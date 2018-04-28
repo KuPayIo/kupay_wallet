@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+		// 8
+function fn(n){
+    if(n<=3&&n>0){
+        return n;
+    }else{
+        return fn(n-1)+fn(n-2)
+    }
+}
+console.log(fn(100))
+// 10
+
+    // var a = [1,2,3];
+    // var b = [1,2,3,4,5];
+
+    // function diff(a,b){
+    //     var res = a.conact(b);
+    //     var newarr = [];
+    //     for(var i = 0; i < a.length;i ++){
+    //         if(res.indexOf(res[i]) != -1){
+    //             newarr.push(res[i]);
+    //         }
+    //     }
+    //     return newarr;
+    // }
+
+    // 7
+    function findOnly(str){
+        var arr = str.split();
+        var res = [];
+        for(var i = 0;i < arr.length; i++){
+            if(res.indexOf(arr[i]) != -1){
+                // res.push(arr[i]);
+            }
+        }
+    }
+	</script>
+</body>
+</html> 
