@@ -64,53 +64,48 @@ winit.initNext = function () {
   });
 
 
-  var testF = function () {
-    pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util"], {}, function (mods, fm) {
-      console.log(mods)
-      // console.log("first mods time:", Date.now() - startTime, mods, Date.now());
-      var html = mods[0], util = mods[1], worker = mods[2];
-      // 判断是否第一次进入,决定是显示片头界面还是开始界面
-      var userinfo = html.getCookie("userinfo");
-      pi_modules.commonjs.exports.flags = html.userAgent(flags);
-      flags.userinfo = userinfo;
-      //debugger;
+  pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util"], {}, function (mods, fm) {
+    // console.log("first mods time:", Date.now() - startTime, mods, Date.now());
+    var html = mods[0], util = mods[1], worker = mods[2];
+    // 判断是否第一次进入,决定是显示片头界面还是开始界面
+    var userinfo = html.getCookie("userinfo");
+    pi_modules.commonjs.exports.flags = html.userAgent(flags);
+    flags.userinfo = userinfo;
+    //debugger;
 
-      var sourceList = [
-        "pi/compile/",
-        "pi/lang/",
-        "pi/ui/",
-        "pi/net/",
-        "pi/util/",
-        "pi/widget/",
-        "app/view/"
-      ]
+    var sourceList = [
+      "pi/compile/",
+      "pi/lang/",
+      "pi/ui/",
+      "pi/net/",
+      "pi/util/",
+      "pi/widget/",
+      "app/view/"
+    ]
 
-      util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
-        console.log(fileMap)
-        // console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
-        var tab = util.loadCssRes(fileMap);
-        // 将预加载的资源缓冲90秒，释放
-        tab.timeout = 90000;
-        tab.release();
-        // clear();
-        // console.log("res time:", Date.now() - startTime);
-        // 加载根组件
-        var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
-        root.cfg.full = false;//PC模式
-        var index = pi_modules.commonjs.exports.relativeGet("app/view/main").exports;
-        index.run();
-        // 关闭读取界面
-        document.body.removeChild(document.getElementById('rcmj_loading_log'));
-        // pi_modules.commonjs.exports.relativeGet("app/cims/util").exports.initCfg(fileMap);
-      }, function (r) {
-        alert("加载目录失败, " + r.error + ":" + r.reason);
-      }, dirProcess.handler);
-    }, function (result) {
-      alert("加载基础模块失败, " + result.error + ":" + result.reason);
-    }, modProcess.handler);
-  }
-  setTimeout(testF, 1000);
-  // testF();
+    util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+      console.log(fileMap)
+      // console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
+      var tab = util.loadCssRes(fileMap);
+      // 将预加载的资源缓冲90秒，释放
+      tab.timeout = 90000;
+      tab.release();
+      // clear();
+      // console.log("res time:", Date.now() - startTime);
+      // 加载根组件
+      var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+      root.cfg.full = false;//PC模式
+      var index = pi_modules.commonjs.exports.relativeGet("app/view/main").exports;
+      index.run();
+      // 关闭读取界面
+      document.body.removeChild(document.getElementById('rcmj_loading_log'));
+      // pi_modules.commonjs.exports.relativeGet("app/cims/util").exports.initCfg(fileMap);
+    }, function (r) {
+      alert("加载目录失败, " + r.error + ":" + r.reason);
+    }, dirProcess.handler);
+  }, function (result) {
+    alert("加载基础模块失败, " + result.error + ":" + result.reason);
+  }, modProcess.handler);
 };
 
 // 初始化开始
