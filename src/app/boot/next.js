@@ -33,7 +33,7 @@ winit.initNext = function () {
   TIME_STR += "before load time: " + (Date.now() - PRE_TIME);
   PRE_TIME = Date.now();
   var div = document.createElement('div');
-  div.setAttribute("id","pi")
+  div.setAttribute("id", "pi")
   div.setAttribute("pi", "1");
   div.setAttribute("class", "process");
   // div.setAttribute("style", "position:absolute;bottom:10px;left: 2%;width: 95%;height: 10px;background: #262626;padding: 1px;border-radius: 20px;border-top: 1px solid #000;border-bottom: 1px solid #7992a8;z-index:9999;");
@@ -41,8 +41,8 @@ winit.initNext = function () {
   var divProcessBg = document.createElement('div');
   var divProcessIcon = document.createElement('div');
   divProcess.setAttribute("style", "width: 0%;height: 100%;border-radius: 20px;position:relative");
-  divProcessBg.setAttribute("style", "width: 100%;height: 15px;background-size: 100% 100%;background-image:url(../res/common/sliderProgress.png)");
-  divProcessIcon.setAttribute("style", "width:50px;height:50px;background-size: 100% 100%;position:absolute;right:-30px;top:-15px;background-image:url(../res/common/slider.png)");
+  // divProcessBg.setAttribute("style", "width: 100%;height: 15px;background-size: 100% 100%;background-image:url(../res/common/sliderProgress.png)");
+  // divProcessIcon.setAttribute("style", "width:50px;height:50px;background-size: 100% 100%;position:absolute;right:-30px;top:-15px;background-image:url(../res/common/slider.png)");
   divProcessIcon.setAttribute("class", "rotating")
   div.appendChild(divProcess);
   divProcess.appendChild(divProcessBg);
@@ -64,16 +64,18 @@ winit.initNext = function () {
   });
 
 
-  pi_modules.commonjs.exports.require(["pi/util/html","pi/widget/util"], {}, function(mods, fm) {
-    // console.log("first mods time:", Date.now() - startTime, mods, Date.now());
-    var html = mods[0], util = mods[1], worker = mods[2];
-    // 判断是否第一次进入,决定是显示片头界面还是开始界面
-    var userinfo = html.getCookie("userinfo");
-    pi_modules.commonjs.exports.flags = html.userAgent(flags);
-    flags.userinfo = userinfo;
-    //debugger;
+  var testF = function () {
+    pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util"], {}, function (mods, fm) {
+      console.log(mods)
+      // console.log("first mods time:", Date.now() - startTime, mods, Date.now());
+      var html = mods[0], util = mods[1], worker = mods[2];
+      // 判断是否第一次进入,决定是显示片头界面还是开始界面
+      var userinfo = html.getCookie("userinfo");
+      pi_modules.commonjs.exports.flags = html.userAgent(flags);
+      flags.userinfo = userinfo;
+      //debugger;
 
-    var sourceList = [
+      var sourceList = [
         "pi/compile/",
         "pi/lang/",
         "pi/ui/",
@@ -81,13 +83,14 @@ winit.initNext = function () {
         "pi/util/",
         "pi/widget/",
         "app/view/"
-    ]
+      ]
 
-    util.loadDir(sourceList, flags, fm,undefined, function(fileMap) {
+      util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+        console.log(fileMap)
         // console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
         var tab = util.loadCssRes(fileMap);
         // 将预加载的资源缓冲90秒，释放
-        tab.timeout = 90000; 
+        tab.timeout = 90000;
         tab.release();
         // clear();
         // console.log("res time:", Date.now() - startTime);
@@ -99,12 +102,15 @@ winit.initNext = function () {
         // 关闭读取界面
         document.body.removeChild(document.getElementById('rcmj_loading_log'));
         // pi_modules.commonjs.exports.relativeGet("app/cims/util").exports.initCfg(fileMap);
-    }, function(r){
-        alert("加载目录失败, "+r.error + ":" + r.reason);
-    }, dirProcess.handler);
-}, function(result){
-    alert("加载基础模块失败, "+result.error + ":" + result.reason);
-}, modProcess.handler);
+      }, function (r) {
+        alert("加载目录失败, " + r.error + ":" + r.reason);
+      }, dirProcess.handler);
+    }, function (result) {
+      alert("加载基础模块失败, " + result.error + ":" + result.reason);
+    }, modProcess.handler);
+  }
+  setTimeout(testF, 1000);
+  // testF();
 };
 
 // 初始化开始

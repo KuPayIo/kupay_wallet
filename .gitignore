@@ -6,3 +6,4 @@
 /scripts/*.sh
 /dst
 /src/.depend
+/node_modules
