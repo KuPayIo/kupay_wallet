@@ -1,0 +1,53 @@
+.pi-collapse{
+    position: relative;
+    border-top: 1px solid #ebeef5;
+    border-bottom: 1px solid #ebeef5;
+}
+.pi-collapse-head{
+    position: relative;
+}
+.pi-collapse-title{
+    height: 48px;
+    line-height: 48px;
+    color: #303133;
+    cursor: pointer;
+    border-bottom: 1px solid #ebeef5;
+    font-size: 13px;
+    font-weight: 500;
+    -webkit-transition: border-bottom-color .3s;
+    transition: border-bottom-color .3s;
+    outline: 0;
+}
+.pi-collapse-title-avtive{
+    border-bottom: 1px solid transparent;
+}
+.pi-collapse-arrow{
+    width: 10px;
+    height: 10px;
+    border-left:1px solid #ccc;
+    border-bottom:1px solid #ccc;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%) rotateZ(-135deg);
+    transition: all .3s ease-out;
+}
+.pi-collapse-arrow-rotate{
+    transform: translateY(-50%) rotateZ(-45deg);
+}
+.pi-collapse-item-panel{
+    height: 0;
+    overflow: hidden;
+    transition: all .3s ease-out;
+    border-bottom: 1px solid transparent;
+}
+.pi-collapse-item-panel-border{
+    border-bottom: 1px solid #ebeef5;
+}
+.pi-collapse-item-content{
+    padding-bottom: 25px;
+    font-size: 13px;
+    color: #303133;
+    line-height: 1.769230769230769;
+    
+}

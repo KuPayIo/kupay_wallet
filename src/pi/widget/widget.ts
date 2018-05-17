@@ -5,7 +5,7 @@
 组件名的规则：可以使用英文小写字母加'_'和''。 '-'表示路径分隔，'$'只能在最后，1个'$'表示本目录开始查找，N个'$'表示上溯N-1个父目录开始查找。如果没有'$'表示从根目录下开始查找
 举例：
 <role_show$ style=""></role_show$>表示本目录下的role_show组件，
-<role_show$$ style=""></role_show$$>表示父目录下的role_show组件，
+<role_show$$ style=""> </role_show$$>表示父目录下的role_show组件，
 <role_show-zb_show$$ style=""></role_show-zb_show$$>表示父目录下role_show目录下的zb_show组件
 <app-base-btn style=""></app-base-btn>表示根目录开始，app/base目录下的btn组件
 */
@@ -191,7 +191,7 @@ export const register = (name: string, widget: Function, tpl: Tpl, sheet?: {valu
 		warn(level, 'widget already register, name:', name);
 	}
 	widget = widget || getWidget;
-	widgetMap.set(name, { name, widget, tpl, sheet, config, forelet });
+	widgetMap.set(name, {name, widget, tpl, sheet, config, forelet });
 
 	return old;
 };

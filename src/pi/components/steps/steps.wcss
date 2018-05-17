@@ -1,0 +1,130 @@
+.base{
+    display: flex;
+}
+
+.base-horizontal{
+    white-space: nowrap;
+}
+
+.base-vertical{
+    height: 100%;
+    flex-flow: column;
+}
+
+.each-normal{
+    flex-basis: 50%;
+    margin-right: 0px;
+}
+.each-last{
+    margin-right: 0px;
+    flex-shrink: 0;
+}
+.each-horizontal{
+    display: block;
+}
+
+.each-vertical{
+    display: flex;
+}
+
+.is-success{
+    color: #67c23a;
+    border-color: #67c23a;
+}
+.is-process{
+    color: #303133;
+    border-color: #303133;
+}
+.is-wait{
+    color: #c0c4cc;
+    border-color: #c0c4cc;
+}
+
+.head{
+    position: relative;
+}
+
+.line-horizontal{
+    position: absolute;
+    border-color: inherit;
+    background-color: #c0c4cc;
+    height: 2px;
+    top: 11px;
+    left: 0;
+    right: 0;
+    margin-right: 0px;
+}
+
+.line-vertical{
+    position: absolute;
+    border-color: inherit;
+    background-color: #c0c4cc;
+    width: 2px;
+    top: 0;
+    bottom: 0;
+    left: 11px;
+    margin-right: 0px;
+}
+.line-inner{
+    display: block;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+    transition: .15s ease-out;
+    box-sizing: border-box;
+    width: 0;
+    height: 0;
+    transition-delay: 0ms;
+    border-width: 0px;
+    width: 0%;
+}
+
+.icon{
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    box-sizing: border-box;
+    background: #fff;
+    transition: .15s ease-out;
+    border-radius: 50%;
+    border: 2px solid;
+    border-color: inherit;
+}
+
+.icon-inner{
+    display: inline-block;
+    user-select: none;
+    text-align: center;
+    font-weight: 700;
+    line-height: 1;
+    color: inherit;
+    transform: translateY(1px);
+}
+
+.main-horizontal{
+    text-align: left;
+}
+.main-vertical{
+    text-align: left;
+    padding-left: 10px;
+    flex-grow: 1;
+}
+
+.title{
+    font-size: 16px;
+    line-height: 32px;
+    white-space:nowrap;
+}
+
+.description{
+    padding-right: 10%;
+    margin-top: -5px;
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: 400;
+}

@@ -1,0 +1,56 @@
+.bar{
+    padding-right: 50px;
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    margin-right: -55px;
+    box-sizing: border-box;
+}
+
+.bar_outer{
+    height: 6px;
+    border-radius: 100px;
+    background-color: #ebeef5;
+    overflow: hidden;
+    position: relative;
+    vertical-align: middle;
+}
+
+.bar_inner{
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background-color: #409eff;
+    text-align: right;
+    border-radius: 100px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.outer_text{
+    font-size: 14px;
+    color: #606266;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+    line-height: 1;
+}
+
+.inner_text{
+    display: inline-block;
+    vertical-align: middle;
+    color: #fff;
+    font-size: 12px;
+    margin: 0 5px;
+}
+
+.circle_text{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    transform: translate(0, -50%);
+}

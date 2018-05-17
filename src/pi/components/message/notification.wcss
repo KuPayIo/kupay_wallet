@@ -1,0 +1,39 @@
+.base{
+    display: flex;
+    width: 330px;
+    padding: 14px 26px 14px 13px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ebeef5;
+    position: fixed;
+    background-color: #fff;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    transition: opacity .3s,transform .3s,left .3s,right .3s,top .4s,bottom .3s;
+    overflow: hidden;
+    right: 16px;
+    top: 16px;
+}
+.group{
+    margin-left: 13px;
+}
+.title{
+    font-weight: 700;
+    font-size: 16px;
+    color: #303133;
+    margin: 0;
+}
+.content{
+    font-size: 14px;
+    line-height: 21px;
+    margin: 6px 0 0;
+    color: #606266;
+    text-align: justify;
+}
+.close{
+    position: absolute;
+    top: 18px;
+    right: 15px;
+    cursor: pointer;
+    color: #909399;
+    font-size: 16px;
+}

@@ -75,6 +75,7 @@ winit.initNext = function () {
 
     var sourceList = [
       "pi/compile/",
+      "pi/components/",
       "pi/lang/",
       "pi/ui/",
       "pi/net/",

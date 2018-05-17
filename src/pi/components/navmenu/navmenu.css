@@ -1,0 +1,179 @@
+/**********************navmenu*******************************/
+.nav-menu{
+	border-right: 1px solid #e6e6e6;
+    list-style: none;
+    position: relative;
+    margin: 0;
+    padding-left: 0;
+    background-color: #fff;
+}
+.nav-menu:after, .nav-menu:before {
+    display: table;
+    content: "";
+}
+.nav-menu:after {
+    clear: both;
+}
+.nav-menu--vertical .nav-menu-item:hover,
+.nav-menu--vertical .nav-submenu__title:hover {
+    background-color: rgb(236,245,255);   
+}
+.nav-menu-item {
+    height: 56px;
+    line-height: 56px;
+    font-size: 14px;
+    color: #303133;
+    padding: 0 20px;
+    list-style: none;
+    cursor: pointer;
+    position: relative;
+    transition: border-color .3s,background-color .3s,color .3s;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+.nav-submenu .nav-menu-item {
+    height: 50px;
+    line-height: 50px;
+    min-width: 200px;
+}
+.nav-submenu {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;     
+}
+.nav-menu--vertical .nav-submenu{
+    display: none;
+}
+.nav-submenu.is-open{
+	display: block;
+}
+.nav-submenu__title {
+    height: 56px;
+    line-height: 56px;
+    font-size: 14px;
+    color: #303133;
+    padding: 0 20px;
+    list-style: none;
+    cursor: pointer;
+    position: relative;
+    transition: border-color .3s,background-color .3s,color .3s;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+/* 
+ * 右侧小图标旋转
+ */
+@keyframes navsubmenu_iconopen{
+    0%{transform:rotate(-90deg)}
+    50%{transform:rotate(0deg)}
+    100%{transform:rotate(90deg)}
+}
+@keyframes navsubmenu_iconclose{
+    0%{transform:rotate(90deg)}
+    50%{transform:rotate(0deg)}
+    100%{transform:rotate(-90deg)}
+}
+.navsubmenu-iconopen{
+    animation: navsubmenu_iconopen .15s forwards;    
+}
+.navsubmenu-iconclose{
+    animation: navsubmenu_iconclose .15s forwards;
+}
+/*
+ * 子模块展开隐藏
+ */
+@keyframes navsubmenu_open
+{
+    from {height: 0;}
+    to {height: auto}
+}
+@keyframes navsubmenu_close
+{
+    from {height: auto}
+    to {height: 0;}
+}
+.navsubmenu-open{   
+    animation: navsubmenu_open .5s forwards;
+    display: block; 
+}
+.navsubmenu-close{   
+    animation: navsubmenu_close .5s forwards;
+    display: none;
+}
+
+.nav-menu--horizontal {
+    border-right: none;
+    border-bottom: 1px solid #e6e6e6;
+}
+.nav-menu--horizontal .nav-menu-item:hover,
+.nav-menu--horizontal .nav-submenu__title:hover {
+    color: black;  
+}
+.nav-menu-item-group__title {
+    padding: 7px 0 7px 20px;
+    line-height: normal;
+    font-size: 12px;
+    color: #909399;
+}
+.nav-menu-item.is-disabled {
+    opacity: .25;
+    cursor: not-allowed;
+    background: none!important;
+}
+.nav-menu-item.is-active{    
+    color: #409eff;
+}
+.nav-menu--horizontal>.nav-menu-item.is-active {
+    border-bottom: 2px solid #409eff;
+    color: #303133;
+}
+.nav-menu--horizontal>.nav-menu-item {
+    float: left;
+    height: 60px;
+    line-height: 60px;
+    margin: 0;
+    border-bottom: 2px solid transparent;
+    color: #909399;
+}
+.nav-menu--horizontal>.nav-menu-item.is-active {
+    border-bottom: 2px solid #409eff;
+    color: #303133;
+}
+.nav-menu--popup {
+    z-index: 100;
+    min-width: 200px;
+    border: none;
+    padding: 5px 0;
+    border-radius: 2px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+}
+.nav-menu--popup-bottom-start {
+    margin-top: 5px;
+}
+.nav-menu--horizontal .nav-menu .nav-menu-item, .nav-menu--horizontal .nav-menu .nav-submenu__title {
+    background-color: #fff;
+    float: none;
+    height: 36px;
+    line-height: 36px;
+    padding: 0 10px;
+    color: #909399;
+}
+.nav-submenu.is-active .nav-submenu__title {
+    border-bottom-color: #409eff;
+}
+.nav-menu--horizontal>.nav-submenu.is-active .nav-submenu__title {
+    border-bottom: 2px solid #409eff;
+    color: #303133;
+}
+.nav-menu--horizontal>.nav-submenu .nav-submenu__title {
+    height: 60px;
+    line-height: 60px;
+    border-bottom: 2px solid transparent;
+    color: #909399;
+}
+.nav-menu--horizontal>.nav-submenu {
+    float: left;
+}
+.nav-menu--horizontal.nav-menu .nav-menu-item.is-active, .nav-menu--horizontal.nav-menu .nav-submenu__title.is-active {
+    color: #303133;
+}

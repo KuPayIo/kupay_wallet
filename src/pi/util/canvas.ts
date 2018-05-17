@@ -168,8 +168,8 @@ export const calcText = (cfg: ImgTextCfg): void => {
 	const ctx = initWidth(cfg);
 	const arr = cfg.text.split('');
 	let v = cfg.lineHeight;
-	let u;
-	let h;
+	let u = 0;
+	let h = 0;
 	const uv = {};
 	let totalW = 0;
 	let currW = 0;
@@ -206,7 +206,7 @@ export const calcText = (cfg: ImgTextCfg): void => {
 		let w;
 		let index = 0;
 		h = (cfg.fontCfg.size + cfg.offsetHeight) * cfg.hfactor + cfg.lineHeight;
-		const v = 0;
+		v = 0;
 		for (const c of arr) {
 			w = ctx.measureText(c).width * cfg.factor + cfg.offsetWidth + cfg.space;
 			if (u + w - halfSpace > cfg.width) {

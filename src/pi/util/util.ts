@@ -449,7 +449,7 @@ export const utf8Encode = ((self !== undefined) && (<any>self).TextDecoder) ? ((
 	return null;
 };
 /**
- * @description 将字符串解析成json，可以执行运算，可以加注释，obj的键可以不用引号引起来
+ * @description 将字符串解析成json，可以执行运算，可以加注释，obj的键可以不用引号引起来。必须使用缓冲，因为该函数对象v8中不会释放。
  * @note return的两边加上圆括号，是为了让s有空行（因为js引擎的自动加分号机制）和开头的注释时候也能生效
  * @example
  */

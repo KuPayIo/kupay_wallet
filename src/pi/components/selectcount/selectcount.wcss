@@ -1,0 +1,32 @@
+.base{
+    position: relative;
+}
+
+.btn{
+    position: absolute;
+    z-index: 1;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    background: #f5f7fa;
+    color: #606266;
+    cursor: pointer;
+    font-size: 13px;
+    width: 32px;
+    top: 1px;
+}
+.btn_left{
+    left: 1px;
+    border-radius: 4px 0 0 4px;
+    border-right: 1px solid #dcdfe6;
+}
+.btn_right{
+    right: 1px;
+    border-radius: 0 4px 4px 0;
+    border-left: 1px solid #dcdfe6;
+}
+
+.input{
+    display: inline-block;
+    height: 40px;
+}

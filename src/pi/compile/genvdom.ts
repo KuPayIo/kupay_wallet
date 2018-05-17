@@ -1254,7 +1254,7 @@ const attrFunc = (syntax: Syntax, parent: Syntax) => {
 		child: (): Syntax[] => {
 			if (syntax.right[0].value === 'w-sid') {
 				(<any>syntax.parent.parent).sid = parseInt(syntax.right[1].right[0].value, 10);
-
+				
 				return [];
 			}
 			let child = [];

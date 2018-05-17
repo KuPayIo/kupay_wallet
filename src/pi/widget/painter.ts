@@ -178,7 +178,7 @@ export const createWidget = (node: VirtualWidgetNode): void => {
 	}
 	const w = factory(relative(node.tagName, s));
 	if (!w) {
-		throw new Error(`widget not found, name: ${node.tagName}`);
+		throw new Error(`widget not found, name: ${node.tagName}`);		
 	}
 	node.link = w;
 	node.widget.children.push(w);
