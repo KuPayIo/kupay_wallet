@@ -81,7 +81,9 @@ winit.initNext = function () {
       "pi/net/",
       "pi/util/",
       "pi/widget/",
-      "app/view/"
+      "app/view/",
+      "app/components/",
+      "app/res/"
     ]
 
     util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {

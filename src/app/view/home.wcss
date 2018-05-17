@@ -1,0 +1,94 @@
+.ga-header{
+    height: 200px;
+    background-color: #ccc;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+}
+.ga-loading-container{
+    text-align: right;
+    padding-right: 10px;
+}
+.ga-wallet-name-container{
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+.ga-wallet-name-dot{
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.ga-wallet-name{
+    font-size: 22px;
+    color: #fff;
+    margin-left: 8px;
+}
+.ga-assets-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+}
+.ga-assets-box{
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+}
+.ga-assets-title{
+    font-size: 16px;
+}
+.ga-assets{
+    font-size: 20px;
+}
+.ga-add-currency{
+    cursor: pointer;
+}
+.ga-currency-list-container{
+    position: relative;
+}
+
+.ga-currency-list{
+    position: relative;
+    margin: 0;
+    padding: 20px 0 0 0;
+}
+.ga-currency-item{
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    margin: 0 8px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+.ga-currency-logo{
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+}
+.ga-curreny-name-container{
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    margin-left: 10px;
+}
+
+.ga-curreny-assets-container{
+    display: flex;
+    flex-direction: column;
+}
+.ga-curreny-name{
+    font-size: 20px;
+}
+.ga-curreny-balance{
+    font-size: 20px;
+    text-align: right;
+}
+.ga-curreny-full-name{
+    font-size: 16px;
+}
+.ga-curreny-balance-value{
+    font-size: 16px;
+    text-align: right;
+}
