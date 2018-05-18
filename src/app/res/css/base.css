@@ -4,6 +4,5 @@
     top: 0;
     bottom: 0;
     right: 0;
-    background-color: #fff;
-    opacity: 1;
+    background-color: rgba(256, 256, 256, 1);
 }

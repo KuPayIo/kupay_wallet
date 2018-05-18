@@ -10,3 +10,15 @@ export function getLocalStorage(key:string, cb?: Function){
     }
     return find(key);
 }
+
+export function getCurrentWallet(wallets){
+    if(!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)){
+        return null;
+    }
+    for(let i = 0;i < wallets.list.length;i++){
+        if(wallets.list[i].walletId === wallets.curWalletId){
+            return wallets.list[i];
+        }
+    }
+    return null;
+}

@@ -1,6 +1,6 @@
 import { Widget } from "../../pi/widget/widget";
 import { popNew } from "../../pi/ui/root";
-import { getLocalStorage } from '../utils/tools'
+import { getLocalStorage, getCurrentWallet } from '../utils/tools'
 
 interface Wallet{
     walletName:string;
@@ -17,10 +17,11 @@ export class Home extends Widget{
         this.init();
     }
     public init(): void{
-        const wallet = getLocalStorage("wallet",(wallet)=>{
-            this.state.wallet = wallet;
+        const wallets = getLocalStorage("wallets",(wallets)=>{
+            this.state.wallet = getCurrentWallet(wallets);
             this.paint();
         });
+        const wallet = getCurrentWallet(wallets);
         this.state = {
             wallet,
             walletNameDotBgColor:"#fff",
@@ -48,5 +49,8 @@ export class Home extends Widget{
     }
     public createWalletClick(){
         popNew("app-view-walletCreate-walletCreate");
+    }
+    public switchWalletClick(){
+        popNew("app-view-switchWallet-switchWallet");
     }
 }
