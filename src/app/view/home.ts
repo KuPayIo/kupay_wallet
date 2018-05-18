@@ -1,4 +1,6 @@
 import { Widget } from "../../pi/widget/widget";
+import { popNew } from "../../pi/ui/root";
+import { getLocalStorage } from '../utils/tools'
 
 interface Wallet{
     walletName:string;
@@ -15,8 +17,12 @@ export class Home extends Widget{
         this.init();
     }
     public init(): void{
+        const wallet = getLocalStorage("wallet",(wallet)=>{
+            this.state.wallet = wallet;
+            this.paint();
+        });
         this.state = {
-            walletName:"GAIA钱包",
+            wallet,
             walletNameDotBgColor:"#fff",
             totalAssets:"0.00",
             currencyList:[{
@@ -38,5 +44,8 @@ export class Home extends Widget{
     }
     public clickAddCurrencyListener(){
         alert("hello")
+    }
+    public createWalletClick(){
+        popNew("app-view-walletCreate-walletCreate");
     }
 }

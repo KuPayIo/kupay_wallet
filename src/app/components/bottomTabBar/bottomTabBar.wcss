@@ -1,10 +1,10 @@
 .ga-bottom-tab-bar-container{
     display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
     height: 80px;
     width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 .ga-tab-bar-item{
     flex: 1 0 0;

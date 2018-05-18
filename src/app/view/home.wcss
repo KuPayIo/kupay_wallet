@@ -24,6 +24,7 @@
     font-size: 22px;
     color: #fff;
     margin-left: 8px;
+    cursor: pointer;
 }
 .ga-assets-container{
     display: flex;
