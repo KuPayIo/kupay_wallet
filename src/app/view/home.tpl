@@ -4,7 +4,7 @@
         <div w-class="ga-loading-container"><img src="../res/image/u250.png" /></div>
         <div w-class="ga-wallet-name-container">
             <span w-class="ga-wallet-name-dot" style="background-color:{{it1.walletNameDotBgColor}};"></span>
-            <span w-class="ga-wallet-name">{{it1.wallet.walletName}}</span>
+            <span w-class="ga-wallet-name" on-tap="switchWalletClick">{{it1.wallet.walletName}}</span>
         </div>
         <div w-class="ga-assets-container">
             <div w-class="ga-assets-box">

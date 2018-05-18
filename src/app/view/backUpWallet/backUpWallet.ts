@@ -1,6 +1,6 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from "../../../pi/ui/root";
-import { getLocalStorage } from "../../utils/tools";
+import { getLocalStorage, getCurrentWallet } from "../../utils/tools";
 
 /**
  * back up wallet
@@ -18,8 +18,7 @@ export class BackUpWallet extends Widget{
     }
     public backUpWalletClick(){
         popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: "" }, (r) => {
-            console.log("确认",r)
-            const wallet = getLocalStorage("wallet");
+            const wallet = getCurrentWallet(getLocalStorage("wallets"));
             if(wallet.walletPsw === r){
                 let close = popNew("pi-components-loading-loading",{text:"导出中"});
                 setTimeout(()=>{

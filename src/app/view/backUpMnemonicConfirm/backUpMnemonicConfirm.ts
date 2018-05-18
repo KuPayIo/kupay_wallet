@@ -1,6 +1,6 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from "../../../pi/ui/root";
-import { getLocalStorage, setLocalStorage } from "../../utils/tools";
+import { getLocalStorage, setLocalStorage, getCurrentWallet } from "../../utils/tools";
 
 /**
  * back up Mnemonic confirm
@@ -15,7 +15,7 @@ export class BackUpMnemonicConfirm extends Widget{
         this.init();
     }
     public init(){
-        const wallet = getLocalStorage("wallet");
+        const wallet = getCurrentWallet(getLocalStorage("wallets"));
         let shuffledMnemonic = this.initMnemonic(wallet.mnemonic);
         this.state = {
             mnemonic:wallet.mnemonic,
@@ -65,15 +65,21 @@ export class BackUpMnemonicConfirm extends Widget{
             popNew("pi-components-message-messagebox", { type: "alert", title: "请检查助记词", content: "" });
         }else{
             popNew("pi-components-message-messagebox", { type: "confirm", title: "助记词即将移除", content: "Start navigation to Restaurant Mos Eisley?" }, () => {
-                let wallet = getLocalStorage("wallet");
-                delete wallet.mnemonic;
-                setLocalStorage("wallet",wallet);
+                this.deleteMnemonic();
                 this.ok && this.ok();
             }, () => {
                 this.ok && this.ok();
             })
         }
     }
+
+    public deleteMnemonic(){
+        let wallets = getLocalStorage("wallets");
+        let wallet = getCurrentWallet(wallets);
+        delete wallet.mnemonic;
+        setLocalStorage("wallets",wallets);
+    }
+
     public shuffledMnemonicItemClick(e,v){
         let mnemonic = this.state.shuffledMnemonic[v];
         if(mnemonic.isActive) return;

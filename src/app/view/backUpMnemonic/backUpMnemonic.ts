@@ -1,6 +1,6 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from "../../../pi/ui/root";
-import { getLocalStorage } from "../../utils/tools";
+import { getLocalStorage, getCurrentWallet } from "../../utils/tools";
 
 /**
  * back up Mnemonic
@@ -15,7 +15,7 @@ export class BackUpMnemonic extends Widget{
         this.init();
     }
     public init(){
-        let wallet = getLocalStorage("wallet");
+        let wallet =getCurrentWallet(getLocalStorage("wallets")) ;
         this.state = {
             mnemonic:wallet.mnemonic
         }
