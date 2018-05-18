@@ -1,6 +1,6 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from '../../../pi/ui/root';
-import { setLocalStorage } from '../../utils/tools'
+import { setLocalStorage, getLocalStorage } from '../../utils/tools'
 
 export class WalletCreate extends Widget{
     public ok: () => void;
@@ -74,20 +74,35 @@ export class WalletCreate extends Widget{
             popNew("pi-components-message-message", { type: "notice", content: "请阅读用户协议" })
             return;
         }
-        let wallet = {
-            walletName:this.state.walletName,
-            walletPsw:this.state.walletPsw,
-            walletPswTips:this.state.walletPswTips
-        }
-        setLocalStorage("wallet",wallet,true);
+
+        this.createWallet();
+
         let close = popNew("pi-components-loading-loading",{text:"创建中"});
         setTimeout(()=>{
             close.callback(close.widget);
+            this.ok && this.ok();
+            popNew("app-view-backUpWallet-backUpWallet");
         },500);
-        this.ok && this.ok();
-        popNew("app-view-backUpWallet-backUpWallet");
     }
+    
 
+    public createWallet(){
+        let wallets = getLocalStorage("wallets") || {list:[],curWalletId:""};
+        let curWalletId = "";
+        for(let i = 0; i < 32;i++ ){
+            curWalletId += Math.floor(Math.random() * 10);
+        }
+        wallets.curWalletId = curWalletId;
+        let wallet = {
+            walletId:curWalletId,
+            walletName:this.state.walletName,
+            walletPsw:this.state.walletPsw,
+            walletPswTips:this.state.walletPswTips,
+            mnemonic:["one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve"]
+        }
+        wallets.list.push(wallet);
+        setLocalStorage("wallets",wallets,true);
+    }
     public walletNameAvailable(){
         return this.state.walletName.length >=1 && this.state.walletName.length <= 12;
         
