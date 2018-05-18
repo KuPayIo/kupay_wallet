@@ -11,6 +11,7 @@ import { login, setUrl } from '../../pi/net/ui/con_mgr';
 import { open, popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
+import { getLocalStorage } from '../utils/tools'
 // ============================== 导出
 
 export const forelet = new Forelet();
@@ -19,6 +20,8 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (): void => {
 	addWidget(document.body, 'pi-ui-root');
 	popNew('app-view-home');
+	//popNew('app-view-backUpWallet-backUpWallet');
+	
 };
 
 // ============================== 立即执行

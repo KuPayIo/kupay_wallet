@@ -1,9 +1,10 @@
 <div>
+    {{if it1.wallet}}
     <div w-class="ga-header">
         <div w-class="ga-loading-container"><img src="../res/image/u250.png" /></div>
         <div w-class="ga-wallet-name-container">
             <span w-class="ga-wallet-name-dot" style="background-color:{{it1.walletNameDotBgColor}};"></span>
-            <span w-class="ga-wallet-name">{{it1.walletName}}</span>
+            <span w-class="ga-wallet-name">{{it1.wallet.walletName}}</span>
         </div>
         <div w-class="ga-assets-container">
             <div w-class="ga-assets-box">
@@ -13,6 +14,20 @@
             <img w-class="ga-add-currency" src="../res/image/u124.png"  on-click="clickAddCurrencyListener"/>
         </div>
     </div>
+    {{else}}
+    <div w-class="ga-header">
+        <div w-class="ga-loading-container"><img src="../../res/image/u250.png" /></div>
+        <div w-class="ga-wallet-name-container">
+            <span w-class="ga-wallet-name" on-click="createWalletClick">创建钱包</span>
+        </div>
+        <div w-class="ga-assets-container">
+            <div w-class="ga-assets-box">
+                <span w-class="ga-assets-title">总资产</span>
+                <span w-class="ga-assets">≈${{it1.totalAssets}}</span>
+            </div>
+        </div>
+    </div>
+    {{end}}
     <div w-class="ga-currency-list-container">
         <ul w-class="ga-currency-list">
             {{for index,currency of it1.currencyList}}
