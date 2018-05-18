@@ -1,4 +1,5 @@
 import { Widget } from "../../../pi/widget/widget";
+import { popNew } from "../../../pi/ui/root";
 
 export class AddAsset extends Widget {
 
@@ -15,25 +16,9 @@ export class AddAsset extends Widget {
         this.state = {
             title: "添加资产",
             list: [{
-                name: "货币",
-                description: "货币描述",
+                name: "ETH",
+                description: "Ethereum",
                 isChoose: true
-            }, {
-                name: "货币1",
-                description: "货币描述1",
-                isChoose: true
-            }, {
-                name: "货币2",
-                description: "货币描述2",
-                isChoose: false
-            }, {
-                name: "货币3",
-                description: "货币描述3",
-                isChoose: false
-            }, {
-                name: "货币4",
-                description: "货币描述4",
-                isChoose: false
             }]
         }
     }
@@ -49,7 +34,7 @@ export class AddAsset extends Widget {
      * 处理查找
      */
     public doSearch() {
-        console.log("doSearch")
+        popNew("app-view-assets-search_asset", { list: this.state.list })
     }
 
     /**
@@ -57,6 +42,9 @@ export class AddAsset extends Widget {
      */
     public onSwitchChange(e, index) {
         console.log("onSwitchChange", e, index)
+        this.state.list[index].isChoose = e.newType;
+        
+        // todo 这里处理数据变化
     }
 
 }

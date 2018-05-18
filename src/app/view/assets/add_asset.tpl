@@ -4,10 +4,10 @@
         <div w-class="title " style="top: 9px; transform-origin: 185.5px 13px 0px;">
             <span>{{it1.title}}</span>
         </div>
-        <div w-class="back" style="cursor: pointer;" on-click="doClose">
+        <div w-class="back" style="cursor: pointer;" on-tap="doClose">
             <img w-class="img-back" src="../../res/image/u12.png" />
         </div>
-        <div w-class="search" style="cursor: pointer;" on-click="doSearch">
+        <div w-class="search" style="cursor: pointer;" on-tap="doSearch">
             <div w-class="search1">
                 <img w-class="img-search1" src="../../res/image/u591.png" />
             </div>
