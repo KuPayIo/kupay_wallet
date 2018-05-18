@@ -1,0 +1,164 @@
+.base{
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+.header{
+    border-width: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 44px;
+    font-size: 20px;
+    color: #FFFFFF;
+    text-align: center;
+    line-height: normal;
+}
+
+.header-bg{
+    border-width: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 44px;
+    background-color: rgba(126, 126, 126, 1);
+}
+
+.title{
+    border-width: 0px;
+    position: absolute;
+    left: 2px;
+    top: 8px;
+    width: 100%;
+    word-wrap: break-word;
+}
+
+.back{
+    border-width: 0px;
+    position: absolute;
+    left: 15px;
+    top: 9px;
+    width: 15px;
+    height: 26px;
+}
+
+.img-back{
+    border-width: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 15px;
+    height: 26px;
+}
+
+.search{
+    border-width: 0px;
+    position: absolute;
+    right: 15px;
+    top: 12px;
+    word-wrap: break-word;
+    transform-origin: 185.5px 13px 0px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.body{
+    position: absolute;
+    width: 100%;
+    top: 55px;
+}
+.balance{
+    text-align: center;
+    margin-top: 10px;
+}
+.balance-conversion{
+    text-align: center;
+    margin-top: 10px;
+}
+.transaction-record{
+    position: relative;
+    width: 90%;
+    left: 5%;
+    margin-top: 20px;
+}
+.record-text{
+    position: absolute;
+}
+.introduction-text{
+    position: absolute;
+    right: 0px;
+    cursor: pointer;
+}
+.line{
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: rgb(136, 136, 136);
+    top: 25px;
+}
+.transaction-list{
+    position: absolute;
+    top: 30px;
+    width: 100%;
+    font-size: 12px;
+}
+.each{
+    position: relative;
+    width: 100%;
+    margin-top: 10px;
+    height: 50px;
+    cursor: pointer;
+}
+.type{
+    position: absolute;
+    width: 40px;
+}
+.account{
+    position: absolute;
+    left: 40px;
+    width: 200px;
+}
+.pay{
+    position: absolute;
+    right: 0px;
+}
+.time{
+    position: absolute;
+    top: 22px;
+}
+.result{
+    position: absolute;
+    top: 22px;
+    right: 0px;
+}
+
+.footer{
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    height: 50px;
+    border-top: 1px solid rgb(136, 136, 136);
+}
+.transfer{
+    position: absolute;
+    width: 50%;
+    border-right: 1px solid rgb(136, 136, 136);
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    cursor: pointer;
+}
+.receipt{
+    position: absolute;
+    left: 50%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    width: 50%;
+    cursor: pointer;
+}

@@ -12,7 +12,7 @@
             </div>
             {{if it.type==="prompt"}}
             <div ev-input-change="inputChange">
-                <components-input-input>{}</components-input-input>
+                <input-input$$>{}</input-input$$>
             </div>
             {{end}}
         </div>
