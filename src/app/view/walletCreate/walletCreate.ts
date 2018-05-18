@@ -77,7 +77,8 @@ export class WalletCreate extends Widget{
         let wallet = {
             walletName:this.state.walletName,
             walletPsw:this.state.walletPsw,
-            walletPswTips:this.state.walletPswTips
+            walletPswTips:this.state.walletPswTips,
+            mnemonic:["one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve"]
         }
         setLocalStorage("wallet",wallet,true);
         let close = popNew("pi-components-loading-loading",{text:"创建中"});
