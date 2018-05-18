@@ -1,4 +1,5 @@
 import { Widget } from "../../pi/widget/widget";
+import { popNew } from "../../pi/ui/root";
 
 interface Wallet{
     walletName:string;
@@ -37,6 +38,6 @@ export class Home extends Widget{
         alert("hello")
     }
     public clickAddCurrencyListener(){
-        alert("hello")
+        popNew("app-view-assets-add_asset")
     }
 }
