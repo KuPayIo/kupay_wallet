@@ -1,0 +1,46 @@
+.base{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+.bg{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+.show-list{
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    right: 0px;
+    top: 44px;
+    background-color: white;
+    padding-top: 100px;
+}
+.each{
+    position: relative;
+    height: 25px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+.is-choose{
+    position: absolute;
+    left: 5px;
+}
+.name{
+    position: absolute;
+    left: 25px;
+}
+.balance{
+    position: absolute;
+    right: 5px;
+}
+.add-addr{
+    margin-top: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+}

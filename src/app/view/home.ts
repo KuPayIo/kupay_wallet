@@ -41,10 +41,11 @@ export class Home extends Widget{
     }
 
     public clickCurrencyItemListener(){
-        alert("hello")
+        popNew("app-view-transaction-currency_details",{currencyName:"ETH",currencyBalance:"0.001 ETH",currencyBalanceConversion:"≈￥4.73"})
+        
     }
     public clickAddCurrencyListener(){
-        alert("hello")
+        popNew("app-view-assets-add_asset")
     }
     public createWalletClick(){
         popNew("app-view-walletCreate-walletCreate");

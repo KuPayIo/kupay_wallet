@@ -1,0 +1,144 @@
+.base{
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+.header{
+    border-width: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 44px;
+    font-size: 20px;
+    color: #FFFFFF;
+    text-align: center;
+    line-height: normal;
+}
+
+.header-bg{
+    border-width: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 44px;
+    background-color: rgba(126, 126, 126, 1);
+}
+
+.title{
+    border-width: 0px;
+    position: absolute;
+    left: 2px;
+    top: 8px;
+    width: 100%;
+    word-wrap: break-word;
+}
+
+.back{
+    border-width: 0px;
+    position: absolute;
+    left: 15px;
+    top: 9px;
+    width: 15px;
+    height: 26px;
+}
+
+.img-back{
+    border-width: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 15px;
+    height: 26px;
+}
+
+.search{
+    border-width: 0px;
+    position: absolute;
+    right: 30px;
+    top: 9px;
+    width: 15px;
+    height: 26px;
+}
+
+.search1{
+    border-width: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 20px;
+    height: 20px;
+}
+
+.img-search1{
+    border-width: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 20px;
+    height: 20px;
+}
+
+.search2{
+    border-width: 0px;
+    position: absolute;
+    left: 15px;
+    top: 19px;
+    width: 10px;
+    height: 2px;
+    -webkit-transform: rotate(-135deg);
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+}
+.img-search2{
+    border-width: 0px;
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    width: 13px;
+    height: 5px;
+}
+
+.body{
+    position: absolute;
+    width: 100%;
+    top: 55px;
+}
+
+.each{
+    position: relative;
+    height: 60px;
+    width: 90%;
+    left: 5%;
+    border-bottom: 1px solid #888;
+}
+
+.icon{
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+.name{
+    position: absolute;
+    left: 60px;
+    top: 5px;
+}
+
+.description{
+    position: absolute;
+    left: 60px;
+    top: 30px;
+}
+.switch{
+    position: absolute;
+    top: 16px;
+    right: 30px;
+}
