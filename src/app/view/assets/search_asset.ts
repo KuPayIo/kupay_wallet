@@ -2,6 +2,7 @@
  * 搜索货币
  */
 import { Widget } from "../../../pi/widget/widget";
+import { getLocalStorage, getCurrentWallet, setLocalStorage } from "../../utils/tools";
 
 interface Props {
     list: any[];
@@ -36,10 +37,22 @@ export class AddAsset extends Widget {
      * 处理添加
      */
     public doAdd(e, index) {
-        console.log("doSearch", e, index)
-        this.state.list[index].isChoose = true;
+        let currencys = this.state.list[index];
+        currencys.isChoose = true;
         this.paint();
-        // todo 这里处理search数据
+
+        // 处理search数据
+        let wallets = getLocalStorage("wallets");
+        const wallet = getCurrentWallet(wallets);
+        let showCurrencys = wallet.showCurrencys || [];
+        const oldIndex = showCurrencys.indexOf(currencys.name);
+        if (oldIndex < 0) {
+            showCurrencys.push(currencys.name)
+            wallet.showCurrencys = showCurrencys;
+
+            setLocalStorage("wallets", wallets, true);
+        }
+
     }
 
     /**

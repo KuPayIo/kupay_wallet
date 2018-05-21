@@ -189,7 +189,12 @@ export class GaiaWallet {
      * @memberof GaiaWallet
      */
     exportKeystore(passwd: string) : string {
-        let decrypted = cipher.decrypt(passwd, this._privKey);
+        let decrypted;
+        try {
+            decrypted = cipher.decrypt(passwd, this._privKey);
+        } catch(e) {
+            throw new Error("Invalid operation");
+        }
         let wlt = Wallet.fromPrivateKey(decrypted);
         return wlt.toV3String(passwd);
     }
@@ -202,7 +207,12 @@ export class GaiaWallet {
      * @memberof GaiaWallet
      */
     exportPrivateKey(passwd: string) : string {
-        return cipher.decrypt(passwd, this._privKey);
+        let privKey;
+        try {
+            return cipher.decrypt(passwd, this._privKey);
+        } catch(e) {
+            throw new Error("Invalid operation");
+        }
     }
 
     /**
@@ -218,6 +228,19 @@ export class GaiaWallet {
         } else {
             throw new Error("Mnemonic unavailable");
         }
+    }
+
+    deleteMnemonic(passwd: string): void {
+        if (this._mnemonic.length == 0) {
+            throw new Error("Invalid operation");
+        }
+
+        try {
+            cipher.decrypt(passwd, this._mnemonic);
+        } catch(e) {
+            throw new Error("Invalid operation");
+        }
+        this._mnemonic = '';
     }
 
     /**
@@ -238,7 +261,12 @@ export class GaiaWallet {
         tx.value = txObj.value;
         tx.data = txObj.data;
 
-        let privKey = cipher.decrypt(passwd, this._privKey);
+        let privKey;
+        try {
+            privKey = cipher.decrypt(passwd, this._privKey);
+        } catch(e) {
+            throw new Error("Invalid operation");
+        }
         privKey = Buffer(privKey, 'hex');
         tx.sign(privKey);
         let serializedTx = tx.serialize();

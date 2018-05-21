@@ -17,7 +17,7 @@
     width: 50%;
     height: 100%;
     right: 0px;
-    top: 44px;
+    top: 50px;
     background-color: white;
     padding-top: 100px;
 }

@@ -7,3 +7,4 @@
 /dst
 /src/.depend
 /node_modules
+.temp
