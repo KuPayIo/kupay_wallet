@@ -2,10 +2,10 @@
     <div w-class="ga-switch-wallet-left" on-tap="closePageClick"></div>
     <div w-class="ga-switch-wallet-right">
         <div w-class="ga-wallet-container">
-            {{for index,wallet of it1.wallets.list}}
+            {{for index,wallet of it1.wallets.walletList}}
             <div w-class="ga-wallet-item" on-tap="switchWalletClick(e,{{index}})">
                 <span w-class="ga-wallet-item-dot" style="background-color:{{wallet.walletId === it1.wallets.curWalletId ? 'green' : 'white'}};"></span>
-                <span w-class="ga-wallet-item-name">{{wallet.walletName}}</span>
+                <span w-class="ga-wallet-item-name">{{wallet.gwlt.nickName}}</span>
             </div>
             {{end}}
         </div>
@@ -14,7 +14,7 @@
                 <img src="../../res/image/u250.png" w-class="ga-img"/>
                 <span w-class="ga-text">创建钱包</span>
             </div>
-            <div w-class="ga-import-wallet">
+            <div w-class="ga-import-wallet" on-tap="importWalletClick">
                 <img src="../../res/image/u250.png" w-class="ga-img"/>
                 <span w-class="ga-text">导入钱包</span>
             </div>

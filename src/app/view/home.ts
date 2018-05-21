@@ -1,6 +1,8 @@
 import { Widget } from "../../pi/widget/widget";
 import { popNew } from "../../pi/ui/root";
 import { getLocalStorage, getCurrentWallet } from '../utils/tools'
+import { register } from '../store/store'
+import { GaiaWallet } from "../core/eth/wallet";
 
 interface Wallet {
     walletName: string;
@@ -17,14 +19,22 @@ export class Home extends Widget {
         this.init();
     }
     public init(): void {
-        const wallets = getLocalStorage("wallets", (wallets) => {
-            this.state.wallet = getCurrentWallet(wallets);
+        const wallets = getLocalStorage("wallets");
+        register("wallets", (wallets) => {
+            const wallet = getCurrentWallet(wallets);
+            const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+            this.state.gwlt = gwlt;
             this.state.currencyList = parseCurrencyList(this.state.wallet);
             this.paint();
         });
-        const wallet = getCurrentWallet(wallets);
+        let gwlt = null;
+        let wallet = null;
+        if (wallets) {
+            wallet = getCurrentWallet(wallets);
+            gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+        }
         this.state = {
-            wallet,
+            gwlt,
             walletNameDotBgColor: "#fff",
             totalAssets: "0.00",
             currencyList: parseCurrencyList(wallet)
@@ -32,6 +42,13 @@ export class Home extends Widget {
     }
 
     public clickCurrencyItemListener(e, index) {
+
+        const wallets = getLocalStorage("wallets");
+        if (!wallets) {
+            this.createWalletClick();
+            return
+        }
+
         let currency = this.state.currencyList[index];
         popNew("app-view-transaction-currency_details", {
             currencyName: currency.currencyName, currencyBalance: `${currency.balance} ${parseCurrencyUnit(currency)}`
@@ -58,7 +75,7 @@ const parseCurrencyList = (wallet) => {
     let list = [];
     //todo 测试代码  不处理没有的情况
     // if (!wallet.showCurrencys) return list;
-    let showCurrencys = wallet.showCurrencys || ["ETH"];
+    let showCurrencys = (wallet && wallet.showCurrencys) || ["ETH"];
 
     //todo  这里需要正确的处理钱包货币
     showCurrencys.forEach(v => {

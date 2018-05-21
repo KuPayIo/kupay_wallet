@@ -1,10 +1,10 @@
 <div>
-    {{if it1.wallet}}
+    {{if it1.gwlt}}
     <div w-class="ga-header">
         <div w-class="ga-loading-container"><img src="../res/image/u250.png" /></div>
         <div w-class="ga-wallet-name-container">
             <span w-class="ga-wallet-name-dot" style="background-color:{{it1.walletNameDotBgColor}};"></span>
-            <span w-class="ga-wallet-name" on-tap="switchWalletClick">{{it1.wallet.walletName}}</span>
+            <span w-class="ga-wallet-name" on-tap="switchWalletClick">{{it1.gwlt.nickName}}</span>
         </div>
         <div w-class="ga-assets-container">
             <div w-class="ga-assets-box">
