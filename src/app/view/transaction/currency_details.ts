@@ -1,5 +1,6 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from "../../../pi/ui/root";
+import { getCurrentWallet, getLocalStorage } from "../../utils/tools";
 
 interface Props {
     currencyName: string;
@@ -22,24 +23,13 @@ export class AddAsset extends Widget {
         this.init();
     }
     public init(): void {
+        let wallets = getLocalStorage("wallets");
+        const wallet = getCurrentWallet(wallets);
+
         this.state = {
-            list: []
+            list: getTransactionDetails(wallet)
         }
-        //显示18位  21位判断  9
-        this.state.list.push({
-            type: "收款",
-            account: parseAccount("0x58b0b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586"),
-            pay: "0.0002 ETH",
-            time: "2018-02-02 14:00:00",
-            result: "交易成功"
-        });
-        this.state.list.push({
-            type: "转账",
-            account: parseAccount("0x58b0b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586"),
-            pay: "0.0002 ETH",
-            time: "2018-02-02 14:00:00",
-            result: "交易中"
-        });
+
     }
 
     /**
@@ -95,6 +85,7 @@ export class AddAsset extends Widget {
     public doTransfer() {
         //todo 这里获取地址
         let addr = "1xdfsdfsfsdfgdsfgsddfg4d54g5sdg2sfgdsfgsddfg4d54g5sdg2sg4d54g5sdg2s";
+        
         popNew("app-view-transaction-transfer", {
             currencyBalance: this.props.currencyBalance,
             setAddr: addr
@@ -124,4 +115,25 @@ export class AddAsset extends Widget {
 const parseAccount = (str: string) => {
     if (str.length <= 29) return str;
     return `${str.slice(0, 13)}...${str.slice(str.length - 13, str.length)}`;
+}
+
+const getTransactionDetails = (wallet) => {
+    if (!wallet.transactionDetails) return [];
+
+    //todo 获取交易记录
+    // //显示18位  21位判断  9
+    // this.state.list.push({
+    //     type: "收款",
+    //     account: parseAccount("0x58b0b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586"),
+    //     pay: "0.0002 ETH",
+    //     time: "2018-02-02 14:00:00",
+    //     result: "交易成功"
+    // });
+    // this.state.list.push({
+    //     type: "转账",
+    //     account: parseAccount("0x58b0b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586b586b0b586"),
+    //     pay: "0.0002 ETH",
+    //     time: "2018-02-02 14:00:00",
+    //     result: "交易中"
+    // });
 }
