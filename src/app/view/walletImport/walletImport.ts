@@ -3,7 +3,6 @@ import { popNew } from '../../../pi/ui/root';
 import { setLocalStorage, getLocalStorage, encrypt } from '../../utils/tools'
 import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength } from '../../utils/account'
 import { GaiaWallet } from "../../core/eth/wallet";
-import { notify } from "../../store/store";
 
 export class WalletImport extends Widget{
     public ok: () => void;
@@ -69,8 +68,12 @@ export class WalletImport extends Widget{
             return;
         }
 
-        this.importWallet();
-
+        try{
+            this.importWallet();
+        }catch(e){
+            popNew("pi-components-message-message", { type: "error", content: "无效的助记词" })
+            return;
+        }
         let close = popNew("pi-components-loading-loading",{text:"导入中"});
         setTimeout(()=>{
             close.callback(close.widget);
@@ -80,23 +83,27 @@ export class WalletImport extends Widget{
     }
     
 
-    public importWallet(){
+    public importWallet(): void{
         //garden  file spider holiday only panel author bind miss stool yard salt
-        const gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic,"english",this.state.walletPsw);
+        let gwlt = null;
+        try{
+            gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic,"english",this.state.walletPsw);
+        }catch(e){
+            throw e;
+        }
         gwlt.nickName = this.state.walletName;
-        console.log(gwlt)
+        console.log("gwlt")
         let wallets = getLocalStorage("wallets") || {walletList:[],curWalletId:""};
         let curWalletId = gwlt.address;
         let wallet = {
             walletId:curWalletId,
             walletPsw:encrypt(this.state.walletPsw),
-            walletPswTips:this.state.walletPswTips,
+            walletPswTips:encrypt(this.state.walletPswTips),
             gwlt:gwlt.toJSON()
         }
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
-        setLocalStorage("wallets",wallets);
-        notify("wallets")
+        setLocalStorage("wallets",wallets,true);
     }
 
 }
