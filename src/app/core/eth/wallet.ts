@@ -2,6 +2,7 @@
 import { Mnemonic } from '../thirdparty/bip39';
 import { WORDLISTS } from '../thirdparty/wordlist';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
+import { Cipher } from '../crypto/cipher';
 
 const Buffer = ethereumjs.Buffer.Buffer;;
 const Wallet = ethereumjs.Wallet;
@@ -11,6 +12,18 @@ const ETHUtil = ethereumjs.Util;
 
 const LANGUAGES = {"english": 0, "chinese_simplified": 1, "chinese_traditional": 2};
 const DEFAULT_DERIVE_PATH = "m/44'/60'/0'/0/0";
+
+// currently use the default config
+const cipher = new Cipher();
+
+export interface Transaction {
+    to: string;
+    nonce: number | string;
+    gasPrice: number | string;
+    gasLimit: number | string;
+    value: number | string;
+    data: string;
+}
 
 export class GaiaWallet {
 
@@ -22,11 +35,14 @@ export class GaiaWallet {
     private _mnemonic: string;
     private _privKey: string;
 
+    // private _isHD: boolean;
+    // private _extendedPrivKey: string;
     // private _lastUsedIndex: number;
 
     constructor() {
         this._txs = [];
         this._balance = 0;
+        this._mnemonic = "";
     }
 
     get nickName() : string {
@@ -45,27 +61,36 @@ export class GaiaWallet {
         return this._balance;
     }
 
+    set balance(value: number) {
+        this._balance = value;
+    }
+
+    // TODO: how to define a tx history?
     get txHistory() : string[] {
         return this._txs;
+    }
+
+    set txHistory(txs: string[]) {
+        this._txs = txs;
     }
 
     /**
      * recover wallet from mnenomic words
      * 
      * @static
-     * @param {string} mnenomic words
+     * @param {string} mnemonic words
      * @param {string} language what's the language of the mnenomic words
      * @param {string} passwd used to encrypt the mnemonic
      * @returns {GaiaWallet} 
      * @memberof GaiaWallet
      */
-    static fromMnemonic(mnenomic: string, language: string, passwd: string) : GaiaWallet {
+    static fromMnemonic(mnemonic: string, language: string, passwd: string) : GaiaWallet {
         if (!(language in LANGUAGES)) {
             throw new Error("this language does not supported")
         }
 
         let mn = new Mnemonic(language);
-        let seedBuffer = mn.toSeed(mnenomic);
+        let seedBuffer = mn.toSeed(mnemonic);
         let rootNode = WalletHD.fromMasterSeed(Buffer(seedBuffer, 'hex'));
         
         let hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
@@ -73,10 +98,10 @@ export class GaiaWallet {
 
         let gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
-        //TODO: encrypt _privKey
-        gwlt._privKey = wlt.getPrivateKey();
-        // TODD: encrypt mnemonic
-        gwlt._mnemonic = mnenomic;
+        gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
+        gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
+        // gwlt._isHD = true;
+        // gwlt._lastUsedIndex = 0;
 
         return gwlt;
     }
@@ -90,12 +115,11 @@ export class GaiaWallet {
      * @returns 
      * @memberof GaiaWallet
      */
-    static fromKeyStore(v3string: string, passwd: string) : GaiaWallet {    
+    static fromKeyStore(v3string: string, passwd: string) : GaiaWallet {
         let wlt = Wallet.fromV3(v3string, passwd, true);
         let gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
-        gwlt._privKey = wlt.getPrivateKey();
-        // TODO: intialize another field
+        gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
 
         return gwlt;
     }
@@ -104,16 +128,17 @@ export class GaiaWallet {
      * recover wallet from private key
      * 
      * @static
+     * @param {string} passwd
      * @param {string} privKey 
      * @returns {GaiaWallet} 
      * @memberof GaiaWallet
      */
-    static fromPrivateKey(privKey: string) : GaiaWallet {
-        let wlt = Wallet.fromPrivateKey(privKey);
+    static fromPrivateKey(passwd: string, privKey: string) : GaiaWallet {
+        let sk = Buffer(privKey, 'hex');
+        let wlt = Wallet.fromPrivateKey(sk);
         let gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
-        gwlt._privKey = Buffer(privKey, 'hex');
-        // TODO: intialize another field
+        gwlt._privKey = cipher.encrypt(passwd, privKey);
 
         return gwlt;
     }
@@ -147,11 +172,11 @@ export class GaiaWallet {
 
         let gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
-        // TODO: encrypt private key
-        gwlt._privKey = wlt.getPrivateKey();
-        // TODO: encrypt mnemonic
-        gwlt._mnemonic = mnemonic;
+        gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
+        gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
         gwlt._balance = 0;
+        // gwlt._isHD = true;
+        // gwlt._lastUsedIndex = 0;
 
         return gwlt;
     }
@@ -164,7 +189,8 @@ export class GaiaWallet {
      * @memberof GaiaWallet
      */
     exportKeystore(passwd: string) : string {
-        let wlt = Wallet.fromPrivateKey(this._privKey);
+        let decrypted = cipher.decrypt(passwd, this._privKey);
+        let wlt = Wallet.fromPrivateKey(decrypted);
         return wlt.toV3String(passwd);
     }
 
@@ -176,8 +202,7 @@ export class GaiaWallet {
      * @memberof GaiaWallet
      */
     exportPrivateKey(passwd: string) : string {
-        //TODO: decrypt _privKey
-        return this._privKey.toString();
+        return cipher.decrypt(passwd, this._privKey);
     }
 
     /**
@@ -188,30 +213,62 @@ export class GaiaWallet {
      * @memberof GaiaWallet
      */
     exportMnemonic(passwd: string) : string {
-        //TODO: decrypt: _mnemonic
-        return this._mnemonic;
+        if(this._mnemonic.length != 0) {
+            return cipher.decrypt(passwd, this._mnemonic);
+        } else {
+            throw new Error("Mnemonic unavailable");
+        }
     }
 
     /**
      * sign a raw transaction
      * 
-     * @param {any} txObj an instance of raw transaction
+     * @param {Transaction} txObj an instance of raw transaction
+     * @param {string} passwd passwd to decrypt private key
      * @returns signed and serilized transaction, could be send to Ethereum network via 'sendRawTransaction' RPC call
      * @memberof GaiaWallet
      */
-    signRawTransaction(txObj) {
+    signRawTransaction(passwd: string, txObj: Transaction) {
         let tx = new ETHTx();
 
-        tx.nonce = txObj['nonce'];
-        tx.gasPrice = txObj['gasPrice'];
-        tx.gasLimit = txObj['gasLimit'];
-        tx.value = txObj['value'];
-        tx.data = txObj['data'];
+        tx.to = txObj.to;
+        tx.nonce = txObj.nonce;
+        tx.gasPrice = txObj.gasPrice;
+        tx.gasLimit = txObj.gasLimit;
+        tx.value = txObj.value;
+        tx.data = txObj.data;
 
-        //TODO: decrypt _privKey
-        tx.sign(this._privKey)
+        let privKey = cipher.decrypt(passwd, this._privKey);
+        privKey = Buffer(privKey, 'hex');
+        tx.sign(privKey);
         let serializedTx = tx.serialize();
 
         return serializedTx;
+    }
+
+    toJSON() : string {
+        let wlt = {
+            nickname: this._nickName,
+            address: this._address,
+            balance: this._balance,
+            txs: this._txs,
+            mnemonic: this._mnemonic,
+            privkey: this._privKey
+        }
+        return JSON.stringify(wlt);
+    }
+
+    static fromJSON(jsonstring: string) : GaiaWallet {
+        let wlt = JSON.parse(jsonstring);
+        let gwlt = new GaiaWallet();
+        
+        gwlt._nickName = jsonstring['nickname'];
+        gwlt._address = jsonstring['address'];
+        gwlt._balance = jsonstring['balance'];
+        gwlt._mnemonic = jsonstring['mnemonic'];
+        gwlt._privKey = jsonstring['privkey'];
+        gwlt._txs = jsonstring['txs'];
+
+        return gwlt;
     }
 }
