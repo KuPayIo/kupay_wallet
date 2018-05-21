@@ -35,9 +35,8 @@ export class GaiaWallet {
     private _mnemonic: string;
     private _privKey: string;
 
-    // private _isHD: boolean;
-    // private _extendedPrivKey: string;
-    // private _lastUsedIndex: number;
+    private _masterSeed: string;
+    private _lastUsedIndex = 1;
 
     constructor() {
         this._txs = [];
@@ -90,6 +89,9 @@ export class GaiaWallet {
         }
 
         let mn = new Mnemonic(language);
+        if(!mn.check(mnemonic)) {
+            throw new Error("Invalid Mnemonic");
+        }
         let seedBuffer = mn.toSeed(mnemonic);
         let rootNode = WalletHD.fromMasterSeed(Buffer(seedBuffer, 'hex'));
         
@@ -100,8 +102,7 @@ export class GaiaWallet {
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
         gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
-        // gwlt._isHD = true;
-        // gwlt._lastUsedIndex = 0;
+        gwlt._masterSeed = cipher.encrypt(passwd, seedBuffer);
 
         return gwlt;
     }
@@ -175,6 +176,7 @@ export class GaiaWallet {
         gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
         gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
         gwlt._balance = 0;
+        gwlt._masterSeed = cipher.encrypt(passwd, seedBuffer);
         // gwlt._isHD = true;
         // gwlt._lastUsedIndex = 0;
 
@@ -281,7 +283,9 @@ export class GaiaWallet {
             balance: this._balance,
             txs: this._txs,
             mnemonic: this._mnemonic,
-            privkey: this._privKey
+            privkey: this._privKey,
+            masterseed: this._masterSeed,
+            lastusedindex: this._lastUsedIndex
         }
         return JSON.stringify(wlt);
     }
@@ -296,7 +300,29 @@ export class GaiaWallet {
         gwlt._mnemonic = wlt['mnemonic'];
         gwlt._privKey = wlt['privkey'];
         gwlt._txs = wlt['txs'];
+        gwlt._masterSeed = wlt['masterseed'];
+        gwlt._lastUsedIndex = wlt['lastusedindex'];
 
         return gwlt;
+    }
+
+    nextAddress(passwd: string): string {
+        if(this._masterSeed.length == 0) {
+            throw new Error("This is not a HD wallet");
+        }
+        let masterSeed;
+        try {
+            masterSeed = cipher.decrypt(passwd, this._masterSeed);
+        } catch(e) {
+            throw new Error("Invalid operation");
+        }
+
+        let rootNode = WalletHD.fromMasterSeed(Buffer(masterSeed, 'hex'));
+        let path = "m/44'/60'/0'/0/" + this._lastUsedIndex.toString();
+        let hdwlt = rootNode.derivePath(path);
+
+        this._lastUsedIndex += 1;
+
+        return hdwlt.getWallet().getChecksumAddressString();
     }
 }
