@@ -23,6 +23,6 @@
             <span w-class="ga-user-protocol" on-click="agreementClick">用户协议</span>
         </div>
         <div w-class="ga-wallet-create-btn" on-click="createWalletClick">创建钱包</div>
-        <div w-class="ga-wallet-import-btn">导入钱包</div>
+        <div w-class="ga-wallet-import-btn" on-tap="importWalletClick">导入钱包</div>
     </div>
 </div>

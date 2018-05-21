@@ -1,0 +1,53 @@
+
+
+.ga-import-container{
+    padding: 20px 10px;
+}
+
+.ga-import-item{
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    position: relative;
+}
+.ga-import-item-label{
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.ga-password-strength{
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    transform: translateY(50%);
+}
+
+.ga-import-protocol{
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+.ga-user-protocol{
+    margin-left: 10px;
+    color: #ccc;
+    font-size: 14px;
+    cursor: pointer;
+}
+.ga-import-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 45px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 30px;
+    cursor: pointer;
+}
+.ga-whatis-mnemonic-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #ccc;
+}
