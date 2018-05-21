@@ -1,6 +1,6 @@
 import { Widget } from "../../pi/widget/widget";
 import { popNew } from "../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet } from '../utils/tools'
+import { getLocalStorage, getCurrentWallet, randomRgbColor } from '../utils/tools'
 import { register } from '../store/store'
 import { GaiaWallet } from "../core/eth/wallet";
 
@@ -24,7 +24,7 @@ export class Home extends Widget {
             const wallet = getCurrentWallet(wallets);
             const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
             this.state.gwlt = gwlt;
-            this.state.currencyList = parseCurrencyList(this.state.wallet);
+            this.state.currencyList = parseCurrencyList(wallet);
             this.paint();
         });
         let gwlt = null;
@@ -35,7 +35,7 @@ export class Home extends Widget {
         }
         this.state = {
             gwlt,
-            walletNameDotBgColor: "#fff",
+            walletNameDotBgColor: randomRgbColor(),
             totalAssets: "0.00",
             currencyList: parseCurrencyList(wallet)
         };

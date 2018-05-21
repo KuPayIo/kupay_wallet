@@ -33,19 +33,17 @@ export const find = (keyname: string, id?: number): any => {
 };
 
 /**
- * 更新store
+ * 更新store并通知
  */
 // tslint:disable-next-line:no-any
-export const updateStore = (keyName: string, data: any): void => {
-    localStorage.setItem(keyName,JSON.stringify(data));
+export const updateStore = (keyName: string, data: any,notified?:boolean): void => {
+	localStorage.setItem(keyName,JSON.stringify(data));
+	if(notified){
+		handlerMap.notify(keyName, [find(keyName)]);
+	}
 };
 
-/**
- * notify
- */
-export const notify = (keyName: string):void => {
-	handlerMap.notify(keyName, [find(keyName)]);
-}
+
 
 /**
  * 消息处理器

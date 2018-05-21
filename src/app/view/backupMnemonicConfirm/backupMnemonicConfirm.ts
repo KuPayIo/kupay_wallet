@@ -1,6 +1,6 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from "../../../pi/ui/root";
-import { getLocalStorage, setLocalStorage, getCurrentWallet } from "../../utils/tools";
+import { getLocalStorage, setLocalStorage, getCurrentWallet, decrypt } from "../../utils/tools";
 import { GaiaWallet } from "../../core/eth/wallet";
 
 
@@ -83,9 +83,10 @@ export class BackupMnemonicConfirm extends Widget{
     public deleteMnemonic(){
         let wallets = getLocalStorage("wallets");
         let wallet = getCurrentWallet(wallets);
+        let psw = decrypt(wallet.walletPsw);
         let gwlt = GaiaWallet.fromJSON(wallet.gwlt);
-        //gwlt._mnemonic
-        //wallet.gwlt = 
+        gwlt.deleteMnemonic(psw);
+        wallet.gwlt = gwlt.toJSON();
         setLocalStorage("wallets",wallets);
     }
 

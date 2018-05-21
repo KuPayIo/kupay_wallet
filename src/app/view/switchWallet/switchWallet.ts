@@ -1,7 +1,6 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from "../../../pi/ui/root";
 import { getLocalStorage, setLocalStorage, encrypt, decrypt } from "../../utils/tools";
-import { notify } from "../../store/store";
 import { GaiaWallet } from "../../core/eth/wallet";
 import { pswEqualed } from "../../utils/account";
 
@@ -47,8 +46,7 @@ export class SwitchWallet extends Widget{
     public switchWallet(curWalletId){
         let wallets = getLocalStorage("wallets");
         wallets.curWalletId = curWalletId;
-        setLocalStorage("wallets",wallets);
-        notify("wallets");
+        setLocalStorage("wallets",wallets,true);
     }
 
     public closePageClick(){
