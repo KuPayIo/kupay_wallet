@@ -262,12 +262,12 @@ export class GaiaWallet {
         let wlt = JSON.parse(jsonstring);
         let gwlt = new GaiaWallet();
         
-        gwlt._nickName = jsonstring['nickname'];
-        gwlt._address = jsonstring['address'];
-        gwlt._balance = jsonstring['balance'];
-        gwlt._mnemonic = jsonstring['mnemonic'];
-        gwlt._privKey = jsonstring['privkey'];
-        gwlt._txs = jsonstring['txs'];
+        gwlt._nickName = wlt['nickname'];
+        gwlt._address = wlt['address'];
+        gwlt._balance = wlt['balance'];
+        gwlt._mnemonic = wlt['mnemonic'];
+        gwlt._privKey = wlt['privkey'];
+        gwlt._txs = wlt['txs'];
 
         return gwlt;
     }
