@@ -27,14 +27,39 @@
     left: 5%;
 }
 .balance{
-    text-align: center;
     margin-top: 14px;
-    font-size: 16px;
 }
-.addr{
+.get-addr{
     margin-top: 10px;
 }
-.copy{
+.get-addr-value{
+    margin-top: 5px;
+}
+.pay{
+    margin-top: 10px;
+    position: relative;
+}
+.pay-value{
+    margin-top: 5px;
+    
+}
+.pay-value-conversion{
+    right: 0px;
+    position: absolute;
+}
+.set-addr{
+    margin-top: 10px;
+}
+.fees{
+    margin-top: 10px;
+}
+.info{
+    margin-top: 10px;
+}
+.info-value{
+    margin-top: 5px;
+}
+.next{
     border: 1px solid rgb(136, 136, 136);
     width: 300px;
     font-size: 18px;
@@ -45,6 +70,6 @@
     position: relative;
     left: 50%;
     transform: translate(-50%,0);
-    margin-top: 10px;
+    margin-top: 100px;
     cursor: pointer;
 }

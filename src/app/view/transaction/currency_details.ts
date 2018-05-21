@@ -93,10 +93,12 @@ export class AddAsset extends Widget {
      * 处理转账
      */
     public doTransfer() {
-        // console.log("onSwitchChange", e, index)
-        // this.state.list[index].isChoose = e.newType;
-
-        // // todo 这里处理数据变化
+        //todo 这里获取地址
+        let addr = "1xdfsdfsfsdfgdsfgsddfg4d54g5sdg2sfgdsfgsddfg4d54g5sdg2sg4d54g5sdg2s";
+        popNew("app-view-transaction-transfer", {
+            currencyBalance: this.props.currencyBalance,
+            setAddr: addr
+        })
     }
 
     /**
