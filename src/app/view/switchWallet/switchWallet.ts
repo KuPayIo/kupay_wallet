@@ -22,6 +22,10 @@ export class SwitchWallet extends Widget{
         popNew("app-view-walletCreate-walletCreate");
     }
 
+    public importWalletClick(){
+        this.ok && this.ok();
+        popNew("app-view-walletImport-walletImport");
+    }
     public switchWalletClick(e,index){
         popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: "" }, (r) => {
             const psw = this.state.wallets.list[index].walletPsw;

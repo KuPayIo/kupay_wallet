@@ -3,7 +3,7 @@ import { popNew } from '../../../pi/ui/root';
 import { setLocalStorage, getLocalStorage } from '../../utils/tools'
 import { walletNameAvailable,walletPswAvailable,walletPswConfirmAvailable,getWalletPswStrength } from '../../utils/account'
 
-export class WalletCreate extends Widget{
+export class WalletImport extends Widget{
     public ok: () => void;
     constructor(){
         super();
@@ -13,8 +13,8 @@ export class WalletCreate extends Widget{
         this.init();
     }
     public init(){
-
         this.state = {
+            walletMnemonic:"",
             walletName:"",
             walletPsw:"",
             walletPswConfirm:"",
@@ -26,7 +26,9 @@ export class WalletCreate extends Widget{
     public backPrePage(){
         this.ok && this.ok();
     }
-
+    public walletMnemonicChange(e){
+        this.state.walletMnemonic = e.value;
+    }
     public walletNameChange(e){
         this.state.walletName = e.value;
     }
@@ -47,7 +49,11 @@ export class WalletCreate extends Widget{
     public agreementClick(){
         popNew("app-view-agreementInterpretation-agreementInterpretation");
     }
-    public createWalletClick(){
+    public importWalletClick(){
+        if(!this.walletMnemonicAvailable()){
+            popNew("pi-components-message-messagebox", { type: "alert", title: "助记词错误", content: "请输入12个助记词" })
+            return;
+        }
         if(!walletNameAvailable(this.state.walletName)){
             popNew("pi-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名" })
             return;
@@ -65,9 +71,9 @@ export class WalletCreate extends Widget{
             return;
         }
 
-        this.createWallet();
+        this.importWallet();
 
-        let close = popNew("pi-components-loading-loading",{text:"创建中"});
+        let close = popNew("pi-components-loading-loading",{text:"导入中"});
         setTimeout(()=>{
             close.callback(close.widget);
             this.ok && this.ok();
@@ -76,7 +82,7 @@ export class WalletCreate extends Widget{
     }
     
 
-    public createWallet(){
+    public importWallet(){
         let wallets = getLocalStorage("wallets") || {list:[],curWalletId:""};
         let curWalletId = "";
         for(let i = 0; i < 32;i++ ){
@@ -94,4 +100,7 @@ export class WalletCreate extends Widget{
         setLocalStorage("wallets",wallets,true);
     }
 
+    public walletMnemonicAvailable(){
+        return this.state.walletMnemonic.split(" ").length === 12;
+    }
 }
