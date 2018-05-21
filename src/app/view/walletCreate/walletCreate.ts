@@ -3,7 +3,6 @@ import { popNew } from '../../../pi/ui/root';
 import { setLocalStorage, getLocalStorage, encrypt } from '../../utils/tools'
 import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength } from '../../utils/account'
 import { GaiaWallet } from '../../core/eth/wallet'
-import { notify } from "../../store/store";
 
 export class WalletCreate extends Widget{
     public ok: () => void;
@@ -85,13 +84,12 @@ export class WalletCreate extends Widget{
         let wallet = {
             walletId:curWalletId,
             walletPsw:encrypt(this.state.walletPsw),
-            walletPswTips:this.state.walletPswTips,
+            walletPswTips:encrypt(this.state.walletPswTips),
             gwlt:gwlt.toJSON()
         }
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
-        setLocalStorage("wallets",wallets);
-        notify("wallets");
+        setLocalStorage("wallets",wallets,true);
     }
 
     public importWalletClick(){
