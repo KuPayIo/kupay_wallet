@@ -1,4 +1,4 @@
-import { sjcl } from "../thirdparty/sjcl.js";
+import { sjcl } from "../thirdparty/sjcl";
 
 export class Cipher {
     private _config: any;
