@@ -1,7 +1,9 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from '../../../pi/ui/root';
-import { setLocalStorage, getLocalStorage } from '../../utils/tools'
-import { walletNameAvailable,walletPswAvailable,walletPswConfirmAvailable,getWalletPswStrength } from '../../utils/account'
+import { setLocalStorage, getLocalStorage, encrypt } from '../../utils/tools'
+import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength } from '../../utils/account'
+import { GaiaWallet } from "../../core/eth/wallet";
+import { notify } from "../../store/store";
 
 export class WalletImport extends Widget{
     public ok: () => void;
@@ -50,10 +52,6 @@ export class WalletImport extends Widget{
         popNew("app-view-agreementInterpretation-agreementInterpretation");
     }
     public importWalletClick(){
-        if(!this.walletMnemonicAvailable()){
-            popNew("pi-components-message-messagebox", { type: "alert", title: "助记词错误", content: "请输入12个助记词" })
-            return;
-        }
         if(!walletNameAvailable(this.state.walletName)){
             popNew("pi-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名" })
             return;
@@ -62,7 +60,7 @@ export class WalletImport extends Widget{
             popNew("pi-components-message-message", { type: "error", content: "密码格式不正确,请重新输入" })
             return;
         }
-        if(!walletPswConfirmAvailable(this.state.walletPsw,this.state.walletPswConfirm)){
+        if(!pswEqualed(this.state.walletPsw,this.state.walletPswConfirm)){
             popNew("pi-components-message-message", { type: "error", content: "密码不一致，请重新输入" })
             return;
         }
@@ -77,30 +75,28 @@ export class WalletImport extends Widget{
         setTimeout(()=>{
             close.callback(close.widget);
             this.ok && this.ok();
-            popNew("app-view-backUpWallet-backUpWallet");
+            popNew("app-view-backupWallet-backupWallet");
         },500);
     }
     
 
     public importWallet(){
-        let wallets = getLocalStorage("wallets") || {list:[],curWalletId:""};
-        let curWalletId = "";
-        for(let i = 0; i < 32;i++ ){
-            curWalletId += Math.floor(Math.random() * 10);
-        }
-        wallets.curWalletId = curWalletId;
+        //garden  file spider holiday only panel author bind miss stool yard salt
+        const gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic,"english",this.state.walletPsw);
+        gwlt.nickName = this.state.walletName;
+        console.log(gwlt)
+        let wallets = getLocalStorage("wallets") || {walletList:[],curWalletId:""};
+        let curWalletId = gwlt.address;
         let wallet = {
             walletId:curWalletId,
-            walletName:this.state.walletName,
-            walletPsw:this.state.walletPsw,
+            walletPsw:encrypt(this.state.walletPsw),
             walletPswTips:this.state.walletPswTips,
-            mnemonic:["one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve"]
+            gwlt:gwlt.toJSON()
         }
-        wallets.list.push(wallet);
-        setLocalStorage("wallets",wallets,true);
+        wallets.curWalletId = curWalletId;
+        wallets.walletList.push(wallet);
+        setLocalStorage("wallets",wallets);
+        notify("wallets")
     }
 
-    public walletMnemonicAvailable(){
-        return this.state.walletMnemonic.split(" ").length === 12;
-    }
 }

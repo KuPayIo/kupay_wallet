@@ -1,10 +1,10 @@
-.ga-back-up-container{
+.ga-backup-container{
     padding: 100px 10px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.ga-back-up-img{
+.ga-backup-img{
     width: 100px;
     height: 100px;
 }
@@ -17,7 +17,7 @@
     margin-top: 20px;
     font-size: 16px;
 }
-.ga-wallet-back-up-btn{
+.ga-wallet-backup-btn{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -29,7 +29,7 @@
     width: 100%;
 }
 
-.ga-how-to-back-up-btn{
+.ga-how-to-backup-btn{
     display: flex;
     justify-content: center;
     align-items: center;

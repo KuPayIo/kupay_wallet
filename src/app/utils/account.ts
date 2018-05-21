@@ -1,3 +1,7 @@
+
+
+
+
 /**
  * 和账号相关的工具
  */
@@ -25,8 +29,8 @@ export function walletPswAvailable(walletPsw){
 }
 
 
-export function walletPswConfirmAvailable(walletPsw,walletPswConfirm){
-    return walletPsw === walletPswConfirm;
+export function pswEqualed(psw1,psw2){
+    return psw1 === psw2;
 }
 
 

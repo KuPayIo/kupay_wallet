@@ -1,6 +1,9 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from "../../../pi/ui/root";
-import { getLocalStorage, setLocalStorage } from "../../utils/tools";
+import { getLocalStorage, setLocalStorage, encrypt, decrypt } from "../../utils/tools";
+import { notify } from "../../store/store";
+import { GaiaWallet } from "../../core/eth/wallet";
+import { pswEqualed } from "../../utils/account";
 
 export class SwitchWallet extends Widget{
     public ok:()=>void;
@@ -13,6 +16,9 @@ export class SwitchWallet extends Widget{
     }
     public init(){
         let wallets = getLocalStorage("wallets");
+        for(let i = 0;i < wallets.walletList.length; i ++){
+            wallets.walletList[i].gwlt = GaiaWallet.fromJSON(wallets.walletList[i].gwlt);
+        }
         this.state = {
             wallets
         };
@@ -28,11 +34,11 @@ export class SwitchWallet extends Widget{
     }
     public switchWalletClick(e,index){
         popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: "" }, (r) => {
-            const psw = this.state.wallets.list[index].walletPsw;
-            if(r !== psw){
+            const psw = decrypt(this.state.wallets.walletList[index].walletPsw);
+            if(!pswEqualed(psw,r)){
                 popNew("pi-components-message-message", { type: "error", content: "密码错误" })
             }else{
-                this.switchWallet(this.state.wallets.list[index].walletId);
+                this.switchWallet(this.state.wallets.walletList[index].walletId);
                 this.ok && this.ok();
             }
         })
@@ -41,7 +47,8 @@ export class SwitchWallet extends Widget{
     public switchWallet(curWalletId){
         let wallets = getLocalStorage("wallets");
         wallets.curWalletId = curWalletId;
-        setLocalStorage("wallets",wallets,true);
+        setLocalStorage("wallets",wallets);
+        notify("wallets");
     }
 
     public closePageClick(){
