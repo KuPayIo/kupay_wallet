@@ -1,0 +1,71 @@
+.ga-backup-mnemonic-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+}
+.ga-mnemonic-title{
+    font-size: 18px;
+    color: #ccc;
+    margin-top: 20px;
+}
+.ga-mnemonic-desc{
+    font-size: 16px;
+    margin-top: 20px;
+}
+.ga-mnemonic{
+    font-size: 18px;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+.ga-mnemonic-next-step-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 45px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 60px;
+    cursor: pointer;
+    width: 100%;
+}
+.ga-mnemonic-confirm{
+    min-height: 80px;
+    border: 1px solid #ccc;
+    margin-top: 60px;
+    width: 100%;
+    flex-wrap: wrap;
+    display: flex;
+}
+
+.ga-mnemonic-shuffled{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+.ga-mnemonic-confirmed-item{
+    padding: 0 15px;
+    margin: 5px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: #999;
+    color: #fff;
+}
+.ga-mnemonic-shuffled-item{
+    padding: 0 15px;
+    margin: 5px;
+    cursor: pointer;
+    color: #000;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ga-mnemonic-shuffled-item-active{
+    background-color: #333;
+    color: #fff;
+}
