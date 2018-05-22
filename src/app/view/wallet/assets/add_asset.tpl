@@ -3,10 +3,10 @@
         <app-components-topBar-topBar>{title:{{it1.title}}}</app-components-topBar-topBar>
         <div w-class="search" style="cursor: pointer;" on-tap="doSearch">
             <div w-class="search1">
-                <img w-class="img-search1" src="../../res/image/u591.png" />
+                <img w-class="img-search1" src="../../../res/image/u591.png" />
             </div>
             <div w-class="search2">
-                <img w-class="img-search2" src="../../res/image/u592.png" />
+                <img w-class="img-search2" src="../../../res/image/u592.png" />
             </div>
         </div>
     </div>

@@ -50,20 +50,20 @@ export class Home extends Widget {
         }
 
         let currency = this.state.currencyList[index];
-        popNew("app-view-transaction-currency_details", {
+        popNew("app-view-wallet-transaction-currency_details", {
             currencyName: currency.currencyName, currencyBalance: `${currency.balance} ${parseCurrencyUnit(currency)}`
             , currencyBalanceConversion: currency.balanceValue
         })
 
     }
     public clickAddCurrencyListener() {
-        popNew("app-view-assets-add_asset")
+        popNew("app-view-wallet-assets-add_asset")
     }
     public createWalletClick() {
-        popNew("app-view-walletCreate-walletCreate");
+        popNew("app-view-wallet-walletCreate-walletCreate");
     }
     public switchWalletClick() {
-        popNew("app-view-switchWallet-switchWallet");
+        popNew("app-view-wallet-switchWallet-switchWallet");
     }
 }
 

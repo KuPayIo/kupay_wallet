@@ -1,7 +1,7 @@
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet, setLocalStorage } from "../../utils/tools";
-import { register } from "../../store/store";
+import { Widget } from "../../../../pi/widget/widget";
+import { popNew } from "../../../../pi/ui/root";
+import { getLocalStorage, getCurrentWallet, setLocalStorage } from "../../../utils/tools";
+import { register } from "../../../store/store";
 
 export class AddAsset extends Widget {
 
@@ -57,7 +57,7 @@ export class AddAsset extends Widget {
      * 处理查找
      */
     public doSearch() {
-        popNew("app-view-assets-search_asset", { list: this.state.list })
+        popNew("app-view-wallet-assets-search_asset", { list: this.state.list })
     }
 
     /**
