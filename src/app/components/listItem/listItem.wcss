@@ -1,5 +1,0 @@
-.listItem_div{
-    border-bottom: 0.1px solid #555555;    
-    padding:10px;
-    margin:5px;
-}

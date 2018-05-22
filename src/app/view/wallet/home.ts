@@ -1,8 +1,8 @@
-import { Widget } from "../../pi/widget/widget";
-import { popNew } from "../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet, randomRgbColor } from '../utils/tools'
-import { register } from '../store/store'
-import { GaiaWallet } from "../core/eth/wallet";
+import { Widget } from "../../../pi/widget/widget";
+import { popNew } from "../../../pi/ui/root";
+import { getLocalStorage, getCurrentWallet, randomRgbColor } from '../../utils/tools'
+import { register } from '../../store/store'
+import { GaiaWallet } from "../../core/eth/wallet";
 
 interface Wallet {
     walletName: string;

@@ -1,4 +1,4 @@
-import { Widget } from "../../../pi/widget/widget";
+import { Widget } from "../../../../pi/widget/widget";
 
 /**
  * 协议条款解释

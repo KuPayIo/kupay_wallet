@@ -11,7 +11,7 @@ interface Props{
     placeHolder:string;//提示文字
     disabled:boolean;//是否禁用
     clearable:boolean;//是否可清空
-    type:string;//text textarea
+    type:string;//text textarea password
     rows:number;//输入框行数，只对 type="textarea" 有效
     autosize:boolean;//自适应高度
     prepend:string;//前置内容

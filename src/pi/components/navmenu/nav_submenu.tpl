@@ -17,7 +17,7 @@
 </li>
 {{else}}
 <li>
-	<div class="nav-submenu__title nav-menu-item {{it.isdisabled?'is-disabled':'' }}" style="padding-left: {{it.index.split("-").length*20+'px' }}" on-click="subClick">
+	<div class="nav-submenu__title nav-menu-item {{it.isdisabled?'is-disabled':'' }}" style="padding-left: {{it.index.split("-").length*20+'px' }}" on-tap="subClick">
 		{{it.subtitle}}
 		<span style="float: right;right: 20px; {{it.isopen?'transform:rotate(-90deg)':'transform:rotate(90deg)' }}" >></span>
 	</div>

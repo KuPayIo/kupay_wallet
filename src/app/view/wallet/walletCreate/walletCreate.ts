@@ -1,10 +1,11 @@
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from '../../../pi/ui/root';
-import { setLocalStorage, getLocalStorage, encrypt } from '../../utils/tools'
-import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength } from '../../utils/account'
-import { GaiaWallet } from "../../core/eth/wallet";
+import { Widget } from "../../../../pi/widget/widget";
+import { popNew } from '../../../../pi/ui/root';
+import { setLocalStorage, getLocalStorage, encrypt } from '../../../utils/tools'
+import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength } from '../../../utils/account'
+import { GaiaWallet } from '../../../core/eth/wallet'
+import { Wallet } from "../../interface";
 
-export class WalletImport extends Widget{
+export class WalletCreate extends Widget{
     public ok: () => void;
     constructor(){
         super();
@@ -15,7 +16,6 @@ export class WalletImport extends Widget{
     }
     public init(){
         this.state = {
-            walletMnemonic:"",
             walletName:"",
             walletPsw:"",
             walletPswConfirm:"",
@@ -27,9 +27,7 @@ export class WalletImport extends Widget{
     public backPrePage(){
         this.ok && this.ok();
     }
-    public walletMnemonicChange(e){
-        this.state.walletMnemonic = e.value;
-    }
+
     public walletNameChange(e){
         this.state.walletName = e.value;
     }
@@ -50,7 +48,7 @@ export class WalletImport extends Widget{
     public agreementClick(){
         popNew("app-view-agreementInterpretation-agreementInterpretation");
     }
-    public importWalletClick(){
+    public createWalletClick(){
         if(!walletNameAvailable(this.state.walletName)){
             popNew("pi-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名" })
             return;
@@ -68,13 +66,9 @@ export class WalletImport extends Widget{
             return;
         }
 
-        try{
-            this.importWallet();
-        }catch(e){
-            popNew("pi-components-message-message", { type: "error", content: "无效的助记词" })
-            return;
-        }
-        let close = popNew("pi-components-loading-loading",{text:"导入中"});
+        this.createWallet();
+
+        let close = popNew("pi-components-loading-loading",{text:"创建中"});
         setTimeout(()=>{
             close.callback(close.widget);
             this.ok && this.ok();
@@ -83,27 +77,33 @@ export class WalletImport extends Widget{
     }
     
 
-    public importWallet(): void{
-        //garden  file spider holiday only panel author bind miss stool yard salt
-        let gwlt = null;
-        try{
-            gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic,"english",this.state.walletPsw);
-        }catch(e){
-            throw e;
-        }
-        gwlt.nickName = this.state.walletName;
-        console.log("gwlt")
+    public createWallet(){
         let wallets = getLocalStorage("wallets") || {walletList:[],curWalletId:""};
+        let gwlt = GaiaWallet.generate("english",128,this.state.walletPsw);
+        gwlt.nickName = this.state.walletName;
         let curWalletId = gwlt.address;
-        let wallet = {
+        let wallet:Wallet = {
             walletId:curWalletId,
             walletPsw:encrypt(this.state.walletPsw),
             walletPswTips:encrypt(this.state.walletPswTips),
-            gwlt:gwlt.toJSON()
+            gwlt:gwlt.toJSON(),
+            showCurrencys:["ETH"],
+            currencyRecords:[{
+                currencyName:"ETH",
+                currentAddr:gwlt.address,
+                addrs:[{
+                    addr:gwlt.address,
+                    addrName:"默认地址",
+                    record:[]
+                }]
+            }]
         }
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
         setLocalStorage("wallets",wallets,true);
     }
 
+    public importWalletClick(){
+        popNew("app-view-walletImport-walletImport");
+    }
 }

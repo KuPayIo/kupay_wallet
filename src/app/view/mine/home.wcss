@@ -1,0 +1,44 @@
+.ga-top-banner{
+    background-color: #ccc;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.ga-notice{
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+.ga-banner-title{
+    font-size: 20px;
+    color: #fff;
+}
+.ga-item{
+    display: flex;
+    padding: 10px 5px;
+    margin: 5px 10px;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+.ga-item-icon{
+    width: 20px;
+    height: 20px;
+}
+.ga-item-text{
+    flex: 1 0 0;
+    margin-left: 10px;
+}
+.ga-item-arrow{
+    width: 10px;
+    height: 10px;
+    background-color: transparent;
+    border-right: 2px solid #000;
+    border-bottom: 2px solid #000;
+    transform: rotateZ(-45deg);
+}

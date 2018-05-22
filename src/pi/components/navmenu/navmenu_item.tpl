@@ -16,11 +16,11 @@
 	</li>
 
 	{{elseif it.mod=="horizontal"}}
-	<li class="nav-menu-item {{it.isActivated?'is-active':''}} {{it.isdisabled?'is-disabled':''}}" on-click="doClick">
+	<li class="nav-menu-item {{it.isActivated?'is-active':''}} {{it.isdisabled?'is-disabled':''}}" on-tap="doClick">
 		{{it.title}}
 	</li>	
 	{{else}}
-	<li class="nav-menu-item {{it.isActivated?'is-active':''}} {{it.isdisabled?'is-disabled':''}}" style="padding-left: {{it.index.split("-").length*20+'px'}}" on-click="doClick">
+	<li class="nav-menu-item {{it.isActivated?'is-active':''}} {{it.isdisabled?'is-disabled':''}}" style="padding-left: {{it.index.split("-").length*20+'px'}}" on-tap="doClick">
 		{{it.title}}
 	</li>	　
 	{{end}}

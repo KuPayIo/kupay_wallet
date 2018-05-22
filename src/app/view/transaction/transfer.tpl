@@ -3,9 +3,9 @@
         <app-components-topBar-topBar>{title:{{it1.title}}}</app-components-topBar-topBar>
     </div>
     <div w-class="body">
-        <div w-class="balance">余额&nbsp;&nbsp;{{it.currencyBalance}}</div>
+        <div w-class="balance">余额&nbsp;&nbsp;{{it.currencyBalance}} ETH</div>
         <div w-class="get-addr">收款地址</div>
-        <div w-class="get-addr-value" ev-input-change="onGetAddrChange">
+        <div w-class="get-addr-value" ev-input-change="onToChange">
             <pi-components-input-input>{}</pi-components-input-input>
         </div>
         <div w-class="pay">
@@ -19,7 +19,7 @@
         <div w-class="set-addr">
             <span>发币地址</span>
             &nbsp;&nbsp;
-            <span>{{it1.setAddrShow||''}}</span>
+            <span>{{it1.fromShow||''}}</span>
         </div>
         <div w-class="fees">
             <span>矿工费</span>

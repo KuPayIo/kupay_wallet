@@ -1,7 +1,7 @@
 import {Widget} from "../../../pi/widget/widget";
 
 interface Props {
-    data:any[];
+    value:string;
 }
 
 export class listItem extends Widget{

@@ -30,7 +30,7 @@
         w-class="{{it && it.disabled ? 'pi-input__inner-disabled' : 'pi-input__inner' }} {{it && it.prepend ? 'pi-input_inner-prepend' : ''}} {{it && it.append ? 'pi-input_inner-append' : ''}}" 
         class="{{it && it.disabled ? 'pi-input__inner-disabled' : 'pi-input__inner' }}"
         style="{{it1.styleStr}}"
-        type="text" 
+        type="{{it.type ? it.type : 'text'}}" 
         autocomplete="off" 
         placeholder="{{it && it.placeHolder ? it.placeHolder : '请输入内容'}}" 
         value="{{it1 && it1.currentValue ? it1.currentValue : ''}}"
@@ -39,7 +39,7 @@
         on-blur="blur"
         on-focus="focus"
         />
-        {{if it1 && it1.showClear()}}<span w-class="pi-input__suffix" class="pi-input__suffix" on-click="clearClickListener"></span>{{end}}
+        {{if it1 && it1.showClear()}}<span w-class="pi-input__suffix" class="pi-input__suffix" on-tap="clearClickListener"></span>{{end}}
     </div>
     
     {{if it.append}}

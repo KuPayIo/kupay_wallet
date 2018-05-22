@@ -4,17 +4,17 @@
     </div>
 
     <div w-class="body">
-        <div w-class="pay">{{it.pay}}</div>
+        <div w-class="pay">{{it.type==="转账"?"-":"+"}}{{it.pay}} ETH</div>
         <div w-class="result">{{it.result}}</div>
         <div w-class="line"></div>
         <div w-class="body-title">收币地址</div>
-        <div w-class="body-title-value">{{it.getAddr}}</div>
+        <div w-class="body-title-value">{{it.to}}</div>
         <div w-class="body-title">矿工费</div>
         <div w-class="body-title-value">{{it.tip}}</div>
         <div w-class="body-title">备注</div>
         <div w-class="body-title-value">{{it.info}}</div>
         <div w-class="body-title">发币地址</div>
-        <div w-class="body-title-value">{{it.setAddr}}</div>
+        <div w-class="body-title-value">{{it.from}}</div>
         <div w-class="body-title">交易时间</div>
         <div w-class="body-title-value">{{it.time}}</div>
         <div w-class="body-title">交易号</div>
