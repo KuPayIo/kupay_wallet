@@ -1,7 +1,7 @@
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
-import { getLocalStorage, setLocalStorage, getCurrentWallet, decrypt } from "../../utils/tools";
-import { GaiaWallet } from "../../core/eth/wallet";
+import { Widget } from "../../../../pi/widget/widget";
+import { popNew } from "../../../../pi/ui/root";
+import { getLocalStorage, setLocalStorage, getCurrentWallet, decrypt } from "../../../utils/tools";
+import { GaiaWallet } from "../../../core/eth/wallet";
 
 
 interface Props{

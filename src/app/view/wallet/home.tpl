@@ -45,5 +45,4 @@
             {{end}}
         </ul>
     </div>
-    <app-components-bottomTabBar-bottomTabBar></app-components-bottomTabBar-bottomTabBar>
 </div>

@@ -1,9 +1,9 @@
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from '../../../pi/ui/root';
-import { setLocalStorage, getLocalStorage, encrypt } from '../../utils/tools'
-import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength } from '../../utils/account'
-import { GaiaWallet } from '../../core/eth/wallet'
-import { Wallet } from "../interface";
+import { Widget } from "../../../../pi/widget/widget";
+import { popNew } from '../../../../pi/ui/root';
+import { setLocalStorage, getLocalStorage, encrypt } from '../../../utils/tools'
+import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength } from '../../../utils/account'
+import { GaiaWallet } from '../../../core/eth/wallet'
+import { Wallet } from "../../interface";
 
 export class WalletCreate extends Widget{
     public ok: () => void;
