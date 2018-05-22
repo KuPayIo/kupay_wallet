@@ -24,12 +24,12 @@ export class SwitchWallet extends Widget{
     }
     public createWalletClick(){
         this.ok && this.ok();
-        popNew("app-view-walletCreate-walletCreate");
+        popNew("app-view-wallet-walletCreate-walletCreate");
     }
 
     public importWalletClick(){
         this.ok && this.ok();
-        popNew("app-view-walletImport-walletImport");
+        popNew("app-view-wallet-walletImport-walletImport");
     }
     public switchWalletClick(e,index){
         popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: "" }, (r) => {

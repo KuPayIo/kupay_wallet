@@ -49,7 +49,7 @@ export class WalletImport extends Widget{
         this.state.userProtocolReaded = e.newType;
     }
     public agreementClick(){
-        popNew("app-view-agreementInterpretation-agreementInterpretation");
+        popNew("app-view-wallet-agreementInterpretation-agreementInterpretation");
     }
     public importWalletClick(){
         if(!walletNameAvailable(this.state.walletName)){
@@ -86,7 +86,7 @@ export class WalletImport extends Widget{
         setTimeout(()=>{
             close.callback(close.widget);
             this.ok && this.ok();
-            popNew("app-view-backupWallet-backupWallet");
+            popNew("app-view-wallet-backupWallet-backupWallet");
         },500);
     }
     

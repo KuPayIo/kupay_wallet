@@ -1,5 +1,5 @@
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
+import { Widget } from "../../../../pi/widget/widget";
+import { popNew } from "../../../../pi/ui/root";
 
 interface Props {
     pay: string;

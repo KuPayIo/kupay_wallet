@@ -1,5 +1,6 @@
 import { register, updateStore, find } from '../store/store'
 import { Cipher } from '../core/crypto/cipher'
+import { Api } from '../core/eth/api';
 
 export function setLocalStorage(key:string,data:any,notified?:boolean){
     updateStore(key,data,notified);
@@ -77,6 +78,8 @@ export const eth2Wei = (num: number) => {
  * Eth转rmb
  */
 export const Eth2RMB = (num: number) => {
+    // let api = new Api();
+    // api.getExchangeRate()
     return (num * 60).toFixed(2);
 }
 /**
