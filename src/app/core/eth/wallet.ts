@@ -194,6 +194,7 @@ export class GaiaWallet {
         } catch(e) {
             throw new Error("Invalid operation");
         }
+        decrypted = Buffer(decrypted, 'hex'); //decrypted should be a Buffer
         let wlt = Wallet.fromPrivateKey(decrypted);
         return wlt.toV3String(passwd);
     }
