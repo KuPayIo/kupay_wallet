@@ -1,8 +1,8 @@
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
-import { getLocalStorage, setLocalStorage, encrypt, decrypt } from "../../utils/tools";
-import { GaiaWallet } from "../../core/eth/wallet";
-import { pswEqualed } from "../../utils/account";
+import { Widget } from "../../../../pi/widget/widget";
+import { popNew } from "../../../../pi/ui/root";
+import { getLocalStorage, setLocalStorage, encrypt, decrypt } from "../../../utils/tools";
+import { GaiaWallet } from "../../../core/eth/wallet";
+import { pswEqualed } from "../../../utils/account";
 
 export class SwitchWallet extends Widget{
     public ok:()=>void;

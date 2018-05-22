@@ -1,6 +1,6 @@
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet } from "../../utils/tools";
+import { Widget } from "../../../../pi/widget/widget";
+import { popNew } from "../../../../pi/ui/root";
+import { getLocalStorage, getCurrentWallet } from "../../../utils/tools";
 
 
 interface Props{

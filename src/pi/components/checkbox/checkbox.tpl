@@ -1,4 +1,4 @@
-<div on-click="doClick">
+<div on-tap="doClick">
     {{if it.type}}
     <span w-class="icon_{{it.type}}">
         <i w-class="arrow_{{it.type}}" class="checkbox_{{it.type}}"></i>

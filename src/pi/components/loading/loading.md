@@ -25,7 +25,7 @@ setTimeout(()=>{
 - 父节点positon不能为static
 
 ```html
-<div on-click="localClick" style="height:500px;width:500px;margin:200px auto;background-color:#fff;position:relative;">
+<div on-tap="localClick" style="height:500px;width:500px;margin:200px auto;background-color:#fff;position:relative;">
         局部loading
         {{if it1.showLocalLoading}}
         <components-loading-loading>{text:"局部加载"}</components-loading-loading>
