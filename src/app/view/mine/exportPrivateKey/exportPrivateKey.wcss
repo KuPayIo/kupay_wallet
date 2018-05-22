@@ -5,3 +5,6 @@
 .ga-container{
     padding: 20px 10px;
 }
+.ga-currency-container{
+    margin-top: 20px;
+}

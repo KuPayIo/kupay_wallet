@@ -24,7 +24,7 @@ export class BackupWallet extends Widget{
         this.ok && this.ok();
     }
     public backupWalletClick(){
-        popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: "" }, (r) => {
+        popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
             if(this.exportMnemonicSucceed(r)){
                 let close = popNew("pi-components-loading-loading",{text:"导出中"});
                 setTimeout(()=>{

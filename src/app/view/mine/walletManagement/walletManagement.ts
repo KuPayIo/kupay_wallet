@@ -50,4 +50,8 @@ export class WalletManagement extends Widget{
             }
         })
     }
+
+    public backupMnemonic(){
+        popNew("app-view-wallet-backupMnemonic-backupMnemonic");
+    }
 }

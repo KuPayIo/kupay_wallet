@@ -33,6 +33,6 @@
             <span w-class="ga-item-arrow"></span>
         </div>
     </div>
-    <div w-class="ga-wallet-backup-btn" on-tap="">备份助记词</div>
+    <div w-class="ga-wallet-backup-btn" on-tap="backupMnemonic">备份助记词</div>
     <div w-class="ga-delete-wallet">删除钱包</div>
 </div>

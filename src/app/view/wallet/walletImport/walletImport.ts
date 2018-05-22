@@ -106,6 +106,7 @@ export class WalletImport extends Widget{
                 addrs:[{
                     addr:gwlt.address,
                     addrName:"默认地址",
+                    gwlt:gwlt.toJSON(),
                     record:[]
                 }]
             }]
