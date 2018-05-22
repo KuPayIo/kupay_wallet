@@ -1,31 +1,32 @@
+/**
+ * 选择地址
+ */
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
+import { getLocalStorage, getCurrentWallet, wei2Eth, decrypt, setLocalStorage } from "../../../utils/tools";
+import { Api } from "../../../core/eth/api";
+import { GaiaWallet } from "../../../core/eth/wallet";
+
+interface Props {
+    currencyName: string;
+}
 
 export class AddAsset extends Widget {
+    public props: Props;
     public ok: () => void;
 
     constructor() {
         super();
     }
-    public create() {
-        super.create();
+    public setProps(props: Props, oldProps: Props): void {
+        super.setProps(props, oldProps);
         this.init();
     }
 
     public init(): void {
-        this.state = {
-            list: [{ name: "地址1", balance: 0.001, isChoose: false }
-                , { name: "地址2", balance: 0.001, isChoose: false }
-                , { name: "地址3", balance: 0.001, isChoose: false }
-                , { name: "地址4", balance: 0.001, isChoose: false }]
-        }
+        this.state = {};
 
-        // todo 这里获取当前地址
-        let currencyAddr = "地址1";
-        this.state.list.map((v) => {
-            if (currencyAddr == v.name) v.isChoose = true;
-            return v;
-        })
+        this.getAddrs()
     }
 
     /**
@@ -40,7 +41,13 @@ export class AddAsset extends Widget {
      */
     public chooseAddr(e, index) {
         if (!this.state.list[index].isChoose) {
-            //todo 这里出来地址切换
+            let wallets = getLocalStorage("wallets");
+            const wallet = getCurrentWallet(wallets);
+            let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
+            if (currencyRecord) {
+                currencyRecord.currentAddr = this.state.list[index].addr;
+                setLocalStorage("wallets", wallets, true);
+            }
         }
         this.doClose()
     }
@@ -49,11 +56,56 @@ export class AddAsset extends Widget {
      * 处理添加地址
      */
     public addAddr(e, index) {
-        popNew("pi-components-message-messagebox", { type: "prompt", title: "添加地址", content: "地址信息" }, (r) => {
+        let api = new Api();
+        let wallets = getLocalStorage("wallets");
+        const wallet = getCurrentWallet(wallets);
+        let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
+        if (!currencyRecord) return
+        let gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+        let newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), this.state.list.length)
+
+        // r.toJSON()
+
+        popNew("pi-components-message-messagebox", { type: "prompt", title: "添加地址", content: newGwlt.address }, (r) => {
+            currencyRecord.addrs.push({
+                addr: newGwlt.address,
+                addrName: r ? r : `默认地址${this.state.list.length}`,
+                gwlt: newGwlt.toJSON(),
+                record: []
+            });
+            currencyRecord.currentAddr = newGwlt.address;
+            setLocalStorage("wallets", wallets, true);
+            console.log(wallets)
             //todo 这里验证输入，并根据输入添加地址，且处理地址切换
             this.doClose();
         }, () => {
             this.doClose();
+        })
+    }
+
+    private getAddrs() {
+        let wallets = getLocalStorage("wallets");
+        const wallet = getCurrentWallet(wallets);
+
+        if (!wallet.currencyRecords || !this.props.currencyName) return [];
+
+        let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0]
+        if (!currencyRecord) return [];
+
+        let currentAddr = currencyRecord.currentAddr || wallet.walletId;
+        let api = new Api();
+        this.state.list = currencyRecord.addrs.map(v => {
+            let r: any = api.getBalance(v.addr);
+            let num = 0
+            if (this.props.currencyName === "ETH") {
+                num = wei2Eth(r.toNumber());
+            }
+            return {
+                name: v.addrName || "默认地址",
+                balance: num,
+                isChoose: v.addr === currentAddr,
+                addr: v.addr
+            }
         })
     }
 
