@@ -3,7 +3,7 @@
         <app-components-topBar-topBar>{title:{{it1.title}}}</app-components-topBar-topBar>
     </div>
     <div w-class="body">
-        <div w-class="balance">余额&nbsp;&nbsp;{{it.currencyBalance}}</div>
+        <div w-class="balance">余额&nbsp;&nbsp;{{it.currencyBalance}} ETH</div>
         <div w-class="qrcode">
             <pi-components-qrcode-qrcode>{value:{{it.addr}}}</pi-components-qrcode-qrcode>
         </div>

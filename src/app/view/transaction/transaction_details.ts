@@ -4,10 +4,10 @@ import { popNew } from "../../../pi/ui/root";
 interface Props {
     pay: string;
     result: string
-    getAddr: string;
+    to: string;
     tip: string;
     info: string;
-    setAddr: string
+    from: string
     time: string;
     id: string;
 }
