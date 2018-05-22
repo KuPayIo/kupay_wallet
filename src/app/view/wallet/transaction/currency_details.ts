@@ -65,7 +65,7 @@ export class AddAsset extends Widget {
      * 处理选择地址
      */
     public doSearch() {
-        popNew("app-view-wallet-transaction-choose_address")
+        popNew("app-view-wallet-transaction-choose_address",{currencyName: this.props.currencyName})
     }
 
     /**
@@ -147,7 +147,7 @@ export class AddAsset extends Widget {
         const wallet = getCurrentWallet(wallets);
         if (!wallet.currencyRecords || !this.props.currencyName) return;
 
-        let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0]
+        let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
         if (!currencyRecord) return;
 
         let addr = currencyRecord.addrs.filter(v => v.addr === this.state.currentAddr)[0];

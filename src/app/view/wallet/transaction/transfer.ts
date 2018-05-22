@@ -73,9 +73,6 @@ export class AddAsset extends Widget {
      * 处理下一步
      */
     public doNext() {
-        // getTransaction(this.props.from,"0xfe62dd012daa0c8f1e753e91e1bf019868fa5541e4ea4f8b0eb9b52f554e8223");
-
-
         if (!this.state.to) {
             popNew("pi-components-message-message", { type: "warn", content: "请输入收款地址", center: true });
             return
@@ -96,7 +93,7 @@ export class AddAsset extends Widget {
             let psw = decrypt(wallet.walletPsw)
             if (r === psw) {
                 try {
-                    let id = doTransfer(wallet, this.props.from, this.state.to, psw, this.state.gasPrice, this.state.gasLimit, eth2Wei(this.state.pay))
+                    let id = doTransfer(wallet, this.props.from, this.state.to, psw, this.state.gasPrice, this.state.gasLimit, eth2Wei(this.state.pay), this.props.currencyName)
                     // console.log(id)
                     //打开交易详情界面
                     this.showTransactionDetails(id, wallet)
@@ -109,27 +106,6 @@ export class AddAsset extends Widget {
                 }
             }
         }, () => { })
-    }
-
-    private doNext1() {
-        try {
-            // let wallets = getLocalStorage("wallets");
-            // const wallet = getCurrentWallet(wallets);
-            // let psw = decrypt(wallet.walletPsw)
-            // let id = doTransfer(wallet, this.props.from, this.state.to, psw, 100000000, 21000, 10000000000)
-            // console.log(id)
-            getAccount("0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1")
-            getAccount(this.props.from)
-            let id = sendTx(this.props.from)
-            console.log(id)
-            getAccount("0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1")
-            getAccount(this.props.from)
-        } catch (error) {
-            console.log(error.message)
-            if (error.message.indexOf("insufficient funds") >= 0) {
-                popNew("pi-components-message-message", { type: "error", content: "余额不足", center: true })
-            }
-        }
     }
 
     /**
@@ -222,7 +198,7 @@ const parseDate = (t: Date) => {
 /**
  * 处理转账
  */
-const doTransfer = (wallet, acct1, acct2, psw, gasPrice, gasLimit, value) => {
+const doTransfer = (wallet, acct1, acct2, psw, gasPrice, gasLimit, value, currencyName) => {
     let api = new Api();
     let nonce = api.getTransactionCount(acct1);
 
@@ -235,49 +211,22 @@ const doTransfer = (wallet, acct1, acct2, psw, gasPrice, gasLimit, value) => {
         data: ''
     }
 
-    let gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+    let gwlt = getGwltByAddr(wallet, acct1, currencyName)
+    if (!gwlt) return
 
     let tx = gwlt.signRawTransaction(psw, txObj);
 
     return api.sendRawTransaction(tx);
 }
 
-const sendTx = (acct2) => {
-    let acct1 = "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1"
-    // let acct2 = "0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0"
-
-    let sk1 = "4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"
-    let sk2 = "6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1"
-
-    let api = new Api();
-    let nonce = api.getTransactionCount(acct1);
-
-    let txObj = {
-        to: acct2,
-        nonce: nonce,
-        gasPrice: 100000000,
-        gasLimit: 21000,
-        value: 10000000000,
-        data: ''
-    }
-
-    let gwlt = GaiaWallet.fromPrivateKey("123", sk1);
-    let tx = gwlt.signRawTransaction("123", txObj);
-
-    return api.sendRawTransaction(tx);
-}
-
-const getAccount = (acct) => {
-    let api = new Api();
-    let r: any = api.getBalance(acct);
-    console.log(r, r.toNumber())
-}
-
-const getTransaction = (acct1, hash) => {
-    let api = new Api();
-    let r;
-    //获取交易数量
-    // let r = api.getTransactionCount(acct1);
-    r = api.getTransactionReceipt(hash)
-    console.log(r)
+/**
+ * 获取钱包
+ */
+const getGwltByAddr = (wallet, addr, currencyName) => {
+    if (wallet.walletId === addr) return GaiaWallet.fromJSON(wallet.gwlt);
+    let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0]
+    if (!currencyRecord) return;
+    let currentAddr = currencyRecord.addrs.filter(v => v.addr === addr)[0];
+    if (!currentAddr) return
+    return GaiaWallet.fromJSON(currentAddr.gwlt);
 }
