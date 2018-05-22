@@ -10,25 +10,65 @@ const ETH_CMC_URL = "https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY";
  * @class Api
  */
 export class Api {
-    
-    getBalance(address: string): number {
-        return web3.eth.getBalance(address);
-    }
- 
-    sendRawTransaction(serializedTx): string {
-        return web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
+
+    getBalance(address: string): Promise<number> {
+        return new Promise((resolve, reject) => {
+            web3.eth.getBalance(address, (err, bal) => {
+                if (!err) {
+                    return resolve(bal);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
     }
 
-    getTransactionCount(address: string): number {
-        return web3.eth.getTransactionCount(address);
+    sendRawTransaction(serializedTx): Promise<string> {
+        return new Promise((resolve, reject) => {
+            web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), (err, hash) => {
+                if (!err) {
+                    return resolve(hash);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
     }
 
-    getTransaction(hash: string): string {
-        return web3.eth.getTransaction(hash);
+    getTransactionCount(address: string): Promise<number> {
+        return new Promise((resolve, reject) => {
+            web3.eth.getTransactionCount(address, (err, cnt) => {
+                if (!err) {
+                    return resolve(cnt);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
     }
 
-    getTransactionReceipt(hash): string {
-        return web3.eth.getTransactionReceipt(hash);
+    getTransaction(hash: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            web3.eth.getTransaction(hash, (err, val) => {
+                if (!err) {
+                    return resolve(val);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
+    }
+
+    getTransactionReceipt(hash): Promise<string> {
+        return new Promise((resolve, reject) => {
+            web3.eth.getTransactionReceipt(hash, (err, val) => {
+                if (!err) {
+                    return resolve(val);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
     }
 
     async getExchangeRate(): Promise<{}> {
