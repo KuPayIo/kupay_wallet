@@ -637,7 +637,7 @@ forelet.listener = (cmd: string, widget: Widget): void => {
 		startX = e.touches[0].screenX;
 		startY = e.touches[0].screenY;
 
-		const r = doTouchStart(e);
+		const r = doTouchStart(e, orientation);
 		orientation = r.orientation;
 		el = r.el;
 	};
@@ -706,7 +706,7 @@ try {
  * 处理点击开始
  * @param e 事件
  */
-const doTouchStart = (e) => {
+const doTouchStart = (e, orientation) => {
 	e.stopPropagation();
 	orientation = 0;
 	let el = e.target;
