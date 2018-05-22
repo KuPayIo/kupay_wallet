@@ -98,7 +98,6 @@ export class WalletImport extends Widget{
         let wallet:Wallet = {
             walletId:curWalletId,
             walletPsw:encrypt(this.state.walletPsw),
-            walletPswTips:encrypt(this.state.walletPswTips),
             gwlt:gwlt.toJSON(),
             showCurrencys:["ETH"],
             currencyRecords:[{
@@ -110,6 +109,9 @@ export class WalletImport extends Widget{
                     record:[]
                 }]
             }]
+        }
+        if(this.state.walletPswTips.trim().length>0){
+            wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
         }
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);

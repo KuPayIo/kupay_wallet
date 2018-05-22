@@ -8,7 +8,7 @@
  export interface Wallet{
     walletId:string,  //wallet id  (first address)
     walletPsw:string, // wallet password
-    walletPswTips:string,// wallet password tips
+    walletPswTips?:string,// wallet password tips
     gwlt:string,  // Serialization GaiaWallet object
     showCurrencys:Array<string>, //home page show currencys
     currencyRecords:[{     // currency records 
