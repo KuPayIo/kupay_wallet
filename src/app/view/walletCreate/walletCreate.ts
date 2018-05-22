@@ -3,6 +3,7 @@ import { popNew } from '../../../pi/ui/root';
 import { setLocalStorage, getLocalStorage, encrypt } from '../../utils/tools'
 import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength } from '../../utils/account'
 import { GaiaWallet } from '../../core/eth/wallet'
+import { Wallet } from "../interface";
 
 export class WalletCreate extends Widget{
     public ok: () => void;
@@ -81,7 +82,7 @@ export class WalletCreate extends Widget{
         let gwlt = GaiaWallet.generate("english",128,this.state.walletPsw);
         gwlt.nickName = this.state.walletName;
         let curWalletId = gwlt.address;
-        let wallet = {
+        let wallet:Wallet = {
             walletId:curWalletId,
             walletPsw:encrypt(this.state.walletPsw),
             walletPswTips:encrypt(this.state.walletPswTips),
@@ -89,8 +90,10 @@ export class WalletCreate extends Widget{
             showCurrencys:["ETH"],
             currencyRecords:[{
                 currencyName:"ETH",
+                currentAddr:gwlt.address,
                 addrs:[{
                     addr:gwlt.address,
+                    addrName:"默认地址",
                     record:[]
                 }]
             }]

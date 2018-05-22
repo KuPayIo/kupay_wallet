@@ -18,11 +18,11 @@
         </div>
         <div w-class="btns">
             {{if it.type==="confirm"||it.type==="prompt"}}
-            <button type="button" w-class="button button_small" on-click="doClickCancel" style="margin-right: 10px;">
+            <button type="button" w-class="button button_small" on-tap="doClickCancel" style="margin-right: 10px;">
                 <span>取消</span>
             </button>
             {{end}}
-            <button type="button" w-class="button button_small button_sure" on-click="doClickSure">
+            <button type="button" w-class="button button_small button_sure" on-tap="doClickSure">
                 <span>确定</span>
             </button>
         </div>

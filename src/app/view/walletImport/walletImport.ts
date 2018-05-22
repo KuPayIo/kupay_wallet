@@ -3,6 +3,7 @@ import { popNew } from '../../../pi/ui/root';
 import { setLocalStorage, getLocalStorage, encrypt } from '../../utils/tools'
 import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength } from '../../utils/account'
 import { GaiaWallet } from "../../core/eth/wallet";
+import { Wallet } from "../interface"
 
 export class WalletImport extends Widget{
     public ok: () => void;
@@ -68,12 +69,19 @@ export class WalletImport extends Widget{
             return;
         }
 
+
+        let gwlt = null;
         try{
-            this.importWallet();
+            gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic,"english",this.state.walletPsw);
         }catch(e){
             popNew("pi-components-message-message", { type: "error", content: "无效的助记词" })
             return;
         }
+        if(this.importedWalletIsExisted(gwlt)){
+            popNew("pi-components-message-message", { type: "alert", content: "钱包已存在" })
+            return;
+        }
+        this.importWallet(gwlt);
         let close = popNew("pi-components-loading-loading",{text:"导入中"});
         setTimeout(()=>{
             close.callback(close.widget);
@@ -83,27 +91,43 @@ export class WalletImport extends Widget{
     }
     
 
-    public importWallet(): void{
-        //garden  file spider holiday only panel author bind miss stool yard salt
-        let gwlt = null;
-        try{
-            gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic,"english",this.state.walletPsw);
-        }catch(e){
-            throw e;
-        }
+    public importWallet(gwlt:GaiaWallet): void{
         gwlt.nickName = this.state.walletName;
-        console.log("gwlt")
         let wallets = getLocalStorage("wallets") || {walletList:[],curWalletId:""};
         let curWalletId = gwlt.address;
-        let wallet = {
+        let wallet:Wallet = {
             walletId:curWalletId,
             walletPsw:encrypt(this.state.walletPsw),
             walletPswTips:encrypt(this.state.walletPswTips),
-            gwlt:gwlt.toJSON()
+            gwlt:gwlt.toJSON(),
+            showCurrencys:["ETH"],
+            currencyRecords:[{
+                currencyName:"ETH",
+                currentAddr:gwlt.address,
+                addrs:[{
+                    addr:gwlt.address,
+                    addrName:"默认地址",
+                    record:[]
+                }]
+            }]
         }
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
         setLocalStorage("wallets",wallets,true);
     }
 
+    /**
+     * 判断导入的钱包是否存在
+     * @param gwlt imported wallet
+     */
+    public importedWalletIsExisted(gwlt:GaiaWallet){
+        let wallets = getLocalStorage("wallets") || {walletList:[],curWalletId:""};
+        let len = wallets.walletList.length;
+        for(let i = 0; i < len; i ++){
+            if(gwlt.address === wallets.walletList[i].walletId){
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -1,6 +1,6 @@
 <div>
     {{if it.chooseAll}}
-    <div on-click="doAllClick">
+    <div on-tap="doAllClick">
         <components-checkbox-checkbox>{type:{{it1.chooseAllType}},text:{{it.chooseAll}}}</components-checkbox-checkbox>
     </div>
     {{end}}
