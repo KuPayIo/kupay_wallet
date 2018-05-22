@@ -1,8 +1,8 @@
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
-import { getCurrentWallet, getLocalStorage, wei2Eth, Eth2RMB, parseAccount, setLocalStorage } from "../../utils/tools";
-import { Api } from "../../core/eth/api";
-import { register } from "../../store/store";
+import { Widget } from "../../../../pi/widget/widget";
+import { popNew } from "../../../../pi/ui/root";
+import { getCurrentWallet, getLocalStorage, wei2Eth, Eth2RMB, parseAccount, setLocalStorage } from "../../../utils/tools";
+import { Api } from "../../../core/eth/api";
+import { register } from "../../../store/store";
 
 interface Props {
     currencyName: string;
@@ -65,14 +65,14 @@ export class AddAsset extends Widget {
      * 处理选择地址
      */
     public doSearch() {
-        popNew("app-view-transaction-choose_address")
+        popNew("app-view-wallet-transaction-choose_address")
     }
 
     /**
      * 显示交易详情
      */
     public showTransactionDetails(e, index) {
-        popNew("app-view-transaction-transaction_details", this.state.list[index])
+        popNew("app-view-wallet-transaction-transaction_details", this.state.list[index])
     }
 
     /**
@@ -90,7 +90,7 @@ export class AddAsset extends Widget {
      */
     public doTransfer() {
         if (!this.state.currentAddr) return
-        popNew("app-view-transaction-transfer", {
+        popNew("app-view-wallet-transaction-transfer", {
             currencyBalance: this.state.balance,
             from: this.state.currentAddr,
             currencyName: this.props.currencyName
@@ -102,10 +102,10 @@ export class AddAsset extends Widget {
      */
     public doReceipt() {
         //todo 这里获取地址
-        let addr = "1xdfsdfsfsdfgdsfgsddfg4d54g5sdg2sfgdsfgsddfg4d54g5sdg2sg4d54g5sdg2s";
-        popNew("app-view-transaction-receipt", {
+        if (!this.state.currentAddr) return
+        popNew("app-view-wallet-transaction-receipt", {
             currencyBalance: this.state.balance,
-            addr: addr
+            addr: this.state.currentAddr
         })
     }
 

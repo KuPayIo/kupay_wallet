@@ -30,7 +30,7 @@ export class BackupWallet extends Widget{
                 setTimeout(()=>{
                     close.callback(close.widget);
                     this.ok && this.ok();
-                    popNew("app-view-backupMnemonic-backupMnemonic",{ mnemonic:this.state.mnemonic.split(" ") });
+                    popNew("app-view-wallet-backupMnemonic-backupMnemonic",{ mnemonic:this.state.mnemonic.split(" ") });
                 },500);
             }else{
                 popNew("pi-components-message-message", { type: "error", content: "密码错误,请重新输入" })

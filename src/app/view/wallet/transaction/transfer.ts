@@ -1,11 +1,11 @@
 /**
  * 处理转账逻辑
  */
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
-import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, Eth2RMB, eth2Wei, setLocalStorage } from "../../utils/tools";
-import { GaiaWallet } from "../../core/eth/wallet";
-import { Api } from "../../core/eth/api";
+import { Widget } from "../../../../pi/widget/widget";
+import { popNew } from "../../../../pi/ui/root";
+import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, Eth2RMB, eth2Wei, setLocalStorage } from "../../../utils/tools";
+import { GaiaWallet } from "../../../core/eth/wallet";
+import { Api } from "../../../core/eth/api";
 
 interface Props {
     currencyBalance: string;
@@ -176,7 +176,7 @@ export class AddAsset extends Widget {
 
         addRecord(this.props.currencyName, this.props.from, record)
 
-        popNew("app-view-transaction-transaction_details", record)
+        popNew("app-view-wallet-transaction-transaction_details", record)
     }
 
 }
