@@ -1,8 +1,8 @@
 /**
  * 搜索货币
  */
-import { Widget } from "../../../pi/widget/widget";
-import { getLocalStorage, getCurrentWallet, setLocalStorage } from "../../utils/tools";
+import { Widget } from "../../../../pi/widget/widget";
+import { getLocalStorage, getCurrentWallet, setLocalStorage } from "../../../utils/tools";
 
 interface Props {
     list: any[];

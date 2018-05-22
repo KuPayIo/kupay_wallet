@@ -46,7 +46,7 @@ export class WalletCreate extends Widget{
         this.state.userProtocolReaded = e.newType;
     }
     public agreementClick(){
-        popNew("app-view-agreementInterpretation-agreementInterpretation");
+        popNew("app-view-wallet-agreementInterpretation-agreementInterpretation");
     }
     public createWalletClick(){
         if(!walletNameAvailable(this.state.walletName)){
@@ -72,7 +72,7 @@ export class WalletCreate extends Widget{
         setTimeout(()=>{
             close.callback(close.widget);
             this.ok && this.ok();
-            popNew("app-view-backupWallet-backupWallet");
+            popNew("app-view-wallet-backupWallet-backupWallet");
         },500);
     }
     
@@ -104,6 +104,6 @@ export class WalletCreate extends Widget{
     }
 
     public importWalletClick(){
-        popNew("app-view-walletImport-walletImport");
+        popNew("app-view-wallet-walletImport-walletImport");
     }
 }

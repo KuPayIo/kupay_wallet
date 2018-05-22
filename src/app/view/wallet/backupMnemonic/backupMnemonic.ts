@@ -25,6 +25,6 @@ export class BackupMnemonic extends Widget{
     }
     public nextStepClick(){
         this.ok && this.ok();
-        popNew("app-view-backupMnemonicConfirm-backupMnemonicConfirm",{mnemonic:this.props.mnemonic});
+        popNew("app-view-wallet-backupMnemonicConfirm-backupMnemonicConfirm",{mnemonic:this.props.mnemonic});
     }
 }
