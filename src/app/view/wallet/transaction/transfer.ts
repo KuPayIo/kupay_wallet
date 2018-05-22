@@ -48,7 +48,7 @@ export class AddAsset extends Widget {
             fromShow: parseAccount(this.props.from),
             to: "",
             pay: 0,
-            payConversion: `￥ 0.00`,
+            payConversion: `￥0.00`,
             gasPrice: 100000000,
             gasLimit: 21000,
             fees: 0,
@@ -59,7 +59,7 @@ export class AddAsset extends Widget {
 
         this.state.fees = wei2Eth(this.state.gasPrice * this.state.gasLimit);
         this.state.feesShow = `${this.state.fees} ETH`;
-        this.state.feesConversion = `≈￥ ${Eth2RMB(this.state.fees)}`;
+        this.state.feesConversion = `≈￥${Eth2RMB(this.state.fees)}`;
     }
 
     /**
@@ -121,7 +121,7 @@ export class AddAsset extends Widget {
     public onPayChange(e) {
         let num = parseFloat(e.value);
         this.state.pay = num || 0;
-        this.state.payConversion = `≈￥ ${Eth2RMB(num)}`;
+        this.state.payConversion = `≈￥${Eth2RMB(num)}`;
         this.paint();
     }
 

@@ -10,11 +10,19 @@ const ETH_CMC_URL = "https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY";
  * @class Api
  */
 export class Api {
-    
-    getBalance(address: string): number {
-        return web3.eth.getBalance(address);
+
+    getBalance(address: string): Promise<number> {
+        return new Promise((resolve, reject) => {
+            web3.eth.getBalance(address, (err, bal) => {
+                if (!err) {
+                    return resolve(bal);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
     }
- 
+
     sendRawTransaction(serializedTx): string {
         return web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
     }
@@ -39,7 +47,7 @@ export class Api {
                 "CNY": data['data']['quotes']['CNY']['price'],
                 "USD": data['data']['quotes']['USD']['price']
             }
-        } catch(e) {
+        } catch (e) {
             console.log("Unknown error:", e);
         }
     }

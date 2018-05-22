@@ -82,11 +82,3 @@ export const Eth2RMB = (num: number) => {
     // api.getExchangeRate()
     return (num * 60).toFixed(2);
 }
-/**
- * 转化价格
- * @param num 
- */
-const conversion = (num: number) => {
-    if (!num || num <= 0) return "￥ 0.00";
-    return `≈￥ ${num * 60}`;
-}
