@@ -85,7 +85,15 @@ export class WalletCreate extends Widget{
             walletId:curWalletId,
             walletPsw:encrypt(this.state.walletPsw),
             walletPswTips:encrypt(this.state.walletPswTips),
-            gwlt:gwlt.toJSON()
+            gwlt:gwlt.toJSON(),
+            showCurrencys:["ETH"],
+            currencyRecords:[{
+                currencyName:"ETH",
+                addrs:[{
+                    addr:gwlt.address,
+                    record:[]
+                }]
+            }]
         }
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
