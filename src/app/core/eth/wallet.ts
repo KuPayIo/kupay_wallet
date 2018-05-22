@@ -36,7 +36,6 @@ export class GaiaWallet {
     private _privKey: string;
 
     private _masterSeed: string;
-    private _lastUsedIndex = 1;
 
     constructor() {
         this._txs = [];
@@ -177,8 +176,6 @@ export class GaiaWallet {
         gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
         gwlt._balance = 0;
         gwlt._masterSeed = cipher.encrypt(passwd, seedBuffer);
-        // gwlt._isHD = true;
-        // gwlt._lastUsedIndex = 0;
 
         return gwlt;
     }
@@ -285,7 +282,6 @@ export class GaiaWallet {
             mnemonic: this._mnemonic,
             privkey: this._privKey,
             masterseed: this._masterSeed,
-            lastusedindex: this._lastUsedIndex
         }
         return JSON.stringify(wlt);
     }
@@ -301,12 +297,18 @@ export class GaiaWallet {
         gwlt._privKey = wlt['privkey'];
         gwlt._txs = wlt['txs'];
         gwlt._masterSeed = wlt['masterseed'];
-        gwlt._lastUsedIndex = wlt['lastusedindex'];
 
         return gwlt;
     }
-
-    nextAddress(passwd: string): string {
+    /**
+     * Derive address according to `index`. Return GaiaWallet object
+     *
+     * @param {string} passwd Passwd to decrypt `_masterSeed`
+     * @param {number} index Which address you want to use
+     * @returns {GaiaWallet}
+     * @memberof GaiaWallet
+     */
+    selectAddress(passwd: string, index: number): GaiaWallet {
         if(this._masterSeed.length == 0) {
             throw new Error("This is not a HD wallet");
         }
@@ -318,11 +320,16 @@ export class GaiaWallet {
         }
 
         let rootNode = WalletHD.fromMasterSeed(Buffer(masterSeed, 'hex'));
-        let path = "m/44'/60'/0'/0/" + this._lastUsedIndex.toString();
+        let path = "m/44'/60'/0'/0/" + index.toString();
         let hdwlt = rootNode.derivePath(path);
 
-        this._lastUsedIndex += 1;
+        let wlt = hdwlt.getWallet();
+        let gwlt = new GaiaWallet();
+        gwlt._address = wlt.getChecksumAddressString();
+        gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
+        gwlt._balance = 0;
+        gwlt._masterSeed = cipher.encrypt(passwd, this._masterSeed);
 
-        return hdwlt.getWallet().getChecksumAddressString();
+        return gwlt;
     }
 }
