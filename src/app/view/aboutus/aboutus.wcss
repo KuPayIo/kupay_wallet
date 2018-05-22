@@ -1,0 +1,7 @@
+.aboutus-img{
+    margin: 40px;  
+}
+.aboutus-back{
+    width: 50px;
+    padding: 10px;
+}

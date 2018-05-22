@@ -19,8 +19,8 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export const run = (): void => {
 	addWidget(document.body, 'pi-ui-root');
-	popNew('app-view-home');
-	//popNew('app-view-backupWallet-backupWallet');
+	// popNew('app-view-home');
+	popNew('app-view-languageAndcoinset-coinset');
 	
 	
 };
