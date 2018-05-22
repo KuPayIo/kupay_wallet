@@ -18,8 +18,8 @@ export class AddAsset extends Widget {
     constructor() {
         super();
     }
-    public create() {
-        super.create();
+    public setProps(props: Props, oldProps: Props): void {
+        super.setProps(props, oldProps);
         this.init();
     }
     public init(): void {
@@ -27,7 +27,7 @@ export class AddAsset extends Widget {
         const wallet = getCurrentWallet(wallets);
 
         this.state = {
-            list: getTransactionDetails(wallet)
+            list: getTransactionDetails(wallet, this.props.currencyName)
         }
 
     }
@@ -85,7 +85,7 @@ export class AddAsset extends Widget {
     public doTransfer() {
         //todo 这里获取地址
         let addr = "1xdfsdfsfsdfgdsfgsddfg4d54g5sdg2sfgdsfgsddfg4d54g5sdg2sg4d54g5sdg2s";
-        
+
         popNew("app-view-transaction-transfer", {
             currencyBalance: this.props.currencyBalance,
             setAddr: addr
@@ -117,9 +117,17 @@ const parseAccount = (str: string) => {
     return `${str.slice(0, 13)}...${str.slice(str.length - 13, str.length)}`;
 }
 
-const getTransactionDetails = (wallet) => {
-    if (!wallet.transactionDetails) return [];
+const getTransactionDetails = (wallet, currencyName) => {
+    if (!wallet.currencyRecords || currencyName) return [];
 
+    let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0]
+    if (!currencyRecord) return [];
+
+    let currentAddr = currencyRecord.currentAddr || wallet.walletId;
+    let addr = currencyRecord.filter(v => v.addr === currentAddr)[0];
+    if (!addr) return []
+
+    return addr.record;
     //todo 获取交易记录
     // //显示18位  21位判断  9
     // this.state.list.push({
