@@ -8,8 +8,8 @@
     </div>
 
     <div w-class="body">
-        <div w-class="balance">{{it.currencyBalance}}</div>
-        <div w-class="balance-conversion">{{it.currencyBalanceConversion}}</div>
+        <div w-class="balance">{{it1.showBalance}}</div>
+        <div w-class="balance-conversion">{{it1.showBalanceConversion}}</div>
         <div w-class="transaction-record">
             <div w-class="record-text">交易记录</div>
             <div w-class="introduction-text" on-tap="showIntroduction">简介</div>
@@ -19,7 +19,7 @@
                 <div w-class="each" on-tap="showTransactionDetails(e,{{i}})">
                     <div w-class="type" style="color:{{each.type==='收款'?'#008000':'#FF0000'}}">{{each.type}}</div>
                     <div w-class="account">{{each.account}}</div>
-                    <div w-class="pay">{{each.type==='收款'?'+':'-'}}{{each.pay}}</div>
+                    <div w-class="pay">{{each.type==='收款'?'+':'-'}}{{each.showPay}}</div>
                     <div w-class="time">{{each.time}}</div>
                     <div w-class="result">{{each.result}}</div>
                 </div>
