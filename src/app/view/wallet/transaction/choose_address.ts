@@ -95,18 +95,32 @@ export class AddAsset extends Widget {
         let currentAddr = currencyRecord.currentAddr || wallet.walletId;
         let api = new Api();
         this.state.list = currencyRecord.addrs.map(v => {
-            let r: any = api.getBalance(v.addr);
-            let num = 0
-            if (this.props.currencyName === "ETH") {
-                num = wei2Eth(r.toNumber());
-            }
             return {
                 name: v.addrName || "默认地址",
-                balance: num,
+                balance: 0,
                 isChoose: v.addr === currentAddr,
                 addr: v.addr
             }
         })
+
+        currencyRecord.addrs.forEach(v => {
+            api.getBalance(v.addr).then(r => {
+                this.setBalance(v.addr, r)
+            });
+        })
     }
+
+    private setBalance(addr, r) {
+        let num = 0
+        if (this.props.currencyName === "ETH") {
+            num = wei2Eth((<any>r).toNumber());
+        }
+        this.state.list = this.state.list.map(v => {
+            if (v.addr === addr) v.balance = num;
+            return v;
+        })
+        this.paint();
+    }
+
 
 }
