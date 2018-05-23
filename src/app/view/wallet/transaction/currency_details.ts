@@ -1,6 +1,6 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { getCurrentWallet, getLocalStorage, wei2Eth, Eth2RMB, parseAccount, setLocalStorage } from "../../../utils/tools";
+import { getCurrentWallet, getLocalStorage, wei2Eth, parseAccount, setLocalStorage, effectiveCurrency } from "../../../utils/tools";
 import { Api } from "../../../core/eth/api";
 import { register } from "../../../store/store";
 
@@ -126,18 +126,18 @@ export class AddAsset extends Widget {
         });
     }
 
-    private parseBalance() {
+    async parseBalance() {
         let api = new Api();
-        api.getBalance(this.state.currentAddr).then(r => {
-            if (this.props.currencyName === "ETH") {
-                let num = wei2Eth((<any>r).toNumber());
-                this.state.balance = num;
-                this.state.showBalance = `${num} ETH`;
-                this.state.showBalanceConversion = `≈￥${Eth2RMB(num)}`;
-                this.paint();
-            }
-        });
 
+        // let r = await api.getAllTransactionsOf("0x8B2735E4A098541CA119ee690781B2282913f978")
+        // console.log(r)
+
+        let balance: any = await api.getBalance(this.state.currentAddr);
+        let r = await effectiveCurrency(balance, "ETH", "CNY",true);
+        this.state.balance = r.num;
+        this.state.showBalance = r.show;
+        this.state.showBalanceConversion = r.conversionShow;
+        this.paint();
     }
 
     private openCheck() {
