@@ -1,7 +1,7 @@
 <div class="ga-new-page">
     <div w-class="ga-top-banner">
         <span w-class="ga-banner-title">我的</span>
-        <img src="../../res/image/u250.png" w-class="ga-notice"/>
+        <img src="../../res/image/u250.png" w-class="ga-notice" on-tap="geNotice"/>
     </div>
     {{for index,item of it1.mineList}}
     <div w-class="ga-item" on-tap="itemClick(e,{{index}})">
