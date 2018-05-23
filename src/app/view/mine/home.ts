@@ -26,19 +26,19 @@ export class Home extends Widget{
             },{
                 icon:"u250.png",
                 text:"语言设置",
-                components:"app-view-mine-walletManagement-walletManagement"
+                components:"app-view-languageAndcoinset-language"
             },{
                 icon:"u250.png",
                 text:"货币设置",
-                components:"app-view-mine-walletManagement-walletManagement"
+                components:"app-view-languageAndcoinset-coinset"
             },{
                 icon:"u250.png",
                 text:"常见问题",
-                components:"app-view-mine-walletManagement-walletManagement"
+                components:"app-view-FAQ-FAQ"
             },{
                 icon:"u250.png",
                 text:"关于我们",
-                components:"app-view-mine-walletManagement-walletManagement"
+                components:"app-view-aboutus-aboutus"
             },{
                 icon:"u250.png",
                 text:"分享下载链接",
@@ -50,5 +50,9 @@ export class Home extends Widget{
 
     public itemClick(e,index){
         popNew(this.state.mineList[index].components);
+    }
+
+    public geNotice(event:any){
+        popNew("app-view-messageList-messageList");
     }
 }

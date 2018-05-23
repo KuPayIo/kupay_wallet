@@ -1,0 +1,61 @@
+.messItem{
+    border-bottom: 0.1px solid #f1f1f1;
+    padding: 10px 20px;
+    background-color: #ffffff;
+}
+.messType{
+    font-size: 16px;
+    display: inline-block;
+    margin-left: 8px;
+}
+.messTitle{
+    font-size: 14px;
+    color: #999999;
+    word-break:break-all;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow: hidden;
+    display: inline-block;
+    width:100%;
+    margin: 8px;
+    margin-bottom: 0;
+}
+.messTime{
+    font-size: 14px;
+    float: right;
+    color: #999999;
+}
+.is-noread{
+    width: 8px;
+    height: 8px;
+    background: red;
+    border-radius: 4px;
+    display: inline-block;
+    margin-left: -8px;
+}
+.messlist{
+    background-color: #f9f9f9;
+}
+.ga-top-banner{
+    background-color: #fff;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 10px;
+}
+.ga-back{
+    position: absolute;
+    left: 10px;
+    cursor: pointer;
+}
+.ga-banner-title{
+    font-size: 20px;   
+}
+.ga-banner-btn{
+    font-size: 12px;
+    position: absolute;
+    right: 20px;
+}
