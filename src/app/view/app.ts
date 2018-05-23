@@ -11,23 +11,28 @@ export class App extends Widget{
         this.state = {
             tabBarList:[{
                 text:'钱包',
-                icon:"u124.png",
-                iconActive:"u250.png",
+                icon:"wallet_icon_active.png",
+                iconActive:"wallet_icon_active.png",
                 components:"app-view-wallet-home"
             },{
                 text:'理财',
-                icon:"u124.png",
-                iconActive:"u250.png",
+                icon:"financialManagement_icon.png",
+                iconActive:"financialManagement_icon.png",
                 components:"app-view-financialManagement-home"
             },{
+                text:'交易所',
+                icon:"exchange_icon.png",
+                iconActive:"exchange_icon.png",
+                components:"app-view-exchange-home"
+            },{
                 text:'应用',
-                icon:"u124.png",
-                iconActive:"u250.png",
+                icon:"application_icon.png",
+                iconActive:"application_icon.png",
                 components:"app-view-application-home"
             },{
                 text:'我的',
-                icon:"u124.png",
-                iconActive:"u250.png",
+                icon:"mine_icon.png",
+                iconActive:"mine_icon.png",
                 components:"app-view-mine-home"
             }],
             isActive:0

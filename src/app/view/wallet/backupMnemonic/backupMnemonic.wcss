@@ -2,39 +2,52 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 10px;
+    padding: 0 17px;
 }
 .ga-mnemonic-title{
+    margin-top: 35px;
     font-size: 18px;
-    color: #ccc;
-    margin-top: 20px;
+    line-height: 24px;
+    color: #203260;
+    text-align: left;
 }
 .ga-mnemonic-desc{
     font-size: 16px;
     margin-top: 20px;
+    color: #8E96AB;
+    text-align: left;
+    line-height: 23px;
 }
 .ga-mnemonic{
     font-size: 18px;
     margin-top: 20px;
-    border: 1px solid #ccc;
-    padding: 20px;
+    padding: 17px 17px 25px;
     display: flex;
     flex-wrap: wrap;
     width: 100%;
     box-sizing: border-box;
+    background: #FFFFFF;
+    border-radius: 6px;
 }
 .ga-mnemonic-item{
     line-height: 20px;
-    margin-right: 5px;
+    padding: 0 3px;
+    font-size: 18px;
+    line-height: 24px;
+    color: #1A70DD;
+    text-align: left;
 }
 .ga-mnemonic-next-step-btn{
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 45px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 60px;
+    height: 55px;
     cursor: pointer;
-    width: 100%;
+    margin-top: 95px;
+    background: #203260;
+    border-radius: 6px;
+    font-size: 18px;
+    color: rgba(255,255,255,0.87);
+    text-align: center;
 }
