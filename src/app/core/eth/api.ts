@@ -23,20 +23,52 @@ export class Api {
         })
     }
 
-    sendRawTransaction(serializedTx): string {
-        return web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
+    sendRawTransaction(serializedTx): Promise<string> {
+        return new Promise((resolve, reject) => {
+            web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), (err, hash) => {
+                if (!err) {
+                    return resolve(hash);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
     }
 
-    getTransactionCount(address: string): number {
-        return web3.eth.getTransactionCount(address);
+    getTransactionCount(address: string): Promise<number> {
+        return new Promise((resolve, reject) => {
+            web3.eth.getTransactionCount(address, (err, cnt) => {
+                if (!err) {
+                    return resolve(cnt);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
     }
 
-    getTransaction(hash: string): string {
-        return web3.eth.getTransaction(hash);
+    getTransaction(hash: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            web3.eth.getTransaction(hash, (err, val) => {
+                if (!err) {
+                    return resolve(val);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
     }
 
-    getTransactionReceipt(hash): string {
-        return web3.eth.getTransactionReceipt(hash);
+    getTransactionReceipt(hash): Promise<string> {
+        return new Promise((resolve, reject) => {
+            web3.eth.getTransactionReceipt(hash, (err, val) => {
+                if (!err) {
+                    return resolve(val);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
     }
 
     async getExchangeRate(): Promise<{}> {
@@ -47,7 +79,7 @@ export class Api {
                 "CNY": data['data']['quotes']['CNY']['price'],
                 "USD": data['data']['quotes']['USD']['price']
             }
-        } catch (e) {
+        } catch(e) {
             console.log("Unknown error:", e);
         }
     }

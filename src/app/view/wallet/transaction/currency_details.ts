@@ -157,18 +157,20 @@ export class AddAsset extends Widget {
         if (!addr) return
         let api = new Api();
         let isUpdate = false;
-        addr.record = addr.record.map(v => {
-            if (v.result === "已完成") return v;
-            if (!api.getTransactionReceipt(v.id)) return v;
-            isUpdate = true;
-            v.result = "已完成";
-            return v;
-        })
-        if (isUpdate) {
-            setLocalStorage("wallets", wallets, true)
-        }
+        addr.record.filter(v => v.result !== "已完成").forEach(v => {
+            api.getTransactionReceipt(v.id).then(r => {
+                this.resetRecord(wallets, addr, v.id, r)
+            });
+        });
     }
 
+    private resetRecord(wallets, addr, id, r) {
+        if (!r) return;
+        addr.record = addr.record.map(v => {
+            if (v.id === id) v.result = "已完成";
+            return v;
+        });
+        setLocalStorage("wallets", wallets, true)
+    }
 }
-
 
