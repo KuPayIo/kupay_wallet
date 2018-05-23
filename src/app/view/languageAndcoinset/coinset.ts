@@ -2,6 +2,7 @@ import {Widget} from "../../../pi/widget/widget";
 import {notify} from "../../../pi/widget/event";
 
 export class language extends Widget{
+    public ok: () => void;
     constructor(){
         super();
         this.props={
@@ -21,4 +22,8 @@ export class language extends Widget{
         }
         this.paint();       
     }   
+
+    public backPrePage(){
+        this.ok && this.ok();
+    }
 }

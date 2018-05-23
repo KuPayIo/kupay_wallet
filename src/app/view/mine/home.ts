@@ -34,7 +34,7 @@ export class Home extends Widget{
             },{
                 icon:"u250.png",
                 text:"常见问题",
-                components:"app-view-mine-walletManagement-walletManagement"
+                components:"app-view-FAQ-FAQ"
             },{
                 icon:"u250.png",
                 text:"关于我们",

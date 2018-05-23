@@ -8,7 +8,7 @@
         <div w-class="pi-collapse-item-panel {{it1.isExpanded(index) ? 'pi-collapse-item-panel-border' : ''}}"
             class="pi-collapse-item-panel" 
             style="">
-            <widget w-tag="ui-html" w-class="pi-collapse-item-content" >{{CollapseItem.htmlStr}}</widget>
+            <widget w-tag="ui-html$$$" w-class="pi-collapse-item-content" >{{CollapseItem.htmlStr}}</widget>
         </div>
     </div>
     {{end}}
