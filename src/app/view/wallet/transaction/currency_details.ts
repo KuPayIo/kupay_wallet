@@ -41,7 +41,7 @@ export class AddAsset extends Widget {
         let wallets = getLocalStorage("wallets");
         const wallet = getCurrentWallet(wallets);
 
-        this.state = { list: [], currentAddr: "", balance: 0, showBalance: "", showBalanceConversion: "" };
+        this.state = { list: [], currentAddr: "", balance: 0, showBalance: "0 ETH", showBalanceConversion: "≈￥0" };
         this.state.list = this.getTransactionDetails(wallet, this.props.currencyName)
         this.parseBalance();
 
@@ -65,7 +65,7 @@ export class AddAsset extends Widget {
      * 处理选择地址
      */
     public doSearch() {
-        popNew("app-view-wallet-transaction-choose_address",{currencyName: this.props.currencyName})
+        popNew("app-view-wallet-transaction-choose_address", { currencyName: this.props.currencyName })
     }
 
     /**
@@ -128,13 +128,16 @@ export class AddAsset extends Widget {
 
     private parseBalance() {
         let api = new Api();
-        let r: any = api.getBalance(this.state.currentAddr);
-        if (this.props.currencyName === "ETH") {
-            let num = wei2Eth(r.toNumber());
-            this.state.balance = num;
-            this.state.showBalance = `${num} ETH`;
-            this.state.showBalanceConversion = `≈￥ ${Eth2RMB(num)}`;
-        }
+        api.getBalance(this.state.currentAddr).then(r => {
+            if (this.props.currencyName === "ETH") {
+                let num = wei2Eth((<any>r).toNumber());
+                this.state.balance = num;
+                this.state.showBalance = `${num} ETH`;
+                this.state.showBalanceConversion = `≈￥${Eth2RMB(num)}`;
+                this.paint();
+            }
+        });
+
     }
 
     private openCheck() {
@@ -154,18 +157,20 @@ export class AddAsset extends Widget {
         if (!addr) return
         let api = new Api();
         let isUpdate = false;
-        addr.record = addr.record.map(v => {
-            if (v.result === "已完成") return v;
-            if (!api.getTransactionReceipt(v.id)) return v;
-            isUpdate = true;
-            v.result = "已完成";
-            return v;
-        })
-        if (isUpdate) {
-            setLocalStorage("wallets", wallets, true)
-        }
+        addr.record.filter(v => v.result !== "已完成").forEach(v => {
+            api.getTransactionReceipt(v.id).then(r => {
+                this.resetRecord(wallets, addr, v.id, r)
+            });
+        });
     }
 
+    private resetRecord(wallets, addr, id, r) {
+        if (!r) return;
+        addr.record = addr.record.map(v => {
+            if (v.id === id) v.result = "已完成";
+            return v;
+        });
+        setLocalStorage("wallets", wallets, true)
+    }
 }
-
 

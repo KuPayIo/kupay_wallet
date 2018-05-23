@@ -51,4 +51,8 @@ export class Home extends Widget{
     public itemClick(e,index){
         popNew(this.state.mineList[index].components);
     }
+
+    public geNotice(event:any){
+        popNew("app-view-messageList-messageList");
+    }
 }

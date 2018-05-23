@@ -1,0 +1,8 @@
+.messitemTitle{
+    margin: 10px;
+    font-size: 18px;
+    font-weight: 200;
+}
+.messitemContent{
+    margin: 10px;
+}

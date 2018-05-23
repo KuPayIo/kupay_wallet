@@ -1,0 +1,25 @@
+.messItem{
+    border-bottom: 0.1px solid #777777;
+    margin: 5px;
+    padding: 10px;
+}
+.messType{
+    width: 80px;
+    display: inline-block;
+}
+.messTitle{
+    word-break:break-all;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow: hidden;
+    display: inline-block;
+    width: 77%;
+}
+.messTime{
+    width: 40px;
+    display: inline-block;    
+    text-align: cetner;
+    position: relative;
+    right: 0;
+    text-align: right;
+}
