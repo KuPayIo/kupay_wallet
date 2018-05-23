@@ -48,7 +48,7 @@ export class AddAsset extends Widget {
             fromShow: parseAccount(this.props.from),
             to: "",
             pay: 0,
-            payConversion: `￥ 0.00`,
+            payConversion: `￥0.00`,
             gasPrice: 100000000,
             gasLimit: 21000,
             fees: 0,
@@ -59,7 +59,7 @@ export class AddAsset extends Widget {
 
         this.state.fees = wei2Eth(this.state.gasPrice * this.state.gasLimit);
         this.state.feesShow = `${this.state.fees} ETH`;
-        this.state.feesConversion = `≈￥ ${Eth2RMB(this.state.fees)}`;
+        this.state.feesConversion = `≈￥${Eth2RMB(this.state.fees)}`;
     }
 
     /**
@@ -82,9 +82,10 @@ export class AddAsset extends Widget {
             return
         }
 
+        let thisObj = this;
 
         //todo 这里进行当前验证，处理下一步
-        popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: this.state.fromShow }, (r) => {
+        popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: this.state.fromShow }, async function (r) {
             //todo 这里需要验证密码是否正确
             //todo 处理转账逻辑
             //todo 通知交易数据改变
@@ -93,11 +94,11 @@ export class AddAsset extends Widget {
             let psw = decrypt(wallet.walletPsw)
             if (r === psw) {
                 try {
-                    let id = doTransfer(wallet, this.props.from, this.state.to, psw, this.state.gasPrice, this.state.gasLimit, eth2Wei(this.state.pay), this.props.currencyName)
-                    // console.log(id)
+                    let id = await doTransfer(wallet, thisObj.props.from, thisObj.state.to, psw, thisObj.state.gasPrice, thisObj.state.gasLimit
+                        , eth2Wei(thisObj.state.pay), thisObj.props.currencyName)
                     //打开交易详情界面
-                    this.showTransactionDetails(id, wallet)
-                    this.doClose()
+                    thisObj.showTransactionDetails(id, wallet)
+                    thisObj.doClose()
                 } catch (error) {
                     console.log(error.message)
                     if (error.message.indexOf("insufficient funds") >= 0) {
@@ -121,7 +122,7 @@ export class AddAsset extends Widget {
     public onPayChange(e) {
         let num = parseFloat(e.value);
         this.state.pay = num || 0;
-        this.state.payConversion = `≈￥ ${Eth2RMB(num)}`;
+        this.state.payConversion = `≈￥${Eth2RMB(num)}`;
         this.paint();
     }
 
@@ -135,9 +136,6 @@ export class AddAsset extends Widget {
      * 显示交易详情
      */
     public showTransactionDetails(id, wallet) {
-
-        let api = new Api();
-        let r = api.getTransaction(id)
         var record = {
             id: id,
             type: "转账",
@@ -149,10 +147,10 @@ export class AddAsset extends Widget {
             result: "交易中",
             info: this.state.info || "无"
         }
+        popNew("app-view-wallet-transaction-transaction_details", record)
 
         addRecord(this.props.currencyName, this.props.from, record)
 
-        popNew("app-view-wallet-transaction-transaction_details", record)
     }
 
 }
@@ -198,10 +196,9 @@ const parseDate = (t: Date) => {
 /**
  * 处理转账
  */
-const doTransfer = (wallet, acct1, acct2, psw, gasPrice, gasLimit, value, currencyName) => {
+async function doTransfer(wallet, acct1, acct2, psw, gasPrice, gasLimit, value, currencyName) {
     let api = new Api();
-    let nonce = api.getTransactionCount(acct1);
-
+    let nonce = await api.getTransactionCount(acct1);
     let txObj = {
         to: acct2,
         nonce: nonce,
@@ -215,8 +212,8 @@ const doTransfer = (wallet, acct1, acct2, psw, gasPrice, gasLimit, value, curren
     if (!gwlt) return
 
     let tx = gwlt.signRawTransaction(psw, txObj);
-
-    return api.sendRawTransaction(tx);
+    let id = await api.sendRawTransaction(tx);
+    return id;
 }
 
 /**
