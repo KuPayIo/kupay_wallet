@@ -25,10 +25,11 @@
     border: 1px solid #ccc;
     border-radius: 50%;
 }
-.ga-wallet-name{
-    font-size: 22px;
-    margin-left: 8px;
-    cursor: pointer;
+.ga-input{
+    outline: none;
+    border: none;
+    box-sizing: border-box;
+    padding: 10px;
 }
 .ga-assets{
     font-size: 20px;

@@ -4,7 +4,7 @@
         <p w-class="ga-mnemonic-title">抄写你的助记词</p>
         <p w-class="ga-mnemonic-desc">In hac habitasse platea dictumst. Vivamus fermentum quam volutpat aliquam. Integer et elit eget elit facilisis tristique. Nam vel iaculis mauris. Sed ullamcorper tellus erat, ultrices sem tincidunt euismod. </p>
         <div w-class="ga-mnemonic">
-            {{for index,value of it.mnemonic}}
+            {{for index,value of it1.mnemonic}}
             <span w-class="ga-mnemonic-item">{{value}}</span>
             {{end}}
         </div>

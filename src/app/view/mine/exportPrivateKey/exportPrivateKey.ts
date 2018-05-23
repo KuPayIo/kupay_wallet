@@ -29,12 +29,10 @@ export class ExportPrivateKey extends Widget{
                 let privateKey = gwlt.exportPrivateKey(walletPsw);
                 html += privateKey;
                 html += "</p>";
+                obj.htmlStr += html;
             }
-            obj.htmlStr += html;
             htmlStrList.push(obj);
         }
-        console.log(htmlStrList)
-        
         this.state = {
             htmlStrList
         }

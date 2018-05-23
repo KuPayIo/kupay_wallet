@@ -1,6 +1,7 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet } from "../../../utils/tools";
+import { getLocalStorage, getCurrentWallet, decrypt } from "../../../utils/tools";
+import { GaiaWallet } from "../../../core/eth/wallet";
 
 
 interface Props{
@@ -16,15 +17,23 @@ export class BackupMnemonic extends Widget{
     }
     public create(){
         super.create();
+        this.init();
     }
-    public setProps(props:Props,oldProps:Props){
-        super.setProps(props,oldProps);
+    public init(){
+        let wallets = getLocalStorage("wallets");
+        let wallet = getCurrentWallet(wallets);
+        let gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+        let walletPsw = decrypt(wallet.walletPsw);
+        let mnemonic = gwlt.exportMnemonic(walletPsw).split(" ");
+        this.state = {
+            mnemonic
+        }
     }
     public backPrePage(){
         this.ok && this.ok();
     }
     public nextStepClick(){
         this.ok && this.ok();
-        popNew("app-view-wallet-backupMnemonicConfirm-backupMnemonicConfirm",{mnemonic:this.props.mnemonic});
+        popNew("app-view-wallet-backupMnemonicConfirm-backupMnemonicConfirm");
     }
 }

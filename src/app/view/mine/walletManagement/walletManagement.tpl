@@ -1,11 +1,16 @@
 <div class="ga-new-page" ev-back-click="backPrePage" >
-    
     <div w-class="ga-top-banner">
         <app-components-topBar-topBar>{title:""}</app-components-topBar-topBar>
         <div w-class="ga-card">
             <div w-class="ga-wallet-name-container">
                 <span w-class="ga-wallet-name-dot" ></span>
-                <span w-class="ga-wallet-name" on-tap="switchWalletClick">{{it1.gwlt.nickName}}</span>
+                <input 
+                    id="autoInput"
+                    w-class="ga-input" 
+                    value="{{it1.gwlt.nickName}}" 
+                    on-blur="inputBlur"
+                    on-focus="inputFocus"
+                    style="border:{{it1.showInputBorder ? '1px solid #ccc' : 'none'}};margin-left:{{it1.showInputBorder ? '8px' : '0'}};"/>
             </div>
             <span w-class="ga-assets">≈$0.00</span>
         </div>
@@ -33,6 +38,8 @@
             <span w-class="ga-item-arrow"></span>
         </div>
     </div>
+    {{if it1.mnemonicExisted}}
     <div w-class="ga-wallet-backup-btn" on-tap="backupMnemonic">备份助记词</div>
+    {{end}}
     <div w-class="ga-delete-wallet">删除钱包</div>
 </div>

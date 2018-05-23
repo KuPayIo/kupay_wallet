@@ -1,6 +1,7 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet } from "../../../utils/tools";
+import { getLocalStorage, getCurrentWallet, decrypt } from "../../../utils/tools";
+import { pswEqualed } from "../../../utils/account";
 import { GaiaWallet } from '../../../core/eth/wallet'
 
 /**
@@ -25,12 +26,15 @@ export class BackupWallet extends Widget{
     }
     public backupWalletClick(){
         popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
-            if(this.exportMnemonicSucceed(r)){
+            let wallets = getLocalStorage("wallets");
+            let wallet = getCurrentWallet(wallets);
+            let walletPsw = decrypt(wallet.walletPsw);
+            if(pswEqualed(r,walletPsw)){
                 let close = popNew("pi-components-loading-loading",{text:"导出中"});
                 setTimeout(()=>{
                     close.callback(close.widget);
                     this.ok && this.ok();
-                    popNew("app-view-wallet-backupMnemonic-backupMnemonic",{ mnemonic:this.state.mnemonic.split(" ") });
+                    popNew("app-view-wallet-backupMnemonic-backupMnemonic");
                 },500);
             }else{
                 popNew("pi-components-message-message", { type: "error", content: "密码错误,请重新输入" })
