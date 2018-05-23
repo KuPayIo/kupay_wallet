@@ -2,6 +2,8 @@ import { Web3 } from '../thirdparty/web3.min';
 
 const web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/UHhtxDMNBuXoX8OFJKKM"));
 const ETH_CMC_URL = "https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY";
+const ETHSCAN_ROPSTEN_API_URL = "http://api-ropsten.etherscan.io/api?module=account&action=txlist&address="
+
 
 /**
  * API docs: https://github.com/ethereum/wiki/wiki/JavaScript-API
@@ -80,8 +82,25 @@ export class Api {
                 "USD": data['data']['quotes']['USD']['price']
             }
         } catch(e) {
-            console.log("Unknown error:", e);
+            return Promise.reject(e);
+        }
+    }
+    /**
+     * Docs: https://etherscan.io/apis#accounts
+     * Get maxmum last 10000 histroy transactions of `address`
+     * 
+     * @param {string} address 
+     * @returns {Promise<{}>} 
+     * @memberof Api
+     */
+    async getAllTransactionsOf(address: string): Promise<{}> {
+        try {
+            let url = ETHSCAN_ROPSTEN_API_URL + address;
+            let response = await fetch(url);
+            let data = await response.json();
+            return data
+        } catch(e) {
+            return Promise.reject(e);
         }
     }
 }
-
