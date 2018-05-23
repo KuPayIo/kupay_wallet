@@ -20,7 +20,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (): void => {
 	addWidget(document.body, 'pi-ui-root');
 	popNew('app-view-app');
-	//popNew('app-view-mine-walletManagement-walletManagement');
+	popNew('app-view-wallet-backupMnemonicConfirm-backupMnemonicConfirm');
 };
 
 // ============================== 立即执行

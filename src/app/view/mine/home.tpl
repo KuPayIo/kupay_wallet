@@ -1,4 +1,4 @@
-<div>
+<div class="ga-new-page">
     <div w-class="ga-top-banner">
         <span w-class="ga-banner-title">我的</span>
         <img src="../../res/image/u250.png" w-class="ga-notice"/>
