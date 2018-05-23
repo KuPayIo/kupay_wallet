@@ -1,0 +1,23 @@
+.messFriendName{
+    text-align: center;
+}
+.messFriendAddr{
+    font-size: 12px;
+    display: block;
+    text-align: center;
+}
+.ga-top-banner{
+    background-color: #fff;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 10px;
+}
+.ga-back{
+    position: absolute;
+    left: 10px;
+    cursor: pointer;
+}
