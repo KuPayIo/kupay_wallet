@@ -1,3 +1,202 @@
 .ga-new-page{
     background-color: #fff;
+    height: 100%;
+    overflow:auto;
+}
+.ga-announcement-container{
+    height: 45px;
+    display: flex;
+    padding: 0 30px;
+    align-items: center;
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 18px;
+}
+.ga-speaker-icon{
+    width: 22px;
+    height: 22px;
+}
+.ga-speaker-title{
+    color: #1A70DD;
+    margin-left: 3px;
+}
+.ga-speaker-text{
+    color: #666666;
+    margin-left: 10px;
+}
+.ga-carousel-container{
+    margin: 22px 16px 0;
+    height: 150px;
+    background-image: linear-gradient(-121deg, #27347D 0%, #3045B6 100%);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #FFFFFF;
+}
+.ga-carousel-title{
+    font-size: 34px;
+    letter-spacing: 0.77px;
+    text-align: center;
+    line-height: 50px;
+    margin-top: 30px;
+}
+.ga-carousel-text{
+    font-size: 16px;
+    letter-spacing: 0.34px;
+    text-align: center;
+    line-height: 20px;
+}
+.ga-dots{
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+}
+.ga-dot{
+    width: 7px;
+    height: 7px;
+    background: rgba(51,51,51,0.80);
+    margin: 0 7px;
+    border-radius: 50%;
+}
+.ga-dot-active{
+    background: rgba(255,255,255,0.80);
+}
+.ga-other-function{
+    margin: 15px 0; 
+    height: 40px;
+    display: flex;
+}
+.ga-function-item{
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #ddd;
+}
+.ga-function-item-icon{
+    width: 23px;
+    height: 23px;
+}
+.ga-function-item-text{
+    font-size: 16px;
+    color: #666666;
+    letter-spacing: 0.38px;
+    text-align: center;
+    line-height: 22px;
+    margin-left: 3px;
+}
+.ga-line{
+    height: 7px;
+    background-color: #f8f8f8;
+}
+
+.ga-fund-container{
+    margin-top: 30px;
+    padding: 0 16px;
+}
+.ga-box1{
+    display: flex;
+    align-items: baseline;
+}
+.ga-fund-title{
+    font-size: 20px;
+    color: #212C68;
+    letter-spacing: 0.43px;
+    line-height: 28px;
+}
+.ga-fund-desc{
+    font-size: 14px;
+    color: #808890;
+    letter-spacing: 0.29px;
+    line-height: 18px;
+    margin-left: 10px;
+}
+.ga-fund-list{
+    display: flex;
+    flex-direction: column;
+}
+.ga-fund-list-item{
+    padding: 16px 0;
+    border-bottom: 1px solid #DCE8F5;
+}
+.ga-fund-list-item-border{
+    border: none;
+}
+.ga-fund-row1{
+    display: flex;
+    align-items: center;
+    
+}
+.ga-fund-per{
+    color: #FF642B;
+    font-size: 16px;
+    letter-spacing: 0.58px;
+    line-height: 35px;
+    flex: 2 0 0;
+}
+.ga-fund-per-value{
+    font-size: 26px;
+}
+.ga-fund-name{
+    font-size: 18px;
+    color: #344E7D;
+    letter-spacing: 0.38px;
+    line-height: 25px;
+    flex: 3 0 0;
+}
+.ga-fun-row2{
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #808890;
+    letter-spacing: 0.29px;
+    line-height: 18px;
+    margin-top: 10px;
+}
+.ga-fund-date{
+    flex: 2 0 0;
+}
+.ga-fund-begin{
+    flex: 3 0 0;
+}
+
+.ga-news-container{
+    padding: 26px 16px 0;
+}
+.ga-news-box{
+    display: flex;
+    align-items: baseline;
+}
+.ga-news-h{
+    font-size: 20px;
+    color: #212C68;
+    letter-spacing: 0.43px;
+    line-height: 28px;
+}
+.ga-news-p{
+    font-size: 14px;
+    color: #808890;
+    letter-spacing: 0.29px;
+    line-height: 18px;
+    margin-left: 10px;
+}
+.ga-news-item{
+    display: flex;
+    flex-direction: column;
+    padding: 22px 0;
+    border-bottom: 1px solid #DCE8F5;
+}
+.ga-news-title{
+    font-size: 18px;
+    color: #344E7D;
+    letter-spacing: 0.38px;
+    line-height: 25px;
+}
+.ga-news-time{
+    font-size: 12px;
+    color: #808890;
+    letter-spacing: 0.24px;
+    line-height: 16px;
+    margin-top: 10px;
 }

@@ -4,8 +4,10 @@
     background-color: #fff;
 }
 .ga-header{
-    background-image: linear-gradient(-180deg, #EF7041 0%, #FFA100 100%);
     height: 242px;
+    background-image: url(../../../res/image/bg_eggmoney.png);
+    background-size: cover;
+    background-position: center;
 }
 .ga-header-content-container{
     margin: 20px 18px;
