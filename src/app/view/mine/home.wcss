@@ -1,7 +1,7 @@
 .ga-top-banner{
     background-color: #ccc;
     width: 100%;
-    height: 50px;
+    height: 144px;
     display: flex;
     align-items: center;
     justify-content: center;
