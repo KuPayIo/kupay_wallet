@@ -1,6 +1,6 @@
 
 .ga-header{
-    height: 263px;
+    height: 500px;
     display: flex;
     flex-direction: column;
     padding: 0 30px;
@@ -18,26 +18,27 @@
    display: flex;
    justify-content: center;
    align-items: center;
-   margin-top: 86.8px;
+   margin-top: 205px;
 }
 .ga-wallet-name-dot{
     width: 12px;
     height: 12px;
     border-radius: 50%;
+    margin-right: 10px;
 }
 .ga-wallet-name{
-    font-size: 16.8px;
+    font-size: 32px;
     color: #FFFFFF;
     letter-spacing: 0;
     text-align: center;
     cursor: pointer;
-    line-height: 23.6px;
+    line-height: 45px;
 }
 .ga-assets-container{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 85px;
+    margin-top: 130px;
 }
 .ga-assets-box{
     display: flex;
@@ -45,25 +46,28 @@
     color: #fff;
 }
 .ga-assets-title{
-    font-size: 12.6px;
+    font-size: 24px;
     color: #203260;
     text-align: left;
-    line-height: 17.36px;
+    line-height: 33px;
 }
 .ga-assets{
-    font-size: 16.84px;
+    font-size: 48px;
     color: #203260;
     text-align: left;
-    line-height: 23.68px;
+    line-height: 45px;
+}
+.ga-assets-symbol{
+    font-size: 32px;
 }
 .ga-add-currency{
     cursor: pointer;
-    width: 24px;
-    height: 24px;
+    width: 44px;
+    height: 44px;
 }
 .ga-currency-list-container{
     position: relative;
-    margin-top: 10.5px;
+    margin-top: 10px;
 }
 
 .ga-currency-list{
@@ -72,19 +76,19 @@
     padding: 0;
 }
 .ga-currency-item{
-    height: 78.9px;
+    height: 150px;
     display: flex;
     align-items: center;
-    padding: 0 7px;
-    margin: 10px 8px 0;
+    padding: 0 14px;
+    margin: 10px 16px 0;
     cursor: pointer;
     background: #FFFFFF;
     box-shadow: 0 2px 8px 0 rgba(12,15,35,0.05);
     border-radius: 12px;
 }
 .ga-currency-logo-container{
-    width: 52.6px;
-    height: 52.6px;
+    width: 100px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -98,33 +102,32 @@
     display: flex;
     flex-direction: column;
     flex: 1 0 0;
-    margin-left: 8px;
 }
 .ga-curreny-assets-container{
     display: flex;
     flex-direction: column;
 }
 .ga-curreny-name{
-    font-size: 16.8px;
+    font-size: 32px;
     color: rgba(33,44,103,0.87);
     text-align: left;
-    line-height: 23.68px;
+    line-height: 45px;
 }
 .ga-curreny-balance{
-    font-size: 16.8px;
+    font-size: 32px;
     color: rgba(33,44,103,0.87);
     text-align: right;
-    line-height: 23.68px;
+    line-height: 45px;
 }
 .ga-curreny-full-name{
-    font-size: 12.6px;
+    font-size: 24px;
     color: rgba(142,150,171,0.87);
     text-align: left;
-    line-height: 17.3px;
+    line-height: 33px;
 }
 .ga-curreny-balance-value{
-    font-size: 10.5px;
+    font-size: 24px;
     color: rgba(142,150,171,0.87);
     text-align: right;
-    line-height: 14.7px;
+    line-height: 28px;
 }

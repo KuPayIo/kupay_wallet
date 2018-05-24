@@ -1,4 +1,4 @@
-<div>
+<div style="height: 100%;">
     <widget w-tag="{{it1.tabBarList[it1.isActive].components}}"></widget>
     <div w-class="ga-bottom-tab-bar-container">
         {{for index,item of it1.tabBarList}}

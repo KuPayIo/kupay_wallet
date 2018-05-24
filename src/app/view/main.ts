@@ -20,7 +20,8 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (): void => {
 	addWidget(document.body, 'pi-ui-root');
 	popNew('app-view-app');
-	popNew('app-view-financialManagement-fund-home');
+	//popNew('app-view-financialManagement-fund-home');
+	// popNew('app-view-languageAndcoinset-coinset');
 };
 
 // ============================== 立即执行

@@ -46,7 +46,7 @@ export const listenerList = createHandlerList();
  * @example
  */
 export const cfg = {
-	width: 420, height: 700, wscale: 0.25, hscale: 0, full: false
+	width: 750, height: 1334, wscale: 0.25, hscale: 0, full: false
 };
 
 /**
