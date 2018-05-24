@@ -69,6 +69,8 @@
     top: 30px;
     width: 100%;
     font-size: 12px;
+    height: 450px;
+    overflow-y: scroll;
 }
 .each{
     position: relative;

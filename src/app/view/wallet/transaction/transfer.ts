@@ -3,7 +3,7 @@
  */
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, eth2Wei, setLocalStorage, effectiveCurrency } from "../../../utils/tools";
+import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, eth2Wei, setLocalStorage, effectiveCurrency, parseAccount, parseDate } from "../../../utils/tools";
 import { GaiaWallet } from "../../../core/eth/wallet";
 import { Api } from "../../../core/eth/api";
 
@@ -50,7 +50,7 @@ export class AddAsset extends Widget {
             pay: 0,
             payConversion: `￥0.00`,
             gasPrice: 100000000,
-            gasLimit: 21000,
+            gasLimit: 210000,
             fees: 0,
             feesShow: "",
             feesConversion: "",
@@ -93,15 +93,13 @@ export class AddAsset extends Widget {
             if (r === psw) {
                 try {
                     let id = await doTransfer(wallet, thisObj.props.from, thisObj.state.to, psw, thisObj.state.gasPrice, thisObj.state.gasLimit
-                        , eth2Wei(thisObj.state.pay), thisObj.props.currencyName)
+                        , eth2Wei(thisObj.state.pay), thisObj.props.currencyName, thisObj.state.info)
                     //打开交易详情界面
                     thisObj.showTransactionDetails(id, wallet)
                     thisObj.doClose()
                 } catch (error) {
                     console.log(error.message)
-                    if (error.message.indexOf("insufficient funds") >= 0) {
-                        popNew("pi-components-message-message", { type: "error", content: "余额不足", center: true })
-                    }
+                    popNew("pi-components-message-message", { type: "error", content: error.message, center: true })
                 }
             }
         }, () => { })
@@ -136,6 +134,7 @@ export class AddAsset extends Widget {
      * 显示交易详情
      */
     public showTransactionDetails(id, wallet) {
+        let t = new Date();
         var record = {
             id: id,
             type: "转账",
@@ -143,7 +142,8 @@ export class AddAsset extends Widget {
             to: this.state.to,
             pay: this.state.pay + this.state.fees,
             tip: this.state.feesShow,
-            time: parseDate(new Date()),
+            time: t.getTime(),
+            showTime: parseDate(t),
             result: "交易中",
             info: this.state.info || "无"
         }
@@ -183,28 +183,9 @@ const addRecord = (currencyName, currentAddr, record) => {
 
 
 /**
- * 解析显示的账号信息
- * @param str 
- */
-const parseAccount = (str: string) => {
-    if (str.length <= 29) return str;
-    return `${str.slice(0, 13)}...${str.slice(str.length - 13, str.length)}`;
-}
-
-
-
-/**
- * 转化显示时间
- * @param t 
- */
-const parseDate = (t: Date) => {
-    return `${t.getUTCFullYear()}-${t.getUTCMonth() + 1}-${t.getUTCDate()} ${t.getHours()}:${t.getMinutes()}`;
-}
-
-/**
  * 处理转账
  */
-async function doTransfer(wallet, acct1, acct2, psw, gasPrice, gasLimit, value, currencyName) {
+async function doTransfer(wallet, acct1, acct2, psw, gasPrice, gasLimit, value, currencyName, info) {
     let api = new Api();
     let nonce = await api.getTransactionCount(acct1);
     let txObj = {
@@ -213,7 +194,7 @@ async function doTransfer(wallet, acct1, acct2, psw, gasPrice, gasLimit, value, 
         gasPrice: gasPrice,
         gasLimit: gasLimit,
         value: value,
-        data: ''
+        data: info
     }
 
     let gwlt = getGwltByAddr(wallet, acct1, currencyName)

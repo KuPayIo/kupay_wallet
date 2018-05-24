@@ -16,7 +16,7 @@
         <div w-class="body-title">发币地址</div>
         <div w-class="body-title-value">{{it.from}}</div>
         <div w-class="body-title">交易时间</div>
-        <div w-class="body-title-value">{{it.time}}</div>
+        <div w-class="body-title-value">{{it.showTime}}</div>
         <div w-class="body-title">交易号</div>
         <div w-class="body-title-value">{{it.id}}</div>
     </div>

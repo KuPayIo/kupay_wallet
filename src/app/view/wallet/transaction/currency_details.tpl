@@ -17,10 +17,10 @@
             <div w-class="transaction-list">
                 {{for i,each of it1.list}}
                 <div w-class="each" on-tap="showTransactionDetails(e,{{i}})">
-                    <div w-class="type" style="color:{{each.type==='收款'?'#008000':'#FF0000'}}">{{each.type}}</div>
+                    <div w-class="type" style="color:{{each.type==='收款'?'#008000':(each.type==='转账'?'#FF0000':'')}}">{{each.type}}</div>
                     <div w-class="account">{{each.account}}</div>
-                    <div w-class="pay">{{each.type==='收款'?'+':'-'}}{{each.showPay}}</div>
-                    <div w-class="time">{{each.time}}</div>
+                    <div w-class="pay">{{each.type==='收款'?'+':(each.type==='转账'?'-':'')}}{{each.showPay}}</div>
+                    <div w-class="time">{{each.showTime}}</div>
                     <div w-class="result">{{each.result}}</div>
                 </div>
                 {{end}}
