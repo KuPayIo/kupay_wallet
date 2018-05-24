@@ -1,0 +1,132 @@
+.ga-new-page{
+    display: flex;
+    flex-direction: column;
+}
+.ga-header{
+    background-image: linear-gradient(-180deg, #17D5F8 0%, #1A96F7 100%);
+    height: 242px;
+}
+.ga-header-content-container{
+    margin: 20px 18px;
+    height: 210px;
+    background: rgba(255,255,255,0.90);
+    box-shadow: 0 4px 30px 0 rgba(39,52,125,0.25);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #212C68;
+    letter-spacing: 0;
+    text-align: center;
+}
+.ga-bill-container{
+    flex:1 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.ga-title{
+    font-size: 14px;
+    line-height: 18px;
+}
+.ga-costs{
+    font-size: 35px;
+    line-height: 50px;
+    margin:8px 0;
+}
+.ga-balance{
+    font-size: 16px;
+    line-height: 23px;
+}
+.ga-bill-msg{
+    height: 60px;
+    background: rgba(221,226,240,0.42);
+    border-radius: 0 0 16px 16px;
+    width: 100%;
+    padding: 10px 0;
+    display: flex;
+    box-sizing: border-box;
+}
+.ga-item{
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid rgba(39, 52, 125, 0.14);
+}
+.ga-item-1{
+    font-size: 12px;
+    line-height: 16px;
+}
+.ga-item-2{
+    letter-spacing: -0.58px;
+    line-height: 23px;
+    font-size: 15px;
+}
+.ga-bottom-container{
+    background-color: #fff;
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin-top: 60px;
+    padding: 0 16px ;
+}
+
+.ga-unbilled-container{
+    display: flex;
+    flex-direction: column;
+    padding: 10px 2px 15px 15px;
+    color: #8E96AB;
+    font-size: 16px;
+    line-height: 23px;
+    border-bottom: 1px solid #e5e5e5;
+}
+.ga-bill-box{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 13px;
+}
+.ga-bill-num{
+    font-size: 20px;
+    color: #203260;
+    line-height: 28px;
+}
+.ga-list-item{
+    display: flex;
+    padding: 22px 5px 22px 25px;
+    border-bottom: 1px solid #e5e5e5;
+    align-items: center;
+    cursor: pointer;
+}
+.ga-list-item-icon{
+    width: 22px;
+    height: 22px;
+    margin-right: 18px;
+}
+.ga-list-item-text{
+    flex: 1 0 0;
+    font-size: 18px;
+    color: #203260;
+    line-height: 23px;
+}
+.ga-list-item-arrow{
+    width: 15px;
+    height: 15px;
+}
+.ga-btn-bottom{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255,255,255,0.80);
+    height: 55px;
+    border-top: 1px solid #e5e5e5;
+    font-size: 16px;
+    color: #212C68;
+    line-height: 23px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

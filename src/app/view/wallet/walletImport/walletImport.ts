@@ -73,14 +73,15 @@ export class WalletImport extends Widget{
         let gwlt = null;
         try{
             gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic,"english",this.state.walletPsw);
+            gwlt.nickName = this.state.walletName;
         }catch(e){
             popNew("pi-components-message-message", { type: "error", content: "无效的助记词" })
             return;
         }
-        if(this.importedWalletIsExisted(gwlt)){
+        /* if(this.importedWalletIsExisted(gwlt)){
             popNew("pi-components-message-message", { type: "alert", content: "钱包已存在" })
             return;
-        }
+        } */
         this.importWallet(gwlt);
         let close = popNew("pi-components-loading-loading",{text:"导入中"});
         setTimeout(()=>{
@@ -92,7 +93,6 @@ export class WalletImport extends Widget{
     
 
     public importWallet(gwlt:GaiaWallet): void{
-        gwlt.nickName = this.state.walletName;
         let wallets = getLocalStorage("wallets") || {walletList:[],curWalletId:""};
         let curWalletId = gwlt.address;
         let wallet:Wallet = {
@@ -114,6 +114,16 @@ export class WalletImport extends Widget{
         if(this.state.walletPswTips.trim().length>0){
             wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
         }
+        
+
+        //判断钱包是否存在
+        let len = wallets.walletList.length;
+        for(let i = 0; i < len; i ++){
+            if(gwlt.address === wallets.walletList[i].walletId){
+                wallets.walletList.splice(i,1);//删除已存在钱包
+                break;
+            }
+        }
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
         setLocalStorage("wallets",wallets,true);
@@ -124,6 +134,7 @@ export class WalletImport extends Widget{
      * @param gwlt imported wallet
      */
     public importedWalletIsExisted(gwlt:GaiaWallet){
+        
         let wallets = getLocalStorage("wallets") || {walletList:[],curWalletId:""};
         let len = wallets.walletList.length;
         for(let i = 0; i < len; i ++){
@@ -133,4 +144,6 @@ export class WalletImport extends Widget{
         }
         return false;
     }
+
+  
 }
