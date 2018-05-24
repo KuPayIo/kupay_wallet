@@ -11,11 +11,11 @@
         </div>
         <div w-class="ga-bottom-container">
             <div w-class="ga-create-wallet" on-tap="createWalletClick">
-                <img src="../../res/image/u250.png" w-class="ga-img"/>
+                <img src="../../../res/image/u250.png" w-class="ga-img"/>
                 <span w-class="ga-text">创建钱包</span>
             </div>
             <div w-class="ga-import-wallet" on-tap="importWalletClick">
-                <img src="../../res/image/u250.png" w-class="ga-img"/>
+                <img src="../../../res/image/u250.png" w-class="ga-img"/>
                 <span w-class="ga-text">导入钱包</span>
             </div>
         </div>

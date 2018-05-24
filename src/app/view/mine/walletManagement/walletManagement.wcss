@@ -1,0 +1,91 @@
+.ga-top-banner{
+    width: 100%;
+    height: 280px;
+    background-color: #ccc;
+}
+.ga-card{
+   height: 160px;
+   background-color: #fff;
+   margin: 40px 20px 0;
+   border-radius: 8px; 
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 10px;
+   box-sizing: border-box;
+}
+.ga-wallet-name-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ }
+.ga-wallet-name-dot{
+    width: 8px;
+    height: 8px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+}
+.ga-input{
+    outline: none;
+    border: none;
+    box-sizing: border-box;
+    padding: 10px;
+}
+.ga-assets{
+    font-size: 20px;
+}
+
+.ga-bottom-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+.ga-item{
+    display: flex;
+    padding: 10px 5px;
+    margin: 5px 10px;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+.ga-item-text{
+    flex: 1 0 0;
+    margin-left: 10px;
+}
+.ga-item-arrow{
+    width: 10px;
+    height: 10px;
+    background-color: transparent;
+    border-right: 2px solid #000;
+    border-bottom: 2px solid #000;
+    transform: rotateZ(-45deg);
+}
+.ga-psw-tips-container{
+    display: flex;
+    align-items: center;
+}
+.ga-img{
+    width: 12px;
+    height: 12px;
+    margin-left: 5px;
+}
+.ga-wallet-backup-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 45px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 60px 20px 10px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+.ga-delete-wallet{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #ccc;
+}

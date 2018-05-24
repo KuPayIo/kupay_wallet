@@ -22,8 +22,6 @@ export const run = (): void => {
 	// popNew('app-view-app');
 	// popNew('app-view-application-home');
 	popNew('app-view-messageList-messageList');
-	
-	
 };
 
 // ============================== 立即执行

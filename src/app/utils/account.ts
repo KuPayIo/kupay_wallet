@@ -2,6 +2,7 @@
  * 和账号相关的工具
  */
 
+ //密码强度列表
 const walletPswStrengthList = [{
     text:"弱",
     color:"#FF0000"
@@ -14,22 +15,36 @@ const walletPswStrengthList = [{
 }];
 
 
+/**
+ * 钱包名称是否合法
+ * @param walletName 
+ */
 export function walletNameAvailable(walletName){
     return walletName.trim().length >=1 && walletName.trim().length <= 12;
 }
 
-
+/**
+ * 钱包密码是否合乎规则
+ * @param walletPsw 
+ */
 export function walletPswAvailable(walletPsw){
     let reg = /^[.@$&*#a-zA-Z0-9]{8,}$/;
     return reg.test(walletPsw.trim());
 }
 
-
+/**
+ * 判断密码是否相等
+ * @param psw1 
+ * @param psw2 
+ */
 export function pswEqualed(psw1,psw2){
     return psw1.trim() === psw2.trim();
 }
 
-
+/**
+ * 获取密码强度对象
+ * @param walletPsw 
+ */
 export function getWalletPswStrength(walletPsw?:string){
     if(!walletPsw || !walletPsw.trim()){
         return walletPswStrengthList[0];

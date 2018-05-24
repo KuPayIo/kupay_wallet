@@ -1,40 +1,49 @@
 .ga-backup-container{
-    padding: 100px 10px 0;
+    padding: 100px 15px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 .ga-backup-img{
-    width: 100px;
+    width: 150px;
     height: 100px;
 }
 .ga-label-1{
     margin-top: 20px;
-    color: #ccc;
-    font-size: 20px;
+    font-size: 18px;
+    color: #203260;
+    text-align: left;
+    line-height: 25px;
 }
 .ga-label-2{
     margin-top: 20px;
     font-size: 16px;
+    color: #8E96AB;
+    text-align: left;
+    line-height: 22px;
 }
 .ga-wallet-backup-btn{
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 45px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 60px;
+    height: 55px;
     cursor: pointer;
-    width: 100%;
+    margin-top: 55px;
+    background: #203260;
+    border-radius: 6px;
+    font-size: 18px;
+    color: rgba(255,255,255,0.87);
+    text-align: center;
 }
 
 .ga-how-to-backup-btn{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 20px;
     cursor: pointer;
     font-size: 14px;
-    color: #ccc;
+    color: #8E96AB;
+    text-align: center;
 }

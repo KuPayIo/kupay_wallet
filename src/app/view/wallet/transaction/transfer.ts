@@ -3,7 +3,7 @@
  */
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, Eth2RMB, eth2Wei, setLocalStorage } from "../../../utils/tools";
+import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, eth2Wei, setLocalStorage, effectiveCurrency } from "../../../utils/tools";
 import { GaiaWallet } from "../../../core/eth/wallet";
 import { Api } from "../../../core/eth/api";
 
@@ -57,9 +57,7 @@ export class AddAsset extends Widget {
             info: "",
         }
 
-        this.state.fees = wei2Eth(this.state.gasPrice * this.state.gasLimit);
-        this.state.feesShow = `${this.state.fees} ETH`;
-        this.state.feesConversion = `≈￥${Eth2RMB(this.state.fees)}`;
+        this.resetFees();
     }
 
     /**
@@ -119,10 +117,12 @@ export class AddAsset extends Widget {
     /**
      * 收款金额改变
      */
-    public onPayChange(e) {
-        let num = parseFloat(e.value);
-        this.state.pay = num || 0;
-        this.state.payConversion = `≈￥${Eth2RMB(num)}`;
+    async onPayChange(e) {
+        let num = parseFloat(e.value) || 0;
+        this.state.pay = num;
+
+        let r = await effectiveCurrency(num, "ETH", "CNY", false);
+        this.state.payConversion = r.conversionShow;
         this.paint();
     }
 
@@ -151,6 +151,14 @@ export class AddAsset extends Widget {
 
         addRecord(this.props.currencyName, this.props.from, record)
 
+    }
+
+    private async resetFees() {
+        let r = await effectiveCurrency(this.state.gasPrice * this.state.gasLimit, "ETH", "CNY", true);
+        this.state.fees = r.num;
+        this.state.feesShow = r.show;
+        this.state.feesConversion = r.conversionShow;
+        this.paint();
     }
 
 }

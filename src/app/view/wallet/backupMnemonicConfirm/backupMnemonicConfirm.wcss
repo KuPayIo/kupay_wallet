@@ -2,70 +2,81 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 10px;
+    padding: 0 15px;
 }
 .ga-mnemonic-title{
+    margin-top: 35px;
     font-size: 18px;
-    color: #ccc;
-    margin-top: 20px;
+    line-height: 24px;
+    color: #203260;
+    text-align: left;
 }
 .ga-mnemonic-desc{
     font-size: 16px;
     margin-top: 20px;
-}
-.ga-mnemonic{
-    font-size: 18px;
-    margin-top: 20px;
-    border: 1px solid #ccc;
-    padding: 20px;
-}
-.ga-mnemonic-next-step-btn{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 45px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 60px;
-    cursor: pointer;
+    color: #8E96AB;
+    text-align: left;
+    line-height: 23px;
     width: 100%;
 }
 .ga-mnemonic-confirm{
-    min-height: 80px;
-    border: 1px solid #ccc;
-    margin-top: 60px;
-    width: 100%;
-    flex-wrap: wrap;
+    font-size: 18px;
+    margin-top: 20px;
+    padding: 17px 17px 25px;
     display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
+    background: #FFFFFF;
+    border-radius: 6px;
+    min-height: 120px;
+}
+.ga-mnemonic-next-step-btn{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 55px;
+    cursor: pointer;
+    margin-top: 55px;
+    background: #203260;
+    border-radius: 6px;
+    font-size: 18px;
+    color: rgba(255,255,255,0.87);
+    text-align: center;
 }
 
 .ga-mnemonic-shuffled{
     width: 100%;
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 10px;
 }
 .ga-mnemonic-confirmed-item{
-    padding: 0 15px;
-    margin: 5px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    line-height: 20px;
+    padding: 0 3px;
+    font-size: 18px;
+    line-height: 24px;
+    color: #203260;
+    text-align: left;
     cursor: pointer;
-    background-color: #999;
-    color: #fff;
 }
 .ga-mnemonic-shuffled-item{
-    padding: 0 15px;
-    margin: 5px;
     cursor: pointer;
-    color: #000;
-    height: 40px;
+    height: 45px;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #FFFFFF;
+    border-radius: 6px;
+    font-size: 18px;
+    color: #203260;
+    text-align: center;
+    flex: 0 0 30%;
+    margin-top: 10px;
 }
 .ga-mnemonic-shuffled-item-active{
-    background-color: #333;
+    background-color: #1A70DD;
     color: #fff;
 }

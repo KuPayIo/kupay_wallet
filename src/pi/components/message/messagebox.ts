@@ -7,6 +7,7 @@ interface Props {
     type: string;
     text: string;
     center?: boolean;
+    inputType?:string;
 }
 
 export class MessageBox extends Widget {

@@ -85,7 +85,6 @@ export class WalletCreate extends Widget{
         let wallet:Wallet = {
             walletId:curWalletId,
             walletPsw:encrypt(this.state.walletPsw),
-            walletPswTips:encrypt(this.state.walletPswTips),
             gwlt:gwlt.toJSON(),
             showCurrencys:["ETH"],
             currencyRecords:[{
@@ -94,9 +93,13 @@ export class WalletCreate extends Widget{
                 addrs:[{
                     addr:gwlt.address,
                     addrName:"默认地址",
+                    gwlt:gwlt.toJSON(),
                     record:[]
                 }]
             }]
+        }
+        if(this.state.walletPswTips.trim().length>0){
+            wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
         }
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);

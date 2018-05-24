@@ -1,8 +1,8 @@
 <div class="ga-new-page" ev-back-click="backPrePage">
-        <app-components-topBar-topBar>{title:"备份助记词"}</app-components-topBar-topBar>
+        <app-components-topBar-topBar>{title:"备份钱包"}</app-components-topBar-topBar>
         <div w-class="ga-backup-mnemonic-container">
             <p w-class="ga-mnemonic-title">确认你的助记词</p>
-            <p w-class="ga-mnemonic-desc">In hac habitasse platea dictumst. Vivamus fermentum quam volutpat aliquam. Integer et elit eget elit facilisis tristique. Nam vel iaculis mauris. Sed ullamcorper tellus erat, ultrices sem tincidunt euismod. </p>
+            <p w-class="ga-mnemonic-desc">请按顺序选择您刚才抄写的助记词</p>
             <div w-class="ga-mnemonic-confirm">
                 {{for index,item of it1.confirmedMnemonic}}
                 <span w-class="ga-mnemonic-confirmed-item" on-tap="confirmedMnemonicItemClick(e,{{index}})">{{item.word}}</span>
