@@ -33,13 +33,10 @@
     display: inline-block;
     margin-left: -8px;
 }
-.messlist{
-    background-color: #f9f9f9;
-}
 .ga-top-banner{
     background-color: #fff;
     width: 100%;
-    height: 60px;
+    height: 55px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -48,8 +45,10 @@
 }
 .ga-back{
     position: absolute;
-    left: 10px;
+    left: 20px;
     cursor: pointer;
+    width: 25px;
+    height: 25px;
 }
 .ga-banner-title{
     font-size: 20px;   

@@ -1,17 +1,18 @@
 import {Widget} from "../../../pi/widget/widget";
-import {notify} from "../../../pi/widget/event";
-import { popNew } from "../../../pi/ui/root";
 
-export class messageList extends Widget{
+export class messagefriends extends Widget{
     public ok: () => void;
     constructor(){
         super();
-        this.props={       
-            type:"公告",
-            title:"标题标题标题标题标题标题标题标题标题标题",
-            content:"这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容",
-            time:"4-5",
-            name:"小王"
+        this.state={  
+            data:[
+                {type:"1",content:"今天天气真好"},
+                {type:"2",content:"对呀对呀！"},
+                {type:"1",content:"转给你的两个以太坊收到了嘛？"},
+                {type:"2",content:"收到了，好快呀",time:"5-23 10:53"},        
+                {type:"1",content:"嗯，推荐大家都来用fairblock吧！"},
+                {type:"2",content:"好呀好呀！"}
+            ]     
         }
     }
 

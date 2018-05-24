@@ -9,7 +9,7 @@
 .ga-top-banner{
     background-color: #fff;
     width: 100%;
-    height: 60px;
+    height: 55px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -18,6 +18,48 @@
 }
 .ga-back{
     position: absolute;
-    left: 10px;
+    left: 20px;
     cursor: pointer;
+    width: 25px;
+    height: 25px;
+}
+.mymessContent{
+    background: #3561D3;
+    display: block;
+    color: #fff;
+    float: right;
+    border-radius: 12px 12px 26px 12px;
+    padding: 13px 15px;
+    margin: 5px 10px;
+}
+.friendmessContent{
+    background: #203260;
+    border-radius: 12px 12px 12px 26px;
+    color: #fff;
+    float: left;
+    padding: 13px 15px;
+    margin: 5px 10px;   
+}
+.talkInput{
+    background-color: #fff;
+    height: 55px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.sendBtn{
+    width: 30px;
+    float: right;
+    margin: 10px;
+}
+.messFriendTime{
+    text-align: center;
+    font-size: 12px;
+    color: #999999;
+    margin: 10px;
+}
+.messFriendPerson{
+    margin: 5px 15px;
+    font-size: 13px;
+    color: #777777;
 }
