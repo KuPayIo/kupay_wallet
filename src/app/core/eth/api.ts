@@ -72,6 +72,24 @@ export class Api {
             })
         })
     }
+/**
+ * Estimate gas usage of a transaction obj
+ * 
+ * @param {{to, data}} obj `to` and `data` shoul be a '0x' prefixed hex string
+ * @returns {Promise<number>} 
+ * @memberof Api
+ */
+estimateGas(obj: {to, data}): Promise<number> {
+        return new Promise((resolve, reject) => {
+            web3.eth.estimateGas(obj, (err, res) => {
+                if(!err) {
+                    return resolve(res);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
+    }
 
     async getExchangeRate(): Promise<{}> {
         try {
