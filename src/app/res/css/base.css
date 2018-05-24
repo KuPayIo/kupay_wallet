@@ -4,7 +4,7 @@
     top: 0;
     bottom: 0;
     right: 0;
-    background-color: #eee;
+    background-color: #f8f8f8;
 }
 
 .hide-scrollbar::-webkit-scrollbar {

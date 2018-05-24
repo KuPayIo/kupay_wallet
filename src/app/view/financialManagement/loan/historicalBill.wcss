@@ -1,0 +1,55 @@
+.ga-new-page{
+    background-color: #fff;
+}
+.ga-year{
+    height: 27px;
+    background-color: #f8f8f8;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: rgba(142,150,171,0.87);
+    line-height: 17px;
+}
+.ga-mothon-list{
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255,255,255,0.89);
+}
+.ga-mothon-item{
+    margin: 0 16px;
+    padding: 19px 0 22px;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ga-item-left{
+    display: flex;
+    flex-direction: column;
+}
+.ga-left-month{
+    font-size: 18px;
+    color: rgba(33,44,103,0.87);
+    line-height: 25px;
+}
+.ga-left-date{
+    font-size: 14px;
+    color: rgba(142,150,171,0.87);
+    line-height: 18px;
+}
+.ga-item-right{
+    display: flex;
+    align-items: center;
+}
+.ga-right-text{
+    font-size: 16px;
+    color: #203260;
+    letter-spacing: 0;
+    line-height: 23px;
+}
+.ga-right-arrow{
+    width: 22px;
+    height: 22px;
+    margin-left: 5px;
+}

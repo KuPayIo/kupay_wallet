@@ -1,0 +1,212 @@
+.ga-new-page{
+    background-color: #fff;
+    height: 100%;
+    overflow:auto;
+}
+.ga-header{
+    background-image: url(../../../res/image/bg_fund.png);
+    background-size: cover;
+    background-position: center;
+    height: 242px;
+}
+.ga-top-banner{
+    width: 100%;
+    height: 46.3px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    color: #203260;
+    padding: 2px 15px;
+    box-sizing: border-box;
+}
+.ga-back-container{
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.ga-back{
+    width: 22px;
+    height: 22px;
+}
+
+.ga-title-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+    margin-top: 5px;
+}
+.ga-banner-title{
+    font-size: 18px;
+    line-height: 25px;
+    text-align: center;
+}
+.ga-number{
+    font-size: 14px;
+    line-height: 18px;
+}
+.ga-share-container{
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.ga-share{
+    width: 23px;
+    height: 23px;
+}
+.ga-header-content-container{
+    margin: 20px 18px;
+    height: 210px;
+    background: rgba(255,255,255,0.90);
+    box-shadow: 0 4px 30px 0 rgba(39,52,125,0.25);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    color: #212C68;
+    letter-spacing: 0;
+    text-align: center;
+}
+.ga-header-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin: 0 45px 25px;
+    color: #212C68;
+    flex: 1 0 0;
+}
+.ga-header-left{
+    display: flex;
+    flex-direction: column;
+}
+.ga-header-right{
+    display: flex;
+    flex-direction: column;
+}
+.ga-header-h{
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: 0.34px;
+}
+.ga-header-p{
+    font-size: 35px;
+    letter-spacing: 0.77px;
+    line-height: 47px;
+}
+.ga-header-bottom{
+    height: 60px;
+    border-top: 1px solid  #e5e5e5;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+}
+.ga-header-label{
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0.29px;
+    line-height: 18px;
+    background: #212C67;
+    border: 1px solid #1735D6;
+    padding: 5px;
+    margin-right: 12px;
+}
+.ga-charts-container{
+    margin-top: 60px;
+    padding: 0 16px;
+}
+.ga-charts-title{
+    font-size: 20px;
+    color: #212C68;
+    letter-spacing: 0.43px;
+    line-height: 30px;
+}
+.ga-charts{
+    height: 270px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin: 20px 0;
+}
+.ga-charts-btns{
+    margin: 16px 5px;
+    display: flex;
+    height: 32px;
+}
+.ga-charts-btn1{
+    background: #212C67;
+    border: 1px solid #212C67;
+    border-radius: 8px 0 0 8px;
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+.ga-charts-btn2{
+    background: #FFFFFF;
+    border: 1px solid #212C67;
+    border-left: none;
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ga-charts-btn3{
+    background: #FFFFFF;
+    border-top: 1px solid #212C67;
+    border-bottom: 1px solid #212C67;
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ga-charts-btn4{
+    background: #FFFFFF;
+    border: 1px solid #212C67;
+    border-radius: 0 8px 8px 0;
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ga-line{
+    height: 5px;
+    background-color: #f8f8f8;
+}
+.ga-history-container{
+    display: flex;
+    flex-direction: column;
+    color: #212C68;
+}
+.ga-history-box{
+    height: 45px;
+    display: flex;
+}
+.ga-history-performance-btn{
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 3px solid #0980FE; 
+}
+.ga-history-net-worth-btn{
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ga-his-box{
+    margin: 0 16px;
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-top: 1px solid #DCE8F5;
+}

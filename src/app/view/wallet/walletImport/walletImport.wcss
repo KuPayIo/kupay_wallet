@@ -1,7 +1,10 @@
 
 
+.ga-new-page{
+    background-color: #fff;
+}
 .ga-import-container{
-    padding: 20px 10px;
+    padding: 20px 15px;
 }
 
 .ga-import-item{
@@ -11,8 +14,11 @@
     position: relative;
 }
 .ga-import-item-label{
-    font-size: 18px;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: #8E96AB;
+    text-align: left;
+    line-height: 18px;
 }
 .ga-password-strength{
     position: absolute;
@@ -20,7 +26,10 @@
     bottom: 20px;
     transform: translateY(50%);
 }
-
+.ga-password-strength-label{
+    color: rgba(102,102,102,0.87);
+    margin-right: 5px;
+}
 .ga-import-protocol{
     display: flex;
     align-items: center;
@@ -28,26 +37,31 @@
 }
 .ga-user-protocol{
     margin-left: 10px;
-    color: #ccc;
-    font-size: 14px;
     cursor: pointer;
+    font-size: 13px;
+    color: #1A70DD;
+    text-align: left;
 }
 .ga-import-btn{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 45px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 30px;
+    height: 55px;
     cursor: pointer;
+    margin: 30px 15px 0;
+    background: #203260;
+    border-radius: 6px;
+    font-size: 18px;
+    color: rgba(255,255,255,0.87);
+    text-align: center;
 }
 .ga-whatis-mnemonic-btn{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 20px;
     cursor: pointer;
     font-size: 14px;
-    color: #ccc;
+    color: #8E96AB;
+    text-align: center;
 }

@@ -6,6 +6,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    color: #203260;
 }
 .ga-back-container{
     height: 100%;
