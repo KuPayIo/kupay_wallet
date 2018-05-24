@@ -129,6 +129,8 @@ export class AddAsset extends Widget {
      */
     public onInfoChange(e) {
         this.state.info = e.value;
+        // let gas = await api.estimateGas({ to: acct2, data: e.value });
+        // console.log(gas);
     }
     /**
      * 显示交易详情

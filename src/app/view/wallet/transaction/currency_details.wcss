@@ -14,7 +14,7 @@
     width: 100%;
     height: 50px;
     font-size: 20px;
-    color: #FFFFFF;
+    color: black;
     text-align: center;
     line-height: normal;
 }
@@ -78,6 +78,7 @@
     margin-top: 10px;
     height: 50px;
     cursor: pointer;
+    background-color: white;
 }
 .type{
     position: absolute;
@@ -100,6 +101,7 @@
     position: absolute;
     top: 22px;
     right: 0px;
+    color: #8E96AB
 }
 
 .footer{

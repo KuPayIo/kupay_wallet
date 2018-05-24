@@ -1,0 +1,82 @@
+.base{
+    background-color: #eee;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+.header{
+    border-width: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 50px;
+    font-size: 20px;
+    color: black;
+    text-align: center;
+    line-height: normal;
+}
+
+
+.body{
+    position: absolute;
+    width: 100%;
+    top: 55px;
+    height: 100%;
+}
+.no-record{
+    background-image : url(../../../res/image/img_none_record@2x.png) ;
+    background-repeat: no-repeat;
+    background-size: 200px 200px;
+    background-position-x: center;
+    background-position-y: bottom;
+    height: 50%;
+}
+.no-record-text{
+    text-align: center
+}
+.transaction-list{
+    position: absolute;
+    width: 100%;
+    font-size: 12px;
+    height: 630px;
+    overflow-y: scroll;
+}
+.each{
+    position: relative;
+    width: 100%;
+    margin-top: 2px;
+    height: 50px;
+    cursor: pointer;
+    background-color: white;
+}
+.type{
+    position: absolute;
+    width: 40px;
+    left: 10px;
+}
+.account{
+    position: absolute;
+    left: 50px;
+    width: 200px;
+    color: #8E96AB
+}
+.pay{
+    position: absolute;
+    right: 10px;
+    color: #203260
+}
+.time{
+    position: absolute;
+    top: 22px;
+    left: 10px;
+    color: #8E96AB
+}
+.result{
+    position: absolute;
+    top: 22px;
+    right: 10px;
+    color: #8E96AB
+}

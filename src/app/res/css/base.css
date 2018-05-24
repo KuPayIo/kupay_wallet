@@ -6,3 +6,7 @@
     right: 0;
     background-color: #eee;
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}

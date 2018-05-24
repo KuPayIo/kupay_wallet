@@ -160,7 +160,7 @@ export class AddAsset extends Widget {
             v.showPay = `${v.pay} ETH`;
             return v
         }))
-        console.log(list, r)
+        // console.log(list, r)
 
         this.state.list = list.sort((a, b) => b.time - a.time);
         this.paint();
