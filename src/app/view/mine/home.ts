@@ -18,7 +18,7 @@ export class Home extends Widget{
             },{
                 icon:"u250.png",
                 text:"交易记录",
-                components:"app-view-mine-walletManagement-walletManagement"
+                components:"app-view-mine-transaction-record"
             },{
                 icon:"u250.png",
                 text:"地址管理",

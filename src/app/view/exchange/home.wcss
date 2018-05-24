@@ -1,0 +1,47 @@
+.base{
+    background-color: #eee;
+    width: 100%;
+    height: 100%;
+    color: #203260;
+}
+.header{
+    height: 46px;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    text-align: center;
+}
+
+.currency{
+    position: relative;
+    top: 10px;
+    font-size: 18px;
+}
+.currency-change{
+    border-left: 1px solid #8E96AB;
+    width: 6px;
+    height: 6px;
+    border-bottom: 1px solid #8E96AB;
+    transform: rotate(-45deg);
+    position: absolute;
+    margin-left: 7px;
+    top: 17px;
+}
+
+.k-line{
+    position: absolute;
+    right: 10px;
+    background-image: url(../../res/image/btn_exc_k@2x.png);
+    background-size: 30px;
+    width: 30px;
+    height: 30px;
+    top: 8px;
+}
+
+.body{
+
+}
+
+.body-left{
+    
+}

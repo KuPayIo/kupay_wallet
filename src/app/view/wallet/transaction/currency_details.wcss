@@ -14,7 +14,7 @@
     width: 100%;
     height: 50px;
     font-size: 20px;
-    color: #FFFFFF;
+    color: black;
     text-align: center;
     line-height: normal;
 }
@@ -69,6 +69,8 @@
     top: 30px;
     width: 100%;
     font-size: 12px;
+    height: 450px;
+    overflow-y: scroll;
 }
 .each{
     position: relative;
@@ -76,6 +78,7 @@
     margin-top: 10px;
     height: 50px;
     cursor: pointer;
+    background-color: white;
 }
 .type{
     position: absolute;
@@ -98,6 +101,7 @@
     position: absolute;
     top: 22px;
     right: 0px;
+    color: #8E96AB
 }
 
 .footer{

@@ -97,3 +97,45 @@ export async function effectiveCurrency(perNum: any, currencyName: string, conve
     return r
 
 }
+/**
+ * 获取有效的货币不需要转化
+ * 
+ * @param perNum 转化前数据
+ * @param currencyName  当前货币类型
+ * @param isWei 是否wei转化
+ */
+export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isWei: boolean) => {
+    let api = new Api();
+    let r: any = { num: 0, show: "", conversionShow: "" };
+    if (currencyName === "ETH") {
+        let num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+
+        r.num = num;
+        r.show = `${num} ETH`;
+    }
+    return r
+
+}
+
+/**
+ * 转化显示时间
+ * @param t 
+ */
+export const parseDate = (t: Date) => {
+    return `${t.getUTCFullYear()}-${addPerZero(t.getUTCMonth() + 1, 2)}-${addPerZero(t.getUTCDate(), 2)} ${addPerZero(t.getHours(), 2)}:${addPerZero(t.getMinutes(), 2)}`;
+}
+
+
+
+
+/**
+ * 数字前边加0
+ */
+const addPerZero = (num: number, len: number) => {
+    let numStr = num.toString();
+    let perLen = len - numStr.length;
+    if (perLen <= 0) return numStr
+    let list = [];
+    list.length = perLen;
+    return list.fill("0").join("") + numStr;
+}

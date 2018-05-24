@@ -81,7 +81,7 @@ export class Api {
                 "CNY": data['data']['quotes']['CNY']['price'],
                 "USD": data['data']['quotes']['USD']['price']
             }
-        } catch(e) {
+        } catch (e) {
             return Promise.reject(e);
         }
     }
@@ -99,8 +99,20 @@ export class Api {
             let response = await fetch(url);
             let data = await response.json();
             return data
-        } catch(e) {
+        } catch (e) {
             return Promise.reject(e);
         }
+    }
+
+    estimateGas(tx: { to, data }): Promise<number> {
+        return new Promise((resolve, reject) => {
+            web3.eth.estimateGas(tx, (err, res) => {
+                if (!err) {
+                    return resolve(res);
+                } else {
+                    return reject(err);
+                }
+            })
+        })
     }
 }
