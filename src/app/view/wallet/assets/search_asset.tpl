@@ -12,7 +12,9 @@
     <div w-class="body">
         {{for i,each of it1.list}}
         <div w-class="each">
-            <div w-class="icon">logo</div>
+            <div w-class="icon">
+                <img src="{{each.icon}}" />
+            </div>
             <div w-class="name">{{each.name}}</div>
             <div w-class="description">{{each.description}}</div>
             {{if each.isChoose}}

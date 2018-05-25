@@ -1,5 +1,5 @@
 .base{
-    background-color: white;
+    background-color: #eee;
     height: 100%;
     width: 100%;
     position: absolute;
@@ -12,11 +12,10 @@
     left: 0px;
     top: 0px;
     width: 100%;
-    height: 50px;
     font-size: 20px;
-    color: #FFFFFF;
     text-align: center;
     line-height: normal;
+    height: 150px;
 }
 
 .header-bg{
@@ -25,83 +24,93 @@
     left: 0px;
     top: 0px;
     width: 100%;
-    height: 50px;
-    background-color: rgb(204, 204, 204);
+    background-color: white;
+    height: 155px;
 }
 
 .input{
     position: absolute;
-    width: 420px;
+    width: 550px;
     height: 40px;
-    left: 20px;
-    top: 5px;
+    left: 30px;
+    top: 56px;
 }
 
 .back{
     border-width: 0px;
     position: absolute;
-    right: 20px;
-    top: 13px;
+    right: 30px;
+    top: 60px;
     word-wrap: break-word;
     transform-origin: 185.5px 13px 0px;
     cursor: pointer;
+    font-size: 28px;
+    color: #203260;
 }
 
 .body{
     position: absolute;
     width: 100%;
-    top: 55px;
+    top: 150px;
 }
 
 .each{
     position: relative;
-    height: 60px;
-    width: 90%;
-    left: 5%;
-    border-bottom: 1px solid #888;
+    height: 150px;
+    background: white;
+    box-shadow: rgba(12, 15, 35, 0.05) 0px 2px 8px 0px;
+    border-radius: 12px;
 }
 
 .icon{
     width: 40px;
     height: 40px;
     position: absolute;
-    left: 10px;
-    top: 10px;
+    left: 45px;
+    top: 45px;
 }
 
 .name{
     position: absolute;
-    left: 60px;
-    top: 5px;
+    font-size: 32px;
+    left: 130px;
+    top: 36px;
+    color: rgba(33,44,103,0.87);
 }
 
 .description{
     position: absolute;
-    left: 60px;
-    top: 30px;
+    left: 130px;
+    top: 81px;
+    font-size: 24px;
+    color: rgba(142,150,171,0.87);
 }
 .switch{
     position: absolute;
-    top: 16px;
+    top: 40px;
     right: 30px;
 }
 
 .switched{
     position: absolute;
-    top: 16px;
+    top: 50px;
     right: 30px;
-    width: 60px;
-    height: 30px;
     text-align: center;
-    line-height: 30px;
+    color: #196FDB;
+    width: 82px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
 }
 .unswitch{
     position: absolute;
-    top: 16px;
+    top: 50px;
     right: 30px;
-    width: 60px;
-    height: 30px;
     text-align: center;
-    line-height: 30px;
-    border: 1px solid rgb(136, 136, 136);
+    color: #196FDB;
+    width: 82px;
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid #1A70DD;
+    font-size: 20px;
 }

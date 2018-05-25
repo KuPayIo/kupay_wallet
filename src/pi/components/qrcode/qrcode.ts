@@ -8,6 +8,7 @@ import { getRealNode } from '../../widget/painter';
 
 interface Props {
     value: string;
+    size: number;
 }
 
 interface State {
@@ -25,8 +26,8 @@ export class Qrcode extends Widget {
         let wrapper = <HTMLElement>getRealNode(this.tree);
         console.log(this.tree, wrapper)
         var qrcode: any = new QrcodeSrc(wrapper.children[0], {
-            width: 100,
-            height: 100
+            width: this.props.size,
+            height: this.props.size
         });
         qrcode.makeCode(this.props.value);
 
