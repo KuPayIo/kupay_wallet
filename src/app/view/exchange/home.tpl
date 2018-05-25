@@ -1,6 +1,6 @@
 <div w-class="base">
     <div w-class="header">
-        <span w-class="currency">{{it1.currency1}}/{{it1.currency2}}</span>
+        <span w-class="currency" on-tap="changeCurrency">{{it1.currency1}}/{{it1.currency2}}</span>
         <span w-class="currency-change" on-tap="changeCurrency">
         </span>
         <div w-class="k-line" on-tap="showKLine">
@@ -52,7 +52,7 @@
                 </div>
                 {{end}}
             </div>
-            <div w-class="line"></div>
+            <div w-class="line" style="top: 80px;"></div>
             <div w-class="sale-list">
                 {{for i,each of it1.saleList}}
                 <div w-class="each-sale">
@@ -64,12 +64,12 @@
                 </div>
                 {{end}}
             </div>
-            <div w-class="all-conversion">{{it1.allConversion}}</div>
+            <span w-class="all-conversion">{{it1.allConversion}}</span>
             <div w-class="change">{{it1.change}}</div>
         </div>
     </div>
     <div w-class="foot">
-        <div>当前委托</div>
-        <div>暂无数据</div>
+        <div w-class="foot-title">当前委托</div>
+        <div w-class="foot-info">暂无数据</div>
     </div>
 </div>

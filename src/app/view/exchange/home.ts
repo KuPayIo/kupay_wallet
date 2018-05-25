@@ -57,13 +57,19 @@ export class Home extends Widget {
      * 显示K线图
      */
     public showKLine() {
-
+        popNew("app-view-exchange-kline")
     }
 
     /**
      * 更换货币信息
      */
     public changeCurrency() {
-
+        popNew("app-view-exchange-choose", {}, (r) => {
+            if (r) {
+                this.state.currency1 = r.currency1;
+                this.state.currency2 = r.currency2;
+                this.paint();
+            }
+        });
     }
 }
