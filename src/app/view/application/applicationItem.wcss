@@ -1,0 +1,34 @@
+.applimg{
+    width: 80px;
+    height: 80px;
+    border-radius: 80px;
+    margin: 10px 0 10px 15px;
+    float: left;
+}
+.appllike{
+    width: 30px;
+    height: 30px;
+    float: right;
+    margin-right: 30px;
+    margin-top: 40px;
+}
+.appltitle{
+    display: inline-block;
+    padding:25px 25px 5px;
+    font-size: 18px;
+    padding-bottom: 10px;
+}
+.applmess{
+    margin-left: 25px;
+    font-size: 14px;
+    color: #999;
+    display: inline-block;
+}
+.applItem{
+    background-color: #fff;
+    margin: 10px;
+    width: 95%;
+    height: 100px;
+    vertical-align: middle;
+    border-radius: 10px;
+}
