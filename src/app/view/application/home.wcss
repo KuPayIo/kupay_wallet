@@ -1,0 +1,23 @@
+.applicationTop{
+    height: 65px;
+    background-color: #fff;
+    position: relative;
+}
+.applTab{
+    border: 1px solid #f0f0f0;
+    color: #999;
+    border-radius: 18px;
+    padding: 6px 15px;
+    margin: 10px;
+    display: inline-block;
+
+}
+.isactive{
+    border: 1px solid #777777;
+    color: #555555;
+}
+.applicationContent{
+    height: 80%;
+    position: relative;
+    overflow: scroll;
+}

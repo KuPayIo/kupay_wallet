@@ -1,0 +1,29 @@
+.transItem{
+    background-color: #fff;
+    margin: 10px;
+    width: 95%;
+    height: 100px;
+    vertical-align: middle;
+    border-radius: 10px;
+}
+.transType{   
+    padding:25px 30px;
+    padding-bottom: 10px;
+    color: #874040;
+}
+.transData{
+    margin-left: 30px;
+}
+.transRes{
+    border: 1px solid #777777;
+    border-radius: 20px;
+    padding: 10px 20px;
+    float: right;
+    margin-right: 30px;
+    margin-top: 30px;
+}
+.transType1{
+    padding:25px 30px;
+    padding-bottom: 10px;
+    color: #40875E;
+}

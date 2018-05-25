@@ -1,5 +1,5 @@
 .language-radio-checked{
-    border: 1px solid #dcdfe6;
+    border: 1px solid #efefef;
     border-radius: 100%;
     width: 14px;
     height: 14px;
@@ -12,7 +12,7 @@
     background: #409EFF;
 }
 .language-radio{
-    border: 1px solid #dcdfe6;
+    border: 1px solid #efefef;
     border-radius: 100%;
     width: 14px;
     height: 14px;
@@ -21,4 +21,9 @@
     box-sizing: border-box;
     position: relative;
     display: inline-block;
+}
+.languageItem{
+    padding: 15px 10px;
+    margin: 10px;
+    border-bottom: 1px solid #ddd;
 }

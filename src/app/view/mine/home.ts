@@ -11,36 +11,37 @@ export class Home extends Widget{
     }
     public init(){
         this.state = {
+            hasNews:true,
             mineList:[{
-                icon:"u250.png",
+                icon:"icon_mine_wallet.png",
                 text:"管理钱包",
                 components:"app-view-mine-walletManagement-walletManagement"
             },{
-                icon:"u250.png",
+                icon:"icon_mine_annal.png",
                 text:"交易记录",
                 components:"app-view-mine-transaction-record"
             },{
-                icon:"u250.png",
+                icon:"icon_mine_address.png",
                 text:"地址管理",
                 components:"app-view-mine-walletManagement-walletManagement"
             },{
-                icon:"u250.png",
+                icon:"icon_mine_Language.png",
                 text:"语言设置",
                 components:"app-view-languageAndcoinset-language"
             },{
-                icon:"u250.png",
+                icon:"icon_mine_money.png",
                 text:"货币设置",
                 components:"app-view-languageAndcoinset-coinset"
             },{
-                icon:"u250.png",
+                icon:"icon_mine_problem.png",
                 text:"常见问题",
                 components:"app-view-FAQ-FAQ"
             },{
-                icon:"u250.png",
+                icon:"icon_mine_about.png",
                 text:"关于我们",
                 components:"app-view-aboutus-aboutus"
             },{
-                icon:"u250.png",
+                icon:"icon_mine_share.png",
                 text:"分享下载链接",
                 components:"app-view-mine-walletManagement-walletManagement"
             }]
@@ -52,7 +53,7 @@ export class Home extends Widget{
         popNew(this.state.mineList[index].components);
     }
 
-    public geNotice(event:any){
+    public goNotice(event:any){
         popNew("app-view-messageList-messageList");
     }
 }

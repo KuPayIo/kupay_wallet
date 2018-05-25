@@ -1,0 +1,11 @@
+.messitemTitle{
+    margin: 20px;
+}
+.messitemContent{
+    margin: 20px;
+}
+.messitemTime{
+    text-align: right;
+    margin-top: 60px;
+    margin-right: 20px;
+}

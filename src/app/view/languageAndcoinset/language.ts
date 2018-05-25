@@ -9,7 +9,7 @@ export class language extends Widget{
             checkedIndex:0,
             data:[
                 {index:0,lan:"中文",checked:true},
-                {index:1,lan:"English"}
+                {index:1,lan:"英文"}
             ]
         }
     }

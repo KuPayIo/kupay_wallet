@@ -2,7 +2,7 @@ import {Widget} from "../../../pi/widget/widget";
 import {notify} from "../../../pi/widget/event";
 import { popNew } from "../../../pi/ui/root";
 
-export class messageList extends Widget{
+export class messagenotice extends Widget{
     public ok: () => void;
     constructor(){
         super();
