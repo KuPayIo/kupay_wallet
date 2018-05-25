@@ -1,7 +1,5 @@
 .ga-new-page{
     background-color: #fff;
-    height: 100%;
-    overflow:auto;
 }
 .ga-header{
     background-image: url(../../../res/image/bg_fund.png);
@@ -250,4 +248,8 @@
 .ga-bottom-btn{
     background-image: url(../../../res/image/cons.jpg);
     height: 140px;
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+    display: none;
 }

@@ -73,9 +73,9 @@ export class BackupMnemonicConfirm extends Widget {
     }
     public nextStepClick() {
         if (!this.compareMnemonicEqualed()) {
-            popNew("pi-components-message-messagebox", { type: "alert", title: "请检查助记词", content: "" });
+            popNew("app-components-message-messagebox", { type: "alert", title: "请检查助记词", content: "" });
         } else {
-            popNew("pi-components-message-messagebox", { type: "confirm", title: "助记词即将移除", content: "Start navigation to Restaurant Mos Eisley?" }, () => {
+            popNew("app-components-message-messagebox", { type: "confirm", title: "助记词即将移除", content: "Start navigation to Restaurant Mos Eisley?" }, () => {
                 this.deleteMnemonic();
                 this.ok && this.ok();
             }, () => {

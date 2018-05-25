@@ -53,19 +53,19 @@ export class WalletImport extends Widget{
     }
     public importWalletClick(){
         if(!walletNameAvailable(this.state.walletName)){
-            popNew("pi-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名" })
+            popNew("app-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名" })
             return;
         }
         if(!walletPswAvailable(this.state.walletPsw)){
-            popNew("pi-components-message-message", { type: "error", content: "密码格式不正确,请重新输入" })
+            popNew("app-components-message-message", { type: "error", content: "密码格式不正确,请重新输入" })
             return;
         }
         if(!pswEqualed(this.state.walletPsw,this.state.walletPswConfirm)){
-            popNew("pi-components-message-message", { type: "error", content: "密码不一致，请重新输入" })
+            popNew("app-components-message-message", { type: "error", content: "密码不一致，请重新输入" })
             return;
         }
         if(!this.state.userProtocolReaded){
-            popNew("pi-components-message-message", { type: "notice", content: "请阅读用户协议" })
+            popNew("app-components-message-message", { type: "notice", content: "请阅读用户协议" })
             return;
         }
 
@@ -75,13 +75,9 @@ export class WalletImport extends Widget{
             gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic,"english",this.state.walletPsw);
             gwlt.nickName = this.state.walletName;
         }catch(e){
-            popNew("pi-components-message-message", { type: "error", content: "无效的助记词" })
+            popNew("app-components-message-message", { type: "error", content: "无效的助记词" })
             return;
         }
-        /* if(this.importedWalletIsExisted(gwlt)){
-            popNew("pi-components-message-message", { type: "alert", content: "钱包已存在" })
-            return;
-        } */
         this.importWallet(gwlt);
         let close = popNew("pi-components-loading-loading",{text:"导入中"});
         setTimeout(()=>{

@@ -1,9 +1,11 @@
-.ga-importance-description{
-    font-size: 16px;
-    color: #ccc;
+.ga-new-page{
+    background-color: #fff;
+}
+.ga-line16{
+    height: 16px;
+    background-color: #f8f8f8;
 }
 .ga-container{
-    padding: 20px 10px;
 }
 .ga-currency-container{
     margin-top: 20px;

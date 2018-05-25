@@ -1,4 +1,5 @@
-<div class="ga-new-page" w-class="ga-new-page" id="wrapper">
+<div class="ga-new-page" w-class="ga-new-page"  w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }'>
+<div>
     <div w-class="ga-header">
         <div w-class="ga-top-banner">
             <div on-tap="backPrePage" w-class="ga-back-container">
@@ -70,4 +71,5 @@
         <div w-class="ga-line16"></div>
     </div>
     <div w-class="ga-bottom-btn"></div>
+</div>
 </div>

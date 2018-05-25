@@ -1,0 +1,74 @@
+.pi-collapse{
+    position: relative;
+    
+    font-size: 28px;
+    line-height: 40px;
+    color: #203260;
+   
+}
+.pi-collapse-item{
+}
+.pi-collapse-head{
+    position: relative;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    margin: 0 30px;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+}
+.ga-icon-container{
+    width: 100px;
+    height: 100px;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pi-collapse-title{
+    height: 48px;
+    color: #303133;
+    cursor: pointer;
+    border-bottom: 1px solid #e5e5e5;
+    font-weight: 500;
+    -webkit-transition: border-bottom-color .3s;
+    transition: border-bottom-color .3s;
+    outline: 0;
+    flex: 1 0 0;
+}
+.pi-collapse-title-avtive{
+    border-bottom: 1px solid transparent;
+}
+.pi-collapse-arrow{
+    width: 28px;
+    height: 28px;
+    transition: all .3s ease-out;
+}
+.pi-collapse-arrow-rotate{
+    transform: rotateZ(90deg);
+}
+.pi-collapse-item-panel{
+    height: 0;
+    overflow: hidden;
+    transition: all .3s ease-out;
+    border-bottom: 1px solid transparent;
+    background-color: #f8f8f8;
+}
+.pi-collapse-item-panel-border{
+    border-bottom: 1px solid #ebeef5;
+}
+.pi-collapse-item-content{
+    padding-bottom: 25px;
+    color: #303133;
+}
+.pi-collapse-text-item{
+    height: 140px;
+}
+.pi-collapse-text{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin: 0 60px;
+    word-break: break-all;
+    border-bottom: 1px solid #e5e5e5;
+}
