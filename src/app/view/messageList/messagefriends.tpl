@@ -26,7 +26,7 @@
         {{end}}
     </div>  
     <div w-class="talkInput">
-        <input type="text" style="width: 80%;margin: 10px 10px 5px 10px;outline: none;height: 30px;"/>
+        <input type="text" w-class="inputDiv"/>
         <img src="../../res/image/icon_mine_send.png" w-class="sendBtn"/>
     </div>
 </div>
