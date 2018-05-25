@@ -7,7 +7,7 @@ import { notify } from '../../widget/event';
 interface Props {
     list: any[];
     activeNum?: number;
-    type?:string;
+    type?: string;
     position?: string;
 }
 
@@ -29,6 +29,8 @@ export class Tabs extends Widget {
     }
 
     public doClick(event, value) {
+        this.props.activeNum = value;
+        this.paint();
         notify(event.node, 'ev-tabs-change', { value: value });
     }
 

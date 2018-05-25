@@ -1,5 +1,7 @@
-<div class="ga-new-page" ev-back-click="backPrePage">
+<div class="ga-new-page" ev-back-click="backPrePage" style="background-color: #fff;">
     <app-components-topBar-topBar>{title:"常见问题"}</app-components-topBar-topBar>
-
-    <pi-components-collapse-collapse>{htmlStrList:{{it1.htmlStrList}},accordion:true}</pi-components-collapse-collapse>
+    <div style="height: 1.2%;background-color: #f9f9f9;"></div>
+    <div>
+        <app-view-FAQ-collapse>{htmlStrList:{{it1.htmlStrList}},accordion:true}</app-view-FAQ-collapse>
+    </div>
 </div>

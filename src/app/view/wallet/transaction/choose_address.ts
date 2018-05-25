@@ -116,7 +116,7 @@ export class AddAsset extends Widget {
             num = wei2Eth((<any>r).toNumber());
         }
         this.state.list = this.state.list.map(v => {
-            if (v.addr === addr) v.balance = num;
+            if (v.addr === addr) v.balance = num.toFixed(9);
             return v;
         })
         this.paint();

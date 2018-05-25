@@ -1,0 +1,34 @@
+.applimg{
+    width: 150px;
+    height: 150px;
+    border-radius: 150px;
+    margin: 2% 0 2% 4%;
+    float: left;
+}
+.appllike{
+    width: 48px;
+    height: 43px;
+    float: right;
+    margin-right: 30px;
+    margin-top: 8%;
+}
+.appltitle{
+    padding-top: 5%;
+    font-size: 36px;
+    color: #203260;
+    padding-bottom: 10px;
+}
+.applmess{
+    margin-left: 25px;
+    font-size: 24px;
+    color: #8E96AB;
+}
+.applItem{
+    background-color: #fff;
+    margin: 2%;
+    width: 95.7%;
+    height: 17%;
+    box-shadow: 0 2px 8px 0 rgba(12,15,35,0.05);
+    border-radius: 12px;
+    vertical-align: middle;
+}

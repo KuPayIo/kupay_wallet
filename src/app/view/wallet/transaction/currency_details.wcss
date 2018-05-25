@@ -1,5 +1,5 @@
 .base{
-    background-color: white;
+    background-color: #eee;
     height: 100%;
     width: 100%;
     position: absolute;
@@ -8,11 +8,11 @@
 }
 .header{
     border-width: 0px;
-    position: absolute;
+    position: relative;
     left: 0px;
     top: 0px;
     width: 100%;
-    height: 50px;
+    height: 144px;
     font-size: 20px;
     color: black;
     text-align: center;
@@ -22,110 +22,148 @@
 .search{
     border-width: 0px;
     position: absolute;
-    right: 15px;
-    top: 17px;
+    right: 30px;
+    top: 66px;
     word-wrap: break-word;
     transform-origin: 185.5px 13px 0px;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 24px;
+    color: #203260;
 }
 
-.body{
-    position: absolute;
-    width: 100%;
-    top: 55px;
-}
 .balance{
     text-align: center;
-    margin-top: 10px;
+    top: 75px;
+    font-size: 48px;
+    color: #203260;
+    position: relative;
 }
 .balance-conversion{
     text-align: center;
-    margin-top: 10px;
+    position: relative;
+    top: 75px;
+    font-size: 24px;
+    color: #0E1400;
 }
+
+.body{
+    position: relative;
+    width: 100%;
+    top: 16px;
+    background: rgb(255, 255, 255);
+    height: 100%;
+}
+
 .transaction-record{
     position: relative;
     width: 90%;
-    left: 5%;
-    margin-top: 20px;
+    left: 30px;
+    font-size: 28px;
 }
 .record-text{
     position: absolute;
+    top: 30px;
 }
 .introduction-text{
     position: absolute;
     right: 0px;
     cursor: pointer;
+    top: 30px;
 }
 .line{
     position: absolute;
     width: 100%;
     height: 1px;
     background-color: rgb(136, 136, 136);
-    top: 25px;
+    top: 100px;
 }
 .transaction-list{
     position: absolute;
-    top: 30px;
+    top: 101px;
     width: 100%;
-    font-size: 12px;
-    height: 450px;
+    font-size: 20px;
+    height: 700px;
     overflow-y: scroll;
 }
 .each{
     position: relative;
     width: 100%;
-    margin-top: 10px;
-    height: 50px;
+    margin-top: 1px;
+    height: 140px;
     cursor: pointer;
     background-color: white;
 }
 .type{
     position: absolute;
-    width: 40px;
+    width: 56px;
+    color: rgb(135, 64, 64);
+    font-size: 28px;
+    top: 30px;
 }
 .account{
     position: absolute;
-    left: 40px;
+    left: 76px;
     width: 200px;
+    top: 36px;
+    color: #8E96AB;
 }
 .pay{
     position: absolute;
     right: 0px;
+    color: #203260;
+    top: 30px;
 }
 .time{
     position: absolute;
-    top: 22px;
+    top: 79px;
+    color: #8E96AB;
 }
 .result{
     position: absolute;
-    top: 22px;
     right: 0px;
-    color: #8E96AB
+    top: 79px;
+    color: #8E96AB;
 }
 
 .footer{
     position: absolute;
     width: 100%;
     bottom: 0px;
-    height: 50px;
+    height: 98px;
     border-top: 1px solid rgb(136, 136, 136);
+    font-size: 28px;
 }
 .transfer{
     position: absolute;
     width: 50%;
-    border-right: 1px solid rgb(136, 136, 136);
-    height: 50px;
-    line-height: 50px;
+    height: 98px;
+    line-height: 98px;
     text-align: center;
     cursor: pointer;
+    background: #212C67;
+    color: white;
 }
 .receipt{
     position: absolute;
     left: 50%;
-    height: 50px;
-    line-height: 50px;
+    height: 98px;
+    line-height: 98px;
     text-align: center;
     width: 50%;
     cursor: pointer;
+    background: #1735D6;
+    color: white;
+}
+
+.no-record{
+    background-image : url(../../../res/image/img_none_record@2x.png) ;
+    background-repeat: no-repeat;
+    background-size: 300px 300px;
+    background-position-x: center;
+    background-position-y: bottom;
+    height: 600px;
+}
+.no-record-text{
+    text-align: center;
+    font-size: 32px;
 }

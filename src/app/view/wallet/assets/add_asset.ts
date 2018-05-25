@@ -30,9 +30,10 @@ export class AddAsset extends Widget {
         let wallets = getLocalStorage("wallets");
         const wallet = getCurrentWallet(wallets);
 
-        const currencyList = [{ name: "ETH", description: "Ethereum", isChoose: false }
-            , { name: "BTC", description: "Bit coin", isChoose: false }
-            , { name: "GAIA.WORLD", description: "GAIA.WORLD currency", isChoose: false }]
+        const currencyList = [{ icon: "../../../res/image/BTC.png", name: "ETH", description: "Ethereum", isChoose: false }
+            , { icon: "../../../res/image/ETH.png", name: "BTC", description: "Bit coin", isChoose: false }
+            , { icon: "../../../res/image/GAIA.WORLD.png", name: "GAIA.WORLD", description: "GAIA.WORLD currency", isChoose: false }]
+
         let showCurrencys = wallet.showCurrencys || [];
 
 
@@ -65,16 +66,18 @@ export class AddAsset extends Widget {
      */
     public onSwitchChange(e, index) {
         let currencys = this.state.list[index];
-        currencys.isChoose = e.newType;
+        let newType = !currencys.isChoose;
+        currencys.isChoose = newType;
+        this.paint();
 
         // 处理search数据
         let wallets = getLocalStorage("wallets");
         const wallet = getCurrentWallet(wallets);
         let showCurrencys = wallet.showCurrencys || [];
         const oldIndex = showCurrencys.indexOf(currencys.name);
-        if (e.newType && oldIndex < 0) {
+        if (newType && oldIndex < 0) {
             showCurrencys.push(currencys.name)
-        } else if (!e.newType && oldIndex >= 0) {
+        } else if (!newType && oldIndex >= 0) {
             showCurrencys.splice(oldIndex, 1);
         }
         wallet.showCurrencys = showCurrencys;

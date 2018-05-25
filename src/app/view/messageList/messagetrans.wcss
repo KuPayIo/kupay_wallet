@@ -1,0 +1,34 @@
+.transItem{
+    background-color: #fff;
+    margin: 16px;
+    width: 95%;
+    height: 200px;
+    vertical-align: middle;
+    border-radius: 10px;
+}
+.transType{   
+    padding:56px 44px;
+    padding-bottom: 10px;
+    color: #874040;
+    font-size: 28px;
+}
+.transData{
+    margin-left: 44px;
+    font-size: 28px;
+    color: #203260;
+}
+.transRes{
+    padding: 10px 30px;
+    float: right;
+    border: 1px solid #203260;
+    border-radius: 100px;
+    margin-right: 44px;
+    margin-top: 70px;
+    font-size: 28px;
+}
+.transType1{
+    padding:56px 44px;
+    padding-bottom: 10px;
+    color: #40875E;
+    font-size: 28px;
+}

@@ -2,8 +2,8 @@
     <div w-class="header" title="36px" ev-back-click="doClose">
         <app-components-topBar-topBar>{title:{{it1.title}}}</app-components-topBar-topBar>
     </div>
+    <div w-class="balance">余额&nbsp;&nbsp;{{it.currencyBalance}} ETH</div>
     <div w-class="body">
-        <div w-class="balance">余额&nbsp;&nbsp;{{it.currencyBalance}} ETH</div>
         <div w-class="get-addr">收款地址</div>
         <div w-class="get-addr-value" ev-input-change="onToChange">
             <pi-components-input-input>{}</pi-components-input-input>
