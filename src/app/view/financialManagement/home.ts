@@ -11,6 +11,9 @@ export class FinancialManagementHome extends Widget{
     }
     public init(){
         this.state = {
+            timer:null,
+            bannerIndex:0,
+            bannerList:["banner1.png","banner2.png","banner3.png"],
             newsList:[{
                 title:"2018巴菲特股东大会，说了些什么？",
                 time:'2小时前'
@@ -25,10 +28,20 @@ export class FinancialManagementHome extends Widget{
                 time:'5小时前'
             }]
         }
+        this.state.timer = setInterval(()=>{
+            this.state.bannerIndex = (this.state.bannerIndex + 1) % 3;
+            this.paint();
+        },3000);
     }
 
+
+    public destroy(){
+        super.destroy();
+        clearInterval(this.state.timer);
+        return true;
+    }
     public fundClick(){
-        popNew("app-view-financialManagement-fund-home");
+        
     }
 
     public balanceManagementClick(){
@@ -36,5 +49,8 @@ export class FinancialManagementHome extends Widget{
     }
     public loanClick(){
         popNew("app-view-financialManagement-loan-home");
+    }
+    public fundItemClick(){
+        popNew("app-view-financialManagement-fund-home");
     }
 }

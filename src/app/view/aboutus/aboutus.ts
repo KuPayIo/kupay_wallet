@@ -18,7 +18,7 @@ export class aboutus extends Widget{
         if(this.state.data[index].components!=""){
             popNew(this.state.data[index].components);
         }else{
-            popNew("app-view-aboutus-message", { type: "success", content: "当前已是最新版本", center: true })
+            popNew("app-components-message-message", { type: "success", content: "当前已是最新版本", center: true })
         }
     }
 

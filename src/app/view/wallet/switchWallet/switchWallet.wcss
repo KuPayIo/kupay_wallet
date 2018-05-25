@@ -1,31 +1,37 @@
 .ga-switch-wallet-page{
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.2);
     display: flex;
+    color: #203260;
 }
 .ga-switch-wallet-left{
     flex: 1 0 0;
-    opacity: 0;
 }
 .ga-switch-wallet-right{
-    flex: 1 0 0;
+    width: 356px;
+    box-sizing: border-box;
     background-color: #fff;
     opacity: 1;
     display: flex;
     flex-direction: column;
-    padding-left: 20px;
 }
 .ga-wallet-container{
     display: flex;
     flex-direction: column;
-    margin-top: 100px;
+    margin-top: 81px;
     align-items: flex-start;
 }
 .ga-wallet-item{
     display: flex;
     align-items: center;
-    margin: 10px 0px;
     cursor: pointer;
-    
+    height: 90px;
+    display: flex;
+    align-items: center;
+    padding-left: 32px;
+    width: 100%;
+}
+.ga-wallet-item-active{
+    background-color: #f8f8f8;
 }
 .ga-wallet-item-dot{
     width: 10px;
@@ -33,35 +39,32 @@
     border: 1px solid #ccc;
     background-color: #fff;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 11px;
 }
 .ga-wallet-item-name{
-    font-size: 16px;
+    font-size: 32px;
+    line-height: 45px;
 }
 .ga-bottom-container{
-    margin-top: 100px;
+    margin-top: 102px;
+    margin-left: 53px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    font-size: 32px;
+    
+    line-height: 45px;
 }
 .ga-create-wallet{
     display: flex;
     align-items: center;
     cursor: pointer;
-    
-}
-.ga-img{
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
 }
 .ga-import-wallet{
     display: flex;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 50px;
     cursor: pointer;
-    
 }
 .ga-text{
-    font-size: 16px;
 }

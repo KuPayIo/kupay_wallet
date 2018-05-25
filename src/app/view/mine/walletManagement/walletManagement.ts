@@ -44,7 +44,7 @@ export class WalletManagement extends Widget{
     }
 
     public exportPrivateKeyClick(){
-        popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
+        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
             let wallets = getLocalStorage("wallets");
             let wallet = getCurrentWallet(wallets);
             let walletPsw = decrypt(wallet.walletPsw);
@@ -55,7 +55,7 @@ export class WalletManagement extends Widget{
                     popNew("app-view-mine-exportPrivateKey-exportPrivateKey");
                 },500);
             }else{
-                popNew("pi-components-message-message", { type: "error", content: "密码错误" })
+                popNew("app-components-message-message", { type: "error", content: "密码错误" })
             }
         })
     }
@@ -74,7 +74,7 @@ export class WalletManagement extends Widget{
     public inputBlur(e){
         let v = e.currentTarget.value.trim();
         if(v.length === 0){
-            popNew("pi-components-message-message", { type: "error", content: "钱包名不能为空" })
+            popNew("app-components-message-message", { type: "error", content: "钱包名不能为空" })
             let input = document.querySelector("#autoInput");
             input.value = this.state.gwlt.nickName;
             this.state.showInputBorder = false;

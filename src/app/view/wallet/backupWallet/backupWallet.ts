@@ -25,7 +25,7 @@ export class BackupWallet extends Widget{
         this.ok && this.ok();
     }
     public backupWalletClick(){
-        popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
+        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
             let wallets = getLocalStorage("wallets");
             let wallet = getCurrentWallet(wallets);
             let walletPsw = decrypt(wallet.walletPsw);
@@ -37,10 +37,9 @@ export class BackupWallet extends Widget{
                     popNew("app-view-wallet-backupMnemonic-backupMnemonic");
                 },500);
             }else{
-                popNew("pi-components-message-message", { type: "error", content: "密码错误,请重新输入" })
+                popNew("app-components-message-message", { type: "error", content: "密码错误,请重新输入" })
             }
         }, () => {
-            console.log("取消")
         })
     }
 

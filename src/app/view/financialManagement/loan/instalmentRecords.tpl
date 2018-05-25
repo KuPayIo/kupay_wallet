@@ -1,5 +1,6 @@
 <div class="ga-new-page" w-class="ga-new-page" ev-back-click="goBackClick">
     <app-components-topBar-topBar>{title:"分期记录"}</app-components-topBar-topBar>
+    <div w-class="ga-line"></div>
     <div w-class="ga-container">
         <div w-class="ga-item">
             <span w-class="ga-label">借款金额</span>

@@ -1,30 +1,37 @@
-
-
 .ga-new-page{
     background-color: #fff;
 }
 .ga-import-container{
-    padding: 20px 15px;
+    padding: 28px 30px;
 }
 
 .ga-import-item{
     display: flex;
     flex-direction: column;
-    margin-top: 20px;
+    margin-top: 41px;
     position: relative;
 }
 .ga-import-item-label{
-    margin-bottom: 6px;
-    font-size: 12px;
+    margin-bottom: 12px;
+    font-size: 24px;
     color: #8E96AB;
     text-align: left;
-    line-height: 18px;
+    line-height: 33px;
+}
+.ga-input-father{
+    height: 88px;
+    position: relative;
+}
+.ga-textarea-father{
+    height: 153px;
 }
 .ga-password-strength{
     position: absolute;
-    right: 20px;
-    bottom: 20px;
-    transform: translateY(50%);
+    right: 30px;
+    bottom: 27px;
+    text-align: right;
+    line-height: 33px;
+    font-size: 24px;
 }
 .ga-password-strength-label{
     color: rgba(102,102,102,0.87);
@@ -33,12 +40,12 @@
 .ga-import-protocol{
     display: flex;
     align-items: center;
-    margin-top: 15px;
+    margin-top: 42px;
 }
 .ga-user-protocol{
-    margin-left: 10px;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 24px;
+    line-height: 33px;
     color: #1A70DD;
     text-align: left;
 }
@@ -46,12 +53,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 55px;
+    height: 100px;
     cursor: pointer;
-    margin: 30px 15px 0;
+    margin: 41px 30px 0;
     background: #203260;
     border-radius: 6px;
-    font-size: 18px;
+    font-size: 32px;
     color: rgba(255,255,255,0.87);
     text-align: center;
 }
@@ -59,9 +66,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 40px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 24px;
+    line-height: 33px;
     color: #8E96AB;
     text-align: center;
 }

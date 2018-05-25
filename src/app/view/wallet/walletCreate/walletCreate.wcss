@@ -21,11 +21,14 @@
     text-align: left;
     line-height: 33px;
 }
+.ga-input-father{
+    height: 88px;
+    position: relative;
+}
 .ga-password-strength{
     position: absolute;
     right: 30px;
-    bottom: 20px;
-    transform: translateY(50%);
+    bottom: 27px;
     text-align: right;
     line-height: 33px;
     font-size: 24px;

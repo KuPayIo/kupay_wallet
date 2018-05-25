@@ -14,27 +14,25 @@ export class ExportPrivateKey extends Widget{
         let wallet = getCurrentWallet(wallets);
         let walletPsw = decrypt(wallet.walletPsw);
         let currencyRecords = wallet.currencyRecords;
-        let htmlStrList = [];
+        let collapseList = [];
         for(let i = 0;i < currencyRecords.length; i++ ){
             let obj = {
                 title:"",
-                htmlStr:""
+                icon:"",
+                textList:[]
             };
             obj.title = currencyRecords[0].currencyName;
+            obj.icon = currencyRecords[0].currencyName + ".png";
             let addrs = currencyRecords[0].addrs;
-            let html = "";
             for(let j = 0;j < addrs.length; j++){
-                html = "<p>";
                 let gwlt = GaiaWallet.fromJSON(addrs[j].gwlt);
                 let privateKey = gwlt.exportPrivateKey(walletPsw);
-                html += privateKey;
-                html += "</p>";
-                obj.htmlStr += html;
+                obj.textList.push(privateKey);
             }
-            htmlStrList.push(obj);
+            collapseList.push(obj);
         }
         this.state = {
-            htmlStrList
+            collapseList
         }
         
     }
@@ -44,7 +42,7 @@ export class ExportPrivateKey extends Widget{
 
     public exportClick(e,index){
         let privateKey = this.state.gwlt.exportPrivateKey(this.state.walletPsw);
-        popNew("pi-components-message-messagebox", { type: "alert", title: "文字警告", content: privateKey }, () => {
+        popNew("app-components-message-messagebox", { type: "alert", title: "文字警告", content: privateKey }, () => {
         })
     }
 
