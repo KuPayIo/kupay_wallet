@@ -14,33 +14,48 @@
 }
 .show-list{
     position: absolute;
-    width: 50%;
-    height: 100%;
-    right: 0px;
-    top: 50px;
+    width: 370px;
+    right: 26px;
+    top: 160px;
+    padding-bottom: 100px;
     background-color: white;
-    padding-top: 100px;
+    box-shadow: rgba(39, 52, 125, 0.2) 0px 2px 10px 0px;
+    border-radius: 12px;
 }
 .each{
     position: relative;
-    height: 25px;
+    height: 50px;
     margin-top: 10px;
     cursor: pointer;
+    color: #212C68;
 }
 .is-choose{
     position: absolute;
-    left: 5px;
+    left: 15px;
+    font-size: 28px;
 }
 .name{
     position: absolute;
-    left: 25px;
+    left: 50px;
+    font-size: 28px;
 }
 .balance{
     position: absolute;
-    right: 5px;
+    right: 24px;
+    font-size: 24px;
+    top: 4px;
 }
 .add-addr{
-    margin-top: 20px;
-    margin-left: 10px;
     cursor: pointer;
+    border: 2px solid rgb(142, 150, 171);
+    border-radius: 6px;
+    width: 290px;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    font-size: 28px;
+    color: #8E96AB;
+    left: 50px;
+    position: relative;
+    top: 70px;
 }

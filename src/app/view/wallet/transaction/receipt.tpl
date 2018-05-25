@@ -3,12 +3,11 @@
         <app-components-topBar-topBar>{title:{{it1.title}}}</app-components-topBar-topBar>
     </div>
     <div w-class="body">
-        <div w-class="balance">余额&nbsp;&nbsp;{{it.currencyBalance}} ETH</div>
         <div w-class="qrcode">
-            <pi-components-qrcode-qrcode>{value:{{it.addr}}}</pi-components-qrcode-qrcode>
+            <pi-components-qrcode-qrcode>{value:{{it.addr}},size:630}</pi-components-qrcode-qrcode>
         </div>
         <div w-class="addr">{{it.addr}}</div>
-        <div w-class="copy" on-tap="doCopy">复制地址</div>
+        <div w-class="copy" on-tap="doCopy"><img src="../../../res/image/btn_trans_copy@2x.png" /></div>
     </div>
 
 
