@@ -1,4 +1,4 @@
 <div w-class="languageItem" on-tap="itemclick">
-    <span>{{it.lan}}</span>
-    <span w-class="{{it.checked?'language-radio-checked':'language-radio'}}" style="float: right;" on-click="clickListenter"></span>
+    <span w-class="ga-item-text">{{it.lan}}</span>  
+    <img src="../../res/image/icon_selected.png" style="display: {{it.checked?'block':'none'}}"/>
 </div>

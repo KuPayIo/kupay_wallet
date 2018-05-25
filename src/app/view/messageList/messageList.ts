@@ -17,6 +17,10 @@ export class messageList extends Widget{
         }
     }
 
+    public goback(event:any){
+        notify(event.node,"ev-back-click",{})
+    }
+
     public backPrePage(){
         this.ok && this.ok();
     }

@@ -21,7 +21,9 @@ export const run = (): void => {
 	addWidget(document.body, 'pi-ui-root');
 	popNew('app-view-app');
 	// popNew('app-view-application-home');
-	// popNew('app-view-FAQ-FAQ');
+	// popNew('app-view-groupwallet-groupwallet');
+	// popNew('app-view-financialManagement-home');
+	// popNew('app-view-messageList-messageList');
 };
 
 // ============================== 立即执行

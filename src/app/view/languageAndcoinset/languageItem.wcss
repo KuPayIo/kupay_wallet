@@ -23,7 +23,19 @@
     display: inline-block;
 }
 .languageItem{
-    padding: 15px 10px;
-    margin: 10px;
-    border-bottom: 1px solid #ddd;
+    display: flex;
+    padding: 2.8%;
+    margin: 2.2%;
+    align-items: center;
+    border-bottom: 1px solid #E5E5EE;
+    cursor: pointer;
+}
+.ischecked{
+    display: block;
+}
+.ga-item-text{
+    flex: 1 0 0;
+    margin-left: 2%;
+    font-size: 32px;
+    color: #203260;
 }

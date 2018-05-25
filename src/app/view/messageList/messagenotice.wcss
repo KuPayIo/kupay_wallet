@@ -1,11 +1,17 @@
 .messitemTitle{
-    margin: 20px;
+    margin: 30px 50px;
+    font-size: 28px;
+    color: #203260;
 }
 .messitemContent{
-    margin: 20px;
+    margin: 20px 50px;
+    font-size: 28px;
+    color: #203260;
 }
 .messitemTime{
     text-align: right;
-    margin-top: 60px;
-    margin-right: 20px;
+    margin-top: 70px;
+    margin-right: 50px;
+    font-size: 28px;
+    color: #203260;
 }

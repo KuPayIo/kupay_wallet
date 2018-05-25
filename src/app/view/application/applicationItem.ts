@@ -1,4 +1,5 @@
 import { Widget } from "../../../pi/widget/widget";
+import { popNew } from "../../../pi/ui/root";
 
 export class applicationItem extends Widget{
 
@@ -17,5 +18,9 @@ export class applicationItem extends Widget{
     public likeit(event:any){
         this.props.islike = !this.props.islike;
         this.paint();
+    }
+
+    public showDetails(event:any){
+        popNew("app-view-application-applDetails")
     }
 }

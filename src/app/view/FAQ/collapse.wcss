@@ -4,16 +4,14 @@
 .pi-collapse-head{
     position: relative;
     display: flex;
-    height: 50px;
     border-bottom: 1px solid #ebeef5;
 }
 .pi-collapse-title{
     flex: 1 0 0;
-    color: #303133;
     cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 15px;
+    font-size: 28px;
+    color: #203260;
+    padding: 40px;
     -webkit-transition: border-bottom-color .3s;
     transition: border-bottom-color .3s;
     outline: 0;
@@ -43,15 +41,15 @@
 }
 .pi-collapse-item-content{
     padding-bottom: 25px;
-    font-size: 13px;
-    color: #303133;
+    font-size: 24px;
+    color: #8E96AB;
     background-color: #f9f9f9;
-    padding: 15px;
+    padding: 4%;
     line-height: 1.769230769230769;
     
 }
 .collapseBtn{
-    width: 20px;
-    height: 20px;
-    margin: 15px;
+    width: 28px;
+    height: 28px;
+    margin: 40px;
 }
