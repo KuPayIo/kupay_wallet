@@ -1,29 +1,10 @@
-.ga-top-banner{
-    background-color: #ccc;
-    width: 100%;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-.ga-notice{
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-}
-.ga-banner-title{
-    font-size: 20px;
-    color: #fff;
-}
+
 .ga-item{
     display: flex;
-    padding: 10px 5px;
-    margin: 5px 10px;
+    padding: 15px;
+    margin: 10px;
     align-items: center;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #eee;
     cursor: pointer;
 }
 .ga-item-icon{
@@ -35,10 +16,26 @@
     margin-left: 10px;
 }
 .ga-item-arrow{
-    width: 10px;
-    height: 10px;
-    background-color: transparent;
-    border-right: 2px solid #000;
-    border-bottom: 2px solid #000;
-    transform: rotateZ(-45deg);
+    width: 15px;
+    height: 15px;
+    
+}
+.ga-top-banner{
+    background-color: #fff;
+    width: 100%;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 10px;
+}
+.ga-banner-title{
+    font-size: 20px;   
+}
+.ga-banner-btn{
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    right: 20px;
 }

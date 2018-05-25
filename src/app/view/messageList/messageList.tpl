@@ -1,4 +1,4 @@
-<div class="ga-new-page" ev-back-click="backPrePage" style="background-color: #f9f9f9;">
+<div class="ga-new-page" style="background-color: #f9f9f9;">
     <div w-class="ga-top-banner">
         <img src="../../res/image/btn_back.png" w-class="ga-back" on-tap="backPrePage"/>
         <span w-class="ga-banner-title">消息</span>
