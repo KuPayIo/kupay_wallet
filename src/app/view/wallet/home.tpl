@@ -9,7 +9,7 @@
         <div w-class="ga-assets-container">
             <div w-class="ga-assets-box">
                 <span w-class="ga-assets-title">总资产(¥)</span>
-                <span w-class="ga-assets">≈{{it1.totalAssets}}</span>
+                <span w-class="ga-assets"><span w-class="ga-assets-symbol">≈</span>{{it1.totalAssets}}</span>
             </div>
             <img w-class="ga-add-currency" src="../../res/image/btn_add_money.png"  on-tap="clickAddCurrencyListener"/>
         </div>

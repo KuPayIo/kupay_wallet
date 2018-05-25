@@ -1,4 +1,23 @@
-
+.ga-top-banner{
+    background-color: #ccc;
+    width: 100%;
+    height: 144px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.ga-notice{
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+.ga-banner-title{
+    font-size: 20px;
+    color: #fff;
+}
 .ga-item{
     display: flex;
     padding: 15px;

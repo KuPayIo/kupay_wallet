@@ -1,0 +1,189 @@
+.ga-new-page{
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+}
+.ga-header{
+    height: 242px;
+    background-image: url(../../../res/image/bg_eggmoney.png);
+    background-size: cover;
+    background-position: center;
+}
+.ga-header-content-container{
+    margin: 20px 18px;
+    height: 210px;
+    background: rgba(255,255,255,0.90);
+    box-shadow: 0 4px 30px 0 rgba(39,52,125,0.25);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #212C68;
+    letter-spacing: 0;
+    text-align: center;
+}
+.ga-bill-container{
+    flex:1 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.ga-title{
+    font-size: 14px;
+    line-height: 18px;
+}
+.ga-costs{
+    font-size: 35px;
+    line-height: 50px;
+    margin:8px 0;
+}
+.ga-balance{
+    font-size: 16px;
+    line-height: 23px;
+}
+.ga-bill-msg{
+    height: 60px;
+    background: rgba(221,226,240,0.42);
+    border-radius: 0 0 16px 16px;
+    width: 100%;
+    padding: 10px 0;
+    display: flex;
+    box-sizing: border-box;
+}
+.ga-item{
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid rgba(39, 52, 125, 0.14);
+}
+.ga-item-1{
+    font-size: 12px;
+    line-height: 16px;
+}
+.ga-item-2{
+    letter-spacing: -0.58px;
+    line-height: 23px;
+    font-size: 15px;
+}
+.ga-fund-container{
+    margin-top: 60px;
+    padding: 0 16px;
+}
+.ga-box1{
+    display: flex;
+    align-items: baseline;
+}
+.ga-fund-title{
+    font-size: 20px;
+    color: #212C68;
+    letter-spacing: 0.43px;
+    line-height: 28px;
+}
+.ga-fund-desc{
+    font-size: 14px;
+    color: #808890;
+    letter-spacing: 0.29px;
+    line-height: 18px;
+    margin-left: 10px;
+}
+.ga-fund-list{
+    display: flex;
+    flex-direction: column;
+}
+.ga-fund-list-item{
+    padding: 16px 0;
+    border-bottom: 1px solid #DCE8F5;
+}
+.ga-fund-list-item-border{
+    border: none;
+}
+.ga-fund-row1{
+    display: flex;
+    align-items: center;
+    
+}
+.ga-fund-per{
+    color: #FF642B;
+    font-size: 16px;
+    letter-spacing: 0.58px;
+    line-height: 35px;
+    flex: 2 0 0;
+}
+.ga-fund-per-value{
+    font-size: 26px;
+}
+.ga-fund-name{
+    font-size: 18px;
+    color: #344E7D;
+    letter-spacing: 0.38px;
+    line-height: 25px;
+    flex: 3 0 0;
+}
+.ga-fun-row2{
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #808890;
+    letter-spacing: 0.29px;
+    line-height: 18px;
+    margin-top: 10px;
+}
+.ga-fund-date{
+    flex: 2 0 0;
+}
+.ga-fund-begin{
+    flex: 3 0 0;
+}
+.ga-line{
+    height: 5px;
+    background-color: #f8f8f8;
+    width: 100%;
+}
+.ga-list-item{
+    display: flex;
+    padding: 18px 5px 18px 25px;
+    border-bottom: 1px solid #e5e5e5;
+    align-items: center;
+    cursor: pointer;
+}
+.ga-list-item-icon{
+    width: 22px;
+    height: 22px;
+    margin-right: 18px;
+}
+.ga-list-item-text{
+    flex: 1 0 0;
+    font-size: 18px;
+    color: #203260;
+    line-height: 23px;
+}
+.ga-list-item-arrow{
+    width: 15px;
+    height: 15px;
+}
+.ga-btns{
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+}
+.ga-btn-item{
+    flex: 1 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    border-top: 1px solid #e5e5e5;
+    font-size: 16px;
+    color: #212C68;
+    text-align: center;
+    line-height: 23px;
+}
+.ga-btn-active{
+    background-color: #1735D6;
+    color: #fff;
+}

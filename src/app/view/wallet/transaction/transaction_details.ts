@@ -8,7 +8,7 @@ interface Props {
     tip: string;
     info: string;
     from: string
-    time: string;
+    showTime: string;
     id: string;
 }
 

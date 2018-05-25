@@ -19,7 +19,7 @@ export class Home extends Widget{
             },{
                 icon:"icon_mine_annal.png",
                 text:"交易记录",
-                components:"app-view-mine-walletManagement-walletManagement"
+                components:"app-view-mine-transaction-record"
             },{
                 icon:"icon_mine_address.png",
                 text:"地址管理",
