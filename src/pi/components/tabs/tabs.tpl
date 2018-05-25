@@ -3,10 +3,10 @@
 <div w-class="base" style="{{isShowRight||isShowLeft?('height: '+40*(it.list.length+1)+'px;'):''}}">
     <div w-class="nav-wrap-{{it.position}} {{isBorderCard?'nav-wrap-border_card-'+it.position:''}}" class="tabs-nav-wrap-{{it.position}}">
         <div w-class="nav-scroll">
-            <div w-class="nav {{isCard?'nav-card-'+it.position:''}}">
+            <div w-class="nav {{isCard?'nav-card-'+it.position:''}}" style="left: 55px;">
                 {{for i,v of it.list}} {{let isActive = i===it.activeNum}}{{let isFirst = i===0}}
                 <div w-class="nav-item-{{it.position}} {{isFirst?'first-item-'+it.position:''}} {{isActive?'is-active-'+it.type +(isBorderCard&&isFirst?'-first':'')+'-'+it.position:''}} {{isCard?'is-card-'+it.position:''}}"
-                    class="tabs-item" on-tap="doClick(e,{{i}})">
+                    class="tabs-item" style="font-size: 28px;height: 60px;line-height: 60px;" on-tap="doClick(e,{{i}})">
                     <span w-class="{{isActive?('nav-span-'+it.type+'-'+it.position):''}}">{{v}}</span>
                 </div>
                 {{end}}
