@@ -2,14 +2,14 @@
     background-color: #fff;
 }
 .ga-year{
-    height: 27px;
+    height: 50px;
     background-color: #f8f8f8;
-    padding: 0 16px;
+    padding: 0 30px;
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: 24px;
     color: rgba(142,150,171,0.87);
-    line-height: 17px;
+    line-height: 33px;
 }
 .ga-mothon-list{
     display: flex;
@@ -17,8 +17,8 @@
     background-color: rgba(255,255,255,0.89);
 }
 .ga-mothon-item{
-    margin: 0 16px;
-    padding: 19px 0 22px;
+    margin: 0 30px;
+    padding: 36px 0 46px;
     border-bottom: 1px solid #e5e5e5;
     display: flex;
     justify-content: space-between;
@@ -29,27 +29,27 @@
     flex-direction: column;
 }
 .ga-left-month{
-    font-size: 18px;
+    font-size: 32px;
     color: rgba(33,44,103,0.87);
-    line-height: 25px;
+    line-height: 45px;
 }
 .ga-left-date{
-    font-size: 14px;
+    font-size: 24px;
     color: rgba(142,150,171,0.87);
-    line-height: 18px;
+    line-height: 33px;
 }
 .ga-item-right{
     display: flex;
     align-items: center;
 }
 .ga-right-text{
-    font-size: 16px;
+    font-size: 28px;
     color: #203260;
     letter-spacing: 0;
-    line-height: 23px;
+    line-height: 40px;
 }
 .ga-right-arrow{
-    width: 22px;
-    height: 22px;
-    margin-left: 5px;
+    width: 28px;
+    height: 28px;
+    margin-left: 16px;
 }

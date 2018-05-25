@@ -7,17 +7,17 @@
     background-image: url(../../../res/image/bg_fund.png);
     background-size: cover;
     background-position: center;
-    height: 242px;
+    height: 500px;
 }
 .ga-top-banner{
     width: 100%;
-    height: 46.3px;
+    height: 78px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: relative;
     color: #203260;
-    padding: 2px 15px;
+    padding: 0 30px;
     box-sizing: border-box;
 }
 .ga-back-container{
@@ -30,8 +30,8 @@
     cursor: pointer;
 }
 .ga-back{
-    width: 22px;
-    height: 22px;
+    width: 44px;
+    height: 44px;
 }
 
 .ga-title-container{
@@ -39,16 +39,15 @@
     flex-direction: column;
     align-items: center;
     color: #fff;
-    margin-top: 5px;
 }
 .ga-banner-title{
-    font-size: 18px;
-    line-height: 25px;
+    font-size: 32px;
+    line-height: 45px;
     text-align: center;
 }
 .ga-number{
-    font-size: 14px;
-    line-height: 18px;
+    font-size: 24px;
+    line-height: 33px;
 }
 .ga-share-container{
     height: 100%;
@@ -60,12 +59,12 @@
     cursor: pointer;
 }
 .ga-share{
-    width: 23px;
-    height: 23px;
+    width: 44px;
+    height: 44px;
 }
 .ga-header-content-container{
-    margin: 20px 18px;
-    height: 210px;
+    margin: 30px 33px 0;
+    height: 400px;
     background: rgba(255,255,255,0.90);
     box-shadow: 0 4px 30px 0 rgba(39,52,125,0.25);
     border-radius: 16px;
@@ -78,8 +77,7 @@
 .ga-header-top{
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    margin: 0 45px 25px;
+    margin: 112px 80px 0;
     color: #212C68;
     flex: 1 0 0;
 }
@@ -92,63 +90,67 @@
     flex-direction: column;
 }
 .ga-header-h{
-    font-size: 16px;
-    line-height: 22px;
+    font-size: 28px;
+    line-height: 40px;
     letter-spacing: 0.34px;
 }
 .ga-header-p{
-    font-size: 35px;
+    font-size: 64px;
     letter-spacing: 0.77px;
-    line-height: 47px;
+    line-height: 90px;
 }
 .ga-header-bottom{
-    height: 60px;
+    height: 113px;
     border-top: 1px solid  #e5e5e5;
     display: flex;
     align-items: center;
-    padding: 0 12px;
+    padding: 0 24px;
 }
 .ga-header-label{
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    height: 45px;
     color: #FFFFFF;
     letter-spacing: 0.29px;
-    line-height: 18px;
+    line-height: 33px;
     background: #212C67;
     border: 1px solid #1735D6;
-    padding: 5px;
-    margin-right: 12px;
+    margin-right: 20px;
+    padding: 0 10px;
 }
 .ga-charts-container{
-    margin-top: 60px;
-    padding: 0 16px;
+    margin-top: 85px;
+    padding: 0 30px;
 }
 .ga-charts-title{
-    font-size: 20px;
+    font-size: 36px;
     color: #212C68;
     letter-spacing: 0.43px;
-    line-height: 30px;
+    line-height: 50px;
 }
 .ga-charts{
-    height: 270px;
+    height: 454px;
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
-    margin: 20px 0;
+    margin: 30px 0;
 }
 .ga-charts-btns{
-    margin: 16px 5px;
+    margin: 10px;
     display: flex;
-    height: 32px;
+    height: 60px;
+    font-size: 24px;
+    line-height: 33px;
 }
 .ga-charts-btn1{
-    background: #212C67;
+    background: #fff;
     border: 1px solid #212C67;
     border-radius: 8px 0 0 8px;
     flex: 1 0 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
 }
 .ga-charts-btn2{
     background: #FFFFFF;
@@ -158,6 +160,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
 }
 .ga-charts-btn3{
     background: #FFFFFF;
@@ -177,8 +180,16 @@
     align-items: center;
     justify-content: center;
 }
-.ga-line{
-    height: 5px;
+.ga-charts-btn-active{
+    background: #212C67;
+    color: #fff;
+}
+.ga-line8{
+    height: 8px;
+    background-color: #f8f8f8;
+}
+.ga-line16{
+    height: 16px;
     background-color: #f8f8f8;
 }
 .ga-history-container{
@@ -187,8 +198,10 @@
     color: #212C68;
 }
 .ga-history-box{
-    height: 45px;
+    height: 85px;
     display: flex;
+    font-size: 32px;
+    line-height: 45px;
 }
 .ga-history-performance-btn{
     flex: 1 0 0;
@@ -204,9 +217,37 @@
     justify-content: center;
 }
 .ga-his-box{
-    margin: 0 16px;
+    margin: 0 30px;
     display: flex;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 20px 0;
     border-top: 1px solid #DCE8F5;
+    font-size: 28px;
+    line-height: 40px;
+}
+.ga-his-change{
+    color: #FF642B;
+}
+.ga-other-list{
+    display: flex;
+    flex-direction: column;
+}
+.ga-other-list-item{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 30px;
+    padding: 18px 0;
+    font-size: 32px;
+    color: #212C68;
+    letter-spacing: 0;
+    line-height: 45px;
+}
+.ga-arrow{
+    width: 28px;
+    height: 28px;;
+}
+.ga-bottom-btn{
+    background-image: url(../../../res/image/cons.jpg);
+    height: 140px;
 }

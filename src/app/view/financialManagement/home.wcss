@@ -1,32 +1,32 @@
 .ga-new-page{
     background-color: #fff;
     height: 100%;
-    overflow:auto;
+    overflow:scroll;
 }
 .ga-announcement-container{
-    height: 45px;
+    height: 80px;
     display: flex;
-    padding: 0 30px;
+    padding: 0 57px;
     align-items: center;
-    font-size: 14px;
+    font-size: 24px;
     letter-spacing: 0;
-    line-height: 18px;
+    line-height: 33px;
 }
 .ga-speaker-icon{
-    width: 22px;
-    height: 22px;
+    width: 40px;
+    height: 40px;
 }
 .ga-speaker-title{
     color: #1A70DD;
-    margin-left: 3px;
+    margin-left: 8px;
 }
 .ga-speaker-text{
     color: #666666;
-    margin-left: 10px;
+    margin-left: 20px;
 }
 .ga-carousel-container{
-    margin: 22px 16px 0;
-    height: 150px;
+    margin: 45px 30px 0;
+    height: 268px;
     background-image: linear-gradient(-121deg, #27347D 0%, #3045B6 100%);
     border-radius: 20px;
     display: flex;
@@ -35,36 +35,36 @@
     color: #FFFFFF;
 }
 .ga-carousel-title{
-    font-size: 34px;
+    font-size: 64px;
     letter-spacing: 0.77px;
     text-align: center;
-    line-height: 50px;
-    margin-top: 30px;
+    line-height: 90px;
+    margin-top: 50px;
 }
 .ga-carousel-text{
-    font-size: 16px;
+    font-size: 28px;
     letter-spacing: 0.34px;
     text-align: center;
-    line-height: 20px;
+    line-height: 34px;
 }
 .ga-dots{
-    margin-top: 30px;
+    margin-top: 50px;
     display: flex;
     align-items: center;
 }
 .ga-dot{
-    width: 7px;
-    height: 7px;
+    width: 12px;
+    height: 12px;
     background: rgba(51,51,51,0.80);
-    margin: 0 7px;
+    margin: 0 10px;
     border-radius: 50%;
 }
 .ga-dot-active{
     background: rgba(255,255,255,0.80);
 }
 .ga-other-function{
-    margin: 15px 0; 
-    height: 40px;
+    margin: 18px 0 ; 
+    height: 80px;
     display: flex;
 }
 .ga-function-item{
@@ -75,46 +75,47 @@
     border-right: 1px solid #ddd;
 }
 .ga-function-item-icon{
-    width: 23px;
-    height: 23px;
+    width: 44px;
+    height: 44px;
 }
 .ga-function-item-text{
-    font-size: 16px;
+    font-size: 28px;
     color: #666666;
     letter-spacing: 0.38px;
     text-align: center;
-    line-height: 22px;
-    margin-left: 3px;
+    line-height: 40px;
+    margin-left: 10px;
 }
 .ga-line{
-    height: 7px;
+    height: 16px;
     background-color: #f8f8f8;
 }
 
 .ga-fund-container{
-    margin-top: 30px;
-    padding: 0 16px;
+    margin-top: 50px;
+    padding: 0 30px;
 }
 .ga-box1{
     display: flex;
     align-items: baseline;
 }
 .ga-fund-title{
-    font-size: 20px;
+    font-size: 36px;
     color: #212C68;
     letter-spacing: 0.43px;
-    line-height: 28px;
+    line-height: 50px;
 }
 .ga-fund-desc{
-    font-size: 14px;
+    font-size: 24px;
     color: #808890;
     letter-spacing: 0.29px;
-    line-height: 18px;
-    margin-left: 10px;
+    line-height: 33px;
+    margin-left: 20px;
 }
 .ga-fund-list{
     display: flex;
     flex-direction: column;
+    margin-top: 50px;
 }
 .ga-fund-list-item{
     padding: 16px 0;
@@ -130,28 +131,29 @@
 }
 .ga-fund-per{
     color: #FF642B;
-    font-size: 16px;
+    font-size: 28px;
     letter-spacing: 0.58px;
-    line-height: 35px;
     flex: 2 0 0;
+    line-height: 67px;
 }
 .ga-fund-per-value{
-    font-size: 26px;
+    font-size: 48px;
+    
 }
 .ga-fund-name{
-    font-size: 18px;
+    font-size: 32px;
     color: #344E7D;
     letter-spacing: 0.38px;
-    line-height: 25px;
+    line-height: 45px;
     flex: 3 0 0;
 }
 .ga-fun-row2{
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: 24px;
     color: #808890;
     letter-spacing: 0.29px;
-    line-height: 18px;
+    line-height: 33px;
     margin-top: 10px;
 }
 .ga-fund-date{
@@ -162,41 +164,41 @@
 }
 
 .ga-news-container{
-    padding: 26px 16px 0;
+    padding: 50px 30px 0;
 }
 .ga-news-box{
     display: flex;
     align-items: baseline;
 }
 .ga-news-h{
-    font-size: 20px;
+    font-size: 36px;
     color: #212C68;
     letter-spacing: 0.43px;
-    line-height: 28px;
+    line-height: 50px;
 }
 .ga-news-p{
-    font-size: 14px;
+    font-size: 24px;
     color: #808890;
     letter-spacing: 0.29px;
-    line-height: 18px;
-    margin-left: 10px;
+    line-height: 33px;
+    margin-left: 20px;
 }
 .ga-news-item{
     display: flex;
     flex-direction: column;
-    padding: 22px 0;
+    padding: 40px 0;
     border-bottom: 1px solid #DCE8F5;
 }
 .ga-news-title{
-    font-size: 18px;
+    font-size: 32px;
     color: #344E7D;
     letter-spacing: 0.38px;
-    line-height: 25px;
+    line-height: 45px;
 }
 .ga-news-time{
-    font-size: 12px;
+    font-size: 20px;
     color: #808890;
     letter-spacing: 0.24px;
-    line-height: 16px;
-    margin-top: 10px;
+    line-height: 28px;
+    margin-top: 20px;
 }

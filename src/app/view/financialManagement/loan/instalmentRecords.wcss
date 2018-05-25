@@ -1,22 +1,23 @@
+.ga-new-page{
+    background-color: #fff;
+}
+.ga-line{
+    height: 16px;
+    background-color: #f8f8f8;
+}
 .ga-container{
     display: flex;
     flex-direction: column;
-    background-color: #fff;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 60px;
-    bottom: 0;
 }
 .ga-item{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 3px;
+    padding: 35px 0;
     border-bottom: 1px solid #e5e5e5;
-    line-height: 22px;
-    font-size:16px;
-    margin: 0 17px;
+    line-height: 40px;
+    font-size:28px;
+    margin: 0 30px;
 }
 .ga-label{
     color: #8E96AB;
@@ -30,26 +31,26 @@
 .ga-box{
     display: flex;
     flex-direction: column;
-    padding: 16px 3px;
+    padding: 15px 0 35px;
     border-bottom: 1px solid #e5e5e5;
-    margin: 0 17px;
+    margin: 0 30px;
 }
 .ga-box-item1{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    line-height: 22px;
-    font-size:16px;
-    margin-top: 10px;
+    line-height: 40px;
+    font-size:28px;
+    margin-top: 20px;
 }
 .ga-box-item2{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    line-height: 22px;
-    font-size:16px;
-    margin-top: 10px;
-    margin-left: 15px;
+    line-height: 40px;
+    font-size:28px;
+    margin-top: 20px;
+    margin-left: 36px;
 }
 .ga-value2{
     color: #8E96AB;

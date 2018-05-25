@@ -9,9 +9,11 @@
                 {{end}}
             </div>
             <div w-class="ga-mnemonic-shuffled">
+                <div w-class="ga-mnemonic-shuffled-inner">
                 {{for index,item of it1.shuffledMnemonic}}
                 <span w-class="ga-mnemonic-shuffled-item {{item.isActive ? 'ga-mnemonic-shuffled-item-active' : ''}}" on-tap="shuffledMnemonicItemClick(e,{{index}})">{{item.word}}</span>
                 {{end}}
+                </div>
             </div>
             <div w-class="ga-mnemonic-next-step-btn" on-tap="nextStepClick">下一步</div>
         </div>
