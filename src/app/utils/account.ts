@@ -86,3 +86,17 @@ function checkStrong(sPW){
     }  
     return bitTotal(Modes);    
 }  
+
+
+/**
+     * 名字显示截取
+     */
+export function nickNameInterception(name:string):string{
+    let ret = "";
+    if(name.length > 6){
+        ret = name.slice(0,6) + '...';
+    }else{
+        ret = name;
+    }
+    return ret;
+}

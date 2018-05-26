@@ -10,8 +10,9 @@ export class FundHome extends Widget{
         super.create();
         this.init();
     }
-    public attach(){
-        
+    public setProps(props,oldProps){
+        super.setProps(props,oldProps);
+        console.log(props)
     }
     public init(){
         this.state = {
@@ -33,6 +34,33 @@ export class FundHome extends Widget{
                 date:"成立以来",
                 change:"+30.53%"
             }],
+            historicalNetValue:[{
+                date:"20180525",
+                unitNetValue:"0.9743",
+                cumulativeNetValue:"0.9743",
+                changeDay:0.06
+            },{
+                date:"20180524",
+                unitNetValue:"0.9737",
+                cumulativeNetValue:"0.9737",
+                changeDay:-0.6
+            },{
+                date:"20180523",
+                unitNetValue:"0.9796",
+                cumulativeNetValue:"0.9796",
+                changeDay:-1.13
+            },{
+                date:"20180522",
+                unitNetValue:"0.9908",
+                cumulativeNetValue:"0.9908",
+                changeDay:0.04
+            },{
+                date:"20180521",
+                unitNetValue:"0.9986",
+                cumulativeNetValue:"0.9986",
+                changeDay:1.22
+            }],
+            showHistoryPerformances:true,
             otherFundItem:["基金概况","基金公告","基金经理","基金公司","费率结构","基金问答"]
 
         }
@@ -47,5 +75,13 @@ export class FundHome extends Widget{
     }
     public fundShareClick(){
         popNew("app-view-financialManagement-fund-share");
+    }
+    public historyPerformanceClick(){
+        this.state.showHistoryPerformances = true;
+        this.paint();
+    }
+    public historyNetValueClick(){
+        this.state.showHistoryPerformances = false;
+        this.paint();
     }
 }

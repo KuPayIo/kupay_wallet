@@ -19,8 +19,9 @@
 
 .main{
     display: inline-block;
-    width: 70%;
-    padding: 20px;
+    width: 80%;
+    padding: 40px;
+    min-height: 315px;
     vertical-align: middle;
     background-color: #fff;
     border-radius: 4px;
@@ -32,7 +33,7 @@
     backface-visibility: hidden;
     position: absolute;
     left: 50%;
-    top: 40%;
+    top: 50%;
     transform: translate(-50%,-50%);
 }
 
@@ -66,6 +67,7 @@
 .btns{
     padding: 5px 15px 0;
     text-align: right;
+    margin-top: 30px;
 }
 
 .button{

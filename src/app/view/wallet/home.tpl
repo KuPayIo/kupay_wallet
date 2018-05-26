@@ -35,13 +35,15 @@
                 <div w-class="ga-currency-logo-container">
                     <img src="../../res/image/{{currency.currencyName}}.png" w-class="ga-currency-logo"/>
                 </div>
-                <div w-class="ga-curreny-name-container">
-                    <div w-class="ga-curreny-name">{{currency.currencyName}}</div>
-                    <div w-class="ga-curreny-full-name">{{currency.currencyFullName}}</div>
-                </div>
-                <div w-class="ga-curreny-assets-container">
-                    <div w-class="ga-curreny-balance">{{currency.balance}}</div>
-                    <div w-class="ga-curreny-balance-value">{{currency.balanceValue}}</div>
+                <div w-class="ga-item-right-container">
+                    <div w-class="ga-item-top-container">
+                        <div w-class="ga-curreny-name">{{currency.currencyName}}</div>
+                        <div w-class="ga-curreny-balance">{{currency.balance}}</div>
+                    </div>
+                    <div w-class="ga-item-bottom-container">
+                        <div w-class="ga-curreny-full-name">{{currency.currencyFullName}}</div>
+                        <div w-class="ga-curreny-balance-value">{{currency.balanceValue}}</div>
+                    </div>
                 </div>
             </li>
             {{end}}

@@ -1,4 +1,6 @@
 <div class="ga-new-page" w-class="ga-new-page" >
+<div w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }' style="height:1334px;">
+<div w-class="ga-inner-page">
     <div w-class="ga-header" ev-back-click="goBackClick">
         <app-components-topBar-topBar>{title:"币投宝",style:"background-color:transparent;color:#fff;",iconColor:"white"}</app-components-topBar-topBar>
         <div w-class="ga-header-content-container">    
@@ -70,8 +72,10 @@
             </div>
         </div>
     </div>
-    <div w-class="ga-btns">
-        <div w-class="ga-btn-item ">转出</div>
-        <div w-class="ga-btn-item ga-btn-active">存入</div>
-    </div>
+</div>
+</div>
+<div w-class="ga-btns">
+    <div w-class="ga-btn-item ">转出</div>
+    <div w-class="ga-btn-item ga-btn-active">存入</div>
+</div>
 </div>

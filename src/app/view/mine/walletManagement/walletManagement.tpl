@@ -8,7 +8,7 @@
                     <input 
                         id="autoInput"
                         w-class="ga-input" 
-                        value="{{it1.gwlt.nickName}}" 
+                        value="{{it1.nickNameInterception(it1.gwlt.nickName)}}" 
                         on-blur="inputBlur"
                         on-focus="inputFocus"
                         style="border:{{it1.showInputBorder ? '1px solid #ccc' : 'none'}};margin-left:{{it1.showInputBorder ? '8px' : '0'}};"/>

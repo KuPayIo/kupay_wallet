@@ -83,8 +83,8 @@
     height: 44px;
 }
 .ga-function-item-text{
-    font-size: 28px;
-    color: #666666;
+    font-size: 32px;
+    color: #212C67;
     letter-spacing: 0.38px;
     text-align: center;
     line-height: 40px;
