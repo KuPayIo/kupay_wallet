@@ -21,6 +21,6 @@ export class applicationItem extends Widget{
     }
 
     public showDetails(event:any){
-        popNew("app-view-application-applDetails")
+        popNew("app-view-application-applDetails",{imgsrc:this.props.img});
     }
 }
