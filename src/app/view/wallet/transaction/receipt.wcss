@@ -22,7 +22,7 @@
 .body{
     position: absolute;
     width: 90%;
-    top: 55px;
+    top: 230px;
     font-size: 12px;
     left: 5%;
 }
@@ -36,19 +36,17 @@
     text-align: center;
 }
 .addr{
-    margin-top: 10px;
+    margin-top: 90px;
+    margin-left: 30px;
+    font-size: 24px;
+    color: #0B0817;
+    width: 620px;
+    word-wrap: break-word;
 }
 .copy{
-    border: 1px solid rgb(136, 136, 136);
-    width: 300px;
-    font-size: 18px;
-    height: 50px;
-    border-radius: 5px;
-    text-align: center;
-    line-height: 50px;
-    position: relative;
-    left: 50%;
-    transform: translate(-50%,0);
-    margin-top: 10px;
+    position: absolute;
     cursor: pointer;
+    display: inline-block;
+    right: 20px;
+    bottom: -15px;
 }

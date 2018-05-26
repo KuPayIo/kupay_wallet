@@ -1,17 +1,18 @@
-<div class="ga-new-page" w-class="ga-new-page">
+<div class="ga-new-page" w-class="ga-new-page" w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }'> 
+    <div>
     <app-components-topBar-topBar>{title:"理财",iconColor:"white"}</app-components-topBar-topBar>
     <div w-class="ga-announcement-container">
         <img src="../../res/image/icon_speaker.png" w-class="ga-speaker-icon"/>
         <span w-class="ga-speaker-title">{{'[头条]'}}</span>
         <span w-class="ga-speaker-text">医药行情风头正盛，分享享政策红利</span>
     </div>
-    <div w-class="ga-carousel-container">
+    <div w-class="ga-carousel-container" style="background-image:url(../../res/image/{{it1.bannerList[it1.bannerIndex]}});">
         <div w-class="ga-carousel-title">连续12月正收益</div>
         <div w-class="ga-carousel-text">理财投资的好选择</div>
         <div w-class="ga-dots">
-            <span w-class="ga-dot ga-dot-active"></span>
-            <span w-class="ga-dot"></span>
-            <span w-class="ga-dot"></span>
+            <span w-class="ga-dot {{it1.bannerIndex === 0 ? 'ga-dot-active' : ''}}"></span>
+            <span w-class="ga-dot {{it1.bannerIndex === 1 ? 'ga-dot-active' : ''}}"></span>
+            <span w-class="ga-dot {{it1.bannerIndex === 2 ? 'ga-dot-active' : ''}}"></span>
         </div>
     </div>
     <div w-class="ga-other-function">
@@ -35,7 +36,7 @@
             <span w-class="ga-fund-desc">长线投资 专家精选</span>
         </div>
         <div w-class="ga-fund-list">
-            <div w-class="ga-fund-list-item">
+            <div w-class="ga-fund-list-item" on-tap="fundItemClick">
                 <div w-class="ga-fund-row1">
                     <div w-class="ga-fund-per">
                         <span w-class="ga-fund-per-value">27.24</span>
@@ -48,7 +49,7 @@
                     <span w-class="ga-fund-begin">1,000 USDT起投</span>
                 </div>
             </div>
-            <div w-class="ga-fund-list-item ga-fund-list-item-border">
+            <div w-class="ga-fund-list-item ga-fund-list-item-border" on-tap="fundItemClick">
                 <div w-class="ga-fund-row1">
                     <div w-class="ga-fund-per">
                         <span w-class="ga-fund-per-value">25.76</span>
@@ -66,30 +67,30 @@
     <div w-class="ga-line"></div>
     <div w-class="ga-fund-container">
         <div w-class="ga-box1">
-            <span w-class="ga-fund-title">优选基金</span>
-            <span w-class="ga-fund-desc">长线投资 专家精选</span>
+            <span w-class="ga-fund-title">人气类别</span>
+            <span w-class="ga-fund-desc">全网数据 投基风向标</span>
         </div>
         <div w-class="ga-fund-list">
             <div w-class="ga-fund-list-item">
                 <div w-class="ga-fund-row1">
                     <div w-class="ga-fund-per">
-                        <span w-class="ga-fund-per-value">27.24</span>
+                        <span w-class="ga-fund-per-value">37.98</span>
                         <span>%</span>
                     </div>
-                    <div w-class="ga-fund-name">生物/医疗健康</div>
+                    <div w-class="ga-fund-name">社交通讯</div>
                 </div>
                 <div w-class="ga-fun-row2">
                     <span w-class="ga-fund-date">近一年</span>
-                    <span w-class="ga-fund-begin">1,000 USDT起投</span>
+                    <span w-class="ga-fund-begin">100 USDT起投</span>
                 </div>
             </div>
             <div w-class="ga-fund-list-item ga-fund-list-item-border">
                 <div w-class="ga-fund-row1">
                     <div w-class="ga-fund-per">
-                        <span w-class="ga-fund-per-value">25.76</span>
+                        <span w-class="ga-fund-per-value">12.18</span>
                         <span>%</span>
                     </div>
-                    <div w-class="ga-fund-name">基础链</div>
+                    <div w-class="ga-fund-name">物联网/DAG</div>
                 </div>
                 <div w-class="ga-fun-row2">
                     <span w-class="ga-fund-date">近一年</span>
@@ -114,4 +115,5 @@
         </div>
     </div>
 
+</div>
 </div>

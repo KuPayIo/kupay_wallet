@@ -17,11 +17,11 @@ export class Home extends Widget {
             initResultList: [
                 [
                     { icon: "../../res/image/BTC.png", name: "BTC/ETH", currency1: "BTC", currency2: "ETH" },
-                    { icon: "../../res/image/GAIA.WORLD.png", name: "GAIA/ETH", currency1: "GAIA", currency2: "ETH" }
+                    { icon: "../../res/image/GAIA.png", name: "GAIA/ETH", currency1: "GAIA", currency2: "ETH" }
                 ],
                 [
                     { icon: "../../res/image/ETH.png", name: "ETH/BTC", currency1: "ETH", currency2: "BTC" },
-                    { icon: "../../res/image/GAIA.WORLD.png", name: "GAIA/BTC", currency1: "GAIA", currency2: "BTC" }
+                    { icon: "../../res/image/GAIA.png", name: "GAIA/BTC", currency1: "GAIA", currency2: "BTC" }
                 ],
                 [
                     { icon: "../../res/image/ETH.png", name: "ETH/GAIA", currency1: "ETH", currency2: "GAIA" },

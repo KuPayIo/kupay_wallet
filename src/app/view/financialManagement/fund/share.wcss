@@ -1,0 +1,36 @@
+.ga-new-page{
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+}
+.ga-share-top{
+    flex:1 0 0;
+}
+.ga-share-bottom{
+    height: 320px;
+    background-color: #fff;
+}
+.ga-share-title{
+    font-size: 32px;
+    color: #203260;
+    text-align: center;
+    line-height: 45px;
+    margin-top: 30px;
+}
+.ga-share-platforms{
+    display: flex;
+    justify-content: center;
+}
+.ga-share-platform{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 28px;
+    color: #203260;
+    line-height: 40px;
+}
+.ga-share-icon{
+    width: 120px;
+    height: 120px;
+    margin: 50px 125px 10px;
+}

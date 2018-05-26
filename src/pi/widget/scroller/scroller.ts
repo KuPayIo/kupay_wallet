@@ -43,13 +43,15 @@ const scrollerInstanceMap = new Map();
 
 export const pluginBind = (w: Widget, vNode, args: any, oldArgs: any) => {
 	const scrollerInstance = scrollerInstanceMap.get(args.options.id);
-	if (!scrollerInstance) {
+	const bScroller = new BScroll(w, vNode, <Options>args.options);
+	scrollerInstanceMap.set(args.options.id, bScroller);
+	/* if (!scrollerInstance) {
 		const bScroller = new BScroll(w, vNode, <Options>args.options);
 		scrollerInstanceMap.set(args.options.id, bScroller);
 	} else {
 		scrollerInstance.update(<Options>args.options, vNode);
 		console.log(`id : ${args.options.id}已经存在, 直接可用`);
-	}
+	} */
 };
 
 export class BScroll {
@@ -520,7 +522,7 @@ export class BScroll {
 	}
 
 	public _transitionTimingFunction(easing) {
-		console.log(`easing is ${easing}`);
+		// console.log(`easing is ${easing}`);
 		paintCmd3(this.scroller.style, style.transitionTimingFunction, easing);
 		// this.scroller.style[style.transitionTimingFunction] = easing;
 	}

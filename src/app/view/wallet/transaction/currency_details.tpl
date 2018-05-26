@@ -7,23 +7,21 @@
         </div>
     </div>
 
-    <div w-class="body">
+    <div style="height: 250px;background: #FFFFFF;position: relative;">
         <div w-class="balance">{{it1.showBalance}}</div>
         <div w-class="balance-conversion">{{it1.showBalanceConversion}}</div>
+    </div>
+    <div w-class="body">
         <div w-class="transaction-record">
             <div w-class="record-text">交易记录</div>
             <div w-class="introduction-text" on-tap="showIntroduction">简介</div>
             <div w-class="line"></div>
+            {{if it1.list.length<=0}}
+            <div w-class="no-record"></div>
+            <div w-class="no-record-text">还没有交易记录</div>
+            {{end}}
             <div w-class="transaction-list">
-                {{for i,each of it1.list}}
-                <div w-class="each" on-tap="showTransactionDetails(e,{{i}})">
-                    <div w-class="type" style="color:{{each.type==='收款'?'#40875E':(each.type==='转账'?'#874040':'')}}">{{each.type}}</div>
-                    <div w-class="account">{{each.account}}</div>
-                    <div w-class="pay">{{each.type==='收款'?'+':(each.type==='转账'?'-':'')}}{{each.showPay}}</div>
-                    <div w-class="time">{{each.showTime}}</div>
-                    <div w-class="result">{{each.result}}</div>
-                </div>
-                {{end}}
+                <currency_details_list$>{list:{{it1.list}}}</currency_details_list>
             </div>
         </div>
     </div>

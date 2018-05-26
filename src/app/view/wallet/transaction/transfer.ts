@@ -46,7 +46,7 @@ export class AddAsset extends Widget {
         this.state = {
             title: "转账",
             fromShow: parseAccount(this.props.from),
-            to: "",
+            to: "0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3",
             pay: 0,
             payConversion: `￥0.00`,
             gasPrice: 100000000,
@@ -72,18 +72,18 @@ export class AddAsset extends Widget {
      */
     public doNext() {
         if (!this.state.to) {
-            popNew("pi-components-message-message", { type: "warn", content: "请输入收款地址", center: true });
+            popNew("app-components-message-message", { type: "warn", content: "请输入收款地址", center: true });
             return
         }
         if (!this.state.pay) {
-            popNew("pi-components-message-message", { type: "warn", content: "请输入转账金额", center: true });
+            popNew("app-components-message-message", { type: "warn", content: "请输入转账金额", center: true });
             return
         }
 
         let thisObj = this;
 
         //todo 这里进行当前验证，处理下一步
-        popNew("pi-components-message-messagebox", { type: "prompt", title: "输入密码", content: this.state.fromShow }, async function (r) {
+        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: this.state.fromShow }, async function (r) {
             //todo 这里需要验证密码是否正确
             //todo 处理转账逻辑
             //todo 通知交易数据改变
@@ -99,7 +99,7 @@ export class AddAsset extends Widget {
                     thisObj.doClose()
                 } catch (error) {
                     console.log(error.message)
-                    popNew("pi-components-message-message", { type: "error", content: error.message, center: true })
+                    popNew("app-components-message-message", { type: "error", content: error.message, center: true })
                 }
             }
         }, () => { })

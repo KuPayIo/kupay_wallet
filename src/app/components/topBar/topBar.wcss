@@ -21,6 +21,5 @@
 }
 .ga-banner-title{
     font-size: 36px;
-    color: #203260;
     text-align: center;
 }
