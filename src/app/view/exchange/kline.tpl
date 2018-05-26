@@ -23,7 +23,7 @@
                 <br></br>
                 <span style="color: #203260;">{{it1.time}}</span>
             </div>
-            <div style="position: relative;right: 30px;top: -93px;">
+            <div style="position: relative;right: 30px;top: -83px;">
                 <div style="position: absolute;right: 0px;font-size: 36px;color: #203260;">{{it1.blance}}</div>
                 <div style="right: 0px;position: absolute;font-size: 24px;color: #EE6560;top: 40px;">{{it1.up}}</div>
                 <div style="position: absolute;top: 70px;right: 30px;width: 120px;">
@@ -33,7 +33,7 @@
                     <div w-class="sale-color-text">卖</div>
                 </div>
             </div>
-            <div style="position: relative;top: 30px;">
+            <div style="position: relative;top: 40px;">
                 <img width="750" src="../../res/image/img_K@2x.jpg" />
             </div>
             <div style="position: relative;top: 40px;width: 100%;height: 1000px;">
@@ -46,7 +46,7 @@
                     {{for i,each of it1.list}}
                     <div style="position: relative;height: 40px;">
                         <div style="left: 30px;color: #0B0817;position: absolute;">{{each.buyCount}}</div>
-                        <div style="text-align: right;position: absolute;color: #00BD9A;right: 395px;">{{each.buyPrice}}</div>
+                        <div style="text-align: right;position: absolute;color: rgb(0, 189, 154);left: 155px;width: 200px;">{{each.buyPrice}}</div>
                         <div style="position: absolute;left: 367px;color: #FF6960;">{{each.salePrice}}</div>
                         <div style="position: absolute;right: 30px;color: #0B0817;">{{each.saleCount}}</div>
                     </div>

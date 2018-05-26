@@ -2,7 +2,7 @@
     <div w-class="header" title="36px">
         <div w-class="header-bg"></div>
         <div w-class="input" ev-input-change="onInputChange">
-            <pi-components-input-input>{placeHolder:"Search" }</pi-components-input-input>
+            <app-components-input-input>{placeHolder:"输入资产名" }</app-components-input-input>
         </div>
         <div w-class="back" on-tap="doClose">
             <span>取消</span>

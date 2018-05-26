@@ -39,6 +39,7 @@
     position: relative;
     top: 40px;
     left: 30px;
+    color: #8E96AB;
 }
 .get-addr-value{
     position: relative;
@@ -51,38 +52,43 @@
     left: 30px;
     width: 600px;
     top: 80px;
+    color: #8E96AB;
 }
 .pay-value{
     position: relative;
     top: 45px;
-    width: 400px;
+    width: 330px;
     left: 150px;
     
 }
 .pay-value-conversion{
     right: 0px;
     position: absolute;
+    font-size: 32px;
 }
 .set-addr{
     position: relative;
     left: 30px;
     top: 120px;
+    color: #8E96AB;
 }
 .fees{
     position: relative;
     left: 30px;
     top: 200px;
+    color: #8E96AB;
 }
 .info{
     margin-top: 10px;
     position: relative;
-    top: 260px;
+    top: 280px;
     left: 30px;
+    color: rgb(142, 150, 171);
 }
 .info-value{
     margin-top: 5px;
     position: relative;
-    top: 220px;
+    top: 240px;
     width: 500px;
     left: 150px;
 }
@@ -100,4 +106,28 @@
     border-radius: 6px;
     font-size: 32px;
     color: rgba(255,255,255,0.87);
+}
+
+.unSelect{
+    background: #FFFFFF;border: 1px solid #8E96AB;border-radius: 12px;
+    width: 180px;
+    height: 80px;
+    position: absolute;
+    text-align: center;
+    line-height: 80px;
+    cursor: pointer;
+    font-size: 32px;
+    color: #203260;
+}
+
+.isSelect{
+    background: #9BA2B5;border-radius: 12px;
+    width: 180px;
+    height: 80px;
+    position: absolute;
+    text-align: center;
+    line-height: 80px;
+    cursor: not-allowed;
+    font-size: 32px;
+    color: white;
 }

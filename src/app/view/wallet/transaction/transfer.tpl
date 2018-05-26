@@ -6,31 +6,36 @@
     <div w-class="body">
         <div w-class="get-addr">收款地址</div>
         <div w-class="get-addr-value" ev-input-change="onToChange">
-            <pi-components-input-input>{input:{{it1.to}}}</pi-components-input-input>
+            <app-components-input-input>{input:{{it1.to}}}</app-components-input-input>
         </div>
-        <div w-class="pay">
+        <div w-class="pay" style="width: 690px;">
             <span>金额</span>
             <span w-class="pay-value-conversion">{{it1.payConversion||''}}</span>
         </div>
 
         <div w-class="pay-value" ev-input-change="onPayChange">
-            <pi-components-input-input>{}</pi-components-input-input>
+            <app-components-input-input>{placeHolder:"输入转账金额" }</app-components-input-input>
         </div>
         <div w-class="set-addr">
             <span>发币地址</span>
             &nbsp;&nbsp;
-            <span>{{it1.fromShow||''}}</span>
+            <span style="margin-left: 8px;font-size: 32px;">{{it1.fromShow||''}}</span>
         </div>
-        <div w-class="fees">
+        <div w-class="fees" style="width: 690px;">
             <span>矿工费</span>
             &nbsp;&nbsp;
-            <span>{{it1.feesShow||''}}</span>
+            <span style="margin-left: 32px;font-size: 32px;">{{it1.feesShow||''}}</span>
             &nbsp;&nbsp;
-            <span>{{it1.feesConversion||''}}</span>
+            <span >{{it1.feesConversion||''}}</span>
+            <span style="color: #00BD9A;position: absolute;right: 0px;">不拥堵</span>
+        </div>
+        <div style="position: relative;left: 166px;top: 240px;height: 80px;">
+            <span w-class="{{it1.urgent?'isSelect':'unSelect'}}" on-tap="changeUrgent(e,true)">紧急</span>
+            <span w-class="{{it1.urgent?'unSelect':'isSelect'}}" style="left: 210px;" on-tap="changeUrgent(e,false)">不紧急</span>
         </div>
         <div w-class="info">备注</div>
         <div w-class="info-value" ev-input-change="onInfoChange">
-            <pi-components-input-input>{placeHolder:"无"}</pi-components-input-input>
+            <app-components-input-input>{placeHolder:"无"}</app-components-input-input>
         </div>
 
         <div w-class="next" on-tap="doNext">下一步</div>

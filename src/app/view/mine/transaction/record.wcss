@@ -24,6 +24,7 @@
     width: 100%;
     top: 144px;
     height: 100%;
+    background: white;
 }
 .no-record{
     background-image : url(../../../res/image/img_none_record@2x.png) ;
@@ -39,6 +40,7 @@
 }
 .transaction-list{
     position: absolute;
-    width: 100%;
+    width: 90%;
+    left: 30px;
     height: 1140px;
 }
