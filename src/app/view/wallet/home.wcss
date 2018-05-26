@@ -26,6 +26,11 @@
     border-radius: 50%;
     margin-right: 10px;
 }
+.ga-wallet-header-none{
+    width: 100px;
+    height: 100px;
+    visibility: hidden;
+}
 .ga-wallet-name{
     font-size: 36px;
     color: #FFFFFF;
