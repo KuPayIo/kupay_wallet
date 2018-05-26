@@ -522,7 +522,7 @@ export class BScroll {
 	}
 
 	public _transitionTimingFunction(easing) {
-		console.log(`easing is ${easing}`);
+		// console.log(`easing is ${easing}`);
 		paintCmd3(this.scroller.style, style.transitionTimingFunction, easing);
 		// this.scroller.style[style.transitionTimingFunction] = easing;
 	}

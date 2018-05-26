@@ -15,7 +15,7 @@
                 </div>
                 <span w-class="ga-assets"><span w-class="ga-assets-item">≈</span>105,250.00 CNY</span>
             </div>
-            <div w-class="ga-group-wallet">群钱包</div>
+            <div w-class="ga-group-wallet" on-tap="showGroupWallet">群钱包</div>
         </div>
     </div>
     <div w-class="ga-bottom-container">
