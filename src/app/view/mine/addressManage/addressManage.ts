@@ -61,20 +61,23 @@ export class addressManage extends Widget{
         // let gwlt = GaiaWallet.fromJSON(wallet.gwlt);
         // let newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), this.state.list.length)
 
-        popNew("pi-components-message-messagebox", { type: "prompt", title: "添加地址", content: "" }, (r) => {
-            // currencyRecord.addrs.push({
-            //     addr: newGwlt.address,
-            //     addrName: r ? r : `默认地址${this.state.list.length}`,
-            //     gwlt: newGwlt.toJSON(),
-            //     record: []
-            // });
-            // currencyRecord.currentAddr = newGwlt.address;
-            // setLocalStorage("wallets", wallets, true);
-            // console.log(wallets)
-            //todo 这里验证输入，并根据输入添加地址，且处理地址切换
-            this.goback();
-        }, () => {
-            this.goback();
-        })
+        if(this.props.showtype==1){
+            popNew("app-components-message-messagebox", { type: "prompt", title: "添加地址", content: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" }, (r) => {
+                // currencyRecord.addrs.push({
+                //     addr: newGwlt.address,
+                //     addrName: r ? r : `默认地址${this.state.list.length}`,
+                //     gwlt: newGwlt.toJSON(),
+                //     record: []
+                // });
+                // currencyRecord.currentAddr = newGwlt.address;
+                // setLocalStorage("wallets", wallets, true);
+                // console.log(wallets)
+                //todo 这里验证输入，并根据输入添加地址，且处理地址切换
+                
+            })
+        }
+        else{
+            popNew("app-view-mine-addressManage-messagebox",{ type: "prompt", title: "添加地址", content: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" })
+        }
     }
 }

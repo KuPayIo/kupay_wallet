@@ -10,28 +10,30 @@
             <div w-class="messFriendAddr">ETH asdfasdg...fhadfhasf</div>
         </span>
     </div>
-    <div w-class="talkContent" id="talkcontent">
-        
-        {{for ind,val of talkcontent}}
-            {{if val.time}}
-                <div w-class="messFriendTime">{{val.time}}</div>
+    <div w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }' w-class="talkContent"  >
+        <div style="height: auto;" id="talkcontent">
+            {{for ind,val of talkcontent}}
+                {{if val.time}}
+                    <div w-class="messFriendTime">{{val.time}}</div>
+                {{end}}
+                {{if val.type=="1"}}
+                    <div style="overflow:auto;">
+                        <div style="text-align: right;" w-class="messFriendPerson">我</div>
+                        <div w-class="mymessContent">{{val.content}}</div>
+                        <span style="clear: both;"></span>
+                    </div>
+                {{else}}
+                    <div style="overflow:auto;">
+                        <div w-class="messFriendPerson">{{it.name}}</div>
+                        <div w-class="friendmessContent">{{val.content}}</div>
+                    </div>
+                {{end}}
             {{end}}
-            {{if val.type=="1"}}
-                <div style="overflow:auto;">
-                    <div style="text-align: right;" w-class="messFriendPerson">我</div>
-                    <div w-class="mymessContent">{{val.content}}</div>
-                    <span style="clear: both;"></span>
-                </div>
-            {{else}}
-                <div style="overflow:auto;">
-                    <div w-class="messFriendPerson">{{it.name}}</div>
-                    <div w-class="friendmessContent">{{val.content}}</div>
-                </div>
-            {{end}}
-        {{end}}
+        </div>
     </div>  
     <div w-class="talkInput">
-        <input type="text" w-class="inputDiv"/>
+        <div w-class="inputDiv"><app-components-input-input>{}</app-components-input-input></div>
+        
         <img src="../../res/image/icon_mine_send.png" w-class="sendBtn"/>
     </div>
 </div>

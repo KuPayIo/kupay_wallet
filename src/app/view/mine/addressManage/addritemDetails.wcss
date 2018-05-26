@@ -26,8 +26,8 @@
     color: #203260;  
 }
 .qrimg{
-    width: 630px;
-    height: 630px;
+    width: 500px;
+    height: 500px;
     margin: 100px 60px;
 }
 .address{
