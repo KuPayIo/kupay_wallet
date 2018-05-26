@@ -23,23 +23,23 @@ export class Home extends Widget{
             },{
                 icon:"icon_mine_address.png",
                 text:"地址管理",
-                components:"app-view-mine-walletManagement-walletManagement"
+                components:"app-view-mine-addressManage-addressManage"
             },{
                 icon:"icon_mine_Language.png",
                 text:"语言设置",
-                components:"app-view-languageAndcoinset-language"
+                components:"app-view-mine-languageAndcoinset-language"
             },{
                 icon:"icon_mine_money.png",
                 text:"货币设置",
-                components:"app-view-languageAndcoinset-coinset"
+                components:"app-view-mine-languageAndcoinset-coinset"
             },{
                 icon:"icon_mine_problem.png",
                 text:"常见问题",
-                components:"app-view-FAQ-FAQ"
+                components:"app-view-mine-FAQ-FAQ"
             },{
                 icon:"icon_mine_about.png",
                 text:"关于我们",
-                components:"app-view-aboutus-aboutus"
+                components:"app-view-mine-aboutus-aboutus"
             },{
                 icon:"icon_mine_share.png",
                 text:"分享下载链接",

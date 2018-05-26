@@ -1,9 +1,9 @@
 /**
  * 消息框
  */
-import { Widget } from '../../../pi/widget/widget';
-import { notify } from '../../../pi/widget/event';
-import { remove } from '../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+import { notify } from '../../../../pi/widget/event';
+import { remove } from '../../../../pi/ui/root';
 
 interface Props {
     type: string;

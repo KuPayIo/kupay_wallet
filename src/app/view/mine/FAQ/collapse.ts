@@ -1,9 +1,9 @@
 /**
  * Collapse 折叠面板的逻辑处理
  */
-import { Widget } from '../../../pi/widget/widget';
-import { notify } from '../../../pi/widget/event';
-import { getRealNode } from '../../../pi/widget/painter';
+import { Widget } from '../../../../pi/widget/widget';
+import { notify } from '../../../../pi/widget/event';
+import { getRealNode } from '../../../../pi/widget/painter';
 
 interface CollapseItem{
     title:string;//标题
