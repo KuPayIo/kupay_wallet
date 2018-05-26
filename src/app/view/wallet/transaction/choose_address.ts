@@ -3,7 +3,7 @@
  */
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew, add } from "../../../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet, wei2Eth, decrypt, setLocalStorage } from "../../../utils/tools";
+import { getLocalStorage, getCurrentWallet, wei2Eth, decrypt, setLocalStorage, getDefaultAddr } from "../../../utils/tools";
 import { Api } from "../../../core/eth/api";
 import { GaiaWallet } from "../../../core/eth/wallet";
 
@@ -123,7 +123,4 @@ export class AddAsset extends Widget {
     }
 }
 
-const getDefaultAddr = (addr: number | string) => {
-    let addrStr = addr.toString();
-    return `${addrStr.slice(0, 3)}...${addrStr.slice(-3)}`;
-}
+

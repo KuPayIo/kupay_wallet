@@ -43,7 +43,7 @@ export class AddAsset extends Widget {
         let wallets = getLocalStorage("wallets");
         const wallet = getCurrentWallet(wallets);
 
-        this.state = { list: [], currentAddr: "", currentAddrRecords: [], balance: 0, showBalance: "0 ETH", showBalanceConversion: "≈￥0" };
+        this.state = { list: [], currentAddr: "", currentAddrRecords: [], balance: 0, showBalance: `0 ${this.props.currencyName}`, showBalanceConversion: "≈￥0" };
         this.resetCurrentAddr(wallet, this.props.currencyName)
         this.parseBalance();
         this.parseTransactionDetails()
@@ -157,7 +157,7 @@ export class AddAsset extends Widget {
         this.state.currentAddrRecords = this.state.currentAddrRecords.filter(v => removeList.indexOf(v.id) < 0);
         list = list.concat(this.state.currentAddrRecords.map(v => {
             v.account = parseAccount(v.to);
-            v.showPay = `${v.pay} ETH`;
+            v.showPay = `${v.pay} ${this.props.currencyName}`;
             return v
         }))
         // console.log(list, r)

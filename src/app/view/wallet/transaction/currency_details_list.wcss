@@ -1,0 +1,46 @@
+.transaction-list{
+    position: absolute;
+    width: 100%;
+    font-size: 20px;
+    height: 700px;
+    overflow: hidden;
+}
+.each{
+    position: relative;
+    width: 100%;
+    margin-top: 1px;
+    height: 140px;
+    cursor: pointer;
+    background-color: white;
+}
+.type{
+    position: absolute;
+    width: 56px;
+    color: rgb(135, 64, 64);
+    font-size: 28px;
+    top: 30px;
+}
+.account{
+    position: absolute;
+    left: 76px;
+    width: 200px;
+    top: 36px;
+    color: #8E96AB;
+}
+.pay{
+    position: absolute;
+    right: 0px;
+    color: #203260;
+    top: 30px;
+}
+.time{
+    position: absolute;
+    top: 79px;
+    color: #8E96AB;
+}
+.result{
+    position: absolute;
+    right: 0px;
+    top: 79px;
+    color: #8E96AB;
+}
