@@ -21,15 +21,15 @@ export class addressManage extends Widget{
             ],
             content1:[
                 {name:"BTC 001", money:"2.00",address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"},       
-                {name:"BTC 002", money:"2.00",address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"},       
-                {name:"BTC 003", money:"2.00",address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"},                                   
-                {name:"BTC 004", money:"2.00",address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"}       
+                {name:"BTC 002", money:"5.10",address:"hkkhaifdosjjKKHGHgodajflkdlkjNOLLfsdkflkdsfgfsgkjlls"},       
+                {name:"BTC 003", money:"2.80",address:"vhghsdfhstyhdsghgfhlkasldkoawoeuruieyrbhjncbkvksduyu"},                                   
+                {name:"BTC 004", money:"4.20",address:"qouiwrryoipsodfkHSDterjlipfodfJKFShdfghdsfhhfjkdgkgk"}       
             ],
             content2:[
                 {name:"好友 001", money:"2.00",address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"},       
-                {name:"好友 002", money:"2.00",address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"},       
-                {name:"好友 003", money:"2.00",address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"},                                   
-                {name:"好友 004", money:"2.00",address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"}   
+                {name:"好友 002", money:"5.10",address:"hkkhaifdosjjKKHGHgodajflkdlkjNOLLfsdkflkdsfgfsgkjlls"},       
+                {name:"好友 003", money:"2.80",address:"vhghsdfhstyhdsghgfhlkasldkoawoeuruieyrbhjncbkvksduyu"},                                   
+                {name:"好友 004", money:"4.20",address:"qouiwrryoipsodfkHSDterjlipfodfJKFShdfghdsfhhfjkdgkgk"} 
             ]
         }
     }
