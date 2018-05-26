@@ -44,3 +44,10 @@
     top: 79px;
     color: #8E96AB;
 }
+.line{
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: rgb(136, 136, 136);
+    top: 100px;
+}

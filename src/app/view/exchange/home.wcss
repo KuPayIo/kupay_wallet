@@ -1,20 +1,22 @@
 .base{
     background-color: #eee;
     width: 100%;
-    height: 100%;
+    height: 1334px;
     color: #203260;
 }
 .header{
-    height: 144px;
+    height: 128px;
     position: relative;
     background-color: white;
     width: 100%;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .currency{
     position: relative;
-    top: 59px;
     font-size: 36px;
     cursor: pointer;
 }
@@ -25,20 +27,18 @@
     border-bottom: 1px solid rgb(142, 150, 171);
     transform: rotate(-45deg);
     position: absolute;
-    margin-left: 15px;
-    top: 70px;
     cursor: pointer;
+    left: 460px;
 }
 
 .k-line{
     position: absolute;
-    right: 35px;
     background-image: url(../../res/image/btn_exc_k@2x.png);
-    background-size: 33px;
-    width: 33px;
-    height: 33px;
-    top: 67px;
     cursor: pointer;
+    right: 35px;
+    background-size: 44px;
+    width: 44px;
+    height: 44px;
 }
 
 .body{
@@ -270,7 +270,7 @@
 .foot{
     position: relative;
     top: 32px;
-    height: 100%;
+    height: 300px;
     background-color: white;
 }
 

@@ -123,6 +123,27 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
 }
 
 /**
+ * 获取有效的货币不需要转化
+ * 
+ * @param perNum 转化前数据
+ * @param currencyName  当前货币类型
+ * @param isWei 是否wei转化
+ */
+export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isWei: boolean,rate:any) => {
+    let api = new Api();
+    let r: any = { num: 0, show: "", conversionShow: "" };
+    if (currencyName === "ETH") {
+        let num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+
+        r.num = num;
+        r.show = `${num} ETH`;
+        r.conversionShow = `≈${conversionType === "CNY" ? "￥" : "$"}${(num * rate[conversionType]).toFixed(2)}`;
+    }
+    return r
+
+}
+
+/**
  * 转化显示时间
  * @param t 
  */

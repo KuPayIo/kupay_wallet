@@ -23,12 +23,16 @@
     border-width: 0px;
     position: absolute;
     right: 30px;
-    top: 66px;
+    top: 40px;
     word-wrap: break-word;
     transform-origin: 185.5px 13px 0px;
     cursor: pointer;
     font-size: 24px;
-    color: #203260;
+    color: rgb(32, 50, 96);
+    width: 120px;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
 }
 
 .balance{
@@ -67,8 +71,8 @@
 .introduction-text{
     position: absolute;
     right: 0px;
-    cursor: pointer;
     top: 30px;
+    color: #ccc;
 }
 .line{
     position: absolute;
