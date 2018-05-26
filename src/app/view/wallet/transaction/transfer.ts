@@ -3,7 +3,7 @@
  */
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, eth2Wei, setLocalStorage, effectiveCurrency, parseAccount, parseDate } from "../../../utils/tools";
+import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, eth2Wei, setLocalStorage, parseAccount, parseDate, effectiveCurrencyStableConversion } from "../../../utils/tools";
 import { GaiaWallet } from "../../../core/eth/wallet";
 import { Api } from "../../../core/eth/api";
 
@@ -11,7 +11,7 @@ interface Props {
     currencyBalance: string;
     from: string;
     currencyName: number
-
+    rate: any;
 }
 
 interface States {
@@ -27,6 +27,7 @@ interface States {
     feesShow: string;
     feesConversion: string;
     info: string;
+    urgent: boolean;
 }
 
 export class AddAsset extends Widget {
@@ -48,13 +49,14 @@ export class AddAsset extends Widget {
             fromShow: parseAccount(this.props.from),
             to: "0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3",
             pay: 0,
-            payConversion: `￥0.00`,
+            payConversion: `≈￥0.00`,
             gasPrice: 100000000,
-            gasLimit: 210000,
+            gasLimit: 21000,
             fees: 0,
             feesShow: "",
             feesConversion: "",
             info: "",
+            urgent: false
         }
 
         this.resetFees();
@@ -93,7 +95,7 @@ export class AddAsset extends Widget {
             if (r === psw) {
                 try {
                     let id = await doTransfer(wallet, thisObj.props.from, thisObj.state.to, psw, thisObj.state.gasPrice, thisObj.state.gasLimit
-                        , eth2Wei(thisObj.state.pay), thisObj.props.currencyName, thisObj.state.info)
+                        , eth2Wei(thisObj.state.pay), thisObj.props.currencyName, thisObj.state.info, thisObj.state.urgent)
                     //打开交易详情界面
                     thisObj.showTransactionDetails(id, wallet)
                     thisObj.doClose()
@@ -115,11 +117,11 @@ export class AddAsset extends Widget {
     /**
      * 收款金额改变
      */
-    async onPayChange(e) {
+    public onPayChange(e) {
         let num = parseFloat(e.value) || 0;
         this.state.pay = num;
 
-        let r = await effectiveCurrency(num, "ETH", "CNY", false);
+        let r = effectiveCurrencyStableConversion(num, "ETH", "CNY", false, this.props.rate);
         this.state.payConversion = r.conversionShow;
         this.paint();
     }
@@ -155,8 +157,20 @@ export class AddAsset extends Widget {
 
     }
 
-    private async resetFees() {
-        let r = await effectiveCurrency(this.state.gasPrice * this.state.gasLimit, "ETH", "CNY", true);
+    public changeUrgent(e, t) {
+        this.state.urgent = t;
+        this.paint();
+
+        this.resetFees();
+    }
+
+    private resetFees() {
+        let price = this.state.gasPrice;
+        if (this.state.urgent) {
+            price *= 2;
+        }
+        let r = effectiveCurrencyStableConversion(price * this.state.gasLimit, "ETH", "CNY", true,this.props.rate);
+
         this.state.fees = r.num;
         this.state.feesShow = r.show;
         this.state.feesConversion = r.conversionShow;
@@ -187,8 +201,9 @@ const addRecord = (currencyName, currentAddr, record) => {
 /**
  * 处理转账
  */
-async function doTransfer(wallet, acct1, acct2, psw, gasPrice, gasLimit, value, currencyName, info) {
+async function doTransfer(wallet, acct1, acct2, psw, gasPrice, gasLimit, value, currencyName, info, urgent) {
     let api = new Api();
+    if (urgent) gasPrice *= 2;
     let nonce = await api.getTransactionCount(acct1);
     let txObj = {
         to: acct2,

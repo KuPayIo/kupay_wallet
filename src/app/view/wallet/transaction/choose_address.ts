@@ -66,7 +66,7 @@ export class AddAsset extends Widget {
 
         // r.toJSON()
 
-        popNew("pi-components-message-messagebox", { type: "prompt", title: "添加地址", content: newGwlt.address }, (r) => {
+        popNew("app-components-message-messagebox", { type: "prompt", title: "添加地址", content: newGwlt.address,placeHolder:"标签名" }, (r) => {
             currencyRecord.addrs.push({
                 addr: newGwlt.address,
                 addrName: r ? r : `默认地址${this.state.list.length}`,

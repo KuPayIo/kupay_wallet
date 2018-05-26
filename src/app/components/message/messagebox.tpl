@@ -12,7 +12,7 @@
             </div>
             {{if it.type==="prompt"}}
             <div ev-input-change="inputChange" w-class="input-father">
-                <input-input$$>{type:{{it.inputType}}}</input-input$$>
+                <input-input$$>{type:{{it.inputType}},placeHolder:{{it.placeHolder}}}</input-input$$>
             </div>
             {{end}}
         </div>
