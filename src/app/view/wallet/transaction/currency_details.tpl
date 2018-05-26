@@ -3,7 +3,7 @@
         <app-components-topBar-topBar>{title:{{it.currencyName}}}</app-components-topBar-topBar>
 
         <div w-class="search" on-tap="doSearch">
-            <span>选择地址</span>
+            <span>...</span>
         </div>
     </div>
 

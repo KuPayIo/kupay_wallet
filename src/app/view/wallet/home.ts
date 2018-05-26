@@ -76,7 +76,7 @@ const parseCurrencyList = (wallet) => {
     let list = [];
     //todo 测试代码  不处理没有的情况
     // if (!wallet.showCurrencys) return list;
-    let showCurrencys = (wallet && wallet.showCurrencys) || ["ETH"];
+    let showCurrencys = (wallet && wallet.showCurrencys) || ["ETH","BTC","GAIA"];
 
     //todo  这里需要正确的处理钱包货币
     showCurrencys.forEach(v => {
