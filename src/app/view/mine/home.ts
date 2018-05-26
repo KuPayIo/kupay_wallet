@@ -43,7 +43,7 @@ export class Home extends Widget{
             },{
                 icon:"icon_mine_share.png",
                 text:"分享下载链接",
-                components:"app-view-mine-walletManagement-walletManagement"
+                components:"app-view-financialManagement-fund-share"
             }]
         }
     }

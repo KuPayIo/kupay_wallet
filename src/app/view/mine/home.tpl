@@ -1,6 +1,6 @@
 <div class="ga-new-page" style="background-color: #f9f9f9;">
     <div w-class="ga-top-banner">
-        <span w-class="ga-banner-title">消息</span>
+        <span w-class="ga-banner-title">我的</span>
         <img src="{{it1.hasNews?'../../res/image/icon_mine_news2.png':'../../res/image/icon_mine_news.png'}}" w-class="ga-banner-btn" on-tap="goNotice(e)"/>
     </div>
     <div style="background-color: #fff;">
