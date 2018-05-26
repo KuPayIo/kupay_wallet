@@ -16,10 +16,7 @@
         </div>
     </div>
     <div w-class="ga-other-function">
-        <div w-class="ga-function-item" on-tap="fundClick">
-            <img src="../../res/image/icon_fund.png" w-class="ga-function-item-icon"/>
-            <span w-class="ga-function-item-text">基金</span>
-        </div>
+        
         <div w-class="ga-function-item" on-tap="balanceManagementClick">
             <img src="../../res/image/icon_eggmoney.png" w-class="ga-function-item-icon"/>
             <span w-class="ga-function-item-text">币投宝</span>
@@ -28,6 +25,7 @@
             <img src="../../res/image/icon_loan.png" w-class="ga-function-item-icon"/>
             <span w-class="ga-function-item-text">币币贷</span>
         </div>
+      
     </div>
     <div w-class="ga-line"></div>
     <div w-class="ga-fund-container">

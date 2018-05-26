@@ -1,6 +1,6 @@
 .ga-bottom-tab-bar-container{
     display: flex;
-    height: 99px;
+    height: 110px;
     width: 100%;
     position: absolute;
     bottom: 0;
@@ -18,7 +18,7 @@
     cursor: pointer;
     font-size: 20px;
     line-height: 28px;
-    color: #8E96AB;
+    color: #3e477b;
     letter-spacing: 0.24px;
     text-align: center;
 }
@@ -31,4 +31,5 @@
 }
 .ga-tab-bar-text{
     font-size: 20px;
+    margin-top: 10px;
 }

@@ -27,6 +27,7 @@ export class WalletManagement extends Widget {
         }
 
         this.state = {
+            wallet,
             gwlt,
             showPswTips: false,
             pswTips,

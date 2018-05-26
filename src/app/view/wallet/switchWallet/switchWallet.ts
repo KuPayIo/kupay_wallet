@@ -48,7 +48,9 @@ export class SwitchWallet extends Widget{
     public switchWallet(curWalletId){
         let wallets = getLocalStorage("wallets");
         wallets.curWalletId = curWalletId;
+        alert(curWalletId)
         setLocalStorage("wallets",wallets,true);
+        let wallets1 = getLocalStorage("wallets");
     }
 
     public closePageClick(){

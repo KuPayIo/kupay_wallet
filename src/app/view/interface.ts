@@ -7,6 +7,7 @@
  */
  export interface Wallet{
     walletId:string;  //wallet id  (first address)
+    avatar:string;
     walletPsw:string; // wallet password
     walletPswTips?:string;// wallet password tips
     gwlt:string;  // Serialization GaiaWallet object

@@ -49,12 +49,12 @@
         </div>
         <div w-class="ga-line"></div>
         <div w-class="ga-bottom-list">
-            <div w-class="ga-list-item" on-tap="instalmentRecordsClick">
+            <div w-class="ga-list-item" on-tap="projectIntroductionClick">
                 <img src="../../../res/image/icon_fund_Introduce.png" w-class="ga-list-item-icon"/>
                 <div w-class="ga-list-item-text">项目介绍</div>
                 <img src="../../../res/image/btn_right_arrow.png" w-class="ga-list-item-arrow"/>
             </div>
-            <div w-class="ga-list-item" on-tap="historicalBillClick">
+            <div w-class="ga-list-item" on-tap="commonProblemClick">
                 <img src="../../../res/image/icon_fund_ques.png" w-class="ga-list-item-icon"/>
                 <div w-class="ga-list-item-text">常见问题</div>
                 <img src="../../../res/image/btn_right_arrow.png" w-class="ga-list-item-arrow"/>

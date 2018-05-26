@@ -34,4 +34,12 @@ export class BalanceManagementHome extends Widget{
     public preferredFundItemClick(e,index){
         popNew("app-view-financialManagement-fund-home",{fund:this.state.preferredFunds[index]});
     }
+
+    public projectIntroductionClick(){
+        popNew("app-components-message-message", { type: "notice", content: "正在开发,敬请期待" });
+    }
+
+    public commonProblemClick(){
+        popNew("app-components-message-message", { type: "notice", content: "正在开发,敬请期待" });
+    }
 }

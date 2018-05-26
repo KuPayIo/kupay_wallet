@@ -13,26 +13,28 @@
    background-image: url(../../../res/image/bg_card.png);
    background-position: center;
    background-size: cover;
-   padding: 190px 80px;
+   padding: 0 80px;
    color: #fff;
 }
 .ga-card-item{
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: flex-start;
 }
 .ga-wallet-name-container{
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 1 0 0;
+    margin-top: 106px;
  }
-.ga-wallet-name-dot{
-    width: 10px;
-    height: 10px;
+
+.ga-wallet-header{
+    width: 40px;
+    height: 40px;
     border: 1px solid #ccc;
+    background-color: #fff;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 12px;
 }
 .ga-input{
     width: 100%;
@@ -43,11 +45,14 @@
     font-size: 32px;
     line-height: 45px;
     color: #fff;
+    
 }
 .ga-assets{
     font-size: 40px;
     display: flex;
     align-items: baseline;
+    justify-content: flex-end;
+    margin-top: 87px;
 
 }
 .ga-assets-item{
@@ -57,7 +62,7 @@
 .ga-group-wallet{
     font-size: 24px;
     line-height: 33px;
-    margin-top: 118px;
+    margin-top: 36px;
     text-align: right;
 }
 .ga-bottom-container{
