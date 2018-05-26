@@ -10,7 +10,7 @@
             <div w-class="messFriendAddr">ETH asdfasdg...fhadfhasf</div>
         </span>
     </div>
-    <div w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }' w-class="talkContent"  >
+    <div w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{"startY":-819} }' w-class="talkContent"  >
         <div style="height: auto;" id="talkcontent">
             {{for ind,val of talkcontent}}
                 {{if val.time}}
