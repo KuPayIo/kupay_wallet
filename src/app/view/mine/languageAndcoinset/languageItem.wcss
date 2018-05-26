@@ -24,8 +24,8 @@
 }
 .languageItem{
     display: flex;
-    padding: 2.8%;
-    margin: 2.2%;
+    padding: 40px 0;
+    margin: 0 30px;
     align-items: center;
     border-bottom: 1px solid #E5E5EE;
     cursor: pointer;
@@ -35,7 +35,6 @@
 }
 .ga-item-text{
     flex: 1 0 0;
-    margin-left: 2%;
     font-size: 32px;
     color: #203260;
 }

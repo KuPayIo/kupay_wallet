@@ -51,8 +51,10 @@ export class messagefriends extends Widget{
     }
 
     public attach(){
-        var talkcontent=document.getElementById("talkcontent")
+        var talkcontent=document.getElementById("talkcontent");
         talkcontent.scrollTop=talkcontent.scrollHeight;
+        talkcontent.style.height = talkcontent.scrollHeight.toString();
+        
     }
 
     public backPrePage(){

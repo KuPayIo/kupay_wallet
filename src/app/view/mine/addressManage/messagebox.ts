@@ -1,14 +1,13 @@
 /**
  * 确认提示框
  */
-import { Widget } from '../../../pi/widget/widget';
+import { Widget } from '../../../../pi/widget/widget';
 
 interface Props {
     type: string;
     text: string;
     center?: boolean;
     inputType?:string;
-    placeHolder?:string;
 }
 
 export class MessageBox extends Widget {

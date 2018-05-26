@@ -20,7 +20,7 @@
     color: #203260;
 }
 .applicationContent{
-    height: 80%;
+    height: 1300px;
     position: relative;
     overflow: scroll;
 }

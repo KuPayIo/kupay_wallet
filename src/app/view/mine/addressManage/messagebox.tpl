@@ -7,12 +7,14 @@
             </div>
         </div>
         <div w-class="content">
-            <div w-class="message">
-                <p>{{it.content}}</p>
+            <div w-class="cointype">BTC</div>
+            <div w-class="message" ev-input-change="inputChange" w-class="input-father">
+                <app-components-input-input>{type:{{it.inputType}},placeHolder:"地址"}</app-components-input-input>
+                <img src="../../../res/image/btn_scan.png" w-class="scanbtn"/>
             </div>
             {{if it.type==="prompt"}}
             <div ev-input-change="inputChange" w-class="input-father">
-                <input-input$$>{type:{{it.inputType}},placeHolder:{{it.placeHolder}}}</input-input$$>
+                <app-components-input-input>{type:{{it.inputType}},placeHolder:"ETH 004" }</app-components-input-input>
             </div>
             {{end}}
         </div>
