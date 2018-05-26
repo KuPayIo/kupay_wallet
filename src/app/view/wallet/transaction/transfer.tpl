@@ -6,7 +6,7 @@
     <div w-class="body">
         <div w-class="get-addr">收款地址</div>
         <div w-class="get-addr-value" ev-input-change="onToChange">
-            <pi-components-input-input>{}</pi-components-input-input>
+            <pi-components-input-input>{input:{{it1.to}}}</pi-components-input-input>
         </div>
         <div w-class="pay">
             <span>金额</span>

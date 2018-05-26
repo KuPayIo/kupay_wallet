@@ -46,7 +46,7 @@ export class AddAsset extends Widget {
         this.state = {
             title: "转账",
             fromShow: parseAccount(this.props.from),
-            to: "",
+            to: "0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3",
             pay: 0,
             payConversion: `￥0.00`,
             gasPrice: 100000000,

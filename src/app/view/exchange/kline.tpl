@@ -6,8 +6,8 @@
         <span w-class="currency" on-tap="changeCurrency">{{it1.currency1}}/{{it1.currency2}}</span>
         <span w-class="currency-change" on-tap="changeCurrency"></span>
     </div>
-    <div style="background-color: white;height: 1190px;overflow: scroll;" class="hide-scrollbar">
-        <div style="position: relative;">
+    <div style="background-color: white;height: 1190px;overflow: hidden;" w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }'>
+        <div style="height: 1480px;">
             <div w-class="body-text">
                 <span w-class="body-text-title" style="margin-left: 0px;">开</span>
                 <span w-class="body-text-value">{{it1.open}}</span>
@@ -23,7 +23,7 @@
                 <br></br>
                 <span style="color: #203260;">{{it1.time}}</span>
             </div>
-            <div style="position: absolute;right: 30px;">
+            <div style="position: relative;right: 30px;top: -93px;">
                 <div style="position: absolute;right: 0px;font-size: 36px;color: #203260;">{{it1.blance}}</div>
                 <div style="right: 0px;position: absolute;font-size: 24px;color: #EE6560;top: 40px;">{{it1.up}}</div>
                 <div style="position: absolute;top: 70px;right: 30px;width: 120px;">
@@ -33,10 +33,10 @@
                     <div w-class="sale-color-text">卖</div>
                 </div>
             </div>
-            <div style="position: absolute;top: 260px;">
+            <div style="position: relative;top: 30px;">
                 <img width="750" src="../../res/image/img_K@2x.jpg" />
             </div>
-            <div style="position: absolute;top: 1050px;width: 100%;">
+            <div style="position: relative;top: 40px;width: 100%;height: 1000px;">
                 <div style="font-size: 24px;color: #0B0817;background: #E5E5EE;">
                     <div style="display: inline-block;margin-left: 30px;">买入量</div>
                     <div style="display: inline-block;margin-left: 250px;">价格</div>

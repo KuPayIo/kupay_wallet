@@ -7,7 +7,9 @@
             <pi-components-qrcode-qrcode>{value:{{it.addr}},size:630}</pi-components-qrcode-qrcode>
         </div>
         <div w-class="addr">{{it.addr}}</div>
-        <div w-class="copy" on-tap="doCopy"><img src="../../../res/image/btn_trans_copy@2x.png" /></div>
+        <div w-class="copy" style="display: none;" on-tap="doCopy">
+            <img src="../../../res/image/btn_trans_copy@2x.png" />
+        </div>
     </div>
 
 
