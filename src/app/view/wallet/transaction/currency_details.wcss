@@ -23,16 +23,16 @@
     border-width: 0px;
     position: absolute;
     right: 30px;
-    top: 40px;
+    top: 0px;
     word-wrap: break-word;
     transform-origin: 185.5px 13px 0px;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 80px;
     color: rgb(32, 50, 96);
     width: 120px;
-    height: 60px;
+    height: 100%;
     text-align: center;
-    line-height: 60px;
+    line-height: 100%;
 }
 
 .balance{

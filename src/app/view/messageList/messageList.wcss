@@ -57,7 +57,7 @@
 }
 .ga-banner-btn{
     font-size: 24px;
-    color: #203260;
+    color: #ccc;
     position: absolute;
     right: 30px;
 }

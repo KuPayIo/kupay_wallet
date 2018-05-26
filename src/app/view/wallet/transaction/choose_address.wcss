@@ -52,7 +52,7 @@
     width: 450px;
     height: 60px;
     line-height: 60px;
-    left: 50px;
+    left: 70px;
     position: relative;
     top: 30px;
 }
