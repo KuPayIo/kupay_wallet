@@ -45,9 +45,13 @@
     padding: 20px;
     margin: 10px 30px;   
 }
+.talkContent{
+    background-color: #f9f9f9;
+    height: 80%;
+    overflow: scroll;
+}
 .talkInput{
     background-color: #fff;
-    height: 100px;
     position: absolute;
     bottom: 0;
     width: 100%;

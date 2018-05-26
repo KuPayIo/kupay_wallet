@@ -1,5 +1,5 @@
-import {Widget} from "../../../pi/widget/widget";
-import {notify} from "../../../pi/widget/event";
+import {Widget} from "../../../../pi/widget/widget";
+import {notify} from "../../../../pi/widget/event";
 
 export class languageItem extends Widget{
     constructor(){

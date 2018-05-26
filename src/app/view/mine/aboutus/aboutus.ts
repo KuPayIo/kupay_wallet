@@ -1,5 +1,5 @@
-import {Widget} from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
+import {Widget} from "../../../../pi/widget/widget";
+import { popNew } from "../../../../pi/ui/root";
 
 export class aboutus extends Widget{
     public ok: () => void;
@@ -14,11 +14,11 @@ export class aboutus extends Widget{
         }
     }
 
-    public itemClick(e,index){
+    public itemClick(e,index){       
         if(this.state.data[index].components!=""){
-            popNew(this.state.data[index].components);
+            // popNew(this.state.data[index].components);
         }else{
-            popNew("app-components-message-message", { type: "success", content: "当前已是最新版本", center: true })
+            // popNew("app-view-aboutus-message", { type: "success", content: "当前已是最新版本", center: true })
         }
     }
 
