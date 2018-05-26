@@ -9,7 +9,7 @@
         class="{{it && it.disabled ? 'pi-textarea__inner-disabled' : 'pi-textarea__inner' }}" 
         w-class="{{it && it.disabled ? 'pi-textarea__inner-disabled' : 'pi-textarea__inner' }} "
         style="{{it1.styleStr}}"
-        placeholder="{{it && it.placeHolder ? it.placeHolder : '请输入内容'}}"
+        placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}"
         disabled={{it && it.disabled ? true : false}}
         on-input="change"
         on-blur="blur"
@@ -32,7 +32,7 @@
         style="{{it1.styleStr}}"
         type="{{it.type ? it.type : 'text'}}" 
         autocomplete="off" 
-        placeholder="{{it && it.placeHolder ? it.placeHolder : '请输入内容'}}" 
+        placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}" 
         value="{{it1 && it1.currentValue ? it1.currentValue : ''}}"
         disabled={{it && it.disabled ? true : false}}
         on-input="change"

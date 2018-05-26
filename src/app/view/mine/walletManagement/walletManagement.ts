@@ -1,6 +1,6 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { getLocalStorage, getCurrentWallet,decrypt, setLocalStorage } from "../../../utils/tools"
-import { pswEqualed } from "../../../utils/account"
+import { pswEqualed,nickNameInterception } from "../../../utils/account"
 import { GaiaWallet } from "../../../core/eth/wallet"
 import { popNew } from "../../../../pi/ui/root"
 
@@ -31,7 +31,8 @@ export class WalletManagement extends Widget{
             showPswTips:false,
             pswTips,
             mnemonicExisted,
-            showInputBorder:false
+            showInputBorder:false,
+            nickNameInterception
         }
     }
     public backPrePage(){
@@ -39,11 +40,13 @@ export class WalletManagement extends Widget{
     }
 
     public pswTipsClick(){
+        return;
         this.state.showPswTips = !this.state.showPswTips;
         this.paint();
     }
 
     public exportPrivateKeyClick(){
+        return;
         popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
             let wallets = getLocalStorage("wallets");
             let wallet = getCurrentWallet(wallets);
@@ -60,9 +63,6 @@ export class WalletManagement extends Widget{
         })
     }
 
-    public backupMnemonic(){
-        popNew("app-view-wallet-backupMnemonic-backupMnemonic");
-    }
 
 
     public inputFocus(){
@@ -94,5 +94,25 @@ export class WalletManagement extends Widget{
         }
         this.state.showInputBorder = false;
         this.paint();
+    }
+
+
+    public backupMnemonic(){
+        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
+            let wallets = getLocalStorage("wallets");
+            let wallet = getCurrentWallet(wallets);
+            let walletPsw = decrypt(wallet.walletPsw);
+            if(pswEqualed(r,walletPsw)){
+                let close = popNew("pi-components-loading-loading",{text:"导出中"});
+                setTimeout(()=>{
+                    close.callback(close.widget);
+                    this.ok && this.ok();
+                    popNew("app-view-wallet-backupMnemonic-backupMnemonic");
+                },500);
+            }else{
+                popNew("app-components-message-message", { type: "error", content: "密码错误,请重新输入" })
+            }
+        }, () => {
+        })
     }
 }

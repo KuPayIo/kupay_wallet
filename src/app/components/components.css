@@ -1,22 +1,8 @@
 /** √ */
-.checkbox_true::before,.checkbox_true::after{
-    position:absolute;
-    content:'';
-    left:0;
-    bottom:0;
-    background-color:#fff;
-}
-.checkbox_true::before{
-    width: 2px;
-    height: 6px;    
-}
-.checkbox_true::after{
-    width: 11px;
-    height: 2px;
-}
+
 
 /** - */
-.checkbox_indeterminate::before{
+.checkbox1_indeterminate::before{
     content: "";
     position: absolute;
     display: block;
@@ -134,6 +120,19 @@
 }
 .pi-input :-ms-input-placeholder { /* Internet Explorer 10+ */
     color:    #999;
+}
+
+.pi-input textarea::-webkit-input-placeholder { /* WebKit browsers */
+    color: #8E96AB;
+}
+.pi-input textarea:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: #8E96AB;
+}
+.pi-input textarea::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #8E96AB;
+}
+.pi-input textarea:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:#8E96AB;
 }
 
 .pi-input__suffix:after,

@@ -14,7 +14,7 @@ export class Home extends Widget{
             hasNews:true,
             mineList:[{
                 icon:"icon_mine_wallet.png",
-                text:"管理钱包",
+                text:"我的钱包",
                 components:"app-view-mine-walletManagement-walletManagement"
             },{
                 icon:"icon_mine_annal.png",

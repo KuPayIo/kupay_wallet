@@ -21,7 +21,7 @@ export const run = (): void => {
 	addWidget(document.body, 'pi-ui-root');
 	popNew('app-view-app');
 	//popNew('app-view-financialManagement-home');
-	// popNew('app-view-wallet-walletCreate-walletCreate');
+	//popNew('app-view-wallet-walletCreate-walletCreate');
 	// popNew('app-view-application-home');
 	// popNew('app-view-groupwallet-groupwallet');
 	// popNew('app-view-financialManagement-home');

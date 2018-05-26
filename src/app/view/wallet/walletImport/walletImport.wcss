@@ -55,7 +55,7 @@
     align-items: center;
     height: 100px;
     cursor: pointer;
-    margin: 41px 30px 0;
+    margin: 41px 0 0;
     background: #203260;
     border-radius: 6px;
     font-size: 32px;
