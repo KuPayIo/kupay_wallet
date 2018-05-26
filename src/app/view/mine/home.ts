@@ -54,6 +54,11 @@ export class Home extends Widget{
     }
 
     public goNotice(event:any){
-        popNew("app-view-messageList-messageList");
+        popNew("app-view-messageList-messageList",{hasNews:this.state.hasNews},(r)=>{
+            if(r){
+                this.state.hasNews = false;
+                this.paint();
+            }
+        },()=>{});
     }
 }
