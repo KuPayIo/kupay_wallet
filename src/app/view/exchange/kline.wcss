@@ -80,7 +80,7 @@
 }
 
 .body-text{
-    position: absolute;
+    position: relative;
     left: 48px;
     font-size: 24px;
     width: 400px;

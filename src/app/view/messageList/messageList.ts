@@ -8,12 +8,13 @@ export class messageList extends Widget{
         super();
         this.props={
             data:[
-                {type:"1",typename:"好友",title:"好呀好呀！", content:"",time:"2018-5-23",noread:true,name:"小王"},
+                {type:"1",typename:"好友",title:"好呀好呀！", content:"1",time:"2018-5-23",noread:true,name:"小王"},
                 {type:"2",typename:"公告",title:"发布通知", content:"这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容",time:"2018-5-23",noread:true},               
                 {type:"3",typename:"交易通知",title:"交易完成", content:"",time:"2018-5-23"},
-                {type:"1",typename:"好友",title:"最近行情如何？", content:"",time:"2018-5-23",name:"小何"},
+                {type:"1",typename:"好友",title:"最近行情如何？", content:"2",time:"2018-5-23",name:"小何"},
                 {type:"2",typename:"公告",title:"发布通知", content:"这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容",time:"2018-5-23"}                                               
             ]
+           
         }
     }
 

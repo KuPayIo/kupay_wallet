@@ -1,5 +1,5 @@
-import {Widget} from "../../../pi/widget/widget";
-import {notify} from "../../../pi/widget/event";
+import {Widget} from "../../../../pi/widget/widget";
+import {notify} from "../../../../pi/widget/event";
 
 export class language extends Widget{
     public ok: () => void;
@@ -8,8 +8,8 @@ export class language extends Widget{
         this.props={
             checkedIndex:0,
             data:[
-                {index:0,lan:"CNY",checked:true},
-                {index:1,lan:"USD"}
+                {index:0,lan:"中文",checked:true},
+                {index:1,lan:"英文"}
             ]
         }
     }

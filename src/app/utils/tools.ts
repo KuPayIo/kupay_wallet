@@ -61,6 +61,11 @@ export const parseAccount = (str: string) => {
     return `${str.slice(0, 13)}...${str.slice(str.length - 13, str.length)}`;
 }
 
+export const getDefaultAddr = (addr: number | string) => {
+    let addrStr = addr.toString();
+    return `${addrStr.slice(0, 3)}...${addrStr.slice(-3)}`;
+}
+
 /**
  * wei转Eth
  */

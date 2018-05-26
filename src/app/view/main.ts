@@ -25,7 +25,7 @@ export const run = (): void => {
 	// popNew('app-view-application-home');
 	// popNew('app-view-groupwallet-groupwallet');
 	// popNew('app-view-financialManagement-home');
-	// popNew('app-view-messageList-messageList');
+	// popNew('app-view-mine-addressManage-addressManage');
 };
 
 // ============================== 立即执行

@@ -51,7 +51,7 @@ export class Home extends Widget {
 
         let currency = this.state.currencyList[index];
         popNew("app-view-wallet-transaction-currency_details", {
-            currencyName: currency.currencyName, currencyBalance: `${currency.balance} ${parseCurrencyUnit(currency)}`
+            currencyName: currency.currencyName, currencyBalance: `${currency.balance} ${currency.currencyName}`
             , currencyBalanceConversion: currency.balanceValue
         })
 
@@ -79,42 +79,21 @@ const parseCurrencyList = (wallet) => {
 
     //todo  这里需要正确的处理钱包货币
     showCurrencys.forEach(v => {
-        if (v === "BTC") {
-            list.push({
-                currencyName: "BTC",
-                currencyFullName: "Bit coin",
-                balance: "0",
-                balanceValue: "￥0.00"
-            });
-        } else if (v === "GAIA.WORLD") {
-            list.push({
-                currencyName: "GAIA.WORLD",
-                currencyFullName: "GAIA.WORLD currency",
-                balance: "0",
-                balanceValue: "￥0.00"
-            });
-        } else {
-            list.push({
-                currencyName: "ETH",
-                currencyFullName: "Ether",
-                balance: "0",
-                balanceValue: "￥0.00"
-            });
+        let r = "";
+        switch (v) {
+            case "BTC": r = "Bit coin"; break;
+            case "GAIA": r = "GAIA.WORLD currency"; break;
+            case "ETH": r = "Ethereum"; break;
+            case "ETC": r = "Ethereum Classic"; break;
+            case "BCH": r = "Bitcoin Cash"; break;
+            case "XRP": r = "Ripple"; break;
         }
+        list.push({
+            currencyName: v,
+            currencyFullName: r,
+            balance: "0",
+            balanceValue: "￥0.00"
+        });
     });
     return list;
-}
-
-/**
- * 解析货币单位
- * @param currency 
- */
-const parseCurrencyUnit = (currency) => {
-    let r;
-    switch (currency.currencyName) {
-        case "BTC": r = "BTC"; break;
-        case "GAIA.WORLD": r = "GAIA"; break;
-        case "ETH": r = "ETH"; break;
-    }
-    return r;
 }
