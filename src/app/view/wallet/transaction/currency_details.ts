@@ -91,12 +91,15 @@ export class AddAsset extends Widget {
     /**
      * 处理转账
      */
-    public doTransfer() {
+    async doTransfer() {
         if (!this.state.currentAddr) return
+        let api = new Api();
+        let rate: any = await api.getExchangeRate();
         popNew("app-view-wallet-transaction-transfer", {
             currencyBalance: this.state.balance,
             from: this.state.currentAddr,
-            currencyName: this.props.currencyName
+            currencyName: this.props.currencyName,
+            rate: rate
         })
     }
 

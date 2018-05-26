@@ -7,26 +7,18 @@
     top: 0px;
 }
 .header{
-    height: 144px;
+    height: 128px;
     position: relative;
     background-color: white;
     width: 100%;
     text-align: center;
-}
-.ga-back-container{
-    height: 100%;
-    box-sizing: border-box;
-    padding: 0 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    left: 15px;
-    cursor: pointer;
 }
+
 .currency{
     position: relative;
-    top: 59px;
     font-size: 36px;
     cursor: pointer;
 }
@@ -37,8 +29,19 @@
     border-bottom: 1px solid rgb(142, 150, 171);
     transform: rotate(-45deg);
     position: absolute;
-    margin-left: 15px;
-    top: 70px;
+    cursor: pointer;
+    left: 460px;
+}
+
+.ga-back-container{
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 15px;
     cursor: pointer;
 }
 .color-show{
@@ -84,6 +87,7 @@
     left: 48px;
     font-size: 24px;
     width: 400px;
+    top: 10px;
 }
 
 .body-text-title{
