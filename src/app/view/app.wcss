@@ -18,12 +18,12 @@
     cursor: pointer;
     font-size: 20px;
     line-height: 28px;
-    color: #8E96AB;
+    color: #3e477b;
     letter-spacing: 0.24px;
     text-align: center;
 }
 .ga-tab-bar-item-active{
-    color:  #3e477b;
+    color:  #1A70DD;
 }
 .ga-tab-bar-icon{
     width: 44px;

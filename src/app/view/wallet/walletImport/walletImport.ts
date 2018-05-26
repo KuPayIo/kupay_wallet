@@ -91,7 +91,7 @@ export class WalletImport extends Widget{
     public importWallet(gwlt:GaiaWallet): void{
         let wallets = getLocalStorage("wallets") || {walletList:[],curWalletId:""};
         let curWalletId = gwlt.address;
-        let len0 = wallets.walletList.length + 1;
+        let len0 = (wallets.walletList.length) % 5 + 1;
         let wallet:Wallet = {
             walletId:curWalletId,
             avatar:"img_avatar" + len0 + ".jpg",
