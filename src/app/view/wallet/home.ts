@@ -23,6 +23,7 @@ export class Home extends Widget {
         register("wallets", (wallets) => {
             const wallet = getCurrentWallet(wallets);
             const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+            this.state.wallet = wallet;
             this.state.gwlt = gwlt;
             this.state.currencyList = parseCurrencyList(wallet);
             this.paint();
@@ -34,8 +35,8 @@ export class Home extends Widget {
             gwlt = GaiaWallet.fromJSON(wallet.gwlt);
         }
         this.state = {
+            wallet,
             gwlt,
-            walletNameDotBgColor: randomRgbColor(),
             totalAssets: "0.00",
             currencyList: parseCurrencyList(wallet)
         };

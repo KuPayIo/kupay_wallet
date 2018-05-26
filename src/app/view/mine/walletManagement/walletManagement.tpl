@@ -2,19 +2,17 @@
     <div w-class="ga-top-banner">
         <app-components-topBar-topBar>{title:"我的钱包"}</app-components-topBar-topBar>
         <div w-class="ga-card">
-            <div w-class="ga-card-item">
-                <div w-class="ga-wallet-name-container">
-                    <span w-class="ga-wallet-name-dot" ></span>
-                    <input 
-                        id="autoInput"
-                        w-class="ga-input" 
-                        value="{{it1.nickNameInterception(it1.gwlt.nickName)}}" 
-                        on-blur="inputBlur"
-                        on-focus="inputFocus"
-                        style="border:{{it1.showInputBorder ? '1px solid #ccc' : 'none'}};margin-left:{{it1.showInputBorder ? '8px' : '0'}};"/>
-                </div>
-                <span w-class="ga-assets"><span w-class="ga-assets-item">≈</span>105,250.00 CNY</span>
+            <div w-class="ga-wallet-name-container">
+                <img w-class="ga-wallet-header" src="../../../res/image/{{it1.wallet.avatar}}"/>
+                <input 
+                    id="autoInput"
+                    w-class="ga-input" 
+                    value="{{it1.nickNameInterception(it1.gwlt.nickName)}}" 
+                    on-blur="inputBlur"
+                    on-focus="inputFocus"
+                    style="border:{{it1.showInputBorder ? '1px solid #ccc' : 'none'}};margin-left:{{it1.showInputBorder ? '8px' : '0'}};"/>
             </div>
+            <div w-class="ga-assets"><span w-class="ga-assets-item">≈</span>105,250.00 CNY</div>
             <div w-class="ga-group-wallet" on-tap="showGroupWallet">群钱包</div>
         </div>
     </div>
@@ -42,7 +40,7 @@
         </div>
     </div>
     
-    <div w-class="ga-wallet-backup-btn" on-tap="backupMnemonic" {{if it1.mnemonicExisted}} style="pointer-events: none;visibility: hidden;" {{end}}>备份助记词</div>
+    <div w-class="ga-wallet-backup-btn" on-tap="backupMnemonic" {{if !it1.mnemonicExisted}} style="pointer-events: none;visibility: hidden;" {{end}}>备份助记词</div>
     
     <div w-class="ga-delete-wallet">删除钱包</div>
 </div>

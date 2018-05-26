@@ -4,7 +4,7 @@
         <div w-class="ga-wallet-container">
             {{for index,wallet of it1.wallets.walletList}}
             <div w-class="ga-wallet-item {{wallet.walletId === it1.wallets.curWalletId ? 'ga-wallet-item-active' : ''}}" on-tap="switchWalletClick(e,{{index}})">
-                <span w-class="ga-wallet-item-dot" style="background-color:{{it1.randomRgbColor()}};"></span>
+                <img w-class="ga-wallet-header" src="../../../res/image/{{wallet.avatar}}"/>
                 <span w-class="ga-wallet-item-name">{{it1.nickNameInterception(wallet.gwlt.nickName)}}</span>
             </div>
             {{end}}

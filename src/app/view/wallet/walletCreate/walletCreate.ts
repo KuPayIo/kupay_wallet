@@ -79,11 +79,13 @@ export class WalletCreate extends Widget {
 
     public createWallet() {
         let wallets = getLocalStorage("wallets") || { walletList: [], curWalletId: "" };
+        let len = wallets.walletList.length + 1;
         let gwlt = GaiaWallet.generate("english", 128, this.state.walletPsw);
         gwlt.nickName = this.state.walletName;
         let curWalletId = gwlt.address;
         let wallet: Wallet = {
             walletId: curWalletId,
+            avatar:"img_avatar" + len + ".jpg",
             walletPsw: encrypt(this.state.walletPsw),
             gwlt: gwlt.toJSON(),
             showCurrencys: ["ETH","BTC","GAIA"],

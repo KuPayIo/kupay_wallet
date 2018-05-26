@@ -16,13 +16,13 @@
 }
 .ga-wallet-name-container{
    display: flex;
-   justify-content: center;
+   flex-direction: column;
    align-items: center;
-   margin-top: 205px;
+   margin-top: 128px;
 }
-.ga-wallet-name-dot{
-    width: 12px;
-    height: 12px;
+.ga-wallet-header{
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     margin-right: 10px;
 }
@@ -33,6 +33,7 @@
     text-align: center;
     cursor: pointer;
     line-height: 45px;
+    margin-top: 16px;
 }
 .ga-assets-container{
     display: flex;
@@ -42,21 +43,19 @@
 }
 .ga-assets-box{
     display: flex;
-    flex-direction: column;
     color: #fff;
+    align-items: baseline;
 }
 .ga-assets-title{
     font-size: 24px;
-    color: #203260;
     text-align: left;
     line-height: 33px;
+    margin-right: 12px;
 }
 .ga-assets{
     font-size: 48px;
-    color: #203260;
     text-align: left;
     line-height: 45px;
-    margin-top: 10px;
 }
 .ga-assets-symbol{
     font-size: 32px;

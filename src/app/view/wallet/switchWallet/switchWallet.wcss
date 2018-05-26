@@ -34,13 +34,13 @@
 .ga-wallet-item-active{
     background-color: #f8f8f8;
 }
-.ga-wallet-item-dot{
-    width: 10px;
-    height: 10px;
+.ga-wallet-header{
+    width: 40px;
+    height: 40px;
     border: 1px solid #ccc;
     background-color: #fff;
     border-radius: 50%;
-    margin-right: 11px;
+    margin-right: 12px;
 }
 .ga-wallet-item-name{
     font-size: 32px;
@@ -52,18 +52,23 @@
     align-items: flex-start;
     font-size: 32px;
     line-height: 45px;
-    margin: 102px 0px 85px 53px;
+    margin: 102px 0px 85px 0;
+    
 }
 .ga-create-wallet{
     display: flex;
     align-items: center;
     cursor: pointer;
+    padding-left: 53px;
+    width: 100%;
+    box-sizing: border-box;
 }
 .ga-import-wallet{
     display: flex;
     align-items: center;
     margin-top: 50px;
     cursor: pointer;
-}
-.ga-text{
+    padding-left: 53px;
+    width: 100%;
+    box-sizing: border-box;
 }

@@ -3,12 +3,12 @@
     <div w-class="ga-header">
         <div w-class="ga-loading-container"><img src="../../res/image/u250.png" /></div>
         <div w-class="ga-wallet-name-container">
-            <span w-class="ga-wallet-name-dot" style="background-color:{{it1.walletNameDotBgColor}};"></span>
+            <img w-class="ga-wallet-header" src="../../res/image/{{it1.wallet.avatar}}"/>
             <span w-class="ga-wallet-name" on-tap="switchWalletClick">{{it1.gwlt.nickName}}</span>
         </div>
         <div w-class="ga-assets-container">
             <div w-class="ga-assets-box">
-                <span w-class="ga-assets-title">总资产(¥)</span>
+                <span w-class="ga-assets-title">总资产(CNY)</span>
                 <span w-class="ga-assets"><span w-class="ga-assets-symbol">≈</span>{{it1.totalAssets}}</span>
             </div>
             <img w-class="ga-add-currency" src="../../res/image/btn_add_money.png"  on-tap="clickAddCurrencyListener"/>
@@ -22,9 +22,10 @@
         </div>
         <div w-class="ga-assets-container">
             <div w-class="ga-assets-box">
-                <span w-class="ga-assets-title">总资产(¥)</span>
-                <span w-class="ga-assets">≈{{it1.totalAssets}}</span>
+                <span w-class="ga-assets-title">总资产(CNY)</span>
+                <span w-class="ga-assets"><span w-class="ga-assets-symbol">≈</span>{{it1.totalAssets}}</span>
             </div>
+            <img w-class="ga-add-currency" src="../../res/image/btn_add_money.png"  on-tap="clickAddCurrencyListener"/>
         </div>
     </div>
     {{end}}

@@ -44,7 +44,7 @@
 }
 .ga-user-protocol{
     cursor: pointer;
-    font-size: 24px;
+    font-size: 28px;
     line-height: 33px;
     color: #1A70DD;
     text-align: left;
