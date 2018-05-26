@@ -31,32 +31,21 @@
             <span w-class="ga-fund-desc">长线投资 专家精选</span>
         </div>
         <div w-class="ga-fund-list">
-            <div w-class="ga-fund-list-item">
+            {{for index,item of it1.preferredFunds}}
+            <div w-class="ga-fund-list-item {{index === it1.preferredFunds.length - 1 ? 'ga-fund-list-item-border' : ''}}" on-tap="preferredFundItemClick(e,{{index}})">
                 <div w-class="ga-fund-row1">
                     <div w-class="ga-fund-per">
-                        <span w-class="ga-fund-per-value">27.24</span>
+                        <span w-class="ga-fund-per-value">{{item.per}}</span>
                         <span>%</span>
                     </div>
-                    <div w-class="ga-fund-name">生物/医疗健康</div>
+                    <div w-class="ga-fund-name">{{item.name}}</div>
                 </div>
                 <div w-class="ga-fun-row2">
-                    <span w-class="ga-fund-date">近一年</span>
-                    <span w-class="ga-fund-begin">1,000 USDT起投</span>
+                    <span w-class="ga-fund-date">{{item.date}}</span>
+                    <span w-class="ga-fund-begin">{{item.MinInvestment}}&nbsp;USDT起投</span>
                 </div>
             </div>
-            <div w-class="ga-fund-list-item ga-fund-list-item-border">
-                <div w-class="ga-fund-row1">
-                    <div w-class="ga-fund-per">
-                        <span w-class="ga-fund-per-value">25.76</span>
-                        <span>%</span>
-                    </div>
-                    <div w-class="ga-fund-name">基础链</div>
-                </div>
-                <div w-class="ga-fun-row2">
-                    <span w-class="ga-fund-date">近一年</span>
-                    <span w-class="ga-fund-begin">10 USDT起投</span>
-                </div>
-            </div>
+            {{end}}
         </div>
         <div w-class="ga-line"></div>
         <div w-class="ga-bottom-list">
