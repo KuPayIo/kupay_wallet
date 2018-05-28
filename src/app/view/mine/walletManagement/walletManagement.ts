@@ -5,7 +5,7 @@ import { GaiaWallet } from "../../../core/eth/wallet"
 import { popNew } from "../../../../pi/ui/root"
 
 export class WalletManagement extends Widget {
-    public ok: () => void;
+    public ok: (home?:boolean) => void;
     constructor() {
         super();
         this.init();
@@ -128,7 +128,7 @@ export class WalletManagement extends Widget {
             let wallet = getCurrentWallet(wallets);
             wallets.curWalletId = "";
             setLocalStorage("wallets",wallets,true);
-            this.ok && this.ok();
+            this.ok && this.ok(true);
         })
     }
 }

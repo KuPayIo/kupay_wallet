@@ -60,8 +60,11 @@ export class Home extends Widget {
                 return
             }
         }
-        popNew(this.state.mineList[index].components,{},()=>{
-            notify(this.tree,"ev-change-tab",{index:0});
+        popNew(this.state.mineList[index].components,{},(home)=>{
+            if(home){
+                notify(this.tree,"ev-change-tab",{index:0});
+            }
+            
         });
     }
 

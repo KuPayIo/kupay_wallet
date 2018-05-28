@@ -23,6 +23,23 @@ export function getCurrentWallet(wallets) {
     return null;
 }
 
+/**
+ * 获取当前钱包index
+ * @param wallets 
+ */
+export function getCurrentWalletIndex(wallets) {
+    let index = -1;
+    if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
+        return -1;
+    }
+    for (let i = 0; i < wallets.walletList.length; i++) {
+        if (wallets.walletList[i].walletId === wallets.curWalletId) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+}
 
 //Password used to encrypt the plainText
 const passwd = "gaia";
