@@ -17,7 +17,7 @@ export class WalletManagement extends Widget {
         let walletPsw = decrypt(wallet.walletPsw);
         let mnemonicExisted = true;
         try {
-            gwlt.exportMnemonic(walletPsw)
+            gwlt.exportMnemonic(walletPsw);
         } catch (e) {
             mnemonicExisted = false;
         }

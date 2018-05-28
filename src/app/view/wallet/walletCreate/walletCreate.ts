@@ -43,14 +43,19 @@ export class WalletCreate extends Widget {
         this.state.walletPswTips = e.value;
     }
     public checkBoxClick(e) {
-        this.state.userProtocolReaded = e.newType;
+        this.state.userProtocolReaded = ( e.newType === "true" ? true : false );
+        this.paint();
     }
     public agreementClick() {
         popNew("app-view-wallet-agreementInterpretation-agreementInterpretation");
     }
     public createWalletClick() {
+        if (!this.state.userProtocolReaded) {
+            //popNew("app-components-message-message", { type: "notice", content: "请阅读用户协议" })
+            return;
+        }
         if (!walletNameAvailable(this.state.walletName)) {
-            popNew("app-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名" })
+            popNew("app-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名", center: true })
             return;
         }
         if (!walletPswAvailable(this.state.walletPsw)) {
@@ -61,11 +66,6 @@ export class WalletCreate extends Widget {
             popNew("app-components-message-message", { type: "error", content: "密码不一致，请重新输入", center: true })
             return;
         }
-        if (!this.state.userProtocolReaded) {
-            popNew("app-components-message-message", { type: "notice", content: "请阅读用户协议" , center: true})
-            return;
-        }
-
         this.createWallet();
 
         let close = popNew("pi-components-loading-loading", { text: "创建中" });

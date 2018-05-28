@@ -43,4 +43,11 @@ export class App extends Widget{
         this.state.isActive = index;
         this.paint();
     }
+
+    public tabChangeTo(e){
+        let index = e.index;
+        if(this.state.isActive === index) return;
+        this.state.isActive = index;
+        this.paint();
+    }
 }

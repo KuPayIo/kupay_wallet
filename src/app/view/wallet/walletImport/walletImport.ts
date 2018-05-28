@@ -58,26 +58,23 @@ export class WalletImport extends Widget{
             return;
         }
         if(!walletNameAvailable(this.state.walletName)){
-            popNew("app-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名" })
+            popNew("app-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名", center: true })
             return;
         }
         if(!walletPswAvailable(this.state.walletPsw)){
-            popNew("app-components-message-message", { type: "error", content: "密码格式不正确,请重新输入" })
+            popNew("app-components-message-message", { type: "error", content: "密码格式不正确,请重新输入", center: true })
             return;
         }
         if(!pswEqualed(this.state.walletPsw,this.state.walletPswConfirm)){
-            popNew("app-components-message-message", { type: "error", content: "密码不一致，请重新输入" })
+            popNew("app-components-message-message", { type: "error", content: "密码不一致，请重新输入", center: true })
             return;
         }
-        
-
-
         let gwlt = null;
         try{
             gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic,"english",this.state.walletPsw);
             gwlt.nickName = this.state.walletName;
         }catch(e){
-            popNew("app-components-message-message", { type: "error", content: "无效的助记词" })
+            popNew("app-components-message-message", { type: "error", content: "无效的助记词", center: true })
             return;
         }
         this.importWallet(gwlt);

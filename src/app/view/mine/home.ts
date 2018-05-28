@@ -1,6 +1,6 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from '../../../pi/ui/root';
-import { getLocalStorage } from "../../utils/tools";
+import { getLocalStorage, getCurrentWallet } from "../../utils/tools";
 import { notify } from "../../../pi/widget/event";
 
 export class Home extends Widget {
@@ -54,14 +54,14 @@ export class Home extends Widget {
     public itemClick(e, index) {
         if (index <= 1) {
             const wallets = getLocalStorage("wallets");
-            if (!wallets) {
-                popNew("app-components-message-message", { type: "notice", content: "请创建钱包", center: true });
+            const wallet = getCurrentWallet(wallets);
+            if (!wallet) {
+                popNew("app-components-message-message", { type: "notice", content: "请登录钱包", center: true });
                 return
             }
         }
-
         popNew(this.state.mineList[index].components,{},()=>{
-            notify(this.tree,"ev-change-module",{index:0});
+            notify(this.tree,"ev-change-tab",{index:0});
         });
     }
 

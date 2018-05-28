@@ -61,7 +61,8 @@ export class Home extends Widget {
 
     public clickCurrencyItemListener(e, index) {
         const wallets = getLocalStorage("wallets");
-        if (!wallets) {
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) {
             this.createWalletClick();
             return
         }
