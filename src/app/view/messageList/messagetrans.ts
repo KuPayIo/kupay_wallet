@@ -9,7 +9,7 @@ export class messagetrans extends Widget{
                 {type:"1",content:"0.001",unit:"BTC"},
                 {type:"2",content:"0.001",unit:"ETH"},
                 {type:"1",content:"0.001",unit:"ETH"},
-                {type:"2",content:"0.001",unit:"GAIA"}
+                {type:"2",content:"0.001",unit:"EOS"}
             ]     
         }
     }

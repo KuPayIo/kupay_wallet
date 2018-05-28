@@ -12,20 +12,20 @@ export class Home extends Widget {
     }
     public init() {
         this.state = {
-            menuList: ["ETH", "BTC", "GAIA"],
+            menuList: ["ETH", "BTC", "EOS"],
             resultList: [],
             initResultList: [
                 [
                     { icon: "../../res/image/BTC.png", name: "BTC/ETH", currency1: "BTC", currency2: "ETH" },
-                    { icon: "../../res/image/GAIA.png", name: "GAIA/ETH", currency1: "GAIA", currency2: "ETH" }
+                    { icon: "../../res/image/EOS.png", name: "EOS/ETH", currency1: "EOS", currency2: "ETH" }
                 ],
                 [
                     { icon: "../../res/image/ETH.png", name: "ETH/BTC", currency1: "ETH", currency2: "BTC" },
-                    { icon: "../../res/image/GAIA.png", name: "GAIA/BTC", currency1: "GAIA", currency2: "BTC" }
+                    { icon: "../../res/image/EOS.png", name: "EOS/BTC", currency1: "EOS", currency2: "BTC" }
                 ],
                 [
-                    { icon: "../../res/image/ETH.png", name: "ETH/GAIA", currency1: "ETH", currency2: "GAIA" },
-                    { icon: "../../res/image/BTC.png", name: "BTC/GAIA", currency1: "BTC", currency2: "GAIA" }
+                    { icon: "../../res/image/ETH.png", name: "ETH/EOS", currency1: "ETH", currency2: "EOS" },
+                    { icon: "../../res/image/BTC.png", name: "BTC/EOS", currency1: "BTC", currency2: "EOS" }
                 ]
             ],
             select: null

@@ -88,7 +88,7 @@ export class WalletCreate extends Widget {
             avatar:"img_avatar" + len + ".jpg",
             walletPsw: encrypt(this.state.walletPsw),
             gwlt: gwlt.toJSON(),
-            showCurrencys: ["ETH","BTC","GAIA"],
+            showCurrencys: ["ETH","BTC","EOS"],
             currencyRecords: [{
                 currencyName: "ETH",
                 currentAddr: gwlt.address,
