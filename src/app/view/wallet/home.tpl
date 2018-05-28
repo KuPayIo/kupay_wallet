@@ -19,6 +19,7 @@
             <div w-class="ga-header">
                 <div w-class="ga-loading-container"><img src="../../res/image/u250.png" /></div>
                 <div w-class="ga-wallet-name-container">
+                    <img w-class="ga-wallet-header-none"/>
                     <span w-class="ga-wallet-name" on-tap="createWalletClick">创建钱包</span>
                 </div>
                 <div w-class="ga-assets-container">

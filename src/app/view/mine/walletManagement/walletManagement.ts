@@ -59,7 +59,7 @@ export class WalletManagement extends Widget {
                     popNew("app-view-mine-exportPrivateKey-exportPrivateKey");
                 }, 500);
             } else {
-                popNew("app-components-message-message", { type: "error", content: "密码错误" })
+                popNew("app-components-message-message", { type: "error", content: "密码错误", center: true })
             }
         })
     }
@@ -73,7 +73,7 @@ export class WalletManagement extends Widget {
     public inputBlur(e) {
         let v = e.currentTarget.value.trim();
         if (v.length === 0) {
-            popNew("app-components-message-message", { type: "error", content: "钱包名不能为空" })
+            popNew("app-components-message-message", { type: "error", content: "钱包名不能为空", center: true })
             let input = document.querySelector("#autoInput");
             input.value = this.state.gwlt.nickName;
             this.state.showInputBorder = false;
@@ -108,7 +108,7 @@ export class WalletManagement extends Widget {
                     popNew("app-view-wallet-backupMnemonic-backupMnemonic");
                 },500);
             }else{
-                popNew("app-components-message-message", { type: "error", content: "密码错误,请重新输入" })
+                popNew("app-components-message-message", { type: "error", content: "密码错误,请重新输入", center: true })
             }
         }, () => {
         })

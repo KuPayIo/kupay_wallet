@@ -54,7 +54,7 @@ export class Home extends Widget {
         if (index <= 1) {
             const wallets = getLocalStorage("wallets");
             if (!wallets) {
-                popNew("app-components-message-message", { type: "notice", content: "请创建钱包" });
+                popNew("app-components-message-message", { type: "notice", content: "请创建钱包", center: true });
                 return
             }
         }

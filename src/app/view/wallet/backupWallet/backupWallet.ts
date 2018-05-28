@@ -37,7 +37,7 @@ export class BackupWallet extends Widget{
                     popNew("app-view-wallet-backupMnemonic-backupMnemonic");
                 },500);
             }else{
-                popNew("app-components-message-message", { type: "error", content: "密码错误,请重新输入" })
+                popNew("app-components-message-message", { type: "error", content: "密码错误,请重新输入", center: true })
             }
         }, () => {
         })

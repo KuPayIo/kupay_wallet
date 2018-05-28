@@ -76,14 +76,14 @@ const parseCurrencyList = (wallet) => {
     let list = [];
     //todo 测试代码  不处理没有的情况
     // if (!wallet.showCurrencys) return list;
-    let showCurrencys = (wallet && wallet.showCurrencys) || ["ETH","BTC","GAIA"];
+    let showCurrencys = (wallet && wallet.showCurrencys) || ["ETH","BTC","EOS"];
 
     //todo  这里需要正确的处理钱包货币
     showCurrencys.forEach(v => {
         let r = "";
         switch (v) {
             case "BTC": r = "Bit coin"; break;
-            case "GAIA": r = "GAIA.WORLD currency"; break;
+            case "EOS": r = "EOS currency"; break;
             case "ETH": r = "Ethereum"; break;
             case "ETC": r = "Ethereum Classic"; break;
             case "BCH": r = "Bitcoin Cash"; break;

@@ -68,6 +68,10 @@ export class AddAsset extends Widget {
      * 处理选择地址
      */
     public doSearch() {
+        if (!this.state.currentAddr) {
+            popNew("app-components-message-message", { type: "notice", content: "敬请期待", center: true })
+            return;
+        }
         popNew("app-view-wallet-transaction-choose_address", { currencyName: this.props.currencyName })
     }
 
@@ -92,7 +96,10 @@ export class AddAsset extends Widget {
      * 处理转账
      */
     async doTransfer() {
-        if (!this.state.currentAddr) return
+        if (!this.state.currentAddr) {
+            popNew("app-components-message-message", { type: "notice", content: "敬请期待", center: true })
+            return;
+        }
         let api = new Api();
         let rate: any = await api.getExchangeRate();
         popNew("app-view-wallet-transaction-transfer", {
@@ -108,7 +115,10 @@ export class AddAsset extends Widget {
      */
     public doReceipt() {
         //todo 这里获取地址
-        if (!this.state.currentAddr) return
+        if (!this.state.currentAddr) {
+            popNew("app-components-message-message", { type: "notice", content: "敬请期待", center: true })
+            return;
+        }
         popNew("app-view-wallet-transaction-receipt", {
             currencyBalance: this.state.balance,
             addr: this.state.currentAddr

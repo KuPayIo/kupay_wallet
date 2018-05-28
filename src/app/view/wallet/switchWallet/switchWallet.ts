@@ -37,7 +37,7 @@ export class SwitchWallet extends Widget{
         popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
             const psw = decrypt(this.state.wallets.walletList[index].walletPsw);
             if(!pswEqualed(psw,r)){
-                popNew("app-components-message-message", { type: "error", content: "密码错误" })
+                popNew("app-components-message-message", { type: "error", content: "密码错误", center: true })
             }else{
                 this.switchWallet(this.state.wallets.walletList[index].walletId);
                 this.ok && this.ok();
