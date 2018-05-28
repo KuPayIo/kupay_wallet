@@ -17,11 +17,10 @@
         </div>
     </div>
     <div w-class="ga-bottom-container">
-        <div w-class="ga-item" on-tap="">
+        <div w-class="ga-item" on-tap="changePasswordClick">
             <span w-class="ga-item-text">修改密码</span>
             <img w-class="ga-item-arrow" src="../../../res/image/btn_right_arrow.png"/>
         </div>
-        {{if it1.pswTips.length > 0}}
         <div w-class="ga-item">
             <span w-class="ga-item-text">{{it1.showPswTips ? it1.pswTips : '********'}}</span>
             <div w-class="ga-psw-tips-container" on-tap="pswTipsClick">
@@ -29,7 +28,6 @@
                 <img src="../../../res/image/btn_display_open.png" w-class="ga-img"/>
             </div>
         </div>
-        {{end}}
         <div w-class="ga-item" on-tap="exportPrivateKeyClick">
             <span w-class="ga-item-text">导出私钥</span>
             <img w-class="ga-item-arrow" src="../../../res/image/btn_right_arrow.png"/>

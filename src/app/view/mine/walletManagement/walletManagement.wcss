@@ -77,7 +77,6 @@
     border-bottom: 1px solid #ccc;
     cursor: pointer;
     color: #203260;
-    color: #ccc;
 }
 .ga-item-text{
     flex: 1 0 0;

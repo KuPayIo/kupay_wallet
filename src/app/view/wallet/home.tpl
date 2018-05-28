@@ -26,7 +26,6 @@
                 <span w-class="ga-assets-title">总资产(CNY)</span>
                 <span w-class="ga-assets"><span w-class="ga-assets-symbol">≈</span>{{it1.totalAssets}}</span>
             </div>
-            <img w-class="ga-add-currency" src="../../res/image/btn_add_money.png"  on-tap="clickAddCurrencyListener"/>
         </div>
     </div>
     {{end}}

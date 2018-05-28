@@ -25,7 +25,7 @@ export class WalletManagement extends Widget {
         if (wallet.walletPswTips) {
             pswTips = decrypt(wallet.walletPswTips);
         }
-
+        pswTips = pswTips.length > 0 ? pswTips : '无';
         this.state = {
             wallet,
             gwlt,
@@ -41,13 +41,11 @@ export class WalletManagement extends Widget {
     }
 
     public pswTipsClick() {
-        return;
         this.state.showPswTips = !this.state.showPswTips;
         this.paint();
     }
 
     public exportPrivateKeyClick() {
-        return;
         popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "", inputType: "password" }, (r) => {
             let wallets = getLocalStorage("wallets");
             let wallet = getCurrentWallet(wallets);
@@ -112,10 +110,15 @@ export class WalletManagement extends Widget {
             }
         }, () => {
         })
+    }
     /**
      * 显示群钱包
      */
     public showGroupWallet() {
         popNew("app-view-groupwallet-groupwallet");
+    }
+
+    public changePasswordClick(){
+        popNew("app-view-mine-changePassword-changePassword1");
     }
 }
