@@ -32,7 +32,7 @@ export class AddAsset extends Widget {
 
         const currencyList = [{ icon: "../../../res/image/BTC.png", name: "ETH", description: "Ethereum", isChoose: false }
             , { icon: "../../../res/image/ETH.png", name: "BTC", description: "Bit coin", isChoose: false }
-            , { icon: "../../../res/image/GAIA.png", name: "GAIA", description: "GAIA.WORLD currency", isChoose: false }
+            , { icon: "../../../res/image/EOS.png", name: "EOS", description: "EOS currency", isChoose: false }
             , { icon: "../../../res/image/ETC.png", name: "ETC", description: "Ethereum Classic", isChoose: false }
             , { icon: "../../../res/image/BCH.png", name: "BCH", description: "Bitcoin Cash", isChoose: false }
             , { icon: "../../../res/image/XRP.png", name: "XRP", description: "Ripple", isChoose: false }]

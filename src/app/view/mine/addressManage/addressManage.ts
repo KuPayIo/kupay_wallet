@@ -16,7 +16,7 @@ export class addressManage extends Widget{
                 {name:"ETH"},
                 {name:"ETC"},
                 {name:"BCH"},
-                {name:"GAIA"},
+                {name:"EOS"},
                 {name:"XRP"}
             ],
             content1:[
