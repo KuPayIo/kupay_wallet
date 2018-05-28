@@ -32,7 +32,7 @@
             <span w-class="ga-item-text">导出私钥</span>
             <img w-class="ga-item-arrow" src="../../../res/image/btn_right_arrow.png"/>
         </div>
-        <div w-class="ga-item" on-tap="">
+        <div w-class="ga-item" on-tap="signOutClick">
             <span w-class="ga-item-text">退出登录</span>
             <img w-class="ga-item-arrow" src="../../../res/image/btn_right_arrow.png"/>
         </div>

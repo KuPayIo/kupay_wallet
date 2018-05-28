@@ -121,4 +121,14 @@ export class WalletManagement extends Widget {
     public changePasswordClick(){
         popNew("app-view-mine-changePassword-changePassword1");
     }
+
+    public signOutClick(){
+        popNew("app-components-message-messagebox", { type: "confirm", title: "退出钱包", content: "退出后可通过密码再次登录" },()=>{
+            let wallets = getLocalStorage("wallets");
+            let wallet = getCurrentWallet(wallets);
+            wallets.curWalletId = "";
+            setLocalStorage("wallets",wallets,true);
+            this.ok && this.ok();
+        })
+    }
 }

@@ -1,7 +1,9 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from '../../../pi/ui/root';
+import { notify } from "../../../pi/widget/event";
 
 export class Home extends Widget{
+    public ok: () => void;
     constructor(){
         super();
     }
@@ -50,7 +52,9 @@ export class Home extends Widget{
 
 
     public itemClick(e,index){
-        popNew(this.state.mineList[index].components);
+        popNew(this.state.mineList[index].components,{},()=>{
+            notify(this.tree,"ev-change-module",{index:0});
+        });
     }
 
     public goNotice(event:any){
