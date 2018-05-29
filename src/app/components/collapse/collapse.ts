@@ -98,4 +98,9 @@ export class Collapse extends Widget {
         let scrollHeight = currentItemPanelNode.scrollHeight;
         currentItemPanelNode.style.height = scrollHeight + "px";
     }
+
+
+    public itemClick(e,collapseListIndex,textListIndex){
+        notify(e.node,"ev-collapse-item-click",{collapseListIndex,textListIndex});
+    }
 }

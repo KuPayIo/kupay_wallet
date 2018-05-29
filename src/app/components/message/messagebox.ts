@@ -9,6 +9,9 @@ interface Props {
     center?: boolean;
     inputType?:string;
     placeHolder?:string;
+    showQuit?:boolean;//是否显示右上角叉
+    extraInfo?:string;//type = "extra" 时有效
+    contentStyle?:string;
 }
 
 export class MessageBox extends Widget {
@@ -59,4 +62,7 @@ export class MessageBox extends Widget {
         }, 100);
     }
 
+    public quitClick(){
+        this.cancel && this.cancel();
+    }
 }
