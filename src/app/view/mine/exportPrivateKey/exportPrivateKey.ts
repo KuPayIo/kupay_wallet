@@ -49,4 +49,15 @@ export class ExportPrivateKey extends Widget{
     public collapseChange(e){
         const activeIndexs = e.activeIndexs;
     }
+
+    public collapseItemClick(e){
+        const privateKey = this.state.collapseList[e.collapseListIndex].textList[e.textListIndex];
+        popNew("app-components-message-messagebox", { 
+            type: "extra", 
+            title:"导出私钥" , 
+            content: "私钥未经加密，导出存在风险，千万不要丢失、泄露或发送给其他人！",
+            extraInfo:privateKey ,
+            contentStyle:"color:#F17835;" 
+        });
+    }
 }

@@ -31,7 +31,7 @@
             <app-components-checkbox-checkbox>{type:"false",text:"我已经认证阅读并同意"}</app-components-checkbox-checkbox>
             <span w-class="ga-user-protocol" on-tap="agreementClick">隐私条约</span>
         </div>
-        <div w-class="ga-import-btn" on-tap="importWalletClick">开始导入</div>
+        <div w-class="ga-import-btn" on-tap="importWalletClick" style="backgroundColor:{{it1.userProtocolReaded ? '#203260' : '#ccc'}}">开始导入</div>
         <div w-class="ga-whatis-mnemonic-btn">什么是助记词</div>
     </div>
 </div>

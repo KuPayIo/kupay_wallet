@@ -1,3 +1,5 @@
+import { getLocalStorage,shuffle, setLocalStorage } from "./tools";
+
 /**
  * 和账号相关的工具
  */
@@ -89,8 +91,8 @@ function checkStrong(sPW){
 
 
 /**
-     * 名字显示截取
-     */
+ * 名字显示截取
+ */
 export function nickNameInterception(name:string):string{
     let ret = "";
     if(name.length > 6){
@@ -99,4 +101,16 @@ export function nickNameInterception(name:string):string{
         ret = name;
     }
     return ret;
+}
+
+
+/**
+ * 随机获取头像
+ */
+export function getAvatarRandom():string{
+    let avatars = getLocalStorage("avatars") || ["img_avatar1.jpg","img_avatar2.jpg","img_avatar3.jpg","img_avatar4.jpg","img_avatar5.jpg","img_avatar6.jpg","img_avatar7.jpg","img_avatar8.jpg","img_avatar9.jpg","img_avatar10.jpg"];
+    let shuffledAvatars = shuffle(avatars);
+    let avatar = shuffledAvatars.splice(0,1);
+    setLocalStorage("avatars",shuffledAvatars);
+    return avatar[0];
 }

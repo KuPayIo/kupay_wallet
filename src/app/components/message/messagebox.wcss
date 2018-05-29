@@ -29,17 +29,16 @@
     box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px;
     text-align: left;
     overflow: hidden;
-    backface-visibility: hidden;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    padding:0 40px;
+    box-sizing: border-box;
 }
 
 .header{
-    position: relative;
-    left: 40px;
-    top: 50px;
+    margin-top: 50px;
     height: 45px;
 }
 
@@ -52,15 +51,21 @@
 }
 
 .content{
-    position: relative;
     color: rgb(96, 98, 102);
     font-size: 28px;
     line-height: 1.5;
-    left: 40px;
-    top: 60px;
+    margin-top: 20px;
     width: 490px;
 }
-
+.extra{
+    color: #8E96AB;
+    font-size: 28px;
+    line-height: 1.5;
+    margin-top: 20px;
+    width: 490px;
+    word-break: break-all;
+    margin-bottom: 55px;
+}
 .message{
     margin: 0;
     word-break: break-word;
@@ -111,4 +116,14 @@
 .input-father{
     height: 85px;
     margin-top: 40px;
+}
+.quit-container{
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    padding: 10px;
+}
+.quit{
+    width: 28px;
+    height: 28px;
 }

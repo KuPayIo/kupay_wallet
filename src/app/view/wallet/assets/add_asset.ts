@@ -17,6 +17,7 @@ export class AddAsset extends Widget {
     public init(): void {
         register("wallets", (wallets) => {
             const wallet = getCurrentWallet(wallets);
+            if(!wallet) return;
             let showCurrencys = wallet.showCurrencys || [];
             this.state.list = this.state.currencyList.map(v => {
                 v.isChoose = showCurrencys.indexOf(v.name) >= 0

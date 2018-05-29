@@ -22,22 +22,39 @@ export class Home extends Widget {
     public init(): void {
         const wallets = getLocalStorage("wallets");
         register("wallets", (wallets) => {
+            let otherWallets = false;
+            if (wallets && wallets.walletList && wallets.walletList.length > 0) {
+                otherWallets = true;
+            }else{
+                otherWallets = false;
+            }
             const wallet = getCurrentWallet(wallets);
-            const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
-            this.state.wallet = wallet;
+            let gwlt = null;
+            if(wallet){
+                gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+            }
             this.state.gwlt = gwlt;
+            this.state.otherWallets = otherWallets;
+            this.state.wallet = wallet;
             this.state.currencyList = parseCurrencyList(wallet);
             this.paint();
         });
         let gwlt = null;
         let wallet = null;
-        if (wallets) {
+        let otherWallets = false;
+        if (wallets && wallets.walletList && wallets.walletList.length > 0) {
+            otherWallets = true;
             wallet = getCurrentWallet(wallets);
-            gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+            if(wallet){
+                gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+            }
+        }else{
+            otherWallets = false;
         }
         this.state = {
             wallet,
             gwlt,
+            otherWallets,
             totalAssets: "0.00",
             currencyList: parseCurrencyList(wallet)
         };
@@ -46,9 +63,9 @@ export class Home extends Widget {
     }
 
     public clickCurrencyItemListener(e, index) {
-
         const wallets = getLocalStorage("wallets");
-        if (!wallets) {
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) {
             this.createWalletClick();
             return
         }
@@ -64,6 +81,10 @@ export class Home extends Widget {
         popNew("app-view-wallet-assets-add_asset")
     }
     public createWalletClick() {
+        if(this.state.otherWallets){
+            popNew("app-view-wallet-switchWallet-switchWallet");
+            return;
+        }
         popNew("app-view-wallet-walletCreate-walletCreate");
     }
     public switchWalletClick() {

@@ -1,4 +1,5 @@
 import { Widget } from "../../pi/widget/widget";
+import { open, popNew } from '../../pi/ui/root';
 export class App extends Widget{
     constructor(){
         super();
@@ -39,6 +40,13 @@ export class App extends Widget{
         }
     }
     public tabBarChangeListener(event:any,index:number){
+        if(this.state.isActive === index) return;
+        this.state.isActive = index;
+        this.paint();
+    }
+
+    public tabChangeTo(e){
+        let index = e.index;
         if(this.state.isActive === index) return;
         this.state.isActive = index;
         this.paint();

@@ -8,8 +8,10 @@
         </div>
         <div w-class="pi-collapse-item-panel {{it1.isExpanded(index) ? 'pi-collapse-item-panel-border' : ''}}"
             class="pi-collapse-item-panel">
-            {{for index,item of CollapseItem.textList}}
-            <div w-class="pi-collapse-text-item" class="pi-collapse-text-item"><span w-class="pi-collapse-text" class="pi-collapse-text">{{item}}</span></div>
+            {{for index0,item of CollapseItem.textList}}
+            <div w-class="pi-collapse-text-item" class="pi-collapse-text-item" on-tap="itemClick(e,{{index}},{{index0}})">
+                <div w-class="pi-collapse-text" class="pi-collapse-text">{{item}}</div>
+            </div>
             {{end}}
         </div>
     </div>

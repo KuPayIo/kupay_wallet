@@ -28,7 +28,7 @@
             <app-components-checkbox-checkbox>{type:"false",text:"我已经认证阅读并同意"}</app-components-checkbox-checkbox>
             <span w-class="ga-user-protocol" on-tap="agreementClick">用户协议</span>
         </div>
-        <div w-class="ga-wallet-create-btn" on-tap="createWalletClick">创建钱包</div>
+        <div w-class="ga-wallet-create-btn" on-tap="createWalletClick" style="backgroundColor:{{it1.userProtocolReaded ? '#203260' : '#ccc'}}">创建钱包</div>
         <div w-class="ga-wallet-import-btn" on-tap="importWalletClick">导入钱包</div>
     </div>
 </div>

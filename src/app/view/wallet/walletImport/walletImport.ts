@@ -1,7 +1,7 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from '../../../../pi/ui/root';
 import { setLocalStorage, getLocalStorage, encrypt } from '../../../utils/tools'
-import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength } from '../../../utils/account'
+import { walletNameAvailable,walletPswAvailable,pswEqualed,getWalletPswStrength,getAvatarRandom } from '../../../utils/account'
 import { GaiaWallet } from "../../../core/eth/wallet";
 import { Wallet } from "../../interface"
 
@@ -46,14 +46,19 @@ export class WalletImport extends Widget{
         this.state.walletPswTips = e.value;
     }
     public checkBoxClick(e){
-        this.state.userProtocolReaded = e.newType;
+        this.state.userProtocolReaded = ( e.newType === "true" ? true : false );
+        this.paint();
     }
     public agreementClick(){
         popNew("app-view-wallet-agreementInterpretation-agreementInterpretation");
     }
     public importWalletClick(){
+        if(!this.state.userProtocolReaded){
+            //popNew("app-components-message-message", { type: "notice", content: "请阅读用户协议" })
+            return;
+        }
         if(!walletNameAvailable(this.state.walletName)){
-            popNew("app-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名" })
+            popNew("app-components-message-messagebox", { type: "alert", title: "钱包名称错误", content: "请输入1-12位钱包名", center: true })
             return;
         }
         if(!walletPswAvailable(this.state.walletPsw)){
@@ -64,12 +69,6 @@ export class WalletImport extends Widget{
             popNew("app-components-message-message", { type: "error", content: "密码不一致，请重新输入", center: true })
             return;
         }
-        if(!this.state.userProtocolReaded){
-            popNew("app-components-message-message", { type: "notice", content: "请阅读用户协议", center: true })
-            return;
-        }
-
-
         let gwlt = null;
         try{
             gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic,"english",this.state.walletPsw);
@@ -78,7 +77,12 @@ export class WalletImport extends Widget{
             popNew("app-components-message-message", { type: "error", content: "无效的助记词", center: true })
             return;
         }
-        this.importWallet(gwlt);
+        if(!this.importWallet(gwlt)){
+            popNew("app-components-message-message", { type: "error", content: "钱包数量已达上限", center: true });
+            this.ok && this.ok();
+            return;
+        }
+
         let close = popNew("pi-components-loading-loading",{text:"导入中"});
         setTimeout(()=>{
             close.callback(close.widget);
@@ -88,13 +92,16 @@ export class WalletImport extends Widget{
     }
     
 
-    public importWallet(gwlt:GaiaWallet): void{
+    public importWallet(gwlt:GaiaWallet){
         let wallets = getLocalStorage("wallets") || {walletList:[],curWalletId:""};
         let curWalletId = gwlt.address;
-        let len0 = (wallets.walletList.length) % 5 + 1;
+        let len0 = wallets.walletList.length;
+        if(len0 === 10){
+            return false;
+        }
         let wallet:Wallet = {
             walletId:curWalletId,
-            avatar:"img_avatar" + len0 + ".jpg",
+            avatar:getAvatarRandom(),
             walletPsw:encrypt(this.state.walletPsw),
             gwlt:gwlt.toJSON(),
             showCurrencys:["ETH"],
@@ -125,6 +132,7 @@ export class WalletImport extends Widget{
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
         setLocalStorage("wallets",wallets,true);
+        return true;
     }
 
     /**
