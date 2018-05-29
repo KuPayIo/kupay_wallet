@@ -19,7 +19,7 @@
     <div w-class="addNewaddr" on-tap="addNewaddr">
         <img src="../../../res/image/btn_address_add.png" w-class="addbtn"/>
     </div>                             
-    <div w-class="addressmanageContent" ev-address-click="showDetails">
+    <div w-class="addressmanageContent" ev-address-click="showDetails" class="hide-scrollbar" style="overflow-y: auto;overflow-x: hidden;">
         {{for ind,val of content}}
             <addressitem$>{{val}}</addressitem$>
         {{end}}
