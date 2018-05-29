@@ -35,6 +35,7 @@ export class AddAsset extends Widget {
     public init(): void {
         register("wallets", (wallets) => {
             const wallet = getCurrentWallet(wallets);
+            if(!wallet) return;
             this.resetCurrentAddr(wallet, this.props.currencyName)
             this.parseBalance();
             this.parseTransactionDetails()

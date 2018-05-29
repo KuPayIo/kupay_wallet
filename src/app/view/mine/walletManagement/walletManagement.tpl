@@ -40,5 +40,5 @@
     
     <div w-class="ga-wallet-backup-btn" on-tap="backupMnemonic" {{if !it1.mnemonicExisted}} style="pointer-events: none;visibility: hidden;" {{end}}>备份助记词</div>
     
-    <div w-class="ga-delete-wallet">删除钱包</div>
+    <div w-class="ga-delete-wallet" on-tap="deleteWalletClick">删除钱包</div>
 </div>
