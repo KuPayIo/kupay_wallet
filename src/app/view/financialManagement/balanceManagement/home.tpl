@@ -1,5 +1,5 @@
 <div class="ga-new-page" w-class="ga-new-page" >
-<div w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }' style="height:1334px;">
+<div class="hide-scrollbar" style="height:1334px;overflow-y: auto;overflow-x: hidden;">
 <div w-class="ga-inner-page">
     <div w-class="ga-header" ev-back-click="goBackClick">
         <app-components-topBar-topBar>{title:"币投宝",style:"background-color:transparent;color:#fff;",iconColor:"white"}</app-components-topBar-topBar>

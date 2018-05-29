@@ -5,7 +5,7 @@
         <span w-class="applTab {{it1.activeIndex==2?'isactive':''}}" on-tap="tabClick(2)">工具</span>    
         <span w-class="applTab {{it1.activeIndex==3?'isactive':''}}" on-tap="tabClick(3)">我的</span>    
     </div>                               
-    <div w-class="applicationContent" w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }'>
+    <div w-class="applicationContent" class="hide-scrollbar" style="overflow-y: auto;overflow-x: hidden;" >
         <div style="height: 1600px;">
             {{for ind,val of it1.data}}
                 <applicationItem$>{{val}}</applicationItem$>

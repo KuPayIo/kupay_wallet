@@ -1,4 +1,5 @@
 import { Widget } from "../../pi/widget/widget";
+import { open, popNew } from '../../pi/ui/root';
 export class App extends Widget{
     constructor(){
         super();

@@ -3,6 +3,7 @@ import { popNew } from "../../../pi/ui/root";
 import { getLocalStorage, getCurrentWallet, randomRgbColor } from '../../utils/tools'
 import { register } from '../../store/store'
 import { GaiaWallet } from "../../core/eth/wallet";
+import { dataCenter } from "../../store/dataCenter";
 
 interface Wallet {
     walletName: string;
@@ -57,6 +58,8 @@ export class Home extends Widget {
             totalAssets: "0.00",
             currencyList: parseCurrencyList(wallet)
         };
+
+        dataCenter.init();
     }
 
     public clickCurrencyItemListener(e, index) {
@@ -97,7 +100,7 @@ const parseCurrencyList = (wallet) => {
     let list = [];
     //todo 测试代码  不处理没有的情况
     // if (!wallet.showCurrencys) return list;
-    let showCurrencys = (wallet && wallet.showCurrencys) || ["ETH","BTC","EOS"];
+    let showCurrencys = (wallet && wallet.showCurrencys) || ["ETH", "BTC", "EOS"];
 
     //todo  这里需要正确的处理钱包货币
     showCurrencys.forEach(v => {

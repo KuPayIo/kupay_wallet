@@ -1,4 +1,4 @@
-<div class="ga-new-page" w-class="ga-new-page" w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }'> 
+<div class="ga-new-page hide-scrollbar" w-class="ga-new-page" style="overflow-y: auto;overflow-x: hidden;"> 
     <div>
     <app-components-topBar-topBar>{title:"理财",iconColor:"white"}</app-components-topBar-topBar>
     <div w-class="ga-announcement-container">
