@@ -1,5 +1,5 @@
 .base{
-    background-color: #f9f9f9;
+    background-color: #ebebeb;
     height: 100%;
     width: 100%;
     position: absolute;

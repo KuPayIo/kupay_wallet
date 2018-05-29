@@ -84,11 +84,7 @@ export class AddAsset extends Widget {
 
         let thisObj = this;
 
-        //todo 这里进行当前验证，处理下一步
-        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: this.state.fromShow }, async function (r) {
-            //todo 这里需要验证密码是否正确
-            //todo 处理转账逻辑
-            //todo 通知交易数据改变
+        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码",placeHolder:"密码" }, async function (r) {
             let wallets = getLocalStorage("wallets");
             const wallet = getCurrentWallet(wallets);
             let psw = decrypt(wallet.walletPsw)
