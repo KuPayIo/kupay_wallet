@@ -1,4 +1,4 @@
-<div class="ga-new-page" w-class="ga-new-page"  w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }'>
+<div class="ga-new-page hide-scrollbar" style="overflow-y: auto;overflow-x: hidden;" w-class="ga-new-page">
 <div>
     <div w-class="ga-header">
         <div w-class="ga-top-banner">

@@ -1,4 +1,4 @@
-<div w-class="transaction-list" w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }' style="height: {{it.height||700}}px;">
+<div w-class="transaction-list" class="hide-scrollbar" style="overflow-y: auto;overflow-x: hidden;height: {{it.height||700}}px;">
     <div>
         {{for i,each of it.list}}
         <div w-class="each" on-tap="showTransactionDetails(e,{{i}})">
