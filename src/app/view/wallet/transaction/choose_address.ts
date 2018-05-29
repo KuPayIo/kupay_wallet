@@ -3,7 +3,7 @@
  */
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet, wei2Eth, decrypt, setLocalStorage } from "../../../utils/tools";
+import { getLocalStorage, getCurrentWallet, wei2Eth, decrypt, setLocalStorage, getDefaultAddr } from "../../../utils/tools";
 import { Api } from "../../../core/eth/api";
 import { GaiaWallet } from "../../../core/eth/wallet";
 
@@ -69,13 +69,13 @@ export class AddAsset extends Widget {
         popNew("app-components-message-messagebox", { type: "prompt", title: "添加地址", content: newGwlt.address,placeHolder:"标签名" }, (r) => {
             currencyRecord.addrs.push({
                 addr: newGwlt.address,
-                addrName: r ? r : `默认地址${this.state.list.length}`,
+                addrName: r ? r : getDefaultAddr(newGwlt.address),
                 gwlt: newGwlt.toJSON(),
                 record: []
             });
             currencyRecord.currentAddr = newGwlt.address;
             setLocalStorage("wallets", wallets, true);
-            console.log(wallets)
+            // console.log(wallets)
             //todo 这里验证输入，并根据输入添加地址，且处理地址切换
             this.doClose();
         }, () => {
@@ -96,7 +96,7 @@ export class AddAsset extends Widget {
         let api = new Api();
         this.state.list = currencyRecord.addrs.map(v => {
             return {
-                name: v.addrName || "默认地址",
+                name: v.addrName || getDefaultAddr(v.addr),
                 balance: 0,
                 isChoose: v.addr === currentAddr,
                 addr: v.addr
