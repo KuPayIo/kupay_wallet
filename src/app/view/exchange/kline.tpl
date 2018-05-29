@@ -6,7 +6,7 @@
         <span w-class="currency" on-tap="changeCurrency">{{it1.currency1}}/{{it1.currency2}}</span>
         <span w-class="currency-change" on-tap="changeCurrency"></span>
     </div>
-    <div style="background-color: white;height: 1190px;overflow: hidden;" w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }'>
+    <div style="background-color: white;height: 1190px;overflow: hidden;" class="hide-scrollbar" style="overflow-y: auto;overflow-x: hidden;">
         <div style="height: 1480px;">
             <div w-class="body-text">
                 <span w-class="body-text-title" style="margin-left: 0px;">开</span>

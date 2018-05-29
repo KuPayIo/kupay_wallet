@@ -1,4 +1,4 @@
-<div w-class="base" w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }'>
+<div w-class="base" class="hide-scrollbar" style="overflow-y: auto;overflow-x: hidden;">
     <div style="height: 1420px;">
         <div w-class="header">
             <span w-class="currency" on-tap="changeCurrency">{{it1.currency1}}/{{it1.currency2}}</span>
