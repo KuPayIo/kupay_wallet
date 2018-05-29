@@ -182,3 +182,18 @@ const addPerZero = (num: number, len: number) => {
     list.length = perLen;
     return list.fill("0").join("") + numStr;
 }
+
+
+ //数组乱序
+ export function shuffle(arr: Array<any>): Array<any> {
+    var length = arr.length;
+    var shuffled = Array(length);
+    for (var index = 0, rand; index < length; index++) {
+        rand = ~~(Math.random() * (index + 1));
+        if (rand !== index) {
+            shuffled[index] = shuffled[rand];
+        }
+        shuffled[rand] = arr[index];
+    }
+    return shuffled;
+};

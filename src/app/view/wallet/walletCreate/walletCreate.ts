@@ -1,7 +1,7 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from '../../../../pi/ui/root';
 import { setLocalStorage, getLocalStorage, encrypt, getDefaultAddr } from '../../../utils/tools'
-import { walletNameAvailable, walletPswAvailable, pswEqualed, getWalletPswStrength } from '../../../utils/account'
+import { walletNameAvailable, walletPswAvailable, pswEqualed, getWalletPswStrength,getAvatarRandom } from '../../../utils/account'
 import { GaiaWallet } from '../../../core/eth/wallet'
 import { Wallet } from "../../interface";
 
@@ -66,7 +66,11 @@ export class WalletCreate extends Widget {
             popNew("app-components-message-message", { type: "error", content: "密码不一致，请重新输入", center: true })
             return;
         }
-        this.createWallet();
+        if(!this.createWallet()){
+            popNew("app-components-message-message", { type: "error", content: "钱包数量已达上限", center: true });
+            this.ok && this.ok();
+            return;
+        }
 
         let close = popNew("pi-components-loading-loading", { text: "创建中" });
         setTimeout(() => {
@@ -79,13 +83,16 @@ export class WalletCreate extends Widget {
 
     public createWallet() {
         let wallets = getLocalStorage("wallets") || { walletList: [], curWalletId: "" };
-        let len = (wallets.walletList.length) % 5 + 1;;
+        let len = wallets.walletList.length;
+        if(len === 10){
+            return false;
+        }
         let gwlt = GaiaWallet.generate("english", 128, this.state.walletPsw);
         gwlt.nickName = this.state.walletName;
         let curWalletId = gwlt.address;
         let wallet: Wallet = {
             walletId: curWalletId,
-            avatar:"img_avatar" + len + ".jpg",
+            avatar:getAvatarRandom(),
             walletPsw: encrypt(this.state.walletPsw),
             gwlt: gwlt.toJSON(),
             showCurrencys: ["ETH","BTC","EOS"],
@@ -106,6 +113,7 @@ export class WalletCreate extends Widget {
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
         setLocalStorage("wallets", wallets, true);
+        return true;
     }
 
     public importWalletClick() {
