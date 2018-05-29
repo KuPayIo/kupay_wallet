@@ -7,9 +7,11 @@
             </div>
         </div>
         <div w-class="content">
+            {{if it.content}}
             <div w-class="message">
                 <p>{{it.content}}</p>
             </div>
+            {{end}}
             {{if it.type==="prompt"}}
             <div ev-input-change="inputChange" w-class="input-father">
                 <input-input$$>{type:{{it.inputType}},placeHolder:{{it.placeHolder}}}</input-input$$>
@@ -18,7 +20,7 @@
         </div>
         <div w-class="btns">
             {{if it.type==="confirm"||it.type==="prompt"}}
-            <button type="button" w-class="button button_small" on-tap="doClickCancel" style="margin-right: 10px;">
+            <button type="button" w-class="button button_small" on-tap="doClickCancel" style="margin-right: 90px;">
                 <span>取消</span>
             </button>
             {{end}}

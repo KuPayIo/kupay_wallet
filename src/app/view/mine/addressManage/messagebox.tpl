@@ -7,7 +7,6 @@
             </div>
         </div>
         <div w-class="content">
-            <div w-class="cointype">BTC</div>
             <div w-class="message" ev-input-change="inputChange" w-class="input-father">
                 <app-components-input-input>{type:{{it.inputType}},placeHolder:"地址"}</app-components-input-input>
                 <img src="../../../res/image/btn_scan.png" w-class="scanbtn"/>
@@ -20,7 +19,7 @@
         </div>
         <div w-class="btns">
             {{if it.type==="confirm"||it.type==="prompt"}}
-            <button type="button" w-class="button button_small" on-tap="doClickCancel" style="margin-right: 10px;">
+            <button type="button" w-class="button button_small" on-tap="doClickCancel" style="margin-right: 90px;">
                 <span>取消</span>
             </button>
             {{end}}
