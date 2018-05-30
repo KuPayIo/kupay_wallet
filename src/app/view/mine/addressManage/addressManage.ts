@@ -4,6 +4,7 @@ import { Api } from "../../../core/eth/api";
 import { getLocalStorage, getCurrentWallet, decrypt, setLocalStorage, getDefaultAddr } from "../../../utils/tools";
 import { GaiaWallet } from "../../../core/eth/wallet";
 import { dataCenter } from "../../../store/dataCenter";
+import { Wallet, Addr } from "../../interface";
 
 export class addressManage extends Widget {
     public ok: () => void;
@@ -73,13 +74,6 @@ export class addressManage extends Widget {
     }
 
     public addNewaddr() {
-        // let api = new Api();
-        // let wallets = getLocalStorage("wallets");
-        // const wallet = getCurrentWallet(wallets);
-        // let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.state.currencyName)[0];
-        // if (!currencyRecord) return
-        // let gwlt = GaiaWallet.fromJSON(wallet.gwlt);
-        // let newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), this.state.list.length)
 
         if (this.state.showtype == 1) {
             let selectName = this.state.coins[this.state.selectnum].name;
@@ -90,7 +84,7 @@ export class addressManage extends Widget {
             let newGwlt;
             if (selectName === "ETH") {
                 wallets = getLocalStorage("wallets");
-                const wallet = getCurrentWallet(wallets);
+                const wallet: Wallet = getCurrentWallet(wallets);
                 currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === selectName)[0];
                 if (!currencyRecord) return
                 const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
@@ -101,13 +95,11 @@ export class addressManage extends Widget {
             popNew("app-components-message-messagebox", { type: "prompt", title: "添加地址", placeHolder: "标签名", content: content }, (r) => {
                 if (newGwlt) {
                     r = r || getDefaultAddr(newGwlt.address);
-                    currencyRecord.addrs.push({
-                        addr: newGwlt.address,
-                        addrName: r,
-                        gwlt: newGwlt.toJSON(),
-                        record: []
-                    });
+                    currencyRecord.addrs.push(newGwlt.address);
+                    let list: Addr[] = getLocalStorage("addrs") || [];
+                    list.push({ addr: newGwlt.address, addrName: r, gwlt: newGwlt.toJSON(), record: [], balance: 0, currencyName: selectName });
                     currencyRecord.currentAddr = newGwlt.address;
+                    setLocalStorage("addrs", list, false);
                     setLocalStorage("wallets", wallets, true);
 
 

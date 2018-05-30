@@ -17,15 +17,11 @@ export class DataCenter {
      */
     public init() {
         //从缓存中获取地址进行初始化
-        let wallets = getLocalStorage("wallets");
-        if (wallets) {
-            wallets.walletList.forEach(v => {
-                v.currencyRecords.forEach(v1 => {
-                    v1.addrs.forEach(v2 => {
-                        this.addAddr(v2.addr, v2.addrName, v1.currencyName);
-                    })
-                });
-            });
+        let addrs = getLocalStorage("addrs");
+        if (addrs) {
+            addrs.forEach(v => {
+                this.addAddr(v.addr, v.addrName, v.currencyName);
+            })
         }
 
         //启动定时器更新

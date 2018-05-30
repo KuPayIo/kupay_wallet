@@ -56,7 +56,7 @@ export const unregister = (keyName: string, cb: Function): void => {
 	handlerMap.remove(keyName, <any>cb);
 };
 
-type KeyName = MapName | 'wallet';
+type KeyName = MapName | 'wallet'|'addrs';
 
 type MapName = '';
 
