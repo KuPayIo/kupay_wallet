@@ -12,5 +12,6 @@
                 <span>朋友圈</span>
             </div>
         </div>
+        <div w-class="ga-share-cancel" on-tap="cancelShareClick">取消分享</div>
     </div>
 </div>

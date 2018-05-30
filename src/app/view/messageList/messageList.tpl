@@ -5,7 +5,7 @@
         <span w-class="ga-banner-btn">全部已读</span>
     </div>
     <div style="position: relative;top:0px;bottom:0px;width:100%;">
-        {{for ind,val of it.data}}
+        {{for ind,val of it1.data}}
             
             <div w-class="messItem " on-tap="messDetail(e,{{ind}})" >
                 {{if val.noread}}

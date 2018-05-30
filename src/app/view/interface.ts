@@ -5,20 +5,28 @@
 /**
  * localstorage wallet object
  */
- export interface Wallet{
-    walletId:string;  //wallet id  (first address)
-    walletPsw:string; // wallet password
-    walletPswTips?:string;// wallet password tips
-    gwlt:string;  // Serialization GaiaWallet object
-    showCurrencys:Array<string>; //home page show currencys
-    currencyRecords:[{     // currency records 
-        currencyName:string; // currency Name 
-        currentAddr:string;//current address
-        addrs:[{
-            addr:string;  // address
-            addrName:string; // address name
-            gwlt:string;
-            record:Array<Object>; // transaction records
-        }]
-    }]
- }
+export interface Wallet {
+    walletId: string;  // wallet id  (first address)
+    avatar: string;
+    walletPsw: string; // wallet password
+    walletPswTips?: string;// wallet password tips
+    gwlt: string;  // Serialization GaiaWallet object
+    showCurrencys: string[]; // home page show currencys
+    currencyRecords: [{     // currency records 
+        currencyName: string; // currency Name 
+        currentAddr: string;// current address
+        addrs: string[];// address list
+    }];
+}
+
+/**
+ * 地址对象
+ */
+export interface Addr {
+    addr: string;// 地址
+    addrName: string;// 地址名
+    balance: number;// 余额
+    currencyName: string;// 货币类型
+    gwlt: string;// 钱包对象字符串化
+    record: any[];// 记录缓存
+}

@@ -1,4 +1,4 @@
-<div class="ga-new-page" w-class="ga-new-page" w-plugin='{"mod":"pi/widget/scroller/scroller", "options":{} }'> 
+<div class="ga-new-page hide-scrollbar" w-class="ga-new-page" style="overflow-y: auto;overflow-x: hidden;"> 
     <div>
     <app-components-topBar-topBar>{title:"理财",iconColor:"white"}</app-components-topBar-topBar>
     <div w-class="ga-announcement-container">
@@ -6,20 +6,15 @@
         <span w-class="ga-speaker-title">{{'[头条]'}}</span>
         <span w-class="ga-speaker-text">医药行情风头正盛，分享享政策红利</span>
     </div>
-    <div w-class="ga-carousel-container" style="background-image:url(../../res/image/{{it1.bannerList[it1.bannerIndex]}});">
-        <div w-class="ga-carousel-title">连续12月正收益</div>
-        <div w-class="ga-carousel-text">理财投资的好选择</div>
-        <div w-class="ga-dots">
-            <span w-class="ga-dot {{it1.bannerIndex === 0 ? 'ga-dot-active' : ''}}"></span>
-            <span w-class="ga-dot {{it1.bannerIndex === 1 ? 'ga-dot-active' : ''}}"></span>
-            <span w-class="ga-dot {{it1.bannerIndex === 2 ? 'ga-dot-active' : ''}}"></span>
+    <div w-class="ga-carousel-container" class="swiper-container" >
+        <div w-class="swiper-wrapper" class="swiper-wrapper">
+            {{for index,item of it1.bannerList}}
+            <div w-class="swiper-slide" class="swiper-slide" style="background-image:url(../../res/image/{{item}});"></div>
+            {{end}}
         </div>
+        <div class="swiper-pagination"></div>
     </div>
     <div w-class="ga-other-function">
-        <div w-class="ga-function-item" on-tap="fundClick">
-            <img src="../../res/image/icon_fund.png" w-class="ga-function-item-icon"/>
-            <span w-class="ga-function-item-text">基金</span>
-        </div>
         <div w-class="ga-function-item" on-tap="balanceManagementClick">
             <img src="../../res/image/icon_eggmoney.png" w-class="ga-function-item-icon"/>
             <span w-class="ga-function-item-text">币投宝</span>
@@ -28,6 +23,7 @@
             <img src="../../res/image/icon_loan.png" w-class="ga-function-item-icon"/>
             <span w-class="ga-function-item-text">币币贷</span>
         </div>
+      
     </div>
     <div w-class="ga-line"></div>
     <div w-class="ga-fund-container">

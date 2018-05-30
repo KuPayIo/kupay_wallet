@@ -42,11 +42,11 @@
     display: flex;
     align-items: center;
     margin-top: 25px;
-    padding: 0 15px;
+    padding: 0 30px;
 }
 .ga-user-protocol{
     cursor: pointer;
-    font-size: 24px;
+    font-size: 28px;
     line-height: 33px;
     color: #1A70DD;
     text-align: left;
@@ -58,7 +58,6 @@
     height: 100px;
     cursor: pointer;
     margin: 152px 30px 0;
-    background: #203260;
     border-radius: 6px;
     font-size: 32px;
     color: rgba(255,255,255,0.87);

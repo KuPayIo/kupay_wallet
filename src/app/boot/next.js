@@ -101,9 +101,10 @@ winit.initNext = function () {
       var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
       root.cfg.full = false;//PC模式
       var index = pi_modules.commonjs.exports.relativeGet("app/view/main").exports;
-      index.run();
-      // 关闭读取界面
-      document.body.removeChild(document.getElementById('rcmj_loading_log'));
+      index.run(() => {
+        // 关闭读取界面
+        document.body.removeChild(document.getElementById('rcmj_loading_log'));
+      });
       // pi_modules.commonjs.exports.relativeGet("app/cims/util").exports.initCfg(fileMap);
     }, function (r) {
       alert("加载目录失败, " + r.error + ":" + r.reason);

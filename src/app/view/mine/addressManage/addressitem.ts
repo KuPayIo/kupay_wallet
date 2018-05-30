@@ -4,11 +4,6 @@ import { popNew } from "../../../../pi/ui/root";
 export class addressitem extends Widget{
     constructor(){
         super();
-        this.props={        
-            name:"BTC 001",
-            money:"2.00",
-            address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"
-        }
     }
 
     public goDetails(){

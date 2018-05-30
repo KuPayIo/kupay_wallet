@@ -1,6 +1,6 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { getLocalStorage, setLocalStorage, getCurrentWallet, decrypt } from "../../../utils/tools";
+import { getLocalStorage, setLocalStorage, getCurrentWallet, decrypt,shuffle } from "../../../utils/tools";
 import { GaiaWallet } from "../../../core/eth/wallet";
 
 
@@ -37,23 +37,10 @@ export class BackupMnemonicConfirm extends Widget {
 
     //对助记词乱序和标识处理
     public initMnemonic(arr: Array<any>) {
-        return this.initActive(this.shuffle(arr));
+        return this.initActive(shuffle(arr));
     }
 
-    //数组乱序
-    public shuffle(arr: Array<any>): Array<any> {
-        var length = arr.length;
-        var shuffled = Array(length);
-        for (var index = 0, rand; index < length; index++) {
-            rand = ~~(Math.random() * (index + 1));
-            if (rand !== index) {
-                shuffled[index] = shuffled[rand];
-            }
-            shuffled[rand] = arr[index];
-        }
-        return shuffled;
-    };
-
+   
     //初始化每个助记词标识是否被点击
     public initActive(arr: Array<any>): Array<any> {
         let res = [];

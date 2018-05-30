@@ -1,6 +1,6 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { getCurrentWallet, getLocalStorage, wei2Eth, parseAccount, setLocalStorage, effectiveCurrency, effectiveCurrencyNoConversion, parseDate } from "../../../utils/tools";
+import { getCurrentWallet, getLocalStorage, wei2Eth, parseAccount, setLocalStorage, effectiveCurrency, effectiveCurrencyNoConversion, parseDate, getAddrById } from "../../../utils/tools";
 import { Api } from "../../../core/eth/api";
 import { register } from "../../../store/store";
 
@@ -30,7 +30,7 @@ export class AddAsset extends Widget {
         if (!wallet.currencyRecords) return;
         wallet.currencyRecords.forEach(v => {
             v.addrs.forEach(v1 => {
-                this.parseTransactionDetails(v1.addr, v1.record)
+                this.parseTransactionDetails(v1, getAddrById(v1).record)
             });
         });
     }

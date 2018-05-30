@@ -8,4 +8,8 @@ export class FundShare extends Widget{
     public backPrePage(){
         this.ok && this.ok();
     }
+
+    public cancelShareClick(){
+        this.ok && this.ok();
+    }
 } 

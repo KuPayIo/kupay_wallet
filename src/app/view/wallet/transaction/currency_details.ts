@@ -1,6 +1,6 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { getCurrentWallet, getLocalStorage, wei2Eth, parseAccount, setLocalStorage, effectiveCurrency, effectiveCurrencyNoConversion, parseDate } from "../../../utils/tools";
+import { getCurrentWallet, getLocalStorage, wei2Eth, parseAccount, setLocalStorage, effectiveCurrency, effectiveCurrencyNoConversion, parseDate, getAddrById, resetAddrById } from "../../../utils/tools";
 import { Api } from "../../../core/eth/api";
 import { register } from "../../../store/store";
 
@@ -35,6 +35,7 @@ export class AddAsset extends Widget {
     public init(): void {
         register("wallets", (wallets) => {
             const wallet = getCurrentWallet(wallets);
+            if (!wallet) return;
             this.resetCurrentAddr(wallet, this.props.currencyName)
             this.parseBalance();
             this.parseTransactionDetails()
@@ -68,6 +69,10 @@ export class AddAsset extends Widget {
      * 处理选择地址
      */
     public doSearch() {
+        if (!this.state.currentAddr) {
+            popNew("app-components-message-message", { type: "notice", content: "敬请期待", center: true })
+            return;
+        }
         popNew("app-view-wallet-transaction-choose_address", { currencyName: this.props.currencyName })
     }
 
@@ -92,7 +97,10 @@ export class AddAsset extends Widget {
      * 处理转账
      */
     async doTransfer() {
-        if (!this.state.currentAddr) return
+        if (!this.state.currentAddr) {
+            popNew("app-components-message-message", { type: "notice", content: "敬请期待", center: true })
+            return;
+        }
         let api = new Api();
         let rate: any = await api.getExchangeRate();
         popNew("app-view-wallet-transaction-transfer", {
@@ -108,7 +116,10 @@ export class AddAsset extends Widget {
      */
     public doReceipt() {
         //todo 这里获取地址
-        if (!this.state.currentAddr) return
+        if (!this.state.currentAddr) {
+            popNew("app-components-message-message", { type: "notice", content: "敬请期待", center: true })
+            return;
+        }
         popNew("app-view-wallet-transaction-receipt", {
             currencyBalance: this.state.balance,
             addr: this.state.currentAddr
@@ -122,7 +133,7 @@ export class AddAsset extends Widget {
         if (!currencyRecord) return [];
 
         this.state.currentAddr = currencyRecord.currentAddr || wallet.walletId;
-        let currentAddr = currencyRecord.addrs.filter(v => v.addr === this.state.currentAddr)[0];
+        let currentAddr = getAddrById(this.state.currentAddr);
         this.state.currentAddrRecords = currentAddr ? currentAddr.record : [];
     }
 
@@ -194,14 +205,10 @@ export class AddAsset extends Widget {
     }
 
     private resetRecord(record, notified) {
-        let wallets = getLocalStorage("wallets");
-        const wallet = getCurrentWallet(wallets);
-        let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
-        if (!currencyRecord) return;
-        let addr = currencyRecord.addrs.filter(v => v.addr === this.state.currentAddr)[0];
+        let addr = getAddrById(this.state.currentAddr);
         if (!addr) return
         addr.record = record;
-        setLocalStorage("wallets", wallets, notified)
+        resetAddrById(this.state.currentAddr, addr, notified);
     }
 }
 
