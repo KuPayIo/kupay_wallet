@@ -3,7 +3,7 @@
  */
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, eth2Wei, setLocalStorage, parseAccount, parseDate, effectiveCurrencyStableConversion } from "../../../utils/tools";
+import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, eth2Wei, setLocalStorage, parseAccount, parseDate, effectiveCurrencyStableConversion, getAddrById, resetAddrById } from "../../../utils/tools";
 import { GaiaWallet } from "../../../core/eth/wallet";
 import { Api } from "../../../core/eth/api";
 
@@ -84,7 +84,7 @@ export class AddAsset extends Widget {
 
         let thisObj = this;
 
-        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码",placeHolder:"密码" }, async function (r) {
+        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", placeHolder: "密码" }, async function (r) {
             let wallets = getLocalStorage("wallets");
             const wallet = getCurrentWallet(wallets);
             let psw = decrypt(wallet.walletPsw)
@@ -165,7 +165,7 @@ export class AddAsset extends Widget {
         if (this.state.urgent) {
             price *= 2;
         }
-        let r = effectiveCurrencyStableConversion(price * this.state.gasLimit, "ETH", "CNY", true,this.props.rate);
+        let r = effectiveCurrencyStableConversion(price * this.state.gasLimit, "ETH", "CNY", true, this.props.rate);
 
         this.state.fees = r.num;
         this.state.feesShow = r.show;
@@ -179,18 +179,11 @@ export class AddAsset extends Widget {
  * 添加记录
  */
 const addRecord = (currencyName, currentAddr, record) => {
-    let wallets = getLocalStorage("wallets");
-    const wallet = getCurrentWallet(wallets);
-    if (!wallet.currencyRecords || !currencyName) return;
-
-    let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0]
-    if (!currencyRecord) return;
-
-    let addr = currencyRecord.addrs.filter(v => v.addr === currentAddr)[0];
+    let addr = getAddrById(currentAddr);
     if (!addr) return
     addr.record.push(record)
 
-    setLocalStorage("wallets", wallets, true)
+    resetAddrById(this.state.currentAddr, addr, true);
 }
 
 
@@ -210,7 +203,7 @@ async function doTransfer(wallet, acct1, acct2, psw, gasPrice, gasLimit, value, 
         data: info
     }
 
-    let gwlt = getGwltByAddr(wallet, acct1, currencyName)
+    let gwlt = getGwltByAddr(acct1)
     if (!gwlt) return
 
     let tx = gwlt.signRawTransaction(psw, txObj);
@@ -221,11 +214,8 @@ async function doTransfer(wallet, acct1, acct2, psw, gasPrice, gasLimit, value, 
 /**
  * 获取钱包
  */
-const getGwltByAddr = (wallet, addr, currencyName) => {
-    if (wallet.walletId === addr) return GaiaWallet.fromJSON(wallet.gwlt);
-    let currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0]
-    if (!currencyRecord) return;
-    let currentAddr = currencyRecord.addrs.filter(v => v.addr === addr)[0];
+const getGwltByAddr = (addr) => {
+    let currentAddr = getAddrById(addr)
     if (!currentAddr) return
     return GaiaWallet.fromJSON(currentAddr.gwlt);
 }
