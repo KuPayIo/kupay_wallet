@@ -64,6 +64,7 @@ var Mnemonic = function(language) {
         }
         var buffer = new Uint8Array(strength / 8);
         var data = crypto.getRandomValues(buffer);
+        alert(self.toMnemonic(data));
         return self.toMnemonic(data);
     }
 

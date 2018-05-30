@@ -142,6 +142,9 @@ export class WalletManagement extends Widget {
                     let walletIndex = getCurrentWalletIndex(wallets);
                     let walletPsw = decrypt(wallet.walletPsw);
                     if(pswEqualed(r,walletPsw)){
+                        let avatars = getLocalStorage("avatars");
+                        avatars.push(wallet.avatar);
+                        setLocalStorage("avatars",avatars);
                         wallets.walletList.splice(walletIndex,1);
                         wallets.curWalletId = "";
                         setLocalStorage("wallets",wallets,true);

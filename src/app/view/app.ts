@@ -1,11 +1,18 @@
 import { Widget } from "../../pi/widget/widget";
 import { open, popNew } from '../../pi/ui/root';
+import { getLocalStorage, getCurrentWallet, randomRgbColor } from '../utils/tools'
 export class App extends Widget{
     constructor(){
         super();
     }
     public create(){
         super.create();
+        //alert(window.crypto.getRandomValues(new Uint8Array(16)));
+        let wallets = getLocalStorage("wallets");
+
+        /* for(let i =0;i< wallets.walletList.length;i++){
+            alert(wallets.walletList[i].walletId)
+        } */
         this.init();
     }
     public init():void{

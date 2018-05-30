@@ -33,7 +33,10 @@ export class SwitchWallet extends Widget{
         this.ok && this.ok();
         popNew("app-view-wallet-walletImport-walletImport");
     }
-    public switchWalletClick(e,index){
+    public switchWalletClick(e,index,isCurWallet){
+        if(isCurWallet){
+            return;
+        }
         popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
             const psw = decrypt(this.state.wallets.walletList[index].walletPsw);
             if(!pswEqualed(psw,r)){
