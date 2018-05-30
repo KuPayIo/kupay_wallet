@@ -1,5 +1,5 @@
 import { Widget } from "../../../../pi/widget/widget";
-import { getLocalStorage, getCurrentWallet,decrypt } from "../../../utils/tools"
+import { getLocalStorage, getCurrentWallet,decrypt,getAddrById } from "../../../utils/tools"
 import { GaiaWallet } from "../../../core/eth/wallet"
 import { popNew } from "../../../../pi/ui/root"
 
@@ -25,7 +25,8 @@ export class ExportPrivateKey extends Widget{
             obj.icon = currencyRecords[0].currencyName + ".png";
             let addrs = currencyRecords[0].addrs;
             for(let j = 0;j < addrs.length; j++){
-                let gwlt = GaiaWallet.fromJSON(addrs[j].gwlt);
+                let addr = getAddrById(addrs[j]);
+                let gwlt = GaiaWallet.fromJSON(addr.gwlt);
                 let privateKey = gwlt.exportPrivateKey(walletPsw);
                 obj.textList.push(privateKey);
             }

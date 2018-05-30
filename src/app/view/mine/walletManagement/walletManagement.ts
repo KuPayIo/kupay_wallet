@@ -1,5 +1,5 @@
 import { Widget } from "../../../../pi/widget/widget";
-import { getLocalStorage, getCurrentWallet,getCurrentWalletIndex, decrypt, setLocalStorage } from "../../../utils/tools"
+import { getLocalStorage, getCurrentWallet,getCurrentWalletIndex, decrypt, setLocalStorage,getAddrsAll } from "../../../utils/tools"
 import { pswEqualed,nickNameInterception } from "../../../utils/account"
 import { GaiaWallet } from "../../../core/eth/wallet"
 import { popNew } from "../../../../pi/ui/root"
@@ -152,12 +152,21 @@ export class WalletManagement extends Widget {
                 let walletIndex = getCurrentWalletIndex(wallets);
                 let walletPsw = decrypt(wallet.walletPsw);
                 if(pswEqualed(r,walletPsw)){
+                    //返还头像
                     let avatars = getLocalStorage("avatars");
                     avatars.push(wallet.avatar);
                     setLocalStorage("avatars",avatars);
+
+                    //删除地址
+                    let addrs = getAddrsAll(wallet);
+                    this.deleteAddrs(addrs);
+
+                    //删除钱包
                     wallets.walletList.splice(walletIndex,1);
                     wallets.curWalletId = "";
                     setLocalStorage("wallets",wallets,true);
+
+
                     popNew("app-components-message-message", { type: "success", content: "删除成功", center: true });
                     this.ok && this.ok(true);
                 }else{
@@ -166,4 +175,21 @@ export class WalletManagement extends Widget {
             });
         });
     }
+
+  
+
+    /**
+     * 删除addrs中的所有地址
+     * @param addrs 
+     */
+    public deleteAddrs(delAddrs:string[]){
+        let addrs = getLocalStorage("addrs");
+        let addrsNew = addrs.filter((item)=>{
+            if(delAddrs.indexOf(item.addr) < 0){
+                return true;
+            }
+            return false;
+        });
+        setLocalStorage("addrs",addrsNew);
+    }   
 }

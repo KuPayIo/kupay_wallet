@@ -68,7 +68,20 @@ export const resetAddrById = (addrId, data: Addr, notified?: boolean) => {
     setLocalStorage("addrs", list, notified);
 }
 
-
+  /**
+ * 获取钱包下的所有地址
+ * @param wallet 
+ */
+ export  function getAddrsAll(wallet){
+    let currencyRecords = wallet.currencyRecords;
+    let retAddrs = [];
+    currencyRecords.forEach((item)=>{
+        item.addrs.forEach((addr)=>{
+            retAddrs.push(addr);
+        });
+    });
+    return retAddrs;
+}
 
 //Password used to encrypt the plainText
 const passwd = "gaia";

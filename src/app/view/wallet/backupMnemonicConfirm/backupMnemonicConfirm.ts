@@ -1,6 +1,6 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { getLocalStorage, setLocalStorage, getCurrentWallet, decrypt,shuffle } from "../../../utils/tools";
+import { getLocalStorage, setLocalStorage, getCurrentWallet, decrypt,shuffle,getAddrById,resetAddrById } from "../../../utils/tools";
 import { GaiaWallet } from "../../../core/eth/wallet";
 
 
@@ -81,7 +81,10 @@ export class BackupMnemonicConfirm extends Widget {
         wallet.gwlt = gwlt.toJSON();
         //删除第一个地址下的助记词
         let addr0 = wallet.currencyRecords[0].addrs[0];
-        addr0.gwlt = gwlt.toJSON();
+        let addrs = getLocalStorage("addrs");
+        let addr = getAddrById(addr0);
+        addr.gwlt = gwlt.toJSON();
+        resetAddrById(addr0,addr);
         setLocalStorage("wallets", wallets);
     }
 
