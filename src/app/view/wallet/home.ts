@@ -1,16 +1,14 @@
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet, randomRgbColor } from '../../utils/tools'
-import { register } from '../../store/store'
-import { GaiaWallet } from "../../core/eth/wallet";
-import { dataCenter } from "../../store/dataCenter";
+/**
+ * 
+ */
 
-interface Wallet {
-    walletName: string;
-    walletNameDotBgColor: string;
-    totalAssets: string;// total assets
-    currencyList: Array<any>;//Currency list
-}
+import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
+import { GaiaWallet } from '../../core/eth/wallet';
+import { dataCenter } from '../../store/dataCenter';
+import { register } from '../../store/store';
+import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
+
 export class Home extends Widget {
     constructor() {
         super();
@@ -20,17 +18,17 @@ export class Home extends Widget {
         this.init();
     }
     public init(): void {
-        const wallets = getLocalStorage("wallets");
-        register("wallets", (wallets) => {
+        const wallets = getLocalStorage('wallets');
+        register('wallets', (wallets) => {
             let otherWallets = false;
             if (wallets && wallets.walletList && wallets.walletList.length > 0) {
                 otherWallets = true;
-            }else{
+            } else {
                 otherWallets = false;
             }
             const wallet = getCurrentWallet(wallets);
             let gwlt = null;
-            if(wallet){
+            if (wallet) {
                 gwlt = GaiaWallet.fromJSON(wallet.gwlt);
             }
             this.state.gwlt = gwlt;
@@ -45,80 +43,85 @@ export class Home extends Widget {
         if (wallets && wallets.walletList && wallets.walletList.length > 0) {
             otherWallets = true;
             wallet = getCurrentWallet(wallets);
-            if(wallet){
+            if (wallet) {
                 gwlt = GaiaWallet.fromJSON(wallet.gwlt);
             }
-        }else{
+        } else {
             otherWallets = false;
         }
         this.state = {
             wallet,
             gwlt,
             otherWallets,
-            totalAssets: "0.00",
+            totalAssets: '0.00',
             currencyList: parseCurrencyList(wallet)
         };
 
         dataCenter.init();
     }
 
-    public clickCurrencyItemListener(e, index) {
-        const wallets = getLocalStorage("wallets");
+    public clickCurrencyItemListener(e: Event, index: number) {
+        const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         if (!wallet) {
             this.createWalletClick();
-            return
+
+            return;
         }
 
-        let currency = this.state.currencyList[index];
-        popNew("app-view-wallet-transaction-currency_details", {
+        const currency = this.state.currencyList[index];
+        popNew('app-view-wallet-transaction-currency_details', {
             currencyName: currency.currencyName, currencyBalance: `${currency.balance} ${currency.currencyName}`
             , currencyBalanceConversion: currency.balanceValue
-        })
+        });
 
     }
     public clickAddCurrencyListener() {
-        popNew("app-view-wallet-assets-add_asset")
+        popNew('app-view-wallet-assets-add_asset');
     }
     public createWalletClick() {
-        if(this.state.otherWallets){
-            popNew("app-view-wallet-switchWallet-switchWallet");
+        if (this.state.otherWallets) {
+            popNew('app-view-wallet-switchWallet-switchWallet');
+
             return;
         }
-        popNew("app-view-wallet-walletCreate-walletCreate");
+        popNew('app-view-wallet-walletCreate-walletCreate');
     }
     public switchWalletClick() {
-        popNew("app-view-wallet-switchWallet-switchWallet");
+        popNew('app-view-wallet-switchWallet-switchWallet');
     }
 }
 
 /**
  * 解析钱包货币
- * @param wallet 
+ * 
+ * @param wallet 钱包
  */
 const parseCurrencyList = (wallet) => {
-    let list = [];
-    //todo 测试代码  不处理没有的情况
+    const list = [];
+    // todo 测试代码  不处理没有的情况
     // if (!wallet.showCurrencys) return list;
-    let showCurrencys = (wallet && wallet.showCurrencys) || ["ETH", "BTC", "EOS"];
+    const showCurrencys = (wallet && wallet.showCurrencys) || ['ETH', 'BTC', 'EOS'];
 
-    //todo  这里需要正确的处理钱包货币
+    // todo  这里需要正确的处理钱包货币
     showCurrencys.forEach(v => {
-        let r = "";
+        let r = '';
         switch (v) {
-            case "BTC": r = "Bit coin"; break;
-            case "EOS": r = "EOS currency"; break;
-            case "ETH": r = "Ethereum"; break;
-            case "ETC": r = "Ethereum Classic"; break;
-            case "BCH": r = "Bitcoin Cash"; break;
-            case "XRP": r = "Ripple"; break;
+            case 'BTC': r = 'Bit coin'; break;
+            case 'EOS': r = 'EOS currency'; break;
+            case 'ETH': r = 'Ethereum'; break;
+            case 'ETC': r = 'Ethereum Classic'; break;
+            case 'BCH': r = 'Bitcoin Cash'; break;
+            case 'XRP': r = 'Ripple'; break;
+            default:
         }
         list.push({
             currencyName: v,
             currencyFullName: r,
-            balance: "0",
-            balanceValue: "￥0.00"
+            balance: '0',
+            balanceValue: '￥0.00'
         });
     });
+
     return list;
-}
+};

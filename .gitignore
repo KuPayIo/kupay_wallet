@@ -8,3 +8,5 @@
 /src/.depend
 /node_modules
 .temp
+/package-lock.json
+/package.json
