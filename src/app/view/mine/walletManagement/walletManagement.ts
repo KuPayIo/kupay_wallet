@@ -134,28 +134,36 @@ export class WalletManagement extends Widget {
 
 
     public deleteWalletClick(){
-        popNew("app-components-message-messagebox", { type: "alert", title: "备份钱包", content: "您还没有备份助记词，这是找回钱包的重要线索，请先备份" },()=>{
-            popNew("app-components-message-messagebox", { type: "confirm", title: "删除钱包", content: "删除后不再保留数据，再次登录需通过助记词重新导入" },()=>{
-                popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
-                    let wallets = getLocalStorage("wallets");
-                    let wallet = getCurrentWallet(wallets);
-                    let walletIndex = getCurrentWalletIndex(wallets);
-                    let walletPsw = decrypt(wallet.walletPsw);
-                    if(pswEqualed(r,walletPsw)){
-                        let avatars = getLocalStorage("avatars");
-                        avatars.push(wallet.avatar);
-                        setLocalStorage("avatars",avatars);
-                        wallets.walletList.splice(walletIndex,1);
-                        wallets.curWalletId = "";
-                        setLocalStorage("wallets",wallets,true);
-                        popNew("app-components-message-message", { type: "success", content: "删除成功", center: true });
-                        this.ok && this.ok(true);
-                    }else{
-                        popNew("app-components-message-message", { type: "error", content: "密码错误,请重新输入", center: true })
-                    }
-                });
+        if(this.state.mnemonicExisted){
+            popNew("app-components-message-messagebox", { type: "alert", title: "备份钱包", content: "您还没有备份助记词，这是找回钱包的重要线索，请先备份" },()=>{
+                this.deleteWallet();
+            });
+        }else{
+            this.deleteWallet();
+        }
+    }
+
+
+    public deleteWallet(){
+        popNew("app-components-message-messagebox", { type: "confirm", title: "删除钱包", content: "删除后不再保留数据，再次登录需通过助记词重新导入" },()=>{
+            popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
+                let wallets = getLocalStorage("wallets");
+                let wallet = getCurrentWallet(wallets);
+                let walletIndex = getCurrentWalletIndex(wallets);
+                let walletPsw = decrypt(wallet.walletPsw);
+                if(pswEqualed(r,walletPsw)){
+                    let avatars = getLocalStorage("avatars");
+                    avatars.push(wallet.avatar);
+                    setLocalStorage("avatars",avatars);
+                    wallets.walletList.splice(walletIndex,1);
+                    wallets.curWalletId = "";
+                    setLocalStorage("wallets",wallets,true);
+                    popNew("app-components-message-message", { type: "success", content: "删除成功", center: true });
+                    this.ok && this.ok(true);
+                }else{
+                    popNew("app-components-message-message", { type: "error", content: "密码错误,请重新输入", center: true })
+                }
             });
         });
-
     }
 }

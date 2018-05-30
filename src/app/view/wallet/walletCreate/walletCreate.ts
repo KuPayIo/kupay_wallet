@@ -88,6 +88,7 @@ export class WalletCreate extends Widget {
             return false;
         }
         let gwlt = GaiaWallet.generate("english", 128, this.state.walletPsw);
+        alert(gwlt.exportMnemonic(this.state.walletPsw))
         gwlt.nickName = this.state.walletName;
         let curWalletId = gwlt.address;
         let wallet: Wallet = {
