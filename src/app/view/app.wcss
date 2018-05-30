@@ -8,6 +8,7 @@
     box-sizing: border-box;
     background-color: #fff;
     border-top: 1px solid #ddd;
+    
 }
 .ga-tab-bar-item{
     flex: 1 0 0;
@@ -21,6 +22,7 @@
     color: #3e477b;
     letter-spacing: 0.24px;
     text-align: center;
+    cursor: pointer;
 }
 .ga-tab-bar-item-active{
     color:  #1A70DD;
