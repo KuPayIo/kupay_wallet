@@ -6,17 +6,15 @@
         <span w-class="ga-speaker-title">{{'[头条]'}}</span>
         <span w-class="ga-speaker-text">医药行情风头正盛，分享享政策红利</span>
     </div>
-    <div w-class="ga-carousel-container" style="background-image:url(../../res/image/{{it1.bannerList[it1.bannerIndex]}});">
-        <div w-class="ga-carousel-title">连续12月正收益</div>
-        <div w-class="ga-carousel-text">理财投资的好选择</div>
-        <div w-class="ga-dots">
-            <span w-class="ga-dot {{it1.bannerIndex === 0 ? 'ga-dot-active' : ''}}"></span>
-            <span w-class="ga-dot {{it1.bannerIndex === 1 ? 'ga-dot-active' : ''}}"></span>
-            <span w-class="ga-dot {{it1.bannerIndex === 2 ? 'ga-dot-active' : ''}}"></span>
+    <div w-class="ga-carousel-container" class="swiper-container" >
+        <div w-class="swiper-wrapper" class="swiper-wrapper">
+            {{for index,item of it1.bannerList}}
+            <div w-class="swiper-slide" class="swiper-slide" style="background-image:url(../../res/image/{{item}});"></div>
+            {{end}}
         </div>
+        <div class="swiper-pagination"></div>
     </div>
     <div w-class="ga-other-function">
-        
         <div w-class="ga-function-item" on-tap="balanceManagementClick">
             <img src="../../res/image/icon_eggmoney.png" w-class="ga-function-item-icon"/>
             <span w-class="ga-function-item-text">币投宝</span>

@@ -20,7 +20,7 @@
                 <div w-class="ga-loading-container"><img src="../../res/image/u250.png" /></div>
                 <div w-class="ga-wallet-name-container">
                     <img w-class="ga-wallet-header-none"/>
-                    <span w-class="ga-wallet-name" on-tap="createWalletClick">{{it1.otherWallets ? '请选择其他钱包' : '创建钱包'}}</span>
+                    <span w-class="ga-wallet-name" on-tap="createWalletClick">{{it1.otherWallets ? '选择钱包' : '创建钱包'}}</span>
                 </div>
                 <div w-class="ga-assets-container">
                     <div w-class="ga-assets-box">

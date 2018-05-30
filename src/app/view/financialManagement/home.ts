@@ -1,5 +1,6 @@
 import { Widget } from "../../../pi/widget/widget";
 import { popNew } from "../../../pi/ui/root";
+import { Swiper } from '../../res/js/swiper.min'
 
 export class FinancialManagementHome extends Widget{
     constructor(){
@@ -11,8 +12,6 @@ export class FinancialManagementHome extends Widget{
     }
     public init(){
         this.state = {
-            timer:null,
-            bannerIndex:0,
             bannerList:["banner1.png","banner2.png","banner3.png"],
             newsList:[{
                 title:"2018巴菲特股东大会，说了些什么？",
@@ -54,17 +53,22 @@ export class FinancialManagementHome extends Widget{
                 date:"近一年"
             }]
         }
-        this.state.timer = setInterval(()=>{
-            this.state.bannerIndex = (this.state.bannerIndex + 1) % 3;
-            this.paint();
-        },2000);
     }
 
-
-    public destroy(){
-        super.destroy();
-        clearInterval(this.state.timer);
-        return true;
+    public attach(){
+        super.attach();
+        let mySwiper = new Swiper ('.swiper-container', {
+            autoplay:{
+                delay:2000,
+                disableOnInteraction:false
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable:true,
+                bulletClass : 'ga-pagination-bullet',
+                bulletActiveClass: 'ga-pagination-bullet-active',
+            },
+        }) 
     }
     public fundClick(){
         
