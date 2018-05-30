@@ -3,9 +3,10 @@
  */
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet, wei2Eth, decrypt, setLocalStorage, getDefaultAddr } from "../../../utils/tools";
+import { getLocalStorage, getCurrentWallet, wei2Eth, decrypt, setLocalStorage, getDefaultAddr, getAddrById } from "../../../utils/tools";
 import { Api } from "../../../core/eth/api";
 import { GaiaWallet } from "../../../core/eth/wallet";
+import { Addr } from "../../interface";
 
 interface Props {
     currencyName: string;
@@ -64,16 +65,14 @@ export class AddAsset extends Widget {
         let gwlt = GaiaWallet.fromJSON(wallet.gwlt);
         let newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), this.state.list.length)
 
-        // r.toJSON()
+        popNew("app-components-message-messagebox", { type: "prompt", title: "添加地址", content: newGwlt.address, placeHolder: "标签名" }, (r) => {
 
-        popNew("app-components-message-messagebox", { type: "prompt", title: "添加地址", content: newGwlt.address,placeHolder:"标签名" }, (r) => {
-            currencyRecord.addrs.push({
-                addr: newGwlt.address,
-                addrName: r ? r : getDefaultAddr(newGwlt.address),
-                gwlt: newGwlt.toJSON(),
-                record: []
-            });
+            r = r || getDefaultAddr(newGwlt.address);
+            currencyRecord.addrs.push(newGwlt.address);
+            let list: Addr[] = getLocalStorage("addrs") || [];
+            list.push({ addr: newGwlt.address, addrName: r, gwlt: newGwlt.toJSON(), record: [], balance: 0, currencyName: this.props.currencyName });
             currencyRecord.currentAddr = newGwlt.address;
+            setLocalStorage("addrs", list, false);
             setLocalStorage("wallets", wallets, true);
             // console.log(wallets)
             //todo 这里验证输入，并根据输入添加地址，且处理地址切换
@@ -95,17 +94,18 @@ export class AddAsset extends Widget {
         let currentAddr = currencyRecord.currentAddr || wallet.walletId;
         let api = new Api();
         this.state.list = currencyRecord.addrs.map(v => {
+            let r = getAddrById(v)
             return {
-                name: v.addrName || getDefaultAddr(v.addr),
-                balance: 0,
-                isChoose: v.addr === currentAddr,
-                addr: v.addr
+                name: r.addrName,
+                balance: r.balance,
+                isChoose: r.addr === currentAddr,
+                addr: r.addr
             }
         })
 
         currencyRecord.addrs.forEach(v => {
-            api.getBalance(v.addr).then(r => {
-                this.setBalance(v.addr, r)
+            api.getBalance(v).then(r => {
+                this.setBalance(v, r)
             });
         })
     }

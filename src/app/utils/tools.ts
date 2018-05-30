@@ -2,6 +2,7 @@ import { register, updateStore, find } from '../store/store'
 import { Cipher } from '../core/crypto/cipher'
 import { Api } from '../core/eth/api';
 import { isNumber } from '../../pi/util/util';
+import { Addr } from '../view/interface';
 
 export function setLocalStorage(key: string, data: any, notified?: boolean) {
     updateStore(key, data, notified);
@@ -40,6 +41,34 @@ export function getCurrentWalletIndex(wallets) {
     }
     return index;
 }
+
+
+/**
+ * 通过地址id获取地址信息
+ * @param addrId 
+ */
+export const getAddrById = (addrId): Addr => {
+    let list: Addr[] = getLocalStorage("addrs") || [];
+    return list.filter(v => v.addr === addrId)[0];
+}
+
+/**
+ * 通过地址id重置地址
+ * @param addrId 
+ * @param data 
+ * @param notified 
+ */
+export const resetAddrById = (addrId, data: Addr, notified?: boolean) => {
+    let list: Addr[] = getLocalStorage("addrs") || [];
+    list = list.map(v => {
+        if (v.addr !== addrId) return v;
+
+        return data;
+    })
+    setLocalStorage("addrs", list, notified);
+}
+
+
 
 //Password used to encrypt the plainText
 const passwd = "gaia";
@@ -146,7 +175,7 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
  * @param currencyName  当前货币类型
  * @param isWei 是否wei转化
  */
-export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isWei: boolean,rate:any) => {
+export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isWei: boolean, rate: any) => {
     let api = new Api();
     let r: any = { num: 0, show: "", conversionShow: "" };
     if (currencyName === "ETH") {
@@ -184,8 +213,8 @@ const addPerZero = (num: number, len: number) => {
 }
 
 
- //数组乱序
- export function shuffle(arr: Array<any>): Array<any> {
+//数组乱序
+export function shuffle(arr: Array<any>): Array<any> {
     var length = arr.length;
     var shuffled = Array(length);
     for (var index = 0, rand; index < length; index++) {
