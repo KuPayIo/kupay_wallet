@@ -23,7 +23,7 @@ export const run = (): void => {
 	//popNew('app-view-test-test');
 	//popNew('app-view-wallet-walletCreate-walletCreate');	// popNew('app-view-application-home');
 	// popNew('app-view-groupwallet-groupwallet');
-	// popNew('app-view-financialManagement-home');
+	//popNew('app-view-financialManagement-home');
 	 //popNew('app-view-mine-changePassword-changePassword1');
 };
 
