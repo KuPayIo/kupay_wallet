@@ -2,7 +2,7 @@
     <app-components-topBar-topBar>{title:"导入钱包"}</app-components-topBar-topBar>
     <div w-class="ga-import-container">
         <div ev-input-change="walletMnemonicChange">
-                <div w-class="ga-textarea-father"><app-components-input-input>{placeHolder:"请在这里输入助记词，空间键分隔",type:"textarea",rows:3}</app-components-input-input></div>
+            <div w-class="ga-textarea-father"><app-components-input-input>{placeHolder:"请在这里输入助记词，空间键分隔",type:"textarea",rows:3}</app-components-input-input></div>
         </div>
         <div w-class="ga-import-item" ev-input-change="walletNameChange">
             <div w-class="ga-import-item-label">钱包名称</div>

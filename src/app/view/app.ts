@@ -7,12 +7,6 @@ export class App extends Widget{
     }
     public create(){
         super.create();
-        //alert(window.crypto.getRandomValues(new Uint8Array(16)));
-        let wallets = getLocalStorage("wallets");
-
-        /* for(let i =0;i< wallets.walletList.length;i++){
-            alert(wallets.walletList[i].walletId)
-        } */
         this.init();
     }
     public init():void{
