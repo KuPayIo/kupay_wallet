@@ -110,7 +110,7 @@ export class AddressManage extends Widget {
         } else {
             const title = `添加${this.state.coins[this.state.selectnum].name}地址`;
             popNew('app-view-mine-addressManage-messagebox', {
-                type: 'prompt', title: title, content: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f'
+                mType: 'prompt', title: title, content: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f'
             });
         }
     }
