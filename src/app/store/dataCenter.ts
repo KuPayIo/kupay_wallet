@@ -1,5 +1,5 @@
 import { Api } from '../core/eth/api';
-import { getLocalStorage, wei2Eth } from '../utils/tools';
+import { getCurrentWallet, getLocalStorage, wei2Eth } from '../utils/tools';
 
 /**
  * 创建事件处理器表
@@ -7,9 +7,9 @@ import { getLocalStorage, wei2Eth } from '../utils/tools';
  */
 export class DataCenter {
 
-    public rate:string;
-    public addrBalances:any[] = [];
-    public addrs:string[] = [];
+    public rate: string;
+    public addrBalances: any[] = [];
+    public addrs: string[] = [];
     public timerRef: number = 0;
 
     /**
@@ -19,19 +19,29 @@ export class DataCenter {
         // 从缓存中获取地址进行初始化
         const addrs = getLocalStorage('addrs');
         if (addrs) {
+            const wallets = getLocalStorage('wallets');
+            const wallet = getCurrentWallet(wallets);
+            if (!wallet) return;
+            let list = [];
+            wallet.currencyRecords.forEach(v => {
+                list = list.concat(v.addrs);
+            });
+            this.addrBalances = [];
             addrs.forEach(v => {
-                this.addAddr(v.addr, v.addrName, v.currencyName);
+                if (list.indexOf(v.addr) >= 0) {
+                    this.addAddr(v.addr, v.addrName, v.currencyName);
+                }
             });
         }
 
         // 启动定时器更新
-        this.openCheck();
+        if (this.timerRef) this.openCheck();
     }
 
     /**
      * addAddr
      */
-    public addAddr(addr:string, addrName:string, currencyName:string) {
+    public addAddr(addr: string, addrName: string, currencyName: string) {
         if (this.addrBalances.some(v => v.addr === addr)) return;
         this.addrBalances.push({ addr: addr, balance: 0, currencyName: currencyName, addrName: addrName });
     }
@@ -39,21 +49,21 @@ export class DataCenter {
     /**
      * 通过货币类型获取地址余额列表
      */
-    public getAddrBalancesByCurrencyName(currencyName:string) {
+    public getAddrBalancesByCurrencyName(currencyName: string) {
         return this.addrBalances.filter(v => v.currencyName === currencyName);
     }
 
     /**
      * 通过地址获取地址余额
      */
-    public getAddrBalanceByAddr(addr:string) {
+    public getAddrBalanceByAddr(addr: string) {
         return this.addrBalances.filter(v => v.addr === addr)[0];
     }
 
     /**
      * 设置余额
      */
-    private setBalance(addr:string, r:any, currencyName:string) {
+    private setBalance(addr: string, r: any, currencyName: string) {
         console.log('setBalance', addr, r);
         let num = 0;
         if (currencyName === 'ETH') {
@@ -61,7 +71,7 @@ export class DataCenter {
         }
         this.addrBalances = this.addrBalances.map(v => {
             if (v.addr === addr) v.balance = num;
-            
+
             return v;
         });
     }

@@ -5,7 +5,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { Api } from '../../../core/eth/api';
 import { GaiaWallet } from '../../../core/eth/wallet';
-import { decrypt, getAddrById, getCurrentWallet, getDefaultAddr, getLocalStorage, setLocalStorage, wei2Eth } from '../../../utils/tools';
+import {
+    decrypt, getAddrById, getCurrentWallet, getDefaultAddr, getLocalStorage, getStrLen, setLocalStorage, sliceStr, wei2Eth
+} from '../../../utils/tools';
 import { Addr } from '../../interface';
 
 interface Props {
@@ -25,7 +27,7 @@ export class AddAsset extends Widget {
     }
 
     public init(): void {
-        this.state = {};
+        this.state = { maxNameLen: 9 };
 
         this.getAddrs();
     }
@@ -65,9 +67,13 @@ export class AddAsset extends Widget {
         const newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), this.state.list.length);
 
         popNew('app-components-message-messagebox', {
-            itype: 'prompt', title: '添加地址', content: newGwlt.address, placeHolder: '标签名'
+            itype: 'prompt', title: '添加地址', content: newGwlt.address, placeHolder: '标签名(限8个字)'
         }, (r) => {
+            if (r && r.length >= this.state.maxNameLen) {
+                popNew('app-components-message-message', { itype: 'notice', content: '地址标签输入过长', center: true });
 
+                return;
+            }
             r = r || getDefaultAddr(newGwlt.address);
             currencyRecord.addrs.push(newGwlt.address);
             const list: Addr[] = getLocalStorage('addrs') || [];
@@ -98,9 +104,14 @@ export class AddAsset extends Widget {
         const api = new Api();
         this.state.list = currencyRecord.addrs.map(v => {
             const r = getAddrById(v);
+            let addrName = r.addrName;
+            const len = getStrLen(addrName);
+            if (len > this.state.maxNameLen) {
+                addrName = `${sliceStr(addrName, 0, this.state.maxNameLen)}...`;
+            }
 
             return {
-                name: r.addrName,
+                name: addrName,
                 balance: r.balance,
                 isChoose: r.addr === currentAddr,
                 addr: r.addr

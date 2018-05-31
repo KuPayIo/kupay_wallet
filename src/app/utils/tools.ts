@@ -77,7 +77,7 @@ export const resetAddrById = (addrId, data: Addr, notified?: boolean) => {
  * 获取钱包下的所有地址
  * @param wallet wallet obj
  */
-export  const getAddrsAll = (wallet) => {
+export const getAddrsAll = (wallet) => {
     const currencyRecords = wallet.currencyRecords;
     const retAddrs = [];
     currencyRecords.forEach((item) => {
@@ -248,6 +248,44 @@ export const shuffle = (arr: any[]): any[] => {
         }
         shuffled[rand] = arr[index];
     }
-    
+
     return shuffled;
+};
+
+/**
+ * 获取字符串有效长度
+ * @param str 字符串
+ * 
+ * 中文字符算2个字符
+ */
+export const getStrLen = (str): number => {
+    if (str === null) return 0;
+    if (typeof str !== 'string') {
+        str += '';
+    }
+
+    return str.replace(/[^\x00-\xff]/g, '01').length;
+};
+
+/**
+ * 截取字符串
+ * @param str 字符串
+ * @param start 开始位置
+ * @param len 截取长度
+ */
+export const sliceStr = (str, start, len): string => {
+    if (str === null) return '';
+    if (typeof str !== 'string') str += '';
+    let r = '';
+    for (let i = start; i < str.length; i++) {
+        len--;
+        if (str.charCodeAt(i) > 127 || str.charCodeAt(i) === 94) {
+            len--;
+        }
+
+        if (len < 0) break;
+        r += str[i];
+    }
+
+    return r;
 };

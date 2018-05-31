@@ -24,7 +24,7 @@ export class AddressManage extends Widget {
                 { name: 'XRP' }
             ],
             content1: [
-                { name: 'BTC 001', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: 'BTC 001', money: '2.00', address: 'Kye4gFqsnotKvjoVxNXMcksgUWVFTmam2f' },
                 { name: 'BTC 002', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
                 { name: 'BTC 003', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
                 { name: 'BTC 004', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
