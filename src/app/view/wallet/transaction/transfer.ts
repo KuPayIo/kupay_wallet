@@ -90,7 +90,9 @@ export class AddAsset extends Widget {
         // tslint:disable-next-line:no-this-assignment
         const thisObj = this;
 
-        popNew('app-components-message-messagebox', { itype: 'prompt', title: '输入密码', placeHolder: '密码' }, async  (r: any) => {
+        popNew('app-components-message-messagebox', {
+            itype: 'prompt', title: '输入密码', placeHolder: '密码', inputType: 'password'
+        }, async (r: any) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
             const psw = decrypt(wallet.walletPsw);
@@ -104,7 +106,11 @@ export class AddAsset extends Widget {
                     thisObj.doClose();
                 } catch (error) {
                     console.log(error.message);
-                    popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
+                    if (error.message.indexOf('insufficient funds') >= 0) {
+                        popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });    
+                    } else {
+                        popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
+                    }
                 }
             }
         });
