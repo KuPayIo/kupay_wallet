@@ -11,6 +11,7 @@
         style="{{it1.styleStr}}"
         placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}"
         disabled={{it && it.disabled ? true : false}}
+        autofocus={{it && it.autofocus ? true : false}}
         on-input="change"
         on-blur="blur"
         on-focus="focus"
@@ -35,6 +36,7 @@
         placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}" 
         value="{{it1 && it1.currentValue ? it1.currentValue : ''}}"
         disabled={{it && it.disabled ? true : false}}
+        autofocus={{it && it.autofocus ? true : false}}
         on-input="change"
         on-blur="blur"
         on-focus="focus"

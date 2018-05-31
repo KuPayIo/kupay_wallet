@@ -10,6 +10,9 @@ export class ChangePasswordStep1 extends Widget {
     public ok:() => void;
     constructor() {
         super();
+    }
+    public create() {
+        super.create();
         this.init();
     }
     public init() {
