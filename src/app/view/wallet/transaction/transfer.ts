@@ -1,16 +1,19 @@
 /**
  * 处理转账逻辑
  */
-import { Widget } from "../../../../pi/widget/widget";
-import { popNew } from "../../../../pi/ui/root";
-import { decrypt, getLocalStorage, getCurrentWallet, wei2Eth, eth2Wei, setLocalStorage, parseAccount, parseDate, effectiveCurrencyStableConversion, getAddrById, resetAddrById } from "../../../utils/tools";
-import { GaiaWallet } from "../../../core/eth/wallet";
-import { Api } from "../../../core/eth/api";
+import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+import { Api } from '../../../core/eth/api';
+import { GaiaWallet } from '../../../core/eth/wallet';
+import {
+    decrypt, effectiveCurrencyStableConversion, eth2Wei, getAddrById, getCurrentWallet
+    , getLocalStorage, parseAccount, parseDate, resetAddrById
+} from '../../../utils/tools';
 
 interface Props {
     currencyBalance: string;
-    from: string;
-    currencyName: number
+    fromAddr: string;
+    currencyName: string;
     rate: any;
 }
 
@@ -45,19 +48,19 @@ export class AddAsset extends Widget {
     }
     public init(): void {
         this.state = {
-            title: "转账",
-            fromShow: parseAccount(this.props.from),
-            to: "0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3",
+            title: '转账',
+            fromShow: parseAccount(this.props.fromAddr),
+            to: '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3',
             pay: 0,
             payConversion: `≈￥0.00`,
             gasPrice: 100000000,
             gasLimit: 21000,
             fees: 0,
-            feesShow: "",
-            feesConversion: "",
-            info: "",
+            feesShow: '',
+            feesConversion: '',
+            info: '',
             urgent: false
-        }
+        };
 
         this.resetFees();
     }
@@ -74,50 +77,54 @@ export class AddAsset extends Widget {
      */
     public doNext() {
         if (!this.state.to) {
-            popNew("app-components-message-message", { type: "warn", content: "请输入收款地址", center: true });
-            return
+            popNew('app-components-message-message', { type: 'warn', content: '请输入收款地址', center: true });
+
+            return;
         }
         if (!this.state.pay) {
-            popNew("app-components-message-message", { type: "warn", content: "请输入转账金额", center: true });
-            return
+            popNew('app-components-message-message', { type: 'warn', content: '请输入转账金额', center: true });
+
+            return;
         }
 
-        let thisObj = this;
+        const thisObj = this;
 
-        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", placeHolder: "密码" }, async function (r) {
-            let wallets = getLocalStorage("wallets");
+        // tslint:disable-next-line:no-function-expression
+        popNew('app-components-message-messagebox', { type: 'prompt', title: '输入密码', placeHolder: '密码' }, async function (r: any) {
+            const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
-            let psw = decrypt(wallet.walletPsw)
+            const psw = decrypt(wallet.walletPsw);
             if (r === psw) {
                 try {
-                    let id = await doTransfer(wallet, thisObj.props.from, thisObj.state.to, psw, thisObj.state.gasPrice, thisObj.state.gasLimit
-                        , eth2Wei(thisObj.state.pay), thisObj.props.currencyName, thisObj.state.info, thisObj.state.urgent)
-                    //打开交易详情界面
-                    thisObj.showTransactionDetails(id, wallet)
-                    thisObj.doClose()
+                    const id: any = await doTransfer(wallet, thisObj.props.fromAddr, thisObj.state.to, psw, thisObj.state.gasPrice
+                        , thisObj.state.gasLimit, eth2Wei(thisObj.state.pay), thisObj.props.currencyName, thisObj.state.info
+                        , thisObj.state.urgent);
+                    // 打开交易详情界面
+                    thisObj.showTransactionDetails(id);
+                    thisObj.doClose();
                 } catch (error) {
-                    console.log(error.message)
-                    popNew("app-components-message-message", { type: "error", content: error.message, center: true })
+                    console.log(error.message);
+                    popNew('app-components-message-message', { type: 'error', content: error.message, center: true });
                 }
             }
-        }, () => { })
+        });
     }
 
     /**
      * 收款地址改变
      */
-    public onToChange(e) {
-        this.state.to = e.value
+    public onToChange(e: any) {
+        this.state.to = e.value;
     }
 
     /**
      * 收款金额改变
      */
-    public onPayChange(e) {
-        let num = parseFloat(e.value) || 0;
+    public onPayChange(e: any) {
+        const num = parseFloat(e.value) || 0;
         this.state.pay = num;
 
-        let r = effectiveCurrencyStableConversion(num, "ETH", "CNY", false, this.props.rate);
+        const r = effectiveCurrencyStableConversion(num, 'ETH', 'CNY', false, this.props.rate);
         this.state.payConversion = r.conversionShow;
         this.paint();
     }
@@ -125,7 +132,7 @@ export class AddAsset extends Widget {
     /**
      * 备注信息改变
      */
-    public onInfoChange(e) {
+    public onInfoChange(e: any) {
         this.state.info = e.value;
         // let gas = await api.estimateGas({ to: acct2, data: e.value });
         // console.log(gas);
@@ -133,27 +140,27 @@ export class AddAsset extends Widget {
     /**
      * 显示交易详情
      */
-    public showTransactionDetails(id, wallet) {
-        let t = new Date();
-        var record = {
+    public showTransactionDetails(id: number) {
+        const t = new Date();
+        const record = {
             id: id,
-            type: "转账",
-            from: this.props.from,
+            type: '转账',
+            fromAddr: this.props.fromAddr,
             to: this.state.to,
             pay: this.state.pay + this.state.fees,
             tip: this.state.feesShow,
             time: t.getTime(),
             showTime: parseDate(t),
-            result: "交易中",
-            info: this.state.info || "无"
-        }
-        popNew("app-view-wallet-transaction-transaction_details", record)
+            result: '交易中',
+            info: this.state.info || '无'
+        };
+        popNew('app-view-wallet-transaction-transaction_details', record);
 
-        addRecord(this.props.currencyName, this.props.from, record)
+        addRecord(this.props.currencyName, this.props.fromAddr, record);
 
     }
 
-    public changeUrgent(e, t) {
+    public changeUrgent(e: any, t: any) {
         this.state.urgent = t;
         this.paint();
 
@@ -165,7 +172,7 @@ export class AddAsset extends Widget {
         if (this.state.urgent) {
             price *= 2;
         }
-        let r = effectiveCurrencyStableConversion(price * this.state.gasLimit, "ETH", "CNY", true, this.props.rate);
+        const r = effectiveCurrencyStableConversion(price * this.state.gasLimit, 'ETH', 'CNY', true, this.props.rate);
 
         this.state.fees = r.num;
         this.state.feesShow = r.show;
@@ -179,43 +186,46 @@ export class AddAsset extends Widget {
  * 添加记录
  */
 const addRecord = (currencyName, currentAddr, record) => {
-    let addr = getAddrById(currentAddr);
-    if (!addr) return
-    addr.record.push(record)
+    const addr = getAddrById(currentAddr);
+    if (!addr) return;
+    addr.record.push(record);
 
-    resetAddrById(this.state.currentAddr, addr, true);
-}
-
+    resetAddrById(currentAddr, addr, true);
+};
 
 /**
  * 处理转账
  */
-async function doTransfer(wallet, acct1, acct2, psw, gasPrice, gasLimit, value, currencyName, info, urgent) {
-    let api = new Api();
+async function doTransfer(wallet: any, acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
+    , value: number, currencyName: string, info: string, urgent: boolean) {
+    const api = new Api();
     if (urgent) gasPrice *= 2;
-    let nonce = await api.getTransactionCount(acct1);
-    let txObj = {
+    const nonce = await api.getTransactionCount(acct1);
+    const txObj = {
         to: acct2,
         nonce: nonce,
         gasPrice: gasPrice,
         gasLimit: gasLimit,
         value: value,
         data: info
-    }
+    };
 
-    let gwlt = getGwltByAddr(acct1)
-    if (!gwlt) return
+    const gwlt = getGwltByAddr(acct1);
+    if (!gwlt) return;
 
-    let tx = gwlt.signRawTransaction(psw, txObj);
-    let id = await api.sendRawTransaction(tx);
+    const tx = gwlt.signRawTransaction(psw, txObj);
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const id = await api.sendRawTransaction(tx);
+
     return id;
 }
 
 /**
- * 获取钱包
+ * 获取钱包 
  */
 const getGwltByAddr = (addr) => {
-    let currentAddr = getAddrById(addr)
-    if (!currentAddr) return
+    const currentAddr = getAddrById(addr);
+    if (!currentAddr) return;
+
     return GaiaWallet.fromJSON(currentAddr.gwlt);
-}
+};

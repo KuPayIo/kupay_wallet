@@ -1,12 +1,12 @@
-import { Widget } from "../../../../pi/widget/widget";
-import { popNew } from "../../../../pi/ui/root";
+/**
+ * 收款
+ */
+import { Widget } from '../../../../pi/widget/widget';
 
 interface Props {
     currencyBalance: string;
-    addr: string
+    addr: string;
 }
-
-
 
 export class AddAsset extends Widget {
     public props: Props;
@@ -21,7 +21,7 @@ export class AddAsset extends Widget {
         this.init();
     }
     public init(): void {
-        this.state = { title: "收款" }
+        this.state = { title: '收款' };
     }
 
     /**
@@ -35,7 +35,7 @@ export class AddAsset extends Widget {
      * 处理复制地址
      */
     public doCopy() {
-        //todo 这里处理地址拷贝
+        // todo 这里处理地址拷贝
     }
 
 }

@@ -1,6 +1,10 @@
 {
     "compilerOptions": {
-        //需要添加的两行
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "target": "es2015",
+        "module": "es2015",
+        "moduleResolution": "node",
         "noUnusedLocals": true,
         "noUnusedParameters": true
     }
