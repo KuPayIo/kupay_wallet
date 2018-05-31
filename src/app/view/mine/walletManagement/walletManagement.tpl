@@ -25,7 +25,7 @@
             <span w-class="ga-item-text">{{it1.showPswTips ? it1.pswTips : '********'}}</span>
             <div w-class="ga-psw-tips-container" on-tap="pswTipsClick">
                 <span>密码提示</span>
-                <img src="../../../res/image/btn_display_open.png" w-class="ga-img"/>
+                <img src="../../../res/image/{{it1.showPswTips ? 'btn_display_open.png' : 'btn_display_close.png'}}" w-class="ga-img"/>
             </div>
         </div>
         <div w-class="ga-item" on-tap="exportPrivateKeyClick">

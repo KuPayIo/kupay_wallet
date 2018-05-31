@@ -5,7 +5,15 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { nickNameInterception,pswEqualed } from '../../../utils/account';
-import { decrypt, getAddrsAll,getCurrentWallet, getCurrentWalletIndex, getLocalStorage,setLocalStorage } from '../../../utils/tools';
+import { 
+    decrypt, 
+    getAddrById,
+    getAddrsAll, 
+    getCurrentWallet, 
+    getCurrentWalletIndex,
+    getLocalStorage,
+    resetAddrById, 
+    setLocalStorage} from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
     public ok: (returnHome?:boolean) => void;
@@ -90,7 +98,10 @@ export class WalletManagement extends Widget {
             const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
             gwlt.nickName = v;
             wallet.gwlt = gwlt.toJSON();
-            addr0.gwlt = gwlt.toJSON();
+
+            const addr = getAddrById(addr0);
+            addr.gwlt = gwlt.toJSON();
+            resetAddrById(addr0,addr);
             setLocalStorage('wallets', wallets, true);
         }
         this.state.showInputBorder = false;
@@ -128,9 +139,9 @@ export class WalletManagement extends Widget {
     public signOutClick() {
         popNew('app-components-message-messagebox', { itype: 'confirm', title: '退出钱包', content: '退出后可通过密码再次登录' },() => {
             const wallets = getLocalStorage('wallets');
-            const wallet = getCurrentWallet(wallets);
             wallets.curWalletId = '';
             setLocalStorage('wallets',wallets,true);
+            popNew('app-components-message-message', { itype: 'success', content: '退出成功', center: true });
             this.ok && this.ok(true);
         });
     }
