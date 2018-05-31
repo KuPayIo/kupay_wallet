@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GaiaWallet } from '../../../core/eth/wallet';
+import { register } from '../../../store/store';
 import { nickNameInterception,pswEqualed } from '../../../utils/account';
 import { 
     decrypt, 
@@ -22,6 +23,20 @@ export class WalletManagement extends Widget {
         this.init();
     }
     public init() {
+        register('wallets', (wallets) => {
+            const wallet = getCurrentWallet(wallets);
+            if (!wallet) return;
+            const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+            const walletPsw = decrypt(wallet.walletPsw);
+            let mnemonicExisted = true;
+            try {
+                gwlt.exportMnemonic(walletPsw);
+            } catch (e) {
+                mnemonicExisted = false;
+            }
+            this.state.mnemonicExisted = mnemonicExisted;
+            this.paint();
+        });
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
@@ -137,6 +152,16 @@ export class WalletManagement extends Widget {
     }
 
     public signOutClick() {
+        if (this.state.mnemonicExisted) {
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' },() => {
+                popNew('app-view-wallet-backupWallet-backupWallet');
+            });
+        } else {
+            this.signOut();
+        }
+    }
+
+    public signOut() {
         popNew('app-components-message-messagebox', { itype: 'confirm', title: '退出钱包', content: '退出后可通过密码再次登录' },() => {
             const wallets = getLocalStorage('wallets');
             wallets.curWalletId = '';
@@ -145,11 +170,10 @@ export class WalletManagement extends Widget {
             this.ok && this.ok(true);
         });
     }
-
     public deleteWalletClick() {
         if (this.state.mnemonicExisted) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' },() => {
-                this.deleteWallet();
+                popNew('app-view-wallet-backupWallet-backupWallet');
             });
         } else {
             this.deleteWallet();
