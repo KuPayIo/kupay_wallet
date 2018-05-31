@@ -1,13 +1,15 @@
-import {Widget} from "../../../../pi/widget/widget";
+/**
+ * privacy policy
+ */
+import { Widget } from '../../../../pi/widget/widget';
 
-
-export class aboutus extends Widget{
+export class PrivacyPolicy extends Widget {
     public ok: () => void;
-    constructor(){
+    constructor() {
         super();       
     }
 
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
 }

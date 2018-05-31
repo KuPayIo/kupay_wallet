@@ -1,18 +1,21 @@
-import { register, updateStore, find } from '../store/store'
-import { Cipher } from '../core/crypto/cipher'
-import { Api } from '../core/eth/api';
+/**
+ * common tools
+ */
 import { isNumber } from '../../pi/util/util';
+import { Cipher } from '../core/crypto/cipher';
+import { Api } from '../core/eth/api';
+import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
 
-export function setLocalStorage(key: string, data: any, notified?: boolean) {
+export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
-}
+};
 
-export function getLocalStorage(key: string) {
+export const getLocalStorage = (key: string) => {
     return find(key);
-}
+};
 
-export function getCurrentWallet(wallets) {
+export const getCurrentWallet = (wallets) => {
     if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
         return null;
     }
@@ -21,14 +24,15 @@ export function getCurrentWallet(wallets) {
             return wallets.walletList[i];
         }
     }
+
     return null;
-}
+};
 
 /**
  * 获取当前钱包index
- * @param wallets 
+ * @param wallets wallets obj
  */
-export function getCurrentWalletIndex(wallets) {
+export const getCurrentWalletIndex = (wallets) => {
     let index = -1;
     if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
         return -1;
@@ -39,18 +43,18 @@ export function getCurrentWalletIndex(wallets) {
             break;
         }
     }
-    return index;
-}
 
+    return index;
+};
 
 /**
  * 通过地址id获取地址信息
  * @param addrId 
  */
 export const getAddrById = (addrId): Addr => {
-    let list: Addr[] = getLocalStorage("addrs") || [];
+    const list: Addr[] = getLocalStorage('addrs') || [];
     return list.filter(v => v.addr === addrId)[0];
-}
+};
 
 /**
  * 通过地址id重置地址
@@ -59,32 +63,32 @@ export const getAddrById = (addrId): Addr => {
  * @param notified 
  */
 export const resetAddrById = (addrId, data: Addr, notified?: boolean) => {
-    let list: Addr[] = getLocalStorage("addrs") || [];
+    let list: Addr[] = getLocalStorage('addrs') || [];
     list = list.map(v => {
         if (v.addr !== addrId) return v;
 
         return data;
-    })
-    setLocalStorage("addrs", list, notified);
-}
+    });
+    setLocalStorage('addrs', list, notified);
+};
 
   /**
  * 获取钱包下的所有地址
  * @param wallet 
  */
- export  function getAddrsAll(wallet){
-    let currencyRecords = wallet.currencyRecords;
-    let retAddrs = [];
-    currencyRecords.forEach((item)=>{
-        item.addrs.forEach((addr)=>{
+export  function getAddrsAll(wallet) {
+    const currencyRecords = wallet.currencyRecords;
+    const retAddrs = [];
+    currencyRecords.forEach((item) => {
+        item.addrs.forEach((addr) => {
             retAddrs.push(addr);
         });
     });
     return retAddrs;
 }
 
-//Password used to encrypt the plainText
-const passwd = "gaia";
+// Password used to encrypt the plainText
+const passwd = 'gaia';
 /**
  * 密码加密
  * @param plainText 
@@ -103,13 +107,12 @@ export function decrypt(cipherText: string) {
     return cipher.decrypt(passwd, cipherText);
 }
 
-export function randomRgbColor() { //随机生成RGB颜色
-    let r = Math.floor(Math.random() * 256);
-    let g = Math.floor(Math.random() * 256);
-    let b = Math.floor(Math.random() * 256);
-    return `rgb(${r},${g},${b})`; //返回rgb(r,g,b)格式颜色
+export function randomRgbColor() { // 随机生成RGB颜色
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgb(${r},${g},${b})`; // 返回rgb(r,g,b)格式颜色
 }
-
 
 /**
  * 解析显示的账号信息
@@ -118,26 +121,26 @@ export function randomRgbColor() { //随机生成RGB颜色
 export const parseAccount = (str: string) => {
     if (str.length <= 29) return str;
     return `${str.slice(0, 13)}...${str.slice(str.length - 13, str.length)}`;
-}
+};
 
 export const getDefaultAddr = (addr: number | string) => {
-    let addrStr = addr.toString();
+    const addrStr = addr.toString();
     return `${addrStr.slice(0, 3)}...${addrStr.slice(-3)}`;
-}
+};
 
 /**
  * wei转Eth
  */
 export const wei2Eth = (num: number) => {
-    return num / Math.pow(10, 18)
-}
+    return num / Math.pow(10, 18);
+};
 
 /**
  * wei转Eth
  */
 export const eth2Wei = (num: number) => {
-    return num * Math.pow(10, 18)
-}
+    return num * Math.pow(10, 18);
+};
 
 /**
  * 获取有效的货币
@@ -148,17 +151,17 @@ export const eth2Wei = (num: number) => {
  * @param isWei 是否wei转化
  */
 export async function effectiveCurrency(perNum: any, currencyName: string, conversionType: string, isWei: boolean) {
-    let api = new Api();
-    let r: any = { num: 0, show: "", conversionShow: "" };
-    if (currencyName === "ETH") {
-        let rate: any = await api.getExchangeRate();
-        let num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+    const api = new Api();
+    const r: any = { num: 0, show: '', conversionShow: '' };
+    if (currencyName === 'ETH') {
+        const rate: any = await api.getExchangeRate();
+        const num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
 
         r.num = num;
         r.show = `${num} ETH`;
-        r.conversionShow = `≈${conversionType === "CNY" ? "￥" : "$"}${(num * rate[conversionType]).toFixed(2)}`;
+        r.conversionShow = `≈${conversionType === 'CNY' ? '￥' : '$'}${(num * rate[conversionType]).toFixed(2)}`;
     }
-    return r
+    return r;
 
 }
 /**
@@ -169,17 +172,17 @@ export async function effectiveCurrency(perNum: any, currencyName: string, conve
  * @param isWei 是否wei转化
  */
 export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isWei: boolean) => {
-    let api = new Api();
-    let r: any = { num: 0, show: "", conversionShow: "" };
-    if (currencyName === "ETH") {
-        let num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+    const api = new Api();
+    const r: any = { num: 0, show: '', conversionShow: '' };
+    if (currencyName === 'ETH') {
+        const num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
 
         r.num = num;
         r.show = `${num} ETH`;
     }
-    return r
+    return r;
 
-}
+};
 
 /**
  * 获取有效的货币不需要转化
@@ -189,18 +192,18 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
  * @param isWei 是否wei转化
  */
 export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isWei: boolean, rate: any) => {
-    let api = new Api();
-    let r: any = { num: 0, show: "", conversionShow: "" };
-    if (currencyName === "ETH") {
-        let num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+    const api = new Api();
+    const r: any = { num: 0, show: '', conversionShow: '' };
+    if (currencyName === 'ETH') {
+        const num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
 
         r.num = num;
         r.show = `${num} ETH`;
-        r.conversionShow = `≈${conversionType === "CNY" ? "￥" : "$"}${(num * rate[conversionType]).toFixed(2)}`;
+        r.conversionShow = `≈${conversionType === 'CNY' ? '￥' : '$'}${(num * rate[conversionType]).toFixed(2)}`;
     }
-    return r
+    return r;
 
-}
+};
 
 /**
  * 转化显示时间
@@ -208,29 +211,25 @@ export const effectiveCurrencyStableConversion = (perNum: any, currencyName: str
  */
 export const parseDate = (t: Date) => {
     return `${t.getUTCFullYear()}-${addPerZero(t.getUTCMonth() + 1, 2)}-${addPerZero(t.getUTCDate(), 2)} ${addPerZero(t.getHours(), 2)}:${addPerZero(t.getMinutes(), 2)}`;
-}
-
-
-
+};
 
 /**
  * 数字前边加0
  */
 const addPerZero = (num: number, len: number) => {
-    let numStr = num.toString();
-    let perLen = len - numStr.length;
-    if (perLen <= 0) return numStr
-    let list = [];
+    const numStr = num.toString();
+    const perLen = len - numStr.length;
+    if (perLen <= 0) return numStr;
+    const list = [];
     list.length = perLen;
-    return list.fill("0").join("") + numStr;
-}
+    return list.fill('0').join('') + numStr;
+};
 
-
-//数组乱序
-export function shuffle(arr: Array<any>): Array<any> {
-    var length = arr.length;
-    var shuffled = Array(length);
-    for (var index = 0, rand; index < length; index++) {
+// 数组乱序
+export function shuffle(arr: any[]): any[] {
+    const length = arr.length;
+    const shuffled = Array(length);
+    for (let index = 0, rand; index < length; index++) {
         rand = ~~(Math.random() * (index + 1));
         if (rand !== index) {
             shuffled[index] = shuffled[rand];
@@ -238,4 +237,4 @@ export function shuffle(arr: Array<any>): Array<any> {
         shuffled[rand] = arr[index];
     }
     return shuffled;
-};
+}

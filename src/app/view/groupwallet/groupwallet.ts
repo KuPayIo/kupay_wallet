@@ -1,4 +1,7 @@
-import { Widget } from "../../../pi/widget/widget";
+/**
+ * group wallet
+ */
+import { Widget } from '../../../pi/widget/widget';
 
 export class GroupWallet extends Widget {
     public ok: () => void;
@@ -6,7 +9,7 @@ export class GroupWallet extends Widget {
         super();
     }
 
-    public backPrePage(event: any) {
-        this.ok && this.ok()
+    public backPrePage() {
+        this.ok && this.ok();
     }
 }

@@ -1,13 +1,16 @@
-import {Widget} from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
+/**
+ * application details
+ */
+import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
 
-export class aboutus extends Widget{
+export class ApplicationDetails extends Widget {
     public ok: () => void;
-    constructor(){
+    constructor() {
         super();
     }
 
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
 }

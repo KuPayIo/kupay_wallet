@@ -1,28 +1,30 @@
-import {Widget} from "../../../../pi/widget/widget";
-import { popNew } from "../../../../pi/ui/root";
+/**
+ * about us
+ */
+import { Widget } from '../../../../pi/widget/widget';
 
-export class aboutus extends Widget{
+export class Aboutus extends Widget {
     public ok: () => void;
-    constructor(){
+    constructor() {
         super();
-        this.state={
+        this.state = {
             data:[
-                {value:"隐私条款",components:"app-view-aboutus-privacypolicy"},
-                {value:"用户协议",components:"app-view-aboutus-useragreement"},
-                {value:"版本更新",components:""}
+                { value:'隐私条款',components:'app-view-aboutus-privacypolicy' },
+                { value:'用户协议',components:'app-view-aboutus-useragreement' },
+                { value:'版本更新',components:'' }
             ]
-        }
+        };
     }
 
-    public itemClick(e,index){       
-        if(this.state.data[index].components!=""){
+    public itemClick(e:any,index:number) {       
+        if (this.state.data[index].components !== '') {
             // popNew(this.state.data[index].components);
-        }else{
+        } else {
             // popNew("app-view-aboutus-message", { type: "success", content: "当前已是最新版本", center: true })
         }
     }
 
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
 }

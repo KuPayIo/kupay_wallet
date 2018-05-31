@@ -2,11 +2,9 @@
  * 消息框
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { notify } from '../../../../pi/widget/event';
-import { remove } from '../../../../pi/ui/root';
 
 interface Props {
-    type: string;
+    itype: string;
     text: string;
     center?: boolean;
 }
@@ -20,7 +18,7 @@ export class Message extends Widget {
     }
     public create() {
         super.create();
-        this.config = { value: { group: "pop_tip" } };
+        this.config = { value: { group: 'pop_tip' } };
     }
 
     public setProps(props: Props, oldProps: Props): void {

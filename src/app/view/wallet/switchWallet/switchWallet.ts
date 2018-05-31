@@ -1,21 +1,24 @@
-import { Widget } from "../../../../pi/widget/widget";
-import { popNew } from "../../../../pi/ui/root";
-import { getLocalStorage, setLocalStorage, encrypt, decrypt ,randomRgbColor } from "../../../utils/tools";
-import { GaiaWallet } from "../../../core/eth/wallet";
-import { pswEqualed,nickNameInterception } from "../../../utils/account";
+/**
+ * switch wallet 
+ */
+import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+import { GaiaWallet } from '../../../core/eth/wallet';
+import { nickNameInterception,pswEqualed } from '../../../utils/account';
+import { decrypt, encrypt, getLocalStorage, randomRgbColor ,setLocalStorage } from '../../../utils/tools';
 
-export class SwitchWallet extends Widget{
-    public ok:()=>void;
-    constructor(){
+export class SwitchWallet extends Widget {
+    public ok:() => void;
+    constructor() {
         super();
     }
-    public create(){
+    public create() {
         super.create();
         this.init();
     }
-    public init(){
-        let wallets = getLocalStorage("wallets");
-        for(let i = 0;i < wallets.walletList.length; i ++){
+    public init() {
+        const wallets = getLocalStorage('wallets');
+        for (let i = 0;i < wallets.walletList.length; i ++) {
             wallets.walletList[i].gwlt = GaiaWallet.fromJSON(wallets.walletList[i].gwlt);
         }
         this.state = {
@@ -24,40 +27,39 @@ export class SwitchWallet extends Widget{
             nickNameInterception
         };
     }
-    public createWalletClick(){
+    public createWalletClick() {
         this.ok && this.ok();
-        popNew("app-view-wallet-walletCreate-walletCreate");
+        popNew('app-view-wallet-walletCreate-walletCreate');
     }
 
-    public importWalletClick(){
+    public importWalletClick() {
         this.ok && this.ok();
-        popNew("app-view-wallet-walletImport-walletImport");
+        popNew('app-view-wallet-walletImport-walletImport');
     }
-    public switchWalletClick(e,index,isCurWallet){
-        if(isCurWallet){
+    public switchWalletClick(e:Event,index:number,isCurWallet:boolean) {
+        if (isCurWallet) {
             return;
         }
-        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
+        popNew('app-components-message-messagebox', { type: 'prompt', title: '输入密码', content: '',inputType:'password' }, (r) => {
             const psw = decrypt(this.state.wallets.walletList[index].walletPsw);
-            if(!pswEqualed(psw,r)){
-                popNew("app-components-message-message", { type: "error", content: "密码错误", center: true })
-            }else{
+            if (!pswEqualed(psw,r)) {
+                popNew('app-components-message-message', { type: 'error', content: '密码错误', center: true });
+            } else {
                 this.switchWallet(this.state.wallets.walletList[index].walletId);
                 this.ok && this.ok();
             }
-        })
+        });
     }
 
-    public switchWallet(curWalletId){
-        let wallets = getLocalStorage("wallets");
+    public switchWallet(curWalletId:string) {
+        const wallets = getLocalStorage('wallets');
         wallets.curWalletId = curWalletId;
-        setLocalStorage("wallets",wallets,true);
-        let wallets1 = getLocalStorage("wallets");
+        setLocalStorage('wallets',wallets,true);
+        const wallets1 = getLocalStorage('wallets');
     }
 
-    public closePageClick(){
+    public closePageClick() {
         this.ok && this.ok();
     }
-
 
 } 

@@ -1,26 +1,28 @@
-import { Widget } from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
+/**
+ * application item
+ */
+import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
 
-export class applicationItem extends Widget{
+export class ASpplicationItem extends Widget {
 
-    constructor(){
+    constructor() {
         super();
         this.props = {
-            type:"1",
-            img:"../../res/image/img_dapp_4.png",
+            type:'1',
+            img:'../../res/image/img_dapp_4.png',
             title:'每日一氪',
-            mess:"试试今天的手气",
+            mess:'试试今天的手气',
             islike:false  
-        }
+        };
     }
 
-
-    public likeit(event:any){
+    public likeit(event:any) {
         this.props.islike = !this.props.islike;
         this.paint();
     }
 
-    public showDetails(event:any){
-        popNew("app-view-application-applDetails",{imgsrc:this.props.img});
+    public showDetails(event:any) {
+        popNew('app-view-application-applDetails',{ imgsrc:this.props.img });
     }
 }
