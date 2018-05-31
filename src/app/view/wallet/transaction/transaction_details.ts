@@ -1,18 +1,19 @@
-import { Widget } from "../../../../pi/widget/widget";
-import { popNew } from "../../../../pi/ui/root";
+/**
+ * 交易详情
+ */
+
+import { Widget } from '../../../../pi/widget/widget';
 
 interface Props {
     pay: string;
-    result: string
+    result: string;
     to: string;
     tip: string;
     info: string;
-    from: string
+    fromAddr: string;
     showTime: string;
     id: string;
 }
-
-
 
 export class AddAsset extends Widget {
     public props: Props;
@@ -27,7 +28,7 @@ export class AddAsset extends Widget {
         this.init();
     }
     public init(): void {
-        this.state = { title: "交易详情" }
+        this.state = { title: '交易详情' };
     }
 
     /**

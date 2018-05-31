@@ -1,12 +1,14 @@
-import { Widget } from "../../../../pi/widget/widget";
-import { popNew } from "../../../../pi/ui/root";
-import { Api } from "../../../core/eth/api";
-import { getLocalStorage, getCurrentWallet, decrypt, setLocalStorage, getDefaultAddr } from "../../../utils/tools";
-import { GaiaWallet } from "../../../core/eth/wallet";
-import { dataCenter } from "../../../store/dataCenter";
-import { Wallet, Addr } from "../../interface";
+/**
+ * 地址管理
+ */
+import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+import { GaiaWallet } from '../../../core/eth/wallet';
+import { dataCenter } from '../../../store/dataCenter';
+import { decrypt, getCurrentWallet, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { Addr, Wallet } from '../../interface';
 
-export class addressManage extends Widget {
+export class AddressManage extends Widget {
     public ok: () => void;
     constructor() {
         super();
@@ -14,26 +16,26 @@ export class addressManage extends Widget {
             showtype: 1,
             selectnum: 0,
             coins: [
-                { name: "BTC" },
-                { name: "ETH" },
-                { name: "ETC" },
-                { name: "BCH" },
-                { name: "EOS" },
-                { name: "XRP" }
+                { name: 'BTC' },
+                { name: 'ETH' },
+                { name: 'ETC' },
+                { name: 'BCH' },
+                { name: 'EOS' },
+                { name: 'XRP' }
             ],
             content1: [
-                { name: "BTC 001", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" },
-                { name: "BTC 002", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" },
-                { name: "BTC 003", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" },
-                { name: "BTC 004", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" }
+                { name: 'BTC 001', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: 'BTC 002', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: 'BTC 003', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: 'BTC 004', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
             ],
             content2: [
-                { name: "好友 001", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" },
-                { name: "好友 002", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" },
-                { name: "好友 003", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" },
-                { name: "好友 004", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" }
+                { name: '好友 001', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: '好友 002', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: '好友 003', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: '好友 004', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
             ]
-        }
+        };
     }
 
     public goback() {
@@ -47,23 +49,23 @@ export class addressManage extends Widget {
 
     public coinchange(event: any, index: number) {
         this.state.selectnum = index;
-        let selectName = this.state.coins[this.state.selectnum].name;
-        if (selectName === "ETH" && this.state.showtype === 1) {
-            let list = dataCenter.getAddrBalancesByCurrencyName(selectName);
+        const selectName = this.state.coins[this.state.selectnum].name;
+        if (selectName === 'ETH' && this.state.showtype === 1) {
+            const list = dataCenter.getAddrBalancesByCurrencyName(selectName);
 
             this.state.content1 = list.map(v => {
                 return {
                     name: v.addrName,
                     money: v.balance.toFixed(2),
                     address: v.addr
-                }
-            })
+                };
+            });
         } else {
             this.state.content1 = [
-                { name: "BTC 001", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" },
-                { name: "BTC 002", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" },
-                { name: "BTC 003", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" },
-                { name: "BTC 004", money: "2.00", address: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" }
+                { name: 'BTC 001', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: 'BTC 002', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: 'BTC 003', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: 'BTC 004', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
             ];
         }
         this.paint();
@@ -75,43 +77,45 @@ export class addressManage extends Widget {
 
     public addNewaddr() {
 
-        if (this.state.showtype == 1) {
-            let selectName = this.state.coins[this.state.selectnum].name;
+        if (this.state.showtype === 1) {
+            const selectName = this.state.coins[this.state.selectnum].name;
 
-            let content = "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f";
+            let content = 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f';
             let wallets;
             let currencyRecord;
             let newGwlt;
-            if (selectName === "ETH") {
-                wallets = getLocalStorage("wallets");
+            if (selectName === 'ETH') {
+                wallets = getLocalStorage('wallets');
                 const wallet: Wallet = getCurrentWallet(wallets);
                 currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === selectName)[0];
-                if (!currencyRecord) return
+                if (!currencyRecord) return;
                 const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
-                newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length)
+                newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length);
                 content = newGwlt.address;
             }
 
-            popNew("app-components-message-messagebox", { type: "prompt", title: "添加地址", placeHolder: "标签名", content: content }, (r) => {
+            popNew('app-components-message-messagebox', { type: 'prompt', title: '添加地址', placeHolder: '标签名', content: content }, (r) => {
                 if (newGwlt) {
                     r = r || getDefaultAddr(newGwlt.address);
                     currencyRecord.addrs.push(newGwlt.address);
-                    let list: Addr[] = getLocalStorage("addrs") || [];
-                    list.push({ addr: newGwlt.address, addrName: r, gwlt: newGwlt.toJSON(), record: [], balance: 0, currencyName: selectName });
+                    const list: Addr[] = getLocalStorage('addrs') || [];
+                    list.push(
+                        { addr: newGwlt.address, addrName: r, gwlt: newGwlt.toJSON(), record: [], balance: 0, currencyName: selectName }
+                    );
                     currencyRecord.currentAddr = newGwlt.address;
-                    setLocalStorage("addrs", list, false);
-                    setLocalStorage("wallets", wallets, true);
-
+                    setLocalStorage('addrs', list, false);
+                    setLocalStorage('wallets', wallets, true);
 
                     dataCenter.addAddr(newGwlt.address, r, selectName);
-                    this.state.content1.push({ name: r, money: "0.00", address: newGwlt.address });
+                    this.state.content1.push({ name: r, money: '0.00', address: newGwlt.address });
                     this.paint();
                 }
-            })
-        }
-        else {
-            let title = `添加${this.state.coins[this.state.selectnum].name}地址`;
-            popNew("app-view-mine-addressManage-messagebox", { type: "prompt", title: title, content: "Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f" })
+            });
+        } else {
+            const title = `添加${this.state.coins[this.state.selectnum].name}地址`;
+            popNew('app-view-mine-addressManage-messagebox', {
+                type: 'prompt', title: title, content: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f'
+            });
         }
     }
 }

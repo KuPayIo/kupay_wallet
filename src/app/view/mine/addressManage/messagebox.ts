@@ -4,29 +4,28 @@
 import { Widget } from '../../../../pi/widget/widget';
 
 interface Props {
-    type: string;
+    mType: string;
     text: string;
     center?: boolean;
-    inputType?:string;
+    inputType?: string;
 }
 
 export class MessageBox extends Widget {
     public props: Props;
-    public ok: (r) => void;
+    public ok: (r: any) => void;
     public cancel: () => void;
-
 
     constructor() {
         super();
     }
     public create() {
         super.create();
-        this.config = { value: { group: "top" } };
+        this.config = { value: { group: 'top' } };
     }
 
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.state = { isShow: false, input: "" };
+        this.state = { isShow: false, input: '' };
         this.init();
     }
 
@@ -47,7 +46,7 @@ export class MessageBox extends Widget {
     /**
      * 提示框数据改变
      */
-    public inputChange(e) {
+    public inputChange(e: any) {
         this.state.input = e.value;
     }
 
