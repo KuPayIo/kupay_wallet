@@ -1,22 +1,25 @@
-import { Widget } from "../../../../pi/widget/widget";
+/**
+ * bill details
+ */
+import { Widget } from '../../../../pi/widget/widget';
 
-export class BillDetails extends Widget{
-    public ok:()=>void
-    constructor(){
+export class BillDetails extends Widget {
+    public ok:() => void;
+    constructor() {
         super();
     }
-    public create(){
+    public create() {
         super.create();
         this.init();
     }
-    public goBackClick(){
+    public goBackClick() {
         this.ok && this.ok();
     }
-    public init(){
+    public init() {
         this.state = {
             billDetailsList:[{
                 
             }]
-        }
+        };
     }
 }

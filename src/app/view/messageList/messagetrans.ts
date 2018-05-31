@@ -1,25 +1,28 @@
-import {Widget} from "../../../pi/widget/widget";
+/**
+ * message trans
+ */
+import { Widget } from '../../../pi/widget/widget';
 
-export class messagetrans extends Widget{
+export class MessageTrans extends Widget {
     public ok: () => void;
-    constructor(){
+    constructor() {
         super();
-        this.state={  
+        this.state = {  
             data:[
-                {type:"1",content:"0.001",unit:"BTC"},
-                {type:"2",content:"0.001",unit:"ETH"},
-                {type:"1",content:"0.001",unit:"ETH"},
-                {type:"2",content:"0.001",unit:"EOS"}
+                { type:'1',content:'0.001',unit:'BTC' },
+                { type:'2',content:'0.001',unit:'ETH' },
+                { type:'1',content:'0.001',unit:'ETH' },
+                { type:'2',content:'0.001',unit:'EOS' }
             ]     
-        }
+        };
     }
 
-    public create(){
+    public create() {
         super.create();
         this.props = JSON.parse(window.sessionStorage.item);
     }
 
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
    

@@ -1,29 +1,31 @@
-import {Widget} from "../../../../pi/widget/widget";
-import {notify} from "../../../../pi/widget/event";
+/**
+ * coin set
+ */
+import { Widget } from '../../../../pi/widget/widget';
 
-export class language extends Widget{
+export class CoinSet extends Widget {
     public ok: () => void;
-    constructor(){
+    constructor() {
         super();
-        this.props={
+        this.props = {
             checkedIndex:0,
             data:[
-                {index:0,lan:"CNY",checked:true},
-                {index:1,lan:"USD"}
+                { index:0,lan:'CNY',checked:true },
+                { index:1,lan:'USD' }
             ]
-        }
+        };
     }
 
-    public radioChangeListener(event:any){ 
-        for(let i in this.props.data){
-            if(event.index!=this.props.data[i].index){
+    public radioChangeListener(event:any) { 
+        for (const i in this.props.data) {
+            if (event.index !== this.props.data[i].index) {
                 this.props.data[i].checked = false;
             }
         }
         this.paint();       
     }   
 
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
 }

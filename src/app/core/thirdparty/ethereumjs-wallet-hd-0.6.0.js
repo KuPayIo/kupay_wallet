@@ -18102,7 +18102,6 @@ _$define("app/core/thirdparty/ethereumjs-wallet-hd-0.6.0", function (require, ex
              *
              */
             var ts = timestamp ? new Date(timestamp) : new Date()
-
             return [
               'UTC--',
               ts.toJSON().replace(/:/g, '-'),

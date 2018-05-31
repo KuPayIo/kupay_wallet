@@ -1,29 +1,32 @@
-import {Widget} from "../../../../pi/widget/widget";
-import {notify} from "../../../../pi/widget/event";
+/**
+ * language
+ */
+import { notify } from '../../../../pi/widget/event';
+import { Widget } from '../../../../pi/widget/widget';
 
-export class language extends Widget{
+export class Language extends Widget {
     public ok: () => void;
-    constructor(){
+    constructor() {
         super();
-        this.props={
+        this.props = {
             checkedIndex:0,
             data:[
-                {index:0,lan:"中文",checked:true},
-                {index:1,lan:"英文"}
+                { index:0,lan:'中文',checked:true },
+                { index:1,lan:'英文' }
             ]
-        }
+        };
     }
 
-    public radioChangeListener(event:any){ 
-        for(let i in this.props.data){
-            if(event.index!=this.props.data[i].index){
+    public radioChangeListener(event:any) { 
+        for (const i in this.props.data) {
+            if (event.index !== this.props.data[i].index) {
                 this.props.data[i].checked = false;
             }
         }
         this.paint();       
     }   
 
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
 }

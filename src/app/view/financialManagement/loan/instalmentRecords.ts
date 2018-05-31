@@ -1,11 +1,14 @@
-import { Widget } from "../../../../pi/widget/widget";
+/**
+ * instalment records
+ */
+import { Widget } from '../../../../pi/widget/widget';
 
-export class InstalmentRecords extends Widget{
-    public ok:()=>void
-    constructor(){
+export class InstalmentRecords extends Widget {
+    public ok:() => void;
+    constructor() {
         super();
     }
-    public goBackClick(){
+    public goBackClick() {
         this.ok && this.ok();
     }
 }

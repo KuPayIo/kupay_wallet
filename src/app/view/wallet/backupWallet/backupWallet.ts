@@ -1,56 +1,56 @@
-import { Widget } from "../../../../pi/widget/widget";
-import { popNew } from "../../../../pi/ui/root";
-import { getLocalStorage, getCurrentWallet, decrypt } from "../../../utils/tools";
-import { pswEqualed } from "../../../utils/account";
-import { GaiaWallet } from '../../../core/eth/wallet'
-
 /**
- * back up wallet
+ * wallet backup
  */
-export class BackupWallet extends Widget{
+import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+import { GaiaWallet } from '../../../core/eth/wallet';
+import { pswEqualed } from '../../../utils/account';
+import { decrypt, getCurrentWallet, getLocalStorage } from '../../../utils/tools';
+
+export class BackupWallet extends Widget {
     public ok: () => void;
-    constructor(){
+    constructor() {
         super();
     }
-    public create(){
+    public create() {
         super.create();
         this.init();
     }
-    public init(){
+    public init() {
         this.state = {
-            mnemonic:""
-        }
+            mnemonic:''
+        };
     }
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
-    public backupWalletClick(){
-        popNew("app-components-message-messagebox", { type: "prompt", title: "输入密码", content: "",inputType:"password" }, (r) => {
-            let wallets = getLocalStorage("wallets");
-            let wallet = getCurrentWallet(wallets);
-            let walletPsw = decrypt(wallet.walletPsw);
-            if(pswEqualed(r,walletPsw)){
-                let close = popNew("pi-components-loading-loading",{text:"导出中"});
-                setTimeout(()=>{
+    public backupWalletClick() {
+        popNew('app-components-message-messagebox', { type: 'prompt', title: '输入密码', content: '',inputType:'password' }, (r) => {
+            const wallets = getLocalStorage('wallets');
+            const wallet = getCurrentWallet(wallets);
+            const walletPsw = decrypt(wallet.walletPsw);
+            if (pswEqualed(r,walletPsw)) {
+                const close = popNew('pi-components-loading-loading',{ text:'导出中' });
+                setTimeout(() => {
                     close.callback(close.widget);
                     this.ok && this.ok();
-                    popNew("app-view-wallet-backupMnemonic-backupMnemonic");
+                    popNew('app-view-wallet-backupMnemonic-backupMnemonic');
                 },500);
-            }else{
-                popNew("app-components-message-message", { type: "error", content: "密码错误,请重新输入", center: true })
+            } else {
+                popNew('app-components-message-message', { type: 'error', content: '密码错误,请重新输入', center: true });
             }
-        }, () => {
-        })
+        });
     }
 
-    public exportMnemonicSucceed(walletPsw:string){
-        let wallets = getLocalStorage("wallets");
-        let gwltStr = getCurrentWallet(wallets).gwlt;
-        let gwlt = GaiaWallet.fromJSON(gwltStr);
-        try{
+    public exportMnemonicSucceed(walletPsw:string) {
+        const wallets = getLocalStorage('wallets');
+        const gwltStr = getCurrentWallet(wallets).gwlt;
+        const gwlt = GaiaWallet.fromJSON(gwltStr);
+        try {
             this.state.mnemonic = gwlt.exportMnemonic(walletPsw);
+            
             return true;
-        }catch(e){
+        } catch (e) {
             return false;
         }
     }
