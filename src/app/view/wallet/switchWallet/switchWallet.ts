@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { nickNameInterception,pswEqualed } from '../../../utils/account';
-import { decrypt, encrypt, getLocalStorage, randomRgbColor ,setLocalStorage } from '../../../utils/tools';
+import { decrypt, getLocalStorage, randomRgbColor ,setLocalStorage } from '../../../utils/tools';
 
 export class SwitchWallet extends Widget {
     public ok:() => void;
@@ -22,6 +22,7 @@ export class SwitchWallet extends Widget {
             wallets.walletList[i].gwlt = GaiaWallet.fromJSON(wallets.walletList[i].gwlt);
         }
         this.state = {
+            close:false,
             wallets,
             randomRgbColor,
             nickNameInterception
@@ -59,7 +60,12 @@ export class SwitchWallet extends Widget {
     }
 
     public closePageClick() {
-        this.ok && this.ok();
+        this.state.close = true;
+        this.paint();
+        setTimeout(() => {
+            this.ok && this.ok();
+        },300);
+        
     }
 
 } 
