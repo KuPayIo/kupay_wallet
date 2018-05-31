@@ -71,10 +71,6 @@ export class AddressManage extends Widget {
         this.paint();
     }
 
-    public showDetails() {
-        // popNew("app-view-mine-addritemDetails",{name:"BTC 001",address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"});
-    }
-
     public addNewaddr() {
 
         if (this.state.showtype === 1) {

@@ -196,6 +196,7 @@ const addRecord = (currencyName, currentAddr, record) => {
 /**
  * 处理转账
  */
+// tslint:disable-next-line:only-arrow-functions
 async function doTransfer(wallet: any, acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
     , value: number, currencyName: string, info: string, urgent: boolean) {
     const api = new Api();

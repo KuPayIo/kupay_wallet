@@ -6,6 +6,7 @@ import { Widget } from '../../../../pi/widget/widget';
 interface Props {
     currencyBalance: string;
     addr: string;
+    title?: string;
 }
 
 export class AddAsset extends Widget {
@@ -16,12 +17,15 @@ export class AddAsset extends Widget {
     constructor() {
         super();
     }
-    public create() {
-        super.create();
+    /**
+     * setProps
+     */
+    public setProps(props: Props, oldProps: Props): void {
+        super.setProps(props, oldProps);
         this.init();
     }
     public init(): void {
-        this.state = { title: '收款' };
+        this.state = { title: this.props.title || '收款' };
     }
 
     /**
