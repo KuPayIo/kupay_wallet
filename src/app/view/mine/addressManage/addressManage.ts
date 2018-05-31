@@ -24,7 +24,7 @@ export class AddressManage extends Widget {
                 { name: 'XRP' }
             ],
             content1: [
-                { name: 'BTC 001', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: 'BTC 001', money: '2.00', address: 'Kye4gFqsnotKvjoVxNXMcksgUWVFTmam2f' },
                 { name: 'BTC 002', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
                 { name: 'BTC 003', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
                 { name: 'BTC 004', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
@@ -71,10 +71,6 @@ export class AddressManage extends Widget {
         this.paint();
     }
 
-    public showDetails() {
-        // popNew("app-view-mine-addritemDetails",{name:"BTC 001",address:"Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f"});
-    }
-
     public addNewaddr() {
 
         if (this.state.showtype === 1) {
@@ -114,7 +110,7 @@ export class AddressManage extends Widget {
         } else {
             const title = `添加${this.state.coins[this.state.selectnum].name}地址`;
             popNew('app-view-mine-addressManage-messagebox', {
-                type: 'prompt', title: title, content: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f'
+                mType: 'prompt', title: title, content: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f'
             });
         }
     }

@@ -52,7 +52,7 @@ export class AddAsset extends Widget {
             fromShow: parseAccount(this.props.fromAddr),
             to: '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3',
             pay: 0,
-            payConversion: `≈￥0.00`,
+            payConversion: `≈0.00 CNY`,
             gasPrice: 100000000,
             gasLimit: 21000,
             fees: 0,
@@ -90,7 +90,9 @@ export class AddAsset extends Widget {
         // tslint:disable-next-line:no-this-assignment
         const thisObj = this;
 
-        popNew('app-components-message-messagebox', { itype: 'prompt', title: '输入密码', placeHolder: '密码' }, async  (r: any) => {
+        popNew('app-components-message-messagebox', {
+            itype: 'prompt', title: '输入密码', placeHolder: '密码', inputType: 'password'
+        }, async (r: any) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
             const psw = decrypt(wallet.walletPsw);
@@ -104,8 +106,14 @@ export class AddAsset extends Widget {
                     thisObj.doClose();
                 } catch (error) {
                     console.log(error.message);
-                    popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
+                    if (error.message.indexOf('insufficient funds') >= 0) {
+                        popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });
+                    } else {
+                        popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
+                    }
                 }
+            } else {
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
             }
         });
     }
@@ -196,6 +204,7 @@ const addRecord = (currencyName, currentAddr, record) => {
 /**
  * 处理转账
  */
+// tslint:disable-next-line:only-arrow-functions
 async function doTransfer(wallet: any, acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
     , value: number, currencyName: string, info: string, urgent: boolean) {
     const api = new Api();

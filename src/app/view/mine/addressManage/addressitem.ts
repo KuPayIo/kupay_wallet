@@ -10,6 +10,10 @@ export class Addressitem extends Widget {
     }
 
     public goDetails() {
-        popNew('app-view-mine-addressManage-addritemDetails', { name: this.props.name, address: this.props.address });
+        popNew('app-view-wallet-transaction-receipt', {
+            currencyBalance: this.props.money,
+            addr: this.props.address,
+            title: this.props.name
+        });
     }
 }

@@ -57,7 +57,7 @@
 .pay-value{
     position: relative;
     top: 45px;
-    width: 330px;
+    width: 250px;
     left: 150px;
     
 }

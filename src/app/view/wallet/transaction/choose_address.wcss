@@ -32,7 +32,7 @@
     margin-top: 10px;
     cursor: pointer;
     border-bottom: 2px solid rgb(142, 150, 171);
-    margin-left: 58px;
+    margin-left: 36px;
 }
 .is-choose{
     position: absolute;
@@ -52,7 +52,7 @@
     width: 450px;
     height: 60px;
     line-height: 60px;
-    left: 70px;
+    left: 50px;
     position: relative;
     top: 30px;
 }
