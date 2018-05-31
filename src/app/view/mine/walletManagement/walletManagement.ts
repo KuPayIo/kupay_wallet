@@ -5,15 +5,16 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { register } from '../../../store/store';
-import { nickNameInterception,pswEqualed } from '../../../utils/account';
+import { nickNameInterception,pswEqualed,walletNameAvailable } from '../../../utils/account';
 import { 
     decrypt, 
-    getAddrById,
+    encrypt,
+    getAddrById, 
     getAddrsAll, 
-    getCurrentWallet, 
+    getCurrentWallet,
     getCurrentWalletIndex,
-    getLocalStorage,
-    resetAddrById, 
+    getLocalStorage, 
+    resetAddrById,
     setLocalStorage} from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
@@ -34,7 +35,13 @@ export class WalletManagement extends Widget {
             } catch (e) {
                 mnemonicExisted = false;
             }
+            let pswTips = '';
+            if (wallet.walletPswTips) {
+                pswTips = decrypt(wallet.walletPswTips);
+            }
+            pswTips = pswTips.length > 0 ? pswTips : '无';
             this.state.mnemonicExisted = mnemonicExisted;
+            this.state.pswTips = pswTips;
             this.paint();
         });
         const wallets = getLocalStorage('wallets');
@@ -58,20 +65,32 @@ export class WalletManagement extends Widget {
             showPswTips: false,
             pswTips,
             mnemonicExisted,
-            showInputBorder:false,
+            isUpdatingWalletName:false,
+            isUpdatingPswTips:false,
             nickNameInterception
         };
     }
     public backPrePage() {
+        this.pageClick();
         this.ok && this.ok();
     }
 
     public pswTipsClick() {
+        if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
+            this.pageClick();
+
+            return;
+        }
         this.state.showPswTips = !this.state.showPswTips;
         this.paint();
     }
 
     public exportPrivateKeyClick() {
+        if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
+            this.pageClick();
+
+            return;
+        }
         popNew('app-components-message-messagebox', { itype: 'prompt', title: '输入密码', content: '', inputType: 'password' }, (r) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
@@ -88,20 +107,19 @@ export class WalletManagement extends Widget {
         });
     }
 
-    public inputFocus() {
-        // let input = document.querySelector("#autoInput");
-        // input.value = this.state.gwlt.nickName;
-        this.state.showInputBorder = true;
-        this.paint();
+    public walletNameInputFocus() {
+        this.state.isUpdatingWalletName = true;
+        const input = document.querySelector('#walletNameInput');
+        input.value = this.state.gwlt.nickName;
     }
-    public inputBlur(e:any) {
+    public walletNameInputBlur(e:any) {
         const v = e.currentTarget.value.trim();
-        if (v.length === 0) {
-            popNew('app-components-message-message', { itype: 'error', content: '钱包名不能为空', center: true });
-            const input = document.querySelector('#autoInput');
-            input.value = this.state.gwlt.nickName;
-            this.state.showInputBorder = false;
-            this.paint();
+        const input = document.querySelector('#walletNameInput');
+        if (!walletNameAvailable(v)) {
+            popNew('app-components-message-message', { itype: 'error', content: '钱包名长度为1-12位', center: true });
+           
+            input.value = nickNameInterception(this.state.gwlt.nickName);
+            this.state.isUpdatingWalletName = false;
 
             return;
         }
@@ -119,11 +137,44 @@ export class WalletManagement extends Widget {
             resetAddrById(addr0,addr);
             setLocalStorage('wallets', wallets, true);
         }
-        this.state.showInputBorder = false;
-        this.paint();
+        input.value = nickNameInterception(v);
+        this.state.isUpdatingWalletName = false;
+    }
+    public pswTipsInputFocus() {
+        this.state.isUpdatingPswTips = true;
+    }
+
+    public pswTipsInputBlur() {
+        const pswTipsInput = document.querySelector('#pswTipsInput');
+        const value = pswTipsInput.value;
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        wallet.walletPswTips = encrypt(value);
+        setLocalStorage('wallets',wallets,true);
+        this.state.isUpdatingPswTips = false;
+    }
+    public pageClick() {
+        if (this.state.isUpdatingWalletName) {
+            const walletNameInput = document.querySelector('#walletNameInput');
+            walletNameInput.blur();
+
+            return;
+        }
+
+        if (this.state.isUpdatingPswTips) {
+            const pswTipsInput = document.querySelector('#pswTipsInput');
+            pswTipsInput.blur();
+
+            return;
+        }
     }
 
     public backupMnemonic() {
+        if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
+            this.pageClick();
+
+            return;
+        }
         popNew('app-components-message-messagebox', { itype: 'prompt', title: '输入密码', content: '',inputType:'password' }, (r) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
@@ -144,14 +195,29 @@ export class WalletManagement extends Widget {
      * 显示群钱包
      */
     public showGroupWallet() {
+        if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
+            this.pageClick();
+
+            return;
+        }
         popNew('app-view-groupwallet-groupwallet');
     }
 
     public changePasswordClick() {
+        if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
+            this.pageClick();
+
+            return;
+        }
         popNew('app-view-mine-changePassword-changePassword1');
     }
 
     public signOutClick() {
+        if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
+            this.pageClick();
+
+            return;
+        }
         if (this.state.mnemonicExisted) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' },() => {
                 popNew('app-view-wallet-backupWallet-backupWallet');
@@ -171,6 +237,11 @@ export class WalletManagement extends Widget {
         });
     }
     public deleteWalletClick() {
+        if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
+            this.pageClick();
+
+            return;
+        }
         if (this.state.mnemonicExisted) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' },() => {
                 popNew('app-view-wallet-backupWallet-backupWallet');

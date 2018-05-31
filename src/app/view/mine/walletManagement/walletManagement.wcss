@@ -45,7 +45,16 @@
     font-size: 32px;
     line-height: 45px;
     color: #fff;
-    
+}
+.ga-input-psw-tips{
+    outline: none;
+    border: none;
+    box-sizing: border-box;
+    background-color: transparent;
+    flex: 1 0 0;
+    font-size: 28px;
+    line-height: 40px;
+    color: #203260;
 }
 .ga-assets{
     font-size: 40px;
