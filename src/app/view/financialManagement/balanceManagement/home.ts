@@ -39,10 +39,10 @@ export class BalanceManagementHome extends Widget {
     }
 
     public projectIntroductionClick() {
-        popNew('app-components-message-message', { type: 'notice', content: '正在开发,敬请期待', center: true });
+        popNew('app-components-message-message', { itype: 'notice', content: '正在开发,敬请期待', center: true });
     }
 
     public commonProblemClick() {
-        popNew('app-components-message-message', { type: 'notice', content: '正在开发,敬请期待', center: true });
+        popNew('app-components-message-message', { itype: 'notice', content: '正在开发,敬请期待', center: true });
     }
 }

@@ -77,20 +77,20 @@ export class AddAsset extends Widget {
      */
     public doNext() {
         if (!this.state.to) {
-            popNew('app-components-message-message', { type: 'warn', content: '请输入收款地址', center: true });
+            popNew('app-components-message-message', { itype: 'warn', content: '请输入收款地址', center: true });
 
             return;
         }
         if (!this.state.pay) {
-            popNew('app-components-message-message', { type: 'warn', content: '请输入转账金额', center: true });
+            popNew('app-components-message-message', { itype: 'warn', content: '请输入转账金额', center: true });
 
             return;
         }
 
+        // tslint:disable-next-line:no-this-assignment
         const thisObj = this;
 
-        // tslint:disable-next-line:no-function-expression
-        popNew('app-components-message-messagebox', { type: 'prompt', title: '输入密码', placeHolder: '密码' }, async function (r: any) {
+        popNew('app-components-message-messagebox', { itype: 'prompt', title: '输入密码', placeHolder: '密码' }, async  (r: any) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
             const psw = decrypt(wallet.walletPsw);
@@ -104,7 +104,7 @@ export class AddAsset extends Widget {
                     thisObj.doClose();
                 } catch (error) {
                     console.log(error.message);
-                    popNew('app-components-message-message', { type: 'error', content: error.message, center: true });
+                    popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
                 }
             }
         });

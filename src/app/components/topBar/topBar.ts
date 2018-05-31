@@ -1,29 +1,32 @@
-import { Widget } from "../../../pi/widget/widget";
-import { notify } from "../../../pi/widget/event";
+/**
+ * topbar
+ */
+import { notify } from '../../../pi/widget/event';
+import { Widget } from '../../../pi/widget/widget';
 
-interface Props{
+interface Props {
     title:string;
     style?:string;
     iconColor?:string;
 }
-export class TopBar extends Widget{
+export class TopBar extends Widget {
     public props:Props;
-    constructor(){
+    constructor() {
         super();
     }
-    public create(){
+    public create() {
         super.create();
         this.init();
     }
-    public init(){
+    public init() {
         this.state = {
             backIcon:{
-                "default":"btn_back.png",
-                "white":"btn_back_white.png"
+                default:'btn_back.png',
+                white:'btn_back_white.png'
             }
-        }
+        };
     }
-    public backPrePage(event:any){
-        notify(event.node,"ev-back-click",{})
+    public backPrePage(event:any) {
+        notify(event.node,'ev-back-click',{});
     }
 }

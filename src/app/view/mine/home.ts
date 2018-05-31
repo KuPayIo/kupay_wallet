@@ -58,7 +58,7 @@ export class Home extends Widget {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
             if (!wallet) {
-                popNew('app-components-message-message', { type: 'notice', content: '请登录钱包', center: true });
+                popNew('app-components-message-message', { itype: 'notice', content: '请登录钱包', center: true });
 
                 return;
             }
