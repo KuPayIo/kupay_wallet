@@ -4,36 +4,38 @@
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
-    type: string;
+    itype: string;
     text: string;
     center?: boolean;
     inputType?:string;
     placeHolder?:string;
-    showQuit?:boolean;//是否显示右上角叉
-    extraInfo?:string;//type = "extra" 时有效
+    showQuit?:boolean;// 是否显示右上角叉
+    extraInfo?:string;// itype = "extra" 时有效
     contentStyle?:string;
 }
 
 export class MessageBox extends Widget {
     public props: Props;
-    public ok: (r) => void;
+    public ok: (r:any) => void;
     public cancel: () => void;
-
 
     constructor() {
         super();
     }
     public create() {
         super.create();
-        this.config = { value: { group: "top" } };
+        this.config = { value: { group: 'top' } };
     }
 
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.state = { isShow: false, input: "" };
+        this.state = { isShow: false, input: '' };
         this.init();
     }
 
+    public quitClick() {
+        this.cancel && this.cancel();
+    }
     /**
      * 点击确认
      */
@@ -51,7 +53,7 @@ export class MessageBox extends Widget {
     /**
      * 提示框数据改变
      */
-    public inputChange(e) {
+    public inputChange(e:any) {
         this.state.input = e.value;
     }
 
@@ -62,7 +64,4 @@ export class MessageBox extends Widget {
         }, 100);
     }
 
-    public quitClick(){
-        this.cancel && this.cancel();
-    }
 }

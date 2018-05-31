@@ -3,7 +3,7 @@
     w-class="pi-input {{( it.prepend || it.append ) ? 'pi-input-group' : ''}}" 
     on-mouseover="mouseover" 
     on-mouseleave="mouseleave">
-{{if it && it.type === "textarea"}}
+{{if it && it.itype === "textarea"}}
 <div w-class="pi-input-box">
     <textarea 
         class="{{it && it.disabled ? 'pi-textarea__inner-disabled' : 'pi-textarea__inner' }}" 
@@ -30,7 +30,7 @@
         w-class="{{it && it.disabled ? 'pi-input__inner-disabled' : 'pi-input__inner' }} {{it && it.prepend ? 'pi-input_inner-prepend' : ''}} {{it && it.append ? 'pi-input_inner-append' : ''}}" 
         class="{{it && it.disabled ? 'pi-input__inner-disabled' : 'pi-input__inner1' }}"
         style="{{it1.styleStr}}"
-        type="{{it.type ? it.type : 'text'}}" 
+        type="{{it.itype ? it.itype : 'text'}}" 
         autocomplete="off" 
         placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}" 
         value="{{it1 && it1.currentValue ? it1.currentValue : ''}}"

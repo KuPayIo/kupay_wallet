@@ -34,7 +34,7 @@ export class ChangePasswordStep1 extends Widget {
 
     public btnClick() {
         if (!pswEqualed(this.state.walletPsw,this.state.inputValue)) {
-            popNew('app-components-message-message', { type: 'error', content: '密码错误',center:true });
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误',center:true });
 
             return;
         }

@@ -49,18 +49,19 @@ export const getCurrentWalletIndex = (wallets) => {
 
 /**
  * 通过地址id获取地址信息
- * @param addrId 
+ * @param addrId  address id
  */
 export const getAddrById = (addrId): Addr => {
     const list: Addr[] = getLocalStorage('addrs') || [];
+
     return list.filter(v => v.addr === addrId)[0];
 };
 
 /**
  * 通过地址id重置地址
- * @param addrId 
- * @param data 
- * @param notified 
+ * @param addrId address id
+ * @param data  新地址
+ * @param notified 是否通知数据发生改变 
  */
 export const resetAddrById = (addrId, data: Addr, notified?: boolean) => {
     let list: Addr[] = getLocalStorage('addrs') || [];
@@ -72,11 +73,11 @@ export const resetAddrById = (addrId, data: Addr, notified?: boolean) => {
     setLocalStorage('addrs', list, notified);
 };
 
-  /**
+/**
  * 获取钱包下的所有地址
- * @param wallet 
+ * @param wallet wallet obj
  */
-export  function getAddrsAll(wallet) {
+export  const getAddrsAll = (wallet) => {
     const currencyRecords = wallet.currencyRecords;
     const retAddrs = [];
     currencyRecords.forEach((item) => {
@@ -84,47 +85,53 @@ export  function getAddrsAll(wallet) {
             retAddrs.push(addr);
         });
     });
+
     return retAddrs;
-}
+};
 
 // Password used to encrypt the plainText
 const passwd = 'gaia';
 /**
  * 密码加密
- * @param plainText 
+ * @param plainText 需要加密的文本
  */
-export function encrypt(plainText: string) {
+export const encrypt = (plainText: string) => {
     const cipher = new Cipher();
+
     return cipher.encrypt(passwd, plainText);
-}
+};
 
 /**
  * 密码解密
- * @param cipherText 
+ * @param cipherText 需要解密的文本
  */
-export function decrypt(cipherText: string) {
+export const decrypt = (cipherText: string) => {
     const cipher = new Cipher();
-    return cipher.decrypt(passwd, cipherText);
-}
 
-export function randomRgbColor() { // 随机生成RGB颜色
+    return cipher.decrypt(passwd, cipherText);
+};
+
+export const randomRgbColor = () => { // 随机生成RGB颜色
     const r = Math.floor(Math.random() * 256);
     const g = Math.floor(Math.random() * 256);
     const b = Math.floor(Math.random() * 256);
+
     return `rgb(${r},${g},${b})`; // 返回rgb(r,g,b)格式颜色
-}
+};
 
 /**
  * 解析显示的账号信息
- * @param str 
+ * @param str 需要解析的字符串
  */
 export const parseAccount = (str: string) => {
     if (str.length <= 29) return str;
+
     return `${str.slice(0, 13)}...${str.slice(str.length - 13, str.length)}`;
 };
 
 export const getDefaultAddr = (addr: number | string) => {
     const addrStr = addr.toString();
+
     return `${addrStr.slice(0, 3)}...${addrStr.slice(-3)}`;
 };
 
@@ -150,7 +157,7 @@ export const eth2Wei = (num: number) => {
  * @param conversionType 转化类型
  * @param isWei 是否wei转化
  */
-export async function effectiveCurrency(perNum: any, currencyName: string, conversionType: string, isWei: boolean) {
+export const effectiveCurrency = async (perNum: any, currencyName: string, conversionType: string, isWei: boolean) => {
     const api = new Api();
     const r: any = { num: 0, show: '', conversionShow: '' };
     if (currencyName === 'ETH') {
@@ -161,9 +168,10 @@ export async function effectiveCurrency(perNum: any, currencyName: string, conve
         r.show = `${num} ETH`;
         r.conversionShow = `≈${conversionType === 'CNY' ? '￥' : '$'}${(num * rate[conversionType]).toFixed(2)}`;
     }
+
     return r;
 
-}
+};
 /**
  * 获取有效的货币不需要转化
  * 
@@ -180,6 +188,7 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
         r.num = num;
         r.show = `${num} ETH`;
     }
+
     return r;
 
 };
@@ -201,15 +210,17 @@ export const effectiveCurrencyStableConversion = (perNum: any, currencyName: str
         r.show = `${num} ETH`;
         r.conversionShow = `≈${conversionType === 'CNY' ? '￥' : '$'}${(num * rate[conversionType]).toFixed(2)}`;
     }
+
     return r;
 
 };
 
 /**
  * 转化显示时间
- * @param t 
+ * @param t date
  */
 export const parseDate = (t: Date) => {
+    // tslint:disable-next-line:max-line-length
     return `${t.getUTCFullYear()}-${addPerZero(t.getUTCMonth() + 1, 2)}-${addPerZero(t.getUTCDate(), 2)} ${addPerZero(t.getHours(), 2)}:${addPerZero(t.getMinutes(), 2)}`;
 };
 
@@ -222,11 +233,12 @@ const addPerZero = (num: number, len: number) => {
     if (perLen <= 0) return numStr;
     const list = [];
     list.length = perLen;
+
     return list.fill('0').join('') + numStr;
 };
 
 // 数组乱序
-export function shuffle(arr: any[]): any[] {
+export const shuffle = (arr: any[]): any[] => {
     const length = arr.length;
     const shuffled = Array(length);
     for (let index = 0, rand; index < length; index++) {
@@ -236,5 +248,6 @@ export function shuffle(arr: any[]): any[] {
         }
         shuffled[rand] = arr[index];
     }
+    
     return shuffled;
-}
+};

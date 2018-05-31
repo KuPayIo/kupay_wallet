@@ -55,10 +55,10 @@ export class BackupMnemonicConfirm extends Widget {
     }
     public nextStepClick() {
         if (!this.compareMnemonicEqualed()) {
-            popNew('app-components-message-messagebox', { type: 'alert', title: '请检查助记词', content: '' });
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '请检查助记词', content: '' });
         } else {
             popNew('app-components-message-messagebox',
-             { type: 'confirm', title: '助记词即将移除', content: 'Start navigation to Restaurant Mos Eisley?' }, 
+             { itype: 'confirm', title: '助记词即将移除', content: 'Start navigation to Restaurant Mos Eisley?' }, 
              () => {
                  this.deleteMnemonic();
                  this.ok && this.ok();
@@ -78,7 +78,6 @@ export class BackupMnemonicConfirm extends Widget {
         wallet.gwlt = gwlt.toJSON();
         // 删除第一个地址下的助记词
         const addr0 = wallet.currencyRecords[0].addrs[0];
-        const addrs = getLocalStorage('addrs');
         const addr = getAddrById(addr0);
         addr.gwlt = gwlt.toJSON();
         resetAddrById(addr0,addr);

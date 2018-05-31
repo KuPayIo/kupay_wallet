@@ -65,7 +65,7 @@ export class AddAsset extends Widget {
         const newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), this.state.list.length);
 
         popNew('app-components-message-messagebox', {
-            type: 'prompt', title: '添加地址', content: newGwlt.address, placeHolder: '标签名'
+            itype: 'prompt', title: '添加地址', content: newGwlt.address, placeHolder: '标签名'
         }, (r) => {
 
             r = r || getDefaultAddr(newGwlt.address);

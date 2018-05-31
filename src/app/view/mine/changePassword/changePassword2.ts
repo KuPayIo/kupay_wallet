@@ -29,7 +29,7 @@ export class ChangePasswordStep2 extends Widget {
 
     public btnClick() {
         if (!walletPswAvailable(this.state.inputValue)) {
-            popNew('app-components-message-message', { type: 'error', content: '密码格式错误',center:true });
+            popNew('app-components-message-message', { itype: 'error', content: '密码格式错误',center:true });
 
             return;
         }

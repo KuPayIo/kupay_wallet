@@ -41,12 +41,12 @@ export class ChangePasswordStep3 extends Widget {
 
     public btnClick() {
         if (!pswEqualed(this.props.psw,this.state.inputValue)) {
-            popNew('app-components-message-message', { type: 'error', content: '两次密码输入不一致',center:true });
+            popNew('app-components-message-message', { itype: 'error', content: '两次密码输入不一致',center:true });
 
             return;
         }
         this.changeAllPassword();
-        popNew('app-components-message-message', { type: 'success', content: '密码修改成功', center: true });
+        popNew('app-components-message-message', { itype: 'success', content: '密码修改成功', center: true });
         this.ok && this.ok();
     }
 

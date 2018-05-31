@@ -94,7 +94,7 @@ export class AddressManage extends Widget {
                 content = newGwlt.address;
             }
 
-            popNew('app-components-message-messagebox', { type: 'prompt', title: '添加地址', placeHolder: '标签名', content: content }, (r) => {
+            popNew('app-components-message-messagebox', { itype: 'prompt', title: '添加地址', placeHolder: '标签名', content: content }, (r) => {
                 if (newGwlt) {
                     r = r || getDefaultAddr(newGwlt.address);
                     currencyRecord.addrs.push(newGwlt.address);

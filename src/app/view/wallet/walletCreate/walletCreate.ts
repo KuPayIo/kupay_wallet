@@ -54,26 +54,26 @@ export class WalletCreate extends Widget {
     }
     public createWalletClick() {
         if (!this.state.userProtocolReaded) {
-            // popNew("app-components-message-message", { type: "notice", content: "请阅读用户协议" })
+            // popNew("app-components-message-message", { itype: "notice", content: "请阅读用户协议" })
             return;
         }
         if (!walletNameAvailable(this.state.walletName)) {
-            popNew('app-components-message-messagebox', { type: 'alert', title: '钱包名称错误', content: '请输入1-12位钱包名', center: true });
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-12位钱包名', center: true });
 
             return;
         }
         if (!walletPswAvailable(this.state.walletPsw)) {
-            popNew('app-components-message-message', { type: 'error', content: '密码格式不正确,请重新输入', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: '密码格式不正确,请重新输入', center: true });
 
             return;
         }
         if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
-            popNew('app-components-message-message', { type: 'error', content: '密码不一致，请重新输入', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: '密码不一致，请重新输入', center: true });
 
             return;
         }
         if (!this.createWallet()) {
-            popNew('app-components-message-message', { type: 'error', content: '钱包数量已达上限', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: '钱包数量已达上限', center: true });
             this.ok && this.ok();
 
             return;

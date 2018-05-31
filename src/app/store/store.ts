@@ -13,23 +13,23 @@ import { HandlerMap } from '../../pi/util/event';
  */
 // tslint:disable-next-line:no-any
 export const find = (keyname: string, id?: number): any => {
-	const value = JSON.parse(localStorage.getItem(keyname));
-	if (!id) {
-		if (!(value instanceof Map)) {
-			return value instanceof Object ? copy(value) : value;
-		}
-		const arr = [];
-		for (const [, v] of value) {
-			arr.push(v);
-		}
+    const value = JSON.parse(localStorage.getItem(keyname));
+    if (!id) {
+        if (!(value instanceof Map)) {
+            return value instanceof Object ? copy(value) : value;
+        }
+        const arr = [];
+        for (const [, v] of value) {
+            arr.push(v);
+        }
 
-		return copy(arr);
-	}
-	if (id && value instanceof Map) {
-		const result = value.get(id);
+        return copy(arr);
+    }
+    if (id && value instanceof Map) {
+        const result = value.get(id);
 
-		return result && copy(result);
-	}
+        return result && copy(result);
+    }
 };
 
 /**
@@ -37,23 +37,21 @@ export const find = (keyname: string, id?: number): any => {
  */
 // tslint:disable-next-line:no-any
 export const updateStore = (keyName: string, data: any,notified?:boolean): void => {
-	localStorage.setItem(keyName,JSON.stringify(data));
-	if(notified){
-		handlerMap.notify(keyName, [find(keyName)]);
-	}
+    localStorage.setItem(keyName,JSON.stringify(data));
+    if (notified) {
+        handlerMap.notify(keyName, [find(keyName)]);
+    }
 };
-
-
 
 /**
  * 消息处理器
  */
 export const register = (keyName: string, cb: Function): void => {
-	handlerMap.add(keyName, <any>cb);
+    handlerMap.add(keyName, <any>cb);
 };
 
 export const unregister = (keyName: string, cb: Function): void => {
-	handlerMap.remove(keyName, <any>cb);
+    handlerMap.remove(keyName, <any>cb);
 };
 
 type KeyName = MapName | 'wallet'|'addrs';
@@ -63,7 +61,7 @@ type MapName = '';
 // ============================================ 本地
 // tslint:disable-next-line:no-any
 const copy = (v: any): any => {
-	return JSON.parse(JSON.stringify(v));
+    return JSON.parse(JSON.stringify(v));
 };
 
 // ============================================ 立即执行
@@ -71,9 +69,3 @@ const copy = (v: any): any => {
  * 消息处理列表
  */
 const handlerMap: HandlerMap = new HandlerMap();
-
-
-
-
-
-

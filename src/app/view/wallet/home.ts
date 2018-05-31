@@ -1,5 +1,5 @@
 /**
- * 
+ * wallet home page
  */
 
 import { popNew } from '../../../pi/ui/root';

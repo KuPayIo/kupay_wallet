@@ -7,7 +7,7 @@ import { Api } from '../../../core/eth/api';
 import { register } from '../../../store/store';
 import {
     effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
-    , resetAddrById, setLocalStorage, wei2Eth
+    , resetAddrById
 } from '../../../utils/tools';
 import { Wallet } from '../../interface';
 
@@ -79,7 +79,7 @@ export class AddAsset extends Widget {
      */
     public doSearch() {
         if (!this.state.currentAddr) {
-            popNew('app-components-message-message', { type: 'notice', content: '敬请期待', center: true });
+            popNew('app-components-message-message', { itype: 'notice', content: '敬请期待', center: true });
 
             return;
         }
@@ -108,7 +108,7 @@ export class AddAsset extends Widget {
      */
     public async doTransfer() {
         if (!this.state.currentAddr) {
-            popNew('app-components-message-message', { type: 'notice', content: '敬请期待', center: true });
+            popNew('app-components-message-message', { itype: 'notice', content: '敬请期待', center: true });
 
             return;
         }
@@ -128,7 +128,7 @@ export class AddAsset extends Widget {
     public doReceipt() {
         // todo 这里获取地址
         if (!this.state.currentAddr) {
-            popNew('app-components-message-message', { type: 'notice', content: '敬请期待', center: true });
+            popNew('app-components-message-message', { itype: 'notice', content: '敬请期待', center: true });
 
             return;
         }

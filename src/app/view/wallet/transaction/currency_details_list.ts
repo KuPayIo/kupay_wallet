@@ -4,11 +4,6 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 
-interface Props {
-    list: any[];
-    height: number;
-}
-
 export class CurrencyDetailsList extends Widget {
 
     public ok: () => void;
