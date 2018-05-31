@@ -52,7 +52,7 @@ export class AddAsset extends Widget {
             fromShow: parseAccount(this.props.fromAddr),
             to: '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3',
             pay: 0,
-            payConversion: `≈￥0.00`,
+            payConversion: `≈0.00 CNY`,
             gasPrice: 100000000,
             gasLimit: 21000,
             fees: 0,

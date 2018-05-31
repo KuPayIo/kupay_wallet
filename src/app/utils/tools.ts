@@ -166,7 +166,7 @@ export const effectiveCurrency = async (perNum: any, currencyName: string, conve
 
         r.num = num;
         r.show = `${num} ETH`;
-        r.conversionShow = `≈${conversionType === 'CNY' ? '￥' : '$'}${(num * rate[conversionType]).toFixed(2)}`;
+        r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
     }
 
     return r;
@@ -208,7 +208,7 @@ export const effectiveCurrencyStableConversion = (perNum: any, currencyName: str
 
         r.num = num;
         r.show = `${num} ETH`;
-        r.conversionShow = `≈${conversionType === 'CNY' ? '￥' : '$'}${(num * rate[conversionType]).toFixed(2)}`;
+        r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
     }
 
     return r;

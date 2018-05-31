@@ -119,7 +119,7 @@ const parseCurrencyList = (wallet) => {
             currencyName: v,
             currencyFullName: r,
             balance: '0',
-            balanceValue: '￥0.00'
+            balanceValue: '≈0.00 CNY'
         });
     });
 
