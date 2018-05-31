@@ -1,5 +1,5 @@
 .base{
-    background-color: #eee;
+    background-color: #f8f8f8;
     height: 100%;
     width: 100%;
     position: absolute;
@@ -59,7 +59,7 @@
     height: 150px;
     background: white;
     box-shadow: rgba(12, 15, 35, 0.05) 0px 2px 8px 0px;
-    border-radius: 12px;
+    margin-top: 1px;
 }
 
 .icon{

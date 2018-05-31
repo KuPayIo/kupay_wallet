@@ -107,11 +107,13 @@ export class AddAsset extends Widget {
                 } catch (error) {
                     console.log(error.message);
                     if (error.message.indexOf('insufficient funds') >= 0) {
-                        popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });    
+                        popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });
                     } else {
                         popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
                     }
                 }
+            } else {
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
             }
         });
     }
