@@ -159,7 +159,8 @@ var Mnemonic = function(language) {
     }
 
     self.normalizeString = function(str) {
-        return str.normalize("NFKD");
+        //return str.normalize("NFKD");
+        return str;
     }
 
     function byteArrayToWordArray(data) {

@@ -54,11 +54,11 @@ export class Home extends Widget {
     }
 
     public itemClick(e:any, index:number) {
-        if (index <= 1) {
+        if (index <= 2) {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
             if (!wallet) {
-                popNew('app-components-message-message', { itype: 'notice', content: '请登录钱包', center: true });
+                popNew('app-view-wallet-switchWallet-switchWallet');
 
                 return;
             }

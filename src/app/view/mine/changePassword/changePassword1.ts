@@ -10,8 +10,12 @@ export class ChangePasswordStep1 extends Widget {
     public ok:() => void;
     constructor() {
         super();
+    }
+    public create() {
+        super.create();
         this.init();
     }
+   
     public init() {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
@@ -28,6 +32,7 @@ export class ChangePasswordStep1 extends Widget {
         };
         
     }
+   
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -50,4 +55,5 @@ export class ChangePasswordStep1 extends Widget {
         this.ok && this.ok();
         popNew('app-view-wallet-walletImport-walletImport');
     }
+
 }

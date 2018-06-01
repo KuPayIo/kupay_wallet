@@ -1,6 +1,10 @@
 .ga-new-page{
     background-color: #fff;
 }
+.ga-line20{
+    height: 20px;
+    background-color: #f8f8f8;
+}
 .ga-import-container{
     padding: 28px 30px;
 }
@@ -8,7 +12,7 @@
 .ga-import-item{
     display: flex;
     flex-direction: column;
-    margin-top: 41px;
+    height: 110px;
     position: relative;
 }
 .ga-import-item-label{
@@ -17,6 +21,7 @@
     color: #8E96AB;
     text-align: left;
     line-height: 33px;
+    display: none;
 }
 .ga-input-father{
     height: 88px;
@@ -24,6 +29,7 @@
 }
 .ga-textarea-father{
     height: 153px;
+    margin-bottom: 28px;
 }
 .ga-password-strength{
     position: absolute;
@@ -36,6 +42,19 @@
 .ga-password-strength-label{
     color: rgba(102,102,102,0.87);
     margin-right: 5px;
+}
+.ga-psw-tip-hidden{
+    font-size: 24px;
+    color: #FF0000;
+    text-align: right;
+    line-height: 33px;
+    padding: 10px 30px 0;
+    height: 0px;
+    box-sizing: border-box;
+    transition: height .3s ease;
+}
+.ga-psw-tip-show{
+    height: 43px;
 }
 .ga-import-protocol{
     display: flex;
@@ -67,7 +86,7 @@
     align-items: center;
     margin-top: 40px;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 28px;
     line-height: 33px;
     color: #8E96AB;
     text-align: center;

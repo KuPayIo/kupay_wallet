@@ -22,3 +22,24 @@
 .ga-pagination-bullet-active{
     background: rgba(255,255,255,0.80);
 }
+
+
+@keyframes switchWalletPageIn{
+    0% {background-color: rgba(0, 0, 0, 0);}
+    100% {background-color: rgba(0, 0, 0, 0.2);}
+}
+
+@keyframes switchWalletPageOut{
+    0% {background-color: rgba(0, 0, 0, 0.2);}
+    100% {background-color: rgba(0, 0, 0, 0);}
+}
+
+@keyframes switchWalletIn{
+    0% {width: 0px;}
+    100% {width: 356px;}
+}
+
+@keyframes switchWalletOut{
+    0% {width: 356px;}
+    100% {width: 0px;}
+}

@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { nickNameInterception,pswEqualed } from '../../../utils/account';
-import { decrypt, encrypt, getLocalStorage, randomRgbColor ,setLocalStorage } from '../../../utils/tools';
+import { decrypt, getLocalStorage, randomRgbColor ,setLocalStorage } from '../../../utils/tools';
 
 export class SwitchWallet extends Widget {
     public ok:() => void;
@@ -22,6 +22,7 @@ export class SwitchWallet extends Widget {
             wallets.walletList[i].gwlt = GaiaWallet.fromJSON(wallets.walletList[i].gwlt);
         }
         this.state = {
+            close:false,
             wallets,
             randomRgbColor,
             nickNameInterception
@@ -46,6 +47,7 @@ export class SwitchWallet extends Widget {
                 popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
             } else {
                 this.switchWallet(this.state.wallets.walletList[index].walletId);
+                popNew('app-components-message-message', { itype: 'success', content: '切换成功', center: true });
                 this.ok && this.ok();
             }
         });
@@ -55,11 +57,15 @@ export class SwitchWallet extends Widget {
         const wallets = getLocalStorage('wallets');
         wallets.curWalletId = curWalletId;
         setLocalStorage('wallets',wallets,true);
-        const wallets1 = getLocalStorage('wallets');
     }
 
     public closePageClick() {
-        this.ok && this.ok();
+        this.state.close = true;
+        this.paint();
+        setTimeout(() => {
+            this.ok && this.ok();
+        },300);
+        
     }
 
 } 

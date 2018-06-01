@@ -81,7 +81,7 @@ export class BackupMnemonicConfirm extends Widget {
         const addr = getAddrById(addr0);
         addr.gwlt = gwlt.toJSON();
         resetAddrById(addr0,addr);
-        setLocalStorage('wallets', wallets);
+        setLocalStorage('wallets', wallets,true);
     }
 
     public shuffledMnemonicItemClick(e:Event, v:number) {

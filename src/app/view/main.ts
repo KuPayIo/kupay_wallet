@@ -28,7 +28,7 @@ export const run = (cb): void => {
     // popNew('app-view-wallet-walletCreate-walletCreate');	// popNew('app-view-application-home');
     // popNew('app-view-groupwallet-groupwallet');
     // popNew('app-view-financialManagement-home');
-    // popNew('app-view-mine-changePassword-changePassword1');
+    // popNew('app-view-mine-walletManagement-walletManagement');
 
     if (cb) cb();
 };

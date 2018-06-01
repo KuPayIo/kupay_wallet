@@ -7,7 +7,15 @@ export class CoinSet extends Widget {
     public ok: () => void;
     constructor() {
         super();
-        this.props = {
+        
+    }
+
+    public create() {
+        super.create();
+        this.init();
+    }
+    public init() {
+        this.state = {
             checkedIndex:0,
             data:[
                 { index:0,lan:'CNY',checked:true },
@@ -15,11 +23,10 @@ export class CoinSet extends Widget {
             ]
         };
     }
-
     public radioChangeListener(event:any) { 
-        for (const i in this.props.data) {
-            if (event.index !== this.props.data[i].index) {
-                this.props.data[i].checked = false;
+        for (const i in this.state.data) {
+            if (event.index !== this.state.data[i].index) {
+                this.state.data[i].checked = false;
             }
         }
         this.paint();       

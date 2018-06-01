@@ -1,15 +1,15 @@
 /**
  * loading逻辑处理
  */
-import { Widget } from '../../widget/widget';
 import { notify } from '../../widget/event';
+import { Widget } from '../../widget/widget';
 
 interface Props {
-    text:string;//加载文本
+    text:string;// 加载文本
 }
 
-interface State{
-    circular:string;//svg内容
+interface State {
+    circular:string;// svg内容
 }
 export class Loading extends Widget {
     public props: Props;
@@ -18,7 +18,7 @@ export class Loading extends Widget {
         super();
     }
 
-    public setProps(props:Props,oldProps:Props){
+    public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.state = {
             circular:`<svg viewBox='25 25 50 50' class='pi-circular'>
