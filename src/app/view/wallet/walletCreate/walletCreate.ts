@@ -79,12 +79,12 @@ export class WalletCreate extends Widget {
             return;
         }
 
-        const close = popNew('pi-components-loading-loading', { text: '创建中' });
+        const close = popNew('pi-components-loading-loading', { text: '创建中...' });
         setTimeout(() => {
             close.callback(close.widget);
             this.ok && this.ok();
             popNew('app-view-wallet-backupWallet-backupWallet');
-        }, 500);
+        }, 50000000);
     }
 
     public createWallet() {

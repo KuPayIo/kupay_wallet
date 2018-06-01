@@ -91,7 +91,7 @@ export class WalletImport extends Widget {
             return;
         }
 
-        const close = popNew('pi-components-loading-loading', { text: '导入中' });
+        const close = popNew('pi-components-loading-loading', { text: '导入中...' });
         setTimeout(() => {
             close.callback(close.widget);
             this.ok && this.ok();

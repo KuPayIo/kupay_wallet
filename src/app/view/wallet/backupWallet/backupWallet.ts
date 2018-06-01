@@ -30,7 +30,7 @@ export class BackupWallet extends Widget {
             const wallet = getCurrentWallet(wallets);
             const walletPsw = decrypt(wallet.walletPsw);
             if (pswEqualed(r,walletPsw)) {
-                const close = popNew('pi-components-loading-loading',{ text:'导出中' });
+                const close = popNew('pi-components-loading-loading',{ text:'导出中...' });
                 setTimeout(() => {
                     close.callback(close.widget);
                     this.ok && this.ok();
