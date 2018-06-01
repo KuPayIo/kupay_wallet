@@ -26,8 +26,14 @@
         </div>
     </div>
     <div w-class="footer">
-        <div w-class="transfer" on-tap="doTransfer">转账</div>
-        <div w-class="receipt" on-tap="doReceipt">收款</div>
+        <div w-class="btn transfer" on-tap="doTransfer">
+            <img src="../../../res/image/icon_trans_transfer.png" alt="" />
+            <span style="margin-left: 20px;">转账</span>
+        </div>
+        <div w-class="btn receipt" on-tap="doReceipt">
+            <img src="../../../res/image/icon_trans_receipt.png" alt="" />
+            <span style="margin-left: 20px;">收款</span>
+        </div>
     </div>
 
 </div>

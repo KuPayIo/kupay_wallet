@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div style="position: relative;top: 40px;">
-                <img width="750" src="../../res/image/img_K@2x.jpg" />
+                <img width="750" src="../../res/image/img_K.jpg" />
             </div>
             <div style="position: relative;top: 40px;width: 100%;height: 1000px;">
                 <div style="font-size: 24px;color: #0B0817;background: #E5E5EE;">

@@ -97,30 +97,28 @@
     border-top: 1px solid rgb(136, 136, 136);
     font-size: 28px;
 }
-.transfer{
+.btn{
     position: absolute;
     width: 50%;
-    height: 98px;
-    line-height: 98px;
+    height: 110px;
+    line-height: 110px;
     text-align: center;
     cursor: pointer;
-    background: #212C67;
     color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.transfer{
+    background: #212C67;
 }
 .receipt{
-    position: absolute;
     left: 50%;
-    height: 98px;
-    line-height: 98px;
-    text-align: center;
-    width: 50%;
-    cursor: pointer;
     background: #1735D6;
-    color: white;
 }
 
 .no-record{
-    background-image : url(../../../res/image/img_none_record@2x.png) ;
+    background-image : url(../../../res/image/img_none_record.png) ;
     background-repeat: no-repeat;
     background-size: 300px 300px;
     background-position-x: center;

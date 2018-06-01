@@ -20,12 +20,16 @@
 }
 
 .search{
-    border-width: 0px;
     position: absolute;
-    right: 32px;
-    top: 45px;
-    width: 44px;
-    height: 44px;
+    background-image: url(../../../res/image/btn_sea.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 44px;
+    cursor: pointer;
+    right: 35px;
+    width: 88px;
+    height: 88px;
+    top: 22px;
 }
 
 .body{
@@ -70,7 +74,7 @@
     position: absolute;
     top: 40px;
     right: 30px;
-    background-image: url(../../../res/image/btn_switch_close@2x.png);
+    background-image: url(../../../res/image/btn_switch_close.png);
     width: 82px;
     height: 60px;
     background-size: 82px;
@@ -79,7 +83,7 @@
     position: absolute;
     top: 40px;
     right: 30px;
-    background-image: url(../../../res/image/btn_switch_open@2x.png);
+    background-image: url(../../../res/image/btn_switch_open.png);
     width: 82px;
     height: 60px;
     background-size: 82px;
