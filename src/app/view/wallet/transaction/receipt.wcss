@@ -5,6 +5,9 @@
     position: absolute;
     left: 0px;
     top: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .header{
     border-width: 0px;
@@ -22,9 +25,6 @@
 .body{
     position: absolute;
     width: 80%;
-    top: 230px;
-    font-size: 12px;
-    left: 60px;
     background-color: #fff;
 }
 .balance{

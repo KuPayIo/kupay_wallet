@@ -43,6 +43,7 @@
     position: relative;
     text-align: center;
     top: 80px;
+    color: #8E96AB;
 }
 .body-other{
     background-color: #FFFFFF;

@@ -30,7 +30,7 @@
 
 .input{
     position: absolute;
-    width: 550px;
+    width: 610px;
     height: 56px;
     left: 30px;
     top: 50px;
@@ -39,13 +39,16 @@
 .back{
     border-width: 0px;
     position: absolute;
-    right: 30px;
-    top: 60px;
+    right: 15px;
+    top: 35px;
     word-wrap: break-word;
     transform-origin: 185.5px 13px 0px;
     cursor: pointer;
     font-size: 28px;
     color: #203260;
+    height: 88px;
+    line-height: 88px;
+    width: 88px;
 }
 
 .body{
