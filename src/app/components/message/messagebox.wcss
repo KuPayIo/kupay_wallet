@@ -73,9 +73,9 @@
 
 .btns{
     text-align: right;
-    top: 95px;
+    top: 60px;
     position: relative;
-    height: 170px;
+    height: 150px;
     right: 50px;
 }
 

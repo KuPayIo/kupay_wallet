@@ -9,7 +9,7 @@
                 <span w-class="ga-left-date">{{bill.date}}</span>
             </div>
             <div w-class="ga-item-right">
-                <span w-class="ga-right-text">￥{{bill.value}}</span>
+                <span w-class="ga-right-text">{{bill.value}} CNY</span>
                 <img src="../../../res/image/btn_right_arrow.png" w-class="ga-right-arrow"/>
             </div>
         </div>

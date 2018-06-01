@@ -52,7 +52,7 @@ export class AddAsset extends Widget {
 
         this.state = {
             list: [], currentAddr: '', currentAddrRecords: [], balance: 0, showBalance: `0 ${this.props.currencyName}`
-            , showBalanceConversion: '≈￥0'
+            , showBalanceConversion: '≈0.00 CNY'
         };
         this.resetCurrentAddr(wallet, this.props.currencyName);
         this.parseBalance();
