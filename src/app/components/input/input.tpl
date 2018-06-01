@@ -11,6 +11,7 @@
         style="{{it1.styleStr}}"
         placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}"
         disabled={{it && it.disabled ? true : false}}
+        autofocus={{it && it.autofocus ? true : false}}
         on-input="change"
         on-blur="blur"
         on-focus="focus"
@@ -28,13 +29,14 @@
     <div w-class="pi-input-box">
     <input 
         w-class="{{it && it.disabled ? 'pi-input__inner-disabled' : 'pi-input__inner' }} {{it && it.prepend ? 'pi-input_inner-prepend' : ''}} {{it && it.append ? 'pi-input_inner-append' : ''}}" 
-        class="{{it && it.disabled ? 'pi-input__inner-disabled' : 'pi-input__inner1' }}"
+        class="{{it && it.disabled ? 'pi-input__inner-disabled pi-input-dom' : 'pi-input__inner1 pi-input-dom' }}"
         style="{{it1.styleStr}}"
         type="{{it.itype ? it.itype : 'text'}}" 
         autocomplete="off" 
         placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}" 
         value="{{it1 && it1.currentValue ? it1.currentValue : ''}}"
         disabled={{it && it.disabled ? true : false}}
+        autofocus={{it && it.autofocus ? true : false}}
         on-input="change"
         on-blur="blur"
         on-focus="focus"

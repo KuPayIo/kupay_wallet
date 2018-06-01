@@ -10,6 +10,7 @@
     -webkit-transition: opacity .3s;
     transition: opacity .3s;
     color: #fff;
+    font-size: 32px;
 }
 .pi-loading-spinner{
     top: 50%;
@@ -23,7 +24,6 @@
 .pi-loading-text{
     color: #fff;
     margin: 20px 0;
-    font-size: 14px;
 }
 .pi-svg-box{
     display: inline-block;

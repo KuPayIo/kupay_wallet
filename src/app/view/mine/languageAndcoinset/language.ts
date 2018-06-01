@@ -1,14 +1,20 @@
 /**
  * language
  */
-import { notify } from '../../../../pi/widget/event';
 import { Widget } from '../../../../pi/widget/widget';
 
 export class Language extends Widget {
     public ok: () => void;
     constructor() {
         super();
-        this.props = {
+        
+    }
+    public create() {
+        super.create();
+        this.init();
+    }
+    public init() {
+        this.state = {
             checkedIndex:0,
             data:[
                 { index:0,lan:'中文',checked:true },
@@ -16,11 +22,10 @@ export class Language extends Widget {
             ]
         };
     }
-
     public radioChangeListener(event:any) { 
-        for (const i in this.props.data) {
-            if (event.index !== this.props.data[i].index) {
-                this.props.data[i].checked = false;
+        for (const i in this.state.data) {
+            if (event.index !== this.state.data[i].index) {
+                this.state.data[i].checked = false;
             }
         }
         this.paint();       

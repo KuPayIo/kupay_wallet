@@ -17,6 +17,7 @@ interface Props {
     prepend:string;// 前置内容
     append:string;// 后置内容
     style:Object;// 样式
+    autofocus:boolean;// 自动获取焦点
 }
 
 interface State {
@@ -59,7 +60,7 @@ export class Input extends Widget {
     public change(event:any) {
         const currentValue = event.currentTarget.value;
         this.state.currentValue = currentValue;
-        if (this.props.type === 'textarea' &&  this.props.autosize) {
+        if (this.props.itype === 'textarea' &&  this.props.autosize) {
             this.setTextareaHeight();
         }
         notify(event.node,'ev-input-change',{ value:this.state.currentValue });
