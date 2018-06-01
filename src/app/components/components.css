@@ -109,6 +109,11 @@
 .pi-textarea__inner:focus{
     border-bottom: 1px solid #409EFF !important;
 }
+
+.pi-input-search__inner1:focus{
+    border: 1px solid #409EFF !important;
+}
+
 .pi-input ::-webkit-input-placeholder { /* WebKit browsers */
     color:    #999;
 }
@@ -153,6 +158,25 @@
 .pi-input__suffix:before{
     transform:translate3d(-50%,-50%,0) rotateZ(-45deg);
 }
+
+.pi-input-search__suffix:after,
+.pi-input-search__suffix:before{
+    content: " ";
+    display: inline-block;
+    width: 16px;
+    height: 3px;
+    background-color: #fff;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+}
+.pi-input-search__suffix:after{
+    transform:translate3d(-50%,-50%,0) rotateZ(45deg);
+}
+.pi-input-search__suffix:before{
+    transform:translate3d(-50%,-50%,0) rotateZ(-45deg);
+}
+
 
 .pi-circular{
     height: 50px;
