@@ -7,7 +7,7 @@
                 <input 
                     id="walletNameInput"
                     w-class="ga-input" 
-                    value="{{it1.nickNameInterception(it1.gwlt.nickName)}}" 
+                    value="{{it1.gwlt.nickName}}" 
                     on-blur="walletNameInputBlur"
                     on-focus="walletNameInputFocus"
                     />

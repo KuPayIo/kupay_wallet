@@ -4,7 +4,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GaiaWallet } from '../../../core/eth/wallet';
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
+// tslint:disable-next-line:max-line-length
+import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable, walletNumLimit,walletPswAvailable } from '../../../utils/account';
 import { encrypt, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 import { Addr, Wallet } from '../../interface';
 
@@ -61,7 +62,7 @@ export class WalletImport extends Widget {
             return;
         }
         if (!walletNameAvailable(this.state.walletName)) {
-            popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-12位钱包名', center: true });
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-24位钱包名', center: true });
 
             return;
         }
@@ -104,7 +105,7 @@ export class WalletImport extends Widget {
         const addrs: Addr[] = getLocalStorage('addrs') || [];
         const curWalletId = gwlt.address;
         const len0 = wallets.walletList.length;
-        if (len0 === 10) {
+        if (len0 === walletNumLimit) {
             return false;
         }
         const wallet: Wallet = {

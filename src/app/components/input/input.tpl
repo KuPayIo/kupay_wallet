@@ -29,7 +29,7 @@
     <div w-class="pi-input-box">
     <input 
         w-class="{{it && it.disabled ? 'pi-input__inner-disabled' : 'pi-input__inner' }} {{it && it.prepend ? 'pi-input_inner-prepend' : ''}} {{it && it.append ? 'pi-input_inner-append' : ''}}" 
-        class="{{it && it.disabled ? 'pi-input__inner-disabled' : 'pi-input__inner1' }}"
+        class="{{it && it.disabled ? 'pi-input__inner-disabled pi-input-dom' : 'pi-input__inner1 pi-input-dom' }}"
         style="{{it1.styleStr}}"
         type="{{it.itype ? it.itype : 'text'}}" 
         autocomplete="off" 

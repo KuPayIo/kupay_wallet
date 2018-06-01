@@ -2,8 +2,9 @@
 /**
  * 和账号相关的工具
  */
-import { getLocalStorage,setLocalStorage, shuffle } from './tools';
+import { getLocalStorage,getStrLen, setLocalStorage,shuffle } from './tools';
 
+export const walletNumLimit = 10;
  // 密码强度列表
 const walletPswStrengthList = [{
     text:'弱',
@@ -21,7 +22,7 @@ const walletPswStrengthList = [{
  * @param walletName wallet name
  */
 export const walletNameAvailable = (walletName) => {
-    return walletName.trim().length >= 1 && walletName.trim().length <= 12;
+    return getStrLen(walletName.trim()) >= 1 && getStrLen(walletName.trim()) <= 24;
 };
 
 /**
@@ -114,10 +115,17 @@ export const nickNameInterception = (name:string):string => {
  */
 export const getAvatarRandom = ():string => {
     // tslint:disable-next-line:max-line-length
-    const avatars = getLocalStorage('avatars') || ['img_avatar1.jpg','img_avatar2.jpg','img_avatar3.jpg','img_avatar4.jpg','img_avatar5.jpg','img_avatar6.jpg','img_avatar7.jpg','img_avatar8.jpg','img_avatar9.jpg','img_avatar10.jpg'];
-    const shuffledAvatars = shuffle(avatars);
+    const avatarsSrc = ['img_avatar1.jpg','img_avatar2.jpg','img_avatar3.jpg','img_avatar4.jpg','img_avatar5.jpg','img_avatar6.jpg','img_avatar7.jpg','img_avatar8.jpg','img_avatar9.jpg','img_avatar10.jpg'];
+    const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
+    const avatarUsed  =  [];
+    wallets.walletList.forEach(item => {
+        avatarUsed.push(item.avatar);
+    });
+    const avatarAvailable = avatarsSrc.filter(item => {
+        return avatarUsed.indexOf(item) === -1;
+    });
+    const shuffledAvatars = shuffle(avatarAvailable);
     const avatar = shuffledAvatars.splice(0,1);
-    setLocalStorage('avatars',shuffledAvatars);
-    
+
     return avatar[0];
 };

@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { register } from '../../../store/store';
-import { nickNameInterception,pswEqualed,walletNameAvailable } from '../../../utils/account';
+import { pswEqualed,walletNameAvailable } from '../../../utils/account';
 import { 
     decrypt, 
     encrypt,
@@ -66,8 +66,7 @@ export class WalletManagement extends Widget {
             pswTips,
             mnemonicExisted,
             isUpdatingWalletName:false,
-            isUpdatingPswTips:false,
-            nickNameInterception
+            isUpdatingPswTips:false
         };
     }
     public backPrePage() {
@@ -109,16 +108,14 @@ export class WalletManagement extends Widget {
 
     public walletNameInputFocus() {
         this.state.isUpdatingWalletName = true;
-        const input = document.querySelector('#walletNameInput');
-        input.value = this.state.gwlt.nickName;
     }
     public walletNameInputBlur(e:any) {
         const v = e.currentTarget.value.trim();
         const input = document.querySelector('#walletNameInput');
         if (!walletNameAvailable(v)) {
-            popNew('app-components-message-message', { itype: 'error', content: '钱包名长度为1-12位', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: '钱包名长度为1-24位', center: true });
            
-            input.value = nickNameInterception(this.state.gwlt.nickName);
+            input.value = this.state.gwlt.nickName;
             this.state.isUpdatingWalletName = false;
 
             return;
@@ -137,7 +134,7 @@ export class WalletManagement extends Widget {
             resetAddrById(addr0,addr);
             setLocalStorage('wallets', wallets, true);
         }
-        input.value = nickNameInterception(v);
+        input.value = v;
         this.state.isUpdatingWalletName = false;
     }
     public pswTipsInputFocus() {
@@ -259,10 +256,6 @@ export class WalletManagement extends Widget {
                 const walletIndex = getCurrentWalletIndex(wallets);
                 const walletPsw = decrypt(wallet.walletPsw);
                 if (pswEqualed(r,walletPsw)) {
-                    // 返还头像
-                    const avatars = getLocalStorage('avatars');
-                    avatars.push(wallet.avatar);
-                    setLocalStorage('avatars',avatars);
 
                     // 删除地址
                     const addrs = getAddrsAll(wallet);
