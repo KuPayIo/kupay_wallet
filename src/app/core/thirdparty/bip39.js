@@ -48,7 +48,7 @@ var Mnemonic = function(language) {
         wordlist = WORDLISTS[language];
         if (wordlist.length != RADIX) {
             err = 'Wordlist should contain ' + RADIX + ' words, but it contains ' + wordlist.length + ' words.';
-            throw err;
+            throw new Error(err);
         }
     }
 
@@ -56,11 +56,11 @@ var Mnemonic = function(language) {
         strength = strength || 128;
         var r = strength % 32;
         if (r > 0) {
-            throw 'Strength should be divisible by 32, but it is not (' + r + ').';
+            throw new Error('Strength should be divisible by 32, but it is not (' + r + ').');
         }
         var hasStrongCrypto = 'crypto' in window && window['crypto'] !== null;
         if (!hasStrongCrypto) {
-            throw 'Mnemonic should be generated with strong randomness, but crypto.getRandomValues is unavailable';
+            throw new Error('Mnemonic should be generated with strong randomness, but crypto.getRandomValues is unavailable');
         }
         var buffer = new Uint8Array(strength / 8);
         var data = crypto.getRandomValues(buffer);
@@ -69,7 +69,7 @@ var Mnemonic = function(language) {
 
     self.toMnemonic = function(byteArray) {
         if (byteArray.length % 4 > 0) {
-            throw 'Data length in bits should be divisible by 32, but it is not (' + byteArray.length + ' bytes = ' + byteArray.length*8 + ' bits).'
+            throw new Error('Data length in bits should be divisible by 32, but it is not (' + byteArray.length + ' bytes = ' + byteArray.length*8 + ' bits).')
         }
 
         //h = hashlib.sha256(data).hexdigest()
