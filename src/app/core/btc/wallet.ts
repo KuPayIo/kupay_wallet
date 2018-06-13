@@ -1,6 +1,10 @@
-import { bitcore } from "../thirdparty/bitcore-lib";
-import { Mnemonic } from '../thirdparty/bip39';
+
+/**
+ * BTC HD wallet implementaion
+ */
 import { Cipher } from '../crypto/cipher';
+import { Mnemonic } from '../thirdparty/bip39';
+import { bitcore } from '../thirdparty/bitcore-lib';
 import { Api } from './api';
 
 const HDWallet = bitcore.HDPrivateKey;
@@ -10,88 +14,65 @@ const Unit = bitcore.Unit;
 
 const cipher = new Cipher();
 
-type LANGUAGE = "english" | "chinese_simplified" | "chinese_traditional";
-type NETWORK = "mainnet" | "testnet";
-type PRIORITY = "high" | "medium" | "low";
+type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional';
+type NETWORK = 'mainnet' | 'testnet';
+type PRIORITY = 'high' | 'medium' | 'low';
 
 export class UTXO {
-    txid: string; // transaction hash that generate this utxo
-    vout: number; // previous output index
-    address: string; // who own this utxo
-    scriptPubKey: string; // public key hash
-    amount: number // BTC unit
-    confirmations?: number;
+    public txid: string; // transaction hash that generate this utxo
+    public vout: number; // previous output index
+    public address: string; // who own this utxo
+    public scriptPubKey: string; // public key hash
+    public amount: number; // BTC unit
+    public confirmations?: number;
 }
 
 export class Output {
-    toAddr: string;
-    amount: number;
-    chgAddr?: string;
+    public toAddr: string;
+    public amount: number;
+    public chgAddr?: string;
 }
 
 export class BTCWallet {
+    // m/bip_number/coin_type/account/internal_or_external/index, we don't use change address
+    public static BIP44_BTC_TESTNET_BASE_PATH: string = 'm/44\'/1\'/0\'/0/';
+    public static BIP44_BTC_MAINNET_BASE_PATH: string = 'm/44\'/0\'/0\'/0/';
+
+    // most look ahead addresses
+    public static GAP_LIMIT: number = 3;
+
+    // minimum confirmations
+    public static MIN_CONFIRMATIONS: number = 6;
+
+    public static SAFELOW_FEE: number = 2;
+    public static HIGHEST_FEE: number = 10;
     // funds that have at least `MIN_CONFIRMATION`
     public balance: number;
 
-    public usedAdresses = {};
-    public utxos = [];
+    public usedAdresses:any = {};
+    public utxos: any = [];
     public network: NETWORK;
     public language: LANGUAGE;
 
     // used to retreive all the utxos of this wallet
     public rootXpub: string;
 
+    public api: Api;    
+
     // dedicated for HD wallet, should be encrypted
-    private _rootXpriv: string;
-    private _mnemonics: string;
+    private rootXpriv: string;
+    private mnemonics: string;
 
-    public api: Api;
-
-    private _isLocked = false;
-    private _isInitialized = false;
-
-    // m/bip_number/coin_type/account/internal_or_external/index, we don't use change address
-    static BIP44_BTC_TESTNET_BASE_PATH = "m/44'/1'/0'/0/";
-    static BIP44_BTC_MAINNET_BASE_PATH = "m/44'/0'/0'/0/";
-
-
-    // most look ahead addresses
-    static GAP_LIMIT = 3;
-
-    // minimum confirmations
-    static MIN_CONFIRMATIONS = 6;
-
-    static SAFELOW_FEE = 2;
-    static HIGHEST_FEE = 10;
+    private isLocked: boolean = false;
+    private isInitialized: boolean = false;
 
     constructor() {
         this.api = new Api();
     }
 
-    getBlance(): number {
-        return this.balance;
-    }
-    setBlance(balance: number): void {
-        this.balance = balance;
-    }
-    
-    lock(passwd: string): void {
-        if(this._isLocked === false) {
-            this._rootXpriv = cipher.encrypt(passwd, this._rootXpriv);
-            this._mnemonics = cipher.encrypt(passwd, this._mnemonics);
-            this._isLocked = true;
-        }
-    }
-
-    unlock(passwd: string): void {
-        if(this._isLocked === true) {
-            this._rootXpriv = cipher.decrypt(passwd, this._rootXpriv);
-            this._mnemonics = cipher.decrypt(passwd, this._mnemonics);
-            this._isLocked = false;
-        }
-    }
-
-    /**
+    /* tslint:disable:jsdoc-format */
+    /* tslint:disable: no-redundant-jsdoc*/
+     /**
      * Generate an HD wallet from scratch
      * 
      * @static
@@ -103,25 +84,25 @@ export class BTCWallet {
      * @returns {BTCWallet} 
      * @memberof BTCWallet
      */
-    static generate(passwd: string, strength: number, network: NETWORK, lang: LANGUAGE, passphrase?: string): BTCWallet {
-        let mn = new Mnemonic(lang);
-        passphrase = passphrase || "";
+    public static generate(passwd: string, strength: number, network: NETWORK, lang: LANGUAGE, passphrase?: string): BTCWallet {
+        const mn = new Mnemonic(lang);
+        passphrase = passphrase || '';
         strength = strength || 128;
 
         // TODO: check passwd
 
-        let mnemonics = mn.generate(strength);
-        if(!mn.check(mnemonics)) {
-            throw new Error("Invalid Mnemonic words!");
+        const mnemonics = mn.generate(strength);
+        if (!mn.check(mnemonics)) {
+            throw new Error('Invalid Mnemonic words!');
         }
-        let seed = mn.toSeed(mnemonics, passphrase);
-        let hdpriv = HDWallet.fromSeed(seed, network);
+        const seed = mn.toSeed(mnemonics, passphrase);
+        const hdpriv = HDWallet.fromSeed(seed, network);
 
-        let btcwallet = new BTCWallet();
-        btcwallet._rootXpriv = hdpriv.toString();
+        const btcwallet = new BTCWallet();
+        btcwallet.rootXpriv = hdpriv.toString();
         btcwallet.rootXpub = hdpriv.xpubkey;
         // TODO: encrypt
-        btcwallet._mnemonics = mnemonics;
+        btcwallet.mnemonics = mnemonics;
 
         return btcwallet;
     }
@@ -137,20 +118,20 @@ export class BTCWallet {
      * @returns {BTCWallet} 
      * @memberof BTCWallet
      */
-    static fromMnemonic(passwd: string, mnemonic: string, network: NETWORK, lang: LANGUAGE, passphrase?: string): BTCWallet {
-        let mn = new Mnemonic(lang);
-        passphrase = passphrase || "";
+    public static fromMnemonic(passwd: string, mnemonic: string, network: NETWORK, lang: LANGUAGE, passphrase?: string): BTCWallet {
+        const mn = new Mnemonic(lang);
+        passphrase = passphrase || '';
 
-        if(!mn.check(mnemonic)) {
-            throw new Error("Invalid Mnemonic words!");
+        if (!mn.check(mnemonic)) {
+            throw new Error('Invalid Mnemonic words!');
         }
-        let seed = mn.toSeed(mnemonic, passphrase)
+        const seed = mn.toSeed(mnemonic, passphrase);
 
-        let hdpriv = HDWallet.fromSeed(seed, network);
-        let btcwallt = new BTCWallet();
+        const hdpriv = HDWallet.fromSeed(seed, network);
+        const btcwallt = new BTCWallet();
         
-        btcwallt._rootXpriv = hdpriv.toString();
-        btcwallt._mnemonics = mnemonic;
+        btcwallt.rootXpriv = hdpriv.toString();
+        btcwallt.mnemonics = mnemonic;
         btcwallt.rootXpub = hdpriv.xpubkey;
         btcwallt.network = network;
         btcwallt.language = lang;
@@ -158,33 +139,6 @@ export class BTCWallet {
         btcwallt.lock(passwd);
 
         return btcwallt;
-    }
-
-    exportMnemonics(): string {
-        if(this._isLocked === true) {
-            throw new Error("You need to unlock wallet first!");
-        }
-        return this._mnemonics;
-    }
-
-    /**
-     * Export WIF format private key for specified index
-     * 
-     * @param {number} index 
-     * @returns {string} 
-     * @memberof BTCWallet
-     */
-    exportWIFOf(index: number): string {
-        return this._privateKeyOf(index).toWIF();
-    }
-
-    toJSON(): string {
-        if(!this._isLocked) {
-            throw new Error("You must lock the wallet first and then export the JSON format representation")
-        }
-        return JSON.stringify({ "mnemonics": this._mnemonics,
-                                "network": this.network,
-                                "language": this.language});
     }
 
     /**
@@ -197,13 +151,65 @@ export class BTCWallet {
      * @returns {BTCWallet}
      * @memberof BTCWallet
      */
-    static fromJSON(json: string, passwd: string, passphrase?: string): BTCWallet {
-        let obj = JSON.parse(json);
-        let mnemonics = cipher.decrypt(passwd, obj.mnemonics);
-        let network = obj.network;
-        let language = obj.language;
+    public static fromJSON(json: string, passwd: string, passphrase?: string): BTCWallet {
+        const obj = JSON.parse(json);
+        const mnemonics = cipher.decrypt(passwd, obj.mnemonics);
+        const network = obj.network;
+        const language = obj.language;
 
         return BTCWallet.fromMnemonic(passwd, mnemonics, network, language, passphrase);
+    }
+
+    public getBlance(): number {
+        return this.balance;
+    }
+    public setBlance(balance: number): void {
+        this.balance = balance;
+    }
+    
+    public lock(passwd: string): void {
+        if (this.isLocked === false) {
+            this.rootXpriv = cipher.encrypt(passwd, this.rootXpriv);
+            this.mnemonics = cipher.encrypt(passwd, this.mnemonics);
+            this.isLocked = true;
+        }
+    }
+
+    public unlock(passwd: string): void {
+        if (this.isLocked === true) {
+            this.rootXpriv = cipher.decrypt(passwd, this.rootXpriv);
+            this.mnemonics = cipher.decrypt(passwd, this.mnemonics);
+            this.isLocked = false;
+        }
+    }
+
+    public exportMnemonics(): string {
+        if (this.isLocked === true) {
+            throw new Error('You need to unlock wallet first!');
+        }
+
+        return this.mnemonics;
+    }
+
+    /**
+     * Export WIF format private key for specified index
+     * 
+     * @param {number} index 
+     * @returns {string} 
+     * @memberof BTCWallet
+     */
+    public exportWIFOf(index: number): string {
+        return this.privateKeyOf(index).toWIF();
+    }
+
+    public toJSON(): string {
+        if (!this.isLocked) {
+            throw new Error('You must lock the wallet first and then export the JSON format representation');
+        }
+        
+        return JSON.stringify({ mnemonics: this.mnemonics,
+            network: this.network,
+            language: this.language});
     }
 
     /**
@@ -213,27 +219,8 @@ export class BTCWallet {
      * @returns {string} Derived address
      * @memberof BTCWallet
      */
-    derive(index: number): string {
-        return this._privateKeyOf(index).toAddress().toString();
-    }
-
-    private _privateKeyOf(index: number): any {
-        if(this._isLocked === true) {
-            throw new Error("You need to unlock wallet first!");
-        }
-
-        let path: string;
-        let parent = new HDWallet(this._rootXpriv);
-
-        if(parent.network.name === "testnet") {
-            path = BTCWallet.BIP44_BTC_TESTNET_BASE_PATH + index;
-        } else if(parent.network.name === "livenet") {
-            path = BTCWallet.BIP44_BTC_MAINNET_BASE_PATH + index;
-        } else {
-            throw new Error("Unexpected network name!");
-        }
-
-        return parent.derive(path).privateKey;
+    public derive(index: number): string {
+        return this.privateKeyOf(index).toAddress().toString();
     }
 
     /**
@@ -251,134 +238,134 @@ export class BTCWallet {
      * @returns {Promise<string>} Transaction hash of this transaction
      * @memberof BTCWallet
      */
-    async spend(output: Output, priority: PRIORITY): Promise<string> {
-        if(!this._isInitialized) {
-            throw new Error("Wallet uninitialized!");
+    public async spend(output: Output, priority: PRIORITY): Promise<string> {
+        if (!this.isInitialized) {
+            throw new Error('Wallet uninitialized!');
         }
 
-        if(output.amount >= this.balance) {
-            throw new Error("Insufficient balance!");
+        if (output.amount >= this.balance) {
+            throw new Error('Insufficient balance!');
         }
 
         // TODO: check error
-        let fee = await this.api.feePerByte()
-        switch(priority) {
-            case "high":
+        let fee = await this.api.feePerByte();
+        switch (priority) {
+            case 'high':
                 fee = fee.fastestFee;
                 break;
-            case "medium":
+            case 'medium':
                 fee = fee.halfHourFee;
                 break;
-            case "low":
+            case 'low':
                 fee = fee.hourFee;
                 break;
+            default:
+                fee = BTCWallet.SAFELOW_FEE;
         }
 
-        if(fee < BTCWallet.SAFELOW_FEE || fee > BTCWallet.HIGHEST_FEE) {
-            throw new Error("Abnormal fee rate");
+        if (fee < BTCWallet.SAFELOW_FEE || fee > BTCWallet.HIGHEST_FEE) {
+            throw new Error('Abnormal fee rate');
         }
 
-        //sort by transaction confirmations
+        // sort by transaction confirmations
         this.utxos.sort((a, b) => a.confirmations - b.confirmations);
 
-        let collected = [];
+        const collected = [];
         let accumlated = 0;
-        for(let i = 0; i < this.utxos.length; i++) {
+        for (let i = 0; i < this.utxos.length; i++) {
             accumlated += this.utxos[i].amount;
             collected.push(this.utxos[i]);
-            if(accumlated > output.amount) {
+            if (accumlated > output.amount) {
                 break;
             }
         }
 
-        let keySet = [];
-        for(let i = 0; i < collected.length; i++) {
-            keySet.push(this._privateKeyOf(this.usedAdresses[collected[i].address]));
+        const keySet = [];
+        for (let i = 0; i < collected.length; i++) {
+            keySet.push(this.privateKeyOf(this.usedAdresses[collected[i].address]));
         }
 
-        console.log("collected: ", collected)
-        console.log("accumlated: ", accumlated)
-        console.log("keyset length: ", keySet.length)
+        console.log('collected: ', collected);
+        console.log('accumlated: ', accumlated);
+        console.log('keyset length: ', keySet.length);
 
         output.amount = Unit.fromBTC(output.amount).toSatoshis();
-        let rawTx = new Transaction().feePerKb(fee * 2000)
+        const rawTx = new Transaction().feePerKb(fee * 2000)
             .from(collected)
             .to(output.toAddr, output.amount)
             .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
-            .sign(keySet)
+            .sign(keySet);
 
-        console.log("rawTx:", rawTx)
+        console.log('rawTx:', rawTx);
 
-        let serialized = rawTx.serialize(true);
-        console.log("serialized:", serialized)
+        const serialized = rawTx.serialize(true);
+        console.log('serialized:', serialized);
 
-        let res = await this.api.sendRawTransaction(serialized);
-        if(res === undefined || res.hasOwnProperty('error')) {
+        const res = await this.api.sendRawTransaction(serialized);
+        if (res === undefined || res.hasOwnProperty('error')) {
             throw new Error(res.error);
         }
-        console.log("txHash: ",res.tx.hash);
+        console.log('txHash: ',res.tx.hash);
+        
         return res.tx.hash;
     }
 
-    private _p2pkh(address: string): any {
-        return Script.buildPublicKeyHashOut(address);
-    }
-
     // TODO: we should distinguish `confirmed`, `unconfirmed` and `spendable`
-    async calcBalance(address?:string): Promise<number> {
+    public async calcBalance(address?:string): Promise<number> {
         let sum = 0;
 
         // TODO: use array.reduce ?
-        if(address === undefined) {
-            for(let i = 0; i < this.utxos.length; i++) {
+        if (address === undefined) {
+            for (let i = 0; i < this.utxos.length; i++) {
                 sum += this.utxos[i].amount;
             }
         } else {
-            for(let i = 0; i < this.utxos.length; i++) {
-                if(this.utxos[i].address === address)
+            for (let i = 0; i < this.utxos.length; i++) {
+                if (this.utxos[i].address === address) {
                     sum += this.utxos[i].amount;
+                }
             }
         }
  
         return sum;
     }
 
-    async init(): Promise<void> {
-        if(!this._isInitialized){
+    public async init(): Promise<void> {
+        if (!this.isInitialized) {
             try {
                 await this.scanUsedAddress();
                 await this.getUnspentOutputs();
                 this.balance = await this.calcBalance();
-                this._isInitialized = true;
-            } catch(e) {
-                throw new Error("Failed to initialize wallet!");
+                this.isInitialized = true;
+            } catch (e) {
+                throw new Error('Failed to initialize wallet!');
             }
         }
 
-        console.log("Wallet initialize successfully!");
+        console.log('Wallet initialize successfully!');
     }
 
-    async getUnspentOutputs(confirmations = 1): Promise<UTXO[]> {
+    public async getUnspentOutputs(confirmations: number = 1): Promise<UTXO[]> {
         this.utxos = [];
-        for(let i = 0; i < Object.keys(this.usedAdresses).length; i++) {
-            let address = this.derive(i);
+        for (let i = 0; i < Object.keys(this.usedAdresses).length; i++) {
+            const address = this.derive(i);
             // TODO: batch requrest (https://blockcypher.github.io/documentation/#batching)
-            let addrinfo = await this.api.getAddrInfo(address, true);
-            if(addrinfo === undefined || addrinfo.hasOwnProperty('error')) {
-                throw new Error("Response error!");
+            const addrinfo = await this.api.getAddrInfo(address, true);
+            if (addrinfo === undefined || addrinfo.hasOwnProperty('error')) {
+                throw new Error('Response error!');
             }
-            if(addrinfo.final_balance !==0 && addrinfo.txrefs.length !== 0) {
-                let utxo = addrinfo.txrefs;
-                for(let j = 0; j < utxo.length; j++) {
-                    if(utxo[j].confirmations >= confirmations) {
+            if (addrinfo.final_balance !== 0 && addrinfo.txrefs.length !== 0) {
+                const utxo = addrinfo.txrefs;
+                for (let j = 0; j < utxo.length; j++) {
+                    if (utxo[j].confirmations >= confirmations) {
                         this.utxos.push({
-                            "txid": utxo[j].tx_hash,
-                            "vout": utxo[j].tx_output_n,
-                            "address": address,
-                            "scriptPubKey": this._p2pkh(address).toHex(),
-                            "amount": Unit.fromSatoshis(utxo[j].value).BTC,
-                            "confirmations": utxo[j].confirmations
-                        })
+                            txid: utxo[j].tx_hash,
+                            vout: utxo[j].tx_output_n,
+                            address: address,
+                            scriptPubKey: this.p2pkh(address).toHex(),
+                            amount: Unit.fromSatoshis(utxo[j].value).BTC,
+                            confirmations: utxo[j].confirmations
+                        });
                     }
                 }
             }
@@ -387,27 +374,50 @@ export class BTCWallet {
         return this.utxos;
     }
 
-    async scanUsedAddress(): Promise<number> {
+    public async scanUsedAddress(): Promise<number> {
         let count = 0;
         let i     = 0;
         this.usedAdresses = [];
-        for(i = 0; ; i++) {
-            let res = await this.api.getAddrInfo(this.derive(i));
-            if(res === undefined || res.hasOwnProperty('error')) {
-                throw new Error("Response error!");
+        for (i = 0; ; i++) {
+            const res = await this.api.getAddrInfo(this.derive(i));
+            if (res === undefined || res.hasOwnProperty('error')) {
+                throw new Error('Response error!');
             }
-            if(res.total_received === 0 && res.total_sent === 0) {
+            if (res.total_received === 0 && res.total_sent === 0) {
                 count = count + 1;
             } else {
                 this.usedAdresses[res.address] = i;
                 count = 0;
             }
 
-            if(count > BTCWallet.GAP_LIMIT) {
+            if (count > BTCWallet.GAP_LIMIT) {
                 break;
             }
         }
 
         return i - BTCWallet.GAP_LIMIT;
+    }
+
+    private privateKeyOf(index: number): any {
+        if (this.isLocked === true) {
+            throw new Error('You need to unlock wallet first!');
+        }
+
+        let path: string;
+        const parent = new HDWallet(this.rootXpriv);
+
+        if (parent.network.name === 'testnet') {
+            path = BTCWallet.BIP44_BTC_TESTNET_BASE_PATH + index;
+        } else if (parent.network.name === 'livenet') {
+            path = BTCWallet.BIP44_BTC_MAINNET_BASE_PATH + index;
+        } else {
+            throw new Error('Unexpected network name!');
+        }
+
+        return parent.derive(path).privateKey;
+    }
+
+    private p2pkh(address: string): any {
+        return Script.buildPublicKeyHashOut(address);
     }
 }
