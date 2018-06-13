@@ -33,12 +33,14 @@
 
 .k-line{
     position: absolute;
-    background-image: url(../../res/image/btn_exc_k@2x.png);
+    background-image: url(../../res/image/btn_exc_k.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 44px;
     cursor: pointer;
     right: 35px;
-    background-size: 44px;
-    width: 44px;
-    height: 44px;
+    width: 88px;
+    height: 88px;
 }
 
 .body{

@@ -25,17 +25,17 @@ export let level = logLevel;
  * @example
  */
 export const addWidget = (el: HTMLElement, name: string, props?: Json): Widget => {
-	const w = factory(name);
-	if (!w) {
-		return;
-	}
-	if (props) {
-		w.setProps(props);
-	}
-	w.paint();
-	paintCmd3(el, 'appendChild', [w.tree.link]);
+    const w = factory(name);
+    if (!w) {
+        return;
+    }
+    if (props) {
+        w.setProps(props);
+    }
+    w.paint();
+    paintCmd3(el, 'appendChild', [w.tree.link]);
 
-	return w;
+    return w;
 };
 
 /**
@@ -45,7 +45,7 @@ export const addWidget = (el: HTMLElement, name: string, props?: Json): Widget =
  * 	$b1、$b2表示flag是否含有此键， $b2!=c2表示flag的b2键的值要不等于c2
  */
 export const flagMatch = (pattern: string, flags: Json): boolean => {
-	return parseMatch({ str: pattern.trim() }, flags);
+    return parseMatch({ str: pattern.trim() }, flags);
 };
 
 /**
@@ -54,45 +54,45 @@ export const flagMatch = (pattern: string, flags: Json): boolean => {
  * @example
  */
 export const listDir = (info: any, flags: Json, fileList: string[], suffixMap: Json, without: any, suffixCfg: any): void => {
-	if (without[info.path]) {
-		return;
-	}
-	let scfg;
-	const children = info.children;
-	const files = [];
-	const dirs = [];
-	for (const name in children) {
-		if (!children.hasOwnProperty(name)) {
-			continue;
-		}
-		const info = children[name];
-		if (info.children) {
-			dirs.push(info);
-			continue;
-		}
-		if (!name.startsWith(exclude)) {
-			files.push(info);
-			continue;
-		}
-		const i = name.indexOf('.', exclude.length);
-		if (!flagMatch(name.slice(i + 1), flags)) {
-			continue;
-		}
-		const suf = name.slice(exclude.length, i);
-		if (!suf) {
-			return;
-		}
-		if (!scfg) {
-			scfg = { ...suffixCfg };
-		}
-		scfg[suf] = 'none';
-	}
-	for (let i = files.length - 1; i > -1; i--) {
-		listFile(files[i], flags, fileList, suffixMap, without, scfg || suffixCfg);
-	}
-	for (const d of dirs) {
-		listDir(d, flags, fileList, suffixMap, without, scfg || suffixCfg);
-	}
+    if (without[info.path]) {
+        return;
+    }
+    let scfg;
+    const children = info.children;
+    const files = [];
+    const dirs = [];
+    for (const name in children) {
+        if (!children.hasOwnProperty(name)) {
+            continue;
+        }
+        const info = children[name];
+        if (info.children) {
+            dirs.push(info);
+            continue;
+        }
+        if (!name.startsWith(exclude)) {
+            files.push(info);
+            continue;
+        }
+        const i = name.indexOf('.', exclude.length);
+        if (!flagMatch(name.slice(i + 1), flags)) {
+            continue;
+        }
+        const suf = name.slice(exclude.length, i);
+        if (!suf) {
+            return;
+        }
+        if (!scfg) {
+            scfg = { ...suffixCfg };
+        }
+        scfg[suf] = 'none';
+    }
+    for (let i = files.length - 1; i > -1; i--) {
+        listFile(files[i], flags, fileList, suffixMap, without, scfg || suffixCfg);
+    }
+    for (const d of dirs) {
+        listDir(d, flags, fileList, suffixMap, without, scfg || suffixCfg);
+    }
 };
 
 /**
@@ -107,131 +107,135 @@ export const listDir = (info: any, flags: Json, fileList: string[], suffixMap: J
  * @example
  */
 export const loadDir = (dirs: string[], flags: Json, without: any, suffixCfg: any,
-	successCallback: Function, errorCallback: Function, processCallback?: Function): Json => {
-	const fileList = [];
-	const dirSuffixCfg = {};
-	const suffixMap = { js: [], tpl: [], widget: [] };
-	without = without || {};
-	if (suffixCfg) {
-		for (const k in suffix_cfg) {
-			if (!suffixCfg[k]) {
-				suffixCfg[k] = suffix_cfg[k];
-			}
-		}
-	} else {
-		suffixCfg = suffix_cfg;
-	}
-	for (const dir of dirs) {
-		const info = depend.get(dir);
-		if (!info) {
-			continue;
-		}
-		if (info.children) {
-			listDir(info, flags, fileList, suffixMap, without, findExclude(getParentInfo(info.path), flags, suffixCfg, dirSuffixCfg));
-		} else {
-			listFile(info, flags, fileList, suffixMap, without, suffixCfg);
-		}
-	}
-	// fileList 去除所有的模块文件
-	for (let f, i = fileList.length - 1; i >= 0; i--) {
-		f = fileList[i].path;
-		// 跳过后缀不为".js"的文件
-		if ((f.charCodeAt(f.length - 1) !== 115 || f.charCodeAt(f.length - 2) !== 106 || f.charCodeAt(f.length - 3) !== 46)) {
-			continue;
-		}
-		if (i < fileList.length - 1) {
-			fileList[i] = fileList[fileList.length - 1];
-		}
-		fileList.length--;
-	}
-	// modNames 去除已经加载的模块文件
-	const modNames = suffixMap.js;
-	for (let f, j, i = modNames.length - 1; i >= 0; i--) {
-		f = modNames[i];
-		modNames[i] = f.slice(0, f.length - 3);
-		if (commonjs.check(modNames[i]) !== true) {
-			continue;
-		}
-		if (i < modNames.length - 1) {
-			modNames[i] = modNames[modNames.length - 1];
-		}
-		modNames.length--;
-	}
-	// 获得包括依赖模块在内的等待加载的模块文件
-	// tslint:disable:no-reserved-keywords
-	const set = commonjs.depend(modNames);
-	modNames.length = 0;
-	// fileList 加上模块依赖的文件，合并下载
-	for (let i = set.length - 1; i >= 0; i--) {
-		const m = set[i];
-		if (m.loaded) {
-			continue;
-		}
-		fileList.push(m.info);
-		modNames.push(m.id);
-	}
-	processCallback && processCallback({
-		type: 'requireStart', total: modNames.length,
-		download: modNames.length, fileList: fileList, modNames: modNames
-	});
-	const down = load.create(fileList, (fileMap) => {
-		// 加载所有的模块
-		// tslint:disable:non-literal-require
-		commonjs.require(modNames, fileMap, (mods) => {
-			loadNext(suffixMap, fileMap, mods, successCallback, processCallback);
-		}, errorCallback, processCallback);
-	}, errorCallback, processCallback);
-	down.fileTab = without;
-	load.start(down);
+    successCallback: Function, errorCallback: Function, processCallback?: Function): Json => {
+    const fileList = [];
+    const dirSuffixCfg = {};
+    const suffixMap = { js: [], tpl: [], widget: [] };
+    without = without || {};
+    if (suffixCfg) {
+        for (const k in suffix_cfg) {
+            if (!suffixCfg[k]) {
+                suffixCfg[k] = suffix_cfg[k];
+            }
+        }
+    } else {
+        suffixCfg = suffix_cfg;
+    }
+    for (const dir of dirs) {
+        const info = depend.get(dir);
+        if (!info) {
+            continue;
+        }
+        if (info.children) {
+            listDir(info, flags, fileList, suffixMap, without, findExclude(getParentInfo(info.path), flags, suffixCfg, dirSuffixCfg));
+        } else {
+            listFile(info, flags, fileList, suffixMap, without, suffixCfg);
+        }
+    }
+    // fileList 去除所有的模块文件
+    for (let f, i = fileList.length - 1; i >= 0; i--) {
+        f = fileList[i].path;
+        // 跳过后缀不为".js"的文件
+        if ((f.charCodeAt(f.length - 1) !== 115 || f.charCodeAt(f.length - 2) !== 106 || f.charCodeAt(f.length - 3) !== 46)) {
+            continue;
+        }
+        if (i < fileList.length - 1) {
+            fileList[i] = fileList[fileList.length - 1];
+        }
+        fileList.length--;
+    }
+    // modNames 去除已经加载的模块文件
+    const modNames = suffixMap.js;
+    for (let f, j, i = modNames.length - 1; i >= 0; i--) {
+        f = modNames[i];
+        modNames[i] = f.slice(0, f.length - 3);
+        if (commonjs.check(modNames[i]) !== true) {
+            continue;
+        }
+        if (i < modNames.length - 1) {
+            modNames[i] = modNames[modNames.length - 1];
+        }
+        modNames.length--;
+    }
+    // 获得包括依赖模块在内的等待加载的模块文件
+    // tslint:disable:no-reserved-keywords
+    const set = commonjs.depend(modNames);
+    modNames.length = 0;
+    // fileList 加上模块依赖的文件，合并下载
+    for (let i = set.length - 1; i >= 0; i--) {
+        const m = set[i];
+        if (m.loaded) {
+            continue;
+        }
+        fileList.push(m.info);
+        modNames.push(m.id);
+    }
+    processCallback && processCallback({
+        type: 'requireStart', total: modNames.length,
+        download: modNames.length, fileList: fileList, modNames: modNames
+    });
+    const down = load.create(fileList, (fileMap) => {
+        // 加载所有的模块
+        // tslint:disable:non-literal-require
+        commonjs.require(modNames, fileMap, (mods) => {
+            loadNext(suffixMap, fileMap, mods, successCallback, processCallback);
+        }, errorCallback, processCallback);
+    }, errorCallback, processCallback);
+    down.fileTab = without;
+    load.start(down);
 
-	return down;
+    return down;
 };
 /**
  * @description 加载全局css，并自动加载css上的图片和字体，并加载fileMap的BlobURL资源
  * @example
  */
 export const loadCssRes = (fileMap, callback: Function): ResTab => {
-	// 从fileMap中，提前将全部的BlobURL资源载入资源管理器上
-	const tab = new ResTab();
-	const cssArr = [];
-	const rcssArr = [];
-	for (const k in fileMap) {
-		const type = butil.fileSuffix(k);
-		if (BlobType[type]) {
-			// tslint:disable:prefer-template
-			tab.load(RES_TYPE_BLOB + ':' + (type === 'webp' ? getWebpSrc(k) : k), RES_TYPE_BLOB, k, fileMap);
-		} else if (type === 'css') {
-			cssArr.push(k);
-		} else if (type === 'rcss') {
-			rcssArr.push(k);
-		}
-	}
-	// 加载不包含资源的全局样式和应用全局样式，应该是完全的兼容样式
-	for (const k of cssArr) {
-		loadCss(fileMap[k]);
-	}
-	// 加载包含资源的全局样式和应用全局样式，并自动加载css上的资源，应该是完全的兼容样式
-	let count = 1;
-	const cb = (s: string) => {
-		s && addCssNode(s);
-		count--;
-		count === 0 && callback && callback();
-	};
-	for (const k of rcssArr) {
-		count++;
-		replaceURL(butil.utf8Decode(fileMap[k]), k, fileMap, cb);
-	}
-	cb('');
+    // 从fileMap中，提前将全部的BlobURL资源载入资源管理器上
+    const tab = new ResTab();
+    const cssArr = [];
+    const rcssArr = [];
+    for (const k in fileMap) {
+        const type = butil.fileSuffix(k);
+        if (BlobType[type]) {
+            // tslint:disable:prefer-template
+            tab.load(RES_TYPE_BLOB + ':' + (type === 'webp' ? getWebpSrc(k) : k), RES_TYPE_BLOB, k, fileMap);
+        } else if (type === 'css') {
+            cssArr.push(k);
+        } else if (type === 'rcss') {
+            rcssArr.push(k);
+        }
+    }
+    // 加载不包含资源的全局样式和应用全局样式，应该是完全的兼容样式
+    for (const k of cssArr) {
+        loadCss(fileMap[k]);
+    }
+    // 加载包含资源的全局样式和应用全局样式，并自动加载css上的资源，应该是完全的兼容样式
+    let count = 1;
+    const cb = (s: string) => {
+        s && addCssNode(s);
+        count--;
+        count === 0 && callback && callback();
+    };
+    for (const k of rcssArr) {
+        count++;
+        replaceURL(butil.utf8Decode(fileMap[k]), k, fileMap, cb);
+    }
+    cb('');
 
-	return tab;
+    return tab;
 };
 /**
  * @description 设置tpl模板加载函数
  * @example
  */
 export const setTplFun = (func: Function) => {
-	tplFun = func;
+    tplFun = func;
 };
+
+// export const loadAndRegisterWidget = (name:string,) => {
+//     register('inputNew', widget, tpl, css, config, forelet);
+// }
 
 // ============================== 本地
 // 排除前缀
@@ -247,13 +251,13 @@ const CSS_URL = /url\(([^\)"':]*)\)/g;
 
 // 默认的后缀配置处理, "downonly"表示仅下载，如果本地有则不加载， "none"表示不下载不加载
 const suffix_cfg = {
-	png: 'downonly', jpg: 'downonly', jpeg: 'downonly',
-	webp: 'downonly', gif: 'downonly', svg: 'downonly', mp3: 'downonly', ogg: 'downonly', aac: 'downonly'
+    png: 'downonly', jpg: 'downonly', jpeg: 'downonly',
+    webp: 'downonly', gif: 'downonly', svg: 'downonly', mp3: 'downonly', ogg: 'downonly', aac: 'downonly'
 };
 
 // tpl模板加载函数
 let tplFun: Function = (tplStr, filename) => {
-	return { value: toFun(tplStr, filename), path: filename, wpath: null };
+    return { value: toFun(tplStr, filename), path: filename, wpath: null };
 };
 
 /**
@@ -261,30 +265,30 @@ let tplFun: Function = (tplStr, filename) => {
  * @example
  */
 const getWebpSrc = (path): string => {
-	const s = path.slice(0, path.length - 5);
-	let s1 = s + '.png';
-	if (depend.get(s1)) {
-		return s1;
-	}
-	s1 = s + '.jpg';
-	if (depend.get(s1)) {
-		return s1;
-	}
-	s1 = s + '.jpeg';
-	if (depend.get(s1)) {
-		return s1;
-	}
+    const s = path.slice(0, path.length - 5);
+    let s1 = s + '.png';
+    if (depend.get(s1)) {
+        return s1;
+    }
+    s1 = s + '.jpg';
+    if (depend.get(s1)) {
+        return s1;
+    }
+    s1 = s + '.jpeg';
+    if (depend.get(s1)) {
+        return s1;
+    }
 
-	return path;
+    return path;
 };
 /**
  * @description 寻找父目录的文件信息
  * @example
  */
 const getParentInfo = (path): string => {
-	const i = path.lastIndexOf('/');
+    const i = path.lastIndexOf('/');
 
-	return (i > 0) ? depend.get(path.slice(0, i + 1)) : undefined;
+    return (i > 0) ? depend.get(path.slice(0, i + 1)) : undefined;
 };
 
 /**
@@ -292,74 +296,74 @@ const getParentInfo = (path): string => {
  * @example
  */
 const findExclude = (parent: Json, flags: Json, suffixCfg: Json, cache: Json): Json => {
-	let scfg;
-	while (parent) {
-		let c = cache[parent.path];
-		if (c === undefined) {
-			const children = parent.children;
-			for (const name in children) {
-				if (!children.hasOwnProperty(name)) {
-					continue;
-				}
-				if (children[name].children) {
-					continue;
-				}
-				if (!name.startsWith(exclude)) {
-					continue;
-				}
-				const i = name.indexOf('.', exclude.length);
-				if (!flagMatch(name.slice(i + 1), flags)) {
-					continue;
-				}
-				const suf = name.slice(exclude.length, i);
-				if (!suf) {
-					continue;
-				}
-				if (!c) {
-					c = {};
-				}
-				c[suf] = 'none';
-			}
-			cache[parent.path] = c || null;
-		}
-		if (c) {
-			if (!scfg) {
-				scfg = { ...suffixCfg };
-			}
-			Object.assign(scfg, c);
-		}
-		parent = getParentInfo(parent.path);
-	}
+    let scfg;
+    while (parent) {
+        let c = cache[parent.path];
+        if (c === undefined) {
+            const children = parent.children;
+            for (const name in children) {
+                if (!children.hasOwnProperty(name)) {
+                    continue;
+                }
+                if (children[name].children) {
+                    continue;
+                }
+                if (!name.startsWith(exclude)) {
+                    continue;
+                }
+                const i = name.indexOf('.', exclude.length);
+                if (!flagMatch(name.slice(i + 1), flags)) {
+                    continue;
+                }
+                const suf = name.slice(exclude.length, i);
+                if (!suf) {
+                    continue;
+                }
+                if (!c) {
+                    c = {};
+                }
+                c[suf] = 'none';
+            }
+            cache[parent.path] = c || null;
+        }
+        if (c) {
+            if (!scfg) {
+                scfg = { ...suffixCfg };
+            }
+            Object.assign(scfg, c);
+        }
+        parent = getParentInfo(parent.path);
+    }
 
-	return scfg || suffixCfg;
+    return scfg || suffixCfg;
 };
 /**
  * @description 列出文件
  * @example
  */
 const listFile = (info: Json, flags: Json, fileList: string[], suffixMap: Json, without: any, suffixCfg: any): void => {
-	const path = info.path;
-	if (without[path]) {
-		return;
-	}
-	const suffix = butil.fileSuffix(path);
-	const type = suffixCfg[suffix];
-	if (type === 'none') {
-		return;
-	}
-	if (type === 'downonly') {
-		if (load.isLocal(path)) {
-			return;
-		}
-	}
-	fileList && fileList.push(info);
-	if (!suffixMap) {
-		return;
-	}
-	const arr = suffixMap[suffix];
-	if (arr) {
-		arr.push(path);
-	}
+    const path = info.path;
+    if (without[path]) {
+        return;
+    }
+    const suffix = butil.fileSuffix(path);
+    const type = suffixCfg[suffix];
+    if (type === 'none') {
+        return;
+    }
+    if (type === 'downonly') {
+        if (load.isLocal(path)) {
+            return;
+        }
+    }
+    fileList && fileList.push(info);
+    if (!suffixMap) {
+        return;
+    }
+    const arr = suffixMap[suffix];
+    if (arr) {
+        arr.push(path);
+    }
 };
 
 /**
@@ -367,11 +371,11 @@ const listFile = (info: Json, flags: Json, fileList: string[], suffixMap: Json, 
  * @example
  */
 const loadCss = (data: ArrayBuffer): HTMLStyleElement => {
-	const url = URL.createObjectURL(new Blob([data], { type: 'text/css' }));
+    const url = URL.createObjectURL(new Blob([data], { type: 'text/css' }));
 
-	return loadCssNode(url, () => {
-		URL.revokeObjectURL(url);
-	});
+    return loadCssNode(url, () => {
+        URL.revokeObjectURL(url);
+    });
 };
 
 /**
@@ -379,29 +383,29 @@ const loadCss = (data: ArrayBuffer): HTMLStyleElement => {
  * @example
  */
 const replaceURL = (css: string, path: string, fileMap, callback: Function) => {
-	const tab = new ResTab();
-	let count = 1;
-	const cb = () => {
-		count--;
-		count === 0 && callback(css.replace(CSS_URL, (str: string, s: string) => {
-			s = butil.relativePath(s, path);
-			const res = tab.get(RES_TYPE_BLOB + ':' + s);
-			if (!res) {
-				return '';
-			}
-			res.use();
+    const tab = new ResTab();
+    let count = 1;
+    const cb = () => {
+        count--;
+        count === 0 && callback(css.replace(CSS_URL, (str: string, s: string) => {
+            s = butil.relativePath(s, path);
+            const res = tab.get(RES_TYPE_BLOB + ':' + s);
+            if (!res) {
+                return '';
+            }
+            res.use();
 
-			return 'url(' + res.link + ')';
-		}));
-	};
-	css.replace(CSS_URL, (str: string, s: string) => {
-		count++;
-		s = butil.relativePath(s, path);
-		tab.load(RES_TYPE_BLOB + ':' + s, RES_TYPE_BLOB, s, fileMap, cb, cb);
+            return 'url(' + res.link + ')';
+        }));
+    };
+    css.replace(CSS_URL, (str: string, s: string) => {
+        count++;
+        s = butil.relativePath(s, path);
+        tab.load(RES_TYPE_BLOB + ':' + s, RES_TYPE_BLOB, s, fileMap, cb, cb);
 
-		return '';
-	});
-	cb();
+        return '';
+    });
+    cb();
 };
 
 /**
@@ -409,27 +413,27 @@ const replaceURL = (css: string, path: string, fileMap, callback: Function) => {
  * @example
  */
 const loadNext = (suffixMap: Json, fileMap: Json, mods: Mod[], successCallback?: Function, processCallback?: Function): void => {
-	task(() => {
-		processCallback && processCallback({ type: 'loadTpl' });
-		const arr = suffixMap.tpl;
-		for (const f of arr) {
-			loadTpl(f, fileMap);
-		}
-	}, undefined, 3000000, 1);
-	task(() => {
-		processCallback && processCallback({ type: 'loadWidget' });
-		const arr = suffixMap.widget;
-		for (const f of arr) {
-			loadWidget(f, fileMap);
-		}
-	}, undefined, 3000000, 1);
-	task(() => {
-		processCallback && processCallback({ type: 'loadDirCompleted' });
-		for (const m of mods) {
-			loadDirCompleted(m, fileMap);
-		}
-		successCallback && successCallback(fileMap, mods);
-	}, undefined, 3000000, 1);
+    task(() => {
+        processCallback && processCallback({ type: 'loadTpl' });
+        const arr = suffixMap.tpl;
+        for (const f of arr) {
+            loadTpl(f, fileMap);
+        }
+    }, undefined, 3000000, 1);
+    task(() => {
+        processCallback && processCallback({ type: 'loadWidget' });
+        const arr = suffixMap.widget;
+        for (const f of arr) {
+            loadWidget(f, fileMap);
+        }
+    }, undefined, 3000000, 1);
+    task(() => {
+        processCallback && processCallback({ type: 'loadDirCompleted' });
+        for (const m of mods) {
+            loadDirCompleted(m, fileMap);
+        }
+        successCallback && successCallback(fileMap, mods);
+    }, undefined, 3000000, 1);
 };
 
 /**
@@ -437,22 +441,22 @@ const loadNext = (suffixMap: Json, fileMap: Json, mods: Mod[], successCallback?:
  * @example
  */
 const loadTpl = (filename: string, fileMap: Json): void => {
-	let widget;
-	let forelet;
-	const name = filename.slice(0, filename.length - 4);
-	const s = name + '.widget'; // 忽略有widget配置的组件
-	if (fileMap[s]) {
-		return;
-	}
-	const mod = commonjs.relativeGet(name);
-	if (mod) {
-		widget = getExportFunc(mod, checkType, Widget);
-		forelet = getExportFunc(mod, checkInstance, Forelet);
-	}
-	const config = loadCfg(name + '.cfg', fileMap, name);
-	const tpl = loadTpl1(filename, fileMap, name);
-	const css = loadWcss(name + '.wcss', fileMap, name);
-	register(name.replace(/\//g, '-'), widget, tpl, css, config, forelet);
+    let widget;
+    let forelet;
+    const name = filename.slice(0, filename.length - 4);
+    const s = name + '.widget'; // 忽略有widget配置的组件
+    if (fileMap[s]) {
+        return;
+    }
+    const mod = commonjs.relativeGet(name);
+    if (mod) {
+        widget = getExportFunc(mod, checkType, Widget);
+        forelet = getExportFunc(mod, checkInstance, Forelet);
+    }
+    const config = loadCfg(name + '.cfg', fileMap, name);
+    const tpl = loadTpl1(filename, fileMap, name);
+    const css = loadWcss(name + '.wcss', fileMap, name);
+    register(name.replace(/\//g, '-'), widget, tpl, css, config, forelet);
 };
 
 /**
@@ -460,47 +464,47 @@ const loadTpl = (filename: string, fileMap: Json): void => {
  * @example
  */
 const loadWidget = (filename: string, fileMap: Json): void => {
-	let widget;
-	let config;
-	let tpl;
-	let css;
-	let forelet;
-	const name = filename.slice(0, filename.length - 7);
-	const cfg = JSON.parse(butil.utf8Decode(fileMap[filename]));
-	if (cfg.js || cfg.widget) {
-		const mod = commonjs.relativeGet(commonjs.modName(cfg.js || cfg.widget), name);
-		if (!mod) {
-			warn(level, 'widget not found, name:', name, cfg.js || cfg.widget);
+    let widget;
+    let config;
+    let tpl;
+    let css;
+    let forelet;
+    const name = filename.slice(0, filename.length - 7);
+    const cfg = JSON.parse(butil.utf8Decode(fileMap[filename]));
+    if (cfg.js || cfg.widget) {
+        const mod = commonjs.relativeGet(commonjs.modName(cfg.js || cfg.widget), name);
+        if (!mod) {
+            warn(level, 'widget not found, name:', name, cfg.js || cfg.widget);
 
-			return;
-		}
-		widget = getExportFunc(mod, checkType, Widget);
-	}
-	if (cfg.cfg) {
-		config = loadCfg(cfg.cfg, fileMap, name);
-		if (!config) {
-			warn(level, 'widget cfg not found, name:', name, cfg.cfg);
-		}
-	}
-	if (cfg.css) {
-		css = loadWcss(cfg.css, fileMap, name);
-		if (!css) {
-			warn(level, 'widget css not found, name:', name, cfg.css);
-		}
-	}
-	if (cfg.tpl) {
-		tpl = loadTpl1(cfg.tpl, fileMap, name);
-	}
-	if (cfg.forelet) {
-		const mod = commonjs.relativeGet(commonjs.modName(cfg.forelet), name);
-		if (!mod) {
-			warn(level, 'widget forelet not found, name:', name, cfg.forelet);
+            return;
+        }
+        widget = getExportFunc(mod, checkType, Widget);
+    }
+    if (cfg.cfg) {
+        config = loadCfg(cfg.cfg, fileMap, name);
+        if (!config) {
+            warn(level, 'widget cfg not found, name:', name, cfg.cfg);
+        }
+    }
+    if (cfg.css) {
+        css = loadWcss(cfg.css, fileMap, name);
+        if (!css) {
+            warn(level, 'widget css not found, name:', name, cfg.css);
+        }
+    }
+    if (cfg.tpl) {
+        tpl = loadTpl1(cfg.tpl, fileMap, name);
+    }
+    if (cfg.forelet) {
+        const mod = commonjs.relativeGet(commonjs.modName(cfg.forelet), name);
+        if (!mod) {
+            warn(level, 'widget forelet not found, name:', name, cfg.forelet);
 
-			return;
-		}
-		forelet = getExportFunc(mod, checkInstance, Forelet);
-	}
-	register(name.replace(/\//g, '-'), widget, tpl, css, config, forelet);
+            return;
+        }
+        forelet = getExportFunc(mod, checkInstance, Forelet);
+    }
+    register(name.replace(/\//g, '-'), widget, tpl, css, config, forelet);
 };
 
 /**
@@ -508,22 +512,22 @@ const loadWidget = (filename: string, fileMap: Json): void => {
  * @example
  */
 const loadTpl1 = (file: string, fileMap: Json, widget: string): Json => {
-	const s = butil.relativePath(file, widget);
-	let tpl = getCache(s);
-	if (!tpl) {
-		const data = fileMap[s];
-		if (!data) {
-			warn(level, 'widget tpl not found, name:', widget, file);
+    const s = butil.relativePath(file, widget);
+    let tpl = getCache(s);
+    if (!tpl) {
+        const data = fileMap[s];
+        if (!data) {
+            warn(level, 'widget tpl not found, name:', widget, file);
 
-			return;
-		}
-		tpl = tplFun(butil.utf8Decode(data), s);
-		setCache(s, tpl);
-	} else if (!tpl.value) {
-		tpl.value = toFun(butil.utf8Decode(fileMap[s]), s);
-	}
+            return;
+        }
+        tpl = tplFun(butil.utf8Decode(data), s);
+        setCache(s, tpl);
+    } else if (!tpl.value) {
+        tpl.value = toFun(butil.utf8Decode(fileMap[s]), s);
+    }
 
-	return tpl;
+    return tpl;
 };
 
 /**
@@ -531,96 +535,96 @@ const loadTpl1 = (file: string, fileMap: Json, widget: string): Json => {
  * @example
  */
 const loadCfg = (cfg: string | string[], fileMap: Json, widget: string): Json => {
-	if (Array.isArray(cfg)) {
-		let c;
-		for (const f of cfg) {
-			let config = loadCfg1(f, fileMap, widget);
-			if (!config) {
-				continue;
-			}
-			config = config.value;
-			if (!config) {
-				continue;
-			}
-			if (!c) {
-				c = {};
-			}
-			for (const k in config) {
-				c[k] = config[k];
-			}
-		}
+    if (Array.isArray(cfg)) {
+        let c;
+        for (const f of cfg) {
+            let config = loadCfg1(f, fileMap, widget);
+            if (!config) {
+                continue;
+            }
+            config = config.value;
+            if (!config) {
+                continue;
+            }
+            if (!c) {
+                c = {};
+            }
+            for (const k in config) {
+                c[k] = config[k];
+            }
+        }
 
-		return c ? { value: c } : null;
-	} else {
-		return loadCfg1(cfg, fileMap, widget);
-	}
+        return c ? { value: c } : null;
+    } else {
+        return loadCfg1(cfg, fileMap, widget);
+    }
 };
 /**
  * @description 加载配置
  * @example
  */
 const loadCfg1 = (cfg: string, fileMap: Json, widget: string): Json => {
-	const s = butil.relativePath(cfg, widget);
-	let config = getCache(s);
-	if (!config) {
-		const data = fileMap[s];
-		if (!data) {
-			return;
-		}
-		config = { value: JSON.parse(butil.utf8Decode(data)) };
-		setCache(s, config);
-	} else if (!config.value) {
-		config.value = parse(butil.utf8Decode(fileMap[s]), s);
-	}
+    const s = butil.relativePath(cfg, widget);
+    let config = getCache(s);
+    if (!config) {
+        const data = fileMap[s];
+        if (!data) {
+            return;
+        }
+        config = { value: JSON.parse(butil.utf8Decode(data)) };
+        setCache(s, config);
+    } else if (!config.value) {
+        config.value = parse(butil.utf8Decode(fileMap[s]), s);
+    }
 
-	return config;
+    return config;
 };
 /**
  * @description 加载配置
  * @example
  */
 const loadWcss = (wcss: string | string[], fileMap: Json, widget: string): Json => {
-	if (Array.isArray(wcss)) {
-		let sheet;
-		for (const f of wcss) {
-			let css = loadWcss1(f, fileMap, widget);
-			if (!css) {
-				continue;
-			}
-			css = css.value;
-			if (!css) {
-				continue;
-			}
-			if (!sheet) {
-				sheet = new Map();
-			}
-			mapCopy(css, sheet);
-		}
+    if (Array.isArray(wcss)) {
+        let sheet;
+        for (const f of wcss) {
+            let css = loadWcss1(f, fileMap, widget);
+            if (!css) {
+                continue;
+            }
+            css = css.value;
+            if (!css) {
+                continue;
+            }
+            if (!sheet) {
+                sheet = new Map();
+            }
+            mapCopy(css, sheet);
+        }
 
-		return { value: sheet };
-	} else {
-		return loadWcss1(wcss, fileMap, widget);
-	}
+        return { value: sheet };
+    } else {
+        return loadWcss1(wcss, fileMap, widget);
+    }
 };
 /**
  * @description 加载样式
  * @example
  */
 const loadWcss1 = (wcss: string, fileMap: Json, widget: string): Json => {
-	const s = butil.relativePath(wcss, widget);
-	let css = getCache(s);
-	if (!css) {
-		const data = fileMap[s];
-		if (!data) {
-			return;
-		}
-		css = { value: parse(butil.utf8Decode(data), s) };
-		setCache(s, css);
-	} else if (!css.value) {
-		css.value = parse(butil.utf8Decode(fileMap[s]), s);
-	}
+    const s = butil.relativePath(wcss, widget);
+    let css = getCache(s);
+    if (!css) {
+        const data = fileMap[s];
+        if (!data) {
+            return;
+        }
+        css = { value: parse(butil.utf8Decode(data), s) };
+        setCache(s, css);
+    } else if (!css.value) {
+        css.value = parse(butil.utf8Decode(fileMap[s]), s);
+    }
 
-	return css;
+    return css;
 };
 
 /**
@@ -628,8 +632,8 @@ const loadWcss1 = (wcss: string, fileMap: Json, widget: string): Json => {
  * @example
  */
 const loadDirCompleted = (mod: Json, fileMap: Json): void => {
-	const func = mod.loadDirCompleted;
-	func && func(fileMap);
+    const func = mod.loadDirCompleted;
+    func && func(fileMap);
 };
 
 /**
@@ -639,34 +643,34 @@ const loadDirCompleted = (mod: Json, fileMap: Json): void => {
  * 	$b1、$b2表示flag是否含有此键， $b2!=c2表示flag的b2键的值要不等于c2
  */
 export const parseMatch = (pattern: any, flags: Json): boolean => {
-	let s = pattern.str;
-	if (s.startsWith('and(')) {
-		pattern.str = s.slice(4).trim();
+    let s = pattern.str;
+    if (s.startsWith('and(')) {
+        pattern.str = s.slice(4).trim();
 
-		return parseAnd(pattern, flags);
-	}
-	if (s.startsWith('or(')) {
-		pattern.str = s.slice(3).trim();
+        return parseAnd(pattern, flags);
+    }
+    if (s.startsWith('or(')) {
+        pattern.str = s.slice(3).trim();
 
-		return parseOr(pattern, flags);
-	}
-	if (s.startsWith('not(')) {
-		pattern.str = s.slice(4).trim();
+        return parseOr(pattern, flags);
+    }
+    if (s.startsWith('not(')) {
+        pattern.str = s.slice(4).trim();
 
-		return parseNot(pattern, flags);
-	}
-	if (s.startsWith('(')) {
-		pattern.str = s.slice(1).trim();
-		const r = parseMatch(pattern, flags);
-		s = pattern.str;
-		if (s.charCodeAt(0) !== 41) { // ")"
-			throw new Error('parse error, invalid pattern:' + pattern.str);
-		}
+        return parseNot(pattern, flags);
+    }
+    if (s.startsWith('(')) {
+        pattern.str = s.slice(1).trim();
+        const r = parseMatch(pattern, flags);
+        s = pattern.str;
+        if (s.charCodeAt(0) !== 41) { // ")"
+            throw new Error('parse error, invalid pattern:' + pattern.str);
+        }
 
-		return r;
-	}
+        return r;
+    }
 
-	return parseEqual(pattern, flags);
+    return parseEqual(pattern, flags);
 };
 
 /**
@@ -674,85 +678,85 @@ export const parseMatch = (pattern: any, flags: Json): boolean => {
  * @example
  */
 const parseNot = (pattern: any, flags: Json): boolean => {
-	const r = parseMatch(pattern, flags);
-	const s = pattern.str;
-	if (s.charCodeAt(0) !== 41) { // ")"
-		throw new Error('parse error, invalid pattern:' + pattern.str);
-	}
-	pattern.str = s.slice(1).trim();
+    const r = parseMatch(pattern, flags);
+    const s = pattern.str;
+    if (s.charCodeAt(0) !== 41) { // ")"
+        throw new Error('parse error, invalid pattern:' + pattern.str);
+    }
+    pattern.str = s.slice(1).trim();
 
-	return !r;
+    return !r;
 };
 /**
  * @description 分析or， ","分隔， ")"结束
  * @example
  */
 const parseOr = (pattern: any, flags: Json): boolean => {
-	let rr = false;
-	// tslint:disable-next-line:no-constant-condition
-	while (true) {
-		const r = parseMatch(pattern, flags);
-		const s = pattern.str;
-		if (s.charCodeAt(0) === 44) { // ","
-			pattern.str = s.slice(1).trim();
-		} else if (s.charCodeAt(0) === 41) { // ")"
-			pattern.str = s.slice(1).trim();
+    let rr = false;
+    // tslint:disable-next-line:no-constant-condition
+    while (true) {
+        const r = parseMatch(pattern, flags);
+        const s = pattern.str;
+        if (s.charCodeAt(0) === 44) { // ","
+            pattern.str = s.slice(1).trim();
+        } else if (s.charCodeAt(0) === 41) { // ")"
+            pattern.str = s.slice(1).trim();
 
-			return rr || r;
-		} else {
-			throw new Error('parse error, invalid pattern:' + pattern.str);
-		}
-		rr = rr || r;
-	}
+            return rr || r;
+        } else {
+            throw new Error('parse error, invalid pattern:' + pattern.str);
+        }
+        rr = rr || r;
+    }
 };
 /**
  * @description 分析and， ","分隔， ")"结束
  * @example
  */
 const parseAnd = (pattern: any, flags: Json): boolean => {
-	let rr = true;
-	// tslint:disable-next-line:no-constant-condition
-	while (true) {
-		const r = parseMatch(pattern, flags);
-		const s = pattern.str;
-		if (s.charCodeAt(0) === 44) { // ","
-			pattern.str = s.slice(1).trim();
-		} else if (s.charCodeAt(0) === 41) { // ")"
-			pattern.str = s.slice(1).trim();
+    let rr = true;
+    // tslint:disable-next-line:no-constant-condition
+    while (true) {
+        const r = parseMatch(pattern, flags);
+        const s = pattern.str;
+        if (s.charCodeAt(0) === 44) { // ","
+            pattern.str = s.slice(1).trim();
+        } else if (s.charCodeAt(0) === 41) { // ")"
+            pattern.str = s.slice(1).trim();
 
-			return rr && r;
-		} else {
-			throw new Error('parse error, invalid pattern:' + pattern.str);
-		}
-		rr = rr && r;
-	}
+            return rr && r;
+        } else {
+            throw new Error('parse error, invalid pattern:' + pattern.str);
+        }
+        rr = rr && r;
+    }
 };
 /**
  * @description 分析变量， 判断 = != 3种情况
  * @example
  */
 const parseEqual = (pattern: any, flags: Json): boolean => {
-	const v1 = parseValue(pattern, flags);
-	const s = pattern.str;
-	if (s.charCodeAt(0) === 41) { // ")"
-		return v1 !== false && v1 !== undefined;
-	}
-	if (s.charCodeAt(0) === 44) { // ","
-		return v1 !== false && v1 !== undefined;
-	}
-	if (s.charCodeAt(0) === 61) { // "="
-		pattern.str = s.slice(1).trim();
-		const v2 = parseValue(pattern, flags);
+    const v1 = parseValue(pattern, flags);
+    const s = pattern.str;
+    if (s.charCodeAt(0) === 41) { // ")"
+        return v1 !== false && v1 !== undefined;
+    }
+    if (s.charCodeAt(0) === 44) { // ","
+        return v1 !== false && v1 !== undefined;
+    }
+    if (s.charCodeAt(0) === 61) { // "="
+        pattern.str = s.slice(1).trim();
+        const v2 = parseValue(pattern, flags);
 
-		return v1 === v2;
-	}
-	if (s.charCodeAt(0) === 33 && s.charCodeAt(1) === 61) {// "!="
-		pattern.str = s.slice(2).trim();
-		const v2 = parseValue(pattern, flags);
+        return v1 === v2;
+    }
+    if (s.charCodeAt(0) === 33 && s.charCodeAt(1) === 61) {// "!="
+        pattern.str = s.slice(2).trim();
+        const v2 = parseValue(pattern, flags);
 
-		return v1 !== v2;
-	}
-	throw new Error('parse error, invalid pattern:' + pattern.str);
+        return v1 !== v2;
+    }
+    throw new Error('parse error, invalid pattern:' + pattern.str);
 };
 
 /**
@@ -760,29 +764,29 @@ const parseEqual = (pattern: any, flags: Json): boolean => {
  * @example
  */
 const parseValue = (pattern: any, flags: Json): any => {
-	const s = pattern.str;
-	if (s.charCodeAt(0) === 36) { // "$"
-		const arr = var_reg.exec(s);
-		if (!arr) {
-			throw new Error('parse error, invalid pattern:' + pattern.str);
-		}
-		pattern.str = s.slice(arr[0].length);
+    const s = pattern.str;
+    if (s.charCodeAt(0) === 36) { // "$"
+        const arr = var_reg.exec(s);
+        if (!arr) {
+            throw new Error('parse error, invalid pattern:' + pattern.str);
+        }
+        pattern.str = s.slice(arr[0].length);
 
-		return getValue(flags, arr[1]);
-	}
-	let arr = str_reg.exec(s);
-	if (arr) {
-		pattern.str = s.slice(arr[0].length);
+        return getValue(flags, arr[1]);
+    }
+    let arr = str_reg.exec(s);
+    if (arr) {
+        pattern.str = s.slice(arr[0].length);
 
-		return arr[1];
-	}
-	arr = number_reg.exec(s);
-	if (!arr) {
-		throw new Error('parse error, invalid pattern:' + pattern.str);
-	}
-	pattern.str = s.slice(arr[0].length);
+        return arr[1];
+    }
+    arr = number_reg.exec(s);
+    if (!arr) {
+        throw new Error('parse error, invalid pattern:' + pattern.str);
+    }
+    pattern.str = s.slice(arr[0].length);
 
-	return parseFloat(arr[1]);
+    return parseFloat(arr[1]);
 };
 
 // ============================== 立即执行

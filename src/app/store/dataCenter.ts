@@ -12,6 +12,14 @@ export class DataCenter {
     public addrs: string[] = [];
     public timerRef: number = 0;
 
+    public currencyList: any[] = [
+        { name: 'ETH', description: 'Ethereum' }
+        , { name: 'BTC', description: 'Bit coin' }
+        , { name: 'EOS', description: 'EOS currency' }
+        , { name: 'ETC', description: 'Ethereum Classic' }
+        , { name: 'BCH', description: 'Bitcoin Cash' }
+        , { name: 'XRP', description: 'Ripple' }];
+
     /**
      * 初始化
      */

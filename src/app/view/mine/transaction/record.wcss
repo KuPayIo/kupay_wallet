@@ -27,7 +27,7 @@
     background: white;
 }
 .no-record{
-    background-image : url(../../../res/image/img_none_record@2x.png) ;
+    background-image : url(../../../res/image/img_none_record.png) ;
     background-repeat: no-repeat;
     background-size: 300px 300px;
     background-position-x: center;
