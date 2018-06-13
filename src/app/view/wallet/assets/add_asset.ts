@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { dataCenter } from '../../../store/dataCenter';
 import { register } from '../../../store/store';
 import { getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 
@@ -35,12 +36,7 @@ export class AddAsset extends Widget {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
 
-        const currencyList = [{ icon: '../../../res/image/BTC.png', name: 'ETH', description: 'Ethereum', isChoose: false }
-            , { icon: '../../../res/image/ETH.png', name: 'BTC', description: 'Bit coin', isChoose: false }
-            , { icon: '../../../res/image/EOS.png', name: 'EOS', description: 'EOS currency', isChoose: false }
-            , { icon: '../../../res/image/ETC.png', name: 'ETC', description: 'Ethereum Classic', isChoose: false }
-            , { icon: '../../../res/image/BCH.png', name: 'BCH', description: 'Bitcoin Cash', isChoose: false }
-            , { icon: '../../../res/image/XRP.png', name: 'XRP', description: 'Ripple', isChoose: false }];
+        const currencyList = dataCenter.currencyList;
 
         const showCurrencys = wallet.showCurrencys || [];
 

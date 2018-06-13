@@ -104,20 +104,11 @@ const parseCurrencyList = (wallet) => {
     const showCurrencys = (wallet && wallet.showCurrencys) || ['ETH', 'BTC', 'EOS'];
 
     // todo  这里需要正确的处理钱包货币
-    showCurrencys.forEach(v => {
-        let r = '';
-        switch (v) {
-            case 'BTC': r = 'Bit coin'; break;
-            case 'EOS': r = 'EOS currency'; break;
-            case 'ETH': r = 'Ethereum'; break;
-            case 'ETC': r = 'Ethereum Classic'; break;
-            case 'BCH': r = 'Bitcoin Cash'; break;
-            case 'XRP': r = 'Ripple'; break;
-            default:
-        }
+    dataCenter.currencyList.forEach(v => {
+        if (showCurrencys.indexOf(v.name) < 0) return;
         list.push({
-            currencyName: v,
-            currencyFullName: r,
+            currencyName: v.name,
+            currencyFullName: v.description,
             balance: '0',
             balanceValue: '≈0.00 CNY'
         });
