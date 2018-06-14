@@ -15,12 +15,11 @@ export class Api {
 
     constructor() {
         // https://blockcypher.github.io/documentation/#websockets
-        // transaction json format: https://blockcypher.github.io/documentation/#transactions    
+        // transaction json format: https://blockcypher.github.io/documentation/#transactions
         this.wss = new WebSocket(Api.WEBSOCKET_URL);
         const self = this;
         self.wss.onmessage = (event) => {
             const payload = JSON.parse(event.data);
-            console.log(payload);
             // filter "pong" message
             if (payload.event !== 'pong') {
                 this.eventQueue.push(payload);

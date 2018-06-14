@@ -51,7 +51,7 @@ export class GaiaWallet {
     public static fromJSON(jsonstring: string) : GaiaWallet {
         const wlt = JSON.parse(jsonstring);
         const gwlt = new GaiaWallet();
-        
+
         gwlt._nickName = wlt.nickname;
         gwlt._address = wlt.address;
         gwlt._balance = wlt.balance;
@@ -94,12 +94,12 @@ export class GaiaWallet {
 
     /**
      * recover wallet from mnenomic words
-     * 
+     *
      * @static
      * @param {string} mnemonic words
      * @param {string} language what's the language of the mnenomic words
      * @param {string} passwd used to encrypt the mnemonic
-     * @returns {GaiaWallet} 
+     * @returns {GaiaWallet}
      * @memberof GaiaWallet
      */
     public static fromMnemonic(mnemonic: string, language: string, passwd: string) : GaiaWallet {
@@ -113,7 +113,7 @@ export class GaiaWallet {
         }
         const seedBuffer = mn.toSeed(mnemonic);
         const rootNode = WalletHD.fromMasterSeed(Buffer(seedBuffer, 'hex'));
-        
+
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
 
@@ -125,14 +125,14 @@ export class GaiaWallet {
 
         return gwlt;
     }
-    
+
     /**
      * recovery wallet from a keystore file
-     * 
+     *
      * @static
      * @param {string} v3string stringfy from keystore file
      * @param {string} passwd used to decrypt keystore file
-     * @returns 
+     * @returns
      * @memberof GaiaWallet
      */
     public static fromKeyStore(v3string: string, passwd: string) : GaiaWallet {
@@ -146,11 +146,11 @@ export class GaiaWallet {
 
     /**
      * recover wallet from private key
-     * 
+     *
      * @static
      * @param {string} passwd
-     * @param {string} privKey 
-     * @returns {GaiaWallet} 
+     * @param {string} privKey
+     * @returns {GaiaWallet}
      * @memberof GaiaWallet
      */
     public static fromPrivateKey(passwd: string, privKey: string) : GaiaWallet {
@@ -165,7 +165,7 @@ export class GaiaWallet {
 
     /**
      * generate new wallet
-     * 
+     *
      * @static
      * @param {string} language only support "english", "chinese_simplified" and "chinese_traditional"
      * @param {number} strength password strength must be the mutiply of 8 and at least 128
@@ -186,7 +186,7 @@ export class GaiaWallet {
         const mnemonic = mn.generate(strength);
         const seedBuffer = mn.toSeed(mnemonic);
         const rootNode = WalletHD.fromMasterSeed(Buffer(seedBuffer, 'hex'));
-        
+
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
 
@@ -202,9 +202,9 @@ export class GaiaWallet {
 
     /**
      * This is a CPU intensive work, may take about 10 seconds!!!
-     * 
+     *
      * @param {string} passwd used to decrypt the keystore file
-     * @returns {string} 
+     * @returns {string}
      * @memberof GaiaWallet
      */
     public exportKeystore(passwd: string) : string {
@@ -222,9 +222,9 @@ export class GaiaWallet {
 
     /**
      * export private key of this wallet
-     * 
+     *
      * @param {string} passwd used to decrypt the private key
-     * @returns {string} 
+     * @returns {string}
      * @memberof GaiaWallet
      */
     public exportPrivateKey(passwd: string) : string {
@@ -237,9 +237,9 @@ export class GaiaWallet {
 
     /**
      * export the mnemonic words of this wallet
-     * 
+     *
      * @param {string} passwd used to decrypt the mnemonic words
-     * @returns {string} 
+     * @returns {string}
      * @memberof GaiaWallet
      */
     public exportMnemonic(passwd: string) : string {
@@ -265,7 +265,7 @@ export class GaiaWallet {
 
     /**
      * sign a raw transaction
-     * 
+     *
      * @param {Transaction} txObj an instance of raw transaction
      * @param {string} passwd passwd to decrypt private key
      * @returns signed and serilized transaction, could be send to Ethereum network via 'sendRawTransaction' RPC call
@@ -303,7 +303,7 @@ export class GaiaWallet {
             privkey: this._privKey,
             masterseed: this._masterSeed
         };
-        
+
         return JSON.stringify(wlt);
     }
 

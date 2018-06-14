@@ -54,11 +54,12 @@ export class BTCWallet {
     public network: NETWORK;
     public language: LANGUAGE;
 
-    public api: Api;    
+    public api: Api;
 
     // dedicated for HD wallet, should be encrypted
     private rootXpriv: string;
     private mnemonics: string;
+    private rootSeed: string;
 
     private isLocked: boolean = false;
     private isInitialized: boolean = false;
@@ -71,14 +72,14 @@ export class BTCWallet {
     /* tslint:disable: no-redundant-jsdoc*/
      /**
      * Generate an HD wallet from scratch
-     * 
+     *
      * @static
      * @param {string} passwd Password used to encrypt secrets
      * @param {number} strength Default to 128, must be a divided by 32
      * @param {NETWORK} network Network idenitifer
      * @param {LANGUAGE} lang Mnenomic language
      * @param {string} [passphrase] Salt used to provide extra credentials to generate seed, default to null
-     * @returns {BTCWallet} 
+     * @returns {BTCWallet}
      * @memberof BTCWallet
      */
     public static generate(passwd: string, strength: number, network: NETWORK, lang: LANGUAGE, passphrase?: string): BTCWallet {
@@ -97,7 +98,7 @@ export class BTCWallet {
 
         const btcwallet = new BTCWallet();
         btcwallet.rootXpriv = hdpriv.toString();
-        btcwallet.rootXpub = hdpriv.xpubkey;
+
         // TODO: encrypt
         btcwallet.mnemonics = mnemonics;
 
@@ -106,13 +107,13 @@ export class BTCWallet {
 
     /**
      * Build HD wallet from mnemonic words
-     * 
+     *
      * @static
      * @param {string} mnemonic Mnemonic words
      * @param {("mainnet" | "testnet")} network Which network to use
      * @param {("english" | "chinese_simplified" | "chinese_traditional")} lang Language
      * @param {string} [passphrase] Passphrase used as salt, don't recommand to use
-     * @returns {BTCWallet} 
+     * @returns {BTCWallet}
      * @memberof BTCWallet
      */
     public static fromMnemonic(passwd: string, mnemonic: string, network: NETWORK, lang: LANGUAGE, passphrase?: string): BTCWallet {
@@ -126,10 +127,25 @@ export class BTCWallet {
 
         const hdpriv = HDWallet.fromSeed(seed, network);
         const btcwallt = new BTCWallet();
-        
+
         btcwallt.rootXpriv = hdpriv.toString();
         btcwallt.mnemonics = mnemonic;
-        btcwallt.rootXpub = hdpriv.xpubkey;
+        btcwallt.rootSeed = seed;
+        btcwallt.network = network;
+        btcwallt.language = lang;
+
+        btcwallt.lock(passwd);
+
+        return btcwallt;
+    }
+
+    public static fromSeed(passwd: string, seed: string, network: NETWORK, lang: LANGUAGE): BTCWallet {
+        // TODO: check seed ?
+        const hdpriv = HDWallet.fromSeed(seed, network);
+        const btcwallt = new BTCWallet();
+
+        btcwallt.rootXpriv = hdpriv.toString();
+        btcwallt.rootSeed = seed;
         btcwallt.network = network;
         btcwallt.language = lang;
 
@@ -150,24 +166,27 @@ export class BTCWallet {
      */
     public static fromJSON(json: string, passwd: string, passphrase?: string): BTCWallet {
         const obj = JSON.parse(json);
-        const mnemonics = cipher.decrypt(passwd, obj.mnemonics);
+        const rootseed = cipher.decrypt(passwd, obj.rootseed);
         const network = obj.network;
         const language = obj.language;
 
-        return BTCWallet.fromMnemonic(passwd, mnemonics, network, language, passphrase);
+        return BTCWallet.fromSeed(passwd, rootseed, network, language);
     }
 
-    public getBlance(): number {
+    public getTotalBlance(): number {
         return this.totalBalance;
     }
-    public setBlance(totalBalance: number): void {
+    public setTotalBlance(totalBalance: number): void {
         this.totalBalance = totalBalance;
     }
-    
+
     public lock(passwd: string): void {
         if (this.isLocked === false) {
             this.rootXpriv = cipher.encrypt(passwd, this.rootXpriv);
-            this.mnemonics = cipher.encrypt(passwd, this.mnemonics);
+            this.rootSeed = cipher.encrypt(passwd, this.rootSeed);
+            if (this.mnemonics !== undefined) {
+                this.mnemonics = cipher.encrypt(passwd, this.mnemonics);
+            }
             this.isLocked = true;
         }
     }
@@ -175,7 +194,10 @@ export class BTCWallet {
     public unlock(passwd: string): void {
         if (this.isLocked === true) {
             this.rootXpriv = cipher.decrypt(passwd, this.rootXpriv);
-            this.mnemonics = cipher.decrypt(passwd, this.mnemonics);
+            this.rootSeed = cipher.decrypt(passwd, this.rootSeed);
+            if (this.mnemonics !== undefined && this.mnemonics.length !== 0) {
+                this.mnemonics = cipher.decrypt(passwd, this.mnemonics);
+            }
             this.isLocked = false;
         }
     }
@@ -188,11 +210,21 @@ export class BTCWallet {
         return this.mnemonics;
     }
 
+    public deleteMnemonics(): void {
+        if (this.isLocked === true) {
+            throw new Error('You need to unlock wallet first!');
+        }
+        if (this.mnemonics.length === 0) {
+            throw new Error('Mnemonics have been deleted!');
+        }
+        this.mnemonics = '';
+    }
+
     /**
      * Export WIF format private key for specified index
-     * 
-     * @param {number} index 
-     * @returns {string} 
+     *
+     * @param {number} index
+     * @returns {string}
      * @memberof BTCWallet
      */
     public exportWIFOf(index: number): string {
@@ -203,8 +235,11 @@ export class BTCWallet {
         if (!this.isLocked) {
             throw new Error('You must lock the wallet first and then export the JSON format representation');
         }
-        
-        return JSON.stringify({ mnemonics: this.mnemonics,
+
+        return JSON.stringify({
+            rootxpriv: this.rootXpriv,
+            rootseed: this.rootSeed,
+            mnemonics: this.mnemonics,
             network: this.network,
             language: this.language});
     }
@@ -222,12 +257,12 @@ export class BTCWallet {
 
     /**
      * Spend btc from all available utxos, using index 0 address as the default change address.
-     * 
+     *
      * Our spend policies are:
-     * 
+     *
      * 1. utxo must at least `MIN_CONFIRMATIONS`
      * 2. spend the most matured coins
-     * 
+     *
      * TODO: design a smarter stratagy (http://bitcoinfees.com/)
      *
      * @param {Output} output Specify `toAddr`, `amount` and `chgaddr`
@@ -303,7 +338,7 @@ export class BTCWallet {
             throw new Error(res.error);
         }
         console.log('txHash: ',res.tx.hash);
-        
+
         return res.tx.hash;
     }
 
@@ -323,7 +358,7 @@ export class BTCWallet {
                 }
             }
         }
- 
+
         return sum;
     }
 
@@ -332,7 +367,7 @@ export class BTCWallet {
             try {
                 await this.scanUsedAddress();
                 await this.getUnspentOutputs();
-                this.totalBalance = await this.calcBalance();   
+                this.totalBalance = await this.calcBalance();
                 this.isInitialized = true;
             } catch (e) {
                 throw new Error('Failed to initialize wallet!');
@@ -367,7 +402,7 @@ export class BTCWallet {
                 }
             }
         }
-        
+
         return this.utxos;
     }
 
