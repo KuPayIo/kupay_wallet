@@ -14,9 +14,9 @@ const Unit = bitcore.Unit;
 
 const cipher = new Cipher();
 
-type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional';
-type NETWORK = 'mainnet' | 'testnet';
-type PRIORITY = 'high' | 'medium' | 'low';
+export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional';
+export type NETWORK = 'mainnet' | 'testnet';
+export type PRIORITY = 'high' | 'medium' | 'low';
 
 export class UTXO {
     public txid: string; // transaction hash that generate this utxo
