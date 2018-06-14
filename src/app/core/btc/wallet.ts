@@ -47,15 +47,12 @@ export class BTCWallet {
     public static SAFELOW_FEE: number = 2;
     public static HIGHEST_FEE: number = 10;
     // funds that have at least `MIN_CONFIRMATION`
-    public balance: number;
+    public totalBalance: number;
 
     public usedAdresses:any = {};
     public utxos: any = [];
     public network: NETWORK;
     public language: LANGUAGE;
-
-    // used to retreive all the utxos of this wallet
-    public rootXpub: string;
 
     public api: Api;    
 
@@ -161,10 +158,10 @@ export class BTCWallet {
     }
 
     public getBlance(): number {
-        return this.balance;
+        return this.totalBalance;
     }
-    public setBlance(balance: number): void {
-        this.balance = balance;
+    public setBlance(totalBalance: number): void {
+        this.totalBalance = totalBalance;
     }
     
     public lock(passwd: string): void {
@@ -243,8 +240,8 @@ export class BTCWallet {
             throw new Error('Wallet uninitialized!');
         }
 
-        if (output.amount >= this.balance) {
-            throw new Error('Insufficient balance!');
+        if (output.amount >= this.totalBalance) {
+            throw new Error('Insufficient totalBalance!');
         }
 
         // TODO: check error
@@ -335,7 +332,7 @@ export class BTCWallet {
             try {
                 await this.scanUsedAddress();
                 await this.getUnspentOutputs();
-                this.balance = await this.calcBalance();
+                this.totalBalance = await this.calcBalance();   
                 this.isInitialized = true;
             } catch (e) {
                 throw new Error('Failed to initialize wallet!');
