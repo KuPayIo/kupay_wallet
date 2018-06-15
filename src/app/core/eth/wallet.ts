@@ -113,7 +113,6 @@ export class GaiaWallet {
         }
         const seedBuffer = mn.toSeed(mnemonic);
         const rootNode = WalletHD.fromMasterSeed(Buffer(seedBuffer, 'hex'));
-
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
 
@@ -122,6 +121,22 @@ export class GaiaWallet {
         gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
         gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
         gwlt._masterSeed = cipher.encrypt(passwd, seedBuffer);
+
+        return gwlt;
+    }
+
+    public static fromSeed(passwd: string, seed: string, language: string): GaiaWallet {
+        if (!(language in LANGUAGES)) {
+            throw new Error('This language does not supported');
+        }
+        const rootNode = WalletHD.fromMasterSeed(Buffer(seed, 'hex'));
+        const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
+        const wlt = hdwlt.getWallet();
+
+        const gwlt = new GaiaWallet();
+        gwlt._address = wlt.getChecksumAddressString();
+        gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
+        gwlt._masterSeed = cipher.encrypt(passwd, seed);
 
         return gwlt;
     }
@@ -178,8 +193,8 @@ export class GaiaWallet {
             throw new Error('this language does not supported');
         }
 
-        if (strength % 8 !== 0 || strength < 128) {
-            throw new Error('strength must be the mutiply of 8 and at least 128!');
+        if (strength % 32 !== 0 || strength < 128) {
+            throw new Error('strength must be the mutiply of 32 and at least 128!');
         }
 
         const mn = new Mnemonic(language);
