@@ -1,5 +1,9 @@
-import { Api } from '../core/eth/api';
-import { getCurrentWallet, getLocalStorage, wei2Eth } from '../utils/tools';
+import { add } from '../../pi/ui/root';
+import { Api as BtcApi } from '../core/btc/api';
+import { Api as EthApi } from '../core/eth/api';
+import {
+    effectiveCurrencyNoConversion, getCurrentWallet, getLocalStorage, parseAccount, parseDate, setLocalStorage, wei2Eth
+} from '../utils/tools';
 
 /**
  * 创建事件处理器表
@@ -8,9 +12,15 @@ import { getCurrentWallet, getLocalStorage, wei2Eth } from '../utils/tools';
 export class DataCenter {
 
     public rate: string;
-    public addrBalances: any[] = [];
+    public addrInfos: any[] = [];
     public addrs: string[] = [];
     public timerRef: number = 0;
+    public transactions: any[] = [];
+
+    public updateList: any[] = [];
+
+    public ethExchangeRate: any;
+    public btcExchangeRate: any;
 
     public currencyList: any[] = [
         { name: 'ETH', description: 'Ethereum' }
@@ -24,6 +34,10 @@ export class DataCenter {
      * 初始化
      */
     public init() {
+
+        this.updateList.push(['exchangeRate', 'ETH']);
+        this.updateList.push(['exchangeRate', 'BTC']);
+
         // 从缓存中获取地址进行初始化
         const addrs = getLocalStorage('addrs');
         if (addrs) {
@@ -34,7 +48,7 @@ export class DataCenter {
             wallet.currencyRecords.forEach(v => {
                 list = list.concat(v.addrs);
             });
-            this.addrBalances = [];
+            this.addrInfos = [];
             addrs.forEach(v => {
                 if (list.indexOf(v.addr) >= 0) {
                     this.addAddr(v.addr, v.addrName, v.currencyName);
@@ -43,59 +57,244 @@ export class DataCenter {
         }
 
         // 启动定时器更新
-        if (this.timerRef) this.openCheck();
+        if (!this.timerRef) this.openCheck();
     }
 
     /**
      * addAddr
      */
     public addAddr(addr: string, addrName: string, currencyName: string) {
-        if (this.addrBalances.some(v => v.addr === addr)) return;
-        this.addrBalances.push({ addr: addr, balance: 0, currencyName: currencyName, addrName: addrName });
+        if (this.addrInfos.some(v => v.addr === addr)) return;
+        this.addrInfos.push({ addr: addr, balance: 0, currencyName: currencyName, addrName: addrName, transactions: [], record: [] });
+
+        // 更新对应地址交易记录
+        this.updateList.push(['balance', addr, currencyName]);
+        this.updateList.push(['transaction', addr, currencyName]);
     }
 
     /**
      * 通过货币类型获取地址余额列表
      */
-    public getAddrBalancesByCurrencyName(currencyName: string) {
-        return this.addrBalances.filter(v => v.currencyName === currencyName);
+    public getAddrInfosByCurrencyName(currencyName: string) {
+        return this.addrInfos.filter(v => v.currencyName === currencyName);
     }
 
     /**
      * 通过地址获取地址余额
      */
-    public getAddrBalanceByAddr(addr: string) {
-        return this.addrBalances.filter(v => v.addr === addr)[0];
+    public getAddrInfoByAddr(addr: string) {
+        return this.addrInfos.filter(v => v.addr === addr)[0];
     }
 
     /**
-     * 设置余额
+     * 通过地址获取所有的交易记录
      */
-    private setBalance(addr: string, r: any, currencyName: string) {
-        console.log('setBalance', addr, r);
-        let num = 0;
+    public getAllTransactionsByAddr(addr: string, currencyName: string) {
+        // 从缓存中取出对应地址的交易记录
+        const transactions = getLocalStorage('transactions') || [];
+        let list = [];
         if (currencyName === 'ETH') {
-            num = wei2Eth((<any>r).toNumber());
-        }
-        this.addrBalances = this.addrBalances.map(v => {
-            if (v.addr === addr) v.balance = num;
+            list = transactions.filter(v => {
+                return v.from && v.to && (v.from.toLowerCase() === addr.toLowerCase() || v.to.toLowerCase() === addr.toLowerCase());
+            });
+        } else if (currencyName === 'BTC') {
+            list = transactions.filter(v => {
+                return v.inputs && v.outputs && (v.inputs.indexOf(addr) >= 0 || v.outputs.indexOf(addr) >= 0);
+            }).map(v => {
+                if (v.inputs.indexOf(addr) >= 0) {
+                    v.from = addr;
+                    v.to = v.outputs[0];
+                } else if (v.outputs.indexOf(addr) >= 0) {
+                    v.from = v.inputs[0];
+                    v.to = addr;
+                }
 
-            return v;
-        });
+                return v;
+            });
+        }
+
+        return list;
+    }
+
+    /**
+     * getEthRate
+     */
+    public getExchangeRate(currencyName: string) {
+        if (currencyName === 'ETH') {
+            return this.ethExchangeRate || { CNY: 3337.01, USD: 517.42 };
+        } else if (currencyName === 'BTC') {
+            return this.btcExchangeRate || { CNY: 6586.55, USD: 1021.28 };
+        }
     }
 
     private openCheck() {
         this.timerRef = setTimeout(() => {
             this.timerRef = 0;
             this.openCheck();
-        }, 10 * 1000);
-        const api = new Api();
-        this.addrBalances.forEach(v => {
-            // api.getBalance(v.addr).then(r => {
-            //     this.setBalance(v.addr, r, v.currencyName)
-            // });
+        }, 1 * 1000);
+        if (this.updateList.length > 0) {
+            const update = this.updateList.shift();
+            switch (update[0]) {
+                case 'transaction': this.parseTransactionDetails(update[1], update[2]); break;
+                case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
+                case 'balance': this.updateBalance(update[1], update[2]); break;
+                case 'exchangeRate': this.exchangeRate(update[1]); break;
+
+                default:
+            }
+        }
+    }
+
+    /**
+     * 解析交易详情
+     */
+    private parseTransactionDetails(addr: string, currencyName: string) {
+        switch (currencyName) {
+            case 'ETH': this.parseEthTransactionDetails(addr); break;
+            case 'BTC': this.parseBtcTransactionDetails(addr); break;
+            default:
+        }
+
+    }
+
+    private async parseEthTransactionDetails(addr: string) {
+        const api = new EthApi();
+        const r: any = await api.getAllTransactionsOf(addr);
+
+        const list = [];
+        // const hashList = [];
+        const transactions = getLocalStorage('transactions') || [];
+        r.result.forEach(v => {
+            if (transactions.some(v1 => v1.hash === v.hash)) return;
+            // todo 移除缓存记录
+            // const isHave = this.state.currentAddrRecords.some(v1 => v1.id === v.hash);
+            // if (isHave) removeList.push(v.hash);
+            // info--input  0x636573--ces
+
+            const record = {
+                hash: v.hash,
+                from: v.from,
+                to: v.to,
+                value: parseFloat(v.value),
+                fees: parseFloat(v.gasUsed) * parseFloat(v.gasPrice),
+                time: parseInt(v.timeStamp, 10) * 1000,
+                info: '无',
+                currencyName: 'ETH'
+            };
+            list.push(record);
+            // hashList.push(v.hash);
         });
-        // this.parseTransactionDetails();
+        if (list.length > 0) {
+            setLocalStorage('transactions', transactions.concat(list), false);
+
+            // let addrs = getLocalStorage('addrs') || [];
+            // addrs = addrs.map(v => {
+            //     if (v.addr === currentAddr) {
+            //         const per = v.transactions || [];
+            //         v.transactions = per.concat(hashList);
+            //     }
+
+            //     return v;
+            // });
+            // setLocalStorage('addrs', addrs, false);
+        }
+
+        // this.state.currentAddrRecords = this.state.currentAddrRecords.filter(v => removeList.indexOf(v.id) < 0);
+        // list = list.concat(this.state.currentAddrRecords.map(v => {
+        //     v.account = parseAccount(v.to);
+        //     v.showPay = `${v.pay} ${this.props.currencyName}`;
+
+        //     return v;
+        // }));
+        // console.log(list, r)
+
+        // this.state.list = list.sort((a, b) => b.time - a.time);
+
+        // this.resetRecord(this.state.currentAddrRecords, false);
+
+    }
+
+    private async parseBtcTransactionDetails(addr: string) {
+        const api = new BtcApi();
+        const info = await api.getAddrInfo(addr);
+        const transactions = getLocalStorage('transactions') || [];
+        info.txrefs.forEach(v => {
+            if (transactions.some(v1 => v1.hash === v.tx_hash)) return;
+            // todo 移除缓存记录
+            this.updateList.unshift(['BtcTransactionTxref', v.tx_hash, v.value]);
+        });
+        // const r = await api.getTxInfo('23a254611115b8f526b5c5b9fb0749a07d2abc577bdabf976b2233b6af57b78d');
+        // console.log(info, r);
+    }
+
+    private async parseBtcTransactionTxrefDetails(hash: string, value: number) {
+        const api = new BtcApi();
+        const info = await api.getTxInfo(hash);
+
+        let inputs = [];
+        let outputs = [];
+        info.inputs.forEach(v => {
+            inputs = inputs.concat(v.addresses);
+        });
+        info.outputs.forEach(v => {
+            outputs = outputs.concat(v.addresses);
+        });
+
+        const record = {
+            hash: hash,
+            value: value,
+            fees: info.fees,
+            time: new Date(info.confirmed).getTime(),
+            info: '无',
+            inputs: inputs,
+            outputs: outputs,
+            currencyName: 'BTC'
+        };
+
+        const transactions = getLocalStorage('transactions') || [];
+        transactions.push(record);
+
+        setLocalStorage('transactions', transactions, false);
+    }
+
+    /**
+     * 更新余额
+     */
+    private updateBalance(addr: string, currencyName: string) {
+        switch (currencyName) {
+            case 'ETH':
+                const api = new EthApi();
+                api.getBalance(addr).then(r => {
+                    const num = wei2Eth((<any>r).toNumber());
+                    this.setBalance(addr, num);
+                });
+                break;
+            case 'BTC': break;
+            default:
+        }
+    }
+
+    /**
+     * 设置余额
+     */
+    private setBalance(addr: string, num: number) {
+        this.addrInfos = this.addrInfos.map(v => {
+            if (v.addr === addr) v.balance = num;
+
+            return v;
+        });
+    }
+
+    private async exchangeRate(currencyName: string) {
+        switch (currencyName) {
+            case 'ETH':
+                const api: EthApi = new EthApi();
+                this.ethExchangeRate = await api.getExchangeRate();
+                break;
+            case 'BTC': break;
+            default:
+        }
+
     }
 
 }

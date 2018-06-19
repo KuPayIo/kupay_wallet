@@ -3,11 +3,11 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { Api } from '../../../core/eth/api';
+import { dataCenter } from '../../../store/dataCenter';
 import { register } from '../../../store/store';
 import {
     effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
-    , resetAddrById
+    , resetAddrById, sat2Btc
 } from '../../../utils/tools';
 import { Wallet } from '../../interface';
 
@@ -112,14 +112,11 @@ export class AddAsset extends Widget {
 
             return;
         }
-        const api = new Api();
-        const rate: any = await api.getExchangeRate();
-        popNew('app-view-wallet-transaction-transfer', {
-            currencyBalance: this.state.balance,
-            fromAddr: this.state.currentAddr,
-            currencyName: this.props.currencyName,
-            rate: rate
-        });
+        if (this.props.currencyName === 'ETH') {
+            this.doEthTransfer();
+        } else if (this.props.currencyName === 'BTC') {
+            this.doBtcTransfer();
+        }
     }
 
     /**
@@ -138,65 +135,65 @@ export class AddAsset extends Widget {
         });
     }
 
-    public async parseTransactionDetails() {
+    /**
+     * 解析交易详情
+     */
+    public parseTransactionDetails() {
         if (!this.state.currentAddr) return;
 
-        const api = new Api();
-        const r: any = await api.getAllTransactionsOf(this.state.currentAddr);
+        let list = dataCenter.getAllTransactionsByAddr(this.state.currentAddr, this.props.currencyName);
+        list = list.map(v => {
 
-        const removeList = [];
-        let list = r.result.map(v => {
-            const pay = effectiveCurrencyNoConversion(parseFloat(v.value), 'ETH', true);
-            const fees = effectiveCurrencyNoConversion(parseFloat(v.gasUsed) * parseFloat(v.gasPrice), 'ETH', true);
-            const isHave = this.state.currentAddrRecords.some(v1 => v1.id === v.hash);
-            if (isHave) removeList.push(v.hash);
+            const pay = effectiveCurrencyNoConversion(v.value, this.props.currencyName, true);
+            const fees = effectiveCurrencyNoConversion(v.fees, this.props.currencyName, true);
             const isFromMe = v.from.toLowerCase() === this.state.currentAddr.toLowerCase();
             const isToMe = v.to.toLowerCase() === this.state.currentAddr.toLowerCase();
-            const t = parseInt(v.timeStamp, 10) * 1000;
-            // info--input  0x636573--ces
 
             return {
+
                 id: v.hash,
                 type: isFromMe ? (isToMe ? '自己' : '转账') : '收款',
                 fromAddr: v.from,
                 to: v.to,
                 pay: pay.num + fees.num,
                 tip: fees.show,
-                time: t,
-                showTime: parseDate(new Date(t)),
+                time: v.time,
+                showTime: parseDate(new Date(v.time)),
                 result: '已完成',
-                info: '无',
-                account: parseAccount(isFromMe ? (isToMe ? v.from : v.to) : v.from),
+                info: v.info,
+                account: parseAccount(isFromMe ? (isToMe ? v.from : v.to) : v.from).toLowerCase(),
                 showPay: pay.show
             };
         });
-        this.state.currentAddrRecords = this.state.currentAddrRecords.filter(v => removeList.indexOf(v.id) < 0);
-        list = list.concat(this.state.currentAddrRecords.map(v => {
-            v.account = parseAccount(v.to);
-            v.showPay = `${v.pay} ${this.props.currencyName}`;
-
-            return v;
-        }));
-        // console.log(list, r)
-
         this.state.list = list.sort((a, b) => b.time - a.time);
         this.paint();
-
-        this.resetRecord(this.state.currentAddrRecords, false);
-
     }
-
-    // tslint:disable-next-line:member-ordering
-    public async parseBalance() {
+    /**
+     * 解析余额
+     */
+    public parseBalance() {
         if (!this.state.currentAddr) return;
-        const api = new Api();
+        const info = dataCenter.getAddrInfoByAddr(this.state.currentAddr);
 
-        const balance: any = await api.getBalance(this.state.currentAddr);
-        const r = await effectiveCurrency(balance, 'ETH', 'CNY', true);
+        const r = effectiveCurrency(info.balance, this.props.currencyName, 'CNY', false);
         this.state.balance = r.num;
         this.state.showBalance = r.show;
         this.state.showBalanceConversion = r.conversionShow;
         this.paint();
+    }
+
+    private doEthTransfer() {
+        const rate: any = dataCenter.getExchangeRate(this.props.currencyName);
+        popNew('app-view-wallet-transaction-transfer', {
+            currencyBalance: this.state.balance,
+            fromAddr: this.state.currentAddr,
+            currencyName: this.props.currencyName,
+            rate: rate
+        });
+    }
+
+    private doBtcTransfer() {
+        // todo
     }
 
     private resetCurrentAddr(wallet: Wallet, currencyName: string) {
@@ -217,6 +214,7 @@ export class AddAsset extends Widget {
         }, 10 * 1000);
 
         this.parseTransactionDetails();
+        this.parseBalance();
     }
 
     private resetRecord(record: any, notified: boolean) {

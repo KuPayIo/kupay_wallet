@@ -3,11 +3,13 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { BTCWallet } from '../../../core/btc/wallet';
 import { GaiaWallet } from '../../../core/eth/wallet';
+import { generate } from '../../../core/genmnemonic';
 // tslint:disable-next-line:max-line-length
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable, walletNumLimit,walletPswAvailable } from '../../../utils/account';
+import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable, walletNumLimit, walletPswAvailable } from '../../../utils/account';
 import { encrypt, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../utils/tools';
-import { Addr, Wallet } from '../../interface';
+import { Addr, CurrencyRecord, Wallet } from '../../interface';
 
 export class WalletCreate extends Widget {
     public ok: () => void;
@@ -32,21 +34,21 @@ export class WalletCreate extends Widget {
         this.ok && this.ok();
     }
 
-    public walletNameChange(e:any) {
+    public walletNameChange(e: any) {
         this.state.walletName = e.value;
     }
-    public walletPswChange(e:any) {
+    public walletPswChange(e: any) {
         this.state.walletPsw = e.value;
         this.state.curWalletPswStrength = getWalletPswStrength(this.state.walletPsw);
         this.paint();
     }
-    public walletPswConfirmChange(e:any) {
+    public walletPswConfirmChange(e: any) {
         this.state.walletPswConfirm = e.value;
     }
-    public walletPswTipsChange(e:any) {
+    public walletPswTipsChange(e: any) {
         this.state.walletPswTips = e.value;
     }
-    public checkBoxClick(e:any) {
+    public checkBoxClick(e: any) {
         this.state.userProtocolReaded = (e.newType === 'true' ? true : false);
         this.paint();
     }
@@ -92,36 +94,31 @@ export class WalletCreate extends Widget {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
         const addrs: Addr[] = getLocalStorage('addrs') || [];
         const len = wallets.walletList.length;
-        if (len === walletNumLimit) {
-            return false;
-        }
-        const gwlt = GaiaWallet.generate('english', 128, this.state.walletPsw);
-        gwlt.nickName = this.state.walletName;
-        const curWalletId = gwlt.address;
+        if (len >= walletNumLimit) return false;
+        // 创建钱包基础数据
         const wallet: Wallet = {
-            walletId: curWalletId,
+            walletId: '',
             avatar: getAvatarRandom(),
             walletPsw: encrypt(this.state.walletPsw),
-            gwlt: gwlt.toJSON(),
+            gwlt: '',
             showCurrencys: ['ETH', 'BTC', 'EOS'],
-            currencyRecords: [{
-                currencyName: 'ETH',
-                currentAddr: gwlt.address,
-                addrs: [gwlt.address]
-            }]
+            currencyRecords: []
         };
-        addrs.push({
-            addr: gwlt.address,
-            addrName: getDefaultAddr(gwlt.address),
-            gwlt: gwlt.toJSON(),
-            record: [],
-            balance: 0,
-            currencyName: 'ETH'
-        });
+        // 生成助记词
+        const mm = generate('english', 128);
+        // 给钱包的默认货币创建首地址
+        // 创建eth钱包首地址，并在钱包对象上存放
+        const gwlt = createEthGwlt(wallet, addrs, mm, this.state.walletPsw, this.state.walletName);
+        // 创建btc钱包首地址
+        createBtcGwlt(wallet, addrs, mm, this.state.walletPsw);
+        // 存储
+        wallet.walletId = gwlt.address;
+        wallet.gwlt = gwlt.toJSON();
+
         if (this.state.walletPswTips.trim().length > 0) {
             wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
         }
-        wallets.curWalletId = curWalletId;
+        wallets.curWalletId = gwlt.address;
         wallets.walletList.push(wallet);
         setLocalStorage('addrs', addrs, false);
         setLocalStorage('wallets', wallets, true);
@@ -133,3 +130,50 @@ export class WalletCreate extends Widget {
         popNew('app-view-wallet-walletImport-walletImport');
     }
 }
+
+const createEthGwlt = (wallet, addrs, mm, walletPsw, walletName) => {
+    const gwlt = GaiaWallet.fromMnemonic(mm, 'english', walletPsw);
+    gwlt.nickName = walletName;
+    const currencyRecord: CurrencyRecord = {
+        currencyName: 'ETH',
+        currentAddr: gwlt.address,
+        addrs: [gwlt.address]
+    };
+    wallet.currencyRecords.push(currencyRecord);
+    addrs.push({
+        addr: gwlt.address,
+        addrName: getDefaultAddr(gwlt.address),
+        gwlt: gwlt.toJSON(),
+        record: [],
+        balance: 0,
+        currencyName: 'ETH'
+    });
+
+    return gwlt;
+};
+
+const createBtcGwlt = (wallet, addrs, mm, walletPsw) => {
+    // todo 测试阶段，使用测试链，后续改为主链
+    const gwlt = BTCWallet.fromMnemonic(walletPsw, mm, 'testnet', 'english');
+    // gwlt.nickName = walletName;
+    gwlt.unlock(walletPsw);
+    const address = gwlt.derive(0);
+    gwlt.lock(walletPsw);
+    const currencyRecord: CurrencyRecord = {
+        currencyName: 'BTC',
+        currentAddr: address,
+        addrs: [address]
+    };
+    wallet.currencyRecords.push(currencyRecord);
+
+    addrs.push({
+        addr: address,
+        addrName: getDefaultAddr(address),
+        gwlt: gwlt.toJSON(),
+        record: [],
+        balance: 0,
+        currencyName: 'BTC'
+    });
+
+    return gwlt;
+};

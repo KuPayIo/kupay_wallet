@@ -11,8 +11,10 @@ import { open, popNew } from '../../pi/ui/root';
 import { isString } from '../../pi/util/util';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
-import { getLocalStorage, setLocalStorage } from '../utils/tools';
-import { Addr } from './interface';
+import { BTCWallet } from '../core/btc/wallet';
+import { GaiaWallet } from '../core/eth/wallet';
+import { decrypt, getDefaultAddr, getLocalStorage, setLocalStorage } from '../utils/tools';
+import { Addr, CurrencyRecord } from './interface';
 // ============================== 导出
 
 export const forelet = new Forelet();
@@ -22,6 +24,7 @@ export const run = (cb): void => {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查
     checkUpdate();
+    // makepayment();
     // 打开界面
     popNew('app-view-app');
     // popNew('app-view-test-test');
@@ -59,6 +62,19 @@ const checkUpdate = () => {
 
             return v;
         });
+
+        // 已有钱包无btc地址初始化地址
+        wallets.walletList.map(wallet => {
+            const hadBtc = wallet.currencyRecords.some(v => v.currencyName === 'BTC');
+            if (hadBtc) return wallet;
+            const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+            const psw = decrypt(wallet.walletPsw);
+            createBtcGwlt(wallet, list, gwlt.exportMnemonic(psw), psw);
+            isUpdate = true;
+
+            return wallet;
+        });
+
         if (isUpdate) {
             setLocalStorage('addrs', list, false);
             setLocalStorage('wallets', wallets, false);
@@ -68,6 +84,49 @@ const checkUpdate = () => {
 
 const isHad = (list: any[], elAddr) => {
     return list.some(v => v.addr === elAddr);
+};
+
+const makepayment = async () => {
+    const words = 'void chuckle melody have hood veteran face wine cat control thumb wheel admit mammal cinnamon';
+    const wlt = BTCWallet.fromMnemonic('123', words, 'testnet', 'english');
+    console.log(wlt);
+    // wlt.unlock('123');
+    // await wlt.init();
+    // const output = {
+    //     toAddr: 'mvPrm9kG8TuPDcsFWHxGMGgxizDUHRHKzv',
+    //     amount: 0.01,
+    //     chgAddr: 'mzJ1AAKQpMj5eaCL3b4oNuSantXmVgz2tM'
+    // };
+    // console.log(wlt);
+
+    // // return wlt.spend(output, 'high').then(console.log); 
+    // wlt.lock('123');
+};
+
+const createBtcGwlt = (wallet, addrs, mm, walletPsw) => {
+    // todo 测试阶段，使用测试链，后续改为主链
+    const gwlt = BTCWallet.fromMnemonic(walletPsw, mm, 'testnet', 'english');
+    // gwlt.nickName = walletName;
+    gwlt.unlock(walletPsw);
+    const address = gwlt.derive(0);
+    gwlt.lock(walletPsw);
+    const currencyRecord: CurrencyRecord = {
+        currencyName: 'BTC',
+        currentAddr: address,
+        addrs: [address]
+    };
+    wallet.currencyRecords.push(currencyRecord);
+
+    addrs.push({
+        addr: address,
+        addrName: getDefaultAddr(address),
+        gwlt: gwlt.toJSON(),
+        record: [],
+        balance: 0,
+        currencyName: 'BTC'
+    });
+
+    return gwlt;
 };
 
 // ============================== 立即执行
