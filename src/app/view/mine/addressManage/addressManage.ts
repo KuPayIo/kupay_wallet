@@ -51,7 +51,7 @@ export class AddressManage extends Widget {
         this.state.selectnum = index;
         const selectName = this.state.coins[this.state.selectnum].name;
         if (selectName === 'ETH' && this.state.showtype === 1) {
-            const list = dataCenter.getAddrBalancesByCurrencyName(selectName);
+            const list = dataCenter.getAddrInfosByCurrencyName(selectName);
 
             this.state.content1 = list.map(v => {
                 return {

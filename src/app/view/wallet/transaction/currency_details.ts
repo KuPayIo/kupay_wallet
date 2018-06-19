@@ -3,14 +3,11 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { Api as BtcApi } from '../../../core/btc/api';
-import { Api as EthApi } from '../../../core/eth/api';
 import { dataCenter } from '../../../store/dataCenter';
 import { register } from '../../../store/store';
 import {
     effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
-    , resetAddrById,
-    sat2Btc
+    , resetAddrById, sat2Btc
 } from '../../../utils/tools';
 import { Wallet } from '../../interface';
 
@@ -174,28 +171,19 @@ export class AddAsset extends Widget {
     /**
      * 解析余额
      */
-    public async parseBalance() {
+    public parseBalance() {
         if (!this.state.currentAddr) return;
-        let balance = 0;
-        if (this.props.currencyName === 'ETH') {
-            const api = new EthApi();
-            balance = await api.getBalance(this.state.currentAddr);
-        } else if (this.props.currencyName === 'BTC') {
-            const api = new BtcApi();
-            const info = await api.getAddrInfo(this.state.currentAddr);
-            balance = info.balance;
-        }
+        const info = dataCenter.getAddrInfoByAddr(this.state.currentAddr);
 
-        const r = await effectiveCurrency(balance, this.props.currencyName, 'CNY', true);
+        const r = effectiveCurrency(info.balance, this.props.currencyName, 'CNY', false);
         this.state.balance = r.num;
         this.state.showBalance = r.show;
         this.state.showBalanceConversion = r.conversionShow;
         this.paint();
     }
 
-    private async doEthTransfer() {
-        const api = new EthApi();
-        const rate: any = await api.getExchangeRate();
+    private doEthTransfer() {
+        const rate: any = dataCenter.getExchangeRate(this.props.currencyName);
         popNew('app-view-wallet-transaction-transfer', {
             currencyBalance: this.state.balance,
             fromAddr: this.state.currentAddr,
@@ -204,7 +192,7 @@ export class AddAsset extends Widget {
         });
     }
 
-    private async doBtcTransfer() {
+    private doBtcTransfer() {
         // todo
     }
 
@@ -226,6 +214,7 @@ export class AddAsset extends Widget {
         }, 10 * 1000);
 
         this.parseTransactionDetails();
+        this.parseBalance();
     }
 
     private resetRecord(record: any, notified: boolean) {

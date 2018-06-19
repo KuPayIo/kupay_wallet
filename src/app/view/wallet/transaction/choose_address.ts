@@ -3,8 +3,10 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { Api } from '../../../core/eth/api';
+import { Api as BtcApi } from '../../../core/btc/api';
+import { Api as EthApi } from '../../../core/eth/api';
 import { GaiaWallet } from '../../../core/eth/wallet';
+import { dataCenter } from '../../../store/dataCenter';
 import {
     decrypt, getAddrById, getCurrentWallet, getDefaultAddr, getLocalStorage, getStrLen, setLocalStorage, sliceStr, wei2Eth
 } from '../../../utils/tools';
@@ -101,41 +103,23 @@ export class AddAsset extends Widget {
         if (!currencyRecord) return [];
 
         const currentAddr = currencyRecord.currentAddr || wallet.walletId;
-        const api = new Api();
         this.state.list = currencyRecord.addrs.map(v => {
             const r = getAddrById(v);
+
             let addrName = r.addrName;
             const len = getStrLen(addrName);
             if (len > this.state.maxNameLen) {
                 addrName = `${sliceStr(addrName, 0, this.state.maxNameLen)}...`;
             }
+            const info = dataCenter.getAddrInfoByAddr(r.addr);
 
             return {
                 name: addrName,
-                balance: r.balance,
+                balance: (info && info.balance) || 0,
                 isChoose: r.addr === currentAddr,
                 addr: r.addr
             };
         });
-
-        currencyRecord.addrs.forEach(v => {
-            api.getBalance(v).then(r => {
-                this.setBalance(v, r);
-            });
-        });
-    }
-
-    private setBalance(addr: string, r: any) {
-        let num = 0;
-        if (this.props.currencyName === 'ETH') {
-            num = wei2Eth((<any>r).toNumber());
-        }
-        this.state.list = this.state.list.map(v => {
-            if (v.addr === addr) v.balance = num.toFixed(6);
-
-            return v;
-        });
-        this.paint();
     }
 
 }

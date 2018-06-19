@@ -12,12 +12,15 @@ import {
 export class DataCenter {
 
     public rate: string;
-    public addrBalances: any[] = [];
+    public addrInfos: any[] = [];
     public addrs: string[] = [];
     public timerRef: number = 0;
     public transactions: any[] = [];
 
     public updateList: any[] = [];
+
+    public ethExchangeRate: any;
+    public btcExchangeRate: any;
 
     public currencyList: any[] = [
         { name: 'ETH', description: 'Ethereum' }
@@ -31,6 +34,10 @@ export class DataCenter {
      * 初始化
      */
     public init() {
+
+        this.updateList.push(['exchangeRate', 'ETH']);
+        this.updateList.push(['exchangeRate', 'BTC']);
+
         // 从缓存中获取地址进行初始化
         const addrs = getLocalStorage('addrs');
         if (addrs) {
@@ -41,7 +48,7 @@ export class DataCenter {
             wallet.currencyRecords.forEach(v => {
                 list = list.concat(v.addrs);
             });
-            this.addrBalances = [];
+            this.addrInfos = [];
             addrs.forEach(v => {
                 if (list.indexOf(v.addr) >= 0) {
                     this.addAddr(v.addr, v.addrName, v.currencyName);
@@ -57,26 +64,26 @@ export class DataCenter {
      * addAddr
      */
     public addAddr(addr: string, addrName: string, currencyName: string) {
-        if (this.addrBalances.some(v => v.addr === addr)) return;
-        this.addrBalances.push({ addr: addr, balance: 0, currencyName: currencyName, addrName: addrName, transactions: [], record: [] });
+        if (this.addrInfos.some(v => v.addr === addr)) return;
+        this.addrInfos.push({ addr: addr, balance: 0, currencyName: currencyName, addrName: addrName, transactions: [], record: [] });
 
         // 更新对应地址交易记录
+        this.updateList.push(['balance', addr, currencyName]);
         this.updateList.push(['transaction', addr, currencyName]);
-        // this.updateList.push(['balance', addr, currencyName]);
     }
 
     /**
      * 通过货币类型获取地址余额列表
      */
-    public getAddrBalancesByCurrencyName(currencyName: string) {
-        return this.addrBalances.filter(v => v.currencyName === currencyName);
+    public getAddrInfosByCurrencyName(currencyName: string) {
+        return this.addrInfos.filter(v => v.currencyName === currencyName);
     }
 
     /**
      * 通过地址获取地址余额
      */
-    public getAddrBalanceByAddr(addr: string) {
-        return this.addrBalances.filter(v => v.addr === addr)[0];
+    public getAddrInfoByAddr(addr: string) {
+        return this.addrInfos.filter(v => v.addr === addr)[0];
     }
 
     /**
@@ -109,6 +116,17 @@ export class DataCenter {
         return list;
     }
 
+    /**
+     * getEthRate
+     */
+    public getExchangeRate(currencyName: string) {
+        if (currencyName === 'ETH') {
+            return this.ethExchangeRate || { CNY: 3337.01, USD: 517.42 };
+        } else if (currencyName === 'BTC') {
+            return this.btcExchangeRate || { CNY: 6586.55, USD: 1021.28 };
+        }
+    }
+
     private openCheck() {
         this.timerRef = setTimeout(() => {
             this.timerRef = 0;
@@ -120,6 +138,7 @@ export class DataCenter {
                 case 'transaction': this.parseTransactionDetails(update[1], update[2]); break;
                 case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
                 case 'balance': this.updateBalance(update[1], update[2]); break;
+                case 'exchangeRate': this.exchangeRate(update[1]); break;
 
                 default:
             }
@@ -259,11 +278,23 @@ export class DataCenter {
      * 设置余额
      */
     private setBalance(addr: string, num: number) {
-        this.addrBalances = this.addrBalances.map(v => {
+        this.addrInfos = this.addrInfos.map(v => {
             if (v.addr === addr) v.balance = num;
 
             return v;
         });
+    }
+
+    private async exchangeRate(currencyName: string) {
+        switch (currencyName) {
+            case 'ETH':
+                const api: EthApi = new EthApi();
+                this.ethExchangeRate = await api.getExchangeRate();
+                break;
+            case 'BTC': break;
+            default:
+        }
+
     }
 
 }

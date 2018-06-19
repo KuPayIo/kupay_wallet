@@ -5,6 +5,7 @@ import { isNumber } from '../../pi/util/util';
 import { Api as BtcApi } from '../core/btc/api';
 import { Cipher } from '../core/crypto/cipher';
 import { Api as EthApi } from '../core/eth/api';
+import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
 
@@ -172,30 +173,19 @@ export const btc2Sat = (num: number) => {
  * @param conversionType 转化类型
  * @param isWei 是否wei转化
  */
-export const effectiveCurrency = async (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean) => {
+export const effectiveCurrency = (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean) => {
 
     const r: any = { num: 0, show: '', conversionShow: '' };
+    const rate: any = dataCenter.getExchangeRate(currencyName);
+    let num;
     if (currencyName === 'ETH') {
-        const api: EthApi = new EthApi();
-        const rate: any = await api.getExchangeRate();
-        const num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-
-        r.num = num;
-        r.show = `${num} ETH`;
-        r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
+        num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
-        // todo 因为暂时没有接汇率，暂定一个数值
-        const rate = {};
-        rate[conversionType] = 6586.55;
-        // const api:EthApi = new EthApi();
-        // const rate: any = await api.getExchangeRate();
-        const num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-
-        r.num = num;
-        r.show = `${num} BTC`;
-        r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
-
+        num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     }
+    r.num = num;
+    r.show = `${num} ${currencyName}`;
+    r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
 
     return r;
 
