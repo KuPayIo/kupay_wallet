@@ -2,8 +2,9 @@
  * common tools
  */
 import { isNumber } from '../../pi/util/util';
+import { Api as BtcApi } from '../core/btc/api';
 import { Cipher } from '../core/crypto/cipher';
-import { Api } from '../core/eth/api';
+import { Api as EthApi } from '../core/eth/api';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
 
@@ -150,6 +151,20 @@ export const eth2Wei = (num: number) => {
 };
 
 /**
+ * sat转btc
+ */
+export const sat2Btc = (num: number) => {
+    return num / Math.pow(10, 8);
+};
+
+/**
+ * btc转sat
+ */
+export const btc2Sat = (num: number) => {
+    return num * Math.pow(10, 8);
+};
+
+/**
  * 获取有效的货币
  * 
  * @param perNum 转化前数据
@@ -157,16 +172,29 @@ export const eth2Wei = (num: number) => {
  * @param conversionType 转化类型
  * @param isWei 是否wei转化
  */
-export const effectiveCurrency = async (perNum: any, currencyName: string, conversionType: string, isWei: boolean) => {
-    const api = new Api();
+export const effectiveCurrency = async (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean) => {
+
     const r: any = { num: 0, show: '', conversionShow: '' };
     if (currencyName === 'ETH') {
+        const api: EthApi = new EthApi();
         const rate: any = await api.getExchangeRate();
-        const num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+        const num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
 
         r.num = num;
         r.show = `${num} ETH`;
         r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
+    } else if (currencyName === 'BTC') {
+        // todo 因为暂时没有接汇率，暂定一个数值
+        const rate = {};
+        rate[conversionType] = 6586.55;
+        // const api:EthApi = new EthApi();
+        // const rate: any = await api.getExchangeRate();
+        const num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+
+        r.num = num;
+        r.show = `${num} BTC`;
+        r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
+
     }
 
     return r;
@@ -179,14 +207,18 @@ export const effectiveCurrency = async (perNum: any, currencyName: string, conve
  * @param currencyName  当前货币类型
  * @param isWei 是否wei转化
  */
-export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isWei: boolean) => {
-    const api = new Api();
+export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isMinUnit: boolean) => {
     const r: any = { num: 0, show: '', conversionShow: '' };
     if (currencyName === 'ETH') {
-        const num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+        const num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
 
         r.num = num;
         r.show = `${num} ETH`;
+    } else if (currencyName === 'BTC') {
+        const num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+
+        r.num = num;
+        r.show = `${num} BTC`;
     }
 
     return r;
@@ -201,7 +233,6 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
  * @param isWei 是否wei转化
  */
 export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isWei: boolean, rate: any) => {
-    const api = new Api();
     const r: any = { num: 0, show: '', conversionShow: '' };
     if (currencyName === 'ETH') {
         const num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;

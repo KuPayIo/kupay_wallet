@@ -20,7 +20,7 @@ export class Api {
         const self = this;
         self.wss.onmessage = (event) => {
             const payload = JSON.parse(event.data);
-            console.log(payload);
+            // console.log(payload);
             // filter "pong" message
             if (payload.event !== 'pong') {
                 this.eventQueue.push(payload);

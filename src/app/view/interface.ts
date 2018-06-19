@@ -12,13 +12,17 @@ export interface Wallet {
     walletPswTips?: string;// wallet password tips
     gwlt: string;  // Serialization GaiaWallet object
     showCurrencys: string[]; // home page show currencys
-    currencyRecords: [{     // currency records 
-        currencyName: string; // currency Name 
-        currentAddr: string;// current address
-        addrs: string[];// address list
-    }];
+    currencyRecords: CurrencyRecord[];
 }
 
+/**
+ * 货币记录
+ */
+export interface CurrencyRecord {
+    currencyName: string; // currency Name 
+    currentAddr: string;// current address
+    addrs: string[];// address list
+}
 /**
  * 地址对象
  */

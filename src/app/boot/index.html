@@ -58,8 +58,21 @@
 
 	<style>
 		body {
-			background-color: #fff !important;
+			background-color: #0A1476 !important;
 		}
+
+        @keyframes opacity2{
+            0%{opacity:0}
+            100%{opacity:1;}
+        }
+        @-webkit-keyframes opacity2{
+            0%{opacity:0}
+            100%{opacity:1;}
+        }
+        @-moz-keyframes opacity2{
+            0%{opacity:0}
+            100%{opacity:1;}
+        }
 
 		#rcmj_loading_log {
 			width: 100%;
@@ -72,6 +85,8 @@
 			z-index: 9998;
 			background-image: url(../res/image/bg_open.jpg);
 			background-size: cover;
+
+			animation: 2s opacity2 ; -webkit-animation: 2s opacity2 ;-moz-animation: 2s opacity2 ;
 		}
 
 		.aside {

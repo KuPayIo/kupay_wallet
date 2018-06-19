@@ -97,7 +97,6 @@ export class BTCWallet {
 
         const btcwallet = new BTCWallet();
         btcwallet.rootXpriv = hdpriv.toString();
-        btcwallet.rootXpub = hdpriv.xpubkey;
         // TODO: encrypt
         btcwallet.mnemonics = mnemonics;
 
@@ -129,7 +128,6 @@ export class BTCWallet {
         
         btcwallt.rootXpriv = hdpriv.toString();
         btcwallt.mnemonics = mnemonic;
-        btcwallt.rootXpub = hdpriv.xpubkey;
         btcwallt.network = network;
         btcwallt.language = lang;
 
