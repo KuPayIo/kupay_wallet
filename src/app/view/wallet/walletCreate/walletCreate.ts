@@ -6,6 +6,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { generate } from '../../../core/genmnemonic';
+import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
 import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable, walletNumLimit, walletPswAvailable } from '../../../utils/account';
 import { encrypt, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../utils/tools';
@@ -122,7 +123,8 @@ export class WalletCreate extends Widget {
         wallets.walletList.push(wallet);
         setLocalStorage('addrs', addrs, false);
         setLocalStorage('wallets', wallets, true);
-
+        console.log(GlobalWallet.generate(this.state.walletPsw,this.state.walletName));
+        
         return true;
     }
 
