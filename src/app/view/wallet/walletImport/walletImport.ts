@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GaiaWallet } from '../../../core/eth/wallet';
+import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
 import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable, walletNumLimit,walletPswAvailable } from '../../../utils/account';
 import { encrypt, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../utils/tools';
@@ -78,7 +78,7 @@ export class WalletImport extends Widget {
         }
         let gwlt = null;
         try {
-            gwlt = GaiaWallet.fromMnemonic(this.state.walletMnemonic, 'english', this.state.walletPsw);
+            gwlt = GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
             gwlt.nickName = this.state.walletName;
         } catch (e) {
             popNew('app-components-message-message', { itype: 'error', content: '无效的助记词', center: true });
@@ -100,10 +100,10 @@ export class WalletImport extends Widget {
         }, 500);
     }
 
-    public importWallet(gwlt: GaiaWallet) {
+    public importWallet(gwlt: GlobalWallet) {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
         const addrs: Addr[] = getLocalStorage('addrs') || [];
-        const curWalletId = gwlt.address;
+        const curWalletId = gwlt.glwtId;
         const len0 = wallets.walletList.length;
         if (len0 === walletNumLimit) {
             return false;
@@ -113,21 +113,11 @@ export class WalletImport extends Widget {
             avatar: getAvatarRandom(),
             walletPsw: encrypt(this.state.walletPsw),
             gwlt: gwlt.toJSON(),
-            showCurrencys: ['ETH'],
-            currencyRecords: [{
-                currencyName: 'ETH',
-                currentAddr: gwlt.address,
-                addrs: [gwlt.address]
-            }]
+            showCurrencys: ['ETH', 'BTC', 'EOS'],
+            currencyRecords: []
         };
-        addrs.push({
-            addr: gwlt.address,
-            addrName: getDefaultAddr(gwlt.address),
-            gwlt: gwlt.toJSON(),
-            record: [],
-            balance: 0,
-            currencyName: 'ETH'
-        });
+        wallet.currencyRecords.push(...gwlt.currencyRecords);
+
         if (this.state.walletPswTips.trim().length > 0) {
             wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
         }
@@ -135,16 +125,18 @@ export class WalletImport extends Widget {
         // 判断钱包是否存在
         const len = wallets.walletList.length;
         for (let i = 0; i < len; i++) {
-            if (gwlt.address === wallets.walletList[i].walletId) {
+            if (gwlt.glwtId === wallets.walletList[i].walletId) {
                 wallets.walletList.splice(i, 1);// 删除已存在钱包
                 break;
             }
         }
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
-        setLocalStorage('addrs', addrs, false);
         setLocalStorage('wallets', wallets, true);
-
+        
+        addrs.push(...gwlt.addrs);
+        setLocalStorage('addrs', addrs, false);
+        
         return true;
     }
 
@@ -152,7 +144,7 @@ export class WalletImport extends Widget {
      * 判断导入的钱包是否存在
      * @param gwlt imported wallet
      */
-    public importedWalletIsExisted(gwlt: GaiaWallet) {
+    public importedWalletIsExisted(gwlt: GlobalWallet) {
 
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
         const len = wallets.walletList.length;

@@ -2,7 +2,7 @@
 /**
  * 和账号相关的工具
  */
-import { getLocalStorage,getStrLen, setLocalStorage,shuffle } from './tools';
+import { getLocalStorage,getStrLen,shuffle } from './tools';
 
 export const walletNumLimit = 10;
  // 密码强度列表

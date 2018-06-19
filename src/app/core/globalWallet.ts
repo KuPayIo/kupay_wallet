@@ -2,7 +2,7 @@
  * global wallet
  */
 import { getDefaultAddr } from '../utils/tools';
-import { Addr, CurrencyRecord, Wallet } from '../view/interface';
+import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
 import { GaiaWallet } from './eth/wallet';
@@ -54,6 +54,24 @@ export class GlobalWallet {
         gwlt._glwtId = wlt.glwtId;
         gwlt._nickName = wlt.nickname;
         gwlt._mnemonic = wlt.mnemonic;
+
+        return gwlt;
+    }
+
+    public static fromMnemonic(mnemonic: string, passwd: string, passphrase?: string) : GlobalWallet {
+        const gwlt = new GlobalWallet();
+        gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
+
+        // 创建ETH钱包
+        const ethGwlt = this.createEthGwlt(passwd,mnemonic);
+        gwlt._glwtId = ethGwlt.addr.addr;
+        gwlt._currencyRecords.push(ethGwlt.currencyRecord);
+        gwlt._addrs.push(ethGwlt.addr);
+
+        // 创建BTC钱包
+        const btcGwlt = this.createBtcGwlt(passwd,mnemonic);
+        gwlt._currencyRecords.push(btcGwlt.currencyRecord);
+        gwlt._addrs.push(btcGwlt.addr);
 
         return gwlt;
     }
@@ -132,6 +150,20 @@ export class GlobalWallet {
             currencyRecord,
             addr
         };
+    }
+
+    /**
+     * export the mnemonic words of this wallet
+     *
+     * @param  passwd used to decrypt the mnemonic words
+     * @returns  mnemonic
+     */
+    public exportMnemonic(passwd: string) : string {
+        if (this._mnemonic.length !== 0) {
+            return cipher.decrypt(passwd, this._mnemonic);
+        } else {
+            throw new Error('Mnemonic unavailable');
+        }
     }
 
     public toJSON() : string {
