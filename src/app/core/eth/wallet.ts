@@ -4,7 +4,9 @@
 import { Cipher } from '../crypto/cipher';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
+import { Web3 } from '../thirdparty/web3.min';
 import { WORDLIST } from '../thirdparty/wordlist';
+import { ERC20Tokens, minABI } from './tokens';
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
@@ -14,6 +16,8 @@ const Buffer = ethereumjs.Buffer.Buffer;
 const Wallet = ethereumjs.Wallet;
 const WalletHD = ethereumjs.WalletHD;
 const ETHTx = ethereumjs.Tx;
+
+const web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/UHhtxDMNBuXoX8OFJKKM'));
 
 const LANGUAGES = { english: 0, chinese_simplified: 1, chinese_traditional: 2 };
 const DEFAULT_DERIVE_PATH = 'm/44\'/60\'/0\'/0/0';
@@ -116,6 +120,7 @@ export class GaiaWallet {
         }
         const seedBuffer = mn.toSeed(mnemonic);
         const rootNode = WalletHD.fromMasterSeed(Buffer(seedBuffer, 'hex'));
+
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
 
@@ -309,6 +314,17 @@ export class GaiaWallet {
         tx.sign(privKey);
 
         return tx.serialize();
+    }
+
+    public getTokenAbiInputData(toAddr: string, amount: number, tokenName: string): string {
+        const tokenAddress = ERC20Tokens[tokenName];
+        if (tokenAddress === undefined) {
+            throw new Error('This token doesn\'t supported');
+        }
+        const contract = web3.eth.contract(minABI).at(tokenAddress);
+
+        // only support `transfer` method
+        return contract.transfer.getData(toAddr, amount);
     }
 
     public toJSON() : string {
