@@ -57,7 +57,6 @@ export class Home extends Widget {
             currencyList: parseCurrencyList(wallet)
         };
 
-        dataCenter.init();
     }
 
     public clickCurrencyItemListener(e: Event, index: number) {

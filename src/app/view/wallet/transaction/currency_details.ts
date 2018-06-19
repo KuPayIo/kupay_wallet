@@ -7,7 +7,7 @@ import { dataCenter } from '../../../store/dataCenter';
 import { register } from '../../../store/store';
 import {
     effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
-    , resetAddrById, sat2Btc
+    , resetAddrById
 } from '../../../utils/tools';
 import { Wallet } from '../../interface';
 

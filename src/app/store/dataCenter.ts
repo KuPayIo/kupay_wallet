@@ -1,8 +1,7 @@
-import { add } from '../../pi/ui/root';
 import { Api as BtcApi } from '../core/btc/api';
 import { Api as EthApi } from '../core/eth/api';
 import {
-    effectiveCurrencyNoConversion, getCurrentWallet, getLocalStorage, parseAccount, parseDate, setLocalStorage, wei2Eth
+    getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage, wei2Eth
 } from '../utils/tools';
 
 /**
@@ -68,7 +67,9 @@ export class DataCenter {
         this.addrInfos.push({ addr: addr, balance: 0, currencyName: currencyName, addrName: addrName, transactions: [], record: [] });
 
         // 更新对应地址交易记录
-        this.updateList.push(['balance', addr, currencyName]);
+        if (currencyName !== 'BTC') {
+            this.updateList.push(['balance', addr, currencyName]);
+        }
         this.updateList.push(['transaction', addr, currencyName]);
     }
 
@@ -134,6 +135,7 @@ export class DataCenter {
         }, 1 * 1000);
         if (this.updateList.length > 0) {
             const update = this.updateList.shift();
+            console.log('openCheck updateList', update);
             switch (update[0]) {
                 case 'transaction': this.parseTransactionDetails(update[1], update[2]); break;
                 case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
@@ -217,14 +219,17 @@ export class DataCenter {
     private async parseBtcTransactionDetails(addr: string) {
         const api = new BtcApi();
         const info = await api.getAddrInfo(addr);
-        const transactions = getLocalStorage('transactions') || [];
-        info.txrefs.forEach(v => {
-            if (transactions.some(v1 => v1.hash === v.tx_hash)) return;
-            // todo 移除缓存记录
-            this.updateList.unshift(['BtcTransactionTxref', v.tx_hash, v.value]);
-        });
-        // const r = await api.getTxInfo('23a254611115b8f526b5c5b9fb0749a07d2abc577bdabf976b2233b6af57b78d');
-        // console.log(info, r);
+        const num = sat2Btc(info.balance);
+        this.setBalance(addr, num);
+
+        if (info.txrefs) {
+            const transactions = getLocalStorage('transactions') || [];
+            info.txrefs.forEach(v => {
+                if (transactions.some(v1 => v1.hash === v.tx_hash)) return;
+                // todo 移除缓存记录
+                this.updateList.unshift(['BtcTransactionTxref', v.tx_hash, v.value]);
+            });
+        }
     }
 
     private async parseBtcTransactionTxrefDetails(hash: string, value: number) {
@@ -270,6 +275,7 @@ export class DataCenter {
                 });
                 break;
             case 'BTC': break;
+
             default:
         }
     }
