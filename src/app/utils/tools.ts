@@ -199,17 +199,14 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
  */
 export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isMinUnit: boolean) => {
     const r: any = { num: 0, show: '', conversionShow: '' };
+    let num;
     if (currencyName === 'ETH') {
-        const num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-
-        r.num = num;
-        r.show = `${num} ETH`;
+        num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
-        const num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-
-        r.num = num;
-        r.show = `${num} BTC`;
+        num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     }
+    r.num = num;
+    r.show = `${num} ${currencyName}`;
 
     return r;
 
@@ -222,15 +219,18 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
  * @param currencyName  当前货币类型
  * @param isWei 是否wei转化
  */
-export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isWei: boolean, rate: any) => {
+export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean
+    , rate: any) => {
     const r: any = { num: 0, show: '', conversionShow: '' };
+    let num;
     if (currencyName === 'ETH') {
-        const num = isWei ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-
-        r.num = num;
-        r.show = `${num} ETH`;
-        r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
+        num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+    } else if (currencyName === 'BTC') {
+        num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     }
+    r.num = num;
+    r.show = `${num} ${currencyName}`;
+    r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
 
     return r;
 
