@@ -102,10 +102,10 @@ export class DataCenter {
             list = transactions.filter(v => {
                 return v.inputs && v.outputs && (v.inputs.indexOf(addr) >= 0 || v.outputs.indexOf(addr) >= 0);
             }).map(v => {
-                if (v.inputs.indexOf(addr) >= 0) {
+                if (v.iIndex >= 0) {
                     v.from = addr;
                     v.to = v.outputs[0];
-                } else if (v.outputs.indexOf(addr) >= 0) {
+                } else {
                     v.from = v.inputs[0];
                     v.to = addr;
                 }
@@ -221,21 +221,25 @@ export class DataCenter {
         const info = await api.getAddrInfo(addr);
         const num = sat2Btc(info.balance);
         this.setBalance(addr, num);
-
+        console.log('getAddrInfo', info);
         if (info.txrefs) {
             const transactions = getLocalStorage('transactions') || [];
             info.txrefs.forEach(v => {
-                if (transactions.some(v1 => v1.hash === v.tx_hash)) return;
+                const t = transactions.filter(v1 => v1.hash === v.tx_hash);
+                if (t) {
+                    
+                    return;
+                } 
                 // todo 移除缓存记录
-                this.updateList.unshift(['BtcTransactionTxref', v.tx_hash, v.value]);
+                this.updateList.unshift(['BtcTransactionTxref', v, addr]);
             });
         }
     }
 
-    private async parseBtcTransactionTxrefDetails(hash: string, value: number) {
+    private async parseBtcTransactionTxrefDetails(iInfo: any, addr: number) {
         const api = new BtcApi();
-        const info = await api.getTxInfo(hash);
-
+        const info = await api.getTxInfo(iInfo.tx_hash);
+        console.log('getTxInfo', info);
         let inputs = [];
         let outputs = [];
         info.inputs.forEach(v => {
@@ -246,14 +250,17 @@ export class DataCenter {
         });
 
         const record = {
-            hash: hash,
-            value: value,
+            hash: iInfo.tx_hash,
+            value: iInfo.value,
             fees: info.fees,
             time: new Date(info.confirmed).getTime(),
             info: '无',
             inputs: inputs,
             outputs: outputs,
-            currencyName: 'BTC'
+            currencyName: 'BTC',
+            iIndex: iInfo.tx_input_n,
+            oIndex: iInfo.tx_output_n,
+            addr: addr
         };
 
         const transactions = getLocalStorage('transactions') || [];
