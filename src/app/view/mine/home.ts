@@ -57,6 +57,11 @@ export class Home extends Widget {
         if (index <= 2) {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
+            if (!wallets) {
+                popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
+
+                return;
+            }
             if (!wallet) {
                 popNew('app-view-wallet-switchWallet-switchWallet');
 

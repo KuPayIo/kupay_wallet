@@ -1,18 +1,15 @@
 /**
  * global wallet
  */
+import { btcNetwork,lang,strength } from '../utils/constants';
 import { getDefaultAddr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
 import { GaiaWallet } from './eth/wallet';
-import { generate } from './genmnemonic';
+import { generate,toSeed } from './genmnemonic';
 
 const cipher = new Cipher();
-
-const strength = 128;
-const btcNetwork = 'testnet';
-const lang = 'english';
 
 /* tslint:disable: variable-name */
 export class GlobalWallet {
@@ -21,6 +18,7 @@ export class GlobalWallet {
     private _mnemonic: string;
     private _currencyRecords:CurrencyRecord[] = [];
     private _addrs:Addr[] = [];
+    private _seed:string;
     
     get glwtId():string {
         return this._glwtId;
@@ -47,6 +45,10 @@ export class GlobalWallet {
         return this._addrs;
     }
 
+    get seed() {
+        return this._seed;
+    }
+
     public static fromJSON(jsonstring: string) : GlobalWallet {
         const wlt = JSON.parse(jsonstring);
         const gwlt = new GlobalWallet();
@@ -54,6 +56,7 @@ export class GlobalWallet {
         gwlt._glwtId = wlt.glwtId;
         gwlt._nickName = wlt.nickname;
         gwlt._mnemonic = wlt.mnemonic;
+        gwlt._seed = wlt.seed;
 
         return gwlt;
     }
@@ -61,6 +64,9 @@ export class GlobalWallet {
     public static fromMnemonic(mnemonic: string, passwd: string, passphrase?: string) : GlobalWallet {
         const gwlt = new GlobalWallet();
         gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
+
+        const seed = toSeed(lang,mnemonic);
+        gwlt._seed = cipher.encrypt(passwd, seed);
 
         // 创建ETH钱包
         const ethGwlt = this.createEthGwlt(passwd,mnemonic);
@@ -89,12 +95,14 @@ export class GlobalWallet {
         const mnemonic = generate(lang, strength);
         gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
 
+        const seed = toSeed(lang,mnemonic);
+        gwlt._seed = cipher.encrypt(passwd, seed);
+
         // 创建ETH钱包
         const ethGwlt = this.createEthGwlt(passwd,mnemonic);
         gwlt._glwtId = ethGwlt.addr.addr;
         gwlt._currencyRecords.push(ethGwlt.currencyRecord);
         gwlt._addrs.push(ethGwlt.addr);
-
         // 创建BTC钱包
         const btcGwlt = this.createBtcGwlt(passwd,mnemonic);
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
@@ -166,14 +174,27 @@ export class GlobalWallet {
         }
     }
 
+    public exportSeed(passwd: string) : string {
+        return cipher.decrypt(passwd, this._seed);
+    }
+
     public toJSON() : string {
         const wlt = {
             glwtId:this._glwtId,
             nickname: this._nickName,
-            mnemonic: this._mnemonic
+            mnemonic: this._mnemonic,
+            seed:this._seed
         };
 
         return JSON.stringify(wlt);
     }
 
+    public passwordChange(oldPsw:string,newPsw:string) {
+        if (this._mnemonic.length === 0) return;
+        const mnemonic = this.exportMnemonic(oldPsw);
+        this._mnemonic = cipher.encrypt(newPsw, mnemonic);
+
+        const seed = cipher.decrypt(oldPsw,this._seed);
+        this._seed = cipher.encrypt(newPsw, seed);
+    }
 }

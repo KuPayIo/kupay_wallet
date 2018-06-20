@@ -3,14 +3,16 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { BTCWallet } from '../../../core/btc/wallet';
 import { GaiaWallet } from '../../../core/eth/wallet';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { pswEqualed } from '../../../utils/account';
+import { btcNetwork,lang } from '../../../utils/constants';
 import { 
     decrypt, 
     encrypt, 
     getAddrsAll ,
     getCurrentWallet, 
-    getCurrentWalletIndex, 
     getLocalStorage,
     setLocalStorage 
 } from '../../../utils/tools';
@@ -46,7 +48,9 @@ export class ChangePasswordStep3 extends Widget {
 
             return;
         }
+        console.time('test');
         this.changeAllPassword();
+        console.timeEnd('test');
         popNew('app-components-message-message', { itype: 'success', content: '密码修改成功', center: true });
         this.ok && this.ok();
     }
@@ -61,40 +65,19 @@ export class ChangePasswordStep3 extends Widget {
     public changeAllPassword() {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        const walletIndex = getCurrentWalletIndex(wallets);
         const walletPswOld = decrypt(wallet.walletPsw);
 
-        // 最外层gwlt修改
-        const gwltNew = this.generateNewGaiaWallet(walletPswOld,this.props.psw,wallet.gwlt);
-        wallet.gwlt = gwltNew.toJSON();
-        wallet.walletPsw = encrypt(this.state.inputValue);
-
+        // 货币列表下所有的地址的wlt修改
         const needUpdateAddrs = getAddrsAll(wallet);
-        // 货币列表下所有的地址的gwlt修改
         this.addrsGaiaWalletChange(needUpdateAddrs,walletPswOld,this.props.psw);
 
+        // 最外层gwlt修改
+        const gwlt =  GlobalWallet.fromJSON(wallet.gwlt);
+        gwlt.passwordChange(walletPswOld,this.props.psw);
+        wallet.gwlt = gwlt.toJSON();
+        wallet.walletPsw = encrypt(this.state.inputValue);
         setLocalStorage('wallets',wallets);
-    }
-    /**
-     * 使用新密码生成GaiaWallet对象
-     * @param oldPsw old password
-     * @param newPsw new password
-     * @param oldGwlt old GaiaWallet string
-     * @return new GaiaWallet
-     */
-    public generateNewGaiaWallet(oldPsw:string,newPsw:string,oldGwlt:string):GaiaWallet {
-        const gwltOld = GaiaWallet.fromJSON(oldGwlt);
-        let gwltNew = null;
-        try {
-            const mnemonic = gwltOld.exportMnemonic(oldPsw);
-            gwltNew = GaiaWallet.fromMnemonic(mnemonic,'english',newPsw);
-        } catch (e) {
-            const privateKey = gwltOld.exportPrivateKey(oldPsw);
-            gwltNew = GaiaWallet.fromPrivateKey(newPsw,privateKey);
-        }
-        gwltNew.nickName = gwltOld.nickName;
 
-        return gwltNew;
     }
 
     /**
@@ -105,11 +88,24 @@ export class ChangePasswordStep3 extends Widget {
      * @return new addrs
      */
     public addrsGaiaWalletChange(needUpdateAddrs:string[],oldPsw:string,newPsw:string) {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+        const seed = gwlt.exportSeed(oldPsw);
         const addrs = getLocalStorage('addrs');
         addrs.forEach((item) => {
             if (needUpdateAddrs.indexOf(item.addr) >= 0) {
-                const gwltNew = this.generateNewGaiaWallet(oldPsw,newPsw,item.gwlt);
-                item.gwlt = gwltNew.toJSON();
+                switch (item.currencyName) {
+                    case 'ETH':
+                        const gaiaWallet = GaiaWallet.fromSeed(newPsw,seed,lang);
+                        item.wlt = gaiaWallet.toJSON();
+                        break;
+                    case 'BTC':
+                        const btcWallet = BTCWallet.fromSeed(newPsw,seed,btcNetwork,lang);
+                        item.wlt = btcWallet.toJSON();
+                        break;
+                    default:
+                }
             }
         });
         setLocalStorage('addrs',addrs);

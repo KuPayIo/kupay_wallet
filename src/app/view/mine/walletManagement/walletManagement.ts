@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GaiaWallet } from '../../../core/eth/wallet';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { register } from '../../../store/store';
 import { pswEqualed,walletNameAvailable } from '../../../utils/account';
 import { 
@@ -27,7 +27,7 @@ export class WalletManagement extends Widget {
         register('wallets', (wallets) => {
             const wallet = getCurrentWallet(wallets);
             if (!wallet) return;
-            const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             const walletPsw = decrypt(wallet.walletPsw);
             let mnemonicExisted = true;
             try {
@@ -46,7 +46,7 @@ export class WalletManagement extends Widget {
         });
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         const walletPsw = decrypt(wallet.walletPsw);
         let mnemonicExisted = true;
         try {
@@ -124,14 +124,14 @@ export class WalletManagement extends Widget {
             this.state.gwlt.nickName = v;
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
-            const addr0 = wallet.currencyRecords[0].addrs[0];
-            const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+            // const addr0 = wallet.currencyRecords[0].addrs[0];
+            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             gwlt.nickName = v;
             wallet.gwlt = gwlt.toJSON();
 
-            const addr = getAddrById(addr0);
+     /*        const addr = getAddrById(addr0);
             addr.gwlt = gwlt.toJSON();
-            resetAddrById(addr0,addr);
+            resetAddrById(addr0,addr); */
             setLocalStorage('wallets', wallets, true);
         }
         input.value = v;

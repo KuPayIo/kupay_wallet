@@ -5,8 +5,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable, walletNumLimit,walletPswAvailable } from '../../../utils/account';
-import { encrypt, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable,walletPswAvailable } from '../../../utils/account';
+import { defalutShowCurrencys,walletNumLimit } from '../../../utils/constants';
+import { encrypt, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 import { Addr, Wallet } from '../../interface';
 
 export class WalletImport extends Widget {
@@ -113,7 +114,7 @@ export class WalletImport extends Widget {
             avatar: getAvatarRandom(),
             walletPsw: encrypt(this.state.walletPsw),
             gwlt: gwlt.toJSON(),
-            showCurrencys: ['ETH', 'BTC', 'EOS'],
+            showCurrencys: defalutShowCurrencys,
             currencyRecords: []
         };
         wallet.currencyRecords.push(...gwlt.currencyRecords);
