@@ -283,11 +283,13 @@ svg:not(:root), symbol, image, marker, pattern, foreignObject {
     background-color: #e4e7ed;
     z-index: 1;
 }
-.pi-collapse-item:last-child .pi-collapse-title,
+
 .pi-collapse-item:last-child .pi-collapse-item-panel{
     border-bottom: 1px solid transparent !important;
 }
-
+.pi-collapse-item:last-child .pi-collapse-head{
+    border-bottom: 1px solid #e5e5e5;
+}
 .pi-collapse-item-active .pi-collapse-item-panel .pi-collapse-text-item:last-child .pi-collapse-text{
     border-bottom: 1px solid transparent !important;
 }

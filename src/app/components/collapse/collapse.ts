@@ -78,7 +78,8 @@ export class Collapse extends Widget {
     // 判断当前item是否展开
     public isExpanded(index:number) {
         if (this.props.accordion) {
-            return this.state.currentExpIndex === index;
+            // tslint:disable-next-line:triple-equals
+            return this.state.currentExpIndex == index;
         }
 
         return this.state.currentExpArr[index];

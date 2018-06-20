@@ -430,7 +430,7 @@ export class BTCWallet {
         return i - BTCWallet.GAP_LIMIT;
     }
 
-    private privateKeyOf(index: number): any {
+    public privateKeyOf(index: number): any {
         if (this.isLocked === true) {
             throw new Error('You need to unlock wallet first!');
         }

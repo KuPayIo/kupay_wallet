@@ -57,7 +57,7 @@ export class Home extends Widget {
         if (index <= 2) {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
-            if (!wallets) {
+            if (!wallets || wallets.walletList.length === 0) {
                 popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
 
                 return;

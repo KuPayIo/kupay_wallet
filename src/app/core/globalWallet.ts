@@ -33,9 +33,6 @@ export class GlobalWallet {
     get mnemonic() : string {
         return this._mnemonic;
     }
-    set mnemonic(mnemonic: string) {
-        this._mnemonic = mnemonic;
-    }
 
     get currencyRecords() {
         return this._currencyRecords;
@@ -196,5 +193,18 @@ export class GlobalWallet {
 
         const seed = cipher.decrypt(oldPsw,this._seed);
         this._seed = cipher.encrypt(newPsw, seed);
+    }
+
+    public deleteMnemonic(passwd: string) {
+        if (this._mnemonic.length === 0) {
+            throw new Error('Invalid operation');
+        }
+
+        try {
+            cipher.decrypt(passwd, this._mnemonic);
+        } catch (e) {
+            throw new Error('Invalid operation');
+        }
+        this._mnemonic = '';
     }
 }

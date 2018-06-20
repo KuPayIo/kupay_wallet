@@ -9,12 +9,10 @@ import { pswEqualed,walletNameAvailable } from '../../../utils/account';
 import { 
     decrypt, 
     encrypt,
-    getAddrById, 
     getAddrsAll, 
     getCurrentWallet,
     getCurrentWalletIndex,
     getLocalStorage, 
-    resetAddrById,
     setLocalStorage} from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
