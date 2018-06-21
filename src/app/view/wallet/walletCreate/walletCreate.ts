@@ -5,9 +5,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { GaiaWallet } from '../../../core/eth/wallet';
-import { generate } from '../../../core/genmnemonic';
+import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable, walletNumLimit, walletPswAvailable } from '../../../utils/account';
+import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
+import { defalutShowCurrencys,walletNumLimit } from '../../../utils/constants';
 import { encrypt, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 import { Addr, CurrencyRecord, Wallet } from '../../interface';
 
@@ -95,34 +96,39 @@ export class WalletCreate extends Widget {
         const addrs: Addr[] = getLocalStorage('addrs') || [];
         const len = wallets.walletList.length;
         if (len >= walletNumLimit) return false;
+
+        const gwlt = GlobalWallet.generate(this.state.walletPsw,this.state.walletName);
+
         // 创建钱包基础数据
         const wallet: Wallet = {
-            walletId: '',
+            walletId: gwlt.glwtId,
             avatar: getAvatarRandom(),
             walletPsw: encrypt(this.state.walletPsw),
-            gwlt: '',
-            showCurrencys: ['ETH', 'BTC', 'EOS'],
+            gwlt: gwlt.toJSON(),
+            showCurrencys: defalutShowCurrencys,
             currencyRecords: []
         };
-        // 生成助记词
+
+        /* // 生成助记词
         const mm = generate('english', 128);
         // 给钱包的默认货币创建首地址
         // 创建eth钱包首地址，并在钱包对象上存放
         const gwlt = createEthGwlt(wallet, addrs, mm, this.state.walletPsw, this.state.walletName);
         // 创建btc钱包首地址
-        createBtcGwlt(wallet, addrs, mm, this.state.walletPsw);
+        createBtcGwlt(wallet, addrs, mm, this.state.walletPsw);*/
         // 存储
-        wallet.walletId = gwlt.address;
-        wallet.gwlt = gwlt.toJSON();
+        wallet.currencyRecords.push(...gwlt.currencyRecords);
 
         if (this.state.walletPswTips.trim().length > 0) {
             wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
         }
-        wallets.curWalletId = gwlt.address;
+        wallets.curWalletId = gwlt.glwtId;
         wallets.walletList.push(wallet);
-        setLocalStorage('addrs', addrs, false);
         setLocalStorage('wallets', wallets, true);
-
+        
+        addrs.push(...gwlt.addrs);
+        setLocalStorage('addrs', addrs, false);
+        
         return true;
     }
 

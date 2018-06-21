@@ -3,8 +3,8 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GaiaWallet } from '../../../core/eth/wallet';
-import { decrypt, getAddrById, getCurrentWallet, getLocalStorage,resetAddrById,setLocalStorage,shuffle } from '../../../utils/tools';
+import { GlobalWallet } from '../../../core/globalWallet';
+import { decrypt, getCurrentWallet, getLocalStorage,setLocalStorage,shuffle } from '../../../utils/tools';
 
 export class BackupMnemonicConfirm extends Widget {
     public ok: () => void;
@@ -19,7 +19,7 @@ export class BackupMnemonicConfirm extends Widget {
     public init() {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         const walletPsw = decrypt(wallet.walletPsw);
         const mnemonic = gwlt.exportMnemonic(walletPsw).split(' ');
         const shuffledMnemonic = this.initMnemonic(mnemonic);
@@ -72,15 +72,10 @@ export class BackupMnemonicConfirm extends Widget {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         const psw = decrypt(wallet.walletPsw);
-        const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         // 删除主线助记词
         gwlt.deleteMnemonic(psw);
         wallet.gwlt = gwlt.toJSON();
-        // 删除第一个地址下的助记词
-        const addr0 = wallet.currencyRecords[0].addrs[0];
-        const addr = getAddrById(addr0);
-        addr.gwlt = gwlt.toJSON();
-        resetAddrById(addr0,addr);
         setLocalStorage('wallets', wallets,true);
     }
 

@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GaiaWallet } from '../../../core/eth/wallet';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { decrypt, getCurrentWallet, getLocalStorage } from '../../../utils/tools';
 
 export class BackupMnemonic extends Widget {
@@ -18,7 +18,7 @@ export class BackupMnemonic extends Widget {
     public init() {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         const walletPsw = decrypt(wallet.walletPsw);
         const mnemonic = gwlt.exportMnemonic(walletPsw).split(' ');
         this.state = {
