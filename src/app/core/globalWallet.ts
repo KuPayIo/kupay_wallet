@@ -157,6 +157,61 @@ export class GlobalWallet {
         };
     }
 
+    private static async fromMnemonicETH(passwd: string,mnemonic:string) {
+        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
+        const cnt = await gaiaWallet.scanUsedAddress(passwd);
+        const currencyRecord: CurrencyRecord = {
+            currencyName: 'ETH',
+            currentAddr: gaiaWallet.address,
+            addrs: [gaiaWallet.address]
+        };
+        for (let i = 1;i < cnt;i++) {
+            currencyRecord.addrs.push(gaiaWallet.selectAddress(passwd,i).address);
+        }
+
+        const addrs :Addr[] = [];
+        const addr: Addr = {
+            addr: gaiaWallet.address,
+            addrName: getDefaultAddr(gaiaWallet.address),
+            wlt: gaiaWallet.toJSON(),
+            record: [],
+            balance: 0,
+            currencyName: 'ETH'
+        };
+
+        return {
+            currencyRecord,
+            addr
+        };
+    }
+
+    private static fromMnemonicBTC(passwd: string,mnemonic:string) {
+        // todo 测试阶段，使用测试链，后续改为主链
+        const btcWallet = BTCWallet.fromMnemonic(passwd, mnemonic, btcNetwork, lang);
+        btcWallet.unlock(passwd);
+        const address = btcWallet.derive(0);
+        btcWallet.lock(passwd);
+        const currencyRecord: CurrencyRecord = {
+            currencyName: 'BTC',
+            currentAddr: address,
+            addrs: [address]
+        };
+    
+        const addr: Addr = {
+            addr: address,
+            addrName: getDefaultAddr(address),
+            wlt: btcWallet.toJSON(),
+            record: [],
+            balance: 0,
+            currencyName: 'BTC'
+        };
+    
+        return {
+            currencyRecord,
+            addr
+        };
+    }
+
     /**
      * export the mnemonic words of this wallet
      *

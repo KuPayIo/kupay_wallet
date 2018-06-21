@@ -141,21 +141,4 @@ export class WalletImport extends Widget {
         return true;
     }
 
-    /**
-     * 判断导入的钱包是否存在
-     * @param gwlt imported wallet
-     */
-    public importedWalletIsExisted(gwlt: GlobalWallet) {
-
-        const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
-        const len = wallets.walletList.length;
-        for (let i = 0; i < len; i++) {
-            if (gwlt.address === wallets.walletList[i].walletId) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-
 }

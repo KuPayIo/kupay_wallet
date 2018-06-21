@@ -5,6 +5,7 @@ import { Cipher } from '../crypto/cipher';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
 import { WORDLIST } from '../thirdparty/wordlist';
+import { Api } from './api';
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
@@ -31,7 +32,8 @@ export interface Transaction {
 }
 
 export class GaiaWallet {
-
+    public static GAP_LIMIT: number = 3;
+    
     private _nickName: string;
     private _address: string;
     private _balance: number;
@@ -41,11 +43,13 @@ export class GaiaWallet {
     private _privKey: string;
 
     private _masterSeed: string;
+    private api:Api;
 
     constructor() {
         this._txs = [];
         this._balance = 0;
         this._mnemonic = '';
+        this.api = new Api();
     }
 
     public static fromJSON(jsonstring: string) : GaiaWallet {
@@ -356,5 +360,27 @@ export class GaiaWallet {
         gwlt._masterSeed = cipher.encrypt(passwd, this._masterSeed);
 
         return gwlt;
+    }
+
+    public async scanUsedAddress(passwd: string): Promise<number> {
+        let count = 0;
+        let i     = 0;
+        for (i = 0; ; i++) {
+            const res = await this.api.getTransactionCount(this.selectAddress(passwd,i)._address);
+            if (res === undefined || res.hasOwnProperty('error')) {
+                throw new Error('Response error!');
+            }
+            if (res === 0) {
+                count = count + 1;
+            } else {
+                count = 0;
+            }
+
+            if (count > GaiaWallet.GAP_LIMIT) {
+                break;
+            }
+        }
+
+        return i - GaiaWallet.GAP_LIMIT;
     }
 }
