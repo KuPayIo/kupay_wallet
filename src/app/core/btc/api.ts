@@ -16,23 +16,24 @@ export class Api {
     constructor() {
         // https://blockcypher.github.io/documentation/#websockets
         // transaction json format: https://blockcypher.github.io/documentation/#transactions
-        this.wss = new WebSocket(Api.WEBSOCKET_URL);
-        const self = this;
-        self.wss.onmessage = (event) => {
-            const payload = JSON.parse(event.data);
-            // filter "pong" message
-            if (payload.event !== 'pong') {
-                this.eventQueue.push(payload);
-            }
-        };
 
-        this.wss.onopen = (event) => {
-            event = event;
-            // send "ping" message every 20s
-            setInterval(() => {
-                self.wss.send(JSON.stringify({ event: 'ping' }));
-            }, 20000);
-        };
+        // this.wss = new WebSocket(Api.WEBSOCKET_URL);
+        // const self = this;
+        // self.wss.onmessage = (event) => {
+        //     const payload = JSON.parse(event.data);
+        //     // filter "pong" message
+        //     if (payload.event !== 'pong') {
+        //         this.eventQueue.push(payload);
+        //     }
+        // };
+
+        // this.wss.onopen = (event) => {
+        //     event = event;
+        //     // send "ping" message every 20s
+        //     setInterval(() => {
+        //         self.wss.send(JSON.stringify({ event: 'ping' }));
+        //     }, 20000);
+        // };
     }
 
     // batch request, 3 addresses at once.
@@ -100,9 +101,9 @@ export class Api {
     public sub(address: string, confirmations: number = 6, event: string = 'tx-confirmation'): void {
         try {
             const self = this;
-            setTimeout(() => {
-                self.wss.send(JSON.stringify({ event: event, address: address, confirmations: confirmations }));
-            }, 2000);
+            // setTimeout(() => {
+            //     self.wss.send(JSON.stringify({ event: event, address: address, confirmations: confirmations }));
+            // }, 2000);
         } catch (e) {
             throw new Error('Error while sending subscribe events to api provider');
         }
