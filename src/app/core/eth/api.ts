@@ -120,7 +120,7 @@ export class Api {
      * @returns {Promise<{}>} 
      * @memberof Api
      */
-    public async getAllTransactionsOf(address: string): Promise<{}> {
+    public async getAllTransactionsOf(address: string): Promise<any> {
         try {
             const url = ETHSCAN_ROPSTEN_API_URL + address;
             const response = await fetch(url);

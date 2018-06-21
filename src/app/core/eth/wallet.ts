@@ -367,12 +367,20 @@ export class GaiaWallet {
         let i     = 0;
         for (i = 0; ; i++) {
             const addr = this.selectAddress(passwd,i)._address;
-            const res = await this.api.getTransactionCount(addr);
-            console.log(addr,res);
+            const res = await this.api.getAllTransactionsOf(addr);
+
+            const startTime = new Date().getTime();
+            let loop = true;
+            while (loop) {
+                const endTime = new Date().getTime();
+                if (endTime - startTime > 1000) {
+                    loop = false;
+                }
+            }
             if (res === undefined || res.hasOwnProperty('error')) {
                 throw new Error('Response error!');
             }
-            if (res === 0) {
+            if (res.result.length === 0) {
                 count = count + 1;
             } else {
                 count = 0;

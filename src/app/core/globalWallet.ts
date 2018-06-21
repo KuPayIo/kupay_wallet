@@ -1,6 +1,7 @@
 /**
  * global wallet
  */
+import { dataCenter } from '../store/dataCenter';
 import { btcNetwork,lang,strength } from '../utils/constants';
 import { getDefaultAddr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
@@ -76,6 +77,14 @@ export class GlobalWallet {
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
         gwlt._addrs.push(...btcGwlt.addrs);
 
+        // 更新内存数据中心
+        ethGwlt.addrs.forEach(item => {
+            dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
+        });
+        btcGwlt.addrs.forEach(item => {
+            dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
+        });
+        
         return gwlt;
     }
 
@@ -104,6 +113,9 @@ export class GlobalWallet {
         const btcGwlt = this.createBtcGwlt(passwd,mnemonic);
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
         gwlt._addrs.push(btcGwlt.addr);
+
+        dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
+        dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
 
         return gwlt;
     }
@@ -160,7 +172,6 @@ export class GlobalWallet {
     private static async fromMnemonicETH(passwd: string,mnemonic:string) {
         const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
         const cnt = await gaiaWallet.scanUsedAddress(passwd);
-        console.log('eth',cnt);
         const currencyRecord: CurrencyRecord = {
             currencyName: 'ETH',
             currentAddr: gaiaWallet.address,
@@ -203,7 +214,6 @@ export class GlobalWallet {
         const btcWalletJson = btcWallet.toJSON();
         btcWallet.unlock(passwd);
         const cnt = await btcWallet.scanUsedAddress();
-        console.log('btc',cnt);
         const address = btcWallet.derive(0);
         
         const currencyRecord: CurrencyRecord = {
@@ -233,7 +243,7 @@ export class GlobalWallet {
                 wlt: btcWalletJson,
                 record: [],
                 balance: 0,
-                currencyName: 'ETH'
+                currencyName: 'BTC'
             };
             addrs.push(addr);
         }
