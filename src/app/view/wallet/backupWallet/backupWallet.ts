@@ -3,7 +3,6 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GaiaWallet } from '../../../core/eth/wallet';
 import { pswEqualed } from '../../../utils/account';
 import { decrypt, getCurrentWallet, getLocalStorage } from '../../../utils/tools';
 
@@ -42,16 +41,4 @@ export class BackupWallet extends Widget {
         });
     }
 
-    public exportMnemonicSucceed(walletPsw:string) {
-        const wallets = getLocalStorage('wallets');
-        const gwltStr = getCurrentWallet(wallets).gwlt;
-        const gwlt = GaiaWallet.fromJSON(gwltStr);
-        try {
-            this.state.mnemonic = gwlt.exportMnemonic(walletPsw);
-            
-            return true;
-        } catch (e) {
-            return false;
-        }
-    }
 }

@@ -4,7 +4,7 @@
 
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { GaiaWallet } from '../../core/eth/wallet';
+import { GlobalWallet } from '../../core/globalWallet';
 import { dataCenter } from '../../store/dataCenter';
 import { register } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
@@ -30,7 +30,7 @@ export class Home extends Widget {
             const wallet = getCurrentWallet(wallets);
             let gwlt = null;
             if (wallet) {
-                gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+                gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             }
             this.state.gwlt = gwlt;
             this.state.otherWallets = otherWallets;
@@ -45,7 +45,7 @@ export class Home extends Widget {
             otherWallets = true;
             wallet = getCurrentWallet(wallets);
             if (wallet) {
-                gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+                gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             }
         } else {
             otherWallets = false;
