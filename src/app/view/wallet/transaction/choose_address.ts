@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { Api as BtcApi } from '../../../core/btc/api';
+import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { dataCenter } from '../../../store/dataCenter';
@@ -65,26 +66,48 @@ export class AddAsset extends Widget {
         const wallet = getCurrentWallet(wallets);
         const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
         if (!currencyRecord) return;
-        const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
-        const newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), this.state.list.length);
+        let address;
+        let gwltJson;
+
+        if (this.props.currencyName === 'ETH') {
+            const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+            const newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), this.state.list.length);
+            address = newGwlt.address;
+            gwltJson = newGwlt.toJSON();
+        } else if (this.props.currencyName === 'BTC') {
+            const addrs = getLocalStorage('addrs');
+            const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
+
+            const psw = decrypt(wallet.walletPsw);
+            const gwlt = BTCWallet.fromJSON(firstAddr.gwlt, psw);
+            gwlt.unlock(psw);
+            address = gwlt.derive(currencyRecord.addrs.length);
+            gwlt.lock(psw);
+
+            gwltJson = firstAddr.gwlt;
+        }
 
         popNew('app-components-message-messagebox', {
-            itype: 'prompt', title: '添加地址', content: newGwlt.address, placeHolder: '标签名(限8个字)'
+            itype: 'prompt', title: '添加地址', content: address, placeHolder: '标签名(限8个字)'
         }, (r) => {
             if (r && r.length >= this.state.maxNameLen) {
                 popNew('app-components-message-message', { itype: 'notice', content: '地址标签输入过长', center: true });
 
                 return;
             }
-            r = r || getDefaultAddr(newGwlt.address);
-            currencyRecord.addrs.push(newGwlt.address);
+            r = r || getDefaultAddr(address);
+            currencyRecord.addrs.push(address);
             const list: Addr[] = getLocalStorage('addrs') || [];
             list.push({
-                addr: newGwlt.address, addrName: r, gwlt: newGwlt.toJSON(), record: [], balance: 0, currencyName: this.props.currencyName
+                addr: address, addrName: r, gwlt: gwltJson, record: [], balance: 0, currencyName: this.props.currencyName
             });
-            currencyRecord.currentAddr = newGwlt.address;
+            currencyRecord.currentAddr = address;
+
+            dataCenter.addAddr(address, r, this.props.currencyName);
+
             setLocalStorage('addrs', list, false);
             setLocalStorage('wallets', wallets, true);
+
             // console.log(wallets)
             // todo 这里验证输入，并根据输入添加地址，且处理地址切换
             this.doClose();

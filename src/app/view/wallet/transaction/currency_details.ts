@@ -7,7 +7,7 @@ import { dataCenter } from '../../../store/dataCenter';
 import { register } from '../../../store/store';
 import {
     effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
-    , resetAddrById, sat2Btc
+    , resetAddrById
 } from '../../../utils/tools';
 import { Wallet } from '../../interface';
 
@@ -112,11 +112,13 @@ export class AddAsset extends Widget {
 
             return;
         }
-        if (this.props.currencyName === 'ETH') {
-            this.doEthTransfer();
-        } else if (this.props.currencyName === 'BTC') {
-            this.doBtcTransfer();
-        }
+        const rate: any = dataCenter.getExchangeRate(this.props.currencyName);
+        popNew('app-view-wallet-transaction-transfer', {
+            currencyBalance: this.state.balance,
+            fromAddr: this.state.currentAddr,
+            currencyName: this.props.currencyName,
+            rate: rate
+        });
     }
 
     /**
@@ -180,20 +182,6 @@ export class AddAsset extends Widget {
         this.state.showBalance = r.show;
         this.state.showBalanceConversion = r.conversionShow;
         this.paint();
-    }
-
-    private doEthTransfer() {
-        const rate: any = dataCenter.getExchangeRate(this.props.currencyName);
-        popNew('app-view-wallet-transaction-transfer', {
-            currencyBalance: this.state.balance,
-            fromAddr: this.state.currentAddr,
-            currencyName: this.props.currencyName,
-            rate: rate
-        });
-    }
-
-    private doBtcTransfer() {
-        // todo
     }
 
     private resetCurrentAddr(wallet: Wallet, currencyName: string) {

@@ -5,7 +5,7 @@
 
     <div w-class="body">
         <div w-class="body-main">
-            <div w-class="pay">{{it.type==="转账"?"-":(it.type==="收款"?"+":"")}}{{it.pay}} ETH</div>
+            <div w-class="pay">{{it.type==="转账"?"-":(it.type==="收款"?"+":"")}}{{it.pay}} {{it.currencyName}}</div>
             <div w-class="result">{{it.result}}</div>
         </div>
         <div w-class="body-other">
