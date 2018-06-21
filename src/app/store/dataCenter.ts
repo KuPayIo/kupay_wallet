@@ -206,7 +206,7 @@ export class DataCenter {
         // const hashList = [];
         const transactions = getLocalStorage('transactions') || [];
         r.result.forEach(v => {
-            if (transactions.some(v1 => v1.hash === v.hash)) return;
+            if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr))) return;
             // todo 移除缓存记录
             this.removeRecordAtAddr(addr, v.hash);
             // info--input  0x636573--ces
