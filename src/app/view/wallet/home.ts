@@ -7,6 +7,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { GaiaWallet } from '../../core/eth/wallet';
 import { dataCenter } from '../../store/dataCenter';
 import { register } from '../../store/store';
+import { defalutShowCurrencys } from '../../utils/constants';
 import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
 
 export class Home extends Widget {
@@ -63,12 +64,16 @@ export class Home extends Widget {
     public clickCurrencyItemListener(e: Event, index: number) {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        if (!wallet) {
+        if (!wallets || wallets.walletList.length === 0) {
             this.createWalletClick();
 
             return;
         }
+        if (!wallet) {
+            popNew('app-view-wallet-switchWallet-switchWallet');
 
+            return;
+        }
         const currency = this.state.currencyList[index];
         popNew('app-view-wallet-transaction-currency_details', {
             currencyName: currency.currencyName, currencyBalance: `${currency.balance} ${currency.currencyName}`
@@ -101,7 +106,7 @@ const parseCurrencyList = (wallet) => {
     const list = [];
     // todo 测试代码  不处理没有的情况
     // if (!wallet.showCurrencys) return list;
-    const showCurrencys = (wallet && wallet.showCurrencys) || ['ETH', 'BTC', 'EOS'];
+    const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
 
     // todo  这里需要正确的处理钱包货币
     dataCenter.currencyList.forEach(v => {
