@@ -316,15 +316,33 @@ export class GaiaWallet {
         return tx.serialize();
     }
 
-    public getTokenAbiInputData(toAddr: string, amount: number, tokenName: string): string {
+    public tokenOperations(method: string, tokenName: string, toAddr?: string, amount?: number): string {
         const tokenAddress = ERC20Tokens[tokenName];
         if (tokenAddress === undefined) {
             throw new Error('This token doesn\'t supported');
         }
         const contract = web3.eth.contract(minABI).at(tokenAddress);
 
-        // only support `transfer` method
-        return contract.transfer.getData(toAddr, amount);
+        switch (method) {
+            case 'totalsupply':
+                return contract.totalSupply.getData();
+            case 'decimals':
+                return contract.decimals.getData();
+            case 'balanceof':
+                if (toAddr !== undefined) {
+                    return contract.balanceOf.getData(toAddr);
+                } else {
+                    throw new Error('Please specifiy the address you want to query balance');
+                }
+            case 'transfer':
+                if (toAddr !== undefined && amount !== undefined) {
+                    return contract.transfer.getData(toAddr, amount);
+                } else {
+                    throw new Error('Need toAddr and amount');
+                }
+            default:
+                throw new Error('Not supported method');
+        }
     }
 
     public toJSON() : string {

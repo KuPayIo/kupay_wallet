@@ -99,7 +99,7 @@ export class Api {
         });
     }
 
-    public async getExchangeRate(): Promise<{}> {
+    public async getExchangeRate(): Promise<any> {
         try {
             const response = await fetch(ETH_CMC_URL);
             const data = await response.json();
@@ -120,7 +120,7 @@ export class Api {
      * @returns {Promise<{}>}
      * @memberof Api
      */
-    public async getAllTransactionsOf(address: string): Promise<{}> {
+    public async getAllTransactionsOf(address: string): Promise<any> {
         try {
             const url = ETHSCAN_ROPSTEN_API_URL + address;
             const response = await fetch(url);
@@ -129,5 +129,20 @@ export class Api {
         } catch (e) {
             return Promise.reject(e);
         }
+    }
+
+    public async ethCall(contractAddress: string, callData: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            web3.eth.call({
+                to: contractAddress,
+                data: callData
+            }, (err, res) => {
+                if (!err) {
+                    return resolve(res);
+                } else {
+                    return reject(err);
+                }
+            });
+        });
     }
 }
