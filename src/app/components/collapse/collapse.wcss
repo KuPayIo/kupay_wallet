@@ -15,7 +15,6 @@
     align-items: center;
     margin: 0 30px;
     border-top: 1px solid #e5e5e5;
-    border-bottom: 1px solid #e5e5e5;
 }
 .ga-icon-container{
     width: 100px;
@@ -29,16 +28,11 @@
     height: 48px;
     color: #303133;
     cursor: pointer;
-    border-bottom: 1px solid #e5e5e5;
     font-weight: 500;
-    -webkit-transition: border-bottom-color .3s;
-    transition: border-bottom-color .3s;
     outline: 0;
     flex: 1 0 0;
 }
-.pi-collapse-title-avtive{
-    border-bottom: 1px solid transparent;
-}
+
 .pi-collapse-arrow{
     width: 28px;
     height: 28px;

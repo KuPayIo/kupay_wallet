@@ -3,9 +3,9 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GaiaWallet } from '../../../core/eth/wallet';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { nickNameInterception,pswEqualed } from '../../../utils/account';
-import { decrypt, getLocalStorage, randomRgbColor ,setLocalStorage } from '../../../utils/tools';
+import { decrypt, getLocalStorage ,setLocalStorage } from '../../../utils/tools';
 
 export class SwitchWallet extends Widget {
     public ok:() => void;
@@ -19,12 +19,11 @@ export class SwitchWallet extends Widget {
     public init() {
         const wallets = getLocalStorage('wallets');
         for (let i = 0;i < wallets.walletList.length; i ++) {
-            wallets.walletList[i].gwlt = GaiaWallet.fromJSON(wallets.walletList[i].gwlt);
+            wallets.walletList[i].gwlt = GlobalWallet.fromJSON(wallets.walletList[i].gwlt);
         }
         this.state = {
             close:false,
             wallets,
-            randomRgbColor,
             nickNameInterception
         };
     }

@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { BTCWallet } from '../../../core/btc/wallet';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { decrypt, getAddrById,getCurrentWallet,getLocalStorage } from '../../../utils/tools';
 
@@ -24,15 +25,22 @@ export class ExportPrivateKey extends Widget {
                 icon:'',
                 textList:[]
             };
-            obj.title = currencyRecords[0].currencyName;
-            obj.icon = `${currencyRecords[0].currencyName}.png`;
-            const addrs = currencyRecords[0].addrs;
-            for (let j = 0;j < addrs.length; j++) {
-                const addr = getAddrById(addrs[j]);
-                const gwlt = GaiaWallet.fromJSON(addr.gwlt);
-                const privateKey = gwlt.exportPrivateKey(walletPsw);
-                obj.textList.push(privateKey);
+            const currencyName = currencyRecords[i].currencyName;
+            obj.title = currencyName;
+            obj.icon = `${currencyName}.png`;
+            const addrs = currencyRecords[i].addrs;
+            switch (currencyName) {
+                case 'ETH':
+                    const ethKeys = this.exportPrivateKeyETH(addrs,walletPsw);
+                    obj.textList.push(...ethKeys);
+                    break;
+                case 'BTC':
+                    const btcKeys = this.exportPrivateKeyBTC(addrs,walletPsw);
+                    obj.textList.push(...btcKeys);
+                    break;
+                default:
             }
+                
             collapseList.push(obj);
         }
         this.state = {
@@ -57,5 +65,33 @@ export class ExportPrivateKey extends Widget {
             extraInfo:privateKey ,
             contentStyle:'color:#F17835;' 
         });
+    }
+
+    // 导出以太坊私钥
+    public exportPrivateKeyETH(addrs:string[],walletPsw:string) {
+        const keys = [];
+        for (let j = 0;j < addrs.length; j++) {
+            const addr = getAddrById(addrs[j]);
+            const wlt = GaiaWallet.fromJSON(addr.wlt);
+            const privateKey = wlt.exportPrivateKey(walletPsw);
+            keys.push(privateKey);
+        }
+
+        return keys;   
+    }
+
+    // 导出BTC私钥
+    public exportPrivateKeyBTC(addrs:string[],walletPsw:string) {
+        const keys = [];
+        for (let j = 0;j < addrs.length; j++) {
+            const addr = getAddrById(addrs[j]);
+            const wlt = BTCWallet.fromJSON(addr.wlt,walletPsw);
+            wlt.unlock(walletPsw);
+            const privateKey = wlt.privateKeyOf(j);
+            wlt.lock(walletPsw);
+            keys.push(privateKey);
+        }
+
+        return keys;   
     }
 }

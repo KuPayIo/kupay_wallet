@@ -13,3 +13,9 @@ export const generate = (lang: LANGUAGE, strength: number): string => {
 
     return mn.generate(strength);
 };
+
+export const toSeed = (lang:LANGUAGE,mnemonic:string):string => {
+    const mn = new Mnemonic(lang);
+    
+    return mn.toSeed(mnemonic);
+};

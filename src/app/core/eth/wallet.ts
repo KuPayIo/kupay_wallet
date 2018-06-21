@@ -92,6 +92,9 @@ export class GaiaWallet {
         this._txs = txs;
     }
 
+    get masterSeed() {
+        return this._masterSeed;
+    }
     /**
      * recover wallet from mnenomic words
      *
