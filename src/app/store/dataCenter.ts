@@ -47,7 +47,6 @@ export class DataCenter {
             wallet.currencyRecords.forEach(v => {
                 list = list.concat(v.addrs);
             });
-            this.addrInfos = [];
             addrs.forEach(v => {
                 if (list.indexOf(v.addr) >= 0) {
                     this.addAddr(v.addr, v.addrName, v.currencyName);
@@ -63,9 +62,6 @@ export class DataCenter {
      * addAddr
      */
     public addAddr(addr: string, addrName: string, currencyName: string) {
-        if (this.addrInfos.some(v => v.addr === addr)) return;
-        this.addrInfos.push({ addr: addr, balance: 0, currencyName: currencyName, addrName: addrName, transactions: [], record: [] });
-
         // 更新对应地址交易记录
         if (currencyName !== 'BTC') {
             this.updateList.push(['balance', addr, currencyName]);
@@ -77,14 +73,18 @@ export class DataCenter {
      * 通过货币类型获取地址余额列表
      */
     public getAddrInfosByCurrencyName(currencyName: string) {
-        return this.addrInfos.filter(v => v.currencyName === currencyName);
+        const addrs = getLocalStorage('addrs') || [];
+
+        return addrs.filter(v => v.currencyName === currencyName);
     }
 
     /**
      * 通过地址获取地址余额
      */
     public getAddrInfoByAddr(addr: string) {
-        return this.addrInfos.filter(v => v.addr === addr)[0];
+        const addrs = getLocalStorage('addrs') || [];
+
+        return addrs.filter(v => v.addr === addr)[0];
     }
 
     /**
@@ -164,6 +164,9 @@ export class DataCenter {
      * 更新记录
      */
     public updatetTransaction(addr: string, currencyName: string) {
+        if (currencyName !== 'BTC') {
+            this.updateList.push(['balance', addr, currencyName]);
+        }
         this.updateList.push(['transaction', addr, currencyName]);
     }
 
@@ -206,7 +209,7 @@ export class DataCenter {
         // const hashList = [];
         const transactions = getLocalStorage('transactions') || [];
         r.result.forEach(v => {
-            if (transactions.some(v1 => v1.hash === v.hash)) return;
+            if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr))) return;
             // todo 移除缓存记录
             this.removeRecordAtAddr(addr, v.hash);
             // info--input  0x636573--ces
@@ -384,11 +387,21 @@ export class DataCenter {
      * 设置余额
      */
     private setBalance(addr: string, num: number) {
-        this.addrInfos = this.addrInfos.map(v => {
-            if (v.addr === addr) v.balance = num;
+        let addrs = getLocalStorage('addrs') || [];
+
+        let isUpdate = false;
+        addrs = addrs.map(v => {
+            if (v.addr === addr && v.balance !== num) {
+                v.balance = num;
+                isUpdate = true;
+            }
 
             return v;
         });
+
+        if (isUpdate) {
+            setLocalStorage('addrs', addrs, false);
+        }
     }
 
     private async exchangeRate(currencyName: string) {
