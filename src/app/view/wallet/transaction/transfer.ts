@@ -109,6 +109,7 @@ export class AddAsset extends Widget {
             if (r === psw) {
                 try {
                     let id: any;
+                    const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
                     if (this.props.currencyName === 'ETH') {
                         id = await doEthTransfer(thisObj.props.fromAddr, thisObj.state.to, psw, thisObj.state.gasPrice
                             , thisObj.state.gasLimit, eth2Wei(thisObj.state.pay), thisObj.state.info, thisObj.state.urgent);
@@ -117,6 +118,7 @@ export class AddAsset extends Widget {
                             , thisObj.state.gasLimit, thisObj.state.pay, thisObj.state.info, thisObj.state.urgent);
                     }
 
+                    loading.callback(loading.widget);
                     // 打开交易详情界面
                     thisObj.showTransactionDetails(id);
                     thisObj.doClose();

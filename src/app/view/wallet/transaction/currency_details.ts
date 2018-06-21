@@ -7,7 +7,6 @@ import { dataCenter } from '../../../store/dataCenter';
 import { register } from '../../../store/store';
 import {
     effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
-    , resetAddrById
 } from '../../../utils/tools';
 import { Wallet } from '../../interface';
 
@@ -47,6 +46,13 @@ export class AddAsset extends Widget {
             this.parseTransactionDetails();
             this.paint();
         });
+        register('addrs', (wallets) => {
+            const wallet = getCurrentWallet(wallets);
+            if (!wallet) return;
+            this.parseTransactionDetails();
+            this.paint();
+        });
+        
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
 
@@ -182,7 +188,6 @@ export class AddAsset extends Widget {
         }
 
         this.state.list = list.concat(recordList).sort((a, b) => b.time - a.time);
-        this.paint();
     }
     /**
      * 解析余额
@@ -195,7 +200,6 @@ export class AddAsset extends Widget {
         this.state.balance = r.num;
         this.state.showBalance = r.show;
         this.state.showBalanceConversion = r.conversionShow;
-        this.paint();
     }
 
     private resetCurrentAddr(wallet: Wallet, currencyName: string) {
@@ -217,6 +221,7 @@ export class AddAsset extends Widget {
 
         this.parseTransactionDetails();
         this.parseBalance();
+        this.paint();
         dataCenter.updatetTransaction(this.state.currentAddr, this.props.currencyName);
     }
 

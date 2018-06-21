@@ -258,6 +258,7 @@ export class DataCenter {
     private async parseBtcTransactionDetails(addr: string) {
         const api = new BtcApi();
         const info = await api.getAddrInfo(addr);
+        if (!info) return;
         const num = sat2Btc(info.balance);
         this.setBalance(addr, num);
         console.log('getAddrInfo', info);
