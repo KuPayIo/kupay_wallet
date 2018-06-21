@@ -3,10 +3,8 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GaiaWallet } from '../../../core/eth/wallet';
 import { dataCenter } from '../../../store/dataCenter';
-import { decrypt, getCurrentWallet, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../utils/tools';
-import { Addr, Wallet } from '../../interface';
+import { addNewAddr, getNewAddrInfo } from '../../../utils/tools';
 
 export class AddressManage extends Widget {
     public ok: () => void;
@@ -36,6 +34,13 @@ export class AddressManage extends Widget {
                 { name: '好友 004', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
             ]
         };
+        this.state.content1 = dataCenter.getAddrInfosByCurrencyName('BTC').map(v => {
+            return {
+                name: v.addrName,
+                money: v.balance.toFixed(2),
+                address: v.addr
+            };
+        });
     }
 
     public goback() {
@@ -50,22 +55,31 @@ export class AddressManage extends Widget {
     public coinchange(event: any, index: number) {
         this.state.selectnum = index;
         const selectName = this.state.coins[this.state.selectnum].name;
-        if (selectName === 'ETH' && this.state.showtype === 1) {
+        if (this.state.showtype === 1) {
             const list = dataCenter.getAddrInfosByCurrencyName(selectName);
+            if (list.length > 0) {
+                this.state.content1 = list.map(v => {
+                    return {
+                        name: v.addrName,
+                        money: v.balance.toFixed(2),
+                        address: v.addr
+                    };
+                });
+            } else {
+                this.state.content1 = [
+                    { name: `${selectName} 001`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                    { name: `${selectName} 002`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                    { name: `${selectName} 003`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                    { name: `${selectName} 004`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
+                ];
+            }
 
-            this.state.content1 = list.map(v => {
-                return {
-                    name: v.addrName,
-                    money: v.balance.toFixed(2),
-                    address: v.addr
-                };
-            });
         } else {
             this.state.content1 = [
-                { name: 'BTC 001', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: 'BTC 002', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: 'BTC 003', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: 'BTC 004', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
+                { name: `${selectName} 001`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: `${selectName} 002`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: `${selectName} 003`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
+                { name: `${selectName} 004`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
             ];
         }
         this.paint();
@@ -75,35 +89,23 @@ export class AddressManage extends Widget {
 
         if (this.state.showtype === 1) {
             const selectName = this.state.coins[this.state.selectnum].name;
+            const info = getNewAddrInfo(selectName);
+            let address;
+            let wltJson;
 
-            let content = 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f';
-            let wallets;
-            let currencyRecord;
-            let newGwlt;
-            if (selectName === 'ETH') {
-                wallets = getLocalStorage('wallets');
-                const wallet: Wallet = getCurrentWallet(wallets);
-                currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === selectName)[0];
-                if (!currencyRecord) return;
-                const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
-                newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length);
-                content = newGwlt.address;
+            if (info) {
+                address = info.address;
+                wltJson = info.wltJson;
+            } else {
+                address = 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f';
             }
 
-            popNew('app-components-message-messagebox', { itype: 'prompt', title: '添加地址', placeHolder: '标签名', content: content }, (r) => {
-                if (newGwlt) {
-                    r = r || getDefaultAddr(newGwlt.address);
-                    currencyRecord.addrs.push(newGwlt.address);
-                    const list: Addr[] = getLocalStorage('addrs') || [];
-                    list.push(
-                        { addr: newGwlt.address, addrName: r, gwlt: newGwlt.toJSON(), record: [], balance: 0, currencyName: selectName }
-                    );
-                    currencyRecord.currentAddr = newGwlt.address;
-                    setLocalStorage('addrs', list, false);
-                    setLocalStorage('wallets', wallets, true);
+            popNew('app-components-message-messagebox', { itype: 'prompt', title: '添加地址', placeHolder: '标签名', content: address }, (r) => {
+                if (wltJson) {
 
-                    dataCenter.addAddr(newGwlt.address, r, selectName);
-                    this.state.content1.push({ name: r, money: '0.00', address: newGwlt.address });
+                    const info = addNewAddr(selectName, address, r, wltJson);
+
+                    this.state.content1.push({ name: info.addrName, money: '0.00', address: address });
                     this.paint();
                 }
             });

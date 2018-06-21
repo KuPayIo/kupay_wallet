@@ -294,10 +294,10 @@ export class BTCWallet {
             default:
                 fee = BTCWallet.SAFELOW_FEE;
         }
-
-        if (fee < BTCWallet.SAFELOW_FEE || fee > BTCWallet.HIGHEST_FEE) {
-            throw new Error('Abnormal fee rate');
-        }
+        // 因交易api的问题，旷工费很高，暂时屏蔽该处理
+        // if (fee < BTCWallet.SAFELOW_FEE || fee > BTCWallet.HIGHEST_FEE) {
+        //     throw new Error('Abnormal fee rate');
+        // }
 
         // sort by transaction confirmations
         this.utxos.sort((a, b) => a.confirmations - b.confirmations);

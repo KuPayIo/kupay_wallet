@@ -7,7 +7,6 @@ import { dataCenter } from '../../../store/dataCenter';
 import { register } from '../../../store/store';
 import {
     effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
-    , resetAddrById
 } from '../../../utils/tools';
 import { Wallet } from '../../interface';
 
@@ -47,6 +46,13 @@ export class AddAsset extends Widget {
             this.parseTransactionDetails();
             this.paint();
         });
+        register('addrs', (wallets) => {
+            const wallet = getCurrentWallet(wallets);
+            if (!wallet) return;
+            this.parseTransactionDetails();
+            this.paint();
+        });
+        
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
 
@@ -152,23 +158,36 @@ export class AddAsset extends Widget {
             const isToMe = v.to.toLowerCase() === this.state.currentAddr.toLowerCase();
 
             return {
-
                 id: v.hash,
                 type: isFromMe ? (isToMe ? '自己' : '转账') : '收款',
                 fromAddr: v.from,
                 to: v.to,
-                pay: pay.num + fees.num,
+                pay: pay.num,
                 tip: fees.show,
                 time: v.time,
                 showTime: parseDate(new Date(v.time)),
                 result: '已完成',
                 info: v.info,
                 account: parseAccount(isFromMe ? (isToMe ? v.from : v.to) : v.from).toLowerCase(),
-                showPay: pay.show
+                showPay: pay.show,
+                currencyName: this.props.currencyName
             };
         });
-        this.state.list = list.sort((a, b) => b.time - a.time);
-        this.paint();
+
+        const addr = getAddrById(this.state.currentAddr);
+        let recordList = [];
+        if (addr) {
+            recordList = addr.record.map(v => {
+                const pay = effectiveCurrencyNoConversion(v.pay, this.props.currencyName, false);
+
+                v.account = parseAccount(v.to).toLowerCase();
+                v.showPay = pay.show;
+
+                return v;
+            });
+        }
+
+        this.state.list = list.concat(recordList).sort((a, b) => b.time - a.time);
     }
     /**
      * 解析余额
@@ -181,7 +200,6 @@ export class AddAsset extends Widget {
         this.state.balance = r.num;
         this.state.showBalance = r.show;
         this.state.showBalanceConversion = r.conversionShow;
-        this.paint();
     }
 
     private resetCurrentAddr(wallet: Wallet, currencyName: string) {
@@ -203,12 +221,8 @@ export class AddAsset extends Widget {
 
         this.parseTransactionDetails();
         this.parseBalance();
+        this.paint();
+        dataCenter.updatetTransaction(this.state.currentAddr, this.props.currencyName);
     }
 
-    private resetRecord(record: any, notified: boolean) {
-        const addr = getAddrById(this.state.currentAddr);
-        if (!addr) return;
-        addr.record = record;
-        resetAddrById(this.state.currentAddr, addr, notified);
-    }
 }
