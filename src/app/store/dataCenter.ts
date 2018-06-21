@@ -93,15 +93,14 @@ export class DataCenter {
     public getAllTransactionsByAddr(addr: string, currencyName: string) {
         // 从缓存中取出对应地址的交易记录
         const transactions = getLocalStorage('transactions') || [];
+
+        // return transactions.filter(v => v.addr === addr);
+
         let list = [];
         if (currencyName === 'ETH') {
-            list = transactions.filter(v => {
-                return v.from && v.to && (v.from.toLowerCase() === addr.toLowerCase() || v.to.toLowerCase() === addr.toLowerCase());
-            });
+            list = transactions.filter(v => v.addr === addr);
         } else if (currencyName === 'BTC') {
-            list = transactions.filter(v => {
-                return v.inputs && v.outputs && (v.inputs.indexOf(addr) >= 0 || v.outputs.indexOf(addr) >= 0);
-            }).map(v => {
+            list = transactions.filter(v => v.addr === addr).map(v => {
                 if (v.iIndex >= 0) {
                     v.from = addr;
                     v.to = v.outputs[0];
@@ -112,13 +111,47 @@ export class DataCenter {
 
                 return v;
             });
+
+            // 合并记录数据
+            list.filter(v => v.from === v.to).forEach(v => {
+                const tList = list.filter(v1 => v1.hash === v.hash);
+                if (tList.length > 1) {
+                    let value = 0;
+                    let maxValue = 0;
+                    let fromAddr = '';
+                    let to = '';
+                    tList.forEach(v1 => {
+                        if (v1.to === addr) {
+                            value += v1.value;
+                        } else {
+                            value -= v1.value;
+                        }
+                        if (v1.value > maxValue) {
+                            maxValue = v1.value;
+                            fromAddr = v1.from;
+                            to = v1.to;
+                        }
+                    });
+                    let done = false;
+                    list = list.map(v1 => {
+                        if (v1.hash !== v.hash) return v1;
+                        if (done) return 'clear';
+                        v1.from = fromAddr;
+                        v1.to = to;
+                        v1.value = Math.abs(value) - v1.fees;
+                        done = true;
+
+                        return v1;
+                    }).filter(v1 => v1 !== 'clear');
+                }
+            });
         }
 
         return list;
     }
 
     /**
-     * getEthRate
+     * 获取汇率
      */
     public getExchangeRate(currencyName: string) {
         if (currencyName === 'ETH') {
@@ -126,6 +159,12 @@ export class DataCenter {
         } else if (currencyName === 'BTC') {
             return this.btcExchangeRate || { CNY: 6586.55, USD: 1021.28 };
         }
+    }
+    /**
+     * 更新记录
+     */
+    public updatetTransaction(addr: string, currencyName: string) {
+        this.updateList.push(['transaction', addr, currencyName]);
     }
 
     private openCheck() {
@@ -169,8 +208,7 @@ export class DataCenter {
         r.result.forEach(v => {
             if (transactions.some(v1 => v1.hash === v.hash)) return;
             // todo 移除缓存记录
-            // const isHave = this.state.currentAddrRecords.some(v1 => v1.id === v.hash);
-            // if (isHave) removeList.push(v.hash);
+            this.removeRecordAtAddr(addr, v.hash);
             // info--input  0x636573--ces
 
             const record = {
@@ -181,7 +219,8 @@ export class DataCenter {
                 fees: parseFloat(v.gasUsed) * parseFloat(v.gasPrice),
                 time: parseInt(v.timeStamp, 10) * 1000,
                 info: '无',
-                currencyName: 'ETH'
+                currencyName: 'ETH',
+                addr: addr
             };
             list.push(record);
             // hashList.push(v.hash);
@@ -226,17 +265,25 @@ export class DataCenter {
             const transactions = getLocalStorage('transactions') || [];
             info.txrefs.forEach(v => {
                 const t = transactions.filter(v1 => v1.hash === v.tx_hash);
-                if (t) {
-                    
+                if (t.length > 0) {
+                    this.addTransactions(transactions, v, t, addr);
+
                     return;
-                } 
+                }
                 // todo 移除缓存记录
                 this.updateList.unshift(['BtcTransactionTxref', v, addr]);
             });
         }
     }
 
-    private async parseBtcTransactionTxrefDetails(iInfo: any, addr: number) {
+    private async parseBtcTransactionTxrefDetails(iInfo: any, addr: string) {
+        const transactions = getLocalStorage('transactions') || [];
+        const t = transactions.filter(v1 => v1.hash === iInfo.tx_hash);
+        if (t.length > 0) {
+            this.addTransactions(transactions, iInfo, t, addr);
+
+            return;
+        }
         const api = new BtcApi();
         const info = await api.getTxInfo(iInfo.tx_hash);
         console.log('getTxInfo', info);
@@ -263,10 +310,55 @@ export class DataCenter {
             addr: addr
         };
 
-        const transactions = getLocalStorage('transactions') || [];
+        // const transactions = getLocalStorage('transactions') || [];
         transactions.push(record);
 
         setLocalStorage('transactions', transactions, false);
+
+        this.removeRecordAtAddr(addr, iInfo.tx_hash);
+    }
+
+    private addTransactions(transactions: any[], iInfo: any, tInfos: any[], addr: string) {
+
+        if (tInfos.some(v => (iInfo.value === v.value) && (addr === v.addr))) return;
+
+        const record = {
+            hash: iInfo.tx_hash,
+            value: iInfo.value,
+            fees: tInfos[0].fees,
+            time: tInfos[0].time,
+            info: '无',
+            inputs: tInfos[0].inputs,
+            outputs: tInfos[0].outputs,
+            currencyName: 'BTC',
+            iIndex: iInfo.tx_input_n,
+            oIndex: iInfo.tx_output_n,
+            addr: addr
+        };
+
+        transactions.push(record);
+
+        setLocalStorage('transactions', transactions, false);
+
+        this.removeRecordAtAddr(addr, iInfo.tx_hash);
+    }
+
+    private removeRecordAtAddr(addr: string, hashStr: string) {
+        let addrs = getLocalStorage('addrs') || [];
+        let isUpdate = false;
+        addrs = addrs.map(v => {
+            if (v.addr !== addr) return v;
+            const t = v.record.filter(v1 => v1.id !== hashStr);
+            if (v.record.length !== t.length) {
+                isUpdate = true;
+                v.record = t;
+            }
+
+            return v;
+        });
+        if (isUpdate) {
+            setLocalStorage('addrs', addrs, false);
+        }
     }
 
     /**

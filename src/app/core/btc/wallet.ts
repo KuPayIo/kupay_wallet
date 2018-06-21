@@ -294,7 +294,6 @@ export class BTCWallet {
             default:
                 fee = BTCWallet.SAFELOW_FEE;
         }
-
         if (fee < BTCWallet.SAFELOW_FEE || fee > BTCWallet.HIGHEST_FEE) {
             throw new Error('Abnormal fee rate');
         }

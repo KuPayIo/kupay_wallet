@@ -171,13 +171,15 @@ export class AddAsset extends Widget {
             type: '转账',
             fromAddr: this.props.fromAddr,
             to: this.state.to,
-            pay: this.state.pay + this.state.fees,
+            pay: this.state.pay,
             tip: this.state.feesShow,
             time: t.getTime(),
             showTime: parseDate(t),
             result: '交易中',
-            info: this.state.info || '无'
+            info: this.state.info || '无',
+            currencyName: this.props.currencyName
         };
+
         popNew('app-view-wallet-transaction-transaction_details', record);
 
         addRecord(this.props.currencyName, this.props.fromAddr, record);
@@ -235,10 +237,12 @@ async function doEthTransfer(acct1: string, acct2: string, psw: string, gasPrice
         data: info
     };
 
-    const gwlt = getGwltByAddr(acct1);
-    if (!gwlt) return;
+    const currentAddr = getAddrById(acct1);
+    if (!currentAddr) return;
 
-    const tx = gwlt.signRawTransaction(psw, txObj);
+    const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
+
+    const tx = wlt.signRawTransaction(psw, txObj);
     // tslint:disable-next-line:no-unnecessary-local-variable
     const id = await api.sendRawTransaction(tx);
 
@@ -255,29 +259,19 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
     const addrs = getLocalStorage('addrs');
     const addr = addrs.filter(v => v.addr === acct1)[0];
 
-    const gwlt = BTCWallet.fromJSON(addr.gwlt, psw);
-    gwlt.unlock(psw);
-    await gwlt.init();
+    const wlt = BTCWallet.fromJSON(addr.wlt, psw);
+    wlt.unlock(psw);
+    await wlt.init();
     const output = {
         toAddr: acct2,
         amount: value,
         chgAddr: acct1
     };
-    console.log(gwlt, value);
+    console.log(wlt, value);
 
-    const id = await gwlt.spend(output, urgent ? 'high' : 'medium');
-    gwlt.lock(psw);
+    const id = await wlt.spend(output, urgent ? 'high' : 'medium');
+    wlt.lock(psw);
 
     return id;
 
 }
-
-/**
- * 获取钱包 
- */
-const getGwltByAddr = (addr) => {
-    const currentAddr = getAddrById(addr);
-    if (!currentAddr) return;
-
-    return GaiaWallet.fromJSON(currentAddr.gwlt);
-};
