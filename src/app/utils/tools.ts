@@ -3,8 +3,10 @@
  */
 import { isNumber } from '../../pi/util/util';
 import { Api as BtcApi } from '../core/btc/api';
+import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { Api as EthApi } from '../core/eth/api';
+import { GaiaWallet } from '../core/eth/wallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
@@ -309,4 +311,66 @@ export const sliceStr = (str, start, len): string => {
     }
 
     return r;
+};
+
+/**
+ * 获取新的地址信息
+ * @param currencyName 货币类型
+ */
+export const getNewAddrInfo = (currencyName) => {
+    const wallets = getLocalStorage('wallets');
+    const wallet = getCurrentWallet(wallets);
+    const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
+    if (!currencyRecord) return;
+    let address;
+    let gwltJson;
+    if (currencyName === 'ETH') {
+        const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
+        const newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length);
+        address = newGwlt.address;
+        gwltJson = newGwlt.toJSON();
+    } else if (currencyName === 'BTC') {
+        const addrs = getLocalStorage('addrs');
+        const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
+
+        const psw = decrypt(wallet.walletPsw);
+        const gwlt = BTCWallet.fromJSON(firstAddr.gwlt, psw);
+        gwlt.unlock(psw);
+        address = gwlt.derive(currencyRecord.addrs.length);
+        gwlt.lock(psw);
+
+        gwltJson = firstAddr.gwlt;
+    }
+
+    return {
+        address: address,
+        gwltJson: gwltJson
+    };
+};
+
+/**
+ * 添加新的地址
+ * @param currencyName 货币类型
+ * @param address 新的地址
+ * @param addrName 新的地址名
+ * @param gwltJson 新的地址钱包对象
+ */
+export const addNewAddr = (currencyName, address, addrName, gwltJson) => {
+    const wallets = getLocalStorage('wallets');
+    const wallet = getCurrentWallet(wallets);
+    const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
+    if (!currencyRecord) return;
+    addrName = addrName || getDefaultAddr(address);
+    currencyRecord.addrs.push(address);
+    const list: Addr[] = getLocalStorage('addrs') || [];
+    const newAddrInfo = { addr: address, addrName, gwlt: gwltJson, record: [], balance: 0, currencyName };
+    list.push(newAddrInfo);
+    currencyRecord.currentAddr = address;
+
+    dataCenter.addAddr(address, addrName, currencyName);
+
+    setLocalStorage('addrs', list, false);
+    setLocalStorage('wallets', wallets, true);
+
+    return newAddrInfo;
 };

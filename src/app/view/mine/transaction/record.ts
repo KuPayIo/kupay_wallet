@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { Api } from '../../../core/eth/api';
+import { dataCenter } from '../../../store/dataCenter';
 import {
     effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
 } from '../../../utils/tools';
@@ -31,11 +31,13 @@ export class AddAsset extends Widget {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         if (!wallet.currencyRecords) return;
+        let list = [];
         wallet.currencyRecords.forEach(v => {
             v.addrs.forEach(v1 => {
-                this.parseTransactionDetails(v1, getAddrById(v1).record);
+                list = list.concat(this.parseTransactionDetails(v1, v.currencyName));
             });
         });
+        this.state.list = list.sort((a, b) => b.time - a.time);
     }
 
     /**
@@ -52,50 +54,47 @@ export class AddAsset extends Widget {
         popNew('app-view-wallet-transaction-transaction_details', this.state.list[index]);
     }
 
-    public async parseTransactionDetails(addr: any, records: any) {
+    public parseTransactionDetails(currentAddr: string, currencyName: string) {
 
-        const api = new Api();
-        const r: any = await api.getAllTransactionsOf(addr);
+        let list = dataCenter.getAllTransactionsByAddr(currentAddr, currencyName);
+        list = list.map(v => {
 
-        const removeList = [];
-        let list = r.result.map(v => {
-            const pay = effectiveCurrencyNoConversion(parseFloat(v.value), 'ETH', true);
-            const fees = effectiveCurrencyNoConversion(parseFloat(v.gasUsed) * parseFloat(v.gasPrice), 'ETH', true);
-            const isHave = records.some(v1 => v1.id === v.hash);
-            if (isHave) removeList.push(v.hash);
-            const isFromMe = v.from.toLowerCase() === addr.toLowerCase();
-            const isToMe = v.to.toLowerCase() === addr.toLowerCase();
-            const t = parseInt(v.timeStamp, 10) * 1000;
-            // info--input  0x636573--ces
+            const pay = effectiveCurrencyNoConversion(v.value, currencyName, true);
+            const fees = effectiveCurrencyNoConversion(v.fees, currencyName, true);
+            const isFromMe = v.from.toLowerCase() === currentAddr.toLowerCase();
+            const isToMe = v.to.toLowerCase() === currentAddr.toLowerCase();
 
             return {
                 id: v.hash,
                 type: isFromMe ? (isToMe ? '自己' : '转账') : '收款',
                 fromAddr: v.from,
                 to: v.to,
-                pay: pay.num + fees.num,
+                pay: pay.num,
                 tip: fees.show,
-                time: t,
-                showTime: parseDate(new Date(t)),
+                time: v.time,
+                showTime: parseDate(new Date(v.time)),
                 result: '已完成',
-                info: '无',
-                account: parseAccount(isFromMe ? (isToMe ? v.from : v.to) : v.from),
-                showPay: pay.show
+                info: v.info,
+                account: parseAccount(isFromMe ? (isToMe ? v.from : v.to) : v.from).toLowerCase(),
+                showPay: pay.show,
+                currencyName: currencyName
             };
         });
-        records = records.filter(v => removeList.indexOf(v.id) < 0);
-        list = list.concat(records.map(v => {
-            v.account = parseAccount(v.to);
-            v.showPay = `${v.pay} ETH`;
 
-            return v;
-        }));
+        const addr = getAddrById(currentAddr);
+        let recordList = [];
+        if (addr) {
+            recordList = addr.record.map(v => {
+                const pay = effectiveCurrencyNoConversion(v.pay, currencyName, false);
 
-        list = this.state.list.concat(list);
-        // console.log(list, r)
+                v.account = parseAccount(v.to).toLowerCase();
+                v.showPay = pay.show;
 
-        this.state.list = list.sort((a, b) => b.time - a.time);
-        this.paint();
+                return v;
+            });
+        }
+
+        return list.concat(recordList);
 
     }
 }

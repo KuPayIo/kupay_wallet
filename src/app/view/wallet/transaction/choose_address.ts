@@ -3,15 +3,10 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { Api as BtcApi } from '../../../core/btc/api';
-import { BTCWallet } from '../../../core/btc/wallet';
-import { Api as EthApi } from '../../../core/eth/api';
-import { GaiaWallet } from '../../../core/eth/wallet';
 import { dataCenter } from '../../../store/dataCenter';
 import {
-    decrypt, getAddrById, getCurrentWallet, getDefaultAddr, getLocalStorage, getStrLen, setLocalStorage, sliceStr, wei2Eth
+    addNewAddr, getAddrById, getCurrentWallet, getLocalStorage, getNewAddrInfo, getStrLen, setLocalStorage, sliceStr
 } from '../../../utils/tools';
-import { Addr } from '../../interface';
 
 interface Props {
     currencyName: string;
@@ -62,30 +57,10 @@ export class AddAsset extends Widget {
      * 处理添加地址
      */
     public addAddr(e: any, index: number) {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
-        const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
-        if (!currencyRecord) return;
-        let address;
-        let gwltJson;
-
-        if (this.props.currencyName === 'ETH') {
-            const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
-            const newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), this.state.list.length);
-            address = newGwlt.address;
-            gwltJson = newGwlt.toJSON();
-        } else if (this.props.currencyName === 'BTC') {
-            const addrs = getLocalStorage('addrs');
-            const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
-
-            const psw = decrypt(wallet.walletPsw);
-            const gwlt = BTCWallet.fromJSON(firstAddr.gwlt, psw);
-            gwlt.unlock(psw);
-            address = gwlt.derive(currencyRecord.addrs.length);
-            gwlt.lock(psw);
-
-            gwltJson = firstAddr.gwlt;
-        }
+        const info = getNewAddrInfo(this.props.currencyName);
+        if (!info) return;
+        const address = info.address;
+        const gwltJson = info.gwltJson;
 
         popNew('app-components-message-messagebox', {
             itype: 'prompt', title: '添加地址', content: address, placeHolder: '标签名(限8个字)'
@@ -95,18 +70,7 @@ export class AddAsset extends Widget {
 
                 return;
             }
-            r = r || getDefaultAddr(address);
-            currencyRecord.addrs.push(address);
-            const list: Addr[] = getLocalStorage('addrs') || [];
-            list.push({
-                addr: address, addrName: r, gwlt: gwltJson, record: [], balance: 0, currencyName: this.props.currencyName
-            });
-            currencyRecord.currentAddr = address;
-
-            dataCenter.addAddr(address, r, this.props.currencyName);
-
-            setLocalStorage('addrs', list, false);
-            setLocalStorage('wallets', wallets, true);
+            addNewAddr(this.props.currencyName, address, r, gwltJson);
 
             // console.log(wallets)
             // todo 这里验证输入，并根据输入添加地址，且处理地址切换

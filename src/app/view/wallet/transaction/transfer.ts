@@ -171,13 +171,15 @@ export class AddAsset extends Widget {
             type: '转账',
             fromAddr: this.props.fromAddr,
             to: this.state.to,
-            pay: this.state.pay + this.state.fees,
+            pay: this.state.pay,
             tip: this.state.feesShow,
             time: t.getTime(),
             showTime: parseDate(t),
             result: '交易中',
-            info: this.state.info || '无'
+            info: this.state.info || '无',
+            currencyName: this.props.currencyName
         };
+
         popNew('app-view-wallet-transaction-transaction_details', record);
 
         addRecord(this.props.currencyName, this.props.fromAddr, record);

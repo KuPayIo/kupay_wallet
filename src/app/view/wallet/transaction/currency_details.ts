@@ -152,22 +152,36 @@ export class AddAsset extends Widget {
             const isToMe = v.to.toLowerCase() === this.state.currentAddr.toLowerCase();
 
             return {
-
                 id: v.hash,
                 type: isFromMe ? (isToMe ? '自己' : '转账') : '收款',
                 fromAddr: v.from,
                 to: v.to,
-                pay: pay.num + fees.num,
+                pay: pay.num,
                 tip: fees.show,
                 time: v.time,
                 showTime: parseDate(new Date(v.time)),
                 result: '已完成',
                 info: v.info,
                 account: parseAccount(isFromMe ? (isToMe ? v.from : v.to) : v.from).toLowerCase(),
-                showPay: pay.show
+                showPay: pay.show,
+                currencyName: this.props.currencyName
             };
         });
-        this.state.list = list.sort((a, b) => b.time - a.time);
+
+        const addr = getAddrById(this.state.currentAddr);
+        let recordList = [];
+        if (addr) {
+            recordList = addr.record.map(v => {
+                const pay = effectiveCurrencyNoConversion(v.pay, this.props.currencyName, false);
+
+                v.account = parseAccount(v.to).toLowerCase();
+                v.showPay = pay.show;
+
+                return v;
+            });
+        }
+
+        this.state.list = list.concat(recordList).sort((a, b) => b.time - a.time);
         this.paint();
     }
     /**
@@ -203,12 +217,7 @@ export class AddAsset extends Widget {
 
         this.parseTransactionDetails();
         this.parseBalance();
+        dataCenter.updatetTransaction(this.state.currentAddr, this.props.currencyName);
     }
 
-    private resetRecord(record: any, notified: boolean) {
-        const addr = getAddrById(this.state.currentAddr);
-        if (!addr) return;
-        addr.record = record;
-        resetAddrById(this.state.currentAddr, addr, notified);
-    }
 }
