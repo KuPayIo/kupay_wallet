@@ -51,7 +51,7 @@ const checkUpdate = () => {
                     if (isString(v2)) return v2;
                     if (!isHad(addrs, v2.addr)) {
                         addrs.push({
-                            addr: v2.addr, balance: 0, currencyName: v1.currencyName, addrName: v2.addrName, gwlt: v2.gwlt
+                            addr: v2.addr, balance: 0, currencyName: v1.currencyName, addrName: v2.addrName, wlt: v2.gwlt || v2.wlt
                             , record: v2.record
                         });
                         isUpdate = true;

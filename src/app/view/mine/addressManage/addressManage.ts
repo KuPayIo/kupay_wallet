@@ -91,19 +91,19 @@ export class AddressManage extends Widget {
             const selectName = this.state.coins[this.state.selectnum].name;
             const info = getNewAddrInfo(selectName);
             let address;
-            let gwltJson;
+            let wltJson;
 
             if (info) {
                 address = info.address;
-                gwltJson = info.gwltJson;
+                wltJson = info.wltJson;
             } else {
                 address = 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f';
             }
 
             popNew('app-components-message-messagebox', { itype: 'prompt', title: '添加地址', placeHolder: '标签名', content: address }, (r) => {
-                if (gwltJson) {
+                if (wltJson) {
 
-                    const info = addNewAddr(selectName, address, r, gwltJson);
+                    const info = addNewAddr(selectName, address, r, wltJson);
 
                     this.state.content1.push({ name: info.addrName, money: '0.00', address: address });
                     this.paint();

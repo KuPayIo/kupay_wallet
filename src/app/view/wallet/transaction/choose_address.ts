@@ -60,7 +60,7 @@ export class AddAsset extends Widget {
         const info = getNewAddrInfo(this.props.currencyName);
         if (!info) return;
         const address = info.address;
-        const gwltJson = info.gwltJson;
+        const wltJson = info.wltJson;
 
         popNew('app-components-message-messagebox', {
             itype: 'prompt', title: '添加地址', content: address, placeHolder: '标签名(限8个字)'
@@ -70,7 +70,7 @@ export class AddAsset extends Widget {
 
                 return;
             }
-            addNewAddr(this.props.currencyName, address, r, gwltJson);
+            addNewAddr(this.props.currencyName, address, r, wltJson);
 
             // console.log(wallets)
             // todo 这里验证输入，并根据输入添加地址，且处理地址切换

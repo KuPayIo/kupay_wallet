@@ -322,29 +322,29 @@ export const getNewAddrInfo = (currencyName) => {
     const wallet = getCurrentWallet(wallets);
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
+    const addrs = getLocalStorage('addrs');
+    const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
+
     let address;
-    let gwltJson;
+    let wltJson;
     if (currencyName === 'ETH') {
-        const gwlt = GaiaWallet.fromJSON(wallet.gwlt);
-        const newGwlt = gwlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length);
-        address = newGwlt.address;
-        gwltJson = newGwlt.toJSON();
+        const wlt = GaiaWallet.fromJSON(firstAddr.wlt);
+        const newWlt = wlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length);
+        address = newWlt.address;
+        wltJson = newWlt.toJSON();
     } else if (currencyName === 'BTC') {
-        const addrs = getLocalStorage('addrs');
-        const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
-
         const psw = decrypt(wallet.walletPsw);
-        const gwlt = BTCWallet.fromJSON(firstAddr.gwlt, psw);
-        gwlt.unlock(psw);
-        address = gwlt.derive(currencyRecord.addrs.length);
-        gwlt.lock(psw);
+        const wlt = BTCWallet.fromJSON(firstAddr.wlt, psw);
+        wlt.unlock(psw);
+        address = wlt.derive(currencyRecord.addrs.length);
+        wlt.lock(psw);
 
-        gwltJson = firstAddr.gwlt;
+        wltJson = firstAddr.wlt;
     }
 
     return {
         address: address,
-        gwltJson: gwltJson
+        wltJson: wltJson
     };
 };
 
@@ -353,9 +353,9 @@ export const getNewAddrInfo = (currencyName) => {
  * @param currencyName 货币类型
  * @param address 新的地址
  * @param addrName 新的地址名
- * @param gwltJson 新的地址钱包对象
+ * @param wltJson 新的地址钱包对象
  */
-export const addNewAddr = (currencyName, address, addrName, gwltJson) => {
+export const addNewAddr = (currencyName, address, addrName, wltJson) => {
     const wallets = getLocalStorage('wallets');
     const wallet = getCurrentWallet(wallets);
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
@@ -363,7 +363,7 @@ export const addNewAddr = (currencyName, address, addrName, gwltJson) => {
     addrName = addrName || getDefaultAddr(address);
     currencyRecord.addrs.push(address);
     const list: Addr[] = getLocalStorage('addrs') || [];
-    const newAddrInfo = { addr: address, addrName, gwlt: gwltJson, record: [], balance: 0, currencyName };
+    const newAddrInfo: Addr = { addr: address, addrName, wlt: wltJson, record: [], balance: 0, currencyName };
     list.push(newAddrInfo);
     currencyRecord.currentAddr = address;
 
