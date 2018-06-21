@@ -1,37 +1,36 @@
 /**
  * global wallet
  */
-import { dataCenter } from '../store/dataCenter';
-import { btcNetwork, lang, strength } from '../utils/constants';
+import { btcNetwork,lang,strength } from '../utils/constants';
 import { getDefaultAddr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
 import { GaiaWallet } from './eth/wallet';
-import { generate, toSeed } from './genmnemonic';
+import { generate,toSeed } from './genmnemonic';
 
 const cipher = new Cipher();
 
 /* tslint:disable: variable-name */
 export class GlobalWallet {
-    private _glwtId: string;
+    private _glwtId:string;
     private _nickName: string;
     private _mnemonic: string;
-    private _currencyRecords: CurrencyRecord[] = [];
-    private _addrs: Addr[] = [];
-    private _seed: string;
-
-    get glwtId(): string {
+    private _currencyRecords:CurrencyRecord[] = [];
+    private _addrs:Addr[] = [];
+    private _seed:string;
+    
+    get glwtId():string {
         return this._glwtId;
     }
-    get nickName(): string {
+    get nickName() : string {
         return this._nickName;
     }
 
     set nickName(name: string) {
         this._nickName = name;
     }
-    get mnemonic(): string {
+    get mnemonic() : string {
         return this._mnemonic;
     }
 
@@ -47,7 +46,7 @@ export class GlobalWallet {
         return this._seed;
     }
 
-    public static fromJSON(jsonstring: string): GlobalWallet {
+    public static fromJSON(jsonstring: string) : GlobalWallet {
         const wlt = JSON.parse(jsonstring);
         const gwlt = new GlobalWallet();
 
@@ -59,27 +58,23 @@ export class GlobalWallet {
         return gwlt;
     }
 
-    public static fromMnemonic(mnemonic: string, passwd: string, passphrase?: string): GlobalWallet {
+    public static async fromMnemonic(mnemonic: string, passwd: string, passphrase?: string) : Promise<GlobalWallet> {
         const gwlt = new GlobalWallet();
         gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
 
-        const seed = toSeed(lang, mnemonic);
+        const seed = toSeed(lang,mnemonic);
         gwlt._seed = cipher.encrypt(passwd, seed);
 
         // 创建ETH钱包
-        const ethGwlt = this.createEthGwlt(passwd, mnemonic);
-        gwlt._glwtId = ethGwlt.addr.addr;
+        const ethGwlt = await this.fromMnemonicETH(passwd,mnemonic);
+        gwlt._glwtId = ethGwlt.addrs[0].addr;
         gwlt._currencyRecords.push(ethGwlt.currencyRecord);
-        gwlt._addrs.push(ethGwlt.addr);
+        gwlt._addrs.push(...ethGwlt.addrs);
 
         // 创建BTC钱包
-        const btcGwlt = this.createBtcGwlt(passwd, mnemonic);
+        const btcGwlt = await this.fromMnemonicBTC(passwd,mnemonic);
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
-        gwlt._addrs.push(btcGwlt.addr);
-
-        // 更新内存数据中心
-        dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
-        dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
+        gwlt._addrs.push(...btcGwlt.addrs);
 
         return gwlt;
     }
@@ -90,34 +85,30 @@ export class GlobalWallet {
      * @param walletName  wallet name
      * @param passphrase passphrase
      */
-    public static generate(passwd: string, walletName: string, passphrase?: string): GlobalWallet {
+    public static generate(passwd: string,walletName:string, passphrase?: string) : GlobalWallet {
         const gwlt = new GlobalWallet();
         gwlt._nickName = walletName;
 
         const mnemonic = generate(lang, strength);
         gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
 
-        const seed = toSeed(lang, mnemonic);
+        const seed = toSeed(lang,mnemonic);
         gwlt._seed = cipher.encrypt(passwd, seed);
 
         // 创建ETH钱包
-        const ethGwlt = this.createEthGwlt(passwd, mnemonic);
+        const ethGwlt = this.createEthGwlt(passwd,mnemonic);
         gwlt._glwtId = ethGwlt.addr.addr;
         gwlt._currencyRecords.push(ethGwlt.currencyRecord);
         gwlt._addrs.push(ethGwlt.addr);
         // 创建BTC钱包
-        const btcGwlt = this.createBtcGwlt(passwd, mnemonic);
+        const btcGwlt = this.createBtcGwlt(passwd,mnemonic);
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
         gwlt._addrs.push(btcGwlt.addr);
-
-        // 更新内存数据中心
-        dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
-        dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
 
         return gwlt;
     }
 
-    private static createEthGwlt(passwd: string, mnemonic: string) {
+    private static createEthGwlt(passwd: string,mnemonic:string) {
         const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
         const currencyRecord: CurrencyRecord = {
             currencyName: 'ETH',
@@ -139,7 +130,7 @@ export class GlobalWallet {
         };
     }
 
-    private static createBtcGwlt(passwd: string, mnemonic: string) {
+    private static createBtcGwlt(passwd: string,mnemonic:string) {
         // todo 测试阶段，使用测试链，后续改为主链
         const btcWallet = BTCWallet.fromMnemonic(passwd, mnemonic, btcNetwork, lang);
         btcWallet.unlock(passwd);
@@ -150,7 +141,7 @@ export class GlobalWallet {
             currentAddr: address,
             addrs: [address]
         };
-
+    
         const addr: Addr = {
             addr: address,
             addrName: getDefaultAddr(address),
@@ -159,7 +150,7 @@ export class GlobalWallet {
             balance: 0,
             currencyName: 'BTC'
         };
-
+    
         return {
             currencyRecord,
             addr
@@ -169,17 +160,13 @@ export class GlobalWallet {
     private static async fromMnemonicETH(passwd: string,mnemonic:string) {
         const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
         const cnt = await gaiaWallet.scanUsedAddress(passwd);
+        console.log('eth',cnt);
         const currencyRecord: CurrencyRecord = {
             currencyName: 'ETH',
             currentAddr: gaiaWallet.address,
             addrs: [gaiaWallet.address]
         };
-        for (let i = 1;i < cnt;i++) {
-            currencyRecord.addrs.push(gaiaWallet.selectAddress(passwd,i).address);
-        }
-
-        const addrs :Addr[] = [];
-        const addr: Addr = {
+        const firstAddr: Addr = {
             addr: gaiaWallet.address,
             addrName: getDefaultAddr(gaiaWallet.address),
             wlt: gaiaWallet.toJSON(),
@@ -187,37 +174,74 @@ export class GlobalWallet {
             balance: 0,
             currencyName: 'ETH'
         };
+        const addrs :Addr[] = [];
+        addrs.push(firstAddr);
+
+        for (let i = 1;i < cnt;i++) {
+            const wlt = gaiaWallet.selectAddress(passwd,i);
+            currencyRecord.addrs.push(wlt.address);
+            const addr : Addr = {
+                addr: wlt.address,
+                addrName: getDefaultAddr(wlt.address),
+                wlt: wlt.toJSON(),
+                record: [],
+                balance: 0,
+                currencyName: 'ETH'
+            };
+            addrs.push(addr);
+        }
 
         return {
             currencyRecord,
-            addr
+            addrs
         };
     }
 
-    private static fromMnemonicBTC(passwd: string,mnemonic:string) {
+    private static async fromMnemonicBTC(passwd: string,mnemonic:string) {
         // todo 测试阶段，使用测试链，后续改为主链
         const btcWallet = BTCWallet.fromMnemonic(passwd, mnemonic, btcNetwork, lang);
+        const btcWalletJson = btcWallet.toJSON();
         btcWallet.unlock(passwd);
+        const cnt = await btcWallet.scanUsedAddress();
+        console.log('btc',cnt);
         const address = btcWallet.derive(0);
-        btcWallet.lock(passwd);
+        
         const currencyRecord: CurrencyRecord = {
             currencyName: 'BTC',
             currentAddr: address,
             addrs: [address]
         };
     
-        const addr: Addr = {
+        const firstAddr: Addr = {
             addr: address,
             addrName: getDefaultAddr(address),
-            wlt: btcWallet.toJSON(),
+            wlt: btcWalletJson,
             record: [],
             balance: 0,
             currencyName: 'BTC'
         };
-    
+
+        const addrs :Addr[] = [];
+        addrs.push(firstAddr);
+
+        for (let i = 1;i < cnt;i++) {
+            const address = btcWallet.derive(i);
+            currencyRecord.addrs.push(address);
+            const addr : Addr = {
+                addr: address,
+                addrName: getDefaultAddr(address),
+                wlt: btcWalletJson,
+                record: [],
+                balance: 0,
+                currencyName: 'ETH'
+            };
+            addrs.push(addr);
+        }
+        btcWallet.lock(passwd);
+
         return {
             currencyRecord,
-            addr
+            addrs
         };
     }
 
@@ -227,7 +251,7 @@ export class GlobalWallet {
      * @param  passwd used to decrypt the mnemonic words
      * @returns  mnemonic
      */
-    public exportMnemonic(passwd: string): string {
+    public exportMnemonic(passwd: string) : string {
         if (this._mnemonic.length !== 0) {
             return cipher.decrypt(passwd, this._mnemonic);
         } else {
@@ -235,27 +259,27 @@ export class GlobalWallet {
         }
     }
 
-    public exportSeed(passwd: string): string {
+    public exportSeed(passwd: string) : string {
         return cipher.decrypt(passwd, this._seed);
     }
 
-    public toJSON(): string {
+    public toJSON() : string {
         const wlt = {
-            glwtId: this._glwtId,
+            glwtId:this._glwtId,
             nickname: this._nickName,
             mnemonic: this._mnemonic,
-            seed: this._seed
+            seed:this._seed
         };
 
         return JSON.stringify(wlt);
     }
 
-    public passwordChange(oldPsw: string, newPsw: string) {
+    public passwordChange(oldPsw:string,newPsw:string) {
         if (this._mnemonic.length === 0) return;
         const mnemonic = this.exportMnemonic(oldPsw);
         this._mnemonic = cipher.encrypt(newPsw, mnemonic);
 
-        const seed = cipher.decrypt(oldPsw, this._seed);
+        const seed = cipher.decrypt(oldPsw,this._seed);
         this._seed = cipher.encrypt(newPsw, seed);
     }
 

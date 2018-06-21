@@ -57,7 +57,7 @@ export class WalletImport extends Widget {
     public agreementClick() {
         popNew('app-view-wallet-agreementInterpretation-agreementInterpretation');
     }
-    public importWalletClick() {
+    public async importWalletClick() {
         if (!this.state.userProtocolReaded) {
             // popNew("app-components-message-message", { itype: "notice", content: "请阅读用户协议" })
             return;
@@ -77,28 +77,25 @@ export class WalletImport extends Widget {
 
             return;
         }
+        const close = popNew('pi-components-loading-loading', { text: '导入中...' });
         let gwlt = null;
         try {
-            gwlt = GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
+            gwlt = await GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
             gwlt.nickName = this.state.walletName;
+            
         } catch (e) {
+            close.callback(close.widget);
             popNew('app-components-message-message', { itype: 'error', content: '无效的助记词', center: true });
 
             return;
         }
+        close.callback(close.widget);
         if (!this.importWallet(gwlt)) {
             popNew('app-components-message-message', { itype: 'error', content: '钱包数量已达上限', center: true });
-            this.ok && this.ok();
-
-            return;
         }
-
-        const close = popNew('pi-components-loading-loading', { text: '导入中...' });
-        setTimeout(() => {
-            close.callback(close.widget);
-            this.ok && this.ok();
-            popNew('app-view-wallet-backupWallet-backupWallet');
-        }, 500);
+        this.ok && this.ok();
+        popNew('app-view-wallet-backupWallet-backupWallet');
+        
     }
 
     public importWallet(gwlt: GlobalWallet) {

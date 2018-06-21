@@ -366,7 +366,9 @@ export class GaiaWallet {
         let count = 0;
         let i     = 0;
         for (i = 0; ; i++) {
-            const res = await this.api.getTransactionCount(this.selectAddress(passwd,i)._address);
+            const addr = this.selectAddress(passwd,i)._address;
+            const res = await this.api.getTransactionCount(addr);
+            console.log(addr,res);
             if (res === undefined || res.hasOwnProperty('error')) {
                 throw new Error('Response error!');
             }
