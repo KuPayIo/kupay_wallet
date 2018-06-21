@@ -5,6 +5,7 @@ export class Api {
     public static BASE_URL: string = 'https://api.blockcypher.com';
     public static ESTIMATION_FEE_URL: string = 'https://bitcoinfees.earn.com/api/v1/fees/recommended';
     public static WEBSOCKET_URL: string = 'wss://socket.blockcypher.com/v1/btc/test3';
+    public static BTC_CMC_URL: string = 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY';
 
     public eventQueue: any = [];
     private wss: any;
@@ -87,6 +88,20 @@ export class Api {
             return await response.json();
         } catch (e) {
             Promise.reject(e);
+        }
+    }
+
+    public async getExchangeRate(): Promise<{}> {
+        try {
+            const response = await fetch(Api.BTC_CMC_URL);
+            const data = await response.json();
+
+            return {
+                CNY: data.data.quotes.CNY.price,
+                USD: data.data.quotes.USD.price
+            };
+        } catch (e) {
+            return Promise.reject(e);
         }
     }
 
