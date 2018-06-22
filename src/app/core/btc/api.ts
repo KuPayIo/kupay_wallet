@@ -91,7 +91,7 @@ export class Api {
         }
     }
 
-    public async getExchangeRate(): Promise<{}> {
+    public async getExchangeRate(): Promise<any> {
         try {
             const response = await fetch(Api.BTC_CMC_URL);
             const data = await response.json();

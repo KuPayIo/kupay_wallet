@@ -400,3 +400,19 @@ export const addNewAddr = (currencyName, address, addrName, wltJson) => {
 
     return newAddrInfo;
 };
+
+// 函数防抖
+export const debounce = (fn, wait = 1000) => {
+    let timer = null;
+
+    return  (...rest) => {
+        if (timer) {
+            clearTimeout(timer);
+            timer = null;
+        }
+        timer = setTimeout(() => {
+            fn(...rest);
+        }, wait);
+    };
+};
+  

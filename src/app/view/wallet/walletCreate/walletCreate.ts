@@ -88,7 +88,7 @@ export class WalletCreate extends Widget {
             close.callback(close.widget);
             this.ok && this.ok();
             popNew('app-view-wallet-backupWallet-backupWallet');
-        }, 5000000);
+        }, 500);
     }
 
     public createWallet() {
