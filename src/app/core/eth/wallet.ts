@@ -1,6 +1,7 @@
 /**
  * ETH wallet implementation
  */
+import { sleep } from '../../utils/tools';
 import { Cipher } from '../crypto/cipher';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
@@ -37,7 +38,7 @@ export interface Transaction {
 
 export class GaiaWallet {
 
-	public static GAP_LIMIT: number = 3;
+    public static GAP_LIMIT: number = 3;
     private _nickName: string;
     private _address: string;
     private _balance: number;
@@ -47,13 +48,13 @@ export class GaiaWallet {
     private _privKey: string;
 
     private _masterSeed: string;
-	private api:Api;
+    private api:Api;
 
     constructor() {
         this._txs = [];
         this._balance = 0;
         this._mnemonic = '';
-		this.api = new Api();
+        this.api = new Api();
     }
 
     public static fromJSON(jsonstring: string) : GaiaWallet {
@@ -395,21 +396,14 @@ export class GaiaWallet {
 
         return gwlt;
     }
-	public async scanUsedAddress(passwd: string): Promise<number> {
+
+    public async scanUsedAddress(passwd: string): Promise<number> {
         let count = 0;
         let i     = 0;
         for (i = 0; ; i++) {
             const addr = this.selectAddress(passwd,i)._address;
             const res = await this.api.getAllTransactionsOf(addr);
-
-            const startTime = new Date().getTime();
-            let loop = true;
-            while (loop) {
-                const endTime = new Date().getTime();
-                if (endTime - startTime > 1000) {
-                    loop = false;
-                }
-            }
+            sleep(1000);
             if (res === undefined || res.hasOwnProperty('error')) {
                 throw new Error('Response error!');
             }

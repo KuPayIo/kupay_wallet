@@ -7,7 +7,7 @@ import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
 import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable,walletPswAvailable } from '../../../utils/account';
 import { defalutShowCurrencys,walletNumLimit } from '../../../utils/constants';
-import { encrypt, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { encrypt, getAddrsAll, getLocalStorage,setLocalStorage } from '../../../utils/tools';
 import { Addr, Wallet } from '../../interface';
 
 export class WalletImport extends Widget {
@@ -100,7 +100,7 @@ export class WalletImport extends Widget {
 
     public importWallet(gwlt: GlobalWallet) {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
-        const addrs: Addr[] = getLocalStorage('addrs') || [];
+        let addrs: Addr[] = getLocalStorage('addrs') || [];
         const curWalletId = gwlt.glwtId;
         const len0 = wallets.walletList.length;
         if (len0 === walletNumLimit) {
@@ -124,7 +124,11 @@ export class WalletImport extends Widget {
         const len = wallets.walletList.length;
         for (let i = 0; i < len; i++) {
             if (gwlt.glwtId === wallets.walletList[i].walletId) {
-                wallets.walletList.splice(i, 1);// 删除已存在钱包
+                const wallet0 = wallets.walletList.splice(i, 1)[0];// 删除已存在钱包
+                const retAddrs = getAddrsAll(wallet0);
+                addrs = addrs.filter(addr => {
+                    return retAddrs.indexOf(addr.addr) === -1;
+                });
                 break;
             }
         }

@@ -10,6 +10,15 @@ export class AddressManage extends Widget {
     public ok: () => void;
     constructor() {
         super();
+
+    }
+
+    public create() {
+        super.create();
+        this.init();
+    } 
+
+    public init() {
         this.state = {
             showtype: 1,
             selectnum: 0,

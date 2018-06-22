@@ -1,7 +1,7 @@
 import { Api as BtcApi } from '../core/btc/api';
 import { Api as EthApi } from '../core/eth/api';
 import {
-    getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage, wei2Eth
+    getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage,wei2Eth
 } from '../utils/tools';
 
 /**
@@ -70,12 +70,16 @@ export class DataCenter {
     }
 
     /**
-     * 通过货币类型获取地址余额列表
+     * 通过货币类型获取当前钱包地址详情
      */
     public getAddrInfosByCurrencyName(currencyName: string) {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        const retAddrs = getAddrsByCurrencyName(wallet,currencyName);
         const addrs = getLocalStorage('addrs') || [];
 
-        return addrs.filter(v => v.currencyName === currencyName);
+        return addrs.filter(v => retAddrs.indexOf(v.addr) !== -1);
     }
 
     /**

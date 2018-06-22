@@ -114,8 +114,8 @@ export class GlobalWallet {
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
         gwlt._addrs.push(btcGwlt.addr);
 
-        dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
-        dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
+        // dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
+        // dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
 
         return gwlt;
     }
