@@ -85,7 +85,7 @@ export class WalletImport extends Widget {
             
         } catch (e) {
             close.callback(close.widget);
-            popNew('app-components-message-message', { itype: 'error', content: '无效的助记词', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: '导入失败', center: true });
 
             return;
         }

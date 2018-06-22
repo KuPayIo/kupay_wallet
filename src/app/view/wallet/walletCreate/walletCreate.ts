@@ -88,7 +88,7 @@ export class WalletCreate extends Widget {
             close.callback(close.widget);
             this.ok && this.ok();
             popNew('app-view-wallet-backupWallet-backupWallet');
-        }, 500);
+        }, 5000000);
     }
 
     public createWallet() {
@@ -109,14 +109,6 @@ export class WalletCreate extends Widget {
             currencyRecords: []
         };
 
-        /* // 生成助记词
-        const mm = generate('english', 128);
-        // 给钱包的默认货币创建首地址
-        // 创建eth钱包首地址，并在钱包对象上存放
-        const gwlt = createEthGwlt(wallet, addrs, mm, this.state.walletPsw, this.state.walletName);
-        // 创建btc钱包首地址
-        createBtcGwlt(wallet, addrs, mm, this.state.walletPsw);*/
-        // 存储
         wallet.currencyRecords.push(...gwlt.currencyRecords);
 
         if (this.state.walletPswTips.trim().length > 0) {
@@ -136,50 +128,3 @@ export class WalletCreate extends Widget {
         popNew('app-view-wallet-walletImport-walletImport');
     }
 }
-
-const createEthGwlt = (wallet, addrs, mm, walletPsw, walletName) => {
-    const gwlt = GaiaWallet.fromMnemonic(mm, 'english', walletPsw);
-    gwlt.nickName = walletName;
-    const currencyRecord: CurrencyRecord = {
-        currencyName: 'ETH',
-        currentAddr: gwlt.address,
-        addrs: [gwlt.address]
-    };
-    wallet.currencyRecords.push(currencyRecord);
-    addrs.push({
-        addr: gwlt.address,
-        addrName: getDefaultAddr(gwlt.address),
-        gwlt: gwlt.toJSON(),
-        record: [],
-        balance: 0,
-        currencyName: 'ETH'
-    });
-
-    return gwlt;
-};
-
-const createBtcGwlt = (wallet, addrs, mm, walletPsw) => {
-    // todo 测试阶段，使用测试链，后续改为主链
-    const gwlt = BTCWallet.fromMnemonic(walletPsw, mm, 'testnet', 'english');
-    // gwlt.nickName = walletName;
-    gwlt.unlock(walletPsw);
-    const address = gwlt.derive(0);
-    gwlt.lock(walletPsw);
-    const currencyRecord: CurrencyRecord = {
-        currencyName: 'BTC',
-        currentAddr: address,
-        addrs: [address]
-    };
-    wallet.currencyRecords.push(currencyRecord);
-
-    addrs.push({
-        addr: address,
-        addrName: getDefaultAddr(address),
-        gwlt: gwlt.toJSON(),
-        record: [],
-        balance: 0,
-        currencyName: 'BTC'
-    });
-
-    return gwlt;
-};
