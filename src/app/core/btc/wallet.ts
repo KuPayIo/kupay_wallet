@@ -256,7 +256,7 @@ export class BTCWallet {
     }
 
     /**
-     * Spend btc from all available utxos, using index 0 address as the default change address.
+     * build raw btc transaction from all available utxos, using index 0 address as the default change address.
      *
      * Our spend policies are:
      *
@@ -270,7 +270,7 @@ export class BTCWallet {
      * @returns {Promise<string>} Transaction hash of this transaction
      * @memberof BTCWallet
      */
-    public async spend(output: Output, priority: PRIORITY): Promise<string> {
+    public async buildRawTransaction(output: Output, priority: PRIORITY): Promise<[string, number]> {
         if (!this.isInitialized) {
             throw new Error('Wallet uninitialized!');
         }
@@ -322,24 +322,19 @@ export class BTCWallet {
         console.log('keyset length: ', keySet.length);
 
         output.amount = Unit.fromBTC(output.amount).toSatoshis();
-        const rawTx = new Transaction().feePerKb(fee * 2000)
+        const rawTx = new Transaction().feePerKb(fee * 1000)
             .from(collected)
             .to(output.toAddr, output.amount)
             .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
             .sign(keySet);
 
         console.log('rawTx:', rawTx);
+        console.log('txFee:', rawTx.getFee());
 
         const serialized = rawTx.serialize(true);
         console.log('serialized:', serialized);
 
-        const res = await this.api.sendRawTransaction(serialized);
-        if (res === undefined || res.hasOwnProperty('error')) {
-            throw new Error(res.error);
-        }
-        console.log('txHash: ',res.tx.hash);
-
-        return res.tx.hash;
+        return [serialized, rawTx.getFee];
     }
 
     // TODO: we should distinguish `confirmed`, `unconfirmed` and `spendable`
