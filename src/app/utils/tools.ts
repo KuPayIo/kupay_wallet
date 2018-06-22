@@ -19,6 +19,16 @@ export const getLocalStorage = (key: string) => {
     return find(key);
 };
 
+export const sleep = (delay) => {
+    const startTime = new Date().getTime();
+    let loop = true;
+    while (loop) {
+        const endTime = new Date().getTime();
+        if (endTime - startTime > delay) {
+            loop = false;
+        }
+    }
+};
 export const getCurrentWallet = (wallets) => {
     if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
         return null;
@@ -85,10 +95,26 @@ export const getAddrsAll = (wallet) => {
     const currencyRecords = wallet.currencyRecords;
     const retAddrs = [];
     currencyRecords.forEach((item) => {
-        item.addrs.forEach((addr) => {
-            retAddrs.push(addr);
-        });
+        retAddrs.push(...item.addrs);
     });
+
+    return retAddrs;
+};
+
+/**
+ * 获取钱包下指定货币类型的所有地址
+ * @param wallet wallet obj
+ */
+export const getAddrsByCurrencyName = (wallet:any,currencyName:string) => {
+    const currencyRecords = wallet.currencyRecords;
+    const retAddrs = [];
+    const len = currencyRecords.length;
+    for (let i = 0;i < len; i++) {
+        if (currencyRecords[i].currencyName === currencyName) {
+            retAddrs.push(...currencyRecords[i].addrs);
+            break;
+        }
+    }
 
     return retAddrs;
 };

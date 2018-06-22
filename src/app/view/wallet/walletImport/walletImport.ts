@@ -7,7 +7,7 @@ import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
 import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable,walletPswAvailable } from '../../../utils/account';
 import { defalutShowCurrencys,walletNumLimit } from '../../../utils/constants';
-import { encrypt, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { encrypt, getAddrsAll, getLocalStorage,setLocalStorage } from '../../../utils/tools';
 import { Addr, Wallet } from '../../interface';
 
 export class WalletImport extends Widget {
@@ -57,7 +57,7 @@ export class WalletImport extends Widget {
     public agreementClick() {
         popNew('app-view-wallet-agreementInterpretation-agreementInterpretation');
     }
-    public importWalletClick() {
+    public async importWalletClick() {
         if (!this.state.userProtocolReaded) {
             // popNew("app-components-message-message", { itype: "notice", content: "请阅读用户协议" })
             return;
@@ -77,33 +77,30 @@ export class WalletImport extends Widget {
 
             return;
         }
+        const close = popNew('pi-components-loading-loading', { text: '导入中...' });
         let gwlt = null;
         try {
-            gwlt = GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
+            gwlt = await GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
             gwlt.nickName = this.state.walletName;
+            
         } catch (e) {
-            popNew('app-components-message-message', { itype: 'error', content: '无效的助记词', center: true });
+            close.callback(close.widget);
+            popNew('app-components-message-message', { itype: 'error', content: '导入失败', center: true });
 
             return;
         }
+        close.callback(close.widget);
         if (!this.importWallet(gwlt)) {
             popNew('app-components-message-message', { itype: 'error', content: '钱包数量已达上限', center: true });
-            this.ok && this.ok();
-
-            return;
         }
-
-        const close = popNew('pi-components-loading-loading', { text: '导入中...' });
-        setTimeout(() => {
-            close.callback(close.widget);
-            this.ok && this.ok();
-            popNew('app-view-wallet-backupWallet-backupWallet');
-        }, 500);
+        this.ok && this.ok();
+        popNew('app-view-wallet-backupWallet-backupWallet');
+        
     }
 
     public importWallet(gwlt: GlobalWallet) {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
-        const addrs: Addr[] = getLocalStorage('addrs') || [];
+        let addrs: Addr[] = getLocalStorage('addrs') || [];
         const curWalletId = gwlt.glwtId;
         const len0 = wallets.walletList.length;
         if (len0 === walletNumLimit) {
@@ -127,7 +124,11 @@ export class WalletImport extends Widget {
         const len = wallets.walletList.length;
         for (let i = 0; i < len; i++) {
             if (gwlt.glwtId === wallets.walletList[i].walletId) {
-                wallets.walletList.splice(i, 1);// 删除已存在钱包
+                const wallet0 = wallets.walletList.splice(i, 1)[0];// 删除已存在钱包
+                const retAddrs = getAddrsAll(wallet0);
+                addrs = addrs.filter(addr => {
+                    return retAddrs.indexOf(addr.addr) === -1;
+                });
                 break;
             }
         }
@@ -139,23 +140,6 @@ export class WalletImport extends Widget {
         setLocalStorage('addrs', addrs, false);
         
         return true;
-    }
-
-    /**
-     * 判断导入的钱包是否存在
-     * @param gwlt imported wallet
-     */
-    public importedWalletIsExisted(gwlt: GlobalWallet) {
-
-        const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
-        const len = wallets.walletList.length;
-        for (let i = 0; i < len; i++) {
-            if (gwlt.address === wallets.walletList[i].walletId) {
-                return true;
-            }
-        }
-        
-        return false;
     }
 
 }
