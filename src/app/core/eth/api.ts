@@ -15,7 +15,7 @@ const ETHSCAN_ROPSTEN_API_URL = 'http://api-ropsten.etherscan.io/api?module=acco
 
 /**
  * API docs: https://github.com/ethereum/wiki/wiki/JavaScript-API
- * 
+ *
  * @export
  * @class Api
  */
@@ -82,9 +82,9 @@ export class Api {
     }
     /**
      * Estimate gas usage of a transaction obj
-     * 
+     *
      * @param {{to, data}} obj `to` and `data` shoul be a '0x' prefixed hex string
-     * @returns {Promise<number>} 
+     * @returns {Promise<number>}
      * @memberof Api
      */
     public estimateGas(obj: {to: any; data: any}): Promise<number> {
@@ -99,7 +99,7 @@ export class Api {
         });
     }
 
-    public async getExchangeRate(): Promise<{}> {
+    public async getExchangeRate(): Promise<any> {
         try {
             const response = await fetch(ETH_CMC_URL);
             const data = await response.json();
@@ -115,9 +115,9 @@ export class Api {
     /**
      * Docs: https://etherscan.io/apis#accounts
      * Get maxmum last 10000 histroy transactions of `address`
-     * 
-     * @param {string} address 
-     * @returns {Promise<{}>} 
+     *
+     * @param {string} address
+     * @returns {Promise<{}>}
      * @memberof Api
      */
     public async getAllTransactionsOf(address: string): Promise<any> {
@@ -129,5 +129,20 @@ export class Api {
         } catch (e) {
             return Promise.reject(e);
         }
+    }
+
+    public async ethCall(contractAddress: string, callData: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            web3.eth.call({
+                to: contractAddress,
+                data: callData
+            }, (err, res) => {
+                if (!err) {
+                    return resolve(res);
+                } else {
+                    return reject(err);
+                }
+            });
+        });
     }
 }
