@@ -9,6 +9,7 @@ import { Web3 } from '../thirdparty/web3.min';
 const web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/UHhtxDMNBuXoX8OFJKKM'));
 const ETH_CMC_URL = 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY';
 const ETHSCAN_ROPSTEN_API_URL = 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=';
+const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx';
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
@@ -144,5 +145,17 @@ export class Api {
                 }
             });
         });
+    }
+
+    public async getTokenTransferEvents(contractAddress: string, address: string): Promise<any> {
+        const path = ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT + `&contractAddress=${contractAddress}&address=${address}`;
+        console.log(path);
+        try {
+            const response = await fetch(path);
+
+            return response.json();
+        } catch (e) {
+            return Promise.reject(e);
+        }
     }
 }
