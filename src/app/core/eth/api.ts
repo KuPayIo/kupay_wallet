@@ -132,6 +132,14 @@ export class Api {
         }
     }
 
+    /**
+     * Invoke contract calls that don't modify blockchain state
+     *
+     * @param {string} contractAddress Address of the called contract
+     * @param {string} callData Contract call parameters
+     * @returns {Promise<any>} Json response
+     * @memberof Api
+     */
     public async ethCall(contractAddress: string, callData: string): Promise<any> {
         return new Promise((resolve, reject) => {
             web3.eth.call({
@@ -147,6 +155,14 @@ export class Api {
         });
     }
 
+    /**
+     * Get token transfer events of an address
+     *
+     * @param {string} contractAddress Token contract address
+     * @param {string} address Which address to query
+     * @returns {Promise<any>} Json response
+     * @memberof Api
+     */
     public async getTokenTransferEvents(contractAddress: string, address: string): Promise<any> {
         const path = ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT + `&contractAddress=${contractAddress}&address=${address}`;
         console.log(path);
