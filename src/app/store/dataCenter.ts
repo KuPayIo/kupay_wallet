@@ -1,7 +1,7 @@
 import { Api as BtcApi } from '../core/btc/api';
 import { Api as EthApi } from '../core/eth/api';
 import {
-    getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage, wei2Eth
+    getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage,wei2Eth
 } from '../utils/tools';
 
 /**
@@ -70,12 +70,16 @@ export class DataCenter {
     }
 
     /**
-     * 通过货币类型获取地址余额列表
+     * 通过货币类型获取当前钱包地址详情
      */
     public getAddrInfosByCurrencyName(currencyName: string) {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        const retAddrs = getAddrsByCurrencyName(wallet,currencyName);
         const addrs = getLocalStorage('addrs') || [];
 
-        return addrs.filter(v => v.currencyName === currencyName);
+        return addrs.filter(v => retAddrs.indexOf(v.addr) !== -1);
     }
 
     /**
@@ -157,7 +161,7 @@ export class DataCenter {
         if (currencyName === 'ETH') {
             return this.ethExchangeRate || { CNY: 3337.01, USD: 517.42 };
         } else if (currencyName === 'BTC') {
-            return this.btcExchangeRate || { CNY: 6586.55, USD: 1021.28 };
+            return this.btcExchangeRate || { CNY: 42868.55 , USD: 6598.71 };
         }
     }
     /**
@@ -407,10 +411,14 @@ export class DataCenter {
     private async exchangeRate(currencyName: string) {
         switch (currencyName) {
             case 'ETH':
-                const api: EthApi = new EthApi();
-                this.ethExchangeRate = await api.getExchangeRate();
+                const ethApi: EthApi = new EthApi();
+                this.ethExchangeRate = await ethApi.getExchangeRate();
                 break;
-            case 'BTC': break;
+            case 'BTC': 
+                const btcApi:BtcApi = new BtcApi();
+                
+                this.btcExchangeRate = await btcApi.getExchangeRate(); 
+                break;
             default:
         }
 

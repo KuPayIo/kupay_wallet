@@ -1,10 +1,14 @@
 /**
  * ETH wallet implementation
  */
+import { sleep } from '../../utils/tools';
 import { Cipher } from '../crypto/cipher';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
+import { Web3 } from '../thirdparty/web3.min';
 import { WORDLIST } from '../thirdparty/wordlist';
+import { Api } from './api';
+import { ERC20Tokens, minABI } from './tokens';
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
@@ -14,6 +18,8 @@ const Buffer = ethereumjs.Buffer.Buffer;
 const Wallet = ethereumjs.Wallet;
 const WalletHD = ethereumjs.WalletHD;
 const ETHTx = ethereumjs.Tx;
+
+const web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/UHhtxDMNBuXoX8OFJKKM'));
 
 const LANGUAGES = { english: 0, chinese_simplified: 1, chinese_traditional: 2 };
 const DEFAULT_DERIVE_PATH = 'm/44\'/60\'/0\'/0/0';
@@ -32,6 +38,7 @@ export interface Transaction {
 
 export class GaiaWallet {
 
+    public static GAP_LIMIT: number = 3;
     private _nickName: string;
     private _address: string;
     private _balance: number;
@@ -41,11 +48,13 @@ export class GaiaWallet {
     private _privKey: string;
 
     private _masterSeed: string;
+    private api:Api;
 
     constructor() {
         this._txs = [];
         this._balance = 0;
         this._mnemonic = '';
+        this.api = new Api();
     }
 
     public static fromJSON(jsonstring: string) : GaiaWallet {
@@ -116,6 +125,7 @@ export class GaiaWallet {
         }
         const seedBuffer = mn.toSeed(mnemonic);
         const rootNode = WalletHD.fromMasterSeed(Buffer(seedBuffer, 'hex'));
+
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
 
@@ -311,6 +321,35 @@ export class GaiaWallet {
         return tx.serialize();
     }
 
+    public tokenOperations(method: string, tokenName: string, toAddr?: string, amount?: number): string {
+        const tokenAddress = ERC20Tokens[tokenName];
+        if (tokenAddress === undefined) {
+            throw new Error('This token doesn\'t supported');
+        }
+        const contract = web3.eth.contract(minABI).at(tokenAddress);
+
+        switch (method) {
+            case 'totalsupply':
+                return contract.totalSupply.getData();
+            case 'decimals':
+                return contract.decimals.getData();
+            case 'balanceof':
+                if (toAddr !== undefined) {
+                    return contract.balanceOf.getData(toAddr);
+                } else {
+                    throw new Error('Please specifiy the address you want to query balance');
+                }
+            case 'transfer':
+                if (toAddr !== undefined && amount !== undefined) {
+                    return contract.transfer.getData(toAddr, amount);
+                } else {
+                    throw new Error('Need toAddr and amount');
+                }
+            default:
+                throw new Error('Not supported method');
+        }
+    }
+
     public toJSON() : string {
         const wlt = {
             nickname: this._nickName,
@@ -356,5 +395,29 @@ export class GaiaWallet {
         gwlt._masterSeed = cipher.encrypt(passwd, this._masterSeed);
 
         return gwlt;
+    }
+
+    public async scanUsedAddress(passwd: string): Promise<number> {
+        let count = 0;
+        let i     = 0;
+        for (i = 0; ; i++) {
+            const addr = this.selectAddress(passwd,i)._address;
+            const res = await this.api.getAllTransactionsOf(addr);
+            sleep(1000);
+            if (res === undefined || res.hasOwnProperty('error')) {
+                throw new Error('Response error!');
+            }
+            if (res.result.length === 0) {
+                count = count + 1;
+            } else {
+                count = 0;
+            }
+
+            if (count > GaiaWallet.GAP_LIMIT) {
+                break;
+            }
+        }
+
+        return i - GaiaWallet.GAP_LIMIT;
     }
 }

@@ -9,13 +9,14 @@ import { Web3 } from '../thirdparty/web3.min';
 const web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/UHhtxDMNBuXoX8OFJKKM'));
 const ETH_CMC_URL = 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY';
 const ETHSCAN_ROPSTEN_API_URL = 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=';
+const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx';
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
 
 /**
  * API docs: https://github.com/ethereum/wiki/wiki/JavaScript-API
- * 
+ *
  * @export
  * @class Api
  */
@@ -82,9 +83,9 @@ export class Api {
     }
     /**
      * Estimate gas usage of a transaction obj
-     * 
+     *
      * @param {{to, data}} obj `to` and `data` shoul be a '0x' prefixed hex string
-     * @returns {Promise<number>} 
+     * @returns {Promise<number>}
      * @memberof Api
      */
     public estimateGas(obj: {to: any; data: any}): Promise<number> {
@@ -99,7 +100,7 @@ export class Api {
         });
     }
 
-    public async getExchangeRate(): Promise<{}> {
+    public async getExchangeRate(): Promise<any> {
         try {
             const response = await fetch(ETH_CMC_URL);
             const data = await response.json();
@@ -115,17 +116,60 @@ export class Api {
     /**
      * Docs: https://etherscan.io/apis#accounts
      * Get maxmum last 10000 histroy transactions of `address`
-     * 
-     * @param {string} address 
-     * @returns {Promise<{}>} 
+     *
+     * @param {string} address
+     * @returns {Promise<{}>}
      * @memberof Api
      */
-    public async getAllTransactionsOf(address: string): Promise<{}> {
+    public async getAllTransactionsOf(address: string): Promise<any> {
         try {
             const url = ETHSCAN_ROPSTEN_API_URL + address;
             const response = await fetch(url);
 
             return await response.json();
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    }
+
+    /**
+     * Invoke contract calls that don't modify blockchain state
+     *
+     * @param {string} contractAddress Address of the called contract
+     * @param {string} callData Contract call parameters
+     * @returns {Promise<any>} Json response
+     * @memberof Api
+     */
+    public async ethCall(contractAddress: string, callData: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            web3.eth.call({
+                to: contractAddress,
+                data: callData
+            }, (err, res) => {
+                if (!err) {
+                    return resolve(res);
+                } else {
+                    return reject(err);
+                }
+            });
+        });
+    }
+
+    /**
+     * Get token transfer events of an address
+     *
+     * @param {string} contractAddress Token contract address
+     * @param {string} address Which address to query
+     * @returns {Promise<any>} Json response
+     * @memberof Api
+     */
+    public async getTokenTransferEvents(contractAddress: string, address: string): Promise<any> {
+        const path = ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT + `&contractAddress=${contractAddress}&address=${address}`;
+        console.log(path);
+        try {
+            const response = await fetch(path);
+
+            return response.json();
         } catch (e) {
             return Promise.reject(e);
         }
