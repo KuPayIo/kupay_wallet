@@ -178,7 +178,7 @@ export class DataCenter {
         this.timerRef = setTimeout(() => {
             this.timerRef = 0;
             this.openCheck();
-        }, 1 * 1000);
+        }, 5 * 1000);
         if (this.updateList.length > 0) {
             const update = this.updateList.shift();
             console.log('openCheck updateList', update);

@@ -416,3 +416,20 @@ export const debounce = (fn, wait = 1000) => {
     };
 };
   
+/**
+ * 是否是有效地址
+ * @param currencyName 货币类型
+ * @param addr 地址
+ */
+export const effectiveAddr = (currencyName: string, addr: string): boolean => {
+    let flag = false;
+    if (currencyName === 'ETH') {
+        // 0xa6e83b630bf8af41a9278427b6f2a35dbc5f20e3
+        flag = addr.indexOf('0x') === 0 && addr.length === 42;
+    } else if (currencyName === 'BTC') {
+        // mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB
+        flag = addr.length === 34;
+    }
+
+    return flag;
+};

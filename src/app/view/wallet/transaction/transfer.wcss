@@ -43,9 +43,10 @@
 }
 .get-addr-value{
     position: relative;
-    width: 500px;
+    width: 600px;
     left: 150px;
     top: 5px;
+    display: flex;
 }
 .pay{
     position: relative;
