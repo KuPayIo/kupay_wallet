@@ -161,7 +161,7 @@ export class DataCenter {
         if (currencyName === 'ETH') {
             return this.ethExchangeRate || { CNY: 3337.01, USD: 517.42 };
         } else if (currencyName === 'BTC') {
-            return this.btcExchangeRate || { CNY: 6586.55, USD: 1021.28 };
+            return this.btcExchangeRate || { CNY: 42868.55 , USD: 6598.71 };
         }
     }
     /**
@@ -411,10 +411,14 @@ export class DataCenter {
     private async exchangeRate(currencyName: string) {
         switch (currencyName) {
             case 'ETH':
-                const api: EthApi = new EthApi();
-                this.ethExchangeRate = await api.getExchangeRate();
+                const ethApi: EthApi = new EthApi();
+                this.ethExchangeRate = await ethApi.getExchangeRate();
                 break;
-            case 'BTC': break;
+            case 'BTC': 
+                const btcApi:BtcApi = new BtcApi();
+                
+                this.btcExchangeRate = await btcApi.getExchangeRate(); 
+                break;
             default:
         }
 

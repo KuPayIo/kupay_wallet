@@ -257,23 +257,28 @@ async function doEthTransfer(acct1: string, acct2: string, psw: string, gasPrice
 // tslint:disable-next-line:only-arrow-functions
 async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
     , value: number, info: string, urgent: boolean) {
-
+    const api = new BtcApi();
     const addrs = getLocalStorage('addrs');
     const addr = addrs.filter(v => v.addr === acct1)[0];
-
-    const wlt = BTCWallet.fromJSON(addr.wlt, psw);
-    wlt.unlock(psw);
-    await wlt.init();
+    const priority = urgent ? 'high' : 'medium' ;
     const output = {
         toAddr: acct2,
         amount: value,
         chgAddr: acct1
     };
-    console.log(wlt, value);
-
-    const id = await wlt.spend(output, urgent ? 'high' : 'medium');
+    const wlt = BTCWallet.fromJSON(addr.wlt, psw);
+    wlt.unlock(psw);
+    await wlt.init();
+    
+    const retArr = await wlt.buildRawTransaction(output,priority);
     wlt.lock(psw);
-
-    return id;
+    const rawHexString :string = retArr[0];
+    const fee = retArr[1];
+    
+    console.log(wlt, value);
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const res = await api.sendRawTransaction(rawHexString);
+    
+    return res.tx.hash;
 
 }
