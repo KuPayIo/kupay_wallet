@@ -74,6 +74,7 @@ winit.initNext = function () {
     //debugger;
 
     var sourceList = [
+      "pi/browser/",
       "pi/compile/",
       "pi/components/",
       "pi/lang/",

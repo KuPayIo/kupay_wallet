@@ -1,6 +1,7 @@
 /**
  * 处理转账逻辑
  */
+import { QRCode } from '../../../../pi/browser/qrcode';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { Api as BtcApi } from '../../../core/btc/api';
@@ -8,8 +9,8 @@ import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import {
-    decrypt, effectiveCurrencyStableConversion, eth2Wei, getAddrById, getCurrentWallet
-    , getLocalStorage, parseAccount, parseDate, resetAddrById
+    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, getAddrById
+    , getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById
 } from '../../../utils/tools';
 
 interface Props {
@@ -193,6 +194,36 @@ export class AddAsset extends Widget {
         this.paint();
 
         this.resetFees();
+    }
+
+    /**
+     * 处理扫描
+     */
+    public doScan() {
+        const qrcode = new QRCode();
+        qrcode.init();
+        qrcode.scan({
+            success: (r) => {
+                console.log(`scan result:${r}`);
+                if (effectiveAddr(this.props.currencyName, r)) {
+                    this.state.to = r;
+                    this.paint();
+                } else {
+                    popNew('app-components-message-message', { itype: 'error', content: '无效的地址', center: true });
+                }
+                // alert(`scan result:${r}`);
+            },
+            fail: (r) => {
+                // alert(`scan fail:${r}`);
+                console.log(`scan fail:${r}`);
+            }
+        });
+        qrcode.close({
+            success: (r) => {
+                // alert(`close result:${r}`);
+                console.log(`close result:${r}`);
+            }
+        });
     }
 
     private resetFees() {
