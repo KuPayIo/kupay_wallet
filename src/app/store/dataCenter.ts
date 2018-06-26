@@ -62,6 +62,7 @@ export class DataCenter {
      * addAddr
      */
     public addAddr(addr: string, addrName: string, currencyName: string) {
+        // return;
         // 更新对应地址交易记录
         if (currencyName !== 'BTC') {
             this.updateList.push(['balance', addr, currencyName]);
@@ -263,6 +264,7 @@ export class DataCenter {
     }
 
     private async parseBtcTransactionDetails(addr: string) {
+        // return;
         const api = new BtcApi();
         const info = await api.getAddrInfo(addr);
         if (!info) return;

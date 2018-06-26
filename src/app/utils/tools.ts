@@ -62,6 +62,20 @@ export const getCurrentWalletIndex = (wallets) => {
 };
 
 /**
+ * 获取当前钱包对应货币正在使用的地址信息
+ * @param currencyName 货币类型
+ */
+export const getCurrentAddrInfo = (currencyName:string) => {
+    const wallets = getLocalStorage('wallets');
+    const addrs = getLocalStorage('addrs');
+    const wallet = getCurrentWallet(wallets);
+    const currencyRecord = wallet.currencyRecords.filter(item => item.currencyName === currencyName)[0];
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const addrInfo = addrs.filter(item => item.addr === currencyRecord.currentAddr)[0];
+
+    return addrInfo;
+};
+/**
  * 通过地址id获取地址信息
  * @param addrId  address id
  */
@@ -245,7 +259,8 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
  * 
  * @param perNum 转化前数据
  * @param currencyName  当前货币类型
- * @param isWei 是否wei转化
+ * @param isMinUnit 是否是最小单位
+ * 
  */
 export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean
     , rate: any) => {
