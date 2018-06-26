@@ -19,7 +19,7 @@
         </div>
 
         <div w-class="pay-value" ev-input-change="onPayChange">
-            <app-components-input-input>{placeHolder:"输入转账金额" }</app-components-input-input>
+            <app-components-input-input>{placeHolder:"输入转账金额",input:{{it1.pay}} }</app-components-input-input>
         </div>
         <div w-class="set-addr">
             <span>发币地址</span>

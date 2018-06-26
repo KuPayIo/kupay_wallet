@@ -7,10 +7,11 @@ import { Widget } from '../../../../pi/widget/widget';
 import { Api as BtcApi } from '../../../core/btc/api';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
+import { ibanToAddress } from '../../../core/eth/helper';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import {
     decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, getAddrById
-    , getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById
+    , getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById, urlParams
 } from '../../../utils/tools';
 
 interface Props {
@@ -203,10 +204,18 @@ export class AddAsset extends Widget {
         const qrcode = new QRCode();
         qrcode.init();
         qrcode.scan({
-            success: (r) => {
-                console.log(`scan result:${r}`);
-                if (effectiveAddr(this.props.currencyName, r)) {
-                    this.state.to = r;
+            success: (addr) => {
+                console.log(`scan result:${addr}`);
+                const r = effectiveAddr(this.props.currencyName, addr);
+                if (r[0]) {
+                    const amount = urlParams(addr, 'amount');
+                    if (amount) {
+                        const num = parseFloat(amount);
+                        this.state.pay = num;
+                        const t = effectiveCurrencyStableConversion(num, 'ETH', 'CNY', false, this.props.rate);
+                        this.state.payConversion = t.conversionShow;
+                    }
+                    this.state.to = r[1];
                     this.paint();
                 } else {
                     popNew('app-components-message-message', { itype: 'error', content: '无效的地址', center: true });
