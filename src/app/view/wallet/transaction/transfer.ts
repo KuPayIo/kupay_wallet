@@ -10,7 +10,7 @@ import { Api as EthApi } from '../../../core/eth/api';
 import { ibanToAddress } from '../../../core/eth/helper';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import {
-    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, getAddrById
+    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, getAddrById,getCurrentAddrInfo
     , getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById, urlParams
 } from '../../../utils/tools';
 
@@ -71,7 +71,15 @@ export class AddAsset extends Widget {
             // this.state.to = '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3';
         } else if (this.props.currencyName === 'BTC') {
             // this.state.to = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
-            this.state.gasPrice = 1;
+            this.state.gasPrice = 10;
+            const defaultToAddr = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
+            const defaultAmount = 0.001;
+            this.getBtcTransactionFee(defaultToAddr,defaultAmount).then(fee => {
+                console.log('fee',fee);
+                this.state.gasPrice = fee;
+                this.state.gasLimit = 1;
+                this.resetFees();
+            });
         }
 
         this.resetFees();
@@ -246,6 +254,28 @@ export class AddAsset extends Widget {
         this.state.feesShow = r.show;
         this.state.feesConversion = r.conversionShow;
         this.paint();
+    }
+// tslint:disable-next-line:only-arrow-functions
+    private async getBtcTransactionFee(toAddr:string ,amount:number,priority:'high' | 'medium' | 'low' = 'medium') {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        const psw = decrypt(wallet.walletPsw);
+        const addrInfo = getCurrentAddrInfo('BTC');
+        // console.log(addrInfo);
+        // const priority = this.state.urgent ? 'high' : 'medium' ;
+        const output = {
+            toAddr: toAddr,
+            amount: amount,
+            chgAddr: addrInfo.addr
+        };
+        const wlt = BTCWallet.fromJSON(addrInfo.wlt, psw);
+        wlt.unlock(psw);
+        await wlt.init();
+        
+        const retArr = await wlt.buildRawTransaction(output,priority);
+        wlt.lock(psw);
+        
+        return retArr[1];
     }
 
 }
