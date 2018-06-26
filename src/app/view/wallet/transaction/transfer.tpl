@@ -7,7 +7,7 @@
         <div w-class="get-addr">收款地址</div>
         <div w-class="get-addr-value" ev-input-change="onToChange">
             <div style="width: 500px;">
-                <app-components-input-input>{input:{{it1.to}}}</app-components-input-input>
+                <app-components-input-input_textarea>{input:{{it1.to}},itype:"textarea",autosize:true,placeHolder:"请输入收款地址"}</app-components-input-input_textarea>
             </div>
             <div style="margin-left: 25px;" on-tap="doScan">
                 <img src="../../../res/image/btn_scan.png" w-class="scanbtn" />

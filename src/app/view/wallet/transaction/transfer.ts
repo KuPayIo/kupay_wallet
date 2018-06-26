@@ -67,9 +67,9 @@ export class AddAsset extends Widget {
 
         // todo 这是测试地址
         if (this.props.currencyName === 'ETH') {
-            this.state.to = '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3';
+            // this.state.to = '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3';
         } else if (this.props.currencyName === 'BTC') {
-            this.state.to = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
+            // this.state.to = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
             this.state.gasPrice = 1;
         }
 
@@ -291,7 +291,7 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
     const api = new BtcApi();
     const addrs = getLocalStorage('addrs');
     const addr = addrs.filter(v => v.addr === acct1)[0];
-    const priority = urgent ? 'high' : 'medium' ;
+    const priority = urgent ? 'high' : 'medium';
     const output = {
         toAddr: acct2,
         amount: value,
@@ -300,16 +300,16 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
     const wlt = BTCWallet.fromJSON(addr.wlt, psw);
     wlt.unlock(psw);
     await wlt.init();
-    
-    const retArr = await wlt.buildRawTransaction(output,priority);
+
+    const retArr = await wlt.buildRawTransaction(output, priority);
     wlt.lock(psw);
-    const rawHexString :string = retArr[0];
+    const rawHexString: string = retArr[0];
     const fee = retArr[1];
-    
+
     console.log(wlt, value);
     // tslint:disable-next-line:no-unnecessary-local-variable
     const res = await api.sendRawTransaction(rawHexString);
-    
+
     return res.tx.hash;
 
 }
