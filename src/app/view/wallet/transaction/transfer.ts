@@ -7,10 +7,11 @@ import { Widget } from '../../../../pi/widget/widget';
 import { Api as BtcApi } from '../../../core/btc/api';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
+import { ibanToAddress } from '../../../core/eth/helper';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import {
     decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, getAddrById,getCurrentAddrInfo
-    , getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById
+    , getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById, urlParams
 } from '../../../utils/tools';
 
 interface Props {
@@ -67,11 +68,9 @@ export class AddAsset extends Widget {
 
         // todo 这是测试地址
         if (this.props.currencyName === 'ETH') {
-            this.state.to = '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3';
+            // this.state.to = '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3';
         } else if (this.props.currencyName === 'BTC') {
-            this.state.to = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
-            this.state.gasPrice = 1;
-            this.state.gasPrice = 1;
+            // this.state.to = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
             this.state.gasPrice = 10;
             const defaultToAddr = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
             const defaultAmount = 0.001;
@@ -213,10 +212,18 @@ export class AddAsset extends Widget {
         const qrcode = new QRCode();
         qrcode.init();
         qrcode.scan({
-            success: (r) => {
-                console.log(`scan result:${r}`);
-                if (effectiveAddr(this.props.currencyName, r)) {
-                    this.state.to = r;
+            success: (addr) => {
+                console.log(`scan result:${addr}`);
+                const r = effectiveAddr(this.props.currencyName, addr);
+                if (r[0]) {
+                    const amount = urlParams(addr, 'amount');
+                    if (amount) {
+                        const num = parseFloat(amount);
+                        this.state.pay = num;
+                        const t = effectiveCurrencyStableConversion(num, 'ETH', 'CNY', false, this.props.rate);
+                        this.state.payConversion = t.conversionShow;
+                    }
+                    this.state.to = r[1];
                     this.paint();
                 } else {
                     popNew('app-components-message-message', { itype: 'error', content: '无效的地址', center: true });
@@ -323,7 +330,7 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
     const api = new BtcApi();
     const addrs = getLocalStorage('addrs');
     const addr = addrs.filter(v => v.addr === acct1)[0];
-    const priority = urgent ? 'high' : 'medium' ;
+    const priority = urgent ? 'high' : 'medium';
     const output = {
         toAddr: acct2,
         amount: value,
@@ -332,16 +339,16 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
     const wlt = BTCWallet.fromJSON(addr.wlt, psw);
     wlt.unlock(psw);
     await wlt.init();
-    
-    const retArr = await wlt.buildRawTransaction(output,priority);
+
+    const retArr = await wlt.buildRawTransaction(output, priority);
     wlt.lock(psw);
-    const rawHexString :string = retArr[0];
+    const rawHexString: string = retArr[0];
     const fee = retArr[1];
-    
+
     console.log(wlt, value);
     // tslint:disable-next-line:no-unnecessary-local-variable
     const res = await api.sendRawTransaction(rawHexString);
-    
+
     return res.tx.hash;
 
 }

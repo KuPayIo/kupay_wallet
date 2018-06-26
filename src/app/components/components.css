@@ -101,12 +101,14 @@
 }
 
 .pi-input__inner1:hover,
-.pi-textarea__inner:hover{
+.pi-textarea__inner:hover,
+.pi-input-textarea__inner:hover{
     border: none;
     border-bottom: 1px solid #c0c4cc !important;
 }
 .pi-input__inner1:focus,
-.pi-textarea__inner:focus{
+.pi-textarea__inner:focus,
+.pi-input-textarea__inner:focus{
     border-bottom: 1px solid #409EFF !important;
 }
 

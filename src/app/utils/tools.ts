@@ -6,6 +6,7 @@ import { Api as BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { Api as EthApi } from '../core/eth/api';
+import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { GaiaWallet } from '../core/eth/wallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
@@ -119,11 +120,11 @@ export const getAddrsAll = (wallet) => {
  * 获取钱包下指定货币类型的所有地址
  * @param wallet wallet obj
  */
-export const getAddrsByCurrencyName = (wallet:any,currencyName:string) => {
+export const getAddrsByCurrencyName = (wallet: any, currencyName: string) => {
     const currencyRecords = wallet.currencyRecords;
     const retAddrs = [];
     const len = currencyRecords.length;
-    for (let i = 0;i < len; i++) {
+    for (let i = 0; i < len; i++) {
         if (currencyRecords[i].currencyName === currencyName) {
             retAddrs.push(...currencyRecords[i].addrs);
             break;
@@ -420,7 +421,7 @@ export const addNewAddr = (currencyName, address, addrName, wltJson) => {
 export const debounce = (fn, wait = 1000) => {
     let timer = null;
 
-    return  (...rest) => {
+    return (...rest) => {
         if (timer) {
             clearTimeout(timer);
             timer = null;
@@ -430,21 +431,48 @@ export const debounce = (fn, wait = 1000) => {
         }, wait);
     };
 };
-  
+
 /**
  * 是否是有效地址
  * @param currencyName 货币类型
  * @param addr 地址
  */
-export const effectiveAddr = (currencyName: string, addr: string): boolean => {
+export const effectiveAddr = (currencyName: string, addr: string): [boolean, string] => {
     let flag = false;
     if (currencyName === 'ETH') {
         // 0xa6e83b630bf8af41a9278427b6f2a35dbc5f20e3
+        // alert(addr);
+        const per = 'iban:';
+        if (addr.indexOf(per) === 0) {
+            const lastIndex = addr.indexOf('?');
+            addr = lastIndex >= 0 ? addr.slice(per.length, lastIndex) : addr.slice(per.length);
+            if (isValidIban(addr)) {
+                addr = ibanToAddress(addr);
+            }
+        }
         flag = addr.indexOf('0x') === 0 && addr.length === 42;
     } else if (currencyName === 'BTC') {
+        // alert(addr);
+        const per = 'bitcoin:';
+        if (addr.indexOf(per) === 0) {
+            const lastIndex = addr.indexOf('?');
+            addr = lastIndex >= 0 ? addr.slice(per.length, lastIndex) : addr.slice(per.length);
+        }
+        // alert(addr.length);
         // mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB
         flag = addr.length === 34;
     }
 
-    return flag;
+    return [flag, addr];
+};
+
+/**
+ * 解析url中指定key的值
+ * @param url url地址
+ * @param key 键
+ */
+export const urlParams = (url: string, key: string) => {
+    const ret = url.match(new RegExp(`(\\?|&)${key}=(.*?)(&|$)`));
+
+    return ret && decodeURIComponent(ret[2]);
 };
