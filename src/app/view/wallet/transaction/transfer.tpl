@@ -6,7 +6,12 @@
     <div w-class="body">
         <div w-class="get-addr">收款地址</div>
         <div w-class="get-addr-value" ev-input-change="onToChange">
-            <app-components-input-input>{input:{{it1.to}}}</app-components-input-input>
+            <div style="width: 500px;">
+                <app-components-input-input>{input:{{it1.to}}}</app-components-input-input>
+            </div>
+            <div style="margin-left: 25px;" on-tap="doScan">
+                <img src="../../../res/image/btn_scan.png" w-class="scanbtn" />
+            </div>
         </div>
         <div w-class="pay" style="width: 690px;">
             <span>金额</span>
@@ -26,7 +31,7 @@
             &nbsp;&nbsp;
             <span style="margin-left: 32px;font-size: 32px;">{{it1.feesShow||''}}</span>
             &nbsp;&nbsp;
-            <span >{{it1.feesConversion||''}}</span>
+            <span>{{it1.feesConversion||''}}</span>
             <span style="color: #00BD9A;position: absolute;right: 0px;">不拥堵</span>
         </div>
         <div style="position: relative;left: 166px;top: 240px;height: 80px;">

@@ -1,6 +1,7 @@
 /**
  * 处理转账逻辑
  */
+import { QRCode } from '../../../../pi/browser/qrcode';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { Api as BtcApi } from '../../../core/btc/api';
@@ -8,8 +9,8 @@ import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import {
-    decrypt, effectiveCurrencyStableConversion, eth2Wei, getAddrById, getCurrentAddrInfo
-    , getCurrentWallet, getLocalStorage, parseAccount, parseDate,resetAddrById
+    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, getAddrById,getCurrentAddrInfo
+    , getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById
 } from '../../../utils/tools';
 
 interface Props {
@@ -48,7 +49,7 @@ export class AddAsset extends Widget {
         super.setProps(props, oldProps);
         this.init();
     }
-    public init() {
+    public init(): void {
         this.state = {
             title: '转账',
             fromShow: parseAccount(this.props.fromAddr),
@@ -69,6 +70,8 @@ export class AddAsset extends Widget {
             this.state.to = '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3';
         } else if (this.props.currencyName === 'BTC') {
             this.state.to = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
+            this.state.gasPrice = 1;
+            this.state.gasPrice = 1;
             this.state.gasPrice = 10;
             const defaultToAddr = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
             const defaultAmount = 0.001;
@@ -198,18 +201,39 @@ export class AddAsset extends Widget {
 
     public changeUrgent(e: any, t: any) {
         this.state.urgent = t;
-        // this.paint();
-        /* const defaultToAddr = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
-        const defaultAmount = 0.001;
-        const priority = this.state.urgent ? 'high' : 'medium' ;
-        console.log(priority);
-        this.getBtcTransactionFee(defaultToAddr,defaultAmount,priority).then(fee => {
-            console.log('fee',fee);
-            this.state.gasPrice = fee;
-            this.state.gasLimit = 1;
-            this.resetFees();
-        }); */
+        this.paint();
+
         this.resetFees();
+    }
+
+    /**
+     * 处理扫描
+     */
+    public doScan() {
+        const qrcode = new QRCode();
+        qrcode.init();
+        qrcode.scan({
+            success: (r) => {
+                console.log(`scan result:${r}`);
+                if (effectiveAddr(this.props.currencyName, r)) {
+                    this.state.to = r;
+                    this.paint();
+                } else {
+                    popNew('app-components-message-message', { itype: 'error', content: '无效的地址', center: true });
+                }
+                // alert(`scan result:${r}`);
+            },
+            fail: (r) => {
+                // alert(`scan fail:${r}`);
+                console.log(`scan fail:${r}`);
+            }
+        });
+        qrcode.close({
+            success: (r) => {
+                // alert(`close result:${r}`);
+                console.log(`close result:${r}`);
+            }
+        });
     }
 
     private resetFees() {
@@ -224,7 +248,7 @@ export class AddAsset extends Widget {
         this.state.feesConversion = r.conversionShow;
         this.paint();
     }
-    // tslint:disable-next-line:only-arrow-functions
+// tslint:disable-next-line:only-arrow-functions
     private async getBtcTransactionFee(toAddr:string ,amount:number,priority:'high' | 'medium' | 'low' = 'medium') {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
@@ -314,7 +338,7 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
     const rawHexString :string = retArr[0];
     const fee = retArr[1];
     
-    // console.log(wlt, value);
+    console.log(wlt, value);
     // tslint:disable-next-line:no-unnecessary-local-variable
     const res = await api.sendRawTransaction(rawHexString);
     
