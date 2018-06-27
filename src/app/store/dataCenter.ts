@@ -1,5 +1,7 @@
 import { Api as BtcApi } from '../core/btc/api';
 import { Api as EthApi } from '../core/eth/api';
+import { ERC20Tokens } from '../core/eth/tokens';
+import { defalutShowCurrencys,defaultExchangeRateJson,ethTokenTransferCode,supportCurrencyList } from '../utils/constants';
 import {
     getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage,wei2Eth
 } from '../utils/tools';
@@ -18,16 +20,11 @@ export class DataCenter {
 
     public updateList: any[] = [];
 
-    public ethExchangeRate: any;
-    public btcExchangeRate: any;
+    // public ethExchangeRate: any;
+    // public btcExchangeRate: any;
 
-    public currencyList: any[] = [
-        { name: 'ETH', description: 'Ethereum' }
-        , { name: 'BTC', description: 'Bit coin' }
-        , { name: 'EOS', description: 'EOS currency' }
-        , { name: 'ETC', description: 'Ethereum Classic' }
-        , { name: 'BCH', description: 'Bitcoin Cash' }
-        , { name: 'XRP', description: 'Ripple' }];
+    public exchangeRateJson:any = defaultExchangeRateJson;
+    public currencyList: any[] = supportCurrencyList;
 
     /**
      * 初始化
@@ -159,11 +156,13 @@ export class DataCenter {
      * 获取汇率
      */
     public getExchangeRate(currencyName: string) {
-        if (currencyName === 'ETH') {
+        /* if (currencyName === 'ETH') {
             return this.ethExchangeRate || { CNY: 3337.01, USD: 517.42 };
         } else if (currencyName === 'BTC') {
             return this.btcExchangeRate || { CNY: 42868.55 , USD: 6598.71 };
-        }
+        } */
+
+        return this.exchangeRateJson[currencyName];
     }
     /**
      * 更新记录
@@ -209,11 +208,13 @@ export class DataCenter {
     private async parseEthTransactionDetails(addr: string) {
         const api = new EthApi();
         const r: any = await api.getAllTransactionsOf(addr);
-
+        console.log('哈哈哈哈',r);
+        const ethTrans = this.filterEthTrans(r.result);
+        console.log('嘻嘻嘻',ethTrans);
         const list = [];
         // const hashList = [];
         const transactions = getLocalStorage('transactions') || [];
-        r.result.forEach(v => {
+        ethTrans.forEach(v => {
             if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr))) return;
             // todo 移除缓存记录
             this.removeRecordAtAddr(addr, v.hash);
@@ -262,7 +263,16 @@ export class DataCenter {
         // this.resetRecord(this.state.currentAddrRecords, false);
 
     }
+    // 过滤eth交易记录，过滤掉token的交易记录
+    private filterEthTrans(trans:any[]) {
+        return trans.filter(item => {
+            if (item.to.length === 0) return false;
+            if (item.input.indexOf(ethTokenTransferCode) === 0) return false;
+            
+            return true;
+        });
 
+    }
     private async parseBtcTransactionDetails(addr: string) {
         // return;
         const api = new BtcApi();
@@ -414,12 +424,14 @@ export class DataCenter {
         switch (currencyName) {
             case 'ETH':
                 const ethApi: EthApi = new EthApi();
-                this.ethExchangeRate = await ethApi.getExchangeRate();
+                // this.ethExchangeRate = await ethApi.getExchangeRate();
+                this.exchangeRateJson.ETH = await ethApi.getExchangeRate();
                 break;
             case 'BTC': 
                 const btcApi:BtcApi = new BtcApi();
                 
-                this.btcExchangeRate = await btcApi.getExchangeRate(); 
+                // this.btcExchangeRate = await btcApi.getExchangeRate(); 
+                this.exchangeRateJson.BTC = await btcApi.getExchangeRate();
                 break;
             default:
         }

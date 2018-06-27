@@ -195,7 +195,6 @@ export class AddAsset extends Widget {
     public parseBalance() {
         if (!this.state.currentAddr) return;
         const info = dataCenter.getAddrInfoByAddr(this.state.currentAddr);
-
         const r = effectiveCurrency(info.balance, this.props.currencyName, 'CNY', false);
         this.state.balance = r.num;
         this.state.showBalance = r.show;
@@ -211,6 +210,7 @@ export class AddAsset extends Widget {
         this.state.currentAddr = currencyRecord.currentAddr || wallet.walletId;
         const currentAddr = getAddrById(this.state.currentAddr);
         this.state.currentAddrRecords = currentAddr ? currentAddr.record : [];
+
     }
 
     private openCheck() {

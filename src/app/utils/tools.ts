@@ -224,6 +224,8 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+    } else {
+        num = !isNumber(perNum) ? perNum.toNumber() : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;

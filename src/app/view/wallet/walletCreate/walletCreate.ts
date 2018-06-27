@@ -76,19 +76,22 @@ export class WalletCreate extends Widget {
 
             return;
         }
-        if (!this.createWallet()) {
-            popNew('app-components-message-message', { itype: 'error', content: '钱包数量已达上限', center: true });
-            this.ok && this.ok();
-
-            return;
+        const close = popNew('pi-components-loading-loading', { text: '创建中...' });
+        const succeed = this.createWallet();
+        if (!succeed) {
+            setTimeout(() => {
+                close.callback(close.widget);
+                this.ok && this.ok();
+                popNew('app-components-message-message', { itype: 'error', content: '钱包数量已达上限', center: true });
+            },500);
+        } else {
+            setTimeout(() => {
+                close.callback(close.widget);
+                this.ok && this.ok();
+                popNew('app-view-wallet-backupWallet-backupWallet');
+            },500);
         }
 
-        const close = popNew('pi-components-loading-loading', { text: '创建中...' });
-        setTimeout(() => {
-            close.callback(close.widget);
-            this.ok && this.ok();
-            popNew('app-view-wallet-backupWallet-backupWallet');
-        }, 500);
     }
 
     public createWallet() {
@@ -125,6 +128,7 @@ export class WalletCreate extends Widget {
     }
 
     public importWalletClick() {
+        this.ok && this.ok();
         popNew('app-view-wallet-walletImport-walletImport');
     }
 }

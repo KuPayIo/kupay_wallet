@@ -403,7 +403,31 @@ export class GaiaWallet {
         for (i = 0; ; i++) {
             const addr = this.selectAddress(passwd,i)._address;
             const res = await this.api.getAllTransactionsOf(addr);
-            sleep(1000);
+            sleep(200);
+            if (res === undefined || res.hasOwnProperty('error')) {
+                throw new Error('Response error!');
+            }
+            if (res.result.length === 0) {
+                count = count + 1;
+            } else {
+                count = 0;
+            }
+
+            if (count > GaiaWallet.GAP_LIMIT) {
+                break;
+            }
+        }
+
+        return i - GaiaWallet.GAP_LIMIT;
+    }
+
+    public async scanTokenUsedAddress(contractAddress: string,passwd: string): Promise<number> {
+        let count = 0;
+        let i     = 0;
+        for (i = 0; ; i++) {
+            const addr = this.selectAddress(passwd,i)._address;
+            const res = await this.api.getTokenTransferEvents(contractAddress,addr);
+            // sleep(1000);
             if (res === undefined || res.hasOwnProperty('error')) {
                 throw new Error('Response error!');
             }

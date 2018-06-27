@@ -80,7 +80,9 @@ export class WalletImport extends Widget {
         const close = popNew('pi-components-loading-loading', { text: '导入中...' });
         let gwlt = null;
         try {
+            console.time('import');
             gwlt = await GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
+            console.timeEnd('import');
             gwlt.nickName = this.state.walletName;
             
         } catch (e) {
