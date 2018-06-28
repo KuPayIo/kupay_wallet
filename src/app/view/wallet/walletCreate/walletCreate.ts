@@ -7,8 +7,8 @@ import { BTCWallet } from '../../../core/btc/wallet';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
-import { defalutShowCurrencys,walletNumLimit } from '../../../utils/constants';
+import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
+import { defalutShowCurrencys, walletNumLimit } from '../../../utils/constants';
 import { encrypt, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 import { Addr, CurrencyRecord, Wallet } from '../../interface';
 
@@ -76,31 +76,27 @@ export class WalletCreate extends Widget {
 
             return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '创建中...' });
-        const succeed = this.createWallet();
-        if (!succeed) {
-            setTimeout(() => {
-                close.callback(close.widget);
-                this.ok && this.ok();
-                popNew('app-components-message-message', { itype: 'error', content: '钱包数量已达上限', center: true });
-            },500);
-        } else {
-            setTimeout(() => {
-                close.callback(close.widget);
-                this.ok && this.ok();
-                popNew('app-view-wallet-backupWallet-backupWallet');
-            },500);
+        if (!walletCountAvailable()) {
+            popNew('app-components-message-message', { itype: 'error', content: '钱包数量已达上限', center: true });
+            this.ok && this.ok();
+
+            return;
         }
 
+        const close = popNew('pi-components-loading-loading', { text: '创建中...' });
+        this.createWallet();
+        setTimeout(() => {
+            close.callback(close.widget);
+            this.ok && this.ok();
+            popNew('app-view-wallet-backupWallet-backupWallet');
+        }, 500);
     }
 
     public createWallet() {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
         const addrs: Addr[] = getLocalStorage('addrs') || [];
-        const len = wallets.walletList.length;
-        if (len >= walletNumLimit) return false;
 
-        const gwlt = GlobalWallet.generate(this.state.walletPsw,this.state.walletName);
+        const gwlt = GlobalWallet.generate(this.state.walletPsw, this.state.walletName);
 
         // 创建钱包基础数据
         const wallet: Wallet = {
@@ -120,15 +116,13 @@ export class WalletCreate extends Widget {
         wallets.curWalletId = gwlt.glwtId;
         wallets.walletList.push(wallet);
         setLocalStorage('wallets', wallets, true);
-        
+
         addrs.push(...gwlt.addrs);
         setLocalStorage('addrs', addrs, false);
-        
-        return true;
+
     }
 
     public importWalletClick() {
-        this.ok && this.ok();
         popNew('app-view-wallet-walletImport-walletImport');
     }
 }

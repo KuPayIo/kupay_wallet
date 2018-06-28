@@ -10,6 +10,7 @@
         w-class="{{it && it.disabled ? 'pi-textarea__inner-disabled' : 'pi-textarea__inner' }} "
         style="{{it1.styleStr}}"
         placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}"
+        value="{{it1 && it1.currentValue ? it1.currentValue : ''}}"
         disabled={{it && it.disabled ? true : false}}
         autofocus={{it && it.autofocus ? true : false}}
         on-input="change"
@@ -20,6 +21,7 @@
         {{else}}
         rows="{{it && it.rows ? it.rows : '2'}}"
         {{end}}>
+        {{it1 && it1.currentValue ? it1.currentValue : ''}}
     </textarea>
 </div>
 {{else}}

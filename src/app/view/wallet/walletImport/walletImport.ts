@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletNameAvailable,walletPswAvailable } from '../../../utils/account';
+import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable,walletNameAvailable, walletPswAvailable } from '../../../utils/account';
 import { defalutShowCurrencys,walletNumLimit } from '../../../utils/constants';
 import { encrypt, getAddrsAll, getLocalStorage,setLocalStorage } from '../../../utils/tools';
 import { Addr, Wallet } from '../../interface';
@@ -77,6 +77,13 @@ export class WalletImport extends Widget {
 
             return;
         }
+        if (!walletCountAvailable()) {
+            popNew('app-components-message-message', { itype: 'error', content: '钱包数量已达上限', center: true });
+            this.ok && this.ok();
+
+            return;
+        }
+
         const close = popNew('pi-components-loading-loading', { text: '导入中...' });
         let gwlt = null;
         try {
@@ -84,6 +91,7 @@ export class WalletImport extends Widget {
             gwlt = await GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
             console.timeEnd('import');
             gwlt.nickName = this.state.walletName;
+            this.importWallet(gwlt);
             
         } catch (e) {
             close.callback(close.widget);
@@ -92,9 +100,6 @@ export class WalletImport extends Widget {
             return;
         }
         close.callback(close.widget);
-        if (!this.importWallet(gwlt)) {
-            popNew('app-components-message-message', { itype: 'error', content: '钱包数量已达上限', center: true });
-        }
         this.ok && this.ok();
         popNew('app-view-wallet-backupWallet-backupWallet');
         
@@ -104,10 +109,6 @@ export class WalletImport extends Widget {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
         let addrs: Addr[] = getLocalStorage('addrs') || [];
         const curWalletId = gwlt.glwtId;
-        const len0 = wallets.walletList.length;
-        if (len0 === walletNumLimit) {
-            return false;
-        }
         const wallet: Wallet = {
             walletId: curWalletId,
             avatar: getAvatarRandom(),

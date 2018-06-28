@@ -12,6 +12,8 @@ import {
  */
 export class DataCenter {
 
+    public static MAX_ADDRNAME_LEN: number = 9;// 最长地址名
+
     public rate: string;
     public addrInfos: any[] = [];
     public addrs: string[] = [];
@@ -83,7 +85,7 @@ export class DataCenter {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         if (!wallet) return;
-        const retAddrs = getAddrsByCurrencyName(wallet,currencyName);
+        const retAddrs = getAddrsByCurrencyName(wallet, currencyName);
         const addrs = getLocalStorage('addrs') || [];
 
         return addrs.filter(v => retAddrs.indexOf(v.addr) !== -1);
@@ -168,7 +170,7 @@ export class DataCenter {
         /* if (currencyName === 'ETH') {
             return this.ethExchangeRate || { CNY: 3337.01, USD: 517.42 };
         } else if (currencyName === 'BTC') {
-            return this.btcExchangeRate || { CNY: 42868.55 , USD: 6598.71 };
+            return this.btcExchangeRate || { CNY: 42868.55, USD: 6598.71 };
         } */
 
         return this.exchangeRateJson[currencyName];
@@ -258,7 +260,7 @@ export class DataCenter {
         const transactions = getLocalStorage('transactions') || [];
         ethTrans.forEach(v => {
             if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr))) return;
-            // todo 移除缓存记录
+            // 移除缓存记录
             this.removeRecordAtAddr(addr, v.hash);
             // info--input  0x636573--ces
 
@@ -278,32 +280,7 @@ export class DataCenter {
         });
         if (list.length > 0) {
             setLocalStorage('transactions', transactions.concat(list), false);
-
-            // let addrs = getLocalStorage('addrs') || [];
-            // addrs = addrs.map(v => {
-            //     if (v.addr === currentAddr) {
-            //         const per = v.transactions || [];
-            //         v.transactions = per.concat(hashList);
-            //     }
-
-            //     return v;
-            // });
-            // setLocalStorage('addrs', addrs, false);
         }
-
-        // this.state.currentAddrRecords = this.state.currentAddrRecords.filter(v => removeList.indexOf(v.id) < 0);
-        // list = list.concat(this.state.currentAddrRecords.map(v => {
-        //     v.account = parseAccount(v.to);
-        //     v.showPay = `${v.pay} ${this.props.currencyName}`;
-
-        //     return v;
-        // }));
-        // console.log(list, r)
-
-        // this.state.list = list.sort((a, b) => b.time - a.time);
-
-        // this.resetRecord(this.state.currentAddrRecords, false);
-
     }
     // 过滤eth交易记录，过滤掉token的交易记录
     private filterEthTrans(trans:any[]) {
@@ -333,7 +310,7 @@ export class DataCenter {
 
                     return;
                 }
-                // todo 移除缓存记录
+                // 移除缓存记录
                 this.updateList.unshift(['BtcTransactionTxref', v, addr]);
             });
         }
