@@ -86,6 +86,11 @@ export class GlobalWallet {
             const tokenGwlt = await GlobalWallet.fromMnemonicEthToken(tokenName,contractAddress,passwd,mnemonic);
             gwlt._currencyRecords.push(tokenGwlt.currencyRecord);
             gwlt._addrs.push(...tokenGwlt.addrs);
+
+            // 更新内存数据中心
+            tokenGwlt.addrs.forEach(item => {
+                dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
+            });
         }
         
         // 更新内存数据中心

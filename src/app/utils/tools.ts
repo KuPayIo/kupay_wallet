@@ -6,6 +6,7 @@ import { Api as BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { Api as EthApi } from '../core/eth/api';
+import { ERC20Tokens } from '../core/eth/tokens'; 
 import { GaiaWallet } from '../core/eth/wallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
@@ -208,6 +209,13 @@ export const btc2Sat = (num: number) => {
 };
 
 /**
+ * eth 代币精度计算
+ */
+export const ethTokenDecimals = (num:number,tokenName:string) => {
+    return num / dataCenter.decimals[tokenName]; 
+};
+
+/**
  * 获取有效的货币
  * 
  * @param perNum 转化前数据
@@ -224,8 +232,8 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else {
-        num = !isNumber(perNum) ? perNum.toNumber() : perNum;
+    } else if (ERC20Tokens[currencyName]) {
+        num = isMinUnit ? ethTokenDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
@@ -239,19 +247,21 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
  * 
  * @param perNum 转化前数据
  * @param currencyName  当前货币类型
- * @param isWei 是否wei转化
+ * @param isWei 是否wei转化effectiveCurrencyNoConversion
  */
-export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isMinUnit: boolean) => {
+export  const  effectiveCurrencyNoConversion =   (perNum: any, currencyName: string, isMinUnit: boolean) => {
     const r: any = { num: 0, show: '', conversionShow: '' };
     let num;
     if (currencyName === 'ETH') {
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+    } else if (ERC20Tokens[currencyName]) {
+        num = isMinUnit ? ethTokenDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
-
+    
     return r;
 
 };
@@ -272,6 +282,8 @@ export const effectiveCurrencyStableConversion = (perNum: any, currencyName: str
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+    } else if (ERC20Tokens[currencyName]) {
+        num = isMinUnit ? ethTokenDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;

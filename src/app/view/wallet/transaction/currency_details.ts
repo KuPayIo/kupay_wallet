@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { ERC20Tokens } from '../../../core/eth/tokens';
 import { dataCenter } from '../../../store/dataCenter';
 import { register } from '../../../store/store';
 import {
@@ -146,14 +147,14 @@ export class AddAsset extends Widget {
     /**
      * 解析交易详情
      */
-    public parseTransactionDetails() {
+    public  parseTransactionDetails() {
         if (!this.state.currentAddr) return;
 
         let list = dataCenter.getAllTransactionsByAddr(this.state.currentAddr, this.props.currencyName);
         list = list.map(v => {
-
-            const pay = effectiveCurrencyNoConversion(v.value, this.props.currencyName, true);
-            const fees = effectiveCurrencyNoConversion(v.fees, this.props.currencyName, true);
+            const pay =  effectiveCurrencyNoConversion(v.value, this.props.currencyName, true);
+            // tslint:disable-next-line:max-line-length
+            const fees =  effectiveCurrencyNoConversion(v.fees, ERC20Tokens[this.props.currencyName] ? 'ETH' : this.props.currencyName, true);
             const isFromMe = v.from.toLowerCase() === this.state.currentAddr.toLowerCase();
             const isToMe = v.to.toLowerCase() === this.state.currentAddr.toLowerCase();
 
@@ -194,7 +195,7 @@ export class AddAsset extends Widget {
      */
     public parseBalance() {
         if (!this.state.currentAddr) return;
-        const info = dataCenter.getAddrInfoByAddr(this.state.currentAddr);
+        const info = dataCenter.getAddrInfoByAddr(this.state.currentAddr,this.props.currencyName);
         const r = effectiveCurrency(info.balance, this.props.currencyName, 'CNY', false);
         this.state.balance = r.num;
         this.state.showBalance = r.show;

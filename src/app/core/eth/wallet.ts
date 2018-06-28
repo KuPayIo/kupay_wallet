@@ -227,7 +227,35 @@ export class GaiaWallet {
 
         return gwlt;
     }
+    
+    public static tokenOperations(method: string, tokenName: string, toAddr?: string, amount?: number): string {
+        const tokenAddress = ERC20Tokens[tokenName];
+        if (tokenAddress === undefined) {
+            throw new Error('This token doesn\'t supported');
+        }
+        const contract = web3.eth.contract(minABI).at(tokenAddress);
 
+        switch (method) {
+            case 'totalsupply':
+                return contract.totalSupply.getData();
+            case 'decimals':
+                return contract.decimals.getData();
+            case 'balanceof':
+                if (toAddr !== undefined) {
+                    return contract.balanceOf.getData(toAddr);
+                } else {
+                    throw new Error('Please specifiy the address you want to query balance');
+                }
+            case 'transfer':
+                if (toAddr !== undefined && amount !== undefined) {
+                    return contract.transfer.getData(toAddr, amount);
+                } else {
+                    throw new Error('Need toAddr and amount');
+                }
+            default:
+                throw new Error('Not supported method');
+        }
+    }
     /**
      * This is a CPU intensive work, may take about 10 seconds!!!
      *
@@ -319,35 +347,6 @@ export class GaiaWallet {
         tx.sign(privKey);
 
         return tx.serialize();
-    }
-
-    public tokenOperations(method: string, tokenName: string, toAddr?: string, amount?: number): string {
-        const tokenAddress = ERC20Tokens[tokenName];
-        if (tokenAddress === undefined) {
-            throw new Error('This token doesn\'t supported');
-        }
-        const contract = web3.eth.contract(minABI).at(tokenAddress);
-
-        switch (method) {
-            case 'totalsupply':
-                return contract.totalSupply.getData();
-            case 'decimals':
-                return contract.decimals.getData();
-            case 'balanceof':
-                if (toAddr !== undefined) {
-                    return contract.balanceOf.getData(toAddr);
-                } else {
-                    throw new Error('Please specifiy the address you want to query balance');
-                }
-            case 'transfer':
-                if (toAddr !== undefined && amount !== undefined) {
-                    return contract.transfer.getData(toAddr, amount);
-                } else {
-                    throw new Error('Need toAddr and amount');
-                }
-            default:
-                throw new Error('Not supported method');
-        }
     }
 
     public toJSON() : string {
