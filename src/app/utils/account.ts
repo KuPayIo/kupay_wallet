@@ -2,18 +2,19 @@
 /**
  * 和账号相关的工具
  */
-import { getLocalStorage,getStrLen,shuffle } from './tools';
+import { walletNumLimit } from './constants';
+import { getLocalStorage, getStrLen, shuffle } from './tools';
 
- // 密码强度列表
+// 密码强度列表
 const walletPswStrengthList = [{
-    text:'弱',
-    color:'#FF0000'
-},{
-    text:'一般',
-    color:'#FF9900'
-},{
-    text:'强',
-    color:'#33CC00'
+    text: '弱',
+    color: '#FF0000'
+}, {
+    text: '一般',
+    color: '#FF9900'
+}, {
+    text: '强',
+    color: '#33CC00'
 }];
 
 /**
@@ -39,15 +40,24 @@ export const walletPswAvailable = (walletPsw) => {
  * @param psw1 password one
  * @param psw2 password two
  */
-export const pswEqualed = (psw1,psw2) => {
+export const pswEqualed = (psw1, psw2) => {
     return psw1.trim() === psw2.trim();
+};
+
+/**
+ * 钱包数量是否合乎规则
+ */
+export const walletCountAvailable = () => {
+    const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
+
+    return wallets.walletList.length < walletNumLimit;
 };
 
 /**
  * 获取密码强度对象
  * @param walletPsw wallet password
  */
-export const getWalletPswStrength = (walletPsw?:string) => {
+export const getWalletPswStrength = (walletPsw?: string) => {
     if (!walletPsw || !walletPsw.trim()) {
         return walletPswStrengthList[0];
     }
@@ -57,51 +67,51 @@ export const getWalletPswStrength = (walletPsw?:string) => {
 };
 
 // 判断输入密码的类型    
-const CharMode = (iN) => {    
+const CharMode = (iN) => {
     if (iN >= 48 && iN <= 57) { // 数字    
         return 1;
-    }    
+    }
     if (iN >= 65 && iN <= 90) { // 大写    
         return 2;
-    }    
+    }
     if (iN >= 97 && iN <= 122) { // 小写    
         return 4;
-    } else {    
+    } else {
         return 8;
-    }     
-};  
+    }
+};
 // bitTotal函数    
 // 计算密码模式    
-const bitTotal = (num) => {    
-    let modes = -1;    
-    for (let i = 0;i < 4;i++) {    
-        if (num & 1) modes++;    
-        num >>>= 1;    
-    }  
+const bitTotal = (num) => {
+    let modes = -1;
+    for (let i = 0; i < 4; i++) {
+        if (num & 1) modes++;
+        num >>>= 1;
+    }
 
-    return modes;    
-};  
+    return modes;
+};
 // 返回强度级别    
-const checkStrong = (sPW) => {    
-    if (sPW.length < 8) {    
+const checkStrong = (sPW) => {
+    if (sPW.length < 8) {
         return 0;
     } // 密码太短，不检测级别  
-    let Modes = 0;    
-    for (let i = 0;i < sPW.length;i++) {    
+    let Modes = 0;
+    for (let i = 0; i < sPW.length; i++) {
         // 密码模式    
-        Modes |= CharMode(sPW.charCodeAt(i));    
-    }  
+        Modes |= CharMode(sPW.charCodeAt(i));
+    }
 
-    return bitTotal(Modes);    
-};  
+    return bitTotal(Modes);
+};
 
 /**
  * 名字显示截取
  */
-export const nickNameInterception = (name:string):string => {
+export const nickNameInterception = (name: string): string => {
     let ret = '';
     if (name.length > 6) {
-        ret = `${name.slice(0,6)}...`;
+        ret = `${name.slice(0, 6)}...`;
     } else {
         ret = name;
     }
@@ -112,11 +122,11 @@ export const nickNameInterception = (name:string):string => {
 /**
  * 随机获取头像
  */
-export const getAvatarRandom = ():string => {
+export const getAvatarRandom = (): string => {
     // tslint:disable-next-line:max-line-length
-    const avatarsSrc = ['img_avatar1.jpg','img_avatar2.jpg','img_avatar3.jpg','img_avatar4.jpg','img_avatar5.jpg','img_avatar6.jpg','img_avatar7.jpg','img_avatar8.jpg','img_avatar9.jpg','img_avatar10.jpg'];
+    const avatarsSrc = ['img_avatar1.jpg', 'img_avatar2.jpg', 'img_avatar3.jpg', 'img_avatar4.jpg', 'img_avatar5.jpg', 'img_avatar6.jpg', 'img_avatar7.jpg', 'img_avatar8.jpg', 'img_avatar9.jpg', 'img_avatar10.jpg'];
     const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
-    const avatarUsed  =  [];
+    const avatarUsed = [];
     wallets.walletList.forEach(item => {
         avatarUsed.push(item.avatar);
     });
@@ -124,7 +134,7 @@ export const getAvatarRandom = ():string => {
         return avatarUsed.indexOf(item) === -1;
     });
     const shuffledAvatars = shuffle(avatarAvailable);
-    const avatar = shuffledAvatars.splice(0,1);
+    const avatar = shuffledAvatars.splice(0, 1);
 
     return avatar[0];
 };

@@ -58,7 +58,7 @@ export class BackupMnemonicConfirm extends Widget {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '请检查助记词', content: '' });
         } else {
             popNew('app-components-message-messagebox',
-             { itype: 'confirm', title: '助记词即将移除', content: 'Start navigation to Restaurant Mos Eisley?' }, 
+             { itype: 'confirm', title: '是否移除助记词？', content: '确认抄写助记词，此操作不可撤销' }, 
              () => {
                  this.deleteMnemonic();
                  this.ok && this.ok();
