@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../store/dataCenter';
+import { dataCenter, DataCenter } from '../../../store/dataCenter';
 import { addNewAddr, getNewAddrInfo } from '../../../utils/tools';
 
 export class AddressManage extends Widget {
@@ -16,7 +16,7 @@ export class AddressManage extends Widget {
     public create() {
         super.create();
         this.init();
-    } 
+    }
 
     public init() {
         this.state = {
@@ -109,15 +109,21 @@ export class AddressManage extends Widget {
                 address = 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f';
             }
 
-            popNew('app-components-message-messagebox', { itype: 'prompt', title: '添加地址', placeHolder: '标签名', content: address }, (r) => {
-                if (wltJson) {
+            popNew('app-components-message-messagebox',
+                { itype: 'prompt', title: '添加地址', placeHolder: '标签名(限8个字)', content: address }, (r) => {
+                    if (wltJson) {
+                        if (r && r.length >= DataCenter.MAX_ADDRNAME_LEN) {
+                            popNew('app-components-message-message', { itype: 'notice', content: '地址标签输入过长', center: true });
 
-                    const info = addNewAddr(selectName, address, r, wltJson);
+                            return;
+                        }
 
-                    this.state.content1.push({ name: info.addrName, money: '0.00', address: address });
-                    this.paint();
-                }
-            });
+                        const info = addNewAddr(selectName, address, r, wltJson);
+
+                        this.state.content1.push({ name: info.addrName, money: '0.00', address: address });
+                        this.paint();
+                    }
+                });
         } else {
             const title = `添加${this.state.coins[this.state.selectnum].name}地址`;
             popNew('app-view-mine-addressManage-messagebox', {

@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../store/dataCenter';
+import { dataCenter, DataCenter } from '../../../store/dataCenter';
 import {
     addNewAddr, getAddrById, getCurrentWallet, getLocalStorage, getNewAddrInfo, getStrLen, setLocalStorage, sliceStr
 } from '../../../utils/tools';
@@ -25,7 +25,6 @@ export class AddAsset extends Widget {
     }
 
     public init(): void {
-        this.state = { maxNameLen: 9 };
 
         this.getAddrs();
     }
@@ -65,7 +64,7 @@ export class AddAsset extends Widget {
         popNew('app-components-message-messagebox', {
             itype: 'prompt', title: '添加地址', content: address, placeHolder: '标签名(限8个字)'
         }, (r) => {
-            if (r && r.length >= this.state.maxNameLen) {
+            if (r && r.length >= DataCenter.MAX_ADDRNAME_LEN) {
                 popNew('app-components-message-message', { itype: 'notice', content: '地址标签输入过长', center: true });
 
                 return;
@@ -95,8 +94,8 @@ export class AddAsset extends Widget {
 
             let addrName = r.addrName;
             const len = getStrLen(addrName);
-            if (len > this.state.maxNameLen) {
-                addrName = `${sliceStr(addrName, 0, this.state.maxNameLen)}...`;
+            if (len > DataCenter.MAX_ADDRNAME_LEN) {
+                addrName = `${sliceStr(addrName, 0, DataCenter.MAX_ADDRNAME_LEN)}...`;
             }
             const info = dataCenter.getAddrInfoByAddr(r.addr);
 
