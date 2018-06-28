@@ -91,14 +91,14 @@ export class AddAsset extends Widget {
 
         const currentAddr = currencyRecord.currentAddr || wallet.walletId;
         this.state.list = currencyRecord.addrs.map(v => {
-            const r = getAddrById(v);
+            const r = getAddrById(v,this.props.currencyName);
 
             let addrName = r.addrName;
             const len = getStrLen(addrName);
             if (len > this.state.maxNameLen) {
                 addrName = `${sliceStr(addrName, 0, this.state.maxNameLen)}...`;
             }
-            const info = dataCenter.getAddrInfoByAddr(r.addr);
+            const info = dataCenter.getAddrInfoByAddr(r.addr,this.props.currencyName);
 
             return {
                 name: addrName,

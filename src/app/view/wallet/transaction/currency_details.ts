@@ -18,7 +18,6 @@ interface Props {
 interface State {
     list: any[];
     currentAddr: string;
-    currentAddrRecords: any[];
     balance: number;
     showBalance: string;
     showBalanceConversion: string;
@@ -58,7 +57,7 @@ export class AddAsset extends Widget {
         const wallet = getCurrentWallet(wallets);
 
         this.state = {
-            list: [], currentAddr: '', currentAddrRecords: [], balance: 0, showBalance: `0 ${this.props.currencyName}`
+            list: [], currentAddr: '', balance: 0, showBalance: `0 ${this.props.currencyName}`
             , showBalanceConversion: '≈0.00 CNY'
         };
         this.resetCurrentAddr(wallet, this.props.currencyName);
@@ -175,7 +174,7 @@ export class AddAsset extends Widget {
             };
         });
 
-        const addr = getAddrById(this.state.currentAddr);
+        const addr = getAddrById(this.state.currentAddr,this.props.currencyName);
         let recordList = [];
         if (addr) {
             recordList = addr.record.map(v => {
@@ -209,8 +208,6 @@ export class AddAsset extends Widget {
         if (!currencyRecord) return [];
 
         this.state.currentAddr = currencyRecord.currentAddr || wallet.walletId;
-        const currentAddr = getAddrById(this.state.currentAddr);
-        this.state.currentAddrRecords = currentAddr ? currentAddr.record : [];
 
     }
 

@@ -72,7 +72,7 @@ export const getCurrentAddrInfo = (currencyName:string) => {
     const wallet = getCurrentWallet(wallets);
     const currencyRecord = wallet.currencyRecords.filter(item => item.currencyName === currencyName)[0];
     // tslint:disable-next-line:no-unnecessary-local-variable
-    const addrInfo = addrs.filter(item => item.addr === currencyRecord.currentAddr)[0];
+    const addrInfo = addrs.filter(item => item.addr === currencyRecord.currentAddr && item.currencyName === currencyName)[0];
 
     return addrInfo;
 };
@@ -80,10 +80,10 @@ export const getCurrentAddrInfo = (currencyName:string) => {
  * 通过地址id获取地址信息
  * @param addrId  address id
  */
-export const getAddrById = (addrId): Addr => {
+export const getAddrById = (addrId:string,currencyName:string): Addr => {
     const list: Addr[] = getLocalStorage('addrs') || [];
 
-    return list.filter(v => v.addr === addrId)[0];
+    return list.filter(v => v.addr === addrId && v.currencyName === currencyName)[0];
 };
 
 /**
@@ -92,12 +92,12 @@ export const getAddrById = (addrId): Addr => {
  * @param data  新地址
  * @param notified 是否通知数据发生改变 
  */
-export const resetAddrById = (addrId, data: Addr, notified?: boolean) => {
+export const resetAddrById = (addrId:string,currencyName:string, data: Addr, notified?: boolean) => {
     let list: Addr[] = getLocalStorage('addrs') || [];
     list = list.map(v => {
-        if (v.addr !== addrId) return v;
+        if (v.addr === addrId && v.currencyName === currencyName) return data;
 
-        return data;
+        return v;
     });
     setLocalStorage('addrs', list, notified);
 };

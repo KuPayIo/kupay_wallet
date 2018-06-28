@@ -127,9 +127,6 @@ export class WalletManagement extends Widget {
             gwlt.nickName = v;
             wallet.gwlt = gwlt.toJSON();
 
-     /*        const addr = getAddrById(addr0);
-            addr.gwlt = gwlt.toJSON();
-            resetAddrById(addr0,addr); */
             setLocalStorage('wallets', wallets, true);
         }
         input.value = v;

@@ -7,6 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { Api as BtcApi } from '../../../core/btc/api';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
+import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import {
     decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, getAddrById,getCurrentAddrInfo
@@ -241,7 +242,8 @@ export class AddAsset extends Widget {
         if (this.state.urgent) {
             price *= 2;
         }
-        const r = effectiveCurrencyStableConversion(price * this.state.gasLimit, this.props.currencyName, 'CNY', true, this.props.rate);
+        // tslint:disable-next-line:max-line-length
+        const r = effectiveCurrencyStableConversion(price * this.state.gasLimit, ERC20Tokens[this.props.currencyName] ? 'ETH' : this.props.currencyName, 'CNY', true, this.props.rate);
 
         this.state.fees = r.num;
         this.state.feesShow = r.show;
@@ -277,11 +279,11 @@ export class AddAsset extends Widget {
  * 添加记录
  */
 const addRecord = (currencyName, currentAddr, record) => {
-    const addr = getAddrById(currentAddr);
+    const addr = getAddrById(currentAddr,currencyName);
     if (!addr) return;
     addr.record.push(record);
 
-    resetAddrById(currentAddr, addr, true);
+    resetAddrById(currentAddr,currencyName,addr, true);
 };
 
 /**
@@ -302,7 +304,7 @@ async function doEthTransfer(acct1: string, acct2: string, psw: string, gasPrice
         data: info
     };
 
-    const currentAddr = getAddrById(acct1);
+    const currentAddr = getAddrById(acct1,'ETH');
     if (!currentAddr) return;
 
     const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
@@ -344,4 +346,34 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
     
     return res.tx.hash;
 
+}
+
+/**
+ * 处理eth代币转账
+ */
+// tslint:disable-next-line:only-arrow-functions
+async function doERC20TokenTransfer(acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
+    , value: number, info: string, urgent: boolean) {
+    const api = new EthApi();
+    if (urgent) gasPrice *= 2;
+    const nonce = await api.getTransactionCount(acct1);
+    const txObj = {
+        to: acct2,
+        nonce: nonce,
+        gasPrice: gasPrice,
+        gasLimit: gasLimit,
+        value: value,
+        data: info
+    };
+
+    const currentAddr = getAddrById(acct1,'ETH');
+    if (!currentAddr) return;
+
+    const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
+
+    const tx = wlt.signRawTransaction(psw, txObj);
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const id = await api.sendRawTransaction(tx);
+
+    return id;
 }

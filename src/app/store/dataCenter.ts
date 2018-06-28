@@ -4,7 +4,7 @@ import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { defaultEthToken,defaultExchangeRateJson,ethTokenTransferCode,supportCurrencyList } from '../utils/constants';
 import {
-    getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage,wei2Eth
+    ethTokenDecimals, getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc,setLocalStorage,wei2Eth
 } from '../utils/tools';
 /**
  * 创建事件处理器表
@@ -225,7 +225,6 @@ export class DataCenter {
         const contractAddress = ERC20Tokens[currencyName];
         const res = await api.getTokenTransferEvents(contractAddress,addr);
         const list = [];
-        // const hashList = [];
         const transactions = getLocalStorage('transactions') || [];
         res.result.forEach(v => {
             if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr) && (v1.currencyName === currencyName))) return;
@@ -429,6 +428,18 @@ export class DataCenter {
      * 更新余额
      */
     private updateBalance(addr: string, currencyName: string) {
+        if (ERC20Tokens[currencyName]) {
+            const balanceOfCode = GaiaWallet.tokenOperations('balanceof',currencyName,addr);
+            // console.log('balanceOfCode',balanceOfCode);
+            const api = new EthApi();
+            api.ethCall(ERC20Tokens[currencyName],balanceOfCode).then(r => {
+                // tslint:disable-next-line:radix
+                const num = ethTokenDecimals(parseInt(r),currencyName);
+                this.setBalance(addr,currencyName,num);
+            });
+            
+            return;
+        }
         switch (currencyName) {
             case 'ETH':
                 const api = new EthApi();
