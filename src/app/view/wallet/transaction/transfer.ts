@@ -11,8 +11,8 @@ import { ibanToAddress } from '../../../core/eth/helper';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import {
-    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, getAddrById,getCurrentAddrInfo
-    , getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById, urlParams
+    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals,getAddrById
+    , getCurrentAddrInfo, getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById,urlParams
 } from '../../../utils/tools';
 
 interface Props {
@@ -36,6 +36,7 @@ interface States {
     feesConversion: string;
     info: string;
     urgent: boolean;
+    showNote:boolean;
 }
 
 export class AddAsset extends Widget {
@@ -58,13 +59,14 @@ export class AddAsset extends Widget {
             to: '',
             pay: 0,
             payConversion: `≈0.00 CNY`,
-            gasPrice: 100000000,
+            gasPrice: 1000000000,
             gasLimit: 21000,
             fees: 0,
             feesShow: '',
             feesConversion: '',
             info: '',
-            urgent: false
+            urgent: false,
+            showNote:ERC20Tokens[this.props.currencyName] ? false : true
         };
 
         // todo 这是测试地址
@@ -81,6 +83,9 @@ export class AddAsset extends Widget {
                 this.state.gasLimit = 1;
                 this.resetFees();
             });
+        } else if (ERC20Tokens[this.props.currencyName]) {
+            this.state.gasLimit = 100000;
+            this.state.to = '0x14571a8f98301db5dc5c7640a9c7f6ca5beab338';
         }
 
         this.resetFees();
@@ -117,16 +122,20 @@ export class AddAsset extends Widget {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
             const psw = decrypt(wallet.walletPsw);
+            let loading;
             if (r === psw) {
                 try {
                     let id: any;
-                    const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
+                    loading = popNew('pi-components-loading-loading', { text: '交易中...' });
                     if (this.props.currencyName === 'ETH') {
                         id = await doEthTransfer(thisObj.props.fromAddr, thisObj.state.to, psw, thisObj.state.gasPrice
                             , thisObj.state.gasLimit, eth2Wei(thisObj.state.pay), thisObj.state.info, thisObj.state.urgent);
                     } else if (this.props.currencyName === 'BTC') {
                         id = await doBtcTransfer(thisObj.props.fromAddr, thisObj.state.to, psw, thisObj.state.gasPrice
                             , thisObj.state.gasLimit, thisObj.state.pay, thisObj.state.info, thisObj.state.urgent);
+                    } else if (ERC20Tokens[this.props.currencyName]) {
+                        id = await doERC20TokenTransfer(thisObj.props.fromAddr, thisObj.state.to, psw, thisObj.state.gasPrice
+                            , thisObj.state.gasLimit, thisObj.state.pay,  thisObj.state.urgent,thisObj.props.currencyName);
                     }
 
                     loading.callback(loading.widget);
@@ -134,6 +143,7 @@ export class AddAsset extends Widget {
                     thisObj.showTransactionDetails(id);
                     thisObj.doClose();
                 } catch (error) {
+                    loading.callback(loading.widget);
                     console.log(error.message);
                     if (error.message.indexOf('insufficient funds') >= 0) {
                         popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });
@@ -360,20 +370,22 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
  */
 // tslint:disable-next-line:only-arrow-functions
 async function doERC20TokenTransfer(acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
-    , value: number, info: string, urgent: boolean) {
+    , value: number, urgent: boolean,currencyName:string) {
+    
     const api = new EthApi();
     if (urgent) gasPrice *= 2;
     const nonce = await api.getTransactionCount(acct1);
+    const transferCode = GaiaWallet.tokenOperations('transfer',currencyName,acct2,ethTokenMultiplyDecimals(value,currencyName));
     const txObj = {
-        to: acct2,
+        to: ERC20Tokens[currencyName],
         nonce: nonce,
         gasPrice: gasPrice,
         gasLimit: gasLimit,
-        value: value,
-        data: info
+        value: 0,
+        data: transferCode
     };
 
-    const currentAddr = getAddrById(acct1,'ETH');
+    const currentAddr = getAddrById(acct1,currencyName);
     if (!currentAddr) return;
 
     const wlt = GaiaWallet.fromJSON(currentAddr.wlt);

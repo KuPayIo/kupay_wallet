@@ -211,10 +211,16 @@ export const btc2Sat = (num: number) => {
 };
 
 /**
- * eth 代币精度计算
+ * eth 代币除以精度计算
  */
-export const ethTokenDecimals = (num:number,tokenName:string) => {
+export const ethTokenDivideDecimals = (num:number,tokenName:string) => {
     return num / dataCenter.decimals[tokenName]; 
+};
+/**
+ * eth 代币乘以精度计算
+ */
+export const ethTokenMultiplyDecimals = (num:number,tokenName:string) => {
+    return num * dataCenter.decimals[tokenName]; 
 };
 
 /**
@@ -235,7 +241,7 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
@@ -259,7 +265,7 @@ export  const  effectiveCurrencyNoConversion =   (perNum: any, currencyName: str
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
@@ -285,7 +291,7 @@ export const effectiveCurrencyStableConversion = (perNum: any, currencyName: str
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;

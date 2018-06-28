@@ -336,7 +336,6 @@ export class GaiaWallet {
         tx.gasLimit = txObj.gasLimit;
         tx.value = txObj.value;
         tx.data = txObj.data;
-
         let privKey;
         try {
             privKey = cipher.decrypt(passwd, this._privKey);

@@ -4,7 +4,7 @@ import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { defaultEthToken,defaultExchangeRateJson,ethTokenTransferCode,supportCurrencyList } from '../utils/constants';
 import {
-    ethTokenDecimals, getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc,setLocalStorage,wei2Eth
+    ethTokenDivideDecimals, getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc,setLocalStorage,wei2Eth
 } from '../utils/tools';
 /**
  * 创建事件处理器表
@@ -411,7 +411,7 @@ export class DataCenter {
             const api = new EthApi();
             api.ethCall(ERC20Tokens[currencyName],balanceOfCode).then(r => {
                 // tslint:disable-next-line:radix
-                const num = ethTokenDecimals(parseInt(r),currencyName);
+                const num = ethTokenDivideDecimals(parseInt(r),currencyName);
                 this.setBalance(addr,currencyName,num);
             });
             

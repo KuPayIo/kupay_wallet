@@ -25,7 +25,9 @@ export class AddAsset extends Widget {
     }
 
     public init(): void {
-
+        this.state = {
+            list:[]
+        };
         this.getAddrs();
     }
 
@@ -91,7 +93,6 @@ export class AddAsset extends Widget {
         const currentAddr = currencyRecord.currentAddr || wallet.walletId;
         this.state.list = currencyRecord.addrs.map(v => {
             const r = getAddrById(v,this.props.currencyName);
-
             let addrName = r.addrName;
             const len = getStrLen(addrName);
             if (len > DataCenter.MAX_ADDRNAME_LEN) {

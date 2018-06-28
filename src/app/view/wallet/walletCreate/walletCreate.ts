@@ -123,6 +123,7 @@ export class WalletCreate extends Widget {
     }
 
     public importWalletClick() {
+        this.ok && this.ok();
         popNew('app-view-wallet-walletImport-walletImport');
     }
 }
