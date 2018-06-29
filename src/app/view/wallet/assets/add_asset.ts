@@ -93,7 +93,7 @@ export class AddAsset extends Widget {
             const psw = decrypt(wallet.walletPsw);
             const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
-            initCurrency(currencys.name,ERC20TokensTestnet[currencys.name],psw,gwlt.seed);
+            initERC20TokenCurrency(currencys.name,ERC20TokensTestnet[currencys.name],psw,gwlt.seed);
 
             return;
         }
@@ -114,7 +114,7 @@ export class AddAsset extends Widget {
 
 }
 
-const initCurrency = async (tokenName:string,contractAddress: string,passwd: string,seed:string) => {
+const initERC20TokenCurrency = async (tokenName:string,contractAddress: string,passwd: string,seed:string) => {
     GlobalWallet.fromSeedEthToken(tokenName,contractAddress,passwd,seed).then(r => {
         const wallets = getLocalStorage('wallets');
         const addrs = getLocalStorage('addrs');

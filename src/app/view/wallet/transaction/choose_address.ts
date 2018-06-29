@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter, DataCenter } from '../../../store/dataCenter';
 import {
-    addNewAddr, getAddrById, getCurrentWallet, getLocalStorage, getNewAddrInfo, getStrLen, setLocalStorage, sliceStr
+    addNewAddr, formatBalance, getAddrById, getCurrentWallet, getLocalStorage, getNewAddrInfo, getStrLen, setLocalStorage,sliceStr
 } from '../../../utils/tools';
 
 interface Props {
@@ -102,7 +102,7 @@ export class AddAsset extends Widget {
 
             return {
                 name: addrName,
-                balance: (info && info.balance) || 0,
+                balance:formatBalance((info && info.balance) || 0),
                 isChoose: r.addr === currentAddr,
                 addr: r.addr
             };

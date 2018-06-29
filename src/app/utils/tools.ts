@@ -115,7 +115,8 @@ export const getAddrsAll = (wallet) => {
         retAddrs.push(...item.addrs);
     });
 
-    return retAddrs;
+    // 去除数组中重复的地址
+    return [...new Set(retAddrs)];
 };
 
 /**
@@ -502,4 +503,11 @@ export const urlParams = (url: string, key: string) => {
     const ret = url.match(new RegExp(`(\\?|&)${key}=(.*?)(&|$)`));
 
     return ret && decodeURIComponent(ret[2]);
+};
+
+export const formatBalance = (banlance:number) => {
+    if (banlance >= 1) return banlance.toPrecision(7);
+    else if (banlance === 0) return banlance;
+    
+    return banlance.toPrecision(6);
 };

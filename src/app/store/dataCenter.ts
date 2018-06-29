@@ -181,7 +181,7 @@ export class DataCenter {
         }, 5 * 1000);
         if (this.updateList.length > 0) {
             const update = this.updateList.shift();
-            // console.log('openCheck updateList', update);
+            console.log('openCheck updateList', update);
             switch (update[0]) {
                 case 'transaction': this.parseTransactionDetails(update[1], update[2]); break;
                 case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
@@ -236,7 +236,8 @@ export class DataCenter {
             list.push(record);
         });
         if (list.length > 0) {
-            setLocalStorage('transactions', transactions.concat(list), false);
+            this.setTransactionLocalStorage(transactions.concat(list));
+            // setLocalStorage('transactions', transactions.concat(list), false);
         }
     }
     private async parseEthTransactionDetails(addr: string) {
@@ -267,7 +268,8 @@ export class DataCenter {
             // hashList.push(v.hash);
         });
         if (list.length > 0) {
-            setLocalStorage('transactions', transactions.concat(list), false);
+            this.setTransactionLocalStorage(transactions.concat(list));
+            // setLocalStorage('transactions', transactions.concat(list), false);
         }
     }
     // 过滤eth交易记录，过滤掉token的交易记录
@@ -340,8 +342,8 @@ export class DataCenter {
 
         // const transactions = getLocalStorage('transactions') || [];
         transactions.push(record);
-
-        setLocalStorage('transactions', transactions, false);
+        this.setTransactionLocalStorage(transactions);
+        // setLocalStorage('transactions', transactions, false);
 
         this.removeRecordAtAddr(addr, iInfo.tx_hash);
     }
@@ -365,8 +367,8 @@ export class DataCenter {
         };
 
         transactions.push(record);
-
-        setLocalStorage('transactions', transactions, false);
+        this.setTransactionLocalStorage(transactions);
+        // setLocalStorage('transactions', transactions, false);
 
         this.removeRecordAtAddr(addr, iInfo.tx_hash);
     }
@@ -458,6 +460,13 @@ export class DataCenter {
 
     }
 
+    private setTransactionLocalStorage(transactions:any[],notify:boolean= false) {
+        const addrs = getLocalStorage('addrs');
+        const existedAddrs = [];
+        addrs.forEach(addr => existedAddrs.push(addr.addr));
+        const trans = transactions.filter(trans => existedAddrs.indexOf(trans.addr) >= 0);
+        setLocalStorage('transactions',trans,notify);
+    }
 }
 
 // ============================================ 立即执行
