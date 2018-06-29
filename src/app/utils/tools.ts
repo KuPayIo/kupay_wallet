@@ -506,8 +506,14 @@ export const urlParams = (url: string, key: string) => {
 };
 
 export const formatBalance = (banlance:number) => {
-    if (banlance >= 1) return banlance.toPrecision(7);
-    else if (banlance === 0) return banlance;
+    let retBanlance;
+    if (banlance >= 1) {
+        retBanlance = +banlance.toPrecision(7);
+    } else if (banlance === 0) {
+        retBanlance = banlance;
+    } else {
+        retBanlance = +banlance.toPrecision(6);
+    }
     
-    return banlance.toPrecision(6);
+    return retBanlance;
 };

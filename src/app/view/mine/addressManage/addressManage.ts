@@ -25,7 +25,7 @@ export class AddressManage extends Widget {
             coins: [
                 { name: 'BTC' },
                 { name: 'ETH' },
-                { name: 'ETC' },
+                { name: 'YNC' },
                 { name: 'BCH' },
                 { name: 'EOS' },
                 { name: 'XRP' }

@@ -77,7 +77,7 @@ export class DataCenter {
         const retAddrs = getAddrsByCurrencyName(wallet, currencyName);
         const addrs = getLocalStorage('addrs') || [];
 
-        return addrs.filter(v => retAddrs.indexOf(v.addr) !== -1);
+        return addrs.filter(v => retAddrs.indexOf(v.addr) !== -1 && v.currencyName === currencyName);
     }
 
     /**
