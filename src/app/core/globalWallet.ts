@@ -3,11 +3,11 @@
  */
 import { dataCenter } from '../store/dataCenter';
 import { btcNetwork,defaultEthToken,lang,strength } from '../utils/constants';
-import { getDefaultAddr } from '../utils/tools';
+import { decrypt, getDefaultAddr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
-import { ERC20Tokens } from './eth/tokens';
+import { ERC20TokensTestnet } from './eth/tokens';
 import { GaiaWallet } from './eth/wallet';
 import { generate,toSeed } from './genmnemonic';
 
@@ -82,7 +82,7 @@ export class GlobalWallet {
 
         for (let i = 0; i < defaultEthToken.length;i++) {
             const tokenName = defaultEthToken[i];
-            const contractAddress = ERC20Tokens[tokenName];
+            const contractAddress = ERC20TokensTestnet[tokenName];
             const tokenGwlt = await GlobalWallet.fromMnemonicEthToken(tokenName,contractAddress,passwd,mnemonic);
             gwlt._currencyRecords.push(tokenGwlt.currencyRecord);
             gwlt._addrs.push(...tokenGwlt.addrs);
@@ -151,7 +151,45 @@ export class GlobalWallet {
 
         return gwlt;
     }
+    public static async fromSeedEthToken(tokenName:string,contractAddress: string,passwd: string,seed:string) {
+        const _seed = cipher.decrypt(passwd,seed);
+        const gaiaWallet = GaiaWallet.fromSeed(passwd, _seed, lang);
+        const cnt = await gaiaWallet.scanTokenUsedAddress(contractAddress,passwd);
+        const currencyRecord: CurrencyRecord = {
+            currencyName: tokenName,
+            currentAddr: gaiaWallet.address,
+            addrs: [gaiaWallet.address]
+        };
+        const firstAddr: Addr = {
+            addr: gaiaWallet.address,
+            addrName: getDefaultAddr(gaiaWallet.address),
+            wlt: gaiaWallet.toJSON(),
+            record: [],
+            balance: 0,
+            currencyName: tokenName
+        };
+        const addrs :Addr[] = [];
+        addrs.push(firstAddr);
 
+        for (let i = 1;i < cnt;i++) {
+            const wlt = gaiaWallet.selectAddress(passwd,i);
+            currencyRecord.addrs.push(wlt.address);
+            const addr : Addr = {
+                addr: wlt.address,
+                addrName: getDefaultAddr(wlt.address),
+                wlt: wlt.toJSON(),
+                record: [],
+                balance: 0,
+                currencyName: tokenName
+            };
+            addrs.push(addr);
+        }
+
+        return {
+            currencyRecord,
+            addrs
+        };
+    }
     private static createEthGwlt(passwd: string,mnemonic:string) {
         const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
         const currencyRecord: CurrencyRecord = {

@@ -1,6 +1,6 @@
 import { Api as BtcApi } from '../core/btc/api';
 import { Api as EthApi } from '../core/eth/api';
-import { ERC20Tokens } from '../core/eth/tokens'; 
+import { ERC20TokensTestnet } from '../core/eth/tokens'; 
 import { GaiaWallet } from '../core/eth/wallet';
 import { defaultEthToken,defaultExchangeRateJson,ethTokenTransferCode,supportCurrencyList } from '../utils/constants';
 import {
@@ -27,13 +27,6 @@ export class DataCenter {
 
     public exchangeRateJson:any = defaultExchangeRateJson;
     public currencyList: any[] = supportCurrencyList;
-    public decimals:any = {};
-
-    public constructor() {
-        defaultEthToken.forEach(tokenName => {
-            this.decimals[tokenName] = Math.pow(10,18);
-        });
-    }
     /**
      * 初始化
      */
@@ -41,9 +34,6 @@ export class DataCenter {
 
         this.updateList.push(['exchangeRate', 'ETH']);
         this.updateList.push(['exchangeRate', 'BTC']);
-        defaultEthToken.forEach(tokenName => {
-            this.updateList.push(['decimals',tokenName]);
-        });
 
         // 从缓存中获取地址进行初始化
         const addrs = getLocalStorage('addrs');
@@ -65,7 +55,6 @@ export class DataCenter {
         // 启动定时器更新
         if (!this.timerRef) this.openCheck();
     }
-
     /**
      * addAddr
      */
@@ -110,7 +99,7 @@ export class DataCenter {
         // return transactions.filter(v => v.addr === addr);
 
         let list = [];
-        if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
+        if (currencyName === 'ETH' || ERC20TokensTestnet[currencyName]) {
             list = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
         } else if (currencyName === 'BTC') {
             list = transactions.filter(v => v.addr === addr && v.currencyName === currencyName).map(v => {
@@ -198,7 +187,6 @@ export class DataCenter {
                 case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
                 case 'balance': this.updateBalance(update[1], update[2]); break;
                 case 'exchangeRate': this.exchangeRate(update[1]); break;
-                case 'decimals':this.fetchDecimals(update[1]);break;
 
                 default:
             }
@@ -209,7 +197,7 @@ export class DataCenter {
      * 解析交易详情
      */
     private parseTransactionDetails(addr: string, currencyName: string) {
-        if (ERC20Tokens[currencyName]) {
+        if (ERC20TokensTestnet[currencyName]) {
             this.parseEthERC20TokenTransactionDetails(addr,currencyName);
 
             return;
@@ -224,7 +212,7 @@ export class DataCenter {
 
     private async parseEthERC20TokenTransactionDetails(addr: string, currencyName: string) {
         const api = new EthApi();
-        const contractAddress = ERC20Tokens[currencyName];
+        const contractAddress = ERC20TokensTestnet[currencyName];
         const res = await api.getTokenTransferEvents(contractAddress,addr);
         const list = [];
         const transactions = getLocalStorage('transactions') || [];
@@ -405,11 +393,11 @@ export class DataCenter {
      * 更新余额
      */
     private updateBalance(addr: string, currencyName: string) {
-        if (ERC20Tokens[currencyName]) {
+        if (ERC20TokensTestnet[currencyName]) {
             const balanceOfCode = GaiaWallet.tokenOperations('balanceof',currencyName,addr);
             // console.log('balanceOfCode',balanceOfCode);
             const api = new EthApi();
-            api.ethCall(ERC20Tokens[currencyName],balanceOfCode).then(r => {
+            api.ethCall(ERC20TokensTestnet[currencyName],balanceOfCode).then(r => {
                 // tslint:disable-next-line:radix
                 const num = ethTokenDivideDecimals(parseInt(r),currencyName);
                 this.setBalance(addr,currencyName,num);
@@ -468,14 +456,6 @@ export class DataCenter {
             default:
         }
 
-    }
-
-    private async fetchDecimals(currencyName:string) {
-        const decimalsCode = GaiaWallet.tokenOperations('decimals',currencyName);
-        const api = new EthApi();
-        const decimals = await api.ethCall(ERC20Tokens[currencyName],decimalsCode);
-        // tslint:disable-next-line:radix
-        this.decimals[currencyName] = Math.pow(10,parseInt(decimals));
     }
 
 }

@@ -3,9 +3,11 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { ERC20TokensTestnet } from '../../../core/eth/tokens';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
 import { register } from '../../../store/store';
-import { getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { decrypt, getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 
 export class AddAsset extends Widget {
 
@@ -87,6 +89,39 @@ export class AddAsset extends Widget {
         wallet.showCurrencys = showCurrencys;
 
         setLocalStorage('wallets', wallets, true);
+
+        if (!newType) return;
+        const currencyRecords = wallet.currencyRecords;
+        // 判断当前点击货币是否已经初始化
+        let isInit = false;
+        currencyRecords.forEach(ele => {
+            if (ele.currencyName === currencys.name) {
+                isInit = true;
+            }
+        });
+        if (!isInit && ERC20TokensTestnet[currencys.name]) {
+            const psw = decrypt(wallet.walletPsw);
+            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+
+            initCurrency(currencys.name,ERC20TokensTestnet[currencys.name],psw,gwlt.seed);
+
+            return;
+        }
     }
 
 }
+
+const initCurrency = async (tokenName:string,contractAddress: string,passwd: string,seed:string) => {
+    GlobalWallet.fromSeedEthToken(tokenName,contractAddress,passwd,seed).then(r => {
+        const wallets = getLocalStorage('wallets');
+        const addrs = getLocalStorage('addrs');
+        const wallet = getCurrentWallet(wallets);
+        wallet.currencyRecords.push(r.currencyRecord);
+        addrs.push(...r.addrs);
+        setLocalStorage('wallets', wallets);
+        setLocalStorage('addrs', addrs);
+        
+    });
+
+    return ;
+};

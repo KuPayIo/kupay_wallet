@@ -15,10 +15,10 @@ export const supportCurrencyList = [{ name: 'ETH', description: 'Ethereum' },
     { name: 'YNC', description: 'YiNeng Ltd' }];
 
 // 默认显示得ETH代币
-export const defaultEthToken = ['YNC'];
+export const defaultEthToken = [];
 
 // 默认显示货币列表
-export const defalutShowCurrencys = ['ETH', 'BTC', 'YNC'];
+export const defalutShowCurrencys = ['ETH', 'BTC','EOS'];
 
 //
 export const strength = 128;
