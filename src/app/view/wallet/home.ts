@@ -6,7 +6,7 @@ import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
 import { dataCenter } from '../../store/dataCenter';
-import { register } from '../../store/store';
+import { register,unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
 import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
 
@@ -20,24 +20,7 @@ export class Home extends Widget {
     }
     public init(): void {
         const wallets = getLocalStorage('wallets');
-        register('wallets', (wallets) => {
-            let otherWallets = false;
-            if (wallets && wallets.walletList && wallets.walletList.length > 0) {
-                otherWallets = true;
-            } else {
-                otherWallets = false;
-            }
-            const wallet = getCurrentWallet(wallets);
-            let gwlt = null;
-            if (wallet) {
-                gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-            }
-            this.state.gwlt = gwlt;
-            this.state.otherWallets = otherWallets;
-            this.state.wallet = wallet;
-            this.state.currencyList = parseCurrencyList(wallet);
-            this.paint();
-        });
+        register('wallets', this.registerWalletsFun);
         let gwlt = null;
         let wallet = null;
         let otherWallets = false;
@@ -58,6 +41,12 @@ export class Home extends Widget {
             currencyList: parseCurrencyList(wallet)
         };
 
+    }
+    /**
+     * 处理关闭
+     */
+    public doClose() {
+        unregister('wallets',this.registerWalletsFun);
     }
 
     public clickCurrencyItemListener(e: Event, index: number) {
@@ -93,6 +82,25 @@ export class Home extends Widget {
     }
     public switchWalletClick() {
         popNew('app-view-wallet-switchWallet-switchWallet');
+    }
+
+    private registerWalletsFun = (wallets:any) => {
+        let otherWallets = false;
+        if (wallets && wallets.walletList && wallets.walletList.length > 0) {
+            otherWallets = true;
+        } else {
+            otherWallets = false;
+        }
+        const wallet = getCurrentWallet(wallets);
+        let gwlt = null;
+        if (wallet) {
+            gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+        }
+        this.state.gwlt = gwlt;
+        this.state.otherWallets = otherWallets;
+        this.state.wallet = wallet;
+        this.state.currencyList = parseCurrencyList(wallet);
+        this.paint();
     }
 }
 

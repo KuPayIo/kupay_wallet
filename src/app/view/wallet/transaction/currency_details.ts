@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20TokensTestnet } from '../../../core/eth/tokens';
 import { dataCenter } from '../../../store/dataCenter';
-import { register } from '../../../store/store';
+import { register,unregister } from '../../../store/store';
 import {
     effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
 } from '../../../utils/tools';
@@ -38,20 +38,8 @@ export class AddAsset extends Widget {
         this.init();
     }
     public init(): void {
-        register('wallets', (wallets) => {
-            const wallet = getCurrentWallet(wallets);
-            if (!wallet) return;
-            this.resetCurrentAddr(wallet, this.props.currencyName);
-            this.parseBalance();
-            this.parseTransactionDetails();
-            this.paint();
-        });
-        register('addrs', (wallets) => {
-            const wallet = getCurrentWallet(wallets);
-            if (!wallet) return;
-            this.parseTransactionDetails();
-            this.paint();
-        });
+        register('wallets',this.registerWalletsFun);
+        register('addrs',this.registerAddrsFun);
         
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
@@ -77,6 +65,8 @@ export class AddAsset extends Widget {
             clearTimeout(this.timerRef);
             this.timerRef = 0;
         }
+        unregister('wallets',this.registerWalletsFun);
+        unregister('addrs',this.registerAddrsFun);
         this.ok && this.ok();
     }
 
@@ -224,4 +214,18 @@ export class AddAsset extends Widget {
         dataCenter.updatetTransaction(this.state.currentAddr, this.props.currencyName);
     }
 
+    private registerWalletsFun = (wallets:any) => {
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        this.resetCurrentAddr(wallet, this.props.currencyName);
+        this.parseBalance();
+        this.parseTransactionDetails();
+        this.paint();
+    }
+
+    private registerAddrsFun = (addrs:any) => {
+        if (addrs.length === 0) return;
+        this.parseTransactionDetails();
+        this.paint();
+    }
 }

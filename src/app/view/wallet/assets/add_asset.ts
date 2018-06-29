@@ -6,34 +6,23 @@ import { Widget } from '../../../../pi/widget/widget';
 import { ERC20TokensTestnet } from '../../../core/eth/tokens';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
-import { register } from '../../../store/store';
+import { register,unregister } from '../../../store/store';
 import { decrypt, getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 
 export class AddAsset extends Widget {
-
+    
     public ok: () => void;
 
     constructor() {
         super();
     }
+    
     public create() {
         super.create();
         this.init();
     }
     public init(): void {
-        register('wallets', (wallets) => {
-            const wallet = getCurrentWallet(wallets);
-            if (!wallet) return;
-            const showCurrencys = wallet.showCurrencys || [];
-            this.state.list = this.state.currencyList.map(v => {
-                v.isChoose = showCurrencys.indexOf(v.name) >= 0;
-
-                return v;
-            });
-
-            this.paint();
-
-        });
+        register('wallets',this.registerWalletsFun);
 
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
@@ -52,11 +41,12 @@ export class AddAsset extends Widget {
             })
         };
     }
-
+    
     /**
      * 处理关闭
      */
     public doClose() {
+        unregister('wallets',this.registerWalletsFun);
         this.ok && this.ok();
     }
 
@@ -109,6 +99,19 @@ export class AddAsset extends Widget {
         }
     }
 
+    private registerWalletsFun = (wallets:any) => {
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        const showCurrencys = wallet.showCurrencys || [];
+        this.state.list = this.state.currencyList.map(v => {
+            v.isChoose = showCurrencys.indexOf(v.name) >= 0;
+
+            return v;
+        });
+
+        this.paint();
+    }
+
 }
 
 const initCurrency = async (tokenName:string,contractAddress: string,passwd: string,seed:string) => {
@@ -120,7 +123,9 @@ const initCurrency = async (tokenName:string,contractAddress: string,passwd: str
         addrs.push(...r.addrs);
         setLocalStorage('wallets', wallets);
         setLocalStorage('addrs', addrs);
-        
+        r.addrs.forEach(item => {
+            dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
+        });
     });
 
     return ;

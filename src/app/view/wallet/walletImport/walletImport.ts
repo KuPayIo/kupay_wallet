@@ -135,12 +135,11 @@ export class WalletImport extends Widget {
                 break;
             }
         }
+        addrs.push(...gwlt.addrs);
+        setLocalStorage('addrs', addrs, false);
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
         setLocalStorage('wallets', wallets, true);
-        
-        addrs.push(...gwlt.addrs);
-        setLocalStorage('addrs', addrs, false);
         
         return true;
     }

@@ -113,12 +113,12 @@ export class WalletCreate extends Widget {
         if (this.state.walletPswTips.trim().length > 0) {
             wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
         }
-        wallets.curWalletId = gwlt.glwtId;
-        wallets.walletList.push(wallet);
-        setLocalStorage('wallets', wallets, true);
 
         addrs.push(...gwlt.addrs);
         setLocalStorage('addrs', addrs, false);
+        wallets.curWalletId = gwlt.glwtId;
+        wallets.walletList.push(wallet);
+        setLocalStorage('wallets', wallets, true);
 
     }
 
