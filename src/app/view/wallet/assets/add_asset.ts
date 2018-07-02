@@ -41,12 +41,15 @@ export class AddAsset extends Widget {
             })
         };
     }
-    
+    public destroy() {
+        unregister('wallets',this.registerWalletsFun);
+        
+        return super.destroy();
+    }
     /**
      * 处理关闭
      */
     public doClose() {
-        unregister('wallets',this.registerWalletsFun);
         this.ok && this.ok();
     }
 

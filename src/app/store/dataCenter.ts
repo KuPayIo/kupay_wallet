@@ -438,7 +438,7 @@ export class DataCenter {
         });
 
         if (isUpdate) {
-            setLocalStorage('addrs', addrs, false);
+            setLocalStorage('addrs', addrs, true);
         }
     }
 

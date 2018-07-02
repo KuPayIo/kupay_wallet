@@ -56,7 +56,12 @@ export class AddAsset extends Widget {
         this.openCheck();
 
     }
-
+    public destroy() {
+        unregister('wallets',this.registerWalletsFun);
+        unregister('addrs',this.registerAddrsFun);
+        
+        return super.destroy();
+    }
     /**
      * 处理关闭
      */
@@ -65,8 +70,7 @@ export class AddAsset extends Widget {
             clearTimeout(this.timerRef);
             this.timerRef = 0;
         }
-        unregister('wallets',this.registerWalletsFun);
-        unregister('addrs',this.registerAddrsFun);
+       
         this.ok && this.ok();
     }
 

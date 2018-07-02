@@ -397,7 +397,7 @@ export const getNewAddrInfo = (currencyName) => {
 
     let address;
     let wltJson;
-    if (currencyName === 'ETH') {
+    if (currencyName === 'ETH' || ERC20TokensTestnet[currencyName]) {
         const wlt = GaiaWallet.fromJSON(firstAddr.wlt);
         const newWlt = wlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length);
         address = newWlt.address;

@@ -8,7 +8,7 @@ import { GlobalWallet } from '../../core/globalWallet';
 import { dataCenter } from '../../store/dataCenter';
 import { register,unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
-import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
+import { formatBalance, getAddrsByCurrencyName,getCurrentWallet,getLocalStorage } from '../../utils/tools';
 
 export class Home extends Widget {
     constructor() {
@@ -18,9 +18,19 @@ export class Home extends Widget {
         super.create();
         this.init();
     }
+
+    public destroy() {
+        const r = super.destroy();
+        unregister('wallets',this.registerWalletsFun);
+        unregister('addrs', this.registerAddrsFun);
+
+        return r;
+    }
+
     public init(): void {
         const wallets = getLocalStorage('wallets');
         register('wallets', this.registerWalletsFun);
+        register('addrs', this.registerAddrsFun);
         let gwlt = null;
         let wallet = null;
         let otherWallets = false;
@@ -37,18 +47,11 @@ export class Home extends Widget {
             wallet,
             gwlt,
             otherWallets,
-            totalAssets: '0.00',
+            totalAssets: 0.00,
             currencyList: parseCurrencyList(wallet)
         };
-
+        this.registerAddrsFun();
     }
-    /**
-     * 处理关闭
-     */
-    public doClose() {
-        unregister('wallets',this.registerWalletsFun);
-    }
-
     public clickCurrencyItemListener(e: Event, index: number) {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
@@ -100,10 +103,56 @@ export class Home extends Widget {
         this.state.otherWallets = otherWallets;
         this.state.wallet = wallet;
         this.state.currencyList = parseCurrencyList(wallet);
+        this.registerAddrsFun();
+        this.paint();
+    }
+
+    /**
+     * 余额更新
+     */
+    private registerAddrsFun = (addrs?:any) => {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        
+        wallet.currencyRecords.forEach(item => {
+            const balance = fetchBalanceOfCurrency(item.addrs,item.currencyName);
+            setCurrencyListBalance(this.state.currencyList,balance,item.currencyName);
+        });
+        this.state.totalAssets = fetchTotalAssets(this.state.currencyList);
         this.paint();
     }
 }
 
+/**
+ * 获取指定货币下余额总数
+ * @param addrs 指定货币下的地址
+ * @param currencyName 货币名称
+ */
+const fetchBalanceOfCurrency = (addrs:string[],currencyName:string) => {
+    const localAddrs = getLocalStorage('addrs');
+    let balance = 0;
+    localAddrs.forEach(item => {
+        if (addrs.indexOf(item.addr) >= 0 && item.currencyName === currencyName) {
+            balance += item.balance;
+        }
+    });
+
+    return balance;
+};
+
+/**
+ * 获取总资产
+ * @param currencyList 资产列表
+ */
+const fetchTotalAssets = (currencyList:any[]) => {
+    let totalAssets = 0;
+    currencyList.forEach(item => {
+        totalAssets += item.balanceValue;
+    });
+
+    return totalAssets;
+};
 /**
  * 解析钱包货币
  * 
@@ -121,10 +170,22 @@ const parseCurrencyList = (wallet) => {
         list.push({
             currencyName: v.name,
             currencyFullName: v.description,
-            balance: '0',
-            balanceValue: '≈0.00 CNY'
+            balance: 0,
+            balanceValue: 0.00
         });
     });
 
     return list;
+};
+
+const setCurrencyListBalance = (currencyList:any[],balance:number,currencyName:string) => {
+    return currencyList.map(item => {
+        if (item.currencyName === currencyName) {
+            const rate = dataCenter.getExchangeRate(currencyName);
+            item.balance = formatBalance(balance); 
+            item.balanceValue = +(balance * rate.CNY).toFixed(6);
+        }
+
+        return item;
+    });
 };

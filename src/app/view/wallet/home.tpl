@@ -44,7 +44,7 @@
                             </div>
                             <div w-class="ga-item-bottom-container">
                                 <div w-class="ga-curreny-full-name">{{currency.currencyFullName}}</div>
-                                <div w-class="ga-curreny-balance-value">{{currency.balanceValue}}</div>
+                                <div w-class="ga-curreny-balance-value">≈{{currency.balanceValue}}&nbsp;CNY</div>
                             </div>
                         </div>
                     </li>

@@ -85,7 +85,6 @@ export class AddAsset extends Widget {
             });
         } else if (ERC20TokensTestnet[this.props.currencyName]) {
             this.state.gasLimit = 100000;
-            this.state.to = '0x14571a8f98301db5dc5c7640a9c7f6ca5beab338';
         }
 
         this.resetFees();
