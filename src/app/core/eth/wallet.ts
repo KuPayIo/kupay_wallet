@@ -8,7 +8,7 @@ import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
 import { Web3 } from '../thirdparty/web3.min';
 import { WORDLIST } from '../thirdparty/wordlist';
 import { Api } from './api';
-import { ERC20Tokens, minABI } from './tokens';
+import { ERC20TokensTestnet, minABI } from './tokens';
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
@@ -227,7 +227,35 @@ export class GaiaWallet {
 
         return gwlt;
     }
+    
+    public static tokenOperations(method: string, tokenName: string, toAddr?: string, amount?: number): string {
+        const tokenAddress = ERC20TokensTestnet[tokenName];
+        if (tokenAddress === undefined) {
+            throw new Error('This token doesn\'t supported');
+        }
+        const contract = web3.eth.contract(minABI).at(tokenAddress);
 
+        switch (method) {
+            case 'totalsupply':
+                return contract.totalSupply.getData();
+            case 'decimals':
+                return contract.decimals.getData();
+            case 'balanceof':
+                if (toAddr !== undefined) {
+                    return contract.balanceOf.getData(toAddr);
+                } else {
+                    throw new Error('Please specifiy the address you want to query balance');
+                }
+            case 'transfer':
+                if (toAddr !== undefined && amount !== undefined) {
+                    return contract.transfer.getData(toAddr, amount);
+                } else {
+                    throw new Error('Need toAddr and amount');
+                }
+            default:
+                throw new Error('Not supported method');
+        }
+    }
     /**
      * This is a CPU intensive work, may take about 10 seconds!!!
      *
@@ -308,7 +336,6 @@ export class GaiaWallet {
         tx.gasLimit = txObj.gasLimit;
         tx.value = txObj.value;
         tx.data = txObj.data;
-
         let privKey;
         try {
             privKey = cipher.decrypt(passwd, this._privKey);
@@ -319,35 +346,6 @@ export class GaiaWallet {
         tx.sign(privKey);
 
         return tx.serialize();
-    }
-
-    public tokenOperations(method: string, tokenName: string, toAddr?: string, amount?: number): string {
-        const tokenAddress = ERC20Tokens[tokenName];
-        if (tokenAddress === undefined) {
-            throw new Error('This token doesn\'t supported');
-        }
-        const contract = web3.eth.contract(minABI).at(tokenAddress);
-
-        switch (method) {
-            case 'totalsupply':
-                return contract.totalSupply.getData();
-            case 'decimals':
-                return contract.decimals.getData();
-            case 'balanceof':
-                if (toAddr !== undefined) {
-                    return contract.balanceOf.getData(toAddr);
-                } else {
-                    throw new Error('Please specifiy the address you want to query balance');
-                }
-            case 'transfer':
-                if (toAddr !== undefined && amount !== undefined) {
-                    return contract.transfer.getData(toAddr, amount);
-                } else {
-                    throw new Error('Need toAddr and amount');
-                }
-            default:
-                throw new Error('Not supported method');
-        }
     }
 
     public toJSON() : string {
@@ -403,7 +401,31 @@ export class GaiaWallet {
         for (i = 0; ; i++) {
             const addr = this.selectAddress(passwd,i)._address;
             const res = await this.api.getAllTransactionsOf(addr);
-            sleep(1000);
+            sleep(200);
+            if (res === undefined || res.hasOwnProperty('error')) {
+                throw new Error('Response error!');
+            }
+            if (res.result.length === 0) {
+                count = count + 1;
+            } else {
+                count = 0;
+            }
+
+            if (count > GaiaWallet.GAP_LIMIT) {
+                break;
+            }
+        }
+
+        return i - GaiaWallet.GAP_LIMIT;
+    }
+
+    public async scanTokenUsedAddress(contractAddress: string,passwd: string): Promise<number> {
+        let count = 0;
+        let i     = 0;
+        for (i = 0; ; i++) {
+            const addr = this.selectAddress(passwd,i)._address;
+            const res = await this.api.getTokenTransferEvents(contractAddress,addr);
+            // sleep(1000);
             if (res === undefined || res.hasOwnProperty('error')) {
                 throw new Error('Response error!');
             }

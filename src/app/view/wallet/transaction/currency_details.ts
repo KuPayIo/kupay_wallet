@@ -3,8 +3,9 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { ERC20TokensTestnet } from '../../../core/eth/tokens';
 import { dataCenter } from '../../../store/dataCenter';
-import { register } from '../../../store/store';
+import { register,unregister } from '../../../store/store';
 import {
     effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
 } from '../../../utils/tools';
@@ -17,7 +18,6 @@ interface Props {
 interface State {
     list: any[];
     currentAddr: string;
-    currentAddrRecords: any[];
     balance: number;
     showBalance: string;
     showBalanceConversion: string;
@@ -38,26 +38,14 @@ export class AddAsset extends Widget {
         this.init();
     }
     public init(): void {
-        register('wallets', (wallets) => {
-            const wallet = getCurrentWallet(wallets);
-            if (!wallet) return;
-            this.resetCurrentAddr(wallet, this.props.currencyName);
-            this.parseBalance();
-            this.parseTransactionDetails();
-            this.paint();
-        });
-        register('addrs', (wallets) => {
-            const wallet = getCurrentWallet(wallets);
-            if (!wallet) return;
-            this.parseTransactionDetails();
-            this.paint();
-        });
+        register('wallets',this.registerWalletsFun);
+        register('addrs',this.registerAddrsFun);
         
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
 
         this.state = {
-            list: [], currentAddr: '', currentAddrRecords: [], balance: 0, showBalance: `0 ${this.props.currencyName}`
+            list: [], currentAddr: '', balance: 0, showBalance: `0 ${this.props.currencyName}`
             , showBalanceConversion: '≈0.00 CNY'
         };
         this.resetCurrentAddr(wallet, this.props.currencyName);
@@ -68,7 +56,12 @@ export class AddAsset extends Widget {
         this.openCheck();
 
     }
-
+    public destroy() {
+        unregister('wallets',this.registerWalletsFun);
+        unregister('addrs',this.registerAddrsFun);
+        
+        return super.destroy();
+    }
     /**
      * 处理关闭
      */
@@ -77,6 +70,7 @@ export class AddAsset extends Widget {
             clearTimeout(this.timerRef);
             this.timerRef = 0;
         }
+       
         this.ok && this.ok();
     }
 
@@ -146,14 +140,14 @@ export class AddAsset extends Widget {
     /**
      * 解析交易详情
      */
-    public parseTransactionDetails() {
+    public  parseTransactionDetails() {
         if (!this.state.currentAddr) return;
 
         let list = dataCenter.getAllTransactionsByAddr(this.state.currentAddr, this.props.currencyName);
         list = list.map(v => {
-
-            const pay = effectiveCurrencyNoConversion(v.value, this.props.currencyName, true);
-            const fees = effectiveCurrencyNoConversion(v.fees, this.props.currencyName, true);
+            const pay =  effectiveCurrencyNoConversion(v.value, this.props.currencyName, true);
+            // tslint:disable-next-line:max-line-length
+            const fees =  effectiveCurrencyNoConversion(v.fees, ERC20TokensTestnet[this.props.currencyName] ? 'ETH' : this.props.currencyName, true);
             const isFromMe = v.from.toLowerCase() === this.state.currentAddr.toLowerCase();
             const isToMe = v.to.toLowerCase() === this.state.currentAddr.toLowerCase();
 
@@ -174,7 +168,7 @@ export class AddAsset extends Widget {
             };
         });
 
-        const addr = getAddrById(this.state.currentAddr);
+        const addr = getAddrById(this.state.currentAddr,this.props.currencyName);
         let recordList = [];
         if (addr) {
             recordList = addr.record.map(v => {
@@ -194,8 +188,8 @@ export class AddAsset extends Widget {
      */
     public parseBalance() {
         if (!this.state.currentAddr) return;
-        const info = dataCenter.getAddrInfoByAddr(this.state.currentAddr);
-
+        const info = dataCenter.getAddrInfoByAddr(this.state.currentAddr,this.props.currencyName);
+        // console.log('parseBalance',info);
         const r = effectiveCurrency(info.balance, this.props.currencyName, 'CNY', false);
         this.state.balance = r.num;
         this.state.showBalance = r.show;
@@ -209,8 +203,7 @@ export class AddAsset extends Widget {
         if (!currencyRecord) return [];
 
         this.state.currentAddr = currencyRecord.currentAddr || wallet.walletId;
-        const currentAddr = getAddrById(this.state.currentAddr);
-        this.state.currentAddrRecords = currentAddr ? currentAddr.record : [];
+
     }
 
     private openCheck() {
@@ -225,4 +218,18 @@ export class AddAsset extends Widget {
         dataCenter.updatetTransaction(this.state.currentAddr, this.props.currencyName);
     }
 
+    private registerWalletsFun = (wallets:any) => {
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        this.resetCurrentAddr(wallet, this.props.currencyName);
+        this.parseBalance();
+        this.parseTransactionDetails();
+        this.paint();
+    }
+
+    private registerAddrsFun = (addrs:any) => {
+        if (addrs.length === 0) return;
+        this.parseTransactionDetails();
+        this.paint();
+    }
 }

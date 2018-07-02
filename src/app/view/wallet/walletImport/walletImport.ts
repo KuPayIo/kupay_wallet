@@ -87,7 +87,9 @@ export class WalletImport extends Widget {
         const close = popNew('pi-components-loading-loading', { text: '导入中...' });
         let gwlt = null;
         try {
+            console.time('import');
             gwlt = await GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
+            console.timeEnd('import');
             gwlt.nickName = this.state.walletName;
             this.importWallet(gwlt);
             
@@ -133,12 +135,11 @@ export class WalletImport extends Widget {
                 break;
             }
         }
+        addrs.push(...gwlt.addrs);
+        setLocalStorage('addrs', addrs, false);
         wallets.curWalletId = curWalletId;
         wallets.walletList.push(wallet);
         setLocalStorage('wallets', wallets, true);
-        
-        addrs.push(...gwlt.addrs);
-        setLocalStorage('addrs', addrs, false);
         
         return true;
     }

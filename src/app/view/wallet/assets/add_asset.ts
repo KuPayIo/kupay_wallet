@@ -3,35 +3,26 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { ERC20TokensTestnet } from '../../../core/eth/tokens';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
-import { register } from '../../../store/store';
-import { getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { register,unregister } from '../../../store/store';
+import { decrypt, getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 
 export class AddAsset extends Widget {
-
+    
     public ok: () => void;
 
     constructor() {
         super();
     }
+    
     public create() {
         super.create();
         this.init();
     }
     public init(): void {
-        register('wallets', (wallets) => {
-            const wallet = getCurrentWallet(wallets);
-            if (!wallet) return;
-            const showCurrencys = wallet.showCurrencys || [];
-            this.state.list = this.state.currencyList.map(v => {
-                v.isChoose = showCurrencys.indexOf(v.name) >= 0;
-
-                return v;
-            });
-
-            this.paint();
-
-        });
+        register('wallets',this.registerWalletsFun);
 
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
@@ -50,7 +41,11 @@ export class AddAsset extends Widget {
             })
         };
     }
-
+    public destroy() {
+        unregister('wallets',this.registerWalletsFun);
+        
+        return super.destroy();
+    }
     /**
      * 处理关闭
      */
@@ -87,6 +82,54 @@ export class AddAsset extends Widget {
         wallet.showCurrencys = showCurrencys;
 
         setLocalStorage('wallets', wallets, true);
+
+        if (!newType) return;
+        const currencyRecords = wallet.currencyRecords;
+        // 判断当前点击货币是否已经初始化
+        let isInit = false;
+        currencyRecords.forEach(ele => {
+            if (ele.currencyName === currencys.name) {
+                isInit = true;
+            }
+        });
+        if (!isInit && ERC20TokensTestnet[currencys.name]) {
+            const psw = decrypt(wallet.walletPsw);
+            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+
+            initERC20TokenCurrency(currencys.name,ERC20TokensTestnet[currencys.name],psw,gwlt.seed);
+
+            return;
+        }
+    }
+
+    private registerWalletsFun = (wallets:any) => {
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        const showCurrencys = wallet.showCurrencys || [];
+        this.state.list = this.state.currencyList.map(v => {
+            v.isChoose = showCurrencys.indexOf(v.name) >= 0;
+
+            return v;
+        });
+
+        this.paint();
     }
 
 }
+
+const initERC20TokenCurrency = async (tokenName:string,contractAddress: string,passwd: string,seed:string) => {
+    GlobalWallet.fromSeedEthToken(tokenName,contractAddress,passwd,seed).then(r => {
+        const wallets = getLocalStorage('wallets');
+        const addrs = getLocalStorage('addrs');
+        const wallet = getCurrentWallet(wallets);
+        wallet.currencyRecords.push(r.currencyRecord);
+        addrs.push(...r.addrs);
+        setLocalStorage('wallets', wallets);
+        setLocalStorage('addrs', addrs);
+        r.addrs.forEach(item => {
+            dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
+        });
+    });
+
+    return ;
+};

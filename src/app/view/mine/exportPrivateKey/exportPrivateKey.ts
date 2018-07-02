@@ -71,7 +71,7 @@ export class ExportPrivateKey extends Widget {
     public exportPrivateKeyETH(addrs:string[],walletPsw:string) {
         const keys = [];
         for (let j = 0;j < addrs.length; j++) {
-            const addr = getAddrById(addrs[j]);
+            const addr = getAddrById(addrs[j],'ETH');
             const wlt = GaiaWallet.fromJSON(addr.wlt);
             const privateKey = wlt.exportPrivateKey(walletPsw);
             keys.push(privateKey);
@@ -84,7 +84,7 @@ export class ExportPrivateKey extends Widget {
     public exportPrivateKeyBTC(addrs:string[],walletPsw:string) {
         const keys = [];
         for (let j = 0;j < addrs.length; j++) {
-            const addr = getAddrById(addrs[j]);
+            const addr = getAddrById(addrs[j],'BTC');
             const wlt = BTCWallet.fromJSON(addr.wlt,walletPsw);
             wlt.unlock(walletPsw);
             const privateKey = wlt.privateKeyOf(j);
