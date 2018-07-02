@@ -126,15 +126,20 @@ export class AddAsset extends Widget {
                 try {
                     let id: any;
                     loading = popNew('pi-components-loading-loading', { text: '交易中...' });
+                    const fromAddr = thisObj.props.fromAddr;
+                    const toAddr = thisObj.state.to;
+                    const gasPrice = thisObj.state.gasPrice;
+                    const gasLimit = thisObj.state.gasLimit;
+                    const pay = thisObj.state.pay;
+                    const info = thisObj.state.info;
+                    const urgent = thisObj.state.urgent;
+                    const currencyName = thisObj.props.currencyName;
                     if (this.props.currencyName === 'ETH') {
-                        id = await doEthTransfer(thisObj.props.fromAddr, thisObj.state.to, psw, thisObj.state.gasPrice
-                            , thisObj.state.gasLimit, eth2Wei(thisObj.state.pay), thisObj.state.info, thisObj.state.urgent);
+                        id = await doEthTransfer(fromAddr, toAddr, psw, gasPrice, gasLimit, eth2Wei(pay), info, urgent);
                     } else if (this.props.currencyName === 'BTC') {
-                        id = await doBtcTransfer(thisObj.props.fromAddr, thisObj.state.to, psw, thisObj.state.gasPrice
-                            , thisObj.state.gasLimit, thisObj.state.pay, thisObj.state.info, thisObj.state.urgent);
+                        id = await doBtcTransfer(fromAddr, toAddr, psw,gasPrice, gasLimit, pay, info, urgent);
                     } else if (ERC20TokensTestnet[this.props.currencyName]) {
-                        id = await doERC20TokenTransfer(thisObj.props.fromAddr, thisObj.state.to, psw, thisObj.state.gasPrice
-                            , thisObj.state.gasLimit, thisObj.state.pay,  thisObj.state.urgent,thisObj.props.currencyName);
+                        id = await doERC20TokenTransfer(fromAddr, toAddr, psw, gasPrice, gasLimit, pay, urgent,currencyName);
                     }
 
                     loading.callback(loading.widget);

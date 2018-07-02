@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
+import { ERC20TokensTestnet } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { pswEqualed } from '../../../utils/account';
@@ -48,9 +49,7 @@ export class ChangePasswordStep3 extends Widget {
 
             return;
         }
-        console.time('test');
         this.changeAllPassword();
-        console.timeEnd('test');
         popNew('app-components-message-message', { itype: 'success', content: '密码修改成功', center: true });
         this.ok && this.ok();
     }
@@ -95,6 +94,12 @@ export class ChangePasswordStep3 extends Widget {
         const addrs = getLocalStorage('addrs');
         addrs.forEach((item) => {
             if (needUpdateAddrs.indexOf(item.addr) >= 0) {
+                if (ERC20TokensTestnet[item.currencyName]) {
+                    const gaiaWallet = GaiaWallet.fromSeed(newPsw,seed,lang);
+                    item.wlt = gaiaWallet.toJSON();
+                    
+                    return;
+                }
                 switch (item.currencyName) {
                     case 'ETH':
                         const gaiaWallet = GaiaWallet.fromSeed(newPsw,seed,lang);
