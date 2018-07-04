@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
+import { ERC20TokensTestnet } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { decrypt, getAddrById,getCurrentWallet,getLocalStorage } from '../../../utils/tools';
 
@@ -29,6 +30,7 @@ export class ExportPrivateKey extends Widget {
             obj.title = currencyName;
             obj.icon = `${currencyName}.png`;
             const addrs = currencyRecords[i].addrs;
+
             switch (currencyName) {
                 case 'ETH':
                     const ethKeys = this.exportPrivateKeyETH(addrs,walletPsw);
@@ -40,7 +42,10 @@ export class ExportPrivateKey extends Widget {
                     break;
                 default:
             }
-                
+            if (ERC20TokensTestnet[currencyName]) {
+                const erc20TokenKeys = this.exportPrivateKeyERC20Token(currencyName,addrs,walletPsw);
+                obj.textList.push(...erc20TokenKeys);
+            }
             collapseList.push(obj);
         }
         this.state = {
@@ -89,6 +94,18 @@ export class ExportPrivateKey extends Widget {
             wlt.unlock(walletPsw);
             const privateKey = wlt.privateKeyOf(j);
             wlt.lock(walletPsw);
+            keys.push(privateKey);
+        }
+
+        return keys;   
+    }
+
+    public exportPrivateKeyERC20Token(currencyName:string,addrs:string[],walletPsw:string) {
+        const keys = [];
+        for (let j = 0;j < addrs.length; j++) {
+            const addr = getAddrById(addrs[j],currencyName);
+            const wlt = GaiaWallet.fromJSON(addr.wlt);
+            const privateKey = wlt.exportPrivateKey(walletPsw);
             keys.push(privateKey);
         }
 

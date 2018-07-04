@@ -505,6 +505,9 @@ export const urlParams = (url: string, key: string) => {
     return ret && decodeURIComponent(ret[2]);
 };
 
+/**
+ * 余额格式
+ */
 export const formatBalance = (banlance:number) => {
     let retBanlance;
     if (banlance >= 1) {
@@ -516,4 +519,37 @@ export const formatBalance = (banlance:number) => {
     }
     
     return retBanlance;
+};
+
+/**
+ * 获取总资产
+ */
+export const fetchTotalAssets = () => {
+    const wallets = getLocalStorage('wallets');
+    const wallet = getCurrentWallet(wallets);
+    if (!wallet) return;
+    let totalAssets = 0;
+    wallet.currencyRecords.forEach(item => {
+        const balance = fetchBalanceOfCurrency(item.addrs,item.currencyName);
+        totalAssets += balance;
+    });
+    
+    return totalAssets;
+};
+
+/**
+ * 获取指定货币下余额总数
+ * @param addrs 指定货币下的地址
+ * @param currencyName 货币名称
+ */
+export const fetchBalanceOfCurrency = (addrs:string[],currencyName:string) => {
+    const localAddrs = getLocalStorage('addrs');
+    let balance = 0;
+    localAddrs.forEach(item => {
+        if (addrs.indexOf(item.addr) >= 0 && item.currencyName === currencyName) {
+            balance += item.balance;
+        }
+    });
+
+    return balance;
 };
