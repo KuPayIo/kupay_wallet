@@ -531,7 +531,7 @@ export const fetchTotalAssets = () => {
     let totalAssets = 0;
     wallet.currencyRecords.forEach(item => {
         const balance = fetchBalanceOfCurrency(item.addrs,item.currencyName);
-        totalAssets += balance;
+        totalAssets += balance * dataCenter.getExchangeRate(item.currencyName).CNY;
     });
     
     return totalAssets;
