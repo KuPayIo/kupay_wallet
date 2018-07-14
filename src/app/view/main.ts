@@ -11,7 +11,7 @@ import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
 import { Api as EthApi } from '../core/eth/api';
-import { ERC20TokensTestnet } from '../core/eth/tokens'; 
+import { ERC20Tokens } from '../core/eth/tokens'; 
 import { GaiaWallet } from '../core/eth/wallet';
 import { dataCenter } from '../store/dataCenter';
 import { getLocalStorage, setLocalStorage } from '../utils/tools';
@@ -84,7 +84,7 @@ const initEthTokenDecimals = () => {
     newTokenNames.forEach(tokenName => {
         const decimalsCode = GaiaWallet.tokenOperations('decimals',tokenName);
         const api = new EthApi();
-        api.ethCall(ERC20TokensTestnet[tokenName],decimalsCode).then(r => {
+        api.ethCall(ERC20Tokens[tokenName],decimalsCode).then(r => {
             const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
             // tslint:disable-next-line:radix
             ERC20TokenDecimals[tokenName] = Math.pow(10,parseInt(r));
@@ -100,7 +100,7 @@ const initEthTokenDecimals = () => {
  */
 const checkHasNewTokens = () => {
     const localTokenNames = Object.keys(getLocalStorage('ERC20TokenDecimals') || {});
-    const tokenNames = Object.keys(ERC20TokensTestnet);
+    const tokenNames = Object.keys(ERC20Tokens);
     const newTokenNames = [];
     tokenNames.forEach(tokenName => {
         if (localTokenNames.indexOf(tokenName) < 0) {

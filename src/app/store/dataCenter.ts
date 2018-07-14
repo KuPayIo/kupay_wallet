@@ -1,6 +1,6 @@
 import { Api as BtcApi } from '../core/btc/api';
 import { Api as EthApi } from '../core/eth/api';
-import { ERC20TokensTestnet } from '../core/eth/tokens'; 
+import { ERC20Tokens } from '../core/eth/tokens'; 
 import { GaiaWallet } from '../core/eth/wallet';
 import { defaultEthToken,defaultExchangeRateJson,ethTokenTransferCode,supportCurrencyList } from '../utils/constants';
 import {
@@ -99,7 +99,7 @@ export class DataCenter {
         // return transactions.filter(v => v.addr === addr);
 
         let list = [];
-        if (currencyName === 'ETH' || ERC20TokensTestnet[currencyName]) {
+        if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
             list = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
         } else if (currencyName === 'BTC') {
             list = transactions.filter(v => v.addr === addr && v.currencyName === currencyName).map(v => {
@@ -197,7 +197,7 @@ export class DataCenter {
      * 解析交易详情
      */
     private parseTransactionDetails(addr: string, currencyName: string) {
-        if (ERC20TokensTestnet[currencyName]) {
+        if (ERC20Tokens[currencyName]) {
             this.parseEthERC20TokenTransactionDetails(addr,currencyName);
 
             return;
@@ -212,7 +212,7 @@ export class DataCenter {
 
     private async parseEthERC20TokenTransactionDetails(addr: string, currencyName: string) {
         const api = new EthApi();
-        const contractAddress = ERC20TokensTestnet[currencyName];
+        const contractAddress = ERC20Tokens[currencyName];
         const res = await api.getTokenTransferEvents(contractAddress,addr);
         const list = [];
         const transactions = getLocalStorage('transactions') || [];
@@ -395,11 +395,11 @@ export class DataCenter {
      * 更新余额
      */
     private updateBalance(addr: string, currencyName: string) {
-        if (ERC20TokensTestnet[currencyName]) {
+        if (ERC20Tokens[currencyName]) {
             const balanceOfCode = GaiaWallet.tokenOperations('balanceof',currencyName,addr);
             // console.log('balanceOfCode',balanceOfCode);
             const api = new EthApi();
-            api.ethCall(ERC20TokensTestnet[currencyName],balanceOfCode).then(r => {
+            api.ethCall(ERC20Tokens[currencyName],balanceOfCode).then(r => {
                 // tslint:disable-next-line:radix
                 const num = ethTokenDivideDecimals(parseInt(r),currencyName);
                 this.setBalance(addr,currencyName,num);

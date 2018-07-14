@@ -8,7 +8,7 @@ import { Api as BtcApi } from '../../../core/btc/api';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
 import { ibanToAddress } from '../../../core/eth/helper';
-import { ERC20TokensTestnet } from '../../../core/eth/tokens';
+import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import {
     decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals,getAddrById
@@ -66,7 +66,7 @@ export class AddAsset extends Widget {
             feesConversion: '',
             info: '',
             urgent: false,
-            showNote:ERC20TokensTestnet[this.props.currencyName] ? false : true
+            showNote:ERC20Tokens[this.props.currencyName] ? false : true
         };
 
         // todo 这是测试地址
@@ -83,7 +83,7 @@ export class AddAsset extends Widget {
                 this.state.gasLimit = 1;
                 this.resetFees();
             });
-        } else if (ERC20TokensTestnet[this.props.currencyName]) {
+        } else if (ERC20Tokens[this.props.currencyName]) {
             this.state.gasLimit = 100000;
         }
 
@@ -138,7 +138,7 @@ export class AddAsset extends Widget {
                         id = await doEthTransfer(fromAddr, toAddr, psw, gasPrice, gasLimit, eth2Wei(pay), info, urgent);
                     } else if (this.props.currencyName === 'BTC') {
                         id = await doBtcTransfer(fromAddr, toAddr, psw,gasPrice, gasLimit, pay, info, urgent);
-                    } else if (ERC20TokensTestnet[this.props.currencyName]) {
+                    } else if (ERC20Tokens[this.props.currencyName]) {
                         id = await doERC20TokenTransfer(fromAddr, toAddr, psw, gasPrice, gasLimit, pay, urgent,currencyName);
                     }
 
@@ -264,7 +264,7 @@ export class AddAsset extends Widget {
             price *= 2;
         }
         // tslint:disable-next-line:max-line-length
-        const r = effectiveCurrencyStableConversion(price * this.state.gasLimit, ERC20TokensTestnet[this.props.currencyName] ? 'ETH' : this.props.currencyName, 'CNY', true, this.props.rate);
+        const r = effectiveCurrencyStableConversion(price * this.state.gasLimit, ERC20Tokens[this.props.currencyName] ? 'ETH' : this.props.currencyName, 'CNY', true, this.props.rate);
 
         this.state.fees = r.num;
         this.state.feesShow = r.show;
@@ -381,7 +381,7 @@ async function doERC20TokenTransfer(acct1: string, acct2: string, psw: string, g
     const nonce = await api.getTransactionCount(acct1);
     const transferCode = GaiaWallet.tokenOperations('transfer',currencyName,acct2,ethTokenMultiplyDecimals(value,currencyName));
     const txObj = {
-        to: ERC20TokensTestnet[currencyName],
+        to: ERC20Tokens[currencyName],
         nonce: nonce,
         gasPrice: gasPrice,
         gasLimit: gasLimit,

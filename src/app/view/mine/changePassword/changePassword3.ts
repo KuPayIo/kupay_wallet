@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
-import { ERC20TokensTestnet } from '../../../core/eth/tokens';
+import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { pswEqualed } from '../../../utils/account';
@@ -96,7 +96,7 @@ export class ChangePasswordStep3 extends Widget {
         currencyRecords.forEach(item => {
             const currencyName = item.currencyName;
             const needUpdateAddrs = item.addrs;
-            if (currencyName === 'ETH' || ERC20TokensTestnet[currencyName]) {
+            if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
                 const firstAddr = GaiaWallet.fromSeed(newPsw,seed,lang);
                 const addr = getAddrById(needUpdateAddrs[0],currencyName);
                 addr.wlt = firstAddr.toJSON();

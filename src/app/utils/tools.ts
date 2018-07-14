@@ -8,7 +8,7 @@ import { Cipher } from '../core/crypto/cipher';
 import { Api as EthApi } from '../core/eth/api';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 
-import { ERC20TokensTestnet } from '../core/eth/tokens'; 
+import { ERC20Tokens } from '../core/eth/tokens'; 
 import { GaiaWallet } from '../core/eth/wallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
@@ -247,7 +247,7 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (ERC20TokensTestnet[currencyName]) {
+    } else if (ERC20Tokens[currencyName]) {
         num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
@@ -271,7 +271,7 @@ export  const  effectiveCurrencyNoConversion =   (perNum: any, currencyName: str
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (ERC20TokensTestnet[currencyName]) {
+    } else if (ERC20Tokens[currencyName]) {
         num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
@@ -297,7 +297,7 @@ export const effectiveCurrencyStableConversion = (perNum: any, currencyName: str
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (ERC20TokensTestnet[currencyName]) {
+    } else if (ERC20Tokens[currencyName]) {
         num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
@@ -397,7 +397,7 @@ export const getNewAddrInfo = (currencyName) => {
 
     let address;
     let wltJson;
-    if (currencyName === 'ETH' || ERC20TokensTestnet[currencyName]) {
+    if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
         const wlt = GaiaWallet.fromJSON(firstAddr.wlt);
         const newWlt = wlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length);
         address = newWlt.address;

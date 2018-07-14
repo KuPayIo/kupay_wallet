@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
-import { ERC20TokensTestnet } from '../../../core/eth/tokens';
+import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { decrypt, getAddrById,getCurrentWallet,getLocalStorage } from '../../../utils/tools';
 
@@ -42,7 +42,7 @@ export class ExportPrivateKey extends Widget {
                     break;
                 default:
             }
-            if (ERC20TokensTestnet[currencyName]) {
+            if (ERC20Tokens[currencyName]) {
                 const erc20TokenKeys = this.exportPrivateKeyERC20Token(currencyName,addrs,walletPsw);
                 obj.textList.push(...erc20TokenKeys);
             }

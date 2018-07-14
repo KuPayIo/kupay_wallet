@@ -112,6 +112,7 @@ export class Home extends Widget {
      * 余额更新
      */
     private registerAddrsFun = (addrs?:any) => {
+        console.log('余额更新')
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         if (!wallet) return;
@@ -120,7 +121,7 @@ export class Home extends Widget {
             const balance = fetchBalanceOfCurrency(item.addrs,item.currencyName);
             setCurrencyListBalance(this.state.currencyList,balance,item.currencyName);
         });
-        this.state.totalAssets = fetchTotalAssets();
+        this.state.totalAssets = formatBalance(fetchTotalAssets()); 
         this.paint();
     }
 }

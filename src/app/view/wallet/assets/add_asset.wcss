@@ -36,6 +36,9 @@
     position: absolute;
     width: 100%;
     top: 150px;
+    bottom: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .each{
