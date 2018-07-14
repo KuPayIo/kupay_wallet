@@ -7,6 +7,8 @@ import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { Api as EthApi } from '../core/eth/api';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
+
+import { ERC20TokensTestnet } from '../core/eth/tokens'; 
 import { GaiaWallet } from '../core/eth/wallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
@@ -72,7 +74,7 @@ export const getCurrentAddrInfo = (currencyName: string) => {
     const wallet = getCurrentWallet(wallets);
     const currencyRecord = wallet.currencyRecords.filter(item => item.currencyName === currencyName)[0];
     // tslint:disable-next-line:no-unnecessary-local-variable
-    const addrInfo = addrs.filter(item => item.addr === currencyRecord.currentAddr)[0];
+    const addrInfo = addrs.filter(item => item.addr === currencyRecord.currentAddr && item.currencyName === currencyName)[0];
 
     return addrInfo;
 };
@@ -80,10 +82,10 @@ export const getCurrentAddrInfo = (currencyName: string) => {
  * 通过地址id获取地址信息
  * @param addrId  address id
  */
-export const getAddrById = (addrId): Addr => {
+export const getAddrById = (addrId:string,currencyName:string): Addr => {
     const list: Addr[] = getLocalStorage('addrs') || [];
 
-    return list.filter(v => v.addr === addrId)[0];
+    return list.filter(v => v.addr === addrId && v.currencyName === currencyName)[0];
 };
 
 /**
@@ -92,12 +94,12 @@ export const getAddrById = (addrId): Addr => {
  * @param data  新地址
  * @param notified 是否通知数据发生改变 
  */
-export const resetAddrById = (addrId, data: Addr, notified?: boolean) => {
+export const resetAddrById = (addrId:string,currencyName:string, data: Addr, notified?: boolean) => {
     let list: Addr[] = getLocalStorage('addrs') || [];
     list = list.map(v => {
-        if (v.addr !== addrId) return v;
+        if (v.addr === addrId && v.currencyName === currencyName) return data;
 
-        return data;
+        return v;
     });
     setLocalStorage('addrs', list, notified);
 };
@@ -113,7 +115,8 @@ export const getAddrsAll = (wallet) => {
         retAddrs.push(...item.addrs);
     });
 
-    return retAddrs;
+    // 去除数组中重复的地址
+    return [...new Set(retAddrs)];
 };
 
 /**
@@ -209,6 +212,25 @@ export const btc2Sat = (num: number) => {
 };
 
 /**
+ * eth 代币除以精度计算
+ */
+export const ethTokenDivideDecimals = (num:number,tokenName:string) => {
+    const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
+    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10,18);
+
+    return num / decimals; 
+};
+/**
+ * eth 代币乘以精度计算
+ */
+export const ethTokenMultiplyDecimals = (num:number,tokenName:string) => {
+    const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
+    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10,18);
+
+    return num * decimals; 
+};
+
+/**
  * 获取有效的货币
  * 
  * @param perNum 转化前数据
@@ -225,6 +247,8 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+    } else if (ERC20TokensTestnet[currencyName]) {
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
@@ -238,19 +262,21 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
  * 
  * @param perNum 转化前数据
  * @param currencyName  当前货币类型
- * @param isWei 是否wei转化
+ * @param isWei 是否wei转化effectiveCurrencyNoConversion
  */
-export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isMinUnit: boolean) => {
+export  const  effectiveCurrencyNoConversion =   (perNum: any, currencyName: string, isMinUnit: boolean) => {
     const r: any = { num: 0, show: '', conversionShow: '' };
     let num;
     if (currencyName === 'ETH') {
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+    } else if (ERC20TokensTestnet[currencyName]) {
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
-
+    
     return r;
 
 };
@@ -271,6 +297,8 @@ export const effectiveCurrencyStableConversion = (perNum: any, currencyName: str
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
+    } else if (ERC20TokensTestnet[currencyName]) {
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
@@ -369,7 +397,7 @@ export const getNewAddrInfo = (currencyName) => {
 
     let address;
     let wltJson;
-    if (currencyName === 'ETH') {
+    if (currencyName === 'ETH' || ERC20TokensTestnet[currencyName]) {
         const wlt = GaiaWallet.fromJSON(firstAddr.wlt);
         const newWlt = wlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length);
         address = newWlt.address;
@@ -475,6 +503,19 @@ export const urlParams = (url: string, key: string) => {
     const ret = url.match(new RegExp(`(\\?|&)${key}=(.*?)(&|$)`));
 
     return ret && decodeURIComponent(ret[2]);
+};
+
+export const formatBalance = (banlance:number) => {
+    let retBanlance;
+    if (banlance >= 1) {
+        retBanlance = +banlance.toPrecision(7);
+    } else if (banlance === 0) {
+        retBanlance = banlance;
+    } else {
+        retBanlance = +banlance.toPrecision(6);
+    }
+    
+    return retBanlance;
 };
 
 /**

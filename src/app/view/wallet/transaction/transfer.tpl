@@ -38,11 +38,12 @@
             <span w-class="{{it1.urgent?'isSelect':'unSelect'}}" on-tap="changeUrgent(e,true)">紧急</span>
             <span w-class="{{it1.urgent?'unSelect':'isSelect'}}" style="left: 210px;" on-tap="changeUrgent(e,false)">不紧急</span>
         </div>
+        {{if it1.showNote}}
         <div w-class="info">备注</div>
         <div w-class="info-value" ev-input-change="onInfoChange">
             <app-components-input-input>{placeHolder:"无"}</app-components-input-input>
         </div>
-
+        {{end}}
         <div w-class="next" on-tap="doNext">下一步</div>
     </div>
 </div>

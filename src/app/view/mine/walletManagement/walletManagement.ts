@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { register } from '../../../store/store';
+import { register,unregister } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import {
     decrypt,
@@ -23,26 +23,7 @@ export class WalletManagement extends Widget {
         this.init();
     }
     public init() {
-        register('wallets', (wallets) => {
-            const wallet = getCurrentWallet(wallets);
-            if (!wallet) return;
-            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-            const walletPsw = decrypt(wallet.walletPsw);
-            let mnemonicExisted = true;
-            try {
-                gwlt.exportMnemonic(walletPsw);
-            } catch (e) {
-                mnemonicExisted = false;
-            }
-            let pswTips = '';
-            if (wallet.walletPswTips) {
-                pswTips = decrypt(wallet.walletPswTips);
-            }
-            pswTips = pswTips.length > 0 ? pswTips : '无';
-            this.state.mnemonicExisted = mnemonicExisted;
-            this.state.pswTips = pswTips;
-            this.paint();
-        });
+        register('wallets', this.registerWalletsFun);
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
@@ -68,8 +49,15 @@ export class WalletManagement extends Widget {
             isUpdatingPswTips: false
         };
     }
+
+    public destroy() {
+        unregister('wallets',this.registerWalletsFun);
+        
+        return super.destroy();
+    }
     public backPrePage() {
         this.pageClick();
+        
         this.ok && this.ok();
     }
 
@@ -298,5 +286,26 @@ export class WalletManagement extends Widget {
             return delAddrs.indexOf(item.addr) < 0;
         });
         setLocalStorage('transactions', transactionsNew);
+    }
+
+    private registerWalletsFun = (wallets:any) => {
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+        const walletPsw = decrypt(wallet.walletPsw);
+        let mnemonicExisted = true;
+        try {
+            gwlt.exportMnemonic(walletPsw);
+        } catch (e) {
+            mnemonicExisted = false;
+        }
+        let pswTips = '';
+        if (wallet.walletPswTips) {
+            pswTips = decrypt(wallet.walletPswTips);
+        }
+        pswTips = pswTips.length > 0 ? pswTips : '无';
+        this.state.mnemonicExisted = mnemonicExisted;
+        this.state.pswTips = pswTips;
+        this.paint();
     }
 }

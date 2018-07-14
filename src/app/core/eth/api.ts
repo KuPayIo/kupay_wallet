@@ -165,7 +165,7 @@ export class Api {
      */
     public async getTokenTransferEvents(contractAddress: string, address: string): Promise<any> {
         const path = ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT + `&contractAddress=${contractAddress}&address=${address}`;
-        console.log(path);
+        // console.log(path);
         try {
             const response = await fetch(path);
 

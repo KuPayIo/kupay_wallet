@@ -81,7 +81,7 @@ export class AddAsset extends Widget {
             };
         });
 
-        const addr = getAddrById(currentAddr);
+        const addr = getAddrById(currentAddr,currencyName);
         let recordList = [];
         if (addr) {
             recordList = addr.record.map(v => {

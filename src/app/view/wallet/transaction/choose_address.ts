@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter, DataCenter } from '../../../store/dataCenter';
 import {
-    addNewAddr, getAddrById, getCurrentWallet, getLocalStorage, getNewAddrInfo, getStrLen, setLocalStorage, sliceStr
+    addNewAddr, formatBalance, getAddrById, getCurrentWallet, getLocalStorage, getNewAddrInfo, getStrLen, setLocalStorage,sliceStr
 } from '../../../utils/tools';
 
 interface Props {
@@ -25,7 +25,9 @@ export class AddAsset extends Widget {
     }
 
     public init(): void {
-
+        this.state = {
+            list:[]
+        };
         this.getAddrs();
     }
 
@@ -90,18 +92,17 @@ export class AddAsset extends Widget {
 
         const currentAddr = currencyRecord.currentAddr || wallet.walletId;
         this.state.list = currencyRecord.addrs.map(v => {
-            const r = getAddrById(v);
-
+            const r = getAddrById(v,this.props.currencyName);
             let addrName = r.addrName;
             const len = getStrLen(addrName);
             if (len > DataCenter.MAX_ADDRNAME_LEN) {
                 addrName = `${sliceStr(addrName, 0, DataCenter.MAX_ADDRNAME_LEN)}...`;
             }
-            const info = dataCenter.getAddrInfoByAddr(r.addr);
+            const info = dataCenter.getAddrInfoByAddr(r.addr,this.props.currencyName);
 
             return {
                 name: addrName,
-                balance: (info && info.balance) || 0,
+                balance:formatBalance((info && info.balance) || 0),
                 isChoose: r.addr === currentAddr,
                 addr: r.addr
             };
