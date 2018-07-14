@@ -86,9 +86,9 @@ winit.initNext = function () {
       "app/components/",
       "app/res/",
       "app/utils/",
-      "app/store/"
+      "app/store/",
+      "app/exchange/"
     ]
-
     util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
       console.log(fileMap)
       // console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());

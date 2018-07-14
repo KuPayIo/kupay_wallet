@@ -66,7 +66,7 @@ export const getCurrentWalletIndex = (wallets) => {
  * 获取当前钱包对应货币正在使用的地址信息
  * @param currencyName 货币类型
  */
-export const getCurrentAddrInfo = (currencyName:string) => {
+export const getCurrentAddrInfo = (currencyName: string) => {
     const wallets = getLocalStorage('wallets');
     const addrs = getLocalStorage('addrs');
     const wallet = getCurrentWallet(wallets);
@@ -475,4 +475,154 @@ export const urlParams = (url: string, key: string) => {
     const ret = url.match(new RegExp(`(\\?|&)${key}=(.*?)(&|$)`));
 
     return ret && decodeURIComponent(ret[2]);
+};
+
+/**
+ * 字符串转u8Arr
+ * 
+ * @param str 输入字符串
+ */
+export const str2arr = (str) => {
+    const len = str.length;
+    const arr = [];
+    let arr32;
+    let i;
+    let offset = 0;
+    if (len >= 32) {
+        for (i = 0; i < 8; i++) {
+            arr[i] = ((str.charCodeAt(i * 4) & 0xff) << 24)
+                | ((str.charCodeAt(i * 4 + 1) & 0xff) << 16)
+                | ((str.charCodeAt(i * 4 + 2) & 0xff) << 8)
+                | (str.charCodeAt(i * 4 + 3) & 0xff);
+        }
+    }
+    arr32 = new Uint32Array(new ArrayBuffer(32));
+    for (i = 0; i < 8; i++) {
+        arr32[i] = arr[offset++];
+    }
+
+    return new Uint8Array(arr32.buffer, 0, 32);
+};
+/**
+ * u16Arr转字符串
+ * 
+ * @param buf 输入buff
+ */
+export const ab2str = (buf) => {
+    return String.fromCharCode.apply(null, new Uint16Array(buf));
+};
+
+/**
+ * 字符串转u16Arr
+ * 
+ * @param str 输入字符串
+ */
+export const str2ab = (str) => {
+    const buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+    const bufView = new Uint16Array(buf);
+    for (let i = 0, strLen = str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+    }
+
+    return buf;
+};
+
+/**
+ * 字节数组转十六进制字符串
+ * @param arr 传入数组
+ */
+export const bytes2Str = (arr) => {
+    let str = '';
+    for (let i = 0; i < arr.length; i++) {
+        let tmp = arr[i].toString(16);
+        if (tmp.length === 1) {
+            tmp = `0${tmp}`;
+        }
+        str += tmp;
+    }
+
+    return str;
+};
+
+/**
+ * 十六进制字符串转字节数组
+ * @param str 传入字符串
+ */
+export const str2Bytes = (str) => {
+    let pos = 0;
+    let len = str.length;
+    if (len % 2 !== 0) return null;
+
+    len /= 2;
+    const hexA = [];
+    for (let i = 0; i < len; i++) {
+        const s = str.substr(pos, 2);
+        const v = parseInt(s, 16);
+        hexA.push(v);
+        pos += 2;
+    }
+
+    return hexA;
+};
+
+/**
+ * 十六进制字符串转u8数组
+ * 
+ * @param str 输入字符串
+ */
+export const hexstrToU8Array = (str: string) => {
+    if (str.length % 2 > 0) str = `0${str}`;
+
+    const r = new Uint8Array(str.length / 2);
+    for (let i = 0; i < str.length; i += 2) {
+        const high = parseInt(str.charAt(i), 16);
+        const low = parseInt(str.charAt(i + 1), 16);
+        r[i / 2] = (high * 16 + low);
+    }
+
+    return r;
+};
+
+/**
+ * u8数组转十六进制字符串
+ * 
+ * @param u8Array 输入数组
+ */
+export const u8ArrayToHexstr = (u8Array: Uint8Array) => {
+    let str = '';
+    for (let i = 0; i < u8Array.length; i++) {
+        str += Math.floor(u8Array[i] / 16).toString(16);
+        str += (u8Array[i] % 16).toString(16);
+        // str += u8Array[i].toString(16);
+    }
+    if (str[0] === '0') str = str.slice(1);
+
+    return str;
+};
+
+/**
+ * 简化加密助记词
+ * 
+ * @param cipherMnemonic 加密助记词
+ */
+export const simplifyCipherMnemonic = (cipherMnemonic: string) => {
+    const r = JSON.parse(cipherMnemonic);
+    const newJson = { iv: r.iv, ct: r.ct, salt: r.salt };
+
+    return JSON.stringify(newJson);
+};
+
+/**
+ * 还原加密助记词
+ * 
+ * @param cipherMnemonic 加密助记词
+ */
+export const reductionCipherMnemonic = (cipherMnemonic: string) => {
+    const r = JSON.parse(cipherMnemonic);
+    const newJson = {
+        iv: r.iv, ct: r.ct, salt: r.salt, v: 1, iter: 10000, ks: 128, ts: 64
+        , mode: 'ccm', adata: '', cipher: 'aes', keySize: 128, tagSize: 64
+    };
+
+    return JSON.stringify(newJson);
 };
