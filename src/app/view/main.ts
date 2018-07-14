@@ -3,7 +3,6 @@
  * @author henk<speoth@163.com>
  */
 
-// tslint:disable-next-line:no-any
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
@@ -28,15 +27,16 @@ export const run = (cb): void => {
     checkUpdate();
     // 初始化数据
     dataCenter.init();
-    // makepayment();
+    // 启动交易所管理
+    // exchangeManage.init();
     // 打开界面
     popNew('app-view-app');
+
     // popNew('app-view-test-test');
     // popNew('app-view-wallet-walletCreate-walletCreate');	// popNew('app-view-application-home');
     // popNew('app-view-groupwallet-groupwallet');
     // popNew('app-view-financialManagement-home');
     // popNew('app-view-mine-walletManagement-walletManagement');
-
     if (cb) cb();
     // test();
 };

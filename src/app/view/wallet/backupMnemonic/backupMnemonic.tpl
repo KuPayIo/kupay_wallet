@@ -9,5 +9,6 @@
             {{end}}
         </div>
         <div w-class="ga-mnemonic-next-step-btn" on-tap="nextStepClick">下一步</div>
+        <div w-class="ga-mnemonic-next-step-btn" on-tap="doShare">分享备份助记词</div>
     </div>
 </div>

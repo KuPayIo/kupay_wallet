@@ -14,6 +14,11 @@ export class DataCenter {
 
     public static MAX_ADDRNAME_LEN: number = 9;// 最长地址名
 
+    public static MAX_SHARE_LEN: number = 4;
+    public static MIN_SHARE_LEN: number = 2;
+    public static SHARE_SPLIT: string = '&&&&';
+    public static MNEMONIC_SPLIT: string = ' ';
+
     public rate: string;
     public addrInfos: any[] = [];
     public addrs: string[] = [];
@@ -21,9 +26,6 @@ export class DataCenter {
     public transactions: any[] = [];
 
     public updateList: any[] = [];
-
-    // public ethExchangeRate: any;
-    // public btcExchangeRate: any;
 
     public exchangeRateJson:any = defaultExchangeRateJson;
     public currencyList: any[] = supportCurrencyList;
@@ -156,12 +158,6 @@ export class DataCenter {
      * 获取汇率
      */
     public getExchangeRate(currencyName: string) {
-        /* if (currencyName === 'ETH') {
-            return this.ethExchangeRate || { CNY: 3337.01, USD: 517.42 };
-        } else if (currencyName === 'BTC') {
-            return this.btcExchangeRate || { CNY: 42868.55, USD: 6598.71 };
-        } */
-
         return this.exchangeRateJson[currencyName];
     }
     /**
@@ -446,13 +442,10 @@ export class DataCenter {
         switch (currencyName) {
             case 'ETH':
                 const ethApi: EthApi = new EthApi();
-                // this.ethExchangeRate = await ethApi.getExchangeRate();
                 this.exchangeRateJson.ETH = await ethApi.getExchangeRate();
                 break;
             case 'BTC': 
                 const btcApi:BtcApi = new BtcApi();
-                
-                // this.btcExchangeRate = await btcApi.getExchangeRate(); 
                 this.exchangeRateJson.BTC = await btcApi.getExchangeRate();
                 break;
             default:
