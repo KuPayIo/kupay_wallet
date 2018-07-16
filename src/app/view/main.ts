@@ -36,9 +36,9 @@ export const run = (cb): void => {
     // popNew('app-view-groupwallet-groupwallet');
     // popNew('app-view-financialManagement-home');
     // popNew('app-view-mine-walletManagement-walletManagement');
-
+    popNew('app-components-passwordScreen-passwordScreen',{title:"解锁屏幕",extraText:"忘记密码?"});
     if (cb) cb();
-     test();
+    // test();
 };
 
 const checkUpdate = () => {
