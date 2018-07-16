@@ -8,6 +8,7 @@ import { GlobalWallet } from '../../core/globalWallet';
 import { dataCenter } from '../../store/dataCenter';
 import { register,unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
+
 // tslint:disable-next-line:max-line-length
 import { fetchBalanceOfCurrency, fetchTotalAssets,formatBalance,getAddrsByCurrencyName,getCurrentWallet,getLocalStorage, formatBalanceValue } from '../../utils/tools';
 
@@ -162,3 +163,4 @@ const setCurrencyListBalance = (currencyList:any[],balance:number,currencyName:s
         return item;
     });
 };
+

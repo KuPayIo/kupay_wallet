@@ -15,6 +15,7 @@ import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { dataCenter } from '../store/dataCenter';
 import { getLocalStorage, setLocalStorage } from '../utils/tools';
+
 // ============================== 导出
 
 export const forelet = new Forelet();
@@ -31,11 +32,6 @@ export const run = (cb): void => {
     // makepayment();
     // 打开界面
     popNew('app-view-app');
-    // popNew('app-view-test-test');
-    // popNew('app-view-wallet-walletCreate-walletCreate');	// popNew('app-view-application-home');
-    // popNew('app-view-groupwallet-groupwallet');
-    // popNew('app-view-financialManagement-home');
-    // popNew('app-view-mine-walletManagement-walletManagement');
     popNew('app-components-passwordScreen-passwordScreen',{title:"解锁屏幕",extraText:"忘记密码?"});
     if (cb) cb();
     // test();
@@ -50,7 +46,7 @@ const checkUpdate = () => {
 // 0xDEadcA0CF78Caac23a59FfF4353b3D715e26C367
 // 0xFeA9610a4C2fCDF63A1755384B42ff760dB68EFC
 // tslint:disable-next-line:only-arrow-functions
-async function  test() {
+function  test() {
     document.addEventListener("visibilitychange", function() {
         console.log( document.hidden );
         if(document.hidden){
@@ -58,6 +54,9 @@ async function  test() {
         }
     });
 }
+
+
+
 // ============================== 立即执行
 
 
