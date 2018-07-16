@@ -14,7 +14,8 @@ import {
     getCurrentWallet,
     getCurrentWalletIndex,
     getLocalStorage,
-    setLocalStorage
+    setLocalStorage,
+    formatBalanceValue
 } from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
@@ -322,7 +323,7 @@ export class WalletManagement extends Widget {
         const wallet = getCurrentWallet(wallets);
         if (!wallet) return;
         
-        this.state.totalAssets = fetchTotalAssets();
+        this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
         this.paint();
     }
 }

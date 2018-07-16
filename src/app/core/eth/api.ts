@@ -8,8 +8,10 @@ import { Web3 } from '../thirdparty/web3.min';
 /* tslint:disable: no-http-string*/
 const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/UHhtxDMNBuXoX8OFJKKM'));
 const ETH_CMC_URL = 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY';
-const ETHSCAN_ROPSTEN_API_URL = 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=';
-const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx';
+//http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=
+const ETHSCAN_ROPSTEN_API_URL = 'http://api.etherscan.io/api?module=account&action=txlist&address=';
+//https://api-ropsten.etherscan.io/api?module=account&action=tokentx
+const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = 'https://api.etherscan.io/api?module=account&action=tokentx';
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/

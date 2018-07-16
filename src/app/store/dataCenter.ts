@@ -401,7 +401,8 @@ export class DataCenter {
             const api = new EthApi();
             api.ethCall(ERC20Tokens[currencyName],balanceOfCode).then(r => {
                 // tslint:disable-next-line:radix
-                const num = ethTokenDivideDecimals(parseInt(r),currencyName);
+                const num = ethTokenDivideDecimals(Number(r),currencyName);
+                // console.log(currencyName,num);
                 this.setBalance(addr,currencyName,num);
             });
             

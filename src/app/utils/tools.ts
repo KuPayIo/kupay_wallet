@@ -506,7 +506,7 @@ export const urlParams = (url: string, key: string) => {
 };
 
 /**
- * 余额格式
+ * 余额格式化
  */
 export const formatBalance = (banlance:number) => {
     let retBanlance;
@@ -519,6 +519,13 @@ export const formatBalance = (banlance:number) => {
     }
     
     return retBanlance;
+};
+
+/**
+ * 余额格式化
+ */
+export const formatBalanceValue = (value:number) => {
+    return value.toFixed(2);
 };
 
 /**

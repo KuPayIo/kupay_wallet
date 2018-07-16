@@ -59,7 +59,7 @@ export class AddAsset extends Widget {
             to: '',
             pay: 0,
             payConversion: `≈0.00 CNY`,
-            gasPrice: 1000000000,
+            gasPrice: 10000000000,
             gasLimit: 21000,
             fees: 0,
             feesShow: '',

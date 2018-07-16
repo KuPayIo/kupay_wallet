@@ -9,7 +9,7 @@ import { dataCenter } from '../../store/dataCenter';
 import { register,unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceOfCurrency, fetchTotalAssets,formatBalance,getAddrsByCurrencyName,getCurrentWallet,getLocalStorage } from '../../utils/tools';
+import { fetchBalanceOfCurrency, fetchTotalAssets,formatBalance,getAddrsByCurrencyName,getCurrentWallet,getLocalStorage, formatBalanceValue } from '../../utils/tools';
 
 export class Home extends Widget {
     constructor() {
@@ -121,7 +121,7 @@ export class Home extends Widget {
             const balance = fetchBalanceOfCurrency(item.addrs,item.currencyName);
             setCurrencyListBalance(this.state.currencyList,balance,item.currencyName);
         });
-        this.state.totalAssets = formatBalance(fetchTotalAssets()); 
+        this.state.totalAssets = formatBalanceValue(fetchTotalAssets()); 
         this.paint();
     }
 }
@@ -156,7 +156,7 @@ const setCurrencyListBalance = (currencyList:any[],balance:number,currencyName:s
         if (item.currencyName === currencyName) {
             const rate = dataCenter.getExchangeRate(currencyName);
             item.balance = formatBalance(balance); 
-            item.balanceValue = +(balance * rate.CNY).toFixed(6);
+            item.balanceValue = formatBalanceValue(+(balance * rate.CNY));
         }
 
         return item;

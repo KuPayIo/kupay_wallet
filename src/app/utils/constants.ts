@@ -34,6 +34,7 @@ export const supportCurrencyList = [
     { name: 'MANA', description: 'Decentraland' },
     { name: 'KIN', description: 'Kin' },
     { name: 'VERI', description: 'Veritaseum' }, 
+    { name: 'HEALP', description: 'HEALP' }
 
 ];
 
@@ -76,7 +77,8 @@ export const defaultExchangeRateJson = {
     POWR:{ CNY: 100 , USD: 15.2625 },
     MANA:{ CNY: 100 , USD: 15.2625 },
     KIN:{ CNY: 100 , USD: 15.2625 },
-    VERI:{ CNY: 100 , USD: 15.2625 }
+    VERI:{ CNY: 100 , USD: 15.2625 },
+    HEALP:{ CNY: 100 , USD: 15.2625 }
 };
 
 // eth代币transfer交易编码前缀
