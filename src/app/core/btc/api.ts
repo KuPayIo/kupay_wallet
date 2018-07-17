@@ -1,126 +1,91 @@
 /**
- * BTC api
+ * Api v2
  */
-export class Api {
-    public static BASE_URL: string = 'https://api.blockcypher.com';
-    public static ESTIMATION_FEE_URL: string = 'https://bitcoinfees.earn.com/api/v1/fees/recommended';
-    public static WEBSOCKET_URL: string = 'wss://socket.blockcypher.com/v1/btc/test3';
-    public static BTC_CMC_URL: string = 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY';
+import { config } from '../config';
 
-    public eventQueue: any = [];
-    private wss: any;
+if(config.dev_mode === 'dev') {
+    var BTC_API_BASE_URL = config.dev.BtcApiBaseUrl;
+    var BTC_MARKET_PRICE_ORACLE_URL = config.dev.BtcMarketPriceOracleUrl;
+} else if (config.dev_mode === 'prod') {
+    var BTC_API_BASE_URL = config.prod.BtcApiBaseUrl;
+    var BTC_MARKET_PRICE_ORACLE_URL = config.prod.BtcMarketPriceOracleUrl;
+}
 
-    /* tslint:disable:prefer-template */
-    /* tslint:disable: no-redundant-jsdoc*/
-    /* tslint:disable: no-this-assignment*/
+type BlanceType = 'balance' | 'totalReceived' | 'totalSent' | 'unconfirmed'
 
-    constructor() {
-        // https://blockcypher.github.io/documentation/#websockets
-        // transaction json format: https://blockcypher.github.io/documentation/#transactions
+interface Options {
+    method?: 'GET' | 'POST',
+    body?: string
+}
 
-        // this.wss = new WebSocket(Api.WEBSOCKET_URL);
-        // const self = this;
-        // self.wss.onmessage = (event) => {
-        //     const payload = JSON.parse(event.data);
-        //     // filter "pong" message
-        //     if (payload.event !== 'pong') {
-        //         this.eventQueue.push(payload);
-        //     }
-        // };
-
-        // this.wss.onopen = (event) => {
-        //     event = event;
-        //     // send "ping" message every 20s
-        //     setInterval(() => {
-        //         self.wss.send(JSON.stringify({ event: 'ping' }));
-        //     }, 20000);
-        // };
-    }
-
-    // batch request, 3 addresses at once.
-    public async getAddrInfo(address: string | string[], unspentOnly: boolean = false): Promise<any> {
-        if (Array.isArray(address)) {
-            address = address.join(';');
-        }
-
-        const path = unspentOnly ? Api.BASE_URL + `/v1/btc/test3/addrs/${address}?unspentOnly=true` :
-                                Api.BASE_URL + `/v1/btc/test3/addrs/${address}`;
-
-        try {
-            const  response = await fetch(path);
-
-            return await response.json();
-        } catch (e) {
-            Promise.reject(e);
-        }
-    }
-
-    public async sendRawTransaction(rawHexString: string): Promise<any> {
-        try {
-            const path = Api.BASE_URL + '/v1/btc/test3/txs/push';
-            const response = await fetch(path, {
-                method: 'POST',
-                body: JSON.stringify({ tx: rawHexString })
+const sendRequest = async (endpoint: string, opt: Options = {method: 'GET'}): Promise<any> => {
+    opt.method = opt.method || 'GET';
+    try {
+        let response: any;
+        if(opt.method === 'GET') {
+            response = await fetch(endpoint);
+        } else if(opt.method === 'POST') {
+            response = await fetch(endpoint, {
+                method: opt.method,
+                body: JSON.stringify(opt.body)
             });
-
-            return await response.json();
-        } catch (e) {
-            Promise.reject(e);
         }
+
+        return await response.json();
+    } catch(e) {
+        Promise.reject(e);
     }
+}
 
-    public async getTxInfo(txHash: string): Promise<any> {
-        const path = Api.BASE_URL + `/v1/btc/test3/txs/${txHash}`;
+export const BtcApi = {
+    getAddrUnspent: async (addr: string): Promise<any> => {
+        const endpoint = BTC_API_BASE_URL + `/addr/${addr}/utxo`;
 
-        try {
-            const response = await fetch(path);
+        return await sendRequest(endpoint);
+    },
 
-            return await response.json();
-        } catch (e) {
-            Promise.reject(e);
-        }
-    }
+    getBalance: async (addr: string, option: BlanceType = 'balance'): Promise<any> => {
+        const endpoint: string = BTC_API_BASE_URL + `/addr/${addr}/${option}`;
 
-    public async feePerByte(): Promise<any> {
-        try {
-            const response = await fetch(Api.ESTIMATION_FEE_URL);
+        return await sendRequest(endpoint);
+    },
 
-            return await response.json();
-        } catch (e) {
-            Promise.reject(e);
-        }
-    }
+    getAddrInfo: async (addr: string): Promise<any> => {
+        const endpoint = BTC_API_BASE_URL + `/addr/${addr}`;
 
-    public async getExchangeRate(): Promise<any> {
-        try {
-            const response = await fetch(Api.BTC_CMC_URL);
-            const data = await response.json();
+        return await sendRequest(endpoint);
+    },
 
-            return {
-                CNY: data.data.quotes.CNY.price,
-                USD: data.data.quotes.USD.price
-            };
-        } catch (e) {
-            return Promise.reject(e);
-        }
-    }
+    getAddrTxHistory: async (addr: string): Promise<any> => {
+        const endpoint = BTC_API_BASE_URL + `/txs/?address=${addr}`;
 
-    /**
-     * Subscribe incoming coins event
-     *
-     * @param {string} address Which address to detect?
-     * @param {number} [confirmations=6] Default to 6 confirmations
-     * @param {string} [event="tx-confirmation"] Event type
-     * @memberof Api
-     */
-    public sub(address: string, confirmations: number = 6, event: string = 'tx-confirmation'): void {
-        try {
-            const self = this;
-            // setTimeout(() => {
-            //     self.wss.send(JSON.stringify({ event: event, address: address, confirmations: confirmations }));
-            // }, 2000);
-        } catch (e) {
-            throw new Error('Error while sending subscribe events to api provider');
-        }
+        return await sendRequest(endpoint);
+    },
+
+    sendRawTransaction: async (rawTx: string): Promise<string> => {
+        const endpoint = BTC_API_BASE_URL + '/tx/send';
+
+        return await sendRequest(endpoint, {method: 'POST', body: rawTx});
+    },
+
+    getTxInfo: async (txHash: string): Promise<any> => {
+        const endpoint = BTC_API_BASE_URL + `/tx/${txHash}`;
+
+        return await sendRequest(endpoint);
+    },
+
+    estimateFee: async (nbBlocks: number = 2): Promise<any> => {
+        const endpoint = BTC_API_BASE_URL + `/utils/estimatefee?nbBlocks=${nbBlocks}`;
+
+        return await sendRequest(endpoint);
+    },
+
+    getExchangeRate: async (): Promise<any> => {
+        const data = await sendRequest(BTC_MARKET_PRICE_ORACLE_URL);
+
+        return {
+            CNY: data.data.quotes.CNY.price,
+            USD: data.data.quotes.USD.price
+        };
     }
 }

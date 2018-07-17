@@ -5,11 +5,10 @@
 import { Cipher } from '../crypto/cipher';
 import { Mnemonic } from '../thirdparty/bip39';
 import { bitcore } from '../thirdparty/bitcore-lib';
-import { Api } from './api';
+import { BtcApi } from './api';
 
 const HDWallet = bitcore.HDPrivateKey;
 const Transaction = bitcore.Transaction;
-const Script = bitcore.Script;
 const Unit = bitcore.Unit;
 
 const cipher = new Cipher();
@@ -65,7 +64,7 @@ export class BTCWallet {
     private isInitialized: boolean = false;
 
     constructor() {
-        this.api = new Api();
+
     }
 
     /* tslint:disable:jsdoc-format */
@@ -280,24 +279,13 @@ export class BTCWallet {
         }
 
         // TODO: check error
-        let fee = await this.api.feePerByte();
-        switch (priority) {
-            case 'high':
-                fee = fee.fastestFee;
-                break;
-            case 'medium':
-                fee = fee.halfHourFee;
-                break;
-            case 'low':
-                fee = fee.hourFee;
-                break;
-            default:
-                fee = BTCWallet.SAFELOW_FEE;
+        // let fee: any;
+        const priorityMap = {
+            'low': 6,
+            'medium': 3,
+            'high': 2
         }
-        // 因交易api的问题，旷工费很高，暂时屏蔽该处理
-        // if (fee < BTCWallet.SAFELOW_FEE || fee > BTCWallet.HIGHEST_FEE) {
-        //     throw new Error('Abnormal fee rate');
-        // }
+        const fee = await BtcApi.estimateFee(priorityMap[priority])
 
         // sort by transaction confirmations
         this.utxos.sort((a, b) => a.confirmations - b.confirmations);
@@ -322,7 +310,7 @@ export class BTCWallet {
         console.log('keyset length: ', keySet.length);
 
         output.amount = Unit.fromBTC(output.amount).toSatoshis();
-        const rawTx = new Transaction().feePerKb(fee * 1000)
+        const rawTx = new Transaction().feePerKb(Unit.fromBTC(fee[priorityMap[priority]]).toSatoshis() * 1024)
             .from(collected)
             .to(output.toAddr, output.amount)
             .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
@@ -372,48 +360,38 @@ export class BTCWallet {
         console.log('Wallet initialize successfully!');
     }
 
-    public async getUnspentOutputs(confirmations: number = 1): Promise<UTXO[]> {
+    public async getUnspentOutputs(): Promise<UTXO[]> {
         this.utxos = [];
         for (let i = 0; i < Object.keys(this.usedAdresses).length; i++) {
             const address = this.derive(i);
-            // TODO: batch requrest (https://blockcypher.github.io/documentation/#batching)
-            const addrinfo = await this.api.getAddrInfo(address, true);
-            if (addrinfo === undefined || addrinfo.hasOwnProperty('error')) {
-                throw new Error('Response error!');
-            }
-            if (addrinfo.final_balance !== 0 && addrinfo.txrefs.length !== 0) {
-                const utxo = addrinfo.txrefs;
-                for (let j = 0; j < utxo.length; j++) {
-                    if (utxo[j].confirmations >= confirmations) {
-                        this.utxos.push({
-                            txid: utxo[j].tx_hash,
-                            vout: utxo[j].tx_output_n,
-                            address: address,
-                            scriptPubKey: this.p2pkh(address).toHex(),
-                            amount: Unit.fromSatoshis(utxo[j].value).BTC,
-                            confirmations: utxo[j].confirmations
-                        });
-                    }
-                }
-            }
+            const addrUtxo = await BtcApi.getAddrUnspent(address);
+            addrUtxo.forEach((utxo) => {
+                this.utxos.push({
+                    txid: utxo.txid,
+                    vout: utxo.vout,
+                    address: address,
+                    scriptPubKey: utxo.scriptPubKey,
+                    amount: utxo.amount,
+                    confirmations: utxo.confirmations
+                })
+            })
         }
 
         return this.utxos;
     }
 
+    // TODO: consider make this as a server side api
     public async scanUsedAddress(): Promise<number> {
         let count = 0;
         let i     = 0;
         this.usedAdresses = [];
         for (i = 0; ; i++) {
-            const res = await this.api.getAddrInfo(this.derive(i));
-            if (res === undefined || res.hasOwnProperty('error')) {
-                throw new Error('Response error!');
-            }
-            if (res.total_received === 0 && res.total_sent === 0) {
+            const addr = this.derive(i);
+            const res = await BtcApi.getAddrTxHistory(addr);
+            if (res.txs.length === 0) {
                 count = count + 1;
             } else {
-                this.usedAdresses[res.address] = i;
+                this.usedAdresses[addr] = i;
                 count = 0;
             }
 
@@ -442,9 +420,5 @@ export class BTCWallet {
         }
 
         return parent.derive(path).privateKey;
-    }
-
-    private p2pkh(address: string): any {
-        return Script.buildPublicKeyHashOut(address);
     }
 }

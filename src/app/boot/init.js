@@ -408,7 +408,7 @@ pi_modules.ajax.exports = (function () {
 	 */
 	module.get = function (url/*:string*/, headers/*:join*/, reqData/*:json|string*/, respType/*:string*/, timeout/*:int*/, callback/*:function*/, errorCallback/*:function*/, processCallback/*:function*/) {
 		if (reqData !== null && typeof reqData === "object") {
-			reqData = param(reqData);
+			reqData = module.param(reqData);
 			url = (url.indexOf("?") > 0) ? url + "&" + reqData : url + "?" + reqData;
 		}
 		return module.request('GET', url, headers, undefined, respType, timeout, callback, errorCallback, processCallback);
@@ -433,6 +433,7 @@ pi_modules.ajax.exports = (function () {
 		if (respType === module.RESP_TYPE_BIN) {
 			xhr.responseType = 'arraybuffer';
 		}
+		xhr.withCredentials = true;
 		xhr.onabort = function () {
 			timeout && clearTimeout(xhr.timerRef);
 			errorCallback({
