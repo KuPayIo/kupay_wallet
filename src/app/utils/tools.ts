@@ -8,7 +8,7 @@ import { Cipher } from '../core/crypto/cipher';
 import { Api as EthApi } from '../core/eth/api';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 
-import { ERC20TokensTestnet } from '../core/eth/tokens'; 
+import { ERC20TokensTestnet } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
@@ -82,7 +82,7 @@ export const getCurrentAddrInfo = (currencyName: string) => {
  * 通过地址id获取地址信息
  * @param addrId  address id
  */
-export const getAddrById = (addrId:string,currencyName:string): Addr => {
+export const getAddrById = (addrId: string, currencyName: string): Addr => {
     const list: Addr[] = getLocalStorage('addrs') || [];
 
     return list.filter(v => v.addr === addrId && v.currencyName === currencyName)[0];
@@ -94,7 +94,7 @@ export const getAddrById = (addrId:string,currencyName:string): Addr => {
  * @param data  新地址
  * @param notified 是否通知数据发生改变 
  */
-export const resetAddrById = (addrId:string,currencyName:string, data: Addr, notified?: boolean) => {
+export const resetAddrById = (addrId: string, currencyName: string, data: Addr, notified?: boolean) => {
     let list: Addr[] = getLocalStorage('addrs') || [];
     list = list.map(v => {
         if (v.addr === addrId && v.currencyName === currencyName) return data;
@@ -214,20 +214,20 @@ export const btc2Sat = (num: number) => {
 /**
  * eth 代币除以精度计算
  */
-export const ethTokenDivideDecimals = (num:number,tokenName:string) => {
+export const ethTokenDivideDecimals = (num: number, tokenName: string) => {
     const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
-    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10,18);
+    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10, 18);
 
-    return num / decimals; 
+    return num / decimals;
 };
 /**
  * eth 代币乘以精度计算
  */
-export const ethTokenMultiplyDecimals = (num:number,tokenName:string) => {
+export const ethTokenMultiplyDecimals = (num: number, tokenName: string) => {
     const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
-    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10,18);
+    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10, 18);
 
-    return num * decimals; 
+    return num * decimals;
 };
 
 /**
@@ -248,7 +248,7 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (ERC20TokensTestnet[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
@@ -264,7 +264,7 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
  * @param currencyName  当前货币类型
  * @param isWei 是否wei转化effectiveCurrencyNoConversion
  */
-export  const  effectiveCurrencyNoConversion =   (perNum: any, currencyName: string, isMinUnit: boolean) => {
+export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isMinUnit: boolean) => {
     const r: any = { num: 0, show: '', conversionShow: '' };
     let num;
     if (currencyName === 'ETH') {
@@ -272,11 +272,11 @@ export  const  effectiveCurrencyNoConversion =   (perNum: any, currencyName: str
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (ERC20TokensTestnet[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
-    
+
     return r;
 
 };
@@ -298,7 +298,7 @@ export const effectiveCurrencyStableConversion = (perNum: any, currencyName: str
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (ERC20TokensTestnet[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
@@ -505,7 +505,7 @@ export const urlParams = (url: string, key: string) => {
     return ret && decodeURIComponent(ret[2]);
 };
 
-export const formatBalance = (banlance:number) => {
+export const formatBalance = (banlance: number) => {
     let retBanlance;
     if (banlance >= 1) {
         retBanlance = +banlance.toPrecision(7);
@@ -514,7 +514,7 @@ export const formatBalance = (banlance:number) => {
     } else {
         retBanlance = +banlance.toPrecision(6);
     }
-    
+
     return retBanlance;
 };
 
@@ -666,4 +666,23 @@ export const reductionCipherMnemonic = (cipherMnemonic: string) => {
     };
 
     return JSON.stringify(newJson);
+};
+
+/**
+ * 获取异或值
+ * @param first 前段
+ * @param second 后段
+ */
+
+export const getXOR = (first, second) => {
+    if (first.length !== second.length) return '';
+
+    const arr = [];
+    for (let i = 0; i < first.length; i++) {
+        const m = parseInt(first.substr(i, 1), 16);
+        const k = parseInt(second.substr(i, 1), 16);
+        arr.push((m ^ k).toString(16));
+    }
+
+    return arr.join('');
 };
