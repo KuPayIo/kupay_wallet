@@ -708,3 +708,23 @@ export const fetchBalanceOfCurrency = (addrs:string[],currencyName:string) => {
 
     return balance;
 };
+
+
+/**
+ * 获取异或值
+ * @param first 前段
+ * @param second 后段
+ */
+
+export const getXOR = (first, second) => {
+    if (first.length !== second.length) return '';
+
+    const arr = [];
+    for (let i = 0; i < first.length; i++) {
+        const m = parseInt(first.substr(i, 1), 16);
+        const k = parseInt(second.substr(i, 1), 16);
+        arr.push((m ^ k).toString(16));
+    }
+
+    return arr.join('');
+};
