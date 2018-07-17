@@ -31,8 +31,9 @@ export const run = (cb): void => {
     dataCenter.init();
     // makepayment();
     // 打开界面
-    popNew('app-view-app');
-    popNew('app-components-passwordScreen-passwordScreen',{title:"解锁屏幕",extraText:"忘记密码?"});
+    // popNew('app-view-app');
+    popNew('app-view-guidePages-privacyAgreement');
+    // popNew('app-components-passwordScreen-passwordScreen',{title:"解锁屏幕"});
     if (cb) cb();
     // test();
 };
