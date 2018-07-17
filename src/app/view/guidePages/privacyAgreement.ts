@@ -1,5 +1,5 @@
 /**
- * group wallet
+ * privacy agreement
  */
 import { Widget } from '../../../pi/widget/widget';
 import { popNew } from '../../../pi/ui/root';

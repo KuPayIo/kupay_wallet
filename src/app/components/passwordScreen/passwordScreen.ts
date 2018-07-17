@@ -30,12 +30,14 @@ export class PasswordScreen extends Widget {
     }
 
     public boardItemClick(e:any,index:number){
+        if(this.state.pswArr.length > 6) return;
+        this.state.pswArr.push(this.state.pswBoard[index]);
+        this.paint();
         if(this.state.pswArr.length === 6){
             notify(e.node,"ev-completed-click",{psw:this.state.pswArr.join("")});
             return;
         }
-        this.state.pswArr.push(this.state.pswBoard[index]);
-        this.paint();
+       
     }
 
     public clearClick(){

@@ -32,8 +32,9 @@ export const run = (cb): void => {
     // makepayment();
     // 打开界面
     // popNew('app-view-app');
-    popNew('app-view-guidePages-privacyAgreement');
+    //popNew('app-view-guidePages-privacyAgreement');
     // popNew('app-components-passwordScreen-passwordScreen',{title:"解锁屏幕"});
+    popNew('app-view-guidePages-setLockScreenScret');
     if (cb) cb();
     // test();
 };
