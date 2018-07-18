@@ -105,7 +105,8 @@ export class WalletImport extends Widget {
         }
         close.callback(close.widget);
         this.ok && this.ok();
-        popNew('app-view-wallet-backupWallet-backupWallet');
+        // popNew('app-view-wallet-backupWallet-backupWallet');
+        popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
 
     }
 
