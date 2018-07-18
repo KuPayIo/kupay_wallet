@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { drawImg } from '../../../../pi/util/canvas';
 import { Widget } from '../../../../pi/widget/widget';
 import { Cipher } from '../../../core/crypto/cipher';
-import { generateByHash } from '../../../core/genmnemonic';
+import { generateByHash, toMnemonic } from '../../../core/genmnemonic';
 import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
 import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
@@ -167,8 +167,9 @@ const testAhash1 = (src) => {
         // 生成助记词的随机数仅需要128位即可，这里对256位随机数进行折半取异或的处理
         s = getXOR(s.slice(0, len / 2), s.slice(len / 2));
 
-        const t = generateByHash('english', s);
-        console.log(img.src, r, s, t);
+        const t = generateByHash(s);
+        const m = toMnemonic('english', t);
+        console.log(img.src, r, s, t, m);
     };
     img.src = src;
 };
