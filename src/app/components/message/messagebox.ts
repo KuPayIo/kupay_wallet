@@ -12,6 +12,10 @@ interface Props {
     showQuit?:boolean;// 是否显示右上角叉
     extraInfo?:string;// itype = "extra" 时有效
     contentStyle?:string;
+    okButton?:string;//确定按钮的名称
+    cancelButton?:string;//取消按钮的名称
+    okButtonStyle?:string;//确认按钮的样式
+    cancelButtonStyle?:string;//取消按钮的样式
 }
 
 export class MessageBox extends Widget {

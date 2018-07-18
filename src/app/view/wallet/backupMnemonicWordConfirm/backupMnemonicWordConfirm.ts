@@ -30,13 +30,16 @@ export class backupMnemonicWordConfirm extends Widget {
         };
     }
     public jumpOver() {
-    	popNew('app-view-wallet-backupMnemonicWord-messagebox', {
+    	popNew('app-components-message-messagebox', {
     		itype: 'confirm',
     		title: '提示',
-    		content: '为了确保您的资产安全，建议不要跳过验证！'
-    	},()=>{
-    		this.ok && this.ok();
-    	});
+            content: '为了确保您的资产安全，建议不要跳过验证！',
+            okButton:"取消",
+            cancelButton:"跳过",
+            okButtonStyle:"color:rgba(26,112,221,1);"
+    	},null,()=>{
+            this.ok && this.ok();
+        });
     }
     public back() {
     	this.ok && this.ok();
