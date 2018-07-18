@@ -105,10 +105,10 @@ export class WalletImport extends Widget {
         }
         close.callback(close.widget);
         this.ok && this.ok();
-        const wallets = getLocalStorage("wallets");
-        if(wallets.walletList.length === 1){
+        const wallets = getLocalStorage('wallets');
+        if (wallets.walletList.length === 1) {
             popNew('app-view-guidePages-setLockScreenScret');
-        }else{
+        } else {
             popNew('app-view-app');
         }
         // popNew('app-view-wallet-backupWallet-backupWallet');

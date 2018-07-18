@@ -1,8 +1,8 @@
 /**
  * 确认提示框--验证
  */
-import { Widget } from '../../../pi/widget/widget';
 import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
     itype: string;
@@ -34,7 +34,6 @@ export class MessageBoxVerify extends Widget {
 
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        console.log(props);
         this.state = { isShow: false, input: '' };
         this.init();
     }
@@ -47,12 +46,12 @@ export class MessageBoxVerify extends Widget {
      */
     public doClickSure() {
         const close = popNew('pi-components-loading-loading', { text: '验证中...' });
-        setTimeout(()=>{
+        setTimeout(() => {
             close.callback(close.widget);
-            if(this.props.confirmCallBack(this.state.input)){
+            if (this.props.confirmCallBack(this.state.input)) {
                 this.ok && this.ok(this.state.input);
-            }else{
-                this.state.input = "";
+            } else {
+                this.state.input = '';
                 popNew('app-components-message-message', { itype: 'error', content: this.props.confirmErrorText, center: true });
                 this.paint();
             }

@@ -24,21 +24,22 @@ export class DisplayPage extends Widget {
 
     public attach() {
         super.attach();
+        // tslint:disable-next-line:no-this-assignment
         const that = this;
         const mySwiper = new Swiper ('.swiper-container', {
             autoplay:false,
             on:{
-                slideChangeTransitionStart:function(){
+                slideChangeTransitionStart:function() {
                     that.state.activeIndex = this.activeIndex;
                     that.paint();
                 },
-                slideChangeTransitionEnd: function(){
-                    if(this.activeIndex === that.state.guidePages.length){
+                slideChangeTransitionEnd: function() {
+                    if (this.activeIndex === that.state.guidePages.length) {
                         popNew('app-view-app');
                         that.ok && that.ok();
                     }
                     
-                },
+                }
 
             }
         }); 

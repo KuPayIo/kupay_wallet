@@ -32,13 +32,12 @@ export const run = (cb): void => {
     // makepayment();
     // 打开界面
     popNewPage();
-    //后台切前台
+    // 后台切前台
     backToFront();
     
     // popNew('app-components-passwordScreen-passwordScreen',{title:"解锁屏幕"});
     // popNew('app-view-guidePages-setLockScreenScret');
     
-
     // popNew('app-view-guidePages-unlockScreen');
     if (cb) cb();
     // test();
@@ -48,17 +47,17 @@ export const run = (cb): void => {
  * 界面入口
  */
 const popNewPage = () => {
-    const hasReadedPrivacyAgreement = getLocalStorage("hasReadedPrivacyAgreement");
-    if(hasReadedPrivacyAgreement){
+    const hasReadedPrivacyAgreement = getLocalStorage('hasReadedPrivacyAgreement');
+    if (hasReadedPrivacyAgreement) {
         popNew('app-view-app');
-        if(ifNeedUnlockScreen()){
+        if (ifNeedUnlockScreen()) {
             popNew('app-view-guidePages-unlockScreen');
         }
         
-    }else{
+    } else {
         popNew('app-view-guidePages-privacyAgreement');
     }
-}
+};
 const checkUpdate = () => {
     // todo
 };
@@ -68,26 +67,24 @@ const checkUpdate = () => {
 // 0xDEadcA0CF78Caac23a59FfF4353b3D715e26C367
 // 0xFeA9610a4C2fCDF63A1755384B42ff760dB68EFC
 // tslint:disable-next-line:only-arrow-functions
-function  test() {
+/* function  test() {
     
-}
+} */
 
 /**
  * 后台切换到前台
  */
 const backToFront = () => {
-    document.addEventListener("visibilitychange", function() {
-        if(!document.hidden){
-            if(ifNeedUnlockScreen()){
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            if (ifNeedUnlockScreen()) {
                 popNew('app-view-guidePages-unlockScreen');
             }
         }
     });
-}
+};
 
 // ============================== 立即执行
-
-
 
 /**
  * eth代币精度初始化
@@ -130,7 +127,8 @@ const checkHasNewTokens = () => {
  * 是否需要解锁屏幕
  */
 const ifNeedUnlockScreen = () => {
-    const unlockScreen = document.querySelector("#unlock-screen");
-    if(unlockScreen) return false;
+    const unlockScreen = document.querySelector('#unlock-screen');
+    if (unlockScreen) return false;
+    
     return false;
-}
+};
