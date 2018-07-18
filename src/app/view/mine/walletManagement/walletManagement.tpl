@@ -12,7 +12,7 @@
                     on-focus="walletNameInputFocus"
                     />
             </div>
-            <div w-class="ga-assets"><span w-class="ga-assets-item">≈</span>105,250.00 CNY</div>
+            <div w-class="ga-assets"><span w-class="ga-assets-item">≈</span>{{it1.totalAssets}}&nbsp;CNY</div>
             <div w-class="ga-group-wallet" on-tap="showGroupWallet">群钱包</div>
         </div>
     </div>

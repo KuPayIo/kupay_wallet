@@ -89,7 +89,13 @@ export class WalletCreate extends Widget {
             close.callback(close.widget);
             this.ok && this.ok();
             // popNew('app-view-wallet-backupWallet-backupWallet');
-            popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
+            const wallets = getLocalStorage("wallets");
+            if(wallets.walletList.length === 1){
+                popNew('app-view-guidePages-setLockScreenScret');
+            }else{
+                popNew('app-view-app');
+            }
+            
         }, 500);
     }
 

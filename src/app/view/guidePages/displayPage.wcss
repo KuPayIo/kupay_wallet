@@ -1,0 +1,45 @@
+.ga-display-page{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: #fff;
+}
+.ga-display-img-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 112px;
+}
+.ga-display-img{
+    width: 635px;
+    height: 755px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.ga-intro{
+    font-size: 28px;
+    color: #203260;
+    text-align: left;
+    line-height: 44px;
+    margin: 45px 60px 0;
+}
+.ga-pagination{
+    position: absolute;
+    bottom: 80px;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+.ga-dot{
+    width: 20px;
+    height: 20px;
+    background: #E5E5EE;
+    border-radius: 50%;
+    margin: 0 15px;
+}
+.ga-dot-active{
+    background: #1A70DD;
+}

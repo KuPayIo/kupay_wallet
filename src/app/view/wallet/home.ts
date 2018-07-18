@@ -8,7 +8,9 @@ import { GlobalWallet } from '../../core/globalWallet';
 import { dataCenter } from '../../store/dataCenter';
 import { register,unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
-import { formatBalance, getAddrsByCurrencyName,getCurrentWallet,getLocalStorage } from '../../utils/tools';
+
+// tslint:disable-next-line:max-line-length
+import { fetchBalanceOfCurrency, fetchTotalAssets,formatBalance,getAddrsByCurrencyName,getCurrentWallet,getLocalStorage, formatBalanceValue } from '../../utils/tools';
 
 export class Home extends Widget {
     constructor() {
@@ -112,6 +114,7 @@ export class Home extends Widget {
      * 余额更新
      */
     private registerAddrsFun = (addrs?:any) => {
+        console.log('余额更新')
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         if (!wallet) return;
@@ -120,40 +123,11 @@ export class Home extends Widget {
             const balance = fetchBalanceOfCurrency(item.addrs,item.currencyName);
             setCurrencyListBalance(this.state.currencyList,balance,item.currencyName);
         });
-        this.state.totalAssets = fetchTotalAssets(this.state.currencyList);
+        this.state.totalAssets = formatBalanceValue(fetchTotalAssets()); 
         this.paint();
     }
 }
 
-/**
- * 获取指定货币下余额总数
- * @param addrs 指定货币下的地址
- * @param currencyName 货币名称
- */
-const fetchBalanceOfCurrency = (addrs:string[],currencyName:string) => {
-    const localAddrs = getLocalStorage('addrs');
-    let balance = 0;
-    localAddrs.forEach(item => {
-        if (addrs.indexOf(item.addr) >= 0 && item.currencyName === currencyName) {
-            balance += item.balance;
-        }
-    });
-
-    return balance;
-};
-
-/**
- * 获取总资产
- * @param currencyList 资产列表
- */
-const fetchTotalAssets = (currencyList:any[]) => {
-    let totalAssets = 0;
-    currencyList.forEach(item => {
-        totalAssets += item.balanceValue;
-    });
-
-    return totalAssets;
-};
 /**
  * 解析钱包货币
  * 
@@ -184,9 +158,10 @@ const setCurrencyListBalance = (currencyList:any[],balance:number,currencyName:s
         if (item.currencyName === currencyName) {
             const rate = dataCenter.getExchangeRate(currencyName);
             item.balance = formatBalance(balance); 
-            item.balanceValue = +(balance * rate.CNY).toFixed(6);
+            item.balanceValue = formatBalanceValue(+(balance * rate.CNY));
         }
 
         return item;
     });
 };
+

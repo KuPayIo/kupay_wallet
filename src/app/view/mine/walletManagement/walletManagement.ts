@@ -9,11 +9,13 @@ import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import {
     decrypt,
     encrypt,
+    fetchTotalAssets,
     getAddrsAll,
     getCurrentWallet,
     getCurrentWalletIndex,
     getLocalStorage,
-    setLocalStorage
+    setLocalStorage,
+    formatBalanceValue
 } from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
@@ -24,6 +26,7 @@ export class WalletManagement extends Widget {
     }
     public init() {
         register('wallets', this.registerWalletsFun);
+        register('addrs', this.registerAddrsFun);
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
@@ -46,12 +49,15 @@ export class WalletManagement extends Widget {
             pswTips,
             mnemonicExisted,
             isUpdatingWalletName: false,
-            isUpdatingPswTips: false
+            isUpdatingPswTips: false,
+            totalAssets:0.00
         };
+        this.registerAddrsFun();
     }
 
     public destroy() {
         unregister('wallets',this.registerWalletsFun);
+        unregister('addrs', this.registerAddrsFun);
         
         return super.destroy();
     }
@@ -306,6 +312,18 @@ export class WalletManagement extends Widget {
         pswTips = pswTips.length > 0 ? pswTips : '无';
         this.state.mnemonicExisted = mnemonicExisted;
         this.state.pswTips = pswTips;
+        this.paint();
+    }
+
+    /**
+     * 总资产更新
+     */
+    private registerAddrsFun = (addrs?:any) => {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        
+        this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
         this.paint();
     }
 }
