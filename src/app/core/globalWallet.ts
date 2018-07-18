@@ -8,7 +8,7 @@ import { decrypt, getDefaultAddr, u8ArrayToHexstr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
-import { ERC20TokensTestnet } from './eth/tokens';
+import { ERC20Tokens } from './eth/tokens';
 import { GaiaWallet } from './eth/wallet';
 import { generate, generateRandomValues, toMnemonic, toSeed } from './genmnemonic';
 
@@ -88,7 +88,7 @@ export class GlobalWallet {
 
         for (let i = 0; i < defaultEthToken.length; i++) {
             const tokenName = defaultEthToken[i];
-            const contractAddress = ERC20TokensTestnet[tokenName];
+            const contractAddress = ERC20Tokens[tokenName];
             const tokenGwlt = await GlobalWallet.fromMnemonicEthToken(tokenName, contractAddress, passwd, mnemonic);
             gwlt._currencyRecords.push(tokenGwlt.currencyRecord);
             gwlt._addrs.push(...tokenGwlt.addrs);

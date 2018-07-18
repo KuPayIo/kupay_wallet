@@ -5,8 +5,13 @@
     height: 16px;
     background-color: #f8f8f8;
 }
-.ga-container{
-}
 .ga-currency-container{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 153px;
     margin-top: 20px;
+    bottom: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }

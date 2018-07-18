@@ -5,8 +5,10 @@ import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
+import { ShareToPlatforms } from "../../../pi/browser/shareToPlatforms";
 
 export class Home extends Widget {
+    public stp:any;
     constructor() {
         super();
     }
@@ -15,6 +17,8 @@ export class Home extends Widget {
         this.init();
     }
     public init() {
+        this.stp = new ShareToPlatforms();
+        this.stp.init();
         this.state = {
             hasNews: true,
             mineList: [{
@@ -68,6 +72,10 @@ export class Home extends Widget {
                 return;
             }
         }
+        if(index === this.state.mineList.length - 1){
+            this.share();
+            return;
+        }
         popNew(this.state.mineList[index].components,{},(home) => {
             if (home) {
                 notify(this.tree,'ev-change-tab',{ index:0 });
@@ -83,5 +91,16 @@ export class Home extends Widget {
                 this.paint();
             }
         });
+    }
+
+    public share() {
+        this.stp.shareQRCode({
+            success: (result) => {
+                alert(result);
+            },
+            fail: (result) => {
+                alert(result);
+            }, content: "This is a test QRCode"
+        })
     }
 }

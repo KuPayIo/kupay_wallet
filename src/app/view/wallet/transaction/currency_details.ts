@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { ERC20TokensTestnet } from '../../../core/eth/tokens';
+import { ERC20Tokens } from '../../../core/eth/tokens';
 import { dataCenter } from '../../../store/dataCenter';
 import { register,unregister } from '../../../store/store';
 import {
@@ -147,7 +147,7 @@ export class AddAsset extends Widget {
         list = list.map(v => {
             const pay =  effectiveCurrencyNoConversion(v.value, this.props.currencyName, true);
             // tslint:disable-next-line:max-line-length
-            const fees =  effectiveCurrencyNoConversion(v.fees, ERC20TokensTestnet[this.props.currencyName] ? 'ETH' : this.props.currencyName, true);
+            const fees =  effectiveCurrencyNoConversion(v.fees, ERC20Tokens[this.props.currencyName] ? 'ETH' : this.props.currencyName, true);
             const isFromMe = v.from.toLowerCase() === this.state.currentAddr.toLowerCase();
             const isToMe = v.to.toLowerCase() === this.state.currentAddr.toLowerCase();
 
