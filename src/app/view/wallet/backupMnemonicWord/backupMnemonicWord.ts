@@ -13,7 +13,7 @@ import {
     , simplifyCipherMnemonic, str2ab, str2Bytes, u8ArrayToHexstr
 } from '../../../utils/tools';
 
-export class BackupMnemonic_c extends Widget {
+export class backupMnemonicWord extends Widget {
     public ok: () => void;
     constructor() {
         super();
@@ -34,7 +34,7 @@ export class BackupMnemonic_c extends Widget {
     }
     
     public jumpOver() {
-    	popNew('app-view-wallet-backupMnemonic_c-messagebox', {
+    	popNew('app-view-wallet-backupMnemonicWord-messagebox', {
     		itype: 'confirm',
     		title: '提示',
     		content: '为了确保您的资产安全，建议不要跳过验证！'
@@ -44,7 +44,7 @@ export class BackupMnemonic_c extends Widget {
     }
     public next() {
     	this.ok && this.ok();
-    	popNew('app-view-wallet-backupMnemonicConfirm_c-backupMnemonicConfirm_c');
+    	popNew('app-view-wallet-backupMnemonicWordConfirm-backupMnemonicWordConfirm');
     }
     public back() {
     	this.ok && this.ok();

@@ -89,7 +89,7 @@ export class WalletCreate extends Widget {
             close.callback(close.widget);
             this.ok && this.ok();
             //popNew('app-view-wallet-backupWallet-backupWallet');
-            popNew('app-view-wallet-backupMnemonic_c-backupMnemonic_c');
+            popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
         }, 500);
     }
 
