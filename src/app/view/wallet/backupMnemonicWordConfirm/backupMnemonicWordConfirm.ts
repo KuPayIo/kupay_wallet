@@ -6,7 +6,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { decrypt, getCurrentWallet, getLocalStorage,setLocalStorage,shuffle } from '../../../utils/tools';
 
-export class backupMnemonicWordConfirm extends Widget {
+export class BackupMnemonicWordConfirm extends Widget {
     public ok: () => void;
     constructor() {
         super();
@@ -30,19 +30,19 @@ export class backupMnemonicWordConfirm extends Widget {
         };
     }
     public jumpOver() {
-    	popNew('app-components-message-messagebox', {
-    		itype: 'confirm',
-    		title: '提示',
+        popNew('app-components-message-messagebox', {
+            itype: 'confirm',
+            title: '提示',
             content: '为了确保您的资产安全，建议不要跳过验证！',
-            okButton:"取消",
-            cancelButton:"跳过",
-            okButtonStyle:"color:rgba(26,112,221,1);"
-    	},null,()=>{
+            okButton:'取消',
+            cancelButton:'跳过',
+            okButtonStyle:'color:rgba(26,112,221,1);'
+        },null,() => {
             this.ok && this.ok();
         });
     }
     public back() {
-    	this.ok && this.ok();
+        this.ok && this.ok();
     }
 
     // 对助记词乱序和标识处理
