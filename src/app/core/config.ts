@@ -3,7 +3,6 @@
  */
 export const config = {
     dev_mode: 'dev',
-
     dev: {
         // tslint:disable-next-line:no-http-string
         BtcApiBaseUrl: 'http://192.168.33.154:3002/insight-api',
