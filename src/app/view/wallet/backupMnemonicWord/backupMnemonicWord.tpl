@@ -1,4 +1,4 @@
-<div id="backupWallet_c" class="ga-new-page">
+<div id="backupMnemonicWord" class="ga-new-page">
 	<div w-class="head">
 		<div w-class="headMain">
 			<span w-class="headTitle">
