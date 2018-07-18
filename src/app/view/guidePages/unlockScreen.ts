@@ -29,7 +29,7 @@ export class UnlockScreen extends Widget {
         
     }
 
-    public completedInput(r) {
+    public completedInput(r:any) {
         const psw = r.psw;
         const hash256 = sha256(psw + lockScreenSalt);
         const localHash256 = getLocalStorage('lockScreenPsw');
