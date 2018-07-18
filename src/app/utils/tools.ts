@@ -5,7 +5,7 @@ import { isNumber } from '../../pi/util/util';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
-import { ERC20Tokens } from '../core/eth/tokens'
+import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
@@ -156,11 +156,12 @@ export const decrypt = (cipherText: string) => {
     return cipher.decrypt(passwd, cipherText);
 };
 
-//hash256
+// hash256
 export const sha256 = (data: string) => {
     const cipher = new Cipher();
+    
     return cipher.sha256(data);
-}
+};
 
 export const randomRgbColor = () => { // 随机生成RGB颜色
     const r = Math.floor(Math.random() * 256);
@@ -671,7 +672,6 @@ export const reductionCipherMnemonic = (cipherMnemonic: string) => {
     return JSON.stringify(newJson);
 };
 
-
 /**
  * 余额格式化
  */
@@ -711,7 +711,6 @@ export const fetchBalanceOfCurrency = (addrs:string[],currencyName:string) => {
 
     return balance;
 };
-
 
 /**
  * 获取异或值

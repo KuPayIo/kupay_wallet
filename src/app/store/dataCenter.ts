@@ -1,8 +1,8 @@
-import { Api as BtcApi } from '../core/btc/api';
+import {  BtcApi } from '../core/btc/api';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens'; 
 import { GaiaWallet } from '../core/eth/wallet';
-import { defaultEthToken,defaultExchangeRateJson,ethTokenTransferCode,supportCurrencyList } from '../utils/constants';
+import { defaultExchangeRateJson,ethTokenTransferCode,supportCurrencyList } from '../utils/constants';
 import {
     ethTokenDivideDecimals, getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc,setLocalStorage,wei2Eth
 } from '../utils/tools';
@@ -281,8 +281,7 @@ export class DataCenter {
     }
     private async parseBtcTransactionDetails(addr: string) {
         // return;
-        const api = new BtcApi();
-        const info = await api.getAddrInfo(addr);
+        const info = await BtcApi.getAddrInfo(addr);
         if (!info) return;
         const num = sat2Btc(info.balance);
         this.setBalance(addr, 'BTC',num);
@@ -310,8 +309,7 @@ export class DataCenter {
 
             return;
         }
-        const api = new BtcApi();
-        const info = await api.getTxInfo(iInfo.tx_hash);
+        const info = await BtcApi.getAddrInfo(addr);
         // console.log('getTxInfo', info);
         let inputs = [];
         let outputs = [];
@@ -446,8 +444,7 @@ export class DataCenter {
                 this.exchangeRateJson.ETH = await ethApi.getExchangeRate();
                 break;
             case 'BTC': 
-                const btcApi:BtcApi = new BtcApi();
-                this.exchangeRateJson.BTC = await btcApi.getExchangeRate();
+                this.exchangeRateJson.BTC = await BtcApi.getExchangeRate();
                 break;
             default:
         }

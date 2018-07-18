@@ -4,7 +4,7 @@
 import { QRCode } from '../../../../pi/browser/qrcode';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { Api as BtcApi } from '../../../core/btc/api';
+import { BtcApi } from '../../../core/btc/api';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
 import { ibanToAddress } from '../../../core/eth/helper';
@@ -84,7 +84,7 @@ export class AddAsset extends Widget {
                 this.resetFees();
             });
         } else if (ERC20Tokens[this.props.currencyName]) {
-            this.state.gasLimit = 51000;
+            this.state.gasLimit = 81000;
         }
 
         this.resetFees();
@@ -343,7 +343,6 @@ async function doEthTransfer(acct1: string, acct2: string, psw: string, gasPrice
 // tslint:disable-next-line:only-arrow-functions
 async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
     , value: number, info: string, urgent: boolean) {
-    const api = new BtcApi();
     const addrs = getLocalStorage('addrs');
     const addr = addrs.filter(v => v.addr === acct1)[0];
     const priority = urgent ? 'high' : 'medium';
@@ -363,9 +362,9 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
 
     console.log(wlt, value);
     // tslint:disable-next-line:no-unnecessary-local-variable
-    const res = await api.sendRawTransaction(rawHexString);
+    const hash = await BtcApi.sendRawTransaction(rawHexString);
 
-    return res.tx.hash;
+    return hash;
 
 }
 
@@ -379,7 +378,7 @@ async function doERC20TokenTransfer(acct1: string, acct2: string, psw: string, g
     const api = new EthApi();
     if (urgent) gasPrice *= 2;
     const nonce = await api.getTransactionCount(acct1);
-    console.log("nonce",nonce);
+    console.log('nonce',nonce);
     const transferCode = GaiaWallet.tokenOperations('transfer',currencyName,acct2,ethTokenMultiplyDecimals(value,currencyName));
     const txObj = {
         to: ERC20Tokens[currencyName],
