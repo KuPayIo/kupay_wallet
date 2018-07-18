@@ -3,28 +3,29 @@
  */
 import { config } from '../config';
 
-if(config.dev_mode === 'dev') {
+/* tslint:disable:no-var-keyword */
+if (config.dev_mode === 'dev') {
     var BTC_API_BASE_URL = config.dev.BtcApiBaseUrl;
     var BTC_MARKET_PRICE_ORACLE_URL = config.dev.BtcMarketPriceOracleUrl;
 } else if (config.dev_mode === 'prod') {
-    var BTC_API_BASE_URL = config.prod.BtcApiBaseUrl;
-    var BTC_MARKET_PRICE_ORACLE_URL = config.prod.BtcMarketPriceOracleUrl;
+    BTC_API_BASE_URL = config.prod.BtcApiBaseUrl;
+    BTC_MARKET_PRICE_ORACLE_URL = config.prod.BtcMarketPriceOracleUrl;
 }
 
-type BlanceType = 'balance' | 'totalReceived' | 'totalSent' | 'unconfirmed'
+type BlanceType = 'balance' | 'totalReceived' | 'totalSent' | 'unconfirmed';
 
 interface Options {
-    method?: 'GET' | 'POST',
-    body?: string
+    method?: 'GET' | 'POST';
+    body?: string;
 }
 
-const sendRequest = async (endpoint: string, opt: Options = {method: 'GET'}): Promise<any> => {
+const sendRequest = async (endpoint: string, opt: Options = { method: 'GET' }): Promise<any> => {
     opt.method = opt.method || 'GET';
     try {
         let response: any;
-        if(opt.method === 'GET') {
+        if (opt.method === 'GET') {
             response = await fetch(endpoint);
-        } else if(opt.method === 'POST') {
+        } else if (opt.method === 'POST') {
             response = await fetch(endpoint, {
                 method: opt.method,
                 body: JSON.stringify(opt.body)
@@ -32,52 +33,52 @@ const sendRequest = async (endpoint: string, opt: Options = {method: 'GET'}): Pr
         }
 
         return await response.json();
-    } catch(e) {
+    } catch (e) {
         Promise.reject(e);
     }
-}
+};
 
 export const BtcApi = {
     getAddrUnspent: async (addr: string): Promise<any> => {
-        const endpoint = BTC_API_BASE_URL + `/addr/${addr}/utxo`;
+        const endpoint = `${BTC_API_BASE_URL}/addr/${addr}/utxo`;
 
-        return await sendRequest(endpoint);
+        return sendRequest(endpoint);
     },
 
     getBalance: async (addr: string, option: BlanceType = 'balance'): Promise<any> => {
-        const endpoint: string = BTC_API_BASE_URL + `/addr/${addr}/${option}`;
+        const endpoint: string = `${BTC_API_BASE_URL}/addr/${addr}/${option}`;
 
-        return await sendRequest(endpoint);
+        return sendRequest(endpoint);
     },
 
     getAddrInfo: async (addr: string): Promise<any> => {
-        const endpoint = BTC_API_BASE_URL + `/addr/${addr}`;
+        const endpoint = `${BTC_API_BASE_URL}/addr/${addr}`;
 
-        return await sendRequest(endpoint);
+        return sendRequest(endpoint);
     },
 
     getAddrTxHistory: async (addr: string): Promise<any> => {
-        const endpoint = BTC_API_BASE_URL + `/txs/?address=${addr}`;
+        const endpoint = `${BTC_API_BASE_URL}/txs/?address=${addr}`;
 
-        return await sendRequest(endpoint);
+        return sendRequest(endpoint);
     },
 
     sendRawTransaction: async (rawTx: string): Promise<string> => {
-        const endpoint = BTC_API_BASE_URL + '/tx/send';
+        const endpoint = `${BTC_API_BASE_URL}/tx/send`;
 
-        return await sendRequest(endpoint, {method: 'POST', body: rawTx});
+        return sendRequest(endpoint, { method: 'POST', body: rawTx });
     },
 
     getTxInfo: async (txHash: string): Promise<any> => {
-        const endpoint = BTC_API_BASE_URL + `/tx/${txHash}`;
+        const endpoint = `${BTC_API_BASE_URL}/tx/${txHash}`;
 
-        return await sendRequest(endpoint);
+        return sendRequest(endpoint);
     },
 
     estimateFee: async (nbBlocks: number = 2): Promise<any> => {
-        const endpoint = BTC_API_BASE_URL + `/utils/estimatefee?nbBlocks=${nbBlocks}`;
+        const endpoint = `${BTC_API_BASE_URL}/utils/estimatefee?nbBlocks=${nbBlocks}`;
 
-        return await sendRequest(endpoint);
+        return sendRequest(endpoint);
     },
 
     getExchangeRate: async (): Promise<any> => {
@@ -88,4 +89,4 @@ export const BtcApi = {
             USD: data.data.quotes.USD.price
         };
     }
-}
+};

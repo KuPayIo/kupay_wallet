@@ -2,10 +2,8 @@
  * common tools
  */
 import { isNumber } from '../../pi/util/util';
-import { Api as BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
-import { Api as EthApi } from '../core/eth/api';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { ERC20Tokens } from '../core/eth/tokens'
 import { GaiaWallet } from '../core/eth/wallet';

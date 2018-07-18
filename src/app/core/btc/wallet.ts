@@ -53,8 +53,6 @@ export class BTCWallet {
     public network: NETWORK;
     public language: LANGUAGE;
 
-    public api: Api;
-
     // dedicated for HD wallet, should be encrypted
     private rootXpriv: string;
     private mnemonics: string;
@@ -64,7 +62,7 @@ export class BTCWallet {
     private isInitialized: boolean = false;
 
     constructor() {
-
+        // todo
     }
 
     /* tslint:disable:jsdoc-format */
@@ -282,11 +280,11 @@ export class BTCWallet {
         // TODO: check error
         // let fee: any;
         const priorityMap = {
-            'low': 6,
-            'medium': 3,
-            'high': 2
-        }
-        const fee = await BtcApi.estimateFee(priorityMap[priority])
+            low: 6,
+            medium: 3,
+            high: 2
+        };
+        const fee = await BtcApi.estimateFee(priorityMap[priority]);
 
         // sort by transaction confirmations
         this.utxos.sort((a, b) => a.confirmations - b.confirmations);
@@ -374,8 +372,8 @@ export class BTCWallet {
                     scriptPubKey: utxo.scriptPubKey,
                     amount: utxo.amount,
                     confirmations: utxo.confirmations
-                })
-            })
+                });
+            });
         }
 
         return this.utxos;

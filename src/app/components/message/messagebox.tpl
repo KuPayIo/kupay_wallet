@@ -21,12 +21,20 @@
         {{if it.itype !== "extra"}}
         <div w-class="btns">
             {{if it.itype==="confirm"||it.itype==="prompt"}}
-            <button type="button" w-class="button button_small" on-tap="doClickCancel" style="margin-right: 90px;">
+            <button type="button" w-class="button button_small" on-tap="doClickCancel" style="margin-right: 90px;{{it.cancelButtonStyle?it.cancelButtonStyle:''}}">
+                {{if it.cancelButton}}
+                <span>{{it.cancelButton}}</span>
+                {{else}}
                 <span>取消</span>
+                {{end}}
             </button>
             {{end}}
-            <button type="button" w-class="button button_small button_sure" on-tap="doClickSure">
-                <span>确定</span>
+            <button type="button" w-class="button button_small button_sure" on-tap="doClickSure" style="{{it.okButtonStyle?it.okButtonStyle:''}}">
+                    {{if it.okButton}}
+                    <span>{{it.okButton}}</span>
+                    {{else}}
+                    <span>确定</span>
+                    {{end}}
             </button>
         </div>
         {{else}}
