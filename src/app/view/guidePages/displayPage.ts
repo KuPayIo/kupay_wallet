@@ -44,5 +44,4 @@ export class DisplayPage extends Widget {
         }); 
     }
 
-
 }

@@ -91,3 +91,6 @@ export const guidePages = [
     {imgUrl:"banner2.png",text:"以太坊，Ethereum是一个分布式的计算机，有许多的节点，其中的每一个节点，都会执行字节码（其实就是智能合约），然后把结果存在区块链上。"},
     {imgUrl:"banner3.png",text:"智能合约与平时的代码其实没有什么区别，只是运行于一个以太坊这样的分布式平台上而已。"}
 ];
+
+//锁屏密码盐值
+export const lockScreenSalt = "salt";

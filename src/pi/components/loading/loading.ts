@@ -17,7 +17,10 @@ export class Loading extends Widget {
     constructor() {
         super();
     }
-
+    public create() {
+        super.create();
+        this.config = { value: { group: 'top' } };
+    }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.state = {

@@ -31,14 +31,34 @@ export const run = (cb): void => {
     dataCenter.init();
     // makepayment();
     // 打开界面
-    // popNew('app-view-app');
-    //popNew('app-view-guidePages-privacyAgreement');
+    popNewPage();
+    //后台切前台
+    backToFront();
+    
     // popNew('app-components-passwordScreen-passwordScreen',{title:"解锁屏幕"});
-    popNew('app-view-guidePages-setLockScreenScret');
+    // popNew('app-view-guidePages-setLockScreenScret');
+    
+
+    // popNew('app-view-guidePages-unlockScreen');
     if (cb) cb();
     // test();
 };
 
+/**
+ * 界面入口
+ */
+const popNewPage = () => {
+    const hasReadedPrivacyAgreement = getLocalStorage("hasReadedPrivacyAgreement");
+    if(hasReadedPrivacyAgreement){
+        popNew('app-view-app');
+        if(ifNeedUnlockScreen()){
+            popNew('app-view-guidePages-unlockScreen');
+        }
+        
+    }else{
+        popNew('app-view-guidePages-privacyAgreement');
+    }
+}
 const checkUpdate = () => {
     // todo
 };
@@ -49,15 +69,21 @@ const checkUpdate = () => {
 // 0xFeA9610a4C2fCDF63A1755384B42ff760dB68EFC
 // tslint:disable-next-line:only-arrow-functions
 function  test() {
+    
+}
+
+/**
+ * 后台切换到前台
+ */
+const backToFront = () => {
     document.addEventListener("visibilitychange", function() {
-        console.log( document.hidden );
-        if(document.hidden){
-            console.log("houtai");
+        if(!document.hidden){
+            if(ifNeedUnlockScreen()){
+                popNew('app-view-guidePages-unlockScreen');
+            }
         }
     });
 }
-
-
 
 // ============================== 立即执行
 
@@ -99,3 +125,12 @@ const checkHasNewTokens = () => {
 
     return newTokenNames;
 };
+
+/**
+ * 是否需要解锁屏幕
+ */
+const ifNeedUnlockScreen = () => {
+    const unlockScreen = document.querySelector("#unlock-screen");
+    if(unlockScreen) return false;
+    return false;
+}

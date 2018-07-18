@@ -88,7 +88,14 @@ export class WalletCreate extends Widget {
         setTimeout(() => {
             close.callback(close.widget);
             this.ok && this.ok();
-            popNew('app-view-wallet-backupWallet-backupWallet');
+            // popNew('app-view-wallet-backupWallet-backupWallet');
+            const wallets = getLocalStorage("wallets");
+            if(wallets.walletList.length === 1){
+                popNew('app-view-guidePages-setLockScreenScret');
+            }else{
+                popNew('app-view-app');
+            }
+            
         }, 500);
     }
 

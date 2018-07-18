@@ -344,7 +344,6 @@ export class GaiaWallet {
         }
         privKey = Buffer(privKey, 'hex');
         tx.sign(privKey);
-
         return tx.serialize();
     }
 

@@ -3,6 +3,7 @@
  */
 import { Widget } from '../../../pi/widget/widget';
 import { popNew } from '../../../pi/ui/root';
+import { setLocalStorage } from '../../utils/tools';
 
 export class PrivacyAgreement extends Widget {
     public ok: () => void;
@@ -32,6 +33,7 @@ export class PrivacyAgreement extends Widget {
         if (!this.state.userProtocolReaded) {
             return;
         }
+        setLocalStorage("hasReadedPrivacyAgreement",true);
         popNew('app-view-guidePages-displayPage');
         this.ok && this.ok();
     }

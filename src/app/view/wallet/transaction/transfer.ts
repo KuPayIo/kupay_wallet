@@ -59,7 +59,7 @@ export class AddAsset extends Widget {
             to: '',
             pay: 0,
             payConversion: `≈0.00 CNY`,
-            gasPrice: 10000000000,
+            gasPrice: 4000000000,
             gasLimit: 21000,
             fees: 0,
             feesShow: '',
@@ -84,7 +84,7 @@ export class AddAsset extends Widget {
                 this.resetFees();
             });
         } else if (ERC20Tokens[this.props.currencyName]) {
-            this.state.gasLimit = 100000;
+            this.state.gasLimit = 51000;
         }
 
         this.resetFees();
@@ -379,6 +379,7 @@ async function doERC20TokenTransfer(acct1: string, acct2: string, psw: string, g
     const api = new EthApi();
     if (urgent) gasPrice *= 2;
     const nonce = await api.getTransactionCount(acct1);
+    console.log("nonce",nonce);
     const transferCode = GaiaWallet.tokenOperations('transfer',currencyName,acct2,ethTokenMultiplyDecimals(value,currencyName));
     const txObj = {
         to: ERC20Tokens[currencyName],
