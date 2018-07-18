@@ -4,15 +4,15 @@
 import { QRCode } from '../../../../pi/browser/qrcode';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { Api as BtcApi } from '../../../core/btc/api';
+import { BtcApi } from '../../../core/btc/api';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
 import { ibanToAddress } from '../../../core/eth/helper';
 import { ERC20TokensTestnet } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import {
-    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals,getAddrById
-    , getCurrentAddrInfo, getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById,urlParams
+    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals, getAddrById
+    , getCurrentAddrInfo, getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById, urlParams
 } from '../../../utils/tools';
 
 interface Props {
@@ -36,7 +36,7 @@ interface States {
     feesConversion: string;
     info: string;
     urgent: boolean;
-    showNote:boolean;
+    showNote: boolean;
 }
 
 export class AddAsset extends Widget {
@@ -66,7 +66,7 @@ export class AddAsset extends Widget {
             feesConversion: '',
             info: '',
             urgent: false,
-            showNote:ERC20TokensTestnet[this.props.currencyName] ? false : true
+            showNote: ERC20TokensTestnet[this.props.currencyName] ? false : true
         };
 
         // todo 这是测试地址
@@ -77,8 +77,8 @@ export class AddAsset extends Widget {
             this.state.gasPrice = 10;
             const defaultToAddr = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
             const defaultAmount = 0.001;
-            this.getBtcTransactionFee(defaultToAddr,defaultAmount).then(fee => {
-                console.log('fee',fee);
+            this.getBtcTransactionFee(defaultToAddr, defaultAmount).then(fee => {
+                console.log('fee', fee);
                 this.state.gasPrice = fee;
                 this.state.gasLimit = 1;
                 this.resetFees();
@@ -137,9 +137,9 @@ export class AddAsset extends Widget {
                     if (this.props.currencyName === 'ETH') {
                         id = await doEthTransfer(fromAddr, toAddr, psw, gasPrice, gasLimit, eth2Wei(pay), info, urgent);
                     } else if (this.props.currencyName === 'BTC') {
-                        id = await doBtcTransfer(fromAddr, toAddr, psw,gasPrice, gasLimit, pay, info, urgent);
+                        id = await doBtcTransfer(fromAddr, toAddr, psw, gasPrice, gasLimit, pay, info, urgent);
                     } else if (ERC20TokensTestnet[this.props.currencyName]) {
-                        id = await doERC20TokenTransfer(fromAddr, toAddr, psw, gasPrice, gasLimit, pay, urgent,currencyName);
+                        id = await doERC20TokenTransfer(fromAddr, toAddr, psw, gasPrice, gasLimit, pay, urgent, currencyName);
                     }
 
                     loading.callback(loading.widget);
@@ -271,8 +271,8 @@ export class AddAsset extends Widget {
         this.state.feesConversion = r.conversionShow;
         this.paint();
     }
-// tslint:disable-next-line:only-arrow-functions
-    private async getBtcTransactionFee(toAddr:string ,amount:number,priority:'high' | 'medium' | 'low' = 'medium') {
+    // tslint:disable-next-line:only-arrow-functions
+    private async getBtcTransactionFee(toAddr: string, amount: number, priority: 'high' | 'medium' | 'low' = 'medium') {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         const psw = decrypt(wallet.walletPsw);
@@ -287,10 +287,10 @@ export class AddAsset extends Widget {
         const wlt = BTCWallet.fromJSON(addrInfo.wlt, psw);
         wlt.unlock(psw);
         await wlt.init();
-        
-        const retArr = await wlt.buildRawTransaction(output,priority);
+
+        const retArr = await wlt.buildRawTransaction(output, priority);
         wlt.lock(psw);
-        
+
         return retArr[1];
     }
 
@@ -300,11 +300,11 @@ export class AddAsset extends Widget {
  * 添加记录
  */
 const addRecord = (currencyName, currentAddr, record) => {
-    const addr = getAddrById(currentAddr,currencyName);
+    const addr = getAddrById(currentAddr, currencyName);
     if (!addr) return;
     addr.record.push(record);
 
-    resetAddrById(currentAddr,currencyName,addr, true);
+    resetAddrById(currentAddr, currencyName, addr, true);
 };
 
 /**
@@ -325,7 +325,7 @@ async function doEthTransfer(acct1: string, acct2: string, psw: string, gasPrice
         data: info
     };
 
-    const currentAddr = getAddrById(acct1,'ETH');
+    const currentAddr = getAddrById(acct1, 'ETH');
     if (!currentAddr) return;
 
     const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
@@ -343,7 +343,6 @@ async function doEthTransfer(acct1: string, acct2: string, psw: string, gasPrice
 // tslint:disable-next-line:only-arrow-functions
 async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
     , value: number, info: string, urgent: boolean) {
-    const api = new BtcApi();
     const addrs = getLocalStorage('addrs');
     const addr = addrs.filter(v => v.addr === acct1)[0];
     const priority = urgent ? 'high' : 'medium';
@@ -363,9 +362,9 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
 
     console.log(wlt, value);
     // tslint:disable-next-line:no-unnecessary-local-variable
-    const res = await api.sendRawTransaction(rawHexString);
+    const hash = await BtcApi.sendRawTransaction(rawHexString);
 
-    return res.tx.hash;
+    return hash;
 
 }
 
@@ -374,12 +373,12 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
  */
 // tslint:disable-next-line:only-arrow-functions
 async function doERC20TokenTransfer(acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
-    , value: number, urgent: boolean,currencyName:string) {
-    
+    , value: number, urgent: boolean, currencyName: string) {
+
     const api = new EthApi();
     if (urgent) gasPrice *= 2;
     const nonce = await api.getTransactionCount(acct1);
-    const transferCode = GaiaWallet.tokenOperations('transfer',currencyName,acct2,ethTokenMultiplyDecimals(value,currencyName));
+    const transferCode = GaiaWallet.tokenOperations('transfer', currencyName, acct2, ethTokenMultiplyDecimals(value, currencyName));
     const txObj = {
         to: ERC20TokensTestnet[currencyName],
         nonce: nonce,
@@ -389,7 +388,7 @@ async function doERC20TokenTransfer(acct1: string, acct2: string, psw: string, g
         data: transferCode
     };
 
-    const currentAddr = getAddrById(acct1,currencyName);
+    const currentAddr = getAddrById(acct1, currencyName);
     if (!currentAddr) return;
 
     const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
