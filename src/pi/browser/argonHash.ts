@@ -1,6 +1,8 @@
 /**
  * memory hash
  */
+// 手机版需要移除该引用
+import { getArgonHash } from '../../app/utils_pc/argon2';
 import { NativeObject, ParamType, registerSign } from './native';
 
 export class ArgonHash extends NativeObject {
@@ -20,30 +22,33 @@ export class ArgonHash extends NativeObject {
             type: 2,
             hashLen: 32
         };
-        this.call('getArgon2Hash', param);
+        if (navigator.userAgent.indexOf('YINENG') < 0) {
+            this.calcHashValueAtPc('getArgon2Hash', param);
+        } else {
+            this.call('getArgon2Hash', param);
+        }
+
     }
 
     public async calcHashValuePromise(iParam: any): Promise<any> {
         return new Promise((resolve, reject) => {
-            const param = {
-                success: (result) => {
-                    return resolve(result);
-                },
-                fail: (err) => {
-                    alert(`失败${err}`);
+            this.calcHashValue(iParam, (result) => {
+                return resolve(result);
+            }, (err) => {
+                alert(`失败${err}`);
 
-                    return reject(err);
-                },
-                t: 1,
-                m: 512 * 1024,
-                p: 8,
-                pwd: iParam.pwd || 'password',
-                salt: iParam.salt || 'somesalt',
-                type: 2,
-                hashLen: 32
-            };
-            this.call('getArgon2Hash', param);
+                return reject(err);
+            });
         });
+    }
+
+    private calcHashValueAtPc(iType: string, param: any) {
+        if (iType === 'getArgon2Hash') {
+            const hash = getArgonHash(param.pwd, param.salt, param.time, param.memory, param.hashLen, param.parallelism, 1);
+            setTimeout(() => {
+                param.success(hash);
+            }, 1000);
+        }
     }
 }
 
