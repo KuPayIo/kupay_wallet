@@ -173,6 +173,7 @@
             "CRLF"
         ],
         "no-multiline-string": false,
+        "no-http-string": false,
         "prefer-for-of": false,
         "no-unused-expression": false,
         "no-bitwise": false,

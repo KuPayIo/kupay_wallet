@@ -13,7 +13,7 @@ const Unit = bitcore.Unit;
 
 const cipher = new Cipher();
 
-export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional';
+export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 export type NETWORK = 'mainnet' | 'testnet';
 export type PRIORITY = 'high' | 'medium' | 'low';
 
@@ -48,7 +48,7 @@ export class BTCWallet {
     // funds that have at least `MIN_CONFIRMATION`
     public totalBalance: number;
 
-    public usedAdresses:any = {};
+    public usedAdresses: any = {};
     public utxos: any = [];
     public network: NETWORK;
     public language: LANGUAGE;
@@ -69,18 +69,18 @@ export class BTCWallet {
 
     /* tslint:disable:jsdoc-format */
     /* tslint:disable: no-redundant-jsdoc*/
-     /**
-     * Generate an HD wallet from scratch
-     *
-     * @static
-     * @param {string} passwd Password used to encrypt secrets
-     * @param {number} strength Default to 128, must be a divided by 32
-     * @param {NETWORK} network Network idenitifer
-     * @param {LANGUAGE} lang Mnenomic language
-     * @param {string} [passphrase] Salt used to provide extra credentials to generate seed, default to null
-     * @returns {BTCWallet}
-     * @memberof BTCWallet
-     */
+    /**
+    * Generate an HD wallet from scratch
+    *
+    * @static
+    * @param {string} passwd Password used to encrypt secrets
+    * @param {number} strength Default to 128, must be a divided by 32
+    * @param {NETWORK} network Network idenitifer
+    * @param {LANGUAGE} lang Mnenomic language
+    * @param {string} [passphrase] Salt used to provide extra credentials to generate seed, default to null
+    * @returns {BTCWallet}
+    * @memberof BTCWallet
+    */
     public static generate(passwd: string, strength: number, network: NETWORK, lang: LANGUAGE, passphrase?: string): BTCWallet {
         const mn = new Mnemonic(lang);
         passphrase = passphrase || '';
@@ -240,7 +240,8 @@ export class BTCWallet {
             rootseed: this.rootSeed,
             mnemonics: this.mnemonics,
             network: this.network,
-            language: this.language});
+            language: this.language
+        });
     }
 
     /**
@@ -326,7 +327,7 @@ export class BTCWallet {
     }
 
     // TODO: we should distinguish `confirmed`, `unconfirmed` and `spendable`
-    public async calcBalance(address?:string): Promise<number> {
+    public async calcBalance(address?: string): Promise<number> {
         let sum = 0;
 
         // TODO: use array.reduce ?
@@ -383,7 +384,7 @@ export class BTCWallet {
     // TODO: consider make this as a server side api
     public async scanUsedAddress(): Promise<number> {
         let count = 0;
-        let i     = 0;
+        let i = 0;
         this.usedAdresses = [];
         for (i = 0; ; i++) {
             const addr = this.derive(i);
