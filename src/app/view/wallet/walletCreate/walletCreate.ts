@@ -93,11 +93,11 @@ export class WalletCreate extends Widget {
         }, 500);
     }
 
-    public createWallet() {
+    public async createWallet() {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
         const addrs: Addr[] = getLocalStorage('addrs') || [];
 
-        const gwlt = GlobalWallet.generate(this.state.walletPsw, this.state.walletName);
+        const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName);
 
         // 创建钱包基础数据
         const wallet: Wallet = {
