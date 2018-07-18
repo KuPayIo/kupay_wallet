@@ -15,19 +15,19 @@
             {{end}}
             {{if it.itype==="prompt"}}
             <div ev-input-change="inputChange" w-class="input-father">
-                <input-input$$>{itype:{{it.inputType}},placeHolder:{{it.placeHolder}}}</input-input$$>
+                <input-input$$>{itype:{{it.inputType}},placeHolder:{{it.placeHolder}},style:{{it1.style}}}</input-input$$>
             </div>
             {{end}}
         </div>
         {{if it.itype !== "extra"}}
         <div w-class="btns">
             {{if it.itype==="confirm"||it.itype==="prompt"}}
-            <button type="button" w-class="button button_small" on-tap="doClickCancel" style="margin-right: 90px;">
+            <button type="button" w-class="button button_cancel" on-tap="doClickCancel">
                 <span>取消</span>
             </button>
             {{end}}
-            <button type="button" w-class="button button_small button_sure" on-tap="doClickSure">
-                <span>确定</span>
+            <button type="button" w-class="button button_sure" on-tap="doClickSure">
+                <span>验证</span>
             </button>
         </div>
         {{else}}

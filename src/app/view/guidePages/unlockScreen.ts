@@ -29,7 +29,7 @@ export class UnlockScreen extends Widget {
         
     }
 
-    public completedInput(r) {
+    public completedInput(r:any) {
         const psw = r.psw;
         const hash256 = sha256(psw + lockScreenSalt);
         const localHash256 = getLocalStorage('lockScreenPsw');
@@ -54,6 +54,7 @@ export class UnlockScreen extends Widget {
                     inputType:'password',
                     tipsTitle:gwlt.nickName,
                     tipsImgUrl:wallet.avatar,
+                    placeHolder:'请输入长密码',
                     confirmCallBack:this.verifyLongPsw,
                     confirmErrorText:'密码错误,请重新输入'
                 };
@@ -79,9 +80,26 @@ export class UnlockScreen extends Widget {
 
     public forgetPasswordClick() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-message-messagebox', { itype: 'prompt', title: '忘记密码', content: '忘记锁屏密码，请验证当前钱包长密码后重置',inputType:'password' }, (r) => {
-            console.log(r);
-
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+        const messageboxVerifyProps = {
+            itype: 'prompt', 
+            title: '忘记密码', 
+            content: '忘记锁屏密码，请验证当前钱包长密码后重置',
+            inputType:'password',
+            tipsTitle:gwlt.nickName,
+            tipsImgUrl:wallet.avatar,
+            placeHolder:'请输入长密码',
+            confirmCallBack:this.verifyLongPsw,
+            confirmErrorText:'密码错误,请重新输入'
+        };
+        popNew('app-components-message-messageboxVerify', messageboxVerifyProps,() => {
+            popNew('app-view-guidePages-setLockScreenScret');
+            this.ok && this.ok();
+        },() => {
+            this.init();
+            this.paint();
         });
     }
 }

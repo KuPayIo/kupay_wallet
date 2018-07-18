@@ -130,5 +130,5 @@ const ifNeedUnlockScreen = () => {
     const unlockScreen = document.querySelector('#unlock-screen');
     if (unlockScreen) return false;
     
-    return false;
+    return true;
 };

@@ -5,6 +5,8 @@
     left: 0;
     right: 0;
     text-align: center;
+    font-family: "PingFangSC-Regular";
+   
 }
 
 .bg{
@@ -36,7 +38,7 @@
 .main{
     display: inline-block;
     width: 570px;
-    min-height: 315px;
+    min-height: 500px;
     vertical-align: middle;
     background-color: rgb(255, 255, 255);
     border-radius: 4px;
@@ -49,8 +51,9 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    padding:0 40px;
+    padding:0 50px;
     box-sizing: border-box;
+    border-radius: 12px;
 }
 
 .header{
@@ -61,17 +64,18 @@
 .title{
     padding-left: 0;
     margin-bottom: 0;
-    font-size: 32px;
-    line-height: 1.5;
+    font-size: 40px;
+    line-height: 56px;
     color: #111111;
 }
 
 .content{
-    color: rgb(96, 98, 102);
-    font-size: 28px;
-    line-height: 1.5;
-    margin-top: 20px;
+    line-height: 45px;
+    margin-top: 30px;
     width: 490px;
+    font-size: 32px;
+    color: #8E96AB;
+    word-break: break-all;
 }
 .extra{
     color: #8E96AB;
@@ -88,23 +92,16 @@
 }
 
 .btns{
-    text-align: right;
-    top: 60px;
-    position: relative;
-    height: 150px;
-    right: 50px;
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .button{
-    display: inline-block;
-    line-height: 1;
     white-space: nowrap;
-    cursor: pointer;
     background: #fff;
     border: none;
-    border-color: #dcdfe6;
     -webkit-appearance: none;
-    text-align: center;
     box-sizing: border-box;
     outline: none;
     margin: 0;
@@ -113,25 +110,31 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 12px 20px;
-    font-size: 30px;
-    line-height: 1.5;
-    border-radius: 4px;
-    color: #111;
+    font-size: 32px;
+    border-radius: 100px;
+    width: 220px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    margin: 0;
+
 }
-.button_small {
-    padding: 9px 15px;
-    font-size: 30px;
-    border-radius: 3px;
+.button_cancel {
+    color: #A0ACC0;
+    border: 1px solid #A0ACC0;
 }
 
 .button_sure{
     color: #111;
+    color: rgba(255,255,255,0.87);
+    background: #1A70DD;
 }
 
 .input-father{
-    height: 85px;
-    margin-top: 40px;
+    height: 80px;
+    margin-top: 30px;
 }
 .quit-container{
     position: absolute;

@@ -34,7 +34,6 @@ export class MessageBoxVerify extends Widget {
 
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.state = { isShow: false, input: '' };
         this.init();
     }
 
@@ -73,10 +72,14 @@ export class MessageBoxVerify extends Widget {
     }
 
     private init() {
-        setTimeout(() => {
-            this.state.isShow = true;
-            this.paint();
-        }, 100);
+        this.state = { 
+            style:{
+                backgroundColor: '#F8F8F8',
+                border: '1px solid #D6D9DF',
+                borderRadius: '6px',
+                padding:'0 17px'
+            }
+        };
     }
 
 }
