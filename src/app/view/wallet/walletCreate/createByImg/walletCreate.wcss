@@ -1,3 +1,4 @@
+
 .ga-new-page{
     background-color: #fff;
 }
@@ -5,17 +6,27 @@
     height: 20px;
     background-color: #f8f8f8;
 }
-.ga-import-container{
-    padding: 28px 30px;
+.ga-notice-text{
+    font-size: 24px;
+    color: rgba(255,255,255,1);
+    line-height: 33px;
+    padding: 30px;
+    background:#1A70DD;
+}
+.ga-registered-container{
+    
 }
 
-.ga-import-item{
+.ga-registered-item{
+    height: 110px;
     display: flex;
     flex-direction: column;
-    height: 110px;
+    justify-content: center;
     position: relative;
+    background-color: #fff;
+    padding: 0 30px;
 }
-.ga-import-item-label{
+.ga-registered-item-label{
     margin-bottom: 12px;
     font-size: 24px;
     color: #8E96AB;
@@ -27,26 +38,24 @@
     height: 88px;
     position: relative;
 }
-.ga-textarea-father{
-    height: 200px;
-    margin-bottom: 28px;
-    box-sizing:border-box;
-}
 .ga-password-strength{
     position: absolute;
     right: 30px;
     bottom: 27px;
     text-align: right;
     line-height: 33px;
-    font-size: 24px;
+    font-size: 28px;
 }
 .ga-password-strength-label{
     color: rgba(102,102,102,0.87);
     margin-right: 5px;
+    font-size: 24px;
+    line-height: 33px;
+    
 }
 .ga-psw-tip-hidden{
     font-size: 24px;
-    color: #F3845B;
+    color: #FF0000;
     text-align: right;
     line-height: 33px;
     padding: 10px 30px 0;
@@ -57,10 +66,11 @@
 .ga-psw-tip-show{
     height: 43px;
 }
-.ga-import-protocol{
+.ga-registered-protocol{
     display: flex;
     align-items: center;
-    margin-top: 42px;
+    margin-top: 25px;
+    padding: 0 30px;
 }
 .ga-user-protocol{
     cursor: pointer;
@@ -69,20 +79,20 @@
     color: #1A70DD;
     text-align: left;
 }
-.ga-import-btn{
+.ga-wallet-create-btn{
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100px;
     cursor: pointer;
-    margin: 41px 0 0;
-    border-radius: 100px;
+    margin: 152px 30px 0;
+    border-radius: 6px;
     font-size: 32px;
-    color: rgba(255,255,255,0.87);
     text-align: center;
-    border:1px solid #1A70DD;
+    border-radius: 100px;
+    border: 1px solid #1A70DD;
 }
-.ga-whatis-mnemonic-btn{
+.ga-wallet-import-btn{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -93,12 +103,8 @@
     color: #8E96AB;
     text-align: center;
 }
-.topTip{
-    height:126px;
-    box-sizing:border-box;
-    padding:30px;
-    color:#FFFFFF;
-    background:#1A70DD;
-    font-size:24px;
-    line-height:33px;
+.ga-tips{
+    font-size:36px;
+    color:#111111;
+    line-height:50px;
 }

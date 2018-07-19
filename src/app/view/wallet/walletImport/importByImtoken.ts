@@ -31,7 +31,11 @@ export class WalletImport extends Widget {
             walletPswConfirm: '',
             walletPswTips: '',
             userProtocolReaded: false,
-            curWalletPswStrength: getWalletPswStrength()
+            curWalletPswStrength: getWalletPswStrength(),
+            textAreaStyle:{
+                "border":"3px dotted #A0ACC0",
+                "padding-top":"26px"
+            }
         };
     }
     public backPrePage() {
@@ -106,13 +110,8 @@ export class WalletImport extends Widget {
         }
         close.callback(close.widget);
         this.ok && this.ok();
-        const lockScreenPsw = getLocalStorage('lockScreenPsw');
-        if (!lockScreenPsw) {
-            popNew('app-view-guidePages-setLockScreenScret');
-        } else {
-            popNew('app-view-app');
-        }
         // popNew('app-view-wallet-backupWallet-backupWallet');
+        popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
 
     }
 

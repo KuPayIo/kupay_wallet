@@ -1,12 +1,12 @@
 <div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page">
-    <app-components-topBar-topBar>{title:"导入助记词"}</app-components-topBar-topBar>
+    <app-components-topBar-topBar>{title:"导入imtoken"}</app-components-topBar-topBar>
     <div w-class="topTip">
         Fairblock是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。
     </div>
     <div w-class="ga-import-container">
         <div ev-input-change="walletMnemonicChange">
             <div w-class="ga-textarea-father">
-                <app-components-input-input>{placeHolder:"请在这里输入助记词，空间键分隔",itype:"textarea",rows:3}</app-components-input-input>
+                <app-components-input-input>{placeHolder:"请在这里输入助记词，空间键分隔",itype:"textarea",rows:3,style:{{it1.textAreaStyle}}}</app-components-input-input>
             </div>
         </div>
         <div w-class="ga-import-item" ev-input-change="walletPswChange">

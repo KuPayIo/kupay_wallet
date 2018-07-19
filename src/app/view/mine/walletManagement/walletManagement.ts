@@ -160,10 +160,9 @@ export class WalletManagement extends Widget {
             const close = popNew('pi-components-loading-loading', { text: '导出中...' });
             try {
                 const mnemonic = await getMnemonic(wallet, r);
-                // const t = await VerifyIdentidy(wallet, r);
                 if (mnemonic) {
                     this.ok && this.ok();
-                    popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic });
+                    popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd: r });
                 } else {
                     popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
                 }

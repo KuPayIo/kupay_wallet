@@ -8,9 +8,8 @@
 		</div>
 	</div>
 	<div w-class="stepBarBox">
-		{{let totalSteps=it.totalSteps}}
 		{{let i=1}}
-		{{while i <= totalSteps}}
+		{{while i <= it1.totalSteps}}
 		<span w-class="step {{it1.step==i? 'stepchoosed' : ''}}"></span>
 		{{:i=i+1}}
 		{{end}}
