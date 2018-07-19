@@ -1,13 +1,14 @@
 /**
  * global wallet
  */
+import { ArgonHash } from '../../pi/browser/argonHash';
 import { dataCenter } from '../store/dataCenter';
 import { btcNetwork, defaultEthToken, lang, strength } from '../utils/constants';
 import { decrypt, getDefaultAddr, u8ArrayToHexstr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
-import { ERC20TokensTestnet } from './eth/tokens';
+import { ERC20Tokens } from './eth/tokens';
 import { GaiaWallet } from './eth/wallet';
 import { generate, generateRandomValues, toMnemonic, toSeed } from './genmnemonic';
 
@@ -48,7 +49,7 @@ export class GlobalWallet {
     get seed() {
         return this._seed;
     }
-    
+
     get randomValues() {
         return this._randomValues;
     }
@@ -87,7 +88,7 @@ export class GlobalWallet {
 
         for (let i = 0; i < defaultEthToken.length; i++) {
             const tokenName = defaultEthToken[i];
-            const contractAddress = ERC20TokensTestnet[tokenName];
+            const contractAddress = ERC20Tokens[tokenName];
             const tokenGwlt = await GlobalWallet.fromMnemonicEthToken(tokenName, contractAddress, passwd, mnemonic);
             gwlt._currencyRecords.push(tokenGwlt.currencyRecord);
             gwlt._addrs.push(...tokenGwlt.addrs);
@@ -115,27 +116,31 @@ export class GlobalWallet {
      * @param walletName  wallet name
      * @param passphrase passphrase
      */
-    public static generate(passwd: string, walletName: string, passphrase?: string): GlobalWallet {
+    public static async generate(passwd: string, walletName: string, passphrase?: string) {
         const gwlt = new GlobalWallet();
         gwlt._nickName = walletName;
 
+        const argonHash = new ArgonHash();
+        argonHash.init();
+        const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
+
         const randomValues = generateRandomValues(strength);
-        gwlt._randomValues = cipher.encrypt(passwd, u8ArrayToHexstr(randomValues));
+        gwlt._randomValues = cipher.encrypt(hash, u8ArrayToHexstr(randomValues));
 
         const mnemonic = toMnemonic(lang, randomValues);
-        gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
+        gwlt._mnemonic = cipher.encrypt(hash, mnemonic);
 
         const seed = toSeed(lang, mnemonic);
-        gwlt._seed = cipher.encrypt(passwd, seed);
+        gwlt._seed = cipher.encrypt(hash, seed);
 
         // 创建ETH钱包
-        const ethGwlt = this.createEthGwlt(passwd, mnemonic);
+        const ethGwlt = this.createEthGwlt(hash, mnemonic);
         gwlt._glwtId = ethGwlt.addr.addr;
         gwlt._currencyRecords.push(ethGwlt.currencyRecord);
         gwlt._addrs.push(ethGwlt.addr);
 
         // 创建BTC钱包
-        const btcGwlt = this.createBtcGwlt(passwd, mnemonic);
+        const btcGwlt = this.createBtcGwlt(hash, mnemonic);
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
         gwlt._addrs.push(btcGwlt.addr);
 

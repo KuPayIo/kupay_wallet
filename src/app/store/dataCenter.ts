@@ -1,10 +1,10 @@
-import { BtcApi } from '../core/btc/api';
+import {  BtcApi } from '../core/btc/api';
 import { Api as EthApi } from '../core/eth/api';
-import { ERC20TokensTestnet } from '../core/eth/tokens';
+import { ERC20Tokens } from '../core/eth/tokens'; 
 import { GaiaWallet } from '../core/eth/wallet';
-import { defaultEthToken, defaultExchangeRateJson, ethTokenTransferCode, supportCurrencyList } from '../utils/constants';
+import { defaultExchangeRateJson,ethTokenTransferCode,supportCurrencyList } from '../utils/constants';
 import {
-    ethTokenDivideDecimals, getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage, wei2Eth
+    ethTokenDivideDecimals, getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc,setLocalStorage,wei2Eth
 } from '../utils/tools';
 /**
  * 创建事件处理器表
@@ -27,7 +27,7 @@ export class DataCenter {
 
     public updateList: any[] = [];
 
-    public exchangeRateJson: any = defaultExchangeRateJson;
+    public exchangeRateJson:any = defaultExchangeRateJson;
     public currencyList: any[] = supportCurrencyList;
     /**
      * 初始化
@@ -85,7 +85,7 @@ export class DataCenter {
     /**
      * 通过地址获取地址余额
      */
-    public getAddrInfoByAddr(addr: string, currencyName: string) {
+    public getAddrInfoByAddr(addr: string,currencyName:string) {
         const addrs = getLocalStorage('addrs') || [];
 
         return addrs.filter(v => v.addr === addr && v.currencyName === currencyName)[0];
@@ -101,7 +101,7 @@ export class DataCenter {
         // return transactions.filter(v => v.addr === addr);
 
         let list = [];
-        if (currencyName === 'ETH' || ERC20TokensTestnet[currencyName]) {
+        if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
             list = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
         } else if (currencyName === 'BTC') {
             list = transactions.filter(v => v.addr === addr && v.currencyName === currencyName).map(v => {
@@ -193,8 +193,8 @@ export class DataCenter {
      * 解析交易详情
      */
     private parseTransactionDetails(addr: string, currencyName: string) {
-        if (ERC20TokensTestnet[currencyName]) {
-            this.parseEthERC20TokenTransactionDetails(addr, currencyName);
+        if (ERC20Tokens[currencyName]) {
+            this.parseEthERC20TokenTransactionDetails(addr,currencyName);
 
             return;
         }
@@ -203,13 +203,13 @@ export class DataCenter {
             case 'BTC': this.parseBtcTransactionDetails(addr); break;
             default:
         }
-
+            
     }
 
     private async parseEthERC20TokenTransactionDetails(addr: string, currencyName: string) {
         const api = new EthApi();
-        const contractAddress = ERC20TokensTestnet[currencyName];
-        const res = await api.getTokenTransferEvents(contractAddress, addr);
+        const contractAddress = ERC20Tokens[currencyName];
+        const res = await api.getTokenTransferEvents(contractAddress,addr);
         const list = [];
         const transactions = getLocalStorage('transactions') || [];
         res.result.forEach(v => {
@@ -269,12 +269,12 @@ export class DataCenter {
         }
     }
     // 过滤eth交易记录，过滤掉token的交易记录
-    private filterEthTrans(trans: any[]) {
+    private filterEthTrans(trans:any[]) {
 
         return trans.filter(item => {
             if (item.to.length === 0) return false;
             if (item.input.indexOf(ethTokenTransferCode) === 0) return false;
-
+            
             return true;
         });
 
@@ -284,7 +284,7 @@ export class DataCenter {
         const info = await BtcApi.getAddrInfo(addr);
         if (!info) return;
         const num = sat2Btc(info.balance);
-        this.setBalance(addr, 'BTC', num);
+        this.setBalance(addr, 'BTC',num);
         // console.log('getAddrInfo', info);
         if (info.txrefs) {
             const transactions = getLocalStorage('transactions') || [];
@@ -309,7 +309,7 @@ export class DataCenter {
 
             return;
         }
-        const info = await BtcApi.getTxInfo(iInfo.tx_hash);
+        const info = await BtcApi.getAddrInfo(addr);
         // console.log('getTxInfo', info);
         let inputs = [];
         let outputs = [];
@@ -389,16 +389,17 @@ export class DataCenter {
      * 更新余额
      */
     private updateBalance(addr: string, currencyName: string) {
-        if (ERC20TokensTestnet[currencyName]) {
-            const balanceOfCode = GaiaWallet.tokenOperations('balanceof', currencyName, addr);
+        if (ERC20Tokens[currencyName]) {
+            const balanceOfCode = GaiaWallet.tokenOperations('balanceof',currencyName,addr);
             // console.log('balanceOfCode',balanceOfCode);
             const api = new EthApi();
-            api.ethCall(ERC20TokensTestnet[currencyName], balanceOfCode).then(r => {
+            api.ethCall(ERC20Tokens[currencyName],balanceOfCode).then(r => {
                 // tslint:disable-next-line:radix
-                const num = ethTokenDivideDecimals(parseInt(r), currencyName);
-                this.setBalance(addr, currencyName, num);
+                const num = ethTokenDivideDecimals(Number(r),currencyName);
+                // console.log(currencyName,num);
+                this.setBalance(addr,currencyName,num);
             });
-
+            
             return;
         }
         switch (currencyName) {
@@ -406,7 +407,7 @@ export class DataCenter {
                 const api = new EthApi();
                 api.getBalance(addr).then(r => {
                     const num = wei2Eth((<any>r).toNumber());
-                    this.setBalance(addr, currencyName, num);
+                    this.setBalance(addr,currencyName, num);
                 });
                 break;
             case 'BTC': break;
@@ -418,7 +419,7 @@ export class DataCenter {
     /**
      * 设置余额
      */
-    private setBalance(addr: string, currencyName: string, num: number) {
+    private setBalance(addr: string,currencyName:string, num: number) {
         let addrs = getLocalStorage('addrs') || [];
 
         let isUpdate = false;
@@ -442,7 +443,7 @@ export class DataCenter {
                 const ethApi: EthApi = new EthApi();
                 this.exchangeRateJson.ETH = await ethApi.getExchangeRate();
                 break;
-            case 'BTC':
+            case 'BTC': 
                 this.exchangeRateJson.BTC = await BtcApi.getExchangeRate();
                 break;
             default:
@@ -450,12 +451,12 @@ export class DataCenter {
 
     }
 
-    private setTransactionLocalStorage(transactions: any[], notify: boolean = false) {
+    private setTransactionLocalStorage(transactions:any[],notify:boolean= false) {
         const addrs = getLocalStorage('addrs');
         const existedAddrs = [];
         addrs.forEach(addr => existedAddrs.push(addr.addr));
         const trans = transactions.filter(trans => existedAddrs.indexOf(trans.addr) >= 0);
-        setLocalStorage('transactions', trans, notify);
+        setLocalStorage('transactions',trans,notify);
     }
 }
 

@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { ERC20TokensTestnet } from '../../../core/eth/tokens';
+import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
 import { register,unregister } from '../../../store/store';
@@ -92,11 +92,11 @@ export class AddAsset extends Widget {
                 isInit = true;
             }
         });
-        if (!isInit && ERC20TokensTestnet[currencys.name]) {
+        if (!isInit && ERC20Tokens[currencys.name]) {
             const psw = decrypt(wallet.walletPsw);
             const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
-            initERC20TokenCurrency(currencys.name,ERC20TokensTestnet[currencys.name],psw,gwlt.seed);
+            initERC20TokenCurrency(currencys.name,ERC20Tokens[currencys.name],psw,gwlt.seed);
 
             return;
         }

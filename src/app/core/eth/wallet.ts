@@ -8,7 +8,7 @@ import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
 import { Web3 } from '../thirdparty/web3.min';
 import { WORDLIST } from '../thirdparty/wordlist';
 import { Api } from './api';
-import { ERC20TokensTestnet, minABI } from './tokens';
+import { ERC20Tokens, minABI } from './tokens';
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
@@ -229,7 +229,7 @@ export class GaiaWallet {
     }
     
     public static tokenOperations(method: string, tokenName: string, toAddr?: string, amount?: number): string {
-        const tokenAddress = ERC20TokensTestnet[tokenName];
+        const tokenAddress = ERC20Tokens[tokenName];
         if (tokenAddress === undefined) {
             throw new Error('This token doesn\'t supported');
         }
@@ -344,7 +344,6 @@ export class GaiaWallet {
         }
         privKey = Buffer(privKey, 'hex');
         tx.sign(privKey);
-
         return tx.serialize();
     }
 

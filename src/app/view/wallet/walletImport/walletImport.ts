@@ -106,8 +106,13 @@ export class WalletImport extends Widget {
         }
         close.callback(close.widget);
         this.ok && this.ok();
+        const lockScreenPsw = getLocalStorage('lockScreenPsw');
+        if (!lockScreenPsw) {
+            popNew('app-view-guidePages-setLockScreenScret');
+        } else {
+            popNew('app-view-app');
+        }
         // popNew('app-view-wallet-backupWallet-backupWallet');
-        popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
 
     }
 

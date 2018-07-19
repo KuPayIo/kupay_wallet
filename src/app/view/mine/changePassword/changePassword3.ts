@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
-import { ERC20TokensTestnet } from '../../../core/eth/tokens';
+import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { pswEqualed } from '../../../utils/account';
@@ -12,10 +12,12 @@ import { btcNetwork,lang } from '../../../utils/constants';
 import { 
     decrypt, 
     encrypt, 
-    getAddrsAll ,
-    getCurrentWallet, 
-    getLocalStorage,
-    setLocalStorage 
+    getAddrById ,
+    getAddrsAll, 
+    getCurrentWallet,
+    getLocalStorage, 
+    resetAddrById,
+    setLocalStorage
 } from '../../../utils/tools';
 
 export class ChangePasswordStep3 extends Widget {
@@ -67,8 +69,7 @@ export class ChangePasswordStep3 extends Widget {
         const walletPswOld = decrypt(wallet.walletPsw);
 
         // 货币列表下所有的地址的wlt修改
-        const needUpdateAddrs = getAddrsAll(wallet);
-        this.addrsGaiaWalletChange(needUpdateAddrs,walletPswOld,this.props.psw);
+        this.addrsGaiaWalletChange(walletPswOld,this.props.psw);
 
         // 最外层gwlt修改
         const gwlt =  GlobalWallet.fromJSON(wallet.gwlt);
@@ -86,34 +87,34 @@ export class ChangePasswordStep3 extends Widget {
      * @param newPsw new password
      * @return new addrs
      */
-    public addrsGaiaWalletChange(needUpdateAddrs:string[],oldPsw:string,newPsw:string) {
+    public addrsGaiaWalletChange(oldPsw:string,newPsw:string) {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
+        const currencyRecords = wallet.currencyRecords;
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         const seed = gwlt.exportSeed(oldPsw);
-        const addrs = getLocalStorage('addrs');
-        addrs.forEach((item) => {
-            if (needUpdateAddrs.indexOf(item.addr) >= 0) {
-                if (ERC20TokensTestnet[item.currencyName]) {
-                    const gaiaWallet = GaiaWallet.fromSeed(newPsw,seed,lang);
-                    item.wlt = gaiaWallet.toJSON();
-                    
-                    return;
+        currencyRecords.forEach(item => {
+            const currencyName = item.currencyName;
+            const needUpdateAddrs = item.addrs;
+            if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
+                const firstAddr = GaiaWallet.fromSeed(newPsw,seed,lang);
+                const addr = getAddrById(needUpdateAddrs[0],currencyName);
+                addr.wlt = firstAddr.toJSON();
+                resetAddrById(needUpdateAddrs[0],currencyName,addr);
+                for (let i = 1; i < needUpdateAddrs.length; i++) {
+                    const addr = getAddrById(needUpdateAddrs[i],currencyName);
+                    addr.wlt = firstAddr.selectAddress(newPsw,i).toJSON();
+                    resetAddrById(needUpdateAddrs[i],currencyName,addr);
                 }
-                switch (item.currencyName) {
-                    case 'ETH':
-                        const gaiaWallet = GaiaWallet.fromSeed(newPsw,seed,lang);
-                        item.wlt = gaiaWallet.toJSON();
-                        break;
-                    case 'BTC':
-                        const btcWallet = BTCWallet.fromSeed(newPsw,seed,btcNetwork,lang);
-                        item.wlt = btcWallet.toJSON();
-                        break;
-                    default:
+            } else if (currencyName === 'BTC') {
+                const btcWallet = BTCWallet.fromSeed(newPsw,seed,btcNetwork,lang);
+                for (let i = 0; i < needUpdateAddrs.length; i++) {
+                    const addr = getAddrById(needUpdateAddrs[i],currencyName);
+                    addr.wlt = btcWallet.toJSON();
+                    resetAddrById(needUpdateAddrs[i],currencyName,addr);
                 }
             }
         });
-        setLocalStorage('addrs',addrs);
     }
 
 }
