@@ -25,4 +25,6 @@
 }
 .ga-banner-title{
     font-size: 36px;
+    position: absolute;
+    left: 74px;
 }

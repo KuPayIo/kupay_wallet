@@ -83,8 +83,7 @@ export class Home extends Widget {
 
             return;
         }
-        popNew('app-view-wallet-walletCreate-walletCreate');
-        //popNew('app-view-wallet-share-share');
+        popNew('app-view-wallet-walletCreate-createWalletEnter');
     }
     public switchWalletClick() {
         popNew('app-view-wallet-switchWallet-switchWallet');

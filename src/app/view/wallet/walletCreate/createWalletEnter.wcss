@@ -1,0 +1,55 @@
+.body{
+    box-sizing: border-box;
+    padding: 0 30px;
+    text-align: center;
+}
+.imgsecur{
+	margin-top:242px;
+}
+.tips{
+	color: #203260;
+	font-size: 28px;
+	line-height: 40px;
+	margin-top: 41px;
+}
+.btnBlue{
+	color: rgba(255,255,255,0.87);
+	background: rgba(26,112,221,1);
+	cursor: pointer;
+	height: 100px;
+	line-height: 100px;
+	border-radius: 100px;
+	font-size: 32px;
+}
+.btnWhite{
+	color: rgba(160,172,192,1);
+	background: none;
+	cursor: pointer;
+	height: 100px;
+	line-height: 100px;
+	border-radius: 100px;
+	font-size: 32px;
+	border: 1px solid #A0ACC0;
+}
+.btn{
+	margin-top: 63px;
+}
+.btn2{
+	margin-top: 20px;
+}
+.btn3{
+	margin-top: 60px;
+}
+.botTips{
+	position: absolute;
+	bottom: 40px;
+	left: 0;
+	right: 0;
+	margin: auto;
+	color: rgba(160,172,192,1);
+	font-size: 28px;
+	line-height: 40px;
+}
+.botItem{
+	padding: 0 10px;
+}
