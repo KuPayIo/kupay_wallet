@@ -22,7 +22,8 @@ export class GlobalWallet {
     private _currencyRecords: CurrencyRecord[] = [];
     private _addrs: Addr[] = [];
     private _seed: string;
-    private _randomValues: string;
+    private _vault: string;
+    private _mnemonicBackup: boolean = false;// 助记词备份
 
     get glwtId(): string {
         return this._glwtId;
@@ -50,8 +51,11 @@ export class GlobalWallet {
         return this._seed;
     }
 
-    get randomValues() {
-        return this._randomValues;
+    get vault() {
+        return this._vault;
+    }
+    get mnemonicBackup() {
+        return this._mnemonicBackup;
     }
 
     public static fromJSON(jsonstring: string): GlobalWallet {
@@ -62,6 +66,8 @@ export class GlobalWallet {
         gwlt._nickName = wlt.nickname;
         gwlt._mnemonic = wlt.mnemonic;
         gwlt._seed = wlt.seed;
+        gwlt._vault = wlt.vault;
+        gwlt._mnemonicBackup = wlt.mnemonicBackup;
 
         return gwlt;
     }
@@ -123,11 +129,14 @@ export class GlobalWallet {
         const argonHash = new ArgonHash();
         argonHash.init();
         const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
+        // const hash = passwd; 
+        // const hash = '11111111';
 
-        const randomValues = generateRandomValues(strength);
-        gwlt._randomValues = cipher.encrypt(hash, u8ArrayToHexstr(randomValues));
+        const vault = generateRandomValues(strength);
+        gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
+        console.log('generate hash', hash, gwlt._vault, passwd,u8ArrayToHexstr(vault));
 
-        const mnemonic = toMnemonic(lang, randomValues);
+        const mnemonic = toMnemonic(lang, vault);
         gwlt._mnemonic = cipher.encrypt(hash, mnemonic);
 
         const seed = toSeed(lang, mnemonic);
@@ -400,7 +409,9 @@ export class GlobalWallet {
             glwtId: this._glwtId,
             nickname: this._nickName,
             mnemonic: this._mnemonic,
-            seed: this._seed
+            seed: this._seed,
+            vault: this._vault,
+            mnemonicBackup: this._mnemonicBackup
         };
 
         return JSON.stringify(wlt);
