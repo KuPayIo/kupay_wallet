@@ -4,18 +4,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { register,unregister } from '../../../store/store';
+import { register, unregister } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import {
-    decrypt,
-    encrypt,
-    fetchTotalAssets,
-    formatBalanceValue,
-    getAddrsAll,
-    getCurrentWallet,
-    getCurrentWalletIndex,
-    getLocalStorage,
-    setLocalStorage
+    decrypt, encrypt, fetchTotalAssets, formatBalanceValue, getAddrsAll, getCurrentWallet, getCurrentWalletIndex
+    , getLocalStorage, getMnemonic, setLocalStorage, VerifyIdentidy
 } from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
@@ -30,13 +23,6 @@ export class WalletManagement extends Widget {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        const walletPsw = decrypt(wallet.walletPsw);
-        let mnemonicExisted = true;
-        try {
-            gwlt.exportMnemonic(walletPsw);
-        } catch (e) {
-            mnemonicExisted = false;
-        }
         let pswTips = '';
         if (wallet.walletPswTips) {
             pswTips = decrypt(wallet.walletPswTips);
@@ -47,23 +33,23 @@ export class WalletManagement extends Widget {
             gwlt,
             showPswTips: false,
             pswTips,
-            mnemonicExisted,
+            mnemonicBackup: gwlt.mnemonicBackup,
             isUpdatingWalletName: false,
             isUpdatingPswTips: false,
-            totalAssets:0.00
+            totalAssets: 0.00
         };
         this.registerAddrsFun();
     }
 
     public destroy() {
-        unregister('wallets',this.registerWalletsFun);
+        unregister('wallets', this.registerWalletsFun);
         unregister('addrs', this.registerAddrsFun);
-        
+
         return super.destroy();
     }
     public backPrePage() {
         this.pageClick();
-        
+
         this.ok && this.ok();
     }
 
@@ -159,26 +145,34 @@ export class WalletManagement extends Widget {
         }
     }
 
+    /**
+     * 备份助记词
+     */
     public backupMnemonic() {
         if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
             this.pageClick();
 
             return;
         }
-        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (r) => {
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
-            const walletPsw = decrypt(wallet.walletPsw);
-            if (pswEqualed(r, walletPsw)) {
-                const close = popNew('pi-components-loading-loading', { text: '导出中...' });
-                setTimeout(() => {
-                    close.callback(close.widget);
+            const close = popNew('pi-components-loading-loading', { text: '导出中...' });
+            try {
+                const mnemonic = await getMnemonic(wallet, r);
+                // const t = await VerifyIdentidy(wallet, r);
+                if (mnemonic) {
                     this.ok && this.ok();
-                    popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
-                }, 500);
-            } else {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+                    popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic });
+                } else {
+                    popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+                }
+            } catch (error) {
+                console.log(error);
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入111', center: true });
             }
+
+            close.callback(close.widget);
         });
     }
     /**
@@ -208,9 +202,9 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        if (this.state.mnemonicExisted) {
+        if (!this.state.mnemonicBackup) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' }, () => {
-                popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
+                popNew('app-view-wallet-backupWallet-backupMnemonicWord');
             });
         } else {
             this.signOut();
@@ -232,9 +226,9 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        if (this.state.mnemonicExisted) {
+        if (!this.state.mnemonicBackup) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' }, () => {
-                popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
+                popNew('app-view-wallet-backupWallet-backupMnemonicWord');
             });
         } else {
             this.deleteWallet();
@@ -294,23 +288,16 @@ export class WalletManagement extends Widget {
         setLocalStorage('transactions', transactionsNew);
     }
 
-    private registerWalletsFun = (wallets:any) => {
+    private registerWalletsFun = (wallets: any) => {
         const wallet = getCurrentWallet(wallets);
         if (!wallet) return;
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        const walletPsw = decrypt(wallet.walletPsw);
-        let mnemonicExisted = true;
-        try {
-            gwlt.exportMnemonic(walletPsw);
-        } catch (e) {
-            mnemonicExisted = false;
-        }
         let pswTips = '';
         if (wallet.walletPswTips) {
             pswTips = decrypt(wallet.walletPswTips);
         }
         pswTips = pswTips.length > 0 ? pswTips : '无';
-        this.state.mnemonicExisted = mnemonicExisted;
+        this.state.mnemonicBackup = gwlt.mnemonicBackup;
         this.state.pswTips = pswTips;
         this.paint();
     }
@@ -318,11 +305,11 @@ export class WalletManagement extends Widget {
     /**
      * 总资产更新
      */
-    private registerAddrsFun = (addrs?:any) => {
+    private registerAddrsFun = (addrs?: any) => {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         if (!wallet) return;
-        
+
         this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
         this.paint();
     }

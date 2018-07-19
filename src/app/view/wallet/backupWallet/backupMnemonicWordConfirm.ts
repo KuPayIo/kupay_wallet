@@ -4,24 +4,23 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { decrypt, getCurrentWallet, getLocalStorage,setLocalStorage,shuffle } from '../../../utils/tools';
+import { decrypt, getCurrentWallet, getLocalStorage, setLocalStorage, shuffle } from '../../../utils/tools';
+
+interface Props {
+    mnemonic: string;
+}
 
 export class BackupMnemonicWordConfirm extends Widget {
     public ok: () => void;
     constructor() {
         super();
     }
-    public create() {
-        super.create();
+    public setProps(props: Props, oldProps: Props): void {
+        super.setProps(props, oldProps);
         this.init();
     }
-
     public init() {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
-        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        const walletPsw = decrypt(wallet.walletPsw);
-        const mnemonic = gwlt.exportMnemonic(walletPsw).split(' ');
+        const mnemonic = this.props.mnemonic.split(' ');
         const shuffledMnemonic = this.initMnemonic(mnemonic);
         this.state = {
             mnemonic,
@@ -34,10 +33,10 @@ export class BackupMnemonicWordConfirm extends Widget {
             itype: 'confirm',
             title: '提示',
             content: '为了确保您的资产安全，建议不要跳过验证！',
-            okButton:'取消',
-            cancelButton:'跳过',
-            okButtonStyle:'color:rgba(26,112,221,1);'
-        },null,() => {
+            okButton: '取消',
+            cancelButton: '跳过',
+            okButtonStyle: 'color:rgba(26,112,221,1);'
+        }, null, () => {
             this.ok && this.ok();
         });
     }
@@ -71,13 +70,13 @@ export class BackupMnemonicWordConfirm extends Widget {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '请检查助记词', content: '' });
         } else {
             popNew('app-components-message-messagebox',
-             { itype: 'confirm', title: '是否移除助记词？', content: '确认抄写助记词，此操作不可撤销' }, 
-             () => {
-                 this.deleteMnemonic();
-                 this.ok && this.ok();
-             }, () => {
-                 this.ok && this.ok();
-             });
+                { itype: 'confirm', title: '是否移除助记词？', content: '确认抄写助记词，此操作不可撤销' },
+                () => {
+                    this.deleteMnemonic();
+                    this.ok && this.ok();
+                }, () => {
+                    this.ok && this.ok();
+                });
         }
     }
 
@@ -89,10 +88,10 @@ export class BackupMnemonicWordConfirm extends Widget {
         // 删除主线助记词
         gwlt.deleteMnemonic(psw);
         wallet.gwlt = gwlt.toJSON();
-        setLocalStorage('wallets', wallets,true);
+        setLocalStorage('wallets', wallets, true);
     }
 
-    public shuffledMnemonicItemClick(e:Event, v:number) {
+    public shuffledMnemonicItemClick(e: Event, v: number) {
         const mnemonic = this.state.shuffledMnemonic[v];
         if (mnemonic.isActive) return;
         mnemonic.isActive = true;
@@ -100,7 +99,7 @@ export class BackupMnemonicWordConfirm extends Widget {
         this.paint();
     }
 
-    public confirmedMnemonicItemClick(e:Event, v:number) {
+    public confirmedMnemonicItemClick(e: Event, v: number) {
         const arr = this.state.confirmedMnemonic.splice(v, 1);
         arr[0].isActive = false;
         this.paint();
@@ -116,7 +115,7 @@ export class BackupMnemonicWordConfirm extends Widget {
                 break;
             }
         }
-        
+
         return isEqualed;
     }
 }

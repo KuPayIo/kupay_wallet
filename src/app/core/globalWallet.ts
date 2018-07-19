@@ -1,6 +1,7 @@
 /**
  * global wallet
  */
+import { ArgonHash } from '../../pi/browser/argonHash';
 import { dataCenter } from '../store/dataCenter';
 import { btcNetwork, defaultEthToken, lang, strength } from '../utils/constants';
 import { decrypt, getDefaultAddr, u8ArrayToHexstr } from '../utils/tools';
@@ -21,7 +22,8 @@ export class GlobalWallet {
     private _currencyRecords: CurrencyRecord[] = [];
     private _addrs: Addr[] = [];
     private _seed: string;
-    private _randomValues: string;
+    private _vault: string;
+    private _mnemonicBackup: boolean = false;// 助记词备份
 
     get glwtId(): string {
         return this._glwtId;
@@ -48,9 +50,12 @@ export class GlobalWallet {
     get seed() {
         return this._seed;
     }
-    
-    get randomValues() {
-        return this._randomValues;
+
+    get vault() {
+        return this._vault;
+    }
+    get mnemonicBackup() {
+        return this._mnemonicBackup;
     }
 
     public static fromJSON(jsonstring: string): GlobalWallet {
@@ -61,6 +66,8 @@ export class GlobalWallet {
         gwlt._nickName = wlt.nickname;
         gwlt._mnemonic = wlt.mnemonic;
         gwlt._seed = wlt.seed;
+        gwlt._vault = wlt.vault;
+        gwlt._mnemonicBackup = wlt.mnemonicBackup;
 
         return gwlt;
     }
@@ -115,27 +122,34 @@ export class GlobalWallet {
      * @param walletName  wallet name
      * @param passphrase passphrase
      */
-    public static generate(passwd: string, walletName: string, passphrase?: string): GlobalWallet {
+    public static async generate(passwd: string, walletName: string, passphrase?: string) {
         const gwlt = new GlobalWallet();
         gwlt._nickName = walletName;
 
-        const randomValues = generateRandomValues(strength);
-        gwlt._randomValues = cipher.encrypt(passwd, u8ArrayToHexstr(randomValues));
+        const argonHash = new ArgonHash();
+        argonHash.init();
+        const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
+        // const hash = passwd; 
+        // const hash = '11111111';
 
-        const mnemonic = toMnemonic(lang, randomValues);
-        gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
+        const vault = generateRandomValues(strength);
+        gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
+        console.log('generate hash', hash, gwlt._vault, passwd,u8ArrayToHexstr(vault));
+
+        const mnemonic = toMnemonic(lang, vault);
+        gwlt._mnemonic = cipher.encrypt(hash, mnemonic);
 
         const seed = toSeed(lang, mnemonic);
-        gwlt._seed = cipher.encrypt(passwd, seed);
+        gwlt._seed = cipher.encrypt(hash, seed);
 
         // 创建ETH钱包
-        const ethGwlt = this.createEthGwlt(passwd, mnemonic);
+        const ethGwlt = this.createEthGwlt(hash, mnemonic);
         gwlt._glwtId = ethGwlt.addr.addr;
         gwlt._currencyRecords.push(ethGwlt.currencyRecord);
         gwlt._addrs.push(ethGwlt.addr);
 
         // 创建BTC钱包
-        const btcGwlt = this.createBtcGwlt(passwd, mnemonic);
+        const btcGwlt = this.createBtcGwlt(hash, mnemonic);
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
         gwlt._addrs.push(btcGwlt.addr);
 
@@ -395,7 +409,9 @@ export class GlobalWallet {
             glwtId: this._glwtId,
             nickname: this._nickName,
             mnemonic: this._mnemonic,
-            seed: this._seed
+            seed: this._seed,
+            vault: this._vault,
+            mnemonicBackup: this._mnemonicBackup
         };
 
         return JSON.stringify(wlt);

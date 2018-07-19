@@ -54,7 +54,7 @@ export class WalletCreate extends Widget {
     public agreementClick() {
         popNew('app-view-wallet-agreementInterpretation-agreementInterpretation');
     }
-    public createWalletClick() {
+    public async createWalletClick() {
         if (!this.state.userProtocolReaded) {
             // popNew("app-components-message-message", { itype: "notice", content: "请阅读用户协议" })
             return;
@@ -82,26 +82,23 @@ export class WalletCreate extends Widget {
         }
 
         const close = popNew('pi-components-loading-loading', { text: '创建中...' });
-        this.createWallet();
-        setTimeout(() => {
-            close.callback(close.widget);
-            this.ok && this.ok();
-            // popNew('app-view-wallet-backupWallet-backupWallet');
-            const wallets = getLocalStorage('wallets');
-            if (wallets.walletList.length === 1) {
-                popNew('app-view-guidePages-setLockScreenScret');
-            } else {
-                popNew('app-view-app');
-            }
-            
-        }, 500);
+        await this.createWallet();
+        close.callback(close.widget);
+        this.ok && this.ok();
+        // popNew('app-view-wallet-backupWallet-backupWallet');
+        const lockScreenPsw = getLocalStorage('lockScreenPsw');
+        if (!lockScreenPsw) {
+            popNew('app-view-guidePages-setLockScreenScret');
+        } else {
+            popNew('app-view-app');
+        }
     }
 
-    public createWallet() {
+    public async createWallet() {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
         const addrs: Addr[] = getLocalStorage('addrs') || [];
 
-        const gwlt = GlobalWallet.generate(this.state.walletPsw, this.state.walletName);
+        const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName);
 
         // 创建钱包基础数据
         const wallet: Wallet = {

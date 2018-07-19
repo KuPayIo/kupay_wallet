@@ -1,17 +1,20 @@
 /**
  * common tools
  */
+import { ArgonHash } from '../../pi/browser/argonHash';
+import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { isNumber } from '../../pi/util/util';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
+import { toMnemonic } from '../core/genmnemonic';
+import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
-import { lockScreenSalt } from './constants';
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
+import { lang,lockScreenSalt } from './constants';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
@@ -81,7 +84,7 @@ export const getCurrentAddrInfo = (currencyName: string) => {
  * 通过地址id获取地址信息
  * @param addrId  address id
  */
-export const getAddrById = (addrId:string,currencyName:string): Addr => {
+export const getAddrById = (addrId: string, currencyName: string): Addr => {
     const list: Addr[] = getLocalStorage('addrs') || [];
 
     return list.filter(v => v.addr === addrId && v.currencyName === currencyName)[0];
@@ -93,7 +96,7 @@ export const getAddrById = (addrId:string,currencyName:string): Addr => {
  * @param data  新地址
  * @param notified 是否通知数据发生改变 
  */
-export const resetAddrById = (addrId:string,currencyName:string, data: Addr, notified?: boolean) => {
+export const resetAddrById = (addrId: string, currencyName: string, data: Addr, notified?: boolean) => {
     let list: Addr[] = getLocalStorage('addrs') || [];
     list = list.map(v => {
         if (v.addr === addrId && v.currencyName === currencyName) return data;
@@ -161,7 +164,7 @@ export const decrypt = (cipherText: string) => {
 // hash256
 export const sha256 = (data: string) => {
     const cipher = new Cipher();
-    
+
     return cipher.sha256(data);
 };
 
@@ -220,20 +223,20 @@ export const btc2Sat = (num: number) => {
 /**
  * eth 代币除以精度计算
  */
-export const ethTokenDivideDecimals = (num:number,tokenName:string) => {
+export const ethTokenDivideDecimals = (num: number, tokenName: string) => {
     const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
-    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10,18);
+    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10, 18);
 
-    return num / decimals; 
+    return num / decimals;
 };
 /**
  * eth 代币乘以精度计算
  */
-export const ethTokenMultiplyDecimals = (num:number,tokenName:string) => {
+export const ethTokenMultiplyDecimals = (num: number, tokenName: string) => {
     const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
-    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10,18);
+    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10, 18);
 
-    return num * decimals; 
+    return num * decimals;
 };
 
 /**
@@ -254,7 +257,7 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
@@ -270,7 +273,7 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
  * @param currencyName  当前货币类型
  * @param isWei 是否wei转化effectiveCurrencyNoConversion
  */
-export  const  effectiveCurrencyNoConversion =   (perNum: any, currencyName: string, isMinUnit: boolean) => {
+export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isMinUnit: boolean) => {
     const r: any = { num: 0, show: '', conversionShow: '' };
     let num;
     if (currencyName === 'ETH') {
@@ -278,11 +281,11 @@ export  const  effectiveCurrencyNoConversion =   (perNum: any, currencyName: str
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
-    
+
     return r;
 
 };
@@ -304,7 +307,7 @@ export const effectiveCurrencyStableConversion = (perNum: any, currencyName: str
     } else if (currencyName === 'BTC') {
         num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
     } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum,currencyName) : perNum;
+        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
     r.num = num;
     r.show = `${num} ${currencyName}`;
@@ -511,7 +514,7 @@ export const urlParams = (url: string, key: string) => {
     return ret && decodeURIComponent(ret[2]);
 };
 
-export const formatBalance = (banlance:number) => {
+export const formatBalance = (banlance: number) => {
     let retBanlance;
     if (banlance >= 1) {
         retBanlance = +banlance.toPrecision(7);
@@ -520,7 +523,7 @@ export const formatBalance = (banlance:number) => {
     } else {
         retBanlance = +banlance.toPrecision(6);
     }
-    
+
     return retBanlance;
 };
 
@@ -677,7 +680,7 @@ export const reductionCipherMnemonic = (cipherMnemonic: string) => {
 /**
  * 余额格式化
  */
-export const formatBalanceValue = (value:number) => {
+export const formatBalanceValue = (value: number) => {
     return value.toFixed(2);
 };
 
@@ -690,10 +693,10 @@ export const fetchTotalAssets = () => {
     if (!wallet) return;
     let totalAssets = 0;
     wallet.currencyRecords.forEach(item => {
-        const balance = fetchBalanceOfCurrency(item.addrs,item.currencyName);
+        const balance = fetchBalanceOfCurrency(item.addrs, item.currencyName);
         totalAssets += balance * dataCenter.getExchangeRate(item.currencyName).CNY;
     });
-    
+
     return totalAssets;
 };
 
@@ -702,7 +705,7 @@ export const fetchTotalAssets = () => {
  * @param addrs 指定货币下的地址
  * @param currencyName 货币名称
  */
-export const fetchBalanceOfCurrency = (addrs:string[],currencyName:string) => {
+export const fetchBalanceOfCurrency = (addrs: string[], currencyName: string) => {
     const localAddrs = getLocalStorage('addrs');
     let balance = 0;
     localAddrs.forEach(item => {
@@ -733,6 +736,48 @@ export const getXOR = (first, second) => {
     return arr.join('');
 };
 
+/**
+ * 验证身份
+ */
+export const VerifyIdentidy = async (wallet, passwd) => {
+    const argonHash = new ArgonHash();
+    argonHash.init();
+    const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
+
+    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+
+    try {
+        const cipher = new Cipher();
+        const r = cipher.decrypt(hash, gwlt.vault);
+        console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r, hexstrToU8Array(r));
+
+        return true;
+    } catch (error) {
+        console.log(error);
+
+        return false;
+    }
+};
+
+/**
+ * 获取助记词
+ */
+export const getMnemonic = async (wallet, passwd) => {
+    const argonHash = new ArgonHash();
+    argonHash.init();
+    const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
+    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+    try {
+        const cipher = new Cipher();
+        const r = cipher.decrypt(hash, gwlt.vault);
+
+        return toMnemonic(lang, hexstrToU8Array(r));
+    } catch (error) {
+        console.log(error);
+
+        return '';
+    }
+};
 // 锁屏密码验证
 export const lockScreenVerify = (psw) => {
     const hash256 = sha256(psw + lockScreenSalt);
@@ -745,13 +790,12 @@ export const lockScreenHash = (psw) => {
     return sha256(psw + lockScreenSalt);
 };
 
-
 // 复制到剪切板
 export const copyToClipboard = (copyText) => {
     const input = document.createElement('input');
     input.setAttribute('readonly', 'readonly');
     input.setAttribute('value', copyText);
-    input.setAttribute("style","position:absolute;top:-9999px;");
+    input.setAttribute('style','position:absolute;top:-9999px;');
     document.body.appendChild(input);
     input.setSelectionRange(0, 9999);
     input.select();
@@ -759,7 +803,7 @@ export const copyToClipboard = (copyText) => {
         document.execCommand('copy');
     }
     document.body.removeChild(input);
-}
+};
 
 // 二维码分享
 export const shareToQrcode = (shareText) => {
@@ -773,4 +817,4 @@ export const shareToQrcode = (shareText) => {
             alert(result);
         }, content: shareText
     });
-}
+};
