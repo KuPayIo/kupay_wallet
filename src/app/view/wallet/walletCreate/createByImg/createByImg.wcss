@@ -76,6 +76,9 @@
 	height:48px;
 	right:-24px;
 	top:-24px;
-	background:red;
 	z-index:10;
+}
+.closeImg{
+	width:100%;
+	height:100%;
 }

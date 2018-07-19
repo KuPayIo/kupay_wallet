@@ -92,7 +92,7 @@ export class CreateComplete extends Widget {
         }
         return{
             message:"",
-            isvalid:true;
+            isvalid:true
         }
     }
 }

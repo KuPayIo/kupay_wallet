@@ -3,6 +3,7 @@
  */
 import { Widget } from '../../../../pi/widget/widget';
 import { DataCenter } from '../../../store/dataCenter';
+import { shareToQrcode } from '../../../utils/tools';
 
 interface Props {
     shares: string[];
@@ -28,6 +29,7 @@ export class WalletCreate extends Widget {
     }
     public shareBtnClick() {
         // TODO 分享给好友
+        shareToQrcode(this.state.part);
 
         // 分享完成后
         this.state.step++;

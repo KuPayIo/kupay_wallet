@@ -88,7 +88,7 @@ export class WalletCreate extends Widget {
         setTimeout(() => {
             close.callback(close.widget);
             this.ok && this.ok();
-            popNew('app-view-wallet-walletCreate-createComplete');
+            popNew('app-view-wallet-walletCreate-createByImg-createComplete');
         }, 500);
     }
 
