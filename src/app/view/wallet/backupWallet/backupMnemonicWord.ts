@@ -2,10 +2,15 @@
  * Mnemonic backup 
  */
 import { popNew } from '../../../../pi/ui/root';
+import { arrayBufferToBase64 } from '../../../../pi/util/base64';
 import { Widget } from '../../../../pi/widget/widget';
+import { DataCenter } from '../../../store/dataCenter';
+import { shareSecret } from '../../../utils/secretsBase';
+import { getCurrentWallet, getLocalStorage, getMnemonicHexstr, hexstrToU8Array } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;
+    passwd: string;
 }
 
 export class BackupMnemonicWord extends Widget {
@@ -41,8 +46,15 @@ export class BackupMnemonicWord extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
-    public shareClick() {
+    public async shareClick() {
+        const close = popNew('pi-components-loading-loading', { text: '处理中...' });
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        const mnemonicHexstr = await getMnemonicHexstr(wallet, this.props.passwd);
+        const shares = shareSecret(mnemonicHexstr, DataCenter.MAX_SHARE_LEN, DataCenter.MIN_SHARE_LEN)
+            .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
         this.ok && this.ok();
-        popNew('app-view-wallet-backupWallet-share'); 
+        popNew('app-view-wallet-backupWallet-share', { shares });
+        close.callback(close.widget);
     }
 }

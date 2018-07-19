@@ -14,7 +14,7 @@ export class DataCenter {
 
     public static MAX_ADDRNAME_LEN: number = 9;// 最长地址名
 
-    public static MAX_SHARE_LEN: number = 4;
+    public static MAX_SHARE_LEN: number = 3;
     public static MIN_SHARE_LEN: number = 2;
     public static SHARE_SPLIT: string = '&&&&';
     public static MNEMONIC_SPLIT: string = ' ';
