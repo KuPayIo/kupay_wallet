@@ -6,7 +6,7 @@ import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
     title: string;
-    forgetPsw?:string;
+    forgetPsw?:boolean;
 }
 
 export class PasswordScreen extends Widget {
@@ -34,7 +34,9 @@ export class PasswordScreen extends Widget {
         this.state.pswArr.push(this.state.pswBoard[index]);
         this.paint();
         if (this.state.pswArr.length === 6) {
-            notify(e.node,'ev-completed-click',{ psw:this.state.pswArr.join('') });
+            setTimeout(() => {
+                notify(e.node,'ev-completed-click',{ psw:this.state.pswArr.join('') });
+            },200);
             
             return;
         }

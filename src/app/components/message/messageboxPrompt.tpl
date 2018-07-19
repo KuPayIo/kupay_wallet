@@ -1,6 +1,5 @@
 <div w-class="base">
     <div w-class="bg"></div>
-    <div w-class="tips"><img w-class="avatar" src="../../res/image/{{it.tipsImgUrl}}"/>{{it.tipsTitle}}</div>
     <div w-class="main">
         <div w-class="header">
             <div w-class="title">
@@ -22,7 +21,7 @@
                 <span>取消</span>
             </button>
             <button type="button" w-class="button button_sure" on-tap="doClickSure">
-                <span>验证</span>
+                <span>确定</span>
             </button>
         </div>
     </div>

@@ -18,25 +18,8 @@
     opacity: 0.5;
     background: #000;
 }
-.tips{
-    position: absolute;
-    right: 30px;
-    top: 80px;
-    font-size: 32px;
-    color: #FFFFFF;
-    letter-spacing: 0;
-    line-height: 45px;
-    display: flex;
-    align-items: center;
-}
-.avatar{
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    margin-right: 10px;
-}
 .main{
-    position: relative;
+    display: inline-block;
     width: 570px;
     vertical-align: middle;
     background-color: rgb(255, 255, 255);
@@ -53,7 +36,6 @@
     padding:50px;
     box-sizing: border-box;
     border-radius: 12px;
-    overflow: hidden;
 }
 
 .header{
@@ -125,4 +107,5 @@
 .input-father{
     height: 80px;
     margin-top: 30px;
+    width: 470px;
 }

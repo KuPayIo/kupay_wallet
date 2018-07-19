@@ -68,6 +68,7 @@ export class ExportPrivateKey extends Widget {
             title:'导出私钥' , 
             content: '私钥未经加密，导出存在风险，千万不要丢失、泄露或发送给其他人！',
             extraInfo:privateKey ,
+            copyBtnText:"复制",
             contentStyle:'color:#F17835;' 
         });
     }

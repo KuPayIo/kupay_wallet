@@ -35,10 +35,9 @@ export const run = (cb): void => {
     // 后台切前台
     backToFront();
     
-    // popNew('app-components-passwordScreen-passwordScreen',{title:"解锁屏幕"});
-    // popNew('app-view-guidePages-setLockScreenScret');
-    
-    // popNew('app-view-guidePages-unlockScreen');
+    // popNew('app-view-mine-lockScreen-lockScreenSetting');
+   /*  popNew('app-view-wallet-transaction-receipt',{currencyBalance: 100,
+        addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
     if (cb) cb();
     // test();
 };
@@ -129,6 +128,9 @@ const checkHasNewTokens = () => {
 const ifNeedUnlockScreen = () => {
     const unlockScreen = document.querySelector('#unlock-screen');
     if (unlockScreen) return false;
-    
+    const lockScreenPsw = getLocalStorage('lockScreenPsw');
+    const openLockScreen = getLocalStorage('openLockScreen') !== false;
+
     return false;
+    return lockScreenPsw && openLockScreen;
 };
