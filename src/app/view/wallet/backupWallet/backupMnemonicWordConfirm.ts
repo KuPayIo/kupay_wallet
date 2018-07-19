@@ -35,12 +35,13 @@ export class BackupMnemonicWordConfirm extends Widget {
             content: '为了确保您的资产安全，建议不要跳过验证！',
             okButton: '取消',
             cancelButton: '跳过',
-            okButtonStyle: 'color:rgba(26,112,221,1);'
+            okButtonStyle: 'color:rgba(26,112,221,1);',
+            cancelButtonStyle:'color:#8E96AB'
         }, null, () => {
             this.ok && this.ok();
         });
     }
-    public back() {
+    public backPrePage() {
         this.ok && this.ok();
     }
 
@@ -67,7 +68,7 @@ export class BackupMnemonicWordConfirm extends Widget {
 
     public nextStepClick() {
         if (!this.compareMnemonicEqualed()) {
-            popNew('app-components-message-messagebox', { itype: 'alert', title: '请检查助记词', content: '' });
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '提示', content: '请检查助记词' });
         } else {
             popNew('app-components-message-messagebox',
                 { itype: 'confirm', title: '是否移除助记词？', content: '确认抄写助记词，此操作不可撤销' },

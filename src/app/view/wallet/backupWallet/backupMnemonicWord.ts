@@ -28,7 +28,8 @@ export class BackupMnemonicWord extends Widget {
             content: '为了确保您的资产安全，建议不要跳过验证！',
             okButton: '取消',
             cancelButton: '跳过',
-            okButtonStyle: 'color:rgba(26,112,221,1);'
+            okButtonStyle: 'color:rgba(26,112,221,1);',
+            cancelButtonStyle:'color:#8E96AB'
         }, null, () => {
             this.ok && this.ok();
         });
@@ -37,10 +38,11 @@ export class BackupMnemonicWord extends Widget {
         this.ok && this.ok();
         popNew('app-view-wallet-backupWallet-backupMnemonicWordConfirm', { mnemonic: this.props.mnemonic });
     }
-    public back() {
+    public backPrePage() {
         this.ok && this.ok();
     }
     public shareClick() {
+        this.ok && this.ok();
         popNew('app-view-wallet-backupWallet-share'); 
     }
 }

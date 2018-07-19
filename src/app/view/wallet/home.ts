@@ -83,7 +83,8 @@ export class Home extends Widget {
 
             return;
         }
-        popNew('app-view-wallet-walletCreate-createWalletEnter');
+        //popNew('app-view-wallet-walletCreate-createWalletEnter');
+        popNew('app-view-wallet-backupWallet-backupMnemonicWord',{mnemonic:"aa"});
     }
     public switchWalletClick() {
         popNew('app-view-wallet-switchWallet-switchWallet');
