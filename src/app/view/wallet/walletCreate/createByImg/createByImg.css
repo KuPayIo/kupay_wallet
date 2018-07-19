@@ -1,0 +1,28 @@
+#createByImg .input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: #8E96AB;
+	font-size: 36px;
+	line-height: 50px;
+	text-align: center;
+}
+#createByImg .input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: #8E96AB;
+	font-size: 36px;
+	line-height: 50px;
+	text-align: center;
+}
+#createByImg .input::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #8E96AB;
+	font-size: 36px;
+	line-height: 50px;
+	text-align: center;
+}
+#createByImg .input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #8E96AB;
+	font-size: 36px;
+	line-height: 50px;
+	text-align: center;
+}
+#createByImg .input:focus{
+	border: none;
+	outline: none;
+}

@@ -31,7 +31,11 @@ export class WalletImport extends Widget {
             walletPswConfirm: '',
             walletPswTips: '',
             userProtocolReaded: false,
-            curWalletPswStrength: getWalletPswStrength()
+            curWalletPswStrength: getWalletPswStrength(),
+            textAreaStyle:{
+                "border":"3px dotted #A0ACC0",
+                "padding-top":"26px"
+            }
         };
     }
     public backPrePage() {
