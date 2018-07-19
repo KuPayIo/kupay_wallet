@@ -1,11 +1,11 @@
 /**
  * mine home page
  */
+import { ShareToPlatforms } from '../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
-import { ShareToPlatforms } from "../../../pi/browser/shareToPlatforms";
 
 export class Home extends Widget {
     public stp:any;
@@ -25,11 +25,11 @@ export class Home extends Widget {
                 icon: 'icon_mine_wallet.png',
                 text: '我的钱包',
                 components: 'app-view-mine-walletManagement-walletManagement'
-            }, {
+            },/*  {
                 icon: 'icon_mine_annal.png',
                 text: '交易记录',
                 components: 'app-view-mine-transaction-record'
-            }, {
+            }, */ {
                 icon: 'icon_mine_address.png',
                 text: '地址管理',
                 components: 'app-view-mine-addressManage-addressManage'
@@ -37,6 +37,10 @@ export class Home extends Widget {
                 icon: 'icon_mine_Language.png',
                 text: '语言设置',
                 components: 'app-view-mine-languageAndcoinset-language'
+            }, {
+                icon: 'icon_mine_Language.png',
+                text: '锁屏密码',
+                components: 'app-view-mine-lockScreen-lockScreenSetting'
             }, {
                 icon: 'icon_mine_money.png',
                 text: '货币设置',
@@ -72,8 +76,9 @@ export class Home extends Widget {
                 return;
             }
         }
-        if(index === this.state.mineList.length - 1){
+        if (index === this.state.mineList.length - 1) {
             this.share();
+
             return;
         }
         popNew(this.state.mineList[index].components,{},(home) => {
@@ -100,7 +105,7 @@ export class Home extends Widget {
             },
             fail: (result) => {
                 alert(result);
-            }, content: "This is a test QRCode"
-        })
+            }, content: 'This is a test QRCode'
+        });
     }
 }

@@ -132,6 +132,7 @@ export class AddAsset extends Widget {
             return;
         }
         popNew('app-view-wallet-transaction-receipt', {
+            currencyName:this.props.currencyName,
             currencyBalance: this.state.balance,
             addr: this.state.currentAddr
         });

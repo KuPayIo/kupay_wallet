@@ -3,22 +3,31 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { lockScreenSalt } from '../../utils/constants';
-import { setLocalStorage,sha256 } from '../../utils/tools';
+import { lockScreenHash,setLocalStorage } from '../../utils/tools';
 
+interface Props {
+    title1?:string;
+    title2?:string;
+}
 export class SetLockScreenScret extends Widget {
     public ok: () => void;
-
+    public props:Props;
     constructor() {
         super();
        
     }
-
     public create() {
         super.create();
         this.init();
     }
 
+    public setProps(props: Props, oldProps: Props): void {
+        super.setProps(props, oldProps);
+        if (props.title1) {
+            this.state.passwordScreenTitle = props.title1;
+        }
+    }
+    
     public init() {
         this.state = {
             passwordScreenTitle:`为了保护您的资产安全
@@ -35,26 +44,21 @@ export class SetLockScreenScret extends Widget {
                 const close = popNew('pi-components-loading-loading', { text: '验证中...' });
                 setTimeout(() => {
                     close.callback(close.widget);
-                    const hash256 = sha256(psw + lockScreenSalt);
+                    const hash256 = lockScreenHash(psw);
                     setLocalStorage('lockScreenPsw',hash256);
                     popNew('app-components-message-message', { itype: 'success', content: '设置成功',  center: true });
-                    popNew('app-view-app');
                     this.ok && this.ok();
                 },1000);
                 
             } else {
-                setTimeout(() => {
-                    popNew('app-components-message-message', { itype: 'error', content: '两次密码输入不一致，请重新输入',  center: true });
-                    this.init();
-                    this.paint();
-                },200);
+                popNew('app-components-message-message', { itype: 'error', content: '两次密码输入不一致，请重新输入',  center: true });
+                this.init();
+                this.paint();
             }
         } else {
-            setTimeout(() => {
-                this.state.lockScreenPsw = psw;
-                this.state.passwordScreenTitle = '请重复';
-                this.paint();
-            },200);
+            this.state.lockScreenPsw = psw;
+            this.state.passwordScreenTitle = (this.props && this.props.title2) || '请重复';
+            this.paint();
         }
         
     }

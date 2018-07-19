@@ -1,41 +1,56 @@
 /**
- * unlock screen
+ * lockScreen settings
  */
-import { popNew } from '../../../pi/ui/root';
-import { Widget } from '../../../pi/widget/widget';
-import { GlobalWallet } from '../../core/globalWallet';
-import { getCurrentWallet, getLocalStorage, lockScreenVerify } from '../../utils/tools';
+import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+import { GlobalWallet } from '../../../core/globalWallet';
+import { getCurrentWallet, getLocalStorage,lockScreenVerify,setLocalStorage } from '../../../utils/tools';
 
-export class UnlockScreen extends Widget {
-    public ok: () => void;
-
+export class DisplayPage extends Widget {
+    public ok :() => void;
     constructor() {
         super();
-       
     }
-
     public create() {
         super.create();
         this.init();
     }
-
     public init() {
         this.state = {
-            passwordScreenTitle:'解锁屏幕',
+            openLockScreen:getLocalStorage('openLockScreen') !== false,
+            lockScreenTitle:'',
+            showLockScreen:false,
             numberOfErrors:0,
-            errorTips:['解锁屏幕','已错误1次，还有两次机会','最后1次，否则密码将会重置']
+            errorTips:['请输入原来的密码','已错误1次，还有两次机会','最后1次，否则密码将会重置']
         };
-        
+    }
+    public backPrePage() {
+        this.ok && this.ok();
+    }
+
+    /**
+     * 处理滑块改变
+     */
+    public onSwitchChange() {
+        this.state.openLockScreen = !this.state.openLockScreen;
+        setLocalStorage('openLockScreen',this.state.openLockScreen);
+        this.paint();
+    }
+
+    // 修改锁屏密码
+    public resetLockScreen() {
+        this.state.lockScreenTitle = '请输入原来的密码';
+        this.state.showLockScreen = true;
+        this.paint();
     }
 
     public completedInput(r:any) {
         const psw = r.psw;
         if (lockScreenVerify(psw)) {
-            this.ok && this.ok();
+            popNew('app-view-guidePages-setLockScreenScret',{ title1:'请输入新密码',title2:'请重复新密码' });
 
             return;
-        }
-        
+        } 
         this.state.numberOfErrors++;
         if (this.state.numberOfErrors >= 3) {
             const wallets = getLocalStorage('wallets');
@@ -61,13 +76,14 @@ export class UnlockScreen extends Widget {
 
             return;
         }
-        this.state.passwordScreenTitle = this.state.errorTips[this.state.numberOfErrors];
+        this.state.lockScreenTitle = this.state.errorTips[this.state.numberOfErrors];
         this.paint();
+
     }
 
     // 验证密码
     public verifyLongPsw(r:string) {
-        return false;
+        return true;
     }
 
     public forgetPasswordClick() {
