@@ -2,6 +2,8 @@
  * 确认提示框
  */
 import { Widget } from '../../../pi/widget/widget';
+import { popNew } from '../../../pi/ui/root';
+import { copyToClipboard } from '../../utils/tools';
 
 interface Props {
     itype: string;
@@ -11,16 +13,17 @@ interface Props {
     placeHolder?:string;
     showQuit?:boolean;// 是否显示右上角叉
     extraInfo?:string;// itype = "extra" 时有效
+    copyBtnText?:string;//itype = "extra"  button文字
     contentStyle?:string;
-    okButton?:string;//确定按钮的名称
-    cancelButton?:string;//取消按钮的名称
-    okButtonStyle?:string;//确认按钮的样式
-    cancelButtonStyle?:string;//取消按钮的样式
+    okButton?:string;// 确定按钮的名称
+    cancelButton?:string;// 取消按钮的名称
+    okButtonStyle?:string;// 确认按钮的样式
+    cancelButtonStyle?:string;// 取消按钮的样式
 }
 
 export class MessageBox extends Widget {
     public props: Props;
-    public ok: (r:any) => void;
+    public ok: (r?:any) => void;
     public cancel: () => void;
 
     constructor() {
@@ -66,6 +69,12 @@ export class MessageBox extends Widget {
             this.state.isShow = true;
             this.paint();
         }, 100);
+    }
+
+    public copyBtnClick(e:any){
+        copyToClipboard(this.props.extraInfo);
+        popNew('app-components-message-message', { itype: 'success', content: '复制成功', center: true });
+        this.ok && this.ok();
     }
 
 }

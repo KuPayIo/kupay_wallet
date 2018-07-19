@@ -40,6 +40,7 @@
         {{else}}
         <div w-class="extra">{{it.extraInfo}}</div>
         <div w-class="quit-container" on-tap="quitClick"><img w-class="quit" src="../../res/image/btn_pop_close.png"/></div>
+        <div w-class="copy-btn" on-tap="copyBtnClick">{{it.copyBtnText}}</div>
         {{end}}
     </div>
 </div>

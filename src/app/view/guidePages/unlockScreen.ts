@@ -4,8 +4,7 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
-import { lockScreenSalt } from '../../utils/constants';
-import { getCurrentWallet, getLocalStorage, sha256 } from '../../utils/tools';
+import { getCurrentWallet, getLocalStorage, lockScreenVerify } from '../../utils/tools';
 
 export class UnlockScreen extends Widget {
     public ok: () => void;
@@ -31,45 +30,39 @@ export class UnlockScreen extends Widget {
 
     public completedInput(r:any) {
         const psw = r.psw;
-        const hash256 = sha256(psw + lockScreenSalt);
-        const localHash256 = getLocalStorage('lockScreenPsw');
-        if (hash256 === localHash256) {
-            setTimeout(() => {
-                this.ok && this.ok();
-            },200);
+        if (lockScreenVerify(psw)) {
+            this.ok && this.ok();
 
             return;
         }
         
-        setTimeout(() => {
-            this.state.numberOfErrors++;
-            if (this.state.numberOfErrors >= 3) {
-                const wallets = getLocalStorage('wallets');
-                const wallet = getCurrentWallet(wallets);
-                const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-                const messageboxVerifyProps = {
-                    itype: 'prompt', 
-                    title: '重置锁屏密码', 
-                    content: '错误次数过多，已被锁定，请验证当前钱包长密码后重置',
-                    inputType:'password',
-                    tipsTitle:gwlt.nickName,
-                    tipsImgUrl:wallet.avatar,
-                    confirmCallBack:this.verifyLongPsw,
-                    confirmErrorText:'密码错误,请重新输入'
-                };
-                popNew('app-components-message-messageboxVerify', messageboxVerifyProps,() => {
-                    popNew('app-view-guidePages-setLockScreenScret');
-                    this.ok && this.ok();
-                },() => {
-                    this.init();
-                    this.paint();
-                });
+        this.state.numberOfErrors++;
+        if (this.state.numberOfErrors >= 3) {
+            const wallets = getLocalStorage('wallets');
+            const wallet = getCurrentWallet(wallets);
+            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+            const messageboxVerifyProps = {
+                title: '重置锁屏密码', 
+                content: '错误次数过多，已被锁定，请验证当前钱包长密码后重置',
+                inputType:'password',
+                tipsTitle:gwlt.nickName,
+                tipsImgUrl:wallet.avatar,
+                placeHolder:'请输入长密码',
+                confirmCallBack:this.verifyLongPsw,
+                confirmErrorText:'密码错误,请重新输入'
+            };
+            popNew('app-components-message-messageboxVerify', messageboxVerifyProps,() => {
+                popNew('app-view-guidePages-setLockScreenScret',{title1:'请输入新密码',title2:'请重复新密码'});
+                this.ok && this.ok();
+            },() => {
+                this.init();
+                this.paint();
+            });
 
-                return;
-            }
-            this.state.passwordScreenTitle = this.state.errorTips[this.state.numberOfErrors];
-            this.paint();
-        },200);
+            return;
+        }
+        this.state.passwordScreenTitle = this.state.errorTips[this.state.numberOfErrors];
+        this.paint();
     }
 
     // 验证密码
@@ -79,9 +72,25 @@ export class UnlockScreen extends Widget {
 
     public forgetPasswordClick() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-message-messagebox', { itype: 'prompt', title: '忘记密码', content: '忘记锁屏密码，请验证当前钱包长密码后重置',inputType:'password' }, (r) => {
-            console.log(r);
-
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+        const messageboxVerifyProps = {
+            title: '忘记密码', 
+            content: '忘记锁屏密码，请验证当前钱包长密码后重置',
+            inputType:'password',
+            tipsTitle:gwlt.nickName,
+            tipsImgUrl:wallet.avatar,
+            placeHolder:'请输入长密码',
+            confirmCallBack:this.verifyLongPsw,
+            confirmErrorText:'密码错误,请重新输入'
+        };
+        popNew('app-components-message-messageboxVerify', messageboxVerifyProps,() => {
+            popNew('app-view-guidePages-setLockScreenScret',{title1:'请输入新密码',title2:'请重复新密码'});
+            this.ok && this.ok();
+        },() => {
+            this.init();
+            this.paint();
         });
     }
 }

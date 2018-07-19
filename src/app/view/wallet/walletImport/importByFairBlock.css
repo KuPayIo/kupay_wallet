@@ -1,0 +1,7 @@
+#importFairBlock #area1 .pi-textarea__inner:focus{
+    border:3px dotted #A0ACC0 !important;
+    border-bottom: none !important;
+}
+#importFairBlock #area2 .pi-textarea__inner:focus{
+    border:3px dotted #A0ACC0 !important;
+}

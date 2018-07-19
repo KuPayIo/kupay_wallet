@@ -1,15 +1,8 @@
-<div id="backupMnemonicWordConfirm" class="ga-new-page">
-	<div w-class="head">
-		<div w-class="headMain">
-			<span w-class="headTitle">
-				<img on-tap="back" src="../../../res/image/btn_back.png" style="vertical-align: middle;margin-right: 20px;" />
-				备份钱包
-			</span>
-			<span w-class="jumpOver" on-tap="jumpOver">
+<div id="backupMnemonicWordConfirm" class="ga-new-page" ev-back-click="backPrePage">
+		<app-components-topBar-topBar>{title:"备份助记词"}</app-components-topBar-topBar>
+		<span w-class="jumpOver" on-tap="jumpOver">
 				跳过
-			</span>
-		</div>
-	</div>
+		</span>
 	<div w-class="body">
 		<div w-class="bodyTitle">
 			确认你的助记词
@@ -32,9 +25,9 @@
 		</div>
 		
 		<div w-class="btnBox">
-			<button w-class="btn" on-tap="nextStepClick">
+			<div w-class="btn" on-tap="nextStepClick">
 				完成
-			</button>
+			</div>
 		</div>
 	</div>
 </div>

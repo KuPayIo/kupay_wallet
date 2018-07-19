@@ -109,7 +109,7 @@
 .pi-input__inner1:focus,
 .pi-textarea__inner:focus,
 .pi-input-textarea__inner:focus{
-    border-bottom: 1px solid #409EFF !important;
+    /* border-bottom: 1px solid #409EFF !important; */
 }
 
 .pi-input-search__inner1:focus{

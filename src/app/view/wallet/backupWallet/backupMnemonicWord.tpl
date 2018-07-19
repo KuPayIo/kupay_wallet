@@ -1,15 +1,8 @@
-<div id="backupMnemonicWord" class="ga-new-page">
-	<div w-class="head">
-		<div w-class="headMain">
-			<span w-class="headTitle">
-				<img on-tap="back" src="../../../res/image/btn_back.png" style="vertical-align: middle;margin-right: 20px;" />
-				备份助记词
-			</span>
-			<span w-class="jumpOver" on-tap="jumpOver">
+<div id="backupMnemonicWord" w-class="ga-new-page" class="ga-new-page" ev-back-click="backPrePage">
+		<app-components-topBar-topBar>{title:"备份助记词"}</app-components-topBar-topBar>
+		<span w-class="jumpOver" on-tap="jumpOver">
 				跳过
-			</span>
-		</div>
-	</div>
+		</span>
 	<div w-class="body">
 		<div w-class="bodyTitle">
 			您的钱包已生成
@@ -21,12 +14,12 @@
 			{{it.mnemonic}}
 		</div>
 		<div w-class="btns">
-			<button w-class="btn1" on-tap="next">
+			<div w-class="btn1" on-tap="next">
 				已妥善保管
-			</button>
-			<button w-class="btn2" on-tap="shareClick">
+			</div>
+			<div w-class="btn2" on-tap="shareClick">
 				使用更安全的保管方案
-			</button>
+			</div>
 		</div>
 	</div>
 </div>

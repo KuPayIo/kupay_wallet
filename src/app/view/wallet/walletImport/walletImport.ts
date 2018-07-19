@@ -66,11 +66,11 @@ export class WalletImport extends Widget {
             // popNew("app-components-message-message", { itype: "notice", content: "请阅读用户协议" })
             return;
         }
-        if (!walletNameAvailable(this.state.walletName)) {
-            popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-24位钱包名', center: true });
+        // if (!walletNameAvailable(this.state.walletName)) {
+        //     popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-24位钱包名', center: true });
 
-            return;
-        }
+        //     return;
+        // }
         if (!walletPswAvailable(this.state.walletPsw)) {
             popNew('app-components-message-message', { itype: 'error', content: '密码格式不正确,请重新输入', center: true });
 
@@ -99,6 +99,7 @@ export class WalletImport extends Widget {
 
         } catch (e) {
             close.callback(close.widget);
+            console.log(e);
             popNew('app-components-message-message', { itype: 'error', content: '导入失败', center: true });
 
             return;

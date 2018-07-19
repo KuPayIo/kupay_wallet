@@ -5,17 +5,14 @@ import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
-    itype: string;
-    text: string;
+    content: string;
+    title: string;
     tipsTitle:string;
     tipsImgUrl:string;
     confirmCallBack:Function;
     confirmErrorText:string;
-    center?: boolean;
     inputType?:string;
     placeHolder?:string;
-    showQuit?:boolean;// 是否显示右上角叉
-    extraInfo?:string;// itype = "extra" 时有效
     contentStyle?:string;
 }
 
@@ -34,13 +31,9 @@ export class MessageBoxVerify extends Widget {
 
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.state = { isShow: false, input: '' };
         this.init();
     }
 
-    public quitClick() {
-        this.cancel && this.cancel();
-    }
     /**
      * 点击确认
      */
@@ -73,10 +66,14 @@ export class MessageBoxVerify extends Widget {
     }
 
     private init() {
-        setTimeout(() => {
-            this.state.isShow = true;
-            this.paint();
-        }, 100);
+        this.state = { 
+            style:{
+                backgroundColor: '#F8F8F8',
+                border: '1px solid #D6D9DF',
+                borderRadius: '6px',
+                padding:'0 17px'
+            }
+        };
     }
 
 }
