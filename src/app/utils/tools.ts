@@ -10,6 +10,7 @@ import { GaiaWallet } from '../core/eth/wallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
+import { lockScreenSalt } from './constants';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
@@ -729,4 +730,16 @@ export const getXOR = (first, second) => {
     }
 
     return arr.join('');
+};
+
+// 锁屏密码验证
+export const lockScreenVerify = (psw) => {
+    const hash256 = sha256(psw + lockScreenSalt);
+    const localHash256 = getLocalStorage('lockScreenPsw');
+    
+    return hash256 === localHash256;
+};
+// 锁屏密码hash算法
+export const lockScreenHash = (psw) => {
+    return sha256(psw + lockScreenSalt);
 };

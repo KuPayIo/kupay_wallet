@@ -35,10 +35,7 @@ export const run = (cb): void => {
     // 后台切前台
     backToFront();
     
-    // popNew('app-components-passwordScreen-passwordScreen',{title:"解锁屏幕"});
-    // popNew('app-view-guidePages-setLockScreenScret');
-    
-    // popNew('app-view-guidePages-unlockScreen');
+    // popNew('app-view-mine-lockScreen-lockScreenSetting');
     if (cb) cb();
     // test();
 };
@@ -129,6 +126,8 @@ const checkHasNewTokens = () => {
 const ifNeedUnlockScreen = () => {
     const unlockScreen = document.querySelector('#unlock-screen');
     if (unlockScreen) return false;
-    
-    return true;
+    const lockScreenPsw = getLocalStorage('lockScreenPsw');
+    const openLockScreen = getLocalStorage('openLockScreen') !== false;
+
+    return lockScreenPsw && openLockScreen;
 };

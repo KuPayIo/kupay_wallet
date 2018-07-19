@@ -10,12 +10,12 @@ import {
     decrypt,
     encrypt,
     fetchTotalAssets,
+    formatBalanceValue,
     getAddrsAll,
     getCurrentWallet,
     getCurrentWalletIndex,
     getLocalStorage,
-    setLocalStorage,
-    formatBalanceValue
+    setLocalStorage
 } from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
@@ -165,7 +165,7 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        popNew('app-components-message-messagebox', { itype: 'prompt', title: '输入密码', content: '', inputType: 'password' }, (r) => {
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (r) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
             const walletPsw = decrypt(wallet.walletPsw);

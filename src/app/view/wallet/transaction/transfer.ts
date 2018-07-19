@@ -7,7 +7,6 @@ import { Widget } from '../../../../pi/widget/widget';
 import { BtcApi } from '../../../core/btc/api';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
-import { ibanToAddress } from '../../../core/eth/helper';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import {
