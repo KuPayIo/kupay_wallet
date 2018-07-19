@@ -748,7 +748,7 @@ export const VerifyIdentidy = async (wallet, passwd) => {
     try {
         const cipher = new Cipher();
         const r = cipher.decrypt(hash, gwlt.vault);
-        console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r, hexstrToU8Array(r));
+        console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r);
 
         return true;
     } catch (error) {
@@ -771,6 +771,25 @@ export const getMnemonic = async (wallet, passwd) => {
         const r = cipher.decrypt(hash, gwlt.vault);
 
         return toMnemonic(lang, hexstrToU8Array(r));
+    } catch (error) {
+        console.log(error);
+
+        return '';
+    }
+};
+
+/**
+ * 获取助记词16进制字符串
+ */
+export const getMnemonicHexstr = async (wallet, passwd) => {
+    const argonHash = new ArgonHash();
+    argonHash.init();
+    const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
+    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+    try {
+        const cipher = new Cipher();
+
+        return cipher.decrypt(hash, gwlt.vault);
     } catch (error) {
         console.log(error);
 
