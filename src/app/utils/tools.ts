@@ -815,6 +815,7 @@ export const shareToQrcode = (shareText) => {
         },
         fail: (result) => {
             alert(result);
-        }, content: shareText
+        }, 
+        content: shareText
     });
 };
