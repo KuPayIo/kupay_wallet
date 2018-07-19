@@ -36,6 +36,7 @@ export const run = (cb): void => {
     backToFront();
     
     // popNew('app-view-mine-lockScreen-lockScreenSetting');
+    popNew('app-view-mine-exportPrivateKey-exportPrivateKey');
     if (cb) cb();
     // test();
 };
@@ -129,5 +130,6 @@ const ifNeedUnlockScreen = () => {
     const lockScreenPsw = getLocalStorage('lockScreenPsw');
     const openLockScreen = getLocalStorage('openLockScreen') !== false;
 
+    return false;
     return lockScreenPsw && openLockScreen;
 };
