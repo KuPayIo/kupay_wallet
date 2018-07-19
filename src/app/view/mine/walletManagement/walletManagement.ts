@@ -8,7 +8,7 @@ import { register, unregister } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import {
     decrypt, encrypt, fetchTotalAssets, formatBalanceValue, getAddrsAll, getCurrentWallet, getCurrentWalletIndex
-    , getLocalStorage, setLocalStorage, VerifyIdentidy
+    , getLocalStorage, getMnemonic, setLocalStorage, VerifyIdentidy
 } from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
@@ -157,17 +157,22 @@ export class WalletManagement extends Widget {
         popNew('app-components-message-messagebox', { itype: 'prompt', title: '输入密码', content: '', inputType: 'password' }, async (r) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
-            const t = await VerifyIdentidy(wallet, r);
-            if (t) {
-                const close = popNew('pi-components-loading-loading', { text: '导出中...' });
-                setTimeout(() => {
-                    close.callback(close.widget);
+            const close = popNew('pi-components-loading-loading', { text: '导出中...' });
+            try {
+                const mnemonic = await getMnemonic(wallet, r);
+                // const t = await VerifyIdentidy(wallet, r);
+                if (mnemonic) {
                     this.ok && this.ok();
-                    popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
-                }, 500);
-            } else {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+                    popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic });
+                } else {
+                    popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+                }
+            } catch (error) {
+                console.log(error);
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入111', center: true });
             }
+
+            close.callback(close.widget);
         });
     }
     /**
@@ -199,7 +204,7 @@ export class WalletManagement extends Widget {
         }
         if (!this.state.mnemonicBackup) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' }, () => {
-                popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
+                popNew('app-view-wallet-backupWallet-backupMnemonicWord');
             });
         } else {
             this.signOut();
@@ -223,7 +228,7 @@ export class WalletManagement extends Widget {
         }
         if (!this.state.mnemonicBackup) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' }, () => {
-                popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
+                popNew('app-view-wallet-backupWallet-backupMnemonicWord');
             });
         } else {
             this.deleteWallet();

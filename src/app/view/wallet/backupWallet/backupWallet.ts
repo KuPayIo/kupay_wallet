@@ -31,7 +31,7 @@ export class BackupWallet extends Widget {
                 setTimeout(() => {
                     close.callback(close.widget);
                     this.ok && this.ok();
-                    popNew('app-view-wallet-backupMnemonicWord-backupMnemonicWord');
+                    popNew('app-view-wallet-backupWallet-backupMnemonicWord');
                 }, 500);
             } else {
                 popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });

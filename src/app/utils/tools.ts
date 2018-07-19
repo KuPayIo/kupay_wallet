@@ -8,10 +8,12 @@ import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
+import { toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
+import { lang } from './constants';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
@@ -740,8 +742,6 @@ export const VerifyIdentidy = async (wallet, passwd) => {
     const argonHash = new ArgonHash();
     argonHash.init();
     const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
-    // const hash = passwd;
-    // const hash = '11111111';
 
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
@@ -752,6 +752,28 @@ export const VerifyIdentidy = async (wallet, passwd) => {
 
         return true;
     } catch (error) {
+        console.log(error);
+
         return false;
+    }
+};
+
+/**
+ * 获取助记词
+ */
+export const getMnemonic = async (wallet, passwd) => {
+    const argonHash = new ArgonHash();
+    argonHash.init();
+    const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
+    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+    try {
+        const cipher = new Cipher();
+        const r = cipher.decrypt(hash, gwlt.vault);
+
+        return toMnemonic(lang, hexstrToU8Array(r));
+    } catch (error) {
+        console.log(error);
+
+        return '';
     }
 };
