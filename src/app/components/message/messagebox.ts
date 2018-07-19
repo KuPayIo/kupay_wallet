@@ -3,6 +3,7 @@
  */
 import { Widget } from '../../../pi/widget/widget';
 import { popNew } from '../../../pi/ui/root';
+import { copyToClipboard } from '../../utils/tools';
 
 interface Props {
     itype: string;
@@ -71,22 +72,9 @@ export class MessageBox extends Widget {
     }
 
     public copyBtnClick(e:any){
-        this.copyText();
+        copyToClipboard(this.props.extraInfo);
         popNew('app-components-message-message', { itype: 'success', content: '复制成功', center: true });
         this.ok && this.ok();
     }
 
-    public copyText(){
-        const input = document.createElement('input');
-        input.setAttribute('readonly', 'readonly');
-        input.setAttribute('value', this.props.extraInfo);
-        input.setAttribute("style","position:absolute;top:-9999px;");
-        document.body.appendChild(input);
-        input.setSelectionRange(0, 9999);
-        input.select();
-        if (document.execCommand('copy')) {
-            document.execCommand('copy');
-        }
-        document.body.removeChild(input);
-    }
 }

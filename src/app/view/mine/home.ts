@@ -25,11 +25,11 @@ export class Home extends Widget {
                 icon: 'icon_mine_wallet.png',
                 text: '我的钱包',
                 components: 'app-view-mine-walletManagement-walletManagement'
-            }, {
+            },/*  {
                 icon: 'icon_mine_annal.png',
                 text: '交易记录',
                 components: 'app-view-mine-transaction-record'
-            }, {
+            }, */ {
                 icon: 'icon_mine_address.png',
                 text: '地址管理',
                 components: 'app-view-mine-addressManage-addressManage'

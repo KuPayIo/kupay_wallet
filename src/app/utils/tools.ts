@@ -11,6 +11,7 @@ import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
 import { lockScreenSalt } from './constants';
+import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
@@ -743,3 +744,33 @@ export const lockScreenVerify = (psw) => {
 export const lockScreenHash = (psw) => {
     return sha256(psw + lockScreenSalt);
 };
+
+
+// 复制到剪切板
+export const copyToClipboard = (copyText) => {
+    const input = document.createElement('input');
+    input.setAttribute('readonly', 'readonly');
+    input.setAttribute('value', copyText);
+    input.setAttribute("style","position:absolute;top:-9999px;");
+    document.body.appendChild(input);
+    input.setSelectionRange(0, 9999);
+    input.select();
+    if (document.execCommand('copy')) {
+        document.execCommand('copy');
+    }
+    document.body.removeChild(input);
+}
+
+// 二维码分享
+export const shareToQrcode = (shareText) => {
+    const stp = new ShareToPlatforms();
+    stp.init();
+    stp.shareQRCode({
+        success: (result) => {
+            alert(result);
+        },
+        fail: (result) => {
+            alert(result);
+        }, content: shareText
+    });
+}

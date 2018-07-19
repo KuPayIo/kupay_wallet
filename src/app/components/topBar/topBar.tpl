@@ -1,4 +1,4 @@
-<div w-class="ga-top-banner" style="{{it.style ? it.style : ''}}">
+<div w-class="ga-top-banner {{it.titlePosition === 'left' ? 'ga-title-left' : ''}}" style="{{it.style ? it.style : ''}}">
     <div on-tap="backPrePage" w-class="ga-back-container">
         <img src="../../res/image/{{it.iconColor ? it1.backIcon[it.iconColor] : it1.backIcon['default']}}" w-class="ga-back" />
     </div>

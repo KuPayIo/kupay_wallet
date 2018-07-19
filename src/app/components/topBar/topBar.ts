@@ -8,6 +8,7 @@ interface Props {
     title:string;
     style?:string;
     iconColor?:string;
+    titlePosition?:string;
 }
 export class TopBar extends Widget {
     public props:Props;

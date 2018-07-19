@@ -36,7 +36,8 @@ export const run = (cb): void => {
     backToFront();
     
     // popNew('app-view-mine-lockScreen-lockScreenSetting');
-    popNew('app-view-mine-exportPrivateKey-exportPrivateKey');
+   /*  popNew('app-view-wallet-transaction-receipt',{currencyBalance: 100,
+        addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
     if (cb) cb();
     // test();
 };
