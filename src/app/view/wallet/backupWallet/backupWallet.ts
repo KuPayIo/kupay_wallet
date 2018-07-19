@@ -3,8 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { pswEqualed } from '../../../utils/account';
-import { decrypt, getCurrentWallet, getLocalStorage } from '../../../utils/tools';
+import { getCurrentWallet, getLocalStorage, VerifyIdentidy } from '../../../utils/tools';
 
 export class BackupWallet extends Widget {
     public ok: () => void;
@@ -27,8 +26,7 @@ export class BackupWallet extends Widget {
         popNew('app-components-message-messagebox', { itype: 'prompt', title: '输入密码', content: '', inputType: 'password' }, (r) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
-            const walletPsw = decrypt(wallet.walletPsw);
-            if (pswEqualed(r, walletPsw)) {
+            if (VerifyIdentidy(wallet, r)) {
                 const close = popNew('pi-components-loading-loading', { text: '导出中...' });
                 setTimeout(() => {
                     close.callback(close.widget);
