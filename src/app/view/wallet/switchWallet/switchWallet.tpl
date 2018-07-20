@@ -10,11 +10,8 @@
             {{end}}
         </div>
         <div w-class="ga-bottom-container">
-            <div w-class="ga-create-wallet" on-tap="createWalletClick">
-                <span w-class="ga-text">创建钱包</span>
-            </div>
             <div w-class="ga-import-wallet" on-tap="importWalletClick">
-                <span w-class="ga-text">导入钱包</span>
+                <span w-class="ga-text">添加钱包</span>
             </div>
         </div>
     </div>

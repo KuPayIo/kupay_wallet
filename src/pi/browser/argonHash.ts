@@ -44,8 +44,9 @@ export class ArgonHash extends NativeObject {
 
     private calcHashValueAtPc(iType: string, param: any) {
         if (iType === 'getArgon2Hash') {
-            const hash = getArgonHash(param.pwd, param.salt, param.time, param.memory, param.hashLen, param.parallelism, 1);
             setTimeout(() => {
+                // todo 这里考虑使用worker进行处理
+                const hash = getArgonHash(param.pwd, param.salt, param.t, param.m, param.hashLen, param.p, 1);
                 param.success(hash);
             }, 1000);
         }

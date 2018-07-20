@@ -11,10 +11,11 @@ import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
 import { Api as EthApi } from '../core/eth/api';
-import { ERC20Tokens } from '../core/eth/tokens'; 
+import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
+import { sha3 } from '../core/genmnemonic';
 import { dataCenter } from '../store/dataCenter';
-import { getLocalStorage, setLocalStorage } from '../utils/tools';
+import { calcHashValuePromise, getLocalStorage, setLocalStorage } from '../utils/tools';
 
 // ============================== 导出
 
@@ -34,8 +35,7 @@ export const run = (cb): void => {
     popNewPage();
     // 后台切前台
     backToFront();
-    
-   /*  popNew('app-view-wallet-transaction-transfer',{
+  /*  popNew('app-view-wallet-transaction-transfer',{
         currencyBalance: 100,
         fromAddr: '0xssss',
         currencyName: 'ETH',
@@ -59,7 +59,7 @@ const popNewPage = () => {
         if (ifNeedUnlockScreen()) {
             popNew('app-view-guidePages-unlockScreen');
         }
-        
+
     } else {
         popNew('app-view-guidePages-privacyAgreement');
     }
@@ -100,17 +100,17 @@ const initEthTokenDecimals = () => {
     if (newTokenNames.length === 0) return;
 
     newTokenNames.forEach(tokenName => {
-        const decimalsCode = GaiaWallet.tokenOperations('decimals',tokenName);
+        const decimalsCode = GaiaWallet.tokenOperations('decimals', tokenName);
         const api = new EthApi();
-        api.ethCall(ERC20Tokens[tokenName],decimalsCode).then(r => {
+        api.ethCall(ERC20Tokens[tokenName], decimalsCode).then(r => {
             const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
             // tslint:disable-next-line:radix
-            ERC20TokenDecimals[tokenName] = Math.pow(10,parseInt(r));
-            setLocalStorage('ERC20TokenDecimals',ERC20TokenDecimals);
+            ERC20TokenDecimals[tokenName] = Math.pow(10, parseInt(r));
+            setLocalStorage('ERC20TokenDecimals', ERC20TokenDecimals);
         });
-        
+
     });
-    
+
 };
 
 /**
@@ -139,4 +139,13 @@ const ifNeedUnlockScreen = () => {
     const openLockScreen = getLocalStorage('openLockScreen') !== false;
 
     return lockScreenPsw && openLockScreen;
+};
+
+const test = async () => {
+
+    const hash1 = await calcHashValuePromise('4579fb9befb0af8b04e98c748475cc2fd53505ecd7c9d89a7f11c832242c4bc0', 'somesalt');
+    const hash2 = await calcHashValuePromise('24d86cd1f14912f7b20aebe1ba9fdef4cf21a770a8db5b902326502eaf70989d', 'somesalt');
+
+    console.log(hash1, hash2);
+
 };

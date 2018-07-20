@@ -27,14 +27,10 @@ export class SwitchWallet extends Widget {
             nickNameInterception
         };
     }
-    public createWalletClick() {
-        this.ok && this.ok();
-        popNew('app-view-wallet-walletCreate-walletCreate');
-    }
 
     public importWalletClick() {
         this.ok && this.ok();
-        popNew('app-view-wallet-walletImport-walletImport');
+        popNew('app-view-wallet-walletCreate-createWalletEnter');
     }
     public switchWalletClick(e:Event,index:number,isCurWallet:boolean) {
         if (isCurWallet) {

@@ -27,26 +27,26 @@ export class CreateWalletEnter extends Widget {
     }
     public toCreateWallet() {
         this.ok && this.ok();
-        popNew("app-view-wallet-walletCreate-walletCreate");
+        popNew('app-view-wallet-walletCreate-walletCreate');
     }
     public backPrePage() {
         this.ok && this.ok();
     }
-    public toCreateByImg(){
+    public toCreateByImg() {
         this.ok && this.ok();
-        popNew("app-view-wallet-walletCreate-createByImg-createByImg");
+        popNew('app-view-wallet-walletCreate-createByImg-createByImg');
     }
-    public importByImtokenClicked(){
+    public importByImtokenClicked() {
         this.ok && this.ok();
-        popNew("app-view-wallet-walletImport-importByImtoken");
+        popNew('app-view-wallet-walletImport-importByImtoken');
     }
-    public walletImportClicked(){
+    public walletImportClicked() {
         this.ok && this.ok();
-        popNew("app-view-wallet-walletImport-walletImport");
+        popNew('app-view-wallet-walletImport-walletImport');
     }
-    public importByFairblockClicked(){
+    public importByFairblockClicked() {
         this.ok && this.ok();
-        popNew("app-view-wallet-walletImport-importByFairBlock");
+        popNew('app-view-wallet-walletImport-importByFairBlock');
     }
 
 }
