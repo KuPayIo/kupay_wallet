@@ -3,7 +3,7 @@
  */
 import { dataCenter } from '../store/dataCenter';
 import { btcNetwork, defaultEthToken, lang, strength } from '../utils/constants';
-import { calcHashValuePromise, decrypt, getDefaultAddr, u8ArrayToHexstr } from '../utils/tools';
+import { calcHashValuePromise, decrypt, getDefaultAddr, getMnemonic, u8ArrayToHexstr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
@@ -215,6 +215,37 @@ export class GlobalWallet {
             addrs
         };
     }
+
+    /**
+     * 动态创建钱包(地址)对象
+     */
+    public static async createWlt(currencyName: string, passwd: string, wallet: any, i: number) {
+        // todo
+        const mnemonic = await getMnemonic(wallet, passwd);
+        let wlt;
+        if (currencyName === 'ETH') {
+            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
+            wlt = gaiaWallet.selectAddress(passwd, i);
+        } else if (currencyName === 'BTC') {
+            wlt = BTCWallet.fromMnemonic(passwd, mnemonic, btcNetwork, lang);
+        } else if (ERC20Tokens[currencyName]) {
+            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
+            wlt = gaiaWallet.selectAddress(passwd, i);
+        }
+
+        return wlt;
+    }
+
+    /**
+     * 获取钱包地址的位置
+     */
+    public static getWltAddrIndex(wallet: any, addr: string, currencyName: string): number {
+        const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
+        if (!currencyRecord) return -1;
+
+        return currencyRecord.addrs.indexOf(addr);
+    }
+
     private static createEthGwlt(passwd: string, mnemonic: string) {
         const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
         const currencyRecord: CurrencyRecord = {

@@ -9,9 +9,10 @@ import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
+import { GlobalWallet } from '../../../core/globalWallet';
 import {
-    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals,getAddrById
-    , getCurrentAddrInfo, getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById,urlParams
+    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals, getAddrById
+    , getCurrentAddrInfo, getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById, urlParams
 } from '../../../utils/tools';
 
 interface Props {
@@ -35,7 +36,7 @@ interface States {
     feesConversion: string;
     info: string;
     urgent: boolean;
-    showNote:boolean;
+    showNote: boolean;
 }
 
 export class AddAsset extends Widget {
@@ -65,7 +66,7 @@ export class AddAsset extends Widget {
             feesConversion: '',
             info: '',
             urgent: false,
-            showNote:ERC20Tokens[this.props.currencyName] ? false : true
+            showNote: ERC20Tokens[this.props.currencyName] ? false : true
         };
 
         // todo 这是测试地址
@@ -76,8 +77,8 @@ export class AddAsset extends Widget {
             this.state.gasPrice = 10;
             const defaultToAddr = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
             const defaultAmount = 0.001;
-            this.getBtcTransactionFee(defaultToAddr,defaultAmount).then(fee => {
-                console.log('fee',fee);
+            this.getBtcTransactionFee(defaultToAddr, defaultAmount).then(fee => {
+                console.log('fee', fee);
                 this.state.gasPrice = fee;
                 this.state.gasLimit = 1;
                 this.resetFees();
@@ -119,44 +120,44 @@ export class AddAsset extends Widget {
         }, async (r: any) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
+
+            const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
             const psw = decrypt(wallet.walletPsw);
-            let loading;
-            if (r === psw) {
-                try {
-                    let id: any;
-                    loading = popNew('pi-components-loading-loading', { text: '交易中...' });
-                    const fromAddr = thisObj.props.fromAddr;
-                    const toAddr = thisObj.state.to;
-                    const gasPrice = thisObj.state.gasPrice;
-                    const gasLimit = thisObj.state.gasLimit;
-                    const pay = thisObj.state.pay;
-                    const info = thisObj.state.info;
-                    const urgent = thisObj.state.urgent;
-                    const currencyName = thisObj.props.currencyName;
+            try {
+                let id: any;
+                const fromAddr = thisObj.props.fromAddr;
+                const toAddr = thisObj.state.to;
+                const gasPrice = thisObj.state.gasPrice;
+                const gasLimit = thisObj.state.gasLimit;
+                const pay = thisObj.state.pay;
+                const info = thisObj.state.info;
+                const urgent = thisObj.state.urgent;
+                const currencyName = thisObj.props.currencyName;
+                const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, currencyName);
+                if (addrIndex >= 0) {
+                    const wlt = await GlobalWallet.createWlt(this.props.currencyName, r, wallet, addrIndex);
                     if (this.props.currencyName === 'ETH') {
-                        id = await doEthTransfer(fromAddr, toAddr, psw, gasPrice, gasLimit, eth2Wei(pay), info, urgent);
+                        id = await doEthTransfer(<any>wlt, fromAddr, toAddr, psw, gasPrice, gasLimit, eth2Wei(pay), info, urgent);
                     } else if (this.props.currencyName === 'BTC') {
-                        id = await doBtcTransfer(fromAddr, toAddr, psw,gasPrice, gasLimit, pay, info, urgent);
+                        id = await doBtcTransfer(<any>wlt, fromAddr, toAddr, psw, gasPrice, gasLimit, pay, info, urgent);
                     } else if (ERC20Tokens[this.props.currencyName]) {
-                        id = await doERC20TokenTransfer(fromAddr, toAddr, psw, gasPrice, gasLimit, pay, urgent,currencyName);
+                        id = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, psw, gasPrice, gasLimit, pay, urgent, currencyName);
                     }
 
-                    loading.callback(loading.widget);
                     // 打开交易详情界面
                     thisObj.showTransactionDetails(id);
                     thisObj.doClose();
-                } catch (error) {
-                    loading.callback(loading.widget);
-                    console.log(error.message);
-                    if (error.message.indexOf('insufficient funds') >= 0) {
-                        popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });
-                    } else {
-                        popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
-                    }
                 }
-            } else {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
+            } catch (error) {
+                console.log(error.message);
+                if (error.message.indexOf('insufficient funds') >= 0) {
+                    popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });
+                } else {
+                    popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
+                }
             }
+
+            loading.callback(loading.widget);
         });
     }
 
@@ -270,8 +271,8 @@ export class AddAsset extends Widget {
         this.state.feesConversion = r.conversionShow;
         this.paint();
     }
-// tslint:disable-next-line:only-arrow-functions
-    private async getBtcTransactionFee(toAddr:string ,amount:number,priority:'high' | 'medium' | 'low' = 'medium') {
+    // tslint:disable-next-line:only-arrow-functions
+    private async getBtcTransactionFee(toAddr: string, amount: number, priority: 'high' | 'medium' | 'low' = 'medium') {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         const psw = decrypt(wallet.walletPsw);
@@ -286,10 +287,10 @@ export class AddAsset extends Widget {
         const wlt = BTCWallet.fromJSON(addrInfo.wlt, psw);
         wlt.unlock(psw);
         await wlt.init();
-        
-        const retArr = await wlt.buildRawTransaction(output,priority);
+
+        const retArr = await wlt.buildRawTransaction(output, priority);
         wlt.lock(psw);
-        
+
         return retArr[1];
     }
 
@@ -299,18 +300,18 @@ export class AddAsset extends Widget {
  * 添加记录
  */
 const addRecord = (currencyName, currentAddr, record) => {
-    const addr = getAddrById(currentAddr,currencyName);
+    const addr = getAddrById(currentAddr, currencyName);
     if (!addr) return;
     addr.record.push(record);
 
-    resetAddrById(currentAddr,currencyName,addr, true);
+    resetAddrById(currentAddr, currencyName, addr, true);
 };
 
 /**
  * 处理转账
  */
 // tslint:disable-next-line:only-arrow-functions
-async function doEthTransfer(acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
+async function doEthTransfer(wlt: GaiaWallet, acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
     , value: number, info: string, urgent: boolean) {
     const api = new EthApi();
     if (urgent) gasPrice *= 2;
@@ -324,10 +325,10 @@ async function doEthTransfer(acct1: string, acct2: string, psw: string, gasPrice
         data: info
     };
 
-    const currentAddr = getAddrById(acct1,'ETH');
-    if (!currentAddr) return;
+    // const currentAddr = getAddrById(acct1, 'ETH');
+    // if (!currentAddr) return;
 
-    const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
+    // const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
 
     const tx = wlt.signRawTransaction(psw, txObj);
     // tslint:disable-next-line:no-unnecessary-local-variable
@@ -340,7 +341,7 @@ async function doEthTransfer(acct1: string, acct2: string, psw: string, gasPrice
  * 处理转账
  */
 // tslint:disable-next-line:only-arrow-functions
-async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
+async function doBtcTransfer(wlt: BTCWallet, acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
     , value: number, info: string, urgent: boolean) {
     const addrs = getLocalStorage('addrs');
     const addr = addrs.filter(v => v.addr === acct1)[0];
@@ -350,7 +351,7 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
         amount: value,
         chgAddr: acct1
     };
-    const wlt = BTCWallet.fromJSON(addr.wlt, psw);
+    // const wlt = BTCWallet.fromJSON(addr.wlt, psw);
     wlt.unlock(psw);
     await wlt.init();
 
@@ -371,14 +372,14 @@ async function doBtcTransfer(acct1: string, acct2: string, psw: string, gasPrice
  * 处理eth代币转账
  */
 // tslint:disable-next-line:only-arrow-functions
-async function doERC20TokenTransfer(acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
-    , value: number, urgent: boolean,currencyName:string) {
-    
+async function doERC20TokenTransfer(wlt: GaiaWallet, acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
+    , value: number, urgent: boolean, currencyName: string) {
+
     const api = new EthApi();
     if (urgent) gasPrice *= 2;
     const nonce = await api.getTransactionCount(acct1);
-    console.log('nonce',nonce);
-    const transferCode = GaiaWallet.tokenOperations('transfer',currencyName,acct2,ethTokenMultiplyDecimals(value,currencyName));
+    console.log('nonce', nonce);
+    const transferCode = GaiaWallet.tokenOperations('transfer', currencyName, acct2, ethTokenMultiplyDecimals(value, currencyName));
     const txObj = {
         to: ERC20Tokens[currencyName],
         nonce: nonce,
@@ -388,10 +389,10 @@ async function doERC20TokenTransfer(acct1: string, acct2: string, psw: string, g
         data: transferCode
     };
 
-    const currentAddr = getAddrById(acct1,currencyName);
-    if (!currentAddr) return;
+    // const currentAddr = getAddrById(acct1, currencyName);
+    // if (!currentAddr) return;
 
-    const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
+    // const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
 
     const tx = wlt.signRawTransaction(psw, txObj);
     // tslint:disable-next-line:no-unnecessary-local-variable

@@ -832,7 +832,7 @@ export const shareToQrcode = (shareText) => {
 };
 
 /**
- * 获取助记词
+ * 获取memery hash
  */
 export const calcHashValuePromise = async (pwd, salt) => {
     const argonHash = new ArgonHash();
