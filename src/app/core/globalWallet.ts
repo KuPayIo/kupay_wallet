@@ -3,13 +3,13 @@
  */
 import { dataCenter } from '../store/dataCenter';
 import { btcNetwork, defaultEthToken, lang, strength } from '../utils/constants';
-import { calcHashValuePromise, decrypt, getDefaultAddr, u8ArrayToHexstr } from '../utils/tools';
+import { calcHashValuePromise, decrypt, getDefaultAddr, getMnemonic, u8ArrayToHexstr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
 import { ERC20Tokens } from './eth/tokens';
 import { GaiaWallet } from './eth/wallet';
-import { generate, generateRandomValues, toMnemonic, toSeed } from './genmnemonic';
+import { generate, generateRandomValues, getRandomValuesByMnemonic, toMnemonic, toSeed } from './genmnemonic';
 
 const cipher = new Cipher();
 
@@ -17,10 +17,10 @@ const cipher = new Cipher();
 export class GlobalWallet {
     private _glwtId: string;
     private _nickName: string;
-    private _mnemonic: string;
+    // private _mnemonic: string;
     private _currencyRecords: CurrencyRecord[] = [];
     private _addrs: Addr[] = [];
-    private _seed: string;
+    // private _seed: string;
     private _vault: string;
     private _mnemonicBackup: boolean = false;// 助记词备份
 
@@ -34,9 +34,9 @@ export class GlobalWallet {
     set nickName(name: string) {
         this._nickName = name;
     }
-    get mnemonic(): string {
-        return this._mnemonic;
-    }
+    // get mnemonic(): string {
+    //     return this._mnemonic;
+    // }
 
     get currencyRecords() {
         return this._currencyRecords;
@@ -46,12 +46,15 @@ export class GlobalWallet {
         return this._addrs;
     }
 
-    get seed() {
-        return this._seed;
-    }
+    // get seed() {
+    //     return this._seed;
+    // }
 
     get vault() {
         return this._vault;
+    }
+    set mnemonicBackup(mnemonicBackup: boolean) {
+        this._mnemonicBackup = mnemonicBackup;
     }
     get mnemonicBackup() {
         return this._mnemonicBackup;
@@ -63,8 +66,8 @@ export class GlobalWallet {
 
         gwlt._glwtId = wlt.glwtId;
         gwlt._nickName = wlt.nickname;
-        gwlt._mnemonic = wlt.mnemonic;
-        gwlt._seed = wlt.seed;
+        // gwlt._mnemonic = wlt.mnemonic;
+        // gwlt._seed = wlt.seed;
         gwlt._vault = wlt.vault;
         gwlt._mnemonicBackup = wlt.mnemonicBackup;
 
@@ -72,11 +75,17 @@ export class GlobalWallet {
     }
 
     public static async fromMnemonic(mnemonic: string, passwd: string, passphrase?: string): Promise<GlobalWallet> {
-        const gwlt = new GlobalWallet();
-        gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
+        const hash = await calcHashValuePromise(passwd, 'somesalt');
 
-        const seed = toSeed(lang, mnemonic);
-        gwlt._seed = cipher.encrypt(passwd, seed);
+        const gwlt = new GlobalWallet();
+
+        const vault = getRandomValuesByMnemonic(lang, mnemonic);
+        gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
+
+        // gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
+
+        // const seed = toSeed(lang, mnemonic);
+        // gwlt._seed = cipher.encrypt(passwd, seed);
 
         // 创建ETH钱包
         const ethGwlt = await this.fromMnemonicETH(passwd, mnemonic);
@@ -90,7 +99,6 @@ export class GlobalWallet {
         gwlt._addrs.push(...btcGwlt.addrs);
 
         // ETH代币创建
-
         for (let i = 0; i < defaultEthToken.length; i++) {
             const tokenName = defaultEthToken[i];
             const contractAddress = ERC20Tokens[tokenName];
@@ -122,22 +130,20 @@ export class GlobalWallet {
      * @param passphrase passphrase
      */
     public static async generate(passwd: string, walletName: string, passphrase?: string, vault?: Uint8Array) {
-        const gwlt = new GlobalWallet();
-        gwlt._nickName = walletName;
-
         const hash = await calcHashValuePromise(passwd, 'somesalt');
         // const hash = passwd; 
         // const hash = '11111111';
-
+        const gwlt = new GlobalWallet();
+        gwlt._nickName = walletName;
         vault = vault || generateRandomValues(strength);
         gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
         console.log('generate hash', hash, gwlt._vault, passwd, u8ArrayToHexstr(vault));
 
         const mnemonic = toMnemonic(lang, vault);
-        gwlt._mnemonic = cipher.encrypt(hash, mnemonic);
+        // gwlt._mnemonic = cipher.encrypt(hash, mnemonic);
 
-        const seed = toSeed(lang, mnemonic);
-        gwlt._seed = cipher.encrypt(hash, seed);
+        // const seed = toSeed(lang, mnemonic);
+        // gwlt._seed = cipher.encrypt(hash, seed);
 
         // 创建ETH钱包
         const ethGwlt = this.createEthGwlt(hash, mnemonic);
@@ -209,6 +215,37 @@ export class GlobalWallet {
             addrs
         };
     }
+
+    /**
+     * 动态创建钱包(地址)对象
+     */
+    public static async createWlt(currencyName: string, passwd: string, wallet: any, i: number) {
+        // todo
+        const mnemonic = await getMnemonic(wallet, passwd);
+        let wlt;
+        if (currencyName === 'ETH') {
+            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
+            wlt = gaiaWallet.selectAddress(passwd, i);
+        } else if (currencyName === 'BTC') {
+            wlt = BTCWallet.fromMnemonic(passwd, mnemonic, btcNetwork, lang);
+        } else if (ERC20Tokens[currencyName]) {
+            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
+            wlt = gaiaWallet.selectAddress(passwd, i);
+        }
+
+        return wlt;
+    }
+
+    /**
+     * 获取钱包地址的位置
+     */
+    public static getWltAddrIndex(wallet: any, addr: string, currencyName: string): number {
+        const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
+        if (!currencyRecord) return -1;
+
+        return currencyRecord.addrs.indexOf(addr);
+    }
+
     private static createEthGwlt(passwd: string, mnemonic: string) {
         const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang, passwd);
         const currencyRecord: CurrencyRecord = {
@@ -383,30 +420,18 @@ export class GlobalWallet {
         };
     }
 
-    /**
-     * export the mnemonic words of this wallet
-     *
-     * @param  passwd used to decrypt the mnemonic words
-     * @returns  mnemonic
-     */
-    public exportMnemonic(passwd: string): string {
-        if (this._mnemonic.length !== 0) {
-            return cipher.decrypt(passwd, this._mnemonic);
-        } else {
-            throw new Error('Mnemonic unavailable');
-        }
-    }
-
     public exportSeed(passwd: string): string {
-        return cipher.decrypt(passwd, this._seed);
+        // todo 这里处理导出种子
+        return '';
+        // return cipher.decrypt(passwd, this._seed);
     }
 
     public toJSON(): string {
         const wlt = {
             glwtId: this._glwtId,
             nickname: this._nickName,
-            mnemonic: this._mnemonic,
-            seed: this._seed,
+            // mnemonic: this._mnemonic,
+            // seed: this._seed,
             vault: this._vault,
             mnemonicBackup: this._mnemonicBackup
         };
@@ -415,24 +440,13 @@ export class GlobalWallet {
     }
 
     public passwordChange(oldPsw: string, newPsw: string) {
-        if (this._mnemonic.length === 0) return;
-        const mnemonic = this.exportMnemonic(oldPsw);
-        this._mnemonic = cipher.encrypt(newPsw, mnemonic);
+        // todo 这里需要处理修改密码
 
-        const seed = cipher.decrypt(oldPsw, this._seed);
-        this._seed = cipher.encrypt(newPsw, seed);
-    }
+        // if (this._mnemonic.length === 0) return;
+        // const mnemonic = this.exportMnemonic(oldPsw);
+        // this._mnemonic = cipher.encrypt(newPsw, mnemonic);
 
-    public deleteMnemonic(passwd: string) {
-        if (this._mnemonic.length === 0) {
-            throw new Error('Invalid operation');
-        }
-
-        try {
-            cipher.decrypt(passwd, this._mnemonic);
-        } catch (e) {
-            throw new Error('Invalid operation');
-        }
-        this._mnemonic = '';
+        // const seed = cipher.decrypt(oldPsw, this._seed);
+        // this._seed = cipher.encrypt(newPsw, seed);
     }
 }

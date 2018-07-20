@@ -38,11 +38,11 @@ export class CreateWalletEnter extends Widget {
     }
     public importByImtokenClicked() {
         this.ok && this.ok();
-        popNew('app-view-wallet-walletImport-importByImtoken');
+        popNew('app-view-wallet-walletImport-walletImport',{ title:'导入imtoken' });
     }
     public walletImportClicked() {
         this.ok && this.ok();
-        popNew('app-view-wallet-walletImport-walletImport');
+        popNew('app-view-wallet-walletImport-walletImport',{ title:'导入助记词' });
     }
     public importByFairblockClicked() {
         this.ok && this.ok();

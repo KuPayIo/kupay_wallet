@@ -5,6 +5,7 @@
 import { LANGUAGE } from './btc/wallet';
 import { Mnemonic } from './thirdparty/bip39';
 import { Web3 } from './thirdparty/web3.min';
+import { WORDLISTS } from './thirdparty/wordlist';
 
 export const generate = (language: LANGUAGE, strength: number): string => {
     if (strength < 128 && strength % 32 !== 0) {
@@ -85,6 +86,33 @@ export const sha3 = (str: string, isHex: boolean) => {
 };
 
 /**
+ * 通过助记词，获得随机数
+ */
+export const getRandomValuesByMnemonic = (language: LANGUAGE, mnemonic: string): Uint8Array => {
+    mnemonic = splitWords(mnemonic);
+    if (mnemonic.length === 0 || mnemonic.length % 3 > 0) {
+        return;
+    }
+    const idx = [];
+    const wordlist = WORDLISTS[language];
+
+    for (let i = 0; i < mnemonic.length; i++) {
+        const word = mnemonic[i];
+        const wordIndex = wordlist.indexOf(word);
+        if (wordIndex === -1) {
+            return;
+        }
+        const binaryIndex = zfill(wordIndex.toString(2), 11);
+        idx.push(binaryIndex);
+    }
+    const b = idx.join('');
+    const d = b.substring(0, b.length / 33 * 32);
+    const nd = binaryStringToWordArray(d);
+
+    return new Uint8Array(wordArrayToByteArray(nd));
+};
+
+/**
  * 字符串转u8Arr
  * 
  * @param str 输入字符串
@@ -97,4 +125,42 @@ const str2arr = (str) => {
     }
 
     return new Uint8Array(buf);
+};
+
+const splitWords = (mnemonic) => {
+    return mnemonic.split(/\s/g).filter((x) => x.length);
+};
+
+const zfill = (source, length) => {
+    source = source.toString();
+    while (source.length < length) {
+        source = `0${source}`;
+    }
+
+    return source;
+};
+
+const binaryStringToWordArray = (binary) => {
+    const aLen = binary.length / 32;
+    const a = [];
+    for (let i = 0; i < aLen; i++) {
+        const valueStr = binary.substring(0, 32);
+        const value = parseInt(valueStr, 2);
+        a.push(value);
+        binary = binary.slice(32);
+    }
+
+    return a;
+};
+
+const wordArrayToByteArray = (data) => {
+    const a = [];
+    for (let i = 0; i < data.length; i++) {
+        a.push(data[i] >> 8 * 3);
+        a.push((data[i] >> 8 * 2) & 255);
+        a.push((data[i] >> 8 * 1) & 255);
+        a.push((data[i]) & 255);
+    }
+
+    return a;
 };

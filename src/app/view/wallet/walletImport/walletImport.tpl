@@ -1,5 +1,5 @@
 <div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page">
-    <app-components-topBar-topBar>{title:"导入助记词"}</app-components-topBar-topBar>
+    <app-components-topBar-topBar>{title:{{it.title}}}</app-components-topBar-topBar>
     <div w-class="topTip">
         Fairblock是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。
     </div>

@@ -36,7 +36,7 @@ export class BackupMnemonicWordConfirm extends Widget {
             okButton: '取消',
             cancelButton: '跳过',
             okButtonStyle: 'color:rgba(26,112,221,1);',
-            cancelButtonStyle:'color:#8E96AB'
+            cancelButtonStyle: 'color:#8E96AB'
         }, null, () => {
             this.ok && this.ok();
         });
@@ -70,26 +70,10 @@ export class BackupMnemonicWordConfirm extends Widget {
         if (!this.compareMnemonicEqualed()) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '提示', content: '请检查助记词' });
         } else {
-            popNew('app-components-message-messagebox',
-                { itype: 'confirm', title: '是否移除助记词？', content: '确认抄写助记词，此操作不可撤销' },
-                () => {
-                    this.deleteMnemonic();
-                    this.ok && this.ok();
-                }, () => {
-                    this.ok && this.ok();
-                });
+            this.deleteMnemonic();
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '提示', content: '备份完成' });
+            this.ok && this.ok();
         }
-    }
-
-    public deleteMnemonic() {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
-        const psw = decrypt(wallet.walletPsw);
-        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        // 删除主线助记词
-        gwlt.deleteMnemonic(psw);
-        wallet.gwlt = gwlt.toJSON();
-        setLocalStorage('wallets', wallets, true);
     }
 
     public shuffledMnemonicItemClick(e: Event, v: number) {
@@ -106,14 +90,22 @@ export class BackupMnemonicWordConfirm extends Widget {
         this.paint();
     }
 
-    public compareMnemonicEqualed(): boolean {
+    private deleteMnemonic() {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+        gwlt.mnemonicBackup = true;
+        wallet.gwlt = gwlt.toJSON();
+        setLocalStorage('wallets', wallets, true);
+    }
+
+    private compareMnemonicEqualed(): boolean {
         let isEqualed = true;
         const len = this.state.mnemonic.length;
         if (this.state.confirmedMnemonic.length !== len) return false;
         for (let i = 0; i < len; i++) {
             if (this.state.confirmedMnemonic[i].word !== this.state.mnemonic[i]) {
                 isEqualed = false;
-                break;
             }
         }
 
