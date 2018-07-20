@@ -1,10 +1,14 @@
 .base{
-    background-color: rgb(238, 238, 238);
+    background-color: rgb(68, 140, 255);
     height: 100%;
     width: 100%;
     position: absolute;
     left: 0px;
     top: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
 }
 .header{
     border-width: 0px;
@@ -18,22 +22,35 @@
     text-align: center;
     line-height: normal;
 }
-
+.qrcode-scan{
+    position: absolute;
+    right: 30px;
+    top: 44px;
+    width: 42px;
+    height: 42px;
+}
+.scanbtn{
+    width: 100%;
+    height: 100%;
+}
 .balance{
     position: relative;
-    width: 90%;
-    top: 45px;
+    margin-top: 30px;
     left: 5%;
-    font-size: 36px;
-    color: #203260;
+    font-size: 48px;
+    color: #fff;
+    align-self: flex-start;
+}
+.currency-name{
+    font-size: 32px;
 }
 .body{
     position: relative;
-    width: 100%;
-    top: 85px;
+    width: 690px;
     font-size: 24px;
     background-color: white;
-    height: 100%;
+    height: 1000px;
+    margin-top: 40px;
 }
 .get-addr{
     position: relative;
@@ -41,38 +58,55 @@
     left: 30px;
     color: #8E96AB;
 }
-.get-addr-value{
-    position: relative;
-    width: 600px;
-    left: 150px;
-    top: 5px;
+.ga-item{
+    height: 120px;
     display: flex;
+    align-items: center;
+    position: relative;
+}
+.ga-item-space-between{
+    justify-content: space-between;
+}
+.get-addr-value{
+    margin-top: 20px;
+}
+.textarea-father{
+    width: 100%;
+    height: 120px;
 }
 .pay{
     position: relative;
-    left: 30px;
-    width: 600px;
-    top: 80px;
     color: #8E96AB;
 }
 .pay-value{
     position: relative;
-    top: 45px;
-    width: 250px;
-    left: 150px;
-    
+}
+.input-father{
+    position: relative;
+    height: 100%;
+    width: 100%;
 }
 .pay-value-conversion{
-    right: 0px;
     position: absolute;
+    right: 30px;
     font-size: 32px;
     color: #003C00;
 }
 .set-addr{
-    position: relative;
-    left: 30px;
-    top: 120px;
-    color: #8E96AB;
+    color: #A0ACC0;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 630px;
+    border-top: 1px solid #e5e5ee;
+    padding:20px 30px 0;
+    font-size: 28px;
+
+}
+.addr-from{
+    font-size: 24px;
+    color:#203260;
+    margin-top: 30px;
 }
 .fees{
     position: relative;
@@ -88,26 +122,20 @@
     color: rgb(142, 150, 171);
 }
 .info-value{
-    margin-top: 5px;
-    position: relative;
-    top: 240px;
-    width: 500px;
-    left: 150px;
+    width:100%;
 }
 .next{
     text-align: center;
     position: relative;
-    left: 50%;
-    transform: translate(-50%, 0px);
-    cursor: pointer;
-    top: 400px;
-    width: 690px;
-    height: 100px;
     line-height: 100px;
-    background: #203260;
-    border-radius: 6px;
     font-size: 32px;
     color: rgba(255,255,255,0.87);
+    width: 630px;
+    height: 100px;
+    border-radius: 100px;
+    background-color: rgba(26, 112, 221, 1);
+    margin: 100px auto 0;
+
 }
 
 .unSelect{
@@ -132,4 +160,31 @@
     cursor: not-allowed;
     font-size: 32px;
     color: white;
+}
+.ga-img{
+    width: 30px;
+    height: 30px;
+}
+.ga-congestion-container{
+    padding: 0 30px;
+    border-bottom: 1px solid #e5e5ee;
+}
+.ga-congestion-title{
+    margin-left: 10px;
+    margin-right: 25px;
+    line-height: 42px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 28px;
+    font-family: "SourceHanSansCN-Regular";
+}
+.ga-congestion{
+    width: 450px;
+    height: 45px;
+    border-radius: 100px;
+    background-color: rgba(94, 180, 109, 1);
+    color: #fff;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

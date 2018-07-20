@@ -35,7 +35,12 @@ export const run = (cb): void => {
     // 后台切前台
     backToFront();
     
-    // popNew('app-view-mine-lockScreen-lockScreenSetting');
+   /*  popNew('app-view-wallet-transaction-transfer',{
+        currencyBalance: 100,
+        fromAddr: '0xssss',
+        currencyName: 'ETH',
+        rate: { CNY: 100 , USD: 15.2625 }
+    }); */
    /*  popNew('app-view-wallet-transaction-receipt',{currencyBalance: 100,
         addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
     if (cb) cb();
@@ -131,6 +136,5 @@ const ifNeedUnlockScreen = () => {
     const lockScreenPsw = getLocalStorage('lockScreenPsw');
     const openLockScreen = getLocalStorage('openLockScreen') !== false;
 
-    return false;
     return lockScreenPsw && openLockScreen;
 };
