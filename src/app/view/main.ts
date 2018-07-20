@@ -13,7 +13,8 @@ import { addWidget } from '../../pi/widget/util';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
-import { sha3 } from '../core/genmnemonic';
+import { generate, getRandomValuesByMnemonic, sha3, toMnemonic } from '../core/genmnemonic';
+import { Mnemonic } from '../core/thirdparty/bip39';
 import { dataCenter } from '../store/dataCenter';
 import { calcHashValuePromise, getLocalStorage, setLocalStorage } from '../utils/tools';
 
@@ -40,7 +41,7 @@ export const run = (cb): void => {
     /*  popNew('app-view-wallet-transaction-receipt',{currencyBalance: 100,
          addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
     if (cb) cb();
-    // test();
+    test();
 };
 
 /**
@@ -138,9 +139,8 @@ const ifNeedUnlockScreen = () => {
 
 const test = async () => {
 
-    const hash1 = await calcHashValuePromise('4579fb9befb0af8b04e98c748475cc2fd53505ecd7c9d89a7f11c832242c4bc0', 'somesalt');
-    const hash2 = await calcHashValuePromise('24d86cd1f14912f7b20aebe1ba9fdef4cf21a770a8db5b902326502eaf70989d', 'somesalt');
-
-    console.log(hash1, hash2);
+    const m = generate('english', 128);
+    const r = getRandomValuesByMnemonic('english', m);
+    console.log(m, r, toMnemonic('english', r));
 
 };
