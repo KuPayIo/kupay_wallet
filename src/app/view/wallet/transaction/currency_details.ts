@@ -112,12 +112,10 @@ export class AddAsset extends Widget {
 
             return;
         }
-        const rate: any = dataCenter.getExchangeRate(this.props.currencyName);
         popNew('app-view-wallet-transaction-transfer', {
             currencyBalance: this.state.balance,
             fromAddr: this.state.currentAddr,
-            currencyName: this.props.currencyName,
-            rate: rate
+            currencyName: this.props.currencyName
         });
     }
 

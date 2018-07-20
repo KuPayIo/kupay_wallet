@@ -1,0 +1,90 @@
+.ga-new-page{
+    background-color: #fff;
+}
+.ga-title-bar{
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.ga-red-envelope-record{
+    position: absolute;
+    right: 30px;
+    font-size: 28px;
+    color: #fff;
+}
+.ga-body{
+    display: flex;
+    flex-direction: column;
+    padding: 0 30px;
+    font-family: "SourceHanSansCN-Regular";
+}
+.ga-balance-box{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 147px;
+    color: #A0ACC0 ;
+    font-size: 32px;
+    border-bottom: 1px solid #e5e5ee;
+}
+.ga-balance{
+    font-size: 46px;
+    margin: 0 10px;
+}
+.ga-item-box{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 120px;
+    border-bottom: 1px solid #e5e5ee;
+}
+.ga-amount-inner{
+    display: flex;
+}
+.ga-tag{
+    line-height: 48px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 32px;
+}
+
+.ga-currency-name{
+    line-height: 48px;
+    color: rgba(32, 50, 96, 1);
+    font-size: 32px;
+    margin: 0 10px;
+}
+.ga-leave-message{
+    width: 470px;
+    margin: 0 10px;
+}
+.ga-send-amount{
+    line-height: 67px;
+    color: rgba(17, 17, 17, 1);
+    font-size: 48px;
+    font-family: "PingFangSC-Regular";
+    text-align: center;
+    margin-top: 40px;
+}
+.ga-send-btn{
+    width: 630px;
+    height: 100px;
+    border-radius: 100px;
+    background-color: rgba(223, 94, 94, 1);
+    left: 295px;
+    line-height: 45px;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 32px;
+    text-align: center;
+    font-family: "PingFangSC-Regular";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 60px auto 0;
+}
+.ga-tips{
+    line-height: 36px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 24px;
+    text-align: center;
+    margin-top: 40px;
+}

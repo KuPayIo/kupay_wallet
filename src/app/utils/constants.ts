@@ -4,13 +4,15 @@
 
  // 钱包数量最大限制
 export const walletNumLimit = 10;
-
-// 钱包所支持的货币列表
-/* { name: 'ETC', description: 'Ethereum Classic' }, 
-    { name: 'BCH', description: 'Bitcoin Cash' }, 
-    { name: 'XRP', description: 'Ripple' }, 
-    { name: 'YNC', description: 'YiNeng Ltd' } */
-export const supportCurrencyList = [
+// 钱包所支持的货币列表测试网络
+const supportCurrencyListTest = [
+    { name: 'ETH', description: 'Ethereum' },
+    { name: 'BTC', description: 'Bit coin' }, 
+    { name: 'EOS', description: 'EOS currency' }, 
+    { name: 'YNC', description: 'YiNeng Ltd' }
+];
+// 钱包所支持的货币列表主网络
+const supportCurrencyListMain = [
     { name: 'ETH', description: 'Ethereum' }, 
     { name: 'BTC', description: 'Bit coin' }, 
     { name: 'EOS', description: 'EOS currency' }, 
@@ -35,8 +37,10 @@ export const supportCurrencyList = [
     { name: 'KIN', description: 'Kin' },
     { name: 'VERI', description: 'Veritaseum' }, 
     { name: 'HEALP', description: 'HEALP' }
-
 ];
+
+// 钱包所支持的货币列表
+export const supportCurrencyList = supportCurrencyListTest;
 
 // 默认显示得ETH代币
 export const defaultEthToken = [];
@@ -53,11 +57,17 @@ export const btcNetwork = 'testnet';
 // 语言
 export const lang = 'english';
 
-// 默认货币汇率
-export const defaultExchangeRateJson = {
+// 默认货币汇率测试网络
+const defaultExchangeRateJsonTest = {
     ETH:{ CNY: 3337.01, USD: 517.42 },
     BTC:{ CNY: 42868.55 , USD: 6598.71 },
-    YNC:{ CNY: 100 , USD: 15.2625 },
+    YNC:{ CNY: 100 , USD: 15.2625 }
+};
+
+// 默认货币汇率主网络
+const defaultExchangeRateJsonMain = {
+    ETH:{ CNY: 3337.01, USD: 517.42 },
+    BTC:{ CNY: 42868.55 , USD: 6598.71 },
     BNB:{ CNY: 100 , USD: 15.2625 },
     VEN:{ CNY: 100 , USD: 15.2625 },
     OMG:{ CNY: 100 , USD: 15.2625 },
@@ -80,6 +90,9 @@ export const defaultExchangeRateJson = {
     VERI:{ CNY: 100 , USD: 15.2625 },
     HEALP:{ CNY: 100 , USD: 15.2625 }
 };
+
+// 默认货币汇率
+export const defaultExchangeRateJson = defaultExchangeRateJsonTest;
 
 // eth代币transfer交易编码前缀
 export const ethTokenTransferCode = '0xa9059cbb';
