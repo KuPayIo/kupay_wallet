@@ -212,7 +212,8 @@ export class AddAsset extends Widget {
             showTime: parseDate(t),
             result: '交易中',
             info: this.state.info || '无',
-            currencyName: this.props.currencyName
+            currencyName: this.props.currencyName,
+            tip: this.state.fees
         };
 
         popNew('app-view-wallet-transaction-transaction_details', record);
