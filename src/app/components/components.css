@@ -104,7 +104,7 @@
 .pi-textarea__inner:hover,
 .pi-input-textarea__inner:hover{
     border: none;
-    border-bottom: 1px solid #c0c4cc !important;
+    border-bottom: 2px solid #c0c4cc !important;
 }
 .pi-input__inner1:focus,
 .pi-textarea__inner:focus,

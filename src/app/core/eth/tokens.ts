@@ -24,7 +24,7 @@ const ERC20TokensMainnet = {
     MCO:'0xb63b606ac810a52cca15e44bb630fd42d8d1d83d',
     POWR:'0x595832f8fc6bf59c85c527fec3740a1b7a361269',
     MANA:'0x0f5d2fb29fb7d3cfee444a200298f468908cc942',
-    KIN:"0x818Fc6C2Ec5986bc6E2CBf00939d90556aB12ce5",
+    KIN:'0x818Fc6C2Ec5986bc6E2CBf00939d90556aB12ce5',
     VERI:'0x8f3470A7388c05eE4e7AF3d01D8C722b0FF52374',
     HEALP:'0x7b2f9706cd8473b4f5b7758b0171a9933fc6c4d6'
 };
@@ -33,8 +33,7 @@ const ERC20TokensTestnet = {
     YNC: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702'
 };
 
-export const ERC20Tokens = ERC20TokensMainnet;
-
+export const ERC20Tokens = ERC20TokensTestnet;
 
 // Basic ERC20 interfaces
 export const minABI = [
