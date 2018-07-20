@@ -4,6 +4,7 @@
 
 import { LANGUAGE } from './btc/wallet';
 import { Mnemonic } from './thirdparty/bip39';
+import { Web3 } from './thirdparty/web3.min';
 
 export const generate = (language: LANGUAGE, strength: number): string => {
     if (strength < 128 && strength % 32 !== 0) {
@@ -67,6 +68,20 @@ export const generateByHash = (hash: string): Uint8Array => {
     }
 
     return str2arr(hash);
+};
+
+/**
+ * sha3加密
+ * 
+ * @param str 数据
+ */
+export const sha3 = (str: string, isHex: boolean) => {
+    const web3 = new Web3();
+    if (isHex) {
+        return web3.sha3(str, { encoding: 'hex' }).slice(2);
+    } else {
+        return web3.sha3(str).slice(2);
+    }
 };
 
 /**

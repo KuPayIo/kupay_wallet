@@ -3,22 +3,27 @@
  */
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { BTCWallet } from '../../../../core/btc/wallet';
-import { GaiaWallet } from '../../../../core/eth/wallet';
+import { generateByHash, sha3 } from '../../../../core/genmnemonic';
 import { GlobalWallet } from '../../../../core/globalWallet';
-// tslint:disable-next-line:max-line-length
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../../utils/account';
-import { defalutShowCurrencys, walletNumLimit } from '../../../../utils/constants';
-import { encrypt, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../../utils/tools';
-import { Addr, CurrencyRecord, Wallet } from '../../../interface';
+import {
+    getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
+} from '../../../../utils/account';
+import { defalutShowCurrencys } from '../../../../utils/constants';
+import { calcHashValuePromise, encrypt, getLocalStorage, getXOR, openBasePage, setLocalStorage } from '../../../../utils/tools';
+import { Addr, Wallet } from '../../../interface';
+
+interface Props {
+    choosedImg: string;
+    inputWords: string;
+}
 
 export class WalletCreate extends Widget {
     public ok: () => void;
     constructor() {
         super();
     }
-    public create() {
-        super.create();
+    public setProps(props: Props, oldProps: Props): void {
+        super.setProps(props, oldProps);
         this.init();
     }
     public init() {
@@ -56,7 +61,7 @@ export class WalletCreate extends Widget {
     public agreementClick() {
         popNew('app-view-wallet-agreementInterpretation-agreementInterpretation');
     }
-    public createWalletClick() {
+    public async createWalletClick() {
         if (!this.state.userProtocolReaded) {
             // popNew("app-components-message-message", { itype: "notice", content: "请阅读用户协议" })
             return;
@@ -84,19 +89,21 @@ export class WalletCreate extends Widget {
         }
 
         const close = popNew('pi-components-loading-loading', { text: '创建中...' });
-        //this.createWallet();
-        setTimeout(() => {
-            close.callback(close.widget);
-            this.ok && this.ok();
-            popNew('app-view-wallet-walletCreate-createByImg-createComplete');
-        }, 500);
+        const hash: any = await imgToHash(this.props.choosedImg, this.props.inputWords);
+        await this.createWallet(hash);
+        // await openBasePage('app-view-wallet-walletCreate-createComplete');
+        popNew('app-view-wallet-walletCreate-createComplete');
+        this.ok && this.ok();
+        close.callback(close.widget);
+
     }
 
-    public createWallet() {
+    public async createWallet(hash: Uint8Array) {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
         const addrs: Addr[] = getLocalStorage('addrs') || [];
 
-        const gwlt = GlobalWallet.generate(this.state.walletPsw, this.state.walletName);
+        const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName, null, hash);
+        // todo 这里需要验证钱包是否已经存在，且需要进行修改密码处理
 
         // 创建钱包基础数据
         const wallet: Wallet = {
@@ -127,3 +134,16 @@ export class WalletCreate extends Widget {
         popNew('app-view-wallet-walletImport-walletImport');
     }
 }
+
+const imgToHash = async (choosedImg, inputWords) => {
+    const sha3Hash = sha3(choosedImg + inputWords, false);
+    const hash = await calcHashValuePromise(sha3Hash, 'somesalt');
+    const sha3Hash1 = sha3(hash, true);
+    const len = sha3Hash1.length;
+    // 生成助记词的随机数仅需要128位即可，这里对256位随机数进行折半取异或的处理
+    const sha3Hash2 = getXOR(sha3Hash1.slice(0, len / 2), sha3Hash1.slice(len / 2));
+    // console.log(choosedImg, inputWords, sha3Hash, hash, sha3Hash1, sha3Hash2);
+
+    return generateByHash(sha3Hash2);
+
+};

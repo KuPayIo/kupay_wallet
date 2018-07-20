@@ -1,5 +1,5 @@
 <div class="ga-new-page" ev-back-click="backPrePage">
-    <app-components-topBar-topBar>{title:"新建钱包"}</app-components-topBar-topBar>
+    <app-components-topBar-topBar>{title:"添加钱包"}</app-components-topBar-topBar>
     <div w-class="body">
        <img src="../../../res/image/security.png" w-class="imgsecur" />
        <p w-class="tips">选择创建或导入一个钱包</p>
