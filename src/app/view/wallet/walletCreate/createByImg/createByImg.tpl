@@ -4,16 +4,16 @@
 		同一张照片和同样的字符会生成同一个的钱包。所以可以记住您的照片和输入字符，这也是一种备份手段。
 	</div>
 	<div w-class="imgBox">
-		{{if !it1.choosedimg}}
+		{{if !it1.choosedImg}}
 			<div w-class="boxAlt" on-tap="chooseImg">
 				<p w-class="altTitle">选择一张照片</p>
 				<p w-class="altMain">请使用颜色丰富的照片</p>
 			</div>
 		{{end}}
-		{{if it1.choosedimg}}
+		{{if it1.choosedImg}}
 		<div w-class="closeicon" on-tap="removeImg">x</div>
 		{{end}}
-		<img style="display: {{it1.choosedimg? 'inline-block' : 'none'}}" id="choosedImg" w-class="img"/>
+		<img style="display: {{it1.choosedImg? 'inline-block' : 'none'}}" id="choosedImg" w-class="img"/>
 		<form id="hideForm">
 		<input type="file" id="imgInput" style="visibility:hidden;" on-input="change"/>
 		</form>

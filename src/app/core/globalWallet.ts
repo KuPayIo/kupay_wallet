@@ -1,10 +1,9 @@
 /**
  * global wallet
  */
-import { ArgonHash } from '../../pi/browser/argonHash';
 import { dataCenter } from '../store/dataCenter';
 import { btcNetwork, defaultEthToken, lang, strength } from '../utils/constants';
-import { decrypt, getDefaultAddr, u8ArrayToHexstr } from '../utils/tools';
+import { calcHashValuePromise, decrypt, getDefaultAddr, u8ArrayToHexstr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
@@ -122,19 +121,17 @@ export class GlobalWallet {
      * @param walletName  wallet name
      * @param passphrase passphrase
      */
-    public static async generate(passwd: string, walletName: string, passphrase?: string) {
+    public static async generate(passwd: string, walletName: string, passphrase?: string, vault?: Uint8Array) {
         const gwlt = new GlobalWallet();
         gwlt._nickName = walletName;
 
-        const argonHash = new ArgonHash();
-        argonHash.init();
-        const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
+        const hash = await calcHashValuePromise(passwd, 'somesalt');
         // const hash = passwd; 
         // const hash = '11111111';
 
-        const vault = generateRandomValues(strength);
+        vault = vault || generateRandomValues(strength);
         gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
-        console.log('generate hash', hash, gwlt._vault, passwd,u8ArrayToHexstr(vault));
+        console.log('generate hash', hash, gwlt._vault, passwd, u8ArrayToHexstr(vault));
 
         const mnemonic = toMnemonic(lang, vault);
         gwlt._mnemonic = cipher.encrypt(hash, mnemonic);
