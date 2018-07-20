@@ -25,8 +25,8 @@ export let logLevel = commonjs.debug ? LogLevel.info : LogLevel.none;
 
 // 关闭值
 export interface Close {
-	widget: Widget;
-	callback(w: Widget): any;
+    widget: Widget;
+    callback(w: Widget): any;
 }
 
 /**
@@ -46,7 +46,7 @@ export const listenerList = createHandlerList();
  * @example
  */
 export const cfg = {
-	width: 750, height: 1334, wscale: 0.25, hscale: 0, full: false
+    width: 750, height: 1334, wscale: 0.25, hscale: 0, full: false
 };
 
 /**
@@ -54,28 +54,28 @@ export const cfg = {
  * @example
  */
 export const getRoot = (): HTMLElement => {
-	return root;
+    return root;
 };
 /**
  * @description 获得根元素的缩放比例
  * @example
  */
 export const getScale = (): number => {
-	return rootScale;
+    return rootScale;
 };
 /**
  * @description 获得根元素的宽度
  * @example
  */
 export const getWidth = (): number => {
-	return rootWidth;
+    return rootWidth;
 };
 /**
  * @description 获得根元素的高度
  * @example
  */
 export const getHeight = (): number => {
-	return rootHeight;
+    return rootHeight;
 };
 
 /**
@@ -83,15 +83,15 @@ export const getHeight = (): number => {
  * @example
  */
 export const forbidEvent = (timeout: number, rect?: number[]): void => {
-	forbidEventTime = timeout ? now() + timeout : 0;
-	if (rect) {
-		allowEventRect[0] = rect[0];
-		allowEventRect[1] = rect[1];
-		allowEventRect[2] = rect[2];
-		allowEventRect[3] = rect[3];
-	} else {
-		allowEventRect[0] = allowEventRect[1] = allowEventRect[2] = allowEventRect[3] = 0;
-	}
+    forbidEventTime = timeout ? now() + timeout : 0;
+    if (rect) {
+        allowEventRect[0] = rect[0];
+        allowEventRect[1] = rect[1];
+        allowEventRect[2] = rect[2];
+        allowEventRect[3] = rect[3];
+    } else {
+        allowEventRect[0] = allowEventRect[1] = allowEventRect[2] = allowEventRect[3] = 0;
+    }
 };
 
 /**
@@ -99,28 +99,28 @@ export const forbidEvent = (timeout: number, rect?: number[]): void => {
  * @example
  */
 export const isForbidBack = (): boolean => {
-	return forbidBack;
+    return forbidBack;
 };
 /**
  * @description 设置是否禁止返回
  * @example
  */
 export const setForbidBack = (b: boolean): void => {
-	forbidBack = b;
+    forbidBack = b;
 };
 /**
  * @description 获得是否禁止默认滚动
  * @example
  */
 export const isPreventScroll = (): boolean => {
-	return preventScroll;
+    return preventScroll;
 };
 /**
  * @description 设置是否禁止默认滚动
  * @example
  */
 export const setPreventScroll = (b: boolean): void => {
-	preventScroll = b;
+    preventScroll = b;
 };
 /**
  * @description 弹出界面，返回关闭对象
@@ -128,37 +128,37 @@ export const setPreventScroll = (b: boolean): void => {
  * @example
  */
 export const pop = (w: Widget, ok?: Callback, cancel?: Callback,
-	process?: Callback, back?: Callback | 'cancel' | 'force' | 'next'): Close => {
-	const b = { widget: w, callback: null };
-	const close = { widget: w, callback: backClose };
-	if (back === undefined || back === 'cancel') {
-		b.callback = () => {
-			close.callback(close.widget);
-			cancel('back');
-		};
-	} else if (back === 'next') {
-		b.callback = () => {
-			close.callback(close.widget);
-			cancel('back');
-			backCall();
-		};
-	} else if (back !== 'force') {
-		b.callback = back;
-	}
-	backList.push(b);
-	// 设置回调
-	(<any>w).ok = (<any>w).$ok = (arg) => {
-		close.callback(close.widget);
-		ok && ok(arg);
-	};
-	(<any>w).cancel = (<any>w).$cancel = (arg) => {
-		close.callback(close.widget);
-		cancel && cancel(arg);
-	};
-	(<any>w).process = (<any>w).$process = process;
-	add(w);
+    process?: Callback, back?: Callback | 'cancel' | 'force' | 'next'): Close => {
+    const b = { widget: w, callback: null };
+    const close = { widget: w, callback: backClose };
+    if (back === undefined || back === 'cancel') {
+        b.callback = () => {
+            close.callback(close.widget);
+            cancel('back');
+        };
+    } else if (back === 'next') {
+        b.callback = () => {
+            close.callback(close.widget);
+            cancel('back');
+            backCall();
+        };
+    } else if (back !== 'force') {
+        b.callback = back;
+    }
+    backList.push(b);
+    // 设置回调
+    (<any>w).ok = (<any>w).$ok = (arg) => {
+        close.callback(close.widget);
+        ok && ok(arg);
+    };
+    (<any>w).cancel = (<any>w).$cancel = (arg) => {
+        close.callback(close.widget);
+        cancel && cancel(arg);
+    };
+    (<any>w).process = (<any>w).$process = process;
+    add(w);
 
-	return close;
+    return close;
 };
 /**
  * @description 弹出新界面，返回关闭对象
@@ -166,33 +166,33 @@ export const pop = (w: Widget, ok?: Callback, cancel?: Callback,
  * @example
  */
 export const popNew = (name: string, props?: any, ok?: Callback, cancel?: Callback,
-	process?: Callback, back?: Callback | 'cancel' | 'force' | 'next'): Close => {
-	const w = create(name, props);
-	const close = pop(w, ok, cancel, process, back);
-	const c = close.callback;
-	close.callback = (w: Widget) => {
-		// popNew创建的，关闭需要销毁
-		backClose(w);
-		destory(w);
-	};
+    process?: Callback, back?: Callback | 'cancel' | 'force' | 'next'): Close => {
+    const w = create(name, props);
+    const close = pop(w, ok, cancel, process, back);
+    const c = close.callback;
+    close.callback = (w: Widget) => {
+        // popNew创建的，关闭需要销毁
+        backClose(w);
+        destory(w);
+    };
 
-	return close;
+    return close;
 };
 /**
  * @description 将2个close关联起来，1个界面被关闭时，关闭另外1个界面，一般要求界面1先打开
  * @example
  */
 export const linkClose = (close1: Close, close2: Close): void => {
-	const c1 = close1.callback;
-	const c2 = close2.callback;
-	close1.callback = (w: Widget) => {
-		c2(close2.widget);
-		c1(w);
-	};
-	close2.callback = (w: Widget) => {
-		c2(w);
-		c1(close1.widget);
-	};
+    const c1 = close1.callback;
+    const c2 = close2.callback;
+    close1.callback = (w: Widget) => {
+        c2(close2.widget);
+        c1(w);
+    };
+    close2.callback = (w: Widget) => {
+        c2(w);
+        c1(close1.widget);
+    };
 };
 
 /**
@@ -200,26 +200,26 @@ export const linkClose = (close1: Close, close2: Close): void => {
  * @example
  */
 export const popLink = (close1: Close, name: string, props?: any, ok?: Callback, cancel?: Callback,
-	process?: Callback, back?: Callback | 'cancel' | 'force' | 'next'): void => {
-	getGlobal().setAfter(() => {
-		task(() => {
-			if (!close1.widget.parentNode) {
-				return;
-			}
-			const w = create(name, props);
-			if (!close1.widget.parentNode) {
-				destory(w);
+    process?: Callback, back?: Callback | 'cancel' | 'force' | 'next'): void => {
+    getGlobal().setAfter(() => {
+        task(() => {
+            if (!close1.widget.parentNode) {
+                return;
+            }
+            const w = create(name, props);
+            if (!close1.widget.parentNode) {
+                destory(w);
 
-				return;
-			}
-			const close2 = pop(w, ok, cancel, process, back);
-			close2.callback = (w: Widget) => {
-				backClose(w);
-				destory(w);
-			};
-			linkClose(close1, close2);
-		}, undefined, 1000, 1);
-	});
+                return;
+            }
+            const close2 = pop(w, ok, cancel, process, back);
+            close2.callback = (w: Widget) => {
+                backClose(w);
+                destory(w);
+            };
+            linkClose(close1, close2);
+        }, undefined, 1000, 1);
+    });
 };
 
 /**
@@ -227,33 +227,33 @@ export const popLink = (close1: Close, name: string, props?: any, ok?: Callback,
  * @example
  */
 export const create = (name: string, props?: any): Widget => {
-	const w = factory(name);
-	if (!w) {
-		return;
-	}
-	if (props !== undefined) {
-		w.setProps(props);
-	}
-	w.paint();
+    const w = factory(name);
+    if (!w) {
+        return;
+    }
+    if (props !== undefined) {
+        w.setProps(props);
+    }
+    w.paint();
 
-	return w;
+    return w;
 };
 /**
  * @description 创建指定名称的组件，根据组件上的配置，将组件加入到指定的组上，会延迟到帧调用时添加
  * @example
  */
 export const open = (name: string, props?: any): Widget => {
-	const w = factory(name);
-	if (!w) {
-		return;
-	}
-	if (props !== undefined) {
-		w.setProps(props);
-	}
-	w.paint();
-	add(w);
+    const w = factory(name);
+    if (!w) {
+        return;
+    }
+    if (props !== undefined) {
+        w.setProps(props);
+    }
+    w.paint();
+    add(w);
 
-	return w;
+    return w;
 };
 
 /**
@@ -261,69 +261,71 @@ export const open = (name: string, props?: any): Widget => {
  * @example
  */
 export const add = (w: Widget, props?: any): void => {
-	const cfg = w.getConfig();
-	const name = cfg && cfg.group;
-	const group = groupMap.get(name || 'main');
-	if (!group) {
-		return;
-	}
-	if (w.parentNode) {
-		return;
-	}
-	group.arr.push(w);
-	if (props !== undefined) {
-		w.setProps(props);
-		w.paint();
-	}
-	// tslint:disable-next-line:no-object-literal-type-assertion
-	const node = <VirtualWidgetNode>{ attrs: {}, attrSize: 0, attrHash: 0, link: w, widget: rootWidget, childHash: 0xffffffff, child: null };
-	w.parentNode = node;
-	// TODO 计算进场动画时间和是否透明
-	paintCmd3(group.el, 'appendChild', [getRealNode(w.tree)]);
-	paintAttach(w);
-	if (group.arr.length === 1) {
-		paintCmd3(root, 'appendChild', [group.el]);
-	}
-	listenerList({ type: 'add', widget: w, group: group });
+    const cfg = w.getConfig();
+    const name = cfg && cfg.group;
+    const group = groupMap.get(name || 'main');
+    if (!group) {
+        return;
+    }
+    if (w.parentNode) {
+        return;
+    }
+    group.arr.push(w);
+    if (props !== undefined) {
+        w.setProps(props);
+        w.paint();
+    }
+    // tslint:disable-next-line:no-object-literal-type-assertion
+    const node = <VirtualWidgetNode>{
+        attrs: {}, attrSize: 0, attrHash: 0, link: w, widget: rootWidget, childHash: 0xffffffff, child: null
+    };
+    w.parentNode = node;
+    // TODO 计算进场动画时间和是否透明
+    paintCmd3(group.el, 'appendChild', [getRealNode(w.tree)]);
+    paintAttach(w);
+    if (group.arr.length === 1) {
+        paintCmd3(root, 'appendChild', [group.el]);
+    }
+    listenerList({ type: 'add', widget: w, group: group });
 };
 /**
  * @description 将指定的组件移除，会延迟到帧调用时移除
  * @example
  */
 export const remove = (w: Widget): void => {
-	if (!w.parentNode) {
-		return;
-	}
-	w.parentNode = null;
-	paintCmd3(getRealNode(w.tree), 'remove', []);
-	paintDetach(w);
-	const cfg = w.getConfig();
-	const name = cfg && cfg.group;
-	const group = groupMap.get(name || 'main');
-	if (!group) {
-		return;
-	}
-	const i = group.arr.indexOf(w);
-	if (i < 0) {
-		return;
-	}
-	group.arr.splice(i, 1);
-	// TODO 计算离场动画时间和是否透明
-	if (group.arr.length === 0) {
-		paintCmd3(group.el, 'remove', []);
-	}
-	listenerList({ type: 'remove', widget: w, group: group });
+    if (!w.parentNode) {
+        return;
+    }
+    w.parentNode = null;
+    paintCmd3(getRealNode(w.tree), 'remove', []);
+    paintDetach(w);
+    const cfg = w.getConfig();
+    const name = cfg && cfg.group;
+    const group = groupMap.get(name || 'main');
+    if (!group) {
+        return;
+    }
+    const i = group.arr.indexOf(w);
+    if (i < 0) {
+        return;
+    }
+    group.arr.splice(i, 1);
+    // TODO 计算离场动画时间和是否透明
+    if (group.arr.length === 0) {
+        paintCmd3(group.el, 'remove', []);
+    }
+    listenerList({ type: 'remove', widget: w, group: group });
 };
 /**
  * @description 显示或隐藏组
  * @example
  */
 export const show = (groupName: string, b: boolean): void => {
-	const group = groupMap.get(groupName || 'main');
-	if (!group) {
-		return;
-	}
-	paintCmd3(group.el.style, 'visibility', b ? 'visible' : 'hidden');
+    const group = groupMap.get(groupName || 'main');
+    if (!group) {
+        return;
+    }
+    paintCmd3(group.el.style, 'visibility', b ? 'visible' : 'hidden');
 };
 
 /**
@@ -331,8 +333,8 @@ export const show = (groupName: string, b: boolean): void => {
  * @example
  */
 export const destory = (w: Widget): void => {
-	remove(w);
-	delWidget(w);
+    remove(w);
+    delWidget(w);
 };
 
 /**
@@ -340,40 +342,40 @@ export const destory = (w: Widget): void => {
  * @example
  */
 export const log = (level, msg, args1, args2, args3, args4, args5, args6, args7, args8, args9): void => {
-	if (level < logLevel || !logContainer) {
-		return;
-	}
-	let s;
-	if (args9 !== undefined) {
-		// tslint:disable:max-line-length prefer-template
-		s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + ', ' + toString(args5) + ', ' + toString(args6) + ', ' + toString(args7) + ', ' + toString(args8) + ', ' + toString(args9) + '\n';
-	} else if (args8 !== undefined) {
-		s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + ', ' + toString(args5) + ', ' + toString(args6) + ', ' + toString(args7) + ', ' + toString(args8) + '\n';
-	} else if (args7 !== undefined) {
-		s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + ', ' + toString(args5) + ', ' + toString(args6) + ', ' + toString(args7) + '\n';
-	} else if (args6 !== undefined) {
-		s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + ', ' + toString(args5) + ', ' + toString(args6) + '\n';
-	} else if (args5 !== undefined) {
-		s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + ', ' + toString(args5) + '\n';
-	} else if (args4 !== undefined) {
-		s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + '\n';
-	} else if (args3 !== undefined) {
-		s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + '\n';
-	} else if (args2 !== undefined) {
-		s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + '\n';
-	} else if (args1 !== undefined) {
-		s = toString(msg) + ', ' + toString(args1) + '\n';
-	} else {
-		s = toString(msg) + '\n';
-	}
-	logClearTime = now() + LogClearTimeout;
-	const t = document.createTextNode(s);
-	logs.unshift(t);
-	paintCmd3(logContainer, 'appendChild', [t]);
-	if (logs.length === 1) {
-		paintCmd3(root, 'appendChild', [logContainer]);
-		setTimeout(clearLog, LogClearInterval);
-	}
+    if (level < logLevel || !logContainer) {
+        return;
+    }
+    let s;
+    if (args9 !== undefined) {
+        // tslint:disable:max-line-length prefer-template
+        s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + ', ' + toString(args5) + ', ' + toString(args6) + ', ' + toString(args7) + ', ' + toString(args8) + ', ' + toString(args9) + '\n';
+    } else if (args8 !== undefined) {
+        s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + ', ' + toString(args5) + ', ' + toString(args6) + ', ' + toString(args7) + ', ' + toString(args8) + '\n';
+    } else if (args7 !== undefined) {
+        s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + ', ' + toString(args5) + ', ' + toString(args6) + ', ' + toString(args7) + '\n';
+    } else if (args6 !== undefined) {
+        s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + ', ' + toString(args5) + ', ' + toString(args6) + '\n';
+    } else if (args5 !== undefined) {
+        s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + ', ' + toString(args5) + '\n';
+    } else if (args4 !== undefined) {
+        s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + ', ' + toString(args4) + '\n';
+    } else if (args3 !== undefined) {
+        s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + ', ' + toString(args3) + '\n';
+    } else if (args2 !== undefined) {
+        s = toString(msg) + ', ' + toString(args1) + ', ' + toString(args2) + '\n';
+    } else if (args1 !== undefined) {
+        s = toString(msg) + ', ' + toString(args1) + '\n';
+    } else {
+        s = toString(msg) + '\n';
+    }
+    logClearTime = now() + LogClearTimeout;
+    const t = document.createTextNode(s);
+    logs.unshift(t);
+    paintCmd3(logContainer, 'appendChild', [t]);
+    if (logs.length === 1) {
+        paintCmd3(root, 'appendChild', [logContainer]);
+        setTimeout(clearLog, LogClearInterval);
+    }
 };
 
 /**
@@ -381,59 +383,59 @@ export const log = (level, msg, args1, args2, args3, args4, args5, args6, args7,
  * @example
  */
 export const getParentByAttr = (el: Element, key: string, value?: string): Element | undefined => {
-	while (el !== null && el !== root && el !== document.body) {
-		const v = el.getAttribute(key);
-		if (v !== null) {
-			if ((!value) || v === value) {
-				return el;
-			}
-		}
-		el = <Element>el.parentNode;
-	}
+    while (el !== null && el !== root && el !== document.body) {
+        const v = el.getAttribute(key);
+        if (v !== null) {
+            if ((!value) || v === value) {
+                return el;
+            }
+        }
+        el = <Element>el.parentNode;
+    }
 };
 /**
  * @description 返回最后一个弹出界面
  * @example
  */
 export const lastBack = (): Widget => {
-	const h = backList[backList.length - 1];
+    const h = backList[backList.length - 1];
 
-	return h ? h.widget : null;
+    return h ? h.widget : null;
 };
 /**
  * @description 返回调用，返回弹出界面的数量
  * @example
  */
 export const backCall = (): number => {
-	const h = backList[backList.length - 1];
-	h.callback && h.callback(h.widget);
+    const h = backList[backList.length - 1];
+    h.callback && h.callback(h.widget);
 
-	return backList.length;
+    return backList.length;
 };
 /**
  * @description 尽量关闭所有的返回对象，返回最后留下的弹出界面的数量
  * @example
  */
 export const closeBack = (): number => {
-	let len = backList.length;
-	let i = backCall();
-	while (i && i < len) {
-		len = i;
-		i = backCall();
-	}
+    let len = backList.length;
+    let i = backCall();
+    while (i && i < len) {
+        len = i;
+        i = backCall();
+    }
 
-	return i;
+    return i;
 };
 // ============================== 本地
 // 组对象
 interface Group {
-	name: string;
-	el: HTMLElement; // 组元素
-	arr: Widget[]; // 组上的组件
+    name: string;
+    el: HTMLElement; // 组元素
+    arr: Widget[]; // 组上的组件
 }
 interface Back {
-	widget: Widget; // 组件
-	callback: Callback; // 回调函数
+    widget: Widget; // 组件
+    callback: Callback; // 回调函数
 }
 
 // 日志清除掉超时时间，20秒，也就是说20秒内，如果有日志写入，则不清除日志
@@ -484,11 +486,11 @@ const allowEventRect = [0, 0, 0, 0];
  * @example
  */
 const backClose = (w: Widget) => {
-	remove(w);
-	(<any>w).ok = (<any>w).$ok = null;
-	(<any>w).cancel = (<any>w).$cancel = null;
-	(<any>w).process = (<any>w).$process = null;
-	backList.pop();
+    remove(w);
+    (<any>w).ok = (<any>w).$ok = null;
+    (<any>w).cancel = (<any>w).$cancel = null;
+    (<any>w).process = (<any>w).$process = null;
+    backList.pop();
 };
 
 /**
@@ -496,63 +498,63 @@ const backClose = (w: Widget) => {
  * @example
  */
 const checkAllowRect = (x: number, y: number, rect: number[]): boolean => {
-	return (x > rect[0] && x < rect[2] && y > rect[1] && y < rect[3]);
+    return (x > rect[0] && x < rect[2] && y > rect[1] && y < rect[3]);
 };
 /**
  * @description 负责监控页面大小变化，约束根元素在标准比例附近变化
  * @example
  */
 const browserAdaptive = () => {
-	if (!root) {
-		return;
-	}
-	const clientWidth = document.documentElement.clientWidth;
-	const clientHeight = document.documentElement.clientHeight;
-	const ae = <HTMLElement>document.activeElement;
-	// 表示因为是输入，手机上弹出输入面板后的页面变小
-	if ((ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA') && oldHeight > clientHeight) {
-		const rect = ae.getBoundingClientRect();
-		if (rect.bottom > clientHeight) {
-			rootY -= (rect.bottom - clientHeight) / rootScale;// ?TODO 好像不应该/rootScale
-			paintCmd3(root.style, 'top', rootY + 'px');
-			oldHeight = clientHeight;
-		}
+    if (!root) {
+        return;
+    }
+    const clientWidth = document.documentElement.clientWidth;
+    const clientHeight = document.documentElement.clientHeight;
+    const ae = <HTMLElement>document.activeElement;
+    // 表示因为是输入，手机上弹出输入面板后的页面变小
+    if ((ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA') && oldHeight > clientHeight) {
+        const rect = ae.getBoundingClientRect();
+        if (rect.bottom > clientHeight) {
+            rootY -= (rect.bottom - clientHeight) / rootScale;// ?TODO 好像不应该/rootScale
+            paintCmd3(root.style, 'top', rootY + 'px');
+            oldHeight = clientHeight;
+        }
 
-		return;
-	}
-	if (cfg.full) {
-		rootWidth = clientWidth;
-		rootHeight = clientHeight;
+        return;
+    }
+    if (cfg.full) {
+        rootWidth = clientWidth;
+        rootHeight = clientHeight;
 
-		return paintCmd3(root.style, 'cssText', 'position:absolute;overflow:hidden;width:100%;height:100%;');
-	}
-	oldHeight = clientHeight;
-	rootWidth = cfg.width;
-	rootHeight = cfg.height;
-	let scaleW = clientWidth / rootWidth;
-	let scaleH = clientHeight / rootHeight;
-	if (cfg.wscale >= cfg.hscale) {
-		// 宽度比例变动
-		if (scaleW > scaleH * (cfg.wscale + 1)) {
-			// 大于规定的比例
-			rootWidth = rootWidth * (cfg.wscale + 1) | 0;
-		} else {
-			rootWidth = (clientWidth / scaleH) | 0;
-		}
-		rootScale = scaleW = scaleH;
-	} else {
-		// 高度比例变动
-		if (scaleH > scaleW * (cfg.hscale + 1)) {
-			rootHeight = rootHeight * (cfg.hscale + 1) | 0;
-		} else {
-			rootHeight = (clientHeight / scaleW) | 0;
-		}
-		rootScale = scaleH = scaleW;
-	}
-	rootX = (clientWidth - rootWidth) / 2;
-	rootY = (clientHeight - rootHeight) / 2;
-	paintCmd3(root.style, 'cssText', 'position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');');
-	listenerList({ type: 'resize', root: root, scale: rootScale, x: rootX, y: rootY, width: rootWidth, height: rootHeight });
+        return paintCmd3(root.style, 'cssText', 'position:absolute;overflow:hidden;width:100%;height:100%;');
+    }
+    oldHeight = clientHeight;
+    rootWidth = cfg.width;
+    rootHeight = cfg.height;
+    let scaleW = clientWidth / rootWidth;
+    let scaleH = clientHeight / rootHeight;
+    if (cfg.wscale >= cfg.hscale) {
+        // 宽度比例变动
+        if (scaleW > scaleH * (cfg.wscale + 1)) {
+            // 大于规定的比例
+            rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+        } else {
+            rootWidth = (clientWidth / scaleH) | 0;
+        }
+        rootScale = scaleW = scaleH;
+    } else {
+        // 高度比例变动
+        if (scaleH > scaleW * (cfg.hscale + 1)) {
+            rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+        } else {
+            rootHeight = (clientHeight / scaleW) | 0;
+        }
+        rootScale = scaleH = scaleW;
+    }
+    rootX = (clientWidth - rootWidth) / 2;
+    rootY = (clientHeight - rootHeight) / 2;
+    paintCmd3(root.style, 'cssText', 'position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');');
+    listenerList({ type: 'resize', root: root, scale: rootScale, x: rootX, y: rootY, width: rootWidth, height: rootHeight });
 };
 
 /**
@@ -560,25 +562,25 @@ const browserAdaptive = () => {
  * @example
  */
 const clearLog = () => {
-	// 清除超过100条的日志
-	let i = logs.length - 1;
-	if (i >= LogLimit) {
-		for (; i >= LogLimit; i--) {
-			paintCmd3(logs[i], 'remove', []);
-		}
-		logs.length = i + 1;
-	} else {
-		const t = now();
-		if (t > logClearTime) {
-			paintCmd3(logs[i--], 'remove', []);
-			logs.pop();
-		}
-	}
-	if (i >= 0) {
-		setTimeout(clearLog, LogClearInterval);
-	} else {
-		paintCmd3(logContainer, 'remove', []);
-	}
+    // 清除超过100条的日志
+    let i = logs.length - 1;
+    if (i >= LogLimit) {
+        for (; i >= LogLimit; i--) {
+            paintCmd3(logs[i], 'remove', []);
+        }
+        logs.length = i + 1;
+    } else {
+        const t = now();
+        if (t > logClearTime) {
+            paintCmd3(logs[i--], 'remove', []);
+            logs.pop();
+        }
+    }
+    if (i >= 0) {
+        setTimeout(clearLog, LogClearInterval);
+    } else {
+        paintCmd3(logContainer, 'remove', []);
+    }
 };
 
 // ============================== 立即执行
@@ -587,118 +589,118 @@ commonjs.flags.mobile && setBroadcast(log);
 
 // 监听添加widget
 forelet.listener = (cmd: string, widget: Widget): void => {
-	if (cmd !== 'firstPaint') {
-		return;
-	}
-	rootWidget = widget;
-	root = getRealNode(widget.tree);
-	const forbid = (e) => {
-		if (forbidEventTime > 0) {
-			if (now() < forbidEventTime && !checkAllowRect(e.clientX, e.clientY, allowEventRect)) {
-				e.stopPropagation();
-			} else {
-				forbidEventTime = 0;
-			}
-		}
-	};
-	const forbidTouch = (e) => {
-		if (forbidEventTime > 0) {
-			if (now() < forbidEventTime && !checkAllowRect(e.touches[0].pageX, e.touches[0].pageY, allowEventRect)) {
-				e.stopPropagation();
-			} else {
-				forbidEventTime = 0;
-			}
-		}
-	};
-	const stop = (e) => {
-		e.stopPropagation();
-	};
-	const disabled = (e) => {
-		e.stopPropagation();
-		e.preventDefault();
-	};
-	const allowDefault = (e) => {
-		e.stopPropagation();
-		el = e.target;
-		while (el !== null && el !== root && el !== document.body) {
-			// 如果元素为输入框或允许默认事件，则返回
-			if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.getAttribute('allowDefault')) {
-				return;
-			}
-			el = <Element>el.parentNode;
-		}
-		e.preventDefault();
-	};
-	let startX;
-	let startY;
-	let el;
-	let orientation;
-	const onTouchStart = (e) => {
-		startX = e.touches[0].screenX;
-		startY = e.touches[0].screenY;
+    if (cmd !== 'firstPaint') {
+        return;
+    }
+    rootWidget = widget;
+    root = getRealNode(widget.tree);
+    const forbid = (e) => {
+        if (forbidEventTime > 0) {
+            if (now() < forbidEventTime && !checkAllowRect(e.clientX, e.clientY, allowEventRect)) {
+                e.stopPropagation();
+            } else {
+                forbidEventTime = 0;
+            }
+        }
+    };
+    const forbidTouch = (e) => {
+        if (forbidEventTime > 0) {
+            if (now() < forbidEventTime && !checkAllowRect(e.touches[0].pageX, e.touches[0].pageY, allowEventRect)) {
+                e.stopPropagation();
+            } else {
+                forbidEventTime = 0;
+            }
+        }
+    };
+    const stop = (e) => {
+        e.stopPropagation();
+    };
+    const disabled = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+    };
+    const allowDefault = (e) => {
+        e.stopPropagation();
+        el = e.target;
+        while (el !== null && el !== root && el !== document.body) {
+            // 如果元素为输入框或允许默认事件，则返回
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.getAttribute('allowDefault')) {
+                return;
+            }
+            el = <Element>el.parentNode;
+        }
+        e.preventDefault();
+    };
+    let startX;
+    let startY;
+    let el;
+    let orientation;
+    const onTouchStart = (e) => {
+        startX = e.touches[0].screenX;
+        startY = e.touches[0].screenY;
 
-		const r = doTouchStart(e, orientation);
-		orientation = r.orientation;
-		el = r.el;
-	};
-	const onTouchMove = (e) => {
-		if (orientation === 0) {
-			e.preventDefault();
+        const r = doTouchStart(e, orientation);
+        orientation = r.orientation;
+        el = r.el;
+    };
+    const onTouchMove = (e) => {
+        if (orientation === 0) {
+            e.preventDefault();
 
-			return;
-		}
+            return;
+        }
 
-		const r = doTouchMove(e, el, orientation, startX, startY);
-		startX = r.startX;
-		startY = r.startY;
-	};
-	root.addEventListener('mousemove', forbid, true);
-	root.addEventListener('mousedown', forbid, true);
-	root.addEventListener('mouseup', forbid, true);
-	root.addEventListener('touchmove', forbidTouch, true);
-	root.addEventListener('touchstart', forbidTouch, true);
-	root.addEventListener('touchend', forbidTouch, true);
+        const r = doTouchMove(e, el, orientation, startX, startY);
+        startX = r.startX;
+        startY = r.startY;
+    };
+    root.addEventListener('mousemove', forbid, true);
+    root.addEventListener('mousedown', forbid, true);
+    root.addEventListener('mouseup', forbid, true);
+    root.addEventListener('touchmove', forbidTouch, true);
+    root.addEventListener('touchstart', forbidTouch, true);
+    root.addEventListener('touchend', forbidTouch, true);
 
-	root.addEventListener('mousemove', allowDefault, false);
-	root.addEventListener('mousedown', stop, false);
-	root.addEventListener('mouseup', allowDefault, false);
-	root.addEventListener('touchmove', onTouchMove, false);
-	root.addEventListener('touchstart', onTouchStart, false);
-	root.addEventListener('touchend', stop, false);
-	const arr = (<VirtualNode>widget.tree).children;
-	for (const n of arr) {
-		const e = getRealNode(n);
-		paintCmd3(e, 'remove', []);
-		const name = getAttribute((<any>n).attrs, 'group');
-		if (!name) {
-			continue;
-		}
-		groupMap.set(name, { name: name, el: e, arr: [] });
-		if (name === 'log') {
-			logContainer = e;
-		}
-	}
-	browserAdaptive();
+    root.addEventListener('mousemove', allowDefault, false);
+    root.addEventListener('mousedown', stop, false);
+    root.addEventListener('mouseup', allowDefault, false);
+    root.addEventListener('touchmove', onTouchMove, false);
+    root.addEventListener('touchstart', onTouchStart, false);
+    root.addEventListener('touchend', stop, false);
+    const arr = (<VirtualNode>widget.tree).children;
+    for (const n of arr) {
+        const e = getRealNode(n);
+        paintCmd3(e, 'remove', []);
+        const name = getAttribute((<any>n).attrs, 'group');
+        if (!name) {
+            continue;
+        }
+        groupMap.set(name, { name: name, el: e, arr: [] });
+        if (name === 'log') {
+            logContainer = e;
+        }
+    }
+    browserAdaptive();
 };
 // 监听onresize
 window.onresize = browserAdaptive;
 // 取顶层窗口
 try {
-	const win = top.window;
-	// 注册系统返回事件
-	win.onpopstate = () => {
-		win.history.pushState({}, null);
-		if (forbidBack) {
-			return;
-		}
-		if (backList.length) {
-			backCall();
-		} else {
-			listenerList({ type: 'back' });
-		}
-	};
-	win.history.pushState({}, null);
-	// tslint:disable-next-line:no-empty
+    const win = top.window;
+    // 注册系统返回事件
+    win.onpopstate = () => {
+        win.history.pushState({}, null);
+        if (forbidBack) {
+            return;
+        }
+        if (backList.length) {
+            backCall();
+        } else {
+            listenerList({ type: 'back' });
+        }
+    };
+    win.history.pushState({}, null);
+    // tslint:disable-next-line:no-empty
 } catch (e) {
 }
 
@@ -707,34 +709,34 @@ try {
  * @param e 事件
  */
 const doTouchStart = (e, orientation) => {
-	e.stopPropagation();
-	orientation = 0;
-	let el = e.target;
-	while (el !== null && el !== root && el !== document.body) {
-		// 如果元素为输入框或允许默认事件，则返回
-		if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.getAttribute('allowDefault')) {
-			return { orientation, el };
-		}
-		if (!preventScroll) {
-			// 如果完全使用better-scroll，则可以去掉
-			const st = getStyle(el);
-			if (st.overflowX === 'auto') {
-				orientation |= 1;
-			}
-			if (st.overflowY === 'auto') {
-				orientation |= 2;
-			}
-			// 如果元素为可滚动，则返回
-			if (orientation !== 0) {
-				return { orientation, el };
-			}
-		}
-		el = <Element>el.parentNode;
-	}
-	// 禁止默认操作，防止微信及浏览器的返回或拉下
-	e.preventDefault();
+    e.stopPropagation();
+    orientation = 0;
+    let el = e.target;
+    while (el !== null && el !== root && el !== document.body) {
+        // 如果元素为输入框或允许默认事件，则返回
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.getAttribute('allowDefault')) {
+            return { orientation, el };
+        }
+        if (!preventScroll) {
+            // 如果完全使用better-scroll，则可以去掉
+            const st = getStyle(el);
+            if (st.overflowX === 'auto') {
+                orientation |= 1;
+            }
+            if (st.overflowY === 'auto') {
+                orientation |= 2;
+            }
+            // 如果元素为可滚动，则返回
+            if (orientation !== 0) {
+                return { orientation, el };
+            }
+        }
+        el = <Element>el.parentNode;
+    }
+    // 禁止默认操作，防止微信及浏览器的返回或拉下
+    e.preventDefault();
 
-	return { orientation, el };
+    return { orientation, el };
 };
 
 /**
@@ -747,30 +749,30 @@ const doTouchStart = (e, orientation) => {
  * @param startY 起始y位置
  */
 const doTouchMove = (e, el, orientation, startX, startY) => {
-	const endX = e.touches[0].screenX;
-	const endY = e.touches[0].screenY;
-	if ((orientation & 2) !== 0) {
-		if (endY - startY >= 0) {
-			if (el.scrollTop <= 0) {
-				e.preventDefault();
-			}
-		} else {
-			if (el.scrollHeight - el.clientHeight <= el.scrollTop) {
-				e.preventDefault();
-			}
-		}
-	}
-	if ((orientation & 1) !== 0) {
-		if (endX - startX >= 0) {
-			if (el.scrollLeft <= 0) {
-				e.preventDefault();
-			}
-		} else {
-			if (el.scrollWidth - el.clientWidth <= el.scrollLeft) {
-				e.preventDefault();
-			}
-		}
-	}
+    const endX = e.touches[0].screenX;
+    const endY = e.touches[0].screenY;
+    if ((orientation & 2) !== 0) {
+        if (endY - startY >= 0) {
+            if (el.scrollTop <= 0) {
+                e.preventDefault();
+            }
+        } else {
+            if (el.scrollHeight - el.clientHeight <= el.scrollTop) {
+                e.preventDefault();
+            }
+        }
+    }
+    if ((orientation & 1) !== 0) {
+        if (endX - startX >= 0) {
+            if (el.scrollLeft <= 0) {
+                e.preventDefault();
+            }
+        } else {
+            if (el.scrollWidth - el.clientWidth <= el.scrollLeft) {
+                e.preventDefault();
+            }
+        }
+    }
 
-	return { startX, startY };
+    return { startX, startY };
 };

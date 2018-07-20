@@ -3,6 +3,7 @@
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
+import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
@@ -14,7 +15,7 @@ import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
-import { lang,lockScreenSalt } from './constants';
+import { lang, lockScreenSalt } from './constants';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
@@ -740,10 +741,7 @@ export const getXOR = (first, second) => {
  * 验证身份
  */
 export const VerifyIdentidy = async (wallet, passwd) => {
-    const argonHash = new ArgonHash();
-    argonHash.init();
-    const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
-
+    const hash = await calcHashValuePromise(passwd, 'somesalt');
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
     try {
@@ -763,9 +761,7 @@ export const VerifyIdentidy = async (wallet, passwd) => {
  * 获取助记词
  */
 export const getMnemonic = async (wallet, passwd) => {
-    const argonHash = new ArgonHash();
-    argonHash.init();
-    const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
+    const hash = await calcHashValuePromise(passwd, 'somesalt');
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -778,11 +774,27 @@ export const getMnemonic = async (wallet, passwd) => {
         return '';
     }
 };
+/**
+ * 获取助记词16进制字符串
+ */
+export const getMnemonicHexstr = async (wallet, passwd) => {
+    const hash = await calcHashValuePromise(passwd, 'somesalt');
+    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+    try {
+        const cipher = new Cipher();
+
+        return cipher.decrypt(hash, gwlt.vault);
+    } catch (error) {
+        console.log(error);
+
+        return '';
+    }
+};
 // 锁屏密码验证
 export const lockScreenVerify = (psw) => {
     const hash256 = sha256(psw + lockScreenSalt);
     const localHash256 = getLocalStorage('lockScreenPsw');
-    
+
     return hash256 === localHash256;
 };
 // 锁屏密码hash算法
@@ -795,7 +807,7 @@ export const copyToClipboard = (copyText) => {
     const input = document.createElement('input');
     input.setAttribute('readonly', 'readonly');
     input.setAttribute('value', copyText);
-    input.setAttribute('style','position:absolute;top:-9999px;');
+    input.setAttribute('style', 'position:absolute;top:-9999px;');
     document.body.appendChild(input);
     input.setSelectionRange(0, 9999);
     input.select();
@@ -818,21 +830,48 @@ export const shareToQrcode = (shareText) => {
         }, content: shareText
     });
 };
+
 /**
- * 获取助记词16进制字符串
+ * 获取助记词
  */
-export const getMnemonicHexstr = async (wallet, passwd) => {
+export const calcHashValuePromise = async (pwd, salt) => {
     const argonHash = new ArgonHash();
     argonHash.init();
-    const hash = await argonHash.calcHashValuePromise({ psw: passwd, salt: 'somesalt' });
-    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-    try {
-        const cipher = new Cipher();
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const hash = await argonHash.calcHashValuePromise({ pwd, salt });
 
-        return cipher.decrypt(hash, gwlt.vault);
-    } catch (error) {
-        console.log(error);
+    return hash;
+};
 
-        return '';
-    }
+/**
+ * 基础打开弹窗界面封装
+ */
+export const openBasePage = (foreletName: string, foreletParams: any = {}): Promise<string> => {
+    // this.windowConfig = windowconfig || this.windowConfig;
+    // if (!foreletName || foreletName === '') {
+    //     console.warn(`openModal foreletName is fail:${foreletName}`);
+
+    //     return;
+    // }
+
+    // // 单例模式
+    // if (this.windowConfig && this.windowConfig.model === 'single' && this.windowSet.has(foreletName)) {
+    //     console.info(`窗口${foreletName}已经创建，阻止重复创建`);
+
+    //     return;
+    // }  else {
+    //     this.windowSet.add(foreletName);
+    // }
+
+    // tslint:disable-next-line:typedef
+    return new Promise((resolve, reject) => {
+        popNew(foreletName, foreletParams, (ok: string) => {
+            // this.windowSet.delete(foreletName);
+            resolve(ok);
+        }, (cancel: string) => {
+            // this.windowSet.delete(foreletName);
+            reject(cancel);
+        });
+
+    });
 };
