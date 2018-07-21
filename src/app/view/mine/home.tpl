@@ -1,7 +1,11 @@
 <div class="ga-new-page" style="background-color: #f9f9f9;">
-    <div w-class="ga-top-banner">
-        <span w-class="ga-banner-title">我的</span>
-        <img src="{{it1.hasNews?'../../res/image/icon_mine_news2.png':'../../res/image/icon_mine_news.png'}}" w-class="ga-banner-btn" on-tap="goNotice(e)"/>
+    <div w-class="ga-top-banner" on-tap="walletManagementClick">
+        <img src="../../res/image/{{it1.avatar}}" w-class="avatar"/>
+        <span w-class="ga-banner-title">{{it1.walletName}}</span>
+        <span w-class="ga-banner-btn" on-tap="backupClick">
+            请备份
+        </span>
+      
     </div>
     <div style="background-color: #fff;">
         {{for index,item of it1.mineList}}
