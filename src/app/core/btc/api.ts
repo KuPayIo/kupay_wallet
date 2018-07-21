@@ -28,7 +28,10 @@ const sendRequest = async (endpoint: string, opt: Options = { method: 'GET' }): 
         } else if (opt.method === 'POST') {
             response = await fetch(endpoint, {
                 method: opt.method,
-                body: JSON.stringify({ rawtx:opt.body })
+                body: JSON.stringify({ rawtx:opt.body }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
         }
 

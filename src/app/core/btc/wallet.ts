@@ -309,7 +309,7 @@ export class BTCWallet {
         console.log('keyset length: ', keySet.length);
 
         output.amount = Unit.fromBTC(output.amount).toSatoshis();
-        const rawTx = new Transaction().feePerKb(Unit.fromBTC(fee[priorityMap[priority]]).toSatoshis() * 1024)
+        const rawTx = new Transaction().feePerKb(Unit.fromBTC(fee[priorityMap[priority]]).toSatoshis())
             .from(collected)
             .to(output.toAddr, output.amount)
             .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
