@@ -66,7 +66,7 @@ export const BtcApi = {
         return sendRequest(endpoint);
     },
 
-    sendRawTransaction: async (rawTx: string): Promise<string> => {
+    sendRawTransaction: async (rawTx: string): Promise<any> => {
         const endpoint = `${BTC_API_BASE_URL}/tx/send`;
 
         return sendRequest(endpoint, { method: 'POST', body: rawTx });

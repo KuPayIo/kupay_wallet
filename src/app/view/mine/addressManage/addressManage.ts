@@ -45,7 +45,7 @@ export class AddressManage extends Widget {
         };
         this.state.content1 = dataCenter.getAddrInfosByCurrencyName('BTC').map(v => {
             return {
-                currencyName: "BTC",
+                currencyName: 'BTC',
                 name: v.addrName,
                 money: v.balance.toFixed(2),
                 address: v.addr
@@ -126,7 +126,7 @@ export class AddressManage extends Widget {
                             return;
                         }
 
-                        const info = addNewAddr(selectName, address, r, wltJson);
+                        const info = addNewAddr(selectName, address, r);
 
                         this.state.content1.push({ name: info.addrName, money: '0.00', address: address });
                         this.paint();

@@ -118,7 +118,6 @@ export class AddAsset extends Widget {
             const wallet = getCurrentWallet(wallets);
 
             const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
-            const psw = decrypt(wallet.walletPsw);
             try {
                 let id: any;
                 const fromAddr = thisObj.props.fromAddr;
@@ -132,11 +131,11 @@ export class AddAsset extends Widget {
                 if (addrIndex >= 0) {
                     const wlt = await GlobalWallet.createWlt(this.props.currencyName, r, wallet, addrIndex);
                     if (this.props.currencyName === 'ETH') {
-                        id = await doEthTransfer(<any>wlt, fromAddr, toAddr, psw, gasPrice, gasLimit, eth2Wei(pay), info);
+                        id = await doEthTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, eth2Wei(pay), info);
                     } else if (this.props.currencyName === 'BTC') {
-                        id = await doBtcTransfer(<any>wlt, fromAddr, toAddr, psw, gasPrice, gasLimit, pay, info);
+                        id = await doBtcTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, info);
                     } else if (ERC20Tokens[this.props.currencyName]) {
-                        id = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, psw, gasPrice, gasLimit, pay, currencyName);
+                        id = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, currencyName);
                     }
 
                     // 打开交易详情界面
@@ -272,19 +271,18 @@ export class AddAsset extends Widget {
     private async getBtcTransactionFee(toAddr: string, amount: number, priority: 'high' | 'medium' | 'low' = 'medium') {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        const psw = decrypt(wallet.walletPsw);
         const addrInfo = getCurrentAddrInfo('BTC');
         const output = {
             toAddr: toAddr,
             amount: amount,
             chgAddr: addrInfo.addr
         };
-        const wlt = BTCWallet.fromJSON(addrInfo.wlt, psw);
-        wlt.unlock(psw);
+        const wlt = BTCWallet.fromJSON(addrInfo.wlt);
+        wlt.unlock();
         await wlt.init();
 
         const retArr = await wlt.buildRawTransaction(output, priority);
-        wlt.lock(psw);
+        wlt.lock();
 
         return retArr[1];
     }
@@ -306,7 +304,7 @@ const addRecord = (currencyName, currentAddr, record) => {
  * 处理转账
  */
 // tslint:disable-next-line:only-arrow-functions
-async function doEthTransfer(wlt: GaiaWallet, acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
+async function doEthTransfer(wlt: GaiaWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
     , value: number, info: string) {
     const api = new EthApi();
     const nonce = await api.getTransactionCount(acct1);
@@ -324,7 +322,7 @@ async function doEthTransfer(wlt: GaiaWallet, acct1: string, acct2: string, psw:
 
     // const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
 
-    const tx = wlt.signRawTransaction(psw, txObj);
+    const tx = wlt.signRawTransaction(txObj);
     // tslint:disable-next-line:no-unnecessary-local-variable
     const id = await api.sendRawTransaction(tx);
 
@@ -335,7 +333,7 @@ async function doEthTransfer(wlt: GaiaWallet, acct1: string, acct2: string, psw:
  * 处理转账
  */
 // tslint:disable-next-line:only-arrow-functions
-async function doBtcTransfer(wlt: BTCWallet, acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
+async function doBtcTransfer(wlt: BTCWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
     , value: number, info: string) {
     const addrs = getLocalStorage('addrs');
     const addr = addrs.filter(v => v.addr === acct1)[0];
@@ -344,19 +342,18 @@ async function doBtcTransfer(wlt: BTCWallet, acct1: string, acct2: string, psw: 
         amount: value,
         chgAddr: acct1
     };
-    // const wlt = BTCWallet.fromJSON(addr.wlt, psw);
-    wlt.unlock(psw);
+    wlt.unlock();
     await wlt.init();
 
     const retArr = await wlt.buildRawTransaction(output, 'medium');
-    wlt.lock(psw);
+    wlt.lock();
     const rawHexString: string = retArr[0];
     const fee = retArr[1];
 
     // tslint:disable-next-line:no-unnecessary-local-variable
     const hash = await BtcApi.sendRawTransaction(rawHexString);
 
-    return hash;
+    return hash.txid;
 
 }
 
@@ -364,7 +361,7 @@ async function doBtcTransfer(wlt: BTCWallet, acct1: string, acct2: string, psw: 
  * 处理eth代币转账
  */
 // tslint:disable-next-line:only-arrow-functions
-async function doERC20TokenTransfer(wlt: GaiaWallet, acct1: string, acct2: string, psw: string, gasPrice: number, gasLimit: number
+async function doERC20TokenTransfer(wlt: GaiaWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
     , value: number, currencyName: string) {
 
     const api = new EthApi();
@@ -385,7 +382,7 @@ async function doERC20TokenTransfer(wlt: GaiaWallet, acct1: string, acct2: strin
 
     // const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
 
-    const tx = wlt.signRawTransaction(psw, txObj);
+    const tx = wlt.signRawTransaction(txObj);
     // tslint:disable-next-line:no-unnecessary-local-variable
     const id = await api.sendRawTransaction(tx);
 

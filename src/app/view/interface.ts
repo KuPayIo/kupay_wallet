@@ -8,7 +8,6 @@
 export interface Wallet {
     walletId: string;  // wallet id  (first address)
     avatar: string;
-    walletPsw: string; // wallet password
     walletPswTips?: string;// wallet password tips
     gwlt: string;  // Serialization GaiaWallet object
     showCurrencys: string[]; // home page show currencys
@@ -31,7 +30,6 @@ export interface Addr {
     addrName: string;// 地址名
     balance: number;// 余额
     currencyName: string;// 货币类型
-    wlt: string;// 钱包对象字符串化
     record: any[];// 记录缓存
 }
 

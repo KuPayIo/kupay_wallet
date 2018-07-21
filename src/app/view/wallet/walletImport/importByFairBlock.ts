@@ -3,8 +3,12 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { Cipher } from '../../../core/crypto/cipher';
+import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
-import {  getWalletPswStrength, pswEqualed, walletCountAvailable, walletPswAvailable } from '../../../utils/account';
+import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
+import { ahash } from '../../../utils/ahash';
+
 export class WalletImport extends Widget {
     public ok: () => void;
     constructor() {
@@ -96,7 +100,7 @@ export class WalletImport extends Widget {
             return;
         }
         const close = popNew('pi-components-loading-loading', { text: '导入钱包中...' });
-        // this.importWallet();
+        this.importWallet();
         setTimeout(() => {
             close.callback(close.widget);
         }, 500);
@@ -104,4 +108,7 @@ export class WalletImport extends Widget {
         popNew('app-view-wallet-walletImport-importComplete');
     }
 
+    public importWallet() {
+        // todo 
+    }
 }

@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter, DataCenter } from '../../../store/dataCenter';
 import {
-    addNewAddr, formatBalance, getAddrById, getCurrentWallet, getLocalStorage, getNewAddrInfo, getStrLen, setLocalStorage,sliceStr
+    addNewAddr, formatBalance, getAddrById, getCurrentWallet, getLocalStorage, getNewAddrInfo, getStrLen, setLocalStorage, sliceStr
 } from '../../../utils/tools';
 
 interface Props {
@@ -26,7 +26,7 @@ export class AddAsset extends Widget {
 
     public init(): void {
         this.state = {
-            list:[]
+            list: []
         };
         this.getAddrs();
     }
@@ -61,7 +61,6 @@ export class AddAsset extends Widget {
         const info = getNewAddrInfo(this.props.currencyName);
         if (!info) return;
         const address = info.address;
-        const wltJson = info.wltJson;
 
         popNew('app-components-message-messagebox', {
             itype: 'prompt', title: '添加地址', content: address, placeHolder: '标签名(限8个字)'
@@ -71,7 +70,7 @@ export class AddAsset extends Widget {
 
                 return;
             }
-            addNewAddr(this.props.currencyName, address, r, wltJson);
+            addNewAddr(this.props.currencyName, address, r);
 
             // console.log(wallets)
             // todo 这里验证输入，并根据输入添加地址，且处理地址切换
@@ -92,17 +91,17 @@ export class AddAsset extends Widget {
 
         const currentAddr = currencyRecord.currentAddr || wallet.walletId;
         this.state.list = currencyRecord.addrs.map(v => {
-            const r = getAddrById(v,this.props.currencyName);
+            const r = getAddrById(v, this.props.currencyName);
             let addrName = r.addrName;
             const len = getStrLen(addrName);
             if (len > DataCenter.MAX_ADDRNAME_LEN) {
                 addrName = `${sliceStr(addrName, 0, DataCenter.MAX_ADDRNAME_LEN)}...`;
             }
-            const info = dataCenter.getAddrInfoByAddr(r.addr,this.props.currencyName);
+            const info = dataCenter.getAddrInfoByAddr(r.addr, this.props.currencyName);
 
             return {
                 name: addrName,
-                balance:formatBalance((info && info.balance) || 0),
+                balance: formatBalance((info && info.balance) || 0),
                 isChoose: r.addr === currentAddr,
                 addr: r.addr
             };

@@ -2,11 +2,9 @@
  * ETH wallet implementation
  */
 import { sleep } from '../../utils/tools';
-import { Cipher } from '../crypto/cipher';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
 import { Web3 } from '../thirdparty/web3.min';
-import { WORDLIST } from '../thirdparty/wordlist';
 import { Api } from './api';
 import { ERC20Tokens, minABI } from './tokens';
 
@@ -25,8 +23,6 @@ const LANGUAGES = { english: 0, chinese_simplified: 1, chinese_traditional: 2 };
 const DEFAULT_DERIVE_PATH = 'm/44\'/60\'/0\'/0/0';
 
 // currently use the default config
-const cipher = new Cipher();
-
 export interface Transaction {
     to: string;
     nonce: number | string;
@@ -48,7 +44,7 @@ export class GaiaWallet {
     private _privKey: string;
 
     private _masterSeed: string;
-    private api:Api;
+    private api: Api;
 
     constructor() {
         this._txs = [];
@@ -57,7 +53,7 @@ export class GaiaWallet {
         this.api = new Api();
     }
 
-    public static fromJSON(jsonstring: string) : GaiaWallet {
+    public static fromJSON(jsonstring: string): GaiaWallet {
         const wlt = JSON.parse(jsonstring);
         const gwlt = new GaiaWallet();
 
@@ -72,7 +68,7 @@ export class GaiaWallet {
         return gwlt;
     }
 
-    get nickName() : string {
+    get nickName(): string {
         return this._nickName;
     }
 
@@ -80,11 +76,11 @@ export class GaiaWallet {
         this._nickName = name;
     }
 
-    get address() : string {
+    get address(): string {
         return this._address;
     }
 
-    get balance() : number {
+    get balance(): number {
         return this._balance;
     }
 
@@ -93,7 +89,7 @@ export class GaiaWallet {
     }
 
     // TODO: how to define a tx history?
-    get txHistory() : string[] {
+    get txHistory(): string[] {
         return this._txs;
     }
 
@@ -110,11 +106,10 @@ export class GaiaWallet {
      * @static
      * @param {string} mnemonic words
      * @param {string} language what's the language of the mnenomic words
-     * @param {string} passwd used to encrypt the mnemonic
      * @returns {GaiaWallet}
      * @memberof GaiaWallet
      */
-    public static fromMnemonic(mnemonic: string, language: string, passwd: string) : GaiaWallet {
+    public static fromMnemonic(mnemonic: string, language: string): GaiaWallet {
         if (!(language in LANGUAGES)) {
             throw new Error('this language does not supported');
         }
@@ -131,14 +126,14 @@ export class GaiaWallet {
 
         const gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
-        gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
-        gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
-        gwlt._masterSeed = cipher.encrypt(passwd, seedBuffer);
+        gwlt._privKey = wlt.getPrivateKey().toString('hex');
+        gwlt._mnemonic = mnemonic;
+        gwlt._masterSeed = seedBuffer;
 
         return gwlt;
     }
 
-    public static fromSeed(passwd: string, seed: string, language: string): GaiaWallet {
+    public static fromSeed(seed: string, language: string): GaiaWallet {
         if (!(language in LANGUAGES)) {
             throw new Error('This language does not supported');
         }
@@ -148,8 +143,8 @@ export class GaiaWallet {
 
         const gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
-        gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
-        gwlt._masterSeed = cipher.encrypt(passwd, seed);
+        gwlt._privKey = wlt.getPrivateKey().toString('hex');
+        gwlt._masterSeed = seed;
 
         return gwlt;
     }
@@ -163,11 +158,11 @@ export class GaiaWallet {
      * @returns
      * @memberof GaiaWallet
      */
-    public static fromKeyStore(v3string: string, passwd: string) : GaiaWallet {
+    public static fromKeyStore(v3string: string, passwd: string): GaiaWallet {
         const wlt = Wallet.fromV3(v3string, passwd, true);
         const gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
-        gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
+        gwlt._privKey = wlt.getPrivateKey().toString('hex');
 
         return gwlt;
     }
@@ -176,17 +171,16 @@ export class GaiaWallet {
      * recover wallet from private key
      *
      * @static
-     * @param {string} passwd
      * @param {string} privKey
      * @returns {GaiaWallet}
      * @memberof GaiaWallet
      */
-    public static fromPrivateKey(passwd: string, privKey: string) : GaiaWallet {
+    public static fromPrivateKey(privKey: string): GaiaWallet {
         const sk = Buffer(privKey, 'hex');
         const wlt = Wallet.fromPrivateKey(sk);
         const gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
-        gwlt._privKey = cipher.encrypt(passwd, privKey);
+        gwlt._privKey = privKey;
 
         return gwlt;
     }
@@ -197,11 +191,10 @@ export class GaiaWallet {
      * @static
      * @param {string} language only support "english", "chinese_simplified" and "chinese_traditional"
      * @param {number} strength password strength must be the mutiply of 8 and at least 128
-     * @param {string} passwd used to encrypt mnemonic
      * @returns {GaiaWallet}
      * @memberof GaiaWallet
      */
-    public static generate(language: string, strength: number, passwd: string) : GaiaWallet {
+    public static generate(language: string, strength: number): GaiaWallet {
         if (!(language in LANGUAGES)) {
             throw new Error('this language does not supported');
         }
@@ -220,14 +213,14 @@ export class GaiaWallet {
 
         const gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
-        gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
-        gwlt._mnemonic = cipher.encrypt(passwd, mnemonic);
+        gwlt._privKey = wlt.getPrivateKey().toString('hex');
+        gwlt._mnemonic = mnemonic;
         gwlt._balance = 0;
-        gwlt._masterSeed = cipher.encrypt(passwd, seedBuffer);
+        gwlt._masterSeed = seedBuffer;
 
         return gwlt;
     }
-    
+
     public static tokenOperations(method: string, tokenName: string, toAddr?: string, amount?: number): string {
         const tokenAddress = ERC20Tokens[tokenName];
         if (tokenAddress === undefined) {
@@ -263,13 +256,8 @@ export class GaiaWallet {
      * @returns {string}
      * @memberof GaiaWallet
      */
-    public exportKeystore(passwd: string) : string {
-        let decrypted;
-        try {
-            decrypted = cipher.decrypt(passwd, this._privKey);
-        } catch (e) {
-            throw new Error('Invalid operation');
-        }
+    public exportKeystore(passwd: string): string {
+        let decrypted = this._privKey;
         decrypted = Buffer(decrypted, 'hex'); // decrypted should be a Buffer
         const wlt = Wallet.fromPrivateKey(decrypted);
 
@@ -279,55 +267,31 @@ export class GaiaWallet {
     /**
      * export private key of this wallet
      *
-     * @param {string} passwd used to decrypt the private key
      * @returns {string}
      * @memberof GaiaWallet
      */
-    public exportPrivateKey(passwd: string) : string {
-        try {
-            return cipher.decrypt(passwd, this._privKey);
-        } catch (e) {
-            throw new Error('Invalid operation');
-        }
+    public exportPrivateKey(): string {
+        return this._privKey;
     }
 
     /**
      * export the mnemonic words of this wallet
      *
-     * @param {string} passwd used to decrypt the mnemonic words
      * @returns {string}
      * @memberof GaiaWallet
      */
-    public exportMnemonic(passwd: string) : string {
-        if (this._mnemonic.length !== 0) {
-            return cipher.decrypt(passwd, this._mnemonic);
-        } else {
-            throw new Error('Mnemonic unavailable');
-        }
-    }
-
-    public deleteMnemonic(passwd: string): void {
-        if (this._mnemonic.length === 0) {
-            throw new Error('Invalid operation');
-        }
-
-        try {
-            cipher.decrypt(passwd, this._mnemonic);
-        } catch (e) {
-            throw new Error('Invalid operation');
-        }
-        this._mnemonic = '';
+    public exportMnemonic(): string {
+        return this._mnemonic;
     }
 
     /**
      * sign a raw transaction
      *
      * @param {Transaction} txObj an instance of raw transaction
-     * @param {string} passwd passwd to decrypt private key
      * @returns signed and serilized transaction, could be send to Ethereum network via 'sendRawTransaction' RPC call
      * @memberof GaiaWallet
      */
-    public signRawTransaction(passwd: string, txObj: Transaction) {
+    public signRawTransaction(txObj: Transaction) {
         const tx = new ETHTx();
 
         tx.to = txObj.to;
@@ -336,19 +300,12 @@ export class GaiaWallet {
         tx.gasLimit = txObj.gasLimit;
         tx.value = txObj.value;
         tx.data = txObj.data;
-        let privKey;
-        try {
-            privKey = cipher.decrypt(passwd, this._privKey);
-        } catch (e) {
-            throw new Error('Invalid operation');
-        }
-        privKey = Buffer(privKey, 'hex');
-        tx.sign(privKey);
-        
+        tx.sign(Buffer(this._privKey, 'hex'));
+
         return tx.serialize();
     }
 
-    public toJSON() : string {
+    public toJSON(): string {
         const wlt = {
             nickname: this._nickName,
             address: this._address,
@@ -365,21 +322,37 @@ export class GaiaWallet {
     /**
      * Derive address according to `index`. Return GaiaWallet object
      *
-     * @param {string} passwd Passwd to decrypt `_masterSeed`
      * @param {number} index Which address you want to use
      * @returns {GaiaWallet}
      * @memberof GaiaWallet
      */
-    public selectAddress(passwd: string, index: number): GaiaWallet {
+    public selectAddress(index: number): string {
         if (this._masterSeed.length === 0) {
             throw new Error('This is not a HD wallet');
         }
-        let masterSeed;
-        try {
-            masterSeed = cipher.decrypt(passwd, this._masterSeed);
-        } catch (e) {
-            throw new Error('Invalid operation');
+        const masterSeed = this._masterSeed;
+
+        const rootNode = WalletHD.fromMasterSeed(Buffer(masterSeed, 'hex'));
+        const path = 'm/44\'/60\'/0\'/0/' + index.toString();
+        const hdwlt = rootNode.derivePath(path);
+
+        const wlt = hdwlt.getWallet();
+
+        return wlt.getChecksumAddressString();
+    }
+
+    /**
+     * Derive address according to `index`. Return GaiaWallet object
+     *
+     * @param {number} index Which address you want to use
+     * @returns {GaiaWallet}
+     * @memberof GaiaWallet
+     */
+    public selectAddressWlt(index: number): GaiaWallet {
+        if (this._masterSeed.length === 0) {
+            throw new Error('This is not a HD wallet');
         }
+        const masterSeed = this._masterSeed;
 
         const rootNode = WalletHD.fromMasterSeed(Buffer(masterSeed, 'hex'));
         const path = 'm/44\'/60\'/0\'/0/' + index.toString();
@@ -388,18 +361,18 @@ export class GaiaWallet {
         const wlt = hdwlt.getWallet();
         const gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
-        gwlt._privKey = cipher.encrypt(passwd, wlt.getPrivateKey().toString('hex'));
+        gwlt._privKey = wlt.getPrivateKey().toString('hex');
         gwlt._balance = 0;
-        gwlt._masterSeed = cipher.encrypt(passwd, this._masterSeed);
+        gwlt._masterSeed = this._masterSeed;
 
         return gwlt;
     }
 
-    public async scanUsedAddress(passwd: string): Promise<number> {
+    public async scanUsedAddress(): Promise<number> {
         let count = 0;
-        let i     = 0;
+        let i = 0;
         for (i = 0; ; i++) {
-            const addr = this.selectAddress(passwd,i)._address;
+            const addr = this.selectAddress(i);
             const res = await this.api.getAllTransactionsOf(addr);
             sleep(200);
             if (res === undefined || res.hasOwnProperty('error')) {
@@ -419,12 +392,12 @@ export class GaiaWallet {
         return i - GaiaWallet.GAP_LIMIT;
     }
 
-    public async scanTokenUsedAddress(contractAddress: string,passwd: string): Promise<number> {
+    public async scanTokenUsedAddress(contractAddress: string): Promise<number> {
         let count = 0;
-        let i     = 0;
+        let i = 0;
         for (i = 0; ; i++) {
-            const addr = this.selectAddress(passwd,i)._address;
-            const res = await this.api.getTokenTransferEvents(contractAddress,addr);
+            const addr = this.selectAddress(i);
+            const res = await this.api.getTokenTransferEvents(contractAddress, addr);
             // sleep(1000);
             if (res === undefined || res.hasOwnProperty('error')) {
                 throw new Error('Response error!');

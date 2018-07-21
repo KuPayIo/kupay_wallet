@@ -1,9 +1,6 @@
 <div class="ga-new-page" w-class="ga-new-page" ev-back-click="backPrePage">
     <app-components-topBar-topBar>{title:"修改交易密码"}</app-components-topBar-topBar>
     <div w-class="ga-content">
-        <div w-class="ga-input-father first" ev-input-change="oldPasswordChange">
-            <app-components-input-input>{itype:"password",placeHolder:"原来的密码",style:{{it1.style}},autofocus:{{true}}}</app-components-input-input>
-        </div>
         <div w-class="ga-input-father" ev-input-change="newPasswordChange">
             <app-components-input-input>{itype:"password",placeHolder:"新密码",style:{{it1.style}}}</app-components-input-input>
             <span w-class="strength">
