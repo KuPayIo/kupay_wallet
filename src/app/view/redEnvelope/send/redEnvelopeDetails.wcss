@@ -1,0 +1,79 @@
+.ga-new-page{
+    display: flex;
+    flex-direction: column;
+    font-family: "PingFangSC-Regular";
+}
+.ga-head{
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ga-big-head{
+    width: 177px;
+    height: 177px;
+}
+.ga-leave-message{
+    line-height: 40px;
+    color: rgba(32, 50, 96, 1);
+    font-size: 28px;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 125px;
+}
+.ga-records-list-box{
+    flex: 1 0 0;
+    background-color: #fff;
+}
+.ga-records-list-title{
+    height: 100px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 28px;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e5e5ee;
+}
+.ga-records-item{
+    height: 170px;
+    border-bottom: 1px solid #e5e5ee;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+}
+.ga-little-head{
+    width: 100px;
+    height: 100px;
+    margin-right: 30px;
+}
+.ga-records-right{
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    font-family: "PingFangSC-Medium";
+}
+.ga-item-top{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.ga-records-type{
+    line-height: 50px;
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+    
+
+}
+.ga-records-time{
+    line-height: 33px;
+    color: rgba(142, 150, 171, 0.87);
+    font-size: 24px;
+    margin-top: 10px;
+}
+.ga-amount{
+    line-height: 50px;
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+    font-family: "PingFangSC-Regular";
+
+}

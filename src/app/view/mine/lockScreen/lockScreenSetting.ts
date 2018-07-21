@@ -49,6 +49,7 @@ export class DisplayPage extends Widget {
         if (lockScreenVerify(psw)) {
             popNew('app-view-guidePages-setLockScreenScret',{ title1:'请输入新密码',title2:'请重复新密码' });
             this.ok && this.ok();
+            
             return;
         } 
         this.state.numberOfErrors++;

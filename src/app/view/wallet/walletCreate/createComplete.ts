@@ -13,7 +13,7 @@ export class CreateComplete extends Widget {
         this.ok && this.ok();
         const lockScreenPsw = getLocalStorage('lockScreenPsw');
         if (!lockScreenPsw) {
-            popNew('app-view-guidePages-setLockScreenScret');
+            popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
         } else {
             popNew('app-view-app');
         }

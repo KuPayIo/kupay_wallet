@@ -44,8 +44,8 @@ export const run = (cb): void => {
     }); */
    /*  popNew('app-view-wallet-transaction-receipt',{currencyBalance: 100,
         addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
-    // popNew('app-view-redEnvelope-sendRedEnvelope');
-    // popNew('app-veiw-redEnvelope-redEnvelopeRecords');
+    // popNew('app-view-redEnvelope-send-sendRedEnvelope');
+    // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
     if (cb) cb();
     test();
 };
