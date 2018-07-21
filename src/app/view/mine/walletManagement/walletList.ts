@@ -32,12 +32,12 @@ export class WalletList extends Widget {
         this.ok && this.ok();
     }
 
-    public listItemClicked(walletId) {
+    public listItemClicked(walletId: string) {
         if (this.state.wallets.curWalletId === walletId) {
             popNew('app-view-mine-walletManagement-walletManagement');
         }
     }
-    public backupClicked(walletId) {
+    public backupClicked(walletId: string) {
         if (this.state.wallets.curWalletId === walletId) {
             popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
                 const wallets = getLocalStorage('wallets');
