@@ -1,9 +1,9 @@
 /**
  * 收款
  */
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { copyToClipboard,shareToQrcode } from '../../../utils/tools';
-import { popNew } from '../../../../pi/ui/root';
 
 interface Props {
     currencyName:string;
@@ -38,13 +38,13 @@ export class AddAsset extends Widget {
         this.ok && this.ok();
     }
 
-    //复制
-    public copyClick(){
+    // 复制
+    public copyClick() {
         copyToClipboard(this.props.addr);
         popNew('app-components-message-message', { itype: 'success', content: '复制成功', center: true });
     }
 
-    public shareToFriends(){
+    public shareToFriends() {
         shareToQrcode(this.props.addr);
     }
 }

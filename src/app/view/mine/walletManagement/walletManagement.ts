@@ -8,7 +8,7 @@ import { register, unregister } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import {
     decrypt, encrypt, fetchTotalAssets, formatBalanceValue, getAddrsAll, getCurrentWallet, getCurrentWalletIndex
-    , getLocalStorage, getMnemonic, setLocalStorage, VerifyIdentidy
+    , getLocalStorage, getMnemonic, setLocalStorage
 } from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
@@ -240,7 +240,7 @@ export class WalletManagement extends Widget {
         }
         if (!this.state.mnemonicBackup) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' }, () => {
-                popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic: "aaa" });//需要生成助记词后传入参数
+                popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic: 'aaa' });// 需要生成助记词后传入参数
             });
         } else {
             this.deleteWallet();

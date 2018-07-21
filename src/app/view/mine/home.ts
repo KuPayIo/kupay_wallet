@@ -18,12 +18,12 @@ export class Home extends Widget {
         this.init();
     }
     public init() {
-        //获取钱包显示头像
+        // 获取钱包显示头像
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        let gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        let avatar = wallet.avatar;
-        let walletName = gwlt.nickName;
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+        const avatar = wallet.avatar;
+        const walletName = gwlt.nickName;
         this.stp = new ShareToPlatforms();
         this.stp.init();
         this.state = {
@@ -127,7 +127,7 @@ export class Home extends Widget {
         });
     }
     public walletManagementClick() {
-        popNew("app-view-mine-walletManagement-walletManagement");
+        popNew('app-view-mine-walletManagement-walletManagement');
     }
     public backupClick() {
         popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {

@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { decrypt, getCurrentWallet, getLocalStorage, setLocalStorage, shuffle } from '../../../utils/tools';
+import { getCurrentWallet, getLocalStorage, setLocalStorage, shuffle } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;

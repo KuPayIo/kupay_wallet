@@ -2,10 +2,9 @@
  * 钱包列表页面展示所有钱包
  */
 import { popNew } from '../../../../pi/ui/root';
-import { notify } from '../../../../pi/widget/event';
 import { Widget } from '../../../../pi/widget/widget';
-import { getCurrentWallet, getLocalStorage, getMnemonic } from '../../../utils/tools';
 import { GlobalWallet } from '../../../core/globalWallet';
+import { getCurrentWallet, getLocalStorage, getMnemonic } from '../../../utils/tools';
 
 export class WalletList extends Widget {
     public ok: () => void;
@@ -17,29 +16,29 @@ export class WalletList extends Widget {
         this.init();
     }
     public init() {
-        //获取钱包显示头像
+        // 获取钱包显示头像
         const wallets = getLocalStorage('wallets');
-        console.log("-------walletList---------");
+        console.log('-------walletList---------');
         console.log(wallets);
         // const wallet = getCurrentWallet(wallets);
-        let fromJSON = GlobalWallet.fromJSON;
+        const fromJSON = GlobalWallet.fromJSON;
 
         this.state = {
             wallets,
             fromJSON
-        }
+        };
     }
     public backPrePage() {
         this.ok && this.ok();
     }
 
     public listItemClicked(walletId) {
-        if (this.state.wallets.curWalletId == walletId) {
-            popNew("app-view-mine-walletManagement-walletManagement");
+        if (this.state.wallets.curWalletId === walletId) {
+            popNew('app-view-mine-walletManagement-walletManagement');
         }
     }
     public backupClicked(walletId) {
-        if (this.state.wallets.curWalletId == walletId) {
+        if (this.state.wallets.curWalletId === walletId) {
             popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
                 const wallets = getLocalStorage('wallets');
                 const wallet = getCurrentWallet(wallets);

@@ -9,7 +9,7 @@ import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
 } from '../../../../utils/account';
 import { defalutShowCurrencys } from '../../../../utils/constants';
-import { calcHashValuePromise, encrypt, getLocalStorage, getXOR, openBasePage, setLocalStorage } from '../../../../utils/tools';
+import { calcHashValuePromise, encrypt, getLocalStorage, getXOR, setLocalStorage } from '../../../../utils/tools';
 import { Addr, Wallet } from '../../../interface';
 
 interface Props {
