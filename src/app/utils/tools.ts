@@ -875,3 +875,18 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
 
     });
 };
+
+// 计算字符串长度包含中文 中文长度加2 英文加1
+export const getByteLen = (val) => {
+    let len = 0;
+    for (let i = 0; i < val.length; i++) {
+        const a = val.charAt(i);
+        if (a.match(/[^\x00-\xff]/ig) !== null) {
+            len += 2;
+        } else {
+            len += 1;
+        }
+    }
+
+    return len;
+};

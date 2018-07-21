@@ -5,8 +5,8 @@ import { ShareToPlatforms } from '../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
-import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
 import { GlobalWallet } from '../../core/globalWallet';
+import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
 
 export class Home extends Widget {
     public stp: any;
@@ -18,12 +18,12 @@ export class Home extends Widget {
         this.init();
     }
     public init() {
-        //获取钱包显示头像
+        // 获取钱包显示头像
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        let gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        let avatar = wallet.avatar;
-        let walletName = gwlt.nickName;
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+        const avatar = wallet.avatar;
+        const walletName = gwlt.nickName;
         this.stp = new ShareToPlatforms();
         this.stp.init();
         this.state = {
@@ -127,9 +127,9 @@ export class Home extends Widget {
         });
     }
     public walletManagementClick() {
-        popNew("app-view-mine-walletManagement-walletManagement");
+        popNew('app-view-mine-walletManagement-walletManagement');
     }
     public backupClick() {
-        alert("aa");
+        alert('aa');
     }
 }

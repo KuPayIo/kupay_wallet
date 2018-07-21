@@ -5,7 +5,7 @@ import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
     itype: string;
-    text: string;
+    content: string;
     center?: boolean;
 }
 

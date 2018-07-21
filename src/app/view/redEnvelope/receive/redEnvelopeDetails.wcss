@@ -1,0 +1,51 @@
+.ga-new-page{
+    display: flex;
+    flex-direction: column;
+    font-family: "PingFangSC-Regular";
+}
+.ga-head{
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ga-big-head{
+    width: 177px;
+    height: 177px;
+}
+.ga-leave-message{
+    line-height: 40px;
+    color: rgba(32, 50, 96, 1);
+    font-size: 28px;
+    text-align: center;
+    margin-top: 50px;
+}
+.ga-type{
+    line-height: 50px;
+    color: rgba(32, 50, 96, 1);
+    font-size: 36px;
+    text-align: center;
+    margin-top: 60px;
+}
+.ga-amount{
+    line-height: 90px;
+    color: rgba(26, 112, 221, 1);
+    font-size: 64px;
+    text-align: center;
+    margin: 60px auto;
+}
+.ga-currency-name{
+    font-size: 36px;
+    margin-left: 10px;
+}
+.ga-bottom{
+    flex: 1 0 0;
+    background-color: #fff;
+    padding: 60px;
+}
+.ga-tips{
+    line-height: 42px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 28px;
+    text-align: center;
+}

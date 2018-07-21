@@ -23,7 +23,6 @@ interface Props {
 
 interface States {
     title: string;
-    fromShow: string;
     to: string;
     pay: number;
     payConversion: string;
@@ -52,7 +51,6 @@ export class AddAsset extends Widget {
     public init(): void {
         this.state = {
             title: '转账',
-            fromShow: parseAccount(this.props.fromAddr),
             to: '',
             pay: 0,
             payConversion: `0.00`,
