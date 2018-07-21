@@ -88,7 +88,7 @@ export class WalletCreate extends Widget {
         // popNew('app-view-wallet-backupWallet-backupWallet');
         const lockScreenPsw = getLocalStorage('lockScreenPsw');
         if (!lockScreenPsw) {
-            popNew('app-view-guidePages-setLockScreenScret');
+            popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
         } else {
             popNew('app-view-app');
         }

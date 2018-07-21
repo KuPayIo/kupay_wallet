@@ -1,8 +1,8 @@
 /**
  * creation complete
  */
-import { Widget } from '../../../../pi/widget/widget';
 import { notify } from '../../../../pi/widget/event';
+import { Widget } from '../../../../pi/widget/widget';
 export class CreateComplete extends Widget {
     public ok: () => void;
     constructor() {

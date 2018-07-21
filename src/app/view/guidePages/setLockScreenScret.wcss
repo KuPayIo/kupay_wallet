@@ -1,0 +1,8 @@
+.ga-jump{
+    position: absolute;
+    right: 30px;
+    top: 24px;
+    line-height: 40px;
+    color: rgba(142, 150, 171, 1);
+    font-size: 28px;
+}
