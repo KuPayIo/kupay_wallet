@@ -36,16 +36,9 @@ export class SwitchWallet extends Widget {
         if (isCurWallet) {
             return;
         }
-        popNew('app-components-message-messagebox', { itype: 'prompt', title: '输入密码', content: '', inputType: 'password' }, (r) => {
-            const psw = decrypt(this.state.wallets.walletList[index].walletPsw);
-            if (!pswEqualed(psw, r)) {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
-            } else {
-                this.switchWallet(this.state.wallets.walletList[index].walletId);
-                popNew('app-components-message-message', { itype: 'success', content: '切换成功', center: true });
-                this.ok && this.ok();
-            }
-        });
+        this.switchWallet(this.state.wallets.walletList[index].walletId);
+        popNew('app-components-message-message', { itype: 'success', content: '切换成功', center: true });
+        this.ok && this.ok();
     }
 
     public switchWallet(curWalletId: string) {

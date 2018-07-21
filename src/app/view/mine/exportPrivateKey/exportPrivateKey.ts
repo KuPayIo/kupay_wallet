@@ -6,25 +6,32 @@ import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
-import { decrypt, getAddrById,getCurrentWallet,getLocalStorage } from '../../../utils/tools';
+import { btcNetwork, lang } from '../../../utils/constants';
+import { decrypt, getAddrById, getCurrentWallet, getLocalStorage } from '../../../utils/tools';
 
+interface Props {
+    mnemonic: string;
+}
 export class ExportPrivateKey extends Widget {
-    public ok:() => void;
+    public ok: () => void;
     constructor() {
         super();
+    }
+    public setProps(props: Props, oldProps: Props): void {
+        super.setProps(props, oldProps);
         this.init();
     }
+
     public init() {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        const walletPsw = decrypt(wallet.walletPsw);
         const currencyRecords = wallet.currencyRecords;
         const collapseList = [];
-        for (let i = 0;i < currencyRecords.length; i++) {
+        for (let i = 0; i < currencyRecords.length; i++) {
             const obj = {
-                title:'',
-                icon:'',
-                textList:[]
+                title: '',
+                icon: '',
+                textList: []
             };
             const currencyName = currencyRecords[i].currencyName;
             obj.title = currencyName;
@@ -33,17 +40,17 @@ export class ExportPrivateKey extends Widget {
 
             switch (currencyName) {
                 case 'ETH':
-                    const ethKeys = this.exportPrivateKeyETH(addrs,walletPsw);
+                    const ethKeys = this.exportPrivateKeyETH(addrs);
                     obj.textList.push(...ethKeys);
                     break;
                 case 'BTC':
-                    const btcKeys = this.exportPrivateKeyBTC(addrs,walletPsw);
+                    const btcKeys = this.exportPrivateKeyBTC(addrs);
                     obj.textList.push(...btcKeys);
                     break;
                 default:
             }
             if (ERC20Tokens[currencyName]) {
-                const erc20TokenKeys = this.exportPrivateKeyERC20Token(currencyName,addrs,walletPsw);
+                const erc20TokenKeys = this.exportPrivateKeyERC20Token(addrs);
                 obj.textList.push(...erc20TokenKeys);
             }
             collapseList.push(obj);
@@ -51,65 +58,64 @@ export class ExportPrivateKey extends Widget {
         this.state = {
             collapseList
         };
-        
+
     }
     public backPrePage() {
         this.ok && this.ok();
     }
 
-    public collapseChange(e:any) {
+    public collapseChange(e: any) {
         const activeIndexs = e.activeIndexs;
     }
 
-    public collapseItemClick(e:any) {
+    public collapseItemClick(e: any) {
         const privateKey = this.state.collapseList[e.collapseListIndex].textList[e.textListIndex];
-        popNew('app-components-message-messagebox', { 
-            itype: 'extra', 
-            title:'导出私钥' , 
+        popNew('app-components-message-messagebox', {
+            itype: 'extra',
+            title: '导出私钥',
             content: '私钥未经加密，导出存在风险，千万不要丢失、泄露或发送给其他人！',
-            extraInfo:privateKey ,
-            copyBtnText:"复制",
-            contentStyle:'color:#F17835;' 
+            extraInfo: privateKey,
+            copyBtnText: '复制',
+            contentStyle: 'color:#F17835;'
         });
     }
 
     // 导出以太坊私钥
-    public exportPrivateKeyETH(addrs:string[],walletPsw:string) {
+    public exportPrivateKeyETH(addrs: string[]) {
         const keys = [];
-        for (let j = 0;j < addrs.length; j++) {
-            const addr = getAddrById(addrs[j],'ETH');
-            const wlt = GaiaWallet.fromJSON(addr.wlt);
-            const privateKey = wlt.exportPrivateKey(walletPsw);
+        const firstWlt = GaiaWallet.fromMnemonic(this.props.mnemonic, lang);
+        for (let j = 0; j < addrs.length; j++) {
+            const wlt = firstWlt.selectAddressWlt(j);
+            const privateKey = wlt.exportPrivateKey();
             keys.push(privateKey);
         }
 
-        return keys;   
+        return keys;
     }
 
     // 导出BTC私钥
-    public exportPrivateKeyBTC(addrs:string[],walletPsw:string) {
+    public exportPrivateKeyBTC(addrs: string[]) {
         const keys = [];
-        for (let j = 0;j < addrs.length; j++) {
-            const addr = getAddrById(addrs[j],'BTC');
-            const wlt = BTCWallet.fromJSON(addr.wlt,walletPsw);
-            wlt.unlock(walletPsw);
+        const wlt = BTCWallet.fromMnemonic(this.props.mnemonic, btcNetwork, lang);
+        wlt.unlock();
+        for (let j = 0; j < addrs.length; j++) {
             const privateKey = wlt.privateKeyOf(j);
-            wlt.lock(walletPsw);
             keys.push(privateKey);
         }
+        wlt.lock();
 
-        return keys;   
+        return keys;
     }
 
-    public exportPrivateKeyERC20Token(currencyName:string,addrs:string[],walletPsw:string) {
+    public exportPrivateKeyERC20Token(addrs: string[]) {
         const keys = [];
-        for (let j = 0;j < addrs.length; j++) {
-            const addr = getAddrById(addrs[j],currencyName);
-            const wlt = GaiaWallet.fromJSON(addr.wlt);
-            const privateKey = wlt.exportPrivateKey(walletPsw);
+        const firstWlt = GaiaWallet.fromMnemonic(this.props.mnemonic, lang);
+        for (let j = 0; j < addrs.length; j++) {
+            const wlt = firstWlt.selectAddressWlt(j);
+            const privateKey = wlt.exportPrivateKey();
             keys.push(privateKey);
         }
 
-        return keys;   
+        return keys;
     }
 }
