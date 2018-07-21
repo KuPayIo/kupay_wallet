@@ -112,6 +112,8 @@ export class GlobalWallet {
             });
         }
 
+        // todo 动态异步创建其他货币地址
+
         // 更新内存数据中心
         ethGwlt.addrs.forEach(item => {
             dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
@@ -177,6 +179,8 @@ export class GlobalWallet {
         return gwlt;
     }
     public static async fromSeedEthToken(tokenName: string, contractAddress: string, passwd: string, seed: string) {
+        // const hash = await calcHashValuePromise(passwd, 'somesalt');
+
         const _seed = cipher.decrypt(passwd, seed);
         const gaiaWallet = GaiaWallet.fromSeed(passwd, _seed, lang);
         const cnt = await gaiaWallet.scanTokenUsedAddress(contractAddress, passwd);
