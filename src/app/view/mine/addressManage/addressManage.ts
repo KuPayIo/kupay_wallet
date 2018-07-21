@@ -53,7 +53,7 @@ export class AddressManage extends Widget {
         });
     }
 
-    public goback() {
+    public backPrePage() {
         this.ok && this.ok();
     }
 
@@ -100,7 +100,13 @@ export class AddressManage extends Widget {
 
         if (this.state.showtype === 1) {
             const selectName = this.state.coins[this.state.selectnum].name;
-            const info = getNewAddrInfo(selectName);
+            let info:any;
+            try {
+                info = getNewAddrInfo(selectName);
+            } catch (error) {
+                console.log(error);
+            }
+            
             let address;
             let wltJson;
 
@@ -111,7 +117,7 @@ export class AddressManage extends Widget {
                 address = 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f';
             }
 
-            popNew('app-components-message-messagebox',
+            popNew('app-components-message-messageboxPrompt',
                 { itype: 'prompt', title: '添加地址', placeHolder: '标签名(限8个字)', content: address }, (r) => {
                     if (wltJson) {
                         if (r && r.length >= DataCenter.MAX_ADDRNAME_LEN) {
