@@ -1,7 +1,7 @@
 /**
  * red-envelope details
  */
-import { Widget } from '../../../pi/widget/widget';
+import { Widget } from '../../../../pi/widget/widget';
 
 export class RedEnvelopeDetails extends Widget {
     public ok:() => void;

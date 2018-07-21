@@ -34,3 +34,15 @@ export interface Addr {
     wlt: string;// 钱包对象字符串化
     record: any[];// 记录缓存
 }
+
+/**
+ * 红包详情对象
+ */
+export interface RedEnvelope {
+    // tslint:disable-next-line:no-reserved-keywords
+    type:string;
+    time:string;
+    currencyName:string;
+    amount:number;
+    leaveMessage:string;
+}
