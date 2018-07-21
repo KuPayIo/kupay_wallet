@@ -299,9 +299,9 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
  * @param isMinUnit 是否是最小单位
  * 
  */
-export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean
-    , rate: any) => {
-    const r: any = { num: 0, show: '', conversionShow: '' };
+export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean) => {
+    const rate: any = dataCenter.getExchangeRate(currencyName);
+    const r: any = { num: 0, conversionShow: '' };
     let num;
     if (currencyName === 'ETH') {
         num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
@@ -311,8 +311,7 @@ export const effectiveCurrencyStableConversion = (perNum: any, currencyName: str
         num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
     r.num = num;
-    r.show = `${num} ${currencyName}`;
-    r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
+    r.conversionShow = (num * rate[conversionType]).toFixed(2);
 
     return r;
 
@@ -827,12 +826,13 @@ export const shareToQrcode = (shareText) => {
         },
         fail: (result) => {
             alert(result);
-        }, content: shareText
+        }, 
+        content: shareText
     });
 };
 
 /**
- * 获取助记词
+ * 获取memery hash
  */
 export const calcHashValuePromise = async (pwd, salt) => {
     const argonHash = new ArgonHash();

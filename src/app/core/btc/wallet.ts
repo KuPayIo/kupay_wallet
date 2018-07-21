@@ -387,7 +387,7 @@ export class BTCWallet {
         for (i = 0; ; i++) {
             const addr = this.derive(i);
             const res = await BtcApi.getAddrTxHistory(addr);
-            if (res.txs.length === 0) {
+            if (!res || res.txs.length === 0) {
                 count = count + 1;
             } else {
                 this.usedAdresses[addr] = i;

@@ -5,12 +5,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { drawImg } from '../../../../pi/util/canvas';
 import { Widget } from '../../../../pi/widget/widget';
 import { Cipher } from '../../../core/crypto/cipher';
-import { generateByHash, toMnemonic } from '../../../core/genmnemonic';
+import { getRandomValuesByMnemonic } from '../../../core/genmnemonic';
 import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
 import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
 import { ahash } from '../../../utils/ahash';
-import { defalutShowCurrencys, walletNumLimit } from '../../../utils/constants';
+import { defalutShowCurrencys, lang, walletNumLimit } from '../../../utils/constants';
 import { encrypt, getAddrsAll, getLocalStorage, getXOR, setLocalStorage } from '../../../utils/tools';
 import { Addr, Wallet } from '../../interface';
 
@@ -89,14 +89,8 @@ export class WalletImport extends Widget {
         }
 
         const close = popNew('pi-components-loading-loading', { text: '导入中...' });
-        let gwlt = null;
         try {
-            console.time('import');
-            gwlt = await GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
-            console.timeEnd('import');
-            gwlt.nickName = this.state.walletName;
-            this.importWallet(gwlt);
-
+            await this.importWallet();
         } catch (e) {
             close.callback(close.widget);
             console.log(e);
@@ -116,9 +110,18 @@ export class WalletImport extends Widget {
 
     }
 
-    public importWallet(gwlt: GlobalWallet) {
+    public async importWallet() {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
         let addrs: Addr[] = getLocalStorage('addrs') || [];
+
+        let gwlt = null;
+        console.time('import');
+        gwlt = await GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
+        // todo 这里需要验证钱包是否已经存在，且需要进行修改密码处理
+
+        console.timeEnd('import');
+        gwlt.nickName = `我的钱包${wallets.walletList.length + 1}`;
+
         const curWalletId = gwlt.glwtId;
         const wallet: Wallet = {
             walletId: curWalletId,
@@ -156,27 +159,3 @@ export class WalletImport extends Widget {
     }
 
 }
-
-const testAhash = () => {
-    ['../../app/res/image/banner1.png', '../../app/res/image/banner2.png', '../../app/res/image/banner3.png'].map(testAhash1);
-};
-
-const testAhash1 = (src) => {
-    const img = new Image();
-    const cipher = new Cipher();
-    img.onload = () => {
-        const ab = drawImg(img);
-        const r = ahash(new Uint8Array(ab), img.width, img.height, 4);
-        const psw = '11111111';
-        // 这里需要使用memory_hash进行处理，不适用sha256加密
-        let s = cipher.sha256(r + psw);
-        const len = s.length;
-        // 生成助记词的随机数仅需要128位即可，这里对256位随机数进行折半取异或的处理
-        s = getXOR(s.slice(0, len / 2), s.slice(len / 2));
-
-        const t = generateByHash(s);
-        const m = toMnemonic('english', t);
-        console.log(img.src, r, s, t, m);
-    };
-    img.src = src;
-};

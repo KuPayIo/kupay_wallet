@@ -10,7 +10,7 @@ import { register,unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
 
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceOfCurrency, fetchTotalAssets,formatBalance,getAddrsByCurrencyName,getCurrentWallet,getLocalStorage, formatBalanceValue } from '../../utils/tools';
+import { fetchBalanceOfCurrency, fetchTotalAssets,formatBalance,formatBalanceValue,getAddrsByCurrencyName,getCurrentWallet, getLocalStorage } from '../../utils/tools';
 
 export class Home extends Widget {
     constructor() {
@@ -113,7 +113,7 @@ export class Home extends Widget {
      * 余额更新
      */
     private registerAddrsFun = (addrs?:any) => {
-        console.log('余额更新')
+        console.log('余额更新');
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         if (!wallet) return;
@@ -137,7 +137,6 @@ const parseCurrencyList = (wallet) => {
     // todo 测试代码  不处理没有的情况
     // if (!wallet.showCurrencys) return list;
     const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
-
     // todo  这里需要正确的处理钱包货币
     dataCenter.currencyList.forEach(v => {
         if (showCurrencys.indexOf(v.name) < 0) return;
@@ -163,4 +162,3 @@ const setCurrencyListBalance = (currencyList:any[],balance:number,currencyName:s
         return item;
     });
 };
-
