@@ -1,19 +1,19 @@
 .ga-new-page{
-    background-color: #fff;
+
 }
 .ga-top-banner{
     width: 100%;
 }
 .ga-card{
-   height: 460px;
-   border-radius: 8px; 
+   height: 340px;
+   border-radius: 15px; 
    display: flex;
    flex-direction: column;
    box-sizing: border-box;
-   background-image: url(../../../res/image/bg_card.png);
+   background-image: url(../../../res/image/bg_walletManagement.png);
    background-position: center;
    background-size: cover;
-   padding: 0 80px;
+   padding: 0 30px;
    color: #fff;
 }
 .ga-card-item{
@@ -25,12 +25,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 106px;
+    margin-top: 60px;
+    height:100px;
  }
 
 .ga-wallet-header{
-    width: 40px;
-    height: 40px;
+    width: 100px;
+    height: 100px;
     border: 1px solid #ccc;
     background-color: #fff;
     border-radius: 50%;
@@ -42,8 +43,8 @@
     border: none;
     box-sizing: border-box;
     background-color: transparent;
-    font-size: 32px;
-    line-height: 45px;
+    font-size: 36px;
+    line-height: 50px;
     color: #fff;
 }
 .ga-input-psw-tips{
@@ -61,7 +62,7 @@
     display: flex;
     align-items: baseline;
     justify-content: flex-end;
-    margin-top: 87px;
+    margin-top: 56px;
 
 }
 .ga-assets-item{
@@ -77,6 +78,7 @@
 .ga-bottom-container{
     display: flex;
     flex-direction: column;
+    background:#fff;
 }
 .ga-item{
     display: flex;
@@ -114,14 +116,14 @@
     justify-content: center;
     align-items: center;
     height: 100px;
-    background: #203260;
-    border-radius: 6px;
+    background: #3574FA;
+    border-radius: 100px;
     margin: 60px 30px 40px;
     cursor: pointer;
     box-sizing: border-box;
     font-size: 32px;
-    color: rgba(255,255,255,0.87);
-    line-height: 45px;
+    color: rgba(255, 255, 255, 0.87);
+    line-height: 100px;
 }
 .ga-delete-wallet{
     display: flex;
@@ -131,4 +133,10 @@
     font-size: 28px;
     color: #8E96AB;
     line-height: 33px;
+}
+.cardPaddingDiv{
+    padding: 30px;
+    padding-bottom: 16px;
+    margin-bottom:16px;
+    background:#fff;
 }

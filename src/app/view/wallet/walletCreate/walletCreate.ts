@@ -85,13 +85,14 @@ export class WalletCreate extends Widget {
         await this.createWallet();
         close.callback(close.widget);
         this.ok && this.ok();
+        popNew('app-view-wallet-walletCreate-createComplete');
         // popNew('app-view-wallet-backupWallet-backupWallet');
-        const lockScreenPsw = getLocalStorage('lockScreenPsw');
+        /* const lockScreenPsw = getLocalStorage('lockScreenPsw');
         if (!lockScreenPsw) {
             popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
         } else {
             popNew('app-view-app');
-        }
+        } */
     }
 
     public async createWallet() {

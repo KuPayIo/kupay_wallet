@@ -11,6 +11,7 @@ export class Addressitem extends Widget {
 
     public goDetails() {
         popNew('app-view-wallet-transaction-receipt', {
+            currencyName: this.props.currencyName,
             currencyBalance: this.props.money,
             addr: this.props.address,
             title: this.props.name

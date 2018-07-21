@@ -6,9 +6,10 @@ import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
+import { GlobalWallet } from '../../core/globalWallet';
 
 export class Home extends Widget {
-    public stp:any;
+    public stp: any;
     constructor() {
         super();
     }
@@ -17,51 +18,68 @@ export class Home extends Widget {
         this.init();
     }
     public init() {
+        //获取钱包显示头像
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        let gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+        let avatar = wallet.avatar;
+        let walletName = gwlt.nickName;
         this.stp = new ShareToPlatforms();
         this.stp.init();
         this.state = {
+            avatar,
+            walletName,
             hasNews: true,
             mineList: [{
                 icon: 'icon_mine_wallet.png',
-                text: '我的钱包',
-                components: 'app-view-mine-walletManagement-walletManagement'
+                text: '管理钱包',
+                components: 'app-view-mine-walletManagement-walletList'
             },/*  {
                 icon: 'icon_mine_annal.png',
                 text: '交易记录',
                 components: 'app-view-mine-transaction-record'
-            }, */ {
+            }, */
+            {
                 icon: 'icon_mine_address.png',
-                text: '地址管理',
+                text: '常用地址',
                 components: 'app-view-mine-addressManage-addressManage'
-            }, {
-                icon: 'icon_mine_Language.png',
-                text: '语言设置',
-                components: 'app-view-mine-languageAndcoinset-language'
-            }, {
+            },
+            // {
+            //     icon: 'icon_mine_Language.png',
+            //     text: '语言设置',
+            //     components: 'app-view-mine-languageAndcoinset-language'
+            // }, 
+            {
                 icon: 'icon_mine_Language.png',
                 text: '锁屏密码',
                 components: 'app-view-mine-lockScreen-lockScreenSetting'
-            }, {
-                icon: 'icon_mine_money.png',
-                text: '货币设置',
-                components: 'app-view-mine-languageAndcoinset-coinset'
-            }, {
+            },
+            // {
+            //     icon: 'icon_mine_money.png',
+            //     text: '货币设置',
+            //     components: 'app-view-mine-languageAndcoinset-coinset'
+            // }, 
+            {
                 icon: 'icon_mine_problem.png',
                 text: '常见问题',
                 components: 'app-view-mine-FAQ-FAQ'
-            }, {
+            },
+            {
                 icon: 'icon_mine_about.png',
                 text: '关于我们',
                 components: 'app-view-mine-aboutus-aboutus'
-            }, {
-                icon: 'icon_mine_share.png',
-                text: '分享下载链接',
-                components: 'app-view-financialManagement-fund-share'
-            }]
+            }
+                // ,
+                //  {
+                //     icon: 'icon_mine_share.png',
+                //     text: '分享下载链接',
+                //     components: 'app-view-financialManagement-fund-share'
+                // }
+            ]
         };
     }
 
-    public itemClick(e:any, index:number) {
+    public itemClick(e: any, index: number) {
         if (index <= 2) {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
@@ -81,11 +99,11 @@ export class Home extends Widget {
 
             return;
         }
-        popNew(this.state.mineList[index].components,{},(home) => {
+        popNew(this.state.mineList[index].components, {}, (home) => {
             if (home) {
-                notify(this.tree,'ev-change-tab',{ index:0 });
+                notify(this.tree, 'ev-change-tab', { index: 0 });
             }
-            
+
         });
     }
 
@@ -107,5 +125,11 @@ export class Home extends Widget {
                 alert(result);
             }, content: 'This is a test QRCode'
         });
+    }
+    public walletManagementClick() {
+        popNew("app-view-mine-walletManagement-walletManagement");
+    }
+    public backupClick() {
+        alert("aa");
     }
 }
