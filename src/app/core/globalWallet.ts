@@ -77,7 +77,7 @@ export class GlobalWallet {
         gwlt._addrs.push(...ethGwlt.addrs);
 
         // 创建BTC钱包
-        const btcGwlt = await this.fromMnemonicBTC(hash, mnemonic);
+        const btcGwlt = await this.fromMnemonicBTC(mnemonic);
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
         gwlt._addrs.push(...btcGwlt.addrs);
 
@@ -131,7 +131,7 @@ export class GlobalWallet {
         gwlt._addrs.push(ethGwlt.addr);
 
         // 创建BTC钱包
-        const btcGwlt = this.createBtcGwlt(hash, mnemonic);
+        const btcGwlt = this.createBtcGwlt(mnemonic);
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
         gwlt._addrs.push(btcGwlt.addr);
 
@@ -202,19 +202,19 @@ export class GlobalWallet {
         // todo
         const mnemonic = await getMnemonic(wallet, passwd);
 
-        return this.createWltByMnemonic(mnemonic, currencyName, passwd, i);
+        return this.createWltByMnemonic(mnemonic, currencyName, i);
     }
 
     /**
      * 通过助记词创建对应钱包对象
      */
-    public static createWltByMnemonic(mnemonic: string, currencyName: string, passwd: string, i: number) {
+    public static createWltByMnemonic(mnemonic: string, currencyName: string, i: number) {
         let wlt;
         if (currencyName === 'ETH') {
             const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
             wlt = gaiaWallet.selectAddressWlt(i);
         } else if (currencyName === 'BTC') {
-            wlt = BTCWallet.fromMnemonic(passwd, mnemonic, btcNetwork, lang);
+            wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         } else if (ERC20Tokens[currencyName]) {
             const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
             wlt = gaiaWallet.selectAddressWlt(i);
@@ -255,12 +255,12 @@ export class GlobalWallet {
         };
     }
 
-    private static createBtcGwlt(passwd: string, mnemonic: string) {
+    private static createBtcGwlt(mnemonic: string) {
         // todo 测试阶段，使用测试链，后续改为主链
-        const btcWallet = BTCWallet.fromMnemonic(passwd, mnemonic, btcNetwork, lang);
-        btcWallet.unlock(passwd);
+        const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
+        btcWallet.unlock();
         const address = btcWallet.derive(0);
-        btcWallet.lock(passwd);
+        btcWallet.lock();
         const currencyRecord: CurrencyRecord = {
             currencyName: 'BTC',
             currentAddr: address,
@@ -355,11 +355,10 @@ export class GlobalWallet {
         };
     }
 
-    private static async fromMnemonicBTC(passwd: string, mnemonic: string) {
+    private static async fromMnemonicBTC(mnemonic: string) {
         // todo 测试阶段，使用测试链，后续改为主链
-        const btcWallet = BTCWallet.fromMnemonic(passwd, mnemonic, btcNetwork, lang);
-        const btcWalletJson = btcWallet.toJSON();
-        btcWallet.unlock(passwd);
+        const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
+        btcWallet.unlock();
         const cnt = await btcWallet.scanUsedAddress();
         const address = btcWallet.derive(0);
 
@@ -392,7 +391,7 @@ export class GlobalWallet {
             };
             addrs.push(addr);
         }
-        btcWallet.lock(passwd);
+        btcWallet.lock();
 
         return {
             currencyRecord,
@@ -421,6 +420,7 @@ export class GlobalWallet {
         // todo 这里需要处理修改密码
         const oldHash = await calcHashValuePromise(oldPsw, 'somesalt');
         const newHash = await calcHashValuePromise(newPsw, 'somesalt');
+        // console.log('passwordChange hash', oldHash, this._vault, oldPsw, newHash, newPsw);
 
         const oldVault = cipher.decrypt(oldHash, this._vault);
         this._vault = cipher.encrypt(newHash, oldVault);

@@ -412,11 +412,10 @@ export const getNewAddrInfo = (currencyName) => {
         address = newWlt.address;
         wltJson = newWlt.toJSON();
     } else if (currencyName === 'BTC') {
-        const psw = decrypt(wallet.walletPsw);
-        const wlt = BTCWallet.fromJSON(firstAddr.wlt, psw);
-        wlt.unlock(psw);
+        const wlt = BTCWallet.fromJSON(firstAddr.wlt);
+        wlt.unlock();
         address = wlt.derive(currencyRecord.addrs.length);
-        wlt.lock(psw);
+        wlt.lock();
 
         wltJson = firstAddr.wlt;
     }
@@ -746,7 +745,7 @@ export const VerifyIdentidy = async (wallet, passwd) => {
     try {
         const cipher = new Cipher();
         const r = cipher.decrypt(hash, gwlt.vault);
-        console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r);
+        // console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r);
 
         return true;
     } catch (error) {

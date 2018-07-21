@@ -24,7 +24,6 @@ export class ChangePassword extends Widget {
     public init() {
         // const wallets = getLocalStorage('wallets');
         // const wallet = getCurrentWallet(wallets);
-        // const walletPsw = decrypt(wallet.walletPsw);
         this.state = {
             style: {
                 backgroundColor: '#FFF',
@@ -73,9 +72,9 @@ export class ChangePassword extends Widget {
             return;
         }
         // 验证全部通过，开始设置新密码
-        const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
+        const loading = popNew('pi-components-loading-loading', { text: '修改中...' });
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        await gwlt.passwordChange(this.props.Props, newPassword);
+        await gwlt.passwordChange(this.props.passwd, newPassword);
         wallet.gwlt = gwlt.toJSON();
         setLocalStorage('wallets', wallets);
         loading.callback(loading.widget);

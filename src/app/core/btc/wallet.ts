@@ -190,16 +190,6 @@ export class BTCWallet {
         return this.mnemonics;
     }
 
-    public deleteMnemonics(): void {
-        if (this.isLocked === true) {
-            throw new Error('You need to unlock wallet first!');
-        }
-        if (this.mnemonics.length === 0) {
-            throw new Error('Mnemonics have been deleted!');
-        }
-        this.mnemonics = '';
-    }
-
     /**
      * Export WIF format private key for specified index
      *

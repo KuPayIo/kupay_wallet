@@ -25,7 +25,6 @@ export class ExportPrivateKey extends Widget {
     public init() {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        const walletPsw = decrypt(wallet.walletPsw);
         const currencyRecords = wallet.currencyRecords;
         const collapseList = [];
         for (let i = 0; i < currencyRecords.length; i++) {
@@ -45,7 +44,7 @@ export class ExportPrivateKey extends Widget {
                     obj.textList.push(...ethKeys);
                     break;
                 case 'BTC':
-                    const btcKeys = this.exportPrivateKeyBTC(addrs, walletPsw);
+                    const btcKeys = this.exportPrivateKeyBTC(addrs);
                     obj.textList.push(...btcKeys);
                     break;
                 default:
@@ -95,15 +94,15 @@ export class ExportPrivateKey extends Widget {
     }
 
     // 导出BTC私钥
-    public exportPrivateKeyBTC(addrs: string[], walletPsw: string) {
+    public exportPrivateKeyBTC(addrs: string[]) {
         const keys = [];
-        const wlt = BTCWallet.fromMnemonic(walletPsw, this.props.mnemonic, btcNetwork, lang);
-        wlt.unlock(walletPsw);
+        const wlt = BTCWallet.fromMnemonic(this.props.mnemonic, btcNetwork, lang);
+        wlt.unlock();
         for (let j = 0; j < addrs.length; j++) {
             const privateKey = wlt.privateKeyOf(j);
             keys.push(privateKey);
         }
-        wlt.lock(walletPsw);
+        wlt.lock();
 
         return keys;
     }

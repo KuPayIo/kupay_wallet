@@ -105,7 +105,6 @@ export class WalletCreate extends Widget {
         const wallet: Wallet = {
             walletId: gwlt.glwtId,
             avatar: getAvatarRandom(),
-            walletPsw: encrypt(this.state.walletPsw),
             gwlt: gwlt.toJSON(),
             showCurrencys: defalutShowCurrencys,
             currencyRecords: []

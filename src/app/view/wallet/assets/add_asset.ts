@@ -94,12 +94,7 @@ export class AddAsset extends Widget {
             }
         });
         if (!isInit && ERC20Tokens[currencys.name]) {
-            const psw = decrypt(wallet.walletPsw);
-            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-
             initERC20TokenCurrency(currencys.name, ERC20Tokens[currencys.name], wallet);
-
-            return;
         }
     }
 

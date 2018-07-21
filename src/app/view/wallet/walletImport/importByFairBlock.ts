@@ -5,14 +5,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { drawImg } from '../../../../pi/util/canvas';
 import { Widget } from '../../../../pi/widget/widget';
 import { Cipher } from '../../../core/crypto/cipher';
-import { generateByHash, toMnemonic } from '../../../core/genmnemonic';
 import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
 import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
 import { ahash } from '../../../utils/ahash';
-import { defalutShowCurrencys, walletNumLimit } from '../../../utils/constants';
-import { encrypt, getAddrsAll, getLocalStorage, getXOR, setLocalStorage } from '../../../utils/tools';
-import { Addr, Wallet } from '../../interface';
 
 export class WalletImport extends Widget {
     public ok: () => void;
@@ -35,13 +31,13 @@ export class WalletImport extends Widget {
             userProtocolReaded: false,
             curWalletPswStrength: getWalletPswStrength(),
             textAreaStyle1: {
-                "border": "3px dotted #A0ACC0",
-                "border-bottom": "none",
-                "padding-top": "26px"
+                border: '3px dotted #A0ACC0',
+                'border-bottom': 'none',
+                'padding-top': '26px'
             },
             textAreaStyle2: {
-                "border": "3px dotted #A0ACC0",
-                "padding-top": "26px"
+                border: '3px dotted #A0ACC0',
+                'padding-top': '26px'
             }
         };
     }
@@ -104,16 +100,16 @@ export class WalletImport extends Widget {
 
             return;
         }
-        let close = popNew('pi-components-loading-loading', { text: '导入钱包中...' });
+        const close = popNew('pi-components-loading-loading', { text: '导入钱包中...' });
         this.importWallet();
         setTimeout(() => {
             close.callback(close.widget);
         }, 500);
         this.ok && this.ok();
-        popNew("app-view-wallet-walletImport-importComplete");
+        popNew('app-view-wallet-walletImport-importComplete');
     }
 
     public importWallet() {
-
+        // todo 
     }
 }

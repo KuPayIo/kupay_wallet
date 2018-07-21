@@ -126,7 +126,6 @@ export class WalletImport extends Widget {
         const wallet: Wallet = {
             walletId: curWalletId,
             avatar: getAvatarRandom(),
-            walletPsw: encrypt(this.state.walletPsw),
             gwlt: gwlt.toJSON(),
             showCurrencys: defalutShowCurrencys,
             currencyRecords: []

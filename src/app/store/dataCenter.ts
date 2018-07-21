@@ -18,6 +18,7 @@ export class DataCenter {
     public static MIN_SHARE_LEN: number = 2;
     public static SHARE_SPLIT: string = '&&&&';
     public static MNEMONIC_SPLIT: string = ' ';
+    public static LIMIT_CONFIRMATIONS: number = 1;
 
     public rate: string;
     public addrInfos: any[] = [];
@@ -290,6 +291,7 @@ export class DataCenter {
 
             info.txs.forEach(v => {
                 if (transactions.some(v1 => (v1.hash === v.txid) && (v1.addr === addr))) return;
+                if (v.confirmations < DataCenter.LIMIT_CONFIRMATIONS) return;
                 this.removeRecordAtAddr(addr, v.txid);
                 list.push(this.parseBtcTransactionTxRecord(addr, v));
             });
@@ -320,12 +322,16 @@ export class DataCenter {
         console.log('parseBtcTransactionTxRecord', tx);
         let value = 0;
         const inputs = tx.vin.map(v => {
-            if ((v.addr === addr) && !value) value = v.value;
-
             return v.addr;
         });
         const outputs = tx.vout.map(v => {
-            if (!value) value = parseFloat(v.value);
+            if (!value) {
+                if (inputs.indexOf(addr) >= 0) {
+                    value = parseFloat(v.value);
+                } else if (addr === v.scriptPubKey.addresses[0]) {
+                    value = parseFloat(v.value);
+                }
+            }
 
             return v.scriptPubKey.addresses[0];
         });
