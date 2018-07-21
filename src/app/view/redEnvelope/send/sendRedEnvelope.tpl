@@ -10,16 +10,16 @@
         <div w-class="ga-item-box">
             <span w-class="ga-tag">单个金额</span>
             <div w-class="ga-amount-inner">
-                <div ev-input-change="amountInputChange">
-                    <app-components-input-input>{itype:"number"}</app-components-input-input>
+                <div ev-input-change="amountInputChange" w-class="input-father">
+                    <app-components-input-input>{itype:"number",style:{{it1.inputStyle}}}</app-components-input-input>
                 </div>
                 <span w-class="ga-currency-name">{{it1.currencyName}}</span>
             </div>
         </div>
         <div w-class="ga-item-box">
             <span w-class="ga-tag">留言</span>
-            <div w-class="ga-leave-message" ev-input-change="leaveMessageChange">
-                <app-components-input-input>{placeHolder:{{it1.leaveMessage}}}</app-components-input-input>
+            <div w-class="ga-leave-message input-father" ev-input-change="leaveMessageChange">
+                <app-components-input-input>{placeHolder:{{it1.leaveMessage}},style:{{it1.inputStyle}}}</app-components-input-input>
             </div>
         </div>
         <div w-class="ga-send-amount">{{it1.amount}}&nbsp;{{it1.currencyName}}</div>

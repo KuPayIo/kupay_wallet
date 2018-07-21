@@ -14,6 +14,10 @@ export class SendRedEnvelope extends Widget {
 
     public init() {
         this.state = {
+            inputStyle:{
+                border:'none',
+                textAlign:'right'
+            },
             balance:55.55,
             currencyName:'ETH',
             amount:0,
