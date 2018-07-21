@@ -1,0 +1,14 @@
+.ga-new-page{
+    background-color: #fff;
+}
+.ga-title-bar{
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.ga-red-envelope-record{
+    position: absolute;
+    right: 30px;
+    font-size: 28px;
+    color: #203260;
+}
