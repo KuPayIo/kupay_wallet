@@ -1,8 +1,8 @@
 /**
  * fund share Page
  */
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { Widget } from '../../../../pi/widget/widget';
-import {ShareToPlatforms} from "../../../../pi/browser/shareToPlatforms";
 
 export class FundShare extends Widget {
     public ok:() => void;
@@ -15,10 +15,10 @@ export class FundShare extends Widget {
 
     public cancelShareClick() {
         this.ok && this.ok();
-        //this.testShare();
+        // this.testShare();
     }
 
-    public testShare(){
+    public testShare() {
         const stp = new ShareToPlatforms();
 
         stp.init();
@@ -28,7 +28,7 @@ export class FundShare extends Widget {
             },
             fail: (result) => {
                 alert(result);
-            }, content: "This is a test QRCode"
-        })
+            }, content: 'This is a test QRCode'
+        });
     }
 } 

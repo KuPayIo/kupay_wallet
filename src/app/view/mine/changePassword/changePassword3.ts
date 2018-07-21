@@ -8,7 +8,6 @@ import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { pswEqualed } from '../../../utils/account';
-import { btcNetwork,lang } from '../../../utils/constants';
 import { 
     decrypt, 
     encrypt, 
@@ -93,28 +92,6 @@ export class ChangePasswordStep3 extends Widget {
         const currencyRecords = wallet.currencyRecords;
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         const seed = gwlt.exportSeed(oldPsw);
-        currencyRecords.forEach(item => {
-            const currencyName = item.currencyName;
-            const needUpdateAddrs = item.addrs;
-            if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
-                const firstAddr = GaiaWallet.fromSeed(newPsw,seed,lang);
-                const addr = getAddrById(needUpdateAddrs[0],currencyName);
-                addr.wlt = firstAddr.toJSON();
-                resetAddrById(needUpdateAddrs[0],currencyName,addr);
-                for (let i = 1; i < needUpdateAddrs.length; i++) {
-                    const addr = getAddrById(needUpdateAddrs[i],currencyName);
-                    addr.wlt = firstAddr.selectAddress(newPsw,i).toJSON();
-                    resetAddrById(needUpdateAddrs[i],currencyName,addr);
-                }
-            } else if (currencyName === 'BTC') {
-                const btcWallet = BTCWallet.fromSeed(newPsw,seed,btcNetwork,lang);
-                for (let i = 0; i < needUpdateAddrs.length; i++) {
-                    const addr = getAddrById(needUpdateAddrs[i],currencyName);
-                    addr.wlt = btcWallet.toJSON();
-                    resetAddrById(needUpdateAddrs[i],currencyName,addr);
-                }
-            }
-        });
     }
 
 }

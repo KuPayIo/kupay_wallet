@@ -408,7 +408,7 @@ export const getNewAddrInfo = (currencyName) => {
     let wltJson;
     if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
         const wlt = GaiaWallet.fromJSON(firstAddr.wlt);
-        const newWlt = wlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length);
+        const newWlt = wlt.selectAddressWlt(currencyRecord.addrs.length);
         address = newWlt.address;
         wltJson = newWlt.toJSON();
     } else if (currencyName === 'BTC') {
@@ -434,7 +434,7 @@ export const getNewAddrInfo = (currencyName) => {
  * @param addrName 新的地址名
  * @param wltJson 新的地址钱包对象
  */
-export const addNewAddr = (currencyName, address, addrName, wltJson) => {
+export const addNewAddr = (currencyName, address, addrName) => {
     const wallets = getLocalStorage('wallets');
     const wallet = getCurrentWallet(wallets);
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
@@ -442,7 +442,7 @@ export const addNewAddr = (currencyName, address, addrName, wltJson) => {
     addrName = addrName || getDefaultAddr(address);
     currencyRecord.addrs.push(address);
     const list: Addr[] = getLocalStorage('addrs') || [];
-    const newAddrInfo: Addr = { addr: address, addrName, wlt: wltJson, record: [], balance: 0, currencyName };
+    const newAddrInfo: Addr = { addr: address, addrName, record: [], balance: 0, currencyName };
     list.push(newAddrInfo);
     currencyRecord.currentAddr = address;
 

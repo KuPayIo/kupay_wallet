@@ -326,7 +326,7 @@ async function doEthTransfer(wlt: GaiaWallet, acct1: string, acct2: string, psw:
 
     // const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
 
-    const tx = wlt.signRawTransaction(psw, txObj);
+    const tx = wlt.signRawTransaction(txObj);
     // tslint:disable-next-line:no-unnecessary-local-variable
     const id = await api.sendRawTransaction(tx);
 
@@ -387,7 +387,7 @@ async function doERC20TokenTransfer(wlt: GaiaWallet, acct1: string, acct2: strin
 
     // const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
 
-    const tx = wlt.signRawTransaction(psw, txObj);
+    const tx = wlt.signRawTransaction(txObj);
     // tslint:disable-next-line:no-unnecessary-local-variable
     const id = await api.sendRawTransaction(tx);
 

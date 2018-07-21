@@ -69,19 +69,23 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (r) => {
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
-            const walletPsw = decrypt(wallet.walletPsw);
-            if (pswEqualed(r, walletPsw)) {
-                const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
-                setTimeout(() => {
-                    close.callback(close.widget);
-                    popNew('app-view-mine-exportPrivateKey-exportPrivateKey');
-                }, 500);
-            } else {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
+            const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
+            try {
+                const mnemonic = await getMnemonic(wallet, r);
+                if (mnemonic) {
+                    popNew('app-view-mine-exportPrivateKey-exportPrivateKey', { mnemonic });
+                } else {
+                    popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+                }
+            } catch (error) {
+                console.log(error);
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入111', center: true });
             }
+
+            close.callback(close.widget);
         });
     }
 
@@ -184,28 +188,33 @@ export class WalletManagement extends Widget {
         }
         popNew('app-view-groupwallet-groupwallet');
     }
-
+    /**
+     * 修改密码
+     */
     public changePasswordClick() {
         if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
             this.pageClick();
 
             return;
         }
-        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (r) => {
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
-            const walletPsw = decrypt(wallet.walletPsw);
-            if (pswEqualed(r, walletPsw)) {
-                const close = popNew('pi-components-loading-loading', { text: '加载中...' });
-                setTimeout(() => {
-                    close.callback(close.widget);
-                    popNew('app-view-mine-changePassword-changePassword');
-                }, 500);
-            } else {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
+            const close = popNew('pi-components-loading-loading', { text: '加载中...' });
+            try {
+                const isEffective = await VerifyIdentidy(wallet, r);
+                if (isEffective) {
+                    popNew('app-view-mine-changePassword-changePassword', { passwd: r });
+                } else {
+                    popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+                }
+            } catch (error) {
+                console.log(error);
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
             }
-        });
 
+            close.callback(close.widget);
+        });
     }
 
     public signOutClick() {
@@ -232,6 +241,9 @@ export class WalletManagement extends Widget {
             this.ok && this.ok(true);
         });
     }
+    /**
+     * 删除钱包
+     */
     public deleteWalletClick() {
         if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
             this.pageClick();
@@ -240,7 +252,7 @@ export class WalletManagement extends Widget {
         }
         if (!this.state.mnemonicBackup) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' }, () => {
-                popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic: "aaa" });//需要生成助记词后传入参数
+                this.backupMnemonic();
             });
         } else {
             this.deleteWallet();
