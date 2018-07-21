@@ -44,7 +44,7 @@
 
         <div w-class="set-addr">
             <span>发币地址</span>
-            <span w-class="addr-from">{{it1.fromShow||''}}</span>
+            <span w-class="addr-from">{{it.fromAddr||''}}</span>
         </div>
     </div>
 </div>

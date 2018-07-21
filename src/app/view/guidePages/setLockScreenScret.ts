@@ -6,6 +6,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { lockScreenHash,setLocalStorage } from '../../utils/tools';
 
 interface Props {
+    jump?:boolean;
     title1?:string;
     title2?:string;
 }
@@ -61,5 +62,9 @@ export class SetLockScreenScret extends Widget {
             this.paint();
         }
         
+    }
+
+    public jumpClick() {
+        this.ok && this.ok();
     }
 }

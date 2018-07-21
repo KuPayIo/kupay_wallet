@@ -7,13 +7,15 @@
         </div>
         <div w-class="ga-records-list-box">
             <div w-class="ga-records-list-title">未被领取的红包已退回云端账户</div>
-            <div w-class="ga-records-item">
+            {{for index,obj of it1.redEnvelopeList}}
+            <div w-class="ga-records-item" on-tap="redEnvelopeItemClick(e,{{index}})">
                 <div w-class="ga-records-left">
-                    <span w-class="ga-records-type">等额红包</span>
-                    <span w-class="ga-records-time">04-12  14:32:00</span>
+                    <span w-class="ga-records-type">{{obj.type}}</span>
+                    <span w-class="ga-records-time">{{obj.time}}</span>
                 </div>
-                <div w-class="ga-amount"><span>1</span>&nbsp;<span>MPT</span></div>
+                <div w-class="ga-amount"><span>{{obj.amount}}</span>&nbsp;<span>{{obj.currencyName}}</span></div>
             </div>
+            {{end}}
         </div>
     </div>
 </div>

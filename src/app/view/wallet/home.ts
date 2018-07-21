@@ -10,7 +10,7 @@ import { register,unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
 
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceOfCurrency, fetchTotalAssets,formatBalance,formatBalanceValue,getAddrsByCurrencyName,getCurrentWallet, getLocalStorage } from '../../utils/tools';
+import { fetchBalanceOfCurrency, fetchTotalAssets,formatBalance,formatBalanceValue,getCurrentWallet, getLocalStorage } from '../../utils/tools';
 
 export class Home extends Widget {
     constructor() {
