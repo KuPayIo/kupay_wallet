@@ -45,6 +45,7 @@ export class AddressManage extends Widget {
         };
         this.state.content1 = dataCenter.getAddrInfosByCurrencyName('BTC').map(v => {
             return {
+                currencyName: "BTC",
                 name: v.addrName,
                 money: v.balance.toFixed(2),
                 address: v.addr
@@ -69,6 +70,7 @@ export class AddressManage extends Widget {
             if (list.length > 0) {
                 this.state.content1 = list.map(v => {
                     return {
+                        currencyName: selectName,
                         name: v.addrName,
                         money: v.balance.toFixed(2),
                         address: v.addr

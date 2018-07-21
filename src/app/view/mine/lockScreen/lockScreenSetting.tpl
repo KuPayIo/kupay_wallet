@@ -5,8 +5,10 @@
         <span>开启锁屏密码</span>
         <div w-class="{{it1.openLockScreen ? 'switch-choose':'switch'}}" on-tap="onSwitchChange"></div>
     </div>
+    <div w-class="hiddenArea {{it1.openLockScreen ? 'openLockScreen' : ''}}">
     <div w-class="ga-item" on-tap="resetLockScreen">修改锁屏密码</div>
     <div w-class="ga-item" on-tap="forgetPasswordClick">忘了密码?</div>
+    </div>
     {{if it1.showLockScreen}}
     <div ev-completed-click="completedInput" ev-forgetPassword-click="forgetPasswordClick">
         <app-components-passwordScreen-passwordScreen>{title:{{it1.lockScreenTitle}},forgetPsw:{{true}}}</app-components-passwordScreen-passwordScreen>

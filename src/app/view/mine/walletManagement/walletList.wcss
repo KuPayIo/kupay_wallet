@@ -1,0 +1,40 @@
+.main{
+    padding-top:35px;
+    padding-left:16px;
+    padding-right:16px;
+}
+.items{
+    height:170px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 2px 8px 0px rgba(12, 15, 35, 0.05);
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    position:relative;
+}
+.avatar{
+    width:100px;
+    height:100px;
+    margin-left:14px;
+    margin-right:30px;
+    border-radius:50px;
+}
+.backupBtn{
+    position:absolute;
+    right:14px;
+    width: 120px;
+    height: 60px;
+    border-radius: 100px;
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(53, 116, 250, 1);
+    text-align:center;
+    line-height: 60px;
+    color: rgba(53, 116, 250, 1);
+    font-size: 28px;
+}
+.nickName{
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+}
+

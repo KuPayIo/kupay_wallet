@@ -69,7 +69,7 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        popNew('app-components-message-messageboxPrompt', {  title: '输入密码', content: '', inputType: 'password' }, (r) => {
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (r) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
             const walletPsw = decrypt(wallet.walletPsw);
@@ -191,7 +191,21 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        popNew('app-view-mine-changePassword-changePassword1');
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (r) => {
+            const wallets = getLocalStorage('wallets');
+            const wallet = getCurrentWallet(wallets);
+            const walletPsw = decrypt(wallet.walletPsw);
+            if (pswEqualed(r, walletPsw)) {
+                const close = popNew('pi-components-loading-loading', { text: '加载中...' });
+                setTimeout(() => {
+                    close.callback(close.widget);
+                    popNew('app-view-mine-changePassword-changePassword');
+                }, 500);
+            } else {
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
+            }
+        });
+
     }
 
     public signOutClick() {
@@ -226,7 +240,7 @@ export class WalletManagement extends Widget {
         }
         if (!this.state.mnemonicBackup) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' }, () => {
-                popNew('app-view-wallet-backupWallet-backupMnemonicWord');
+                popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic: "aaa" });//需要生成助记词后传入参数
             });
         } else {
             this.deleteWallet();
