@@ -6,7 +6,6 @@ import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
-import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
 import { getCurrentWallet, getLocalStorage, getMnemonic } from '../../utils/tools';
 
 export class Home extends Widget {
