@@ -72,14 +72,15 @@ export class AddAsset extends Widget {
             // this.state.to = '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3';
         } else if (this.props.currencyName === 'BTC') {
             // this.state.to = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
+
             this.state.gasPrice = 10;
-            const defaultToAddr = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
-            const defaultAmount = 0.001;
-            this.getBtcTransactionFee(defaultToAddr, defaultAmount).then(fee => {
-                this.state.gasPrice = fee;
-                this.state.gasLimit = 1;
-                this.resetFees();
-            });
+            // const defaultToAddr = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
+            // const defaultAmount = 0.001;
+            // this.getBtcTransactionFee(defaultToAddr, defaultAmount).then(fee => {
+            //     this.state.gasPrice = fee;
+            //     this.state.gasLimit = 1;
+            //     this.resetFees();
+            // });
         } else if (ERC20Tokens[this.props.currencyName]) {
             this.state.gasLimit = 81000;
         }
