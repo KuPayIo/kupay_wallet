@@ -6,23 +6,24 @@ import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
-import { register,unregister } from '../../../store/store';
-import { decrypt, getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { register, unregister } from '../../../store/store';
+import { decrypt, getAddrsByCurrencyName, getCurrentWallet, getDefaultAddr, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { CurrencyRecord, Wallet } from '../../interface';
 
 export class AddAsset extends Widget {
-    
+
     public ok: () => void;
 
     constructor() {
         super();
     }
-    
+
     public create() {
         super.create();
         this.init();
     }
     public init(): void {
-        register('wallets',this.registerWalletsFun);
+        register('wallets', this.registerWalletsFun);
 
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
@@ -42,8 +43,8 @@ export class AddAsset extends Widget {
         };
     }
     public destroy() {
-        unregister('wallets',this.registerWalletsFun);
-        
+        unregister('wallets', this.registerWalletsFun);
+
         return super.destroy();
     }
     /**
@@ -96,13 +97,13 @@ export class AddAsset extends Widget {
             const psw = decrypt(wallet.walletPsw);
             const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
-            initERC20TokenCurrency(currencys.name,ERC20Tokens[currencys.name],psw,gwlt.seed);
+            initERC20TokenCurrency(currencys.name, ERC20Tokens[currencys.name], wallet);
 
             return;
         }
     }
 
-    private registerWalletsFun = (wallets:any) => {
+    private registerWalletsFun = (wallets: any) => {
         const wallet = getCurrentWallet(wallets);
         if (!wallet) return;
         const showCurrencys = wallet.showCurrencys || [];
@@ -117,19 +118,47 @@ export class AddAsset extends Widget {
 
 }
 
-const initERC20TokenCurrency = async (tokenName:string,contractAddress: string,passwd: string,seed:string) => {
-    GlobalWallet.fromSeedEthToken(tokenName,contractAddress,passwd,seed).then(r => {
-        const wallets = getLocalStorage('wallets');
-        const addrs = getLocalStorage('addrs');
-        const wallet = getCurrentWallet(wallets);
-        wallet.currencyRecords.push(r.currencyRecord);
-        addrs.push(...r.addrs);
-        setLocalStorage('wallets', wallets);
-        setLocalStorage('addrs', addrs);
-        r.addrs.forEach(item => {
-            dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
-        });
+const initERC20TokenCurrency = async (tokenName: string, contractAddress: string, wallet1: Wallet) => {
+    // todo 这里将做动态创建地址，暂时处理为将eth地址直接拿出来
+    const wallets = getLocalStorage('wallets');
+    const addrs = getLocalStorage('addrs');
+    const wallet = getCurrentWallet(wallets);
+    const currencyName = 'ETH';
+    const currentAddrs = getAddrsByCurrencyName(wallet, currencyName);
+    wallet.currencyRecords.push({
+        currencyName: tokenName,
+        currentAddr: currentAddrs[0],
+        addrs: currentAddrs
+    });
+    const addrInfos = currentAddrs.map(v => {
+
+        return {
+            addr: v,
+            addrName: getDefaultAddr(v),
+            record: [],
+            balance: 0,
+            currencyName: tokenName
+        };
+    });
+    addrs.push(...addrInfos);
+    setLocalStorage('wallets', wallets);
+    setLocalStorage('addrs', addrs);
+
+    addrInfos.forEach(item => {
+        dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
     });
 
-    return ;
+    // GlobalWallet.fromSeedEthToken(tokenName,contractAddress,passwd,seed).then(r => {
+    //     const wallets = getLocalStorage('wallets');
+    //     const addrs = getLocalStorage('addrs');
+    //     const wallet = getCurrentWallet(wallets);
+    //     wallet.currencyRecords.push(r.currencyRecord);
+    //     addrs.push(...r.addrs);
+    //     setLocalStorage('wallets', wallets);
+    //     setLocalStorage('addrs', addrs);
+    //     r.addrs.forEach(item => {
+    //         dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
+    //     });
+    // });
+
 };
