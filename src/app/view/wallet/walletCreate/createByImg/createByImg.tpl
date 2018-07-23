@@ -3,9 +3,9 @@
 	<div w-class="topBar">
 		同一张照片和同样的字符会生成同一个的钱包。所以可以记住您的照片和输入字符，这也是一种备份手段。
 	</div>
-	<div w-class="imgBox">
+	<div w-class="imgBox" on-tap="chooseImg">
 		{{if !it1.choosedImg}}
-			<div w-class="boxAlt" on-tap="chooseImg">
+			<div w-class="boxAlt">
 				<p w-class="altTitle">选择一张照片</p>
 				<p w-class="altMain">请使用颜色丰富的照片</p>
 			</div>
@@ -13,10 +13,7 @@
 		{{if it1.choosedImg}}
 		<div w-class="closeicon" on-tap="removeImg">x</div>
 		{{end}}
-		<img style="display: {{it1.choosedImg? 'inline-block' : 'none'}}" id="choosedImg" w-class="img"/>
-		<form id="hideForm">
-			<input type="file" id="imgInput" style="visibility:hidden;" on-input="change" />
-		</form>
+		<img style="display: {{it1.choosedImg? 'inline-block' : 'none'}}" src="{{it1.imgBase64Data}}" id="choosedImg" w-class="img"/>
 	</div>
 	<div w-class="inputTitle">
 		<input type="text" class="input" on-input="inputIng" w-class="input" placeholder="输入一串用于生成助记词的字符" />

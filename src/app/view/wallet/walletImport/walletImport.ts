@@ -11,7 +11,7 @@ import { GlobalWallet } from '../../../core/globalWallet';
 import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
 import { ahash } from '../../../utils/ahash';
 import { defalutShowCurrencys, lang, walletNumLimit } from '../../../utils/constants';
-import { encrypt, getAddrsAll, getLocalStorage, getXOR, setLocalStorage } from '../../../utils/tools';
+import { encrypt, getAddrsAll, getLocalStorage, getXOR, openBasePage, setLocalStorage } from '../../../utils/tools';
 import { Addr, Wallet } from '../../interface';
 
 export class WalletImport extends Widget {
@@ -117,10 +117,26 @@ export class WalletImport extends Widget {
         let gwlt = null;
         console.time('import');
         gwlt = await GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
-        // todo 这里需要验证钱包是否已经存在，且需要进行修改密码处理
-
         console.timeEnd('import');
-        gwlt.nickName = `我的钱包${wallets.walletList.length + 1}`;
+        // 判断钱包是否存在
+        let len = wallets.walletList.length;
+        if (wallets.walletList.some(v => v.walletId === gwlt.glwtId)) {
+            await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '提示', content: '该钱包已存在，是否使用新密码' });
+
+            for (let i = len - 1; i >= 0; i--) {
+                if (gwlt.glwtId === wallets.walletList[i].walletId) {
+                    const wallet0 = wallets.walletList.splice(i, 1)[0];// 删除已存在钱包
+                    const retAddrs = getAddrsAll(wallet0);
+                    addrs = addrs.filter(addr => {
+                        return retAddrs.indexOf(addr.addr) === -1;
+                    });
+                    break;
+                }
+            }
+            len--;
+        }
+
+        gwlt.nickName = `我的钱包${len + 1}`;
 
         const curWalletId = gwlt.glwtId;
         const wallet: Wallet = {
@@ -136,18 +152,6 @@ export class WalletImport extends Widget {
             wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
         }
 
-        // 判断钱包是否存在
-        const len = wallets.walletList.length;
-        for (let i = 0; i < len; i++) {
-            if (gwlt.glwtId === wallets.walletList[i].walletId) {
-                const wallet0 = wallets.walletList.splice(i, 1)[0];// 删除已存在钱包
-                const retAddrs = getAddrsAll(wallet0);
-                addrs = addrs.filter(addr => {
-                    return retAddrs.indexOf(addr.addr) === -1;
-                });
-                break;
-            }
-        }
         addrs.push(...gwlt.addrs);
         setLocalStorage('addrs', addrs, false);
         wallets.curWalletId = curWalletId;

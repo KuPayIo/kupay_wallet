@@ -1,6 +1,7 @@
 /**
  * creation complete
  */
+import { ImagePicker } from '../../../../../pi/browser/imagePicker';
 import { popNew } from '../../../../../pi/ui/root';
 import { drawImg } from '../../../../../pi/util/canvas';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -27,7 +28,27 @@ export class CreateComplete extends Widget {
         this.ok && this.ok();
     }
     public chooseImg() {
-        this.trigger();// 触发input file输入框点击事件
+        // this.trigger();// 触发input file输入框点击事件
+        console.log('选择图片');
+
+        // tslint:disable-next-line:no-this-assignment
+        const thisObj = this;
+        const image = new ImagePicker();
+        image.init();
+        image.selectFromLocal({
+            success: (result) => {
+                alert('成功');
+                // thisObj.state.imgBase64Data = `data:image/png;base64,${result}`;
+                // thisObj.state.choosedImg = true;
+                // thisObj.paint();
+            },
+            fail: (result) => {
+                alert('失败');
+            },
+            useCamera: 1,
+            single: 1,
+            max: 1
+        });
     }
     /**
      * 
@@ -82,7 +103,7 @@ export class CreateComplete extends Widget {
     }
     public removeImg() {
         this.state.choosedImg = false;
-        document.getElementById('hideForm').reset();
+        // document.getElementById('hideForm').reset();
         this.paint();
     }
 

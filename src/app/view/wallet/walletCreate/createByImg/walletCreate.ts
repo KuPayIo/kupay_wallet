@@ -9,7 +9,7 @@ import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
 } from '../../../../utils/account';
 import { defalutShowCurrencys } from '../../../../utils/constants';
-import { calcHashValuePromise, encrypt, getLocalStorage, getXOR, openBasePage, setLocalStorage } from '../../../../utils/tools';
+import { calcHashValuePromise, encrypt, getAddrsAll, getLocalStorage, getXOR, openBasePage, setLocalStorage } from '../../../../utils/tools';
 import { Addr, Wallet } from '../../../interface';
 
 interface Props {
@@ -89,21 +89,43 @@ export class WalletCreate extends Widget {
         }
 
         const close = popNew('pi-components-loading-loading', { text: '创建中...' });
-        const hash: any = await imgToHash(this.props.choosedImg, this.props.inputWords);
-        await this.createWallet(hash);
-        // await openBasePage('app-view-wallet-walletCreate-createComplete');
-        popNew('app-view-wallet-walletCreate-createComplete');
-        this.ok && this.ok();
+        try {
+            const hash: any = await imgToHash(this.props.choosedImg, this.props.inputWords);
+            await this.createWallet(hash);
+            // await openBasePage('app-view-wallet-walletCreate-createComplete');
+            popNew('app-view-wallet-walletCreate-createComplete');
+            this.ok && this.ok();
+        } catch (error) {
+            if (!error) {
+                this.ok && this.ok();
+            }
+        }
         close.callback(close.widget);
 
     }
 
     public async createWallet(hash: Uint8Array) {
         const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
-        const addrs: Addr[] = getLocalStorage('addrs') || [];
+        let addrs: Addr[] = getLocalStorage('addrs') || [];
 
         const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName, null, hash);
-        // todo 这里需要验证钱包是否已经存在，且需要进行修改密码处理
+        // 判断钱包是否存在
+        let len = wallets.walletList.length;
+        if (wallets.walletList.some(v => v.walletId === gwlt.glwtId)) {
+            await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '提示', content: '该钱包已存在，是否使用新密码' });
+
+            for (let i = len - 1; i >= 0; i--) {
+                if (gwlt.glwtId === wallets.walletList[i].walletId) {
+                    const wallet0 = wallets.walletList.splice(i, 1)[0];// 删除已存在钱包
+                    const retAddrs = getAddrsAll(wallet0);
+                    addrs = addrs.filter(addr => {
+                        return retAddrs.indexOf(addr.addr) === -1;
+                    });
+                    break;
+                }
+            }
+            len--;
+        }
 
         // 创建钱包基础数据
         const wallet: Wallet = {
