@@ -6,7 +6,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter, DataCenter } from '../../../store/dataCenter';
 import {
-    addNewAddr, formatBalance, getAddrById, getCurrentWallet, getLocalStorage, getMnemonic, getNewAddrInfo, getStrLen, openBasePage, setLocalStorage, sliceStr
+    addNewAddr, formatBalance, getAddrById, getCurrentWallet, getLocalStorage, getMnemonic, getStrLen, openBasePage,
+    setLocalStorage, sliceStr
 } from '../../../utils/tools';
 
 interface Props {

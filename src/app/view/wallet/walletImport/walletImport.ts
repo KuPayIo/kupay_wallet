@@ -2,17 +2,10 @@
  * import wallet
  */
 import { popNew } from '../../../../pi/ui/root';
-import { drawImg } from '../../../../pi/util/canvas';
 import { Widget } from '../../../../pi/widget/widget';
-import { Cipher } from '../../../core/crypto/cipher';
-import { getRandomValuesByMnemonic } from '../../../core/genmnemonic';
-import { GlobalWallet } from '../../../core/globalWallet';
-// tslint:disable-next-line:max-line-length
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
-import { ahash } from '../../../utils/ahash';
-import { defalutShowCurrencys, lang, walletNumLimit } from '../../../utils/constants';
-import { encrypt, getAddrsAll, getLocalStorage, getXOR, openBasePage, setLocalStorage } from '../../../utils/tools';
-import { Addr, Wallet } from '../../interface';
+import { getWalletPswStrength, pswEqualed, walletCountAvailable, walletPswAvailable } from '../../../utils/account';
+import { importWalletByMnemonic } from '../../../utils/basicOperation';
+import { getLocalStorage } from '../../../utils/tools';
 
 export class WalletImport extends Widget {
     public ok: () => void;
@@ -90,7 +83,7 @@ export class WalletImport extends Widget {
 
         const close = popNew('pi-components-loading-loading', { text: '导入中...' });
         try {
-            await this.importWallet();
+            await importWalletByMnemonic(this.state.walletMnemonic, this.state.walletPsw, this.state.walletPswTips);
         } catch (e) {
             close.callback(close.widget);
             console.log(e);
@@ -98,67 +91,10 @@ export class WalletImport extends Widget {
 
             return;
         }
-        close.callback(close.widget);
         this.ok && this.ok();
-        const lockScreenPsw = getLocalStorage('lockScreenPsw');
-        if (!lockScreenPsw) {
-            popNew('app-view-guidePages-setLockScreenScret');
-        } else {
-            popNew('app-view-app');
-        }
-        // popNew('app-view-wallet-backupWallet-backupWallet');
+        popNew('app-view-wallet-walletImport-importComplete');
+        close.callback(close.widget);
 
-    }
-
-    public async importWallet() {
-        const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
-        let addrs: Addr[] = getLocalStorage('addrs') || [];
-
-        let gwlt = null;
-        console.time('import');
-        gwlt = await GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
-        console.timeEnd('import');
-        // 判断钱包是否存在
-        let len = wallets.walletList.length;
-        if (wallets.walletList.some(v => v.walletId === gwlt.glwtId)) {
-            await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '提示', content: '该钱包已存在，是否使用新密码' });
-
-            for (let i = len - 1; i >= 0; i--) {
-                if (gwlt.glwtId === wallets.walletList[i].walletId) {
-                    const wallet0 = wallets.walletList.splice(i, 1)[0];// 删除已存在钱包
-                    const retAddrs = getAddrsAll(wallet0);
-                    addrs = addrs.filter(addr => {
-                        return retAddrs.indexOf(addr.addr) === -1;
-                    });
-                    break;
-                }
-            }
-            len--;
-        }
-
-        gwlt.nickName = `我的钱包${len + 1}`;
-
-        const curWalletId = gwlt.glwtId;
-        const wallet: Wallet = {
-            walletId: curWalletId,
-            avatar: getAvatarRandom(),
-            gwlt: gwlt.toJSON(),
-            showCurrencys: defalutShowCurrencys,
-            currencyRecords: []
-        };
-        wallet.currencyRecords.push(...gwlt.currencyRecords);
-
-        if (this.state.walletPswTips.trim().length > 0) {
-            wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
-        }
-
-        addrs.push(...gwlt.addrs);
-        setLocalStorage('addrs', addrs, false);
-        wallets.curWalletId = curWalletId;
-        wallets.walletList.push(wallet);
-        setLocalStorage('wallets', wallets, true);
-
-        return true;
     }
 
 }
