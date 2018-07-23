@@ -396,34 +396,26 @@ export const sliceStr = (str, start, len): string => {
  * 获取新的地址信息
  * @param currencyName 货币类型
  */
-export const getNewAddrInfo = (currencyName) => {
-    const wallets = getLocalStorage('wallets');
-    const wallet = getCurrentWallet(wallets);
+export const getNewAddrInfo = (currencyName, mnemonic, wallet) => {
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
     const addrs = getLocalStorage('addrs');
     const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
 
     let address;
-    let wltJson;
     if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
         const wlt = GaiaWallet.fromJSON(firstAddr.wlt);
         const newWlt = wlt.selectAddressWlt(currencyRecord.addrs.length);
         address = newWlt.address;
-        wltJson = newWlt.toJSON();
     } else if (currencyName === 'BTC') {
         const wlt = BTCWallet.fromJSON(firstAddr.wlt);
         wlt.unlock();
         address = wlt.derive(currencyRecord.addrs.length);
         wlt.lock();
 
-        wltJson = firstAddr.wlt;
     }
 
-    return {
-        address: address,
-        wltJson: wltJson
-    };
+    return address;
 };
 
 /**
@@ -825,7 +817,7 @@ export const shareToQrcode = (shareText) => {
         },
         fail: (result) => {
             alert(result);
-        }, 
+        },
         content: shareText
     });
 };

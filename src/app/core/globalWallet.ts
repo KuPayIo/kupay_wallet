@@ -224,6 +224,28 @@ export class GlobalWallet {
     }
 
     /**
+     * 
+     * 通过助记词获得指定位置的钱包地址
+     */
+    public static getWltAddrByMnemonic(mnemonic: string, currencyName: string, i: number) {
+        let addr;
+        if (currencyName === 'ETH') {
+            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
+            addr = gaiaWallet.selectAddress(i);
+        } else if (currencyName === 'BTC') {
+            const wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
+            wlt.unlock();
+            addr = wlt.derive(i);
+            wlt.lock();
+        } else if (ERC20Tokens[currencyName]) {
+            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
+            addr = gaiaWallet.selectAddress(i);
+        }
+
+        return addr;
+    }
+
+    /**
      * 获取钱包地址的位置
      */
     public static getWltAddrIndex(wallet: any, addr: string, currencyName: string): number {
