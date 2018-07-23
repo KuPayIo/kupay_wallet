@@ -3,8 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter, DataCenter } from '../../../store/dataCenter';
-import { addNewAddr, getNewAddrInfo } from '../../../utils/tools';
+import { dataCenter } from '../../../store/dataCenter';
 
 export class AddressManage extends Widget {
     public ok: () => void;
@@ -20,7 +19,6 @@ export class AddressManage extends Widget {
 
     public init() {
         this.state = {
-            showtype: 1,
             selectnum: 0,
             coins: [
                 { name: 'BTC' },
@@ -30,25 +28,14 @@ export class AddressManage extends Widget {
                 { name: 'EOS' },
                 { name: 'XRP' }
             ],
-            content1: [
-                { name: 'BTC 001', money: '2.00', address: 'Kye4gFqsnotKvjoVxNXMcksgUWVFTmam2f' },
-                { name: 'BTC 002', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: 'BTC 003', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: 'BTC 004', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
-            ],
-            content2: [
-                { name: '好友 001', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: '好友 002', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: '好友 003', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: '好友 004', money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
-            ]
+            content:[]
+
         };
-        this.state.content1 = dataCenter.getAddrInfosByCurrencyName('BTC').map(v => {
+        this.state.content = dataCenter.getTopContacts('BTC').map(v => {
             return {
                 currencyName: 'BTC',
-                name: v.addrName,
-                money: v.balance.toFixed(2),
-                address: v.addr
+                name: v.tags,
+                address: v.addresse
             };
         });
     }
@@ -57,86 +44,40 @@ export class AddressManage extends Widget {
         this.ok && this.ok();
     }
 
-    public tabchange(event: any, index: number) {
-        this.state.showtype = index;
-        this.paint();
-    }
-
     public coinchange(event: any, index: number) {
         this.state.selectnum = index;
         const selectName = this.state.coins[this.state.selectnum].name;
-        if (this.state.showtype === 1) {
-            const list = dataCenter.getAddrInfosByCurrencyName(selectName);
-            if (list.length > 0) {
-                this.state.content1 = list.map(v => {
-                    return {
-                        currencyName: selectName,
-                        name: v.addrName,
-                        money: v.balance.toFixed(2),
-                        address: v.addr
-                    };
-                });
-            } else {
-                this.state.content1 = [
-                    { name: `${selectName} 001`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                    { name: `${selectName} 002`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                    { name: `${selectName} 003`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                    { name: `${selectName} 004`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
-                ];
-            }
-
-        } else {
-            this.state.content1 = [
-                { name: `${selectName} 001`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: `${selectName} 002`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: `${selectName} 003`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' },
-                { name: `${selectName} 004`, money: '2.00', address: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f' }
-            ];
-        }
+        const list = dataCenter.getTopContacts(selectName);
+  
+        this.state.content = list.map(v => {
+            return {
+                currencyName: selectName,
+                name: v.tags,
+                address: v.addresse
+            };
+        });
+        
         this.paint();
     }
 
     public addNewaddr() {
-
-        if (this.state.showtype === 1) {
-            const selectName = this.state.coins[this.state.selectnum].name;
-            let info:any;
-            try {
-                info = getNewAddrInfo(selectName);
-            } catch (error) {
-                console.log(error);
+        const title = `添加地址-${this.state.coins[this.state.selectnum].name}`;
+        popNew('app-view-mine-addressManage-messagebox', {
+            mType: 'prompt', title: title
+        },(data) => {
+            const addresse = data.addresse;
+            let tags = data.tags;
+            if (!addresse) {
+                return;
             }
-            
-            let address;
-            let wltJson;
+            if (!tags) {
+                // TODO 自动生成地址名称
+                tags = '默认地址';
 
-            if (info) {
-                address = info.address;
-                wltJson = info.wltJson;
-            } else {
-                address = 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f';
             }
-
-            popNew('app-components-message-messageboxPrompt',
-                { itype: 'prompt', title: '添加地址', placeHolder: '标签名(限8个字)', content: address }, (r) => {
-                    if (wltJson) {
-                        if (r && r.length >= DataCenter.MAX_ADDRNAME_LEN) {
-                            popNew('app-components-message-message', { itype: 'notice', content: '地址标签输入过长', center: true });
-
-                            return;
-                        }
-
-                        const info = addNewAddr(selectName, address, r);
-
-                        this.state.content1.push({ name: info.addrName, money: '0.00', address: address });
-                        this.paint();
-                    }
-                });
-        } else {
-            const title = `添加${this.state.coins[this.state.selectnum].name}地址`;
-            popNew('app-view-mine-addressManage-messagebox', {
-                mType: 'prompt', title: title, content: 'Kye4gFqsnotKvjoVxNy1xoe2CRiC9GdZ8UdtXMcksgUWVFTmam2f'
-            });
-        }
+            dataCenter.addTopContacts(this.state.coins[this.state.selectnum].name,addresse,tags);
+            this.coinchange(null,this.state.selectnum);
+            popNew('app-components-message-message', { itype: 'success', content: '添加常用联系人成功！', center: true });
+        });
     }
 }

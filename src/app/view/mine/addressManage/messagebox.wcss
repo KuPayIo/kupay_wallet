@@ -1,12 +1,12 @@
 .base{
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
+    width:570px;
+    background:white;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    border-radius:12px;
 }
-
 .bg{
     position: fixed;
     left: 0;
@@ -16,116 +16,50 @@
     opacity: 0.5;
     background: #000;
 }
-
 .main{
-    display: inline-block;
-    width: 570px;
-    min-height: 315px;
-    vertical-align: middle;
-    background-color: rgb(255, 255, 255);
-    border-radius: 4px;
-    border: 1px solid rgb(235, 238, 245);
-    font-size: 18px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px;
-    text-align: left;
-    overflow: hidden;
-    backface-visibility: hidden;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.header{
-    position: relative;
-    left: 40px;
-    top: 50px;
-    height: 50px;
-}
-
-.title{
-    padding-left: 0;
-    margin-bottom: 0;
-    font-size: 32px;
-    line-height: 1.5;
-    color: #111;
-}
-
-.content{
-    position: relative;
-    color: rgb(96, 98, 102);
-    font-size: 28px;
-    line-height: 1.5;
-    top: 100px;
-    left: 40px;
-    width: 500px;
-    height: 280px;
-}
-
-.message{
-    margin: 0;
-    word-break: break-word;
-}
-
-.btns{
-    text-align: right;
-    margin-top: 30px;
-    right: 30px;
-    position: relative;
-    height: 80px;
-}
-
-.button{
-    display: inline-block;
-    line-height: 1;
-    white-space: nowrap;
-    cursor: pointer;
-    background: #fff;
-    border: none;
-    border-color: #dcdfe6;
-    -webkit-appearance: none;
-    text-align: center;
     box-sizing: border-box;
-    outline: none;
-    margin: 0;
-    transition: .1s;
-    font-weight: 500;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    padding: 12px 20px;
-    font-size: 30px;
-    line-height: 1.5;
-    border-radius: 4px;
-    color: #111;
+    padding: 50px;
 }
-.button_small {
-    padding: 9px 15px;
-    font-size: 30px;
-    border-radius: 3px;
-}
-
-.button_sure{
-    color: #111;
-}
-
-.input-father{
-    height: 85px;
-    border-bottom: 1px solid #E5E5EE;
-}
-.cointype{
-    text-align: center;
-    font-size: 28px;
-    color: #111111;
-    width: auto;
-    padding: 20px;
-    margin: 24px 0 60px;
-    border: 1px solid #8E96AB;
+.title{ 
+    line-height: 56px;
+    color: rgba(17, 17, 17, 1);
+    font-size: 40px;
 }
 .scanbtn{
-    width: 44px;
-    height: 44px;
-    position: absolute;
-    right: 20px;
-    margin-top: 30px;
+    float:right;
+    margin-top: 5px;
+}
+.addressInput{
+    min-height: 45px;
+    line-height: 45px;
+    color: rgba(142, 150, 171, 1);
+    font-size: 32px;
+    margin-top:30px;
+}
+.tags{
+    height: 80px;
+    border-radius: 6px;
+    background-color: rgba(248, 248, 248, 1);
+    border: 1px solid rgba(214, 217, 223, 1);   
+    color: rgba(160, 172, 192, 1);
+    font-size: 32px;
+    padding-left:17px;
+}
+.btns{
+    margin-top:30px;
+}
+.button{
+    width:220px;
+    height:80px;
+    border-radius: 100px;
+    border: 1px solid rgba(160, 172, 192, 1);
+    line-height: 80px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 32px;
+    text-align: center;
+    background:none;
+}   
+.button_sure{
+    background:#1A70DD;
+    color:rgba(255, 255, 255, 0.87);
 }

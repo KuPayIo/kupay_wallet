@@ -43,3 +43,6 @@
     0% {width: 356px;}
     100% {width: 0px;}
 }
+#addressMessageBox .addressInput textarea:focus{
+    border: none !important;
+}

@@ -1,6 +1,6 @@
-{{let content = it1.content1}}
+{{let content = it1.content}}
 {{if it1.showtype==2}}
-    {{: content=it1.content2}}
+    {{: content=it1.content}}
 {{end}}
 <div class="ga-new-page" ev-back-click="backPrePage" style="background-color: #f9f9f9;">
     <app-components-topBar-topBar>{title:"常用地址"}</app-components-topBar-topBar>
