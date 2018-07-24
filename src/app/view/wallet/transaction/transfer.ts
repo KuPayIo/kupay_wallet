@@ -142,6 +142,7 @@ export class AddAsset extends Widget {
                     // 打开交易详情界面
                     thisObj.showTransactionDetails(id);
                     thisObj.doClose();
+                    this.topContactAdd(this.state.to,this.props.currencyName);
                 }
             } catch (error) {
                 console.log(error.message);
@@ -153,7 +154,7 @@ export class AddAsset extends Widget {
             }
 
             loading.callback(loading.widget);
-            this.topContactAdd(this.state.to,this.props.currencyName);
+            
         });
     }
 

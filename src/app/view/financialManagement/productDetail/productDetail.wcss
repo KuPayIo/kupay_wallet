@@ -1,3 +1,6 @@
+productDetailPage{
+    
+}
 .profit{
     min-height:150px;
     background:white;
@@ -11,7 +14,32 @@
     justify-content:center;
 }
 .process{
-
+    background:#fff;
+    margin-top:20px;
+    min-height:150px;
 }
 .processTitle{
+    margin-left:30px;
+}
+.processContent{
+    display:flex;
+}
+.productInfo{
+    padding:30px;
+    background:white;
+}
+.productDetail{
+    
+}
+.title{
+    margin-bottom:10px;
+}
+.productIntroduction{
+
+}
+.surplus{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    min-height:150px;
 }

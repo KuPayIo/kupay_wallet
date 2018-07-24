@@ -21,12 +21,20 @@ export class Home extends Widget {
         // 获取钱包显示头像
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        const avatar = wallet.avatar;
-        const walletName = gwlt.nickName;
+        let gwlt = null;
+        let avatar = null;
+        let walletName = null;
+        if (wallet) {
+            gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+            avatar = wallet.avatar;
+            walletName = gwlt.nickName;
+        }
+        
         this.stp = new ShareToPlatforms();
         this.stp.init();
         this.state = {
+            wallets,
+            wallet,
             avatar,
             walletName,
             hasNews: true,
@@ -127,9 +135,19 @@ export class Home extends Widget {
         });
     }
     public walletManagementClick() {
+        if (!this.state.wallet || this.state.wallets.walletList.length === 0) {
+            popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
+
+            return;
+        }
         popNew('app-view-mine-walletManagement-walletManagement');
     }
     public backupClick() {
+        if (!this.state.wallet || this.state.wallets.walletList.length === 0) {
+            popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
+
+            return;
+        }
         popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
