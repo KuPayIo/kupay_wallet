@@ -239,7 +239,7 @@ export class DataCenter {
         const transactions = getLocalStorage('transactions') || [];
         res.result.forEach(v => {
             if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr) && (v1.currencyName === currencyName))) return;
-            // todo 移除缓存记录
+            // 移除缓存记录
             this.removeRecordAtAddr(addr, v.hash);
             // info--input  0x636573--ces
 

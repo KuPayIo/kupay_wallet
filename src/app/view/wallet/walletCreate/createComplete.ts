@@ -11,11 +11,8 @@ export class CreateComplete extends Widget {
     }
     public backPrePage() {
         this.ok && this.ok();
-        const lockScreenPsw = getLocalStorage('lockScreenPsw');
-        if (!lockScreenPsw) {
-            popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
-        } else {
-            popNew('app-view-app');
+        if (!getLocalStorage('lockScreenPsw')) {
+            popNew('app-view-guidePages-setLockScreenScret', { jump: true });
         }
     }
 

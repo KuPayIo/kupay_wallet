@@ -2,12 +2,19 @@
  * import wallet
  */
 import { popNew } from '../../../../pi/ui/root';
+import { base64ToArrayBuffer } from '../../../../pi/util/base64';
+import { drawImg } from '../../../../pi/util/canvas';
 import { Widget } from '../../../../pi/widget/widget';
 import { Cipher } from '../../../core/crypto/cipher';
+import { toMnemonic } from '../../../core/genmnemonic';
 import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
 import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
 import { ahash } from '../../../utils/ahash';
+import { importWalletByMnemonic } from '../../../utils/basicOperation';
+import { lang } from '../../../utils/constants';
+import { restoreSecret } from '../../../utils/secretsBase';
+import { getLocalStorage, hexstrToU8Array, u8ArrayToHexstr } from '../../../utils/tools';
 
 export class WalletImport extends Widget {
     public ok: () => void;
@@ -20,10 +27,8 @@ export class WalletImport extends Widget {
     }
     public init() {
         this.state = {
-            walletMnemonic: '',
             walletPart1: '',
             walletPart2: '',
-            walletName: '',
             walletPsw: '',
             walletPswConfirm: '',
             walletPswTips: '',
@@ -49,12 +54,6 @@ export class WalletImport extends Widget {
     public walletPart2Change(e: any) {
         this.state.walletPart2 = e.value;
     }
-    public walletMnemonicChange(e: any) {
-        this.state.walletMnemonic = e.value;
-    }
-    public walletNameChange(e: any) {
-        this.state.walletName = e.value;
-    }
     public walletPswChange(e: any) {
         this.state.walletPsw = e.value;
         this.state.curWalletPswStrength = getWalletPswStrength(this.state.walletPsw);
@@ -73,7 +72,7 @@ export class WalletImport extends Widget {
     public agreementClick() {
         popNew('app-view-wallet-agreementInterpretation-agreementInterpretation');
     }
-    public importWalletClick() {
+    public async importWalletClick() {
         if (!this.state.userProtocolReaded) {
             // popNew("app-components-message-message", { itype: "notice", content: "请阅读用户协议" })
             return;
@@ -100,15 +99,25 @@ export class WalletImport extends Widget {
             return;
         }
         const close = popNew('pi-components-loading-loading', { text: '导入钱包中...' });
-        this.importWallet();
-        setTimeout(() => {
+        try {
+            await this.importWallet();
+
+        } catch (e) {
             close.callback(close.widget);
-        }, 500);
+            console.log(e);
+            popNew('app-components-message-message', { itype: 'error', content: '导入失败', center: true });
+
+            return;
+        }
         this.ok && this.ok();
         popNew('app-view-wallet-walletImport-importComplete');
+        close.callback(close.widget);
     }
 
-    public importWallet() {
+    public async importWallet() {
         // todo 
+        const shares = [this.state.walletPart1, this.state.walletPart2].map(v => u8ArrayToHexstr(new Uint8Array(base64ToArrayBuffer(v))));
+        const comb = restoreSecret(shares);
+        await importWalletByMnemonic(toMnemonic(lang, hexstrToU8Array(comb)), this.state.walletPsw, this.state.walletPswTips);
     }
 }

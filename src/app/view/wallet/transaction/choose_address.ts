@@ -3,9 +3,11 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter, DataCenter } from '../../../store/dataCenter';
 import {
-    addNewAddr, formatBalance, getAddrById, getCurrentWallet, getLocalStorage, getNewAddrInfo, getStrLen, setLocalStorage, sliceStr
+    addNewAddr, formatBalance, getAddrById, getCurrentWallet, getLocalStorage, getMnemonic, getStrLen, openBasePage,
+    setLocalStorage, sliceStr
 } from '../../../utils/tools';
 
 interface Props {
@@ -57,27 +59,39 @@ export class AddAsset extends Widget {
     /**
      * 处理添加地址
      */
-    public addAddr(e: any, index: number) {
-        const info = getNewAddrInfo(this.props.currencyName);
-        if (!info) return;
-        const address = info.address;
+    public async addAddr(e: any, index: number) {
+        this.doClose();
+        const close = popNew('pi-components-loading-loading', { text: '添加中...' });
+        try {
+            await this.doAddAddr();
+        } catch (error) {
+            //
+        }
+        close.callback(close.widget);
+    }
 
-        popNew('app-components-message-messagebox', {
-            itype: 'prompt', title: '添加地址', content: address, placeHolder: '标签名(限8个字)'
-        }, (r) => {
-            if (r && r.length >= DataCenter.MAX_ADDRNAME_LEN) {
+    private async doAddAddr() {
+        const passwd = await openBasePage('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' });
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        const mnemonic = await getMnemonic(wallet, passwd);
+        if (mnemonic) {
+            const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
+            const address = GlobalWallet.getWltAddrByMnemonic(mnemonic, this.props.currencyName, currencyRecord.addrs.length);
+            if (!address) return;
+            const addrName = await openBasePage('app-components-message-messagebox', {
+                itype: 'prompt', title: '添加地址', content: address, placeHolder: '标签名(限8个字)'
+            });
+            if (addrName && addrName.length >= DataCenter.MAX_ADDRNAME_LEN) {
                 popNew('app-components-message-message', { itype: 'notice', content: '地址标签输入过长', center: true });
 
                 return;
             }
-            addNewAddr(this.props.currencyName, address, r);
+            addNewAddr(this.props.currencyName, address, addrName);
+        } else {
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+        }
 
-            // console.log(wallets)
-            // todo 这里验证输入，并根据输入添加地址，且处理地址切换
-            this.doClose();
-        }, () => {
-            this.doClose();
-        });
     }
 
     private getAddrs() {
