@@ -8,7 +8,7 @@ import { register, unregister } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import {
     decrypt, encrypt, fetchTotalAssets, formatBalanceValue, getAddrsAll, getCurrentWallet, getCurrentWalletIndex
-    , getLocalStorage, getMnemonic, setLocalStorage
+    , getLocalStorage, getMnemonic, setLocalStorage, VerifyIdentidy
 } from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
