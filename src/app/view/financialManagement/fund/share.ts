@@ -5,7 +5,7 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { Widget } from '../../../../pi/widget/widget';
 
 export class FundShare extends Widget {
-    public ok:() => void;
+    public ok: () => void;
     constructor() {
         super();
     }
@@ -22,13 +22,15 @@ export class FundShare extends Widget {
         const stp = new ShareToPlatforms();
 
         stp.init();
-        stp.shareQRCode({
+        stp.shareCode({
             success: (result) => {
                 alert(result);
             },
             fail: (result) => {
                 alert(result);
-            }, content: 'This is a test QRCode'
+            }, 
+            content: 'This is a test QRCode',
+            type: ShareToPlatforms.TYPE_IMG
         });
     }
 } 
