@@ -5,15 +5,14 @@
 	</div>
 	<div w-class="imgBox" on-tap="chooseImg">
 		{{if !it1.choosedImg}}
-			<div w-class="boxAlt">
-				<p w-class="altTitle">选择一张照片</p>
-				<p w-class="altMain">请使用颜色丰富的照片</p>
-			</div>
+		<div w-class="boxAlt">
+			<p w-class="altTitle">选择一张照片</p>
+			<p w-class="altMain">请使用颜色丰富的照片</p>
+		</div>
+		{{else}}
+		<div w-class="closeicon" on-tap="removeImg"></div>
+		<widget w-tag="pi-ui-html" >{{it1.imgStr}}</widget>
 		{{end}}
-		{{if it1.choosedImg}}
-		<div w-class="closeicon" on-tap="removeImg">x</div>
-		{{end}}
-		<img style="display: {{it1.choosedImg? 'inline-block' : 'none'}}" src="{{it1.imgBase64Data}}" id="choosedImg" w-class="img"/>
 	</div>
 	<div w-class="inputTitle">
 		<input type="text" class="input" on-input="inputIng" w-class="input" placeholder="输入一串用于生成助记词的字符" />
