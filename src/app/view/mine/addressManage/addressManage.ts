@@ -61,9 +61,10 @@ export class AddressManage extends Widget {
     }
 
     public addNewaddr() {
+        const defaultTag = this.getDefaultTags(this.state.coins[this.state.selectnum].name);
         const title = `添加地址-${this.state.coins[this.state.selectnum].name}`;
         popNew('app-view-mine-addressManage-messagebox', {
-            mType: 'prompt', title: title
+            mType: 'prompt', title: title,input2DefaultValue:defaultTag
         },(data) => {
             const addresse = data.addresse;
             let tags = data.tags;
@@ -79,5 +80,12 @@ export class AddressManage extends Widget {
             this.coinchange(null,this.state.selectnum);
             popNew('app-components-message-message', { itype: 'success', content: '添加常用联系人成功！', center: true });
         });
+    }
+
+    public getDefaultTags(currencyName:string) {
+        const contacts = dataCenter.getTopContacts(currencyName);
+        const length = contacts.length + 1;
+
+        return `${currencyName} ${length}`;
     }
 }

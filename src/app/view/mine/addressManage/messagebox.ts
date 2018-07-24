@@ -3,10 +3,14 @@
  */
 import { QRCode } from '../../../../pi/browser/qrcode';
 import { Widget } from '../../../../pi/widget/widget';
+import { dataCenter } from '../../../store/dataCenter';
 
 interface Props {
-    mType: string;
+    mType: string;// prompt,confirm
     text: string;
+    title:string;
+    input1DefaultValue?:string;
+    input2DefaultValue?:string;
     center?: boolean;
     inputType?: string;
 }
@@ -25,9 +29,18 @@ export class MessageBox extends Widget {
 
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.state = { isShow: false, tags: '',addresse:'' };
+        let input1Value = '';
+        let input2Value = '';
+        if (this.props.input1DefaultValue) {
+            input1Value = this.props.input1DefaultValue;
+        }
+        if (this.props.input2DefaultValue) {
+            input2Value = this.props.input2DefaultValue;
+        }
+        this.state = { isShow: false, tags: '',input1Value:input1Value,input2Value:input2Value };
         this.state.textAreaStyle = {
-            border:'none'
+            border:'none',
+            background:'#fff'
         };
         this.state.textInputStyle = {
             border:'none',
@@ -40,7 +53,7 @@ export class MessageBox extends Widget {
      * 点击确认
      */
     public doClickSure() {
-        this.ok && this.ok({ addresse:this.state.addresse,tags:this.state.tags });
+        this.ok && this.ok({ addresse:this.state.input1Value,tags:this.state.input2Value });
     }
 
     /**
@@ -54,14 +67,14 @@ export class MessageBox extends Widget {
      * 标签名输入框数据改变
      */
     public tagsChange(e: any) {
-        this.state.tags = e.value;
+        this.state.input2Value = e.value;
     }
 
     /**
      * 地址输入框数据改变
      */
     public addresseChange(e: any) {
-        this.state.addresse = e.value;
+        this.state.input1Value = e.value;
     }
 
     /**
@@ -73,7 +86,8 @@ export class MessageBox extends Widget {
         qrcode.init();
         qrcode.scan({
             success: (addr) => {
-                alert(addr);
+                this.state.input1Value = addr;
+                this.paint();
             },
             fail: (r) => {
                 alert(r);

@@ -1,0 +1,17 @@
+.profit{
+    min-height:150px;
+    background:white;
+    text-align:center;
+    padding-top:50px;
+    box-sizing:border-box;
+}
+.rules{
+    display:flex;
+    flex-wrap:nowrap;
+    justify-content:center;
+}
+.process{
+
+}
+.processTitle{
+}
