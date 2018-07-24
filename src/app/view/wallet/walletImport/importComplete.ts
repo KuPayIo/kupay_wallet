@@ -1,8 +1,9 @@
 /**
  * creation complete
  */
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { notify } from '../../../../pi/widget/event';
+import { getLocalStorage } from '../../../utils/tools';
 export class CreateComplete extends Widget {
     public ok: () => void;
     constructor() {
@@ -13,9 +14,12 @@ export class CreateComplete extends Widget {
         this.init();
     }
     public init(): void {
-
+        //
     }
     public backPrePage() {
+        if (!getLocalStorage('lockScreenPsw')) {
+            popNew('app-view-guidePages-setLockScreenScret', { jump: true });
+        }
         this.ok && this.ok();
     }
 

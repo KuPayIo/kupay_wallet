@@ -15,6 +15,7 @@ import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { generate, getRandomValuesByMnemonic, sha3, toMnemonic } from '../core/genmnemonic';
 import { Mnemonic } from '../core/thirdparty/bip39';
+import { exchangeManage } from '../exchange/manage';
 import { dataCenter } from '../store/dataCenter';
 import { calcHashValuePromise, getLocalStorage, setLocalStorage } from '../utils/tools';
 
@@ -32,22 +33,25 @@ export const run = (cb): void => {
     // 初始化数据
     dataCenter.init();
     // makepayment();
+    // exchangeManage.init();
     // 打开界面
     popNewPage();
     // 后台切前台
     backToFront();
-  /*  popNew('app-view-wallet-transaction-transfer',{
-        currencyBalance: 100,
-        fromAddr: '0xssss',
-        currencyName: 'ETH',
-        rate: { CNY: 100 , USD: 15.2625 }
-    }); */
-   /*  popNew('app-view-wallet-transaction-receipt',{currencyBalance: 100,
-        addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
+    /*  popNew('app-view-wallet-transaction-transfer',{
+          currencyBalance: 100,
+          fromAddr: '0xssss',
+          currencyName: 'ETH',
+          rate: { CNY: 100 , USD: 15.2625 }
+      }); */
+    /*  popNew('app-view-wallet-transaction-receipt',{currencyBalance: 100,
+         addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
     // popNew('app-view-redEnvelope-send-sendRedEnvelope');
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
+
+    // popNew('app-view-wallet-walletCreate-createByImg-createByImg');
     if (cb) cb();
-    test();
+    // test();
 };
 
 /**
