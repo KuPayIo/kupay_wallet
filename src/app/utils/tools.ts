@@ -15,7 +15,7 @@ import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
-import { lang, lockScreenSalt } from './constants';
+import { lang, lockScreenSalt,supportCurrencyList } from './constants';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
@@ -899,4 +899,17 @@ export const getByteLen = (val) => {
     }
 
     return len;
+};
+
+// 计算支持的币币兑换的币种
+export const currencyExchangeAvailable = () => {
+    const shapeshiftCoins = dataCenter.shapeShiftCoins;
+    const currencyArr = [];
+    for (let i = 0; i < supportCurrencyList.length; i++) {
+        currencyArr.push(supportCurrencyList[i].name);
+    } 
+
+    return shapeshiftCoins.filter(item => {
+        return item.status === 'available' && currencyArr.indexOf(item.symbol) >= 0;
+    });
 };
