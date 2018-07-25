@@ -9,7 +9,7 @@ import { GlobalWallet } from '../../core/globalWallet';
 import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
 
 export class Home extends Widget {
-    public stp: any;
+    public stp: ShareToPlatforms;
     constructor() {
         super();
     }
@@ -117,13 +117,15 @@ export class Home extends Widget {
     }
 
     public share() {
-        this.stp.shareQRCode({
+        this.stp.shareCode({
             success: (result) => {
                 alert(result);
             },
             fail: (result) => {
                 alert(result);
-            }, content: 'This is a test QRCode'
+            },
+            content: 'This is a test QRCode',
+            type: ShareToPlatforms.TYPE_IMG
         });
     }
     public walletManagementClick() {

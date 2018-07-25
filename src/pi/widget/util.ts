@@ -10,7 +10,7 @@ import { addCssNode, loadCssNode } from '../util/html';
 import { logLevel, warn } from '../util/log';
 import { BlobType, RES_TYPE_BLOB, ResTab } from '../util/res_mgr';
 import { set as task } from '../util/task_mgr';
-import { toFun } from '../util/tpl';
+import { toFun, toMiniFun } from '../util/tpl';
 import { checkInstance, checkType, getExportFunc, getValue, mapCopy } from '../util/util';
 import { parse, Sheet } from '../widget/style';
 import { Forelet } from './forelet';
@@ -249,6 +249,9 @@ const number_reg = /^([0-9\.]+)\s*/;
 // 样式中匹配URL的正则表达式，不匹配含有:的字符串，所以如果是http:或https:，则不替换
 const CSS_URL = /url\(([^\)"':]*)\)/g;
 
+// TODO debug/release切换
+const isDebug = true;
+
 // 默认的后缀配置处理, "downonly"表示仅下载，如果本地有则不加载， "none"表示不下载不加载
 const suffix_cfg = {
     png: 'downonly', jpg: 'downonly', jpeg: 'downonly',
@@ -257,7 +260,11 @@ const suffix_cfg = {
 
 // tpl模板加载函数
 let tplFun: Function = (tplStr, filename) => {
-    return { value: toFun(tplStr, filename), path: filename, wpath: null };
+    if (isDebug) {
+        return { value: toFun(tplStr, filename), path: filename, wpath: null };
+    } else {
+        return { value: toMiniFun(tplStr, filename), path: filename, wpath: null };
+    }
 };
 
 /**
@@ -524,7 +531,11 @@ const loadTpl1 = (file: string, fileMap: Json, widget: string): Json => {
         tpl = tplFun(butil.utf8Decode(data), s);
         setCache(s, tpl);
     } else if (!tpl.value) {
-        tpl.value = toFun(butil.utf8Decode(fileMap[s]), s);
+        if (isDebug) {
+            tpl.value = toFun(butil.utf8Decode(fileMap[s]), s);
+        } else {
+            tpl.value = toMiniFun(butil.utf8Decode(fileMap[s]), s);
+        }
     }
 
     return tpl;

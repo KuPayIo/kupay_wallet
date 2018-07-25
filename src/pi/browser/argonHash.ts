@@ -2,7 +2,7 @@
  * memory hash
  */
 // todo 手机版需要移除该引用
-import { getArgonHash } from '../../app/utils_pc/argon2';
+// import { getArgonHash } from '../../app/utils_pc/argon2';
 import { NativeObject, ParamType, registerSign } from './native';
 
 export class ArgonHash extends NativeObject {
