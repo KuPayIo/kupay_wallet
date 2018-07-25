@@ -24,8 +24,6 @@ export class Home extends Widget {
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         const avatar = wallet.avatar;
         const walletName = gwlt.nickName;
-        this.stp = new ShareToPlatforms();
-        this.stp.init();
         this.state = {
             avatar,
             walletName,
@@ -117,15 +115,10 @@ export class Home extends Widget {
     }
 
     public share() {
-        this.stp.shareCode({
-            success: (result) => {
-                alert(result);
-            },
-            fail: (result) => {
-                alert(result);
-            },
-            content: 'This is a test QRCode',
-            type: ShareToPlatforms.TYPE_IMG
+        popNew('app-components-share-share', { text: 'This is a test QRCode', shareType: ShareToPlatforms.TYPE_IMG }, (result) => {
+            alert(result);
+        }, (result) => {
+            alert(result);
         });
     }
     public walletManagementClick() {

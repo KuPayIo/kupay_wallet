@@ -1,12 +1,13 @@
 /**
  * 收款
  */
-import { Widget } from '../../../../pi/widget/widget';
-import { copyToClipboard,shareToQrcode } from '../../../utils/tools';
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+import { copyToClipboard } from '../../../utils/tools';
 
 interface Props {
-    currencyName:string;
+    currencyName: string;
     currencyBalance: string;
     addr: string;
     title?: string;
@@ -38,13 +39,13 @@ export class AddAsset extends Widget {
         this.ok && this.ok();
     }
 
-    //复制
-    public copyClick(){
+    // 复制
+    public copyClick() {
         copyToClipboard(this.props.addr);
         popNew('app-components-message-message', { itype: 'success', content: '复制成功', center: true });
     }
 
-    public shareToFriends(){
-        shareToQrcode(this.props.addr);
+    public shareToFriends() {
+        popNew('app-components-share-share', { text: this.props.addr, shareType: ShareToPlatforms.TYPE_IMG });
     }
 }

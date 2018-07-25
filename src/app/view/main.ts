@@ -7,6 +7,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
+import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
@@ -48,8 +49,8 @@ export const run = (cb): void => {
          addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
     // popNew('app-view-redEnvelope-send-sendRedEnvelope');
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
-
-    // popNew('app-view-wallet-walletCreate-createByImg-createByImg');
+    
+    // popNew('app-components-share-share', { text: 'ces', shareType: ShareToPlatforms.TYPE_IMG });
     if (cb) cb();
     // test();
 };
