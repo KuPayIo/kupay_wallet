@@ -166,6 +166,34 @@ export class DataCenter {
         this.updateList.push(['balance', addr, currencyName]);
         this.updateList.push(['transaction', addr, currencyName]);
     }
+    /**
+     * 添加常用联系人地址
+     */
+    public addTopContacts(currencyName: string,addresse:string,tags:string) {
+        let topContacts = getLocalStorage('topContacts');
+        if (!topContacts) {
+            topContacts = [];
+        }
+        const item = {
+            currencyName,
+            tags,
+            addresse
+        };
+        topContacts.push(item);
+        setLocalStorage('topContacts',topContacts);
+    }
+    /**
+     * 获取常用联系人地址
+     */
+    public getTopContacts(currencyName:string) {
+        let topContacts = getLocalStorage('topContacts');
+        if (!topContacts) {
+            topContacts = [];
+        }
+        topContacts = topContacts.filter(v => v.currencyName === currencyName);
+
+        return topContacts;
+    }
 
     private openCheck() {
         this.timerRef = setTimeout(() => {

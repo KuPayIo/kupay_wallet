@@ -10,6 +10,7 @@ import { Api as EthApi } from '../../../core/eth/api';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { GlobalWallet } from '../../../core/globalWallet';
+import { dataCenter } from '../../../store/dataCenter';
 import {
     decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals, getAddrById
     , getCurrentAddrInfo, getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById, urlParams
@@ -141,6 +142,7 @@ export class AddAsset extends Widget {
                     // 打开交易详情界面
                     thisObj.showTransactionDetails(id);
                     thisObj.doClose();
+                    this.topContactAdd(this.state.to,this.props.currencyName);
                 }
             } catch (error) {
                 console.log(error.message);
@@ -152,6 +154,7 @@ export class AddAsset extends Widget {
             }
 
             loading.callback(loading.widget);
+            
         });
     }
 
@@ -256,6 +259,42 @@ export class AddAsset extends Widget {
                 console.log(`close result:${r}`);
             }
         });
+    }
+
+    /**
+     * 判断收款地址是否为常用联系人,不是则提示加入常用联系人
+     */
+    public topContactAdd(addresse:string,currencyName:string) {
+        if (!currencyName) {
+            return;
+        }
+        let isExist = false;
+        const topContacts = dataCenter.getTopContacts(this.props.currencyName);
+        for (let i = 0;i < topContacts.length;i++) {
+            const v = topContacts[i];
+            if (v.addresse === addresse && v.currencyName === currencyName) {
+                isExist = true;
+                break;
+            } else {
+                isExist = false;
+            }
+        }
+        if (isExist) {
+            return;
+        } else {
+            // 不存在常用联系人，提示是否添加
+            popNew('app-view-mine-addressManage-messagebox',{
+                mType: 'confirm', title: '是否添加联系人',text:'是否将此收币地址添加为常用地址',input1DefaultValue:addresse
+            },(data) => {
+                const addresse = data.addresse;
+                let tags = data.tags;
+                if (!tags) {
+                    tags = '默认地址';
+                }
+                dataCenter.addTopContacts(currencyName,addresse,tags);
+                popNew('app-components-message-message', { itype: 'success', content: '添加常用联系人成功！', center: true });
+            });
+        }
     }
 
     private resetFees() {

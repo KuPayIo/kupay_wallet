@@ -12,6 +12,8 @@ export class FinancialManagementHome extends Widget {
     public create() {
         super.create();
         this.init();
+        // 测试理财产品详情页面
+        popNew('app-view-financialManagement-productDetail-productDetail');
     }
     public init() {
         this.state = {

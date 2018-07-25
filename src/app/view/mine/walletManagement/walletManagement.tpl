@@ -18,6 +18,18 @@
             <span w-class="ga-item-text">修改交易密码</span>
             <img w-class="ga-item-arrow" src="../../../res/image/btn_right_arrow.png" />
         </div>
+
+        <div w-class="ga-item">
+            {{if !it1.showPswTips}}
+            <span w-class="ga-item-text">********</span>
+            {{else}}
+            <input id="pswTipsInput" w-class="ga-input-psw-tips" value="{{it1.pswTips}}" on-blur="pswTipsInputBlur" on-focus="pswTipsInputFocus"
+            /> {{end}}
+            <div w-class="ga-psw-tips-container" on-tap="pswTipsClick">
+                <span>密码提示</span>
+                <img src="../../../res/image/{{it1.showPswTips ? 'btn_display_open.png' : 'btn_display_close.png'}}" w-class="ga-img" />
+            </div>
+        </div>
         <div w-class="ga-item" on-tap="exportPrivateKeyClick">
             <span w-class="ga-item-text">导出私钥</span>
             <img w-class="ga-item-arrow" src="../../../res/image/btn_right_arrow.png" />

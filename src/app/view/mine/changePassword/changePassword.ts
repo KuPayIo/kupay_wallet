@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { getWalletPswStrength, pswEqualed, walletPswAvailable } from '../../../utils/account';
-import { decrypt, getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { decrypt, getCurrentWallet, getLocalStorage, getWalletByWalletId,setLocalStorage } from '../../../utils/tools';
 
 interface Props {
     passwd: string;
@@ -22,8 +22,6 @@ export class ChangePassword extends Widget {
     }
 
     public init() {
-        // const wallets = getLocalStorage('wallets');
-        // const wallet = getCurrentWallet(wallets);
         this.state = {
             style: {
                 backgroundColor: '#FFF',
@@ -56,7 +54,7 @@ export class ChangePassword extends Widget {
         const newPassword = this.state.newPassword;
         const rePassword = this.state.rePassword;
         const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = getWalletByWalletId(wallets,this.props.walletId);
         if (!newPassword || !rePassword) {
             return;
         }

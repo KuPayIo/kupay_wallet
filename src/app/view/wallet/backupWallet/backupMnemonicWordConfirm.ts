@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { decrypt, getCurrentWallet, getLocalStorage, setLocalStorage, shuffle } from '../../../utils/tools';
+import { getCurrentWallet, getLocalStorage, getWalletByWalletId, setLocalStorage,shuffle } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;
@@ -92,7 +92,7 @@ export class BackupMnemonicWordConfirm extends Widget {
 
     private deleteMnemonic() {
         const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = getWalletByWalletId(wallets,this.props.walletId);
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         gwlt.mnemonicBackup = true;
         wallet.gwlt = gwlt.toJSON();
