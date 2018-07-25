@@ -1,11 +1,12 @@
 /**
  * fund share Page
  */
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import {ShareToPlatforms} from "../../../../pi/browser/shareToPlatforms";
 
 export class FundShare extends Widget {
-    public ok:() => void;
+    public ok: () => void;
     constructor() {
         super();
     }
@@ -15,20 +16,14 @@ export class FundShare extends Widget {
 
     public cancelShareClick() {
         this.ok && this.ok();
-        //this.testShare();
+        // this.testShare();
     }
 
-    public testShare(){
-        const stp = new ShareToPlatforms();
-
-        stp.init();
-        stp.shareQRCode({
-            success: (result) => {
-                alert(result);
-            },
-            fail: (result) => {
-                alert(result);
-            }, content: "This is a test QRCode"
-        })
+    public testShare() {
+        popNew('app-components-share-share', { text: 'This is a test QRCode', shareType: ShareToPlatforms.TYPE_IMG }, (result) => {
+            alert(result);
+        }, (result) => {
+            alert(result);
+        });
     }
 } 

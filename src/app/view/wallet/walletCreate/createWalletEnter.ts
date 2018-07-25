@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-
+// tslint:disable-next-line:max-line-length
 export class CreateWalletEnter extends Widget {
     public ok: () => void;
     constructor() {

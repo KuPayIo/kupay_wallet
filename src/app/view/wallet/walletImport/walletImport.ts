@@ -2,16 +2,12 @@
  * import wallet
  */
 import { popNew } from '../../../../pi/ui/root';
-import { drawImg } from '../../../../pi/util/canvas';
 import { Widget } from '../../../../pi/widget/widget';
-import { Cipher } from '../../../core/crypto/cipher';
-import { getRandomValuesByMnemonic } from '../../../core/genmnemonic';
 import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
-import { ahash } from '../../../utils/ahash';
-import { defalutShowCurrencys, lang, walletNumLimit } from '../../../utils/constants';
-import { encrypt, getAddrsAll, getLocalStorage, getXOR, setLocalStorage } from '../../../utils/tools';
+import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletPswAvailable } from '../../../utils/account';
+import { defalutShowCurrencys } from '../../../utils/constants';
+import { encrypt, getAddrsAll, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 import { Addr, Wallet } from '../../interface';
 
 export class WalletImport extends Widget {
@@ -126,7 +122,6 @@ export class WalletImport extends Widget {
         const wallet: Wallet = {
             walletId: curWalletId,
             avatar: getAvatarRandom(),
-            walletPsw: encrypt(this.state.walletPsw),
             gwlt: gwlt.toJSON(),
             showCurrencys: defalutShowCurrencys,
             currencyRecords: []

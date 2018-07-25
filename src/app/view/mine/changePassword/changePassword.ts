@@ -3,32 +3,33 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { decrypt, getCurrentWallet, getLocalStorage } from '../../../utils/tools';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { getWalletPswStrength, pswEqualed, walletPswAvailable } from '../../../utils/account';
+import { decrypt, getCurrentWallet, getLocalStorage, getWalletByWalletId,setLocalStorage } from '../../../utils/tools';
+
+interface Props {
+    passwd: string;
+}
 
 export class ChangePassword extends Widget {
     public ok: () => void;
     constructor() {
         super();
     }
-    public create() {
-        super.create();
+    public setProps(props: Props, oldProps: Props): void {
+        super.setProps(props, oldProps);
         this.init();
     }
 
     public init() {
-        // const wallets = getLocalStorage('wallets');
-        // const wallet = getCurrentWallet(wallets);
-        // const walletPsw = decrypt(wallet.walletPsw);
         this.state = {
             style: {
                 backgroundColor: '#FFF',
                 fontSize: '24px',
                 color: '#8E96AB',
                 lineHeight: '33px',
-                "border-bottom": "1px solid #c0c4cc"
+                'border-bottom': '1px solid #c0c4cc'
             },
-            oldPassword: '',
             newPassword: '',
             rePassword: '',
             strength: getWalletPswStrength('')
@@ -40,18 +41,6 @@ export class ChangePassword extends Widget {
         this.ok && this.ok();
     }
 
-    public btnClick() {
-        if (!pswEqualed(this.state.walletPsw, this.state.inputValue)) {
-            popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
-
-            return;
-        }
-        popNew('app-view-mine-changePassword-changePassword2');
-        this.ok && this.ok();
-    }
-    public oldPasswordChange(e: any) {
-        this.state.oldPassword = e.value;
-    }
     public newPasswordChange(e: any) {
         this.state.newPassword = e.value;
         this.state.strength = getWalletPswStrength(this.state.newPassword);
@@ -61,32 +50,33 @@ export class ChangePassword extends Widget {
         this.state.rePassword = e.value;
     }
 
-    public btnClicked() {
-        let newPassword = this.state.newPassword;
-        let oldPassword = this.state.oldPassword;
-        let rePassword = this.state.rePassword;
+    public async btnClicked() {
+        const newPassword = this.state.newPassword;
+        const rePassword = this.state.rePassword;
         const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
-        const walletPsw = decrypt(wallet.walletPsw);
-        if (!newPassword || !oldPassword || !rePassword) {
+        const wallet = getWalletByWalletId(wallets,this.props.walletId);
+        if (!newPassword || !rePassword) {
             return;
         }
-        //判断两次输入的密码是否相同
+        // 判断两次输入的密码是否相同
         if (!pswEqualed(newPassword, rePassword)) {
-            popNew("app-components-message-messagebox", { itype: "alert", title: "提示！", content: "两次输入的密码不一致！" });
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '提示！', content: '两次输入的密码不一致！' });
+
             return;
         }
         if (!walletPswAvailable(newPassword)) {
-            popNew("app-components-message-messagebox", { itype: "alert", title: "提示！", content: "密码不符合规则！密码至少8位字符，可包含英文、数字、特殊字符！" });
-            return;
-        }
-        //判断旧密码是否正确
-        if (!pswEqualed(walletPsw, oldPassword)) {
-            popNew("app-components-message-messagebox", { itype: "alert", title: "提示！", content: "旧密码输入错误！" });
-            return;
-        }
-        //验证全部通过，开始设置新密码
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '提示！', content: '密码不符合规则！密码至少8位字符，可包含英文、数字、特殊字符！' });
 
+            return;
+        }
+        // 验证全部通过，开始设置新密码
+        const loading = popNew('pi-components-loading-loading', { text: '修改中...' });
+        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+        await gwlt.passwordChange(this.props.passwd, newPassword);
+        wallet.gwlt = gwlt.toJSON();
+        setLocalStorage('wallets', wallets);
+        loading.callback(loading.widget);
+        this.backPrePage();
     }
 
 }

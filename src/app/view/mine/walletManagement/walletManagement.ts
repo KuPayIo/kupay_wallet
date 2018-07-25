@@ -8,20 +8,23 @@ import { register, unregister } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import {
     decrypt, encrypt, fetchTotalAssets, formatBalanceValue, getAddrsAll, getCurrentWallet, getCurrentWalletIndex
-    , getLocalStorage, getMnemonic, setLocalStorage, VerifyIdentidy
+    , getLocalStorage, getMnemonic, getWalletByWalletId, getWalletIndexByWalletId,setLocalStorage,VerifyIdentidy
 } from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
     public ok: (returnHome?: boolean) => void;
     constructor() {
         super();
+    }
+    public setProps(props: any, oldProps: any) {
+        this.props = props;
         this.init();
     }
     public init() {
         register('wallets', this.registerWalletsFun);
         register('addrs', this.registerAddrsFun);
         const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = getWalletByWalletId(wallets,this.props.walletId);
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         let pswTips = '';
         if (wallet.walletPswTips) {
@@ -69,19 +72,23 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (r) => {
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
             const wallets = getLocalStorage('wallets');
-            const wallet = getCurrentWallet(wallets);
-            const walletPsw = decrypt(wallet.walletPsw);
-            if (pswEqualed(r, walletPsw)) {
-                const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
-                setTimeout(() => {
-                    close.callback(close.widget);
-                    popNew('app-view-mine-exportPrivateKey-exportPrivateKey');
-                }, 500);
-            } else {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
+            const wallet = getWalletByWalletId(wallets,this.props.walletId);
+            const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
+            try {
+                const mnemonic = await getMnemonic(wallet, r);
+                if (mnemonic) {
+                    popNew('app-view-mine-exportPrivateKey-exportPrivateKey', { mnemonic ,walletId:this.props.walletId });
+                } else {
+                    popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+                }
+            } catch (error) {
+                console.log(error);
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入111', center: true });
             }
+
+            close.callback(close.widget);
         });
     }
 
@@ -102,7 +109,7 @@ export class WalletManagement extends Widget {
         if (v !== this.state.gwlt.nickName) {
             this.state.gwlt.nickName = v;
             const wallets = getLocalStorage('wallets');
-            const wallet = getCurrentWallet(wallets);
+            const wallet = getWalletByWalletId(wallets,this.props.walletId);
             // const addr0 = wallet.currencyRecords[0].addrs[0];
             const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             gwlt.nickName = v;
@@ -124,7 +131,7 @@ export class WalletManagement extends Widget {
         const pswTipsInput: any = document.querySelector('#pswTipsInput');
         const value = pswTipsInput.value;
         const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = getWalletByWalletId(wallets,this.props.walletId);
         wallet.walletPswTips = encrypt(value);
         setLocalStorage('wallets', wallets, true);
         this.state.isUpdatingPswTips = false;
@@ -156,12 +163,12 @@ export class WalletManagement extends Widget {
         }
         popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
             const wallets = getLocalStorage('wallets');
-            const wallet = getCurrentWallet(wallets);
+            const wallet = getWalletByWalletId(wallets,this.props.walletId);
             const close = popNew('pi-components-loading-loading', { text: '导出中...' });
             try {
                 const mnemonic = await getMnemonic(wallet, r);
                 if (mnemonic) {
-                    popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd: r });
+                    popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd: r ,walletId:this.props.walletId });
                 } else {
                     popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
                 }
@@ -184,54 +191,55 @@ export class WalletManagement extends Widget {
         }
         popNew('app-view-groupwallet-groupwallet');
     }
-
+    /**
+     * 修改密码
+     */
     public changePasswordClick() {
         if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
             this.pageClick();
 
             return;
         }
-        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (r) => {
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
             const wallets = getLocalStorage('wallets');
-            const wallet = getCurrentWallet(wallets);
-            const walletPsw = decrypt(wallet.walletPsw);
-            if (pswEqualed(r, walletPsw)) {
-                const close = popNew('pi-components-loading-loading', { text: '加载中...' });
-                setTimeout(() => {
-                    close.callback(close.widget);
-                    popNew('app-view-mine-changePassword-changePassword');
-                }, 500);
-            } else {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误', center: true });
+            const wallet = getWalletByWalletId(wallets,this.props.walletId);
+            const close = popNew('pi-components-loading-loading', { text: '加载中...' });
+            try {
+                const isEffective = await VerifyIdentidy(wallet, r);
+                if (isEffective) {
+                    popNew('app-view-mine-changePassword-changePassword', { passwd: r ,walletId:this.props.walletId });
+                } else {
+                    popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+                }
+            } catch (error) {
+                console.log(error);
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
             }
-        });
 
+            close.callback(close.widget);
+        });
     }
 
+    /**
+     * 退出钱包
+     */
     public signOutClick() {
         if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
             this.pageClick();
 
             return;
         }
-        if (!this.state.mnemonicBackup) {
-            popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' }, () => {
-                popNew('app-view-wallet-backupWallet-backupMnemonicWord');
-            });
-        } else {
-            this.signOut();
-        }
-    }
+        popNew('app-components-message-messagebox', { itype: 'confirm', title: '退出钱包', content: '退出将清除该钱包密码数据' }, () => {
+            // todo 这里退出时需要移除保存在内存中的密码
 
-    public signOut() {
-        popNew('app-components-message-messagebox', { itype: 'confirm', title: '退出钱包', content: '退出后可通过密码再次登录' }, () => {
-            const wallets = getLocalStorage('wallets');
-            wallets.curWalletId = '';
-            setLocalStorage('wallets', wallets, true);
             popNew('app-components-message-message', { itype: 'success', content: '退出成功', center: true });
             this.ok && this.ok(true);
         });
     }
+
+    /**
+     * 删除钱包
+     */
     public deleteWalletClick() {
         if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
             this.pageClick();
@@ -240,7 +248,7 @@ export class WalletManagement extends Widget {
         }
         if (!this.state.mnemonicBackup) {
             popNew('app-components-message-messagebox', { itype: 'alert', title: '备份钱包', content: '您还没有备份助记词，这是找回钱包的重要线索，请先备份' }, () => {
-                popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic: "aaa" });//需要生成助记词后传入参数
+                this.backupMnemonic();
             });
         } else {
             this.deleteWallet();
@@ -248,30 +256,37 @@ export class WalletManagement extends Widget {
     }
 
     public deleteWallet() {
-        popNew('app-components-message-messagebox', { itype: 'confirm', title: '删除钱包', content: '删除后不再保留数据，再次登录需通过助记词重新导入' }, () => {
-            popNew('app-components-message-messagebox', { itype: 'prompt', title: '输入密码', content: '', inputType: 'password' }, (r) => {
+        popNew('app-components-message-messagebox', { itype: 'confirm', title: '删除钱包', content: '删除后需要重新导入，之前的分享也将失效' }, () => {
+            popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
                 const wallets = getLocalStorage('wallets');
-                const wallet = getCurrentWallet(wallets);
-                const walletIndex = getCurrentWalletIndex(wallets);
-                const walletPsw = decrypt(wallet.walletPsw);
-                if (pswEqualed(r, walletPsw)) {
+                const wallet = getWalletByWalletId(wallets,this.props.walletId);
+                const close = popNew('pi-components-loading-loading', { text: '删除中...' });
+                try {
+                    const isEffective = await VerifyIdentidy(wallet, r);
+                    if (isEffective) {
+                        const walletIndex = getCurrentWalletIndex(wallets);
+                        // 删除地址
+                        const addrs = getAddrsAll(wallet);
+                        this.deleteAddrs(addrs);
+                        // 移除当前钱包的交易记录
+                        this.deleteTransactions(addrs);
 
-                    // 删除地址
-                    const addrs = getAddrsAll(wallet);
-                    this.deleteAddrs(addrs);
-                    // 移除当前钱包的交易记录
-                    this.deleteTransactions(addrs);
+                        // 删除钱包
+                        wallets.walletList.splice(walletIndex, 1);
+                        wallets.curWalletId = wallets.walletList.length > 0 ? wallets.walletList[0].walletId : '';
+                        setLocalStorage('wallets', wallets, true);
+                        this.ok && this.ok(true);
 
-                    // 删除钱包
-                    wallets.walletList.splice(walletIndex, 1);
-                    wallets.curWalletId = '';
-                    setLocalStorage('wallets', wallets, true);
-
-                    popNew('app-components-message-message', { itype: 'success', content: '删除成功', center: true });
-                    this.ok && this.ok(true);
-                } else {
+                        popNew('app-components-message-message', { itype: 'success', content: '删除成功', center: true });
+                    } else {
+                        popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+                    }
+                } catch (error) {
+                    console.log(error);
                     popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
                 }
+
+                close.callback(close.widget);
             });
         });
     }
@@ -301,7 +316,7 @@ export class WalletManagement extends Widget {
     }
 
     private registerWalletsFun = (wallets: any) => {
-        const wallet = getCurrentWallet(wallets);
+        const wallet = getWalletByWalletId(wallets,this.props.walletId);
         if (!wallet) return;
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         let pswTips = '';
@@ -319,7 +334,7 @@ export class WalletManagement extends Widget {
      */
     private registerAddrsFun = (addrs?: any) => {
         const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = getWalletByWalletId(wallets,this.props.walletId);
         if (!wallet) return;
 
         this.state.totalAssets = formatBalanceValue(fetchTotalAssets());

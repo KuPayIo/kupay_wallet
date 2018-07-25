@@ -1,0 +1,66 @@
+.ga-new-page{
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+}
+.ga-share-top{
+    flex:1 0 0;
+}
+.ga-share-bottom{
+    height: 420px;
+    background-color: #f8f8f8;
+    position: relative;
+}
+.ga-share-title{
+    font-size: 32px;
+    color: #203260;
+    text-align: center;
+    line-height: 45px;
+    margin-top: 30px;
+}
+.ga-share-platforms{
+    display: flex;
+    justify-content: center;
+}
+.ga-share-platform{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 28px;
+    color: #203260;
+    line-height: 40px;
+}
+.ga-share-icon1{
+    width: 120px;
+    height: 120px;
+    margin: 50px 125px 10px;
+}
+.ga-share-icon2{
+    width: 120px;
+    height: 120px;
+    margin: 50px 125px 10px;
+}
+.ga-share-icon3{
+    width: 120px;
+    height: 120px;
+    margin: 50px 60px 10px;
+}
+.ga-share-icon4{
+    width: 120px;
+    height: 120px;
+    margin: 50px 35px 10px;
+}
+.ga-share-cancel{
+    height: 100px;
+    background-color: #fff;
+    font-size: 32px;
+    color: rgba(17,17,17,0.87);
+    line-height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}

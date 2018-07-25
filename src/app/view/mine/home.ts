@@ -6,29 +6,39 @@ import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
-import { getCurrentWallet, getLocalStorage } from '../../utils/tools';
+import { register } from '../../store/store';
+import { getCurrentWallet, getLocalStorage, getMnemonic } from '../../utils/tools';
 
 export class Home extends Widget {
-    public stp: any;
+    public stp: ShareToPlatforms;
     constructor() {
         super();
     }
     public create() {
         super.create();
+        register('wallets', this.registerWalletsFun);
         this.init();
     }
     public init() {
         // 获取钱包显示头像
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        const avatar = wallet.avatar;
-        const walletName = gwlt.nickName;
-        this.stp = new ShareToPlatforms();
-        this.stp.init();
+        let gwlt = null;
+        let avatar = null;
+        let walletName = null;
+        let mnemonicBackup = null;
+        if (wallet&&wallet.length>0) {
+            gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+            avatar = wallet.avatar;
+            walletName = gwlt.nickName;
+            mnemonicBackup = gwlt.mnemonicBackup;
+        }
         this.state = {
+            wallets,
+            wallet,
             avatar,
             walletName,
+            mnemonicBackup,
             hasNews: true,
             mineList: [{
                 icon: 'icon_mine_wallet.png',
@@ -117,19 +127,48 @@ export class Home extends Widget {
     }
 
     public share() {
-        this.stp.shareQRCode({
-            success: (result) => {
-                alert(result);
-            },
-            fail: (result) => {
-                alert(result);
-            }, content: 'This is a test QRCode'
+        popNew('app-components-share-share', { text: 'This is a test QRCode', shareType: ShareToPlatforms.TYPE_IMG }, (result) => {
+            alert(result);
+        }, (result) => {
+            alert(result);
         });
     }
     public walletManagementClick() {
-        popNew('app-view-mine-walletManagement-walletManagement');
+        if (!this.state.wallet || this.state.wallets.walletList.length === 0) {
+            popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
+
+            return;
+        }
+        popNew('app-view-mine-walletManagement-walletManagement',{ walletId:this.state.wallet.walletId });
     }
     public backupClick() {
-        alert('aa');
+        if (!this.state.wallet || this.state.wallets.walletList.length === 0) {
+            popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
+
+            return;
+        }
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
+            const wallets = getLocalStorage('wallets');
+            const wallet = getCurrentWallet(wallets);
+            const close = popNew('pi-components-loading-loading', { text: '导出中...' });
+            try {
+                const mnemonic = await getMnemonic(wallet, r);
+                if (mnemonic) {
+                    popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd: r ,walletId:wallet.walletId });
+                } else {
+                    popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+                }
+            } catch (error) {
+                console.log(error);
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入111', center: true });
+            }
+
+            close.callback(close.widget);
+        });
+    }
+    
+    private registerWalletsFun = () => {
+        this.init();
+        this.paint();
     }
 }

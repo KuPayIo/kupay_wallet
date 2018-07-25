@@ -49,6 +49,40 @@ export const getCurrentWallet = (wallets) => {
 };
 
 /**
+ * 获取指定id的钱包
+ */
+export const getWalletByWalletId = (wallets,walletId) => {
+    if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
+        return null;
+    }
+    for (let i = 0; i < wallets.walletList.length; i++) {
+        if (wallets.walletList[i].walletId === walletId) {
+            return wallets.walletList[i];
+        }
+    }
+
+    return null;
+};
+
+/**
+ * 获取指定id钱包的index
+ */
+export const getWalletIndexByWalletId = (wallets,walletId) => {
+    let index = -1;
+    if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
+        return -1;
+    }
+    for (let i = 0; i < wallets.walletList.length; i++) {
+        if (wallets.walletList[i].walletId === walletId) {
+            index = i;
+            break;
+        }
+    }
+
+    return index;
+};
+
+/**
  * 获取当前钱包index
  * @param wallets wallets obj
  */
@@ -396,35 +430,26 @@ export const sliceStr = (str, start, len): string => {
  * 获取新的地址信息
  * @param currencyName 货币类型
  */
-export const getNewAddrInfo = (currencyName) => {
-    const wallets = getLocalStorage('wallets');
-    const wallet = getCurrentWallet(wallets);
+export const getNewAddrInfo = (currencyName, mnemonic, wallet) => {
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
     const addrs = getLocalStorage('addrs');
     const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
 
     let address;
-    let wltJson;
     if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
         const wlt = GaiaWallet.fromJSON(firstAddr.wlt);
-        const newWlt = wlt.selectAddress(decrypt(wallet.walletPsw), currencyRecord.addrs.length);
+        const newWlt = wlt.selectAddressWlt(currencyRecord.addrs.length);
         address = newWlt.address;
-        wltJson = newWlt.toJSON();
     } else if (currencyName === 'BTC') {
-        const psw = decrypt(wallet.walletPsw);
-        const wlt = BTCWallet.fromJSON(firstAddr.wlt, psw);
-        wlt.unlock(psw);
+        const wlt = BTCWallet.fromJSON(firstAddr.wlt);
+        wlt.unlock();
         address = wlt.derive(currencyRecord.addrs.length);
-        wlt.lock(psw);
+        wlt.lock();
 
-        wltJson = firstAddr.wlt;
     }
 
-    return {
-        address: address,
-        wltJson: wltJson
-    };
+    return address;
 };
 
 /**
@@ -434,7 +459,7 @@ export const getNewAddrInfo = (currencyName) => {
  * @param addrName 新的地址名
  * @param wltJson 新的地址钱包对象
  */
-export const addNewAddr = (currencyName, address, addrName, wltJson) => {
+export const addNewAddr = (currencyName, address, addrName) => {
     const wallets = getLocalStorage('wallets');
     const wallet = getCurrentWallet(wallets);
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
@@ -442,7 +467,7 @@ export const addNewAddr = (currencyName, address, addrName, wltJson) => {
     addrName = addrName || getDefaultAddr(address);
     currencyRecord.addrs.push(address);
     const list: Addr[] = getLocalStorage('addrs') || [];
-    const newAddrInfo: Addr = { addr: address, addrName, wlt: wltJson, record: [], balance: 0, currencyName };
+    const newAddrInfo: Addr = { addr: address, addrName, record: [], balance: 0, currencyName };
     list.push(newAddrInfo);
     currencyRecord.currentAddr = address;
 
@@ -746,7 +771,7 @@ export const VerifyIdentidy = async (wallet, passwd) => {
     try {
         const cipher = new Cipher();
         const r = cipher.decrypt(hash, gwlt.vault);
-        console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r);
+        // console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r);
 
         return true;
     } catch (error) {
@@ -814,21 +839,6 @@ export const copyToClipboard = (copyText) => {
         document.execCommand('copy');
     }
     document.body.removeChild(input);
-};
-
-// 二维码分享
-export const shareToQrcode = (shareText) => {
-    const stp = new ShareToPlatforms();
-    stp.init();
-    stp.shareQRCode({
-        success: (result) => {
-            alert(result);
-        },
-        fail: (result) => {
-            alert(result);
-        }, 
-        content: shareText
-    });
 };
 
 /**

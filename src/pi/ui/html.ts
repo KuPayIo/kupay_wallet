@@ -12,12 +12,12 @@ import { Widget } from '../widget/widget';
  */
 export class InnerHTML extends Widget {
 
-	public firstPaint() {
-		(this.tree.link as HTMLElement).innerHTML = this.props;
-	}
-	public afterUpdate() {
-		(this.tree.link as HTMLElement).innerHTML = this.props;
-	}
+    public firstPaint() {
+        (this.tree.link as HTMLElement).innerHTML = this.props;
+    }
+    public afterUpdate() {
+        (this.tree.link as HTMLElement).innerHTML = this.props;
+    }
 }
 
 // ============================== 本地

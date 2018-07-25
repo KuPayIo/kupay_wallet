@@ -1,9 +1,10 @@
 /**
  * 分享片段给好友
  */
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { DataCenter } from '../../../store/dataCenter';
-import { shareToQrcode } from '../../../utils/tools';
 
 interface Props {
     shares: string[];
@@ -28,19 +29,32 @@ export class WalletCreate extends Widget {
         this.ok && this.ok();
     }
     public shareBtnClick() {
-        // TODO 分享给好友
-        shareToQrcode(this.state.part);
+        // this.state.step++;
+        // this.state.part = this.props.shares[this.state.step - 1];
+        // this.paint();
 
-        // 分享完成后
-        this.state.step++;
-        this.state.part = this.props.shares[this.state.step - 1];
-        this.paint();
+        // // 分享完成
+        // if (this.state.step > this.state.totalSteps) {
+        //     popNew('app-components-message-message', { itype: 'success', content: '分享成功', center: true });
+        //     this.ok && this.ok();
+        // }
 
-        // 分享完成
-        if (this.state.step > this.state.totalSteps) {
-            this.ok && this.ok();
-        }
+        // tslint:disable-next-line:no-this-assignment
+        const thisObj = this;
+        popNew('app-components-share-share', { text: this.state.part, shareType: ShareToPlatforms.TYPE_TEXT }, () => {
+            // 分享完成后
+            thisObj.state.step++;
+            thisObj.state.part = thisObj.props.shares[thisObj.state.step - 1];
+            thisObj.paint();
 
+            // 分享完成
+            if (thisObj.state.step > thisObj.state.totalSteps) {
+                popNew('app-components-message-message', { itype: 'success', content: '分享成功', center: true });
+                thisObj.ok && thisObj.ok();
+            }
+        }, () => {
+            popNew('app-components-message-message', { itype: 'error', content: '分享失败', center: true });
+        });
     }
 
 }

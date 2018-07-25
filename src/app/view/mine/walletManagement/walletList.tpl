@@ -7,9 +7,11 @@
             <div w-class="nickName">
                 {{it1.fromJSON(v.gwlt).nickName}}
             </div>
-            <span w-class="backupBtn">
+            {{if  !it1.fromJSON(v.gwlt).mnemonicBackup}}
+            <span w-class="backupBtn" on-tap="backupClicked('{{v.walletId}}')">
                 请备份
             </span>
+            {{end}}
         </div>
         {{end}}
     </div>

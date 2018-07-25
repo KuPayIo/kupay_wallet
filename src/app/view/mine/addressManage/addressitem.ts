@@ -10,7 +10,7 @@ export class Addressitem extends Widget {
     }
 
     public goDetails() {
-        popNew('app-view-wallet-transaction-receipt', {
+        popNew('app-view-mine-addressManage-addressDetail', {
             currencyName: this.props.currencyName,
             currencyBalance: this.props.money,
             addr: this.props.address,

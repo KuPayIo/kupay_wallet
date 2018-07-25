@@ -1,10 +1,12 @@
 <div class="ga-new-page" style="background-color: #f9f9f9;">
     <div w-class="ga-top-banner" on-tap="walletManagementClick">
         <img src="../../res/image/{{it1.avatar}}" w-class="avatar"/>
-        <span w-class="ga-banner-title">{{it1.walletName}}</span>
+        <span w-class="ga-banner-title">{{it1.walletName ? it1.walletName : "请先创建钱包"}}</span>
+        {{if !it1.mnemonicBackup}}
         <span w-class="ga-banner-btn" on-tap="backupClick">
-            请备份
-        </span>
+                请备份
+            </span>
+        {{end}}
       
     </div>
     <div style="background-color: #fff;">

@@ -19,6 +19,7 @@ export class DataCenter {
     public static MIN_SHARE_LEN: number = 2;
     public static SHARE_SPLIT: string = '&&&&';
     public static MNEMONIC_SPLIT: string = ' ';
+    public static LIMIT_CONFIRMATIONS: number = 1;
 
     public rate: string;
     public addrInfos: any[] = [];
@@ -168,6 +169,34 @@ export class DataCenter {
         this.updateList.push(['balance', addr, currencyName]);
         this.updateList.push(['transaction', addr, currencyName]);
     }
+    /**
+     * 添加常用联系人地址
+     */
+    public addTopContacts(currencyName: string,addresse:string,tags:string) {
+        let topContacts = getLocalStorage('topContacts');
+        if (!topContacts) {
+            topContacts = [];
+        }
+        const item = {
+            currencyName,
+            tags,
+            addresse
+        };
+        topContacts.push(item);
+        setLocalStorage('topContacts',topContacts);
+    }
+    /**
+     * 获取常用联系人地址
+     */
+    public getTopContacts(currencyName:string) {
+        let topContacts = getLocalStorage('topContacts');
+        if (!topContacts) {
+            topContacts = [];
+        }
+        topContacts = topContacts.filter(v => v.currencyName === currencyName);
+
+        return topContacts;
+    }
 
     private openCheck() {
         this.timerRef = setTimeout(() => {
@@ -225,7 +254,7 @@ export class DataCenter {
         const transactions = getLocalStorage('transactions') || [];
         res.result.forEach(v => {
             if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr) && (v1.currencyName === currencyName))) return;
-            // todo 移除缓存记录
+            // 移除缓存记录
             this.removeRecordAtAddr(addr, v.hash);
             // info--input  0x636573--ces
 
@@ -305,6 +334,7 @@ export class DataCenter {
 
             info.txs.forEach(v => {
                 if (transactions.some(v1 => (v1.hash === v.txid) && (v1.addr === addr))) return;
+                if (v.confirmations < DataCenter.LIMIT_CONFIRMATIONS) return;
                 this.removeRecordAtAddr(addr, v.txid);
                 list.push(this.parseBtcTransactionTxRecord(addr, v));
             });
@@ -335,12 +365,16 @@ export class DataCenter {
         console.log('parseBtcTransactionTxRecord', tx);
         let value = 0;
         const inputs = tx.vin.map(v => {
-            if ((v.addr === addr) && !value) value = v.value;
-
             return v.addr;
         });
         const outputs = tx.vout.map(v => {
-            if (!value) value = parseFloat(v.value);
+            if (!value) {
+                if (inputs.indexOf(addr) >= 0) {
+                    value = parseFloat(v.value);
+                } else if (addr === v.scriptPubKey.addresses[0]) {
+                    value = parseFloat(v.value);
+                }
+            }
 
             return v.scriptPubKey.addresses[0];
         });

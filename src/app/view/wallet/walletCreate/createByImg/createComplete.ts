@@ -7,13 +7,6 @@ export class CreateComplete extends Widget {
     constructor() {
         super();
     }
-    public create() {
-        super.create();
-        this.init();
-    }
-    public init(): void {
-
-    }
     public backPrePage() {
         this.ok && this.ok();
     }

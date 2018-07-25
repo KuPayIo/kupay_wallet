@@ -1,6 +1,7 @@
 /**
  * creation complete
  */
+import { ImagePicker } from '../../../../../pi/browser/imagePicker';
 import { popNew } from '../../../../../pi/ui/root';
 import { drawImg } from '../../../../../pi/util/canvas';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -19,15 +20,47 @@ export class CreateComplete extends Widget {
     public init(): void {
         this.state = {
             choosedImg: false,// 是否选择图片
+            // tslint:disable-next-line:max-line-length
             imgBase64Data: '',// 图片base64
-            inputWords: ''// 输入字符串
+            inputWords: '',// 输入字符串
+            imgStr: '',
+            imgWidth: 0,
+            imgHeight: 0
         };
+
     }
     public backPrePage() {
         this.ok && this.ok();
     }
     public chooseImg() {
-        this.trigger();// 触发input file输入框点击事件
+        // this.trigger();// 触发input file输入框点击事件
+        console.log('选择图片');
+        const close = popNew('pi-components-loading-loading', { text: '导入中...' });
+
+        // tslint:disable-next-line:no-this-assignment
+        const thisObj = this;
+        const image = new ImagePicker();
+        image.init();
+        image.selectFromLocal({
+            success: (width, height, result) => {
+                // alert('成功');
+                thisObj.state.imgWidth = width;
+                thisObj.state.imgHeight = height;
+                thisObj.state.imgBase64Data = result;
+                thisObj.state.choosedImg = true;
+                // tslint:disable-next-line:max-line-length
+                this.state.imgStr = `<div style="background-image: url(${this.state.imgBase64Data});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;"></div>`;
+                thisObj.paint();
+                close.callback(close.widget);
+            },
+            fail: (result) => {
+                close.callback(close.widget);
+                popNew('app-components-message-message', { itype: 'notice', content: '导入失败', center: true });
+            },
+            useCamera: 1,
+            single: 1,
+            max: 1
+        });
     }
     /**
      * 
@@ -82,7 +115,7 @@ export class CreateComplete extends Widget {
     }
     public removeImg() {
         this.state.choosedImg = false;
-        document.getElementById('hideForm').reset();
+        // document.getElementById('hideForm').reset();
         this.paint();
     }
 

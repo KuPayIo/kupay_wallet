@@ -52,7 +52,7 @@ export class UnlockScreen extends Widget {
                 confirmErrorText:'密码错误,请重新输入'
             };
             popNew('app-components-message-messageboxVerify', messageboxVerifyProps,() => {
-                popNew('app-view-guidePages-setLockScreenScret',{title1:'请输入新密码',title2:'请重复新密码'});
+                popNew('app-view-guidePages-setLockScreenScret',{ title1:'请输入新密码',title2:'请重复新密码' });
                 this.ok && this.ok();
             },() => {
                 this.init();
@@ -86,7 +86,7 @@ export class UnlockScreen extends Widget {
             confirmErrorText:'密码错误,请重新输入'
         };
         popNew('app-components-message-messageboxVerify', messageboxVerifyProps,() => {
-            popNew('app-view-guidePages-setLockScreenScret',{title1:'请输入新密码',title2:'请重复新密码'});
+            popNew('app-view-guidePages-setLockScreenScret',{ title1:'请输入新密码',title2:'请重复新密码' });
             this.ok && this.ok();
         },() => {
             this.init();

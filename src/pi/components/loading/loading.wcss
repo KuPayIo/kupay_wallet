@@ -1,6 +1,5 @@
 .pi-loading-mask{
     position: absolute;
-    z-index: 2000;
     background-color: rgba(0,0,0,.7);
     margin: 0;
     top: 0;

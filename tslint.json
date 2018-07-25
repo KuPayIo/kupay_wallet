@@ -169,7 +169,7 @@
         ],
         // 换行符强制为CRLF
         "linebreak-style": [
-            true,
+            false,
             "CRLF"
         ],
         "no-multiline-string": false,

@@ -28,7 +28,10 @@ const sendRequest = async (endpoint: string, opt: Options = { method: 'GET' }): 
         } else if (opt.method === 'POST') {
             response = await fetch(endpoint, {
                 method: opt.method,
-                body: JSON.stringify({ rawtx:opt.body })
+                body: JSON.stringify({ rawtx:opt.body }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
         }
 
@@ -63,7 +66,7 @@ export const BtcApi = {
         return sendRequest(endpoint);
     },
 
-    sendRawTransaction: async (rawTx: string): Promise<string> => {
+    sendRawTransaction: async (rawTx: string): Promise<any> => {
         const endpoint = `${BTC_API_BASE_URL}/tx/send`;
 
         return sendRequest(endpoint, { method: 'POST', body: rawTx });

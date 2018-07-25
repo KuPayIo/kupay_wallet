@@ -39,6 +39,7 @@
     color: #8E96AB;
     background-color: #fff;
     padding: 20px 0;
+    margin-bottom:20px;
 }
 .coinitem{
     margin-left: 24px;
@@ -62,4 +63,16 @@
 .addressmanageContent{
     height: 68%;
     overflow: scroll;
+}
+.blueBtn{
+    height:100px;
+    background:red;
+    margin-left:30px;
+    margin-right:30px;
+    border-radius:100px;
+    color:rgba(255, 255, 255, 0.87);
+    background:#3574FA;
+    font-size:32px;
+    line-height:100px;
+    text-align:center;
 }
