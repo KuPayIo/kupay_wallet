@@ -10,6 +10,7 @@ const init = (cfgPath) => {
         }
     });
     deleteall("../dst");
+    deleteall(config.dsts[1].path);
     console.log("------------ok");
 }
 const deleteall = (path) => {

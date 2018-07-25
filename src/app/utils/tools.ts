@@ -845,14 +845,15 @@ export const copyToClipboard = (copyText) => {
 export const shareToQrcode = (shareText) => {
     const stp = new ShareToPlatforms();
     stp.init();
-    stp.shareQRCode({
+    stp.shareCode({
         success: (result) => {
             alert(result);
         },
         fail: (result) => {
             alert(result);
         },
-        content: shareText
+        content: shareText,
+        type: ShareToPlatforms.TYPE_IMG
     });
 };
 
