@@ -7,7 +7,7 @@ import { BTCWallet } from '../../../core/btc/wallet';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { GaiaWallet } from '../../../core/eth/wallet';
 import { btcNetwork, lang } from '../../../utils/constants';
-import { decrypt, getAddrById, getCurrentWallet, getLocalStorage } from '../../../utils/tools';
+import { decrypt, getAddrById, getCurrentWallet, getLocalStorage,getWalletByWalletId } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;
@@ -24,7 +24,7 @@ export class ExportPrivateKey extends Widget {
 
     public init() {
         const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = getWalletByWalletId(wallets,this.props.walletId);
         const currencyRecords = wallet.currencyRecords;
         const collapseList = [];
         for (let i = 0; i < currencyRecords.length; i++) {

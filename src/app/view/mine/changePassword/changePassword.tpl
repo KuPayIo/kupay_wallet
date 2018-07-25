@@ -11,14 +11,6 @@
         <div w-class="ga-input-father" ev-input-change="rePasswordChange">
             <app-components-input-input>{itype:"password",placeHolder:"再次输入密码",style:{{it1.style}}}</app-components-input-input>
         </div>
-        <div w-class="ga-input-father passWordTips">
-            <span>
-                密码是我生日
-            </span>
-            <span w-class="rightTip">
-                密码提示
-            </span>
-        </div>
         <div w-class="blueBtn" on-tap="btnClicked">
             确认修改
         </div>

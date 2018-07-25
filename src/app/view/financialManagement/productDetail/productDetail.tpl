@@ -23,8 +23,8 @@
             认购流程
         </div>
         <div w-class="processContent">
-            <div>
-                step组件
+            <div style="width: 100%;">
+                <app-view-financialManagement-productDetail-step-step>{step:1,itemList:[{title:"标题1",content:"content1"},{title:"title2",content:"content2"},{title:"title2",content:"content2"}]}</app-components-step-step>
             </div>
         </div>
     </div>

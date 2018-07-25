@@ -6,6 +6,7 @@ import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
+import { register } from '../../store/store';
 import { getCurrentWallet, getLocalStorage, getMnemonic } from '../../utils/tools';
 
 export class Home extends Widget {
@@ -15,6 +16,7 @@ export class Home extends Widget {
     }
     public create() {
         super.create();
+        register('wallets', this.registerWalletsFun);
         this.init();
     }
     public init() {
@@ -24,10 +26,12 @@ export class Home extends Widget {
         let gwlt = null;
         let avatar = null;
         let walletName = null;
+        let mnemonicBackup = null;
         if (wallet) {
             gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             avatar = wallet.avatar;
             walletName = gwlt.nickName;
+            mnemonicBackup = gwlt.mnemonicBackup;
         }
         
         this.stp = new ShareToPlatforms();
@@ -37,6 +41,7 @@ export class Home extends Widget {
             wallet,
             avatar,
             walletName,
+            mnemonicBackup,
             hasNews: true,
             mineList: [{
                 icon: 'icon_mine_wallet.png',
@@ -140,7 +145,7 @@ export class Home extends Widget {
 
             return;
         }
-        popNew('app-view-mine-walletManagement-walletManagement');
+        popNew('app-view-mine-walletManagement-walletManagement',{ walletId:this.state.wallet.walletId });
     }
     public backupClick() {
         if (!this.state.wallet || this.state.wallets.walletList.length === 0) {
@@ -155,7 +160,7 @@ export class Home extends Widget {
             try {
                 const mnemonic = await getMnemonic(wallet, r);
                 if (mnemonic) {
-                    popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd: r });
+                    popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd: r ,walletId:wallet.walletId });
                 } else {
                     popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
                 }
@@ -166,5 +171,10 @@ export class Home extends Widget {
 
             close.callback(close.widget);
         });
+    }
+    
+    private registerWalletsFun = () => {
+        this.init();
+        this.paint();
     }
 }

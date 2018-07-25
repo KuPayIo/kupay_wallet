@@ -1,0 +1,52 @@
+.step{
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    position: relative;
+}
+.iconLine{
+    height: 5px;
+    width: 100%;
+    position: absolute;
+    top: 10px;
+    left: 0;
+    background: #DDD;
+}
+.iconLines{
+    height: 5px;
+    width: 50%;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    background: #DDD;
+}
+.iconLinee{
+    height: 5px;
+    width: 50%;
+    position: absolute;
+    top: 10px;
+    left: 0;
+    background: #DDD;
+}
+.stepItem{
+    position: relative;
+    width: 100px;
+    text-align: center;
+}
+.iconSpan{
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius:50%;
+    background: #DDD; 
+}
+
+.iconbox{
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.stepd{
+    background: #000;
+}

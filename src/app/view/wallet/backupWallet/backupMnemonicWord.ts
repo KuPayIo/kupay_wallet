@@ -41,7 +41,7 @@ export class BackupMnemonicWord extends Widget {
     }
     public next() {
         this.ok && this.ok();
-        popNew('app-view-wallet-backupWallet-backupMnemonicWordConfirm', { mnemonic: this.props.mnemonic });
+        popNew('app-view-wallet-backupWallet-backupMnemonicWordConfirm', { mnemonic: this.props.mnemonic ,walletId:this.props.walletId });
     }
     public backPrePage() {
         this.ok && this.ok();

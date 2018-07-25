@@ -49,6 +49,40 @@ export const getCurrentWallet = (wallets) => {
 };
 
 /**
+ * 获取指定id的钱包
+ */
+export const getWalletByWalletId = (wallets,walletId) => {
+    if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
+        return null;
+    }
+    for (let i = 0; i < wallets.walletList.length; i++) {
+        if (wallets.walletList[i].walletId === walletId) {
+            return wallets.walletList[i];
+        }
+    }
+
+    return null;
+};
+
+/**
+ * 获取指定id钱包的index
+ */
+export const getWalletIndexByWalletId = (wallets,walletId) => {
+    let index = -1;
+    if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
+        return -1;
+    }
+    for (let i = 0; i < wallets.walletList.length; i++) {
+        if (wallets.walletList[i].walletId === walletId) {
+            index = i;
+            break;
+        }
+    }
+
+    return index;
+};
+
+/**
  * 获取当前钱包index
  * @param wallets wallets obj
  */
