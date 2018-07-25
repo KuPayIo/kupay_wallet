@@ -1,20 +1,20 @@
-<div wclass="productDetailPage" class="ga-new-page" ev-back-click="goBackPage">
+<div w-class="productDetailPage" class="ga-new-page" ev-back-click="goBackPage">
     <app-components-topBar-topBar>{title:"产品详情"}</app-components-topBar-topBar>
     <div w-class="profit">
-        <p>
+        <p w-class="profitTitle">
             预期年化收益
         </p>
-        <p>
+        <p w-class="profitNum">
             +8.0000%
         </p>
         <div w-class="rules">
             <div>
-                <p>30天</p>
-                <p>认购期限</p>
+                <p w-class="ruleTitle">30天</p>
+                <p w-class="ruleContent">认购期限</p>
             </div>
             <div>
-                <p>0ETH</p>
-                <p>起购金额</p>
+                <p w-class="ruleTitle">0ETH</p>
+                <p w-class="ruleContent">起购金额</p>
             </div>
         </div>
     </div>
@@ -23,7 +23,7 @@
             认购流程
         </div>
         <div w-class="processContent">
-            <div style="width: 100%;">
+            <div w-class="stepBox">
                 <app-view-financialManagement-productDetail-step-step>{step:1,itemList:[{title:"标题1",content:"content1"},{title:"title2",content:"content2"},{title:"title2",content:"content2"}]}</app-components-step-step>
             </div>
         </div>
@@ -34,19 +34,19 @@
                 产品详情
             </div>
             <div w-class="mainDetail">
-                <p>认购币种：
+                <p w-class="detailP">认购币种：
                     <span>BTC</span>
                 </p>
-                <p>收款方式：
+                <p w-class="detailP">收款方式：
                     <span>预期年化收益</span>
                 </p>
-                <p>产品额度：
+                <p w-class="detailP">产品额度：
                     <span>31BTC</span>
                 </p>
-                <p>额度限制：
+                <p w-class="detailP">额度限制：
                     <span>0.00001BTC起购，每人认购无上限</span>
                 </p>
-                <p>时间限制
+                <p w-class="detailP">时间限制
                     <span>即日起到7月20日23：59：59或购完即止</span>
                 </p>
             </div>
@@ -58,13 +58,24 @@
             </div>
             <div w-class="mainInfo">
                 <p w-class="paragraph">
-                    fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。
+                    fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。fairblock理财产品编号00001是面向fairblock用户与资产端撮合的理财产品。
                 </p>
             </div>
         </div>
     </div>
-    <div w-class="surplus">
-        底部块
+    <div style="width: 100%;height: 150px;">
+
+    </div>
+    <div w-class="bottomFixed">
+        <div w-class="Surplus">
+            剩余额度0.00000BTC
+            <div w-class="progressBar">
+                <div w-class="barBackground"></div>
+            </div>
+        </div>
+        <div w-class="butBottom">
+            购买
+        </div>
     </div>
 
 </div>
