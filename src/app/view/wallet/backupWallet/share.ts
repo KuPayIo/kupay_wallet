@@ -41,29 +41,20 @@ export class WalletCreate extends Widget {
 
         // tslint:disable-next-line:no-this-assignment
         const thisObj = this;
+        popNew('app-components-share-share', { text: this.state.part, shareType: ShareToPlatforms.TYPE_TEXT }, () => {
+            // 分享完成后
+            thisObj.state.step++;
+            thisObj.state.part = thisObj.props.shares[thisObj.state.step - 1];
+            thisObj.paint();
 
-        const stp = new ShareToPlatforms();
-        stp.init();
-        stp.shareCode({
-            success: (result) => {
-                // 分享完成后
-                thisObj.state.step++;
-                thisObj.state.part = thisObj.props.shares[thisObj.state.step - 1];
-                thisObj.paint();
-
-                // 分享完成
-                if (thisObj.state.step > thisObj.state.totalSteps) {
-                    popNew('app-components-message-message', { itype: 'success', content: '分享成功', center: true });
-                    thisObj.ok && thisObj.ok();
-                }
-            },
-            fail: (result) => {
-                popNew('app-components-message-message', { itype: 'error', content: '分享失败', center: true });
-            },
-            content: this.state.part,
-            type: ShareToPlatforms.TYPE_TEXT
+            // 分享完成
+            if (thisObj.state.step > thisObj.state.totalSteps) {
+                popNew('app-components-message-message', { itype: 'success', content: '分享成功', center: true });
+                thisObj.ok && thisObj.ok();
+            }
+        }, () => {
+            popNew('app-components-message-message', { itype: 'error', content: '分享失败', center: true });
         });
-
     }
 
 }

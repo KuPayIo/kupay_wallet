@@ -841,22 +841,6 @@ export const copyToClipboard = (copyText) => {
     document.body.removeChild(input);
 };
 
-// 二维码分享
-export const shareToQrcode = (shareText) => {
-    const stp = new ShareToPlatforms();
-    stp.init();
-    stp.shareCode({
-        success: (result) => {
-            alert(result);
-        },
-        fail: (result) => {
-            alert(result);
-        },
-        content: shareText,
-        type: ShareToPlatforms.TYPE_IMG
-    });
-};
-
 /**
  * 获取memery hash
  */

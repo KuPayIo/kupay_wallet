@@ -1,12 +1,13 @@
 /**
  * 收款
  */
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { copyToClipboard,shareToQrcode } from '../../../utils/tools';
+import { copyToClipboard } from '../../../utils/tools';
 
 interface Props {
-    currencyName:string;
+    currencyName: string;
     currencyBalance: string;
     addr: string;
     title?: string;
@@ -45,6 +46,6 @@ export class AddAsset extends Widget {
     }
 
     public shareToFriends() {
-        shareToQrcode(this.props.addr);
+        popNew('app-components-share-share', { text: this.props.addr, shareType: ShareToPlatforms.TYPE_IMG });
     }
 }

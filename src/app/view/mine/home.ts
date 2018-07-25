@@ -27,15 +27,12 @@ export class Home extends Widget {
         let avatar = null;
         let walletName = null;
         let mnemonicBackup = null;
-        if (wallet) {
+        if (wallet&&wallet.length>0) {
             gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             avatar = wallet.avatar;
             walletName = gwlt.nickName;
             mnemonicBackup = gwlt.mnemonicBackup;
         }
-        
-        this.stp = new ShareToPlatforms();
-        this.stp.init();
         this.state = {
             wallets,
             wallet,
@@ -130,15 +127,10 @@ export class Home extends Widget {
     }
 
     public share() {
-        this.stp.shareCode({
-            success: (result) => {
-                alert(result);
-            },
-            fail: (result) => {
-                alert(result);
-            },
-            content: 'This is a test QRCode',
-            type: ShareToPlatforms.TYPE_IMG
+        popNew('app-components-share-share', { text: 'This is a test QRCode', shareType: ShareToPlatforms.TYPE_IMG }, (result) => {
+            alert(result);
+        }, (result) => {
+            alert(result);
         });
     }
     public walletManagementClick() {
