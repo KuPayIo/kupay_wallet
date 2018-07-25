@@ -2,6 +2,7 @@ import { BtcApi } from '../core/btc/api';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
+import { shapeshift } from '../exchange/shapeshift/shapeshift'; 
 import { defaultExchangeRateJson, ethTokenTransferCode, supportCurrencyList } from '../utils/constants';
 import {
     btc2Sat, ethTokenDivideDecimals, getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage, wei2Eth
@@ -29,14 +30,16 @@ export class DataCenter {
 
     public exchangeRateJson: any = defaultExchangeRateJson;
     public currencyList: any[] = supportCurrencyList;
+
+    public shapeShiftCoins:any = [];// shapeShift 支持的币种
     /**
      * 初始化
      */
     public init() {
-
+        this.updateList.push(['shapeShiftCoins']);
         this.updateList.push(['exchangeRate', 'ETH']);
         this.updateList.push(['exchangeRate', 'BTC']);
-
+        
         // 从缓存中获取地址进行初始化
         const addrs = getLocalStorage('addrs');
         if (addrs) {
@@ -179,12 +182,24 @@ export class DataCenter {
                 // case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
                 case 'balance': this.updateBalance(update[1], update[2]); break;
                 case 'exchangeRate': this.exchangeRate(update[1]); break;
-
+                case 'shapeShiftCoins': this.getShapeShiftCoins();
                 default:
             }
         }
     }
+    private getShapeShiftCoins() {
+        shapeshift.coins((err,data) => {
+            if (err) {
+                console.log(err);
 
+                return;
+            }
+            for (const k in data) {
+                this.shapeShiftCoins.push(data[k]);
+            }
+            console.log(this.shapeShiftCoins);
+        });
+    }
     /**
      * 解析交易详情
      */

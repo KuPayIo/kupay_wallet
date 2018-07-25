@@ -1,0 +1,87 @@
+
+.ga-new-page{
+    font-size: 28px;
+    
+}
+.topbar{
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 28px;
+}
+.history{
+    position: absolute;
+    right: 10px;
+}
+.body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 700px;
+    margin: 0 auto;
+}
+.currency-contaier{
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    padding: 30px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.currency-item{
+    width: 100%;
+    height: 130px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e5e5;
+}
+.currency{
+    flex: 1 0 0;
+    margin-left: 20px;
+}
+.choose-out-currency{
+
+}
+.input-father{
+    height: 130px;
+    flex: 1 0 0;
+    margin-left: 20px;
+}
+.available-balance{
+    text-align: right;
+    margin-top: 20px;
+}
+.exchange-msg{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+}
+.min-limit-item{
+    margin-top:20px;
+}
+.max-limit-item{
+    margin-top:20px;
+}
+.min-limit{
+    margin-left: 30px;
+}
+.max-limit{
+    margin-left: 30px;
+}
+.rate{
+    margin-top: 30px;
+    color: red;
+}
+.ok-btn{
+    height: 100px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: yellow;
+    margin-top: 30px;
+}

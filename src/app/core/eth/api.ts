@@ -6,13 +6,13 @@ import { Web3 } from '../thirdparty/web3.min';
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
 /* tslint:disable: no-http-string*/
-// const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/UHhtxDMNBuXoX8OFJKKM'));// 主网
-const web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/UHhtxDMNBuXoX8OFJKKM'));// 测试网
+const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/UHhtxDMNBuXoX8OFJKKM'));// 主网
+// const web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/UHhtxDMNBuXoX8OFJKKM'));// 测试网
 const ETH_CMC_URL = 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY';
-// const ETHSCAN_ROPSTEN_API_URL = 'http://api.etherscan.io/api?module=account&action=txlist&address=';// 主网
-const ETHSCAN_ROPSTEN_API_URL = 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=';// 测试网
-// const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = 'https://api.etherscan.io/api?module=account&action=tokentx';// 主网
-const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx';// 测试网
+const ETHSCAN_ROPSTEN_API_URL = 'http://api.etherscan.io/api?module=account&action=txlist&address=';// 主网
+// const ETHSCAN_ROPSTEN_API_URL = 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=';// 测试网
+const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = 'https://api.etherscan.io/api?module=account&action=tokentx';// 主网
+// const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx';// 测试网
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/

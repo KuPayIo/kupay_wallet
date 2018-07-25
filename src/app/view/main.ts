@@ -15,6 +15,7 @@ import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { generate, getRandomValuesByMnemonic, sha3, toMnemonic } from '../core/genmnemonic';
 import { Mnemonic } from '../core/thirdparty/bip39';
+import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../store/dataCenter';
 import { calcHashValuePromise, getLocalStorage, setLocalStorage } from '../utils/tools';
 
@@ -46,8 +47,9 @@ export const run = (cb): void => {
         addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
     // popNew('app-view-redEnvelope-send-sendRedEnvelope');
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
+    popNew('app-view-currencyExchange-currencyExchange');
     if (cb) cb();
-    test();
+    // test();
 };
 
 /**
@@ -148,4 +150,13 @@ const test = async () => {
     const r = getRandomValuesByMnemonic('english', m);
     console.log(m, r, toMnemonic('english', r));
 
+};
+
+const testShapeShift = () => {
+    const pair = 'btc_ltc';
+    shapeshift.depositLimit(pair, (err, limit) => {
+        console.log(limit); // => '4.41101872'
+    });
+
+    // console.log(shapeshift);
 };
