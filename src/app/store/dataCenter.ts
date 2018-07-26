@@ -226,7 +226,7 @@ export class DataCenter {
             for (const k in data) {
                 this.shapeShiftCoins.push(data[k]);
             }
-            console.log(this.shapeShiftCoins);
+            // console.log(this.shapeShiftCoins);
         });
     }
     /**
