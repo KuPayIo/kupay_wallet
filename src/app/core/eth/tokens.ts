@@ -33,7 +33,7 @@ const ERC20TokensTestnet = {
     YNC: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702'
 };
 
-export const ERC20Tokens = ERC20TokensTestnet;
+export const ERC20Tokens = ERC20TokensMainnet;
 
 // Basic ERC20 interfaces
 export const minABI = [
