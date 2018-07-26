@@ -13,7 +13,7 @@ import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
 import {
     decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals, getAddrById
-    , getCurrentAddrInfo, getCurrentWallet, getLocalStorage, parseAccount, parseDate, resetAddrById, urlParams
+    , getCurrentAddrInfo, getCurrentWallet, getLocalStorage, openBasePage, parseAccount, parseDate, resetAddrById, urlParams
 } from '../../../utils/tools';
 
 interface Props {
@@ -97,7 +97,7 @@ export class AddAsset extends Widget {
     /**
      * 处理下一步
      */
-    public doNext() {
+    public async doNext() {
         if (!this.state.to) {
             popNew('app-components-message-message', { itype: 'warn', content: '请输入收款地址', center: true });
 
@@ -109,53 +109,53 @@ export class AddAsset extends Widget {
             return;
         }
 
-        // tslint:disable-next-line:no-this-assignment
-        const thisObj = this;
+        const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
 
-        popNew('app-components-message-messagebox', {
-            itype: 'prompt', title: '输入密码', placeHolder: '密码', inputType: 'password'
-        }, async (r: any) => {
+        try {
+            const fromAddr = this.props.fromAddr;
+            const toAddr = this.state.to;
+            const gasPrice = this.state.gasPrice;
+            const gasLimit = this.state.gasLimit;
+            const pay = this.state.pay;
+            const info = this.state.info;
+            const currencyName = this.props.currencyName;
+
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
-
-            const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
-            try {
-                let id: any;
-                const fromAddr = thisObj.props.fromAddr;
-                const toAddr = thisObj.state.to;
-                const gasPrice = thisObj.state.gasPrice;
-                const gasLimit = thisObj.state.gasLimit;
-                const pay = thisObj.state.pay;
-                const info = thisObj.state.info;
-                const currencyName = thisObj.props.currencyName;
-                const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, currencyName);
-                if (addrIndex >= 0) {
-                    const wlt = await GlobalWallet.createWlt(this.props.currencyName, r, wallet, addrIndex);
-                    if (this.props.currencyName === 'ETH') {
-                        id = await doEthTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, eth2Wei(pay), info);
-                    } else if (this.props.currencyName === 'BTC') {
-                        id = await doBtcTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, info);
-                    } else if (ERC20Tokens[this.props.currencyName]) {
-                        id = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, currencyName);
-                    }
-
-                    // 打开交易详情界面
-                    thisObj.showTransactionDetails(id);
-                    thisObj.doClose();
-                    this.topContactAdd(this.state.to,this.props.currencyName);
-                }
-            } catch (error) {
-                console.log(error.message);
-                if (error.message.indexOf('insufficient funds') >= 0) {
-                    popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });
-                } else {
-                    popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
-                }
+            let passwd;
+            if (!dataCenter.getHash(wallet.walletId)) {
+                passwd = await openBasePage('app-components-message-messageboxPrompt', {
+                    title: '输入密码', content: '', inputType: 'password'
+                });
             }
+            const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, currencyName);
+            if (addrIndex >= 0) {
+                let id: any;
+                const wlt = await GlobalWallet.createWlt(currencyName, passwd, wallet, addrIndex);
+                if (currencyName === 'ETH') {
+                    id = await doEthTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, eth2Wei(pay), info);
+                } else if (currencyName === 'BTC') {
+                    id = await doBtcTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, info);
+                } else if (ERC20Tokens[currencyName]) {
+                    id = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, currencyName);
+                }
 
-            loading.callback(loading.widget);
-            
-        });
+                // 打开交易详情界面
+                this.showTransactionDetails(id);
+                this.doClose();
+                this.topContactAdd(toAddr, currencyName);
+            }
+        } catch (error) {
+            console.log(error.message);
+            if (error.message.indexOf('insufficient funds') >= 0) {
+                popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });
+            } else {
+                popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
+            }
+        }
+
+        loading.callback(loading.widget);
+
     }
 
     /**
@@ -264,13 +264,13 @@ export class AddAsset extends Widget {
     /**
      * 判断收款地址是否为常用联系人,不是则提示加入常用联系人
      */
-    public topContactAdd(addresse:string,currencyName:string) {
+    public topContactAdd(addresse: string, currencyName: string) {
         if (!currencyName) {
             return;
         }
         let isExist = false;
         const topContacts = dataCenter.getTopContacts(this.props.currencyName);
-        for (let i = 0;i < topContacts.length;i++) {
+        for (let i = 0; i < topContacts.length; i++) {
             const v = topContacts[i];
             if (v.addresse === addresse && v.currencyName === currencyName) {
                 isExist = true;
@@ -283,15 +283,15 @@ export class AddAsset extends Widget {
             return;
         } else {
             // 不存在常用联系人，提示是否添加
-            popNew('app-view-mine-addressManage-messagebox',{
-                mType: 'confirm', title: '是否添加联系人',text:'是否将此收币地址添加为常用地址',input1DefaultValue:addresse
-            },(data) => {
+            popNew('app-view-mine-addressManage-messagebox', {
+                mType: 'confirm', title: '是否添加联系人', text: '是否将此收币地址添加为常用地址', input1DefaultValue: addresse
+            }, (data) => {
                 const addresse = data.addresse;
                 let tags = data.tags;
                 if (!tags) {
                     tags = '默认地址';
                 }
-                dataCenter.addTopContacts(currencyName,addresse,tags);
+                dataCenter.addTopContacts(currencyName, addresse, tags);
                 popNew('app-components-message-message', { itype: 'success', content: '添加常用联系人成功！', center: true });
             });
         }

@@ -19,7 +19,7 @@
             <img w-class="ga-item-arrow" src="../../../res/image/btn_right_arrow.png" />
         </div>
 
-        <div w-class="ga-item">
+        <div w-class="ga-item"> 
             {{if !it1.showPswTips}}
             <span w-class="ga-item-text">********</span>
             {{else}}

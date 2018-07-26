@@ -102,7 +102,6 @@ export class WalletImport extends Widget {
         } else {
             popNew('app-view-app');
         }
-        // popNew('app-view-wallet-backupWallet-backupWallet');
 
     }
 
