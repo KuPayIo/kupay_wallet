@@ -24,7 +24,7 @@
         </div>
         <div w-class="processContent">
             <div w-class="stepBox">
-                <app-view-financialManagement-productDetail-step-step>{step:1,itemList:[{title:"标题1",content:"content1"},{title:"title2",content:"content2"},{title:"title2",content:"content2"}]}</app-components-step-step>
+                <app-view-financialManagement-productDetail-step-step>{step:1,itemList:[{title:"申购日",content:"今日"},{title:"起息日",content:"2018-08-16"},{title:"到期日",content:"2018-8-30"}]}</app-components-step-step>
             </div>
         </div>
     </div>
@@ -63,7 +63,7 @@
             </div>
         </div>
     </div>
-    <div style="width: 100%;height: 150px;">
+    <div style="width: 100%;height: 185px;">
 
     </div>
     <div w-class="bottomFixed">
@@ -73,7 +73,7 @@
                 <div w-class="barBackground"></div>
             </div>
         </div>
-        <div w-class="butBottom">
+        <div w-class="butBottom active">
             购买
         </div>
     </div>
