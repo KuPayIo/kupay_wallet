@@ -73,7 +73,7 @@
                 <div w-class="barBackground"></div>
             </div>
         </div>
-        <div w-class="butBottom active">
+        <div w-class="butBottom active" on-tap="buyClicked">
             购买
         </div>
     </div>
