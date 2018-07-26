@@ -7,7 +7,6 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
@@ -15,11 +14,9 @@ import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { generate, getRandomValuesByMnemonic, sha3, toMnemonic } from '../core/genmnemonic';
-import { Mnemonic } from '../core/thirdparty/bip39';
-import { exchangeManage } from '../exchange/manage';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../store/dataCenter';
-import { calcHashValuePromise, getLocalStorage, setLocalStorage } from '../utils/tools';
+import { getLocalStorage, setLocalStorage } from '../utils/tools';
 
 // ============================== 导出
 

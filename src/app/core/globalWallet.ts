@@ -4,7 +4,7 @@
 import { dataCenter } from '../store/dataCenter';
 import { btcNetwork, defaultEthToken, lang, strength } from '../utils/constants';
 import { calcHashValuePromise, decrypt, getDefaultAddr, getMnemonic, u8ArrayToHexstr } from '../utils/tools';
-import { Addr, CurrencyRecord } from '../view/interface';
+import { Addr, CurrencyRecord, Wallet } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
 import { ERC20Tokens } from './eth/tokens';
@@ -62,9 +62,11 @@ export class GlobalWallet {
         return gwlt;
     }
 
+    /**
+     * 通过助记词导入钱包
+     */
     public static async fromMnemonic(mnemonic: string, passwd: string, passphrase?: string): Promise<GlobalWallet> {
-        const hash = await calcHashValuePromise(passwd, 'somesalt');
-
+        const hash = await calcHashValuePromise(passwd, 'somesalt', null);
         const gwlt = new GlobalWallet();
 
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
@@ -115,7 +117,7 @@ export class GlobalWallet {
      * @param passphrase passphrase
      */
     public static async generate(passwd: string, walletName: string, passphrase?: string, vault?: Uint8Array) {
-        const hash = await calcHashValuePromise(passwd, 'somesalt');
+        const hash = await calcHashValuePromise(passwd, 'somesalt', null);
         const gwlt = new GlobalWallet();
         gwlt._nickName = walletName;
         vault = vault || generateRandomValues(strength);
@@ -156,7 +158,7 @@ export class GlobalWallet {
         return gwlt;
     }
     public static async fromSeedEthToken(tokenName: string, contractAddress: string, passwd: string, seed: string) {
-        // const hash = await calcHashValuePromise(passwd, 'somesalt');
+        // const hash = await calcHashValuePromise(passwd, 'somesalt',null);
 
         const _seed = cipher.decrypt(passwd, seed);
         const gaiaWallet = GaiaWallet.fromSeed(_seed, lang);
@@ -438,13 +440,16 @@ export class GlobalWallet {
         return JSON.stringify(wlt);
     }
 
-    public async passwordChange(oldPsw: string, newPsw: string) {
+    public async passwordChange(oldPsw: string, newPsw: string, walletId: string) {
         // todo 这里需要处理修改密码
-        const oldHash = await calcHashValuePromise(oldPsw, 'somesalt');
-        const newHash = await calcHashValuePromise(newPsw, 'somesalt');
+        const oldHash = await calcHashValuePromise(oldPsw, 'somesalt', walletId);
+        const newHash = await calcHashValuePromise(newPsw, 'somesalt', null);
         // console.log('passwordChange hash', oldHash, this._vault, oldPsw, newHash, newPsw);
 
         const oldVault = cipher.decrypt(oldHash, this._vault);
         this._vault = cipher.encrypt(newHash, oldVault);
+
+        // 更新hash
+        dataCenter.setHash(walletId, newHash);
     }
 }

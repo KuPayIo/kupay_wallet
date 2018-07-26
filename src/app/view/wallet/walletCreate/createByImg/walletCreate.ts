@@ -9,7 +9,9 @@ import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
 } from '../../../../utils/account';
 import { defalutShowCurrencys } from '../../../../utils/constants';
-import { calcHashValuePromise, encrypt, getAddrsAll, getLocalStorage, getXOR, openBasePage, setLocalStorage } from '../../../../utils/tools';
+import {
+    calcHashValuePromise, encrypt, getAddrsAll, getLocalStorage, getXOR, openBasePage, setLocalStorage
+} from '../../../../utils/tools';
 import { Addr, Wallet } from '../../../interface';
 
 interface Props {
@@ -158,7 +160,7 @@ export class WalletCreate extends Widget {
 
 const imgToHash = async (choosedImg, inputWords) => {
     const sha3Hash = sha3(choosedImg + inputWords, false);
-    const hash = await calcHashValuePromise(sha3Hash, 'somesalt');
+    const hash = await calcHashValuePromise(sha3Hash, 'somesalt', null);
     const sha3Hash1 = sha3(hash, true);
     const len = sha3Hash1.length;
     // 生成助记词的随机数仅需要128位即可，这里对256位随机数进行折半取异或的处理

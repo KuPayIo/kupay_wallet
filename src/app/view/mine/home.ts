@@ -6,8 +6,9 @@ import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
+import { dataCenter } from '../../store/dataCenter';
 import { register } from '../../store/store';
-import { getCurrentWallet, getLocalStorage, getMnemonic } from '../../utils/tools';
+import { getCurrentWallet, getLocalStorage, getMnemonic, openBasePage } from '../../utils/tools';
 
 export class Home extends Widget {
     public stp: ShareToPlatforms;
@@ -23,11 +24,11 @@ export class Home extends Widget {
         // 获取钱包显示头像
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        let gwlt = null;
+        let gwlt: GlobalWallet = null;
         let avatar = null;
         let walletName = null;
         let mnemonicBackup = null;
-        if (wallet&&wallet.length>0) {
+        if (wallet) {
             gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             avatar = wallet.avatar;
             walletName = gwlt.nickName;
@@ -139,34 +140,37 @@ export class Home extends Widget {
 
             return;
         }
-        popNew('app-view-mine-walletManagement-walletManagement',{ walletId:this.state.wallet.walletId });
+        popNew('app-view-mine-walletManagement-walletManagement', { walletId: this.state.wallet.walletId });
     }
-    public backupClick() {
+    public async backupClick() {
         if (!this.state.wallet || this.state.wallets.walletList.length === 0) {
             popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
 
             return;
         }
-        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, async (r) => {
+        const close = popNew('pi-components-loading-loading', { text: '导出中...' });
+        try {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
-            const close = popNew('pi-components-loading-loading', { text: '导出中...' });
-            try {
-                const mnemonic = await getMnemonic(wallet, r);
-                if (mnemonic) {
-                    popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd: r ,walletId:wallet.walletId });
-                } else {
-                    popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
-                }
-            } catch (error) {
-                console.log(error);
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入111', center: true });
+            let passwd;
+            if (!dataCenter.getHash(wallet.walletId)) {
+                passwd = await openBasePage('app-components-message-messageboxPrompt', {
+                    title: '输入密码', content: '', inputType: 'password'
+                });
             }
-
-            close.callback(close.widget);
-        });
+            const mnemonic = await getMnemonic(wallet, passwd);
+            if (mnemonic) {
+                popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: wallet.walletId });
+            } else {
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+            }
+        } catch (error) {
+            console.log(error);
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+        }
+        close.callback(close.widget);
     }
-    
+
     private registerWalletsFun = () => {
         this.init();
         this.paint();

@@ -71,9 +71,13 @@ export class AddAsset extends Widget {
     }
 
     private async doAddAddr() {
-        const passwd = await openBasePage('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' });
+
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
+        let passwd;
+        if (!dataCenter.getHash(wallet.walletId)) {
+            passwd = await openBasePage('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' });
+        }
         const mnemonic = await getMnemonic(wallet, passwd);
         if (mnemonic) {
             const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
