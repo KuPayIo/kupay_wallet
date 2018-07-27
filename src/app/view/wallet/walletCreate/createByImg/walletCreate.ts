@@ -94,7 +94,6 @@ export class WalletCreate extends Widget {
         try {
             const hash: any = await imgToHash(this.props.choosedImg, this.props.inputWords);
             await this.createWallet(hash);
-            // await openBasePage('app-view-wallet-walletCreate-createComplete');
             popNew('app-view-wallet-walletCreate-createComplete');
             this.ok && this.ok();
         } catch (error) {

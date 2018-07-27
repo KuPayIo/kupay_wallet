@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
-import { register } from '../../../store/store';
+import { register, unregister } from '../../../store/store';
 import { getCurrentWallet, getLocalStorage, getMnemonic, getWalletByWalletId, openBasePage } from '../../../utils/tools';
 
 export class WalletList extends Widget {
@@ -17,6 +17,11 @@ export class WalletList extends Widget {
         super.create();
         register('wallets', this.registerWalletsFun);
         this.init();
+    }
+    public destroy() {
+        unregister('wallets', this.registerWalletsFun);
+
+        return super.destroy();
     }
     public init() {
         // 获取钱包显示头像
