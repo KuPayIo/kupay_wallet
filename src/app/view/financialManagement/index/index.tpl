@@ -3,50 +3,40 @@
         理财
     </div>
     <div w-class="assetsDetail">
-        <div w-class="flexItem boxBorderRight">
+        <div w-class="flexItem boxBorderRight" on-tap="assestsClicked">
             <img src="../../../res/image/btn_right_arrow.png" w-class="arrow" />
-            <p w-class="assetsTitle">持有资产（ETH）</p>
-            <p w-class="assetsContent">0.0000</p>
+            <p w-class="assetsTitle">持有资产（MPT）</p>
+            <p w-class="assetsContent">{{it1.assets}}</p>
         </div>
-        <div w-class="flexItem">
+        <div w-class="flexItem" on-tap="incomeClicked">
             <img src="../../../res/image/btn_right_arrow.png" w-class="arrow" />
             <p w-class="assetsTitle">累计收益</p>
-            <p w-class="assetsContent">0.0000</p>
+            <p w-class="assetsContent">{{it1.cumulativeIncome}}</p>
         </div>
     </div>
     <div w-class="productList">
         <div w-class="listTitle">
             热门推荐
         </div>
+        {{for i,v of it1.productList}}
         <div w-class="listItems" on-tap="toDetail">
             <div w-class="listflexleft">
-                <p w-class="expectedEarnings">+8.0000%</p>
-                <p w-class="tip">预期年化收益</p>
+                <p w-class="expectedEarnings">{{v.expectedEarnings}}</p>
+                <p w-class="tip">{{v.tip}}</p>
             </div>
             <div w-class="listflexright">
                 <div>
-                    <p w-class="title">币生币MPT增币</p>
+                    <p w-class="title">{{v.title}}</p>
+                    {{if v.isSellOut}}
                     <span w-class="tag">售罄</span>
+                    {{end}}
                 </div>
                 <p w-class="describe">
-                    新人专享收益稳，1000MPT起投，历史从未亏损
+                    {{v.content}}
                 </p>
             </div>
         </div>
-        <div w-class="listItems" on-tap="toDetail">
-            <div w-class="listflexleft">
-                <p w-class="expectedEarnings">+10.0000%</p>
-                <p w-class="tip">预期年化收益</p>
-            </div>
-            <div w-class="listflexright">
-                <div>
-                    <p w-class="title">币生币MPT增币</p>
-                    <span w-class="tag">售罄</span>
-                </div>
-                <p w-class="describe">
-                    新人专享收益稳，1000MPT起投，历史从未亏损
-                </p>
-            </div>
-        </div>
+        {{end}}
+
     </div>
 </div>

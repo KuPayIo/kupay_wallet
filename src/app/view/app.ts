@@ -18,23 +18,39 @@ export class App extends Widget {
                 icon: 'wallet_icon.png',
                 iconActive: 'wallet_icon_active.png',
                 components: 'app-view-wallet-home'
-            }, {
+            }, 
+            {
+                text: '云端',
+                icon: 'financialManagement_icon.png',
+                iconActive: 'financialManagement_icon_active.png',
+                components: 'app-view-financialManagement-index-index'
+            },
+            {
+                text: '聊天2',
+                icon: 'financialManagement_icon.png',
+                iconActive: 'financialManagement_icon_active.png',
+                components: 'app-view-financialManagement-index-index'
+                // components: 'app-view-financialManagement-home'
+            },
+            {
                 text: '理财',
                 icon: 'financialManagement_icon.png',
                 iconActive: 'financialManagement_icon_active.png',
                 components: 'app-view-financialManagement-index-index'
                 // components: 'app-view-financialManagement-home'
-            }, {
-                text: '交易所',
-                icon: 'exchange_icon.png',
-                iconActive: 'exchange_icon_active.png',
-                components: 'app-view-exchange-home'
-            }, {
-                text: '应用',
-                icon: 'application_icon.png',
-                iconActive: 'application_icon_active.png',
-                components: 'app-view-application-home'
-            }, {
+            }, 
+            // {
+            //     text: '交易所',
+            //     icon: 'exchange_icon.png',
+            //     iconActive: 'exchange_icon_active.png',
+            //     components: 'app-view-exchange-home'
+            // }, {
+            //     text: '应用',
+            //     icon: 'application_icon.png',
+            //     iconActive: 'application_icon_active.png',
+            //     components: 'app-view-application-home'
+            // }, 
+            {
                 text: '我的',
                 icon: 'mine_icon.png',
                 iconActive: 'mine_icon_active.png',
