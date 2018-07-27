@@ -1,7 +1,7 @@
 <div w-class="purchase" id="purchase" class="ga-new-page" ev-back-click="goBackPage">
     <app-components-topBar-topBar>{title:"认购额度"}</app-components-topBar-topBar>
     <div w-class="productType">
-        理财产品MTP理财产品第001期-1天（剩余额度0.5BTC）
+        理财产品MPT理财产品第001期-1天（剩余额度0MPT）
     </div>
     <div w-class="purchaseBox">
         <div w-class="whiteArea">

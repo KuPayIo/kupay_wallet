@@ -25,11 +25,11 @@
             </div>
             <div w-class="listflexright">
                 <div>
-                    <p w-class="title">币生币MTP增币</p>
+                    <p w-class="title">币生币MPT增币</p>
                     <span w-class="tag">售罄</span>
                 </div>
                 <p w-class="describe">
-                    新人专享收益稳，1000MTP起投，历史从未亏损
+                    新人专享收益稳，1000MPT起投，历史从未亏损
                 </p>
             </div>
         </div>
@@ -40,11 +40,11 @@
             </div>
             <div w-class="listflexright">
                 <div>
-                    <p w-class="title">币生币MTP增币</p>
+                    <p w-class="title">币生币MPT增币</p>
                     <span w-class="tag">售罄</span>
                 </div>
                 <p w-class="describe">
-                    新人专享收益稳，1000MTP起投，历史从未亏损
+                    新人专享收益稳，1000MPT起投，历史从未亏损
                 </p>
             </div>
         </div>
