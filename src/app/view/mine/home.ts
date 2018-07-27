@@ -105,11 +105,6 @@ export class Home extends Widget {
                 return;
             }
         }
-        if (index === this.state.mineList.length - 1) {
-            this.share();
-
-            return;
-        }
         popNew(this.state.mineList[index].components, {}, (home) => {
             if (home) {
                 notify(this.tree, 'ev-change-tab', { index: 0 });
