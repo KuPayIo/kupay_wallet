@@ -3,7 +3,7 @@
  */
 import { dataCenter } from '../store/dataCenter';
 import { btcNetwork, lang, strength } from '../utils/constants';
-import { calcHashValuePromise, getDefaultAddr, getMnemonic, u8ArrayToHexstr } from '../utils/tools';
+import { calcHashValuePromise, getMnemonic, u8ArrayToHexstr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
@@ -280,129 +280,6 @@ export class GlobalWallet {
 
         // 更新hash
         dataCenter.setHash(walletId, newHash);
-    }
-
-    /**********************************************************
-     * 废弃的
-     */
-    private async fromSeedEthToken(tokenName: string, contractAddress: string, passwd: string, seed: string) {
-        // const hash = await calcHashValuePromise(passwd, 'somesalt',null);
-
-        const _seed = cipher.decrypt(passwd, seed);
-        const gaiaWallet = GaiaWallet.fromSeed(_seed, lang);
-        const cnt = await gaiaWallet.scanTokenUsedAddress(contractAddress);
-        const currencyRecord: CurrencyRecord = {
-            currencyName: tokenName,
-            currentAddr: gaiaWallet.address,
-            addrs: [gaiaWallet.address],
-            updateAddr: false
-        };
-        const firstAddr: Addr = dataCenter.initAddr(gaiaWallet.address, tokenName);
-        const addrs: Addr[] = [];
-        addrs.push(firstAddr);
-
-        for (let i = 1; i < cnt; i++) {
-            const address = gaiaWallet.selectAddress(i);
-            currencyRecord.addrs.push(address);
-            const addr: Addr = dataCenter.initAddr(address, tokenName);
-            addrs.push(addr);
-        }
-
-        return {
-            currencyRecord,
-            addrs
-        };
-    }
-
-    private async fromMnemonicETH(mnemonic: string) {
-        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-        const cnt = await gaiaWallet.scanUsedAddress();
-        const currencyRecord: CurrencyRecord = {
-            currencyName: 'ETH',
-            currentAddr: gaiaWallet.address,
-            addrs: [gaiaWallet.address],
-            updateAddr: false
-        };
-        const firstAddr: Addr = dataCenter.initAddr(gaiaWallet.address, 'ETH');
-        const addrs: Addr[] = [];
-        addrs.push(firstAddr);
-
-        for (let i = 1; i < cnt; i++) {
-            const address = gaiaWallet.selectAddress(i);
-            currencyRecord.addrs.push(address);
-            const addr: Addr = dataCenter.initAddr(address, 'ETH');
-            addrs.push(addr);
-        }
-
-        return {
-            currencyRecord,
-            addrs
-        };
-    }
-
-    private async fromMnemonicEthToken(tokenName: string, contractAddress: string, mnemonic: string) {
-        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-        const cnt = await gaiaWallet.scanTokenUsedAddress(contractAddress);
-        const currencyRecord: CurrencyRecord = {
-            currencyName: tokenName,
-            currentAddr: gaiaWallet.address,
-            addrs: [gaiaWallet.address],
-            updateAddr: false
-        };
-        const firstAddr: Addr = dataCenter.initAddr(gaiaWallet.address, tokenName);
-        const addrs: Addr[] = [];
-        addrs.push(firstAddr);
-
-        for (let i = 1; i < cnt; i++) {
-            const address = gaiaWallet.selectAddress(i);
-            currencyRecord.addrs.push(address);
-            const addr: Addr = dataCenter.initAddr(address, tokenName);
-            addrs.push(addr);
-        }
-
-        return {
-            currencyRecord,
-            addrs
-        };
-    }
-
-    private async fromMnemonicBTC(mnemonic: string) {
-        // todo 测试阶段，使用测试链，后续改为主链
-        const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
-        btcWallet.unlock();
-        const cnt = await btcWallet.scanUsedAddress();
-        const address = btcWallet.derive(0);
-
-        const currencyRecord: CurrencyRecord = {
-            currencyName: 'BTC',
-            currentAddr: address,
-            addrs: [address],
-            updateAddr: false
-        };
-
-        const firstAddr: Addr = dataCenter.initAddr(address, 'BTC');
-
-        const addrs: Addr[] = [];
-        addrs.push(firstAddr);
-
-        for (let i = 1; i < cnt; i++) {
-            const address = btcWallet.derive(i);
-            currencyRecord.addrs.push(address);
-            const addr: Addr = dataCenter.initAddr(address, 'BTC');
-            addrs.push(addr);
-        }
-        btcWallet.lock();
-
-        return {
-            currencyRecord,
-            addrs
-        };
-    }
-
-    private exportSeed(passwd: string): string {
-        // todo 这里处理导出种子
-        return '';
-        // return cipher.decrypt(passwd, this._seed);
     }
 
 }
