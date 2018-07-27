@@ -35,3 +35,7 @@
     font-size: 20px;
     margin-top: 10px;
 }
+.iconCenter{
+    width: 80px;
+    height: 80px;
+}
