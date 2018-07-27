@@ -1,12 +1,15 @@
 import { BtcApi } from '../core/btc/api';
+import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
-import { defaultExchangeRateJson, ethTokenTransferCode, supportCurrencyList } from '../utils/constants';
+import { btcNetwork, defaultExchangeRateJson, ethTokenTransferCode, lang, supportCurrencyList } from '../utils/constants';
 import {
-    btc2Sat, ethTokenDivideDecimals, getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage, wei2Eth
+    btc2Sat, ethTokenDivideDecimals, getAddrsByCurrencyName, getCurrentWallet, getDefaultAddr, getLocalStorage, getMnemonic,
+    sat2Btc, setLocalStorage, wei2Eth
 } from '../utils/tools';
+import { Addr, CurrencyRecord, Wallet } from '../view/interface';
 /**
  * 创建事件处理器表
  * @example
@@ -62,6 +65,19 @@ export class DataCenter {
 
         // 启动定时器更新
         if (!this.timerRef) this.openCheck();
+    }
+
+    /**
+     * 初始化地址对象
+     */
+    public initAddr(address: string, currencyName: string, addrName?: string): Addr {
+        return {
+            addr: address,
+            addrName: addrName || getDefaultAddr(address),
+            record: [],
+            balance: 0,
+            currencyName: currencyName
+        };
     }
     /**
      * addAddr
@@ -199,8 +215,47 @@ export class DataCenter {
                 case 'shapeShiftCoins': this.getShapeShiftCoins();
                 default:
             }
+
+            return;
+        }
+
+        // 检查地址--放于最后一步
+        this.checkAddr();
+    }
+
+    private async checkAddr() {
+        const wallets = getLocalStorage('wallets');
+        const list = [];
+        wallets.walletList.forEach((v, i) => {
+            if (dataCenter.getHash(v.walletId)) {
+                v.currencyRecords.forEach((v1, i1) => {
+                    if (!v1.updateAddr) list.push([i, i1]);
+                });
+            }
+        });
+
+        if (list[0]) {
+            let addrs = getLocalStorage('addrs');
+            const wallet = wallets.walletList[list[0][0]];
+            const currencyRecord: CurrencyRecord = wallet.currencyRecords[list[0][1]];
+            console.log('checkAddr', currencyRecord.currencyName);
+            let addAddrs;
+            if (currencyRecord.currencyName === 'ETH') {
+                addAddrs = await this.checkEthAddr(wallet, currencyRecord);
+            } else if (currencyRecord.currencyName === 'BTC') {
+                addAddrs = await this.checkBtcAddr(wallet, currencyRecord);
+            } else if (ERC20Tokens[currencyRecord.currencyName]) {
+                addAddrs = await this.checkEthERC20TokenAddr(wallet, currencyRecord);
+            }
+            if (addAddrs.length > 0) {
+                addrs = addrs.concat(addAddrs);
+                setLocalStorage('addrs', list, false);
+            }
+            currencyRecord.updateAddr = true;
+            setLocalStorage('wallets', wallets, true);
         }
     }
+
     private getShapeShiftCoins() {
         shapeshift.coins((err, data) => {
             if (err) {
@@ -457,6 +512,67 @@ export class DataCenter {
         const trans = transactions.filter(trans => existedAddrs.indexOf(trans.addr) >= 0);
         setLocalStorage('transactions', trans, notify);
     }
+
+    /**
+     * 检查eth地址
+     */
+    private async checkEthAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
+        const mnemonic = await getMnemonic(wallet, '');
+        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
+        const cnt = await gaiaWallet.scanUsedAddress();
+        const addrs: Addr[] = [];
+
+        for (let i = 1; i < cnt; i++) {
+            const address = gaiaWallet.selectAddress(i);
+            currencyRecord.addrs.push(address);
+            const addr: Addr = this.initAddr(address, 'ETH');
+            addrs.push(addr);
+        }
+
+        return addrs;
+    }
+
+    /**
+     * 检查btc地址
+     */
+    private async checkBtcAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
+        const mnemonic = await getMnemonic(wallet, '');
+        const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
+        btcWallet.unlock();
+        const cnt = await btcWallet.scanUsedAddress();
+
+        const addrs: Addr[] = [];
+
+        for (let i = 1; i < cnt; i++) {
+            const address = btcWallet.derive(i);
+            currencyRecord.addrs.push(address);
+            const addr: Addr = this.initAddr(address, 'BTC');
+            addrs.push(addr);
+        }
+        btcWallet.lock();
+
+        return addrs;
+    }
+
+    /**
+     * 检查eth erc20 token地址
+     */
+    private async checkEthERC20TokenAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
+        const mnemonic = await getMnemonic(wallet, '');
+        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
+        const cnt = await gaiaWallet.scanTokenUsedAddress(ERC20Tokens[currencyRecord.currencyName]);
+        const addrs: Addr[] = [];
+
+        for (let i = 1; i < cnt; i++) {
+            const address = gaiaWallet.selectAddress(i);
+            currencyRecord.addrs.push(address);
+            const addr: Addr = this.initAddr(address, currencyRecord.currencyName);
+            addrs.push(addr);
+        }
+
+        return addrs;
+    }
+
 }
 
 // ============================================ 立即执行

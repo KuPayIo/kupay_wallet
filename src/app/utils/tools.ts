@@ -15,7 +15,7 @@ import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
-import { lang, lockScreenSalt,supportCurrencyList } from './constants';
+import { lang, lockScreenSalt, supportCurrencyList } from './constants';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
@@ -464,10 +464,9 @@ export const addNewAddr = (currencyName, address, addrName) => {
     const wallet = getCurrentWallet(wallets);
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
-    addrName = addrName || getDefaultAddr(address);
     currencyRecord.addrs.push(address);
     const list: Addr[] = getLocalStorage('addrs') || [];
-    const newAddrInfo: Addr = { addr: address, addrName, record: [], balance: 0, currencyName };
+    const newAddrInfo: Addr = dataCenter.initAddr(address, currencyName, addrName);
     list.push(newAddrInfo);
     currencyRecord.currentAddr = address;
 
@@ -916,7 +915,7 @@ export const currencyExchangeAvailable = () => {
     const currencyArr = [];
     for (let i = 0; i < supportCurrencyList.length; i++) {
         currencyArr.push(supportCurrencyList[i].name);
-    } 
+    }
 
     return shapeshiftCoins.filter(item => {
         return item.status === 'available' && currencyArr.indexOf(item.symbol) >= 0;

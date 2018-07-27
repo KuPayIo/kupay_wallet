@@ -14,7 +14,7 @@ export class Home extends Widget {
     }
     public init() {
         this.state = {
-            menuList: ['ETH', 'BTC', 'EOS'],
+            menuList: ['ETH', 'BTC'],
             resultList: [],
             initResultList: [
                 [

@@ -33,7 +33,6 @@ export class CreateComplete extends Widget {
         this.ok && this.ok();
     }
     public chooseImg() {
-        // this.trigger();// 触发input file输入框点击事件
         console.log('选择图片');
         const close = popNew('pi-components-loading-loading', { text: '导入中...' });
 
@@ -62,31 +61,12 @@ export class CreateComplete extends Widget {
             max: 1
         });
     }
-    /**
-     * 
-     */
-    public change(e: any) {
-        // todo
-
-        // this.reader.onload = (r) => {
-        //     const imgBase64Data = r.currentTarget.result;
-        //     const img = document.getElementById('choosedImg');
-        //     img.src = imgBase64Data;
-        //     this.state.choosedImg = true;
-        //     this.state.imgBase64Data = imgBase64Data;
-        //     this.paint();
-        // };
-        // this.reader.readAsDataURL(e.target.files[0]);
-
-    }
 
     public inputIng(event: any) {
         const currentValue = event.currentTarget.value;
         this.state.inputWords = currentValue;
     }
     public nextStep() {
-        // todo 临时数据
-        this.state.choosedImg = '../../app/res/image/banner2.png';
         if (this.state.choosedImg === false) {
             popNew('app-components-message-messagebox', { itype: 'message', title: '提示', content: '请选择图片' });
 
@@ -102,31 +82,18 @@ export class CreateComplete extends Widget {
         img.onload = () => {
             const ab = drawImg(img);
             const r = ahash(new Uint8Array(ab), img.width, img.height, 4);
-
-            this.removeImg();
             popNew('app-view-wallet-walletCreate-createByImg-walletCreate', {
                 choosedImg: r, inputWords: this.state.inputWords
             });
             this.ok && this.ok();
 
         };
-        img.src = this.state.choosedImg;
+        img.src = this.state.imgBase64Data;
 
     }
     public removeImg() {
         this.state.choosedImg = false;
-        // document.getElementById('hideForm').reset();
         this.paint();
     }
 
-    private trigger() {
-        // IE
-        if (document.all) {
-            document.getElementById('imgInput').click();
-        } else {
-            const e = document.createEvent('MouseEvents');
-            e.initEvent('click', true, true);              // 这里的click可以换成你想触发的行为
-            document.getElementById('imgInput').dispatchEvent(e);   // 这里的clickME可以换成你想触发行为的DOM结点
-        }
-    }
 }

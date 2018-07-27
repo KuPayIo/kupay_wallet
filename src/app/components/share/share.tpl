@@ -22,5 +22,6 @@
             </div>
             {{end}}
         </div>
+        <div w-class="ga-share-cancel" on-tap="backPrePage">取消分享</div>
     </div>
 </div>
