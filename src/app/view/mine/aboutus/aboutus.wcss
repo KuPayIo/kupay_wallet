@@ -27,7 +27,7 @@
     flex: 1 0 0;
     margin-left: 2%;
     font-size: 32px;
-    color: #ccc;
+    color: #203260;
 }
 .ga-item-arrow{
     width: 28px;

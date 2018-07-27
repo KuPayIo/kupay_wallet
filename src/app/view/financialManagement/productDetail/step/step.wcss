@@ -5,48 +5,39 @@
     justify-content: center;
     position: relative;
 }
-.iconLine{
-    height: 5px;
-    width: 100%;
-    position: absolute;
-    top: 10px;
-    left: 0;
-    background: #DDD;
-}
-.iconLines{
-    height: 5px;
-    width: 50%;
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    background: #DDD;
-}
-.iconLinee{
-    height: 5px;
-    width: 50%;
-    position: absolute;
-    top: 10px;
-    left: 0;
-    background: #DDD;
-}
 .stepItem{
-    position: relative;
-    width: 100px;
+    flex-basis: 50%;
     text-align: center;
+}
+.iconbox{
+    position: relative;
 }
 .iconSpan{
     display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius:50%;
-    background: #DDD; 
-}
-
-.iconbox{
+    height: 20px;
+    width: 20px;
+    background: #ddd;
+    border-radius: 50%;
     position: relative;
+    z-index: 1;
+}
+.iconLine{
+    display: inline-block;
+    height: 5px;
+    width: 100%;
+    position: absolute;
     left: 50%;
-    transform: translateX(-50%);
+    top: 10px;
+    background: #DDD;
 }
 .stepd{
-    background: #000;
+    background: #1A70DD;
+}
+.title{
+    font-size: 24px;
+    margin-top: 10px; 
+}
+.content{
+    font-size: 24px;
+    margin-top: 10px;
 }

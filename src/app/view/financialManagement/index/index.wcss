@@ -1,0 +1,95 @@
+.index{
+    color: #203260;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.assetsDetail{
+    letter-spacing: 5px;
+    padding: 50px 0;
+    display: flex;
+    background: #1A70DD;
+}
+.flexItem{
+    flex-basis: 50%;
+    padding: 0 30px;
+    color: #FFFFFF;
+    position: relative;
+}
+.boxBorderRight{
+    border-right: 1px solid #aaa;
+}
+.topBar{
+    height: 80px;
+    font-size: 36px;
+    color: #203260;
+    line-height: 80px;
+    text-align: center;
+}
+.assetsTitle{
+    font-size: 28px;
+}
+.assetsContent{
+    font-size: 36px;
+    margin-top: 20px;
+}
+.arrow{
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    margin-right: 30px;
+}
+.productList{
+    margin-top: 30px;
+    padding: 30px;
+    background: #fff; 
+}
+.listTitle{
+    font-size: 32px;
+}
+.listItems{
+    display: flex;
+    margin-top:30px; 
+}
+.listflexleft{
+    width: 30%;
+}
+.listflexright{
+    width: 70%;
+}
+.expectedEarnings{
+    font-size: 32px;
+}
+.tip{
+    font-size: 20px;
+    margin-top:20px; 
+}
+.title{
+    font-size: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 50%;
+    display: inline-block;
+}
+.describe{
+    font-size: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    margin-top:20px; 
+}
+.tag{
+    font-size: 22px;
+    line-height: 32px;
+    vertical-align: top;
+    padding: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background: #aaa;
+    color: #fff;
+    float: right;
+    margin-right:30px; 
+}
