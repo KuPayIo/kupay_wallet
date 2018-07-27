@@ -22,7 +22,8 @@ export class App extends Widget {
                 text: '理财',
                 icon: 'financialManagement_icon.png',
                 iconActive: 'financialManagement_icon_active.png',
-                components: 'app-view-financialManagement-home'
+                components: 'app-view-financialManagement-index-index'
+                // components: 'app-view-financialManagement-home'
             }, {
                 text: '交易所',
                 icon: 'exchange_icon.png',

@@ -33,5 +33,20 @@
                 </p>
             </div>
         </div>
+        <div w-class="listItems" on-tap="toDetail">
+            <div w-class="listflexleft">
+                <p w-class="expectedEarnings">+10.0000%</p>
+                <p w-class="tip">预期年化收益</p>
+            </div>
+            <div w-class="listflexright">
+                <div>
+                    <p w-class="title">币生币MTP增币</p>
+                    <span w-class="tag">售罄</span>
+                </div>
+                <p w-class="describe">
+                    新人专享收益稳，1000MTP起投，历史从未亏损
+                </p>
+            </div>
+        </div>
     </div>
 </div>
