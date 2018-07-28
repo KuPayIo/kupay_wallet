@@ -66,7 +66,7 @@ export class GlobalWallet {
      * 通过助记词导入钱包
      */
     public static async fromMnemonic(mnemonic: string, passwd: string, passphrase?: string): Promise<GlobalWallet> {
-        const hash = await calcHashValuePromise(passwd, 'somesalt', null);
+        const hash = await calcHashValuePromise(passwd, dataCenter.salt, null);
         const gwlt = new GlobalWallet();
 
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
@@ -91,7 +91,7 @@ export class GlobalWallet {
      * @param passphrase passphrase
      */
     public static async generate(passwd: string, walletName: string, passphrase?: string, vault?: Uint8Array) {
-        const hash = await calcHashValuePromise(passwd, 'somesalt', null);
+        const hash = await calcHashValuePromise(passwd, dataCenter.salt, null);
         const gwlt = new GlobalWallet();
         gwlt._nickName = walletName;
         vault = vault || generateRandomValues(strength);
@@ -271,8 +271,8 @@ export class GlobalWallet {
      */
     public async passwordChange(oldPsw: string, newPsw: string, walletId: string) {
         // todo 这里需要处理修改密码
-        const oldHash = await calcHashValuePromise(oldPsw, 'somesalt', walletId);
-        const newHash = await calcHashValuePromise(newPsw, 'somesalt', null);
+        const oldHash = await calcHashValuePromise(oldPsw, dataCenter.salt, walletId);
+        const newHash = await calcHashValuePromise(newPsw, dataCenter.salt, null);
         // console.log('passwordChange hash', oldHash, this._vault, oldPsw, newHash, newPsw);
 
         const oldVault = cipher.decrypt(oldHash, this._vault);

@@ -48,9 +48,9 @@ export const pswEqualed = (psw1, psw2) => {
  * 钱包数量是否合乎规则
  */
 export const walletCountAvailable = () => {
-    const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
+    const wallets = getLocalStorage('wallets');
 
-    return wallets.walletList.length < walletNumLimit;
+    return wallets ? wallets.walletList.length < walletNumLimit : true;
 };
 
 /**
@@ -125,11 +125,13 @@ export const nickNameInterception = (name: string): string => {
 export const getAvatarRandom = (): string => {
     // tslint:disable-next-line:max-line-length
     const avatarsSrc = ['img_avatar1.jpg', 'img_avatar2.jpg', 'img_avatar3.jpg', 'img_avatar4.jpg', 'img_avatar5.jpg', 'img_avatar6.jpg', 'img_avatar7.jpg', 'img_avatar8.jpg', 'img_avatar9.jpg', 'img_avatar10.jpg'];
-    const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
+    const wallets = getLocalStorage('wallets');
     const avatarUsed = [];
-    wallets.walletList.forEach(item => {
-        avatarUsed.push(item.avatar);
-    });
+    if (!wallets) {
+        wallets.walletList.forEach(item => {
+            avatarUsed.push(item.avatar);
+        });
+    }
     const avatarAvailable = avatarsSrc.filter(item => {
         return avatarUsed.indexOf(item) === -1;
     });

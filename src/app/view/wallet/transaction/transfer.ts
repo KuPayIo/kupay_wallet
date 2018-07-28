@@ -308,8 +308,6 @@ export class AddAsset extends Widget {
     }
     // tslint:disable-next-line:only-arrow-functions
     private async getBtcTransactionFee(toAddr: string, amount: number, priority: 'high' | 'medium' | 'low' = 'medium') {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
         const addrInfo = getCurrentAddrInfo('BTC');
         const output = {
             toAddr: toAddr,

@@ -1,3 +1,4 @@
+import { cryptoRandomInt } from '../../pi/util/math';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
@@ -37,7 +38,15 @@ export class DataCenter {
     public shapeShiftCoins: any = [];// shapeShift 支持的币种
 
     private hashMap: any = {};
+    private iSalt: string;
 
+    public get salt() {
+        if (!this.iSalt) {
+            this.iSalt = cryptoRandomInt().toString();
+        }
+
+        return this.iSalt;
+    }
     /**
      * 初始化
      */
@@ -52,6 +61,7 @@ export class DataCenter {
             const wallets = getLocalStorage('wallets');
             const wallet = getCurrentWallet(wallets);
             if (!wallet) return;
+            this.iSalt = wallet.salt;
             let list = [];
             wallet.currencyRecords.forEach(v => {
                 list = list.concat(v.addrs);
