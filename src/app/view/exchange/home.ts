@@ -70,9 +70,6 @@ export class Home extends Widget {
      * 更换货币信息
      */
     public changeCurrency() {
-        this.ok();
-
-        return;
         popNew('app-view-exchange-choose', {}, (r) => {
             if (r) {
                 this.state.currency1 = r.currency1;
