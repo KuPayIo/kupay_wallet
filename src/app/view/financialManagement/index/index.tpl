@@ -19,7 +19,7 @@
             热门推荐
         </div>
         {{for i,v of it1.productList}}
-        <div w-class="listItems" on-tap="toDetail">
+        <div w-class="listItems" on-tap="toDetail(e,'{{v.id}}')">
             <div w-class="listflexleft">
                 <p w-class="expectedEarnings">{{v.expectedEarnings}}</p>
                 <p w-class="tip">{{v.tip}}</p>

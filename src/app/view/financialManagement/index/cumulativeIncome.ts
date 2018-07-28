@@ -2,7 +2,7 @@
  * 累计收益
  */
 import { Widget } from '../../../../pi/widget/widget';
-export class Index extends Widget {
+export class CumulativeIncome extends Widget {
     public ok: () => void;
     constructor() {
         super();
@@ -13,7 +13,7 @@ export class Index extends Widget {
     }
     public init() {
         this.state = {
-            totalAssests:'0.0000'
+            totalIncom:'0.0000'
         };
     }
     public goBackPage() {

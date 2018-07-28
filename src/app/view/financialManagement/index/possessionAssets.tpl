@@ -3,9 +3,9 @@
     <div w-class="coloBlock">
         <p w-class="title">总资产（MPT）</p>
         <p w-class="num">{{it1.totalAssests}}</p>
-        <p>
-            <span>
-                买入待确认
+        <p w-class="confirm">
+            <span w-class="toBeConfirmed">
+                买入待确认0MPT
             </span>
         </p>
     </div>

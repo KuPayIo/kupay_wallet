@@ -2,7 +2,7 @@
  * 持有资产
  */
 import { Widget } from '../../../../pi/widget/widget';
-export class Index extends Widget {
+export class PossessionAssets extends Widget {
     public ok: () => void;
     constructor() {
         super();

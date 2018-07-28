@@ -23,10 +23,11 @@ export class App extends Widget {
                 text: '云端',
                 icon: 'remote_icon.png',
                 iconActive: 'remote_icon_active.png',
-                components: 'app-view-financialManagement-index-index'
+                components: 'app-view-exchange-home'
             },
             {
                 text: '',
+                name:'chat',
                 icon: 'chatIcon.png',
                 iconActive: 'chatIcon.png',
                 components: ''
@@ -62,8 +63,8 @@ export class App extends Widget {
     public tabBarChangeListener(event: any, index: number) {
         if (this.state.isActive === index) return;
         // 点击的是聊天则调用接口打开聊天，不进行组件切换
-        if (index === 2) {
-            this.setProxy();
+        if (this.state.tabBarList[index].name === 'chat') {
+            this.setProxy().then(this.sendMessage);
 
             return;
         }
@@ -84,14 +85,18 @@ export class App extends Widget {
     public sendMessage() {
         const chat = new SendChatMessage();
         chat.init();
-        chat.prepareChat({
-            success: (result) => {
-                alert('成功');
-            },
-            fail: (result) => {
-                alert('失败');
-            }
+
+        return new Promise((resolve,reject) => {
+            chat.prepareChat({
+                success: (result) => {
+                    resolve(result);
+                },
+                fail: (result) => {
+                    reject(result);
+                }
+            });
         });
+        
     }
 
     /**
@@ -100,13 +105,17 @@ export class App extends Widget {
     public setProxy() {
         const chat = new SendChatMessage();
         chat.init();
-        chat.setProxy({
-            success: (result) => {
-                this.sendMessage();
-            },
-            fail: (result) => {
-                alert('失败');
-            }, proxyIp: '120.77.252.201', proxyPort: 1820, userName: '', password: ''
+
+        return new Promise((resolve,reject) => {
+            chat.setProxy({
+                success: (result) => {
+                    resolve(result);
+                },
+                fail: (result) => {
+                    reject(result);
+                }, proxyIp: '120.77.252.201', proxyPort: 1820, userName: '', password: ''
+            });
         });
+        
     }
 }
