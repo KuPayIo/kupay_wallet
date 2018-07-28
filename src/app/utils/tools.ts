@@ -230,6 +230,8 @@ export const getDefaultAddr = (addr: number | string) => {
  * wei转Eth
  */
 export const wei2Eth = (num: number) => {
+    if (!num) return 0;
+
     return num / Math.pow(10, 18);
 };
 
@@ -237,6 +239,8 @@ export const wei2Eth = (num: number) => {
  * wei转Eth
  */
 export const eth2Wei = (num: number) => {
+    if (!num) return 0;
+
     return num * Math.pow(10, 18);
 };
 
@@ -244,6 +248,8 @@ export const eth2Wei = (num: number) => {
  * sat转btc
  */
 export const sat2Btc = (num: number) => {
+    if (!num) return 0;
+
     return num / Math.pow(10, 8);
 };
 
@@ -251,6 +257,8 @@ export const sat2Btc = (num: number) => {
  * btc转sat
  */
 export const btc2Sat = (num: number) => {
+    if (!num) return 0;
+
     return num * Math.pow(10, 8);
 };
 
