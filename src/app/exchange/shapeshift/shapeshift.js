@@ -776,7 +776,6 @@ _$define("app/exchange/shapeshift/shapeshift", function (require, exports, modul
                     var payload = util.clone(options)
                     payload.withdrawal = withdrawalAddress
                     payload.pair = pair
-                    console.log("payload",payload);
                     http.post(url, payload, function (err, data) {
                         if (err) return callback(err, data)
                         if (data.error) return callback(new Error(data.error), data)

@@ -101,6 +101,8 @@ export class AddAsset extends Widget {
         // this.state.list[index].isChoose = e.newType;
 
         // // todo 这里处理数据变化
+        // 这里暂时作为币币兑换的入口
+        popNew('app-view-currencyExchange-currencyExchange',{ currencyName: this.props.currencyName });
     }
 
     /**
