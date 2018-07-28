@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
+import { dataCenter } from '../../../store/dataCenter';
 import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
 } from '../../../utils/account';
@@ -90,7 +91,7 @@ export class WalletCreate extends Widget {
     }
 
     public async createWallet() {
-        const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
+        const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '', salt: dataCenter.salt };
         const addrs: Addr[] = getLocalStorage('addrs') || [];
 
         const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName);

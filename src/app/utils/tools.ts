@@ -2,7 +2,6 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
 import { BTCWallet } from '../core/btc/wallet';
@@ -764,7 +763,7 @@ export const getXOR = (first, second) => {
  * 验证身份
  */
 export const VerifyIdentidy = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt', wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
     try {
@@ -784,7 +783,7 @@ export const VerifyIdentidy = async (wallet, passwd) => {
  * 获取助记词
  */
 export const getMnemonic = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt', wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -801,7 +800,7 @@ export const getMnemonic = async (wallet, passwd) => {
  * 获取助记词16进制字符串
  */
 export const getMnemonicHexstr = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt', wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
