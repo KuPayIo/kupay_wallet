@@ -86,10 +86,10 @@ export class App extends Widget {
         chat.init();
         chat.prepareChat({
             success: (result) => {
-                alert('成功');
+                console.log('成功连接telegram');
             },
             fail: (result) => {
-                alert('失败');
+                alert('连接服务器失败，请稍后重试！');
             }
         });
     }
@@ -105,7 +105,7 @@ export class App extends Widget {
                 this.sendMessage();
             },
             fail: (result) => {
-                alert('失败');
+                alert('设置代理失败，请稍后重试！');
             }, proxyIp: '120.77.252.201', proxyPort: 1820, userName: '', password: ''
         });
     }

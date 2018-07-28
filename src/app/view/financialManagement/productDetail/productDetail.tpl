@@ -73,9 +73,16 @@
                 <div w-class="barBackground"></div>
             </div>
         </div>
-        <div w-class="butBottom" on-tap="buyClicked">
+        {{if it1.isSellOut}}
+        <div w-class="butBottom">
             售罄
         </div>
+        {{else}}
+        <div w-class="butBottom active" on-tap="buyClicked">
+            认购
+        </div>
+        {{end}}
+        
     </div>
 
 </div>

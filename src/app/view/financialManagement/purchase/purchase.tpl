@@ -5,11 +5,11 @@
     </div>
     <div w-class="purchaseBox">
         <div w-class="whiteArea">
-            <input type="number" placeholder="请输入认购数量" w-class="numInput"/>
+            <input type="number" on-input="onValueChange" placeholder="请输入认购数量" w-class="numInput"/>
         </div>
         <div w-class="whiteArea">
             <div w-class="showBalance">
-                托管账户可用余额：0.0000<span w-class="recharge">充值</span>
+                托管账户可用余额：{{it1.managedAccountBalance.toFixed(4)}}<span w-class="recharge">充值</span>
             </div>
         </div>
     </div>
