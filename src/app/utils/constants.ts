@@ -8,14 +8,12 @@ export const walletNumLimit = 10;
 const supportCurrencyListTest = [
     { name: 'ETH', description: 'Ethereum' },
     { name: 'BTC', description: 'Bit coin' }, 
-    { name: 'EOS', description: 'EOS currency' }, 
     { name: 'YNC', description: 'YiNeng Ltd' }
 ];
 // 钱包所支持的货币列表主网络
 const supportCurrencyListMain = [
     { name: 'ETH', description: 'Ethereum' }, 
     { name: 'BTC', description: 'Bit coin' }, 
-    { name: 'EOS', description: 'EOS currency' }, 
     { name: 'BNB', description: 'BNB' },
     { name: 'VEN', description: 'VeChain' },
     { name: 'OMG', description: 'OmiseGO' },
@@ -39,18 +37,20 @@ const supportCurrencyListMain = [
     { name: 'HEALP', description: 'HEALP' }
 ];
 
+// todo 测试网络与正式网络切换
 // 钱包所支持的货币列表
-export const supportCurrencyList = supportCurrencyListMain;
+export const supportCurrencyList = supportCurrencyListTest;
 
 // 默认显示得ETH代币
 export const defaultEthToken = [];
 
 // 默认显示货币列表
-export const defalutShowCurrencys = ['ETH', 'BTC','EOS'];
+export const defalutShowCurrencys = ['ETH', 'BTC'];
 
 //
 export const strength = 128;
 
+// todo 测试网络与正式网络切换
 // btc网络
 export const btcNetwork = 'testnet';
 
@@ -91,8 +91,9 @@ const defaultExchangeRateJsonMain = {
     HEALP:{ CNY: 100 , USD: 15.2625 }
 };
 
+// todo 测试网络与正式网络切换
 // 默认货币汇率
-export const defaultExchangeRateJson = defaultExchangeRateJsonMain;
+export const defaultExchangeRateJson = defaultExchangeRateJsonTest;
 
 // eth代币transfer交易编码前缀
 export const ethTokenTransferCode = '0xa9059cbb';

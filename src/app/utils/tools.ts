@@ -2,7 +2,6 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
 import { BTCWallet } from '../core/btc/wallet';
@@ -15,7 +14,7 @@ import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
 import { Addr } from '../view/interface';
-import { lang, lockScreenSalt,supportCurrencyList } from './constants';
+import { lang, lockScreenSalt, supportCurrencyList } from './constants';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
@@ -51,7 +50,7 @@ export const getCurrentWallet = (wallets) => {
 /**
  * 获取指定id的钱包
  */
-export const getWalletByWalletId = (wallets,walletId) => {
+export const getWalletByWalletId = (wallets, walletId) => {
     if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
         return null;
     }
@@ -67,7 +66,7 @@ export const getWalletByWalletId = (wallets,walletId) => {
 /**
  * 获取指定id钱包的index
  */
-export const getWalletIndexByWalletId = (wallets,walletId) => {
+export const getWalletIndexByWalletId = (wallets, walletId) => {
     let index = -1;
     if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
         return -1;
@@ -231,6 +230,8 @@ export const getDefaultAddr = (addr: number | string) => {
  * wei转Eth
  */
 export const wei2Eth = (num: number) => {
+    if (!num) return 0;
+
     return num / Math.pow(10, 18);
 };
 
@@ -238,6 +239,8 @@ export const wei2Eth = (num: number) => {
  * wei转Eth
  */
 export const eth2Wei = (num: number) => {
+    if (!num) return 0;
+
     return num * Math.pow(10, 18);
 };
 
@@ -245,6 +248,8 @@ export const eth2Wei = (num: number) => {
  * sat转btc
  */
 export const sat2Btc = (num: number) => {
+    if (!num) return 0;
+
     return num / Math.pow(10, 8);
 };
 
@@ -252,6 +257,8 @@ export const sat2Btc = (num: number) => {
  * btc转sat
  */
 export const btc2Sat = (num: number) => {
+    if (!num) return 0;
+
     return num * Math.pow(10, 8);
 };
 
@@ -464,10 +471,9 @@ export const addNewAddr = (currencyName, address, addrName) => {
     const wallet = getCurrentWallet(wallets);
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
-    addrName = addrName || getDefaultAddr(address);
     currencyRecord.addrs.push(address);
     const list: Addr[] = getLocalStorage('addrs') || [];
-    const newAddrInfo: Addr = { addr: address, addrName, record: [], balance: 0, currencyName };
+    const newAddrInfo: Addr = dataCenter.initAddr(address, currencyName, addrName);
     list.push(newAddrInfo);
     currencyRecord.currentAddr = address;
 
@@ -766,7 +772,7 @@ export const getXOR = (first, second) => {
  * 验证身份
  */
 export const VerifyIdentidy = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt');
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
     try {
@@ -786,7 +792,7 @@ export const VerifyIdentidy = async (wallet, passwd) => {
  * 获取助记词
  */
 export const getMnemonic = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt');
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -803,7 +809,7 @@ export const getMnemonic = async (wallet, passwd) => {
  * 获取助记词16进制字符串
  */
 export const getMnemonicHexstr = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt');
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -845,11 +851,20 @@ export const copyToClipboard = (copyText) => {
 /**
  * 获取memery hash
  */
-export const calcHashValuePromise = async (pwd, salt) => {
+export const calcHashValuePromise = async (pwd, salt, walletId) => {
+    let hash;
+    if (walletId) {
+        hash = dataCenter.getHash(walletId);
+        if (hash) return hash;
+    }
+
     const argonHash = new ArgonHash();
     argonHash.init();
     // tslint:disable-next-line:no-unnecessary-local-variable
-    const hash = await argonHash.calcHashValuePromise({ pwd, salt });
+    hash = await argonHash.calcHashValuePromise({ pwd, salt });
+    if (walletId) {
+        dataCenter.setHash(walletId, hash);
+    }
 
     return hash;
 };
@@ -908,7 +923,7 @@ export const currencyExchangeAvailable = () => {
     const currencyArr = [];
     for (let i = 0; i < supportCurrencyList.length; i++) {
         currencyArr.push(supportCurrencyList[i].name);
-    } 
+    }
     
     return shapeshiftCoins.filter(item => {
         return item.status === 'available' && currencyArr.indexOf(item.symbol) >= 0 ;

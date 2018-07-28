@@ -3,12 +3,9 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GlobalWallet } from '../../../core/globalWallet';
-// tslint:disable-next-line:max-line-length
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletPswAvailable } from '../../../utils/account';
-import { defalutShowCurrencys } from '../../../utils/constants';
-import { encrypt, getAddrsAll, getLocalStorage, setLocalStorage } from '../../../utils/tools';
-import { Addr, Wallet } from '../../interface';
+import { getWalletPswStrength, pswEqualed, walletCountAvailable, walletPswAvailable } from '../../../utils/account';
+import { importWalletByMnemonic } from '../../../utils/basicOperation';
+import { getLocalStorage } from '../../../utils/tools';
 
 export class WalletImport extends Widget {
     public ok: () => void;
@@ -86,7 +83,7 @@ export class WalletImport extends Widget {
 
         const close = popNew('pi-components-loading-loading', { text: '导入中...' });
         try {
-            await this.importWallet();
+            await importWalletByMnemonic(this.state.walletMnemonic, this.state.walletPsw, this.state.walletPswTips);
         } catch (e) {
             close.callback(close.widget);
             console.log(e);
@@ -94,63 +91,9 @@ export class WalletImport extends Widget {
 
             return;
         }
-        close.callback(close.widget);
         this.ok && this.ok();
-        const lockScreenPsw = getLocalStorage('lockScreenPsw');
-        if (!lockScreenPsw) {
-            popNew('app-view-guidePages-setLockScreenScret');
-        } else {
-            popNew('app-view-app');
-        }
-        // popNew('app-view-wallet-backupWallet-backupWallet');
-
-    }
-
-    public async importWallet() {
-        const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
-        let addrs: Addr[] = getLocalStorage('addrs') || [];
-
-        let gwlt = null;
-        console.time('import');
-        gwlt = await GlobalWallet.fromMnemonic(this.state.walletMnemonic, this.state.walletPsw);
-        // todo 这里需要验证钱包是否已经存在，且需要进行修改密码处理
-
-        console.timeEnd('import');
-        gwlt.nickName = `我的钱包${wallets.walletList.length + 1}`;
-
-        const curWalletId = gwlt.glwtId;
-        const wallet: Wallet = {
-            walletId: curWalletId,
-            avatar: getAvatarRandom(),
-            gwlt: gwlt.toJSON(),
-            showCurrencys: defalutShowCurrencys,
-            currencyRecords: []
-        };
-        wallet.currencyRecords.push(...gwlt.currencyRecords);
-
-        if (this.state.walletPswTips.trim().length > 0) {
-            wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
-        }
-
-        // 判断钱包是否存在
-        const len = wallets.walletList.length;
-        for (let i = 0; i < len; i++) {
-            if (gwlt.glwtId === wallets.walletList[i].walletId) {
-                const wallet0 = wallets.walletList.splice(i, 1)[0];// 删除已存在钱包
-                const retAddrs = getAddrsAll(wallet0);
-                addrs = addrs.filter(addr => {
-                    return retAddrs.indexOf(addr.addr) === -1;
-                });
-                break;
-            }
-        }
-        addrs.push(...gwlt.addrs);
-        setLocalStorage('addrs', addrs, false);
-        wallets.curWalletId = curWalletId;
-        wallets.walletList.push(wallet);
-        setLocalStorage('wallets', wallets, true);
-
-        return true;
+        popNew('app-view-wallet-walletImport-importComplete');
+        close.callback(close.widget);
     }
 
 }

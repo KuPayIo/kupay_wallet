@@ -46,3 +46,7 @@
 #addressMessageBox .addressInput textarea:focus{
     border: none !important;
 }
+#purchase input:focus{
+    border: none !important;
+    outline: none !important;
+}
