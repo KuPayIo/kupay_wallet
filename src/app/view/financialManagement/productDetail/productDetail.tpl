@@ -41,7 +41,7 @@
                     <span>{{it1.productDetail.paymentMethod}}</span>
                 </p>
                 <p w-class="detailP">产品额度：
-                    <span>{{it1.productDetail.productLine}}</span>
+                    <span>{{it1.productDetail.productLine}}MPT</span>
                 </p>
                 <p w-class="detailP">额度限制：
                     <span>{{it1.productDetail.limit}}</span>
@@ -58,7 +58,7 @@
             </div>
             <div w-class="mainInfo">
                 <p w-class="paragraph">
-                    {{it1.productIntroduction}} 
+                    {{it1.productIntroduction}}
                 </p>
             </div>
         </div>
@@ -68,9 +68,10 @@
     </div>
     <div w-class="bottomFixed">
         <div w-class="Surplus">
-            剩余额度{{it1.surplusAmount}}
+            剩余额度{{it1.surplusAmount}}MPT
             <div w-class="progressBar">
-                <div w-class="barBackground"></div>
+                <div w-class="barBackground" style="width: {{it1.percentage}};">
+                </div>
             </div>
         </div>
         {{if it1.isSellOut}}
@@ -82,7 +83,7 @@
             认购
         </div>
         {{end}}
-        
+
     </div>
 
 </div>
