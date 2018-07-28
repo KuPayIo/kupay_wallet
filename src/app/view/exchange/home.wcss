@@ -3,6 +3,8 @@
     width: 100%;
     height: 1334px;
     color: #203260;
+    position: absolute;
+    top: 0px;
 }
 .header{
     height: 128px;

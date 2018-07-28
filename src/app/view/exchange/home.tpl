@@ -7,31 +7,34 @@
             <div w-class="k-line" on-tap="showKLine">
             </div>
         </div>
+        <div w-class="menu">
+            <pi-components-tabs-tabs>{list:{{it1.list}},activeNum:{{it1.activeNum}} } </pi-components-tabs-tabs>
+        </div>
         <div w-class="body">
             <div w-class="body-left">
-                <div w-class="btn-buy {{it1.isSelect==='buy'?'is-select':''}}" on-tap="clkBuy">买入</div>
-                <div w-class="btn-sale {{it1.isSelect!=='buy'?'is-select':''}}" on-tap="clkSale">卖出</div>
-                <div w-class="limit-text">
-                    <span>限价{{it1.isSelect==='buy'?'买入':'卖出'}}</span>
-                </div>
-                <div w-class="color-show">
-                    <div w-class="buy-color"></div>
-                    <div w-class="buy-color-text">买</div>
-                    <div w-class="sale-color"></div>
-                    <div w-class="sale-color-text">卖</div>
-                </div>
                 <div w-class="input-price">
-                    <app-components-input-input>{input:{{it1.price}},disabled:true}</app-components-input-input>
+                    <app-components-input-input_border>{input:{{it1.price}}}</app-components-input-input_border>
+                </div>
+                <div>
+                    <div>-</div>
+                    <div>+</div>
                 </div>
                 <div w-class="price-conversion">
                     <span>{{it1.priceConversion}}</span>
                 </div>
                 <div w-class="input-count">
-                    <app-components-input-input>{input:{{it1.count}},disabled:true}</app-components-input-input>
+                    <app-components-input-input>{input:{{it1.count}}}</app-components-input-input>
                 </div>
-
+                <div>可用
+                    <span>0.00BTC</span>
+                </div>
+                <div>
+                    <pi-components-slider-slider>{value:5,min:0,max:100}</pi-components-slider-slider>
+                    <span>5%</span>
+                </div>
+                <span>交易额</span>
                 <div w-class="input-all">
-                    <app-components-input-input>{input:{{it1.all}},disabled:true}</app-components-input-input>
+                    <app-components-input-input>{input:{{it1.all}}}</app-components-input-input>
                 </div>
                 <div w-class="btn-buy-currency">{{it1.isSelect==='buy'?'买入':'卖出'}}{{it1.currency1}}</div>
             </div>
