@@ -107,3 +107,11 @@ export const guidePages = [
 
 // 锁屏密码盐值
 export const lockScreenSalt = 'salt';
+
+// shapeshift api public key
+// tslint:disable-next-line:max-line-length
+export const shapeshiftApiPublicKey = '339a363550d4490fb4a0efae308440f4386c7d99ecf0f572584adc0400658b5799e3107eb0fe573c438e6d98b68dbe2ade2873aa7ac2fde8f74ab1be0750fdb2';
+
+// shapeshift api private key
+// tslint:disable-next-line:max-line-length
+export const shapeshiftApiPrivateKey = 'c98210f4568b04d3f84c5404f8e5be98353849138ed26b3e2723223257d3cbb8bb5cba5060b7c4d44e746342a2eb43e26b9bb5827588d9ed3e712e85d35f054c';

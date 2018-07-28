@@ -2,46 +2,71 @@
  * currency exchange
  */
 import { shapeshift } from '../../../app/exchange/shapeshift/shapeshift';
-import { currencyExchangeAvailable, getCurrentWallet, getLocalStorage } from '../../../app/utils/tools'; 
+// tslint:disable-next-line:max-line-length
+import { currencyExchangeAvailable, 
+    eth2Wei, ethTokenMultiplyDecimals,
+     getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName,
+     getCurrentWallet,getLocalStorage,wei2Eth } from '../../../app/utils/tools'; 
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+import { BtcApi } from '../../core/btc/api';
+import { BTCWallet } from '../../core/btc/wallet';
+import { Api as EthApi } from '../../core/eth/api';
+import { ERC20Tokens } from '../../core/eth/tokens';
+import { GaiaWallet } from '../../core/eth/wallet';
+import { GlobalWallet } from '../../core/globalWallet';
+import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey } from '../../utils/constants';
 
 interface Props {
-    outCurrency?:string;// 出账币种
-    inCurrency?:string;// 入账币种
+    currencyName:string;// 出账币种
 }
 export class CurrencyExchange extends Widget {
-    public create() {
-        super.create();
-        this.init();
-    }
-
-    public init() {
-        setTimeout(() => {
-            console.log(currencyExchangeAvailable());
-        },5000);
+    public ok:() => void;
+    public setProps(props:Props,oldProps:Props) {
+        super.setProps(props,oldProps);
+        const outCurrency = this.props.currencyName;
+        const inCurrency = outCurrency === 'BTC' ? 'ETH' : 'BTC';
+        // ZRX   BAT
         this.state = {
-            outCurrency:this.props && this.props.outCurrency ? this.props.outCurrency : 'ETH',
-            inCurrency:this.props && this.props.inCurrency ? this.props.inCurrency : 'BAT',
+            outCurrency,
+            inCurrency,
+            gasPrice:5000000000,
             pair:'',
             maxLimit:0,
             minimum:0,
             rate:0,
             timer:0,
-            balance:0,
-            amount:0,
+            outBalance:0,
+            outAmount:0,
             receiveAmount:0,
-            curAddr:''
+            curOutAddr:'',
+            curInAddr:''
         };
+        this.init();
+    }
+    public destroy() {
+        clearTimeout(this.state.timer);
+
+        return super.destroy();
+    }
+    public init() {
         this.setPair();
-        this.getOutCurrencyBalance();
+        // 获取出币币种的余额和当前使用地址
+        this.state.curOutAddr = getCurrentAddrByCurrencyName(this.state.outCurrency);
+        this.state.outBalance = getCurrentAddrBalanceByCurrencyName(this.state.outCurrency);
+        // 获取入币币种的当前使用地址
+        this.state.curInAddr = getCurrentAddrByCurrencyName(this.state.inCurrency);
         this.marketInfoUpdated();
     }
-
+    public backClick() {
+        this.ok && this.ok();
+    }
+    // 设置币币兑换的pair  如btc_eth
     public setPair() {
         this.state.pair = `${this.state.outCurrency.toLowerCase()}_${this.state.inCurrency.toLowerCase()}`;
     }
 
+    // 定时获取兑率等信息 30s更新一次
     public marketInfoUpdated() {
         shapeshift.marketInfo(this.state.pair, (err, marketInfo) => {
             console.log('marketInfo',marketInfo);
@@ -57,78 +82,328 @@ export class CurrencyExchange extends Widget {
         });
         this.state.timer = setTimeout(() => {
             this.marketInfoUpdated();
-        },10 * 1000);
+        },30 * 1000);
     }
 
-    public getOutCurrencyBalance() {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
-        const currencyRecords = wallet.currencyRecords;
-        let curAddr = '';
-
-        for (let i = 0; i < currencyRecords.length; i ++) {
-            if (currencyRecords[i].currencyName === this.state.outCurrency) {
-                curAddr = currencyRecords[i].currentAddr;
-                break;
-            }
-        }
-        const addrs = getLocalStorage('addrs');
-        for (let i = 0; i < addrs.length; i++) {
-            if ((addrs[i].currencyName === this.state.outCurrency) && (addrs[i].addr === curAddr)) {
-                this.state.balance = addrs[i].balance;
-                this.paint();
-                break;
-            }
-        }
-        this.state.curAddr = curAddr;
-    }
-
-    public amountChange(e:any) {
-        const amount = Number(e.value);
-        this.state.amount = amount;
-        this.state.receiveAmount = amount * this.state.rate;
+    // 出币数量变化
+    public outAmountChange(e:any) {
+        const outAmount = Number(e.value);
+        this.state.outAmount = outAmount;
+        this.state.receiveAmount = outAmount * this.state.rate;
         this.paint();
+        
     }
-
-    public sureClick() {
-        const amount = this.state.amount;
-        const options = {
-            returnAddress: this.state.curAddr, // 失败后的退款地址
-            amount: this.state.receiveAmount // <---- must set amount here
-        };
-        // 0x958B0bA923260A91Ffd28e8E9a209240648066C2
-        const withdrawalAddress = this.state.curAddr; // 入账币种的地址
-        // const close = popNew('pi-components-loading-loading', { text: '等待中...' });
-        shapeshift.shift(withdrawalAddress, this.state.pair, options, (err, returnData) => {
-            console.log('returnData',returnData);
-          // ShapeShift owned BTC address that you send your BTC to
-            const depositAddress = returnData.deposit;
-        
-          // NOTE: `depositAmount`, `expiration`, and `quotedRate` are only returned if
-          // you set `options.amount`
-        
-          // amount to send to ShapeShift (type string)
-            const shiftAmount = returnData.depositAmount;
-        
-          // Time before rate expires (type number, time from epoch in seconds)
-            const expiration = new Date(returnData.expiration * 1000);
-        
-          // rate of exchange, 1 BTC for ??? LTC (type string)
-            const rate = returnData.quotedRate;
-          // you need to actually then send your BTC to ShapeShift
-          // you could use module `spend`: https://www.npmjs.com/package/spend
-          // CONVERT AMOUNT TO SATOSHIS IF YOU USED `spend`
-          // spend(SS_BTC_WIF, depositAddress, shiftAmountSatoshis, function (err, txId) { /.. ../ })
-        
-          // later, you can then check the deposit status
-           /*  shapeshift.status(depositAddress, (err, status, data) => {
-                console.log('status',status); // => should be 'received' or 'complete'
-            }); */
-
-            popNew('app-components-message-messageboxPrompt',{ title:'请输入密码' },(r) => {
-                const psw = r;
-                
-            });
+    // 选择出币币种 如果出币币种和入币币种一样时,入币币种顺延一种
+    public outCurrencySelectClick() {
+        const data = currencyExchangeAvailable();
+        const dataList = [];
+        data.forEach(element => {
+            dataList.push(element.symbol);
+        });
+        popNew('app-components-chooseCurrency-chooseCurrency',{ currencyList:dataList },(r) => {
+            const currencyName = dataList[r];
+            if (this.state.outCurrency === currencyName) return;
+            if (this.state.inCurrency === currencyName) {
+                const index = dataList.indexOf(currencyName);
+                this.state.inCurrency = dataList[(index + 1) % dataList.length];
+            }
+            this.state.outCurrency = dataList[r];
+            this.state.outAmount = 0;
+            this.state.receiveAmount = 0;
+            this.init();
+            this.paint();
         });
     }
+
+    // 选择入币币种 如果入币币种和出币币种一样时,出币币种顺延一种
+    public inCurrencySelectClick() {
+        const data = currencyExchangeAvailable();
+        const dataList = [];
+        data.forEach(element => {
+            dataList.push(element.symbol);
+        });
+        popNew('app-components-chooseCurrency-chooseCurrency',{ currencyList:dataList },(r) => {
+            const currencyName = dataList[r];
+            if (this.state.inCurrency === currencyName) return;
+            if (this.state.outCurrency === currencyName) {
+                const index = dataList.indexOf(currencyName);
+                this.state.outCurrency = dataList[(index + 1) % dataList.length];
+            }
+            this.state.inCurrency = dataList[r];
+            this.state.outAmount = 0;
+            this.state.receiveAmount = 0;
+            this.init();
+            this.paint();
+        });
+    }
+    // 出币币种和入币币种切换
+    public switchInOutClick() {
+        const outCurrency = this.state.outCurrency;
+        this.state.outCurrency = this.state.inCurrency;
+        this.state.inCurrency = outCurrency;
+        this.state.outAmount = 0;
+        this.state.receiveAmount = 0;
+        this.init();
+        this.paint();
+       
+    }
+
+    public exchangeRecordClick() {
+        popNew('app-view-currencyExchange-currencyExchangeRecord',{ currencyName:this.state.outCurrency });
+    }
+    public async rateDescClick() {
+        const outCurrency = this.state.outCurrency;
+        let gasLimit = 0;
+        let fee = 0;
+        if (outCurrency === 'ETH') {
+            gasLimit = await estimateGasETH(this.state.curOutAddr);
+            fee = gasLimit * wei2Eth(this.state.gasPrice);
+        } else if (outCurrency === 'BTC') {
+            gasLimit = 0;
+            fee = 0;
+        } else if (ERC20Tokens[outCurrency]) {
+            gasLimit = await estimateGasERC20(outCurrency,this.state.curOutAddr,this.state.outAmount * this.state.rate);
+            fee = gasLimit * wei2Eth(this.state.gasPrice);
+        }
+        popNew('app-view-currencyExchange-rateDescription',{ fee });
+    }
+    public async sureClick() {
+        /* shapeshift.transactions(shapeshiftApiPrivateKey,this.state.outAmount, (err, transactions) => {
+            console.log('transactions',transactions);
+            if (err) return console.error(err);
+            transactions.forEach((tx) => {
+                console.log(tx);
+            });
+        });
+
+        return ; */
+        const outAmount = this.state.outAmount;
+        const outCurrency = this.state.outCurrency;
+        if (outAmount <= 0) {
+            popNew('app-components-message-message',{ itype:'error',content:'输入发出数量',center:true });
+
+            return;
+        }
+        if (outAmount >= this.state.outBalance) {
+            popNew('app-components-message-message',{ itype:'error',content:'余额不足',center:true });
+
+            return;
+        }
+        if (outAmount > this.state.maxLimit || outAmount < this.state.minimum) {
+            popNew('app-components-message-message',{ itype:'error',content:'换币数量必须在最小数量和最大数量之间',center:true });
+
+            return;
+        }
+
+        let gasLimit = 0;
+        let fee = 0;
+        if (outCurrency === 'ETH') {
+            gasLimit = await estimateGasETH(this.state.curOutAddr);
+            fee = gasLimit * wei2Eth(this.state.gasPrice);
+        } else if (outCurrency === 'BTC') {
+            gasLimit = 0;
+            fee = 0;
+        } else if (ERC20Tokens[outCurrency]) {
+            gasLimit = await estimateGasERC20(outCurrency,this.state.curOutAddr,this.state.outAmount * this.state.rate);
+            fee = gasLimit * wei2Eth(this.state.gasPrice);
+        }
+        popNew('app-view-currencyExchange-exchangeConfirm',{
+            outCurrency,
+            outAmount,
+            inCurrency:this.state.inCurrency,
+            inAmount:outAmount * this.state.rate,
+            fee
+        },() => {
+            const options = {
+                returnAddress: this.state.curOutAddr,// 失败后的退款地址
+                apiKey:shapeshiftApiPublicKey
+                // amount: this.state.receiveAmount // <---- must set amount here
+            };
+            // 0x958B0bA923260A91Ffd28e8E9a209240648066C2
+            const withdrawalAddress = this.state.curInAddr; // 入账币种的地址
+            const close = popNew('pi-components-loading-loading', { text: '等待中...' });
+            popNew('app-components-message-messageboxPrompt',{ title:'请输入密码' },(r) => {
+                const psw = r;
+                shapeshift.shift(withdrawalAddress, this.state.pair, options, (err, returnData) => {
+                    close.callback(close.widget);
+                    console.log('returnData',returnData);
+                    // ShapeShift owned BTC address that you send your BTC to
+                    const depositAddress = returnData.deposit;
+            
+                    // NOTE: `depositAmount`, `expiration`, and `quotedRate` are only returned if
+                    // you set `options.amount`
+            
+                    // amount to send to ShapeShift (type string)
+                    // const shiftAmount = returnData.depositAmount;
+            
+                    // Time before rate expires (type number, time from epoch in seconds)
+                    // const expiration = new Date(returnData.expiration * 1000);
+            
+                    // rate of exchange, 1 BTC for ??? LTC (type string)
+                    // const rate = returnData.quotedRate;
+                    // you need to actually then send your BTC to ShapeShift
+                    // you could use module `spend`: https://www.npmjs.com/package/spend
+                    // CONVERT AMOUNT TO SATOSHIS IF YOU USED `spend`
+                    // spend(SS_BTC_WIF, depositAddress, shiftAmountSatoshis, function (err, txId) { /.. ../ })
+            
+                    // later, you can then check the deposit status
+                    // this.transfer(psw,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
+                    this.init();
+                    this.paint();
+                });
+            });
+        });
+        
+        // 0x9399264c3367d9bdc589c3aea32901611845b2a4  未退回的交易 hash 0x899f84b755cfa2db660ffeb73ba6952162f4ee125c11a2d6ec2a557edf10f915
+        /* shapeshift.status('0xe59b7d96e3c83bccd7a4a0b79d05aa5def9a72e4', (err, status, data) => {
+            console.error('errror',err);
+            console.log('status',status); // => should be 'received' or 'complete'
+            console.log('status data',data);
+        }); */
+       
+    }
+
+    // tslint:disable-next-line:max-line-length
+    public async transfer(psw:string,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,currencyName:string,info?:string) {
+        // tslint:disable-next-line:no-this-assignment
+        const thisObj = this;
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
+        try {
+            let id: any;
+            const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, currencyName);
+            if (addrIndex >= 0) {
+                const wlt = await GlobalWallet.createWlt(currencyName, psw, wallet, addrIndex);
+                if (currencyName === 'ETH') {
+                    id = await doEthTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, eth2Wei(pay), info);
+                } else if (currencyName === 'BTC') {
+                    id = await doBtcTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, info);
+                } else if (ERC20Tokens[currencyName]) {
+                    id = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, currencyName);
+                }
+            }
+            console.log('transfer hash',id);
+        } catch (error) {
+            console.log(error.message);
+            if (error.message.indexOf('insufficient funds') >= 0) {
+                popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });
+            } else {
+                popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
+            }
+        }
+
+        loading.callback(loading.widget);
+            
+    }
+}
+
+/**
+ * 处理转账
+ */
+// tslint:disable-next-line:only-arrow-functions
+async function doEthTransfer(wlt: GaiaWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
+    , value: number, info: string) {
+    const api = new EthApi();
+    const nonce = await api.getTransactionCount(acct1);
+    const txObj = {
+        to: acct2,
+        nonce: nonce,
+        gasPrice: gasPrice,
+        gasLimit: gasLimit,
+        value: value,
+        data: info
+    };
+
+    // const currentAddr = getAddrById(acct1, 'ETH');
+    // if (!currentAddr) return;
+
+    // const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
+
+    const tx = wlt.signRawTransaction(txObj);
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const id = await api.sendRawTransaction(tx);
+
+    return id;
+}
+
+/**
+ * 处理转账
+ */
+// tslint:disable-next-line:only-arrow-functions
+async function doBtcTransfer(wlt: BTCWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
+    , value: number, info: string) {
+    const addrs = getLocalStorage('addrs');
+    const addr = addrs.filter(v => v.addr === acct1)[0];
+    const output = {
+        toAddr: acct2,
+        amount: value,
+        chgAddr: acct1
+    };
+    wlt.unlock();
+    await wlt.init();
+
+    const retArr = await wlt.buildRawTransaction(output, 'medium');
+    wlt.lock();
+    const rawHexString: string = retArr[0];
+    const fee = retArr[1];
+
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const hash = await BtcApi.sendRawTransaction(rawHexString);
+
+    return hash.txid;
+
+}
+
+/**
+ * 处理eth代币转账
+ */
+// tslint:disable-next-line:only-arrow-functions
+async function doERC20TokenTransfer(wlt: GaiaWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
+    , value: number, currencyName: string) {
+
+    const api = new EthApi();
+    const nonce = await api.getTransactionCount(acct1);
+    console.log('nonce', nonce);
+    const transferCode = GaiaWallet.tokenOperations('transfer', currencyName, acct2, ethTokenMultiplyDecimals(value, currencyName));
+    const txObj = {
+        to: ERC20Tokens[currencyName],
+        nonce: nonce,
+        gasPrice: gasPrice,
+        gasLimit: gasLimit,
+        value: 0,
+        data: transferCode
+    };
+
+    // const currentAddr = getAddrById(acct1, currencyName);
+    // if (!currentAddr) return;
+
+    // const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
+
+    const tx = wlt.signRawTransaction(txObj);
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const id = await api.sendRawTransaction(tx);
+
+    return id;
+}
+
+// 预估ETH的gas limit
+// tslint:disable-next-line:only-arrow-functions
+async function estimateGasETH(toAddr:string) {
+    const api = new EthApi();
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const gas = await api.estimateGas({ to: toAddr,data:'' });
+
+    return gas;
+}
+
+// 预估ETH ERC20Token的gas limit
+// tslint:disable-next-line:only-arrow-functions
+async function estimateGasERC20(currencyName:string,toAddr:string,amount:number) {
+    const api = new EthApi();
+    const transferCode = GaiaWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const gas = await api.estimateGas({ to: ERC20Tokens[currencyName], data: transferCode });
+
+    return gas;
 }

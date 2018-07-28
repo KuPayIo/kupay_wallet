@@ -1,0 +1,36 @@
+.ga-new-page{
+    background-color: #fff;
+    font-family: "PingFangSC-Medium";
+}
+.ga-currency-container{
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.ga-currency-list{
+    display: flex;
+    flex-direction: column;
+}
+.ga-currency-item{
+    height: 150px;
+    padding: 0 68px 0 50px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e5e5ee;
+}
+.ga-currency-icon{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+.ga-currency{
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+    margin-left: 20px;
+}
+.ga-balance{
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 28px;
+    font-family: "PingFangSC-Regular";
+    flex: 1 0 0;
+    text-align: right;
+}

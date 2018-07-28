@@ -46,7 +46,7 @@ export const run = (cb): void => {
          addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
     // popNew('app-view-redEnvelope-send-sendRedEnvelope');
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
-    // popNew('app-view-currencyExchange-currencyExchange');
+    // popNew('app-view-currencyExchange-currencyExchangeRecord',{ currencyName:'ETH' });
     if (cb) cb();
     // test();
 };
