@@ -5,6 +5,7 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { generateByHash, sha3 } from '../../../../core/genmnemonic';
 import { GlobalWallet } from '../../../../core/globalWallet';
+import { dataCenter } from '../../../../store/dataCenter';
 import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
 } from '../../../../utils/account';
@@ -106,7 +107,7 @@ export class WalletCreate extends Widget {
     }
 
     public async createWallet(hash: Uint8Array) {
-        const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
+        const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '', salt: dataCenter.salt };
         let addrs: Addr[] = getLocalStorage('addrs') || [];
 
         const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName, null, hash);
@@ -159,7 +160,7 @@ export class WalletCreate extends Widget {
 
 const imgToHash = async (choosedImg, inputWords) => {
     const sha3Hash = sha3(choosedImg + inputWords, false);
-    const hash = await calcHashValuePromise(sha3Hash, 'somesalt', null);
+    const hash = await calcHashValuePromise(sha3Hash, dataCenter.salt, null);
     const sha3Hash1 = sha3(hash, true);
     const len = sha3Hash1.length;
     // 生成助记词的随机数仅需要128位即可，这里对256位随机数进行折半取异或的处理

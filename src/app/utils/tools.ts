@@ -2,7 +2,6 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
 import { BTCWallet } from '../core/btc/wallet';
@@ -231,6 +230,8 @@ export const getDefaultAddr = (addr: number | string) => {
  * wei转Eth
  */
 export const wei2Eth = (num: number) => {
+    if (!num) return 0;
+
     return num / Math.pow(10, 18);
 };
 
@@ -238,6 +239,8 @@ export const wei2Eth = (num: number) => {
  * wei转Eth
  */
 export const eth2Wei = (num: number) => {
+    if (!num) return 0;
+
     return num * Math.pow(10, 18);
 };
 
@@ -245,6 +248,8 @@ export const eth2Wei = (num: number) => {
  * sat转btc
  */
 export const sat2Btc = (num: number) => {
+    if (!num) return 0;
+
     return num / Math.pow(10, 8);
 };
 
@@ -252,6 +257,8 @@ export const sat2Btc = (num: number) => {
  * btc转sat
  */
 export const btc2Sat = (num: number) => {
+    if (!num) return 0;
+
     return num * Math.pow(10, 8);
 };
 
@@ -764,7 +771,7 @@ export const getXOR = (first, second) => {
  * 验证身份
  */
 export const VerifyIdentidy = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt', wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
     try {
@@ -784,7 +791,7 @@ export const VerifyIdentidy = async (wallet, passwd) => {
  * 获取助记词
  */
 export const getMnemonic = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt', wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -801,7 +808,7 @@ export const getMnemonic = async (wallet, passwd) => {
  * 获取助记词16进制字符串
  */
 export const getMnemonicHexstr = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt', wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
