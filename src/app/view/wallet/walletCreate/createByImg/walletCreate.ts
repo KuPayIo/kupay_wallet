@@ -38,6 +38,9 @@ export class WalletCreate extends Widget {
             userProtocolReaded: false,
             curWalletPswStrength: getWalletPswStrength()
         };
+        const wallets = getLocalStorage('wallets');
+        const len = wallets ? wallets.walletList.length : 0;
+        this.state.walletName = `我的钱包${len + 1}`;
     }
     public backPrePage() {
         this.ok && this.ok();

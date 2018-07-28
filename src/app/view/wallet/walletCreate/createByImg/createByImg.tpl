@@ -10,8 +10,8 @@
 			<p w-class="altMain">请使用颜色丰富的照片</p>
 		</div>
 		{{else}}
-		<div w-class="closeicon" on-tap="removeImg"></div>
 		<widget w-tag="pi-ui-html" >{{it1.imgStr}}</widget>
+		<div w-class="closeicon" on-tap="removeImg"></div>
 		{{end}}
 	</div>
 	<div w-class="inputTitle">

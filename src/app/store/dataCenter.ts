@@ -235,6 +235,7 @@ export class DataCenter {
 
     private async checkAddr() {
         const wallets = getLocalStorage('wallets');
+        if (!wallets) return;
         const list = [];
         wallets.walletList.forEach((v, i) => {
             if (dataCenter.getHash(v.walletId)) {

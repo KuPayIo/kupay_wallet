@@ -5,7 +5,7 @@
     <div w-class="ga-registered-container">
         <div w-class="ga-registered-item" ev-input-change="walletNameChange">
             <div w-class="ga-registered-item-label">钱包名称</div>
-            <div w-class="ga-input-father"><app-components-input-input>{placeHolder:"钱包名称"}</app-components-input-input></div>
+            <div w-class="ga-input-father"><app-components-input-input>{placeHolder:"钱包名称",input:{{it1.walletName}}}</app-components-input-input></div>
         </div>
         <div w-class="ga-registered-item" ev-input-change="walletPswChange">
             <div w-class="ga-registered-item-label">密码，不少于8位字符，可包含英文、数字、特殊字符</div>
