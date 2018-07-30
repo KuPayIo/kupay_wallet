@@ -780,6 +780,8 @@ export const VerifyIdentidy = async (wallet, passwd) => {
         const r = cipher.decrypt(hash, gwlt.vault);
         // console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r);
 
+        dataCenter.setHash(wallet.walletId, hash);
+
         return true;
     } catch (error) {
         console.log(error);
@@ -798,6 +800,8 @@ export const getMnemonic = async (wallet, passwd) => {
         const cipher = new Cipher();
         const r = cipher.decrypt(hash, gwlt.vault);
 
+        dataCenter.setHash(wallet.walletId, hash);
+
         return toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {
         console.log(error);
@@ -813,8 +817,11 @@ export const getMnemonicHexstr = async (wallet, passwd) => {
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
+        const r = cipher.decrypt(hash, gwlt.vault);
 
-        return cipher.decrypt(hash, gwlt.vault);
+        dataCenter.setHash(wallet.walletId, hash);
+
+        return r;
     } catch (error) {
         console.log(error);
 
@@ -862,9 +869,6 @@ export const calcHashValuePromise = async (pwd, salt, walletId) => {
     argonHash.init();
     // tslint:disable-next-line:no-unnecessary-local-variable
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
-    if (walletId) {
-        dataCenter.setHash(walletId, hash);
-    }
 
     return hash;
 };
@@ -924,20 +928,20 @@ export const currencyExchangeAvailable = () => {
     for (let i = 0; i < supportCurrencyList.length; i++) {
         currencyArr.push(supportCurrencyList[i].name);
     }
-    
+
     return shapeshiftCoins.filter(item => {
-        return item.status === 'available' && currencyArr.indexOf(item.symbol) >= 0 ;
+        return item.status === 'available' && currencyArr.indexOf(item.symbol) >= 0;
     });
 };
 
 // 根据货币名获取当前正在使用的地址
-export const getCurrentAddrByCurrencyName = (currencyName:string) => {
+export const getCurrentAddrByCurrencyName = (currencyName: string) => {
     const wallets = getLocalStorage('wallets');
     const wallet = getCurrentWallet(wallets);
     const currencyRecords = wallet.currencyRecords;
     let curAddr = '';
 
-    for (let i = 0; i < currencyRecords.length; i ++) {
+    for (let i = 0; i < currencyRecords.length; i++) {
         if (currencyRecords[i].currencyName === currencyName) {
             curAddr = currencyRecords[i].currentAddr;
             break;
@@ -948,7 +952,7 @@ export const getCurrentAddrByCurrencyName = (currencyName:string) => {
 };
 
 // 根据货币名获取当前正在使用的地址的余额
-export const getCurrentAddrBalanceByCurrencyName = (currencyName:string) => {
+export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
     const curAddr = getCurrentAddrByCurrencyName(currencyName);
     const addrs = getLocalStorage('addrs');
     for (let i = 0; i < addrs.length; i++) {
@@ -958,14 +962,14 @@ export const getCurrentAddrBalanceByCurrencyName = (currencyName:string) => {
     }
 };
 // 时间戳格式化
-export const timestampFormat = (timestamp:number) => {
+export const timestampFormat = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
     const year = date.getFullYear();
     const month = (date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : `0${date.getMonth() + 1}`;
     const day = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
-    const hour = date.getHours() >= 10 ? date.getHours() :`0${date.getHours()}`;
-    const minutes  = date.getMinutes() >= 10 ? date.getMinutes() :`0${date.getMinutes()}`;
-    const seconds  = date.getSeconds() >= 10 ? date.getSeconds() :`0${date.getSeconds()}`;
-    
+    const hour = date.getHours() >= 10 ? date.getHours() : `0${date.getHours()}`;
+    const minutes = date.getMinutes() >= 10 ? date.getMinutes() : `0${date.getMinutes()}`;
+    const seconds = date.getSeconds() >= 10 ? date.getSeconds() : `0${date.getSeconds()}`;
+
     return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
 };

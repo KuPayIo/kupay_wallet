@@ -15,10 +15,8 @@
                 <div w-class="input-price">
                     <app-components-input-input_border>{input:{{it1.price}}}</app-components-input-input_border>
                 </div>
-                <div>
-                    <div>-</div>
-                    <div>+</div>
-                </div>
+                <div>-</div>
+                <div>+</div>
                 <div w-class="price-conversion">
                     <span>{{it1.priceConversion}}</span>
                 </div>
