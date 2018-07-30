@@ -15,7 +15,7 @@
                 <img src="../../res/image/{{it1.outCurrency}}.png" w-class="choose-out-currency" on-tap="outCurrencySelectClick"/>
                 <span w-class="currency">{{it1.outCurrency}}</span>
             </div>
-            <div w-class="ga-switch" on-tap="switchInOutClick"><img src="../../res/image/AION.png" w-class="ga-switch-img"/></div>
+            <div w-class="ga-switch"><div w-class="ga-switch-img-box" on-tap="switchInOutClick"><img src="../../res/image/currency_exchange.png" w-class="ga-switch-img"/></div></div>
             <div w-class="ga-outin-container">
                 <span w-class="ga-outin">买入</span>
                 <img src="../../res/image/{{it1.inCurrency}}.png" w-class="choose-out-currency" on-tap="inCurrencySelectClick"/>

@@ -5,7 +5,7 @@
         <div w-class="ga-item">
             <div w-class="ga-item-top">
                 <div w-class="ga-box1">
-                    <span w-class="ga-status">兑换成功</span>
+                    <span w-class="ga-status">{{item.status_show}}</span>
                     <div w-class="ga-inout"><span>{{item.inputCurrency}}</span><span w-class="ga-arrow">→</span><span>{{item.outputCurrency}}</span></div>
                 </div>
                 <div w-class="ga-box2">
@@ -15,12 +15,12 @@
             </div>
             <div w-class="ga-item-bottom">
                 <div w-class="ga-box3">
-                    <div w-class="ga-out-hash">{{item.inputTXID_show}}</div>
-                    <div w-class="ga-out-amount">-{{item.inputAmount}}</div>
+                    <div w-class="ga-in-hash" on-tap="inHashClick(e,{{index}})">{{item.inputTXID_show}}</div>
+                    <div w-class="ga-in-amount">-{{item.inputAmount}}</div>
                 </div>
                 <div w-class="ga-box4">
-                    <div w-class="ga-in-hash">{{item.outputTXID_show}}</div>
-                    <div w-class="ga-in-amount">+{{item.outputAmount}}</div>
+                    <div w-class="ga-out-hash" on-tap="outHashClick(e,{{index}})">{{item.outputTXID_show}}</div>
+                    <div w-class="ga-out-amount">+{{item.outputAmount}}</div>
                 </div>
             </div>
         </div>

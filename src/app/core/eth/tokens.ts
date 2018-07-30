@@ -34,7 +34,7 @@ const ERC20TokensTestnet = {
 };
 
 // todo 测试网络与正式网络切换
-export const ERC20Tokens = ERC20TokensTestnet;
+export const ERC20Tokens = ERC20TokensMainnet;
 
 // Basic ERC20 interfaces
 export const minABI = [

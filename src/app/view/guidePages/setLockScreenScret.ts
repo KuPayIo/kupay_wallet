@@ -31,7 +31,8 @@ export class SetLockScreenScret extends Widget {
     
     public init() {
         this.state = {
-            passwordScreenTitle:`为了保护您的资产安全 请设置锁屏密码`,
+            passwordScreenTitle:`为了保护您的资产安全
+请设置锁屏密码`,
             lockScreenPsw:''
         };
         

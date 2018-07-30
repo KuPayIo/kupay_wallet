@@ -39,7 +39,7 @@ const supportCurrencyListMain = [
 
 // todo 测试网络与正式网络切换
 // 钱包所支持的货币列表
-export const supportCurrencyList = supportCurrencyListTest;
+export const supportCurrencyList = supportCurrencyListMain;
 
 // 默认显示得ETH代币
 export const defaultEthToken = [];
@@ -93,7 +93,7 @@ const defaultExchangeRateJsonMain = {
 
 // todo 测试网络与正式网络切换
 // 默认货币汇率
-export const defaultExchangeRateJson = defaultExchangeRateJsonTest;
+export const defaultExchangeRateJson = defaultExchangeRateJsonMain;
 
 // eth代币transfer交易编码前缀
 export const ethTokenTransferCode = '0xa9059cbb';

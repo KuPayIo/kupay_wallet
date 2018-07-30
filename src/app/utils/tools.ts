@@ -217,7 +217,7 @@ export const randomRgbColor = () => { // 随机生成RGB颜色
 export const parseAccount = (str: string) => {
     if (str.length <= 29) return str;
 
-    return `${str.slice(0, 13)}...${str.slice(str.length - 13, str.length)}`;
+    return `${str.slice(0, 8)}...${str.slice(str.length - 8, str.length)}`;
 };
 
 export const getDefaultAddr = (addr: number | string) => {

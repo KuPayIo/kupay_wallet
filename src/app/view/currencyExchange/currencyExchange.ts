@@ -5,8 +5,8 @@ import { shapeshift } from '../../../app/exchange/shapeshift/shapeshift';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, 
     eth2Wei, ethTokenMultiplyDecimals,
-     getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName,
-     getCurrentWallet,getLocalStorage,wei2Eth } from '../../../app/utils/tools'; 
+     getAddrById, getCurrentAddrBalanceByCurrencyName,
+     getCurrentAddrByCurrencyName,getCurrentWallet,getLocalStorage, parseDate, resetAddrById, wei2Eth } from '../../../app/utils/tools'; 
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { BtcApi } from '../../core/btc/api';
@@ -15,7 +15,7 @@ import { Api as EthApi } from '../../core/eth/api';
 import { ERC20Tokens } from '../../core/eth/tokens';
 import { GaiaWallet } from '../../core/eth/wallet';
 import { GlobalWallet } from '../../core/globalWallet';
-import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey } from '../../utils/constants';
+import { shapeshiftApiPublicKey } from '../../utils/constants';
 
 interface Props {
     currencyName:string;// 出账币种
@@ -247,20 +247,13 @@ export class CurrencyExchange extends Widget {
                     // spend(SS_BTC_WIF, depositAddress, shiftAmountSatoshis, function (err, txId) { /.. ../ })
             
                     // later, you can then check the deposit status
-                    // this.transfer(psw,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
+                    this.transfer(psw,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
                     this.init();
                     this.paint();
                 });
             });
         });
         
-        // 0x9399264c3367d9bdc589c3aea32901611845b2a4  未退回的交易 hash 0x899f84b755cfa2db660ffeb73ba6952162f4ee125c11a2d6ec2a557edf10f915
-        /* shapeshift.status('0xe59b7d96e3c83bccd7a4a0b79d05aa5def9a72e4', (err, status, data) => {
-            console.error('errror',err);
-            console.log('status',status); // => should be 'received' or 'complete'
-            console.log('status data',data);
-        }); */
-       
     }
 
     // tslint:disable-next-line:max-line-length
@@ -283,6 +276,7 @@ export class CurrencyExchange extends Widget {
                     id = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, currencyName);
                 }
             }
+            this.showTransactionDetails(id,fromAddr,toAddr,gasPrice,gasLimit,pay,currencyName);
             console.log('transfer hash',id);
         } catch (error) {
             console.log(error.message);
@@ -294,10 +288,43 @@ export class CurrencyExchange extends Widget {
         }
 
         loading.callback(loading.widget);
-            
     }
-}
 
+    //
+    // tslint:disable-next-line:max-line-length
+    public showTransactionDetails(id: number,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,currencyName:string) {
+        const t = new Date();
+        const record = {
+            id: id,
+            type: '转账',
+            fromAddr: fromAddr,
+            to: toAddr,
+            pay: pay,
+            time: t.getTime(),
+            showTime: parseDate(t),
+            result: '交易中',
+            info: '兑换',
+            currencyName: currencyName,
+            tip: gasLimit * wei2Eth(gasPrice)
+        };
+
+        popNew('app-view-wallet-transaction-transaction_details', record);
+
+        addRecord(currencyName, fromAddr, record);
+
+    } 
+    
+}
+/**
+ * 添加记录
+ */
+const addRecord = (currencyName, currentAddr, record) => {
+    const addr = getAddrById(currentAddr, currencyName);
+    if (!addr) return;
+    addr.record.push(record);
+
+    resetAddrById(currentAddr, currencyName, addr, true);
+};
 /**
  * 处理转账
  */
