@@ -196,6 +196,7 @@ export class DataCenter {
      * 设置缓存hash
      */
     public setHash(key: string, hash: string) {
+        if (!key) return;
         this.hashMap[key] = hash;
     }
     /**
