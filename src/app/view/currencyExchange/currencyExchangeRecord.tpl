@@ -18,10 +18,12 @@
                     <div w-class="ga-in-hash" on-tap="inHashClick(e,{{index}})">{{item.inputTXID_show}}</div>
                     <div w-class="ga-in-amount">-{{item.inputAmount}}</div>
                 </div>
+                {{if item.status === 'complete'}}
                 <div w-class="ga-box4">
                     <div w-class="ga-out-hash" on-tap="outHashClick(e,{{index}})">{{item.outputTXID_show}}</div>
                     <div w-class="ga-out-amount">+{{item.outputAmount}}</div>
                 </div>
+                {{end}}
             </div>
         </div>
         {{end}}

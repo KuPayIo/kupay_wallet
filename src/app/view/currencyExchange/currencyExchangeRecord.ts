@@ -7,7 +7,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { shapeshiftApiPrivateKey } from '../../utils/constants';
 import { getCurrentAddrByCurrencyName,getCurrentAddrInfo,getLocalStorage, parseAccount, timestampFormat, wei2Eth } from '../../utils/tools';
 
-interface tx {
+interface Tx {
     hasConfirmations:boolean;
     inputAddress:string;
     inputAmount:number;
@@ -37,7 +37,7 @@ export class CurrencyExchangeRecord extends Widget {
             console.log('transactions',transactions);
             if (err) return console.error(err);
             const txList = [];
-            transactions.forEach((tx) => {
+            transactions.forEach((tx:Tx) => {
                 // tslint:disable-next-line:variable-name
                 let status_show = '';
                 if (tx.status === 'complete') {
@@ -50,7 +50,7 @@ export class CurrencyExchangeRecord extends Widget {
                 txList.push({
                     ...tx,
                     inputTXID_show:parseAccount(tx.inputTXID),
-                    outputTXID_show:parseAccount(tx.outputTXID),
+                    outputTXID_show:tx.status === 'complete' && parseAccount(tx.outputTXID),
                     timestamp_show:timestampFormat(tx.timestamp),
                     status_show
                 });
