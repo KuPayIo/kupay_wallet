@@ -127,7 +127,7 @@ export const getAvatarRandom = (): string => {
     const avatarsSrc = ['img_avatar1.jpg', 'img_avatar2.jpg', 'img_avatar3.jpg', 'img_avatar4.jpg', 'img_avatar5.jpg', 'img_avatar6.jpg', 'img_avatar7.jpg', 'img_avatar8.jpg', 'img_avatar9.jpg', 'img_avatar10.jpg'];
     const wallets = getLocalStorage('wallets');
     const avatarUsed = [];
-    if (!wallets) {
+    if (wallets) {
         wallets.walletList.forEach(item => {
             avatarUsed.push(item.avatar);
         });

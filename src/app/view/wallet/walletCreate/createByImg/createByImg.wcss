@@ -79,7 +79,6 @@
 	height:48px;
 	right:-24px;
 	top:-24px;
-	z-index:10;
 	background-image: url(../../../../res/image/btn_img_close.png)
 }
 .closeImg{
