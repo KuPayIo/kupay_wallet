@@ -59,9 +59,9 @@ export class DataCenter {
         const addrs = getLocalStorage('addrs');
         if (addrs) {
             const wallets = getLocalStorage('wallets');
+            this.iSalt = wallets.salt;
             const wallet = getCurrentWallet(wallets);
             if (!wallet) return;
-            this.iSalt = wallet.salt;
             let list = [];
             wallet.currencyRecords.forEach(v => {
                 list = list.concat(v.addrs);
