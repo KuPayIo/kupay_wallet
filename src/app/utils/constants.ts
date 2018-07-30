@@ -115,3 +115,5 @@ export const shapeshiftApiPublicKey = '339a363550d4490fb4a0efae308440f4386c7d99e
 // shapeshift api private key
 // tslint:disable-next-line:max-line-length
 export const shapeshiftApiPrivateKey = 'c98210f4568b04d3f84c5404f8e5be98353849138ed26b3e2723223257d3cbb8bb5cba5060b7c4d44e746342a2eb43e26b9bb5827588d9ed3e712e85d35f054c';
+// 发红包所支持的货币
+export const redEnvelopeSupportCurrency = ['ETH','ZRX','BAT'];

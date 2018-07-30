@@ -2,6 +2,14 @@
     display: flex;
     flex-direction: column;
     font-family: "PingFangSC-Regular";
+    font-size: 0;
+}
+
+.ga-top{
+    background-image: url(../../../res/image/redEnvelopeDetail_bg.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #f8f8f8;
 }
 .ga-head{
     height: 200px;
@@ -10,8 +18,8 @@
     align-items: center;
 }
 .ga-big-head{
-    width: 177px;
-    height: 177px;
+    width: 195px;
+    height: 195px;
 }
 .ga-leave-message{
     line-height: 40px;

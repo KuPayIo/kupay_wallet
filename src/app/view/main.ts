@@ -47,6 +47,8 @@ export const run = (cb): void => {
     // popNew('app-view-redEnvelope-send-sendRedEnvelope');
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
     // popNew('app-view-currencyExchange-currencyExchangeRecord',{ currencyName:'ETH' });
+    // popNew('app-view-redEnvelope-send-sendRedEnvelope');
+    // popNew('app-view-redEnvelope-receive-convertRedEnvelope');
     if (cb) cb();
     // test();
 };
