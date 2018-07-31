@@ -1,0 +1,114 @@
+.statusBar{
+    height: 40px;
+    background: #fff;
+}
+.headBar{
+    height: 176px;
+    overflow: hidden;
+    padding: 0 30px;
+    background: #fff;
+}
+.innerDiv{
+    margin-top: 63px;
+}
+.accountTitle{
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+}
+.accountBalance{
+    color: #203260;
+    font-size: 28px;
+}
+.icon{
+    vertical-align: bottom;
+    margin-left: 17px;
+}
+.rightFloat{
+    float: right;
+
+}
+.market{
+    padding: 40px 30px;
+    background: #fff;
+    position: relative;
+    margin-top: 10px;
+    display: flex;
+}
+.itemLeft{
+    flex-grow: 1;
+}
+.itemRight{
+    flex-basis: 122px;
+    flex-grow: 0;
+    margin-left: 20px; 
+}
+.increase{
+    padding: 14px 20px;
+    background: #EE6560;
+    color: #FFFFFF;
+    font-size: 24px;
+}
+.exchangeType{
+    font-size: 32px;
+}
+.exchangeRate{
+    color: #203260;
+    font-size: 32px;    
+}
+.marketItem{
+    display: flex;
+    justify-content: space-between;
+}
+.itembot{
+    margin-top:11px; 
+}
+.transactionVolume{
+    color: rgba(142, 150, 171, 0.87);
+    font-size: 24px;
+}
+.YNC{
+    color: rgba(142, 150, 171, 0.87);
+    font-size: 24px;
+}
+.kLineContainer{
+    min-height: 328px;
+}
+.service{
+    background: #fff;
+    height: 100%;
+}
+.title{
+    padding: 30px;
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+    line-height: 50px;
+}
+.functions{
+    margin-top:42px; 
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+}
+.funcItems{
+min-width: 100px;
+
+}
+.imgBox{
+    width: 100px;
+    height: 100px;
+    margin: auto;
+}
+.img{
+    width: 100px;
+    height: 100px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.text{
+    margin-top:10px; 
+    color: #A0ACC0;
+    font-size: 28px;
+    line-height: 40px;
+    text-align: center;
+}
