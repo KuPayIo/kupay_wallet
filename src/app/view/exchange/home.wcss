@@ -45,15 +45,18 @@
     height: 88px;
 }
 
-.body{
+.menu{
     position: relative;
-    top: 16px;
+    background-color: white;
+}
+.body-business{
+    position: relative;
     font-size: 24px;
     background-color: white;
-    height: 868px;
+    top: 20px;
 }
 
-.body-left{
+.body-business-left{
     position: relative;
 }
 
@@ -89,13 +92,13 @@
 .limit-text{
     position: absolute;
     left: 30px;
-    top: 185px;
+    top: 30px;
     
 }
 .color-show{
     position: absolute;
-    left: 294px;
-    top: 188px;
+    left: 230px;
+    top: 30px;
 }
 .buy-color{
     position: absolute;
@@ -127,50 +130,98 @@
 }
 .input-price{
     position: absolute;
-    left: 30px;  
-    top: 252px;
-    width: 390px;
+    left: 30px;
+    top: 90px;
+    width: 326px;
     height: 80px;
     
 }
+.price-less{
+    position: absolute;
+    left: 30px;
+    top: 90px;
+    height: 80px;
+    width: 70px;
+    font-size: 60px;
+    background:url(../../res/image/btn_exc_cut.png) no-repeat center;
+}
+.price-add{
+    position: absolute;
+    left: 290px;
+    top: 90px;
+    height: 80px;
+    width: 70px;
+    font-size: 60px;
+    background:url(../../res/image/btn_exc_add.png) no-repeat center;
+}
 .price-conversion{
     position: absolute;
-    left: 30px;  
-    top: 346px;
+    left: 30px;
+    top: 184px;
+    color: #8E96AB 
     
 }
 .input-count{
     position: absolute;
-    left: 30px;  
-    top: 407px;
-    width: 390px;
+    left: 30px;
+    top: 244px;
+    width: 326px;
     height: 80px;
+}
+.count-use{
+    position: absolute;
+    left: 30px;
+    top: 339px;
+    width: 326px;
+}
+.count-slider{
+    position: absolute;
+    left: 30px;
+    top: 370px;
+    width: 326px;
+}
+.all_text{
+    position: absolute;
+    left: 30px;
+    top: 447px;
+    width: 326px;
+    display: none;
 }
 .input-all{
     position: absolute;
-    left: 30px;  
-    top: 511px;
-    width: 390px;
+    left: 30px;
+    top: 534px;
+    width: 326px;
     height: 80px;
     
 }
+.count-currency{
+    position: absolute;
+    width: 100px;
+    right: 0px;
+    text-align: center;
+    top: 0;
+    height: 80px;
+    line-height: 80px;
+}
 .btn-buy-currency{
     position: absolute;
-    left: 30px;  
-    top: 734px;
-    width: 390px;
-    height: 80px;
+    left: 30px;
+    top: 644px;
+    width: 326px;
+    height: 98px;
     font-size: 36px;
-    line-height: 80px;
+    line-height: 98px;
     text-align: center;
-    background-color: #ccc;
+    background-color: #00BD9A;
     color: white;
     cursor: not-allowed;
 }
 
-.body-right{
+.body-business-right{
     position: relative;
-    left: 446px;
+    left: 375px;
+    width: 375px;
 }
 .show-tip{
     position: relative;
@@ -180,7 +231,7 @@
 .line{
     position: relative;
     height: 1px;
-    width: 274px;
+    width: 344px;
     background: #8E96AB;
 }
 .title{
@@ -192,17 +243,18 @@
     position: relative;
 }
 .title-count{
-    left: 123px;
     position: absolute;
+    right: 30px
 }
 .buy-list{
     position: relative;
-    top: 60px;
+    top: 50px;
     font-size: 28px;
 }
 .each-buy{
     position: relative;
     height: 40px;
+    margin-top: 10px;
 }
 
 .buy-price{
@@ -211,28 +263,38 @@
 }
 .buy-count{
     position: absolute;
-    left: 130px;
+    right: 30px;
 }
 .buy-schedule{
     position: absolute;
-    left: 213px;
-    height: 10px;
-    width: 60px;
-    top: 15px;
+    height: 40px;
+    width: 345px;
 }
 .buy-schedule-bar{
     background: rgba(0,189,154,0.20);
-    position: relative;
+    position: absolute;
     height: 100%;
+    width: 20%;
+    right: 0px;
+}
+.average{
+    position: relative;
+    top: 60px;
+    font-size: 28px;
+}
+.average-price{
+    position: relative;
+    top: 70px;
 }
 .sale-list{
     position: relative;
-    top: 100px;
+    top: 120px;
     font-size: 28px;
 }
 .each-sale{
     position: relative;
     height: 40px;
+    margin-top: 10px;
 }
 .sale-price{
     position: absolute;
@@ -240,55 +302,134 @@
 }
 .sale-count{
     position: absolute;
-    left: 130px;
+    right: 30px;
 }
 .sale-schedule{
     position: absolute;
-    left: 213px;
-    height: 10px;
-    width: 60px;
-    top: 15px;
+    height: 40px;
+    width: 345px;
 }
 .sale-schedule-bar{
     background: rgba(255,105,96,0.20);
-    position: relative;
+    position: absolute;
     height: 100%;
-}
-.all-conversion{
-    position: relative;
-    top: 150px;
-}
-.change{
-    position: relative;
-    top: 100px;
-    width: 122px;
-    left: 150px;
-    text-align: center;
-    background: #EE6560;
-    border-radius: 8px;
-    height: 60px;
-    line-height: 60px;
-    color: #FFFFFF;
+    width: 20%;
+    right: 0px;
 }
 
-.foot{
+.foot-business{
     position: relative;
-    top: 32px;
     height: 300px;
     background-color: white;
+    min-height: 500px;
+    top: 160px;
 }
 
-.foot-title{
-    font-size: 36px;
-    color: #212C68;
+.transfer-title{
+    font-size: 24px;
+    color: #0B0817;
     position: relative;
-    left: 30px;
     top: 25px;
+    margin: 0px 30px;
 }
-.foot-info{
+.transfer-info{
     position: relative;
     top: 80px;
     font-size: 28px;
+    color: #203260;
+    text-align: center;
+}
+.transfer-info-none{
+    position: relative;
+    top: 130px;
+    font-size: 28px;
     color: #8E96AB;
     text-align: center;
+}
+.each-transfer{
+    position: relative;
+    height: 30px;
+    margin: 10px 30px;
+}
+.transfer-time{
+    position: absolute;
+}
+.transfer-price{
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+.transfer-count{
+    position: absolute;
+    right: 0px;
+}
+
+.body-entrust{
+    font-size: 28px;
+    font-family: PingFangSC-Regular;
+    background-color: white;
+    margin-top: 30px;
+}
+.each-entrust{
+    position: relative;
+    height: 296px;
+}
+.entrust-type{
+    color: rgba(0, 189, 154, 1);
+    font-size: 32px;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+.entrust-currency{
+    font-size: 32px;
+    color: rgba(32, 50, 96, 1);
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 30px;
+}
+.entrust-status{
+    color: rgba(32, 50, 96, 1);
+    position: absolute;
+    right: 30px;
+    top: 33px;
+}
+.entrust-time{
+    color: rgba(142, 150, 171, 0.87);
+    position: absolute;
+    top: 95px;
+    left: 30px;
+}
+.entrust-cancel{
+    color: rgba(26, 112, 221, 1);
+    position: absolute;
+    top: 95px;
+    right: 30px;
+}
+.entrust-title{
+    color: rgba(142, 150, 171, 0.87);
+    position: absolute;
+    top: 155px;
+    left: 30px;
+}
+.entrust-body{
+    color: rgba(32, 50, 96, 1);
+    position: absolute;
+    top: 215px;
+    left: 30px;
+}
+.entrust-price{
+    position: absolute;
+    width: 100px;
+}
+.entrust-currency1{
+    position: absolute;
+    left: 264px;
+    width: 100px;
+}
+.entrust-currency2{
+    position: absolute;
+    left: 504px;
+    width: 100px;
 }

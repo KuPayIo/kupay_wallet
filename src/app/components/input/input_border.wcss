@@ -12,16 +12,17 @@
 .pi-input__inner{
     -webkit-appearance: none;
     box-sizing: border-box;
-    color: rgb(96, 98, 102);
     display: inline-block;
-    height: 100%;
-    outline: 0px;
-    padding: 0px 30px;
-    width: 100%;
-    background: #F3F6F9;
-    border-radius: 100px;
+
     font-size: 28px;
-    border: none;
+    left: 30px;
+    top: 318px;
+    height: 100%;
+    width: 100%;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(229, 229, 238, 1);
+    padding: 0px 70px;
 }
 
 .pi-input__inner-disabled{
@@ -55,52 +56,4 @@
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-}
-
-.pi-input-group{
-    line-height: normal;
-    display: inline-table;
-    width: 100%;
-    border-collapse: separate;
-}
-
-.pi-input-group__prepend{
-    background-color: #f5f7fa;
-    color: #909399;
-    vertical-align: middle;
-    display: table-cell;
-    position: relative;
-    border: 1px solid #dcdfe6;
-    border-radius: 4px;
-    padding: 0 20px;
-    width: 1px;
-    white-space: nowrap;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right: 0;
-}
-.pi-input_inner-prepend{
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.pi-input-group__append{
-    background-color: #f5f7fa;
-    color: #909399;
-    vertical-align: middle;
-    display: table-cell;
-    position: relative;
-    border: 1px solid #dcdfe6;
-    border-radius: 4px;
-    padding: 0 20px;
-    width: 1px;
-    white-space: nowrap;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-left: 0;
-}
-
-.pi-input_inner-append{
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
 }

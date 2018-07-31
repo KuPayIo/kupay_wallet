@@ -17,9 +17,7 @@ interface Props {
     itype: string;// text textarea password
     rows: number;// 输入框行数，只对 itype="textarea" 有效
     autosize: boolean;// 自适应高度
-    prepend: string;// 前置内容
-    append: string;// 后置内容
-    style: Object;// 样式
+    style: string;// 样式
     autofocus: boolean;// 自动获取焦点
 }
 
@@ -40,9 +38,7 @@ export class Input extends Widget {
         super.setProps(props, oldProps);
         let styleStr = '';
         if (props && props.style) {
-            for (const key in props.style) {
-                styleStr += `${key}:${props.style[key]};`;
-            }
+            styleStr += props.style;
         }
         let currentValue = '';
         if (props.input) {

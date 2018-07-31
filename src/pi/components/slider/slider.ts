@@ -1,6 +1,7 @@
 /**
  * 消息框
  */
+import { getScale } from '../../ui/root';
 import { notify } from '../../widget/event';
 import { addEvent, removeEvent } from '../../widget/scroller/dom';
 import { Widget } from '../../widget/widget';
@@ -92,7 +93,7 @@ export class Message extends Widget {
             event.clientX = event.touches[0].clientX;
         }
         this.startX = event.clientX;
-        this.sliderSize = event.currentTarget.parentNode.parentNode.offsetWidth / 100;
+        this.sliderSize = event.currentTarget.parentNode.parentNode.offsetWidth / 100 * getScale();
 
         this.startPosition = this.state.showValue;
         this.newPosition = this.startPosition;

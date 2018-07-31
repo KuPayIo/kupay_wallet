@@ -1,7 +1,7 @@
 /**
  * 交易所
  */
-import { open, request,setUrl } from '../../../pi/net/ui/con_mgr';
+import { open, request, setUrl } from '../../../pi/net/ui/con_mgr';
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 
@@ -15,36 +15,71 @@ export class Home extends Widget {
         this.init();
     }
     public init() {
+        const currency1 = 'MPT';
+        const currency2 = 'MPT';
         this.state = {
-            currency1: 'BTC',
-            currency2: 'ETH',
+            currency1: currency1,
+            currency2: currency2,
             isSelect: 'buy',
-            price: 7835.59,
-            priceConversion: '≈51283.93 CNY',
-            count: 1,
-            all: 7835.59,
-            allConversion: '￥51283.93',
-            change: '-2.63%',
+            price: 0,
+            priceConversion: '≈0 CNY',
+            count: 0,
+            all: 0,
+            average: '0',
+            averagePrice: '≈0 CNY',
             buyList: [
                 { price: 919.23, count: 0.010, schedule: 0.2 },
                 { price: 919.16, count: 0.550, schedule: 0.8 },
                 { price: 919.23, count: 0.010, schedule: 0.5 },
                 { price: 919.16, count: 0.550, schedule: 0.6 },
-                { price: 919.23, count: 0.010, schedule: 0.1 },
-                { price: 919.16, count: 0.550, schedule: 0.4 },
-                { price: 919.23, count: 0.010, schedule: 0.9 }
+                { price: 919.23, count: 0.010, schedule: 0.1 }
             ],
             saleList: [
                 { price: 919.23, count: 0.010, schedule: 0.2 },
                 { price: 919.16, count: 0.550, schedule: 0.8 },
                 { price: 919.23, count: 0.010, schedule: 0.5 },
                 { price: 919.16, count: 0.550, schedule: 0.6 },
-                { price: 919.23, count: 0.010, schedule: 0.1 },
-                { price: 919.16, count: 0.550, schedule: 0.4 },
-                { price: 919.23, count: 0.010, schedule: 0.9 }
+                { price: 919.23, count: 0.010, schedule: 0.1 }
+            ],
+            transferList: [
+                { time: '2018/7/30 7:05', price: 0.00000056, count: 25 },
+                { time: '2018/7/30 7:05', price: 0.00000056, count: 2.4909 },
+                { time: '2018/7/30 7:05', price: 0.00000056, count: 2.18524 },
+                { time: '2018/7/30 7:05', price: 0.00000056, count: 19 },
+                { time: '2018/7/30 7:05', price: 0.00000056, count: 1200 },
+                { time: '2018/7/30 7:05', price: 0.00000056, count: 19 },
+                { time: '2018/7/30 7:05', price: 0.00000056, count: 1200 },
+                { time: '2018/7/30 7:05', price: 0.00000056, count: 1200 },
+                { time: '2018/7/30 7:05', price: 0.00000056, count: 19 },
+                { time: '2018/7/30 7:05', price: 0.00000056, count: 1200 }
             ],
             list: ['买入', '卖出', '当前委托', '历史委托'],
-            activeNum: 0
+            activeNum: 0,
+            usePercent: 0,
+            countHolder: `数量(${currency1})`,
+            allCountHolder: `总额(${currency2})`,
+            entrustList: [
+                {
+                    id: 1, type: 1, currency1: 'KT', currency2: 'ETH', time: '07-24 12:55:24', price: 0.0012
+                    , currencyCount1: 0.00123052, currencyCount2: 0.00002354
+                },
+                {
+                    id: 1, type: 1, currency1: 'KT', currency2: 'ETH', time: '07-24 12:55:24', price: 0.0012
+                    , currencyCount1: 0.00123052, currencyCount2: 0.00002354
+                },
+                {
+                    id: 1, type: 1, currency1: 'KT', currency2: 'ETH', time: '07-24 12:55:24', price: 0.0012
+                    , currencyCount1: 0.00123052, currencyCount2: 0.00002354
+                },
+                {
+                    id: 1, type: 1, currency1: 'KT', currency2: 'ETH', time: '07-24 12:55:24', price: 0.0012
+                    , currencyCount1: 0.00123052, currencyCount2: 0.00002354
+                },
+                {
+                    id: 1, type: 1, currency1: 'KT', currency2: 'ETH', time: '07-24 12:55:24', price: 0.0012
+                    , currencyCount1: 0.00123052, currencyCount2: 0.00002354
+                }
+            ]
         };
     }
 
@@ -78,6 +113,23 @@ export class Home extends Widget {
             }
         });
     }
+
+    /**
+     * 滑动改变
+     */
+    public onSlicerChange(e: any) {
+        this.state.usePercent = e.value;
+        this.paint();
+    }
+
+    /**
+     * 目录切换
+     */
+    public onMenuChange(e: any) {
+        console.log(e.value);
+        this.state.activeNum = e.value;
+        this.paint();
+    }
 }
 
 const testNet = async () => {
@@ -87,13 +139,6 @@ const testNet = async () => {
         // todo 需要在登录后才能发起正式的通信
 
         // query_all_order：查询所有订单数据
-        // args:
-        // 	type: 100MPT, 101ETH
-        // 	page: 页数，从0开始
-        // 	count: 每页的记录数，>0
-        // return:
-        // 	result: 1成功, 600数据库错误
-        // 	value: [[单号, 已卖出数量, 卖出数量, 已买入数量, 买入数量, 挂单时间(ms), 成交时间(ms), 撤消时间(ms)], ...]
         const msgQueryAllOrder = {
             type: 'query_all_order',
             param: {
@@ -103,14 +148,6 @@ const testNet = async () => {
             }
         };
         // query_user_order:查询我的订单数据
-        // args:
-        // 	type: 100MPT, 101ETH
-        //  status: 0未成交(包括部分成交)，1已成交，2已撤消
-        // 	page: 页数，从0开始
-        // 	count: 每页的记录数，>0
-        // return:
-        // 	result: 1成功, 600数据库错误
-        // 	value: [[单号, 已卖出数量, 卖出数量, 已买入数量, 买入数量, 挂单时间(ms), 成交时间(ms), 撤消时间(ms)], ...]
         const msgQueryUserOrder = {
             type: 'query_user_order',
             param: {
@@ -121,27 +158,15 @@ const testNet = async () => {
             }
         };
         // pending_order：发起订单
-        // args:
-        // 	type: 100MPT, 101ETH 卖出类型
-        // 	sell: 卖出数量，MPT最小卖单为1000MPT，可配置，ETH最小卖单为0.01ETH，可配置
-        // 	buy: 买入数量, ==0市价交易，>0限价交易
-        // return:
-        // 	result: 1成功, 600数据库错误
-        // 	value: [单号, 挂单时间(ms)]
         const msgPendingOrder = {
             type: 'pending_order',
             param: {
                 type: 100,
-                sell: Math.pow(10, 9) * 1000,
-                buy: 1
+                amount: Math.pow(10, 9) * 1000,
+                price: 1
             }
         };
         // undo_order：撤销订单
-        // args:
-        // 	type: 100MPT, 101ETH
-        // 	sid: 单号
-        // return:
-        // 	result: 1成功, 600数据库错误
         const msgUndoOrder = {
             type: 'undo_order',
             param: {
