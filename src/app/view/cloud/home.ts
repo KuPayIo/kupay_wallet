@@ -26,7 +26,7 @@ export class Home extends Widget {
      */
     public cloudAccountClicked() {
         // TODO
-        popNew('app-view-cloud-account-account');
+        popNew('app-view-cloud-cloudAccount-cloudAccount');
     }
 
     /**
@@ -52,6 +52,9 @@ export class Home extends Widget {
      * 点击邀请好友
      */
     public friendsClicked() {
+        // TODO
+    }
+    public toTradingPlaces() {
         // TODO
     }
 }

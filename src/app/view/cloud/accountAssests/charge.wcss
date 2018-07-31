@@ -1,0 +1,35 @@
+.items{
+    padding: 45px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #E5E5EE;
+}
+.itemIcon{
+    width: 50px;
+    height: 50px;
+    flex-grow: 0;
+    margin-right:26px; 
+}
+.info{
+    flex-grow: 1; 
+}
+.amount{
+    flex-grow: 0;
+    color: #203260;
+    font-size: 28px;
+    text-align: right;
+}
+.behavior{
+    color: #203260;
+    font-size: 28px;
+}
+.time{
+    color: #A0ACC0;
+    font-size: 20px;
+    margin-top:10px; 
+}
+.statas{
+    color: #E1953C;
+    font-size: 20px;
+}

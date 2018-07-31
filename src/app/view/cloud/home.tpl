@@ -43,7 +43,7 @@
         </div>
     </div>
 
-    <div w-class="kLineContainer">
+    <div w-class="kLineContainer" on-tap="toTradingPlaces">
 
     </div>
 
