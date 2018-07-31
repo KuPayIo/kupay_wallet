@@ -16,7 +16,7 @@ interface Props {
     autosize:boolean;// 自适应高度
     prepend:string;// 前置内容
     append:string;// 后置内容
-    style:Object;// 样式
+    style:string;// 样式
     autofocus:boolean;// 自动获取焦点
 }
 
@@ -25,7 +25,6 @@ interface State {
     hovering:boolean;
     focused:boolean;
     showClear:object;
-    styleStr:string;// 样式设置
 }
 export class Input extends Widget {
     public props: Props;
@@ -35,12 +34,7 @@ export class Input extends Widget {
     }
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
-        let styleStr = '';
-        if (props && props.style) {
-            for (const key in props.style) {
-                styleStr += `${key}:${props.style[key]};`;
-            }
-        }
+        
         let currentValue = '';
         if (props.input) {
             currentValue = props.input;
@@ -49,8 +43,7 @@ export class Input extends Widget {
             currentValue,
             hovering: false,
             focused: false,
-            showClear:this.showClear.bind(this),
-            styleStr
+            showClear:this.showClear.bind(this)
         };
         if (oldProps) {
             this.changeInputValue();

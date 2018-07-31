@@ -8,7 +8,7 @@
     <textarea 
         class="{{it && it.disabled ? 'pi-textarea__inner-disabled' : 'pi-textarea__inner' }}" 
         w-class="{{it && it.disabled ? 'pi-textarea__inner-disabled' : 'pi-textarea__inner' }} "
-        style="{{it1.styleStr}}"
+        style="{{it.style ? it.style : ''}}"
         placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}"
         value="{{it1 && it1.currentValue ? it1.currentValue : ''}}"
         disabled={{it && it.disabled ? true : false}}
@@ -32,7 +32,7 @@
     <input 
         w-class="{{it && it.disabled ? 'pi-input__inner-disabled' : 'pi-input__inner' }} {{it && it.prepend ? 'pi-input_inner-prepend' : ''}} {{it && it.append ? 'pi-input_inner-append' : ''}}" 
         class="{{it && it.disabled ? 'pi-input__inner-disabled pi-input-dom' : 'pi-input__inner1 pi-input-dom' }}"
-        style="{{it1.styleStr}}"
+        style="{{it.style ? it.style : ''}}"
         type="{{it.itype ? it.itype : 'text'}}" 
         autocomplete="off" 
         placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}" 

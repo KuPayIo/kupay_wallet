@@ -14,7 +14,7 @@
         </div>
         <div w-class="ga-item pay ga-item-space-between" >
             <div w-class="pay-value input-father" ev-input-change="onPayChange">
-                <app-components-input-input>{placeHolder:"输入转账金额",input:{{it1.pay}},style:{{it1.inputStyle}} }</app-components-input-input>
+                <app-components-input-input>{placeHolder:"输入转账金额",input:{{it1.pay}},style:"padding:0 180px 0 30px;" }</app-components-input-input>
             </div>
             <span w-class="pay-value-conversion">≈￥{{it1.payConversion||''}}</span>
         </div>
@@ -22,14 +22,14 @@
         {{if it1.showNote}}
         <div w-class="ga-item">
             <div w-class="info-value input-father" ev-input-change="onInfoChange">
-                <app-components-input-input>{placeHolder:"备注",style:{{it1.inputStyle}}}</app-components-input-input>
+                <app-components-input-input>{placeHolder:"备注",style:"padding:0 180px 0 30px;"}</app-components-input-input>
             </div>
         </div>
         {{end}}
 
         <div w-class="ga-item pay ga-item-space-between" >
             <div w-class="pay-value input-father" ev-input-change="onGasFeeChange">
-                <app-components-input-input>{placeHolder:"矿工费",input:{{it1.fees||''}},style:{{it1.inputStyle}} }</app-components-input-input>
+                <app-components-input-input>{placeHolder:"矿工费",input:{{it1.fees||''}},style:"padding:0 180px 0 30px;" }</app-components-input-input>
             </div>
             <span w-class="pay-value-conversion">≈￥{{it1.feesConversion||''}}</span>
         </div>

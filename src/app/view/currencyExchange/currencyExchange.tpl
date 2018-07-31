@@ -23,9 +23,13 @@
             </div>
         </div>
         <div w-class="ga-input-container">
-            <div w-class="input-father" ev-input-change="outAmountChange"><app-components-input-input>{input:{{it1.outAmount}},placeHolder:"发出数量"}</app-components-input-input></div>
+            <div w-class="input-father" ev-input-change="outAmountChange">
+                <app-components-input-input_simple>{input:{{it1.outAmount}},placeHolder:"发出数量"}</app-components-input-input_simple>
+            </div>
             <div w-class="ga-space"></div>
-            <div w-class="input-father"><app-components-input-input>{input:{{it1.receiveAmount}},placeHolder:"收到数量"}</app-components-input-input></div>
+            <div w-class="input-father">
+                <app-components-input-input_simple>{input:{{it1.receiveAmount}},placeHolder:"收到数量",style:"textAlign:right;"}</app-components-input-input_simple>
+            </div>
         </div>
         <div w-class="rate" on-tap="rateDescClick">
             <img src="../../res/image/rate_tip.png" w-class="ga-tip" /> 

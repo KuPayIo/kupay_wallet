@@ -116,6 +116,7 @@
     display: flex;
     align-items: center;
     padding: 0 60px;
+    align-self: flex-start;
 }
 .ga-tip{
     margin-right: 20px;

@@ -14,7 +14,7 @@
             </div>
             {{end}}
             <div ev-input-change="inputChange" w-class="input-father">
-                <input-input$$>{itype:{{it.inputType}},placeHolder:{{it.placeHolder}},style:{{it1.style}}}</input-input$$>
+                <input-input$$>{itype:{{it.inputType}},placeHolder:{{it.placeHolder}},style:"backgroundColor:#F8F8F8;border:1px solid #D6D9DF;borderRadius: 6px;padding:0 17px;"}</input-input$$>
             </div>
         </div>
         <div w-class="btns">
