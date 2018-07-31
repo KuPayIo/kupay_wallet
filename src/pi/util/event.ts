@@ -302,66 +302,66 @@ const call1 = (func: Function, args: any[]) => {
 		level <= LogLevel.debug && debug(level, `event slow, cost: ${end - start}`, func, args);
 	}
 
-	return r;
+    return r;
 };
 // 对象方法调用
 const objCall1 = (obj: any, func: string, args: any[]) => {
-	let r;
-	const start = timeNow();
-	try {
-		r = objCall(obj, func, args);
-	} catch (ex) {
-		return warn(level, 'event, ex: ', ex, ', func: ', obj, func, args);
-	}
-	const end = timeNow();
-	if (end - start > timeout) {
-		level <= LogLevel.debug && debug(level, `event slow, cost: ${end - start}`, obj, func, args);
-	}
+    let r;
+    const start = timeNow();
+    try {
+        r = objCall(obj, func, args);
+    } catch (ex) {
+        return warn(level, 'event, ex: ', ex, ', func: ', obj, func, args);
+    }
+    const end = timeNow();
+    if (end - start > timeout) {
+    level <= LogLevel.debug && debug(level, `event slow, cost: ${end - start}`, obj, func, args);
+}
 
-	return r;
+    return r;
 };
 
 // TODO 以后改成树结构-并且是写时复制的，就可以任意重入。而且删除效率高。js对象不能直接比较大小，可以转成字符串后的hash来比较大小。如果是乱序执行，则只需要1个树。如果是按照放入的顺序执行，则需要2个树。sbtree或fingertree
 // tslint:disable:max-classes-per-file
 class HandlerArray {
-	public handling: number = 0;
-	public count: number = 0;
-	public array: Handler[] = [];
-	/**
+    public handling: number = 0;
+    public count: number = 0;
+    public array: Handler[] = [];
+    /**
 	 * 获得事件处理器列表的长度
 	 */
-	public size() {
-		return this.count;
-	}
-	/**
+    public size() {
+        return this.count;
+    }
+    /**
 	 * 添加事件处理器
 	 */
-	public add(handler: Handler) {
-		this.array.push(handler);
-		this.count += 1;
-	}
-	/**
+    public add(handler: Handler) {
+        this.array.push(handler);
+        this.count += 1;
+    }
+    /**
 	 * 删除事件处理器
 	 */
-	public remove(handler: Handler) {
-		let i;
-		const arr = this.array;
-		for (i = arr.length - 1; i >= 0; --i) {
-			if (arr[i] === handler) {
-				arr[i] = null;
-				this.count -= 1;
+    public remove(handler: Handler) {
+        let i;
+        const arr = this.array;
+        for (i = arr.length - 1; i >= 0; --i) {
+            if (arr[i] === handler) {
+                arr[i] = null;
+                this.count -= 1;
 
-				return true;
-			}
-		}
+                return true;
+            }
+        }
 
-		return false;
-	}
-	/**
+        return false;
+    }
+    /**
 	 * 清理事件处理器
 	 */
-	public clear() {
-		this.array = [];
-		this.count = 0;
-	}
+    public clear() {
+        this.array = [];
+        this.count = 0;
+    }
 }
