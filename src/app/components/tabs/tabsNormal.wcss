@@ -1,0 +1,57 @@
+.base{
+    position: relative;
+    margin: 0;
+    padding-bottom: 2px;
+}
+
+.nav-wrap{
+    overflow: hidden;
+    margin-bottom: -1px;
+    position: relative;
+}
+
+.nav-scroll{
+    overflow: hidden;
+}
+
+.nav{
+    white-space: nowrap;
+    position: relative;
+    transition: transform .3s;
+    float: left;
+    z-index: 2;
+    transform: translateX(0px);
+    border-bottom: 1px solid #000;
+    width: 100%;
+}
+
+.nav-item{
+    padding: 0 10px;
+    height: 80px;
+    box-sizing: border-box;
+    height: 80px;
+    line-height: 80px;
+    display: inline-block;
+    list-style: none;
+    font-size: 28px;
+    font-weight: 500;
+    color: #303133;
+    position: relative;
+}
+
+.first-item{
+    padding-left: 42px;
+}
+
+.is-active-normal{
+    color: #409eff;
+}
+
+.nav-span-normal{
+    padding: 20px 32px 20px 32px;
+}
+
+.nav-span-normal-activity{
+    padding: 20px 32px 20px 32px;
+    border-bottom: 2px solid #409eff;
+}
