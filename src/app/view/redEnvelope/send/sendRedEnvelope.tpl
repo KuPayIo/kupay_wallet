@@ -6,7 +6,7 @@
     <div w-class="ga-body">
         <div w-class="ga-item-box" on-tap="chooseCurrencyClick">
             <div w-class="ga-balance-inner-box"><span w-class="ga-balance-title">余额</span><span w-class="ga-balance">{{it1.balance}}</span><span>{{it1.currencyName}}</span></div>
-            <div w-class="ga-choose-currency"><span>{{it1.currencyName}}</span><span w-class="ga-currency-img">></span></div>
+            <div w-class="ga-choose-currency"><span>{{it1.currencyName}}</span><img w-class="ga-currency-img" src="../../../res/image/right_arrow.png"/></div>
         </div>
         {{if it1.itype === 1}}
         <div w-class="ga-item-box">

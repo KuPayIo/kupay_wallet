@@ -43,7 +43,10 @@
 }
 .ga-choose-currency{
     font-size: 28px;
+    line-height: 1.5;
     color: #111;
+    display: flex;
+    align-items: center;
 }
 .ga-currency-img{
     width: 28px;

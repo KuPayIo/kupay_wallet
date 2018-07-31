@@ -7,7 +7,7 @@
                 <span w-class="ga-arrow">→</span>
                 <span>{{it.inCurrency}}</span>
             </div>
-            <img w-class="ga-cancel" on-tap="cancelClick" src="../../res/image/AION.png"/>
+            <img w-class="ga-cancel" on-tap="cancelClick" src="../../res/image/exchange_delete.png"/>
         </div>
         <div w-class="ga-container">
             <div w-class="ga-item">
