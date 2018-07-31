@@ -51,6 +51,7 @@
     background-color: white;
     height: 1000px;
     margin-top: 40px;
+    border-radius: 12px;
 }
 .get-addr{
     position: relative;

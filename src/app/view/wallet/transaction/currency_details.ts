@@ -7,7 +7,8 @@ import { ERC20Tokens } from '../../../core/eth/tokens';
 import { dataCenter } from '../../../store/dataCenter';
 import { register,unregister } from '../../../store/store';
 import {
-    effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
+    currencyExchangeAvailable, effectiveCurrency, effectiveCurrencyNoConversion, 
+    formatBalance, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
 } from '../../../utils/tools';
 import { Wallet } from '../../interface';
 
@@ -21,6 +22,7 @@ interface State {
     balance: number;
     showBalance: string;
     showBalanceConversion: string;
+    canCurrencyExchange:boolean;
 }
 
 export class AddAsset extends Widget {
@@ -41,12 +43,22 @@ export class AddAsset extends Widget {
         register('wallets',this.registerWalletsFun);
         register('addrs',this.registerAddrsFun);
         
+        const data = currencyExchangeAvailable();
+        const dataList = [];
+        data.forEach(element => {
+            dataList.push(element.symbol);
+        });
         const wallets = getLocalStorage('wallets');
+        
         const wallet = getCurrentWallet(wallets);
 
         this.state = {
-            list: [], currentAddr: '', balance: 0, showBalance: `0 ${this.props.currencyName}`
-            , showBalanceConversion: '≈0.00 CNY'
+            list: [], 
+            currentAddr: '', 
+            balance: 0, 
+            showBalance: `0 ${this.props.currencyName}`, 
+            showBalanceConversion: '≈0.00 CNY',
+            canCurrencyExchange:dataList.indexOf(this.props.currencyName) >= 0 
         };
         this.resetCurrentAddr(wallet, this.props.currencyName);
         this.parseBalance();
@@ -96,7 +108,7 @@ export class AddAsset extends Widget {
     /**
      * 显示简介
      */
-    public showIntroduction() {
+    public currencyExchangeClick() {
         // console.log("onSwitchChange", e, index)
         // this.state.list[index].isChoose = e.newType;
 
@@ -164,7 +176,7 @@ export class AddAsset extends Widget {
                 result: '已完成',
                 info: v.info,
                 account: parseAccount(isFromMe ? (isToMe ? v.from : v.to) : v.from).toLowerCase(),
-                showPay: pay.show,
+                showPay:pay.show,
                 currencyName: this.props.currencyName
             };
         });

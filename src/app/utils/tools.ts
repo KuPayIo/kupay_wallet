@@ -326,7 +326,7 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
         num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
     r.num = num;
-    r.show = `${num} ${currencyName}`;
+    r.show = `${formatBalance(num)} ${currencyName}`;
 
     return r;
 
@@ -546,6 +546,7 @@ export const urlParams = (url: string, key: string) => {
 };
 
 export const formatBalance = (banlance: number) => {
+    banlance = Number(banlance);
     if (!banlance) return 0;
     let retBanlance;
     if (banlance >= 1) {

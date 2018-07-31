@@ -3,6 +3,7 @@
     font-size: 28px;
     font-family: "PingFangSC-Regular";
     color: #203260;
+    background-color: #fff;
 }
 .topbar{
     display: flex;

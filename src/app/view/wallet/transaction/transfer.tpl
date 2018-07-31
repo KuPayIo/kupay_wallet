@@ -35,7 +35,7 @@
         </div>
        
         <div w-class="ga-item ga-congestion-container">
-            <img src="../../../res/image/AION.png" w-class="ga-img"/>
+            <img src="../../../res/image/rate_tip.png" w-class="ga-img"/>
             <span w-class="ga-congestion-title">拥堵情况</span>
             <span w-class="ga-congestion">畅通</span>
         </div>

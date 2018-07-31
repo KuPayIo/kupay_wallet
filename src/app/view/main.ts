@@ -44,11 +44,14 @@ export const run = (cb): void => {
       }); */
     /*  popNew('app-view-wallet-transaction-receipt',{currencyBalance: 100,
          addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
-    // popNew('app-view-redEnvelope-send-sendRedEnvelope');
-    // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
-    // popNew('app-view-currencyExchange-currencyExchangeRecord',{ currencyName:'ETH' });
-    // popNew('app-view-redEnvelope-send-sendRedEnvelope');
-    // popNew('app-view-redEnvelope-receive-convertRedEnvelope');
+    // tslint:disable-next-line:max-line-length
+   /*  popNew('app-view-wallet-transaction-currency_details',{ 
+        list:[],
+        currentAddr:'mtGwFrTMfX6BKgCt2TjYBkRGxHihMqCG2v',
+        balance:'0',
+        showBalance:'0',
+        showBalanceConversion:'0',
+        currencyName:'BTC' }); */
     if (cb) cb();
     // test();
 };

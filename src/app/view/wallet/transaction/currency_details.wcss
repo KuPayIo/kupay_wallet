@@ -5,18 +5,17 @@
     position: absolute;
     left: 0px;
     top: 0px;
+    background-color: #203260;
+    display: flex;
+    flex-direction: column;
 }
 .header{
-    border-width: 0px;
-    position: relative;
-    left: 0px;
-    top: 0px;
     width: 100%;
-    height: 144px;
     font-size: 20px;
     color: black;
     text-align: center;
     line-height: normal;
+   
 }
 
 .search{
@@ -28,79 +27,102 @@
     transform-origin: 185.5px 13px 0px;
     cursor: pointer;
     font-size: 80px;
-    color: rgb(32, 50, 96);
+    color: #fff;
     width: 120px;
-    height: 100%;
     text-align: center;
     line-height: 100%;
 }
-
+.container{
+    background-color: #203260;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+    height: 420px;
+}
 .balance{
-    text-align: center;
-    top: 75px;
     font-size: 48px;
-    color: #203260;
     position: relative;
 }
 .balance-conversion{
-    text-align: center;
+    margin-top: 10px;
     position: relative;
-    top: 75px;
     font-size: 24px;
-    color: #8E96AB;
 }
 
 .body{
     position: relative;
     width: 100%;
     background: rgb(255, 255, 255);
-    height: 100%;
 }
 
 .transaction-record{
+    flex: 1 0 0;
     position: relative;
-    width: 90%;
-    left: 30px;
+    width: 100%;
     font-size: 28px;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+}
+.box{
+    height: 100px;
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e5ee;
 }
 .record-text{
-    position: absolute;
-    top: 30px;
+    color: #8e96ab;
 }
-.introduction-text{
-    position: absolute;
-    right: 0px;
-    top: 30px;
-    color: #ccc;
+.box1{
+    color: #fff;
+    font-size: 24px;
+    display: flex;
 }
-.line{
-    position: absolute;
-    width: 100%;
-    height: 1px;
-    background-color: #e5e5ee;
-    top: 100px;
+.ga-up-and-down{
+    width: 122px;
+    height: 60px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(238, 101, 96, 1);
+}
+.ga-exchange{
+    width: 122px;
+    height: 60px;
+    border-radius: 8px;
+    background-color: #1a70dd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+}
+.no-record-container{
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .transaction-list{
-    position: absolute;
-    top: 101px;
     width: 100%;
     font-size: 20px;
-    height: 700px;
+    flex: 1 0 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .footer{
-    position: absolute;
     width: 100%;
-    bottom: 0px;
     height: 110px;
     border-top: 1px solid rgb(136, 136, 136);
     font-size: 28px;
+    display: flex;
 }
 .btn{
-    position: absolute;
-    width: 50%;
-    height: 100%;
-    cursor: pointer;
+    flex: 1 0 0;
     color: white;
     display: flex;
     align-items: center;
@@ -115,14 +137,13 @@
 }
 
 .no-record{
-    background-image : url(../../../res/image/img_none_record.png) ;
-    background-repeat: no-repeat;
-    background-size: 300px 300px;
-    background-position-x: center;
-    background-position-y: bottom;
-    height: 600px;
+    margin-top: 56px;
+    height: 250px;
+    width: 250px;
 }
 .no-record-text{
     text-align: center;
     font-size: 32px;
+    margin-top: 30px;
+    color: #8e96ab;
 }
