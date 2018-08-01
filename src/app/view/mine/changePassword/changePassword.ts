@@ -23,13 +23,7 @@ export class ChangePassword extends Widget {
 
     public init() {
         this.state = {
-            style: {
-                backgroundColor: '#FFF',
-                fontSize: '24px',
-                color: '#8E96AB',
-                lineHeight: '33px',
-                'border-bottom': '1px solid #c0c4cc'
-            },
+            style: 'backgroundColor: #FFF;fontSize: 24px;color: #8E96AB;lineHeight: 33px;borderBottom: 1px solid #c0c4cc;',
             newPassword: '',
             rePassword: '',
             strength: getWalletPswStrength('')

@@ -33,16 +33,7 @@ export class WalletImport extends Widget {
             walletPswConfirm: '',
             walletPswTips: '',
             userProtocolReaded: false,
-            curWalletPswStrength: getWalletPswStrength(),
-            textAreaStyle1: {
-                border: '3px dotted #A0ACC0',
-                'border-bottom': 'none',
-                'padding-top': '26px'
-            },
-            textAreaStyle2: {
-                border: '3px dotted #A0ACC0',
-                'padding-top': '26px'
-            }
+            curWalletPswStrength: getWalletPswStrength()
         };
     }
     public backPrePage() {

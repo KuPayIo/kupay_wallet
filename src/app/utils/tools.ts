@@ -13,7 +13,7 @@ import { toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
-import { Addr } from '../view/interface';
+import { Addr, Wallet } from '../view/interface';
 import { lang, lockScreenSalt, supportCurrencyList } from './constants';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
@@ -34,7 +34,7 @@ export const sleep = (delay) => {
         }
     }
 };
-export const getCurrentWallet = (wallets) => {
+export const getCurrentWallet = (wallets): Wallet => {
     if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
         return null;
     }
@@ -217,7 +217,7 @@ export const randomRgbColor = () => { // 随机生成RGB颜色
 export const parseAccount = (str: string) => {
     if (str.length <= 29) return str;
 
-    return `${str.slice(0, 13)}...${str.slice(str.length - 13, str.length)}`;
+    return `${str.slice(0, 8)}...${str.slice(str.length - 8, str.length)}`;
 };
 
 export const getDefaultAddr = (addr: number | string) => {
@@ -326,7 +326,7 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
         num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
     r.num = num;
-    r.show = `${num} ${currencyName}`;
+    r.show = `${formatBalance(num)} ${currencyName}`;
 
     return r;
 
@@ -546,6 +546,7 @@ export const urlParams = (url: string, key: string) => {
 };
 
 export const formatBalance = (banlance: number) => {
+    banlance = Number(banlance);
     if (!banlance) return 0;
     let retBanlance;
     if (banlance >= 1) {

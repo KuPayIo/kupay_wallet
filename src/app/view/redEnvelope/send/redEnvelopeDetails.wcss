@@ -57,6 +57,12 @@
     display: flex;
     justify-content: space-between;
 }
+.ga-item-bottom{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 .ga-records-type{
     line-height: 50px;
     color: rgba(17, 17, 17, 0.87);
@@ -76,4 +82,8 @@
     font-size: 36px;
     font-family: "PingFangSC-Regular";
 
+}
+.ga-best{
+    color: rgba(222, 153, 116, 0.87);
+    font-size: 24px;
 }
