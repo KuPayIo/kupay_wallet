@@ -81,42 +81,19 @@
         </div>
         <div w-class="functions">
             <div w-class="funcItems">
-                <div w-class="imgBox">
-                    <img src="../../res/image/cloud_packets.png" w-class="img" />
-                </div>
-                <div w-class="text">
-                    发红包
-                </div>
-            </div>
-
-            <div w-class="funcItems">
-                <div w-class="imgBox">
-                    <img src="../../res/image/cloud_awards.png" w-class="img" />
-                </div>
-                <div w-class="text">
-                    兑换领奖
+                <img src="../../res/image/cloud_packets.png" w-class="img" />
+                <div w-class="txtFather">
+                    <div w-class="txtTitle">发红包</div>
+                    <div w-class="txtContent">发红包给好友</div>
                 </div>
             </div>
             <div w-class="funcItems">
-                <div w-class="imgBox">
-                    <img src="../../res/image/cloud_bonus.png" w-class="img" />
-                </div>
-                <div w-class="text">
-                    领分红
-                </div>
-            </div>
-
-            <div w-class="funcItems">
-                <div w-class="imgBox">
-                    <img src="../../res/image/cloud_friends.png" w-class="img" />
-                </div>
-                <div w-class="text">
-                    邀请好友
+                <img src="../../res/image/cloud_awards.png" w-class="img" />
+                <div w-class="txtFather">
+                    <div w-class="txtTitle">发红包</div>
+                    <div w-class="txtContent">发红包给好友</div>
                 </div>
             </div>
-
-
-
         </div>
     </div>
 
