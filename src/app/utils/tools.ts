@@ -13,7 +13,7 @@ import { toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
-import { Addr } from '../view/interface';
+import { Addr, Wallet } from '../view/interface';
 import { lang, lockScreenSalt, supportCurrencyList } from './constants';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
@@ -34,7 +34,7 @@ export const sleep = (delay) => {
         }
     }
 };
-export const getCurrentWallet = (wallets) => {
+export const getCurrentWallet = (wallets): Wallet => {
     if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
         return null;
     }

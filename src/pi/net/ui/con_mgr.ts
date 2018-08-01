@@ -47,6 +47,20 @@ export const setUrl = (url: string) => {
 };
 
 /**
+ * 获取连接用户
+ */
+export const getUser = () => {
+    return conUser;
+};
+
+/**
+ * 设置连接用户
+ */
+export const setUser = (user: string) => {
+    conUser = user;
+};
+
+/**
  * 打开连接
  */
 let lastRequest = null;
@@ -358,6 +372,9 @@ let slowReq: number = 0;
 
 // 通讯地址
 let conUrl: string = '';
+
+// 连接用户
+let conUser: string = '';
 
 // 通讯等待时间
 const waitTimeout = 20 * 1000;
