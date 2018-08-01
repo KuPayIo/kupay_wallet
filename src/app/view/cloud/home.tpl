@@ -52,7 +52,7 @@
             服务
         </div>
         <div w-class="functions">
-            <div w-class="funcItems">
+            <div w-class="funcItems" on-tap="packetsClicked">
                 <div w-class="imgBox">
                     <img src="../../res/image/cloud_packets.png" w-class="img" />
                 </div>
@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <div w-class="funcItems">
+            <div w-class="funcItems" on-tap="awardsClicked">
                 <div w-class="imgBox">
                     <img src="../../res/image/cloud_awards.png" w-class="img" />
                 </div>

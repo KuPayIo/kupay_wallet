@@ -3,13 +3,18 @@
     flex-direction: column;
     font-family: "PingFangSC-Regular";
     font-size: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
 }
 .ga-main{
     overflow-x: hidden;
     overflow-y: auto;
 }
 .ga-top{
-    background-image: url(../../../res/image/redEnvelopeDetail_bg.png);
+    background-image: url(../../res/image/redEnvelopeDetail_bg.png);
     background-repeat: no-repeat;
     background-size: contain;
     background-color: #f8f8f8;
@@ -55,10 +60,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 32px;
+    color: #8e96ab;
 }
 .input-father{
     flex: 1 0 0;
-    margin-right: 30px;
+    margin-left: 40px;
 }
 .ga-copy-btn{
     width: 195px;

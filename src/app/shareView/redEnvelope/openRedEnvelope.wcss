@@ -4,6 +4,11 @@
     align-items: center;
     justify-content: center;
     font-family: "PingFangSC-Regular";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 .ga-main{
     width: 690px;
@@ -33,11 +38,15 @@
     text-align: center;
     margin-top: 60px;
 }
+.open-container{
+    
+}
 .ga-open{
     width: 177px;
     height: 177px;
     margin-top: 110px;
 }
+
 .ga-look{
     font-size: 28px;
     line-height: 40px;
