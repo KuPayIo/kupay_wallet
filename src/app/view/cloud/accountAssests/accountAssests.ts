@@ -11,12 +11,13 @@ export class AccountAssests extends Widget {
     public setProps(props:any,oldProps:any) {
         super.setProps(props,oldProps);
         this.init();
+        this.dataProcess();
     }
     public init(): void {
         this.state = {
             balance:'2.000000',// 资产余额
-            coinType:this.props.coinType,// 货币种类
-            coinIcon:'BTC.png',// 货币的图标
+            coinType:'',// 货币种类
+            coinIcon:'',// 货币的图标
             maskHeight:getHeight(),
             routePath: 'app-view-cloud-accountAssests-others',
             panelBtns: [{
@@ -57,5 +58,14 @@ export class AccountAssests extends Widget {
     }
     public withdrawClicked() {
         popNew('app-view-cloud-assestsManage-withdraw',{ coinType:this.props.coinType });
+    }
+
+    public dataProcess() {
+        this.state.coinType = this.props.coinType;
+        if (this.props.coinType === 'KPT') {
+            this.state.coinIcon = 'cloud_cointype_btc.png';
+        } else if (this.props.coinType === 'ETH') {
+            this.state.coinIcon = 'cloud_cointype_eth.png';
+        }
     }
 }

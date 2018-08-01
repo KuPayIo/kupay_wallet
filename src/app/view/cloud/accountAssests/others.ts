@@ -14,17 +14,17 @@ export class Others extends Widget {
         this.state = {
             infoList:[{
                 behavior:'发红包',// 名称
-                behaviorIcon:'cloud_packets.png',// 对应的图标
+                behaviorIcon:'cloud_others_pockets.png',// 对应的图标
                 time:'2018-05-03 12:00:02',// 时间
                 amount:'-0.0001'// 金额
             },{
-                behavior:'发红包2',
-                behaviorIcon:'cloud_packets.png',
+                behavior:'分红',
+                behaviorIcon:'cloud_others_bonus.png',
                 time:'2018-05-03 12:00:02',
                 amount:'-0.0001'
             },{
-                behavior:'发红包3',
-                behaviorIcon:'cloud_packets.png',
+                behavior:'挖坑',
+                behaviorIcon:'cloud_others_drag.png',
                 time:'2018-05-03 12:00:02',
                 amount:'-0.0001'
             }]
