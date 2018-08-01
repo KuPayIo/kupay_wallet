@@ -4,7 +4,6 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../core/eth/tokens';
-import { echarts } from '../../../res/js/echarts';
 import { dataCenter } from '../../../store/dataCenter';
 import { register,unregister } from '../../../store/store';
 import {
@@ -525,11 +524,11 @@ export class AddAsset extends Widget {
         
             ]
         };
-         // 基于准备好的dom，初始化echarts实例
-        const myChart = echarts.init(document.getElementById('k-line'));
+        //  // 基于准备好的dom，初始化echarts实例
+        // const myChart = echarts.init(document.getElementById('k-line'));
         
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
+        // // 使用刚指定的配置项和数据显示图表。
+        // myChart.setOption(option);
     }
     private resetCurrentAddr(wallet: Wallet, currencyName: string) {
         if (!wallet.currencyRecords || !currencyName) return [];
