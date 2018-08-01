@@ -1,17 +1,45 @@
-<div class="ga-new-page">
+<div class="ga-new-page" w-class="ga-new-page">
     <div w-class="statusBar"></div>
-    <div w-class="headBar">
-        <div w-class="innerDiv" on-tap="cloudAccountClicked">
-            <span w-class="accountTitle">
-                我的云账户
-            </span>
-            <span w-class="rightFloat">
-                <span w-class="accountBalance">
-                    {{it1.cloudBalance}}
-                </span>
-                <img src="../../res/image/cloud_arow_right.png" w-class="icon" />
+    <div w-class="headBar" on-tap="cloudAccountClicked">
+
+        <div w-class="flexLeft">
+            <img src="../../res/image/cloud_cointype_btc.png" w-class="coinIcon" />
+            <span w-class="accountBalance">
+                5,000.00 KPT
             </span>
         </div>
+        <div w-class="flexRight">
+            <img src="../../res/image/cloud_cointype_eth.png" w-class="coinIcon" />
+            <span w-class="accountBalance">
+                0.522 ETH
+            </span>
+            <img src="../../res/image/cloud_arow_right.png" w-class="arowIcon" />
+        </div>
+
+    </div>
+    <div w-class="bonusBox">
+        <img src="../../res/image/cloud_bonus.png" w-class="bonusIcon" />累计分红(ETH)
+
+        <span w-class="rightFloat">
+            <span w-class="bonusAmount">
+                0.9152
+            </span>
+            <img src="../../res/image/cloud_arow_right.png" w-class="bonusArowIcon" />
+        </span>
+
+
+    </div>
+    <div w-class="bonusBox">
+        <img src="../../res/image/cloud_others_drag.png" style="width: 38px;height: 38px;" w-class="bonusIcon" />挖矿(KT)
+
+        <span w-class="rightFloat">
+            <span w-class="linerBg">
+                挖一下
+            </span>
+            <img src="../../res/image/cloud_arow_right.png" w-class="bonusArowIcon" />
+        </span>
+
+
     </div>
 
     <div w-class="market">
@@ -90,5 +118,9 @@
 
 
         </div>
+    </div>
+
+    <div style="width: 100%;height: 110px;margin-top:10px; ">
+
     </div>
 </div>
