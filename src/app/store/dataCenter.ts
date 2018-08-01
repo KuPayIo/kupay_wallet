@@ -45,7 +45,7 @@ export class DataCenter {
     public exchangeRateJson: any = defaultExchangeRateJson;
     public currencyList: any[] = supportCurrencyList;
     public shapeShiftCoins: any = [];// shapeShift 支持的币种
-    public currencyExchangeTimer:number;
+    public currencyExchangeTimer: number;
 
     private hashMap: any = {};
     private iSalt: string;
@@ -213,11 +213,12 @@ export class DataCenter {
     public fetchCurrencyExchangeTx() {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
         const curAllAddrs = getAddrsAll(wallet);
         curAllAddrs.forEach(item => {
             this.getTransactionsByAddr(item);
         });
-        
+
     }
 
     /****************************************************************************************************
@@ -253,7 +254,7 @@ export class DataCenter {
         this.fetchCurrencyExchangeTx();
         this.currencyExchangeTimer = setTimeout(() => {
             this.currencyExchangeTimerStart();
-        },10 * 60 * 1000);
+        }, 10 * 60 * 1000);
     }
     private async checkAddr() {
         const wallets = getLocalStorage('wallets');
@@ -606,11 +607,11 @@ export class DataCenter {
         return addrs;
     }
 
-    private async getTransactionsByAddr(addr:string) {
+    private async getTransactionsByAddr(addr: string) {
         const addrLowerCase = addr.toLowerCase();
-        const transactions = (addr:string):Promise<any> => {
+        const transactions = (addr: string): Promise<any> => {
             return new Promise((resolve, reject) => {
-                shapeshift.transactions(shapeshiftApiPrivateKey,addr, (err, transactions) => {
+                shapeshift.transactions(shapeshiftApiPrivateKey, addr, (err, transactions) => {
                     if (err || transactions.length === 0) {
                         reject(err || new Error('null array'));
                     }
@@ -620,7 +621,7 @@ export class DataCenter {
         };
         let count = shapeshiftTransactionRequestNumber;
         while (count >= 0) {
-           
+
             let txs;
             try {
                 txs = await transactions(addrLowerCase);
@@ -631,7 +632,7 @@ export class DataCenter {
                 const currencyExchangeTxs = getLocalStorage('currencyExchangeTxs') || {};
                 const oldTxs = currencyExchangeTxs[addrLowerCase] || [];
                 txs.forEach(tx => {
-                    const index = this.getTxByHash(oldTxs,tx.inputTXID);
+                    const index = this.getTxByHash(oldTxs, tx.inputTXID);
                     if (index >= 0) {
                         oldTxs[index] = tx;
                     } else {
@@ -639,16 +640,16 @@ export class DataCenter {
                     }
                 });
                 currencyExchangeTxs[addrLowerCase] = oldTxs;
-                setLocalStorage('currencyExchangeTxs',currencyExchangeTxs);
-                
+                setLocalStorage('currencyExchangeTxs', currencyExchangeTxs);
+
                 return;
             }
             count--;
         }
     }
 
-    private getTxByHash(txs:any[],hash:string) {
-        for (let i = 0; i < txs.length;i++) {
+    private getTxByHash(txs: any[], hash: string) {
+        for (let i = 0; i < txs.length; i++) {
             // tslint:disable-next-line:possible-timing-attack
             if (txs[i].inputTXID === hash) {
                 return i;
