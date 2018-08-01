@@ -1,11 +1,12 @@
-<div class="ga-new-page" ev-back-click="backClick">
+<div class="ga-new-page" ev-back-click="backClick" w-class="ga-new-page">
     <app-components-topBar-topBar>{title:"兑换记录"}</app-components-topBar-topBar>
     <div w-class="ga-body">
+        <div>
         {{for index,item of it1.txList}}
         <div w-class="ga-item">
             <div w-class="ga-item-top">
                 <div w-class="ga-box1">
-                    <span w-class="ga-status">{{item.status_show}}</span>
+                    <span w-class="{{item.status_class}}">{{item.status_show}}</span>
                     <div w-class="ga-inout"><span>{{item.inputCurrency}}</span><span w-class="ga-arrow">→</span><span>{{item.outputCurrency}}</span></div>
                 </div>
                 <div w-class="ga-box2">
@@ -27,5 +28,6 @@
             </div>
         </div>
         {{end}}
+        </div>
     </div>
 </div>

@@ -27,6 +27,9 @@ export class MessageBoxVerify extends Widget {
     public create() {
         super.create();
         this.config = { value: { group: 'top' } };
+        this.state = {
+            input:''
+        };
     }
 
     /**

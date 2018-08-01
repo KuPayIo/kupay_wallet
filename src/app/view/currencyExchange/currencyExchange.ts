@@ -15,7 +15,8 @@ import {
     openBasePage, 
     parseDate, 
     resetAddrById, 
-    wei2Eth } from '../../../app/utils/tools'; 
+    setLocalStorage, 
+    wei2Eth} from '../../../app/utils/tools'; 
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { BtcApi } from '../../core/btc/api';
@@ -81,7 +82,7 @@ export class CurrencyExchange extends Widget {
     // 定时获取兑率等信息 30s更新一次
     public marketInfoUpdated() {
         shapeshift.marketInfo(this.state.pair, (err, marketInfo) => {
-            console.log('marketInfo',marketInfo);
+            // console.log('marketInfo',marketInfo);
             if (err) {
                 console.log(err);
                 
@@ -179,6 +180,7 @@ export class CurrencyExchange extends Widget {
         }
         popNew('app-view-currencyExchange-rateDescription',{ fee });
     }
+    // tslint:disable-next-line:max-func-body-length
     public async sureClick() {
         const outAmount = this.state.outAmount;
         const outCurrency = this.state.outCurrency;
@@ -209,6 +211,8 @@ export class CurrencyExchange extends Widget {
             fee = 0;
         } else if (ERC20Tokens[outCurrency]) {
             gasLimit = await estimateGasERC20(outCurrency,this.state.curOutAddr,this.state.outAmount * this.state.rate);
+            // 临时解决方案
+            gasLimit  = gasLimit * 2;
             fee = gasLimit * wei2Eth(this.state.gasPrice);
         }
         console.log('gasLimit',gasLimit);
@@ -259,7 +263,11 @@ export class CurrencyExchange extends Widget {
             // spend(SS_BTC_WIF, depositAddress, shiftAmountSatoshis, function (err, txId) { /.. ../ })
     
             // later, you can then check the deposit status
-            await this.transfer(passwd,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
+            // tslint:disable-next-line:max-line-length
+            const hash = await this.transfer(passwd,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
+            // tslint:disable-next-line:max-line-length
+            this.setTemporaryRecord(hash,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency,this.state.inCurrency,this.state.rate);
+            popNew('app-view-currencyExchange-currencyExchangeRecord', { currencyName:outCurrency });
             close.callback(close.widget);
             this.init();
             this.paint();
@@ -271,8 +279,8 @@ export class CurrencyExchange extends Widget {
         // tslint:disable-next-line:no-this-assignment
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
+        let id: string;
         try {
-            let id: any;
             const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, currencyName);
             if (addrIndex >= 0) {
                 const wlt = await GlobalWallet.createWlt(currencyName, psw, wallet, addrIndex);
@@ -284,7 +292,6 @@ export class CurrencyExchange extends Widget {
                     id = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, currencyName);
                 }
             }
-            this.showTransactionDetails(id,fromAddr,toAddr,gasPrice,gasLimit,pay,currencyName);
             console.log('transfer hash',id);
         } catch (error) {
             console.log(error.message);
@@ -294,14 +301,35 @@ export class CurrencyExchange extends Widget {
                 popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
             }
         }
-    }
 
-    //
+        return id;
+    }
+    // 临时记录
     // tslint:disable-next-line:max-line-length
-    public showTransactionDetails(id: number,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,currencyName:string) {
+    public setTemporaryRecord(hash: string,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,outCurrency:string,inCurrency:string,rate:number) {
         const t = new Date();
+        // 币币兑换交易记录
+        const tx = {
+            hasConfirmations:'false',
+            inputAddress:fromAddr,
+            inputAmount:pay,
+            inputCurrency:outCurrency,
+            inputTXID:hash,
+            outputAddress:'',
+            outputAmount:'',
+            outputCurrency:inCurrency,
+            outputTXID:'',
+            shiftRate:rate,
+            status:'pending',
+            timestamp:t.getTime() / 1000
+        };
+        const currencyExchangeTxs = getLocalStorage('currencyExchangeTxs') || {};
+        currencyExchangeTxs[this.state.curOutAddr.toLowerCase()].push(tx);
+        setLocalStorage('currencyExchangeTxs',currencyExchangeTxs);
+
+        // 币币兑换出货币种交易记录
         const record = {
-            id: id,
+            id: hash,
             type: '转账',
             fromAddr: fromAddr,
             to: toAddr,
@@ -310,15 +338,11 @@ export class CurrencyExchange extends Widget {
             showTime: parseDate(t),
             result: '交易中',
             info: '兑换',
-            currencyName: currencyName,
+            currencyName: outCurrency,
             tip: gasLimit * wei2Eth(gasPrice)
         };
-
-        popNew('app-view-wallet-transaction-transaction_details', record);
-
-        addRecord(currencyName, fromAddr, record);
-
-    } 
+        addRecord(outCurrency, fromAddr, record);
+    }
     
 }
 /**

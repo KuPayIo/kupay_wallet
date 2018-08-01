@@ -10,6 +10,7 @@
     <div w-class="container">
         <div w-class="balance">{{it1.showBalance}}</div>
         <div w-class="balance-conversion">{{it1.showBalanceConversion}}</div>
+        <div id="k-line" w-class="k-line"></div>
     </div>
     <div w-class="transaction-record">
         <div w-class="box">
