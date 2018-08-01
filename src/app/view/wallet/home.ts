@@ -2,15 +2,16 @@
  * wallet home page
  */
 
+import { getUser, open, request, setUrl, setUser } from '../../../pi/net/ui/con_mgr';
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
 import { dataCenter } from '../../store/dataCenter';
-import { register,unregister } from '../../store/store';
+import { register, unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
-
-// tslint:disable-next-line:max-line-length
-import { fetchBalanceOfCurrency, fetchTotalAssets,formatBalance,formatBalanceValue,getCurrentWallet, getLocalStorage } from '../../utils/tools';
+import {
+    fetchBalanceOfCurrency, fetchTotalAssets, formatBalance, formatBalanceValue, getCurrentWallet, getLocalStorage
+} from '../../utils/tools';
 
 export class Home extends Widget {
     constructor() {
@@ -23,7 +24,7 @@ export class Home extends Widget {
 
     public destroy() {
         const r = super.destroy();
-        unregister('wallets',this.registerWalletsFun);
+        unregister('wallets', this.registerWalletsFun);
         unregister('addrs', this.registerAddrsFun);
 
         return r;
@@ -55,6 +56,8 @@ export class Home extends Widget {
             hiddenAssets:false
         };
         this.registerAddrsFun();
+        // 登录云端账号
+        this.loginWallet();
     }
     public clickCurrencyItemListener(e: Event, index: number) {
         const wallets = getLocalStorage('wallets');
@@ -118,18 +121,90 @@ export class Home extends Widget {
     /**
      * 余额更新
      */
-    private registerAddrsFun = (addrs?:any) => {
+    private registerAddrsFun = (addrs?: any) => {
         console.log('余额更新');
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         if (!wallet) return;
-        
+
         wallet.currencyRecords.forEach(item => {
-            const balance = fetchBalanceOfCurrency(item.addrs,item.currencyName);
-            setCurrencyListBalance(this.state.currencyList,balance,item.currencyName);
+            const balance = fetchBalanceOfCurrency(item.addrs, item.currencyName);
+            setCurrencyListBalance(this.state.currencyList, balance, item.currencyName);
         });
-        this.state.totalAssets = formatBalanceValue(fetchTotalAssets()); 
+        this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
         this.paint();
+    }
+
+    /**
+     * 登录云端钱包
+     */
+    private loginWallet() {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        if (getUser() === wallet.walletId) return;
+        // setUrl(`ws://127.0.0.1:2081`);
+        // setUser(wallet.walletId);
+        // open(() => {
+        //     // 连接打开后开始设置账号缓存
+        //     const msgRandom = {
+        //         type: 'get_random',
+        //         param: {
+        //             account: wallet.walletId,
+        //             page: 0,
+        //             count: 20
+        //         }
+        //     };
+        //     // todo 需要在登录后才能发起正式的通信
+
+        //     // query_all_order：查询所有订单数据
+        //     const msgQueryAllOrder = {
+        //         type: 'query_all_order',
+        //         param: {
+        //             type: 100,
+        //             page: 0,
+        //             count: 20
+        //         }
+        //     };
+        //     // query_user_order:查询我的订单数据
+        //     const msgQueryUserOrder = {
+        //         type: 'query_user_order',
+        //         param: {
+        //             type: 100,
+        //             page: 0,
+        //             count: 20,
+        //             status: 0
+        //         }
+        //     };
+        //     // pending_order：发起订单
+        //     const msgPendingOrder = {
+        //         type: 'pending_order',
+        //         param: {
+        //             type: 100,
+        //             amount: Math.pow(10, 9) * 1000,
+        //             price: 1
+        //         }
+        //     };
+        //     // undo_order：撤销订单
+        //     const msgUndoOrder = {
+        //         type: 'undo_order',
+        //         param: {
+        //             type: 100,
+        //             sid: 1
+        //         }
+        //     };
+
+        //     const msg = msgQueryUserOrder;
+        //     request(msg, (resp) => {
+        //         if (resp.type) {
+        //             console.log(`错误信息为${resp.type}`);
+        //         } else if (resp.result !== undefined) {
+        //             console.log(resp.result);
+        //         }
+        //     });
+        // }, (result) => {
+        //     console.log(`open错误信息为${result}`);
+        // });
     }
 }
 
@@ -157,11 +232,11 @@ const parseCurrencyList = (wallet) => {
     return list;
 };
 
-const setCurrencyListBalance = (currencyList:any[],balance:number,currencyName:string) => {
+const setCurrencyListBalance = (currencyList: any[], balance: number, currencyName: string) => {
     return currencyList.map(item => {
         if (item.currencyName === currencyName) {
             const rate = dataCenter.getExchangeRate(currencyName);
-            item.balance = formatBalance(balance); 
+            item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(+(balance * rate.CNY));
         }
 
