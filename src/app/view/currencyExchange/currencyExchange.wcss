@@ -3,6 +3,7 @@
     font-size: 28px;
     font-family: "PingFangSC-Regular";
     color: #203260;
+    background-color: #fff;
 }
 .topbar{
     display: flex;
@@ -78,11 +79,20 @@
     flex: 1 0 0;
     display: flex;
     justify-content: center;
-    align-items: center
+    align-items: center;
 }
-.ga-switch-img{
+.ga-switch-img-box{
     width: 80px;
     height: 80px;
+    border: 1px solid #cecece;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ga-switch-img{
+    width: 48px;
+    height: 48px;
 }
 .ga-input-container{
     margin-top: 40px;
@@ -106,6 +116,7 @@
     display: flex;
     align-items: center;
     padding: 0 60px;
+    align-self: flex-start;
 }
 .ga-tip{
     margin-right: 20px;

@@ -3,10 +3,20 @@
  */
 import { shapeshift } from '../../../app/exchange/shapeshift/shapeshift';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, 
-    eth2Wei, ethTokenMultiplyDecimals,
-     getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName,
-     getCurrentWallet,getLocalStorage,wei2Eth } from '../../../app/utils/tools'; 
+import { 
+    currencyExchangeAvailable, 
+    eth2Wei, 
+    ethTokenMultiplyDecimals,
+    getAddrById, 
+    getCurrentAddrBalanceByCurrencyName,
+    getCurrentAddrByCurrencyName,
+    getCurrentWallet,
+    getLocalStorage, 
+    openBasePage, 
+    parseDate, 
+    resetAddrById, 
+    setLocalStorage, 
+    wei2Eth} from '../../../app/utils/tools'; 
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { BtcApi } from '../../core/btc/api';
@@ -15,17 +25,19 @@ import { Api as EthApi } from '../../core/eth/api';
 import { ERC20Tokens } from '../../core/eth/tokens';
 import { GaiaWallet } from '../../core/eth/wallet';
 import { GlobalWallet } from '../../core/globalWallet';
-import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey } from '../../utils/constants';
+import { dataCenter } from '../../store/dataCenter';
+import { shapeshiftApiPublicKey } from '../../utils/constants';
 
 interface Props {
     currencyName:string;// 出账币种
 }
 export class CurrencyExchange extends Widget {
     public ok:() => void;
+
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         const outCurrency = this.props.currencyName;
-        const inCurrency = outCurrency === 'BTC' ? 'ETH' : 'BTC';
+        const inCurrency = (outCurrency === 'BTC' ||  ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
         // ZRX   BAT
         this.state = {
             outCurrency,
@@ -50,6 +62,7 @@ export class CurrencyExchange extends Widget {
         return super.destroy();
     }
     public init() {
+        this.state.outAmount = 0;
         this.setPair();
         // 获取出币币种的余额和当前使用地址
         this.state.curOutAddr = getCurrentAddrByCurrencyName(this.state.outCurrency);
@@ -69,7 +82,7 @@ export class CurrencyExchange extends Widget {
     // 定时获取兑率等信息 30s更新一次
     public marketInfoUpdated() {
         shapeshift.marketInfo(this.state.pair, (err, marketInfo) => {
-            console.log('marketInfo',marketInfo);
+            // console.log('marketInfo',marketInfo);
             if (err) {
                 console.log(err);
                 
@@ -167,16 +180,8 @@ export class CurrencyExchange extends Widget {
         }
         popNew('app-view-currencyExchange-rateDescription',{ fee });
     }
+    // tslint:disable-next-line:max-func-body-length
     public async sureClick() {
-        /* shapeshift.transactions(shapeshiftApiPrivateKey,this.state.outAmount, (err, transactions) => {
-            console.log('transactions',transactions);
-            if (err) return console.error(err);
-            transactions.forEach((tx) => {
-                console.log(tx);
-            });
-        });
-
-        return ; */
         const outAmount = this.state.outAmount;
         const outCurrency = this.state.outCurrency;
         if (outAmount <= 0) {
@@ -195,6 +200,7 @@ export class CurrencyExchange extends Widget {
             return;
         }
 
+        const loading = popNew('pi-components-loading-loading', { text: '矿工费预估中...' });
         let gasLimit = 0;
         let fee = 0;
         if (outCurrency === 'ETH') {
@@ -205,73 +211,76 @@ export class CurrencyExchange extends Widget {
             fee = 0;
         } else if (ERC20Tokens[outCurrency]) {
             gasLimit = await estimateGasERC20(outCurrency,this.state.curOutAddr,this.state.outAmount * this.state.rate);
+            // 临时解决方案
+            gasLimit  = gasLimit * 2;
             fee = gasLimit * wei2Eth(this.state.gasPrice);
         }
-        popNew('app-view-currencyExchange-exchangeConfirm',{
+        console.log('gasLimit',gasLimit);
+        loading.callback(loading.widget);
+        await openBasePage('app-view-currencyExchange-exchangeConfirm',{
             outCurrency,
             outAmount,
             inCurrency:this.state.inCurrency,
             inAmount:outAmount * this.state.rate,
             fee
-        },() => {
-            const options = {
-                returnAddress: this.state.curOutAddr,// 失败后的退款地址
-                apiKey:shapeshiftApiPublicKey
-                // amount: this.state.receiveAmount // <---- must set amount here
-            };
-            // 0x958B0bA923260A91Ffd28e8E9a209240648066C2
-            const withdrawalAddress = this.state.curInAddr; // 入账币种的地址
-            const close = popNew('pi-components-loading-loading', { text: '等待中...' });
-            popNew('app-components-message-messageboxPrompt',{ title:'请输入密码' },(r) => {
-                const psw = r;
-                shapeshift.shift(withdrawalAddress, this.state.pair, options, (err, returnData) => {
-                    close.callback(close.widget);
-                    console.log('returnData',returnData);
-                    // ShapeShift owned BTC address that you send your BTC to
-                    const depositAddress = returnData.deposit;
-            
-                    // NOTE: `depositAmount`, `expiration`, and `quotedRate` are only returned if
-                    // you set `options.amount`
-            
-                    // amount to send to ShapeShift (type string)
-                    // const shiftAmount = returnData.depositAmount;
-            
-                    // Time before rate expires (type number, time from epoch in seconds)
-                    // const expiration = new Date(returnData.expiration * 1000);
-            
-                    // rate of exchange, 1 BTC for ??? LTC (type string)
-                    // const rate = returnData.quotedRate;
-                    // you need to actually then send your BTC to ShapeShift
-                    // you could use module `spend`: https://www.npmjs.com/package/spend
-                    // CONVERT AMOUNT TO SATOSHIS IF YOU USED `spend`
-                    // spend(SS_BTC_WIF, depositAddress, shiftAmountSatoshis, function (err, txId) { /.. ../ })
-            
-                    // later, you can then check the deposit status
-                    // this.transfer(psw,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
-                    this.init();
-                    this.paint();
-                });
-            });
         });
         
-        // 0x9399264c3367d9bdc589c3aea32901611845b2a4  未退回的交易 hash 0x899f84b755cfa2db660ffeb73ba6952162f4ee125c11a2d6ec2a557edf10f915
-        /* shapeshift.status('0xe59b7d96e3c83bccd7a4a0b79d05aa5def9a72e4', (err, status, data) => {
-            console.error('errror',err);
-            console.log('status',status); // => should be 'received' or 'complete'
-            console.log('status data',data);
-        }); */
-       
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        let passwd;
+        if (!dataCenter.getHash(wallet.walletId)) {
+            passwd = await openBasePage('app-components-message-messageboxPrompt', {
+                title: '输入密码', inputType: 'password'
+            });
+        }
+        const close = popNew('pi-components-loading-loading', { text: '交易中...' });
+        const options = {
+            returnAddress: this.state.curOutAddr,// 失败后的退款地址
+            apiKey:shapeshiftApiPublicKey
+                // amount: this.state.receiveAmount // <---- must set amount here
+        };
+            // 0x958B0bA923260A91Ffd28e8E9a209240648066C2
+        const withdrawalAddress = this.state.curInAddr; // 入账币种的地址
+        shapeshift.shift(withdrawalAddress, this.state.pair, options, async (err, returnData) => {
+            console.log('returnData',returnData);
+            // ShapeShift owned BTC address that you send your BTC to
+            const depositAddress = returnData.deposit;
+            
+            // NOTE: `depositAmount`, `expiration`, and `quotedRate` are only returned if
+            // you set `options.amount`
+    
+            // amount to send to ShapeShift (type string)
+            // const shiftAmount = returnData.depositAmount;
+    
+            // Time before rate expires (type number, time from epoch in seconds)
+            // const expiration = new Date(returnData.expiration * 1000);
+    
+            // rate of exchange, 1 BTC for ??? LTC (type string)
+            // const rate = returnData.quotedRate;
+            // you need to actually then send your BTC to ShapeShift
+            // you could use module `spend`: https://www.npmjs.com/package/spend
+            // CONVERT AMOUNT TO SATOSHIS IF YOU USED `spend`
+            // spend(SS_BTC_WIF, depositAddress, shiftAmountSatoshis, function (err, txId) { /.. ../ })
+    
+            // later, you can then check the deposit status
+            // tslint:disable-next-line:max-line-length
+            const hash = await this.transfer(passwd,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
+            // tslint:disable-next-line:max-line-length
+            this.setTemporaryRecord(hash,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency,this.state.inCurrency,this.state.rate);
+            popNew('app-view-currencyExchange-currencyExchangeRecord', { currencyName:outCurrency });
+            close.callback(close.widget);
+            this.init();
+            this.paint();
+        });
     }
 
     // tslint:disable-next-line:max-line-length
-    public async transfer(psw:string,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,currencyName:string,info?:string) {
+    public async transfer(psw:string,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,currencyName:string,info ? :string) {
         // tslint:disable-next-line:no-this-assignment
-        const thisObj = this;
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
-        const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
+        let id: string;
         try {
-            let id: any;
             const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, currencyName);
             if (addrIndex >= 0) {
                 const wlt = await GlobalWallet.createWlt(currencyName, psw, wallet, addrIndex);
@@ -293,11 +302,59 @@ export class CurrencyExchange extends Widget {
             }
         }
 
-        loading.callback(loading.widget);
-            
+        return id;
     }
-}
+    // 临时记录
+    // tslint:disable-next-line:max-line-length
+    public setTemporaryRecord(hash: string,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,outCurrency:string,inCurrency:string,rate:number) {
+        const t = new Date();
+        // 币币兑换交易记录
+        const tx = {
+            hasConfirmations:'false',
+            inputAddress:fromAddr,
+            inputAmount:pay,
+            inputCurrency:outCurrency,
+            inputTXID:hash,
+            outputAddress:'',
+            outputAmount:'',
+            outputCurrency:inCurrency,
+            outputTXID:'',
+            shiftRate:rate,
+            status:'pending',
+            timestamp:t.getTime() / 1000
+        };
+        const currencyExchangeTxs = getLocalStorage('currencyExchangeTxs') || {};
+        currencyExchangeTxs[this.state.curOutAddr.toLowerCase()].push(tx);
+        setLocalStorage('currencyExchangeTxs',currencyExchangeTxs);
 
+        // 币币兑换出货币种交易记录
+        const record = {
+            id: hash,
+            type: '转账',
+            fromAddr: fromAddr,
+            to: toAddr,
+            pay: pay,
+            time: t.getTime(),
+            showTime: parseDate(t),
+            result: '交易中',
+            info: '兑换',
+            currencyName: outCurrency,
+            tip: gasLimit * wei2Eth(gasPrice)
+        };
+        addRecord(outCurrency, fromAddr, record);
+    }
+    
+}
+/**
+ * 添加记录
+ */
+const addRecord = (currencyName, currentAddr, record) => {
+    const addr = getAddrById(currentAddr, currencyName);
+    if (!addr) return;
+    addr.record.push(record);
+
+    resetAddrById(currentAddr, currencyName, addr, true);
+};
 /**
  * 处理转账
  */

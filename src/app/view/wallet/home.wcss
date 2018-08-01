@@ -8,28 +8,19 @@
     box-sizing: border-box;
     background-position: center;
     background-size: cover;
-}
-.ga-loading-container{
-    text-align: right;
-    padding-right: 10px;
-    display: none;
+    position: relative;
 }
 .ga-wallet-name-container{
    display: flex;
-   flex-direction: column;
    align-items: center;
-   margin-top: 128px;
+   justify-content: flex-end;
+   margin-top: 84px;
 }
 .ga-wallet-header{
-    width: 100px;
-    height: 100px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     margin-right: 10px;
-}
-.ga-wallet-header-none{
-    width: 100px;
-    height: 100px;
-    visibility: hidden;
 }
 .ga-wallet-name{
     font-size: 36px;
@@ -38,19 +29,18 @@
     text-align: center;
     cursor: pointer;
     line-height: 45px;
-    margin-top: 16px;
 }
 .ga-assets-container{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-top: 120px;
 }
 .ga-assets-box{
+    position: relative;
     display: flex;
+    justify-content: center;
     color: #fff;
-    align-items: baseline;
+    align-items: center;
 }
+
 .ga-assets-title{
     font-size: 24px;
     text-align: left;
@@ -59,16 +49,62 @@
 }
 .ga-assets{
     font-size: 48px;
-    text-align: left;
     line-height: 45px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.ga-box{
+    display: flex;
+    align-items: baseline;
+}
+.ga-hidden{
+    position: absolute;
+    right: -62px;
+    width: 40px;
+    height: 40px;
 }
 .ga-assets-symbol{
     font-size: 32px;
+}
+.ga-profit{
+    height: 33px;
+    line-height: 33px;
+    color: #fff;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 10px;
+}
+.ga-add-container{
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 30px;
 }
 .ga-add-currency{
     cursor: pointer;
     width: 44px;
     height: 44px;
+}
+.ga-float-box{
+    height: 60px;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    line-height: 33px;
+    color: #203260;
+    font-size: 24px;
+    margin: 10px 0;
+    background-color: #fff;
+
+}
+.ga-arrow-img{
+    width: 28px;
+    height: 28px;
 }
 .ga-currency-list-container{
     position: relative;
@@ -84,12 +120,11 @@
     height: 170px;
     display: flex;
     align-items: center;
-    padding: 0 14px;
-    margin: 10px 16px 0;
+    padding: 0 30px;
+    margin-top: 10px;
     cursor: pointer;
     background: #FFFFFF;
     box-shadow: 0 2px 8px 0 rgba(12,15,35,0.05);
-    border-radius: 12px;
 }
 .ga-currency-logo-container{
     width: 100px;
@@ -97,7 +132,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 16px;
+    margin-right: 30px;
 }
 .ga-currency-logo{
     max-width: 100%;

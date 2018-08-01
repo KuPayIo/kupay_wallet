@@ -9,12 +9,12 @@
         </div>
         <div ev-input-change="walletPart1Change">
             <div w-class="ga-textarea-father" id="area1">
-                <app-components-input-input>{placeHolder:"请在这里输入片段",itype:"textarea",rows:3,style:{{it1.textAreaStyle1}}}</app-components-input-input>
+                <app-components-input-input>{placeHolder:"请在这里输入片段",itype:"textarea",rows:3,style:"border:3px dotted #A0ACC0;borderBottom:none;paddingTop: 26px;"}</app-components-input-input>
             </div>
         </div>
         <div ev-input-change="walletPart2Change">
                 <div w-class="ga-textarea-father" style="margin-bottom: 20px" id="area2">
-                    <app-components-input-input>{placeHolder:"这里也输入片段",itype:"textarea",rows:3,style:{{it1.textAreaStyle2}}}</app-components-input-input>
+                    <app-components-input-input>{placeHolder:"这里也输入片段",itype:"textarea",rows:3,style:"border:3px dotted #A0ACC0;paddingTop:26px;"}</app-components-input-input>
                 </div>
         </div>
         <div w-class="ga-import-item" ev-input-change="walletPswChange">

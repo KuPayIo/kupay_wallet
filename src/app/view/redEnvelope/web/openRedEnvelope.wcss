@@ -1,0 +1,45 @@
+.ga-new-page{
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "PingFangSC-Regular";
+}
+.ga-main{
+    width: 690px;
+    height: 1000px;
+    border-radius: 12px;
+    background-color: rgba(194, 62, 62, 1);
+    box-shadow: 0px 2px 8px 0px rgba(12, 15, 35, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+}
+.ga-leave-message{
+    width: 576px;
+    height: 90px;
+    line-height: 90px;
+    font-size: 64px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 270px;
+}
+.ga-tag{
+    line-height: 50px;
+    font-size: 36px;
+    text-align: center;
+    margin-top: 60px;
+}
+.ga-open{
+    width: 177px;
+    height: 177px;
+    margin-top: 110px;
+}
+.ga-look{
+    font-size: 28px;
+    line-height: 40px;
+    margin-top: 70px;
+}
