@@ -143,68 +143,68 @@ export class Home extends Widget {
         const wallet = getCurrentWallet(wallets);
         if (!wallet) return;
         if (getUser() === wallet.walletId) return;
-        setUrl(`ws://127.0.0.1:2081`);
-        setUser(wallet.walletId);
-        open(() => {
-            // 连接打开后开始设置账号缓存
-            const msgRandom = {
-                type: 'get_random',
-                param: {
-                    account: wallet.walletId,
-                    page: 0,
-                    count: 20
-                }
-            };
-            // todo 需要在登录后才能发起正式的通信
+        // setUrl(`ws://127.0.0.1:2081`);
+        // setUser(wallet.walletId);
+        // open(() => {
+        //     // 连接打开后开始设置账号缓存
+        //     const msgRandom = {
+        //         type: 'get_random',
+        //         param: {
+        //             account: wallet.walletId,
+        //             page: 0,
+        //             count: 20
+        //         }
+        //     };
+        //     // todo 需要在登录后才能发起正式的通信
 
-            // query_all_order：查询所有订单数据
-            const msgQueryAllOrder = {
-                type: 'query_all_order',
-                param: {
-                    type: 100,
-                    page: 0,
-                    count: 20
-                }
-            };
-            // query_user_order:查询我的订单数据
-            const msgQueryUserOrder = {
-                type: 'query_user_order',
-                param: {
-                    type: 100,
-                    page: 0,
-                    count: 20,
-                    status: 0
-                }
-            };
-            // pending_order：发起订单
-            const msgPendingOrder = {
-                type: 'pending_order',
-                param: {
-                    type: 100,
-                    amount: Math.pow(10, 9) * 1000,
-                    price: 1
-                }
-            };
-            // undo_order：撤销订单
-            const msgUndoOrder = {
-                type: 'undo_order',
-                param: {
-                    type: 100,
-                    sid: 1
-                }
-            };
+        //     // query_all_order：查询所有订单数据
+        //     const msgQueryAllOrder = {
+        //         type: 'query_all_order',
+        //         param: {
+        //             type: 100,
+        //             page: 0,
+        //             count: 20
+        //         }
+        //     };
+        //     // query_user_order:查询我的订单数据
+        //     const msgQueryUserOrder = {
+        //         type: 'query_user_order',
+        //         param: {
+        //             type: 100,
+        //             page: 0,
+        //             count: 20,
+        //             status: 0
+        //         }
+        //     };
+        //     // pending_order：发起订单
+        //     const msgPendingOrder = {
+        //         type: 'pending_order',
+        //         param: {
+        //             type: 100,
+        //             amount: Math.pow(10, 9) * 1000,
+        //             price: 1
+        //         }
+        //     };
+        //     // undo_order：撤销订单
+        //     const msgUndoOrder = {
+        //         type: 'undo_order',
+        //         param: {
+        //             type: 100,
+        //             sid: 1
+        //         }
+        //     };
 
-            const msg = msgQueryUserOrder;
-            request(msg, (resp) => {
-                if (resp.type) {
-                    console.log(`错误信息为${resp.type}`);
-                } else if (resp.result !== undefined) {
-                    console.log(resp.result);
-                }
-            });
-        }, (result) => {
-            console.log(`open错误信息为${result}`);
-        });
+        //     const msg = msgQueryUserOrder;
+        //     request(msg, (resp) => {
+        //         if (resp.type) {
+        //             console.log(`错误信息为${resp.type}`);
+        //         } else if (resp.result !== undefined) {
+        //             console.log(resp.result);
+        //         }
+        //     });
+        // }, (result) => {
+        //     console.log(`open错误信息为${result}`);
+        // });
     }
 }
 
