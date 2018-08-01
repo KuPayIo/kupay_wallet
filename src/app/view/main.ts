@@ -53,7 +53,6 @@ export const run = (cb): void => {
         showBalanceConversion:'0',
         currencyName:'BTC' }); */
     // popNew('app-view-redEnvelope-send-sendRedEnvelope');
-    // popNew('app-view-currencyExchange-currencyExchange',{ currencyName:'ETH' });
     if (cb) cb();
     // test();
 };
