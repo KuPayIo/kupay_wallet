@@ -50,7 +50,9 @@ export class Home extends Widget {
             gwlt,
             otherWallets,
             totalAssets: 0.00,
-            currencyList: parseCurrencyList(wallet)
+            currencyList: parseCurrencyList(wallet),
+            floatBoxTip:'为了您的资产安全，请及时备份助记词',
+            hiddenAssets:false
         };
         this.registerAddrsFun();
     }
@@ -89,6 +91,10 @@ export class Home extends Widget {
         popNew('app-view-wallet-switchWallet-switchWallet');
     }
 
+    public hiddenAssetsClick() {
+        this.state.hiddenAssets = !this.state.hiddenAssets;
+        this.paint();
+    }
     private registerWalletsFun = (wallets:any) => {
         let otherWallets = false;
         if (wallets && wallets.walletList && wallets.walletList.length > 0) {

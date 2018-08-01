@@ -3,7 +3,6 @@
  */
 import { QRCode } from '../../../../pi/browser/qrcode';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../store/dataCenter';
 
 interface Props {
     mType: string;// prompt,confirm
@@ -38,14 +37,6 @@ export class MessageBox extends Widget {
             input2Value = this.props.input2DefaultValue;
         }
         this.state = { isShow: false, tags: '',input1Value:input1Value,input2Value:input2Value };
-        this.state.textAreaStyle = {
-            border:'none',
-            background:'#fff'
-        };
-        this.state.textInputStyle = {
-            border:'none',
-            background:'#F8F8F8'
-        };
         this.init();
     }
 

@@ -5,10 +5,11 @@ import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
-import { btcNetwork, defaultExchangeRateJson, ethTokenTransferCode, lang, supportCurrencyList } from '../utils/constants';
+// tslint:disable-next-line:max-line-length
+import { btcNetwork, defaultExchangeRateJson, ethTokenTransferCode, lang, shapeshiftApiPrivateKey, shapeshiftTransactionRequestNumber, supportCurrencyList } from '../utils/constants';
 import {
-    btc2Sat, ethTokenDivideDecimals, getAddrsByCurrencyName, getCurrentWallet, getDefaultAddr, getLocalStorage, getMnemonic,
-    sat2Btc, setLocalStorage, wei2Eth
+    btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getCurrentWallet, getDefaultAddr, getLocalStorage,
+    getMnemonic, sat2Btc, setLocalStorage, wei2Eth
 } from '../utils/tools';
 import { Addr, CurrencyRecord, Wallet } from '../view/interface';
 /**
@@ -16,6 +17,14 @@ import { Addr, CurrencyRecord, Wallet } from '../view/interface';
  * @example
  */
 export class DataCenter {
+
+    public get salt() {
+        if (!this.iSalt) {
+            this.iSalt = cryptoRandomInt().toString();
+        }
+
+        return this.iSalt;
+    }
 
     public static MAX_ADDRNAME_LEN: number = 9;// 最长地址名
 
@@ -36,17 +45,10 @@ export class DataCenter {
     public exchangeRateJson: any = defaultExchangeRateJson;
     public currencyList: any[] = supportCurrencyList;
     public shapeShiftCoins: any = [];// shapeShift 支持的币种
+    public currencyExchangeTimer:number;
 
     private hashMap: any = {};
     private iSalt: string;
-
-    public get salt() {
-        if (!this.iSalt) {
-            this.iSalt = cryptoRandomInt().toString();
-        }
-
-        return this.iSalt;
-    }
     /**
      * 初始化
      */
@@ -75,6 +77,7 @@ export class DataCenter {
 
         // 启动定时器更新
         if (!this.timerRef) this.openCheck();
+        if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
     }
 
     /**
@@ -206,6 +209,17 @@ export class DataCenter {
         return this.hashMap[id];
     }
 
+    // 获取币币交易交易记录
+    public fetchCurrencyExchangeTx() {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        const curAllAddrs = getAddrsAll(wallet);
+        curAllAddrs.forEach(item => {
+            this.getTransactionsByAddr(item);
+        });
+        
+    }
+
     /****************************************************************************************************
      * 私有函数
      ******************************************************************************************/
@@ -234,6 +248,13 @@ export class DataCenter {
         this.checkAddr();
     }
 
+    // 币币交易记录定时器
+    private currencyExchangeTimerStart() {
+        this.fetchCurrencyExchangeTx();
+        this.currencyExchangeTimer = setTimeout(() => {
+            this.currencyExchangeTimerStart();
+        },10 * 60 * 1000);
+    }
     private async checkAddr() {
         const wallets = getLocalStorage('wallets');
         if (!wallets) return;
@@ -585,6 +606,57 @@ export class DataCenter {
         return addrs;
     }
 
+    private async getTransactionsByAddr(addr:string) {
+        const addrLowerCase = addr.toLowerCase();
+        const transactions = (addr:string):Promise<any> => {
+            return new Promise((resolve, reject) => {
+                shapeshift.transactions(shapeshiftApiPrivateKey,addr, (err, transactions) => {
+                    if (err || transactions.length === 0) {
+                        reject(err || new Error('null array'));
+                    }
+                    resolve(transactions);
+                });
+            });
+        };
+        let count = shapeshiftTransactionRequestNumber;
+        while (count >= 0) {
+           
+            let txs;
+            try {
+                txs = await transactions(addrLowerCase);
+            } catch (err) {
+                // tslint:disable-next-line:prefer-template
+            }
+            if (txs) {
+                const currencyExchangeTxs = getLocalStorage('currencyExchangeTxs') || {};
+                const oldTxs = currencyExchangeTxs[addrLowerCase] || [];
+                txs.forEach(tx => {
+                    const index = this.getTxByHash(oldTxs,tx.inputTXID);
+                    if (index >= 0) {
+                        oldTxs[index] = tx;
+                    } else {
+                        oldTxs.push(tx);
+                    }
+                });
+                currencyExchangeTxs[addrLowerCase] = oldTxs;
+                setLocalStorage('currencyExchangeTxs',currencyExchangeTxs);
+                
+                return;
+            }
+            count--;
+        }
+    }
+
+    private getTxByHash(txs:any[],hash:string) {
+        for (let i = 0; i < txs.length;i++) {
+            // tslint:disable-next-line:possible-timing-attack
+            if (txs[i].inputTXID === hash) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }
 
 // ============================================ 立即执行

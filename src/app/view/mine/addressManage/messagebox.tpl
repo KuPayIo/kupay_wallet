@@ -13,17 +13,17 @@
             <div w-class="content">
                 {{if it.mType=="prompt"}}
                 <div w-class="message" ev-input-change="addresseChange" w-class="input-father addressInput" class="addressInput">
-                    <app-components-input-input>{itype:"textarea",placeHolder:"输入地址",input:"{{it1.input1Value}}",style:{{it1.textAreaStyle}}}</app-components-input-input>
+                    <app-components-input-input>{itype:"textarea",placeHolder:"输入地址",input:"{{it1.input1Value}}",style:"border:none,background:#fff;"}</app-components-input-input>
                 </div>
                 {{else}}
                 <div w-class="message" ev-input-change="addresseChange" w-class="input-father addressInput" class="addressInput">
-                        <app-components-input-input>{itype:"textarea",placeHolder:"{{it.text}}",style:{{it1.textAreaStyle}},disabled:true}</app-components-input-input>
+                        <app-components-input-input>{itype:"textarea",placeHolder:"{{it.text}}",style:"border:none,background:#fff;",disabled:true}</app-components-input-input>
                 </div>
                 {{end}}
 
                 {{if it.mType=="confirm"||it.mType=="prompt"}}
                 <div ev-input-change="tagsChange" w-class="input-father tags">
-                    <app-components-input-input>{itype:{{it.inputType}},placeHolder:"请输入标签",input:"{{it1.input2Value}}",style:{{it1.textInputStyle}} }</app-components-input-input>
+                    <app-components-input-input>{itype:{{it.inputType}},placeHolder:"请输入标签",input:"{{it1.input2Value}}",style:"border:none,background:#F8F8F8;" }</app-components-input-input>
                 </div>
                 {{end}}
             </div>

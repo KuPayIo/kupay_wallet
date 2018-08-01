@@ -186,7 +186,22 @@
     animation: loadingRotating 2s linear infinite;
 }
 
-
+.pi-input-simple ::-webkit-input-placeholder { /* WebKit browsers */
+    color:    #a0acc0;
+}
+.pi-input-simple :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    #a0acc0;
+}
+.pi-input-simple ::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #a0acc0;
+}
+.pi-input-simple :-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:    #a0acc0;
+}
+.pi-input-simple__inner:focus{
+    border: none;
+    outline: none;
+}
 @keyframes loadingRotating{
     100% {transform: rotate(360deg);}
 }

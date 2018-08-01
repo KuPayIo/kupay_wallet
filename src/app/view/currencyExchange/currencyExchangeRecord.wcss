@@ -1,8 +1,25 @@
-
+.ga-new-page{
+    display: flex;
+    flex-direction: column;
+}
+.ga-body{
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex: 1 0 0;
+}
 .ga-item{
     background-color: #fff;
     margin-top: 10px;
     font-family: "PingFangSC-Medium";
+}
+.ga-status-success{
+    color: #203260;
+}
+.ga-status-pending{
+    color: #e1953c;
+}
+.ga-status-failed{
+    color: red;
 }
 .ga-item-top{
     border-bottom: 1px solid #e5e5ee;
@@ -51,5 +68,8 @@
     color: #a0acc0;
 }
 .ga-out-amount{
-    
+    color: #203260;
+}
+.ga-in-amount{
+    color: #203260;
 }

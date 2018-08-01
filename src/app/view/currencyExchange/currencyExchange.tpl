@@ -15,7 +15,7 @@
                 <img src="../../res/image/{{it1.outCurrency}}.png" w-class="choose-out-currency" on-tap="outCurrencySelectClick"/>
                 <span w-class="currency">{{it1.outCurrency}}</span>
             </div>
-            <div w-class="ga-switch" on-tap="switchInOutClick"><img src="../../res/image/AION.png" w-class="ga-switch-img"/></div>
+            <div w-class="ga-switch"><div w-class="ga-switch-img-box" on-tap="switchInOutClick"><img src="../../res/image/currency_exchange.png" w-class="ga-switch-img"/></div></div>
             <div w-class="ga-outin-container">
                 <span w-class="ga-outin">买入</span>
                 <img src="../../res/image/{{it1.inCurrency}}.png" w-class="choose-out-currency" on-tap="inCurrencySelectClick"/>
@@ -23,9 +23,13 @@
             </div>
         </div>
         <div w-class="ga-input-container">
-            <div w-class="input-father" ev-input-change="outAmountChange"><app-components-input-input>{input:{{it1.outAmount}},placeHolder:"发出数量"}</app-components-input-input></div>
+            <div w-class="input-father" ev-input-change="outAmountChange">
+                <app-components-input-input_simple>{input:{{it1.outAmount}},placeHolder:"发出数量"}</app-components-input-input_simple>
+            </div>
             <div w-class="ga-space"></div>
-            <div w-class="input-father"><app-components-input-input>{input:{{it1.receiveAmount}},placeHolder:"收到数量"}</app-components-input-input></div>
+            <div w-class="input-father">
+                <app-components-input-input_simple>{input:{{it1.receiveAmount}},placeHolder:"收到数量",style:"textAlign:right;"}</app-components-input-input_simple>
+            </div>
         </div>
         <div w-class="rate" on-tap="rateDescClick">
             <img src="../../res/image/rate_tip.png" w-class="ga-tip" /> 
