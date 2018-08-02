@@ -50,3 +50,8 @@
     border: none !important;
     outline: none !important;
 }
+
+@keyframes rotated{
+    0% {transform: rotateY(0deg);}
+    100% {transform: rotateY(360deg);}
+}

@@ -4,6 +4,11 @@
     align-items: center;
     justify-content: center;
     font-family: "PingFangSC-Regular";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 .ga-main{
     width: 690px;
@@ -15,6 +20,10 @@
     flex-direction: column;
     align-items: center;
     color: #fff;
+    background-image: url(../../res/image/redEnvelopes2.png);
+    background-size:cover;
+    background-repeat: no-repeat; 
+    position: relative;
 }
 .ga-leave-message{
     width: 576px;
@@ -34,12 +43,18 @@
     margin-top: 60px;
 }
 .ga-open{
-    width: 177px;
-    height: 177px;
-    margin-top: 110px;
+    position: absolute;
+    width: 195px;
+    height: 195px;
+    bottom: 230px;
 }
+
 .ga-look{
+    position: absolute;
     font-size: 28px;
     line-height: 40px;
-    margin-top: 70px;
+    bottom: 120px;
+}
+.ga-open-animate{
+    animation: rotated 1s ease-in-out infinite;
 }

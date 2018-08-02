@@ -1,8 +1,8 @@
 /**
  * open red-envelope
  */
-import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
+import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
 
 export class OpenRedEnvelope extends Widget {
     public ok:() => void;
@@ -16,10 +16,9 @@ export class OpenRedEnvelope extends Widget {
         this.state.openClick = true;
         this.paint();
         setTimeout(() => {
-            popNew('app-components-message-message',{ itype:'success',content:'兑换成功',center:true });
-            popNew('app-view-redEnvelope-receive-redEnvelopeDetails');
+            popNew('app-shareView-redEnvelope-redEnvelopeDetails',{ code:'HGD78SDF' });
             this.ok && this.ok();
         },2000);
-       
+        
     }
 }

@@ -14,6 +14,16 @@
     font-size: 28px;
     font-family: "PingFangSC-Regular";
     color:#fff;
+    background-image: url(../../../res/image/redEnvelopes1.png);
+    background-size:cover;
+    background-repeat: no-repeat; 
+    position: relative;
+}
+.ga-open{
+    position: absolute;
+    width: 195px;
+    height: 195px;
+    top: 143px;
 }
 .ga-leave-message{
     line-height: 40px;

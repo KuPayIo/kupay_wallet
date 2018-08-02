@@ -99,7 +99,7 @@
             服务
         </div>
         <div w-class="serviceBox">
-            <div w-class="serviceItem">
+            <div w-class="serviceItem" on-tap="packetsClicked">
                 <img src="../../../res/image/cloud_others_pockets.png" w-class="serviceIcon" />
                 <div>
                     <div w-class="serviceTitle">发红包</div>
@@ -107,7 +107,7 @@
                 </div>
             </div>
 
-            <div w-class="serviceItem">
+            <div w-class="serviceItem" on-tap="awardsClicked">
                 <img src="../../../res/image/cloud_others_pockets.png" w-class="serviceIcon" />
                 <div>
                     <div w-class="serviceTitle">兑换领奖</div>
