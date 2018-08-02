@@ -2,7 +2,7 @@
     <div w-class="ga-main">
         <div w-class="ga-scroll-container">
             <div w-class="ga-top">
-                <div w-class="ga-head"><img src="../../res/image/application_icon_active.png" w-class="ga-big-head"/></div>
+                <div w-class="ga-head"><div w-class="ga-head-inner"></div></div>
                 <div w-class="ga-leave-message">恭喜发财 大吉大利</div>
                 <div w-class="ga-amount"><span>100</span><span w-class="ga-currency-name">ETH</span></div>
                 <div w-class="ga-input-father">
@@ -16,7 +16,7 @@
                     <div w-class="ga-title">已领取1/4，共10MPT</div>
                     <div w-class="ga-list">
                         <div w-class="ga-item">
-                            <img src="../../res/image/BTC.png" w-class="ga-avator"/>
+                            <img src="../../res/image/img_avatar1.png" w-class="ga-avator"/>
                             <div w-class="ga-item-right">
                                 <div w-class="ga-box1">
                                     <div w-class="ga-name">好友钱包名</div>

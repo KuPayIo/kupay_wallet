@@ -20,6 +20,10 @@
     flex-direction: column;
     align-items: center;
     color: #fff;
+    background-image: url(../../res/image/redEnvelopes2.png);
+    background-size:cover;
+    background-repeat: no-repeat; 
+    position: relative;
 }
 .ga-leave-message{
     width: 576px;
@@ -38,17 +42,16 @@
     text-align: center;
     margin-top: 60px;
 }
-.open-container{
-    
-}
 .ga-open{
-    width: 177px;
-    height: 177px;
-    margin-top: 110px;
+    position: absolute;
+    width: 195px;
+    height: 195px;
+    bottom: 230px;
 }
 
 .ga-look{
+    position: absolute;
     font-size: 28px;
     line-height: 40px;
-    margin-top: 70px;
+    bottom: 120px;
 }

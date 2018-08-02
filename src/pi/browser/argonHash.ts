@@ -2,7 +2,7 @@
  * memory hash
  */
 // todo 手机版需要移除该引用
-// import { getArgonHash } from '../../app/utils_pc/argon2';
+import { getArgonHash } from '../../app/utils_pc/argon2';
 import { NativeObject, ParamType, registerSign } from './native';
 
 export class ArgonHash extends NativeObject {
@@ -15,7 +15,7 @@ export class ArgonHash extends NativeObject {
             success: successF,
             fail: failF,
             t: 1,
-            m: 512 * 1024,
+            m: 256 * 1024,
             p: 8,
             pwd: iParam.pwd || 'password',
             salt: iParam.salt || 'somesalt',
