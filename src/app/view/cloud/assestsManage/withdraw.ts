@@ -15,7 +15,7 @@ export class Withdraw extends Widget {
         this.state = {
             amount:0,// 提币金额
             serviceCharge:0.001,// 手续费
-            cloudBalance:0.001,// 可提金额
+            cloudBalance:0.00,// 可提金额
             isFeeEnough:true
         };
         this.judgeFeeEnough();

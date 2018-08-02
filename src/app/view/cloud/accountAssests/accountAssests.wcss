@@ -12,8 +12,9 @@
     box-sizing: border-box;
 }
 .assestsImg{
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
+    margin-right:20px; 
     flex-grow: 0;
 }
 .coinType{

@@ -14,22 +14,22 @@ export class Charge extends Widget {
         this.state = {
             infoList:[{
                 behavior:'充值',// 名称
-                behaviorIcon:'cloud_packets.png',// 对应的图标
+                behaviorIcon:'cloud_charge_icon.png',// 对应的图标
                 time:'2018-05-03 12:00:02',// 时间
                 amount:'-0.0001',// 金额
                 status:'发送中'
             },{
                 behavior:'充值2',
-                behaviorIcon:'cloud_packets.png',
+                behaviorIcon:'cloud_charge_icon.png',
                 time:'2018-05-03 12:00:02',
                 amount:'-0.0001',
                 status:'发送中'
             },{
                 behavior:'充值3',
-                behaviorIcon:'cloud_packets.png',
+                behaviorIcon:'cloud_charge_icon.png',
                 time:'2018-05-03 12:00:02',
                 amount:'-0.0001',
-                status:'已完成'
+                status:'完成'
             }]
         };
     }

@@ -4,7 +4,7 @@
         <div w-class="ga-currency-list">
             {{for index,item of it1.currencyShowList}}
             <div w-class="ga-currency-item" on-tap="currencyItemClick(e,{{index}})">
-                <img src="../../res/image/{{item.currencyName}}.png" w-class="ga-currency-icon"/>
+                <img src="../../res/image/currency/{{item.currencyName}}.png" w-class="ga-currency-icon"/>
                 <div w-class="ga-currency">{{item.currencyName}}</div>
                 <div w-class="ga-balance">{{item.balance}}</div>
             </div>

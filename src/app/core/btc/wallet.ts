@@ -6,10 +6,6 @@ import { Mnemonic } from '../thirdparty/bip39';
 import { bitcore } from '../thirdparty/bitcore-lib';
 import { BtcApi } from './api';
 
-const HDWallet = bitcore.HDPrivateKey;
-const Transaction = bitcore.Transaction;
-const Unit = bitcore.Unit;
-
 export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 export type NETWORK = 'mainnet' | 'testnet';
 export type PRIORITY = 'high' | 'medium' | 'low';
@@ -85,7 +81,7 @@ export class BTCWallet {
             throw new Error('Invalid Mnemonic words!');
         }
         const seed = mn.toSeed(mnemonics, passphrase);
-        const hdpriv = HDWallet.fromSeed(seed, network);
+        const hdpriv = bitcore.HDPrivateKey.fromSeed(seed, network);
 
         const btcwallet = new BTCWallet();
         btcwallet.rootXpriv = hdpriv.toString();
@@ -116,7 +112,7 @@ export class BTCWallet {
         }
         const seed = mn.toSeed(mnemonic, passphrase);
 
-        const hdpriv = HDWallet.fromSeed(seed, network);
+        const hdpriv = bitcore.HDPrivateKey.fromSeed(seed, network);
         const btcwallt = new BTCWallet();
 
         btcwallt.rootXpriv = hdpriv.toString();
@@ -132,7 +128,7 @@ export class BTCWallet {
 
     public static fromSeed(seed: string, network: NETWORK, lang: LANGUAGE): BTCWallet {
         // TODO: check seed ?
-        const hdpriv = HDWallet.fromSeed(seed, network);
+        const hdpriv = bitcore.HDPrivateKey.fromSeed(seed, network);
         const btcwallt = new BTCWallet();
 
         btcwallt.rootXpriv = hdpriv.toString();
@@ -281,8 +277,8 @@ export class BTCWallet {
         console.log('accumlated: ', accumlated);
         console.log('keyset length: ', keySet.length);
 
-        output.amount = Unit.fromBTC(output.amount).toSatoshis();
-        const rawTx = new Transaction().feePerKb(Unit.fromBTC(fee[priorityMap[priority]]).toSatoshis())
+        output.amount = bitcore.Unit.fromBTC(output.amount).toSatoshis();
+        const rawTx = new bitcore.Transaction().feePerKb(bitcore.Unit.fromBTC(fee[priorityMap[priority]]).toSatoshis())
             .from(collected)
             .to(output.toAddr, output.amount)
             .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
@@ -381,7 +377,7 @@ export class BTCWallet {
         }
 
         let path: string;
-        const parent = new HDWallet(this.rootXpriv);
+        const parent = new bitcore.HDPrivateKey(this.rootXpriv);
 
         if (parent.network.name === 'testnet') {
             path = BTCWallet.BIP44_BTC_TESTNET_BASE_PATH + index;

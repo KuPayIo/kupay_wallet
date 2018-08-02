@@ -1,8 +1,6 @@
 /**
  * memory hash
  */
-// todo 手机版需要移除该引用
-import { getArgonHash } from '../../app/utils_pc/argon2';
 import { NativeObject, ParamType, registerSign } from './native';
 
 export class ArgonHash extends NativeObject {
@@ -15,7 +13,7 @@ export class ArgonHash extends NativeObject {
             success: successF,
             fail: failF,
             t: 1,
-            m: 512 * 1024,
+            m: 256 * 1024,
             p: 8,
             pwd: iParam.pwd || 'password',
             salt: iParam.salt || 'somesalt',
@@ -44,11 +42,12 @@ export class ArgonHash extends NativeObject {
 
     private calcHashValueAtPc(iType: string, param: any) {
         if (iType === 'getArgon2Hash') {
-            setTimeout(() => {
+            pi_modules.commonjs.exports.require(['app/utils_pc/argon2'], {}, (mods, fm) => {
                 // todo 这里考虑使用worker进行处理
-                const hash = getArgonHash(param.pwd, param.salt, param.t, param.m, param.hashLen, param.p, 1);
+                const hash = mods[0].getArgonHash(param.pwd, param.salt, param.t, param.m, param.hashLen, param.p, 1);
                 param.success(hash);
-            }, 1000);
+                console.log(mods, fm);
+            });
         }
     }
 }

@@ -1,7 +1,7 @@
 /**
  * download app
  */
-import { Widget } from '../../../../pi/widget/widget';
+import { Widget } from '../../../pi/widget/widget';
 
 export class DownloadApp extends Widget {
     public create() {

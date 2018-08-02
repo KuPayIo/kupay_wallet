@@ -13,7 +13,7 @@
             <span w-class="ga-tag">单个金额</span>
             <div w-class="ga-amount-inner">
                 <div ev-input-change="singleAmountInputChange" w-class="input-father">
-                    <app-components-input-input>{itype:"number",style:{{it1.inputStyle}},input:{{it1.singleAmount}},placeHolder:"0"}</app-components-input-input>
+                    <app-components-input-input_simple>{itype:"number",style:"fontSize:32px;textAlign:right;",input:{{it1.singleAmount}},placeHolder:"0"}</app-components-input-input_simple>
                 </div>
                 <span w-class="ga-currency-name">{{it1.currencyName}}</span>
             </div>
@@ -26,7 +26,7 @@
             </div>
             <div w-class="ga-amount-inner">
                 <div ev-input-change="totalAmountInputChange" w-class="input-father">
-                    <app-components-input-input>{itype:"number",style:{{it1.inputStyle}},input:{{it1.singleAmount}},placeHolder:"0"}</app-components-input-input>
+                    <app-components-input-input_simple>{itype:"number",style:"fontSize:32px;textAlign:right;",input:{{it1.singleAmount}},placeHolder:"0"}</app-components-input-input_simple>
                 </div>
                 <span w-class="ga-currency-name">{{it1.currencyName}}</span>
             </div>
@@ -36,7 +36,7 @@
             <span w-class="ga-tag">红包个数</span>
             <div w-class="ga-number-inner">
                 <div ev-input-change="redEnvelopeNumberChange" w-class="input-father">
-                    <app-components-input-input>{itype:"number",style:{{it1.inputStyle}},input:{{it1.redEnvelopeNumber}},placeHolder:"0"}</app-components-input-input>
+                    <app-components-input-input_simple>{itype:"number",style:"fontSize:32px;textAlign:right;",input:{{it1.redEnvelopeNumber}},placeHolder:"0"}</app-components-input-input_simple>
                 </div>
                 <span w-class="ga-number-unit">个</span>
             </div>
@@ -49,7 +49,7 @@
         <div w-class="ga-item-box">
             <span w-class="ga-tag">留言</span>
             <div w-class="ga-leave-message input-father" ev-input-change="leaveMessageChange">
-                <app-components-input-input>{placeHolder:{{it1.leaveMessage}},style:{{it1.inputStyle}}}</app-components-input-input>
+                <app-components-input-input_simple>{placeHolder:{{it1.leaveMessage}},style:"fontSize:32px;textAlign:right;"}</app-components-input-input_simple>
             </div>
         </div>
         <div w-class="ga-send-amount">{{it1.totalAmount}}&nbsp;{{it1.currencyName}}</div>

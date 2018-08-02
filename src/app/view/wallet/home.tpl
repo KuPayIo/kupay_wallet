@@ -38,7 +38,7 @@
                 {{for index,currency of it1.currencyList}}
                 <li w-class="ga-currency-item" on-tap="clickCurrencyItemListener(e,{{index}})">
                     <div w-class="ga-currency-logo-container">
-                        <img src="../../res/image/{{currency.currencyName}}.png" w-class="ga-currency-logo"/>
+                        <img src="../../res/image/currency/{{currency.currencyName}}.png" w-class="ga-currency-logo"/>
                     </div>
                     <div w-class="ga-item-right-container">
                         <div w-class="ga-item-top-container">
