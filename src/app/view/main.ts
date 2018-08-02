@@ -12,7 +12,7 @@ import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
-import { GaiaWallet } from '../core/eth/wallet';
+import { EthWallet } from '../core/eth/wallet';
 import { generate, getRandomValuesByMnemonic, sha3, toMnemonic } from '../core/genmnemonic';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../store/dataCenter';
@@ -101,7 +101,7 @@ const initEthTokenDecimals = () => {
     if (newTokenNames.length === 0) return;
 
     newTokenNames.forEach(tokenName => {
-        const decimalsCode = GaiaWallet.tokenOperations('decimals', tokenName);
+        const decimalsCode = EthWallet.tokenOperations('decimals', tokenName);
         const api = new EthApi();
         api.ethCall(ERC20Tokens[tokenName], decimalsCode).then(r => {
             const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
