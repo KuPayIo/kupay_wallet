@@ -1,0 +1,173 @@
+.ga-new-page{
+    display: flex;
+    flex-direction: column;
+    font-family: "PingFangSC-Regular";
+    font-size: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+.ga-main{
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.ga-top{
+    background-image: url(../../res/image/redEnvelopeDetail_bg.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.ga-head{
+    margin-top: 20px;
+    height: 195px;
+    width: 195px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffd9a9;
+    border-radius: 50%;
+}
+.ga-head-inner{
+    width: 177px;
+    height: 177px;
+    border-radius: 50%;
+    background-image: url(../../res/image/img_avatar1.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 177px 177px;
+}
+.ga-leave-message{
+    line-height: 40px;
+    color: rgba(32, 50, 96, 1);
+    font-size: 28px;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.ga-amount{
+    line-height: 90px;
+    color: rgba(26, 112, 221, 1);
+    font-size: 64px;
+    text-align: center;
+    margin: 30px auto 40px;
+}
+.ga-currency-name{
+    font-size: 36px;
+    margin-left: 10px;
+}
+.ga-input-father{
+    width: 690px;
+    height: 80px;
+    border-radius: 6px;
+    border: 1px solid #e5e5ee;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 32px;
+    color: #8e96ab;
+}
+.input-father{
+    flex: 1 0 0;
+    margin-left: 40px;
+}
+.ga-copy-btn{
+    width: 195px;
+    height: 63px;
+    border-radius: 6px;
+    background-color: rgba(223, 94, 94, 1);
+    font-size: 32px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 14px;
+}
+.ga-receive{
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 32px;
+    width: 690px;
+    height: 80px;
+    border-radius: 6px;
+    background-color: rgba(26, 112, 221, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0;
+}
+.ga-bottom{
+    background-color: #fff;
+}
+.ga-receive-details{
+    
+}
+.ga-title{
+    height: 100px;
+    display: flex;
+    align-items: center;
+    color: rgba(160, 172, 192, 1);
+    font-size: 28px;
+    border-bottom: 1px solid #e5e5ee;
+    padding: 0 30px;
+}
+.ga-item{
+    height: 170px;
+    border-bottom: 1px solid #e5e5ee;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+    font-family: "PingFangSC-Medium";
+}
+.ga-avator{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+.ga-item-right{
+    margin-left: 30px;
+    flex: 1 0 0;
+}
+.ga-box1{
+    line-height: 50px;
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+    display: flex;
+}
+.ga-box2{
+    line-height: 33px;
+    color: rgba(142, 150, 171, 0.87);
+    font-size: 24px;
+    display: flex;
+    margin-top: 10px;
+}
+.ga-name{
+    flex: 1 0 0;
+}
+.ga-time{
+    flex: 1 0 0;
+}
+.ga-best{
+    color: rgba(255, 169, 103, 0.87);
+}
+.ga-rule{
+    line-height: 42px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 28px;
+    font-family: "SourceHanSansCN-Regular";
+    padding: 72px 30px;
+    background-color: #fff;
+}
+.ga-rule-title{
+    text-align: center;
+}
+.ga-rule-list{
+    margin-top: 40px;
+}
+.ga-rule-item{
+    margin-top: 15px;
+}

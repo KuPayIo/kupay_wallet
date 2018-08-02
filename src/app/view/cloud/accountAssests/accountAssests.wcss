@@ -1,0 +1,76 @@
+.ga-new-page{
+    background: #fff;
+}
+.assestsHead{
+    padding: 10px 50px;
+    padding-right:68px;
+    background: #fff; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 150px;
+    box-sizing: border-box;
+}
+.assestsImg{
+    width: 60px;
+    height: 60px;
+    margin-right:20px; 
+    flex-grow: 0;
+}
+.coinType{
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+    flex-grow: 1;
+}
+.balance{
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 28px;
+    flex-grow: 0;
+}
+.panelBtnGroup{
+    background: #fff;
+    border-top:1px solid #BEBEBE; 
+    border-bottom:1px solid #BEBEBE; 
+}
+.btn{
+    display: inline-block;
+    color: #8E96AB;
+    font-size: 28px;
+    width: 120px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    margin-left:54px; 
+}
+.active{
+    border-bottom:2px solid #1A70DD;
+    color: #1A70DD;
+}
+.mask{
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.botFixed{
+    height: 110px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    display: flex;
+}
+.fixedBtn{
+    flex-basis: 50%;
+    line-height: 110px;
+    color: #FFFFFF;
+    font-size: 28px;
+    text-align: center;
+}
+.Charge{
+    background: #212C67;
+}
+.btnIcon{
+    vertical-align: middle;
+    margin-right:27px; 
+}
+.Withdraw{
+    background: #1735D6;
+}

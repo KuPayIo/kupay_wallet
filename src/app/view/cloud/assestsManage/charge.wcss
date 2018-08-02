@@ -1,0 +1,83 @@
+.ga-new-page{
+    background: #ffffff;
+}
+.iconsBox{
+    padding: 60px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.local{
+    text-align: center;
+}
+.icon{
+    width: 100px;
+    height: 100px;
+    border-radius:10px; 
+    background:#1A70DD;
+}
+.text{
+    color: #203260;
+    font-size: 32px;
+    margin-top: 23px;
+}
+.arow{
+    font-size: 40px;
+    margin: 0 94px;
+    margin-bottom: 55px;
+}
+.cloud{
+    text-align: center;
+}
+
+.paddingBox{
+    padding: 0 30px;
+}
+.charge{
+    padding: 38px 30px;
+    border-bottom:1px solid #E5E5EE;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.chargeAmount{
+    font-size: 32px;
+    color: #A0ACC0;
+}
+.unit{
+    color: #111111;
+    font-size: 32px;
+}
+.amountInput{
+    flex-grow: 1;
+    width: 0px;
+    text-align: right;
+    margin: 0 30px;
+    font-size: 32px;
+    color: #A0ACC0;
+    border: none;
+    outline: none;
+}
+.balanceTip{
+    padding: 30px;
+    color: #203260;
+    font-size: 28px;
+}
+.message{
+    color: #F5A264;
+    font-size: 28px;
+    text-align: center;
+    margin-top: 30px;
+    
+}
+.blueBtn{
+    height: 100px;
+    background: #1A70DD;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 32px;
+    line-height: 100px;
+    text-align: center;
+    margin: 0 60px;
+    margin-top: 100px;
+    border-radius: 100px;
+}

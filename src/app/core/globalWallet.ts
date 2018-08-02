@@ -2,14 +2,14 @@
  * global wallet
  */
 import { dataCenter } from '../store/dataCenter';
-import { btcNetwork, defaultEthToken, lang, strength } from '../utils/constants';
-import { calcHashValuePromise, decrypt, getDefaultAddr, getMnemonic, u8ArrayToHexstr } from '../utils/tools';
-import { Addr, CurrencyRecord, Wallet } from '../view/interface';
+import { btcNetwork, lang, strength } from '../utils/constants';
+import { calcHashValuePromise, getMnemonic, u8ArrayToHexstr } from '../utils/tools';
+import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
 import { ERC20Tokens } from './eth/tokens';
 import { GaiaWallet } from './eth/wallet';
-import { generate, generateRandomValues, getRandomValuesByMnemonic, toMnemonic, toSeed } from './genmnemonic';
+import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';
 
 const cipher = new Cipher();
 
@@ -66,44 +66,18 @@ export class GlobalWallet {
      * 通过助记词导入钱包
      */
     public static async fromMnemonic(mnemonic: string, passwd: string, passphrase?: string): Promise<GlobalWallet> {
-        const hash = await calcHashValuePromise(passwd, 'somesalt', null);
+        const hash = await calcHashValuePromise(passwd, dataCenter.salt, null);
         const gwlt = new GlobalWallet();
 
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
         gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
 
-        // 创建ETH钱包
-        const ethGwlt = await this.fromMnemonicETH(mnemonic);
-        gwlt._glwtId = ethGwlt.addrs[0].addr;
-        gwlt._currencyRecords.push(ethGwlt.currencyRecord);
-        gwlt._addrs.push(...ethGwlt.addrs);
+        gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
 
-        // 创建BTC钱包
-        const btcGwlt = await this.fromMnemonicBTC(mnemonic);
-        gwlt._currencyRecords.push(btcGwlt.currencyRecord);
-        gwlt._addrs.push(...btcGwlt.addrs);
-
-        // ETH代币创建
-        for (let i = 0; i < defaultEthToken.length; i++) {
-            const tokenName = defaultEthToken[i];
-            const contractAddress = ERC20Tokens[tokenName];
-            const tokenGwlt = await GlobalWallet.fromMnemonicEthToken(tokenName, contractAddress, mnemonic);
-            gwlt._currencyRecords.push(tokenGwlt.currencyRecord);
-            gwlt._addrs.push(...tokenGwlt.addrs);
-
-            // 更新内存数据中心
-            tokenGwlt.addrs.forEach(item => {
-                dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
-            });
-        }
-
-        // todo 动态异步创建其他货币地址
+        dataCenter.setHash(gwlt._glwtId, hash);
 
         // 更新内存数据中心
-        ethGwlt.addrs.forEach(item => {
-            dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
-        });
-        btcGwlt.addrs.forEach(item => {
+        gwlt._addrs.forEach(item => {
             dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
         });
 
@@ -117,7 +91,7 @@ export class GlobalWallet {
      * @param passphrase passphrase
      */
     public static async generate(passwd: string, walletName: string, passphrase?: string, vault?: Uint8Array) {
-        const hash = await calcHashValuePromise(passwd, 'somesalt', null);
+        const hash = await calcHashValuePromise(passwd, dataCenter.salt, null);
         const gwlt = new GlobalWallet();
         gwlt._nickName = walletName;
         vault = vault || generateRandomValues(strength);
@@ -125,78 +99,15 @@ export class GlobalWallet {
         // console.log('generate hash', hash, gwlt._vault, passwd, u8ArrayToHexstr(vault));
 
         const mnemonic = toMnemonic(lang, vault);
+        gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
 
-        // 创建ETH钱包
-        const ethGwlt = this.createEthGwlt(mnemonic);
-        gwlt._glwtId = ethGwlt.addr.addr;
-        gwlt._currencyRecords.push(ethGwlt.currencyRecord);
-        gwlt._addrs.push(ethGwlt.addr);
-
-        // 创建BTC钱包
-        const btcGwlt = this.createBtcGwlt(mnemonic);
-        gwlt._currencyRecords.push(btcGwlt.currencyRecord);
-        gwlt._addrs.push(btcGwlt.addr);
-
-        // ETH代币创建
-        defaultEthToken.forEach(tokenName => {
-            const tokenRecord = {
-                ...ethGwlt.currencyRecord,
-                tokenName
-            };
-            const tokenAddr = {
-                ...ethGwlt.addr,
-                tokenName
-            };
-            gwlt._currencyRecords.push(tokenRecord);
-            gwlt._addrs.push(tokenAddr);
-
-        });
+        dataCenter.setHash(gwlt._glwtId, hash);
 
         // dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
         // dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
 
         return gwlt;
     }
-    public static async fromSeedEthToken(tokenName: string, contractAddress: string, passwd: string, seed: string) {
-        // const hash = await calcHashValuePromise(passwd, 'somesalt',null);
-
-        const _seed = cipher.decrypt(passwd, seed);
-        const gaiaWallet = GaiaWallet.fromSeed(_seed, lang);
-        const cnt = await gaiaWallet.scanTokenUsedAddress(contractAddress);
-        const currencyRecord: CurrencyRecord = {
-            currencyName: tokenName,
-            currentAddr: gaiaWallet.address,
-            addrs: [gaiaWallet.address]
-        };
-        const firstAddr: Addr = {
-            addr: gaiaWallet.address,
-            addrName: getDefaultAddr(gaiaWallet.address),
-            record: [],
-            balance: 0,
-            currencyName: tokenName
-        };
-        const addrs: Addr[] = [];
-        addrs.push(firstAddr);
-
-        for (let i = 1; i < cnt; i++) {
-            const address = gaiaWallet.selectAddress(i);
-            currencyRecord.addrs.push(address);
-            const addr: Addr = {
-                addr: address,
-                addrName: getDefaultAddr(address),
-                record: [],
-                balance: 0,
-                currencyName: tokenName
-            };
-            addrs.push(addr);
-        }
-
-        return {
-            currencyRecord,
-            addrs
-        };
-    }
-
     /**
      * 动态创建钱包(地址)对象
      */
@@ -257,21 +168,59 @@ export class GlobalWallet {
         return currencyRecord.addrs.indexOf(addr);
     }
 
+    /*****************************************
+     * 私有静态函数
+     * ************************************************************
+
+    /**
+     * init GlobalWallet
+     * @param passwd password
+     * @param walletName  wallet name
+     * @param passphrase passphrase
+     */
+    private static initGwlt(gwlt: GlobalWallet, mnemonic: string) {
+        // 创建ETH钱包
+        const ethGwlt = this.createEthGwlt(mnemonic);
+        gwlt._currencyRecords.push(ethGwlt.currencyRecord);
+        gwlt._addrs.push(ethGwlt.addr);
+
+        // 创建BTC钱包
+        const btcGwlt = this.createBtcGwlt(mnemonic);
+        gwlt._currencyRecords.push(btcGwlt.currencyRecord);
+        gwlt._addrs.push(btcGwlt.addr);
+
+        const ethTokenList = Object.keys(ERC20Tokens);
+        // ETH代币创建
+        ethTokenList.forEach(tokenName => {
+            const tokenRecord = {
+                ...ethGwlt.currencyRecord,
+                currencyName: tokenName
+            };
+            const tokenAddr = {
+                ...ethGwlt.addr,
+                currencyName: tokenName
+            };
+            gwlt._currencyRecords.push(tokenRecord);
+            gwlt._addrs.push(tokenAddr);
+
+        });
+
+        // dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
+        // dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
+
+        return ethGwlt.addr.addr;
+    }
+
     private static createEthGwlt(mnemonic: string) {
         const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
         const address = gaiaWallet.selectAddress(0);
         const currencyRecord: CurrencyRecord = {
             currencyName: 'ETH',
             currentAddr: address,
-            addrs: [address]
+            addrs: [address],
+            updateAddr: false
         };
-        const addr: Addr = {
-            addr: address,
-            addrName: getDefaultAddr(address),
-            record: [],
-            balance: 0,
-            currencyName: 'ETH'
-        };
+        const addr: Addr = dataCenter.initAddr(address, 'ETH');
 
         return {
             currencyRecord,
@@ -288,16 +237,11 @@ export class GlobalWallet {
         const currencyRecord: CurrencyRecord = {
             currencyName: 'BTC',
             currentAddr: address,
-            addrs: [address]
+            addrs: [address],
+            updateAddr: false
         };
 
-        const addr: Addr = {
-            addr: address,
-            addrName: getDefaultAddr(address),
-            record: [],
-            balance: 0,
-            currencyName: 'BTC'
-        };
+        const addr: Addr = dataCenter.initAddr(address, 'BTC');
 
         return {
             currencyRecord,
@@ -305,130 +249,12 @@ export class GlobalWallet {
         };
     }
 
-    private static async fromMnemonicETH(mnemonic: string) {
-        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-        const cnt = await gaiaWallet.scanUsedAddress();
-        const currencyRecord: CurrencyRecord = {
-            currencyName: 'ETH',
-            currentAddr: gaiaWallet.address,
-            addrs: [gaiaWallet.address]
-        };
-        const firstAddr: Addr = {
-            addr: gaiaWallet.address,
-            addrName: getDefaultAddr(gaiaWallet.address),
-            record: [],
-            balance: 0,
-            currencyName: 'ETH'
-        };
-        const addrs: Addr[] = [];
-        addrs.push(firstAddr);
-
-        for (let i = 1; i < cnt; i++) {
-            const address = gaiaWallet.selectAddress(i);
-            currencyRecord.addrs.push(address);
-            const addr: Addr = {
-                addr: address,
-                addrName: getDefaultAddr(address),
-                record: [],
-                balance: 0,
-                currencyName: 'ETH'
-            };
-            addrs.push(addr);
-        }
-
-        return {
-            currencyRecord,
-            addrs
-        };
-    }
-
-    private static async fromMnemonicEthToken(tokenName: string, contractAddress: string, mnemonic: string) {
-        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-        const cnt = await gaiaWallet.scanTokenUsedAddress(contractAddress);
-        const currencyRecord: CurrencyRecord = {
-            currencyName: tokenName,
-            currentAddr: gaiaWallet.address,
-            addrs: [gaiaWallet.address]
-        };
-        const firstAddr: Addr = {
-            addr: gaiaWallet.address,
-            addrName: getDefaultAddr(gaiaWallet.address),
-            record: [],
-            balance: 0,
-            currencyName: tokenName
-        };
-        const addrs: Addr[] = [];
-        addrs.push(firstAddr);
-
-        for (let i = 1; i < cnt; i++) {
-            const address = gaiaWallet.selectAddress(i);
-            currencyRecord.addrs.push(address);
-            const addr: Addr = {
-                addr: address,
-                addrName: getDefaultAddr(address),
-                record: [],
-                balance: 0,
-                currencyName: tokenName
-            };
-            addrs.push(addr);
-        }
-
-        return {
-            currencyRecord,
-            addrs
-        };
-    }
-
-    private static async fromMnemonicBTC(mnemonic: string) {
-        // todo 测试阶段，使用测试链，后续改为主链
-        const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
-        btcWallet.unlock();
-        const cnt = await btcWallet.scanUsedAddress();
-        const address = btcWallet.derive(0);
-
-        const currencyRecord: CurrencyRecord = {
-            currencyName: 'BTC',
-            currentAddr: address,
-            addrs: [address]
-        };
-
-        const firstAddr: Addr = {
-            addr: address,
-            addrName: getDefaultAddr(address),
-            record: [],
-            balance: 0,
-            currencyName: 'BTC'
-        };
-
-        const addrs: Addr[] = [];
-        addrs.push(firstAddr);
-
-        for (let i = 1; i < cnt; i++) {
-            const address = btcWallet.derive(i);
-            currencyRecord.addrs.push(address);
-            const addr: Addr = {
-                addr: address,
-                addrName: getDefaultAddr(address),
-                record: [],
-                balance: 0,
-                currencyName: 'BTC'
-            };
-            addrs.push(addr);
-        }
-        btcWallet.lock();
-
-        return {
-            currencyRecord,
-            addrs
-        };
-    }
-
-    public exportSeed(passwd: string): string {
-        // todo 这里处理导出种子
-        return '';
-        // return cipher.decrypt(passwd, this._seed);
-    }
-
+    /**********************************************
+     * 公共内部函数
+     * *******************************************************************/
+    /** 
+     * 当前对象转化为json字符串
+     */
     public toJSON(): string {
         const wlt = {
             glwtId: this._glwtId,
@@ -440,10 +266,13 @@ export class GlobalWallet {
         return JSON.stringify(wlt);
     }
 
+    /**
+     * 修改密码
+     */
     public async passwordChange(oldPsw: string, newPsw: string, walletId: string) {
         // todo 这里需要处理修改密码
-        const oldHash = await calcHashValuePromise(oldPsw, 'somesalt', walletId);
-        const newHash = await calcHashValuePromise(newPsw, 'somesalt', null);
+        const oldHash = await calcHashValuePromise(oldPsw, dataCenter.salt, walletId);
+        const newHash = await calcHashValuePromise(newPsw, dataCenter.salt, null);
         // console.log('passwordChange hash', oldHash, this._vault, oldPsw, newHash, newPsw);
 
         const oldVault = cipher.decrypt(oldHash, this._vault);
@@ -452,4 +281,5 @@ export class GlobalWallet {
         // 更新hash
         dataCenter.setHash(walletId, newHash);
     }
+
 }

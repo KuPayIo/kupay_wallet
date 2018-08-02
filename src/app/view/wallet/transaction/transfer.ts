@@ -33,7 +33,6 @@ interface States {
     feesConversion: string;
     info: string;
     showNote: boolean;
-    inputStyle: any;
 }
 
 export class AddAsset extends Widget {
@@ -60,10 +59,7 @@ export class AddAsset extends Widget {
             fees: 0,
             feesConversion: '',
             info: '',
-            showNote: ERC20Tokens[this.props.currencyName] ? false : true,
-            inputStyle: {
-                padding: '0 180px 0 30px'
-            }
+            showNote: ERC20Tokens[this.props.currencyName] ? false : true
         };
 
         // todo 这是测试地址
@@ -308,8 +304,6 @@ export class AddAsset extends Widget {
     }
     // tslint:disable-next-line:only-arrow-functions
     private async getBtcTransactionFee(toAddr: string, amount: number, priority: 'high' | 'medium' | 'low' = 'medium') {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
         const addrInfo = getCurrentAddrInfo('BTC');
         const output = {
             toAddr: toAddr,

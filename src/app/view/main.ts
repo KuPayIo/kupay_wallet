@@ -24,6 +24,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void => {
     addWidget(document.body, 'pi-ui-root');
+    // 设置开发环境
     // eth代币精度初始化
     initEthTokenDecimals();
     // 数据检查
@@ -36,17 +37,9 @@ export const run = (cb): void => {
     popNewPage();
     // 后台切前台
     backToFront();
-    /*  popNew('app-view-wallet-transaction-transfer',{
-          currencyBalance: 100,
-          fromAddr: '0xssss',
-          currencyName: 'ETH',
-          rate: { CNY: 100 , USD: 15.2625 }
-      }); */
-    /*  popNew('app-view-wallet-transaction-receipt',{currencyBalance: 100,
-         addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
-    // popNew('app-view-redEnvelope-send-sendRedEnvelope');
-    // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
-    // popNew('app-view-currencyExchange-currencyExchange');
+    // popNew('app-view-redEnvelope-send-inviteRedEnvelope',{ amount:100,leaveMessage:'大吉大利',currencyName:'ETH' });
+    // popNew('app-view-redEnvelope-receive-redEnvelopeDetails',{ amount:100,leaveMessage:'大吉大利',currencyName:'ETH' });
+    // popNew('app-view-redEnvelope-receive-redEnvelopeRecord');
     if (cb) cb();
     // test();
 };
@@ -83,6 +76,12 @@ const checkUpdate = () => {
  * 后台切换到前台
  */
 const backToFront = () => {
+    // (<any>window).handle_app_lifecycle_listener = (iType: string) => {
+    //     alert(iType);
+    //     // onAppResumed
+    //     // onAppPaused
+    // };
+
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
             if (ifNeedUnlockScreen()) {

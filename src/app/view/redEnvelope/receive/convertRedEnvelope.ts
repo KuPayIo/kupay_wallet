@@ -3,7 +3,6 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { RedEnvelope } from '../../interface';
 
 export class ConvertRedEnvelope extends Widget {
     public ok:() => void;
@@ -21,13 +20,7 @@ export class ConvertRedEnvelope extends Widget {
                 amount:1,
                 leaveMessage:'恭喜发财,大吉大利'
             },
-            placeHolder:'输入兑换码，领取红包',
-            style:{
-                backgroundColor: '#F8F8F8',
-                border: '1px solid #D6D9DF',
-                borderRadius: '6px',
-                padding:'0 17px'
-            }
+            placeHolder:'输入兑换码，领取红包'
         };
     }
     public backPrePage() {
@@ -36,6 +29,7 @@ export class ConvertRedEnvelope extends Widget {
 
     public redemptionCodeChange(e:any) {
         this.state.redemptionCode = e.value;
+        this.paint();
     }
     // 兑换
     public convertClick() {
@@ -46,5 +40,11 @@ export class ConvertRedEnvelope extends Widget {
         }
         // tslint:disable-next-line:max-line-length
         popNew('app-view-redEnvelope-receive-openRedEnvelope',{ redemptionCode:this.state.redemptionCode,redEnvelope:this.state.redEnvelope });
+        this.state.redemptionCode = '';
+        this.paint();
+    }
+
+    public redEnvelopeRecordsClick() {
+        popNew('app-view-redEnvelope-receive-redEnvelopeRecord');
     }
 }

@@ -2,16 +2,37 @@
     display: flex;
     flex-direction: column;
     font-family: "PingFangSC-Regular";
+    font-size: 0;
+}
+
+.ga-top{
+    background-image: url(../../../res/image/redEnvelopeDetail_bg.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #f8f8f8;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .ga-head{
-    height: 200px;
+    margin-top: 20px;
+    height: 195px;
+    width: 195px;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #ffd9a9;
+    border-radius: 50%;
 }
-.ga-big-head{
+.ga-head-inner{
     width: 177px;
     height: 177px;
+    border-radius: 50%;
+    background-image: url(../../../res/image/img_avatar1.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 177px 177px;
 }
 .ga-leave-message{
     line-height: 40px;

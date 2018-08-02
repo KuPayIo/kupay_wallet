@@ -2,7 +2,6 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
 import { BTCWallet } from '../core/btc/wallet';
@@ -14,8 +13,8 @@ import { toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { find, updateStore } from '../store/store';
-import { Addr } from '../view/interface';
-import { lang, lockScreenSalt,supportCurrencyList } from './constants';
+import { Addr, Wallet } from '../view/interface';
+import { lang, lockScreenSalt, supportCurrencyList } from './constants';
 
 export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
@@ -35,7 +34,7 @@ export const sleep = (delay) => {
         }
     }
 };
-export const getCurrentWallet = (wallets) => {
+export const getCurrentWallet = (wallets): Wallet => {
     if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
         return null;
     }
@@ -218,7 +217,7 @@ export const randomRgbColor = () => { // 随机生成RGB颜色
 export const parseAccount = (str: string) => {
     if (str.length <= 29) return str;
 
-    return `${str.slice(0, 13)}...${str.slice(str.length - 13, str.length)}`;
+    return `${str.slice(0, 8)}...${str.slice(str.length - 8, str.length)}`;
 };
 
 export const getDefaultAddr = (addr: number | string) => {
@@ -231,6 +230,8 @@ export const getDefaultAddr = (addr: number | string) => {
  * wei转Eth
  */
 export const wei2Eth = (num: number) => {
+    if (!num) return 0;
+
     return num / Math.pow(10, 18);
 };
 
@@ -238,6 +239,8 @@ export const wei2Eth = (num: number) => {
  * wei转Eth
  */
 export const eth2Wei = (num: number) => {
+    if (!num) return 0;
+
     return num * Math.pow(10, 18);
 };
 
@@ -245,6 +248,8 @@ export const eth2Wei = (num: number) => {
  * sat转btc
  */
 export const sat2Btc = (num: number) => {
+    if (!num) return 0;
+
     return num / Math.pow(10, 8);
 };
 
@@ -252,6 +257,8 @@ export const sat2Btc = (num: number) => {
  * btc转sat
  */
 export const btc2Sat = (num: number) => {
+    if (!num) return 0;
+
     return num * Math.pow(10, 8);
 };
 
@@ -319,7 +326,7 @@ export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string,
         num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
     r.num = num;
-    r.show = `${num} ${currencyName}`;
+    r.show = `${formatBalance(num)} ${currencyName}`;
 
     return r;
 
@@ -464,10 +471,9 @@ export const addNewAddr = (currencyName, address, addrName) => {
     const wallet = getCurrentWallet(wallets);
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
-    addrName = addrName || getDefaultAddr(address);
     currencyRecord.addrs.push(address);
     const list: Addr[] = getLocalStorage('addrs') || [];
-    const newAddrInfo: Addr = { addr: address, addrName, record: [], balance: 0, currencyName };
+    const newAddrInfo: Addr = dataCenter.initAddr(address, currencyName, addrName);
     list.push(newAddrInfo);
     currencyRecord.currentAddr = address;
 
@@ -540,6 +546,8 @@ export const urlParams = (url: string, key: string) => {
 };
 
 export const formatBalance = (banlance: number) => {
+    banlance = Number(banlance);
+    if (!banlance) return 0;
     let retBanlance;
     if (banlance >= 1) {
         retBanlance = +banlance.toPrecision(7);
@@ -765,13 +773,15 @@ export const getXOR = (first, second) => {
  * 验证身份
  */
 export const VerifyIdentidy = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt', wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
     try {
         const cipher = new Cipher();
         const r = cipher.decrypt(hash, gwlt.vault);
         // console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r);
+
+        dataCenter.setHash(wallet.walletId, hash);
 
         return true;
     } catch (error) {
@@ -785,11 +795,13 @@ export const VerifyIdentidy = async (wallet, passwd) => {
  * 获取助记词
  */
 export const getMnemonic = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt', wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
         const r = cipher.decrypt(hash, gwlt.vault);
+
+        dataCenter.setHash(wallet.walletId, hash);
 
         return toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {
@@ -802,12 +814,15 @@ export const getMnemonic = async (wallet, passwd) => {
  * 获取助记词16进制字符串
  */
 export const getMnemonicHexstr = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, 'somesalt', wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
+        const r = cipher.decrypt(hash, gwlt.vault);
 
-        return cipher.decrypt(hash, gwlt.vault);
+        dataCenter.setHash(wallet.walletId, hash);
+
+        return r;
     } catch (error) {
         console.log(error);
 
@@ -855,9 +870,6 @@ export const calcHashValuePromise = async (pwd, salt, walletId) => {
     argonHash.init();
     // tslint:disable-next-line:no-unnecessary-local-variable
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
-    if (walletId) {
-        dataCenter.setHash(walletId, hash);
-    }
 
     return hash;
 };
@@ -916,9 +928,49 @@ export const currencyExchangeAvailable = () => {
     const currencyArr = [];
     for (let i = 0; i < supportCurrencyList.length; i++) {
         currencyArr.push(supportCurrencyList[i].name);
-    } 
+    }
 
     return shapeshiftCoins.filter(item => {
         return item.status === 'available' && currencyArr.indexOf(item.symbol) >= 0;
     });
+};
+
+// 根据货币名获取当前正在使用的地址
+export const getCurrentAddrByCurrencyName = (currencyName: string) => {
+    const wallets = getLocalStorage('wallets');
+    const wallet = getCurrentWallet(wallets);
+    const currencyRecords = wallet.currencyRecords;
+    let curAddr = '';
+
+    for (let i = 0; i < currencyRecords.length; i++) {
+        if (currencyRecords[i].currencyName === currencyName) {
+            curAddr = currencyRecords[i].currentAddr;
+            break;
+        }
+    }
+
+    return curAddr;
+};
+
+// 根据货币名获取当前正在使用的地址的余额
+export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
+    const curAddr = getCurrentAddrByCurrencyName(currencyName);
+    const addrs = getLocalStorage('addrs');
+    for (let i = 0; i < addrs.length; i++) {
+        if ((addrs[i].currencyName === currencyName) && (addrs[i].addr === curAddr)) {
+            return addrs[i].balance;
+        }
+    }
+};
+// 时间戳格式化
+export const timestampFormat = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : `0${date.getMonth() + 1}`;
+    const day = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
+    const hour = date.getHours() >= 10 ? date.getHours() : `0${date.getHours()}`;
+    const minutes = date.getMinutes() >= 10 ? date.getMinutes() : `0${date.getMinutes()}`;
+    const seconds = date.getSeconds() >= 10 ? date.getSeconds() : `0${date.getSeconds()}`;
+
+    return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
 };

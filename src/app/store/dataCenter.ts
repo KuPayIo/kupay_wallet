@@ -1,17 +1,30 @@
+import { cryptoRandomInt } from '../../pi/util/math';
 import { BtcApi } from '../core/btc/api';
+import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { GaiaWallet } from '../core/eth/wallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
-import { defaultExchangeRateJson, ethTokenTransferCode, supportCurrencyList } from '../utils/constants';
+// tslint:disable-next-line:max-line-length
+import { btcNetwork, defaultExchangeRateJson, ethTokenTransferCode, lang, shapeshiftApiPrivateKey, shapeshiftTransactionRequestNumber, supportCurrencyList } from '../utils/constants';
 import {
-    btc2Sat, ethTokenDivideDecimals, getAddrsByCurrencyName, getCurrentWallet, getLocalStorage, sat2Btc, setLocalStorage, wei2Eth
+    btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getCurrentWallet, getDefaultAddr, getLocalStorage,
+    getMnemonic, sat2Btc, setLocalStorage, wei2Eth
 } from '../utils/tools';
+import { Addr, CurrencyRecord, Wallet } from '../view/interface';
 /**
  * 创建事件处理器表
  * @example
  */
 export class DataCenter {
+
+    public get salt() {
+        if (!this.iSalt) {
+            this.iSalt = cryptoRandomInt().toString();
+        }
+
+        return this.iSalt;
+    }
 
     public static MAX_ADDRNAME_LEN: number = 9;// 最长地址名
 
@@ -32,9 +45,10 @@ export class DataCenter {
     public exchangeRateJson: any = defaultExchangeRateJson;
     public currencyList: any[] = supportCurrencyList;
     public shapeShiftCoins: any = [];// shapeShift 支持的币种
+    public currencyExchangeTimer: number;
 
     private hashMap: any = {};
-
+    private iSalt: string;
     /**
      * 初始化
      */
@@ -47,6 +61,7 @@ export class DataCenter {
         const addrs = getLocalStorage('addrs');
         if (addrs) {
             const wallets = getLocalStorage('wallets');
+            this.iSalt = wallets.salt;
             const wallet = getCurrentWallet(wallets);
             if (!wallet) return;
             let list = [];
@@ -62,6 +77,20 @@ export class DataCenter {
 
         // 启动定时器更新
         if (!this.timerRef) this.openCheck();
+        if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
+    }
+
+    /**
+     * 初始化地址对象
+     */
+    public initAddr(address: string, currencyName: string, addrName?: string): Addr {
+        return {
+            addr: address,
+            addrName: addrName || getDefaultAddr(address),
+            record: [],
+            balance: 0,
+            currencyName: currencyName
+        };
     }
     /**
      * addAddr
@@ -170,6 +199,7 @@ export class DataCenter {
      * 设置缓存hash
      */
     public setHash(key: string, hash: string) {
+        if (!key) return;
         this.hashMap[key] = hash;
     }
     /**
@@ -177,6 +207,18 @@ export class DataCenter {
      */
     public getHash(id: string) {
         return this.hashMap[id];
+    }
+
+    // 获取币币交易交易记录
+    public fetchCurrencyExchangeTx() {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) return;
+        const curAllAddrs = getAddrsAll(wallet);
+        curAllAddrs.forEach(item => {
+            this.getTransactionsByAddr(item);
+        });
+
     }
 
     /****************************************************************************************************
@@ -199,8 +241,55 @@ export class DataCenter {
                 case 'shapeShiftCoins': this.getShapeShiftCoins();
                 default:
             }
+
+            return;
+        }
+
+        // 检查地址--放于最后一步
+        this.checkAddr();
+    }
+
+    // 币币交易记录定时器
+    private currencyExchangeTimerStart() {
+        this.fetchCurrencyExchangeTx();
+        this.currencyExchangeTimer = setTimeout(() => {
+            this.currencyExchangeTimerStart();
+        }, 10 * 60 * 1000);
+    }
+    private async checkAddr() {
+        const wallets = getLocalStorage('wallets');
+        if (!wallets) return;
+        const list = [];
+        wallets.walletList.forEach((v, i) => {
+            if (dataCenter.getHash(v.walletId)) {
+                v.currencyRecords.forEach((v1, i1) => {
+                    if (!v1.updateAddr) list.push([i, i1]);
+                });
+            }
+        });
+
+        if (list[0]) {
+            let addrs = getLocalStorage('addrs');
+            const wallet = wallets.walletList[list[0][0]];
+            const currencyRecord: CurrencyRecord = wallet.currencyRecords[list[0][1]];
+            console.log('checkAddr', currencyRecord.currencyName);
+            let addAddrs;
+            if (currencyRecord.currencyName === 'ETH') {
+                addAddrs = await this.checkEthAddr(wallet, currencyRecord);
+            } else if (currencyRecord.currencyName === 'BTC') {
+                addAddrs = await this.checkBtcAddr(wallet, currencyRecord);
+            } else if (ERC20Tokens[currencyRecord.currencyName]) {
+                addAddrs = await this.checkEthERC20TokenAddr(wallet, currencyRecord);
+            }
+            if (addAddrs.length > 0) {
+                addrs = addrs.concat(addAddrs);
+                setLocalStorage('addrs', list, false);
+            }
+            currencyRecord.updateAddr = true;
+            setLocalStorage('wallets', wallets, true);
         }
     }
+
     private getShapeShiftCoins() {
         shapeshift.coins((err, data) => {
             if (err) {
@@ -211,7 +300,7 @@ export class DataCenter {
             for (const k in data) {
                 this.shapeShiftCoins.push(data[k]);
             }
-            console.log(this.shapeShiftCoins);
+            // console.log(this.shapeShiftCoins);
         });
     }
     /**
@@ -456,6 +545,118 @@ export class DataCenter {
         addrs.forEach(addr => existedAddrs.push(addr.addr));
         const trans = transactions.filter(trans => existedAddrs.indexOf(trans.addr) >= 0);
         setLocalStorage('transactions', trans, notify);
+    }
+
+    /**
+     * 检查eth地址
+     */
+    private async checkEthAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
+        const mnemonic = await getMnemonic(wallet, '');
+        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
+        const cnt = await gaiaWallet.scanUsedAddress();
+        const addrs: Addr[] = [];
+
+        for (let i = 1; i < cnt; i++) {
+            const address = gaiaWallet.selectAddress(i);
+            currencyRecord.addrs.push(address);
+            const addr: Addr = this.initAddr(address, 'ETH');
+            addrs.push(addr);
+        }
+
+        return addrs;
+    }
+
+    /**
+     * 检查btc地址
+     */
+    private async checkBtcAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
+        const mnemonic = await getMnemonic(wallet, '');
+        const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
+        btcWallet.unlock();
+        const cnt = await btcWallet.scanUsedAddress();
+
+        const addrs: Addr[] = [];
+
+        for (let i = 1; i < cnt; i++) {
+            const address = btcWallet.derive(i);
+            currencyRecord.addrs.push(address);
+            const addr: Addr = this.initAddr(address, 'BTC');
+            addrs.push(addr);
+        }
+        btcWallet.lock();
+
+        return addrs;
+    }
+
+    /**
+     * 检查eth erc20 token地址
+     */
+    private async checkEthERC20TokenAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
+        const mnemonic = await getMnemonic(wallet, '');
+        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
+        const cnt = await gaiaWallet.scanTokenUsedAddress(ERC20Tokens[currencyRecord.currencyName]);
+        const addrs: Addr[] = [];
+
+        for (let i = 1; i < cnt; i++) {
+            const address = gaiaWallet.selectAddress(i);
+            currencyRecord.addrs.push(address);
+            const addr: Addr = this.initAddr(address, currencyRecord.currencyName);
+            addrs.push(addr);
+        }
+
+        return addrs;
+    }
+
+    private async getTransactionsByAddr(addr: string) {
+        const addrLowerCase = addr.toLowerCase();
+        const transactions = (addr: string): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                shapeshift.transactions(shapeshiftApiPrivateKey, addr, (err, transactions) => {
+                    if (err || transactions.length === 0) {
+                        reject(err || new Error('null array'));
+                    }
+                    resolve(transactions);
+                });
+            });
+        };
+        let count = shapeshiftTransactionRequestNumber;
+        while (count >= 0) {
+
+            let txs;
+            try {
+                txs = await transactions(addrLowerCase);
+            } catch (err) {
+                // tslint:disable-next-line:prefer-template
+            }
+            if (txs) {
+                const currencyExchangeTxs = getLocalStorage('currencyExchangeTxs') || {};
+                const oldTxs = currencyExchangeTxs[addrLowerCase] || [];
+                txs.forEach(tx => {
+                    const index = this.getTxByHash(oldTxs, tx.inputTXID);
+                    if (index >= 0) {
+                        oldTxs[index] = tx;
+                    } else {
+                        oldTxs.push(tx);
+                    }
+                });
+                currencyExchangeTxs[addrLowerCase] = oldTxs;
+                setLocalStorage('currencyExchangeTxs', currencyExchangeTxs);
+
+                return;
+            }
+            count--;
+        }
+    }
+
+    private getTxByHash(txs: any[], hash: string) {
+        for (let i = 0; i < txs.length; i++) {
+            // tslint:disable-next-line:possible-timing-attack
+            if (txs[i].inputTXID === hash) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }
 

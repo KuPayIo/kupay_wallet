@@ -1,0 +1,60 @@
+.ga-new-page{
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "PingFangSC-Regular";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.ga-main{
+    width: 690px;
+    height: 1000px;
+    border-radius: 12px;
+    background-color: rgba(194, 62, 62, 1);
+    box-shadow: 0px 2px 8px 0px rgba(12, 15, 35, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+    background-image: url(../../res/image/redEnvelopes2.png);
+    background-size:cover;
+    background-repeat: no-repeat; 
+    position: relative;
+}
+.ga-leave-message{
+    width: 576px;
+    height: 90px;
+    line-height: 90px;
+    font-size: 64px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 270px;
+}
+.ga-tag{
+    line-height: 50px;
+    font-size: 36px;
+    text-align: center;
+    margin-top: 60px;
+}
+.ga-open{
+    position: absolute;
+    width: 195px;
+    height: 195px;
+    bottom: 230px;
+}
+
+.ga-look{
+    position: absolute;
+    font-size: 28px;
+    line-height: 40px;
+    bottom: 120px;
+}
+.ga-open-animate{
+    animation: rotated 1s ease-in-out infinite;
+}

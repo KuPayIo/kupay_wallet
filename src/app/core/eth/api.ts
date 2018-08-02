@@ -1,18 +1,13 @@
 /**
  * ETH api
  */
+import { config } from '../config';
 import { Web3 } from '../thirdparty/web3.min';
 
-/* tslint:disable:prefer-template */
-/* tslint:disable: no-redundant-jsdoc*/
-/* tslint:disable: no-http-string*/
-const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/UHhtxDMNBuXoX8OFJKKM'));// 主网
-// const web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/UHhtxDMNBuXoX8OFJKKM'));// 测试网
-const ETH_CMC_URL = 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY';
-const ETHSCAN_ROPSTEN_API_URL = 'http://api.etherscan.io/api?module=account&action=txlist&address=';// 主网
-// const ETHSCAN_ROPSTEN_API_URL = 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=';// 测试网
-const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = 'https://api.etherscan.io/api?module=account&action=tokentx';// 主网
-// const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx';// 测试网
+let web3;
+const ETHSCAN_ROPSTEN_API_URL = config.currentNetIsTest ? config.eth.TEST_ETHSCAN_ROPSTEN_API_URL : config.eth.MAIN_ETHSCAN_ROPSTEN_API_URL;
+// tslint:disable-next-line:max-line-length
+const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config.currentNetIsTest ? config.eth.TEST_ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT : config.eth.MAIN_ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT;
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
@@ -27,6 +22,7 @@ export class Api {
 
     public getBalance(address: string): Promise<number> {
         return new Promise((resolve, reject) => {
+            initWeb3();
             web3.eth.getBalance(address, (err, bal) => {
                 if (!err) {
                     return resolve(bal);
@@ -39,6 +35,7 @@ export class Api {
 
     public sendRawTransaction(serializedTx: any): Promise<string> {
         return new Promise((resolve, reject) => {
+            initWeb3();
             web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), (err, hash) => {
                 if (!err) {
                     return resolve(hash);
@@ -51,6 +48,7 @@ export class Api {
 
     public getTransactionCount(address: string): Promise<number> {
         return new Promise((resolve, reject) => {
+            initWeb3();
             web3.eth.getTransactionCount(address, (err, cnt) => {
                 if (!err) {
                     return resolve(cnt);
@@ -63,6 +61,7 @@ export class Api {
 
     public getTransaction(hash: string): Promise<string> {
         return new Promise((resolve, reject) => {
+            initWeb3();
             web3.eth.getTransaction(hash, (err, val) => {
                 if (!err) {
                     return resolve(val);
@@ -75,6 +74,7 @@ export class Api {
 
     public getTransactionReceipt(hash: string): Promise<string> {
         return new Promise((resolve, reject) => {
+            initWeb3();
             web3.eth.getTransactionReceipt(hash, (err, val) => {
                 if (!err) {
                     return resolve(val);
@@ -93,6 +93,7 @@ export class Api {
      */
     public estimateGas(obj: { to: any; data: any }): Promise<number> {
         return new Promise((resolve, reject) => {
+            initWeb3();
             web3.eth.estimateGas(obj, (err, res) => {
                 if (!err) {
                     return resolve(res);
@@ -105,7 +106,7 @@ export class Api {
 
     public async getExchangeRate(): Promise<any> {
         try {
-            const response = await fetch(ETH_CMC_URL);
+            const response = await fetch(config.eth.ETH_CMC_URL);
             const data = await response.json();
 
             return {
@@ -145,6 +146,7 @@ export class Api {
      */
     public async ethCall(contractAddress: string, callData: string): Promise<any> {
         return new Promise((resolve, reject) => {
+            initWeb3();
             web3.eth.call({
                 to: contractAddress,
                 data: callData
@@ -177,4 +179,11 @@ export class Api {
             return Promise.reject(e);
         }
     }
+
 }
+
+const initWeb3 = () => {
+    if (!web3) {
+        web3 = new Web3(new Web3.providers.HttpProvider(config.currentNetIsTest ? config.eth.testWeb3 : config.eth.mainWeb3));
+    }
+};

@@ -2,6 +2,7 @@
  * 基础操作
  */
 import { GlobalWallet } from '../core/globalWallet';
+import { dataCenter } from '../store/dataCenter';
 import { Addr, Wallet } from '../view/interface';
 import { getAvatarRandom } from './account';
 import { defalutShowCurrencys } from './constants';
@@ -11,7 +12,7 @@ import { encrypt, getAddrsAll, getLocalStorage, openBasePage, setLocalStorage } 
  * 通过助记词导入钱包
  */
 export const importWalletByMnemonic = async (mnemonic, psw, pswTips) => {
-    const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '' };
+    const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '', salt: dataCenter.salt };
     let addrs: Addr[] = getLocalStorage('addrs') || [];
 
     let gwlt = null;

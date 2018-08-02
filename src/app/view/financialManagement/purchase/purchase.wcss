@@ -1,0 +1,40 @@
+.purchase{
+
+}
+.productType{
+    padding: 30px;
+    font-size: 20px;
+    color: #203260;
+}
+.purchaseBox{
+    background: #fff;
+}
+.whiteArea{
+    padding: 30px;
+    border-bottom: 1px solid #ddd;
+}
+.numInput{
+    width: 100%;
+    height: 40px;
+    font-size: 28px;
+    color: #666;
+    border: none;
+}
+.showBalance{
+    height: 40px;
+    font-size: 28px;
+}
+.recharge{
+    color: #1A70DD;
+    margin-left: 30px;
+}
+.blueBtn{
+    height: 100px;
+    margin: 30px;
+    background: #1A70DD;
+    color: #fff;
+    line-height: 100px;
+    text-align: center;
+    border-radius: 100px;
+    font-size: 28px;
+}
