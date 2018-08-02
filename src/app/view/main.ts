@@ -76,6 +76,12 @@ const checkUpdate = () => {
  * 后台切换到前台
  */
 const backToFront = () => {
+    // (<any>window).handle_app_lifecycle_listener = (iType: string) => {
+    //     alert(iType);
+    //     // onAppResumed
+    //     // onAppPaused
+    // };
+
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
             if (ifNeedUnlockScreen()) {
