@@ -15,10 +15,6 @@ export class SendRedEnvelope extends Widget {
 
     public init() {
         this.state = {
-            inputStyle:{
-                border:'none',
-                textAlign:'right'
-            },
             itype:1,// 1 等额红包  2 拼手气红包
             balance:this.getBalance(),
             currencyName:redEnvelopeSupportCurrency[0],
@@ -88,6 +84,11 @@ export class SendRedEnvelope extends Widget {
 
             return;
         }
+        if (this.state.totalAmount > this.state.balance) {
+            popNew('app-components-message-message',{ itype:'error',content:'余额不足',center:true });
+
+            return;
+        }
         if (getByteLen(this.state.leaveMessage) > this.state.leaveMessageMaxLen * 2) {
             popNew('app-components-message-message',{ itype:'error',content:`留言最多${this.state.leaveMessageMaxLen}个字`,center:true });
             this.state.leaveMessage = '';
@@ -95,6 +96,7 @@ export class SendRedEnvelope extends Widget {
 
             return;
         }
+        
         popNew('app-view-redEnvelope-send-shareRedEnvelope',{
             amount:this.state.amount,
             leaveMessage:this.state.leaveMessage,

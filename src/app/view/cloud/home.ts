@@ -34,6 +34,7 @@ export class Home extends Widget {
      */
     public packetsClicked() {
         // TODO
+        popNew('app-view-redEnvelope-send-sendRedEnvelope');
     }
 
     /**
@@ -41,6 +42,7 @@ export class Home extends Widget {
      */
     public awardsClicked() {
         // TODO
+        popNew('app-view-redEnvelope-receive-convertRedEnvelope');
     }
     /**
      * 领分红

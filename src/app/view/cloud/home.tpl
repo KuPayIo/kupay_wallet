@@ -80,14 +80,14 @@
             服务
         </div>
         <div w-class="functions">
-            <div w-class="funcItems">
+            <div w-class="funcItems" on-tap="packetsClicked">
                 <img src="../../res/image/cloud_packets.png" w-class="img" />
                 <div w-class="txtFather">
                     <div w-class="txtTitle">发红包</div>
                     <div w-class="txtContent">发红包给好友</div>
                 </div>
             </div>
-            <div w-class="funcItems">
+            <div w-class="funcItems" on-tap="awardsClicked">
                 <img src="../../res/image/cloud_awards.png" w-class="img" />
                 <div w-class="txtFather">
                     <div w-class="txtTitle">发红包</div>

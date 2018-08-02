@@ -3,13 +3,18 @@
     flex-direction: column;
     font-family: "PingFangSC-Regular";
     font-size: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
 }
 .ga-main{
     overflow-x: hidden;
     overflow-y: auto;
 }
 .ga-top{
-    background-image: url(../../../res/image/redEnvelopeDetail_bg.png);
+    background-image: url(../../res/image/redEnvelopeDetail_bg.png);
     background-repeat: no-repeat;
     background-size: contain;
     background-color: #f8f8f8;
@@ -18,14 +23,23 @@
     align-items: center;
 }
 .ga-head{
-    height: 200px;
+    margin-top: 20px;
+    height: 195px;
+    width: 195px;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #ffd9a9;
+    border-radius: 50%;
 }
-.ga-big-head{
-    width: 195px;
-    height: 195px;
+.ga-head-inner{
+    width: 177px;
+    height: 177px;
+    border-radius: 50%;
+    background-image: url(../../res/image/img_avatar1.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 177px 177px;
 }
 .ga-leave-message{
     line-height: 40px;
@@ -55,10 +69,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 32px;
+    color: #8e96ab;
 }
 .input-father{
     flex: 1 0 0;
-    margin-right: 30px;
+    margin-left: 40px;
 }
 .ga-copy-btn{
     width: 195px;
