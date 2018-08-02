@@ -8,14 +8,12 @@ export const walletNumLimit = 10;
 const supportCurrencyListTest = [
     { name: 'ETH', description: 'Ethereum' },
     { name: 'BTC', description: 'Bit coin' }, 
-    { name: 'EOS', description: 'EOS currency' }, 
     { name: 'YNC', description: 'YiNeng Ltd' }
 ];
 // 钱包所支持的货币列表主网络
 const supportCurrencyListMain = [
     { name: 'ETH', description: 'Ethereum' }, 
     { name: 'BTC', description: 'Bit coin' }, 
-    { name: 'EOS', description: 'EOS currency' }, 
     { name: 'BNB', description: 'BNB' },
     { name: 'VEN', description: 'VeChain' },
     { name: 'OMG', description: 'OmiseGO' },
@@ -39,18 +37,20 @@ const supportCurrencyListMain = [
     { name: 'HEALP', description: 'HEALP' }
 ];
 
+// todo 测试网络与正式网络切换
 // 钱包所支持的货币列表
-export const supportCurrencyList = supportCurrencyListTest;
+export const supportCurrencyList = supportCurrencyListMain;
 
 // 默认显示得ETH代币
 export const defaultEthToken = [];
 
 // 默认显示货币列表
-export const defalutShowCurrencys = ['ETH', 'BTC','EOS'];
+export const defalutShowCurrencys = ['ETH', 'BTC'];
 
 //
 export const strength = 128;
 
+// todo 测试网络与正式网络切换
 // btc网络
 export const btcNetwork = 'testnet';
 
@@ -91,8 +91,9 @@ const defaultExchangeRateJsonMain = {
     HEALP:{ CNY: 100 , USD: 15.2625 }
 };
 
+// todo 测试网络与正式网络切换
 // 默认货币汇率
-export const defaultExchangeRateJson = defaultExchangeRateJsonTest;
+export const defaultExchangeRateJson = defaultExchangeRateJsonMain;
 
 // eth代币transfer交易编码前缀
 export const ethTokenTransferCode = '0xa9059cbb';
@@ -106,3 +107,16 @@ export const guidePages = [
 
 // 锁屏密码盐值
 export const lockScreenSalt = 'salt';
+
+// shapeshift api public key
+// tslint:disable-next-line:max-line-length
+export const shapeshiftApiPublicKey = '339a363550d4490fb4a0efae308440f4386c7d99ecf0f572584adc0400658b5799e3107eb0fe573c438e6d98b68dbe2ade2873aa7ac2fde8f74ab1be0750fdb2';
+
+// shapeshift api private key
+// tslint:disable-next-line:max-line-length
+export const shapeshiftApiPrivateKey = 'c98210f4568b04d3f84c5404f8e5be98353849138ed26b3e2723223257d3cbb8bb5cba5060b7c4d44e746342a2eb43e26b9bb5827588d9ed3e712e85d35f054c';
+
+// 如果shapeshift交易记录返回[],请求的最多次数,超过默认没有交易记录
+export const shapeshiftTransactionRequestNumber = 5;
+// 发红包所支持的货币
+export const redEnvelopeSupportCurrency = ['ETH','ZRX','BAT'];

@@ -639,13 +639,13 @@ const createWBStr = (type: Type, key: string): string => {
 export const toFunc = (s: string) => {
 	try {
 		/* tslint:disable:no-function-constructor-with-string-args prefer-template*/
-		return (new Function('_stringify', '_tansType', '_typeToString', '_parseType', '_isStruct', '_isInteger', '_isString',
-			'_createWBStr', '_isBase', '_strHashCode', '_upperFirst', 'return ' + s))(toString, tansType, typeToString, parseType, isStruct,
-				isInteger, isString, createWBStr, isBase, hash.strHashCode, upperFirst);
-	} catch (e) {
-		// warn(level, "tpl toFun, path: "+", s: ", s, e);
-		throw (e);
-	}
+        return (new Function('_stringify', '_tansType', '_typeToString', '_parseType', '_isStruct', '_isInteger', '_isString',
+            '_createWBStr', '_isBase', '_strHashCode', '_upperFirst', 'return ' + s))(toString, tansType, typeToString, parseType, isStruct,
+                isInteger, isString, createWBStr, isBase, hash.strHashCode, upperFirst);
+} catch (e) {
+        // warn(level, "tpl toFun, path: "+", s: ", s, e);
+    throw (e);
+}
 };
 
 /* tslint:disable:max-line-length*/

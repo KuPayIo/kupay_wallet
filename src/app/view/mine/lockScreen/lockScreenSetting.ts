@@ -16,8 +16,10 @@ export class DisplayPage extends Widget {
         this.init();
     }
     public init() {
+        const lockScreenPsw = getLocalStorage('lockScreenPsw');
         this.state = {
-            openLockScreen:getLocalStorage('openLockScreen') !== false,
+            lockScreenPsw,
+            openLockScreen:lockScreenPsw && getLocalStorage('openLockScreen') !== false,
             lockScreenTitle:'',
             showLockScreen:false,
             numberOfErrors:0,
@@ -32,9 +34,15 @@ export class DisplayPage extends Widget {
      * 处理滑块改变
      */
     public onSwitchChange() {
+        if (!this.state.lockScreenPsw) {
+            popNew('app-view-guidePages-setLockScreenScret',{},() => {
+                this.state.lockScreenPsw = getLocalStorage('lockScreenPsw');
+            });
+        } 
         this.state.openLockScreen = !this.state.openLockScreen;
         setLocalStorage('openLockScreen',this.state.openLockScreen);
         this.paint();
+        
     }
 
     // 修改锁屏密码

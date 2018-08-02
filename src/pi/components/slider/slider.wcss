@@ -32,8 +32,8 @@
 }
 
 .slider_block_button{
-    width: 16px;
-    height: 16px;
+    width: 32px;
+    height: 32px;
     border: 2px solid #409eff;
     background-color: #fff;
     border-radius: 50%;

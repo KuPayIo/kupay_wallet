@@ -1,0 +1,75 @@
+.ga-new-page{
+    display: flex;
+    flex-direction: column;
+}
+.ga-body{
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex: 1 0 0;
+}
+.ga-item{
+    background-color: #fff;
+    margin-top: 10px;
+    font-family: "PingFangSC-Medium";
+}
+.ga-status-success{
+    color: #203260;
+}
+.ga-status-pending{
+    color: #e1953c;
+}
+.ga-status-failed{
+    color: red;
+}
+.ga-item-top{
+    border-bottom: 1px solid #e5e5ee;
+    padding: 40px 30px 20px;
+    display: flex;
+    flex-direction: column;
+    color: #203260;
+}
+.ga-box1{
+    display: flex;
+    justify-content: space-between;
+    line-height: 45px;
+    font-size: 32px;
+}
+.ga-box2{
+    display: flex;
+    justify-content: space-between;
+    font-size: 24px;
+    margin-top: 20px;
+}
+.ga-arrow{
+    margin: 0 15px;
+}
+.ga-item-bottom{
+    padding: 20px 30px 40px;
+    display: flex;
+    flex-direction: column;
+}
+.ga-box3{
+    display: flex;
+    justify-content: space-between;
+    line-height: 40px;
+    font-size: 28px;
+}
+.ga-box4{
+    display: flex;
+    justify-content: space-between;
+    font-size: 28px;
+    line-height: 40px;
+    margin-top: 20px;
+}
+.ga-out-hash{
+    color: #a0acc0;
+}
+.ga-in-hash{
+    color: #a0acc0;
+}
+.ga-out-amount{
+    color: #203260;
+}
+.ga-in-amount{
+    color: #203260;
+}

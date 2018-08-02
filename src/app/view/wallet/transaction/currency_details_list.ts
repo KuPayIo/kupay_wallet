@@ -11,7 +11,6 @@ export class CurrencyDetailsList extends Widget {
     constructor() {
         super();
     }
-
     /**
      * 显示交易详情
      */

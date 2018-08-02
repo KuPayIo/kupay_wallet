@@ -1,0 +1,80 @@
+.ga-new-page{
+    background-color: rgba(0, 0, 0, 0.6);
+}
+.ga-bottome-container{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 600px;
+    background-color: #fff;
+    font-size: 32px;
+    display: flex;
+    flex-direction: column;
+    color: #111111;
+}
+.ga-exchange-head{
+    height: 135px;
+    border-bottom: 1px solid #e5e5ee;
+    display: flex;
+    position: relative;
+    align-items: center;
+    padding-left: 60px;
+    font-size: 40px;
+    
+}
+.ga-sure{
+    margin-right: 20px;
+}
+.ga-arrow{
+    margin: 0 15px;
+}
+.ga-cancel{
+    position: absolute;
+    right: 30px;
+    width: 56px;
+    height: 56px;
+}
+.ga-exchanges{
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ga-container{
+    border-bottom: 1px solid #e5e5ee;
+    padding: 0 60px 40px;
+}
+.ga-item{
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 28px;
+}
+.ga-tag{
+    width: 200px;
+}
+.ga-content{
+    text-align: right;
+    flex: 1 0 0;
+}
+.ga-unit{
+    margin-left: 15px;
+}
+.ga-tip{
+    color: bisque;
+    text-align: center;
+}
+.ga-ok-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 630px;
+    height: 100px;
+    border-radius: 100px;
+    background-color: #1a70dd;
+    margin:58px auto 0;
+    font-size: 32px;
+    color: #fff;
+}

@@ -13,7 +13,7 @@ export class FinancialManagementHome extends Widget {
         super.create();
         this.init();
         // 测试理财产品详情页面
-        popNew('app-view-financialManagement-productDetail-productDetail');
+        popNew('app-view-financialManagement-index-index');
     }
     public init() {
         this.state = {

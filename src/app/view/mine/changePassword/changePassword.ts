@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { getWalletPswStrength, pswEqualed, walletPswAvailable } from '../../../utils/account';
-import { decrypt, getCurrentWallet, getLocalStorage, getWalletByWalletId,setLocalStorage } from '../../../utils/tools';
+import { decrypt, getCurrentWallet, getLocalStorage, getWalletByWalletId, setLocalStorage } from '../../../utils/tools';
 
 interface Props {
     passwd: string;
@@ -23,13 +23,7 @@ export class ChangePassword extends Widget {
 
     public init() {
         this.state = {
-            style: {
-                backgroundColor: '#FFF',
-                fontSize: '24px',
-                color: '#8E96AB',
-                lineHeight: '33px',
-                'border-bottom': '1px solid #c0c4cc'
-            },
+            style: 'backgroundColor: #FFF;fontSize: 24px;color: #8E96AB;lineHeight: 33px;borderBottom: 1px solid #c0c4cc;',
             newPassword: '',
             rePassword: '',
             strength: getWalletPswStrength('')
@@ -54,7 +48,7 @@ export class ChangePassword extends Widget {
         const newPassword = this.state.newPassword;
         const rePassword = this.state.rePassword;
         const wallets = getLocalStorage('wallets');
-        const wallet = getWalletByWalletId(wallets,this.props.walletId);
+        const wallet = getWalletByWalletId(wallets, this.props.walletId);
         if (!newPassword || !rePassword) {
             return;
         }
@@ -72,7 +66,7 @@ export class ChangePassword extends Widget {
         // 验证全部通过，开始设置新密码
         const loading = popNew('pi-components-loading-loading', { text: '修改中...' });
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        await gwlt.passwordChange(this.props.passwd, newPassword);
+        await gwlt.passwordChange(this.props.passwd, newPassword, this.props.walletId);
         wallet.gwlt = gwlt.toJSON();
         setLocalStorage('wallets', wallets);
         loading.callback(loading.widget);

@@ -21,6 +21,7 @@ export interface CurrencyRecord {
     currencyName: string; // currency Name 
     currentAddr: string;// current address
     addrs: string[];// address list
+    updateAddr: boolean;
 }
 /**
  * 地址对象
@@ -38,9 +39,9 @@ export interface Addr {
  */
 export interface RedEnvelope {
     // tslint:disable-next-line:no-reserved-keywords
-    type:string;
-    time:string;
-    currencyName:string;
-    amount:number;
-    leaveMessage:string;
+    type: string;
+    time: string;
+    currencyName: string;
+    amount: number;
+    leaveMessage: string;
 }
