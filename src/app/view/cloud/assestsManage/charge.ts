@@ -15,7 +15,7 @@ export class Charge extends Widget {
         this.state = {
             amount:0,// 充值输入值
             serviceCharge:0.001,// 手续费
-            localBalance:0.001,// 本地余额
+            localBalance:0.00,// 本地余额
             isFeeEnough:false
         };
         this.judgeFeeEnough();

@@ -8,7 +8,7 @@
                 </div>
                 <div w-class="amount">
                         <p>{{v.amount}}</p>
-                        <p w-class="statas">{{v.status}}</p>
+                        <p w-class="statas" style="color: {{v.status=='完成' ? '#8E96AB' : ''}};">{{v.status}}</p>
                 </div>
         </div>
         {{end}}

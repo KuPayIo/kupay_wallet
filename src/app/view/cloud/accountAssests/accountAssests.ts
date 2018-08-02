@@ -11,6 +11,7 @@ export class AccountAssests extends Widget {
     public setProps(props: any, oldProps: any) {
         super.setProps(props, oldProps);
         this.init();
+        this.dataProcess();
     }
     public init(): void {
         this.state = {
@@ -55,5 +56,14 @@ export class AccountAssests extends Widget {
     }
     public withdrawClicked() {
         popNew('app-view-cloud-assestsManage-withdraw', { coinType: this.props.coinType });
+    }
+
+    public dataProcess() {
+        this.state.coinType = this.props.coinType;
+        if (this.props.coinType === 'KPT') {
+            this.state.coinIcon = 'cloud_cointype_btc.png';
+        } else if (this.props.coinType === 'ETH') {
+            this.state.coinIcon = 'cloud_cointype_eth.png';
+        }
     }
 }

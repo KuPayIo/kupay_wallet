@@ -18,11 +18,11 @@ export class CloudAccount extends Widget {
             accoutHeadImg:'img_avatar1.jpg',// 账户头像
             accountAssets:'￥50.050',// 账户资产
             coinList:[{
-                coinIcon:'BTC.png',// 代币图标
-                coinType:'BTC',// 代币名称
+                coinIcon:'cloud_cointype_btc.png',// 代币图标
+                coinType:'KPT',// 代币名称
                 coinBalance:'0.000000'// 代币余额
             },{
-                coinIcon:'ETH.png',
+                coinIcon:'cloud_cointype_eth.png',
                 coinType:'ETH',
                 coinBalance:'0.000000'
             }]

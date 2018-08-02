@@ -16,10 +16,10 @@
     </div>
     <div w-class="botFixed">
         <div w-class="fixedBtn Charge" on-tap="chargeClicked">
-            <img src="../../../res/image/currency/BAT.png" w-class="btnIcon" />充值
+            <img src="../../../res/image/cloud_charge.png" w-class="btnIcon" />充值
         </div>
         <div w-class="fixedBtn Withdraw" on-tap="withdrawClicked">
-            <img src="../../../res/image/currency/BAT.png" w-class="btnIcon" />提现
+            <img src="../../../res/image/cloud_withdraw.png" w-class="btnIcon" />提现
         </div>
     </div>
 </div>
