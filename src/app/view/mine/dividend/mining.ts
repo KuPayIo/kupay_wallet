@@ -90,11 +90,15 @@ export class Dividend extends Widget {
     }
 
     public goDetail() {
-        popNew('app-view-mine-dividend-dividendHistory');
+        popNew('app-view-mine-dividend-dividendHistory',2);
     }
 
     public goToggle(ind:number) {
         this.state.data[ind].isOpen = !this.state.data[ind].isOpen;
         this.paint();
+    }
+
+    public goRank() {
+        popNew('app-view-mine-dividend-dividendRank',2);
     }
 }

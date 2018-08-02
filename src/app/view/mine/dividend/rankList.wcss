@@ -1,0 +1,7 @@
+.rankItem{
+    height: 120px;
+    background-color: #fff;
+    line-height: 120px;
+    font-size: 28px;
+    border-bottom: 1px solid #E5E5EE;
+}

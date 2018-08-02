@@ -1,3 +1,8 @@
+.history{
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 .historyitem{
     height: 170px;
     padding-top: 40px;
