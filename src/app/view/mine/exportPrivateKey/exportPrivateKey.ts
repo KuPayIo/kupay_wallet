@@ -35,7 +35,7 @@ export class ExportPrivateKey extends Widget {
             };
             const currencyName = currencyRecords[i].currencyName;
             obj.title = currencyName;
-            obj.icon = `${currencyName}.png`;
+            obj.icon = `../../res/image/currency/${currencyName}.png`;
             const addrs = currencyRecords[i].addrs;
 
             switch (currencyName) {

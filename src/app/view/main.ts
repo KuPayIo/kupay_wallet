@@ -24,6 +24,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void => {
     addWidget(document.body, 'pi-ui-root');
+    // 设置开发环境
     // eth代币精度初始化
     initEthTokenDecimals();
     // 数据检查

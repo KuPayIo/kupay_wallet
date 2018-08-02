@@ -2,6 +2,7 @@
  * ETH wallet implementation
  */
 import { sleep } from '../../utils/tools';
+import { config } from '../config';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
 import { Web3 } from '../thirdparty/web3.min';
@@ -12,12 +13,7 @@ import { ERC20Tokens, minABI } from './tokens';
 /* tslint:disable: no-redundant-jsdoc*/
 /* tslint:disable: variable-name */
 
-const Buffer = ethereumjs.Buffer.Buffer;
-const Wallet = ethereumjs.Wallet;
-const WalletHD = ethereumjs.WalletHD;
-const ETHTx = ethereumjs.Tx;
-
-const web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/UHhtxDMNBuXoX8OFJKKM'));
+let web3;
 
 const LANGUAGES = { english: 0, chinese_simplified: 1, chinese_traditional: 2 };
 const DEFAULT_DERIVE_PATH = 'm/44\'/60\'/0\'/0/0';
@@ -119,7 +115,7 @@ export class GaiaWallet {
             throw new Error('Invalid Mnemonic');
         }
         const seedBuffer = mn.toSeed(mnemonic);
-        const rootNode = WalletHD.fromMasterSeed(Buffer(seedBuffer, 'hex'));
+        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(seedBuffer, 'hex'));
 
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
@@ -137,7 +133,7 @@ export class GaiaWallet {
         if (!(language in LANGUAGES)) {
             throw new Error('This language does not supported');
         }
-        const rootNode = WalletHD.fromMasterSeed(Buffer(seed, 'hex'));
+        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(seed, 'hex'));
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
 
@@ -159,7 +155,7 @@ export class GaiaWallet {
      * @memberof GaiaWallet
      */
     public static fromKeyStore(v3string: string, passwd: string): GaiaWallet {
-        const wlt = Wallet.fromV3(v3string, passwd, true);
+        const wlt = ethereumjs.Wallet.fromV3(v3string, passwd, true);
         const gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = wlt.getPrivateKey().toString('hex');
@@ -176,8 +172,8 @@ export class GaiaWallet {
      * @memberof GaiaWallet
      */
     public static fromPrivateKey(privKey: string): GaiaWallet {
-        const sk = Buffer(privKey, 'hex');
-        const wlt = Wallet.fromPrivateKey(sk);
+        const sk = ethereumjs.Buffer.Buffer(privKey, 'hex');
+        const wlt = ethereumjs.Wallet.fromPrivateKey(sk);
         const gwlt = new GaiaWallet();
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = privKey;
@@ -206,7 +202,7 @@ export class GaiaWallet {
         const mn = new Mnemonic(language);
         const mnemonic = mn.generate(strength);
         const seedBuffer = mn.toSeed(mnemonic);
-        const rootNode = WalletHD.fromMasterSeed(Buffer(seedBuffer, 'hex'));
+        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(seedBuffer, 'hex'));
 
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
@@ -226,6 +222,7 @@ export class GaiaWallet {
         if (tokenAddress === undefined) {
             throw new Error('This token doesn\'t supported');
         }
+        initWeb3();
         const contract = web3.eth.contract(minABI).at(tokenAddress);
 
         switch (method) {
@@ -258,8 +255,8 @@ export class GaiaWallet {
      */
     public exportKeystore(passwd: string): string {
         let decrypted = this._privKey;
-        decrypted = Buffer(decrypted, 'hex'); // decrypted should be a Buffer
-        const wlt = Wallet.fromPrivateKey(decrypted);
+        decrypted = ethereumjs.Buffer.Buffer(decrypted, 'hex'); // decrypted should be a Buffer
+        const wlt = ethereumjs.Wallet.fromPrivateKey(decrypted);
 
         return wlt.toV3String(passwd);
     }
@@ -292,7 +289,7 @@ export class GaiaWallet {
      * @memberof GaiaWallet
      */
     public signRawTransaction(txObj: Transaction) {
-        const tx = new ETHTx();
+        const tx = new ethereumjs.Tx();
 
         tx.to = txObj.to;
         tx.nonce = txObj.nonce;
@@ -300,7 +297,7 @@ export class GaiaWallet {
         tx.gasLimit = txObj.gasLimit;
         tx.value = txObj.value;
         tx.data = txObj.data;
-        tx.sign(Buffer(this._privKey, 'hex'));
+        tx.sign(ethereumjs.Buffer.Buffer(this._privKey, 'hex'));
 
         return tx.serialize();
     }
@@ -332,7 +329,7 @@ export class GaiaWallet {
         }
         const masterSeed = this._masterSeed;
 
-        const rootNode = WalletHD.fromMasterSeed(Buffer(masterSeed, 'hex'));
+        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(masterSeed, 'hex'));
         const path = 'm/44\'/60\'/0\'/0/' + index.toString();
         const hdwlt = rootNode.derivePath(path);
 
@@ -354,7 +351,7 @@ export class GaiaWallet {
         }
         const masterSeed = this._masterSeed;
 
-        const rootNode = WalletHD.fromMasterSeed(Buffer(masterSeed, 'hex'));
+        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(masterSeed, 'hex'));
         const path = 'm/44\'/60\'/0\'/0/' + index.toString();
         const hdwlt = rootNode.derivePath(path);
 
@@ -416,3 +413,9 @@ export class GaiaWallet {
         return i - GaiaWallet.GAP_LIMIT;
     }
 }
+
+const initWeb3 = () => {
+    if (!web3) {
+        web3 = new Web3(new Web3.providers.HttpProvider(config.currentNetIsTest ? config.eth.testWeb3 : config.eth.mainWeb3));
+    }
+};
