@@ -49,7 +49,9 @@ export const run = (cb): void => {
     // popNew('app-view-redEnvelope-send-sendRedEnvelope');
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
     
-    // popNew('app-components-share-share', { text: 'ces', shareType: ShareToPlatforms.TYPE_IMG });
+    // popNew('app-view-application-home', {}); 
+    popNew('app-view-mine-dividend-mining', {}); 
+    // popNew('app-view-mine-dividend-dividend', {}); 
     if (cb) cb();
     // test();
 };

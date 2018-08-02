@@ -1,0 +1,8 @@
+.gainbtn{
+    width: 100px;
+    height: 50px;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 32px;
+    background: #efefef;
+}
