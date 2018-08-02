@@ -55,3 +55,6 @@
     line-height: 40px;
     bottom: 120px;
 }
+.ga-open-animate{
+    animation: rotated 1s ease-in-out infinite;
+}

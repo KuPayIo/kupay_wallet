@@ -5,6 +5,7 @@
             <img src="../../../res/image/open2.png" w-class="ga-open"/>
             <div w-class="ga-leave-message">{{it.leaveMessage}}</div>
             <div w-class="ga-tag">您准备了一个红包</div>
+            <div w-class="ga-amount">0.5 ETH</div>
             <div w-class="ga-share-to" on-tap="shareToFriends">发给好友</div>
         </div>
         <div w-class="ga-box">

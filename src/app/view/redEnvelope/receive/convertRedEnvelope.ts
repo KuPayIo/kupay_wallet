@@ -43,4 +43,8 @@ export class ConvertRedEnvelope extends Widget {
         this.state.redemptionCode = '';
         this.paint();
     }
+
+    public redEnvelopeRecordsClick() {
+        popNew('app-view-redEnvelope-receive-redEnvelopeRecord');
+    }
 }

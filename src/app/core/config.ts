@@ -14,7 +14,7 @@ export const config = {
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY'
     },
     // 当前网络是否是测试网络
-    currentNetIsTest: true,
+    currentNetIsTest: false,
     // todo 测试网络与正式网络切换
     ERC20TokensMainnet: {
         // mainnet
