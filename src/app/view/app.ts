@@ -23,7 +23,7 @@ export class App extends Widget {
                 text: '云端',
                 icon: 'remote_icon.png',
                 iconActive: 'remote_icon_active.png',
-                components: 'app-view-cloud-home'
+                components: 'app-view-cloud-home-home'
             },
             {
                 text: '',
