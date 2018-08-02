@@ -2,7 +2,7 @@
     <app-components-topBar-topBar>{title:"{{it.coinType}}充值"}</app-components-topBar-topBar>
     <div w-class="iconsBox">
         <div w-class="local">
-            <img src="../../../res/image/BTC.png" w-class="icon" />
+            <img src="../../../res/image/currency/BTC.png" w-class="icon" />
             <div w-class="text">
                 本地钱包
             </div>
@@ -11,7 +11,7 @@
                 =>
         </div>
         <div w-class="cloud">
-                <img src="../../../res/image/BTC.png" w-class="icon" />
+                <img src="../../../res/image/currency/BTC.png" w-class="icon" />
                 <div w-class="text">
                     云端账户
                 </div>

@@ -13,7 +13,7 @@
 
         {{for i,v of it1.coinList}}
         <div w-class="item" on-tap="itemClicked(e,'{{v.coinType}}')">
-                <img src="../../../res/image/{{v.coinIcon}}" w-class="coinIcon" />
+                <img src="../../../res/image/currency/{{v.coinType}}.png" w-class="coinIcon" />
                 <span w-class="coinType">{{v.coinType}}</span>
                 <span w-class="coinBalance">{{v.coinBalance}}</span>
                 <img src="../../../res/image/cloud_arow_right.png" w-class="arow" />
