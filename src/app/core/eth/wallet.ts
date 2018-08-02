@@ -28,7 +28,7 @@ export interface Transaction {
     data: string;
 }
 
-export class GaiaWallet {
+export class EthWallet {
 
     public static GAP_LIMIT: number = 3;
     private _nickName: string;
@@ -49,9 +49,9 @@ export class GaiaWallet {
         this.api = new Api();
     }
 
-    public static fromJSON(jsonstring: string): GaiaWallet {
+    public static fromJSON(jsonstring: string): EthWallet {
         const wlt = JSON.parse(jsonstring);
-        const gwlt = new GaiaWallet();
+        const gwlt = new EthWallet();
 
         gwlt._nickName = wlt.nickname;
         gwlt._address = wlt.address;
@@ -102,10 +102,10 @@ export class GaiaWallet {
      * @static
      * @param {string} mnemonic words
      * @param {string} language what's the language of the mnenomic words
-     * @returns {GaiaWallet}
-     * @memberof GaiaWallet
+     * @returns {EthWallet}
+     * @memberof EthWallet
      */
-    public static fromMnemonic(mnemonic: string, language: string): GaiaWallet {
+    public static fromMnemonic(mnemonic: string, language: string): EthWallet {
         if (!(language in LANGUAGES)) {
             throw new Error('this language does not supported');
         }
@@ -120,7 +120,7 @@ export class GaiaWallet {
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
 
-        const gwlt = new GaiaWallet();
+        const gwlt = new EthWallet();
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = wlt.getPrivateKey().toString('hex');
         gwlt._mnemonic = mnemonic;
@@ -129,7 +129,7 @@ export class GaiaWallet {
         return gwlt;
     }
 
-    public static fromSeed(seed: string, language: string): GaiaWallet {
+    public static fromSeed(seed: string, language: string): EthWallet {
         if (!(language in LANGUAGES)) {
             throw new Error('This language does not supported');
         }
@@ -137,7 +137,7 @@ export class GaiaWallet {
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
 
-        const gwlt = new GaiaWallet();
+        const gwlt = new EthWallet();
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = wlt.getPrivateKey().toString('hex');
         gwlt._masterSeed = seed;
@@ -152,11 +152,11 @@ export class GaiaWallet {
      * @param {string} v3string stringfy from keystore file
      * @param {string} passwd used to decrypt keystore file
      * @returns
-     * @memberof GaiaWallet
+     * @memberof EthWallet
      */
-    public static fromKeyStore(v3string: string, passwd: string): GaiaWallet {
+    public static fromKeyStore(v3string: string, passwd: string): EthWallet {
         const wlt = ethereumjs.Wallet.fromV3(v3string, passwd, true);
-        const gwlt = new GaiaWallet();
+        const gwlt = new EthWallet();
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = wlt.getPrivateKey().toString('hex');
 
@@ -168,13 +168,13 @@ export class GaiaWallet {
      *
      * @static
      * @param {string} privKey
-     * @returns {GaiaWallet}
-     * @memberof GaiaWallet
+     * @returns {EthWallet}
+     * @memberof EthWallet
      */
-    public static fromPrivateKey(privKey: string): GaiaWallet {
+    public static fromPrivateKey(privKey: string): EthWallet {
         const sk = ethereumjs.Buffer.Buffer(privKey, 'hex');
         const wlt = ethereumjs.Wallet.fromPrivateKey(sk);
-        const gwlt = new GaiaWallet();
+        const gwlt = new EthWallet();
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = privKey;
 
@@ -187,10 +187,10 @@ export class GaiaWallet {
      * @static
      * @param {string} language only support "english", "chinese_simplified" and "chinese_traditional"
      * @param {number} strength password strength must be the mutiply of 8 and at least 128
-     * @returns {GaiaWallet}
-     * @memberof GaiaWallet
+     * @returns {EthWallet}
+     * @memberof EthWallet
      */
-    public static generate(language: string, strength: number): GaiaWallet {
+    public static generate(language: string, strength: number): EthWallet {
         if (!(language in LANGUAGES)) {
             throw new Error('this language does not supported');
         }
@@ -207,7 +207,7 @@ export class GaiaWallet {
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
 
-        const gwlt = new GaiaWallet();
+        const gwlt = new EthWallet();
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = wlt.getPrivateKey().toString('hex');
         gwlt._mnemonic = mnemonic;
@@ -251,7 +251,7 @@ export class GaiaWallet {
      *
      * @param {string} passwd used to decrypt the keystore file
      * @returns {string}
-     * @memberof GaiaWallet
+     * @memberof EthWallet
      */
     public exportKeystore(passwd: string): string {
         let decrypted = this._privKey;
@@ -265,7 +265,7 @@ export class GaiaWallet {
      * export private key of this wallet
      *
      * @returns {string}
-     * @memberof GaiaWallet
+     * @memberof EthWallet
      */
     public exportPrivateKey(): string {
         return this._privKey;
@@ -275,7 +275,7 @@ export class GaiaWallet {
      * export the mnemonic words of this wallet
      *
      * @returns {string}
-     * @memberof GaiaWallet
+     * @memberof EthWallet
      */
     public exportMnemonic(): string {
         return this._mnemonic;
@@ -286,7 +286,7 @@ export class GaiaWallet {
      *
      * @param {Transaction} txObj an instance of raw transaction
      * @returns signed and serilized transaction, could be send to Ethereum network via 'sendRawTransaction' RPC call
-     * @memberof GaiaWallet
+     * @memberof EthWallet
      */
     public signRawTransaction(txObj: Transaction) {
         const tx = new ethereumjs.Tx();
@@ -317,11 +317,11 @@ export class GaiaWallet {
     }
 
     /**
-     * Derive address according to `index`. Return GaiaWallet object
+     * Derive address according to `index`. Return EthWallet object
      *
      * @param {number} index Which address you want to use
-     * @returns {GaiaWallet}
-     * @memberof GaiaWallet
+     * @returns {EthWallet}
+     * @memberof EthWallet
      */
     public selectAddress(index: number): string {
         if (this._masterSeed.length === 0) {
@@ -339,13 +339,13 @@ export class GaiaWallet {
     }
 
     /**
-     * Derive address according to `index`. Return GaiaWallet object
+     * Derive address according to `index`. Return EthWallet object
      *
      * @param {number} index Which address you want to use
-     * @returns {GaiaWallet}
-     * @memberof GaiaWallet
+     * @returns {EthWallet}
+     * @memberof EthWallet
      */
-    public selectAddressWlt(index: number): GaiaWallet {
+    public selectAddressWlt(index: number): EthWallet {
         if (this._masterSeed.length === 0) {
             throw new Error('This is not a HD wallet');
         }
@@ -356,7 +356,7 @@ export class GaiaWallet {
         const hdwlt = rootNode.derivePath(path);
 
         const wlt = hdwlt.getWallet();
-        const gwlt = new GaiaWallet();
+        const gwlt = new EthWallet();
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = wlt.getPrivateKey().toString('hex');
         gwlt._balance = 0;
@@ -381,12 +381,12 @@ export class GaiaWallet {
                 count = 0;
             }
 
-            if (count > GaiaWallet.GAP_LIMIT) {
+            if (count > EthWallet.GAP_LIMIT) {
                 break;
             }
         }
 
-        return i - GaiaWallet.GAP_LIMIT;
+        return i - EthWallet.GAP_LIMIT;
     }
 
     public async scanTokenUsedAddress(contractAddress: string): Promise<number> {
@@ -405,12 +405,12 @@ export class GaiaWallet {
                 count = 0;
             }
 
-            if (count > GaiaWallet.GAP_LIMIT) {
+            if (count > EthWallet.GAP_LIMIT) {
                 break;
             }
         }
 
-        return i - GaiaWallet.GAP_LIMIT;
+        return i - EthWallet.GAP_LIMIT;
     }
 }
 

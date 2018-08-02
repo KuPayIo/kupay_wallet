@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { ERC20Tokens } from '../../../core/eth/tokens';
-import { GaiaWallet } from '../../../core/eth/wallet';
+import { EthWallet } from '../../../core/eth/wallet';
 import { btcNetwork, lang } from '../../../utils/constants';
 import { decrypt, getAddrById, getCurrentWallet, getLocalStorage,getWalletByWalletId } from '../../../utils/tools';
 
@@ -83,7 +83,7 @@ export class ExportPrivateKey extends Widget {
     // 导出以太坊私钥
     public exportPrivateKeyETH(addrs: string[]) {
         const keys = [];
-        const firstWlt = GaiaWallet.fromMnemonic(this.props.mnemonic, lang);
+        const firstWlt = EthWallet.fromMnemonic(this.props.mnemonic, lang);
         for (let j = 0; j < addrs.length; j++) {
             const wlt = firstWlt.selectAddressWlt(j);
             const privateKey = wlt.exportPrivateKey();
@@ -109,7 +109,7 @@ export class ExportPrivateKey extends Widget {
 
     public exportPrivateKeyERC20Token(addrs: string[]) {
         const keys = [];
-        const firstWlt = GaiaWallet.fromMnemonic(this.props.mnemonic, lang);
+        const firstWlt = EthWallet.fromMnemonic(this.props.mnemonic, lang);
         for (let j = 0; j < addrs.length; j++) {
             const wlt = firstWlt.selectAddressWlt(j);
             const privateKey = wlt.exportPrivateKey();

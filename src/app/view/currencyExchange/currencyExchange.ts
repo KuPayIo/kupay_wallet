@@ -23,7 +23,7 @@ import { BtcApi } from '../../core/btc/api';
 import { BTCWallet } from '../../core/btc/wallet';
 import { Api as EthApi } from '../../core/eth/api';
 import { ERC20Tokens } from '../../core/eth/tokens';
-import { GaiaWallet } from '../../core/eth/wallet';
+import { EthWallet } from '../../core/eth/wallet';
 import { GlobalWallet } from '../../core/globalWallet';
 import { dataCenter } from '../../store/dataCenter';
 import { shapeshiftApiPublicKey } from '../../utils/constants';
@@ -359,7 +359,7 @@ const addRecord = (currencyName, currentAddr, record) => {
  * 处理转账
  */
 // tslint:disable-next-line:only-arrow-functions
-async function doEthTransfer(wlt: GaiaWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
+async function doEthTransfer(wlt: EthWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
     , value: number, info: string) {
     const api = new EthApi();
     const nonce = await api.getTransactionCount(acct1);
@@ -375,7 +375,7 @@ async function doEthTransfer(wlt: GaiaWallet, acct1: string, acct2: string, gasP
     // const currentAddr = getAddrById(acct1, 'ETH');
     // if (!currentAddr) return;
 
-    // const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
+    // const wlt = EthWallet.fromJSON(currentAddr.wlt);
 
     const tx = wlt.signRawTransaction(txObj);
     // tslint:disable-next-line:no-unnecessary-local-variable
@@ -416,13 +416,13 @@ async function doBtcTransfer(wlt: BTCWallet, acct1: string, acct2: string, gasPr
  * 处理eth代币转账
  */
 // tslint:disable-next-line:only-arrow-functions
-async function doERC20TokenTransfer(wlt: GaiaWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
+async function doERC20TokenTransfer(wlt: EthWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
     , value: number, currencyName: string) {
 
     const api = new EthApi();
     const nonce = await api.getTransactionCount(acct1);
     console.log('nonce', nonce);
-    const transferCode = GaiaWallet.tokenOperations('transfer', currencyName, acct2, ethTokenMultiplyDecimals(value, currencyName));
+    const transferCode = EthWallet.tokenOperations('transfer', currencyName, acct2, ethTokenMultiplyDecimals(value, currencyName));
     const txObj = {
         to: ERC20Tokens[currencyName],
         nonce: nonce,
@@ -435,7 +435,7 @@ async function doERC20TokenTransfer(wlt: GaiaWallet, acct1: string, acct2: strin
     // const currentAddr = getAddrById(acct1, currencyName);
     // if (!currentAddr) return;
 
-    // const wlt = GaiaWallet.fromJSON(currentAddr.wlt);
+    // const wlt = EthWallet.fromJSON(currentAddr.wlt);
 
     const tx = wlt.signRawTransaction(txObj);
     // tslint:disable-next-line:no-unnecessary-local-variable
@@ -458,7 +458,7 @@ async function estimateGasETH(toAddr:string) {
 // tslint:disable-next-line:only-arrow-functions
 async function estimateGasERC20(currencyName:string,toAddr:string,amount:number) {
     const api = new EthApi();
-    const transferCode = GaiaWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
+    const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
     // tslint:disable-next-line:no-unnecessary-local-variable
     const gas = await api.estimateGas({ to: ERC20Tokens[currencyName], data: transferCode });
 
