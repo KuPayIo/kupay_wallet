@@ -8,7 +8,7 @@
         <div>
             {{for i,each of it1.list}}
             <div w-class="each">
-                <img src="../../../res/image/{{each.name}}.png" w-class="icon-img"/>
+                <img src="../../../res/image/currency/{{each.name}}.png" w-class="icon-img"/>
                 <div w-class="box">
                     <div w-class="name">{{each.name}}</div>
                     <div w-class="description">{{each.description}}</div>
