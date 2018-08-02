@@ -15,7 +15,7 @@ export class CloudAccount extends Widget {
     public init(): void {
         this.state = {
             accoutNickName:'昵称未设置',// 账户昵称
-            accoutHeadImg:'BTC.png',// 账户头像
+            accoutHeadImg:'img_avatar1.jpg',// 账户头像
             accountAssets:'￥50.050',// 账户资产
             coinList:[{
                 coinIcon:'cloud_cointype_btc.png',// 代币图标

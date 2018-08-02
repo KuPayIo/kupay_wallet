@@ -24,6 +24,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void => {
     addWidget(document.body, 'pi-ui-root');
+    // 设置开发环境
     // eth代币精度初始化
     initEthTokenDecimals();
     // 数据检查
@@ -45,13 +46,13 @@ export const run = (cb): void => {
     /*  popNew('app-view-wallet-transaction-receipt',{currencyBalance: 100,
          addr: "0x958b0ba923260a91ffd28e8e9a209240648066c2"}); */
     // tslint:disable-next-line:max-line-length
-   /*  popNew('app-view-wallet-transaction-currency_details',{ 
-        list:[],
-        currentAddr:'mtGwFrTMfX6BKgCt2TjYBkRGxHihMqCG2v',
-        balance:'0',
-        showBalance:'0',
-        showBalanceConversion:'0',
-        currencyName:'BTC' }); */
+    /*  popNew('app-view-wallet-transaction-currency_details',{ 
+         list:[],
+         currentAddr:'mtGwFrTMfX6BKgCt2TjYBkRGxHihMqCG2v',
+         balance:'0',
+         showBalance:'0',
+         showBalanceConversion:'0',
+         currencyName:'BTC' }); */
     // popNew('app-view-redEnvelope-send-sendRedEnvelope');
     if (cb) cb();
     // test();

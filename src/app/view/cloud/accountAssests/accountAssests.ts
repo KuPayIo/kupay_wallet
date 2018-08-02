@@ -8,17 +8,15 @@ export class AccountAssests extends Widget {
     constructor() {
         super();
     }
-    public setProps(props:any,oldProps:any) {
-        super.setProps(props,oldProps);
+    public setProps(props: any, oldProps: any) {
+        super.setProps(props, oldProps);
         this.init();
         this.dataProcess();
     }
     public init(): void {
         this.state = {
-            balance:'2.000000',// 资产余额
-            coinType:'',// 货币种类
-            coinIcon:'',// 货币的图标
-            maskHeight:getHeight(),
+            balance: '2.000000',// 资产余额
+            maskHeight: getHeight(),
             routePath: 'app-view-cloud-accountAssests-others',
             panelBtns: [{
                 label: '其他',
@@ -54,10 +52,10 @@ export class AccountAssests extends Widget {
     }
 
     public chargeClicked() {
-        popNew('app-view-cloud-assestsManage-charge',{ coinType:this.props.coinType });
+        popNew('app-view-cloud-assestsManage-charge', { coinType: this.props.coinType });
     }
     public withdrawClicked() {
-        popNew('app-view-cloud-assestsManage-withdraw',{ coinType:this.props.coinType });
+        popNew('app-view-cloud-assestsManage-withdraw', { coinType: this.props.coinType });
     }
 
     public dataProcess() {

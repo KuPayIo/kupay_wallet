@@ -92,11 +92,6 @@ winit.initNext = function () {
       "app/exchange/"
     ]
 
-    //加载仅在非app上使用的模块
-    if (navigator.userAgent.indexOf("YINENG") < 0) {
-      sourceList.push("app/utils_pc")
-    }
-
     util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
       console.log(fileMap)
       // console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());

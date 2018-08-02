@@ -11,10 +11,10 @@
                 <img src="../../../res/image/cloud_change.png" />
         </div>
         <div w-class="cloud">
-                <img src="../../../res/image/cloud_icon_cloud.png" w-class="icon" />
-                <div w-class="text">
-                    云端账户
-                </div>
+            <img src="../../../res/image/cloud_icon_cloud.png" w-class="icon" />
+            <div w-class="text">
+                云端账户
+            </div>
         </div>
     </div>
 

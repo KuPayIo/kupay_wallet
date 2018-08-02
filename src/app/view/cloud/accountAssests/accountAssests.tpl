@@ -1,19 +1,13 @@
 <div class="ga-new-page" w-class="ga-new-page" ev-back-click="backClick">
     <app-components-topBar-topBar>{title:{{it.coinType}}}</app-components-topBar-topBar>
     <div w-class="assestsHead">
-        <img src="../../../res/image/{{it1.coinIcon}}" w-class="assestsImg"/>
-        <span w-class="coinType">
-            {{it1.coinType}}
-        </span>
-        <span w-class="balance">
-            {{it1.balance}}
-        </span>
+        <img src="../../../res/image/currency/{{it.coinType}}.png" w-class="assestsImg" />
+        <span w-class="coinType">{{it.coinType}}</span>
+        <span w-class="balance">{{it1.balance}}</span>
     </div>
     <div w-class="panelBtnGroup">
         {{for k,v of it1.panelBtns}}
-        <span w-class="btn {{v.isActive ? 'active' : ''}}" on-tap="panelBtnClicked(e,{{k}})">
-            {{v.label}}
-        </span>
+        <span w-class="btn {{v.isActive ? 'active' : ''}}" on-tap="panelBtnClicked(e,{{k}})">{{v.label}}</span>
         {{end}}
     </div>
 
