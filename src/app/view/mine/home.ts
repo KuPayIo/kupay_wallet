@@ -82,11 +82,6 @@ export class Home extends Widget {
             },
             {
                 icon: 'icon_mine_about.png',
-                text: '分红',
-                components: 'app-view-mine-dividend-dividend'
-            },
-            {
-                icon: 'icon_mine_about.png',
                 text: '关于我们',
                 components: 'app-view-mine-aboutus-aboutus'
             }

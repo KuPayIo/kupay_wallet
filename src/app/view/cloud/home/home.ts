@@ -48,6 +48,7 @@ export class Home extends Widget {
      */
     public bonusClicked() {
         // TODO
+        popNew('app-view-mine-dividend-dividend');
     }
     /**
      * 点击邀请好友
@@ -57,5 +58,11 @@ export class Home extends Widget {
     }
     public toTradingPlaces() {
         // TODO
+    }
+    /**
+     * 点击挖矿
+     */
+    public mining() {
+        popNew('app-view-mine-dividend-mining');
     }
 }
