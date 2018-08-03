@@ -4,11 +4,6 @@
 import { request } from '../../../../pi/net/ui/con_mgr';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { EthWallet } from '../../../core/eth/wallet';
-import { sign } from '../../../core/genmnemonic';
-import { GlobalWallet } from '../../../core/globalWallet';
-import { dataCenter } from '../../../store/dataCenter';
-import { getCurrentWallet, getLocalStorage, openBasePage } from '../../../utils/tools';
 export class Home extends Widget {
     constructor() {
         super();
@@ -19,37 +14,33 @@ export class Home extends Widget {
     }
     public init(): void {
         this.state = {
-            ktBalance: '5,000.00KT',// kt余额
+            ktBalance: '5,000.00',// kt余额
             ethBalance: '70.00',// eth余额
             bonus: '0.9152'// 累计分红
-
         };
+
+        const msg = { type: 'wallet/account@get', param: { list: '[100, 101]' } };
+        request(msg, (resp) => {
+            if (resp.type) {
+                console.log(`错误信息为${resp.type}`);
+            } else if (resp.result !== undefined) {
+                for (let i = 0; i < resp.value.length; i++) {
+                    const each = resp.value[i];
+                    if (each[0] === 100) {
+                        this.state.ktBalance = each[1];
+                    } else if (each[0] === 101) {
+                        this.state.ethBalance = each[1];
+                    }
+                }
+                this.paint();
+            }
+        });
     }
 
     /**
      * 点击云端账户
      */
     public async cloudAccountClicked() {
-        const passwd = await openBasePage('app-components-message-messageboxPrompt', {
-            title: '输入密码', content: '', inputType: 'password'
-        });
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
-        const wlt: EthWallet = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
-        console.log(dataCenter.getConRandom(), wlt.exportPrivateKey());
-        const signStr = sign(dataCenter.getConRandom(), wlt.exportPrivateKey());
-        const msgLogin = { type: 'login', param: { sign: signStr } };
-        request(msgLogin, (resp) => {
-            if (resp.type) {
-                console.log(`错误信息为${resp.type}`);
-            } else if (resp.result !== undefined) {
-                console.log(resp.result);
-                // dataCenter.setConRandom(resp.rand);
-            }
-        });
-
-        return;
-        // TODO
         popNew('app-view-cloud-cloudAccount-cloudAccount');
     }
 

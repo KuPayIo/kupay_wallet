@@ -7,7 +7,7 @@
             </span>
             <img src="../../../res/image/cloud_cointype_eth.png" w-class="ktIcon" />
             <span w-class="ktBalance">
-                {{it1.ktBalance}}
+                {{it1.ktBalance}}KT
             </span>
             <img src="../../../res/image/cloud_arow_right.png" />
         </div>
