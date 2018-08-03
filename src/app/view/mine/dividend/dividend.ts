@@ -14,7 +14,7 @@ export class Dividend extends Widget {
         this.ok && this.ok();
     }
 
-    public goDetail() {
+    public goHistory() {
         popNew('app-view-mine-dividend-dividendHistory',1);
     }
 }

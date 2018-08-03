@@ -3,7 +3,7 @@
         <div w-class="ga-top-banner">
             <img src="../../../res/image/btn_back_white.png" w-class="ga-back" on-tap="backPrePage"/>
             <span w-class="ga-banner-title">挖矿</span>    
-            <img src="../../../res/image/btn_back_white.png" w-class="ga-next" on-tap="goDetail"/>
+            <img src="../../../res/image/btn_back_white.png" w-class="ga-next" on-tap="goHistory"/>
         </div>
         <div w-class="groupcard">
             <div w-class="dividend-title">矿山总量(KT)</div>
@@ -56,7 +56,7 @@
                 </div>
                 <div w-class="itemDetail" style="display: {{val.isOpen?'block':'none'}}">
                     <widget w-tag="pi-ui-html">{{val.itemDetail}}</widget>
-                    <div w-class="{{val.isComplete?'itemBtnNo':'itemBtn'}}">{{val.itemBtn}}</div>
+                    <div w-class="{{val.isComplete?'itemBtnNo':'itemBtn'}}" on-tap="goDetail( {{ind}} )">{{val.itemBtn}}</div>
                 </div>
             </div>
             {{end}}

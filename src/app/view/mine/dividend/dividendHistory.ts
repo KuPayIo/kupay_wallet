@@ -13,7 +13,7 @@ interface Item {
 
 export class Dividend extends Widget {
     public ok: () => void;
-    public state: {refresh:boolean,data:Item[]};
+    public state: {refresh:boolean; data:Item[]};
     constructor() {
         super();
     }
@@ -98,10 +98,10 @@ export class Dividend extends Widget {
     }
 
     public getMoreList() {
-        let h1 = document.getElementById('historylist').scrollTop + document.getElementById('historylist').offsetHeight; 
-        let h2 = document.getElementById('more').offsetTop; 
-        if(h2-h1<20 && this.state.refresh){
-            this.state.refresh=false;
+        const h1 = document.getElementById('historylist').scrollTop + document.getElementById('historylist').offsetHeight; 
+        const h2 = document.getElementById('more').offsetTop; 
+        if (h2 - h1 < 20 && this.state.refresh) {
+            this.state.refresh = false;
             console.log('加载中，请稍后~~~');
             setTimeout(() => {
                 this.state.data.push({

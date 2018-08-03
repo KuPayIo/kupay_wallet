@@ -25,7 +25,7 @@
             </div>
             <span w-class="line"></span>
             <div w-class="totalBonus">
-                <div>
+                <div on-tap="bonusClicked">
                     <img src="../../../res/image/cloud_bonus.png" w-class="bonusIcon" />
                     <span w-class="ethText">
                         累计分红(ETH)
@@ -62,7 +62,7 @@
 
 
     <div w-class="activity">
-        <div w-class="activityItem">
+        <div w-class="activityItem" on-tap="mining">
             <img src="../../../res/image/cloud_others_drag.png" w-class="activityIcon" />
             <div w-class="activityInfo">
                 <div w-class="infoTitle">
