@@ -1,9 +1,9 @@
 /**
  * 云端首页
  */
-import { request } from '../../../../pi/net/ui/con_mgr';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { CurrencyType, getAllBalance } from '../../../store/conMgr';
 export class Home extends Widget {
     constructor() {
         super();
@@ -19,22 +19,7 @@ export class Home extends Widget {
             bonus: '0.9152'// 累计分红
         };
 
-        const msg = { type: 'wallet/account@get', param: { list: '[100, 101]' } };
-        request(msg, (resp) => {
-            if (resp.type) {
-                console.log(`错误信息为${resp.type}`);
-            } else if (resp.result !== undefined) {
-                for (let i = 0; i < resp.value.length; i++) {
-                    const each = resp.value[i];
-                    if (each[0] === 100) {
-                        this.state.ktBalance = each[1];
-                    } else if (each[0] === 101) {
-                        this.state.ethBalance = each[1];
-                    }
-                }
-                this.paint();
-            }
-        });
+        this.initDate();
     }
 
     /**
@@ -83,5 +68,18 @@ export class Home extends Widget {
     }
     public inviteRedEnvelopeClick() {
         popNew('app-view-redEnvelope-send-inviteRedEnvelope');
+    }
+
+    private async initDate() {
+        const balanceInfo = await getAllBalance();
+        for (let i = 0; i < balanceInfo.value.length; i++) {
+            const each = balanceInfo.value[i];
+            if (each[0] === CurrencyType.KT) {
+                this.state.ktBalance = each[1];
+            } else if (each[0] === CurrencyType.ETH) {
+                this.state.ethBalance = each[1];
+            }
+        }
+        this.paint();
     }
 }
