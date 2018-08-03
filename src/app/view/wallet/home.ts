@@ -2,10 +2,10 @@
  * wallet home page
  */
 
-import { open, request, setUrl } from '../../../pi/net/ui/con_mgr';
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
+import { openAndGetRandom } from '../../store/conMgr';
 import { dataCenter } from '../../store/dataCenter';
 import { register, unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
@@ -57,7 +57,7 @@ export class Home extends Widget {
         };
         this.registerAddrsFun();
         // 登录云端账号
-        this.loginWallet();
+        openAndGetRandom();
     }
     public clickCurrencyItemListener(e: Event, index: number) {
         const wallets = getLocalStorage('wallets');
@@ -133,38 +133,6 @@ export class Home extends Widget {
         });
         this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
         this.paint();
-    }
-
-    /**
-     * 登录云端钱包
-     */
-    private loginWallet() {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
-        if (!wallet) return;
-        if (dataCenter.getUser() === wallet.walletId) return;
-        setUrl(`ws://127.0.0.1:2081`);
-        dataCenter.setUser(wallet.walletId);
-        open(() => {
-            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-            // 连接打开后开始设置账号缓存
-            const msgRandom = {
-                type: 'get_random',
-                param: {
-                    account: wallet.walletId.slice(2),
-                    pk: `04${gwlt.publicKey}`
-                }
-            };
-            request(msgRandom, (resp) => {
-                if (resp.type) {
-                    console.log(`错误信息为${resp.type}`);
-                } else if (resp.result !== undefined) {
-                    dataCenter.setConRandom(resp.rand);
-                }
-            });
-        }, (result) => {
-            console.log(`open错误信息为${result}`);
-        });
     }
 }
 
