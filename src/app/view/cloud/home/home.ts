@@ -1,7 +1,7 @@
 /**
  * 云端首页
  */
-import { popNew } from '../../../../pi/ui/root';
+import { pop, popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 export class Home extends Widget {
     constructor() {
@@ -57,5 +57,8 @@ export class Home extends Widget {
     }
     public toTradingPlaces() {
         // TODO
+    }
+    public inviteRedEnvelopeClick() {
+        popNew('app-view-redEnvelope-send-inviteRedEnvelope');
     }
 }

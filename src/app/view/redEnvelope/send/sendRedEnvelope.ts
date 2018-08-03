@@ -1,6 +1,7 @@
 /**
  * send red-envelope
  */
+import { open, request, setUrl } from '../../../../pi/net/ui/con_mgr';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
@@ -15,7 +16,7 @@ export class SendRedEnvelope extends Widget {
 
     public init() {
         this.state = {
-            itype:1,// 1 等额红包  2 拼手气红包
+            itype:0,// 0 等额红包  1 拼手气红包
             balance:this.getBalance(),
             currencyName:redEnvelopeSupportCurrency[0],
             singleAmount:0,
@@ -45,7 +46,7 @@ export class SendRedEnvelope extends Widget {
     public redEnvelopeNumberChange(e:any) {
         const num = Number(e.value);
         this.state.redEnvelopeNumber = num;
-        if (this.state.itype === 1) {
+        if (this.state.itype === 0) {
             this.state.totalAmount = num * this.state.singleAmount;
         }
         this.paint();
@@ -57,7 +58,7 @@ export class SendRedEnvelope extends Widget {
     }
     // 红包类型切换
     public redEnvelopeTypeSwitchClick() {
-        this.state.itype = this.state.itype === 1 ? 2 : 1;
+        this.state.itype = this.state.itype === 0 ? 1 : 0;
         this.state.singleAmount = 0;
         this.state.redEnvelopeNumber = 0;
         this.state.totalAmount = 0;
@@ -69,12 +70,12 @@ export class SendRedEnvelope extends Widget {
 
     // 发送
     public sendRedEnvelopeClick() {
-        if (this.state.itype === 1 && this.state.singleAmount <= 0) {
+        if (this.state.itype === 0 && this.state.singleAmount <= 0) {
             popNew('app-components-message-message',{ itype:'error',content:'请输入要发送的单个红包金额',center:true });
 
             return;
         }
-        if (this.state.itype !== 1 && this.state.totalAmount <= 0) {
+        if (this.state.itype !== 0 && this.state.totalAmount <= 0) {
             popNew('app-components-message-message',{ itype:'error',content:'请输入要发送的红包总金额',center:true });
 
             return;
@@ -96,9 +97,9 @@ export class SendRedEnvelope extends Widget {
 
             return;
         }
-        
+        this.sendRedEnvlope();
         popNew('app-view-redEnvelope-send-shareRedEnvelope',{
-            amount:this.state.amount,
+            rid:'shfjksdhfks',
             leaveMessage:this.state.leaveMessage,
             currencyName:this.state.currencyName
         });
@@ -115,5 +116,35 @@ export class SendRedEnvelope extends Widget {
         const index = await openBasePage('app-components-chooseCurrency-chooseCurrency',{ currencyList:redEnvelopeSupportCurrency });
         this.state.currencyName = redEnvelopeSupportCurrency[index];
         this.paint();
+    }
+
+    public sendRedEnvlope(success?:Function,fail?:Function) {
+        // 币种
+        const priceTypes = {
+            KT:100,
+            ETH:101
+        };
+        setUrl(`ws://192.168.33.65:2081`);
+        open(() => {
+            // todo 需要在登录后才能发起正式的通信
+
+            // 发红包
+            const sendRedEnvelope = {
+                type:'emit_red_bag',
+                param:{
+                    type:this.state.itype,
+                    priceType:priceTypes[this.state.currencyName],
+                    totalPrice:this.state.totalAmount,
+                    count:this.state.redEnvelopeNumber,
+                    desc:this.state.leaveMessage
+                }
+            };
+            const msg = sendRedEnvelope;
+            request(msg, (res) => {
+                console.log(`发送红包`,res);
+            });
+        }, (result) => {
+            console.log(`open错误信息为${result}`);
+        });
     }
 }
