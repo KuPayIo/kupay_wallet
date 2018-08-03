@@ -62,6 +62,10 @@ registerSign(ShareToPlatforms, {
         {
             name: 'comment',// 评论
             type: ParamType.String
+        },
+        {
+            name: 'platform',// 要分享到的平台：1、微信 2、朋友圈 3、QQ空间 4、QQ 5、所有平台(当你传5的时候！不用写界面、底层会自动弹出界面)
+            type: ParamType.Number
         }
     ]
 });
