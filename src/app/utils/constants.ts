@@ -119,4 +119,4 @@ export const shapeshiftApiPrivateKey = 'c98210f4568b04d3f84c5404f8e5be9835384913
 // 如果shapeshift交易记录返回[],请求的最多次数,超过默认没有交易记录
 export const shapeshiftTransactionRequestNumber = 5;
 // 发红包所支持的货币
-export const redEnvelopeSupportCurrency = ['ETH', 'ZRX', 'BAT'];
+export const redEnvelopeSupportCurrency = ['KT', 'ETH'];

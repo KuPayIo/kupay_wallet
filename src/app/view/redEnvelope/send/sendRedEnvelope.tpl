@@ -8,7 +8,7 @@
             <div w-class="ga-balance-inner-box"><span w-class="ga-balance-title">余额</span><span w-class="ga-balance">{{it1.balance}}</span><span>{{it1.currencyName}}</span></div>
             <div w-class="ga-choose-currency"><span>{{it1.currencyName}}</span><img w-class="ga-currency-img" src="../../../res/image/right_arrow.png"/></div>
         </div>
-        {{if it1.itype === 1}}
+        {{if it1.itype === 0}}
         <div w-class="ga-item-box">
             <span w-class="ga-tag">单个金额</span>
             <div w-class="ga-amount-inner">
@@ -21,7 +21,7 @@
         {{else}}
         <div w-class="ga-item-box">
             <div w-class="ga-box">
-                <img src="../../../res/image/AION.png"/>
+                <img src="../../../res/image/currency/AION.png"/>
                 <span w-class="ga-tag ga-total-tag">总金额</span>
             </div>
             <div w-class="ga-amount-inner">
@@ -42,8 +42,8 @@
             </div>
         </div>
         <div w-class="ga-item-box">
-            <div w-class="ga-type"><span>{{it1.itype === 1 ? "每个红包金额固定，" : "每个红包金额随机，"}}</span>
-                <span w-class="ga-switch" on-tap="redEnvelopeTypeSwitchClick">{{it1.itype === 1 ? "改为拼手气红包" : "改为普通红包"}}</span>
+            <div w-class="ga-type"><span>{{it1.itype === 0 ? "每个红包金额固定，" : "每个红包金额随机，"}}</span>
+                <span w-class="ga-switch" on-tap="redEnvelopeTypeSwitchClick">{{it1.itype === 0 ? "改为拼手气红包" : "改为普通红包"}}</span>
             </div>
         </div>
         <div w-class="ga-item-box">
