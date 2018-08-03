@@ -3,45 +3,83 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { openBasePage } from '../../../utils/tools';
 export class ProductDetail extends Widget {
     public ok: () => void;
     constructor() {
         super();
     }
-    public setProps(props: any, oldProps: any) {
-        super.setProps(props,oldProps);
+    public create() {
+        super.create();
         this.init();
+    }
+    public setProps(props: any, oldProps: any) {
+        super.setProps(props, oldProps);
+        console.log(props);
     }
     public init() {
         this.state = {
-            isSellOut:true,
-            expectedAnnualIncome:'+8.0000%',// 预期年化收益
-            subscriptionPeriod:'30天',// 认购期限
-            purchaseAmount:1000,// 起购金额
-            purchaseDay:'今天',// 申购日
-            dayOfInterest:'2018-8-16',// 起息日
-            dueDate:'2018-8-30',// 到期日
-            surplusAmount:'0',// 剩余额度
-            productDetail:{
-                subscribeCurrency:'MPT',// 认购币种
-                paymentMethod:'预期年化收益',// 收款方式
-                productLine:'100000',// 产品额度
-                limit:'1000MPT起购，每人认购无上限',// 额度限制
-                timeLimit:'即日起到8月16日23：59：59或购完即止'// 时间限制
-            },
-            percentage:'',
-            // 产品描述
-            productIntroduction:`KuPay${this.props.id}号理财产品是KuPay面向KuPay用户与资产端撮合的固定周期理财
-            项目，为KuPay用户提供资产理财和到期自动退出服务。KuPay通过优选资产穿透体系，为用户提供多样低风险优质理财产品。`
-        }; 
-        const ratio = this.state.surplusAmount / this.state.productDetail.productLine;
-        this.state.percentage = `${(1 - ratio) * 100}%`;
+            showStep: true,
+            productName:'ETH1期',
+            expectedEarnings: '+8%',
+            unitPrice: '0.1',
+            days: 'T+0',
+            surplus: '200',
+            purchaseDate: '2018-08-02',
+            interestDate: '2018-08-02',
+            endDate: '2018-08-02',
+            productIntroduction: 'ETH资管第1期是KuPay退出的一种固定收益类，回报稳定、无风险定期产品。',
+            limit: '5',
+            amount: 1,
+            lockday:'无'
+
+        };
     }
     public goBackPage() {
         this.ok && this.ok();
     }
-    public buyClicked() {
-        popNew('app-view-financialManagement-purchase-purchase',{ id:this.props.id });
-        this.ok && this.ok();
+
+    public async readNotice() {
+        this.hideStep();
+        await openBasePage('app-view-financialManagement-notice-notice').then((r) => {
+            this.showStep();
+        });
+        
+    }
+    public async purchaseClicked() {
+        this.hideStep();
+        const props = {
+            money:this.state.amount * Number(this.state.unitPrice),
+            unitPrice:this.state.unitPrice,
+            productName:this.state.productName,
+            amount:this.state.amount,
+            expectedEarnings:this.state.expectedEarnings,
+            lockday:this.state.lockday
+        };
+        await openBasePage('app-view-financialManagement-purchase-purchase',props).then((r) => {
+            // TODO 购买
+            // 返回值r是输入的密码
+            console.log(r);
+        });
+
+    }
+    public hideStep() {
+        this.state.showStep = false;
+        this.paint();
+    }
+    public showStep() {
+        this.state.showStep = true;
+        this.paint();
+    }
+    public minus() {
+        if (this.state.amount === 1) {
+            return;
+        }
+        this.state.amount -= 1;
+        this.paint();
+    }
+    public add() {
+        this.state.amount += 1;
+        this.paint();
     }
 }
