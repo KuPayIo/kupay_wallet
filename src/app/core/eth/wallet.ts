@@ -246,6 +246,28 @@ export class EthWallet {
                 throw new Error('Not supported method');
         }
     }
+
+    /**
+     * get publickey by mnemonic
+     */
+    public static getPublicKeyByMnemonic(mnemonic: string, language: string): string {
+        if (!(language in LANGUAGES)) {
+            throw new Error('this language does not supported');
+        }
+
+        const mn = new Mnemonic(language);
+        if (!mn.check(mnemonic)) {
+            throw new Error('Invalid Mnemonic');
+        }
+        const seedBuffer = mn.toSeed(mnemonic);
+        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(seedBuffer, 'hex'));
+
+        const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
+        const wlt = hdwlt.getWallet();
+
+        return wlt.getPublicKey().toString('hex');
+    }
+
     /**
      * This is a CPU intensive work, may take about 10 seconds!!!
      *

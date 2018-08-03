@@ -49,6 +49,10 @@ export class DataCenter {
 
     private hashMap: any = {};
     private iSalt: string;
+    // 连接用户
+    private conUser: string = '';
+    // 连接随机数
+    private conRandom: string = '';
     /**
      * 初始化
      */
@@ -219,6 +223,32 @@ export class DataCenter {
             this.getTransactionsByAddr(item);
         });
 
+    }
+
+    /**
+     * 设置连接用户
+     */
+    public getUser() {
+        return this.conUser;
+    }
+    /**
+     * 获取连接用户
+     */
+    public setUser(user: string) {
+        this.conUser = user;
+    }
+
+    /**
+     * 设置连接随机数
+     */
+    public getConRandom() {
+        return this.conRandom;
+    }
+    /**
+     * 获取连接随机数
+     */
+    public setConRandom(random: string) {
+        this.conRandom = random;
     }
 
     /****************************************************************************************************
