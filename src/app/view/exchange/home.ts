@@ -127,6 +127,7 @@ export class Home extends Widget {
      */
     public onMenuChange(e: any) {
         console.log(e.value);
+        testNet();
         this.state.activeNum = e.value;
         this.paint();
     }
@@ -175,7 +176,18 @@ const testNet = async () => {
             }
         };
 
-        const msg = msgQueryUserOrder;
+        // 发红包
+        const sendRedEnvelope = {
+            type:'emit_red_bag',
+            param:{
+                type:0,
+                priceType:100,
+                totalPrice:1000,
+                count:10,
+                desc:'大吉大利 今晚吃鸡'
+            }
+        };
+        const msg = sendRedEnvelope;
         request(msg, (resp) => {
             if (resp.type) {
                 console.log(`错误信息为${resp.type}`);
