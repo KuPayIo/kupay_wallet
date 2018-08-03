@@ -33,7 +33,7 @@
             <div w-class="rulemess">2、分红开始之前可增加持有KT获取更多分红。</div>
             <div w-class="rulemess">3、分红分别在开始第3天，6天，9天，12天，15天，18天，21天，24天结算分红。</div>
             <div w-class="rulemess">4、拥有3000KT才具有提现权限。</div>
-            <div w-class="rulemess">5、KuPay拥有最终解释权</div>   
+            <div w-class="rulemess">5、KuPay拥有最终解释权。</div>   
         </div>
     </div>
 </div>

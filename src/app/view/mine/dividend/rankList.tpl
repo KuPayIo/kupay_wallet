@@ -4,7 +4,7 @@
     <app-components-topBar-topBar>{title:{{it==1?"矿山排名":"挖矿排名"}} }</app-components-topBar-topBar>
     <div style="height: 10px;background: #F8F8F8"></div>
 
-    <div style="height: 100%;overflow-x: hidden;overflow-y: auto;">
+    <div style="height: 100%;overflow-x: hidden;overflow-y: auto;" on-scroll="getMoreList" id="ranklist">
         <div w-class="rankItem" style="color: #A0ACC0;">
             <span style="margin-left: 50px;">排名</span>
             <span style="margin-left: 67px;">昵称</span>
@@ -19,6 +19,7 @@
         </div>
         {{end}}
     
-        <div style="height: 128px;"></div>
+        <div w-class="loadmore">加载中，请稍后~~~</div>
+        <div style="height: 128px;" id="more"></div>
     </div>
 </div>

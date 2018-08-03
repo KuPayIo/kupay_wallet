@@ -81,14 +81,6 @@ export class DividendItem extends Widget {
             index:3,
             name:'昵称未设置',
             num:'96,554,000.00'
-        },{
-            index:4,
-            name:'昵称未设置',
-            num:'96,554,000.00'
-        },{
-            index:5,
-            name:'昵称未设置',
-            num:'96,554,000.00'
         });
         this.paint();
     }

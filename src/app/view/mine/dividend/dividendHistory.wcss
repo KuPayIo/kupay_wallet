@@ -40,3 +40,10 @@
     float: right;
     margin-right: 30px;
 }
+.loadmore{
+    background: #f8f8f8;
+    height: 50px;
+    text-align: center;
+    font-size: 28px;
+    padding: 10px;
+}
