@@ -1,0 +1,194 @@
+.ga-new-page{
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.headStatusBar{
+    height:40px;
+    background: #FFFFFF;
+}
+.accountInfo{
+    background: #FFFFFF;
+}
+.ktInfo{
+    height:170px;
+    padding-left:30px;
+    padding-right:30px;
+    border-bottom:1px solid #E5E5EE;
+    display:flex;
+    align-items: center;
+}
+.growAccountName{
+    flex-grow:1;
+    color:#111111;
+    font-size:36px;
+}
+.ktIcon{
+    width:48px;
+    height:48px;
+}
+.ktBalance{
+    color:#111111;
+    font-size:36px;
+    margin-left:15px;
+    margin-right:10px; 
+}
+.ethInfo{
+    height:170px;
+    display:flex;
+    align-items: center;
+    justify-content:space-around;
+    border-bottom:1px solid #E5E5EE;
+}
+.ethHoldings{
+    flex-basis:50%;
+    text-align:center;
+}
+.totalBonus{
+    flex-basis: 50%;
+    text-align:center;
+}
+.bonusIcon{
+    width:70px;
+    height:70px;
+    vertical-align:middle;
+}
+.ethText{
+    color:#3C3C3C;
+    font-size:24px;
+}
+.possession{
+    color:rgba(17,17,17,0.87);
+    font-size:36px;
+}
+.fontArow{
+    margin-left: 14px;
+}
+.line{
+    display:inline-block;
+    width: 1px;
+    height:78px;
+    background:#A0ACC0;
+}
+.activity{
+    margin-top:18px;
+    background: #FFFFFF;
+}
+.activityItem{
+    height: 170px;
+    border-bottom: 1px solid #E5E5EE;
+    padding-left:30px;
+    padding-right:30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;  
+}
+.activityIcon{
+    width: 100px;
+    height: 100px;
+    margin-right:20px; 
+}
+.activityInfo{
+    flex-grow: 1;
+}
+.infoTitle{
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 32px;
+}
+.infoMain{
+    color: rgba(142, 150, 171, 0.87);
+    font-size: 24px;
+    margin-top:10px; 
+}
+.paddingSpan{
+    padding: 15px 28px;
+    border-radius: 100px;
+    background:linear-gradient(#FFD700,#FFAE00);
+    font-size: 28px;
+    color: #FFFFFF;
+    margin-right:20px; 
+}
+.service{
+    margin-top:10px;
+    background: #FFFFFF; 
+}
+.serviceHead{
+    padding: 40px 30px;
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+}
+.serviceBox{
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+}
+.serviceIcon{
+    width: 100px;
+    height: 100px;
+    margin-right:20px; 
+}
+.serviceItem{
+    display: flex;
+    align-items: center;
+    flex-basis: 50%;
+    margin-bottom:50px; 
+}
+.serviceTitle{
+    font-size: 32px;
+    color: rgba(17, 17, 17, 0.87);
+}
+.serviceMain{
+    color: rgba(142, 150, 171, 0.87);
+    font-size: 24px;
+    margin-top:10px; 
+}
+
+
+.canvas{
+    background: #FFFFFF;
+    margin-top: 20px; 
+}
+.canvasHead{
+    height: 170px;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+}
+.canvasHead-left{
+    flex-grow: 1;
+}
+.leftTitle{
+    color: rgba(142, 150, 171, 0.87);
+    font-size: 36px;
+}
+.KTspan{
+    color: rgba(17, 17, 17, 0.87);
+}
+.leftMain{
+    color: rgba(142, 150, 171, 0.87);
+    font-size: 24px;
+    margin-top:10px; 
+}
+.midTitle{
+    color: #203260;
+    font-size: 32px;
+}
+.midMain{
+    font-size:24px;
+    color: rgba(142, 150, 171, 0.87);
+    margin-top:10px; 
+}
+.canvasHead-right{
+    background: #EE6560;
+    color: #FFFFFF;
+    font-size: 24px;
+    margin-left:20px;
+    padding: 14px 19px; 
+    border-radius: 8px;
+}
+.canvasHead-mid{
+    text-align: right;
+}
+.canvasContainer{
+    min-height: 326px;
+    background: #FFFFFF;
+}

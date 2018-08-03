@@ -3,7 +3,7 @@ import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
-import { GaiaWallet } from '../core/eth/wallet';
+import { EthWallet } from '../core/eth/wallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 // tslint:disable-next-line:max-line-length
 import { btcNetwork, defaultExchangeRateJson, ethTokenTransferCode, lang, shapeshiftApiPrivateKey, shapeshiftTransactionRequestNumber, supportCurrencyList } from '../utils/constants';
@@ -475,7 +475,7 @@ export class DataCenter {
      */
     private updateBalance(addr: string, currencyName: string) {
         if (ERC20Tokens[currencyName]) {
-            const balanceOfCode = GaiaWallet.tokenOperations('balanceof', currencyName, addr);
+            const balanceOfCode = EthWallet.tokenOperations('balanceof', currencyName, addr);
             // console.log('balanceOfCode',balanceOfCode);
             const api = new EthApi();
             api.ethCall(ERC20Tokens[currencyName], balanceOfCode).then(r => {
@@ -552,12 +552,12 @@ export class DataCenter {
      */
     private async checkEthAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
         const mnemonic = await getMnemonic(wallet, '');
-        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-        const cnt = await gaiaWallet.scanUsedAddress();
+        const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+        const cnt = await ethWallet.scanUsedAddress();
         const addrs: Addr[] = [];
 
         for (let i = 1; i < cnt; i++) {
-            const address = gaiaWallet.selectAddress(i);
+            const address = ethWallet.selectAddress(i);
             currencyRecord.addrs.push(address);
             const addr: Addr = this.initAddr(address, 'ETH');
             addrs.push(addr);
@@ -593,12 +593,12 @@ export class DataCenter {
      */
     private async checkEthERC20TokenAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
         const mnemonic = await getMnemonic(wallet, '');
-        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-        const cnt = await gaiaWallet.scanTokenUsedAddress(ERC20Tokens[currencyRecord.currencyName]);
+        const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+        const cnt = await ethWallet.scanTokenUsedAddress(ERC20Tokens[currencyRecord.currencyName]);
         const addrs: Addr[] = [];
 
         for (let i = 1; i < cnt; i++) {
-            const address = gaiaWallet.selectAddress(i);
+            const address = ethWallet.selectAddress(i);
             currencyRecord.addrs.push(address);
             const addr: Addr = this.initAddr(address, currencyRecord.currencyName);
             addrs.push(addr);

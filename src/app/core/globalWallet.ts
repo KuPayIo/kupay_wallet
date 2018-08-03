@@ -8,7 +8,7 @@ import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
 import { ERC20Tokens } from './eth/tokens';
-import { GaiaWallet } from './eth/wallet';
+import { EthWallet } from './eth/wallet';
 import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';
 
 const cipher = new Cipher();
@@ -124,13 +124,13 @@ export class GlobalWallet {
     public static createWltByMnemonic(mnemonic: string, currencyName: string, i: number) {
         let wlt;
         if (currencyName === 'ETH') {
-            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-            wlt = gaiaWallet.selectAddressWlt(i);
+            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            wlt = ethWallet.selectAddressWlt(i);
         } else if (currencyName === 'BTC') {
             wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         } else if (ERC20Tokens[currencyName]) {
-            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-            wlt = gaiaWallet.selectAddressWlt(i);
+            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            wlt = ethWallet.selectAddressWlt(i);
         }
 
         return wlt;
@@ -143,16 +143,16 @@ export class GlobalWallet {
     public static getWltAddrByMnemonic(mnemonic: string, currencyName: string, i: number) {
         let addr;
         if (currencyName === 'ETH') {
-            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-            addr = gaiaWallet.selectAddress(i);
+            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            addr = ethWallet.selectAddress(i);
         } else if (currencyName === 'BTC') {
             const wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
             wlt.unlock();
             addr = wlt.derive(i);
             wlt.lock();
         } else if (ERC20Tokens[currencyName]) {
-            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-            addr = gaiaWallet.selectAddress(i);
+            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            addr = ethWallet.selectAddress(i);
         }
 
         return addr;
@@ -212,8 +212,8 @@ export class GlobalWallet {
     }
 
     private static createEthGwlt(mnemonic: string) {
-        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-        const address = gaiaWallet.selectAddress(0);
+        const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+        const address = ethWallet.selectAddress(0);
         const currencyRecord: CurrencyRecord = {
             currencyName: 'ETH',
             currentAddr: address,

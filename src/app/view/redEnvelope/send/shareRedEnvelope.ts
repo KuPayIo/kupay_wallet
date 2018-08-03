@@ -16,7 +16,13 @@ export class ShareRedEnvelope extends Widget {
 
     // 发送给好友
     public shareToFriends() {
-        popNew('app-components-share-share', { text: this.props.leaveMessage, shareType: ShareToPlatforms.TYPE_IMG });
+        popNew('app-components-share-share', { 
+            shareType: ShareToPlatforms.TYPE_LINK,
+            webName:'挂号费',
+            url:'https://www.baidu.com',
+            title:'红包title',
+            content:this.props.leaveMessage
+        });
         this.ok && this.ok();
     }
 }
