@@ -1,0 +1,14 @@
+.rankItem{
+    height: 120px;
+    background-color: #fff;
+    line-height: 120px;
+    font-size: 28px;
+    border-bottom: 1px solid #E5E5EE;
+}
+.loadmore{
+    background: #f8f8f8;
+    height: 50px;
+    text-align: center;
+    font-size: 28px;
+    padding: 10px;
+}

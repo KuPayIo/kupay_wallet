@@ -40,6 +40,11 @@ export const run = (cb): void => {
     // popNew('app-view-redEnvelope-send-inviteRedEnvelope',{ amount:100,leaveMessage:'大吉大利',currencyName:'ETH' });
     // popNew('app-view-redEnvelope-receive-redEnvelopeDetails',{ amount:100,leaveMessage:'大吉大利',currencyName:'ETH' });
     // popNew('app-view-redEnvelope-receive-redEnvelopeRecord');
+    // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
+    
+    // popNew('app-view-application-home', {}); 
+    popNew('app-view-mine-dividend-mining', {}); 
+    // popNew('app-view-mine-FAQ-FAQ', {}); 
     if (cb) cb();
     // test();
 };
