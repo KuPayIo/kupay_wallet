@@ -18,7 +18,7 @@ export class App extends Widget {
                 icon: 'wallet_icon.png',
                 iconActive: 'wallet_icon_active.png',
                 components: 'app-view-wallet-home'
-            }, 
+            },
             {
                 text: '云端',
                 icon: 'remote_icon.png',
@@ -27,7 +27,7 @@ export class App extends Widget {
             },
             {
                 text: '',
-                name:'chat',
+                name: 'chat',
                 icon: 'chatIcon.png',
                 iconActive: 'chatIcon.png',
                 components: ''
@@ -39,7 +39,7 @@ export class App extends Widget {
                 iconActive: 'financialManagement_icon_active.png',
                 components: 'app-view-financialManagement-index-index'
                 // components: 'app-view-financialManagement-home'
-            }, 
+            },
             // {
             //     text: '交易所',
             //     icon: 'exchange_icon.png',
@@ -86,7 +86,7 @@ export class App extends Widget {
         const chat = new SendChatMessage();
         chat.init();
 
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             chat.prepareChat({
                 success: (result) => {
                     resolve(result);
@@ -96,7 +96,7 @@ export class App extends Widget {
                 }
             });
         });
-        
+
     }
 
     /**
@@ -106,7 +106,8 @@ export class App extends Widget {
         const chat = new SendChatMessage();
         chat.init();
 
-        return new Promise((resolve,reject) => {
+        // todo 这里需要向服务器通信获取代理地址，且区分国内外的情况
+        return new Promise((resolve, reject) => {
             chat.setProxy({
                 success: (result) => {
                     resolve(result);
@@ -116,6 +117,6 @@ export class App extends Widget {
                 }, proxyIp: '120.77.252.201', proxyPort: 1820, userName: '', password: ''
             });
         });
-        
+
     }
 }

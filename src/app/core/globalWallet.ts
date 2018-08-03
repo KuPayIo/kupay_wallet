@@ -21,6 +21,7 @@ export class GlobalWallet {
     private _addrs: Addr[] = [];
     private _vault: string;
     private _mnemonicBackup: boolean = false;// 助记词备份
+    private _publicKey: string;
 
     get glwtId(): string {
         return this._glwtId;
@@ -50,6 +51,10 @@ export class GlobalWallet {
         return this._mnemonicBackup;
     }
 
+    get publicKey() {
+        return this._publicKey;
+    }
+
     public static fromJSON(jsonstring: string): GlobalWallet {
         const wlt = JSON.parse(jsonstring);
         const gwlt = new GlobalWallet();
@@ -58,6 +63,7 @@ export class GlobalWallet {
         gwlt._nickName = wlt.nickname;
         gwlt._vault = wlt.vault;
         gwlt._mnemonicBackup = wlt.mnemonicBackup;
+        gwlt._publicKey = wlt.publicKey;
 
         return gwlt;
     }
@@ -73,6 +79,8 @@ export class GlobalWallet {
         gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
 
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
+
+        gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
 
         dataCenter.setHash(gwlt._glwtId, hash);
 
@@ -100,6 +108,8 @@ export class GlobalWallet {
 
         const mnemonic = toMnemonic(lang, vault);
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
+
+        gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
 
         dataCenter.setHash(gwlt._glwtId, hash);
 
@@ -260,7 +270,8 @@ export class GlobalWallet {
             glwtId: this._glwtId,
             nickname: this._nickName,
             vault: this._vault,
-            mnemonicBackup: this._mnemonicBackup
+            mnemonicBackup: this._mnemonicBackup,
+            publicKey: this._publicKey
         };
 
         return JSON.stringify(wlt);
