@@ -85,6 +85,7 @@ export class Home extends Widget {
                 text: '关于我们',
                 components: 'app-view-mine-aboutus-aboutus'
             }
+        
                 // ,
                 //  {
                 //     icon: 'icon_mine_share.png',

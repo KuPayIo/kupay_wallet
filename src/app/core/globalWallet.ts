@@ -8,7 +8,7 @@ import { Addr, CurrencyRecord } from '../view/interface';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
 import { ERC20Tokens } from './eth/tokens';
-import { GaiaWallet } from './eth/wallet';
+import { EthWallet } from './eth/wallet';
 import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';
 
 const cipher = new Cipher();
@@ -21,6 +21,7 @@ export class GlobalWallet {
     private _addrs: Addr[] = [];
     private _vault: string;
     private _mnemonicBackup: boolean = false;// 助记词备份
+    private _publicKey: string;
 
     get glwtId(): string {
         return this._glwtId;
@@ -50,6 +51,10 @@ export class GlobalWallet {
         return this._mnemonicBackup;
     }
 
+    get publicKey() {
+        return this._publicKey;
+    }
+
     public static fromJSON(jsonstring: string): GlobalWallet {
         const wlt = JSON.parse(jsonstring);
         const gwlt = new GlobalWallet();
@@ -58,6 +63,7 @@ export class GlobalWallet {
         gwlt._nickName = wlt.nickname;
         gwlt._vault = wlt.vault;
         gwlt._mnemonicBackup = wlt.mnemonicBackup;
+        gwlt._publicKey = wlt.publicKey;
 
         return gwlt;
     }
@@ -73,6 +79,8 @@ export class GlobalWallet {
         gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
 
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
+
+        gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
 
         dataCenter.setHash(gwlt._glwtId, hash);
 
@@ -101,6 +109,8 @@ export class GlobalWallet {
         const mnemonic = toMnemonic(lang, vault);
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
 
+        gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
+
         dataCenter.setHash(gwlt._glwtId, hash);
 
         // dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
@@ -124,13 +134,13 @@ export class GlobalWallet {
     public static createWltByMnemonic(mnemonic: string, currencyName: string, i: number) {
         let wlt;
         if (currencyName === 'ETH') {
-            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-            wlt = gaiaWallet.selectAddressWlt(i);
+            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            wlt = ethWallet.selectAddressWlt(i);
         } else if (currencyName === 'BTC') {
             wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         } else if (ERC20Tokens[currencyName]) {
-            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-            wlt = gaiaWallet.selectAddressWlt(i);
+            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            wlt = ethWallet.selectAddressWlt(i);
         }
 
         return wlt;
@@ -143,16 +153,16 @@ export class GlobalWallet {
     public static getWltAddrByMnemonic(mnemonic: string, currencyName: string, i: number) {
         let addr;
         if (currencyName === 'ETH') {
-            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-            addr = gaiaWallet.selectAddress(i);
+            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            addr = ethWallet.selectAddress(i);
         } else if (currencyName === 'BTC') {
             const wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
             wlt.unlock();
             addr = wlt.derive(i);
             wlt.lock();
         } else if (ERC20Tokens[currencyName]) {
-            const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-            addr = gaiaWallet.selectAddress(i);
+            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            addr = ethWallet.selectAddress(i);
         }
 
         return addr;
@@ -212,8 +222,8 @@ export class GlobalWallet {
     }
 
     private static createEthGwlt(mnemonic: string) {
-        const gaiaWallet = GaiaWallet.fromMnemonic(mnemonic, lang);
-        const address = gaiaWallet.selectAddress(0);
+        const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+        const address = ethWallet.selectAddress(0);
         const currencyRecord: CurrencyRecord = {
             currencyName: 'ETH',
             currentAddr: address,
@@ -260,7 +270,8 @@ export class GlobalWallet {
             glwtId: this._glwtId,
             nickname: this._nickName,
             vault: this._vault,
-            mnemonicBackup: this._mnemonicBackup
+            mnemonicBackup: this._mnemonicBackup,
+            publicKey: this._publicKey
         };
 
         return JSON.stringify(wlt);

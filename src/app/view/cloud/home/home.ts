@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { CurrencyType, getAllBalance } from '../../../store/conMgr';
 export class Home extends Widget {
     constructor() {
         super();
@@ -13,18 +14,18 @@ export class Home extends Widget {
     }
     public init(): void {
         this.state = {
-            ktBalance:'5,000.00KT',// kt余额
-            ethBalance:'70.00',// eth余额
-            bonus:'0.9152'// 累计分红
-           
+            ktBalance: '5,000.00',// kt余额
+            ethBalance: '70.00',// eth余额
+            bonus: '0.9152'// 累计分红
         };
+
+        this.initDate();
     }
 
     /**
      * 点击云端账户
      */
-    public cloudAccountClicked() {
-        // TODO
+    public async cloudAccountClicked() {
         popNew('app-view-cloud-cloudAccount-cloudAccount');
     }
 
@@ -48,6 +49,7 @@ export class Home extends Widget {
      */
     public bonusClicked() {
         // TODO
+        popNew('app-view-mine-dividend-dividend');
     }
     /**
      * 点击邀请好友
@@ -57,5 +59,27 @@ export class Home extends Widget {
     }
     public toTradingPlaces() {
         // TODO
+    }
+    /**
+     * 点击挖矿
+     */
+    public mining() {
+        popNew('app-view-mine-dividend-mining');
+    }
+    public inviteRedEnvelopeClick() {
+        popNew('app-view-redEnvelope-send-inviteRedEnvelope');
+    }
+
+    private async initDate() {
+        const balanceInfo = await getAllBalance();
+        for (let i = 0; i < balanceInfo.value.length; i++) {
+            const each = balanceInfo.value[i];
+            if (each[0] === CurrencyType.KT) {
+                this.state.ktBalance = each[1];
+            } else if (each[0] === CurrencyType.ETH) {
+                this.state.ethBalance = each[1];
+            }
+        }
+        this.paint();
     }
 }

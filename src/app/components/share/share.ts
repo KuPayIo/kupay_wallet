@@ -67,7 +67,8 @@ export class BaseShare extends Widget {
                 url: this.props.url,
                 title: this.props.title,
                 content: this.props.content,
-                comment: this.props.comment || ''
+                comment: this.props.comment || '',
+                platform: platform
             });
         } else {
             stp.shareCode({

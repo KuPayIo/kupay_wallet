@@ -9,7 +9,7 @@ export interface Wallet {
     walletId: string;  // wallet id  (first address)
     avatar: string;
     walletPswTips?: string;// wallet password tips
-    gwlt: string;  // Serialization GaiaWallet object
+    gwlt: string;  // Serialization EthWallet object
     showCurrencys: string[]; // home page show currencys
     currencyRecords: CurrencyRecord[];
 }

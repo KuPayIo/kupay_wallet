@@ -7,7 +7,7 @@
             </span>
             <img src="../../../res/image/cloud_cointype_eth.png" w-class="ktIcon" />
             <span w-class="ktBalance">
-                {{it1.ktBalance}}
+                {{it1.ktBalance}}KT
             </span>
             <img src="../../../res/image/cloud_arow_right.png" />
         </div>
@@ -25,7 +25,7 @@
             </div>
             <span w-class="line"></span>
             <div w-class="totalBonus">
-                <div>
+                <div on-tap="bonusClicked">
                     <img src="../../../res/image/cloud_bonus.png" w-class="bonusIcon" />
                     <span w-class="ethText">
                         累计分红(ETH)
@@ -62,7 +62,7 @@
 
 
     <div w-class="activity">
-        <div w-class="activityItem">
+        <div w-class="activityItem" on-tap="mining">
             <img src="../../../res/image/cloud_others_drag.png" w-class="activityIcon" />
             <div w-class="activityInfo">
                 <div w-class="infoTitle">
@@ -78,7 +78,7 @@
             <img src="../../../res/image/cloud_arow_right.png" />
         </div>
 
-        <div w-class="activityItem">
+        <div w-class="activityItem" on-tap="inviteRedEnvelopeClick">
             <img src="../../../res/image/cloud_others_drag.png" w-class="activityIcon" />
             <div w-class="activityInfo">
                 <div w-class="infoTitle">

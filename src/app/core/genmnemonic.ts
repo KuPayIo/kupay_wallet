@@ -4,6 +4,7 @@
 
 import { LANGUAGE } from './btc/wallet';
 import { Mnemonic } from './thirdparty/bip39';
+import { KJUR } from './thirdparty/sample-ecdsa';
 import { Web3 } from './thirdparty/web3.min';
 import { WORDLISTS } from './thirdparty/wordlist';
 
@@ -110,6 +111,30 @@ export const getRandomValuesByMnemonic = (language: LANGUAGE, mnemonic: string):
     const nd = binaryStringToWordArray(d);
 
     return new Uint8Array(wordArrayToByteArray(nd));
+};
+
+/**
+ * 签名
+ */
+export const sign = (random, privateKey) => {
+    console.log(KJUR, KJUR.jws.JWS.jwsalg2sigalg);
+    const sig = new KJUR.crypto.Signature({ alg: KJUR.jws.JWS.jwsalg2sigalg.ES256 });
+    sig.init({ d: privateKey, curve: 'secp256k1' });
+    sig.updateString(random);
+
+    return sig.sign();
+
+    // const secKey = sjcl.bn.fromBits(sjcl.codec.hex.toBits(privateKey));
+    // // FIXME: magicl number 6
+    // const ec = new sjcl.ecc.ecdsa.generateKeys(sjcl.ecc.curves.k256, 6, secKey);
+    // const randomHash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(random));
+    // const sign = ec.sec.sign(randomHash);
+
+    // // console.log(sjcl.ecc.curves.k256);
+    // //  new sjcl.ecc.curve(sjcl.bn.prime.p256k, random, 0, 7, privateKey);
+
+    // return sjcl.codec.hex.fromBits(sign);
+    // // return u8ArrayToHexstr(new Uint8Array(new Uint32Array(sign).buffer));
 };
 
 /**

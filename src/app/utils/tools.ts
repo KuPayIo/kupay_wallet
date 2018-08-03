@@ -8,7 +8,7 @@ import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { ERC20Tokens } from '../core/eth/tokens';
-import { GaiaWallet } from '../core/eth/wallet';
+import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
@@ -445,7 +445,7 @@ export const getNewAddrInfo = (currencyName, mnemonic, wallet) => {
 
     let address;
     if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
-        const wlt = GaiaWallet.fromJSON(firstAddr.wlt);
+        const wlt = EthWallet.fromJSON(firstAddr.wlt);
         const newWlt = wlt.selectAddressWlt(currencyRecord.addrs.length);
         address = newWlt.address;
     } else if (currencyName === 'BTC') {
