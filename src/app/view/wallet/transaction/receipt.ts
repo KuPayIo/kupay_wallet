@@ -47,8 +47,5 @@ export class AddAsset extends Widget {
 
     public shareToFriends() {
         popNew('app-components-share-share', { text: this.props.addr, shareType: ShareToPlatforms.TYPE_IMG });
-        // popNew('app-components-share-share', {
-        //     url: 'www.baidu.com', title: '我是标题', content: this.props.addr, shareType: ShareToPlatforms.TYPE_LINK
-        // });
     }
 }
