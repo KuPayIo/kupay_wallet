@@ -4,6 +4,7 @@
 import { open, request, setUrl } from '../../../../pi/net/ui/con_mgr';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { requestLogined } from '../../../store/conMgr';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
 import { getByteLen, openBasePage } from '../../../utils/tools';
 
@@ -118,33 +119,24 @@ export class SendRedEnvelope extends Widget {
         this.paint();
     }
 
-    public sendRedEnvlope(success?:Function,fail?:Function) {
+    public sendRedEnvlope() {
         // 币种
         const priceTypes = {
             KT:100,
             ETH:101
         };
-        setUrl(`ws://192.168.33.65:2081`);
-        open(() => {
-            // todo 需要在登录后才能发起正式的通信
 
             // 发红包
-            const sendRedEnvelope = {
-                type:'emit_red_bag',
-                param:{
-                    type:this.state.itype,
-                    priceType:priceTypes[this.state.currencyName],
-                    totalPrice:this.state.totalAmount,
-                    count:this.state.redEnvelopeNumber,
-                    desc:this.state.leaveMessage
-                }
-            };
-            const msg = sendRedEnvelope;
-            request(msg, (res) => {
-                console.log(`发送红包`,res);
-            });
-        }, (result) => {
-            console.log(`open错误信息为${result}`);
-        });
+        const msgSendRedEnvelope = {
+            type:'emit_red_bag',
+            param:{
+                type:this.state.itype,
+                priceType:priceTypes[this.state.currencyName],
+                totalPrice:this.state.totalAmount,
+                count:this.state.redEnvelopeNumber,
+                desc:this.state.leaveMessage
+            }
+        };
+        requestLogined(msgSendRedEnvelope).then(console.log).catch(console.log);
     }
 }

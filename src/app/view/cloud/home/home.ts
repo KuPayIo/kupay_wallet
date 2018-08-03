@@ -90,7 +90,7 @@ export class Home extends Widget {
     public mining() {
         popNew('app-view-mine-dividend-mining');
     }
-   public inviteRedEnvelopeClick() {
+    public inviteRedEnvelopeClick() {
         popNew('app-view-redEnvelope-send-inviteRedEnvelope');
     }
 }
