@@ -1,0 +1,64 @@
+.hideOrShow{
+    text-align: center;
+    display: none;
+}
+.imgtip{
+    margin-top:121px; 
+}
+.textTip{
+    font-size: 36px;
+    color: #808890;
+    margin-top:76px; 
+}
+.mineItem{
+    height: 250px;
+    background: #fff;
+    margin-top:10px; 
+    border-bottom: 1px solid #E5E5EE;
+}
+.mineTitle{
+    color: #203260;
+    font-size: 28px;
+    padding: 30px 43px;
+}
+.stateSpan{
+    font-size: 24px;
+    color: #FFFFFF;
+    background: #1A70DD;
+    padding: 13px 0;
+    text-align: center;
+    width: 100px;
+    border-radius: 8px;
+    float: right;
+}
+.mineMain{
+    padding-top: 10px; 
+    display: flex;
+    justify-content: center;
+}
+.mainLeft{
+    flex-basis: 30%;
+    text-align: center;
+}
+.mainMid{
+    flex-basis: 30%;
+    text-align: center;
+}
+.mainRight{
+    flex-basis: 30%;
+    text-align: center;
+}
+.normalTitle{
+    color: #808890;
+    font-size: 24px;
+}
+.normalMain{
+    color: #344E7D;
+    font-size: 32px;
+    margin-top:20px; 
+}
+.incomMain{
+    font-size: 48px;
+    color: #FF642B;
+    margin-top: 10px; 
+}

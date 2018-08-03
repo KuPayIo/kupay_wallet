@@ -14,34 +14,38 @@ export class Index extends Widget {
     }
     public init() {
         this.state = {
-            assets: 0,// 持有资产
-            cumulativeIncome: 0,// 累计收益
-            productList:[{
-                id:'1',
-                expectedEarnings:'+8.0000%',
-                title:'币生币MPT增币',
-                tip:'预期年化收益',
-                content:'新人专享收益稳，1000MPT起投，历史从未亏损',
-                isSellOut:true
+            record:[{
+                title:'ETH资管第1期',
+                amount:'1',
+                bonus:'0.002',
+                days:'2'
             },{
-                id:'2',
-                expectedEarnings:'+10.0000%',
-                title:'币生币MPT增币',
-                tip:'预期年化收益',
-                content:'新人专享收益稳，1000MPT起投，历史从未亏损',
-                isSellOut:true
+                title:'ETH资管第1期',
+                amount:'1',
+                bonus:'0.002',
+                days:'2'
+            }],
+            productList:[{
+                title:'优选理财-随存随取',
+                surplus:'50%',
+                profit:'5%',
+                productName:'ETH资管第1期',
+                productDescribe:' 赎回T+0到账 | 0.1 ETH/份',
+                isSoldOut:false
+            },{
+                title:'优选理财-随存随取',
+                surplus:'50%',
+                profit:'5%',
+                productName:'ETH资管第1期',
+                productDescribe:' 赎回T+0到账 | 0.1 ETH/份',
+                isSoldOut:true
             }]
-            
-        };  
+        };
     }
-    public toDetail(e:any,id:any) {
-        popNew('app-view-financialManagement-productDetail-productDetail',{ id });
+    public toDetail() {
+        popNew('app-view-financialManagement-productDetail-productDetail');
     }
-
-    public assestsClicked() {
-        popNew('app-view-financialManagement-index-possessionAssets');
-    }
-    public incomeClicked() {
-        popNew('app-view-financialManagement-index-cumulativeIncome');
+    public toRecord() {
+        popNew('app-view-financialManagement-purchaseRecord-purchaseRecord');
     }
 }
