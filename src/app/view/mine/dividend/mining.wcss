@@ -1,0 +1,205 @@
+.ga-header{
+    width: 100%;
+    height: 500px;
+    background-color: #FF912F;
+}
+.ga-top-banner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    color: #203260;
+    padding: 2px 30px;
+    box-sizing: border-box;
+    height: 128px;
+    margin-bottom: 10px;
+}
+.ga-back{
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+}
+.ga-next{
+    width: 40px;
+    height: 38px;
+    left: 678px;
+}
+.ga-banner-title{
+    flex: 1 0 0;
+    font-size: 36px;
+    color: #FFFFFF;
+    letter-spacing: -0.83px;
+    line-height: 50px;
+}
+.groupcard{
+    top: 158px;
+    width: 684px;
+    border-radius: 16px;
+    margin: 0 33px;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 4px 30px 0px rgba(39, 52, 125, 0.25);
+
+}
+.dividend-title{ 
+    height: 33px;
+    line-height: 33px;
+    color: rgba(33, 44, 104, 1);
+    font-size: 24px;
+    text-align: center;
+    padding-top: 45px;
+}
+.dividend-money{
+    color: orange;
+    line-height: 90px;
+    text-align: center;
+    color: rgba(33, 44, 104, 1);
+    font-size: 64px;
+}
+.dividend-sum{
+    vertical-align: middle;
+    height: 48px;
+    color: rgba(33, 44, 104, 1);
+    font-size: 28px;
+    text-align: center;
+    margin-top: 27px;
+    margin-bottom: 51px;
+}
+.twodata{
+    clear:both;
+    vertical-align: middle;
+    background: rgba(221,226,240,0.42);
+    border-radius: 0 0 16px 16px;
+    width: 684px;
+    height: 116px;
+    color: rgba(33, 44, 104, 1);
+}
+.dataleft{
+    display: inline-block;
+    width: 50%;
+    text-align: center;  
+    padding-top: 16px;
+    vertical-align: middle;   
+}
+.dataleft-title{
+    border-right: 3px solid rgb(227,230,245); 
+    font-size: 24px;
+}
+.dataleft-num{
+    border-right: 3px solid rgb(227,230,245); 
+    font-size: 28px;
+    padding-top: 9px;
+}
+.dataright{
+    display: inline-block;
+    width: 48%;
+    padding-top: 16px;
+    text-align: center;
+    vertical-align: middle;
+}
+.dataright-title{
+    font-size: 24px;
+}
+.dataright-num{
+    font-size: 28px;
+    padding-top: 9px;
+}
+.rule-title{
+    color: rgba(17, 17, 17, 1);
+    display: inline-block;
+    font-size: 36px;
+    line-height: 50px;
+}
+.line{
+    display: inline-block;
+    width: 260px;
+    height: 25px;
+    vertical-align: bottom;
+    border-top: 1px solid #A0ACC0;
+    margin: 0 10px;
+}
+.dividend-rule{
+    margin:50px 30px 60px;
+    line-height: 40px;
+    color: rgba(32, 50, 96, 1);
+    font-size: 28px;
+}
+.title{
+    margin-left: 50px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 24px;
+}
+.total{
+    margin-right: 30px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 24px;
+    float: right;
+}
+.miningItem{
+    vertical-align: middle;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 2px 8px 0px rgba(12, 15, 35, 0.05);
+}
+.itemImg{
+    margin-left: 45px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #FF912F;
+    display: inline-block;
+    vertical-align: middle;
+}
+.itemName{
+    margin-left: 21px;
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 32px;
+    line-height: 120px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.itemNum{
+    right: 30px;
+    position: absolute;
+    color: rgba(32, 50, 96, 1);
+    font-size: 32px;
+    line-height: 120px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.itemDetail{
+    color: rgba(102, 102, 102, 1);
+    font-size: 28px;
+    padding: 20px 30px;
+    line-height: 46px;
+    overflow: auto;
+    border-top: 1px solid #E5E5EE;
+}
+.itemBtn{
+    width: 122px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    float: right;
+    margin-top:20px;
+    margin-bottom: 10px;
+    vertical-align: middle;
+    border-radius: 100px;
+    border: 1px solid rgba(26, 112, 221, 1);
+    color: rgba(53, 116, 250, 1);
+    font-size: 24px;
+}
+.itemBtnNo{
+    width: 122px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 100px;
+    border: 1px solid rgba(160, 172, 192, 1);
+    color: rgba(160, 172, 192, 1);
+    font-size: 24px;
+    text-align: center;
+    float: right;
+    margin-top:20px;
+    margin-bottom: 10px;
+    vertical-align: middle;
+}
