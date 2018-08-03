@@ -12,8 +12,8 @@ import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
-import { GaiaWallet } from '../core/eth/wallet';
-import { generate, getRandomValuesByMnemonic, sha3, toMnemonic } from '../core/genmnemonic';
+import { EthWallet } from '../core/eth/wallet';
+import { generate, getRandomValuesByMnemonic, sha3, sign, toMnemonic } from '../core/genmnemonic';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../store/dataCenter';
 import { getLocalStorage, setLocalStorage } from '../utils/tools';
@@ -40,7 +40,11 @@ export const run = (cb): void => {
     // popNew('app-view-redEnvelope-send-inviteRedEnvelope',{ amount:100,leaveMessage:'大吉大利',currencyName:'ETH' });
     // popNew('app-view-redEnvelope-receive-redEnvelopeDetails',{ amount:100,leaveMessage:'大吉大利',currencyName:'ETH' });
     // popNew('app-view-redEnvelope-receive-redEnvelopeRecord');
-    // popNew('app-view-exchange-home');
+    // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
+    
+    // popNew('app-view-application-home', {}); 
+    // popNew('app-view-mine-dividend-mining', {}); 
+    // popNew('app-view-mine-FAQ-FAQ', {}); 
     if (cb) cb();
     // test();
 };
@@ -102,7 +106,7 @@ const initEthTokenDecimals = () => {
     if (newTokenNames.length === 0) return;
 
     newTokenNames.forEach(tokenName => {
-        const decimalsCode = GaiaWallet.tokenOperations('decimals', tokenName);
+        const decimalsCode = EthWallet.tokenOperations('decimals', tokenName);
         const api = new EthApi();
         api.ethCall(ERC20Tokens[tokenName], decimalsCode).then(r => {
             const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
@@ -144,10 +148,14 @@ const ifNeedUnlockScreen = () => {
 };
 
 const test = async () => {
-
-    const m = generate('english', 128);
-    const r = getRandomValuesByMnemonic('english', m);
-    console.log(m, r, toMnemonic('english', r));
+    const msg = '111';
+    // tslint:disable-next-line:max-line-length
+    const pubKey = '42c678868fe222f2acc0b05c93e554fee9b3f7a2a29ded93f6efcdc7b2b3e566353a6a8fa0943965ca906165d026de5d848e776dbaa2ecad632d0f98e7474a6e';
+    const signStr = sign(msg, 'ddc495b23b0f559b284e42d96604d6499dd8dc894250a99131529af592c15a4d');
+    console.log(msg, signStr, pubKey);
+    // const m = generate('english', 128);
+    // const r = getRandomValuesByMnemonic('english', m);
+    // console.log(m, r, toMnemonic('english', r));
 
 };
 

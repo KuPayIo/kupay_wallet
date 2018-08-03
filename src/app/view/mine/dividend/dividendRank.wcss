@@ -1,0 +1,102 @@
+.ga-header{
+    width: 100%;
+    height: 500px;
+}
+.ga-top-banner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    color: #203260;
+    padding: 2px 30px;
+    box-sizing: border-box;
+    height: 128px;
+    margin-bottom: 10px;
+}
+.ga-back{
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+}
+.ga-banner-title{
+    flex: 1 0 0;
+    font-size: 36px;
+    letter-spacing: -0.83px;
+    line-height: 50px;
+}
+.title{
+    margin-left: 30px;
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+}
+.more{
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 28px;
+    margin-right: 38px;
+    float: right;
+}
+.moreImg{
+    width: 28px;
+    height: 28px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+.rank{
+    text-align: center;
+    margin-top: 40px;
+    border-bottom: 5px solid #FFCE49;
+}
+.rankName{
+    height: 33px;
+    line-height: 33px;
+    width: 190px;
+    color: rgba(102, 102, 102, 1);
+    font-size: 24px;
+    text-align: center;
+    text-overflow:ellipsis; 
+    white-space:nowrap; 
+    overflow:hidden;
+    margin: 10px 0;
+}
+.rankNum{
+    width: 200px;
+    height: 40px;
+    line-height: 40px;
+    color: rgba(32, 50, 96, 1);
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.rankSecond{
+    display: inline-block;
+    width: 200px;
+    vertical-align: bottom;
+}
+.rankFirst{
+    width: 200px;
+    text-align: center;
+    display: inline-block;
+    margin: 0 30px;
+    vertical-align: bottom;
+}
+.rankThree{
+    display: inline-block;
+    width: 200px;
+    vertical-align: bottom;
+}
+.rankItem{
+    height: 120px;
+    background-color: #fff;
+    line-height: 120px;
+    font-size: 28px;
+    border-bottom: 1px solid #E5E5EE;
+}
+.moreRank{
+    height: 80px;
+    background-color: rgba(253,253,253);
+    text-align: center;
+    font-size: 28px;
+    line-height: 80px;
+    color: #A0ACC0;
+}
