@@ -35,13 +35,15 @@ export const run = (cb): void => {
     // exchangeManage.init();
     // 打开界面
     popNewPage();
-    // 后台切前台
-    backToFront();
+    // // 后台切前台
+    // todo 临时处理方案，暂时屏蔽后台唤醒时输入锁屏密码功能
+    // backToFront();
+
     // popNew('app-view-redEnvelope-send-inviteRedEnvelope',{ amount:100,leaveMessage:'大吉大利',currencyName:'ETH' });
     // popNew('app-view-redEnvelope-receive-redEnvelopeDetails',{ amount:100,leaveMessage:'大吉大利',currencyName:'ETH' });
     // popNew('app-view-redEnvelope-receive-redEnvelopeRecord');
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
-    
+
     // popNew('app-view-application-home', {}); 
     // popNew('app-view-mine-dividend-mining', {}); 
     // popNew('app-view-mine-FAQ-FAQ', {}); 

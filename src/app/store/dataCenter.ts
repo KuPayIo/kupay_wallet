@@ -313,7 +313,7 @@ export class DataCenter {
             }
             if (addAddrs.length > 0) {
                 addrs = addrs.concat(addAddrs);
-                setLocalStorage('addrs', list, false);
+                setLocalStorage('addrs', addrs, false);
             }
             currencyRecord.updateAddr = true;
             setLocalStorage('wallets', wallets, true);
@@ -589,8 +589,7 @@ export class DataCenter {
         for (let i = 1; i < cnt; i++) {
             const address = ethWallet.selectAddress(i);
             currencyRecord.addrs.push(address);
-            const addr: Addr = this.initAddr(address, 'ETH');
-            addrs.push(addr);
+            addrs.push(this.initAddr(address, 'ETH'));
         }
 
         return addrs;
@@ -610,8 +609,7 @@ export class DataCenter {
         for (let i = 1; i < cnt; i++) {
             const address = btcWallet.derive(i);
             currencyRecord.addrs.push(address);
-            const addr: Addr = this.initAddr(address, 'BTC');
-            addrs.push(addr);
+            addrs.push(this.initAddr(address, 'BTC'));
         }
         btcWallet.lock();
 
@@ -630,8 +628,7 @@ export class DataCenter {
         for (let i = 1; i < cnt; i++) {
             const address = ethWallet.selectAddress(i);
             currencyRecord.addrs.push(address);
-            const addr: Addr = this.initAddr(address, currencyRecord.currencyName);
-            addrs.push(addr);
+            addrs.push(this.initAddr(address, currencyRecord.currencyName));
         }
 
         return addrs;
