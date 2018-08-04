@@ -3,19 +3,23 @@
  */
 import { getHeight, popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+
+interface Props {
+    coinType: string;
+    coinBalance: number;
+}
 export class AccountAssests extends Widget {
     public ok: () => void;
     constructor() {
         super();
     }
-    public setProps(props: any, oldProps: any) {
+    public setProps(props: Props, oldProps: Props) {
         super.setProps(props, oldProps);
         this.init();
         this.dataProcess();
     }
     public init(): void {
         this.state = {
-            balance: '2.000000',// 资产余额
             maskHeight: getHeight(),
             routePath: 'app-view-cloud-accountAssests-others',
             panelBtns: [{
@@ -30,7 +34,8 @@ export class AccountAssests extends Widget {
                 label: '提币',
                 isActive: false,
                 component: 'app-view-cloud-accountAssests-withdraw'
-            }]
+            }],
+            showChargeAndWithdraw: false
         };
     }
     public backClick() {
@@ -60,7 +65,7 @@ export class AccountAssests extends Widget {
 
     public dataProcess() {
         this.state.coinType = this.props.coinType;
-        if (this.props.coinType === 'KPT') {
+        if (this.props.coinType === 'KT') {
             this.state.coinIcon = 'cloud_cointype_btc.png';
         } else if (this.props.coinType === 'ETH') {
             this.state.coinIcon = 'cloud_cointype_eth.png';
