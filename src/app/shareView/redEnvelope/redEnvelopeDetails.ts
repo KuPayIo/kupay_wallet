@@ -4,13 +4,25 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 interface Props {
-    code:string;
+    rid:string;// 红包id
+    uid:string;// 用户id
+    rtype:number;// 红包类型
+    ctype:number;// 币种
+    code:string;// 兑换码
+    amount:number;// 兑换金额
+    leaveMsg:string;// 留言
 }
+// 枚举货币类型
+const CurrencyType  = {
+    100:'KT',
+    101:'ETH'
+};
 export class RedEnvelopeDetails extends Widget {
     public ok:() => void;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.state = {
+            currencyName:CurrencyType[props.ctype],
             rules:['1.安装Fairblock，创建钱包',
                 '2.在钱包里点击发现-发红包',
                 '3.输入收到的红包码，红包金额将自动到账',

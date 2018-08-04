@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { requestAsync, requestLogined } from '../../../store/conMgr';
 
 export class ConvertRedEnvelope extends Widget {
     public ok:() => void;
@@ -12,7 +13,7 @@ export class ConvertRedEnvelope extends Widget {
     }
     public init() {
         this.state = {
-            redemptionCode:'',
+            cid:'',
             redEnvelope:{
                 type:'等额红包',
                 time:'04-12  14:32:00',
@@ -28,23 +29,49 @@ export class ConvertRedEnvelope extends Widget {
     }
 
     public redemptionCodeChange(e:any) {
-        this.state.redemptionCode = e.value;
+        this.state.cid = e.value;
         this.paint();
     }
     // 兑换
-    public convertClick() {
-        if (this.state.redemptionCode.trim().length <= 0) {
+    public async convertClick() {
+        if (this.state.cid.trim().length <= 0) {
             popNew('app-components-message-message',{ itype:'error',content:'请输入兑换码',center:true });
 
             return;
         }
+        const close = popNew('pi-components-loading-loading',{ text:'兑换中...' });
+        await this.convertRedEnvelope();
+        // await this.queryDetailByCid();
+        close.callback(close.widget);
         // tslint:disable-next-line:max-line-length
-        popNew('app-view-redEnvelope-receive-openRedEnvelope',{ redemptionCode:this.state.redemptionCode,redEnvelope:this.state.redEnvelope });
-        this.state.redemptionCode = '';
+        popNew('app-view-redEnvelope-receive-openRedEnvelope',{ cid:this.state.cid,redEnvelope:this.state.redEnvelope });
+        this.state.cid = '';
         this.paint();
     }
 
     public redEnvelopeRecordsClick() {
         popNew('app-view-redEnvelope-receive-redEnvelopeRecord');
+    }
+
+    public async convertRedEnvelope() {
+        const msg = {
+            type:'convert_red_bag',
+            param:{
+                cid:this.state.cid
+            }
+        };
+        const res = await requestLogined(msg);
+        console.log('convert_red_bag',res);
+    }
+
+    public async queryDetailByCid() {
+        const msg = {
+            type:'query_detail_log',
+            param:{
+                cids:this.state.cid
+            }
+        };
+        const res = await requestAsync(msg);
+        console.log('query_detail_log',res);
     }
 }

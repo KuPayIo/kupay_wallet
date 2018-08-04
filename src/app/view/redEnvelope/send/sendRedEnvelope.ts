@@ -7,10 +7,13 @@ import { requestLogined } from '../../../store/conMgr';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
 import { getByteLen, openBasePage } from '../../../utils/tools';
 
+interface Props {
+    balance:number;
+}
 export class SendRedEnvelope extends Widget {
     public ok:() => void;
-    public create() {
-        super.create();
+    public setProps(props:Props,oldProps:Props) {
+        super.setProps(props,oldProps);
         this.init();
     }
 
@@ -33,7 +36,7 @@ export class SendRedEnvelope extends Widget {
     
     // 获取余额
     public getBalance() {
-        return 100.50;
+        return this.props.balance;
     }
     // 单个金额改变
     public singleAmountInputChange(e:any) {
@@ -69,7 +72,7 @@ export class SendRedEnvelope extends Widget {
     }
 
     // 发送
-    public sendRedEnvelopeClick() {
+    public async sendRedEnvelopeClick() {
         if (this.state.itype === 0 && this.state.singleAmount <= 0) {
             popNew('app-components-message-message',{ itype:'error',content:'请输入要发送的单个红包金额',center:true });
 
@@ -97,12 +100,19 @@ export class SendRedEnvelope extends Widget {
 
             return;
         }
-        this.sendRedEnvlope();
-        popNew('app-view-redEnvelope-send-shareRedEnvelope',{
-            rid:'shfjksdhfks',
-            leaveMessage:this.state.leaveMessage,
-            currencyName:this.state.currencyName
-        });
+        const close = popNew('pi-components-loading-loading',{ text:'加载中...' });
+        const res = await this.sendRedEnvlope();
+        close.callback(close.widget);
+        if (res.result === 1) {
+            popNew('app-view-redEnvelope-send-shareRedEnvelope',{
+                rid:res.value,
+                leaveMessage:this.state.leaveMessage,
+                currencyName:this.state.currencyName
+            });
+        } else {
+            popNew('app-components-message-message',{ itype:'error',content:'出错啦,请重试',center:true });
+        }
+        
     }
     
     // 红包记录
@@ -118,7 +128,7 @@ export class SendRedEnvelope extends Widget {
         this.paint();
     }
 
-    public sendRedEnvlope() {
+    public async sendRedEnvlope() {
         // 币种
         const priceTypes = {
             KT:100,
@@ -136,6 +146,10 @@ export class SendRedEnvelope extends Widget {
                 desc:this.state.leaveMessage
             }
         };
-        requestLogined(msgSendRedEnvelope).then(console.log).catch(console.log);
+        // tslint:disable-next-line:no-unnecessary-local-variable
+        const res = await requestLogined(msgSendRedEnvelope);
+        console.log('emit_red_bag',res);
+
+        return res;
     }
 }
