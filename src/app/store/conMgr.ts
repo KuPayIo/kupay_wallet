@@ -1,7 +1,7 @@
 /**
  * 连接管理
  */
-import { open, request, setUrl } from '../../pi/net/ui/con_mgr';
+import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
@@ -93,7 +93,16 @@ export const openAndGetRandom = async () => {
     const wallets = getLocalStorage('wallets');
     const wallet = getCurrentWallet(wallets);
     if (!wallet) return;
-    if (dataCenter.getUser() === wallet.walletId) return;
+    const oldUser = dataCenter.getUser();
+    if (oldUser === wallet.walletId) return;
+    if (oldUser) {
+        closeCon();
+        setLoginState(LoginState.init);
+        dataCenter.setUser(wallet.walletId);
+
+        return;
+    }
+
     setUrl(`ws://127.0.0.1:2081`);
     dataCenter.setUser(wallet.walletId);
 
@@ -114,6 +123,19 @@ export const openAndGetRandom = async () => {
         }, (result) => {
             console.log(`open错误信息为${result}`);
             reject(result);
+        }, () => {
+            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+            // 连接打开后开始设置账号缓存
+            const msg = { type: 'get_random', param: { account: wallet.walletId.slice(2), pk: `04${gwlt.publicKey}` } };
+            request(msg, (resp) => {
+                if (resp.type) {
+                    console.log(`错误信息为${resp.type}`);
+                    reject(resp.type);
+                } else if (resp.result !== undefined) {
+                    dataCenter.setConRandom(resp.rand);
+                    resolve(resp);
+                }
+            });
         });
     });
 
