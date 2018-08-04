@@ -2,7 +2,7 @@
     <div w-class="ga-header">
         <div w-class="ga-top-banner">
             <img src="../../../res/image/btn_back_white.png" w-class="ga-back" on-tap="backPrePage"/>
-            <span w-class="ga-banner-title">挖矿</span>    
+            <span w-class="ga-banner-title" on-tap="backPrePage">挖矿</span>    
             <img src="../../../res/image/btn_back_white.png" w-class="ga-next" on-tap="goHistory"/>
         </div>
         <div w-class="groupcard">

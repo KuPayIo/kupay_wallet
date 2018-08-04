@@ -19,18 +19,20 @@
     cursor: pointer;
     width: 44px;
     height: 44px;
+    line-height: 50px;
 }
 .ga-next{
     width: 40px;
     height: 38px;
-    left: 678px;
+    position: relative;
 }
 .ga-banner-title{
-    flex: 1 0 0;
     font-size: 36px;
     color: #FFFFFF;
     letter-spacing: -0.83px;
     line-height: 50px;
+    position: absolute;
+    left: 74px;
 }
 .groupcard{
     width: 684px;

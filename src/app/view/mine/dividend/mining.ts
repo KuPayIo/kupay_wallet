@@ -6,6 +6,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { getMining } from '../../../store/conMgr';
 
 interface Items {
     isOpen:boolean;   
@@ -23,6 +24,9 @@ export class Dividend extends Widget {
     public state: {data:Items[]};
     constructor() {
         super();
+    }
+
+    public create() {
         this.state = {
             data:[
                 {
@@ -90,6 +94,8 @@ export class Dividend extends Widget {
                 }
             ]
         };
+
+        getMining();
     }
 
     public backPrePage() {
@@ -113,10 +119,10 @@ export class Dividend extends Widget {
     }
 
     /**
-     * 查看排名详情列表
+     * 查看总排名情况
      */
     public goRank() {
-        popNew('app-view-mine-dividend-dividendRank',2);
+        popNew('app-view-mine-dividend-dividendRank');
     }
     /**
      * 挖矿项目跳转

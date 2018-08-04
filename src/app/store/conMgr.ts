@@ -136,3 +136,21 @@ export const getBalance = async (currencyType: CurrencyType) => {
 
     return requestAsync(msg);
 };
+
+/**
+ * 获取分红信息
+ */
+export const getDividend = async() => {
+    const msg = { type:'wallet/cloud@get_bonus_info', param:{} };
+    
+    return requestAsync(msg);
+};
+
+/**
+ * 获取挖矿总信息
+ */
+export const getMining = async() => {
+    const msg = { type:'wallet/cloud@get_mine_total',param:{} };
+
+    return requestAsync(msg);
+};
