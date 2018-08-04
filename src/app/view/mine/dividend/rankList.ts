@@ -60,11 +60,16 @@ export class Dividend extends Widget {
         };
     }
 
+    /**
+     * 滚动加载更多列表数据
+     * h1 滚动条高度+滚动模块的可见高度=当前屏幕最底端高度
+     * h2 最低端元素的绝对高度
+     */
     public getMoreList() {
-        let h1 = document.getElementById('ranklist').scrollTop + document.getElementById('ranklist').offsetHeight; 
-        let h2 = document.getElementById('more').offsetTop; 
-        if(h2-h1<20 && this.state.refresh){
-            this.state.refresh=false;
+        const h1 = document.getElementById('ranklist').scrollTop + document.getElementById('ranklist').offsetHeight;  
+        const h2 = document.getElementById('more').offsetTop; 
+        if (h2 - h1 < 20 && this.state.refresh) {
+            this.state.refresh = false;
             console.log('加载中，请稍后~~~');
             setTimeout(() => {
                 this.state.gainRank.push({
@@ -86,7 +91,7 @@ export class Dividend extends Widget {
         } 
     }
 
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
 }

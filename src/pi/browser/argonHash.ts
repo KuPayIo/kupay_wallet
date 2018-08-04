@@ -42,12 +42,14 @@ export class ArgonHash extends NativeObject {
 
     private calcHashValueAtPc(iType: string, param: any) {
         if (iType === 'getArgon2Hash') {
-            pi_modules.commonjs.exports.require(['app/utils_pc/argon2'], {}, (mods, fm) => {
-                // todo 这里考虑使用worker进行处理
-                const hash = mods[0].getArgonHash(param.pwd, param.salt, param.t, param.m, param.hashLen, param.p, 1);
-                param.success(hash);
-                console.log(mods, fm);
-            });
+            setTimeout(() => {
+                pi_modules.commonjs.exports.require(['app/utils_pc/argon2'], {}, (mods, fm) => {
+                    // todo 这里考虑使用worker进行处理
+                    const hash = mods[0].getArgonHash(param.pwd, param.salt, param.t, param.m, param.hashLen, param.p, 1);
+                    param.success(hash);
+                    console.log(mods, fm);
+                });
+            }, 1000);
         }
     }
 }

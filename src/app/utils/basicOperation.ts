@@ -2,6 +2,7 @@
  * 基础操作
  */
 import { GlobalWallet } from '../core/globalWallet';
+import { openAndGetRandom } from '../store/conMgr';
 import { dataCenter } from '../store/dataCenter';
 import { Addr, Wallet } from '../view/interface';
 import { getAvatarRandom } from './account';
@@ -58,4 +59,6 @@ export const importWalletByMnemonic = async (mnemonic, psw, pswTips) => {
     wallets.curWalletId = curWalletId;
     wallets.walletList.push(wallet);
     setLocalStorage('wallets', wallets, true);
+
+    openAndGetRandom();
 };

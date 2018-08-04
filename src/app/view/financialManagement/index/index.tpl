@@ -1,42 +1,92 @@
-<div class="ga-new-page" w-class="index">
-    <div w-class="topBar">
-        理财
+<div class="ga-new-page" w-class="ga-new-page">
+    <div w-class="headStatusBar"></div>
+    <div w-class="head" on-tap="toRecord">
+        <span w-class="headTitle">我的理财</span>
+        <span w-class="headTip">全部</span>
+        <img src="../../../res/image/cloud_arow_right.png" w-class="headArow" />
     </div>
-    <div w-class="assetsDetail">
-        <div w-class="flexItem boxBorderRight" on-tap="assestsClicked">
-            <img src="../../../res/image/btn_right_arrow.png" w-class="arrow" />
-            <p w-class="assetsTitle">持有资产（MPT）</p>
-            <p w-class="assetsContent">{{it1.assets}}</p>
-        </div>
-        <div w-class="flexItem" on-tap="incomeClicked">
-            <img src="../../../res/image/btn_right_arrow.png" w-class="arrow" />
-            <p w-class="assetsTitle">累计收益</p>
-            <p w-class="assetsContent">{{it1.cumulativeIncome}}</p>
-        </div>
-    </div>
-    <div w-class="productList">
-        <div w-class="listTitle">
-            热门推荐
-        </div>
-        {{for i,v of it1.productList}}
-        <div w-class="listItems" on-tap="toDetail(e,'{{v.id}}')">
-            <div w-class="listflexleft">
-                <p w-class="expectedEarnings">{{v.expectedEarnings}}</p>
-                <p w-class="tip">{{v.tip}}</p>
+
+    <div w-class="mine">
+        {{for i,v of it1.record}}
+        <div w-class="mineItem">
+            <div w-class="mineTitle">
+                {{v.title}}
             </div>
-            <div w-class="listflexright">
-                <div>
-                    <p w-class="title">{{v.title}}</p>
-                    {{if v.isSellOut}}
-                    <span w-class="tag">售罄</span>
-                    {{end}}
+            <div w-class="mineMain">
+                <div w-class="mainLeft">
+                    <div w-class="normalTitle">
+                        持有(0.01/份)
+                    </div>
+                    <div w-class="normalMain">
+                        {{v.amount}}份
+                    </div>
                 </div>
-                <p w-class="describe">
-                    {{v.content}}
-                </p>
+                <div w-class="mainMid">
+                    <div w-class="normalTitle">
+                        昨日收益(ETH)
+                    </div>
+                    <div w-class="incomMain">
+                        {{v.bonus}}
+                    </div>
+                </div>
+                <div w-class="mainRight">
+                    <div w-class="normalTitle">
+                        累计
+                    </div>
+                    <div w-class="normalMain">
+                        {{v.days}}天
+                    </div>
+                </div>
             </div>
         </div>
         {{end}}
 
+        <div w-class="more" on-tap="toRecord">
+            更多
+        </div>
     </div>
+
+
+    <div w-class="currentProduct">
+        活期理财
+    </div>
+    <div w-class="productList">
+
+        {{for i,v of it1.productList}}
+        <div w-class="productItem" on-tap="toDetail">
+            <div w-class="productHead">
+                {{v.title}} 
+                {{if v.isSoldOut}}
+                <span w-class="surplus soldOut">
+                    售罄
+                </span>
+                {{else}}
+                <span w-class="surplus">
+                    剩余{{v.surplus}}
+                </span>
+                {{end}}
+
+            </div>
+            <div w-class="productInfo">
+                <div w-class="interestRate">
+                    <div w-class="rate">{{v.profit}}</div>
+                    <div w-class="rateTitle">预期年化收益</div>
+                </div>
+                <div w-class="infoMain">
+                    <div w-class="mainTitle">
+                        {{v.productName}}
+                    </div>
+                    <div w-class="mainText">
+                        {{v.productDescribe}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{end}}
+
+
+    </div>
+
+    <div style="height: 120px;"></div>
+
 </div>

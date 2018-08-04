@@ -1,0 +1,92 @@
+.expectedEarnings{
+    height: 278px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.centerBox{
+    text-align: center;
+}
+.earningsTitle{
+    font-size: 28px;
+    color: #203260;
+}
+.number{
+    font-size: 64px;
+    color: #212C68;
+    margin-top:10px; 
+}
+.baseInfo{
+    background: #fff;
+    padding-bottom:30px;
+    padding-left:40px;
+    padding-right:40px;  
+    display: flex; 
+    justify-content: space-around;
+}
+.flexOne{
+    text-align: center;
+}
+.oneTitle{
+    font-size: 24px;
+    color: #A0ACC0;
+}
+.oneMain{
+    font-size: 28px;
+    color: #212C68;
+    margin-top:10px; 
+}
+.line{
+    display: inline-block;
+    width: 2px;
+    height: 78px;
+    background: #E5E5EE;
+}
+.contentBox{
+    padding: 0 30px;
+    background: #fff;
+    margin-top:10px; 
+}
+.productIntroduction{
+    padding-top:10px; 
+}
+.introductionTitle{
+    padding: 30px 0;
+    font-size: 28px;
+    color: #203260;
+}
+.introductionContent{
+    font-size: 28px;
+    color: #A0ACC0;
+    padding-bottom:30px; 
+}
+.otherInfo{
+
+}
+.infoTitle{
+    padding: 30px 0;
+    font-size: 28px;
+    color: #203260;
+}
+.infoContent{
+    font-size: 28px;
+    color: #A0ACC0;
+}
+.notice{
+    padding: 30px 0;
+    font-size: 28px;
+    color: #1A70DD;
+}
+.botBtn{
+    height: 100px;
+    line-height: 100px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 36px;
+    color: #FFFFFF;
+    background: #212C67;
+    text-align: center;
+}

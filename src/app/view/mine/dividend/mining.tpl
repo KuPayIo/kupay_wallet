@@ -1,8 +1,8 @@
-<div class="ga-new-page" style="background: #ffffff;overflow-y: auto;height: 100%;overflow-x: hidden; ">
+<div class="ga-new-page" style="background: #F8F8F8;overflow-y: auto;height: 100%;overflow-x: hidden; ">
     <div w-class="ga-header">
         <div w-class="ga-top-banner">
             <img src="../../../res/image/btn_back_white.png" w-class="ga-back" on-tap="backPrePage"/>
-            <span w-class="ga-banner-title">挖矿</span>    
+            <span w-class="ga-banner-title" on-tap="backPrePage">挖矿</span>    
             <img src="../../../res/image/btn_back_white.png" w-class="ga-next" on-tap="goHistory"/>
         </div>
         <div w-class="groupcard">
@@ -25,8 +25,8 @@
             </div>      
         </div>       
     </div>
-    <div>
-        <div style="text-align: center;margin-top: 120px;">
+    <div style="background: #ffffff;">
+        <div style="text-align: center;padding-top: 120px;">
             <span w-class="line"></span>
             <span w-class="rule-title">挖矿规则</span>
             <span w-class="line"></span>            
@@ -40,27 +40,28 @@
         </div>
 
         <div style="padding-left: 30px;font-size: 36px;">增加储备矿</div>
-        <div style="background: #F8F8F8;">
-           
-            <div style="padding-top: 20px;margin-bottom: 20px;background: #ffffff;line-height: 74px;">
-                <span w-class="title">类目</span>
-                <span w-class="total">总累积(KT)</span>
-            </div>
-        
-            {{for ind,val of it1.data}}
-            <div w-class="miningItem" >
-                <div on-tap="goToggle( {{ind}} )">
-                    <img src="../../../res/image/btn_back.png" w-class="itemImg"/>
-                    <span w-class="itemName">{{val.itemName}}</span>
-                    <span w-class="itemNum">{{val.itemNum}}</span>
-                </div>
-                <div w-class="itemDetail" style="display: {{val.isOpen?'block':'none'}}">
-                    <widget w-tag="pi-ui-html">{{val.itemDetail}}</widget>
-                    <div w-class="{{val.isComplete?'itemBtnNo':'itemBtn'}}" on-tap="goDetail( {{ind}} )">{{val.itemBtn}}</div>
-                </div>
-            </div>
-            {{end}}
-        </div>
-
     </div>
+
+    <di>
+        <div style="padding-top: 20px;margin-bottom: 20px;background: #ffffff;line-height: 74px;">
+            <span w-class="title">类目</span>
+            <span w-class="total">总累积(KT)</span>
+        </div>
+    
+        {{for ind,val of it1.data}}
+        <div w-class="miningItem" >
+            <div on-tap="goToggle( {{ind}} )">
+                <img src="../../../res/image/btn_back.png" w-class="itemImg"/>
+                <span w-class="itemName">{{val.itemName}}</span>
+                <span w-class="itemNum">{{val.itemNum}}</span>
+            </div>
+            <div w-class="itemDetail" style="display: {{val.isOpen?'block':'none'}}">
+                <widget w-tag="pi-ui-html">{{val.itemDetail}}</widget>
+                <div w-class="{{val.isComplete?'itemBtnNo':'itemBtn'}}" on-tap="goDetail( {{ind}} )">{{val.itemBtn}}</div>
+            </div>
+        </div>
+        {{end}}
+    </div>
+
+    
 </div>

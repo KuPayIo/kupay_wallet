@@ -2,7 +2,9 @@
  * 
  */
 import { SendChatMessage } from '../../pi/browser/sendMessage';
+import { popNew } from '../../pi/ui/root';
 import { Widget } from '../../pi/widget/widget';
+import { getCurrentWallet, getLocalStorage } from '../utils/tools';
 export class App extends Widget {
     constructor() {
         super();
@@ -21,6 +23,7 @@ export class App extends Widget {
             },
             {
                 text: '云端',
+                name: 'cloud',
                 icon: 'remote_icon.png',
                 iconActive: 'remote_icon_active.png',
                 components: 'app-view-cloud-home-home'
@@ -67,6 +70,14 @@ export class App extends Widget {
             this.setProxy().then(this.sendMessage);
 
             return;
+        }
+        if (this.state.tabBarList[index].name === 'cloud') {
+            const wallets = getLocalStorage('wallets');
+            if (!wallets || wallets.walletList.length === 0) {
+                popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
+
+                return;
+            }
         }
         this.state.isActive = index;
         this.paint();
