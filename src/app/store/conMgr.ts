@@ -27,6 +27,12 @@ export enum CurrencyType {
     KT = 100,
     ETH
 }
+
+// 枚举货币类型
+export const CurrencyTypeReverse  = {
+    100:'KT',
+    101:'ETH'
+};
 /**
  * 登录状态
  */
@@ -47,7 +53,7 @@ export const requestAsync = async (msg: any): Promise<any> => {
         request(msg, (resp: any) => {
             if (resp.type) {
                 console.log(`错误信息为${resp.type}`);
-                reject(resp.type);
+                reject(resp);
             } else if (resp.result !== undefined) {
                 resolve(resp);
             }

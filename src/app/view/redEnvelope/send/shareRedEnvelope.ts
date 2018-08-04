@@ -18,8 +18,8 @@ export class ShareRedEnvelope extends Widget {
     public shareToFriends() {
         popNew('app-components-share-share', { 
             shareType: ShareToPlatforms.TYPE_LINK,
-            url:'https://www.baidu.com',
-            title:'红包title',
+            url:`http://120.24.44.254:8080/wallet/app/boot/share.html?rid=${this.props.rid}`,
+            title:'等额红包',
             content:this.props.leaveMessage
         });
         this.ok && this.ok();

@@ -9,6 +9,7 @@
     flex: 1 0 0;
 }
 .ga-records-num{
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,6 +31,8 @@
 .ga-records-list-box{
     flex: 1 0 0;
     background-color: #fff;
+    display: flex;
+    flex-direction: column;
 }
 .ga-records-list-title{
     height: 100px;
@@ -39,6 +42,11 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid #e5e5ee;
+}
+.ga-records-list{
+    flex: 1 0 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .ga-records-item{
     height: 170px;

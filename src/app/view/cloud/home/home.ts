@@ -34,7 +34,7 @@ export class Home extends Widget {
      */
     public packetsClicked() {
         // TODO
-        popNew('app-view-redEnvelope-send-sendRedEnvelope');
+        popNew('app-view-redEnvelope-send-sendRedEnvelope',{ balance:this.state.ktBalance });
     }
 
     /**

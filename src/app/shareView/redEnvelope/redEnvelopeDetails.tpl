@@ -3,8 +3,8 @@
         <div w-class="ga-scroll-container">
             <div w-class="ga-top">
                 <div w-class="ga-head"><div w-class="ga-head-inner"></div></div>
-                <div w-class="ga-leave-message">恭喜发财 大吉大利</div>
-                <div w-class="ga-amount"><span>100</span><span w-class="ga-currency-name">ETH</span></div>
+                <div w-class="ga-leave-message">{{it.leaveMsg}}</div>
+                <div w-class="ga-amount"><span>{{it.amount}}</span><span w-class="ga-currency-name">{{it1.currencyName}}</span></div>
                 <div w-class="ga-input-father">
                     <div w-class="input-father">{{it.code}}</div>
                     <div w-class="ga-copy-btn" on-tap="copyBtnClick">复制红包码</div>
