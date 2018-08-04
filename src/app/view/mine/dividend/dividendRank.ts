@@ -1,7 +1,6 @@
 /**
  * 挖矿及矿山排名
  */
-import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 
@@ -15,8 +14,8 @@ export class DividendItem extends Widget {
         this.ok && this.ok();
     }
 
-    public setProps(props: Json, oldProps?: Json) {
-        super.setProps(props,oldProps);
+    public create() {
+        super.create();
         this.state = {
             gainRank:[
                 {
@@ -64,6 +63,10 @@ export class DividendItem extends Widget {
         };
     }
 
+    /**
+     * 查看排名详情列表
+     * @param ind 挖矿排名或矿山排名
+     */
     public gotoMore(ind:number) {
         popNew('app-view-mine-dividend-rankList',  ind);
     }

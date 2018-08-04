@@ -10,21 +10,21 @@
     
         <div w-class="rank">
             <div w-class="rankSecond">
-                <img src="../../../res/image/btn_exc_add.png" style="width: 100px;height: 100px;border-radius: 50%;background: #E1E1E1"/>
+                <img src="../../../res/image/mining_rank_two.png" style="width: 100px;height: 100px;border-radius: 50%;background: #E1E1E1"/>
                 <div w-class="rankName">我的名字有十个字</div>
                 <div w-class="rankNum">98,605,000.090</div>
                 <div style="width: 190px;height: 160px;background: #E1E1E1"></div>
             </div>
     
             <div w-class="rankFirst">
-                <img src="../../../res/image/btn_exc_add.png" style="width: 100px;height: 100px;border-radius: 50%;background: #FFCE49"/>
+                <img src="../../../res/image/mining_rank_one.png" style="width: 100px;height: 100px;border-radius: 50%;background: #FFCE49"/>
                 <div w-class="rankName" style="width: auto">我的名字有十个字</div>
                 <div w-class="rankNum">98,605,000.090</div>
                 <div style="width: 190px;height: 280px;background: #FFCE49"></div>
             </div>
     
             <div w-class="rankThree">
-                <img src="../../../res/image/btn_exc_add.png" style="width: 100px;height: 100px;border-radius: 50%;background: #CDA257"/>
+                <img src="../../../res/image/mining_rank_three.png" style="width: 100px;height: 100px;border-radius: 50%;background: #CDA257"/>
                 <div w-class="rankName">我的名字有十个字</div>
                 <div w-class="rankNum">98,605,000.090</div>
                 <div style="width: 190px;height: 110px;background: #CDA257"></div>
@@ -55,21 +55,21 @@
         </div>
         <div w-class="rank">
             <div w-class="rankSecond">
-                <img src="../../../res/image/btn_exc_add.png" style="width: 100px;height: 100px;border-radius: 50%;background: #E1E1E1"/>
+                <img src="../../../res/image/mining_rank_two.png" style="width: 100px;height: 100px;border-radius: 50%;background: #E1E1E1"/>
                 <div w-class="rankName">我的名字有十个字</div>
                 <div w-class="rankNum">98,605,000.090</div>
                 <div style="width: 190px;height: 160px;background: #E1E1E1"></div>
             </div>
     
             <div w-class="rankFirst">
-                <img src="../../../res/image/btn_exc_add.png" style="width: 100px;height: 100px;border-radius: 50%;background: #FFCE49"/>
+                <img src="../../../res/image/mining_rank_one.png" style="width: 100px;height: 100px;border-radius: 50%;background: #FFCE49"/>
                 <div w-class="rankName" style="width: auto">我的名字有十个字</div>
                 <div w-class="rankNum">98,605,000.090</div>
                 <div style="width: 190px;height: 280px;background: #FFCE49"></div>
             </div>
     
             <div w-class="rankThree">
-                <img src="../../../res/image/btn_exc_add.png" style="width: 100px;height: 100px;border-radius: 50%;background: #CDA257"/>
+                <img src="../../../res/image/mining_rank_three.png" style="width: 100px;height: 100px;border-radius: 50%;background: #CDA257"/>
                 <div w-class="rankName">我的名字有十个字</div>
                 <div w-class="rankNum">98,605,000.090</div>
                 <div style="width: 190px;height: 110px;background: #CDA257"></div>
