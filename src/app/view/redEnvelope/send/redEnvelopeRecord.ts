@@ -26,10 +26,10 @@ export class RedEnvelopeRecord extends Widget {
         const res = await this.queryRedEnvelopeRecord();
         const recordListShow = [];
         if (res.result === 1) {
-            const start = res.value[0];
+            const start = res.value[1];
             const recordList = [];
            
-            const r = res.value[1];
+            const r = res.value[2];
             for (let i = 0; i < r.length;i++) {
                 const record:Record = {
                     rtype:r[i][0],
