@@ -14,9 +14,9 @@ export class Home extends Widget {
     }
     public init(): void {
         this.state = {
-            ktBalance: '5,000.00',// kt余额
-            ethBalance: '70.00',// eth余额
-            bonus: '0.9152'// 累计分红
+            ktBalance: 0.00,// kt余额
+            ethBalance: 0.00,// eth余额
+            bonus: 0.00// 累计分红
         };
 
         this.initDate();
@@ -26,7 +26,7 @@ export class Home extends Widget {
      * 点击云端账户
      */
     public async cloudAccountClicked() {
-        popNew('app-view-cloud-cloudAccount-cloudAccount');
+        popNew('app-view-cloud-cloudAccount-cloudAccount', { ktBalance: this.state.ktBalance, ethBalance: this.state.ethBalance });
     }
 
     /**

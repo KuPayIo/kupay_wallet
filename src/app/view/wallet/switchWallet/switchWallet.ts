@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
+import { openAndGetRandom } from '../../../store/conMgr';
 import { nickNameInterception, pswEqualed } from '../../../utils/account';
 import { decrypt, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 
@@ -45,6 +46,8 @@ export class SwitchWallet extends Widget {
         const wallets = getLocalStorage('wallets');
         wallets.curWalletId = curWalletId;
         setLocalStorage('wallets', wallets, true);
+        
+        openAndGetRandom();
     }
 
     public closePageClick() {

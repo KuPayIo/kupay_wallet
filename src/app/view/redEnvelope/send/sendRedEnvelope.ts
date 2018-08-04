@@ -1,7 +1,6 @@
 /**
  * send red-envelope
  */
-import { open, request, setUrl } from '../../../../pi/net/ui/con_mgr';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { requestLogined } from '../../../store/conMgr';

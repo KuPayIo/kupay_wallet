@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
+import { openAndGetRandom } from '../../../store/conMgr';
 import { dataCenter } from '../../../store/dataCenter';
 import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
@@ -120,6 +121,7 @@ export class WalletCreate extends Widget {
         wallets.walletList.push(wallet);
         setLocalStorage('wallets', wallets, true);
 
+        openAndGetRandom();
     }
 
     public importWalletClick() {

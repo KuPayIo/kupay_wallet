@@ -50,7 +50,7 @@ export const setUrl = (url: string) => {
  * 打开连接
  */
 let lastRequest = null;
-export const open = (callback: Function, errorCallback: Function, timeout?: number) => {
+export const open = (callback: Function, errorCallback: Function, reOpenCallback?: Function, timeout?: number) => {
     timeout = timeout || defaultTimeout;
     let lastError;
     // 接收后台推送服务器时间，并设置成服务器时间
@@ -68,7 +68,7 @@ export const open = (callback: Function, errorCallback: Function, timeout?: numb
             }
         }
     });
-    ping();
+    ping(reOpenCallback);
     timeout += now();
     const cfg = { encode: false, isText: (commonjs.flags.os.name === 'Android') && (commonjs.flags.os.version < '4.4.0') };
     const func = (result) => {
@@ -138,18 +138,18 @@ export const send = (msg: any) => {
 /**
  * 登录
  */
-export const login = (userx: string, uType: string, password: string, cb: Function, timeout?: number) => {
+export const login = (userx: string, uType: string, password: string, cb: Function, reOpenCallback?: Function, timeout?: number) => {
     if (con === null) {
         if (conState !== ConState.init) {
             throw new Error(`login, invalid state: ${conState}`);
         }
 
         return open(() => {
-            login(userx, uType, password, cb, timeout);
+            login(userx, uType, password, cb, reOpenCallback, timeout);
         }, (result) => {
             // callTime(cb, [result], "login");
             cb([result]);
-        }, timeout);
+        }, reOpenCallback, timeout);
     }
     con.request({ type: 'login', param: { userType: uType, password: password, user: userx } }, (result) => {
         if (result.error) {
@@ -174,18 +174,18 @@ export const login = (userx: string, uType: string, password: string, cb: Functi
 /**
  * 管理端登录
  */
-export const adminLogin = (username: string, password: string, cb: Function, timeout?: number) => {
+export const adminLogin = (username: string, password: string, cb: Function, reOpenCallback?: Function, timeout?: number) => {
     if (con === null) {
         if (conState !== ConState.init) {
             throw new Error(`login, invalid state: ${conState}`);
         }
 
         return open(() => {
-            adminLogin(username, password, cb, timeout);
+            adminLogin(username, password, cb, reOpenCallback, timeout);
         }, (result) => {
             // callTime(cb, [result], "login");
             cb([result]);
-        }, timeout);
+        }, reOpenCallback, timeout);
     }
     con.request({ type: 'admin_login', param: { username: username, password: password } }, (result) => {
         if (result.error) {
@@ -209,18 +209,18 @@ export const adminLogin = (username: string, password: string, cb: Function, tim
 /**
  * 代理商登录
  */
-export const agentLogin = (agentId: number, cb: Function, timeout?: number) => {
+export const agentLogin = (agentId: number, cb: Function, reOpenCallback?: Function, timeout?: number) => {
     if (con === null) {
         if (conState !== ConState.init) {
             throw new Error(`login, invalid state: ${conState}`);
         }
 
         return open(() => {
-            agentLogin(agentId, cb, timeout);
+            agentLogin(agentId, cb, reOpenCallback, timeout);
         }, (result) => {
             // callTime(cb, [result], "login");
             cb([result]);
-        }, timeout);
+        }, reOpenCallback, timeout);
     }
     con.request({ type: 'agent_login', param: { agent_id: agentId } }, (result) => {
         if (result.error) {
@@ -303,6 +303,17 @@ export const stateChangeRegister = (cb) => {
 
 export const stateChangeUnregister = (index) => {
     stateChangeArr[index] = null;
+};
+
+/**
+ * 关闭连接
+ */
+export const closeCon = () => {
+    if (con) {
+        con.close();
+        setConState(ConState.closed);
+        con = null;
+    }
 };
 // ============================== 本地
 // 默认的超时时间
@@ -402,12 +413,13 @@ const setLoginState = (s: number) => {
 /**
  * 重新打开连接
  */
-const reopen = () => {
+const reopen = (reOpenCallback?: Function) => {
     open(() => {
         if (loginState === LoginState.logined || loginState === LoginState.relogining) {
             relogin();
         }
-    }, null);
+        if (reOpenCallback) reOpenCallback();
+    }, null, reOpenCallback);
 };
 /**
  * 重登录
@@ -436,15 +448,15 @@ const requestWaits = () => {
 /**
  * 定时器：每隔10s调用一次，发送本地时间
  */
-const ping = () => {
+const ping = (reOpenCallback: Function) => {
     const func = () => {
         if (conState === ConState.closed) {
-            reopen();
+            reopen(reOpenCallback);
         } else if (conState === ConState.opened) {
             if (now() > con.activeTime + closeTimeout) {
                 con.close();
                 setConState(ConState.closed);
-                reopen();
+                reopen(reOpenCallback);
             } else {
                 con.send({ type: 'app@time', param: { ctime: now() } });
             }

@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
+import { openAndGetRandom } from '../../../store/conMgr';
 import { dataCenter } from '../../../store/dataCenter';
 import { register, unregister } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
@@ -276,6 +277,9 @@ export class WalletManagement extends Widget {
 
     }
 
+    /**
+     * 删除钱包
+     */
     public async deleteWallet() {
 
         await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '删除钱包', content: '删除后需要重新导入，之前的分享也将失效' });
@@ -303,6 +307,8 @@ export class WalletManagement extends Widget {
                 wallets.walletList.splice(walletIndex, 1);
                 wallets.curWalletId = wallets.walletList.length > 0 ? wallets.walletList[0].walletId : '';
                 setLocalStorage('wallets', wallets, true);
+
+                await openAndGetRandom();
                 this.ok && this.ok(true);
 
                 popNew('app-components-message-message', { itype: 'success', content: '删除成功', center: true });

@@ -62,13 +62,15 @@ export const lang = 'english';
 const defaultExchangeRateJsonTest = {
     ETH: { CNY: 3337.01, USD: 517.42 },
     BTC: { CNY: 42868.55, USD: 6598.71 },
-    YNC: { CNY: 100, USD: 15.2625 }
+    YNC: { CNY: 100, USD: 15.2625 },
+    KT: { CNY: 0.03, USD: 0.19 }
 };
 
 // 默认货币汇率主网络
 const defaultExchangeRateJsonMain = {
     ETH: { CNY: 3337.01, USD: 517.42 },
     BTC: { CNY: 42868.55, USD: 6598.71 },
+    KT: { CNY: 0.03, USD: 0.19 },
     BNB: { CNY: 100, USD: 15.2625 },
     VEN: { CNY: 100, USD: 15.2625 },
     OMG: { CNY: 100, USD: 15.2625 },

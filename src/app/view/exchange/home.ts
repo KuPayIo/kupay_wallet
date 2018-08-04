@@ -15,8 +15,8 @@ export class Home extends Widget {
         this.init();
     }
     public init() {
-        const currency1 = 'MPT';
-        const currency2 = 'MPT';
+        const currency1 = 'KT';
+        const currency2 = 'KT';
         this.state = {
             currency1: currency1,
             currency2: currency2,

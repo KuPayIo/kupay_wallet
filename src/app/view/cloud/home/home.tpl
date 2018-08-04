@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <div w-class="canvas">
+    <div w-class="canvas" style="display: none;">
         <div w-class="canvasHead">
             <div w-class="canvasHead-left">
                 <div w-class="leftTitle"><span w-class="KTspan">KT</span>/ETH</div>
