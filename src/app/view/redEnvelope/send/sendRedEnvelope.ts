@@ -7,10 +7,13 @@ import { requestLogined } from '../../../store/conMgr';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
 import { getByteLen, openBasePage } from '../../../utils/tools';
 
+interface Props {
+    balance:number;
+}
 export class SendRedEnvelope extends Widget {
     public ok:() => void;
-    public create() {
-        super.create();
+    public setProps(props:Props,oldProps:Props) {
+        super.setProps(props,oldProps);
         this.init();
     }
 
@@ -66,7 +69,6 @@ export class SendRedEnvelope extends Widget {
     }
     public leaveMessageChange(e:any) {
         this.state.leaveMessage = e.value;
-        this.paint();
     }
 
     // 发送

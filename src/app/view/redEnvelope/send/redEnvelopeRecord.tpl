@@ -2,7 +2,7 @@
     <app-components-topBar-topBar>{title:"红包记录",iconColor:"white",style:"color:#fff;backgroundColor:#DF5E5E;"}</app-components-topBar-topBar>
     <div w-class="ga-body"> 
         <div w-class="ga-records-num">
-            <span w-class="ga-num">2</span>
+            <span w-class="ga-num">{{it1.sendNumber}}</span>
             <span w-class="ga-tag">发出红包</span>
         </div>
         <div w-class="ga-records-list-box">

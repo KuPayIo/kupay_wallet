@@ -18,6 +18,7 @@ export class RedEnvelopeRecord extends Widget {
     public create() {
         super.create();
         this.state = {
+            sendNumber:0,
             recordList:[]
         };
         this.init();
@@ -26,6 +27,7 @@ export class RedEnvelopeRecord extends Widget {
         const res = await this.queryRedEnvelopeRecord();
         const recordListShow = [];
         if (res.result === 1) {
+            const sendNumber = res.value[0];
             const start = res.value[1];
             const recordList = [];
            
@@ -41,12 +43,13 @@ export class RedEnvelopeRecord extends Widget {
                 recordList.push(record);
                 recordListShow.push({ ...record,ctypeShow:CurrencyTypeReverse[record.ctype],timeShow:timestampFormat(record.time / 1000) });
             }
-            
+            this.state.sendNumber = sendNumber;
+            this.state.recordList = recordListShow;
+            this.paint();
         } else {
             popNew('app-components-message-message',{ itype:'error',content:'出错啦',center:true });
         }
-        this.state.recordList = recordListShow;
-        this.paint();
+        
     }
     public backPrePage() {
         this.ok && this.ok();

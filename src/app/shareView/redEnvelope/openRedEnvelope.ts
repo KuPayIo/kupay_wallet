@@ -7,8 +7,8 @@ import { Widget } from '../../../pi/widget/widget';
 import { setLocalStorage } from '../../utils/tools';
 
 interface RedEnvelope {
-    rid:string;// 红包id
-    uid:string;// 用户id
+    rid:number;// 红包id
+    uid:number;// 用户id
     rtype:number;// 红包类型
     ctype:number;// 币种
     code:string;// 兑换码
@@ -27,15 +27,9 @@ export class OpenRedEnvelope extends Widget {
     public async openRedEnvelopeClick() {
         this.state.openClick = true;
         this.paint();
-         // 发红包
-        const msgTakeRedEnvelope = {
-            type:'take_red_bag',
-            param:{
-                rid:this.state.rid
-            }
-        };
+        
         setTimeout(async () => {
-            const res = await requestAsync(msgTakeRedEnvelope);
+            const res = await this.takeRedEnvelope();
             switch (res.result) {
                 case 1:
                     
@@ -49,6 +43,7 @@ export class OpenRedEnvelope extends Widget {
                         amount:v[4],
                         leaveMsg:unicodeArray2Str(v[5])
                     };
+                    this.querydetail(redEnvelope.uid,redEnvelope.rid);
                     setLocalStorage('takeRedBag',redEnvelope);
                     popNew('app-shareView-redEnvelope-redEnvelopeDetails',{ ...redEnvelope });
                     break;
@@ -69,6 +64,35 @@ export class OpenRedEnvelope extends Widget {
             this.ok && this.ok();
         },2000);
         
+    }
+
+    // 开红包
+    public async takeRedEnvelope() {
+        const msg = {
+            type:'take_red_bag',
+            param:{
+                rid:this.state.rid
+            }
+        };
+        // tslint:disable-next-line:no-unnecessary-local-variable
+        const res = await requestAsync(msg);
+
+        return res;
+    }
+
+    public async querydetail(uid:number,rid:number) {
+        const msg = {
+            type:'query_detail_log',
+            param:{
+                uid,
+                rid
+            }
+        };
+        // tslint:disable-next-line:no-unnecessary-local-variable
+        const res = await requestAsync(msg);
+        console.log('query_detail_log',res);
+
+        return res;
     }
 }
 

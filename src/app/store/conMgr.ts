@@ -109,7 +109,7 @@ export const openAndGetRandom = async () => {
         return;
     }
 
-    setUrl(`ws://127.0.0.1:2081`);
+    setUrl(`ws://120.24.44.254:2081`);
     dataCenter.setUser(wallet.walletId);
 
     return new Promise((resolve, reject) => {

@@ -2,7 +2,7 @@
     <app-components-topBar-topBar>{title:"兑换记录"}</app-components-topBar-topBar>
     <div w-class="ga-body"> 
         <div w-class="ga-records-num">
-            <span w-class="ga-num">2</span>
+            <span w-class="ga-num">{{it1.convertNumber}}</span>
             <span w-class="ga-tag">兑换红包</span>
         </div>
         <div w-class="ga-records-list-box">
