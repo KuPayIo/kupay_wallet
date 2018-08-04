@@ -43,7 +43,7 @@ export const run = (cb): void => {
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
     
     // popNew('app-view-application-home', {}); 
-    // popNew('app-view-mine-dividend-mining', {}); 
+    popNew('app-view-mine-dividend-mining', {}); 
     // popNew('app-view-mine-FAQ-FAQ', {}); 
     if (cb) cb();
     // test();

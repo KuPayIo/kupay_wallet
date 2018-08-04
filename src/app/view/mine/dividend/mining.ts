@@ -27,15 +27,15 @@ export class Dividend extends Widget {
             data:[
                 {
                     isOpen:false,
-                    isComplete:false,
+                    isComplete:true,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'创建钱包',
                     itemNum:'300.00',
                     itemDetail:`<div>1、创建钱包送300KT，每个APP最多创建10个钱包。</div>`,
-                    itemBtn:'去创建',
+                    itemBtn:'已创建',
                     itemJump:''
                 },{
-                    isOpen:true,
+                    isOpen:false,
                     isComplete:true,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'验证手机号',
@@ -45,7 +45,7 @@ export class Dividend extends Widget {
                     itemBtn:'已验证',
                     itemJump:''
                 },{
-                    isOpen:true,
+                    isOpen:false,
                     isComplete:false,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'存币送ETH',
@@ -56,7 +56,7 @@ export class Dividend extends Widget {
                     itemBtn:'去存币',
                     itemJump:''
                 },{
-                    isOpen:true,
+                    isOpen:false,
                     isComplete:false,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'与好友分享',
@@ -79,7 +79,7 @@ export class Dividend extends Widget {
                     itemBtn:'去购买',
                     itemJump:''
                 },{
-                    isOpen:true,
+                    isOpen:false,
                     isComplete:false,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'聊天',
