@@ -1,95 +1,148 @@
-.index{
-    color: #203260;
-    overflow-y: auto;
+.ga-new-page{
     overflow-x: hidden;
+    overflow-y: auto;
 }
-.assetsDetail{
-    letter-spacing: 5px;
-    padding: 50px 0;
-    display: flex;
-    background: #1A70DD;
+.headStatusBar{
+    height: 40px;
+    background: #fff;
 }
-.flexItem{
-    flex-basis: 50%;
+.head{
+    background: #fff;
+    height: 170px;
+    border-bottom: 1px solid #E5E5EE;
     padding: 0 30px;
-    color: #FFFFFF;
-    position: relative;
+    display: flex;
+    align-items: center;
 }
-.boxBorderRight{
-    border-right: 1px solid #aaa;
-}
-.topBar{
-    height: 80px;
+.headTitle{
+    color: rgba(17, 17, 17, 0.87);
     font-size: 36px;
-    color: #203260;
-    line-height: 80px;
-    text-align: center;
+    flex-grow: 1;
 }
-.assetsTitle{
+.headTip{
+    color: rgba(17, 17, 17, 0.87);
     font-size: 28px;
 }
-.assetsContent{
-    font-size: 36px;
-    margin-top: 20px;
+.headArow{
+    margin-left:10px; 
 }
-.arrow{
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    margin-right: 30px;
+.mine{
+    background: #fff;
+}
+.mineItem{
+    height: 250px;
+    border-bottom: 1px solid #E5E5EE;
+}
+.mineTitle{
+    color: #203260;
+    font-size: 28px;
+    padding: 30px 43px;
+}
+.mineMain{
+    padding-top: 10px; 
+    display: flex;
+    justify-content: center;
+}
+.mainLeft{
+    flex-basis: 30%;
+    text-align: center;
+}
+.mainMid{
+    flex-basis: 30%;
+    text-align: center;
+}
+.mainRight{
+    flex-basis: 30%;
+    text-align: center;
+}
+.normalTitle{
+    color: #808890;
+    font-size: 24px;
+}
+.normalMain{
+    color: #344E7D;
+    font-size: 32px;
+    margin-top:20px; 
+}
+.incomMain{
+    font-size: 48px;
+    color: #FF642B;
+    margin-top: 10px; 
+}
+.more{
+    border-bottom: 1px solid #E5E5EE; 
+    height: 80px;
+    line-height: 80px;
+    color: #A0ACC0;
+    font-size: 28px;
+    text-align: center;
+}
+.currentProduct{
+    background: #fff;
+    margin-top:10px;
+    height: 100px;
+    padding-left:30px;
+    line-height: 100px;
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px; 
+    border-bottom: 1px solid #E5E5EE;
 }
 .productList{
-    margin-top: 30px;
-    padding: 30px;
-    background: #fff; 
+    background: #fff;
 }
-.listTitle{
-    font-size: 32px;
+.productItem{
+    padding-top: 30px; 
+    border-bottom: 1px solid #E5E5EE; 
 }
-.listItems{
-    display: flex;
-    margin-top:30px; 
-}
-.listflexleft{
-    width: 30%;
-}
-.listflexright{
-    width: 70%;
-}
-.expectedEarnings{
-    font-size: 32px;
-}
-.tip{
-    font-size: 20px;
-    margin-top:20px; 
-}
-.title{
+.productHead{
+    color: #203260;
     font-size: 24px;
+    padding-left:43px; 
+    padding-right: 30px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 50%;
-    display: inline-block;
 }
-.describe{
-    font-size: 20px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
-    margin-top:20px; 
-}
-.tag{
-    font-size: 22px;
-    line-height: 32px;
-    vertical-align: top;
-    padding: 5px;
-    padding-left: 20px;
-    padding-right: 20px;
-    background: #aaa;
-    color: #fff;
+.surplus{
+    color: #FFFFFF;
+    font-size: 24px;
+    padding: 14px 0;
+    text-align: center;
+    background: #1A70DD;
     float: right;
-    margin-right:30px; 
+    border-radius: 8px;
+    width: 135px;
+}
+.soldOut{
+    background: #A0ACC0;
+}
+.productInfo{
+    padding-top:15px;
+    display: flex; 
+    padding-bottom: 43px;
+    padding-left:43px; 
+}
+.interestRate{
+    text-align: center;
+    margin-right:80px; 
+}
+.infoMain{
+    flex-grow: 1;
+}
+.rate{
+    font-size: 48px;
+    color: #FF642B;
+    line-height: 67px;
+}
+.rateTitle{
+    color: #808890;
+    font-size: 24px;
+}
+.mainTitle{
+    color: #344E7D;
+    font-size: 32px;
+    line-height: 45px;
+}
+.mainText{
+    margin-top:21px; 
+    color: #808890;
+    font-size: 24px;
 }

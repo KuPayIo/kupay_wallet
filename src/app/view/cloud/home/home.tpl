@@ -7,7 +7,7 @@
             </span>
             <img src="../../../res/image/cloud_cointype_eth.png" w-class="ktIcon" />
             <span w-class="ktBalance">
-                {{it1.ktBalance}}
+                {{it1.ktBalance}}KT
             </span>
             <img src="../../../res/image/cloud_arow_right.png" />
         </div>
@@ -78,7 +78,7 @@
             <img src="../../../res/image/cloud_arow_right.png" />
         </div>
 
-        <div w-class="activityItem">
+        <div w-class="activityItem" on-tap="inviteRedEnvelopeClick">
             <img src="../../../res/image/cloud_others_drag.png" w-class="activityIcon" />
             <div w-class="activityInfo">
                 <div w-class="infoTitle">

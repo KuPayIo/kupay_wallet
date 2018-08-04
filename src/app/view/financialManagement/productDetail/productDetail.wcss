@@ -1,120 +1,139 @@
-.productDetailPage{
+.ga-new-page{
     overflow-x: hidden;
     overflow-y: auto;
+}
+.expectedEarnings{
+    height: 278px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.centerBox{
+    text-align: center;
+}
+.earningsTitle{
+    font-size: 28px;
     color: #203260;
 }
-.profit{
-    min-height:150px;
-    background:white;
-    text-align:center;
-    padding-top:50px;
-    padding-left:30px;
-    padding-right:30px;  
-    box-sizing:border-box;
+.number{
+    font-size: 64px;
+    color: #FF642B;
+    margin-top:10px; 
 }
-.profitTitle{
-    font-size: 32px;
+.baseInfo{
+    background: #fff;
+    padding-bottom:30px;
+    padding-left:40px;
+    padding-right:40px;  
+    display: flex; 
+    justify-content: space-around;
 }
-.profitNum{
-    font-size: 32px;
-    padding-bottom: 30px;
-    color: rgb(216, 30, 30);
-    border-bottom: 1px solid #cec8c8;
+.flexOne{
+    text-align: center;
 }
-.rules{
-    display:flex;
-    flex-wrap:nowrap;
-    justify-content:space-around;
-    box-sizing: border-box;
-    padding: 30px;
+.oneTitle{
+    font-size: 24px;
+    color: #A0ACC0;
 }
-.ruleTitle{
+.oneMain{
     font-size: 28px;
+    color: #212C68;
+    margin-top:10px; 
 }
-.ruleContent{
-    font-size: 20px;
-}
-.process{
-    background:#fff;
-    margin-top:20px;
-    min-height:150px;
-}
-.processTitle{
-    font-size: 28px;
-    padding:15px 30px; 
-    border-bottom: 1px solid rgb(190, 184, 184);
-}
-.processContent{
-    padding: 30px;
+.line{
+    display: inline-block;
+    width: 2px;
+    height: 78px;
+    background: #E5E5EE;
 }
 .stepBox{
-    width: 80%;
-    margin: auto;
+    padding: 33px 30px;
+    background: #fff;
+    margin-top:10px; 
+    margin-bottom:10px; 
 }
 .productInfo{
-    padding:30px;
-    background:white;
-    margin-top: 20px;
-}
-.productDetail{
-    
-}
-.title{
-    margin:20px 0;
-    font-size:32px; 
-}
-.mainDetail{
-    font-size: 28px;
-    color: #888;
-}
-.detailP{
-    margin-top: 5px;
-    margin-bottom: 5px; 
-}
-.productIntroduction{
-
-}
-.paragraph{
-    font-size: 28px;
-    color: #888;
-}
-.bottomFixed{
-    position:fixed;
-    bottom:0;
-    width:100%;
-    height:185px;
     background: #fff;
 }
-.Surplus{
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-top: 15px;  
-    text-align: center;
+.productIntroduction{
+    padding: 40px 30px;
+}
+.introductionTitle{
+    color: #203260;
     font-size: 28px;
 }
-.progressBar{
-    margin-top: 10px;
-    border-radius:15px; 
-    height: 15px;
-    background-position: center;
-    overflow: hidden;
-    border: 1px solid #1A70DD;
+.introductionMain{
+    font-size: 28px;
+    color: #A0ACC0;
+    margin-top:30px; 
 }
-.barBackground{
-    width: 100%;
-    background: #1A70DD;
-    height: 100%;
+.purchase{
+    padding: 30px;
 }
-.butBottom{
+.priceTitle{
+    font-size: 28px;
+    color: #203260;
+}
+.colorSpan{
+    color: #FF642B;
+}
+.selectNum{
+    padding-top: 20px;
+    padding-right: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.unitPrice{
+    color: #203260;
+    font-size: 36px;
+    flex-grow: 1;
+}
+.numInputSelectFloatBox{
+    height: 80px;
+    width: 325px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    border: 1px solid #E5E5EE;
+}
+.numInputInput{
+    font-size: 38px;
+    flex-grow: 1;
+    width: 1px;
+    border: none;
+    outline: none;
+    text-align: center; 
+}
+.fontIcon{
+    color: #8E96AB;
+    font-size: 80px;
+    margin-bottom: 15px;
+}
+.plus{
+    font-size: 60px;
+    padding-left:40px; 
+}
+.sub{
+    padding-right:40px; 
+}
+.notice{
+    font-size: 28px;
+    color: #1A70DD;
+    padding-top:35px;
+    padding-bottom: 98px;
+}
+.purchaseBtn{
+    color: #fff;
+    font-size: 36px;
+    background: #212C67;
     text-align: center;
-    margin-top: 20px;
-    height: 100px;
-    line-height: 90px;
-    font-size: 32px;
-    background: #AAA;
-    color: rgb(248, 243, 243);
-}
-.active{
-    color:#fff;
-    background: #1A70DD;
+    height: 98px;
+    line-height: 98px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }

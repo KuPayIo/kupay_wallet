@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 
 interface Props {
-    amount: number;
+    rid: string;
     leaveMessage: string;
     currencyName: string;
 }
@@ -18,7 +18,6 @@ export class ShareRedEnvelope extends Widget {
     public shareToFriends() {
         popNew('app-components-share-share', { 
             shareType: ShareToPlatforms.TYPE_LINK,
-            webName:'挂号费',
             url:'https://www.baidu.com',
             title:'红包title',
             content:this.props.leaveMessage
