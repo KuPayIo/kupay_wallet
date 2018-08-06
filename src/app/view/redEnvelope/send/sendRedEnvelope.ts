@@ -109,6 +109,8 @@ export class SendRedEnvelope extends Widget {
                 leaveMessage:this.state.leaveMessage,
                 currencyName:this.state.currencyName
             });
+            // tslint:disable-next-line:max-line-length
+            console.log('url',`http://192.168.33.113/wallet/app/boot/share.html?rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
         } else {
             popNew('app-components-message-message',{ itype:'error',content:'出错啦,请重试',center:true });
         }

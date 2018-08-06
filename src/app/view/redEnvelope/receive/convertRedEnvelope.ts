@@ -40,11 +40,35 @@ export class ConvertRedEnvelope extends Widget {
             return;
         }
         const close = popNew('pi-components-loading-loading',{ text:'兑换中...' });
-        await this.convertRedEnvelope();
-        // await this.queryDetailByCid();
+        const res = await this.convertRedEnvelope();
+        switch (res.result) {
+            case 1:
+                const r = await this.queryRedBagDesc();
+                if (r.result === 1) {
+                    const redEnvelope = {
+                        leaveMessage:r.value,
+                        ctype:res.value[0],
+                        amount:res.value[1]
+                    };
+                    console.log('redEnvelope',redEnvelope);
+                    popNew('app-view-redEnvelope-receive-openRedEnvelope',{ ...redEnvelope });
+                }
+                break;
+            case 711:
+                popNew('app-components-message-message',{ itype:'error',center:true,content:'兑换码不存在' });
+                break;
+            case 712:
+                popNew('app-components-message-message',{ itype:'error',center:true,content:'兑换码已兑换' });
+                break;
+            case 713:
+                popNew('app-components-message-message',{ itype:'error',center:true,content:'兑换码已过期' });
+                break;
+            default:
+        }
+        
         close.callback(close.widget);
         // tslint:disable-next-line:max-line-length
-        popNew('app-view-redEnvelope-receive-openRedEnvelope',{ cid:this.state.cid,redEnvelope:this.state.redEnvelope });
+        
         this.state.cid = '';
         this.paint();
     }
@@ -62,16 +86,20 @@ export class ConvertRedEnvelope extends Widget {
         };
         const res = await requestLogined(msg);
         console.log('convert_red_bag',res);
+
+        return res;
     }
 
-    public async queryDetailByCid() {
+    public async queryRedBagDesc() {
         const msg = {
-            type:'query_detail_log',
+            type:'query_red_bag_desc',
             param:{
-                cids:this.state.cid
+                cid:this.state.cid
             }
         };
         const res = await requestAsync(msg);
-        console.log('query_detail_log',res);
+        console.log('query_red_bag_desc',res);
+
+        return res;
     }
 }
