@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, CurrencyTypeReverse, getAllBalance } from '../../../store/conMgr';
+import { CurrencyType, CurrencyTypeReverse, getAllBalance, getInviteCode, getInviteCodeDetail } from '../../../store/conMgr';
 export class Home extends Widget {
     constructor() {
         super();
@@ -38,8 +38,7 @@ export class Home extends Widget {
      */
     public packetsClicked() {
         // TODO
-        popNew('app-view-redEnvelope-send-sendRedEnvelope',{ balance: this.state.balance });
-    }
+        popNew('app-view-redEnvelope-send-sendRedEnvelope',{ balance:this.state.ktBalance });    }
 
     /**
      * 点击兑换领奖
@@ -70,8 +69,16 @@ export class Home extends Widget {
     public mining() {
         popNew('app-view-mine-dividend-mining');
     }
-    public inviteRedEnvelopeClick() {
-        popNew('app-view-redEnvelope-send-inviteRedEnvelope');
+    /**
+     * 邀请红包
+     */
+    public async inviteRedEnvelopeClick() {
+        const inviteCodeInfo = await getInviteCode();
+        const inviteCodeDetailInfo = await getInviteCodeDetail();
+        if (inviteCodeInfo.result !== 1 || inviteCodeDetailInfo.result !== 1) return;
+        popNew('app-view-redEnvelope-send-inviteRedEnvelope', {
+            inviteCode: inviteCodeInfo.cid, inviteCodeDetailInfo: inviteCodeDetailInfo.value
+        });
     }
 
     private async initDate() {
