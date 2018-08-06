@@ -3,7 +3,14 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, CurrencyTypeReverse, getAllBalance, getInviteCode, getInviteCodeDetail } from '../../../store/conMgr';
+import { 
+    CurrencyType, 
+    CurrencyTypeReverse, 
+    getAllBalance, 
+    getAward, 
+    getInviteCode, 
+    getInviteCodeDetail } from '../../../store/conMgr';
+import { kpt2kt, wei2Eth } from '../../../utils/tools';
 export class Home extends Widget {
     constructor() {
         super();
@@ -64,10 +71,22 @@ export class Home extends Widget {
         // TODO
     }
     /**
-     * 点击挖矿
+     * 显示挖矿详情
      */
     public mining() {
         popNew('app-view-mine-dividend-mining');
+    }
+    /**
+     * 挖矿
+     */
+    public async doPadding() {
+        const r = await getAward();
+        if (r.result !== 1) {
+            popNew('app-components-message-message', { itype: 'outer', center: true, content: `挖矿失败(${r.result})` });
+
+            return;
+        }
+        popNew('app-components-message-message', { itype: 'outer', center: true, content: '挖矿成功' });
     }
     /**
      * 邀请红包
@@ -86,11 +105,12 @@ export class Home extends Widget {
         for (let i = 0; i < balanceInfo.value.length; i++) {
             const each = balanceInfo.value[i];
             const CurrencyName = CurrencyTypeReverse[each[0]];
-            this.state.balance[CurrencyName] = each[1];
             if (each[0] === CurrencyType.KT) {
-                this.state.ktBalance = each[1];
+                this.state.ktBalance = kpt2kt(each[1]);
+                this.state.balance[CurrencyName] = kpt2kt(each[1]);
             } else if (each[0] === CurrencyType.ETH) {
-                this.state.ethBalance = each[1];
+                this.state.ethBalance = wei2Eth(each[1]);
+                this.state.balance[CurrencyName] = wei2Eth(each[1]);
             }
         }
         this.paint();

@@ -46,3 +46,61 @@ export const timestampFormat = (timestamp: number) => {
 
     return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
 };
+
+/**
+ * wei转Eth
+ */
+export const wei2Eth = (num: number) => {
+    if (!num) return 0;
+
+    return num / Math.pow(10, 18);
+};
+
+/**
+ * wei转Eth
+ */
+export const eth2Wei = (num: number) => {
+    if (!num) return 0;
+
+    return num * Math.pow(10, 18);
+};
+
+/**
+ * kpt转kt
+ */
+export const kpt2kt = (num: number) => {
+    if (!num) return 0;
+
+    return num / Math.pow(10, 8);
+};
+
+/**
+ * kt转kpt
+ */
+export const kt2kpt = (num: number) => {
+    if (!num) return 0;
+
+    return num * Math.pow(10, 8);
+};
+
+/**
+ * 根据货币类型小单位转大单位
+ */
+export const smallUnit2LargeUnit = (currencyName:string,amount:number) => {
+    if (currencyName === 'ETH') {
+        return wei2Eth(amount);
+    } else if (currencyName === 'KT') {
+        return kpt2kt(amount);
+    }
+};
+
+/**
+ * 根据货币类型大单位转小单位
+ */
+export const largeUnit2SmallUnit = (currencyName:string,amount:number) => {
+    if (currencyName === 'ETH') {
+        return eth2Wei(amount);
+    } else if (currencyName === 'KT') {
+        return kt2kpt(amount);
+    }
+};

@@ -72,7 +72,7 @@
                     本次可挖6300KT
                 </div>
             </div>
-            <span w-class="paddingSpan">
+            <span w-class="paddingSpan" on-tap="doPadding">
                 挖一下
             </span>
             <img src="../../../res/image/cloud_arow_right.png" />

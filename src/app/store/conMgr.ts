@@ -109,22 +109,24 @@ export const openAndGetRandom = async () => {
     if (!wallet) return;
     const oldUser = dataCenter.getUser();
     if (oldUser === wallet.walletId) return;
+    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     if (oldUser) {
         closeCon();
         setLoginState(LoginState.init);
         dataCenter.setUser(wallet.walletId);
+        dataCenter.setUserPublicKey(gwlt.publicKey);
 
         return;
     }
 
     setUrl(`ws://${conIp}:2081`);
     dataCenter.setUser(wallet.walletId);
+    dataCenter.setUserPublicKey(gwlt.publicKey);
 
     return new Promise((resolve, reject) => {
         open(() => {
-            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             // 连接打开后开始设置账号缓存
-            const msg = { type: 'get_random', param: { account: wallet.walletId.slice(2), pk: `04${gwlt.publicKey}` } };
+            const msg = { type: 'get_random', param: { account: dataCenter.getUser().slice(2), pk: `04${dataCenter.getUserPublicKey()}` } };
             request(msg, (resp) => {
                 if (resp.type) {
                     console.log(`错误信息为${resp.type}`);
@@ -138,9 +140,8 @@ export const openAndGetRandom = async () => {
             console.log(`open错误信息为${result}`);
             reject(result);
         }, () => {
-            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             // 连接打开后开始设置账号缓存
-            const msg = { type: 'get_random', param: { account: wallet.walletId.slice(2), pk: `04${gwlt.publicKey}` } };
+            const msg = { type: 'get_random', param: { account: dataCenter.getUser().slice(2), pk: `04${dataCenter.getUserPublicKey()}` } };
             request(msg, (resp) => {
                 if (resp.type) {
                     console.log(`错误信息为${resp.type}`);
@@ -264,5 +265,23 @@ export const querySendRedEnvelopeRecord = async (start?:string) => {
         };
     }
     
+    return requestAsync(msg);
+};
+
+/**
+ * 查询红包兑换记录
+ */
+export const queryConvertLog = async (count) => {
+    const msg = { type: 'query_convert_log', param: { count: count } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 挖矿
+ */
+export const getAward = async () => {
+    const msg = { type: 'wallet/cloud@get_award', param: {} };
+
     return requestAsync(msg);
 };

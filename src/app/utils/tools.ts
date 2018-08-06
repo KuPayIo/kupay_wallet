@@ -263,6 +263,45 @@ export const btc2Sat = (num: number) => {
 };
 
 /**
+ * kpt转kt
+ */
+export const kpt2kt = (num: number) => {
+    if (!num) return 0;
+
+    return num / Math.pow(10, 8);
+};
+
+/**
+ * kt转kpt
+ */
+export const kt2kpt = (num: number) => {
+    if (!num) return 0;
+
+    return num * Math.pow(10, 8);
+};
+
+/**
+ * 根据货币类型小单位转大单位
+ */
+export const smallUnit2LargeUnit = (currencyName:string,amount:number) => {
+    if (currencyName === 'ETH') {
+        return wei2Eth(amount);
+    } else if (currencyName === 'KT') {
+        return kpt2kt(amount);
+    }
+};
+
+/**
+ * 根据货币类型大单位转小单位
+ */
+export const largeUnit2SmallUnit = (currencyName:string,amount:number) => {
+    if (currencyName === 'ETH') {
+        return eth2Wei(amount);
+    } else if (currencyName === 'KT') {
+        return kt2kpt(amount);
+    }
+};
+/**
  * eth 代币除以精度计算
  */
 export const ethTokenDivideDecimals = (num: number, tokenName: string) => {

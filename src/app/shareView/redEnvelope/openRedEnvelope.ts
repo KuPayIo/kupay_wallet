@@ -3,8 +3,8 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { setLocalStorage } from '../../utils/tools';
-import { RedEnvelopeType, takeRedEnvelope } from '../store/conMgr';
+import { setLocalStorage, smallUnit2LargeUnit } from '../../utils/tools';
+import { CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../store/conMgr';
 import { parseUrlParams, unicodeArray2Str } from '../utils/tools';
 
 interface RedEnvelope {
@@ -68,7 +68,7 @@ export class OpenRedEnvelope extends Widget {
                         ctype:v[2],
                         code:v[3],
                         codeShow:`${RedEnvelopeType.Normal}${v[3]}`,
-                        amount:v[4],
+                        amount:smallUnit2LargeUnit(CurrencyTypeReverse[v[2]],v[4]),
                         leaveMsg:unicodeArray2Str(v[5])
                     };
                     setLocalStorage('takeRedBag',redEnvelope);

@@ -4,7 +4,7 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { requestAsync } from '../../store/conMgr';
-import { copyToClipboard, timestampFormat } from '../utils/tools';
+import { copyToClipboard, smallUnit2LargeUnit,timestampFormat } from '../utils/tools';
 interface Props {
     rid:number;// 红包id
     uid:number;// 用户id
@@ -33,7 +33,6 @@ export class RedEnvelopeDetails extends Widget {
     public ok:() => void;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.querydetail(props.uid,props.rid);
         this.state = {
             currencyName:CurrencyType[props.ctype],
             totalNumber:0,
@@ -45,6 +44,7 @@ export class RedEnvelopeDetails extends Widget {
                 '3.输入收到的红包码，红包金额将自动到账',
                 '4.同一个红包，每人只能领取一次']
         };
+        this.querydetail(props.uid,props.rid);
     }
 
     public querydetail(uid:number,rid:number) {
@@ -69,7 +69,7 @@ export class RedEnvelopeDetails extends Widget {
                         rid:l[i][1],
                         rtype:l[i][2],
                         ctype:l[i][3],
-                        amount:l[i][4],
+                        amount:smallUnit2LargeUnit(this.state.currencyName,l[i][4]),
                         time:l[i][5],
                         timeShow:timestampFormat(l[i][5])
                     };
@@ -79,7 +79,7 @@ export class RedEnvelopeDetails extends Widget {
             }
             this.state.totalNumber = l.length;
             this.state.convertedNumber = redBagList.length;
-            this.state.totalAmount = totalAmount;
+            this.state.totalAmount = smallUnit2LargeUnit(this.state.currencyName,totalAmount);
             this.state.redBagList = redBagList;
             this.paint();
         }).catch(r => {

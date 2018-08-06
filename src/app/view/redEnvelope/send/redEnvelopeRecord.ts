@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyTypeReverse, querySendRedEnvelopeRecord } from '../../../store/conMgr';
-import { getFirstEthAddr, getLocalStorage, setLocalStorage, timestampFormat } from '../../../utils/tools';
+import { getFirstEthAddr, getLocalStorage, setLocalStorage, smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
 
 interface Record {
     rtype:number;// 红包类型
@@ -70,15 +70,16 @@ export class RedEnvelopeRecord extends Widget {
             const recordList:Record[] = [];
             const r = res.value[2];
             for (let i = 0; i < r.length;i++) {
+                const currencyName = CurrencyTypeReverse[r[i][1]];
                 const record:Record = {
                     rtype:r[i][0],
                     ctype:r[i][1],
-                    amount:r[i][2],
+                    amount:smallUnit2LargeUnit(currencyName,r[i][2]),
                     time:r[i][3],
                     codes:r[i][4]
                 };
                 recordList.push(record);
-                recordListShow.push({ ...record,ctypeShow:CurrencyTypeReverse[record.ctype],timeShow:timestampFormat(record.time) });
+                recordListShow.push({ ...record,ctypeShow:currencyName,timeShow:timestampFormat(record.time) });
             }
             this.state.sendNumber = sendNumber;
             this.state.recordList = this.state.recordList.concat(recordListShow);

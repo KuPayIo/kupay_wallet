@@ -3,9 +3,9 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { RedEnvelopeType, requestLogined, sharePerUrl } from '../../../store/conMgr';
+import { CurrencyType, RedEnvelopeType, requestLogined, sharePerUrl } from '../../../store/conMgr';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
-import { getByteLen, openBasePage } from '../../../utils/tools';
+import { getByteLen, largeUnit2SmallUnit, openBasePage } from '../../../utils/tools';
 
 interface Props {
     balance:any;
@@ -132,19 +132,13 @@ export class SendRedEnvelope extends Widget {
     }
 
     public async sendRedEnvlope() {
-        // 币种
-        const priceTypes = {
-            KT:100,
-            ETH:101
-        };
-
-            // 发红包
+        // 发红包
         const msgSendRedEnvelope = {
             type:'emit_red_bag',
             param:{
                 type:this.state.itype,
-                priceType:priceTypes[this.state.currencyName],
-                totalPrice:this.state.totalAmount,
+                priceType:CurrencyType[this.state.currencyName],
+                totalPrice:largeUnit2SmallUnit(this.state.currencyName,this.state.totalAmount),
                 count:this.state.redEnvelopeNumber,
                 desc:this.state.leaveMessage
             }
