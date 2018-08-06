@@ -13,21 +13,23 @@
             </div>
             <div w-class="ga-bottom">
                 <div w-class="ga-receive-details">
-                    <div w-class="ga-title">已领取1/4，共10MPT</div>
+                    <div w-class="ga-title">已领取{{it1.convertedNumber}}/{{it1.totalNumber}}，共{{it1.totalAmount}}{{it1.currencyName}}</div>
                     <div w-class="ga-list">
+                        {{for index,item of it1.redBagList}}
                         <div w-class="ga-item">
                             <img src="../../res/image/img_avatar1.png" w-class="ga-avator"/>
                             <div w-class="ga-item-right">
                                 <div w-class="ga-box1">
                                     <div w-class="ga-name">好友钱包名</div>
-                                    <div>15 MPT</div>
+                                    <div>{{item.amount}}&nbsp;{{it1.currencyName}}</div>
                                 </div>
                                 <div w-class="ga-box2">
-                                    <div w-class="ga-time">04-12  14:32:00</div>
-                                    <div w-class="ga-best">手气最佳</div>
+                                    <div w-class="ga-time">{{item.timeShow}}</div>
+                                    <div w-class="ga-best"></div>
                                 </div>
                             </div>
                         </div>
+                        {{end}}
                     </div>
                 </div>
             </div>

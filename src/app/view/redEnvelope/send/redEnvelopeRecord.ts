@@ -41,7 +41,7 @@ export class RedEnvelopeRecord extends Widget {
                     codes:r[i][4]
                 };
                 recordList.push(record);
-                recordListShow.push({ ...record,ctypeShow:CurrencyTypeReverse[record.ctype],timeShow:timestampFormat(record.time / 1000) });
+                recordListShow.push({ ...record,ctypeShow:CurrencyTypeReverse[record.ctype],timeShow:timestampFormat(record.time) });
             }
             this.state.sendNumber = sendNumber;
             this.state.recordList = recordListShow;
