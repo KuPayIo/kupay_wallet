@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, getAllBalance, getAward, getInviteCode, getInviteCodeDetail, inputInviteCdKey } from '../../../store/conMgr';
+import { CurrencyType, getAllBalance, getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining, inputInviteCdKey } from '../../../store/conMgr';
 export class Home extends Widget {
     constructor() {
         super();
@@ -16,7 +16,8 @@ export class Home extends Widget {
         this.state = {
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
-            bonus: 0.00// 累计分红
+            bonus: 0.00,// 累计分红
+            mines: 0// 本次可挖数量
         };
 
         this.initDate();
@@ -100,6 +101,12 @@ export class Home extends Widget {
                 this.state.ethBalance = each[1];
             }
         }
+        const mining = await getMining();
+        let nowNum = (mining.mine_total - mining.mines) * 0.25;
+        nowNum = (nowNum < 100 && mining.mine_total > 100) ? 100 :nowNum;
+        this.state.mines = nowNum;
+        const divid = await getDividend();
+        // this.state.bonus = divid.
         this.paint();
     }
 }

@@ -7,7 +7,7 @@
         </div>
         <div w-class="groupcard">
             <div w-class="dividend-title">矿山总量(KT)</div>
-            <div w-class="dividend-money">65,655,000.496</div>
+            <div w-class="dividend-money">{{it1.totalNum}}</div>
             <div w-class="dividend-sum" on-tap="goRank">
                 <img src="../../../res/image/btn_back.png" style="width: 48px;height: 48px;display: inline-block;vertical-align: middle;"/>
                 <span style="display: inline-block;vertical-align: middle;">矿山排名150位之前</span>
@@ -16,11 +16,11 @@
             <div w-class="twodata">
                 <div w-class="dataleft">
                     <div w-class="dataleft-title">本次可挖(KT)</div>
-                    <div w-class="dataleft-num">13,131,000.099</div>
+                    <div w-class="dataleft-num">{{it1.thisNum}}</div>
                 </div>
                 <div w-class="dataright">
                     <div w-class="dataright-title">已挖(KT)</div>
-                    <div w-class="dataright-num">870,800.00</div>
+                    <div w-class="dataright-num">{{it1.holdNum}}</div>
                 </div>
             </div>      
         </div>       

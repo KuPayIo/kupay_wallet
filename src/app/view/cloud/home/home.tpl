@@ -69,7 +69,7 @@
                     每日挖矿
                 </div>
                 <div w-class="infoMain">
-                    本次可挖6300KT
+                    本次可挖{{it1.mines}}KT
                 </div>
             </div>
             <span w-class="paddingSpan" on-tap="doPadding">

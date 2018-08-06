@@ -6,14 +6,14 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMining, getMiningHistory } from '../../../store/conMgr';
+import { getMineDetail, getMining, getMiningHistory } from '../../../store/conMgr';
 
 interface Items {
     isOpen:boolean;   
     isComplete:boolean;
     itemImg:string;
     itemName:string;
-    itemNum:string;
+    itemNum:number;
     itemDetail:any;
     itemBtn:string;
     itemJump:string;
@@ -21,29 +21,46 @@ interface Items {
 
 export class Dividend extends Widget {
     public ok: () => void;
-    public state: {data:Items[]};
+    public state: {
+        totalNum:number; 
+        thisNum:number; 
+        holdNum:number; 
+        data:Items[];
+    };
     constructor() {
         super();
     }
 
     public create() {
+        super.create();
+        this.init();
+        this.initData();
+    }
+
+    /**
+     * 初始化state参数
+     */
+    public init() {
         this.state = {
+            totalNum:0,
+            thisNum:0,
+            holdNum:0,
             data:[
                 {
                     isOpen:false,
                     isComplete:true,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'创建钱包',
-                    itemNum:'300.00',
+                    itemNum:0,
                     itemDetail:`<div>1、创建钱包送300KT，每个APP最多创建10个钱包。</div>`,
                     itemBtn:'已创建',
                     itemJump:''
                 },{
                     isOpen:false,
-                    isComplete:true,
+                    isComplete:false,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'验证手机号',
-                    itemNum:'2,500.00',
+                    itemNum:0,
                     itemDetail:`<div>1、验证手机号，送2500KT。</div>
                     <div>2、一个钱包只能验证一个手机号。</div>`,
                     itemBtn:'已验证',
@@ -53,7 +70,7 @@ export class Dividend extends Widget {
                     isComplete:false,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'存币送ETH',
-                    itemNum:'200.00',
+                    itemNum:0,
                     itemDetail:`<div>1、存币到自己的钱包地址上，存一个ETH送2000KT。</div>
                     <div>2、首次存币额外赠送1000KT。</div>
                     <div>3、1个BTC等于10个ETH。</div>`,
@@ -64,7 +81,7 @@ export class Dividend extends Widget {
                     isComplete:false,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'与好友分享',
-                    itemNum:'65,650,900.00',
+                    itemNum:0,
                     itemDetail:`<div>1、系统赠送邀请红包限量1个，内含0.5ETH，分成单个0.015ETH等额红包。</div>
                     <div>2、每成功邀请一人获得500KT和0.01ETH。</div>
                     <div>3、成功邀请的标准是对方曾经达到1000KT</div>`,
@@ -75,7 +92,7 @@ export class Dividend extends Widget {
                     isComplete:false,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'购买理财',
-                    itemNum:'8,000.00',
+                    itemNum:0,
                     itemDetail:`<div>1、每购买1ETH等价的理财产品每天送100KT。</div>
                     <div>2、购买当日额外赠送500KT。</div>
                     <div>3、首次购买额外赠送1500KT。</div>
@@ -87,16 +104,13 @@ export class Dividend extends Widget {
                     isComplete:false,
                     itemImg:'../../../res/image/btn_back.png',
                     itemName:'聊天',
-                    itemNum:'300.00',
+                    itemNum:0,
                     itemDetail:`<div>1、首次参与聊天赠送700。</div>`,
                     itemBtn:'去聊天',
                     itemJump:''
                 }
             ]
         };
-
-        getMining();
-        getMiningHistory();
     }
 
     public backPrePage() {
@@ -134,5 +148,45 @@ export class Dividend extends Widget {
             console.log(this.state.data[ind].itemBtn);
             // popNew(this.state.data[ind].itemJump);
         }
+    }
+
+    /**
+     * 获取更新数据
+     */
+    public async initData() {
+        const msg = await getMining();
+        let nowNum = (msg.mine_total - msg.mines) * 0.25;
+        nowNum = (nowNum < 100 && msg.mine_total > 100) ? 100 :nowNum;
+        this.state.totalNum = msg.mine_total;
+        this.state.thisNum = nowNum;
+        this.state.holdNum = msg.mines;
+        
+        const detail = await getMineDetail();
+        if (detail.value.length !== 0) {
+            for (let i = 0;i < detail.value.length;i++) {
+                if (detail.value[i][0] === 1001) {
+                    this.state.data[0].isComplete = true;
+                    this.state.data[0].itemNum = detail.value[i][1];                    
+                }
+                if (detail.value[i][0] === 1002) {
+                    this.state.data[1].isComplete = true;
+                    this.state.data[0].itemNum = detail.value[i][1];
+                }
+                if (detail.value[i][0] === 1003) {
+                    this.state.data[2].itemNum = detail.value[i][1];
+                }
+                if (detail.value[i][0] === 1004) {
+                    this.state.data[3].itemNum = detail.value[i][1];                    
+                }
+                if (detail.value[i][0] === 1005) {
+                    this.state.data[4].itemNum = detail.value[i][1];                    
+                }
+                if (detail.value[i][0] === 1006) {
+                    this.state.data[5].itemNum = detail.value[i][1];                    
+                }
+            }
+        }
+        this.paint();
+        
     }
 }
