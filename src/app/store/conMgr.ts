@@ -109,7 +109,7 @@ export const openAndGetRandom = async () => {
         return;
     }
 
-    setUrl(`ws://120.24.44.254:2081`);
+    setUrl(`ws://127.0.0.1:2081`);
     dataCenter.setUser(wallet.walletId);
 
     return new Promise((resolve, reject) => {
@@ -179,6 +179,15 @@ export const getDividend = async() => {
  */
 export const getMining = async() => {
     const msg = { type:'wallet/cloud@get_mine_total',param:{} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取挖矿明细
+ */
+export const getMiningHistory = async() => {
+    const msg = { type:'wallet/cloud@get_pool_detail',param:{} };
 
     return requestAsync(msg);
 };

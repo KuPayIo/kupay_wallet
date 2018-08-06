@@ -6,7 +6,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMining } from '../../../store/conMgr';
+import { getMining, getMiningHistory } from '../../../store/conMgr';
 
 interface Items {
     isOpen:boolean;   
@@ -96,6 +96,7 @@ export class Dividend extends Widget {
         };
 
         getMining();
+        getMiningHistory();
     }
 
     public backPrePage() {
