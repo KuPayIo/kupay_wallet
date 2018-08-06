@@ -17,22 +17,21 @@ interface RedEnvelope {
 }
 export class OpenRedEnvelope extends Widget {
     public ok:() => void;
-    public create() {
+    public async create() {
         super.create();
         this.state = {
             rid:parseUrlParams(window.location.search,'rid'),
+            lm:(<any>window).decodeURIComponent(parseUrlParams(window.location.search,'lm')),
             openClick:false
         };
     }
     public async openRedEnvelopeClick() {
         this.state.openClick = true;
         this.paint();
-        
+        const res = await this.takeRedEnvelope();
         setTimeout(async () => {
-            const res = await this.takeRedEnvelope();
             switch (res.result) {
                 case 1:
-                    
                     const v = res.value;
                     const redEnvelope:RedEnvelope = {
                         rid:this.state.rid,
@@ -43,9 +42,9 @@ export class OpenRedEnvelope extends Widget {
                         amount:v[4],
                         leaveMsg:unicodeArray2Str(v[5])
                     };
-                    this.querydetail(redEnvelope.uid,redEnvelope.rid);
                     setLocalStorage('takeRedBag',redEnvelope);
                     popNew('app-shareView-redEnvelope-redEnvelopeDetails',{ ...redEnvelope });
+                    this.ok && this.ok();
                     break;
                 case 701:
                     popNew('app-shareView-components-message',{ itype:'error',center:true,content:'红包不存在' });
@@ -60,9 +59,11 @@ export class OpenRedEnvelope extends Widget {
                     popNew('app-shareView-components-message',{ itype:'error',center:true,content:'红包已领取过' });
                     break;
                 default:
+                    popNew('app-shareView-components-message',{ itype:'error',center:true,content:'出错啦' });    
             }
-            this.ok && this.ok();
-        },2000);
+            this.state.openClick = false;
+            this.paint();
+        },500);
         
     }
 
@@ -80,20 +81,6 @@ export class OpenRedEnvelope extends Widget {
         return res;
     }
 
-    public async querydetail(uid:number,rid:number) {
-        const msg = {
-            type:'query_detail_log',
-            param:{
-                uid,
-                rid
-            }
-        };
-        // tslint:disable-next-line:no-unnecessary-local-variable
-        const res = await requestAsync(msg);
-        console.log('query_detail_log',res);
-
-        return res;
-    }
 }
 
 const parseUrlParams = (search: string, key: string) => {

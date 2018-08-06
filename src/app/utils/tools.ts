@@ -962,9 +962,9 @@ export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
         }
     }
 };
-// 时间戳格式化
+// 时间戳格式化 毫秒为单位
 export const timestampFormat = (timestamp: number) => {
-    const date = new Date(timestamp * 1000);
+    const date = new Date(timestamp);
     const year = date.getFullYear();
     const month = (date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : `0${date.getMonth() + 1}`;
     const day = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
