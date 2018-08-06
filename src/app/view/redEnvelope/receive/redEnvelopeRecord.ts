@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyTypeReverse, getInviteCodeDetail, queryConvertLog, requestAsync } from '../../../store/conMgr';
-import { timestampFormat } from '../../../utils/tools';
+import { smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
 
 interface Record {
     uid: number;// 用户id
@@ -33,20 +33,20 @@ export class RedEnvelopeRecord extends Widget {
             const convertNumber = res.value[0];
             const start = res.value[1];
             const recordList = [];
-
             const r = res.value[2];
             for (let i = 0; i < r.length; i++) {
+                const currencyName = CurrencyTypeReverse[r[i][3]];
                 const record: Record = {
                     uid: r[i][0],
                     rid: r[i][1],
                     rtype: r[i][2],
                     ctype: r[i][3],
-                    amount: r[i][4],
+                    amount: smallUnit2LargeUnit(currencyName,r[i][4]),
                     time: r[i][5]
                 };
                 recordList.push(record);
                 // tslint:disable-next-line:max-line-length
-                recordListShow.push({ ...record, ctypeShow: CurrencyTypeReverse[record.ctype], timeShow: timestampFormat(record.time) });
+                recordListShow.push({ ...record, ctypeShow: currencyName, timeShow: timestampFormat(record.time) });
             }
             this.state.convertNumber = convertNumber;
             this.state.recordList = recordListShow;

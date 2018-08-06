@@ -36,13 +36,16 @@ export enum RedEnvelopeType {
     Invite = '02'
 }
 export const conIp = '127.0.0.1';
+export const conPort = '80';
 // 分享链接前缀
-export const sharePerUrl = `http://${conIp}:8080/wallet/app/boot/share.html`;
+export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.html`;
 /**
  * 登录状态
  */
 let loginState: number = LoginState.init;
 
+// 查询历史记录时一页的数量
+const recordNumber = 10;
 // 设置登录状态
 const setLoginState = (s: number) => {
     if (loginState === s) {
@@ -226,11 +229,42 @@ export const convertRedBag = async (cid) => {
 };
 
 /**
- * 查询当前红包留言
+ * 获取红包留言
+ * @param cid 兑换码
  */
-export const queryRedBagDesc = async (cid) => {
-    const msg = { type: 'query_red_bag_desc', param: { cid: cid } };
+export const queryRedBagDesc = async (cid: string) => {
+    const msg = {
+        type: 'query_red_bag_desc',
+        param: {
+            cid
+        }
+    };
 
+    return requestAsync(msg);
+};
+
+/**
+ * 查询发送红包记录
+ */
+export const querySendRedEnvelopeRecord = async (start?:string) => {
+    let msg;
+    if (start) {
+        msg = {
+            type:'query_emit_log',
+            param:{
+                start,
+                count:recordNumber
+            }
+        };
+    } else {
+        msg = {
+            type:'query_emit_log',
+            param:{
+                count:recordNumber
+            }
+        };
+    }
+    
     return requestAsync(msg);
 };
 

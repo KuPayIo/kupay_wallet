@@ -3,12 +3,12 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { requestLogined } from '../../../store/conMgr';
+import { CurrencyType, RedEnvelopeType, requestLogined, sharePerUrl } from '../../../store/conMgr';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
-import { getByteLen, openBasePage } from '../../../utils/tools';
+import { getByteLen, largeUnit2SmallUnit, openBasePage } from '../../../utils/tools';
 
 interface Props {
-    balance:number;
+    balance:any;
 }
 export class SendRedEnvelope extends Widget {
     public ok:() => void;
@@ -20,7 +20,7 @@ export class SendRedEnvelope extends Widget {
     public init() {
         this.state = {
             itype:0,// 0 等额红包  1 拼手气红包
-            balance:this.getBalance(),
+            balance:this.getBalance(redEnvelopeSupportCurrency[0]),
             currencyName:redEnvelopeSupportCurrency[0],
             singleAmount:0,
             redEnvelopeNumber:0,
@@ -35,8 +35,8 @@ export class SendRedEnvelope extends Widget {
     }
     
     // 获取余额
-    public getBalance() {
-        return this.props.balance;
+    public getBalance(currencyName:string) {
+        return this.props.balance[currencyName];
     }
     // 单个金额改变
     public singleAmountInputChange(e:any) {
@@ -110,7 +110,7 @@ export class SendRedEnvelope extends Widget {
                 currencyName:this.state.currencyName
             });
             // tslint:disable-next-line:max-line-length
-            console.log('url',`http://192.168.33.113/wallet/app/boot/share.html?rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
+            console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
         } else {
             popNew('app-components-message-message',{ itype:'error',content:'出错啦,请重试',center:true });
         }
@@ -119,31 +119,26 @@ export class SendRedEnvelope extends Widget {
     
     // 红包记录
     public redEnvelopeRecordsClick() {
-        console.log('redEnvelopeRecordsClick');
         popNew('app-view-redEnvelope-send-redEnvelopeRecord');
         
     }
     // 选择要发红包的货币
     public async chooseCurrencyClick() {
-        const index = await openBasePage('app-components-chooseCurrency-chooseCurrency',{ currencyList:redEnvelopeSupportCurrency });
+        // tslint:disable-next-line:max-line-length
+        const index = await openBasePage('app-components-chooseCurrency-chooseCurrency',{ currencyList:redEnvelopeSupportCurrency,balance:this.props.balance });
         this.state.currencyName = redEnvelopeSupportCurrency[index];
+        this.state.balance = this.getBalance(redEnvelopeSupportCurrency[index]);
         this.paint();
     }
 
     public async sendRedEnvlope() {
-        // 币种
-        const priceTypes = {
-            KT:100,
-            ETH:101
-        };
-
-            // 发红包
+        // 发红包
         const msgSendRedEnvelope = {
             type:'emit_red_bag',
             param:{
                 type:this.state.itype,
-                priceType:priceTypes[this.state.currencyName],
-                totalPrice:this.state.totalAmount,
+                priceType:CurrencyType[this.state.currencyName],
+                totalPrice:largeUnit2SmallUnit(this.state.currencyName,this.state.totalAmount),
                 count:this.state.redEnvelopeNumber,
                 desc:this.state.leaveMessage
             }
