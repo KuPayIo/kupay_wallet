@@ -18,7 +18,7 @@ export class ShareRedEnvelope extends Widget {
     public shareToFriends() {
         popNew('app-components-share-share', { 
             shareType: ShareToPlatforms.TYPE_LINK,
-            url:`http://120.24.44.254:8080/wallet/app/boot/share.html?rid=${this.props.rid}`,
+            url:`http://47.106.176.185:8080/wallet/app/boot/share.html?rid=${this.props.rid}`,
             title:'等额红包',
             content:this.props.leaveMessage
         });

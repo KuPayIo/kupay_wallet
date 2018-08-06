@@ -28,7 +28,7 @@ export const run = async (cb): Promise<any> => {
 
 const openSocket = ():Promise<any> => {
     return new Promise((resolve,reject) => {
-        setUrl(`ws://120.24.44.254:2081`);
+        setUrl(`ws://47.106.176.185:2081`);
         open(() => {
             resolve();
         },() => {
