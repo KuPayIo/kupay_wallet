@@ -51,6 +51,8 @@ export class DataCenter {
     private iSalt: string;
     // 连接用户
     private conUser: string = '';
+    // 连接用户公钥
+    private conUserPublicKey: string = '';
     // 连接随机数
     private conRandom: string = '';
     /**
@@ -236,6 +238,19 @@ export class DataCenter {
      */
     public setUser(user: string) {
         this.conUser = user;
+    }
+
+    /**
+     * 设置连接用户
+     */
+    public getUserPublicKey() {
+        return this.conUserPublicKey;
+    }
+    /**
+     * 获取连接用户
+     */
+    public setUserPublicKey(publicKey: string) {
+        this.conUserPublicKey = publicKey;
     }
 
     /**
