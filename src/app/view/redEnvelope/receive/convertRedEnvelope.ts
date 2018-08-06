@@ -3,7 +3,8 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { convertRedBag, inputInviteCdKey, RedEnvelopeType, requestAsync, requestLogined } from '../../../store/conMgr';
+import { convertRedBag, CurrencyType, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType } from '../../../store/conMgr';
+import { showError } from '../../../utils/toolMessages';
 
 export class ConvertRedEnvelope extends Widget {
     public ok: () => void;
@@ -43,40 +44,30 @@ export class ConvertRedEnvelope extends Widget {
         const close = popNew('pi-components-loading-loading', { text: '兑换中...' });
         try {
             const res: any = await this.convertRedEnvelope(code);
-            switch (res.result) {
-                case 1:
-                    console.log('queryRedBagDesc');
-                    const r = await this.queryRedBagDesc(code);
-                    if (r.result === 1) {
-                        const redEnvelope = {
-                            leaveMessage: r.value,
-                            ctype: res.value[0],
-                            amount: res.value[1]
-                        };
-                        console.log('redEnvelope', redEnvelope);
-                        popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope });
-                    }
-                    break;
-                case 711:
-                    popNew('app-components-message-message', { itype: 'error', center: true, content: '兑换码不存在' });
-                    break;
-                case 712:
-                    popNew('app-components-message-message', { itype: 'error', center: true, content: '兑换码已兑换' });
-                    break;
-                case 713:
-                    popNew('app-components-message-message', { itype: 'error', center: true, content: '兑换码已过期' });
-                    break;
-                case -1:
-                    popNew('app-components-message-message', { itype: 'error', center: true, content: '无效的兑换码' });
-                    break;
-                default:
+            if (res.result !== 1) {
+                showError(res.result, res.result === -1 ? '无效的兑换码' : '');
+
+                return;
             }
+
+            const r: any = await this.queryDesc(code);
+            if (r.result !== 1) {
+                showError(res.result);
+
+                return;
+            }
+            const redEnvelope = {
+                leaveMessage: r.value,
+                ctype: res.value[0],
+                amount: res.value[1]
+            };
+            console.log('redEnvelope', redEnvelope);
+            popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope });
         } catch (error) {
             console.log(error);
         }
 
         close.callback(close.widget);
-        // tslint:disable-next-line:max-line-length
 
         this.state.cid = '';
         this.paint();
@@ -89,11 +80,12 @@ export class ConvertRedEnvelope extends Widget {
     public async convertRedEnvelope(code: string) {
         const perCode = code.slice(0, 2);
         const validCode = code.slice(2);
-        let res = { result: -1 };
+        let res = { result: -1, value: [] };
         if (perCode === RedEnvelopeType.Normal) {
             res = await convertRedBag(validCode);
         } else if (perCode === RedEnvelopeType.Invite) {
             res = await inputInviteCdKey(validCode);
+            res.value = [CurrencyType.ETH, 0.015];
         }
 
         console.log('convert_red_bag', res);
@@ -101,14 +93,17 @@ export class ConvertRedEnvelope extends Widget {
         return res;
     }
 
-    public async queryRedBagDesc(code: string) {
-        const msg = {
-            type: 'query_red_bag_desc',
-            param: {
-                cid: code
-            }
-        };
-        const res = await requestAsync(msg);
+    public async queryDesc(code: string) {
+        const perCode = code.slice(0, 2);
+        const validCode = code.slice(2);
+        let res = { result: -1, value: '' };
+        if (perCode === RedEnvelopeType.Normal) {
+            res = await queryRedBagDesc(validCode);
+        } else if (perCode === RedEnvelopeType.Invite) {
+            res.result = 1;
+            res.value = '我是邀请码';
+        }
+
         console.log('query_red_bag_desc', res);
 
         return res;

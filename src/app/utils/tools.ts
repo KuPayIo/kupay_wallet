@@ -263,6 +263,24 @@ export const btc2Sat = (num: number) => {
 };
 
 /**
+ * kpt转kt
+ */
+export const kpt2kt = (num: number) => {
+    if (!num) return 0;
+
+    return num / Math.pow(10, 8);
+};
+
+/**
+ * kt转kpt
+ */
+export const kt2kpt = (num: number) => {
+    if (!num) return 0;
+
+    return num * Math.pow(10, 8);
+};
+
+/**
  * eth 代币除以精度计算
  */
 export const ethTokenDivideDecimals = (num: number, tokenName: string) => {
