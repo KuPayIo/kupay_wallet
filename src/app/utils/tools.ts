@@ -281,6 +281,27 @@ export const kt2kpt = (num: number) => {
 };
 
 /**
+ * 根据货币类型小单位转大单位
+ */
+export const smallUnit2LargeUnit = (currencyName:string,amount:number) => {
+    if (currencyName === 'ETH') {
+        return wei2Eth(amount);
+    } else if (currencyName === 'KT') {
+        return kpt2kt(amount);
+    }
+};
+
+/**
+ * 根据货币类型大单位转小单位
+ */
+export const largeUnit2SmallUnit = (currencyName:string,amount:number) => {
+    if (currencyName === 'ETH') {
+        return eth2Wei(amount);
+    } else if (currencyName === 'KT') {
+        return kt2kpt(amount);
+    }
+};
+/**
  * eth 代币除以精度计算
  */
 export const ethTokenDivideDecimals = (num: number, tokenName: string) => {
@@ -991,4 +1012,16 @@ export const timestampFormat = (timestamp: number) => {
     const seconds = date.getSeconds() >= 10 ? date.getSeconds() : `0${date.getSeconds()}`;
 
     return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
+};
+
+// 获取当前钱包第一个ETH地址
+export const getFirstEthAddr = () => {
+    const wallets = getLocalStorage('wallets');
+    const wallet = getCurrentWallet(wallets);
+    const currencyRecords = wallet.currencyRecords;
+    for (let i = 0; i < currencyRecords.length; i ++) {
+        if (currencyRecords[i].currencyName === 'ETH') {
+            return currencyRecords[i].addrs[0];
+        }
+    }
 };

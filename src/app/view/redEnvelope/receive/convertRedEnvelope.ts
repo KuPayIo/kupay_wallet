@@ -3,7 +3,9 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { convertRedBag, CurrencyType, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType } from '../../../store/conMgr';
+import { kpt2kt, smallUnit2LargeUnit } from '../../../shareView/utils/tools';
+import { convertRedBag, 
+    CurrencyType, CurrencyTypeReverse, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType } from '../../../store/conMgr';
 import { showError } from '../../../utils/toolMessages';
 
 export class ConvertRedEnvelope extends Widget {
@@ -44,12 +46,6 @@ export class ConvertRedEnvelope extends Widget {
         const close = popNew('pi-components-loading-loading', { text: '兑换中...' });
         try {
             const res: any = await this.convertRedEnvelope(code);
-            if (res.result !== 1) {
-                showError(res.result, res.result === -1 ? '无效的兑换码' : '');
-
-                return;
-            }
-
             const r: any = await this.queryDesc(code);
             if (r.result !== 1) {
                 showError(res.result);
@@ -59,7 +55,7 @@ export class ConvertRedEnvelope extends Widget {
             const redEnvelope = {
                 leaveMessage: r.value,
                 ctype: res.value[0],
-                amount: res.value[1]
+                amount: smallUnit2LargeUnit(CurrencyTypeReverse[res.value[0]],res.value[1])
             };
             console.log('redEnvelope', redEnvelope);
             popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope });

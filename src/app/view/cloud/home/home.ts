@@ -15,6 +15,10 @@ export class Home extends Widget {
     }
     public init(): void {
         this.state = {
+            balance:{
+                KT:0.00,
+                ETH:0.00
+            },
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
             bonus: 0.00,// 累计分红
@@ -36,8 +40,7 @@ export class Home extends Widget {
      */
     public packetsClicked() {
         // TODO
-        popNew('app-view-redEnvelope-send-sendRedEnvelope', { balance: this.state.ktBalance });
-    }
+        popNew('app-view-redEnvelope-send-sendRedEnvelope',{ balance:this.state.balance });    }
 
     /**
      * 点击兑换领奖
@@ -96,10 +99,13 @@ export class Home extends Widget {
         const balanceInfo = await getAllBalance();
         for (let i = 0; i < balanceInfo.value.length; i++) {
             const each = balanceInfo.value[i];
+            const CurrencyName = CurrencyTypeReverse[each[0]];
             if (each[0] === CurrencyType.KT) {
                 this.state.ktBalance = kpt2kt(each[1]);
+                this.state.balance[CurrencyName] = kpt2kt(each[1]);
             } else if (each[0] === CurrencyType.ETH) {
                 this.state.ethBalance = wei2Eth(each[1]);
+                this.state.balance[CurrencyName] = wei2Eth(each[1]);
             }
         }
         const mining = await getMining();
