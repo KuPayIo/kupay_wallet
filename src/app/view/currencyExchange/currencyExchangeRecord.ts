@@ -51,7 +51,7 @@ export class CurrencyExchangeRecord extends Widget {
                 ...tx,
                 inputTXID_show:parseAccount(tx.inputTXID),
                 outputTXID_show:tx.status === 'complete' && parseAccount(tx.outputTXID),
-                timestamp_show:timestampFormat(tx.timestamp),
+                timestamp_show:timestampFormat(tx.timestamp * 1000),
                 status_show,
                 status_class
             });
@@ -87,7 +87,7 @@ export class CurrencyExchangeRecord extends Widget {
                     tip: wei2Eth(item.fees),
                     info: item.info,
                     fromAddr: item.from,
-                    showTime: timestampFormat(item.time / 1000),
+                    showTime: timestampFormat(item.time),
                     id: item.hash,
                     currencyName:tx.inputCurrency
                 };
@@ -121,7 +121,7 @@ export class CurrencyExchangeRecord extends Widget {
                     tip: wei2Eth(item.fees),
                     info: item.info,
                     fromAddr: item.from,
-                    showTime: timestampFormat(item.time / 1000),
+                    showTime: timestampFormat(item.time),
                     id: item.hash,
                     currencyName:tx.outputCurrency
                 };

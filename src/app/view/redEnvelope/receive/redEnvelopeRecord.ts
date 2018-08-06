@@ -46,7 +46,7 @@ export class RedEnvelopeRecord extends Widget {
                 };
                 recordList.push(record);
                 // tslint:disable-next-line:max-line-length
-                recordListShow.push({ ...record,ctypeShow:CurrencyTypeReverse[record.ctype],timeShow:timestampFormat(record.time / 1000) });
+                recordListShow.push({ ...record,ctypeShow:CurrencyTypeReverse[record.ctype],timeShow:timestampFormat(record.time) });
             }
             this.state.convertNumber = convertNumber;
             this.state.recordList = recordListShow;
