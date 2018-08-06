@@ -119,7 +119,7 @@ export const openAndGetRandom = async () => {
         return;
     }
 
-    setUrl(`ws://127.0.0.1:2081`);
+    setUrl(`ws://${conIp}:2081`);
     dataCenter.setUser(wallet.walletId);
     dataCenter.setUserPublicKey(gwlt.publicKey);
 
