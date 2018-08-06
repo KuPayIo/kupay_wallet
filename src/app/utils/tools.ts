@@ -974,3 +974,15 @@ export const timestampFormat = (timestamp: number) => {
 
     return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
 };
+
+// 获取当前钱包第一个ETH地址
+export const getFirstEthAddr = () => {
+    const wallets = getLocalStorage('wallets');
+    const wallet = getCurrentWallet(wallets);
+    const currencyRecords = wallet.currencyRecords;
+    for (let i = 0; i < currencyRecords.length; i ++) {
+        if (currencyRecords[i].currencyName === 'ETH') {
+            return currencyRecords[i].addrs[0];
+        }
+    }
+};

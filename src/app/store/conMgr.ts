@@ -44,6 +44,8 @@ export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.htm
  */
 let loginState: number = LoginState.init;
 
+// 查询历史记录时一页的数量
+const recordNumber = 10;
 // 设置登录状态
 const setLoginState = (s: number) => {
     if (loginState === s) {
@@ -237,5 +239,30 @@ export const queryRedBagDesc = async (cid: string) => {
         }
     };
 
+    return requestAsync(msg);
+};
+
+/**
+ * 查询发送红包记录
+ */
+export const querySendRedEnvelopeRecord = async (start?:string) => {
+    let msg;
+    if (start) {
+        msg = {
+            type:'query_emit_log',
+            param:{
+                start,
+                count:recordNumber
+            }
+        };
+    } else {
+        msg = {
+            type:'query_emit_log',
+            param:{
+                count:recordNumber
+            }
+        };
+    }
+    
     return requestAsync(msg);
 };
