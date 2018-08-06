@@ -223,3 +223,12 @@ export const convertRedBag = async (cid) => {
 
     return requestLogined(msg);
 };
+
+/**
+ * 挖矿
+ */
+export const getAward = async () => {
+    const msg = { type: 'wallet/cloud@get_award', param: {} };
+
+    return requestAsync(msg);
+};

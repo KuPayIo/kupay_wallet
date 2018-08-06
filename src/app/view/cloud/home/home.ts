@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, getAllBalance, getInviteCode, getInviteCodeDetail, inputInviteCdKey } from '../../../store/conMgr';
+import { CurrencyType, getAllBalance, getAward, getInviteCode, getInviteCodeDetail, inputInviteCdKey } from '../../../store/conMgr';
 export class Home extends Widget {
     constructor() {
         super();
@@ -61,10 +61,22 @@ export class Home extends Widget {
         // TODO
     }
     /**
-     * 点击挖矿
+     * 显示挖矿详情
      */
     public mining() {
         popNew('app-view-mine-dividend-mining');
+    }
+    /**
+     * 挖矿
+     */
+    public async doPadding() {
+        const r = await getAward();
+        if (r.result !== 1) {
+            popNew('app-components-message-message', { itype: 'outer', center: true, content: `挖矿失败(${r.result})` });
+
+            return;
+        }
+        popNew('app-components-message-message', { itype: 'outer', center: true, content: '挖矿成功' });
     }
     /**
      * 邀请红包
