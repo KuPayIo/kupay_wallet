@@ -203,7 +203,7 @@ export const getInviteCode = async () => {
 export const inputInviteCdKey = async (code) => {
     const msg = { type: 'wallet/cloud@input_cd_key', param: { code: code } };
 
-    return requestAsync(msg);
+    return requestLogined(msg);
 };
 
 /**
@@ -213,4 +213,13 @@ export const getInviteCodeDetail = async () => {
     const msg = { type: 'wallet/cloud@get_invite_code_detail', param: {} };
 
     return requestAsync(msg);
+};
+
+/**
+ * 兑换红包
+ */
+export const convertRedBag = async (cid) => {
+    const msg = { type: 'convert_red_bag', param: { cid: cid } };
+
+    return requestLogined(msg);
 };
