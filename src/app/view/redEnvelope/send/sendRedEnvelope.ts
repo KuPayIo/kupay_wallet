@@ -8,7 +8,7 @@ import { redEnvelopeSupportCurrency } from '../../../utils/constants';
 import { getByteLen, openBasePage } from '../../../utils/tools';
 
 interface Props {
-    balance:number;
+    balance:any;
 }
 export class SendRedEnvelope extends Widget {
     public ok:() => void;
@@ -20,7 +20,7 @@ export class SendRedEnvelope extends Widget {
     public init() {
         this.state = {
             itype:0,// 0 等额红包  1 拼手气红包
-            balance:this.getBalance(),
+            balance:this.getBalance(redEnvelopeSupportCurrency[0]),
             currencyName:redEnvelopeSupportCurrency[0],
             singleAmount:0,
             redEnvelopeNumber:0,
@@ -35,8 +35,8 @@ export class SendRedEnvelope extends Widget {
     }
     
     // 获取余额
-    public getBalance() {
-        return this.props.balance;
+    public getBalance(currencyName:string) {
+        return this.props.balance[currencyName];
     }
     // 单个金额改变
     public singleAmountInputChange(e:any) {
@@ -125,8 +125,10 @@ export class SendRedEnvelope extends Widget {
     }
     // 选择要发红包的货币
     public async chooseCurrencyClick() {
-        const index = await openBasePage('app-components-chooseCurrency-chooseCurrency',{ currencyList:redEnvelopeSupportCurrency });
+        // tslint:disable-next-line:max-line-length
+        const index = await openBasePage('app-components-chooseCurrency-chooseCurrency',{ currencyList:redEnvelopeSupportCurrency,balance:this.props.balance });
         this.state.currencyName = redEnvelopeSupportCurrency[index];
+        this.state.balance = this.getBalance(redEnvelopeSupportCurrency[index]);
         this.paint();
     }
 

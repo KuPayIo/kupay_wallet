@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, getAllBalance } from '../../../store/conMgr';
+import { CurrencyType, CurrencyTypeReverse, getAllBalance } from '../../../store/conMgr';
 export class Home extends Widget {
     constructor() {
         super();
@@ -14,6 +14,10 @@ export class Home extends Widget {
     }
     public init(): void {
         this.state = {
+            balance:{
+                KT:0.00,
+                ETH:0.00
+            },
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
             bonus: 0.00// 累计分红
@@ -34,7 +38,7 @@ export class Home extends Widget {
      */
     public packetsClicked() {
         // TODO
-        popNew('app-view-redEnvelope-send-sendRedEnvelope',{ balance:this.state.ktBalance });
+        popNew('app-view-redEnvelope-send-sendRedEnvelope',{ balance: this.state.balance });
     }
 
     /**
@@ -74,6 +78,8 @@ export class Home extends Widget {
         const balanceInfo = await getAllBalance();
         for (let i = 0; i < balanceInfo.value.length; i++) {
             const each = balanceInfo.value[i];
+            const CurrencyName = CurrencyTypeReverse[each[0]];
+            this.state.balance[CurrencyName] = each[1];
             if (each[0] === CurrencyType.KT) {
                 this.state.ktBalance = each[1];
             } else if (each[0] === CurrencyType.ETH) {

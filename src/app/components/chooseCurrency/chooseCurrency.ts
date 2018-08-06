@@ -6,6 +6,7 @@ import { formatBalance, getCurrentAddrBalanceByCurrencyName } from '../../utils/
 
 interface Props {
     currencyList:string[];
+    balance?:any;
 }
 export class ChooseCurrency extends Widget {
     public ok:(index:number) => void;
@@ -16,10 +17,11 @@ export class ChooseCurrency extends Widget {
     }
     public init() {
         const currencyShowList = [];
+        const getBalance = this.getBalance();
         this.props.currencyList.forEach(item => {
             currencyShowList.push({
                 currencyName:item,
-                balance:formatBalance(getCurrentAddrBalanceByCurrencyName(item))
+                balance:formatBalance(getBalance(item))
             });
         });
         this.state = {
@@ -27,6 +29,15 @@ export class ChooseCurrency extends Widget {
         };
     }
 
+    public getBalance() {
+        if (this.props.balance) {
+            return (currencyName:string) => {
+                return this.props.balance[currencyName];
+            };
+        } else {
+            return getCurrentAddrBalanceByCurrencyName;
+        }
+    }
     public currencyItemClick(e:any,index:number) {
         this.ok && this.ok(index);
     }
