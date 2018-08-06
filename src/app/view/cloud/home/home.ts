@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType, getAllBalance, getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining, inputInviteCdKey } from '../../../store/conMgr';
+import { kpt2kt, wei2Eth } from '../../../utils/tools';
 export class Home extends Widget {
     constructor() {
         super();
@@ -96,9 +97,9 @@ export class Home extends Widget {
         for (let i = 0; i < balanceInfo.value.length; i++) {
             const each = balanceInfo.value[i];
             if (each[0] === CurrencyType.KT) {
-                this.state.ktBalance = each[1];
+                this.state.ktBalance = kpt2kt(each[1]);
             } else if (each[0] === CurrencyType.ETH) {
-                this.state.ethBalance = each[1];
+                this.state.ethBalance = wei2Eth(each[1]);
             }
         }
         const mining = await getMining();
