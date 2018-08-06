@@ -119,7 +119,7 @@ export const openAndGetRandom = async () => {
         return;
     }
 
-    setUrl(`ws://${conIp}:2081`);
+    setUrl(`ws://127.0.0.1:2081`);
     dataCenter.setUser(wallet.walletId);
     dataCenter.setUserPublicKey(gwlt.publicKey);
 
@@ -175,7 +175,7 @@ export const getBalance = async (currencyType: CurrencyType) => {
 };
 
 /**
- * 获取分红信息
+ * 获取分红汇总信息
  */
 export const getDividend = async () => {
     const msg = { type: 'wallet/cloud@get_bonus_info', param: {} };
@@ -188,6 +188,15 @@ export const getDividend = async () => {
  */
 export const getMining = async () => {
     const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取挖矿历史记录
+ */
+export const getMiningHistory = async() => {
+    const msg = { type:'wallet/cloud@get_pool_detail',param:{} };
 
     return requestAsync(msg);
 };
@@ -282,6 +291,24 @@ export const queryConvertLog = async (count) => {
  */
 export const getAward = async () => {
     const msg = { type: 'wallet/cloud@get_award', param: {} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 矿山增加记录
+ */
+export const getMineDetail = async() => {
+    const msg = { type: 'wallet/cloud@grant_detail', param: {} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取分红历史记录
+ */
+export const getDividHistory = async() => {
+    const msg = { type: 'wallet/cloud@get_bonus_info', param: {} };
 
     return requestAsync(msg);
 };
