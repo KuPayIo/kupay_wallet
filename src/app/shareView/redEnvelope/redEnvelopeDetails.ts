@@ -4,6 +4,7 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { requestAsync } from '../../store/conMgr';
+import { copyToClipboard, timestampFormat } from '../utils/tools';
 interface Props {
     rid:number;// 红包id
     uid:number;// 用户id
@@ -92,35 +93,7 @@ export class RedEnvelopeDetails extends Widget {
     }
 
     public copyBtnClick() {
-        copyToClipboard(this.props.code);
+        copyToClipboard(this.props.codeShow);
         popNew('app-shareView-components-message',{ itype:'success',center:true,content:'复制成功' });
     }
 }
-
-// 复制到剪切板
-const copyToClipboard = (copyText) => {
-    const input = document.createElement('input');
-    input.setAttribute('readonly', 'readonly');
-    input.setAttribute('value', copyText);
-    input.setAttribute('style', 'position:absolute;top:-9999px;');
-    document.body.appendChild(input);
-    input.setSelectionRange(0, 9999);
-    input.select();
-    if (document.execCommand('copy')) {
-        document.execCommand('copy');
-    }
-    document.body.removeChild(input);
-};
-
-// 时间戳格式化
-const timestampFormat = (timestamp: number) => {
-    const date = new Date(timestamp);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : `0${date.getMonth() + 1}`;
-    const day = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
-    const hour = date.getHours() >= 10 ? date.getHours() : `0${date.getHours()}`;
-    const minutes = date.getMinutes() >= 10 ? date.getMinutes() : `0${date.getMinutes()}`;
-    const seconds = date.getSeconds() >= 10 ? date.getSeconds() : `0${date.getSeconds()}`;
-
-    return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
-};

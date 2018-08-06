@@ -6,7 +6,7 @@
                 <div w-class="ga-leave-message">{{it.leaveMsg}}</div>
                 <div w-class="ga-amount"><span>{{it.amount}}</span><span w-class="ga-currency-name">{{it1.currencyName}}</span></div>
                 <div w-class="ga-input-father">
-                    <div w-class="input-father">{{it.code}}</div>
+                    <div w-class="input-father">{{it.codeShow}}</div>
                     <div w-class="ga-copy-btn" on-tap="copyBtnClick">复制红包码</div>
                 </div>
                 <div w-class="ga-receive" on-tap="receiveClick">立即领取红包金额</div>

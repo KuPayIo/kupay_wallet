@@ -36,8 +36,9 @@ export enum RedEnvelopeType {
     Invite = '02'
 }
 export const conIp = '127.0.0.1';
+export const conPort = '80';
 // 分享链接前缀
-export const sharePerUrl = `http://${conIp}:8080/wallet/app/boot/share.html`;
+export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.html`;
 /**
  * 登录状态
  */
@@ -222,4 +223,19 @@ export const convertRedBag = async (cid) => {
     const msg = { type: 'convert_red_bag', param: { cid: cid } };
 
     return requestLogined(msg);
+};
+
+/**
+ * 获取红包留言
+ * @param cid 兑换码
+ */
+export const queryRedBagDesc = async (cid: string) => {
+    const msg = {
+        type: 'query_red_bag_desc',
+        param: {
+            cid
+        }
+    };
+
+    return requestAsync(msg);
 };

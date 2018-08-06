@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { convertRedBag, inputInviteCdKey, RedEnvelopeType, requestAsync, requestLogined } from '../../../store/conMgr';
+import { convertRedBag, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType } from '../../../store/conMgr';
 
 export class ConvertRedEnvelope extends Widget {
     public ok: () => void;
@@ -45,7 +45,6 @@ export class ConvertRedEnvelope extends Widget {
             const res: any = await this.convertRedEnvelope(code);
             switch (res.result) {
                 case 1:
-                    console.log('queryRedBagDesc');
                     const r = await this.queryRedBagDesc(code);
                     if (r.result === 1) {
                         const redEnvelope = {
@@ -101,16 +100,10 @@ export class ConvertRedEnvelope extends Widget {
         return res;
     }
 
-    public async queryRedBagDesc(code: string) {
-        const msg = {
-            type: 'query_red_bag_desc',
-            param: {
-                cid: code
-            }
-        };
-        const res = await requestAsync(msg);
+    public async queryRedBagDesc(cid: string) {
+        const res = await queryRedBagDesc(cid);
         console.log('query_red_bag_desc', res);
 
-        return res;
+        return res.value;
     }
 }

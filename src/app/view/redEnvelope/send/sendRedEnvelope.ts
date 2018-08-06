@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { requestLogined } from '../../../store/conMgr';
+import { RedEnvelopeType, requestLogined, sharePerUrl } from '../../../store/conMgr';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
 import { getByteLen, openBasePage } from '../../../utils/tools';
 
@@ -110,7 +110,7 @@ export class SendRedEnvelope extends Widget {
                 currencyName:this.state.currencyName
             });
             // tslint:disable-next-line:max-line-length
-            console.log('url',`http://192.168.33.113/wallet/app/boot/share.html?rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
+            console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
         } else {
             popNew('app-components-message-message',{ itype:'error',content:'出错啦,请重试',center:true });
         }
@@ -119,7 +119,6 @@ export class SendRedEnvelope extends Widget {
     
     // 红包记录
     public redEnvelopeRecordsClick() {
-        console.log('redEnvelopeRecordsClick');
         popNew('app-view-redEnvelope-send-redEnvelopeRecord');
         
     }

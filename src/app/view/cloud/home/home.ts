@@ -38,7 +38,7 @@ export class Home extends Widget {
      */
     public packetsClicked() {
         // TODO
-        popNew('app-view-redEnvelope-send-sendRedEnvelope',{ balance:this.state.ktBalance });    }
+        popNew('app-view-redEnvelope-send-sendRedEnvelope',{ balance:this.state.balance });    }
 
     /**
      * 点击兑换领奖
