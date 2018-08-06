@@ -8,9 +8,7 @@ import { GlobalWallet } from '../core/globalWallet';
 import { getCurrentWallet, getLocalStorage, openBasePage } from '../utils/tools';
 import { dataCenter } from './dataCenter';
 
-/**
- * 枚举登录状态
- */
+// 枚举登录状态
 export enum LoginState {
     init = 0,
     logining,
@@ -20,19 +18,26 @@ export enum LoginState {
     logouted,
     logerror
 }
-/**
- * 货币类型
- */
+// 货币类型
 export enum CurrencyType {
     KT = 100,
     ETH
 }
 
 // 枚举货币类型
-export const CurrencyTypeReverse  = {
-    100:'KT',
-    101:'ETH'
+export const CurrencyTypeReverse = {
+    100: 'KT',
+    101: 'ETH'
 };
+
+// 红包类型
+export enum RedEnvelopeType {
+    Normal = '01',
+    Invite = '02'
+}
+export const conIp = '127.0.0.1';
+// 分享链接前缀
+export const sharePerUrl = `http://${conIp}:8080/wallet/app/boot/share.html`;
 /**
  * 登录状态
  */
@@ -109,7 +114,7 @@ export const openAndGetRandom = async () => {
         return;
     }
 
-    setUrl(`ws://127.0.0.1:2081`);
+    setUrl(`ws://${conIp}:2081`);
     dataCenter.setUser(wallet.walletId);
 
     return new Promise((resolve, reject) => {
@@ -168,17 +173,44 @@ export const getBalance = async (currencyType: CurrencyType) => {
 /**
  * 获取分红信息
  */
-export const getDividend = async() => {
-    const msg = { type:'wallet/cloud@get_bonus_info', param:{} };
-    
+export const getDividend = async () => {
+    const msg = { type: 'wallet/cloud@get_bonus_info', param: {} };
+
     return requestAsync(msg);
 };
 
 /**
  * 获取挖矿总信息
  */
-export const getMining = async() => {
-    const msg = { type:'wallet/cloud@get_mine_total',param:{} };
+export const getMining = async () => {
+    const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取邀请红包码
+ */
+export const getInviteCode = async () => {
+    const msg = { type: 'wallet/cloud@get_invite_code', param: {} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 兑换邀请红包
+ */
+export const inputInviteCdKey = async (code) => {
+    const msg = { type: 'wallet/cloud@input_cd_key', param: { code: code } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取邀请红包领取明细
+ */
+export const getInviteCodeDetail = async () => {
+    const msg = { type: 'wallet/cloud@get_invite_code_detail', param: {} };
 
     return requestAsync(msg);
 };

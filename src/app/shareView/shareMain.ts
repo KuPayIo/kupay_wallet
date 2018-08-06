@@ -7,7 +7,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { open,setUrl } from '../../pi/net/ui/con_mgr';
+import { open, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
@@ -26,23 +26,23 @@ export const run = async (cb): Promise<any> => {
     // test();
 };
 
-const openSocket = ():Promise<any> => {
-    return new Promise((resolve,reject) => {
+const openSocket = (): Promise<any> => {
+    return new Promise((resolve, reject) => {
         setUrl(`ws://127.0.0.1:2081`);
         open(() => {
             resolve();
-        },() => {
+        }, () => {
             reject();
         });
     });
-    
+
 };
 
 const popNewPage = () => {
     const takeRedBag = getLocalStorage('takeRedBag');
-    const rid = parseUrlParams(window.location.search,'rid');
+    const rid = parseUrlParams(window.location.search, 'rid');
     if (takeRedBag && takeRedBag.rid === rid) {
-        popNew('app-shareView-redEnvelope-redEnvelopeDetails',{ ...takeRedBag });
+        popNew('app-shareView-redEnvelope-redEnvelopeDetails', { ...takeRedBag });
     } else {
         popNew('app-shareView-redEnvelope-openRedEnvelope');
     }
