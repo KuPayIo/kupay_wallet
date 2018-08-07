@@ -50,7 +50,7 @@ export class Dividend extends Widget {
                 {
                     isOpen:false,
                     isComplete:true,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_new.png',
                     itemName:'创建钱包',
                     itemNum:0,
                     itemDetail:`<div>1、创建钱包送300KT，每个APP最多创建10个钱包。</div>`,
@@ -59,7 +59,7 @@ export class Dividend extends Widget {
                 },{
                     isOpen:false,
                     isComplete:false,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_phone.png',
                     itemName:'验证手机号',
                     itemNum:0,
                     itemDetail:`<div>1、验证手机号，送2500KT。</div>
@@ -69,7 +69,7 @@ export class Dividend extends Widget {
                 },{
                     isOpen:false,
                     isComplete:false,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_saves.png',
                     itemName:'存币送ETH',
                     itemNum:0,
                     itemDetail:`<div>1、存币到自己的钱包地址上，存一个ETH送2000KT。</div>
@@ -80,7 +80,7 @@ export class Dividend extends Widget {
                 },{
                     isOpen:false,
                     isComplete:false,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_share.png',
                     itemName:'与好友分享',
                     itemNum:0,
                     itemDetail:`<div>1、系统赠送邀请红包限量1个，内含0.5ETH，分成单个0.015ETH等额红包。</div>
@@ -91,7 +91,7 @@ export class Dividend extends Widget {
                 },{
                     isOpen:false,
                     isComplete:false,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_buy.png',
                     itemName:'购买理财',
                     itemNum:0,
                     itemDetail:`<div>1、每购买1ETH等价的理财产品每天送100KT。</div>
@@ -103,7 +103,7 @@ export class Dividend extends Widget {
                 },{
                     isOpen:false,
                     isComplete:false,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_chat.png',
                     itemName:'聊天',
                     itemNum:0,
                     itemDetail:`<div>1、首次参与聊天赠送700。</div>`,

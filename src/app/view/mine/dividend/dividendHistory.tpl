@@ -17,6 +17,10 @@
         </div>
         {{end}}
         
+        {{if it1.data.length==0}}
+        <div w-class="loadmore">~暂无数据~</div>
+        {{end}}
+        
         {{% <div w-class="loadmore">加载中，请稍后~~~</div>}}
         <div style="height: 128px;" id="more"></div>
     </div>
