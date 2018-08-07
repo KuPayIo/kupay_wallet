@@ -11,8 +11,8 @@
         {{end}}
     </div>
 
-    <div w-class="mask" style="height:{{it1.maskHeight-470}}px;">
-        <widget w-tag={{it1.routePath}}></widget>
+    <div w-class="mask" style="height:{{it1.maskHeight-470}}px;"> 
+        <widget w-tag={{it1.routePath}}>{ coinType: {{it.coinType}} }</widget>
     </div>
     {{if it1.showChargeAndWithdraw}}
     <div w-class="botFixed">
