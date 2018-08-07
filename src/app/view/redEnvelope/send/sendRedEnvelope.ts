@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType, RedEnvelopeType, requestLogined, sharePerUrl } from '../../../store/conMgr';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
-import { getByteLen, largeUnit2SmallUnit, openBasePage } from '../../../utils/tools';
+import { getByteLen, largeUnit2SmallUnit, openBasePage, removeLocalStorage } from '../../../utils/tools';
 
 interface Props {
     balance:any;
@@ -109,6 +109,7 @@ export class SendRedEnvelope extends Widget {
                 leaveMessage:this.state.leaveMessage,
                 currencyName:this.state.currencyName
             });
+            removeLocalStorage('sendRedEnvelopeHistoryRecord');
             // tslint:disable-next-line:max-line-length
             console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
         } else {

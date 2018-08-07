@@ -29,6 +29,7 @@
     font-size: 36px;
 }
 .ga-records-list-box{
+    position: relative;
     flex: 1 0 0;
     background-color: #fff;
     display: flex;
@@ -80,4 +81,11 @@
     font-size: 36px;
     font-family: "PingFangSC-Regular";
 
+}
+.loadmore{
+    background: #f8f8f8;
+    height: 50px;
+    text-align: center;
+    font-size: 28px;
+    padding: 10px;
 }

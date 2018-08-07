@@ -45,7 +45,7 @@ export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.htm
 let loginState: number = LoginState.init;
 
 // 查询历史记录时一页的数量
-const recordNumber = 10;
+export const recordNumber = 10;
 // 设置登录状态
 const setLoginState = (s: number) => {
     if (loginState === s) {
@@ -274,6 +274,17 @@ export const querySendRedEnvelopeRecord = async (start?:string) => {
 export const queryConvertLog = async (count) => {
     const msg = { type: 'query_convert_log', param: { count: count } };
 
+    return requestAsync(msg);
+};
+
+export const queryDetailLog = async () => {
+    const msg = {
+        type:'query_detail_log',
+        param:{
+            cids:'J8VIXY,LQRNZV,27KP71'
+        }
+    };
+    
     return requestAsync(msg);
 };
 
