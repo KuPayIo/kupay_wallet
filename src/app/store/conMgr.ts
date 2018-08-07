@@ -282,8 +282,25 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
 /**
  * 查询红包兑换记录
  */
-export const queryConvertLog = async (count) => {
-    const msg = { type: 'query_convert_log', param: { count: count } };
+export const queryConvertLog = async (start) => {
+    console.log('queryConvertLog',start);
+    let msg;
+    if (start) {
+        msg = {
+            type: 'query_convert_log',
+            param: {
+                start,
+                count: recordNumber
+            }
+        };
+    } else {
+        msg = {
+            type: 'query_convert_log',
+            param: {
+                count: recordNumber
+            }
+        };
+    }
 
     return requestAsync(msg);
 };
