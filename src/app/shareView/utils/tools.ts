@@ -71,7 +71,7 @@ export const eth2Wei = (num: number) => {
 export const kpt2kt = (num: number) => {
     if (!num) return 0;
 
-    return num / Math.pow(10, 8);
+    return num / Math.pow(10, 9);
 };
 
 /**
@@ -80,7 +80,7 @@ export const kpt2kt = (num: number) => {
 export const kt2kpt = (num: number) => {
     if (!num) return 0;
 
-    return num * Math.pow(10, 8);
+    return num * Math.pow(10, 9);
 };
 
 /**
@@ -99,8 +99,8 @@ export const smallUnit2LargeUnit = (currencyName:string,amount:number) => {
  */
 export const largeUnit2SmallUnit = (currencyName:string,amount:number) => {
     if (currencyName === 'ETH') {
-        return eth2Wei(amount);
+        return Math.floor(eth2Wei(amount));
     } else if (currencyName === 'KT') {
-        return kt2kpt(amount);
+        return Math.floor(kt2kpt(amount));
     }
 };

@@ -161,6 +161,7 @@
     font-family: "SourceHanSansCN-Regular";
     padding: 72px 30px;
     background-color: #fff;
+    flex: 1 0 0;
 }
 .ga-rule-title{
     text-align: center;

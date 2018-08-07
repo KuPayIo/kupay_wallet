@@ -83,3 +83,10 @@
 .ga-time{
     flex: 1 0 0;
 }
+.loadmore{
+    background: #f8f8f8;
+    height: 50px;
+    text-align: center;
+    font-size: 28px;
+    padding: 10px;
+}

@@ -49,7 +49,7 @@
         <div w-class="ga-item-box">
             <span w-class="ga-tag">留言</span>
             <div w-class="ga-leave-message input-father" ev-input-change="leaveMessageChange">
-                <app-components-input-input_simple>{placeHolder:{{it1.leaveMessage}},style:"fontSize:32px;textAlign:right;"}</app-components-input-input_simple>
+                <app-components-input-input_simple>{placeHolder:{{it1.lmPlaceHolder}},style:"fontSize:32px;textAlign:right;",input:{{it1.leaveMessage}}}</app-components-input-input_simple>
             </div>
         </div>
         <div w-class="ga-send-amount">{{it1.totalAmount}}&nbsp;{{it1.currencyName}}</div>

@@ -3,12 +3,11 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { kpt2kt, smallUnit2LargeUnit } from '../../../shareView/utils/tools';
 import {
     convertRedBag, CurrencyType, CurrencyTypeReverse, getData, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType, setData
 } from '../../../store/conMgr';
 import { showError } from '../../../utils/toolMessages';
-import { eth2Wei } from '../../../utils/tools';
+import { eth2Wei, removeLocalStorage, smallUnit2LargeUnit } from '../../../utils/tools';
 
 export class ConvertRedEnvelope extends Widget {
     public ok: () => void;
@@ -19,13 +18,6 @@ export class ConvertRedEnvelope extends Widget {
     public init() {
         this.state = {
             cid: '',
-            redEnvelope: {
-                type: '等额红包',
-                time: '04-12  14:32:00',
-                currencyName: 'ETH',
-                amount: 1,
-                leaveMessage: '恭喜发财,大吉大利'
-            },
             placeHolder: '输入兑换码，领取红包'
         };
     }
@@ -54,6 +46,7 @@ export class ConvertRedEnvelope extends Widget {
 
                 return;
             }
+            removeLocalStorage('convertRedEnvelopeHistoryRecord');
             const r: any = await this.queryDesc(code);
 
             const redEnvelope = {
