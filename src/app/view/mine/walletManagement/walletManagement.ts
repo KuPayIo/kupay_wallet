@@ -98,6 +98,15 @@ export class WalletManagement extends Widget {
         close.callback(close.widget);
     }
 
+    public async bindPhone() {
+        if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
+            this.pageClick();
+
+            return;
+        }
+        popNew('app-view-cloud-cloudAccount-bindPhone', {});
+    }
+
     public walletNameInputFocus() {
         this.state.isUpdatingWalletName = true;
     }

@@ -199,13 +199,13 @@ export const getBalance = async (currencyType: CurrencyType) => {
  * 获取分红汇总信息
  */
 export const getDividend = async () => {
-    const msg = { type: 'wallet/cloud@get_bonus_info', param: {} };
+    const msg = { type: 'wallet/cloud@get_bonus_total', param: {} };
 
     return requestAsync(msg);
 };
 
 /**
- * 获取挖矿总信息
+ * 获取挖矿汇总信息
  */
 export const getMining = async () => {
     const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
@@ -412,6 +412,42 @@ export const doChat = async () => {
  */
 export const getAccountDetail = async (coin) => {
     const msg = { type: 'wallet/account@get_detail', param: { coin } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取矿山排名列表
+ */
+export const getMineRank = async(num:number) => {
+    const msg = { type: 'wallet/cloud@mine_top', param: { num:num } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取挖矿排名列表
+ */
+export const getMiningRank = async(num:number) => {
+    const msg = { type: 'wallet/cloud@get_mine_top', param: { num:num } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 发送验证码
+ */
+export const sendCode = async(phone:number,num:number) => {
+    const msg = { type: 'wallet/sms@send_sms_code', param: { phone,num,name:'钱包' } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 注册手机
+ */
+export const regPhone = async(phone:number,code:number) => {
+    const msg = { type: 'wallet/user@reg_phone', param: { phone,code } };
 
     return requestAsync(msg);
 };

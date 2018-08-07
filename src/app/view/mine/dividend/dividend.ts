@@ -4,12 +4,13 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getDividend } from '../../../store/conMgr';
+import { kpt2kt, wei2Eth } from '../../../utils/tools';
 
 interface State {
-    totalDivid:string;
-    totalHold:string;
-    thisDivid:string;
-    totalDays:string;
+    totalDivid:number;
+    totalHold:number;
+    thisDivid:number;
+    totalDays:number;
 }
 
 export class Dividend extends Widget {
@@ -21,12 +22,12 @@ export class Dividend extends Widget {
 
     public create() {
         this.state = {
-            totalDivid:'0.9152',
-            totalHold:'520,000',
-            thisDivid:'0.15',
-            totalDays:'8'
+            totalDivid:0,
+            totalHold:0,
+            thisDivid:0,
+            totalDays:0
         };
-        getDividend();
+        this.initData();
     }
 
     public backPrePage() {
@@ -37,4 +38,14 @@ export class Dividend extends Widget {
         popNew('app-view-mine-dividend-dividendHistory',1);
     }
 
+    public async initData() {
+        const msg = await getDividend();
+        this.state = {
+            totalDivid:wei2Eth(msg.value[0]),
+            totalHold:window.sessionStorage.bonus,
+            totalDays:msg.value[1],
+            thisDivid:wei2Eth(msg.value[2])           
+        };
+        this.paint();
+    }
 }

@@ -9,26 +9,30 @@
         </div>
     
         <div w-class="rank">
+            {{if it1.mineSecond}}
             <div w-class="rankSecond">
                 <img src="../../../res/image/mining_rank_two.png" style="width: 100px;height: 100px;border-radius: 50%;background: #E1E1E1"/>
-                <div w-class="rankName">我的名字有十个字</div>
-                <div w-class="rankNum">98,605,000.090</div>
+                <div w-class="rankName">{{it1.mineRank[1].name}}</div>
+                <div w-class="rankNum">{{it1.mineRank[1].num}}</div>
                 <div style="width: 190px;height: 160px;background: #E1E1E1"></div>
             </div>
+            {{end}}
     
             <div w-class="rankFirst">
                 <img src="../../../res/image/mining_rank_one.png" style="width: 100px;height: 100px;border-radius: 50%;background: #FFCE49"/>
-                <div w-class="rankName" style="width: auto">我的名字有十个字</div>
-                <div w-class="rankNum">98,605,000.090</div>
+                <div w-class="rankName" style="width: auto">{{it1.mineRank[0].name}}</div>
+                <div w-class="rankNum">{{it1.mineRank[0].num}}</div>
                 <div style="width: 190px;height: 280px;background: #FFCE49"></div>
             </div>
     
+            {{if it1.mineThird}}
             <div w-class="rankThree">
                 <img src="../../../res/image/mining_rank_three.png" style="width: 100px;height: 100px;border-radius: 50%;background: #CDA257"/>
-                <div w-class="rankName">我的名字有十个字</div>
-                <div w-class="rankNum">98,605,000.090</div>
+                <div w-class="rankName">{{it1.mineRank[2].name}}</div>
+                <div w-class="rankNum">{{it1.mineRank[2].num}}</div>
                 <div style="width: 190px;height: 110px;background: #CDA257"></div>
             </div>
+            {{end}}
         </div>
     
         <div w-class="rankItem" style="color: #A0ACC0;">
@@ -37,14 +41,14 @@
             <span style="float: right;margin-right: 30px;">矿山总量(KT)</span>        
         </div>
     
-        {{for ind,val of it1.gainRank}}
+        {{for ind,val of it1.mineRank}}
         <div w-class="rankItem" style="color: #666666;">
             <span style="margin-left: 50px;color: #111111">{{val.index}}</span>
             <span style="margin-left: 67px;">{{val.name}}</span>
             <span style="float: right;margin-right: 30px;">{{val.num}}</span>        
         </div>
         {{end}}
-        <div w-class="moreRank" on-tap="getMore(1)">更多</div>
+        <div w-class="moreRank" on-tap="getMore(1)" style="display: {{it1.mineRank.length>10?'block':'none'}}">更多</div>
         <div style="height: 20px;background: #f8f8f8;"></div>
 
 
@@ -54,26 +58,30 @@
             <span w-class="more" on-tap="gotoMore(2)">更多<img src="../../../res/image/btn_right_arrow.png" w-class="moreImg"/></span>
         </div>
         <div w-class="rank">
+            {{if it1.miningSecond}}
             <div w-class="rankSecond">
                 <img src="../../../res/image/mining_rank_two.png" style="width: 100px;height: 100px;border-radius: 50%;background: #E1E1E1"/>
-                <div w-class="rankName">我的名字有十个字</div>
-                <div w-class="rankNum">98,605,000.090</div>
+                <div w-class="rankName">{{it1.miningRank[1].name}}</div>
+                <div w-class="rankNum">{{it1.miningRank[1].num}}</div>
                 <div style="width: 190px;height: 160px;background: #E1E1E1"></div>
             </div>
+            {{end}}
     
             <div w-class="rankFirst">
                 <img src="../../../res/image/mining_rank_one.png" style="width: 100px;height: 100px;border-radius: 50%;background: #FFCE49"/>
-                <div w-class="rankName" style="width: auto">我的名字有十个字</div>
-                <div w-class="rankNum">98,605,000.090</div>
+                <div w-class="rankName" style="width: auto">{{it1.miningRank[0].name}}</div>
+                <div w-class="rankNum">{{it1.miningRank[0].num}}</div>
                 <div style="width: 190px;height: 280px;background: #FFCE49"></div>
             </div>
     
+            {{if it1.miningThird}}
             <div w-class="rankThree">
                 <img src="../../../res/image/mining_rank_three.png" style="width: 100px;height: 100px;border-radius: 50%;background: #CDA257"/>
-                <div w-class="rankName">我的名字有十个字</div>
-                <div w-class="rankNum">98,605,000.090</div>
+                <div w-class="rankName">{{it1.miningRank[2].name}}</div>
+                <div w-class="rankNum">{{it1.miningRank[2].num}}</div>
                 <div style="width: 190px;height: 110px;background: #CDA257"></div>
             </div>
+            {{end}}
         </div>
 
         <div w-class="rankItem" style="color: #A0ACC0;">
@@ -82,14 +90,14 @@
             <span style="float: right;margin-right: 30px;">挖矿总量(KT)</span>        
         </div>
     
-        {{for ind,val of it1.gainRank}}
+        {{for ind,val of it1.miningRank}}
         <div w-class="rankItem" style="color: #666666;">
             <span style="margin-left: 50px;color: #111111">{{val.index}}</span>
             <span style="margin-left: 67px;">{{val.name}}</span>
             <span style="float: right;margin-right: 30px;">{{val.num}}</span>        
         </div>
         {{end}}
-        <div w-class="moreRank" on-tap="getMore(2)">更多</div>
+        <div w-class="moreRank" on-tap="getMore(2)" style="display: {{it1.miningRank.length>10?'block':'none'}}">更多</div>
         <div style="height: 20px;background: #f8f8f8;"></div>
 
         <div style="height: 128px;"></div>

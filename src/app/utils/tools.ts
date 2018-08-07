@@ -411,6 +411,14 @@ export const parseDate = (t: Date) => {
 };
 
 /**
+ * 转化显示时间格式为‘04-30 14:32:00’
+ */
+export const transDate = (t: Date) => {
+    // tslint:disable-next-line:max-line-length
+    return `${addPerZero(t.getUTCMonth() + 1, 2)}-${addPerZero(t.getUTCDate(), 2)} ${addPerZero(t.getHours(), 2)}:${addPerZero(t.getMinutes(), 2)}:${addPerZero(t.getSeconds(), 2)}`;
+};
+
+/**
  * 数字前边加0
  */
 const addPerZero = (num: number, len: number) => {

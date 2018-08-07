@@ -19,7 +19,7 @@
         </div>
         {{end}}
     
-        <div w-class="loadmore">加载中，请稍后~~~</div>
+       {{%  <div w-class="loadmore">加载中，请稍后~~~</div>}}
         <div style="height: 128px;" id="more"></div>
     </div>
 </div>

@@ -1,22 +1,21 @@
 /**
- * 分红统计页面 
- * isOpen 是否展开详细描述
- * isComplete 是否已完成该挖矿步骤
+ * 分红统计页面  
  * 
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineDetail, getMining, getMiningHistory } from '../../../store/conMgr';
+import { getMineDetail, getMineRank, getMining, getMiningHistory } from '../../../store/conMgr';
+import { kpt2kt } from '../../../utils/tools';
 
 interface Items {
-    isOpen:boolean;   
-    isComplete:boolean;
-    itemImg:string;
-    itemName:string;
-    itemNum:number;
-    itemDetail:any;
-    itemBtn:string;
-    itemJump:string;
+    isOpen:boolean;   // 是否展开详细描述
+    isComplete:boolean;  // 是否已完成该挖矿步骤
+    itemImg:string;  // 图片地址
+    itemName:string;  // 挖矿项目名称
+    itemNum:number;  // 该项目已得到数量
+    itemDetail:any;  // 项目介绍
+    itemBtn:string;  // 按钮名称
+    itemJump:string;  // 跳转链接 
 }
 
 export class Dividend extends Widget {
@@ -24,7 +23,8 @@ export class Dividend extends Widget {
     public state: {
         totalNum:number; 
         thisNum:number; 
-        holdNum:number; 
+        holdNum:number;
+        mineRank:number; 
         data:Items[];
     };
     constructor() {
@@ -45,30 +45,31 @@ export class Dividend extends Widget {
             totalNum:0,
             thisNum:0,
             holdNum:0,
+            mineRank:0,
             data:[
                 {
                     isOpen:false,
                     isComplete:true,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_new.png',
                     itemName:'创建钱包',
                     itemNum:0,
                     itemDetail:`<div>1、创建钱包送300KT，每个APP最多创建10个钱包。</div>`,
-                    itemBtn:'已创建',
+                    itemBtn:'去创建',
                     itemJump:''
                 },{
                     isOpen:false,
                     isComplete:false,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_phone.png',
                     itemName:'验证手机号',
                     itemNum:0,
                     itemDetail:`<div>1、验证手机号，送2500KT。</div>
                     <div>2、一个钱包只能验证一个手机号。</div>`,
-                    itemBtn:'已验证',
+                    itemBtn:'去验证',
                     itemJump:''
                 },{
                     isOpen:false,
                     isComplete:false,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_saves.png',
                     itemName:'存币送ETH',
                     itemNum:0,
                     itemDetail:`<div>1、存币到自己的钱包地址上，存一个ETH送2000KT。</div>
@@ -79,7 +80,7 @@ export class Dividend extends Widget {
                 },{
                     isOpen:false,
                     isComplete:false,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_share.png',
                     itemName:'与好友分享',
                     itemNum:0,
                     itemDetail:`<div>1、系统赠送邀请红包限量1个，内含0.5ETH，分成单个0.015ETH等额红包。</div>
@@ -90,7 +91,7 @@ export class Dividend extends Widget {
                 },{
                     isOpen:false,
                     isComplete:false,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_buy.png',
                     itemName:'购买理财',
                     itemNum:0,
                     itemDetail:`<div>1、每购买1ETH等价的理财产品每天送100KT。</div>
@@ -102,7 +103,7 @@ export class Dividend extends Widget {
                 },{
                     isOpen:false,
                     isComplete:false,
-                    itemImg:'../../../res/image/btn_back.png',
+                    itemImg:'../../../res/image/icon_bonus_chat.png',
                     itemName:'聊天',
                     itemNum:0,
                     itemDetail:`<div>1、首次参与聊天赠送700。</div>`,
@@ -155,37 +156,49 @@ export class Dividend extends Widget {
      */
     public async initData() {
         const msg = await getMining();
-        let nowNum = (msg.mine_total - msg.mines) * 0.25;
-        nowNum = (nowNum < 100 && msg.mine_total > 100) ? 100 :nowNum;
-        this.state.totalNum = msg.mine_total;
-        this.state.thisNum = nowNum;
-        this.state.holdNum = msg.mines;
+        let nowNum = (msg.mine_total - msg.mines) * 0.25 - msg.today;  // 本次可挖数量为矿山剩余量的0.25减去今日已挖
+        if (nowNum <= 0) {
+            nowNum = 0;  // 如果本次可挖小于等于0，表示现在不能挖
+        } else {
+            nowNum = (nowNum < 100 && (msg.mine_total - msg.mines) > 100) ? 100 :nowNum;  // 如果本次可挖小于100，且矿山剩余量大于100，则本次可挖100
+        }
+        
+        this.state.totalNum = kpt2kt(msg.mine_total);
+        this.state.thisNum = kpt2kt(nowNum);
+        this.state.holdNum = kpt2kt(msg.mines);
         
         const detail = await getMineDetail();
         if (detail.value.length !== 0) {
             for (let i = 0;i < detail.value.length;i++) {
-                if (detail.value[i][0] === 1001) {
+                if (detail.value[i][0] === 1001) {// 创建钱包
                     this.state.data[0].isComplete = true;
-                    this.state.data[0].itemNum = detail.value[i][1];                    
+                    this.state.data[0].itemNum = kpt2kt(detail.value[i][1]);                    
+                    this.state.data[0].itemBtn = '已创建';                    
                 }
-                if (detail.value[i][0] === 1002) {
+                if (detail.value[i][0] === 1003) {// 注册手机号
                     this.state.data[1].isComplete = true;
-                    this.state.data[0].itemNum = detail.value[i][1];
+                    this.state.data[0].itemNum = kpt2kt(detail.value[i][1]);
+                    this.state.data[1].itemBtn = '已验证';
                 }
-                if (detail.value[i][0] === 1003) {
-                    this.state.data[2].itemNum = detail.value[i][1];
+                if (detail.value[i][0] === 1004) {// 存币
+                    this.state.data[2].itemNum = kpt2kt(detail.value[i][1]);
                 }
-                if (detail.value[i][0] === 1004) {
-                    this.state.data[3].itemNum = detail.value[i][1];                    
+                if (detail.value[i][0] === 1005) {// 与好友分享
+                    this.state.data[3].itemNum = kpt2kt(detail.value[i][1]);                    
                 }
-                if (detail.value[i][0] === 1005) {
-                    this.state.data[4].itemNum = detail.value[i][1];                    
+                if (detail.value[i][0] === 1007) {// 购买理财
+                    this.state.data[4].itemNum = kpt2kt(detail.value[i][1]);                    
                 }
-                if (detail.value[i][0] === 1006) {
-                    this.state.data[5].itemNum = detail.value[i][1];                    
+                if (detail.value[i][0] === 1011) {// 聊天
+                    this.state.data[5].isComplete = true;
+                    this.state.data[5].itemNum = kpt2kt(detail.value[i][1]);
+                    this.state.data[5].itemBtn = '已聊天';                   
                 }
             }
         }
+
+        const mineRank = await getMineRank(100);
+        this.state.mineRank = mineRank.me;
         this.paint();
         
     }
