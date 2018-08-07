@@ -4,6 +4,7 @@
 import { SendChatMessage } from '../../pi/browser/sendMessage';
 import { popNew } from '../../pi/ui/root';
 import { Widget } from '../../pi/widget/widget';
+import { doChat } from '../store/conMgr';
 import { getCurrentWallet, getLocalStorage } from '../utils/tools';
 export class App extends Widget {
     constructor() {
@@ -63,10 +64,13 @@ export class App extends Widget {
             isActive: 0
         };
     }
-    public tabBarChangeListener(event: any, index: number) {
+    public async tabBarChangeListener(event: any, index: number) {
         if (this.state.isActive === index) return;
         // 点击的是聊天则调用接口打开聊天，不进行组件切换
         if (this.state.tabBarList[index].name === 'chat') {
+            // todo 测试代码，需要移除
+            await doChat();
+
             this.setProxy().then(this.sendMessage);
 
             return;
@@ -93,7 +97,10 @@ export class App extends Widget {
     /**
      * 打开聊天界面
      */
-    public sendMessage() {
+    public async sendMessage() {
+        // todo 进入聊天界面时，标记聊天任务完成
+        await doChat();
+
         const chat = new SendChatMessage();
         chat.init();
 
