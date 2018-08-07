@@ -147,8 +147,8 @@
     margin-left: 45px;
     width: 48px;
     height: 48px;
-    border-radius: 50%;
-    background: #FF912F;
+    /* border-radius: 50%; */
+    /* background: #FF912F; */
     display: inline-block;
     vertical-align: middle;
 }

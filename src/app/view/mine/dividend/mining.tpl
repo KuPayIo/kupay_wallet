@@ -3,13 +3,13 @@
         <div w-class="ga-top-banner">
             <img src="../../../res/image/btn_back_white.png" w-class="ga-back" on-tap="backPrePage"/>
             <span w-class="ga-banner-title" on-tap="backPrePage">挖矿</span>    
-            <img src="../../../res/image/btn_back_white.png" w-class="ga-next" on-tap="goHistory"/>
+            <img src="../../../res/image/btn_lsjl.png" w-class="ga-next" on-tap="goHistory"/>
         </div>
         <div w-class="groupcard">
             <div w-class="dividend-title">矿山总量(KT)</div>
             <div w-class="dividend-money">{{it1.totalNum}}</div>
             <div w-class="dividend-sum" on-tap="goRank">
-                <img src="../../../res/image/btn_back.png" style="width: 48px;height: 48px;display: inline-block;vertical-align: middle;"/>
+                <img src="../../../res/image/icon_bonus_ranking.png" style="width: 48px;height: 48px;display: inline-block;vertical-align: middle;"/>
                 <span style="display: inline-block;vertical-align: middle;">矿山排名第{{it1.mineRank}}位</span>
             </div>
         
@@ -51,7 +51,7 @@
         {{for ind,val of it1.data}}
         <div w-class="miningItem" >
             <div on-tap="goToggle( {{ind}} )">
-                <img src="../../../res/image/btn_back.png" w-class="itemImg"/>
+                <img src="{{val.itemImg}}" w-class="itemImg"/>
                 <span w-class="itemName">{{val.itemName}}</span>
                 <span w-class="itemNum">{{val.itemNum}}</span>
             </div>

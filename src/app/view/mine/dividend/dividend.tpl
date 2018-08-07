@@ -3,7 +3,7 @@
         <div w-class="ga-top-banner">
             <img src="../../../res/image/btn_back_white.png" w-class="ga-back" on-tap="backPrePage"/>
             <span w-class="ga-banner-title" on-tap="backPrePage">领分红</span>    
-            <img src="../../../res/image/btn_back_white.png" w-class="ga-next" on-tap="goHistory"/>
+            <img src="../../../res/image/btn_lsjl.png" w-class="ga-next" on-tap="goHistory"/>
         </div>
         <div w-class="groupcard">
             <div w-class="dividend-title">累计总分红(ETH)</div>
