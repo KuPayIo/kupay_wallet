@@ -4,9 +4,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { kpt2kt, smallUnit2LargeUnit } from '../../../shareView/utils/tools';
-import { convertRedBag, 
-    CurrencyType, CurrencyTypeReverse, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType } from '../../../store/conMgr';
+import {
+    convertRedBag, CurrencyType, CurrencyTypeReverse, getData, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType, setData
+} from '../../../store/conMgr';
 import { showError } from '../../../utils/toolMessages';
+import { eth2Wei } from '../../../utils/tools';
 
 export class ConvertRedEnvelope extends Widget {
     public ok: () => void;
@@ -46,16 +48,18 @@ export class ConvertRedEnvelope extends Widget {
         const close = popNew('pi-components-loading-loading', { text: '兑换中...' });
         try {
             const res: any = await this.convertRedEnvelope(code);
-            const r: any = await this.queryDesc(code);
-            if (r.result !== 1) {
+            if (res.result !== 1) {
                 showError(res.result);
+                close.callback(close.widget);
 
                 return;
             }
+            const r: any = await this.queryDesc(code);
+
             const redEnvelope = {
                 leaveMessage: r.value,
                 ctype: res.value[0],
-                amount: smallUnit2LargeUnit(CurrencyTypeReverse[res.value[0]],res.value[1])
+                amount: smallUnit2LargeUnit(CurrencyTypeReverse[res.value[0]], res.value[1])
             };
             console.log('redEnvelope', redEnvelope);
             popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope });
@@ -80,8 +84,16 @@ export class ConvertRedEnvelope extends Widget {
         if (perCode === RedEnvelopeType.Normal) {
             res = await convertRedBag(validCode);
         } else if (perCode === RedEnvelopeType.Invite) {
+            const data = await getData('convertRedEnvelope');
+            if (data.value) {
+                res.result = -2;
+
+                return res;
+            }
             res = await inputInviteCdKey(validCode);
-            res.value = [CurrencyType.ETH, 0.015];
+            res.value = [CurrencyType.ETH, eth2Wei(0.015)];
+            await setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
+            console.log('兑换成功', data);
         }
 
         console.log('convert_red_bag', res);
