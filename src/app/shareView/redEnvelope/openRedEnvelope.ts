@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+import { CurrencyType } from '../../store/conMgr';
 import { setLocalStorage, smallUnit2LargeUnit } from '../../utils/tools';
 import { CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../store/conMgr';
 import { parseUrlParams, unicodeArray2Str } from '../utils/tools';
@@ -12,8 +13,8 @@ interface RedEnvelope {
     uid:number;// 用户id
     rtype:number;// 红包类型
     ctype:number;// 币种
-    code:string;// 兑换码
-    codeShow:string;// 加前缀的兑换码
+    cid:string;// 兑换码
+    cidShow:string;// 加前缀的兑换码
     amount:number;// 兑换金额
     leaveMsg:string;// 留言
 }
@@ -23,19 +24,33 @@ export class OpenRedEnvelope extends Widget {
         super.create();
         const search = window.location.search;
         const itype = parseUrlParams(search,'type');
-        console.log('type',itype);
-        this.state = {};
         switch (itype) {
             case RedEnvelopeType.Normal:
                 this.state = {
                     type:itype,
                     rid:parseUrlParams(search,'rid'),
                     lm:(<any>window).decodeURIComponent(parseUrlParams(search,'lm')),
+                    desc:'您收到一个红包',
+                    openClick:false
+                };
+                break;
+            case RedEnvelopeType.Random:
+                this.state = {
+                    type:itype,
+                    rid:parseUrlParams(search,'rid'),
+                    lm:(<any>window).decodeURIComponent(parseUrlParams(search,'lm')),
+                    desc:'金额随机，试试手气',
                     openClick:false
                 };
                 break;
             case RedEnvelopeType.Invite:
-
+                this.state = {
+                    type:itype,
+                    cid:parseUrlParams(search,'cid'),
+                    lm:'KuPay大礼包',
+                    desc:'您收到一个邀请红包',
+                    openClick:false
+                };
                 break;
             default:
         }
@@ -46,13 +61,31 @@ export class OpenRedEnvelope extends Widget {
         this.paint();
         switch (this.state.type) {
             case RedEnvelopeType.Normal:
+            case RedEnvelopeType.Random:
                 this.openNormalRedEnvelope();
                 break; 
             case RedEnvelopeType.Invite:
-
+                this.openInviteRedEnvelope();
                 break;
             default:
         }
+    }
+    // 开邀请红包
+    public openInviteRedEnvelope() {
+        setTimeout(() => {
+            const redEnvelope:RedEnvelope = {
+                rid:0,
+                uid:0,
+                rtype:99,
+                ctype:CurrencyType.ETH,
+                cid:this.state.cid,
+                cidShow:`${RedEnvelopeType.Invite}${this.state.cid}`,
+                amount:0.015,
+                leaveMsg:'KuPay大礼包'
+            };
+            setLocalStorage('takeRedBag',redEnvelope);
+            popNew('app-shareView-redEnvelope-redEnvelopeDetails',{ ...redEnvelope });
+        },500);
     }
 
     // 开普通红包
@@ -67,8 +100,8 @@ export class OpenRedEnvelope extends Widget {
                         uid:v[0],
                         rtype:v[1],
                         ctype:v[2],
-                        code:v[3],
-                        codeShow:`${RedEnvelopeType.Normal}${v[3]}`,
+                        cid:v[3],
+                        cidShow:`${RedEnvelopeType.Normal}${v[3]}`,
                         amount:smallUnit2LargeUnit(CurrencyTypeReverse[v[2]],v[4]),
                         leaveMsg:unicodeArray2Str(v[5])
                     };

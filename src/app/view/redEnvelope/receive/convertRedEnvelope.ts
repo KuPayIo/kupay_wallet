@@ -18,13 +18,6 @@ export class ConvertRedEnvelope extends Widget {
     public init() {
         this.state = {
             cid: '',
-            redEnvelope: {
-                type: '等额红包',
-                time: '04-12  14:32:00',
-                currencyName: 'ETH',
-                amount: 1,
-                leaveMessage: '恭喜发财,大吉大利'
-            },
             placeHolder: '输入兑换码，领取红包'
         };
     }

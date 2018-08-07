@@ -12,6 +12,7 @@ import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
 import { getLocalStorage } from '../utils/tools';
+import { RedEnvelopeType } from './store/conMgr';
 
 // ============================== 导出
 
@@ -40,12 +41,29 @@ const openSocket = (): Promise<any> => {
 
 const popNewPage = () => {
     const takeRedBag = getLocalStorage('takeRedBag');
-    const rid = parseUrlParams(window.location.search, 'rid');
-    if (takeRedBag && takeRedBag.rid === rid) {
-        popNew('app-shareView-redEnvelope-redEnvelopeDetails', { ...takeRedBag });
-    } else {
+    if (!takeRedBag) {
         popNew('app-shareView-redEnvelope-openRedEnvelope');
+        
+        return;
     }
+    const itype = parseUrlParams(window.location.search, 'type');
+    // 普通红包
+    if (itype !== RedEnvelopeType.Invite) {
+        const rid = parseUrlParams(window.location.search, 'rid');
+        if (takeRedBag.rid === rid) {
+            popNew('app-shareView-redEnvelope-redEnvelopeDetails', { ...takeRedBag });
+        } else {
+            popNew('app-shareView-redEnvelope-openRedEnvelope');
+        }
+    } else {
+        const cid = parseUrlParams(window.location.search, 'cid');
+        if (takeRedBag.cid === cid) {
+            popNew('app-shareView-redEnvelope-redEnvelopeDetails', { ...takeRedBag });
+        } else {
+            popNew('app-shareView-redEnvelope-openRedEnvelope');
+        }
+    }
+    
 };
 
 const parseUrlParams = (search: string, key: string) => {

@@ -35,6 +35,7 @@ export class RedEnvelopeRecord extends Widget {
             start:undefined,// 下一次从服务器获取记录时的start
             refresh:true,// 是否可以刷新
             hasMore:false, // 是否还有更多记录
+            showMoreTips:false, // 是否显示底部加载更多提示
             inviteObj:null// 邀请红包对象
         };
         this.loadMore();
@@ -66,10 +67,9 @@ export class RedEnvelopeRecord extends Widget {
         }
         this.state.convertNumberShow = this.state.convertNumber + 1;
         const rList = this.state.recordList.slice(0);
-        console.log('rList',rList);
         rList.push(this.state.inviteObj);
         rList.sort((i1,i2) => {
-            return i1.time - i2.time;
+            return i2.time - i1.time;
         });
         this.state.recordListShow = rList;
         this.paint();
@@ -106,6 +106,7 @@ export class RedEnvelopeRecord extends Widget {
         this.state.convertNumber = curHistoryRecord.convertNumber;
         this.state.start = curHistoryRecord.start;
         this.state.hasMore = this.state.convertNumber > this.state.recordList.length;
+        this.state.showMoreTips = this.state.convertNumber >= recordNumber;
         this.innerPaint();
     }
     // 向服务器请求更多记录
@@ -118,9 +119,8 @@ export class RedEnvelopeRecord extends Widget {
             return;
         }
         const firstEthAddr = getFirstEthAddr();
-        const historyRecord = getLocalStorage('convertRedEnvelopeHistoryRecord');
-        const rList:RecordShow[] = (historyRecord && historyRecord[firstEthAddr].list) || [];
-
+        const historyRecord = getLocalStorage('convertRedEnvelopeHistoryRecord') || {};
+        const rList:RecordShow[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
         const convertNumber = res.value[0];
         const startNext = res.value[1];
         const recordList:RecordShow[] = [];
@@ -144,13 +144,16 @@ export class RedEnvelopeRecord extends Widget {
         this.state.recordList = this.state.recordList.concat(recordList);
         this.state.start = startNext;
         this.state.hasMore = convertNumber > this.state.recordList.length;
-        const hRecord = {};
-        hRecord[firstEthAddr] = {
+        this.state.showMoreTips = convertNumber >= recordNumber;
+        historyRecord[firstEthAddr] = {
             start:startNext,
             convertNumber,
             list:rList.concat(recordList)
         };
-        setLocalStorage('convertRedEnvelopeHistoryRecord',hRecord);
+        if (convertNumber > 0) {
+            setLocalStorage('convertRedEnvelopeHistoryRecord',historyRecord);
+        }
+       
         this.innerPaint();
     }
     public getMoreList() {

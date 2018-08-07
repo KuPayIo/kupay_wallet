@@ -15,11 +15,6 @@ interface RecordShow {
     timeShow:string;
     codes:string[];// 兑换码
 }
-interface SendRedEnvelopeHistoryRecord {
-    start:string;// 下次请求数据时start字段
-    sendNumber:number;// 发送红包总数
-    list:RecordShow[];// 记录列表
-}
 
 export class RedEnvelopeRecord extends Widget {
     public ok:() => void;
@@ -33,7 +28,8 @@ export class RedEnvelopeRecord extends Widget {
             recordList:[],// 历史记录
             start:undefined,// 下一次从服务器获取记录时的start
             refresh:true,// 是否可以刷新
-            hasMore:false // 是否还有更多记录
+            hasMore:false, // 是否还有更多记录
+            showMoreTips:false // 是否显示底部加载更多提示
         };
         this.loadMore();
     }
@@ -47,8 +43,8 @@ export class RedEnvelopeRecord extends Widget {
 
     public loadMore() {
         const firstEthAddr = getFirstEthAddr();
-        const historyRecord = getLocalStorage('sendRedEnvelopeHistoryRecord');
-        const curHistoryRecord = historyRecord && historyRecord[firstEthAddr];
+        const historyRecord = getLocalStorage('sendRedEnvelopeHistoryRecord') || {};
+        const curHistoryRecord = historyRecord[firstEthAddr];
         if (curHistoryRecord) {
             const hList = curHistoryRecord.list;
             if (hList.length > this.state.recordList.length) {
@@ -73,6 +69,7 @@ export class RedEnvelopeRecord extends Widget {
         this.state.sendNumber = curHistoryRecord.sendNumber;
         this.state.start = curHistoryRecord.start;
         this.state.hasMore = this.state.sendNumber > this.state.recordList.length;
+        this.state.showMoreTips = this.state.sendNumber >= recordNumber;
         this.paint();
     }
 
@@ -80,8 +77,8 @@ export class RedEnvelopeRecord extends Widget {
     public async loadMoreFromServer(start?:string) {
         console.log('load more from server');
         const firstEthAddr = getFirstEthAddr();
-        const historyRecord = getLocalStorage('sendRedEnvelopeHistoryRecord');
-        const rList:RecordShow[] = (historyRecord && historyRecord[firstEthAddr].list) || [];
+        const historyRecord = getLocalStorage('sendRedEnvelopeHistoryRecord') || {};
+        const rList:RecordShow[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
         const res = await querySendRedEnvelopeRecord(start);
         if (res.result === 1) {
             const sendNumber = res.value[0];
@@ -105,13 +102,15 @@ export class RedEnvelopeRecord extends Widget {
             this.state.recordList = this.state.recordList.concat(recordList);
             this.state.start = start;
             this.state.hasMore = sendNumber > this.state.recordList.length;
-            const hRecord = {};
-            hRecord[firstEthAddr] = {
+            this.state.showMoreTips = sendNumber >= recordNumber;
+            historyRecord[firstEthAddr] = {
                 start,
                 sendNumber,
                 list:rList.concat(recordList)
             };
-            setLocalStorage('sendRedEnvelopeHistoryRecord',hRecord);
+            if (sendNumber > 0) {
+                setLocalStorage('sendRedEnvelopeHistoryRecord',historyRecord);
+            }
             this.paint();
         } else {
             popNew('app-components-message-message',{ itype:'error',content:'出错啦',center:true });

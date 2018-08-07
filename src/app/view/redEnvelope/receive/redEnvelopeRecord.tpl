@@ -23,7 +23,9 @@
                         </div>
                     </div>
                     {{end}}
+                    {{if it1.showMoreTips}}
                     <div w-class="loadmore" id="more">{{it1.hasMore ? '加载中，请稍后~~~' : '没有更多了'}}</div>
+                    {{end}}
                 </div>
             </div>
         </div>

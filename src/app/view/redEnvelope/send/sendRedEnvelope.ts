@@ -25,7 +25,8 @@ export class SendRedEnvelope extends Widget {
             singleAmount:0,
             redEnvelopeNumber:0,
             totalAmount:0,
-            leaveMessage:'恭喜发财  万事如意',
+            leaveMessage:'',
+            lmPlaceHolder:'恭喜发财  万事如意',
             leaveMessageMaxLen:20
         };
     }
@@ -69,6 +70,7 @@ export class SendRedEnvelope extends Widget {
     }
     public leaveMessageChange(e:any) {
         this.state.leaveMessage = e.value;
+        this.paint();
     }
 
     // 发送
@@ -106,12 +108,26 @@ export class SendRedEnvelope extends Widget {
         if (res.result === 1) {
             popNew('app-view-redEnvelope-send-shareRedEnvelope',{
                 rid:res.value,
+                rtype:this.state.itype,
                 leaveMessage:this.state.leaveMessage,
                 currencyName:this.state.currencyName
             });
+            this.state.balance = this.state.balance - this.state.totalAmount;
+            this.state.singleAmount = 0;
+            this.state.redEnvelopeNumber = 0;
+            this.state.totalAmount = 0;
+            this.state.leaveMessage = '';
+            this.paint();
             removeLocalStorage('sendRedEnvelopeHistoryRecord');
-            // tslint:disable-next-line:max-line-length
-            console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
+            
+            if (this.state.itype === 0) {
+                // tslint:disable-next-line:max-line-length
+                console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
+            } else {
+                // tslint:disable-next-line:max-line-length
+                console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
+            }
+            
         } else {
             popNew('app-components-message-message',{ itype:'error',content:'出错啦,请重试',center:true });
         }
@@ -133,6 +149,12 @@ export class SendRedEnvelope extends Widget {
     }
 
     public async sendRedEnvlope() {
+        let lm = '';
+        if (this.state.leaveMessage.length > 0) {
+            lm = this.state.leaveMessage;
+        } else {
+            lm = this.state.lmPlaceHolder;
+        }
         // 发红包
         const msgSendRedEnvelope = {
             type:'emit_red_bag',
@@ -141,12 +163,11 @@ export class SendRedEnvelope extends Widget {
                 priceType:CurrencyType[this.state.currencyName],
                 totalPrice:largeUnit2SmallUnit(this.state.currencyName,this.state.totalAmount),
                 count:this.state.redEnvelopeNumber,
-                desc:this.state.leaveMessage
+                desc:lm
             }
         };
         // tslint:disable-next-line:no-unnecessary-local-variable
         const res = await requestLogined(msgSendRedEnvelope);
-        console.log('emit_red_bag',res);
 
         return res;
     }

@@ -289,9 +289,9 @@ export const kt2kpt = (num: number) => {
  */
 export const smallUnit2LargeUnit = (currencyName:string,amount:number) => {
     if (currencyName === 'ETH') {
-        return Math.floor(wei2Eth(amount));
+        return wei2Eth(amount);
     } else if (currencyName === 'KT') {
-        return Math.floor(kpt2kt(amount));
+        return kpt2kt(amount);
     }
 };
 

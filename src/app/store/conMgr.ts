@@ -33,8 +33,9 @@ export const CurrencyTypeReverse = {
 
 // 红包类型
 export enum RedEnvelopeType {
-    Normal = '01',
-    Invite = '02'
+    Normal = '00',
+    Random = '01',
+    Invite = '99'
 }
 export const conIp = '127.0.0.1';
 export const conPort = '80';
