@@ -14,7 +14,7 @@
                         <img src="../../../res/image/img_avatar1.png" w-class="ga-avator"/>
                         <div w-class="ga-item-right">
                             <div w-class="ga-box1">
-                                <div w-class="ga-type">{{item.rtype === 0 ? '等额红包' : '随机红包'}}</div>
+                                <div w-class="ga-type">{{item.rtypeShow}}</div>
                                 <div>{{item.amount}}&nbsp;{{item.ctypeShow}}</div>
                             </div>
                             <div w-class="ga-box2">

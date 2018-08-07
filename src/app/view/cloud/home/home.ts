@@ -3,7 +3,9 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, getAllBalance, getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining, inputInviteCdKey } from '../../../store/conMgr';
+import {
+    CurrencyType, CurrencyTypeReverse, getAllBalance, getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining, inputInviteCdKey
+} from '../../../store/conMgr';
 import { kpt2kt, wei2Eth } from '../../../utils/tools';
 export class Home extends Widget {
     constructor() {
@@ -15,9 +17,9 @@ export class Home extends Widget {
     }
     public init(): void {
         this.state = {
-            balance:{
-                KT:0.00,
-                ETH:0.00
+            balance: {
+                KT: 0.00,
+                ETH: 0.00
             },
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
@@ -40,7 +42,8 @@ export class Home extends Widget {
      */
     public packetsClicked() {
         // TODO
-        popNew('app-view-redEnvelope-send-sendRedEnvelope',{ balance:this.state.balance });    }
+        popNew('app-view-redEnvelope-send-sendRedEnvelope', { balance: this.state.balance });
+    }
 
     /**
      * 点击兑换领奖
@@ -110,7 +113,7 @@ export class Home extends Widget {
         }
         const mining = await getMining();
         let nowNum = (mining.mine_total - mining.mines) * 0.25;
-        nowNum = (nowNum < 100 && mining.mine_total > 100) ? 100 :nowNum;
+        nowNum = (nowNum < 100 && mining.mine_total > 100) ? 100 : nowNum;
         this.state.mines = nowNum;
         const divid = await getDividend();
         // this.state.bonus = divid.
