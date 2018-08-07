@@ -24,6 +24,7 @@ export class OpenRedEnvelope extends Widget {
         const search = window.location.search;
         const itype = parseUrlParams(search,'type');
         console.log('type',itype);
+        this.state = {};
         switch (itype) {
             case RedEnvelopeType.Normal:
                 this.state = {

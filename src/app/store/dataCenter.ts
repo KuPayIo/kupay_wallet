@@ -55,6 +55,8 @@ export class DataCenter {
     private conUserPublicKey: string = '';
     // 连接随机数
     private conRandom: string = '';
+    // 连接uid
+    private conUid: number = 0;
     /**
      * 初始化
      */
@@ -264,6 +266,19 @@ export class DataCenter {
      */
     public setConRandom(random: string) {
         this.conRandom = random;
+    }
+
+    /**
+     * 设置连接随机数
+     */
+    public getConUid() {
+        return this.conUid;
+    }
+    /**
+     * 获取连接随机数
+     */
+    public setConUid(uid: number) {
+        this.conUid = uid;
     }
 
     /****************************************************************************************************

@@ -133,6 +133,7 @@ export const openAndGetRandom = async () => {
                     reject(resp.type);
                 } else if (resp.result !== undefined) {
                     dataCenter.setConRandom(resp.rand);
+                    dataCenter.setConUid(resp.uid);
                     resolve(resp);
                 }
             });
@@ -148,6 +149,7 @@ export const openAndGetRandom = async () => {
                     reject(resp.type);
                 } else if (resp.result !== undefined) {
                     dataCenter.setConRandom(resp.rand);
+                    dataCenter.setConUid(resp.uid);
                     resolve(resp);
                 }
             });
@@ -175,7 +177,7 @@ export const getBalance = async (currencyType: CurrencyType) => {
 };
 
 /**
- * 获取分红信息
+ * 获取分红汇总信息
  */
 export const getDividend = async () => {
     const msg = { type: 'wallet/cloud@get_bonus_info', param: {} };
@@ -188,6 +190,15 @@ export const getDividend = async () => {
  */
 export const getMining = async () => {
     const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取挖矿历史记录
+ */
+export const getMiningHistory = async () => {
+    const msg = { type: 'wallet/cloud@get_pool_detail', param: {} };
 
     return requestAsync(msg);
 };
@@ -246,25 +257,25 @@ export const queryRedBagDesc = async (cid: string) => {
 /**
  * 查询发送红包记录
  */
-export const querySendRedEnvelopeRecord = async (start?:string) => {
+export const querySendRedEnvelopeRecord = async (start?: string) => {
     let msg;
     if (start) {
         msg = {
-            type:'query_emit_log',
-            param:{
+            type: 'query_emit_log',
+            param: {
                 start,
-                count:recordNumber
+                count: recordNumber
             }
         };
     } else {
         msg = {
-            type:'query_emit_log',
-            param:{
-                count:recordNumber
+            type: 'query_emit_log',
+            param: {
+                count: recordNumber
             }
         };
     }
-    
+
     return requestAsync(msg);
 };
 
@@ -293,6 +304,60 @@ export const queryDetailLog = async () => {
  */
 export const getAward = async () => {
     const msg = { type: 'wallet/cloud@get_award', param: {} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 矿山增加记录
+ */
+export const getMineDetail = async () => {
+    const msg = { type: 'wallet/cloud@grant_detail', param: {} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取分红历史记录
+ */
+export const getDividHistory = async () => {
+    const msg = { type: 'wallet/cloud@get_bonus_info', param: {} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 设置客户端数据
+ */
+export const setData = async (param) => {
+    const msg = { type: 'wallet/data@set', param: param };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取客户端数据
+ */
+export const getData = async (key) => {
+    const msg = { type: 'wallet/data@get', param: { key } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 设置用户基础信息
+ */
+export const setUserInfo = async (value) => {
+    const msg = { type: 'wallet/user@set_info', param: { value } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 批量获取用户信息
+ */
+export const getUserInfo = async (uids: [number]) => {
+    const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
 
     return requestAsync(msg);
 };
