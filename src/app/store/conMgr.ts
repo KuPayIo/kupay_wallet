@@ -5,6 +5,7 @@ import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
+import { showError } from '../utils/toolMessages';
 import { getCurrentWallet, getLocalStorage, openBasePage } from '../utils/tools';
 import { dataCenter } from './dataCenter';
 
@@ -39,6 +40,20 @@ export const conIp = '127.0.0.1';
 export const conPort = '80';
 // 分享链接前缀
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.html`;
+
+// 任务id记录
+export enum TaskSid {
+    createWlt = 1001,// 创建钱包
+    firstChargeEth,// 首次转入
+    bindPhone,// 注册手机
+    chargeEth,// 存币
+    inviteFriends,// 邀请真实好友
+    buyFinancial = 1007,// 购买理财产品
+    transfer,// 交易奖励
+    bonus,// 分红
+    mines,// 挖矿
+    chat// 聊天
+}
 /**
  * 登录状态
  */
@@ -62,7 +77,10 @@ export const requestAsync = async (msg: any): Promise<any> => {
             if (resp.type) {
                 console.log(`错误信息为${resp.type}`);
                 reject(resp);
-            } else if (resp.result !== undefined) {
+            } else if (resp.result !== 1) {
+                showError(resp.result);
+                reject(resp);
+            } else {
                 resolve(resp);
             }
         });
@@ -375,6 +393,24 @@ export const setUserInfo = async (value) => {
  */
 export const getUserInfo = async (uids: [number]) => {
     const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 批量获取用户信息
+ */
+export const doChat = async () => {
+    const msg = { type: 'wallet/cloud@chat', param: {} };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取指定货币流水
+ */
+export const getAccountDetail = async (coin) => {
+    const msg = { type: 'wallet/account@get_detail', param: { coin } };
 
     return requestAsync(msg);
 };
