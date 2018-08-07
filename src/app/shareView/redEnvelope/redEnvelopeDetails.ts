@@ -10,7 +10,7 @@ interface Props {
     uid:number;// 用户id
     rtype:number;// 红包类型
     ctype:number;// 币种
-    code:string;// 兑换码
+    cid:string;// 兑换码
     amount:number;// 兑换金额
     leaveMsg:string;// 留言
 }
@@ -39,12 +39,16 @@ export class RedEnvelopeDetails extends Widget {
             convertedNumber:0,
             totalAmount:0,
             redBagList:[],
+            showConverted:props.rtype !== 99,
             rules:['1.安装Fairblock，创建钱包',
                 '2.在钱包里点击发现-发红包',
                 '3.输入收到的红包码，红包金额将自动到账',
                 '4.同一个红包，每人只能领取一次']
         };
-        this.querydetail(props.uid,props.rid);
+        if (props.rtype !== 99) {
+            this.querydetail(props.uid,props.rid);
+        }
+        
     }
 
     public querydetail(uid:number,rid:number) {
@@ -93,7 +97,7 @@ export class RedEnvelopeDetails extends Widget {
     }
 
     public copyBtnClick() {
-        copyToClipboard(this.props.codeShow);
+        copyToClipboard(this.props.cidShow);
         popNew('app-shareView-components-message',{ itype:'success',center:true,content:'复制成功' });
     }
 }

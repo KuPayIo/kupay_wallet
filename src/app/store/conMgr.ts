@@ -33,8 +33,9 @@ export const CurrencyTypeReverse = {
 
 // 红包类型
 export enum RedEnvelopeType {
-    Normal = '01',
-    Invite = '02'
+    Normal = '00',
+    Random = '01',
+    Invite = '99'
 }
 export const conIp = '127.0.0.1';
 export const conPort = '80';
@@ -60,7 +61,7 @@ export enum TaskSid {
 let loginState: number = LoginState.init;
 
 // 查询历史记录时一页的数量
-const recordNumber = 10;
+export const recordNumber = 10;
 // 设置登录状态
 const setLoginState = (s: number) => {
     if (loginState === s) {
@@ -300,9 +301,37 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
 /**
  * 查询红包兑换记录
  */
-export const queryConvertLog = async (count) => {
-    const msg = { type: 'query_convert_log', param: { count: count } };
+export const queryConvertLog = async (start) => {
+    console.log('queryConvertLog',start);
+    let msg;
+    if (start) {
+        msg = {
+            type: 'query_convert_log',
+            param: {
+                start,
+                count: recordNumber
+            }
+        };
+    } else {
+        msg = {
+            type: 'query_convert_log',
+            param: {
+                count: recordNumber
+            }
+        };
+    }
 
+    return requestAsync(msg);
+};
+
+export const queryDetailLog = async () => {
+    const msg = {
+        type:'query_detail_log',
+        param:{
+            cids:'J8VIXY,LQRNZV,27KP71'
+        }
+    };
+    
     return requestAsync(msg);
 };
 

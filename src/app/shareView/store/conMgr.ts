@@ -16,10 +16,11 @@ export const CurrencyTypeReverse = {
     101: 'ETH'
 };
 
-// 红包类型
+// 不同红包类型
 export enum RedEnvelopeType {
-    Normal = '01',
-    Invite = '02'
+    Normal = '00',
+    Random = '01',
+    Invite = '99'
 }
 
 const requestAsync = async (msg: any): Promise<any> => {

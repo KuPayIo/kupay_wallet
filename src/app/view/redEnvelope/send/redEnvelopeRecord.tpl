@@ -7,8 +7,8 @@
         </div>
         <div w-class="ga-records-list-box">
             <div w-class="ga-records-list-title">未被领取的红包已退回云端账户</div>
-            <div w-class="ga-records-list">
-                <div>
+            <div w-class="ga-records-list" on-scroll="getMoreList" id="records-container">
+                <div id="records">
                     {{for index,item of it1.recordList}}
                     <div w-class="ga-records-item" on-tap="redEnvelopeItemClick(e,{{index}})">
                         <div w-class="ga-records-left">
@@ -17,6 +17,9 @@
                         </div>
                         <div w-class="ga-amount"><span>{{item.amount}}</span>&nbsp;<span>{{item.ctypeShow}}</span></div>
                     </div>
+                    {{end}}
+                    {{if it1.showMoreTips}}
+                    <div w-class="loadmore" id="more">{{it1.hasMore ? '加载中，请稍后~~~' : '没有更多了'}}</div>
                     {{end}}
                 </div>
             </div>

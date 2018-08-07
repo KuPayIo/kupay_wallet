@@ -21,12 +21,14 @@ export class InviteRedEnvelope extends Widget {
 
     // 发送给好友
     public shareToFriends() {
+       
         popNew('app-components-share-share', {
             shareType: ShareToPlatforms.TYPE_LINK,
             url: `${sharePerUrl}?cid=${this.props.inviteCode}&type=${RedEnvelopeType.Invite}`,
             title: '邀请红包',
             content: this.state.shareContent
         });
+        console.log('invitedRed cid',`${sharePerUrl}?cid=${this.props.inviteCode}&type=${RedEnvelopeType.Invite}`);
     }
     public backClick() {
         this.ok && this.ok();

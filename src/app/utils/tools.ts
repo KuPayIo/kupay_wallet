@@ -24,6 +24,10 @@ export const getLocalStorage = (key: string) => {
     return find(key);
 };
 
+export const removeLocalStorage = (key:string) => {
+    localStorage.removeItem(key);
+};
+
 export const sleep = (delay) => {
     const startTime = new Date().getTime();
     let loop = true;
@@ -296,9 +300,9 @@ export const smallUnit2LargeUnit = (currencyName:string,amount:number) => {
  */
 export const largeUnit2SmallUnit = (currencyName:string,amount:number) => {
     if (currencyName === 'ETH') {
-        return eth2Wei(amount);
+        return Math.floor(eth2Wei(amount));
     } else if (currencyName === 'KT') {
-        return kt2kpt(amount);
+        return Math.floor(kt2kpt(amount));
     }
 };
 /**
