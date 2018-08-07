@@ -404,3 +404,21 @@ export const getMiningRank = async(num:number) => {
 
     return requestAsync(msg);
 };
+
+/**
+ * 发送验证码
+ */
+export const sendCode = async(phone:number,num:number) => {
+    const msg = { type: 'wallet/sms@send_sms_code', param: { phone,num,name:'钱包' } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 注册手机
+ */
+export const regPhone = async(phone:number,code:number) => {
+    const msg = { type: 'wallet/user@reg_phone', param: { phone,code } };
+
+    return requestAsync(msg);
+};

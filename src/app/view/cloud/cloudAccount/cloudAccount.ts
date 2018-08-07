@@ -1,5 +1,5 @@
 /**
- * 云端首页
+ * 云端账号首页
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
