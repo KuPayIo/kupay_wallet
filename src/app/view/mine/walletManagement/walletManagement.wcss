@@ -118,7 +118,7 @@
     height: 100px;
     background: #3574FA;
     border-radius: 100px;
-    margin: 60px 30px 40px;
+    margin: 20px 30px 30px;
     cursor: pointer;
     box-sizing: border-box;
     font-size: 32px;
@@ -137,6 +137,5 @@
 .cardPaddingDiv{
     padding: 30px;
     padding-bottom: 16px;
-    margin-bottom:16px;
     background:#fff;
 }
