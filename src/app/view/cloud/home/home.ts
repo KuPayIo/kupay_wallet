@@ -116,13 +116,13 @@ export class Home extends Widget {
         }
 
         const msg = await getMining();
-        let nowNum = (msg.mine_total - msg.mines) * 0.25 - msg.today;  // 本次可挖数量为矿山剩余量的0.25减去今日已挖
+        let nowNum = (msg.mine_total - msg.mines + msg.today) * 0.25 - msg.today;  // 本次可挖数量为矿山剩余量的0.25减去今日已挖
         if (nowNum <= 0) {
             nowNum = 0;  // 如果本次可挖小于等于0，表示现在不能挖
-            this.state.isAbleBtn = false;
-        } else {
+        } else if ((msg.mine_total - msg.mines) > 100) {
             nowNum = (nowNum < 100 && (msg.mine_total - msg.mines) > 100) ? 100 :nowNum;  // 如果本次可挖小于100，且矿山剩余量大于100，则本次可挖100
-            this.state.isAbleBtn = true;
+        } else {
+            nowNum = msg.mine_total - msg.mines;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
         }
         this.state.mines = kpt2kt(nowNum);
 
