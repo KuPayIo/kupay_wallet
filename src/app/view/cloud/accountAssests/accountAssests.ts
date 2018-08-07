@@ -37,6 +37,7 @@ export class AccountAssests extends Widget {
             }],
             showChargeAndWithdraw: false
         };
+
     }
     public backClick() {
         this.ok && this.ok();
