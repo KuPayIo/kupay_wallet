@@ -17,9 +17,9 @@ export class Home extends Widget {
     }
     public init(): void {
         this.state = {
-            balance:{
-                KT:0.00,
-                ETH:0.00
+            balance: {
+                KT: 0.00,
+                ETH: 0.00
             },
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
@@ -43,7 +43,8 @@ export class Home extends Widget {
      */
     public packetsClicked() {
         // TODO
-        popNew('app-view-redEnvelope-send-sendRedEnvelope',{ balance:this.state.balance });    }
+        popNew('app-view-redEnvelope-send-sendRedEnvelope', { balance: this.state.balance });
+    }
 
     /**
      * 点击兑换领奖

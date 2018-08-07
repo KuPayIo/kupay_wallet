@@ -48,5 +48,16 @@ export class InviteRedEnvelope extends Widget {
             shareContent: '我是邀请红包'
         };
         console.log(this.props.inviteCode, this.props.inviteCodeDetailInfo);
+        this.state.inviteOkCount = this.props.inviteCodeDetailInfo[0];
+        if (this.props.inviteCodeDetailInfo[1].length > 0) {
+            let currency1 = 0;
+            let currency2 = 0;
+            this.props.inviteCodeDetailInfo[1].forEach(v => {
+                currency1 += v[0];
+                currency2 += v[1];
+            });
+            this.state.inviteCurrency1 = `${currency1} KT`;
+            this.state.inviteCurrency2 = `${currency2} ETH`;
+        }
     }
 }

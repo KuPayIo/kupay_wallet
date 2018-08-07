@@ -15,6 +15,8 @@ export const showError = (result, str?) => {
             case 712: str = '兑换码已兑换'; break;
             case 713: str = '兑换码已过期'; break;
             case 2010: str = '无法兑换自己的兑换码'; break;
+            case -1: str = '无效的兑换码'; break;
+            case -2: str = '你已经兑换了同类型的兑换码'; break;
             default:
         }
     }
