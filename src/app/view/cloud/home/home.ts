@@ -3,8 +3,10 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, getAllBalance, getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining, inputInviteCdKey } from '../../../store/conMgr';
-import { kpt2kt, wei2Eth } from '../../../utils/tools';
+import { CurrencyType, 
+    CurrencyTypeReverse, 
+    getAllBalance, getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining,inputInviteCdKey } from '../../../store/conMgr';
+import { kpt2kt, kt2kpt, wei2Eth } from '../../../utils/tools';
 export class Home extends Widget {
     constructor() {
         super();
@@ -22,7 +24,8 @@ export class Home extends Widget {
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
             bonus: 0.00,// 累计分红
-            mines: 0// 本次可挖数量
+            mines: 0,// 本次可挖数量
+            isAbleBtn: true // 挖矿按钮是否可点击
         };
 
         this.initDate();
@@ -54,6 +57,7 @@ export class Home extends Widget {
      */
     public bonusClicked() {
         // TODO
+        window.sessionStorage.bonus = this.state.ktBalance;
         popNew('app-view-mine-dividend-dividend');
     }
     /**
@@ -106,14 +110,23 @@ export class Home extends Widget {
             } else if (each[0] === CurrencyType.ETH) {
                 this.state.ethBalance = wei2Eth(each[1]);
                 this.state.balance[CurrencyName] = wei2Eth(each[1]);
+                
             }
         }
-        const mining = await getMining();
-        let nowNum = (mining.mine_total - mining.mines) * 0.25;
-        nowNum = (nowNum < 100 && mining.mine_total > 100) ? 100 :nowNum;
-        this.state.mines = nowNum;
+
+        const msg = await getMining();
+        let nowNum = (msg.mine_total - msg.mines) * 0.25 - msg.today;  // 本次可挖数量为矿山剩余量的0.25减去今日已挖
+        if (nowNum <= 0) {
+            nowNum = 0;  // 如果本次可挖小于等于0，表示现在不能挖
+            this.state.isAbleBtn = false;
+        } else {
+            nowNum = (nowNum < 100 && (msg.mine_total - msg.mines) > 100) ? 100 :nowNum;  // 如果本次可挖小于100，且矿山剩余量大于100，则本次可挖100
+            this.state.isAbleBtn = true;
+        }
+        this.state.mines = kpt2kt(nowNum);
+
         const divid = await getDividend();
-        // this.state.bonus = divid.
+        this.state.bonus = divid.value[0];
         this.paint();
     }
 }

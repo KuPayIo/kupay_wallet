@@ -10,7 +10,7 @@
             <div w-class="dividend-money">{{it1.totalNum}}</div>
             <div w-class="dividend-sum" on-tap="goRank">
                 <img src="../../../res/image/btn_back.png" style="width: 48px;height: 48px;display: inline-block;vertical-align: middle;"/>
-                <span style="display: inline-block;vertical-align: middle;">矿山排名150位之前</span>
+                <span style="display: inline-block;vertical-align: middle;">矿山排名第{{it1.mineRank}}位</span>
             </div>
         
             <div w-class="twodata">
