@@ -16,7 +16,7 @@
                     <div w-class="dataleft-num">{{it1.thisDivid}}</div>
                 </div>
                 <div w-class="dataright">
-                    <div w-class="dataright-title">累计数(天)</div>
+                    <div w-class="dataright-title">累计数(次)</div>
                     <div w-class="dataright-num">{{it1.totalDays}}</div>
                 </div>
             </div>      

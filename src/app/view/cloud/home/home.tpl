@@ -72,7 +72,7 @@
                     本次可挖{{it1.mines}}KT
                 </div>
             </div>
-            <span w-class="paddingSpan" on-tap="doPadding">
+            <span w-class="paddingSpan" style="display: {{it1.isAbleBtn?'inline':'none'}}" on-tap="doPadding">
                 挖一下
             </span>
             <img src="../../../res/image/cloud_arow_right.png" />
