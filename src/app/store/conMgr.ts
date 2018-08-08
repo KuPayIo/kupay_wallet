@@ -6,7 +6,8 @@ import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { showError } from '../utils/toolMessages';
-import { getCurrentWallet, getLocalStorage, openBasePage } from '../utils/tools';
+import { getCurrentWallet, getLocalStorage, largeUnit2SmallUnit, openBasePage } from '../utils/tools';
+import { cloudAccount } from './cloudAccount';
 import { dataCenter } from './dataCenter';
 
 // 枚举登录状态
@@ -155,6 +156,7 @@ export const openAndGetRandom = async () => {
                 } else if (resp.result !== undefined) {
                     dataCenter.setConRandom(resp.rand);
                     dataCenter.setConUid(resp.uid);
+                    cloudAccount.init();
                     resolve(resp);
                 }
             });
@@ -171,6 +173,7 @@ export const openAndGetRandom = async () => {
                 } else if (resp.result !== undefined) {
                     dataCenter.setConRandom(resp.rand);
                     dataCenter.setConUid(resp.uid);
+                    cloudAccount.init();
                     resolve(resp);
                 }
             });
@@ -252,6 +255,28 @@ export const getInviteCodeDetail = async () => {
 };
 
 /**
+ * 发送红包
+ * @param rtype 红包类型
+ * @param ctype 货币类型
+ * @param totalAmount 总金额
+ * @param count 红包数量
+ * @param lm 留言
+ */
+export const sendRedEnvlope = async (rtype:number,ctype:number,totalAmount:number,redEnvelopeNumber:number,lm:string) => {
+    const msg = {
+        type:'emit_red_bag',
+        param:{
+            type:rtype,
+            priceType:ctype,
+            totalPrice:largeUnit2SmallUnit(CurrencyTypeReverse[ctype],totalAmount),
+            count:redEnvelopeNumber,
+            desc:lm
+        }
+    };
+
+    return requestLogined(msg);
+};
+/**
  * 兑换红包
  */
 export const convertRedBag = async (cid) => {
@@ -304,7 +329,6 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
  * 查询红包兑换记录
  */
 export const queryConvertLog = async (start) => {
-    console.log('queryConvertLog', start);
     let msg;
     if (start) {
         msg = {

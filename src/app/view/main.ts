@@ -13,7 +13,7 @@ import { addWidget } from '../../pi/widget/util';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
-import { generate, getRandomValuesByMnemonic, sha3, sign, toMnemonic } from '../core/genmnemonic';
+import { sign } from '../core/genmnemonic';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../store/dataCenter';
 import { getLocalStorage, setLocalStorage } from '../utils/tools';
