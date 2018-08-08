@@ -2,6 +2,12 @@
  * 常用工具
  */
 
+export const setLocalStorage = (keyName:string,data:any) => {
+    localStorage.setItem(keyName,JSON.stringify(data));
+}; 
+export const getLocalStorage = (keyName:string) => {
+    return JSON.parse(localStorage.getItem(keyName));
+};
  // 解析url参数
 export const parseUrlParams = (search: string, key: string) => {
     const ret = search.match(new RegExp(`(\\?|&)${key}=(.*?)(&|$)`));

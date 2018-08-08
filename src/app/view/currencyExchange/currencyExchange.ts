@@ -63,6 +63,7 @@ export class CurrencyExchange extends Widget {
     }
     public init() {
         this.state.outAmount = 0;
+        this.state.receiveAmount = 0;
         this.setPair();
         // 获取出币币种的余额和当前使用地址
         this.state.curOutAddr = getCurrentAddrByCurrencyName(this.state.outCurrency);
@@ -243,6 +244,14 @@ export class CurrencyExchange extends Widget {
         const withdrawalAddress = this.state.curInAddr; // 入账币种的地址
         shapeshift.shift(withdrawalAddress, this.state.pair, options, async (err, returnData) => {
             console.log('returnData',returnData);
+            if (returnData.error) {
+                popNew('app-components-message-message',{ itype:'error',content:'出错啦,请重试！',center:true });
+                close.callback(close.widget);
+                this.init();
+                this.paint();
+
+                return;
+            }
             // ShapeShift owned BTC address that you send your BTC to
             const depositAddress = returnData.deposit;
             
@@ -263,14 +272,24 @@ export class CurrencyExchange extends Widget {
             // spend(SS_BTC_WIF, depositAddress, shiftAmountSatoshis, function (err, txId) { /.. ../ })
     
             // later, you can then check the deposit status
-            // tslint:disable-next-line:max-line-length
-            const hash = await this.transfer(passwd,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
-            // tslint:disable-next-line:max-line-length
-            this.setTemporaryRecord(hash,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency,this.state.inCurrency,this.state.rate);
-            popNew('app-view-currencyExchange-currencyExchangeRecord', { currencyName:outCurrency });
-            close.callback(close.widget);
-            this.init();
-            this.paint();
+           
+            try {
+                 // tslint:disable-next-line:max-line-length
+                const hash = await this.transfer(passwd,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
+                if (!hash) {
+                    return;
+                }
+                // tslint:disable-next-line:max-line-length
+                this.setTemporaryRecord(hash,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency,this.state.inCurrency,this.state.rate);
+                popNew('app-view-currencyExchange-currencyExchangeRecord', { currencyName:outCurrency });
+            } catch (e) {
+                console.log(e);
+            } finally {
+                close.callback(close.widget);
+                this.init();
+                this.paint();
+            }
+            
         });
     }
 

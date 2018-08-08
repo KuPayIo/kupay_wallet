@@ -4,9 +4,8 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { CurrencyType } from '../../store/conMgr';
-import { setLocalStorage, smallUnit2LargeUnit } from '../../utils/tools';
 import { CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../store/conMgr';
-import { parseUrlParams, unicodeArray2Str } from '../utils/tools';
+import { parseUrlParams, setLocalStorage, smallUnit2LargeUnit, unicodeArray2Str } from '../utils/tools';
 
 interface RedEnvelope {
     rid:number;// 红包id
