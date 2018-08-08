@@ -103,17 +103,13 @@ export class Dividend extends Widget {
     }
 
     public async initData() {
-        let msg = JSON.parse(window.localStorage.mineRank);
-        if (this.props === 2) {
-            msg = JSON.parse(window.localStorage.miningRank);
-        }
-
+        const msg = this.props.data;
         const data = [];
-        for (let i = 0;i < msg.value.length;i++) {
+        for (let i = 0;i < msg.length;i++) {
             data.push({
                 index: i + 1,
-                name: msg.value[i][1] === '' ? '昵称未设置' : msg.value[i][1],
-                num: kpt2kt(msg.value[i][2])
+                name: msg[i][1] === '' ? '昵称未设置' : msg[i][1],
+                num: kpt2kt(msg[i][2])
             });
         }
         this.state.gainRank = data;

@@ -6,7 +6,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType, 
     CurrencyTypeReverse, 
     getAllBalance, getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining,inputInviteCdKey } from '../../../store/conMgr';
-import { kpt2kt, kt2kpt, wei2Eth } from '../../../utils/tools';
+import { kpt2kt, wei2Eth } from '../../../utils/tools';
 export class Home extends Widget {
     constructor() {
         super();
@@ -58,8 +58,7 @@ export class Home extends Widget {
      */
     public bonusClicked() {
         // TODO
-        window.sessionStorage.bonus = this.state.ktBalance;
-        popNew('app-view-mine-dividend-dividend');
+        popNew('app-view-mine-dividend-dividend',this.state.ktBalance);
     }
     /**
      * 点击邀请好友
@@ -122,6 +121,7 @@ export class Home extends Widget {
         let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 本次可挖数量为矿山剩余量的0.25减去今日已挖
         if (nowNum <= 0) {
             nowNum = 0;  // 如果本次可挖小于等于0，表示现在不能挖
+            this.state.isAbleBtn = false;
         } else if ((totalNum - holdNum) > 100) {
             nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果本次可挖小于100，且矿山剩余量大于100，则本次可挖100
         } else {
@@ -130,7 +130,7 @@ export class Home extends Widget {
         this.state.mines = nowNum;
 
         const divid = await getDividend();
-        this.state.bonus = divid.value[0];
+        this.state.bonus = wei2Eth(divid.value[0]);
         this.paint();
     }
 }

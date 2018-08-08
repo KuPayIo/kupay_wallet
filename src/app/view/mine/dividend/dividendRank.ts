@@ -24,8 +24,11 @@ export class DividendItem extends Widget {
 
     public init() {
         this.state = {
-            mineSecond:false,
-            mineThird:false,
+            mineSecond:false,  // 矿山排名第二名是否存在
+            mineThird:false,   // 矿山排名第三名是否存在
+            minePage:1,  // 矿山排名列表页码
+            mineMore:false,  // 矿山排名是否还有更多  
+            mineList:[],  // 矿山排名列表
             mineRank:[
                 {
                     index:1,
@@ -33,8 +36,11 @@ export class DividendItem extends Widget {
                     num:'96,554,000.00'
                 }
             ],
-            miningSecond:false,
-            miningThird:false,
+            miningSecond:false,   // 挖矿排名第二名是否存在
+            miningThird:false,   // 挖矿排名第三名是否存在
+            miningPage:1,  // 挖矿排名列表页码
+            miningMore:false,  // 挖矿排名是否还有更多
+            miningList:[],  // 挖矿排名列表
             miningRank:[
                 {
                     index:1,
@@ -47,50 +53,68 @@ export class DividendItem extends Widget {
     
     /**
      * 查看排名详情列表
-     * @param ind 挖矿排名或矿山排名
+     * @param ind 1 为矿山排名，2 为挖矿排名
      */
     public gotoMore(ind:number) {
-        popNew('app-view-mine-dividend-rankList',  ind);
+        if (ind === 1) {
+            popNew('app-view-mine-dividend-rankList', { data:this.state.mineList });
+        } else {
+            popNew('app-view-mine-dividend-rankList',  { data:this.state.miningList });
+        }
+        
     }
 
     public getMore(ind:number) {
-        this.state.gainRank.push({
-            index:1,
-            name:'昵称未设置',
-            num:'96,554,000.00'
-        },{
-            index:2,
-            name:'昵称未设置',
-            num:'96,554,000.00'
-        },{
-            index:3,
-            name:'昵称未设置',
-            num:'96,554,000.00'
-        });
+        if (ind === 1) {
+            const msg = this.state.mineList;
+            for (let i = this.state.minePage * 10;i < msg.length && i < (this.state.minePage + 1) * 10; i++) {
+                this.state.mineRank.push({
+                    index: i + 1,
+                    name: msg[i][1] === '' ? '昵称未设置' : msg[i][1],
+                    num: kpt2kt(msg[i][2])
+                });
+            }
+        } else {
+            const msg = this.state.miningList;
+            for (let i = this.state.minePage * 10;i < msg.length && i < (this.state.minePage + 1) * 10; i++) {
+                this.state.miningRank.push({
+                    index: i + 1,
+                    name: msg[i][1] === '' ? '昵称未设置' : msg[i][1],
+                    num: kpt2kt(msg[i][2])
+                });
+            }
+        }
         this.paint();
     }
 
     public async initData() {
         const msg1 = await getMineRank(100);
         const msg2 = await getMiningRank(100);
-        window.localStorage.mineRank = JSON.stringify(msg1);
-        window.localStorage.miningRank = JSON.stringify(msg2);
+        this.state.mineList = msg1.value;
+        this.state.miningList = msg2.value;
 
-        if (msg1.value.length > 1) {
-            this.state.mineSecond = true;
-        }
-        if (msg1.value.length > 2) {
+        if (msg1.value.length > 10) {
+            this.state.mineMore = true;
             this.state.mineSecond = true;
             this.state.mineThird = true;
+        } else if (msg1.value.length > 2) {
+            this.state.mineSecond = true;
+            this.state.mineThird = true;
+        } else if (msg1.value.length > 1) {
+            this.state.mineSecond = true;
         }
-        if (msg2.value.length > 1) {
-            this.state.miningSecond = true;
-        }
-        if (msg2.value.length > 2) {
+        
+        if (msg2.value.length > 10) {
+            this.state.miningMore = true;
             this.state.miningSecond = true;
             this.state.miningThird = true;
+        } else if (msg2.value.length > 2) {
+            this.state.miningSecond = true;
+            this.state.miningThird = true;
+        } else if (msg2.value.length > 1) {
+            this.state.miningSecond = true;
         }
-
+        
         const data1 = [];
         for (let i = 0;i < msg1.value.length && i < 10;i++) {
             data1.push({
