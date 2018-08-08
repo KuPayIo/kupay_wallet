@@ -4,25 +4,22 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { cloudAccount } from '../../../store/cloudAccount';
-import { CurrencyType, RedEnvelopeType, requestLogined, sendRedEnvlope, sharePerUrl } from '../../../store/conMgr';
-import { notify } from '../../../store/store';
+import { CurrencyType, RedEnvelopeType, sendRedEnvlope, sharePerUrl } from '../../../store/conMgr';
+import { register, unregister } from '../../../store/store';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
-import { getByteLen, largeUnit2SmallUnit, openBasePage, removeLocalStorage } from '../../../utils/tools';
+import { getByteLen , openBasePage, removeLocalStorage } from '../../../utils/tools';
 
-interface Props {
-    balance:any;
-}
 export class SendRedEnvelope extends Widget {
     public ok:() => void;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
+    public create() {
+        super.create();
         this.init();
     }
 
     public init() {
         this.state = {
             itype:0,// 0 等额红包  1 拼手气红包
-            balance:this.getBalance(redEnvelopeSupportCurrency[0]),
+            balance:0,
             currencyName:redEnvelopeSupportCurrency[0],
             singleAmount:0,
             redEnvelopeNumber:0,
@@ -31,15 +28,24 @@ export class SendRedEnvelope extends Widget {
             lmPlaceHolder:'恭喜发财  万事如意',
             leaveMessageMaxLen:20
         };
+        this.updateBalance();
+        register('cloudBalance',cloudBalance => {
+            this.updateBalance();
+        });
     }
+    public destroy() {
+        unregister('cloudBalance',null);
 
+        return super.destroy();
+    }
     public backPrePage() {
         this.ok && this.ok();
     }
     
     // 获取余额
-    public getBalance(currencyName:string) {
-        return this.props.balance[currencyName];
+    public updateBalance() {
+        this.state.balance = cloudAccount.cloudBalance[this.state.currencyName];
+        this.paint();
     }
     // 单个金额改变
     public singleAmountInputChange(e:any) {
@@ -119,7 +125,6 @@ export class SendRedEnvelope extends Widget {
                 leaveMessage:this.state.leaveMessage,
                 currencyName:this.state.currencyName
             });
-            this.state.balance = this.state.balance - this.state.totalAmount;
             this.state.singleAmount = 0;
             this.state.redEnvelopeNumber = 0;
             this.state.totalAmount = 0;
@@ -149,9 +154,9 @@ export class SendRedEnvelope extends Widget {
     // 选择要发红包的货币
     public async chooseCurrencyClick() {
         // tslint:disable-next-line:max-line-length
-        const index = await openBasePage('app-components-chooseCurrency-chooseCurrency',{ currencyList:redEnvelopeSupportCurrency,balance:this.props.balance });
+        const index = await openBasePage('app-components-chooseCurrency-chooseCurrency',{ currencyList:redEnvelopeSupportCurrency,balance:cloudAccount.cloudBalance });
         this.state.currencyName = redEnvelopeSupportCurrency[index];
-        this.state.balance = this.getBalance(redEnvelopeSupportCurrency[index]);
+        this.updateBalance();
         this.paint();
     }
 

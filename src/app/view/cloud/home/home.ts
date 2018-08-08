@@ -4,11 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { cloudAccount } from '../../../store/cloudAccount';
-import { CurrencyType, 
-    CurrencyTypeReverse, 
-    getAllBalance, getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining,inputInviteCdKey } from '../../../store/conMgr';
+import {  getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining } from '../../../store/conMgr';
 import { register, unregister } from '../../../store/store';
-import { kpt2kt, kt2kpt, wei2Eth } from '../../../utils/tools';
+import { kpt2kt } from '../../../utils/tools';
 export class Home extends Widget {
     constructor() {
         super();
@@ -19,10 +17,6 @@ export class Home extends Widget {
     }
     public init(): void {
         this.state = {
-            balance: {
-                KT: 0.00,
-                ETH: 0.00
-            },
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
             bonus: 0.00,// 累计分红
@@ -45,7 +39,7 @@ export class Home extends Widget {
      */
     public packetsClicked() {
         // TODO
-        popNew('app-view-redEnvelope-send-sendRedEnvelope', { balance: this.state.balance });
+        popNew('app-view-redEnvelope-send-sendRedEnvelope');
     }
 
     /**
@@ -109,12 +103,10 @@ export class Home extends Widget {
     }
     private async initDate() {
         const cloudBalance = cloudAccount.cloudBalance;
-        this.state.balance = cloudBalance;
         this.state.ktBalance = cloudBalance.KT;
         this.state.ethBalance = cloudBalance.ETH;
         register('cloudBalance',(cloudBalance) => {
             console.log('cloudBalance update');
-            this.state.balance = cloudBalance;
             this.state.ktBalance = cloudBalance.KT;
             this.state.ethBalance = cloudBalance.ETH;
             this.paint();
