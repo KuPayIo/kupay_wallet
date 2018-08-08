@@ -120,15 +120,18 @@ export class Home extends Widget {
             this.paint();
         });
         const msg = await getMining();
-        let nowNum = (msg.mine_total - msg.mines) * 0.25 - msg.today;  // 本次可挖数量为矿山剩余量的0.25减去今日已挖
+        const totalNum = kpt2kt(msg.mine_total);
+        const holdNum = kpt2kt(msg.mines);
+        const today = kpt2kt(msg.today);
+        let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 本次可挖数量为矿山剩余量的0.25减去今日已挖
         if (nowNum <= 0) {
             nowNum = 0;  // 如果本次可挖小于等于0，表示现在不能挖
-            this.state.isAbleBtn = false;
+        } else if ((totalNum - holdNum) > 100) {
+            nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果本次可挖小于100，且矿山剩余量大于100，则本次可挖100
         } else {
-            nowNum = (nowNum < 100 && (msg.mine_total - msg.mines) > 100) ? 100 :nowNum;  // 如果本次可挖小于100，且矿山剩余量大于100，则本次可挖100
-            this.state.isAbleBtn = true;
-        }
-        this.state.mines = kpt2kt(nowNum);
+            nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
+        }        
+        this.state.mines = nowNum;
 
         const divid = await getDividend();
         this.state.bonus = divid.value[0];
