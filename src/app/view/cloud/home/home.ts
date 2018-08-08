@@ -27,7 +27,7 @@ export class Home extends Widget {
             ethBalance: 0.00,// eth余额
             bonus: 0.00,// 累计分红
             mines: 0,// 本次可挖数量
-            isAbleBtn: true // 挖矿按钮是否可点击
+            isAbleBtn: false // 挖矿按钮是否可点击
         };
 
         this.initDate();
@@ -116,8 +116,8 @@ export class Home extends Widget {
             this.state.balance = cloudBalance;
             this.state.ktBalance = cloudBalance.KT;
             this.state.ethBalance = cloudBalance.ETH;
-            this.paint();
         });
+
         const msg = await getMining();
         const totalNum = kpt2kt(msg.mine_total);
         const holdNum = kpt2kt(msg.mines);
@@ -128,8 +128,10 @@ export class Home extends Widget {
             this.state.isAbleBtn = false;
         } else if ((totalNum - holdNum) > 100) {
             nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果本次可挖小于100，且矿山剩余量大于100，则本次可挖100
+            this.state.isAbleBtn = true;
         } else {
             nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
+            this.state.isAbleBtn = true;
         }        
         this.state.mines = nowNum;
 
