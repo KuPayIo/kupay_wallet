@@ -37,7 +37,9 @@ export enum RedEnvelopeType {
     Random = '01',
     Invite = '99'
 }
+// export const conIp = '47.106.176.185';
 export const conIp = '127.0.0.1';
+// export const conPort = '8080';
 export const conPort = '80';
 // 分享链接前缀
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.html`;
@@ -302,7 +304,7 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
  * 查询红包兑换记录
  */
 export const queryConvertLog = async (start) => {
-    console.log('queryConvertLog',start);
+    console.log('queryConvertLog', start);
     let msg;
     if (start) {
         msg = {
@@ -326,12 +328,12 @@ export const queryConvertLog = async (start) => {
 
 export const queryDetailLog = async () => {
     const msg = {
-        type:'query_detail_log',
-        param:{
-            cids:'J8VIXY,LQRNZV,27KP71'
+        type: 'query_detail_log',
+        param: {
+            cids: 'J8VIXY,LQRNZV,27KP71'
         }
     };
-    
+
     return requestAsync(msg);
 };
 
@@ -419,8 +421,8 @@ export const getAccountDetail = async (coin) => {
 /**
  * 获取矿山排名列表
  */
-export const getMineRank = async(num:number) => {
-    const msg = { type: 'wallet/cloud@mine_top', param: { num:num } };
+export const getMineRank = async (num: number) => {
+    const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
 
     return requestAsync(msg);
 };
@@ -428,8 +430,8 @@ export const getMineRank = async(num:number) => {
 /**
  * 获取挖矿排名列表
  */
-export const getMiningRank = async(num:number) => {
-    const msg = { type: 'wallet/cloud@get_mine_top', param: { num:num } };
+export const getMiningRank = async (num: number) => {
+    const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
 
     return requestAsync(msg);
 };
@@ -437,8 +439,8 @@ export const getMiningRank = async(num:number) => {
 /**
  * 发送验证码
  */
-export const sendCode = async(phone:number,num:number) => {
-    const msg = { type: 'wallet/sms@send_sms_code', param: { phone,num,name:'钱包' } };
+export const sendCode = async (phone: number, num: number) => {
+    const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
 
     return requestAsync(msg);
 };
@@ -446,8 +448,8 @@ export const sendCode = async(phone:number,num:number) => {
 /**
  * 注册手机
  */
-export const regPhone = async(phone:number,code:number) => {
-    const msg = { type: 'wallet/user@reg_phone', param: { phone,code } };
+export const regPhone = async (phone: number, code: number) => {
+    const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
 
     return requestAsync(msg);
 };
