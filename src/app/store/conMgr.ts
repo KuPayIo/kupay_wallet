@@ -262,15 +262,15 @@ export const getInviteCodeDetail = async () => {
  * @param count 红包数量
  * @param lm 留言
  */
-export const sendRedEnvlope = async (rtype:number,ctype:number,totalAmount:number,redEnvelopeNumber:number,lm:string) => {
+export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
     const msg = {
-        type:'emit_red_bag',
-        param:{
-            type:rtype,
-            priceType:ctype,
-            totalPrice:largeUnit2SmallUnit(CurrencyTypeReverse[ctype],totalAmount),
-            count:redEnvelopeNumber,
-            desc:lm
+        type: 'emit_red_bag',
+        param: {
+            type: rtype,
+            priceType: ctype,
+            totalPrice: largeUnit2SmallUnit(CurrencyTypeReverse[ctype], totalAmount),
+            count: redEnvelopeNumber,
+            desc: lm
         }
     };
 
@@ -474,6 +474,15 @@ export const sendCode = async (phone: number, num: number) => {
  */
 export const regPhone = async (phone: number, code: number) => {
     const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取代理
+ */
+export const getProxy = async () => {
+    const msg = { type: 'wallet/proxy@get_proxy', param: {} };
 
     return requestAsync(msg);
 };
