@@ -3,10 +3,12 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { cloudAccount } from '../../../store/cloudAccount';
 import { CurrencyType, 
     CurrencyTypeReverse, 
     getAllBalance, getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining,inputInviteCdKey } from '../../../store/conMgr';
-import { kpt2kt, wei2Eth } from '../../../utils/tools';
+import { register, unregister } from '../../../store/store';
+import { kpt2kt, kt2kpt, wei2Eth } from '../../../utils/tools';
 export class Home extends Widget {
     constructor() {
         super();
@@ -99,21 +101,23 @@ export class Home extends Widget {
         });
     }
 
-    private async initDate() {
-        const balanceInfo = await getAllBalance();
-        for (let i = 0; i < balanceInfo.value.length; i++) {
-            const each = balanceInfo.value[i];
-            const CurrencyName = CurrencyTypeReverse[each[0]];
-            if (each[0] === CurrencyType.KT) {
-                this.state.ktBalance = kpt2kt(each[1]);
-                this.state.balance[CurrencyName] = kpt2kt(each[1]);
-            } else if (each[0] === CurrencyType.ETH) {
-                this.state.ethBalance = wei2Eth(each[1]);
-                this.state.balance[CurrencyName] = wei2Eth(each[1]);
-                
-            }
-        }
+    public destroy() {
+        unregister('cloudBalance',null);
 
+        return super.destroy();
+    }
+    private async initDate() {
+        const cloudBalance = cloudAccount.cloudBalance;
+        this.state.balance = cloudBalance;
+        this.state.ktBalance = cloudBalance.KT;
+        this.state.ethBalance = cloudBalance.ETH;
+        register('cloudBalance',(cloudBalance) => {
+            console.log('cloudBalance update');
+            this.state.balance = cloudBalance;
+            this.state.ktBalance = cloudBalance.KT;
+            this.state.ethBalance = cloudBalance.ETH;
+            this.paint();
+        });
         const msg = await getMining();
         const totalNum = kpt2kt(msg.mine_total);
         const holdNum = kpt2kt(msg.mines);

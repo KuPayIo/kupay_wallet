@@ -78,7 +78,11 @@
     margin-top: 10px;
 }
 .ga-type{
+    flex-shrink: 0;
+}
+.ga-amount{
     flex: 1 0 0;
+    text-align: right;
 }
 .ga-time{
     flex: 1 0 0;
