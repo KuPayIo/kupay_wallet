@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getDividend } from '../../../store/conMgr';
-import { kpt2kt, wei2Eth } from '../../../utils/tools';
+import { wei2Eth } from '../../../utils/tools';
 
 interface State {
     totalDivid:number;
@@ -42,7 +42,7 @@ export class Dividend extends Widget {
         const msg = await getDividend();
         this.state = {
             totalDivid:wei2Eth(msg.value[0]),
-            totalHold:window.sessionStorage.bonus,
+            totalHold:this.props,
             totalDays:msg.value[1],
             thisDivid:wei2Eth(msg.value[2])           
         };

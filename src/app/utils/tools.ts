@@ -597,18 +597,7 @@ export const urlParams = (url: string, key: string) => {
 };
 
 export const formatBalance = (banlance: number) => {
-    banlance = Number(banlance);
-    if (!banlance) return 0;
-    let retBanlance;
-    if (banlance >= 1) {
-        retBanlance = +banlance.toPrecision(7);
-    } else if (banlance === 0) {
-        retBanlance = banlance;
-    } else {
-        retBanlance = +banlance.toPrecision(6);
-    }
-
-    return retBanlance;
+    return Number(banlance.toFixed(6));
 };
 
 /**

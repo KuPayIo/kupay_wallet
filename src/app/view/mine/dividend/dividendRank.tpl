@@ -48,7 +48,7 @@
             <span style="float: right;margin-right: 30px;">{{val.num}}</span>        
         </div>
         {{end}}
-        <div w-class="moreRank" on-tap="getMore(1)" style="display: {{it1.mineRank.length>10?'block':'none'}}">更多</div>
+        <div w-class="moreRank" on-tap="getMore(1)" style="display: {{it1.mineMore?'block':'none'}}">更多</div>
         <div style="height: 20px;background: #f8f8f8;"></div>
 
 
@@ -97,7 +97,7 @@
             <span style="float: right;margin-right: 30px;">{{val.num}}</span>        
         </div>
         {{end}}
-        <div w-class="moreRank" on-tap="getMore(2)" style="display: {{it1.miningRank.length>10?'block':'none'}}">更多</div>
+        <div w-class="moreRank" on-tap="getMore(2)" style="display: {{it1.miningMore?'block':'none'}}">更多</div>
         <div style="height: 20px;background: #f8f8f8;"></div>
 
         <div style="height: 128px;"></div>
