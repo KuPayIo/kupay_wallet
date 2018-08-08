@@ -11,8 +11,8 @@ import { open, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
-import { getLocalStorage } from '../utils/tools';
 import { RedEnvelopeType } from './store/conMgr';
+import { getLocalStorage } from './utils/tools';
 
 // ============================== 导出
 
@@ -29,7 +29,7 @@ export const run = async (cb): Promise<any> => {
 
 const openSocket = (): Promise<any> => {
     return new Promise((resolve, reject) => {
-        setUrl(`ws://127.0.0.1:2081`);
+        setUrl(`ws://47.106.176.185:2081`);
         open(() => {
             resolve();
         }, () => {

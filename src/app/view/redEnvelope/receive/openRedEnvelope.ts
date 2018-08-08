@@ -35,7 +35,7 @@ export class OpenRedEnvelope extends Widget {
             popNew('app-components-message-message',{ itype:'success',content:'兑换成功',center:true });
             popNew('app-view-redEnvelope-receive-redEnvelopeDetails',{ ...this.props });
             this.ok && this.ok();
-        },2000);
+        },500);
        
     }
 

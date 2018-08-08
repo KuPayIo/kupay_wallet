@@ -10,6 +10,8 @@ interface Props {
     placeHolder:string;// 提示文字
     itype:string;// text textarea password
     style:string;// 样式
+    reg?:string;// 正则表达式
+    replace?:string;// 替换后的文本
 }
 
 interface State {
@@ -38,7 +40,11 @@ export class InputSimple extends Widget {
     }
 
     public change(event:any) {
-        const currentValue = event.currentTarget.value;
+        let currentValue = event.currentTarget.value;
+        if (this.props.reg) {
+            const regex = new RegExp(this.props.reg,'g');
+            currentValue = currentValue.replace(regex,this.props.replace || '');
+        }
         this.state.currentValue = currentValue;
         notify(event.node,'ev-input-change',{ value:this.state.currentValue });
         this.changeInputValue();

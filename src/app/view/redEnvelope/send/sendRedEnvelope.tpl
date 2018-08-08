@@ -13,12 +13,12 @@
             <span w-class="ga-tag">单个金额</span>
             <div w-class="ga-amount-inner">
                 <div ev-input-change="singleAmountInputChange" w-class="input-father">
-                    <app-components-input-input_simple>{itype:"number",style:"fontSize:32px;textAlign:right;",input:{{it1.singleAmount}},placeHolder:"0"}</app-components-input-input_simple>
+                    <app-components-input-input_simple>{style:"fontSize:32px;textAlign:right;",input:{{it1.singleAmount}},placeHolder:"0",reg:"[^0-9.]"}</app-components-input-input_simple>
                 </div>
                 <span w-class="ga-currency-name">{{it1.currencyName}}</span>
             </div>
         </div>
-        {{else}}
+        {{else}} 
         <div w-class="ga-item-box">
             <div w-class="ga-box">
                 <img src="../../../res/image/currency/AION.png"/>
@@ -26,7 +26,7 @@
             </div>
             <div w-class="ga-amount-inner">
                 <div ev-input-change="totalAmountInputChange" w-class="input-father">
-                    <app-components-input-input_simple>{itype:"number",style:"fontSize:32px;textAlign:right;",input:{{it1.totalAmount}},placeHolder:"0"}</app-components-input-input_simple>
+                    <app-components-input-input_simple>{style:"fontSize:32px;textAlign:right;",input:{{it1.totalAmount}},placeHolder:"0",reg:"[^0-9.]"}</app-components-input-input_simple>
                 </div>
                 <span w-class="ga-currency-name">{{it1.currencyName}}</span>
             </div>
@@ -36,7 +36,7 @@
             <span w-class="ga-tag">红包个数</span>
             <div w-class="ga-number-inner">
                 <div ev-input-change="redEnvelopeNumberChange" w-class="input-father">
-                    <app-components-input-input_simple>{itype:"number",style:"fontSize:32px;textAlign:right;",input:{{it1.redEnvelopeNumber}},placeHolder:"0"}</app-components-input-input_simple>
+                    <app-components-input-input_simple>{style:"fontSize:32px;textAlign:right;",input:{{it1.redEnvelopeNumber}},placeHolder:"0",reg:"[^1-9]"}</app-components-input-input_simple>
                 </div>
                 <span w-class="ga-number-unit">个</span>
             </div>
@@ -52,7 +52,7 @@
                 <app-components-input-input_simple>{placeHolder:{{it1.lmPlaceHolder}},style:"fontSize:32px;textAlign:right;",input:{{it1.leaveMessage}}}</app-components-input-input_simple>
             </div>
         </div>
-        <div w-class="ga-send-amount">{{it1.totalAmount}}&nbsp;{{it1.currencyName}}</div>
+        <div w-class="ga-send-amount">{{it1.totalAmount || '0'}}&nbsp;{{it1.currencyName}}</div>
         <div w-class="ga-send-btn" on-tap="sendRedEnvelopeClick">塞钱进红包</div>
         <div w-class="ga-tips">可以直接使用云账户里的货币发红包</div>
     </div>
