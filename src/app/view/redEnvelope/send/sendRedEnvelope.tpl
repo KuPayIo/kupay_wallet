@@ -26,7 +26,7 @@
             </div>
             <div w-class="ga-amount-inner">
                 <div ev-input-change="totalAmountInputChange" w-class="input-father">
-                    <app-components-input-input_simple>{itype:"number",style:"fontSize:32px;textAlign:right;",input:{{it1.singleAmount}},placeHolder:"0"}</app-components-input-input_simple>
+                    <app-components-input-input_simple>{itype:"number",style:"fontSize:32px;textAlign:right;",input:{{it1.totalAmount}},placeHolder:"0"}</app-components-input-input_simple>
                 </div>
                 <span w-class="ga-currency-name">{{it1.currencyName}}</span>
             </div>

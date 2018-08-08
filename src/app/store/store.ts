@@ -44,6 +44,12 @@ export const updateStore = (keyName: string, data: any,notified?:boolean): void 
 };
 
 /**
+ * 更新store
+ */
+export const notify = (keyName: string,data?:any) => {
+    handlerMap.notify(keyName, [data]);
+};
+/**
  * 消息处理器
  */
 export const register = (keyName: string, cb: Function): void => {
@@ -54,7 +60,7 @@ export const unregister = (keyName: string, cb: Function): void => {
     handlerMap.remove(keyName, <any>cb);
 };
 
-type KeyName = MapName | 'wallet'|'addrs';
+type KeyName = MapName | 'wallet'|'addrs'|'cloudBalance';
 
 type MapName = '';
 

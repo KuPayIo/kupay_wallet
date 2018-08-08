@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyTypeReverse, querySendRedEnvelopeRecord, recordNumber } from '../../../store/conMgr';
-import { getFirstEthAddr, getLocalStorage, setLocalStorage, smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
+import { formatBalance, getFirstEthAddr, getLocalStorage, setLocalStorage, smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
 
 interface RecordShow {
     rtype:number;// 红包类型
@@ -91,7 +91,7 @@ export class RedEnvelopeRecord extends Widget {
                     rtype:r[i][0],
                     ctype:r[i][1],
                     ctypeShow:currencyName,
-                    amount:smallUnit2LargeUnit(currencyName,r[i][2]),
+                    amount:formatBalance(smallUnit2LargeUnit(currencyName,r[i][2])),
                     time:r[i][3],
                     timeShow:timestampFormat(r[i][3]),
                     codes:r[i][4]

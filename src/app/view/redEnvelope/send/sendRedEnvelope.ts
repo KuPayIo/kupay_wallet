@@ -3,7 +3,9 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, RedEnvelopeType, requestLogined, sharePerUrl } from '../../../store/conMgr';
+import { cloudAccount } from '../../../store/cloudAccount';
+import { CurrencyType, RedEnvelopeType, requestLogined, sendRedEnvlope, sharePerUrl } from '../../../store/conMgr';
+import { notify } from '../../../store/store';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
 import { getByteLen, largeUnit2SmallUnit, openBasePage, removeLocalStorage } from '../../../utils/tools';
 
@@ -103,7 +105,12 @@ export class SendRedEnvelope extends Widget {
             return;
         }
         const close = popNew('pi-components-loading-loading',{ text:'加载中...' });
-        const res = await this.sendRedEnvlope();
+        const lm = this.state.leaveMessage || this.state.lmPlaceHolder;
+        const rtype = this.state.itype;
+        const ctype = Number(CurrencyType[this.state.currencyName]);
+        const totalAmount = this.state.totalAmount;
+        const redEnvelopeNumber = this.state.redEnvelopeNumber;
+        const res = await sendRedEnvlope(rtype,ctype,totalAmount,redEnvelopeNumber,lm);
         close.callback(close.widget);
         if (res.result === 1) {
             popNew('app-view-redEnvelope-send-shareRedEnvelope',{
@@ -119,13 +126,13 @@ export class SendRedEnvelope extends Widget {
             this.state.leaveMessage = '';
             this.paint();
             removeLocalStorage('sendRedEnvelopeHistoryRecord');
-            
+            cloudAccount.updateBalance();
             if (this.state.itype === 0) {
                 // tslint:disable-next-line:max-line-length
-                console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
+                console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(lm)}`);
             } else {
                 // tslint:disable-next-line:max-line-length
-                console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(this.state.leaveMessage)}`);
+                console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(lm)}`);
             }
             
         } else {
@@ -148,27 +155,4 @@ export class SendRedEnvelope extends Widget {
         this.paint();
     }
 
-    public async sendRedEnvlope() {
-        let lm = '';
-        if (this.state.leaveMessage.length > 0) {
-            lm = this.state.leaveMessage;
-        } else {
-            lm = this.state.lmPlaceHolder;
-        }
-        // 发红包
-        const msgSendRedEnvelope = {
-            type:'emit_red_bag',
-            param:{
-                type:this.state.itype,
-                priceType:CurrencyType[this.state.currencyName],
-                totalPrice:largeUnit2SmallUnit(this.state.currencyName,this.state.totalAmount),
-                count:this.state.redEnvelopeNumber,
-                desc:lm
-            }
-        };
-        // tslint:disable-next-line:no-unnecessary-local-variable
-        const res = await requestLogined(msgSendRedEnvelope);
-
-        return res;
-    }
 }

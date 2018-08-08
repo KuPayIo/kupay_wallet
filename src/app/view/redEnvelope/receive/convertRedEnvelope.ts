@@ -55,7 +55,7 @@ export class ConvertRedEnvelope extends Widget {
                 amount: smallUnit2LargeUnit(CurrencyTypeReverse[res.value[0]], res.value[1])
             };
             console.log('redEnvelope', redEnvelope);
-            popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope });
+            popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope,rtype:code.slice(0,2) });
         } catch (error) {
             console.log(error);
         }
@@ -102,10 +102,8 @@ export class ConvertRedEnvelope extends Widget {
             res = await queryRedBagDesc(validCode);
         } else if (perCode === RedEnvelopeType.Invite) {
             res.result = 1;
-            res.value = '我是邀请码';
+            res.value = 'KuPay大礼包';
         }
-
-        console.log('query_red_bag_desc', res);
 
         return res;
     }
