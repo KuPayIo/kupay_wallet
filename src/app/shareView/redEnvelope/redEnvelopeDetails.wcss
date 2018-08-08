@@ -8,10 +8,13 @@
     right: 0;
     top: 0;
     bottom: 0;
+    background-color: #fff;
 }
 .ga-main{
     overflow-x: hidden;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 .ga-top{
     background-image: url(../../res/image/redEnvelopeDetail_bg.png);
@@ -21,6 +24,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+.ga-scroll-container{
+    flex: 1 0 0;
 }
 .ga-head{
     margin-top: 20px;

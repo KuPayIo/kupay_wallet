@@ -4,7 +4,7 @@
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType, CurrencyTypeReverse, getData, queryConvertLog, recordNumber } from '../../../store/conMgr';
 import { showError } from '../../../utils/toolMessages';
-import { getFirstEthAddr, getLocalStorage, setLocalStorage, smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
+import { formatBalance, getFirstEthAddr, getLocalStorage, setLocalStorage, smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
 
 interface RecordShow {
     uid: number;// 用户id
@@ -134,7 +134,7 @@ export class RedEnvelopeRecord extends Widget {
                 rtypeShow: parseRtype(r[i][2]),
                 ctype: r[i][3],
                 ctypeShow:currencyName,
-                amount: smallUnit2LargeUnit(currencyName, r[i][4]),
+                amount: formatBalance(smallUnit2LargeUnit(currencyName, r[i][4])),
                 time: r[i][5],
                 timeShow: timestampFormat(r[i][5])
             };

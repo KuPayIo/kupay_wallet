@@ -15,7 +15,7 @@
                         <div w-class="ga-item-right">
                             <div w-class="ga-box1">
                                 <div w-class="ga-type">{{item.rtypeShow}}</div>
-                                <div>{{item.amount}}&nbsp;{{item.ctypeShow}}</div>
+                                <div w-class="ga-amount">{{item.amount}}&nbsp;{{item.ctypeShow}}</div>
                             </div>
                             <div w-class="ga-box2">
                                 <div w-class="ga-time">{{item.timeShow}}</div>
