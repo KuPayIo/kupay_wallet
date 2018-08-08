@@ -156,18 +156,21 @@ export class Dividend extends Widget {
      */
     public async initData() {
         const msg = await getMining();
-        let nowNum = (msg.mine_total - msg.mines + msg.today) * 0.25 - msg.today;  // 本次可挖数量为矿山剩余量的0.25减去今日已挖
+        const totalNum = kpt2kt(msg.mine_total);
+        const holdNum = kpt2kt(msg.mines);
+        const today = kpt2kt(msg.today);
+        let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 本次可挖数量为矿山剩余量的0.25减去今日已挖
         if (nowNum <= 0) {
             nowNum = 0;  // 如果本次可挖小于等于0，表示现在不能挖
-        } else if ((msg.mine_total - msg.mines) > 100) {
-            nowNum = (nowNum < 100 && (msg.mine_total - msg.mines) > 100) ? 100 :nowNum;  // 如果本次可挖小于100，且矿山剩余量大于100，则本次可挖100
+        } else if ((totalNum - holdNum) > 100) {
+            nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果本次可挖小于100，且矿山剩余量大于100，则本次可挖100
         } else {
-            nowNum = msg.mine_total - msg.mines;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
+            nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
         }
         
-        this.state.totalNum = kpt2kt(msg.mine_total);
-        this.state.thisNum = kpt2kt(nowNum);
-        this.state.holdNum = kpt2kt(msg.mines);
+        this.state.totalNum = totalNum;
+        this.state.thisNum = nowNum;
+        this.state.holdNum = holdNum;
         
         const detail = await getMineDetail();
         if (detail.value.length !== 0) {
@@ -179,7 +182,7 @@ export class Dividend extends Widget {
                 }
                 if (detail.value[i][0] === 1003) {// 注册手机号
                     this.state.data[1].isComplete = true;
-                    this.state.data[0].itemNum = kpt2kt(detail.value[i][1]);
+                    this.state.data[1].itemNum = kpt2kt(detail.value[i][1]);
                     this.state.data[1].itemBtn = '已验证';
                 }
                 if (detail.value[i][0] === 1004) {// 存币
