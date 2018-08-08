@@ -11,7 +11,7 @@ export class CreateComplete extends Widget {
     }
     public backPrePage() {
         this.ok && this.ok();
-        if (!getLocalStorage('lockScreenPsw')) {
+        if (!getLocalStorage('lockScreenPsw') && !getLocalStorage('jumpLockScreen')) {
             popNew('app-view-guidePages-setLockScreenScret', { jump: true });
         }
     }

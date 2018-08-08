@@ -65,6 +65,7 @@ export class SetLockScreenScret extends Widget {
     }
 
     public jumpClick() {
+        setLocalStorage('jumpLockScreen',true);
         this.ok && this.ok();
     }
 }

@@ -56,7 +56,8 @@ export enum TaskSid {
     transfer,// 交易奖励
     bonus,// 分红
     mines,// 挖矿
-    chat// 聊天
+    chat,// 聊天
+    redEnvelope = 'red_bag_port' // 红包
 }
 /**
  * 登录状态

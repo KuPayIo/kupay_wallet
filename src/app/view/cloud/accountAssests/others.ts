@@ -24,13 +24,26 @@ export class Others extends Widget {
 
     private async initData() {
         const r = await getAccountDetail(CurrencyType[this.props.coinType]);
+        console.log('流水',r);
         if (r.value.length > 0) {
             const list = [];
             r.value.forEach(v => {
+                const itype = v[0];
+                const amount = smallUnit2LargeUnit(this.props.coinType, v[1]);
+                let behavior = '';
+                if (itype === TaskSid.redEnvelope) {
+                    if (amount > 0) {
+                        behavior = '领红包';
+                    } else {
+                        behavior = '发红包';
+                    }
+                } else {
+                    behavior = isArray(v[2]) ? v[2].map(v1 => String.fromCharCode(v1)).join('') : v[2];
+                }
                 list.push({
                     type: v[0],
-                    amount: smallUnit2LargeUnit(this.props.coinType, v[1]),
-                    behavior: isArray(v[2]) ? v[2].map(v1 => String.fromCharCode(v1)).join('') : v[2],
+                    amount,
+                    behavior,
                     time: timestampFormat(v[3]),
                     behaviorIcon: getIconByType(v[0])
 
@@ -47,7 +60,11 @@ export class Others extends Widget {
  * 通过类型获取图标
  */
 const getIconByType = (iType) => {
-    if (iType === TaskSid.mines) return 'cloud_others_drag.png';
+    if (iType === TaskSid.mines) {
+        return 'cloud_others_drag.png';
+    } else if (iType === TaskSid.redEnvelope) {
+        return 'cloud_others_pockets.png';
+    }
     // '发红包'---cloud_others_pockets.png
     // '分红'---cloud_others_bonus.png
 };
