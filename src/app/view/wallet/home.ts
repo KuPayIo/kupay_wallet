@@ -35,6 +35,7 @@ export class Home extends Widget {
         const wallets = getLocalStorage('wallets');
         register('wallets', this.registerWalletsFun);
         register('addrs', this.registerAddrsFun);
+        
         let gwlt = null;
         let wallet = null;
         let otherWallets = false;
@@ -56,6 +57,12 @@ export class Home extends Widget {
             floatBoxTip: '为了您的资产安全，请及时备份助记词',
             hiddenAssets: false
         };
+
+        // 如果没有创建钱包提示创建钱包
+        if (!wallets) {
+            this.state.floatBoxTip = '您还没有钱包，请先创建钱包';
+        }
+
         this.registerAddrsFun();
         // 登录云端账号
         openAndGetRandom();
@@ -99,7 +106,7 @@ export class Home extends Widget {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
         if (!wallet) {
-            alert('你还没有钱包哦');
+            this.createWalletClick();
 
             return;
         }
@@ -131,6 +138,12 @@ export class Home extends Widget {
         this.paint();
     }
     private registerWalletsFun = (wallets: any) => {
+        // 创建完钱包之后修改floatBoxTip提示信息
+        const walletsObj = getLocalStorage('wallets');
+        if (walletsObj) {
+            this.state.floatBoxTip = '为了您的资产安全，请及时备份助记词';
+        }
+
         let otherWallets = false;
         if (wallets && wallets.walletList && wallets.walletList.length > 0) {
             otherWallets = true;
