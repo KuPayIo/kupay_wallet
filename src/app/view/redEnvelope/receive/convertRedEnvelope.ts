@@ -32,6 +32,7 @@ export class ConvertRedEnvelope extends Widget {
     }
     // 兑换
     public async convertClick() {
+        this.inputBlur();
         const code = this.state.cid.trim();
         if (code.length <= 0) {
             popNew('app-components-message-message', { itype: 'error', content: '请输入兑换码', center: true });
@@ -107,5 +108,9 @@ export class ConvertRedEnvelope extends Widget {
         }
 
         return res;
+    }
+    public inputBlur() {
+        const input: any = document.querySelector('.pi-input-simple__inner');
+        input.blur();
     }
 }

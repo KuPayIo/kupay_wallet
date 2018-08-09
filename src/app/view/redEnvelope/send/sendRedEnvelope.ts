@@ -121,7 +121,7 @@ export class SendRedEnvelope extends Widget {
             popNew('app-view-redEnvelope-send-shareRedEnvelope',{
                 rid:res.value,
                 rtype:this.state.itype,
-                leaveMessage:this.state.leaveMessage,
+                leaveMessage:this.state.leaveMessage || this.state.lmPlaceHolder,
                 currencyName:this.state.currencyName
             });
             this.state.singleAmount = '';
@@ -165,6 +165,5 @@ export class SendRedEnvelope extends Widget {
         inputs.forEach(input => {
             input.blur();
         });
-        console.log(inputs);
     }
 }
