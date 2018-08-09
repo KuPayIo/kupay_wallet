@@ -8,7 +8,7 @@ import {
     convertRedBag, CurrencyType, CurrencyTypeReverse, getData, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType, setData
 } from '../../../store/conMgr';
 import { showError } from '../../../utils/toolMessages';
-import { eth2Wei, formatBalance, removeLocalStorage, smallUnit2LargeUnit } from '../../../utils/tools';
+import { eth2Wei, removeLocalStorage, smallUnit2LargeUnitString } from '../../../utils/tools';
 
 export class ConvertRedEnvelope extends Widget {
     public ok: () => void;
@@ -55,7 +55,7 @@ export class ConvertRedEnvelope extends Widget {
             const redEnvelope = {
                 leaveMessage: r.value,
                 ctype: res.value[0],
-                amount:formatBalance(smallUnit2LargeUnit(CurrencyTypeReverse[res.value[0]], res.value[1])) 
+                amount:smallUnit2LargeUnitString(CurrencyTypeReverse[res.value[0]], res.value[1]) 
             };
             popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope,rtype:code.slice(0,2) });
         } catch (error) {

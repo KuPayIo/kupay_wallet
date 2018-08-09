@@ -5,10 +5,10 @@ import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { CurrencyType } from '../../store/conMgr';
 import { CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../store/conMgr';
-import { parseUrlParams, setLocalStorage, smallUnit2LargeUnit, unicodeArray2Str } from '../utils/tools';
+import { parseUrlParams, setLocalStorage, smallUnit2LargeUnitString, unicodeArray2Str } from '../utils/tools';
 
 interface RedEnvelope {
-    rid:number;// 红包id
+    rid:string;// 红包id
     uid:number;// 用户id
     rtype:number;// 红包类型
     ctype:number;// 币种
@@ -73,7 +73,7 @@ export class OpenRedEnvelope extends Widget {
     public openInviteRedEnvelope() {
         setTimeout(() => {
             const redEnvelope:RedEnvelope = {
-                rid:0,
+                rid:'0',
                 uid:0,
                 rtype:99,
                 ctype:CurrencyType.ETH,
@@ -101,7 +101,7 @@ export class OpenRedEnvelope extends Widget {
                         ctype:v[2],
                         cid:v[3],
                         cidShow:`${RedEnvelopeType.Normal}${v[3]}`,
-                        amount:smallUnit2LargeUnit(CurrencyTypeReverse[v[2]],v[4]),
+                        amount:smallUnit2LargeUnitString(CurrencyTypeReverse[v[2]],v[4]),
                         leaveMsg:unicodeArray2Str(v[5])
                     };
                     setLocalStorage('takeRedBag',redEnvelope);

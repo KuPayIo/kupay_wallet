@@ -34,6 +34,13 @@ export const run = (cb): void => {
     // makepayment();
     // exchangeManage.init();
     // 打开界面
+    /* popNew('app-view-guidePages-privacyAgreement');
+    popNew('app-components-share-share', { 
+        shareType: ShareToPlatforms.TYPE_LINK,
+        url:'http://104.224.152.72',
+        title:'测试',
+        content:'测试'
+    }); */
     popNewPage();
     // // 后台切前台
     // todo 临时处理方案，暂时屏蔽后台唤醒时输入锁屏密码功能

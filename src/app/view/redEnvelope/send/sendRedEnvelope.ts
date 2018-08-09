@@ -7,6 +7,7 @@ import { cloudAccount } from '../../../store/cloudAccount';
 import { CurrencyType, RedEnvelopeType, sendRedEnvlope, sharePerUrl } from '../../../store/conMgr';
 import { register, unregister } from '../../../store/store';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
+import { doErrorShow } from '../../../utils/toolMessages';
 import { getByteLen , openBasePage, removeLocalStorage } from '../../../utils/tools';
 
 export class SendRedEnvelope extends Widget {
@@ -115,8 +116,17 @@ export class SendRedEnvelope extends Widget {
         const ctype = Number(CurrencyType[this.state.currencyName]);
         const totalAmount = Number(this.state.totalAmount);
         const redEnvelopeNumber = this.state.redEnvelopeNumber;
-        const res = await sendRedEnvlope(rtype,ctype,totalAmount,redEnvelopeNumber,lm);
-        close.callback(close.widget);
+        let res;
+        try {
+            res = await sendRedEnvlope(rtype,ctype,totalAmount,redEnvelopeNumber,lm);
+        } catch (err) {
+            doErrorShow(err);
+            
+            return;
+        } finally {
+            close.callback(close.widget);
+        }
+        
         if (res.result === 1) {
             popNew('app-view-redEnvelope-send-shareRedEnvelope',{
                 rid:res.value,

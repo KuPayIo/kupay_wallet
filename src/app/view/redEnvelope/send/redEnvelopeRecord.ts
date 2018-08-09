@@ -4,9 +4,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyTypeReverse, querySendRedEnvelopeRecord, recordNumber } from '../../../store/conMgr';
-import { formatBalance, getFirstEthAddr, getLocalStorage, setLocalStorage, smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
+import { formatBalance, getFirstEthAddr, 
+    getLocalStorage, setLocalStorage, smallUnit2LargeUnit, smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';
 
 interface RecordShow {
+    rid:string;// 红包id
     rtype:number;// 红包类型
     ctype:number;// 币种
     ctypeShow:string;
@@ -86,15 +88,16 @@ export class RedEnvelopeRecord extends Widget {
             const recordList:RecordShow[] = [];
             const r = res.value[2];
             for (let i = 0; i < r.length;i++) {
-                const currencyName = CurrencyTypeReverse[r[i][1]];
+                const currencyName = CurrencyTypeReverse[r[i][2]];
                 const record:RecordShow = {
-                    rtype:r[i][0],
-                    ctype:r[i][1],
+                    rid:r[i][0].toString(),
+                    rtype:r[i][1],
+                    ctype:r[i][2],
                     ctypeShow:currencyName,
-                    amount:formatBalance(smallUnit2LargeUnit(currencyName,r[i][2])),
-                    time:r[i][3],
-                    timeShow:timestampFormat(r[i][3]),
-                    codes:r[i][4]
+                    amount:smallUnit2LargeUnitString(currencyName,r[i][3]),
+                    time:r[i][4],
+                    timeShow:timestampFormat(r[i][4]),
+                    codes:r[i][5]
                 };
                 recordList.push(record);
             }

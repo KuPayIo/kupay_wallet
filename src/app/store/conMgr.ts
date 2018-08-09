@@ -6,7 +6,7 @@ import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { showError } from '../utils/toolMessages';
-import { getCurrentWallet, getLocalStorage, largeUnit2SmallUnit, openBasePage } from '../utils/tools';
+import { getCurrentWallet, getLocalStorage, largeUnit2SmallUnit, largeUnit2SmallUnitString, openBasePage } from '../utils/tools';
 import { cloudAccount } from './cloudAccount';
 import { dataCenter } from './dataCenter';
 
@@ -267,7 +267,7 @@ export const sendRedEnvlope = async (rtype:number,ctype:number,totalAmount:numbe
         param:{
             type:rtype,
             priceType:ctype,
-            totalPrice:largeUnit2SmallUnit(CurrencyTypeReverse[ctype],totalAmount),
+            totalPrice:largeUnit2SmallUnitString(CurrencyTypeReverse[ctype],totalAmount),
             count:redEnvelopeNumber,
             desc:lm
         }
@@ -349,11 +349,15 @@ export const queryConvertLog = async (start) => {
     return requestAsync(msg);
 };
 
-export const queryDetailLog = async () => {
+/**
+ * 查询某个红包兑换详情
+ */
+export const queryDetailLog = async (rid:string) => {
     const msg = {
         type:'query_detail_log',
         param:{
-            cids:'J8VIXY,LQRNZV,27KP71'
+            uid:dataCenter.getConUid(),
+            rid
         }
     };
     

@@ -24,3 +24,17 @@ export const showError = (result, str?) => {
 
     popNew('app-components-message-message', { itype: 'error', center: true, content: str });
 };
+
+/**
+ * 显示错误信息
+ * @param err 错误对象
+ */
+export const doErrorShow = (err:Error) => {
+    if (!err) return;
+    let showStr = '';
+    switch (err.message) {
+        case 'Invalid Mnemonic' : showStr = '密码错误';break;
+        default: showStr = `出错啦`;
+    }
+    popNew('app-components-message-message', { itype: 'error', center: true, content: showStr });
+};

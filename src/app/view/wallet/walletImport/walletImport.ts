@@ -5,7 +5,6 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getWalletPswStrength, pswEqualed, walletCountAvailable, walletPswAvailable } from '../../../utils/account';
 import { importWalletByMnemonic } from '../../../utils/basicOperation';
-import { getLocalStorage } from '../../../utils/tools';
 
 export class WalletImport extends Widget {
     public ok: () => void;
