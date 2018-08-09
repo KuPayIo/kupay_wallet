@@ -4,7 +4,8 @@
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType, CurrencyTypeReverse, getData, queryConvertLog, recordNumber } from '../../../store/conMgr';
 import { showError } from '../../../utils/toolMessages';
-import { formatBalance, getFirstEthAddr, getLocalStorage, setLocalStorage, smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
+import { formatBalance, getFirstEthAddr, getLocalStorage, 
+    setLocalStorage, smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
 
 interface RecordShow {
     uid: number;// 用户id
@@ -39,7 +40,19 @@ export class RedEnvelopeRecord extends Widget {
             inviteObj:null// 邀请红包对象
         };
         this.loadMore();
-        // 获取邀请红包是否兑换
+        this.getInviteRedEnvelope();
+    }
+    // 获取邀请红包记录
+    public async getInviteRedEnvelope() {
+        const firstEthAddr = getFirstEthAddr();
+        const inviteRedEnvelope = getLocalStorage('inviteRedEnvelope') || {};
+        const inviteObj = inviteRedEnvelope[firstEthAddr];
+        if (inviteObj) {
+            this.state.inviteObj = inviteObj;
+            this.innerPaint();
+
+            return;
+        }
         const data = await getData('convertRedEnvelope');
         if (data.value && data.value !== '$nil') {
             this.state.inviteObj = {
@@ -53,6 +66,8 @@ export class RedEnvelopeRecord extends Widget {
                 time: data.value,
                 timeShow: timestampFormat(data.value)
             };
+            inviteRedEnvelope[firstEthAddr] = this.state.inviteObj;
+            setLocalStorage('inviteRedEnvelope',inviteRedEnvelope);
             this.innerPaint();
         }
     }
