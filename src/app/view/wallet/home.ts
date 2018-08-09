@@ -10,7 +10,8 @@ import { dataCenter } from '../../store/dataCenter';
 import { register, unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
 import {
-    fetchBalanceOfCurrency, fetchTotalAssets, formatBalance, formatBalanceValue, getCurrentWallet, getLocalStorage
+    fetchBalanceOfCurrency,fetchTotalAssets, formatBalance, formatBalanceValue, getCurrentWallet, getLocalStorage, getMnemonic,
+    openBasePage
 } from '../../utils/tools';
 
 export class Home extends Widget {
@@ -92,6 +93,37 @@ export class Home extends Widget {
     }
     public switchWalletClick() {
         popNew('app-view-wallet-switchWallet-switchWallet');
+    }
+    // 点击备份钱包
+    public async backupWalletClick() {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) {
+            alert('你还没有钱包哦');
+
+            return;
+        }
+        const walletId = wallet.walletId;
+        const close = popNew('pi-components-loading-loading', { text: '导出中...' });
+        try {
+            
+            let passwd;
+            if (!dataCenter.getHash(wallet.walletId)) {
+                passwd = await openBasePage('app-components-message-messageboxPrompt', {
+                    title: '输入密码', content: '', inputType: 'password'
+                });
+            }
+            const mnemonic = await getMnemonic(wallet, passwd);
+            if (mnemonic) {
+                popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: walletId });
+            } else {
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+            }
+        } catch (error) {
+            console.log(error);
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+        }
+        close.callback(close.widget);
     }
 
     public hiddenAssetsClick() {

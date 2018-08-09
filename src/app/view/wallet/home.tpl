@@ -32,7 +32,7 @@
             </div>
         </div>
         {{end}}
-        <div w-class="ga-float-box"><span>{{it1.floatBoxTip}}</span><img src="../../res/image/right_arrow.png" w-class="ga-arrow-img"/></div>
+        <div on-tap="backupWalletClick" w-class="ga-float-box"><span>{{it1.floatBoxTip}}</span><img src="../../res/image/right_arrow.png" w-class="ga-arrow-img"/></div>
         <div w-class="ga-currency-list-container">
             <ul w-class="ga-currency-list">
                 {{for index,currency of it1.currencyList}}
