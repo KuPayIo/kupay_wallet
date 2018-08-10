@@ -11,7 +11,6 @@ import { config } from '../core/config';
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy } from '../utils/tools';
 import { Addr, CurrencyInfo, Store, TransactionRecord, Wallet } from './interface';
-import { find as findByLoc } from './localStorageStore';
 
 // ============================================ 导出
 /**
@@ -98,6 +97,12 @@ type KeyName = MapName | 'wallets' | 'curWallet' | 'addrs' | 'transactions' | 'c
 type MapName = 'exchangeRateJson' | 'hashMap';
 
 // ============================================ 本地
+type LocKeyName = 'wallets' | 'addrs' | 'transactions';
+const findByLoc = (keyName: LocKeyName): any => {
+    const value = JSON.parse(localStorage.getItem(keyName));
+
+    return value instanceof Object ? depCopy(value) : value;
+};
 
 // ============================================ 立即执行
 /**

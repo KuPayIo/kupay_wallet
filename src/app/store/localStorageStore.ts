@@ -2,18 +2,13 @@
  * 处理localStorage上的数据
  */
 // ===================================================== 导入
-import { depCopy } from '../utils/tools';
 import { Addr, Wallet } from '../view/interface';
 import { TransactionRecord } from './interface';
 import { register } from './store';
 // ===================================================== 导出
-export const find = (keyName: KeyName): any => {
-    const value = JSON.parse(localStorage.getItem(keyName));
 
-    return value instanceof Object ? depCopy(value) : value;
-};
 // ===================================================== 本地
-type KeyName = 'wallets' | 'addrs' | 'transactions';
+
 // ===================================================== 立即执行
 register('wallets', (wallets: Wallet[]) => {
     let locWallets = JSON.parse(localStorage.getItem('wallets'));

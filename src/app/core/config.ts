@@ -18,7 +18,7 @@ export const config = {
         EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY'
     },
     // 当前网络是否是测试网络
-    currentNetIsTest: false,
+    currentNetIsTest: true,
     // todo 测试网络与正式网络切换
     ERC20TokensMainnet: {
         // mainnet
