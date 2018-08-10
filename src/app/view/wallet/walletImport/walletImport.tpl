@@ -26,6 +26,7 @@
                 <app-components-input-input>{itype:"password",placeHolder:"再次输入密码"}</app-components-input-input>
             </div>
         </div>
+        <div w-class="ga-psw-tip-hidden  {{!it1.pswSame ? 'ga-psw-tip-show' : ''}}">两次输入的密码不相同</div>
         <div w-class="ga-import-item" ev-input-change="walletPswTipsChange">
             <div w-class="ga-import-item-label">提示信息（可不填）</div>
             <div w-class="ga-input-father">

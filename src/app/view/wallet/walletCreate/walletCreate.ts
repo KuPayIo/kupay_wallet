@@ -27,6 +27,7 @@ export class WalletCreate extends Widget {
             walletName: '',
             walletPsw: '',
             walletPswConfirm: '',
+            pswSame:true,
             walletPswTips: '',
             userProtocolReaded: false,
             curWalletPswStrength: getWalletPswStrength()
@@ -44,11 +45,23 @@ export class WalletCreate extends Widget {
     }
     public walletPswChange(e: any) {
         this.state.walletPsw = e.value;
+        // 判断两次输入密码是否相同
+        if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
+            this.state.pswSame = false;
+        } else {
+            this.state.pswSame = true;
+        }
         this.state.curWalletPswStrength = getWalletPswStrength(this.state.walletPsw);
         this.paint();
     }
     public walletPswConfirmChange(e: any) {
         this.state.walletPswConfirm = e.value;
+        if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
+            this.state.pswSame = false;
+        } else {
+            this.state.pswSame = true;
+        }
+        this.paint();
     }
     public walletPswTipsChange(e: any) {
         this.state.walletPswTips = e.value;
@@ -76,8 +89,7 @@ export class WalletCreate extends Widget {
             return;
         }
         if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
-            popNew('app-components-message-message', { itype: 'error', content: '密码不一致，请重新输入', center: true });
-
+            
             return;
         }
         if (!walletCountAvailable()) {

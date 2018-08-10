@@ -23,8 +23,8 @@
     font-size:36px;
 }
 .ktIcon{
-    width:48px;
-    height:48px;
+    width:60px;
+    height:60px;
 }
 .ktBalance{
     color:#111111;

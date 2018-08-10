@@ -79,8 +79,9 @@ export class BackupMnemonicWordConfirm extends Widget {
     public shuffledMnemonicItemClick(e: Event, v: number) {
         const mnemonic = this.state.shuffledMnemonic[v];
         if (mnemonic.isActive) {
-            // mnemonic.isActive = false;
-            // this.state.confirmedMnemonic.pop(mnemonic);
+            mnemonic.isActive = false;
+            arryRemove(this.state.confirmedMnemonic,mnemonic);
+            
         } else {
             mnemonic.isActive = true;
             this.state.confirmedMnemonic.push(mnemonic);
@@ -118,3 +119,18 @@ export class BackupMnemonicWordConfirm extends Widget {
         return isEqualed;
     }
 }
+
+const arryRemove = (ary:any[],target:Object) => {
+    //
+    for (let i = 0;i < ary.length;i++) {
+        const one = ary[i];
+        if (one === target) {
+            ary.splice(i,1);
+
+            return;
+        }
+
+    }
+    
+    return;
+};

@@ -22,6 +22,7 @@
             <div w-class="ga-registered-item-label">再次输入密码</div>
             <div w-class="ga-input-father"><app-components-input-input>{itype:"password",placeHolder:"再次输入密码"}</app-components-input-input></div>
         </div>
+        <div w-class="ga-psw-tip-hidden  {{!it1.pswSame ? 'ga-psw-tip-show' : ''}}"  style="color: rgba(234,142,65,1);">两次输入的密码不相同</div>
         <div w-class="ga-registered-item" ev-input-change="walletPswTipsChange">
             <div w-class="ga-registered-item-label">提示信息（可不填）</div>
             <div w-class="ga-input-father"><app-components-input-input>{placeHolder:"提示信息（可不填）"}</app-components-input-input></div>

@@ -42,8 +42,11 @@ export class Index extends Widget {
             }]
         };
     }
-    public toDetail() {
-        popNew('app-view-financialManagement-productDetail-productDetail');
+    public toDetail(i:any) {
+        console.log('---------i-----------');
+        console.log(i);
+        const item = this.state.productList[i];
+        popNew('app-view-financialManagement-productDetail-productDetail',{ i,item });
     }
     public toRecord() {
         popNew('app-view-financialManagement-purchaseRecord-purchaseRecord');

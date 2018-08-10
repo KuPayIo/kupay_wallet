@@ -53,7 +53,7 @@
     <div w-class="productList">
 
         {{for i,v of it1.productList}}
-        <div w-class="productItem" on-tap="toDetail">
+        <div w-class="productItem" on-tap="toDetail({{i}})">
             <div w-class="productHead">
                 {{v.title}} 
                 {{if v.isSoldOut}}

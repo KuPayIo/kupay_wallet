@@ -67,11 +67,11 @@ export class DisplayPage extends Widget {
             const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             const messageboxVerifyProps = {
                 title: '重置锁屏密码', 
-                content: '错误次数过多，已被锁定，请验证当前钱包长密码后重置',
+                content: '错误次数过多，已被锁定，请验证当前钱包交易密码后重置',
                 inputType:'password',
                 tipsTitle:gwlt.nickName,
                 tipsImgUrl:wallet.avatar,
-                placeHolder:'请输入长密码',
+                placeHolder:'请输入交易密码',
                 confirmCallBack:this.verifyLongPsw,
                 confirmErrorText:'密码错误,请重新输入'
             };
@@ -102,11 +102,11 @@ export class DisplayPage extends Widget {
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         const messageboxVerifyProps = {
             title: '忘记密码', 
-            content: '忘记锁屏密码，请验证当前钱包长密码后重置',
+            content: '忘记锁屏密码，请验证当前钱包交易密码后重置',
             inputType:'password',
             tipsTitle:gwlt.nickName,
             tipsImgUrl:wallet.avatar,
-            placeHolder:'请输入长密码',
+            placeHolder:'请输入交易密码',
             confirmCallBack:this.verifyLongPsw,
             confirmErrorText:'密码错误,请重新输入'
         };
