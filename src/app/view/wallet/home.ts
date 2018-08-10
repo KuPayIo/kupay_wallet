@@ -177,6 +177,7 @@ export class Home extends Widget {
             setCurrencyListBalance(this.state.currencyList, balance, item.currencyName);
         });
         this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
+        
         this.paint();
     }
 }

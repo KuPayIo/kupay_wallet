@@ -9,7 +9,7 @@
             <div w-class="ga-assets-container">
                 <div w-class="ga-assets-box">
                     <span w-class="ga-assets">
-                        <div w-class="ga-box"><span w-class="ga-assets-symbol">≈￥</span><span>{{it1.hiddenAssets ? '******' : it1.totalAssets}}</span></div>
+                        <div w-class="ga-box"><span w-class="ga-assets-symbol">≈￥</span><span>{{it1.hiddenAssets ? it1.totalAssets.replace(/./g,'*') : it1.totalAssets}}</span></div>
                         <img src="../../res/image/{{it1.hiddenAssets ? 'btn_display_close' : 'btn_display_open'}}.png" w-class="ga-hidden" on-tap="hiddenAssetsClick"/>
                     </span>
                 </div>
@@ -25,7 +25,7 @@
             <div w-class="ga-assets-container">
                 <div w-class="ga-assets-box">
                     <span w-class="ga-assets">
-                            <div w-class="ga-box"><span w-class="ga-assets-symbol">≈￥</span><span>{{it1.hiddenAssets ? '******' : it1.totalAssets}}</span></div>
+                            <div w-class="ga-box"><span w-class="ga-assets-symbol">≈￥</span><span>{{it1.hiddenAssets ? it1.totalAssets.toFixed(2).replace(/./g,'*') : it1.totalAssets.toFixed(2)}}</span></div>
                         <img src="../../res/image/{{it1.hiddenAssets ? 'btn_display_close' : 'btn_display_open'}}.png" w-class="ga-hidden" on-tap="hiddenAssetsClick"/>
                     </span>
                 </div>
