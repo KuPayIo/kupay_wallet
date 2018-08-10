@@ -1,10 +1,10 @@
 /**
- * 分红统计页面  
+ * 挖矿总信息页面  
  * 
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineDetail, getMineRank, getMining, getMiningHistory, TaskSid } from '../../../store/conMgr';
+import { getMineDetail, getMineRank, getMining, TaskSid, getMiningHistory } from '../../../store/conMgr';
 import { kpt2kt } from '../../../utils/tools';
 
 interface Items {
@@ -21,11 +21,11 @@ interface Items {
 export class Dividend extends Widget {
     public ok: () => void;
     public state: {
-        totalNum:number; 
-        thisNum:number; 
-        holdNum:number;
-        mineRank:number; 
-        data:Items[];
+        totalNum:number; // 矿山总量
+        thisNum:number;  // 本次可挖
+        holdNum:number;  // 已挖数量
+        mineRank:number;  // 当前用户的矿山排名
+        data:Items[]; // 挖矿项目
     };
     constructor() {
         super();
@@ -175,21 +175,26 @@ export class Dividend extends Widget {
         const detail = await getMineDetail();
         if (detail.value.length !== 0) {
             for (let i = 0;i < detail.value.length;i++) {
-                if (detail.value[i][0] === TaskSid.createWlt) {// 创建钱包
+                if (detail.value[i][0] === 1001) {// 创建钱包
                     this.state.data[0].isComplete = true;
                     this.state.data[0].itemNum = kpt2kt(detail.value[i][1]);                    
                     this.state.data[0].itemBtn = '已创建';                    
-                } else if (detail.value[i][0] === TaskSid.bindPhone) {// 注册手机号
+                }
+                if (detail.value[i][0] === 1003) {// 注册手机号
                     this.state.data[1].isComplete = true;
                     this.state.data[1].itemNum = kpt2kt(detail.value[i][1]);
                     this.state.data[1].itemBtn = '已验证';
-                } else if (detail.value[i][0] === TaskSid.chargeEth) {// 存币
+                }
+                if (detail.value[i][0] === 1004) {// 存币
                     this.state.data[2].itemNum = kpt2kt(detail.value[i][1]);
-                } else if (detail.value[i][0] === TaskSid.inviteFriends) {// 与好友分享
+                }
+                if (detail.value[i][0] === 1005) {// 与好友分享
                     this.state.data[3].itemNum = kpt2kt(detail.value[i][1]);                    
-                } else if (detail.value[i][0] === TaskSid.buyFinancial) {// 购买理财
+                }
+                if (detail.value[i][0] === 1007) {// 购买理财
                     this.state.data[4].itemNum = kpt2kt(detail.value[i][1]);                    
-                } else if (detail.value[i][0] === TaskSid.chat) {// 聊天
+                }
+                if (detail.value[i][0] === 1011) {// 聊天
                     this.state.data[5].isComplete = true;
                     this.state.data[5].itemNum = kpt2kt(detail.value[i][1]);
                     this.state.data[5].itemBtn = '已聊天';                   

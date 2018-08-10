@@ -74,9 +74,7 @@ export class CloudAccount extends Widget {
         } catch (error) {
             console.log(error);
             if (error.type === -300) {
-                popNew('app-components-message-message', { itype: 'error', center: true, content: `验证码无效，请重新获取` });
-            } else if (error.type === -301) {
-                popNew('app-components-message-message', { itype: 'error', center: true, content: `验证码无效，请重新获取` });
+                popNew('app-components-message-message', { itype: 'error', center: true, content: `验证码失效，请重新获取` });
             } else {
                 popNew('app-components-message-message', { itype: 'error', center: true, content: `错误${error.type}` });
             }

@@ -69,7 +69,11 @@
                     每日挖矿
                 </div>
                 <div w-class="infoMain">
-                    今日可挖{{it1.mines}}KT
+                    {{if it1.isAbleBtn}}
+                    本次可挖{{it1.mines}}KT
+                    {{else}}
+                    拥有1000KT才能提现
+                    {{end}}
                 </div>
             </div>
             <span w-class="paddingSpan" style="display: {{it1.isAbleBtn?'inline':'none'}}" on-tap="doPadding">

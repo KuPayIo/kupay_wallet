@@ -34,7 +34,8 @@ export class WalletImport extends Widget {
             pswSame:true,
             walletPswTips: '',
             userProtocolReaded: false,
-            curWalletPswStrength: getWalletPswStrength()
+            curWalletPswStrength: getWalletPswStrength(),
+            showPswTips:false
         };
     }
     public backPrePage() {
@@ -48,12 +49,17 @@ export class WalletImport extends Widget {
     }
     public walletPswChange(e: any) {
         this.state.walletPsw = e.value;
+        this.state.showPswTips = this.state.walletPsw.length > 0;
         this.state.curWalletPswStrength = getWalletPswStrength(this.state.walletPsw);
         if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
             this.state.pswSame = false;
         } else {
             this.state.pswSame = true;
         }
+        this.paint();
+    }
+    public walletPswBlur() {
+        this.state.showPswTips = false;
         this.paint();
     }
     public walletPswConfirmChange(e: any) {
