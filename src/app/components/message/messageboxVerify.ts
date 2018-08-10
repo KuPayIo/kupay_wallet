@@ -35,18 +35,17 @@ export class MessageBoxVerify extends Widget {
     /**
      * 点击确认
      */
-    public doClickSure() {
+    public async doClickSure() {
         const close = popNew('pi-components-loading-loading', { text: '验证中...' });
-        setTimeout(() => {
-            close.callback(close.widget);
-            if (this.props.confirmCallBack(this.state.input)) {
-                this.ok && this.ok(this.state.input);
-            } else {
-                this.state.input = '';
-                popNew('app-components-message-message', { itype: 'error', content: this.props.confirmErrorText, center: true });
-                this.paint();
-            }
-        },1000);
+        const isEffective = await this.props.confirmCallBack(this.state.input);
+        close.callback(close.widget);
+        if (isEffective) {
+            this.ok && this.ok(this.state.input);
+        } else {
+            this.state.input = '';
+            popNew('app-components-message-message', { itype: 'error', content: this.props.confirmErrorText, center: true });
+            this.paint();
+        }
     }
 
     /**

@@ -4,7 +4,7 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
-import { getCurrentWallet, getLocalStorage, lockScreenVerify } from '../../utils/tools';
+import { getCurrentWallet, getLocalStorage, lockScreenVerify, VerifyIdentidy } from '../../utils/tools';
 
 export class UnlockScreen extends Widget {
     public ok: () => void;
@@ -66,8 +66,11 @@ export class UnlockScreen extends Widget {
     }
 
     // 验证密码
-    public verifyLongPsw(r:string) {
-        return false;
+    public  verifyLongPsw(psw:string) {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+
+        return VerifyIdentidy(wallet, psw);
     }
 
     public forgetPasswordClick() {

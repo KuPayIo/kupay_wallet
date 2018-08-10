@@ -5,17 +5,21 @@ import { SendChatMessage } from '../../pi/browser/sendMessage';
 import { popNew } from '../../pi/ui/root';
 import { Widget } from '../../pi/widget/widget';
 import { doChat } from '../store/conMgr';
-import { getCurrentWallet, getLocalStorage } from '../utils/tools';
+import { getLocalStorage } from '../utils/tools';
 export class App extends Widget {
-    constructor() {
-        super();
-    }
+    public old: any = {};  
     public create() {
         super.create();
         this.init();
     }
+
     public init(): void {
+        const isActive = 0;
+        this.old[isActive] = true;
         this.state = {
+            type:2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
+            isActive,
+            old:this.old,
             tabBarList: [{
                 text: '钱包',
                 icon: 'wallet_icon.png',
@@ -60,8 +64,8 @@ export class App extends Widget {
                 icon: 'mine_icon.png',
                 iconActive: 'mine_icon_active.png',
                 components: 'app-view-mine-home'
-            }],
-            isActive: 0
+            }]
+            
         };
     }
     public async tabBarChangeListener(event: any, index: number) {
@@ -69,7 +73,7 @@ export class App extends Widget {
         // 点击的是聊天则调用接口打开聊天，不进行组件切换
         if (this.state.tabBarList[index].name === 'chat') {
             // todo 测试代码，需要移除
-            await doChat();
+            // await doChat();
 
             this.setProxy().then(this.sendMessage);
 
@@ -84,6 +88,7 @@ export class App extends Widget {
         //     }
         // }
         this.state.isActive = index;
+        this.old[index] = true;
         this.paint();
     }
 
