@@ -26,14 +26,16 @@
     line-height: 50px;
 }
 .title{
-    margin-left: 30px;
+    margin-left: 136px;
     color: rgba(17, 17, 17, 0.87);
     font-size: 36px;
+    flex: 1 0 0;
+    text-align: center;
 }
 .more{
     color: rgba(17, 17, 17, 0.87);
     font-size: 28px;
-    margin-right: 38px;
+    margin-right: 36px;
     float: right;
 }
 .moreImg{
@@ -64,9 +66,10 @@
     height: 40px;
     line-height: 40px;
     color: rgba(32, 50, 96, 1);
-    font-size: 28px;
+    font-size: 36px;
     text-align: center;
     margin-bottom: 20px;
+    font-weight: 600;
 }
 .rankSecond{
     display: inline-block;
