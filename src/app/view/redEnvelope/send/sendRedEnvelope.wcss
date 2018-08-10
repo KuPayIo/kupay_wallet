@@ -23,6 +23,17 @@
     justify-content: center;
     align-items: center;
 }
+.ga-pin{
+    color: #fff;
+    font-size: 24px;
+    background-color: #ffcb6b;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+}
 .ga-total-tag{
     margin-left: 5px;
 }

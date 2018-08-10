@@ -21,7 +21,7 @@
         {{else}} 
         <div w-class="ga-item-box">
             <div w-class="ga-box">
-                <img src="../../../res/image/currency/AION.png"/>
+                <div w-class="ga-pin">拼</div>
                 <span w-class="ga-tag ga-total-tag">总金额</span>
             </div>
             <div w-class="ga-amount-inner">

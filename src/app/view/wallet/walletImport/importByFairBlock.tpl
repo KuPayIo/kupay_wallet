@@ -17,7 +17,7 @@
                     <app-components-input-input>{placeHolder:"这里也输入片段",itype:"textarea",rows:3,style:"border:3px dotted #A0ACC0;paddingTop:26px;"}</app-components-input-input>
                 </div>
         </div>
-        <div w-class="ga-import-item" ev-input-change="walletPswChange">
+        <div w-class="ga-import-item" ev-input-change="walletPswChange" ev-input-blur="walletPswBlur">
             <div w-class="ga-import-item-label">密码，不少于8位字符，可包含英文、数字、特殊字符</div>
             <div w-class="ga-input-father">
                 <app-components-input-input>{itype:"password",placeHolder:"设置密码"}</app-components-input-input>
@@ -27,7 +27,7 @@
                 </span>
             </div>
         </div>
-        <div w-class="ga-psw-tip-hidden  {{it1.walletPsw.length>0 ? 'ga-psw-tip-show' : ''}}">不少于8位字符，可包含英文、数字、特殊字符</div>
+        <div w-class="ga-psw-tip-hidden  {{it1.showPswTips ? 'ga-psw-tip-show' : ''}}">不少于8位字符，可包含英文、数字、特殊字符</div>
         <div w-class="ga-import-item" ev-input-change="walletPswConfirmChange">
             <div w-class="ga-import-item-label">再次输入密码</div>
             <div w-class="ga-input-father">

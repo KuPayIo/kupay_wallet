@@ -37,7 +37,8 @@ export class WalletCreate extends Widget {
             walletPswConfirm: '',
             walletPswTips: '',
             userProtocolReaded: false,
-            curWalletPswStrength: getWalletPswStrength()
+            curWalletPswStrength: getWalletPswStrength(),
+            showPswTips:false
         };
         const wallets = getLocalStorage('wallets');
         const len = wallets ? wallets.walletList.length : 0;
@@ -52,7 +53,12 @@ export class WalletCreate extends Widget {
     }
     public walletPswChange(e: any) {
         this.state.walletPsw = e.value;
+        this.state.showPswTips = this.state.walletPsw.length > 0;
         this.state.curWalletPswStrength = getWalletPswStrength(this.state.walletPsw);
+        this.paint();
+    }
+    public walletPswBlur() {
+        this.state.showPswTips = false;
         this.paint();
     }
     public walletPswConfirmChange(e: any) {

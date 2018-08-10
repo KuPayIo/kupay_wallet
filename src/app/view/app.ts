@@ -4,7 +4,7 @@
 import { SendChatMessage } from '../../pi/browser/sendMessage';
 import { popNew } from '../../pi/ui/root';
 import { Widget } from '../../pi/widget/widget';
-import { doChat, getProxy } from '../store/conMgr';
+import { doChat } from '../store/conMgr';
 import { getCurrentWallet, getLocalStorage } from '../utils/tools';
 export class App extends Widget {
     constructor() {
@@ -68,6 +68,9 @@ export class App extends Widget {
         if (this.state.isActive === index) return;
         // 点击的是聊天则调用接口打开聊天，不进行组件切换
         if (this.state.tabBarList[index].name === 'chat') {
+            // todo 测试代码，需要移除
+            await doChat();
+
             this.setProxy().then(this.sendMessage);
 
             return;
@@ -123,25 +126,14 @@ export class App extends Widget {
 
         // todo 这里需要向服务器通信获取代理地址，且区分国内外的情况
         return new Promise((resolve, reject) => {
-            getProxy().then((r) => {
-                if (r.result !== 1) {
-                    reject(r.result);
-
-                    return;
-                }
-                const proxy = JSON.parse(r.proxy);
-                if (proxy.protocol === 'socks5') {
-                    chat.setProxy({
-                        success: (result) => { resolve(result); },
-                        fail: (result) => { reject(result); },
-                        proxyIp: proxy.ip, proxyPort: proxy.prot, userName: '', password: ''
-                    });
-                } else {
-                    reject('no support');
-                }
-
+            chat.setProxy({
+                success: (result) => {
+                    resolve(result);
+                },
+                fail: (result) => {
+                    reject(result);
+                }, proxyIp: '120.77.252.201', proxyPort: 1820, userName: '', password: ''
             });
-
         });
 
     }
