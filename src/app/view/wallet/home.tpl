@@ -29,6 +29,7 @@
                         <img src="../../res/image/{{it1.hiddenAssets ? 'btn_display_close' : 'btn_display_open'}}.png" w-class="ga-hidden" on-tap="hiddenAssetsClick"/>
                     </span>
                 </div>
+                <div w-class="ga-profit">今日盈利 ￥{{it1.hiddenAssets ? '***' : '0.00'}}</div>
             </div>
         </div>
         {{end}}

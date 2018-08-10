@@ -72,14 +72,14 @@ export class App extends Widget {
 
             return;
         }
-        if (this.state.tabBarList[index].name === 'cloud') {
-            const wallets = getLocalStorage('wallets');
-            if (!wallets || wallets.walletList.length === 0) {
-                popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
+        // if (this.state.tabBarList[index].name === 'cloud') {
+        //     const wallets = getLocalStorage('wallets');
+        //     if (!wallets || wallets.walletList.length === 0) {
+        //         popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
 
-                return;
-            }
-        }
+        //         return;
+        //     }
+        // }
         this.state.isActive = index;
         this.paint();
     }

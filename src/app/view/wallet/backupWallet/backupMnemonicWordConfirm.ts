@@ -78,9 +78,15 @@ export class BackupMnemonicWordConfirm extends Widget {
 
     public shuffledMnemonicItemClick(e: Event, v: number) {
         const mnemonic = this.state.shuffledMnemonic[v];
-        if (mnemonic.isActive) return;
-        mnemonic.isActive = true;
-        this.state.confirmedMnemonic.push(mnemonic);
+        if (mnemonic.isActive) {
+            // mnemonic.isActive = false;
+            // this.state.confirmedMnemonic.pop(mnemonic);
+        } else {
+            mnemonic.isActive = true;
+            this.state.confirmedMnemonic.push(mnemonic);
+        }
+        console.log(this.state.confirmedMnemonic);
+        console.log(this.state.confirmedMnemonic);
         this.paint();
     }
 

@@ -106,10 +106,10 @@
     font-size: 24px;
     padding: 14px 0;
     text-align: center;
-    background: #1A70DD;
     float: right;
     border-radius: 8px;
     width: 135px;
+    position: relative;
 }
 .soldOut{
     background: #A0ACC0;

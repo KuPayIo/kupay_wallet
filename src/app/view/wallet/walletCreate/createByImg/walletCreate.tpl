@@ -1,7 +1,7 @@
 <div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page">
         <app-components-topBar-topBar>{title:"生成钱包"}</app-components-topBar-topBar>
         
-        <div w-class="ga-notice-text">Fairblock是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。</div>
+        <div w-class="ga-notice-text">KuPay是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。</div>
         <div w-class="ga-registered-item">
             <div w-class="ga-tips">为钱包设置密码，完成最后的步骤</div>
         </div>

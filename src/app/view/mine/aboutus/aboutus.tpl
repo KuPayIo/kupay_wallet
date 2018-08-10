@@ -4,7 +4,7 @@
         <img src="../../../res/image/img_logo.png" w-class="logoimg"/>
     </div>
     <div w-class="version">V0.0.1</div>
-    <div w-class="shortmess">fairblock是一款功能全面、简单易用的钱包应用。</div>
+    <div w-class="shortmess">KuPay是一款功能全面、简单易用的钱包应用。</div>
     
     {{for ind,val of it1.data}}
         <div w-class="ga-item" on-tap="itemClick(e,{{ind}})">

@@ -71,7 +71,7 @@ export class WalletCreate extends Widget {
             return;
         }
         if (!walletPswAvailable(this.state.walletPsw)) {
-            popNew('app-components-message-message', { itype: 'error', content: '密码格式不正确,请重新输入', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: '密码格式不正确', center: true });
 
             return;
         }

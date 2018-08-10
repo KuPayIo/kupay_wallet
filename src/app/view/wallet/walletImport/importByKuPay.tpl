@@ -1,7 +1,7 @@
-<div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page" id="importFairBlock">
-    <app-components-topBar-topBar>{title:"导入FairBlock"}</app-components-topBar-topBar>
+<div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page" id="importKuPay">
+    <app-components-topBar-topBar>{title:"导入KuPay"}</app-components-topBar-topBar>
     <div w-class="topTip">
-        Fairblock是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。
+            KuPay是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。
     </div>
     <div w-class="ga-import-container">
         <div w-class="ga-topTips">
