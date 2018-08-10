@@ -7,7 +7,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
 import { openAndGetRandom } from '../../store/conMgr';
 import { dataCenter } from '../../store/dataCenter';
-import { register, unregister } from '../../store/store';
+import { find, register, unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
 import {
     fetchBalanceOfCurrency, fetchTotalAssets, formatBalance, formatBalanceValue, getCurrentWallet, getLocalStorage
@@ -147,7 +147,7 @@ const parseCurrencyList = (wallet) => {
     // if (!wallet.showCurrencys) return list;
     const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
     // todo  这里需要正确的处理钱包货币
-    dataCenter.currencyList.forEach(v => {
+    find('currencyList').forEach(v => {
         if (showCurrencys.indexOf(v.name) < 0) return;
         list.push({
             currencyName: v.name,

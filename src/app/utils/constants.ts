@@ -7,13 +7,13 @@ import { config } from '../core/config';
 // 钱包数量最大限制
 export const walletNumLimit = 10;
 // 钱包所支持的货币列表测试网络
-const supportCurrencyListTest = [
+export const supportCurrencyListTest = [
     { name: 'ETH', description: 'Ethereum' },
     { name: 'BTC', description: 'Bit coin' },
     { name: 'YNC', description: 'YiNeng Ltd' }
 ];
 // 钱包所支持的货币列表主网络
-const supportCurrencyListMain = [
+export const supportCurrencyListMain = [
     { name: 'ETH', description: 'Ethereum' },
     { name: 'BTC', description: 'Bit coin' },
     { name: 'BNB', description: 'BNB' },
@@ -59,7 +59,7 @@ export const btcNetwork = 'testnet';
 export const lang = 'english';
 
 // 默认货币汇率测试网络
-const defaultExchangeRateJsonTest = {
+export const defaultExchangeRateJsonTest = {
     ETH: { CNY: 3337.01, USD: 517.42 },
     BTC: { CNY: 42868.55, USD: 6598.71 },
     YNC: { CNY: 100, USD: 15.2625 },
@@ -67,7 +67,7 @@ const defaultExchangeRateJsonTest = {
 };
 
 // 默认货币汇率主网络
-const defaultExchangeRateJsonMain = {
+export const defaultExchangeRateJsonMain = {
     ETH: { CNY: 3337.01, USD: 517.42 },
     BTC: { CNY: 42868.55, USD: 6598.71 },
     KT: { CNY: 0.03, USD: 0.19 },

@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../store/dataCenter';
+import { find } from '../../../store/store';
 import { getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
 
 export class AddAsset extends Widget {
@@ -22,7 +23,7 @@ export class AddAsset extends Widget {
         const wallets = getLocalStorage('wallets');
         const wallet = getCurrentWallet(wallets);
 
-        const currencyList = dataCenter.currencyList;
+        const currencyList = find('currencyList');
 
         const showCurrencys = wallet.showCurrencys || [];
 
