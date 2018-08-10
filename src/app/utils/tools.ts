@@ -308,6 +308,34 @@ export const largeUnit2SmallUnit = (currencyName: string, amount: number) => {
         return Math.floor(kt2kpt(amount));
     }
 };
+
+/**
+ * 根据货币类型小单位转大单位  
+ */
+export const smallUnit2LargeUnitString = (currencyName:string,amount:string):number => {
+    if (currencyName === 'ETH') {
+        const pow = amount.length - 15;
+        let num = Number(amount.slice(0,15));
+        num = wei2Eth(num);
+        num  = num * Math.pow(10,pow);
+
+        return formatBalance(num);
+    } else if (currencyName === 'KT') {
+        return formatBalance(kpt2kt(Number(amount)));
+    }
+};
+
+/**
+ * 根据货币类型大单位转小单位
+ */
+export const largeUnit2SmallUnitString = (currencyName:string,amount:number):string => {
+    if (currencyName === 'ETH') {
+        return eth2Wei(amount).toLocaleString().replace(/,/g,'');
+    } else if (currencyName === 'KT') {
+        return kt2kpt(amount).toLocaleString().replace(/,/g,'');
+    }
+};
+
 /**
  * eth 代币除以精度计算
  */
@@ -599,6 +627,10 @@ export const urlParams = (url: string, key: string) => {
     return ret && decodeURIComponent(ret[2]);
 };
 
+/**
+ * 金额格式化
+ * @param banlance 金额
+ */
 export const formatBalance = (banlance: number) => {
     return Number(banlance.toFixed(6));
 };
@@ -1028,4 +1060,14 @@ export const getFirstEthAddr = () => {
             return currencyRecords[i].addrs[0];
         }
     }
+};
+
+// unicode数组转字符串
+export const unicodeArray2Str = (arr) => {
+    let str = '';
+    for (let i = 0; i < arr.length;i++) {
+        str += String.fromCharCode(arr[i]);
+    }
+
+    return str;
 };

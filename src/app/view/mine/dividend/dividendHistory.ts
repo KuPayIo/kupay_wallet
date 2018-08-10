@@ -30,51 +30,11 @@ export class Dividend extends Widget {
         this.state = {
             refresh:true,
             data:[
-                {
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                },{
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                },{
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                },{
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                },{
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                },{
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                },{
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                },{
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                },{
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                },{
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                },{
-                    num:0.02,
-                    time:'04-30 14:32:00',
-                    total:10.2
-                }                
+                // {
+                //     num:0.02,
+                //     time:'04-30 14:32:00',
+                //     total:10.2
+                // }                
             ]
         };
     }

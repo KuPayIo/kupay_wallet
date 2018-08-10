@@ -21,6 +21,7 @@ export class CloudAccount extends Widget {
     }
     public init(): void {
         this.state = {
+            isNameUpdated:false,
             accoutNickName: '昵称未设置',// 账户昵称
             accoutHeadImg: 'img_avatar1.jpg',// 账户头像
             accountAssets: '',// 账户资产
@@ -44,6 +45,27 @@ export class CloudAccount extends Widget {
     public itemClicked(e: any, coinType: any) {
         const coinBalance = this.state.coinList.filter(v => v.coinType === coinType)[0].coinBalance;
         popNew('app-view-cloud-accountAssests-accountAssests', { coinType, coinBalance });
+    }
+    public nickNameChanged(e:any) {
+        if (!this.state.isNameUpdated) {
+            this.state.isNameUpdated = true;
+        }
+        const value = e.currentTarget.value;
+        this.state.accoutNickName = value;
+        this.paint();
+
+    }
+    public pageClicked(e:any) {
+        if (!this.state.isNameUpdated) {
+            return;
+        }
+        // 判断点击的对象是否是昵称输入框
+        const clickedNode = e.native.target;
+        const targetNode = document.getElementById('nicknameInput');
+        if (!((targetNode.children.length < 1) && (clickedNode === targetNode))) {
+            // 点击空白处修改云账户昵称
+            
+        } 
     }
 
 }

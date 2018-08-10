@@ -22,11 +22,7 @@ export class AddressManage extends Widget {
             selectnum: 0,
             coins: [
                 { name: 'BTC' },
-                { name: 'ETH' },
-                { name: 'YNC' },
-                { name: 'BCH' },
-                { name: 'EOS' },
-                { name: 'XRP' }
+                { name: 'ETH' }
             ],
             content:[]
 

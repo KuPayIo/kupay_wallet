@@ -5,7 +5,7 @@
     </div>
     <div w-class="ga-bottom-agreement">
         <div w-class="ga-registered-protocol" ev-checkbox-click="checkBoxClick">
-            <app-components-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components-checkbox-checkbox>
+            <app-components-checkbox-checkbox>{itype:"false",text:"我已经认真阅读并同意"}</app-components-checkbox-checkbox>
             <span w-class="ga-user-protocol" on-tap="agreementClick">隐私条约</span>
         </div>
         <div w-class="{{it1.userProtocolReaded ? 'ga-readed-btn ga-readed-btn-active' : 'ga-readed-btn'}} " on-tap="readedClick" >我已阅读</div>

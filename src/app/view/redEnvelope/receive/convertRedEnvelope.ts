@@ -8,7 +8,7 @@ import {
     convertRedBag, CurrencyType, CurrencyTypeReverse, getData, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType, setData
 } from '../../../store/conMgr';
 import { showError } from '../../../utils/toolMessages';
-import { eth2Wei, formatBalance, removeLocalStorage, smallUnit2LargeUnit } from '../../../utils/tools';
+import { eth2Wei, removeLocalStorage, smallUnit2LargeUnitString } from '../../../utils/tools';
 
 export class ConvertRedEnvelope extends Widget {
     public ok: () => void;
@@ -32,6 +32,7 @@ export class ConvertRedEnvelope extends Widget {
     }
     // 兑换
     public async convertClick() {
+        this.inputBlur();
         const code = this.state.cid.trim();
         if (code.length <= 0) {
             popNew('app-components-message-message', { itype: 'error', content: '请输入兑换码', center: true });
@@ -54,7 +55,7 @@ export class ConvertRedEnvelope extends Widget {
             const redEnvelope = {
                 leaveMessage: r.value,
                 ctype: res.value[0],
-                amount:formatBalance(smallUnit2LargeUnit(CurrencyTypeReverse[res.value[0]], res.value[1])) 
+                amount:smallUnit2LargeUnitString(CurrencyTypeReverse[res.value[0]], res.value[1]) 
             };
             popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope,rtype:code.slice(0,2) });
         } catch (error) {
@@ -85,7 +86,7 @@ export class ConvertRedEnvelope extends Widget {
                 return res;
             }
             res = await inputInviteCdKey(validCode);
-            res.value = [CurrencyType.ETH, eth2Wei(0.015)];
+            res.value = [CurrencyType.ETH, eth2Wei(0.015).toString()];
             await setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
             console.log('兑换成功', data);
         }
@@ -107,5 +108,9 @@ export class ConvertRedEnvelope extends Widget {
         }
 
         return res;
+    }
+    public inputBlur() {
+        const input: any = document.querySelector('.pi-input-simple__inner');
+        input.blur();
     }
 }

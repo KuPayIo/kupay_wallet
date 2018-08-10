@@ -48,6 +48,7 @@
     margin-right: 12px;
 }
 .ga-assets{
+    
     font-size: 48px;
     line-height: 45px;
     display: flex;

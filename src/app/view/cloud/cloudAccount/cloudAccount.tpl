@@ -1,7 +1,8 @@
-<div w-class="account" class="ga-new-page" ev-back-click="backClick">
+<div w-class="account" on-tap="pageClicked" id="account" class="ga-new-page" ev-back-click="backClick">
     <app-components-topBar-topBar>{title:"云账户"}</app-components-topBar-topBar>
     <div w-class="accountInfo">
-        <img src="../../../res/image/{{it1.accoutHeadImg}}" w-class="headImg" /> {{it1.accoutNickName}}
+        <img src="../../../res/image/{{it1.accoutHeadImg}}" w-class="headImg" />
+        <input id="nicknameInput" on-input="nickNameChanged" type="text" value="{{it1.accoutNickName}}" w-class="accountNameInput"/>
     </div>
     <div w-class="balanceDetail">
         <div w-class="overView">

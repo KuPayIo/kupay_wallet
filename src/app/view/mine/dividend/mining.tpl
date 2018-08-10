@@ -15,7 +15,7 @@
         
             <div w-class="twodata">
                 <div w-class="dataleft">
-                    <div w-class="dataleft-title">本次可挖(KT)</div>
+                    <div w-class="dataleft-title">今日可挖(KT)</div>
                     <div w-class="dataleft-num">{{it1.thisNum}}</div>
                 </div>
                 <div w-class="dataright">

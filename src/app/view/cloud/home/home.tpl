@@ -5,14 +5,14 @@
             <span w-class="growAccountName">
                 我的云账户
             </span>
-            <img src="../../../res/image/cloud_cointype_eth.png" w-class="ktIcon" />
+            <img src="../../../res/image/currency/KT.png" w-class="ktIcon" />
             <span w-class="ktBalance">
                 {{it1.ktBalance}}KT
             </span>
             <img src="../../../res/image/cloud_arow_right.png" />
         </div>
         <div w-class="ethInfo">
-            <div w-class="ethHoldings">
+            <div w-class="ethHoldings" on-tap="ethHoldingsClicked">
                 <div>
                     <img src="../../../res/image/cloud_bonus.png" w-class="bonusIcon" />
                     <span w-class="ethText">
@@ -24,8 +24,8 @@
                 </div>
             </div>
             <span w-class="line"></span>
-            <div w-class="totalBonus">
-                <div on-tap="bonusClicked">
+            <div w-class="totalBonus" on-tap="bonusClicked">
+                <div>
                     <img src="../../../res/image/cloud_bonus.png" w-class="bonusIcon" />
                     <span w-class="ethText">
                         累计分红(ETH)
@@ -69,7 +69,11 @@
                     每日挖矿
                 </div>
                 <div w-class="infoMain">
+                    {{if it1.isAbleBtn}}
                     本次可挖{{it1.mines}}KT
+                    {{else}}
+                    拥有1000KT才能提现
+                    {{end}}
                 </div>
             </div>
             <span w-class="paddingSpan" style="display: {{it1.isAbleBtn?'inline':'none'}}" on-tap="doPadding">

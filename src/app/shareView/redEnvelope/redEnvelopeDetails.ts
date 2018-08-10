@@ -4,9 +4,9 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { requestAsync } from '../../store/conMgr';
-import { copyToClipboard, smallUnit2LargeUnit,timestampFormat } from '../utils/tools';
+import { copyToClipboard, formatBalance,smallUnit2LargeUnit, smallUnit2LargeUnitString, timestampFormat } from '../utils/tools';
 interface Props {
-    rid:number;// 红包id
+    rid:string;// 红包id
     uid:number;// 用户id
     rtype:number;// 红包类型
     ctype:number;// 币种
@@ -21,8 +21,8 @@ const CurrencyType  = {
 };
 
 interface RedBag {
-    uid:number;
-    rid:number;
+    suid:number;
+    uid:string;
     rtype:number;
     ctype:number;
     amount:number;
@@ -40,7 +40,7 @@ export class RedEnvelopeDetails extends Widget {
             totalAmount:0,
             redBagList:[],
             showConverted:props.rtype !== 99,
-            rules:['1.安装Fairblock，创建钱包',
+            rules:['1.安装KuPay，创建钱包',
                 '2.在钱包里点击发现-发红包',
                 '3.输入收到的红包码，红包金额将自动到账',
                 '4.同一个红包，每人只能领取一次']
@@ -51,7 +51,7 @@ export class RedEnvelopeDetails extends Widget {
         
     }
 
-    public querydetail(uid:number,rid:number) {
+    public querydetail(uid:number,rid:string) {
         const msg = {
             type:'query_detail_log',
             param:{
@@ -61,19 +61,23 @@ export class RedEnvelopeDetails extends Widget {
         };
         // tslint:disable-next-line:no-unnecessary-local-variable
         requestAsync(msg).then(res => {
+            if (res.result !== 1) {
+                popNew('app-shareView-components-message',{ itype:'error',center:true,content:'出错啦' });
+            }
             console.log('query_detail_log',res);
             const l = res.value[1];
             const redBagList:RedBag[] = [];
             let totalAmount = 0;
             for (let i = 0;i < l.length;i++) {
-                totalAmount += l[i][4];
+                const amount = smallUnit2LargeUnitString(this.state.currencyName,l[i][4]);
+                totalAmount += amount;
                 if (l[i][1] !== 0 && l[i][5] !== 0) {
                     const redBag:RedBag = {
-                        uid:l[i][0],
-                        rid:l[i][1],
+                        suid:l[i][0],
+                        uid:l[i][1],
                         rtype:l[i][2],
                         ctype:l[i][3],
-                        amount:smallUnit2LargeUnit(this.state.currencyName,l[i][4]),
+                        amount,
                         time:l[i][5],
                         timeShow:timestampFormat(l[i][5])
                     };
@@ -83,7 +87,7 @@ export class RedEnvelopeDetails extends Widget {
             }
             this.state.totalNumber = l.length;
             this.state.convertedNumber = redBagList.length;
-            this.state.totalAmount = smallUnit2LargeUnit(this.state.currencyName,totalAmount);
+            this.state.totalAmount = totalAmount;
             this.state.redBagList = redBagList;
             this.paint();
         }).catch(r => {

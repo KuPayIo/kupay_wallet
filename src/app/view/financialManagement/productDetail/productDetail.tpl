@@ -55,9 +55,18 @@
             <div w-class="notice" on-tap="readNotice">
                     阅读声明
             </div>
+
+            {{if it1.isSoldOut}}
+            <div w-class="purchaseBtn soldout">
+                    售罄
+            </div>
+            {{else}}
             <div w-class="purchaseBtn" on-tap="purchaseClicked">
                     购买
             </div>
+            {{end}}
+
+            
         </div>
     </div>
 </div>

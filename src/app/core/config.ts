@@ -6,12 +6,16 @@ export const config = {
     dev: {
         // tslint:disable-next-line:no-http-string
         BtcApiBaseUrl: 'http://192.168.33.115:3002/insight-api',
-        BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY'
+        BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
+        EthApiBaseUrl: 'http://192.168.33.115:8545',
+        EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY'
     },
 
     prod: {
-        BtcApiBaseUrl: '',
-        BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY'
+        BtcApiBaseUrl: 'http://39.104.129.43:3001/insight-api',
+        BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
+        EthApiBaseUrl: 'http://39.104.185.112:37298',
+        EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY'
     },
     // 当前网络是否是测试网络
     currentNetIsTest: false,
@@ -47,8 +51,8 @@ export const config = {
         YNC: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702'
     },
     eth: {
-        mainWeb3: 'https://mainnet.infura.io/UHhtxDMNBuXoX8OFJKKM',
-        testWeb3: 'https://ropsten.infura.io/UHhtxDMNBuXoX8OFJKKM',
+        mainWeb3: 'http://39.104.185.112:37298',
+        testWeb3: 'http://192.168.33.115:8545',
         MAIN_ETHSCAN_ROPSTEN_API_URL: 'http://api.etherscan.io/api?module=account&action=txlist&address=',
         TEST_ETHSCAN_ROPSTEN_API_URL: 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=',
         MAIN_ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT: 'https://api.etherscan.io/api?module=account&action=tokentx',

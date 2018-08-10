@@ -17,6 +17,6 @@
         <div w-class="new-code">+{{it1.newCode}}</div>
         {{end}}
         <div w-class="btn-code" on-tap="doSure">确认</div>
-        <div w-class="tip">一个钱包只能验证一个手机号</div>
+        <div w-class="tip">一个手机号只能验证一个钱包</div>
     </div>
 </div>
