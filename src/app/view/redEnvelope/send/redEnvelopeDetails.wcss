@@ -44,65 +44,69 @@
     flex: 1 0 0;
     background-color: #fff;
 }
-.ga-records-list-title{
+.ga-title{
     height: 100px;
+    display: flex;
+    align-items: center;
     color: rgba(160, 172, 192, 1);
     font-size: 28px;
-    padding: 0 30px;
-    display: flex;
-    align-items: center;
     border-bottom: 1px solid #e5e5ee;
+    padding: 0 30px;
 }
-.ga-records-item{
+.ga-item{
     height: 170px;
     border-bottom: 1px solid #e5e5ee;
-    padding: 0 30px;
     display: flex;
     align-items: center;
-}
-.ga-little-head{
-    width: 100px;
-    height: 100px;
-    margin-right: 30px;
-}
-.ga-records-right{
-    flex: 1 0 0;
-    display: flex;
-    flex-direction: column;
+    padding: 0 30px;
     font-family: "PingFangSC-Medium";
 }
-.ga-item-top{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
+.ga-avator{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
 }
-.ga-item-bottom{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.ga-item-right{
+    margin-left: 30px;
+    flex: 1 0 0;
 }
-.ga-records-type{
+.ga-box1{
     line-height: 50px;
     color: rgba(17, 17, 17, 0.87);
     font-size: 36px;
-    
-
+    display: flex;
 }
-.ga-records-time{
+.ga-box2{
     line-height: 33px;
     color: rgba(142, 150, 171, 0.87);
     font-size: 24px;
+    display: flex;
     margin-top: 10px;
 }
-.ga-amount{
-    line-height: 50px;
-    color: rgba(17, 17, 17, 0.87);
-    font-size: 36px;
-    font-family: "PingFangSC-Regular";
-
+.ga-name{
+    flex: 1 0 0;
+}
+.ga-time{
+    flex: 1 0 0;
 }
 .ga-best{
-    color: rgba(222, 153, 116, 0.87);
-    font-size: 24px;
+    color: rgba(255, 169, 103, 0.87);
+}
+.ga-rule{
+    line-height: 42px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 28px;
+    font-family: "SourceHanSansCN-Regular";
+    padding: 72px 30px;
+    background-color: #fff;
+    flex: 1 0 0;
+}
+.ga-rule-title{
+    text-align: center;
+}
+.ga-rule-list{
+    margin-top: 40px;
+}
+.ga-rule-item{
+    margin-top: 15px;
 }

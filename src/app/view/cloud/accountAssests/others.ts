@@ -4,7 +4,7 @@
 import { isArray } from '../../../../pi/net/websocket/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType, getAccountDetail, TaskSid } from '../../../store/conMgr';
-import { smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
+import { formatBalance, smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
 
 interface Props {
     coinType: string;
@@ -29,7 +29,7 @@ export class Others extends Widget {
             const list = [];
             r.value.forEach(v => {
                 const itype = v[0];
-                const amount = smallUnit2LargeUnit(this.props.coinType, v[1]);
+                const amount = formatBalance(smallUnit2LargeUnit(this.props.coinType, v[1]));
                 let behavior = '';
                 if (itype === TaskSid.redEnvelope) {
                     if (amount > 0) {

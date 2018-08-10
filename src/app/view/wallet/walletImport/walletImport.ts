@@ -5,7 +5,6 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getWalletPswStrength, pswEqualed, walletCountAvailable, walletPswAvailable } from '../../../utils/account';
 import { importWalletByMnemonic } from '../../../utils/basicOperation';
-import { getLocalStorage } from '../../../utils/tools';
 
 export class WalletImport extends Widget {
     public ok: () => void;
@@ -24,7 +23,8 @@ export class WalletImport extends Widget {
             walletPswConfirm: '',
             walletPswTips: '',
             userProtocolReaded: false,
-            curWalletPswStrength: getWalletPswStrength()
+            curWalletPswStrength: getWalletPswStrength(),
+            showPswTips:false
         };
     }
     public backPrePage() {
@@ -38,7 +38,12 @@ export class WalletImport extends Widget {
     }
     public walletPswChange(e: any) {
         this.state.walletPsw = e.value;
+        this.state.showPswTips = this.state.walletPsw.length > 0;
         this.state.curWalletPswStrength = getWalletPswStrength(this.state.walletPsw);
+        this.paint();
+    }
+    public walletPswBlur() {
+        this.state.showPswTips = false;
         this.paint();
     }
     public walletPswConfirmChange(e: any) {
