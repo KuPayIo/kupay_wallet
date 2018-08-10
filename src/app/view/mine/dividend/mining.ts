@@ -63,11 +63,11 @@ export class Dividend extends Widget {
         const totalNum = kpt2kt(msg.mine_total);
         const holdNum = kpt2kt(msg.mines);
         const today = kpt2kt(msg.today);
-        let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 本次可挖数量为矿山剩余量的0.25减去今日已挖
+        let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
         if (nowNum <= 0) {
-            nowNum = 0;  // 如果本次可挖小于等于0，表示现在不能挖
+            nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
         } else if ((totalNum - holdNum) > 100) {
-            nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果本次可挖小于100，且矿山剩余量大于100，则本次可挖100
+            nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
         } else {
             nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
         }

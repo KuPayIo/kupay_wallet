@@ -7,6 +7,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
+import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
@@ -16,6 +17,7 @@ import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../store/dataCenter';
+import { initStore } from '../store/store';
 import { getLocalStorage, setLocalStorage } from '../utils/tools';
 
 // ============================== 导出
@@ -31,9 +33,18 @@ export const run = (cb): void => {
     checkUpdate();
     // 初始化数据
     dataCenter.init();
+    initStore();
     // makepayment();
     // exchangeManage.init();
     // 打开界面
+    // popNew('app-view-guidePages-privacyAgreement');
+   /*  popNew('app-components-share-share', { 
+        shareType: ShareToPlatforms.TYPE_LINK,
+        url:'http://www.kupay.io',
+        title:'测试',
+        content:'测试'
+    }); */
+    // popNew('app-view-home');
     popNewPage();
     // // 后台切前台
     // todo 临时处理方案，暂时屏蔽后台唤醒时输入锁屏密码功能

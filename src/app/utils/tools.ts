@@ -16,15 +16,18 @@ import { find, updateStore } from '../store/store';
 import { Addr, Wallet } from '../view/interface';
 import { lang, lockScreenSalt, supportCurrencyList } from './constants';
 
-export const setLocalStorage = (key: string, data: any, notified?: boolean) => {
+export const depCopy = (v: any): any => {
+    return JSON.parse(JSON.stringify(v));
+};
+export const setLocalStorage = (key: any, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
 };
 
-export const getLocalStorage = (key: string) => {
+export const getLocalStorage = (key: any) => {
     return find(key);
 };
 
-export const removeLocalStorage = (key:string) => {
+export const removeLocalStorage = (key: string) => {
     localStorage.removeItem(key);
 };
 
@@ -287,7 +290,7 @@ export const kt2kpt = (num: number) => {
 /**
  * 根据货币类型小单位转大单位
  */
-export const smallUnit2LargeUnit = (currencyName:string,amount:number) => {
+export const smallUnit2LargeUnit = (currencyName: string, amount: number) => {
     if (currencyName === 'ETH') {
         return wei2Eth(amount);
     } else if (currencyName === 'KT') {
@@ -298,13 +301,41 @@ export const smallUnit2LargeUnit = (currencyName:string,amount:number) => {
 /**
  * 根据货币类型大单位转小单位
  */
-export const largeUnit2SmallUnit = (currencyName:string,amount:number) => {
+export const largeUnit2SmallUnit = (currencyName: string, amount: number) => {
     if (currencyName === 'ETH') {
         return Math.floor(eth2Wei(amount));
     } else if (currencyName === 'KT') {
         return Math.floor(kt2kpt(amount));
     }
 };
+
+/**
+ * 根据货币类型小单位转大单位  
+ */
+export const smallUnit2LargeUnitString = (currencyName:string,amount:string):number => {
+    if (currencyName === 'ETH') {
+        const pow = amount.length - 15;
+        let num = Number(amount.slice(0,15));
+        num = wei2Eth(num);
+        num  = num * Math.pow(10,pow);
+
+        return formatBalance(num);
+    } else if (currencyName === 'KT') {
+        return formatBalance(kpt2kt(Number(amount)));
+    }
+};
+
+/**
+ * 根据货币类型大单位转小单位
+ */
+export const largeUnit2SmallUnitString = (currencyName:string,amount:number):string => {
+    if (currencyName === 'ETH') {
+        return eth2Wei(amount).toLocaleString().replace(/,/g,'');
+    } else if (currencyName === 'KT') {
+        return kt2kpt(amount).toLocaleString().replace(/,/g,'');
+    }
+};
+
 /**
  * eth 代币除以精度计算
  */
@@ -596,6 +627,10 @@ export const urlParams = (url: string, key: string) => {
     return ret && decodeURIComponent(ret[2]);
 };
 
+/**
+ * 金额格式化
+ * @param banlance 金额
+ */
 export const formatBalance = (banlance: number) => {
     return Number(banlance.toFixed(6));
 };
@@ -964,7 +999,7 @@ export const getByteLen = (val) => {
 
 // 计算支持的币币兑换的币种
 export const currencyExchangeAvailable = () => {
-    const shapeshiftCoins = dataCenter.shapeShiftCoins;
+    const shapeshiftCoins = find('shapeShiftCoins');
     const currencyArr = [];
     for (let i = 0; i < supportCurrencyList.length; i++) {
         currencyArr.push(supportCurrencyList[i].name);
@@ -1020,9 +1055,19 @@ export const getFirstEthAddr = () => {
     const wallets = getLocalStorage('wallets');
     const wallet = getCurrentWallet(wallets);
     const currencyRecords = wallet.currencyRecords;
-    for (let i = 0; i < currencyRecords.length; i ++) {
+    for (let i = 0; i < currencyRecords.length; i++) {
         if (currencyRecords[i].currencyName === 'ETH') {
             return currencyRecords[i].addrs[0];
         }
     }
+};
+
+// unicode数组转字符串
+export const unicodeArray2Str = (arr) => {
+    let str = '';
+    for (let i = 0; i < arr.length;i++) {
+        str += String.fromCharCode(arr[i]);
+    }
+
+    return str;
 };

@@ -1,7 +1,7 @@
 <div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page">
     <app-components-topBar-topBar>{title:{{it.title}}}</app-components-topBar-topBar>
     <div w-class="topTip">
-        Fairblock是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。
+            KuPay是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。
     </div>
     <div w-class="ga-import-container">
         <div ev-input-change="walletMnemonicChange">
@@ -9,7 +9,7 @@
                 <app-components-input-input>{placeHolder:"请在这里输入助记词，空间键分隔",itype:"textarea",rows:3}</app-components-input-input>
             </div>
         </div>
-        <div w-class="ga-import-item" ev-input-change="walletPswChange">
+        <div w-class="ga-import-item" ev-input-change="walletPswChange" ev-input-blur="walletPswBlur">
             <div w-class="ga-import-item-label">密码，不少于8位字符，可包含英文、数字、特殊字符</div>
             <div w-class="ga-input-father">
                 <app-components-input-input>{itype:"password",placeHolder:"设置密码"}</app-components-input-input>
@@ -19,13 +19,14 @@
                 </span>
             </div>
         </div>
-        <div w-class="ga-psw-tip-hidden  {{it1.walletPsw.length>0 ? 'ga-psw-tip-show' : ''}}">不少于8位字符，可包含英文、数字、特殊字符</div>
+        <div w-class="ga-psw-tip-hidden  {{it1.showPswTips ? 'ga-psw-tip-show' : ''}}">不少于8位字符，可包含英文、数字、特殊字符</div>
         <div w-class="ga-import-item" ev-input-change="walletPswConfirmChange">
             <div w-class="ga-import-item-label">再次输入密码</div>
             <div w-class="ga-input-father">
                 <app-components-input-input>{itype:"password",placeHolder:"再次输入密码"}</app-components-input-input>
             </div>
         </div>
+        <div w-class="ga-psw-tip-hidden  {{!it1.pswSame ? 'ga-psw-tip-show' : ''}}">两次输入的密码不相同</div>
         <div w-class="ga-import-item" ev-input-change="walletPswTipsChange">
             <div w-class="ga-import-item-label">提示信息（可不填）</div>
             <div w-class="ga-input-father">

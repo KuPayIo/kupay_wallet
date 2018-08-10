@@ -4,18 +4,22 @@
 import { SendChatMessage } from '../../pi/browser/sendMessage';
 import { popNew } from '../../pi/ui/root';
 import { Widget } from '../../pi/widget/widget';
-import { doChat, getProxy } from '../store/conMgr';
-import { getCurrentWallet, getLocalStorage } from '../utils/tools';
+import { doChat } from '../store/conMgr';
+import { getLocalStorage } from '../utils/tools';
 export class App extends Widget {
-    constructor() {
-        super();
-    }
+    public old: any = {};  
     public create() {
         super.create();
         this.init();
     }
+
     public init(): void {
+        const isActive = 0;
+        this.old[isActive] = true;
         this.state = {
+            type:2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
+            isActive,
+            old:this.old,
             tabBarList: [{
                 text: '钱包',
                 icon: 'wallet_icon.png',
@@ -60,27 +64,31 @@ export class App extends Widget {
                 icon: 'mine_icon.png',
                 iconActive: 'mine_icon_active.png',
                 components: 'app-view-mine-home'
-            }],
-            isActive: 0
+            }]
+            
         };
     }
     public async tabBarChangeListener(event: any, index: number) {
         if (this.state.isActive === index) return;
         // 点击的是聊天则调用接口打开聊天，不进行组件切换
         if (this.state.tabBarList[index].name === 'chat') {
+            // todo 测试代码，需要移除
+            // await doChat();
+
             this.setProxy().then(this.sendMessage);
 
             return;
         }
-        if (this.state.tabBarList[index].name === 'cloud') {
-            const wallets = getLocalStorage('wallets');
-            if (!wallets || wallets.walletList.length === 0) {
-                popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
+        // if (this.state.tabBarList[index].name === 'cloud') {
+        //     const wallets = getLocalStorage('wallets');
+        //     if (!wallets || wallets.walletList.length === 0) {
+        //         popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
 
-                return;
-            }
-        }
+        //         return;
+        //     }
+        // }
         this.state.isActive = index;
+        this.old[index] = true;
         this.paint();
     }
 
@@ -123,25 +131,14 @@ export class App extends Widget {
 
         // todo 这里需要向服务器通信获取代理地址，且区分国内外的情况
         return new Promise((resolve, reject) => {
-            getProxy().then((r) => {
-                if (r.result !== 1) {
-                    reject(r.result);
-
-                    return;
-                }
-                const proxy = JSON.parse(r.proxy);
-                if (proxy.protocol === 'socks5') {
-                    chat.setProxy({
-                        success: (result) => { resolve(result); },
-                        fail: (result) => { reject(result); },
-                        proxyIp: proxy.ip, proxyPort: proxy.prot, userName: '', password: ''
-                    });
-                } else {
-                    reject('no support');
-                }
-
+            chat.setProxy({
+                success: (result) => {
+                    resolve(result);
+                },
+                fail: (result) => {
+                    reject(result);
+                }, proxyIp: '120.77.252.201', proxyPort: 1820, userName: '', password: ''
             });
-
         });
 
     }

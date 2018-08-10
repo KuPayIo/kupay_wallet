@@ -1,14 +1,14 @@
 /**
- * 连接管理
+ * 主动向后端通讯
  */
 import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
+import { cloudAccount } from '../store/cloudAccount';
+import { dataCenter } from '../store/dataCenter';
 import { showError } from '../utils/toolMessages';
-import { getCurrentWallet, getLocalStorage, largeUnit2SmallUnit, largeUnit2SmallUnitString, openBasePage } from '../utils/tools';
-import { cloudAccount } from './cloudAccount';
-import { dataCenter } from './dataCenter';
+import { getCurrentWallet, getLocalStorage, largeUnit2SmallUnit, openBasePage } from '../utils/tools';
 
 // 枚举登录状态
 export enum LoginState {
@@ -38,7 +38,9 @@ export enum RedEnvelopeType {
     Random = '01',
     Invite = '99'
 }
+// export const conIp = '47.106.176.185';
 export const conIp = '127.0.0.1';
+// export const conPort = '8080';
 export const conPort = '80';
 // 分享链接前缀
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.html`;
@@ -261,15 +263,15 @@ export const getInviteCodeDetail = async () => {
  * @param count 红包数量
  * @param lm 留言
  */
-export const sendRedEnvlope = async (rtype:number,ctype:number,totalAmount:number,redEnvelopeNumber:number,lm:string) => {
+export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
     const msg = {
-        type:'emit_red_bag',
-        param:{
-            type:rtype,
-            priceType:ctype,
-            totalPrice:largeUnit2SmallUnitString(CurrencyTypeReverse[ctype],totalAmount),
-            count:redEnvelopeNumber,
-            desc:lm
+        type: 'emit_red_bag',
+        param: {
+            type: rtype,
+            priceType: ctype,
+            totalPrice: largeUnit2SmallUnit(CurrencyTypeReverse[ctype], totalAmount),
+            count: redEnvelopeNumber,
+            desc: lm
         }
     };
 
@@ -349,18 +351,14 @@ export const queryConvertLog = async (start) => {
     return requestAsync(msg);
 };
 
-/**
- * 查询某个红包兑换详情
- */
-export const queryDetailLog = async (rid:string) => {
+export const queryDetailLog = async () => {
     const msg = {
-        type:'query_detail_log',
-        param:{
-            uid:dataCenter.getConUid(),
-            rid
+        type: 'query_detail_log',
+        param: {
+            cids: 'J8VIXY,LQRNZV,27KP71'
         }
     };
-    
+
     return requestAsync(msg);
 };
 
@@ -448,8 +446,8 @@ export const getAccountDetail = async (coin) => {
 /**
  * 获取矿山排名列表
  */
-export const getMineRank = async(num:number) => {
-    const msg = { type: 'wallet/cloud@mine_top', param: { num:num } };
+export const getMineRank = async (num: number) => {
+    const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
 
     return requestAsync(msg);
 };
@@ -457,8 +455,8 @@ export const getMineRank = async(num:number) => {
 /**
  * 获取挖矿排名列表
  */
-export const getMiningRank = async(num:number) => {
-    const msg = { type: 'wallet/cloud@get_mine_top', param: { num:num } };
+export const getMiningRank = async (num: number) => {
+    const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
 
     return requestAsync(msg);
 };
@@ -466,8 +464,8 @@ export const getMiningRank = async(num:number) => {
 /**
  * 发送验证码
  */
-export const sendCode = async(phone:number,num:number) => {
-    const msg = { type: 'wallet/sms@send_sms_code', param: { phone,num,name:'钱包' } };
+export const sendCode = async (phone: number, num: number) => {
+    const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
 
     return requestAsync(msg);
 };
@@ -475,8 +473,17 @@ export const sendCode = async(phone:number,num:number) => {
 /**
  * 注册手机
  */
-export const regPhone = async(phone:number,code:number) => {
-    const msg = { type: 'wallet/user@reg_phone', param: { phone,code } };
+export const regPhone = async (phone: number, code: number) => {
+    const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取代理
+ */
+export const getProxy = async () => {
+    const msg = { type: 'wallet/proxy@get_proxy', param: {} };
 
     return requestAsync(msg);
 };

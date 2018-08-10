@@ -10,7 +10,7 @@
             <img src="../../../res/image/exchange_delete.png"  w-class="closeBtn" on-tap="close"/>
         </div>
         <div w-class="details">
-            <p>购买单价：{{it.unitPrice}}</p>
+            <p>购买单价：{{it.unitPrice}}ETH</p>
             <p>产品名称：{{it.productName}}</p>
             <p>购买份数：{{it.amount}}份</p>
             <p>年化收益：{{it.expectedEarnings}}</p>

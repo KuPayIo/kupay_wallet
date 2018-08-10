@@ -15,6 +15,7 @@ export class ProductDetail extends Widget {
     }
     public setProps(props: any, oldProps: any) {
         super.setProps(props, oldProps);
+        this.state.isSoldOut = props.item.isSoldOut;
         console.log(props);
     }
     public init() {
@@ -31,8 +32,8 @@ export class ProductDetail extends Widget {
             productIntroduction: 'ETH资管第1期是KuPay退出的一种固定收益类，回报稳定、无风险定期产品。',
             limit: '5',
             amount: 1,
-            lockday:'无'
-
+            lockday:'无',
+            isSoldOut:false
         };
     }
     public goBackPage() {
@@ -56,11 +57,13 @@ export class ProductDetail extends Widget {
             expectedEarnings:this.state.expectedEarnings,
             lockday:this.state.lockday
         };
+        props.money = strip(props.money);
         await openBasePage('app-view-financialManagement-purchase-purchase',props).then((r) => {
             // TODO 购买
             // 返回值r是输入的密码
             console.log(r);
         });
+        this.showStep();
 
     }
     public hideStep() {
@@ -79,7 +82,16 @@ export class ProductDetail extends Widget {
         this.paint();
     }
     public add() {
+        const limit = Number(this.state.limit);
+        if (this.state.amount === limit) {
+            return;
+        }
         this.state.amount += 1;
         this.paint();
     }
 }
+
+// 解决js浮点数运算误差 3*0.1=0.3000000000004
+const strip = (num, precision = 12) => {
+    return +parseFloat(num.toPrecision(precision));
+};

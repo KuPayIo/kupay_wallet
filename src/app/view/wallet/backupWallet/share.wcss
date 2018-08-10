@@ -34,7 +34,7 @@
 	background: #1A70DD;
 }
 .note{
-	height: 220px;
+	min-height: 220px;
 	box-sizing: border-box;
 	padding: 30px;
 	border: 1px solid #8E96AB;
@@ -49,6 +49,9 @@
 	margin-top: 196px;
 	border-bottom: 1px solid #DDD;
 	padding-bottom: 40px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .shareTitle{
 	color: #203260;

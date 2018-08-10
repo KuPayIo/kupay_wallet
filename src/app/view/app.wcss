@@ -8,7 +8,6 @@
     box-sizing: border-box;
     background-color: #fff;
     border-top: 1px solid #ddd;
-    
 }
 .ga-tab-bar-item{
     flex: 1 0 0;

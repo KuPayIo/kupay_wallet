@@ -1,7 +1,6 @@
 /**
  * loading逻辑处理
  */
-import { notify } from '../../widget/event';
 import { Widget } from '../../widget/widget';
 
 interface Props {

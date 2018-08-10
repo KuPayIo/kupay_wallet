@@ -137,3 +137,6 @@
     left: 0;
     right: 0;
 }
+.soldout{
+    background: #A0ACC0;
+}
