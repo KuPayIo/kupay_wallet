@@ -86,7 +86,7 @@ export class ConvertRedEnvelope extends Widget {
                 return res;
             }
             res = await inputInviteCdKey(validCode);
-            res.value = [CurrencyType.ETH, eth2Wei(0.015)];
+            res.value = [CurrencyType.ETH, eth2Wei(0.015).toString()];
             await setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
             console.log('兑换成功', data);
         }
