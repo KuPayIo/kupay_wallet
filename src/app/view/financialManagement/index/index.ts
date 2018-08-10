@@ -27,7 +27,7 @@ export class Index extends Widget {
             }],
             productList:[{
                 title:'优选理财-随存随取',
-                surplus:'50%',
+                surplus:'20%',
                 profit:'5%',
                 productName:'ETH资管第1期',
                 productDescribe:' 赎回T+0到账 | 0.1 ETH/份',
@@ -42,8 +42,11 @@ export class Index extends Widget {
             }]
         };
     }
-    public toDetail() {
-        popNew('app-view-financialManagement-productDetail-productDetail');
+    public toDetail(i:any) {
+        console.log('---------i-----------');
+        console.log(i);
+        const item = this.state.productList[i];
+        popNew('app-view-financialManagement-productDetail-productDetail',{ i,item });
     }
     public toRecord() {
         popNew('app-view-financialManagement-purchaseRecord-purchaseRecord');

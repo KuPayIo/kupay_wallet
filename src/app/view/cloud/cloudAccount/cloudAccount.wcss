@@ -5,6 +5,12 @@
     font-size: 36px;
     margin-top:10px; 
 }
+.accountNameInput{
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+    border: none;
+    outline: none;
+}
 .headImg{
     width: 100px;
     height: 100px;

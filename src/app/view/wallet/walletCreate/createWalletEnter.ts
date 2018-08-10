@@ -36,9 +36,9 @@ export class CreateWalletEnter extends Widget {
         this.ok && this.ok();
         popNew('app-view-wallet-walletImport-walletImport',{ title:'导入助记词' });
     }
-    public importByFairblockClicked() {
+    public importByKuPayClicked() {
         this.ok && this.ok();
-        popNew('app-view-wallet-walletImport-importByFairBlock');
+        popNew('app-view-wallet-walletImport-importByKuPay');
     }
 
 }

@@ -2,6 +2,16 @@
  * currency exchange
  */
 import { shapeshift } from '../../../app/exchange/shapeshift/shapeshift';
+import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
+import { BtcApi } from '../../core/btc/api';
+import { BTCWallet } from '../../core/btc/wallet';
+import { Api as EthApi } from '../../core/eth/api';
+import { ERC20Tokens } from '../../core/eth/tokens';
+import { EthWallet } from '../../core/eth/wallet';
+import { GlobalWallet } from '../../core/globalWallet';
+import { dataCenter } from '../../store/dataCenter';
+import { shapeshiftApiPublicKey } from '../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { 
     currencyExchangeAvailable, 
@@ -16,17 +26,7 @@ import {
     parseDate, 
     resetAddrById, 
     setLocalStorage, 
-    wei2Eth} from '../../../app/utils/tools'; 
-import { popNew } from '../../../pi/ui/root';
-import { Widget } from '../../../pi/widget/widget';
-import { BtcApi } from '../../core/btc/api';
-import { BTCWallet } from '../../core/btc/wallet';
-import { Api as EthApi } from '../../core/eth/api';
-import { ERC20Tokens } from '../../core/eth/tokens';
-import { EthWallet } from '../../core/eth/wallet';
-import { GlobalWallet } from '../../core/globalWallet';
-import { dataCenter } from '../../store/dataCenter';
-import { shapeshiftApiPublicKey } from '../../utils/constants';
+    wei2Eth} from '../../utils/tools'; 
 
 interface Props {
     currencyName:string;// 出账币种

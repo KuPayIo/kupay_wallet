@@ -1,7 +1,7 @@
 <div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page">
     <app-components-topBar-topBar>{title:{{it.title}}}</app-components-topBar-topBar>
     <div w-class="topTip">
-        Fairblock是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。
+            KuPay是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。
     </div>
     <div w-class="ga-import-container">
         <div ev-input-change="walletMnemonicChange">
@@ -26,6 +26,7 @@
                 <app-components-input-input>{itype:"password",placeHolder:"再次输入密码"}</app-components-input-input>
             </div>
         </div>
+        <div w-class="ga-psw-tip-hidden  {{!it1.pswSame ? 'ga-psw-tip-show' : ''}}">两次输入的密码不相同</div>
         <div w-class="ga-import-item" ev-input-change="walletPswTipsChange">
             <div w-class="ga-import-item-label">提示信息（可不填）</div>
             <div w-class="ga-input-father">

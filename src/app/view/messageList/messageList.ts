@@ -18,7 +18,7 @@ export class MessageList extends Widget {
         this.state = {
             data:[
                 { type:'1',typename:'好友',title:'好呀好呀！', content:'1',time:'2018-5-23',noread:true && this.props.hasNews,name:'小王' },
-                {type:'2',typename:'公告',title:'发布通知', content:`fairblock发布内测版本，该版本实现了
+                {type:'2',typename:'公告',title:'发布通知', content:`KuPay发布内测版本，该版本实现了
                 ·助记词导入钱包
                 ·基于助记词和BIP44规范创建钱包
                 ·支持钱包基本功能，包括：转账、收款、交易记录

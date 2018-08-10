@@ -27,9 +27,9 @@ export class Aboutus extends Widget {
         } else {
             // TODO 分享下载
             popNew('app-components-share-share', { text: 'This is a test QRCode', shareType: ShareToPlatforms.TYPE_IMG }, (result) => {
-                alert(result);
+                // alert(result);
             }, (result) => {
-                alert(result);
+                // alert(result);
             });
         }
     }
