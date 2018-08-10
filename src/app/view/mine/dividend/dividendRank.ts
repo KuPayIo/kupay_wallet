@@ -64,6 +64,10 @@ export class DividendItem extends Widget {
         
     }
 
+    /**
+     * 当前页面加载更多排名数据
+     * @param ind 1 为矿山排名，2 为挖矿排名
+     */
     public getMore(ind:number) {
         if (ind === 1) {
             const msg = this.state.mineList;
@@ -74,19 +78,34 @@ export class DividendItem extends Widget {
                     num: kpt2kt(msg[i][2])
                 });
             }
+            this.state.minePage += 1;
+            if ((this.state.minePage + 1) * 10 < msg.length) {
+                this.state.mineMore = true;
+            } else {
+                this.state.mineMore = false;                
+            }
         } else {
             const msg = this.state.miningList;
-            for (let i = this.state.minePage * 10;i < msg.length && i < (this.state.minePage + 1) * 10; i++) {
+            for (let i = this.state.miningPage * 10;i < msg.length && i < (this.state.miningPage + 1) * 10; i++) {
                 this.state.miningRank.push({
                     index: i + 1,
                     name: msg[i][1] === '' ? '昵称未设置' : msg[i][1],
                     num: kpt2kt(msg[i][2])
                 });
             }
+            this.state.miningPage += 1;
+            if ((this.state.miningPage + 1) * 10 < msg.length) {
+                this.state.miningMore = true;
+            } else {
+                this.state.miningMore = false;                
+            }
         }
         this.paint();
     }
 
+    /**
+     * 获取更新数据
+     */
     public async initData() {
         const msg1 = await getMineRank(100);
         const msg2 = await getMiningRank(100);

@@ -1,17 +1,19 @@
 import { cryptoRandomInt } from '../../pi/util/math';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
+import { config } from '../core/config';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 // tslint:disable-next-line:max-line-length
-import { btcNetwork, defaultExchangeRateJson, ethTokenTransferCode, lang, shapeshiftApiPrivateKey, shapeshiftTransactionRequestNumber, supportCurrencyList } from '../utils/constants';
+import { btcNetwork, defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, ethTokenTransferCode, lang, shapeshiftApiPrivateKey, shapeshiftTransactionRequestNumber, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import {
     btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getCurrentWallet, getDefaultAddr, getLocalStorage,
     getMnemonic, sat2Btc, setLocalStorage, wei2Eth
 } from '../utils/tools';
 import { Addr, CurrencyRecord, Wallet } from '../view/interface';
+import { find, updateStore } from './store';
 /**
  * 创建事件处理器表
  * @example
@@ -34,29 +36,15 @@ export class DataCenter {
     public static MNEMONIC_SPLIT: string = ' ';
     public static LIMIT_CONFIRMATIONS: number = 1;
 
-    public rate: string;
-    public addrInfos: any[] = [];
     public addrs: string[] = [];
     public timerRef: number = 0;
     public transactions: any[] = [];
 
     public updateList: any[] = [];
 
-    public exchangeRateJson: any = defaultExchangeRateJson;
-    public currencyList: any[] = supportCurrencyList;
-    public shapeShiftCoins: any = [];// shapeShift 支持的币种
     public currencyExchangeTimer: number;
 
-    private hashMap: any = {};
     private iSalt: string;
-    // 连接用户
-    private conUser: string = '';
-    // 连接用户公钥
-    private conUserPublicKey: string = '';
-    // 连接随机数
-    private conRandom: string = '';
-    // 连接uid
-    private conUid: number = 0;
     /**
      * 初始化
      */
@@ -86,6 +74,28 @@ export class DataCenter {
         // 启动定时器更新
         if (!this.timerRef) this.openCheck();
         if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
+    }
+
+    public initStore() {
+        // 从localStorage中取wallets
+        // 从localStorage中取addrs
+        // 从localStorage中取transactions
+        // 从localStorage中的wallets中初始化salt
+        // 从localStorage中的wallets中初始化curWallet
+
+        // 初始化默认兑换汇率列表
+        const rateJson = config.currentNetIsTest ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
+        const m = new Map();
+        for (const key in rateJson) {
+            if (rateJson.hasOwnProperty(key)) {
+                m.set(key, rateJson[key]);
+            }
+        }
+        updateStore('exchangeRateJson', m);
+
+        // 初始化货币信息列表
+        updateStore('exchangeRateJson', config.currentNetIsTest ? supportCurrencyListTest : supportCurrencyListMain);
+
     }
 
     /**
@@ -162,7 +172,7 @@ export class DataCenter {
      * 获取汇率
      */
     public getExchangeRate(currencyName: string) {
-        return this.exchangeRateJson[currencyName];
+        return find('exchangeRateJson', currencyName);
     }
     /**
      * 更新记录
@@ -208,13 +218,13 @@ export class DataCenter {
      */
     public setHash(key: string, hash: string) {
         if (!key) return;
-        this.hashMap[key] = hash;
+        updateStore('hashMap', find('hashMap').set(key, hash));
     }
     /**
      * 获取缓存hash
      */
-    public getHash(id: string) {
-        return this.hashMap[id];
+    public getHash(key: string) {
+        return find('hashMap', key);
     }
 
     // 获取币币交易交易记录
@@ -233,52 +243,52 @@ export class DataCenter {
      * 设置连接用户
      */
     public getUser() {
-        return this.conUser;
+        return find('conUser');
     }
     /**
      * 获取连接用户
      */
     public setUser(user: string) {
-        this.conUser = user;
+        updateStore('conUser', user);
     }
 
     /**
      * 设置连接用户
      */
     public getUserPublicKey() {
-        return this.conUserPublicKey;
+        return find('conUserPublicKey');
     }
     /**
      * 获取连接用户
      */
     public setUserPublicKey(publicKey: string) {
-        this.conUserPublicKey = publicKey;
+        updateStore('conUserPublicKey', publicKey);
     }
 
     /**
      * 设置连接随机数
      */
     public getConRandom() {
-        return this.conRandom;
+        return find('conRandom');
     }
     /**
      * 获取连接随机数
      */
     public setConRandom(random: string) {
-        this.conRandom = random;
+        updateStore('conRandom', random);
     }
 
     /**
      * 设置连接随机数
      */
     public getConUid() {
-        return this.conUid;
+        return find('conUid');
     }
     /**
      * 获取连接随机数
      */
     public setConUid(uid: number) {
-        this.conUid = uid;
+        updateStore('conUid', uid);
     }
 
     /****************************************************************************************************
@@ -357,10 +367,11 @@ export class DataCenter {
 
                 return;
             }
+            const list = [];
             for (const k in data) {
-                this.shapeShiftCoins.push(data[k]);
+                list.push(data[k]);
             }
-            // console.log(this.shapeShiftCoins);
+            if (list.length > 0) updateStore('shapeShiftCoins', list);
         });
     }
     /**
@@ -589,10 +600,12 @@ export class DataCenter {
         switch (currencyName) {
             case 'ETH':
                 const ethApi: EthApi = new EthApi();
-                this.exchangeRateJson.ETH = await ethApi.getExchangeRate();
+                const ethRate = await ethApi.getExchangeRate();
+                updateStore('exchangeRateJson', find('exchangeRateJson').set('ETH', ethRate));
                 break;
             case 'BTC':
-                this.exchangeRateJson.BTC = await BtcApi.getExchangeRate();
+                const btcRate = await BtcApi.getExchangeRate();
+                updateStore('exchangeRateJson', find('exchangeRateJson').set('BTC', btcRate));
                 break;
             default:
         }

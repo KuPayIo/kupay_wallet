@@ -21,6 +21,7 @@ export class WalletImport extends Widget {
             walletName: '',
             walletPsw: '',
             walletPswConfirm: '',
+            pswSame:true,
             walletPswTips: '',
             userProtocolReaded: false,
             curWalletPswStrength: getWalletPswStrength(),
@@ -40,6 +41,11 @@ export class WalletImport extends Widget {
         this.state.walletPsw = e.value;
         this.state.showPswTips = this.state.walletPsw.length > 0;
         this.state.curWalletPswStrength = getWalletPswStrength(this.state.walletPsw);
+        if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
+            this.state.pswSame = false;
+        } else {
+            this.state.pswSame = true;
+        }
         this.paint();
     }
     public walletPswBlur() {
@@ -48,6 +54,12 @@ export class WalletImport extends Widget {
     }
     public walletPswConfirmChange(e: any) {
         this.state.walletPswConfirm = e.value;
+        if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
+            this.state.pswSame = false;
+        } else {
+            this.state.pswSame = true;
+        }
+        this.paint();
     }
     public walletPswTipsChange(e: any) {
         this.state.walletPswTips = e.value;

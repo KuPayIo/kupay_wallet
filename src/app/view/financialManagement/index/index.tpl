@@ -53,7 +53,7 @@
     <div w-class="productList">
 
         {{for i,v of it1.productList}}
-        <div w-class="productItem" on-tap="toDetail">
+        <div w-class="productItem" on-tap="toDetail({{i}})">
             <div w-class="productHead">
                 {{v.title}} 
                 {{if v.isSoldOut}}
@@ -61,7 +61,7 @@
                     售罄
                 </span>
                 {{else}}
-                <span w-class="surplus">
+                <span w-class="surplus" style="background: repeating-linear-gradient(to right,#1A70DD 0%, #1A70DD {{v.surplus}}, #a0acc0 0%,#a0acc0 101%);">
                     剩余{{v.surplus}}
                 </span>
                 {{end}}

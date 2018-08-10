@@ -44,7 +44,7 @@
     100% {width: 0px;}
 }
 #addressMessageBox .addressInput textarea:focus{
-    border: none !important;
+    border: 2px solid rgb(220, 223, 230)!important;
 }
 #purchase input:focus{
     border: none !important;

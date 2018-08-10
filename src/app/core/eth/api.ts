@@ -9,6 +9,15 @@ const ETHSCAN_ROPSTEN_API_URL = config.currentNetIsTest ? config.eth.TEST_ETHSCA
 // tslint:disable-next-line:max-line-length
 const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config.currentNetIsTest ? config.eth.TEST_ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT : config.eth.MAIN_ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT;
 
+/* tslint:disable:no-var-keyword */
+if (config.dev_mode === 'dev') {
+    var ETH_API_BASE_URL = config.dev.EthApiBaseUrl;
+    var ETH_MARKET_PRICE_ORACLE_URL = config.dev.EthMarketPriceOracleUrl;
+} else if (config.dev_mode === 'prod') {
+    ETH_API_BASE_URL = config.prod.BtcApiBaseUrl;
+    ETH_MARKET_PRICE_ORACLE_URL = config.prod.EthMarketPriceOracleUrl;
+}
+
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
 
@@ -20,16 +29,25 @@ const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config.currentNetIsTest ? config.et
  */
 export class Api {
 
-    public getBalance(address: string): Promise<number> {
-        return new Promise((resolve, reject) => {
-            initWeb3();
-            web3.eth.getBalance(address, (err, bal) => {
-                if (!err) {
-                    return resolve(bal);
-                } else {
-                    return reject(err);
-                }
-            });
+    public getBalance(address: string): Promise<any> {
+        return new Promise((resovle, reject) => {
+            try {
+                const response = fetch(ETH_API_BASE_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        id: 1,
+                        method: 'eth_getBalance',
+                        params: [address, 'latest']
+                    }),
+                    headers:{
+                        'Content-Type': 'application/json'
+                    }
+                });
+                resovle(response.then(res => res.json()));
+            } catch (e) {
+                reject(e);
+            }
+
         });
     }
 
@@ -106,7 +124,7 @@ export class Api {
 
     public async getExchangeRate(): Promise<any> {
         try {
-            const response = await fetch(config.eth.ETH_CMC_URL);
+            const response = await fetch(ETH_MARKET_PRICE_ORACLE_URL);
             const data = await response.json();
 
             return {

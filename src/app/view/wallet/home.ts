@@ -7,10 +7,11 @@ import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
 import { openAndGetRandom } from '../../store/conMgr';
 import { dataCenter } from '../../store/dataCenter';
-import { register, unregister } from '../../store/store';
+import { find, register, unregister } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
 import {
-    fetchBalanceOfCurrency, fetchTotalAssets, formatBalance, formatBalanceValue, getCurrentWallet, getLocalStorage
+    fetchBalanceOfCurrency,fetchTotalAssets, formatBalance, formatBalanceValue, getCurrentWallet, getLocalStorage, getMnemonic,
+    openBasePage
 } from '../../utils/tools';
 
 export class Home extends Widget {
@@ -34,6 +35,7 @@ export class Home extends Widget {
         const wallets = getLocalStorage('wallets');
         register('wallets', this.registerWalletsFun);
         register('addrs', this.registerAddrsFun);
+        
         let gwlt = null;
         let wallet = null;
         let otherWallets = false;
@@ -55,6 +57,12 @@ export class Home extends Widget {
             floatBoxTip: '为了您的资产安全，请及时备份助记词',
             hiddenAssets: false
         };
+
+        // 如果没有创建钱包提示创建钱包
+        if (!wallets) {
+            this.state.floatBoxTip = '您还没有钱包，请先创建钱包';
+        }
+
         this.registerAddrsFun();
         // 登录云端账号
         openAndGetRandom();
@@ -93,12 +101,49 @@ export class Home extends Widget {
     public switchWalletClick() {
         popNew('app-view-wallet-switchWallet-switchWallet');
     }
+    // 点击备份钱包
+    public async backupWalletClick() {
+        const wallets = getLocalStorage('wallets');
+        const wallet = getCurrentWallet(wallets);
+        if (!wallet) {
+            this.createWalletClick();
+
+            return;
+        }
+        const walletId = wallet.walletId;
+        const close = popNew('pi-components-loading-loading', { text: '导出中...' });
+        try {
+            
+            let passwd;
+            if (!dataCenter.getHash(wallet.walletId)) {
+                passwd = await openBasePage('app-components-message-messageboxPrompt', {
+                    title: '输入密码', content: '', inputType: 'password'
+                });
+            }
+            const mnemonic = await getMnemonic(wallet, passwd);
+            if (mnemonic) {
+                popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: walletId });
+            } else {
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+            }
+        } catch (error) {
+            console.log(error);
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+        }
+        close.callback(close.widget);
+    }
 
     public hiddenAssetsClick() {
         this.state.hiddenAssets = !this.state.hiddenAssets;
         this.paint();
     }
     private registerWalletsFun = (wallets: any) => {
+        // 创建完钱包之后修改floatBoxTip提示信息
+        const walletsObj = getLocalStorage('wallets');
+        if (walletsObj) {
+            this.state.floatBoxTip = '为了您的资产安全，请及时备份助记词';
+        }
+
         let otherWallets = false;
         if (wallets && wallets.walletList && wallets.walletList.length > 0) {
             otherWallets = true;
@@ -132,6 +177,7 @@ export class Home extends Widget {
             setCurrencyListBalance(this.state.currencyList, balance, item.currencyName);
         });
         this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
+        
         this.paint();
     }
 }
@@ -147,7 +193,7 @@ const parseCurrencyList = (wallet) => {
     // if (!wallet.showCurrencys) return list;
     const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
     // todo  这里需要正确的处理钱包货币
-    dataCenter.currencyList.forEach(v => {
+    find('currencyList').forEach(v => {
         if (showCurrencys.indexOf(v.name) < 0) return;
         list.push({
             currencyName: v.name,

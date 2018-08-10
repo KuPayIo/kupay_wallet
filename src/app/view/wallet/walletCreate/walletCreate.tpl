@@ -1,11 +1,11 @@
 <div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page">
     <app-components-topBar-topBar>{title:"设置密码"}</app-components-topBar-topBar>
     
-    <div w-class="ga-notice-text">Fairblock是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。</div>
+    <div w-class="ga-notice-text">KuPay是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。<span style="color: tomato;">请不要丢失或忘记。</span></div>
     <div w-class="ga-registered-container">
         <div w-class="ga-registered-item" ev-input-change="walletNameChange">
             <div w-class="ga-registered-item-label">钱包名称</div>
-            <div w-class="ga-input-father"><app-components-input-input>{placeHolder:"钱包名称",input:{{it1.walletName}}}</app-components-input-input></div>
+            <div w-class="ga-input-father"><app-components-input-input>{placeHolder:"钱包名称",input:{{it1.walletName}},maxLength:24}</app-components-input-input></div>
         </div>
         <div w-class="ga-registered-item" ev-input-change="walletPswChange" ev-input-blur="walletPswBlur">
             <div w-class="ga-registered-item-label">密码，不少于8位字符，可包含英文、数字、特殊字符</div>
@@ -22,6 +22,7 @@
             <div w-class="ga-registered-item-label">再次输入密码</div>
             <div w-class="ga-input-father"><app-components-input-input>{itype:"password",placeHolder:"再次输入密码"}</app-components-input-input></div>
         </div>
+        <div w-class="ga-psw-tip-hidden  {{!it1.pswSame ? 'ga-psw-tip-show' : ''}}"  style="color: rgba(234,142,65,1);">两次输入的密码不相同</div>
         <div w-class="ga-registered-item" ev-input-change="walletPswTipsChange">
             <div w-class="ga-registered-item-label">提示信息（可不填）</div>
             <div w-class="ga-input-father"><app-components-input-input>{placeHolder:"提示信息（可不填）"}</app-components-input-input></div>
