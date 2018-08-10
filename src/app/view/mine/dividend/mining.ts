@@ -1,10 +1,10 @@
 /**
- * 分红统计页面  
+ * 挖矿总信息页面  
  * 
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineDetail, getMineRank, getMining, getMiningHistory } from '../../../store/conMgr';
+import { getMineDetail, getMineRank, getMining, TaskSid, getMiningHistory } from '../../../store/conMgr';
 import { kpt2kt } from '../../../utils/tools';
 
 interface Items {
@@ -21,11 +21,11 @@ interface Items {
 export class Dividend extends Widget {
     public ok: () => void;
     public state: {
-        totalNum:number; 
-        thisNum:number; 
-        holdNum:number;
-        mineRank:number; 
-        data:Items[];
+        totalNum:number; // 矿山总量
+        thisNum:number;  // 本次可挖
+        holdNum:number;  // 已挖数量
+        mineRank:number;  // 当前用户的矿山排名
+        data:Items[]; // 挖矿项目
     };
     constructor() {
         super();
