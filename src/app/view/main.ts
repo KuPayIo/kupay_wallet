@@ -16,6 +16,7 @@ import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../store/dataCenter';
+import { initStore } from '../store/store';
 import { getLocalStorage, setLocalStorage } from '../utils/tools';
 
 // ============================== 导出
@@ -31,6 +32,7 @@ export const run = (cb): void => {
     checkUpdate();
     // 初始化数据
     dataCenter.init();
+    initStore();
     // makepayment();
     // exchangeManage.init();
     // 打开界面
