@@ -8,7 +8,7 @@
     <div w-class="ga-forgetpsw" on-tap="forgetPswClick">{{it.forgetPsw ? '忘记密码?' : ''}}</div>
     <div w-class="ga-password-board">
         {{for index,value of it1.pswBoard}}
-            <span w-class="ga-psw-board-item" on-tap="boardItemClick(e,{{index}})">{{value}}</span>
+            <span w-class="ga-psw-board-item" on-down="boardItemClick(e,{{index}})">{{value}}</span>
         {{end}}
         <span w-class="ga-clear" on-tap="clearClick">x</span>
     </div>
