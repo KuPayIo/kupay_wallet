@@ -1,12 +1,22 @@
 /**
  * 云端首页
  */
+// ===================================================== 导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { cloudAccount } from '../../../store/cloudAccount';
-import {  getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining } from '../../../store/conMgr';
-import { register, unregister } from '../../../store/store';
+import { getAllBalance } from '../../../net/pull';
+import { CurrencyType } from '../../../shareView/store/conMgr';
+import { getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining } from '../../../store/conMgr';
+import { find, getBorn, register, unregister } from '../../../store/store';
 import { formatBalance, kpt2kt, wei2Eth } from '../../../utils/tools';
+
+// ===================================================== 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class Home extends Widget {
     constructor() {
         super();
@@ -25,6 +35,7 @@ export class Home extends Widget {
         };
 
         this.initDate();
+        this.initEvent();
     }
     /**
      * 点击eth跳转充值提现
@@ -61,7 +72,7 @@ export class Home extends Widget {
      */
     public bonusClicked() {
         // TODO
-        popNew('app-view-mine-dividend-dividend',this.state.ktBalance);
+        popNew('app-view-mine-dividend-dividend', this.state.ktBalance);
     }
     /**
      * 点击邀请好友
@@ -88,7 +99,7 @@ export class Home extends Widget {
 
             return;
         }
-        cloudAccount.updateBalance();
+        getAllBalance();
         popNew('app-components-message-message', { itype: 'outer', center: true, content: '挖矿成功' });
     }
     /**
@@ -103,19 +114,17 @@ export class Home extends Widget {
         });
     }
 
-    public destroy() {
-        unregister('cloudBalance',null);
-
-        return super.destroy();
+    /**
+     * 刷新云端余额
+     */
+    public refreshCloudBalance() {
+        const cloudBalance = getBorn('cloudBalance');
+        this.state.ktBalance = formatBalance(cloudBalance.get(CurrencyType.KT));
+        this.state.ethBalance = formatBalance(cloudBalance.get(CurrencyType.ETH));
     }
+
     private async initDate() {
-        const cloudBalance = cloudAccount.cloudBalance;
-        this.state.ktBalance = formatBalance(cloudBalance.KT);
-        this.state.ethBalance = formatBalance(cloudBalance.ETH);
-        register('cloudBalance',(cloudBalance) => {
-            this.state.ktBalance = formatBalance(cloudBalance.KT);
-            this.state.ethBalance = formatBalance(cloudBalance.ETH);
-        });
+        this.refreshCloudBalance();
 
         const msg = await getMining();
         const totalNum = kpt2kt(msg.mine_total);
@@ -126,16 +135,30 @@ export class Home extends Widget {
             nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
             this.state.isAbleBtn = false;
         } else if ((totalNum - holdNum) > 100) {
-            nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
+            nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 : nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
             this.state.isAbleBtn = true;
         } else {
             nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
             this.state.isAbleBtn = true;
-        }        
+        }
         this.state.mines = nowNum;
 
         const divid = await getDividend();
         this.state.bonus = wei2Eth(divid.value[0]);
         this.paint();
     }
+
+    /**
+     * 初始化事件
+     */
+    private initEvent() {
+        // 这里发起通信
+    }
 }
+
+register('cloudBalance', (cloudBalance) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.refreshCloudBalance();
+    }
+});

@@ -2,7 +2,8 @@
  * red-envelope record
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, CurrencyTypeReverse, getData, queryConvertLog, recordNumber } from '../../../store/conMgr';
+import { CurrencyType, CurrencyTypeReverse, getData, queryConvertLog } from '../../../store/conMgr';
+import { recordNumber } from '../../../utils/constants';
 import { showError } from '../../../utils/toolMessages';
 import { getFirstEthAddr, getLocalStorage, 
     setLocalStorage, smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';

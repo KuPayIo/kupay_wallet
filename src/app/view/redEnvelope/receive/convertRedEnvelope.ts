@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { cloudAccount } from '../../../store/cloudAccount';
+import { getAllBalance } from '../../../net/pull';
 import {
     convertRedBag, CurrencyType, CurrencyTypeReverse, getData, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType, setData
 } from '../../../store/conMgr';
@@ -49,7 +49,7 @@ export class ConvertRedEnvelope extends Widget {
                 return;
             }
             removeLocalStorage('convertRedEnvelopeHistoryRecord');
-            cloudAccount.updateBalance();
+            getAllBalance();
             const r: any = await this.queryDesc(code);
 
             const redEnvelope = {
