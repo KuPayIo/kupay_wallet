@@ -38,18 +38,17 @@ export const run = (cb): void => {
     // exchangeManage.init();
     // 打开界面
     // popNew('app-view-guidePages-privacyAgreement');
-   /*  popNew('app-components-share-share', { 
-        shareType: ShareToPlatforms.TYPE_LINK,
-        url:'http://www.kupay.io',
-        title:'测试',
-        content:'测试'
-    }); */
-   
+    /*  popNew('app-components-share-share', { 
+         shareType: ShareToPlatforms.TYPE_LINK,
+         url:'http://www.kupay.io',
+         title:'测试',
+         content:'测试'
+     }); */
+
     popNewPage();
     // popNew('app-view-guidePages-unlockScreen');
     // // 后台切前台
-    // todo 临时处理方案，暂时屏蔽后台唤醒时输入锁屏密码功能
-    // backToFront();
+    backToFront();
 
     // popNew('app-view-redEnvelope-send-inviteRedEnvelope',{ amount:100,leaveMessage:'大吉大利',currencyName:'ETH' });
     // popNew('app-view-redEnvelope-receive-redEnvelopeDetails',{ amount:100,leaveMessage:'大吉大利',currencyName:'ETH' });
@@ -95,19 +94,11 @@ const checkUpdate = () => {
  * 后台切换到前台
  */
 const backToFront = () => {
-    // (<any>window).handle_app_lifecycle_listener = (iType: string) => {
-    //     alert(iType);
-    //     // onAppResumed
-    //     // onAppPaused
-    // };
-
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) {
-            if (ifNeedUnlockScreen()) {
-                popNew('app-view-guidePages-unlockScreen');
-            }
+    (<any>window).handle_app_lifecycle_listener = (iType: string) => {
+        if ((iType === 'onAppResumed') && ifNeedUnlockScreen()) {
+            popNew('app-view-guidePages-unlockScreen');
         }
-    });
+    };
 };
 
 // ============================== 立即执行
@@ -155,7 +146,7 @@ const checkHasNewTokens = () => {
 const ifNeedUnlockScreen = () => {
     const unlockScreen = document.querySelector('#unlock-screen');
     if (unlockScreen) return false;
-    const ls:LockScreen = find('lockScreen');
+    const ls: LockScreen = find('lockScreen');
     const lockScreenPsw = ls.psw;
     const openLockScreen = ls.open !== false;
 
