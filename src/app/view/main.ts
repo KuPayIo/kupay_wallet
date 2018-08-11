@@ -7,7 +7,6 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
@@ -17,6 +16,7 @@ import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../store/dataCenter';
+import { find, initStore } from '../store/store';
 import { getLocalStorage, setLocalStorage } from '../utils/tools';
 
 // ============================== 导出
@@ -32,6 +32,7 @@ export const run = (cb): void => {
     checkUpdate();
     // 初始化数据
     dataCenter.init();
+    initStore();
     // makepayment();
     // exchangeManage.init();
     // 打开界面
@@ -54,7 +55,7 @@ export const run = (cb): void => {
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
 
     // popNew('app-view-application-home', {}); 
-    // popNew('app-view-mine-dividend-mining', {}); 
+    // popNew('app-view-mine-dividend-dividend', {}); 
     // popNew('app-view-mine-FAQ-FAQ', {}); 
     if (cb) cb();
     // test();
@@ -64,8 +65,8 @@ export const run = (cb): void => {
  * 界面入口
  */
 const popNewPage = () => {
-    const hasReadedPrivacyAgreement = getLocalStorage('hasReadedPrivacyAgreement');
-    if (hasReadedPrivacyAgreement) {
+    const readedPriAgr = find('readedPriAgr');
+    if (readedPriAgr) {
         popNew('app-view-app');
         if (ifNeedUnlockScreen()) {
             popNew('app-view-guidePages-unlockScreen');

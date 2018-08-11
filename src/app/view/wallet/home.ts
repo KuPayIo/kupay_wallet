@@ -1,18 +1,23 @@
 /**
  * wallet home page
  */
-
+// ============================== 导入
 import { popNew } from '../../../pi/ui/root';
+import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
 import { openAndGetRandom } from '../../store/conMgr';
 import { dataCenter } from '../../store/dataCenter';
-import { register, unregister } from '../../store/store';
+import { find, register } from '../../store/store';
 import { defalutShowCurrencys } from '../../utils/constants';
 import {
-    fetchBalanceOfCurrency,fetchTotalAssets, formatBalance, formatBalanceValue, getCurrentWallet, getLocalStorage, getMnemonic,
-    openBasePage
+    fetchBalanceOfCurrency, fetchTotalAssets, formatBalance, formatBalanceValue, getMnemonic, openBasePage
 } from '../../utils/tools';
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Home extends Widget {
     constructor() {
@@ -23,31 +28,10 @@ export class Home extends Widget {
         this.init();
     }
 
-    public destroy() {
-        const r = super.destroy();
-        unregister('wallets', this.registerWalletsFun);
-        unregister('addrs', this.registerAddrsFun);
-
-        return r;
-    }
-
     public init(): void {
-        const wallets = getLocalStorage('wallets');
-        register('wallets', this.registerWalletsFun);
-        register('addrs', this.registerAddrsFun);
-        
-        let gwlt = null;
-        let wallet = null;
-        let otherWallets = false;
-        if (wallets && wallets.walletList && wallets.walletList.length > 0) {
-            otherWallets = true;
-            wallet = getCurrentWallet(wallets);
-            if (wallet) {
-                gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-            }
-        } else {
-            otherWallets = false;
-        }
+        const wallet = find('curWallet');
+        const gwlt = wallet ? GlobalWallet.fromJSON(wallet.gwlt) : null;
+        const otherWallets = !!wallet;
         this.state = {
             wallet,
             gwlt,
@@ -59,7 +43,7 @@ export class Home extends Widget {
         };
 
         // 如果没有创建钱包提示创建钱包
-        if (!wallets) {
+        if (!find('walletList')) {
             this.state.floatBoxTip = '您还没有钱包，请先创建钱包';
         }
 
@@ -68,14 +52,13 @@ export class Home extends Widget {
         openAndGetRandom();
     }
     public clickCurrencyItemListener(e: Event, index: number) {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
-        if (!wallets || wallets.walletList.length === 0) {
+        const wallets = find('walletList');
+        if (!wallets || wallets.length === 0) {
             this.createWalletClick();
 
             return;
         }
-        if (!wallet) {
+        if (!find('curWallet')) {
             popNew('app-view-wallet-switchWallet-switchWallet');
 
             return;
@@ -85,7 +68,6 @@ export class Home extends Widget {
             currencyName: currency.currencyName, currencyBalance: `${currency.balance} ${currency.currencyName}`
             , currencyBalanceConversion: currency.balanceValue
         });
-
     }
     public clickAddCurrencyListener() {
         popNew('app-view-wallet-assets-add_asset');
@@ -103,8 +85,7 @@ export class Home extends Widget {
     }
     // 点击备份钱包
     public async backupWalletClick() {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         if (!wallet) {
             this.createWalletClick();
 
@@ -113,7 +94,7 @@ export class Home extends Widget {
         const walletId = wallet.walletId;
         const close = popNew('pi-components-loading-loading', { text: '导出中...' });
         try {
-            
+
             let passwd;
             if (!dataCenter.getHash(wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
@@ -137,26 +118,15 @@ export class Home extends Widget {
         this.state.hiddenAssets = !this.state.hiddenAssets;
         this.paint();
     }
-    private registerWalletsFun = (wallets: any) => {
+    public registerWalletsFun = (wallets: any) => {
         // 创建完钱包之后修改floatBoxTip提示信息
-        const walletsObj = getLocalStorage('wallets');
-        if (walletsObj) {
+        if (wallets) {
             this.state.floatBoxTip = '为了您的资产安全，请及时备份助记词';
         }
 
-        let otherWallets = false;
-        if (wallets && wallets.walletList && wallets.walletList.length > 0) {
-            otherWallets = true;
-        } else {
-            otherWallets = false;
-        }
-        const wallet = getCurrentWallet(wallets);
-        let gwlt = null;
-        if (wallet) {
-            gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        }
-        this.state.gwlt = gwlt;
-        this.state.otherWallets = otherWallets;
+        const wallet = find('curWallet');
+        this.state.gwlt = wallet ? GlobalWallet.fromJSON(wallet.gwlt) : null;
+        this.state.otherWallets = wallets && wallets.length > 0;
         this.state.wallet = wallet;
         this.state.currencyList = parseCurrencyList(wallet);
         this.registerAddrsFun();
@@ -166,10 +136,9 @@ export class Home extends Widget {
     /**
      * 余额更新
      */
-    private registerAddrsFun = (addrs?: any) => {
+    private registerAddrsFun = () => {
         console.log('余额更新');
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         if (!wallet) return;
 
         wallet.currencyRecords.forEach(item => {
@@ -177,11 +146,11 @@ export class Home extends Widget {
             setCurrencyListBalance(this.state.currencyList, balance, item.currencyName);
         });
         this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
-        
+
         this.paint();
     }
 }
-
+// ============================== 本地
 /**
  * 解析钱包货币
  * 
@@ -193,7 +162,7 @@ const parseCurrencyList = (wallet) => {
     // if (!wallet.showCurrencys) return list;
     const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
     // todo  这里需要正确的处理钱包货币
-    dataCenter.currencyList.forEach(v => {
+    find('currencyList').forEach(v => {
         if (showCurrencys.indexOf(v.name) < 0) return;
         list.push({
             currencyName: v.name,
@@ -217,3 +186,17 @@ const setCurrencyListBalance = (currencyList: any[], balance: number, currencyNa
         return item;
     });
 };
+
+register('walletList', (resp) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.registerWalletsFun(resp);
+    }
+});
+
+register('addrs', (resp) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.registerAddrsFun();
+    }
+});

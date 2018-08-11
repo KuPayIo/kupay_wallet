@@ -3,8 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../store/dataCenter';
-import { getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { find, updateStore } from '../../../store/store';
 
 export class AddAsset extends Widget {
 
@@ -19,12 +18,10 @@ export class AddAsset extends Widget {
         this.init();
     }
     public init(): void {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
+        const currencyList = find('currencyList');
 
-        const currencyList = dataCenter.currencyList;
-
-        const showCurrencys = wallet.showCurrencys || [];
+        const showCurrencys = (wallet && wallet.showCurrencys) || [];
 
         this.state = {
             title: '添加资产',
@@ -60,8 +57,7 @@ export class AddAsset extends Widget {
         this.paint();
 
         // 处理search数据
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         const showCurrencys = wallet.showCurrencys || [];
         const oldIndex = showCurrencys.indexOf(currencys.name);
         if (newType && oldIndex < 0) {
@@ -71,7 +67,7 @@ export class AddAsset extends Widget {
         }
         wallet.showCurrencys = showCurrencys;
 
-        setLocalStorage('wallets', wallets, true);
+        updateStore('curWallet', wallet);
     }
 
 }

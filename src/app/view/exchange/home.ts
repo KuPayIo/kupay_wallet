@@ -4,6 +4,7 @@
 import { open, request, setUrl } from '../../../pi/net/ui/con_mgr';
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+import { conIp } from '../../store/conMgr';
 
 export class Home extends Widget {
     public ok: () => void;
@@ -135,7 +136,7 @@ export class Home extends Widget {
 
 const testNet = async () => {
     // setUrl(`ws://${location.hostname}:2081`);
-    setUrl(`ws://192.168.33.65:2081`);
+    setUrl(`ws://${conIp}:2081`);
     open(() => {
         // todo 需要在登录后才能发起正式的通信
 

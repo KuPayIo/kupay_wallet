@@ -33,7 +33,7 @@ export class DividendItem extends Widget {
                 {
                     index:1,
                     name:'昵称未设置',
-                    num:'96,554,000.00'
+                    num:'0'
                 }
             ],
             miningSecond:false,   // 挖矿排名第二名是否存在
@@ -45,7 +45,7 @@ export class DividendItem extends Widget {
                 {
                     index:1,
                     name:'昵称未设置',
-                    num:'96,554,000.00'
+                    num:'0'
                 }
             ]
         };
@@ -57,9 +57,9 @@ export class DividendItem extends Widget {
      */
     public gotoMore(ind:number) {
         if (ind === 1) {
-            popNew('app-view-mine-dividend-rankList', { data:this.state.mineList });
+            popNew('app-view-mine-dividend-rankList', { data:this.state.mineList,ind:ind });
         } else {
-            popNew('app-view-mine-dividend-rankList',  { data:this.state.miningList });
+            popNew('app-view-mine-dividend-rankList',  { data:this.state.miningList,ind:ind });
         }
         
     }

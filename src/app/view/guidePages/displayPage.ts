@@ -32,17 +32,13 @@ export class DisplayPage extends Widget {
                 slideChangeTransitionStart:function() {
                     that.state.activeIndex = this.activeIndex;
                     that.paint();
-                },
-                slideChangeTransitionEnd: function() {
-                    if (this.activeIndex === that.state.guidePages.length) {
-                        popNew('app-view-app');
-                        that.ok && that.ok();
-                    }
-                    
                 }
-
             }
         }); 
     }
 
+    public doNextClick() {
+        popNew('app-view-app');
+        this.ok && this.ok();
+    }
 }

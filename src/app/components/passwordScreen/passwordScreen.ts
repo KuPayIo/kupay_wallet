@@ -36,7 +36,7 @@ export class PasswordScreen extends Widget {
         if (this.state.pswArr.length === 6) {
             setTimeout(() => {
                 notify(e.node,'ev-completed-click',{ psw:this.state.pswArr.join('') });
-            },200);
+            },100);
             
             return;
         }

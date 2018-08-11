@@ -5,12 +5,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { openAndGetRandom } from '../../../store/conMgr';
-import { dataCenter } from '../../../store/dataCenter';
+import { find, updateStore } from '../../../store/store';
 import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
 } from '../../../utils/account';
 import { defalutShowCurrencys } from '../../../utils/constants';
-import { encrypt, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { encrypt } from '../../../utils/tools';
 import { Addr, Wallet } from '../../interface';
 
 export class WalletCreate extends Widget {
@@ -27,15 +27,15 @@ export class WalletCreate extends Widget {
             walletName: '',
             walletPsw: '',
             walletPswConfirm: '',
-            pswSame:true,
+            pswSame: true,
             walletPswTips: '',
             userProtocolReaded: false,
             curWalletPswStrength: getWalletPswStrength(),
-            showPswTips:false
+            showPswTips: false
 
         };
-        const wallets = getLocalStorage('wallets');
-        const len = wallets ? wallets.walletList.length : 0;
+        const wallets = find('walletList');
+        const len = wallets ? wallets.length : 0;
         this.state.walletName = `我的钱包${len + 1}`;
     }
     public backPrePage() {
@@ -53,7 +53,7 @@ export class WalletCreate extends Widget {
         } else {
             this.state.pswSame = true;
         }
-		this.state.showPswTips = this.state.walletPsw.length > 0;
+        this.state.showPswTips = this.state.walletPsw.length > 0;
         this.state.curWalletPswStrength = getWalletPswStrength(this.state.walletPsw);
         this.paint();
     }
@@ -96,7 +96,7 @@ export class WalletCreate extends Widget {
             return;
         }
         if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
-            
+
             return;
         }
         if (!walletCountAvailable()) {
@@ -114,10 +114,8 @@ export class WalletCreate extends Widget {
     }
 
     public async createWallet() {
-        const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '', salt: dataCenter.salt };
-        const addrs: Addr[] = getLocalStorage('addrs') || [];
-
-        const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName);
+        const salt = find('salt');
+        const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName,salt);
 
         // 创建钱包基础数据
         const wallet: Wallet = {
@@ -134,11 +132,14 @@ export class WalletCreate extends Widget {
             wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
         }
 
+        const walletList: Wallet[] = find('walletList');
+        const addrs: Addr[] = find('addrs');
         addrs.push(...gwlt.addrs);
-        setLocalStorage('addrs', addrs, false);
-        wallets.curWalletId = gwlt.glwtId;
-        wallets.walletList.push(wallet);
-        setLocalStorage('wallets', wallets, true);
+        updateStore('addrs', addrs);
+        walletList.push(wallet);
+        updateStore('walletList', walletList);
+        updateStore('curWallet', wallet);
+        updateStore('salt', salt);
 
         openAndGetRandom();
     }

@@ -13,18 +13,20 @@
     padding: 2px 30px;
     box-sizing: border-box;
     height: 128px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
 }
 .ga-back{
     cursor: pointer;
     width: 44px;
     height: 44px;
     line-height: 50px;
+    margin-right: 30px;
 }
 .ga-next{
-    width: 40px;
-    height: 38px;
     position: relative;
+    font-size: 28px;
+    color: #FFFFFF;
+    line-height: 50px;
 }
 .ga-banner-title{
     font-size: 36px;
@@ -35,76 +37,56 @@
     left: 74px;
 }
 .groupcard{
-    width: 684px;
+    width: auto;
     border-radius: 16px;
-    margin: 0 33px;
+    margin: 0 33px 20px;
     position: relative;
     background-color: rgba(255, 255, 255, 1);
     box-shadow: 0px 4px 30px 0px rgba(39, 52, 125, 0.25);
 
 }
 .dividend-title{ 
-    height: 33px;
-    line-height: 33px;
-    color: rgba(33, 44, 104, 1);
-    font-size: 24px;
+    line-height: 37px;
+    color: #666666;
+    font-size: 26px;
     text-align: center;
-    padding-top: 45px;
+    padding-top: 60px;
+    margin-bottom: 10px;
 }
 .dividend-money{
-    color: orange;
-    line-height: 90px;
     text-align: center;
-    color: rgba(33, 44, 104, 1);
-    font-size: 64px;
+    font-size: 72px;
+    color: #FF2002;
+    font-weight: 600;
+    line-height: 100px;
+    margin-bottom: 30px;
 }
 .dividend-sum{
     vertical-align: middle;
-    height: 48px;
-    color: rgba(33, 44, 104, 1);
-    font-size: 28px;
     text-align: center;
-    margin-top: 27px;
-    margin-bottom: 51px;
+    padding: 19px 0;
+    font-size: 32px;
+    color: #203260;
 }
 .twodata{
-    clear:both;
     vertical-align: middle;
-    background: rgba(221,226,240,0.42);
-    border-radius: 0 0 16px 16px;
-    width: 684px;
-    height: 116px;
     color: rgba(33, 44, 104, 1);
+    display: flex;
 }
-.dataleft{
+.data{
     display: inline-block;
-    width: 50%;
+    flex: 1;
     text-align: center;  
-    padding-top: 16px;
+    padding: 58px 0;
     vertical-align: middle;   
 }
-.dataleft-title{
-    border-right: 3px solid rgb(227,230,245); 
+.data-title{
     font-size: 24px;
+    padding-bottom: 10px;
 }
-.dataleft-num{
-    border-right: 3px solid rgb(227,230,245); 
-    font-size: 28px;
-    padding-top: 9px;
-}
-.dataright{
-    display: inline-block;
-    width: 48%;
-    padding-top: 16px;
-    text-align: center;
-    vertical-align: middle;
-}
-.dataright-title{
-    font-size: 24px;
-}
-.dataright-num{
-    font-size: 28px;
-    padding-top: 9px;
+.data-num{
+    font-size: 48px;
+    color: #F17835;
 }
 .rule-title{
     color: rgba(17, 17, 17, 1);
@@ -126,6 +108,9 @@
     color: rgba(32, 50, 96, 1);
     font-size: 28px;
 }
+.rulemess{
+    margin-bottom: 10px;
+}
 .title{
     margin-left: 50px;
     color: rgba(160, 172, 192, 1);
@@ -137,71 +122,32 @@
     font-size: 24px;
     float: right;
 }
-.miningItem{
-    vertical-align: middle;
-    margin-bottom: 20px;
-    background-color: rgba(255, 255, 255, 1);
-    box-shadow: 0px 2px 8px 0px rgba(12, 15, 35, 0.05);
+.dividLine{
+    background: #A0ACC0;
+    height: 1px;
+    width: auto;
+    margin: 0 35px;
 }
-.itemImg{
-    margin-left: 45px;
-    width: 48px;
-    height: 48px;
-    /* border-radius: 50%; */
-    /* background: #FF912F; */
-    display: inline-block;
-    vertical-align: middle;
-}
-.itemName{
-    margin-left: 21px;
-    color: rgba(17, 17, 17, 0.87);
-    font-size: 32px;
-    line-height: 120px;
-    display: inline-block;
-    vertical-align: middle;
-}
-.itemNum{
-    right: 30px;
-    position: absolute;
-    color: rgba(32, 50, 96, 1);
-    font-size: 32px;
-    line-height: 120px;
-    display: inline-block;
-    vertical-align: middle;
-}
-.itemDetail{
-    color: rgba(102, 102, 102, 1);
-    font-size: 28px;
-    padding: 20px 30px;
-    line-height: 46px;
-    overflow: auto;
-    border-top: 1px solid #E5E5EE;
-}
-.itemBtn{
-    width: 122px;
-    height: 60px;
-    line-height: 60px;
-    text-align: center;
-    float: right;
-    margin-top:20px;
-    margin-bottom: 10px;
-    vertical-align: middle;
+.miningBtn{
+    background-image: linear-gradient(-180deg, #FFAB6B 0%, #FF7339 100%);
+    box-shadow: 0 4px 30px 0 rgba(39,52,125,0.25);
     border-radius: 100px;
-    border: 1px solid rgba(26, 112, 221, 1);
-    color: rgba(53, 116, 250, 1);
-    font-size: 24px;
+    width: 200px;
+    height: 200px;
+    position: relative;
+    font-size: 48px;
+    color: #A0430B;
+    line-height: 200px;
+    display: inline-block;
 }
-.itemBtnNo{
-    width: 122px;
-    height: 60px;
-    line-height: 60px;
-    border-radius: 100px;
-    border: 1px solid rgba(160, 172, 192, 1);
-    color: rgba(160, 172, 192, 1);
-    font-size: 24px;
+.addMine{
+    background: #FFFFFF;
+    box-shadow: 0 4px 30px 0 rgba(39,52,125,0.25);
+    border-radius: 12px;
+    margin: 80px 30px;
+    height: 120px;
+    font-size: 36px;
+    color: rgba(17,17,17,0.87);
     text-align: center;
-    float: right;
-    margin-top:20px;
-    margin-bottom: 10px;
-    vertical-align: middle;
+    line-height: 120px;
 }
