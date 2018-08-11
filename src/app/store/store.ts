@@ -10,7 +10,11 @@ import { config } from '../core/config';
 // tslint:disable-next-line:max-line-length
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy } from '../utils/tools';
-import { Addr, CurrencyInfo, CurrencyType, LoginState, MiningHistory, MiningTotal, Store, TransactionRecord, Wallet } from './interface';
+import { AddMineItem, Addr, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LoginState, MineRank, MiningRank, 
+    MiningTotal, 
+    Store,
+    TransactionRecord,
+    Wallet} from './interface';
 
 // ============================================ 导出
 /**
@@ -104,7 +108,8 @@ export const initStore = () => {
 
 // tslint:disable-next-line:max-line-length
 type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' |
-    'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState'|'miningTotal' | 'miningHistory';
+    'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState'|'miningTotal' | 'miningHistory' | 'dividHistory' | 
+    'dividTotal'|'addMine'|'mineRank'|'miningRank';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -145,5 +150,10 @@ const store = <Store>{
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
     accountDetail: new Map<CurrencyType, number>(),// 云端账户详情
     miningTotal:<MiningTotal>null, // 挖矿汇总信息
-    miningHistory:<MiningHistory>null // 挖矿历史记录
+    dividTotal:<DividTotal>null,// 分红汇总信息
+    miningHistory:<DividendItem[]>[],// 挖矿历史记录
+    dividHistory:<DividendItem[]>[],// 分红历史记录
+    addMine:<AddMineItem[]>[],// 矿山增加项目
+    mineRank:<MineRank>null,// 矿山排名
+    miningRank:<MiningRank>null// 挖矿排名   
 };

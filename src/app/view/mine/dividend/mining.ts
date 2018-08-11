@@ -6,6 +6,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getMineDetail, getMiningHistory, getMiningRank } from '../../../net/pull';
 import { find, register } from '../../../store/store';
 
 // ================================ 导出
@@ -15,32 +16,15 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Dividend extends Widget {
     public ok: () => void;
-    public state: {
-        totalNum:number; // 矿山总量
-        thisNum:number;  // 本次可挖
-        holdNum:number;  // 已挖数量
-        mineRank:number;  // 当前用户的矿山排名
-    };
     constructor() {
         super();
     }
 
     public create() {
         super.create();
-        this.init();
+        this.state = {};
         this.initData();
-    }
-
-    /**
-     * 初始化state参数
-     */
-    public init() {
-        this.state = {
-            totalNum:0,
-            thisNum:0,
-            holdNum:0,
-            mineRank:1
-        };
+        this.initEvent();
     }
 
     public backPrePage() {
@@ -66,12 +50,14 @@ export class Dividend extends Widget {
      */
     public initData() {
         const data = find('miningTotal');
-        this.state.totalNum = data.totalNum;
-        this.state.thisNum = data.thisNum;
-        this.state.holdNum = data.holdNum; 
-        // const msg = find('');
+        const rank = find('mineRank');
+        this.state = {
+            totalNum:data.totalNum,
+            thisNum:data.thisNum,
+            holdNum:data.holdNum,
+            mineRank:rank.myRank
+        };
         this.paint();
-        
     }
 
     /**
@@ -80,9 +66,25 @@ export class Dividend extends Widget {
     public goAddMine() {
         popNew('app-view-mine-dividend-addMine');
     }
+
+    /**
+     * 初始化事件
+     */
+    private initEvent() {
+        // 这里发起通信
+        getMiningHistory();
+        getMineDetail();
+        getMiningRank(100);
+    }
 }
 
 register('miningTotal', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+register('mineRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

@@ -57,15 +57,6 @@ export enum TaskSid {
 export const recordNumber = 10;
 
 /**
- * 获取分红汇总信息
- */
-export const getDividend = async () => {
-    const msg = { type: 'wallet/cloud@get_bonus_total', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
  * 发送红包
  * @param rtype 红包类型
  * @param ctype 货币类型
@@ -181,42 +172,6 @@ export const queryDetailLog = async (rid: string) => {
  */
 export const getAward = async () => {
     const msg = { type: 'wallet/cloud@get_award', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
- * 矿山增加记录
- */
-export const getMineDetail = async () => {
-    const msg = { type: 'wallet/cloud@grant_detail', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
- * 获取分红历史记录
- */
-export const getDividHistory = async () => {
-    const msg = { type: 'wallet/cloud@get_bonus_info', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
- * 获取矿山排名列表
- */
-export const getMineRank = async (num: number) => {
-    const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
-
-    return requestAsync(msg);
-};
-
-/**
- * 获取挖矿排名列表
- */
-export const getMiningRank = async (num: number) => {
-    const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
 
     return requestAsync(msg);
 };
