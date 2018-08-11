@@ -84,21 +84,6 @@ export const getMiningHistory = async () => {
 };
 
 /**
- * 获取红包留言
- * @param cid 兑换码
- */
-export const queryRedBagDesc = async (cid: string) => {
-    const msg = {
-        type: 'query_red_bag_desc',
-        param: {
-            cid
-        }
-    };
-
-    return requestAsync(msg);
-};
-
-/**
  * 挖矿
  */
 export const getAward = async () => {

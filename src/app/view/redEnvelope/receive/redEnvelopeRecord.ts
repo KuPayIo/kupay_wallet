@@ -36,7 +36,7 @@ export class RedEnvelopeRecord extends Widget {
             refresh:true,// 是否可以刷新
             hasMore:false, // 是否还有更多记录
             showMoreTips:false, // 是否显示底部加载更多提示
-            inviteObj:null// 邀请红包对象
+            inviteObj:<CHisRec>null// 邀请红包对象
         };
         this.loadMore();
         this.getInviteRedEnvelope();
