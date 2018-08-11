@@ -1,13 +1,20 @@
 /**
  * lockScreen settings
  */
+// ============================== 导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { GlobalWallet } from '../../../core/globalWallet';
-import { find } from '../../../store/store';
-import { getLocalStorage, lockScreenVerify, setLocalStorage } from '../../../utils/tools';
+import { find, updateStore } from '../../../store/store';
+import { forgetPasswordClick } from '../../guidePages/unlockScreen'; 
 
-export class DisplayPage extends Widget {
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
+export class LockScreenSetting extends Widget {
     public ok: () => void;
     constructor() {
         super();
@@ -17,12 +24,11 @@ export class DisplayPage extends Widget {
         this.init();
     }
     public init() {
-        const lockScreenPsw = getLocalStorage('lockScreenPsw');
+        const ls = find('lockScreen');
         this.state = {
-            lockScreenPsw,
-            openLockScreen: lockScreenPsw && getLocalStorage('openLockScreen') !== false,
+            lockScreenPsw:ls.psw,
+            openLockScreen: ls.psw && ls.open !== false,
             lockScreenTitle: '',
-            showLockScreen: false,
             numberOfErrors: 0,
             errorTips: ['请输入原来的密码', '已错误1次，还有两次机会', '最后1次，否则密码将会重置']
         };
@@ -37,83 +43,23 @@ export class DisplayPage extends Widget {
     public onSwitchChange() {
         if (!this.state.lockScreenPsw) {
             popNew('app-view-guidePages-setLockScreenScret', {}, () => {
-                this.state.lockScreenPsw = getLocalStorage('lockScreenPsw');
+                this.state.lockScreenPsw = find('lockScreen').psw;
             });
         }
         this.state.openLockScreen = !this.state.openLockScreen;
-        setLocalStorage('openLockScreen', this.state.openLockScreen);
+        const ls = find('lockScreen');
+        ls.open = this.state.openLockScreen;
+        updateStore('lockScreen',ls);
         this.paint();
 
     }
 
     // 修改锁屏密码
     public resetLockScreen() {
-        this.state.lockScreenTitle = '请输入原来的密码';
-        this.state.showLockScreen = true;
-        this.paint();
-    }
-
-    public completedInput(r: any) {
-        const psw = r.psw;
-        if (lockScreenVerify(psw)) {
-            popNew('app-view-guidePages-setLockScreenScret', { title1: '请输入新密码', title2: '请重复新密码' });
-            this.ok && this.ok();
-
-            return;
-        }
-        this.state.numberOfErrors++;
-        if (this.state.numberOfErrors >= 3) {
-            const wallet = find('curWallet');
-            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-            const messageboxVerifyProps = {
-                title: '重置锁屏密码',
-                content: '错误次数过多，已被锁定，请验证当前钱包交易密码后重置',
-                inputType: 'password',
-                tipsTitle: gwlt.nickName,
-                tipsImgUrl: wallet.avatar,
-                placeHolder: '请输入交易密码',
-                confirmCallBack: this.verifyLongPsw,
-                confirmErrorText: '密码错误,请重新输入'
-            };
-            popNew('app-components-message-messageboxVerify', messageboxVerifyProps, () => {
-                popNew('app-view-guidePages-setLockScreenScret', { title1: '请输入新密码', title2: '请重复新密码' });
-                this.ok && this.ok();
-            }, () => {
-                this.init();
-                this.paint();
-            });
-
-            return;
-        }
-        this.state.lockScreenTitle = this.state.errorTips[this.state.numberOfErrors];
-        this.paint();
-
-    }
-
-    // 验证密码
-    public verifyLongPsw(r: string) {
-        return true;
+        popNew('app-view-guidePages-unlockScreen',{ updatedPsw:true });
     }
 
     public forgetPasswordClick() {
-        const wallet = find('curWallet');
-        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        const messageboxVerifyProps = {
-            title: '忘记密码',
-            content: '忘记锁屏密码，请验证当前钱包交易密码后重置',
-            inputType: 'password',
-            tipsTitle: gwlt.nickName,
-            tipsImgUrl: wallet.avatar,
-            placeHolder: '请输入交易密码',
-            confirmCallBack: this.verifyLongPsw,
-            confirmErrorText: '密码错误,请重新输入'
-        };
-        popNew('app-components-message-messageboxVerify', messageboxVerifyProps, () => {
-            popNew('app-view-guidePages-setLockScreenScret', { title1: '请输入新密码', title2: '请重复新密码' });
-            this.ok && this.ok();
-        }, () => {
-            this.init();
-            this.paint();
-        });
+        forgetPasswordClick(null);
     }
 }

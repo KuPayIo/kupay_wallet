@@ -10,7 +10,7 @@ import { config } from '../core/config';
 // tslint:disable-next-line:max-line-length
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy } from '../utils/tools';
-import { AccountDetail, Addr, CurrencyInfo, CurrencyType, LoginState, Store, TransactionRecord, Wallet } from './interface';
+import { AccountDetail, Addr, CurrencyInfo, CurrencyType, LockScreen, LoginState, Store,TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -88,7 +88,8 @@ export const initStore = () => {
     store.curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
     // 从localStorage中取readedPriAgr
     store.readedPriAgr = findByLoc('readedPriAgr');
-
+    // 从localStorage中取lockScreen
+    store.lockScreen = findByLoc('lockScreen') || {};
     // 初始化默认兑换汇率列表
     const rateJson = config.currentNetIsTest ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
     const m = new Map();
@@ -109,7 +110,7 @@ type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'sa
 type MapName = 'exchangeRateJson' | 'hashMap';
 
 // ============================================ 本地
-type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr';
+type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -141,6 +142,7 @@ const store = <Store>{
     exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
     currencyList: <CurrencyInfo[]>[],// 货币信息列表
     shapeShiftCoins: <any>[],// shapeShift 支持的币种
+    lockScreen:<LockScreen>null, // 锁屏密码相关
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
     accountDetail: new Map<CurrencyType, AccountDetail[]>()// 云端账户详情
