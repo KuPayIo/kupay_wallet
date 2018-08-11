@@ -5,9 +5,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAllBalance } from '../../../net/pull';
+import { getAllBalance, getInviteCode, getInviteCodeDetail } from '../../../net/pull';
 import { CurrencyType } from '../../../shareView/store/conMgr';
-import { getAward, getDividend, getInviteCode, getInviteCodeDetail, getMining } from '../../../store/conMgr';
+import { getAward, getDividend, getMining } from '../../../store/conMgr';
 import { find, getBorn, register, unregister } from '../../../store/store';
 import { formatBalance, kpt2kt, wei2Eth } from '../../../utils/tools';
 
@@ -21,8 +21,8 @@ export class Home extends Widget {
     constructor() {
         super();
     }
-    public create() {
-        super.create();
+    public setProps(props: Props, oldProps: Props) {
+        super.setProps(props, oldProps);
         this.init();
     }
     public init(): void {
@@ -35,7 +35,10 @@ export class Home extends Widget {
         };
 
         this.initDate();
-        this.initEvent();
+
+        if (this.props.isActive) {
+            this.initEvent();
+        }
     }
     /**
      * 点击eth跳转充值提现
@@ -162,3 +165,7 @@ register('cloudBalance', (cloudBalance) => {
         w.refreshCloudBalance();
     }
 });
+
+interface Props {
+    isActive: boolean;
+}

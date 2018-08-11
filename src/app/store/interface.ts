@@ -109,20 +109,24 @@ export interface RedEnvelope {
 }
 
 export interface Store {
-    walletList: Wallet[];// 钱包数据
-    curWallet: Wallet;// 当前钱包
-    addrs: Addr[];// 地址数据
-    transactions: TransactionRecord[];// 交易记录
-    exchangeRateJson: Map<string, any>;// 兑换汇率列表
-    currencyList: CurrencyInfo[];// 货币信息列表
+    // 基础数据
     hashMap: Map<string, string>;// 输入密码后hash缓存
     salt: string;// 盐--加密时使用
     conUser: string;// 连接用户
     conUserPublicKey: string;// 连接用户公钥
     conRandom: string;// 连接随机数
     conUid: number;// 连接uid
-    shapeShiftCoins: any;// shapeShift 支持的币种
     readedPriAgr: boolean;// 隐私协议阅读与否
     loginState: LoginState;// 连接状态
+    // 本地钱包
+    walletList: Wallet[];// 钱包数据
+    curWallet: Wallet;// 当前钱包
+    addrs: Addr[];// 地址数据
+    transactions: TransactionRecord[];// 交易记录
+    exchangeRateJson: Map<string, any>;// 兑换汇率列表
+    currencyList: CurrencyInfo[];// 货币信息列表
+    shapeShiftCoins: any;// shapeShift 支持的币种
+    // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
+    accountDetail: Map<CurrencyType, number>;// 云端账户详情
 }

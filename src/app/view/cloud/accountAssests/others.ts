@@ -3,7 +3,8 @@
  */
 import { isArray } from '../../../../pi/net/websocket/util';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, getAccountDetail, TaskSid } from '../../../store/conMgr';
+import { getAccountDetail } from '../../../net/pull';
+import { CurrencyType, TaskSid } from '../../../store/conMgr';
 import { formatBalance, smallUnit2LargeUnit, timestampFormat } from '../../../utils/tools';
 
 interface Props {

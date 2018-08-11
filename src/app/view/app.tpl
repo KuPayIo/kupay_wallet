@@ -4,17 +4,17 @@
 {{if it1.type === 0}}
     {{for i, v of it1.tabBarList}}
         {{if i == it1.isActive}}
-        <widget w-tag={{v.components}} style="visibility:visible;z-index:0;position:absolute;width:100%;height:100%;"></widget>
+        <widget w-tag={{v.components}} style="visibility:visible;z-index:0;position:absolute;width:100%;height:100%;">{isActive:{{i == it1.isActive}}}</widget>
         {{elseif it1.old[i]}}
-        <widget w-tag={{v.components}} style="visibility:hidden;z-index:-1;position: absolute;width:100%;height:100%;"></widget>
+        <widget w-tag={{v.components}} style="visibility:hidden;z-index:-1;position: absolute;width:100%;height:100%;">{isActive:{{i == it1.isActive}}}</widget>
         {{end}}
     {{end}}
 {{elseif it1.type === 1}}
-    <widget w-tag={{it1.tabBarList[it1.isActive].components}} style="position:absolute;width:100%;height:100%;"></widget>
+    <widget w-tag={{it1.tabBarList[it1.isActive].components}} style="position:absolute;width:100%;height:100%;">{isActive:false}</widget>
 {{else}}
     {{for i, v of it1.tabBarList}}
         {{if v.name !== 'chat'}}
-        <widget w-tag={{v.components}} style="visibility: {{i == it1.isActive ? 'visible' : 'hidden'}}; z-index:{{i == it1.isActive ? 0 : -1}}; position:absolute; width:100%;height:100%;"></widget>
+        <widget w-tag={{v.components}} style="visibility: {{i == it1.isActive ? 'visible' : 'hidden'}}; z-index:{{i == it1.isActive ? 0 : -1}}; position:absolute; width:100%;height:100%;">{isActive:{{i == it1.isActive}}}</widget>
         {{end}}
     {{end}}
 {{end}}
