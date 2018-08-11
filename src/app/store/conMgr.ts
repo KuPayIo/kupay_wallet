@@ -57,46 +57,10 @@ export enum TaskSid {
 export const recordNumber = 10;
 
 /**
- * 获取指定类型的货币余额
- */
-export const getBalance = async (currencyType: CurrencyType) => {
-    const msg = { type: 'wallet/account@get', param: { list: `[${currencyType}]` } };
-
-    return requestAsync(msg);
-};
-
-/**
  * 获取分红汇总信息
  */
 export const getDividend = async () => {
     const msg = { type: 'wallet/cloud@get_bonus_total', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
- * 获取邀请红包码
- */
-export const getInviteCode = async () => {
-    const msg = { type: 'wallet/cloud@get_invite_code', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
- * 兑换邀请红包
- */
-export const inputInviteCdKey = async (code) => {
-    const msg = { type: 'wallet/cloud@input_cd_key', param: { code: code } };
-
-    return requestLogined(msg);
-};
-
-/**
- * 获取邀请红包领取明细
- */
-export const getInviteCodeDetail = async () => {
-    const msg = { type: 'wallet/cloud@get_invite_code_detail', param: {} };
 
     return requestAsync(msg);
 };
@@ -109,15 +73,15 @@ export const getInviteCodeDetail = async () => {
  * @param count 红包数量
  * @param lm 留言
  */
-export const sendRedEnvlope = async (rtype:number,ctype:number,totalAmount:number,redEnvelopeNumber:number,lm:string) => {
+export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
     const msg = {
-        type:'emit_red_bag',
-        param:{
-            type:rtype,
-            priceType:ctype,
-            totalPrice:largeUnit2SmallUnitString(CurrencyTypeReverse[ctype],totalAmount),
-            count:redEnvelopeNumber,
-            desc:lm
+        type: 'emit_red_bag',
+        param: {
+            type: rtype,
+            priceType: ctype,
+            totalPrice: largeUnit2SmallUnitString(CurrencyTypeReverse[ctype], totalAmount),
+            count: redEnvelopeNumber,
+            desc: lm
         }
     };
 
@@ -200,15 +164,15 @@ export const queryConvertLog = async (start) => {
 /**
  * 查询某个红包兑换详情
  */
-export const queryDetailLog = async (rid:string) => {
+export const queryDetailLog = async (rid: string) => {
     const msg = {
-        type:'query_detail_log',
-        param:{
-            uid:dataCenter.getConUid(),
+        type: 'query_detail_log',
+        param: {
+            uid: dataCenter.getConUid(),
             rid
         }
     };
-    
+
     return requestAsync(msg);
 };
 
@@ -240,64 +204,10 @@ export const getDividHistory = async () => {
 };
 
 /**
- * 设置客户端数据
- */
-export const setData = async (param) => {
-    const msg = { type: 'wallet/data@set', param: param };
-
-    return requestAsync(msg);
-};
-
-/**
- * 获取客户端数据
- */
-export const getData = async (key) => {
-    const msg = { type: 'wallet/data@get', param: { key } };
-
-    return requestAsync(msg);
-};
-
-/**
- * 设置用户基础信息
- */
-export const setUserInfo = async (value) => {
-    const msg = { type: 'wallet/user@set_info', param: { value } };
-
-    return requestAsync(msg);
-};
-
-/**
- * 批量获取用户信息
- */
-export const getUserInfo = async (uids: [number]) => {
-    const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
-
-    return requestAsync(msg);
-};
-
-/**
- * 批量获取用户信息
- */
-export const doChat = async () => {
-    const msg = { type: 'wallet/cloud@chat', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
- * 获取指定货币流水
- */
-export const getAccountDetail = async (coin) => {
-    const msg = { type: 'wallet/account@get_detail', param: { coin } };
-
-    return requestAsync(msg);
-};
-
-/**
  * 获取矿山排名列表
  */
-export const getMineRank = async(num:number) => {
-    const msg = { type: 'wallet/cloud@mine_top', param: { num:num } };
+export const getMineRank = async (num: number) => {
+    const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
 
     return requestAsync(msg);
 };
@@ -305,8 +215,8 @@ export const getMineRank = async(num:number) => {
 /**
  * 获取挖矿排名列表
  */
-export const getMiningRank = async(num:number) => {
-    const msg = { type: 'wallet/cloud@get_mine_top', param: { num:num } };
+export const getMiningRank = async (num: number) => {
+    const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
 
     return requestAsync(msg);
 };
@@ -314,8 +224,8 @@ export const getMiningRank = async(num:number) => {
 /**
  * 发送验证码
  */
-export const sendCode = async(phone:number,num:number) => {
-    const msg = { type: 'wallet/sms@send_sms_code', param: { phone,num,name:'钱包' } };
+export const sendCode = async (phone: number, num: number) => {
+    const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
 
     return requestAsync(msg);
 };
@@ -323,8 +233,8 @@ export const sendCode = async(phone:number,num:number) => {
 /**
  * 注册手机
  */
-export const regPhone = async(phone:number,code:number) => {
-    const msg = { type: 'wallet/user@reg_phone', param: { phone,code } };
+export const regPhone = async (phone: number, code: number) => {
+    const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
 
     return requestAsync(msg);
 };

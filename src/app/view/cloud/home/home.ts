@@ -21,8 +21,8 @@ export class Home extends Widget {
     constructor() {
         super();
     }
-    public create() {
-        super.create();
+    public setProps(props: Props, oldProps: Props) {
+        super.setProps(props, oldProps);
         this.init();
     }
     public init(): void {
@@ -35,7 +35,10 @@ export class Home extends Widget {
         };
 
         this.initDate();
-        this.initEvent();
+
+        if (this.props.isActive) {
+            this.initEvent();
+        }
     }
     /**
      * 点击eth跳转充值提现
@@ -163,3 +166,7 @@ register('cloudBalance', (cloudBalance) => {
         w.refreshCloudBalance();
     }
 });
+
+interface Props {
+    isActive: boolean;
+}

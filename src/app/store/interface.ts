@@ -146,6 +146,7 @@ export interface Store {
     shapeShiftCoins: any;// shapeShift 支持的币种
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
-    miningTotal:MiningTotal;// 挖矿汇总信息
+    accountDetail: Map<CurrencyType, number>;// 云端账户详情
+	miningTotal:MiningTotal;// 挖矿汇总信息
     miningHistory:MiningHistory;// 挖矿历史记录
 }

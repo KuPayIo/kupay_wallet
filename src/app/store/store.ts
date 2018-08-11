@@ -77,11 +77,11 @@ export const unregister = (keyName: KeyName, cb: Function): void => {
 export const initStore = () => {
     // 从localStorage中取wallets
     const wallets = findByLoc('wallets');
-    store.walletList = wallets && wallets.walletList;
+    store.walletList = (wallets && wallets.walletList) || [];
     // 从localStorage中取addrs
-    store.addrs = findByLoc('addrs');
+    store.addrs = findByLoc('addrs') || [];
     // 从localStorage中取transactions
-    store.transactions = findByLoc('transactions');
+    store.transactions = findByLoc('transactions') || [];
     // 从localStorage中的wallets中初始化salt
     store.salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
     // 从localStorage中的wallets中初始化curWallet
@@ -134,7 +134,7 @@ const store = <Store>{
     readedPriAgr: false, // 是否阅读隐私协议
     loginState: LoginState.init,// 连接状态
     // 本地钱包
-    walletList: <Wallet[]>[],// 钱包数据     
+    walletList: <Wallet[]>[],// 钱包数据
     curWallet: <Wallet>null,// 当前钱包
     addrs: <Addr[]>[],// 地址数据
     transactions: <TransactionRecord[]>[],// 交易记录
@@ -143,7 +143,7 @@ const store = <Store>{
     shapeShiftCoins: <any>[],// shapeShift 支持的币种
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
+    accountDetail: new Map<CurrencyType, number>(),// 云端账户详情
     miningTotal:<MiningTotal>null, // 挖矿汇总信息
     miningHistory:<MiningHistory>null // 挖矿历史记录
-
 };

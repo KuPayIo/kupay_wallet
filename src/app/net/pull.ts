@@ -398,12 +398,14 @@ export const getUserInfo = async (uids: [number]) => {
 };
 
 /**
- * 批量获取用户信息
+ * 处理聊天
  */
 export const doChat = async () => {
     const msg = { type: 'wallet/cloud@chat', param: {} };
 
-    return requestAsync(msg);
+    requestAsync(msg).then(r => {
+        // 通信成功
+    });
 };
 
 /**
