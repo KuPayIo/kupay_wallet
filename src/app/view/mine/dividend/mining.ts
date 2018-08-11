@@ -2,39 +2,29 @@
  * 挖矿总信息页面  
  * 
  */
+// ============================== 导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineRank, getMining } from '../../../store/conMgr';
-import { kpt2kt } from '../../../utils/tools';
+import { getMineDetail, getMiningHistory, getMiningRank } from '../../../net/pull';
+import { find, register } from '../../../store/store';
 
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Dividend extends Widget {
     public ok: () => void;
-    public state: {
-        totalNum:number; // 矿山总量
-        thisNum:number;  // 本次可挖
-        holdNum:number;  // 已挖数量
-        mineRank:number;  // 当前用户的矿山排名
-    };
     constructor() {
         super();
     }
 
     public create() {
         super.create();
-        this.init();
+        this.state = {};
         this.initData();
-    }
-
-    /**
-     * 初始化state参数
-     */
-    public init() {
-        this.state = {
-            totalNum:0,
-            thisNum:0,
-            holdNum:0,
-            mineRank:1
-        };
+        this.initEvent();
     }
 
     public backPrePage() {
@@ -58,28 +48,16 @@ export class Dividend extends Widget {
     /**
      * 获取更新数据
      */
-    public async initData() {
-        const msg = await getMining();
-        const totalNum = kpt2kt(msg.mine_total);
-        const holdNum = kpt2kt(msg.mines);
-        const today = kpt2kt(msg.today);
-        let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
-        if (nowNum <= 0) {
-            nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
-        } else if ((totalNum - holdNum) > 100) {
-            nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
-        } else {
-            nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
-        }
-        
-        this.state.totalNum = totalNum;
-        this.state.thisNum = nowNum;
-        this.state.holdNum = holdNum; 
-
-        const mineRank = await getMineRank(100);
-        this.state.mineRank = mineRank.me;
+    public initData() {
+        const data = find('miningTotal');
+        const rank = find('mineRank');
+        this.state = {
+            totalNum:data.totalNum,
+            thisNum:data.thisNum,
+            holdNum:data.holdNum,
+            mineRank:rank.myRank
+        };
         this.paint();
-        
     }
 
     /**
@@ -88,4 +66,27 @@ export class Dividend extends Widget {
     public goAddMine() {
         popNew('app-view-mine-dividend-addMine');
     }
+
+    /**
+     * 初始化事件
+     */
+    private initEvent() {
+        // 这里发起通信
+        getMiningHistory();
+        getMineDetail();
+        getMiningRank(100);
+    }
 }
+
+register('miningTotal', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+register('mineRank', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});

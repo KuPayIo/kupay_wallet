@@ -10,7 +10,8 @@ import { config } from '../core/config';
 // tslint:disable-next-line:max-line-length
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy } from '../utils/tools';
-import { AccountDetail, Addr, CurrencyInfo, CurrencyType, LockScreen, LoginState, Store,TransactionRecord, Wallet } from './interface';
+// tslint:disable-next-line:max-line-length
+import { AccountDetail, AddMineItem, Addr, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MineRank, MiningRank, MiningTotal, Store, TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -104,8 +105,8 @@ export const initStore = () => {
 };
 
 // tslint:disable-next-line:max-line-length
-type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' |
-    'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState' | 'accountDetail';
+type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState' | 'miningTotal' | 'miningHistory' | 'dividHistory' | 'accountDetail' |
+    'dividTotal' | 'addMine' | 'mineRank' | 'miningRank';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -142,8 +143,15 @@ const store = <Store>{
     exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
     currencyList: <CurrencyInfo[]>[],// 货币信息列表
     shapeShiftCoins: <any>[],// shapeShift 支持的币种
-    lockScreen:<LockScreen>null, // 锁屏密码相关
+    lockScreen: <LockScreen>null, // 锁屏密码相关
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
-    accountDetail: new Map<CurrencyType, AccountDetail[]>()// 云端账户详情
+    accountDetail: new Map<CurrencyType, AccountDetail[]>(),// 云端账户详情
+    miningTotal: <MiningTotal>null, // 挖矿汇总信息
+    dividTotal: <DividTotal>null,// 分红汇总信息
+    miningHistory: <DividendItem[]>[],// 挖矿历史记录
+    dividHistory: <DividendItem[]>[],// 分红历史记录
+    addMine: <AddMineItem[]>[],// 矿山增加项目
+    mineRank: <MineRank>null,// 矿山排名
+    miningRank: <MiningRank>null// 挖矿排名   
 };

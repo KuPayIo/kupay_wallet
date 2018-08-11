@@ -32,33 +32,6 @@ export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.htm
 export const recordNumber = 10;
 
 /**
- * 获取分红汇总信息
- */
-export const getDividend = async () => {
-    const msg = { type: 'wallet/cloud@get_bonus_total', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
- * 获取挖矿汇总信息
- */
-export const getMining = async () => {
-    const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
- * 获取挖矿历史记录
- */
-export const getMiningHistory = async () => {
-    const msg = { type: 'wallet/cloud@get_pool_detail', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
  * 发送红包
  * @param rtype 红包类型
  * @param ctype 货币类型
@@ -213,3 +186,21 @@ export const getMiningRank = async (num: number) => {
 
     return requestAsync(msg);
 };
+/**
+ * 发送验证码
+ */
+export const sendCode = async (phone: number, num: number) => {
+    const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 注册手机
+ */
+export const regPhone = async (phone: number, code: number) => {
+    const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
+
+    return requestAsync(msg);
+};
+

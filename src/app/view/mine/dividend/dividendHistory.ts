@@ -1,66 +1,39 @@
 /**
  * 分红领取记录，挖矿记录
  */
+// ================================ 导入
 import { Json } from '../../../../pi/lang/type';
+import { register } from '../../../../pi/util/res_mgr';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { wei2Eth } from '../../../shareView/utils/tools';
-import { getDividHistory, getMiningHistory } from '../../../store/conMgr';
-import { kpt2kt, parseDate, transDate } from '../../../utils/tools';
+import { find } from '../../../store/store';
 
-interface Item {
-    num:number;
-    time:string;
-    total:number;
-}
-
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Dividend extends Widget {
     public ok: () => void;
-    public state: {refresh:boolean; data:Item[]};
     constructor() {
         super();
     }
 
     public setProps(props:Json,oldProps:Json) {
         super.setProps(props,oldProps);
-        this.init();
+        this.state = {};
         this.initData();
     }
-
-    public init() {
-        this.state = {
-            refresh:true,
-            data:[
-                // {
-                //     num:0.02,
-                //     time:'04-30 14:32:00',
-                //     total:10.2
-                // }                
-            ]
-        };
-    }
     
+    /**
+     * 获取更新数据
+     */
     public async initData() {
         if (this.props === 2) { // 挖矿记录列表
-            const msg = await getMiningHistory();
-            const data = [];
-            for (let i = 0;i < msg.value.length;i++) {
-                data.push({
-                    num:kpt2kt(msg.value[i][0]),
-                    total:kpt2kt(msg.value[i][1]),
-                    time:transDate(new Date(msg.value[i][2]))
-                });
-            }
+            const data = find('miningHistory');            
             this.state.data = data;
         } else {  // 分红记录列表
-            const msg = await getDividHistory();
-            const data = [];
-            for (let i = 0;i < msg.value.length;i++) {
-                data.push({
-                    num:wei2Eth(msg.value[i][1][0]),
-                    total:wei2Eth(msg.value[i][1][1]),
-                    time:transDate(new Date(msg.value[i][0]))
-                });
-            }
+            const data = find('dividHistory');
             this.state.data = data;
         }        
         this.paint();
@@ -104,3 +77,15 @@ export class Dividend extends Widget {
     //     } 
     // }
 }
+register('dividHistory', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+register('miningHistory', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
