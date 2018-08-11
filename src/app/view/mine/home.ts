@@ -66,7 +66,7 @@ export class Home extends Widget {
             //     components: 'app-view-mine-languageAndcoinset-language'
             // }, 
             {
-                icon: 'icon_mine_Language.png',
+                icon: 'icon_mine_lock.png',
                 text: '锁屏密码',
                 components: 'app-view-mine-lockScreen-lockScreenSetting'
             },
@@ -83,6 +83,11 @@ export class Home extends Widget {
             {
                 icon: 'icon_mine_about.png',
                 text: '关于我们',
+                components: 'app-view-mine-aboutus-aboutus'
+            },
+            {
+                icon: 'icon_mine_phone.png',
+                text: '联系我们',
                 components: 'app-view-mine-aboutus-aboutus'
             }
 
