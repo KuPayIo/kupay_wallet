@@ -10,7 +10,7 @@ import { config } from '../core/config';
 // tslint:disable-next-line:max-line-length
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy } from '../utils/tools';
-import { Addr, CurrencyInfo, Store, TransactionRecord, Wallet } from './interface';
+import { Addr, CurrencyInfo, CurrencyType, LoginState, Store, TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -103,8 +103,8 @@ export const initStore = () => {
 };
 
 // tslint:disable-next-line:max-line-length
-type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' | 
-'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins';
+type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' |
+    'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -137,5 +137,7 @@ const store = <Store>{
     conRandom: '',// 连接随机数
     conUid: 0,// 连接uid
     shapeShiftCoins: <any>[],// shapeShift 支持的币种
-    readedPriAgr:false // 是否阅读隐私协议
+    readedPriAgr: false, // 是否阅读隐私协议
+    loginState: LoginState.init,// 连接状态
+    cloudBalance: new Map<CurrencyType, number>()// 云端账户余额
 };

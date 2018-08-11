@@ -6,6 +6,8 @@ import { config } from '../core/config';
 
 // 钱包数量最大限制
 export const walletNumLimit = 10;
+// 记录默认获取数量
+export const recordNumber = 10;
 // 钱包所支持的货币列表测试网络
 export const supportCurrencyListTest = [
     { name: 'ETH', description: 'Ethereum' },
