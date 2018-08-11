@@ -108,6 +108,24 @@ export interface RedEnvelope {
     leaveMessage: string;
 }
 
+/**
+ * 挖矿汇总信息
+ */
+export interface MiningTotal {
+    totalNum:number; // 矿山总量
+    thisNum:number;  // 本次可挖
+    holdNum:number;  // 已挖数量
+}
+
+/**
+ * 挖矿历史记录
+ */
+export interface MiningHistory {
+    num:number;
+    time:string;
+    total:number;
+}
+
 export interface Store {
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包
@@ -123,4 +141,6 @@ export interface Store {
     conUid: number;// 连接uid
     shapeShiftCoins: any;// shapeShift 支持的币种
     readedPriAgr:boolean;// 隐私协议阅读与否
+    miningTotal:MiningTotal;// 挖矿汇总信息
+    miningHistory:MiningHistory;// 挖矿历史记录
 }

@@ -9,7 +9,7 @@ import { cloudAccount } from '../store/cloudAccount';
 import { dataCenter } from '../store/dataCenter';
 import { find } from '../store/store';
 import { showError } from '../utils/toolMessages';
-import { largeUnit2SmallUnit, openBasePage } from '../utils/tools';
+import { kpt2kt, largeUnit2SmallUnit, openBasePage } from '../utils/tools';
 
 // 枚举登录状态
 export enum LoginState {
@@ -213,9 +213,26 @@ export const getDividend = async () => {
  * 获取挖矿汇总信息
  */
 export const getMining = async () => {
-    const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
+    const data = await requestAsync({ type: 'wallet/cloud@get_mine_total', param: {} });
+    const totalNum = kpt2kt(data.mine_total);
+    const holdNum = kpt2kt(data.mines);
+    const today = kpt2kt(data.today);
+    let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
+    if (nowNum <= 0) {
+        nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
+    } else if ((totalNum - holdNum) > 100) {
+        nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
+    } else {
+        nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
+    }
+    
+    const mining = find('miningTotal');
+    mining.totalNum = totalNum;
+    mining.thisNum = nowNum;
+    mining.holdNum = holdNum; 
 
-    return requestAsync(msg);
+    // const mineRank = await getMineRank(100);
+    // mining.mineRank = mineRank.me;
 };
 
 /**
