@@ -796,8 +796,7 @@ export const formatBalanceValue = (value: number) => {
  * 获取总资产
  */
 export const fetchTotalAssets = () => {
-    const wallets = getLocalStorage('wallets');
-    const wallet = getCurrentWallet(wallets);
+    const wallet = find('curWallet');
     if (!wallet) return;
     let totalAssets = 0;
     wallet.currencyRecords.forEach(item => {

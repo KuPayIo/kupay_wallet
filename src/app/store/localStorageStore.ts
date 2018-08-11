@@ -10,7 +10,7 @@ import { register } from './store';
 // ===================================================== 本地
 
 // ===================================================== 立即执行
-register('wallets', (wallets: Wallet[]) => {
+register('walletList', (wallets: Wallet[]) => {
     let locWallets = JSON.parse(localStorage.getItem('wallets'));
     if (!locWallets) locWallets = { curWalletId: '', salt: '', walletList: [] };
     locWallets.walletList = wallets;
@@ -26,12 +26,22 @@ register('transactions', (transactions: TransactionRecord[]) => {
 });
 
 register('curWallet', (curWallet: Wallet) => {
-    let locWallets = JSON.parse(localStorage.getItem('wallets'));
-    if (!locWallets || locWallets.length <= 0) return;
-    locWallets = locWallets.map(v => {
-        if (v.walletId === curWallet.walletId) v = curWallet;
+    const locWallets = JSON.parse(localStorage.getItem('wallets'));
+    if (!locWallets || locWallets.walletList.length <= 0) return;
+    locWallets.walletList = locWallets.walletList.map(v => {
+        if (v.walletId === curWallet.walletId) {
+            v = curWallet;
+            locWallets.curWalletId = curWallet.walletId;
+        }
 
         return v;
     });
+    localStorage.setItem('wallets', JSON.stringify(locWallets));
+});
+
+register('salt', (salt: string) => {
+    let locWallets = JSON.parse(localStorage.getItem('wallets'));
+    if (!locWallets) locWallets = { curWalletId: '', salt: '', walletList: [] };
+    locWallets.salt = salt;
     localStorage.setItem('wallets', JSON.stringify(locWallets));
 });

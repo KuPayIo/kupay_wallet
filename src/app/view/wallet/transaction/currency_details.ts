@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { dataCenter } from '../../../store/dataCenter';
-import { register,unregister } from '../../../store/store';
+import { find,register, unregister } from '../../../store/store';
 import {
     currencyExchangeAvailable, effectiveCurrency, effectiveCurrencyNoConversion, 
     formatBalance, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
@@ -48,9 +48,8 @@ export class AddAsset extends Widget {
         data.forEach(element => {
             dataList.push(element.symbol);
         });
-        const wallets = getLocalStorage('wallets');
         
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
 
         this.state = {
             list: [], 

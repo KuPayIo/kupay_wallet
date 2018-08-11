@@ -4,10 +4,11 @@
 import { SendChatMessage } from '../../pi/browser/sendMessage';
 import { popNew } from '../../pi/ui/root';
 import { Widget } from '../../pi/widget/widget';
+import { getProxy } from '../net/pull';
 import { doChat } from '../store/conMgr';
 import { getLocalStorage } from '../utils/tools';
 export class App extends Widget {
-    public old: any = {};  
+    public old: any = {};
     public create() {
         super.create();
         this.init();
@@ -17,9 +18,9 @@ export class App extends Widget {
         const isActive = 0;
         this.old[isActive] = true;
         this.state = {
-            type:2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
+            type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
             isActive,
-            old:this.old,
+            old: this.old,
             tabBarList: [{
                 text: '钱包',
                 icon: 'wallet_icon.png',
@@ -65,7 +66,7 @@ export class App extends Widget {
                 iconActive: 'mine_icon_active.png',
                 components: 'app-view-mine-home'
             }]
-            
+
         };
     }
     public async tabBarChangeListener(event: any, index: number) {
@@ -129,15 +130,24 @@ export class App extends Widget {
         const chat = new SendChatMessage();
         chat.init();
 
-        // todo 这里需要向服务器通信获取代理地址，且区分国内外的情况
+        // 这里需要向服务器通信获取代理地址，且区分国内外的情况
         return new Promise((resolve, reject) => {
-            chat.setProxy({
-                success: (result) => {
-                    resolve(result);
-                },
-                fail: (result) => {
-                    reject(result);
-                }, proxyIp: '120.77.252.201', proxyPort: 1820, userName: '', password: ''
+            getProxy().then((r) => {
+                if (r.result !== 1) {
+                    reject(r.result);
+
+                    return;
+                }
+                const proxy = JSON.parse(r.proxy);
+                if (proxy.protocol === 'socks5') {
+                    chat.setProxy({
+                        success: (result) => { resolve(result); },
+                        fail: (result) => { reject(result); },
+                        proxyIp: proxy.ip, proxyPort: proxy.prot, userName: '', password: ''
+                    });
+                } else {
+                    reject('no support');
+                }
             });
         });
 
