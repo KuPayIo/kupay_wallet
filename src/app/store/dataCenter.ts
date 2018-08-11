@@ -1,4 +1,3 @@
-import { cryptoRandomInt } from '../../pi/util/math';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { config } from '../core/config';
@@ -9,25 +8,16 @@ import { shapeshift } from '../exchange/shapeshift/shapeshift';
 // tslint:disable-next-line:max-line-length
 import { btcNetwork, defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, ethTokenTransferCode, lang, shapeshiftApiPrivateKey, shapeshiftTransactionRequestNumber, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import {
-    btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getCurrentWallet, getDefaultAddr, getLocalStorage,
+    btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getDefaultAddr, getLocalStorage,
     getMnemonic, sat2Btc, setLocalStorage, wei2Eth
 } from '../utils/tools';
 import { Addr, CurrencyRecord, Wallet } from '../view/interface';
-import { find, updateStore } from './store';
+import { find, getBorn, updateStore } from './store';
 /**
  * 创建事件处理器表
  * @example
  */
 export class DataCenter {
-
-    public get salt() {
-        if (!this.iSalt) {
-            this.iSalt = cryptoRandomInt().toString();
-        }
-
-        return this.iSalt;
-    }
-
     public static MAX_ADDRNAME_LEN: number = 9;// 最长地址名
 
     public static MAX_SHARE_LEN: number = 3;
@@ -44,7 +34,6 @@ export class DataCenter {
 
     public currencyExchangeTimer: number;
 
-    private iSalt: string;
     /**
      * 初始化
      */
@@ -54,11 +43,9 @@ export class DataCenter {
         this.updateList.push(['exchangeRate', 'BTC']);
 
         // 从缓存中获取地址进行初始化
-        const addrs = getLocalStorage('addrs');
+        const addrs = find('addrs');
         if (addrs) {
-            const wallets = getLocalStorage('wallets');
-            // this.iSalt = wallets.salt;
-            const wallet = getCurrentWallet(wallets);
+            const wallet = find('curWallet');
             if (!wallet) return;
             let list = [];
             wallet.currencyRecords.forEach(v => {
@@ -121,11 +108,10 @@ export class DataCenter {
      * 通过货币类型获取当前钱包地址详情
      */
     public getAddrInfosByCurrencyName(currencyName: string) {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         if (!wallet) return;
         const retAddrs = getAddrsByCurrencyName(wallet, currencyName);
-        const addrs = getLocalStorage('addrs') || [];
+        const addrs = find('addrs') || [];
 
         return addrs.filter(v => retAddrs.indexOf(v.addr) !== -1 && v.currencyName === currencyName);
     }
@@ -134,7 +120,7 @@ export class DataCenter {
      * 通过地址获取地址余额
      */
     public getAddrInfoByAddr(addr: string, currencyName: string) {
-        const addrs = getLocalStorage('addrs') || [];
+        const addrs = find('addrs') || [];
 
         return addrs.filter(v => v.addr === addr && v.currencyName === currencyName)[0];
     }
@@ -144,7 +130,7 @@ export class DataCenter {
      */
     public getAllTransactionsByAddr(addr: string, currencyName: string) {
         // 从缓存中取出对应地址的交易记录
-        const transactions = getLocalStorage('transactions') || [];
+        const transactions = find('transactions') || [];
 
         // return transactions.filter(v => v.addr === addr);
 
@@ -218,7 +204,7 @@ export class DataCenter {
      */
     public setHash(key: string, hash: string) {
         if (!key) return;
-        updateStore('hashMap', find('hashMap').set(key, hash));
+        updateStore('hashMap', getBorn('hashMap').set(key, hash));
     }
     /**
      * 获取缓存hash
@@ -229,8 +215,7 @@ export class DataCenter {
 
     // 获取币币交易交易记录
     public fetchCurrencyExchangeTx() {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         if (!wallet) return;
         const curAllAddrs = getAddrsAll(wallet);
         curAllAddrs.forEach(item => {
@@ -327,10 +312,10 @@ export class DataCenter {
         }, 10 * 60 * 1000);
     }
     private async checkAddr() {
-        const wallets = getLocalStorage('wallets');
-        if (!wallets) return;
+        const walletList = find('walletList');
+        if (!walletList || walletList.length <= 0) return;
         const list = [];
-        wallets.walletList.forEach((v, i) => {
+        walletList.forEach((v, i) => {
             if (dataCenter.getHash(v.walletId)) {
                 v.currencyRecords.forEach((v1, i1) => {
                     if (!v1.updateAddr) list.push([i, i1]);
@@ -339,8 +324,8 @@ export class DataCenter {
         });
 
         if (list[0]) {
-            let addrs = getLocalStorage('addrs');
-            const wallet = wallets.walletList[list[0][0]];
+            let addrs = find('addrs');
+            const wallet = walletList[list[0][0]];
             const currencyRecord: CurrencyRecord = wallet.currencyRecords[list[0][1]];
             console.log('checkAddr', currencyRecord.currencyName);
             let addAddrs;
@@ -353,10 +338,10 @@ export class DataCenter {
             }
             if (addAddrs.length > 0) {
                 addrs = addrs.concat(addAddrs);
-                setLocalStorage('addrs', addrs, false);
+                updateStore('addrs', addrs);
             }
             currencyRecord.updateAddr = true;
-            setLocalStorage('wallets', wallets, true);
+            updateStore('walletList', walletList);
         }
     }
 
@@ -396,7 +381,7 @@ export class DataCenter {
         const contractAddress = ERC20Tokens[currencyName];
         const res = await api.getTokenTransferEvents(contractAddress, addr);
         const list = [];
-        const transactions = getLocalStorage('transactions') || [];
+        const transactions = find('transactions') || [];
         res.result.forEach(v => {
             if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr) && (v1.currencyName === currencyName))) return;
             // 移除缓存记录
@@ -418,7 +403,6 @@ export class DataCenter {
         });
         if (list.length > 0) {
             this.setTransactionLocalStorage(transactions.concat(list));
-            // setLocalStorage('transactions', transactions.concat(list), false);
         }
     }
     private async parseEthTransactionDetails(addr: string) {
@@ -427,7 +411,7 @@ export class DataCenter {
         const ethTrans = this.filterEthTrans(r.result);
         const list = [];
         // const hashList = [];
-        const transactions = getLocalStorage('transactions') || [];
+        const transactions = find('transactions') || [];
         ethTrans.forEach(v => {
             if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr))) return;
             // 移除缓存记录
@@ -450,7 +434,6 @@ export class DataCenter {
         });
         if (list.length > 0) {
             this.setTransactionLocalStorage(transactions.concat(list));
-            // setLocalStorage('transactions', transactions.concat(list), false);
         }
     }
     // 过滤eth交易记录，过滤掉token的交易记录
@@ -474,7 +457,7 @@ export class DataCenter {
 
         // console.log('getAddrInfo', info);
         if (info.txs) {
-            const transactions = getLocalStorage('transactions') || [];
+            const transactions = find('transactions') || [];
             const list = [];
 
             info.txs.forEach(v => {
@@ -524,7 +507,7 @@ export class DataCenter {
     }
 
     private removeRecordAtAddr(addr: string, hashStr: string) {
-        let addrs = getLocalStorage('addrs') || [];
+        let addrs = find('addrs') || [];
         let isUpdate = false;
         addrs = addrs.map(v => {
             if (v.addr !== addr) return v;
@@ -537,7 +520,7 @@ export class DataCenter {
             return v;
         });
         if (isUpdate) {
-            setLocalStorage('addrs', addrs, false);
+            updateStore('addrs', addrs);
         }
     }
 
@@ -579,7 +562,7 @@ export class DataCenter {
      * 设置余额
      */
     private setBalance(addr: string, currencyName: string, num: number) {
-        let addrs = getLocalStorage('addrs') || [];
+        let addrs = find('addrs') || [];
 
         let isUpdate = false;
         addrs = addrs.map(v => {
@@ -592,7 +575,7 @@ export class DataCenter {
         });
 
         if (isUpdate) {
-            setLocalStorage('addrs', addrs, true);
+            updateStore('addrs', addrs);
         }
     }
 
@@ -613,11 +596,11 @@ export class DataCenter {
     }
 
     private setTransactionLocalStorage(transactions: any[], notify: boolean = false) {
-        const addrs = getLocalStorage('addrs');
+        const addrs = find('addrs');
         const existedAddrs = [];
         addrs.forEach(addr => existedAddrs.push(addr.addr));
         const trans = transactions.filter(trans => existedAddrs.indexOf(trans.addr) >= 0);
-        setLocalStorage('transactions', trans, notify);
+        updateStore('transactions', trans);
     }
 
     /**

@@ -42,6 +42,13 @@ export const find = (keyName: KeyName, id?: number | string): any => {
 };
 
 /**
+ * 返回原始数据结构
+ */
+export const getBorn = (keyname) => {
+    return store[keyname];
+};
+
+/**
  * 更新store并通知
  */
 // tslint:disable-next-line:no-any

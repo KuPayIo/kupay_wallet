@@ -4,8 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
+import { find, updateStore } from '../../../store/store';
 import { getWalletPswStrength, pswEqualed, walletPswAvailable } from '../../../utils/account';
-import { decrypt, getCurrentWallet, getLocalStorage, getWalletByWalletId, setLocalStorage } from '../../../utils/tools';
+import { getWalletByWalletId } from '../../../utils/tools';
 
 interface Props {
     passwd: string;
@@ -47,8 +48,8 @@ export class ChangePassword extends Widget {
     public async btnClicked() {
         const newPassword = this.state.newPassword;
         const rePassword = this.state.rePassword;
-        const wallets = getLocalStorage('wallets');
-        const wallet = getWalletByWalletId(wallets, this.props.walletId);
+        const walletList = find('walletList');
+        const wallet = getWalletByWalletId(walletList, this.props.walletId);
         if (!newPassword || !rePassword) {
             return;
         }
@@ -68,7 +69,7 @@ export class ChangePassword extends Widget {
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         await gwlt.passwordChange(this.props.passwd, newPassword, this.props.walletId);
         wallet.gwlt = gwlt.toJSON();
-        setLocalStorage('wallets', wallets);
+        updateStore('walletList', walletList);
         loading.callback(loading.widget);
         this.backPrePage();
     }

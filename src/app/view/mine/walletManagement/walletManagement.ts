@@ -6,11 +6,11 @@ import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { openAndGetRandom } from '../../../store/conMgr';
 import { dataCenter } from '../../../store/dataCenter';
-import { register, unregister } from '../../../store/store';
-import { pswEqualed, walletNameAvailable } from '../../../utils/account';
+import { find, register, unregister, updateStore } from '../../../store/store';
+import { walletNameAvailable } from '../../../utils/account';
 import {
-    decrypt, encrypt, fetchTotalAssets, formatBalanceValue, getAddrsAll, getCurrentWallet, getCurrentWalletIndex
-    , getLocalStorage, getMnemonic, getWalletByWalletId, getWalletIndexByWalletId, openBasePage, setLocalStorage, VerifyIdentidy
+    decrypt, encrypt, fetchTotalAssets, formatBalanceValue, getAddrsAll, getMnemonic,
+    getWalletByWalletId, getWalletIndexByWalletId, openBasePage, VerifyIdentidy
 } from '../../../utils/tools';
 
 export class WalletManagement extends Widget {
@@ -23,10 +23,10 @@ export class WalletManagement extends Widget {
         this.init();
     }
     public init() {
-        register('wallets', this.registerWalletsFun);
+        register('walletList', this.registerWalletsFun);
         register('addrs', this.registerAddrsFun);
-        const wallets = getLocalStorage('wallets');
-        const wallet = getWalletByWalletId(wallets, this.props.walletId);
+        const walletList = find('walletList');
+        const wallet = getWalletByWalletId(walletList, this.props.walletId);
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         let pswTips = '';
         if (wallet.walletPswTips) {
@@ -47,7 +47,7 @@ export class WalletManagement extends Widget {
     }
 
     public destroy() {
-        unregister('wallets', this.registerWalletsFun);
+        unregister('walletList', this.registerWalletsFun);
         unregister('addrs', this.registerAddrsFun);
 
         return super.destroy();
@@ -76,8 +76,8 @@ export class WalletManagement extends Widget {
         }
         const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
         try {
-            const wallets = getLocalStorage('wallets');
-            const wallet = getWalletByWalletId(wallets, this.props.walletId);
+            const walletList = find('walletList');
+            const wallet = getWalletByWalletId(walletList, this.props.walletId);
             let passwd;
             if (!dataCenter.getHash(wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
@@ -123,14 +123,14 @@ export class WalletManagement extends Widget {
         }
         if (v !== this.state.gwlt.nickName) {
             this.state.gwlt.nickName = v;
-            const wallets = getLocalStorage('wallets');
-            const wallet = getWalletByWalletId(wallets, this.props.walletId);
+            const walletList = find('walletList');
+            const wallet = getWalletByWalletId(walletList, this.props.walletId);
             // const addr0 = wallet.currencyRecords[0].addrs[0];
             const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             gwlt.nickName = v;
             wallet.gwlt = gwlt.toJSON();
 
-            setLocalStorage('wallets', wallets, true);
+            updateStore('walletList', walletList);
         }
         input.value = v;
         this.state.isUpdatingWalletName = false;
@@ -142,10 +142,10 @@ export class WalletManagement extends Widget {
     public pswTipsInputBlur() {
         const pswTipsInput: any = document.querySelector('#pswTipsInput');
         const value = pswTipsInput.value;
-        const wallets = getLocalStorage('wallets');
-        const wallet = getWalletByWalletId(wallets, this.props.walletId);
+        const walletList = find('walletList');
+        const wallet = getWalletByWalletId(walletList, this.props.walletId);
         wallet.walletPswTips = encrypt(value);
-        setLocalStorage('wallets', wallets, true);
+        updateStore('walletList', walletList);
         this.state.isUpdatingPswTips = false;
     }
     public pageClick() {
@@ -175,8 +175,7 @@ export class WalletManagement extends Widget {
         }
         const close = popNew('pi-components-loading-loading', { text: '导出中...' });
         try {
-            const wallets = getLocalStorage('wallets');
-            const wallet = getWalletByWalletId(wallets, this.props.walletId);
+            const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
             let passwd;
             if (!dataCenter.getHash(wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
@@ -218,8 +217,7 @@ export class WalletManagement extends Widget {
         }
         const close = popNew('pi-components-loading-loading', { text: '加载中...' });
         try {
-            const wallets = getLocalStorage('wallets');
-            const wallet = getWalletByWalletId(wallets, this.props.walletId);
+            const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
             let passwd;
             if (!dataCenter.getHash(wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
@@ -292,8 +290,8 @@ export class WalletManagement extends Widget {
 
         const close = popNew('pi-components-loading-loading', { text: '删除中...' });
         try {
-            const wallets = getLocalStorage('wallets');
-            const wallet = getWalletByWalletId(wallets, this.props.walletId);
+            const walletList = find('walletList');
+            const wallet = getWalletByWalletId(walletList, this.props.walletId);
             let passwd;
             if (!dataCenter.getHash(wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
@@ -302,7 +300,8 @@ export class WalletManagement extends Widget {
             }
             const isEffective = await VerifyIdentidy(wallet, passwd);
             if (isEffective) {
-                const walletIndex = getCurrentWalletIndex(wallets);
+                const curWallet = find('curWallet');
+                const walletIndex = getWalletIndexByWalletId(walletList, curWallet.walletId);
                 // 删除地址
                 const addrs = getAddrsAll(wallet);
                 this.deleteAddrs(addrs);
@@ -310,9 +309,9 @@ export class WalletManagement extends Widget {
                 this.deleteTransactions(addrs);
 
                 // 删除钱包
-                wallets.walletList.splice(walletIndex, 1);
-                wallets.curWalletId = wallets.walletList.length > 0 ? wallets.walletList[0].walletId : '';
-                setLocalStorage('wallets', wallets, true);
+                walletList.splice(walletIndex, 1);
+                updateStore('walletList', walletList);
+                updateStore('curWallet', walletList[0] || null);
 
                 await openAndGetRandom();
                 this.ok && this.ok(true);
@@ -335,22 +334,22 @@ export class WalletManagement extends Widget {
      * 
      */
     public deleteAddrs(delAddrs: string[]) {
-        const addrs = getLocalStorage('addrs');
+        const addrs = find('addrs');
         const addrsNew = addrs.filter((item) => {
             return delAddrs.indexOf(item.addr) < 0;
         });
-        setLocalStorage('addrs', addrsNew);
+        updateStore('addrs', addrsNew);
     }
 
     /**
      * 移除交易记录
      */
     public deleteTransactions(delAddrs: string[]) {
-        const transactions = getLocalStorage('transactions');
+        const transactions = find('transactions');
         const transactionsNew = transactions.filter((item) => {
             return delAddrs.indexOf(item.addr) < 0;
         });
-        setLocalStorage('transactions', transactionsNew);
+        updateStore('transactions', transactionsNew);
     }
 
     private registerWalletsFun = (wallets: any) => {
@@ -371,8 +370,7 @@ export class WalletManagement extends Widget {
      * 总资产更新
      */
     private registerAddrsFun = (addrs?: any) => {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getWalletByWalletId(wallets, this.props.walletId);
+        const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
         if (!wallet) return;
 
         this.state.totalAssets = formatBalanceValue(fetchTotalAssets());

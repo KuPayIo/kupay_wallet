@@ -13,8 +13,8 @@ import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
 import { find } from '../../../store/store';
 import {
-    decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals, getAddrById
-    , getCurrentAddrInfo, getCurrentWallet, getLocalStorage, openBasePage, parseAccount, parseDate, resetAddrById, urlParams
+    effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals, getAddrById
+    , getCurrentAddrInfo, openBasePage, parseDate, resetAddrById, urlParams
 } from '../../../utils/tools';
 
 interface Props {
@@ -368,8 +368,6 @@ async function doEthTransfer(wlt: EthWallet, acct1: string, acct2: string, gasPr
 // tslint:disable-next-line:only-arrow-functions
 async function doBtcTransfer(wlt: BTCWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
     , value: number, info: string) {
-    const addrs = getLocalStorage('addrs');
-    const addr = addrs.filter(v => v.addr === acct1)[0];
     const output = {
         toAddr: acct2,
         amount: value,

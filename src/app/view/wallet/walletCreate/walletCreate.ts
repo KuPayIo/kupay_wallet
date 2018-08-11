@@ -5,13 +5,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { openAndGetRandom } from '../../../store/conMgr';
-import { dataCenter } from '../../../store/dataCenter';
 import { find, updateStore } from '../../../store/store';
 import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
 } from '../../../utils/account';
 import { defalutShowCurrencys } from '../../../utils/constants';
-import { encrypt, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { encrypt } from '../../../utils/tools';
 import { Addr, Wallet } from '../../interface';
 
 export class WalletCreate extends Widget {
@@ -115,7 +114,8 @@ export class WalletCreate extends Widget {
     }
 
     public async createWallet() {
-        const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName);
+        const salt = find('salt');
+        const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName,salt);
 
         // 创建钱包基础数据
         const wallet: Wallet = {
@@ -132,14 +132,14 @@ export class WalletCreate extends Widget {
             wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
         }
 
-        const wallets: Wallet[] = find('walletList');
+        const walletList: Wallet[] = find('walletList');
         const addrs: Addr[] = find('addrs');
         addrs.push(...gwlt.addrs);
         updateStore('addrs', addrs);
-        wallets.push(wallet);
-        updateStore('walletList', wallets);
-        updateStore('curWallet', gwlt);
-        updateStore('salt', find('salt'));
+        walletList.push(wallet);
+        updateStore('walletList', walletList);
+        updateStore('curWallet', wallet);
+        updateStore('salt', salt);
 
         openAndGetRandom();
     }

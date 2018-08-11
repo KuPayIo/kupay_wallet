@@ -2,8 +2,9 @@
 /**
  * 和账号相关的工具
  */
+import { find } from '../store/store';
 import { walletNumLimit } from './constants';
-import { getLocalStorage, getStrLen, shuffle } from './tools';
+import { getStrLen, shuffle } from './tools';
 
 // 密码强度列表
 const walletPswStrengthList = [{
@@ -48,9 +49,9 @@ export const pswEqualed = (psw1, psw2) => {
  * 钱包数量是否合乎规则
  */
 export const walletCountAvailable = () => {
-    const wallets = getLocalStorage('wallets');
+    const walletList = find('walletList');
 
-    return wallets ? wallets.walletList.length < walletNumLimit : true;
+    return walletList ? walletList.length < walletNumLimit : true;
 };
 
 /**
@@ -125,10 +126,10 @@ export const nickNameInterception = (name: string): string => {
 export const getAvatarRandom = (): string => {
     // tslint:disable-next-line:max-line-length
     const avatarsSrc = ['img_avatar1.jpg', 'img_avatar2.jpg', 'img_avatar3.jpg', 'img_avatar4.jpg', 'img_avatar5.jpg', 'img_avatar6.jpg', 'img_avatar7.jpg', 'img_avatar8.jpg', 'img_avatar9.jpg', 'img_avatar10.jpg'];
-    const wallets = getLocalStorage('wallets');
+    const walletList = find('walletList');
     const avatarUsed = [];
-    if (wallets) {
-        wallets.walletList.forEach(item => {
+    if (walletList) {
+        walletList.forEach(item => {
             avatarUsed.push(item.avatar);
         });
     }

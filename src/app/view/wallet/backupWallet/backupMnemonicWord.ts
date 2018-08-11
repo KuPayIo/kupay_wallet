@@ -5,8 +5,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { arrayBufferToBase64 } from '../../../../pi/util/base64';
 import { Widget } from '../../../../pi/widget/widget';
 import { DataCenter } from '../../../store/dataCenter';
+import { find } from '../../../store/store';
 import { shareSecret } from '../../../utils/secretsBase';
-import { getCurrentWallet, getLocalStorage, getMnemonicHexstr, hexstrToU8Array } from '../../../utils/tools';
+import { getMnemonicHexstr, hexstrToU8Array } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;
@@ -34,22 +35,21 @@ export class BackupMnemonicWord extends Widget {
             okButton: '取消',
             cancelButton: '跳过',
             okButtonStyle: 'color:rgba(26,112,221,1);',
-            cancelButtonStyle:'color:#8E96AB'
+            cancelButtonStyle: 'color:#8E96AB'
         }, null, () => {
             this.ok && this.ok();
         });
     }
     public next() {
         this.ok && this.ok();
-        popNew('app-view-wallet-backupWallet-backupMnemonicWordConfirm', { mnemonic: this.props.mnemonic ,walletId:this.props.walletId });
+        popNew('app-view-wallet-backupWallet-backupMnemonicWordConfirm', { mnemonic: this.props.mnemonic, walletId: this.props.walletId });
     }
     public backPrePage() {
         this.ok && this.ok();
     }
     public async shareClick() {
         const close = popNew('pi-components-loading-loading', { text: '处理中...' });
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         const mnemonicHexstr = await getMnemonicHexstr(wallet, this.props.passwd);
         const shares = shareSecret(mnemonicHexstr, DataCenter.MAX_SHARE_LEN, DataCenter.MIN_SHARE_LEN)
             .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
