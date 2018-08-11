@@ -11,8 +11,7 @@ import { config } from '../core/config';
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail, AddMineItem, Addr, CHisRec, 
-    CurrencyInfo, CurrencyType,DividendItem, DividTotal, LockScreen, LoginState,SHisRec,MineRank, MiningRank, MiningTotal, Store, TransactionRecord, Wallet } from './interface';
+import { AccountDetail, AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MineRank, MiningRank, MiningTotal, SHisRec, Store, TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -149,9 +148,9 @@ const store = <Store>{
     exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
     currencyList: <CurrencyInfo[]>[],// 货币信息列表
     shapeShiftCoins: <any>[],// shapeShift 支持的币种
-  lockScreen:<LockScreen>null, // 锁屏密码相关
-  sHisRec:<SHisRec> null, // 发送红包记录
-    cHisRec:<CHisRec>null,// 兑换红包记录
+    lockScreen: <LockScreen>null, // 锁屏密码相关
+    sHisRec: <SHisRec>null, // 发送红包记录
+    cHisRec: <CHisRec>null,// 兑换红包记录
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
     accountDetail: new Map<CurrencyType, AccountDetail[]>(),// 云端账户详情

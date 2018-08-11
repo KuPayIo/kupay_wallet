@@ -2,7 +2,7 @@
  * red-envelope details
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyTypeReverse } from '../../../store/conMgr';
+import { CurrencyTypeReverse } from '../../../store/interface';
 
 interface Props {
     leaveMessage:string;

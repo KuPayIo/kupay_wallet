@@ -5,10 +5,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getCloudBalance, getInviteCode, getInviteCodeDetail } from '../../../net/pull';
-import { getAllBalance, getDividend, getInviteCode, getInviteCodeDetail,getMineRank, getMining } from '../../../net/pull';
-import { CurrencyType } from '../../../shareView/store/conMgr';
-import { getAward } from '../../../store/conMgr';
+import { getAward, getCloudBalance, getDividend, getInviteCode, getInviteCodeDetail, getMineRank, getMining } from '../../../net/pull';
+import { CurrencyType } from '../../../store/interface';
 import { find, getBorn, register, unregister } from '../../../store/store';
 import { formatBalance, kpt2kt, wei2Eth } from '../../../utils/tools';
 
@@ -76,7 +74,7 @@ export class Home extends Widget {
      */
     public bonusClicked() {
         // TODO
-        popNew('app-view-mine-dividend-dividend', { totalHold:this.state.ktBalance });
+        popNew('app-view-mine-dividend-dividend', { totalHold: this.state.ktBalance });
     }
     /**
      * 点击邀请好友
