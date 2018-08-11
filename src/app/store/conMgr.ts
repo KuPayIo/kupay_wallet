@@ -32,7 +32,14 @@ export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.htm
 export const recordNumber = 10;
 
 /**
- * 发送红包
+* 获取分红汇总信息
+ */
+export const getDividend = async () => {
+    const msg = { type: 'wallet/cloud@get_bonus_total', param: {} };
+    return requestAsync(msg);
+};
+/**
+* 发送红包
  * @param rtype 红包类型
  * @param ctype 货币类型
  * @param totalAmount 总金额
@@ -98,11 +105,19 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
             }
         };
     }
-
     return requestAsync(msg);
 };
 
+
+
 /**
+ * 获取挖矿汇总信息
+ */
+export const getMining = async () => {
+    const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
+    return requestAsync(msg);
+};
+  /**
  * 查询红包兑换记录
  */
 export const queryConvertLog = async (start) => {
@@ -123,11 +138,19 @@ export const queryConvertLog = async (start) => {
             }
         };
     }
-
     return requestAsync(msg);
 };
 
+
+
 /**
+ * 获取挖矿历史记录
+ */
+export const getMiningHistory = async () => {
+    const msg = { type: 'wallet/cloud@get_pool_detail', param: {} };
+    return requestAsync(msg);
+};
+  /**
  * 查询某个红包兑换详情
  */
 export const queryDetailLog = async (rid: string) => {
@@ -138,9 +161,9 @@ export const queryDetailLog = async (rid: string) => {
             rid
         }
     };
-
     return requestAsync(msg);
 };
+
 
 /**
  * 挖矿

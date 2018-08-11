@@ -14,7 +14,7 @@ export const parseCloudBalance = (balanceInfo): Map<CurrencyType, number> => {
     const m = new Map<CurrencyType, number>();
     for (let i = 0; i < balanceInfo.value.length; i++) {
         const each = balanceInfo.value[i];
-        m.set(CurrencyType.KT, smallUnit2LargeUnit(CurrencyTypeReverse[each[0]], each[1]));
+        m.set(each[0], smallUnit2LargeUnit(CurrencyTypeReverse[each[0]], each[1]));
     }
 
     return m;
