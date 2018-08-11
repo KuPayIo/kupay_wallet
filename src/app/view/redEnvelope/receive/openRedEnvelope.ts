@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { RedEnvelopeType } from '../../../store/conMgr';
+import { RedEnvelopeType } from '../../../store/interface';
 
 interface Props {
     rtype:string;

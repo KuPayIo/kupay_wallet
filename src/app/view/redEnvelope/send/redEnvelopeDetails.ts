@@ -5,8 +5,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { queryDetailLog } from '../../../net/pull';
-import { CurrencyTypeReverse } from '../../../store/conMgr';
-import { RedBag } from '../../../store/interface';
+import { CurrencyTypeReverse, RedBag } from '../../../store/interface';
 import { smallUnit2LargeUnitString, timestampFormat, unicodeArray2Str } from '../../../utils/tools';
 
 interface Props {

@@ -5,8 +5,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getData, queryConvertLog } from '../../../net/pull';
-import { CurrencyType, CurrencyTypeReverse } from '../../../store/conMgr';
-import { CHisRec } from '../../../store/interface';
+import { CHisRec, CurrencyType, CurrencyTypeReverse } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
 import { recordNumber } from '../../../utils/constants';
 import { getFirstEthAddr, getLocalStorage, 

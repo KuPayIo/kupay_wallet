@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { convertRedBag, getCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
-import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType } from '../../../store/conMgr';
+import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
 import { showError } from '../../../utils/toolMessages';
 import { eth2Wei, getFirstEthAddr, removeLocalStorage, smallUnit2LargeUnitString } from '../../../utils/tools';

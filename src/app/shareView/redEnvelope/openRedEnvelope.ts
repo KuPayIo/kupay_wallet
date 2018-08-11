@@ -3,8 +3,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { CurrencyType } from '../../store/conMgr';
-import { CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../store/conMgr';
+import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../store/conMgr';
 import { parseUrlParams, setLocalStorage, smallUnit2LargeUnitString, unicodeArray2Str } from '../utils/tools';
 
 interface RedEnvelope {

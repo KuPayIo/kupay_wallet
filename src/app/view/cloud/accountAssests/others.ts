@@ -5,8 +5,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
-import { CurrencyType } from '../../../store/conMgr';
-import { TaskSid } from '../../../store/interface';
+import { CurrencyType, TaskSid } from '../../../store/interface';
 import { find, register } from '../../../store/store';
 import { timestampFormat } from '../../../utils/tools';
 

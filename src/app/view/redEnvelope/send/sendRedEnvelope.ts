@@ -5,8 +5,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getCloudBalance, sendRedEnvlope } from '../../../net/pull';
-import { CurrencyType, RedEnvelopeType, sharePerUrl } from '../../../store/conMgr';
+import { getCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
+import { CurrencyType, RedEnvelopeType } from '../../../store/interface';
 import { find, register, unregister, updateStore } from '../../../store/store';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
 import { getByteLen, getFirstEthAddr, openBasePage, removeLocalStorage } from '../../../utils/tools';
@@ -118,7 +118,7 @@ export class SendRedEnvelope extends Widget {
         const rid = await sendRedEnvlope(rtype, ctype, totalAmount, redEnvelopeNumber, lm);
         close.callback(close.widget);
         if (!rid) return;
-        
+
         popNew('app-view-redEnvelope-send-shareRedEnvelope', {
             rid,
             rtype: this.state.itype,
@@ -133,7 +133,7 @@ export class SendRedEnvelope extends Widget {
         const firstAddr = getFirstEthAddr();
         const sHisRec = find('sHisRec');
         sHisRec[firstAddr] = {};
-        updateStore('sHisRec',sHisRec);// 更新红包记录
+        updateStore('sHisRec', sHisRec);// 更新红包记录
         getCloudBalance();// 更新余额
         if (this.state.itype === 0) {
             // tslint:disable-next-line:max-line-length
