@@ -4,8 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../store/dataCenter';
+import { find } from '../../../store/store';
 import {
-    effectiveCurrencyNoConversion, getAddrById, getCurrentWallet, getLocalStorage, parseAccount, parseDate
+    effectiveCurrencyNoConversion, getAddrById, parseAccount, parseDate
 } from '../../../utils/tools';
 
 interface State {
@@ -28,8 +29,7 @@ export class AddAsset extends Widget {
     public init(): void {
 
         this.state = { list: [] };
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         if (!wallet.currencyRecords) return;
         let list = [];
         wallet.currencyRecords.forEach(v => {
@@ -81,7 +81,7 @@ export class AddAsset extends Widget {
             };
         });
 
-        const addr = getAddrById(currentAddr,currencyName);
+        const addr = getAddrById(currentAddr, currencyName);
         let recordList = [];
         if (addr) {
             recordList = addr.record.map(v => {

@@ -7,7 +7,6 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';

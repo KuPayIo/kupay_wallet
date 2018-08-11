@@ -2,7 +2,7 @@
  * 搜索货币
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { getCurrentWallet, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { find, updateStore } from '../../../store/store';
 
 interface Props {
     list: any[];
@@ -36,15 +36,13 @@ export class AddAsset extends Widget {
         this.paint();
 
         // 处理search数据
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         const showCurrencys = wallet.showCurrencys || [];
         const oldIndex = showCurrencys.indexOf(currencys.name);
         if (oldIndex < 0) {
             showCurrencys.push(currencys.name);
             wallet.showCurrencys = showCurrencys;
-
-            setLocalStorage('wallets', wallets, true);
+            updateStore('curWallet', wallet);
         }
 
     }

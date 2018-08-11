@@ -30,7 +30,7 @@ register('transactions', (transactions: TransactionRecord[]) => {
 
 register('curWallet', (curWallet: Wallet) => {
     const locWallets = JSON.parse(localStorage.getItem('wallets'));
-    if (!locWallets || locWallets.walletList.length <= 0) return;
+    if (!curWallet || !locWallets || locWallets.walletList.length <= 0) return;
     locWallets.walletList = locWallets.walletList.map(v => {
         if (v.walletId === curWallet.walletId) {
             v = curWallet;

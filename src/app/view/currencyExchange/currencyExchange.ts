@@ -11,6 +11,7 @@ import { ERC20Tokens } from '../../core/eth/tokens';
 import { EthWallet } from '../../core/eth/wallet';
 import { GlobalWallet } from '../../core/globalWallet';
 import { dataCenter } from '../../store/dataCenter';
+import { find } from '../../store/store';
 import { shapeshiftApiPublicKey } from '../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { 
@@ -20,7 +21,6 @@ import {
     getAddrById, 
     getCurrentAddrBalanceByCurrencyName,
     getCurrentAddrByCurrencyName,
-    getCurrentWallet,
     getLocalStorage, 
     openBasePage, 
     parseDate, 
@@ -226,8 +226,7 @@ export class CurrencyExchange extends Widget {
             fee
         });
         
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         let passwd;
         if (!dataCenter.getHash(wallet.walletId)) {
             passwd = await openBasePage('app-components-message-messageboxPrompt', {
@@ -296,8 +295,7 @@ export class CurrencyExchange extends Widget {
     // tslint:disable-next-line:max-line-length
     public async transfer(psw:string,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,currencyName:string,info ? :string) {
         // tslint:disable-next-line:no-this-assignment
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         let id: string;
         try {
             const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, currencyName);
@@ -409,8 +407,6 @@ async function doEthTransfer(wlt: EthWallet, acct1: string, acct2: string, gasPr
 // tslint:disable-next-line:only-arrow-functions
 async function doBtcTransfer(wlt: BTCWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
     , value: number, info: string) {
-    const addrs = getLocalStorage('addrs');
-    const addr = addrs.filter(v => v.addr === acct1)[0];
     const output = {
         toAddr: acct2,
         amount: value,
