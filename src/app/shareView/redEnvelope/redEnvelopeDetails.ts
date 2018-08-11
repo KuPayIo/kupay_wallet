@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { requestAsync } from '../../store/conMgr';
+import { requestAsync } from '../../net/pull';
 import { copyToClipboard, formatBalance,smallUnit2LargeUnit, smallUnit2LargeUnitString, timestampFormat } from '../utils/tools';
 interface Props {
     rid:string;// 红包id

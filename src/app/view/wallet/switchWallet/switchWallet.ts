@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { openAndGetRandom } from '../../../store/conMgr';
+import { openAndGetRandom } from '../../../net/pull';
 import { find, updateStore } from '../../../store/store';
 import { nickNameInterception } from '../../../utils/account';
 

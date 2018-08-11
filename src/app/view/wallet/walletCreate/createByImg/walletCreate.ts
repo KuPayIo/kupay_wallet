@@ -5,8 +5,7 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { generateByHash, sha3 } from '../../../../core/genmnemonic';
 import { GlobalWallet } from '../../../../core/globalWallet';
-import { openAndGetRandom } from '../../../../store/conMgr';
-import { dataCenter } from '../../../../store/dataCenter';
+import { openAndGetRandom } from '../../../../net/pull';
 import { find, updateStore } from '../../../../store/store';
 import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable

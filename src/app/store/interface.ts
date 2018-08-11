@@ -140,7 +140,9 @@ export interface Store {
     conRandom: string;// 连接随机数
     conUid: number;// 连接uid
     shapeShiftCoins: any;// shapeShift 支持的币种
-    readedPriAgr:boolean;// 隐私协议阅读与否
+    readedPriAgr: boolean;// 隐私协议阅读与否
+    loginState: LoginState;// 连接状态
+    cloudBalance: Map<CurrencyType, number>;// 云端账户余额
     miningTotal:MiningTotal;// 挖矿汇总信息
     miningHistory:MiningHistory;// 挖矿历史记录
 }

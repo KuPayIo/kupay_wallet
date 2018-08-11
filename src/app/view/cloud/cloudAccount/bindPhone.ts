@@ -1,16 +1,15 @@
 /**
- * 云端账号首页
+ * 云端绑定手机
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { regPhone, sendCode } from '../../../store/conMgr';
-import { dataCenter } from '../../../store/dataCenter';
-import { formatBalanceValue, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { getLocalStorage, setLocalStorage } from '../../../utils/tools';
 
 interface Props {
     ktBalance: number;
 }
-export class CloudAccount extends Widget {
+export class BindPhone extends Widget {
     public ok: () => void;
     constructor() {
         super();
