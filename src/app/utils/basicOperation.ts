@@ -2,7 +2,7 @@
  * 基础操作
  */
 import { GlobalWallet } from '../core/globalWallet';
-import { openAndGetRandom } from '../store/conMgr';
+import { openAndGetRandom } from '../net/pull';
 import { find, updateStore } from '../store/store';
 import { Addr, Wallet } from '../view/interface';
 import { getAvatarRandom } from './account';

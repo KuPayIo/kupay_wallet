@@ -3,15 +3,15 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { cloudAccount } from '../../../store/cloudAccount';
+import { getAllBalance } from '../../../net/pull';
 import { CurrencyType, RedEnvelopeType, sendRedEnvlope, sharePerUrl } from '../../../store/conMgr';
-import { register, unregister } from '../../../store/store';
+import { find, register, unregister } from '../../../store/store';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
 import { doErrorShow } from '../../../utils/toolMessages';
-import { getByteLen , openBasePage, removeLocalStorage } from '../../../utils/tools';
+import { getByteLen, openBasePage, removeLocalStorage } from '../../../utils/tools';
 
 export class SendRedEnvelope extends Widget {
-    public ok:() => void;
+    public ok: () => void;
     public create() {
         super.create();
         this.init();
@@ -19,43 +19,43 @@ export class SendRedEnvelope extends Widget {
 
     public init() {
         this.state = {
-            itype:0,// 0 等额红包  1 拼手气红包
-            balance:0,
-            currencyName:redEnvelopeSupportCurrency[0],
-            singleAmount:'',
-            redEnvelopeNumber:0,
-            totalAmount:'',
-            leaveMessage:'',
-            lmPlaceHolder:'恭喜发财  万事如意',
-            leaveMessageMaxLen:20
+            itype: 0,// 0 等额红包  1 拼手气红包
+            balance: 0,
+            currencyName: redEnvelopeSupportCurrency[0],
+            singleAmount: '',
+            redEnvelopeNumber: 0,
+            totalAmount: '',
+            leaveMessage: '',
+            lmPlaceHolder: '恭喜发财  万事如意',
+            leaveMessageMaxLen: 20
         };
         this.updateBalance();
-        register('cloudBalance',cloudBalance => {
+        register('cloudBalance', cloudBalance => {
             this.updateBalance();
         });
     }
     public destroy() {
-        unregister('cloudBalance',null);
+        unregister('cloudBalance', null);
 
         return super.destroy();
     }
     public backPrePage() {
         this.ok && this.ok();
     }
-    
+
     // 获取余额
     public updateBalance() {
-        this.state.balance = cloudAccount.cloudBalance[this.state.currencyName];
+        this.state.balance = find('cloudBalance', CurrencyType[this.state.currencyName]) || 0;
         this.paint();
     }
     // 单个金额改变
-    public singleAmountInputChange(e:any) {
+    public singleAmountInputChange(e: any) {
         this.state.singleAmount = e.value;
         this.state.totalAmount = String(Number(e.value) * this.state.redEnvelopeNumber);
         this.paint();
     }
     // 红包个数改变
-    public redEnvelopeNumberChange(e:any) {
+    public redEnvelopeNumberChange(e: any) {
         const num = Number(e.value);
         this.state.redEnvelopeNumber = num;
         if (this.state.itype === 0) {
@@ -64,7 +64,7 @@ export class SendRedEnvelope extends Widget {
         this.paint();
     }
     // 总金额改变
-    public totalAmountInputChange(e:any) {
+    public totalAmountInputChange(e: any) {
         this.state.totalAmount = e.value;
         this.paint();
     }
@@ -76,7 +76,7 @@ export class SendRedEnvelope extends Widget {
         this.state.totalAmount = '';
         this.paint();
     }
-    public leaveMessageChange(e:any) {
+    public leaveMessageChange(e: any) {
         this.state.leaveMessage = e.value;
         this.paint();
     }
@@ -84,33 +84,33 @@ export class SendRedEnvelope extends Widget {
     // 发送
     public async sendRedEnvelopeClick() {
         if (this.state.itype === 0 && Number(this.state.singleAmount) <= 0) {
-            popNew('app-components-message-message',{ itype:'error',content:'请输入要发送的单个红包金额',center:true });
+            popNew('app-components-message-message', { itype: 'error', content: '请输入要发送的单个红包金额', center: true });
 
             return;
         }
         if (this.state.itype !== 0 && Number(this.state.totalAmount) <= 0) {
-            popNew('app-components-message-message',{ itype:'error',content:'请输入要发送的红包总金额',center:true });
+            popNew('app-components-message-message', { itype: 'error', content: '请输入要发送的红包总金额', center: true });
 
             return;
         }
         if (this.state.redEnvelopeNumber <= 0) {
-            popNew('app-components-message-message',{ itype:'error',content:'请输入要发送红包数量',center:true });
+            popNew('app-components-message-message', { itype: 'error', content: '请输入要发送红包数量', center: true });
 
             return;
         }
         if (Number(this.state.totalAmount) > this.state.balance) {
-            popNew('app-components-message-message',{ itype:'error',content:'余额不足',center:true });
+            popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });
 
             return;
         }
         if (getByteLen(this.state.leaveMessage) > this.state.leaveMessageMaxLen * 2) {
-            popNew('app-components-message-message',{ itype:'error',content:`留言最多${this.state.leaveMessageMaxLen}个字`,center:true });
+            popNew('app-components-message-message', { itype: 'error', content: `留言最多${this.state.leaveMessageMaxLen}个字`, center: true });
             this.state.leaveMessage = '';
             this.paint();
 
             return;
         }
-        const close = popNew('pi-components-loading-loading',{ text:'加载中...' });
+        const close = popNew('pi-components-loading-loading', { text: '加载中...' });
         const lm = this.state.leaveMessage || this.state.lmPlaceHolder;
         const rtype = this.state.itype;
         const ctype = Number(CurrencyType[this.state.currencyName]);
@@ -118,21 +118,21 @@ export class SendRedEnvelope extends Widget {
         const redEnvelopeNumber = this.state.redEnvelopeNumber;
         let res;
         try {
-            res = await sendRedEnvlope(rtype,ctype,totalAmount,redEnvelopeNumber,lm);
+            res = await sendRedEnvlope(rtype, ctype, totalAmount, redEnvelopeNumber, lm);
         } catch (err) {
             doErrorShow(err);
-            
+
             return;
         } finally {
             close.callback(close.widget);
         }
-        
+
         if (res.result === 1) {
-            popNew('app-view-redEnvelope-send-shareRedEnvelope',{
-                rid:res.value,
-                rtype:this.state.itype,
-                leaveMessage:this.state.leaveMessage || this.state.lmPlaceHolder,
-                currencyName:this.state.currencyName
+            popNew('app-view-redEnvelope-send-shareRedEnvelope', {
+                rid: res.value,
+                rtype: this.state.itype,
+                leaveMessage: this.state.leaveMessage || this.state.lmPlaceHolder,
+                currencyName: this.state.currencyName
             });
             this.state.singleAmount = '';
             this.state.redEnvelopeNumber = 0;
@@ -140,31 +140,31 @@ export class SendRedEnvelope extends Widget {
             this.state.leaveMessage = '';
             this.paint();
             removeLocalStorage('sendRedEnvelopeHistoryRecord');
-            cloudAccount.updateBalance();
+            getAllBalance();
             if (this.state.itype === 0) {
                 // tslint:disable-next-line:max-line-length
-                console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(lm)}`);
+                console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(lm)}`);
             } else {
                 // tslint:disable-next-line:max-line-length
-                console.log('url',`${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(lm)}`);
+                console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(lm)}`);
             }
-            
+
         } else {
-            popNew('app-components-message-message',{ itype:'error',content:'出错啦,请重试',center:true });
+            popNew('app-components-message-message', { itype: 'error', content: '出错啦,请重试', center: true });
         }
-        
+
     }
-    
+
     // 红包记录
     public redEnvelopeRecordsClick() {
         this.inputBlur();
         popNew('app-view-redEnvelope-send-redEnvelopeRecord');
-        
+
     }
     // 选择要发红包的货币
     public async chooseCurrencyClick() {
         // tslint:disable-next-line:max-line-length
-        const index = await openBasePage('app-components-chooseCurrency-chooseCurrency',{ currencyList:redEnvelopeSupportCurrency,balance:cloudAccount.cloudBalance });
+        const index = await openBasePage('app-components-chooseCurrency-chooseCurrency', { currencyList: redEnvelopeSupportCurrency });
         this.state.currencyName = redEnvelopeSupportCurrency[index];
         this.updateBalance();
         this.paint();

@@ -3,9 +3,9 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { cloudAccount } from '../../../store/cloudAccount';
+import { getAllBalance, getData, inputInviteCdKey, setData } from '../../../net/pull';
 import {
-    convertRedBag, CurrencyType, CurrencyTypeReverse, getData, inputInviteCdKey, queryRedBagDesc, RedEnvelopeType, setData
+    convertRedBag, CurrencyType, CurrencyTypeReverse, queryRedBagDesc, RedEnvelopeType
 } from '../../../store/conMgr';
 import { showError } from '../../../utils/toolMessages';
 import { eth2Wei, removeLocalStorage, smallUnit2LargeUnitString } from '../../../utils/tools';
@@ -49,15 +49,15 @@ export class ConvertRedEnvelope extends Widget {
                 return;
             }
             removeLocalStorage('convertRedEnvelopeHistoryRecord');
-            cloudAccount.updateBalance();
+            getAllBalance();
             const r: any = await this.queryDesc(code);
 
             const redEnvelope = {
                 leaveMessage: r.value,
                 ctype: res.value[0],
-                amount:smallUnit2LargeUnitString(CurrencyTypeReverse[res.value[0]], res.value[1]) 
+                amount: smallUnit2LargeUnitString(CurrencyTypeReverse[res.value[0]], res.value[1])
             };
-            popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope,rtype:code.slice(0,2) });
+            popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope, rtype: code.slice(0, 2) });
         } catch (error) {
             console.log(error);
         }

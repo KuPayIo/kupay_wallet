@@ -593,6 +593,8 @@ export const urlParams = (url: string, key: string) => {
  * @param banlance 金额
  */
 export const formatBalance = (banlance: number) => {
+    if (!banlance) return 0;
+
     return Number(banlance.toFixed(6));
 };
 

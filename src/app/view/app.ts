@@ -3,8 +3,7 @@
  */
 import { SendChatMessage } from '../../pi/browser/sendMessage';
 import { Widget } from '../../pi/widget/widget';
-import { getProxy } from '../net/pull';
-import { doChat } from '../store/conMgr';
+import { doChat, getProxy } from '../net/pull';
 export class App extends Widget {
     public old: any = {};
     public create() {
@@ -71,9 +70,6 @@ export class App extends Widget {
         if (this.state.isActive === index) return;
         // 点击的是聊天则调用接口打开聊天，不进行组件切换
         if (this.state.tabBarList[index].name === 'chat') {
-            // todo 测试代码，需要移除
-            // await doChat();
-
             this.setProxy().then(this.sendMessage);
 
             return;
@@ -103,7 +99,7 @@ export class App extends Widget {
      */
     public async sendMessage() {
         // todo 进入聊天界面时，标记聊天任务完成
-        await doChat();
+        doChat();
 
         const chat = new SendChatMessage();
         chat.init();
