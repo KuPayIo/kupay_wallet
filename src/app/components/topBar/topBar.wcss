@@ -1,5 +1,8 @@
-.ga-top-banner{
+.outer{
     background-color: #fff;
+}
+.ga-top-banner{
+    
     width: 100%;
     height: 100px;
     display: flex;
