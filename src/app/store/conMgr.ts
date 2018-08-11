@@ -75,24 +75,6 @@ export const getDividend = async () => {
 };
 
 /**
- * 获取挖矿汇总信息
- */
-export const getMining = async () => {
-    const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
- * 获取挖矿历史记录
- */
-export const getMiningHistory = async () => {
-    const msg = { type: 'wallet/cloud@get_pool_detail', param: {} };
-
-    return requestAsync(msg);
-};
-
-/**
  * 获取邀请红包码
  */
 export const getInviteCode = async () => {

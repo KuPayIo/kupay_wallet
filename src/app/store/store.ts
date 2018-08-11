@@ -124,22 +124,26 @@ const handlerMap: HandlerMap = new HandlerMap();
 
 // tslint:disable-next-line:no-object-literal-type-assertion
 const store = <Store>{
-    walletList: <Wallet[]>[],// 钱包数据
-    curWallet: <Wallet>null,// 当前钱包
-    addrs: <Addr[]>[],// 地址数据
-    transactions: <TransactionRecord[]>[],// 交易记录
-    exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
-    currencyList: <CurrencyInfo[]>[],// 货币信息列表
+    // 基础数据
     hashMap: new Map<string, string>(),// 输入密码后hash缓存
     salt: '',// 盐--加密时使用
     conUser: '',// 连接用户
     conUserPublicKey: '',// 连接用户公钥
     conRandom: '',// 连接随机数
     conUid: 0,// 连接uid
-    shapeShiftCoins: <any>[],// shapeShift 支持的币种
     readedPriAgr: false, // 是否阅读隐私协议
     loginState: LoginState.init,// 连接状态
+    // 本地钱包
+    walletList: <Wallet[]>[],// 钱包数据     
+    curWallet: <Wallet>null,// 当前钱包
+    addrs: <Addr[]>[],// 地址数据
+    transactions: <TransactionRecord[]>[],// 交易记录
+    exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
+    currencyList: <CurrencyInfo[]>[],// 货币信息列表
+    shapeShiftCoins: <any>[],// shapeShift 支持的币种
+    // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
     miningTotal:<MiningTotal>null, // 挖矿汇总信息
     miningHistory:<MiningHistory>null // 挖矿历史记录
+
 };

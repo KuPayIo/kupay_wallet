@@ -166,24 +166,27 @@ export const getDividend = async () => {
  * 获取挖矿汇总信息
  */
 export const getMining = async () => {
-    const data = await requestAsync({ type: 'wallet/cloud@get_mine_total', param: {} });
-    const totalNum = kpt2kt(data.mine_total);
-    const holdNum = kpt2kt(data.mines);
-    const today = kpt2kt(data.today);
-    let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
-    if (nowNum <= 0) {
-        nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
-    } else if ((totalNum - holdNum) > 100) {
-        nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
-    } else {
-        nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
-    }
+    const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
+    requestAsync(msg).then(data => {
+        console.log('miningTotal',data);
+        const totalNum = kpt2kt(data.mine_total);
+        const holdNum = kpt2kt(data.mines);
+        const today = kpt2kt(data.today);
+        let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
+        if (nowNum <= 0) {
+            nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
+        } else if ((totalNum - holdNum) > 100) {
+            nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 :nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
+        } else {
+            nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
+        }
+        const mining = null;
+        mining.totalNum = totalNum;
+        mining.thisNum = nowNum;
+        mining.holdNum = holdNum; 
+        updateStore('miningTotal',mining);
+    });
     
-    const mining = find('miningTotal');
-    mining.totalNum = totalNum;
-    mining.thisNum = nowNum;
-    mining.holdNum = holdNum; 
-
     // const mineRank = await getMineRank(100);
     // mining.mineRank = mineRank.me;
 };

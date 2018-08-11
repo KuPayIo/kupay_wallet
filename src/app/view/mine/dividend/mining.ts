@@ -64,7 +64,7 @@ export class Dividend extends Widget {
     /**
      * 获取更新数据
      */
-    public async initData() {
+    public initData() {
         const data = find('miningTotal');
         this.state.totalNum = data.totalNum;
         this.state.thisNum = data.thisNum;
