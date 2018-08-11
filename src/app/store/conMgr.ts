@@ -5,16 +5,6 @@ import { requestAsync, requestLogined } from '../net/pull';
 import { largeUnit2SmallUnitString } from '../utils/tools';
 import { dataCenter } from './dataCenter';
 
-// 枚举登录状态
-export enum LoginState {
-    init = 0,
-    logining,
-    logined,
-    relogining,
-    logouting,
-    logouted,
-    logerror
-}
 // 货币类型
 export enum CurrencyType {
     KT = 100,
