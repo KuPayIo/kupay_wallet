@@ -105,6 +105,27 @@ export interface LockScreen {
     locked?:boolean;// 是否3次解锁机会都用完
 }
 
+// 任务id记录
+export enum TaskSid {
+    createWlt = 1001,// 创建钱包
+    firstChargeEth,// 首次转入
+    bindPhone,// 注册手机
+    chargeEth,// 存币
+    inviteFriends,// 邀请真实好友
+    buyFinancial = 1007,// 购买理财产品
+    transfer,// 交易奖励
+    bonus,// 分红
+    mines,// 挖矿
+    chat,// 聊天
+    redEnvelope = 'red_bag_port' // 红包
+}
+
+export interface AccountDetail {
+    iType: TaskSid;// 类型
+    amount: number;// 数据
+    behavior: string;// 标签
+    time: number;// 时间
+}
 /**
  * 发送红包记录
  */
@@ -154,6 +175,7 @@ export interface Store {
     conUid: number;// 连接uid
     readedPriAgr: boolean;// 隐私协议阅读与否
     loginState: LoginState;// 连接状态
+    lockScreen:LockScreen;// 锁屏相关
     // 本地钱包
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包
@@ -164,8 +186,7 @@ export interface Store {
     shapeShiftCoins: any;// shapeShift 支持的币种
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
-    accountDetail: Map<CurrencyType, number>;// 云端账户详情
-    lockScreen:LockScreen;// 锁屏相关
+    accountDetail: Map<CurrencyType, AccountDetail[]>;// 云端账户详情
     sHisRec:SHisRec;// 发送红包记录
     cHisRec:CHisRec;// 兑换红包记录
 

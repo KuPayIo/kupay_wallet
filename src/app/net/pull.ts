@@ -2,12 +2,14 @@
  * 主动向后端通讯
  */
 import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
+import { popNew } from '../../pi/ui/root';
 import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { CurrencyType, CurrencyTypeReverse, LoginState } from '../store/interface';
-import { find, updateStore } from '../store/store';
+import { parseCloudAccountDetail, parseCloudBalance } from '../store/parse';
+import { find, getBorn, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
 import { doErrorShow, showError } from '../utils/toolMessages';
 import { kpt2kt, largeUnit2SmallUnit, largeUnit2SmallUnitString, openBasePage, smallUnit2LargeUnit, wei2Eth } from '../utils/tools';
@@ -134,12 +136,7 @@ export const getCloudBalance = () => {
     const msg = { type: 'wallet/account@get', param: { list: `[${CurrencyType.KT}, ${CurrencyType.ETH}]` } };
     requestAsync(msg).then(balanceInfo => {
         console.log('balanceInfo', balanceInfo);
-        const m = new Map<CurrencyType, number>();
-        for (let i = 0; i < balanceInfo.value.length; i++) {
-            const each = balanceInfo.value[i];
-            m.set(each[0], smallUnit2LargeUnit(CurrencyTypeReverse[each[0]], each[1]));
-        }
-        updateStore('cloudBalance', m);
+        updateStore('cloudBalance', parseCloudBalance(balanceInfo));
     });
 };
 
@@ -470,10 +467,13 @@ export const doChat = async () => {
 /**
  * 获取指定货币流水
  */
-export const getAccountDetail = async (coin) => {
+export const getAccountDetail = async (coin: CurrencyType) => {
     const msg = { type: 'wallet/account@get_detail', param: { coin } };
-
-    return requestAsync(msg);
+    requestAsync(msg).then(r => {
+        if (!r.value || r.value.length <= 0) return;
+        const detail = parseCloudAccountDetail(coin, r.value);
+        updateStore('accountDetail', getBorn('accountDetail').set(coin, detail));
+    });
 };
 
 /**
@@ -509,7 +509,14 @@ export const sendCode = async (phone: number, num: number) => {
 export const regPhone = async (phone: number, code: number) => {
     const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
 
-    return requestAsync(msg);
+    return requestAsync(msg).catch(error => {
+        console.log(error);
+        if (error.type === -300) {
+            popNew('app-components-message-message', { itype: 'error', center: true, content: `验证码失效，请重新获取` });
+        } else {
+            popNew('app-components-message-message', { itype: 'error', center: true, content: `错误${error.type}` });
+        }
+    });
 };
 
 /**
