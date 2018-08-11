@@ -84,37 +84,6 @@ export const getMiningHistory = async () => {
 };
 
 /**
- * 发送红包
- * @param rtype 红包类型
- * @param ctype 货币类型
- * @param totalAmount 总金额
- * @param count 红包数量
- * @param lm 留言
- */
-export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
-    const msg = {
-        type: 'emit_red_bag',
-        param: {
-            type: rtype,
-            priceType: ctype,
-            totalPrice: largeUnit2SmallUnitString(CurrencyTypeReverse[ctype], totalAmount),
-            count: redEnvelopeNumber,
-            desc: lm
-        }
-    };
-
-    return requestLogined(msg);
-};
-/**
- * 兑换红包
- */
-export const convertRedBag = async (cid) => {
-    const msg = { type: 'convert_red_bag', param: { cid: cid } };
-
-    return requestLogined(msg);
-};
-
-/**
  * 获取红包留言
  * @param cid 兑换码
  */
@@ -123,71 +92,6 @@ export const queryRedBagDesc = async (cid: string) => {
         type: 'query_red_bag_desc',
         param: {
             cid
-        }
-    };
-
-    return requestAsync(msg);
-};
-
-/**
- * 查询发送红包记录
- */
-export const querySendRedEnvelopeRecord = async (start?: string) => {
-    let msg;
-    if (start) {
-        msg = {
-            type: 'query_emit_log',
-            param: {
-                start,
-                count: recordNumber
-            }
-        };
-    } else {
-        msg = {
-            type: 'query_emit_log',
-            param: {
-                count: recordNumber
-            }
-        };
-    }
-
-    return requestAsync(msg);
-};
-
-/**
- * 查询红包兑换记录
- */
-export const queryConvertLog = async (start) => {
-    let msg;
-    if (start) {
-        msg = {
-            type: 'query_convert_log',
-            param: {
-                start,
-                count: recordNumber
-            }
-        };
-    } else {
-        msg = {
-            type: 'query_convert_log',
-            param: {
-                count: recordNumber
-            }
-        };
-    }
-
-    return requestAsync(msg);
-};
-
-/**
- * 查询某个红包兑换详情
- */
-export const queryDetailLog = async (rid: string) => {
-    const msg = {
-        type: 'query_detail_log',
-        param: {
-            uid: dataCenter.getConUid(),
-            rid
         }
     };
 

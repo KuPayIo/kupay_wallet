@@ -95,7 +95,9 @@ export interface TransactionRecord {
     inputs?: string[];// 输入地址列表
     outputs?: string[];// 输出地址列表
 }
-
+/**
+ * 锁屏密码相关
+ */
 export interface LockScreen {
     psw?:string;// 锁屏密码
     open?:boolean;// 锁屏功能是否打开
@@ -103,6 +105,45 @@ export interface LockScreen {
     locked?:boolean;// 是否3次解锁机会都用完
 }
 
+/**
+ * 发送红包记录
+ */
+export interface SHisRec {
+    rid:string;// 红包id
+    rtype:number;// 红包类型
+    ctype:number;// 币种
+    ctypeShow:string;
+    amount:number;// 金额
+    time:number;// 时间
+    timeShow:string;
+    codes:string[];// 兑换码
+}
+/**
+ * 兑换红包记录
+ */
+export interface CHisRec {
+    suid: number;// 发送者uid
+    rid: number;// 红包id
+    rtype: number;// 红包类型 0-普通红包，1-拼手气红包，99-邀请红包
+    rtypeShow:string;
+    ctype: number;// 币种
+    ctypeShow:string;
+    amount: number;// 金额
+    time: number;// 时间
+    timeShow:string;
+}
+/**
+ * 红包详情
+ */
+export interface RedBag {
+    suid:number;// 发送者uid
+    cuid:number; // 兑换者uid
+    rtype:number;// 红包类型
+    ctype:number;// 货币类型
+    amount:number;// 金额
+    time:number;// 时间
+    timeShow:string;
+}
 export interface Store {
     // 基础数据
     hashMap: Map<string, string>;// 输入密码后hash缓存
@@ -125,5 +166,7 @@ export interface Store {
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
     accountDetail: Map<CurrencyType, number>;// 云端账户详情
     lockScreen:LockScreen;// 锁屏相关
+    sHisRec:SHisRec;// 发送红包记录
+    cHisRec:CHisRec;// 兑换红包记录
 
 }

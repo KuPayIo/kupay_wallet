@@ -1,24 +1,22 @@
 /**
  * red-envelope record
  */
+// ============================== 导入
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyType, CurrencyTypeReverse, getData, queryConvertLog } from '../../../store/conMgr';
+import { getData, queryConvertLog } from '../../../net/pull';
+import { CurrencyType, CurrencyTypeReverse } from '../../../store/conMgr';
+import { CHisRec } from '../../../store/interface';
+import { find, updateStore } from '../../../store/store';
 import { recordNumber } from '../../../utils/constants';
-import { showError } from '../../../utils/toolMessages';
 import { getFirstEthAddr, getLocalStorage, 
     setLocalStorage, smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';
 
-interface RecordShow {
-    uid: number;// 用户id
-    rid: number;// 红包id
-    rtype: number;// 红包类型 0-普通红包，1-拼手气红包，99-邀请红包
-    rtypeShow:string;
-    ctype: number;// 币种
-    ctypeShow:string;
-    amount: number;// 金额
-    time: number;// 时间
-    timeShow:string;
-}
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class RedEnvelopeRecord extends Widget {
     public ok: () => void;
@@ -96,11 +94,11 @@ export class RedEnvelopeRecord extends Widget {
 
     public loadMore() {
         const firstEthAddr = getFirstEthAddr();
-        const historyRecord = getLocalStorage('convertRedEnvelopeHistoryRecord');
+        const historyRecord = find('cHisRec');
         const curHistoryRecord = historyRecord && historyRecord[firstEthAddr];
         if (curHistoryRecord) {
             const hList = curHistoryRecord.list;
-            if (hList.length > this.state.recordList.length) {
+            if (hList && hList.length > this.state.recordList.length) {
                 this.loadMoreFromLocal();
             } else {
                 this.loadMoreFromServer(this.state.start);
@@ -113,7 +111,7 @@ export class RedEnvelopeRecord extends Widget {
     public loadMoreFromLocal() {
         console.log('load more from local');
         const firstEthAddr = getFirstEthAddr();
-        const historyRecord = getLocalStorage('convertRedEnvelopeHistoryRecord');
+        const historyRecord = find('cHisRec');
         const curHistoryRecord = historyRecord[firstEthAddr];
         const hList = curHistoryRecord.list;
         const start = this.state.recordList.length;
@@ -128,23 +126,19 @@ export class RedEnvelopeRecord extends Widget {
     // 向服务器请求更多记录
     public async loadMoreFromServer(start?:string) {
         console.log('load more from server');
-        const res = await queryConvertLog(start);
-        if (res.result !== 1) {
-            showError(res.result);
-
-            return;
-        }
+        const value = await queryConvertLog(start);
+        if (!value) return;
         const firstEthAddr = getFirstEthAddr();
-        const historyRecord = getLocalStorage('convertRedEnvelopeHistoryRecord') || {};
-        const rList:RecordShow[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
-        const convertNumber = res.value[0];
-        const startNext = res.value[1];
-        const recordList:RecordShow[] = [];
-        const r = res.value[2];
+        const historyRecord = find('cHisRec');
+        const rList:CHisRec[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
+        const convertNumber = value[0];
+        const startNext = value[1];
+        const recordList:CHisRec[] = [];
+        const r = value[2];
         for (let i = 0; i < r.length;i++) {
             const currencyName = CurrencyTypeReverse[r[i][3]];
-            const record: RecordShow = {
-                uid: r[i][0],
+            const record: CHisRec = {
+                suid: r[i][0],
                 rid: r[i][1],
                 rtype: r[i][2],
                 rtypeShow: parseRtype(r[i][2]),
@@ -167,7 +161,7 @@ export class RedEnvelopeRecord extends Widget {
             list:rList.concat(recordList)
         };
         if (convertNumber > 0) {
-            setLocalStorage('convertRedEnvelopeHistoryRecord',historyRecord);
+            updateStore('cHisRec',historyRecord);
         }
        
         this.innerPaint();

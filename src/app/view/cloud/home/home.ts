@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAllBalance, getInviteCode, getInviteCodeDetail } from '../../../net/pull';
+import { getCloudBalance, getInviteCode, getInviteCodeDetail } from '../../../net/pull';
 import { CurrencyType } from '../../../shareView/store/conMgr';
 import { getAward, getDividend, getMining } from '../../../store/conMgr';
 import { find, getBorn, register, unregister } from '../../../store/store';
@@ -102,7 +102,7 @@ export class Home extends Widget {
 
             return;
         }
-        getAllBalance();
+        getCloudBalance();
         popNew('app-components-message-message', { itype: 'outer', center: true, content: '挖矿成功' });
     }
     /**

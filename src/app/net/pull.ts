@@ -9,8 +9,8 @@ import { dataCenter } from '../store/dataCenter';
 import { CurrencyType, CurrencyTypeReverse, LoginState } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
-import { showError } from '../utils/toolMessages';
-import { kpt2kt, largeUnit2SmallUnit, openBasePage, smallUnit2LargeUnit, wei2Eth } from '../utils/tools';
+import { doErrorShow, showError } from '../utils/toolMessages';
+import { kpt2kt, largeUnit2SmallUnit, largeUnit2SmallUnitString, openBasePage, smallUnit2LargeUnit, wei2Eth } from '../utils/tools';
 
 // export const conIp = '47.106.176.185';
 export const conIp = '127.0.0.1';
@@ -101,7 +101,7 @@ export const openAndGetRandom = async () => {
                 } else if (resp.result !== undefined) {
                     dataCenter.setConRandom(resp.rand);
                     dataCenter.setConUid(resp.uid);
-                    getAllBalance();
+                    getCloudBalance();
                     resolve(resp);
                 }
             });
@@ -118,7 +118,7 @@ export const openAndGetRandom = async () => {
                 } else if (resp.result !== undefined) {
                     dataCenter.setConRandom(resp.rand);
                     dataCenter.setConUid(resp.uid);
-                    getAllBalance();
+                    getCloudBalance();
                     resolve(resp);
                 }
             });
@@ -130,14 +130,14 @@ export const openAndGetRandom = async () => {
 /**
  * 获取所有的货币余额
  */
-export const getAllBalance = () => {
+export const getCloudBalance = () => {
     const msg = { type: 'wallet/account@get', param: { list: `[${CurrencyType.KT}, ${CurrencyType.ETH}]` } };
     requestAsync(msg).then(balanceInfo => {
         console.log('balanceInfo', balanceInfo);
         const m = new Map<CurrencyType, number>();
         for (let i = 0; i < balanceInfo.value.length; i++) {
             const each = balanceInfo.value[i];
-            m.set(CurrencyType.KT, smallUnit2LargeUnit(CurrencyTypeReverse[each[0]], each[1]));
+            m.set(each[0], smallUnit2LargeUnit(CurrencyTypeReverse[each[0]], each[1]));
         }
         updateStore('cloudBalance', m);
     });
@@ -180,6 +180,7 @@ export const getMiningHistory = async () => {
     return requestAsync(msg);
 };
 
+// ==========================================红包start
 /**
  * 获取邀请红包码
  */
@@ -194,8 +195,19 @@ export const getInviteCode = async () => {
  */
 export const inputInviteCdKey = async (code) => {
     const msg = { type: 'wallet/cloud@input_cd_key', param: { code: code } };
+    try {
+        await requestLogined(msg);
 
-    return requestLogined(msg);
+        return [];
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return;
+    }
 };
 
 /**
@@ -221,13 +233,26 @@ export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: 
         param: {
             type: rtype,
             priceType: ctype,
-            totalPrice: largeUnit2SmallUnit(CurrencyTypeReverse[ctype], totalAmount),
+            totalPrice: largeUnit2SmallUnitString(CurrencyTypeReverse[ctype], totalAmount),
             count: redEnvelopeNumber,
             desc: lm
         }
     };
 
-    return requestLogined(msg);
+    try {
+        const res = await requestLogined(msg);
+
+        return res.value;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return;
+    }
+    
 };
 /**
  * 兑换红包
@@ -235,7 +260,19 @@ export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: 
 export const convertRedBag = async (cid) => {
     const msg = { type: 'convert_red_bag', param: { cid: cid } };
 
-    return requestLogined(msg);
+    try {
+        const res = await requestLogined(msg);
+        
+        return res.value;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return;
+    }
 };
 
 /**
@@ -275,7 +312,19 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
         };
     }
 
-    return requestAsync(msg);
+    try {
+        const res = await requestAsync(msg);
+
+        return res.value;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return;
+    }
 };
 
 /**
@@ -300,19 +349,49 @@ export const queryConvertLog = async (start) => {
         };
     }
 
-    return requestAsync(msg);
+    try {
+        const res = await requestAsync(msg);
+
+        return res.value;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return;
+    }
 };
 
-export const queryDetailLog = async () => {
+/**
+ * 查询某个红包兑换详情
+ */
+export const queryDetailLog = async (rid: string) => {
     const msg = {
         type: 'query_detail_log',
         param: {
-            cids: 'J8VIXY,LQRNZV,27KP71'
+            uid: dataCenter.getConUid(),
+            rid
         }
     };
 
-    return requestAsync(msg);
+    try {
+        const res = await requestAsync(msg);
+
+        return res.value;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return;
+    }
 };
+
+// ==========================================红包end
 
 /**
  * 挖矿
