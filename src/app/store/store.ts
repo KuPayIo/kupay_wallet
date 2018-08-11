@@ -10,7 +10,7 @@ import { config } from '../core/config';
 // tslint:disable-next-line:max-line-length
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy } from '../utils/tools';
-import { Addr, CurrencyInfo, CurrencyType, LoginState, Store, TransactionRecord, Wallet } from './interface';
+import { AccountDetail, Addr, CurrencyInfo, CurrencyType, LoginState, Store, TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -104,7 +104,7 @@ export const initStore = () => {
 
 // tslint:disable-next-line:max-line-length
 type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' |
-    'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState';
+    'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState' | 'accountDetail';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -143,5 +143,5 @@ const store = <Store>{
     shapeShiftCoins: <any>[],// shapeShift 支持的币种
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
-    accountDetail: new Map<CurrencyType, number>()// 云端账户详情
+    accountDetail: new Map<CurrencyType, AccountDetail[]>()// 云端账户详情
 };
