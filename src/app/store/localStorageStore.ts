@@ -10,6 +10,9 @@ import { register } from './store';
 // ===================================================== 本地
 
 // ===================================================== 立即执行
+const setLocalStorage = (key:string,data:any) => {
+    localStorage.setItem(key, JSON.stringify(data));
+};
 register('walletList', (wallets: Wallet[]) => {
     let locWallets = JSON.parse(localStorage.getItem('wallets'));
     if (!locWallets) locWallets = { curWalletId: '', salt: '', walletList: [] };
@@ -44,4 +47,9 @@ register('salt', (salt: string) => {
     if (!locWallets) locWallets = { curWalletId: '', salt: '', walletList: [] };
     locWallets.salt = salt;
     localStorage.setItem('wallets', JSON.stringify(locWallets));
+});
+
+// 注册是否已阅读隐私协议
+register('readedPriAgr',(readed:boolean) => {
+    setLocalStorage('readedPriAgr',readed);
 });

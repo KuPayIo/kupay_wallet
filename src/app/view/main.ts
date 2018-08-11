@@ -17,7 +17,7 @@ import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../store/dataCenter';
-import { initStore } from '../store/store';
+import { find, initStore } from '../store/store';
 import { getLocalStorage, setLocalStorage } from '../utils/tools';
 
 // ============================== 导出
@@ -56,7 +56,7 @@ export const run = (cb): void => {
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
 
     // popNew('app-view-application-home', {}); 
-    popNew('app-view-mine-dividend-dividend', {}); 
+    // popNew('app-view-mine-dividend-dividend', {}); 
     // popNew('app-view-mine-FAQ-FAQ', {}); 
     if (cb) cb();
     // test();
@@ -66,9 +66,8 @@ export const run = (cb): void => {
  * 界面入口
  */
 const popNewPage = () => {
-    const hasReadedPrivacyAgreement = getLocalStorage('hasReadedPrivacyAgreement');
-    console.log(hasReadedPrivacyAgreement);
-    if (hasReadedPrivacyAgreement) {
+    const readedPriAgr = find('readedPriAgr');
+    if (readedPriAgr) {
         popNew('app-view-app');
         if (ifNeedUnlockScreen()) {
             popNew('app-view-guidePages-unlockScreen');

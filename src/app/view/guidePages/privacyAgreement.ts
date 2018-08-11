@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { setLocalStorage } from '../../utils/tools';
+import { updateStore } from '../../store/store';
 
 export class PrivacyAgreement extends Widget {
     public ok: () => void;
@@ -40,7 +40,7 @@ KuPay建议您在使用本产品（以下简称“KuPay”）之前仔细阅读�
         if (!this.state.userProtocolReaded) {
             return;
         }
-        setLocalStorage('hasReadedPrivacyAgreement',true);
+        updateStore('readedPriAgr',true);
         popNew('app-view-guidePages-displayPage');
         this.ok && this.ok();
     }
