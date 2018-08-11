@@ -86,6 +86,8 @@ export const initStore = () => {
     store.salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
     // 从localStorage中的wallets中初始化curWallet
     store.curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
+    // 从localStorage中取readedPriAgr
+    store.readedPriAgr = findByLoc('readedPriAgr');
 
     // 初始化默认兑换汇率列表
     const rateJson = config.currentNetIsTest ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
@@ -101,12 +103,13 @@ export const initStore = () => {
 };
 
 // tslint:disable-next-line:max-line-length
-type KeyName = MapName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins';
+type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' | 
+'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
 // ============================================ 本地
-type LocKeyName = 'wallets' | 'addrs' | 'transactions';
+type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -133,6 +136,6 @@ const store = <Store>{
     conUserPublicKey: '',// 连接用户公钥
     conRandom: '',// 连接随机数
     conUid: 0,// 连接uid
-    shapeShiftCoins: <any>[]// shapeShift 支持的币种
-
+    shapeShiftCoins: <any>[],// shapeShift 支持的币种
+    readedPriAgr:false // 是否阅读隐私协议
 };

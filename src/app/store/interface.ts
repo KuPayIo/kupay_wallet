@@ -122,4 +122,5 @@ export interface Store {
     conRandom: string;// 连接随机数
     conUid: number;// 连接uid
     shapeShiftCoins: any;// shapeShift 支持的币种
+    readedPriAgr:boolean;// 隐私协议阅读与否
 }
