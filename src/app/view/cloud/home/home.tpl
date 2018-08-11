@@ -5,37 +5,23 @@
             <span w-class="growAccountName">
                 我的云账户
             </span>
-            <img src="../../../res/image/currency/KT.png" w-class="ktIcon" />
             <span w-class="ktBalance">
                 {{it1.ktBalance}}KT
             </span>
             <img src="../../../res/image/cloud_arow_right.png" />
         </div>
-        <div w-class="ethInfo">
-            <div w-class="ethHoldings" on-tap="ethHoldingsClicked">
-                <div>
-                    <img src="../../../res/image/cloud_bonus.png" w-class="bonusIcon" />
-                    <span w-class="ethText">
-                        当前持有（ETH）
-                    </span>
-                </div>
-                <div w-class="possession">
-                    {{it1.ethBalance}}
-                </div>
-            </div>
-            <span w-class="line"></span>
-            <div w-class="totalBonus" on-tap="bonusClicked">
-                <div>
-                    <img src="../../../res/image/cloud_bonus.png" w-class="bonusIcon" />
-                    <span w-class="ethText">
-                        累计分红(ETH)
-                        <span w-class="fontArow">▶</span>
-                    </span>
-                </div>
-                <div w-class="possession">
-                    {{it1.bonus}}
-                </div>
-            </div>
+    </div>
+
+    <div w-class="myEthInfo">
+        <div w-class="myethTitle">
+                累计分红(ETH)
+                <img src="../../../res/image/cloud_arow_right2.png" w-class="arowR2"/>
+        </div>
+        <div w-class="myethBonusAmount">
+                0.9152
+        </div>
+        <div w-class="myethAmount">
+                持有 5,000.00 ETH
         </div>
     </div>
 

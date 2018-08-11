@@ -4,13 +4,13 @@
 }
 .headStatusBar{
     height:40px;
-    background: #FFFFFF;
+    background: #3574FA;
 }
 .accountInfo{
-    background: #FFFFFF;
+    background: #3574FA;
 }
 .ktInfo{
-    height:170px;
+    height:250px;
     padding-left:30px;
     padding-right:30px;
     border-bottom:1px solid #E5E5EE;
@@ -19,16 +19,18 @@
 }
 .growAccountName{
     flex-grow:1;
-    color:#111111;
-    font-size:36px;
+    color:#FFFFFF;
+    font-size:48px;
+    line-height: 67px;
 }
 .ktIcon{
     width:60px;
     height:60px;
 }
 .ktBalance{
-    color:#111111;
-    font-size:36px;
+    color:#FFF;
+    font-size:28px;
+    line-height: 40px;
     margin-left:15px;
     margin-right:10px; 
 }
@@ -192,4 +194,40 @@
 .canvasContainer{
     min-height: 326px;
     background: #FFFFFF;
+}
+.myEthInfo{
+    margin: 0 30px;
+    height: 230px;
+    background: #fff;
+    position: relative;
+    top: -40px;
+    box-shadow: 0 4px 30px 0 rgba(39,52,125,0.25);
+    border-radius: 12px;
+    padding-top:30px;
+    box-sizing: border-box; 
+}
+.myethTitle{
+    color: #666;
+    font-size: 26px;
+    line-height: 37px;
+    text-align: center;
+}
+.arowR2{
+    vertical-align: middle;
+    margin-left:10px; 
+}
+.myethBonusAmount{
+    color: #F17835;
+    font-size: 48px;
+    line-height: 67px;
+    text-align: center;
+    margin-top:10px;
+    margin-bottom: 30px; 
+}
+.myethAmount{
+    border-top: 1px solid #E5E5EE;
+    font-size: 26px;
+    line-height: 37px;
+    text-align: center;
+    padding-top:9px; 
 }

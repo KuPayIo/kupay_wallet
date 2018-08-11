@@ -13,8 +13,12 @@
        	导入imtoken钱包
        </div>
        <div w-class="botTips">
-       	<span w-class="botItem" style="border-right: 1px solid rgba(160,172,192,1);" on-tap="walletImportClicked">已有助记词</span>
-       	<span w-class="botItem" on-tap="importByKuPayClicked">冗余助记词</span>  
+           <span w-class="outer" on-tap="walletImportClicked">
+                <span w-class="botItem" style="border-right: 1px solid rgba(160,172,192,1);" >已有助记词</span>
+           </span>
+           <span w-class="outer" on-tap="importByKuPayClicked">
+                <span w-class="botItem" >冗余助记词</span>
+           </span>
        </div>
     </div>
 </div>

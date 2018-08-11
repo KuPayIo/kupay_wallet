@@ -31,7 +31,7 @@ export class Home extends Widget {
      */
     public ethHoldingsClicked() {
         // 跳转充值提现
-        // popNew('app-view-cloud-accountAssests-accountAssests',{ coinType:'ETH' });
+        popNew('app-view-cloud-accountAssests-accountAssests',{ coinType:'ETH' ,coinBalance:0 });
     }
 
     /**

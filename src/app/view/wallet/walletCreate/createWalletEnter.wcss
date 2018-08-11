@@ -52,4 +52,11 @@
 }
 .botItem{
 	padding: 0 10px;
+	margin-top:12px; 
+	display: inline-block;
+}
+.outer{
+	display: inline-block;
+	height: 70px;
+	overflow: hidden;
 }
