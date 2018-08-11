@@ -3,18 +3,14 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { base64ToArrayBuffer } from '../../../../pi/util/base64';
-import { drawImg } from '../../../../pi/util/canvas';
 import { Widget } from '../../../../pi/widget/widget';
-import { Cipher } from '../../../core/crypto/cipher';
 import { toMnemonic } from '../../../core/genmnemonic';
-import { GlobalWallet } from '../../../core/globalWallet';
 // tslint:disable-next-line:max-line-length
-import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
-import { ahash } from '../../../utils/ahash';
+import { getWalletPswStrength, pswEqualed, walletCountAvailable, walletPswAvailable } from '../../../utils/account';
 import { importWalletByMnemonic } from '../../../utils/basicOperation';
 import { lang } from '../../../utils/constants';
 import { restoreSecret } from '../../../utils/secretsBase';
-import { getLocalStorage, hexstrToU8Array, u8ArrayToHexstr } from '../../../utils/tools';
+import { hexstrToU8Array, u8ArrayToHexstr } from '../../../utils/tools';
 
 export class WalletImport extends Widget {
     public ok: () => void;

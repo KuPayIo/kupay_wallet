@@ -2,6 +2,7 @@
  * global wallet
  */
 import { dataCenter } from '../store/dataCenter';
+import { find } from '../store/store';
 import { btcNetwork, lang, strength } from '../utils/constants';
 import { calcHashValuePromise, getMnemonic, u8ArrayToHexstr } from '../utils/tools';
 import { Addr, CurrencyRecord } from '../view/interface';
@@ -71,8 +72,8 @@ export class GlobalWallet {
     /**
      * 通过助记词导入钱包
      */
-    public static async fromMnemonic(mnemonic: string, passwd: string, passphrase?: string): Promise<GlobalWallet> {
-        const hash = await calcHashValuePromise(passwd, dataCenter.salt, null);
+    public static async fromMnemonic(mnemonic: string, passwd: string, salt: string): Promise<GlobalWallet> {
+        const hash = await calcHashValuePromise(passwd, salt, null);
         const gwlt = new GlobalWallet();
 
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
@@ -98,8 +99,8 @@ export class GlobalWallet {
      * @param walletName  wallet name
      * @param passphrase passphrase
      */
-    public static async generate(passwd: string, walletName: string, passphrase?: string, vault?: Uint8Array) {
-        const hash = await calcHashValuePromise(passwd, dataCenter.salt, null);
+    public static async generate(passwd: string, walletName: string, salt: string, vault?: Uint8Array) {
+        const hash = await calcHashValuePromise(passwd, salt, null);
         const gwlt = new GlobalWallet();
         gwlt._nickName = walletName;
         vault = vault || generateRandomValues(strength);
@@ -281,9 +282,9 @@ export class GlobalWallet {
      * 修改密码
      */
     public async passwordChange(oldPsw: string, newPsw: string, walletId: string) {
-        // todo 这里需要处理修改密码
-        const oldHash = await calcHashValuePromise(oldPsw, dataCenter.salt, walletId);
-        const newHash = await calcHashValuePromise(newPsw, dataCenter.salt, null);
+        const salt = find('salt');
+        const oldHash = await calcHashValuePromise(oldPsw, salt, walletId);
+        const newHash = await calcHashValuePromise(newPsw, salt, null);
         // console.log('passwordChange hash', oldHash, this._vault, oldPsw, newHash, newPsw);
 
         const oldVault = cipher.decrypt(oldHash, this._vault);

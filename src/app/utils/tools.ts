@@ -19,14 +19,16 @@ import { lang, lockScreenSalt, supportCurrencyList } from './constants';
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
 };
+// 这需要移除
 export const setLocalStorage = (key: any, data: any, notified?: boolean) => {
     updateStore(key, data, notified);
 };
 
+// 这需要移除
 export const getLocalStorage = (key: any) => {
     return find(key);
 };
-
+// 这需要移除
 export const removeLocalStorage = (key: string) => {
     localStorage.removeItem(key);
 };
@@ -41,30 +43,14 @@ export const sleep = (delay) => {
         }
     }
 };
-export const getCurrentWallet = (wallets): Wallet => {
-    if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
-        return null;
-    }
-    for (let i = 0; i < wallets.walletList.length; i++) {
-        if (wallets.walletList[i].walletId === wallets.curWalletId) {
-            return wallets.walletList[i];
-        }
-    }
-
-    return null;
-};
 
 /**
  * 获取指定id的钱包
  */
 export const getWalletByWalletId = (wallets, walletId) => {
-    if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
-        return null;
-    }
-    for (let i = 0; i < wallets.walletList.length; i++) {
-        if (wallets.walletList[i].walletId === walletId) {
-            return wallets.walletList[i];
-        }
+    if (!(wallets && wallets.length > 0)) return null;
+    for (let i = 0; i < wallets.length; i++) {
+        if (wallets[i].walletId === walletId) return wallets[i];
     }
 
     return null;
@@ -74,37 +60,14 @@ export const getWalletByWalletId = (wallets, walletId) => {
  * 获取指定id钱包的index
  */
 export const getWalletIndexByWalletId = (wallets, walletId) => {
-    let index = -1;
-    if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
+    if (!(wallets && wallets.length > 0)) {
         return -1;
     }
-    for (let i = 0; i < wallets.walletList.length; i++) {
-        if (wallets.walletList[i].walletId === walletId) {
-            index = i;
-            break;
-        }
+    for (let i = 0; i < wallets.length; i++) {
+        if (wallets[i].walletId === walletId) return i;
     }
 
-    return index;
-};
-
-/**
- * 获取当前钱包index
- * @param wallets wallets obj
- */
-export const getCurrentWalletIndex = (wallets) => {
-    let index = -1;
-    if (!(wallets && wallets.curWalletId && wallets.curWalletId.length > 0)) {
-        return -1;
-    }
-    for (let i = 0; i < wallets.walletList.length; i++) {
-        if (wallets.walletList[i].walletId === wallets.curWalletId) {
-            index = i;
-            break;
-        }
-    }
-
-    return index;
+    return -1;
 };
 
 /**
@@ -112,9 +75,8 @@ export const getCurrentWalletIndex = (wallets) => {
  * @param currencyName 货币类型
  */
 export const getCurrentAddrInfo = (currencyName: string) => {
-    const wallets = getLocalStorage('wallets');
-    const addrs = getLocalStorage('addrs');
-    const wallet = getCurrentWallet(wallets);
+    const addrs = find('addrs');
+    const wallet = find('curWallet');
     const currencyRecord = wallet.currencyRecords.filter(item => item.currencyName === currencyName)[0];
     // tslint:disable-next-line:no-unnecessary-local-variable
     const addrInfo = addrs.filter(item => item.addr === currencyRecord.currentAddr && item.currencyName === currencyName)[0];
@@ -126,7 +88,7 @@ export const getCurrentAddrInfo = (currencyName: string) => {
  * @param addrId  address id
  */
 export const getAddrById = (addrId: string, currencyName: string): Addr => {
-    const list: Addr[] = getLocalStorage('addrs') || [];
+    const list: Addr[] = find('addrs') || [];
 
     return list.filter(v => v.addr === addrId && v.currencyName === currencyName)[0];
 };
@@ -138,13 +100,13 @@ export const getAddrById = (addrId: string, currencyName: string): Addr => {
  * @param notified 是否通知数据发生改变 
  */
 export const resetAddrById = (addrId: string, currencyName: string, data: Addr, notified?: boolean) => {
-    let list: Addr[] = getLocalStorage('addrs') || [];
+    let list: Addr[] = find('addrs') || [];
     list = list.map(v => {
         if (v.addr === addrId && v.currencyName === currencyName) return data;
 
         return v;
     });
-    setLocalStorage('addrs', list, notified);
+    updateStore('addrs', list);
 };
 
 /**
@@ -312,12 +274,12 @@ export const largeUnit2SmallUnit = (currencyName: string, amount: number) => {
 /**
  * 根据货币类型小单位转大单位  
  */
-export const smallUnit2LargeUnitString = (currencyName:string,amount:string):number => {
+export const smallUnit2LargeUnitString = (currencyName: string, amount: string): number => {
     if (currencyName === 'ETH') {
         const pow = amount.length - 15;
-        let num = Number(amount.slice(0,15));
+        let num = Number(amount.slice(0, 15));
         num = wei2Eth(num);
-        num  = num * Math.pow(10,pow);
+        num = num * Math.pow(10, pow);
 
         return formatBalance(num);
     } else if (currencyName === 'KT') {
@@ -328,11 +290,11 @@ export const smallUnit2LargeUnitString = (currencyName:string,amount:string):num
 /**
  * 根据货币类型大单位转小单位
  */
-export const largeUnit2SmallUnitString = (currencyName:string,amount:number):string => {
+export const largeUnit2SmallUnitString = (currencyName: string, amount: number): string => {
     if (currencyName === 'ETH') {
-        return eth2Wei(amount).toLocaleString().replace(/,/g,'');
+        return eth2Wei(amount).toLocaleString().replace(/,/g, '');
     } else if (currencyName === 'KT') {
-        return kt2kpt(amount).toLocaleString().replace(/,/g,'');
+        return kt2kpt(amount).toLocaleString().replace(/,/g, '');
     }
 };
 
@@ -522,7 +484,7 @@ export const sliceStr = (str, start, len): string => {
 export const getNewAddrInfo = (currencyName, mnemonic, wallet) => {
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
-    const addrs = getLocalStorage('addrs');
+    const addrs = find('addrs');
     const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
 
     let address;
@@ -549,20 +511,19 @@ export const getNewAddrInfo = (currencyName, mnemonic, wallet) => {
  * @param wltJson 新的地址钱包对象
  */
 export const addNewAddr = (currencyName, address, addrName) => {
-    const wallets = getLocalStorage('wallets');
-    const wallet = getCurrentWallet(wallets);
+    const wallet = find('curWallet');
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
     currencyRecord.addrs.push(address);
-    const list: Addr[] = getLocalStorage('addrs') || [];
+    const addrs: Addr[] = find('addrs') || [];
     const newAddrInfo: Addr = dataCenter.initAddr(address, currencyName, addrName);
-    list.push(newAddrInfo);
+    addrs.push(newAddrInfo);
     currencyRecord.currentAddr = address;
 
     dataCenter.addAddr(address, addrName, currencyName);
 
-    setLocalStorage('addrs', list, false);
-    setLocalStorage('wallets', wallets, true);
+    updateStore('addrs', addrs);
+    updateStore('curWallet', wallet);
 
     return newAddrInfo;
 };
@@ -813,7 +774,7 @@ export const fetchTotalAssets = () => {
  * @param currencyName 货币名称
  */
 export const fetchBalanceOfCurrency = (addrs: string[], currencyName: string) => {
-    const localAddrs = getLocalStorage('addrs');
+    const localAddrs = find('addrs');
     let balance = 0;
     localAddrs.forEach(item => {
         if (addrs.indexOf(item.addr) >= 0 && item.currencyName === currencyName) {
@@ -847,7 +808,7 @@ export const getXOR = (first, second) => {
  * 验证身份
  */
 export const VerifyIdentidy = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
     try {
@@ -869,7 +830,7 @@ export const VerifyIdentidy = async (wallet, passwd) => {
  * 获取助记词
  */
 export const getMnemonic = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -888,7 +849,7 @@ export const getMnemonic = async (wallet, passwd) => {
  * 获取助记词16进制字符串
  */
 export const getMnemonicHexstr = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, dataCenter.salt, wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -1011,8 +972,7 @@ export const currencyExchangeAvailable = () => {
 
 // 根据货币名获取当前正在使用的地址
 export const getCurrentAddrByCurrencyName = (currencyName: string) => {
-    const wallets = getLocalStorage('wallets');
-    const wallet = getCurrentWallet(wallets);
+    const wallet = find('curWallet');
     const currencyRecords = wallet.currencyRecords;
     let curAddr = '';
 
@@ -1029,7 +989,7 @@ export const getCurrentAddrByCurrencyName = (currencyName: string) => {
 // 根据货币名获取当前正在使用的地址的余额
 export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
     const curAddr = getCurrentAddrByCurrencyName(currencyName);
-    const addrs = getLocalStorage('addrs');
+    const addrs = find('addrs');
     for (let i = 0; i < addrs.length; i++) {
         if ((addrs[i].currencyName === currencyName) && (addrs[i].addr === curAddr)) {
             return addrs[i].balance;
@@ -1051,8 +1011,7 @@ export const timestampFormat = (timestamp: number) => {
 
 // 获取当前钱包第一个ETH地址
 export const getFirstEthAddr = () => {
-    const wallets = getLocalStorage('wallets');
-    const wallet = getCurrentWallet(wallets);
+    const wallet = find('curWallet');
     const currencyRecords = wallet.currencyRecords;
     for (let i = 0; i < currencyRecords.length; i++) {
         if (currencyRecords[i].currencyName === 'ETH') {
@@ -1064,7 +1023,7 @@ export const getFirstEthAddr = () => {
 // unicode数组转字符串
 export const unicodeArray2Str = (arr) => {
     let str = '';
-    for (let i = 0; i < arr.length;i++) {
+    for (let i = 0; i < arr.length; i++) {
         str += String.fromCharCode(arr[i]);
     }
 

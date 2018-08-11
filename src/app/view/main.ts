@@ -7,7 +7,6 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
@@ -56,7 +55,7 @@ export const run = (cb): void => {
     // popNew('app-view-guidePages-setLockScreenScret',{ jump:true });
 
     // popNew('app-view-application-home', {}); 
-    popNew('app-view-mine-dividend-dividend', {}); 
+    // popNew('app-view-mine-dividend-dividend', {}); 
     // popNew('app-view-mine-FAQ-FAQ', {}); 
     if (cb) cb();
     // test();

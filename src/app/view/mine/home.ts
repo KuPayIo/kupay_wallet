@@ -7,8 +7,8 @@ import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { GlobalWallet } from '../../core/globalWallet';
 import { dataCenter } from '../../store/dataCenter';
-import { register, unregister } from '../../store/store';
-import { getCurrentWallet, getLocalStorage, getMnemonic, openBasePage } from '../../utils/tools';
+import { find, register, unregister } from '../../store/store';
+import { getMnemonic, openBasePage } from '../../utils/tools';
 
 export class Home extends Widget {
     public stp: ShareToPlatforms;
@@ -17,18 +17,18 @@ export class Home extends Widget {
     }
     public create() {
         super.create();
-        register('wallets', this.registerWalletsFun);
+        register('walletList', this.registerWalletsFun);
         this.init();
     }
     public destroy() {
-        unregister('wallets', this.registerWalletsFun);
+        unregister('walletList', this.registerWalletsFun);
 
         return super.destroy();
     }
     public init() {
         // 获取钱包显示头像
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const walletList = find('walletList');
+        const wallet = find('curWallet');
         let gwlt: GlobalWallet = null;
         let avatar = null;
         let walletName = null;
@@ -40,7 +40,7 @@ export class Home extends Widget {
             mnemonicBackup = gwlt.mnemonicBackup;
         }
         this.state = {
-            wallets,
+            walletList,
             wallet,
             avatar,
             walletName,
@@ -85,7 +85,7 @@ export class Home extends Widget {
                 text: '关于我们',
                 components: 'app-view-mine-aboutus-aboutus'
             }
-        
+
                 // ,
                 //  {
                 //     icon: 'icon_mine_share.png',
@@ -98,14 +98,13 @@ export class Home extends Widget {
 
     public itemClick(e: any, index: number) {
         if (index <= 2) {
-            const wallets = getLocalStorage('wallets');
-            const wallet = getCurrentWallet(wallets);
-            if (!wallets || wallets.walletList.length === 0) {
+            const walletList = find('walletList');
+            if (!walletList || walletList.length === 0) {
                 popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
 
                 return;
             }
-            if (!wallet) {
+            if (!find('curWallet')) {
                 popNew('app-view-wallet-switchWallet-switchWallet');
 
                 return;
@@ -136,7 +135,7 @@ export class Home extends Widget {
         });
     }
     public walletManagementClick() {
-        if (!this.state.wallet || this.state.wallets.walletList.length === 0) {
+        if (!this.state.wallet || this.state.walletList.length === 0) {
             popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
 
             return;
@@ -144,15 +143,14 @@ export class Home extends Widget {
         popNew('app-view-mine-walletManagement-walletManagement', { walletId: this.state.wallet.walletId });
     }
     public async backupClick() {
-        if (!this.state.wallet || this.state.wallets.walletList.length === 0) {
+        if (!this.state.wallet || this.state.walletList.length === 0) {
             popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
 
             return;
         }
         const close = popNew('pi-components-loading-loading', { text: '导出中...' });
         try {
-            const wallets = getLocalStorage('wallets');
-            const wallet = getCurrentWallet(wallets);
+            const wallet = find('curWallet');
             let passwd;
             if (!dataCenter.getHash(wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {

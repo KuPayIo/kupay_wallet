@@ -5,8 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
-import { register, unregister } from '../../../store/store';
-import { getCurrentWallet, getLocalStorage, getMnemonic, getWalletByWalletId, openBasePage } from '../../../utils/tools';
+import { find, register, unregister } from '../../../store/store';
+import { getMnemonic, getWalletByWalletId, openBasePage } from '../../../utils/tools';
 
 export class WalletList extends Widget {
     public ok: () => void;
@@ -15,25 +15,26 @@ export class WalletList extends Widget {
     }
     public create() {
         super.create();
-        register('wallets', this.registerWalletsFun);
+        register('walletList', this.registerWalletsFun);
         this.init();
     }
     public destroy() {
-        unregister('wallets', this.registerWalletsFun);
+        unregister('walletList', this.registerWalletsFun);
 
         return super.destroy();
     }
     public init() {
         // 获取钱包显示头像
-        const wallets = getLocalStorage('wallets');
+        const walletList = find('walletList');
         console.log('-------walletList---------');
-        console.log(wallets);
-        // const wallet = getCurrentWallet(wallets);
+        console.log(walletList);
         const fromJSON = GlobalWallet.fromJSON;
 
+        const curWallet = find('curWallet');
         this.state = {
-            wallets,
-            fromJSON
+            walletList,
+            fromJSON,
+            curWalletId: curWallet && curWallet.walletId
         };
     }
     public backPrePage() {
@@ -47,8 +48,8 @@ export class WalletList extends Widget {
     public async backupClicked(walletId: string) {
         const close = popNew('pi-components-loading-loading', { text: '导出中...' });
         try {
-            const wallets = getLocalStorage('wallets');
-            const wallet = getWalletByWalletId(wallets, walletId);
+            const walletList = find('walletList');
+            const wallet = getWalletByWalletId(walletList, walletId);
             let passwd;
             if (!dataCenter.getHash(wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {

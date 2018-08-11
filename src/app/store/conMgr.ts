@@ -6,9 +6,10 @@ import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { showError } from '../utils/toolMessages';
-import { getCurrentWallet, getLocalStorage, largeUnit2SmallUnit, largeUnit2SmallUnitString, openBasePage } from '../utils/tools';
+import { largeUnit2SmallUnitString, openBasePage } from '../utils/tools';
 import { cloudAccount } from './cloudAccount';
 import { dataCenter } from './dataCenter';
+import { find } from './store';
 
 // 枚举登录状态
 export enum LoginState {
@@ -96,8 +97,7 @@ export const requestLogined = async (msg: any) => {
     if (loginState === LoginState.logined) {
         return requestAsync(msg);
     } else {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         let passwd = '';
         if (!dataCenter.getHash(wallet.walletId)) {
             passwd = await openBasePage('app-components-message-messageboxPrompt', {
@@ -125,8 +125,7 @@ export const requestLogined = async (msg: any) => {
  * 开启连接并获取验证随机数
  */
 export const openAndGetRandom = async () => {
-    const wallets = getLocalStorage('wallets');
-    const wallet = getCurrentWallet(wallets);
+    const wallet = find('curWallet');
     if (!wallet) return;
     const oldUser = dataCenter.getUser();
     if (oldUser === wallet.walletId) return;

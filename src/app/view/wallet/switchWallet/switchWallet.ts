@@ -5,8 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { openAndGetRandom } from '../../../store/conMgr';
-import { nickNameInterception, pswEqualed } from '../../../utils/account';
-import { decrypt, getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { find, updateStore } from '../../../store/store';
+import { nickNameInterception } from '../../../utils/account';
 
 export class SwitchWallet extends Widget {
     public ok: () => void;
@@ -18,13 +18,16 @@ export class SwitchWallet extends Widget {
         this.init();
     }
     public init() {
-        const wallets = getLocalStorage('wallets');
-        for (let i = 0; i < wallets.walletList.length; i++) {
-            wallets.walletList[i].gwlt = GlobalWallet.fromJSON(wallets.walletList[i].gwlt);
-        }
+        const walletList = find('walletList').map(v => {
+            v.gwlt = GlobalWallet.fromJSON(v.gwlt);
+
+            return v;
+        });
+        const curWallet = find('curWallet');
         this.state = {
             close: false,
-            wallets,
+            walletList,
+            curWalletId: curWallet && curWallet.walletId,
             nickNameInterception
         };
     }
@@ -37,17 +40,10 @@ export class SwitchWallet extends Widget {
         if (isCurWallet) {
             return;
         }
-        this.switchWallet(this.state.wallets.walletList[index].walletId);
+        updateStore('curWallet', this.state.walletList[index]);
+        openAndGetRandom();
         popNew('app-components-message-message', { itype: 'success', content: '切换成功', center: true });
         this.ok && this.ok();
-    }
-
-    public switchWallet(curWalletId: string) {
-        const wallets = getLocalStorage('wallets');
-        wallets.curWalletId = curWalletId;
-        setLocalStorage('wallets', wallets, true);
-        
-        openAndGetRandom();
     }
 
     public closePageClick() {

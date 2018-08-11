@@ -4,7 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { getCurrentWallet, getLocalStorage, getWalletByWalletId, setLocalStorage,shuffle } from '../../../utils/tools';
+import { Wallet } from '../../../store/interface';
+import { find, updateStore } from '../../../store/store';
+import { shuffle } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;
@@ -80,8 +82,8 @@ export class BackupMnemonicWordConfirm extends Widget {
         const mnemonic = this.state.shuffledMnemonic[v];
         if (mnemonic.isActive) {
             mnemonic.isActive = false;
-            arryRemove(this.state.confirmedMnemonic,mnemonic);
-            
+            arryRemove(this.state.confirmedMnemonic, mnemonic);
+
         } else {
             mnemonic.isActive = true;
             this.state.confirmedMnemonic.push(mnemonic);
@@ -98,12 +100,18 @@ export class BackupMnemonicWordConfirm extends Widget {
     }
 
     private deleteMnemonic() {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getWalletByWalletId(wallets,this.props.walletId);
-        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        gwlt.mnemonicBackup = true;
-        wallet.gwlt = gwlt.toJSON();
-        setLocalStorage('wallets', wallets, true);
+        let isUpdate = false;
+        const walletList: Wallet[] = find('walletList').map(v => {
+            if (v.walletId === this.props.walletId) {
+                isUpdate = true;
+                const gwlt = GlobalWallet.fromJSON(v.gwlt);
+                gwlt.mnemonicBackup = true;
+                v.gwlt = gwlt.toJSON();
+            }
+
+            return v;
+        });
+        if (isUpdate) updateStore('walletList', walletList);
     }
 
     private compareMnemonicEqualed(): boolean {
@@ -120,17 +128,17 @@ export class BackupMnemonicWordConfirm extends Widget {
     }
 }
 
-const arryRemove = (ary:any[],target:Object) => {
+const arryRemove = (ary: any[], target: Object) => {
     //
-    for (let i = 0;i < ary.length;i++) {
+    for (let i = 0; i < ary.length; i++) {
         const one = ary[i];
         if (one === target) {
-            ary.splice(i,1);
+            ary.splice(i, 1);
 
             return;
         }
 
     }
-    
+
     return;
 };

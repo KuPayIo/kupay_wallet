@@ -6,8 +6,9 @@ import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { EthWallet } from '../../../core/eth/wallet';
+import { find } from '../../../store/store';
 import { btcNetwork, lang } from '../../../utils/constants';
-import { decrypt, getAddrById, getCurrentWallet, getLocalStorage,getWalletByWalletId } from '../../../utils/tools';
+import { getWalletByWalletId } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;
@@ -23,8 +24,8 @@ export class ExportPrivateKey extends Widget {
     }
 
     public init() {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getWalletByWalletId(wallets,this.props.walletId);
+        const walletList = find('walletList');
+        const wallet = getWalletByWalletId(walletList, this.props.walletId);
         const currencyRecords = wallet.currencyRecords;
         const collapseList = [];
         for (let i = 0; i < currencyRecords.length; i++) {

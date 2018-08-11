@@ -2,11 +2,9 @@
  * 
  */
 import { SendChatMessage } from '../../pi/browser/sendMessage';
-import { popNew } from '../../pi/ui/root';
 import { Widget } from '../../pi/widget/widget';
 import { getProxy } from '../net/pull';
 import { doChat } from '../store/conMgr';
-import { getLocalStorage } from '../utils/tools';
 export class App extends Widget {
     public old: any = {};
     public create() {
@@ -81,8 +79,8 @@ export class App extends Widget {
             return;
         }
         // if (this.state.tabBarList[index].name === 'cloud') {
-        //     const wallets = getLocalStorage('wallets');
-        //     if (!wallets || wallets.walletList.length === 0) {
+        //     const walletList = find('walletList');
+        //     if (!walletList || walletList.length === 0) {
         //         popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
 
         //         return;

@@ -5,9 +5,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter, DataCenter } from '../../../store/dataCenter';
+import { find, updateStore } from '../../../store/store';
 import {
-    addNewAddr, formatBalance, getAddrById, getCurrentWallet, getLocalStorage, getMnemonic, getStrLen, openBasePage,
-    setLocalStorage, sliceStr
+    addNewAddr, formatBalance, getAddrById, getMnemonic, getStrLen, openBasePage, sliceStr
 } from '../../../utils/tools';
 
 interface Props {
@@ -45,12 +45,11 @@ export class AddAsset extends Widget {
      */
     public chooseAddr(e: any, index: number) {
         if (!this.state.list[index].isChoose) {
-            const wallets = getLocalStorage('wallets');
-            const wallet = getCurrentWallet(wallets);
+            const wallet = find('curWallet');
             const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
             if (currencyRecord) {
                 currencyRecord.currentAddr = this.state.list[index].addr;
-                setLocalStorage('wallets', wallets, true);
+                updateStore('curWallet', wallet);
             }
         }
         this.doClose();
@@ -71,9 +70,7 @@ export class AddAsset extends Widget {
     }
 
     private async doAddAddr() {
-
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
         let passwd;
         if (!dataCenter.getHash(wallet.walletId)) {
             passwd = await openBasePage('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' });
@@ -99,8 +96,7 @@ export class AddAsset extends Widget {
     }
 
     private getAddrs() {
-        const wallets = getLocalStorage('wallets');
-        const wallet = getCurrentWallet(wallets);
+        const wallet = find('curWallet');
 
         if (!wallet.currencyRecords || !this.props.currencyName) return [];
 

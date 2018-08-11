@@ -4,6 +4,7 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { dataCenter } from '../../store/dataCenter';
+import { find } from '../../store/store';
 import { getCurrentAddrByCurrencyName,getCurrentAddrInfo,getLocalStorage, parseAccount, timestampFormat, wei2Eth } from '../../utils/tools';
 
 interface Tx {
@@ -76,7 +77,7 @@ export class CurrencyExchangeRecord extends Widget {
     public inHashClick(e:any,index:number) {
         const tx = this.state.txList[index];
         const inHash = tx.inputTXID;
-        const transactions = getLocalStorage('transactions');
+        const transactions = find('transactions');
         let record = null;
         transactions.forEach(item => {
             if (item.hash === inHash) {
@@ -110,7 +111,7 @@ export class CurrencyExchangeRecord extends Widget {
         const tx = this.state.txList[index];
         if (tx.status !== 'complete') return;
         const outHash = tx.outputTXID;
-        const transactions = getLocalStorage('transactions');
+        const transactions = find('transactions');
         let record = null;
         transactions.forEach(item => {
             if (item.hash === outHash) {
