@@ -7,6 +7,7 @@ import { generateByHash, sha3 } from '../../../../core/genmnemonic';
 import { GlobalWallet } from '../../../../core/globalWallet';
 import { openAndGetRandom } from '../../../../store/conMgr';
 import { dataCenter } from '../../../../store/dataCenter';
+import { find, updateStore } from '../../../../store/store';
 import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
 } from '../../../../utils/account';
@@ -38,9 +39,9 @@ export class WalletCreate extends Widget {
             walletPswTips: '',
             userProtocolReaded: false,
             curWalletPswStrength: getWalletPswStrength(),
-            showPswTips:false
+            showPswTips: false
         };
-        const wallets = getLocalStorage('wallets');
+        const wallets = find('walletList');
         const len = wallets ? wallets.walletList.length : 0;
         this.state.walletName = `我的钱包${len + 1}`;
     }
@@ -117,18 +118,19 @@ export class WalletCreate extends Widget {
     }
 
     public async createWallet(hash: Uint8Array) {
-        const wallets = getLocalStorage('wallets') || { walletList: [], curWalletId: '', salt: dataCenter.salt };
-        let addrs: Addr[] = getLocalStorage('addrs') || [];
+
+        const wallets: Wallet[] = find('walletList');
+        let addrs: Addr[] = find('addrs');
 
         const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName, null, hash);
         // 判断钱包是否存在
-        let len = wallets.walletList.length;
-        if (wallets.walletList.some(v => v.walletId === gwlt.glwtId)) {
+        let len = wallets.length;
+        if (wallets.some(v => v.walletId === gwlt.glwtId)) {
             await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '提示', content: '该钱包已存在，是否使用新密码' });
 
             for (let i = len - 1; i >= 0; i--) {
-                if (gwlt.glwtId === wallets.walletList[i].walletId) {
-                    const wallet0 = wallets.walletList.splice(i, 1)[0];// 删除已存在钱包
+                if (gwlt.glwtId === wallets[i].walletId) {
+                    const wallet0 = wallets.splice(i, 1)[0];// 删除已存在钱包
                     const retAddrs = getAddrsAll(wallet0);
                     addrs = addrs.filter(addr => {
                         return retAddrs.indexOf(addr.addr) === -1;
@@ -155,10 +157,11 @@ export class WalletCreate extends Widget {
         }
 
         addrs.push(...gwlt.addrs);
-        setLocalStorage('addrs', addrs, false);
-        wallets.curWalletId = gwlt.glwtId;
-        wallets.walletList.push(wallet);
-        setLocalStorage('wallets', wallets, true);
+        updateStore('addrs', addrs);
+        wallets.push(wallet);
+        updateStore('walletList', wallets);
+        updateStore('curWallet', gwlt);
+        updateStore('salt', find('salt'));
 
         openAndGetRandom();
     }

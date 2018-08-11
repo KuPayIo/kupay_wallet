@@ -57,7 +57,7 @@ export class DataCenter {
         const addrs = getLocalStorage('addrs');
         if (addrs) {
             const wallets = getLocalStorage('wallets');
-            this.iSalt = wallets.salt;
+            // this.iSalt = wallets.salt;
             const wallet = getCurrentWallet(wallets);
             if (!wallet) return;
             let list = [];

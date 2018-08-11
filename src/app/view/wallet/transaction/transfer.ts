@@ -11,6 +11,7 @@ import { ERC20Tokens } from '../../../core/eth/tokens';
 import { EthWallet } from '../../../core/eth/wallet';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
+import { find } from '../../../store/store';
 import {
     decrypt, effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals, getAddrById
     , getCurrentAddrInfo, getCurrentWallet, getLocalStorage, openBasePage, parseAccount, parseDate, resetAddrById, urlParams
@@ -116,8 +117,7 @@ export class AddAsset extends Widget {
             const info = this.state.info;
             const currencyName = this.props.currencyName;
 
-            const wallets = getLocalStorage('wallets');
-            const wallet = getCurrentWallet(wallets);
+            const wallet = find('curWallet');
             let passwd;
             if (!dataCenter.getHash(wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {

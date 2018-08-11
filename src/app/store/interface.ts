@@ -109,7 +109,7 @@ export interface RedEnvelope {
 }
 
 export interface Store {
-    wallets: Wallet[];// 钱包数据
+    walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包
     addrs: Addr[];// 地址数据
     transactions: TransactionRecord[];// 交易记录
