@@ -2,10 +2,8 @@
  * 
  */
 import { SendChatMessage } from '../../pi/browser/sendMessage';
-import { popNew } from '../../pi/ui/root';
 import { Widget } from '../../pi/widget/widget';
 import { doChat } from '../store/conMgr';
-import { getLocalStorage } from '../utils/tools';
 export class App extends Widget {
     public old: any = {};  
     public create() {

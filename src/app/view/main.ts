@@ -67,6 +67,7 @@ export const run = (cb): void => {
  */
 const popNewPage = () => {
     const hasReadedPrivacyAgreement = getLocalStorage('hasReadedPrivacyAgreement');
+    console.log(hasReadedPrivacyAgreement);
     if (hasReadedPrivacyAgreement) {
         popNew('app-view-app');
         if (ifNeedUnlockScreen()) {
