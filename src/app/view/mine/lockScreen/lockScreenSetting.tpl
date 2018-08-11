@@ -9,9 +9,4 @@
     <div w-class="ga-item" on-tap="resetLockScreen">修改锁屏密码</div>
     <div w-class="ga-item" on-tap="forgetPasswordClick">忘了密码?</div>
     </div>
-    {{if it1.showLockScreen}}
-    <div ev-completed-click="completedInput" ev-forgetPassword-click="forgetPasswordClick">
-        <app-components-passwordScreen-passwordScreen>{title:{{it1.lockScreenTitle}},forgetPsw:{{true}}}</app-components-passwordScreen-passwordScreen>
-    </div>
-    {{end}}
 </div>

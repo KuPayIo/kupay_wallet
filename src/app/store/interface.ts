@@ -96,16 +96,11 @@ export interface TransactionRecord {
     outputs?: string[];// 输出地址列表
 }
 
-/**
- * 红包详情对象
- */
-export interface RedEnvelope {
-    // tslint:disable-next-line:no-reserved-keywords
-    type: string;
-    time: string;
-    currencyName: string;
-    amount: number;
-    leaveMessage: string;
+export interface LockScreen {
+    psw?:string;// 锁屏密码
+    open?:boolean;// 锁屏功能是否打开
+    jump?:boolean;// 创建钱包后是否跳过锁屏设置,如果跳过,再次创建钱包时默认不再跳出锁屏设置
+    locked?:boolean;// 是否3次解锁机会都用完
 }
 
 /**
@@ -192,6 +187,7 @@ export interface Store {
     conUid: number;// 连接uid
     readedPriAgr: boolean;// 隐私协议阅读与否
     loginState: LoginState;// 连接状态
+    lockScreen:LockScreen;// 锁屏相关
     // 本地钱包
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包
@@ -202,7 +198,8 @@ export interface Store {
     shapeShiftCoins: any;// shapeShift 支持的币种
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
-    accountDetail: Map<CurrencyType, number>;// 云端账户详情
+    accountDetail: Map<CurrencyType, AccountDetail[]>;// 云端账户详情
+
     miningTotal:MiningTotal;// 挖矿汇总信息
     dividTotal:DividTotal;// 分红汇总信息
     miningHistory:DividendItem[];// 挖矿历史记录
@@ -210,4 +207,25 @@ export interface Store {
     addMine:AddMineItem[];// 矿山增加项目
     mineRank:MineRank;// 矿山排名
     miningRank:MiningRank;// 挖矿排名    
+}
+
+export enum TaskSid {
+    createWlt = 1001,// 创建钱包
+    firstChargeEth,// 首次转入
+    bindPhone,// 注册手机
+    chargeEth,// 存币
+    inviteFriends,// 邀请真实好友
+    buyFinancial = 1007,// 购买理财产品
+    transfer,// 交易奖励
+    bonus,// 分红
+    mines,// 挖矿
+    chat,// 聊天
+    redEnvelope = 'red_bag_port' // 红包
+}
+
+export interface AccountDetail {
+    iType: TaskSid;// 类型
+    amount: number;// 数据
+    behavior: string;// 标签
+    time: number;// 时间
 }

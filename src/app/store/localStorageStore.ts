@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { Addr, Wallet } from '../view/interface';
-import { TransactionRecord } from './interface';
+import { LockScreen, TransactionRecord } from './interface';
 import { register } from './store';
 // ===================================================== 导出
 
@@ -52,4 +52,8 @@ register('salt', (salt: string) => {
 // 注册是否已阅读隐私协议
 register('readedPriAgr',(readed:boolean) => {
     setLocalStorage('readedPriAgr',readed);
+});
+
+register('lockScreen',(ls:LockScreen) => {
+    setLocalStorage('lockScreen',ls);
 });

@@ -10,8 +10,8 @@
         {{for index,value of it1.pswBoard}}
             <span w-class="ga-psw-board-item" on-down="boardItemClick(e,{{index}})">{{value}}</span>
         {{end}}
-        <span w-class="ga-clear" on-tap="clearClick">
-            <img src="../../res/image/cloud_change.png" w-class="deletIcon"/>
+        <span w-class="ga-clear" on-down="clearClick">
+            <img src="../../res/image/delete_lock.png" w-class="deletIcon"/>
         </span>
     </div>
 </div>
