@@ -1,5 +1,5 @@
 /**
- * 
+ * 首页
  */
 import { SendChatMessage } from '../../pi/browser/sendMessage';
 import { Widget } from '../../pi/widget/widget';

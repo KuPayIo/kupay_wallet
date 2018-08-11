@@ -96,16 +96,10 @@ export interface TransactionRecord {
     outputs?: string[];// 输出地址列表
 }
 
-/**
- * 红包详情对象
- */
-export interface RedEnvelope {
-    // tslint:disable-next-line:no-reserved-keywords
-    type: string;
-    time: string;
-    currencyName: string;
-    amount: number;
-    leaveMessage: string;
+export interface LockScreen {
+    psw:string;// 锁屏密码
+    open:boolean;// 锁屏功能是否打开
+    jump:boolean;// 创建钱包后是否跳过锁屏设置,如果跳过,再次创建钱包时默认不再跳出锁屏设置
 }
 
 export interface Store {
@@ -123,4 +117,5 @@ export interface Store {
     conUid: number;// 连接uid
     shapeShiftCoins: any;// shapeShift 支持的币种
     readedPriAgr:boolean;// 隐私协议阅读与否
+
 }
