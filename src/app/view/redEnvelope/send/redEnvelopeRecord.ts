@@ -3,7 +3,8 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyTypeReverse, querySendRedEnvelopeRecord, recordNumber } from '../../../store/conMgr';
+import { CurrencyTypeReverse, querySendRedEnvelopeRecord } from '../../../store/conMgr';
+import { recordNumber } from '../../../utils/constants';
 import { formatBalance, getFirstEthAddr, 
     getLocalStorage, setLocalStorage, smallUnit2LargeUnit, smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';
 

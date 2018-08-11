@@ -5,40 +5,13 @@ import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { cloudAccount } from '../store/cloudAccount';
 import { dataCenter } from '../store/dataCenter';
-import { find } from '../store/store';
+import { CurrencyType, CurrencyTypeReverse, LoginState } from '../store/interface';
+import { find, updateStore } from '../store/store';
+import { recordNumber } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { largeUnit2SmallUnit, openBasePage } from '../utils/tools';
+import { kpt2kt, largeUnit2SmallUnit, openBasePage, smallUnit2LargeUnit, wei2Eth } from '../utils/tools';
 
-// 枚举登录状态
-export enum LoginState {
-    init = 0,
-    logining,
-    logined,
-    relogining,
-    logouting,
-    logouted,
-    logerror
-}
-// 货币类型
-export enum CurrencyType {
-    KT = 100,
-    ETH
-}
-
-// 枚举货币类型
-export const CurrencyTypeReverse = {
-    100: 'KT',
-    101: 'ETH'
-};
-
-// 红包类型
-export enum RedEnvelopeType {
-    Normal = '00',
-    Random = '01',
-    Invite = '99'
-}
 // export const conIp = '47.106.176.185';
 export const conIp = '127.0.0.1';
 // export const conPort = '8080';
@@ -46,34 +19,6 @@ export const conPort = '80';
 // 分享链接前缀
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.html`;
 
-// 任务id记录
-export enum TaskSid {
-    createWlt = 1001,// 创建钱包
-    firstChargeEth,// 首次转入
-    bindPhone,// 注册手机
-    chargeEth,// 存币
-    inviteFriends,// 邀请真实好友
-    buyFinancial = 1007,// 购买理财产品
-    transfer,// 交易奖励
-    bonus,// 分红
-    mines,// 挖矿
-    chat,// 聊天
-    redEnvelope = 'red_bag_port' // 红包
-}
-/**
- * 登录状态
- */
-let loginState: number = LoginState.init;
-
-// 查询历史记录时一页的数量
-export const recordNumber = 10;
-// 设置登录状态
-const setLoginState = (s: number) => {
-    if (loginState === s) {
-        return;
-    }
-    loginState = s;
-};
 /**
  * 通用的异步通信
  */
@@ -96,7 +41,7 @@ export const requestAsync = async (msg: any): Promise<any> => {
  * 验证登录的异步通信
  */
 export const requestLogined = async (msg: any) => {
-    if (loginState === LoginState.logined) {
+    if (find('loginState') === LoginState.logined) {
         return requestAsync(msg);
     } else {
         const wallet = find('curWallet');
@@ -109,14 +54,14 @@ export const requestLogined = async (msg: any) => {
         const wlt: EthWallet = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
         const signStr = sign(dataCenter.getConRandom(), wlt.exportPrivateKey());
         const msgLogin = { type: 'login', param: { sign: signStr } };
-        setLoginState(LoginState.logining);
+        updateStore('loginState', LoginState.logining);
         const res: any = await requestAsync(msgLogin);
         if (res.result === 1) {
-            setLoginState(LoginState.logined);
+            updateStore('loginState', LoginState.logined);
 
             return requestAsync(msg);
         }
-        setLoginState(LoginState.logerror);
+        updateStore('loginState', LoginState.logerror);
 
         return;
     }
@@ -134,7 +79,7 @@ export const openAndGetRandom = async () => {
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     if (oldUser) {
         closeCon();
-        setLoginState(LoginState.init);
+        updateStore('loginState', LoginState.init);
         dataCenter.setUser(wallet.walletId);
         dataCenter.setUserPublicKey(gwlt.publicKey);
 
@@ -156,7 +101,7 @@ export const openAndGetRandom = async () => {
                 } else if (resp.result !== undefined) {
                     dataCenter.setConRandom(resp.rand);
                     dataCenter.setConUid(resp.uid);
-                    cloudAccount.init();
+                    getAllBalance();
                     resolve(resp);
                 }
             });
@@ -173,7 +118,7 @@ export const openAndGetRandom = async () => {
                 } else if (resp.result !== undefined) {
                     dataCenter.setConRandom(resp.rand);
                     dataCenter.setConUid(resp.uid);
-                    cloudAccount.init();
+                    getAllBalance();
                     resolve(resp);
                 }
             });
@@ -185,10 +130,17 @@ export const openAndGetRandom = async () => {
 /**
  * 获取所有的货币余额
  */
-export const getAllBalance = async () => {
+export const getAllBalance = () => {
     const msg = { type: 'wallet/account@get', param: { list: `[${CurrencyType.KT}, ${CurrencyType.ETH}]` } };
-
-    return requestAsync(msg);
+    requestAsync(msg).then(balanceInfo => {
+        console.log('balanceInfo', balanceInfo);
+        const m = new Map<CurrencyType, number>();
+        for (let i = 0; i < balanceInfo.value.length; i++) {
+            const each = balanceInfo.value[i];
+            m.set(CurrencyType.KT, smallUnit2LargeUnit(CurrencyTypeReverse[each[0]], each[1]));
+        }
+        updateStore('cloudBalance', m);
+    });
 };
 
 /**
@@ -196,8 +148,9 @@ export const getAllBalance = async () => {
  */
 export const getBalance = async (currencyType: CurrencyType) => {
     const msg = { type: 'wallet/account@get', param: { list: `[${currencyType}]` } };
-
-    return requestAsync(msg);
+    requestAsync(msg).then(r => {
+        // todo 这里更新余额
+    });
 };
 
 /**
