@@ -32,10 +32,12 @@ export const find = (keyName: KeyName, id?: number | string): any => {
         return depCopy(arr);
     }
     const value = store[keyName].get(id);
-    if (id && value instanceof Map) {
+    if (value instanceof Map) {
         const result = value.get(id);
 
         return result && depCopy(result);
+    } else {
+        return value && depCopy(value);
     }
 };
 
@@ -68,11 +70,11 @@ export const unregister = (keyName: KeyName, cb: Function): void => {
 export const initStore = () => {
     // 从localStorage中取wallets
     const wallets = findByLoc('wallets');
-    store.wallets = wallets && wallets.walletList;
+    store.walletList = wallets && wallets.walletList;
     // 从localStorage中取addrs
-    store.wallets = findByLoc('addrs');
+    store.addrs = findByLoc('addrs');
     // 从localStorage中取transactions
-    store.wallets = findByLoc('transactions');
+    store.transactions = findByLoc('transactions');
     // 从localStorage中的wallets中初始化salt
     store.salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
     // 从localStorage中的wallets中初始化curWallet
@@ -92,7 +94,7 @@ export const initStore = () => {
 };
 
 // tslint:disable-next-line:max-line-length
-type KeyName = MapName | 'wallets' | 'curWallet' | 'addrs' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins';
+type KeyName = MapName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -112,7 +114,7 @@ const handlerMap: HandlerMap = new HandlerMap();
 
 // tslint:disable-next-line:no-object-literal-type-assertion
 const store = <Store>{
-    wallets: <Wallet[]>[],// 钱包数据
+    walletList: <Wallet[]>[],// 钱包数据
     curWallet: <Wallet>null,// 当前钱包
     addrs: <Addr[]>[],// 地址数据
     transactions: <TransactionRecord[]>[],// 交易记录

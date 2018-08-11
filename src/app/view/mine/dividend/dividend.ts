@@ -7,10 +7,11 @@ import { getDividend } from '../../../store/conMgr';
 import { wei2Eth } from '../../../utils/tools';
 
 interface State {
-    totalDivid:number;
-    totalHold:number;
-    thisDivid:number;
-    totalDays:number;
+    totalDivid:number; // 累计分红
+    totalHold:number;  // 持有KT数量
+    thisDivid:number;  // 本次分红
+    totalDays:number;  // 分红天数
+    yearIncome:number; // 年华收益
 }
 
 export class Dividend extends Widget {
@@ -25,7 +26,8 @@ export class Dividend extends Widget {
             totalDivid:0,
             totalHold:0,
             thisDivid:0,
-            totalDays:0
+            totalDays:0,
+            yearIncome:0
         };
         this.initData();
     }
@@ -44,7 +46,8 @@ export class Dividend extends Widget {
             totalDivid:wei2Eth(msg.value[0]),
             totalHold:this.props,
             totalDays:msg.value[1],
-            thisDivid:wei2Eth(msg.value[2])           
+            thisDivid:wei2Eth(msg.value[2]),
+            yearIncome:0           
         };
         this.paint();
     }
