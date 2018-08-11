@@ -97,9 +97,10 @@ export interface TransactionRecord {
 }
 
 export interface LockScreen {
-    psw:string;// 锁屏密码
-    open:boolean;// 锁屏功能是否打开
-    jump:boolean;// 创建钱包后是否跳过锁屏设置,如果跳过,再次创建钱包时默认不再跳出锁屏设置
+    psw?:string;// 锁屏密码
+    open?:boolean;// 锁屏功能是否打开
+    jump?:boolean;// 创建钱包后是否跳过锁屏设置,如果跳过,再次创建钱包时默认不再跳出锁屏设置
+    locked?:boolean;// 是否3次解锁机会都用完
 }
 
 export interface Store {
@@ -117,5 +118,6 @@ export interface Store {
     conUid: number;// 连接uid
     shapeShiftCoins: any;// shapeShift 支持的币种
     readedPriAgr:boolean;// 隐私协议阅读与否
+    lockScreen:LockScreen;// 锁屏相关
 
 }

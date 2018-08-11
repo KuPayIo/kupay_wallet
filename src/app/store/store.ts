@@ -10,7 +10,7 @@ import { config } from '../core/config';
 // tslint:disable-next-line:max-line-length
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy } from '../utils/tools';
-import { Addr, CurrencyInfo, Store, TransactionRecord, Wallet } from './interface';
+import { Addr, CurrencyInfo, LockScreen, Store, TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -77,18 +77,19 @@ export const unregister = (keyName: KeyName, cb: Function): void => {
 export const initStore = () => {
     // 从localStorage中取wallets
     const wallets = findByLoc('wallets');
-    store.walletList = wallets && wallets.walletList;
+    store.walletList = wallets && wallets.walletList || [];
     // 从localStorage中取addrs
-    store.addrs = findByLoc('addrs');
+    store.addrs = findByLoc('addrs') || [];
     // 从localStorage中取transactions
-    store.transactions = findByLoc('transactions');
+    store.transactions = findByLoc('transactions') || [];
     // 从localStorage中的wallets中初始化salt
     store.salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
     // 从localStorage中的wallets中初始化curWallet
     store.curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
     // 从localStorage中取readedPriAgr
     store.readedPriAgr = findByLoc('readedPriAgr');
-
+    // 从localStorage中取lockScreen
+    store.lockScreen = findByLoc('lockScreen') || {};
     // 初始化默认兑换汇率列表
     const rateJson = config.currentNetIsTest ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
     const m = new Map();
@@ -109,7 +110,7 @@ type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'sa
 type MapName = 'exchangeRateJson' | 'hashMap';
 
 // ============================================ 本地
-type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr';
+type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -137,5 +138,6 @@ const store = <Store>{
     conRandom: '',// 连接随机数
     conUid: 0,// 连接uid
     shapeShiftCoins: <any>[],// shapeShift 支持的币种
-    readedPriAgr:false // 是否阅读隐私协议
+    readedPriAgr:false, // 是否阅读隐私协议
+    lockScreen:<LockScreen>null // 锁屏密码相关
 };

@@ -16,6 +16,7 @@ import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../store/dataCenter';
+import { LockScreen } from '../store/interface';
 import { find, initStore } from '../store/store';
 import { getLocalStorage, setLocalStorage } from '../utils/tools';
 
@@ -43,8 +44,9 @@ export const run = (cb): void => {
         title:'测试',
         content:'测试'
     }); */
-    // popNew('app-view-home');
+   
     popNewPage();
+    // popNew('app-view-guidePages-unlockScreen');
     // // 后台切前台
     // todo 临时处理方案，暂时屏蔽后台唤醒时输入锁屏密码功能
     // backToFront();
@@ -153,8 +155,9 @@ const checkHasNewTokens = () => {
 const ifNeedUnlockScreen = () => {
     const unlockScreen = document.querySelector('#unlock-screen');
     if (unlockScreen) return false;
-    const lockScreenPsw = getLocalStorage('lockScreenPsw');
-    const openLockScreen = getLocalStorage('openLockScreen') !== false;
+    const ls:LockScreen = find('lockScreen');
+    const lockScreenPsw = ls.psw;
+    const openLockScreen = ls.open !== false;
 
     return lockScreenPsw && openLockScreen;
 };

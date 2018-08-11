@@ -2,14 +2,23 @@
  * set lock-screen psw
  */
 import { popNew } from '../../../pi/ui/root';
+import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { lockScreenHash,setLocalStorage } from '../../utils/tools';
+import { LockScreen } from '../../store/interface';
+import { find, updateStore } from '../../store/store';
+import { lockScreenHash } from '../../utils/tools';
 
 interface Props {
     jump?:boolean;
     title1?:string;
     title2?:string;
 }
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class SetLockScreenScret extends Widget {
     public ok: () => void;
     public props:Props;
@@ -46,7 +55,9 @@ export class SetLockScreenScret extends Widget {
                 setTimeout(() => {
                     close.callback(close.widget);
                     const hash256 = lockScreenHash(psw);
-                    setLocalStorage('lockScreenPsw',hash256);
+                    const ls:LockScreen = find('lockScreen'); 
+                    ls.psw = hash256;
+                    updateStore('lockScreen',ls);
                     popNew('app-components-message-message', { itype: 'success', content: '设置成功',  center: true });
                     this.ok && this.ok();
                 },1000);
@@ -65,7 +76,9 @@ export class SetLockScreenScret extends Widget {
     }
 
     public jumpClick() {
-        setLocalStorage('jumpLockScreen',true);
+        const ls:LockScreen = find('lockScreen'); 
+        ls.jump = true;
+        updateStore('lockScreen',ls);
         this.ok && this.ok();
     }
 }
