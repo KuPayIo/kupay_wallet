@@ -96,16 +96,11 @@ export interface TransactionRecord {
     outputs?: string[];// 输出地址列表
 }
 
-/**
- * 红包详情对象
- */
-export interface RedEnvelope {
-    // tslint:disable-next-line:no-reserved-keywords
-    type: string;
-    time: string;
-    currencyName: string;
-    amount: number;
-    leaveMessage: string;
+export interface LockScreen {
+    psw?:string;// 锁屏密码
+    open?:boolean;// 锁屏功能是否打开
+    jump?:boolean;// 创建钱包后是否跳过锁屏设置,如果跳过,再次创建钱包时默认不再跳出锁屏设置
+    locked?:boolean;// 是否3次解锁机会都用完
 }
 
 export interface Store {
@@ -129,4 +124,6 @@ export interface Store {
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
     accountDetail: Map<CurrencyType, number>;// 云端账户详情
+    lockScreen:LockScreen;// 锁屏相关
+
 }
