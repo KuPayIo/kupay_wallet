@@ -38,21 +38,6 @@ export const conPort = '80';
 // 分享链接前缀
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.html`;
 
-// 任务id记录
-export enum TaskSid {
-    createWlt = 1001,// 创建钱包
-    firstChargeEth,// 首次转入
-    bindPhone,// 注册手机
-    chargeEth,// 存币
-    inviteFriends,// 邀请真实好友
-    buyFinancial = 1007,// 购买理财产品
-    transfer,// 交易奖励
-    bonus,// 分红
-    mines,// 挖矿
-    chat,// 聊天
-    redEnvelope = 'red_bag_port' // 红包
-}
-
 // 查询历史记录时一页的数量
 export const recordNumber = 10;
 
@@ -235,24 +220,6 @@ export const getMineRank = async (num: number) => {
  */
 export const getMiningRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
-
-    return requestAsync(msg);
-};
-
-/**
- * 发送验证码
- */
-export const sendCode = async (phone: number, num: number) => {
-    const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
-
-    return requestAsync(msg);
-};
-
-/**
- * 注册手机
- */
-export const regPhone = async (phone: number, code: number) => {
-    const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
 
     return requestAsync(msg);
 };
