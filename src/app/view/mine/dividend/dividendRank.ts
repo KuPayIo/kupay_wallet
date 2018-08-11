@@ -1,11 +1,18 @@
 /**
  * 挖矿及矿山排名
  */
+// ============================== 导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineRank, getMiningRank } from '../../../store/conMgr';
+import { find, register } from '../../../store/store';
 import { kpt2kt } from '../../../utils/tools';
 
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class DividendItem extends Widget {
     public ok: () => void;
     constructor() {
@@ -18,37 +25,8 @@ export class DividendItem extends Widget {
 
     public create() {
         super.create();
-        this.init();
+        this.state = {};
         this.initData();
-    }
-
-    public init() {
-        this.state = {
-            mineSecond:false,  // 矿山排名第二名是否存在
-            mineThird:false,   // 矿山排名第三名是否存在
-            minePage:1,  // 矿山排名列表页码
-            mineMore:false,  // 矿山排名是否还有更多  
-            mineList:[],  // 矿山排名列表
-            mineRank:[
-                {
-                    index:1,
-                    name:'昵称未设置',
-                    num:'0'
-                }
-            ],
-            miningSecond:false,   // 挖矿排名第二名是否存在
-            miningThird:false,   // 挖矿排名第三名是否存在
-            miningPage:1,  // 挖矿排名列表页码
-            miningMore:false,  // 挖矿排名是否还有更多
-            miningList:[],  // 挖矿排名列表
-            miningRank:[
-                {
-                    index:1,
-                    name:'昵称未设置',
-                    num:'0'
-                }
-            ]
-        };
     }
     
     /**
@@ -107,52 +85,35 @@ export class DividendItem extends Widget {
      * 获取更新数据
      */
     public async initData() {
-        const msg1 = await getMineRank(100);
-        const msg2 = await getMiningRank(100);
-        this.state.mineList = msg1.value;
-        this.state.miningList = msg2.value;
-
-        if (msg1.value.length > 10) {
-            this.state.mineMore = true;
-            this.state.mineSecond = true;
-            this.state.mineThird = true;
-        } else if (msg1.value.length > 2) {
-            this.state.mineSecond = true;
-            this.state.mineThird = true;
-        } else if (msg1.value.length > 1) {
-            this.state.mineSecond = true;
-        }
-        
-        if (msg2.value.length > 10) {
-            this.state.miningMore = true;
-            this.state.miningSecond = true;
-            this.state.miningThird = true;
-        } else if (msg2.value.length > 2) {
-            this.state.miningSecond = true;
-            this.state.miningThird = true;
-        } else if (msg2.value.length > 1) {
-            this.state.miningSecond = true;
-        }
-        
-        const data1 = [];
-        for (let i = 0;i < msg1.value.length && i < 10;i++) {
-            data1.push({
-                index: i + 1,
-                name: msg1.value[i][1] === '' ? '昵称未设置' : msg1.value[i][1],
-                num: kpt2kt(msg1.value[i][2])
-            });
-        }
-        this.state.mineRank = data1;
-
-        const data2 = [];
-        for (let i = 0;i < msg2.value.length && i < 10;i++) {
-            data2.push({
-                index: i + 1,
-                name: msg2.value[i][1] === '' ? '昵称未设置' : msg2.value[i][1],
-                num: kpt2kt(msg2.value[i][2])
-            });
-        }
-        this.state.miningRank = data2;
+        const msg1 = find('mineRank');
+        const msg2 = find('miningRank');
+        this.state = {
+            mineSecond:msg1.mineSecond,
+            mineThird:msg1.mineThird,
+            minePage:msg1.minePage,
+            mineMore:msg1.mineMore,
+            mineList:msg1.mineList,
+            mineRank:msg1.mineRank,
+            miningSecond:msg2.miningSecond,
+            miningThird:msg2.miningThird,
+            miningPage:msg2.miningPage,
+            miningMore:msg2.miningMore,
+            miningList:msg2.miningList,
+            miningRank:msg2.miningRank
+        };
         this.paint();
     }
 }
+
+register('mineRank', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+register('miningRank', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});

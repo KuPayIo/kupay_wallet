@@ -1,54 +1,68 @@
 /**
  * 分红统计页面 
  */
+// ================================ 导入
+import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getDividend } from '../../../store/conMgr';
-import { wei2Eth } from '../../../utils/tools';
+import { getDividHistory } from '../../../net/pull';
+import { find, register } from '../../../store/store';
 
-interface State {
-    totalDivid:number; // 累计分红
-    totalHold:number;  // 持有KT数量
-    thisDivid:number;  // 本次分红
-    totalDays:number;  // 分红天数
-    yearIncome:number; // 年华收益
-}
-
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Dividend extends Widget {
     public ok: () => void;
-    public state : State;
     constructor() {
         super();
     }
 
-    public create() {
-        this.state = {
-            totalDivid:0,
-            totalHold:0,
-            thisDivid:0,
-            totalDays:0,
-            yearIncome:0
-        };
+    public setProps(props: Json, oldProps?: Json) {
+        super.setProps(props,oldProps);
+        this.state = {};
         this.initData();
+        this.initEvent();
     }
 
     public backPrePage() {
         this.ok && this.ok();
     }
 
+    /**
+     * 查看分红记录
+     */
     public goHistory() {
         popNew('app-view-mine-dividend-dividendHistory',1);
     }
 
-    public async initData() {
-        const msg = await getDividend();
+    /**
+     * 获取更新数据
+     */
+    public initData() {
+        const data = find('dividTotal');
         this.state = {
-            totalDivid:wei2Eth(msg.value[0]),
-            totalHold:this.props,
-            totalDays:msg.value[1],
-            thisDivid:wei2Eth(msg.value[2]),
-            yearIncome:0           
+            totalDivid:data.totalDivid,
+            totalDays:data.totalDays,
+            thisDivid:data.thisDivid,
+            yearIncome:data.yearIncome           
         };
         this.paint();
     }
+
+    /**
+     * 初始化事件
+     */
+    private initEvent() {
+        // 这里发起通信
+        getDividHistory();
+    }
 }
+register('dividTotal', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});

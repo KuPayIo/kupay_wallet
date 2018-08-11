@@ -6,8 +6,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getCloudBalance, getInviteCode, getInviteCodeDetail } from '../../../net/pull';
+import { getAllBalance, getDividend, getInviteCode, getInviteCodeDetail,getMineRank, getMining } from '../../../net/pull';
 import { CurrencyType } from '../../../shareView/store/conMgr';
-import { getAward, getDividend, getMining } from '../../../store/conMgr';
+import { getAward } from '../../../store/conMgr';
 import { find, getBorn, register, unregister } from '../../../store/store';
 import { formatBalance, kpt2kt, wei2Eth } from '../../../utils/tools';
 
@@ -75,7 +76,7 @@ export class Home extends Widget {
      */
     public bonusClicked() {
         // TODO
-        popNew('app-view-mine-dividend-dividend', this.state.ktBalance);
+        popNew('app-view-mine-dividend-dividend', { totalHold:this.state.ktBalance });
     }
     /**
      * 点击邀请好友
@@ -129,25 +130,25 @@ export class Home extends Widget {
     private async initDate() {
         this.refreshCloudBalance();
 
-        const msg = await getMining();
-        const totalNum = kpt2kt(msg.mine_total);
-        const holdNum = kpt2kt(msg.mines);
-        const today = kpt2kt(msg.today);
-        let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
-        if (nowNum <= 0) {
-            nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
-            this.state.isAbleBtn = false;
-        } else if ((totalNum - holdNum) > 100) {
-            nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 : nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
-            this.state.isAbleBtn = true;
-        } else {
-            nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
-            this.state.isAbleBtn = true;
-        }
-        this.state.mines = nowNum;
+        // const msg = await getMining();
+        // const totalNum = kpt2kt(msg.mine_total);
+        // const holdNum = kpt2kt(msg.mines);
+        // const today = kpt2kt(msg.today);
+        // let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
+        // if (nowNum <= 0) {
+        //     nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
+        //     this.state.isAbleBtn = false;
+        // } else if ((totalNum - holdNum) > 100) {
+        //     nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 : nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
+        //     this.state.isAbleBtn = true;
+        // } else {
+        //     nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
+        //     this.state.isAbleBtn = true;
+        // }
+        // this.state.mines = nowNum;
 
-        const divid = await getDividend();
-        this.state.bonus = wei2Eth(divid.value[0]);
+        // const divid = await getDividend();
+        // this.state.bonus = wei2Eth(divid.value[0]);
         this.paint();
     }
 
@@ -156,6 +157,9 @@ export class Home extends Widget {
      */
     private initEvent() {
         // 这里发起通信
+        getMining();
+        getDividend();
+        getMineRank(100);
     }
 }
 

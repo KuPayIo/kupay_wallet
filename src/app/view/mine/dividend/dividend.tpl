@@ -1,3 +1,4 @@
+{{: it=it.totalHold||0}}
 <div class="ga-new-page" style="background-image: linear-gradient(-180deg, #F94E4E 0%, #F6A151 100%);">
     <div w-class="">
         <div w-class="ga-top-banner">
@@ -9,7 +10,7 @@
             <div w-class="dividend-title">累计分红(ETH)</div>
             <div w-class="dividend-money">{{it1.totalDivid}}</div>
             <div w-class="dividLine"></div>
-            <div w-class="dividend-sum">持有 {{it1.totalHold}} KT</div>
+            <div w-class="dividend-sum">持有 {{it}} KT</div>
             
         </div>  
         
