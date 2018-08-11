@@ -3,9 +3,9 @@
     <div style="height: 10px;background: #F8F8F8"></div>
 
     <div style="height: 100%;margin-bottom: 128px;overflow-x: hidden;overflow-y: auto;">
-        <div style="line-height: 100px;border-bottom: 1px solid #e5e5ee;">
-            <span w-class="title">矿山排名</span>
-            <span w-class="more" on-tap="gotoMore(1)">更多<img src="../../../res/image/btn_right_arrow.png" w-class="moreImg"/></span>
+        <div style="line-height: 100px;border-bottom: 1px solid #e5e5ee;display: flex">
+            <div w-class="title">矿山排名</div>
+            <span w-class="more" on-tap="gotoMore(1)">全部<img src="../../../res/image/btn_right_arrow.png" w-class="moreImg"/></span>
         </div>
     
         <div w-class="rank">
@@ -43,9 +43,9 @@
     
         {{for ind,val of it1.mineRank}}
         <div w-class="rankItem" style="color: #666666;">
-            <span style="margin-left: 50px;color: #111111">{{val.index}}</span>
+            <span style="margin-left: 50px;color: #111111;font-size: 28px;font-weight: 600;">{{val.index}}</span>
             <span style="margin-left: 67px;">{{val.name}}</span>
-            <span style="float: right;margin-right: 30px;">{{val.num}}</span>        
+            <span style="float: right;margin-right: 30px;font-size: 28px;font-weight: 600;">{{val.num}}</span>        
         </div>
         {{end}}
         <div w-class="moreRank" on-tap="getMore(1)" style="display: {{it1.mineMore?'block':'none'}}">更多</div>
@@ -53,9 +53,9 @@
 
 
         {{% 挖矿排名}}
-        <div style="line-height: 100px;border-bottom: 1px solid #e5e5ee;">
-            <span w-class="title">挖矿排名</span>
-            <span w-class="more" on-tap="gotoMore(2)">更多<img src="../../../res/image/btn_right_arrow.png" w-class="moreImg"/></span>
+        <div style="line-height: 100px;border-bottom: 1px solid #e5e5ee;display: flex;">
+            <div w-class="title">挖矿排名</div>
+            <span w-class="more" on-tap="gotoMore(2)">全部<img src="../../../res/image/btn_right_arrow.png" w-class="moreImg"/></span>
         </div>
         <div w-class="rank">
             {{if it1.miningSecond}}
@@ -92,9 +92,9 @@
     
         {{for ind,val of it1.miningRank}}
         <div w-class="rankItem" style="color: #666666;">
-            <span style="margin-left: 50px;color: #111111">{{val.index}}</span>
+            <span style="margin-left: 50px;color: #111111;font-size: 28px;font-weight: 600;">{{val.index}}</span>
             <span style="margin-left: 67px;">{{val.name}}</span>
-            <span style="float: right;margin-right: 30px;">{{val.num}}</span>        
+            <span style="float: right;margin-right: 30px;font-size: 28px;font-weight: 600;">{{val.num}}</span>        
         </div>
         {{end}}
         <div w-class="moreRank" on-tap="getMore(2)" style="display: {{it1.miningMore?'block':'none'}}">更多</div>

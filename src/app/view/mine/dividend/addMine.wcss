@@ -1,0 +1,94 @@
+.ga-top-banner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    color: #203260;
+    padding: 2px 30px;
+    box-sizing: border-box;
+    height: 128px;
+    margin-bottom: 20px;
+}
+.ga-back{
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    line-height: 50px;
+    margin-right: 30px;
+}
+.ga-banner-title{
+    font-size: 36px;
+    color: #FFFFFF;
+    letter-spacing: -0.83px;
+    line-height: 50px;
+    position: absolute;
+    left: 74px;
+}
+.miningItem{
+    vertical-align: middle;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 2px 8px 0px rgba(12, 15, 35, 0.05);
+    margin: 0 30px 30px;
+    border-radius: 12px;
+}
+.itemImg{
+    margin-left: 10px;
+    width: 48px;
+    height: 48px;
+    /* border-radius: 50%; */
+    /* background: #FF912F; */
+    display: inline-block;
+    vertical-align: middle;
+}
+.itemName{
+    margin-left: 21px;
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 32px;
+    line-height: 90px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.itemNum{
+    margin-right: 30px;
+    float: right;
+    margin-top: 20px;
+    width: 46px;
+    height: 46px;    
+}
+.itemDetail{
+    color: rgba(102, 102, 102, 1);
+    font-size: 28px;
+    padding: 20px 30px;
+    line-height: 46px;
+    overflow: auto;
+    border-top: 1px solid #E5E5EE;
+}
+.itemBtn{
+    width: 122px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    float: right;
+    margin-top:20px;
+    margin-bottom: 10px;
+    vertical-align: middle;
+    border-radius: 100px;
+    border: 1px solid rgba(26, 112, 221, 1);
+    color: rgba(53, 116, 250, 1);
+    font-size: 24px;
+}
+.itemBtnNo{
+    width: 122px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 100px;
+    border: 1px solid rgba(160, 172, 192, 1);
+    color: rgba(160, 172, 192, 1);
+    font-size: 24px;
+    text-align: center;
+    float: right;
+    margin-top:20px;
+    margin-bottom: 10px;
+    vertical-align: middle;
+}

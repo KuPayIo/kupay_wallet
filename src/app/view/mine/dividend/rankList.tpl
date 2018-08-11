@@ -1,4 +1,4 @@
-{{: it=it||1}}
+{{: it=it.ind||1}}
 {{% 默认显示矿山排名，传入数据为1 则是矿山排名，2 则是挖矿排名}}
 <div class="ga-new-page" ev-back-click="backPrePage" style="background-color: #fff;">
     <app-components-topBar-topBar>{title:{{it==1?"矿山排名":"挖矿排名"}} }</app-components-topBar-topBar>
@@ -13,9 +13,9 @@
     
         {{for ind,val of it1.gainRank}}
         <div w-class="rankItem" style="color: #666666;">
-            <span style="margin-left: 50px;color: #111111">{{val.index}}</span>
+            <span style="margin-left: 50px;font-weight: 600;color: {{ind<=10?'#F17835':'#111111'}}">{{val.index}}</span>
             <span style="margin-left: 67px;">{{val.name}}</span>
-            <span style="float: right;margin-right: 30px;">{{val.num}}</span>        
+            <span style="float: right;margin-right: 30px;font-weight: 600;">{{val.num}}</span>        
         </div>
         {{end}}
     
