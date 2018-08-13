@@ -78,7 +78,7 @@ export class CurrencyExchangeRecord extends Widget {
     }
 
     public inHashClick(e:any,index:number) {
-        const tx = this.state.txList[index];
+        const tx = this.state.txsShow[index];
         const inHash = tx.inputTXID;
         const transactions = find('transactions');
         let record = null;
@@ -111,7 +111,7 @@ export class CurrencyExchangeRecord extends Widget {
     }
 
     public outHashClick(e:any,index:number) {
-        const tx = this.state.txList[index];
+        const tx = this.state.txsShow[index];
         if (tx.status !== 'complete') return;
         const outHash = tx.outputTXID;
         const transactions = find('transactions');
