@@ -7,8 +7,8 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAward, getCloudBalance, getDividend, getInviteCode, getInviteCodeDetail, getMineRank, getMining } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
-import { find, getBorn, register, unregister } from '../../../store/store';
-import { formatBalance, kpt2kt, wei2Eth } from '../../../utils/tools';
+import { find, getBorn, register } from '../../../store/store';
+import { formatBalance } from '../../../utils/tools';
 
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords

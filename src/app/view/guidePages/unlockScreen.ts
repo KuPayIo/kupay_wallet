@@ -15,9 +15,6 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
-interface Props {
-    updatedPsw?:boolean;// 是否是修改密码解锁
-}
 export class UnlockScreen extends Widget {
     public ok: () => void;
     public create() {

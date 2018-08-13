@@ -3,18 +3,18 @@
  */
 // ===================================================== 导入
 import { getFirstEthAddr } from '../utils/tools';
-import { Addr, CHisRec, LockScreen, ShapeShiftTx, ShapeShiftTxs, SHisRec, TransactionRecord, Wallet } from './interface';
+import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TopContact, TransactionRecord, Wallet } from './interface';
 import { register } from './store';
 // ===================================================== 导出
 
 // ===================================================== 本地
 
 // ===================================================== 立即执行
-const setLocalStorage = (key:string,data:any) => {
+const setLocalStorage = (key: string, data: any) => {
     localStorage.setItem(key, JSON.stringify(data));
 };
 
-const getLocalStorage = (key:string) => {
+const getLocalStorage = (key: string) => {
     return JSON.parse(localStorage.getItem(key));
 };
 register('walletList', (wallets: Wallet[]) => {
@@ -54,47 +54,52 @@ register('salt', (salt: string) => {
 });
 
 // 注册是否已阅读隐私协议
-register('readedPriAgr',(readed:boolean) => {
-    setLocalStorage('readedPriAgr',readed);
+register('readedPriAgr', (readed: boolean) => {
+    setLocalStorage('readedPriAgr', readed);
 });
 
 // 锁屏相关
-register('lockScreen',(ls:LockScreen) => {
-    setLocalStorage('lockScreen',ls);
+register('lockScreen', (ls: LockScreen) => {
+    setLocalStorage('lockScreen', ls);
 });
 
 // 发送红包记录
-register('sHisRec',(sHisRec:SHisRec) => {
+register('sHisRec', (sHisRec: SHisRec) => {
     const sHisRecMap = new Map(getLocalStorage('sHisRecMap')) || new Map();
     if (!sHisRec) {
         sHisRecMap.delete(getFirstEthAddr());
     } else {
-        sHisRecMap.set(getFirstEthAddr(),sHisRec);
+        sHisRecMap.set(getFirstEthAddr(), sHisRec);
     }
-    setLocalStorage('sHisRecMap',sHisRecMap);
+    setLocalStorage('sHisRecMap', sHisRecMap);
 });
 
 // 兑换红包记录
-register('cHisRec',(cHisRec:CHisRec) => {
+register('cHisRec', (cHisRec: CHisRec) => {
     const cHisRecMap = new Map(getLocalStorage('cHisRecMap')) || new Map();
     if (!cHisRec) {
         cHisRecMap.delete(getFirstEthAddr());
     } else {
-        cHisRecMap.set(getFirstEthAddr(),cHisRec);
+        cHisRecMap.set(getFirstEthAddr(), cHisRec);
     }
-    
-    setLocalStorage('cHisRecMap',cHisRecMap);
+
+    setLocalStorage('cHisRecMap', cHisRecMap);
 });
 
 // 邀请红包记录
-register('inviteRedBagRec',(inviteRedBagRec:CHisRec) => {
+register('inviteRedBagRec', (inviteRedBagRec: CHisRec) => {
     const inviteRedBagRecMap = new Map(getLocalStorage('inviteRedBagRecMap')) || new Map();
     if (!inviteRedBagRec) {
         inviteRedBagRecMap.delete(getFirstEthAddr());
     } else {
-        inviteRedBagRecMap.set(getFirstEthAddr(),inviteRedBagRec);
+        inviteRedBagRecMap.set(getFirstEthAddr(), inviteRedBagRec);
     }
-    setLocalStorage('inviteRedBagRecMap',inviteRedBagRecMap);
+    setLocalStorage('inviteRedBagRecMap', inviteRedBagRecMap);
+});
+
+// 常用联系人
+register('TopContacts', (TopContacts: TopContact[]) => {
+    setLocalStorage('TopContacts', TopContacts);
 });
 
 /* // shapeshift交易记录

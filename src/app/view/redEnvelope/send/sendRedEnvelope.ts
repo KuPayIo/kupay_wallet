@@ -7,9 +7,9 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
 import { CurrencyType, RedEnvelopeType } from '../../../store/interface';
-import { find, register, unregister, updateStore } from '../../../store/store';
+import { find, register, updateStore } from '../../../store/store';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
-import { getByteLen, getFirstEthAddr, openBasePage, removeLocalStorage } from '../../../utils/tools';
+import { getByteLen, openBasePage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
