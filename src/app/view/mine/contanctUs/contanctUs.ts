@@ -15,9 +15,9 @@ export class Aboutus extends Widget {
     public init() {
         this.state = {
             data:[
-                { value:'KuPay官网',desc:'www.KuPay.io' },
+                { value:'官方网站',desc:'www.Kupay.io' },
                 { value:'微信客服',desc:'KuPay小助手' },
-                { value:'公众号',desc:'KuPay' }
+                { value:'微信公众号',desc:'KuPay' }
             ]
         };
     }
