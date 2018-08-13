@@ -2,8 +2,9 @@
  * 处理localStorage上的数据
  */
 // ===================================================== 导入
+import { getFirstEthAddr } from '../utils/tools';
 import { Addr, Wallet } from '../store/interface';
-import { CHisRec, LockScreen, SHisRec, TransactionRecord } from './interface';
+import { CHisRec, CRecDetail, LockScreen, SHisRec, SRecDetail, TransactionRecord } from './interface';
 import { register } from './store';
 // ===================================================== 导出
 
@@ -12,6 +13,10 @@ import { register } from './store';
 // ===================================================== 立即执行
 const setLocalStorage = (key:string,data:any) => {
     localStorage.setItem(key, JSON.stringify(data));
+};
+
+const getLocalStorage = (key:string) => {
+    return JSON.parse(localStorage.getItem(key));
 };
 register('walletList', (wallets: Wallet[]) => {
     let locWallets = JSON.parse(localStorage.getItem('wallets'));
@@ -61,10 +66,34 @@ register('lockScreen',(ls:LockScreen) => {
 
 // 发送红包记录
 register('sHisRec',(sHisRec:SHisRec) => {
-    setLocalStorage('sHisRec',sHisRec);
+    const sHisRecMap = new Map(getLocalStorage('sHisRecMap')) || new Map();
+    if (!sHisRec) {
+        sHisRecMap.delete(getFirstEthAddr());
+    } else {
+        sHisRecMap.set(getFirstEthAddr(),sHisRec);
+    }
+    setLocalStorage('sHisRecMap',sHisRecMap);
 });
 
 // 兑换红包记录
 register('cHisRec',(cHisRec:CHisRec) => {
-    setLocalStorage('cHisRec',cHisRec);
+    const cHisRecMap = new Map(getLocalStorage('cHisRecMap')) || new Map();
+    if (!cHisRec) {
+        cHisRecMap.delete(getFirstEthAddr());
+    } else {
+        cHisRecMap.set(getFirstEthAddr(),cHisRec);
+    }
+    
+    setLocalStorage('cHisRecMap',cHisRecMap);
+});
+
+// 邀请红包记录
+register('inviteRedBagRec',(inviteRedBagRec:CHisRec) => {
+    const inviteRedBagRecMap = new Map(getLocalStorage('inviteRedBagRecMap')) || new Map();
+    if (!inviteRedBagRec) {
+        inviteRedBagRecMap.delete(getFirstEthAddr());
+    } else {
+        inviteRedBagRecMap.set(getFirstEthAddr(),inviteRedBagRec);
+    }
+    setLocalStorage('inviteRedBagRecMap',inviteRedBagRecMap);
 });

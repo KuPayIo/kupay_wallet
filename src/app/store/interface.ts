@@ -178,10 +178,19 @@ export interface MiningRank {
     miningList:any[];  // 挖矿排名总列表
     miningRank:MineRankItem[];  // 挖矿排名分页数据
 }
+
 /**
  * 发送红包记录
  */
 export interface SHisRec {
+    sendNumber:number;// 发送红包总数
+    start:string;// 翻页start
+    list:SRecDetail[];// 详情列表
+}
+/**
+ * 发送红包记录详情
+ */
+export interface SRecDetail {
     rid:string;// 红包id
     rtype:number;// 红包类型
     ctype:number;// 币种
@@ -191,10 +200,19 @@ export interface SHisRec {
     timeShow:string;
     codes:string[];// 兑换码
 }
+
 /**
  * 兑换红包记录
  */
 export interface CHisRec {
+    convertNumber:number;// 兑换红包总数
+    start:string;// 翻页start
+    list:CRecDetail[];// 详情列表
+}
+/**
+ * 兑换红包记录详情
+ */
+export interface CRecDetail {
     suid: number;// 发送者uid
     rid: number;// 红包id
     rtype: number;// 红包类型 0-普通红包，1-拼手气红包，99-邀请红包
@@ -241,7 +259,7 @@ export interface Store {
     accountDetail: Map<CurrencyType, AccountDetail[]>;// 云端账户详情
     sHisRec:SHisRec;// 发送红包记录
     cHisRec:CHisRec;// 兑换红包记录
-
+    inviteRedBagRec:CHisRec;// 邀请红包记录
     miningTotal:MiningTotal;// 挖矿汇总信息
     dividTotal:DividTotal;// 分红汇总信息
     miningHistory:DividendItem[];// 挖矿历史记录
