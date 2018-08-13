@@ -11,7 +11,7 @@ import { config } from '../core/config';
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail, AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MineRank, MiningRank, MiningTotal, SHisRec, Store, TopContact, TransactionRecord ,Wallet } from './interface';
+import { AccountDetail, AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MineRank, MiningRank, MiningTotal, SHisRec, Store, TopContact, TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -92,12 +92,12 @@ export const initStore = () => {
     // 从localStorage中取lockScreen
     store.lockScreen = findByLoc('lockScreen') || {};
     // 从localStorage中取sHisRecMap
-    const sHisRecMap =  new Map(findByLoc('sHisRecMap')) || new Map();
+    const sHisRecMap = new Map(findByLoc('sHisRecMap')) || new Map();
     store.sHisRec = sHisRecMap.get(getFirstEthAddr());
     // 从localStorage中取cHisRecMap
     const cHisRecMap = new Map(findByLoc('cHisRecMap')) || new Map();
-    store.cHisRec =  cHisRecMap.get(getFirstEthAddr());
-     // 从localStorage中取inviteRedBagRecMap
+    store.cHisRec = cHisRecMap.get(getFirstEthAddr());
+    // 从localStorage中取inviteRedBagRecMap
     const inviteRedBagRecMap = new Map(findByLoc('inviteRedBagRecMap')) || new Map();
     store.inviteRedBagRec = inviteRedBagRecMap.get(getFirstEthAddr());
     // 从localStorage中取常用联系人列表
@@ -118,12 +118,13 @@ export const initStore = () => {
 
 // tslint:disable-next-line:max-line-length
 type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState' | 'miningTotal' | 'miningHistory' | 'dividHistory' | 'accountDetail' |
-    'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' | 'inviteRedBagRec'| 'TopContacts';
+    'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' | 'inviteRedBagRec' | 'TopContacts';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
 // ============================================ 本地
-type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' | 'inviteRedBagRecMap'| 'TopContacts';
+// tslint:disable-next-line:max-line-length
+type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' | 'inviteRedBagRecMap' | 'TopContacts';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -155,20 +156,20 @@ const store = <Store>{
     exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
     currencyList: <CurrencyInfo[]>[],// 货币信息列表
     shapeShiftCoins: <any>[],// shapeShift 支持的币种
-    lockScreen:<LockScreen>null, // 锁屏密码相关
+    lockScreen: <LockScreen>null, // 锁屏密码相关
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
     accountDetail: new Map<CurrencyType, AccountDetail[]>(),// 云端账户详情
-    sHisRec:<SHisRec> null, // 发送红包记录
-    cHisRec:<CHisRec>null,// 兑换红包记录
-    inviteRedBagRec:<CHisRec>null,// 邀请红包记录
+    sHisRec: <SHisRec>null, // 发送红包记录
+    cHisRec: <CHisRec>null,// 兑换红包记录
+    inviteRedBagRec: <CHisRec>null,// 邀请红包记录
     miningTotal: <MiningTotal>null, // 挖矿汇总信息
-    dividTotal:<DividTotal>null,// 分红汇总信息
-    miningHistory:<DividendItem[]>[],// 挖矿历史记录
+    dividTotal: <DividTotal>null,// 分红汇总信息
+    miningHistory: <DividendItem[]>[],// 挖矿历史记录
     dividHistory: <DividendItem[]>[],// 分红历史记录
     addMine: <AddMineItem[]>[],// 矿山增加项目
     mineRank: <MineRank>null,// 矿山排名
     miningRank: <MiningRank>null,// 挖矿排名
     // 地址管理
-    TopContacts:<TopContact[]>[]// 常用联系人列表   
+    TopContacts: <TopContact[]>[]// 常用联系人列表   
 };
