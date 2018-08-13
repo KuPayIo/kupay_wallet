@@ -25,7 +25,7 @@ export class ProductDetail extends Widget {
             expectedEarnings: '+8%',
             unitPrice: '0.1',
             days: 'T+0',
-            surplus: '200',
+            surplus: '0',
             purchaseDate: '2018-08-02',
             interestDate: '2018-08-02',
             endDate: '2018-08-02',

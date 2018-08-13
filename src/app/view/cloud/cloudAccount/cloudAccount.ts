@@ -23,7 +23,7 @@ export class CloudAccount extends Widget {
         this.state = {
             isNameUpdated:false,
             accoutNickName: '昵称未设置',// 账户昵称
-            accoutHeadImg: 'img_avatar1.jpg',// 账户头像
+            accoutHeadImg: 'img_avatar1.png',// 账户头像
             accountAssets: '',// 账户资产
             coinList: [{
                 coinIcon: 'cloud_cointype_btc.png',// 代币图标

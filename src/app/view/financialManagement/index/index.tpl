@@ -55,17 +55,7 @@
                 <span w-class="productItemHeadTitle">
                     {{v.title}} 
                 </span>
-                {{if v.isSoldOut}}
-                <span w-class="surplus soldOut">
-                    售罄
-                </span>
-                {{else}}
-                <canvas id="canvas1"></canvas>
-                <span w-class="surplus" style="background: repeating-linear-gradient(to right,#1A70DD 0%, #1A70DD {{v.surplus}}, #a0acc0 0%,#a0acc0 101%);">
-                    剩余{{v.surplus}}
-                </span>
-                {{end}}
-
+                <canvas id="canvas{{i}}" w-class="canvas" width="120" height="120"></canvas>
             </div>
             <div w-class="productInfo">
                 <div w-class="interestRate">
