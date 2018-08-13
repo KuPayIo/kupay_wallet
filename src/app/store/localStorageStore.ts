@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { getFirstEthAddr } from '../utils/tools';
-import { Addr, CHisRec, CRecDetail, LockScreen, SHisRec, SRecDetail, TransactionRecord, Wallet } from './interface';
+import { Addr, CHisRec, LockScreen, ShapeShiftTx, ShapeShiftTxs, SHisRec, TransactionRecord, Wallet } from './interface';
 import { register } from './store';
 // ===================================================== 导出
 
@@ -95,4 +95,16 @@ register('inviteRedBagRec',(inviteRedBagRec:CHisRec) => {
         inviteRedBagRecMap.set(getFirstEthAddr(),inviteRedBagRec);
     }
     setLocalStorage('inviteRedBagRecMap',inviteRedBagRecMap);
+});
+
+/* // shapeshift交易记录
+register('shapeShiftTxs',(shapeShiftTxs:ShapeShiftTxs) => {
+    const shapeShiftTxsMap = new Map(getLocalStorage('shapeShiftTxsMap')) || new Map();
+    shapeShiftTxsMap.set(shapeShiftTxs.addr.toLowerCase(),shapeShiftTxs);
+    setLocalStorage('shapeShiftTxsMap',shapeShiftTxsMap);
+}); */
+
+// shapeshift交易记录
+register('shapeShiftTxsMap',(shapeShiftTxsMap:Map<string,ShapeShiftTxs>) => {
+    setLocalStorage('shapeShiftTxsMap',shapeShiftTxsMap);
 });

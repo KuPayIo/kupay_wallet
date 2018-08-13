@@ -1,26 +1,21 @@
 /**
  * currency exchange records
  */
+// ================================ 导入
 import { popNew } from '../../../pi/ui/root';
+import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { dataCenter } from '../../store/dataCenter';
-import { find } from '../../store/store';
-import { getCurrentAddrByCurrencyName,getCurrentAddrInfo,getLocalStorage, parseAccount, timestampFormat, wei2Eth } from '../../utils/tools';
+import { getTransactionsByAddr } from '../../net/pullWallet';
+import { ShapeShiftTx, ShapeShiftTxs } from '../../store/interface';
+import { find, register } from '../../store/store';
+import { getCurrentAddrByCurrencyName,getCurrentAddrInfo, parseAccount, timestampFormat, wei2Eth } from '../../utils/tools';
 
-interface Tx {
-    hasConfirmations:boolean;
-    inputAddress:string;
-    inputAmount:number;
-    inputCurrency:string;
-    inputTXID:string;
-    outputAddress:string;
-    outputAmount:string;
-    outputCurrency:string;
-    outputTXID:string;
-    shiftRate:string;
-    status:string;
-    timestamp:number;
-}
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 interface Props {
     currencyName:string;
 }
@@ -30,10 +25,28 @@ export class CurrencyExchangeRecord extends Widget {
         super.setProps(props,oldProps);
         this.init();
     }
-    public init() {
-        const txs = this.getSortedCurrencyExchangeTxs();
-        const txList = [];
-        txs.forEach((tx:Tx) => {
+    public async init() {
+        this.state = {
+            txsShow:[]
+        };
+        const close = popNew('pi-components-loading-loading',{ text:'加载中...' });
+        const addr = getCurrentAddrByCurrencyName(this.props.currencyName);
+        await getTransactionsByAddr(addr);
+        close.callback(close.widget);
+    }
+    public backClick() {
+        this.ok && this.ok();
+    }
+    public shapeShiftTxsUpdate(shapeShiftTxsMap:Map<string,ShapeShiftTxs>) {
+        const addr = getCurrentAddrByCurrencyName(this.props.currencyName).toLowerCase();
+        const shapeShiftTxs = shapeShiftTxsMap.get(addr);
+        console.log('shapeShiftTxs===========',shapeShiftTxs);
+        const txs = shapeShiftTxs && shapeShiftTxs.list || [];
+        txs.sort((tx1,tx2) => {
+            return tx2.timestamp - tx1.timestamp;
+        });
+        const txsShow = [];
+        txs.forEach((tx:ShapeShiftTx) => {
             // tslint:disable-next-line:variable-name
             let status_show = '';
             // tslint:disable-next-line:variable-name
@@ -48,7 +61,7 @@ export class CurrencyExchangeRecord extends Widget {
                 status_show = '兑换中';
                 status_class = 'ga-status-pending';
             }
-            txList.push({
+            txsShow.push({
                 ...tx,
                 inputTXID_show:parseAccount(tx.inputTXID),
                 outputTXID_show:tx.status === 'complete' && parseAccount(tx.outputTXID),
@@ -57,23 +70,13 @@ export class CurrencyExchangeRecord extends Widget {
                 status_class
             });
         });
-        this.state = {
-            txList
-        };
+        this.state.txsShow = txsShow;
+        this.paint();
+        if (txsShow.length === 0) {
+            popNew('app-components-message-message', { itype: 'success', center: true, content: '暂无兑换记录' });
+        }
     }
-    public backClick() {
-        this.ok && this.ok();
-    }
-    public getSortedCurrencyExchangeTxs() {
-        const outAddr = getCurrentAddrByCurrencyName(this.props.currencyName).toLowerCase();
-        const currencyExchangeTxs = getLocalStorage('currencyExchangeTxs') || {};
-        const txs = currencyExchangeTxs[outAddr] || [];
-        txs.sort((tx1,tx2) => {
-            return tx2.timestamp - tx1.timestamp;
-        });
 
-        return txs;
-    }
     public inHashClick(e:any,index:number) {
         const tx = this.state.txList[index];
         const inHash = tx.inputTXID;
@@ -132,3 +135,12 @@ export class CurrencyExchangeRecord extends Widget {
         popNew('app-view-wallet-transaction-transaction_details',{ ...record });
     }
 }
+
+// =================================本地
+
+register('shapeShiftTxsMap', shapeShiftTxsMap => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.shapeShiftTxsUpdate(shapeShiftTxsMap);
+    }
+});
