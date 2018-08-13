@@ -44,7 +44,7 @@ export class Home extends Widget {
      */
     public ethHoldingsClicked() {
         // 跳转充值提现
-        popNew('app-view-cloud-accountAssests-accountAssests',{ coinType:'ETH' ,coinBalance:0 });
+        popNew('app-view-cloud-accountAssests-accountAssests', { coinType: 'ETH', coinBalance: 0 });
     }
 
     /**
@@ -98,7 +98,7 @@ export class Home extends Widget {
         const r = await getAward();
         if (r.result !== 1) {
             popNew('app-components-message-message', { itype: 'outer', center: true, content: `挖矿失败(${r.result})` });
-            
+
             return;
         }
         getCloudBalance();
@@ -143,7 +143,7 @@ export class Home extends Widget {
         }
 
         const divid = find('dividTotal');
-        this.state.bonus = divid === null ? 0 :divid.totalDivid;
+        this.state.bonus = divid ? divid.totalDivid : 0;
         this.paint();
     }
 
@@ -167,14 +167,14 @@ register('cloudBalance', () => {
     }
 });
 
-register('miningTotal',() => {
+register('miningTotal', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initDate();
     }
 });
 
-register('dividTotal',() => {
+register('dividTotal', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initDate();

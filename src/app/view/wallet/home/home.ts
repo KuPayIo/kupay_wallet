@@ -2,17 +2,17 @@
  * wallet home page
  */
 // ============================== 导入
-import { popNew } from '../../../pi/ui/root';
-import { Forelet } from '../../../pi/widget/forelet';
-import { Widget } from '../../../pi/widget/widget';
-import { GlobalWallet } from '../../core/globalWallet';
-import { openAndGetRandom } from '../../net/pull';
-import { dataCenter } from '../../store/dataCenter';
-import { find, register } from '../../store/store';
-import { defalutShowCurrencys } from '../../utils/constants';
+import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { GlobalWallet } from '../../../core/globalWallet';
+import { openAndGetRandom } from '../../../net/pull';
+import { dataCenter } from '../../../store/dataCenter';
+import { find, register } from '../../../store/store';
+import { defalutShowCurrencys } from '../../../utils/constants';
 import {
     fetchBalanceOfCurrency, fetchTotalAssets, formatBalance, formatBalanceValue, getMnemonic, openBasePage
-} from '../../utils/tools';
+} from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
