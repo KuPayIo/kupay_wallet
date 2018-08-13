@@ -12,10 +12,6 @@ export class Index extends Widget {
         super.create();
         this.init();
     }
-    // public firstPaint() {
-    //     super.firstPaint();
-    //     this.drawCircle();
-    // }
     public init() {
         this.state = {
             record: [{
@@ -51,26 +47,26 @@ export class Index extends Widget {
     public toRecord() {
         popNew('app-view-financialManagement-purchaseRecord-purchaseRecord');
     }
-    // public drawCircle() {
-    //     const t = 99;
-    //     const oC = document.getElementById('canvas1');
-    //     const oGC = oC.getContext('2d');
-    //     const oB = Math.PI * (-90) / 180;
-    //     const oR = (t - 25) * 3.6 * Math.PI / 180;
+    public drawCircle() {
+        const t = 99;
+        const oC = document.getElementById('canvas1');
+        const oGC = oC.getContext('2d');
+        const oB = Math.PI * (-90) / 180;
+        const oR = (t - 25) * 3.6 * Math.PI / 180;
         
-    //     const x = 200;
-    //     const y = 200;
-    //     const r = 150;
+        const x = 200;
+        const y = 200;
+        const r = 150;
 
-    //     oGC.strokeStyle = '#abcdef';
-    //     oGC.lineWidth = '10';
-    //     oGC.beginPath();
-    //     oGC.arc(x, y, r, oB, oR, false);
-    //     oGC.stroke();
-    //     oGC.font = 'Bold 50px Arial';
-    //     oGC.fillStyle = '#ccc';
-    //     oGC.textAlign = 'center';
-    //     oGC.fillText(`${t}%`, x, y + 10);
+        oGC.strokeStyle = '#abcdef';
+        oGC.lineWidth = '10';
+        oGC.beginPath();
+        oGC.arc(x, y, r, oB, oR, false);
+        oGC.stroke();
+        oGC.font = 'Bold 50px Arial';
+        oGC.fillStyle = '#ccc';
+        oGC.textAlign = 'center';
+        oGC.fillText(`${t}%`, x, y + 10);
         
-    // }
+    }
 }
