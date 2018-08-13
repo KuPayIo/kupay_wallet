@@ -195,7 +195,7 @@ export class WalletManagement extends Widget {
             }
         } catch (error) {
             console.log(error);
-            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入111', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
         }
 
         close.callback(close.widget);
