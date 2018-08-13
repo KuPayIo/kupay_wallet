@@ -65,10 +65,8 @@ export class ProductDetail extends Widget {
         props.money = strip(props.money);
         if (!this.state.isReadedDeclare) {
             const readPromice = this.readNotice();
-            
             await readPromice.then((r) => {
                 this.hideStep();
-
                 openBasePage('app-view-financialManagement-purchase-purchase',props).then((r) => {
                     // TODO 购买
                     // 返回值r是输入的密码
