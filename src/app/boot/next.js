@@ -92,8 +92,7 @@ winit.initNext = function () {
       "app/view/wallet/",
       "app/view/cloud/home/",
       "app/view/financialManagement/index/",
-      "app/view/mine/home/",
-      "app/view/"
+      "app/view/mine/home/"
     ]
 
     util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
@@ -113,6 +112,12 @@ winit.initNext = function () {
         // 关闭读取界面
         document.body.removeChild(document.getElementById('rcmj_loading_log'));
       });
+      // 加载其他文件
+      util.loadDir(["app/view/"], flags, fm, undefined, function (fileMap) {
+        console.log(fileMap)
+      }, function (r) {
+        alert("加载目录失败, " + r.error + ":" + r.reason);
+      }, dirProcess.handler);
       // pi_modules.commonjs.exports.relativeGet("app/cims/util").exports.initCfg(fileMap);
     }, function (r) {
       alert("加载目录失败, " + r.error + ":" + r.reason);

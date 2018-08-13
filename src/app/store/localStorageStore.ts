@@ -2,9 +2,8 @@
  * 处理localStorage上的数据
  */
 // ===================================================== 导入
-import { Addr, Wallet } from '../store/interface';
 import { getFirstEthAddr } from '../utils/tools';
-import { CHisRec, CRecDetail, LockScreen, SHisRec, SRecDetail, TransactionRecord } from './interface';
+import { Addr, CHisRec, CRecDetail, LockScreen, SHisRec, SRecDetail, TransactionRecord, Wallet } from './interface';
 import { register } from './store';
 // ===================================================== 导出
 
