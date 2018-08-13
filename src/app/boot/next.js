@@ -90,6 +90,9 @@ winit.initNext = function () {
       "app/store/",
       "app/view/base/",
       "app/view/wallet/",
+      "app/view/cloud/home/",
+      "app/view/financialManagement/index/",
+      "app/view/mine/home/",
       "app/view/"
     ]
 

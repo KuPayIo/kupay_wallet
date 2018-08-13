@@ -2,25 +2,25 @@
     <div>
     <app-components-topBar-topBar>{title:"理财",iconColor:"white"}</app-components-topBar-topBar>
     <div w-class="ga-announcement-container">
-        <img src="../../res/image/icon_speaker.png" w-class="ga-speaker-icon"/>
+        <img src="../../../res/image/icon_speaker.png" w-class="ga-speaker-icon"/>
         <span w-class="ga-speaker-title">{{'[头条]'}}</span>
         <span w-class="ga-speaker-text">医药行情风头正盛，分享享政策红利</span>
     </div>
     <div w-class="ga-carousel-container" class="swiper-container" >
         <div w-class="swiper-wrapper" class="swiper-wrapper">
             {{for index,item of it1.bannerList}}
-            <div w-class="swiper-slide" class="swiper-slide" style="background-image:url(../../res/image/{{item}});"></div>
+            <div w-class="swiper-slide" class="swiper-slide" style="background-image:url(../../../res/image/{{item}});"></div>
             {{end}}
         </div>
         <div class="swiper-pagination"></div>
     </div>
     <div w-class="ga-other-function">
         <div w-class="ga-function-item" on-tap="balanceManagementClick">
-            <img src="../../res/image/icon_eggmoney.png" w-class="ga-function-item-icon"/>
+            <img src="../../../res/image/icon_eggmoney.png" w-class="ga-function-item-icon"/>
             <span w-class="ga-function-item-text">币投宝</span>
         </div>
         <div w-class="ga-function-item" on-tap="loanClick">
-            <img src="../../res/image/icon_loan.png" w-class="ga-function-item-icon"/>
+            <img src="../../../res/image/icon_loan.png" w-class="ga-function-item-icon"/>
             <span w-class="ga-function-item-text">币币贷</span>
         </div>
       

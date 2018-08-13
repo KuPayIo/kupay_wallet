@@ -1,14 +1,14 @@
 /**
  * mine home page
  */
-import { ShareToPlatforms } from '../../../pi/browser/shareToPlatforms';
-import { popNew } from '../../../pi/ui/root';
-import { notify } from '../../../pi/widget/event';
-import { Widget } from '../../../pi/widget/widget';
-import { GlobalWallet } from '../../core/globalWallet';
-import { dataCenter } from '../../store/dataCenter';
-import { find, register, unregister } from '../../store/store';
-import { getMnemonic, openBasePage } from '../../utils/tools';
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../../pi/ui/root';
+import { notify } from '../../../../pi/widget/event';
+import { Widget } from '../../../../pi/widget/widget';
+import { GlobalWallet } from '../../../core/globalWallet';
+import { dataCenter } from '../../../store/dataCenter';
+import { find, register, unregister } from '../../../store/store';
+import { getMnemonic, openBasePage } from '../../../utils/tools';
 
 export class Home extends Widget {
     public stp: ShareToPlatforms;
