@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { Addr, Wallet } from '../view/interface';
-import { CHisRec, LockScreen, SHisRec, TransactionRecord } from './interface';
+import { CRecDetail, LockScreen, SRecDetail, TransactionRecord } from './interface';
 import { register } from './store';
 // ===================================================== 导出
 
@@ -60,11 +60,11 @@ register('lockScreen',(ls:LockScreen) => {
 });
 
 // 发送红包记录
-register('sHisRec',(sHisRec:SHisRec) => {
+register('sHisRec',(sHisRec:SRecDetail) => {
     setLocalStorage('sHisRec',sHisRec);
 });
 
 // 兑换红包记录
-register('cHisRec',(cHisRec:CHisRec) => {
+register('cHisRec',(cHisRec:CRecDetail) => {
     setLocalStorage('cHisRec',cHisRec);
 });

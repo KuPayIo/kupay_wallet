@@ -11,7 +11,7 @@ import { config } from '../core/config';
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy } from '../utils/tools';
 import { AccountDetail, Addr, CHisRec, 
-    CurrencyInfo, CurrencyType, LockScreen, LoginState,SHisRec, Store, TransactionRecord, Wallet } from './interface';
+    CRecDetail, CurrencyInfo, CurrencyType, LockScreen,LoginState, SHisRec, SRecDetail, Store, TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -116,7 +116,7 @@ type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'sa
 type MapName = 'exchangeRateJson' | 'hashMap';
 
 // ============================================ 本地
-type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRec' | 'cHisRec';
+type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRec' | 'cHisRec' | 'inviteRedBag';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -149,9 +149,9 @@ const store = <Store>{
     currencyList: <CurrencyInfo[]>[],// 货币信息列表
     shapeShiftCoins: <any>[],// shapeShift 支持的币种
     lockScreen:<LockScreen>null, // 锁屏密码相关
-    sHisRec:<SHisRec> null, // 发送红包记录
-    cHisRec:<CHisRec>null,// 兑换红包记录
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
-    accountDetail: new Map<CurrencyType, AccountDetail[]>()// 云端账户详情
+    accountDetail: new Map<CurrencyType, AccountDetail[]>(),// 云端账户详情
+    sHisRec:<SHisRec> null, // 发送红包记录
+    cHisRec:<CHisRec>null// 兑换红包记录
 };

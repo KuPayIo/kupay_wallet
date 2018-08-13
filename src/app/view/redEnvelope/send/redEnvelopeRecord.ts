@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { querySendRedEnvelopeRecord } from '../../../net/pull';
 import { CurrencyTypeReverse } from '../../../store/conMgr';
-import { SHisRec } from '../../../store/interface';
+import { SRecDetail } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
 import { recordNumber } from '../../../utils/constants';
 import { getFirstEthAddr, smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';
@@ -80,16 +80,16 @@ export class RedEnvelopeRecord extends Widget {
         console.log('load more from server');
         const firstEthAddr = getFirstEthAddr();
         const historyRecord = find('sHisRec');
-        const rList:SHisRec[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
+        const rList:SRecDetail[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
         const value = await querySendRedEnvelopeRecord(bStart);
         if (!value) return;
         const sendNumber = value[0];
         const start = value[1];
-        const recordList:SHisRec[] = [];
+        const recordList:SRecDetail[] = [];
         const r = value[2];
         for (let i = 0; i < r.length;i++) {
             const currencyName = CurrencyTypeReverse[r[i][2]];
-            const record:SHisRec = {
+            const record:SRecDetail = {
                 rid:r[i][0].toString(),
                 rtype:r[i][1],
                 ctype:r[i][2],

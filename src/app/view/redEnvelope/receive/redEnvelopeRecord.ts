@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getData, queryConvertLog } from '../../../net/pull';
 import { CurrencyType, CurrencyTypeReverse } from '../../../store/conMgr';
-import { CHisRec } from '../../../store/interface';
+import { CRecDetail } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
 import { recordNumber } from '../../../utils/constants';
 import { getFirstEthAddr, getLocalStorage, 
@@ -36,7 +36,7 @@ export class RedEnvelopeRecord extends Widget {
             refresh:true,// 是否可以刷新
             hasMore:false, // 是否还有更多记录
             showMoreTips:false, // 是否显示底部加载更多提示
-            inviteObj:<CHisRec>null// 邀请红包对象
+            inviteObj:<CRecDetail>null// 邀请红包对象
         };
         this.loadMore();
         this.getInviteRedEnvelope();
@@ -44,7 +44,7 @@ export class RedEnvelopeRecord extends Widget {
     // 获取邀请红包记录
     public async getInviteRedEnvelope() {
         const firstEthAddr = getFirstEthAddr();
-        const inviteRedEnvelope = getLocalStorage('inviteRedEnvelope') || {};
+        const inviteRedEnvelope = find('inviteRedBag') || {};
         const inviteObj = inviteRedEnvelope[firstEthAddr];
         if (inviteObj) {
             this.state.inviteObj = inviteObj;
@@ -66,7 +66,7 @@ export class RedEnvelopeRecord extends Widget {
                 timeShow: timestampFormat(data.value)
             };
             inviteRedEnvelope[firstEthAddr] = this.state.inviteObj;
-            setLocalStorage('inviteRedEnvelope',inviteRedEnvelope);
+            updateStore('inviteRedBag',inviteRedEnvelope);
             this.innerPaint();
         }
     }
@@ -130,14 +130,14 @@ export class RedEnvelopeRecord extends Widget {
         if (!value) return;
         const firstEthAddr = getFirstEthAddr();
         const historyRecord = find('cHisRec');
-        const rList:CHisRec[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
+        const rList:CRecDetail[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
         const convertNumber = value[0];
         const startNext = value[1];
-        const recordList:CHisRec[] = [];
+        const recordList:CRecDetail[] = [];
         const r = value[2];
         for (let i = 0; i < r.length;i++) {
             const currencyName = CurrencyTypeReverse[r[i][3]];
-            const record: CHisRec = {
+            const record: CRecDetail = {
                 suid: r[i][0],
                 rid: r[i][1],
                 rtype: r[i][2],

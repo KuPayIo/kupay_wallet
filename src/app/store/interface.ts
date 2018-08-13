@@ -126,10 +126,19 @@ export interface AccountDetail {
     behavior: string;// 标签
     time: number;// 时间
 }
+
 /**
  * 发送红包记录
  */
 export interface SHisRec {
+    sendNumber:number;// 发送红包总数
+    start:string;// 翻页start
+    list:SRecDetail[];// 详情列表
+}
+/**
+ * 发送红包记录详情
+ */
+export interface SRecDetail {
     rid:string;// 红包id
     rtype:number;// 红包类型
     ctype:number;// 币种
@@ -139,10 +148,19 @@ export interface SHisRec {
     timeShow:string;
     codes:string[];// 兑换码
 }
+
 /**
  * 兑换红包记录
  */
 export interface CHisRec {
+    convertNumber:number;// 兑换红包总数
+    start:string;// 翻页start
+    list:CRecDetail[];// 详情列表
+}
+/**
+ * 兑换红包记录详情
+ */
+export interface CRecDetail {
     suid: number;// 发送者uid
     rid: number;// 红包id
     rtype: number;// 红包类型 0-普通红包，1-拼手气红包，99-邀请红包
