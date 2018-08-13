@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { getFirstEthAddr } from '../utils/tools';
-import { Addr, Wallet } from '../view/interface';
+import { Addr, Wallet } from '../store/interface';
 import { CHisRec, CRecDetail, LockScreen, SHisRec, SRecDetail, TransactionRecord } from './interface';
 import { register } from './store';
 // ===================================================== 导出

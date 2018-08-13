@@ -4,70 +4,88 @@
 }
 .headStatusBar{
     height: 40px;
-    background: #fff;
+    background: #3574FA;
 }
 .head{
-    background: #fff;
-    height: 170px;
+    background: #3574FA;
+    height: 250px;
     border-bottom: 1px solid #E5E5EE;
     padding: 0 30px;
     display: flex;
     align-items: center;
 }
 .headTitle{
-    color: rgba(17, 17, 17, 0.87);
-    font-size: 36px;
+    color: #FFFFFF;
+    font-size: 48px;
+    line-height: 67px;
     flex-grow: 1;
 }
-.headTip{
-    color: rgba(17, 17, 17, 0.87);
-    font-size: 28px;
-}
+
 .headArow{
     margin-left:10px; 
 }
-.mine{
-    background: #fff;
-}
+
 .mineItem{
     height: 250px;
-    border-bottom: 1px solid #E5E5EE;
+    width: 690px;
+    margin: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 30px 0 rgba(39,52,125,0.25);
+    transform: translateY(-40px);
+    background: #fff;
 }
 .mineTitle{
     color: #203260;
-    font-size: 28px;
-    padding: 30px 43px;
+    font-size: 26px;
+    line-height: 37px;
+    padding: 30px 37px;
 }
 .mineMain{
-    padding-top: 10px; 
+    padding-top: 10px;  
     display: flex;
     justify-content: center;
+    align-items: center;
+}
+.iconLine{
+    display: inline-block;
+    width: 1px;
+    background: #666;
+    height: 70px;
 }
 .mainLeft{
+    flex-grow: 1;
     flex-basis: 30%;
     text-align: center;
 }
 .mainMid{
+    flex-grow: 1;
     flex-basis: 30%;
     text-align: center;
 }
 .mainRight{
+    flex-grow: 1;
     flex-basis: 30%;
     text-align: center;
 }
 .normalTitle{
-    color: #808890;
-    font-size: 24px;
+    color: #666;
+    font-size: 26px;
+    line-height: 37px;
 }
 .normalMain{
-    color: #344E7D;
-    font-size: 32px;
+    color: #203260;
+    font-size: 48px;
+    line-height: 67px;
     margin-top:20px; 
+}
+.unit{
+    font-size: 24px;
 }
 .incomMain{
     font-size: 48px;
-    color: #FF642B;
-    margin-top: 10px; 
+    color: #F17835;
+    line-height: 67px;
+    margin-top: 20px; 
 }
 .more{
     border-bottom: 1px solid #E5E5EE; 
@@ -79,20 +97,18 @@
 }
 .currentProduct{
     background: #fff;
-    margin-top:10px;
     height: 100px;
     padding-left:30px;
     line-height: 100px;
-    color: rgba(17, 17, 17, 0.87);
-    font-size: 36px; 
+    color: rgba(17,17,17,0.87);
+    font-size: 36px;
     border-bottom: 1px solid #E5E5EE;
 }
-.productList{
-    background: #fff;
-}
+
 .productItem{
-    padding-top: 30px; 
-    border-bottom: 1px solid #E5E5EE; 
+    margin-bottom:10px;
+    background: #fff; 
+    box-shadow: 0 2px 8px 0 rgba(12,15,35,0.05);
 }
 .productHead{
     color: #203260;
@@ -145,4 +161,9 @@
     margin-top:21px; 
     color: #808890;
     font-size: 24px;
+}
+.productItemHeadTitle{
+    margin-top:44px;
+    display: inline-block;
+     
 }

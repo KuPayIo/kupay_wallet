@@ -5,13 +5,13 @@ import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
+import { Addr, CurrencyRecord, Wallet } from '../store/interface';
 // tslint:disable-next-line:max-line-length
 import { btcNetwork, defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, ethTokenTransferCode, lang, shapeshiftApiPrivateKey, shapeshiftTransactionRequestNumber, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import {
     btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getDefaultAddr, getLocalStorage,
     getMnemonic, sat2Btc, setLocalStorage, wei2Eth
 } from '../utils/tools';
-import { Addr, CurrencyRecord, Wallet } from '../view/interface';
 import { find, getBorn, updateStore } from './store';
 /**
  * 创建事件处理器表

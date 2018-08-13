@@ -12,9 +12,9 @@ import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
+import { Addr } from '../store/interface';
 import { find, updateStore } from '../store/store';
-import { Addr, Wallet } from '../view/interface';
-import { lang, lockScreenSalt, supportCurrencyList } from './constants';
+import { lang, supportCurrencyList } from './constants';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -809,8 +809,8 @@ export const getXOR = (first, second) => {
 /**
  * 验证身份
  */
-export const VerifyIdentidy = async (wallet, passwd,useCache:boolean = true) => {
-    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId,useCache);
+export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) => {
+    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId, useCache);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
     try {
@@ -896,7 +896,7 @@ export const copyToClipboard = (copyText) => {
 /**
  * 获取memery hash
  */
-export const calcHashValuePromise = async (pwd, salt, walletId,useCache:boolean = true) => {
+export const calcHashValuePromise = async (pwd, salt, walletId, useCache: boolean = true) => {
     let hash;
     if (useCache && walletId) {
         hash = dataCenter.getHash(walletId);

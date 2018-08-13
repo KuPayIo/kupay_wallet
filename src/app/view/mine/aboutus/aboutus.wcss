@@ -5,6 +5,7 @@
 .logoimg{
     width: 150px;
     height: 150px;
+    border-radius: 6px;
 }
 .aboutus-back{
     width: 50px;
