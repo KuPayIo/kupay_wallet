@@ -7,18 +7,18 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { popNew } from '../../pi/ui/root';
-import { Forelet } from '../../pi/widget/forelet';
-import { addWidget } from '../../pi/widget/util';
-import { Api as EthApi } from '../core/eth/api';
-import { ERC20Tokens } from '../core/eth/tokens';
-import { EthWallet } from '../core/eth/wallet';
-import { sign } from '../core/genmnemonic';
-import { shapeshift } from '../exchange/shapeshift/shapeshift';
-import { dataCenter } from '../store/dataCenter';
-import { LockScreen } from '../store/interface';
-import { find, initStore } from '../store/store';
-import { getLocalStorage, setLocalStorage } from '../utils/tools';
+import { popNew } from '../../../pi/ui/root';
+import { Forelet } from '../../../pi/widget/forelet';
+import { addWidget } from '../../../pi/widget/util';
+import { Api as EthApi } from '../../core/eth/api';
+import { ERC20Tokens } from '../../core/eth/tokens';
+import { EthWallet } from '../../core/eth/wallet';
+import { sign } from '../../core/genmnemonic';
+import { shapeshift } from '../../exchange/shapeshift/shapeshift';
+import { dataCenter } from '../../store/dataCenter';
+import { LockScreen } from '../../store/interface';
+import { find, initStore } from '../../store/store';
+import { getLocalStorage, setLocalStorage } from '../../utils/tools';
 
 // ============================== 导出
 
@@ -68,7 +68,7 @@ export const run = (cb): void => {
 const popNewPage = () => {
     const readedPriAgr = find('readedPriAgr');
     if (readedPriAgr) {
-        popNew('app-view-app');
+        popNew('app-view-base-app');
         if (ifNeedUnlockScreen()) {
             popNew('app-view-guidePages-unlockScreen');
         }

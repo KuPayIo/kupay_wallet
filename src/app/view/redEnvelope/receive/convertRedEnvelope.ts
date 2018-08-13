@@ -7,9 +7,9 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { convertRedBag, getCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType } from '../../../store/interface';
-import { find, updateStore } from '../../../store/store';
+import {  updateStore } from '../../../store/store';
 import { showError } from '../../../utils/toolMessages';
-import { eth2Wei, getFirstEthAddr, removeLocalStorage, smallUnit2LargeUnitString } from '../../../utils/tools';
+import { eth2Wei, smallUnit2LargeUnitString } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -50,10 +50,7 @@ export class ConvertRedEnvelope extends Widget {
         const value: any = await this.convertRedEnvelope(code);
         close.callback(close.widget);
         if (!value) return;
-        const firstAddr = getFirstEthAddr();
-        const cHisRec = find('cHisRec');
-        cHisRec[firstAddr] = {};
-        updateStore('cHisRec',cHisRec);
+        updateStore('cHisRec',undefined);
         getCloudBalance();
         const r: any = await this.queryDesc(code);
 

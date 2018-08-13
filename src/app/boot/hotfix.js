@@ -2,22 +2,22 @@
 
 (function(){
 	var root = null, hinit = self.winit;
-	var es = new EventSource('/event/request');
-	es.onmessage = function(e){
-		console.log(e.data); // 打印服务器推送的信息
-		if(e.data === "ok")
-			return;
-		if(root)
-			return;
-		root = createPopup("文件改变，是否需要热更？", function(){
-			startHot();
-			root.remove();
-			root = null;
-		}, function(){
-			root.remove();
-			root = null;
-		});
-	}
+	// var es = new EventSource('/event/request');
+	// es.onmessage = function(e){
+	// 	console.log(e.data); // 打印服务器推送的信息
+	// 	if(e.data === "ok")
+	// 		return;
+	// 	if(root)
+	// 		return;
+	// 	root = createPopup("文件改变，是否需要热更？", function(){
+	// 		startHot();
+	// 		root.remove();
+	// 		root = null;
+	// 	}, function(){
+	// 		root.remove();
+	// 		root = null;
+	// 	});
+	// }
 
 	var createPopup = function(text, sure, cancel){
 		var root = document.createElement("div");

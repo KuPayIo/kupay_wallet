@@ -84,12 +84,13 @@ winit.initNext = function () {
       "pi/net/",
       "pi/util/",
       "pi/widget/",
-      "app/view/",
       "app/components/",
       "app/res/",
       "app/utils/",
       "app/store/",
-      "app/exchange/"
+      "app/view/base/",
+      "app/view/wallet/",
+      "app/view/"
     ]
 
     util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
@@ -104,7 +105,7 @@ winit.initNext = function () {
       // 加载根组件
       var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
       root.cfg.full = false;//PC模式
-      var index = pi_modules.commonjs.exports.relativeGet("app/view/main").exports;
+      var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
       index.run(() => {
         // 关闭读取界面
         document.body.removeChild(document.getElementById('rcmj_loading_log'));

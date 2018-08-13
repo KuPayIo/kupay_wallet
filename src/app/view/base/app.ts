@@ -1,9 +1,9 @@
 /**
  * 首页
  */
-import { SendChatMessage } from '../../pi/browser/sendMessage';
-import { Widget } from '../../pi/widget/widget';
-import { doChat, getProxy } from '../net/pull';
+import { SendChatMessage } from '../../../pi/browser/sendMessage';
+import { Widget } from '../../../pi/widget/widget';
+import { doChat, getProxy } from '../../net/pull';
 export class App extends Widget {
     public old: any = {};
     public create() {
