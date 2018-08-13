@@ -12,16 +12,16 @@
         </div>
     </div>
 
-    <div w-class="myEthInfo">
+    <div w-class="myEthInfo" on-tap="bonusClicked">
         <div w-class="myethTitle">
             累计分红(ETH)
             <img src="../../../res/image/cloud_arow_right2.png" w-class="arowR2" />
         </div>
         <div w-class="myethBonusAmount">
-            0.9152
+                {{it1.bonus}}
         </div>
         <div w-class="myethAmount">
-            持有 5,000.00 ETH
+                持有 {{it1.ethBalance}} ETH
         </div>
     </div>
 
