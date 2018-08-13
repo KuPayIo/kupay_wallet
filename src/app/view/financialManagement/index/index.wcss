@@ -2,15 +2,15 @@
     overflow-x: hidden;
     overflow-y: auto;
 }
-.headStatusBar{
-    height: 40px;
-    background: #3574FA;
+.canvas{
+    float: right;
 }
 .head{
     background: #3574FA;
     height: 250px;
     border-bottom: 1px solid #E5E5EE;
     padding: 0 30px;
+    padding-top:40px;  
     display: flex;
     align-items: center;
 }
@@ -123,6 +123,7 @@
     padding: 14px 0;
     text-align: center;
     float: right;
+    margin-top:20px; 
     border-radius: 8px;
     width: 135px;
     position: relative;

@@ -2,11 +2,8 @@
     overflow-x: hidden;
     overflow-y: auto;
 }
-.headStatusBar{
-    height:40px;
-    background: #3574FA;
-}
 .accountInfo{
+    padding-top:40px;  
     background: #3574FA;
 }
 .ktInfo{

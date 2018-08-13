@@ -1,5 +1,5 @@
 <div class="ga-new-page" w-class="ga-new-page">
-    <div w-class="headStatusBar"></div>
+    
     <div w-class="accountInfo">
         <div w-class="ktInfo" on-tap="cloudAccountClicked">
             <span w-class="growAccountName">
@@ -66,7 +66,7 @@
         </div>
 
         <div w-class="activityItem" on-tap="inviteRedEnvelopeClick">
-            <img src="../../../res/image/cloud_others_drag.png" w-class="activityIcon" />
+            <img src="../../../res/image/cloud_others_getETH.png" w-class="activityIcon" />
             <div w-class="activityInfo">
                 <div w-class="infoTitle">
                     领取0.5个ETH
@@ -79,7 +79,7 @@
             <img src="../../../res/image/cloud_arow_right3.png" />
         </div>
         <div w-class="activityItem" on-tap="packetsClicked">
-            <img src="../../../res/image/cloud_others_drag.png" w-class="activityIcon" />
+            <img src="../../../res/image/cloud_others_redPocket.png" w-class="activityIcon" />
             <div w-class="activityInfo">
                 <div w-class="infoTitle">
                     发红包
@@ -92,7 +92,7 @@
             <img src="../../../res/image/cloud_arow_right3.png" />
         </div>
         <div w-class="activityItem" on-tap="awardsClicked">
-            <img src="../../../res/image/cloud_others_drag.png" w-class="activityIcon" />
+            <img src="../../../res/image/cloud_others_award.png" w-class="activityIcon" />
             <div w-class="activityInfo">
                 <div w-class="infoTitle">
                     兑换领奖

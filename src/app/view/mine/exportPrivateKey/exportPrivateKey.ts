@@ -25,7 +25,15 @@ export class ExportPrivateKey extends Widget {
     public ok: () => void;
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.init();
+        this.state = {
+            collapseList:[]
+        };
+        const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
+        setTimeout(() => {
+            this.init();
+            close.callback(close.widget);
+            this.paint();
+        },0);
     }
 
     public init() {
