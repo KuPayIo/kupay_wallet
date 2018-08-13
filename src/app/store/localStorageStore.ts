@@ -2,7 +2,7 @@
  * 处理localStorage上的数据
  */
 // ===================================================== 导入
-import { Addr, Wallet } from '../view/interface';
+import { Addr, Wallet } from '../store/interface';
 import { CHisRec, LockScreen, SHisRec, TransactionRecord } from './interface';
 import { register } from './store';
 // ===================================================== 导出

@@ -38,7 +38,7 @@ export class DisplayPage extends Widget {
     }
 
     public doNextClick() {
-        popNew('app-view-app');
+        popNew('app-view-base-app');
         this.ok && this.ok();
     }
 }

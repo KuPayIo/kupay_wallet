@@ -5,11 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { dataCenter } from '../../../store/dataCenter';
+import { Wallet } from '../../../store/interface';
 import { find, register, unregister } from '../../../store/store';
 import {
     currencyExchangeAvailable, effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, parseAccount, parseDate
 } from '../../../utils/tools';
-import { Wallet } from '../../interface';
 
 interface Props {
     currencyName: string;

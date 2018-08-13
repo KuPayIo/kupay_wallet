@@ -6,6 +6,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { generateByHash, sha3 } from '../../../../core/genmnemonic';
 import { GlobalWallet } from '../../../../core/globalWallet';
 import { openAndGetRandom } from '../../../../net/pull';
+import { Addr, Wallet } from '../../../../store/interface';
 import { find, updateStore } from '../../../../store/store';
 import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
@@ -14,7 +15,6 @@ import { defalutShowCurrencys } from '../../../../utils/constants';
 import {
     calcHashValuePromise, encrypt, getAddrsAll, getXOR, openBasePage
 } from '../../../../utils/tools';
-import { Addr, Wallet } from '../../../interface';
 
 interface Props {
     choosedImg: string;
