@@ -1,0 +1,14 @@
+@keyframes move{
+    0%   {color:red;font-size: 40px;opacity: 1;margin-top: -245px;}
+    50%  {color:orangered;font-size: 45px;opacity: 0.5;margin-top: -280px;}
+    100% {color:orange;font-size: 50px;opacity: 0.1;margin-top: -300px;}
+}
+.miningNum{
+    font-size: 40px;
+    opacity: 0;
+    position: absolute;
+    margin-top: -245px;
+    text-align: center;
+    width: 100%;
+    color:red;
+}
