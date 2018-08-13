@@ -92,7 +92,8 @@ winit.initNext = function () {
       "app/view/wallet/",
       "app/view/cloud/home/",
       "app/view/financialManagement/index/",
-      "app/view/mine/home/"
+      "app/view/mine/home/",
+      "app/view/guidePages/",
     ]
 
     util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
