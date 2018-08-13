@@ -19,11 +19,6 @@ export class Index extends Widget {
                 amount:'1',
                 bonus:'0.002',
                 days:'2'
-            },{
-                title:'ETH资管第1期',
-                amount:'1',
-                bonus:'0.002',
-                days:'2'
             }],
             productList:[{
                 title:'优选理财-随存随取',
