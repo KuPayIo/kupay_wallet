@@ -130,10 +130,7 @@ export class SendRedEnvelope extends Widget {
         this.state.totalAmount = '';
         this.state.leaveMessage = '';
         this.paint();
-        const firstAddr = getFirstEthAddr();
-        const sHisRec = find('sHisRec');
-        sHisRec[firstAddr] = {};
-        updateStore('sHisRec', sHisRec);// 更新红包记录
+        updateStore('sHisRec', undefined);// 更新红包记录
         getCloudBalance();// 更新余额
         if (this.state.itype === 0) {
             // tslint:disable-next-line:max-line-length
@@ -167,6 +164,7 @@ export class SendRedEnvelope extends Widget {
     }
 }
 
+// =====================================本地
 register('cloudBalance', cloudBalance => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {

@@ -44,7 +44,7 @@ export class Home extends Widget {
      */
     public ethHoldingsClicked() {
         // 跳转充值提现
-        popNew('app-view-cloud-accountAssests-accountAssests',{ coinType:'ETH' ,coinBalance:0 });
+        popNew('app-view-cloud-accountAssests-accountAssests', { coinType: 'ETH', coinBalance: 0 });
     }
 
     /**
@@ -103,6 +103,9 @@ export class Home extends Widget {
         }
         getCloudBalance();
         popNew('app-components-message-message', { itype: 'outer', center: true, content: '挖矿成功' });
+        this.state.isAbleBtn = false;
+        getMining();
+        this.paint();
     }
     /**
      * 邀请红包
@@ -125,28 +128,22 @@ export class Home extends Widget {
         this.state.ethBalance = formatBalance(cloudBalance.get(CurrencyType.ETH));
     }
 
+    /**
+     * 获取更新数据
+     */
     private async initDate() {
         this.refreshCloudBalance();
 
-        // const msg = await getMining();
-        // const totalNum = kpt2kt(msg.mine_total);
-        // const holdNum = kpt2kt(msg.mines);
-        // const today = kpt2kt(msg.today);
-        // let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
-        // if (nowNum <= 0) {
-        //     nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
-        //     this.state.isAbleBtn = false;
-        // } else if ((totalNum - holdNum) > 100) {
-        //     nowNum = (nowNum < 100 && (totalNum - holdNum) > 100) ? 100 : nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
-        //     this.state.isAbleBtn = true;
-        // } else {
-        //     nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
-        //     this.state.isAbleBtn = true;
-        // }
-        // this.state.mines = nowNum;
+        const mining = find('miningTotal');
+        if (mining !== null && mining.thisNum > 0) {
+            this.state.isAbleBtn = true;
+            this.state.mines = mining.thisNum;
+        } else {
+            this.state.isAbleBtn = false;
+        }
 
-        // const divid = await getDividend();
-        // this.state.bonus = wei2Eth(divid.value[0]);
+        const divid = find('dividTotal');
+        this.state.bonus = divid ? divid.totalDivid : 0;
         this.paint();
     }
 
@@ -163,10 +160,24 @@ export class Home extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-register('cloudBalance', (cloudBalance) => {
+register('cloudBalance', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.refreshCloudBalance();
+    }
+});
+
+register('miningTotal', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initDate();
+    }
+});
+
+register('dividTotal', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initDate();
     }
 });
 

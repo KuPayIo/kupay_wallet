@@ -1,9 +1,9 @@
 /**
  * financial management home page
  */
-import { popNew } from '../../../pi/ui/root';
-import { Widget } from '../../../pi/widget/widget';
-import { Swiper } from '../../res/js/swiper.min';
+import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+import { Swiper } from '../../../res/js/swiper.min';
 
 export class FinancialManagementHome extends Widget {
     constructor() {

@@ -1,16 +1,14 @@
 /**
  * mine home page
  */
-// ========================================================= 导入
-import { ShareToPlatforms } from '../../../pi/browser/shareToPlatforms';
-import { popNew } from '../../../pi/ui/root';
-import { notify } from '../../../pi/widget/event';
-import { Forelet } from '../../../pi/widget/forelet';
-import { Widget } from '../../../pi/widget/widget';
-import { GlobalWallet } from '../../core/globalWallet';
-import { dataCenter } from '../../store/dataCenter';
-import { find, register } from '../../store/store';
-import { getMnemonic, openBasePage } from '../../utils/tools';
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../../pi/ui/root';
+import { notify } from '../../../../pi/widget/event';
+import { Widget } from '../../../../pi/widget/widget';
+import { GlobalWallet } from '../../../core/globalWallet';
+import { dataCenter } from '../../../store/dataCenter';
+import { find, register, unregister } from '../../../store/store';
+import { getMnemonic, openBasePage } from '../../../utils/tools';
 
 // ========================================================= 导出
 // tslint:disable-next-line:no-reserved-keywords

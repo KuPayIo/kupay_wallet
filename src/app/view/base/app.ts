@@ -1,9 +1,9 @@
 /**
  * 首页
  */
-import { SendChatMessage } from '../../pi/browser/sendMessage';
-import { Widget } from '../../pi/widget/widget';
-import { doChat, getProxy } from '../net/pull';
+import { SendChatMessage } from '../../../pi/browser/sendMessage';
+import { Widget } from '../../../pi/widget/widget';
+import { doChat, getProxy } from '../../net/pull';
 export class App extends Widget {
     public old: any = {};
     public create() {
@@ -22,7 +22,7 @@ export class App extends Widget {
                 text: '钱包',
                 icon: 'wallet_icon.png',
                 iconActive: 'wallet_icon_active.png',
-                components: 'app-view-wallet-home'
+                components: 'app-view-wallet-home-home'
             },
             {
                 text: '云端',
@@ -61,7 +61,7 @@ export class App extends Widget {
                 text: '我的',
                 icon: 'mine_icon.png',
                 iconActive: 'mine_icon_active.png',
-                components: 'app-view-mine-home'
+                components: 'app-view-mine-home-home'
             }]
 
         };

@@ -3,8 +3,8 @@
  */
 import { GlobalWallet } from '../core/globalWallet';
 import { openAndGetRandom } from '../net/pull';
+import { Addr, Wallet } from '../store/interface';
 import { find, updateStore } from '../store/store';
-import { Addr, Wallet } from '../view/interface';
 import { getAvatarRandom } from './account';
 import { defalutShowCurrencys } from './constants';
 import { encrypt, getAddrsAll, openBasePage } from './tools';

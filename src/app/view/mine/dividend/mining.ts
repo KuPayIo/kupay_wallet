@@ -6,7 +6,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineDetail, getMiningHistory, getMiningRank } from '../../../net/pull';
+import { getAward, getMineDetail, getMining, getMiningHistory, getMiningRank } from '../../../net/pull';
 import { find, register } from '../../../store/store';
 
 // ================================ 导出
@@ -55,7 +55,8 @@ export class Dividend extends Widget {
             totalNum:data.totalNum,
             thisNum:data.thisNum,
             holdNum:data.holdNum,
-            mineRank:rank.myRank
+            mineRank:rank.myRank,
+            doMining:false
         };
         this.paint();
     }
@@ -65,6 +66,26 @@ export class Dividend extends Widget {
      */
     public goAddMine() {
         popNew('app-view-mine-dividend-addMine');
+    }
+
+    /**
+     * 点击挖矿
+     */
+    public async doMining() {
+        if (this.state.thisNum > 0) { // 如果本次可挖大于0，则需要真正的挖矿操作并刷新数据
+            await getAward();
+        }
+
+        this.state.doMining = true;
+        this.paint();
+        
+        setTimeout(() => {// 动画效果执行完后将挖矿状态改为未点击状态
+            this.state.doMining = false;
+            getMining();
+            this.paint();
+        },1000);
+
+        this.paint();
     }
 
     /**
@@ -78,6 +99,8 @@ export class Dividend extends Widget {
     }
 }
 
+// ===================================================== 本地
+// ===================================================== 立即执行
 register('miningTotal', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
