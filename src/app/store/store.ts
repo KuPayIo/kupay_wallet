@@ -163,6 +163,8 @@ const store = <Store>{
     cHisRec:<CHisRec>null,// 兑换红包记录
     inviteRedBagRec:<CHisRec>null,// 邀请红包记录
     miningTotal: <MiningTotal>null, // 挖矿汇总信息
+    dividTotal:<DividTotal>null,// 分红汇总信息
+    miningHistory:<DividendItem[]>[],// 挖矿历史记录
     dividHistory: <DividendItem[]>[],// 分红历史记录
     addMine: <AddMineItem[]>[],// 矿山增加项目
     mineRank: <MineRank>null,// 矿山排名
