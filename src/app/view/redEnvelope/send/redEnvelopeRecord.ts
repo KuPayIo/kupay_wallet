@@ -1,23 +1,21 @@
 /**
  * red-envelope record
  */
+// ============================== 导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyTypeReverse, querySendRedEnvelopeRecord } from '../../../store/conMgr';
+import { querySendRedEnvelopeRecord } from '../../../net/pull';
+import { CurrencyTypeReverse, SHisRec } from '../../../store/interface';
+import { find, updateStore } from '../../../store/store';
 import { recordNumber } from '../../../utils/constants';
-import { formatBalance, getFirstEthAddr, 
-    getLocalStorage, setLocalStorage, smallUnit2LargeUnit, smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';
+import { getFirstEthAddr, smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';
 
-interface RecordShow {
-    rid:string;// 红包id
-    rtype:number;// 红包类型
-    ctype:number;// 币种
-    ctypeShow:string;
-    amount:number;// 金额
-    time:number;// 时间
-    timeShow:string;
-    codes:string[];// 兑换码
-}
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class RedEnvelopeRecord extends Widget {
     public ok:() => void;
@@ -46,11 +44,11 @@ export class RedEnvelopeRecord extends Widget {
 
     public loadMore() {
         const firstEthAddr = getFirstEthAddr();
-        const historyRecord = getLocalStorage('sendRedEnvelopeHistoryRecord') || {};
+        const historyRecord = find('sHisRec');
         const curHistoryRecord = historyRecord[firstEthAddr];
         if (curHistoryRecord) {
             const hList = curHistoryRecord.list;
-            if (hList.length > this.state.recordList.length) {
+            if (hList && hList.length > this.state.recordList.length) {
                 this.loadMoreFromLocal();
             } else {
                 this.loadMoreFromServer(this.state.start);
@@ -63,7 +61,7 @@ export class RedEnvelopeRecord extends Widget {
     public loadMoreFromLocal() {
         console.log('load more from local');
         const firstEthAddr = getFirstEthAddr();
-        const historyRecord = getLocalStorage('sendRedEnvelopeHistoryRecord');
+        const historyRecord = find('sHisRec');
         const curHistoryRecord = historyRecord[firstEthAddr];
         const hList = curHistoryRecord.list;
         const start = this.state.recordList.length;
@@ -77,48 +75,45 @@ export class RedEnvelopeRecord extends Widget {
     }
 
     // 向服务器请求更多记录
-    public async loadMoreFromServer(start?:string) {
+    public async loadMoreFromServer(bStart?:string) {
         console.log('load more from server');
         const firstEthAddr = getFirstEthAddr();
-        const historyRecord = getLocalStorage('sendRedEnvelopeHistoryRecord') || {};
-        const rList:RecordShow[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
-        const res = await querySendRedEnvelopeRecord(start);
-        if (res.result === 1) {
-            const sendNumber = res.value[0];
-            const start = res.value[1];
-            const recordList:RecordShow[] = [];
-            const r = res.value[2];
-            for (let i = 0; i < r.length;i++) {
-                const currencyName = CurrencyTypeReverse[r[i][2]];
-                const record:RecordShow = {
-                    rid:r[i][0].toString(),
-                    rtype:r[i][1],
-                    ctype:r[i][2],
-                    ctypeShow:currencyName,
-                    amount:smallUnit2LargeUnitString(currencyName,r[i][3]),
-                    time:r[i][4],
-                    timeShow:timestampFormat(r[i][4]),
-                    codes:r[i][5]
-                };
-                recordList.push(record);
-            }
-            this.state.sendNumber = sendNumber;
-            this.state.recordList = this.state.recordList.concat(recordList);
-            this.state.start = start;
-            this.state.hasMore = sendNumber > this.state.recordList.length;
-            this.state.showMoreTips = sendNumber >= recordNumber;
-            historyRecord[firstEthAddr] = {
-                start,
-                sendNumber,
-                list:rList.concat(recordList)
+        const historyRecord = find('sHisRec');
+        const rList:SHisRec[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
+        const value = await querySendRedEnvelopeRecord(bStart);
+        if (!value) return;
+        const sendNumber = value[0];
+        const start = value[1];
+        const recordList:SHisRec[] = [];
+        const r = value[2];
+        for (let i = 0; i < r.length;i++) {
+            const currencyName = CurrencyTypeReverse[r[i][2]];
+            const record:SHisRec = {
+                rid:r[i][0].toString(),
+                rtype:r[i][1],
+                ctype:r[i][2],
+                ctypeShow:currencyName,
+                amount:smallUnit2LargeUnitString(currencyName,r[i][3]),
+                time:r[i][4],
+                timeShow:timestampFormat(r[i][4]),
+                codes:r[i][5]
             };
-            if (sendNumber > 0) {
-                setLocalStorage('sendRedEnvelopeHistoryRecord',historyRecord);
-            }
-            this.paint();
-        } else {
-            popNew('app-components-message-message',{ itype:'error',content:'出错啦',center:true });
+            recordList.push(record);
         }
+        this.state.sendNumber = sendNumber;
+        this.state.recordList = this.state.recordList.concat(recordList);
+        this.state.start = start;
+        this.state.hasMore = sendNumber > this.state.recordList.length;
+        this.state.showMoreTips = sendNumber >= recordNumber;
+        historyRecord[firstEthAddr] = {
+            start,
+            sendNumber,
+            list:rList.concat(recordList)
+        };
+        if (sendNumber > 0) {
+            updateStore('sHisRec',historyRecord);
+        }
+        this.paint();
     }
 
     public getMoreList() {

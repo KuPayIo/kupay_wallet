@@ -4,7 +4,8 @@
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { RedEnvelopeType, sharePerUrl } from '../../../store/conMgr';
+import { sharePerUrl } from '../../../net/pull';
+import { RedEnvelopeType } from '../../../store/interface';
 
 interface Props {
     rid: string;

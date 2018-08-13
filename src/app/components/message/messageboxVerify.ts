@@ -3,14 +3,13 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+import { find } from '../../store/store';
 
 interface Props {
     content: string;
     title: string;
     tipsTitle:string;
     tipsImgUrl:string;
-    confirmCallBack:Function;
-    confirmErrorText:string;
     inputType?:string;
     placeHolder?:string;
     contentStyle?:string;
@@ -36,23 +35,23 @@ export class MessageBoxVerify extends Widget {
      * 点击确认
      */
     public async doClickSure() {
-        const close = popNew('pi-components-loading-loading', { text: '验证中...' });
-        const isEffective = await this.props.confirmCallBack(this.state.input);
-        close.callback(close.widget);
-        if (isEffective) {
-            this.ok && this.ok(this.state.input);
-        } else {
-            this.state.input = '';
-            popNew('app-components-message-message', { itype: 'error', content: this.props.confirmErrorText, center: true });
-            this.paint();
+        if (this.state.input.length === 0) {
+            popNew('app-components-message-message', { itype: 'error', content: '密码不能为空,请重新输入', center: true });
+            
+            return;
         }
+        this.ok && this.ok(this.state.input);
     }
 
     /**
      * 点击取消
      */
     public doClickCancel() {
-        this.cancel && this.cancel();
+        const ls = find('lockScreen');
+        // 如果没有被锁住
+        if (!ls.locked) {
+            this.cancel && this.cancel();
+        }
     }
 
     /**

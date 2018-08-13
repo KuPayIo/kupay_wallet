@@ -1,14 +1,21 @@
 /**
  * convert red-envelope
  */
+// ============================== 导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAllBalance, getData, inputInviteCdKey, setData } from '../../../net/pull';
-import {
-    convertRedBag, CurrencyType, CurrencyTypeReverse, queryRedBagDesc, RedEnvelopeType
-} from '../../../store/conMgr';
+import { convertRedBag, getCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
+import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType } from '../../../store/interface';
+import { find, updateStore } from '../../../store/store';
 import { showError } from '../../../utils/toolMessages';
-import { eth2Wei, removeLocalStorage, smallUnit2LargeUnitString } from '../../../utils/tools';
+import { eth2Wei, getFirstEthAddr, removeLocalStorage, smallUnit2LargeUnitString } from '../../../utils/tools';
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class ConvertRedEnvelope extends Widget {
     public ok: () => void;
@@ -40,30 +47,22 @@ export class ConvertRedEnvelope extends Widget {
             return;
         }
         const close = popNew('pi-components-loading-loading', { text: '兑换中...' });
-        try {
-            const res: any = await this.convertRedEnvelope(code);
-            if (res.result !== 1) {
-                showError(res.result);
-                close.callback(close.widget);
-
-                return;
-            }
-            removeLocalStorage('convertRedEnvelopeHistoryRecord');
-            getAllBalance();
-            const r: any = await this.queryDesc(code);
-
-            const redEnvelope = {
-                leaveMessage: r.value,
-                ctype: res.value[0],
-                amount: smallUnit2LargeUnitString(CurrencyTypeReverse[res.value[0]], res.value[1])
-            };
-            popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope, rtype: code.slice(0, 2) });
-        } catch (error) {
-            console.log(error);
-        }
-
+        const value: any = await this.convertRedEnvelope(code);
         close.callback(close.widget);
+        if (!value) return;
+        const firstAddr = getFirstEthAddr();
+        const cHisRec = find('cHisRec');
+        cHisRec[firstAddr] = {};
+        updateStore('cHisRec',cHisRec);
+        getCloudBalance();
+        const r: any = await this.queryDesc(code);
 
+        const redEnvelope = {
+            leaveMessage: r.value,
+            ctype: value[0],
+            amount: smallUnit2LargeUnitString(CurrencyTypeReverse[value[0]], value[1])
+        };
+        popNew('app-view-redEnvelope-receive-openRedEnvelope', { ...redEnvelope, rtype: code.slice(0, 2) });
         this.state.cid = '';
         this.paint();
     }
@@ -75,25 +74,27 @@ export class ConvertRedEnvelope extends Widget {
     public async convertRedEnvelope(code: string) {
         const perCode = code.slice(0, 2);
         const validCode = code.slice(2);
-        let res = { result: -1, value: [] };
+        let value = [];
         if (perCode === RedEnvelopeType.Normal) {
-            res = await convertRedBag(validCode);
+            value = await convertRedBag(validCode);
         } else if (perCode === RedEnvelopeType.Invite) {
             const data = await getData('convertRedEnvelope');
             if (data.value) {
-                res.result = -2;
+                showError(-2);
 
-                return res;
+                return;
             }
-            res = await inputInviteCdKey(validCode);
-            res.value = [CurrencyType.ETH, eth2Wei(0.015).toString()];
-            await setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
-            console.log('兑换成功', data);
+            value = await inputInviteCdKey(validCode);
+            if (!value) return;
+            value = [CurrencyType.ETH, eth2Wei(0.015).toString()];
+            setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
+        } else {
+            popNew('app-components-message-message', { itype: 'error', content: '兑换码错误', center: true });
+
+            return null;
         }
 
-        console.log('convert_red_bag', res);
-
-        return res;
+        return value;
     }
 
     public async queryDesc(code: string) {

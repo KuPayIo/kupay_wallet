@@ -809,8 +809,8 @@ export const getXOR = (first, second) => {
 /**
  * 验证身份
  */
-export const VerifyIdentidy = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId);
+export const VerifyIdentidy = async (wallet, passwd,useCache:boolean = true) => {
+    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId,useCache);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
     try {
@@ -868,14 +868,14 @@ export const getMnemonicHexstr = async (wallet, passwd) => {
 };
 // 锁屏密码验证
 export const lockScreenVerify = (psw) => {
-    const hash256 = sha256(psw + lockScreenSalt);
-    const localHash256 = getLocalStorage('lockScreenPsw');
+    const hash256 = sha256(psw + find('salt'));
+    const localHash256 = find('lockScreen').psw;
 
     return hash256 === localHash256;
 };
 // 锁屏密码hash算法
 export const lockScreenHash = (psw) => {
-    return sha256(psw + lockScreenSalt);
+    return sha256(psw + find('salt'));
 };
 
 // 复制到剪切板
@@ -896,9 +896,9 @@ export const copyToClipboard = (copyText) => {
 /**
  * 获取memery hash
  */
-export const calcHashValuePromise = async (pwd, salt, walletId) => {
+export const calcHashValuePromise = async (pwd, salt, walletId,useCache:boolean = true) => {
     let hash;
-    if (walletId) {
+    if (useCache && walletId) {
         hash = dataCenter.getHash(walletId);
         if (hash) return hash;
     }

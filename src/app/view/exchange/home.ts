@@ -4,7 +4,7 @@
 import { open, request, setUrl } from '../../../pi/net/ui/con_mgr';
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { conIp } from '../../store/conMgr';
+import { conIp } from '../../net/pull';
 
 export class Home extends Widget {
     public ok: () => void;

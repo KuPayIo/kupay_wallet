@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { Addr, Wallet } from '../view/interface';
-import { TransactionRecord } from './interface';
+import { CHisRec, LockScreen, SHisRec, TransactionRecord } from './interface';
 import { register } from './store';
 // ===================================================== 导出
 
@@ -52,4 +52,19 @@ register('salt', (salt: string) => {
 // 注册是否已阅读隐私协议
 register('readedPriAgr',(readed:boolean) => {
     setLocalStorage('readedPriAgr',readed);
+});
+
+// 锁屏相关
+register('lockScreen',(ls:LockScreen) => {
+    setLocalStorage('lockScreen',ls);
+});
+
+// 发送红包记录
+register('sHisRec',(sHisRec:SHisRec) => {
+    setLocalStorage('sHisRec',sHisRec);
+});
+
+// 兑换红包记录
+register('cHisRec',(cHisRec:CHisRec) => {
+    setLocalStorage('cHisRec',cHisRec);
 });

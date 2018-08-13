@@ -1,14 +1,21 @@
 /**
  * send red-envelope
  */
+// ============================== 导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAllBalance } from '../../../net/pull';
-import { CurrencyType, RedEnvelopeType, sendRedEnvlope, sharePerUrl } from '../../../store/conMgr';
-import { find, register, unregister } from '../../../store/store';
+import { getCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
+import { CurrencyType, RedEnvelopeType } from '../../../store/interface';
+import { find, register, unregister, updateStore } from '../../../store/store';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
-import { doErrorShow } from '../../../utils/toolMessages';
-import { getByteLen, openBasePage, removeLocalStorage } from '../../../utils/tools';
+import { getByteLen, getFirstEthAddr, openBasePage, removeLocalStorage } from '../../../utils/tools';
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class SendRedEnvelope extends Widget {
     public ok: () => void;
@@ -30,20 +37,12 @@ export class SendRedEnvelope extends Widget {
             leaveMessageMaxLen: 20
         };
         this.updateBalance();
-        register('cloudBalance', cloudBalance => {
-            this.updateBalance();
-        });
-    }
-    public destroy() {
-        unregister('cloudBalance', null);
-
-        return super.destroy();
     }
     public backPrePage() {
         this.ok && this.ok();
     }
 
-    // 获取余额
+    // 更新余额
     public updateBalance() {
         this.state.balance = find('cloudBalance', CurrencyType[this.state.currencyName]) || 0;
         this.paint();
@@ -116,43 +115,33 @@ export class SendRedEnvelope extends Widget {
         const ctype = Number(CurrencyType[this.state.currencyName]);
         const totalAmount = Number(this.state.totalAmount);
         const redEnvelopeNumber = this.state.redEnvelopeNumber;
-        let res;
-        try {
-            res = await sendRedEnvlope(rtype, ctype, totalAmount, redEnvelopeNumber, lm);
-        } catch (err) {
-            doErrorShow(err);
+        const rid = await sendRedEnvlope(rtype, ctype, totalAmount, redEnvelopeNumber, lm);
+        close.callback(close.widget);
+        if (!rid) return;
 
-            return;
-        } finally {
-            close.callback(close.widget);
-        }
-
-        if (res.result === 1) {
-            popNew('app-view-redEnvelope-send-shareRedEnvelope', {
-                rid: res.value,
-                rtype: this.state.itype,
-                leaveMessage: this.state.leaveMessage || this.state.lmPlaceHolder,
-                currencyName: this.state.currencyName
-            });
-            this.state.singleAmount = '';
-            this.state.redEnvelopeNumber = 0;
-            this.state.totalAmount = '';
-            this.state.leaveMessage = '';
-            this.paint();
-            removeLocalStorage('sendRedEnvelopeHistoryRecord');
-            getAllBalance();
-            if (this.state.itype === 0) {
-                // tslint:disable-next-line:max-line-length
-                console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(lm)}`);
-            } else {
-                // tslint:disable-next-line:max-line-length
-                console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${res.value}&lm=${(<any>window).encodeURIComponent(lm)}`);
-            }
-
+        popNew('app-view-redEnvelope-send-shareRedEnvelope', {
+            rid,
+            rtype: this.state.itype,
+            leaveMessage: this.state.leaveMessage || this.state.lmPlaceHolder,
+            currencyName: this.state.currencyName
+        });
+        this.state.singleAmount = '';
+        this.state.redEnvelopeNumber = 0;
+        this.state.totalAmount = '';
+        this.state.leaveMessage = '';
+        this.paint();
+        const firstAddr = getFirstEthAddr();
+        const sHisRec = find('sHisRec');
+        sHisRec[firstAddr] = {};
+        updateStore('sHisRec', sHisRec);// 更新红包记录
+        getCloudBalance();// 更新余额
+        if (this.state.itype === 0) {
+            // tslint:disable-next-line:max-line-length
+            console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
         } else {
-            popNew('app-components-message-message', { itype: 'error', content: '出错啦,请重试', center: true });
+            // tslint:disable-next-line:max-line-length
+            console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
         }
-
     }
 
     // 红包记录
@@ -177,3 +166,10 @@ export class SendRedEnvelope extends Widget {
         });
     }
 }
+
+register('cloudBalance', cloudBalance => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateBalance();
+    }
+});

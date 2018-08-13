@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { regPhone, sendCode } from '../../../store/conMgr';
+import { regPhone, sendCode } from '../../../net/pull';
 import { getLocalStorage, setLocalStorage } from '../../../utils/tools';
 
 interface Props {
@@ -67,17 +67,8 @@ export class BindPhone extends Widget {
 
             return;
         }
-        try {
-            await regPhone(this.state.phone, this.state.code);
-            this.ok();
-        } catch (error) {
-            console.log(error);
-            if (error.type === -300) {
-                popNew('app-components-message-message', { itype: 'error', center: true, content: `验证码失效，请重新获取` });
-            } else {
-                popNew('app-components-message-message', { itype: 'error', center: true, content: `错误${error.type}` });
-            }
-        }
+        await regPhone(this.state.phone, this.state.code);
+        this.ok();
     }
     /**
      * 显示新的区号
