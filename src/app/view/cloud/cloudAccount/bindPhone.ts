@@ -1,14 +1,15 @@
 /**
  * 云端绑定手机
  */
+interface Props {
+    ktBalance: number;
+}
+// =================================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { regPhone, sendCode } from '../../../net/pull';
 import { getLocalStorage, setLocalStorage } from '../../../utils/tools';
-
-interface Props {
-    ktBalance: number;
-}
+// =================================================导出
 export class BindPhone extends Widget {
     public ok: () => void;
     constructor() {

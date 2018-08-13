@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { Addr, Wallet } from '../view/interface';
-import { CHisRec, LockScreen, SHisRec, TransactionRecord } from './interface';
+import { CHisRec, LockScreen, SHisRec, TopContact,TransactionRecord } from './interface';
 import { register } from './store';
 // ===================================================== 导出
 
@@ -67,4 +67,9 @@ register('sHisRec',(sHisRec:SHisRec) => {
 // 兑换红包记录
 register('cHisRec',(cHisRec:CHisRec) => {
     setLocalStorage('cHisRec',cHisRec);
+});
+
+// 常用联系人
+register('TopContacts', (TopContacts: TopContact[]) => {
+    setLocalStorage('TopContacts',TopContacts);
 });

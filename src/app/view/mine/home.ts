@@ -90,7 +90,7 @@ export class Home extends Widget {
             {
                 icon: 'icon_mine_phone.png',
                 text: '联系我们',
-                components: 'app-view-mine-aboutus-aboutus'
+                components: 'app-view-mine-contanctUs-contanctUs'
             }
 
                 // ,
