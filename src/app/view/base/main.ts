@@ -32,8 +32,8 @@ export const run = (cb): void => {
     // 数据检查
     checkUpdate();
     // 初始化数据
-    dataCenter.init();
     initStore();
+    dataCenter.init();
     // makepayment();
     // exchangeManage.init();
     // 打开界面

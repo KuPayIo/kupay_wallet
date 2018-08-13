@@ -118,13 +118,14 @@ export class Home extends Widget {
         this.state.hiddenAssets = !this.state.hiddenAssets;
         this.paint();
     }
-    public registerWalletsFun = (wallets: any) => {
+    public registerWalletsFun = () => {
         // 创建完钱包之后修改floatBoxTip提示信息
-        if (wallets) {
+        const wallets = find('walletList');
+        const wallet = find('curWallet');
+        if (wallet) {
             this.state.floatBoxTip = '为了您的资产安全，请及时备份助记词';
         }
 
-        const wallet = find('curWallet');
         this.state.gwlt = wallet ? GlobalWallet.fromJSON(wallet.gwlt) : null;
         this.state.otherWallets = wallets && wallets.length > 0;
         this.state.wallet = wallet;
@@ -187,7 +188,7 @@ const setCurrencyListBalance = (currencyList: any[], balance: number, currencyNa
     });
 };
 
-register('walletList', (resp) => {
+register('curWallet', (resp) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.registerWalletsFun(resp);

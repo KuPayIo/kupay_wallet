@@ -11,7 +11,7 @@ import { config } from '../core/config';
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail, AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MineRank, MiningRank, MiningTotal, SHisRec, Store, TransactionRecord, Wallet } from './interface';
+import { AccountDetail, AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, LockScreen, LoginState, MineRank, MiningRank, MiningTotal, SHisRec, Store, TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**

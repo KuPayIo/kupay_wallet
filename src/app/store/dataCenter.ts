@@ -28,8 +28,11 @@ export class DataCenter {
 
     public addrs: string[] = [];
     public timerRef: number = 0;
+    public timerRef1: number = 0;
+
     public transactions: any[] = [];
 
+    public updateFastList: any[] = [];
     public updateList: any[] = [];
 
     public currencyExchangeTimer: number;
@@ -38,9 +41,9 @@ export class DataCenter {
      * 初始化
      */
     public init() {
-        this.updateList.push(['shapeShiftCoins']);
-        this.updateList.push(['exchangeRate', 'ETH']);
-        this.updateList.push(['exchangeRate', 'BTC']);
+        this.updateFastList.push(['shapeShiftCoins']);
+        this.updateFastList.push(['exchangeRate', 'ETH']);
+        this.updateFastList.push(['exchangeRate', 'BTC']);
 
         // 从缓存中获取地址进行初始化
         const addrs = find('addrs');
@@ -59,7 +62,9 @@ export class DataCenter {
         }
 
         // 启动定时器更新
-        if (!this.timerRef) this.openCheck();
+        if (!this.timerRef) this.openCheckFast();
+        if (!this.timerRef1) this.openCheck();
+
         if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
     }
 
@@ -164,11 +169,8 @@ export class DataCenter {
      * 更新记录
      */
     public updatetTransaction(addr: string, currencyName: string) {
-        // if (currencyName !== 'BTC') {
-        //     this.updateList.push(['balance', addr, currencyName]);   
-        // }
-        this.updateList.push(['balance', addr, currencyName]);
-        this.updateList.push(['transaction', addr, currencyName]);
+        this.updateFastList.push(['balance', addr, currencyName]);
+        this.updateFastList.push(['transaction', addr, currencyName]);
     }
     /**
      * 添加常用联系人地址
@@ -280,14 +282,15 @@ export class DataCenter {
      * 私有函数
      ******************************************************************************************/
 
-    private openCheck() {
+    // 快速检测
+    private openCheckFast() {
         this.timerRef = setTimeout(() => {
             this.timerRef = 0;
-            this.openCheck();
-        }, 5 * 1000);
-        if (this.updateList.length > 0) {
-            const update = this.updateList.shift();
-            console.log('openCheck updateList', update);
+            this.openCheckFast();
+        }, 100);
+        if (this.updateFastList.length > 0) {
+            const update = this.updateFastList.shift();
+            console.log('openCheck updateFastList', update);
             switch (update[0]) {
                 case 'transaction': this.parseTransactionDetails(update[1], update[2]); break;
                 // case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
@@ -297,6 +300,19 @@ export class DataCenter {
                 default:
             }
 
+            return;
+        }
+    }
+
+    // 普通检测
+    private openCheck() {
+        this.timerRef = setTimeout(() => {
+            this.timerRef = 0;
+            this.openCheck();
+        }, 5 * 1000);
+        if (this.updateFastList.length > 0) return;
+        if (this.updateList.length > 0) {
+            // todo doupdate
             return;
         }
 
@@ -545,7 +561,7 @@ export class DataCenter {
             case 'ETH':
                 const api = new EthApi();
                 api.getBalance(addr).then(r => {
-                    const num = wei2Eth((<any>r).toNumber());
+                    const num = wei2Eth(parseInt(r.result, 16));
                     this.setBalance(addr, currencyName, num);
                 });
                 break;
@@ -584,11 +600,11 @@ export class DataCenter {
             case 'ETH':
                 const ethApi: EthApi = new EthApi();
                 const ethRate = await ethApi.getExchangeRate();
-                updateStore('exchangeRateJson', find('exchangeRateJson').set('ETH', ethRate));
+                updateStore('exchangeRateJson', getBorn('exchangeRateJson').set('ETH', ethRate));
                 break;
             case 'BTC':
                 const btcRate = await BtcApi.getExchangeRate();
-                updateStore('exchangeRateJson', find('exchangeRateJson').set('BTC', btcRate));
+                updateStore('exchangeRateJson', getBorn('exchangeRateJson').set('BTC', btcRate));
                 break;
             default:
         }
