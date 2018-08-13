@@ -105,26 +105,78 @@ export interface LockScreen {
     locked?:boolean;// 是否3次解锁机会都用完
 }
 
-// 任务id记录
-export enum TaskSid {
-    createWlt = 1001,// 创建钱包
-    firstChargeEth,// 首次转入
-    bindPhone,// 注册手机
-    chargeEth,// 存币
-    inviteFriends,// 邀请真实好友
-    buyFinancial = 1007,// 购买理财产品
-    transfer,// 交易奖励
-    bonus,// 分红
-    mines,// 挖矿
-    chat,// 聊天
-    redEnvelope = 'red_bag_port' // 红包
+/**
+ * 挖矿汇总信息
+ */
+export interface MiningTotal {
+    totalNum:number; // 矿山总量
+    thisNum:number;  // 本次可挖
+    holdNum:number;  // 已挖数量
 }
 
-export interface AccountDetail {
-    iType: TaskSid;// 类型
-    amount: number;// 数据
-    behavior: string;// 标签
-    time: number;// 时间
+/**
+ * 
+ */
+export interface DividTotal {
+    totalDivid:number; // 累计分红
+    thisDivid:number;  // 本次分红
+    totalDays:number;  // 分红天数
+    yearIncome:number; // 年华收益
+}
+
+/**
+ * 挖矿，分红历史记录
+ */
+export interface DividendItem {
+    num:number;
+    time:string;
+    total:number;
+}
+
+/**
+ * 矿山增加项目
+ */
+export interface AddMineItem {
+    isComplete:boolean;  // 是否已完成该挖矿步骤
+    itemImg:string;  // 图片地址
+    itemName:string;  // 挖矿项目名称
+    itemNum:number;  // 该项目已得到数量
+    itemDetail:any;  // 项目介绍
+    itemJump:string;  // 跳转链接 
+}
+
+/**
+ * 矿山，挖矿排名单项
+ */
+export interface MineRankItem {
+    index:number;// 名次
+    name:string;// 用户名称
+    num:number;// 矿山，挖矿总量
+}
+
+/**
+ * 矿山排名
+ */
+export interface MineRank {
+    mineSecond:boolean;  // 矿山排名第二名是否存在
+    mineThird:boolean;   // 矿山排名第三名是否存在
+    minePage:number;  // 矿山排名列表页码
+    mineMore:boolean;  // 矿山排名是否还有更多  
+    mineList:any[];  // 矿山排名总列表
+    mineRank:MineRankItem[];  // 矿山排名分页数据
+    myRank:number; // 当前用户的排名
+}
+
+/**
+ * 挖矿排名
+ */
+export interface MiningRank {
+    miningSecond:boolean;  // 挖矿排名第二名是否存在
+    miningThird:boolean;   // 挖矿排名第三名是否存在
+    miningPage:number;  // 挖矿排名列表页码
+    miningMore:boolean;  // 挖矿排名是否还有更多  
+    miningList:any[];  // 挖矿排名总列表
+    miningRank:MineRankItem[];  // 挖矿排名分页数据
 }
 
 /**
@@ -207,5 +259,33 @@ export interface Store {
     accountDetail: Map<CurrencyType, AccountDetail[]>;// 云端账户详情
     sHisRec:SHisRec;// 发送红包记录
     cHisRec:CHisRec;// 兑换红包记录
+    inviteRedBagRec:CHisRec;// 邀请红包记录
+    miningTotal:MiningTotal;// 挖矿汇总信息
+    dividTotal:DividTotal;// 分红汇总信息
+    miningHistory:DividendItem[];// 挖矿历史记录
+    dividHistory:DividendItem[];// 分红历史记录
+    addMine:AddMineItem[];// 矿山增加项目
+    mineRank:MineRank;// 矿山排名
+    miningRank:MiningRank;// 挖矿排名    
+}
 
+export enum TaskSid {
+    createWlt = 1001,// 创建钱包
+    firstChargeEth,// 首次转入
+    bindPhone,// 注册手机
+    chargeEth,// 存币
+    inviteFriends,// 邀请真实好友
+    buyFinancial = 1007,// 购买理财产品
+    transfer,// 交易奖励
+    bonus,// 分红
+    mines,// 挖矿
+    chat,// 聊天
+    redEnvelope = 'red_bag_port' // 红包
+}
+
+export interface AccountDetail {
+    iType: TaskSid;// 类型
+    amount: number;// 数据
+    behavior: string;// 标签
+    time: number;// 时间
 }

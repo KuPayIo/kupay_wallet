@@ -6,11 +6,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { querySendRedEnvelopeRecord } from '../../../net/pull';
-import { CurrencyTypeReverse } from '../../../store/conMgr';
-import { SRecDetail } from '../../../store/interface';
+import { CurrencyTypeReverse, SHisRec, SRecDetail } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
 import { recordNumber } from '../../../utils/constants';
-import { getFirstEthAddr, smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';
+import { smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -44,11 +43,9 @@ export class RedEnvelopeRecord extends Widget {
     }
 
     public loadMore() {
-        const firstEthAddr = getFirstEthAddr();
-        const historyRecord = find('sHisRec');
-        const curHistoryRecord = historyRecord[firstEthAddr];
-        if (curHistoryRecord) {
-            const hList = curHistoryRecord.list;
+        const sHisRec = find('sHisRec');
+        if (sHisRec) {
+            const hList = sHisRec.list;
             if (hList && hList.length > this.state.recordList.length) {
                 this.loadMoreFromLocal();
             } else {
@@ -58,18 +55,17 @@ export class RedEnvelopeRecord extends Widget {
             this.loadMoreFromServer(this.state.start);
         }
     }
+
     // 从本地缓存加载更多
     public loadMoreFromLocal() {
         console.log('load more from local');
-        const firstEthAddr = getFirstEthAddr();
-        const historyRecord = find('sHisRec');
-        const curHistoryRecord = historyRecord[firstEthAddr];
-        const hList = curHistoryRecord.list;
+        const sHisRec = find('sHisRec');
+        const hList = sHisRec.list;
         const start = this.state.recordList.length;
 
         this.state.recordList = this.state.recordList.concat(hList.slice(start,start + recordNumber));
-        this.state.sendNumber = curHistoryRecord.sendNumber;
-        this.state.start = curHistoryRecord.start;
+        this.state.sendNumber = sHisRec.sendNumber;
+        this.state.start = sHisRec.start;
         this.state.hasMore = this.state.sendNumber > this.state.recordList.length;
         this.state.showMoreTips = this.state.sendNumber >= recordNumber;
         this.paint();
@@ -78,9 +74,8 @@ export class RedEnvelopeRecord extends Widget {
     // 向服务器请求更多记录
     public async loadMoreFromServer(bStart?:string) {
         console.log('load more from server');
-        const firstEthAddr = getFirstEthAddr();
-        const historyRecord = find('sHisRec');
-        const rList:SRecDetail[] = (historyRecord[firstEthAddr] && historyRecord[firstEthAddr].list) || [];
+        const sHisRec = find('sHisRec');
+        const rList:SRecDetail[] = sHisRec && sHisRec.list || [];
         const value = await querySendRedEnvelopeRecord(bStart);
         if (!value) return;
         const sendNumber = value[0];
@@ -106,13 +101,13 @@ export class RedEnvelopeRecord extends Widget {
         this.state.start = start;
         this.state.hasMore = sendNumber > this.state.recordList.length;
         this.state.showMoreTips = sendNumber >= recordNumber;
-        historyRecord[firstEthAddr] = {
+        const sHisRecNew:SHisRec = {
             start,
             sendNumber,
             list:rList.concat(recordList)
         };
         if (sendNumber > 0) {
-            updateStore('sHisRec',historyRecord);
+            updateStore('sHisRec',sHisRecNew);
         }
         this.paint();
     }

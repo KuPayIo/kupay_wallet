@@ -1014,6 +1014,7 @@ export const timestampFormat = (timestamp: number) => {
 // 获取当前钱包第一个ETH地址
 export const getFirstEthAddr = () => {
     const wallet = find('curWallet');
+    if (!wallet) return;
     const currencyRecords = wallet.currencyRecords;
     for (let i = 0; i < currencyRecords.length; i++) {
         if (currencyRecords[i].currencyName === 'ETH') {
