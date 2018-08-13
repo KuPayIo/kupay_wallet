@@ -31,7 +31,10 @@
 
     <div style="text-align: center;">
         <img src="../../../res/image/Group 531.png" style="width: 611px;height: 800px;margin-top: -360px;"/>
-        <div style="margin-top: -190px;"><div w-class="miningBtn">挖一下</div></div>
+        <div style="margin-top: -190px;"><div w-class="miningBtn" on-tap="doMining">挖一下</div></div>
+    </div>
+    <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
+        <span>+{{it1.thisNum}}</span>
     </div>
 
     <div w-class="addMine" on-tap="goAddMine">去增加储备矿</div>
