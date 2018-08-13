@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <div w-class="notice">
+        <div w-class="notice" on-tap="redNotice">
                 阅读声明
         </div>
     </div>

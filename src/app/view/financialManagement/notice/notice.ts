@@ -2,6 +2,7 @@
  * 理财产品首页
  */
 import { Widget } from '../../../../pi/widget/widget';
+import { Config } from '../../base/config';
 export class Notice extends Widget {
     public ok: (r:any) => void;
     constructor() {
@@ -13,6 +14,7 @@ export class Notice extends Widget {
     }
     public init() {
         this.state = {
+            notice:Config.notice,
             isAgree:false
         };
     }

@@ -23,11 +23,11 @@ export const parseCloudBalance = (balanceInfo): Map<CurrencyType, number> => {
 /**
  * 解析云端账号详情
  */
-export const parseCloudAccountDetail = (coinType, infos): AccountDetail[] => {
+export const parseCloudAccountDetail = (coinType: CurrencyType, infos): AccountDetail[] => {
     const list = [];
     infos.forEach(v => {
         const itype = v[0];
-        const amount = formatBalance(smallUnit2LargeUnit(coinType, v[1]));
+        const amount = formatBalance(smallUnit2LargeUnit(CurrencyTypeReverse[coinType], v[1]));
         let behavior = '';
         if (itype === TaskSid.redEnvelope) {
             if (amount > 0) {
