@@ -5,13 +5,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { openAndGetRandom } from '../../../net/pull';
+import { Addr, Wallet } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
 import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
 } from '../../../utils/account';
 import { defalutShowCurrencys } from '../../../utils/constants';
 import { encrypt } from '../../../utils/tools';
-import { Addr, Wallet } from '../../interface';
 
 export class WalletCreate extends Widget {
     public ok: () => void;
