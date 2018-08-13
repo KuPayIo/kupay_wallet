@@ -30,6 +30,7 @@
     right: 35px;
     width: 88px;
     height: 88px;
+    top:40px;
 }
 
 .body{

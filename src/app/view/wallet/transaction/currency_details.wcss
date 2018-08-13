@@ -22,7 +22,7 @@
     border-width: 0px;
     position: absolute;
     right: 30px;
-    top: 0px;
+    top: 22px;
     word-wrap: break-word;
     transform-origin: 185.5px 13px 0px;
     cursor: pointer;

@@ -47,7 +47,8 @@ export class Dividend extends Widget {
             totalDivid:data.totalDivid,
             totalDays:data.totalDays,
             thisDivid:data.thisDivid,
-            yearIncome:data.yearIncome           
+            // yearIncome:data.yearIncome           
+            yearIncome:8          
         };
         this.paint();
     }

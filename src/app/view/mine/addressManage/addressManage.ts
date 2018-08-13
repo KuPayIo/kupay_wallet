@@ -1,9 +1,18 @@
 /**
  * 地址管理
  */
+// ================================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../store/dataCenter';
+import { TopContact } from '../../../store/interface';
+import { register } from '../../../store/store';
+// ====================================================导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class AddressManage extends Widget {
     public ok: () => void;
@@ -77,7 +86,7 @@ export class AddressManage extends Widget {
             popNew('app-components-message-message', { itype: 'success', content: '添加常用联系人成功！', center: true });
         });
     }
-
+    // 获取默认地址标签名
     public getDefaultTags(currencyName:string) {
         const contacts = dataCenter.getTopContacts(currencyName);
         const length = contacts.length + 1;
@@ -85,3 +94,11 @@ export class AddressManage extends Widget {
         return `${currencyName} ${length}`;
     }
 }
+// ======================================= 本地
+register('TopContacts', (TopContacts:TopContact[]) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init(); 
+        w.paint();
+    }
+});

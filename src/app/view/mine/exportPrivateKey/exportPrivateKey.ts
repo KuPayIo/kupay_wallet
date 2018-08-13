@@ -1,7 +1,12 @@
 /**
  * export privateKey
  */
+interface Props {
+    walletId: string;
+}
+// =========================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { ERC20Tokens } from '../../../core/eth/tokens';
@@ -10,23 +15,39 @@ import { find } from '../../../store/store';
 import { btcNetwork, lang } from '../../../utils/constants';
 import { getWalletByWalletId } from '../../../utils/tools';
 
-interface Props {
-    mnemonic: string;
-}
+// ================================================导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class ExportPrivateKey extends Widget {
     public ok: () => void;
-    constructor() {
-        super();
-    }
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.init();
+        this.state = {
+            collapseList:[]
+        };
+        const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
+        setTimeout(() => {
+            this.init();
+            close.callback(close.widget);
+            this.paint();
+        },0);
     }
 
     public init() {
         const walletList = find('walletList');
         const wallet = getWalletByWalletId(walletList, this.props.walletId);
-        const currencyRecords = wallet.currencyRecords;
+        let showCurrency = wallet.showCurrencys;
+        if (!wallet || !showCurrency) {
+            showCurrency = [];
+        }
+        let currencyRecords = wallet.currencyRecords;
+        if (!wallet || !wallet.currencyRecords) {
+            currencyRecords = [];
+        }
+        currencyRecords = getChoosedCurrencyRecords(showCurrency,currencyRecords);
         const collapseList = [];
         for (let i = 0; i < currencyRecords.length; i++) {
             const obj = {
@@ -61,6 +82,7 @@ export class ExportPrivateKey extends Widget {
         };
 
     }
+    
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -120,3 +142,17 @@ export class ExportPrivateKey extends Widget {
         return keys;
     }
 }
+
+// ==================================================本地
+// 过滤所有私钥，返回用户选择显示币种的私钥
+const getChoosedCurrencyRecords = (showCurrency:[any],currencyRecords:[any]) => {
+    return currencyRecords.filter((item) => {
+        let result = false;
+        for (let i = 0;i < showCurrency.length;i++) {
+            result = (showCurrency[i] === item.currencyName);
+            if (result) break;
+        }
+
+        return result;
+    });
+};

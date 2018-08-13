@@ -1,16 +1,22 @@
 /**
  * change password
  */
+interface Props {
+    passwd: string;
+}
+// ==============================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { find, updateStore } from '../../../store/store';
 import { getWalletPswStrength, pswEqualed, walletPswAvailable } from '../../../utils/account';
 import { getWalletByWalletId } from '../../../utils/tools';
-
-interface Props {
-    passwd: string;
-}
+// ==============================================导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class ChangePassword extends Widget {
     public ok: () => void;

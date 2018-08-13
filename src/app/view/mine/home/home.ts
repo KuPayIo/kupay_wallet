@@ -4,11 +4,18 @@
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { notify } from '../../../../pi/widget/event';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
-import { find, register, unregister } from '../../../store/store';
+import { find, register } from '../../../store/store';
 import { getMnemonic, openBasePage } from '../../../utils/tools';
+
+// ========================================================= 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Home extends Widget {
     public stp: ShareToPlatforms;
@@ -17,13 +24,7 @@ export class Home extends Widget {
     }
     public create() {
         super.create();
-        register('walletList', this.registerWalletsFun);
         this.init();
-    }
-    public destroy() {
-        unregister('walletList', this.registerWalletsFun);
-
-        return super.destroy();
     }
     public init() {
         // 获取钱包显示头像
@@ -66,7 +67,7 @@ export class Home extends Widget {
             //     components: 'app-view-mine-languageAndcoinset-language'
             // }, 
             {
-                icon: 'icon_mine_Language.png',
+                icon: 'icon_mine_lock.png',
                 text: '锁屏密码',
                 components: 'app-view-mine-lockScreen-lockScreenSetting'
             },
@@ -84,6 +85,11 @@ export class Home extends Widget {
                 icon: 'icon_mine_about.png',
                 text: '关于我们',
                 components: 'app-view-mine-aboutus-aboutus'
+            },
+            {
+                icon: 'icon_mine_phone.png',
+                text: '联系我们',
+                components: 'app-view-mine-contanctUs-contanctUs'
             }
 
                 // ,
@@ -96,6 +102,7 @@ export class Home extends Widget {
         };
     }
 
+    // 处理菜单点击事件
     public itemClick(e: any, index: number) {
         if (index <= 2) {
             const walletList = find('walletList');
@@ -118,22 +125,24 @@ export class Home extends Widget {
         });
     }
 
-    public goNotice(event: any) {
-        popNew('app-view-messageList-messageList', { hasNews: this.state.hasNews }, (r) => {
-            if (r) {
-                this.state.hasNews = false;
-                this.paint();
-            }
-        });
-    }
+    // public goNotice(event: any) {
+    //     popNew('app-view-messageList-messageList', { hasNews: this.state.hasNews }, (r) => {
+    //         if (r) {
+    //             this.state.hasNews = false;
+    //             this.paint();
+    //         }
+    //     });
+    // }
 
-    public share() {
-        popNew('app-components-share-share', { text: 'This is a test QRCode', shareType: ShareToPlatforms.TYPE_IMG }, (result) => {
-            alert(result);
-        }, (result) => {
-            alert(result);
-        });
-    }
+    // public share() {
+    //     popNew('app-components-share-share', { text: 'This is a test QRCode', shareType: ShareToPlatforms.TYPE_IMG }, (result) => {
+    //         alert(result);
+    //     }, (result) => {
+    //         alert(result);
+    //     });
+    // }
+
+    // 跳转到钱包管理页面
     public walletManagementClick() {
         if (!this.state.wallet || this.state.walletList.length === 0) {
             popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
@@ -142,6 +151,8 @@ export class Home extends Widget {
         }
         popNew('app-view-mine-walletManagement-walletManagement', { walletId: this.state.wallet.walletId });
     }
+
+    // 点击备份钱包
     public async backupClick() {
         if (!this.state.wallet || this.state.walletList.length === 0) {
             popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
@@ -170,8 +181,20 @@ export class Home extends Widget {
         close.callback(close.widget);
     }
 
-    private registerWalletsFun = () => {
-        this.init();
-        this.paint();
-    }
 }
+
+// ================================ 本地
+register('walletList', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init(); 
+        w.paint();
+    }
+});
+register('curWallet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init(); 
+        w.paint();
+    }
+});

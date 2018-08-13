@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { getFirstEthAddr } from '../utils/tools';
-import { Addr, CHisRec, CRecDetail, LockScreen, SHisRec, SRecDetail, TransactionRecord, Wallet } from './interface';
+import { Addr, CHisRec, CRecDetail, LockScreen, SHisRec, SRecDetail, TransactionRecord, Wallet ,TopContact} from './interface';
 import { register } from './store';
 // ===================================================== 导出
 
@@ -95,4 +95,9 @@ register('inviteRedBagRec',(inviteRedBagRec:CHisRec) => {
         inviteRedBagRecMap.set(getFirstEthAddr(),inviteRedBagRec);
     }
     setLocalStorage('inviteRedBagRecMap',inviteRedBagRecMap);
+});
+
+// 常用联系人
+register('TopContacts', (TopContacts: TopContact[]) => {
+    setLocalStorage('TopContacts',TopContacts);
 });

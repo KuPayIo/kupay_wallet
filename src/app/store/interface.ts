@@ -267,6 +267,8 @@ export interface Store {
     addMine:AddMineItem[];// 矿山增加项目
     mineRank:MineRank;// 矿山排名
     miningRank:MiningRank;// 挖矿排名    
+    // 地址管理
+    TopContacts:TopContact[];// 常用联系人列表
 }
 
 export enum TaskSid {
@@ -288,4 +290,11 @@ export interface AccountDetail {
     amount: number;// 数据
     behavior: string;// 标签
     time: number;// 时间
+}
+
+// 常用联系人数据结构
+export interface TopContact {
+    currencyName: string;// 货币名称
+    tags: string;// 地址标签
+    addresse: string;// 地址
 }

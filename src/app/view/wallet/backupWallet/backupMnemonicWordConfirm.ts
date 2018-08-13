@@ -108,6 +108,7 @@ export class BackupMnemonicWordConfirm extends Widget {
                 gwlt.mnemonicBackup = true;
                 v.gwlt = gwlt.toJSON();
             }
+            if (isUpdate) updateStore('curWallet', v);
 
             return v;
         });
