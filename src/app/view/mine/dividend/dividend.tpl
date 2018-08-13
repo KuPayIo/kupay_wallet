@@ -34,7 +34,7 @@
     <div w-class="groupcard">
         <span w-class="rule-title">分红规则</span>
         <div w-class="dividend-rule">
-            <div w-class="rulemess">1、KT最小分红单位为份，1份KT=3000MPT。</div>
+            <div w-class="rulemess">1、KT最小分红单位为份，1份KT=3000KT。</div>
             <div w-class="rulemess">2、分红开始之前可增加持有KT获取更多分红。</div>
             <div w-class="rulemess">3、分红时间是北京时间(同台北时间)每周五下午2点。</div>
             <div w-class="rulemess">4、拥有1000KT才具有提现权限。</div>
