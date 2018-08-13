@@ -1,5 +1,5 @@
 <div class="ga-new-page" w-class="ga-new-page">
-    <div w-class="headStatusBar"></div>
+    
     <div w-class="accountInfo">
         <div w-class="ktInfo" on-tap="cloudAccountClicked">
             <span w-class="growAccountName">
@@ -14,8 +14,8 @@
 
     <div w-class="myEthInfo" on-tap="bonusClicked">
         <div w-class="myethTitle">
-                累计分红(ETH)
-                <img src="../../../res/image/cloud_arow_right2.png" w-class="arowR2"/>
+            累计分红(ETH)
+            <img src="../../../res/image/cloud_arow_right2.png" w-class="arowR2" />
         </div>
         <div w-class="myethBonusAmount">
                 {{it1.bonus}}
@@ -28,7 +28,8 @@
     <div w-class="canvas" style="display: none;">
         <div w-class="canvasHead">
             <div w-class="canvasHead-left">
-                <div w-class="leftTitle"><span w-class="KTspan">KT</span>/ETH</div>
+                <div w-class="leftTitle">
+                    <span w-class="KTspan">KT</span>/ETH</div>
                 <div w-class="leftMain">交易量 2652125.624</div>
             </div>
             <div w-class="canvasHead-mid">
@@ -36,7 +37,7 @@
                 <div w-class="midMain">￥106,088.98</div>
             </div>
             <span w-class="canvasHead-right">
-                    -2.63%
+                -2.63%
             </span>
         </div>
         <div w-class="canvasContainer">
@@ -55,21 +56,17 @@
                     每日挖矿
                 </div>
                 <div w-class="infoMain">
-                    {{if it1.isAbleBtn}}
-                    本次可挖{{it1.mines}}KT
-                    {{else}}
-                    拥有1000KT才能提现
-                    {{end}}
+                    {{if it1.isAbleBtn}} 本次可挖{{it1.mines}}KT {{else}} 拥有1000KT才能提现 {{end}}
                 </div>
             </div>
             <span w-class="paddingSpan" style="display: {{it1.isAbleBtn?'inline':'none'}}" on-tap="doPadding">
                 挖一下
             </span>
-            <img src="../../../res/image/cloud_arow_right.png" />
+            <img src="../../../res/image/cloud_arow_right3.png" />
         </div>
 
         <div w-class="activityItem" on-tap="inviteRedEnvelopeClick">
-            <img src="../../../res/image/cloud_others_drag.png" w-class="activityIcon" />
+            <img src="../../../res/image/cloud_others_getETH.png" w-class="activityIcon" />
             <div w-class="activityInfo">
                 <div w-class="infoTitle">
                     领取0.5个ETH
@@ -79,34 +76,35 @@
                 </div>
             </div>
 
-            <img src="../../../res/image/cloud_arow_right.png" />
+            <img src="../../../res/image/cloud_arow_right3.png" />
         </div>
-    </div>
-
-
-    <div w-class="service">
-        <div w-class="serviceHead">
-            服务
-        </div>
-        <div w-class="serviceBox">
-            <div w-class="serviceItem" on-tap="packetsClicked">
-                <img src="../../../res/image/cloud_others_pockets.png" w-class="serviceIcon" />
-                <div>
-                    <div w-class="serviceTitle">发红包</div>
-                    <div w-class="serviceMain">发红包给好友</div>
+        <div w-class="activityItem" on-tap="packetsClicked">
+            <img src="../../../res/image/cloud_others_redPocket.png" w-class="activityIcon" />
+            <div w-class="activityInfo">
+                <div w-class="infoTitle">
+                    发红包
+                </div>
+                <div w-class="infoMain">
+                    发红包给好友
                 </div>
             </div>
 
-            <div w-class="serviceItem" on-tap="awardsClicked">
-                <img src="../../../res/image/cloud_others_pockets.png" w-class="serviceIcon" />
-                <div>
-                    <div w-class="serviceTitle">兑换领奖</div>
-                    <div w-class="serviceMain">使用兑换码</div>
+            <img src="../../../res/image/cloud_arow_right3.png" />
+        </div>
+        <div w-class="activityItem" on-tap="awardsClicked">
+            <img src="../../../res/image/cloud_others_award.png" w-class="activityIcon" />
+            <div w-class="activityInfo">
+                <div w-class="infoTitle">
+                    兑换领奖
+                </div>
+                <div w-class="infoMain">
+                    使用兑换码开礼包
                 </div>
             </div>
+
+            <img src="../../../res/image/cloud_arow_right3.png" />
         </div>
     </div>
-
     <div style="height: 120px;">
 
     </div>

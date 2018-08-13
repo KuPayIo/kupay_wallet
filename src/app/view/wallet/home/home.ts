@@ -200,3 +200,14 @@ register('addrs', (resp) => {
         w.registerAddrsFun();
     }
 });
+
+register('curWallet', (curWallet) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        const wallet = curWallet;
+        const gwlt = wallet ? GlobalWallet.fromJSON(wallet.gwlt) : null;
+        w.state.wallet = wallet;
+        w.state.gwlt = gwlt;
+        w.paint();
+    }
+});

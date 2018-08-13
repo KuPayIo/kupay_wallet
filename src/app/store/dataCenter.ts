@@ -174,7 +174,7 @@ export class DataCenter {
      * 添加常用联系人地址
      */
     public addTopContacts(currencyName: string, addresse: string, tags: string) {
-        let topContacts = getLocalStorage('topContacts');
+        let topContacts = find('TopContacts');
         if (!topContacts) {
             topContacts = [];
         }
@@ -184,13 +184,13 @@ export class DataCenter {
             addresse
         };
         topContacts.push(item);
-        setLocalStorage('topContacts', topContacts);
+        updateStore('TopContacts', topContacts);
     }
     /**
      * 获取常用联系人地址
      */
     public getTopContacts(currencyName: string) {
-        let topContacts = getLocalStorage('topContacts');
+        let topContacts = find('TopContacts');
         if (!topContacts) {
             topContacts = [];
         }

@@ -1,5 +1,4 @@
 <div class="ga-new-page" w-class="ga-new-page">
-    <div w-class="headStatusBar"></div>
     <div w-class="head" on-tap="toRecord">
         <span w-class="headTitle">我的理财</span>
         <img src="../../../res/image/cloud_arow_right.png" w-class="headArow" />
@@ -61,6 +60,7 @@
                     售罄
                 </span>
                 {{else}}
+                
                 <span w-class="surplus" style="background: repeating-linear-gradient(to right,#1A70DD 0%, #1A70DD {{v.surplus}}, #a0acc0 0%,#a0acc0 101%);">
                     剩余{{v.surplus}}
                 </span>

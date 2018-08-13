@@ -1,30 +1,34 @@
 /**
  * my wallet
  */
+// ==============================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { openAndGetRandom } from '../../../net/pull';
 import { dataCenter } from '../../../store/dataCenter';
-import { find, register, unregister, updateStore } from '../../../store/store';
+import { Wallet } from '../../../store/interface';
+import { find, register, updateStore } from '../../../store/store';
 import { walletNameAvailable } from '../../../utils/account';
 import {
     decrypt, encrypt, fetchTotalAssets, formatBalanceValue, getAddrsAll, getMnemonic,
     getWalletByWalletId, getWalletIndexByWalletId, openBasePage, VerifyIdentidy
 } from '../../../utils/tools';
 
+// ==============================================导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class WalletManagement extends Widget {
     public ok: (returnHome?: boolean) => void;
-    constructor() {
-        super();
-    }
     public setProps(props: any, oldProps: any) {
         super.setProps(props, oldProps);
         this.init();
     }
     public init() {
-        register('walletList', this.registerWalletsFun);
-        register('addrs', this.registerAddrsFun);
         const walletList = find('walletList');
         const wallet = getWalletByWalletId(walletList, this.props.walletId);
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
@@ -43,15 +47,13 @@ export class WalletManagement extends Widget {
             isUpdatingPswTips: false,
             totalAssets: 0.00
         };
-        this.registerAddrsFun();
+        
+        if (!wallet) return;
+        this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
+        this.paint();
     }
 
-    public destroy() {
-        unregister('walletList', this.registerWalletsFun);
-        unregister('addrs', this.registerAddrsFun);
-
-        return super.destroy();
-    }
+    // 返回
     public backPrePage() {
         this.pageClick();
 
@@ -68,6 +70,7 @@ export class WalletManagement extends Widget {
         this.paint();
     }
 
+    // 导出私钥
     public async exportPrivateKeyClick() {
         if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
             this.pageClick();
@@ -94,10 +97,10 @@ export class WalletManagement extends Widget {
             console.log(error);
             popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
         }
-
         close.callback(close.widget);
     }
 
+    // 绑定手机
     public async bindPhone() {
         if (this.state.isUpdatingWalletName || this.state.isUpdatingPswTips) {
             this.pageClick();
@@ -107,6 +110,7 @@ export class WalletManagement extends Widget {
         popNew('app-view-cloud-cloudAccount-bindPhone', {});
     }
 
+    // 修改钱包名称
     public walletNameInputFocus() {
         this.state.isUpdatingWalletName = true;
     }
@@ -129,8 +133,8 @@ export class WalletManagement extends Widget {
             const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             gwlt.nickName = v;
             wallet.gwlt = gwlt.toJSON();
-
             updateStore('walletList', walletList);
+            updateStore('curWallet', wallet);
         }
         input.value = v;
         this.state.isUpdatingWalletName = false;
@@ -139,6 +143,7 @@ export class WalletManagement extends Widget {
         this.state.isUpdatingPswTips = true;
     }
 
+    // 修改密码提示
     public pswTipsInputBlur() {
         const pswTipsInput: any = document.querySelector('#pswTipsInput');
         const value = pswTipsInput.value;
@@ -352,8 +357,15 @@ export class WalletManagement extends Widget {
         updateStore('transactions', transactionsNew);
     }
 
-    private registerWalletsFun = (wallets: any) => {
-        const wallet = getWalletByWalletId(wallets, this.props.walletId);
+}
+
+// ==============================================本地
+
+// walletList更新
+register('walletList', (wallets:[Wallet]) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        const wallet = getWalletByWalletId(wallets, w.props.walletId);
         if (!wallet) return;
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         let pswTips = '';
@@ -361,19 +373,20 @@ export class WalletManagement extends Widget {
             pswTips = decrypt(wallet.walletPswTips);
         }
         pswTips = pswTips.length > 0 ? pswTips : '无';
-        this.state.mnemonicBackup = gwlt.mnemonicBackup;
-        this.state.pswTips = pswTips;
-        this.paint();
+        w.state.mnemonicBackup = gwlt.mnemonicBackup;
+        w.state.pswTips = pswTips;
+        w.paint();
     }
+});
 
-    /**
-     * 总资产更新
-     */
-    private registerAddrsFun = (addrs?: any) => {
-        const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
+// 总资产更新
+register('addrs', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        const wallet = getWalletByWalletId(find('walletList'), w.props.walletId);
         if (!wallet) return;
 
-        this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
-        this.paint();
+        w.state.totalAssets = formatBalanceValue(fetchTotalAssets());
+        w.paint();
     }
-}
+});

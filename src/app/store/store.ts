@@ -11,7 +11,7 @@ import { config } from '../core/config';
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail, AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MineRank, MiningRank, MiningTotal, SHisRec, Store, TransactionRecord, Wallet } from './interface';
+import { AccountDetail, AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MineRank, MiningRank, MiningTotal, SHisRec, Store, TopContact, TransactionRecord ,Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -100,6 +100,8 @@ export const initStore = () => {
      // 从localStorage中取inviteRedBagRecMap
     const inviteRedBagRecMap = new Map(findByLoc('inviteRedBagRecMap')) || new Map();
     store.inviteRedBagRec = inviteRedBagRecMap.get(getFirstEthAddr());
+    // 从localStorage中取常用联系人列表
+    store.TopContacts = findByLoc('TopContacts') || [];
 
     // 初始化默认兑换汇率列表
     const rateJson = config.currentNetIsTest ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
@@ -116,12 +118,12 @@ export const initStore = () => {
 
 // tslint:disable-next-line:max-line-length
 type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState' | 'miningTotal' | 'miningHistory' | 'dividHistory' | 'accountDetail' |
-    'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' | 'inviteRedBagRec';
+    'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' | 'inviteRedBagRec'| 'TopContacts';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
 // ============================================ 本地
-type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' | 'inviteRedBagRecMap';
+type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' | 'inviteRedBagRecMap'| 'TopContacts';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -166,5 +168,7 @@ const store = <Store>{
     dividHistory: <DividendItem[]>[],// 分红历史记录
     addMine: <AddMineItem[]>[],// 矿山增加项目
     mineRank: <MineRank>null,// 矿山排名
-    miningRank: <MiningRank>null// 挖矿排名   
+    miningRank: <MiningRank>null,// 挖矿排名
+    // 地址管理
+    TopContacts:<TopContact[]>[]// 常用联系人列表   
 };
