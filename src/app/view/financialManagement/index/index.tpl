@@ -6,7 +6,7 @@
 
 
         {{for i,v of it1.record}}
-        <div w-class="mineItem">
+        <div w-class="mineItem" on-tap="toRecord">
             <div w-class="mineTitle">
                 {{v.title}}
             </div>

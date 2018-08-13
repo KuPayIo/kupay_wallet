@@ -1,9 +1,6 @@
 /**
  * 确认提示框
  */
-import { QRCode } from '../../../../pi/browser/qrcode';
-import { Widget } from '../../../../pi/widget/widget';
-
 interface Props {
     mType: string;// prompt,confirm
     text: string;
@@ -13,7 +10,11 @@ interface Props {
     center?: boolean;
     inputType?: string;
 }
+// ======================================导入
+import { QRCode } from '../../../../pi/browser/qrcode';
+import { Widget } from '../../../../pi/widget/widget';
 
+// ============================================导出
 export class MessageBox extends Widget {
     public props: Props;
     public ok: (r: any) => void;

@@ -1,8 +1,9 @@
 /**
  * 地址详情
  */
+// ======================================导入
 import { Widget } from '../../../../pi/widget/widget';
-
+// ===========================================导出
 export class AddritemDetails extends Widget {
     public ok: () => void;
     constructor() {

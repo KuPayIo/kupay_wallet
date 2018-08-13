@@ -1,10 +1,11 @@
 /**
  * about us
  */
+// =======================================导入
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-
+// =========================================导出
 export class Aboutus extends Widget {
     public ok: () => void;
     constructor() {

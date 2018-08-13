@@ -1,7 +1,9 @@
 /**
  * 提现界面
  */
+// ==================================================导入
 import { Widget } from '../../../../pi/widget/widget';
+// =================================================导出
 export class Withdraw extends Widget {
     public ok:() => void;
     constructor() {

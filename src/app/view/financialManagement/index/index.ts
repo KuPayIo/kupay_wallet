@@ -1,8 +1,10 @@
 /**
  * 理财产品首页
  */
+// ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+// ====================================================导出
 export class Index extends Widget {
     public ok: () => void;
     constructor() {
@@ -34,7 +36,7 @@ export class Index extends Widget {
                 profit: '5%',
                 productName: 'ETH资管第1期',
                 productDescribe: ' 赎回T+0到账 | 0.1 ETH/份',
-                isSoldOut: true
+                isSoldOut: false
             }, {
                 title: '优选理财-随存随取',
                 surplus: '0%',

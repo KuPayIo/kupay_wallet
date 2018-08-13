@@ -1,7 +1,9 @@
 /**
  * 购买记录详情
  */
+// ===================================================导入
 import { Widget } from '../../../../pi/widget/widget';
+// =====================================================导出
 export class RecordDetail extends Widget {
     public ok: () => void;
     constructor() {

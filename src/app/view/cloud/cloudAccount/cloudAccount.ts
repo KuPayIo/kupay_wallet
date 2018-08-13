@@ -1,15 +1,17 @@
 /**
  * 云端账号首页
  */
+interface Props {
+    ktBalance: number;
+    ethBalance: number;
+}
+// ===============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../store/dataCenter';
 import { formatBalanceValue } from '../../../utils/tools';
 
-interface Props {
-    ktBalance: number;
-    ethBalance: number;
-}
+// ====================================================导出
 export class CloudAccount extends Widget {
     public ok: () => void;
     constructor() {

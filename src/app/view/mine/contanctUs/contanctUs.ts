@@ -33,11 +33,11 @@ export class Aboutus extends Widget {
                 break;
             // KuPay小助手
             case 1:
-                // TODO
+                window.open('weixin://dl/officialaccounts');
                 break;
             // KuPay公众号
             case 2:
-                // TODO
+                window.open('weixin://dl/officialaccounts');
                 break;
             default:
                 console.log('服务器异常请稍后重试');
