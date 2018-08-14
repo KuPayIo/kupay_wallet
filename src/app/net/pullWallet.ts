@@ -2,7 +2,6 @@
  * 主动向钱包通讯
  */
 // ===================================================== 导入
-import { popNew } from '../../pi/ui/root';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
@@ -13,7 +12,7 @@ import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { eth2Wei, ethTokenMultiplyDecimals } from '../utils/tools';
+import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/tools';
 // ===================================================== 导出
 
 /**
@@ -44,7 +43,36 @@ export const transfer = async (psw:string,fromAddr:string,toAddr:string,gasPrice
 
     return hash;
 };
+/**
+ * 预估矿工费
+ * @param currencyName 货币名称
+ * @param options 可选项,货币为ETH或ERC20时必传
+ */
+export const estimateMinerFee = async (currencyName:string,options?:{toAddr:string;pay:number;gasPrice:number}) => {
+    console.log('options',options);
+    let gasLimit = 21000;
+    let fee = 0;
+    if (currencyName === 'ETH') {
+        gasLimit = await estimateGasETH(options.toAddr);
+        fee = gasLimit * wei2Eth(options.gasPrice);
+    } else if (currencyName === 'BTC') {
+        // todo 获取BTC矿工费估值
+        const nbBlocks = 2;
+        const feeObj = await estimateMinerFeeBTC(nbBlocks);
+        gasLimit = 0;
+        fee = feeObj[nbBlocks];
+    } else if (ERC20Tokens[currencyName]) {
+        gasLimit = await estimateGasERC20(currencyName,options.toAddr,options.pay);
+        // 临时解决方案
+        gasLimit  = gasLimit * 2;
+        fee = gasLimit * wei2Eth(options.gasPrice);
+    }
 
+    return {
+        minerFee:fee,
+        gasLimit
+    };
+};
 // =====================================================ETH
 /**
  * 预估ETH的gas limit
@@ -109,20 +137,8 @@ const doERC20TokenTransfer = async (wlt: EthWallet, acct1: string, acct2: string
 
 // ==================================================BTC
 // 预估BTC矿工费
-export const estimateMinerFeeBTC = async (wlt:BTCWallet,acct1:string, acct2:string, value: number, info: string) => {
-    const output = {
-        toAddr: acct2,
-        amount: value,
-        chgAddr: acct1
-    };
-    wlt.unlock();
-    await wlt.init();
-
-    const retArr = await wlt.buildRawTransaction(output, 'medium');
-    wlt.lock();
-
-    return retArr[1];
-
+export const estimateMinerFeeBTC = async (nbBlocks: number = 2) => {
+    return BtcApi.estimateFee(nbBlocks);
 };
 
 /**
