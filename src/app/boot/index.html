@@ -159,12 +159,21 @@
 			winit.debug = true
 			// winit.debug = location.host.indexOf('192.168.31') > -1;
 			main = location.port ? main + ":" + location.port : main;
+			winit.isLoc = location.protocol.indexOf("file")>=0
 
 			var needCDN = true;
 
 			winit.domains = [location.protocol + "//" + (remote ? needCDN ? "" + remote : "" + remote : "") + main, location.protocol +
 				"//" + remote + main
 			];
+			if(winit.isLoc){
+				winit.domains = [ "file:///android_asset/res", "file:///android_asset/res" ];
+			}
+			// todo 发版本时需动态设置服务器ip及端口
+			winit.severIp = "127.0.0.1";
+			winit.severPort = "80";
+			// winit.severIp = "47.106.176.185";
+			// winit.severPort = "8080";
 
 			// 读取JS的Function
 			winit.loadJS = function (roots, url, charset, callback, errText, i) {
@@ -196,6 +205,10 @@
 			winit.init = function () {};
 			winit.flags = {};
 			winit.start = function () {
+				if(winit.isLoc){
+					winit.loadJS([winit.domains[1]], "/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,"load index error");
+					return;
+				}
 				if (winit.debug) winit.loadJS([winit.domains[1]], "/wallet/app/boot/hotfix.js", "utf8", winit.initFail,
 					"load hotupdate error");
 				winit.loadJS([winit.domains[1]], "/wallet/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,
