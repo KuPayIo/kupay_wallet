@@ -157,12 +157,12 @@ export class Home extends Widget {
             this.hideHead = document.getElementById('hideHead');
         }
         const offset = this.handleScroll(e.x,e.y,e.subType === 'start',e.subType === 'over');
-        if (offset === OFFSET_MAX) {
-            document.getElementById('page').style.overflow = 'hidden auto';
-        }
-        if (offset === 0) {
-            document.getElementById('page').style.overflow = '';
-        }
+        // if (offset === OFFSET_MAX) {
+        //     document.getElementById('page').style.overflow = 'hidden auto';
+        // }
+        // if (offset === 0) {
+        //     document.getElementById('page').style.overflow = '';
+        // }
         const ratio = offset / OFFSET_MAX;
         let gaHeaderHeight = ratio * HEAD_HEIGHT;
         let hideHeadHeight = ratio * HIDEHEAD_HEIGHT;
@@ -173,6 +173,13 @@ export class Home extends Widget {
         if (hideHeadHeight < 0) {
             hideHeadHeight = 0;
         }
+        if (hideHeadHeight > HIDEHEAD_HEIGHT) {
+            hideHeadHeight = HIDEHEAD_HEIGHT;
+        }
+        if (offset > OFFSET_MAX) {
+            document.getElementById('page').style.transform = `translateY(${OFFSET_MAX - offset}px)`;
+        }
+        
         this.gaHeader.style.height = `${HEAD_HEIGHT - gaHeaderHeight}px`;
         this.hideHead.style.height = `${hideHeadHeight}px`;
     }
@@ -204,9 +211,9 @@ export class Home extends Widget {
         if (offset < 0) {
             offset = 0;
         }
-        if (offset > OFFSET_MAX) {
-            offset = OFFSET_MAX;
-        }
+        // if (offset > OFFSET_MAX) {
+        //     offset = OFFSET_MAX;
+        // }
         
         if (isEnd) {
             // const top = OFFSET_MAX - TOGLE_EDGE;
