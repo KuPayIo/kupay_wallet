@@ -17,8 +17,7 @@ import { sign } from '../../core/genmnemonic';
 import { shapeshift } from '../../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../../store/dataCenter';
 import { LockScreen } from '../../store/interface';
-import { find, initStore } from '../../store/store';
-import { getLocalStorage, setLocalStorage } from '../../utils/tools';
+import { find, initStore, updateStore } from '../../store/store';
 
 // ============================== 导出
 
@@ -28,12 +27,13 @@ export const run = (cb): void => {
     addWidget(document.body, 'pi-ui-root');
     // 设置开发环境
     // eth代币精度初始化
-    initEthTokenDecimals();
+   
     // 数据检查
     checkUpdate();
     // 初始化数据
     initStore();
     dataCenter.init();
+    initEthTokenDecimals();
     // makepayment();
     // exchangeManage.init();
     // 打开界面
@@ -114,10 +114,9 @@ const initEthTokenDecimals = () => {
         const decimalsCode = EthWallet.tokenOperations('decimals', tokenName);
         const api = new EthApi();
         api.ethCall(ERC20Tokens[tokenName], decimalsCode).then(r => {
-            const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
-            // tslint:disable-next-line:radix
-            ERC20TokenDecimals[tokenName] = Math.pow(10, parseInt(r));
-            setLocalStorage('ERC20TokenDecimals', ERC20TokenDecimals);
+            const ERC20TokenDecimals = find('ERC20TokenDecimals');
+            ERC20TokenDecimals[tokenName] = Math.pow(10, parseInt(r,16));
+            updateStore('ERC20TokenDecimals', ERC20TokenDecimals);
         });
 
     });
@@ -128,7 +127,7 @@ const initEthTokenDecimals = () => {
  * 检测是否有新增代币
  */
 const checkHasNewTokens = () => {
-    const localTokenNames = Object.keys(getLocalStorage('ERC20TokenDecimals') || {});
+    const localTokenNames = Object.keys(find('ERC20TokenDecimals'));
     const tokenNames = Object.keys(ERC20Tokens);
     const newTokenNames = [];
     tokenNames.forEach(tokenName => {

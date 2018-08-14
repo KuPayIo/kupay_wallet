@@ -91,18 +91,19 @@ export const initStore = () => {
     store.readedPriAgr = findByLoc('readedPriAgr');
     // 从localStorage中取lockScreen
     store.lockScreen = findByLoc('lockScreen') || {};
+    store.ERC20TokenDecimals = findByLoc('ERC20TokenDecimals') || {};
     // 从localStorage中取sHisRecMap
-    const sHisRecMap = new Map(findByLoc('sHisRecMap')) || new Map();
+    const sHisRecMap = new Map<string,SHisRec>(findByLoc('sHisRecMap'));
     store.sHisRec = sHisRecMap.get(getFirstEthAddr());
     // 从localStorage中取cHisRecMap
-    const cHisRecMap = new Map(findByLoc('cHisRecMap')) || new Map();
+    const cHisRecMap = new Map<string,CHisRec>(findByLoc('cHisRecMap'));
     store.cHisRec = cHisRecMap.get(getFirstEthAddr());
     // 从localStorage中取inviteRedBagRecMap
-    const inviteRedBagRecMap = new Map(findByLoc('inviteRedBagRecMap')) || new Map();
+    const inviteRedBagRecMap = new Map<string,CHisRec>(findByLoc('inviteRedBagRecMap'));
     store.inviteRedBagRec = inviteRedBagRecMap.get(getFirstEthAddr());
    // 从localStorage中取inviteRedBagRecMap
-    store.shapeShiftTxsMap = new Map(findByLoc('shapeShiftTxsMap')) || new Map();
-    console.log('store.shapeShiftTxsMap',store.shapeShiftTxsMap);    // 从localStorage中取常用联系人列表
+    store.shapeShiftTxsMap = new Map(findByLoc('shapeShiftTxsMap'));
+    // 从localStorage中取常用联系人列表
     store.TopContacts = findByLoc('TopContacts') || [];
 
     // 初始化默认兑换汇率列表
@@ -129,7 +130,7 @@ type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo' | 'shapeShiftTx
 
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
- 'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts';
+ 'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -160,7 +161,7 @@ const store = <Store>{
     transactions: <TransactionRecord[]>[],// 交易记录
     exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
     currencyList: <CurrencyInfo[]>[],// 货币信息列表
-    
+    ERC20TokenDecimals:null,// ERC20精度
     lockScreen: <LockScreen>null, // 锁屏密码相关
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
@@ -175,6 +176,7 @@ const store = <Store>{
     addMine: <AddMineItem[]>[],// 矿山增加项目
     mineRank: <MineRank>null,// 矿山排名
     miningRank: <MiningRank>null,// 挖矿排名
+    mineItemJump: '',// 矿山增加项目跳转详情
     // shapeshift
     shapeShiftCoins: <ShapeShiftCoin[]>[],// shapeShift 支持的币种
     shapeShiftMarketInfo:<MarketInfo>null,// shapeshift 汇率相关
