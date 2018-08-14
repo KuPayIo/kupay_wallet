@@ -1,17 +1,18 @@
 /**
  * 地址详情
  */
-import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
-import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-import { copyToClipboard } from '../../../utils/tools';
 interface Props {
     currencyName:string;
     currencyBalance: string;
     addr: string;
     title?: string;
 }
-
+// ======================================导入
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+import { copyToClipboard } from '../../../utils/tools';
+// ======================================导出
 export class AddressDetail extends Widget {
     public props: Props;
 

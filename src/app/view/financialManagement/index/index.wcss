@@ -4,6 +4,7 @@
 }
 .canvas{
     float: right;
+    margin-top:10px; 
 }
 .head{
     background: #3574FA;

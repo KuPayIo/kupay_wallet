@@ -62,3 +62,7 @@
     color: #FF642B;
     margin-top: 10px; 
 }
+.stateEnd{
+    background: #A0ACC0;
+    color: #FFFFFF;
+}

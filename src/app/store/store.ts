@@ -11,7 +11,7 @@ import { config } from '../core/config';
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail, AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MineRank, MiningRank, MiningTotal, SHisRec, Store, TopContact, TransactionRecord, Wallet } from './interface';
+import { AccountDetail, AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, ShapeShiftCoin,ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -55,7 +55,7 @@ export const getBorn = (keyname) => {
 // tslint:disable-next-line:no-any
 export const updateStore = (keyName: KeyName, data: any, notified: boolean = true): void => {
     store[keyName] = data;
-    if (notified) handlerMap.notify(keyName, [find(keyName)]);
+    if (notified) handlerMap.notify(keyName, [data]);
 };
 
 /**
@@ -100,11 +100,13 @@ export const initStore = () => {
     // 从localStorage中取inviteRedBagRecMap
     const inviteRedBagRecMap = new Map(findByLoc('inviteRedBagRecMap')) || new Map();
     store.inviteRedBagRec = inviteRedBagRecMap.get(getFirstEthAddr());
-    // 从localStorage中取常用联系人列表
+   // 从localStorage中取inviteRedBagRecMap
+    store.shapeShiftTxsMap = new Map(findByLoc('shapeShiftTxsMap')) || new Map();
+    console.log('store.shapeShiftTxsMap',store.shapeShiftTxsMap);    // 从localStorage中取常用联系人列表
     store.TopContacts = findByLoc('TopContacts') || [];
 
     // 初始化默认兑换汇率列表
-    const rateJson = config.currentNetIsTest ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
+    const rateJson = (config.dev_mode === 'dev') ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
     const m = new Map();
     for (const key in rateJson) {
         if (rateJson.hasOwnProperty(key)) { m.set(key, rateJson[key]); }
@@ -112,19 +114,22 @@ export const initStore = () => {
     store.exchangeRateJson = m;
 
     // 初始化货币信息列表
-    store.currencyList = config.currentNetIsTest ? supportCurrencyListTest : supportCurrencyListMain;
+    store.currencyList = (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain;
 
 };
 
 // tslint:disable-next-line:max-line-length
-type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState' | 'miningTotal' | 'miningHistory' | 'dividHistory' | 'accountDetail' |
-    'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' | 'inviteRedBagRec' | 'TopContacts' | 'mineItemJump';
+type KeyName = MapName | LocKeyName | shapeShiftName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
+'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'loginState' | 'miningTotal' | 'miningHistory' | 
+'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' | 'inviteRedBagRec';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
+type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo' | 'shapeShiftTxs';
+
 // ============================================ 本地
-// tslint:disable-next-line:max-line-length
-type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' | 'inviteRedBagRecMap' | 'TopContacts';
+type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
+ 'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -155,7 +160,7 @@ const store = <Store>{
     transactions: <TransactionRecord[]>[],// 交易记录
     exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
     currencyList: <CurrencyInfo[]>[],// 货币信息列表
-    shapeShiftCoins: <any>[],// shapeShift 支持的币种
+    
     lockScreen: <LockScreen>null, // 锁屏密码相关
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
@@ -170,7 +175,12 @@ const store = <Store>{
     addMine: <AddMineItem[]>[],// 矿山增加项目
     mineRank: <MineRank>null,// 矿山排名
     miningRank: <MiningRank>null,// 挖矿排名
-    mineItemJump: '',// 矿山增加项目跳转详情        
+    mineItemJump: '',// 矿山增加项目跳转详情
+    // shapeshift
+    shapeShiftCoins: <ShapeShiftCoin[]>[],// shapeShift 支持的币种
+    shapeShiftMarketInfo:<MarketInfo>null,// shapeshift 汇率相关
+    shapeShiftTxs:<ShapeShiftTxs>null,// shapeshift 交易记录
+    shapeShiftTxsMap:new Map<string,ShapeShiftTxs>(),// shapeshift 交易记录Map
     // 地址管理
     TopContacts: <TopContact[]>[]// 常用联系人列表   
 };

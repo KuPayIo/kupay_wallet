@@ -1,13 +1,14 @@
 /**
  * 云端资产
  */
-import { getHeight, popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-
 interface Props {
     coinType: string;
     coinBalance: number;
 }
+// ========================================================导入
+import { getHeight, popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+// =======================================================导出
 export class AccountAssests extends Widget {
     public ok: () => void;
     constructor() {

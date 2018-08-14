@@ -1,7 +1,10 @@
 /**
  * 购买记录详情
  */
+// ===================================================导入
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+// =====================================================导出
 export class RecordDetail extends Widget {
     public ok: () => void;
     constructor() {
@@ -27,6 +30,10 @@ export class RecordDetail extends Widget {
     }
     public goBackPage() {
         this.ok && this.ok();
+    }
+    // 阅读理财声明
+    public redNotice() {
+        popNew('app-view-financialManagement-notice-notice');
     }
 
 }

@@ -50,13 +50,15 @@ export const setUrl = (url: string) => {
  * 打开连接
  */
 let lastRequest = null;
-export const open = (callback: Function, errorCallback: Function, reOpenCallback?: Function, timeout?: number) => {
+export const open = (
+    callback: Function, errorCallback: Function, closeCallback?: Function, reOpenCallback?: Function, timeout?: number) => {
     timeout = timeout || defaultTimeout;
     let lastError;
     // 接收后台推送服务器时间，并设置成服务器时间
     Connect.setNotify((msg) => {
         if (msg.type === 'closed') {
             setConState(ConState.closed);
+            if (closeCallback) closeCallback();
             // alert(`服务器主动断掉了链接，最后的信息为：${JSON.stringify(lastRequest)}`)
         } else if (msg.msg) {
             if (msg.msg.type === 'echo_time') {
@@ -84,6 +86,7 @@ export const open = (callback: Function, errorCallback: Function, reOpenCallback
                 Connect.open(conUrl, cfg, func, 10000);
             }, 3000);
         } else {
+            doClose = false;
             con = result;
             setConState(ConState.opened);
             con.send({ type: 'app@time', param: { ctime: now() } });
@@ -149,7 +152,7 @@ export const login = (userx: string, uType: string, password: string, cb: Functi
         }, (result) => {
             // callTime(cb, [result], "login");
             cb([result]);
-        }, reOpenCallback, timeout);
+        }, null, reOpenCallback, timeout);
     }
     con.request({ type: 'login', param: { userType: uType, password: password, user: userx } }, (result) => {
         if (result.error) {
@@ -185,7 +188,7 @@ export const adminLogin = (username: string, password: string, cb: Function, reO
         }, (result) => {
             // callTime(cb, [result], "login");
             cb([result]);
-        }, reOpenCallback, timeout);
+        }, null, reOpenCallback, timeout);
     }
     con.request({ type: 'admin_login', param: { username: username, password: password } }, (result) => {
         if (result.error) {
@@ -220,7 +223,7 @@ export const agentLogin = (agentId: number, cb: Function, reOpenCallback?: Funct
         }, (result) => {
             // callTime(cb, [result], "login");
             cb([result]);
-        }, reOpenCallback, timeout);
+        }, null, reOpenCallback, timeout);
     }
     con.request({ type: 'agent_login', param: { agent_id: agentId } }, (result) => {
         if (result.error) {
@@ -310,6 +313,7 @@ export const stateChangeUnregister = (index) => {
  */
 export const closeCon = () => {
     if (con) {
+        doClose = true;
         con.close();
         setConState(ConState.closed);
         con = null;
@@ -390,6 +394,8 @@ let serverTime = 0;
 let localTime = 0;
 // 通讯时间，ping的来回时间
 let pingpong = 0;
+// 手动关闭
+let doClose = false;
 
 // 状态改变的CB
 const stateChangeArr = [];
@@ -414,6 +420,7 @@ const setLoginState = (s: number) => {
  * 重新打开连接
  */
 const reopen = (reOpenCallback?: Function) => {
+    if (doClose) return;
     open(() => {
         if (loginState === LoginState.logined || loginState === LoginState.relogining) {
             relogin();

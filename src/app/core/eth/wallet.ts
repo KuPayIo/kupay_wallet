@@ -438,6 +438,6 @@ export class EthWallet {
 
 const initWeb3 = () => {
     if (!web3) {
-        web3 = new Web3(new Web3.providers.HttpProvider(config.currentNetIsTest ? config.eth.testWeb3 : config.eth.mainWeb3));
+        web3 = new Web3(new Web3.providers.HttpProvider(config.dev_mode === 'dev' ? config.dev.EthApiBaseUrl : config.prod.EthApiBaseUrl));
     }
 };

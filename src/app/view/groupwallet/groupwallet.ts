@@ -12,4 +12,5 @@ export class GroupWallet extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
+    
 }

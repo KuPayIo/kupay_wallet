@@ -1,7 +1,9 @@
 /**
  * 提币记录
  */
+// ==================================================导入
 import { Widget } from '../../../../pi/widget/widget';
+// ====================================================导出
 export class Withdraw extends Widget {
     constructor() {
         super();

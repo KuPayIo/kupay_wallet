@@ -35,7 +35,8 @@ export const doErrorShow = (err:Error) => {
     let showStr = '';
     switch (err.message) {
         case 'Invalid Mnemonic' : showStr = '密码错误';break;
-        default: showStr = `出错啦`;
+        case 'insufficient funds' : showStr = '余额不足';break;
+        default: showStr = err.message || '出错啦';
     }
     popNew('app-components-message-message', { itype: 'error', center: true, content: showStr });
 };

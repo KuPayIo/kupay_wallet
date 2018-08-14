@@ -1,8 +1,10 @@
 /**
  * 确认购买
  */
+// ===============================================导入
 import { Widget } from '../../../../pi/widget/widget';
 import { openBasePage } from '../../../utils/tools';
+// ==================================================导出
 export class ProductDetail extends Widget {
     public ok: (r:any) => void;
     constructor() {
