@@ -14,7 +14,7 @@ if (config.dev_mode === 'dev') {
     var ETH_API_BASE_URL = config.dev.EthApiBaseUrl;
     var ETH_MARKET_PRICE_ORACLE_URL = config.dev.EthMarketPriceOracleUrl;
 } else if (config.dev_mode === 'prod') {
-    ETH_API_BASE_URL = config.prod.BtcApiBaseUrl;
+    ETH_API_BASE_URL = config.prod.EthApiBaseUrl;
     ETH_MARKET_PRICE_ORACLE_URL = config.prod.EthMarketPriceOracleUrl;
 }
 

@@ -1,6 +1,10 @@
 /**
  * 
  */
+interface State {
+    list: any[];
+}
+// =============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../store/dataCenter';
@@ -9,10 +13,7 @@ import {
     effectiveCurrencyNoConversion, getAddrById, parseAccount, parseDate
 } from '../../../utils/tools';
 
-interface State {
-    list: any[];
-}
-
+// =========================================================导出
 export class AddAsset extends Widget {
     public state: State;
 

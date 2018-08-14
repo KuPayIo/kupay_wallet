@@ -1,10 +1,6 @@
 /**
  * Collapse 折叠面板的逻辑处理
  */
-import { notify } from '../../../../pi/widget/event';
-import { getRealNode } from '../../../../pi/widget/painter';
-import { Widget } from '../../../../pi/widget/widget';
-
 interface CollapseItem {
     title:string;// 标题
     htmlStr:string;// 内容
@@ -20,6 +16,12 @@ interface State {
     currentExpArr?:boolean[];// 当前展开item数组 accordion = false 使用
     isExpanded:object;// 判断当前item是否展开
 }
+// ==========================================导入
+import { notify } from '../../../../pi/widget/event';
+import { getRealNode } from '../../../../pi/widget/painter';
+import { Widget } from '../../../../pi/widget/widget';
+// ==============================================导出
+
 export class Collapse extends Widget {
     public props: Props;
     public state: State;

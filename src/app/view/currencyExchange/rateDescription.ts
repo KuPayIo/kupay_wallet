@@ -3,7 +3,8 @@
  */
 import { Widget } from '../../../pi/widget/widget';
 interface Props {
-    fee:number;
+    currencyName:string;
+    minerFee:number;
 }
 export class RateDescription extends Widget {
     public ok:() => void;
@@ -19,4 +20,5 @@ export class RateDescription extends Widget {
     public cancelClick() {
         this.ok && this.ok();
     }
+
 }
