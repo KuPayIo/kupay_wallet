@@ -120,7 +120,7 @@ export const initStore = () => {
 
 // tslint:disable-next-line:max-line-length
 type KeyName = MapName | LocKeyName | shapeShiftName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
-'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'loginState' | 'miningTotal' | 'miningHistory' | 
+'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' | 'inviteRedBagRec';
 
 type MapName = 'exchangeRateJson' | 'hashMap';

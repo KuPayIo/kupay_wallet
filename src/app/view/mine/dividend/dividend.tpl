@@ -21,8 +21,8 @@
                     <div w-class="data-num" style="border-right: 3px solid rgb(227,230,245); ">{{it1.thisDivid}}</div>
                 </div>
                 <div w-class="data">
-                    <div w-class="data-title" style="border-right: 3px solid rgb(227,230,245); ">年化收益</div>
-                    <div w-class="data-num" style="border-right: 3px solid rgb(227,230,245); ">{{it1.yearIncome}}%</div>
+                    <div w-class="data-title" style="border-right: 3px solid rgb(227,230,245); ">年化收益(ETH/份)</div>
+                    <div w-class="data-num" style="border-right: 3px solid rgb(227,230,245); ">{{it1.yearIncome}}</div>
                 </div>
                 <div w-class="data">
                     <div w-class="data-title">已分红天数</div>

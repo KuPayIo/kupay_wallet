@@ -157,15 +157,15 @@ export const getBalance = async (currencyType: CurrencyType) => {
 export const getDividend = async () => {
     const msg = { type: 'wallet/cloud@get_bonus_total', param: {} };
     const data = await getBonusHistory();
-    const num = (data.value !== '') ? (wei2Eth(data.value[0][1]) + 1) :1.0005;
-    const yearIncome = Math.pow(num,365 / 7) - 1; 
+    const num = (data.value !== '') ? wei2Eth(data.value[0][1]) :0;
+    const yearIncome = (num * 365 / 7).toFixed(4); 
     
     requestAsync(msg).then(data => {
         const dividend: any = {
             totalDivid: wei2Eth(data.value[0]),
             totalDays: data.value[1],
             thisDivid: wei2Eth(data.value[2]),
-            yearIncome: (yearIncome * 100).toFixed(2)
+            yearIncome: yearIncome
         };
         updateStore('dividTotal', dividend);
     });
