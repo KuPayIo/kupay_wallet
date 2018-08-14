@@ -57,7 +57,12 @@ export class Home extends Widget {
     public clickCurrencyItemListener(e: Event, index: number) {
         const wallets = find('walletList');
         if (!wallets || wallets.length === 0) {
-            this.createWalletClick();
+            // this.createWalletClick();
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
 
             return;
         }
