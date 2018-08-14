@@ -1,7 +1,8 @@
-<div class="ga-new-page hide-scrollbar" style="overflow-y: auto;overflow-x: hidden;" on-move="handleScroll">
+<div class="ga-new-page hide-scrollbar" id="page" cap-move="pageScroll">
     <div>
+        <div id="gaHeader" w-class="ga-header-Outer">
         {{if it1.gwlt}}
-        <div w-class="ga-header" id="gaHeader">
+        <div w-class="ga-header">
             <div w-class="ga-wallet-name-container">
                 <img w-class="ga-wallet-header" src="../../../res/image/{{it1.wallet.avatar}}" on-tap="switchWalletClick"/>
                 <span w-class="ga-wallet-name" on-tap="switchWalletClick">{{it1.gwlt.nickName}}</span>
@@ -33,7 +34,16 @@
             </div>
         </div>
         {{end}}
-        <div on-tap="backupWalletClick" w-class="ga-float-box"><span>{{it1.floatBoxTip}}</span><img src="../../../res/image/right_arrow.png" w-class="ga-arrow-img"/></div>
+        <div on-tap="backupWalletClick" w-class="ga-float-box"><span w-class="iconSpan"></span><span style="flex-grow: 1;">{{it1.floatBoxTip}}</span><img src="../../../res/image/right_arrow.png" w-class="ga-arrow-img"/></div>
+    </div>
+    <div id="hideHead" w-class="hideHeadOuter">
+    <div w-class="hideHead">
+        <span>
+                <span w-class="currencyIcon">￥</span>{{it1.totalAssets}}
+        </span>
+        <img src="../../../res/image/img_avatar1.png" w-class="hidetitleHeadImg"/>
+    </div>
+    </div>
         <div w-class="ga-currency-list-container">
             <ul w-class="ga-currency-list">
                 {{for index,currency of it1.currencyList}}
