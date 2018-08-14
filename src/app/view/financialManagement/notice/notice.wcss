@@ -55,8 +55,8 @@
     line-height: 100px;
     border-radius: 100px;
     text-align: center;
-    border: 1px solid #808890;
-    color: #808890 ;
+    background: #e5e5ee;
+    color: #FFF;
 }
 .active{
     background: #1A70DD;
