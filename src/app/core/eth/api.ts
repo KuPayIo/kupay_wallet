@@ -5,17 +5,17 @@ import { config } from '../config';
 import { Web3 } from '../thirdparty/web3.min';
 
 let web3;
-const ETHSCAN_ROPSTEN_API_URL = config.currentNetIsTest ? config.eth.TEST_ETHSCAN_ROPSTEN_API_URL : config.eth.MAIN_ETHSCAN_ROPSTEN_API_URL;
-// tslint:disable-next-line:max-line-length
-const ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config.currentNetIsTest ? config.eth.TEST_ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT : config.eth.MAIN_ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT;
-
 /* tslint:disable:no-var-keyword */
 if (config.dev_mode === 'dev') {
     var ETH_API_BASE_URL = config.dev.EthApiBaseUrl;
     var ETH_MARKET_PRICE_ORACLE_URL = config.dev.EthMarketPriceOracleUrl;
+    var ETHSCAN_ROPSTEN_API_URL = config.dev.EthscanRopstenUrl;
+    var ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config.dev.EthscanRopstenTokenTransferEvent;
 } else if (config.dev_mode === 'prod') {
     ETH_API_BASE_URL = config.prod.EthApiBaseUrl;
     ETH_MARKET_PRICE_ORACLE_URL = config.prod.EthMarketPriceOracleUrl;
+    ETHSCAN_ROPSTEN_API_URL = config.prod.EthscanRopstenUrl;
+    ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config.prod.EthscanRopstenTokenTransferEvent;
 }
 
 /* tslint:disable:prefer-template */
@@ -39,7 +39,7 @@ export class Api {
                         method: 'eth_getBalance',
                         params: [address, 'latest']
                     }),
-                    headers:{
+                    headers: {
                         'Content-Type': 'application/json'
                     }
                 });
@@ -202,6 +202,6 @@ export class Api {
 
 const initWeb3 = () => {
     if (!web3) {
-        web3 = new Web3(new Web3.providers.HttpProvider(config.currentNetIsTest ? config.eth.testWeb3 : config.eth.mainWeb3));
+        web3 = new Web3(new Web3.providers.HttpProvider(ETH_API_BASE_URL));
     }
 };

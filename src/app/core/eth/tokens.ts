@@ -3,7 +3,7 @@
  */
 import { config } from '../config';
 
-export const ERC20Tokens = config.currentNetIsTest ? config.ERC20TokensTestnet : config.ERC20TokensMainnet;
+export const ERC20Tokens = (config.dev_mode === 'dev') ? config.ERC20TokensTestnet : config.ERC20TokensMainnet;
 
 // Basic ERC20 interfaces
 export const minABI = [
