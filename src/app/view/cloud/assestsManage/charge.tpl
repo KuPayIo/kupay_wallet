@@ -22,7 +22,7 @@
         <div w-class="charge">
                 <span w-class="chargeAmount">充值数量</span>
                 <div ev-input-change="chargeChange" w-class="input-father">
-                    <app-components-input-input_simple>{style:"fontSize:32px;textAlign:right;",input:{{it1.singleAmount}},placeHolder:"0",reg:"[^0-9.]"}</app-components-input-input_simple>
+                    <app-components-input-input_simple>{style:"fontSize:32px;textAlign:right;",input:{{it1.amount}},placeHolder:"0",reg:"[^0-9.]"}</app-components-input-input_simple>
                 </div>
                 <span w-class="unit">{{it.currencyName}}</span>
         </div>

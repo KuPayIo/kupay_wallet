@@ -991,6 +991,7 @@ export const getCurrentAddrByCurrencyName = (currencyName: string) => {
 // 根据货币名获取当前正在使用的地址的余额
 export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
     const curAddr = getCurrentAddrByCurrencyName(currencyName);
+    console.log('curAddr',curAddr);
     const addrs = find('addrs');
     for (let i = 0; i < addrs.length; i++) {
         if ((addrs[i].currencyName === currencyName) && (addrs[i].addr === curAddr)) {
@@ -1031,4 +1032,15 @@ export const unicodeArray2Str = (arr) => {
     }
 
     return str;
+};
+
+/**
+ * 添加交易记录到本地
+ */
+export const addRecord = (currencyName, currentAddr, record) => {
+    const addr = getAddrById(currentAddr, currencyName);
+    if (!addr) return;
+    addr.record.push(record);
+
+    resetAddrById(currentAddr, currencyName, addr, true);
 };

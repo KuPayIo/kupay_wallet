@@ -86,11 +86,15 @@ export const estimateGasETH = async (toAddr:string,data?:any) => {
 /**
  * 处理ETH转账
  */
-const doEthTransfer = async (wlt:EthWallet, acct1:string, acct2:string, gasPrice:number, gasLimit:number, value:number, info:string) => {
+const doEthTransfer = async (wlt:EthWallet, fromAddr:string,
+     toAddr:string, gasPrice:number, gasLimit:number, value:number, info:string) => {
     const api = new EthApi();
-    const nonce = await api.getTransactionCount(acct1);
+    const localNonce = find('nonce');
+    const chainNonce = await api.getTransactionCount(fromAddr);
+    const nonce = localNonce > chainNonce ? localNonce : chainNonce;
+    updateStore('nonce',nonce + 1);
     const txObj = {
-        to: acct2,
+        to: toAddr,
         nonce: nonce,
         gasPrice: gasPrice,
         gasLimit: gasLimit,
@@ -114,7 +118,10 @@ export const signRawTransactionETH = async (psw:string,fromAddr:string,toAddr:st
         if (addrIndex >= 0) {
             const wlt:EthWallet = await GlobalWallet.createWlt('ETH', psw, wallet, addrIndex);
             const api = new EthApi();
-            const nonce = await api.getTransactionCount(fromAddr);
+            const localNonce = find('nonce');
+            const chainNonce = await api.getTransactionCount(fromAddr);
+            const nonce = localNonce > chainNonce ? localNonce : chainNonce;
+            updateStore('nonce',nonce + 1);
             const txObj = {
                 to: toAddr,
                 nonce: nonce,
@@ -152,11 +159,14 @@ export const estimateGasERC20 = (currencyName:string,toAddr:string,amount:number
 /**
  * 处理eth代币转账
  */
-const doERC20TokenTransfer = async (wlt: EthWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
+const doERC20TokenTransfer = async (wlt: EthWallet, fromAddr: string, toAddr: string, gasPrice: number, gasLimit: number
     , value: number, currencyName: string) => {
     const api = new EthApi();
-    const nonce = await api.getTransactionCount(acct1);
-    const transferCode = EthWallet.tokenOperations('transfer', currencyName, acct2, ethTokenMultiplyDecimals(value, currencyName));
+    const localNonce = find('nonce');
+    const chainNonce = await api.getTransactionCount(fromAddr);
+    const nonce = localNonce > chainNonce ? localNonce : chainNonce;
+    updateStore('nonce',nonce + 1);
+    const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(value, currencyName));
     const txObj = {
         to: ERC20Tokens[currencyName],
         nonce: nonce,

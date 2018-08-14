@@ -641,7 +641,7 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
         const res = await requestAsync(msg);
         console.log('rechargeToServer',res);
         
-        return res.value;
+        return true;
     } catch (err) {
         if (err && err.result) {
             showError(err.result);
@@ -649,7 +649,7 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
             doErrorShow(err);
         }
 
-        return;
+        return false;
     }
 
 };

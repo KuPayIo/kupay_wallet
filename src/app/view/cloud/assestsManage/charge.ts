@@ -5,10 +5,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getBankAddr, rechargeToServer } from '../../../net/pull';
-import { signRawTransactionETH } from '../../../net/pullWallet';
+import { estimateGasETH, sendRawTransactionETH, signRawTransactionETH, transfer } from '../../../net/pullWallet';
 import { find } from '../../../store/store';
 import { gasLimit, gasPrice, serviceChargeRate } from '../../../utils/constants';
-import { eth2Wei, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, openBasePage } from '../../../utils/tools';
+import { addRecord, eth2Wei, getCurrentAddrBalanceByCurrencyName, 
+    getCurrentAddrByCurrencyName, getCurrentAddrInfo, openBasePage, parseDate, wei2Eth } from '../../../utils/tools';
 // ===============================================导出
 interface Props {
     currencyName:string;
@@ -25,7 +26,7 @@ export class Charge extends Widget {
     public init(): void {
         this.state = {
             amount:0,// 充值输入值
-            serviceCharge:0,// 手续费
+            serviceCharge:wei2Eth(gasLimit * gasPrice),// 手续费
             localBalance:getCurrentAddrBalanceByCurrencyName(this.props.currencyName),// 本地余额
             isFeeEnough:false
         };
@@ -36,7 +37,6 @@ export class Charge extends Widget {
     }
     public chargeChange(e:any) {
         this.state.amount = Number(e.value);
-        this.state.serviceCharge = this.state.amount * serviceChargeRate;
         this.judgeFeeEnough();
         this.paint();
     }
@@ -70,19 +70,77 @@ export class Charge extends Widget {
             });
         }
        
-        const close = popNew('pi-components-loading-loading', { text: '地址获取中...' });
+        console.time('recharge');
+        const close = popNew('pi-components-loading-loading', { text: '正在充值...' });
         const toAddr = await getBankAddr();
-        close.callback(close.widget);
         if (!toAddr) {
+            close.callback(close.widget);
+            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
+
             return;
         }
-        const close1 = popNew('pi-components-loading-loading', { text: '交易签名中...' });
         const fromAddr = getCurrentAddrByCurrencyName(this.props.currencyName);
         const obj = await signRawTransactionETH(passwd,fromAddr,toAddr,gasPrice,gasLimit,this.state.amount);
+        if (!obj) {
+            close.callback(close.widget);
+            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
+
+            return;
+        }
         const signedTX = obj.signedTx;
         const hash = obj.hash;
         const nonce = Number(obj.nonce);
-        close1.callback(close1.widget);
-        rechargeToServer(fromAddr,toAddr,hash,nonce,gasPrice,eth2Wei(this.state.amount));
+        const pay = eth2Wei(this.state.amount);
+        const canTransfer = await rechargeToServer(fromAddr,toAddr,hash,nonce,gasPrice,pay);
+        if (!canTransfer) {
+            close.callback(close.widget);
+            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
+
+            return;
+        }
+        const h = await sendRawTransactionETH(signedTX);
+        if (!h) {
+            close.callback(close.widget);
+            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
+
+            return;
+        }
+        close.callback(close.widget);
+        popNew('app-components-message-message',{ itype:'success',content:'充值成功',center:true });
+        this.state.amount = 0;
+        this.paint();
+        console.timeEnd('recharge');
+        // 维护本地交易记录
+        const t = new Date();
+        const record = {
+            id: h,
+            type: '转账',
+            fromAddr: fromAddr,
+            to: toAddr,
+            pay: wei2Eth(pay),
+            time: t.getTime(),
+            showTime: parseDate(t),
+            result: '交易中',
+            info: '兑换',
+            currencyName: this.props.currencyName,
+            tip: gasLimit * wei2Eth(gasPrice)
+        };
+        addRecord(this.props.currencyName, fromAddr, record);
+        this.popToTxDetail(h);
+    }
+
+    public popToTxDetail(hash:string) {
+        const curAddrInfo = getCurrentAddrInfo(this.props.currencyName);
+        let record;
+        for (let i = 0;i < curAddrInfo.record.length;i++) {
+            // tslint:disable-next-line:possible-timing-attack
+            if (curAddrInfo.record[i].id === hash) {
+                record = {
+                    ...curAddrInfo.record[i]
+                };
+                break;
+            }
+        }
+        popNew('app-view-wallet-transaction-transaction_details',{ ...record });
     }
 }
