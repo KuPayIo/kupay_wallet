@@ -138,11 +138,7 @@ export interface DividendItem {
  */
 export interface AddMineItem {
     isComplete:boolean;  // 是否已完成该挖矿步骤
-    itemImg:string;  // 图片地址
-    itemName:string;  // 挖矿项目名称
     itemNum:number;  // 该项目已得到数量
-    itemDetail:any;  // 项目介绍
-    itemJump:string;  // 跳转链接 
 }
 
 /**
@@ -310,7 +306,8 @@ export interface Store {
     dividHistory:DividendItem[];// 分红历史记录
     addMine:AddMineItem[];// 矿山增加项目
     mineRank:MineRank;// 矿山排名
-    miningRank:MiningRank;// 挖矿排名    
+    miningRank:MiningRank;// 挖矿排名
+    mineItemJump:string;// 矿山增加项目跳转详情    
     // 地址管理
     TopContacts:TopContact[];// 常用联系人列表
     // shapeShift

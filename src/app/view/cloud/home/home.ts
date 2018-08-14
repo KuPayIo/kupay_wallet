@@ -180,6 +180,17 @@ register('dividTotal', () => {
         w.initDate();
     }
 });
+/**
+ * 矿山增加项目进入分享好友页面
+ */
+register('mineItemJump',(arg) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        if (arg === 'shareFriend') {
+            w.inviteRedEnvelopeClick();
+        }
+    }
+});
 
 interface Props {
     isActive: boolean;

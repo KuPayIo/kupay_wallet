@@ -175,6 +175,7 @@ const store = <Store>{
     addMine: <AddMineItem[]>[],// 矿山增加项目
     mineRank: <MineRank>null,// 矿山排名
     miningRank: <MiningRank>null,// 挖矿排名
+    mineItemJump: '',// 矿山增加项目跳转详情
     // shapeshift
     shapeShiftCoins: <ShapeShiftCoin[]>[],// shapeShift 支持的币种
     shapeShiftMarketInfo:<MarketInfo>null,// shapeshift 汇率相关

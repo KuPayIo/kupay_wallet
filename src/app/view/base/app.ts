@@ -1,9 +1,19 @@
 /**
  * 首页
  */
+// ================================ 导入
 import { SendChatMessage } from '../../../pi/browser/sendMessage';
+import { popNew } from '../../../pi/ui/root';
+import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { doChat, getProxy } from '../../net/pull';
+import { register } from '../../store/store';
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class App extends Widget {
     public old: any = {};
     public create() {
@@ -59,7 +69,7 @@ export class App extends Widget {
             // }, 
             {
                 text: '我的',
-                icon: 'mine_icon.png',
+                icon: 'mine_icon.png',  
                 iconActive: 'mine_icon_active.png',
                 components: 'app-view-mine-home-home'
             }]
@@ -70,7 +80,7 @@ export class App extends Widget {
         if (this.state.isActive === index) return;
         // 点击的是聊天则调用接口打开聊天，不进行组件切换
         if (this.state.tabBarList[index].name === 'chat') {
-            this.setProxy().then(this.sendMessage);
+            this.openChat();
 
             return;
         }
@@ -146,4 +156,29 @@ export class App extends Widget {
         });
 
     }
+
+    /**
+     * 执行打开聊天界面
+     */
+    public openChat() {
+        this.setProxy().then(this.sendMessage);
+    }
 }
+
+// ===================================================== 本地
+// ===================================================== 立即执行
+
+/**
+ * 矿山增加项目进入聊天页面和理财页面
+ */
+register('mineItemJump',(arg) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        if (arg === 'toChat') {
+            w.openChat();
+        }
+        if (arg === 'buyFinancial') {
+            w.tabBarChangeListener('',3);
+        }
+    }
+});
