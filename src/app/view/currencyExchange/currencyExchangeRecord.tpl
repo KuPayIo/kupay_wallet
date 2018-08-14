@@ -2,7 +2,7 @@
     <app-components-topBar-topBar>{title:"兑换记录"}</app-components-topBar-topBar>
     <div w-class="ga-body">
         <div>
-        {{for index,item of it1.txList}}
+        {{for index,item of it1.txsShow}}
         <div w-class="ga-item">
             <div w-class="ga-item-top">
                 <div w-class="ga-box1">

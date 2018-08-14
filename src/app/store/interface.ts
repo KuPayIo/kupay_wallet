@@ -235,6 +235,51 @@ export interface RedBag {
     time:number;// 时间
     timeShow:string;
 }
+/**
+ * shapeShift支持的货币类型
+ */
+export interface ShapeShiftCoin {
+    // tslint:disable-next-line:no-reserved-keywords
+    symbol:string;// 货币类型
+    status:string;// 状态
+    name:string;// 货币全称
+    minerFee:number;// 矿工费
+    image:string;// 图片url
+    imageSmall:string;// 小图url
+}
+/**
+ * shapeShift汇率相关
+ */
+export interface MarketInfo {
+    rate:number;// 兑换汇率
+    pair:string;// 交易对 eg:BTC_ETH
+    minimum:number;// 最小发出数量
+    maxLimit:number;// 最大发出数量
+    minerFee:number;// 矿工费
+    limit:number;// 限制数量
+}
+/**
+ * shapeshift兑换记录
+ */
+export interface ShapeShiftTx  {
+    hasConfirmations:string;// 是否确认
+    inputAddress:string;// Address that the input coin was paid to for this shift
+    inputAmount:number;// Amount of input coin that was paid in on this shift
+    inputCurrency:string;// Currency type of the input coin
+    inputTXID:string;// Transaction ID of the input coin going into shapeshift
+    outputAddress:string;// Address that the output coin was sent to for this shift
+    outputAmount:number;// Amount of output coin that was paid out on this shift
+    outputCurrency:string;// Currency type of the output coin
+    outputTXID:string;// Transaction ID of the output coin going out to user
+    shiftRate:string;// The effective rate the user got on this shift.
+    status:string;// status of the shift
+    timestamp:number; // timestamp
+}
+
+export interface ShapeShiftTxs {
+    addr:string;// 这个地址的交易记录
+    list:ShapeShiftTx[];// 交易记录列表
+}
 export interface Store {
     // 基础数据
     hashMap: Map<string, string>;// 输入密码后hash缓存
@@ -253,7 +298,6 @@ export interface Store {
     transactions: TransactionRecord[];// 交易记录
     exchangeRateJson: Map<string, any>;// 兑换汇率列表
     currencyList: CurrencyInfo[];// 货币信息列表
-    shapeShiftCoins: any;// shapeShift 支持的币种
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
     accountDetail: Map<CurrencyType, AccountDetail[]>;// 云端账户详情
@@ -269,6 +313,11 @@ export interface Store {
     miningRank:MiningRank;// 挖矿排名    
     // 地址管理
     TopContacts:TopContact[];// 常用联系人列表
+    // shapeShift
+    shapeShiftCoins:ShapeShiftCoin[];// shapeShift 支持的币种
+    shapeShiftMarketInfo:MarketInfo;// shapeShift 汇率相关
+    shapeShiftTxs:ShapeShiftTxs;// shapeshift 交易记录
+    shapeShiftTxsMap:Map<string,ShapeShiftTxs>;// shapeshift 交易记录Map
 }
 
 export enum TaskSid {

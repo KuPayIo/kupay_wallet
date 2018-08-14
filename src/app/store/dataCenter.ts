@@ -4,13 +4,13 @@ import { config } from '../core/config';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
-import { shapeshift } from '../exchange/shapeshift/shapeshift';
+import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
 import { Addr, CurrencyRecord, Wallet } from '../store/interface';
 // tslint:disable-next-line:max-line-length
-import { btcNetwork, defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, ethTokenTransferCode, lang, shapeshiftApiPrivateKey, shapeshiftTransactionRequestNumber, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
+import { btcNetwork, defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, ethTokenTransferCode, lang, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import {
-    btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getDefaultAddr, getLocalStorage,
-    getMnemonic, sat2Btc, setLocalStorage, wei2Eth
+    btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getDefaultAddr,
+    getMnemonic, sat2Btc, wei2Eth
 } from '../utils/tools';
 import { find, getBorn, updateStore } from './store';
 /**
@@ -65,7 +65,7 @@ export class DataCenter {
         if (!this.timerRef) this.openCheckFast();
         if (!this.timerRef1) this.openCheck();
 
-        if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
+        // if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
     }
 
     public initStore() {
@@ -76,7 +76,7 @@ export class DataCenter {
         // 从localStorage中的wallets中初始化curWallet
 
         // 初始化默认兑换汇率列表
-        const rateJson = config.currentNetIsTest ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
+        const rateJson = (config.dev_mode === 'dev') ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
         const m = new Map();
         for (const key in rateJson) {
             if (rateJson.hasOwnProperty(key)) {
@@ -86,7 +86,7 @@ export class DataCenter {
         updateStore('exchangeRateJson', m);
 
         // 初始化货币信息列表
-        updateStore('exchangeRateJson', config.currentNetIsTest ? supportCurrencyListTest : supportCurrencyListMain);
+        updateStore('exchangeRateJson', (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain);
 
     }
 
@@ -221,7 +221,7 @@ export class DataCenter {
         if (!wallet) return;
         const curAllAddrs = getAddrsAll(wallet);
         curAllAddrs.forEach(item => {
-            this.getTransactionsByAddr(item);
+            getTransactionsByAddr(item);
         });
 
     }
@@ -296,7 +296,7 @@ export class DataCenter {
                 // case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
                 case 'balance': this.updateBalance(update[1], update[2]); break;
                 case 'exchangeRate': this.exchangeRate(update[1]); break;
-                case 'shapeShiftCoins': this.getShapeShiftCoins();
+                case 'shapeShiftCoins': getShapeShiftCoins();console.log('getShapeShiftCoins start----------------');break;
                 default:
             }
 
@@ -325,7 +325,7 @@ export class DataCenter {
         this.fetchCurrencyExchangeTx();
         this.currencyExchangeTimer = setTimeout(() => {
             this.currencyExchangeTimerStart();
-        }, 10 * 60 * 1000);
+        }, 30 * 1000);
     }
     private async checkAddr() {
         const walletList = find('walletList');
@@ -361,20 +361,6 @@ export class DataCenter {
         }
     }
 
-    private getShapeShiftCoins() {
-        shapeshift.coins((err, data) => {
-            if (err) {
-                console.log(err);
-
-                return;
-            }
-            const list = [];
-            for (const k in data) {
-                list.push(data[k]);
-            }
-            if (list.length > 0) updateStore('shapeShiftCoins', list);
-        });
-    }
     /**
      * 解析交易详情
      */
@@ -676,57 +662,6 @@ export class DataCenter {
         return addrs;
     }
 
-    private async getTransactionsByAddr(addr: string) {
-        const addrLowerCase = addr.toLowerCase();
-        const transactions = (addr: string): Promise<any> => {
-            return new Promise((resolve, reject) => {
-                shapeshift.transactions(shapeshiftApiPrivateKey, addr, (err, transactions) => {
-                    if (err || transactions.length === 0) {
-                        reject(err || new Error('null array'));
-                    }
-                    resolve(transactions);
-                });
-            });
-        };
-        let count = shapeshiftTransactionRequestNumber;
-        while (count >= 0) {
-
-            let txs;
-            try {
-                txs = await transactions(addrLowerCase);
-            } catch (err) {
-                // tslint:disable-next-line:prefer-template
-            }
-            if (txs) {
-                const currencyExchangeTxs = getLocalStorage('currencyExchangeTxs') || {};
-                const oldTxs = currencyExchangeTxs[addrLowerCase] || [];
-                txs.forEach(tx => {
-                    const index = this.getTxByHash(oldTxs, tx.inputTXID);
-                    if (index >= 0) {
-                        oldTxs[index] = tx;
-                    } else {
-                        oldTxs.push(tx);
-                    }
-                });
-                currencyExchangeTxs[addrLowerCase] = oldTxs;
-                setLocalStorage('currencyExchangeTxs', currencyExchangeTxs);
-
-                return;
-            }
-            count--;
-        }
-    }
-
-    private getTxByHash(txs: any[], hash: string) {
-        for (let i = 0; i < txs.length; i++) {
-            // tslint:disable-next-line:possible-timing-attack
-            if (txs[i].inputTXID === hash) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
 }
 
 // ============================================ 立即执行
