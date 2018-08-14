@@ -2,24 +2,25 @@
  * config file
  */
 export const config = {
+    // 当前网络处于什么环境  dev--开发，prod--发布
     dev_mode: 'prod',
     dev: {
         // tslint:disable-next-line:no-http-string
         BtcApiBaseUrl: 'http://192.168.33.115:3002/insight-api',
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
         EthApiBaseUrl: 'http://192.168.33.115:8545',
-        EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY'
+        EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY',
+        EthscanRopstenUrl: 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=',
+        EthscanRopstenTokenTransferEvent: 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx'
     },
-
     prod: {
         BtcApiBaseUrl: 'http://39.104.129.43:3001/insight-api',
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
         EthApiBaseUrl: 'http://39.104.185.112:37298',
-        EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY'
+        EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY',
+        EthscanRopstenUrl: 'http://api.etherscan.io/api?module=account&action=txlist&address=',
+        EthscanRopstenTokenTransferEvent: 'https://api.etherscan.io/api?module=account&action=tokentx'
     },
-    // 当前网络是否是测试网络
-    currentNetIsTest: false,
-    // todo 测试网络与正式网络切换
     ERC20TokensMainnet: {
         // mainnet
         BNB: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52',
@@ -49,14 +50,5 @@ export const config = {
     }, ERC20TokensTestnet: {
         // testnet: ropsten
         YNC: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702'
-    },
-    eth: {
-        mainWeb3: 'http://39.104.185.112:37298',
-        testWeb3: 'http://192.168.33.115:8545',
-        MAIN_ETHSCAN_ROPSTEN_API_URL: 'http://api.etherscan.io/api?module=account&action=txlist&address=',
-        TEST_ETHSCAN_ROPSTEN_API_URL: 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=',
-        MAIN_ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT: 'https://api.etherscan.io/api?module=account&action=tokentx',
-        TEST_ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT: 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx',
-        ETH_CMC_URL: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY'
     }
 };

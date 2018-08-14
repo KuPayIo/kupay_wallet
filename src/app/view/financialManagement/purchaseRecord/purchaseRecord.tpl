@@ -10,7 +10,7 @@
     <div w-class="mineItem" on-tap="toDetail">
         <div w-class="mineTitle">
             {{v.productName}}
-            <span w-class="stateSpan">
+            <span w-class="stateSpan {{if v.state=='结束'}} stateEnd {{end}}">
                 {{v.state}}
             </span>
         </div>

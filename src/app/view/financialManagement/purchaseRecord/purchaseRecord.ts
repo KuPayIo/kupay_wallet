@@ -1,8 +1,10 @@
 /**
  * 我的理财购买记录
  */
+// ===============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+// ================================================导出
 export class PurchaseRecord extends Widget {
     public ok: () => void;
     constructor() {

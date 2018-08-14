@@ -15,9 +15,9 @@ export class Aboutus extends Widget {
     public init() {
         this.state = {
             data:[
-                { value:'KuPay官网',desc:'www.KuPay.io' },
+                { value:'官方网站',desc:'www.Kupay.io' },
                 { value:'微信客服',desc:'KuPay小助手' },
-                { value:'公众号',desc:'KuPay' }
+                { value:'微信公众号',desc:'KuPay' }
             ]
         };
     }
@@ -33,11 +33,11 @@ export class Aboutus extends Widget {
                 break;
             // KuPay小助手
             case 1:
-                // TODO
+                window.open('weixin://dl/officialaccounts');
                 break;
             // KuPay公众号
             case 2:
-                // TODO
+                window.open('weixin://dl/officialaccounts');
                 break;
             default:
                 console.log('服务器异常请稍后重试');

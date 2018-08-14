@@ -1,15 +1,17 @@
 /**
  * 云端账号首页
  */
+interface Props {
+    ktBalance: number;
+    ethBalance: number;
+}
+// ===============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../store/dataCenter';
 import { formatBalanceValue } from '../../../utils/tools';
 
-interface Props {
-    ktBalance: number;
-    ethBalance: number;
-}
+// ====================================================导出
 export class CloudAccount extends Widget {
     public ok: () => void;
     constructor() {
@@ -23,7 +25,7 @@ export class CloudAccount extends Widget {
         this.state = {
             isNameUpdated:false,
             accoutNickName: '昵称未设置',// 账户昵称
-            accoutHeadImg: 'img_avatar1.jpg',// 账户头像
+            accoutHeadImg: 'img_avatar1.png',// 账户头像
             accountAssets: '',// 账户资产
             coinList: [{
                 coinIcon: 'cloud_cointype_btc.png',// 代币图标
