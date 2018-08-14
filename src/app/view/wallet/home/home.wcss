@@ -4,10 +4,8 @@
     display: flex;
     flex-direction: column;
     padding: 0 30px;
-    background-image: url(../../../res/image/headerView.png);
-    box-sizing: border-box;
-    background-position: center;
-    background-size: cover;
+    
+    background: #3574FA;
     position: relative;
 }
 .ga-wallet-name-container{
