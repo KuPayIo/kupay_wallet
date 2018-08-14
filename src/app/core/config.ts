@@ -3,7 +3,7 @@
  */
 export const config = {
     // 当前网络处于什么环境  dev--开发，prod--发布
-    dev_mode: 'prod',
+    dev_mode: 'dev',
     dev: {
         // tslint:disable-next-line:no-http-string
         BtcApiBaseUrl: 'http://192.168.33.115:3002/insight-api',

@@ -295,6 +295,7 @@ export interface Store {
     transactions: TransactionRecord[];// 交易记录
     exchangeRateJson: Map<string, any>;// 兑换汇率列表
     currencyList: CurrencyInfo[];// 货币信息列表
+    ERC20TokenDecimals:Object;// ERC20精度
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
     accountDetail: Map<CurrencyType, AccountDetail[]>;// 云端账户详情

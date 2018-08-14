@@ -20,6 +20,9 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Home extends Widget {
+    public gaHerder:any = null;// 头部dom元素
+    public scrollStartY:number = null;// 每次滑动的初始位置Y
+    public dis:number = 0;// 累计移动距离
     constructor() {
         super();
     }
@@ -54,7 +57,12 @@ export class Home extends Widget {
     public clickCurrencyItemListener(e: Event, index: number) {
         const wallets = find('walletList');
         if (!wallets || wallets.length === 0) {
-            this.createWalletClick();
+            // this.createWalletClick();
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
 
             return;
         }
@@ -96,7 +104,7 @@ export class Home extends Widget {
         try {
 
             let passwd;
-            if (!dataCenter.getHash(wallet.walletId)) {
+            if (!find('hashMap',wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
                     title: '输入密码', content: '', inputType: 'password'
                 });
@@ -118,6 +126,46 @@ export class Home extends Widget {
         this.state.hiddenAssets = !this.state.hiddenAssets;
         this.paint();
     }
+
+    // public handleScroll(e:any) {
+    //     const currencyY = e.y;// 当前Y
+    //     const currentDis = this.dis;
+    //     let dis = 0;// 本次移动距离
+    //     // 获取dom元素头部和隐藏头部
+    //     if (! this.gaHerder) {
+    //         this.gaHerder = document.getElementById('gaHeader');
+    //     }
+    //     // 计算header应该减少的高度
+    //     if (e.subType === 'start') {
+    //         this.scrollStartY = e.y;// 初始化起点Y
+    //     }
+    //     if (this.scrollStartY) {
+    //         dis = currencyY - this.scrollStartY;// 计算本次移动距离
+    //     }
+    //     if (e.subType === 'over') {
+    //         // 滑动结束，将本次移动距离合并到累计移动距离
+    //         if (dis <= 0) {
+    //             this.dis += dis;
+    //         } else {
+    //             this.dis = 0;
+    //         }
+    //     }
+        
+    //     // 计算隐藏头部应该增加的高度
+    //     // 减少header的高度
+    //     if ((dis + currentDis) >= 0) {
+    //         return;
+    //     }
+    //     console.log('---------dis-----------');
+    //     console.log(dis);
+    //     console.log('---------currentDis-----------');
+    //     console.log(currentDis);
+    //     console.log('---------this.dis-----------');
+    //     console.log(this.dis);
+    //     this.gaHerder.style.transform = `translateY(${dis + currentDis}px)`;
+    //     // 增加隐藏头部的高度
+    // }
+
     public registerWalletsFun = () => {
         // 创建完钱包之后修改floatBoxTip提示信息
         const wallets = find('walletList');

@@ -55,7 +55,7 @@ export const strength = 128;
 
 // todo 测试网络与正式网络切换
 // btc网络
-export const btcNetwork = 'testnet';
+export const btcNetwork = config.dev_mode === 'dev' ? 'testnet' : 'mainnet';
 
 // 语言
 export const lang = 'english';
@@ -121,6 +121,15 @@ export const shapeshiftApiPublicKey = '339a363550d4490fb4a0efae308440f4386c7d99e
 export const shapeshiftApiPrivateKey = 'c98210f4568b04d3f84c5404f8e5be98353849138ed26b3e2723223257d3cbb8bb5cba5060b7c4d44e746342a2eb43e26b9bb5827588d9ed3e712e85d35f054c';
 
 // 如果shapeshift交易记录返回[],请求的最多次数,超过默认没有交易记录
-export const shapeshiftTransactionRequestNumber = 8;
+export const shapeshiftTransactionRequestNumber = 5;
 // 发红包所支持的货币
 export const redEnvelopeSupportCurrency = ['KT', 'ETH'];
+
+// 充值服务费比率
+export const serviceChargeRate = 0.03;
+
+// 默认ETH gasPrice
+export const gasPrice = 5000000000;
+
+// 默认ETH gasLimit
+export const gasLimit = 21000;

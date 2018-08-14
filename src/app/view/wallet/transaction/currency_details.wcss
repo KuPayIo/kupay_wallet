@@ -22,7 +22,7 @@
     border-width: 0px;
     position: absolute;
     right: 30px;
-    top: 22px;
+    top: 0;
     word-wrap: break-word;
     transform-origin: 185.5px 13px 0px;
     cursor: pointer;
@@ -30,7 +30,7 @@
     color: #fff;
     width: 120px;
     text-align: center;
-    line-height: 100%;
+    line-height: 80%;
 }
 .container{
     background-color: #203260;

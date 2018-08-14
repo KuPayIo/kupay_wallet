@@ -82,7 +82,7 @@ export class WalletManagement extends Widget {
             const walletList = find('walletList');
             const wallet = getWalletByWalletId(walletList, this.props.walletId);
             let passwd;
-            if (!dataCenter.getHash(wallet.walletId)) {
+            if (!find('hashMap',wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
                     title: '输入密码', content: '', inputType: 'password'
                 });
@@ -182,7 +182,7 @@ export class WalletManagement extends Widget {
         try {
             const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
             let passwd;
-            if (!dataCenter.getHash(wallet.walletId)) {
+            if (!find('hashMap',wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
                     title: '输入密码', content: '', inputType: 'password'
                 });
@@ -224,7 +224,7 @@ export class WalletManagement extends Widget {
         try {
             const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
             let passwd;
-            if (!dataCenter.getHash(wallet.walletId)) {
+            if (!find('hashMap',wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
                     title: '输入密码', content: '', inputType: 'password'
                 });
@@ -298,7 +298,7 @@ export class WalletManagement extends Widget {
             const walletList = find('walletList');
             const wallet = getWalletByWalletId(walletList, this.props.walletId);
             let passwd;
-            if (!dataCenter.getHash(wallet.walletId)) {
+            if (!find('hashMap',wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
                     title: '输入密码', content: '', inputType: 'password'
                 });
