@@ -118,7 +118,7 @@ export const initStore = () => {
 
 // tslint:disable-next-line:max-line-length
 type KeyName = MapName | LocKeyName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'shapeShiftCoins' | 'loginState' | 'miningTotal' | 'miningHistory' | 'dividHistory' | 'accountDetail' |
-    'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' | 'inviteRedBagRec' | 'TopContacts';
+    'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' | 'inviteRedBagRec' | 'TopContacts' | 'mineItemJump';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -170,6 +170,7 @@ const store = <Store>{
     addMine: <AddMineItem[]>[],// 矿山增加项目
     mineRank: <MineRank>null,// 矿山排名
     miningRank: <MiningRank>null,// 挖矿排名
+    mineItemJump: '',// 矿山增加项目跳转详情        
     // 地址管理
     TopContacts: <TopContact[]>[]// 常用联系人列表   
 };

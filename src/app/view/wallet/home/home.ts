@@ -212,3 +212,11 @@ register('curWallet', (curWallet) => {
         w.paint();
     }
 });
+/**
+ * 矿山增加项目进入创建钱包页面
+ */
+register('mineItemJump',(arg) => {
+    if (arg === 'walletCreate') {
+        popNew('app-view-wallet-walletCreate-createWalletEnter');
+    }
+});
