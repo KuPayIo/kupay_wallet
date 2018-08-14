@@ -103,6 +103,43 @@ const doEthTransfer = async (wlt:EthWallet, acct1:string, acct2:string, gasPrice
 
 };
 
+/**
+ * ETH交易签名
+ */
+export const signRawTransactionETH = async (psw:string,fromAddr:string,toAddr:string,
+    gasPrice:number,gasLimit:number,pay:number,info?:string) => {
+    const wallet = find('curWallet');
+    try {
+        const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, 'ETH');
+        if (addrIndex >= 0) {
+            const wlt:EthWallet = await GlobalWallet.createWlt('ETH', psw, wallet, addrIndex);
+            const api = new EthApi();
+            const nonce = await api.getTransactionCount(fromAddr);
+            const txObj = {
+                to: toAddr,
+                nonce: nonce,
+                gasPrice: gasPrice,
+                gasLimit: gasLimit,
+                value: eth2Wei(pay),
+                data: info
+            };
+
+            return wlt.signRawTransactionHash(txObj);
+        }
+    } catch (error) {
+        doErrorShow(error);
+    }
+};
+/**
+ * 发送ETH交易
+ * @param signedTx 签名交易
+ */
+export const sendRawTransactionETH = async (signedTx) => {
+    const api = new EthApi();
+
+    return api.sendRawTransaction(signedTx);
+};
+
 // ==============================================ERC20
 // 预估ETH ERC20Token的gas limit
 export const estimateGasERC20 = (currencyName:string,toAddr:string,amount:number) => {

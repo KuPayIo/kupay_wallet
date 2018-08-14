@@ -44,6 +44,9 @@
     font-size: 32px;
     color: #A0ACC0;
 }
+.input-father{
+    height: 45px;
+}
 .unit{
     color: #111111;
     font-size: 32px;

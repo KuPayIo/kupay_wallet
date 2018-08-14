@@ -1,5 +1,5 @@
 <div class="ga-new-page" w-class="ga-new-page" ev-back-click="backClick">
-        <app-components-topBar-topBar>{title:"{{it.coinType}}提币"}</app-components-topBar-topBar>
+        <app-components-topBar-topBar>{title:"{{it.currencyName}}提币"}</app-components-topBar-topBar>
         <div w-class="iconsBox">
             <div w-class="local">
                 <img src="../../../res/image/cloud_icon_cloud.png" w-class="icon" />
@@ -22,17 +22,17 @@
             <div w-class="charge">
                     <span w-class="chargeAmount">提币数量</span>
                     <input type="number" w-class="amountInput" placeholder="{{it1.amount}}" on-input="amountInput"/>
-                    <span w-class="unit">{{it.coinType}}</span>
+                    <span w-class="unit">{{it.currencyName}}</span>
             </div>
     
             <div w-class="charge">
                     <span w-class="chargeAmount">手续费</span>
                     <div w-class="amountInput">{{it1.serviceCharge}}</div>
-                    <span w-class="unit">{{it.coinType}}</span>
+                    <span w-class="unit">{{it.currencyName}}</span>
             </div>
     
             <div w-class="balanceTip">
-                    可提金额 {{it1.cloudBalance}}{{it.coinType}}
+                    可提金额 {{it1.cloudBalance}}{{it.currencyName}}
             </div>
         </div>
     

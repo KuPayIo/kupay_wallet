@@ -48,7 +48,7 @@ export const requestLogined = async (msg: any) => {
     } else {
         const wallet = find('curWallet');
         let passwd = '';
-        if (!dataCenter.getHash(wallet.walletId)) {
+        if (!find('hashMap',wallet.walletId)) {
             passwd = await openBasePage('app-components-message-messageboxPrompt', {
                 title: '输入密码', content: '', inputType: 'password'
             });
@@ -136,7 +136,7 @@ export const getRandom = async () => {
 export const getCloudBalance = () => {
     const msg = { type: 'wallet/account@get', param: { list: `[${CurrencyType.KT}, ${CurrencyType.ETH}]` } };
     requestAsync(msg).then(balanceInfo => {
-        console.log('balanceInfo', balanceInfo);
+        // console.log('balanceInfo', balanceInfo);
         updateStore('cloudBalance', parseCloudBalance(balanceInfo));
     });
 };
@@ -712,4 +712,61 @@ export const getProxy = async () => {
     const msg = { type: 'wallet/proxy@get_proxy', param: {} };
 
     return requestAsync(msg);
+};
+
+// ===============================充值提现
+/**
+ * 获取服务端钱包地址
+ */
+export const getBankAddr = async () => {
+    const msg = {
+        type: 'wallet/bank@get_bank_addr',
+        param: { }
+    };
+
+    try {
+        const res = await requestAsync(msg);
+
+        return res.value;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return;
+    }
+};
+/**
+ * 向服务器发起充值请求
+ */
+export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:number,coin:number= 101) => {
+    const msg = {
+        type: 'wallet/bank@pay',
+        param: {
+            from:fromAddr,
+            to:toAddr,
+            tx,
+            nonce,
+            gas,
+            value,
+            coin
+        }
+    };
+    try {
+        const res = await requestAsync(msg);
+        console.log('rechargeToServer',res);
+        
+        return res.value;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return;
+    }
+
 };
