@@ -15,9 +15,10 @@ import { doErrorShow, showError } from '../utils/toolMessages';
 import { kpt2kt, largeUnit2SmallUnitString, openBasePage, transDate, wei2Eth } from '../utils/tools';
 
 // export const conIp = '47.106.176.185';
-export const conIp = '127.0.0.1';
+declare var pi_modules: any;
+export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 // export const conPort = '8080';
-export const conPort = '80';
+export const conPort = pi_modules.store.exports.severPort || '80';
 // 分享链接前缀
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.html`;
 
