@@ -81,52 +81,53 @@ export const openAndGetRandom = async () => {
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     if (oldUser) {
         closeCon();
-        updateStore('loginState', LoginState.init);
         dataCenter.setUser(wallet.walletId);
         dataCenter.setUserPublicKey(gwlt.publicKey);
 
         return;
     }
-
     setUrl(`ws://${conIp}:2081`);
     dataCenter.setUser(wallet.walletId);
     dataCenter.setUserPublicKey(gwlt.publicKey);
 
+    return doOpen();
+
+};
+
+const doOpen = async () => {
     return new Promise((resolve, reject) => {
-        open(() => {
-            // 连接打开后开始设置账号缓存
-            const msg = { type: 'get_random', param: { account: dataCenter.getUser().slice(2), pk: `04${dataCenter.getUserPublicKey()}` } };
-            request(msg, (resp) => {
-                if (resp.type) {
-                    console.log(`错误信息为${resp.type}`);
-                    reject(resp.type);
-                } else if (resp.result !== undefined) {
-                    dataCenter.setConRandom(resp.rand);
-                    dataCenter.setConUid(resp.uid);
-                    getCloudBalance();
-                    resolve(resp);
-                }
-            });
+        open(async (con) => {
+            console.log('----------------------', con);
+            try {
+                await getRandom();
+                resolve(true);
+            } catch (error) {
+                reject(false);
+            }
         }, (result) => {
             console.log(`open错误信息为${result}`);
             reject(result);
-        }, () => {
-            // 连接打开后开始设置账号缓存
-            const msg = { type: 'get_random', param: { account: dataCenter.getUser().slice(2), pk: `04${dataCenter.getUserPublicKey()}` } };
-            request(msg, (resp) => {
-                if (resp.type) {
-                    console.log(`错误信息为${resp.type}`);
-                    reject(resp.type);
-                } else if (resp.result !== undefined) {
-                    dataCenter.setConRandom(resp.rand);
-                    dataCenter.setConUid(resp.uid);
-                    getCloudBalance();
-                    resolve(resp);
-                }
-            });
+        }, async () => {
+            updateStore('loginState', LoginState.init);
+            try {
+                await doOpen();
+                resolve(true);
+            } catch (error) {
+                reject(false);
+            }
         });
     });
+};
 
+/**
+ * 获取随机数
+ */
+export const getRandom = async () => {
+    const msg = { type: 'get_random', param: { account: dataCenter.getUser().slice(2), pk: `04${dataCenter.getUserPublicKey()}` } };
+    const resp = await requestAsync(msg);
+    dataCenter.setConRandom(resp.rand);
+    dataCenter.setConUid(resp.uid);
+    getCloudBalance();
 };
 
 /**

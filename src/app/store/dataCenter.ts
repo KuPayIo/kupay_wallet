@@ -76,7 +76,7 @@ export class DataCenter {
         // 从localStorage中的wallets中初始化curWallet
 
         // 初始化默认兑换汇率列表
-        const rateJson = config.currentNetIsTest ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
+        const rateJson = (config.dev_mode === 'dev') ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
         const m = new Map();
         for (const key in rateJson) {
             if (rateJson.hasOwnProperty(key)) {
@@ -86,7 +86,7 @@ export class DataCenter {
         updateStore('exchangeRateJson', m);
 
         // 初始化货币信息列表
-        updateStore('exchangeRateJson', config.currentNetIsTest ? supportCurrencyListTest : supportCurrencyListMain);
+        updateStore('exchangeRateJson', (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain);
 
     }
 
