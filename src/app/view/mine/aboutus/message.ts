@@ -1,14 +1,14 @@
 /**
  * 消息框
  */
-import { Widget } from '../../../../pi/widget/widget';
-
 interface Props {
     itype: string;
     text: string;
     center?: boolean;
 }
-
+// =============================================导入
+import { Widget } from '../../../../pi/widget/widget';
+// ==============================================导出
 export class Message extends Widget {
     public props: Props;
     public ok: () => void;

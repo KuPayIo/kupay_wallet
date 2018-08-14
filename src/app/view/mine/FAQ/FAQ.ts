@@ -1,8 +1,9 @@
 /**
  * FAQ
  */
+// =============================================导入
 import { Widget } from '../../../../pi/widget/widget';
-
+// ================================================导出
 export class FAQ extends Widget {
     public ok: () => void;
     constructor() {

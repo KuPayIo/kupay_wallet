@@ -1,9 +1,10 @@
 /**
  * 理财产品详情页面
  */
-import { popNew } from '../../../../pi/ui/root';
+// ==================================================导入
 import { Widget } from '../../../../pi/widget/widget';
 import { openBasePage } from '../../../utils/tools';
+// =====================================================导出
 export class ProductDetail extends Widget {
     public ok: () => void;
     constructor() {
@@ -20,12 +21,13 @@ export class ProductDetail extends Widget {
     }
     public init() {
         this.state = {
+            isReadedDeclare:false,
             showStep: true,
             productName:'ETH1期',
             expectedEarnings: '+8%',
             unitPrice: '0.1',
             days: 'T+0',
-            surplus: '200',
+            surplus: '0',
             purchaseDate: '2018-08-02',
             interestDate: '2018-08-02',
             endDate: '2018-08-02',
@@ -40,15 +42,18 @@ export class ProductDetail extends Widget {
         this.ok && this.ok();
     }
 
+    // 阅读声明
     public async readNotice() {
         this.hideStep();
         await openBasePage('app-view-financialManagement-notice-notice').then((r) => {
+            this.state.isReadedDeclare = r;
             this.showStep();
         });
         
     }
+    // 点击购买
     public async purchaseClicked() {
-        this.hideStep();
+        this.hideStep();// 隐藏步骤条，应为步骤条样式应用了z-index，不隐藏的话影响后续弹出的页面
         const props = {
             money:this.state.amount * Number(this.state.unitPrice),
             unitPrice:this.state.unitPrice,
@@ -58,13 +63,24 @@ export class ProductDetail extends Widget {
             lockday:this.state.lockday
         };
         props.money = strip(props.money);
-        await openBasePage('app-view-financialManagement-purchase-purchase',props).then((r) => {
-            // TODO 购买
-            // 返回值r是输入的密码
-            console.log(r);
-        });
-        this.showStep();
-
+        if (!this.state.isReadedDeclare) {
+            const readPromice = this.readNotice();
+            await readPromice.then((r) => {
+                this.hideStep();
+                openBasePage('app-view-financialManagement-purchase-purchase',props).then((r) => {
+                    // TODO 购买
+                    // 返回值r是输入的密码
+                    this.showStep();
+                });
+            });
+        } else {
+            openBasePage('app-view-financialManagement-purchase-purchase',props).then((r) => {
+                // TODO 购买
+                // 返回值r是输入的密码
+                this.showStep();
+            });
+        }
+        
     }
     public hideStep() {
         this.state.showStep = false;
@@ -90,7 +106,7 @@ export class ProductDetail extends Widget {
         this.paint();
     }
 }
-
+// ===========================================本地
 // 解决js浮点数运算误差 3*0.1=0.3000000000004
 const strip = (num, precision = 12) => {
     return +parseFloat(num.toPrecision(precision));
