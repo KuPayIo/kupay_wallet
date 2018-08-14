@@ -198,6 +198,9 @@ pi_modules.store.exports = (function () {
 	module.ERR_DELETE = "ERR_DELETE";
 	module.ERR_ITERATE = "ERR_ITERATE";
 	module.ERR_CLEAR = "ERR_CLEAR";
+
+	module.severIp = winit.severIp
+	module.severPort = winit.severPort
 	/**
 	 * @description 判断是否支持IndexedDB
 	 * @example

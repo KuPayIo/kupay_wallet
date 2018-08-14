@@ -122,7 +122,8 @@ export const initStore = () => {
 // tslint:disable-next-line:max-line-length
 type KeyName = MapName | LocKeyName | shapeShiftName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'loginState' | 'miningTotal' | 'miningHistory' | 
-'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' | 'inviteRedBagRec';
+'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
+ 'inviteRedBagRec' | 'mineItemJump';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -176,6 +177,7 @@ const store = <Store>{
     addMine: <AddMineItem[]>[],// 矿山增加项目
     mineRank: <MineRank>null,// 矿山排名
     miningRank: <MiningRank>null,// 挖矿排名
+    mineItemJump: '',// 矿山增加项目跳转详情
     // shapeshift
     shapeShiftCoins: <ShapeShiftCoin[]>[],// shapeShift 支持的币种
     shapeShiftMarketInfo:<MarketInfo>null,// shapeshift 汇率相关

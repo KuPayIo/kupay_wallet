@@ -79,13 +79,14 @@ export class Dividend extends Widget {
         this.state.doMining = true;
         this.paint();
         
-        setTimeout(() => {// 动画效果执行完后将挖矿状态改为未点击状态
+        setTimeout(() => {// 动画效果执行完后将挖矿状态改为未点击状态，则可以再次点击
             this.state.doMining = false;
-            getMining();
+            if (this.state.thisNum > 0) {
+                getMining();
+            }
             this.paint();
         },1000);
 
-        this.paint();
     }
 
     /**
@@ -111,5 +112,13 @@ register('mineRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
+    }
+});
+register('mineItemJump',(arg) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        if (arg === 'buyFinancial') {
+            w.backPrePage();
+        }
     }
 });

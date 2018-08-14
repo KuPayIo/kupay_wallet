@@ -108,8 +108,12 @@ export class Home extends Widget {
         if (index <= 2) {
             const walletList = find('walletList');
             if (!walletList || walletList.length === 0) {
-                popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
-
+                popNew('app-components-linkMessage-linkMessage',{ 
+                    tip:'还没有钱包',
+                    linkTxt:'去创建',
+                    linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+                });
+                
                 return;
             }
             if (!find('curWallet')) {
@@ -146,7 +150,11 @@ export class Home extends Widget {
     // 跳转到钱包管理页面
     public walletManagementClick() {
         if (!this.state.wallet || this.state.walletList.length === 0) {
-            popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
 
             return;
         }

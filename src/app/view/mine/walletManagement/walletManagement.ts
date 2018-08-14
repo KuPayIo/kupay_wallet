@@ -390,3 +390,11 @@ register('addrs', () => {
         w.paint();
     }
 });
+/**
+ * 矿山增加项目进入绑定手机号页面
+ */
+register('mineItemJump',(arg) => {
+    if (arg === 'bindPhone') {
+        popNew('app-view-cloud-cloudAccount-bindPhone', {});
+    }
+});

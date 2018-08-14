@@ -8,16 +8,17 @@ import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { CurrencyType, CurrencyTypeReverse, LoginState, TaskSid } from '../store/interface';
-import { parseCloudAccountDetail, parseCloudBalance } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseMineDetail, parseMineRank, parseMiningRank } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
 import { doErrorShow, showError } from '../utils/toolMessages';
 import { kpt2kt, largeUnit2SmallUnitString, openBasePage, transDate, wei2Eth } from '../utils/tools';
 
 // export const conIp = '47.106.176.185';
-export const conIp = '127.0.0.1';
+declare var pi_modules: any;
+export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 // export const conPort = '8080';
-export const conPort = '80';
+export const conPort = pi_modules.store.exports.severPort || '80';
 // 分享链接前缀
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.html`;
 
@@ -156,15 +157,28 @@ export const getBalance = async (currencyType: CurrencyType) => {
  */
 export const getDividend = async () => {
     const msg = { type: 'wallet/cloud@get_bonus_total', param: {} };
+    const data = await getBonusHistory();
+    const num = (data.value !== '') ? (wei2Eth(data.value[0][1]) + 1) :1.0005;
+    const yearIncome = Math.pow(num,365 / 7) - 1; 
+    
     requestAsync(msg).then(data => {
         const dividend: any = {
             totalDivid: wei2Eth(data.value[0]),
             totalDays: data.value[1],
             thisDivid: wei2Eth(data.value[2]),
-            yearIncome: 0
+            yearIncome: (yearIncome * 100).toFixed(2)
         };
         updateStore('dividTotal', dividend);
     });
+};
+
+/**
+ * 获取后台发起分红历史记录
+ */
+export const getBonusHistory = async() => {
+    const msg = { type:'wallet/cloud@get_bonus_history',param:{} };
+
+    return requestAsync(msg);
 };
 
 /**
@@ -439,79 +453,7 @@ export const getAward = async () => {
 export const getMineDetail = async () => {
     const msg = { type: 'wallet/cloud@grant_detail', param: {} };
     requestAsync(msg).then(detail => {
-        const list = [
-            {
-                isComplete: true,
-                itemImg: '../../../res/image/icon_bonus_new.png',
-                itemName: '创建钱包',
-                itemNum: 0,
-                itemDetail: `<div>1、创建钱包送300KT，每个APP最多创建10个钱包。</div>`,
-                itemJump: ''
-            }, {
-                isComplete: false,
-                itemImg: '../../../res/image/icon_bonus_phone.png',
-                itemName: '验证手机号',
-                itemNum: 0,
-                itemDetail: `<div>1、验证手机号，送2500KT。</div>
-                        <div>2、一个钱包只能验证一个手机号。</div>`,
-                itemJump: ''
-            }, {
-                isComplete: false,
-                itemImg: '../../../res/image/icon_bonus_saves.png',
-                itemName: '存币送ETH',
-                itemNum: 0,
-                itemDetail: `<div>1、存币到自己的钱包地址上，存一个ETH送2000KT。</div>
-                        <div>2、首次存币额外赠送1000KT。</div>
-                        <div>3、1个BTC等于10个ETH。</div>`,
-                itemJump: ''
-            }, {
-                isComplete: false,
-                itemImg: '../../../res/image/icon_bonus_share.png',
-                itemName: '与好友分享',
-                itemNum: 0,
-                itemDetail: `<div>1、系统赠送邀请红包限量1个，内含0.5ETH，分成单个0.015ETH等额红包。</div>
-                        <div>2、每成功邀请一人获得500KT和0.01ETH。</div>
-                        <div>3、成功邀请的标准是对方曾经达到1000KT</div>`,
-                itemJump: ''
-            }, {
-                isComplete: false,
-                itemImg: '../../../res/image/icon_bonus_buy.png',
-                itemName: '购买理财',
-                itemNum: 0,
-                itemDetail: `<div>1、每购买1ETH等价的理财产品每天送100KT。</div>
-                        <div>2、购买当日额外赠送500KT。</div>
-                        <div>3、首次购买额外赠送1500KT。</div>
-                        <div>4、购买理财不会降低矿山</div>`,
-                itemJump: ''
-            }, {
-                isComplete: false,
-                itemImg: '../../../res/image/icon_bonus_chat.png',
-                itemName: '聊天',
-                itemNum: 0,
-                itemDetail: `<div>1、首次参与聊天赠送700。</div>`,
-                itemJump: ''
-            }
-        ];
-        if (detail.value.length !== 0) {
-            for (let i = 0; i < detail.value.length; i++) {
-                if (detail.value[i][0] === TaskSid.createWlt) {// 创建钱包
-                    list[0].isComplete = true;
-                    list[0].itemNum = kpt2kt(detail.value[i][1]);
-                } else if (detail.value[i][0] === TaskSid.bindPhone) {// 注册手机号
-                    list[1].isComplete = true;
-                    list[1].itemNum = kpt2kt(detail.value[i][1]);
-                } else if (detail.value[i][0] === TaskSid.chargeEth) {// 存币
-                    list[2].itemNum = kpt2kt(detail.value[i][1]);
-                } else if (detail.value[i][0] === TaskSid.inviteFriends) {// 与好友分享
-                    list[3].itemNum = kpt2kt(detail.value[i][1]);
-                } else if (detail.value[i][0] === TaskSid.buyFinancial) {// 购买理财
-                    list[4].itemNum = kpt2kt(detail.value[i][1]);
-                } else if (detail.value[i][0] === TaskSid.chat) {// 聊天
-                    list[5].isComplete = true;
-                    list[5].itemNum = kpt2kt(detail.value[i][1]);
-                }
-            }
-        }
+        const list = parseMineDetail(detail);
         updateStore('addMine', list);
     });
 };
@@ -599,40 +541,7 @@ export const getAccountDetail = async (coin: CurrencyType) => {
 export const getMineRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
     requestAsync(msg).then(data => {
-        const mineData: any = {
-            mineSecond: false,
-            mineThird: false,
-            minePage: 1,
-            mineMore: false,
-            mineList: data.value,
-            mineRank: [
-                {
-                    index: 1,
-                    name: '昵称未设置',
-                    num: '0'
-                }
-            ],
-            myRank: data.me
-        };
-        if (data.value.length > 10) {
-            mineData.mineMore = true;
-            mineData.mineSecond = true;
-            mineData.mineThird = true;
-        } else if (data.value.length > 2) {
-            mineData.mineSecond = true;
-            mineData.mineThird = true;
-        } else if (data.value.length > 1) {
-            mineData.mineSecond = true;
-        }
-        const data1 = [];
-        for (let i = 0; i < data.value.length && i < 10; i++) {
-            data1.push({
-                index: i + 1,
-                name: data.value[i][1] === '' ? '昵称未设置' : data.value[i][1],
-                num: kpt2kt(data.value[i][2])
-            });
-        }
-        mineData.mineRank = data1;
+        const mineData = parseMineRank(data);
         updateStore('mineRank', mineData);
     });
 };
@@ -643,39 +552,7 @@ export const getMineRank = async (num: number) => {
 export const getMiningRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
     requestAsync(msg).then(data => {
-        const miningData: any = {
-            miningSecond: false,
-            miningThird: false,
-            miningPage: 1,
-            miningMore: false,
-            miningList: data.value,
-            miningRank: [
-                {
-                    index: 1,
-                    name: '昵称未设置',
-                    num: '0'
-                }
-            ]
-        };
-        if (data.value.length > 10) {
-            miningData.miningMore = true;
-            miningData.miningSecond = true;
-            miningData.miningThird = true;
-        } else if (data.value.length > 2) {
-            miningData.miningSecond = true;
-            miningData.miningThird = true;
-        } else if (data.value.length > 1) {
-            miningData.miningSecond = true;
-        }
-        const data2 = [];
-        for (let i = 0; i < data.value.length && i < 10; i++) {
-            data2.push({
-                index: i + 1,
-                name: data.value[i][1] === '' ? '昵称未设置' : data.value[i][1],
-                num: kpt2kt(data.value[i][2])
-            });
-        }
-        miningData.miningRank = data2;
+        const miningData = parseMiningRank(data);
         updateStore('miningRank', miningData);
     });
 };
@@ -712,6 +589,12 @@ export const getProxy = async () => {
     const msg = { type: 'wallet/proxy@get_proxy', param: {} };
 
     return requestAsync(msg);
+};
+/**
+ * 矿山增加项目跳转详情
+ */
+export const getMineItemJump = async(itemJump) => {
+    updateStore('mineItemJump',itemJump);
 };
 
 // ===============================充值提现
