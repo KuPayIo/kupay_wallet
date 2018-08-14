@@ -65,7 +65,7 @@ register('lockScreen', (ls: LockScreen) => {
 
 // 发送红包记录
 register('sHisRec', (sHisRec: SHisRec) => {
-    const sHisRecMap = new Map(getLocalStorage('sHisRecMap')) || new Map();
+    const sHisRecMap = new Map(getLocalStorage('sHisRecMap'));
     if (!sHisRec) {
         sHisRecMap.delete(getFirstEthAddr());
     } else {
@@ -76,7 +76,7 @@ register('sHisRec', (sHisRec: SHisRec) => {
 
 // 兑换红包记录
 register('cHisRec', (cHisRec: CHisRec) => {
-    const cHisRecMap = new Map(getLocalStorage('cHisRecMap')) || new Map();
+    const cHisRecMap = new Map(getLocalStorage('cHisRecMap'));
     if (!cHisRec) {
         cHisRecMap.delete(getFirstEthAddr());
     } else {
@@ -88,7 +88,7 @@ register('cHisRec', (cHisRec: CHisRec) => {
 
 // 邀请红包记录
 register('inviteRedBagRec', (inviteRedBagRec: CHisRec) => {
-    const inviteRedBagRecMap = new Map(getLocalStorage('inviteRedBagRecMap')) || new Map();
+    const inviteRedBagRecMap = new Map(getLocalStorage('inviteRedBagRecMap'));
     if (!inviteRedBagRec) {
         inviteRedBagRecMap.delete(getFirstEthAddr());
     } else {
@@ -102,14 +102,12 @@ register('TopContacts', (TopContacts: TopContact[]) => {
     setLocalStorage('TopContacts', TopContacts);
 });
 
-/* // shapeshift交易记录
-register('shapeShiftTxs',(shapeShiftTxs:ShapeShiftTxs) => {
-    const shapeShiftTxsMap = new Map(getLocalStorage('shapeShiftTxsMap')) || new Map();
-    shapeShiftTxsMap.set(shapeShiftTxs.addr.toLowerCase(),shapeShiftTxs);
-    setLocalStorage('shapeShiftTxsMap',shapeShiftTxsMap);
-}); */
-
 // shapeshift交易记录
 register('shapeShiftTxsMap',(shapeShiftTxsMap:Map<string,ShapeShiftTxs>) => {
     setLocalStorage('shapeShiftTxsMap',shapeShiftTxsMap);
+});
+
+// ERC20精度
+register('ERC20TokenDecimals',(ERC20TokenDecimals:Object) => {
+    setLocalStorage('ERC20TokenDecimals',ERC20TokenDecimals);
 });

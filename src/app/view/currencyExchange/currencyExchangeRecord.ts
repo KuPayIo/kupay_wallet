@@ -40,7 +40,6 @@ export class CurrencyExchangeRecord extends Widget {
     public shapeShiftTxsUpdate(shapeShiftTxsMap:Map<string,ShapeShiftTxs>) {
         const addr = getCurrentAddrByCurrencyName(this.props.currencyName).toLowerCase();
         const shapeShiftTxs = shapeShiftTxsMap.get(addr);
-        console.log('shapeShiftTxs===========',shapeShiftTxs);
         const txs = shapeShiftTxs && shapeShiftTxs.list || [];
         txs.sort((tx1,tx2) => {
             return tx2.timestamp - tx1.timestamp;

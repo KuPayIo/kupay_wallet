@@ -6,7 +6,7 @@ import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { ERC20Tokens } from '../../core/eth/tokens';
-import { beginShift, estimateGasERC20, estimateGasETH, getMarketInfo, transfer } from '../../net/pullWallet';
+import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../net/pullWallet';
 import { dataCenter } from '../../store/dataCenter';
 import { MarketInfo } from '../../store/interface';
 import { find, getBorn, register, updateStore } from '../../store/store';
@@ -162,7 +162,8 @@ export class CurrencyExchange extends Widget {
         popNew('app-view-currencyExchange-currencyExchangeRecord',{ currencyName:this.state.outCurrency });
     }
     public async rateDescClick() {
-        popNew('app-view-currencyExchange-rateDescription',{ currencyName:this.state.outCurrency,minerFee:this.state.minerFee });
+        popNew('app-view-currencyExchange-rateDescription',{ currencyName:this.state.outCurrency,
+            toAddr:this.state.curOutAddr,gasPrice:this.state.gasPrice,pay:this.state.outAmount });
     }
     // tslint:disable-next-line:max-func-body-length
     public async sureClick() {
@@ -188,18 +189,10 @@ export class CurrencyExchange extends Widget {
         let gasLimit = 0;
         let fee = 0;
         try {
-            if (outCurrency === 'ETH') {
-                gasLimit = await estimateGasETH(this.state.curOutAddr);
-                fee = gasLimit * wei2Eth(this.state.gasPrice);
-            } else if (outCurrency === 'BTC') {
-                gasLimit = 0;
-                fee = 0;
-            } else if (ERC20Tokens[outCurrency]) {
-                gasLimit = await estimateGasERC20(outCurrency,this.state.curOutAddr,this.state.outAmount * this.state.rate);
-                // 临时解决方案
-                gasLimit  = gasLimit * 2;
-                fee = gasLimit * wei2Eth(this.state.gasPrice);
-            }
+            // tslint:disable-next-line:max-line-length
+            const obj = await estimateMinerFee(outCurrency,{ toAddr:this.state.curOutAddr,gasPrice:this.state.gasPrice,pay:this.state.outAmount });
+            fee = obj.minerFee;
+            gasLimit = obj.gasLimit;
         } catch (err) {
             console.error(err);
         } finally {
@@ -236,20 +229,17 @@ export class CurrencyExchange extends Widget {
                 return;
             }
             const depositAddress = returnData.deposit;
-            try {
                 // tslint:disable-next-line:max-line-length
-                const hash = await transfer(passwd,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
-               // tslint:disable-next-line:max-line-length
-                this.setTemRecord(hash,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency,this.state.inCurrency,this.state.rate);
-                popNew('app-view-currencyExchange-currencyExchangeRecord', { currencyName:outCurrency });
-            } catch (e) {
-                console.error(e);
-                popNew('app-components-message-message',{ itype:'error',content:'交易失败,请重试！',center:true });
-            } finally {
-                close.callback(close.widget);
-                this.init();
-                this.paint();
+            const hash = await transfer(passwd,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
+            close.callback(close.widget);
+            if (!hash) {
+                return;
             }
+               // tslint:disable-next-line:max-line-length
+            this.setTemRecord(hash,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency,this.state.inCurrency,this.state.rate);
+            popNew('app-view-currencyExchange-currencyExchangeRecord', { currencyName:outCurrency });
+            this.init();
+            this.paint();
         },(err) => {
             console.error(err);
             popNew('app-components-message-message',{ itype:'error',content:'出错啦,请重试！',center:true });
@@ -281,6 +271,7 @@ export class CurrencyExchange extends Widget {
             status:'pending',
             timestamp:t.getTime() / 1000
         };
+        console.log('tx',tx);
         const addrLowerCase = this.state.curOutAddr.toLowerCase();
         const shapeShiftTxsMap = getBorn('shapeShiftTxsMap');
         const shapeShiftTxs =  shapeShiftTxsMap.get(addrLowerCase) || { addr:addrLowerCase,list:[] };

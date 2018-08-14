@@ -36,6 +36,7 @@ export const doErrorShow = (err:Error) => {
     switch (err.message) {
         case 'Invalid Mnemonic' : showStr = '密码错误';break;
         case 'insufficient funds' : showStr = '余额不足';break;
+        case 'intrinsic gas too low':showStr = 'intrinsic gas too low！';break;
         default: showStr = err.message || '出错啦';
     }
     popNew('app-components-message-message', { itype: 'error', center: true, content: showStr });
