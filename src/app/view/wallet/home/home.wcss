@@ -110,6 +110,7 @@
 .ga-currency-list-container{
     position: relative;
     margin-top: 10px;
+    z-index: -1;
 }
 
 .ga-currency-list{

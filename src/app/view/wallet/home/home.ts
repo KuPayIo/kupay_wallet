@@ -21,6 +21,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 const OFFSET_COMPALET_VALUE:number = 500;// 规定滑动距离为该值时两个头部的变化完成
 const HEAD_HEIGHT:number = 580;// 首页头部高度，滑动时隐藏该头部
 const HIDEHEAD_HEIGHT:number = 140;// 隐藏头部的高度
+const EDGE_VALUE:number = 50;// 边缘值，小于相差小于此值认为滑动变化完成
 export class Home extends Widget {
     private pageHeight:number = null;
     private offset:number = 0;
@@ -174,15 +175,12 @@ export class Home extends Widget {
         if (hideHeadHeight > HIDEHEAD_HEIGHT) {
             hideHeadHeight = HIDEHEAD_HEIGHT;
         }
-        
+        console.log(offset);
         const transformHeight = OFFSET_COMPALET_VALUE - offset;// 移动距离
         const overflowHeight = getHeight() - this.pageHeight - HEAD_HEIGHT;
-        console.log('--------transformHeight-----------');
-        console.log(transformHeight);
-        console.log('--------overflowHeight-----------');
-        console.log(overflowHeight);
+
         if (offset > OFFSET_COMPALET_VALUE) {
-            document.getElementById('page').style.transform = `translateY(${transformHeight}px)`;
+            document.getElementById('currencyList').style.transform = `translateY(${transformHeight}px)`;
         }
         
         this.gaHeader.style.height = `${HEAD_HEIGHT - gaHeaderHeight}px`;
@@ -218,7 +216,11 @@ export class Home extends Widget {
             offset = 0;
         }
         
-        if (isEnd) {            
+        if (isEnd) {
+            if (Math.abs(offset - OFFSET_COMPALET_VALUE) < EDGE_VALUE) {            
+                offset = OFFSET_COMPALET_VALUE;
+                console.log('aaaa');
+            }
             this.offset = offset;
             this.distance = 0;
             

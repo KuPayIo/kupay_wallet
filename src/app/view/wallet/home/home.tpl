@@ -45,7 +45,7 @@
     </div>
     </div>
         <div w-class="ga-currency-list-container">
-            <ul w-class="ga-currency-list">
+            <ul id="currencyList" w-class="ga-currency-list">
                 {{for index,currency of it1.currencyList}}
                 <li w-class="ga-currency-item" on-tap="clickCurrencyItemListener(e,{{index}})">
                     <div w-class="ga-currency-logo-container">
