@@ -1,5 +1,5 @@
-<div class="ga-new-page hide-scrollbar" >
-    <div cap-move="pageScroll" id="page">
+<div class="ga-new-page hide-scrollbar" cap-move="pageScroll">
+    <div  id="page">
         <div id="gaHeader" w-class="ga-header-Outer">
         {{if it1.gwlt}}
         <div w-class="ga-header">
@@ -65,6 +65,6 @@
                 {{end}}
             </ul>
         </div>
-        <div style="position: relative;height: 110px;"></div>
+        <div style="position: relative;height: 100px;"></div>
     </div>
 </div>
