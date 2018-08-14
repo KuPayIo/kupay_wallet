@@ -272,6 +272,7 @@ export const getTransactionsByAddr = async (addr: string) => {
             // console.error(err);
         }
         if (txs) {
+            console.log('shapeshifttx',txs);
             txs.forEach(tx => {
                 const index = getTxByHash(shapeShiftTxs.list || [], tx.inputTXID);
                 if (index >= 0) {
