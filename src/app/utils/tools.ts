@@ -899,7 +899,7 @@ export const copyToClipboard = (copyText) => {
 export const calcHashValuePromise = async (pwd, salt, walletId, useCache: boolean = true) => {
     let hash;
     if (useCache && walletId) {
-        hash = dataCenter.getHash(walletId);
+        hash = find('hashMap',walletId);
         if (hash) return hash;
     }
 

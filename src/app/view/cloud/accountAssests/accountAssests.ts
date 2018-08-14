@@ -36,7 +36,7 @@ export class AccountAssests extends Widget {
                 isActive: false,
                 component: 'app-view-cloud-accountAssests-withdraw'
             }],
-            showChargeAndWithdraw: false
+            showChargeAndWithdraw: this.props.coinType === 'ETH'
         };
 
     }
@@ -59,10 +59,10 @@ export class AccountAssests extends Widget {
     }
 
     public chargeClicked() {
-        popNew('app-view-cloud-assestsManage-charge', { coinType: this.props.coinType });
+        popNew('app-view-cloud-assestsManage-charge', { currencyName: this.props.coinType });
     }
     public withdrawClicked() {
-        popNew('app-view-cloud-assestsManage-withdraw', { coinType: this.props.coinType });
+        popNew('app-view-cloud-assestsManage-withdraw', { currencyName: this.props.coinType });
     }
 
     public dataProcess() {
