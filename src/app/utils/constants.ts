@@ -55,7 +55,7 @@ export const strength = 128;
 
 // todo 测试网络与正式网络切换
 // btc网络
-export const btcNetwork = 'testnet';
+export const btcNetwork = config.dev_mode === 'dev' ? 'testnet' : 'mainnet';
 
 // 语言
 export const lang = 'english';
