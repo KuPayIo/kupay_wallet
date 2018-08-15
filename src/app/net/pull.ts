@@ -653,3 +653,32 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
     }
 
 };
+
+/**
+ * 提现
+ */
+export const withdrawFromServer = async (toAddr:string,coin:number,value:number) => {
+    const msg = {
+        type: 'wallet/bank@to_cash',
+        param: {
+            to:toAddr,
+            coin,
+            value
+        }
+    };
+
+    try {
+        const res = await requestAsync(msg);
+        console.log('withdrawFromServer',res);
+
+        return true;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return false;
+    }
+};

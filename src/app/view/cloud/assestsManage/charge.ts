@@ -5,9 +5,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getBankAddr, rechargeToServer } from '../../../net/pull';
-import { estimateGasETH, sendRawTransactionETH, signRawTransactionETH, transfer } from '../../../net/pullWallet';
+import { sendRawTransactionETH, signRawTransactionETH, transfer } from '../../../net/pullWallet';
 import { find } from '../../../store/store';
-import { gasLimit, gasPrice, serviceChargeRate } from '../../../utils/constants';
+import { gasLimit, gasPrice } from '../../../utils/constants';
 import { addRecord, eth2Wei, getCurrentAddrBalanceByCurrencyName, 
     getCurrentAddrByCurrencyName, getCurrentAddrInfo, openBasePage, parseDate, wei2Eth } from '../../../utils/tools';
 // ===============================================导出

@@ -1,4 +1,6 @@
 'use strict';
+
+
 var pi_modules = pi_modules || {};
 // 定义基础函数模块
 pi_modules.butil = { id: 'butil', exports: undefined, loaded: true };
@@ -1510,8 +1512,11 @@ pi_modules.commonjs.exports = (function () {
 	// 相对构建
 	var relativeBuild = function (modName, dir) {
 		var mod = module.relativeGet(modName, dir);
-		if (!mod)
+		if (!mod) {
+			debugger;
 			throw new Error("invalid require: " + modName + ", from: " + dir);
+		}
+			
 		var func = mod.buildFunc;
 		if (func) {
 			mod.buildFunc = undefined;
