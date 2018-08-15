@@ -94,6 +94,7 @@ export class DividendItem extends Widget {
             mineMore:msg1.mineMore,
             mineList:msg1.mineList,
             mineRank:msg1.mineRank,
+            miningFirst:msg2.miningFirst,
             miningSecond:msg2.miningSecond,
             miningThird:msg2.miningThird,
             miningPage:msg2.miningPage,

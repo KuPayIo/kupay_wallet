@@ -49,10 +49,11 @@
         </div>
         {{end}}
         <div w-class="moreRank" on-tap="getMore(1)" style="display: {{it1.mineMore?'block':'none'}}">更多</div>
-        <div style="height: 20px;background: #f8f8f8;"></div>
-
 
         {{% 挖矿排名}}
+        {{if it1.miningFirst}}
+        <div style="height: 20px;background: #f8f8f8;"></div>
+
         <div style="line-height: 100px;border-bottom: 1px solid #e5e5ee;display: flex;">
             <div w-class="title">挖矿排名</div>
             <span w-class="more" on-tap="gotoMore(2)">全部<img src="../../../res/image/btn_right_arrow.png" w-class="moreImg"/></span>
@@ -99,6 +100,7 @@
         {{end}}
         <div w-class="moreRank" on-tap="getMore(2)" style="display: {{it1.miningMore?'block':'none'}}">更多</div>
         <div style="height: 20px;background: #f8f8f8;"></div>
+        {{end}}
 
         <div style="height: 128px;"></div>
     </div>

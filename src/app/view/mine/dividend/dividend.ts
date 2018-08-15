@@ -6,7 +6,7 @@ import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getBonusHistory, getDividHistory } from '../../../net/pull';
+import { getDividHistory } from '../../../net/pull';
 import { find, register } from '../../../store/store';
 
 // ================================ 导出
@@ -47,7 +47,7 @@ export class Dividend extends Widget {
             totalDivid:data.totalDivid,
             totalDays:data.totalDays,
             thisDivid:data.thisDivid,
-            yearIncome:data.yearIncome           
+            yearIncome:Number(data.yearIncome) === 0 ? '暂未分红' :data.yearIncome           
         };
         this.paint();
     }

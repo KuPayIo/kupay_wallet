@@ -29,9 +29,9 @@
         </div>
     </div>
 
-    <div style="text-align: center;">
+    <div style="text-align: center;" id="miningBtn">
         <img src="../../../res/image/Group 531.png" style="width: 611px;height: 800px;margin-top: -360px;"/>
-        <div style="margin-top: -190px;"><div w-class="miningBtn" on-tap="doMining">挖一下</div></div>
+        <div style="margin-top: -190px;height: 200px;"><div w-class="miningBtn" class="miningBtnClick" on-tap="doMining" style="animation:{{it1.isAbleBtn?'change 0.2s':''}}" >挖一下</div></div>
     </div>
     <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
         <span>+{{it1.thisNum}}</span>
