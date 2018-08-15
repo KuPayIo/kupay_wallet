@@ -219,7 +219,6 @@ export class Home extends Widget {
         if (isEnd) {
             if (Math.abs(offset - OFFSET_COMPALET_VALUE) < EDGE_VALUE) {            
                 offset = OFFSET_COMPALET_VALUE;
-                console.log('aaaa');
             }
             this.offset = offset;
             this.distance = 0;

@@ -35,7 +35,7 @@ export class UnlockScreen extends Widget {
         if (lockScreenVerify(psw)) {
             if (this.props && this.props.updatedPsw) {
                 popNew('app-components-message-message', { itype: 'success', content:'验证成功,请输入新密码', center: true });
-                popNew('app-view-guidePages-setLockScreenScret', { title1: '请输入新密码', title2: '请重复新密码' });
+                popNew('app-view-guidePages-setLockScreenScret', { title1: '请输入新密码', title2: '请重复新密码' ,jump:true });
             }
             this.ok && this.ok();
 
@@ -57,6 +57,9 @@ export class UnlockScreen extends Widget {
     
     public forgetPasswordClick() {
         forgetPasswordClick(this);
+    }
+    public jumpClick() {
+        this.ok && this.ok();
     }
 }
 
@@ -88,7 +91,7 @@ const verifyLongPsw = async (psw: string,that:any) => {
     close.callback(close.widget);
     if (isEffective) {
         popNew('app-components-message-message', { itype: 'success', content:'验证成功,请重新设置锁屏密码', center: true });
-        popNew('app-view-guidePages-setLockScreenScret', { title1: '请输入新密码', title2: '请重复新密码' });
+        popNew('app-view-guidePages-setLockScreenScret', { title1: '请输入新密码', title2: '请重复新密码' ,jump:true });
         ls.locked = false;
         updateStore('lockScreen',ls);// 更新屏幕锁定
         that && that.ok && that.ok();
