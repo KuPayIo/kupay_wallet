@@ -123,7 +123,7 @@ export const initStore = () => {
 type KeyName = MapName | LocKeyName | shapeShiftName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'loginState' | 'miningTotal' | 'miningHistory' | 
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
- 'inviteRedBagRec' | 'mineItemJump';
+ 'inviteRedBagRec' | 'mineItemJump' | 'nonce';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -164,6 +164,7 @@ const store = <Store>{
     currencyList: <CurrencyInfo[]>[],// 货币信息列表
     ERC20TokenDecimals:null,// ERC20精度
     lockScreen: <LockScreen>null, // 锁屏密码相关
+    nonce:0,// 本地nonce维护
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
     accountDetail: new Map<CurrencyType, AccountDetail[]>(),// 云端账户详情
