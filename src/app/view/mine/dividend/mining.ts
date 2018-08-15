@@ -56,7 +56,12 @@ export class Dividend extends Widget {
             thisNum:data.thisNum,
             holdNum:data.holdNum,
             mineRank:rank.myRank,
-            doMining:false
+            doMining:false,  // 点击挖矿，数字动画效果执行
+            firstClick:true,
+            isAbleBtn:false,  // 点击挖矿，按钮动画效果执行
+            miningNum:` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
+            <span>+{{it1.thisNum}}</span>
+        </div>`
         };
         this.paint();
     }
@@ -72,21 +77,33 @@ export class Dividend extends Widget {
      * 点击挖矿
      */
     public async doMining() {
-        if (this.state.thisNum > 0) { // 如果本次可挖大于0，则需要真正的挖矿操作并刷新数据
+        if (this.state.thisNum > 0 && this.state.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的挖矿操作并刷新数据
             await getAward();
-        }
+            this.state.firstClick = false;
 
-        this.state.doMining = true;
-        this.paint();
-        
-        setTimeout(() => {// 动画效果执行完后将挖矿状态改为未点击状态，则可以再次点击
-            this.state.doMining = false;
-            if (this.state.thisNum > 0) {
+            setTimeout(() => {// 数字动画效果执行完后刷新页面
                 getMining();
-            }
-            this.paint();
-        },1000);
+                this.paint();
+            },500);
 
+        } else {  // 添加一个新的数字动画效果并移除旧的
+            const child = document.createElement('div');
+            child.setAttribute('class','miningNum');
+            child.setAttribute('style','animation:move 0.5s');
+            // tslint:disable-next-line:no-inner-html
+            child.innerHTML = '<span>+0</span>';
+            document.getElementsByClassName('miningNum').item(0).remove();
+            document.getElementById('miningBtn').appendChild(child);
+            
+        }
+        this.state.doMining = true;        
+        this.state.isAbleBtn = true;
+        this.paint();
+
+        setTimeout(() => {// 按钮动画效果执行完后将挖矿状态改为未点击状态，则可以再次点击
+            this.state.isAbleBtn = false;
+            this.paint();
+        },100);
     }
 
     /**

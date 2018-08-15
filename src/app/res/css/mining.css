@@ -12,3 +12,24 @@
     width: 100%;
     color:red;
 }
+@keyframes change{
+    0%   {
+        width: 180px;
+        height: 180px;
+        font-size: 48px;
+        line-height: 180px;
+        margin-top: 10px;
+    }
+    100% {
+        width: 200px;
+        height: 200px;
+        font-size: 48px;
+        line-height: 200px;
+    }
+}
+.miningBtnClick{
+    width: 200px;
+    height: 200px;
+    font-size: 48px;
+    line-height: 200px;
+}

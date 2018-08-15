@@ -173,6 +173,7 @@ export interface MiningRank {
     miningMore:boolean;  // 挖矿排名是否还有更多  
     miningList:any[];  // 挖矿排名总列表
     miningRank:MineRankItem[];  // 挖矿排名分页数据
+    miningFirst:boolean; // 挖矿排名是否有人
 }
 
 /**

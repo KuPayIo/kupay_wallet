@@ -98,6 +98,7 @@ export const parseMiningRank = (data) => {
     const miningData: any = {
         miningSecond: false,
         miningThird: false,
+        miningFirst: true,
         miningPage: 1,
         miningMore: false,
         miningList: data.value,
@@ -109,6 +110,12 @@ export const parseMiningRank = (data) => {
             }
         ]
     };
+    if (data.value === '') {
+        miningData.miningFirst = false;
+        
+        return miningData;
+    }
+
     if (data.value.length > 10) {
         miningData.miningMore = true;
         miningData.miningSecond = true;
