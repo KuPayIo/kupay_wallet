@@ -1,10 +1,13 @@
-
+.ga-header-Outer{
+    overflow: hidden;
+    height: 580px;
+}
 .ga-header{
     height: 500px;
     display: flex;
     flex-direction: column;
     padding: 0 30px;
-    
+    overflow: hidden;
     background: #3574FA;
     position: relative;
 }
@@ -93,7 +96,6 @@
     padding: 0 30px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     line-height: 33px;
     color: #203260;
     font-size: 24px;
@@ -108,6 +110,7 @@
 .ga-currency-list-container{
     position: relative;
     margin-top: 10px;
+    z-index: -1;
 }
 
 .ga-currency-list{
@@ -176,4 +179,33 @@
     color: rgba(142,150,171,0.87);
     text-align: right;
     line-height: 28px;
+}
+.iconSpan{
+    width: 6px;
+    height: 30px;
+    background: #3574FA;
+    margin-right:10px; 
+}
+.hideHead{
+    padding: 0px 30px;
+    padding-top:40px;
+    padding-bottom: 20px; 
+    background: #fff;
+    color: #111;
+    box-sizing: border-box;
+    font-size: 48px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+.hideHeadOuter{
+    overflow: hidden;
+    height: 0;
+}
+.currencyIcon{
+    font-size: 32px;
+}
+.hidetitleHeadImg{
+    height: 80px;
+    width: 80px;
 }

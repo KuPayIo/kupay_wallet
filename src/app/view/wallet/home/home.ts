@@ -2,7 +2,7 @@
  * wallet home page
  */
 // ============================== 导入
-import { popNew } from '../../../../pi/ui/root';
+import { getHeight,popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
@@ -18,11 +18,17 @@ import {
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-
+const OFFSET_COMPALET_VALUE:number = 500;// 规定滑动距离为该值时两个头部的变化完成
+const HEAD_HEIGHT:number = 580;// 首页头部高度，滑动时隐藏该头部
+const HIDEHEAD_HEIGHT:number = 140;// 隐藏头部的高度
+const EDGE_VALUE:number = 50;// 边缘值，小于相差小于此值认为滑动变化完成
 export class Home extends Widget {
-    public gaHerder:any = null;// 头部dom元素
-    public scrollStartY:number = null;// 每次滑动的初始位置Y
-    public dis:number = 0;// 累计移动距离
+    private pageHeight:number = null;
+    private offset:number = 0;
+    private startY:number = null;
+    private distance:number = 0;
+    private gaHeader:any = null;
+    private hideHead:any = null;
     constructor() {
         super();
     }
@@ -41,15 +47,14 @@ export class Home extends Widget {
             otherWallets,
             totalAssets: 0.00,
             currencyList: parseCurrencyList(wallet),
-            floatBoxTip: '为了您的资产安全，请及时备份助记词',
+            floatBoxTip: '',
             hiddenAssets: false
         };
 
         // 如果没有创建钱包提示创建钱包
-        if (!find('walletList')) {
+        if (find('walletList') || find('walletList').length === 0) {
             this.state.floatBoxTip = '您还没有钱包，请先创建钱包';
         }
-
         this.registerAddrsFun();
         // 登录云端账号
         openAndGetRandom();
@@ -127,45 +132,6 @@ export class Home extends Widget {
         this.paint();
     }
 
-    // public handleScroll(e:any) {
-    //     const currencyY = e.y;// 当前Y
-    //     const currentDis = this.dis;
-    //     let dis = 0;// 本次移动距离
-    //     // 获取dom元素头部和隐藏头部
-    //     if (! this.gaHerder) {
-    //         this.gaHerder = document.getElementById('gaHeader');
-    //     }
-    //     // 计算header应该减少的高度
-    //     if (e.subType === 'start') {
-    //         this.scrollStartY = e.y;// 初始化起点Y
-    //     }
-    //     if (this.scrollStartY) {
-    //         dis = currencyY - this.scrollStartY;// 计算本次移动距离
-    //     }
-    //     if (e.subType === 'over') {
-    //         // 滑动结束，将本次移动距离合并到累计移动距离
-    //         if (dis <= 0) {
-    //             this.dis += dis;
-    //         } else {
-    //             this.dis = 0;
-    //         }
-    //     }
-        
-    //     // 计算隐藏头部应该增加的高度
-    //     // 减少header的高度
-    //     if ((dis + currentDis) >= 0) {
-    //         return;
-    //     }
-    //     console.log('---------dis-----------');
-    //     console.log(dis);
-    //     console.log('---------currentDis-----------');
-    //     console.log(currentDis);
-    //     console.log('---------this.dis-----------');
-    //     console.log(this.dis);
-    //     this.gaHerder.style.transform = `translateY(${dis + currentDis}px)`;
-    //     // 增加隐藏头部的高度
-    // }
-
     public registerWalletsFun = () => {
         // 创建完钱包之后修改floatBoxTip提示信息
         const wallets = find('walletList');
@@ -180,6 +146,44 @@ export class Home extends Widget {
         this.state.currencyList = parseCurrencyList(wallet);
         this.registerAddrsFun();
         this.paint();
+    }
+    // 这个函数是用来实现首页滑动特效的，看不懂就算了吧，写到最后我也不知道我在写什么
+    public pageScroll(e:any) {
+        
+        // 头部高度580px
+        if (!this.gaHeader) {
+            this.gaHeader = document.getElementById('gaHeader');
+        }
+        if (!this.hideHead) {
+            this.hideHead = document.getElementById('hideHead');
+        }
+        if (!this.pageHeight) {
+            this.pageHeight = document.getElementById('page').offsetHeight;
+        }
+        
+        const offset = this.handleScroll(e.x,e.y,e.subType === 'start',e.subType === 'over');
+        const ratio = offset / OFFSET_COMPALET_VALUE;
+        let gaHeaderHeight = ratio * HEAD_HEIGHT;
+        let hideHeadHeight = ratio * HIDEHEAD_HEIGHT;
+        
+        if (gaHeaderHeight < 0) {
+            gaHeaderHeight = 0;
+        }
+        if (hideHeadHeight < 0) {
+            hideHeadHeight = 0;
+        }
+        if (hideHeadHeight > HIDEHEAD_HEIGHT) {
+            hideHeadHeight = HIDEHEAD_HEIGHT;
+        }
+        const transformHeight = OFFSET_COMPALET_VALUE - offset;// 移动距离
+        const overflowHeight = getHeight() - this.pageHeight - HEAD_HEIGHT;
+
+        if (offset > OFFSET_COMPALET_VALUE) {
+            document.getElementById('currencyList').style.transform = `translateY(${transformHeight}px)`;
+        }
+        
+        this.gaHeader.style.height = `${HEAD_HEIGHT - gaHeaderHeight}px`;
+        this.hideHead.style.height = `${hideHeadHeight}px`;
     }
 
     /**
@@ -197,6 +201,30 @@ export class Home extends Widget {
         this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
 
         this.paint();
+    }
+
+    // 处理滑动，返回滑动距离，需要依赖本类中的几个成员变量
+    private handleScroll(x:number,y:number,isStart:boolean,isEnd:boolean) {
+        if (isStart) {
+            this.startY = y;
+        }
+        this.distance = this.startY - y;
+
+        let offset = this.offset + this.distance;
+        if (offset < 0) {
+            offset = 0;
+        }
+        
+        if (isEnd) {
+            if (Math.abs(offset - OFFSET_COMPALET_VALUE) < EDGE_VALUE) {            
+                offset = OFFSET_COMPALET_VALUE;
+            }
+            this.offset = offset;
+            this.distance = 0;
+            
+        }
+
+        return offset;
     }
 }
 // ============================== 本地

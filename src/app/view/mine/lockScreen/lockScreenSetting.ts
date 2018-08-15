@@ -42,7 +42,7 @@ export class LockScreenSetting extends Widget {
      */
     public onSwitchChange() {
         if (!this.state.lockScreenPsw) {
-            popNew('app-view-guidePages-setLockScreenScret', {}, () => {
+            popNew('app-view-guidePages-setLockScreenScret', { jump:true }, () => {
                 this.state.lockScreenPsw = find('lockScreen').psw;
             });
         }
@@ -56,7 +56,7 @@ export class LockScreenSetting extends Widget {
 
     // 修改锁屏密码
     public resetLockScreen() {
-        popNew('app-view-guidePages-unlockScreen',{ updatedPsw:true });
+        popNew('app-view-guidePages-unlockScreen',{ updatedPsw:true,jump:true });
     }
 
     public forgetPasswordClick() {
