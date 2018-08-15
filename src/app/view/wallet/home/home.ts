@@ -18,17 +18,20 @@ import {
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-const OFFSET_COMPALET_VALUE:number = 500;// 规定滑动距离为该值时两个头部的变化完成
-const HEAD_HEIGHT:number = 580;// 首页头部高度，滑动时隐藏该头部
-const HIDEHEAD_HEIGHT:number = 140;// 隐藏头部的高度
-const EDGE_VALUE:number = 50;// 边缘值，小于相差小于此值认为滑动变化完成
+const OFFSET_COMPALET_VALUE:number = 430;// 规定滑动距离为该值时两个头部的变化完成
+// const HEAD_HEIGHT:number = 580;// 首页头部高度，滑动时隐藏该头部
+// const HIDEHEAD_HEIGHT:number = 140;// 隐藏头部的高度
+// const EDGE_VALUE:number = 50;// 边缘值，小于相差小于此值认为滑动变化完成
 export class Home extends Widget {
-    private pageHeight:number = null;
+    // private pageHeight:number = null;
     private offset:number = 0;
     private startY:number = null;
     private distance:number = 0;
+    private maxVal:number = 0;
     private gaHeader:any = null;
     private hideHead:any = null;
+    private currencyHeight:number = null;
+    
     constructor() {
         super();
     }
@@ -36,7 +39,22 @@ export class Home extends Widget {
         super.create();
         this.init();
     }
-
+    public attach() {
+        super.attach();
+        if (!this.hideHead) {
+            this.hideHead = document.getElementById('hideHead');
+        }
+        if (!this.gaHeader) {
+            this.gaHeader = document.getElementById('gaHeader');
+        }
+        if (!this.currencyHeight) {
+            this.currencyHeight = document.getElementById('currencyList').offsetHeight;
+        }
+        const pageHeight = getHeight() - 120;
+        const contentHeight =  this.currencyHeight + 150;
+        const overflowHeight = (contentHeight - pageHeight) < 0 ? 0 :(contentHeight - pageHeight);
+        this.maxVal = OFFSET_COMPALET_VALUE + overflowHeight;
+    }
     public init(): void {
         const wallet = find('curWallet');
         const gwlt = wallet ? GlobalWallet.fromJSON(wallet.gwlt) : null;
@@ -147,43 +165,12 @@ export class Home extends Widget {
         this.registerAddrsFun();
         this.paint();
     }
-    // 这个函数是用来实现首页滑动特效的，看不懂就算了吧，写到最后我也不知道我在写什么
-    public pageScroll(e:any) {
-        
-        // 头部高度580px
-        if (!this.gaHeader) {
-            this.gaHeader = document.getElementById('gaHeader');
-        }
-        if (!this.hideHead) {
-            this.hideHead = document.getElementById('hideHead');
-        }
-        if (!this.pageHeight) {
-            this.pageHeight = document.getElementById('page').offsetHeight;
-        }
-        
-        const offset = this.handleScroll(e.x,e.y,e.subType === 'start',e.subType === 'over');
+    public pageScroll(e:any) { {
+       
+        const offset = this.handleScroll(e.x,e.y,this.maxVal,e.subType === 'start',e.subType === 'over');
         const ratio = offset / OFFSET_COMPALET_VALUE;
-        let gaHeaderHeight = ratio * HEAD_HEIGHT;
-        let hideHeadHeight = ratio * HIDEHEAD_HEIGHT;
-        
-        if (gaHeaderHeight < 0) {
-            gaHeaderHeight = 0;
-        }
-        if (hideHeadHeight < 0) {
-            hideHeadHeight = 0;
-        }
-        if (hideHeadHeight > HIDEHEAD_HEIGHT) {
-            hideHeadHeight = HIDEHEAD_HEIGHT;
-        }
-        const transformHeight = OFFSET_COMPALET_VALUE - offset;// 移动距离
-        const overflowHeight = getHeight() - this.pageHeight - HEAD_HEIGHT;
-
-        if (offset > OFFSET_COMPALET_VALUE) {
-            document.getElementById('currencyList').style.transform = `translateY(${transformHeight}px)`;
-        }
-        
-        this.gaHeader.style.height = `${HEAD_HEIGHT - gaHeaderHeight}px`;
-        this.hideHead.style.height = `${hideHeadHeight}px`;
+        document.getElementById('page').style.transform = `translateY(${-offset}px)`;
+        this.hideHead.style.opacity = ratio;
     }
 
     /**
@@ -204,7 +191,7 @@ export class Home extends Widget {
     }
 
     // 处理滑动，返回滑动距离，需要依赖本类中的几个成员变量
-    private handleScroll(x:number,y:number,isStart:boolean,isEnd:boolean) {
+    private handleScroll(x:number,y:number,maxVal:number,isStart:boolean,isEnd:boolean) {
         if (isStart) {
             this.startY = y;
         }
@@ -214,14 +201,13 @@ export class Home extends Widget {
         if (offset < 0) {
             offset = 0;
         }
+        if (offset > maxVal) {
+            offset = maxVal;
+        }
         
         if (isEnd) {
-            if (Math.abs(offset - OFFSET_COMPALET_VALUE) < EDGE_VALUE) {            
-                offset = OFFSET_COMPALET_VALUE;
-            }
             this.offset = offset;
             this.distance = 0;
-            
         }
 
         return offset;
