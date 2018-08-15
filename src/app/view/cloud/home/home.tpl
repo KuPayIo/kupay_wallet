@@ -12,15 +12,15 @@
         </div>
     </div>
 
-    <div w-class="myEthInfo" on-tap="bonusClicked">
-        <div w-class="myethTitle">
+    <div w-class="myEthInfo">
+        <div w-class="myethTitle" on-tap="bonusClicked">
             累计分红(ETH)
             <img src="../../../res/image/cloud_arow_right2.png" w-class="arowR2" />
         </div>
-        <div w-class="myethBonusAmount">
+        <div w-class="myethBonusAmount" on-tap="bonusClicked">
                 {{it1.bonus}}
         </div>
-        <div w-class="myethAmount">
+        <div w-class="myethAmount" on-tap="ethHoldingsClicked">
                 持有 {{it1.ethBalance}} ETH
         </div>
     </div>
