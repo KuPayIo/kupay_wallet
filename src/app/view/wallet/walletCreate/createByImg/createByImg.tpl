@@ -1,8 +1,6 @@
 <div class="ga-new-page" id="createByImg" ev-back-click="backPrePage">
 	<app-components-topBar-topBar>{title:"生成钱包"}</app-components-topBar-topBar>
-	<div w-class="topBar">
-		同一张照片和同样的字符会生成同一个的钱包。所以可以记住您的照片和输入字符，这也是一种备份手段。
-	</div>
+	<app-view-wallet-walletCreate-headTips-headTips>{content:"同一张照片和同样的字符会生成同一个的钱包。所以可以记住您的照片和输入字符，这也是一种备份手段。"}</app-view-wallet-walletCreate-headTips-headTips>
 	<div w-class="imgBox" on-tap="chooseImg">
 		{{if !it1.choosedImg}}
 		<div w-class="boxAlt">
