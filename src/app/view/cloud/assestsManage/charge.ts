@@ -88,7 +88,7 @@ export class Charge extends Widget {
             return;
         }
         const signedTX = obj.signedTx;
-        const hash = obj.hash;
+        const hash = `0x${obj.hash}`;
         const nonce = Number(obj.nonce);
         const pay = eth2Wei(this.state.amount);
         const canTransfer = await rechargeToServer(fromAddr,toAddr,hash,nonce,gasPrice,pay);
