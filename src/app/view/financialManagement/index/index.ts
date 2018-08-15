@@ -4,6 +4,7 @@
 // ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { getProductList } from '../../../net/pull';
 // ====================================================导出
 export class Index extends Widget {
     public ok: () => void;
@@ -46,7 +47,16 @@ export class Index extends Widget {
                 isSoldOut: true
             }]
         };
+        setTimeout(() => {
+            this.getProductList();
+        },5000);
         
+    }
+    public async getProductList() {
+        const productList = await getProductList();
+        console.log('---------getProductList-------------');
+        
+        return productList;
     }
     public toDetail(i: any) {
         console.log('---------i-----------');
