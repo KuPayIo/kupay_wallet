@@ -175,7 +175,6 @@ export class Home extends Widget {
         if (hideHeadHeight > HIDEHEAD_HEIGHT) {
             hideHeadHeight = HIDEHEAD_HEIGHT;
         }
-        console.log(offset);
         const transformHeight = OFFSET_COMPALET_VALUE - offset;// 移动距离
         const overflowHeight = getHeight() - this.pageHeight - HEAD_HEIGHT;
 
