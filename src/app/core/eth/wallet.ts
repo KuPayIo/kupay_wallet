@@ -324,6 +324,24 @@ export class EthWallet {
         return tx.serialize();
     }
 
+    public signRawTransactionHash(txObj: Transaction) {
+        const tx = new ethereumjs.Tx();
+
+        tx.to = txObj.to;
+        tx.nonce = txObj.nonce;
+        tx.gasPrice = txObj.gasPrice;
+        tx.gasLimit = txObj.gasLimit;
+        tx.value = txObj.value;
+        tx.data = txObj.data;
+        tx.sign(ethereumjs.Buffer.Buffer(this._privKey, 'hex'));
+
+        return {
+            nonce:txObj.nonce,
+            hash:tx.hash().toString('hex'),
+            signedTx:tx.serialize()
+        };
+    }
+
     public toJSON(): string {
         const wlt = {
             nickname: this._nickName,

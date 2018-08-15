@@ -290,13 +290,13 @@ export class DataCenter {
         }, 100);
         if (this.updateFastList.length > 0) {
             const update = this.updateFastList.shift();
-            console.log('openCheck updateFastList', update);
+            // console.log('openCheck updateFastList', update);
             switch (update[0]) {
                 case 'transaction': this.parseTransactionDetails(update[1], update[2]); break;
                 // case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
                 case 'balance': this.updateBalance(update[1], update[2]); break;
                 case 'exchangeRate': this.exchangeRate(update[1]); break;
-                case 'shapeShiftCoins': getShapeShiftCoins();console.log('getShapeShiftCoins start----------------');break;
+                case 'shapeShiftCoins': getShapeShiftCoins();break;
                 default:
             }
 

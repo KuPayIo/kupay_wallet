@@ -12,13 +12,14 @@ import { MarketInfo } from '../../store/interface';
 import { find, getBorn, register, updateStore } from '../../store/store';
 // tslint:disable-next-line:max-line-length
 import { 
+    addRecord, 
     currencyExchangeAvailable, 
-    getAddrById, 
+    getAddrById,
     getCurrentAddrBalanceByCurrencyName,
-    getCurrentAddrByCurrencyName,
+    getCurrentAddrByCurrencyName, 
     openBasePage, 
     parseDate, 
-    resetAddrById, 
+    resetAddrById,
     wei2Eth} from '../../utils/tools'; 
 
 // ================================ 导出
@@ -210,7 +211,7 @@ export class CurrencyExchange extends Widget {
         
         const wallet = find('curWallet');
         let passwd;
-        if (!dataCenter.getHash(wallet.walletId)) {
+        if (!find('hashMap',wallet.walletId)) {
             passwd = await openBasePage('app-components-message-messageboxPrompt', {
                 title: '输入密码', inputType: 'password'
             });
@@ -297,16 +298,6 @@ export class CurrencyExchange extends Widget {
     }
     
 }
-/**
- * 添加记录
- */
-const addRecord = (currencyName, currentAddr, record) => {
-    const addr = getAddrById(currentAddr, currencyName);
-    if (!addr) return;
-    addr.record.push(record);
-
-    resetAddrById(currentAddr, currencyName, addr, true);
-};
 
 // =====================================本地
 register('shapeShiftMarketInfo', marketInfo => {

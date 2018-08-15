@@ -124,3 +124,12 @@ export const shapeshiftApiPrivateKey = 'c98210f4568b04d3f84c5404f8e5be9835384913
 export const shapeshiftTransactionRequestNumber = 5;
 // 发红包所支持的货币
 export const redEnvelopeSupportCurrency = ['KT', 'ETH'];
+
+// 充值服务费比率
+export const serviceChargeRate = 0.03;
+
+// 默认ETH gasPrice
+export const gasPrice = 5000000000;
+
+// 默认ETH gasLimit
+export const gasLimit = 21000;

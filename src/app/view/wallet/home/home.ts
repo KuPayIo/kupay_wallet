@@ -109,7 +109,7 @@ export class Home extends Widget {
         try {
 
             let passwd;
-            if (!dataCenter.getHash(wallet.walletId)) {
+            if (!find('hashMap',wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
                     title: '输入密码', content: '', inputType: 'password'
                 });

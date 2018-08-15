@@ -54,7 +54,7 @@ export class WalletList extends Widget {
             const walletList = find('walletList');
             const wallet = getWalletByWalletId(walletList, walletId);
             let passwd;
-            if (!dataCenter.getHash(wallet.walletId)) {
+            if (!find('hashMap',wallet.walletId)) {
                 passwd = await openBasePage('app-components-message-messageboxPrompt', {
                     title: '输入密码', content: '', inputType: 'password'
                 });
