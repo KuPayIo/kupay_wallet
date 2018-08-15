@@ -170,11 +170,15 @@
 				winit.domains = [ "file:///android_asset/res", "file:///android_asset/res" ];
 			}
 			// todo 发版本时需动态设置服务器ip及端口
+			//----------本地-------
 			winit.severIp = "127.0.0.1";
 			winit.severPort = "80";
+			// ---------国内------
 			// winit.severIp = "47.106.176.185";
 			// winit.severPort = "8080";
-
+			// -----------香港------
+			// winit.severIp = "47.75.210.96";
+			// winit.severPort = "8080";
 			// 读取JS的Function
 			winit.loadJS = function (roots, url, charset, callback, errText, i) {
 				var u, n, head;
