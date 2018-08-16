@@ -3,8 +3,6 @@
  */
 import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { deepCopy } from '../../pi/util/util';
-import { fromWei } from '../core/eth/helper';
 import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet, wei2Eth } from '../core/globalWallet';
@@ -15,8 +13,7 @@ import { parseCloudAccountDetail, parseCloudBalance,
 import { find, getBorn, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
 import { doErrorShow, showError } from '../utils/toolMessages';
-import { kpt2kt, largeUnit2SmallUnitString, openBasePage, popPswBox, transDate } from '../utils/tools';
-import { Config } from '../view/financialManagement/config/config';
+import { kpt2kt, largeUnit2SmallUnitString, popPswBox, transDate } from '../utils/tools';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
