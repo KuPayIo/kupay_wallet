@@ -2,8 +2,17 @@
  * 提币记录
  */
 // ==================================================导入
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-// ====================================================导出
+import { getWithdrawLogs } from '../../../net/pull';
+import { RechargeWithdrawalLog } from '../../../store/interface';
+import { register } from '../../../store/store';
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class Withdraw extends Widget {
     constructor() {
         super();
@@ -12,30 +21,20 @@ export class Withdraw extends Widget {
         super.create();
         this.init();
     }
-    public init(): void {
+    public async init() {
         this.state = { infoList: [] };
-
-        return;
-        this.state.infoList.push({
-            behavior: '提币',// 名称
-            behaviorIcon: 'cloud_withdraw_icon.png',// 对应的图标
-            time: '2018-05-03 12:00:02',// 时间
-            amount: '-0.0001',// 金额
-            status: '发送中'
-        });
-        this.state.infoList.push({
-            behavior: '提币',
-            behaviorIcon: 'cloud_withdraw_icon.png',
-            time: '2018-05-03 12:00:02',
-            amount: '-0.0001',
-            status: '发送中'
-        });
-        this.state.infoList.push({
-            behavior: '提币',
-            behaviorIcon: 'cloud_withdraw_icon.png',
-            time: '2018-05-03 12:00:02',
-            amount: '-0.0001',
-            status: '完成'
-        });
+        getWithdrawLogs();
+    }
+    public updateWithdrawLogs(withdrawLogs:RechargeWithdrawalLog[]) {
+        this.state.infoList = withdrawLogs;
+        this.paint();
     }
 }
+
+// ==================本地
+register('withdrawLogs',(withdrawLogs:RechargeWithdrawalLog[]) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateWithdrawLogs(withdrawLogs);
+    }
+});

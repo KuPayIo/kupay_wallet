@@ -256,7 +256,7 @@ export interface MarketInfo {
     limit:number;// 限制数量
 }
 /**
- * shapeshift兑换记录
+ * shapeshift兑换记录详情
  */
 export interface ShapeShiftTx  {
     hasConfirmations:string;// 是否确认
@@ -272,10 +272,23 @@ export interface ShapeShiftTx  {
     status:string;// status of the shift
     timestamp:number; // timestamp
 }
-
+/**
+ * shapeshift兑换记录
+ */
 export interface ShapeShiftTxs {
     addr:string;// 这个地址的交易记录
     list:ShapeShiftTx[];// 交易记录列表
+}
+/**
+ * 充值提现记录
+ */
+export interface RechargeWithdrawalLog {
+    time:number; // timestamp
+    timeShow:string;
+    amount:number;// 金额
+    status:number;// 状态码
+    statusShow:string;
+    hash:string;// 交易ha'sh
 }
 export interface Store {
     // 基础数据
@@ -310,7 +323,9 @@ export interface Store {
     addMine:AddMineItem[];// 矿山增加项目
     mineRank:MineRank;// 矿山排名
     miningRank:MiningRank;// 挖矿排名
-    mineItemJump:string;// 矿山增加项目跳转详情    
+    mineItemJump:string;// 矿山增加项目跳转详情 
+    rechargeLogs:RechargeWithdrawalLog[];// 充值记录
+    withdrawLogs:RechargeWithdrawalLog[];// 提现记录
     // 地址管理
     TopContacts:TopContact[];// 常用联系人列表
     // shapeShift
@@ -331,7 +346,9 @@ export enum TaskSid {
     bonus,// 分红
     mines,// 挖矿
     chat,// 聊天
-    redEnvelope = 'red_bag_port' // 红包
+    redEnvelope = 'red_bag_port', // 红包
+    recharge = 'bank_db',// 充值
+    withdraw = 'bank_port'// 提现
 }
 
 export interface AccountDetail {
