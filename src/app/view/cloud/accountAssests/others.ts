@@ -50,13 +50,16 @@ export class Others extends Widget {
  * 通过类型获取图标
  */
 const getIconByType = (iType) => {
-    if (iType === TaskSid.mines) {
-        return 'cloud_others_drag.png';
-    } else if (iType === TaskSid.redEnvelope) {
-        return 'cloud_others_pockets.png';
+    let img;
+    switch (iType) {
+        case TaskSid.mines:img = 'cloud_others_drag.png';
+        case TaskSid.redEnvelope:img = 'cloud_others_pockets.png';
+        case TaskSid.recharge:img = 'cloud_charge_icon.png';
+        case TaskSid.withdraw:img = 'cloud_withdraw_icon.png';
+        default:
     }
-    // '发红包'---cloud_others_pockets.png
-    // '分红'---cloud_others_bonus.png
+    
+    return img;
 };
 // ===================================================== 立即执行
 

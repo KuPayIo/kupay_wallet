@@ -125,8 +125,8 @@ export const shapeshiftTransactionRequestNumber = 5;
 // 发红包所支持的货币
 export const redEnvelopeSupportCurrency = ['KT', 'ETH'];
 
-// 充值服务费比率
-export const serviceChargeRate = 0.03;
+// 提现服务费比率
+export const withdrawServiceCharge = 0.03;
 
 // 默认ETH gasPrice
 export const gasPrice = 5000000000;

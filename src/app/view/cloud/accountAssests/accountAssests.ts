@@ -23,17 +23,15 @@ export class AccountAssests extends Widget {
         this.state = {
             maskHeight: getHeight(),
             routePath: 'app-view-cloud-accountAssests-others',
+            isActive: 0,
             panelBtns: [{
-                label: '其他',
-                isActive: true,
+                label: '全部',
                 component: 'app-view-cloud-accountAssests-others'
             }, {
                 label: '充值',
-                isActive: false,
                 component: 'app-view-cloud-accountAssests-charge'
             }, {
                 label: '提币',
-                isActive: false,
                 component: 'app-view-cloud-accountAssests-withdraw'
             }],
             showChargeAndWithdraw: this.props.coinType === 'ETH'
@@ -45,21 +43,16 @@ export class AccountAssests extends Widget {
     }
     // 点击面板按钮
     public panelBtnClicked(e: any, index: any) {
-        // 按钮样式改变
-        for (let i = 0; i < this.state.panelBtns.length; i++) {
-            const temp = this.state.panelBtns[i];
-            temp.isActive = false;
-            if (i === index) {
-                temp.isActive = true;
-                // 动态组件改变
-                this.state.routePath = temp.component;
-            }
-        }
+        this.state.isActive = index;
+        this.state.routePath = this.state.panelBtns[index].component;
         this.paint();
     }
 
     public chargeClicked() {
-        popNew('app-view-cloud-assestsManage-charge', { currencyName: this.props.coinType });
+        popNew('app-view-cloud-assestsManage-charge', { currencyName: this.props.coinType },() => {
+            console.log('充值---------------');
+            // this.isActive =     ; 
+        });
     }
     public withdrawClicked() {
         popNew('app-view-cloud-assestsManage-withdraw', { currencyName: this.props.coinType });
