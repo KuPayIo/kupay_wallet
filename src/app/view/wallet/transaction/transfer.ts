@@ -34,6 +34,7 @@ interface States {
     feesConversion: string;
     info: string;
     showNote: boolean;
+    payEnough:boolean;
 }
 
 export class AddAsset extends Widget {
@@ -60,7 +61,8 @@ export class AddAsset extends Widget {
             fees: 0,
             feesConversion: '',
             info: '',
-            showNote: ERC20Tokens[this.props.currencyName] ? false : true
+            showNote: ERC20Tokens[this.props.currencyName] ? false : true,
+            payEnough:true
         };
 
         // todo 这是测试地址
@@ -102,6 +104,12 @@ export class AddAsset extends Widget {
         }
         if (!this.state.pay) {
             popNew('app-components-message-message', { itype: 'warn', content: '请输入转账金额', center: true });
+
+            return;
+        }
+
+        if (!this.state.payEnough) {
+            popNew('app-components-message-message', { itype: 'warn', content: '余额不足', center: true });
 
             return;
         }
@@ -167,6 +175,11 @@ export class AddAsset extends Widget {
     public onPayChange(e: any) {
         const num = parseFloat(e.value) || 0;
         this.state.pay = num;
+        if (num > parseFloat(this.props.currencyBalance)) {
+            this.state.payEnough = false;
+        } else {
+            this.state.payEnough = true;            
+        }
         // tslint:disable-next-line:max-line-length
         const r = effectiveCurrencyStableConversion(num, ERC20Tokens[this.props.currencyName] ? 'ETH' : this.props.currencyName, 'CNY', false);
         this.state.payConversion = r.conversionShow;

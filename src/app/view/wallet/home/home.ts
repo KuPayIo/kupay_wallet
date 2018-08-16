@@ -140,7 +140,9 @@ export class Home extends Widget {
             }
         } catch (error) {
             console.log(error);
-            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+            if (error) {
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+            }
         }
         close.callback(close.widget);
     }
@@ -154,6 +156,7 @@ export class Home extends Widget {
         // 创建完钱包之后修改floatBoxTip提示信息
         const wallets = find('walletList');
         const wallet = find('curWallet');
+        console.log(wallet);
         if (wallet) {
             this.state.floatBoxTip = '为了您的资产安全，请及时备份助记词';
         }
