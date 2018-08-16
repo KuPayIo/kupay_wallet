@@ -5,11 +5,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { fromWei } from '../../../core/eth/helper';
-import { getProductList } from '../../../net/pull';
-import { CurrencyTypeReverse } from '../../../store/interface';
-import { register } from '../../../store/store';
-import { Config } from '../config/config';
+import { getProductList,getPurchaseRecord } from '../../../net/pull';
+import { find, register } from '../../../store/store';
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -37,12 +34,7 @@ export class Index extends Widget {
     }
     public init() {
         this.state = {
-            record: [{
-                title: 'ETH资管第1期',
-                amount: '1',
-                bonus: '0.002',
-                days: '2'
-            }],
+            record: [],
             productList: []
         };
         
@@ -54,8 +46,9 @@ export class Index extends Widget {
         const item = this.state.productList[i];
         popNew('app-view-financialManagement-productDetail-productDetail', { i, item });
     }
+
     public toRecord() {
-        popNew('app-view-financialManagement-purchaseRecord-purchaseRecord');
+        popNew('app-view-financialManagement-purchaseRecord-purchaseRecord',{ record:this.state.record });
     }
     public drawCircle(canvasId:string,t:number,total:number) {
         const oC = document.getElementById(canvasId);
@@ -63,6 +56,7 @@ export class Index extends Widget {
 
         const pi = Math.PI;
         const percent = t / total;
+        
         const oB = pi * 1.5 - percent * 2 * pi;
         const oR = Math.PI * 1.5;
         
@@ -88,42 +82,35 @@ export class Index extends Widget {
         if (t <= 0) {
             oGC.fillText(`售罄`, x, y + 10);
         } else {
-            oGC.fillText(`${percent * 100}%`, x, y + 10);
+            oGC.fillText(`${(percent * 100).toFixed(0)}%`, x, y + 10);
         }
         
     }
 }
 // ===============================================本地
-const productListAdapter = (data:any,w:any) => {
-
-    const result = [];
-    for (let i = 0;i < data.value.length;i++) {
-        const item = data.value[i];
-        const id = item[0];
-        const product = Config.productList[id];
-        product.coninType = CurrencyTypeReverse[`${item[2]}`];
-        product.unitPrice = fromWei(item[3],'ether');
-        product.total = item[4];
-        product.surplus = item[4] - item[5];
-        if (product.surplus <= 0) {
-            product.isSoldOut = true;
-        } else {
-            product.isSoldOut = false;
-        }
-        result.push(product);
-    }
-    w.state.productList = result;
-    console.log('-------result-------');
-    console.log(result);
-};
 
 register('conRandom', async (conRandom) => {
     if (!conRandom) return;
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         const data = await getProductList();
-        console.log('-----productList-');
-        productListAdapter(data,w);
+        const recordData = getPurchaseRecord();
+        w.paint();
+    }
+    
+});
+register('productList', async (productList) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.state.productList = productList;
+        w.paint();
+    }
+    
+});
+register('purchaseRecord', async (purchaseRecord) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.state.record = purchaseRecord;
         w.paint();
     }
     

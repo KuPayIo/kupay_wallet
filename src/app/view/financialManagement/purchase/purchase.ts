@@ -19,7 +19,7 @@ export class ProductDetail extends Widget {
         this.state = {}; 
     }
     public close() {
-        this.ok && this.ok('');
+        this.ok && this.ok(null);
     }
     public async purchaseClicked() {
         const passwd = await openBasePage('app-components-message-messageboxPrompt', {

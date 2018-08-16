@@ -8,7 +8,7 @@
         {{for i,v of it1.record}}
         <div w-class="mineItem" on-tap="toRecord">
             <div w-class="mineTitle">
-                {{v.title}}
+                {{v.productName}}
             </div>
             <div w-class="mineMain">
                 <div w-class="mainLeft">
@@ -26,7 +26,7 @@
                         昨日收益(ETH)
                     </div>
                     <div w-class="incomMain">
-                        {{v.bonus}}<span w-class="unit"></span>
+                        {{v.yesterdayIncoming}}<span w-class="unit"></span>
                     </div>
                 </div>
                 <span w-class="iconLine"></span>

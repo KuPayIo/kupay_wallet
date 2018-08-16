@@ -1044,3 +1044,13 @@ export const addRecord = (currencyName, currentAddr, record) => {
 
     resetAddrById(currentAddr, currencyName, addr, true);
 };
+
+/**
+ * 计算日期间隔
+ */
+export const GetDateDiff = (startDate,endDate) => {  
+    const startTime = startDate.getTime();     
+    const endTime = endDate.getTime();     
+
+    return  Math.floor(Math.abs((startTime - endTime)) / (1000 * 60 * 60 * 24));    
+};

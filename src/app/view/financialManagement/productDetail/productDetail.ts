@@ -3,10 +3,16 @@
  */
 // ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find } from '../../../store/store';
+import { buyProduct,getProductList } from '../../../net/pull';
+import { find,register } from '../../../store/store';
 import { openBasePage,VerifyIdentidy } from '../../../utils/tools';
 // =====================================================导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class ProductDetail extends Widget {
     public ok: () => void;
     constructor() {
@@ -15,7 +21,8 @@ export class ProductDetail extends Widget {
 
     public setProps(props: any, oldProps: any) {
         super.setProps(props, oldProps);
-        this.state = props.item;
+        this.state = find('productList')[props.i];
+        
         this.state.isReadedDeclare = false;
         this.state.showStep = true;
         this.state.amount = 1;
@@ -53,6 +60,11 @@ export class ProductDetail extends Widget {
                 openBasePage('app-view-financialManagement-purchase-purchase',props).then(async (r)  => {
                     // TODO 购买
                     // 返回值r是输入的密码
+                    if (!r) {
+                        this.showStep();
+    
+                        return;
+                    }// r为null，说明点击取消
                     this.doPurchase(r);
                     this.showStep();
                 });
@@ -61,12 +73,18 @@ export class ProductDetail extends Widget {
             openBasePage('app-view-financialManagement-purchase-purchase',props).then(async (r) => {
                 // TODO 购买
                 // 返回值r是输入的密码
+                if (!r) {
+                    this.showStep();
+
+                    return;
+                }// r为null，说明点击取消
                 this.doPurchase(r);
                 this.showStep();
             });
         }
         
     }
+    // 购买理财
     public async doPurchase(r:any) {
         const close = popNew('pi-components-loading-loading', { text: '正在购买...' });    
         const pswCorrect = await VerifyIdentidy(find('curWallet'),r,false);
@@ -75,6 +93,13 @@ export class ProductDetail extends Widget {
             popNew('app-components-message-message', { itype: 'error', content: '密码不正确', center: true });
             
             return;
+        }
+        const data = await buyProduct(this.state.id,this.state.amount);
+        if (data) {
+            popNew('app-components-message-message', { itype: 'success', content: '购买成功', center: true });
+            this.ok && this.ok(); 
+        } else {
+            popNew('app-components-message-message', { itype: 'error', content: '服务器繁忙，请稍后重试', center: true });
         }
         
     }
@@ -101,9 +126,20 @@ export class ProductDetail extends Widget {
         this.state.amount += 1;
         this.paint();
     }
+    public amountInput(e:any) {
+        this.state.amount = Number(e.currentTarget.value);
+    }
 }
 // ===========================================本地
 // 解决js浮点数运算误差 3*0.1=0.3000000000004
 const strip = (num, precision = 12) => {
     return +parseFloat(num.toPrecision(precision));
 };
+register('productList', async (productList) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.state =  productList[w.props.i];
+        w.paint();
+    }
+    
+});

@@ -3,31 +3,28 @@
  */
 // ===================================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { buyBack,getPurchaseRecord } from '../../../net/pull';
+import { register } from '../../../store/store';
+import { parseDate } from '../../../utils/tools';
 // =====================================================导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class RecordDetail extends Widget {
     public ok: () => void;
     constructor() {
         super();
     }
-    public create() {
-        super.create();
-        this.init();
+    public setProps(props: any, oldProps: any) {
+        super.setProps(props,oldProps);
+        this.state = this.props.item;
+        this.state.purchaseTimeStampFormat = parseDate(new Date(this.state.purchaseTimeStamp))   ;
     }
-    public init() {
-        this.state = {
-            yesterdayProfit:'0.002',
-            totalProfit:'0.072',
-            continuedDay:'3',
-            annualIncome:'8%',
-            productIntroduction:'ETH资管第1期是KuPay退出的一种固定收益类，回报稳定、无风险定期产品。',
-            dealTime:'2018-8-1 12:12:03',
-            unitPrice:'0.1',
-            productName:'ETH资管第1期',
-            amount:'2',
-            lockday:'无'
-        };
-    }
+
     public goBackPage() {
         this.ok && this.ok();
     }
@@ -35,5 +32,28 @@ export class RecordDetail extends Widget {
     public redNotice() {
         popNew('app-view-financialManagement-notice-notice');
     }
+    public  returnBack() {
+        popNew('app-components-message-messagebox',{ itype: 'confirm', title: '赎回', content: '是否赎回理财产品' },async () => {
+            const close = popNew('pi-components-loading-loading', { text: '正在赎回...' });
+            const result = await buyBack(this.state.purchaseTimeStamp);
+            await getPurchaseRecord();
+            close.callback(close.widget);
+            if (result) {
+                popNew('app-components-message-message', { itype: 'success', content: '赎回成功', center: true });
+            } else {
+                popNew('app-components-message-message', { itype: 'error', content: '赎回失败', center: true });
+            }
+        });
+    }
 
 }
+// =========================================本地
+register('purchaseRecord', async (purchaseRecord) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.state = purchaseRecord[w.props.i];
+        w.state.purchaseTimeStampFormat = parseDate(new Date(w.state.purchaseTimeStamp));
+        w.paint();
+    }
+    
+});
