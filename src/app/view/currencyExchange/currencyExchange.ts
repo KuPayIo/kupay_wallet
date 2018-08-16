@@ -6,21 +6,19 @@ import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { ERC20Tokens } from '../../core/eth/tokens';
+import { wei2Eth } from '../../core/globalWallet';
 import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../net/pullWallet';
-import { dataCenter } from '../../store/dataCenter';
 import { MarketInfo } from '../../store/interface';
 import { find, getBorn, register, updateStore } from '../../store/store';
 // tslint:disable-next-line:max-line-length
 import { 
     addRecord, 
     currencyExchangeAvailable, 
-    getAddrById,
     getCurrentAddrBalanceByCurrencyName,
     getCurrentAddrByCurrencyName, 
     openBasePage, 
-    parseDate, 
-    resetAddrById,
-    wei2Eth} from '../../utils/tools'; 
+    parseDate,
+    popPswBox} from '../../utils/tools'; 
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -212,9 +210,8 @@ export class CurrencyExchange extends Widget {
         const wallet = find('curWallet');
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
         const close = popNew('pi-components-loading-loading', { text: '交易中...' });
         const withdrawalAddress = this.state.curInAddr; // 入账币种的地址

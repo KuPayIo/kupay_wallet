@@ -4,13 +4,14 @@ import { config } from '../core/config';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
+import { wei2Eth } from '../core/globalWallet';
 import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
 import { Addr, CurrencyRecord, Wallet } from '../store/interface';
 // tslint:disable-next-line:max-line-length
 import { btcNetwork, defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, ethTokenTransferCode, lang, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import {
     btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getDefaultAddr,
-    getMnemonic, sat2Btc, wei2Eth
+    getMnemonic, sat2Btc
 } from '../utils/tools';
 import { find, getBorn, updateStore } from './store';
 /**
@@ -41,6 +42,10 @@ export class DataCenter {
      * 初始化
      */
     public init() {
+        // 启动定时器更新
+        if (!this.timerRef) this.openCheckFast();
+        if (!this.timerRef1) this.openCheck();
+
         this.updateFastList.push(['shapeShiftCoins']);
         this.updateFastList.push(['exchangeRate', 'ETH']);
         this.updateFastList.push(['exchangeRate', 'BTC']);
@@ -60,10 +65,6 @@ export class DataCenter {
                 }
             });
         }
-
-        // 启动定时器更新
-        if (!this.timerRef) this.openCheckFast();
-        if (!this.timerRef1) this.openCheck();
 
         // if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
     }
@@ -547,7 +548,7 @@ export class DataCenter {
             case 'ETH':
                 const api = new EthApi();
                 api.getBalance(addr).then(r => {
-                    const num = wei2Eth(parseInt(r.result, 16));
+                    const num = wei2Eth(r.result);
                     this.setBalance(addr, currencyName, num);
                 });
                 break;

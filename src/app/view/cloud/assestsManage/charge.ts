@@ -4,12 +4,13 @@
 // ==============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { eth2Wei, wei2Eth } from '../../../core/globalWallet';
 import { getBankAddr, getRechargeLogs, rechargeToServer } from '../../../net/pull';
-import { sendRawTransactionETH, signRawTransactionETH, transfer } from '../../../net/pullWallet';
+import { sendRawTransactionETH, signRawTransactionETH } from '../../../net/pullWallet';
 import { find } from '../../../store/store';
 import { gasLimit, gasPrice } from '../../../utils/constants';
-import { addRecord, eth2Wei, getCurrentAddrBalanceByCurrencyName, 
-    getCurrentAddrByCurrencyName, getCurrentAddrInfo, openBasePage, parseDate, wei2Eth } from '../../../utils/tools';
+import { addRecord, getCurrentAddrBalanceByCurrencyName, 
+    getCurrentAddrByCurrencyName, getCurrentAddrInfo, openBasePage, parseDate, popPswBox } from '../../../utils/tools';
 // ===============================================导出
 interface Props {
     currencyName:string;
@@ -65,9 +66,8 @@ export class Charge extends Widget {
         const wallet = find('curWallet');
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
        
         console.time('recharge');
@@ -75,7 +75,6 @@ export class Charge extends Widget {
         const toAddr = await getBankAddr();
         if (!toAddr) {
             close.callback(close.widget);
-            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
 
             return;
         }
@@ -83,7 +82,6 @@ export class Charge extends Widget {
         const obj = await signRawTransactionETH(passwd,fromAddr,toAddr,gasPrice,gasLimit,this.state.amount);
         if (!obj) {
             close.callback(close.widget);
-            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
 
             return;
         }
@@ -94,14 +92,12 @@ export class Charge extends Widget {
         const canTransfer = await rechargeToServer(fromAddr,toAddr,hash,nonce,gasPrice,pay);
         if (!canTransfer) {
             close.callback(close.widget);
-            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
 
             return;
         }
         const h = await sendRawTransactionETH(signedTX);
         if (!h) {
             close.callback(close.widget);
-            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
 
             return;
         }

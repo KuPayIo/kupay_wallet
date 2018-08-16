@@ -8,9 +8,8 @@ import { notify } from '../../../../pi/widget/event';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { dataCenter } from '../../../store/dataCenter';
 import { find, register } from '../../../store/store';
-import { getMnemonic, openBasePage } from '../../../utils/tools';
+import { getMnemonic, popPswBox } from '../../../utils/tools';
 
 // ========================================================= 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -164,19 +163,24 @@ export class Home extends Widget {
     // 点击备份钱包
     public async backupClick() {
         if (!this.state.wallet || this.state.walletList.length === 0) {
-            popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
-
+            // popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
+            
             return;
         }
         const close = popNew('pi-components-loading-loading', { text: '导出中...' });
+        
+        const wallet = find('curWallet');
+        let passwd;
+        if (!find('hashMap',wallet.walletId)) {
+            passwd = await popPswBox();
+            if (!passwd) return;
+        }
         try {
-            const wallet = find('curWallet');
-            let passwd;
-            if (!find('hashMap',wallet.walletId)) {
-                passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                    title: '输入密码', content: '', inputType: 'password'
-                });
-            }
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
                 popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: wallet.walletId });

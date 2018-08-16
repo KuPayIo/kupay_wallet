@@ -7,7 +7,7 @@ import { deepCopy } from '../../pi/util/util';
 import { fromWei } from '../core/eth/helper';
 import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
+import { GlobalWallet, wei2Eth } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { CurrencyType, CurrencyTypeReverse, LoginState } from '../store/interface';
 import { parseCloudAccountDetail, parseCloudBalance, 
@@ -15,7 +15,7 @@ import { parseCloudAccountDetail, parseCloudBalance,
 import { find, getBorn, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
 import { doErrorShow, showError } from '../utils/toolMessages';
-import { kpt2kt, largeUnit2SmallUnitString, openBasePage, transDate, wei2Eth } from '../utils/tools';
+import { kpt2kt, largeUnit2SmallUnitString, openBasePage, popPswBox, transDate } from '../utils/tools';
 import { Config } from '../view/financialManagement/config/config';
 
 // export const conIp = '47.106.176.185';
@@ -24,8 +24,8 @@ export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 // export const conPort = '8080';
 export const conPort = pi_modules.store.exports.severPort || '80';
 // 分享链接前缀
-export const sharePerUrl = `http://${conIp}:${conPort}/wallet/app/boot/share.html`;
-
+// export const sharePerUrl = `http://share.kupay.io:8080/wallet/app/boot/share.html`;
+export const sharePerUrl = `http://127.0.0.1:80/wallet/app/boot/share.html`;
 /**
  * 通用的异步通信
  */
@@ -54,9 +54,8 @@ export const requestLogined = async (msg: any) => {
         const wallet = find('curWallet');
         let passwd = '';
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', content: '', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
         const wlt: EthWallet = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
         const signStr = sign(dataCenter.getConRandom(), wlt.exportPrivateKey());
@@ -629,7 +628,7 @@ export const getBankAddr = async () => {
 /**
  * 向服务器发起充值请求
  */
-export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:number,coin:number= 101) => {
+export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:string,coin:number= 101) => {
     const msg = {
         type: 'wallet/bank@pay',
         param: {
@@ -662,7 +661,7 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
 /**
  * 提现
  */
-export const withdrawFromServer = async (toAddr:string,coin:number,value:number) => {
+export const withdrawFromServer = async (toAddr:string,coin:number,value:string) => {
     const msg = {
         type: 'wallet/bank@to_cash',
         param: {

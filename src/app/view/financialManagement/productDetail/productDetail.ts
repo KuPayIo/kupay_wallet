@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { buyProduct,getProductList } from '../../../net/pull';
+import { buyProduct,getPurchaseRecord } from '../../../net/pull';
 import { find,register } from '../../../store/store';
 import { openBasePage,VerifyIdentidy } from '../../../utils/tools';
 // =====================================================导出
@@ -95,11 +95,12 @@ export class ProductDetail extends Widget {
             return;
         }
         const data = await buyProduct(this.state.id,this.state.amount);
+        await getPurchaseRecord();
         if (data) {
             popNew('app-components-message-message', { itype: 'success', content: '购买成功', center: true });
             this.ok && this.ok(); 
         } else {
-            popNew('app-components-message-message', { itype: 'error', content: '服务器繁忙，请稍后重试', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: '购买失败', center: true });
         }
         
     }

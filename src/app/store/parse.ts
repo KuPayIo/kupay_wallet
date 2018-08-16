@@ -1,7 +1,8 @@
 import { isArray } from '../../pi/net/websocket/util';
 import { deepCopy } from '../../pi/util/util';
 import { fromWei } from '../core/eth/helper';
-import { formatBalance, GetDateDiff, kpt2kt, smallUnit2LargeUnit, timestampFormat,wei2Eth } from '../utils/tools';
+import { wei2Eth } from '../core/globalWallet';
+import { formatBalance, GetDateDiff, kpt2kt, smallUnit2LargeUnit, timestampFormat,unicodeArray2Str } from '../utils/tools';
 import { Config } from '../view/financialManagement/config/config';
 import { AccountDetail, CurrencyType, CurrencyTypeReverse, PurchaseRecordOne,TaskSid } from './interface';
 import { find } from './store';
@@ -32,15 +33,16 @@ export const parseCloudAccountDetail = (coinType: CurrencyType, infos): AccountD
         const itype = v[0];
         const amount = formatBalance(smallUnit2LargeUnit(CurrencyTypeReverse[coinType], v[1]));
         let behavior = '';
-        if (itype === TaskSid.redEnvelope) {
-            if (amount > 0) {
-                behavior = '领红包';
-            } else {
-                behavior = '发红包';
-            }
-        } else {
-            behavior = isArray(v[2]) ? v[2].map(v1 => String.fromCharCode(v1)).join('') : v[2];
+        console.log('itype',itype);
+        switch (itype) {
+            case TaskSid.mines:behavior = '挖矿';break;
+            case TaskSid.redEnvelope: behavior = amount > 0 ? '领红包' : '发红包';break;
+            case TaskSid.recharge:behavior = '充值';break;
+            case TaskSid.withdraw:behavior = '提现';break;
+            default:
+                behavior = isArray(v[2]) ? unicodeArray2Str(v[2]) : v[2];
         }
+            
         list.push({
             itype,
             amount,

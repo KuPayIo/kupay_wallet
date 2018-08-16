@@ -4,17 +4,14 @@
 import { QRCode } from '../../../../pi/browser/qrcode';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { BtcApi } from '../../../core/btc/api';
-import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
 import { ERC20Tokens } from '../../../core/eth/tokens';
-import { EthWallet } from '../../../core/eth/wallet';
-import { GlobalWallet } from '../../../core/globalWallet';
+import { transfer } from '../../../net/pullWallet';
 import { dataCenter } from '../../../store/dataCenter';
 import { find } from '../../../store/store';
 import {
-    effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals, getAddrById
-    , getCurrentAddrInfo, openBasePage, parseDate, resetAddrById, urlParams
+    effectiveAddr, effectiveCurrencyStableConversion, getAddrById
+    , openBasePage, parseDate, popPswBox, resetAddrById, urlParams
 } from '../../../utils/tools';
 
 interface Props {
@@ -108,47 +105,30 @@ export class AddAsset extends Widget {
 
         const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
 
-        try {
-            const fromAddr = this.props.fromAddr;
-            const toAddr = this.state.to;
-            const gasPrice = this.state.gasPrice;
-            const gasLimit = this.state.gasLimit;
-            const pay = this.state.pay;
-            const info = this.state.info;
-            const currencyName = this.props.currencyName;
+        const fromAddr = this.props.fromAddr;
+        const toAddr = this.state.to;
+        const gasPrice = this.state.gasPrice;
+        const gasLimit = this.state.gasLimit;
+        const pay = this.state.pay;
+        const info = this.state.info;
+        const currencyName = this.props.currencyName;
 
-            const wallet = find('curWallet');
-            let passwd;
-            if (!find('hashMap',wallet.walletId)) {
-                passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                    title: '输入密码', content: '', inputType: 'password'
-                });
-            }
-            const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, currencyName);
-            if (addrIndex >= 0) {
-                let id: any;
-                const wlt = await GlobalWallet.createWlt(currencyName, passwd, wallet, addrIndex);
-                if (currencyName === 'ETH') {
-                    id = await doEthTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, eth2Wei(pay), info);
-                } else if (currencyName === 'BTC') {
-                    id = await doBtcTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, info);
-                } else if (ERC20Tokens[currencyName]) {
-                    id = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, currencyName);
-                }
-
-                // 打开交易详情界面
-                this.showTransactionDetails(id);
-                this.doClose();
-                this.topContactAdd(toAddr, currencyName);
-            }
-        } catch (error) {
-            console.log(error.message);
-            if (error.message.indexOf('insufficient funds') >= 0) {
-                popNew('app-components-message-message', { itype: 'error', content: '余额不足', center: true });
-            } else {
-                popNew('app-components-message-message', { itype: 'error', content: error.message, center: true });
-            }
+        const wallet = find('curWallet');
+        let passwd;
+        if (!find('hashMap',wallet.walletId)) {
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
+        const hash = await transfer(passwd,fromAddr,toAddr,gasPrice,gasLimit,pay,currencyName,info);
+        if (!hash) {
+            loading.callback(loading.widget);
+
+            return;
+        }
+            // 打开交易详情界面
+        this.showTransactionDetails(hash);
+        this.doClose();
+        this.topContactAdd(toAddr, currencyName);
 
         loading.callback(loading.widget);
 
@@ -197,7 +177,7 @@ export class AddAsset extends Widget {
     /**
      * 显示交易详情
      */
-    public showTransactionDetails(id: number) {
+    public showTransactionDetails(id: string) {
         const t = new Date();
         const record = {
             id: id,
@@ -302,23 +282,6 @@ export class AddAsset extends Widget {
         this.state.feesConversion = r.conversionShow;
         this.paint();
     }
-    // tslint:disable-next-line:only-arrow-functions
-    private async getBtcTransactionFee(toAddr: string, amount: number, priority: 'high' | 'medium' | 'low' = 'medium') {
-        const addrInfo = getCurrentAddrInfo('BTC');
-        const output = {
-            toAddr: toAddr,
-            amount: amount,
-            chgAddr: addrInfo.addr
-        };
-        const wlt = BTCWallet.fromJSON(addrInfo.wlt);
-        wlt.unlock();
-        await wlt.init();
-
-        const retArr = await wlt.buildRawTransaction(output, priority);
-        wlt.lock();
-
-        return retArr[1];
-    }
 
 }
 
@@ -332,90 +295,3 @@ const addRecord = (currencyName, currentAddr, record) => {
 
     resetAddrById(currentAddr, currencyName, addr, true);
 };
-
-/**
- * 处理转账
- */
-// tslint:disable-next-line:only-arrow-functions
-async function doEthTransfer(wlt: EthWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
-    , value: number, info: string) {
-    const api = new EthApi();
-    const nonce = await api.getTransactionCount(acct1);
-    const txObj = {
-        to: acct2,
-        nonce: nonce,
-        gasPrice: gasPrice,
-        gasLimit: gasLimit,
-        value: value,
-        data: info
-    };
-
-    // const currentAddr = getAddrById(acct1, 'ETH');
-    // if (!currentAddr) return;
-
-    // const wlt = EthWallet.fromJSON(currentAddr.wlt);
-
-    const tx = wlt.signRawTransaction(txObj);
-    // tslint:disable-next-line:no-unnecessary-local-variable
-    const id = await api.sendRawTransaction(tx);
-
-    return id;
-}
-
-/**
- * 处理转账
- */
-// tslint:disable-next-line:only-arrow-functions
-async function doBtcTransfer(wlt: BTCWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
-    , value: number, info: string) {
-    const output = {
-        toAddr: acct2,
-        amount: value,
-        chgAddr: acct1
-    };
-    wlt.unlock();
-    await wlt.init();
-
-    const retArr = await wlt.buildRawTransaction(output, 'medium');
-    wlt.lock();
-    const rawHexString: string = retArr[0];
-    const fee = retArr[1];
-
-    // tslint:disable-next-line:no-unnecessary-local-variable
-    const hash = await BtcApi.sendRawTransaction(rawHexString);
-
-    return hash.txid;
-
-}
-
-/**
- * 处理eth代币转账
- */
-// tslint:disable-next-line:only-arrow-functions
-async function doERC20TokenTransfer(wlt: EthWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
-    , value: number, currencyName: string) {
-
-    const api = new EthApi();
-    const nonce = await api.getTransactionCount(acct1);
-    console.log('nonce', nonce);
-    const transferCode = EthWallet.tokenOperations('transfer', currencyName, acct2, ethTokenMultiplyDecimals(value, currencyName));
-    const txObj = {
-        to: ERC20Tokens[currencyName],
-        nonce: nonce,
-        gasPrice: gasPrice,
-        gasLimit: gasLimit,
-        value: 0,
-        data: transferCode
-    };
-
-    // const currentAddr = getAddrById(acct1, currencyName);
-    // if (!currentAddr) return;
-
-    // const wlt = EthWallet.fromJSON(currentAddr.wlt);
-
-    const tx = wlt.signRawTransaction(txObj);
-    // tslint:disable-next-line:no-unnecessary-local-variable
-    const id = await api.sendRawTransaction(tx);
-
-    return id;
-}

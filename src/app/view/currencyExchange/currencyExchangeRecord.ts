@@ -5,10 +5,11 @@
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { wei2Eth } from '../../core/globalWallet';
 import { getTransactionsByAddr } from '../../net/pullWallet';
 import { ShapeShiftTx, ShapeShiftTxs } from '../../store/interface';
 import { find, register } from '../../store/store';
-import { getCurrentAddrByCurrencyName,getCurrentAddrInfo, parseAccount, timestampFormat, wei2Eth } from '../../utils/tools';
+import { getCurrentAddrByCurrencyName,getCurrentAddrInfo, parseAccount, timestampFormat } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

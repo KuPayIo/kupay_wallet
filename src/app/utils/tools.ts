@@ -10,7 +10,7 @@ import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
+import { eth2Wei, GlobalWallet, wei2Eth } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { Addr } from '../store/interface';
 import { find, updateStore } from '../store/store';
@@ -196,24 +196,6 @@ export const getDefaultAddr = (addr: number | string) => {
 };
 
 /**
- * wei转Eth
- */
-export const wei2Eth = (num: number) => {
-    if (!num) return 0;
-
-    return Math.floor(num / Math.pow(10, 18));
-};
-
-/**
- * wei转Eth
- */
-export const eth2Wei = (num: number) => {
-    if (!num) return 0;
-
-    return Math.floor(num * Math.pow(10, 18));
-};
-
-/**
  * sat转btc
  */
 export const sat2Btc = (num: number) => {
@@ -265,7 +247,7 @@ export const smallUnit2LargeUnit = (currencyName: string, amount: number) => {
  */
 export const largeUnit2SmallUnit = (currencyName: string, amount: number) => {
     if (currencyName === 'ETH') {
-        return Math.floor(eth2Wei(amount));
+        return eth2Wei(amount);
     } else if (currencyName === 'KT') {
         return Math.floor(kt2kpt(amount));
     }
@@ -292,7 +274,7 @@ export const smallUnit2LargeUnitString = (currencyName: string, amount: string):
  */
 export const largeUnit2SmallUnitString = (currencyName: string, amount: number): string => {
     if (currencyName === 'ETH') {
-        return eth2Wei(amount).toLocaleString().replace(/,/g, '');
+        return Number(eth2Wei(amount)).toString(10);
     } else if (currencyName === 'KT') {
         return kt2kpt(amount).toLocaleString().replace(/,/g, '');
     }
@@ -337,6 +319,7 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
     } else if (ERC20Tokens[currencyName]) {
         num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
+    num = formatBalance(num);
     r.num = num;
     r.show = `${num} ${currencyName}`;
     r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
@@ -934,6 +917,34 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
     // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {
         popNew(foreletName, foreletParams, (ok: string) => {
+            // this.windowSet.delete(foreletName);
+            resolve(ok);
+        }, (cancel: string) => {
+            // this.windowSet.delete(foreletName);
+            reject(cancel);
+        });
+
+    });
+};
+
+export const popPswBox = async () => {
+    try {
+        // tslint:disable-next-line:no-unnecessary-local-variable
+        const psw = await openMessageboxPsw();
+
+        return psw;
+    } catch (error) {
+        return;
+    }
+};
+
+/**
+ * 打开密码输入框
+ */
+const openMessageboxPsw = (): Promise<string> => {
+    // tslint:disable-next-line:typedef
+    return new Promise((resolve, reject) => {
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (ok: string) => {
             // this.windowSet.delete(foreletName);
             resolve(ok);
         }, (cancel: string) => {
