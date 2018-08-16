@@ -1,0 +1,16 @@
+.headTip{
+    padding: 30px;
+    background: #FFFBE9;
+    font-size: 24px;
+    line-height: 33px;
+    color: #FF2002;
+    display: flex;
+}
+.iconWarn{
+    width: 28px;
+    height: 28px;
+    vertical-align: middle;
+    margin-right:11px;
+    flex-shrink: 0;
+    margin-top:5px;  
+}
