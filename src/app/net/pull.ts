@@ -5,14 +5,15 @@ import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { EthWallet } from '../core/eth/wallet';
 import { sign } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
+import { GlobalWallet, wei2Eth } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
-import { CurrencyType, CurrencyTypeReverse, LoginState, TaskSid } from '../store/interface';
-import { parseCloudAccountDetail, parseCloudBalance, parseMineDetail, parseMineRank, parseMiningRank } from '../store/parse';
+import { CurrencyType, CurrencyTypeReverse, LoginState } from '../store/interface';
+import { parseCloudAccountDetail, parseCloudBalance, 
+    parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
 import { doErrorShow, showError } from '../utils/toolMessages';
-import { kpt2kt, largeUnit2SmallUnitString, openBasePage, transDate, wei2Eth } from '../utils/tools';
+import { kpt2kt, largeUnit2SmallUnitString, openBasePage, transDate } from '../utils/tools';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
@@ -530,6 +531,7 @@ export const getAccountDetail = async (coin: CurrencyType) => {
     const msg = { type: 'wallet/account@get_detail', param: { coin } };
     requestAsync(msg).then(r => {
         if (!r.value || r.value.length <= 0) return;
+        console.log('accountDetail',r.value);
         const detail = parseCloudAccountDetail(coin, r.value);
         updateStore('accountDetail', getBorn('accountDetail').set(coin, detail));
     });
@@ -624,7 +626,7 @@ export const getBankAddr = async () => {
 /**
  * 向服务器发起充值请求
  */
-export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:number,coin:number= 101) => {
+export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:string,coin:number= 101) => {
     const msg = {
         type: 'wallet/bank@pay',
         param: {
@@ -653,3 +655,108 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
     }
 
 };
+
+
+/**
+ * 提现
+ */
+export const withdrawFromServer = async (toAddr:string,coin:number,value:string) => {
+    const msg = {
+        type: 'wallet/bank@to_cash',
+        param: {
+            to:toAddr,
+            coin,
+            value
+        }
+    };
+
+    try {
+        const res = await requestAsync(msg);
+        console.log('withdrawFromServer',res);
+
+        return true;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return false;
+    }
+};
+/**
+ * 充值历史记录
+ */
+export const getRechargeLogs = async () => {
+    const msg = {
+        type: 'wallet/bank@pay_log',
+        param: { }
+    };
+
+    try {
+        const res = await requestAsync(msg);
+        updateStore('rechargeLogs',parseRechargeWithdrawalLog(res.value));
+
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+
+  
+
+
+        return;
+    }
+};
+
+/**
+ * 提现历史记录
+ */
+export const getWithdrawLogs = async () => {
+    const msg = {
+        type: 'wallet/bank@to_cash_log',
+        param: { }
+    };
+
+    try {
+        const res = await requestAsync(msg);
+        updateStore('withdrawLogs',parseRechargeWithdrawalLog(res.value));
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return;
+    }
+
+};
+
+/**
+ * 获取理财列表
+ */
+export const getProductList = async () => {
+    const msg = {
+        type: 'wallet/manage_money@get_product_list',
+        param: {}
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        console.log('getProductList',res);
+        
+        return res;
+         } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+              return [];
+    }
+ };

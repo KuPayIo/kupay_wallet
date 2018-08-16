@@ -201,7 +201,7 @@
     overflow: hidden;
     height: 140px;
     position: fixed;
-    opacity: 0;
+    display: none;
     left: 0;
     right: 0;
     top: 0;

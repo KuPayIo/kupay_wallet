@@ -1,3 +1,4 @@
+
 /**
  * 常用工具
  */
@@ -54,24 +55,6 @@ export const timestampFormat = (timestamp: number) => {
 };
 
 /**
- * wei转Eth
- */
-export const wei2Eth = (num: number) => {
-    if (!num) return 0;
-
-    return num / Math.pow(10, 18);
-};
-
-/**
- * wei转Eth
- */
-export const eth2Wei = (num: number) => {
-    if (!num) return 0;
-
-    return num * Math.pow(10, 18);
-};
-
-/**
  * kpt转kt
  */
 export const kpt2kt = (num: number) => {
@@ -90,25 +73,21 @@ export const kt2kpt = (num: number) => {
 };
 
 /**
- * 根据货币类型小单位转大单位
+ * kpt转kt
  */
-export const smallUnit2LargeUnit = (currencyName:string,amount:number) => {
-    if (currencyName === 'ETH') {
-        return wei2Eth(amount);
-    } else if (currencyName === 'KT') {
-        return kpt2kt(amount);
-    }
+export const wei2Eth = (num: number) => {
+    if (!num) return 0;
+
+    return num / Math.pow(10, 18);
 };
 
 /**
- * 根据货币类型大单位转小单位
+ * kt转kpt
  */
-export const largeUnit2SmallUnit = (currencyName:string,amount:number) => {
-    if (currencyName === 'ETH') {
-        return Math.floor(eth2Wei(amount));
-    } else if (currencyName === 'KT') {
-        return Math.floor(kt2kpt(amount));
-    }
+export const eth2Wei = (num: number) => {
+    if (!num) return 0;
+
+    return num * Math.pow(10, 18);
 };
 
 /**

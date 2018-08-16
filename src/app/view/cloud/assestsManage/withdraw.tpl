@@ -21,7 +21,9 @@
         <div w-class="paddingBox">
             <div w-class="charge">
                     <span w-class="chargeAmount">提币数量</span>
-                    <input type="number" w-class="amountInput" placeholder="{{it1.amount}}" on-input="amountInput"/>
+                    <div ev-input-change="amountChange" w-class="input-father">
+                        <app-components-input-input_simple>{style:"fontSize:32px;textAlign:right;",input:{{it1.amount}},placeHolder:"0",reg:"[^0-9.]"}</app-components-input-input_simple>
+                    </div>
                     <span w-class="unit">{{it.currencyName}}</span>
             </div>
     
@@ -39,7 +41,7 @@
         <div w-class="message">
                 {{it1.isFeeEnough ? '' : '手续费不足'}}
         </div>
-        <diV w-class="blueBtn">
+        <diV w-class="blueBtn" on-tap="withdrawClick">
                 提币到钱包
         </diV>
     </div>

@@ -1,5 +1,6 @@
 import { isArray } from '../../pi/net/websocket/util';
-import { formatBalance, kpt2kt, smallUnit2LargeUnit } from '../utils/tools';
+import { wei2Eth } from '../core/globalWallet';
+import { formatBalance, kpt2kt, smallUnit2LargeUnit, timestampFormat } from '../utils/tools';
 import { AccountDetail, CurrencyType, CurrencyTypeReverse, TaskSid } from './interface';
 
 /**
@@ -187,5 +188,37 @@ export const parseMineDetail = (detail) => {
 
     return list;
 };
+/**
+ * 解析充值提现记录
+ */
+export const parseRechargeWithdrawalLog = (val) => {
+    const infoList = [];
+    for (let i = 0; i < val.length;i++) {
+        const record = {
+            time:val[i][0],
+            timeShow:timestampFormat(val[i][0]),
+            amount:wei2Eth(val[i][1]),
+            status:val[i][2],
+            statusShow:parseRechargeWithdrawalLogStatus(val[i][2]),
+            hash:val[i][3]
+        };
+        infoList.push(record);
+    }
+    
+    return infoList.reverse();
+};
 // ===================================================== 本地
+
+const parseRechargeWithdrawalLogStatus = (status:number) => {
+    let statusShow;
+    switch (status) {
+        case -2:statusShow = '取消';break;
+        case -1:statusShow = '错误';break;
+        case 0:statusShow = '发送中';break;
+        case 1:statusShow = '完成';break;
+        default:
+    }
+
+    return statusShow;
+};
 // ===================================================== 立即执行

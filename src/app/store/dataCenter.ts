@@ -4,13 +4,14 @@ import { config } from '../core/config';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
+import { wei2Eth } from '../core/globalWallet';
 import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
 import { Addr, CurrencyRecord, Wallet } from '../store/interface';
 // tslint:disable-next-line:max-line-length
 import { btcNetwork, defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, ethTokenTransferCode, lang, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import {
     btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getDefaultAddr,
-    getMnemonic, sat2Btc, wei2Eth
+    getMnemonic, sat2Btc
 } from '../utils/tools';
 import { find, getBorn, updateStore } from './store';
 /**
@@ -547,7 +548,7 @@ export class DataCenter {
             case 'ETH':
                 const api = new EthApi();
                 api.getBalance(addr).then(r => {
-                    const num = wei2Eth(parseInt(r.result, 16));
+                    const num = wei2Eth(r.result);
                     this.setBalance(addr, currencyName, num);
                 });
                 break;
