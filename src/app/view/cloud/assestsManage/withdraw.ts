@@ -4,11 +4,12 @@
 // ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { eth2Wei } from '../../../core/globalWallet';
 import { getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find } from '../../../store/store';
 import { withdrawServiceCharge } from '../../../utils/constants';
-import { eth2Wei, getCurrentAddrByCurrencyName, openBasePage, VerifyIdentidy } from '../../../utils/tools';
+import { getCurrentAddrByCurrencyName, openBasePage, VerifyIdentidy } from '../../../utils/tools';
 // =================================================导出
 
 interface Props {

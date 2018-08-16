@@ -6,21 +6,18 @@ import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { ERC20Tokens } from '../../core/eth/tokens';
+import { wei2Eth } from '../../core/globalWallet';
 import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../net/pullWallet';
-import { dataCenter } from '../../store/dataCenter';
 import { MarketInfo } from '../../store/interface';
 import { find, getBorn, register, updateStore } from '../../store/store';
 // tslint:disable-next-line:max-line-length
 import { 
     addRecord, 
     currencyExchangeAvailable, 
-    getAddrById,
     getCurrentAddrBalanceByCurrencyName,
     getCurrentAddrByCurrencyName, 
     openBasePage, 
-    parseDate, 
-    resetAddrById,
-    wei2Eth} from '../../utils/tools'; 
+    parseDate} from '../../utils/tools'; 
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

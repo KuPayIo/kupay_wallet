@@ -4,12 +4,13 @@
 // ==============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { eth2Wei, wei2Eth } from '../../../core/globalWallet';
 import { getBankAddr, getRechargeLogs, rechargeToServer } from '../../../net/pull';
-import { sendRawTransactionETH, signRawTransactionETH, transfer } from '../../../net/pullWallet';
+import { sendRawTransactionETH, signRawTransactionETH } from '../../../net/pullWallet';
 import { find } from '../../../store/store';
 import { gasLimit, gasPrice } from '../../../utils/constants';
-import { addRecord, eth2Wei, getCurrentAddrBalanceByCurrencyName, 
-    getCurrentAddrByCurrencyName, getCurrentAddrInfo, openBasePage, parseDate, wei2Eth } from '../../../utils/tools';
+import { addRecord, getCurrentAddrBalanceByCurrencyName, 
+    getCurrentAddrByCurrencyName, getCurrentAddrInfo, openBasePage, parseDate } from '../../../utils/tools';
 // ===============================================导出
 interface Props {
     currencyName:string;

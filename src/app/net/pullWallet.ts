@@ -7,12 +7,12 @@ import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
-import { GlobalWallet } from '../core/globalWallet';
+import { eth2Wei, GlobalWallet, wei2Eth } from '../core/globalWallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/tools';
+import { ethTokenMultiplyDecimals } from '../utils/tools';
 // ===================================================== 导出
 
 /**
@@ -27,7 +27,7 @@ export const transfer = async (psw:string,fromAddr:string,toAddr:string,gasPrice
         if (addrIndex >= 0) {
             const wlt = await GlobalWallet.createWlt(currencyName, psw, wallet, addrIndex);
             if (currencyName === 'ETH') {
-                hash = await doEthTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, eth2Wei(pay), info);
+                hash = await doEthTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, info);
             } else if (currencyName === 'BTC') {
                 const res = await doBtcTransfer(<any>wlt, fromAddr, toAddr, pay, info);
                 hash = res.txid;
@@ -87,7 +87,7 @@ export const estimateGasETH = async (toAddr:string,data?:any) => {
  * 处理ETH转账
  */
 const doEthTransfer = async (wlt:EthWallet, fromAddr:string,
-     toAddr:string, gasPrice:number, gasLimit:number, value:number, info:string) => {
+     toAddr:string, gasPrice:number, gasLimit:number, value:number | string, info:string) => {
     const api = new EthApi();
     const localNonce = find('nonce');
     const chainNonce = await api.getTransactionCount(fromAddr);
@@ -98,9 +98,10 @@ const doEthTransfer = async (wlt:EthWallet, fromAddr:string,
         nonce: nonce,
         gasPrice: gasPrice,
         gasLimit: gasLimit,
-        value: value,
+        value: eth2Wei(value),
         data: info
     };
+    console.log('txObj',txObj);
     const tx = wlt.signRawTransaction(txObj);
 
     return api.sendRawTransaction(tx);

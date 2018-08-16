@@ -15,7 +15,6 @@ import { ERC20Tokens } from '../../core/eth/tokens';
 import { EthWallet } from '../../core/eth/wallet';
 import { sign } from '../../core/genmnemonic';
 import { shapeshift } from '../../exchange/shapeshift/shapeshift';
-import { getBankAddr } from '../../net/pull';
 import { dataCenter } from '../../store/dataCenter';
 import { LockScreen } from '../../store/interface';
 import { find, initStore, updateStore } from '../../store/store';

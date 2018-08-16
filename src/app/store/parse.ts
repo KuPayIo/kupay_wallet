@@ -1,5 +1,6 @@
 import { isArray } from '../../pi/net/websocket/util';
-import { formatBalance, kpt2kt, smallUnit2LargeUnit, timestampFormat, wei2Eth } from '../utils/tools';
+import { wei2Eth } from '../core/globalWallet';
+import { formatBalance, kpt2kt, smallUnit2LargeUnit, timestampFormat } from '../utils/tools';
 import { AccountDetail, CurrencyType, CurrencyTypeReverse, TaskSid } from './interface';
 
 /**
