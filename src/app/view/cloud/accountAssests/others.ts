@@ -52,10 +52,10 @@ export class Others extends Widget {
 const getIconByType = (iType) => {
     let img;
     switch (iType) {
-        case TaskSid.mines:img = 'cloud_others_drag.png';
-        case TaskSid.redEnvelope:img = 'cloud_others_pockets.png';
-        case TaskSid.recharge:img = 'cloud_charge_icon.png';
-        case TaskSid.withdraw:img = 'cloud_withdraw_icon.png';
+        case TaskSid.mines:img = 'cloud_others_drag.png';break;
+        case TaskSid.redEnvelope:img = 'cloud_others_pockets.png';break;
+        case TaskSid.recharge:img = 'cloud_charge_icon.png';break;
+        case TaskSid.withdraw:img = 'cloud_withdraw_icon.png';break;
         default:
     }
     
