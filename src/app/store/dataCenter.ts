@@ -42,6 +42,10 @@ export class DataCenter {
      * 初始化
      */
     public init() {
+        // 启动定时器更新
+        if (!this.timerRef) this.openCheckFast();
+        if (!this.timerRef1) this.openCheck();
+
         this.updateFastList.push(['shapeShiftCoins']);
         this.updateFastList.push(['exchangeRate', 'ETH']);
         this.updateFastList.push(['exchangeRate', 'BTC']);
@@ -61,10 +65,6 @@ export class DataCenter {
                 }
             });
         }
-
-        // 启动定时器更新
-        if (!this.timerRef) this.openCheckFast();
-        if (!this.timerRef1) this.openCheck();
 
         // if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
     }
