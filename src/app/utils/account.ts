@@ -125,7 +125,7 @@ export const nickNameInterception = (name: string): string => {
  */
 export const getAvatarRandom = (): string => {
     // tslint:disable-next-line:max-line-length
-    const avatarsSrc = ['img_avatar1.jpg', 'img_avatar2.jpg', 'img_avatar3.jpg', 'img_avatar4.jpg', 'img_avatar5.jpg', 'img_avatar6.jpg', 'img_avatar7.jpg', 'img_avatar8.jpg', 'img_avatar9.jpg', 'img_avatar10.jpg'];
+    const avatarsSrc = ['img_avatar1.png', 'img_avatar2.png', 'img_avatar3.png', 'img_avatar4.png', 'img_avatar5.png', 'img_avatar6.png', 'img_avatar7.png', 'img_avatar8.png', 'img_avatar9.png', 'img_avatar10.png'];
     const walletList = find('walletList');
     const avatarUsed = [];
     if (walletList) {
