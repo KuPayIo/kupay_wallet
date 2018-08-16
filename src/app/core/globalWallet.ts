@@ -302,13 +302,14 @@ export const eth2Wei = (amount:number|string):string => {
     const decimals = new web3.BigNumber('1000000000000000000');
     const balance = decimals.times(amount);
 
-    return balance.toString(10);
+    return  `0x${balance.toString(16)}`;
 };
 
 export const wei2Eth = (amount:string|number):number => {
     const web3 = new Web3();
     const decimals = new web3.BigNumber('1000000000000000000');
     const wei = new web3.BigNumber(amount);
+    console.log('wei--------',wei);
     const balance = wei.div(decimals);
 
     return Number(balance.toString(10));

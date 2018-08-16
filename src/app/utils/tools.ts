@@ -274,7 +274,7 @@ export const smallUnit2LargeUnitString = (currencyName: string, amount: string):
  */
 export const largeUnit2SmallUnitString = (currencyName: string, amount: number): string => {
     if (currencyName === 'ETH') {
-        return eth2Wei(amount).toLocaleString().replace(/,/g, '');
+        return Number(eth2Wei(amount)).toString(10);
     } else if (currencyName === 'KT') {
         return kt2kpt(amount).toLocaleString().replace(/,/g, '');
     }

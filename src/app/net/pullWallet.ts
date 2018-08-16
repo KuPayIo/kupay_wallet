@@ -27,7 +27,7 @@ export const transfer = async (psw:string,fromAddr:string,toAddr:string,gasPrice
         if (addrIndex >= 0) {
             const wlt = await GlobalWallet.createWlt(currencyName, psw, wallet, addrIndex);
             if (currencyName === 'ETH') {
-                hash = await doEthTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, eth2Wei(pay), info);
+                hash = await doEthTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, pay, info);
             } else if (currencyName === 'BTC') {
                 const res = await doBtcTransfer(<any>wlt, fromAddr, toAddr, pay, info);
                 hash = res.txid;
@@ -98,9 +98,10 @@ const doEthTransfer = async (wlt:EthWallet, fromAddr:string,
         nonce: nonce,
         gasPrice: gasPrice,
         gasLimit: gasLimit,
-        value: value,
+        value: eth2Wei(value),
         data: info
     };
+    console.log('txObj',txObj);
     const tx = wlt.signRawTransaction(txObj);
 
     return api.sendRawTransaction(tx);

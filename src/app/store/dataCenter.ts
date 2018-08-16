@@ -548,7 +548,7 @@ export class DataCenter {
             case 'ETH':
                 const api = new EthApi();
                 api.getBalance(addr).then(r => {
-                    const num = wei2Eth(parseInt(r.result, 16));
+                    const num = wei2Eth(r.result);
                     this.setBalance(addr, currencyName, num);
                 });
                 break;
