@@ -171,9 +171,9 @@ export class Home extends Widget {
         const ratio = offset / OFFSET_COMPALET_VALUE;
         document.getElementById('page').style.transform = `translateY(${-offset}px)`;
         if (offset >= OFFSET_COMPALET_VALUE) {
-            this.hideHead.style.opacity = ratio;
+            this.hideHead.style.display = 'block';
         } else {
-            this.hideHead.style.opacity = 0;
+            this.hideHead.style.display = 'none';
         }
         
     }
