@@ -13,7 +13,7 @@
             <div w-class="mineMain">
                 <div w-class="mainLeft">
                     <div w-class="normalTitle">
-                        持有(0.01/份)
+                        持有({{v.unitPrice}}/份)
                     </div>
                     <div w-class="normalMain">
                         <span>{{v.amount}}</span>
