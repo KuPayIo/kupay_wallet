@@ -1,8 +1,6 @@
 <div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page" id="importKuPay">
     <app-components-topBar-topBar>{title:"导入KuPay"}</app-components-topBar-topBar>
-    <div w-class="topTip">
-            KuPay是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。
-    </div>
+    <app-view-wallet-walletCreate-headTips-headTips>{content:"KuPay是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。"}</app-view-wallet-walletCreate-headTips-headTips>
     <div w-class="ga-import-container">
         <div w-class="ga-topTips">
             将您分享给好友的片段内容粘贴至输入框中

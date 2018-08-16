@@ -1,7 +1,6 @@
 <div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page">
     <app-components-topBar-topBar>{title:"设置密码"}</app-components-topBar-topBar>
-    
-    <div w-class="ga-notice-text">KuPay是一个开源项目，不储存用户密码，如果您忘了密码，我们将无法帮助你重置。<span style="color: tomato;">请不要丢失或忘记。</span></div>
+    <app-view-wallet-walletCreate-headTips-headTips>{content:"该密码用于保护钱包，KuPay不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。"}</app-view-wallet-walletCreate-headTips-headTips>
     <div w-class="ga-registered-container">
         <div w-class="ga-registered-item" ev-input-change="walletNameChange">
             <div w-class="ga-registered-item-label">钱包名称</div>

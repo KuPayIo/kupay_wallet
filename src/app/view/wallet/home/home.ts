@@ -170,7 +170,12 @@ export class Home extends Widget {
         const offset = this.handleScroll(e.x,e.y,this.maxVal,e.subType === 'start',e.subType === 'over');
         const ratio = offset / OFFSET_COMPALET_VALUE;
         document.getElementById('page').style.transform = `translateY(${-offset}px)`;
-        this.hideHead.style.opacity = ratio;
+        if (offset >= OFFSET_COMPALET_VALUE) {
+            this.hideHead.style.opacity = ratio;
+        } else {
+            this.hideHead.style.opacity = 0;
+        }
+        
     }
 
     /**
