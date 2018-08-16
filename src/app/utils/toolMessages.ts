@@ -32,6 +32,7 @@ export const showError = (result, str?) => {
  * @param err 错误对象
  */
 export const doErrorShow = (err:Error) => {
+    // console.log('error',err);
     if (!err) return;
     let showStr = '';
     switch (err.message) {

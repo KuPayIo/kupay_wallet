@@ -9,7 +9,7 @@ import { getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find } from '../../../store/store';
 import { withdrawServiceCharge } from '../../../utils/constants';
-import { getCurrentAddrByCurrencyName, openBasePage, VerifyIdentidy } from '../../../utils/tools';
+import { getCurrentAddrByCurrencyName, openBasePage, popPswBox, VerifyIdentidy } from '../../../utils/tools';
 // =================================================导出
 
 interface Props {
@@ -68,9 +68,8 @@ export class Withdraw extends Widget {
         const wallet = find('curWallet');
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
         const close = popNew('pi-components-loading-loading', { text: '正在提现...' });
         const verify = await VerifyIdentidy(wallet,passwd);
@@ -86,8 +85,6 @@ export class Withdraw extends Widget {
         close.callback(close.widget);
         if (success) {
             popNew('app-components-message-message',{ itype:'success',content:'提现成功',center:true });
-        } else {
-            popNew('app-components-message-message',{ itype:'error',content:'出错啦',center:true });
         }
         getWithdrawLogs();
         this.ok && this.ok();

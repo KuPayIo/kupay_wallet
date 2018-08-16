@@ -17,7 +17,8 @@ import {
     getCurrentAddrBalanceByCurrencyName,
     getCurrentAddrByCurrencyName, 
     openBasePage, 
-    parseDate} from '../../utils/tools'; 
+    parseDate,
+    popPswBox} from '../../utils/tools'; 
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -209,9 +210,8 @@ export class CurrencyExchange extends Widget {
         const wallet = find('curWallet');
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
         const close = popNew('pi-components-loading-loading', { text: '交易中...' });
         const withdrawalAddress = this.state.curInAddr; // 入账币种的地址

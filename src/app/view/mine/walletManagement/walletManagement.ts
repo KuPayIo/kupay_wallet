@@ -13,7 +13,7 @@ import { find, register, updateStore } from '../../../store/store';
 import { walletNameAvailable } from '../../../utils/account';
 import {
     decrypt, encrypt, fetchTotalAssets, formatBalanceValue, getAddrsAll, getMnemonic,
-    getWalletByWalletId, getWalletIndexByWalletId, openBasePage, VerifyIdentidy
+    getWalletByWalletId, getWalletIndexByWalletId, openBasePage, popPswBox, VerifyIdentidy
 } from '../../../utils/tools';
 
 // ==============================================导出
@@ -78,15 +78,15 @@ export class WalletManagement extends Widget {
             return;
         }
         const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
+        
+        const walletList = find('walletList');
+        const wallet = getWalletByWalletId(walletList, this.props.walletId);
+        let passwd;
+        if (!find('hashMap',wallet.walletId)) {
+            passwd = await popPswBox();
+            if (!passwd) return;
+        }
         try {
-            const walletList = find('walletList');
-            const wallet = getWalletByWalletId(walletList, this.props.walletId);
-            let passwd;
-            if (!find('hashMap',wallet.walletId)) {
-                passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                    title: '输入密码', content: '', inputType: 'password'
-                });
-            }
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
                 popNew('app-view-mine-exportPrivateKey-exportPrivateKey', { mnemonic, walletId: this.props.walletId });
@@ -95,7 +95,9 @@ export class WalletManagement extends Widget {
             }
         } catch (error) {
             console.log(error);
-            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+            if (error) {
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+            }
         }
         close.callback(close.widget);
     }
@@ -179,14 +181,15 @@ export class WalletManagement extends Widget {
             return;
         }
         const close = popNew('pi-components-loading-loading', { text: '导出中...' });
+        
+        const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
+        let passwd;
+        if (!find('hashMap',wallet.walletId)) {
+            passwd = await openBasePage('app-components-message-messageboxPrompt', {
+                title: '输入密码', content: '', inputType: 'password'
+            });
+        }
         try {
-            const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
-            let passwd;
-            if (!find('hashMap',wallet.walletId)) {
-                passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                    title: '输入密码', content: '', inputType: 'password'
-                });
-            }
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
                 popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: this.props.walletId });
@@ -221,14 +224,14 @@ export class WalletManagement extends Widget {
             return;
         }
         const close = popNew('pi-components-loading-loading', { text: '加载中...' });
+        
+        const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
+        let passwd;
+        if (!find('hashMap',wallet.walletId)) {
+            passwd = await popPswBox();
+            if (!passwd) return;
+        }
         try {
-            const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
-            let passwd;
-            if (!find('hashMap',wallet.walletId)) {
-                passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                    title: '输入密码', content: '', inputType: 'password'
-                });
-            }
             const isEffective = await VerifyIdentidy(wallet, passwd);
             if (isEffective) {
                 popNew('app-view-mine-changePassword-changePassword', { passwd, walletId: this.props.walletId });
@@ -294,15 +297,15 @@ export class WalletManagement extends Widget {
         await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '删除钱包', content: '删除后需要重新导入，之前的分享也将失效' });
 
         const close = popNew('pi-components-loading-loading', { text: '删除中...' });
+        
+        const walletList = find('walletList');
+        const wallet = getWalletByWalletId(walletList, this.props.walletId);
+        let passwd;
+        if (!find('hashMap',wallet.walletId)) {
+            passwd = await popPswBox();
+            if (!passwd) return;
+        }
         try {
-            const walletList = find('walletList');
-            const wallet = getWalletByWalletId(walletList, this.props.walletId);
-            let passwd;
-            if (!find('hashMap',wallet.walletId)) {
-                passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                    title: '输入密码', content: '', inputType: 'password'
-                });
-            }
             const isEffective = await VerifyIdentidy(wallet, passwd);
             if (isEffective) {
                 const curWallet = find('curWallet');

@@ -13,7 +13,7 @@ import { parseCloudAccountDetail, parseCloudBalance,
 import { find, getBorn, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
 import { doErrorShow, showError } from '../utils/toolMessages';
-import { kpt2kt, largeUnit2SmallUnitString, openBasePage, transDate } from '../utils/tools';
+import { kpt2kt, largeUnit2SmallUnitString, openBasePage, popPswBox, transDate } from '../utils/tools';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
@@ -51,9 +51,8 @@ export const requestLogined = async (msg: any) => {
         const wallet = find('curWallet');
         let passwd = '';
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', content: '', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
         const wlt: EthWallet = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
         const signStr = sign(dataCenter.getConRandom(), wlt.exportPrivateKey());
@@ -656,7 +655,6 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
 
 };
 
-
 /**
  * 提现
  */
@@ -705,10 +703,6 @@ export const getRechargeLogs = async () => {
             doErrorShow(err);
         }
 
-
-  
-
-
         return;
     }
 };
@@ -751,12 +745,13 @@ export const getProductList = async () => {
         console.log('getProductList',res);
         
         return res;
-         } catch (err) {
+    } catch (err) {
         if (err && err.result) {
             showError(err.result);
         } else {
             doErrorShow(err);
         }
-              return [];
+        
+        return [];
     }
- };
+};

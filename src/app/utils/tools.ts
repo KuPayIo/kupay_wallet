@@ -319,6 +319,7 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
     } else if (ERC20Tokens[currencyName]) {
         num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
+    num = formatBalance(num);
     r.num = num;
     r.show = `${num} ${currencyName}`;
     r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
@@ -916,6 +917,34 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
     // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {
         popNew(foreletName, foreletParams, (ok: string) => {
+            // this.windowSet.delete(foreletName);
+            resolve(ok);
+        }, (cancel: string) => {
+            // this.windowSet.delete(foreletName);
+            reject(cancel);
+        });
+
+    });
+};
+
+export const popPswBox = async () => {
+    try {
+        // tslint:disable-next-line:no-unnecessary-local-variable
+        const psw = await openMessageboxPsw();
+
+        return psw;
+    } catch (error) {
+        return;
+    }
+};
+
+/**
+ * 打开密码输入框
+ */
+const openMessageboxPsw = (): Promise<string> => {
+    // tslint:disable-next-line:typedef
+    return new Promise((resolve, reject) => {
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (ok: string) => {
             // this.windowSet.delete(foreletName);
             resolve(ok);
         }, (cancel: string) => {
