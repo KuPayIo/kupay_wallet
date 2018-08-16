@@ -656,6 +656,7 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
 
 };
 
+
 /**
  * 提现
  */
@@ -696,12 +697,17 @@ export const getRechargeLogs = async () => {
     try {
         const res = await requestAsync(msg);
         updateStore('rechargeLogs',parseRechargeWithdrawalLog(res.value));
+
     } catch (err) {
         if (err && err.result) {
             showError(err.result);
         } else {
             doErrorShow(err);
         }
+
+
+  
+
 
         return;
     }
@@ -728,4 +734,29 @@ export const getWithdrawLogs = async () => {
 
         return;
     }
+
 };
+
+/**
+ * 获取理财列表
+ */
+export const getProductList = async () => {
+    const msg = {
+        type: 'wallet/manage_money@get_product_list',
+        param: {}
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        console.log('getProductList',res);
+        
+        return res;
+         } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+              return [];
+    }
+ };
