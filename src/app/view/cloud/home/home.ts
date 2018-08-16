@@ -30,7 +30,8 @@ export class Home extends Widget {
             ethBalance: 0.00,// eth余额
             bonus: 0.00,// 累计分红
             mines: 0,// 今日可挖数量
-            isAbleBtn: false // 挖矿按钮是否可点击
+            isAbleBtn: false, // 挖矿按钮是否可点击
+            hasWallet:true // 是否已经创建钱包
         };
 
         this.initDate();
@@ -43,15 +44,33 @@ export class Home extends Widget {
      * 点击eth跳转充值提现
      */
     public ethHoldingsClicked() {
-        // 跳转充值提现
-        popNew('app-view-cloud-accountAssests-accountAssests', { coinType: 'ETH', coinBalance: 0 });
+        if (!this.state.hasWallet) {
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
+                
+        } else {
+            popNew('app-view-cloud-accountAssests-accountAssests', { coinType: 'ETH', coinBalance: 0 });
+        } 
+        
     }
 
     /**
      * 点击云端账户
      */
     public async cloudAccountClicked() {
-        popNew('app-view-cloud-cloudAccount-cloudAccount', { ktBalance: this.state.ktBalance, ethBalance: this.state.ethBalance });
+        if (!this.state.hasWallet) {
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
+                
+        } else {
+            popNew('app-view-cloud-cloudAccount-cloudAccount', { ktBalance: this.state.ktBalance, ethBalance: this.state.ethBalance });
+        }
     }
 
     /**
@@ -59,7 +78,16 @@ export class Home extends Widget {
      */
     public packetsClicked() {
         // TODO
-        popNew('app-view-redEnvelope-send-sendRedEnvelope');
+        if (!this.state.hasWallet) {
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
+                
+        } else {
+            popNew('app-view-redEnvelope-send-sendRedEnvelope');
+        }
     }
 
     /**
@@ -67,14 +95,32 @@ export class Home extends Widget {
      */
     public awardsClicked() {
         // TODO
-        popNew('app-view-redEnvelope-receive-convertRedEnvelope');
+        if (!this.state.hasWallet) {
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
+                
+        } else {
+            popNew('app-view-redEnvelope-receive-convertRedEnvelope');
+        }
     }
     /**
      * 领分红
      */
     public bonusClicked() {
         // TODO
-        popNew('app-view-mine-dividend-dividend', { totalHold: this.state.ktBalance });
+        if (!this.state.hasWallet) {
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
+                
+        } else {
+            popNew('app-view-mine-dividend-dividend', { totalHold: this.state.ktBalance });
+        }
     }
     /**
      * 点击邀请好友
@@ -89,7 +135,16 @@ export class Home extends Widget {
      * 显示挖矿详情
      */
     public mining() {
-        popNew('app-view-mine-dividend-mining');
+        if (!this.state.hasWallet) {
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
+                
+        } else {
+            popNew('app-view-mine-dividend-mining');
+        }
     }
     /**
      * 挖矿
@@ -111,12 +166,21 @@ export class Home extends Widget {
      * 邀请红包
      */
     public async inviteRedEnvelopeClick() {
-        const inviteCodeInfo = await getInviteCode();
-        const inviteCodeDetailInfo = await getInviteCodeDetail();
-        if (inviteCodeInfo.result !== 1 || inviteCodeDetailInfo.result !== 1) return;
-        popNew('app-view-redEnvelope-send-inviteRedEnvelope', {
-            inviteCode: inviteCodeInfo.cid, inviteCodeDetailInfo: inviteCodeDetailInfo.value
-        });
+        if (!this.state.hasWallet) {
+            popNew('app-components-linkMessage-linkMessage',{ 
+                tip:'还没有钱包',
+                linkTxt:'去创建',
+                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            });
+                
+        } else {
+            const inviteCodeInfo = await getInviteCode();
+            const inviteCodeDetailInfo = await getInviteCodeDetail();
+            if (inviteCodeInfo.result !== 1 || inviteCodeDetailInfo.result !== 1) return;
+            popNew('app-view-redEnvelope-send-inviteRedEnvelope', {
+                inviteCode: inviteCodeInfo.cid, inviteCodeDetailInfo: inviteCodeDetailInfo.value
+            });
+        }
     }
 
     /**
@@ -133,6 +197,11 @@ export class Home extends Widget {
      */
     private async initDate() {
         this.refreshCloudBalance();
+
+        const walletList = find('walletList');
+        if (!walletList || walletList.length === 0) {
+            this.state.hasWallet = false;
+        }
 
         const mining = find('miningTotal');
         if (mining !== null && mining.thisNum > 0) {

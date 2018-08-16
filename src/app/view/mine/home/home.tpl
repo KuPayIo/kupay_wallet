@@ -5,7 +5,7 @@
         <span w-class="ga-banner-btn-Box">
 
         
-        {{if !it1.mnemonicBackup}}
+        {{if !it1.mnemonicBackup && (it1.wallet || it1.walletList.length > 0)}}
         <span w-class="ga-banner-btn" on-tap="backupClick">
                 请备份
         </span>
