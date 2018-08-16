@@ -3,9 +3,19 @@
  */
 // ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { fromWei } from '../../../core/eth/helper';
 import { getProductList } from '../../../net/pull';
+import { CurrencyTypeReverse } from '../../../store/interface';
+import { register } from '../../../store/store';
+import { Config } from '../config/config';
 // ====================================================导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class Index extends Widget {
     public ok: () => void;
     constructor() {
@@ -15,11 +25,13 @@ export class Index extends Widget {
         super.create();
         this.init();
     }
-    public attach() {
-        super.attach();
+    public afterUpdate() {
+        super.afterUpdate();
         for (let i = 0;i < this.state.productList.length;i++) {
             const canvasId = `canvas${i}`;
-            this.drawCircle(canvasId,0);
+            const sur = this.state.productList[i].surplus;
+            const total = this.state.productList[i].total;
+            this.drawCircle(canvasId,sur,total);
         }
         
     }
@@ -31,33 +43,11 @@ export class Index extends Widget {
                 bonus: '0.002',
                 days: '2'
             }],
-            productList: [{
-                title: '优选理财-随存随取',
-                surplus: '0%',
-                profit: '5%',
-                productName: 'ETH资管第1期',
-                productDescribe: ' 赎回T+0到账 | 0.1 ETH/份',
-                isSoldOut: true
-            }, {
-                title: '优选理财-随存随取',
-                surplus: '0%',
-                profit: '5%',
-                productName: 'ETH资管第1期',
-                productDescribe: ' 赎回T+0到账 | 0.1 ETH/份',
-                isSoldOut: true
-            }]
+            productList: []
         };
-        setTimeout(() => {
-            this.getProductList();
-        },5000);
         
     }
-    public async getProductList() {
-        const productList = await getProductList();
-        console.log('---------getProductList-------------');
-        
-        return productList;
-    }
+ 
     public toDetail(i: any) {
         console.log('---------i-----------');
         console.log(i);
@@ -67,12 +57,12 @@ export class Index extends Widget {
     public toRecord() {
         popNew('app-view-financialManagement-purchaseRecord-purchaseRecord');
     }
-    public drawCircle(canvasId:string,t:number) {
+    public drawCircle(canvasId:string,t:number,total:number) {
         const oC = document.getElementById(canvasId);
         const oGC = oC.getContext('2d');
 
         const pi = Math.PI;
-        const percent = t / 100;
+        const percent = t / total;
         const oB = pi * 1.5 - percent * 2 * pi;
         const oR = Math.PI * 1.5;
         
@@ -98,8 +88,43 @@ export class Index extends Widget {
         if (t <= 0) {
             oGC.fillText(`售罄`, x, y + 10);
         } else {
-            oGC.fillText(`${t}%`, x, y + 10);
+            oGC.fillText(`${percent * 100}%`, x, y + 10);
         }
         
     }
 }
+// ===============================================本地
+const productListAdapter = (data:any,w:any) => {
+
+    const result = [];
+    for (let i = 0;i < data.value.length;i++) {
+        const item = data.value[i];
+        const id = item[0];
+        const product = Config.productList[id];
+        product.coninType = CurrencyTypeReverse[`${item[2]}`];
+        product.unitPrice = fromWei(item[3],'ether');
+        product.total = item[4];
+        product.surplus = item[4] - item[5];
+        if (product.surplus <= 0) {
+            product.isSoldOut = true;
+        } else {
+            product.isSoldOut = false;
+        }
+        result.push(product);
+    }
+    w.state.productList = result;
+    console.log('-------result-------');
+    console.log(result);
+};
+
+register('conRandom', async (conRandom) => {
+    if (!conRandom) return;
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        const data = await getProductList();
+        console.log('-----productList-');
+        productListAdapter(data,w);
+        w.paint();
+    }
+    
+});

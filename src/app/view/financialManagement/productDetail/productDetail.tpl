@@ -5,7 +5,7 @@
             <div w-class="earningsTitle">
                 预期年化收益
             </div>
-            <div w-class="number">{{it1.expectedEarnings}}</div>
+            <div w-class="number">{{it1.profit}}</div>
         </div>
     </div>
     <div w-class="baseInfo">
