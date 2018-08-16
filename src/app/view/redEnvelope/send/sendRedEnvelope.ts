@@ -150,7 +150,7 @@ export class SendRedEnvelope extends Widget {
     // 选择要发红包的货币
     public async chooseCurrencyClick() {
         // tslint:disable-next-line:max-line-length
-        const index = await openBasePage('app-components-chooseCurrency-chooseCurrency', { currencyList: redEnvelopeSupportCurrency });
+        const index = await openBasePage('app-components-chooseCurrency-chooseCurrency', { currencyList: redEnvelopeSupportCurrency,isLocal:false });
         this.state.currencyName = redEnvelopeSupportCurrency[index];
         this.updateBalance();
         this.paint();

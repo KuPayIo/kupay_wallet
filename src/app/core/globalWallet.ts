@@ -11,6 +11,7 @@ import { Cipher } from './crypto/cipher';
 import { ERC20Tokens } from './eth/tokens';
 import { EthWallet } from './eth/wallet';
 import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';
+import { Web3 } from './thirdparty/web3.min';
 
 const cipher = new Cipher();
 
@@ -295,3 +296,20 @@ export class GlobalWallet {
     }
 
 }
+
+export const eth2Wei = (amount:number|string):string => {
+    const web3 = new Web3();
+    const decimals = new web3.BigNumber('1000000000000000000');
+    const balance = decimals.times(amount);
+
+    return balance.toString(10);
+};
+
+export const wei2Eth = (amount:string|number):number => {
+    const web3 = new Web3();
+    const decimals = new web3.BigNumber('1000000000000000000');
+    const wei = new web3.BigNumber(amount);
+    const balance = wei.div(decimals);
+
+    return Number(balance.toString(10));
+};

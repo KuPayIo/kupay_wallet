@@ -2,11 +2,13 @@
  * choose currency
  */
 import { Widget } from '../../../pi/widget/widget';
+import { CurrencyType } from '../../store/interface';
+import { find, getBorn } from '../../store/store';
 import { formatBalance, getCurrentAddrBalanceByCurrencyName } from '../../utils/tools';
 
 interface Props {
     currencyList:string[];
-    balance?:any;
+    isLocal:boolean;
 }
 export class ChooseCurrency extends Widget {
     public ok:(index:number) => void;
@@ -17,11 +19,13 @@ export class ChooseCurrency extends Widget {
     }
     public init() {
         const currencyShowList = [];
-        const getBalance = this.getBalance();
         this.props.currencyList.forEach(item => {
+            console.log(find('cloudBalance',item));
+            // tslint:disable-next-line:max-line-length
+            const balance = this.props.isLocal ? getCurrentAddrBalanceByCurrencyName(item) : getBorn('cloudBalance').get(CurrencyType[item]);
             currencyShowList.push({
                 currencyName:item,
-                balance:formatBalance(getBalance(item))
+                balance:formatBalance(balance)
             });
         });
         this.state = {
@@ -29,15 +33,6 @@ export class ChooseCurrency extends Widget {
         };
     }
 
-    public getBalance() {
-        if (this.props.balance) {
-            return (currencyName:string) => {
-                return this.props.balance[currencyName];
-            };
-        } else {
-            return getCurrentAddrBalanceByCurrencyName;
-        }
-    }
     public currencyItemClick(e:any,index:number) {
         this.ok && this.ok(index);
     }

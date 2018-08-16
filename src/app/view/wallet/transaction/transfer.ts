@@ -9,11 +9,11 @@ import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { EthWallet } from '../../../core/eth/wallet';
-import { GlobalWallet } from '../../../core/globalWallet';
+import { eth2Wei, GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
 import { find } from '../../../store/store';
 import {
-    effectiveAddr, effectiveCurrencyStableConversion, eth2Wei, ethTokenMultiplyDecimals, getAddrById
+    effectiveAddr, effectiveCurrencyStableConversion, ethTokenMultiplyDecimals, getAddrById
     , getCurrentAddrInfo, openBasePage, parseDate, resetAddrById, urlParams
 } from '../../../utils/tools';
 
@@ -338,7 +338,7 @@ const addRecord = (currencyName, currentAddr, record) => {
  */
 // tslint:disable-next-line:only-arrow-functions
 async function doEthTransfer(wlt: EthWallet, acct1: string, acct2: string, gasPrice: number, gasLimit: number
-    , value: number, info: string) {
+    , value: number | string, info: string) {
     const api = new EthApi();
     const nonce = await api.getTransactionCount(acct1);
     const txObj = {
