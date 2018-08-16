@@ -1513,7 +1513,6 @@ pi_modules.commonjs.exports = (function () {
 	var relativeBuild = function (modName, dir) {
 		var mod = module.relativeGet(modName, dir);
 		if (!mod) {
-			debugger;
 			throw new Error("invalid require: " + modName + ", from: " + dir);
 		}
 			

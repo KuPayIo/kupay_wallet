@@ -201,7 +201,7 @@ export const getDefaultAddr = (addr: number | string) => {
 export const wei2Eth = (num: number) => {
     if (!num) return 0;
 
-    return num / Math.pow(10, 18);
+    return Math.floor(num / Math.pow(10, 18));
 };
 
 /**
@@ -210,7 +210,7 @@ export const wei2Eth = (num: number) => {
 export const eth2Wei = (num: number) => {
     if (!num) return 0;
 
-    return num * Math.pow(10, 18);
+    return Math.floor(num * Math.pow(10, 18));
 };
 
 /**

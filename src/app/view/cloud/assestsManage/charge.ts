@@ -4,7 +4,7 @@
 // ==============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { getBankAddr, rechargeToServer } from '../../../net/pull';
+import { getBankAddr, getRechargeLogs, rechargeToServer } from '../../../net/pull';
 import { sendRawTransactionETH, signRawTransactionETH, transfer } from '../../../net/pullWallet';
 import { find } from '../../../store/store';
 import { gasLimit, gasPrice } from '../../../utils/constants';
@@ -126,7 +126,9 @@ export class Charge extends Widget {
             tip: gasLimit * wei2Eth(gasPrice)
         };
         addRecord(this.props.currencyName, fromAddr, record);
-        this.popToTxDetail(h);
+        getRechargeLogs();
+        this.ok && this.ok();
+        // this.popToTxDetail(h);
     }
 
     public popToTxDetail(hash:string) {

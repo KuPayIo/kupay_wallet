@@ -4,7 +4,7 @@
 // ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { withdrawFromServer } from '../../../net/pull';
+import { getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find } from '../../../store/store';
 import { withdrawServiceCharge } from '../../../utils/constants';
@@ -71,10 +71,10 @@ export class Withdraw extends Widget {
                 title: '输入密码', inputType: 'password'
             });
         }
-        const close = popNew('pi-components-loading-loading', { text: '正在充值...' });
+        const close = popNew('pi-components-loading-loading', { text: '正在提现...' });
         const verify = await VerifyIdentidy(wallet,passwd);
-        close.callback(close.widget);
         if (!verify) {
+            close.callback(close.widget);
             popNew('app-components-message-message',{ itype:'error',content:'密码错误',center:true });
 
             return;
@@ -82,8 +82,13 @@ export class Withdraw extends Widget {
         const toAddr = getCurrentAddrByCurrencyName(this.props.currencyName);
         const coin = Number(CurrencyType[this.props.currencyName]);
         const success = await withdrawFromServer(toAddr,coin,eth2Wei(this.state.amount));
+        close.callback(close.widget);
         if (success) {
             popNew('app-components-message-message',{ itype:'success',content:'提现成功',center:true });
+        } else {
+            popNew('app-components-message-message',{ itype:'error',content:'出错啦',center:true });
         }
+        getWithdrawLogs();
+        this.ok && this.ok();
     }
 }
