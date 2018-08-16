@@ -7,7 +7,7 @@
     </div>
     <div w-class="panelBtnGroup">
         {{for k,v of it1.panelBtns}}
-        <span w-class="btn {{v.isActive ? 'active' : ''}}" on-tap="panelBtnClicked(e,{{k}})">{{v.label}}</span>
+        <span w-class="btn {{it1.isActive === k ? 'active' : ''}}" on-tap="panelBtnClicked(e,{{k}})">{{v.label}}</span>
         {{end}}
     </div>
 
