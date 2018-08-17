@@ -112,24 +112,36 @@ export class ProductDetail extends Widget {
         this.state.showStep = true;
         this.paint();
     }
-    public minus() {
+    public minus(e:any) {
         if (this.state.amount === 1) {
             return;
         }
         this.state.amount -= 1;
+        e.node.link.value = this.state.amount;
         this.paint();
     }
-    public add() {
+    public add(e:any) {
         const limit = Number(this.state.limit);
         if (this.state.amount === limit) {
             return;
         }
         this.state.amount += 1;
+        e.node.link.value = this.state.amount;
         this.paint();
     }
-    public amountInput(e:any) {
-        this.state.amount = Number(e.currentTarget.value);
-    }
+    // public amountInput(e:any) {
+
+    //     const value = Number(e.currentTarget.value);
+    //     const limit = Number(this.state.limit);
+    //     if (value <= limit) {
+    //         this.state.amount = value;
+    //     } else {
+    //         this.state.amount = limit;
+    //     }
+    //     console.log(e.node.link.attributes.value);
+    //     e.node.link.value = this.state.amount;
+    //     this.paint();
+    // }
 }
 // ===========================================本地
 // 解决js浮点数运算误差 3*0.1=0.3000000000004

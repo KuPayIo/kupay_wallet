@@ -6,7 +6,8 @@
 
 
         {{for i,v of it1.record}}
-        <div w-class="mineItem" on-tap="toRecord">
+        {{if i>it1.record.length-3}}
+        <div w-class="mineItem" on-tap="toRecordDetail({{i}})">
             <div w-class="mineTitle">
                 {{v.productName}}
             </div>
@@ -40,6 +41,8 @@
                 </div>
             </div>
         </div>
+        {{end}}
+        
         {{end}}
     
 

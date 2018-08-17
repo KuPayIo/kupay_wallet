@@ -2,7 +2,7 @@ import { isArray } from '../../pi/net/websocket/util';
 import { deepCopy } from '../../pi/util/util';
 import { fromWei } from '../core/eth/helper';
 import { wei2Eth } from '../core/globalWallet';
-import { formatBalance, GetDateDiff, kpt2kt, smallUnit2LargeUnit, timestampFormat,unicodeArray2Str } from '../utils/tools';
+import { formatBalance, GetDateDiff, kpt2kt, smallUnit2LargeUnit, timestampFormat,timestampFormatToDate,unicodeArray2Str } from '../utils/tools';
 import { Config } from '../view/financialManagement/config/config';
 import { AccountDetail, CurrencyType, CurrencyTypeReverse, PurchaseRecordOne,TaskSid } from './interface';
 import { find } from './store';
@@ -269,6 +269,7 @@ export const paseProductList = (res:any) => {
         product.unitPrice = fromWei(item[2],'ether');
         product.total = item[3];
         product.surplus = item[3] - item[4];
+        product.purchaseDate = timestampFormatToDate(new Date().getTime());
         if (product.surplus <= 0) {
             product.isSoldOut = true;
         } else {

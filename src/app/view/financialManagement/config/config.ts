@@ -6,7 +6,7 @@ export const Config = {
         60001:{
             id:'60001',
             title: '优选理财-随存随取',
-            profit: '5%',
+            profit: '8%',
             productName: 'ETH资管第1期',
             productDescribe: '赎回T+0到账 | 0.1 ETH/份',
             unitPrice: null,

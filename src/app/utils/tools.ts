@@ -1059,9 +1059,27 @@ export const addRecord = (currencyName, currentAddr, record) => {
 /**
  * 计算日期间隔
  */
-export const GetDateDiff = (startDate,endDate) => {  
-    const startTime = startDate.getTime();     
-    const endTime = endDate.getTime();     
+export const GetDateDiff = (startDate,endDate) => {
+    let Y =   `${startDate.getFullYear()}-`;
+    let M =   `${(startDate.getMonth() + 1 < 10 ? `0${(startDate.getMonth() + 1)}` : startDate.getMonth() + 1)}-`;
+    let D = `${startDate.getDate()}`;
+    startDate = new Date(`${Y}${M}${D}`); 
+    const startTime = startDate.getTime();  
+    Y =   `${endDate.getFullYear()}-`;
+    M =   `${(endDate.getMonth() + 1 < 10 ? `0${(endDate.getMonth() + 1)}` : endDate.getMonth() + 1)}-`;
+    D = `${endDate.getDate()}`;
+    endDate = new Date(`${Y}${M}${D}`); 
+    const endTime = endDate.getTime();
 
     return  Math.floor(Math.abs((startTime - endTime)) / (1000 * 60 * 60 * 24));    
+};
+
+// 时间戳格式化 毫秒为单位
+export const timestampFormatToDate = (timestamp: number) => {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : `0${date.getMonth() + 1}`;
+    const day = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
+    
+    return `${year}-${month}-${day}`;
 };

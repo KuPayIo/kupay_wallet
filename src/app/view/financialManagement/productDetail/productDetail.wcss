@@ -106,6 +106,7 @@
     border: none;
     outline: none;
     text-align: center; 
+    background: #fff;
 }
 .fontIcon{
     color: #8E96AB;

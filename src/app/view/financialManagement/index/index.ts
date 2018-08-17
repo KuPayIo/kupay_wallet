@@ -41,14 +41,15 @@ export class Index extends Widget {
     }
  
     public toDetail(i: any) {
-        console.log('---------i-----------');
-        console.log(i);
         const item = this.state.productList[i];
         popNew('app-view-financialManagement-productDetail-productDetail', { i, item });
     }
 
     public toRecord() {
         popNew('app-view-financialManagement-purchaseRecord-purchaseRecord',{ record:this.state.record });
+    }
+    public toRecordDetail(i:any) {
+        popNew('app-view-financialManagement-purchaseRecord-recordDetail',{ item:this.state.record[i],i });
     }
     public drawCircle(canvasId:string,t:number,total:number) {
         const oC = document.getElementById(canvasId);

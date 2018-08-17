@@ -48,7 +48,7 @@
                 </span>
                 <div w-class="numInputSelectFloatBox">
                     <span w-class="fontIcon sub" on-tap="minus">-</span>
-                    <input type="number" on-input="amountInput" w-class="numInputInput" value="{{it1.amount}}"/>
+                    <input type="number" on-input="amountInput" disabled="true" w-class="numInputInput" value="{{it1.amount}}"/>
                     <span w-class="fontIcon plus" on-tap="add">+</span>
                 </div>
             </div>
