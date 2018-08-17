@@ -50,8 +50,8 @@
 }
 
 .icon-img{
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
 }
 .box{
     flex: 1 0 0;
