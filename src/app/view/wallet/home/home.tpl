@@ -1,5 +1,4 @@
 <div class="ga-new-page hide-scrollbar" on-move="pageScroll">
-        
     <div  id="page">
         <div id="gaHeader" w-class="ga-header-Outer">
         {{if it1.gwlt}}

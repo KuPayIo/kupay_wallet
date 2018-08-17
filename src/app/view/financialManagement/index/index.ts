@@ -42,7 +42,8 @@ export class Index extends Widget {
     //     }
         
     // }
-    public init() {
+    public async init() {
+
         this.state = {
             record: [],
             productList: [
@@ -67,6 +68,11 @@ export class Index extends Widget {
                 }
             ]
         };
+        const random = find('conRandom');
+        if (random) {
+            const data = await getProductList();
+            const recordData = getPurchaseRecord();
+        }
         
     }
  
@@ -82,7 +88,9 @@ export class Index extends Widget {
 
             return;
         }
+        
         popNew('app-view-financialManagement-productDetail-productDetail', { i, item });
+        
     }
 
     public toRecord() {
