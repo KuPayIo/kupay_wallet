@@ -40,13 +40,19 @@ const openSocket = (): Promise<any> => {
 };
 
 const popNewPage = () => {
-    const takeRedBag = getLocalStorage('takeRedBag');
+    const itype = parseUrlParams(window.location.search, 'type');
+    let takeRedBag;
+    if (itype !== RedEnvelopeType.Invite) {
+        takeRedBag = getLocalStorage('takeRedBag');
+    } else {
+        takeRedBag = getLocalStorage('inviteRedBag');
+    }
     if (!takeRedBag) {
         popNew('app-shareView-redEnvelope-openRedEnvelope');
         
         return;
     }
-    const itype = parseUrlParams(window.location.search, 'type');
+   
     // 普通红包
     if (itype !== RedEnvelopeType.Invite) {
         const rid = parseUrlParams(window.location.search, 'rid');

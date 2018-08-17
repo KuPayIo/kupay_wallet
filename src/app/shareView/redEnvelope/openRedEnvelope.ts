@@ -81,8 +81,9 @@ export class OpenRedEnvelope extends Widget {
                 amount:0.015,
                 leaveMsg:'KuPay大礼包'
             };
-            setLocalStorage('takeRedBag',redEnvelope);
+            setLocalStorage('inviteRedBag',redEnvelope);
             popNew('app-shareView-redEnvelope-redEnvelopeDetails',{ ...redEnvelope });
+            this.ok && this.ok();
         },500);
     }
 
