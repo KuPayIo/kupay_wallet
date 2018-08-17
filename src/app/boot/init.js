@@ -1122,6 +1122,85 @@ pi_modules.load.exports = (function () {
 	return module;
 })();
 
+pi_modules.localize = { id: 'localize', exports: undefined, loaded: true };
+pi_modules.localize.exports = (function () {
+    var module = function mod_localize() {
+    };
+    var ajax = pi_modules.ajax.exports;
+    var LOCALIZE_API_TIMEOUT = 10000;
+    // 所有的请求使用HTTP协议
+    var PROTOCOL = "http://$";
+
+    /**
+     * @description 使用ajax发送请求
+     * @param url
+     * @param success
+     * @param fail
+     */
+    module.send = function (actionName, param, success, fail) {
+        // TODO:  set a unique return value, to represend if requests is done
+        var request_url = encodeURI(PROTOCOL + actionName + "/" + param);
+        ajax.get(request_url, undefined, undefined, undefined, LOCALIZE_API_TIMEOUT, success, fail, function () {
+        });
+    };
+
+    /**
+     * @description 请求原生客户端更新文件。  注意：此请求在完成后不会写入到客户端，需要手动执行完成操作。
+     * @param file    请求更新的文件的完整路径
+     * @param success 成功回调
+     * @param fail    失败回调
+     */
+    module.update = function (file, success, fail) {
+        module.send("update", file, success, fail);
+    }
+
+    /**
+     * @description 设置客户端的标志。
+     * @param flagname    标志名称
+     * @param success     成功回调
+     * @param fail        失败回调
+     */
+    module.setFlag = function (flagname, success, fail) {
+        module.send("setflag", flagname, success, fail);
+    }
+
+    /**
+     * @description 设置总是从服务器拉取文件，而不从本地进行读取
+     * @param success     成功回调
+     * @param fail        失败回调
+     */
+    module.setForceFetchFromServer = function (success, fail) {
+        module.setFlag('force-server-fetch', success, fail);
+    }
+
+    /**
+     * @description 设置从本地获取大部分内容（默认值）
+     * @param success     成功回调
+     * @param fail        失败回调
+     */
+    module.setFetchFromLocal = function (success, fail) {
+        module.setFlag('local-fetch', success, fail);
+    }
+
+    /**
+     * @description 刷新浏览器页面
+     * @param fail        失败回调
+     */
+    module.reload = function (fail) {
+        module.send("reload", "", function() {}, fail);
+    }
+
+    /**
+	 * @description 请求客户端保存下载的更新，写入到本地
+     * @param success     成功回调
+     * @param fail        失败回调
+     */
+    module.applyUpdate = function(success, fail) {
+		module.send("applyupdate", "", success, fail);
+	}
+	return module;
+})();
+
 // 异步模块请求加载， AMD规范允许输出的模块兼容CommonJS规范， 类似： define(function (require, exports, module){ var someModule = require("someModule");
 pi_modules.commonjs = { id: 'commonjs', exports: undefined, loaded: true };
 pi_modules.commonjs.exports = (function () {
