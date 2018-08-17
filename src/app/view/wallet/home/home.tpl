@@ -65,7 +65,12 @@
                 <span>
                         <span w-class="currencyIcon">￥</span>{{it1.totalAssets}}
                 </span>
+                {{if it1.gwlt}}
                 <img src="../../../res/image/{{it1.wallet.avatar}}" w-class="hidetitleHeadImg"/>
+                {{else}}
+                <img src="../../../res/image/img_avatar1.png" w-class="hidetitleHeadImg"/>
+                {{end}}
+
             </div>
     </div>
 </div>
