@@ -1,18 +1,29 @@
-<div class="ga-new-page" ev-back-click="goBackPage">
+<div class="ga-new-page" w-class="ga-new-page" ev-back-click="goBackPage">
     <app-components-topBar-topBar>{title:"我的理财"}</app-components-topBar-topBar>
+    {{if !(it1.recordList&&it1.recordList.length>0)}}
     <div w-class="hideOrShow">
         <img src="../../../res/image/img_none_record.png" w-class="imgtip" />
         <div w-class="textTip">
             还没有购买理财哦
         </div>
     </div>
+    {{end}}
+    
     {{for i,v of it1.recordList}}
-    <div w-class="mineItem" on-tap="toDetail">
+    <div w-class="mineItem" on-tap="toDetail({{i}})">
         <div w-class="mineTitle">
             {{v.productName}}
-            <span w-class="stateSpan {{if v.state=='结束'}} stateEnd {{end}}">
-                {{v.state}}
+            {{if v.state=='2'}}
+            <span w-class="stateSpan stateEnd">
+                已赎回
             </span>
+            {{end}}
+            {{if v.state=='1'}}
+            <span w-class="stateSpan">
+                收益中
+            </span>
+            {{end}}
+           
         </div>
         <div w-class="mineMain">
             <div w-class="mainLeft">

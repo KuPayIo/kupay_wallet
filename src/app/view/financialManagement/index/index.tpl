@@ -6,14 +6,15 @@
 
 
         {{for i,v of it1.record}}
-        <div w-class="mineItem" on-tap="toRecord">
+        {{if i>it1.record.length-3}}
+        <div w-class="mineItem" on-tap="toRecordDetail({{i}})">
             <div w-class="mineTitle">
-                {{v.title}}
+                {{v.productName}}
             </div>
             <div w-class="mineMain">
                 <div w-class="mainLeft">
                     <div w-class="normalTitle">
-                        持有(0.01/份)
+                        持有({{v.unitPrice}}/份)
                     </div>
                     <div w-class="normalMain">
                         <span>{{v.amount}}</span>
@@ -26,7 +27,7 @@
                         昨日收益(ETH)
                     </div>
                     <div w-class="incomMain">
-                        {{v.bonus}}<span w-class="unit"></span>
+                        {{v.yesterdayIncoming}}<span w-class="unit"></span>
                     </div>
                 </div>
                 <span w-class="iconLine"></span>
@@ -40,6 +41,8 @@
                 </div>
             </div>
         </div>
+        {{end}}
+        
         {{end}}
     
 
