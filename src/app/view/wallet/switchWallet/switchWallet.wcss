@@ -39,19 +39,20 @@
     width: 100%;
 }
 .ga-wallet-item-active{
-    background-color: #f8f8f8;
+    background-color: #E1E4EB;
 }
 .ga-wallet-header{
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border: 1px solid #ccc;
     background-color: #fff;
     border-radius: 50%;
     margin-right: 12px;
 }
 .ga-wallet-item-name{
-    font-size: 32px;
-    line-height: 45px;
+    font-size: 28px;
+    line-height: 40px;
+    color: #203260;
 }
 .ga-bottom-container{
     display: flex;
@@ -75,7 +76,17 @@
     align-items: center;
     margin-top: 50px;
     cursor: pointer;
-    padding-left: 53px;
+    padding-left: 30px;
     width: 100%;
     box-sizing: border-box;
+}
+.ga-text{
+    font-size: 28px;
+    line-height: 40px;
+    color: #203260;
+}
+.add-wallet-icon{
+    width: 44px;
+    height: 44px;
+    margin-right:20px; 
 }
