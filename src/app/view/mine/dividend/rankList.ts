@@ -3,7 +3,7 @@
  */
 import { Json } from '../../../../pi/lang/type';
 import { Widget } from '../../../../pi/widget/widget';
-import { kpt2kt } from '../../../shareView/utils/tools';
+import { kpt2kt } from '../../../utils/tools';
 
 export class Dividend extends Widget {
     public ok: () => void;
