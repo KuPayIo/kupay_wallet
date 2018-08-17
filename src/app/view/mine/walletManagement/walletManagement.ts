@@ -84,7 +84,11 @@ export class WalletManagement extends Widget {
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) return;
+            if (!passwd) {
+                close.callback(close.widget);
+
+                return;
+            }
         }
         try {
             const mnemonic = await getMnemonic(wallet, passwd);
@@ -185,11 +189,16 @@ export class WalletManagement extends Widget {
         const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', content: '', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) {
+                close.callback(close.widget);
+
+                return;
+            }
         }
+        
         try {
+            
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
                 popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: this.props.walletId });
@@ -229,7 +238,11 @@ export class WalletManagement extends Widget {
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) return;
+            if (!passwd) {
+                close.callback(close.widget);
+                
+                return;
+            }
         }
         try {
             const isEffective = await VerifyIdentidy(wallet, passwd);
@@ -303,7 +316,11 @@ export class WalletManagement extends Widget {
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) return;
+            if (!passwd) {
+                close.callback(close.widget);
+                
+                return;
+            }
         }
         try {
             const isEffective = await VerifyIdentidy(wallet, passwd);
