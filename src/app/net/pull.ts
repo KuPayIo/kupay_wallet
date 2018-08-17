@@ -21,7 +21,7 @@ export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 // export const conPort = '8080';
 export const conPort = pi_modules.store.exports.severPort || '80';
 // 分享链接前缀
-// export const sharePerUrl = `http://share.kupay.io:8080/wallet/app/boot/share.html`;
+// export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 export const sharePerUrl = `http://127.0.0.1:80/wallet/app/boot/share.html`;
 /**
  * 通用的异步通信

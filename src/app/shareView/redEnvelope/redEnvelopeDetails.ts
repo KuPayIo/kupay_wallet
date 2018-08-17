@@ -102,6 +102,6 @@ export class RedEnvelopeDetails extends Widget {
 
     public copyBtnClick() {
         copyToClipboard(this.props.cidShow);
-        popNew('app-shareView-components-message',{ itype:'success',center:true,content:'复制成功' });
+        popNew('app-shareView-shareComponents-message',{ itype:'success',center:true,content:'复制成功' });
     }
 }
