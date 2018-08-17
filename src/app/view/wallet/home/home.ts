@@ -19,7 +19,7 @@ import {
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-const OFFSET_COMPALET_VALUE: number = 430;// 规定滑动距离为该值时两个头部的变化完成
+const OFFSET_COMPALET_VALUE: number = 440;// 规定滑动距离为该值时两个头部的变化完成
 // const HEAD_HEIGHT:number = 580;// 首页头部高度，滑动时隐藏该头部
 // const HIDEHEAD_HEIGHT:number = 140;// 隐藏头部的高度
 // const EDGE_VALUE:number = 50;// 边缘值，小于相差小于此值认为滑动变化完成

@@ -11,6 +11,7 @@
         </div>
         <div w-class="ga-bottom-container">
             <div w-class="ga-import-wallet" on-tap="importWalletClick">
+                <img w-class="ga-wallet-header" src="../../../res/image/btn_add_qian.png" w-class="add-wallet-icon"/>
                 <span w-class="ga-text">添加钱包</span>
             </div>
         </div>
