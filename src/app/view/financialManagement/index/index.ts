@@ -22,26 +22,66 @@ export class Index extends Widget {
         super.create();
         this.init();
     }
-    public afterUpdate() {
-        super.afterUpdate();
+    public attach() {
+        super.attach();
         for (let i = 0;i < this.state.productList.length;i++) {
             const canvasId = `canvas${i}`;
             const sur = this.state.productList[i].surplus;
             const total = this.state.productList[i].total;
             this.drawCircle(canvasId,sur,total);
         }
-        
+            
     }
+    // public afterUpdate() {
+    //     super.afterUpdate();
+    //     for (let i = 0;i < this.state.productList.length;i++) {
+    //         const canvasId = `canvas${i}`;
+    //         const sur = this.state.productList[i].surplus;
+    //         const total = this.state.productList[i].total;
+    //         this.drawCircle(canvasId,sur,total);
+    //     }
+        
+    // }
     public init() {
         this.state = {
             record: [],
-            productList: []
+            productList: [
+                {
+                    id:'60001',
+                    title: '优选理财-随存随取',
+                    profit: '8%',
+                    productName: 'ETH资管第1期',
+                    productDescribe: '赎回T+0到账 | 0.1 ETH/份',
+                    unitPrice: 0.1,
+                    coninType:'ETH',
+                    days: 'T+0',
+                    total:1000,
+                    surplus: 1000,
+                    purchaseDate: '无',
+                    interestDate: '无',
+                    endDate: '无',
+                    productIntroduction: 'ETH资管第1期是KuPay退出的一种固定收益类，回报稳定、无风险定期产品。',
+                    limit: '5',
+                    lockday:'无',
+                    isSoldOut:true
+                }
+            ]
         };
         
     }
  
     public toDetail(i: any) {
         const item = this.state.productList[i];
+        const wallet = find('curWallet');
+        if (!wallet) {
+            popNew('app-components-linkMessage-linkMessage', {
+                tip: '还没有钱包',
+                linkTxt: '去创建',
+                linkCom: 'app-view-wallet-walletCreate-createWalletEnter'
+            });
+
+            return;
+        }
         popNew('app-view-financialManagement-productDetail-productDetail', { i, item });
     }
 
@@ -54,7 +94,7 @@ export class Index extends Widget {
     public drawCircle(canvasId:string,t:number,total:number) {
         const oC = document.getElementById(canvasId);
         const oGC = oC.getContext('2d');
-
+        oGC.clearRect(0,0,150,150);  
         const pi = Math.PI;
         const percent = t / total;
         
@@ -104,6 +144,7 @@ register('productList', async (productList) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.state.productList = productList;
+        w.attach();
         w.paint();
     }
     
@@ -112,6 +153,16 @@ register('purchaseRecord', async (purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.state.record = purchaseRecord;
+        w.paint();
+    }
+    
+});
+register('curWallet', async (curWallet) => {
+    if (!curWallet) return;
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        const data = await getProductList();
+        const recordData = getPurchaseRecord();
         w.paint();
     }
     
