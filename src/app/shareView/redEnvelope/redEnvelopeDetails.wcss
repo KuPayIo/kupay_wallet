@@ -17,7 +17,7 @@
     flex-direction: column;
 }
 .ga-top{
-    background-image: url(../../res/image/redEnvelopeDetail_bg.png);
+    background-image: url(../shareImage/redEnvelopeDetail_bg.png);
     background-repeat: no-repeat;
     background-size: contain;
     background-color: #f8f8f8;
@@ -42,7 +42,7 @@
     width: 177px;
     height: 177px;
     border-radius: 50%;
-    background-image: url(../../res/image/img_avatar1.png);
+    background-image: url(../shareImage/img_avatar1.png);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 177px 177px;

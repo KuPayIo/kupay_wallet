@@ -8,7 +8,7 @@
             </div>
         </div>
         <div w-class="arow">
-                <img src="../../../res/image/cloud_change.png" />
+                <img src="../../../res/image/right_arrow2.png" />
         </div>
         <div w-class="cloud">
             <img src="../../../res/image/cloud_icon_cloud.png" w-class="icon" />
