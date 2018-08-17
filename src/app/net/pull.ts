@@ -9,11 +9,11 @@ import { GlobalWallet, wei2Eth } from '../core/globalWallet';
 import { dataCenter } from '../store/dataCenter';
 import { CurrencyType, CurrencyTypeReverse, LoginState } from '../store/interface';
 import { parseCloudAccountDetail, parseCloudBalance, 
-    parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog } from '../store/parse';
+    parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog,paseProductList,pasePurchaseRecord } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
 import { doErrorShow, showError } from '../utils/toolMessages';
-import { kpt2kt, largeUnit2SmallUnitString, openBasePage, popPswBox, transDate } from '../utils/tools';
+import { kpt2kt, largeUnit2SmallUnitString, popPswBox, transDate } from '../utils/tools';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
@@ -743,8 +743,46 @@ export const getProductList = async () => {
     try {
         const res = await requestAsync(msg);
         console.log('getProductList',res);
+        const result = paseProductList(res);
+        updateStore('productList',result);
+
+        return result;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return [];
+    }
+};
+
+/**
+ * 购买理财
+ */
+export const buyProduct = async (pid:any,count:any) => {
+    pid = Number(pid);
+    count = Number(count);
+    const msg = {
+        type: 'wallet/manage_money@buy',
+        param: {
+            pid,
+            count
+        }
         
-        return res;
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        console.log('buyProduct',res);
+        if (res.result === 1) {
+            getProductList();
+
+            return true;
+        } else {
+            return false;
+        }
     } catch (err) {
         if (err && err.result) {
             showError(err.result);
@@ -752,6 +790,58 @@ export const getProductList = async () => {
             doErrorShow(err);
         }
         
-        return [];
+        return false;
+    }
+};
+
+/**
+ * 购买记录
+ */
+export const getPurchaseRecord = async () => {
+
+    const msg = {
+        type: 'wallet/manage_money@get_pay_list',
+        param: {}
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        console.log('getPurchaseRecord',res);
+        const record = pasePurchaseRecord(res);
+        updateStore('purchaseRecord',record);
+
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+    }
+};
+/**
+ * 赎回理财产品
+ */
+export const buyBack = async (timeStamp:any) => {
+    const msg = {
+        type: 'wallet/manage_money@sell',
+        param: {
+            time:timeStamp
+        }
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        console.log('buyBack',res);
+
+        return true;
+    } catch (err) {
+        if (err && err.result) {
+            showError(err.result);
+        } else {
+            doErrorShow(err);
+        }
+
+        return false;
     }
 };

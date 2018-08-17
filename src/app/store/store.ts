@@ -11,7 +11,7 @@ import { config } from '../core/config';
 import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail, AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, RechargeWithdrawalLog,ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransactionRecord, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog,ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransactionRecord, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -123,7 +123,7 @@ export const initStore = () => {
 type KeyName = MapName | LocKeyName | shapeShiftName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
- 'inviteRedBagRec' | 'nonce' | 'rechargeLogs' | 'withdrawLogs';
+ 'inviteRedBagRec' | 'nonce' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -187,5 +187,10 @@ const store = <Store>{
     shapeShiftTxs:<ShapeShiftTxs>null,// shapeshift 交易记录
     shapeShiftTxsMap:new Map<string,ShapeShiftTxs>(),// shapeshift 交易记录Map
     // 地址管理
-    TopContacts: <TopContact[]>[]// 常用联系人列表   
+    TopContacts: <TopContact[]>[],// 常用联系人列表 
+    // 理财
+    // 所有理财产品
+    productList:  <Product[]>[],
+    // 已购买理财产品
+    purchaseRecord:<PurchaseRecordOne[]>[]
 };
