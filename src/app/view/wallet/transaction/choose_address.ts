@@ -7,7 +7,7 @@ import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter, DataCenter } from '../../../store/dataCenter';
 import { find, updateStore } from '../../../store/store';
 import {
-    addNewAddr, formatBalance, getAddrById, getMnemonic, getStrLen, openBasePage, sliceStr
+    addNewAddr, formatBalance, getAddrById, getMnemonic, getStrLen, openBasePage, popPswBox, sliceStr
 } from '../../../utils/tools';
 
 interface Props {
@@ -60,22 +60,24 @@ export class AddAsset extends Widget {
      */
     public async addAddr(e: any, index: number) {
         this.doClose();
-        const close = popNew('pi-components-loading-loading', { text: '添加中...' });
+        
         try {
             await this.doAddAddr();
         } catch (error) {
             //
         }
-        close.callback(close.widget);
     }
 
     private async doAddAddr() {
         const wallet = find('curWallet');
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
+        const close = popNew('pi-components-loading-loading', { text: '添加中...' });
         const mnemonic = await getMnemonic(wallet, passwd);
+        close.callback(close.widget);
         if (mnemonic) {
             const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
             const address = GlobalWallet.getWltAddrByMnemonic(mnemonic, this.props.currencyName, currencyRecord.addrs.length);

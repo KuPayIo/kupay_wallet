@@ -34,7 +34,14 @@ export class CurrencyExchange extends Widget {
 
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        const outCurrency = this.props.currencyName;
+        const data = currencyExchangeAvailable();
+        const dataList = [];
+        data.forEach(element => {
+            dataList.push(element.symbol);
+        });
+        const canCurrencyExchange = dataList.indexOf(props.currencyName) >= 0;
+
+        const outCurrency = canCurrencyExchange ? props.currencyName : 'ETH';
         const inCurrency = (outCurrency === 'BTC' ||  ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
         // ZRX   BAT
         this.state = {

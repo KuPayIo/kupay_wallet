@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { eth2Wei, wei2Eth } from '../../../core/globalWallet';
-import { getBankAddr, getRechargeLogs, rechargeToServer } from '../../../net/pull';
+import { getBankAddr, getCloudBalance, getRechargeLogs, rechargeToServer } from '../../../net/pull';
 import { sendRawTransactionETH, signRawTransactionETH } from '../../../net/pullWallet';
 import { find } from '../../../store/store';
 import { gasLimit, gasPrice } from '../../../utils/constants';
@@ -123,22 +123,8 @@ export class Charge extends Widget {
         };
         addRecord(this.props.currencyName, fromAddr, record);
         getRechargeLogs();
+        getCloudBalance();
         this.ok && this.ok();
-        // this.popToTxDetail(h);
     }
 
-    public popToTxDetail(hash:string) {
-        const curAddrInfo = getCurrentAddrInfo(this.props.currencyName);
-        let record;
-        for (let i = 0;i < curAddrInfo.record.length;i++) {
-            // tslint:disable-next-line:possible-timing-attack
-            if (curAddrInfo.record[i].id === hash) {
-                record = {
-                    ...curAddrInfo.record[i]
-                };
-                break;
-            }
-        }
-        popNew('app-view-wallet-transaction-transaction_details',{ ...record });
-    }
 }

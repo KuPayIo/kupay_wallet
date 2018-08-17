@@ -258,12 +258,7 @@ export const largeUnit2SmallUnit = (currencyName: string, amount: number) => {
  */
 export const smallUnit2LargeUnitString = (currencyName: string, amount: string): number => {
     if (currencyName === 'ETH') {
-        const pow = amount.length - 15;
-        let num = Number(amount.slice(0, 15));
-        num = wei2Eth(num);
-        num = num * Math.pow(10, pow);
-
-        return formatBalance(num);
+        return formatBalance(wei2Eth(amount));
     } else if (currencyName === 'KT') {
         return formatBalance(kpt2kt(Number(amount)));
     }
@@ -276,7 +271,7 @@ export const largeUnit2SmallUnitString = (currencyName: string, amount: number):
     if (currencyName === 'ETH') {
         return Number(eth2Wei(amount)).toString(10);
     } else if (currencyName === 'KT') {
-        return kt2kpt(amount).toLocaleString().replace(/,/g, '');
+        return kt2kpt(amount).toString(10);
     }
 };
 

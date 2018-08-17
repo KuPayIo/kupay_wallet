@@ -11,8 +11,8 @@ import { open, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { Forelet } from '../../pi/widget/forelet';
 import { addWidget } from '../../pi/widget/util';
-import { RedEnvelopeType } from './store/conMgr';
-import { getLocalStorage } from './utils/tools';
+import { RedEnvelopeType } from './shareStore/conMgr';
+import { getLocalStorage } from './shareUtils/tools';
 
 // ============================== 导出
 

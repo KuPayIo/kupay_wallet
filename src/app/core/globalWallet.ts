@@ -76,8 +76,8 @@ export class GlobalWallet {
     public static async fromMnemonic(mnemonic: string, passwd: string, salt: string): Promise<GlobalWallet> {
         const hash = await calcHashValuePromise(passwd, salt, null);
         const gwlt = new GlobalWallet();
-
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
+        
         gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
 
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);

@@ -40,8 +40,8 @@ export class WalletCreate extends Widget {
             curWalletPswStrength: getWalletPswStrength(),
             showPswTips: false
         };
-        const wallets = find('walletList');
-        const len = wallets ? wallets.walletList.length : 0;
+        const walletList = find('walletList');
+        const len = walletList ? walletList.length : 0;
         this.state.walletName = `我的钱包${len + 1}`;
     }
     public backPrePage() {

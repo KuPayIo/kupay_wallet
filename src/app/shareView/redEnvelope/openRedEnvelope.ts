@@ -3,8 +3,8 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../store/conMgr';
-import { parseUrlParams, setLocalStorage, smallUnit2LargeUnitString, unicodeArray2Str } from '../utils/tools';
+import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../shareStore/conMgr';
+import { parseUrlParams, setLocalStorage, smallUnit2LargeUnitString, unicodeArray2Str } from '../shareUtils/tools';
 
 interface RedEnvelope {
     rid:string;// 红包id

@@ -3,8 +3,8 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { requestAsync } from '../net/pull';
-import { copyToClipboard, smallUnit2LargeUnitString, timestampFormat } from '../utils/tools';
+import { requestAsync } from '../shareNet/pull';
+import { copyToClipboard, smallUnit2LargeUnitString, timestampFormat } from '../shareUtils/tools';
 interface Props {
     rid:string;// 红包id
     uid:number;// 用户id
