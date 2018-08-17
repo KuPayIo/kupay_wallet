@@ -3,8 +3,8 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../store/conMgr';
-import { parseUrlParams, setLocalStorage, smallUnit2LargeUnitString, unicodeArray2Str } from '../utils/tools';
+import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../shareStore/conMgr';
+import { parseUrlParams, setLocalStorage, smallUnit2LargeUnitString, unicodeArray2Str } from '../shareUtils/tools';
 
 interface RedEnvelope {
     rid:string;// 红包id
@@ -81,8 +81,9 @@ export class OpenRedEnvelope extends Widget {
                 amount:0.015,
                 leaveMsg:'KuPay大礼包'
             };
-            setLocalStorage('takeRedBag',redEnvelope);
+            setLocalStorage('inviteRedBag',redEnvelope);
             popNew('app-shareView-redEnvelope-redEnvelopeDetails',{ ...redEnvelope });
+            this.ok && this.ok();
         },500);
     }
 

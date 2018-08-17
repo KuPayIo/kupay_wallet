@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { eth2Wei } from '../../../core/globalWallet';
-import { getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
+import { getCloudBalance, getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find } from '../../../store/store';
 import { withdrawServiceCharge } from '../../../utils/constants';
@@ -87,6 +87,7 @@ export class Withdraw extends Widget {
             popNew('app-components-message-message',{ itype:'success',content:'提现成功',center:true });
         }
         getWithdrawLogs();
+        getCloudBalance();
         this.ok && this.ok();
     }
 }

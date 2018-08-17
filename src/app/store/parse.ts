@@ -33,12 +33,28 @@ export const parseCloudAccountDetail = (coinType: CurrencyType, infos): AccountD
         const itype = v[0];
         const amount = formatBalance(smallUnit2LargeUnit(CurrencyTypeReverse[coinType], v[1]));
         let behavior = '';
-        console.log('itype',itype);
+        let behaviorIcon = '';
         switch (itype) {
-            case TaskSid.mines:behavior = '挖矿';break;
-            case TaskSid.redEnvelope: behavior = amount > 0 ? '领红包' : '发红包';break;
-            case TaskSid.recharge:behavior = '充值';break;
-            case TaskSid.withdraw:behavior = '提现';break;
+            case TaskSid.mines:
+                behavior = '挖矿';
+                behaviorIcon = 'cloud_others_drag.png';
+                break;
+            case TaskSid.inviteFriends:
+                behavior = '邀请红包';
+                behaviorIcon = 'cloud_others_pockets.png';
+                break;
+            case TaskSid.redEnvelope: 
+                behavior = amount > 0 ? '领红包' : '发红包';
+                behaviorIcon = 'cloud_others_pockets.png';
+                break;
+            case TaskSid.recharge:
+                behavior = '充值';
+                behaviorIcon = 'cloud_charge_icon.png';
+                break;
+            case TaskSid.withdraw:
+                behavior = '提现';
+                behaviorIcon = 'cloud_withdraw_icon.png';
+                break;
             default:
                 behavior = isArray(v[2]) ? unicodeArray2Str(v[2]) : v[2];
         }
@@ -47,11 +63,12 @@ export const parseCloudAccountDetail = (coinType: CurrencyType, infos): AccountD
             itype,
             amount,
             behavior,
-            time: v[3]
+            behaviorIcon,
+            time: timestampFormat(v[3])
         });
     });
 
-    return list;
+    return list.reverse();
 };
 
 /**

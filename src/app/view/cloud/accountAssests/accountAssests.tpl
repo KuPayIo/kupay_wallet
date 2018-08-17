@@ -3,7 +3,7 @@
     <div w-class="assestsHead">
         <img src="../../../res/image/currency/{{it.coinType}}.png" w-class="assestsImg" />
         <span w-class="coinType">{{it.coinType}}</span>
-        <span w-class="balance">{{it.coinBalance}}</span>
+        <span w-class="balance">{{it1.coinBalance}}</span>
     </div>
     <div w-class="panelBtnGroup">
         {{for k,v of it1.panelBtns}}
@@ -12,7 +12,7 @@
     </div>
 
     <div w-class="mask" style="height:{{it1.maskHeight-470}}px;"> 
-        <widget w-tag={{it1.routePath}}>{ coinType: {{it.coinType}} }</widget>
+        <widget w-tag={{it1.panelBtns[it1.isActive].component}}>{ coinType: {{it.coinType}} }</widget>
     </div>
     {{if it1.showChargeAndWithdraw}}
     <div w-class="botFixed">

@@ -18,7 +18,7 @@
                     <div w-class="ga-list">
                         {{for index,item of it1.redBagList}}
                         <div w-class="ga-item">
-                            <img src="../../res/image/img_avatar1.png" w-class="ga-avator"/>
+                            <img src="../shareImage/img_avatar1.png" w-class="ga-avator"/>
                             <div w-class="ga-item-right">
                                 <div w-class="ga-box1">
                                     <div w-class="ga-name">好友钱包名</div>
