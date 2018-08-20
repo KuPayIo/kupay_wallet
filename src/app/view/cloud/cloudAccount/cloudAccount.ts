@@ -8,7 +8,9 @@ interface Props {
 // ===============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../store/dataCenter';
+import { find } from '../../../store/store';
 import { formatBalanceValue } from '../../../utils/tools';
 
 // ====================================================导出
@@ -22,10 +24,12 @@ export class CloudAccount extends Widget {
         this.init();
     }
     public init(): void {
+        const curWallet = find('curWallet');
+        const gwlt = GlobalWallet.fromJSON(curWallet.gwlt);
         this.state = {
             isNameUpdated:false,
-            accoutNickName: '昵称未设置',// 账户昵称
-            accoutHeadImg: 'img_avatar1.png',// 账户头像
+            accoutNickName: gwlt.nickName,// 账户昵称
+            accoutHeadImg: curWallet.avatar,// 账户头像
             accountAssets: '',// 账户资产
             coinList: [{
                 coinIcon: 'cloud_cointype_btc.png',// 代币图标

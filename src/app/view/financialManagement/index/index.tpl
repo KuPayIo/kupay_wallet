@@ -58,7 +58,17 @@
                 <span w-class="productItemHeadTitle">
                     {{v.title}} 
                 </span>
-                <canvas id="canvas{{i}}" w-class="canvas" width="120" height="120"></canvas>
+                <div w-class="ring-container">
+                    <app-components-ringProgressBar-ringProgressBar>{
+                        "width":120,
+                        "borderWidth":15,
+                        "activeColor":"#e5e5e5",
+                        "bgColor":"#a0acc0",
+                        "activePercent":{{v.surplus / v.total}},
+                        "centerStyle":"fontSize:28px;color:#111;",
+                        "centerText":{{v.surplus === v.total ? '售罄' : Math.floor(v.surplus / v.total * 100) + '%' }}}
+                    </app-components-ringProgressBar-ringProgressBar>
+                </div>
             </div>
             <div w-class="productInfo">
                 <div w-class="interestRate">

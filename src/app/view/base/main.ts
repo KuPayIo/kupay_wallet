@@ -34,6 +34,16 @@ export const run = (cb): void => {
     initStore();
     dataCenter.init();
     initEthTokenDecimals();
+    const props = {
+        width:120,
+        borderWidth:15,
+        activeColor:'red',
+        bgColor:'#ccc',
+        activePercent:0.3,
+        centerStyle:'fontSize:36px;',
+        centerText:'30%'
+    };
+    // popNew('app-view-base-test');
     // makepayment();
     // exchangeManage.init();
     // 打开界面

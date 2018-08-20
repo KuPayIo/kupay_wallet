@@ -190,6 +190,7 @@ export class Home extends Widget {
         const cloudBalance = getBorn('cloudBalance');
         this.state.ktBalance = formatBalance(cloudBalance.get(CurrencyType.KT));
         this.state.ethBalance = formatBalance(cloudBalance.get(CurrencyType.ETH));
+        this.paint();
     }
 
     /**

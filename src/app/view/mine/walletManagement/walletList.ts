@@ -28,8 +28,6 @@ export class WalletList extends Widget {
     public init() {
         // 获取钱包显示头像
         const walletList = find('walletList');
-        console.log('-------walletList---------');
-        console.log(walletList);
         const fromJSON = GlobalWallet.fromJSON;
 
         const curWallet = find('curWallet');
@@ -48,8 +46,7 @@ export class WalletList extends Widget {
     }
 
     public async backupClicked(walletId: string) {
-        const close = popNew('pi-components-loading-loading', { text: '导出中...' });
-       
+        
         const walletList = find('walletList');
         const wallet = getWalletByWalletId(walletList, walletId);
         let passwd;
@@ -57,6 +54,7 @@ export class WalletList extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
+        const close = popNew('pi-components-loading-loading', { text: '导出中...' });
         try {
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {

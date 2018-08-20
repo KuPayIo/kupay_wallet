@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { openAndGetRandom } from '../../../net/pull';
+import { openAndGetRandom, setUserInfo } from '../../../net/pull';
 import { Addr, Wallet } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
 import {
@@ -141,7 +141,7 @@ export class WalletCreate extends Widget {
         updateStore('curWallet', wallet);
         updateStore('salt', salt);
 
-        openAndGetRandom();
+        openAndGetRandom(true);
     }
 
     public importWalletClick() {
