@@ -28,8 +28,7 @@ export class Others extends Widget {
         this.initEvent();
     }
 
-    private initData(accountDetail:Map<CurrencyType, AccountDetail[]>) {
-        console.log('accountDetail=====',accountDetail);
+    public initData(accountDetail:Map<CurrencyType, AccountDetail[]>) {
         const list = accountDetail.get(this.props.coinType);
         this.state.infoList = list;
         this.paint();

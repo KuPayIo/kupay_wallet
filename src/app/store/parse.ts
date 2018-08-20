@@ -57,6 +57,10 @@ export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[
                 behavior = '提现';
                 behaviorIcon = 'cloud_withdraw_icon.png';
                 break;
+            case TaskSid.financialManagement:
+                behavior = '理财买入';
+                behaviorIcon = 'financialManagement_icon_cloud.png';
+                break;
             default:
                 behavior = isArray(v[2]) ? unicodeArray2Str(v[2]) : v[2];
         }
