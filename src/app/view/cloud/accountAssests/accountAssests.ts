@@ -94,3 +94,11 @@ register('cloudBalance', cloudBalance => {
         w.updateBalance();
     }
 });
+/**
+ * 矿山增加项目进入充值页面
+ */
+register('mineItemJump',(arg) => {
+    if (arg === 'storeCoin') {
+        popNew('app-view-cloud-assestsManage-charge', { currencyName:'ETH' });
+    }
+});
