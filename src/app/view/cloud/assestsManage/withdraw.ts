@@ -8,8 +8,8 @@ import { eth2Wei, wei2Eth } from '../../../core/globalWallet';
 import { getCloudBalance, getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find } from '../../../store/store';
-import { gasLimit, gasPrice, withdrawServiceCharge } from '../../../utils/constants';
-import { getCurrentAddrByCurrencyName, openBasePage, popPswBox, VerifyIdentidy } from '../../../utils/tools';
+import { gasLimit, gasPrice } from '../../../utils/constants';
+import { getCurrentAddrByCurrencyName, popPswBox, VerifyIdentidy } from '../../../utils/tools';
 // =================================================导出
 
 interface Props {

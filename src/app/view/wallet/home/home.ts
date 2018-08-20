@@ -141,10 +141,7 @@ export class Home extends Widget {
                 popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
             }
         } catch (error) {
-            console.log(error);
-            if (error) {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
-            }
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
         }
         close.callback(close.widget);
     }
