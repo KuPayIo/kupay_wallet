@@ -12,6 +12,7 @@ interface Props {
 }
 // ======================================导入
 import { QRCode } from '../../../../pi/browser/qrcode';
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 
 // ============================================导出
@@ -45,7 +46,19 @@ export class MessageBox extends Widget {
      * 点击确认
      */
     public doClickSure() {
-        this.ok && this.ok({ addresse:this.state.input1Value,tags:this.state.input2Value });
+        const reg = /[a-zA-Z0-9]*/;
+        
+        if (reg.test(this.state.input1Value)) {
+            if (/^ETH/.test(this.props.input2DefaultValue) && !/^0x/.test(this.state.input1Value)) {
+                popNew('app-components-message-message', { itype: 'error', content: '无效地址，请重新输入', center: true });
+
+                return;
+            }
+            this.ok && this.ok({ addresse:this.state.input1Value,tags:this.state.input2Value });
+        } else {
+            popNew('app-components-message-message', { itype: 'error', content: '无效地址，请重新输入', center: true });
+        }
+        
     }
 
     /**

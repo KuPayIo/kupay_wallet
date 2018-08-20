@@ -209,6 +209,7 @@
     left: 0;
     right: 0;
     top: 0;
+    display: none;
 }
 .currencyIcon{
     font-size: 32px;

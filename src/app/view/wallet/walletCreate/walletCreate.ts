@@ -86,7 +86,7 @@ export class WalletCreate extends Widget {
             return;
         }
         if (!walletNameAvailable(this.state.walletName)) {
-            popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-24位钱包名', center: true });
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-10位钱包名', center: true });
 
             return;
         }
