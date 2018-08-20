@@ -48,7 +48,7 @@ export class Index extends Widget {
             record: [],
             productList: []
         };
-        
+        if (!this.props.isActive) return;
         getProductList();
         getPurchaseRecord();
     }

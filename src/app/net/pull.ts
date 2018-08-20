@@ -516,14 +516,20 @@ export const doChat = async () => {
 /**
  * 获取指定货币流水
  */
-export const getAccountDetail = async (coin: CurrencyType) => {
-    const msg = { type: 'wallet/account@get_detail', param: { coin } };
-    requestAsync(msg).then(r => {
-        if (!r.value || r.value.length <= 0) return;
-        console.log('accountDetail',r.value);
-        const detail = parseCloudAccountDetail(coin, r.value);
-        updateStore('accountDetail', getBorn('accountDetail').set(coin, detail));
-    });
+export const getAccountDetail = async (coin: string) => {
+    console.log('coin----------',coin,CurrencyType[coin]);
+    const msg = { type: 'wallet/account@get_detail', param: { coin:CurrencyType[coin] } };
+
+    try {
+        const res = await requestAsync(msg);
+        const detail = parseCloudAccountDetail(coin, res.value);
+        updateStore('accountDetail',getBorn('accountDetail').set(coin, detail));
+    } catch (err) {
+        console.log(err);
+        showError(err && (err.result || err.type));
+
+        return;
+    }
 };
 
 /**
