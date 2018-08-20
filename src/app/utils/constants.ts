@@ -12,7 +12,27 @@ export const recordNumber = 10;
 export const supportCurrencyListTest = [
     { name: 'ETH', description: 'Ethereum' },
     { name: 'BTC', description: 'Bit coin' },
-    { name: 'YNC', description: 'YiNeng Ltd' }
+    // { name: 'YNC', description: 'YiNeng Ltd' },
+    { name: 'BNB', description: 'BNB' },
+    { name: 'VEN', description: 'VeChain' },
+    { name: 'OMG', description: 'OmiseGO' },
+    { name: 'ZRX', description: 'ZRX' },
+    { name: 'MKR', description: 'Maker' },
+    { name: 'BAT', description: 'BAT' },
+    { name: 'XUC', description: 'ExchangeUnion' },
+    { name: 'REP', description: 'Reputation' },
+    { name: 'BTM', description: 'Bytom' },
+    { name: 'USDT', description: 'Tether USD' },
+    { name: 'PPT', description: 'Populous' },
+    { name: 'SNT', description: 'StatusNetwork' },
+    { name: 'AION', description: 'AION' },
+    { name: 'FUN', description: 'FunFair' },
+    { name: 'KNC', description: 'KyberNetwork' },
+    // { name: 'MCO', description: 'Monaco' },
+    { name: 'POWR', description: 'PowerLedger' },
+    { name: 'MANA', description: 'Decentraland' },
+    { name: 'KIN', description: 'Kin' },
+    { name: 'VERI', description: 'Veritaseum' }
 ];
 // 钱包所支持的货币列表主网络
 export const supportCurrencyListMain = [
@@ -65,7 +85,27 @@ export const defaultExchangeRateJsonTest = {
     ETH: { CNY: 3337.01, USD: 517.42 },
     BTC: { CNY: 42868.55, USD: 6598.71 },
     YNC: { CNY: 100, USD: 15.2625 },
-    KT: { CNY: 0.03, USD: 0.19 }
+    KT: { CNY: 0.03, USD: 0.19 },
+    BNB: { CNY: 100, USD: 15.2625 },
+    VEN: { CNY: 100, USD: 15.2625 },
+    OMG: { CNY: 100, USD: 15.2625 },
+    ZRX: { CNY: 100, USD: 15.2625 },
+    MKR: { CNY: 100, USD: 15.2625 },
+    BAT: { CNY: 100, USD: 15.2625 },
+    XUC: { CNY: 100, USD: 15.2625 },
+    REP: { CNY: 100, USD: 15.2625 },
+    BTM: { CNY: 100, USD: 15.2625 },
+    USDT: { CNY: 100, USD: 15.2625 },
+    PPT: { CNY: 100, USD: 15.2625 },
+    SNT: { CNY: 100, USD: 15.2625 },
+    AION: { CNY: 100, USD: 15.2625 },
+    FUN: { CNY: 100, USD: 15.2625 },
+    KNC: { CNY: 100, USD: 15.2625 },
+    MCO: { CNY: 100, USD: 15.2625 },
+    POWR: { CNY: 100, USD: 15.2625 },
+    MANA: { CNY: 100, USD: 15.2625 },
+    KIN: { CNY: 100, USD: 15.2625 },
+    VERI:{ CNY: 0.03, USD: 0.19 }
 };
 
 // 默认货币汇率主网络

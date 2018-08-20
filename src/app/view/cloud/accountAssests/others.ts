@@ -5,7 +5,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
-import { CurrencyType, TaskSid } from '../../../store/interface';
+import { AccountDetail, CurrencyType, TaskSid } from '../../../store/interface';
 import { find, register } from '../../../store/store';
 import { timestampFormat } from '../../../utils/tools';
 
@@ -25,27 +25,26 @@ export class Others extends Widget {
     }
     public init(): void {
         this.state = { infoList: [] };
-        this.initData();
         this.initEvent();
     }
 
-    private initData() {
-        const list = find('accountDetail', CurrencyType[this.props.coinType]) || [];
+    public initData(accountDetail:Map<CurrencyType, AccountDetail[]>) {
+        const list = accountDetail.get(this.props.coinType);
         this.state.infoList = list;
         this.paint();
     }
 
     private initEvent() {
-        getAccountDetail(<any>CurrencyType[this.props.coinType]);
+        getAccountDetail(this.props.coinType);
     }
 }
 
 // ===================================================== 本地
 
-register('accountDetail', (info) => {
+register('accountDetail', (accountDetail) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initData();
+        w.initData(accountDetail);
     }
 });
 
