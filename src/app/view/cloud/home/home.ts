@@ -40,23 +40,7 @@ export class Home extends Widget {
             this.initEvent();
         }
     }
-    /**
-     * 点击eth跳转充值提现
-     */
-    public ethHoldingsClicked() {
-        if (!this.state.hasWallet) {
-            popNew('app-components-linkMessage-linkMessage',{ 
-                tip:'还没有钱包',
-                linkTxt:'去创建',
-                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
-            });
-                
-        } else {
-            popNew('app-view-cloud-accountAssests-accountAssests', { coinType: 'ETH', coinBalance: 0 });
-        } 
-        
-    }
-
+    
     /**
      * 点击云端账户
      */
