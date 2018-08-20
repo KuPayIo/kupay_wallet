@@ -77,8 +77,6 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
-        
         const walletList = find('walletList');
         const wallet = getWalletByWalletId(walletList, this.props.walletId);
         let passwd;
@@ -86,6 +84,7 @@ export class WalletManagement extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
+        const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
         try {
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
@@ -95,9 +94,7 @@ export class WalletManagement extends Widget {
             }
         } catch (error) {
             console.log(error);
-            if (error) {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
-            }
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
         }
         close.callback(close.widget);
     }
@@ -180,15 +177,14 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '导出中...' });
         
         const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', content: '', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
+        const close = popNew('pi-components-loading-loading', { text: '导出中...' });
         try {
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
@@ -198,9 +194,7 @@ export class WalletManagement extends Widget {
             }
         } catch (error) {
             console.log(error);
-            if (error) {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
-            }
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
         }
 
         close.callback(close.widget);
@@ -225,14 +219,14 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '加载中...' });
-        
+       
         const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
             if (!passwd) return;
         }
+        const close = popNew('pi-components-loading-loading', { text: '加载中...' });
         try {
             const isEffective = await VerifyIdentidy(wallet, passwd);
             if (isEffective) {
@@ -242,9 +236,7 @@ export class WalletManagement extends Widget {
             }
         } catch (error) {
             console.log(error);
-            if (error) {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
-            }
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
         }
 
         close.callback(close.widget);
@@ -334,9 +326,7 @@ export class WalletManagement extends Widget {
             }
         } catch (error) {
             console.log(error);
-            if (error) {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
-            }
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
         }
 
         close.callback(close.widget);

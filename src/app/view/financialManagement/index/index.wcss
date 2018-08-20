@@ -6,6 +6,11 @@
     float: right;
     margin-top:10px; 
 }
+.ring-container{
+    float: right;
+    margin-top:10px; 
+    display: inline-block;
+}
 .head{
     background: #3574FA;
     height: 250px;

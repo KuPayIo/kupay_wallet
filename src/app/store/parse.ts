@@ -2,7 +2,8 @@ import { isArray } from '../../pi/net/websocket/util';
 import { deepCopy } from '../../pi/util/util';
 import { fromWei } from '../core/eth/helper';
 import { wei2Eth } from '../core/globalWallet';
-import { formatBalance, GetDateDiff, kpt2kt, smallUnit2LargeUnit, timestampFormat,timestampFormatToDate,unicodeArray2Str } from '../utils/tools';
+import { formatBalance, GetDateDiff, kpt2kt, 
+    smallUnit2LargeUnit, timestampFormat,timestampFormatToDate,unicodeArray2Str } from '../utils/tools';
 import { Config } from '../view/financialManagement/config/config';
 import { AccountDetail, CurrencyType, CurrencyTypeReverse, PurchaseRecordOne,TaskSid } from './interface';
 import { find } from './store';

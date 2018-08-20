@@ -8,7 +8,7 @@ interface Props {
 }
 
 interface State {
-    beginTime:number;
+    startTime:number;
     circular:string;// svg内容
 }
 export class Loading extends Widget {
@@ -21,13 +21,6 @@ export class Loading extends Widget {
     public create() {
         super.create();
         this.config = { value: { group: 'top' } };
-
-        console.log('loading start------');
-    }
-    public destroy() {
-        console.log('loading end-------');
-
-        return super.destroy();
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
@@ -36,13 +29,19 @@ export class Loading extends Widget {
             <circle cx='50' cy='50' r='20' fill='none' class="pi-path">
             </circle>
             </svg>`,
-            beginTime:0
+            startTime:new Date().getTime()
         };
     }
-    public attach() {
-        this.state.beginTime = new Date().getTime();
+    public close() {
+        const INTERVAL = 500;
+        const endTime = new Date().getTime();
+        const interval = endTime - this.state.startTime;
+        if (interval >= INTERVAL) {
+            this.ok && this.ok();
+        } else {
+            setTimeout(() => {
+                this.ok && this.ok();
+            },INTERVAL - interval);
+        }
     }
-    /* public close() {
-
-    } */
 }
