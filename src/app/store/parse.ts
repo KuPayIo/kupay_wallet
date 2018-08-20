@@ -1,8 +1,11 @@
 import { isArray } from '../../pi/net/websocket/util';
+import { deepCopy } from '../../pi/util/util';
+import { fromWei } from '../core/eth/helper';
 import { wei2Eth } from '../core/globalWallet';
-import { formatBalance, kpt2kt, smallUnit2LargeUnit, timestampFormat } from '../utils/tools';
-import { AccountDetail, CurrencyType, CurrencyTypeReverse, TaskSid } from './interface';
-
+import { formatBalance, GetDateDiff, kpt2kt, smallUnit2LargeUnit, timestampFormat,timestampFormatToDate,unicodeArray2Str } from '../utils/tools';
+import { Config } from '../view/financialManagement/config/config';
+import { AccountDetail, CurrencyType, CurrencyTypeReverse, PurchaseRecordOne,TaskSid } from './interface';
+import { find } from './store';
 /**
  * 解析数据
  */
@@ -30,24 +33,42 @@ export const parseCloudAccountDetail = (coinType: CurrencyType, infos): AccountD
         const itype = v[0];
         const amount = formatBalance(smallUnit2LargeUnit(CurrencyTypeReverse[coinType], v[1]));
         let behavior = '';
-        if (itype === TaskSid.redEnvelope) {
-            if (amount > 0) {
-                behavior = '领红包';
-            } else {
-                behavior = '发红包';
-            }
-        } else {
-            behavior = isArray(v[2]) ? v[2].map(v1 => String.fromCharCode(v1)).join('') : v[2];
+        let behaviorIcon = '';
+        switch (itype) {
+            case TaskSid.mines:
+                behavior = '挖矿';
+                behaviorIcon = 'cloud_others_drag.png';
+                break;
+            case TaskSid.inviteFriends:
+                behavior = '邀请红包';
+                behaviorIcon = 'cloud_others_pockets.png';
+                break;
+            case TaskSid.redEnvelope: 
+                behavior = amount > 0 ? '领红包' : '发红包';
+                behaviorIcon = 'cloud_others_pockets.png';
+                break;
+            case TaskSid.recharge:
+                behavior = '充值';
+                behaviorIcon = 'cloud_charge_icon.png';
+                break;
+            case TaskSid.withdraw:
+                behavior = '提现';
+                behaviorIcon = 'cloud_withdraw_icon.png';
+                break;
+            default:
+                behavior = isArray(v[2]) ? unicodeArray2Str(v[2]) : v[2];
         }
+            
         list.push({
             itype,
             amount,
             behavior,
-            time: v[3]
+            behaviorIcon,
+            time: timestampFormat(v[3])
         });
     });
 
-    return list;
+    return list.reverse();
 };
 
 /**
@@ -206,6 +227,75 @@ export const parseRechargeWithdrawalLog = (val) => {
     }
     
     return infoList.reverse();
+};
+
+/**
+ * 解析购买记录
+ */
+const getproductById = (id:string) => {
+    const productList = find('productList');
+    for (let i = 0;i < productList.length;i++) {
+        if (productList[i].id === `${id}`) {
+            return productList[i];
+        }
+    }
+
+    return null;
+};
+export const pasePurchaseRecord = (res:any) => {
+    
+    const record = [];
+    for (let i = 0;i < res.value.length;i++) {
+        const item = res.value[i];
+        const id = item[0];
+        const product = getproductById(id);
+        const result:PurchaseRecordOne = {
+            id,
+            yesterdayIncoming:fromWei(item[2],'ether'),
+            totalIncoming:fromWei(item[4],'ether'),
+            profit:product.profit,
+            productName:product.productName,
+            unitPrice:product.unitPrice,// 产品列表获取TODO
+            amount:item[3],
+            coinType:product.coinType,// 产品列表获取TODO
+            days:GetDateDiff(new Date(item[1]),new Date()).toString(),// 本地时间计算TODO
+            purchaseDate:product.purchaseDate,
+            interestDate:product.interestDate,
+            endDate:product.endDate,
+            purchaseTimeStamp:item[1],
+            productIntroduction:product.productIntroduction,
+            lockday:product.lockday,
+            state:item[5]
+        };
+        
+        record.push(result);
+    }
+
+    return record;
+};
+/**
+ * 解析理财产品列表数据
+ */
+export const paseProductList = (res:any) => {
+    const result = [];
+    for (let i = 0;i < res.value.length;i++) {
+        const item = res.value[i];
+        const id = item[0];
+        const product = deepCopy(Config.productList[id]);
+        product.coninType = CurrencyTypeReverse[`${item[1]}`];
+        product.unitPrice = fromWei(item[2],'ether');
+        product.total = item[3];
+        product.surplus = item[3] - item[4];
+        product.purchaseDate = timestampFormatToDate(new Date().getTime());
+        if (product.surplus <= 0) {
+            product.isSoldOut = true;
+        } else {
+            product.isSoldOut = false;
+        }
+        result.push(product);
+    }
+
+    return result;
 };
 // ===================================================== 本地
 

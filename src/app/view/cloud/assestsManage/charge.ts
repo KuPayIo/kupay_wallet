@@ -5,12 +5,12 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { eth2Wei, wei2Eth } from '../../../core/globalWallet';
-import { getBankAddr, getRechargeLogs, rechargeToServer } from '../../../net/pull';
+import { getBankAddr, getCloudBalance, getRechargeLogs, rechargeToServer } from '../../../net/pull';
 import { sendRawTransactionETH, signRawTransactionETH } from '../../../net/pullWallet';
 import { find } from '../../../store/store';
 import { gasLimit, gasPrice } from '../../../utils/constants';
 import { addRecord, getCurrentAddrBalanceByCurrencyName, 
-    getCurrentAddrByCurrencyName, getCurrentAddrInfo, openBasePage, parseDate } from '../../../utils/tools';
+    getCurrentAddrByCurrencyName, getCurrentAddrInfo, openBasePage, parseDate, popPswBox } from '../../../utils/tools';
 // ===============================================导出
 interface Props {
     currencyName:string;
@@ -66,9 +66,8 @@ export class Charge extends Widget {
         const wallet = find('curWallet');
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
        
         console.time('recharge');
@@ -76,7 +75,6 @@ export class Charge extends Widget {
         const toAddr = await getBankAddr();
         if (!toAddr) {
             close.callback(close.widget);
-            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
 
             return;
         }
@@ -84,7 +82,6 @@ export class Charge extends Widget {
         const obj = await signRawTransactionETH(passwd,fromAddr,toAddr,gasPrice,gasLimit,this.state.amount);
         if (!obj) {
             close.callback(close.widget);
-            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
 
             return;
         }
@@ -95,14 +92,12 @@ export class Charge extends Widget {
         const canTransfer = await rechargeToServer(fromAddr,toAddr,hash,nonce,gasPrice,pay);
         if (!canTransfer) {
             close.callback(close.widget);
-            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
 
             return;
         }
         const h = await sendRawTransactionETH(signedTX);
         if (!h) {
             close.callback(close.widget);
-            popNew('app-components-message-message',{ itype:'error',content:'发生错误啦',center:true });
 
             return;
         }
@@ -128,22 +123,8 @@ export class Charge extends Widget {
         };
         addRecord(this.props.currencyName, fromAddr, record);
         getRechargeLogs();
+        getCloudBalance();
         this.ok && this.ok();
-        // this.popToTxDetail(h);
     }
 
-    public popToTxDetail(hash:string) {
-        const curAddrInfo = getCurrentAddrInfo(this.props.currencyName);
-        let record;
-        for (let i = 0;i < curAddrInfo.record.length;i++) {
-            // tslint:disable-next-line:possible-timing-attack
-            if (curAddrInfo.record[i].id === hash) {
-                record = {
-                    ...curAddrInfo.record[i]
-                };
-                break;
-            }
-        }
-        popNew('app-view-wallet-transaction-transaction_details',{ ...record });
-    }
 }

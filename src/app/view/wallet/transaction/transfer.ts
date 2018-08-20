@@ -4,17 +4,14 @@
 import { QRCode } from '../../../../pi/browser/qrcode';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { BtcApi } from '../../../core/btc/api';
-import { BTCWallet } from '../../../core/btc/wallet';
 import { Api as EthApi } from '../../../core/eth/api';
 import { ERC20Tokens } from '../../../core/eth/tokens';
-import { EthWallet } from '../../../core/eth/wallet';
 import { transfer } from '../../../net/pullWallet';
 import { dataCenter } from '../../../store/dataCenter';
 import { find } from '../../../store/store';
 import {
-    effectiveAddr, effectiveCurrencyStableConversion, ethTokenMultiplyDecimals, getAddrById
-    , getCurrentAddrInfo, openBasePage, parseDate, resetAddrById, urlParams
+    effectiveAddr, effectiveCurrencyStableConversion, getAddrById
+    , openBasePage, parseDate, popPswBox, resetAddrById, urlParams
 } from '../../../utils/tools';
 
 interface Props {
@@ -127,9 +124,8 @@ export class AddAsset extends Widget {
         const wallet = find('curWallet');
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', content: '', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
         const hash = await transfer(passwd,fromAddr,toAddr,gasPrice,gasLimit,pay,currencyName,info);
         if (!hash) {

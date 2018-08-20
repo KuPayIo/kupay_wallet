@@ -11,7 +11,7 @@ export const showError = (result, str?) => {
     if (!str) {
         switch (result) {
             case 600: str = '数据库错误'; break;
-            case 705: str = '红包余额必须大于1000';break;
+            case 705: str = '只有真实用户才能发红包';break;
             case 711: str = '兑换码不存在'; break;
             case 712: str = '兑换码已兑换'; break;
             case 713: str = '兑换码已过期'; break;
@@ -32,6 +32,7 @@ export const showError = (result, str?) => {
  * @param err 错误对象
  */
 export const doErrorShow = (err:Error) => {
+    // console.log('error',err);
     if (!err) return;
     let showStr = '';
     switch (err.message) {

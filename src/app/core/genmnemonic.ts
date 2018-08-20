@@ -92,7 +92,7 @@ export const sha3 = (str: string, isHex: boolean) => {
 export const getRandomValuesByMnemonic = (language: LANGUAGE, mnemonic: string): Uint8Array => {
     mnemonic = splitWords(mnemonic);
     if (mnemonic.length === 0 || mnemonic.length % 3 > 0) {
-        return;
+        throw new Error('mnemonic invalid');
     }
     const idx = [];
     const wordlist = WORDLISTS[language];
@@ -101,7 +101,7 @@ export const getRandomValuesByMnemonic = (language: LANGUAGE, mnemonic: string):
         const word = mnemonic[i];
         const wordIndex = wordlist.indexOf(word);
         if (wordIndex === -1) {
-            return;
+            throw new Error('mnemonic invalid');
         }
         const binaryIndex = zfill(wordIndex.toString(2), 11);
         idx.push(binaryIndex);

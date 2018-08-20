@@ -258,12 +258,7 @@ export const largeUnit2SmallUnit = (currencyName: string, amount: number) => {
  */
 export const smallUnit2LargeUnitString = (currencyName: string, amount: string): number => {
     if (currencyName === 'ETH') {
-        const pow = amount.length - 15;
-        let num = Number(amount.slice(0, 15));
-        num = wei2Eth(num);
-        num = num * Math.pow(10, pow);
-
-        return formatBalance(num);
+        return formatBalance(wei2Eth(amount));
     } else if (currencyName === 'KT') {
         return formatBalance(kpt2kt(Number(amount)));
     }
@@ -276,7 +271,7 @@ export const largeUnit2SmallUnitString = (currencyName: string, amount: number):
     if (currencyName === 'ETH') {
         return Number(eth2Wei(amount)).toString(10);
     } else if (currencyName === 'KT') {
-        return kt2kpt(amount).toLocaleString().replace(/,/g, '');
+        return kt2kpt(amount).toString(10);
     }
 };
 
@@ -319,6 +314,7 @@ export const effectiveCurrency = (perNum: any, currencyName: string, conversionT
     } else if (ERC20Tokens[currencyName]) {
         num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
     }
+    num = formatBalance(num);
     r.num = num;
     r.show = `${num} ${currencyName}`;
     r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
@@ -926,6 +922,34 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
     });
 };
 
+export const popPswBox = async () => {
+    try {
+        // tslint:disable-next-line:no-unnecessary-local-variable
+        const psw = await openMessageboxPsw();
+
+        return psw;
+    } catch (error) {
+        return;
+    }
+};
+
+/**
+ * 打开密码输入框
+ */
+const openMessageboxPsw = (): Promise<string> => {
+    // tslint:disable-next-line:typedef
+    return new Promise((resolve, reject) => {
+        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (ok: string) => {
+            // this.windowSet.delete(foreletName);
+            resolve(ok);
+        }, (cancel: string) => {
+            // this.windowSet.delete(foreletName);
+            reject(cancel);
+        });
+
+    });
+};
+
 // 计算字符串长度包含中文 中文长度加2 英文加1
 export const getByteLen = (val) => {
     let len = 0;
@@ -1025,4 +1049,32 @@ export const addRecord = (currencyName, currentAddr, record) => {
     addr.record.push(record);
 
     resetAddrById(currentAddr, currencyName, addr, true);
+};
+
+/**
+ * 计算日期间隔
+ */
+export const GetDateDiff = (startDate,endDate) => {
+    let Y =   `${startDate.getFullYear()}-`;
+    let M =   `${(startDate.getMonth() + 1 < 10 ? `0${(startDate.getMonth() + 1)}` : startDate.getMonth() + 1)}-`;
+    let D = `${startDate.getDate()}`;
+    startDate = new Date(`${Y}${M}${D}`); 
+    const startTime = startDate.getTime();  
+    Y =   `${endDate.getFullYear()}-`;
+    M =   `${(endDate.getMonth() + 1 < 10 ? `0${(endDate.getMonth() + 1)}` : endDate.getMonth() + 1)}-`;
+    D = `${endDate.getDate()}`;
+    endDate = new Date(`${Y}${M}${D}`); 
+    const endTime = endDate.getTime();
+
+    return  Math.floor(Math.abs((startTime - endTime)) / (1000 * 60 * 60 * 24));    
+};
+
+// 时间戳格式化 毫秒为单位
+export const timestampFormatToDate = (timestamp: number) => {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : `0${date.getMonth() + 1}`;
+    const day = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
+    
+    return `${year}-${month}-${day}`;
 };

@@ -76,8 +76,8 @@ export class GlobalWallet {
     public static async fromMnemonic(mnemonic: string, passwd: string, salt: string): Promise<GlobalWallet> {
         const hash = await calcHashValuePromise(passwd, salt, null);
         const gwlt = new GlobalWallet();
-
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
+        
         gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
 
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
@@ -309,7 +309,7 @@ export const wei2Eth = (amount:string|number):number => {
     const web3 = new Web3();
     const decimals = new web3.BigNumber('1000000000000000000');
     const wei = new web3.BigNumber(amount);
-    console.log('wei--------',wei);
+    
     const balance = wei.div(decimals);
 
     return Number(balance.toString(10));

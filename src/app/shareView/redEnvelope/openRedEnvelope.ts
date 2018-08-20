@@ -3,8 +3,8 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../store/conMgr';
-import { parseUrlParams, setLocalStorage, smallUnit2LargeUnitString, unicodeArray2Str } from '../utils/tools';
+import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType, takeRedEnvelope } from '../shareStore/conMgr';
+import { parseUrlParams, setLocalStorage, smallUnit2LargeUnitString, unicodeArray2Str } from '../shareUtils/tools';
 
 interface RedEnvelope {
     rid:string;// 红包id
@@ -81,8 +81,9 @@ export class OpenRedEnvelope extends Widget {
                 amount:0.015,
                 leaveMsg:'KuPay大礼包'
             };
-            setLocalStorage('takeRedBag',redEnvelope);
+            setLocalStorage('inviteRedBag',redEnvelope);
             popNew('app-shareView-redEnvelope-redEnvelopeDetails',{ ...redEnvelope });
+            this.ok && this.ok();
         },500);
     }
 
@@ -108,19 +109,19 @@ export class OpenRedEnvelope extends Widget {
                     this.ok && this.ok();
                     break;
                 case 701:
-                    popNew('app-shareView-components-message',{ itype:'error',center:true,content:'红包不存在' });
+                    popNew('app-shareView-shareComponents-message',{ itype:'error',center:true,content:'红包不存在' });
                     break;
                 case 702:
-                    popNew('app-shareView-components-message',{ itype:'error',center:true,content:'红包已领完' });
+                    popNew('app-shareView-shareComponents-message',{ itype:'error',center:true,content:'红包已领完' });
                     break;
                 case 703:
-                    popNew('app-shareView-components-message',{ itype:'error',center:true,content:'红包已过期' });
+                    popNew('app-shareView-shareComponents-message',{ itype:'error',center:true,content:'红包已过期' });
                     break;
                 case 704:
-                    popNew('app-shareView-components-message',{ itype:'error',center:true,content:'红包已领取过' });
+                    popNew('app-shareView-shareComponents-message',{ itype:'error',center:true,content:'红包已领取过' });
                     break;
                 default:
-                    popNew('app-shareView-components-message',{ itype:'error',center:true,content:'出错啦' });    
+                    popNew('app-shareView-shareComponents-message',{ itype:'error',center:true,content:'出错啦' });    
             }
             this.state.openClick = false;
             this.paint();

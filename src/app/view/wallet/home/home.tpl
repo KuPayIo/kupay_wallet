@@ -1,5 +1,4 @@
 <div class="ga-new-page hide-scrollbar" on-move="pageScroll">
-        
     <div  id="page">
         <div id="gaHeader" w-class="ga-header-Outer">
         {{if it1.gwlt}}
@@ -11,11 +10,11 @@
             <div w-class="ga-assets-container">
                 <div w-class="ga-assets-box">
                     <span w-class="ga-assets">
-                        <div w-class="ga-box"><span w-class="ga-assets-symbol">≈￥</span><span>{{it1.hiddenAssets ? it1.totalAssets.replace(/[0-9]/g,'-') : it1.totalAssets}}</span></div>
+                        <div w-class="ga-box"><span w-class="ga-assets-symbol">￥</span><span w-class="specialFont">{{it1.hiddenAssets ? it1.totalAssets.replace(/[0-9]/g,'-') : it1.totalAssets}}</span></div>
                         <img src="../../../res/image/{{it1.hiddenAssets ? 'btn_display_close_v2' : 'btn_display_open_v2'}}.png" w-class="ga-hidden" on-tap="hiddenAssetsClick"/>
                     </span>
                 </div>
-                <div w-class="ga-profit">今日盈利 ￥{{it1.hiddenAssets ? '-.--' : '0.00'}}</div>
+                <div w-class="ga-profit">今日盈利 ￥<span w-class="specialFont">{{it1.hiddenAssets ? '-.--' : '0.00'}}</span></div>
             </div>
             <div w-class="ga-add-container"><img w-class="ga-add-currency" src="../../../res/image/btn_add_money.png"  on-tap="clickAddCurrencyListener"/></div>
         </div>
@@ -27,11 +26,11 @@
             <div w-class="ga-assets-container">
                 <div w-class="ga-assets-box">
                     <span w-class="ga-assets">
-                            <div w-class="ga-box"><span w-class="ga-assets-symbol">≈￥</span><span>{{it1.hiddenAssets ? it1.totalAssets.toFixed(2).replace(/./g,'*') : it1.totalAssets.toFixed(2)}}</span></div>
+                            <div w-class="ga-box"><span w-class="ga-assets-symbol">￥</span><span w-class="specialFont">{{it1.hiddenAssets ? it1.totalAssets.toFixed(2).replace(/./g,'*') : it1.totalAssets.toFixed(2)}}</span></div>
                         <img src="../../../res/image/{{it1.hiddenAssets ? 'btn_display_close_v2' : 'btn_display_open_v2'}}.png" w-class="ga-hidden" on-tap="hiddenAssetsClick"/>
                     </span>
                 </div>
-                <div w-class="ga-profit">今日盈利 ￥{{it1.hiddenAssets ? '-.--' : '0.00'}}</div>
+                <div w-class="ga-profit">今日盈利 ￥<span w-class="specialFont">{{it1.hiddenAssets ? '-.--' : '0.00'}}</span></div>
             </div>
         </div>
         {{end}}
@@ -65,7 +64,12 @@
                 <span>
                         <span w-class="currencyIcon">￥</span>{{it1.totalAssets}}
                 </span>
+                {{if it1.gwlt}}
+                <img src="../../../res/image/{{it1.wallet.avatar}}" w-class="hidetitleHeadImg"/>
+                {{else}}
                 <img src="../../../res/image/img_avatar1.png" w-class="hidetitleHeadImg"/>
+                {{end}}
+
             </div>
     </div>
 </div>

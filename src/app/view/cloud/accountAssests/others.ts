@@ -31,12 +31,7 @@ export class Others extends Widget {
 
     private initData() {
         const list = find('accountDetail', CurrencyType[this.props.coinType]) || [];
-        this.state.infoList = list.map(v => {
-            v.time = timestampFormat(v.time);
-            v.behaviorIcon = getIconByType(v.itype);
-
-            return v;
-        });
+        this.state.infoList = list;
         this.paint();
     }
 
@@ -46,22 +41,6 @@ export class Others extends Widget {
 }
 
 // ===================================================== 本地
-/**
- * 通过类型获取图标
- */
-const getIconByType = (iType) => {
-    let img;
-    switch (iType) {
-        case TaskSid.mines:img = 'cloud_others_drag.png';
-        case TaskSid.redEnvelope:img = 'cloud_others_pockets.png';
-        case TaskSid.recharge:img = 'cloud_charge_icon.png';
-        case TaskSid.withdraw:img = 'cloud_withdraw_icon.png';
-        default:
-    }
-    
-    return img;
-};
-// ===================================================== 立即执行
 
 register('accountDetail', (info) => {
     const w: any = forelet.getWidget(WIDGET_NAME);

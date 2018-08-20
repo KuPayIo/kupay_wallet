@@ -70,7 +70,7 @@ export class BackupMnemonicWordConfirm extends Widget {
 
     public nextStepClick() {
         if (!this.compareMnemonicEqualed()) {
-            popNew('app-components-message-messagebox', { itype: 'alert', title: '提示', content: '请检查助记词' });
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '提示', content: '助记词错误，请重新输入' });
         } else {
             this.deleteMnemonic();
             popNew('app-components-message-messagebox', { itype: 'alert', title: '提示', content: '备份完成' });

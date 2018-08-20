@@ -1,6 +1,7 @@
 /**
  * 基础操作
  */
+import { popNew } from '../../pi/ui/root';
 import { GlobalWallet } from '../core/globalWallet';
 import { openAndGetRandom } from '../net/pull';
 import { Addr, Wallet } from '../store/interface';

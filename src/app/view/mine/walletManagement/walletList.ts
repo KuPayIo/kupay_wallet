@@ -6,9 +6,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { dataCenter } from '../../../store/dataCenter';
-import { find, register, unregister } from '../../../store/store';
-import { getMnemonic, getWalletByWalletId, openBasePage } from '../../../utils/tools';
+import { find, register } from '../../../store/store';
+import { getMnemonic, getWalletByWalletId, popPswBox } from '../../../utils/tools';
 // ==========================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -50,15 +49,15 @@ export class WalletList extends Widget {
 
     public async backupClicked(walletId: string) {
         const close = popNew('pi-components-loading-loading', { text: '导出中...' });
+       
+        const walletList = find('walletList');
+        const wallet = getWalletByWalletId(walletList, walletId);
+        let passwd;
+        if (!find('hashMap',wallet.walletId)) {
+            passwd = await popPswBox();
+            if (!passwd) return;
+        }
         try {
-            const walletList = find('walletList');
-            const wallet = getWalletByWalletId(walletList, walletId);
-            let passwd;
-            if (!find('hashMap',wallet.walletId)) {
-                passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                    title: '输入密码', content: '', inputType: 'password'
-                });
-            }
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
                 popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: walletId });

@@ -5,7 +5,7 @@
             <div w-class="earningsTitle">
                 预期年化收益
             </div>
-            <div w-class="number">{{it1.expectedEarnings}}</div>
+            <div w-class="number">{{it1.profit}}</div>
         </div>
     </div>
     <div w-class="baseInfo">
@@ -26,7 +26,7 @@
     </div>
 
     <div w-class="stepBox" style="display: {{it1.showStep ? 'block' : 'none'}};">
-            <app-view-financialManagement-productDetail-step-step>{itemList:[{title:"申购日",content:"2018-08-02"},{title:"起息日",content:"2018-08-02"},{title:"到期日",content:"2018-08-02"}]}</app-components-step-step>
+            <app-view-financialManagement-productDetail-step-step>{itemList:[{title:"申购日",content:"{{it1.purchaseDate}}"},{title:"起息日",content:"{{it1.interestDate}}"},{title:"到期日",content:"{{it1.endDate}}"}]}</app-components-step-step>
     </div>
 
     <div w-class="productInfo">
@@ -48,7 +48,7 @@
                 </span>
                 <div w-class="numInputSelectFloatBox">
                     <span w-class="fontIcon sub" on-tap="minus">-</span>
-                    <input type="number" w-class="numInputInput" value="{{it1.amount}}"/>
+                    <input type="number" on-input="amountInput" disabled="true" w-class="numInputInput" value="{{it1.amount}}"/>
                     <span w-class="fontIcon plus" on-tap="add">+</span>
                 </div>
             </div>

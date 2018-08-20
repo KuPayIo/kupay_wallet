@@ -33,12 +33,6 @@ export class AddAsset extends Widget {
         this.init();
     }
     public init(): void {
-        const data = currencyExchangeAvailable();
-        const dataList = [];
-        data.forEach(element => {
-            dataList.push(element.symbol);
-        });
-
         const wallet = find('curWallet');
 
         this.state = {
@@ -46,8 +40,8 @@ export class AddAsset extends Widget {
             currentAddr: '',
             balance: 0,
             showBalance: `0 ${this.props.currencyName}`,
-            showBalanceConversion: '≈0.00 CNY',
-            canCurrencyExchange: dataList.indexOf(this.props.currencyName) >= 0
+            showBalanceConversion: '≈0.00 CNY'
+            
         };
         this.resetCurrentAddr(wallet, this.props.currencyName);
         this.parseBalance();
@@ -266,5 +260,4 @@ interface State {
     balance: number;
     showBalance: string;
     showBalanceConversion: string;
-    canCurrencyExchange: boolean;
 }

@@ -103,8 +103,7 @@ export class WalletImport extends Widget {
             await importWalletByMnemonic(this.state.walletMnemonic, this.state.walletPsw, this.state.walletPswTips);
         } catch (e) {
             close.callback(close.widget);
-            console.log(e);
-            popNew('app-components-message-message', { itype: 'error', content: '导入失败', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: '无效的助记词', center: true });
 
             return;
         }

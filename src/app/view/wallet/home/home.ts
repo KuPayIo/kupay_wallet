@@ -2,7 +2,8 @@
  * wallet home page
  */
 // ============================== 导入
-import { getHeight,popNew } from '../../../../pi/ui/root';
+import { getHeight, popNew } from '../../../../pi/ui/root';
+import { isString } from '../../../../pi/util/util';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
@@ -11,27 +12,27 @@ import { dataCenter } from '../../../store/dataCenter';
 import { find, register } from '../../../store/store';
 import { defalutShowCurrencys } from '../../../utils/constants';
 import {
-    fetchBalanceOfCurrency, fetchTotalAssets, formatBalance, formatBalanceValue, getMnemonic, openBasePage
+    fetchBalanceOfCurrency, fetchTotalAssets, formatBalance, formatBalanceValue, getMnemonic, popPswBox
 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-const OFFSET_COMPALET_VALUE:number = 430;// 规定滑动距离为该值时两个头部的变化完成
+const OFFSET_COMPALET_VALUE: number = 440;// 规定滑动距离为该值时两个头部的变化完成
 // const HEAD_HEIGHT:number = 580;// 首页头部高度，滑动时隐藏该头部
 // const HIDEHEAD_HEIGHT:number = 140;// 隐藏头部的高度
 // const EDGE_VALUE:number = 50;// 边缘值，小于相差小于此值认为滑动变化完成
 export class Home extends Widget {
     // private pageHeight:number = null;
-    private offset:number = 0;
-    private startY:number = null;
-    private distance:number = 0;
-    private maxVal:number = 0;
-    private gaHeader:any = null;
-    private hideHead:any = null;
-    private currencyHeight:number = null;
-    
+    private offset: number = 0;
+    private startY: number = null;
+    private distance: number = 0;
+    private maxVal: number = 0;
+    private gaHeader: any = null;
+    private hideHead: any = null;
+    private currencyHeight: number = null;
+
     constructor() {
         super();
     }
@@ -51,8 +52,8 @@ export class Home extends Widget {
             this.currencyHeight = document.getElementById('currencyList').offsetHeight;
         }
         const pageHeight = getHeight() - 120;
-        const contentHeight =  this.currencyHeight + 150;
-        const overflowHeight = (contentHeight - pageHeight) < 0 ? 0 :(contentHeight - pageHeight);
+        const contentHeight = this.currencyHeight + 150;
+        const overflowHeight = (contentHeight - pageHeight) < 0 ? 0 : (contentHeight - pageHeight);
         this.maxVal = OFFSET_COMPALET_VALUE + overflowHeight;
     }
     public init(): void {
@@ -70,8 +71,10 @@ export class Home extends Widget {
         };
 
         // 如果没有创建钱包提示创建钱包
-        if (find('walletList') || find('walletList').length === 0) {
+        if (!find('walletList') || find('walletList').length === 0) {
             this.state.floatBoxTip = '您还没有钱包，请先创建钱包';
+        } else {
+            this.state.floatBoxTip = '为了您的资产安全，请及时备份助记词';
         }
         this.registerAddrsFun();
         // 登录云端账号
@@ -81,10 +84,10 @@ export class Home extends Widget {
         const wallets = find('walletList');
         if (!wallets || wallets.length === 0) {
             // this.createWalletClick();
-            popNew('app-components-linkMessage-linkMessage',{ 
-                tip:'还没有钱包',
-                linkTxt:'去创建',
-                linkCom:'app-view-wallet-walletCreate-createWalletEnter' 
+            popNew('app-components-linkMessage-linkMessage', {
+                tip: '还没有钱包',
+                linkTxt: '去创建',
+                linkCom: 'app-view-wallet-walletCreate-createWalletEnter'
             });
 
             return;
@@ -123,15 +126,14 @@ export class Home extends Widget {
             return;
         }
         const walletId = wallet.walletId;
+       
+        let passwd;
+        if (!find('hashMap', wallet.walletId)) {
+            passwd = await popPswBox();
+            if (!passwd) return;
+        }
         const close = popNew('pi-components-loading-loading', { text: '导出中...' });
         try {
-
-            let passwd;
-            if (!find('hashMap',wallet.walletId)) {
-                passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                    title: '输入密码', content: '', inputType: 'password'
-                });
-            }
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
                 popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: walletId });
@@ -168,9 +170,9 @@ export class Home extends Widget {
         this.registerAddrsFun();
         this.paint();
     }
-    public pageScroll(e:any) { {
-       
-        const offset = this.handleScroll(e.x,e.y,this.maxVal,e.subType === 'start',e.subType === 'over');
+    public pageScroll(e: any) {
+
+        const offset = this.handleScroll(e.x, e.y, this.maxVal, e.subType === 'start', e.subType === 'over');
         const ratio = offset / OFFSET_COMPALET_VALUE;
         document.getElementById('page').style.transform = `translateY(${-offset}px)`;
         if (offset >= OFFSET_COMPALET_VALUE) {
@@ -178,13 +180,13 @@ export class Home extends Widget {
         } else {
             this.hideHead.style.display = 'none';
         }
-        
+
     }
 
     /**
      * 余额更新
      */
-    private registerAddrsFun = () => {
+    private registerAddrsFun() {
         console.log('余额更新');
         const wallet = find('curWallet');
         if (!wallet) return;
@@ -199,7 +201,7 @@ export class Home extends Widget {
     }
 
     // 处理滑动，返回滑动距离，需要依赖本类中的几个成员变量
-    private handleScroll(x:number,y:number,maxVal:number,isStart:boolean,isEnd:boolean) {
+    private handleScroll(x: number, y: number, maxVal: number, isStart: boolean, isEnd: boolean) {
         if (isStart) {
             this.startY = y;
         }
@@ -212,7 +214,7 @@ export class Home extends Widget {
         if (offset > maxVal) {
             offset = maxVal;
         }
-        
+
         if (isEnd) {
             this.offset = offset;
             this.distance = 0;
@@ -276,7 +278,7 @@ register('curWallet', (curWallet) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         const wallet = curWallet;
-        const gwlt = wallet ? GlobalWallet.fromJSON(wallet.gwlt) : null;
+        const gwlt = wallet ? (isString(wallet.gwlt) ? GlobalWallet.fromJSON : wallet.gwlt) : null;
         w.state.wallet = wallet;
         w.state.gwlt = gwlt;
         w.paint();
@@ -285,7 +287,7 @@ register('curWallet', (curWallet) => {
 /**
  * 矿山增加项目进入创建钱包页面
  */
-register('mineItemJump',(arg) => {
+register('mineItemJump', (arg) => {
     if (arg === 'walletCreate') {
         popNew('app-view-wallet-walletCreate-createWalletEnter');
     }
