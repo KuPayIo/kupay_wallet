@@ -10,4 +10,5 @@ if(winit.isLoc){
 }
 
 winit.loadJS(winit.domains, winit.path+"pi/polyfill/babel_polyfill.js", "utf8", winit.initFail, "load babel_polyfill error");
+winit.loadJS(winit.domains, winit.path+"app/boot/check.js", "utf8", winit.initFail, "load check.js error");
 //winit.debug=false; 
