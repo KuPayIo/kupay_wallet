@@ -64,9 +64,9 @@
                         "borderWidth":15,
                         "activeColor":"#e5e5e5",
                         "bgColor":"#a0acc0",
-                        "activePercent":{{v.surplus / v.total}},
+                        "activePercent":{{1 - v.surplus / v.total}},
                         "centerStyle":"fontSize:28px;color:#111;",
-                        "centerText":{{v.surplus === v.total ? '售罄' : Math.floor(v.surplus / v.total * 100) + '%' }}}
+                        "centerText":{{v.surplus === 0 ? '售罄' : Math.floor(v.surplus / v.total * 100) + '%' }}}
                     </app-components-ringProgressBar-ringProgressBar>
                 </div>
             </div>

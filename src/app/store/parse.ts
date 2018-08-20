@@ -28,11 +28,12 @@ export const parseCloudBalance = (balanceInfo): Map<CurrencyType, number> => {
 /**
  * 解析云端账号详情
  */
-export const parseCloudAccountDetail = (coinType: CurrencyType, infos): AccountDetail[] => {
+export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[] => {
+    if (!infos) return [];
     const list = [];
     infos.forEach(v => {
         const itype = v[0];
-        const amount = formatBalance(smallUnit2LargeUnit(CurrencyTypeReverse[coinType], v[1]));
+        const amount = formatBalance(smallUnit2LargeUnit(coinType, v[1]));
         let behavior = '';
         let behaviorIcon = '';
         switch (itype) {
@@ -55,6 +56,10 @@ export const parseCloudAccountDetail = (coinType: CurrencyType, infos): AccountD
             case TaskSid.withdraw:
                 behavior = '提现';
                 behaviorIcon = 'cloud_withdraw_icon.png';
+                break;
+            case TaskSid.financialManagement:
+                behavior = '理财买入';
+                behaviorIcon = 'financialManagement_icon_cloud.png';
                 break;
             default:
                 behavior = isArray(v[2]) ? unicodeArray2Str(v[2]) : v[2];

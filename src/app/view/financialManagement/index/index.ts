@@ -8,6 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getProductList,getPurchaseRecord } from '../../../net/pull';
 import { Product } from '../../../store/interface';
 import { find, register } from '../../../store/store';
+import { PurchaseRecord } from '../purchaseRecord/purchaseRecord';
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -31,6 +32,10 @@ export class Index extends Widget {
         this.state.productList = productList;
         this.paint();
     }
+    public updatePurchaseRecord(purchaseRecord:PurchaseRecord[]) {
+        this.state.record = purchaseRecord;
+        this.paint();
+    }
     /* public afterUpdate() {
         super.afterUpdate();
         if (!this.props.isActive) return;
@@ -48,7 +53,7 @@ export class Index extends Widget {
             record: [],
             productList: []
         };
-        
+        if (!this.props.isActive) return;
         getProductList();
         getPurchaseRecord();
     }
@@ -137,8 +142,7 @@ register('productList', async (productList) => {
 register('purchaseRecord', async (purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.state.record = purchaseRecord;
-        w.paint();
+        w.updatePurchaseRecord(purchaseRecord);
     }
     
 });

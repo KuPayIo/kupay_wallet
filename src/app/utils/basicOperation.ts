@@ -25,8 +25,12 @@ export const importWalletByMnemonic = async (mnemonic, psw, pswTips) => {
     // 判断钱包是否存在
     let len = walletList.length;
     if (walletList.some(v => v.walletId === gwlt.glwtId)) {
-        await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '提示', content: '该钱包已存在，是否使用新密码' });
-
+        try {
+            await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '提示', content: '该钱包已存在，是否使用新密码' });
+        } catch (err) {
+            // console.log(err);
+        }
+        
         for (let i = len - 1; i >= 0; i--) {
             if (gwlt.glwtId === walletList[i].walletId) {
                 const wallet0 = walletList.splice(i, 1)[0];// 删除已存在钱包

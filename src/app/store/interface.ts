@@ -348,7 +348,8 @@ export enum TaskSid {
     chat,// 聊天
     redEnvelope = 'red_bag_port', // 红包
     recharge = 'bank_db',// 充值
-    withdraw = 'bank_port'// 提现
+    withdraw = 'bank_port',// 提现
+    financialManagement = 'manage_money_port' // 理财
 }
 
 export interface AccountDetail {
