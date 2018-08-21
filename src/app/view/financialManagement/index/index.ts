@@ -89,7 +89,7 @@ export class Index extends Widget {
             return;
         }
         
-        popNew('app-view-financialManagement-productDetail-productDetail', { i, item });
+        popNew('app-view-financialManagement-productDetail-productDetail', { i, item,record:this.state.record });
         
     }
 
