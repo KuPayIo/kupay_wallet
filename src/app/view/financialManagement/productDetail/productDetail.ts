@@ -95,6 +95,7 @@ export class ProductDetail extends Widget {
             return;
         }
         const data = await buyProduct(this.state.id,this.state.amount);
+        console.log('data',data);
         await getPurchaseRecord();
         if (data) {
             popNew('app-components-message-message', { itype: 'success', content: '购买成功', center: true });
