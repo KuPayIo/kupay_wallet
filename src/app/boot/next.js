@@ -30,7 +30,7 @@ winit.initNext = function () {
   var flags = winit.flags;
 
   // 检查更新
-  checkUpdate();
+  //checkUpdate();
 
   winit = undefined; //一定要立即释放，保证不会重复执行
   //先登录
@@ -118,6 +118,8 @@ winit.initNext = function () {
       index.run(() => {
         // 关闭读取界面
         document.body.removeChild(document.getElementById('rcmj_loading_log'));
+          // 检查更新
+          checkUpdate();
       });
       // 加载其他文件
       util.loadDir(["app/view/"], flags, fm, undefined, function (fileMap) {
