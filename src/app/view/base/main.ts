@@ -15,6 +15,7 @@ import { ERC20Tokens } from '../../core/eth/tokens';
 import { EthWallet } from '../../core/eth/wallet';
 import { sign } from '../../core/genmnemonic';
 import { shapeshift } from '../../exchange/shapeshift/shapeshift';
+import { fetchWithdrawGasPrice } from '../../net/pullWallet';
 import { dataCenter } from '../../store/dataCenter';
 import { LockScreen } from '../../store/interface';
 import { find, initStore, updateStore } from '../../store/store';
@@ -34,16 +35,7 @@ export const run = (cb): void => {
     initStore();
     dataCenter.init();
     initEthTokenDecimals();
-    const props = {
-        width:120,
-        borderWidth:15,
-        activeColor:'red',
-        bgColor:'#ccc',
-        activePercent:0.3,
-        centerStyle:'fontSize:36px;',
-        centerText:'30%'
-    };
-    // popNew('app-view-base-test');
+    fetchWithdrawGasPrice();
     // makepayment();
     // exchangeManage.init();
     // 打开界面

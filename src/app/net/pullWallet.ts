@@ -2,6 +2,7 @@
  * 主动向钱包通讯
  */
 // ===================================================== 导入
+import { ajax } from '../../pi/lang/mod';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
@@ -350,6 +351,8 @@ export const getTransactionsByAddr = async (addr: string) => {
 
 // ==========================================提现gasPrice获取,后台服务器也使用此接口
 export const fetchWithdrawGasPrice = () => {
-    // todo
+    const url = 'https://safe-relay.gnosis.pm/api/v1/gas-station/';
+    
 };
+
 // ===================================================== 本地
