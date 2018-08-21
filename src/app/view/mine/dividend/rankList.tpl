@@ -13,7 +13,7 @@
     
         {{for ind,val of it1.gainRank}}
         <div w-class="rankItem" style="color: #666666;">
-            <span style="margin-left: 50px;font-weight: 600;color: {{ind<=10?'#F17835':'#111111'}}">{{val.index}}</span>
+            <span style="margin-left: 50px;font-weight: 600;color: {{ind<10?'#F17835':'#111111'}}">{{val.index}}</span>
             <span style="margin-left: 67px;">{{val.name}}</span>
             <span style="float: right;margin-right: 30px;font-weight: 600;">{{val.num}}</span>        
         </div>

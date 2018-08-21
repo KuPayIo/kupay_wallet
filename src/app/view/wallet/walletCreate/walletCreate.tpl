@@ -1,4 +1,4 @@
-<div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page">
+<div class="ga-new-page" ev-back-click="backPrePage" w-class="ga-new-page" id="page">
     <app-components-topBar-topBar>{title:"设置密码"}</app-components-topBar-topBar>
     <app-view-wallet-walletCreate-headTips-headTips>{content:"该密码用于保护钱包，KuPay不储存用户密码，如果您忘了密码，我们将无法帮助你重置。请不要丢失或忘记。"}</app-view-wallet-walletCreate-headTips-headTips>
     <div w-class="ga-registered-container">
