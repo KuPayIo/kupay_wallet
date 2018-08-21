@@ -173,3 +173,10 @@ export const gasPrice = 5000000000;
 
 // 默认ETH gasLimit
 export const gasLimit = 21000;
+
+// 最小提现金额
+export const withdrawLimit = {
+    KT:1000,
+    ETH:0.01,
+    BTC:0.001
+};

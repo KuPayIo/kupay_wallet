@@ -39,6 +39,7 @@ export class Home extends Widget {
             avatar = wallet.avatar;
             walletName = gwlt.nickName;
             mnemonicBackup = gwlt.mnemonicBackup;
+            console.log('mine-----mnemonicBackup',mnemonicBackup);
         }
         this.state = {
             walletList,
@@ -100,6 +101,8 @@ export class Home extends Widget {
                 // }
             ]
         };
+        console.log('mine-----walletList',walletList);
+        console.log('mine-----state',this.state);
     }
 
     // 处理菜单点击事件

@@ -28,7 +28,7 @@
         </div>
 
         <div w-class="charge">
-                <span w-class="chargeAmount">手续费</span>
+                <span w-class="chargeAmount">矿工费</span>
                 <div w-class="amountInput">{{it1.serviceCharge}}</div>
                 <span w-class="unit">{{it.currencyName}}</span>
         </div>

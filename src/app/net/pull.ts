@@ -12,7 +12,7 @@ import { parseCloudAccountDetail, parseCloudBalance,
     parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog,paseProductList,pasePurchaseRecord } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
-import { doErrorShow, showError } from '../utils/toolMessages';
+import { showError } from '../utils/toolMessages';
 import { kpt2kt, largeUnit2SmallUnitString, popPswBox, transDate } from '../utils/tools';
 
 // export const conIp = '47.106.176.185';

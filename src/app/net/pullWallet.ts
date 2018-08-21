@@ -347,4 +347,9 @@ export const getTransactionsByAddr = async (addr: string) => {
 };
 
 // ===================================================shapeShift相关end
+
+// ==========================================提现gasPrice获取,后台服务器也使用此接口
+export const fetchWithdrawGasPrice = () => {
+    // todo
+};
 // ===================================================== 本地

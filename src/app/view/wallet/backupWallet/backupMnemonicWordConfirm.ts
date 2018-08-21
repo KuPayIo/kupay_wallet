@@ -6,7 +6,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { Wallet } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
-import { shuffle } from '../../../utils/tools';
+import { getFirstEthAddr, shuffle } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;
@@ -88,8 +88,6 @@ export class BackupMnemonicWordConfirm extends Widget {
             mnemonic.isActive = true;
             this.state.confirmedMnemonic.push(mnemonic);
         }
-        console.log(this.state.confirmedMnemonic);
-        console.log(this.state.confirmedMnemonic);
         this.paint();
     }
 
@@ -100,19 +98,20 @@ export class BackupMnemonicWordConfirm extends Widget {
     }
 
     private deleteMnemonic() {
-        let isUpdate = false;
+        const curWalletId = find('curWallet').walletId;
+        
         const walletList: Wallet[] = find('walletList').map(v => {
             if (v.walletId === this.props.walletId) {
-                isUpdate = true;
+                // isUpdate = true;
                 const gwlt = GlobalWallet.fromJSON(v.gwlt);
                 gwlt.mnemonicBackup = true;
                 v.gwlt = gwlt.toJSON();
+                if (curWalletId === this.props.walletId) updateStore('curWallet', v);
             }
-            if (isUpdate) updateStore('curWallet', v);
-
+            
             return v;
         });
-        if (isUpdate) updateStore('walletList', walletList);
+        updateStore('walletList', walletList);
     }
 
     private compareMnemonicEqualed(): boolean {
