@@ -3,75 +3,75 @@
  */
 // ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { deepCopy } from '../../../../pi/util/util';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList,getPurchaseRecord } from '../../../net/pull';
+import { Product } from '../../../store/interface';
 import { find, register } from '../../../store/store';
+import { Config } from '../config/config';
+import { PurchaseRecord } from '../purchaseRecord/purchaseRecord';
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+interface Props {
+    isActive:boolean;
+}
 export class Index extends Widget {
     public ok: () => void;
     constructor() {
         super();
     }
-    public create() {
-        super.create();
+    public setProps(props:Props,oldProps:Props) {
+        super.setProps(props,oldProps);
         this.init();
     }
-    public attach() {
-        super.attach();
+
+    public updateProductList(productList:Product[]) {
+        this.state.productList = productList;
+        this.paint();
+    }
+    public updatePurchaseRecord(purchaseRecord:PurchaseRecord[]) {
+        this.state.record = purchaseRecord;
+        this.paint();
+    }
+    /**
+     * 未创建钱包时获取静态理财产品列表
+     */
+    public getOutLineProductList() {
+        const productList = [];
+        const productListConfig = deepCopy(Config.productList);
+        for (const key in productListConfig) {
+            productListConfig[key].total = 100;
+            productListConfig[key].surplus = 100;
+            productList.push(productListConfig[key]);
+        }
+
+        return productList;
+    }
+    /* public afterUpdate() {
+        super.afterUpdate();
+        if (!this.props.isActive) return;
         for (let i = 0;i < this.state.productList.length;i++) {
             const canvasId = `canvas${i}`;
-            const sur = this.state.productList[i].surplus;
+            // const sur = this.state.productList[i].surplus;
+            const sur = 98888;
             const total = this.state.productList[i].total;
             this.drawCircle(canvasId,sur,total);
         }
-            
-    }
-    // public afterUpdate() {
-    //     super.afterUpdate();
-    //     for (let i = 0;i < this.state.productList.length;i++) {
-    //         const canvasId = `canvas${i}`;
-    //         const sur = this.state.productList[i].surplus;
-    //         const total = this.state.productList[i].total;
-    //         this.drawCircle(canvasId,sur,total);
-    //     }
         
-    // }
-    public async init() {
-
+    } */
+    public init() {
         this.state = {
             record: [],
-            productList: [
-                {
-                    id:'60001',
-                    title: '优选理财-随存随取',
-                    profit: '8%',
-                    productName: 'ETH资管第1期',
-                    productDescribe: '赎回T+0到账 | 0.1 ETH/份',
-                    unitPrice: 0.1,
-                    coninType:'ETH',
-                    days: 'T+0',
-                    total:1000,
-                    surplus: 1000,
-                    purchaseDate: '无',
-                    interestDate: '无',
-                    endDate: '无',
-                    productIntroduction: 'ETH资管第1期是KuPay退出的一种固定收益类，回报稳定、无风险定期产品。',
-                    limit: '5',
-                    lockday:'无',
-                    isSoldOut:true
-                }
-            ]
+            productList: this.getOutLineProductList()
         };
-        const random = find('conRandom');
-        if (random) {
-            const data = await getProductList();
-            const recordData = getPurchaseRecord();
+        if (this.props.isActive && find('conRandom')) {
+            getProductList();
+            getPurchaseRecord();
         }
         
     }
@@ -101,7 +101,7 @@ export class Index extends Widget {
     }
     public drawCircle(canvasId:string,t:number,total:number) {
         const oC = document.getElementById(canvasId);
-        const oGC = oC.getContext('2d');
+        const oGC = (<any>oC).getContext('2d');
         oGC.clearRect(0,0,150,150);  
         const pi = Math.PI;
         const percent = t / total;
@@ -149,10 +149,10 @@ register('conRandom', async (conRandom) => {
     
 });
 register('productList', async (productList) => {
+    console.log('productList------home-------',productList);
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.state.productList = productList;
-        w.attach();
+        w.updateProductList(productList);
         w.paint();
     }
     
@@ -160,18 +160,17 @@ register('productList', async (productList) => {
 register('purchaseRecord', async (purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.state.record = purchaseRecord;
-        w.paint();
+        w.updatePurchaseRecord(purchaseRecord);
     }
     
 });
-register('curWallet', async (curWallet) => {
-    if (!curWallet) return;
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        const data = await getProductList();
-        const recordData = getPurchaseRecord();
-        w.paint();
-    }
+// register('curWallet', async (curWallet) => {
+//     if (!curWallet) return;
+//     const w: any = forelet.getWidget(WIDGET_NAME);
+//     if (w) {
+//         const data = await getProductList();
+//         const recordData = getPurchaseRecord();
+//         w.paint();
+//     }
     
-});
+// }); 

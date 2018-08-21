@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { openAndGetRandom } from '../../../net/pull';
+import { openAndGetRandom, setUserInfo } from '../../../net/pull';
 import { Addr, Wallet } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
 import {
@@ -85,7 +85,7 @@ export class WalletCreate extends Widget {
             return;
         }
         if (!walletNameAvailable(this.state.walletName)) {
-            popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-24位钱包名', center: true });
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-10位钱包名', center: true });
 
             return;
         }
@@ -140,7 +140,7 @@ export class WalletCreate extends Widget {
         updateStore('curWallet', wallet);
         updateStore('salt', salt);
 
-        openAndGetRandom();
+        openAndGetRandom(true);
     }
 
     public importWalletClick() {

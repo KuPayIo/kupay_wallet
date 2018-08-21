@@ -4,12 +4,12 @@
 // ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { eth2Wei } from '../../../core/globalWallet';
+import { eth2Wei, wei2Eth } from '../../../core/globalWallet';
 import { getCloudBalance, getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find } from '../../../store/store';
-import { withdrawServiceCharge } from '../../../utils/constants';
-import { getCurrentAddrByCurrencyName, openBasePage, popPswBox, VerifyIdentidy } from '../../../utils/tools';
+import { gasLimit, gasPrice } from '../../../utils/constants';
+import { getCurrentAddrByCurrencyName, popPswBox, VerifyIdentidy } from '../../../utils/tools';
 // =================================================导出
 
 interface Props {
@@ -26,8 +26,8 @@ export class Withdraw extends Widget {
     }
     public init(): void {
         this.state = {
-            amount:0,// 提币金额
-            serviceCharge:0,// 手续费
+            amount:'',// 提币金额
+            serviceCharge:wei2Eth(gasLimit * gasPrice),// 手续费
             cloudBalance:find('cloudBalance',CurrencyType[this.props.currencyName]),// 可提金额
             isFeeEnough:true
         };
@@ -36,13 +36,12 @@ export class Withdraw extends Widget {
         this.ok && this.ok();
     }
     public amountChange(e:any) {
-        this.state.amount = Number(e.value);
-        this.state.serviceCharge = this.state.amount * withdrawServiceCharge;
+        this.state.amount = e.value;
         this.judgeFeeEnough();
         this.paint();
     }
     public judgeFeeEnough() {
-        const amount = this.state.amount;
+        const amount = Number(this.state.amount);
         const serviceCharge = this.state.serviceCharge;
         const cloudBalance = this.state.cloudBalance;
         if ((amount + serviceCharge) > cloudBalance) {
@@ -54,7 +53,7 @@ export class Withdraw extends Widget {
     }
     // 提现
     public async withdrawClick() {
-        if (this.state.amount <= 0) {
+        if (Number(this.state.amount) <= 0) {
             popNew('app-components-message-message',{ itype:'error',content:'请输入提现金额',center:true });
 
             return;

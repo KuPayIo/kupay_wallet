@@ -144,8 +144,14 @@ export const signRawTransactionETH = async (psw:string,fromAddr:string,toAddr:st
  */
 export const sendRawTransactionETH = async (signedTx) => {
     const api = new EthApi();
+    let hash = '';
+    try {
+        hash = await api.sendRawTransaction(signedTx);
+    } catch (err) {
+        doErrorShow(err);
+    }
 
-    return api.sendRawTransaction(signedTx);
+    return hash;
 };
 
 // ==============================================ERC20

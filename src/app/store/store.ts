@@ -74,7 +74,9 @@ export const register = (keyName: KeyName, cb: Function): void => {
 export const unregister = (keyName: KeyName, cb: Function): void => {
     handlerMap.remove(keyName, <any>cb);
 };
-
+/**
+ * 初始化store
+ */
 export const initStore = () => {
     // 从localStorage中取wallets
     const wallets = findByLoc('wallets');

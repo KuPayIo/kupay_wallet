@@ -33,7 +33,6 @@ export const requestAsync = async (msg: any): Promise<any> => {
                 console.log(`错误信息为${resp.type}`);
                 reject(resp);
             } else if (resp.result !== 1) {
-                showError(resp.result);
                 reject(resp);
             } else {
                 resolve(resp);
@@ -74,7 +73,8 @@ export const requestLogined = async (msg: any) => {
 /**
  * 开启连接并获取验证随机数
  */
-export const openAndGetRandom = async () => {
+export const openAndGetRandom = async (setuserinfo?:boolean) => {
+    console.log('setuserinfo1=================',setuserinfo);
     const wallet = find('curWallet');
     if (!wallet) return;
     const oldUser = dataCenter.getUser();
@@ -90,17 +90,31 @@ export const openAndGetRandom = async () => {
     setUrl(`ws://${conIp}:2081`);
     dataCenter.setUser(wallet.walletId);
     dataCenter.setUserPublicKey(gwlt.publicKey);
+    console.log('setuserinfo2=================',setuserinfo);
 
-    return doOpen();
+    return doOpen(setuserinfo);
 
 };
 
-const doOpen = async () => {
+const doOpen = async (setuserinfo:boolean) => {
+    console.log('setuserinfo3=================',setuserinfo);
+
     return new Promise((resolve, reject) => {
+        console.log('setuserinfo4=================',setuserinfo);
         open(async (con) => {
-            console.log('----------------------', con);
             try {
                 await getRandom();
+                if (setuserinfo) {
+                    const curWallet = find('curWallet');
+                    const gwlt = GlobalWallet.fromJSON(curWallet.gwlt);
+                    const userInfo = {
+                        name:gwlt.nickName,
+                        avatar:curWallet.avatar
+                    }; 
+                    console.log('userInfo-------',JSON.stringify(userInfo));
+                    // tslint:disable-next-line:max-line-length
+                    // setUserInfo(JSON.stringify(userInfo)).then(res => console.log('userinfo========',res)).catch(err => console.log('userinfo=======',err));
+                }
                 resolve(true);
             } catch (error) {
                 reject(false);
@@ -111,7 +125,7 @@ const doOpen = async () => {
         }, async () => {
             updateStore('loginState', LoginState.init);
             try {
-                await doOpen();
+                await doOpen(setuserinfo);
                 resolve(true);
             } catch (error) {
                 reject(false);
@@ -245,11 +259,7 @@ export const inputInviteCdKey = async (code) => {
 
         return [];
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -289,11 +299,7 @@ export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: 
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -310,11 +316,7 @@ export const convertRedBag = async (cid) => {
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -362,11 +364,7 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -399,11 +397,7 @@ export const queryConvertLog = async (start) => {
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -426,11 +420,7 @@ export const queryDetailLog = async (rid: string) => {
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -499,7 +489,7 @@ export const getData = async (key) => {
  */
 export const setUserInfo = async (value) => {
     const msg = { type: 'wallet/user@set_info', param: { value } };
-
+    
     return requestAsync(msg);
 };
 
@@ -526,14 +516,20 @@ export const doChat = async () => {
 /**
  * 获取指定货币流水
  */
-export const getAccountDetail = async (coin: CurrencyType) => {
-    const msg = { type: 'wallet/account@get_detail', param: { coin } };
-    requestAsync(msg).then(r => {
-        if (!r.value || r.value.length <= 0) return;
-        console.log('accountDetail',r.value);
-        const detail = parseCloudAccountDetail(coin, r.value);
-        updateStore('accountDetail', getBorn('accountDetail').set(coin, detail));
-    });
+export const getAccountDetail = async (coin: string) => {
+    console.log('coin----------',coin,CurrencyType[coin]);
+    const msg = { type: 'wallet/account@get_detail', param: { coin:CurrencyType[coin] } };
+
+    try {
+        const res = await requestAsync(msg);
+        const detail = parseCloudAccountDetail(coin, res.value);
+        updateStore('accountDetail',getBorn('accountDetail').set(coin, detail));
+    } catch (err) {
+        console.log(err);
+        showError(err && (err.result || err.type));
+
+        return;
+    }
 };
 
 /**
@@ -613,11 +609,7 @@ export const getBankAddr = async () => {
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -644,11 +636,7 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
         
         return true;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return false;
     }
@@ -674,11 +662,7 @@ export const withdrawFromServer = async (toAddr:string,coin:number,value:string)
 
         return true;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return false;
     }
@@ -697,11 +681,7 @@ export const getRechargeLogs = async () => {
         updateStore('rechargeLogs',parseRechargeWithdrawalLog(res.value));
 
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -720,11 +700,7 @@ export const getWithdrawLogs = async () => {
         const res = await requestAsync(msg);
         updateStore('withdrawLogs',parseRechargeWithdrawalLog(res.value));
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -742,17 +718,13 @@ export const getProductList = async () => {
     
     try {
         const res = await requestAsync(msg);
-        console.log('getProductList',res);
+        console.log('getProductList-------++++++++++++',res);
         const result = paseProductList(res);
         updateStore('productList',result);
 
         return result;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return [];
     }
@@ -784,11 +756,7 @@ export const buyProduct = async (pid:any,count:any) => {
             return false;
         }
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
         
         return false;
     }
@@ -811,12 +779,7 @@ export const getPurchaseRecord = async () => {
         updateStore('purchaseRecord',record);
 
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
-
+        showError(err && (err.result || err.type));
     }
 };
 /**
@@ -836,11 +799,7 @@ export const buyBack = async (timeStamp:any) => {
 
         return true;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return false;
     }
