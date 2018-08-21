@@ -42,6 +42,9 @@ export class Home extends Widget {
     }
     public attach() {
         super.attach();
+        document.getElementById('pageOuter').onscroll = () => {
+            this.pageScroll();
+        };
         if (!this.hideHead) {
             this.hideHead = document.getElementById('hideHead');
         }
@@ -167,18 +170,27 @@ export class Home extends Widget {
         this.registerAddrsFun();
         this.paint();
     }
-    public pageScroll(e: any) {
-
-        const offset = this.handleScroll(e.x, e.y, this.maxVal, e.subType === 'start', e.subType === 'over');
-        const ratio = offset / OFFSET_COMPALET_VALUE;
-        document.getElementById('page').style.transform = `translateY(${-offset}px)`;
-        if (offset >= OFFSET_COMPALET_VALUE) {
+    public pageScroll() {
+        const page = document.getElementById('page');
+        const top = -page.getBoundingClientRect().top;
+        if (top > 200) {
             this.hideHead.style.display = 'block';
         } else {
             this.hideHead.style.display = 'none';
         }
-
     }
+    // public pageScroll(e: any) {
+
+    //     const offset = this.handleScroll(e.x, e.y, this.maxVal, e.subType === 'start', e.subType === 'over');
+    //     const ratio = offset / OFFSET_COMPALET_VALUE;
+    //     // document.getElementById('page').style.transform = `translateY(${-offset}px)`;
+    //     if (offset >= OFFSET_COMPALET_VALUE) {
+    //         this.hideHead.style.display = 'block';
+    //     } else {
+    //         this.hideHead.style.display = 'none';
+    //     }
+
+    // }
 
     /**
      * 余额更新
@@ -198,29 +210,30 @@ export class Home extends Widget {
     }
 
     // 处理滑动，返回滑动距离，需要依赖本类中的几个成员变量
-    private handleScroll(x: number, y: number, maxVal: number, isStart: boolean, isEnd: boolean) {
-        if (isStart) {
-            this.startY = y;
-        }
-        this.distance = this.startY - y;
+    // private handleScroll(x: number, y: number, maxVal: number, isStart: boolean, isEnd: boolean) {
+    //     if (isStart) {
+    //         this.startY = y;
+    //     }
+    //     this.distance = this.startY - y;
 
-        let offset = this.offset + this.distance;
-        if (offset < 0) {
-            offset = 0;
-        }
-        if (offset > maxVal) {
-            offset = maxVal;
-        }
+    //     let offset = this.offset + this.distance;
+    //     if (offset < 0) {
+    //         offset = 0;
+    //     }
+    //     if (offset > maxVal) {
+    //         offset = maxVal;
+    //     }
 
-        if (isEnd) {
-            this.offset = offset;
-            this.distance = 0;
-        }
+    //     if (isEnd) {
+    //         this.offset = offset;
+    //         this.distance = 0;
+    //     }
 
-        return offset;
-    }
+    //     return offset;
+    // }
 }
 // ============================== 本地
+
 /**
  * 解析钱包货币
  * 

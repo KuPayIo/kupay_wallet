@@ -718,7 +718,7 @@ export const getProductList = async () => {
     
     try {
         const res = await requestAsync(msg);
-        console.log('getProductList',res);
+        console.log('getProductList-------++++++++++++',res);
         const result = paseProductList(res);
         updateStore('productList',result);
 

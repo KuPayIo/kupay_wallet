@@ -1,6 +1,7 @@
 
 .ga-new-page{
     background-color: #fff;
+    overflow: hidden auto;
 }
 .ga-line20{
     height: 20px;

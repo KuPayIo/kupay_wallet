@@ -41,7 +41,6 @@ export class WalletCreate extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
-
     public walletNameChange(e: any) {
         this.state.walletName = e.value;
     }

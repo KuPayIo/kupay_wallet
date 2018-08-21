@@ -1,4 +1,4 @@
-<div class="ga-new-page hide-scrollbar" on-move="pageScroll">
+<div class="ga-new-page hide-scrollbar" w-class="hide-scrollba" id="pageOuter">
     <div  id="page">
         <div id="gaHeader" w-class="ga-header-Outer">
         {{if it1.gwlt}}
@@ -57,6 +57,7 @@
                 </li>
                 {{end}}
             </ul>
+            <div style="height: 170px;margin-top:10px;"></div>
         </div>
     </div>
     <div id="hideHead" w-class="hideHeadOuter">
