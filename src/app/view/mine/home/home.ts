@@ -7,9 +7,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { notify } from '../../../../pi/widget/event';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { GlobalWallet } from '../../../core/globalWallet';
 import { find, register } from '../../../store/store';
-import { getMnemonic, popPswBox } from '../../../utils/tools';
+import { popPswBox } from '../../../utils/tools';
 
 // ========================================================= 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -30,16 +29,16 @@ export class Home extends Widget {
         // 获取钱包显示头像
         const walletList = find('walletList');
         const wallet = find('curWallet');
-        let gwlt: GlobalWallet = null;
+        let gwlt = null;
         let avatar = null;
         let walletName = null;
         let mnemonicBackup = null;
         if (wallet) {
-            gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+            // gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+            gwlt = JSON.parse(wallet.gwlt);
             avatar = wallet.avatar;
             walletName = gwlt.nickName;
             mnemonicBackup = gwlt.mnemonicBackup;
-            console.log('mine-----mnemonicBackup',mnemonicBackup);
         }
         this.state = {
             walletList,
@@ -101,8 +100,6 @@ export class Home extends Widget {
                 // }
             ]
         };
-        console.log('mine-----walletList',walletList);
-        console.log('mine-----state',this.state);
     }
 
     // 处理菜单点击事件
@@ -175,7 +172,7 @@ export class Home extends Widget {
             
             return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '导出中...' });
+        const close = popNew('app-components-loading-loading', { text: '导出中...' });
         
         const wallet = find('curWallet');
         let passwd;
@@ -184,12 +181,12 @@ export class Home extends Widget {
             if (!passwd) return;
         }
         try {
-            const mnemonic = await getMnemonic(wallet, passwd);
-            if (mnemonic) {
-                popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: wallet.walletId });
-            } else {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
-            }
+            // const mnemonic = await getMnemonic(wallet, passwd);
+            // if (mnemonic) {
+            //     popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: wallet.walletId });
+            // } else {
+            //     popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+            // }
         } catch (error) {
             console.log(error);
             popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });

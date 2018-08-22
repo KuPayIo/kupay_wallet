@@ -2,18 +2,17 @@
  * 主动向钱包通讯
  */
 // ===================================================== 导入
-import { ajax } from '../../pi/lang/mod';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
-import { eth2Wei, GlobalWallet, wei2Eth } from '../core/globalWallet';
+import { GlobalWallet } from '../core/globalWallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { ethTokenMultiplyDecimals } from '../utils/tools';
+import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 // ===================================================== 导出
 
 /**

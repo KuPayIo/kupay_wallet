@@ -1,14 +1,14 @@
 /**
  * 基础操作
  */
-import { popNew } from '../../pi/ui/root';
 import { GlobalWallet } from '../core/globalWallet';
 import { openAndGetRandom } from '../net/pull';
 import { Addr, Wallet } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { getAvatarRandom } from './account';
 import { defalutShowCurrencys } from './constants';
-import { encrypt, getAddrsAll, openBasePage } from './tools';
+import { getAddrsAll, openBasePage } from './tools';
+import { encrypt } from './walletTools';
 
 /**
  * 通过助记词导入钱包

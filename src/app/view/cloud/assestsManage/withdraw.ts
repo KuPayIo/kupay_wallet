@@ -4,12 +4,13 @@
 // ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { eth2Wei, wei2Eth } from '../../../core/globalWallet';
 import { getCloudBalance, getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find } from '../../../store/store';
 import { gasLimit, gasPrice, withdrawLimit } from '../../../utils/constants';
-import { getCurrentAddrByCurrencyName, popPswBox, VerifyIdentidy } from '../../../utils/tools';
+import { getCurrentAddrByCurrencyName, popPswBox } from '../../../utils/tools';
+import { eth2Wei, wei2Eth } from '../../../utils/unitTools';
+import { VerifyIdentidy } from '../../../utils/walletTools';
 // =================================================导出
 
 interface Props {
@@ -70,7 +71,7 @@ export class Withdraw extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '正在提现...' });
+        const close = popNew('app-components-loading-loading', { text: '正在提现...' });
         const verify = await VerifyIdentidy(wallet,passwd);
         if (!verify) {
             close.callback(close.widget);

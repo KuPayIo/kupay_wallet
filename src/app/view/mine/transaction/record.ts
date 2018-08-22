@@ -7,11 +7,10 @@ interface State {
 // =============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../store/dataCenter';
+import { dataCenter } from '../../../logic/dataCenter';
 import { find } from '../../../store/store';
-import {
-    effectiveCurrencyNoConversion, getAddrById, parseAccount, parseDate
-} from '../../../utils/tools';
+import { getAddrById, parseAccount, parseDate } from '../../../utils/tools';
+import { effectiveCurrencyNoConversion } from '../../../utils/walletTools';
 
 // =========================================================导出
 export class AddAsset extends Widget {

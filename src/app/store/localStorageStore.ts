@@ -111,3 +111,6 @@ register('shapeShiftTxsMap',(shapeShiftTxsMap:Map<string,ShapeShiftTxs>) => {
 register('ERC20TokenDecimals',(ERC20TokenDecimals:Object) => {
     setLocalStorage('ERC20TokenDecimals',ERC20TokenDecimals);
 });
+
+// tslint:disable-next-line:no-default-export
+export default {};

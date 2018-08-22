@@ -1,7 +1,7 @@
 /**
  * global wallet
  */
-import { dataCenter } from '../store/dataCenter';
+import { dataCenter } from '../logic/dataCenter';
 import { Addr, CurrencyRecord } from '../store/interface';
 import { find } from '../store/store';
 import { btcNetwork, lang, strength } from '../utils/constants';
@@ -62,7 +62,7 @@ export class GlobalWallet {
         const gwlt = new GlobalWallet();
 
         gwlt._glwtId = wlt.glwtId;
-        gwlt._nickName = wlt.nickname;
+        gwlt._nickName = wlt.nickName;
         gwlt._vault = wlt.vault;
         gwlt._mnemonicBackup = wlt.mnemonicBackup;
         gwlt._publicKey = wlt.publicKey;
@@ -270,7 +270,7 @@ export class GlobalWallet {
     public toJSON(): string {
         const wlt = {
             glwtId: this._glwtId,
-            nickname: this._nickName,
+            nickName: this._nickName,
             vault: this._vault,
             mnemonicBackup: this._mnemonicBackup,
             publicKey: this._publicKey
@@ -296,21 +296,3 @@ export class GlobalWallet {
     }
 
 }
-
-export const eth2Wei = (amount:number|string):string => {
-    const web3 = new Web3();
-    const decimals = new web3.BigNumber('1000000000000000000');
-    const balance = decimals.times(amount);
-
-    return  `0x${balance.toString(16)}`;
-};
-
-export const wei2Eth = (amount:string|number):number => {
-    const web3 = new Web3();
-    const decimals = new web3.BigNumber('1000000000000000000');
-    const wei = new web3.BigNumber(amount);
-    
-    const balance = wei.div(decimals);
-
-    return Number(balance.toString(10));
-};

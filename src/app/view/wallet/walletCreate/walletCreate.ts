@@ -11,7 +11,7 @@ import {
     getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
 } from '../../../utils/account';
 import { defalutShowCurrencys } from '../../../utils/constants';
-import { encrypt } from '../../../utils/tools';
+import { encrypt } from '../../../utils/walletTools';
 
 export class WalletCreate extends Widget {
     public ok: () => void;
@@ -106,7 +106,7 @@ export class WalletCreate extends Widget {
             return;
         }
 
-        const close = popNew('pi-components-loading-loading', { text: '创建中...' });
+        const close = popNew('app-components-loading-loading', { text: '创建中...' });
         await this.createWallet();
         close.callback(close.widget);
         this.ok && this.ok();

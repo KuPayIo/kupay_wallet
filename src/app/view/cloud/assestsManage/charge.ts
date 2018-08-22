@@ -71,7 +71,7 @@ export class Charge extends Widget {
         }
        
         console.time('recharge');
-        const close = popNew('pi-components-loading-loading', { text: '正在充值...' });
+        const close = popNew('app-components-loading-loading', { text: '正在充值...' });
         const toAddr = await getBankAddr();
         if (!toAddr) {
             close.callback(close.widget);

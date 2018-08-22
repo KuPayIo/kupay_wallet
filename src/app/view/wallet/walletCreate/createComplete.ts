@@ -14,7 +14,7 @@ export class CreateComplete extends Widget {
         const ls = find('lockScreen');
 
         if (!ls.psw && !ls.jump) {
-            popNew('app-view-guidePages-setLockScreenScret', { jump: true });
+            popNew('app-view-mine-lockScreen-setLockScreenScret', { jump: true });
         }
     }
 

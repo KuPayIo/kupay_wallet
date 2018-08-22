@@ -76,27 +76,20 @@ winit.initNext = function () {
 
 
     var sourceList = [
-      "pi/browser/",
-      "pi/compile/",
-      "pi/components/",
-      "pi/lang/",
       "pi/ui/",
-      "pi/net/",
-      "pi/util/",
-      "pi/widget/",
-      "app/components/",
+      "app/components/loading/",
+      "app/components/ringProgressBar/",
       "app/res/",
-      "app/utils/",
-      "app/store/",
       "app/view/base/",
-      "app/view/wallet/",
+      "app/view/wallet/home/",
       "app/view/cloud/home/",
       "app/view/financialManagement/index/",
       "app/view/mine/home/",
       "app/view/guidePages/",
     ]
-
+    console.time('firstload');
     util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+      console.timeEnd('firstload');
       console.log(fileMap)
       // console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
       var tab = util.loadCssRes(fileMap);
@@ -113,9 +106,31 @@ winit.initNext = function () {
         // 关闭读取界面
         document.body.removeChild(document.getElementById('rcmj_loading_log'));
       });
+      console.time('secondLoad');
+      const level2SourceList = [
+        "app/core/",
+        "app/logic/"
+      ];
       // 加载其他文件
-      util.loadDir(["app/view/"], flags, fm, undefined, function (fileMap) {
+      util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
         console.log(fileMap)
+        console.timeEnd('secondLoad');
+        var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
+        updatedStore('level_2_page_loaded',true);
+        const level3SourceList = [
+          "app/components/",
+          // "app/exchange/",
+          // "app/net/",
+          "app/view/"
+        ]
+        console.time('thirdLoad');
+        util.loadDir(level3SourceList, flags, fm, undefined, function (fileMap) {
+          console.log(fileMap)
+          console.timeEnd('thirdLoad');
+          updatedStore('level_3_page_loaded',true);
+        }, function (r) {
+          alert("加载目录失败, " + r.error + ":" + r.reason);
+        }, dirProcess.handler);
       }, function (r) {
         alert("加载目录失败, " + r.error + ":" + r.reason);
       }, dirProcess.handler);

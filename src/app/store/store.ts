@@ -8,7 +8,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { config } from '../core/config';
 // tslint:disable-next-line:max-line-length
-import { defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
+import { defaultExchangeRateJson, supportCurrencyList } from '../utils/constants';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
 import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog,ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransactionRecord, Wallet } from './interface';
@@ -109,7 +109,7 @@ export const initStore = () => {
     store.TopContacts = findByLoc('TopContacts') || [];
 
     // 初始化默认兑换汇率列表
-    const rateJson = (config.dev_mode === 'dev') ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
+    const rateJson = defaultExchangeRateJson;
     const m = new Map();
     for (const key in rateJson) {
         if (rateJson.hasOwnProperty(key)) { m.set(key, rateJson[key]); }
@@ -117,12 +117,12 @@ export const initStore = () => {
     store.exchangeRateJson = m;
 
     // 初始化货币信息列表
-    store.currencyList = (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain;
+    store.currencyList = supportCurrencyList;
 
 };
 
 // tslint:disable-next-line:max-line-length
-type KeyName = MapName | LocKeyName | shapeShiftName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
+type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
  'inviteRedBagRec' | 'nonce' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord';
@@ -131,6 +131,7 @@ type MapName = 'exchangeRateJson' | 'hashMap';
 
 type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo' | 'shapeShiftTxs';
 
+type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' | 'level_3_page_loaded';
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
  'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals';

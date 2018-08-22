@@ -3,34 +3,12 @@
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
-import { isNumber } from '../../pi/util/util';
-import { BTCWallet } from '../core/btc/wallet';
-import { Cipher } from '../core/crypto/cipher';
-import { ibanToAddress, isValidIban } from '../core/eth/helper';
-import { ERC20Tokens } from '../core/eth/tokens';
-import { EthWallet } from '../core/eth/wallet';
-import { toMnemonic } from '../core/genmnemonic';
-import { eth2Wei, GlobalWallet, wei2Eth } from '../core/globalWallet';
-import { dataCenter } from '../store/dataCenter';
 import { Addr } from '../store/interface';
 import { find, updateStore } from '../store/store';
-import { lang, supportCurrencyList } from './constants';
+import { ERC20TokenDecimals, lang, supportCurrencyList } from './constants';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
-};
-// 这需要移除
-export const setLocalStorage = (key: any, data: any, notified?: boolean) => {
-    updateStore(key, data, notified);
-};
-
-// 这需要移除
-export const getLocalStorage = (key: any) => {
-    return find(key);
-};
-// 这需要移除
-export const removeLocalStorage = (key: string) => {
-    localStorage.removeItem(key);
 };
 
 export const sleep = (delay) => {
@@ -141,37 +119,8 @@ export const getAddrsByCurrencyName = (wallet: any, currencyName: string) => {
 
     return retAddrs;
 };
-
-// Password used to encrypt the plainText
-const passwd = 'gaia';
-/**
- * 密码加密
- * @param plainText 需要加密的文本
- */
-export const encrypt = (plainText: string) => {
-    const cipher = new Cipher();
-
-    return cipher.encrypt(passwd, plainText);
-};
-
-/**
- * 密码解密
- * @param cipherText 需要解密的文本
- */
-export const decrypt = (cipherText: string) => {
-    const cipher = new Cipher();
-
-    return cipher.decrypt(passwd, cipherText);
-};
-
-// hash256
-export const sha256 = (data: string) => {
-    const cipher = new Cipher();
-
-    return cipher.sha256(data);
-};
-
-export const randomRgbColor = () => { // 随机生成RGB颜色
+// 随机生成RGB颜色
+export const randomRgbColor = () => { 
     const r = Math.floor(Math.random() * 256);
     const g = Math.floor(Math.random() * 256);
     const b = Math.floor(Math.random() * 256);
@@ -195,182 +144,6 @@ export const getDefaultAddr = (addr: number | string) => {
     return `${addrStr.slice(0, 3)}...${addrStr.slice(-3)}`;
 };
 
-/**
- * sat转btc
- */
-export const sat2Btc = (num: number) => {
-    if (!num) return 0;
-
-    return num / Math.pow(10, 8);
-};
-
-/**
- * btc转sat
- */
-export const btc2Sat = (num: number) => {
-    if (!num) return 0;
-
-    return num * Math.pow(10, 8);
-};
-
-/**
- * kpt转kt
- */
-export const kpt2kt = (num: number) => {
-    if (!num) return 0;
-
-    return num / Math.pow(10, 9);
-};
-
-/**
- * kt转kpt
- */
-export const kt2kpt = (num: number) => {
-    if (!num) return 0;
-
-    return num * Math.pow(10, 9);
-};
-
-/**
- * 根据货币类型小单位转大单位
- */
-export const smallUnit2LargeUnit = (currencyName: string, amount: number) => {
-    if (currencyName === 'ETH') {
-        return wei2Eth(amount);
-    } else if (currencyName === 'KT') {
-        return kpt2kt(amount);
-    }
-};
-
-/**
- * 根据货币类型大单位转小单位
- */
-export const largeUnit2SmallUnit = (currencyName: string, amount: number) => {
-    if (currencyName === 'ETH') {
-        return eth2Wei(amount);
-    } else if (currencyName === 'KT') {
-        return Math.floor(kt2kpt(amount));
-    }
-};
-
-/**
- * 根据货币类型小单位转大单位  
- */
-export const smallUnit2LargeUnitString = (currencyName: string, amount: string): number => {
-    if (currencyName === 'ETH') {
-        return formatBalance(wei2Eth(amount));
-    } else if (currencyName === 'KT') {
-        return formatBalance(kpt2kt(Number(amount)));
-    }
-};
-
-/**
- * 根据货币类型大单位转小单位
- */
-export const largeUnit2SmallUnitString = (currencyName: string, amount: number): string => {
-    if (currencyName === 'ETH') {
-        return Number(eth2Wei(amount)).toString(10);
-    } else if (currencyName === 'KT') {
-        return kt2kpt(amount).toString(10);
-    }
-};
-
-/**
- * eth 代币除以精度计算
- */
-export const ethTokenDivideDecimals = (num: number, tokenName: string) => {
-    const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
-    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10, 18);
-
-    return num / decimals;
-};
-/**
- * eth 代币乘以精度计算
- */
-export const ethTokenMultiplyDecimals = (num: number, tokenName: string) => {
-    const ERC20TokenDecimals = getLocalStorage('ERC20TokenDecimals') || {};
-    const decimals = ERC20TokenDecimals[tokenName] ? ERC20TokenDecimals[tokenName] : Math.pow(10, 18);
-
-    return num * decimals;
-};
-
-/**
- * 获取有效的货币
- * 
- * @param perNum 转化前数据
- * @param currencyName  当前货币类型
- * @param conversionType 转化类型
- * @param isWei 是否wei转化
- */
-export const effectiveCurrency = (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean) => {
-
-    const r: any = { num: 0, show: '', conversionShow: '' };
-    const rate: any = dataCenter.getExchangeRate(currencyName);
-    let num;
-    if (currencyName === 'ETH') {
-        num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (currencyName === 'BTC') {
-        num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
-    }
-    num = formatBalance(num);
-    r.num = num;
-    r.show = `${num} ${currencyName}`;
-    r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
-
-    return r;
-
-};
-/**
- * 获取有效的货币不需要转化
- * 
- * @param perNum 转化前数据
- * @param currencyName  当前货币类型
- * @param isWei 是否wei转化effectiveCurrencyNoConversion
- */
-export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isMinUnit: boolean) => {
-    const r: any = { num: 0, show: '', conversionShow: '' };
-    let num;
-    if (currencyName === 'ETH') {
-        num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (currencyName === 'BTC') {
-        num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
-    }
-    r.num = num;
-    r.show = `${formatBalance(num)} ${currencyName}`;
-
-    return r;
-
-};
-
-/**
- * 获取有效的货币不需要转化
- * 
- * @param perNum 转化前数据
- * @param currencyName  当前货币类型
- * @param isMinUnit 是否是最小单位
- * 
- */
-export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean) => {
-    const rate: any = dataCenter.getExchangeRate(currencyName);
-    const r: any = { num: 0, conversionShow: '' };
-    let num;
-    if (currencyName === 'ETH') {
-        num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (currencyName === 'BTC') {
-        num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
-    }
-    r.num = num;
-    r.conversionShow = (num * rate[conversionType]).toFixed(2);
-
-    return r;
-
-};
 
 /**
  * 转化显示时间
@@ -455,57 +228,6 @@ export const sliceStr = (str, start, len): string => {
     return r;
 };
 
-/**
- * 获取新的地址信息
- * @param currencyName 货币类型
- */
-export const getNewAddrInfo = (currencyName, mnemonic, wallet) => {
-    const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
-    if (!currencyRecord) return;
-    const addrs = find('addrs');
-    const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
-
-    let address;
-    if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
-        const wlt = EthWallet.fromJSON(firstAddr.wlt);
-        const newWlt = wlt.selectAddressWlt(currencyRecord.addrs.length);
-        address = newWlt.address;
-    } else if (currencyName === 'BTC') {
-        const wlt = BTCWallet.fromJSON(firstAddr.wlt);
-        wlt.unlock();
-        address = wlt.derive(currencyRecord.addrs.length);
-        wlt.lock();
-
-    }
-
-    return address;
-};
-
-/**
- * 添加新的地址
- * @param currencyName 货币类型
- * @param address 新的地址
- * @param addrName 新的地址名
- * @param wltJson 新的地址钱包对象
- */
-export const addNewAddr = (currencyName, address, addrName) => {
-    const wallet = find('curWallet');
-    const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
-    if (!currencyRecord) return;
-    currencyRecord.addrs.push(address);
-    const addrs: Addr[] = find('addrs') || [];
-    const newAddrInfo: Addr = dataCenter.initAddr(address, currencyName, addrName);
-    addrs.push(newAddrInfo);
-    currencyRecord.currentAddr = address;
-
-    dataCenter.addAddr(address, addrName, currencyName);
-
-    updateStore('addrs', addrs);
-    updateStore('curWallet', wallet);
-
-    return newAddrInfo;
-};
-
 // 函数防抖
 export const debounce = (fn, wait = 1000) => {
     let timer = null;
@@ -519,40 +241,6 @@ export const debounce = (fn, wait = 1000) => {
             fn(...rest);
         }, wait);
     };
-};
-
-/**
- * 是否是有效地址
- * @param currencyName 货币类型
- * @param addr 地址
- */
-export const effectiveAddr = (currencyName: string, addr: string): [boolean, string] => {
-    let flag = false;
-    if (currencyName === 'ETH') {
-        // 0xa6e83b630bf8af41a9278427b6f2a35dbc5f20e3
-        // alert(addr);
-        const per = 'iban:';
-        if (addr.indexOf(per) === 0) {
-            const lastIndex = addr.indexOf('?');
-            addr = lastIndex >= 0 ? addr.slice(per.length, lastIndex) : addr.slice(per.length);
-            if (isValidIban(addr)) {
-                addr = ibanToAddress(addr);
-            }
-        }
-        flag = addr.indexOf('0x') === 0 && addr.length === 42;
-    } else if (currencyName === 'BTC') {
-        // alert(addr);
-        const per = 'bitcoin:';
-        if (addr.indexOf(per) === 0) {
-            const lastIndex = addr.indexOf('?');
-            addr = lastIndex >= 0 ? addr.slice(per.length, lastIndex) : addr.slice(per.length);
-        }
-        // alert(addr.length);
-        // mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB
-        flag = addr.length === 34;
-    }
-
-    return [flag, addr];
 };
 
 /**
@@ -734,21 +422,6 @@ export const formatBalanceValue = (value: number) => {
 };
 
 /**
- * 获取总资产
- */
-export const fetchTotalAssets = () => {
-    const wallet = find('curWallet');
-    if (!wallet) return;
-    let totalAssets = 0;
-    wallet.currencyRecords.forEach(item => {
-        const balance = fetchBalanceOfCurrency(item.addrs, item.currencyName);
-        totalAssets += balance * dataCenter.getExchangeRate(item.currencyName).CNY;
-    });
-
-    return totalAssets;
-};
-
-/**
  * 获取指定货币下余额总数
  * @param addrs 指定货币下的地址
  * @param currencyName 货币名称
@@ -782,78 +455,6 @@ export const getXOR = (first, second) => {
     }
 
     return arr.join('');
-};
-
-/**
- * 验证身份
- */
-export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) => {
-    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId, useCache);
-    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-
-    try {
-        const cipher = new Cipher();
-        const r = cipher.decrypt(hash, gwlt.vault);
-        // console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r);
-
-        dataCenter.setHash(wallet.walletId, hash);
-
-        return true;
-    } catch (error) {
-        console.log(error);
-
-        return false;
-    }
-};
-
-/**
- * 获取助记词
- */
-export const getMnemonic = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId);
-    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-    try {
-        const cipher = new Cipher();
-        const r = cipher.decrypt(hash, gwlt.vault);
-
-        dataCenter.setHash(wallet.walletId, hash);
-
-        return toMnemonic(lang, hexstrToU8Array(r));
-    } catch (error) {
-        console.log(error);
-
-        return '';
-    }
-};
-/**
- * 获取助记词16进制字符串
- */
-export const getMnemonicHexstr = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId);
-    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-    try {
-        const cipher = new Cipher();
-        const r = cipher.decrypt(hash, gwlt.vault);
-
-        dataCenter.setHash(wallet.walletId, hash);
-
-        return r;
-    } catch (error) {
-        console.log(error);
-
-        return '';
-    }
-};
-// 锁屏密码验证
-export const lockScreenVerify = (psw) => {
-    const hash256 = sha256(psw + find('salt'));
-    const localHash256 = find('lockScreen').psw;
-
-    return hash256 === localHash256;
-};
-// 锁屏密码hash算法
-export const lockScreenHash = (psw) => {
-    return sha256(psw + find('salt'));
 };
 
 // 复制到剪切板
@@ -893,21 +494,6 @@ export const calcHashValuePromise = async (pwd, salt, walletId, useCache: boolea
  * 基础打开弹窗界面封装
  */
 export const openBasePage = (foreletName: string, foreletParams: any = {}): Promise<string> => {
-    // this.windowConfig = windowconfig || this.windowConfig;
-    // if (!foreletName || foreletName === '') {
-    //     console.warn(`openModal foreletName is fail:${foreletName}`);
-
-    //     return;
-    // }
-
-    // // 单例模式
-    // if (this.windowConfig && this.windowConfig.model === 'single' && this.windowSet.has(foreletName)) {
-    //     console.info(`窗口${foreletName}已经创建，阻止重复创建`);
-
-    //     return;
-    // }  else {
-    //     this.windowSet.add(foreletName);
-    // }
 
     // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {

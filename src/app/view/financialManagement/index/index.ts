@@ -6,9 +6,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList,getPurchaseRecord } from '../../../net/pull';
-import { Product } from '../../../store/interface';
+import { Product, PurchaseRecordOne } from '../../../store/interface';
 import { find, register } from '../../../store/store';
-import { PurchaseRecord } from '../purchaseRecord/purchaseRecord';
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -32,7 +31,7 @@ export class Index extends Widget {
         this.state.productList = productList;
         this.paint();
     }
-    public updatePurchaseRecord(purchaseRecord:PurchaseRecord[]) {
+    public updatePurchaseRecord(purchaseRecord:PurchaseRecordOne[]) {
         this.state.record = purchaseRecord;
         this.paint();
     }

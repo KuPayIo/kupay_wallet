@@ -4,11 +4,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { dataCenter, DataCenter } from '../../../store/dataCenter';
+import { dataCenter, DataCenter } from '../../../logic/dataCenter';
 import { find, updateStore } from '../../../store/store';
-import {
-    addNewAddr, formatBalance, getAddrById, getMnemonic, getStrLen, openBasePage, popPswBox, sliceStr
-} from '../../../utils/tools';
+import { formatBalance, getAddrById, getStrLen, openBasePage, popPswBox, sliceStr } from '../../../utils/tools';
+import { addNewAddr, getMnemonic } from '../../../utils/walletTools';
 
 interface Props {
     currencyName: string;
@@ -75,7 +74,7 @@ export class AddAsset extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '添加中...' });
+        const close = popNew('app-components-loading-loading', { text: '添加中...' });
         const mnemonic = await getMnemonic(wallet, passwd);
         close.callback(close.widget);
         if (mnemonic) {

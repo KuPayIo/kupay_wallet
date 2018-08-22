@@ -1,9 +1,8 @@
 import { isArray } from '../../pi/net/websocket/util';
 import { deepCopy } from '../../pi/util/util';
-import { fromWei } from '../core/eth/helper';
-import { wei2Eth } from '../core/globalWallet';
-import { formatBalance, GetDateDiff, kpt2kt, 
-    smallUnit2LargeUnit, timestampFormat,timestampFormatToDate,unicodeArray2Str } from '../utils/tools';
+// tslint:disable-next-line:max-line-length
+import { formatBalance, GetDateDiff, timestampFormat,timestampFormatToDate,unicodeArray2Str } from '../utils/tools';
+import { kpt2kt, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 import { Config } from '../view/financialManagement/config/config';
 import { AccountDetail, CurrencyType, CurrencyTypeReverse, PurchaseRecordOne,TaskSid } from './interface';
 import { find } from './store';
@@ -257,8 +256,8 @@ export const pasePurchaseRecord = (res:any) => {
         const product = getproductById(id);
         const result:PurchaseRecordOne = {
             id,
-            yesterdayIncoming:fromWei(item[2],'ether'),
-            totalIncoming:fromWei(item[4],'ether'),
+            yesterdayIncoming:wei2Eth(item[2]),
+            totalIncoming:wei2Eth(item[4]),
             profit:product.profit,
             productName:product.productName,
             unitPrice:product.unitPrice,// 产品列表获取TODO
@@ -289,7 +288,8 @@ export const paseProductList = (res:any) => {
         const id = item[0];
         const product = deepCopy(Config.productList[id]);
         product.coninType = CurrencyTypeReverse[`${item[1]}`];
-        product.unitPrice = fromWei(item[2],'ether');
+        // product.unitPrice = fromWei(item[2],'ether');
+        product.unitPrice = item[2];
         product.total = item[3];
         product.surplus = item[3] - item[4];
         product.purchaseDate = timestampFormatToDate(new Date().getTime());

@@ -1,4 +1,4 @@
-<div style="width:100%;height:100%">
+<div style="width:100%;height:100%;display: flex;">
 
 <div w-class="tabs">
 {{if it1.type === 0}}
@@ -17,6 +17,9 @@
         <widget w-tag={{v.components}} style="visibility: {{i == it1.isActive ? 'visible' : 'hidden'}}; z-index:{{i == it1.isActive ? 0 : -1}}; position:absolute; width:100%;height:100%;">{isActive:{{i == it1.isActive}}}</widget>
         {{end}}
     {{end}}
+{{end}}
+{{if it1.loading}}
+<div w-class="loading-container"><app-components-loading-loading1>{}</app-components-loading-loading1></div>
 {{end}}
 </div>
 

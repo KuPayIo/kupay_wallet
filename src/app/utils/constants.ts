@@ -9,7 +9,7 @@ export const walletNumLimit = 10;
 // 记录默认获取数量
 export const recordNumber = 10;
 // 钱包所支持的货币列表测试网络
-export const supportCurrencyListTest = [
+const supportCurrencyListTest = [
     { name: 'ETH', description: 'Ethereum' },
     { name: 'BTC', description: 'Bit coin' },
     // { name: 'YNC', description: 'YiNeng Ltd' },
@@ -35,7 +35,7 @@ export const supportCurrencyListTest = [
     { name: 'VERI', description: 'Veritaseum' }
 ];
 // 钱包所支持的货币列表主网络
-export const supportCurrencyListMain = [
+const supportCurrencyListMain = [
     { name: 'ETH', description: 'Ethereum' },
     { name: 'BTC', description: 'Bit coin' },
     { name: 'BNB', description: 'BNB' },
@@ -60,28 +60,8 @@ export const supportCurrencyListMain = [
     { name: 'VERI', description: 'Veritaseum' },
     { name: 'HEALP', description: 'HEALP' }
 ];
-
-// 钱包所支持的货币列表
-export const supportCurrencyList = (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain;
-
-// 默认显示得ETH代币
-export const defaultEthToken = [];
-
-// 默认显示货币列表
-export const defalutShowCurrencys = ['ETH', 'BTC'];
-
-//
-export const strength = 128;
-
-// todo 测试网络与正式网络切换
-// btc网络
-export const btcNetwork = config.dev_mode === 'dev' ? 'testnet' : 'mainnet';
-
-// 语言
-export const lang = 'english';
-
 // 默认货币汇率测试网络
-export const defaultExchangeRateJsonTest = {
+const defaultExchangeRateJsonTest = {
     ETH: { CNY: 3337.01, USD: 517.42 },
     BTC: { CNY: 42868.55, USD: 6598.71 },
     YNC: { CNY: 100, USD: 15.2625 },
@@ -109,7 +89,7 @@ export const defaultExchangeRateJsonTest = {
 };
 
 // 默认货币汇率主网络
-export const defaultExchangeRateJsonMain = {
+const defaultExchangeRateJsonMain = {
     ETH: { CNY: 3337.01, USD: 517.42 },
     BTC: { CNY: 42868.55, USD: 6598.71 },
     KT: { CNY: 0.03, USD: 0.19 },
@@ -136,8 +116,77 @@ export const defaultExchangeRateJsonMain = {
     HEALP: { CNY: 100, USD: 15.2625 }
 };
 
+// 测试网络ERC20代币精度
+const ERC20TokenDecimalsTest = {
+    BNB: 100000000,
+    VEN: 100000000,
+    OMG: 100000000,
+    ZRX: 100000000,
+    MKR: 100000000,
+    BAT: 100000000,
+    XUC: 100000000,
+    REP: 100000000,
+    BTM: 100000000,
+    USDT: 100000000,
+    PPT: 100000000,
+    SNT: 100000000,
+    AION: 100000000,
+    FUN: 100000000,
+    KNC: 100000000,
+    MCO: 100000000,
+    POWR: 100000000,
+    MANA: 100000000,
+    KIN: 100000000,
+    VERI:100000000
+};
+
+// 主网络ERC20代币精度
+const ERC20TokenDecimalsMain = {
+    BNB: 1000000000000000000,
+    VEN: 1000000000000000000,
+    OMG: 1000000000000000000,
+    ZRX: 1000000000000000000,
+    MKR: 1000000000000000000,
+    BAT: 1000000000000000000,
+    XUC: 1000000000000000000,
+    REP: 1000000000000000000,
+    BTM: 100000000,
+    GNT: 1000000000000000000,
+    PPT: 100000000,
+    SNT: 1000000000000000000,
+    AION: 100000000,
+    FUN: 100000000,
+    KNC: 1000000000000000000,
+    MCO: 100000000,
+    POWR: 1000000,
+    MANA: 1000000000000000000,
+    KIN: 1000000000000000000,
+    VERI:1000000000000000000
+};
 // 默认货币汇率
 export const defaultExchangeRateJson = (config.dev_mode === 'dev') ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
+
+// 钱包所支持的货币列表
+export const supportCurrencyList = (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain;
+
+// ERC20代币精度
+export const ERC20TokenDecimals = (config.dev_mode === 'dev') ? ERC20TokenDecimalsTest : ERC20TokenDecimalsMain;
+
+// 默认显示得ETH代币
+export const defaultEthToken = [];
+
+// 默认显示货币列表
+export const defalutShowCurrencys = ['ETH', 'BTC'];
+
+//
+export const strength = 128;
+
+// todo 测试网络与正式网络切换
+// btc网络
+export const btcNetwork = config.dev_mode === 'dev' ? 'testnet' : 'mainnet';
+
+// 语言
+export const lang = 'english';
 
 // eth代币transfer交易编码前缀
 export const ethTokenTransferCode = '0xa9059cbb';

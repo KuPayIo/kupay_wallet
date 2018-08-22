@@ -180,11 +180,6 @@
 }
 
 
-.pi-circular{
-    height: 50px;
-    width: 50px;
-    animation: loadingRotating 2s linear infinite;
-}
 
 .pi-input-simple ::-webkit-input-placeholder { /* WebKit browsers */
     color:    #a0acc0;
@@ -201,34 +196,6 @@
 .pi-input-simple__inner:focus{
     border: none;
     outline: none;
-}
-@keyframes loadingRotating{
-    100% {transform: rotate(360deg);}
-}
-
-.pi-path{
-    -webkit-animation: loading-dash 1.5s ease-in-out infinite;
-    animation: loading-dash 1.5s ease-in-out infinite;
-    stroke-dasharray: 90,150;
-    stroke-dashoffset: 0;
-    stroke-width: 2;
-    stroke: #fff;
-    stroke-linecap: round;
-}
-
-@keyframes loading-dash{
-    0% {
-        stroke-dasharray: 1,200;
-        stroke-dashoffset: 0;
-    }
-    50% {
-        stroke-dasharray: 90,150;
-        stroke-dashoffset: -40px;
-    }
-    100% {
-        stroke-dasharray: 90,150;
-        stroke-dashoffset: -120px;
-    }
 }
 
 .pi-autocomplete-item:hover,

@@ -28,7 +28,7 @@ export class ExportPrivateKey extends Widget {
         this.state = {
             collapseList:[]
         };
-        const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
+        const close = popNew('app-components-loading-loading', { text: '导出私钥中...' });
         setTimeout(() => {
             this.init();
             close.callback(close.widget);

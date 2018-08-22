@@ -3,17 +3,14 @@
  */
 import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { EthWallet } from '../core/eth/wallet';
-import { sign } from '../core/genmnemonic';
-import { GlobalWallet, wei2Eth } from '../core/globalWallet';
-import { dataCenter } from '../store/dataCenter';
 import { CurrencyType, CurrencyTypeReverse, LoginState } from '../store/interface';
-import { parseCloudAccountDetail, parseCloudBalance, 
-    parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog,paseProductList,pasePurchaseRecord } from '../store/parse';
+// tslint:disable-next-line:max-line-length
+import { parseCloudAccountDetail, parseCloudBalance, parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog,paseProductList,pasePurchaseRecord } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { kpt2kt, largeUnit2SmallUnitString, popPswBox, transDate } from '../utils/tools';
+import { popPswBox, transDate } from '../utils/tools';
+import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
@@ -53,8 +50,10 @@ export const requestLogined = async (msg: any) => {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const wlt: EthWallet = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
-        const signStr = sign(dataCenter.getConRandom(), wlt.exportPrivateKey());
+        const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports;
+        const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
+        const wlt = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
+        const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
         const msgLogin = { type: 'login', param: { sign: signStr } };
         updateStore('loginState', LoginState.logining);
         const res: any = await requestAsync(msgLogin);
@@ -74,39 +73,41 @@ export const requestLogined = async (msg: any) => {
  * 开启连接并获取验证随机数
  */
 export const openAndGetRandom = async (setuserinfo?:boolean) => {
-    console.log('setuserinfo1=================',setuserinfo);
+    // console.log('setuserinfo1=================',setuserinfo);
     const wallet = find('curWallet');
     if (!wallet) return;
-    const oldUser = dataCenter.getUser();
+    const oldUser = find('conUser');
     if (oldUser === wallet.walletId) return;
-    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+    // const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+    const gwlt = JSON.parse(wallet.gwlt);
     if (oldUser) {
         closeCon();
-        dataCenter.setUser(wallet.walletId);
-        dataCenter.setUserPublicKey(gwlt.publicKey);
+        updateStore('conUser', wallet.walletId);
+        updateStore('conUserPublicKey', gwlt.publicKey);
 
         return;
     }
     setUrl(`ws://${conIp}:2081`);
-    dataCenter.setUser(wallet.walletId);
-    dataCenter.setUserPublicKey(gwlt.publicKey);
-    console.log('setuserinfo2=================',setuserinfo);
+    updateStore('conUser', wallet.walletId);
+    updateStore('conUserPublicKey', gwlt.publicKey);
+    // console.log('setuserinfo2=================',setuserinfo);
 
     return doOpen(setuserinfo);
 
 };
 
 const doOpen = async (setuserinfo:boolean) => {
-    console.log('setuserinfo3=================',setuserinfo);
+    // console.log('setuserinfo3=================',setuserinfo);
 
     return new Promise((resolve, reject) => {
-        console.log('setuserinfo4=================',setuserinfo);
+        // console.log('setuserinfo4=================',setuserinfo);
         open(async (con) => {
             try {
                 await getRandom();
                 if (setuserinfo) {
                     const curWallet = find('curWallet');
-                    const gwlt = GlobalWallet.fromJSON(curWallet.gwlt);
+                    // const gwlt = GlobalWallet.fromJSON(curWallet.gwlt);
+                    const gwlt = JSON.parse(curWallet.gwlt);
                     const userInfo = {
                         name:gwlt.nickName,
                         avatar:curWallet.avatar
@@ -138,10 +139,10 @@ const doOpen = async (setuserinfo:boolean) => {
  * 获取随机数
  */
 export const getRandom = async () => {
-    const msg = { type: 'get_random', param: { account: dataCenter.getUser().slice(2), pk: `04${dataCenter.getUserPublicKey()}` } };
+    const msg = { type: 'get_random', param: { account: find('conUser').slice(2), pk: `04${find('conUserPublicKey')}` } };
     const resp = await requestAsync(msg);
-    dataCenter.setConRandom(resp.rand);
-    dataCenter.setConUid(resp.uid);
+    updateStore('conRandom', resp.rand);
+    updateStore('conUid', resp.uid);
     getCloudBalance();
 };
 
@@ -288,7 +289,7 @@ export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: 
         param: {
             type: rtype,
             priceType: ctype,
-            totalPrice: largeUnit2SmallUnitString(CurrencyTypeReverse[ctype], totalAmount),
+            totalPrice: largeUnit2SmallUnit(CurrencyTypeReverse[ctype], totalAmount),
             count: redEnvelopeNumber,
             desc: lm
         }
@@ -410,7 +411,7 @@ export const queryDetailLog = async (rid: string) => {
     const msg = {
         type: 'query_detail_log',
         param: {
-            uid: dataCenter.getConUid(),
+            uid: find('conUid'),
             rid
         }
     };
