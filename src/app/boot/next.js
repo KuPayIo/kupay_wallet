@@ -1,4 +1,7 @@
 "use strict";
+
+var serverAddress = winit.domains;
+
 // 依赖表加载成功后的回调函数
 winit.initNext = function () {
   var win = winit.win;
@@ -25,9 +28,12 @@ winit.initNext = function () {
   //clear();
   pi_modules.depend.exports.init(winit.deps, winit.path);
   var flags = winit.flags;
+
+  // 检查更新
+  //checkUpdate();
+
   winit = undefined; //一定要立即释放，保证不会重复执行
   //先登录
-
 
   //二级页面相关的图片和代码资源
   TIME_STR += "before load time: " + (Date.now() - PRE_TIME);
@@ -105,6 +111,8 @@ winit.initNext = function () {
       index.run(() => {
         // 关闭读取界面
         document.body.removeChild(document.getElementById('rcmj_loading_log'));
+          // 检查更新
+          checkUpdate();
       });
       console.time('secondLoad');
       const level2SourceList = [

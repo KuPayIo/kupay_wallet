@@ -81,7 +81,11 @@ export class WalletManagement extends Widget {
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) return;
+            if (!passwd) {
+                close.callback(close.widget);
+
+                return;
+            }
         }
         const close = popNew('app-components-loading-loading', { text: '导出私钥中...' });
         try {
@@ -181,10 +185,15 @@ export class WalletManagement extends Widget {
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) return;
+            if (!passwd) {
+                close.callback(close.widget);
+
+                return;
+            }
         }
         const close = popNew('app-components-loading-loading', { text: '导出中...' });
         try {
+            
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
                 popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: this.props.walletId });
@@ -223,7 +232,11 @@ export class WalletManagement extends Widget {
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) return;
+            if (!passwd) {
+                close.callback(close.widget);
+                
+                return;
+            }
         }
         const close = popNew('app-components-loading-loading', { text: '加载中...' });
         try {
@@ -298,7 +311,11 @@ export class WalletManagement extends Widget {
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) return;
+            if (!passwd) {
+                close.callback(close.widget);
+                
+                return;
+            }
         }
         try {
             const isEffective = await VerifyIdentidy(wallet, passwd);

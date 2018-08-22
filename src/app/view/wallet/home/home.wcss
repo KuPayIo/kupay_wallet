@@ -1,3 +1,6 @@
+.hide-scrollba{
+    overflow: hidden auto;
+}
 .ga-header-Outer{
     overflow: hidden;
     height: 590px;

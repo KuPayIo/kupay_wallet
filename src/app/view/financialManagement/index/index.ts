@@ -3,6 +3,7 @@
  */
 // ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { deepCopy } from '../../../../pi/util/util';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList,getPurchaseRecord } from '../../../net/pull';
@@ -35,6 +36,20 @@ export class Index extends Widget {
         this.state.record = purchaseRecord;
         this.paint();
     }
+    /**
+     * 未创建钱包时获取静态理财产品列表
+     */
+    public getOutLineProductList() {
+        const productList = [];
+        const productListConfig = deepCopy(Config.productList);
+        for (const key in productListConfig) {
+            productListConfig[key].total = 100;
+            productListConfig[key].surplus = 100;
+            productList.push(productListConfig[key]);
+        }
+
+        return productList;
+    }
     /* public afterUpdate() {
         super.afterUpdate();
         if (!this.props.isActive) return;
@@ -50,11 +65,13 @@ export class Index extends Widget {
     public init() {
         this.state = {
             record: [],
-            productList: []
+            productList: this.getOutLineProductList()
         };
-        if (!this.props.isActive) return;
-        getProductList();
-        getPurchaseRecord();
+        if (this.props.isActive && find('conRandom')) {
+            getProductList();
+            getPurchaseRecord();
+        }
+        
     }
  
     public toDetail(i: any) {
@@ -70,7 +87,7 @@ export class Index extends Widget {
             return;
         }
         
-        popNew('app-view-financialManagement-productDetail-productDetail', { i, item });
+        popNew('app-view-financialManagement-productDetail-productDetail', { i, item,record:this.state.record });
         
     }
 
@@ -119,7 +136,7 @@ export class Index extends Widget {
 }
 // ===============================================本地
 
-/* register('conRandom', async (conRandom) => {
+register('conRandom', async (conRandom) => {
     if (!conRandom) return;
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -128,7 +145,7 @@ export class Index extends Widget {
         w.paint();
     }
     
-}); */
+});
 register('productList', async (productList) => {
     console.log('productList------home-------',productList);
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -145,13 +162,13 @@ register('purchaseRecord', async (purchaseRecord) => {
     }
     
 });
-/* register('curWallet', async (curWallet) => {
-    if (!curWallet) return;
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        const data = await getProductList();
-        const recordData = getPurchaseRecord();
-        w.paint();
-    }
+// register('curWallet', async (curWallet) => {
+//     if (!curWallet) return;
+//     const w: any = forelet.getWidget(WIDGET_NAME);
+//     if (w) {
+//         const data = await getProductList();
+//         const recordData = getPurchaseRecord();
+//         w.paint();
+//     }
     
-}); */
+// }); 

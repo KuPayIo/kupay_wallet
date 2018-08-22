@@ -7,13 +7,19 @@ interface Props {
 }
 // ===============================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../logic/dataCenter';
-import { find } from '../../../store/store';
+import { find, register } from '../../../store/store';
 import { formatBalanceValue } from '../../../utils/tools';
 
 // ====================================================导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class CloudAccount extends Widget {
     public ok: () => void;
     constructor() {
@@ -75,3 +81,6 @@ export class CloudAccount extends Widget {
     }
 
 }
+
+// ===================================================== 本地
+// ===================================================== 立即执行

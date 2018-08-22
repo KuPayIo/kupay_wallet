@@ -23,10 +23,24 @@ export class ProductDetail extends Widget {
     public setProps(props: any, oldProps: any) {
         super.setProps(props, oldProps);
         this.state = find('productList')[props.i];
-        
         this.state.isReadedDeclare = false;
         this.state.showStep = true;
         this.state.amount = 1;
+        this.state.holdAmout = this.getHoldAmout();
+    }
+    public getHoldAmout() {
+        const productId = this.state.id;
+        const record = this.props.record;
+        let holdAmout = 0;
+        for (let i = 0;i < record.length;i++) {
+            const one = record[i];
+            if (one.id.toString() === productId && one.state === 1) {
+                holdAmout += one.amount;
+            }
+        }
+        console.log('holdAmout',holdAmout);
+
+        return holdAmout;
     }
 
     public goBackPage() {
@@ -96,6 +110,7 @@ export class ProductDetail extends Widget {
             return;
         }
         const data = await buyProduct(this.state.id,this.state.amount);
+        console.log('data',data);
         await getPurchaseRecord();
         if (data) {
             popNew('app-components-message-message', { itype: 'success', content: '购买成功', center: true });
@@ -123,7 +138,7 @@ export class ProductDetail extends Widget {
     }
     public add(e:any) {
         const limit = Number(this.state.limit);
-        if (this.state.amount === limit) {
+        if (this.state.amount + this.state.holdAmout === limit) {
             return;
         }
         this.state.amount += 1;
