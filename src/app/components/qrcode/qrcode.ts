@@ -10,11 +10,6 @@ interface Props {
     size: number;
 }
 
-interface State {
-    circleProgress: string;
-
-}
-
 export class Qrcode extends Widget {
     public props: Props;
     constructor() {
