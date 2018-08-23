@@ -310,7 +310,7 @@ export class DataCenter {
         }
 
         // 检查地址--放于最后一步
-        // this.checkAddr();
+        this.checkAddr();
     }
 
     // 币币交易记录定时器
@@ -471,7 +471,7 @@ export class DataCenter {
      * 解析btc交易详情记录
      */
     private parseBtcTransactionTxRecord(addr: string, tx: any) {
-        console.log('parseBtcTransactionTxRecord', tx);
+        // console.log('parseBtcTransactionTxRecord', tx);
         let value = 0;
         const inputs = tx.vin.map(v => {
             return v.addr;

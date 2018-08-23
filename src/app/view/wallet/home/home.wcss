@@ -4,7 +4,6 @@
 }
 .ga-header-Outer{
     overflow: hidden;
-    height: 590px;
 }
 .ga-header{
     height: 510px;

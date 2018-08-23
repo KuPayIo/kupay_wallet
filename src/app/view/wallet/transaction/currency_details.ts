@@ -16,7 +16,6 @@ import { effectiveCurrency, effectiveCurrencyNoConversion } from '../../../utils
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-
 export class AddAsset extends Widget {
     public props: Props;
     public state: State;
@@ -33,7 +32,7 @@ export class AddAsset extends Widget {
     }
     public init(): void {
         const wallet = find('curWallet');
-
+        console.log('-----------------------------',forelet);
         this.state = {
             list: [],
             currentAddr: '',
@@ -51,11 +50,6 @@ export class AddAsset extends Widget {
 
     }
 
-    public attach() {
-        super.attach();
-        // this.kLineInit();
-        console.log('');
-    }
     /**
      * 处理关闭
      */

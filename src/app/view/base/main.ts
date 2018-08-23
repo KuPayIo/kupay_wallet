@@ -59,6 +59,7 @@ const checkUpdate = () => {
 
 /**
  * 后台切换到前台
+ * onBackPressed
  */
 const backToFront = () => {
     (<any>window).handle_app_lifecycle_listener = (iType: string) => {

@@ -16,19 +16,12 @@ declare var module: any;
 declare var pi_modules:any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-const OFFSET_COMPALET_VALUE: number = 440;// 规定滑动距离为该值时两个头部的变化完成
-// const HEAD_HEIGHT:number = 580;// 首页头部高度，滑动时隐藏该头部
-// const HIDEHEAD_HEIGHT:number = 140;// 隐藏头部的高度
-// const EDGE_VALUE:number = 50;// 边缘值，小于相差小于此值认为滑动变化完成
+
 export class Home extends Widget {
-    // private pageHeight:number = null;
-    private offset: number = 0;
-    private startY: number = null;
-    private distance: number = 0;
-    private maxVal: number = 0;
-    private gaHeader: any = null;
+   
+    // private gaHeader: any = null;
     private hideHead: any = null;
-    private currencyHeight: number = null;
+    // private currencyHeight: number = null;
 
     constructor() {
         super();
@@ -36,6 +29,8 @@ export class Home extends Widget {
     public create() {
         super.create();
         this.init();
+        // 登录云端账号
+        openAndGetRandom();
     }
     public attach() {
         super.attach();
@@ -45,16 +40,12 @@ export class Home extends Widget {
         if (!this.hideHead) {
             this.hideHead = document.getElementById('hideHead');
         }
-        if (!this.gaHeader) {
-            this.gaHeader = document.getElementById('gaHeader');
-        }
-        if (!this.currencyHeight) {
-            this.currencyHeight = document.getElementById('currencyList').offsetHeight;
-        }
-        const pageHeight = getHeight() - 120;
-        const contentHeight = this.currencyHeight + 150;
-        const overflowHeight = (contentHeight - pageHeight) < 0 ? 0 : (contentHeight - pageHeight);
-        this.maxVal = OFFSET_COMPALET_VALUE + overflowHeight;
+        // if (!this.gaHeader) {
+        //     this.gaHeader = document.getElementById('gaHeader');
+        // }
+        // if (!this.currencyHeight) {
+        //     this.currencyHeight = document.getElementById('currencyList').offsetHeight;
+        // }
     }
     public init(): void {
         const wallet = find('curWallet');
@@ -73,12 +64,12 @@ export class Home extends Widget {
         // 如果没有创建钱包提示创建钱包
         if (!find('walletList') || find('walletList').length === 0) {
             this.state.floatBoxTip = '您还没有钱包，请先创建钱包';
-        } else {
+        } else if (!gwlt.mnemonicBackup) {
             this.state.floatBoxTip = '为了您的资产安全，请及时备份助记词';
+        } else {
+            this.state.floatBoxTip = '';
         }
         this.updateAddrsBalance();
-        // 登录云端账号
-        openAndGetRandom();
     }
     public clickCurrencyItemListener(e: Event, index: number) {
         const wallets = find('walletList');
@@ -153,23 +144,6 @@ export class Home extends Widget {
         this.paint();
     }
 
-    public registerWalletsFun = () => {
-        // 创建完钱包之后修改floatBoxTip提示信息
-        const wallets = find('walletList');
-        const wallet = find('curWallet');
-        console.log(wallet);
-        if (wallet) {
-            this.state.floatBoxTip = '为了您的资产安全，请及时备份助记词';
-        }
-
-        // this.state.gwlt = wallet ? GlobalWallet.fromJSON(wallet.gwlt) : null;
-        this.state.gwlt = JSON.parse(wallet.gwlt);
-        this.state.otherWallets = wallets && wallets.length > 0;
-        this.state.wallet = wallet;
-        this.state.currencyList = parseCurrencyList(wallet);
-        this.updateAddrsBalance();
-        this.paint();
-    }
     public pageScroll() {
         const page = document.getElementById('page');
         const top = -page.getBoundingClientRect().top;
@@ -179,19 +153,7 @@ export class Home extends Widget {
             this.hideHead.style.display = 'none';
         }
     }
-    // public pageScroll(e: any) {
-
-    //     const offset = this.handleScroll(e.x, e.y, this.maxVal, e.subType === 'start', e.subType === 'over');
-    //     const ratio = offset / OFFSET_COMPALET_VALUE;
-    //     // document.getElementById('page').style.transform = `translateY(${-offset}px)`;
-    //     if (offset >= OFFSET_COMPALET_VALUE) {
-    //         this.hideHead.style.display = 'block';
-    //     } else {
-    //         this.hideHead.style.display = 'none';
-    //     }
-
-    // }
-
+   
     /**
      * 余额更新
      */
@@ -208,28 +170,6 @@ export class Home extends Widget {
         this.paint();
     }
 
-    // 处理滑动，返回滑动距离，需要依赖本类中的几个成员变量
-    // private handleScroll(x: number, y: number, maxVal: number, isStart: boolean, isEnd: boolean) {
-    //     if (isStart) {
-    //         this.startY = y;
-    //     }
-    //     this.distance = this.startY - y;
-
-    //     let offset = this.offset + this.distance;
-    //     if (offset < 0) {
-    //         offset = 0;
-    //     }
-    //     if (offset > maxVal) {
-    //         offset = maxVal;
-    //     }
-
-    //     if (isEnd) {
-    //         this.offset = offset;
-    //         this.distance = 0;
-    //     }
-
-    //     return offset;
-    // }
 }
 // ============================== 本地
 
@@ -270,13 +210,6 @@ const getCurrencyListBalance = (currencyList: any[], balance: number, currencyNa
     });
 };
 
-register('curWallet', (resp) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.registerWalletsFun(resp);
-    }
-});
-
 register('addrs', (resp) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -287,9 +220,12 @@ register('addrs', (resp) => {
 register('curWallet', (curWallet) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        const gwlt = curWallet ? JSON.parse(curWallet.gwlt) : null;
-        w.state.wallet = curWallet;
-        w.state.gwlt = gwlt;
+        // const gwlt = curWallet ? JSON.parse(curWallet.gwlt) : null;
+        // w.state.wallet = curWallet;
+        // w.state.gwlt = gwlt;
+        // w.updateAddrsBalance();
+        w.init();
+        console.log('state----------------------',w.state);
         w.paint();
     }
 });

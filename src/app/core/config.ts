@@ -10,7 +10,7 @@ export const config = {
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
         // https://ropsten.infura.io/Y4zS49bjsYwtRU3Tt4Yj
         // http://yinengyun.iok.la:8545
-        EthApiBaseUrl: 'http://222.212.171.94:8545',
+        EthApiBaseUrl: 'http://218.88.21.82:8545',
         EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY',
         EthscanRopstenUrl: 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=',
         EthscanRopstenTokenTransferEvent: 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx'
@@ -48,7 +48,6 @@ export const config = {
     }, 
     ERC20TokensTestnet: {
         // testnet: ropsten
-        // YNC: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         BNB: '0x1a8C96e79353EB39e169e9a2ED70B5297dcF9904',
         VEN: '0x8dc0c34aAe1F8Ef96480cDa6eACaf5587c1B4ccB',
         OMG: '0xF1076Dd18997A0e4A4Cd88502eb154148fc82018',
@@ -64,7 +63,6 @@ export const config = {
         AION: '0x3b018094BaFDC1A416ccCdbb83f18D3D666e3c44',
         FUN: '0x3111e6Aa5A49F72b2D19573723d6fe81a2E33eDB',
         KNC: '0x81C512d1b04b082cd519D4e72Cb5432E031Df4CC',
-        // MCO: '0xBd01eC3a457918C67aDCfF65cDb68942171cd383',
         POWR: '0x81c6AC04761fe77a8b9190631980fa0aBcb9ad8C',
         MANA: '0xF7b2a69F5D625D390da1d1A3c26921E5c0E0E57c',
         KIN: '0x338713f113328F411D3b3A0E962DF0727844e938'

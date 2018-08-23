@@ -2,12 +2,9 @@
  * @file store
  * @author donghr
  */
-declare const window;
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { config } from '../core/config';
-// tslint:disable-next-line:max-line-length
 import { defaultExchangeRateJson, supportCurrencyList } from '../utils/constants';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
