@@ -159,15 +159,8 @@ export const getNewAddrInfo = (currencyName, wallet) => {
  */
 export const addNewAddr = (currencyName, address, addrName) => {
     const wallet = find('curWallet');
-    const walletList = find('walletList');
     const addrs: Addr[] = find('addrs') || [];
-    let curWallet;
-    walletList.forEach(walletItem => {
-        if (wallet.walletId === walletItem.walletId) {
-            curWallet = walletItem;
-        }
-    });
-    curWallet.currencyRecords.forEach(currencyRecord => {
+    wallet.currencyRecords.forEach(currencyRecord => {
         if (currencyRecord.currencyName === currencyName) {
             currencyRecord.addrs.push(address);
             currencyRecord.currentAddr = address;
@@ -177,8 +170,7 @@ export const addNewAddr = (currencyName, address, addrName) => {
     addrs.push(newAddrInfo);
     dataCenter.addAddr(address, addrName, currencyName);
     updateStore('addrs', addrs);
-    updateStore('curWallet', curWallet);
-    updateStore('walletList',walletList);
+    updateStore('curWallet', wallet);
 
     return newAddrInfo;
 };

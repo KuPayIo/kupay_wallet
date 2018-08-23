@@ -310,7 +310,7 @@ export class DataCenter {
         }
 
         // 检查地址--放于最后一步
-        this.checkAddr();
+        // this.checkAddr();
     }
 
     // 币币交易记录定时器

@@ -93,7 +93,7 @@ winit.initNext = function () {
       "app/view/cloud/home/",
       "app/view/financialManagement/index/",
       "app/view/mine/home/",
-      "app/view/guidePages/",
+      "app/view/guidePages/"
     ]
     console.time('firstload');
     util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {

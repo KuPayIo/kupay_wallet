@@ -4,7 +4,7 @@
 // ===================================================== 导入
 import { getFirstEthAddr } from '../utils/tools';
 import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TopContact, TransactionRecord, Wallet } from './interface';
-import { register } from './store';
+import { register, updateStore } from './store';
 // ===================================================== 导出
 
 // ===================================================== 本地
@@ -17,6 +17,7 @@ const setLocalStorage = (key: string, data: any) => {
 const getLocalStorage = (key: string) => {
     return JSON.parse(localStorage.getItem(key));
 };
+// tslint:disable-next-line:max-func-body-length
 export const initLocalStorageStore = () => {
     register('walletList', (walletList: Wallet[]) => {
         let locWallets = JSON.parse(localStorage.getItem('wallets'));
@@ -45,6 +46,10 @@ export const initLocalStorageStore = () => {
             return v;
         });
         localStorage.setItem('wallets', JSON.stringify(locWallets));
+
+        // ===============================更新walletList
+        const walletList = JSON.parse(localStorage.getItem('wallets')).walletList;
+        updateStore('walletList',walletList);
     });
     
     register('salt', (salt: string) => {
