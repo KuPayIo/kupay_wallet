@@ -11,7 +11,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { dataCenter } from '../../../logic/dataCenter';
-import { find, register } from '../../../store/store';
+import { find } from '../../../store/store';
 import { formatBalanceValue } from '../../../utils/tools';
 
 // ====================================================导出
@@ -47,8 +47,8 @@ export class CloudAccount extends Widget {
                 coinBalance: this.props.ethBalance
             }]
         };
-        const all = dataCenter.getExchangeRate('KT').CNY * this.props.ktBalance
-            + dataCenter.getExchangeRate('ETH').CNY * this.props.ethBalance;
+        const all = find('exchangeRateJson','KT').CNY * this.props.ktBalance
+            + find('exchangeRateJson','ETH').CNY * this.props.ethBalance;
         this.state.accountAssets = `≈${formatBalanceValue(all)} CNY`;
     }
     public backClick() {

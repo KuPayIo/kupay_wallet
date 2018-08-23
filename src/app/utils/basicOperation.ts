@@ -24,11 +24,21 @@ export const importWalletByMnemonic = async (mnemonic, psw, pswTips) => {
     console.timeEnd('import');
     // 判断钱包是否存在
     let len = walletList.length;
-    if (walletList.some(v => v.walletId === gwlt.glwtId)) {
+    let index = -1;
+    for (let i = 0;i < walletList.length;i++) {
+        if (walletList[i].walletId === gwlt.glwtId) {
+            index = i;
+            break;
+        }
+    }
+    if (index >= 0) {
         try {
             await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '提示', content: '该钱包已存在，是否使用新密码' });
         } catch (err) {
             // console.log(err);
+            updateStore('curWallet', walletList[index]);
+
+            return false;
         }
         
         for (let i = len - 1; i >= 0; i--) {
@@ -65,8 +75,9 @@ export const importWalletByMnemonic = async (mnemonic, psw, pswTips) => {
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
     updateStore('salt', salt);
-
     openAndGetRandom();
+
+    return true;
 };
 
 /**

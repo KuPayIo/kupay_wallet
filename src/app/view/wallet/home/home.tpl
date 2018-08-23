@@ -34,7 +34,9 @@
             </div>
         </div>
         {{end}}
+        {{if it1.floatBoxTip.length > 0}}
         <div on-tap="backupWalletClick" w-class="ga-float-box"><span w-class="iconSpan"></span><span style="flex-grow: 1;">{{it1.floatBoxTip}}</span><img src="../../../res/image/right_arrow.png" w-class="ga-arrow-img"/></div>
+        {{end}}
     </div>
     
         <div w-class="ga-currency-list-container">

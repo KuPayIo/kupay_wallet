@@ -445,8 +445,11 @@ export const fetchTotalAssets = () => {
     if (!wallet) return;
     let totalAssets = 0;
     wallet.currencyRecords.forEach(item => {
-        const balance = fetchBalanceOfCurrency(item.addrs, item.currencyName);
-        totalAssets += balance * find('exchangeRateJson',item.currencyName).CNY;
+        if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
+            const balance = fetchBalanceOfCurrency(item.addrs, item.currencyName);
+            totalAssets += balance * find('exchangeRateJson',item.currencyName).CNY;
+        }
+        
     });
 
     return totalAssets;

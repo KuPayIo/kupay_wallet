@@ -123,5 +123,6 @@ export class WalletImport extends Widget {
         const shares = [this.state.walletPart1, this.state.walletPart2].map(v => u8ArrayToHexstr(new Uint8Array(base64ToArrayBuffer(v))));
         const comb = restoreSecret(shares);
         await importWalletByMnemonic(toMnemonic(lang, hexstrToU8Array(comb)), this.state.walletPsw, this.state.walletPswTips);
+        
     }
 }
