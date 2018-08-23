@@ -10,7 +10,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { dataCenter } from '../../../store/dataCenter';
+import { dataCenter } from '../../../logic/dataCenter';
 import { find, register } from '../../../store/store';
 import { formatBalanceValue } from '../../../utils/tools';
 

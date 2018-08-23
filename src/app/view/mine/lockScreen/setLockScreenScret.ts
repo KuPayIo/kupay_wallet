@@ -1,12 +1,12 @@
 /**
  * set lock-screen psw
  */
-import { popNew } from '../../../pi/ui/root';
-import { Forelet } from '../../../pi/widget/forelet';
-import { Widget } from '../../../pi/widget/widget';
-import { LockScreen } from '../../store/interface';
-import { find, updateStore } from '../../store/store';
-import { lockScreenHash } from '../../utils/tools';
+import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { LockScreen } from '../../../store/interface';
+import { find, updateStore } from '../../../store/store';
+import { lockScreenHash } from '../../../utils/walletTools';
 
 interface Props {
     jump?:boolean;
@@ -51,7 +51,7 @@ export class SetLockScreenScret extends Widget {
         const psw = r.psw;
         if (this.state.lockScreenPsw.length > 0) {
             if (this.state.lockScreenPsw === psw) {
-                const close = popNew('pi-components-loading-loading', { text: '验证中...' });
+                const close = popNew('app-components-loading-loading', { text: '验证中...' });
                 setTimeout(() => {
                     close.callback(close.widget);
                     const hash256 = lockScreenHash(psw);

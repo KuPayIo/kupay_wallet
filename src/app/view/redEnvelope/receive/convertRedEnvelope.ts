@@ -5,12 +5,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { eth2Wei } from '../../../core/globalWallet';
 import { convertRedBag, getCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
+import { eth2Wei, smallUnit2LargeUnitString } from '../../../shareView/shareUtils/tools';
 import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType } from '../../../store/interface';
 import {  updateStore } from '../../../store/store';
 import { showError } from '../../../utils/toolMessages';
-import { smallUnit2LargeUnitString } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -47,7 +46,7 @@ export class ConvertRedEnvelope extends Widget {
 
             return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '兑换中...' });
+        const close = popNew('app-components-loading-loading', { text: '兑换中...' });
         const value: any = await this.convertRedEnvelope(code);
         close.callback(close.widget);
         if (!value) return;

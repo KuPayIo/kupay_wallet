@@ -7,12 +7,12 @@ import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
-import { eth2Wei, GlobalWallet, wei2Eth } from '../core/globalWallet';
+import { GlobalWallet } from '../core/globalWallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { ethTokenMultiplyDecimals } from '../utils/tools';
+import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 // ===================================================== 导出
 
 /**
@@ -347,4 +347,11 @@ export const getTransactionsByAddr = async (addr: string) => {
 };
 
 // ===================================================shapeShift相关end
+
+// ==========================================提现gasPrice获取,后台服务器也使用此接口
+export const fetchWithdrawGasPrice = () => {
+    const url = 'https://safe-relay.gnosis.pm/api/v1/gas-station/';
+    
+};
+
 // ===================================================== 本地

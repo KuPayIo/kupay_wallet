@@ -8,13 +8,11 @@ import { GlobalWallet } from '../../../../core/globalWallet';
 import { openAndGetRandom } from '../../../../net/pull';
 import { Addr, Wallet } from '../../../../store/interface';
 import { find, updateStore } from '../../../../store/store';
-import {
-    getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
-} from '../../../../utils/account';
+// tslint:disable-next-line:max-line-length
+import { getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../../utils/account';
 import { defalutShowCurrencys } from '../../../../utils/constants';
-import {
-    calcHashValuePromise, encrypt, getAddrsAll, getXOR, openBasePage
-} from '../../../../utils/tools';
+import { calcHashValuePromise, getAddrsAll, getXOR, openBasePage } from '../../../../utils/tools';
+import { encrypt } from '../../../../utils/walletTools';
 
 interface Props {
     choosedImg: string;
@@ -101,7 +99,7 @@ export class WalletCreate extends Widget {
             return;
         }
 
-        const close = popNew('pi-components-loading-loading', { text: '创建中...' });
+        const close = popNew('app-components-loading-loading', { text: '创建中...' });
         try {
             const hash: any = await imgToHash(this.props.choosedImg, this.props.inputWords);
             await this.createWallet(hash);

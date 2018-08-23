@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../store/dataCenter';
+import { dataCenter } from '../../../logic/dataCenter';
 import { TopContact } from '../../../store/interface';
 import { register } from '../../../store/store';
 // ====================================================导出

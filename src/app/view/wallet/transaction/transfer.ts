@@ -6,13 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { Api as EthApi } from '../../../core/eth/api';
 import { ERC20Tokens } from '../../../core/eth/tokens';
+import { dataCenter } from '../../../logic/dataCenter';
 import { transfer } from '../../../net/pullWallet';
-import { dataCenter } from '../../../store/dataCenter';
 import { find } from '../../../store/store';
-import {
-    effectiveAddr, effectiveCurrencyStableConversion, getAddrById
-    , openBasePage, parseDate, popPswBox, resetAddrById, urlParams
-} from '../../../utils/tools';
+import { getAddrById, parseDate, popPswBox, resetAddrById, urlParams } from '../../../utils/tools';
+import { effectiveAddr, effectiveCurrencyStableConversion } from '../../../utils/walletTools';
 
 interface Props {
     currencyBalance: string;
@@ -111,7 +109,7 @@ export class AddAsset extends Widget {
             return;
         }
 
-        const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
+        const loading = popNew('app-components-loading-loading', { text: '交易中...' });
 
         const fromAddr = this.props.fromAddr;
         const toAddr = this.state.to;

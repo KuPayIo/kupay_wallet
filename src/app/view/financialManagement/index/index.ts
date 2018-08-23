@@ -7,10 +7,9 @@ import { deepCopy } from '../../../../pi/util/util';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList,getPurchaseRecord } from '../../../net/pull';
-import { Product } from '../../../store/interface';
+import { Product, PurchaseRecordOne } from '../../../store/interface';
 import { find, register } from '../../../store/store';
 import { Config } from '../config/config';
-import { PurchaseRecord } from '../purchaseRecord/purchaseRecord';
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -34,7 +33,7 @@ export class Index extends Widget {
         this.state.productList = productList;
         this.paint();
     }
-    public updatePurchaseRecord(purchaseRecord:PurchaseRecord[]) {
+    public updatePurchaseRecord(purchaseRecord:PurchaseRecordOne[]) {
         this.state.record = purchaseRecord;
         this.paint();
     }
@@ -142,14 +141,13 @@ register('conRandom', async (conRandom) => {
     if (!conRandom) return;
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        const data = await getProductList();
-        const recordData = getPurchaseRecord();
+        getProductList();
+        getPurchaseRecord();
         w.paint();
     }
     
 });
 register('productList', async (productList) => {
-    console.log('productList------home-------',productList);
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateProductList(productList);

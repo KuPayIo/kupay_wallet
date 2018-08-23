@@ -5,12 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../core/eth/tokens';
-import { dataCenter } from '../../../store/dataCenter';
+import { dataCenter } from '../../../logic/dataCenter';
 import { Wallet } from '../../../store/interface';
 import { find, register } from '../../../store/store';
-import {
-    currencyExchangeAvailable, effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, parseAccount, parseDate
-} from '../../../utils/tools';
+import { getAddrById, parseAccount, parseDate } from '../../../utils/tools';
+import { effectiveCurrency, effectiveCurrencyNoConversion } from '../../../utils/walletTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

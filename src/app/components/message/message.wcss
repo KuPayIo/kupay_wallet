@@ -16,6 +16,7 @@
     font-size: 32px;
     line-height: 45px;
 }
+
 .main_success{
     background-color: #f0f9eb;
     border-color: #f0f9eb;

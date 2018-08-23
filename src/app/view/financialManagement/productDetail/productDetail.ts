@@ -7,7 +7,8 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { buyProduct,getPurchaseRecord } from '../../../net/pull';
 import { find,register } from '../../../store/store';
-import { openBasePage,VerifyIdentidy } from '../../../utils/tools';
+import { openBasePage } from '../../../utils/tools';
+import { VerifyIdentidy } from '../../../utils/walletTools';
 // =====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -100,7 +101,7 @@ export class ProductDetail extends Widget {
     }
     // 购买理财
     public async doPurchase(r:any) {
-        const close = popNew('pi-components-loading-loading', { text: '正在购买...' });    
+        const close = popNew('app-components-loading-loading', { text: '正在购买...' });    
         const pswCorrect = await VerifyIdentidy(find('curWallet'),r,false);
         close.callback(close.widget);
         if (!pswCorrect) {
