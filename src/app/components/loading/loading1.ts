@@ -26,8 +26,8 @@ export class Loading extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.state = {
-            circular:`<svg viewBox='25 25 50 50' class='pi-circular'>
-            <circle cx='50' cy='50' r='20' fill='none' class="pi-path pi-path1">
+            circular:`<svg viewBox='25 25 50 50' class='pi-circular1'>
+            <circle cx='50' cy='50' r='20' fill='none' class="pi-path1">
             </circle>
             </svg>`,
             startTime:new Date().getTime()

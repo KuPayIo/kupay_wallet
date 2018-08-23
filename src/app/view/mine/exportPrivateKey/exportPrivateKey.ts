@@ -28,12 +28,13 @@ export class ExportPrivateKey extends Widget {
         this.state = {
             collapseList:[]
         };
-        const close = popNew('app-components-loading-loading', { text: '导出私钥中...' });
-        setTimeout(() => {
-            this.init();
-            close.callback(close.widget);
-            this.paint();
-        },0);
+        this.init();
+        // const close = popNew('app-components-loading-loading', { text: '导出私钥中...' });
+        // setTimeout(() => {
+        //     this.init();
+        //     close.callback(close.widget);
+        //     this.paint();
+        // },0);
     }
 
     public init() {

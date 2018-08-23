@@ -53,10 +53,12 @@ export class DataCenter {
             if (!wallet) return;
             let list = [];
             wallet.currencyRecords.forEach(v => {
-                list = list.concat(v.addrs);
+                if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
+                    list = list.concat(v.addrs);
+                }
             });
             addrs.forEach(v => {
-                if (list.indexOf(v.addr) >= 0) {
+                if (list.indexOf(v.addr) >= 0 && wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
                     this.addAddr(v.addr, v.addrName, v.currencyName);
                 }
             });

@@ -3,15 +3,9 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GlobalWallet } from '../../../core/globalWallet';
-import { openAndGetRandom, setUserInfo } from '../../../net/pull';
-import { Addr, Wallet } from '../../../store/interface';
-import { find, updateStore } from '../../../store/store';
-import {
-    getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
-} from '../../../utils/account';
-import { defalutShowCurrencys } from '../../../utils/constants';
-import { encrypt } from '../../../utils/walletTools';
+import { find } from '../../../store/store';
+import { getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
+import { createWallet } from '../../../utils/basicOperation';
 
 export class WalletCreate extends Widget {
     public ok: () => void;
@@ -106,41 +100,10 @@ export class WalletCreate extends Widget {
         }
 
         const close = popNew('app-components-loading-loading', { text: '创建中...' });
-        await this.createWallet();
+        await createWallet(this.state.walletPsw,this.state.walletName,this.state.walletPswTips);
         close.callback(close.widget);
         this.ok && this.ok();
         popNew('app-view-wallet-walletCreate-createComplete');
-    }
-
-    public async createWallet() {
-        const salt = find('salt');
-        const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName,salt);
-
-        // 创建钱包基础数据
-        const wallet: Wallet = {
-            walletId: gwlt.glwtId,
-            avatar: getAvatarRandom(),
-            gwlt: gwlt.toJSON(),
-            showCurrencys: defalutShowCurrencys,
-            currencyRecords: []
-        };
-
-        wallet.currencyRecords.push(...gwlt.currencyRecords);
-
-        if (this.state.walletPswTips.trim().length > 0) {
-            wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
-        }
-
-        const walletList: Wallet[] = find('walletList');
-        const addrs: Addr[] = find('addrs');
-        addrs.push(...gwlt.addrs);
-        updateStore('addrs', addrs);
-        walletList.push(wallet);
-        updateStore('walletList', walletList);
-        updateStore('curWallet', wallet);
-        updateStore('salt', salt);
-
-        openAndGetRandom(true);
     }
 
     public importWalletClick() {

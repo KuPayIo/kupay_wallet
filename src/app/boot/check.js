@@ -92,12 +92,12 @@ function checkUpdate () {
     db.init(store, function() {
         var indexedDBDepend = db.read(store, "", function(result, key) {
             var indexedDBDepend = result;
-            console.log(result);
+            // console.log(result);
             ajax.get(serverAddress[0] + "/wallet/.depend?"+Math.random(), {}, undefined, undefined, 3000, function (data) {
                 //try {
                     data = data.substring(data.indexOf('['), data.lastIndexOf(']')+1);
                     var localDepend = JSON.parse(data);
-                    console.log(localDepend);
+                    // console.log(localDepend);
                     out = localDepend;
 
                     // Check key-value pair
@@ -120,7 +120,7 @@ function checkUpdate () {
                         }
                         // download index.js then compare
                         ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 3000, function(oldIndexJS) {
-                            console.log('[oldIndexJS]', oldIndexJS);
+                            // console.log('[oldIndexJS]', oldIndexJS);
                             // load index.js locally
                             //   first set flag to ensure all assets are loaded from local.
                             localized.setForceFetchFromServer(function() {

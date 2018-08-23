@@ -12,8 +12,8 @@ import { Wallet } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
 import { walletNameAvailable } from '../../../utils/account';
 // tslint:disable-next-line:max-line-length
-import { formatBalanceValue, getAddrsAll,getWalletByWalletId, getWalletIndexByWalletId, openBasePage, popPswBox } from '../../../utils/tools';
-import { decrypt, encrypt, fetchTotalAssets, getMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
+import { fetchTotalAssets, formatBalanceValue,getAddrsAll, getWalletByWalletId, getWalletIndexByWalletId, openBasePage, popPswBox } from '../../../utils/tools';
+import { decrypt, encrypt, getMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
 
 // ==============================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -81,11 +81,8 @@ export class WalletManagement extends Widget {
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) {
-                close.callback(close.widget);
-
-                return;
-            }
+            if (!passwd) return;
+   
         }
         const close = popNew('app-components-loading-loading', { text: '导出私钥中...' });
         try {
@@ -185,11 +182,7 @@ export class WalletManagement extends Widget {
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) {
-                close.callback(close.widget);
-
-                return;
-            }
+            if (!passwd) return;
         }
         const close = popNew('app-components-loading-loading', { text: '导出中...' });
         try {
@@ -232,11 +225,7 @@ export class WalletManagement extends Widget {
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) {
-                close.callback(close.widget);
-                
-                return;
-            }
+            if (!passwd) return;
         }
         const close = popNew('app-components-loading-loading', { text: '加载中...' });
         try {

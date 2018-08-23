@@ -9,6 +9,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getProductList,getPurchaseRecord } from '../../../net/pull';
 import { Product, PurchaseRecordOne } from '../../../store/interface';
 import { find, register } from '../../../store/store';
+import { Config } from '../config/config';
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -140,14 +141,13 @@ register('conRandom', async (conRandom) => {
     if (!conRandom) return;
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        const data = await getProductList();
-        const recordData = getPurchaseRecord();
+        getProductList();
+        getPurchaseRecord();
         w.paint();
     }
     
 });
 register('productList', async (productList) => {
-    console.log('productList------home-------',productList);
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateProductList(productList);

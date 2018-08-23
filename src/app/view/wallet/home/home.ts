@@ -9,7 +9,7 @@ import { openAndGetRandom } from '../../../net/pull';
 import { find, register } from '../../../store/store';
 import { defalutShowCurrencys } from '../../../utils/constants';
 // tslint:disable-next-line:object-curly-spacing
-import {fetchBalanceOfCurrency, formatBalance, formatBalanceValue, popPswBox} from '../../../utils/tools';
+import {fetchBalanceOfCurrency, fetchTotalAssets, formatBalance, formatBalanceValue, popPswBox} from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -204,8 +204,7 @@ export class Home extends Widget {
             const balance = fetchBalanceOfCurrency(item.addrs, item.currencyName);
             getCurrencyListBalance(this.state.currencyList, balance, item.currencyName);
         });
-        // this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
-        this.state.totalAssets = 0;
+        this.state.totalAssets = formatBalanceValue(fetchTotalAssets());
         this.paint();
     }
 
@@ -288,10 +287,8 @@ register('addrs', (resp) => {
 register('curWallet', (curWallet) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        const wallet = curWallet;
-        // const gwlt = wallet ? (isString(wallet.gwlt) ? GlobalWallet.fromJSON : wallet.gwlt) : null;
-        const gwlt = JSON.parse(wallet.gwlt);
-        w.state.wallet = wallet;
+        const gwlt = curWallet ? JSON.parse(curWallet.gwlt) : null;
+        w.state.wallet = curWallet;
         w.state.gwlt = gwlt;
         w.paint();
     }

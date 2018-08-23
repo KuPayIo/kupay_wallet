@@ -144,7 +144,6 @@ export const getDefaultAddr = (addr: number | string) => {
     return `${addrStr.slice(0, 3)}...${addrStr.slice(-3)}`;
 };
 
-
 /**
  * 转化显示时间
  * @param t date
@@ -438,6 +437,20 @@ export const fetchBalanceOfCurrency = (addrs: string[], currencyName: string) =>
     return balance;
 };
 
+/**
+ * 获取总资产
+ */
+export const fetchTotalAssets = () => {
+    const wallet = find('curWallet');
+    if (!wallet) return;
+    let totalAssets = 0;
+    wallet.currencyRecords.forEach(item => {
+        const balance = fetchBalanceOfCurrency(item.addrs, item.currencyName);
+        totalAssets += balance * find('exchangeRateJson',item.currencyName).CNY;
+    });
+
+    return totalAssets;
+};
 /**
  * 获取异或值
  * @param first 前段

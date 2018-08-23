@@ -1,4 +1,4 @@
-<div class="ga-new-page hide-scrollbar" w-class="hide-scrollba" id="pageOuter">
+<div class="ga-new-page hide-scrollbar" w-class="hide-scrollba" id="pageOuter" >
     <div  id="page">
         <div id="gaHeader" w-class="ga-header-Outer">
         {{if it1.gwlt}}

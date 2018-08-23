@@ -68,3 +68,37 @@ export const importWalletByMnemonic = async (mnemonic, psw, pswTips) => {
 
     openAndGetRandom();
 };
+
+/**
+ * 创建钱包
+ */
+export const createWallet = async (walletPsw,walletName,walletPswTips) => {
+    const salt = find('salt');
+    const gwlt = await GlobalWallet.generate(walletPsw, walletName,salt);
+
+    // 创建钱包基础数据
+    const wallet: Wallet = {
+        walletId: gwlt.glwtId,
+        avatar: getAvatarRandom(),
+        gwlt: gwlt.toJSON(),
+        showCurrencys: defalutShowCurrencys,
+        currencyRecords: []
+    };
+
+    wallet.currencyRecords.push(...gwlt.currencyRecords);
+
+    if (walletPswTips.trim().length > 0) {
+        wallet.walletPswTips = encrypt(walletPswTips.trim());
+    }
+
+    const walletList: Wallet[] = find('walletList');
+    const addrs: Addr[] = find('addrs');
+    addrs.push(...gwlt.addrs);
+    updateStore('addrs', addrs);
+    walletList.push(wallet);
+    updateStore('walletList', walletList);
+    updateStore('curWallet', wallet);
+    updateStore('salt', salt);
+
+    openAndGetRandom(true);
+};

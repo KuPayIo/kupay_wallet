@@ -83,9 +83,11 @@ winit.initNext = function () {
 
     var sourceList = [
       "pi/ui/",
+      "app/components/checkbox/",
       "app/components/loading/",
       "app/components/ringProgressBar/",
-      "app/res/",
+      "app/res/css/",
+      "app/res/js/",
       "app/view/base/",
       "app/view/wallet/home/",
       "app/view/cloud/home/",
@@ -127,7 +129,7 @@ winit.initNext = function () {
         updatedStore('level_2_page_loaded',true);
         const level3SourceList = [
           "app/components/",
-          // "app/exchange/",
+          "app/res/",
           // "app/net/",
           "app/view/"
         ]

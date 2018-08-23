@@ -4,6 +4,11 @@
     width: 100px;
     animation: loadingRotating 2s linear infinite;
 }
+.pi-circular1{
+    height:46px;
+    width: 46px;
+    animation: loadingRotating 2s linear infinite;
+}
 
 @keyframes loadingRotating{
     100% {transform: rotate(360deg);}
@@ -19,7 +24,13 @@
     stroke-linecap: round;
 }
 .pi-path1{
-    stroke: red;
+    -webkit-animation: loading-dash 1.5s ease-in-out infinite;
+    animation: loading-dash 1.5s ease-in-out infinite;
+    stroke-dasharray: 90,150;
+    stroke-dashoffset: 0;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke: #318DE5;
 }
 @keyframes loading-dash{
     0% {

@@ -159,18 +159,26 @@ export const getNewAddrInfo = (currencyName, wallet) => {
  */
 export const addNewAddr = (currencyName, address, addrName) => {
     const wallet = find('curWallet');
-    const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
-    if (!currencyRecord) return;
-    currencyRecord.addrs.push(address);
+    const walletList = find('walletList');
     const addrs: Addr[] = find('addrs') || [];
+    let curWallet;
+    walletList.forEach(walletItem => {
+        if (wallet.walletId === walletItem.walletId) {
+            curWallet = walletItem;
+        }
+    });
+    curWallet.currencyRecords.forEach(currencyRecord => {
+        if (currencyRecord.currencyName === currencyName) {
+            currencyRecord.addrs.push(address);
+            currencyRecord.currentAddr = address;
+        }
+    });
     const newAddrInfo: Addr = dataCenter.initAddr(address, currencyName, addrName);
     addrs.push(newAddrInfo);
-    currencyRecord.currentAddr = address;
-
     dataCenter.addAddr(address, addrName, currencyName);
-
     updateStore('addrs', addrs);
-    updateStore('curWallet', wallet);
+    updateStore('curWallet', curWallet);
+    updateStore('walletList',walletList);
 
     return newAddrInfo;
 };
@@ -207,21 +215,6 @@ export const effectiveAddr = (currencyName: string, addr: string): [boolean, str
     }
 
     return [flag, addr];
-};
-
-/**
- * 获取总资产
- */
-export const fetchTotalAssets = () => {
-    const wallet = find('curWallet');
-    if (!wallet) return;
-    let totalAssets = 0;
-    wallet.currencyRecords.forEach(item => {
-        const balance = fetchBalanceOfCurrency(item.addrs, item.currencyName);
-        totalAssets += balance * dataCenter.getExchangeRate(item.currencyName).CNY;
-    });
-
-    return totalAssets;
 };
 
 /**

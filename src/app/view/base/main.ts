@@ -11,11 +11,10 @@ import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { LockScreen } from '../../store/interface';
-import localStorageStore from '../../store/localStorageStore';
+import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
 
 // ============================== 导出
-
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void => {
@@ -26,8 +25,10 @@ export const run = (cb): void => {
     checkUpdate();
     // 初始化数据
     initStore();
+    // 初始化localstorage
+    initLocalStorageStore();
     // dataCenter.init();
-
+    
     popNewPage();
     // popNew('app-view-guidePages-unlockScreen');
     // // 后台切前台

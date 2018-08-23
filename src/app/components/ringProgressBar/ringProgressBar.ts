@@ -16,7 +16,7 @@ interface Props {
 export class RingProgressBar extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        console.log(props);
+        console.log();
         //
     }
 }

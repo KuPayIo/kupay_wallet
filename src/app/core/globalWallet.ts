@@ -5,13 +5,13 @@ import { dataCenter } from '../logic/dataCenter';
 import { Addr, CurrencyRecord } from '../store/interface';
 import { find } from '../store/store';
 import { btcNetwork, lang, strength } from '../utils/constants';
-import { calcHashValuePromise, getMnemonic, u8ArrayToHexstr } from '../utils/tools';
+import { calcHashValuePromise, u8ArrayToHexstr } from '../utils/tools';
+import { getMnemonic } from '../utils/walletTools';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
 import { ERC20Tokens } from './eth/tokens';
 import { EthWallet } from './eth/wallet';
 import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';
-import { Web3 } from './thirdparty/web3.min';
 
 const cipher = new Cipher();
 
