@@ -7,11 +7,11 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { find, register, updateStore } from '../../../../store/store';
 import { lockScreenVerify } from '../../../../utils/tools';
-import { VerifyIdentidy } from '../../../../utils/walletTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
+declare var pi_modules:any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
@@ -117,6 +117,7 @@ const verifyLongPsw = async (psw: string,that:any) => {
     const close = popNew('app-components_level_1-loading-loading', { text: '验证中...' });
     const wallet = find('curWallet');
     const ls = find('lockScreen');
+    const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
     const isEffective = await VerifyIdentidy(wallet, psw,false);
     close.callback(close.widget);
     if (isEffective) {
