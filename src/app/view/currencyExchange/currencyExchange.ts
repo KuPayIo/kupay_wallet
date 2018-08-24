@@ -184,7 +184,7 @@ export class CurrencyExchange extends Widget {
             return;
         }
 
-        const loading = popNew('app-components-loading-loading', { text: '矿工费预估中...' });
+        const loading = popNew('app-components_level_1-loading-loading', { text: '矿工费预估中...' });
         let gasLimit = 0;
         let fee = 0;
         try {
@@ -213,7 +213,7 @@ export class CurrencyExchange extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('app-components-loading-loading', { text: '交易中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '交易中...' });
         const withdrawalAddress = this.state.curInAddr; // 入账币种的地址
         const returnAddress =  this.state.curOutAddr;// 失败后的退款地址
         const pair = this.state.pair;// 交易对

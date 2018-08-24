@@ -172,7 +172,7 @@ export class Home extends Widget {
             
             return;
         }
-        const close = popNew('app-components-loading-loading', { text: '导出中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '导出中...' });
         
         const wallet = find('curWallet');
         let passwd;

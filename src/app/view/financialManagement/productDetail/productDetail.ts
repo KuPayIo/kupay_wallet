@@ -101,7 +101,7 @@ export class ProductDetail extends Widget {
     }
     // 购买理财
     public async doPurchase(r:any) {
-        const close = popNew('app-components-loading-loading', { text: '正在购买...' });    
+        const close = popNew('app-components_level_1-loading-loading', { text: '正在购买...' });    
         const pswCorrect = await VerifyIdentidy(find('curWallet'),r,false);
         close.callback(close.widget);
         if (!pswCorrect) {

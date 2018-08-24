@@ -74,7 +74,7 @@ export class AddAsset extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('app-components-loading-loading', { text: '添加中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '添加中...' });
         const mnemonic = await getMnemonic(wallet, passwd);
         close.callback(close.widget);
         if (mnemonic) {

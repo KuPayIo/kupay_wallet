@@ -280,3 +280,89 @@ svg:not(:root), symbol, image, marker, pattern, foreignObject {
   opacity: 0;
   transform: translate(-50%, -100%);
 }
+
+
+.pi-loading-mask{
+    position: absolute;
+    margin: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    -webkit-transition: opacity .3s;
+    transition: opacity .3s;
+    color: #fff;
+    font-size: 24px;
+}
+.pi-loading-spinner{
+    width: 180px;
+    height: 180px;
+    background-color: rgba(0,0,0,.6);
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    padding-top: 10px;
+}
+
+.pi-loading-text{
+    color: #fff;
+    margin: 10px 0 20px;
+}
+.pi-svg-box{
+    display: inline-block;
+}
+
+.pi-circular{
+    height:100px;
+    width: 100px;
+    animation: loadingRotating 2s linear infinite;
+}
+.pi-circular1{
+    height:46px;
+    width: 46px;
+    animation: loadingRotating 2s linear infinite;
+}
+
+@keyframes loadingRotating{
+    100% {transform: rotate(360deg);}
+}
+
+.pi-path{
+    -webkit-animation: loading-dash 1.5s ease-in-out infinite;
+    animation: loading-dash 1.5s ease-in-out infinite;
+    stroke-dasharray: 90,150;
+    stroke-dashoffset: 0;
+    stroke-width: 2;
+    stroke: #fff;
+    stroke-linecap: round;
+}
+.pi-path1{
+    -webkit-animation: loading-dash 1.5s ease-in-out infinite;
+    animation: loading-dash 1.5s ease-in-out infinite;
+    stroke-dasharray: 90,150;
+    stroke-dashoffset: 0;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke: #318DE5;
+}
+@keyframes loading-dash{
+    0% {
+        stroke-dasharray: 1,200;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 90,150;
+        stroke-dashoffset: -40px;
+    }
+    100% {
+        stroke-dasharray: 90,150;
+        stroke-dashoffset: -120px;
+    }
+}

@@ -29,12 +29,6 @@ export class ExportPrivateKey extends Widget {
             collapseList:[]
         };
         this.init();
-        // const close = popNew('app-components-loading-loading', { text: '导出私钥中...' });
-        // setTimeout(() => {
-        //     this.init();
-        //     close.callback(close.widget);
-        //     this.paint();
-        // },0);
     }
 
     public init() {

@@ -99,7 +99,7 @@ export class WalletCreate extends Widget {
             return;
         }
 
-        const close = popNew('app-components-loading-loading', { text: '创建中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '创建中...' });
         await createWallet(this.state.walletPsw,this.state.walletName,this.state.walletPswTips);
         close.callback(close.widget);
         this.ok && this.ok();

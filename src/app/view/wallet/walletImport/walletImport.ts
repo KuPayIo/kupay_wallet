@@ -98,7 +98,7 @@ export class WalletImport extends Widget {
             return;
         }
 
-        const close = popNew('app-components-loading-loading', { text: '导入中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '导入中...' });
         try {
             const success = await importWalletByMnemonic(this.state.walletMnemonic, this.state.walletPsw, this.state.walletPswTips);
             if (!success) {

@@ -71,7 +71,7 @@ export class Withdraw extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('app-components-loading-loading', { text: '正在提现...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '正在提现...' });
         const verify = await VerifyIdentidy(wallet,passwd);
         if (!verify) {
             close.callback(close.widget);

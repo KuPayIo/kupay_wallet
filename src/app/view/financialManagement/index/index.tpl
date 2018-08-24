@@ -59,7 +59,7 @@
                     {{v.title}} 
                 </span>
                 <div w-class="ring-container">
-                    <app-components-ringProgressBar-ringProgressBar>{
+                    <app-components_level_1-ringProgressBar-ringProgressBar>{
                         "width":120,
                         "borderWidth":15,
                         "activeColor":"#e5e5e5",
@@ -67,7 +67,7 @@
                         "activePercent":{{1 - v.surplus / v.total}},
                         "centerStyle":"fontSize:28px;color:#111;",
                         "centerText":{{v.surplus === 0 ? '售罄' : Math.floor(v.surplus / v.total * 100) + '%' }}}
-                    </app-components-ringProgressBar-ringProgressBar>
+                    </app-components_level_1-ringProgressBar-ringProgressBar>
                 </div>
             </div>
             <div w-class="productInfo">
