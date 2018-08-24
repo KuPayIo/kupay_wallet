@@ -2,12 +2,11 @@
  * unlock screen
  */
 // ============================== 导入
-import { popNew } from '../../../pi/ui/root';
-import { Forelet } from '../../../pi/widget/forelet';
-import { Widget } from '../../../pi/widget/widget';
-import { GlobalWallet } from '../../core/globalWallet';
-import { find, updateStore } from '../../store/store';
-import { lockScreenVerify, VerifyIdentidy } from '../../utils/tools';
+import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { find, updateStore } from '../../../store/store';
+import { lockScreenVerify, VerifyIdentidy } from '../../../utils/walletTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -68,7 +67,7 @@ export class UnlockScreen extends Widget {
 // 弹出密码验证框
 const popMessageboxVerify = (that:any) => {
     const wallet = find('curWallet');
-    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+    const gwlt = JSON.parse(wallet.gwlt);
     const messageboxVerifyProps = {
         title: '重置锁屏密码',
         content: '错误次数过多，已被锁定，请验证当前钱包交易密码后重置',
@@ -84,7 +83,7 @@ const popMessageboxVerify = (that:any) => {
 
 // 验证密码
 const verifyLongPsw = async (psw: string,that:any) => {
-    const close = popNew('pi-components-loading-loading', { text: '验证中...' });
+    const close = popNew('app-components-loading-loading', { text: '验证中...' });
     const wallet = find('curWallet');
     const ls = find('lockScreen');
     const isEffective = await VerifyIdentidy(wallet, psw,false);
@@ -106,7 +105,7 @@ const verifyLongPsw = async (psw: string,that:any) => {
 
 export const forgetPasswordClick = (that:any) => {
     const wallet = find('curWallet');
-    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+    const gwlt = JSON.parse(wallet.gwlt);
     const messageboxVerifyProps = {
         title: '忘记密码',
         content: '忘记锁屏密码，请验证当前钱包交易密码后重置',

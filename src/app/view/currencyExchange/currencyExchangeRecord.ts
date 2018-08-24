@@ -5,11 +5,11 @@
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { wei2Eth } from '../../core/globalWallet';
 import { getTransactionsByAddr } from '../../net/pullWallet';
 import { ShapeShiftTx, ShapeShiftTxs } from '../../store/interface';
 import { find, register } from '../../store/store';
 import { getCurrentAddrByCurrencyName,getCurrentAddrInfo, parseAccount, timestampFormat } from '../../utils/tools';
+import { wei2Eth } from '../../utils/unitTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -30,7 +30,7 @@ export class CurrencyExchangeRecord extends Widget {
         this.state = {
             txsShow:[]
         };
-        const close = popNew('pi-components-loading-loading',{ text:'加载中...' });
+        const close = popNew('app-components-loading-loading',{ text:'加载中...' });
         const addr = getCurrentAddrByCurrencyName(this.props.currencyName);
         await getTransactionsByAddr(addr);
         close.callback(close.widget);

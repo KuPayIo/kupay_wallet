@@ -38,3 +38,14 @@
     width: 80px;
     height: 80px;
 }
+.tabs{
+    position: relative;
+    flex: 1 0 0;
+}
+.loading-container{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}

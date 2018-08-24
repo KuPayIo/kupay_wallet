@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { find, updateStore } from '../../../store/store';
-import { forgetPasswordClick } from '../../guidePages/unlockScreen'; 
+import { forgetPasswordClick } from './unlockScreen';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

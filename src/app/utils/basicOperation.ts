@@ -7,7 +7,8 @@ import { Addr, Wallet } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { getAvatarRandom } from './account';
 import { defalutShowCurrencys } from './constants';
-import { encrypt, getAddrsAll, openBasePage } from './tools';
+import { getAddrsAll, openBasePage } from './tools';
+import { encrypt } from './walletTools';
 
 /**
  * 通过助记词导入钱包
@@ -23,9 +24,23 @@ export const importWalletByMnemonic = async (mnemonic, psw, pswTips) => {
     console.timeEnd('import');
     // 判断钱包是否存在
     let len = walletList.length;
-    if (walletList.some(v => v.walletId === gwlt.glwtId)) {
-        await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '提示', content: '该钱包已存在，是否使用新密码' });
+    let index = -1;
+    for (let i = 0;i < walletList.length;i++) {
+        if (walletList[i].walletId === gwlt.glwtId) {
+            index = i;
+            break;
+        }
+    }
+    if (index >= 0) {
+        try {
+            await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '提示', content: '该钱包已存在，是否使用新密码' });
+        } catch (err) {
+            // console.log(err);
+            updateStore('curWallet', walletList[index]);
 
+            return false;
+        }
+        
         for (let i = len - 1; i >= 0; i--) {
             if (gwlt.glwtId === walletList[i].walletId) {
                 const wallet0 = walletList.splice(i, 1)[0];// 删除已存在钱包
@@ -60,6 +75,41 @@ export const importWalletByMnemonic = async (mnemonic, psw, pswTips) => {
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
     updateStore('salt', salt);
-
     openAndGetRandom();
+
+    return true;
+};
+
+/**
+ * 创建钱包
+ */
+export const createWallet = async (walletPsw,walletName,walletPswTips) => {
+    const salt = find('salt');
+    const gwlt = await GlobalWallet.generate(walletPsw, walletName,salt);
+
+    // 创建钱包基础数据
+    const wallet: Wallet = {
+        walletId: gwlt.glwtId,
+        avatar: getAvatarRandom(),
+        gwlt: gwlt.toJSON(),
+        showCurrencys: defalutShowCurrencys,
+        currencyRecords: []
+    };
+
+    wallet.currencyRecords.push(...gwlt.currencyRecords);
+
+    if (walletPswTips.trim().length > 0) {
+        wallet.walletPswTips = encrypt(walletPswTips.trim());
+    }
+
+    const walletList: Wallet[] = find('walletList');
+    const addrs: Addr[] = find('addrs');
+    addrs.push(...gwlt.addrs);
+    updateStore('addrs', addrs);
+    walletList.push(wallet);
+    updateStore('walletList', walletList);
+    updateStore('curWallet', wallet);
+    updateStore('salt', salt);
+
+    openAndGetRandom(true);
 };

@@ -3,7 +3,6 @@
  */
 // ================================ 导入
 import { SendChatMessage } from '../../../pi/browser/sendMessage';
-import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { doChat, getProxy } from '../../net/pull';
@@ -12,6 +11,7 @@ import { register } from '../../store/store';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
+declare var pi_modules : any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class App extends Widget {
@@ -24,10 +24,13 @@ export class App extends Widget {
     public init(): void {
         const isActive = 0;
         this.old[isActive] = true;
+        const loading = localStorage.getItem('level_3_page_loaded') ? false : true;
+        localStorage.removeItem('level_3_page_loaded');
         this.state = {
             type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
             isActive,
             old: this.old,
+            loading,
             tabBarList: [{
                 text: '钱包',
                 icon: 'wallet_icon.png',
@@ -75,6 +78,10 @@ export class App extends Widget {
             }]
 
         };
+    }
+    public closeLoading() {
+        this.state.loading = false;
+        this.paint();
     }
     public async tabBarChangeListener(event: any, index: number) {
         if (this.state.isActive === index) return;
@@ -180,5 +187,18 @@ register('mineItemJump',(arg) => {
         if (arg === 'buyFinancial') {
             w.tabBarChangeListener('',3);
         }
+    }
+});
+register('level_2_page_loaded',(loaded:boolean) => {
+    const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+    dataCenter.init();
+});
+
+register('level_3_page_loaded',(loaded:boolean) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.closeLoading();
+    } else { // 处理导航页过程中资源已经加载完毕
+        localStorage.setItem('level_3_page_loaded','1');
     }
 });

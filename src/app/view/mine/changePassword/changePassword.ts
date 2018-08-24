@@ -71,7 +71,7 @@ export class ChangePassword extends Widget {
             return;
         }
         // 验证全部通过，开始设置新密码
-        const loading = popNew('pi-components-loading-loading', { text: '修改中...' });
+        const loading = popNew('app-components-loading-loading', { text: '修改中...' });
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         await gwlt.passwordChange(this.props.passwd, newPassword, this.props.walletId);
         wallet.gwlt = gwlt.toJSON();

@@ -83,6 +83,7 @@ export class Dividend extends Widget {
 
             setTimeout(() => {// 数字动画效果执行完后刷新页面
                 getMining();
+                this.initEvent();
                 this.paint();
             },500);
 

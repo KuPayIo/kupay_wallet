@@ -348,7 +348,8 @@ export enum TaskSid {
     chat,// 聊天
     redEnvelope = 'red_bag_port', // 红包
     recharge = 'bank_db',// 充值
-    withdraw = 'bank_port'// 提现
+    withdraw = 'bank_port',// 提现
+    financialManagement = 'manage_money_port' // 理财
 }
 
 export interface AccountDetail {
@@ -363,4 +364,46 @@ export interface TopContact {
     currencyName: string;// 货币名称
     tags: string;// 地址标签
     addresse: string;// 地址
+}
+
+// 理财产品数据结构
+// 理财残破
+export interface Product {
+    id:string;
+    title: string;
+    profit: string;
+    productName: string;
+    productDescribe: string;
+    unitPrice: number;
+    coinType:string;
+    days: string;
+    total:number;
+    surplus: number;
+    purchaseDate: string;
+    interestDate: string;
+    endDate: string;
+    productIntroduction: number;
+    limit: any;
+    lockday:string;
+    isSoldOut:boolean;
+    
+}
+// 购买记录数据结构
+export interface PurchaseRecordOne {
+    id:string;// 产品id
+    yesterdayIncoming:any;// 昨日收益
+    totalIncoming:any;// 总收益
+    profit: string;// 预期年化收益
+    productName: string;// 产品名称
+    unitPrice: number;// 单价
+    amount:number;// 购买数量
+    coinType:string;// 购买币种
+    days: string;// 累计天数
+    purchaseDate: string;// 起购日
+    interestDate: string;// 起息日
+    endDate: string;// 结束日
+    purchaseTimeStamp:string;// 购买时间戳
+    productIntroduction: number;// 产品简介
+    lockday:string;// 锁定期
+    state:any;
 }

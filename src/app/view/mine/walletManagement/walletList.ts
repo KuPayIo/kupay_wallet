@@ -7,7 +7,8 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { find, register } from '../../../store/store';
-import { getMnemonic, getWalletByWalletId, popPswBox } from '../../../utils/tools';
+import { getWalletByWalletId, popPswBox } from '../../../utils/tools';
+import { getMnemonic } from '../../../utils/walletTools';
 // ==========================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -28,8 +29,6 @@ export class WalletList extends Widget {
     public init() {
         // 获取钱包显示头像
         const walletList = find('walletList');
-        console.log('-------walletList---------');
-        console.log(walletList);
         const fromJSON = GlobalWallet.fromJSON;
 
         const curWallet = find('curWallet');
@@ -48,8 +47,7 @@ export class WalletList extends Widget {
     }
 
     public async backupClicked(walletId: string) {
-        const close = popNew('pi-components-loading-loading', { text: '导出中...' });
-       
+        
         const walletList = find('walletList');
         const wallet = getWalletByWalletId(walletList, walletId);
         let passwd;
@@ -57,6 +55,7 @@ export class WalletList extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
+        const close = popNew('app-components-loading-loading', { text: '导出中...' });
         try {
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {

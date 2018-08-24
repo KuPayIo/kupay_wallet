@@ -3,7 +3,6 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { updateStore } from '../../../store/store';
 import { getWalletPswStrength, pswEqualed, walletCountAvailable, walletPswAvailable } from '../../../utils/account';
 import { importWalletByMnemonic } from '../../../utils/basicOperation';
 
@@ -99,13 +98,18 @@ export class WalletImport extends Widget {
             return;
         }
 
-        const close = popNew('pi-components-loading-loading', { text: '导入中...' });
+        const close = popNew('app-components-loading-loading', { text: '导入中...' });
         try {
-            await importWalletByMnemonic(this.state.walletMnemonic, this.state.walletPsw, this.state.walletPswTips);
+            const success = await importWalletByMnemonic(this.state.walletMnemonic, this.state.walletPsw, this.state.walletPswTips);
+            if (!success) {
+                close.callback(close.widget);
+                this.ok && this.ok();
+
+                return;
+            }
         } catch (e) {
             close.callback(close.widget);
-            console.log(e);
-            popNew('app-components-message-message', { itype: 'error', content: '导入失败', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: '无效的助记词', center: true });
 
             return;
         }

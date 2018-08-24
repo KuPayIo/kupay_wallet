@@ -40,7 +40,9 @@ export class SwitchWallet extends Widget {
         if (isCurWallet) {
             return;
         }
-        updateStore('curWallet', this.state.walletList[index]);
+        const wallet = this.state.walletList[index];
+        wallet.gwlt = wallet.gwlt.toJSON();
+        updateStore('curWallet',wallet);
         openAndGetRandom();
         popNew('app-components-message-message', { itype: 'success', content: '切换成功', center: true });
         this.ok && this.ok();

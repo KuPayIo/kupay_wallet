@@ -35,6 +35,7 @@ export class PrivacyAgreement extends Widget {
             return;
         }
         updateStore('readedPriAgr', true);
+        // localStorage.setItem('readedPriAgr',JSON.stringify(true));
         popNew('app-view-guidePages-displayPage');
         this.ok && this.ok();
     }

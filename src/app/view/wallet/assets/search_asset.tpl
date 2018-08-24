@@ -21,7 +21,15 @@
             <div w-class="each">
                 <img src="../../../res/image/currency/{{each.name}}.png" w-class="icon-img"/>
                 <div w-class="box">
-                    <div w-class="name">{{each.name}}</div>
+                    {{let names = each.name.split(it1.search)}}
+                    <div w-class="name">
+                        {{for ind,val of names}}
+                        {{val}}
+                        {{if ind < names.length-1}}
+                        <span style="color: orangered">{{it1.search}}</span>
+                        {{end}}
+                        {{end}}
+                    </div>
                     <div w-class="description">{{each.description}}</div>
                 </div>
                 {{if each.isChoose}}

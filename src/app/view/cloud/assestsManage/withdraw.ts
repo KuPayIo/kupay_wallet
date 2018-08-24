@@ -4,12 +4,13 @@
 // ==================================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { eth2Wei } from '../../../core/globalWallet';
-import { getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
+import { getCloudBalance, getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find } from '../../../store/store';
-import { withdrawServiceCharge } from '../../../utils/constants';
-import { getCurrentAddrByCurrencyName, openBasePage, popPswBox, VerifyIdentidy } from '../../../utils/tools';
+import { gasLimit, gasPrice, withdrawLimit } from '../../../utils/constants';
+import { getCurrentAddrByCurrencyName, popPswBox } from '../../../utils/tools';
+import { eth2Wei, wei2Eth } from '../../../utils/unitTools';
+import { VerifyIdentidy } from '../../../utils/walletTools';
 // =================================================导出
 
 interface Props {
@@ -26,8 +27,8 @@ export class Withdraw extends Widget {
     }
     public init(): void {
         this.state = {
-            amount:0,// 提币金额
-            serviceCharge:0,// 手续费
+            amount:'',// 提币金额
+            serviceCharge:wei2Eth(gasLimit * gasPrice),// 手续费
             cloudBalance:find('cloudBalance',CurrencyType[this.props.currencyName]),// 可提金额
             isFeeEnough:true
         };
@@ -36,26 +37,25 @@ export class Withdraw extends Widget {
         this.ok && this.ok();
     }
     public amountChange(e:any) {
-        this.state.amount = Number(e.value);
-        this.state.serviceCharge = this.state.amount * withdrawServiceCharge;
+        this.state.amount = e.value;
         this.judgeFeeEnough();
         this.paint();
     }
     public judgeFeeEnough() {
-        const amount = this.state.amount;
-        const serviceCharge = this.state.serviceCharge;
+        const amount = Number(this.state.amount);
         const cloudBalance = this.state.cloudBalance;
-        if ((amount + serviceCharge) > cloudBalance) {
+        if (amount > cloudBalance) {
             this.state.isFeeEnough = false;
         } else {
-
             this.state.isFeeEnough = true;
         }
     }
     // 提现
     public async withdrawClick() {
-        if (this.state.amount <= 0) {
-            popNew('app-components-message-message',{ itype:'error',content:'请输入提现金额',center:true });
+        const currencyName = this.props.currencyName;
+        const limit = withdrawLimit[currencyName];
+        if (Number(this.state.amount) < limit) {
+            popNew('app-components-message-message',{ itype:'error',content:`最小提现金额${limit}${currencyName}`,center:true });
 
             return;
         }
@@ -71,7 +71,7 @@ export class Withdraw extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '正在提现...' });
+        const close = popNew('app-components-loading-loading', { text: '正在提现...' });
         const verify = await VerifyIdentidy(wallet,passwd);
         if (!verify) {
             close.callback(close.widget);
@@ -87,6 +87,7 @@ export class Withdraw extends Widget {
             popNew('app-components-message-message',{ itype:'success',content:'提现成功',center:true });
         }
         getWithdrawLogs();
+        getCloudBalance();
         this.ok && this.ok();
     }
 }

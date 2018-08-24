@@ -7,11 +7,19 @@ interface Props {
 }
 // ===============================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../store/dataCenter';
+import { GlobalWallet } from '../../../core/globalWallet';
+import { dataCenter } from '../../../logic/dataCenter';
+import { find } from '../../../store/store';
 import { formatBalanceValue } from '../../../utils/tools';
 
 // ====================================================导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class CloudAccount extends Widget {
     public ok: () => void;
     constructor() {
@@ -22,10 +30,12 @@ export class CloudAccount extends Widget {
         this.init();
     }
     public init(): void {
+        const curWallet = find('curWallet');
+        const gwlt = GlobalWallet.fromJSON(curWallet.gwlt);
         this.state = {
             isNameUpdated:false,
-            accoutNickName: '昵称未设置',// 账户昵称
-            accoutHeadImg: 'img_avatar1.png',// 账户头像
+            accoutNickName: gwlt.nickName,// 账户昵称
+            accoutHeadImg: curWallet.avatar,// 账户头像
             accountAssets: '',// 账户资产
             coinList: [{
                 coinIcon: 'cloud_cointype_btc.png',// 代币图标
@@ -37,8 +47,8 @@ export class CloudAccount extends Widget {
                 coinBalance: this.props.ethBalance
             }]
         };
-        const all = dataCenter.getExchangeRate('KT').CNY * this.props.ktBalance
-            + dataCenter.getExchangeRate('ETH').CNY * this.props.ethBalance;
+        const all = find('exchangeRateJson','KT').CNY * this.props.ktBalance
+            + find('exchangeRateJson','ETH').CNY * this.props.ethBalance;
         this.state.accountAssets = `≈${formatBalanceValue(all)} CNY`;
     }
     public backClick() {
@@ -71,3 +81,6 @@ export class CloudAccount extends Widget {
     }
 
 }
+
+// ===================================================== 本地
+// ===================================================== 立即执行

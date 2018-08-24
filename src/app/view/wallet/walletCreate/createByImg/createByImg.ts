@@ -34,7 +34,7 @@ export class CreateComplete extends Widget {
     }
     public chooseImg() {
         console.log('选择图片');
-        const close = popNew('pi-components-loading-loading', { text: '导入中...' });
+        const close = popNew('app-components-loading-loading', { text: '导入中...' });
 
         // tslint:disable-next-line:no-this-assignment
         const thisObj = this;

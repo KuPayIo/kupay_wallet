@@ -1,19 +1,15 @@
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
-import { config } from '../core/config';
 import { Api as EthApi } from '../core/eth/api';
 import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
-import { wei2Eth } from '../core/globalWallet';
 import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
 import { Addr, CurrencyRecord, Wallet } from '../store/interface';
-// tslint:disable-next-line:max-line-length
-import { btcNetwork, defaultExchangeRateJsonMain, defaultExchangeRateJsonTest, ethTokenTransferCode, lang, supportCurrencyListMain, supportCurrencyListTest } from '../utils/constants';
-import {
-    btc2Sat, ethTokenDivideDecimals, getAddrsAll, getAddrsByCurrencyName, getDefaultAddr,
-    getMnemonic, sat2Btc
-} from '../utils/tools';
-import { find, getBorn, updateStore } from './store';
+import { find, getBorn, updateStore } from '../store/store';
+import { btcNetwork, defaultExchangeRateJson, ethTokenTransferCode, lang } from '../utils/constants';
+import { getAddrsAll, getAddrsByCurrencyName, getDefaultAddr } from '../utils/tools';
+import { btc2Sat, ethTokenDivideDecimals, sat2Btc, wei2Eth } from '../utils/unitTools';
+import { getMnemonic } from '../utils/walletTools';
 /**
  * 创建事件处理器表
  * @example
@@ -57,10 +53,12 @@ export class DataCenter {
             if (!wallet) return;
             let list = [];
             wallet.currencyRecords.forEach(v => {
-                list = list.concat(v.addrs);
+                if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
+                    list = list.concat(v.addrs);
+                }
             });
             addrs.forEach(v => {
-                if (list.indexOf(v.addr) >= 0) {
+                if (list.indexOf(v.addr) >= 0 && wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
                     this.addAddr(v.addr, v.addrName, v.currencyName);
                 }
             });
@@ -70,14 +68,8 @@ export class DataCenter {
     }
 
     public initStore() {
-        // 从localStorage中取wallets
-        // 从localStorage中取addrs
-        // 从localStorage中取transactions
-        // 从localStorage中的wallets中初始化salt
-        // 从localStorage中的wallets中初始化curWallet
-
         // 初始化默认兑换汇率列表
-        const rateJson = (config.dev_mode === 'dev') ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
+        const rateJson = defaultExchangeRateJson;
         const m = new Map();
         for (const key in rateJson) {
             if (rateJson.hasOwnProperty(key)) {
@@ -87,7 +79,7 @@ export class DataCenter {
         updateStore('exchangeRateJson', m);
 
         // 初始化货币信息列表
-        updateStore('exchangeRateJson', (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain);
+        // updateStore('exchangeRateJson', (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain);
 
     }
 
@@ -227,57 +219,57 @@ export class DataCenter {
 
     }
 
-    /**
-     * 设置连接用户
-     */
-    public getUser() {
-        return find('conUser');
-    }
-    /**
-     * 获取连接用户
-     */
-    public setUser(user: string) {
-        updateStore('conUser', user);
-    }
+    // /**
+    //  * 设置连接用户
+    //  */
+    // public getUser() {
+    //     return find('conUser');
+    // }
+    // /**
+    //  * 获取连接用户
+    //  */
+    // public setUser(user: string) {
+    //     updateStore('conUser', user);
+    // }
 
-    /**
-     * 设置连接用户
-     */
-    public getUserPublicKey() {
-        return find('conUserPublicKey');
-    }
-    /**
-     * 获取连接用户
-     */
-    public setUserPublicKey(publicKey: string) {
-        updateStore('conUserPublicKey', publicKey);
-    }
+    // /**
+    //  * 设置连接用户
+    //  */
+    // public getUserPublicKey() {
+    //     return find('conUserPublicKey');
+    // }
+    // /**
+    //  * 获取连接用户
+    //  */
+    // public setUserPublicKey(publicKey: string) {
+    //     updateStore('conUserPublicKey', publicKey);
+    // }
 
-    /**
-     * 设置连接随机数
-     */
-    public getConRandom() {
-        return find('conRandom');
-    }
-    /**
-     * 获取连接随机数
-     */
-    public setConRandom(random: string) {
-        updateStore('conRandom', random);
-    }
+    // /**
+    //  * 设置连接随机数
+    //  */
+    // public getConRandom() {
+    //     return find('conRandom');
+    // }
+    // /**
+    //  * 获取连接随机数
+    //  */
+    // public setConRandom(random: string) {
+    //     updateStore('conRandom', random);
+    // }
 
-    /**
-     * 设置连接随机数
-     */
-    public getConUid() {
-        return find('conUid');
-    }
-    /**
-     * 获取连接随机数
-     */
-    public setConUid(uid: number) {
-        updateStore('conUid', uid);
-    }
+    // /**
+    //  * 设置连接随机数
+    //  */
+    // public getConUid() {
+    //     return find('conUid');
+    // }
+    // /**
+    //  * 获取连接随机数
+    //  */
+    // public setConUid(uid: number) {
+    //     updateStore('conUid', uid);
+    // }
 
     /****************************************************************************************************
      * 私有函数
@@ -479,7 +471,7 @@ export class DataCenter {
      * 解析btc交易详情记录
      */
     private parseBtcTransactionTxRecord(addr: string, tx: any) {
-        console.log('parseBtcTransactionTxRecord', tx);
+        // console.log('parseBtcTransactionTxRecord', tx);
         let value = 0;
         const inputs = tx.vin.map(v => {
             return v.addr;

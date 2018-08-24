@@ -13,17 +13,22 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+interface Props {
+    coinType:string;
+}
 export class Withdraw extends Widget {
     constructor() {
         super();
     }
-    public create() {
-        super.create();
+    public setProps(props:Props,oldProps:Props) {
+        super.setProps(props,oldProps);
         this.init();
     }
     public async init() {
         this.state = { infoList: [] };
-        getWithdrawLogs();
+        if (this.props.coinType === 'ETH') {
+            getWithdrawLogs();
+        }
     }
     public updateWithdrawLogs(withdrawLogs:RechargeWithdrawalLog[]) {
         this.state.infoList = withdrawLogs;

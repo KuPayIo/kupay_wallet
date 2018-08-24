@@ -6,6 +6,11 @@
     float: right;
     margin-top:10px; 
 }
+.ring-container{
+    float: right;
+    margin-top:10px; 
+    display: inline-block;
+}
 .head{
     background: #3574FA;
     height: 250px;
@@ -34,6 +39,7 @@
     box-shadow: 0 4px 30px 0 rgba(39,52,125,0.25);
     transform: translateY(-40px);
     background: #fff;
+    margin-top:10px;
 }
 .mineTitle{
     color: #203260;

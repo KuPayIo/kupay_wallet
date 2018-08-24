@@ -1,6 +1,5 @@
 .hideOrShow{
     text-align: center;
-    display: none;
 }
 .imgtip{
     margin-top:121px; 
@@ -65,4 +64,7 @@
 .stateEnd{
     background: #A0ACC0;
     color: #FFFFFF;
+}
+.ga-new-page{
+    overflow: hidden auto;
 }

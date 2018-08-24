@@ -17,7 +17,7 @@ export class AddAsset extends Widget {
     }
     public create() {
         super.create();
-        this.state = { list: [] };
+        this.state = { list: [],search:'' };
     }
 
     /**
@@ -54,6 +54,7 @@ export class AddAsset extends Widget {
         let list = [];
         if (e.value) {
             list = this.props.list.filter(v => v.name.toLowerCase().indexOf(e.value.toLowerCase()) >= 0);
+            this.state.search = e.value.toUpperCase();
         }
         this.state.list = list;
         this.paint();
