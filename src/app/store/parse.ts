@@ -288,8 +288,7 @@ export const paseProductList = (res:any) => {
         const id = item[0];
         const product = deepCopy(Config.productList[id]);
         product.coninType = CurrencyTypeReverse[`${item[1]}`];
-        // product.unitPrice = fromWei(item[2],'ether');
-        product.unitPrice = item[2];
+        product.unitPrice = wei2Eth(item[2]);
         product.total = item[3];
         product.surplus = item[3] - item[4];
         product.purchaseDate = timestampFormatToDate(new Date().getTime());

@@ -19,7 +19,7 @@
     {{end}}
 {{end}}
 {{if it1.loading}}
-<div w-class="loading-container"><app-components-loading-loading1>{}</app-components-loading-loading1></div>
+<div w-class="loading-container"><app-components_level_1-loading-loading1>{}</app-components_level_1-loading-loading1></div>
 {{end}}
 </div>
 

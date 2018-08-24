@@ -13,37 +13,8 @@ import { dataCenter } from '../logic/dataCenter';
 import { Addr } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { lang } from './constants';
-import { calcHashValuePromise, fetchBalanceOfCurrency, formatBalance, hexstrToU8Array } from './tools';
+import { calcHashValuePromise, formatBalance, hexstrToU8Array } from './tools';
 import { ethTokenDivideDecimals, sat2Btc, wei2Eth } from './unitTools';
-
-// 加密盐值
-const salt = 'KuPay';
-/**
- * 密码加密
- * @param plainText 需要加密的文本
- */
-export const encrypt = (plainText: string) => {
-    const cipher = new Cipher();
-
-    return cipher.encrypt(salt, plainText);
-};
-
-/**
- * 密码解密
- * @param cipherText 需要解密的文本
- */
-export const decrypt = (cipherText: string) => {
-    const cipher = new Cipher();
-
-    return cipher.decrypt(salt, cipherText);
-};
-
-// hash256;
-export const sha256 = (data: string) => {
-    const cipher = new Cipher();
-
-    return cipher.sha256(data);
-};
 
 /**
  * 获取有效的货币
@@ -268,15 +239,4 @@ export const getMnemonicHexstr = async (wallet, passwd) => {
 
         return '';
     }
-};
-// 锁屏密码验证
-export const lockScreenVerify = (psw) => {
-    const hash256 = sha256(psw + find('salt'));
-    const localHash256 = find('lockScreen').psw;
-
-    return hash256 === localHash256;
-};
-// 锁屏密码hash算法
-export const lockScreenHash = (psw) => {
-    return sha256(psw + find('salt'));
 };

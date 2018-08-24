@@ -77,15 +77,13 @@ winit.initNext = function () {
     var userinfo = html.getCookie("userinfo");
     pi_modules.commonjs.exports.flags = html.userAgent(flags);
     flags.userinfo = userinfo;
-    //debugger;
+    // debugger;
 
 
 
     var sourceList = [
       "pi/ui/",
-      "app/components/checkbox/",
-      "app/components/loading/",
-      "app/components/ringProgressBar/",
+      "app/components_level_1/",
       "app/res/css/",
       "app/res/js/",
       "app/view/base/",
@@ -93,7 +91,8 @@ winit.initNext = function () {
       "app/view/cloud/home/",
       "app/view/financialManagement/index/",
       "app/view/mine/home/",
-      "app/view/guidePages/"
+      "app/view/guidePages/",
+      "app/view/mine/lockScreen/unlockScreen/"
     ]
     console.time('firstload');
     util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
@@ -144,6 +143,7 @@ winit.initNext = function () {
       }, function (r) {
         alert("加载目录失败, " + r.error + ":" + r.reason);
       }, dirProcess.handler);
+      
       // pi_modules.commonjs.exports.relativeGet("app/cims/util").exports.initCfg(fileMap);
     }, function (r) {
       alert("加载目录失败, " + r.error + ":" + r.reason);

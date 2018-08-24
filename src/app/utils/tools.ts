@@ -3,9 +3,10 @@
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
+import { Cipher } from '../core/crypto/cipher';
 import { Addr } from '../store/interface';
 import { find, updateStore } from '../store/store';
-import { ERC20TokenDecimals, lang, supportCurrencyList } from './constants';
+import { supportCurrencyList } from './constants';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -679,4 +680,44 @@ export const timestampFormatToDate = (timestamp: number) => {
     const day = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
     
     return `${year}-${month}-${day}`;
+};
+// 加密盐值
+const salt = 'KuPay';
+/**
+ * 密码加密
+ * @param plainText 需要加密的文本
+ */
+export const encrypt = (plainText: string) => {
+    const cipher = new Cipher();
+
+    return cipher.encrypt(salt, plainText);
+};
+
+/**
+ * 密码解密
+ * @param cipherText 需要解密的文本
+ */
+export const decrypt = (cipherText: string) => {
+    const cipher = new Cipher();
+
+    return cipher.decrypt(salt, cipherText);
+};
+
+// hash256;
+export const sha256 = (data: string) => {
+    const cipher = new Cipher();
+
+    return cipher.sha256(data);
+};
+
+// 锁屏密码验证
+export const lockScreenVerify = (psw) => {
+    const hash256 = sha256(psw + find('salt'));
+    const localHash256 = find('lockScreen').psw;
+
+    return hash256 === localHash256;
+};
+// 锁屏密码hash算法
+export const lockScreenHash = (psw) => {
+    return sha256(psw + find('salt'));
 };

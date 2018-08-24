@@ -138,7 +138,7 @@ function checkUpdate () {
                         }
                         // download index.js then compare
                         ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 10000, function(oldIndexJS) {
-                            //console.log('[oldIndexJS]', oldIndexJS)
+
                             var oldIndexJSVersion = getVersionNumber(oldIndexJS);
                             console.log('[oldIndexJS]', oldIndexJSVersion);
                             // load index.js locally

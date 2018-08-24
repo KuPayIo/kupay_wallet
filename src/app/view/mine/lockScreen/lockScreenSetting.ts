@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { find, updateStore } from '../../../store/store';
-import { forgetPasswordClick } from './unlockScreen';
+import { forgetPasswordClick } from './unlockScreen/unlockScreen';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -42,7 +42,7 @@ export class LockScreenSetting extends Widget {
      */
     public onSwitchChange() {
         if (!this.state.lockScreenPsw) {
-            popNew('app-view-guidePages-setLockScreenScret', { jump:true }, () => {
+            popNew('app-view-mine-lockScreen-setLockScreenScret', { jump:true }, () => {
                 this.state.lockScreenPsw = find('lockScreen').psw;
             });
         }
@@ -56,7 +56,7 @@ export class LockScreenSetting extends Widget {
 
     // 修改锁屏密码
     public resetLockScreen() {
-        popNew('app-view-guidePages-unlockScreen',{ updatedPsw:true,jump:true });
+        popNew('app-view-mine-lockScreen-unlockScreen',{ updatedPsw:true,jump:true });
     }
 
     public forgetPasswordClick() {
