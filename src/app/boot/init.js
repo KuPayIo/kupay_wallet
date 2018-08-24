@@ -687,7 +687,7 @@ pi_modules.load.exports = (function () {
 					localInitCheck(false);
 				}else if(isNative){
 					// 加载标准版的.depend，但是统一叫depend
-					ajax.get("file:///android_asset/res/depend", undefined, undefined, ajax.RESP_TYPE_TEXT, 0, function(r){
+					ajax.get(serverAddress[0]+"/wallet/.depend", undefined, undefined, ajax.RESP_TYPE_TEXT, 0, function(r){
 						localSign = {};
 						var i = r.indexOf("["), j = r.lastIndexOf("]"), info;
 						var arr = JSON.parse(r.slice(i, j + 1));
@@ -822,7 +822,7 @@ pi_modules.load.exports = (function () {
 				if(s === sign)
 					store.read(localStore, name, loadOK, butil.curryFirst(loadError, name));
 				else
-					ajax.get("file:///android_asset/res/"+name, undefined, undefined, ajax.RESP_TYPE_BIN, 0, butil.curryFirst(loadOK, name), butil.curryFirst(loadError, name));
+					ajax.get(serverAddress[0]+"/wallet/"+name, undefined, undefined, ajax.RESP_TYPE_BIN, 0, butil.curryFirst(loadOK, name), butil.curryFirst(loadError, name));
 			} else {
 				load.downAmount++;
 				load.fileMap[name] = null;
