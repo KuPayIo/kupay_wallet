@@ -22,7 +22,7 @@ function checkUpdate () {
 
     function getMainVersionNumber(ver) {
         /// main-ver.sub-ver. ...
-        return parseInt('1.2.3'.match(/^(\d+).?/)[1]);
+        return parseInt(ver.match(/^(\d+).?/)[1]);
     }
 
     function checkIfLargeUpdate(oldVer, newVer) {
@@ -152,10 +152,13 @@ function checkUpdate () {
 
                                     var forceUpdate = checkIfLargeUpdate(oldIndexJSVersion, newIndexJSversion);
                                     if (forceUpdate) {
+                                        // to prevent user close application and restart application without network to avoid updates,
+                                        // set pending flag before alert.
+                                        localStorage.setItem("pending", "false");
                                         alert('A change on main version number is detected, update will start.');
                                     }
 
-                                    // index.js changed, ask user to update
+                                    // version number changed, ask user to update
                                     if (oldIndexJSVersion !== newIndexJSversion && (forceUpdate || confirm("Update detected, processed with update?"))) {
                                         localized.setForceFetchFromServer(function() {
                                             /// update the 5 files
