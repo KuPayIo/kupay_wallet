@@ -22,7 +22,11 @@ function checkUpdate () {
 
     function getMainVersionNumber(ver) {
         /// main-ver.sub-ver. ...
-        return parseInt(ver.match(/^(\d+).?/)[1]);
+        var match = ver.match(/^(\d+).?/);
+        if (match == null) {
+            throw new Error("A version number must be specified at first line of index.js. Format: `//!version=1.1'");
+        }
+        return parseInt(match[1]);
     }
 
     function checkIfLargeUpdate(oldVer, newVer) {
@@ -151,15 +155,27 @@ function checkUpdate () {
                                     console.log('[newIndexJS]', newIndexJSversion);
 
                                     var forceUpdate = checkIfLargeUpdate(oldIndexJSVersion, newIndexJSversion);
+                                    var userAgreeUpdate = false;
                                     if (forceUpdate) {
                                         // to prevent user close application and restart application without network to avoid updates,
                                         // set pending flag before alert.
                                         localStorage.setItem("pending", "false");
                                         alert('A change on main version number is detected, update will start.');
                                     }
+                                    else {
+                                        userAgreeUpdate = confirm("Update detected, processed with update?");
+                                        
+                                        // If user disagree with update
+                                        if (!userAgreeUpdate) {
+                                            localized.setFetchFromLocal(function() {
+                                                console.log('current state: force-from-local');
+                                            }, function() { console.error('unable to set flag: fetch-from-local'); })
+                                        }
+                                    }
+                                    
 
                                     // version number changed, ask user to update
-                                    if (oldIndexJSVersion !== newIndexJSversion && (forceUpdate || confirm("Update detected, processed with update?"))) {
+                                    if (oldIndexJSVersion !== newIndexJSversion && (forceUpdate || userAgreeUpdate)) {
                                         localized.setForceFetchFromServer(function() {
                                             /// update the 5 files
                                             var updateFiles = [
@@ -209,8 +225,13 @@ function checkUpdate () {
                                     else {
                                         localized.setFetchFromLocal(function() {}, errCallback);
                                     }
-                                }, errCallback)
-                            }, function() { console.error('unable to set flag: force-fetch-from-local'); });
+                                }, function() {
+                                    // if get index.js failed, set flag back
+                                    localized.setFetchFromLocal(function() {
+                                        console.log('current state: force-from-local');
+                                    }, function() { console.error('unable to set flag: fetch-from-local'); })
+                                })
+                            }, function() { console.error('unable to set flag: force-fetch-from-server'); });
                         }, errCallback)
                     //}, errCallback);
             }, errCallback);
