@@ -142,7 +142,7 @@ function checkUpdate () {
                         }
                         // download index.js then compare
                         ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 10000, function(oldIndexJS) {
-
+                            //console.log('[oldIndexJS]', oldIndexJS)
                             var oldIndexJSVersion = getVersionNumber(oldIndexJS);
                             console.log('[oldIndexJS]', oldIndexJSVersion);
                             // load index.js locally
@@ -162,7 +162,7 @@ function checkUpdate () {
                                         localStorage.setItem("pending", "false");
                                         alert('A change on main version number is detected, update will start.');
                                     }
-                                    else {
+                                    else if (oldIndexJSVersion !== newIndexJSversion) {
                                         userAgreeUpdate = confirm("Update detected, processed with update?");
                                         
                                         // If user disagree with update
@@ -173,9 +173,8 @@ function checkUpdate () {
                                         }
                                     }
                                     
-
-                                    // version number changed, ask user to update
-                                    if (oldIndexJSVersion !== newIndexJSversion && (forceUpdate || userAgreeUpdate)) {
+                                    // force update, ask user to update
+                                    if (forceUpdate || userAgreeUpdate) {
                                         localized.setForceFetchFromServer(function() {
                                             /// update the 5 files
                                             var updateFiles = [
