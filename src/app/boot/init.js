@@ -1128,6 +1128,7 @@ pi_modules.load.exports = (function () {
 	return module;
 })();
 
+// native 本地化函数
 pi_modules.localize = { id: 'localize', exports: undefined, loaded: true };
 pi_modules.localize.exports = (function () {
     var module = function mod_localize() {
