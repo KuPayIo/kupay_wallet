@@ -22,7 +22,11 @@ function checkUpdate () {
 
     function getMainVersionNumber(ver) {
         /// main-ver.sub-ver. ...
-        return parseInt(ver.match(/^(\d+).?/)[1]);
+        var match = ver.match(/^(\d+).?/);
+        if (match == null) {
+            throw new Error("A version number must be specified at first line of index.js. Format: `//!version=1.1'");
+        }
+        return parseInt(match[1]);
     }
 
     function checkIfLargeUpdate(oldVer, newVer) {
