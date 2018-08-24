@@ -109,7 +109,7 @@ export class SendRedEnvelope extends Widget {
 
             return;
         }
-        const close = popNew('app-components-loading-loading', { text: '加载中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '加载中...' });
         const lm = this.state.leaveMessage || this.state.lmPlaceHolder;
         const rtype = this.state.itype;
         const ctype = Number(CurrencyType[this.state.currencyName]);

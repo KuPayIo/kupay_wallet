@@ -84,7 +84,7 @@ export class WalletManagement extends Widget {
             if (!passwd) return;
    
         }
-        const close = popNew('app-components-loading-loading', { text: '导出私钥中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '导出私钥中...' });
         try {
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
@@ -184,7 +184,7 @@ export class WalletManagement extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('app-components-loading-loading', { text: '导出中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '导出中...' });
         try {
             
             const mnemonic = await getMnemonic(wallet, passwd);
@@ -227,7 +227,7 @@ export class WalletManagement extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('app-components-loading-loading', { text: '加载中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '加载中...' });
         try {
             const isEffective = await VerifyIdentidy(wallet, passwd);
             if (isEffective) {
@@ -293,7 +293,7 @@ export class WalletManagement extends Widget {
 
         await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '删除钱包', content: '删除后需要重新导入，之前的分享也将失效' });
 
-        const close = popNew('app-components-loading-loading', { text: '删除中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '删除中...' });
         
         const walletList = find('walletList');
         const wallet = getWalletByWalletId(walletList, this.props.walletId);

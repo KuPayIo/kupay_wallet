@@ -34,7 +34,7 @@ export class RecordDetail extends Widget {
     }
     public  returnBack() {
         popNew('app-components-message-messagebox',{ itype: 'confirm', title: '赎回', content: '是否赎回理财产品' },async () => {
-            const close = popNew('app-components-loading-loading', { text: '正在赎回...' });
+            const close = popNew('app-components_level_1-loading-loading', { text: '正在赎回...' });
             const result = await buyBack(this.state.purchaseTimeStamp);
             await getPurchaseRecord();
             close.callback(close.widget);

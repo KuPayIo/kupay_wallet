@@ -109,7 +109,7 @@ export class AddAsset extends Widget {
             return;
         }
 
-        const loading = popNew('app-components-loading-loading', { text: '交易中...' });
+        const loading = popNew('app-components_level_1-loading-loading', { text: '交易中...' });
 
         const fromAddr = this.props.fromAddr;
         const toAddr = this.state.to;
