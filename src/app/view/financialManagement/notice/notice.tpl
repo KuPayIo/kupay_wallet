@@ -7,7 +7,7 @@
             {{it1.notice}}
         </div>
         <div w-class="agreeChoose" ev-checkbox-click="checkBoxClick">
-            <app-components-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components-checkbox-checkbox>
+            <app-components_level_1-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components_level_1-checkbox-checkbox>
         </div>
         <div w-class="agreeBtn {{it1.isAgree ? 'active' : ''}}" on-tap="agreeClicked">
                 我已阅读

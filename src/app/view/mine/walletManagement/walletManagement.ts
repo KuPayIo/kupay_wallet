@@ -12,8 +12,8 @@ import { Wallet } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
 import { walletNameAvailable } from '../../../utils/account';
 // tslint:disable-next-line:max-line-length
-import { fetchTotalAssets, formatBalanceValue,getAddrsAll, getWalletByWalletId, getWalletIndexByWalletId, openBasePage, popPswBox } from '../../../utils/tools';
-import { decrypt, encrypt, getMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
+import { decrypt, encrypt,fetchTotalAssets, formatBalanceValue, getAddrsAll, getWalletByWalletId, getWalletIndexByWalletId, openBasePage, popPswBox } from '../../../utils/tools';
+import { getMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
 
 // ==============================================导出
 // tslint:disable-next-line:no-reserved-keywords

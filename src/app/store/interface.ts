@@ -333,6 +333,7 @@ export interface Store {
     shapeShiftMarketInfo:MarketInfo;// shapeShift 汇率相关
     shapeShiftTxs:ShapeShiftTxs;// shapeshift 交易记录
     shapeShiftTxsMap:Map<string,ShapeShiftTxs>;// shapeshift 交易记录Map
+    lastGetSmsCodeTime:number;
 }
 
 export enum TaskSid {

@@ -117,4 +117,8 @@ export const initLocalStorageStore = () => {
     register('ERC20TokenDecimals',(ERC20TokenDecimals:Object) => {
         setLocalStorage('ERC20TokenDecimals',ERC20TokenDecimals);
     });
+
+    register('lastGetSmsCodeTime',(lastGetSmsCodeTime:number) => {
+        setLocalStorage('lastGetSmsCodeTime',lastGetSmsCodeTime);
+    });
 };

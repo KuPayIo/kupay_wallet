@@ -131,7 +131,7 @@ type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo' | 'shapeShiftTx
 type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' | 'level_3_page_loaded';
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
- 'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals';
+ 'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals' | 'lastGetSmsCodeTime';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -192,5 +192,6 @@ const store = <Store>{
     // 所有理财产品
     productList:  <Product[]>[],
     // 已购买理财产品
-    purchaseRecord:<PurchaseRecordOne[]>[]
+    purchaseRecord:<PurchaseRecordOne[]>[],
+    lastGetSmsCodeTime:0
 };

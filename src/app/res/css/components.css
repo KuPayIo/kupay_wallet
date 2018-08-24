@@ -94,7 +94,7 @@
 .pi-input__inner1:hover,
 .pi-textarea__inner:hover,
 .pi-input-textarea__inner:hover{
-    border-color: #1A70DD !important;
+    /* border-color: #1A70DD !important; */
 }
 .pi-input__inner1:focus,
 .pi-textarea__inner:focus,

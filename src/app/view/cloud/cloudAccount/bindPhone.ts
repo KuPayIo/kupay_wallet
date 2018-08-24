@@ -8,7 +8,7 @@ interface Props {
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { regPhone, sendCode } from '../../../net/pull';
-import { getLocalStorage, setLocalStorage } from '../../../utils/tools';
+import { find, updateStore } from '../../../store/store';
 // =================================================导出
 export class BindPhone extends Widget {
     public ok: () => void;
@@ -30,7 +30,7 @@ export class BindPhone extends Widget {
             limitTime: 60,
             phoneReg: /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/
         };
-        const t = getLocalStorage('lastGetSmsCodeTime');
+        const t = find('lastGetSmsCodeTime');
         if (t) {
             const now = new Date().getTime();
             this.state.countdown = this.state.limitTime - Math.ceil((now - t) / 1000);
@@ -50,7 +50,7 @@ export class BindPhone extends Widget {
             return;
         }
         await sendCode(this.state.phone, this.state.oldCode);
-        setLocalStorage('lastGetSmsCodeTime', new Date().getTime());
+        updateStore('lastGetSmsCodeTime', new Date().getTime());
         this.state.countdown = this.state.limitTime;
         this.paint();
     }
