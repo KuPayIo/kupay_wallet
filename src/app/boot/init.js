@@ -442,6 +442,7 @@ pi_modules.ajax.exports = (function () {
 		xhr.onabort = function () {
 			timeout && clearTimeout(xhr.timerRef);
 			errorCallback({
+			    url: url,
 				error: module.ERR_ABORT,
 				reason: "abort"
 			});
@@ -453,6 +454,7 @@ pi_modules.ajax.exports = (function () {
 				var t = xhr.activeTime + timeout - Date.now();
 				if (t <= 0)
 					return errorCallback({
+					    url: url,
 						error: module.ERR_TIMEOUT,
 						reason: "timeout"
 					});
@@ -463,6 +465,7 @@ pi_modules.ajax.exports = (function () {
 		xhr.onerror = function (ev) {
 			timeout && clearTimeout(xhr.timerRef);
 			errorCallback({
+			    url: url,
 				nativeError: ev,
 				error: module.ERR_NORMAL,
 				reason: "error status: " + xhr.status + " " + xhr.statusText + ", " + url
@@ -482,12 +485,14 @@ pi_modules.ajax.exports = (function () {
 			timeout && clearTimeout(xhr.timerRef);
 			if (xhr.status === 300 || xhr.status === 301 || xhr.status === 302 || xhr.status === 303) {
 				return errorCallback({
+				    url: url,
 					error: module.ERR_LOCATION,
 					reason: xhr.getResponseHeader("Location")
 				});
 			}
 			if (xhr.status !== 200 && xhr.status !== 304) {
 				return errorCallback({
+				    url: url,
 					nativeError: ev,
 					error: module.ERR_NORMAL,
 					reason: "error status: " + xhr.status + " " + xhr.statusText + ", " + url
@@ -501,6 +506,7 @@ pi_modules.ajax.exports = (function () {
 					json = JSON.parse(xhr.responseText);
 				} catch (e) {
 					return errorCallback({
+					    url: url,
 						nativeError: e,
 						error: module.ERR_JSON,
 						reason: e.name + ": " + e.message
@@ -687,7 +693,7 @@ pi_modules.load.exports = (function () {
 					localInitCheck(false);
 				}else if(isNative){
 					// 加载标准版的.depend，但是统一叫depend
-					ajax.get("file:///android_asset/res/depend", undefined, undefined, ajax.RESP_TYPE_TEXT, 0, function(r){
+					ajax.get(serverAddress[0]+"/wallet/.depend", undefined, undefined, ajax.RESP_TYPE_TEXT, 0, function(r){
 						localSign = {};
 						var i = r.indexOf("["), j = r.lastIndexOf("]"), info;
 						var arr = JSON.parse(r.slice(i, j + 1));
@@ -822,7 +828,7 @@ pi_modules.load.exports = (function () {
 				if(s === sign)
 					store.read(localStore, name, loadOK, butil.curryFirst(loadError, name));
 				else
-					ajax.get("file:///android_asset/res/"+name, undefined, undefined, ajax.RESP_TYPE_BIN, 0, butil.curryFirst(loadOK, name), butil.curryFirst(loadError, name));
+					ajax.get(serverAddress[0]+"/wallet/"+name, undefined, undefined, ajax.RESP_TYPE_BIN, 0, butil.curryFirst(loadOK, name), butil.curryFirst(loadError, name));
 			} else {
 				load.downAmount++;
 				load.fileMap[name] = null;
@@ -1127,7 +1133,7 @@ pi_modules.localize.exports = (function () {
     var module = function mod_localize() {
     };
     var ajax = pi_modules.ajax.exports;
-    var LOCALIZE_API_TIMEOUT = 10000;
+    var LOCALIZE_API_TIMEOUT = 30000;
     // 所有的请求使用HTTP协议
     var PROTOCOL = "http";
 

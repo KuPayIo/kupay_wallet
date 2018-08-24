@@ -121,28 +121,28 @@ winit.initNext = function () {
         "app/logic/"
       ];
       // 加载其他文件
-      util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
-        console.log(fileMap)
-        console.timeEnd('secondLoad');
-        var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
-        updatedStore('level_2_page_loaded',true);
-        const level3SourceList = [
-          "app/components/",
-          "app/res/",
-          // "app/net/",
-          "app/view/"
-        ]
-        console.time('thirdLoad');
-        util.loadDir(level3SourceList, flags, fm, undefined, function (fileMap) {
-          console.log(fileMap)
-          console.timeEnd('thirdLoad');
-          updatedStore('level_3_page_loaded',true);
-        }, function (r) {
-          alert("加载目录失败, " + r.error + ":" + r.reason);
-        }, dirProcess.handler);
-      }, function (r) {
-        alert("加载目录失败, " + r.error + ":" + r.reason);
-      }, dirProcess.handler);
+      // util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
+      //   console.log(fileMap)
+      //   console.timeEnd('secondLoad');
+      //   var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
+      //   updatedStore('level_2_page_loaded',true);
+      //   const level3SourceList = [
+      //     "app/components/",
+      //     "app/res/",
+      //     // "app/net/",
+      //     "app/view/"
+      //   ]
+      //   console.time('thirdLoad');
+      //   util.loadDir(level3SourceList, flags, fm, undefined, function (fileMap) {
+      //     console.log(fileMap)
+      //     console.timeEnd('thirdLoad');
+      //     updatedStore('level_3_page_loaded',true);
+      //   }, function (r) {
+      //     alert("加载目录失败, " + r.error + ":" + r.reason);
+      //   }, dirProcess.handler);
+      // }, function (r) {
+      //   alert("加载目录失败, " + r.error + ":" + r.reason);
+      // }, dirProcess.handler);
       
       // pi_modules.commonjs.exports.relativeGet("app/cims/util").exports.initCfg(fileMap);
     }, function (r) {
