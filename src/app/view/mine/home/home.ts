@@ -13,6 +13,7 @@ import { popPswBox } from '../../../utils/tools';
 // ========================================================= 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
+declare var pi_modules:any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
@@ -51,31 +52,17 @@ export class Home extends Widget {
                 icon: 'icon_mine_wallet.png',
                 text: '管理钱包',
                 components: 'app-view-mine-walletManagement-walletList'
-            },/*  {
-                icon: 'icon_mine_annal.png',
-                text: '交易记录',
-                components: 'app-view-mine-transaction-record'
-            }, */
+            },
             {
                 icon: 'icon_mine_address.png',
                 text: '常用地址',
                 components: 'app-view-mine-addressManage-addressManage'
             },
-            // {
-            //     icon: 'icon_mine_Language.png',
-            //     text: '语言设置',
-            //     components: 'app-view-mine-languageAndcoinset-language'
-            // }, 
             {
                 icon: 'icon_mine_lock.png',
                 text: '锁屏密码',
                 components: 'app-view-mine-lockScreen-lockScreenSetting'
             },
-            // {
-            //     icon: 'icon_mine_money.png',
-            //     text: '货币设置',
-            //     components: 'app-view-mine-languageAndcoinset-coinset'
-            // }, 
             {
                 icon: 'icon_mine_problem.png',
                 text: '常见问题',
@@ -92,12 +79,6 @@ export class Home extends Widget {
                 components: 'app-view-mine-contanctUs-contanctUs'
             }
 
-                // ,
-                //  {
-                //     icon: 'icon_mine_share.png',
-                //     text: '分享下载链接',
-                //     components: 'app-view-financialManagement-fund-share'
-                // }
             ]
         };
     }
@@ -129,23 +110,6 @@ export class Home extends Widget {
         });
     }
 
-    // public goNotice(event: any) {
-    //     popNew('app-view-messageList-messageList', { hasNews: this.state.hasNews }, (r) => {
-    //         if (r) {
-    //             this.state.hasNews = false;
-    //             this.paint();
-    //         }
-    //     });
-    // }
-
-    // public share() {
-    //     popNew('app-components-share-share', { text: 'This is a test QRCode', shareType: ShareToPlatforms.TYPE_IMG }, (result) => {
-    //         alert(result);
-    //     }, (result) => {
-    //         alert(result);
-    //     });
-    // }
-
     // 跳转到钱包管理页面
     public walletManagementClick() {
         if (!this.state.wallet || this.state.walletList.length === 0) {
@@ -172,21 +136,22 @@ export class Home extends Widget {
             
             return;
         }
-        const close = popNew('app-components_level_1-loading-loading', { text: '导出中...' });
-        
+       
         const wallet = find('curWallet');
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
             if (!passwd) return;
         }
+        const close = popNew('app-components_level_1-loading-loading', { text: '导出中...' });
         try {
-            // const mnemonic = await getMnemonic(wallet, passwd);
-            // if (mnemonic) {
-            //     popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: wallet.walletId });
-            // } else {
-            //     popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
-            // }
+            const getMnemonic = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonic;
+            const mnemonic = await getMnemonic(wallet, passwd);
+            if (mnemonic) {
+                popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: wallet.walletId });
+            } else {
+                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
+            }
         } catch (error) {
             console.log(error);
             popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });

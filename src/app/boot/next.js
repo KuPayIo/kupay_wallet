@@ -113,7 +113,7 @@ winit.initNext = function () {
         // 关闭读取界面
         document.body.removeChild(document.getElementById('rcmj_loading_log'));
           // 检查更新
-          // checkUpdate();
+          checkUpdate();
       });
       console.time('secondLoad');
       const level2SourceList = [

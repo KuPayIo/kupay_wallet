@@ -5,7 +5,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find, updateStore } from '../../../store/store';
+import { LockScreen } from '../../../store/interface';
+import { find, register, updateStore } from '../../../store/store';
 import { forgetPasswordClick } from './unlockScreen/unlockScreen';
 
 // ================================ 导出
@@ -42,24 +43,35 @@ export class LockScreenSetting extends Widget {
      */
     public onSwitchChange() {
         if (!this.state.lockScreenPsw) {
-            popNew('app-view-mine-lockScreen-setLockScreenScret', { jump:true }, () => {
-                this.state.lockScreenPsw = find('lockScreen').psw;
-            });
+            popNew('app-view-mine-lockScreen-setLockScreen-setLockScreenScret', { jump:true });
+
+            return;
         }
         this.state.openLockScreen = !this.state.openLockScreen;
         const ls = find('lockScreen');
         ls.open = this.state.openLockScreen;
         updateStore('lockScreen',ls);
-        this.paint();
-
     }
 
     // 修改锁屏密码
     public resetLockScreen() {
-        popNew('app-view-mine-lockScreen-unlockScreen',{ updatedPsw:true,jump:true });
+        popNew('app-view-mine-lockScreen-unlockScreen-unlockScreen',{ updatedPsw:true,jump:true });
     }
 
     public forgetPasswordClick() {
         forgetPasswordClick(null);
     }
+
+    public updateLockScreen(ls:LockScreen) {
+        this.state.lockScreenPsw = ls.psw;
+        this.state.openLockScreen = ls.open;
+        this.paint();
+    }
 }
+
+register('lockScreen',(ls:LockScreen) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateLockScreen(ls);
+    }
+});
