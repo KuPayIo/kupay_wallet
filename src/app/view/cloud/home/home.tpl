@@ -20,7 +20,7 @@
         <div w-class="myethBonusAmount" on-tap="bonusClicked">
                 {{it1.bonus}}
         </div>
-        <div w-class="myethAmount" on-tap="ethHoldingsClicked">
+        <div w-class="myethAmount">
                 持有 {{it1.ethBalance}} ETH
         </div>
     </div>

@@ -3,17 +3,14 @@
  */
 import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { EthWallet } from '../core/eth/wallet';
-import { sign } from '../core/genmnemonic';
-import { GlobalWallet, wei2Eth } from '../core/globalWallet';
-import { dataCenter } from '../store/dataCenter';
 import { CurrencyType, CurrencyTypeReverse, LoginState } from '../store/interface';
-import { parseCloudAccountDetail, parseCloudBalance, 
-    parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog } from '../store/parse';
+// tslint:disable-next-line:max-line-length
+import { parseCloudAccountDetail, parseCloudBalance, parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog,paseProductList,pasePurchaseRecord } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { recordNumber } from '../utils/constants';
-import { doErrorShow, showError } from '../utils/toolMessages';
-import { kpt2kt, largeUnit2SmallUnitString, openBasePage, popPswBox, transDate } from '../utils/tools';
+import { showError } from '../utils/toolMessages';
+import { popPswBox, transDate } from '../utils/tools';
+import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
@@ -21,7 +18,7 @@ export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 // export const conPort = '8080';
 export const conPort = pi_modules.store.exports.severPort || '80';
 // 分享链接前缀
-// export const sharePerUrl = `http://share.kupay.io:8080/wallet/app/boot/share.html`;
+// export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 export const sharePerUrl = `http://127.0.0.1:80/wallet/app/boot/share.html`;
 /**
  * 通用的异步通信
@@ -33,7 +30,6 @@ export const requestAsync = async (msg: any): Promise<any> => {
                 console.log(`错误信息为${resp.type}`);
                 reject(resp);
             } else if (resp.result !== 1) {
-                showError(resp.result);
                 reject(resp);
             } else {
                 resolve(resp);
@@ -54,8 +50,10 @@ export const requestLogined = async (msg: any) => {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const wlt: EthWallet = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
-        const signStr = sign(dataCenter.getConRandom(), wlt.exportPrivateKey());
+        const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports;
+        const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
+        const wlt = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
+        const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
         const msgLogin = { type: 'login', param: { sign: signStr } };
         updateStore('loginState', LoginState.logining);
         const res: any = await requestAsync(msgLogin);
@@ -74,33 +72,50 @@ export const requestLogined = async (msg: any) => {
 /**
  * 开启连接并获取验证随机数
  */
-export const openAndGetRandom = async () => {
+export const openAndGetRandom = async (setuserinfo?:boolean) => {
+    // console.log('setuserinfo1=================',setuserinfo);
     const wallet = find('curWallet');
     if (!wallet) return;
-    const oldUser = dataCenter.getUser();
+    const oldUser = find('conUser');
     if (oldUser === wallet.walletId) return;
-    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+    // const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+    const gwlt = JSON.parse(wallet.gwlt);
     if (oldUser) {
         closeCon();
-        dataCenter.setUser(wallet.walletId);
-        dataCenter.setUserPublicKey(gwlt.publicKey);
+        updateStore('conUser', wallet.walletId);
+        updateStore('conUserPublicKey', gwlt.publicKey);
 
         return;
     }
     setUrl(`ws://${conIp}:2081`);
-    dataCenter.setUser(wallet.walletId);
-    dataCenter.setUserPublicKey(gwlt.publicKey);
+    updateStore('conUser', wallet.walletId);
+    updateStore('conUserPublicKey', gwlt.publicKey);
+    // console.log('setuserinfo2=================',setuserinfo);
 
-    return doOpen();
+    return doOpen(setuserinfo);
 
 };
 
-const doOpen = async () => {
+const doOpen = async (setuserinfo:boolean) => {
+    // console.log('setuserinfo3=================',setuserinfo);
+
     return new Promise((resolve, reject) => {
+        // console.log('setuserinfo4=================',setuserinfo);
         open(async (con) => {
-            console.log('----------------------', con);
             try {
                 await getRandom();
+                if (setuserinfo) {
+                    const curWallet = find('curWallet');
+                    // const gwlt = GlobalWallet.fromJSON(curWallet.gwlt);
+                    const gwlt = JSON.parse(curWallet.gwlt);
+                    const userInfo = {
+                        name:gwlt.nickName,
+                        avatar:curWallet.avatar
+                    }; 
+                    console.log('userInfo-------',JSON.stringify(userInfo));
+                    // tslint:disable-next-line:max-line-length
+                    // setUserInfo(JSON.stringify(userInfo)).then(res => console.log('userinfo========',res)).catch(err => console.log('userinfo=======',err));
+                }
                 resolve(true);
             } catch (error) {
                 reject(false);
@@ -111,7 +126,7 @@ const doOpen = async () => {
         }, async () => {
             updateStore('loginState', LoginState.init);
             try {
-                await doOpen();
+                await doOpen(setuserinfo);
                 resolve(true);
             } catch (error) {
                 reject(false);
@@ -124,10 +139,10 @@ const doOpen = async () => {
  * 获取随机数
  */
 export const getRandom = async () => {
-    const msg = { type: 'get_random', param: { account: dataCenter.getUser().slice(2), pk: `04${dataCenter.getUserPublicKey()}` } };
+    const msg = { type: 'get_random', param: { account: find('conUser').slice(2), pk: `04${find('conUserPublicKey')}` } };
     const resp = await requestAsync(msg);
-    dataCenter.setConRandom(resp.rand);
-    dataCenter.setConUid(resp.uid);
+    updateStore('conRandom', resp.rand);
+    updateStore('conUid', resp.uid);
     getCloudBalance();
 };
 
@@ -245,11 +260,7 @@ export const inputInviteCdKey = async (code) => {
 
         return [];
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -278,7 +289,7 @@ export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: 
         param: {
             type: rtype,
             priceType: ctype,
-            totalPrice: largeUnit2SmallUnitString(CurrencyTypeReverse[ctype], totalAmount),
+            totalPrice: largeUnit2SmallUnit(CurrencyTypeReverse[ctype], totalAmount),
             count: redEnvelopeNumber,
             desc: lm
         }
@@ -289,11 +300,7 @@ export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: 
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -310,11 +317,7 @@ export const convertRedBag = async (cid) => {
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -362,11 +365,7 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -399,11 +398,7 @@ export const queryConvertLog = async (start) => {
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -416,7 +411,7 @@ export const queryDetailLog = async (rid: string) => {
     const msg = {
         type: 'query_detail_log',
         param: {
-            uid: dataCenter.getConUid(),
+            uid: find('conUid'),
             rid
         }
     };
@@ -426,11 +421,7 @@ export const queryDetailLog = async (rid: string) => {
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -499,7 +490,7 @@ export const getData = async (key) => {
  */
 export const setUserInfo = async (value) => {
     const msg = { type: 'wallet/user@set_info', param: { value } };
-
+    
     return requestAsync(msg);
 };
 
@@ -526,14 +517,20 @@ export const doChat = async () => {
 /**
  * 获取指定货币流水
  */
-export const getAccountDetail = async (coin: CurrencyType) => {
-    const msg = { type: 'wallet/account@get_detail', param: { coin } };
-    requestAsync(msg).then(r => {
-        if (!r.value || r.value.length <= 0) return;
-        console.log('accountDetail',r.value);
-        const detail = parseCloudAccountDetail(coin, r.value);
-        updateStore('accountDetail', getBorn('accountDetail').set(coin, detail));
-    });
+export const getAccountDetail = async (coin: string) => {
+    console.log('coin----------',coin,CurrencyType[coin]);
+    const msg = { type: 'wallet/account@get_detail', param: { coin:CurrencyType[coin] } };
+
+    try {
+        const res = await requestAsync(msg);
+        const detail = parseCloudAccountDetail(coin, res.value);
+        updateStore('accountDetail',getBorn('accountDetail').set(coin, detail));
+    } catch (err) {
+        console.log(err);
+        showError(err && (err.result || err.type));
+
+        return;
+    }
 };
 
 /**
@@ -613,11 +610,7 @@ export const getBankAddr = async () => {
 
         return res.value;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -644,11 +637,7 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
         
         return true;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return false;
     }
@@ -674,11 +663,7 @@ export const withdrawFromServer = async (toAddr:string,coin:number,value:string)
 
         return true;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return false;
     }
@@ -697,11 +682,7 @@ export const getRechargeLogs = async () => {
         updateStore('rechargeLogs',parseRechargeWithdrawalLog(res.value));
 
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -720,11 +701,7 @@ export const getWithdrawLogs = async () => {
         const res = await requestAsync(msg);
         updateStore('withdrawLogs',parseRechargeWithdrawalLog(res.value));
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
-        }
+        showError(err && (err.result || err.type));
 
         return;
     }
@@ -742,16 +719,88 @@ export const getProductList = async () => {
     
     try {
         const res = await requestAsync(msg);
-        console.log('getProductList',res);
-        
-        return res;
+        const result = paseProductList(res);
+        updateStore('productList',result);
+
+        return result;
     } catch (err) {
-        if (err && err.result) {
-            showError(err.result);
-        } else {
-            doErrorShow(err);
+        showError(err && (err.result || err.type));
+
+        return [];
+    }
+};
+
+/**
+ * 购买理财
+ */
+export const buyProduct = async (pid:any,count:any) => {
+    pid = Number(pid);
+    count = Number(count);
+    const msg = {
+        type: 'wallet/manage_money@buy',
+        param: {
+            pid,
+            count
         }
         
-        return [];
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        console.log('buyProduct',res);
+        if (res.result === 1) {
+            getProductList();
+
+            return true;
+        } else {
+            return false;
+        }
+    } catch (err) {
+        showError(err && (err.result || err.type));
+        
+        return false;
+    }
+};
+
+/**
+ * 购买记录
+ */
+export const getPurchaseRecord = async () => {
+
+    const msg = {
+        type: 'wallet/manage_money@get_pay_list',
+        param: {}
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        console.log('getPurchaseRecord',res);
+        const record = pasePurchaseRecord(res);
+        updateStore('purchaseRecord',record);
+
+    } catch (err) {
+        showError(err && (err.result || err.type));
+    }
+};
+/**
+ * 赎回理财产品
+ */
+export const buyBack = async (timeStamp:any) => {
+    const msg = {
+        type: 'wallet/manage_money@sell',
+        param: {
+            time:timeStamp
+        }
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        console.log('buyBack',res);
+
+        return true;
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return false;
     }
 };

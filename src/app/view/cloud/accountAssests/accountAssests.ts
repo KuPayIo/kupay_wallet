@@ -8,7 +8,17 @@ interface Props {
 // ========================================================导入
 import { getHeight, popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+
+import { Forelet } from '../../../../pi/widget/forelet';
+import { CurrencyType } from '../../../store/interface';
+import { getBorn, register } from '../../../store/store';
 // =======================================================导出
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class AccountAssests extends Widget {
     public ok: () => void;
     constructor() {
@@ -21,8 +31,8 @@ export class AccountAssests extends Widget {
     }
     public init(): void {
         this.state = {
+            coinBalance:0,
             maskHeight: getHeight(),
-            routePath: 'app-view-cloud-accountAssests-others',
             isActive: 0,
             panelBtns: [{
                 label: '全部',
@@ -36,6 +46,7 @@ export class AccountAssests extends Widget {
             }],
             showChargeAndWithdraw: this.props.coinType === 'ETH'
         };
+        this.updateBalance();
 
     }
     public backClick() {
@@ -44,18 +55,22 @@ export class AccountAssests extends Widget {
     // 点击面板按钮
     public panelBtnClicked(e: any, index: any) {
         this.state.isActive = index;
-        this.state.routePath = this.state.panelBtns[index].component;
         this.paint();
     }
 
     public chargeClicked() {
         popNew('app-view-cloud-assestsManage-charge', { currencyName: this.props.coinType },() => {
             console.log('充值---------------');
-            // this.isActive =     ; 
+            this.state.isActive = 1;
+            this.paint();
         });
     }
     public withdrawClicked() {
-        popNew('app-view-cloud-assestsManage-withdraw', { currencyName: this.props.coinType });
+        popNew('app-view-cloud-assestsManage-withdraw', { currencyName: this.props.coinType },() => {
+            console.log('提现---------------');
+            this.state.isActive = 2;
+            this.paint();
+        });
     }
 
     public dataProcess() {
@@ -66,4 +81,24 @@ export class AccountAssests extends Widget {
             this.state.coinIcon = 'cloud_cointype_eth.png';
         }
     }
+    public updateBalance() {
+        console.log('cloudBalance',getBorn('cloudBalance').get(101));
+        this.state.coinBalance = getBorn('cloudBalance').get(CurrencyType[this.props.coinType]);
+        this.paint();
+    }
 }
+// ============================本地
+register('cloudBalance', cloudBalance => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateBalance();
+    }
+});
+/**
+ * 矿山增加项目进入充值页面
+ */
+register('mineItemJump',(arg) => {
+    if (arg === 'storeCoin') {
+        popNew('app-view-cloud-assestsManage-charge', { currencyName:'ETH' });
+    }
+});

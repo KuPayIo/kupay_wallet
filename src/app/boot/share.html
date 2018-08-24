@@ -151,7 +151,7 @@
 					winit.win[k] = 1;
 			}
 			winit.startTime = Date.now();
-			var name = "wallet"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
+			var name = "share"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;

@@ -4,11 +4,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { dataCenter, DataCenter } from '../../../store/dataCenter';
+import { dataCenter, DataCenter } from '../../../logic/dataCenter';
 import { find, updateStore } from '../../../store/store';
-import {
-    addNewAddr, formatBalance, getAddrById, getMnemonic, getStrLen, openBasePage, sliceStr
-} from '../../../utils/tools';
+import { formatBalance, getAddrById, getStrLen, openBasePage, popPswBox, sliceStr } from '../../../utils/tools';
+import { addNewAddr, getMnemonic } from '../../../utils/walletTools';
 
 interface Props {
     currencyName: string;
@@ -60,22 +59,24 @@ export class AddAsset extends Widget {
      */
     public async addAddr(e: any, index: number) {
         this.doClose();
-        const close = popNew('pi-components-loading-loading', { text: '添加中...' });
+        
         try {
             await this.doAddAddr();
         } catch (error) {
             //
         }
-        close.callback(close.widget);
     }
 
     private async doAddAddr() {
         const wallet = find('curWallet');
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
+        const close = popNew('app-components-loading-loading', { text: '添加中...' });
         const mnemonic = await getMnemonic(wallet, passwd);
+        close.callback(close.widget);
         if (mnemonic) {
             const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
             const address = GlobalWallet.getWltAddrByMnemonic(mnemonic, this.props.currencyName, currencyRecord.addrs.length);
@@ -97,6 +98,7 @@ export class AddAsset extends Widget {
 
     private getAddrs() {
         const wallet = find('curWallet');
+        console.log('curWallet-=--=-=-=-=',wallet);
 
         if (!wallet.currencyRecords || !this.props.currencyName) return [];
 

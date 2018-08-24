@@ -102,13 +102,17 @@ function checkUpdate () {
     db.init(store, function() {
         var indexedDBDepend = db.read(store, "", function(result, key) {
             var indexedDBDepend = result;
+<<<<<<< HEAD
 
             console.log(result);
             ajax.get(serverAddress[0] + "/wallet/.depend?"+Math.random(), {}, undefined, undefined, 10000, function (data) {
+=======
+            ajax.get(serverAddress[0] + "/wallet/.depend?"+Math.random(), {}, undefined, undefined, 3000, function (data) {
+>>>>>>> 8245a8312ac06fb61b8e89b64969e213c4a873c6
                 //try {
                     data = data.substring(data.indexOf('['), data.lastIndexOf(']')+1);
                     var localDepend = JSON.parse(data);
-                    console.log(localDepend);
+                    // console.log(localDepend);
                     out = localDepend;
 
                     // Check key-value pair
@@ -130,8 +134,13 @@ function checkUpdate () {
                             return;
                         }
                         // download index.js then compare
+<<<<<<< HEAD
                         ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 10000, function(oldIndexJS) {
                             //console.log('[oldIndexJS]', oldIndexJS);
+=======
+                        ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 3000, function(oldIndexJS) {
+
+>>>>>>> 8245a8312ac06fb61b8e89b64969e213c4a873c6
                             var oldIndexJSVersion = getVersionNumber(oldIndexJS);
                             console.log('[oldIndexJS]', oldIndexJSVersion);
                             // load index.js locally

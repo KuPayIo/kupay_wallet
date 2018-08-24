@@ -5,19 +5,17 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../core/eth/tokens';
-import { dataCenter } from '../../../store/dataCenter';
+import { dataCenter } from '../../../logic/dataCenter';
 import { Wallet } from '../../../store/interface';
 import { find, register } from '../../../store/store';
-import {
-    currencyExchangeAvailable, effectiveCurrency, effectiveCurrencyNoConversion, getAddrById, parseAccount, parseDate
-} from '../../../utils/tools';
+import { getAddrById, parseAccount, parseDate } from '../../../utils/tools';
+import { effectiveCurrency, effectiveCurrencyNoConversion } from '../../../utils/walletTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-
 export class AddAsset extends Widget {
     public props: Props;
     public state: State;
@@ -33,21 +31,15 @@ export class AddAsset extends Widget {
         this.init();
     }
     public init(): void {
-        const data = currencyExchangeAvailable();
-        const dataList = [];
-        data.forEach(element => {
-            dataList.push(element.symbol);
-        });
-
         const wallet = find('curWallet');
-
+        console.log('-----------------------------',forelet);
         this.state = {
             list: [],
             currentAddr: '',
             balance: 0,
             showBalance: `0 ${this.props.currencyName}`,
-            showBalanceConversion: '≈0.00 CNY',
-            canCurrencyExchange: dataList.indexOf(this.props.currencyName) >= 0
+            showBalanceConversion: '≈0.00 CNY'
+            
         };
         this.resetCurrentAddr(wallet, this.props.currencyName);
         this.parseBalance();
@@ -58,11 +50,6 @@ export class AddAsset extends Widget {
 
     }
 
-    public attach() {
-        super.attach();
-        // this.kLineInit();
-        console.log('');
-    }
     /**
      * 处理关闭
      */
@@ -266,5 +253,4 @@ interface State {
     balance: number;
     showBalance: string;
     showBalanceConversion: string;
-    canCurrencyExchange: boolean;
 }

@@ -6,15 +6,14 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
+import { dataCenter } from '../../../logic/dataCenter';
 import { openAndGetRandom } from '../../../net/pull';
-import { dataCenter } from '../../../store/dataCenter';
 import { Wallet } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
 import { walletNameAvailable } from '../../../utils/account';
-import {
-    decrypt, encrypt, fetchTotalAssets, formatBalanceValue, getAddrsAll, getMnemonic,
-    getWalletByWalletId, getWalletIndexByWalletId, openBasePage, popPswBox, VerifyIdentidy
-} from '../../../utils/tools';
+// tslint:disable-next-line:max-line-length
+import { fetchTotalAssets, formatBalanceValue,getAddrsAll, getWalletByWalletId, getWalletIndexByWalletId, openBasePage, popPswBox } from '../../../utils/tools';
+import { decrypt, encrypt, getMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
 
 // ==============================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -77,15 +76,15 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '导出私钥中...' });
-        
         const walletList = find('walletList');
         const wallet = getWalletByWalletId(walletList, this.props.walletId);
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
             if (!passwd) return;
+   
         }
+        const close = popNew('app-components-loading-loading', { text: '导出私钥中...' });
         try {
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
@@ -95,9 +94,7 @@ export class WalletManagement extends Widget {
             }
         } catch (error) {
             console.log(error);
-            if (error) {
-                popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
-            }
+            popNew('app-components-message-message', { itype: 'error', content: '密码错误,请重新输入', center: true });
         }
         close.callback(close.widget);
     }
@@ -180,16 +177,16 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '导出中...' });
         
         const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
-            passwd = await openBasePage('app-components-message-messageboxPrompt', {
-                title: '输入密码', content: '', inputType: 'password'
-            });
+            passwd = await popPswBox();
+            if (!passwd) return;
         }
+        const close = popNew('app-components-loading-loading', { text: '导出中...' });
         try {
+            
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {
                 popNew('app-view-wallet-backupWallet-backupMnemonicWord', { mnemonic, passwd, walletId: this.props.walletId });
@@ -223,14 +220,14 @@ export class WalletManagement extends Widget {
 
             return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '加载中...' });
-        
+       
         const wallet = getWalletByWalletId(find('walletList'), this.props.walletId);
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
             if (!passwd) return;
         }
+        const close = popNew('app-components-loading-loading', { text: '加载中...' });
         try {
             const isEffective = await VerifyIdentidy(wallet, passwd);
             if (isEffective) {
@@ -296,14 +293,18 @@ export class WalletManagement extends Widget {
 
         await openBasePage('app-components-message-messagebox', { itype: 'confirm', title: '删除钱包', content: '删除后需要重新导入，之前的分享也将失效' });
 
-        const close = popNew('pi-components-loading-loading', { text: '删除中...' });
+        const close = popNew('app-components-loading-loading', { text: '删除中...' });
         
         const walletList = find('walletList');
         const wallet = getWalletByWalletId(walletList, this.props.walletId);
         let passwd;
         if (!find('hashMap',wallet.walletId)) {
             passwd = await popPswBox();
-            if (!passwd) return;
+            if (!passwd) {
+                close.callback(close.widget);
+                
+                return;
+            }
         }
         try {
             const isEffective = await VerifyIdentidy(wallet, passwd);

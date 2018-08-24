@@ -6,13 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { Api as EthApi } from '../../../core/eth/api';
 import { ERC20Tokens } from '../../../core/eth/tokens';
+import { dataCenter } from '../../../logic/dataCenter';
 import { transfer } from '../../../net/pullWallet';
-import { dataCenter } from '../../../store/dataCenter';
 import { find } from '../../../store/store';
-import {
-    effectiveAddr, effectiveCurrencyStableConversion, getAddrById
-    , openBasePage, parseDate, popPswBox, resetAddrById, urlParams
-} from '../../../utils/tools';
+import { getAddrById, parseDate, popPswBox, resetAddrById, urlParams } from '../../../utils/tools';
+import { effectiveAddr, effectiveCurrencyStableConversion } from '../../../utils/walletTools';
 
 interface Props {
     currencyBalance: string;
@@ -31,6 +29,7 @@ interface States {
     feesConversion: string;
     info: string;
     showNote: boolean;
+    payEnough:boolean;
 }
 
 export class AddAsset extends Widget {
@@ -57,7 +56,8 @@ export class AddAsset extends Widget {
             fees: 0,
             feesConversion: '',
             info: '',
-            showNote: ERC20Tokens[this.props.currencyName] ? false : true
+            showNote: ERC20Tokens[this.props.currencyName] ? false : true,
+            payEnough:true
         };
 
         // todo 这是测试地址
@@ -103,7 +103,13 @@ export class AddAsset extends Widget {
             return;
         }
 
-        const loading = popNew('pi-components-loading-loading', { text: '交易中...' });
+        if (!this.state.payEnough) {
+            popNew('app-components-message-message', { itype: 'warn', content: '余额不足', center: true });
+
+            return;
+        }
+
+        const loading = popNew('app-components-loading-loading', { text: '交易中...' });
 
         const fromAddr = this.props.fromAddr;
         const toAddr = this.state.to;
@@ -147,6 +153,11 @@ export class AddAsset extends Widget {
     public onPayChange(e: any) {
         const num = parseFloat(e.value) || 0;
         this.state.pay = num;
+        if (num > parseFloat(this.props.currencyBalance)) {
+            this.state.payEnough = false;
+        } else {
+            this.state.payEnough = true;            
+        }
         // tslint:disable-next-line:max-line-length
         const r = effectiveCurrencyStableConversion(num, ERC20Tokens[this.props.currencyName] ? 'ETH' : this.props.currencyName, 'CNY', false);
         this.state.payConversion = r.conversionShow;

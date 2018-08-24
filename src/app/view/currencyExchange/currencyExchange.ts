@@ -6,19 +6,12 @@ import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { ERC20Tokens } from '../../core/eth/tokens';
-import { wei2Eth } from '../../core/globalWallet';
 import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../net/pullWallet';
 import { MarketInfo } from '../../store/interface';
 import { find, getBorn, register, updateStore } from '../../store/store';
 // tslint:disable-next-line:max-line-length
-import { 
-    addRecord, 
-    currencyExchangeAvailable, 
-    getCurrentAddrBalanceByCurrencyName,
-    getCurrentAddrByCurrencyName, 
-    openBasePage, 
-    parseDate,
-    popPswBox} from '../../utils/tools'; 
+import { addRecord, currencyExchangeAvailable, getCurrentAddrBalanceByCurrencyName,getCurrentAddrByCurrencyName, openBasePage, parseDate,popPswBox } from '../../utils/tools'; 
+import { wei2Eth } from '../../utils/unitTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -34,7 +27,14 @@ export class CurrencyExchange extends Widget {
 
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        const outCurrency = this.props.currencyName;
+        const data = currencyExchangeAvailable();
+        const dataList = [];
+        data.forEach(element => {
+            dataList.push(element.symbol);
+        });
+        const canCurrencyExchange = dataList.indexOf(props.currencyName) >= 0;
+
+        const outCurrency = canCurrencyExchange ? props.currencyName : 'ETH';
         const inCurrency = (outCurrency === 'BTC' ||  ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
         // ZRX   BAT
         this.state = {
@@ -184,7 +184,7 @@ export class CurrencyExchange extends Widget {
             return;
         }
 
-        const loading = popNew('pi-components-loading-loading', { text: '矿工费预估中...' });
+        const loading = popNew('app-components-loading-loading', { text: '矿工费预估中...' });
         let gasLimit = 0;
         let fee = 0;
         try {
@@ -213,7 +213,7 @@ export class CurrencyExchange extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('pi-components-loading-loading', { text: '交易中...' });
+        const close = popNew('app-components-loading-loading', { text: '交易中...' });
         const withdrawalAddress = this.state.curInAddr; // 入账币种的地址
         const returnAddress =  this.state.curOutAddr;// 失败后的退款地址
         const pair = this.state.pair;// 交易对

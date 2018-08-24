@@ -3,15 +3,9 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GlobalWallet } from '../../../core/globalWallet';
-import { openAndGetRandom } from '../../../net/pull';
-import { Addr, Wallet } from '../../../store/interface';
-import { find, updateStore } from '../../../store/store';
-import {
-    getAvatarRandom, getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable
-} from '../../../utils/account';
-import { defalutShowCurrencys } from '../../../utils/constants';
-import { encrypt } from '../../../utils/tools';
+import { find } from '../../../store/store';
+import { getWalletPswStrength, pswEqualed, walletCountAvailable, walletNameAvailable, walletPswAvailable } from '../../../utils/account';
+import { createWallet } from '../../../utils/basicOperation';
 
 export class WalletCreate extends Widget {
     public ok: () => void;
@@ -41,7 +35,6 @@ export class WalletCreate extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
-
     public walletNameChange(e: any) {
         this.state.walletName = e.value;
     }
@@ -86,7 +79,7 @@ export class WalletCreate extends Widget {
             return;
         }
         if (!walletNameAvailable(this.state.walletName)) {
-            popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-24位钱包名', center: true });
+            popNew('app-components-message-messagebox', { itype: 'alert', title: '钱包名称错误', content: '请输入1-10位钱包名', center: true });
 
             return;
         }
@@ -106,42 +99,11 @@ export class WalletCreate extends Widget {
             return;
         }
 
-        const close = popNew('pi-components-loading-loading', { text: '创建中...' });
-        await this.createWallet();
+        const close = popNew('app-components-loading-loading', { text: '创建中...' });
+        await createWallet(this.state.walletPsw,this.state.walletName,this.state.walletPswTips);
         close.callback(close.widget);
         this.ok && this.ok();
         popNew('app-view-wallet-walletCreate-createComplete');
-    }
-
-    public async createWallet() {
-        const salt = find('salt');
-        const gwlt = await GlobalWallet.generate(this.state.walletPsw, this.state.walletName,salt);
-
-        // 创建钱包基础数据
-        const wallet: Wallet = {
-            walletId: gwlt.glwtId,
-            avatar: getAvatarRandom(),
-            gwlt: gwlt.toJSON(),
-            showCurrencys: defalutShowCurrencys,
-            currencyRecords: []
-        };
-
-        wallet.currencyRecords.push(...gwlt.currencyRecords);
-
-        if (this.state.walletPswTips.trim().length > 0) {
-            wallet.walletPswTips = encrypt(this.state.walletPswTips.trim());
-        }
-
-        const walletList: Wallet[] = find('walletList');
-        const addrs: Addr[] = find('addrs');
-        addrs.push(...gwlt.addrs);
-        updateStore('addrs', addrs);
-        walletList.push(wallet);
-        updateStore('walletList', walletList);
-        updateStore('curWallet', wallet);
-        updateStore('salt', salt);
-
-        openAndGetRandom();
     }
 
     public importWalletClick() {

@@ -668,7 +668,7 @@ pi_modules.load.exports = (function () {
 	// 限制url的长度
 	var LimitLength = 1024 - 100;
 	// 是否为本地浏览器
-	var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
+	var isNative = false;
 
 
 	// 获得路径签名， "-"开头表示本地文件

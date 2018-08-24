@@ -5,7 +5,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
-import { CurrencyType, TaskSid } from '../../../store/interface';
+import { AccountDetail, CurrencyType, TaskSid } from '../../../store/interface';
 import { find, register } from '../../../store/store';
 import { timestampFormat } from '../../../utils/tools';
 
@@ -25,48 +25,26 @@ export class Others extends Widget {
     }
     public init(): void {
         this.state = { infoList: [] };
-        this.initData();
         this.initEvent();
     }
 
-    private initData() {
-        const list = find('accountDetail', CurrencyType[this.props.coinType]) || [];
-        this.state.infoList = list.map(v => {
-            v.time = timestampFormat(v.time);
-            v.behaviorIcon = getIconByType(v.itype);
-
-            return v;
-        });
+    public initData(accountDetail:Map<CurrencyType, AccountDetail[]>) {
+        const list = accountDetail.get(this.props.coinType);
+        this.state.infoList = list;
         this.paint();
     }
 
     private initEvent() {
-        getAccountDetail(<any>CurrencyType[this.props.coinType]);
+        getAccountDetail(this.props.coinType);
     }
 }
 
 // ===================================================== 本地
-/**
- * 通过类型获取图标
- */
-const getIconByType = (iType) => {
-    let img;
-    switch (iType) {
-        case TaskSid.mines:img = 'cloud_others_drag.png';break;
-        case TaskSid.redEnvelope:img = 'cloud_others_pockets.png';break;
-        case TaskSid.recharge:img = 'cloud_charge_icon.png';break;
-        case TaskSid.withdraw:img = 'cloud_withdraw_icon.png';break;
-        default:
-    }
-    
-    return img;
-};
-// ===================================================== 立即执行
 
-register('accountDetail', (info) => {
+register('accountDetail', (accountDetail) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initData();
+        w.initData(accountDetail);
     }
 });
 

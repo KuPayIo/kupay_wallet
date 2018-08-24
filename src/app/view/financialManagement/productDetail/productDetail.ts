@@ -2,42 +2,47 @@
  * 理财产品详情页面
  */
 // ==================================================导入
+import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { buyProduct,getPurchaseRecord } from '../../../net/pull';
+import { find,register } from '../../../store/store';
 import { openBasePage } from '../../../utils/tools';
+import { VerifyIdentidy } from '../../../utils/walletTools';
 // =====================================================导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class ProductDetail extends Widget {
     public ok: () => void;
     constructor() {
         super();
     }
-    public create() {
-        super.create();
-        this.init();
-    }
+
     public setProps(props: any, oldProps: any) {
         super.setProps(props, oldProps);
-        this.state.isSoldOut = props.item.isSoldOut;
-        console.log(props);
+        this.state = find('productList')[props.i];
+        this.state.isReadedDeclare = false;
+        this.state.showStep = true;
+        this.state.amount = 1;
+        this.state.holdAmout = this.getHoldAmout();
     }
-    public init() {
-        this.state = {
-            isReadedDeclare:false,
-            showStep: true,
-            productName:'ETH1期',
-            expectedEarnings: '+8%',
-            unitPrice: '0.1',
-            days: 'T+0',
-            surplus: '0',
-            purchaseDate: '2018-08-02',
-            interestDate: '2018-08-02',
-            endDate: '2018-08-02',
-            productIntroduction: 'ETH资管第1期是KuPay退出的一种固定收益类，回报稳定、无风险定期产品。',
-            limit: '5',
-            amount: 1,
-            lockday:'无',
-            isSoldOut:false
-        };
+    public getHoldAmout() {
+        const productId = this.state.id;
+        const record = this.props.record;
+        let holdAmout = 0;
+        for (let i = 0;i < record.length;i++) {
+            const one = record[i];
+            if (one.id.toString() === productId && one.state === 1) {
+                holdAmout += one.amount;
+            }
+        }
+        console.log('holdAmout',holdAmout);
+
+        return holdAmout;
     }
+
     public goBackPage() {
         this.ok && this.ok();
     }
@@ -59,7 +64,7 @@ export class ProductDetail extends Widget {
             unitPrice:this.state.unitPrice,
             productName:this.state.productName,
             amount:this.state.amount,
-            expectedEarnings:this.state.expectedEarnings,
+            expectedEarnings:this.state.profit,
             lockday:this.state.lockday
         };
         props.money = strip(props.money);
@@ -67,18 +72,51 @@ export class ProductDetail extends Widget {
             const readPromice = this.readNotice();
             await readPromice.then((r) => {
                 this.hideStep();
-                openBasePage('app-view-financialManagement-purchase-purchase',props).then((r) => {
+                openBasePage('app-view-financialManagement-purchase-purchase',props).then(async (r)  => {
                     // TODO 购买
                     // 返回值r是输入的密码
+                    if (!r) {
+                        this.showStep();
+    
+                        return;
+                    }// r为null，说明点击取消
+                    this.doPurchase(r);
                     this.showStep();
                 });
             });
         } else {
-            openBasePage('app-view-financialManagement-purchase-purchase',props).then((r) => {
+            openBasePage('app-view-financialManagement-purchase-purchase',props).then(async (r) => {
                 // TODO 购买
                 // 返回值r是输入的密码
+                if (!r) {
+                    this.showStep();
+
+                    return;
+                }// r为null，说明点击取消
+                this.doPurchase(r);
                 this.showStep();
             });
+        }
+        
+    }
+    // 购买理财
+    public async doPurchase(r:any) {
+        const close = popNew('app-components-loading-loading', { text: '正在购买...' });    
+        const pswCorrect = await VerifyIdentidy(find('curWallet'),r,false);
+        close.callback(close.widget);
+        if (!pswCorrect) {
+            popNew('app-components-message-message', { itype: 'error', content: '密码不正确', center: true });
+            
+            return;
+        }
+        const data = await buyProduct(this.state.id,this.state.amount);
+        console.log('data',data);
+        await getPurchaseRecord();
+        if (data) {
+            popNew('app-components-message-message', { itype: 'success', content: '购买成功', center: true });
+            this.ok && this.ok(); 
+        } else {
+            popNew('app-components-message-message', { itype: 'error', content: '购买失败', center: true });
         }
         
     }
@@ -90,24 +128,47 @@ export class ProductDetail extends Widget {
         this.state.showStep = true;
         this.paint();
     }
-    public minus() {
+    public minus(e:any) {
         if (this.state.amount === 1) {
             return;
         }
         this.state.amount -= 1;
+        e.node.link.value = this.state.amount;
         this.paint();
     }
-    public add() {
+    public add(e:any) {
         const limit = Number(this.state.limit);
-        if (this.state.amount === limit) {
+        if (this.state.amount + this.state.holdAmout === limit) {
             return;
         }
         this.state.amount += 1;
+        e.node.link.value = this.state.amount;
         this.paint();
     }
+    // public amountInput(e:any) {
+
+    //     const value = Number(e.currentTarget.value);
+    //     const limit = Number(this.state.limit);
+    //     if (value <= limit) {
+    //         this.state.amount = value;
+    //     } else {
+    //         this.state.amount = limit;
+    //     }
+    //     console.log(e.node.link.attributes.value);
+    //     e.node.link.value = this.state.amount;
+    //     this.paint();
+    // }
 }
 // ===========================================本地
 // 解决js浮点数运算误差 3*0.1=0.3000000000004
 const strip = (num, precision = 12) => {
     return +parseFloat(num.toPrecision(precision));
 };
+register('productList', async (productList) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.state =  productList[w.props.i];
+        w.paint();
+    }
+    
+});

@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div w-class="arow">
-                    <img src="../../../res/image/cloud_change.png" />
+                    <img src="../../../res/image/right_arrow2.png" />
             </div>
             <div w-class="cloud">
                     <img src="../../../res/image/cloud_icon_local.png" w-class="icon" />
@@ -28,7 +28,7 @@
             </div>
     
             <div w-class="charge">
-                    <span w-class="chargeAmount">手续费</span>
+                    <span w-class="chargeAmount">矿工费</span>
                     <div w-class="amountInput">{{it1.serviceCharge}}</div>
                     <span w-class="unit">{{it.currencyName}}</span>
             </div>
@@ -38,9 +38,6 @@
             </div>
         </div>
     
-        <div w-class="message">
-                {{it1.isFeeEnough ? '' : '手续费不足'}}
-        </div>
         <diV w-class="blueBtn" on-tap="withdrawClick">
                 提币到钱包
         </diV>

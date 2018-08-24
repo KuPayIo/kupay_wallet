@@ -4,10 +4,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { arrayBufferToBase64 } from '../../../../pi/util/base64';
 import { Widget } from '../../../../pi/widget/widget';
-import { DataCenter } from '../../../store/dataCenter';
+import { DataCenter } from '../../../logic/dataCenter';
 import { find } from '../../../store/store';
 import { shareSecret } from '../../../utils/secretsBase';
-import { getMnemonicHexstr, hexstrToU8Array } from '../../../utils/tools';
+import { hexstrToU8Array } from '../../../utils/tools';
+import { getMnemonicHexstr } from '../../../utils/walletTools';
 
 interface Props {
     mnemonic: string;
@@ -48,7 +49,7 @@ export class BackupMnemonicWord extends Widget {
         this.ok && this.ok();
     }
     public async shareClick() {
-        const close = popNew('pi-components-loading-loading', { text: '处理中...' });
+        const close = popNew('app-components-loading-loading', { text: '处理中...' });
         const wallet = find('curWallet');
         const mnemonicHexstr = await getMnemonicHexstr(wallet, this.props.passwd);
         const shares = shareSecret(mnemonicHexstr, DataCenter.MAX_SHARE_LEN, DataCenter.MIN_SHARE_LEN)

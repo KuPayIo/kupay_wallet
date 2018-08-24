@@ -106,6 +106,7 @@
     border: none;
     outline: none;
     text-align: center; 
+    background: #fff;
 }
 .fontIcon{
     color: #8E96AB;
@@ -128,7 +129,7 @@
 .purchaseBtn{
     color: #fff;
     font-size: 36px;
-    background: #212C67;
+    background: #3A70DD;
     text-align: center;
     height: 98px;
     line-height: 98px;

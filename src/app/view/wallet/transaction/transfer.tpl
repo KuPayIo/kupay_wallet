@@ -18,6 +18,9 @@
             </div>
             <span w-class="pay-value-conversion">≈￥{{it1.payConversion||''}}</span>
         </div>
+        {{if !it1.payEnough}}
+        <div style="color: red;font-size: 24px;float: right;margin-right: 25px;">余额不足</div>
+        {{end}}
 
         {{if it1.showNote}}
         <div w-class="ga-item">

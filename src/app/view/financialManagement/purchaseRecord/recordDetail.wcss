@@ -87,6 +87,9 @@
     right: 0;
     font-size: 36px;
     color: #FFFFFF;
-    background: #212C67;
+    background: #3A70DD;
     text-align: center;
+}
+.disable{
+    background: rgb(157, 165, 179);
 }

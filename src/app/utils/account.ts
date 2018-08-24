@@ -23,7 +23,7 @@ const walletPswStrengthList = [{
  * @param walletName wallet name
  */
 export const walletNameAvailable = (walletName) => {
-    return getStrLen(walletName.trim()) >= 1 && getStrLen(walletName.trim()) <= 24;
+    return getStrLen(walletName.trim()) >= 1 && getStrLen(walletName.trim()) <= 10;
 };
 
 /**

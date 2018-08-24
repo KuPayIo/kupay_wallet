@@ -4,7 +4,7 @@
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { DataCenter } from '../../../store/dataCenter';
+import { DataCenter } from '../../../logic/dataCenter';
 
 interface Props {
     shares: string[];

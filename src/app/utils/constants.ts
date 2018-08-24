@@ -9,13 +9,30 @@ export const walletNumLimit = 10;
 // 记录默认获取数量
 export const recordNumber = 10;
 // 钱包所支持的货币列表测试网络
-export const supportCurrencyListTest = [
+const supportCurrencyListTest = [
     { name: 'ETH', description: 'Ethereum' },
     { name: 'BTC', description: 'Bit coin' },
-    { name: 'YNC', description: 'YiNeng Ltd' }
+    { name: 'BNB', description: 'BNB' },
+    { name: 'VEN', description: 'VeChain' },
+    { name: 'OMG', description: 'OmiseGO' },
+    { name: 'ZRX', description: 'ZRX' },
+    { name: 'MKR', description: 'Maker' },
+    { name: 'BAT', description: 'BAT' },
+    { name: 'XUC', description: 'ExchangeUnion' },
+    { name: 'REP', description: 'Reputation' },
+    { name: 'BTM', description: 'Bytom' },
+    { name: 'USDT', description: 'Tether USD' },
+    { name: 'PPT', description: 'Populous' },
+    { name: 'SNT', description: 'StatusNetwork' },
+    { name: 'AION', description: 'AION' },
+    { name: 'FUN', description: 'FunFair' },
+    { name: 'KNC', description: 'KyberNetwork' },
+    { name: 'POWR', description: 'PowerLedger' },
+    { name: 'MANA', description: 'Decentraland' },
+    { name: 'KIN', description: 'Kin' }
 ];
 // 钱包所支持的货币列表主网络
-export const supportCurrencyListMain = [
+const supportCurrencyListMain = [
     { name: 'ETH', description: 'Ethereum' },
     { name: 'BTC', description: 'Bit coin' },
     { name: 'BNB', description: 'BNB' },
@@ -37,12 +54,113 @@ export const supportCurrencyListMain = [
     { name: 'POWR', description: 'PowerLedger' },
     { name: 'MANA', description: 'Decentraland' },
     { name: 'KIN', description: 'Kin' },
-    { name: 'VERI', description: 'Veritaseum' },
-    { name: 'HEALP', description: 'HEALP' }
+    { name: 'VERI', description: 'Veritaseum' }
 ];
+// 默认货币汇率测试网络
+const defaultExchangeRateJsonTest = {
+    ETH: { CNY: 3337.01, USD: 517.42 },
+    BTC: { CNY: 42868.55, USD: 6598.71 },
+    KT: { CNY:0.03,USD:0.19 },
+    BNB: { CNY: 1, USD: 1 },
+    VEN: { CNY: 1, USD: 1 },
+    OMG: { CNY: 1, USD: 1 },
+    ZRX: { CNY: 1, USD: 1 },
+    MKR: { CNY: 1, USD: 1 },
+    BAT: { CNY: 1, USD: 1 },
+    XUC: { CNY: 1, USD: 1 },
+    REP: { CNY: 1, USD: 1 },
+    BTM: { CNY: 1, USD: 1 },
+    USDT: { CNY: 1, USD: 1 },
+    PPT: { CNY: 1, USD: 1 },
+    SNT: { CNY: 1, USD: 1 },
+    AION: { CNY: 1, USD: 1 },
+    FUN: { CNY: 1, USD: 1 },
+    KNC: { CNY: 1, USD: 1 },
+    POWR: { CNY: 1, USD: 1 },
+    MANA: { CNY: 1, USD: 1 },
+    KIN: { CNY: 1, USD: 1 }
+};
+
+// 默认货币汇率主网络
+const defaultExchangeRateJsonMain = {
+    ETH: { CNY: 3337.01, USD: 517.42 },
+    BTC: { CNY: 42868.55, USD: 6598.71 },
+    KT: { CNY:0.03,USD:0.19 },
+    BNB: { CNY: 1, USD: 1 },
+    VEN: { CNY: 1, USD: 1 },
+    OMG: { CNY: 1, USD: 1 },
+    ZRX: { CNY: 1, USD: 1 },
+    MKR: { CNY: 1, USD: 1 },
+    BAT: { CNY: 1, USD: 1 },
+    XUC: { CNY: 1, USD: 1 },
+    REP: { CNY: 1, USD: 1 },
+    BTM: { CNY: 1, USD: 1 },
+    GNT: { CNY: 1, USD: 1 },
+    PPT: { CNY: 1, USD: 1 },
+    SNT: { CNY: 1, USD: 1 },
+    AION: { CNY: 1, USD: 1 },
+    FUN: { CNY: 1, USD: 1 },
+    KNC: { CNY: 1, USD: 1 },
+    MCO: { CNY: 1, USD: 1 },
+    POWR: { CNY: 1, USD: 1 },
+    MANA: { CNY: 1, USD: 1 },
+    KIN: { CNY: 1, USD: 1 },
+    VERI: { CNY: 1, USD: 1 }
+};
+
+// 测试网络ERC20代币精度
+const ERC20TokenDecimalsTest = {
+    BNB: 100000000,
+    VEN: 100000000,
+    OMG: 100000000,
+    ZRX: 100000000,
+    MKR: 100000000,
+    BAT: 100000000,
+    XUC: 100000000,
+    REP: 100000000,
+    BTM: 100000000,
+    USDT: 100000000,
+    PPT: 100000000,
+    SNT: 100000000,
+    AION: 100000000,
+    FUN: 100000000,
+    KNC: 100000000,
+    POWR: 100000000,
+    MANA: 100000000,
+    KIN: 100000000
+};
+
+// 主网络ERC20代币精度
+const ERC20TokenDecimalsMain = {
+    BNB: 1000000000000000000,
+    VEN: 1000000000000000000,
+    OMG: 1000000000000000000,
+    ZRX: 1000000000000000000,
+    MKR: 1000000000000000000,
+    BAT: 1000000000000000000,
+    XUC: 1000000000000000000,
+    REP: 1000000000000000000,
+    BTM: 100000000,
+    GNT: 1000000000000000000,
+    PPT: 100000000,
+    SNT: 1000000000000000000,
+    AION: 100000000,
+    FUN: 100000000,
+    KNC: 1000000000000000000,
+    MCO: 100000000,
+    POWR: 1000000,
+    MANA: 1000000000000000000,
+    KIN: 1000000000000000000,
+    VERI:1000000000000000000
+};
+// 默认货币汇率
+export const defaultExchangeRateJson = (config.dev_mode === 'dev') ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
 
 // 钱包所支持的货币列表
 export const supportCurrencyList = (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain;
+
+// ERC20代币精度
+export const ERC20TokenDecimals = (config.dev_mode === 'dev') ? ERC20TokenDecimalsTest : ERC20TokenDecimalsMain;
 
 // 默认显示得ETH代币
 export const defaultEthToken = [];
@@ -59,45 +177,6 @@ export const btcNetwork = config.dev_mode === 'dev' ? 'testnet' : 'mainnet';
 
 // 语言
 export const lang = 'english';
-
-// 默认货币汇率测试网络
-export const defaultExchangeRateJsonTest = {
-    ETH: { CNY: 3337.01, USD: 517.42 },
-    BTC: { CNY: 42868.55, USD: 6598.71 },
-    YNC: { CNY: 100, USD: 15.2625 },
-    KT: { CNY: 0.03, USD: 0.19 }
-};
-
-// 默认货币汇率主网络
-export const defaultExchangeRateJsonMain = {
-    ETH: { CNY: 3337.01, USD: 517.42 },
-    BTC: { CNY: 42868.55, USD: 6598.71 },
-    KT: { CNY: 0.03, USD: 0.19 },
-    BNB: { CNY: 100, USD: 15.2625 },
-    VEN: { CNY: 100, USD: 15.2625 },
-    OMG: { CNY: 100, USD: 15.2625 },
-    ZRX: { CNY: 100, USD: 15.2625 },
-    MKR: { CNY: 100, USD: 15.2625 },
-    BAT: { CNY: 100, USD: 15.2625 },
-    XUC: { CNY: 100, USD: 15.2625 },
-    REP: { CNY: 100, USD: 15.2625 },
-    BTM: { CNY: 100, USD: 15.2625 },
-    GNT: { CNY: 100, USD: 15.2625 },
-    PPT: { CNY: 100, USD: 15.2625 },
-    SNT: { CNY: 100, USD: 15.2625 },
-    AION: { CNY: 100, USD: 15.2625 },
-    FUN: { CNY: 100, USD: 15.2625 },
-    KNC: { CNY: 100, USD: 15.2625 },
-    MCO: { CNY: 100, USD: 15.2625 },
-    POWR: { CNY: 100, USD: 15.2625 },
-    MANA: { CNY: 100, USD: 15.2625 },
-    KIN: { CNY: 100, USD: 15.2625 },
-    VERI: { CNY: 100, USD: 15.2625 },
-    HEALP: { CNY: 100, USD: 15.2625 }
-};
-
-// 默认货币汇率
-export const defaultExchangeRateJson = (config.dev_mode === 'dev') ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
 
 // eth代币transfer交易编码前缀
 export const ethTokenTransferCode = '0xa9059cbb';
@@ -126,10 +205,17 @@ export const shapeshiftTransactionRequestNumber = 5;
 export const redEnvelopeSupportCurrency = ['KT', 'ETH'];
 
 // 提现服务费比率
-export const withdrawServiceCharge = 0.03;
+export const withdrawServiceCharge = 1.03;
 
 // 默认ETH gasPrice
 export const gasPrice = 5000000000;
 
 // 默认ETH gasLimit
 export const gasLimit = 21000;
+
+// 最小提现金额
+export const withdrawLimit = {
+    KT:1000,
+    ETH:1.01,
+    BTC:1.001
+};

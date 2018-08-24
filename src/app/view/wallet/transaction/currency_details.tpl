@@ -17,9 +17,7 @@
             <div w-class="record-text">交易记录</div>
             <div w-class="box1" >
                 <div w-class="ga-up-and-down">-2.63%</div>
-                {{if it1.canCurrencyExchange}}
                 <div on-tap="currencyExchangeClick" w-class="ga-exchange">买/卖</div>
-                {{end}}
             </div>
         </div>
         {{if it1.list.length<=0}}
