@@ -20,7 +20,14 @@ function checkUpdate () {
         return indexJS.match(regex)[1];
     }
 
-    function checkIfLargeUpdate() {
+    function getMainVersionNumber(ver) {
+        /// main-ver.sub-ver. ...
+        return parseInt(ver.match(/^(\d+).?/)[1]);
+    }
+
+    function checkIfLargeUpdate(oldVer, newVer) {
+        /// Get main version and compare
+        return getMainVersionNumber(oldVer) !== getMainVersionNumber(newVer);
     }
 
     function processUpdate(localDepend, indexedDBDepend) {
@@ -131,7 +138,7 @@ function checkUpdate () {
                         }
                         // download index.js then compare
                         ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 10000, function(oldIndexJS) {
-                            //console.log('[oldIndexJS]', oldIndexJS);
+
                             var oldIndexJSVersion = getVersionNumber(oldIndexJS);
                             console.log('[oldIndexJS]', oldIndexJSVersion);
                             // load index.js locally
@@ -143,8 +150,16 @@ function checkUpdate () {
                                     var newIndexJSversion = getVersionNumber(newIndexJS);
                                     console.log('[newIndexJS]', newIndexJSversion);
 
-                                    // index.js changed, ask user to update
-                                    if (oldIndexJSVersion !== newIndexJSversion && confirm("Update detected, processed with update?")) {
+                                    var forceUpdate = checkIfLargeUpdate(oldIndexJSVersion, newIndexJSversion);
+                                    if (forceUpdate) {
+                                        // to prevent user close application and restart application without network to avoid updates,
+                                        // set pending flag before alert.
+                                        localStorage.setItem("pending", "false");
+                                        alert('A change on main version number is detected, update will start.');
+                                    }
+
+                                    // version number changed, ask user to update
+                                    if (oldIndexJSVersion !== newIndexJSversion && (forceUpdate || confirm("Update detected, processed with update?"))) {
                                         localized.setForceFetchFromServer(function() {
                                             /// update the 5 files
                                             var updateFiles = [
