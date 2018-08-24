@@ -20,7 +20,14 @@ function checkUpdate () {
         return indexJS.match(regex)[1];
     }
 
-    function checkIfLargeUpdate() {
+    function getMainVersionNumber(ver) {
+        /// main-ver.sub-ver. ...
+        return parseInt('1.2.3'.match(/^(\d+).?/)[1]);
+    }
+
+    function checkIfLargeUpdate(oldVer, newVer) {
+        /// Get main version and compare
+        return getMainVersionNumber(oldVer) !== getMainVersionNumber(newVer);
     }
 
     function processUpdate(localDepend, indexedDBDepend) {
@@ -102,13 +109,9 @@ function checkUpdate () {
     db.init(store, function() {
         var indexedDBDepend = db.read(store, "", function(result, key) {
             var indexedDBDepend = result;
-<<<<<<< HEAD
 
             console.log(result);
             ajax.get(serverAddress[0] + "/wallet/.depend?"+Math.random(), {}, undefined, undefined, 10000, function (data) {
-=======
-            ajax.get(serverAddress[0] + "/wallet/.depend?"+Math.random(), {}, undefined, undefined, 3000, function (data) {
->>>>>>> 8245a8312ac06fb61b8e89b64969e213c4a873c6
                 //try {
                     data = data.substring(data.indexOf('['), data.lastIndexOf(']')+1);
                     var localDepend = JSON.parse(data);
@@ -134,13 +137,8 @@ function checkUpdate () {
                             return;
                         }
                         // download index.js then compare
-<<<<<<< HEAD
                         ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 10000, function(oldIndexJS) {
-                            //console.log('[oldIndexJS]', oldIndexJS);
-=======
-                        ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 3000, function(oldIndexJS) {
-
->>>>>>> 8245a8312ac06fb61b8e89b64969e213c4a873c6
+                            //console.log('[oldIndexJS]', oldIndexJS)
                             var oldIndexJSVersion = getVersionNumber(oldIndexJS);
                             console.log('[oldIndexJS]', oldIndexJSVersion);
                             // load index.js locally
@@ -152,8 +150,13 @@ function checkUpdate () {
                                     var newIndexJSversion = getVersionNumber(newIndexJS);
                                     console.log('[newIndexJS]', newIndexJSversion);
 
+                                    var forceUpdate = checkIfLargeUpdate(oldIndexJSVersion, newIndexJSversion);
+                                    if (forceUpdate) {
+                                        alert('A change on main version number is detected, update will start.');
+                                    }
+
                                     // index.js changed, ask user to update
-                                    if (oldIndexJSVersion !== newIndexJSversion && confirm("Update detected, processed with update?")) {
+                                    if (oldIndexJSVersion !== newIndexJSversion && (forceUpdate || confirm("Update detected, processed with update?"))) {
                                         localized.setForceFetchFromServer(function() {
                                             /// update the 5 files
                                             var updateFiles = [
