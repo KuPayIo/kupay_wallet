@@ -46,7 +46,7 @@ export class ConvertRedEnvelope extends Widget {
 
             return;
         }
-        const close = popNew('app-components-loading-loading', { text: '兑换中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '兑换中...' });
         const value: any = await this.convertRedEnvelope(code);
         close.callback(close.widget);
         if (!value) return;

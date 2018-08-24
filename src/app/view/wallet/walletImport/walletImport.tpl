@@ -32,7 +32,7 @@
             </div>
         </div>
         <div w-class="ga-import-protocol" ev-checkbox-click="checkBoxClick">
-            <app-components-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components-checkbox-checkbox>
+            <app-components_level_1-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components_level_1-checkbox-checkbox>
             <span w-class="ga-user-protocol" on-tap="agreementClick">隐私条约</span>
         </div>
         <div w-class="ga-import-btn" on-tap="importWalletClick" style="backgroundColor:{{it1.userProtocolReaded ? '#1A70DD' : 'white'}}; color : {{it1.userProtocolReaded ? '#FFFFFF' : '#1A70DD'}};">导入</div>

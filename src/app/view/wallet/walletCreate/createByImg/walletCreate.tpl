@@ -31,7 +31,7 @@
                 <div w-class="ga-input-father"><app-components-input-input>{placeHolder:"提示信息（可不填）"}</app-components-input-input></div>
             </div>
             <div w-class="ga-registered-protocol" ev-checkbox-click="checkBoxClick">
-                <app-components-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components-checkbox-checkbox>
+                <app-components_level_1-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components_level_1-checkbox-checkbox>
                 <span w-class="ga-user-protocol" on-tap="agreementClick">隐私条约</span>
             </div>
             <div w-class="ga-wallet-create-btn" on-tap="createWalletClick" style="backgroundColor:{{it1.userProtocolReaded ? '#1A70DD' : 'white'}};color:{{it1.userProtocolReaded ? 'rgba(255,255,255,0.87)' : '#1A70DD'}}">创建钱包</div>

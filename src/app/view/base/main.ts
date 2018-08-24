@@ -46,7 +46,7 @@ const popNewPage = () => {
     if (readedPriAgr) {
         popNew('app-view-base-app');
         if (ifNeedUnlockScreen()) {
-            popNew('app-view-guidePages-unlockScreen');
+            popNew('app-view-mine-lockScreen-unlockScreen-unlockScreen',{ firstEnter:true });
         }
 
     } else {
@@ -64,7 +64,7 @@ const checkUpdate = () => {
 const backToFront = () => {
     (<any>window).handle_app_lifecycle_listener = (iType: string) => {
         if ((iType === 'onAppResumed') && ifNeedUnlockScreen()) {
-            popNew('app-view-guidePages-unlockScreen');
+            popNew('app-view-mine-lockScreen-unlockScreen-unlockScreen',{ firstEnter:false });
         }
     };
 };

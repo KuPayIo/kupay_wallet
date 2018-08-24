@@ -102,7 +102,7 @@ export class WalletImport extends Widget {
 
             return;
         }
-        const close = popNew('app-components-loading-loading', { text: '导入钱包中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '导入钱包中...' });
         try {
             await this.importWallet();
 

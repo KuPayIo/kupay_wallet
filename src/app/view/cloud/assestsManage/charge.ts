@@ -4,13 +4,13 @@
 // ==============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { eth2Wei, wei2Eth } from '../../../core/globalWallet';
 import { getBankAddr, getCloudBalance, getRechargeLogs, rechargeToServer } from '../../../net/pull';
 import { sendRawTransactionETH, signRawTransactionETH } from '../../../net/pullWallet';
 import { find } from '../../../store/store';
 import { gasLimit, gasPrice } from '../../../utils/constants';
 import { addRecord, getCurrentAddrBalanceByCurrencyName, 
     getCurrentAddrByCurrencyName, getCurrentAddrInfo, openBasePage, parseDate, popPswBox } from '../../../utils/tools';
+import { eth2Wei, wei2Eth } from '../../../utils/unitTools';
 // ===============================================导出
 interface Props {
     currencyName:string;
@@ -71,7 +71,7 @@ export class Charge extends Widget {
         }
        
         console.time('recharge');
-        const close = popNew('app-components-loading-loading', { text: '正在充值...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '正在充值...' });
         const toAddr = await getBankAddr();
         if (!toAddr) {
             close.callback(close.widget);

@@ -124,7 +124,7 @@ export class Home extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('app-components-loading-loading', { text: '导出中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '导出中...' });
         try {
             const getMnemonic = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonic;
             const mnemonic = await getMnemonic(wallet, passwd);

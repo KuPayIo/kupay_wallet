@@ -55,7 +55,7 @@ export class WalletList extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const close = popNew('app-components-loading-loading', { text: '导出中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '导出中...' });
         try {
             const mnemonic = await getMnemonic(wallet, passwd);
             if (mnemonic) {

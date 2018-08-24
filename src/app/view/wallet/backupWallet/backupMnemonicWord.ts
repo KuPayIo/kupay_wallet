@@ -49,7 +49,7 @@ export class BackupMnemonicWord extends Widget {
         this.ok && this.ok();
     }
     public async shareClick() {
-        const close = popNew('app-components-loading-loading', { text: '处理中...' });
+        const close = popNew('app-components_level_1-loading-loading', { text: '处理中...' });
         const wallet = find('curWallet');
         const mnemonicHexstr = await getMnemonicHexstr(wallet, this.props.passwd);
         const shares = shareSecret(mnemonicHexstr, DataCenter.MAX_SHARE_LEN, DataCenter.MIN_SHARE_LEN)

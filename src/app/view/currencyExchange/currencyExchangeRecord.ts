@@ -30,7 +30,7 @@ export class CurrencyExchangeRecord extends Widget {
         this.state = {
             txsShow:[]
         };
-        const close = popNew('app-components-loading-loading',{ text:'加载中...' });
+        const close = popNew('app-components_level_1-loading-loading',{ text:'加载中...' });
         const addr = getCurrentAddrByCurrencyName(this.props.currencyName);
         await getTransactionsByAddr(addr);
         close.callback(close.widget);
