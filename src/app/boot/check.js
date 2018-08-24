@@ -21,7 +21,6 @@ function checkUpdate () {
     }
 
     function checkIfLargeUpdate() {
-        return false;
     }
 
     function processUpdate(localDepend, indexedDBDepend) {
@@ -42,7 +41,7 @@ function checkUpdate () {
                 remoteCRC[path]=sign;
                 continue;
             }
-            if (currsponding !== sign) {
+            if (currsponding !== sign && currsponding !== '-' + sign && '' + currsponding !== sign) {
                 unidenticalFiles.push(path);
                 remoteCRC[path]=currsponding;
                 console.log('Unidentical file:', path, currsponding, sign);
@@ -59,7 +58,7 @@ function checkUpdate () {
                 for (var i in unidenticalFiles) {
                     var file = unidenticalFiles[i];
                     // first download the file
-                    ajax.get(serverAddress[0] + "/wallet/" + file + "?"+Math.random(), {}, undefined, ajax.RESP_TYPE_BIN, 3000, function (data) {
+                    ajax.get(serverAddress[0] + "/wallet/" + file + "?"+Math.random(), {}, undefined, ajax.RESP_TYPE_BIN, 10000 + unidenticalFilesCount * 1000, function (data) {
                         db.write(store, file, data, function() {
                             updatedFiles++;
                             console.log('update process: ', (updatedFiles / unidenticalFilesCount * 100) + '%     ');
@@ -105,7 +104,7 @@ function checkUpdate () {
             var indexedDBDepend = result;
 
             console.log(result);
-            ajax.get(serverAddress[0] + "/wallet/.depend?"+Math.random(), {}, undefined, undefined, 3000, function (data) {
+            ajax.get(serverAddress[0] + "/wallet/.depend?"+Math.random(), {}, undefined, undefined, 10000, function (data) {
                 //try {
                     data = data.substring(data.indexOf('['), data.lastIndexOf(']')+1);
                     var localDepend = JSON.parse(data);
@@ -120,7 +119,7 @@ function checkUpdate () {
                         if ($pending === "true") {
                             alert('A pending update is held on, update will continue.');
                             /// try to get index.js to determine if there's network, timeout is set to 1000ms
-                            ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 1000, function() {
+                            ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 10000, function() {
                                 // continue updating
                                 processUpdate(localDepend, indexedDBDepend);
                             }, function(e) {
@@ -131,7 +130,7 @@ function checkUpdate () {
                             return;
                         }
                         // download index.js then compare
-                        ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 3000, function(oldIndexJS) {
+                        ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 10000, function(oldIndexJS) {
                             //console.log('[oldIndexJS]', oldIndexJS);
                             var oldIndexJSVersion = getVersionNumber(oldIndexJS);
                             console.log('[oldIndexJS]', oldIndexJSVersion);
@@ -139,7 +138,7 @@ function checkUpdate () {
                             //   first set flag to ensure all assets are loaded from local.
                             localized.setForceFetchFromServer(function() {
                                 //   second get local index.js and compare
-                                ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 3000, function(newIndexJS) {
+                                ajax.get(serverAddress[0] + "/wallet/app/boot/index.js?"+Math.random(), {}, undefined, undefined, 10000, function(newIndexJS) {
 
                                     var newIndexJSversion = getVersionNumber(newIndexJS);
                                     console.log('[newIndexJS]', newIndexJSversion);
@@ -173,7 +172,7 @@ function checkUpdate () {
                                                             localStorage.setItem("pending", "true");
                                                             //db.write(store, "$pending", "true", function(val) {
                                                                 // load remote .depend
-                                                                ajax.get(serverAddress[0] + "/wallet/.depend?"+Math.random(), {}, undefined, undefined, 3000,  function(data) {
+                                                                ajax.get(serverAddress[0] + "/wallet/.depend?"+Math.random(), {}, undefined, undefined, 10000 + updateCount * 10000,  function(data) {
                                                                     data = data.substring(data.indexOf('['), data.lastIndexOf(']')+1);
                                                                     var remoteDepend = JSON.parse(data);
                                                                     processUpdate(remoteDepend, indexedDBDepend);
