@@ -6,10 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getBankAddr, getCloudBalance, getRechargeLogs, rechargeToServer } from '../../../net/pull';
 import { sendRawTransactionETH, signRawTransactionETH } from '../../../net/pullWallet';
+import { GasPriceLevel, TransRecordLocal } from '../../../store/interface';
 import { find } from '../../../store/store';
-import { gasLimit, gasPrice } from '../../../utils/constants';
-import { addRecord, getCurrentAddrBalanceByCurrencyName, 
-    getCurrentAddrByCurrencyName, getCurrentAddrInfo, openBasePage, parseDate, popPswBox } from '../../../utils/tools';
+import { defaultGasLimit } from '../../../utils/constants';
+// tslint:disable-next-line:max-line-length
+import { addRecord, fetchGasPrice,getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, parseDate, popPswBox } from '../../../utils/tools';
 import { eth2Wei, wei2Eth } from '../../../utils/unitTools';
 // ===============================================导出
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
 }
 export class Charge extends Widget {
     public ok:() => void;
-    constructor() {
+    public constructor() {
         super();
     }
     public setProps(props:Props,oldProps:Props) {
@@ -27,7 +28,7 @@ export class Charge extends Widget {
     public init(): void {
         this.state = {
             amount:0,// 充值输入值
-            serviceCharge:wei2Eth(gasLimit * gasPrice),// 手续费
+            serviceCharge:wei2Eth(defaultGasLimit * fetchGasPrice(GasPriceLevel.STANDARD)),// 手续费
             localBalance:getCurrentAddrBalanceByCurrencyName(this.props.currencyName),// 本地余额
             isFeeEnough:false
         };
@@ -79,7 +80,8 @@ export class Charge extends Widget {
             return;
         }
         const fromAddr = getCurrentAddrByCurrencyName(this.props.currencyName);
-        const obj = await signRawTransactionETH(passwd,fromAddr,toAddr,gasPrice,gasLimit,this.state.amount);
+        // tslint:disable-next-line:max-line-length
+        const obj = await signRawTransactionETH(passwd,fromAddr,toAddr,fetchGasPrice(GasPriceLevel.STANDARD),this.state.amount,'');
         if (!obj) {
             close.callback(close.widget);
 
@@ -89,7 +91,7 @@ export class Charge extends Widget {
         const hash = `0x${obj.hash}`;
         const nonce = Number(obj.nonce);
         const pay = eth2Wei(this.state.amount);
-        const canTransfer = await rechargeToServer(fromAddr,toAddr,hash,nonce,gasPrice,pay);
+        const canTransfer = await rechargeToServer(fromAddr,toAddr,hash,nonce,fetchGasPrice(GasPriceLevel.STANDARD),pay);
         if (!canTransfer) {
             close.callback(close.widget);
 
@@ -108,18 +110,20 @@ export class Charge extends Widget {
         console.timeEnd('recharge');
         // 维护本地交易记录
         const t = new Date();
-        const record = {
-            id: h,
-            type: '转账',
+        const record:TransRecordLocal = {
+            hash: h,
+            type: '充值',
             fromAddr: fromAddr,
-            to: toAddr,
+            toAddr: toAddr,
             pay: wei2Eth(pay),
             time: t.getTime(),
             showTime: parseDate(t),
             result: '交易中',
-            info: '兑换',
+            info: '',
             currencyName: this.props.currencyName,
-            tip: gasLimit * wei2Eth(gasPrice)
+            fee: defaultGasLimit * wei2Eth(fetchGasPrice(GasPriceLevel.STANDARD)),
+            nonce,
+            gasPriceLevel:GasPriceLevel.STANDARD
         };
         addRecord(this.props.currencyName, fromAddr, record);
         getRechargeLogs();

@@ -1,19 +1,19 @@
 /**
  * 确认提示框
  */
-import { Widget } from '../../../pi/widget/widget';
 import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
 import { copyToClipboard } from '../../utils/tools';
 
 interface Props {
     itype: string;
-    text: string;
+    content: string;
     center?: boolean;
     inputType?:string;
     placeHolder?:string;
     showQuit?:boolean;// 是否显示右上角叉
     extraInfo?:string;// itype = "extra" 时有效
-    copyBtnText?:string;//itype = "extra"  button文字
+    copyBtnText?:string;// itype = "extra"  button文字
     contentStyle?:string;
     okButton?:string;// 确定按钮的名称
     cancelButton?:string;// 取消按钮的名称
@@ -64,17 +64,17 @@ export class MessageBox extends Widget {
         this.state.input = e.value;
     }
 
+    public copyBtnClick(e:any) {
+        copyToClipboard(this.props.extraInfo);
+        popNew('app-components-message-message', { itype: 'success', content: '复制成功', center: true });
+        this.ok && this.ok();
+    }
+
     private init() {
         setTimeout(() => {
             this.state.isShow = true;
             this.paint();
         }, 100);
-    }
-
-    public copyBtnClick(e:any){
-        copyToClipboard(this.props.extraInfo);
-        popNew('app-components-message-message', { itype: 'success', content: '复制成功', center: true });
-        this.ok && this.ok();
     }
 
 }

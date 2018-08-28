@@ -12,6 +12,7 @@ export enum LoginState {
     logouted,
     logerror
 }
+
 // 货币类型
 export enum CurrencyType {
     KT = 100,
@@ -31,6 +32,12 @@ export enum RedEnvelopeType {
     Invite = '99'
 }
 
+// 3档gasPrice
+export enum GasPriceLevel {
+    STANDARD = 'standard',
+    FAST = 'fast',
+    FASTEST = 'fastest'
+}
 /**
  * localstorage wallet object
  */
@@ -95,6 +102,27 @@ export interface TransactionRecord {
     inputs?: string[];// 输入地址列表
     outputs?: string[];// 输出地址列表
 }
+
+/**
+ * 本地缓存交易记录
+ */
+export interface TransRecordLocal {
+    hash:number | string; // 交易hash
+    // tslint:disable-next-line:no-reserved-keywords
+    type:string;// 转账  充值 收款
+    fromAddr:string;// 转账地址
+    toAddr:string;// 收币地址
+    pay:number;// 转账金额
+    time:number;// 时间戳
+    showTime:string;// 时间显示
+    result:string;// 交易结果
+    info:string;// 交易额外信息
+    currencyName:string;// 货币名称
+    fee:number;// 矿工费
+    nonce:number;// nonce
+    gasPriceLevel:string;// gasPrice档次
+}
+
 /**
  * 锁屏密码相关
  */
@@ -309,7 +337,8 @@ export interface Store {
     exchangeRateJson: Map<string, any>;// 兑换汇率列表
     currencyList: CurrencyInfo[];// 货币信息列表
     ERC20TokenDecimals:Object;// ERC20精度
-    nonce:number;// 维护本地的nonce
+    nonceMap:Map<string,number>;// 维护本地的nonce
+    gasPrice:object;// gasPrice档次(3档)
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
     accountDetail: Map<CurrencyType, AccountDetail[]>;// 云端账户详情

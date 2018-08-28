@@ -5,6 +5,7 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
+import { fetchGasPrice } from '../net/pull';
 import { defaultExchangeRateJson, supportCurrencyList } from '../utils/constants';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
@@ -104,6 +105,9 @@ export const initStore = () => {
     store.shapeShiftTxsMap = new Map(findByLoc('shapeShiftTxsMap'));
     // 从localStorage中取常用联系人列表
     store.TopContacts = findByLoc('TopContacts') || [];
+    // 从localStorage中取nonceMap
+    store.nonceMap = new Map<string,number>(findByLoc('nonceMap'));
+    console.log('nonceMap------------------1111',store.nonceMap);
 
     // 初始化默认兑换汇率列表
     const rateJson = defaultExchangeRateJson;
@@ -122,7 +126,7 @@ export const initStore = () => {
 type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
- 'inviteRedBagRec' | 'nonce' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord';
+ 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -131,7 +135,7 @@ type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo' | 'shapeShiftTx
 type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' | 'level_3_page_loaded';
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
- 'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals' | 'lastGetSmsCodeTime';
+ 'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals' | 'lastGetSmsCodeTime' | 'nonceMap';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -164,7 +168,8 @@ const store = <Store>{
     currencyList: <CurrencyInfo[]>[],// 货币信息列表
     ERC20TokenDecimals:null,// ERC20精度
     lockScreen: <LockScreen>null, // 锁屏密码相关
-    nonce:0,// 本地nonce维护
+    nonceMap:new Map<string,number>(),// 本地nonce维护
+    gasPrice:{},// gasPrice分档次
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
     accountDetail: new Map<CurrencyType, AccountDetail[]>(),// 云端账户详情

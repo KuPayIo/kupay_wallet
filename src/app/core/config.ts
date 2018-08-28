@@ -10,7 +10,7 @@ export const config = {
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
         // https://ropsten.infura.io/Y4zS49bjsYwtRU3Tt4Yj
         // http://yinengyun.iok.la:8545
-        EthApiBaseUrl: 'http://218.88.21.146:8545',
+        EthApiBaseUrl: 'https://ropsten.infura.io/Y4zS49bjsYwtRU3Tt4Yj',
         EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY',
         EthscanRopstenUrl: 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=',
         EthscanRopstenTokenTransferEvent: 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx'

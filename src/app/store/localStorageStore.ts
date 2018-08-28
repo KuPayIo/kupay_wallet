@@ -121,4 +121,8 @@ export const initLocalStorageStore = () => {
     register('lastGetSmsCodeTime',(lastGetSmsCodeTime:number) => {
         setLocalStorage('lastGetSmsCodeTime',lastGetSmsCodeTime);
     });
+
+    register('nonceMap',(nonceMap:Map<string,number>) => {
+        setLocalStorage('nonceMap',nonceMap);
+    });
 };

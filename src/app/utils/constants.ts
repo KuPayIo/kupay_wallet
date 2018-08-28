@@ -207,11 +207,11 @@ export const redEnvelopeSupportCurrency = ['KT', 'ETH'];
 // 提现服务费比率
 export const withdrawServiceCharge = 1.03;
 
-// 默认ETH gasPrice
-export const gasPrice = 5000000000;
-
 // 默认ETH gasLimit
-export const gasLimit = 21000;
+export const defaultGasLimit = 21000;
+
+// 重发时间间隔(超过间隔还未成功即可重发)
+export const resendInterval = 3 * 1000;
 
 // 最小提现金额
 export const withdrawLimit = {

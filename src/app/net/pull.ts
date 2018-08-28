@@ -144,6 +144,7 @@ export const getRandom = async () => {
     updateStore('conRandom', resp.rand);
     updateStore('conUid', resp.uid);
     getCloudBalance();
+    fetchGasPrices();
 };
 
 /**
@@ -618,7 +619,8 @@ export const getBankAddr = async () => {
 /**
  * 向服务器发起充值请求
  */
-export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:string,coin:number= 101) => {
+// tslint:disable-next-line:max-line-length
+export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:string | number,coin:number= 101) => {
     const msg = {
         type: 'wallet/bank@pay',
         param: {
@@ -802,5 +804,30 @@ export const buyBack = async (timeStamp:any) => {
         showError(err && (err.result || err.type));
 
         return false;
+    }
+};
+
+/**
+ * 获取gasPrice
+ */
+export const fetchGasPrices = async () => {
+    const msg = {
+        type: 'wallet/bank@get_gas',
+        param: {}
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        
+        const gasPrice = {
+            standard:Number(res.standard),
+            fast:Number(res.fast),
+            fastest:Number(res.fastest)
+        };
+        updateStore('gasPrice',gasPrice);
+
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
     }
 };
