@@ -68,6 +68,7 @@ export class Index extends Widget {
             record: [],
             productList: this.getOutLineProductList()
         };
+        // 当页面激活并且conRandom已经存在时开始获取理财相关数据
         if (this.props.isActive && find('conRandom')) {
             getProductList();
             getPurchaseRecord();
@@ -98,6 +99,12 @@ export class Index extends Widget {
     public toRecordDetail(i:any) {
         popNew('app-view-financialManagement-purchaseRecord-recordDetail',{ item:this.state.record[i],i });
     }
+    /**
+     * 绘制环形进度条，好像没有用到，可以删除
+     * @param canvasId canvas dom对象的id
+     * @param t 当前值
+     * @param total 总值
+     */
     public drawCircle(canvasId:string,t:number,total:number) {
         const oC = document.getElementById(canvasId);
         const oGC = (<any>oC).getContext('2d');

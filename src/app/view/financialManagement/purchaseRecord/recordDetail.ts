@@ -32,6 +32,7 @@ export class RecordDetail extends Widget {
     public redNotice() {
         popNew('app-view-financialManagement-notice-notice');
     }
+    // 赎回操作
     public  returnBack() {
         popNew('app-components-message-messagebox',{ itype: 'confirm', title: '赎回', content: '是否赎回理财产品' },async () => {
             const close = popNew('app-components_level_1-loading-loading', { text: '正在赎回...' });
