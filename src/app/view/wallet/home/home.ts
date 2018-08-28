@@ -144,6 +144,9 @@ export class Home extends Widget {
         this.paint();
     }
 
+    /**
+     * 处理滑动
+     */
     public pageScroll() {
         const page = document.getElementById('page');
         const top = -page.getBoundingClientRect().top;

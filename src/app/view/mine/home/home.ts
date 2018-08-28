@@ -46,7 +46,7 @@ export class Home extends Widget {
             wallet,
             avatar,
             walletName,
-            mnemonicBackup,
+            mnemonicBackup,// 是否已经备份助记词
             hasNews: true,
             mineList: [{
                 icon: 'icon_mine_wallet.png',
