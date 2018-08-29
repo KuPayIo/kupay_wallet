@@ -8,8 +8,9 @@ import { Widget } from '../../../../pi/widget/widget';
 import { querySendRedEnvelopeRecord } from '../../../net/pull';
 import { CurrencyTypeReverse, SHisRec, SRecDetail } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
-import { recordNumber } from '../../../utils/constants';
-import { smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';
+import { PAGELIMIT } from '../../../utils/constants';
+import { timestampFormat } from '../../../utils/tools';
+import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -63,11 +64,11 @@ export class RedEnvelopeRecord extends Widget {
         const hList = sHisRec.list;
         const start = this.state.recordList.length;
 
-        this.state.recordList = this.state.recordList.concat(hList.slice(start,start + recordNumber));
+        this.state.recordList = this.state.recordList.concat(hList.slice(start,start + PAGELIMIT));
         this.state.sendNumber = sHisRec.sendNumber;
         this.state.start = sHisRec.start;
         this.state.hasMore = this.state.sendNumber > this.state.recordList.length;
-        this.state.showMoreTips = this.state.sendNumber >= recordNumber;
+        this.state.showMoreTips = this.state.sendNumber >= PAGELIMIT;
         this.paint();
     }
 
@@ -89,7 +90,7 @@ export class RedEnvelopeRecord extends Widget {
                 rtype:r[i][1],
                 ctype:r[i][2],
                 ctypeShow:currencyName,
-                amount:smallUnit2LargeUnitString(currencyName,r[i][3]),
+                amount:smallUnit2LargeUnit(currencyName,r[i][3]),
                 time:r[i][4],
                 timeShow:timestampFormat(r[i][4]),
                 codes:r[i][5]
@@ -100,7 +101,7 @@ export class RedEnvelopeRecord extends Widget {
         this.state.recordList = this.state.recordList.concat(recordList);
         this.state.start = start;
         this.state.hasMore = sendNumber > this.state.recordList.length;
-        this.state.showMoreTips = sendNumber >= recordNumber;
+        this.state.showMoreTips = sendNumber >= PAGELIMIT;
         const sHisRecNew:SHisRec = {
             start,
             sendNumber,

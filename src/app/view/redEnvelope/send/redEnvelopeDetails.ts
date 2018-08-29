@@ -6,7 +6,8 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { queryDetailLog } from '../../../net/pull';
 import { CurrencyTypeReverse, RedBag } from '../../../store/interface';
-import { smallUnit2LargeUnitString, timestampFormat, unicodeArray2Str } from '../../../utils/tools';
+import { timestampFormat, unicodeArray2Str } from '../../../utils/tools';
+import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 
 interface Props {
     rid:string;// 红包id
@@ -49,7 +50,7 @@ export class RedEnvelopeDetails extends Widget {
         const redBagList:RedBag[] = [];
         let totalAmount = 0;
         for (let i = 0;i < l.length;i++) {
-            const amount = smallUnit2LargeUnitString(this.state.currencyName,l[i][4]);
+            const amount = smallUnit2LargeUnit(this.state.currencyName,l[i][4]);
             totalAmount += amount;
             if (l[i][1] !== 0 && l[i][5] !== 0) {
                 const redBag:RedBag = {

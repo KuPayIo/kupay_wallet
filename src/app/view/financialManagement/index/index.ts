@@ -144,16 +144,16 @@ export class Index extends Widget {
 }
 // ===============================================本地
 
-register('conRandom', async (conRandom) => {
-    if (!conRandom) return;
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        getProductList();
-        getPurchaseRecord();
-        w.paint();
-    }
+// register('conRandom', async (conRandom) => {
+//     if (!conRandom) return;
+//     const w: any = forelet.getWidget(WIDGET_NAME);
+//     if (w) {
+//         getProductList();
+//         getPurchaseRecord();
+//         w.paint();
+//     }
     
-});
+// });
 register('productList', async (productList) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {

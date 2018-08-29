@@ -60,7 +60,7 @@ export const u128ToBuffer = (n: bigInt.BigInteger, littleEnd?: boolean): Uint8Ar
 export const bufferToU64 = (buf: Uint8Array, littleEnd?: boolean): bigInt.BigInteger => {
     const i = 0;
     if (littleEnd) {
-        const arr = new Uint32Array(buf);// 小端序
+        const arr = new Uint32Array(buf.buffer);// 小端序
 
         return bigInt(arr[1]).multiply(0x100000000).add(bigInt(arr[0]));
     } else {
@@ -73,7 +73,7 @@ export const bufferToU64 = (buf: Uint8Array, littleEnd?: boolean): bigInt.BigInt
 export const bufferToU128 = (buf: Uint8Array, littleEnd?: boolean): bigInt.BigInteger => {
     const i = 0;
     if (littleEnd) {
-        const arr = new Uint32Array(buf);// 小端序
+        const arr = new Uint32Array(buf.buffer);// 小端序
 
         // tslint:disable-next-line:max-line-length
         return bigInt(arr[3]).multiply(bigInt('0x1000000000000000000000000').add(bigInt(arr[2]).multiply(bigInt('0x10000000000000000')))).add(bigInt(arr[1]).multiply(bigInt('0x100000000'))).add(bigInt(arr[0]));
@@ -105,7 +105,7 @@ export const u64Merge = (v: number | Uint8Array): bigInt.BigInteger => {
     if (typeof v === 'number') {
         return bigInt(v);
     } else {
-        bufferToU64(v, true);
+        return bufferToU64(v, true);
     }
 };
 
@@ -113,6 +113,6 @@ export const u128Merge = (v: number | Uint8Array): bigInt.BigInteger => {
     if (typeof v === 'number') {
         return (<any>v).value;
     } else {
-        bufferToU128(v, true);
+        return bufferToU128(v, true);
     }
 };

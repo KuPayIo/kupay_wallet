@@ -1,7 +1,7 @@
 /**
  * 协议块处理
  */
-import { u64Merge } from '../../bigint/util';
+import { bufferToU64, u64Merge } from '../../bigint/util';
 import { decode as erlTermDecode, readInt32, readInt8, readString, TAG } from './erl_term';
 import {
     charToUtf8, createArrayBuffer, createU8ArrayView, isArray, isArrayBuffer,
@@ -256,9 +256,9 @@ const mDecode = (msg, jbuf, offset, length) => {
             tempArray.offset = 0;
             param[k] = readInt32(tempArray);
         } else if (t === TAG.BIG_INT_TAG) {
-            tempArray = readU8Array(jbuf, len);
+            tempArray = readU8Array(jbuf, len - 1);
             tempArray.offset = 0;
-            param[k] = u64Merge(tempArray);
+            param[k] = u64Merge(new Uint8Array(tempArray.buf));
         } else if (t === TAG.STRING_TAG) {
             param[k] = readString({ buf: utf8ToChar(readU8Array(jbuf, len - 1).buf) });
         } else if (t === TAG.BIN_TAG) {

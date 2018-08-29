@@ -50,7 +50,7 @@ export const requestLogined = async (msg: any) => {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports;
+        const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
         const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
         const wlt = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
         const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
@@ -269,6 +269,7 @@ export const inputInviteCdKey = async (code) => {
 
         return [];
     } catch (err) {
+        console.log('input_cd_key--------',err);
         showError(err && (err.result || err.type));
 
         return;

@@ -98,7 +98,6 @@ export class AddAsset extends Widget {
 
     private getAddrs() {
         const wallet = find('curWallet');
-        console.log('curWallet-=--=-=-=-=',wallet);
 
         if (!wallet.currencyRecords || !this.props.currencyName) return [];
 

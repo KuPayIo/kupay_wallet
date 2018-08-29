@@ -7,8 +7,7 @@ import { Addr, Wallet } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { getAvatarRandom } from './account';
 import { defalutShowCurrencys } from './constants';
-import { getAddrsAll, openBasePage } from './tools';
-import { encrypt } from './walletTools';
+import { encrypt, getAddrsAll, openBasePage } from './tools';
 
 /**
  * 通过助记词导入钱包
