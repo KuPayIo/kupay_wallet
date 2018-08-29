@@ -95,9 +95,9 @@ winit.initNext = function () {
       "app/view/mine/lockScreen/unlockScreen/"
     ]
     console.time('firstload');
-    util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+    util.loadDir(sourceList, flags, fm, undefined, function (fileMap,fm1) {
       console.timeEnd('firstload');
-      console.log(fileMap)
+      console.log('fileMap-----------------',fileMap);
       // console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
       var tab = util.loadCssRes(fileMap);
       // 将预加载的资源缓冲90秒，释放

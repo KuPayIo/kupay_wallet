@@ -7,8 +7,9 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getData, queryConvertLog } from '../../../net/pull';
 import { CRecDetail, CurrencyType, CurrencyTypeReverse } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
-import { recordNumber } from '../../../utils/constants';
-import { getFirstEthAddr, smallUnit2LargeUnitString, timestampFormat } from '../../../utils/tools';
+import { PAGELIMIT } from '../../../utils/constants';
+import { timestampFormat } from '../../../utils/tools';
+import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -108,11 +109,11 @@ export class RedEnvelopeRecord extends Widget {
         const hList = cHisRec.list;
         const start = this.state.recordList.length;
 
-        this.state.recordList = this.state.recordList.concat(hList.slice(start,start + recordNumber));
+        this.state.recordList = this.state.recordList.concat(hList.slice(start,start + PAGELIMIT));
         this.state.convertNumber = cHisRec.convertNumber;
         this.state.start = cHisRec.start;
         this.state.hasMore = this.state.convertNumber > this.state.recordList.length;
-        this.state.showMoreTips = this.state.convertNumber >= recordNumber;
+        this.state.showMoreTips = this.state.convertNumber >= PAGELIMIT;
         this.innerPaint();
     }
     // 向服务器请求更多记录
@@ -135,7 +136,7 @@ export class RedEnvelopeRecord extends Widget {
                 rtypeShow: parseRtype(r[i][2]),
                 ctype: r[i][3],
                 ctypeShow:currencyName,
-                amount: smallUnit2LargeUnitString(currencyName, r[i][4]),
+                amount: smallUnit2LargeUnit(currencyName, r[i][4]),
                 time: r[i][5],
                 timeShow: timestampFormat(r[i][5])
             };
@@ -145,7 +146,7 @@ export class RedEnvelopeRecord extends Widget {
         this.state.recordList = this.state.recordList.concat(recordList);
         this.state.start = startNext;
         this.state.hasMore = convertNumber > this.state.recordList.length;
-        this.state.showMoreTips = convertNumber >= recordNumber;
+        this.state.showMoreTips = convertNumber >= PAGELIMIT;
         const cHisRecNew = {
             start:startNext,
             convertNumber,

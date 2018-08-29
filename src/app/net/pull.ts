@@ -7,7 +7,7 @@ import { CurrencyType, CurrencyTypeReverse, LoginState } from '../store/interfac
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog,paseProductList,pasePurchaseRecord } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
-import { recordNumber } from '../utils/constants';
+import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 import { popPswBox, transDate } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
@@ -50,7 +50,7 @@ export const requestLogined = async (msg: any) => {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports;
+        const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
         const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
         const wlt = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
         const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
@@ -144,6 +144,7 @@ export const getRandom = async () => {
     updateStore('conRandom', resp.rand);
     updateStore('conUid', resp.uid);
     getCloudBalance();
+    fetchGasPrices();
 };
 
 /**
@@ -202,6 +203,7 @@ export const getBonusHistory = async() => {
 export const getMining = async () => {
     const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
     requestAsync(msg).then(data => {
+        
         const totalNum = kpt2kt(data.mine_total);
         const holdNum = kpt2kt(data.mines);
         const today = kpt2kt(data.today);
@@ -218,6 +220,7 @@ export const getMining = async () => {
             thisNum: nowNum,
             holdNum: holdNum
         };
+        console.log('-------------------',mining);
         updateStore('miningTotal', mining);
     });
 };
@@ -225,8 +228,14 @@ export const getMining = async () => {
 /**
  * 获取挖矿历史记录
  */
-export const getMiningHistory = async () => {
-    const msg = { type: 'wallet/cloud@get_pool_detail', param: {} };
+export const getMiningHistory = async (start = '') => {
+    const msg = { 
+        type: 'wallet/cloud@get_pool_detail', 
+        param: {
+            start,
+            count:PAGELIMIT
+        } 
+    };
     requestAsync(msg).then(data => {
         const list = [];
         for (let i = 0; i < data.value.length; i++) {
@@ -260,6 +269,7 @@ export const inputInviteCdKey = async (code) => {
 
         return [];
     } catch (err) {
+        console.log('input_cd_key--------',err);
         showError(err && (err.result || err.type));
 
         return;
@@ -348,14 +358,14 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
             type: 'query_emit_log',
             param: {
                 start,
-                count: recordNumber
+                count: PAGELIMIT
             }
         };
     } else {
         msg = {
             type: 'query_emit_log',
             param: {
-                count: recordNumber
+                count: PAGELIMIT
             }
         };
     }
@@ -381,14 +391,14 @@ export const queryConvertLog = async (start) => {
             type: 'query_convert_log',
             param: {
                 start,
-                count: recordNumber
+                count: PAGELIMIT
             }
         };
     } else {
         msg = {
             type: 'query_convert_log',
             param: {
-                count: recordNumber
+                count: PAGELIMIT
             }
         };
     }
@@ -441,8 +451,14 @@ export const getAward = async () => {
 /**
  * 矿山增加记录
  */
-export const getMineDetail = async () => {
-    const msg = { type: 'wallet/cloud@grant_detail', param: {} };
+export const getMineDetail = async (start = '') => {
+    const msg = { 
+        type: 'wallet/cloud@grant_detail', 
+        param: {
+            start,
+            count:PAGELIMIT
+        } 
+    };
     requestAsync(msg).then(detail => {
         const list = parseMineDetail(detail);
         updateStore('addMine', list);
@@ -452,8 +468,14 @@ export const getMineDetail = async () => {
 /**
  * 获取分红历史记录
  */
-export const getDividHistory = async () => {
-    const msg = { type: 'wallet/cloud@get_bonus_info', param: {} };
+export const getDividHistory = async (start = '') => {
+    const msg = { 
+        type: 'wallet/cloud@get_bonus_info', 
+        param: {
+            start,
+            count:PAGELIMIT
+        } 
+    };
     requestAsync(msg).then(data => {
         const list = [];
         for (let i = 0; i < data.value.length; i++) {
@@ -517,9 +539,16 @@ export const doChat = async () => {
 /**
  * 获取指定货币流水
  */
-export const getAccountDetail = async (coin: string) => {
+export const getAccountDetail = async (coin: string,start = '') => {
     console.log('coin----------',coin,CurrencyType[coin]);
-    const msg = { type: 'wallet/account@get_detail', param: { coin:CurrencyType[coin] } };
+    const msg = { 
+        type: 'wallet/account@get_detail', 
+        param: { 
+            coin:CurrencyType[coin],
+            start,
+            count:PAGELIMIT
+        } 
+    };
 
     try {
         const res = await requestAsync(msg);
@@ -618,7 +647,8 @@ export const getBankAddr = async () => {
 /**
  * 向服务器发起充值请求
  */
-export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:string,coin:number= 101) => {
+// tslint:disable-next-line:max-line-length
+export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:string | number,coin:number= 101) => {
     const msg = {
         type: 'wallet/bank@pay',
         param: {
@@ -671,10 +701,13 @@ export const withdrawFromServer = async (toAddr:string,coin:number,value:string)
 /**
  * 充值历史记录
  */
-export const getRechargeLogs = async () => {
+export const getRechargeLogs = async (start = '') => {
     const msg = {
         type: 'wallet/bank@pay_log',
-        param: { }
+        param: {
+            start,
+            count:PAGELIMIT
+        }
     };
 
     try {
@@ -691,10 +724,13 @@ export const getRechargeLogs = async () => {
 /**
  * 提现历史记录
  */
-export const getWithdrawLogs = async () => {
+export const getWithdrawLogs = async (start = '') => {
     const msg = {
         type: 'wallet/bank@to_cash_log',
-        param: { }
+        param: {
+            start,
+            count:PAGELIMIT
+        }
     };
 
     try {
@@ -765,11 +801,14 @@ export const buyProduct = async (pid:any,count:any) => {
 /**
  * 购买记录
  */
-export const getPurchaseRecord = async () => {
+export const getPurchaseRecord = async (start = '') => {
 
     const msg = {
         type: 'wallet/manage_money@get_pay_list',
-        param: {}
+        param: {
+            start,
+            count:PAGELIMIT
+        }
     };
     
     try {
@@ -802,5 +841,30 @@ export const buyBack = async (timeStamp:any) => {
         showError(err && (err.result || err.type));
 
         return false;
+    }
+};
+
+/**
+ * 获取gasPrice
+ */
+export const fetchGasPrices = async () => {
+    const msg = {
+        type: 'wallet/bank@get_gas',
+        param: {}
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        
+        const gasPrice = {
+            standard:Number(res.standard),
+            fast:Number(res.fast),
+            fastest:Number(res.fastest)
+        };
+        updateStore('gasPrice',gasPrice);
+
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
     }
 };

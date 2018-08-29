@@ -280,7 +280,7 @@ export class DataCenter {
         this.timerRef = setTimeout(() => {
             this.timerRef = 0;
             this.openCheckFast();
-        }, 100);
+        }, 1 * 1000);
         if (this.updateFastList.length > 0) {
             const update = this.updateFastList.shift();
             // console.log('openCheck updateFastList', update);
@@ -420,7 +420,7 @@ export class DataCenter {
                 value: parseFloat(v.value),
                 fees: parseFloat(v.gasUsed) * parseFloat(v.gasPrice),
                 time: parseInt(v.timeStamp, 10) * 1000,
-                info: '无',
+                info: '',
                 currencyName: 'ETH',
                 addr: addr
             };
@@ -493,7 +493,7 @@ export class DataCenter {
             currencyName: 'BTC',
             hash: tx.txid,
             time: tx.time * 1000,
-            info: '无',
+            info: '',
             fees: btc2Sat(tx.fees),
             value: btc2Sat(value),
             inputs: inputs,
@@ -506,7 +506,7 @@ export class DataCenter {
         let isUpdate = false;
         addrs = addrs.map(v => {
             if (v.addr !== addr) return v;
-            const t = v.record.filter(v1 => v1.id !== hashStr);
+            const t = v.record.filter(v1 => v1.hash !== hashStr);
             if (v.record.length !== t.length) {
                 isUpdate = true;
                 v.record = t;

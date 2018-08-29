@@ -110,8 +110,14 @@ export class Api {
      * @memberof Api
      */
     public estimateGas(obj: { to: any; data: any }): Promise<number> {
+
         return new Promise((resolve, reject) => {
             initWeb3();
+            if (obj.data) {
+                console.log('obj.data1-------------',obj.data);
+                obj.data = web3.toHex(obj.data);
+                console.log('obj.data2-------------',obj.data);
+            }
             web3.eth.estimateGas(obj, (err, res) => {
                 if (!err) {
                     return resolve(res);

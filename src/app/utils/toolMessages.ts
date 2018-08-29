@@ -58,11 +58,12 @@ export const showError = (result, str?) => {
  * @param err 错误对象
  */
 export const doErrorShow = (err:Error) => {
-    // console.log('error',err);
+    console.log('error',err);
     if (!err) return;
     let showStr = '';
     switch (err.message) {
         case 'Invalid Mnemonic' : showStr = '密码错误';break;
+        case 'insufficient funds for gas * price + value':showStr = '余额不足';break;
         case 'insufficient funds' : showStr = '余额不足';break;
         case 'intrinsic gas too low':showStr = 'gas过低';break;
         default: showStr = err.message || '出错啦';

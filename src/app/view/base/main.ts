@@ -30,8 +30,7 @@ export const run = (cb): void => {
     // dataCenter.init();
     
     popNewPage();
-    // popNew('app-view-guidePages-unlockScreen');
-    // // 后台切前台
+    // 后台切前台
     backToFront();
 
     if (cb) cb();
@@ -65,6 +64,13 @@ const backToFront = () => {
     (<any>window).handle_app_lifecycle_listener = (iType: string) => {
         if ((iType === 'onAppResumed') && ifNeedUnlockScreen()) {
             popNew('app-view-mine-lockScreen-unlockScreen-unlockScreen',{ firstEnter:false });
+        } else if (iType === 'onBackPressed') {
+            const widgetQuen = find('widgetQuen');
+            // const widget = widgetQuen.pop();
+            // alert(widget);
+            alert('1111-------------');
+            (<any>window).onpopstate();
+            // widget.ok && widget.ok();
         }
     };
 };
