@@ -20,7 +20,7 @@ import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
  * 交易
  */
 // tslint:disable-next-line:max-line-length
-export const transfer = async (psw:string,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,currencyName:string,info?:string,nonce?:number) => {
+export const transfer = async (psw:string,fromAddr:string,toAddr:string,gasPrice:number,pay:number,currencyName:string,info?:string,nonce?:number) => {
     const wallet = find('curWallet');
     let ret: any;
     try {
@@ -32,9 +32,12 @@ export const transfer = async (psw:string,fromAddr:string,toAddr:string,gasPrice
                 console.log('--------------ret',ret);
             } else if (currencyName === 'BTC') {
                 const res = await doBtcTransfer(<any>wlt, fromAddr, toAddr, pay, info);
-                ret = res.txid;
+                ret = {
+                    hash:res.txid,
+                    nonce:0
+                };
             } else if (ERC20Tokens[currencyName]) {
-                ret = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, gasPrice, gasLimit, currencyName);
+                ret = await doERC20TokenTransfer(<any>wlt, fromAddr, toAddr, gasPrice, pay,currencyName);
             }
         }
     } catch (error) {
@@ -192,16 +195,16 @@ export const estimateGasERC20 = (currencyName:string,toAddr:string,amount:number
 // tslint:disable-next-line:max-line-length
 const doERC20TokenTransfer = async (wlt: EthWallet, fromAddr: string, toAddr: string, gasPrice: number,value: number, currencyName: string,nonce?:number) => {
     const api = new EthApi();
+    const nonceMap = getBorn('nonceMap');
     if (!nonce) {
-        const nonceMap = getBorn('nonceMap');
         const localNonce = nonceMap.get(fromAddr);
         const chainNonce = await api.getTransactionCount(fromAddr);
         nonce = localNonce && localNonce >= chainNonce ? localNonce : chainNonce;
         nonceMap.set(fromAddr,nonce + 1);
-        updateStore('nonceMap',nonceMap);
     }
     const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(value, currencyName));
     const gasLimit = await estimateGasERC20(currencyName,toAddr,value);
+    console.log('gasLimit-------------',gasLimit);
     const txObj = {
         to: ERC20Tokens[currencyName],
         nonce: nonce,
@@ -210,12 +213,15 @@ const doERC20TokenTransfer = async (wlt: EthWallet, fromAddr: string, toAddr: st
         value: 0,
         data: transferCode
     };
-
+    console.log('txObj---------------',txObj);
     const tx = wlt.signRawTransaction(txObj);
 
     try {
         const hash = await api.sendRawTransaction(tx);
-        
+        if (!nonce) {
+            updateStore('nonceMap',nonceMap);
+        }
+
         return {
             hash,
             nonce
@@ -385,11 +391,5 @@ export const getTransactionsByAddr = async (addr: string) => {
 };
 
 // ===================================================shapeShift相关end
-
-// ==========================================提现gasPrice获取,后台服务器也使用此接口
-export const fetchWithdrawGasPrice = () => {
-    const url = 'https://safe-relay.gnosis.pm/api/v1/gas-station/';
-    
-};
 
 // ===================================================== 本地

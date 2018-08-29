@@ -126,7 +126,7 @@ export class AddAsset extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const ret = await transfer(passwd,fromAddr,toAddr,gasPrice,gasLimit,pay,currencyName,info);
+        const ret = await transfer(passwd,fromAddr,toAddr,gasPrice,pay,currencyName,info);
         if (!ret) {
             loading.callback(loading.widget);
 

@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getBankAddr, getCloudBalance, getRechargeLogs, rechargeToServer } from '../../../net/pull';
 import { sendRawTransactionETH, signRawTransactionETH } from '../../../net/pullWallet';
 import { GasPriceLevel, TransRecordLocal } from '../../../store/interface';
-import { find } from '../../../store/store';
+import { find, getBorn, updateStore } from '../../../store/store';
 import { defaultGasLimit } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { addRecord, fetchGasPrice,getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, parseDate, popPswBox } from '../../../utils/tools';
@@ -94,13 +94,15 @@ export class Charge extends Widget {
         const canTransfer = await rechargeToServer(fromAddr,toAddr,hash,nonce,fetchGasPrice(GasPriceLevel.STANDARD),pay);
         if (!canTransfer) {
             close.callback(close.widget);
+            revertNonceMap(fromAddr);
 
             return;
         }
         const h = await sendRawTransactionETH(signedTX);
         if (!h) {
             close.callback(close.widget);
-
+            revertNonceMap(fromAddr);
+            
             return;
         }
         close.callback(close.widget);
@@ -132,3 +134,10 @@ export class Charge extends Widget {
     }
 
 }
+// 还原nonce
+const revertNonceMap = (fromAddr:string) => {
+    const nonceMap = getBorn('nonceMap');
+    const nonce = nonceMap.get(fromAddr);
+    nonceMap.set(fromAddr,nonce - 1);
+    updateStore('nonceMap',nonceMap);
+};

@@ -6,8 +6,8 @@ import { config } from '../core/config';
 
 // 钱包数量最大限制
 export const walletNumLimit = 10;
-// 记录默认获取数量
-export const recordNumber = 10;
+// 分页每页条目数量
+export const PAGELIMIT = 10;
 // 钱包所支持的货币列表测试网络
 const supportCurrencyListTest = [
     { name: 'ETH', description: 'Ethereum' },
@@ -216,6 +216,6 @@ export const resendInterval = 3 * 1000;
 // 最小提现金额
 export const withdrawLimit = {
     KT:1000,
-    ETH:1.01,
-    BTC:1.001
+    ETH:0.01,
+    BTC:0.001
 };

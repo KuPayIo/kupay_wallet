@@ -52,8 +52,8 @@ export const wei2Eth = (amount:string|number):number => {
 /**
  * sat转btc
  */
-export const sat2Btc = (num: number) => {
-    if (!num) return 0;
+export const sat2Btc = (num: number | string) => {
+    num = Number(num);
 
     return num / Math.pow(10, 8);
 };
@@ -61,8 +61,8 @@ export const sat2Btc = (num: number) => {
 /**
  * btc转sat
  */
-export const btc2Sat = (num: number) => {
-    if (!num) return 0;
+export const btc2Sat = (num: number | string) => {
+    num = Number(num);
 
     return num * Math.pow(10, 8);
 };
@@ -70,8 +70,8 @@ export const btc2Sat = (num: number) => {
 /**
  * kpt转kt
  */
-export const kpt2kt = (num: number) => {
-    if (!num) return 0;
+export const kpt2kt = (num: number | string) => {
+    num = Number(num);
 
     return num / Math.pow(10, 9);
 };
@@ -79,8 +79,8 @@ export const kpt2kt = (num: number) => {
 /**
  * kt转kpt
  */
-export const kt2kpt = (num: number) => {
-    if (!num) return 0;
+export const kt2kpt = (num: number | string) => {
+    num = Number(num);
 
     return num * Math.pow(10, 9);
 };

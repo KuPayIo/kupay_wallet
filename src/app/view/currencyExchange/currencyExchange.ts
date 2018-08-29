@@ -7,7 +7,7 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { ERC20Tokens } from '../../core/eth/tokens';
 import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../net/pullWallet';
-import { GasPriceLevel, MarketInfo } from '../../store/interface';
+import { GasPriceLevel, MarketInfo, TransRecordLocal } from '../../store/interface';
 import { find, getBorn, register, updateStore } from '../../store/store';
 // tslint:disable-next-line:max-line-length
 import { addRecord, currencyExchangeAvailable, fetchGasPrice,getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, openBasePage,parseDate, popPswBox } from '../../utils/tools'; 
@@ -228,13 +228,15 @@ export class CurrencyExchange extends Widget {
             }
             const depositAddress = returnData.deposit;
                 // tslint:disable-next-line:max-line-length
-            const hash = await transfer(passwd,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
+            const ret = await transfer(passwd,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
             close.callback(close.widget);
-            if (!hash) {
+            if (!ret) {
                 return;
             }
+            const hash = ret.hash;
+            const nonce = ret.nonce;
                // tslint:disable-next-line:max-line-length
-            this.setTemRecord(hash,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency,this.state.inCurrency,this.state.rate);
+            this.setTemRecord(hash,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,nonce,outCurrency,this.state.inCurrency,this.state.rate);
             popNew('app-view-currencyExchange-currencyExchangeRecord', { currencyName:outCurrency });
             this.init();
             this.paint();
@@ -252,7 +254,7 @@ export class CurrencyExchange extends Widget {
 
     // 临时记录
     // tslint:disable-next-line:max-line-length
-    public setTemRecord(hash: string,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,outCurrency:string,inCurrency:string,rate:number) {
+    public setTemRecord(hash: string,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,nonce:number,outCurrency:string,inCurrency:string,rate:number) {
         const t = new Date();
         // 币币兑换交易记录
         const tx = {
@@ -278,18 +280,20 @@ export class CurrencyExchange extends Widget {
         updateStore('shapeShiftTxsMap',shapeShiftTxsMap);
 
         // 币币兑换出货币种交易记录
-        const record = {
-            id: hash,
+        const record:TransRecordLocal = {
+            hash,
             type: '转账',
             fromAddr: fromAddr,
-            to: toAddr,
+            toAddr: toAddr,
             pay: pay,
             time: t.getTime(),
             showTime: parseDate(t),
             result: '交易中',
-            info: '兑换',
+            info: '',
             currencyName: outCurrency,
-            tip: gasLimit * wei2Eth(gasPrice)
+            fee: wei2Eth(gasLimit * gasPrice),
+            nonce,
+            gasPriceLevel:GasPriceLevel.STANDARD
         };
         addRecord(outCurrency, fromAddr, record);
     }

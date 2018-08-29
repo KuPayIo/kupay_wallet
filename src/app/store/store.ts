@@ -5,7 +5,6 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { fetchGasPrice } from '../net/pull';
 import { defaultExchangeRateJson, supportCurrencyList } from '../utils/constants';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
@@ -126,7 +125,7 @@ export const initStore = () => {
 type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'currencyList' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
- 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice';
+ 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' ;
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
