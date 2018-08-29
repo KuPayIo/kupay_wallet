@@ -6,7 +6,7 @@ export const config = {
     dev_mode: 'dev',
     dev: {
         // tslint:disable-next-line:no-http-string
-        BtcApiBaseUrl: 'http://yinengyun.iok.la:3002/insight-api',
+        BtcApiBaseUrl: 'http://192.168.33.115:3002/insight-api',
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
         // https://ropsten.infura.io/Y4zS49bjsYwtRU3Tt4Yj
         // http://yinengyun.iok.la:8545
