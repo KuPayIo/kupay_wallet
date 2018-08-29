@@ -55,7 +55,7 @@ export class BackupMnemonicWord extends Widget {
         const shares = shareSecret(mnemonicHexstr, DataCenter.MAX_SHARE_LEN, DataCenter.MIN_SHARE_LEN)
             .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
         this.ok && this.ok();
-        popNew('app-view-wallet-backupWallet-share', { shares });
+        popNew('app-view-wallet-backupWallet-share', { shares,walletId:this.props.walletId });
         close.callback(close.widget);
     }
 }

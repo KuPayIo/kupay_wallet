@@ -62,8 +62,9 @@ export const estimateMinerFee = async (currencyName:string,options?:{toAddr:stri
         fee = gasLimit * wei2Eth(options.gasPrice);
     } else if (currencyName === 'BTC') {
         // todo 获取BTC矿工费估值
-        const nbBlocks = 2;
+        const nbBlocks = 12;
         const feeObj = await estimateMinerFeeBTC(nbBlocks);
+        console.log('feeObj----------',feeObj);
         gasLimit = 0;
         fee = feeObj[nbBlocks];
     } else if (ERC20Tokens[currencyName]) {
@@ -248,6 +249,7 @@ const doBtcTransfer = async (wlt:BTCWallet,acct1:string, acct2:string, value: nu
         amount: value,
         chgAddr: acct1
     };
+    console.log('output----------------',output);
     wlt.unlock();
     await wlt.init();
 
