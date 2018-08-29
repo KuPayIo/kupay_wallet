@@ -258,7 +258,7 @@ const mDecode = (msg, jbuf, offset, length) => {
         } else if (t === TAG.BIG_INT_TAG) {
             tempArray = readU8Array(jbuf, len - 1);
             tempArray.offset = 0;
-            param[k] = u64Merge(new Uint8Array(tempArray.buf));
+            param[k] = bufferToU64(new Uint8Array(tempArray.buf),false);
         } else if (t === TAG.STRING_TAG) {
             param[k] = readString({ buf: utf8ToChar(readU8Array(jbuf, len - 1).buf) });
         } else if (t === TAG.BIN_TAG) {

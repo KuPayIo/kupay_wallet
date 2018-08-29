@@ -66,7 +66,7 @@ export const bufferToU64 = (buf: Uint8Array, littleEnd?: boolean): bigInt.BigInt
     } else {
         const view = new DataView(buf.buffer);
 
-        return bigInt(view.getUint32(0)).multiply(bigInt(0x100000000)).add(bigInt(view.getUint32(4)));
+        return bigInt(view.getUint32(0)).multiply(bigInt(0x100000000)).add(bigInt(view.getUint32(1)));
     }
 };
 
