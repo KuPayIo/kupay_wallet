@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { buyProduct,getPurchaseRecord } from '../../../net/pull';
+import { buyProduct,getCloudBalance, getPurchaseRecord } from '../../../net/pull';
 import { find,register } from '../../../store/store';
 import { openBasePage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
@@ -113,6 +113,7 @@ export class ProductDetail extends Widget {
             return;
         }
         const data = await buyProduct(this.state.id,this.state.amount);
+        getCloudBalance();
         console.log('data',data);
         await getPurchaseRecord();// 购买之后获取购买记录
         if (data) {

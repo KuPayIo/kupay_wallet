@@ -6,7 +6,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAward, getMineDetail, getMining, getMiningHistory, getMiningRank } from '../../../net/pull';
+import { getAward, getCloudBalance, getMineDetail, getMining, getMiningHistory, getMiningRank } from '../../../net/pull';
 import { find, register } from '../../../store/store';
 
 // ================================ 导出
@@ -115,6 +115,7 @@ export class Dividend extends Widget {
         getMiningHistory();
         getMineDetail();
         getMiningRank(100);
+        getCloudBalance();
     }
 }
 

@@ -34,7 +34,7 @@
             <div w-class="pay-value input-father" ev-input-change="onGasFeeChange">
                 <app-components-input-input>{placeHolder:"矿工费",input:{{it1.fees||''}},style:"padding:0 180px 0 30px;" }</app-components-input-input>
             </div>
-            <span w-class="pay-value-conversion">≈￥{{it1.feesConversion||''}}</span>
+            <span w-class="pay-value-conversion">≈￥{{it1.feesConversion||'0'}}</span>
         </div>
        
         <div w-class="ga-item ga-congestion-container">

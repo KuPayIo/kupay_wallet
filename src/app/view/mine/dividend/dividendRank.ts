@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { find, register } from '../../../store/store';
-import { kpt2kt } from '../../../utils/tools';
+import { kpt2kt } from '../../../utils/unitTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

@@ -6,7 +6,7 @@
         <div w-class="main">
             <div w-class="body-header">{{it1.title}}</div>
             <div w-class="qrcode">
-                <pi-components-qrcode-qrcode>{value:{{it.addr}},size:400}</pi-components-qrcode-qrcode>
+                <app-components-qrcode-qrcode>{value:{{it.addr}},size:400}</app-components-qrcode-qrcode>
             </div>
             <div w-class="addr">{{it.addr}}</div>
             <div w-class="btns">
