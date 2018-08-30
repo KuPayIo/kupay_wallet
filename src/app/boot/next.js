@@ -83,6 +83,7 @@ winit.initNext = function () {
 			"app/components_level_1/",
 			"app/res/css/",
 			"app/res/js/",
+			"app/res/image1/",
 			"app/view/base/",
 			"app/view/wallet/home/",
 			"app/view/cloud/home/",
