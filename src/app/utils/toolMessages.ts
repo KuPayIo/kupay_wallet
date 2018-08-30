@@ -16,7 +16,7 @@ export const showError = (result, str?) => {
             case 702: str = '红包已领完';break;
             case 703: str = '红包已过期';break;
             case 704: str = '红包已领取';break;
-            case 705: str = '您不是真实用户';break;
+            case 705: str = '余额不足';break;
             case 711: str = '兑换码不存在'; break;
             case 712: str = '兑换码已兑换'; break;
             case 713: str = '兑换码已过期'; break;
