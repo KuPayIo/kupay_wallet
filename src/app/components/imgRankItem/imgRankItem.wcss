@@ -1,0 +1,35 @@
+.item{
+    height: 180px;
+    line-height: 180px;
+    padding: 0 30px;
+    border-bottom: 1px solid #DBDBE5;
+    display: flex;
+    align-items: center;
+}
+.itemName{
+    height: 45px;
+    line-height: 45px;
+    color: rgba(34, 34, 34, 1);
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.itemDescribe{
+    height: 33px;
+    line-height: 33px;
+    color: rgba(34, 34, 34, 1);
+    font-size: 24px;
+}
+.itemImg{
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+    margin-right: 20px;
+}
+.itemRank{
+    height: 40px;
+    line-height: 40px;
+    color: rgba(136, 136, 136, 1);
+    font-size: 28px;
+    margin-right: 30px;
+}

@@ -1,0 +1,26 @@
+.item{
+    height: 120px;
+    line-height: 120px;
+    margin: 0 20px;
+    border-bottom: 1px solid #DBDBE5;
+    display: flex;
+    align-items: center;
+}
+.itemName{ 
+    flex-grow: 1;
+    color: #222222;
+    font-size: 28px;
+    margin-left: 30px;
+    font-weight: 600;
+}
+.itemDesc{
+    color: rgba(136, 136, 136, 0.87);
+    font-size: 28px;
+    margin-right: 20px;
+}
+.itemImg{
+    width: 40px;
+    height: 40px;
+    margin-right: 30px;
+}
+

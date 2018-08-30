@@ -127,7 +127,8 @@ export class Home extends Widget {
             });
                 
         } else {
-            popNew('app-view-mine-dividend-mining');
+            // popNew('app-view-mine-dividend-mining');
+            popNew('app-view-mine-dividend-test');
         }
     }
     /**
