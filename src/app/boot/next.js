@@ -93,13 +93,19 @@ winit.initNext = function () {
 			"app/view/mine/lockScreen/unlockScreen/"
 		]
 		console.time('firstload');
-		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+		var suffixCfg = util.getDefaultSuffixCfg();
+		for (var i in suffixCfg) {
+			suffixCfg[i] = "load";
+		}
+
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd('firstload');
 			console.log(fileMap)
 			// console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
 			var tab = util.loadCssRes(fileMap);
 			// 将预加载的资源缓冲90秒，释放
 			tab.timeout = 90000;
+
 			tab.release();
 			// clear();
 			// console.log("res time:", Date.now() - startTime);
@@ -117,10 +123,11 @@ winit.initNext = function () {
 				"app/logic/"
 			];
 			// 加载其他文件
-			util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
+			util.loadDir(level2SourceList, flags, fm, suffixCfg, function (fileMap) {
 				console.log(fileMap)
 				console.timeEnd('secondLoad');
 				var tab = util.loadCssRes(fileMap);
+				
 				// 将预加载的资源缓冲90秒，释放
 				tab.timeout = 90000;
 				tab.release();
@@ -133,7 +140,7 @@ winit.initNext = function () {
 					"app/view/"
 				]
 				console.time('thirdLoad');
-				util.loadDir(level3SourceList, flags, fm, undefined, function (fileMap) {
+				util.loadDir(level3SourceList, flags, fm, suffixCfg, function (fileMap) {
 					console.log(fileMap)
 					console.timeEnd('thirdLoad');
 					
