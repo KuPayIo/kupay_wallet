@@ -94,9 +94,9 @@ winit.initNext = function () {
 		]
 		console.time('firstload');
 		var suffixCfg = util.getDefaultSuffixCfg();
-		for (var i in suffixCfg) {
-			suffixCfg[i] = "load";
-		}
+		// for (var i in suffixCfg) {
+		// 	suffixCfg[i] = "load";
+		// }
 
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd('firstload');
@@ -126,11 +126,11 @@ winit.initNext = function () {
 			util.loadDir(level2SourceList, flags, fm, suffixCfg, function (fileMap) {
 				console.log(fileMap)
 				console.timeEnd('secondLoad');
-				var tab = util.loadCssRes(fileMap);
+				// var tab = util.loadCssRes(fileMap);
 				
-				// 将预加载的资源缓冲90秒，释放
-				tab.timeout = 90000;
-				tab.release();
+				// // 将预加载的资源缓冲90秒，释放
+				// tab.timeout = 90000;
+				// tab.release();
 				var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
 				updatedStore('level_2_page_loaded', true);
 				const level3SourceList = [
@@ -144,10 +144,10 @@ winit.initNext = function () {
 					console.log(fileMap)
 					console.timeEnd('thirdLoad');
 					
-					var tab = util.loadCssRes(fileMap);
-					// 将预加载的资源缓冲90秒，释放
-					tab.timeout = 90000;
-					tab.release();
+					// var tab = util.loadCssRes(fileMap);
+					// // 将预加载的资源缓冲90秒，释放
+					// tab.timeout = 90000;
+					// tab.release();
 					updatedStore('level_3_page_loaded', true);
 					var update = pi_modules.update.exports;
 					update.checkUpdate(["app/boot/"], function (needUpdate) {
