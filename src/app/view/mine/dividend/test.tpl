@@ -69,13 +69,16 @@
         <app-components-threeParaCard-threeParaCard>{"name":["年华收益","本次分红"],"data":["8%","0"]}</app-components-threeParaCard-threeParaCard>
     </div>
 
-    <div style="font-size: 32px;margin: 50px 0;">*************带三子项目的卡片**************</div>
-    
-    <app-components-linkMessage-linkMessage>{ 
-            tip:"还没有钱包",
-            linkTxt:"去创建",
-            linkCom:"app-view-wallet-walletCreate-createWalletEnter" 
-        }</app-components-linkMessage-linkMessage>
+    <div style="font-size: 32px;margin: 50px 0;">***********验证手机号**************</div>
 
-    <app-components-bindPhone-bindPhone>{}</app-components-bindPhone-bindPhone>
+    <div ev-getCode="getCode">
+        <app-components-bindPhone-bindPhone></app-components-bindPhone-bindPhone>
+    </div>
+
+    <div style="font-size: 32px;margin: 50px 0;">***********输入密码**************</div>
+    
+    <app-components-password-password>{length:8,hideTips:true,limit:1}</app-components-password-password>
+
+    <div style="font-size: 32px;margin: 50px 0;">***********输入框**************</div>
+    
 </div>

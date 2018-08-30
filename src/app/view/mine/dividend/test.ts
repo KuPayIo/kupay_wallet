@@ -23,4 +23,8 @@ export class Test extends Widget {
     public doTap() {
         console.log('hahhahahhahah');
     }
+
+    public getCode(event:any) {
+        console.log(event.phone);
+    }
 }
