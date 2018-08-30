@@ -120,6 +120,10 @@ winit.initNext = function () {
 			util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
 				console.log(fileMap)
 				console.timeEnd('secondLoad');
+				var tab = util.loadCssRes(fileMap);
+				// 将预加载的资源缓冲90秒，释放
+				tab.timeout = 90000;
+				tab.release();
 				var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
 				updatedStore('level_2_page_loaded', true);
 				const level3SourceList = [
@@ -132,8 +136,12 @@ winit.initNext = function () {
 				util.loadDir(level3SourceList, flags, fm, undefined, function (fileMap) {
 					console.log(fileMap)
 					console.timeEnd('thirdLoad');
+					
+					var tab = util.loadCssRes(fileMap);
+					// 将预加载的资源缓冲90秒，释放
+					tab.timeout = 90000;
+					tab.release();
 					updatedStore('level_3_page_loaded', true);
-
 					var update = pi_modules.update.exports;
 					update.checkUpdate(["app/boot/"], function (needUpdate) {
 						if (!needUpdate) return;
