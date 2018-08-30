@@ -156,7 +156,7 @@
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
 			// winit.debug = !remote;
-			winit.debug = true
+			winit.debug = false;
 			// winit.debug = location.host.indexOf('192.168.31') > -1;
 			main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
