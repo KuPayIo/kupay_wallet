@@ -7,12 +7,12 @@ import { Widget } from '../../../../pi/widget/widget';
 interface Props {
     pay: string;
     result: string;
-    to: string;
-    tip: string;
+    toAddr: string;
+    fee: string;
     info: string;
     fromAddr: string;
     showTime: string;
-    id: string;
+    hash: string;
 }
 
 export class AddAsset extends Widget {

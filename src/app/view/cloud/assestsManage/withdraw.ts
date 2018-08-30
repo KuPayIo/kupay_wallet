@@ -5,10 +5,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getCloudBalance, getWithdrawLogs, withdrawFromServer } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
+import { CurrencyType, GasPriceLevel } from '../../../store/interface';
 import { find } from '../../../store/store';
-import { gasLimit, gasPrice, withdrawLimit } from '../../../utils/constants';
-import { getCurrentAddrByCurrencyName, popPswBox } from '../../../utils/tools';
+import { defaultGasLimit, withdrawLimit } from '../../../utils/constants';
+import { fetchGasPrice, getCurrentAddrByCurrencyName, popPswBox } from '../../../utils/tools';
 import { eth2Wei, wei2Eth } from '../../../utils/unitTools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // =================================================导出
@@ -28,7 +28,7 @@ export class Withdraw extends Widget {
     public init(): void {
         this.state = {
             amount:'',// 提币金额
-            serviceCharge:wei2Eth(gasLimit * gasPrice),// 手续费
+            serviceCharge:wei2Eth(defaultGasLimit * fetchGasPrice(GasPriceLevel.STANDARD)),// 手续费
             cloudBalance:find('cloudBalance',CurrencyType[this.props.currencyName]),// 可提金额
             isFeeEnough:true
         };

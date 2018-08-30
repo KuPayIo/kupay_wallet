@@ -32,7 +32,6 @@ export class AddAsset extends Widget {
     }
     public init(): void {
         const wallet = find('curWallet');
-        console.log('-----------------------------',forelet);
         this.state = {
             list: [],
             currentAddr: '',
@@ -141,12 +140,12 @@ export class AddAsset extends Widget {
             const isToMe = v.to.toLowerCase() === this.state.currentAddr.toLowerCase();
 
             return {
-                id: v.hash,
+                hash: v.hash,
                 type: isFromMe ? (isToMe ? '自己' : '转账') : '收款',
                 fromAddr: v.from,
-                to: v.to,
+                toAddr: v.to,
                 pay: pay.num,
-                tip: fees.show,
+                fee: fees.show,
                 time: v.time,
                 showTime: parseDate(new Date(v.time)),
                 result: '已完成',
@@ -163,7 +162,7 @@ export class AddAsset extends Widget {
             recordList = addr.record.map(v => {
                 const pay = effectiveCurrencyNoConversion(v.pay, this.props.currencyName, false);
 
-                v.account = parseAccount(v.to).toLowerCase();
+                v.account = parseAccount(v.toAddr).toLowerCase();
                 v.showPay = pay.show;
 
                 return v;

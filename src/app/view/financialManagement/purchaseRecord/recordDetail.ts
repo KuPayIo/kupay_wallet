@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { buyBack,getPurchaseRecord } from '../../../net/pull';
+import { buyBack,getCloudBalance, getPurchaseRecord } from '../../../net/pull';
 import { register } from '../../../store/store';
 import { parseDate } from '../../../utils/tools';
 // =====================================================导出
@@ -32,10 +32,12 @@ export class RecordDetail extends Widget {
     public redNotice() {
         popNew('app-view-financialManagement-notice-notice');
     }
+    // 赎回操作
     public  returnBack() {
         popNew('app-components-message-messagebox',{ itype: 'confirm', title: '赎回', content: '是否赎回理财产品' },async () => {
             const close = popNew('app-components_level_1-loading-loading', { text: '正在赎回...' });
             const result = await buyBack(this.state.purchaseTimeStamp);
+            getCloudBalance();
             await getPurchaseRecord();
             close.callback(close.widget);
             if (result) {

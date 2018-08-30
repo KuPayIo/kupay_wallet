@@ -4,7 +4,7 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
 import { Cipher } from '../core/crypto/cipher';
-import { Addr } from '../store/interface';
+import { Addr, GasPriceLevel } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { supportCurrencyList } from './constants';
 
@@ -649,8 +649,18 @@ export const unicodeArray2Str = (arr) => {
 export const addRecord = (currencyName, currentAddr, record) => {
     const addr = getAddrById(currentAddr, currencyName);
     if (!addr) return;
-    addr.record.push(record);
-
+    let resend = false;
+    for (let i = addr.record.length - 1;i >= 0 ;i--) {
+        if (addr.record[i].nonce === record.nonce) {
+            addr.record.splice(i,1,record);
+            resend = true;
+            break;
+        }
+    }
+    if (!resend) {
+        addr.record.push(record);
+    }
+    
     resetAddrById(currentAddr, currencyName, addr, true);
 };
 
@@ -720,4 +730,21 @@ export const lockScreenVerify = (psw) => {
 // 锁屏密码hash算法
 export const lockScreenHash = (psw) => {
     return sha256(psw + find('salt'));
+};
+
+// 获取gasPrice
+export const fetchGasPrice = (gasPriceLevel:GasPriceLevel | string) => {
+    return find('gasPrice')[gasPriceLevel];
+};
+
+// 获取下个等级的gasPriceLevel
+export const fetchNextGasPriceLevel = (gasPriceLevel:GasPriceLevel | string) => {
+    let next = GasPriceLevel.FASTEST;
+    if (gasPriceLevel === GasPriceLevel.STANDARD) {
+        next = GasPriceLevel.FAST;
+    } else if (gasPriceLevel === GasPriceLevel.FAST) {
+        next = GasPriceLevel.FASTEST;
+    }
+    
+    return next;
 };

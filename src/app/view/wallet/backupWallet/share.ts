@@ -4,7 +4,10 @@
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { DataCenter } from '../../../logic/dataCenter';
+import { Wallet } from '../../../store/interface';
+import { find, updateStore } from '../../../store/store';
 
 interface Props {
     shares: string[];
@@ -50,6 +53,7 @@ export class WalletCreate extends Widget {
             // 分享完成
             if (thisObj.state.step > thisObj.state.totalSteps) {
                 popNew('app-components-message-message', { itype: 'success', content: '分享成功', center: true });
+                this.deleteMnemonic();
                 thisObj.ok && thisObj.ok();
             }
         }, () => {
@@ -57,4 +61,20 @@ export class WalletCreate extends Widget {
         });
     }
 
+    private deleteMnemonic() {
+        const curWalletId = find('curWallet').walletId;
+        
+        const walletList: Wallet[] = find('walletList').map(v => {
+            if (v.walletId === this.props.walletId) {
+                // isUpdate = true;
+                const gwlt = GlobalWallet.fromJSON(v.gwlt);
+                gwlt.mnemonicBackup = true;
+                v.gwlt = gwlt.toJSON();
+                if (curWalletId === this.props.walletId) updateStore('curWallet', v);
+            }
+            
+            return v;
+        });
+        updateStore('walletList', walletList);
+    }
 }

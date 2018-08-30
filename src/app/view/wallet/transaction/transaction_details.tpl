@@ -10,9 +10,9 @@
         </div>
         <div w-class="body-other">
             <div w-class="body-title" style="margin-top: 0px">收币地址</div>
-            <div w-class="body-title-value">{{it.to}}</div>
+            <div w-class="body-title-value">{{it.toAddr}}</div>
             <div w-class="body-title">矿工费</div>
-            <div w-class="body-title-value">{{it.tip}}</div>
+            <div w-class="body-title-value">{{it.fee}}</div>
             <div w-class="body-title">备注</div>
             <div w-class="body-title-value">{{it.info}}</div>
             <div w-class="body-title">发币地址</div>
@@ -20,7 +20,7 @@
             <div w-class="body-title">交易时间</div>
             <div w-class="body-title-value">{{it.showTime}}</div>
             <div w-class="body-title">交易号</div>
-            <div w-class="body-title-value">{{it.id}}</div>
+            <div w-class="body-title-value">{{it.hash}}</div>
         </div>
     </div>
 </div>

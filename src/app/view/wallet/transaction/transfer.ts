@@ -7,9 +7,11 @@ import { Widget } from '../../../../pi/widget/widget';
 import { Api as EthApi } from '../../../core/eth/api';
 import { ERC20Tokens } from '../../../core/eth/tokens';
 import { dataCenter } from '../../../logic/dataCenter';
-import { transfer } from '../../../net/pullWallet';
+import { estimateMinerFee, transfer } from '../../../net/pullWallet';
+import { GasPriceLevel, TransRecordLocal } from '../../../store/interface';
 import { find } from '../../../store/store';
-import { getAddrById, parseDate, popPswBox, resetAddrById, urlParams } from '../../../utils/tools';
+import { defaultGasLimit } from '../../../utils/constants';
+import { addRecord, fetchGasPrice, parseDate, popPswBox, urlParams } from '../../../utils/tools';
 import { effectiveAddr, effectiveCurrencyStableConversion } from '../../../utils/walletTools';
 
 interface Props {
@@ -23,7 +25,7 @@ interface States {
     to: string;
     pay: number;
     payConversion: string;
-    gasPrice: number;
+    gasPriceLevel:GasPriceLevel;
     gasLimit: number;
     fees: number;
     feesConversion: string;
@@ -51,22 +53,20 @@ export class AddAsset extends Widget {
             to: '',
             pay: 0,
             payConversion: `0.00`,
-            gasPrice: 4000000000,
-            gasLimit: 21000,
+            gasPriceLevel:GasPriceLevel.STANDARD,
+            gasLimit:defaultGasLimit,
             fees: 0,
-            feesConversion: '',
+            feesConversion: '0',
             info: '',
             showNote: ERC20Tokens[this.props.currencyName] ? false : true,
             payEnough:true
         };
-
         // todo 这是测试地址
         if (this.props.currencyName === 'ETH') {
             // this.state.to = '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3';
         } else if (this.props.currencyName === 'BTC') {
             // this.state.to = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
 
-            this.state.gasPrice = 10;
             // const defaultToAddr = 'mw8VtNKY81RjLz52BqxUkJx57pcsQe4eNB';
             // const defaultAmount = 0.001;
             // this.getBtcTransactionFee(defaultToAddr, defaultAmount).then(fee => {
@@ -79,6 +79,7 @@ export class AddAsset extends Widget {
         }
 
         this.resetFees();
+
     }
 
     /**
@@ -87,7 +88,6 @@ export class AddAsset extends Widget {
     public doClose() {
         this.ok && this.ok();
     }
-
     /**
      * 处理下一步
      */
@@ -112,11 +112,13 @@ export class AddAsset extends Widget {
         const loading = popNew('app-components_level_1-loading-loading', { text: '交易中...' });
 
         const fromAddr = this.props.fromAddr;
+        console.log('fromAddr---------------',fromAddr);
         const toAddr = this.state.to;
-        const gasPrice = this.state.gasPrice;
+        const gasPrice =  fetchGasPrice(this.state.gasPriceLevel);
         const gasLimit = this.state.gasLimit;
         const pay = this.state.pay;
         const info = this.state.info;
+
         const currencyName = this.props.currencyName;
 
         const wallet = find('curWallet');
@@ -125,14 +127,14 @@ export class AddAsset extends Widget {
             passwd = await popPswBox();
             if (!passwd) return;
         }
-        const hash = await transfer(passwd,fromAddr,toAddr,gasPrice,gasLimit,pay,currencyName,info);
-        if (!hash) {
+        const ret = await transfer(passwd,fromAddr,toAddr,gasPrice,pay,currencyName,info);
+        if (!ret) {
             loading.callback(loading.widget);
 
             return;
         }
             // 打开交易详情界面
-        this.showTransactionDetails(hash);
+        this.showTransactionDetails(ret.hash,ret.nonce,this.state.gasPriceLevel);
         this.doClose();
         this.topContactAdd(toAddr, currencyName);
 
@@ -170,8 +172,10 @@ export class AddAsset extends Widget {
     public async onInfoChange(e: any) {
         this.state.info = e.value;
         const api = new EthApi();
-        const gas = await api.estimateGas({ to: '0x9cd1a1031dd7125a80c7d121ae5b17bc39a77ef7', data: '0x123456' });
-        console.log(gas);
+        const option = {
+
+        };
+        estimateMinerFee(this.props.currencyName);
     }
 
     /**
@@ -188,20 +192,22 @@ export class AddAsset extends Widget {
     /**
      * 显示交易详情
      */
-    public showTransactionDetails(id: string) {
+    public showTransactionDetails(hash: string,nonce:number,gasPriceLevel:GasPriceLevel) {
         const t = new Date();
-        const record = {
-            id: id,
+        const record:TransRecordLocal = {
+            hash,
             type: '转账',
             fromAddr: this.props.fromAddr,
-            to: this.state.to,
+            toAddr: this.state.to,
             pay: this.state.pay,
             time: t.getTime(),
             showTime: parseDate(t),
             result: '交易中',
-            info: this.state.info || '无',
+            info: this.state.info,
             currencyName: this.props.currencyName,
-            tip: this.state.fees
+            fee: this.state.fees,
+            nonce,
+            gasPriceLevel
         };
 
         popNew('app-view-wallet-transaction-transaction_details', record);
@@ -284,10 +290,25 @@ export class AddAsset extends Widget {
         }
     }
 
-    private resetFees() {
-        const price = this.state.gasPrice;
+    private async resetFees() {
+        const price = fetchGasPrice(this.state.gasPriceLevel);
+        const option = {
+            toAddr:'',
+            gasPrice:0,
+            gasLimit:0,
+            info:''
+        };
+        if (this.props.currencyName !== 'BTC') {
+            option.toAddr = '0xa6e83b630BF8AF41A9278427b6F2A35dbC5f20e3';
+            option.gasPrice = price;
+            option.gasLimit = this.state.gasLimit;
+            option.info = '';
+        }
+        const ret = await estimateMinerFee(this.props.currencyName,option);
+        console.log('ret-------------',ret);
+        const minerFee = ret.minerFee;
         // tslint:disable-next-line:max-line-length
-        const r = effectiveCurrencyStableConversion(price * this.state.gasLimit, ERC20Tokens[this.props.currencyName] ? 'ETH' : this.props.currencyName, 'CNY', true);
+        const r = effectiveCurrencyStableConversion(minerFee, ERC20Tokens[this.props.currencyName] ? 'ETH' : this.props.currencyName, 'CNY', false);
 
         this.state.fees = r.num;
         this.state.feesConversion = r.conversionShow;
@@ -295,14 +316,3 @@ export class AddAsset extends Widget {
     }
 
 }
-
-/**
- * 添加记录
- */
-const addRecord = (currencyName, currentAddr, record) => {
-    const addr = getAddrById(currentAddr, currencyName);
-    if (!addr) return;
-    addr.record.push(record);
-
-    resetAddrById(currentAddr, currencyName, addr, true);
-};

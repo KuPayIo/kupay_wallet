@@ -57,6 +57,7 @@ export class SetLockScreenScret extends Widget {
                     const hash256 = lockScreenHash(psw);
                     const ls:LockScreen = find('lockScreen'); 
                     ls.psw = hash256;
+                    ls.open = true;
                     updateStore('lockScreen',ls);
                     popNew('app-components-message-message', { itype: 'success', content: '设置成功',  center: true });
                     this.ok && this.ok();
