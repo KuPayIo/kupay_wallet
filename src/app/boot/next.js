@@ -76,7 +76,7 @@ winit.initNext = function () {
 		var userinfo = html.getCookie("userinfo");
 		pi_modules.commonjs.exports.flags = html.userAgent(flags);
 		flags.userinfo = userinfo;
-		debugger;
+		// debugger;
 
 		var sourceList = [
 			"pi/ui/",
