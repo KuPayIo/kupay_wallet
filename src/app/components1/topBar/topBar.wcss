@@ -1,0 +1,38 @@
+.outer{
+    background-color: #fff;
+    width: 100%;
+    position: absolute;
+}
+.ga-top-banner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    color: #203260;
+    box-sizing: border-box;
+    height: 88px;
+    margin-top: 40px;
+}
+.ga-back{
+    width: 40px;
+    height: 40px;
+    margin: 0 30px;
+    line-height: 88px;
+}
+.ga-next{
+    width: 40px;
+    height: 40px;
+    margin: 0 30px;
+    line-height: 88px;
+}
+.ga-banner-title{
+    font-size: 36px;
+    line-height: 88px;
+    position: absolute;
+    left: 100px;
+}
+.ga-banner-title-center{
+    font-size: 36px;
+    line-height: 88px;
+}

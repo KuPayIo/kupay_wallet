@@ -1,24 +1,35 @@
 /**
- * 简单的输入框的逻辑处理
+ * 输入框的逻辑处理
+ * {input:"",placehold:"",disabled:false,clearable:false,itype:"text",style:"",autofacus:false}
+ * input?: 初始内容
+ * placeHolder?: 提示文字
+ * disabled?: 是否禁用
+ * clearable?: 是否可清空
+ * itype?: 输入框类型 text number password
+ * style?: 样式
+ * autofocus?: 是否自动获取焦点
+ * 外部可监听 ev-input-change，ev-input-blur，ev-input-focus，ev-input-clear事件
  */
 import { notify } from '../../../pi/widget/event';
 import { getRealNode } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
-    input:string;// 初始内容
-    placeHolder:string;// 提示文字
-    itype:string;// text textarea password
-    style:string;// 样式
-    reg?:string;// 正则表达式
-    replace?:string;// 替换后的文本
+    input?:string;
+    placeHolder?:string;
+    disabled?:boolean;
+    clearable?:boolean;
+    itype?:string;
+    style?:string;
+    autofocus?:boolean;
 }
 
 interface State {
     currentValue:string;
     focused:boolean;
+    showClear:boolean;
 }
-export class InputSimple extends Widget {
+export class Input extends Widget {
     public props: Props;
     public state: State;
     constructor() {
@@ -26,13 +37,15 @@ export class InputSimple extends Widget {
     }
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
+        
         let currentValue = '';
         if (props.input) {
             currentValue = props.input;
         }
         this.state = {
             currentValue,
-            focused: false
+            focused: false,
+            showClear:false
         };
         if (oldProps) {
             this.changeInputValue();
@@ -40,15 +53,13 @@ export class InputSimple extends Widget {
     }
 
     public change(event:any) {
-        let currentValue = event.currentTarget.value;
-        if (this.props.reg) {
-            const regex = new RegExp(this.props.reg,'g');
-            currentValue = currentValue.replace(regex,this.props.replace || '');
-        }
+        const currentValue = event.currentTarget.value;
         this.state.currentValue = currentValue;
+        this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
+        
         notify(event.node,'ev-input-change',{ value:this.state.currentValue });
         this.changeInputValue();
-        // this.paint();
+        this.paint();
     }
     public blur(event:any) {
         this.state.focused = false;
@@ -60,6 +71,14 @@ export class InputSimple extends Widget {
         notify(event.node,'ev-input-focus',{});
         this.paint();
     }
+    
+    // 清空文本框
+    public clearClickListener(event:any) {
+        this.state.currentValue = '';
+        notify(event.node,'ev-input-clear',{});
+        this.paint(true);
+    }
+
     // 设置input value
     public changeInputValue() {
         const child = (<any>this.tree).children[0];

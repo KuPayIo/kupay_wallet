@@ -1,40 +1,36 @@
 /**
- * 云端绑定手机
+ * 绑定手机号组件
+ * 外部监听 ev-getCode 事件发起获取验证码的请求
+ * event.phone获取数据
  */
-interface Props {
-    ktBalance: number;
-}
+
 // =================================================导入
 import { popNew } from '../../../pi/ui/root';
+import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
-import { regPhone, sendCode } from '../../net/pull';
-import { find, updateStore } from '../../store/store';
+import { regPhone } from '../../net/pull';
 // =================================================导出
 export class BindPhone extends Widget {
     public ok: () => void;
     constructor() {
         super();
     }
-    public setProps(props: Props, oldProps: Props): void {
-        super.setProps(props, oldProps);
-        this.init();
-    }
-    public init(): void {
+    public create(): void {
+        super.create();
         this.state = {
             oldCode: 86,
-            newCode: 886,
+            codeList: ['86','44','49','1','852','81'],
             isShowNewCode: false,
             countdown: 0,
             phone: '',
-            code: '',
             limitTime: 60,
             phoneReg: /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/
         };
-        const t = find('lastGetSmsCodeTime');
-        if (t) {
-            const now = new Date().getTime();
-            this.state.countdown = this.state.limitTime - Math.ceil((now - t) / 1000);
-        }
+        // const t = find('lastGetSmsCodeTime');
+        // if (t) {
+        //     const now = new Date().getTime();
+        //     this.state.countdown = this.state.limitTime - Math.ceil((now - t) / 1000);
+        // }
         this.openTimer();
     }
     public backClick() {
@@ -43,14 +39,13 @@ export class BindPhone extends Widget {
     /**
      * 获取验证码
      */
-    public async getCode() {
+    public async getCode(event:any) {
         if (!this.state.phone || !(this.state.phoneReg.test(this.state.phone))) {
             popNew('app-components-message-message', { itype: 'warn', center: true, content: `请输入正确的手机号` });
 
             return;
         }
-        await sendCode(this.state.phone, this.state.oldCode);
-        updateStore('lastGetSmsCodeTime', new Date().getTime());
+        notify(event.node,'ev-getCode',{ phone:this.state.phone });
         this.state.countdown = this.state.limitTime;
         this.paint();
     }
@@ -81,11 +76,9 @@ export class BindPhone extends Widget {
     /**
      * 选择新的区号
      */
-    public chooseNewCode() {
+    public chooseNewCode(ind:number) {
         this.state.isShowNewCode = false;
-        const t = this.state.oldCode;
-        this.state.oldCode = this.state.newCode;
-        this.state.newCode = t;
+        this.state.oldCode = this.state.codeList[ind];
         this.paint();
     }
 
@@ -94,13 +87,6 @@ export class BindPhone extends Widget {
      */
     public phoneChange(e: any) {
         this.state.phone = e.value;
-    }
-
-    /**
-     * 验证码改变
-     */
-    public codeChange(e: any) {
-        this.state.code = e.value;
     }
 
     private openTimer() {
