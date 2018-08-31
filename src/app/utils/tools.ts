@@ -12,17 +12,6 @@ export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
 };
 
-export const sleep = (delay) => {
-    const startTime = new Date().getTime();
-    let loop = true;
-    while (loop) {
-        const endTime = new Date().getTime();
-        if (endTime - startTime > delay) {
-            loop = false;
-        }
-    }
-};
-
 /**
  * 获取指定id的钱包
  */
@@ -747,4 +736,9 @@ export const fetchNextGasPriceLevel = (gasPriceLevel:GasPriceLevel | string) => 
     }
     
     return next;
+};
+
+// 获取默认币种汇率
+export const fetchDefaultExchangeRateJson = () => {
+    
 };

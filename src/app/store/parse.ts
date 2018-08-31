@@ -1,9 +1,9 @@
 import { isArray } from '../../pi/net/websocket/util';
 import { deepCopy } from '../../pi/util/util';
+import { financialProductList } from '../config';
 // tslint:disable-next-line:max-line-length
 import { formatBalance, GetDateDiff, timestampFormat,timestampFormatToDate,unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
-import { Config } from '../view/financialManagement/config/config';
 import { AccountDetail, CurrencyType, CurrencyTypeReverse, PurchaseRecordOne,TaskSid } from './interface';
 import { find } from './store';
 /**
@@ -286,7 +286,7 @@ export const paseProductList = (res:any) => {
     for (let i = 0;i < res.value.length;i++) {
         const item = res.value[i];
         const id = item[0];
-        const product = deepCopy(Config.productList[id]);
+        const product = deepCopy(financialProductList[id]);
         product.coninType = CurrencyTypeReverse[`${item[1]}`];
         product.unitPrice = wei2Eth(item[2]);
         product.total = item[3];

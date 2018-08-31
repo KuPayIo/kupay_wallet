@@ -15,32 +15,27 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    font-size: 20px;
-    line-height: 28px;
-    color: #3e477b;
+    font-size: 24px;
+    line-height: 1.5;
+    color: #c6c6c6;
     letter-spacing: 0.24px;
     text-align: center;
-    cursor: pointer;
 }
 .ga-tab-bar-item-active{
-    color:  #1A70DD;
+    color:  #4783ee;
 }
 .ga-tab-bar-icon-none{
     display: none;
 }
 .ga-tab-bar-icon{
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
 }
 .ga-tab-bar-text{
     font-size: 20px;
     margin-top: 10px;
 }
-.iconCenter{
-    width: 80px;
-    height: 80px;
-}
+
 .tabs{
     position: relative;
     flex: 1 0 0;

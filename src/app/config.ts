@@ -255,6 +255,21 @@ const ERC20TokensTestnet = {
 // 导出ERC20Tokens
 export const ERC20Tokens = dev_mode === 'dev' ?  ERC20TokensTestnet : ERC20TokensMainnet;
 
+// 主网的币种
+export const MainChainCoin = {
+    ETH:{
+        description:'Ethereum',
+        rate:{ CNY: 3337.01, USD: 517.42 }
+    },
+    BTC:{
+        description:'Bit coin',
+        rate:{ CNY: 42868.55, USD: 6598.71 }
+    },
+    KT:{
+        description:'KT',
+        rate:{ CNY:0.03,USD:0.19 }
+    }
+};
 // tslint:disable
 export const Config = {
     // 隐私条款
@@ -554,3 +569,29 @@ export const Config = {
     本协议履行过程中，KuPay向您发出的书面通知方式包括但不限于邮寄纸质通知、KuPay平台公告、电子邮件、手机短信和传真等方式。如KuPay以邮寄方式向您发出书面通知的，则在KuPay按照您在KuPay或KuPay留存的通讯地址交邮后的第三个自然日即视为送达。如以KuPay平台公告、电子邮件、手机短信和传真等电子方式发出书面通知的，则在通知发送成功即视为送达。
     九、凡因本协议引起的或与本协议有关的任何争议，双方（或三方）应当协商解决，如果协商不成的，双方（或三方）一致同意在KuPay的所有者KuPay基金会所在地法院诉讼解决。`
 };
+
+
+/**
+ * 理财产品配置
+ */
+export const financialProductList = {
+        60001:{
+            id:'60001',// 产品id
+            title: '优选理财-随存随取',// 产品标题
+            profit: '8%',// 预期年化收益
+            productName: 'ETH资管第1期',// 产品名称
+            productDescribe: '赎回T+0到账 | 0.1 ETH/份',// 首页显示的产品描述
+            unitPrice: null,// 单价
+            coninType:'',// 购买币种
+            days: 'T+0',// 锁定日期
+            total:0,// 产品总量
+            surplus: 0,// 剩余量
+            purchaseDate: '无',// 起购日
+            interestDate: '无',// 起息日
+            endDate: '无',// 结束日
+            productIntroduction: 'ETH资管第1期是KuPay退出的一种固定收益类，回报稳定、无风险定期产品。',// 产品介绍
+            limit: '5',// 购买上限
+            lockday:'无',// 锁定期
+            isSoldOut:true// 是否售完
+        }
+    }
