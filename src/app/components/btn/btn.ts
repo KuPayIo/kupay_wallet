@@ -24,6 +24,9 @@ export class Btn extends Widget {
     public ok: () => void;
     constructor() {
         super();
+        this.state = {
+            isAbleBtn:false
+        };
     }
 
     public backPrePage() {
@@ -31,6 +34,13 @@ export class Btn extends Widget {
     }
 
     public doTap(event:any) {
+        this.state.isAbleBtn = true;
+        this.paint();
+
+        setTimeout(() => {// 按钮动画效果执行完后改为未点击状态，则可以再次点击
+            this.state.isAbleBtn = false;
+            this.paint();
+        },200);
         notify(event.node,'ev-btn-tap',{});
     }
 }

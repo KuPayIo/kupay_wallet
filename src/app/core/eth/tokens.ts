@@ -1,9 +1,6 @@
 /**
  * ERC20 tokens that we are intrested in
  */
-import { config } from '../config';
-
-export const ERC20Tokens = (config.dev_mode === 'dev') ? config.ERC20TokensTestnet : config.ERC20TokensMainnet;
 
 // Basic ERC20 interfaces
 export const minABI = [

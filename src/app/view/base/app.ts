@@ -2,10 +2,8 @@
  * 首页
  */
 // ================================ 导入
-import { SendChatMessage } from '../../../pi/browser/sendMessage';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { doChat, getProxy } from '../../net/pull';
 import { register } from '../../store/store';
 
 // ================================ 导出
@@ -32,49 +30,28 @@ export class App extends Widget {
             old: this.old,
             loading,
             tabBarList: [{
-                text: '钱包',
+                text: '玩',
                 icon: 'wallet_icon.png',
                 iconActive: 'wallet_icon_active.png',
-                components: 'app-view-wallet-home-home'
+                components: 'app-view-play-home-home'
             },
             {
-                text: '云端',
-                name: 'cloud',
+                text: '聊',
                 icon: 'remote_icon.png',
                 iconActive: 'remote_icon_active.png',
-                components: 'app-view-cloud-home-home'
+                components: 'app-view-chat-home-home'
             },
             {
-                text: '',
-                name: 'chat',
-                icon: 'chatIcon.png',
-                iconActive: 'chatIcon.png',
-                components: ''
-                // components: 'app-view-financialManagement-home'
-            },
-            {
-                text: '理财',
+                text: '赚',
                 icon: 'financialManagement_icon.png',
                 iconActive: 'financialManagement_icon_active.png',
-                components: 'app-view-financialManagement-index-index'
-                // components: 'app-view-financialManagement-home'
-            },
-            // {
-            //     text: '交易所',
-            //     icon: 'exchange_icon.png',
-            //     iconActive: 'exchange_icon_active.png',
-            //     components: 'app-view-exchange-home'
-            // }, {
-            //     text: '应用',
-            //     icon: 'application_icon.png',
-            //     iconActive: 'application_icon_active.png',
-            //     components: 'app-view-application-home'
-            // }, 
+                components: 'app-view-earn-home-home'
+            }, 
             {
-                text: '我的',
+                text: '钱',
                 icon: 'mine_icon.png',  
                 iconActive: 'mine_icon_active.png',
-                components: 'app-view-mine-home-home'
+                components: 'app-view-wallet-home-home'
             }]
 
         };
@@ -85,113 +62,19 @@ export class App extends Widget {
     }
     public async tabBarChangeListener(event: any, index: number) {
         if (this.state.isActive === index) return;
-        // 点击的是聊天则调用接口打开聊天，不进行组件切换
-        if (this.state.tabBarList[index].name === 'chat') {
-            this.openChat();
-
-            return;
-        }
-        // if (this.state.tabBarList[index].name === 'cloud') {
-        //     const walletList = find('walletList');
-        //     if (!walletList || walletList.length === 0) {
-        //         popNew('app-components-message-message', { itype: 'error', content: '请创建钱包', center: true });
-
-        //         return;
-        //     }
-        // }
         this.state.isActive = index;
         this.old[index] = true;
         this.paint();
     }
 
-    public tabChangeTo(e: any) {
-        const index = e.index;
-        if (this.state.isActive === index) return;
-        this.state.isActive = index;
-        this.paint();
-    }
-
-    /**
-     * 打开聊天界面
-     */
-    public async sendMessage() {
-        // todo 进入聊天界面时，标记聊天任务完成
-        doChat();
-
-        const chat = new SendChatMessage();
-        chat.init();
-
-        return new Promise((resolve, reject) => {
-            chat.prepareChat({
-                success: (result) => {
-                    resolve(result);
-                },
-                fail: (result) => {
-                    reject(result);
-                }
-            });
-        });
-
-    }
-
-    /**
-     * 设置代理
-     */
-    public setProxy() {
-        const chat = new SendChatMessage();
-        chat.init();
-
-        // 这里需要向服务器通信获取代理地址，且区分国内外的情况
-        return new Promise((resolve, reject) => {
-            getProxy().then((r) => {
-                if (r.result !== 1) {
-                    reject(r.result);
-
-                    return;
-                }
-                const proxy = JSON.parse(r.proxy);
-                if (proxy.protocol === 'socks5') {
-                    chat.setProxy({
-                        success: (result) => { resolve(result); },
-                        fail: (result) => { reject(result); },
-                        proxyIp: proxy.ip, proxyPort: proxy.prot, userName: '', password: ''
-                    });
-                } else {
-                    reject('no support');
-                }
-            });
-        });
-
-    }
-
-    /**
-     * 执行打开聊天界面
-     */
-    public openChat() {
-        this.setProxy().then(this.sendMessage);
-    }
 }
 
 // ===================================================== 本地
 // ===================================================== 立即执行
 
-/**
- * 矿山增加项目进入聊天页面和理财页面
- */
-register('mineItemJump',(arg) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        if (arg === 'toChat') {
-            w.openChat();
-        }
-        if (arg === 'buyFinancial') {
-            w.tabBarChangeListener('',3);
-        }
-    }
-});
 register('level_2_page_loaded',(loaded:boolean) => {
     const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-    dataCenter.init();
+    // dataCenter.init();
 });
 
 register('level_3_page_loaded',(loaded:boolean) => {

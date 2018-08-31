@@ -1,5 +1,4 @@
 "use strict";
-
 // 依赖表加载成功后的回调函数
 winit.initNext = function () {
 	var win = winit.win;
@@ -80,17 +79,15 @@ winit.initNext = function () {
 
 		var sourceList = [
 			"pi/ui/",
-			"app/components_level_1/",
+			"app/components/",
+			"app/components1/",
 			"app/res/css/",
 			"app/res/js/",
-			"app/res/image1/",
 			"app/view/base/",
-			"app/view/wallet/home/",
-			"app/view/cloud/home/",
-			"app/view/financialManagement/index/",
-			"app/view/mine/home/",
-			"app/view/guidePages/",
-			"app/view/mine/lockScreen/unlockScreen/"
+			"app/view/play/home/",
+			"app/view/chat/home/",
+			"app/view/earn/home/",
+			"app/view/wallet/home/"
 		]
 		console.time('firstload');
 		var suffixCfg = util.getDefaultSuffixCfg();

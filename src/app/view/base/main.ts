@@ -28,10 +28,10 @@ export const run = (cb): void => {
     // 初始化localstorage
     initLocalStorageStore();
     // dataCenter.init();
-    
-    popNewPage();
+    popNew('app-view-base-app');
+    // popNewPage();
     // 后台切前台
-    backToFront();
+    // backToFront();
 
     // 解决进入时闪一下问题
     setTimeout(() => {

@@ -38,6 +38,56 @@ export enum GasPriceLevel {
     FAST = 'fast',
     FASTEST = 'fastest'
 }
+
+// store数据管理
+export interface Store {
+    // 基础数据
+    hashMap: Map<string, string>;// 输入密码后hash缓存
+    salt: string;// 盐--加密时使用
+    conUser: string;// 连接用户
+    conUserPublicKey: string;// 连接用户公钥
+    conRandom: string;// 连接随机数
+    conUid: number;// 连接uid
+    readedPriAgr: boolean;// 隐私协议阅读与否
+    loginState: LoginState;// 连接状态
+    lockScreen:LockScreen;// 锁屏相关
+    // 本地钱包
+    walletList: Wallet[];// 钱包数据
+    curWallet: Wallet;// 当前钱包
+    addrs: Addr[];// 地址数据
+    transactions: TransactionRecord[];// 交易记录
+    exchangeRateJson: Map<string, any>;// 兑换汇率列表
+    currencyList: CurrencyInfo[];// 货币信息列表
+    ERC20TokenDecimals:Object;// ERC20精度
+    nonceMap:Map<string,number>;// 维护本地的nonce
+    gasPrice:object;// gasPrice档次(3档)
+    realUserMap:Map<string,boolean>;// 真实用户map
+    // 云端数据
+    cloudBalance: Map<CurrencyType, number>;// 云端账户余额
+    accountDetail: Map<CurrencyType, AccountDetail[]>;// 云端账户详情
+    sHisRec:SHisRec;// 发送红包记录
+    cHisRec:CHisRec;// 兑换红包记录
+    inviteRedBagRec:CHisRec;// 邀请红包记录
+    miningTotal:MiningTotal;// 挖矿汇总信息
+    dividTotal:DividTotal;// 分红汇总信息
+    miningHistory:DividendItem[];// 挖矿历史记录
+    dividHistory:DividendItem[];// 分红历史记录
+    addMine:AddMineItem[];// 矿山增加项目
+    mineRank:MineRank;// 矿山排名
+    miningRank:MiningRank;// 挖矿排名
+    mineItemJump:string;// 矿山增加项目跳转详情 
+    rechargeLogs:RechargeWithdrawalLog[];// 充值记录
+    withdrawLogs:RechargeWithdrawalLog[];// 提现记录
+    // 地址管理
+    TopContacts:TopContact[];// 常用联系人列表
+    // shapeShift
+    shapeShiftCoins:ShapeShiftCoin[];// shapeShift 支持的币种
+    shapeShiftMarketInfo:MarketInfo;// shapeShift 汇率相关
+    shapeShiftTxs:ShapeShiftTxs;// shapeshift 交易记录
+    shapeShiftTxsMap:Map<string,ShapeShiftTxs>;// shapeshift 交易记录Map
+    lastGetSmsCodeTime:number;
+}
+
 /**
  * localstorage wallet object
  */
@@ -318,53 +368,6 @@ export interface RechargeWithdrawalLog {
     statusShow:string;
     hash:string;// 交易ha'sh
 }
-export interface Store {
-    // 基础数据
-    hashMap: Map<string, string>;// 输入密码后hash缓存
-    salt: string;// 盐--加密时使用
-    conUser: string;// 连接用户
-    conUserPublicKey: string;// 连接用户公钥
-    conRandom: string;// 连接随机数
-    conUid: number;// 连接uid
-    readedPriAgr: boolean;// 隐私协议阅读与否
-    loginState: LoginState;// 连接状态
-    lockScreen:LockScreen;// 锁屏相关
-    // 本地钱包
-    walletList: Wallet[];// 钱包数据
-    curWallet: Wallet;// 当前钱包
-    addrs: Addr[];// 地址数据
-    transactions: TransactionRecord[];// 交易记录
-    exchangeRateJson: Map<string, any>;// 兑换汇率列表
-    currencyList: CurrencyInfo[];// 货币信息列表
-    ERC20TokenDecimals:Object;// ERC20精度
-    nonceMap:Map<string,number>;// 维护本地的nonce
-    gasPrice:object;// gasPrice档次(3档)
-    realUserMap:Map<string,boolean>;// 真实用户map
-    // 云端数据
-    cloudBalance: Map<CurrencyType, number>;// 云端账户余额
-    accountDetail: Map<CurrencyType, AccountDetail[]>;// 云端账户详情
-    sHisRec:SHisRec;// 发送红包记录
-    cHisRec:CHisRec;// 兑换红包记录
-    inviteRedBagRec:CHisRec;// 邀请红包记录
-    miningTotal:MiningTotal;// 挖矿汇总信息
-    dividTotal:DividTotal;// 分红汇总信息
-    miningHistory:DividendItem[];// 挖矿历史记录
-    dividHistory:DividendItem[];// 分红历史记录
-    addMine:AddMineItem[];// 矿山增加项目
-    mineRank:MineRank;// 矿山排名
-    miningRank:MiningRank;// 挖矿排名
-    mineItemJump:string;// 矿山增加项目跳转详情 
-    rechargeLogs:RechargeWithdrawalLog[];// 充值记录
-    withdrawLogs:RechargeWithdrawalLog[];// 提现记录
-    // 地址管理
-    TopContacts:TopContact[];// 常用联系人列表
-    // shapeShift
-    shapeShiftCoins:ShapeShiftCoin[];// shapeShift 支持的币种
-    shapeShiftMarketInfo:MarketInfo;// shapeShift 汇率相关
-    shapeShiftTxs:ShapeShiftTxs;// shapeshift 交易记录
-    shapeShiftTxsMap:Map<string,ShapeShiftTxs>;// shapeshift 交易记录Map
-    lastGetSmsCodeTime:number;
-}
 
 export enum TaskSid {
     createWlt = 1001,// 创建钱包
@@ -398,7 +401,6 @@ export interface TopContact {
 }
 
 // 理财产品数据结构
-// 理财残破
 export interface Product {
     id:string;
     title: string;

@@ -91,16 +91,6 @@
     border: 1px solid #409EFF !important;
 }
 
-.pi-input__inner1:hover,
-.pi-textarea__inner:hover,
-.pi-input-textarea__inner:hover{
-    /* border-color: #1A70DD !important; */
-}
-.pi-input__inner1:focus,
-.pi-textarea__inner:focus,
-.pi-input-textarea__inner:focus{
-    /* border-bottom: 1px solid #409EFF !important; */
-}
 
 .pi-input-search__inner1:focus{
     border: 1px solid #409EFF !important;
@@ -364,5 +354,16 @@ svg:not(:root), symbol, image, marker, pattern, foreignObject {
     100% {
         stroke-dasharray: 90,150;
         stroke-dashoffset: -120px;
+    }
+}
+
+/**按钮点击效果*/
+@keyframes btnClick{
+    0% {
+        text-shadow: -1px -1px 1px #000, 1px 1px 1px #fff;
+        box-shadow: none;
+    }
+    100% {
+        text-shadow: none;
     }
 }

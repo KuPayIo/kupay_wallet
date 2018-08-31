@@ -6,7 +6,7 @@
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { defaultExchangeRateJson, supportCurrencyList } from '../utils/constants';
-import { depCopy, getFirstEthAddr } from '../utils/tools';
+import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
 import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyInfo, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog,ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransactionRecord, Wallet } from './interface';
 
@@ -110,12 +110,7 @@ export const initStore = () => {
     store.realUserMap = new Map<string,boolean>(findByLoc('realUserMap'));
 
     // 初始化默认兑换汇率列表
-    const rateJson = defaultExchangeRateJson;
-    const m = new Map();
-    for (const key in rateJson) {
-        if (rateJson.hasOwnProperty(key)) { m.set(key, rateJson[key]); }
-    }
-    store.exchangeRateJson = m;
+    store.exchangeRateJson = fetchDefaultExchangeRateJson();
 
     // 初始化货币信息列表
     store.currencyList = supportCurrencyList;

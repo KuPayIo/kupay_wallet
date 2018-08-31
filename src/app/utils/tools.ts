@@ -3,6 +3,7 @@
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
+import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { Addr, GasPriceLevel } from '../store/interface';
 import { find, updateStore } from '../store/store';
@@ -10,17 +11,6 @@ import { supportCurrencyList } from './constants';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
-};
-
-export const sleep = (delay) => {
-    const startTime = new Date().getTime();
-    let loop = true;
-    while (loop) {
-        const endTime = new Date().getTime();
-        if (endTime - startTime > delay) {
-            loop = false;
-        }
-    }
 };
 
 /**
@@ -747,4 +737,23 @@ export const fetchNextGasPriceLevel = (gasPriceLevel:GasPriceLevel | string) => 
     }
     
     return next;
+};
+
+// 获取默认币种汇率
+export const fetchDefaultExchangeRateJson = () => {
+    const rateJson = new Map<string,any>();
+    // 主链汇率
+    for (const k in MainChainCoin) {
+        if (MainChainCoin.hasOwnProperty(k)) {
+            rateJson.set(k,MainChainCoin[k].rate);
+        }
+    }
+    // erc20汇率
+    for (const k in ERC20Tokens) {
+        if (ERC20Tokens.hasOwnProperty(k)) {
+            rateJson.set(k,ERC20Tokens[k].rate);
+        }
+    }
+
+    return rateJson;
 };
