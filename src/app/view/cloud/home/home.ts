@@ -246,6 +246,13 @@ register('mineItemJump',(arg) => {
     }
 });
 
+register('walletList',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initDate();
+    }
+    
+});
 interface Props {
     isActive: boolean;
 }
