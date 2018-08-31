@@ -33,7 +33,11 @@ export const run = (cb): void => {
     // 后台切前台
     backToFront();
 
-    if (cb) cb();
+    // 解决进入时闪一下问题
+    setTimeout(() => {
+        if (cb) cb();
+    },20);
+    
     // test();
 };
 
@@ -65,10 +69,6 @@ const backToFront = () => {
         if ((iType === 'onAppResumed') && ifNeedUnlockScreen()) {
             popNew('app-view-mine-lockScreen-unlockScreen-unlockScreen',{ firstEnter:false });
         } else if (iType === 'onBackPressed') {
-            const widgetQuen = find('widgetQuen');
-            // const widget = widgetQuen.pop();
-            // alert(widget);
-            alert('1111-------------');
             (<any>window).onpopstate();
             // widget.ok && widget.ok();
         }

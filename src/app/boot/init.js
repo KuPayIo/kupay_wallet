@@ -3,27 +3,33 @@
 
 var pi_modules = pi_modules || {};
 // 定义基础函数模块
-pi_modules.butil = { id: 'butil', exports: undefined, loaded: true };
+pi_modules.butil = {
+	id: 'butil',
+	exports: undefined,
+	loaded: true
+};
 pi_modules.butil.exports = (function () {
-	var module = function mod_butil() { };
+	var module = function mod_butil() {};
 	// ============================== 导入
 	// ============================== 导出
 	// utf8的ArrayBuffer解码成字符串
 	module.utf8Decode = (self.TextDecoder) ? (function () {
 		var decoder = new TextDecoder('utf-8');
 		return function (arr) {
-			if((!arr) || arr.byteLength === 0)
+			if ((!arr) || arr.byteLength === 0)
 				return "";
-			if(arr instanceof ArrayBuffer)
+			if (arr instanceof ArrayBuffer)
 				arr = new Uint8Array(arr);
 			return decoder.decode(arr);
 		};
 	})() : function (arr) {
-		if((!arr) || arr.byteLength === 0)
+		if ((!arr) || arr.byteLength === 0)
 			return "";
-		if(arr instanceof ArrayBuffer) 
+		if (arr instanceof ArrayBuffer)
 			arr = new Uint8Array(arr);
-		var c, out = "", i = 0, len = arr.length;
+		var c, out = "",
+			i = 0,
+			len = arr.length;
 		while (i < len) {
 			c = arr[i++];
 			if (c < 128) {
@@ -50,13 +56,13 @@ pi_modules.butil.exports = (function () {
 		};
 	};
 	// 柯里化函数，将调用参数放在参数列表后
-	module.curryLast = function (func, arg/*:any*/) {
+	module.curryLast = function (func, arg /*:any*/ ) {
 		return function (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
 			return func(arg, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 		};
 	};
 	// 获得分隔文件名字和后缀的点的位置
-	module.fileDot = function (file/*:string*/) {
+	module.fileDot = function (file /*:string*/ ) {
 		var i, c;
 		for (i = file.length - 1; i >= 0; i--) {
 			c = file.charCodeAt(i);
@@ -68,12 +74,12 @@ pi_modules.butil.exports = (function () {
 		return -1;
 	};
 	// 获得文件后缀
-	module.fileSuffix = function (file/*:string*/) {
+	module.fileSuffix = function (file /*:string*/ ) {
 		var dot = module.fileDot(file);
 		return (dot >= 0) ? file.slice(dot + 1) : "";
 	};
 	// 获得指定的路径相对目录的路径
-	module.relativePath = function (filePath/*:string*/, dir/*:string*/) {
+	module.relativePath = function (filePath /*:string*/ , dir /*:string*/ ) {
 		var i, len, j;
 		if (filePath.charCodeAt(0) !== 46)
 			return filePath;
@@ -86,7 +92,7 @@ pi_modules.butil.exports = (function () {
 		while (i < len) {
 			if (filePath.charCodeAt(i) !== 46)
 				break;
-			if (filePath.charCodeAt(i + 1) === 47) {// ./的情况
+			if (filePath.charCodeAt(i + 1) === 47) { // ./的情况
 				i += 2;
 				break;
 			}
@@ -105,13 +111,14 @@ pi_modules.butil.exports = (function () {
 		return dir + filePath;
 	};
 	// 计算字符串的hash
-	module.hash = function (s/*:string*/, h/*:number*/) {
+	module.hash = function (s /*:string*/ , h /*:number*/ ) {
 		if (!s)
 			return h;
-		var c, i = 0, len = s.length;
+		var c, i = 0,
+			len = s.length;
 		for (; i < len; i++) {
 			c = s.charCodeAt(i);
-			h = (((h << 5) - h) + c) | 0;//乘31，然后使用了 “|” 运算符，转换参数为 32bit，确保结果是个32位整数
+			h = (((h << 5) - h) + c) | 0; //乘31，然后使用了 “|” 运算符，转换参数为 32bit，确保结果是个32位整数
 		}
 		return h;
 	};
@@ -123,13 +130,17 @@ pi_modules.butil.exports = (function () {
 })();
 
 // 定义依赖模块
-pi_modules.depend = { id: 'depend', exports: undefined, loaded: true };
+pi_modules.depend = {
+	id: 'depend',
+	exports: undefined,
+	loaded: true
+};
 pi_modules.depend.exports = (function () {
-	var module = function mod_depend() { };
+	var module = function mod_depend() {};
 	// ============================== 导入
 	// ============================== 导出
 	// 根据文件表初始化依赖表
-	module.init = function (files, path/*:string*/) {
+	module.init = function (files, path /*:string*/ ) {
 		var i, f, dir;
 		fileMap = {};
 		for (i = files.length - 1; i >= 0; i--) {
@@ -152,7 +163,7 @@ pi_modules.depend.exports = (function () {
 	module.getFileMap = function () {
 		return fileMap;
 	};
-	
+
 	// 多个域名地址，尽量使用CDN，第一个地址尝试下载2次，以后每个地址尝试下载1次
 	module.domains = winit.domains; /*:Array<string>*/
 
@@ -164,15 +175,24 @@ pi_modules.depend.exports = (function () {
 
 	// 将目录放入到文件表中
 	var initDir = function (f, map) {
-		var i, dir, info, s, suf="", path = f.path, i = path.lastIndexOf("."), j = path.lastIndexOf("/");
-		if(i > j)
+		var i, dir, info, s, suf = "",
+			path = f.path,
+			i = path.lastIndexOf("."),
+			j = path.lastIndexOf("/");
+		if (i > j)
 			suf = path.slice(i + 1);
 		j = 0;
 		while ((i = path.indexOf("/", j)) >= 0) {
 			dir = path.slice(j, i + 1);
 			info = map[dir];
 			if (!info) {
-				map[dir] = info = { children: {}, size: 0, path: path.slice(0, i), count: 0, suffix:{} };
+				map[dir] = info = {
+					children: {},
+					size: 0,
+					path: path.slice(0, i),
+					count: 0,
+					suffix: {}
+				};
 				fileMap[path.slice(0, i + 1)] = info;
 			}
 			info.size += f.size;
@@ -190,9 +210,13 @@ pi_modules.depend.exports = (function () {
 })();
 
 // IndexedDB存储
-pi_modules.store = { id: 'store', exports: undefined, loaded: true };
+pi_modules.store = {
+	id: 'store',
+	exports: undefined,
+	loaded: true
+};
 pi_modules.store.exports = (function () {
-	var module = function mod_store() { };
+	var module = function mod_store() {};
 	// ============================== 导入
 	// ============================== 导出
 	module.ERR_READ = "ERR_READ";
@@ -215,16 +239,20 @@ pi_modules.store.exports = (function () {
 	 * @description 创建指定名称的存储
 	 * @example
 	 */
-	module.create = function (dbName/*:string*/, tabName/*:string*/) {// 返回值类型1|类型2
+	module.create = function (dbName /*:string*/ , tabName /*:string*/ ) { // 返回值类型1|类型2
 		dbName = dbName || "_idb_db";
 		tabName = tabName || "_idb_tab";
-		return { dbName: dbName, tabName: dbName, db: undefined };
+		return {
+			dbName: dbName,
+			tabName: dbName,
+			db: undefined
+		};
 	}
 	/**
 	 * @description 初始化存储
 	 * @example
 	 */
-	module.init = function (store/*:Store*/, callback/*:function*/, errorCallback/*:function*/) {// 返回值类型1|类型2
+	module.init = function (store /*:Store*/ , callback /*:function*/ , errorCallback /*:function*/ ) { // 返回值类型1|类型2
 		if (!iDB) {
 			store.db = {};
 			return callback && setTimeout(callback, 0);
@@ -233,7 +261,9 @@ pi_modules.store.exports = (function () {
 			var request = iDB.open(store.dbName, 1);
 			request.onupgradeneeded = function (e) {
 				// 创建table
-				e.currentTarget.result.createObjectStore(store.tabName, { autoIncrement: false });
+				e.currentTarget.result.createObjectStore(store.tabName, {
+					autoIncrement: false
+				});
 			};
 			request.onsuccess = function (e) {
 				store.db = e.currentTarget.result;
@@ -251,9 +281,11 @@ pi_modules.store.exports = (function () {
 	 * @description 读取数据
 	 * @example
 	 */
-	module.read = function (store/*:Store*/, key/*:string*/, callback/*:function*/, errorCallback/*:function*/) {
+	module.read = function (store /*:Store*/ , key /*:string*/ , callback /*:function*/ , errorCallback /*:function*/ ) {
 		if (!iDB) {
-			return setTimeout(function () { callback(store.db[key], key); }, 0);
+			return setTimeout(function () {
+				callback(store.db[key], key);
+			}, 0);
 		}
 		var request = store.db.transaction(store.tabName, "readonly").objectStore(store.tabName).get(key);
 		request.onsuccess = function (e) {
@@ -266,7 +298,7 @@ pi_modules.store.exports = (function () {
 	 * @description 写入数据，如果键名存在则替换
 	 * @example
 	 */
-	module.write = function (store/*:Store*/, key/*:string*/, data/*:any*/, callback/*:function*/, errorCallback/*:function*/) {
+	module.write = function (store /*:Store*/ , key /*:string*/ , data /*:any*/ , callback /*:function*/ , errorCallback /*:function*/ ) {
 		if (!iDB) {
 			store.db[key] = data;
 			return callback && setTimeout(callback, 0);
@@ -281,7 +313,7 @@ pi_modules.store.exports = (function () {
 	 * @description 删除数据
 	 * @example
 	 */
-	module.delete = function (store/*:Store*/, key/*:string*/, callback/*:function*/, errorCallback/*:function*/) {
+	module.delete = function (store /*:Store*/ , key /*:string*/ , callback /*:function*/ , errorCallback /*:function*/ ) {
 		if (!iDB) {
 			delete store.db[key];
 			return callback && setTimeout(callback, 0);
@@ -296,7 +328,7 @@ pi_modules.store.exports = (function () {
 	 * @description 迭代
 	 * @example
 	 */
-	module.iterate = function (store/*:Store*/, callback/*:function*/, errorCallback/*:function*/) {
+	module.iterate = function (store /*:Store*/ , callback /*:function*/ , errorCallback /*:function*/ ) {
 		if (!iDB) {
 			return setTimeout(function () {
 				var k, db = store.db;
@@ -324,7 +356,7 @@ pi_modules.store.exports = (function () {
 	 * @description 清除存储
 	 * @example
 	 */
-	module.clear = function (store/*:Store*/, callback/*:function*/, errorCallback/*:function*/) {
+	module.clear = function (store /*:Store*/ , callback /*:function*/ , errorCallback /*:function*/ ) {
 		if (!iDB) {
 			store.db = {};
 			return callback && setTimeout(callback, 0);
@@ -356,9 +388,13 @@ pi_modules.store.exports = (function () {
 })();
 
 // 定义ajax
-pi_modules.ajax = { id: 'ajax', exports: undefined, loaded: true };
+pi_modules.ajax = {
+	id: 'ajax',
+	exports: undefined,
+	loaded: true
+};
 pi_modules.ajax.exports = (function () {
-	var module = function mod_ajax() { };
+	var module = function mod_ajax() {};
 	// ============================== 导出
 	module.RESP_TYPE_BIN = 'bin';
 	module.RESP_TYPE_JSON = 'json';
@@ -375,7 +411,7 @@ pi_modules.ajax.exports = (function () {
 	 * @description URL增加随机参数
 	 * @example
 	 */
-	module.randomUrl = function (url/*:string*/) {
+	module.randomUrl = function (url /*:string*/ ) {
 		return (url.indexOf("?") > 0) ? url + "&" + Math.random() : url + "?" + Math.random();
 	}
 
@@ -384,7 +420,7 @@ pi_modules.ajax.exports = (function () {
 	 * @return {string} 被encodeURIComponent编码过的&=分隔的字符串， "Content-Type":"application/x-www-form-urlencoded"
 	 * @example
 	 */
-	module.param = function (data/*:json*/) { // string
+	module.param = function (data /*:json*/ ) { // string
 		var k, v, arr = [];
 		for (k in data) {
 			if (!data.hasOwnProperty(k))
@@ -396,8 +432,7 @@ pi_modules.ajax.exports = (function () {
 				v = "null";
 			} else if (typeof v === typeof "") {
 				v = encodeURIComponent(v);
-			} else if (typeof v === typeof 0) {
-			} else {
+			} else if (typeof v === typeof 0) {} else {
 				v = encodeURIComponent(JSON.stringify(v));
 			}
 			arr.push(encodeURIComponent(k), "=", v, "&");
@@ -411,7 +446,7 @@ pi_modules.ajax.exports = (function () {
 	 * @description GET方法
 	 * @example
 	 */
-	module.get = function (url/*:string*/, headers/*:join*/, reqData/*:json|string*/, respType/*:string*/, timeout/*:int*/, callback/*:function*/, errorCallback/*:function*/, processCallback/*:function*/) {
+	module.get = function (url /*:string*/ , headers /*:join*/ , reqData /*:json|string*/ , respType /*:string*/ , timeout /*:int*/ , callback /*:function*/ , errorCallback /*:function*/ , processCallback /*:function*/ ) {
 		if (reqData !== null && typeof reqData === "object") {
 			reqData = module.param(reqData);
 			url = (url.indexOf("?") > 0) ? url + "&" + reqData : url + "?" + reqData;
@@ -423,7 +458,7 @@ pi_modules.ajax.exports = (function () {
 	 * @description POST方法
 	 * @example
 	 */
-	module.post = function (url/*:string*/, headers/*:join*/, reqData/*:string|ArrayBuffer|FormData*/, contentType/*:string*/, respType/*:string*/, timeout/*:int*/, callback/*:function*/, errorCallback/*:function*/, processCallback/*:function*/) {
+	module.post = function (url /*:string*/ , headers /*:join*/ , reqData /*:string|ArrayBuffer|FormData*/ , contentType /*:string*/ , respType /*:string*/ , timeout /*:int*/ , callback /*:function*/ , errorCallback /*:function*/ , processCallback /*:function*/ ) {
 		headers = headers || {};
 		headers["Content-Type"] = contentType;
 		return module.request('POST', url, headers, reqData, respType, timeout, callback, errorCallback, processCallback);
@@ -433,8 +468,11 @@ pi_modules.ajax.exports = (function () {
 	 * @description request方法
 	 * @example
 	 */
-	module.request = function (type/*:string*/, url/*:string*/, headers/*:join*/, reqData/*:string|ArrayBuffer*/, respType/*:string*/, timeout/*:int*/, callback/*:function*/, errorCallback/*:function*/, processCallback/*:function*/) {
+	module.request = function (type /*:string*/ , url /*:string*/ , headers /*:join*/ , reqData /*:string|ArrayBuffer*/ , respType /*:string*/ , timeout /*:int*/ , callback /*:function*/ , errorCallback /*:function*/ , processCallback /*:function*/ ) {
 		var xhr = new XMLHttpRequest();
+
+		console.log("module.request = " + url);
+
 		if (respType === module.RESP_TYPE_BIN) {
 			xhr.responseType = 'arraybuffer';
 		}
@@ -442,7 +480,7 @@ pi_modules.ajax.exports = (function () {
 		xhr.onabort = function () {
 			timeout && clearTimeout(xhr.timerRef);
 			errorCallback({
-			    url: url,
+				url: url,
 				error: module.ERR_ABORT,
 				reason: "abort"
 			});
@@ -454,7 +492,7 @@ pi_modules.ajax.exports = (function () {
 				var t = xhr.activeTime + timeout - Date.now();
 				if (t <= 0)
 					return errorCallback({
-					    url: url,
+						url: url,
 						error: module.ERR_TIMEOUT,
 						reason: "timeout"
 					});
@@ -465,7 +503,7 @@ pi_modules.ajax.exports = (function () {
 		xhr.onerror = function (ev) {
 			timeout && clearTimeout(xhr.timerRef);
 			errorCallback({
-			    url: url,
+				url: url,
 				nativeError: ev,
 				error: module.ERR_NORMAL,
 				reason: "error status: " + xhr.status + " " + xhr.statusText + ", " + url
@@ -485,14 +523,14 @@ pi_modules.ajax.exports = (function () {
 			timeout && clearTimeout(xhr.timerRef);
 			if (xhr.status === 300 || xhr.status === 301 || xhr.status === 302 || xhr.status === 303) {
 				return errorCallback({
-				    url: url,
+					url: url,
 					error: module.ERR_LOCATION,
 					reason: xhr.getResponseHeader("Location")
 				});
 			}
 			if (xhr.status !== 200 && xhr.status !== 304) {
 				return errorCallback({
-				    url: url,
+					url: url,
 					nativeError: ev,
 					error: module.ERR_NORMAL,
 					reason: "error status: " + xhr.status + " " + xhr.statusText + ", " + url
@@ -506,7 +544,7 @@ pi_modules.ajax.exports = (function () {
 					json = JSON.parse(xhr.responseText);
 				} catch (e) {
 					return errorCallback({
-					    url: url,
+						url: url,
 						nativeError: e,
 						error: module.ERR_JSON,
 						reason: e.name + ": " + e.message
@@ -538,9 +576,13 @@ pi_modules.ajax.exports = (function () {
 })();
 
 // 定义前端加载器
-pi_modules.load = { id: 'load', exports: undefined, loaded: true };
+pi_modules.load = {
+	id: 'load',
+	exports: undefined,
+	loaded: true
+};
 pi_modules.load.exports = (function () {
-	var module = function mod_load() { };
+	var module = function mod_load() {};
 	/*
 	// 前端加载和资源框架：
 	1、服务器提供一次性下载多个文件的接口，GET上行要最小化文件列表，因为要CDN缓存
@@ -564,7 +606,7 @@ pi_modules.load.exports = (function () {
 	var depend = pi_modules.depend.exports;
 	var store = pi_modules.store.exports;
 	var ajax = pi_modules.ajax.exports;
-	var empty = function () { };
+	var empty = function () {};
 
 	// ============================== 导出
 	/**
@@ -585,7 +627,7 @@ pi_modules.load.exports = (function () {
 	 * @description 检查文件是否会从本地加载, 返回 true | false | undefined
 	 * @example
 	 */
-	module.isLocal = function (path/*:string*/) {
+	module.isLocal = function (path /*:string*/ ) {
 		var info = depend.get(path);
 		return (info) ? info.sign === getSign(path) : undefined;
 	};
@@ -593,10 +635,11 @@ pi_modules.load.exports = (function () {
 	 * @description 创建加载对象
 	 * @example
 	 */
-	module.create = function (files/*:Array<Info>*/, successCallback/*:function*/, errorCallback/*:function*/, processCallback/*:function*/) {
+	module.create = function (files /*:Array<Info>*/ , successCallback /*:function*/ , errorCallback /*:function*/ , processCallback /*:function*/ ) {
 		return {
 			// 多个下载文件
-			files: files, /*:Array<Info>*/
+			files: files,
+			/*:Array<Info>*/
 			// 加载成功的回调函数
 			onsuccess: successCallback || empty,
 			// 加载失败的回调函数
@@ -604,23 +647,30 @@ pi_modules.load.exports = (function () {
 			// 加载进度的回调函数
 			onprocess: processCallback || empty,
 			// 所有加载的文件数量
-			loadAmount: 0, /*:number*/
+			loadAmount: 0,
+			/*:number*/
 			// 加载到的文件数量
-			loadCount: 0, /*:number*/
+			loadCount: 0,
+			/*:number*/
 			// 所有下载的文件数量
-			downAmount: 0, /*:number*/
+			downAmount: 0,
+			/*:number*/
 			// 下载到的文件数量
-			downCount: 0, /*:number*/
+			downCount: 0,
+			/*:number*/
 			// 下载的总文件长度
 			total: 0,
 			// url为键，值为已下载的长度
 			loaded: {},
 			// 加载文件的数据
-			fileMap: {}, /*:Map*/
+			fileMap: {},
+			/*:Map*/
 			// 加载文件的数据
-			fileTab: {}, /*:Map*/
+			fileTab: {},
+			/*:Map*/
 			// 下载超时时间，默认20秒
-			timeout: 20000, /*:number*/
+			timeout: 20000,
+			/*:number*/
 			// url为键，值为ajax请求对象
 			ajax: {}
 		};
@@ -629,7 +679,7 @@ pi_modules.load.exports = (function () {
 	 * @description 加载开始
 	 * @example
 	 */
-	module.start = function (load/*:Load*/) {
+	module.start = function (load /*:Load*/ ) {
 		if (!initWait)
 			return startNext(load);
 		initWait.push(load);
@@ -641,7 +691,7 @@ pi_modules.load.exports = (function () {
 	 * @description 停止
 	 * @example
 	 */
-	module.stop = function (load/*:Load*/) {
+	module.stop = function (load /*:Load*/ ) {
 		return load.ajax && load.ajax.abort();
 	};
 	/**
@@ -668,18 +718,18 @@ pi_modules.load.exports = (function () {
 	// 限制url的长度
 	var LimitLength = 1024 - 100;
 	// 是否为本地浏览器
-	var isNative = navigator.userAgent.indexOf("YINENG")>=0;
+	var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
 
 
 	// 获得路径签名， "-"开头表示本地文件
-	var getSign = function (path/*:string*/) {
+	var getSign = function (path /*:string*/ ) {
 		return formatSign(localSign[path]);
 	}
 	// 格式化签名， "-"开头表示本地文件
-	var formatSign = function (s/*:string*/) {
-		if(!s)
+	var formatSign = function (s /*:string*/ ) {
+		if (!s)
 			return s;
-		if(s.charCodeAt(0) === 45)
+		if (s.charCodeAt(0) === 45)
 			s = s.slice(1);
 		return s;
 	}
@@ -688,26 +738,28 @@ pi_modules.load.exports = (function () {
 		localStore = store.create(storeName);
 		store.init(localStore, function () {
 			store.read(localStore, "", function (value) {
-				if(value){
+				if (value) {
 					localSign = value;
 					localInitCheck(false);
-				}else if(isNative){
+				} else if (isNative) {
 					// 加载标准版的.depend，但是统一叫depend
-					ajax.get(serverAddress[0]+"/wallet/.depend", undefined, undefined, ajax.RESP_TYPE_TEXT, 0, function(r){
+					ajax.get(depend.domains[0] + depend.rootPath() + ".depend", undefined, undefined, ajax.RESP_TYPE_TEXT, 0, function (r) {
 						localSign = {};
-						var i = r.indexOf("["), j = r.lastIndexOf("]"), info;
+						var i = r.indexOf("["),
+							j = r.lastIndexOf("]"),
+							info;
 						var arr = JSON.parse(r.slice(i, j + 1));
 						// 本地文件的签名前面加"-"的前缀
 						for (i = arr.length - 1; i >= 0; i--) {
 							info = arr[i];
-							localSign[info.path] = "-"+info.sign;
+							localSign[info.path] = "-" + info.sign;
 						}
 						localInitCheck(true);
-					}, function(r){
+					}, function (r) {
 						localSign = {};
 						localInitCheck(false);
 					});
-				}else{
+				} else {
 					localSign = {};
 					localInitCheck(false);
 				}
@@ -715,7 +767,7 @@ pi_modules.load.exports = (function () {
 		}, alert);
 	};
 	// 本地加载检查
-	var localInitCheck = function (save/*:boolean*/) {
+	var localInitCheck = function (save /*:boolean*/ ) {
 		var k, info, s, i;
 		// 删除不存在或签名不正确的文件
 		for (k in localSign) {
@@ -736,21 +788,34 @@ pi_modules.load.exports = (function () {
 		initWait = undefined;
 	};
 	// 加载继续
-	var startNext = function (load/*:Load*/) {
+	var startNext = function (load /*:Load*/ ) {
 		var tree, result, dir, dirMap, len, count, arr = [];
 		localLoad(load, arr);
-		load.onprocess({ type: "loadStart", loadAmount: load.loadAmount, downAmount: load.downAmount });
+		load.onprocess({
+			type: "loadStart",
+			loadAmount: load.loadAmount,
+			downAmount: load.downAmount
+		});
 		if (load.loadAmount === 0 && load.downAmount === 0)
 			return load.onsuccess(load.fileMap);
 		loadWait.push(load);
 		if (arr.length === 0)
 			return;
 		tree = fileTree(arr);
-		dir = {children:{}, suffix:{}}, dirMap = {};
+		dir = {
+			children: {},
+			suffix: {}
+		}, dirMap = {};
 		dirTree(tree, dir, dirMap, "");
 		// 先发送路径部分
 		while (true) {
-			result = { url: "", d: "", f: "", files: [], next: false };
+			result = {
+				url: "",
+				d: "",
+				f: "",
+				files: [],
+				next: false
+			};
 			// 检查url长度, 限制长度1k，超过1k，需要分多次下载
 			stringify(dir, LimitLength, result);
 			if (result.url.length > 1) {
@@ -774,12 +839,20 @@ pi_modules.load.exports = (function () {
 			if (!result.next)
 				break;
 			len = LimitLength;
-			result = { url: "", d: "", f: "", files: [], next: false };
+			result = {
+				url: "",
+				d: "",
+				f: "",
+				files: [],
+				next: false
+			};
 		}
 	}
 	// 加载URL
-	var startURL = function (load/*:Load*/, durl, furl, files) {
-		var i, info, url, len = files.length, size = 0, h = 0; // hash值
+	var startURL = function (load /*:Load*/ , durl, furl, files) {
+		var i, info, url, len = files.length,
+			size = 0,
+			h = 0; // hash值
 		if (len === 0)
 			return;
 		for (i = 0; i < len; i++) {
@@ -805,7 +878,7 @@ pi_modules.load.exports = (function () {
 	};
 
 	// 本地加载
-	var localLoad = function (load/*:Load*/, arr) {
+	var localLoad = function (load /*:Load*/ , arr) {
 		var i, info, name, s, sign, files = load.files;
 		for (i = files.length - 1; i >= 0; i--) {
 			info = files[i];
@@ -825,10 +898,10 @@ pi_modules.load.exports = (function () {
 			if (info.sign === sign) {
 				load.loadAmount++;
 				load.fileMap[name] = 0;
-				if(s === sign)
+				if (s === sign)
 					store.read(localStore, name, loadOK, butil.curryFirst(loadError, name));
 				else
-					ajax.get(serverAddress[0]+"/wallet/"+name, undefined, undefined, ajax.RESP_TYPE_BIN, 0, butil.curryFirst(loadOK, name), butil.curryFirst(loadError, name));
+					ajax.get(depend.domains[0] + depend.rootPath() + name, undefined, undefined, ajax.RESP_TYPE_BIN, 0, butil.curryFirst(loadOK, name), butil.curryFirst(loadError, name));
 			} else {
 				load.downAmount++;
 				load.fileMap[name] = null;
@@ -837,7 +910,7 @@ pi_modules.load.exports = (function () {
 		}
 	};
 	// 从等待的加载中获取文件数据，返回false表示没有加载该文件
-	var findWait = function (file/*:string*/, load/*:Load*/) {
+	var findWait = function (file /*:string*/ , load /*:Load*/ ) {
 		var i, data;
 		for (i = loadWait.length - 1; i >= 0; i--) {
 			data = loadWait[i].fileMap[file];
@@ -858,7 +931,7 @@ pi_modules.load.exports = (function () {
 	};
 
 	// 加载指定的文件成功，通知所有正在等待的加载器
-	var loadOK = function (data, file/*:string*/, down) {
+	var loadOK = function (data, file /*:string*/ , down) {
 		var i, load;
 		for (i = loadWait.length - 1; i >= 0; i--) {
 			load = loadWait[i];
@@ -868,10 +941,22 @@ pi_modules.load.exports = (function () {
 			load.fileTab[file] = data;
 			if (down) {
 				load.downCount++;
-				load.onprocess({ type: "downFile", file: file, data: data, total: load.downAmount, count: load.downCount });
+				load.onprocess({
+					type: "downFile",
+					file: file,
+					data: data,
+					total: load.downAmount,
+					count: load.downCount
+				});
 			} else {
 				load.loadCount++;
-				load.onprocess({ type: "loadFile", file: file, data: data, total: load.loadAmount, count: load.loadCount });
+				load.onprocess({
+					type: "loadFile",
+					file: file,
+					data: data,
+					total: load.loadAmount,
+					count: load.loadCount
+				});
 			}
 			if (load.downCount < load.downAmount || load.loadCount < load.loadAmount)
 				continue;
@@ -883,7 +968,7 @@ pi_modules.load.exports = (function () {
 	};
 
 	// 加载指定的文件失败，通知所有正在等待的加载器
-	var loadError = function (err, file/*:string*/) {
+	var loadError = function (err, file /*:string*/ ) {
 		var i, load;
 		for (i = loadWait.length - 1; i >= 0; i--) {
 			load = loadWait[i];
@@ -896,7 +981,7 @@ pi_modules.load.exports = (function () {
 		}
 	};
 	// 下载一组文件失败
-	var downloadError = function (err, files/*:Array<Info>*/) {
+	var downloadError = function (err, files /*:Array<Info>*/ ) {
 		var i;
 		for (i = files.length - 1; i >= 0; i--) {
 			loadError(err, files[i].path);
@@ -904,7 +989,11 @@ pi_modules.load.exports = (function () {
 	};
 	// 下载进度事件
 	var loadProcess = function () {
-		var i, load, loaded, k, ev = { type: "download", total: 0, loaded: 0 };
+		var i, load, loaded, k, ev = {
+			type: "download",
+			total: 0,
+			loaded: 0
+		};
 		for (i = loadWait.length - 1; i >= 0; i--) {
 			load = loadWait[i];
 			ev.total += load.total;
@@ -920,12 +1009,13 @@ pi_modules.load.exports = (function () {
 		}
 	};
 	// 获取文件的去掉第一个后缀的文件名
-	var basename = function (file/*:string*/) {
-		var i = file.lastIndexOf('/'), j = file.lastIndexOf('.');
+	var basename = function (file /*:string*/ ) {
+		var i = file.lastIndexOf('/'),
+			j = file.lastIndexOf('.');
 		return j > i ? file.slice(i + 1, j) : file.slice(i + 1);
 	};
 	// 上行消息结构： (后缀1(文件名1:文件名2)后缀2(文件名1:文件名2):目录1()目录2())
-	var stringify = function (tree/*:Map*/, limit/*:number*/, result/*:any*/) {
+	var stringify = function (tree /*:Map*/ , limit /*:number*/ , result /*:any*/ ) {
 		// 先写入本目录下的文件，按后缀归类
 		var k, v, f, rk, rs, i, ss = tree.suffix;
 		if (ss) {
@@ -933,7 +1023,7 @@ pi_modules.load.exports = (function () {
 				if (!ss.hasOwnProperty(k))
 					continue;
 				v = ss[k].arr;
-				if(!v.length)
+				if (!v.length)
 					continue;
 				i = v.length - 1;
 				f = v[i--];
@@ -976,13 +1066,17 @@ pi_modules.load.exports = (function () {
 		}
 	};
 	// 3个分隔符 (): $作为转义, $转$$ (转$1 )转$2
-	var replace = function (s/*:string*/) {
+	var replace = function (s /*:string*/ ) {
 		return s.replace(/\(/g, "$1").replace(/\)/g, "$2").replace(/\$/g, "$$");
 	};
 	// 构建上行消息, 最小化文件列表, GET上行，因为要CDN缓存
 	// 先构建一个目录树，目录内再构建一个后缀表
-	var fileTree = function (files/*:Array<Info>*/) {
-		var ss, n, t, s, i, info, j, len, suf, root = {size:0, children:{}, suffix:{}};
+	var fileTree = function (files /*:Array<Info>*/ ) {
+		var ss, n, t, s, i, info, j, len, suf, root = {
+			size: 0,
+			children: {},
+			suffix: {}
+		};
 		for (i = files.length - 1; i >= 0; i--) {
 			info = files[i];
 			ss = info.path.split("/");
@@ -994,11 +1088,18 @@ pi_modules.load.exports = (function () {
 				s = ss[j];
 				t = n.children[s];
 				if (!t)
-					n.children[s] = t = {size:0, children:{}, suffix:{}};
+					n.children[s] = t = {
+						size: 0,
+						children: {},
+						suffix: {}
+					};
 				t.size += info.size;
 				n = t.suffix[suf];
-				if(!n)
-					t.suffix[suf] = n = {arr:[], size: 0};
+				if (!n)
+					t.suffix[suf] = n = {
+						arr: [],
+						size: 0
+					};
 				n.size += info.size;
 				n = t;
 			}
@@ -1008,7 +1109,8 @@ pi_modules.load.exports = (function () {
 	};
 	// 根据下载文件的目录树，生成完全目录加载的目录树
 	var dirTree = function (tree, dir, dirMap, path) {
-		var k, s, tr, d, dd, v, suf, suffix, r = false, children = tree.children;
+		var k, s, tr, d, dd, v, suf, suffix, r = false,
+			children = tree.children;
 		for (k in children) {
 			if (!children.hasOwnProperty(k))
 				continue;
@@ -1019,7 +1121,9 @@ pi_modules.load.exports = (function () {
 				dirMap[d.path] = treeFiles(tr, []);
 				v = dir.suffix[""];
 				if (!v) {
-					dir.suffix[""] = v = {arr:[]};
+					dir.suffix[""] = v = {
+						arr: []
+					};
 				}
 				v.arr.push(d);
 				delete children[k];
@@ -1028,27 +1132,34 @@ pi_modules.load.exports = (function () {
 				continue;
 			}
 			suffix = tr.suffix;
-			for(suf in suffix) { // 目录下全部指定后缀的文件加载
-				if(d.suffix[suf] !== suffix[suf].size)
+			for (suf in suffix) { // 目录下全部指定后缀的文件加载
+				if (d.suffix[suf] !== suffix[suf].size)
 					continue;
-				dd = {path: d.path+"."+suf};
+				dd = {
+					path: d.path + "." + suf
+				};
 				dirMap[dd.path] = treeFiles(tr, [], suf);
 				v = dir.suffix[suf];
 				if (!v) {
-					dir.suffix[suf] = v = {arr:[]};
+					dir.suffix[suf] = v = {
+						arr: []
+					};
 				}
 				v.arr.push(dd);
 				r = true;
 				continue;
 			}
-			if(tr.size) { // 子目录需要检查大小，因为在后缀处理时，可能目录下已经没有文件
-				d = {children:{}, suffix:{}};
+			if (tr.size) { // 子目录需要检查大小，因为在后缀处理时，可能目录下已经没有文件
+				d = {
+					children: {},
+					suffix: {}
+				};
 				if (dirTree(tr, d, dirMap, s)) {
 					dir.children[k] = d;
 					r = true;
 				}
 			}
-			if(!tr.size)
+			if (!tr.size)
 				delete children[k];
 		}
 		return r;
@@ -1057,10 +1168,10 @@ pi_modules.load.exports = (function () {
 	var treeFiles = function (tree, arr, suf) {
 		var k, v, s;
 		v = tree.suffix;
-		if(suf) {
+		if (suf) {
 			// 目录下所有指定的后缀文件
 			s = v[suf];
-			if(s) {
+			if (s) {
 				arr.push.apply(arr, s.arr);
 				tree.size -= s.size;
 				delete v[suf];
@@ -1080,7 +1191,8 @@ pi_modules.load.exports = (function () {
 	};
 	// 将目录下的文件放入数组中
 	var dirFiles = function (dirs, map, r) {
-		var arr, i = 0, len = dirs.length;
+		var arr, i = 0,
+			len = dirs.length;
 		var sort = function (a, b) {
 			return a.path > b.path ? 1 : -1;
 		};
@@ -1104,8 +1216,9 @@ pi_modules.load.exports = (function () {
 		var i, info, name, data, count = files.length - 1;
 		var onsuccess = function () {
 			count--;
-			if (count < 0)
+			if (count < 0) {
 				store.write(localStore, "", localSign);
+			}
 		};
 		for (i = count; i >= 0; i--) {
 			info = files[i];
@@ -1128,80 +1241,15 @@ pi_modules.load.exports = (function () {
 	return module;
 })();
 
-// native 本地化函数
-pi_modules.localize = { id: 'localize', exports: undefined, loaded: true };
-pi_modules.localize.exports = (function () {
-    var module = function mod_localize() {
-    };
-    var ajax = pi_modules.ajax.exports;
-    var LOCALIZE_API_TIMEOUT = 30000;
-    // 所有的请求使用HTTP协议
-    var PROTOCOL = "http";
-
-    /**
-     * @description 使用ajax发送请求
-     * @param url
-     */
-    module.send = function (actionName, param, success, fail) {
-        // TODO:  set a unique return value, to represend if requests is done
-		// http://(server-address)/$(action-name)/(params)
-        var request_url = encodeURI(serverAddress[0] + "/$" + actionName + "/" + param);
-        ajax.get(request_url, undefined, undefined, undefined, LOCALIZE_API_TIMEOUT, success, fail, function () {
-        });
-    };
-
-    /**
-     * @description 请求原生客户端更新文件。  注意：此请求在完成后不会写入到客户端，需要手动执行完成操作。
-     * @param file    请求更新的文件的完整路径
-     */
-    module.update = function (file, success, fail) {
-        module.send("update", file, success, fail);
-    }
-
-    /**
-     * @description 设置客户端的标志。
-     * @param flagname    标志名称
-     */
-    module.setFlag = function (flagname, success, fail) {
-        module.send("setflag", flagname, success, fail);
-    }
-
-    /**
-     * @description 设置总是从服务器拉取文件，而不从本地进行读取
-     */
-    module.setForceFetchFromServer = function (success, fail) {
-        module.setFlag('force-server-fetch', success, fail);
-    }
-
-    /**
-     * @description 设置从本地获取大部分内容（默认值）
-     */
-    module.setFetchFromLocal = function (success, fail) {
-        module.setFlag('local-fetch', success, fail);
-    }
-
-    /**
-     * @description 刷新浏览器页面
-     */
-    module.reload = function (fail) {
-        module.send("reload", "", function() {}, fail);
-    }
-
-    /**
-	 * @description 请求客户端保存下载的更新，写入到本地
-     */
-    module.applyUpdate = function(success, fail) {
-		module.send("applyupdate", "", success, fail);
-	}
-
-	return module;
-})();
-
 // 异步模块请求加载， AMD规范允许输出的模块兼容CommonJS规范， 类似： define(function (require, exports, module){ var someModule = require("someModule");
-pi_modules.commonjs = { id: 'commonjs', exports: undefined, loaded: true };
+pi_modules.commonjs = {
+	id: 'commonjs',
+	exports: undefined,
+	loaded: true
+};
 pi_modules.commonjs.exports = (function () {
-	var module = function mod_commonjs() { };
-	var cmdClass = function commonjs_class() { };
+	var module = function mod_commonjs() {};
+	var cmdClass = function commonjs_class() {};
 	// ============================== 导入
 	var butil = pi_modules.butil.exports;
 	var depend = pi_modules.depend.exports;
@@ -1251,7 +1299,8 @@ pi_modules.commonjs.exports = (function () {
 	 * @example
 	 */
 	module.depend = function (modNames) {
-		var i, name, info, len1, len2, j, arr, temp = {}, set = [];
+		var i, name, info, len1, len2, j, arr, temp = {},
+			set = [];
 		for (i = 0, len1 = modNames.length; i < len1; i++) {
 			name = modNames[i];
 			if ((!module.isBase(name)) && !temp[name])
@@ -1284,10 +1333,12 @@ pi_modules.commonjs.exports = (function () {
 	 * @example
 	 */
 	module.require = function (modNames, fileMap, successCallback, errorCallback, processCallback) {
-		var i, len, mod, data, wait, down, modMap = {}, needs = [], modSet = module.depend(modNames);
+		var i, len, mod, data, wait, down, modMap = {},
+			needs = [],
+			modSet = module.depend(modNames);
 		var dataJS = function (e) {
 			var mod = pi_modules[module.modName(e.file)];
-			(module.debug) ? debugDefine(mod, e.data) : releaseDefine(mod, e.data);
+			(module.debug) ? debugDefine(mod, e.data): releaseDefine(mod, e.data);
 		}
 		for (i = len = modSet.length - 1; i >= 0; i--) {
 			mod = modSet[i];
@@ -1301,7 +1352,10 @@ pi_modules.commonjs.exports = (function () {
 				pi_modules[mod.id] = mod;
 				data = fileMap[mod.info.path];
 				if (data)
-					dataJS({ file: mod.info.path, data: data });
+					dataJS({
+						file: mod.info.path,
+						data: data
+					});
 				else
 					needs.push(mod.info);
 			}
@@ -1310,8 +1364,21 @@ pi_modules.commonjs.exports = (function () {
 		modSet.length = len + 1;
 		if (len < 0)
 			return loadOK(modNames, fileMap, successCallback);
-		processCallback && processCallback({ type: "requireStart", total: modSet.length, download: needs.length });
-		wait = { names: modNames, onsuccess: successCallback, onerror: errorCallback, onprocess: processCallback, set: modSet, map: modMap, count: modSet.length, fileMap: {} };
+		processCallback && processCallback({
+			type: "requireStart",
+			total: modSet.length,
+			download: needs.length
+		});
+		wait = {
+			names: modNames,
+			onsuccess: successCallback,
+			onerror: errorCallback,
+			onprocess: processCallback,
+			set: modSet,
+			map: modMap,
+			count: modSet.length,
+			fileMap: {}
+		};
 		waitList.push(wait);
 		if (needs.length === 0)
 			return;
@@ -1381,8 +1448,7 @@ pi_modules.commonjs.exports = (function () {
 			load = e.count;
 			calc();
 		};
-		process.downFile = function (e) {
-		};
+		process.downFile = function (e) {};
 		process.download = function (e) {
 			down = downAmount * e.loaded / e.total;
 			calc();
@@ -1395,12 +1461,9 @@ pi_modules.commonjs.exports = (function () {
 			build = e.count;
 			calc();
 		}
-		process.loadTpl = function (e) {
-		};
-		process.loadWidget = function (e) {
-		};
-		process.loadDirCompleted = function (e) {
-		};
+		process.loadTpl = function (e) {};
+		process.loadWidget = function (e) {};
+		process.loadDirCompleted = function (e) {};
 		return process;
 	};
 	// ============================== 本地
@@ -1409,7 +1472,8 @@ pi_modules.commonjs.exports = (function () {
 
 	// 创建模块
 	var create = function (name, parent, set, temp) {
-		var mod = pi_modules[name], info, child;
+		var mod = pi_modules[name],
+			info, child;
 		if (mod) {
 			temp[name] = mod;
 			set.push(mod); // 放置已加载和正在加载的模块
@@ -1419,14 +1483,23 @@ pi_modules.commonjs.exports = (function () {
 		if (!info)
 			throw new Error("mod not found, name:" + name + ", from:" + parent);
 		child = info.depend && info.depend.js ? info.depend.js : undefined;
-		mod = { id: name, exports: {}, info: info, loaded: false, children: child, parent: parent, buildFunc: undefined };
+		mod = {
+			id: name,
+			exports: {},
+			info: info,
+			loaded: false,
+			children: child,
+			parent: parent,
+			buildFunc: undefined
+		};
 		mod.__proto__ = cmdClass.prototype;
 		temp[name] = mod;
 		set.push(mod);
 	};
 	// 加载成功的回调
 	var loadOK = function (names, fileMap, callback) {
-		var i, arr = [], modules = pi_modules;
+		var i, arr = [],
+			modules = pi_modules;
 		arr.length = names.length;
 		for (i = names.length - 1; i >= 0; i--)
 			arr[i] = modules[names[i]].exports;
@@ -1434,14 +1507,14 @@ pi_modules.commonjs.exports = (function () {
 	};
 
 	// 加载一组模块失败
-	var loadError = function (err, arr/*:Array<Info>*/) {
+	var loadError = function (err, arr /*:Array<Info>*/ ) {
 		var i;
 		for (i = arr.length - 1; i >= 0; i--) {
 			modError(err, arr[i].path);
 		}
 	};
 	// 加载指定的模块失败，通知所有正在等待的加载器
-	var modError = function (err, name/*:string*/) {
+	var modError = function (err, name /*:string*/ ) {
 		var i, wait;
 		for (i = waitList.length - 1; i >= 0; i--) {
 			wait = waitList[i];
@@ -1454,7 +1527,7 @@ pi_modules.commonjs.exports = (function () {
 		}
 	};
 	// 检查待加载的模块数组是否包含指定的模块
-	var checkError = function (arr, name/*:string*/) {
+	var checkError = function (arr, name /*:string*/ ) {
 		var i;
 		for (i = arr.length - 1; i >= 0; i--) {
 			if (arr[i].info.path === name)
@@ -1464,16 +1537,25 @@ pi_modules.commonjs.exports = (function () {
 	};
 
 	// debug模式下，用node.src的方式加载模块
-	var debugDefine = function (mod/*:Mod*/, data/*:ArrayBuffer*/) {
+	var debugDefine = function (mod /*:Mod*/ , data /*:ArrayBuffer*/ ) {
 		var info = mod.info;
-		loadJS({ mod: mod, src: depend.domains[0] + depend.rootPath() + info.path + "?" + info.sign });
+		loadJS({
+			mod: mod,
+			src: depend.domains[0] + depend.rootPath() + info.path + "?" + info.sign
+		});
 	};
 	// 用BlobURL的方式加载的模块，二进制转换字符串及编译，浏览器内核会异步处理
 	// 创建函数的方式加载，二进制转换字符串及编译，主线程同步处理性能不好
-	var releaseDefine = function (mod/*:Mod*/, data/*:ArrayBuffer*/) {
+	var releaseDefine = function (mod /*:Mod*/ , data /*:ArrayBuffer*/ ) {
 		var info = mod.info;
-		var blob = new Blob([data], { type: "text/javascript" });
-		loadJS({ mod: mod, src: URL.createObjectURL(blob), revokeURL: URL.revokeObjectURL });
+		var blob = new Blob([data], {
+			type: "text/javascript"
+		});
+		loadJS({
+			mod: mod,
+			src: URL.createObjectURL(blob),
+			revokeURL: URL.revokeObjectURL
+		});
 	};
 	// 用node.src的方式加载模块
 	var loadJS = function (cfg) {
@@ -1505,14 +1587,18 @@ pi_modules.commonjs.exports = (function () {
 		head.appendChild(n);
 	};
 	// 模块定义成功，通知所有正在等待的加载器
-	var modDefine = function (mod/*:Mod*/) {
+	var modDefine = function (mod /*:Mod*/ ) {
 		var i, wait;
 		for (i = waitList.length - 1; i >= 0; i--) {
 			wait = waitList[i];
 			if (!wait.map[mod.id])
 				continue;
 			wait.count--;
-			wait.onprocess && wait.onprocess({ type: "defineMod", total: wait.set.length, count: wait.set.length - wait.count });
+			wait.onprocess && wait.onprocess({
+				type: "defineMod",
+				total: wait.set.length,
+				count: wait.set.length - wait.count
+			});
 			if (wait.count > 0)
 				continue;
 			if (i < waitList.length - 1)
@@ -1524,7 +1610,9 @@ pi_modules.commonjs.exports = (function () {
 	};
 	// 构建模块
 	var build = function (wait) {
-		var i, mod, oldlen, mods = wait.set, len = mods.length, end = Date.now() + module.buildTimeout;
+		var i, mod, oldlen, mods = wait.set,
+			len = mods.length,
+			end = Date.now() + module.buildTimeout;
 		// 尽量按照依赖的次序构建模块
 		do {
 			oldlen = len;
@@ -1538,7 +1626,11 @@ pi_modules.commonjs.exports = (function () {
 				len--;
 				if (len > 0 && Date.now() > end) {
 					mods.length = len;
-					wait.onprocess && wait.onprocess({ type: "buildMod", total: wait.count, count: wait.count - mods.length });
+					wait.onprocess && wait.onprocess({
+						type: "buildMod",
+						total: wait.count,
+						count: wait.count - mods.length
+					});
 					return setTimeout(butil.curryLast(build, wait), module.buildDelay);
 				}
 			}
@@ -1551,16 +1643,25 @@ pi_modules.commonjs.exports = (function () {
 	};
 	// 强行构建模块
 	var buildForce = function (wait) {
-		var i, mods = wait.set, end = Date.now() + module.buildTimeout;
+		var i, mods = wait.set,
+			end = Date.now() + module.buildTimeout;
 		for (i = mods.length - 1; i >= 0; i--) {
 			buildMod(mods[i]);
 			if (i > 0 && Date.now() > end) {
 				mods.length = i;
-				wait.onprocess && wait.onprocess({ type: "buildMod", total: wait.count, count: wait.count - mods.length });
+				wait.onprocess && wait.onprocess({
+					type: "buildMod",
+					total: wait.count,
+					count: wait.count - mods.length
+				});
 				return setTimeout(butil.curryLast(buildForce, wait), module.buildDelay);
 			}
 		}
-		wait.onprocess && wait.onprocess({ type: "buildMod", total: wait.count, count: wait.count });
+		wait.onprocess && wait.onprocess({
+			type: "buildMod",
+			total: wait.count,
+			count: wait.count
+		});
 		loadOK(wait.names, wait.fileMap, wait.onsuccess);
 	}
 	// 构建模块
@@ -1590,7 +1691,7 @@ pi_modules.commonjs.exports = (function () {
 		if (!mod) {
 			throw new Error("invalid require: " + modName + ", from: " + dir);
 		}
-			
+
 		var func = mod.buildFunc;
 		if (func) {
 			mod.buildFunc = undefined;
@@ -1604,7 +1705,7 @@ pi_modules.commonjs.exports = (function () {
 	// 定义全局的模块定义函数
 	self._$define = function (name, func) {
 		var mod = pi_modules[name];
-		if(!mod)
+		if (!mod)
 			throw new Error("invalid define: " + name);
 		mod.buildFunc = func;
 		modDefine(mod);
@@ -1612,17 +1713,276 @@ pi_modules.commonjs.exports = (function () {
 	return module;
 })();
 
+// 更新模块
+pi_modules.update = { id: 'update', exports: undefined, loaded: true };
+pi_modules.update.exports = (function () {
+	var module = function mod_update() {};
+
+	var DOWNLOAD_TIMEOUT = 5000;
+
+	var load = pi_modules.load.exports;
+	var ajax = pi_modules.ajax.exports;
+	var depend = pi_modules.depend.exports;
+
+	var dependFileData = undefined;
+	var bootDirs = undefined;
+	var domain = undefined;
+	var rootPath = undefined;
+
+	/**
+	 * 检查是否需要更新
+	 * @param {*} callback callback(isNeedUpdate)
+	 * @param {string[]} bootDirArray 引导目录，可能有多个
+	 */
+	module.checkUpdate = function (bootDirArray, callback) {
+		// 非本地版本，直接返回
+		var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
+		if (!isNative) {
+			setTimeout(function () {
+				callback(false);
+			}, 0);
+			return;
+		}
+
+		bootDirs = bootDirArray;
+		domain = depend.domains[0];
+		rootPath = depend.rootPath();
+
+		setResInfoServer(depend.domains, bootDirs, function () {
+			// 从手机的的index.js取到老版本号
+			ajax.get(domain + rootPath + "app/boot/index.js?" + Math.random(), {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
+				var oldVersion = getIndexVersion(indexJSStr);
+				// 检查是否需要更新
+				checkNeedUpdate(oldVersion, callback);
+			}, function () {
+			});
+		});
+	}
+
+	/**
+	 * 此函数需要在checkUpdate的回调里面实现
+	 * 实现更新，注意，这时，外部所有函数全部要堵塞
+	 * 更新成功，会自动刷新页面
+	 */
+	module.update = function (updateProcessCb) {
+		localStorage.setItem("$$nativeIsUpdating", "1");
+
+		// 不拦截，webview正常模式
+		setIntercept(false, function () {
+			startUpdate(updateProcessCb);
+		});
+	}
+
+	// 从index.js的版本号检查是否需要更新
+	function checkNeedUpdate(oldVersion, okCB, failCB) {
+
+		// 强制取服务器的index.js
+		ajax.get(domain + rootPath + "app/boot/index.js?" + Math.random() + "&$forceServer=1", {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
+			var newVersion = getIndexVersion(indexJSStr);
+			var newMain = newVersion[0],
+				newSub = newVersion[1];
+
+			var oldMain = oldVersion[0],
+				oldSub = oldVersion[1];
+
+			var needUpdate = !!localStorage.getItem("$$nativeIsUpdating");
+			if (needUpdate) {
+				alert("上次版本还没有更新完毕，必须更新");
+			} else if (oldMain !== newMain) {
+				// 主版本号不同，必须强制更新
+				needUpdate = true;
+				alert("版本有重大变化，必须更新");
+			} else if (oldSub !== newSub) {
+				// 小版本号不同，提示用户更新
+				needUpdate = confirm("有新的版本，需要更新吗？");
+			}
+
+			okCB(needUpdate);
+		}, function () {
+			// 取不到index.js，用拦截即可
+		});
+	}
+
+	function startUpdate(updateProcessCb) {
+		// 先下载.depend
+		var url = domain + rootPath + ".depend?" + Math.random() + "&$forceServer=1";
+		ajax.get(url, {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (data) {
+
+			dependFileData = data;
+
+			var str = data.substring(data.indexOf('['), data.lastIndexOf(']') + 1);
+			pi_modules.depend.exports.init(JSON.parse(str), rootPath);
+
+			var dependData = JSON.parse(str);
+
+			var dlBootCB = function (files) {
+				downloadNewFiles(dependData, function () {
+					finishUpdate(files);
+				}, finishUpdate, function () {
+					// alert("更新：下载新文件错误");
+				}, updateProcessCb);
+			}
+
+			downloadBootFiles(dependData, dlBootCB, function () {
+				// alert("更新：下载引导文件错误");
+			}, updateProcessCb);
+		}, function () {
+			alert("更新：下载.depend错误");
+		});
+	}
+
+	function finishUpdate(bootFiles) {
+
+		bootFiles[".depend"] = stringToArrayBuffer(dependFileData);
+
+		for (var path in bootFiles) {
+			JSIntercept.saveFile(rootPath + path, arrayBufferToBase64(bootFiles[path]));
+		}
+
+		// 引导目录下的文件都已经保存
+		setIntercept(true, function () {
+			alert("更新成功，即将进入新版本");
+
+			// 清除标记
+			localStorage.removeItem("$$nativeIsUpdating");
+
+			// 刷新页面
+			location.reload(true);
+		});
+	}
+
+	/**
+	 * 下载引导目录的新文件
+	 * @param {*} dependData 
+	 * @param {*} okCB 
+	 * @param {*} failCB 
+	 */
+	function downloadBootFiles(dependData, okCB, failCB, updateProcessCb) {
+		var downloads = [];
+		for (var i = 0; i < dependData.length; ++i) {
+			var info = dependData[i];
+
+			var needDownload = false;
+			for (var j = 0; j < bootDirs.length; ++j) {
+				if (info.path.indexOf(bootDirs[j]) === 0) {
+					info.__isBootFile = true;
+					needDownload = true;
+					break;
+				}
+			}
+
+			if (needDownload) {
+				downloads.push(info);
+			}
+		}
+
+		var down = load.create(downloads, okCB, failCB, updateProcessCb);
+		load.start(down);
+	}
+
+	/**
+	 * 根据depend的数据下载新的文件，引导目录的文件除外
+	 * @param {*} dependData 
+	 * @param {*} okCB okCB(files)
+	 * @param {*} failCB 
+	 */
+	function downloadNewFiles(dependData, okCB, failCB, updateProcessCb) {
+
+		var downloads = [];
+		for (var i = 0; i < dependData.length; ++i) {
+			var info = dependData[i];
+
+			// 本地没有的才需要下载
+			// __isBootFile是在本文件打的标签
+			if (!info.__isBootFile && !load.isLocal(info.path)) {
+				downloads.push(info);
+			}
+		}
+
+		if (downloads.length === 0) {
+			setTimeout(function () {
+				okCB();
+			}, 0);
+			return;
+		}
+
+		var down = load.create(downloads, okCB, failCB, updateProcessCb);
+		load.start(down);
+	}
+
+	/**
+	 * 设置资源信息到拦截层
+	 * @param {*} domains 
+	 * @param {*} bootDirs 
+	 * @param {*} okCB 
+	 */
+	function setResInfoServer(domains, bootDirs, okCB) {
+		var url = domain + "/$resinfo?domains=" + JSON.stringify(domains) + "&bootdirs=" + JSON.stringify(bootDirs);
+
+		url = encodeURI(url);
+
+		ajax.get(url, undefined, undefined, undefined, DOWNLOAD_TIMEOUT, okCB, function () {
+			alert("更新：setResInfoServer 失败");
+		}, function () {});
+	}
+
+	/**
+	 * @description 通知 webview，是否拦截请求，默认为拦截；
+	 * @param 
+	 */
+	function setIntercept(isIntercept, okCB) {
+		var url = encodeURI(domain + "/$intercept?value=" + (isIntercept ? "1" : "0"));
+
+		ajax.get(url, undefined, undefined, undefined, DOWNLOAD_TIMEOUT, okCB, function () {
+			alert("更新，设置拦截失败");
+		}, function () {});
+	}
+
+	// 取indexjs的版本号
+	function getIndexVersion(indexJS) {
+		// 第一行是：// !version=xx.xx
+		var regex = /\/\/\s*!version=(\d+)\.(\d+)/;
+		var result = indexJS.match(regex);
+		if (!result || result.length !== 3) {
+			throw new Error("index.js must have version at first line, format like: // !version=1.2")
+		}
+		return [result[1], result[2]];
+	}
+
+	function arrayBufferToBase64(buffer) {
+		var binary = '';
+		var bytes = new Uint8Array(buffer);
+		var len = bytes.length;
+		for (var i = 0; i < len; i++) {
+			binary += String.fromCharCode(bytes[i]);
+		}
+		return window.btoa(binary);
+	}
+
+	function stringToArrayBuffer(str) {
+		var bytes = new Uint8Array(str.length);
+		for (var i = 0; i < str.length; i++) {
+			bytes[i] = str.charCodeAt(i);
+		}
+		return bytes.buffer;
+	}
+
+	return module;
+})();
+
 // window全局错误捕捉，记录次数后发送到服务器上
 self.onerror = winit.debug ? undefined : (function () {
-	var map = {}, count = function (e) {
-		var v = map[e] || 0, c = 1;
-		map[e] = ++v;
-		while (true) { // 仅在1,2,4,8...上发送错误信息
-			if (c === v) return v;
-			if (c > v) return 0;
-			c += c;
-		}
-	};
+	var map = {},
+		count = function (e) {
+			var v = map[e] || 0,
+				c = 1;
+			map[e] = ++v;
+			while (true) { // 仅在1,2,4,8...上发送错误信息
+				if (c === v) return v;
+				if (c > v) return 0;
+				c += c;
+			}
+		};
 	var sid = Date.now().toString(36) + "X" + Math.floor(Math.random() * 0xffffffff).toString(36);
 	return function (msg, uri, line, column, error) {
 		var e, c;

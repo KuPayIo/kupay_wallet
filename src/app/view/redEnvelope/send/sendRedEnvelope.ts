@@ -5,9 +5,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
+import { fetchRealUser, getCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
 import { CurrencyType, RedEnvelopeType } from '../../../store/interface';
-import { find, register, updateStore } from '../../../store/store';
+import { find, getBorn, register, updateStore } from '../../../store/store';
 import { redEnvelopeSupportCurrency } from '../../../utils/constants';
 import { getByteLen, openBasePage } from '../../../utils/tools';
 
@@ -25,6 +25,7 @@ export class SendRedEnvelope extends Widget {
     }
 
     public init() {
+        const realUser = getBorn('realUserMap').get(find('conUser'));
         this.state = {
             itype: 0,// 0 等额红包  1 拼手气红包
             balance: 0,
@@ -34,14 +35,20 @@ export class SendRedEnvelope extends Widget {
             totalAmount: '',
             leaveMessage: '',
             lmPlaceHolder: '恭喜发财  万事如意',
-            leaveMessageMaxLen: 20
+            leaveMessageMaxLen: 20,
+            realUser
         };
         this.updateBalance();
+        if (!realUser) {
+            fetchRealUser();
+        }
     }
     public backPrePage() {
         this.ok && this.ok();
     }
-
+    public updateRealUser(realUserMap:Map<string,boolean>) {
+        this.state.realUser = realUserMap.get(find('conUser'));
+    }
     // 更新余额
     public updateBalance() {
         this.state.balance = find('cloudBalance', CurrencyType[this.state.currencyName]) || 0;
@@ -109,6 +116,11 @@ export class SendRedEnvelope extends Widget {
 
             return;
         }
+        if (!this.state.realUser) {
+            popNew('app-components-message-message', { itype: 'error', content: '您不是真实用户', center: true });
+
+            return;
+        }
         const close = popNew('app-components_level_1-loading-loading', { text: '加载中...' });
         const lm = this.state.leaveMessage || this.state.lmPlaceHolder;
         const rtype = this.state.itype;
@@ -169,5 +181,12 @@ register('cloudBalance', cloudBalance => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
+    }
+});
+
+register('realUserMap',realUserMap => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateRealUser(realUserMap);
     }
 });

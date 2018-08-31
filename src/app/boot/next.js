@@ -1,165 +1,186 @@
 "use strict";
 
-var serverAddress = winit.domains;
-
 // 依赖表加载成功后的回调函数
 winit.initNext = function () {
-  var win = winit.win;
-  win._babelPolyfill = 1;
-  win.pi_modules = 1;
-  win.Map = 1;
-  var startTime = winit.startTime;
-  // console.log("init time:", Date.now() - startTime);
-  // 清除运营商注入的代码
-  var clear = function () {
-    //清除window上新增的对象
-    var k;
-    for (k in window) {
-      if (window.hasOwnProperty(k) && !win[k]) window[k] = null;
-    }
-    //清除body里面的非pi元素（自己添加的元素都有pi属性）
-    var i,
-      arr = document.body.children;
-    for (i = arr.length - 1; i >= 0; i--) {
-      k = arr[i];
-      if (!k.getAttribute("pi")) document.body.removeChild(k);
-    }
-  };
-  //clear();
-  pi_modules.depend.exports.init(winit.deps, winit.path);
-  var flags = winit.flags;
+	var win = winit.win;
+	win._babelPolyfill = 1;
+	win.pi_modules = 1;
 
-  // 检查更新
-  //checkUpdate();
+	win.Map = 1;
+	var flags = winit.flags;
 
-  winit = undefined; //一定要立即释放，保证不会重复执行
-  //先登录
+	// console.log("init time:", Date.now() - startTime);
+	// 清除运营商注入的代码
+	var clear = function () {
+		//清除window上新增的对象
+		var k;
+		for (k in window) {
+			if (window.hasOwnProperty(k) && !win[k]) window[k] = null;
+		}
+		//清除body里面的非pi元素（自己添加的元素都有pi属性）
+		var i,
+			arr = document.body.children;
+		for (i = arr.length - 1; i >= 0; i--) {
+			k = arr[i];
+			if (!k.getAttribute("pi")) document.body.removeChild(k);
+		}
+	};
+	//clear();
 
-  //二级页面相关的图片和代码资源
-  TIME_STR += "before load time: " + (Date.now() - PRE_TIME);
-  PRE_TIME = Date.now();
-  var div = document.createElement('div');
-  div.setAttribute("id", "pi")
-  div.setAttribute("pi", "1");
-  div.setAttribute("class", "process");
-  // div.setAttribute("style", "position:absolute;bottom:10px;left: 2%;width: 95%;height: 10px;background: #262626;padding: 1px;border-radius: 20px;border-top: 1px solid #000;border-bottom: 1px solid #7992a8;z-index:9999;");
-  var divProcess = document.createElement('div');
-  var divProcessBg = document.createElement('div');
-  var divProcessIcon = document.createElement('div');
-  divProcess.setAttribute("style", "width: 0%;height: 100%;border-radius: 20px;position:relative");
-  // divProcessBg.setAttribute("style", "width: 100%;height: 15px;background-size: 100% 100%;background-image:url(../res/common/sliderProgress.png)");
-  // divProcessIcon.setAttribute("style", "width:50px;height:50px;background-size: 100% 100%;position:absolute;right:-30px;top:-15px;background-image:url(../res/common/slider.png)");
-  divProcessIcon.setAttribute("class", "rotating")
-  div.appendChild(divProcess);
-  divProcess.appendChild(divProcessBg);
-  divProcess.appendChild(divProcessIcon);
-  var container = document.getElementById("process-container")
-  if (container) {
-    container.appendChild(div);
-  }
+	pi_modules.depend.exports.init(winit.deps, winit.path);
 
-  var modProcess = pi_modules.commonjs.exports.getProcess();
-  var dirProcess = pi_modules.commonjs.exports.getProcess();
-  modProcess.show(function (r) {
-    modProcess.value = r * 0.2;
-    divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
-  });
-  dirProcess.show(function (r) {
-    dirProcess.value = r * 0.8;
-    divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
-  });
+	winit = undefined; //一定要立即释放，保证不会重复执行
+	//先登录
 
+	//二级页面相关的图片和代码资源
+	TIME_STR += "before load time: " + (Date.now() - PRE_TIME);
+	PRE_TIME = Date.now();
+	var div = document.createElement('div');
+	div.setAttribute("id", "pi")
+	div.setAttribute("pi", "1");
+	div.setAttribute("class", "process");
+	// div.setAttribute("style", "position:absolute;bottom:10px;left: 2%;width: 95%;height: 10px;background: #262626;padding: 1px;border-radius: 20px;border-top: 1px solid #000;border-bottom: 1px solid #7992a8;z-index:9999;");
+	var divProcess = document.createElement('div');
+	var divProcessBg = document.createElement('div');
+	var divProcessIcon = document.createElement('div');
+	divProcess.setAttribute("style", "width: 0%;height: 100%;border-radius: 20px;position:relative");
+	// divProcessBg.setAttribute("style", "width: 100%;height: 15px;background-size: 100% 100%;background-image:url(../res/common/sliderProgress.png)");
+	// divProcessIcon.setAttribute("style", "width:50px;height:50px;background-size: 100% 100%;position:absolute;right:-30px;top:-15px;background-image:url(../res/common/slider.png)");
+	divProcessIcon.setAttribute("class", "rotating")
+	div.appendChild(divProcess);
+	divProcess.appendChild(divProcessBg);
+	divProcess.appendChild(divProcessIcon);
+	var container = document.getElementById("process-container")
+	if (container) {
+		container.appendChild(div);
+	}
 
-  pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util"], {}, function (mods, fm) {
-    // console.log("first mods time:", Date.now() - startTime, mods, Date.now());
-    var html = mods[0], util = mods[1], worker = mods[2];
-    // 判断是否第一次进入,决定是显示片头界面还是开始界面
-    var userinfo = html.getCookie("userinfo");
-    pi_modules.commonjs.exports.flags = html.userAgent(flags);
-    flags.userinfo = userinfo;
-    // debugger;
+	var modProcess = pi_modules.commonjs.exports.getProcess();
+	var dirProcess = pi_modules.commonjs.exports.getProcess();
+	modProcess.show(function (r) {
+		modProcess.value = r * 0.2;
+		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
+	});
+	dirProcess.show(function (r) {
+		dirProcess.value = r * 0.8;
+		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
+	});
 
 
+	pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util"], {}, function (mods, fm) {
+		// console.log("first mods time:", Date.now() - startTime, mods, Date.now());
+		var html = mods[0],
+			util = mods[1],
+			worker = mods[2];
+		// 判断是否第一次进入,决定是显示片头界面还是开始界面
+		var userinfo = html.getCookie("userinfo");
+		pi_modules.commonjs.exports.flags = html.userAgent(flags);
+		flags.userinfo = userinfo;
+		// debugger;
 
-    var sourceList = [
-      "pi/ui/",
-      "app/components_level_1/",
-      "app/res/css/",
-      "app/res/js/",
-      "app/view/base/",
-      "app/view/wallet/home/",
-      "app/view/cloud/home/",
-      "app/view/financialManagement/index/",
-      "app/view/mine/home/",
-      "app/view/guidePages/",
-      "app/view/mine/lockScreen/unlockScreen/"
-    ]
-    console.time('firstload');
-    util.loadDir(sourceList, flags, fm, undefined, function (fileMap,fm1) {
-      console.timeEnd('firstload');
-      console.log('fileMap-----------------',fileMap);
-      // console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
-      var tab = util.loadCssRes(fileMap);
-      // 将预加载的资源缓冲90秒，释放
-      tab.timeout = 90000;
-      tab.release();
-      // clear();
-      // console.log("res time:", Date.now() - startTime);
-      // 加载根组件
-      var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
-      root.cfg.full = false;//PC模式
-      var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
-      index.run(() => {
-        // 关闭读取界面
-        document.body.removeChild(document.getElementById('rcmj_loading_log'));
-          // 检查更新
-          checkUpdate();
-      });
-      console.time('secondLoad');
-      const level2SourceList = [
-        "app/core/",
-        "app/logic/"
-      ];
-      // 加载其他文件
-      util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
-        console.log(fileMap)
-        console.timeEnd('secondLoad');
-        var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
-        updatedStore('level_2_page_loaded',true);
-        const level3SourceList = [
-          "app/components/",
-          "app/res/",
-          // "app/net/",
-          "app/view/"
-        ]
-        console.time('thirdLoad');
-        util.loadDir(level3SourceList, flags, fm, undefined, function (fileMap) {
-          console.log(fileMap)
-          console.timeEnd('thirdLoad');
-          updatedStore('level_3_page_loaded',true);
-        }, function (r) {
-          alert("加载目录失败, " + r.error + ":" + r.reason);
-        }, dirProcess.handler);
-      }, function (r) {
-        alert("加载目录失败, " + r.error + ":" + r.reason);
-      }, dirProcess.handler);
-      
-      // pi_modules.commonjs.exports.relativeGet("app/cims/util").exports.initCfg(fileMap);
-    }, function (r) {
-      alert("加载目录失败, " + r.error + ":" + r.reason);
-    }, dirProcess.handler);
-  }, function (result) {
-    alert("加载基础模块失败, " + result.error + ":" + result.reason);
-  }, modProcess.handler);
+		var sourceList = [
+			"pi/ui/",
+			"app/components_level_1/",
+			"app/res/css/",
+			"app/res/js/",
+			"app/res/image1/",
+			"app/view/base/",
+			"app/view/wallet/home/",
+			"app/view/cloud/home/",
+			"app/view/financialManagement/index/",
+			"app/view/mine/home/",
+			"app/view/guidePages/",
+			"app/view/mine/lockScreen/unlockScreen/"
+		]
+		console.time('firstload');
+		var suffixCfg = util.getDefaultSuffixCfg();
+		// for (var i in suffixCfg) {
+		// 	suffixCfg[i] = "load";
+		// }
+
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
+			console.timeEnd('firstload');
+			console.log(fileMap)
+			// console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
+			var tab = util.loadCssRes(fileMap);
+			// 将预加载的资源缓冲90秒，释放
+			tab.timeout = 90000;
+
+			tab.release();
+			// clear();
+			// console.log("res time:", Date.now() - startTime);
+			// 加载根组件
+			var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+			root.cfg.full = false; //PC模式
+			var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+			index.run(() => {
+				// 关闭读取界面
+				document.body.removeChild(document.getElementById('rcmj_loading_log'));
+			});
+			console.time('secondLoad');
+			const level2SourceList = [
+				"app/core/",
+				"app/logic/"
+			];
+			// 加载其他文件
+			util.loadDir(level2SourceList, flags, fm, suffixCfg, function (fileMap) {
+				console.log(fileMap)
+				console.timeEnd('secondLoad');
+				// var tab = util.loadCssRes(fileMap);
+				
+				// // 将预加载的资源缓冲90秒，释放
+				// tab.timeout = 90000;
+				// tab.release();
+				var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
+				updatedStore('level_2_page_loaded', true);
+				const level3SourceList = [
+					"app/components/",
+					"app/res/",
+					// "app/net/",
+					"app/view/"
+				]
+				console.time('thirdLoad');
+				util.loadDir(level3SourceList, flags, fm, suffixCfg, function (fileMap) {
+					console.log(fileMap)
+					console.timeEnd('thirdLoad');
+					
+					// var tab = util.loadCssRes(fileMap);
+					// // 将预加载的资源缓冲90秒，释放
+					// tab.timeout = 90000;
+					// tab.release();
+					updatedStore('level_3_page_loaded', true);
+					var update = pi_modules.update.exports;
+					update.checkUpdate(["app/boot/"], function (needUpdate) {
+						if (!needUpdate) return;
+
+						// 注：必须堵住原有的界面操作，不允许任何更新
+						update.update(function (e) {
+							console.log("update progress: ", e);
+						});
+					})
+				}, function (r) {
+					alert("加载目录失败, " + r.error + ":" + r.reason);
+				}, dirProcess.handler);
+			}, function (r) {
+				alert("加载目录失败, " + r.error + ":" + r.reason);
+			}, dirProcess.handler);
+
+			// pi_modules.commonjs.exports.relativeGet("app/cims/util").exports.initCfg(fileMap);
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}, function (result) {
+		alert("加载基础模块失败, " + result.error + ":" + result.reason);
+	}, modProcess.handler);
 };
 
 // 初始化开始
 (winit.init = function () {
-  if (!winit) return;
-  winit.deps &&
-    self.pi_modules &&
-    self.pi_modules.butil &&
-    self._babelPolyfill &&
-    winit.initNext();
-  !self._babelPolyfill && setTimeout(winit.init, 100);
+	if (!winit) return;
+	winit.deps &&
+		self.pi_modules &&
+		self.pi_modules.butil &&
+		self._babelPolyfill &&
+		winit.initNext();
+	!self._babelPolyfill && setTimeout(winit.init, 100);
 })();

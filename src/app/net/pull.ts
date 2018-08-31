@@ -868,3 +868,23 @@ export const fetchGasPrices = async () => {
 
     }
 };
+
+export const fetchRealUser = async () => {
+    const msg = {
+        type: 'wallet/user@get_real_user',
+        param: {}
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        const realUserMap = getBorn('realUserMap');
+        const conUser = find('conUser');
+        realUserMap.set(conUser,res.value === 'false' ? false : true);
+        updateStore('realUserMap',realUserMap);
+        
+    } catch (err) {
+        console.log('wallet/user@get_real_user--------',err);
+        showError(err && (err.result || err.type));
+
+    } 
+};

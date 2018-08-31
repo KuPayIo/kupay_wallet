@@ -106,7 +106,8 @@ export const initStore = () => {
     store.TopContacts = findByLoc('TopContacts') || [];
     // 从localStorage中取nonceMap
     store.nonceMap = new Map<string,number>(findByLoc('nonceMap'));
-    console.log('nonceMap------------------1111',store.nonceMap);
+    // 从localStorage中取realUserMap
+    store.realUserMap = new Map<string,boolean>(findByLoc('realUserMap'));
 
     // 初始化默认兑换汇率列表
     const rateJson = defaultExchangeRateJson;
@@ -134,7 +135,8 @@ type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo' | 'shapeShiftTx
 type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' | 'level_3_page_loaded';
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
- 'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals' | 'lastGetSmsCodeTime' | 'nonceMap';
+ 'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals' | 'lastGetSmsCodeTime' | 'nonceMap'|
+ 'realUserMap';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -169,6 +171,7 @@ const store = <Store>{
     lockScreen: <LockScreen>null, // 锁屏密码相关
     nonceMap:new Map<string,number>(),// 本地nonce维护
     gasPrice:{},// gasPrice分档次
+    realUserMap:new Map<string,boolean>(),// 本地真实用户map
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
     accountDetail: new Map<CurrencyType, AccountDetail[]>(),// 云端账户详情

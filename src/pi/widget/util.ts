@@ -94,6 +94,12 @@ export const listDir = (info: any, flags: Json, fileList: string[], suffixMap: J
         listDir(d, flags, fileList, suffixMap, without, scfg || suffixCfg);
     }
 };
+/**
+ * 
+ */
+export const getDefaultSuffixCfg = () => {
+    return { ...suffix_cfg };
+};
 
 /**
  * @description 加载并注册指定目录及子目录下的所有模块、组件和资源（图片、声音、字体……）
