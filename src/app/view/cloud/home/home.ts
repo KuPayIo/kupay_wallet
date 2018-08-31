@@ -177,6 +177,12 @@ export class Home extends Widget {
         this.paint();
     }
 
+    public walletListChange() {
+        if (!this.props.isActive) return;
+        this.initDate();
+        this.initEvent();
+    }
+
     /**
      * 获取更新数据
      */
@@ -186,6 +192,8 @@ export class Home extends Widget {
         const walletList = find('walletList');
         if (!walletList || walletList.length === 0) {
             this.state.hasWallet = false;
+        } else {
+            this.state.hasWallet = true;
         }
 
         const mining = find('miningTotal');
@@ -249,7 +257,7 @@ register('mineItemJump',(arg) => {
 register('walletList',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.walletListChange();
     }
     
 });
