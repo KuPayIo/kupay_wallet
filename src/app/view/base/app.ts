@@ -32,49 +32,28 @@ export class App extends Widget {
             old: this.old,
             loading,
             tabBarList: [{
-                text: '钱包',
+                text: '玩',
                 icon: 'wallet_icon.png',
                 iconActive: 'wallet_icon_active.png',
-                components: 'app-view-wallet-home-home'
+                components: 'app-view-play-home-home'
             },
             {
-                text: '云端',
-                name: 'cloud',
+                text: '聊',
                 icon: 'remote_icon.png',
                 iconActive: 'remote_icon_active.png',
-                components: 'app-view-cloud-home-home'
+                components: 'app-view-chat-home-home'
             },
             {
-                text: '',
-                name: 'chat',
-                icon: 'chatIcon.png',
-                iconActive: 'chatIcon.png',
-                components: ''
-                // components: 'app-view-financialManagement-home'
-            },
-            {
-                text: '理财',
+                text: '赚',
                 icon: 'financialManagement_icon.png',
                 iconActive: 'financialManagement_icon_active.png',
-                components: 'app-view-financialManagement-index-index'
-                // components: 'app-view-financialManagement-home'
-            },
-            // {
-            //     text: '交易所',
-            //     icon: 'exchange_icon.png',
-            //     iconActive: 'exchange_icon_active.png',
-            //     components: 'app-view-exchange-home'
-            // }, {
-            //     text: '应用',
-            //     icon: 'application_icon.png',
-            //     iconActive: 'application_icon_active.png',
-            //     components: 'app-view-application-home'
-            // }, 
+                components: 'app-view-earn-home-home'
+            }, 
             {
-                text: '我的',
+                text: '钱',
                 icon: 'mine_icon.png',  
                 iconActive: 'mine_icon_active.png',
-                components: 'app-view-mine-home-home'
+                components: 'app-view-wallet-home-home'
             }]
 
         };
