@@ -73,7 +73,7 @@ export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[
         });
     });
 
-    return list.reverse();
+    return list;
 };
 
 /**
@@ -231,7 +231,7 @@ export const parseRechargeWithdrawalLog = (val) => {
         infoList.push(record);
     }
     
-    return infoList.reverse();
+    return infoList;
 };
 
 /**

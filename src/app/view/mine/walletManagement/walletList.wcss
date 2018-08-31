@@ -1,3 +1,7 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
 .main{
     padding-top:35px;
     padding-left:16px;
