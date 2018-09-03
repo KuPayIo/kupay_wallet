@@ -1,0 +1,20 @@
+.asset-container{
+    padding: 0 20px;
+}
+.total-asset-container{
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    margin-top: 30px;
+}
+.total-asset{
+    line-height: 50px;
+    color: #222;
+    font-size: 36px;
+}
+.add-asset{
+    width: 45px;
+    height: 45px;
+}

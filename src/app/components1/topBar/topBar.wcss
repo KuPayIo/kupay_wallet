@@ -1,7 +1,8 @@
 .outer{
     background-color: #fff;
     width: 100%;
-    position: absolute;
+    position: relative;
+    padding-top: 40px;
 }
 .ga-top-banner{
     width: 100%;
@@ -9,30 +10,25 @@
     align-items: center;
     justify-content: space-between;
     position: relative;
-    color: #203260;
+    color: #222;
     box-sizing: border-box;
     height: 88px;
-    margin-top: 40px;
+}
+.left-container{
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    font-size: 36px;
+    line-height: 88px;
 }
 .ga-back{
     width: 40px;
     height: 40px;
     margin: 0 30px;
-    line-height: 88px;
 }
 .ga-next{
     width: 40px;
     height: 40px;
     margin: 0 30px;
-    line-height: 88px;
-}
-.ga-banner-title{
-    font-size: 36px;
-    line-height: 88px;
-    position: absolute;
-    left: 100px;
-}
-.ga-banner-title-center{
-    font-size: 36px;
     line-height: 88px;
 }

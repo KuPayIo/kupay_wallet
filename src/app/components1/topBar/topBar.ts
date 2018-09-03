@@ -11,6 +11,7 @@ import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
     title:string;
+    nextClick?:boolean;
     centerTitle?:boolean;
     background?:string;
 }

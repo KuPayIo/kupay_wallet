@@ -6,8 +6,8 @@ import { popNew } from '../../pi/ui/root';
 import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { Addr, GasPriceLevel } from '../store/interface';
-import { find, updateStore } from '../store/store';
-import { supportCurrencyList } from './constants';
+import { find, getBorn, updateStore } from '../store/store';
+import { defalutShowCurrencys, supportCurrencyList } from './constants';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -416,9 +416,18 @@ export const formatBalanceValue = (value: number) => {
  * @param addrs 指定货币下的地址
  * @param currencyName 货币名称
  */
-export const fetchBalanceOfCurrency = (addrs: string[], currencyName: string) => {
+export const fetchBalanceOfCurrency = (currencyName: string) => {
+    const wallet = find('curWallet');
+    if (!wallet) return 0;
     const localAddrs = find('addrs');
     let balance = 0;
+    let addrs = [];
+    for (let i = 0; i < wallet.currencyRecords.length;i++) {
+        if (wallet.currencyRecords[i].currencyName === currencyName) {
+            addrs = wallet.currencyRecords[i].addrs;
+            break;
+        }
+    }
     localAddrs.forEach(item => {
         if (addrs.indexOf(item.addr) >= 0 && item.currencyName === currencyName) {
             balance += item.balance;
@@ -437,7 +446,7 @@ export const fetchTotalAssets = () => {
     let totalAssets = 0;
     wallet.currencyRecords.forEach(item => {
         if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
-            const balance = fetchBalanceOfCurrency(item.addrs, item.currencyName);
+            const balance = fetchBalanceOfCurrency(item.currencyName);
             totalAssets += balance * find('exchangeRateJson',item.currencyName).CNY;
         }
         
@@ -722,6 +731,8 @@ export const lockScreenHash = (psw) => {
     return sha256(psw + find('salt'));
 };
 
+// ==========================================================new version tools
+
 // 获取gasPrice
 export const fetchGasPrice = (gasPriceLevel:GasPriceLevel | string) => {
     return find('gasPrice')[gasPriceLevel];
@@ -756,4 +767,44 @@ export const fetchDefaultExchangeRateJson = () => {
     }
 
     return rateJson;
+};
+
+/**
+ * 获取钱包资产列表
+ */
+export const fetchWalletAssetList = () => {
+    const wallet = find('curWallet');
+    const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
+    const assetList = [];
+    for (const k in MainChainCoin) {
+        const item:any = {};
+        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
+            item.currencyName = k;
+            item.description = MainChainCoin[k].description;
+            const balance = fetchBalanceOfCurrency(k);
+            const cny = getBorn('exchangeRateJson').get(k).CNY;
+            item.balance = formatBalance(balance);
+            item.balanceValue = formatBalanceValue(balance * cny);
+            const gain = Math.random();
+            item.gain =  gain > 0.5 ? gain.toFixed(2) : -gain.toFixed(2);
+            assetList.push(item);
+        }
+        
+    }
+
+    for (const k in ERC20Tokens) {
+        const item:any = {};
+        if (ERC20Tokens.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
+            item.currencyName = k;
+            item.description = ERC20Tokens[k].description;
+            const balance = fetchBalanceOfCurrency(k);
+            const cny = getBorn('exchangeRateJson').get(k).CNY;
+            item.balance = formatBalance(balance);
+            item.balanceValue = formatBalanceValue(balance * cny);
+            item.gain = 0.04;
+            assetList.push(item);
+        }
+    }
+
+    return assetList;
 };
