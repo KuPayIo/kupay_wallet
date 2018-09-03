@@ -29,6 +29,7 @@ export const run = (cb): void => {
     initLocalStorageStore();
     // dataCenter.init();
     popNew('app-view-base-app');
+    popNew('app-view-wallet-create-createWallet');
     // popNewPage();
     // 后台切前台
     // backToFront();

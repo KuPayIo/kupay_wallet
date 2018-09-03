@@ -20,7 +20,7 @@ export class App extends Widget {
     }
 
     public init(): void {
-        const isActive = 0;
+        const isActive = 3;
         this.old[isActive] = true;
         const loading = localStorage.getItem('level_3_page_loaded') ? false : true;
         localStorage.removeItem('level_3_page_loaded');
@@ -31,26 +31,26 @@ export class App extends Widget {
             loading,
             tabBarList: [{
                 text: '玩',
-                icon: 'wallet_icon.png',
-                iconActive: 'wallet_icon_active.png',
+                icon: 'play.png',
+                iconActive: 'play_active.png',
                 components: 'app-view-play-home-home'
             },
             {
                 text: '聊',
-                icon: 'remote_icon.png',
-                iconActive: 'remote_icon_active.png',
+                icon: 'chat.png',
+                iconActive: 'chat_active.png',
                 components: 'app-view-chat-home-home'
             },
             {
                 text: '赚',
-                icon: 'financialManagement_icon.png',
-                iconActive: 'financialManagement_icon_active.png',
+                icon: 'earn.png',
+                iconActive: 'earn_active.png',
                 components: 'app-view-earn-home-home'
             }, 
             {
                 text: '钱',
-                icon: 'mine_icon.png',  
-                iconActive: 'mine_icon_active.png',
+                icon: 'wallet.png',  
+                iconActive: 'wallet_active.png',
                 components: 'app-view-wallet-home-home'
             }]
 

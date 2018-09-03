@@ -1,0 +1,20 @@
+<div w-class="list-container">
+    {{for i,v of it.assetList}}
+    <div w-class="item">
+        <img src="../../res/image/currency/{{v.currencyName}}.png" w-class="icon"/>
+        <div w-class="right-container">
+            <div w-class="top-container">
+                <div w-class="currency-name">{{v.currencyName}}</div>
+                <div w-class="balance">{{v.balance}}</div>
+            </div>
+            <div w-class="bottom-container">
+                <div w-class="description">{{v.description}}</div>
+                <div w-class="balance-container">
+                    <div w-class="balance-value">￥{{v.balanceValue}}</div>
+                    <div w-class="gain {{v.gain > 0 ? 'gain-up' : 'gain-down'}}">{{v.gain > 0 ? '+' : ''}}{{v.gain}}%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>

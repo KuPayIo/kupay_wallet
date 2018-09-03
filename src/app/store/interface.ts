@@ -57,7 +57,6 @@ export interface Store {
     addrs: Addr[];// 地址数据
     transactions: TransactionRecord[];// 交易记录
     exchangeRateJson: Map<string, any>;// 兑换汇率列表
-    currencyList: CurrencyInfo[];// 货币信息列表
     ERC20TokenDecimals:Object;// ERC20精度
     nonceMap:Map<string,number>;// 维护本地的nonce
     gasPrice:object;// gasPrice档次(3档)
@@ -117,14 +116,6 @@ export interface CurrencyRecord {
     currentAddr: string;// current address
     addrs: string[];// address list
     updateAddr: boolean;
-}
-
-/**
- * 货币信息
- */
-export interface CurrencyInfo {
-    name: string;
-    description: string;
 }
 
 /**

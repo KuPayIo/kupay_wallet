@@ -156,9 +156,6 @@ const ERC20TokenDecimalsMain = {
 // 默认货币汇率
 export const defaultExchangeRateJson = (config.dev_mode === 'dev') ? defaultExchangeRateJsonTest : defaultExchangeRateJsonMain;
 
-// 钱包所支持的货币列表
-export const supportCurrencyList = (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain;
-
 // ERC20代币精度
 export const ERC20TokenDecimals = (config.dev_mode === 'dev') ? ERC20TokenDecimalsTest : ERC20TokenDecimalsMain;
 

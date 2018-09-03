@@ -1,0 +1,108 @@
+.body{
+    padding: 30px 20px 20px;
+}
+.top-box{
+    border-radius: 12px;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    padding: 35px 30px 30px;
+}
+.top-tip-title{
+    line-height: 50px;
+    color: #222;
+    font-size: 36px;
+}
+.top-tip-content{
+    line-height: 40px;
+    font-size: 28px;
+    color: #888;
+    margin-top: 35px;
+}
+.bottom-box{
+    border-radius: 12px;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    padding: 93px 10px 35px;
+    margin-top: 110px;
+    position: relative;
+}
+.avatar-container{
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background-color: #fff;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%,-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.default-avatar{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;;
+}
+.choose-img-mask{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+.choose-img{
+    width: 60px;
+    height: 60px;
+}
+.name-box{
+    height: 110px;
+    position: relative;
+    color: #222;
+    font-size: 32px;
+    line-height: 45px;
+    border-bottom:1px solid #dbdbe5;
+}
+.name{
+    outline: 0;
+    border: none;
+    border-bottom:1px solid #dbdbe5;
+    height: 100%;
+    width: 100%;
+    padding-right: 100px;
+    padding-left: 30px;
+    box-sizing: border-box;
+    color: #222;
+    font-size: 32px;
+    line-height: 45px;
+}
+.random{
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.input-father{
+    height: 110px;
+}
+.registered-protocol{
+    display: flex;
+    align-items: center;
+    margin-top: 130px;
+    margin-bottom: 60px;
+    padding: 0 30px;
+}
+.user-protocol{
+    cursor: pointer;
+    font-size: 28px;
+    line-height: 33px;
+    color: #1A70DD;
+    text-align: left;
+}
