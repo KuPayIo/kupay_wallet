@@ -1,12 +1,10 @@
 .bindPhone{
     height: 110px;
-    margin: 0px 30px;
     width: auto;
     display: flex;
     border-radius: 12px;
     background-color: rgba(255, 255, 255, 1);
     box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
-    margin: 0 20px;
 }
 .old-code{
     height: 110px;
@@ -22,7 +20,6 @@
 }
 .new-code-bg{
     margin-top: -110px;
-    margin-left: 20px;
     width: 160px;
     border-radius: 12px;
     background-color: rgb(255, 255, 255);
