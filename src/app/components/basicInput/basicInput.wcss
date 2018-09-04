@@ -7,7 +7,6 @@
     padding: 0 30px;
     display: flex;
     align-items: center;
-    margin: 0 20px;
 }
 .prepend{
     height: 45px;
@@ -23,4 +22,13 @@
     font-size: 32px;
     float: right;
     margin-left: 20px;
+}
+.other{
+    font-size: 28px;
+    background: #F8BC45;
+    color: #fff;
+    height: 35px;
+    line-height: 35px;
+    display: inline-block;
+    margin: 5px;
 }

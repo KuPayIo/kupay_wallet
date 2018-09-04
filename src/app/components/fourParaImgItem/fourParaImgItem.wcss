@@ -13,15 +13,17 @@
     font-size: 32px;
     margin-bottom: 10px;
     font-weight: 600;
+    display: flex;
 }
 .itemTime{
     height: 33px;
     line-height: 33px;
     color: rgba(136, 136, 136, 1);
     font-size: 24px;
+    display: flex;
 }
-.itemRight{
-    float: right;
+.itemLeft{
+    flex: 1;
 }
 .itemImg{
     width: 80px;
