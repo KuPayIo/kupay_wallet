@@ -37,7 +37,6 @@ export class Input extends Widget {
     }
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
-        
         let currentValue = '';
         if (props.input) {
             currentValue = props.input;

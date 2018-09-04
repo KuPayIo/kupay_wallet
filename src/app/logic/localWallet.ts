@@ -1,13 +1,43 @@
 /**
- * 基础操作
+ * 本地钱包相关操作
  */
 import { GlobalWallet } from '../core/globalWallet';
 import { openAndGetRandom } from '../net/pull';
 import { Addr, Wallet } from '../store/interface';
 import { find, updateStore } from '../store/store';
-import { getAvatarRandom } from './account';
-import { defalutShowCurrencys } from './constants';
-import { encrypt, getAddrsAll, openBasePage } from './tools';
+import { getAvatarRandom } from '../utils/account';
+import { defalutShowCurrencys } from '../utils/constants';
+import { encrypt, getAddrsAll, openBasePage } from '../utils/tools';
+
+/**
+ * 创建钱包
+ */
+export const createWallet = async (walletPsw:string,walletName:string,avatar:string) => {
+    const salt = find('salt');
+    const gwlt = await GlobalWallet.generate(walletPsw, walletName,salt);
+
+    // 创建钱包基础数据
+    const wallet: Wallet = {
+        walletId: gwlt.glwtId,
+        avatar: avatar,
+        gwlt: gwlt.toJSON(),
+        showCurrencys: defalutShowCurrencys,
+        currencyRecords: []
+    };
+
+    wallet.currencyRecords.push(...gwlt.currencyRecords);
+
+    const walletList: Wallet[] = find('walletList');
+    const addrs: Addr[] = find('addrs');
+    addrs.push(...gwlt.addrs);
+    updateStore('addrs', addrs);
+    walletList.push(wallet);
+    updateStore('walletList', walletList);
+    updateStore('curWallet', wallet);
+    updateStore('salt', salt);
+
+    openAndGetRandom(true);
+};
 
 /**
  * 通过助记词导入钱包
@@ -77,38 +107,4 @@ export const importWalletByMnemonic = async (mnemonic, psw, pswTips) => {
     openAndGetRandom();
 
     return true;
-};
-
-/**
- * 创建钱包
- */
-export const createWallet = async (walletPsw,walletName,walletPswTips) => {
-    const salt = find('salt');
-    const gwlt = await GlobalWallet.generate(walletPsw, walletName,salt);
-
-    // 创建钱包基础数据
-    const wallet: Wallet = {
-        walletId: gwlt.glwtId,
-        avatar: getAvatarRandom(),
-        gwlt: gwlt.toJSON(),
-        showCurrencys: defalutShowCurrencys,
-        currencyRecords: []
-    };
-
-    wallet.currencyRecords.push(...gwlt.currencyRecords);
-
-    if (walletPswTips.trim().length > 0) {
-        wallet.walletPswTips = encrypt(walletPswTips.trim());
-    }
-
-    const walletList: Wallet[] = find('walletList');
-    const addrs: Addr[] = find('addrs');
-    addrs.push(...gwlt.addrs);
-    updateStore('addrs', addrs);
-    walletList.push(wallet);
-    updateStore('walletList', walletList);
-    updateStore('curWallet', wallet);
-    updateStore('salt', salt);
-
-    openAndGetRandom(true);
 };
