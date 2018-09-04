@@ -1,7 +1,7 @@
 .item{
     height: 120px;
     line-height: 120px;
-    padding: 0 30px;
+    padding: 15px 30px;
     border-bottom: 1px solid #DBDBE5;
 }
 .itemName{
@@ -9,16 +9,17 @@
     line-height: 45px;
     color: rgba(34, 34, 34, 1);
     font-size: 32px;
-    padding-top: 15px;
     margin-bottom: 10px;
     font-weight: 600;
+    display: flex;
 }
 .itemTime{
     height: 33px;
     line-height: 33px;
     color: rgba(136, 136, 136, 1);
     font-size: 24px;
+    display: flex;
 }
-.itemRight{
-    float: right;
+.itemleft{
+    flex: 1;
 }

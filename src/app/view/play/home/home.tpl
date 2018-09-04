@@ -11,8 +11,7 @@
     <div style="font-size: 32px;margin: 50px 0;">***************头部标题*****************</div>
     
     <app-components1-topBar-topBar>{"title":"领红包","background":"orange"}</app-components1-topBar-topBar>
-    <div style="margin-top: 200px;"><app-components1-topBar-topBar>{"title":"领红包","centerTitle":true}</app-components1-topBar-topBar></div> 
-    <div style="height: 150px"></div>
+    <app-components1-topBar-topBar>{"title":"领红包","centerTitle":true}</app-components1-topBar-topBar>
 
     <div style="font-size: 32px;margin: 50px 0;">**************基础列表项*************</div>
 
@@ -87,6 +86,10 @@
 
     <div style="font-size: 32px;margin: 50px 0;">********基础样式输入框************</div>
     
-    <app-components1-basicInput-basicInput>{prepend:"红包个数",placeholder:"0",itype:"number",append:"个"}</app-components1-basicInput-basicInput>
+    <app-components-basicInput-basicInput>{prepend:"红包个数",placeholder:"0",itype:"number",append:"个",isShowPin:true}</app-components-basicInput-basicInput>
+    <app-components-basicInput-basicInput>{prepend:"红包个数",placeholder:"恭喜发财，红包拿来"}</app-components-basicInput-basicInput>
     
+    <div style="font-size: 32px;margin: 50px 0;">********带输入的模态框************</div>
+    
+    <div style="font-size: 32px;margin: 30px;" on-tap="modalBox" ev-sure="modalBoxSure">点我查看模态框</div>
 </div>

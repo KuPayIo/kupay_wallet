@@ -1,9 +1,10 @@
 /**
  * topbar头部标题栏
- * {"title":"领红包","background":"orange","centerTitle":true}
+ * {"title":"领红包","background":"orange","centerTitle":true,nextClick:false}
  * title: 标题
  * centerTitle：标题是否居中，默认否
  * background：背景色，传递色值，或者渐变色，默认白色
+ * nextClick:是否需要右侧进入下一页的按钮，默认false
  */
 // ================================ 导入
 import { notify } from '../../../pi/widget/event';
