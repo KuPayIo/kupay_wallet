@@ -85,8 +85,8 @@
         <app-components1-input-input>{placeHolder:"搜索",clearable:true}</app-components1-input-input>
     </div>
 
-    <div style="font-size: 32px;margin: 50px 0;">***********输入框**************</div>
+    <div style="font-size: 32px;margin: 50px 0;">********基础样式输入框************</div>
     
-    
+    <app-components1-basicInput-basicInput>{prepend:"红包个数",placeholder:"0",itype:"number",append:"个"}</app-components1-basicInput-basicInput>
     
 </div>

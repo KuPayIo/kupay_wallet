@@ -5,7 +5,7 @@
  * length：密码设置的最短长度，默认8
  * tips:下方提示语句
  * imit:强度限制，只限制长度传1，长度加两种数据类型传2，默认是1
- * 监听 ev-pswSuccess 事件，event.password 获取密码值
+ * 监听 ev-pswSuccess 事件，event.password 获取密码值,event.success 获取当前密码是否符合规则
  */
 // ================================ 导入
 import { Json } from '../../../pi/lang/type';
@@ -67,11 +67,13 @@ export class ImgRankItem extends Widget {
         if (limit === 1 && psw.length >= length) { // 只限制最小长度，满足条件抛出事件
             this.state.showTips = this.props.hideTips ? false :true;
             this.state.isSuccess = true;
-            notify(event.node,'ev-pswSuccess',{ password:psw });
+            notify(event.node,'ev-pswSuccess',{password:psw,success:true});
         } else if (limit === 2 && secret > 1) {  // 限制最小长度和两种数据类型，满足条件抛出事件
             this.state.showTips = this.props.hideTips ? false :true;
             this.state.isSuccess = true;
-            notify(event.node,'ev-pswSuccess',{ password:psw });
+            notify(event.node,'ev-pswSuccess',{password:psw,success:true});
+        } else {
+            notify(event.node,'ev-pswSuccess',{password:psw,success:false});
         }
         this.state.secret = secret > 3 ? 3 :secret; // 只有三种强度水平显示
         this.paint();
