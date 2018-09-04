@@ -156,6 +156,11 @@ export class App extends Widget {
                         fail: (result) => { reject(result); },
                         proxyIp: proxy.ip, proxyPort: proxy.prot, userName: '', password: ''
                     });
+                    chat.setIosProxy({
+                        success: (result) => { resolve(result); },
+                        fail: (result) => { reject(result); },
+                        proxyIp: '47.75.210.96', proxyPort: 1821, userName: '', password: '',secret:'feb7ebe6923489c73f4405c0a3927a7a'
+                    });
                 } else {
                     reject('no support');
                 }
