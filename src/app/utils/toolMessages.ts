@@ -50,7 +50,7 @@ export const showError = (result, str?) => {
         }
     }
 
-    popNew('app-components-message-message', { itype: 'error', center: true, content: str });
+    popNew('app-components-message-message', { content: str });
 };
 
 /**
@@ -68,5 +68,5 @@ export const doErrorShow = (err:Error) => {
         case 'intrinsic gas too low':showStr = 'gas过低';break;
         default: showStr = err.message || '出错啦';
     }
-    popNew('app-components-message-message', { itype: 'error', center: true, content: showStr });
+    popNew('app-components-message-message', { content: showStr });
 };

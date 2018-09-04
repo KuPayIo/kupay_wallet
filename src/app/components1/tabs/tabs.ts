@@ -30,9 +30,11 @@ export class Tabs extends Widget {
         this.paint();
         notify(event.node, 'ev-tabs-change', { value: value });
     }
+    public importSuccess() {
+        console.log('---------importSuccess');
+    }
 
     private init() {
         //
     }
-
 }

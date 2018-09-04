@@ -1736,7 +1736,7 @@ pi_modules.update.exports = (function () {
 	 */
 	module.checkUpdate = function (bootDirArray, callback) {
 		// 非本地版本，直接返回
-		var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
+		var isNative = navigator.userAgent.indexOf("YINENG_ANDROID") >= 0;
 		if (!isNative) {
 			setTimeout(function () {
 				callback(false);
