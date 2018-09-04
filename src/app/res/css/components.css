@@ -268,7 +268,7 @@ svg:not(:root), symbol, image, marker, pattern, foreignObject {
 
 .message-fade-enter {
   opacity: 0;
-  transform: translate(-50%, -100%);
+  transform: translate(-50%, 100%);
 }
 
 
