@@ -30,6 +30,7 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     popNew('app-view-wallet-create-createWallet');
+    // popNew('app-view-play-home-home');
     // popNewPage();
     // 后台切前台
     // backToFront();
