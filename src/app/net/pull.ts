@@ -69,13 +69,19 @@ export const requestLogined = async (msg: any) => {
 
 };
 
+const defaultConUser = '0x00000000000000000000000000000000000000000';
 /**
  * 开启连接并获取验证随机数
  */
-export const openAndGetRandom = async (setuserinfo?:boolean) => {
+export const openAndGetRandom = async () => {
     // console.log('setuserinfo1=================',setuserinfo);
     const wallet = find('curWallet');
-    if (!wallet) return;
+    if (!wallet) {
+        setUrl(`ws://${conIp}:2081`);
+        updateStore('conUser', defaultConUser);
+        
+        return doOpen();
+    }
     const oldUser = find('conUser');
     if (oldUser === wallet.walletId) return;
     // const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
@@ -92,30 +98,22 @@ export const openAndGetRandom = async (setuserinfo?:boolean) => {
     updateStore('conUserPublicKey', gwlt.publicKey);
     // console.log('setuserinfo2=================',setuserinfo);
 
-    return doOpen(setuserinfo);
+    return doOpen();
 
 };
 
-const doOpen = async (setuserinfo:boolean) => {
+const doOpen = async () => {
     // console.log('setuserinfo3=================',setuserinfo);
 
     return new Promise((resolve, reject) => {
         // console.log('setuserinfo4=================',setuserinfo);
         open(async (con) => {
             try {
-                await getRandom();
-                if (setuserinfo) {
-                    const curWallet = find('curWallet');
-                    // const gwlt = GlobalWallet.fromJSON(curWallet.gwlt);
-                    const gwlt = JSON.parse(curWallet.gwlt);
-                    const userInfo = {
-                        name:gwlt.nickName,
-                        avatar:curWallet.avatar
-                    }; 
-                    console.log('userInfo-------',JSON.stringify(userInfo));
-                    // tslint:disable-next-line:max-line-length
-                    // setUserInfo(JSON.stringify(userInfo)).then(res => console.log('userinfo========',res)).catch(err => console.log('userinfo=======',err));
+                const oldUser = find('conUser');
+                if (oldUser !== defaultConUser) {
+                    await getRandom();
                 }
+                
                 resolve(true);
             } catch (error) {
                 reject(false);
@@ -126,7 +124,7 @@ const doOpen = async (setuserinfo:boolean) => {
         }, async () => {
             updateStore('loginState', LoginState.init);
             try {
-                await doOpen(setuserinfo);
+                await doOpen();
                 resolve(true);
             } catch (error) {
                 reject(false);
