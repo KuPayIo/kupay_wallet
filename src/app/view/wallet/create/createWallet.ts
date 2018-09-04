@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { createWallet } from '../../../logic/localWallet';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 
 export class CreateWallet extends Widget {
@@ -16,9 +17,9 @@ export class CreateWallet extends Widget {
             walletName: '李铁柱',
             walletPsw: '',
             walletPswConfirm: '',
-            pswSame: true,
             userProtocolReaded: false,
-            walletPswAvailable:false
+            walletPswAvailable:false,
+            avatar:''
         };
     }
     public backPrePage() {
@@ -32,11 +33,15 @@ export class CreateWallet extends Widget {
         this.state.userProtocolReaded = (e.newType === 'true' ? true : false);
         this.paint();
     }
-    // 密码格式正确通知
-    public pswSuccessChange() {
-        this.state.walletPswAvailable = true;
+    public pswConfirmChange(r:any) {
+        this.state.walletPswConfirm = r.value;
     }
-    public createClick() {
+    // 密码格式正确通知
+    public pswSuccessChange(res:any) {
+        this.state.walletPswAvailable = true;
+        this.state.walletPsw = res.password;
+    }
+    public async createClick() {
         if (!this.state.userProtocolReaded) {
             return;
         }
@@ -51,8 +56,22 @@ export class CreateWallet extends Widget {
             return;
         }
         if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
+            popNew('app-components-message-message', { content: '两次输入密码不一致' });
 
             return;
         }
+
+        const close = popNew('app-components1-loading-loading', { text: '创建中...' });
+        await createWallet(this.state.walletPsw,this.state.walletName,this.state.avatar);
+        close.callback(close.widget);
+        this.ok && this.ok();
+        popNew('app-components-modalBox-modalBox',{ 
+            title:'创建成功',
+            content:'记得备份，如果忘记账户就找不回来了。',
+            sureText:'备份',
+            cancelText:'暂时不' 
+        },() => {
+            // popNew('app-view-wallet-create-createEnter');
+        });
     }
 }

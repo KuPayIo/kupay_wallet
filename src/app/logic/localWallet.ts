@@ -12,7 +12,7 @@ import { encrypt, getAddrsAll, openBasePage } from '../utils/tools';
 /**
  * 创建钱包
  */
-export const createWallet = async (walletPsw,walletName,avatar) => {
+export const createWallet = async (walletPsw:string,walletName:string,avatar:string) => {
     const salt = find('salt');
     const gwlt = await GlobalWallet.generate(walletPsw, walletName,salt);
 

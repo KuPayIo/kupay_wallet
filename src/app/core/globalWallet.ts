@@ -1,6 +1,7 @@
 /**
  * global wallet
  */
+import { ERC20Tokens } from '../config';
 import { dataCenter } from '../logic/dataCenter';
 import { Addr, CurrencyRecord } from '../store/interface';
 import { find } from '../store/store';
@@ -9,7 +10,6 @@ import { calcHashValuePromise, u8ArrayToHexstr } from '../utils/tools';
 import { getMnemonic } from '../utils/walletTools';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
-import { ERC20Tokens } from './eth/tokens';
 import { EthWallet } from './eth/wallet';
 import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';
 
@@ -113,7 +113,7 @@ export class GlobalWallet {
 
         gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
 
-        dataCenter.setHash(gwlt._glwtId, hash);
+        // dataCenter.setHash(gwlt._glwtId, hash);
 
         // dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
         // dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
@@ -201,7 +201,12 @@ export class GlobalWallet {
         gwlt._currencyRecords.push(btcGwlt.currencyRecord);
         gwlt._addrs.push(btcGwlt.addr);
 
-        const ethTokenList = Object.keys(ERC20Tokens);
+        const ethTokenList = [];
+        for (const k in ERC20Tokens) {
+            if (ERC20Tokens.hasOwnProperty(k)) {
+                ethTokenList.push(k);
+            }
+        }
         // ETH代币创建
         ethTokenList.forEach(tokenName => {
             const tokenRecord = {

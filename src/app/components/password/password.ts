@@ -53,8 +53,8 @@ export class ImgRankItem extends Widget {
         const psw = event.value;
         this.state.password = psw;       
         let secret = 0; 
-        let limit = this.props.limit?this.props.limit:1;
-        let length = this.props.length?this.props.length:8;
+        const limit = this.props.limit ? this.props.limit :1;
+        const length = this.props.length ? this.props.length :8;
         
         if (psw.length < length && psw.length > 0) {
             secret = 1; 
@@ -64,15 +64,14 @@ export class ImgRankItem extends Widget {
             secret = this.strongJudge(psw);
         }
 
-        
         if (limit === 1 && psw.length >= length) { // 只限制最小长度，满足条件抛出事件
             this.state.showTips = this.props.hideTips ? false :true;
             this.state.isSuccess = true;
-            notify(event.node,'ev-pswSuccess',{password:psw});
+            notify(event.node,'ev-pswSuccess',{ password:psw });
         } else if (limit === 2 && secret > 1) {  // 限制最小长度和两种数据类型，满足条件抛出事件
             this.state.showTips = this.props.hideTips ? false :true;
             this.state.isSuccess = true;
-            notify(event.node,'ev-pswSuccess',{password:psw});
+            notify(event.node,'ev-pswSuccess',{ password:psw });
         }
         this.state.secret = secret > 3 ? 3 :secret; // 只有三种强度水平显示
         this.paint();

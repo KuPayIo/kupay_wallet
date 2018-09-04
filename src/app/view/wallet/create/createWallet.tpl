@@ -15,7 +15,7 @@
                 <div w-class="random">随机</div>
             </div>
             <div ev-pswSuccess="pswSuccessChange"><app-components-password-password>{length:8,hideTips:true,limit:1}</app-components-password-password></div>
-            <div w-class="input-father"><app-components1-input-input>{placeHolder:"重复密码",clearable:true}</app-components1-input-input></div>
+            <div w-class="input-father" ev-input-change="pswConfirmChange"><app-components1-input-input>{itype:"password",placeHolder:"重复密码",clearable:true}</app-components1-input-input></div>
             <div w-class="registered-protocol" ev-checkbox-click="checkBoxClick">
                 <app-components1-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components1-checkbox-checkbox>
                 <span w-class="user-protocol" on-tap="agreementClick">隐私条约</span>
