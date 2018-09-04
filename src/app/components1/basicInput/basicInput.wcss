@@ -1,0 +1,26 @@
+.basicInput{
+    width: auto;
+    height: 110px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    margin: 0 20px;
+}
+.prepend{
+    height: 45px;
+    line-height: 45px;
+    color: rgba(34, 34, 34, 1);
+    font-size: 32px;
+    margin-right: 20px;
+}
+.append{
+    height: 45px;
+    line-height: 45px;
+    color: rgba(34, 34, 34, 1);
+    font-size: 32px;
+    float: right;
+    margin-left: 20px;
+}
