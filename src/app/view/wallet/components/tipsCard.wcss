@@ -1,0 +1,17 @@
+.top-box{
+    border-radius: 12px;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    padding: 35px 30px 30px;
+}
+.top-tip-title{
+    line-height: 50px;
+    color: #222;
+    font-size: 36px;
+}
+.top-tip-content{
+    line-height: 40px;
+    font-size: 28px;
+    color: #888;
+    margin-top: 35px;
+}

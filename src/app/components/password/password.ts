@@ -67,13 +67,13 @@ export class ImgRankItem extends Widget {
         if (limit === 1 && psw.length >= length) { // 只限制最小长度，满足条件抛出事件
             this.state.showTips = this.props.hideTips ? false :true;
             this.state.isSuccess = true;
-            notify(event.node,'ev-pswSuccess',{password:psw,success:true});
+            notify(event.node,'ev-psw-change',{ password:psw,success:true });
         } else if (limit === 2 && secret > 1) {  // 限制最小长度和两种数据类型，满足条件抛出事件
             this.state.showTips = this.props.hideTips ? false :true;
             this.state.isSuccess = true;
-            notify(event.node,'ev-pswSuccess',{password:psw,success:true});
+            notify(event.node,'ev-psw-change',{ password:psw,success:true });
         } else {
-            notify(event.node,'ev-pswSuccess',{password:psw,success:false});
+            notify(event.node,'ev-psw-change',{ password:psw,success:false });
         }
         this.state.secret = secret > 3 ? 3 :secret; // 只有三种强度水平显示
         this.paint();

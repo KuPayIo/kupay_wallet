@@ -10,6 +10,7 @@ declare const module;
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
+import { openAndGetRandom } from '../../net/pull';
 import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
@@ -27,9 +28,11 @@ export const run = (cb): void => {
     initStore();
     // 初始化localstorage
     initLocalStorageStore();
+    openAndGetRandom();
     // dataCenter.init();
     popNew('app-view-base-app');
-    popNew('app-view-wallet-create-createWallet');
+    // popNew('app-view-wallet-create-createWallet');
+    popNew('app-view-wallet-import-home');
     // popNew('app-view-play-home-home');
     // popNewPage();
     // 后台切前台

@@ -37,8 +37,8 @@ export class CreateWallet extends Widget {
         this.state.walletPswConfirm = r.value;
     }
     // 密码格式正确通知
-    public pswSuccessChange(res:any) {
-        this.state.walletPswAvailable = true;
+    public pswChange(res:any) {
+        this.state.walletPswAvailable = res.success;
         this.state.walletPsw = res.password;
     }
     public async createClick() {
