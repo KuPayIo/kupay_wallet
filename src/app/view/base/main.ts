@@ -32,8 +32,8 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     // popNew('app-view-wallet-create-createWallet');
-    popNew('app-view-wallet-import-home');
-    // popNew('app-view-play-home-home');
+    // popNew('app-view-wallet-import-home');
+    // popNew('app-view-earn-mining-dividendHistory');
     // popNewPage();
     // 后台切前台
     // backToFront();

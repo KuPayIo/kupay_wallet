@@ -1,5 +1,5 @@
 /**
- * 基础列表项组件
+ * 4参数带图片列表项组件
  * {"name":"拼手气红包","data":"1 ETH","time":"04-30 14:32:00","describe":"手气最好",img:"../../res/image/cloud_icon_cloud.png"}
  * img:图片路径
  * name:左侧标题

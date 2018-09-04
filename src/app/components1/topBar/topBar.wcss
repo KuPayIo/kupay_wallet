@@ -4,6 +4,10 @@
     position: relative;
     padding-top: 40px;
 }
+.outer-bottom{
+    border-bottom: 2px solid #cccccc;
+    margin-bottom: -1px;
+}
 .ga-top-banner{
     width: 100%;
     display: flex;

@@ -1,10 +1,9 @@
 /**
- * earn home 
+ * 分红说明
  */
 // ================================ 导入
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { popNew } from '../../../../pi/ui/root';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -23,10 +22,6 @@ export class PlayHome extends Widget {
 
     public backPrePage() {
         this.ok && this.ok();
-    }
-
-    public dowork(){
-        popNew('app-view-earn-mining-addMine',{});
     }
 
 }
