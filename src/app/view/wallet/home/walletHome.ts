@@ -27,7 +27,7 @@ export class WalletHome extends Widget {
                 sureText:'去登录',
                 cancelText:'暂时不' 
             },() => {
-                popNew('app-view-wallet-create-createEnter');
+                popNew('app-view-wallet-create-home');
             });
 
             return;

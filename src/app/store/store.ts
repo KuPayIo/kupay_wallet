@@ -117,7 +117,7 @@ export const initStore = () => {
 type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
- 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' ;
+ 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'avatar';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -149,6 +149,7 @@ const store = <Store>{
     conUserPublicKey: '',// 连接用户公钥
     conRandom: '',// 连接随机数
     conUid: 0,// 连接uid
+    avatar:'',// 用户头像base64
     readedPriAgr: false, // 是否阅读隐私协议
     loginState: LoginState.init,// 连接状态
     // 本地钱包

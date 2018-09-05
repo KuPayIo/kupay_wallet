@@ -5,8 +5,16 @@
         
         <div w-class="bottom-box">
             <div w-class="avatar-container" on-tap="selectImageClick">
-                <img src="../../../res/image/default_avater_big.png" w-class="default-avatar"/>
-                <div w-class="choose-img-mask"><img src="../../../res/image/choose_img.png" w-class="choose-img"/></div>
+                {{if !it1.chooseImage}}
+                <div style="background-image: url(../../../res/image/default_avater_big.png);" w-class="avatar"></div>
+                {{else}}
+                <widget w-tag="pi-ui-html" w-class="ui-html">{{it1.avatarHtml}}</widget>
+                {{end}}
+                {{if !it1.chooseImage}}
+                <div w-class="choose-img-mask">
+                    <img src="../../../res/image/choose_img.png" w-class="choose-img"/>
+                </div>
+                {{end}}
             </div>
             <div w-class="name-box" ev-input-change="walletNameChange">
                 <app-components1-input-input>{input:{{it1.walletName}}}</app-components1-input-input>

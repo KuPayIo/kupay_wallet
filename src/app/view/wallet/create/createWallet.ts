@@ -20,7 +20,9 @@ export class CreateWallet extends Widget {
             walletPswConfirm: '',
             userProtocolReaded: false,
             walletPswAvailable:false,
-            avatar:''
+            chooseImage:false,
+            avatar:'',
+            avatarHtml:''
         };
     }
     public backPrePage() {
@@ -44,8 +46,10 @@ export class CreateWallet extends Widget {
     }
     public selectImageClick() {
         selectImage((width, height, base64) => {
+            this.state.chooseImage = true;
+            this.state.avatarHtml = `<div style="background-image: url(${base64});" w-class="avatar"></div>`;
             this.state.avatar = base64;
-            console.log(base64);
+            console.log(this.state.avatarHtml);
             this.paint();
         });
     }

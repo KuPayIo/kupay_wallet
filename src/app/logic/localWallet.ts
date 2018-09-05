@@ -17,7 +17,7 @@ export const createWallet = async (walletPsw:string,walletName:string,avatar:str
     // 创建钱包基础数据
     const wallet: Wallet = {
         walletId: gwlt.glwtId,
-        avatar: avatar,
+        avatar: '',
         gwlt: gwlt.toJSON(),
         showCurrencys: defalutShowCurrencys,
         currencyRecords: []
@@ -33,6 +33,7 @@ export const createWallet = async (walletPsw:string,walletName:string,avatar:str
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
     updateStore('salt', salt);
+    updateStore('avatar',avatar);
 
     openAndGetRandom(true);
 };
