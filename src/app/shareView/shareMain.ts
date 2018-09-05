@@ -41,9 +41,9 @@ const openSocket = (): Promise<any> => {
 };
 
 const popNewPage = () => {
-    const hash = window.location.hash;
+    const download = parseUrlParams(window.location.search, 'download');
     // tslint:disable-next-line:possible-timing-attack
-    if (hash === '#download') {
+    if (download === 'download') {
         popNew('app-shareView-redEnvelope-downloadApp');
         
         return;

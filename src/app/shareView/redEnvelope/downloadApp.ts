@@ -16,7 +16,6 @@ export class DownloadApp extends Widget {
         };
     }
     public downloadClick(e:any) {
-        location.href = `${location.href}#download`;            
         popNew('app-shareView-redEnvelope-downloadTips');
     }
-}
+} 

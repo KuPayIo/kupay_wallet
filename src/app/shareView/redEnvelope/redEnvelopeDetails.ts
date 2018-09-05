@@ -97,7 +97,8 @@ export class RedEnvelopeDetails extends Widget {
     }
     
     public receiveClick() {
-        popNew('app-shareView-redEnvelope-downloadApp');
+        location.href = `${location.href}&download=download`;  
+        // popNew('app-shareView-redEnvelope-downloadApp');
     }
 
     public copyBtnClick() {
