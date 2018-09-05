@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet } from '../../../logic/localWallet';
+import { selectImage } from '../../../logic/native';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 
 export class CreateWallet extends Widget {
@@ -40,6 +41,13 @@ export class CreateWallet extends Widget {
     public pswChange(res:any) {
         this.state.walletPswAvailable = res.success;
         this.state.walletPsw = res.password;
+    }
+    public selectImageClick() {
+        selectImage((width, height, base64) => {
+            this.state.avatar = base64;
+            console.log(base64);
+            this.paint();
+        });
     }
     public async createClick() {
         if (!this.state.userProtocolReaded) {

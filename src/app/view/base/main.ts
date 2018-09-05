@@ -31,8 +31,8 @@ export const run = (cb): void => {
     openAndGetRandom();
     // dataCenter.init();
     popNew('app-view-base-app');
-    // popNew('app-view-wallet-create-createWallet');
-    popNew('app-view-wallet-import-home');
+    popNew('app-view-wallet-create-createWallet');
+    // popNew('app-view-wallet-import-home');
     // popNew('app-view-play-home-home');
     // popNewPage();
     // 后台切前台

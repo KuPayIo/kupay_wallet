@@ -4,7 +4,7 @@
         <app-view-wallet-components-tipsCard>{title:"设置账户密码",content:"系统已为您创建好账户，请设置账户密码。"}</app-view-wallet-components-tipsCard>
         
         <div w-class="bottom-box">
-            <div w-class="avatar-container">
+            <div w-class="avatar-container" on-tap="selectImageClick">
                 <img src="../../../res/image/default_avater_big.png" w-class="default-avatar"/>
                 <div w-class="choose-img-mask"><img src="../../../res/image/choose_img.png" w-class="choose-img"/></div>
             </div>
