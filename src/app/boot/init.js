@@ -224,9 +224,6 @@ pi_modules.store.exports = (function () {
 	module.ERR_DELETE = "ERR_DELETE";
 	module.ERR_ITERATE = "ERR_ITERATE";
 	module.ERR_CLEAR = "ERR_CLEAR";
-
-	module.severIp = winit.severIp
-	module.severPort = winit.severPort
 	/**
 	 * @description 判断是否支持IndexedDB
 	 * @example
@@ -470,9 +467,6 @@ pi_modules.ajax.exports = (function () {
 	 */
 	module.request = function (type /*:string*/ , url /*:string*/ , headers /*:join*/ , reqData /*:string|ArrayBuffer*/ , respType /*:string*/ , timeout /*:int*/ , callback /*:function*/ , errorCallback /*:function*/ , processCallback /*:function*/ ) {
 		var xhr = new XMLHttpRequest();
-
-		console.log("module.request = " + url);
-
 		if (respType === module.RESP_TYPE_BIN) {
 			xhr.responseType = 'arraybuffer';
 		}
@@ -719,7 +713,16 @@ pi_modules.load.exports = (function () {
 	var LimitLength = 1024 - 100;
 	// 是否为本地浏览器
 	var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
-
+	// 本地加载
+	var nativeLoad = {
+		timeout: 0,   // 超时时间
+		files: [],    // 待处理文件
+		handleCount: 0, // 正在处理的个数
+ 	};
+	// 本地加载的定时器时间
+	var nativeLoadHandleTimeout = 20;
+	// 本地加载一次性处理的文件数
+	var nativeLoadHandleNum = 50;
 
 	// 获得路径签名， "-"开头表示本地文件
 	var getSign = function (path /*:string*/ ) {
@@ -742,7 +745,7 @@ pi_modules.load.exports = (function () {
 					localSign = value;
 					localInitCheck(false);
 				} else if (isNative) {
-					// 加载标准版的.depend，但是统一叫depend
+
 					ajax.get(depend.domains[0] + depend.rootPath() + ".depend", undefined, undefined, ajax.RESP_TYPE_TEXT, 0, function (r) {
 						localSign = {};
 						var i = r.indexOf("["),
@@ -877,6 +880,47 @@ pi_modules.load.exports = (function () {
 		});
 	};
 
+	// 本地加载的处理函数
+	var nativeLoadHandler = function () {
+
+		var handleWait = function () {
+			--nativeLoad.handleCount;
+			
+			if (nativeLoad.handleCount > 0) return;
+
+			// 原有的等待已经完成
+			if (nativeLoad.files.length >= nativeLoadHandleNum) {
+				nativeLoadHandler();  // files还有很多，就直接调
+			} else if (nativeLoad.files.length > 0 && nativeLoad.timeout === 0) {
+				// 还有东西，开定时器
+				nativeLoad.timeout = setTimeout(nativeLoadHandler, nativeLoadHandleTimeout);
+			}
+		}
+
+		if (nativeLoad.handleCount > 0) {
+			throw new Error("nativeLoadHandler Logic Error");
+		}
+
+		if (nativeLoad.timeout > 0) {
+			clearTimeout(nativeLoad.timeout);
+			nativeLoad.timeout = 0;
+		}
+		
+		nativeLoad.handleCount = Math.min(nativeLoadHandleNum, nativeLoad.files.length);
+		for (var i = 0; i < nativeLoad.handleCount; ++i) {
+			var name = nativeLoad.files.pop();
+		    (function (name, okCB, errCB) {
+				ajax.get(depend.domains[0] + depend.rootPath() + name, undefined, undefined, ajax.RESP_TYPE_BIN, 0, function (data) {
+					handleWait();
+					okCB(data)
+				}, function (err) {
+					handleWait();
+					errCB(err);
+				});
+			})(name, butil.curryFirst(loadOK, name), butil.curryFirst(loadError, name));
+		}
+	}
+
 	// 本地加载
 	var localLoad = function (load /*:Load*/ , arr) {
 		var i, info, name, s, sign, files = load.files;
@@ -900,8 +944,17 @@ pi_modules.load.exports = (function () {
 				load.fileMap[name] = 0;
 				if (s === sign)
 					store.read(localStore, name, loadOK, butil.curryFirst(loadError, name));
-				else
-					ajax.get(depend.domains[0] + depend.rootPath() + name, undefined, undefined, ajax.RESP_TYPE_BIN, 0, butil.curryFirst(loadOK, name), butil.curryFirst(loadError, name));
+				else {
+					// 本地加载：因为android或ios需要拦截url做处理，所以一次不能get太多请求，必须限流
+					nativeLoad.files.push(name);
+					if (nativeLoad.handleCount === 0) {
+						if (nativeLoad.files.length >= nativeLoadHandleNum) {
+							nativeLoadHandler();
+						} else if (nativeLoad.timeout === 0) {
+							nativeLoad.timeout = setTimeout(nativeLoadHandler, nativeLoadHandleTimeout);
+						}
+					}
+				}
 			} else {
 				load.downAmount++;
 				load.fileMap[name] = null;
@@ -1479,7 +1532,7 @@ pi_modules.commonjs.exports = (function () {
 			set.push(mod); // 放置已加载和正在加载的模块
 			return;
 		}
-		info = depend.get(name + ".js");
+		info = depend.get(name + ".js") || depend.get(name + ".sjs");
 		if (!info)
 			throw new Error("mod not found, name:" + name + ", from:" + parent);
 		child = info.depend && info.depend.js ? info.depend.js : undefined;
@@ -1541,7 +1594,7 @@ pi_modules.commonjs.exports = (function () {
 		var info = mod.info;
 		loadJS({
 			mod: mod,
-			src: depend.domains[0] + depend.rootPath() + info.path + "?" + info.sign
+			src: depend.domains[0] + depend.rootPath() + info.path + "?" + info.sign + "&$forceServer=1"
 		});
 	};
 	// 用BlobURL的方式加载的模块，二进制转换字符串及编译，浏览器内核会异步处理
@@ -1637,8 +1690,8 @@ pi_modules.commonjs.exports = (function () {
 		} while (len < oldlen);
 		mods.length = len;
 		// 强行构建模块
-		// if (len > 0 && module.debug)
-		// 	console.log("cycle depend modules,", mods);
+		if (len > 0 && module.debug)
+			console.log("cycle depend modules,", mods);
 		buildForce(wait);
 	};
 	// 强行构建模块
@@ -1725,18 +1778,33 @@ pi_modules.update.exports = (function () {
 	var depend = pi_modules.depend.exports;
 
 	var dependFileData = undefined;
-	var bootDirs = undefined;
+	var bootDir = undefined;
 	var domain = undefined;
 	var rootPath = undefined;
+	var newIndexJSStr = undefined;
+	var isNative = navigator.userAgent.indexOf("YINENG_ANDROID") >= 0;
+	
+	/**
+	 * 
+	 * @param {string} bootDirectory 引导目录
+	 */
+	module.setServerInfo = function (bootDirectory) {
+		if (!isNative) return;
+		
+		bootDir = bootDirectory;
+		domain = depend.domains[0];
+		rootPath = depend.rootPath();
+
+		setResInfoServer(depend.domains, rootPath + bootDir, function () {
+		});
+	}
 
 	/**
 	 * 检查是否需要更新
 	 * @param {*} callback callback(isNeedUpdate)
-	 * @param {string[]} bootDirArray 引导目录，可能有多个
 	 */
-	module.checkUpdate = function (bootDirArray, callback) {
-		// 非本地版本，直接返回
-		var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
+	module.checkUpdate = function (callback) {
+		
 		if (!isNative) {
 			setTimeout(function () {
 				callback(false);
@@ -1744,18 +1812,12 @@ pi_modules.update.exports = (function () {
 			return;
 		}
 
-		bootDirs = bootDirArray;
-		domain = depend.domains[0];
-		rootPath = depend.rootPath();
-
-		setResInfoServer(depend.domains, bootDirs, function () {
-			// 从手机的的index.js取到老版本号
-			ajax.get(domain + rootPath + "app/boot/index.js?" + Math.random(), {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
-				var oldVersion = getIndexVersion(indexJSStr);
-				// 检查是否需要更新
-				checkNeedUpdate(oldVersion, callback);
-			}, function () {
-			});
+		// 从手机的的index.js取到老版本号
+		ajax.get(domain + rootPath + bootDir + "index.js?" + Math.random(), {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
+			var oldVersion = getIndexVersion(indexJSStr);
+			// 检查是否需要更新
+			checkNeedUpdate(oldVersion, callback);
+		}, function () {
 		});
 	}
 
@@ -1777,7 +1839,10 @@ pi_modules.update.exports = (function () {
 	function checkNeedUpdate(oldVersion, okCB, failCB) {
 
 		// 强制取服务器的index.js
-		ajax.get(domain + rootPath + "app/boot/index.js?" + Math.random() + "&$forceServer=1", {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
+		ajax.get(domain + rootPath + bootDir + "index.js?" + Math.random() + "&$forceServer=1", {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
+
+			newIndexJSStr = indexJSStr;
+
 			var newVersion = getIndexVersion(indexJSStr);
 			var newMain = newVersion[0],
 				newSub = newVersion[1];
@@ -1815,31 +1880,19 @@ pi_modules.update.exports = (function () {
 
 			var dependData = JSON.parse(str);
 
-			var dlBootCB = function (files) {
-				downloadNewFiles(dependData, function () {
-					finishUpdate(files);
-				}, finishUpdate, function () {
-					// alert("更新：下载新文件错误");
-				}, updateProcessCb);
-			}
-
-			downloadBootFiles(dependData, dlBootCB, function () {
-				// alert("更新：下载引导文件错误");
+			downloadNewFiles(dependData, function (files) {
+				saveBootFiles(files);
+				finishUpdate();
+			}, function (e) {
+				alert("更新：下载新文件错误, e = " + e.path);
 			}, updateProcessCb);
 		}, function () {
 			alert("更新：下载.depend错误");
 		});
 	}
 
-	function finishUpdate(bootFiles) {
-
-		bootFiles[".depend"] = stringToArrayBuffer(dependFileData);
-
-		for (var path in bootFiles) {
-			JSIntercept.saveFile(rootPath + path, arrayBufferToBase64(bootFiles[path]));
-		}
-
-		// 引导目录下的文件都已经保存
+	function finishUpdate() {
+		
 		setIntercept(true, function () {
 			alert("更新成功，即将进入新版本");
 
@@ -1851,33 +1904,27 @@ pi_modules.update.exports = (function () {
 		});
 	}
 
-	/**
-	 * 下载引导目录的新文件
-	 * @param {*} dependData 
-	 * @param {*} okCB 
-	 * @param {*} failCB 
-	 */
-	function downloadBootFiles(dependData, okCB, failCB, updateProcessCb) {
-		var downloads = [];
-		for (var i = 0; i < dependData.length; ++i) {
-			var info = dependData[i];
+	function saveBootFiles(files) {
+		var bootFiles = {};
+		
+		var rpath = rootPath;
+		if (rootPath.indexOf("/") === 0) {
+			rpath = rootPath.slice(1);
+		}
+		bootFiles[rpath + ".depend"] = stringToArrayBuffer(dependFileData);
+		bootFiles[rpath + bootDir + "index.js"] = stringToArrayBuffer(newIndexJSStr);
 
-			var needDownload = false;
-			for (var j = 0; j < bootDirs.length; ++j) {
-				if (info.path.indexOf(bootDirs[j]) === 0) {
-					info.__isBootFile = true;
-					needDownload = true;
-					break;
-				}
-			}
-
-			if (needDownload) {
-				downloads.push(info);
+		for (var path in files) {
+			if (path.indexOf(bootDir) === 0 && bootFiles[rpath + path] === undefined) {
+				bootFiles[rpath + path] = files[path];
 			}
 		}
 
-		var down = load.create(downloads, okCB, failCB, updateProcessCb);
-		load.start(down);
+		for (var path in bootFiles) {
+			var str = arrayBufferToBase64(bootFiles[path]);
+			console.log("JSIntercept.saveFile, path = " + path + ", size = " + str.length);
+			JSIntercept.saveFile(path, str);
+		}
 	}
 
 	/**
@@ -1893,9 +1940,11 @@ pi_modules.update.exports = (function () {
 			var info = dependData[i];
 
 			// 本地没有的才需要下载
-			// __isBootFile是在本文件打的标签
-			if (!info.__isBootFile && !load.isLocal(info.path)) {
-				downloads.push(info);
+			if (!load.isLocal(info.path) && info.size > 0) {
+				if (info.path !== bootDir + "index.js") {
+					console.log("update, downloadNewFiles: ", info);
+					downloads.push(info);
+				}
 			}
 		}
 
@@ -1913,11 +1962,11 @@ pi_modules.update.exports = (function () {
 	/**
 	 * 设置资源信息到拦截层
 	 * @param {*} domains 
-	 * @param {*} bootDirs 
+	 * @param {*} bootDir
 	 * @param {*} okCB 
 	 */
-	function setResInfoServer(domains, bootDirs, okCB) {
-		var url = domain + "/$resinfo?domains=" + JSON.stringify(domains) + "&bootdirs=" + JSON.stringify(bootDirs);
+	function setResInfoServer(domains, bootDir, okCB) {
+		var url = domain + "/$resinfo?domains=" + JSON.stringify(domains) + "&bootdir=" + bootDir;
 
 		url = encodeURI(url);
 
@@ -1992,6 +2041,8 @@ self.onerror = winit.debug ? undefined : (function () {
 			e = error;
 		} else
 			return;
+				
+		console.log(e);
 		e = JSON.stringify(e);
 		c = count(e);
 		if (c) {

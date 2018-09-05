@@ -67,6 +67,12 @@ winit.initNext = function () {
 	});
 
 
+	// 更新模块
+	var updateMod = pi_modules.update.exports;
+	updateMod.setServerInfo("app/boot/");
+
+	// alert("next.js start");
+
 	pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util"], {}, function (mods, fm) {
 		// console.log("first mods time:", Date.now() - startTime, mods, Date.now());
 		var html = mods[0],
@@ -149,15 +155,17 @@ winit.initNext = function () {
 					// tab.timeout = 90000;
 					// tab.release();
 					updatedStore('level_3_page_loaded', true);
-					var update = pi_modules.update.exports;
-					update.checkUpdate(["app/boot/"], function (needUpdate) {
+					
+					// 测试更新模块
+					updateMod.checkUpdate(function (needUpdate) {
 						if (!needUpdate) return;
 
-						// 注：必须堵住原有的界面操作，不允许任何更新
-						update.update(function (e) {
+						// 注：必须堵住原有的界面操作，不允许任何触发操作
+						
+						updateMod.update(function (e) {
 							console.log("update progress: ", e);
 						});
-					})
+					});
 				}, function (r) {
 					alert("加载目录失败, " + r.error + ":" + r.reason);
 				}, dirProcess.handler);
