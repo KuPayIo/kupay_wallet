@@ -7,7 +7,6 @@
  * describe：描述，可选
  */
 // ================================ 导入
-import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
@@ -18,7 +17,7 @@ interface Props {
 }
 // ================================ 导出
 
-export class ImgAndBtnItem extends Widget {
+export class ImgRankItem extends Widget {
     public props:Props;
     public ok: () => void;
     constructor() {
@@ -29,7 +28,4 @@ export class ImgAndBtnItem extends Widget {
         this.ok && this.ok();
     }
 
-    public doTap(event:any) {
-        notify(event.node,'ev-btn-tap',{});
-    }
 }

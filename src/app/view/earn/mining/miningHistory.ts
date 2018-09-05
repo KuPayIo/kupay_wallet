@@ -2,10 +2,10 @@
  * 分红领取记录，挖矿记录
  */
 // ================================ 导入
-import { register } from '../../../../pi/util/res_mgr';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find } from '../../../store/store';
+import { find, register } from '../../../store/store';
+import { getMiningHistory } from '../../../net/pull';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,18 +20,24 @@ export class Dividend extends Widget {
 
     public create() {
         super.create();
-        this.state = {};
+        this.state={
+            data:[],
+            more:false
+        }; 
         this.initData();
+        getMiningHistory();
     }
     
     /**
      * 获取更新数据
      */
     public async initData() {
-        // const data = find('miningHistory');  
-        const data = [{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'}];    
+        const data = find('miningHistory');  
+        // const data = [{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'}];    
         // const data=[];      
-        this.state.data = data;   
+       if(data){
+            this.state.data = data; 
+       }
         this.paint();
     }
 
@@ -73,12 +79,7 @@ export class Dividend extends Widget {
     //     } 
     // }
 }
-register('dividHistory', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.initData();
-    }
-});
+
 register('miningHistory', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {

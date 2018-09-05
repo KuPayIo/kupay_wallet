@@ -1,9 +1,6 @@
-<div class="new-page">
+<div class="new-page" ev-next-click="goHistory" ev-back-click="backPrePage">
     <div w-class="title-container">
-        <div w-class="user-container">
-            <img src="../../../res/image1/default_avatar.png" w-class="avatar"/>
-            <div w-class="total-asset">￥0.00</div>
-        </div>
+        <app-components1-topBar-topBar>{"title":"排名","background":"linear-gradient(to right,#25D8A0,#33CACC)",nextImg:"../../res/image/26_white.png"}</app-components1-topBar-topBar>
         <div w-class="nav-wrap">
             <div w-class="nav">
                 {{for i,v of it1.tabs}} {{let isActive = i===it1.activeNum}}
@@ -14,7 +11,7 @@
             </div>
         </div>
     </div>
-    {{for i,v of it1.tabs}} {{let isActive = i===it1.activeNum}}
-    <widget w-tag={{v.components}} style="visibility: {{isActive ? 'visible' : 'hidden'}}; z-index:{{isActive ? 0 : -1}}; position:absolute; width:100%;height:100%;">{isActive:{{isActive}}}</widget>
-    {{end}}
+   
+    <app-view-earn-mining-miningRank>{"fg":{{it1.activeNum}} }</app-view-earn-mining-miningRank>
+   
 </div>

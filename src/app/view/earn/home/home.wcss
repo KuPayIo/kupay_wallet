@@ -1,0 +1,106 @@
+.topBack{
+    height: 550px;
+    background:linear-gradient(to right,#318DE6,#38CFE7);
+}
+.userHead{
+    width: 40px;
+    height: 40px;
+    margin: 64px 30px 24px;
+}
+.backImg{
+    position: absolute;
+    top: 0px;
+    right: 0;
+    width: 276px;
+    height: 341px;
+    border-radius: 18px;
+}
+.groupCard{
+    margin: 30px 20px;
+    height: 480px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+}
+.titleMode{
+    display: flex;
+    align-items: center;
+    padding-top: 20px;
+    padding-left: 30px;
+}
+.makeMoney{
+    width: 70px;
+    height: 70px;
+}
+.totalTitle{
+    font-size: 24px;
+    color: rgba(136, 136, 136, 0.87);
+    flex: 1;
+    margin-left: 10px;
+}
+.miningDetail{
+    width: 40px;
+    height: 40px;
+    margin-right: 30px;
+    position: absolute;
+    right: 20px;
+}
+.totalNum{
+    height: 100px;
+    line-height: 100px;
+    color: rgba(34, 34, 34, 0.87);
+    font-size: 72px;
+    text-align: left;
+    margin-left: 40px;
+    font-weight: 600;
+}
+.otherNum{
+    font-size: 36px;
+    color: #222222;
+    font-weight: 600;
+}
+.dividLine{
+    height: 1px;
+    background-color: rgba(219, 219, 229, 1);
+    margin-top: 60px;
+}
+.rankTop{
+    width: 70px;
+    height: 70px;
+    margin-top: 5px;
+}
+.miningTitle{
+    font-size: 28px;
+    color: #222222;
+    font-weight: 600;
+    margin-left: 10px;
+}
+.rankList{
+    width: 40px;
+    height: 40px;
+    margin-right: 40px;
+    margin-left: 10px;
+}
+.menuCard{
+    margin:0 20px 65px;
+    height: 200px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+}
+.oneBtn{
+    flex: 1;
+    text-align: center;
+}
+.btnImg{
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+.btnMess{
+    font-size: 28px;
+    font-weight: 600;
+    color: #222222;
+}

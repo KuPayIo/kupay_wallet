@@ -7,7 +7,9 @@
             <app-components-fourParaItem-fourParaItem>{"name":"挖矿","data":{{val.num+' ETH'}},"time":{{val.time}} }</app-components-fourParaItem-fourParaItem>
             {{end}}
 
+            {{if it1.data.length>0 && !it1.more}}
             <div w-class="endMess">到此结束啦^_^</div>
+            {{end}}
         </div>
         
         {{if it1.data.length==0}}
@@ -17,7 +19,6 @@
         </div>
         {{end}}
         
-        {{% <div w-class="loadmore">加载中，请稍后~~~</div>}}
         <div style="height: 118px;" id="more"></div>
     </div>
 </div>

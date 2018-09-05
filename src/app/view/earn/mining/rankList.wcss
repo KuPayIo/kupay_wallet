@@ -1,8 +1,7 @@
-.title-container{
-    position: relative;
+.title-container{  
     height: 216px;
-    background-image: linear-gradient(to right,#38CFE7,#318DE6);
-    padding-top: 66px;
+    background-image: linear-gradient(to right,#25D8A0,#33CACC);
+    position: relative;
 }
 .nav-wrap{
     position: absolute;
