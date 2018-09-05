@@ -2,7 +2,7 @@
     <div w-class="ga-main">
         <img w-class="ga-logo" src="../shareImage/img_logo.png"/>
         <div w-class="ga-title">KuPay安全的一站式资产管理平台</div>
-        <div w-class="ga-download-btn">立即下载</div>
+        <a href="http://share.kupay.io/KuPay.apk" download="KuPay.apk" w-class="download"><div w-class="ga-download-btn">立即下载</div></a>
         <div w-class="ga-version">V1.0.1</div>
         <div w-class="ga-installation-tutorial">
             <div w-class="ga-install-title">Android安装教程</div>
