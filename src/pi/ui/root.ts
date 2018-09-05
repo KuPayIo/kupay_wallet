@@ -685,24 +685,24 @@ forelet.listener = (cmd: string, widget: Widget): void => {
 // 监听onresize
 window.onresize = browserAdaptive;
 // 取顶层窗口
-try {
-    const win = top.window;
-    // 注册系统返回事件
-    win.onpopstate = () => {
-        win.history.pushState({}, null);
-        if (forbidBack) {
-            return;
-        }
-        if (backList.length) {
-            backCall();
-        } else {
-            listenerList({ type: 'back' });
-        }
-    };
-    win.history.pushState({}, null);
-    // tslint:disable-next-line:no-empty
-} catch (e) {
-}
+// try {
+//     const win = top.window;
+//     // 注册系统返回事件
+//     win.onpopstate = () => {
+//         win.history.pushState({}, null);
+//         if (forbidBack) {
+//             return;
+//         }
+//         if (backList.length) {
+//             backCall();
+//         } else {
+//             listenerList({ type: 'back' });
+//         }
+//     };
+//     win.history.pushState({}, null);
+//     // tslint:disable-next-line:no-empty
+// } catch (e) {
+// }
 
 /**
  * 处理点击开始

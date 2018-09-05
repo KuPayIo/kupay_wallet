@@ -97,14 +97,7 @@ export class RedEnvelopeDetails extends Widget {
     }
     
     public receiveClick() {
-        const res = userAgent({});
-        const browserName = res.browser.name;
-        if (browserName === 'micromessenger' || browserName === 'mqqbrowser') {
-            window.history.pushState(null,null,'#download');
-            popNew('app-shareView-redEnvelope-downloadTips');
-        } else {
-            popNew('app-shareView-redEnvelope-downloadApp');
-        }
+        popNew('app-shareView-redEnvelope-downloadApp');
     }
 
     public copyBtnClick() {
