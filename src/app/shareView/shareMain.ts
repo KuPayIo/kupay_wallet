@@ -40,6 +40,13 @@ const openSocket = (): Promise<any> => {
 };
 
 const popNewPage = () => {
+    const hash = window.location.hash;
+    // tslint:disable-next-line:possible-timing-attack
+    if (hash === '#download') {
+        popNew('app-shareView-redEnvelope-downloadApp');
+        
+        return;
+    }
     const itype = parseUrlParams(window.location.search, 'type');
     let takeRedBag;
     if (itype !== RedEnvelopeType.Invite) {

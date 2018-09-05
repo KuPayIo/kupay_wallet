@@ -2,6 +2,7 @@
  * red-envelope details
  */
 import { popNew } from '../../../pi/ui/root';
+import { userAgent } from '../../../pi/util/html';
 import { Widget } from '../../../pi/widget/widget';
 import { requestAsync } from '../shareNet/pull';
 import { copyToClipboard, smallUnit2LargeUnitString, timestampFormat } from '../shareUtils/tools';
@@ -96,8 +97,14 @@ export class RedEnvelopeDetails extends Widget {
     }
     
     public receiveClick() {
-        popNew('app-shareView-redEnvelope-downloadApp');
-        this.ok && this.ok();
+        const res = userAgent({});
+        const browserName = res.browser.name;
+        if (browserName === 'micromessenger' || browserName === 'mqqbrowser') {
+            window.history.pushState(null,null,'#download');
+            popNew('app-shareView-redEnvelope-downloadTips');
+        } else {
+            popNew('app-shareView-redEnvelope-downloadApp');
+        }
     }
 
     public copyBtnClick() {
