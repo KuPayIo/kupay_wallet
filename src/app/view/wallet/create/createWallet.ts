@@ -4,9 +4,18 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet } from '../../../logic/localWallet';
+import { selectImage } from '../../../logic/native';
+import { CreateWalletType } from '../../../store/interface';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 
+interface Props {
+    itype:CreateWalletType;
+    imageBase64?:string;// 图片base64
+    imagePsw?:string;// 图片密码
+    mnemonic?:string;// 助记词
+}
 export class CreateWallet extends Widget {
+    public props:Props;
     public ok: () => void;
     public create() {
         super.create();
@@ -14,13 +23,22 @@ export class CreateWallet extends Widget {
     }
     public init() {
         this.state = {
+            itype:CreateWalletType.Random,
             walletName: '李铁柱',
             walletPsw: '',
             walletPswConfirm: '',
+            pswEqualed:false,
             userProtocolReaded: false,
             walletPswAvailable:false,
-            avatar:''
+            chooseImage:false,
+            avatar:'',
+            avatarHtml:''
         };
+    }
+
+    public setProps(props:Props,oldProps:Props) {
+        super.setProps(props,oldProps);
+        this.state.itype = props.itype;
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -35,11 +53,24 @@ export class CreateWallet extends Widget {
     }
     public pswConfirmChange(r:any) {
         this.state.walletPswConfirm = r.value;
+        this.state.pswEqualed = pswEqualed(this.state.walletPsw, this.state.walletPswConfirm);
+        this.paint();
     }
     // 密码格式正确通知
     public pswChange(res:any) {
         this.state.walletPswAvailable = res.success;
         this.state.walletPsw = res.password;
+        this.state.pswEqualed = pswEqualed(this.state.walletPsw, this.state.walletPswConfirm);
+        this.paint();
+    }
+    public selectImageClick() {
+        selectImage((width, height, base64) => {
+            this.state.chooseImage = true;
+            // tslint:disable-next-line:max-line-length
+            this.state.avatarHtml = `<div style="background-image: url(${base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+            this.state.avatar = base64;
+            this.paint();
+        });
     }
     public async createClick() {
         if (!this.state.userProtocolReaded) {
@@ -55,15 +86,23 @@ export class CreateWallet extends Widget {
 
             return;
         }
-        if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
+        if (!this.state.pswEqualed) {
             popNew('app-components-message-message', { content: '两次输入密码不一致' });
 
             return;
         }
-
-        const close = popNew('app-components1-loading-loading', { text: '创建中...' });
-        await createWallet(this.state.walletPsw,this.state.walletName,this.state.avatar);
-        close.callback(close.widget);
+        const option:any = {
+            psw:this.state.walletPsw,
+            nickName:this.state.walletName,
+            avatar:this.state.avatar
+        };
+        if (this.state.itype === CreateWalletType.Image) {
+            option.imageBase64 = this.props.imageBase64;
+            option.imagePsw = this.props.imagePsw;
+        } else if (this.state.itype === CreateWalletType.StrandarImport) {
+            option.mnemonic = this.props.mnemonic;
+        }
+        await createWallet(this.state.itype,option);
         this.ok && this.ok();
         popNew('app-components-modalBox-modalBox',{ 
             title:'创建成功',

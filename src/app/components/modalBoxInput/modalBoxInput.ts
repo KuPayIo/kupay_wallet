@@ -10,7 +10,6 @@
  * 外部监听 ev-sure，ev-forgetPsw 事件,event.value获取输入框中数据  
  */
 import { Widget } from '../../../pi/widget/widget';
-import { notify } from '../../../pi/widget/event';
 
 interface Props {
     title:string;
@@ -22,40 +21,36 @@ interface Props {
 }
 export class ModalBox extends Widget {
     public props: Props;
-    public state:{
-        currentValue:string;
-    }
-    public ok: () => void;
+    public ok: (value:string) => void;
+    public cancel: () => void;
 
     public create() {
         super.create();
-        this.state = {currentValue:""}
+        this.state = { currentValue:'' };
         this.config = { value: { group: 'top' } };
     }
     /**
      * 点击取消按钮
      */
     public cancelBtnClick(e:any) {
-        this.ok && this.ok();
+        this.cancel && this.cancel();
     }
     /**
      * 点击确认按钮
      */
     public okBtnClick(e:any) {
-        notify(e.node,'ev-sure',{value:this.state.currentValue});
-        this.ok && this.ok();
+        this.ok && this.ok(this.state.currentValue);
     }
     /**
      * 忘记密码
      */
-    public foegetPsw(e:any){
-        notify(e.node,'ev-forgetPsw',{});
-        this.ok && this.ok();        
+    public foegetPsw(e:any) {
+        // this.ok && this.ok();        
     }
     /**
      * 输入框变化
      */
-    public change(e:any){
+    public change(e:any) {
         this.state.currentValue = e.value;
         this.paint();
     }

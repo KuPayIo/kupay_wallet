@@ -15,7 +15,6 @@ export class WalletHome extends Widget {
         this.state = {
             assetList:fetchWalletAssetList()
         };
-        console.log('assetList----------',this.state.assetList);
     }
     // 添加资产
     public addAssetClick() {
@@ -27,7 +26,7 @@ export class WalletHome extends Widget {
                 sureText:'去登录',
                 cancelText:'暂时不' 
             },() => {
-                popNew('app-view-wallet-create-createEnter');
+                popNew('app-view-wallet-create-home');
             });
 
             return;

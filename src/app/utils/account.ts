@@ -42,6 +42,8 @@ export const walletPswAvailable = (walletPsw) => {
  * @param psw2 password two
  */
 export const pswEqualed = (psw1, psw2) => {
+    if (!psw1 || !psw2) return false;
+    
     return psw1.trim() === psw2.trim();
 };
 
