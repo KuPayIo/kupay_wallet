@@ -80,6 +80,15 @@ export class ImgRankItem extends Widget {
     }
 
     /**
+     * 情况输入框
+     */
+    public clear(){
+        this.state.password = '';
+        this.state.secret = 0;
+        this.paint(true);
+    }
+
+    /**
      * 判断密码强度
      * @param psw 密码
      */
