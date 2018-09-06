@@ -29,3 +29,14 @@
 .itemBtn{
     display: inline-block;
 }
+.mybtn{
+    width: 150px;
+    height: 60px;
+    line-height: 60px;
+    font-size: 28px;
+    margin: 10px;
+    border-radius: 30px;
+    background: #3294E6;
+    color: #fff;
+    text-align: center;
+}

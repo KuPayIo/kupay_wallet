@@ -1,18 +1,21 @@
-<div class="ga-new-page" style="background-image: linear-gradient(-180deg, #FFB800 0%, #FFE400 100%);overflow-y: auto;height: 100%;overflow-x: hidden; ">
+<div class="new-page" style="background: #F2F2F2;" ev-back-click="backPrePage">
     <app-components1-topBar-topBar>{"title":"做任务"}</app-components1-topBar-topBar>
 
-    <div>
-        {{for ind,val of it1.data}}
-        <div w-class="miningItem"  on-tap="goDetail( {{ind}} )">
-            <div>
-                <img src="{{val.itemImg}}" w-class="itemImg"/>
-                <span w-class="itemName">{{val.itemName}}</span>
-                <img src="{{val.isComplete?'../../../res/image/icon_right2.png':'../../../res/image/icon_right.png'}}" w-class="itemNum"/>
+    <div style="overflow-y: auto;overflow-x: hidden;height: 100%;">
+        <div w-class="content">
+            {{for ind,val of it1.data}}
+            <div on-tap="show({{ind}})" ev-imgAndBtn-tap="goDetail({{ind}})">
+                <app-components-imgAndBtnItem-imgAndBtnItem>{"name":{{val.itemName}},"describe":{{val.itemShort}},"img":{{val.itemImg}},"btnName":"做任务",isComplete:{{val.isComplete}} }</app-components-imgAndBtnItem-imgAndBtnItem>
+                {{if val.show}}
+                <div w-class="itemDetail">
+                    {{val.itemDetail}}
+                </div>
+                {{end}}
             </div>
-            <div w-class="itemDetail">
-                <widget w-tag="pi-ui-html">{{val.itemDetail}}</widget>
-            </div>
+            {{end}}
         </div>
-        {{end}}
+        
+        <div style="height: 128px;"></div>
     </div>
+    
 </div>
