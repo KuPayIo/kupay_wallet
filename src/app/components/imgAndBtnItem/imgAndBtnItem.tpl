@@ -7,7 +7,7 @@
     <div w-class="itemBtn">
         {{if it.isComplete}}
         <div w-class="mybtn">
-            <img src="../../res/image/32_gray.png" style="width: 40px;height: 40px;margin-right: 10px;vertical-align: middle;"/>
+            <img src="../../res/image/32_white.png" style="width: 40px;height: 40px;margin-right: 10px;vertical-align: middle;"/>
             <span>完成</span>
         </div>
         {{else}}

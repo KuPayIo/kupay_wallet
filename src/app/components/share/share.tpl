@@ -1,4 +1,4 @@
-<div class="ga-new-page" w-class="ga-new-page">
+<div class="new-page" w-class="ga-new-page">
     <div w-class="ga-share-top" on-tap="backPrePage"></div>
     <div w-class="ga-share-bottom">
         <div w-class="ga-share-title">选择要分享的平台</div>

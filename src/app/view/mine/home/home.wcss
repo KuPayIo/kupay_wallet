@@ -2,11 +2,12 @@
     height: 400px;
     background:linear-gradient(to right,#318DE6,#38CFE7);
     margin-right: 120px;
+    position: relative;
 }
 .userHead{
-    width: 40px;
-    height: 40px;
-    margin: 64px 30px 24px;
+    width: 120px;
+    height: 120px;
+    margin: 140px 40px 24px;
 }
 .backImg{
     position: absolute;
@@ -15,4 +16,14 @@
     width: 276px;
     height: 341px;
     border-radius: 18px;
+}
+.addFriend{
+    position: absolute;
+    top: 160px;
+    right: 10px;
+}
+.scanImg{
+    width: 80px;
+    height: 80px;
+    margin-right: 30px;
 }
