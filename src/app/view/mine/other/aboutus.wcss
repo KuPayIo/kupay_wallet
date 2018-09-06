@@ -1,0 +1,65 @@
+.aboutus-img{
+    margin-top: 204px; 
+    text-align: center;
+}
+.logoimg{
+    width: 150px;
+    height: 150px;
+    border-radius: 6px;
+}
+.aboutus-back{
+    width: 50px;
+    padding: 10px;
+}
+.ga-item{
+    display: flex;
+    padding: 2.8%;
+    margin: 2.2%;
+    align-items: center;
+    border-bottom: 1px solid #E5E5EE;
+    cursor: pointer;
+}
+.ga-item-icon{
+    width: 46px;
+    height: 46px;
+    margin-left: 1.2%;
+}
+.ga-item-text{
+    flex: 1 0 0;
+    margin-left: 2%;
+    font-size: 32px;
+    color: #203260;
+}
+.ga-item-arrow{
+    width: 28px;
+    height: 28px;
+    
+}
+.version{
+    font-size: 28px;
+    color: #8E96AB;
+    text-align: center;
+    margin-bottom: 32px;
+    margin-top: 15px;
+}
+.shortmess{
+    width: 500px;
+    height: 139px;
+    margin-left: 16.7%;
+    margin-bottom: 50px;
+    font-size: 28px;
+    color: #8E96AB;
+    text-align: center;
+}
+.content{
+    background: #fff;
+    top: 158px;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    font-size: 28px;
+    color: #666666;
+    position: absolute;
+    border-radius: 12px;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+}

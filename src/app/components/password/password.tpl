@@ -5,6 +5,8 @@
         </div>
         {{if it1.isSuccess}}
         <img src="../../res/image/icon_right2.png" w-class="successPic"/>
+        {{else}}
+        <img src="../../res/image/31.png" w-class="successPic" on-tap="clear"/>
         {{end}}
     </div>
 
