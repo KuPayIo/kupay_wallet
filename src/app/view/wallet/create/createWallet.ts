@@ -47,9 +47,9 @@ export class CreateWallet extends Widget {
     public selectImageClick() {
         selectImage((width, height, base64) => {
             this.state.chooseImage = true;
-            this.state.avatarHtml = `<div style="background-image: url(${base64});" w-class="avatar"></div>`;
+            // tslint:disable-next-line:max-line-length
+            this.state.avatarHtml = `<div style="background-image: url(${base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
             this.state.avatar = base64;
-            console.log(this.state.avatarHtml);
             this.paint();
         });
     }

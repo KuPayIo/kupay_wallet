@@ -35,7 +35,7 @@ export const createWallet = async (walletPsw:string,walletName:string,avatar:str
     updateStore('salt', salt);
     updateStore('avatar',avatar);
 
-    openAndGetRandom(true);
+    openAndGetRandom();
 };
 
 /**

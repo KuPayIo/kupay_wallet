@@ -72,8 +72,7 @@ export const requestLogined = async (msg: any) => {
 /**
  * 开启连接并获取验证随机数
  */
-export const openAndGetRandom = async (setuserinfo?:boolean) => {
-    // console.log('setuserinfo1=================',setuserinfo);
+export const openAndGetRandom = async () => {
     const wallet = find('curWallet');
     if (!wallet) return;
     const oldUser = find('conUser');
@@ -90,32 +89,17 @@ export const openAndGetRandom = async (setuserinfo?:boolean) => {
     setUrl(`ws://${conIp}:2081`);
     updateStore('conUser', wallet.walletId);
     updateStore('conUserPublicKey', gwlt.publicKey);
-    // console.log('setuserinfo2=================',setuserinfo);
 
-    return doOpen(setuserinfo);
+    return doOpen();
 
 };
 
-const doOpen = async (setuserinfo:boolean) => {
-    // console.log('setuserinfo3=================',setuserinfo);
+const doOpen = async () => {
 
     return new Promise((resolve, reject) => {
-        // console.log('setuserinfo4=================',setuserinfo);
         open(async (con) => {
             try {
                 await getRandom();
-                if (setuserinfo) {
-                    const curWallet = find('curWallet');
-                    // const gwlt = GlobalWallet.fromJSON(curWallet.gwlt);
-                    const gwlt = JSON.parse(curWallet.gwlt);
-                    const userInfo = {
-                        name:gwlt.nickName,
-                        avatar:curWallet.avatar
-                    }; 
-                    console.log('userInfo-------',JSON.stringify(userInfo));
-                    // tslint:disable-next-line:max-line-length
-                    // setUserInfo(JSON.stringify(userInfo)).then(res => console.log('userinfo========',res)).catch(err => console.log('userinfo=======',err));
-                }
                 resolve(true);
             } catch (error) {
                 reject(false);
@@ -126,7 +110,7 @@ const doOpen = async (setuserinfo:boolean) => {
         }, async () => {
             updateStore('loginState', LoginState.init);
             try {
-                await doOpen(setuserinfo);
+                await doOpen();
                 resolve(true);
             } catch (error) {
                 reject(false);

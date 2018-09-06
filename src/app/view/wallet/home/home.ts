@@ -35,7 +35,6 @@ export class Home extends Widget {
 
     public avatarChange(avatar:string) {
         this.state.avatar = avatar;
-        console.log('----------avatar change111111',avatar);
         this.paint();
     }
 }
@@ -44,7 +43,6 @@ export class Home extends Widget {
 register('avatar',(avatar:string) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        console.log('----------avatar change',avatar);
         w.avatarChange(avatar);
     }
 });
