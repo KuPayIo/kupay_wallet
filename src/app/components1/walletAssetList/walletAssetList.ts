@@ -13,7 +13,7 @@ export class WalletAssetList extends Widget {
     }
 
     public init() {
-        console.log('props--------------',this.props.assetList);
+        // console.log('props--------------',this.props.assetList);
     }
 
 }

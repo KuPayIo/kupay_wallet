@@ -15,7 +15,6 @@ export class WalletHome extends Widget {
         this.state = {
             assetList:fetchWalletAssetList()
         };
-        console.log('assetList----------',this.state.assetList);
     }
     // 添加资产
     public addAssetClick() {

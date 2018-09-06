@@ -18,6 +18,7 @@ export class CreateWallet extends Widget {
             walletName: '李铁柱',
             walletPsw: '',
             walletPswConfirm: '',
+            pswEqualed:false,
             userProtocolReaded: false,
             walletPswAvailable:false,
             chooseImage:false,
@@ -38,11 +39,15 @@ export class CreateWallet extends Widget {
     }
     public pswConfirmChange(r:any) {
         this.state.walletPswConfirm = r.value;
+        this.state.pswEqualed = pswEqualed(this.state.walletPsw, this.state.walletPswConfirm);
+        this.paint();
     }
     // 密码格式正确通知
     public pswChange(res:any) {
         this.state.walletPswAvailable = res.success;
         this.state.walletPsw = res.password;
+        this.state.pswEqualed = pswEqualed(this.state.walletPsw, this.state.walletPswConfirm);
+        this.paint();
     }
     public selectImageClick() {
         selectImage((width, height, base64) => {
@@ -67,7 +72,7 @@ export class CreateWallet extends Widget {
 
             return;
         }
-        if (!pswEqualed(this.state.walletPsw, this.state.walletPswConfirm)) {
+        if (!this.state.pswEqualed) {
             popNew('app-components-message-message', { content: '两次输入密码不一致' });
 
             return;

@@ -33,7 +33,7 @@ export const createWallet = async (walletPsw:string,walletName:string,avatar:str
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
     updateStore('salt', salt);
-    updateStore('avatar',avatar);
+    updateStore('userInfo',{ nickName:walletName,avatar });
 
     openAndGetRandom();
 };

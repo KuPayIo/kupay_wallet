@@ -32,6 +32,7 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     popNew('app-view-wallet-create-createWallet');
+    // popNew('app-view-wallet-create-createWalletByImage');
     // popNew('app-view-wallet-import-home');
     // popNew('app-view-play-home-home');
     // popNewPage();

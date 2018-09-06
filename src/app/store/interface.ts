@@ -48,7 +48,7 @@ export interface Store {
     conUserPublicKey: string;// 连接用户公钥
     conRandom: string;// 连接随机数
     conUid: number;// 连接uid
-    avatar:string;// 用户头像base64
+    userInfo:string;// 用户头像base64
     readedPriAgr: boolean;// 隐私协议阅读与否
     loginState: LoginState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
@@ -88,6 +88,13 @@ export interface Store {
     lastGetSmsCodeTime:number;
 }
 
+/**
+ * 云端用户基础数据
+ */
+export interface UserInfo {
+    nickName:string;// 昵称
+    avatar:string;// 头像
+}
 /**
  * localstorage wallet object
  */

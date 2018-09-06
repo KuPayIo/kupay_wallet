@@ -4,6 +4,7 @@
 // ==============================导入
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { UserInfo } from '../../../store/interface';
 import { register } from '../../../store/store';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -33,16 +34,16 @@ export class Home extends Widget {
         this.paint();
     }
 
-    public avatarChange(avatar:string) {
-        this.state.avatar = avatar;
+    public userInfoChange(userInfo:UserInfo) {
+        this.state.avatar = userInfo.avatar;
         this.paint();
     }
 }
 
 // ==========================本地
-register('avatar',(avatar:string) => {
+register('userInfo',(userInfo:UserInfo) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.avatarChange(avatar);
+        w.userInfoChange(userInfo);
     }
 });

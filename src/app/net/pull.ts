@@ -95,7 +95,6 @@ export const openAndGetRandom = async () => {
 };
 
 const doOpen = async () => {
-
     return new Promise((resolve, reject) => {
         open(async (con) => {
             try {
@@ -129,6 +128,8 @@ export const getRandom = async () => {
     updateStore('conUid', resp.uid);
     getCloudBalance();
     fetchGasPrices();
+    // setUserInfo(find('userInfo'));
+    // getUserInfo([find('conUid')]);
 };
 
 /**
@@ -494,8 +495,8 @@ export const getData = async (key) => {
 /**
  * 设置用户基础信息
  */
-export const setUserInfo = async (value) => {
-    const msg = { type: 'wallet/user@set_info', param: { value } };
+export const setUserInfo = async (value:any) => {
+    const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(value) } };
     
     return requestAsync(msg);
 };
@@ -506,7 +507,15 @@ export const setUserInfo = async (value) => {
 export const getUserInfo = async (uids: [number]) => {
     const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
 
-    return requestAsync(msg);
+    try {
+        const res = await requestAsync(msg);
+        console.log('------------',res);
+    } catch (err) {
+        console.log(err);
+        showError(err && (err.result || err.type));
+
+        return;
+    }
 };
 
 /**
