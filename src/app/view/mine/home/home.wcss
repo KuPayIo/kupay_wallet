@@ -1,0 +1,18 @@
+.topBack{
+    height: 400px;
+    background:linear-gradient(to right,#318DE6,#38CFE7);
+    margin-right: 120px;
+}
+.userHead{
+    width: 40px;
+    height: 40px;
+    margin: 64px 30px 24px;
+}
+.backImg{
+    position: absolute;
+    top: 0px;
+    right: 0;
+    width: 276px;
+    height: 341px;
+    border-radius: 18px;
+}

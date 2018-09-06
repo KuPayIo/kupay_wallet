@@ -1,21 +1,18 @@
 /**
- * 基础列表项组件
- * {"name":"拼手气红包","describe":"手气最好",img:"../../res/image/cloud_icon_cloud.png","btnName":"做任务","style":""}
+ * 带图片的排名项组件
+ * {"name":"拼手气红包","describe":"手气最好",img:"../../res/image/cloud_icon_cloud.png","rank":"001"}
  * img:图片路径
  * name:标题
- * btnName:按钮名字
- * style:按钮的额外CSS
+ * rank:排名
  * describe：描述，可选
  */
 // ================================ 导入
-import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
     img:string;
     name:string;
-    btnName:string;
-    style?:string;
+    rank:string;
     describe?:string;
 }
 // ================================ 导出
@@ -31,7 +28,4 @@ export class ImgRankItem extends Widget {
         this.ok && this.ok();
     }
 
-    public doTap(event:any) {
-        notify(event.node,'ev-btn-tap',{});
-    }
 }
