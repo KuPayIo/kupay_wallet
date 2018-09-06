@@ -23,7 +23,7 @@ export class Aboutus extends Widget {
         if (index === 0 && this.state.data[index].components !== '') {
             popNew(this.state.data[index].components);
         } else if (index === 1) {
-            popNew('app-components-message-message', { type: 'success', content: '已是最新版', center: true });
+            popNew('app-components-message-message', { content: '已是最新版' });
         } else {
             // TODO 分享下载
             popNew('app-components-share-share', { text: 'This is a test QRCode', shareType: ShareToPlatforms.TYPE_IMG }, (result) => {

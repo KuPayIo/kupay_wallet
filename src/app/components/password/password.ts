@@ -1,10 +1,11 @@
 /**
  * 密码输入组件
- * {length:8,hideTips:true,tips:"",limit:1}
+ * {length:8,hideTips:true,tips:"",limit:1,placeHolder:"密码"}
  * hideTips:满足条件后是否隐藏tips，默认false
  * length：密码设置的最短长度，默认8
  * tips:下方提示语句
  * imit:强度限制，只限制长度传1，长度加两种数据类型传2，默认是1
+ * placeHolder：输入框中提示文字
  * 监听 ev-pswSuccess 事件，event.password 获取密码值,event.success 获取当前密码是否符合规则
  */
 // ================================ 导入
@@ -18,6 +19,7 @@ interface Props {
     limit?:number;
     hideTips?:boolean;
     tips?:string;
+    placeHolder?:string;
 }
 export class ImgRankItem extends Widget {
     public ok: () => void;
@@ -27,6 +29,7 @@ export class ImgRankItem extends Widget {
         secret:number;
         showTips:boolean;
         isSuccess:boolean;
+        showIcon:boolean;
     };
     constructor() {
         super();
@@ -38,7 +41,8 @@ export class ImgRankItem extends Widget {
             password:'',
             secret:0,
             showTips:true,
-            isSuccess:false
+            isSuccess:false,
+            showIcon:false
         };
     }
 
@@ -51,7 +55,8 @@ export class ImgRankItem extends Widget {
      */
     public pswChange(event:any) {
         const psw = event.value;
-        this.state.password = psw;       
+        this.state.password = psw;
+        this.state.showIcon = true;       
         let secret = 0; 
         const limit = this.props.limit ? this.props.limit :1;
         const length = this.props.length ? this.props.length :8;
@@ -76,6 +81,18 @@ export class ImgRankItem extends Widget {
             notify(event.node,'ev-psw-change',{ password:psw,success:false });
         }
         this.state.secret = secret > 3 ? 3 :secret; // 只有三种强度水平显示
+        this.paint();
+    }
+
+    /**
+     * 选中输入框后图标切换
+     */
+    public iconChange(ind:number){
+        if(ind===1 && this.state.password!=''){
+            this.state.showIcon = true;
+        } else {
+            this.state.showIcon = false;
+        }
         this.paint();
     }
 

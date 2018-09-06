@@ -11,6 +11,7 @@ import { Widget } from '../../../pi/widget/widget';
 interface Props {
     name:string;
     describe?:string;
+    style?:string;
 }
 // ================================ 导出
 
