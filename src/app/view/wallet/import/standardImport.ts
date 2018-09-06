@@ -5,7 +5,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { notify } from '../../../../pi/widget/event';
 import { Widget } from '../../../../pi/widget/widget';
 import { importWalletByMnemonic } from '../../../logic/localWallet';
+import { CreateWalletType } from '../../../store/interface';
 import { pswEqualed } from '../../../utils/account';
+import { forelet,WIDGET_NAME } from './home';
 
 export class StandardImport extends Widget {
     public ok: () => void;
@@ -30,25 +32,11 @@ export class StandardImport extends Widget {
 
             return;
         }
-        popNew('app-components-modalBoxInput-modalBoxInput',{ title:'请输入密码',content:[] },(v1) => {
-            this.state.psw = v1;
-            popNew('app-components-modalBoxInput-modalBoxInput',{ title:'密码确认',content:[] },async (v2) => {
-                this.state.pswConfirm = v2;
-                if (!pswEqualed(this.state.psw, this.state.pswConfirm)) {
-                    popNew('app-components-message-message', { content: '两次输入密码不一致' });
-        
-                    return;
-                }
-                const close = popNew('app-components1-loading-loading', { text: '导入中...' });
-                try {
-                    await importWalletByMnemonic(this.state.mnemonic, this.state.psw);
-                } catch (e) {
-                    popNew('app-components-message-message', { content: '无效的助记词' });
-                } finally {
-                    close.callback(close.widget);
-                }
-                notify(e.node,'ev-import-success',{});
-            });
-        });
+        const w:any = forelet.getWidget(WIDGET_NAME);
+        if (w) {
+            w.ok && w.ok();
+        }
+        // tslint:disable-next-line:max-line-length
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.StrandarImport,mnemonic:this.state.mnemonic });
     }
 }

@@ -5,9 +5,17 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
+import { CreateWalletType } from '../../../store/interface';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 
+interface Props {
+    itype:CreateWalletType;
+    imageBase64?:string;// 图片base64
+    imagePsw?:string;// 图片密码
+    mnemonic?:string;// 助记词
+}
 export class CreateWallet extends Widget {
+    public props:Props;
     public ok: () => void;
     public create() {
         super.create();
@@ -15,6 +23,7 @@ export class CreateWallet extends Widget {
     }
     public init() {
         this.state = {
+            itype:CreateWalletType.Random,
             walletName: '李铁柱',
             walletPsw: '',
             walletPswConfirm: '',
@@ -25,6 +34,11 @@ export class CreateWallet extends Widget {
             avatar:'',
             avatarHtml:''
         };
+    }
+
+    public setProps(props:Props,oldProps:Props) {
+        super.setProps(props,oldProps);
+        this.state.itype = props.itype;
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -77,10 +91,18 @@ export class CreateWallet extends Widget {
 
             return;
         }
-
-        const close = popNew('app-components1-loading-loading', { text: '创建中...' });
-        await createWallet(this.state.walletPsw,this.state.walletName,this.state.avatar);
-        close.callback(close.widget);
+        const option:any = {
+            psw:this.state.walletPsw,
+            nickName:this.state.walletName,
+            avatar:this.state.avatar
+        };
+        if (this.state.itype === CreateWalletType.Image) {
+            option.imageBase64 = this.props.imageBase64;
+            option.imagePsw = this.props.imagePsw;
+        } else if (this.state.itype === CreateWalletType.StrandarImport) {
+            option.mnemonic = this.props.mnemonic;
+        }
+        await createWallet(this.state.itype,option);
         this.ok && this.ok();
         popNew('app-components-modalBox-modalBox',{ 
             title:'创建成功',

@@ -2,6 +2,14 @@
  * 内存中的数据结构
  */
 
+ // 创建钱包方式
+export enum CreateWalletType {
+     Random = 1,// 普通随机创建
+     Image,// 通过图片创建
+     StrandarImport,// 普通导入
+     ImageImport,// 图片导入
+     fragmentImport// 片段导入
+ }
 // 枚举登录状态
 export enum LoginState {
     init = 0,

@@ -70,7 +70,7 @@ winit.initNext = function () {
 	var updateMod = pi_modules.update.exports;
 	updateMod.setServerInfo("app/boot/");
 
-	// alert("next.js start");
+	alert("next.js start");
 
 	pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util"], {}, function (mods, fm) {
 		// console.log("first mods time:", Date.now() - startTime, mods, Date.now());
