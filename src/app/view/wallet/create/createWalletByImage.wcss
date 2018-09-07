@@ -56,3 +56,6 @@
 .input-father1{
     height: 110px;
 }
+.btn{
+    margin: 0 40px;
+}

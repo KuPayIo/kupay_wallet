@@ -13,13 +13,13 @@ import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
     title:string;
-    content?:string[];
+    content:string[];
     sureText?:string;
     cancelText?:string;
     placeholder?:boolean;
     itype?:string;
 }
-export class ModalBox extends Widget {
+export class ModalBoxInput extends Widget {
     public props: Props;
     public ok: (value:string) => void;
     public cancel: () => void;

@@ -3,7 +3,7 @@
         <div w-class="total-asset">总资产：￥0.00</div>
         <img src="../../../res/image1/add.png" w-class="add-asset" on-tap="addAssetClick"/>
     </div>
-    <div w-class="asset-list">
+    <div w-class="asset-list" ev-item-click="itemClick">
         <app-components1-walletAssetList-walletAssetList>{ assetList:{{it1.assetList}} }</app-components1-walletAssetList-walletAssetList>
     </div>
 </div>

@@ -70,6 +70,30 @@ export const requestLogined = async (msg: any) => {
 };
 
 /**
+ * 登录
+ * @param passwd 密码
+ */
+export const login = async (passwd:string) => {
+    if (find('loginState') === LoginState.logined) return;
+    const close = popNew('app-components1-loading-loading', { text: '登录中...' });
+    const wallet = find('curWallet');
+    const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
+    const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
+    const wlt = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
+    const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
+    const msgLogin = { type: 'login', param: { sign: signStr } };
+    updateStore('loginState', LoginState.logining);
+    const res: any = await requestAsync(msgLogin);
+    close.callback(close.widget);
+    if (res.result === 1) {
+        updateStore('loginState', LoginState.logined);
+        popNew('app-components-message-message',{ content:'登录成功' });
+    } else {
+        updateStore('loginState', LoginState.logerror);
+    }
+};
+
+/**
  * 开启连接并获取验证随机数
  */
 export const openAndGetRandom = async () => {
@@ -128,8 +152,7 @@ export const getRandom = async () => {
     updateStore('conUid', resp.uid);
     getCloudBalance();
     fetchGasPrices();
-    // setUserInfo(find('userInfo'));
-    // getUserInfo([find('conUid')]);
+    getUserInfo([resp.uid]);
 };
 
 /**
@@ -495,8 +518,9 @@ export const getData = async (key) => {
 /**
  * 设置用户基础信息
  */
-export const setUserInfo = async (value:any) => {
-    const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(value) } };
+export const setUserInfo = async () => {
+    const userInfo = find('userInfo');
+    const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
     return requestAsync(msg);
 };

@@ -808,3 +808,22 @@ export const fetchWalletAssetList = () => {
 
     return assetList;
 };
+
+/**
+ * 没有创建钱包时
+ */
+export const hasNoWallet = () => {
+    const wallet = find('curWallet');
+    if (!wallet) {
+        popNew('app-components-modalBox-modalBox',{ 
+            title:'提示',
+            content:'你还没有登录，去登录使用更多功能吧',
+            sureText:'去登录',
+            cancelText:'暂时不' 
+        },() => {
+            popNew('app-view-wallet-create-home');
+        });
+
+        return;
+    }
+};

@@ -2,11 +2,10 @@
  * setting
  */
 // =============================================导入
-import { Widget } from '../../../../pi/widget/widget';
-import { register, find, updateStore } from '../../../store/store';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
 import { LockScreen } from '../../../store/interface';
-import { popNew } from '../../../../pi/ui/root';
+import { find, register, updateStore } from '../../../store/store';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,7 +17,7 @@ export class Setting extends Widget {
         super();
     }
 
-    public create(){
+    public create() {
         const ls = find('lockScreen');
         this.state = {
             lockScreenPsw:ls.psw,
