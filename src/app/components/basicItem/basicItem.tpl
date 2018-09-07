@@ -1,4 +1,4 @@
-<div w-class="item">
+<div w-class="item" style="{{it.style?it.style:''}}">
     <span w-class="itemName">{{it.name}}</span>
     {{if it.describe && it.describe!=""}}
     <span w-class="itemDesc">{{it.describe}}</span>

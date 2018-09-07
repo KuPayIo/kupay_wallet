@@ -6,9 +6,10 @@
 
 // =================================================导入
 import { popNew } from '../../../pi/ui/root';
-import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
-import { regPhone } from '../../net/pull';
+import { sendCode } from '../../net/pull';
+import { notify } from '../../../pi/widget/event';
+import { updateStore, find } from '../../store/store';
 // =================================================导出
 export class BindPhone extends Widget {
     public ok: () => void;
@@ -26,11 +27,11 @@ export class BindPhone extends Widget {
             limitTime: 60,
             phoneReg: /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/
         };
-        // const t = find('lastGetSmsCodeTime');
-        // if (t) {
-        //     const now = new Date().getTime();
-        //     this.state.countdown = this.state.limitTime - Math.ceil((now - t) / 1000);
-        // }
+        const t = find('lastGetSmsCodeTime');
+        if (t) {
+            const now = new Date().getTime();
+            this.state.countdown = this.state.limitTime - Math.ceil((now - t) / 1000);
+        }
         this.openTimer();
     }
     public backClick() {
@@ -45,26 +46,11 @@ export class BindPhone extends Widget {
 
             return;
         }
-        notify(event.node,'ev-getCode',{ phone:this.state.phone });
+        await sendCode(this.state.phone, this.state.oldCode);
+        updateStore('lastGetSmsCodeTime', new Date().getTime());
+        notify('ev-getCode',{value:this.state.phone});
         this.state.countdown = this.state.limitTime;
         this.paint();
-    }
-    /**
-     * 点击确认
-     */
-    public async doSure() {
-        if (!this.state.phone || !(this.state.phoneReg.test(this.state.phone))) {
-            popNew('app-components-message-message', { itype: 'warn', center: true, content: `请输入正确的手机号` });
-
-            return;
-        }
-        if (!this.state.code) {
-            popNew('app-components-message-message', { itype: 'warn', center: true, content: `请输入正确的验证码` });
-
-            return;
-        }
-        await regPhone(this.state.phone, this.state.code);
-        this.ok();
     }
     /**
      * 显示新的区号

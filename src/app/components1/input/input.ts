@@ -1,6 +1,6 @@
 /**
  * 输入框的逻辑处理
- * {input:"",placehold:"",disabled:false,clearable:false,itype:"text",style:"",autofacus:false}
+ * {input:"",placehold:"",disabled:false,clearable:false,itype:"text",style:"",autofacus:false,maxLength:1}
  * input?: 初始内容
  * placeHolder?: 提示文字
  * disabled?: 是否禁用
@@ -8,6 +8,7 @@
  * itype?: 输入框类型 text number password
  * style?: 样式
  * autofocus?: 是否自动获取焦点
+ * maxLength?: 输入最大长度，仅对text和password类型输入有效
  * 外部可监听 ev-input-change，ev-input-blur，ev-input-focus，ev-input-clear事件
  */
 import { notify } from '../../../pi/widget/event';
@@ -22,6 +23,7 @@ interface Props {
     itype?:string;
     style?:string;
     autofocus?:boolean;
+    maxLength?:number;
 }
 
 interface State {
@@ -62,11 +64,13 @@ export class Input extends Widget {
     }
     public blur(event:any) {
         this.state.focused = false;
+        this.state.showClear = false;
         notify(event.node,'ev-input-blur',{});
         this.paint();
     }
     public focus(event:any) {
         this.state.focused = true;
+        this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
         notify(event.node,'ev-input-focus',{});
         this.paint();
     }

@@ -34,7 +34,9 @@ export const run = (cb): void => {
     popNew('app-view-wallet-create-createWallet');
     // popNew('app-view-wallet-create-createWalletByImage');
     // popNew('app-view-wallet-import-home');
-    // popNew('app-view-play-home-home');
+    // popNew('app-view-earn-mining-rankList');
+    // popNew('app-view-mine-other-privacypolicy');
+    popNew('app-view-mine-setting-itemList');
     // popNewPage();
     // 后台切前台
     // backToFront();
