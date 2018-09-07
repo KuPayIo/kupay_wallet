@@ -1,0 +1,14 @@
+.itemGroup{
+    margin: 30px 20px;
+}
+.item{
+    height: 110px;
+    border-radius: 12px;
+    background: #fff;
+    font-size: 28px;
+    font-weight: 600;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
