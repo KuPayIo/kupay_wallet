@@ -1,5 +1,7 @@
 .content{
-    margin: 30px 20px;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .userHead{
     height: 150px;
@@ -8,7 +10,7 @@
     box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
-    margin-bottom: 30px;
+    margin: 30px 20px;
 }
 .headImg{
     width: 120px;
@@ -20,4 +22,24 @@
     font-size: 32px;
     color: #222222;
     flex: 1;
+}
+.mode{
+    border-radius: 12px;
+    background: #ffffff;
+    margin: 0 20px 30px;
+}
+.item{
+    height: 120px;
+    line-height: 120px;
+    margin: 0 20px;
+    border-bottom: 1px solid #DBDBE5;
+    display: flex;
+    align-items: center;
+}
+.itemName{ 
+    flex-grow: 1;
+    color: #222222;
+    font-size: 28px;
+    margin-left: 30px;
+    font-weight: 600;
 }

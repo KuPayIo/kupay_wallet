@@ -1,12 +1,12 @@
 <div>
-    <div w-class="pswInput" ev-input-change="pswChange">
+    <div w-class="pswInput" ev-input-change="pswChange" ev-input-focus="iconChange(1)" ev-input-blur="iconChange(2)">
         <div style="flex: 1">
-            <app-components1-input-input>{itype:"password",placeHolder:"密码"}</app-components1-input-input>
+            <app-components1-input-input>{itype:"password",placeHolder:{{it.placeHolder?it.placeHolder:'密码'}} }</app-components1-input-input>
         </div>
         {{if it1.isSuccess}}
         <img src="../../res/image/icon_right2.png" w-class="successPic"/>
-        {{else}}
-        <img src="../../res/image/31.png" w-class="successPic" on-tap="clear"/>
+        {{elseif it1.showIcon}}
+        <img src="../../res/image/btn_img_close.png" w-class="successPic" on-tap="clear"/>
         {{end}}
     </div>
 

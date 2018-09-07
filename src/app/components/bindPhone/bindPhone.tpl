@@ -4,7 +4,7 @@
             <span>+{{it1.oldCode}}</span>
             <img src="../../res/image/15.png" style="width: 40px;height:40px;margin-left: 10px;"/>
         </div>
-        <div w-class="phoneInput"><app-components1-input-input>{placeHolder:"请填入手机号",itype:"number"}</app-components1-input-input></div>
+        <div w-class="phoneInput"><app-components1-input-input>{placeHolder:"手机号",itype:"number"}</app-components1-input-input></div>
         {{if it1.countdown>0}}
         <div w-class="text-code">{{it1.countdown}}秒</div>
         {{else}}
