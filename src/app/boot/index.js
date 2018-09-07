@@ -1,4 +1,5 @@
-//!version=2.1
+//!version=1.1
+
 
 'use strict';
 document.body.style.backgroundColor="#2F2F2F";

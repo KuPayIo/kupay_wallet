@@ -6,7 +6,7 @@
         </div>
         {{end}}
     </div>
-    <div w-class="components">
+    <div w-class="components" ev-import-success="importSuccess">
     {{for i,v of it.list}} {{let isActive = i===it.activeNum}}
     <widget w-tag={{v.components}} style="visibility: {{isActive ? 'visible' : 'hidden'}}; z-index:{{isActive ? 0 : -1}}; position:absolute; width:100%;height:100%;">{isActive:{{isActive}}}</widget>
     {{end}}

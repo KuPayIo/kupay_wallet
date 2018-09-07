@@ -4,7 +4,9 @@
 // ================================ 导入
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { register } from '../../store/store';
+import { setUserInfo } from '../../net/pull';
+import { UserInfo } from '../../store/interface';
+import { find, register } from '../../store/store';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -84,4 +86,13 @@ register('level_3_page_loaded',(loaded:boolean) => {
     } else { // 处理导航页过程中资源已经加载完毕
         localStorage.setItem('level_3_page_loaded','1');
     }
+});
+
+// 头像变化
+register('userInfo',(userInfo:UserInfo) => {
+    const conRandom = find('conRandom');
+    if (conRandom) {
+        setUserInfo(userInfo);
+    }
+   
 });

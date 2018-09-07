@@ -31,7 +31,8 @@ export const run = (cb): void => {
     openAndGetRandom();
     // dataCenter.init();
     popNew('app-view-base-app');
-    // popNew('app-view-wallet-create-createWallet');
+    popNew('app-view-wallet-create-createWallet');
+    // popNew('app-view-wallet-create-createWalletByImage');
     // popNew('app-view-wallet-import-home');
     // popNew('app-view-earn-mining-rankList');
     // popNew('app-view-mine-other-privacypolicy');
