@@ -8,7 +8,7 @@ export enum CreateWalletType {
      Image,// 通过图片创建
      StrandarImport,// 普通导入
      ImageImport,// 图片导入
-     fragmentImport// 片段导入
+     FragmentImport// 片段导入
  }
 // 枚举登录状态
 export enum LoginState {

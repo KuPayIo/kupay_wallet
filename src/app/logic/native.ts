@@ -1,4 +1,5 @@
 import { ImagePicker } from '../../pi/browser/imagePicker';
+import { QRCode } from '../../pi/browser/qrcode';
 import { popNew } from '../../pi/ui/root';
 
 /**
@@ -23,5 +24,28 @@ export const selectImage = (ok?,cancel?) => {
         useCamera: 1,
         single: 1,
         max: 1
+    });
+};
+
+/**
+ * 二维码扫描
+ */
+export const doScanQrCode = (ok?,cancel?) => {
+    const qrcode = new QRCode();
+    qrcode.init();
+    qrcode.scan({
+        success: (res) => {
+            ok && ok(res);
+            console.log('scan-------------',res);
+        },
+        fail: (r) => {
+            cancel && cancel();
+            console.log(`scan fail:${r}`);
+        }
+    });
+    qrcode.close({
+        success: (r) => {
+            console.log(`close result:${r}`);
+        }
     });
 };

@@ -13,6 +13,8 @@ interface Props {
     imageBase64?:string;// 图片base64
     imagePsw?:string;// 图片密码
     mnemonic?:string;// 助记词
+    fragment1?:string;// 片段1
+    fragment2?:string;// 片段2
 }
 export class CreateWallet extends Widget {
     public props:Props;
@@ -101,6 +103,12 @@ export class CreateWallet extends Widget {
             option.imagePsw = this.props.imagePsw;
         } else if (this.state.itype === CreateWalletType.StrandarImport) {
             option.mnemonic = this.props.mnemonic;
+        } else if (this.state.itype === CreateWalletType.ImageImport) {
+            option.imageBase64 = this.props.imageBase64;
+            option.imagePsw = this.props.imagePsw;
+        } else if (this.state.itype === CreateWalletType.FragmentImport) {
+            option.fragment1 = this.props.fragment1;
+            option.fragment2 = this.props.fragment2;
         }
         await createWallet(this.state.itype,option);
         this.ok && this.ok();
