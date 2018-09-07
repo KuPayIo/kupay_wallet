@@ -14,10 +14,8 @@ import { getRealNode } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
-    available:boolean;// 输入的内容是否可用,false 后缀显示叉 true显示勾
     input?:string;
     placeHolder?:string;
-    clearable?:boolean;
     itype?:string;
     style?:string;
     autofocus?:boolean;
@@ -28,7 +26,7 @@ interface State {
     focused:boolean;
     showClear:boolean;
 }
-export class SuffixInput extends Widget {
+export class Input extends Widget {
     public props: Props;
     public state: State;
     constructor() {
@@ -51,8 +49,6 @@ export class SuffixInput extends Widget {
     public change(event:any) {
         const currentValue = event.currentTarget.value;
         this.state.currentValue = currentValue;
-        this.state.showClear = this.props.clearable && this.state.currentValue !== '' && this.state.focused;
-        
         notify(event.node,'ev-input-change',{ value:this.state.currentValue });
         this.changeInputValue();
         this.paint();
@@ -68,16 +64,6 @@ export class SuffixInput extends Widget {
         this.paint();
     }
     
-    // 清空文本框
-    public clearClickListener(event:any) {
-        if (this.props.available) return;
-        this.state.currentValue = '';
-        this.state.showClear = false;
-        notify(event.node,'ev-input-clear',{});
-        this.changeInputValue();
-        this.paint();
-    }
-
     // 设置input value
     public changeInputValue() {
         const child = (<any>this.tree).children[0];
