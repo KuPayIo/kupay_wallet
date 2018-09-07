@@ -4,7 +4,7 @@
     line-height: 100px;
     font-size: 32px;
     width: auto;
-    margin: 10px 60px;
+    margin: 10px 0;
     border-radius: 100px;
     background: #fff;
     color:#fff;

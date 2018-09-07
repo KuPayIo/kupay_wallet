@@ -2,11 +2,8 @@
  * standard import bu Mnemonic
  */
 import { popNew } from '../../../../pi/ui/root';
-import { notify } from '../../../../pi/widget/event';
 import { Widget } from '../../../../pi/widget/widget';
-import { importWalletByMnemonic } from '../../../logic/localWallet';
 import { CreateWalletType } from '../../../store/interface';
-import { pswEqualed } from '../../../utils/account';
 import { forelet,WIDGET_NAME } from './home';
 
 export class StandardImport extends Widget {

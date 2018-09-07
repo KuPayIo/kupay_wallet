@@ -2,15 +2,17 @@
  * 本地钱包相关操作
  */
 import { popNew } from '../../pi/ui/root';
+import { base64ToArrayBuffer } from '../../pi/util/base64';
 import { drawImg } from '../../pi/util/canvas';
-import { generateByHash, sha3 } from '../core/genmnemonic';
+import { generateByHash, sha3, toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { openAndGetRandom } from '../net/pull';
 import { Addr, CreateWalletType, Wallet } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { ahash } from '../utils/ahash';
-import { defalutShowCurrencys } from '../utils/constants';
-import { calcHashValuePromise, getXOR } from '../utils/tools';
+import { defalutShowCurrencys, lang } from '../utils/constants';
+import { restoreSecret } from '../utils/secretsBase';
+import { calcHashValuePromise, getXOR, hexstrToU8Array, u8ArrayToHexstr } from '../utils/tools';
 
 /**
  * 创建钱包
@@ -29,6 +31,14 @@ export const createWallet = async (itype:CreateWalletType,option:any) => {
     } else if (itype === CreateWalletType.StrandarImport) {
         const close = popNew('app-components1-loading-loading', { text: '导入中...' });
         await importWalletByMnemonic(option);
+        close.callback(close.widget);
+    } else if (itype === CreateWalletType.ImageImport) {
+        const close = popNew('app-components1-loading-loading', { text: '导入中...' });
+        await createWalletByImage(option);
+        close.callback(close.widget);
+    } else if (itype === CreateWalletType.FragmentImport) {
+        const close = popNew('app-components1-loading-loading', { text: '导入中...' });
+        await importWalletByFragment(option);
         close.callback(close.widget);
     }
    
@@ -170,4 +180,15 @@ export const importWalletByMnemonic = async (option) => {
     openAndGetRandom();
 
     return true;
+};
+
+/**
+ * 冗余助记词导入
+ */
+export const importWalletByFragment = async (option) => {
+    const shares = [option.fragment1, option.fragment2].map(v => u8ArrayToHexstr(new Uint8Array(base64ToArrayBuffer(v))));
+    const comb = restoreSecret(shares);
+    const mnemonic = toMnemonic(lang, hexstrToU8Array(comb));
+    option.mnemonic = mnemonic;
+    await importWalletByMnemonic(option);
 };
