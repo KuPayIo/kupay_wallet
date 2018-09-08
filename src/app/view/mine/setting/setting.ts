@@ -7,6 +7,8 @@ import { register, find, updateStore } from '../../../store/store';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { LockScreen } from '../../../store/interface';
 import { popNew } from '../../../../pi/ui/root';
+import { VerifyIdentidy } from '../../../utils/walletTools';
+import { lockScreenVerify } from '../../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -72,26 +74,100 @@ export class Setting extends Widget {
         return true;
     }
     /**
-     * 处理滑块改变
+     * 处理锁屏开关切换
      */
     public onSwitchChange() {
         this.judgeWallet();
+        if(this.state.openLockScreen){   // 如果锁屏开关打开则直接关闭
+            const ls = find('lockScreen');
+            ls.open = !this.state.openLockScreen;
+            updateStore('lockScreen',ls);
+        }else{
+            popNew('app-components-keyBoard-keyBoard',{title:'设置锁屏密码'},(r)=>{
+                console.error(r);
+                this.state.lockScreenPsw = r;
+                this.reSetLockPsw()
+                
+            },()=>{
+                this.closeLockPsw();
+                return false;
+            });
+        }
         this.state.openLockScreen = !this.state.openLockScreen;
-        const ls = find('lockScreen');
-        ls.open = this.state.openLockScreen;
-        updateStore('lockScreen',ls);
         this.paint();
     }
 
     /**
-     * 更新锁屏密码
+     * 关闭锁屏开关
      */
-    public updateLockScreen(ls:LockScreen) {
-        this.state.lockScreenPsw = ls.psw;
-        this.state.openLockScreen = ls.open;
+    public closeLockPsw(){
+        this.state.openLockScreen = false;
+        this.state.lockScreenPsw = '';
         this.paint();
     }
 
+
+    /**
+     * 重复锁屏密码
+     */
+    public reSetLockPsw(){
+        popNew('app-components-keyBoard-keyBoard',{title:'重复锁屏密码'},(r)=>{
+            console.error(r);
+            if(this.state.lockScreenPsw!==r){
+                popNew('app-components-message-message',{content:'密码不一致'});
+                this.reSetLockPsw();
+            }else{
+                updateStore('lockScreen',{psw:this.state.lockScreenPsw,open:this.state.openLockScreen});
+            }
+        },()=>{
+            this.closeLockPsw();
+        })
+    }
+
+    /**
+     * 输入原锁屏密码
+     */
+    public oldLockPsw(ind:number){
+        if(ind>2){
+            popNew('app-components-modalBoxInput-modalBoxInput',{title:"重置锁屏",content:["错误次数过多，已被锁定，请验证当前钱包密码后重置。"],placeholder:'输入密码'},(r)=>{
+                const wallet = find('curWallet');
+                const fg=VerifyIdentidy(wallet,r);
+                // const fg = true;
+                if(fg){
+                    popNew('app-components-keyBoard-keyBoard',{title:'设置锁屏密码'},(r)=>{
+                        console.error(r);
+                        this.state.lockScreenPsw = r;
+                        this.reSetLockPsw()
+                        
+                    },()=>{
+                        this.closeLockPsw();
+                        return false;
+                    });
+                }else{
+
+                }
+            })
+        }else{
+            popNew('app-components-keyBoard-keyBoard',{title:this.state.errorTips[ind]},(r)=>{
+                if(lockScreenVerify(r)){
+                    popNew('app-components-keyBoard-keyBoard',{title:'设置锁屏密码'},(r)=>{
+                        console.error(r);
+                        this.state.lockScreenPsw = r;
+                        this.reSetLockPsw()
+                        
+                    },()=>{
+                        this.closeLockPsw();
+                        return false;
+                    });
+                }else{
+                    this.oldLockPsw(++ind);
+                }
+            });
+        }
+        
+    }
+
+    
     /**
      * 点击切换基础属性
      */
@@ -145,9 +221,3 @@ export class Setting extends Widget {
         });
     }
 }
-register('lockScreen',(ls:LockScreen) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateLockScreen(ls);
-    }
-});

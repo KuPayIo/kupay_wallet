@@ -41,11 +41,8 @@
                     <app-components-switch-switch>{types:{{it1.openLockScreen}} }</app-components-switch-switch>
                 </div>
                 {{if it1.openLockScreen}}
-                <div w-class="item" on-tap="">
+                <div w-class="item" on-tap="oldLockPsw(0)">
                     <span w-class="itemName">修改锁屏密码</span>
-                </div>
-                <div w-class="item" style="border-bottom: none;">
-                    <span w-class="itemName">忘记密码？</span>
                 </div>
                 {{end}}
             </div>

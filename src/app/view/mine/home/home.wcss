@@ -4,6 +4,7 @@
     animation: switchWalletPageIn ease-in-out .2s forwards;
     margin-bottom: 110px;
     overflow: hidden;
+    background: #2225;        
 }
 .mineHide{
     animation: switchWalletPageOut ease-in-out .2s forwards;
@@ -37,15 +38,14 @@
     margin-right: 30px;
 }
 .left{
-    width: 630px;
-    opacity: 1;
-    animation: switchWalletIn ease-in-out .3s forwards;
+    flex: 1;
+    animation: switchWalletIn ease-in-out .2s forwards;
 }
 .leftHide{
-    animation: switchWalletOut ease-in-out .3s forwards;
+    animation: switchWalletOut ease-in-out .2s forwards;
 }
 .right{
-    flex: 1 0 0;
+    width: 120px;
 }
 .leftContent{
     background: #fff;

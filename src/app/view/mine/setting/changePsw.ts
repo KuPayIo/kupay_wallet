@@ -2,11 +2,11 @@
  * changePSW
  */
 // =============================================导入
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { GlobalWallet } from '../../../core/globalWallet';
 import { find, updateStore } from '../../../store/store';
 import { pswEqualed, walletPswAvailable } from '../../../utils/account';
-import { popNew } from '../../../../pi/ui/root';
-import { GlobalWallet } from '../../../core/globalWallet';
 // ================================================导出
 export class ChangePSW extends Widget {
     public ok: () => void;
@@ -15,12 +15,12 @@ export class ChangePSW extends Widget {
     }
 
     public create() {
-        super.create()
-        this.state={
+        super.create();
+        this.state = {
             oldPassword:'',
             newPassword:'',
             rePassword:''
-        }
+        };
     }
 
     public backPrePage() {

@@ -1,11 +1,11 @@
 /**
  * wallet home 
  */
-import { Widget } from '../../../../pi/widget/widget';
 import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
 
 export class Home extends Widget {
-    public ok:()=>void;
+    public ok:() => void;
     public create() {
         super.create();
         this.init();
@@ -27,7 +27,7 @@ export class Home extends Widget {
         this.paint();
     }
 
-    public goHistory(){
+    public goHistory() {
         popNew('app-view-earn-mining-miningHistory');
     }
 

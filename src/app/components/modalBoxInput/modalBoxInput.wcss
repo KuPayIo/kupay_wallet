@@ -22,7 +22,6 @@
     line-height: 56px;
     font-size: 40px;
     color: #222;
-    font-weight: 600;
 }
 .content{
     line-height: 45px;

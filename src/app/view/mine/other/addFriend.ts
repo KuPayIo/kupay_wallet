@@ -1,23 +1,23 @@
 /**
  * 添加好友
  */
-import { Widget } from '../../../../pi/widget/widget';
 import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
 import { find } from '../../../store/store';
-import { getFirstEthAddr, copyToClipboard } from '../../../utils/tools';
+import { copyToClipboard, getFirstEthAddr } from '../../../utils/tools';
 
 export class AddFriend extends Widget {
-    public ok:()=>void;
+    public ok:() => void;
     public create() {
         super.create();
-        this.state={
+        this.state = {
             userName:'用户名',
             userHead:'../../../res/image/default_avater_big.png',
             address:'FGGF1512151512sd78d4s51d8d44s51d8d4fd0260hg'
-        }
+        };
     }
 
-    public initData(){
+    public initData() {
         const wallet = find('curWallet');
         const addr = getFirstEthAddr();        
         if (wallet) {
@@ -31,7 +31,7 @@ export class AddFriend extends Widget {
     /**
      * 分享二维码
      */
-    public share(){
+    public share() {
         popNew('app-components-share-share');
     }
 
@@ -39,11 +39,11 @@ export class AddFriend extends Widget {
         this.ok && this.ok();
     } 
 
-     /**
+    /**
      * 复制地址
      */
-    public copyAddr(){
+    public copyAddr() {
         copyToClipboard(this.state.address);
-        popNew('app-components-message-message',{content:"复制成功"});
+        popNew('app-components-message-message',{ content:'复制成功' });
     }
 }

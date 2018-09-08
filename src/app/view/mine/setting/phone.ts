@@ -13,18 +13,17 @@ export class BindPhone extends Widget {
     }
     public create() {
         super.create();
-        this.state={
+        this.state = {
             phone:'',
             code:'',
             phoneReg: /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/
-        }
+        };
     }
 
     public backPrePage() {
         this.ok && this.ok();
     }
     
-
     /**
      * 输入完成后确认
      */
@@ -55,9 +54,9 @@ export class BindPhone extends Widget {
      */
     public codeChange(e: any) {
         this.state.code = e.value;
-        if(e.value.length==6){
+        if (e.value.length === 6) {
             this.doSure();
-            document.getElementById("code").getElementsByTagName("input")[0].blur();   
+            document.getElementById('code').getElementsByTagName('input')[0].blur();   
         }
     }
 

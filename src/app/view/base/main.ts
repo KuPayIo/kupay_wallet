@@ -38,7 +38,7 @@ export const run = (cb): void => {
     // popNew('app-view-earn-home-home');
     // popNew('app-view-mine-home-home');
     // popNew('app-view-mine-setting-setting');
-    popNew('app-components-keyboard-keyboard');
+    // popNew('app-components-keyBoard-keyBoard');
     // popNewPage();
     // 后台切前台
     // backToFront();

@@ -1,8 +1,10 @@
 .body{
     width: 100%;
-    height: 676px;
-    background-color: rgba(255, 255, 255, 1);
+    height: 100%;
     display: flex;
+    flex-direction: column;
+    background: #2225;    
+    justify-content: flex-start;
 }
 .top{
     flex: 1;
@@ -10,4 +12,59 @@
 .bottom{
     height: 680px;
     width: 100%;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 1);
+}
+.title{
+    height: 120px;
+    line-height: 120px;
+    font-size: 36px;
+    font-weight: 600;
+    position: relative;
+    border-bottom: 1px solid #ccc;
+}
+.close{
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+}
+.dots{
+    display: flex;
+    align-items: center;
+    height: 120px;
+    border-bottom: 1px solid #ccc8;
+    justify-content: center;
+}
+.oneDot{
+    border: 1px solid #1A70DD;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin: 0 19px;
+    background-color: #fff;
+}
+.dotActive{
+    background-color: #1A70DD;
+}
+.numbers{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+}
+.oneNum{
+    box-sizing: border-box;
+    width: 33%;
+    height: 110px;
+    border-bottom:1px solid #ccc8;
+    font-family: "SFNSDisplay";
+    font-size: 40px;
+    color: #0B0817;
+    line-height:110px;
+    text-align: center;
+}
+.oneNumMore{
+    border-right: 1px solid #ccc8;    
 }

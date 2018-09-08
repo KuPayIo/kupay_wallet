@@ -2,14 +2,14 @@
  * earn home 
  */
 // ================================ 导入
+import { Json } from '../../../../pi/lang/type';
+import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { popNew } from '../../../../pi/ui/root';
-import { register, find, getBorn } from '../../../store/store';
-import { getMining, getMineRank, getAward, getCloudBalance } from '../../../net/pull';
-import { formatBalance } from '../../../utils/tools';
+import { getAward, getCloudBalance, getMineRank, getMining } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
-import { Json } from '../../../../pi/lang/type';
+import { find, getBorn, register } from '../../../store/store';
+import { formatBalance } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -55,8 +55,8 @@ export class PlayHome extends Widget {
     /**
      * 打开我的设置
      */
-    public showMine(){
-        popNew('app-view-mine-home-home')
+    public showMine() {
+        popNew('app-view-mine-home-home');
     }
 
     /**
@@ -69,22 +69,23 @@ export class PlayHome extends Widget {
     /**
      * 跳转到下一页
      */
-    public goNextPage(ind:number){
-        popNew(this.state.page[ind],{ktBalance:this.state.ktBalance});
+    public goNextPage(ind:number) {
+        popNew(this.state.page[ind],{ ktBalance:this.state.ktBalance });
     }
 
     /**
      * 挖矿说明
      */
-    public miningDetail(){
-        popNew('app-components-otherModalBox-otherModalBox',{title:"挖矿说明",content:"完成任务会产生相应的KT，KT被储存在矿山中，每日可挖取矿储量的25%，最高10000KT，如果当天领取额度低于100，且矿山剩余大于100，则按照100领取，若储矿量小于100KT，则把剩下的一次性挖完。挖矿结算后，挖到的数量将从储矿量中减去。",tips:"曾经拥有1000KT才具有提现权限"});
+    public miningDetail() {
+        // tslint:disable-next-line:max-line-length
+        popNew('app-components-otherModalBox-otherModalBox',{ title:'挖矿说明',content:'完成任务会产生相应的KT，KT被储存在矿山中，每日可挖取矿储量的25%，最高10000KT，如果当天领取额度低于100，且矿山剩余大于100，则按照100领取，若储矿量小于100KT，则把剩下的一次性挖完。挖矿结算后，挖到的数量将从储矿量中减去。',tips:'曾经拥有1000KT才具有提现权限' });
     }
 
     /**
      * 点击挖矿按钮
      */
     public async doPadding() {
-        if(this.state.isAbleBtn){
+        if (this.state.isAbleBtn) {
             const r = await getAward();
             if (r.result !== 1) {
                 popNew('app-components-message-message', { itype: 'outer', center: true, content: `挖矿失败(${r.result})` });
@@ -104,7 +105,7 @@ export class PlayHome extends Widget {
      */
     public refreshCloudBalance() {
         const cloudBalance = getBorn('cloudBalance');
-        if(cloudBalance){
+        if (cloudBalance) {
             this.state.ktBalance = formatBalance(cloudBalance.get(CurrencyType.KT));
             this.state.ethBalance = formatBalance(cloudBalance.get(CurrencyType.ETH));
         }
@@ -124,18 +125,18 @@ export class PlayHome extends Widget {
 
         const mining = find('miningTotal');
         if (mining) {
-            if(mining.thisNum > 0){
+            if (mining.thisNum > 0) {
                 this.state.isAbleBtn = true;
             }
             this.state.mines = mining.thisNum;
-            this.state.mineLast = mining.totalNum-mining.holdNum;
+            this.state.mineLast = mining.totalNum - mining.holdNum;
 
         } else {
             this.state.isAbleBtn = false;
         }
 
         const rank = find('mineRank');
-        if(rank){
+        if (rank) {
             this.state.rankNum = rank.myRank;
         }
         
