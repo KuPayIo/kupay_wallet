@@ -1,6 +1,6 @@
 <div class="new-page">
     <div w-class="topBack">
-        <img src="../../../res/image1/default_avatar.png" w-class="userHead"/>
+        <img src="../../../res/image1/default_avatar.png" w-class="userHead" on-tap="showMine"/>
         <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
         <div w-class="groupCard">
             <div w-class="titleMode">

@@ -2,13 +2,15 @@
     <app-components1-topBar-topBar>{"title":"我的二维码",nextImg:"../../res/image/09.png"}</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="title">
-            <img src="../../../res/image/default_avater_big.png" w-class="userHead"/>
-            <span w-class="userName">用户名</span>
+            <img src={{it1.userHead}} w-class="userHead"/>
+            <span w-class="userName">{{it1.userName}}</span>
         </div>
-        <div w-class="address">FGGF1512151512sd78d4s51d8d44s51d8d4fd0260hg</div>
+        <div w-class="address">{{it1.address}}
+            <img src="../../../res/image/42.png" style="width: 30px;height:30px;margin-left: 15px;vertical-align: middle;" on-tap="copyAddr"/>
+        </div>
         <div style="text-align: center;">
-            <img src="../../../res/image/qrcode.png" w-class="qrcode"/>
-            <div style="font-size: 32px;color: #222222;">扫码添加KuPay好友</div>
+            <app-components-qrcode-qrcode>{value:{{it1.address}},size:"350"}</app-components-qrcode-qrcode>
+            <div style="font-size: 32px;color: #222222;margin-top: 50px;">扫码添加KuPay好友</div>
         </div>
     </div>
 </div>

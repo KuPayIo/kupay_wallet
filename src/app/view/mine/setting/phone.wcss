@@ -1,0 +1,29 @@
+.content{
+    position: absolute;
+    top: 300px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+}
+.verify{
+    margin-top: 35px;
+    margin-right: 30px;
+    line-height: 42px;
+    color: rgba(245, 162, 100, 1);
+    font-size: 28px;
+    text-align: right;
+}
+.code{
+    height: 110px;
+    display: inline-block;
+    margin-top: 60px;
+    margin-left: 60px;
+}
+.codeBottom{
+    border-bottom: 3px solid #368FE5;
+    width: 90px;
+    margin-right: 18px;
+    display: inline-block;
+}

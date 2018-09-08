@@ -26,6 +26,7 @@ export class PlayHome extends Widget {
         super.setProps(props, oldProps);
         this.init();
     }
+    
     public init(): void {
         this.state = {
             ktBalance: 0.00,// kt余额
@@ -49,6 +50,13 @@ export class PlayHome extends Widget {
             this.initEvent();
         }
         
+    }
+
+    /**
+     * 打开我的设置
+     */
+    public showMine(){
+        popNew('app-view-mine-home-home')
     }
 
     /**
@@ -96,8 +104,10 @@ export class PlayHome extends Widget {
      */
     public refreshCloudBalance() {
         const cloudBalance = getBorn('cloudBalance');
-        this.state.ktBalance = formatBalance(cloudBalance.get(CurrencyType.KT));
-        this.state.ethBalance = formatBalance(cloudBalance.get(CurrencyType.ETH));
+        if(cloudBalance){
+            this.state.ktBalance = formatBalance(cloudBalance.get(CurrencyType.KT));
+            this.state.ethBalance = formatBalance(cloudBalance.get(CurrencyType.ETH));
+        }
         this.paint();
     }
 

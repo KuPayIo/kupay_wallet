@@ -1,0 +1,17 @@
+.content{
+    background: #fff;
+    top: 158px;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    font-size: 28px;
+    color: #666666;
+    position: absolute;
+    border-radius: 12px;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+}
+.inputItem{
+    height: 110px;
+    border-bottom: 2px solid #DBDBE5;
+    margin: 0 10px;
+}

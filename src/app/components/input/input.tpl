@@ -5,6 +5,7 @@
         style="{{it.style}}"
         type="{{it.itype ? it.itype : 'text'}}" 
         autocomplete="off" 
+        autofocus="{{it.autofacus}}"
         placeholder="{{it.placeHolder}}" 
         value="{{it1.currentValue}}"
         on-input="change"
