@@ -28,6 +28,7 @@ winit.initNext = function () {
 	//clear();
 
 	pi_modules.depend.exports.init(winit.deps, winit.path);
+	
 
 	winit = undefined; //一定要立即释放，保证不会重复执行
 	//先登录

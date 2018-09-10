@@ -214,9 +214,9 @@
 					winit.loadJS([winit.domains[1]], "/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,"load index error");
 					return;
 				}
-				if (winit.debug) winit.loadJS([winit.domains[1]], "/wallet/app/boot/hotfix.js", "utf8", winit.initFail,
+				if (winit.debug) winit.loadJS([winit.domains[1]], "/ios/app/boot/hotfix.js", "utf8", winit.initFail,
 					"load hotupdate error");
-				winit.loadJS([winit.domains[1]], "/wallet/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,
+				winit.loadJS([winit.domains[1]], "/ios/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,
 					"load index error");
 			};
 			if (document.hidden === true)
