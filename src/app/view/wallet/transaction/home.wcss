@@ -57,6 +57,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
 }
 .icon{
     margin-right: 17px;

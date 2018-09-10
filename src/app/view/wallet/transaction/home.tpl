@@ -10,7 +10,7 @@
             <div w-class="btn-exchange">换币</div>
         </div>
         <div w-class="operating">
-            <div w-class="operating-item"><img src="../../../res/image/transfer.png" w-class="icon"/><span>转账</span></div>
+            <div w-class="operating-item" on-tap="doTransferClick"><img src="../../../res/image/transfer.png" w-class="icon"/><span>转账</span></div>
             <div w-class="line"></div>
             <div w-class="operating-item"><img src="../../../res/image/19.png" w-class="icon"/><span>收款</span></div>
         </div>
@@ -24,7 +24,7 @@
             <div w-class="tx-list">
                 {{for i,v of it1.txList}}
                 <div on-tap="txListItemClick(e,{{i}})">
-                <app-components-fourParaImgItem-fourParaImgItem>{"name":{{v.txType === 1 ? "转账" : "收款"}},"data":{{v.pay}},"time":{{v.TimeShow}},"describe":{{v.result}},img:{{v.txType === 1 ? "transfer_icon.png" : "receive_icon.png"}}}</app-components-fourParaImgItem-fourParaImgItem>
+                <app-components-fourParaImgItem-fourParaImgItem>{"name":{{v.txType === 1 ? "转账" : "收款"}},"data":{{v.pay}},"time":{{v.TimeShow}},"describe":{{v.statusShow}},img:{{v.txType === 1 ? "transfer_icon.png" : "receive_icon.png"}}}</app-components-fourParaImgItem-fourParaImgItem>
                 </div>
                 {{end}}
             </div>

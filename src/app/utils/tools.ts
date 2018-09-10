@@ -5,7 +5,7 @@ import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
 import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { Addr, MinerFeeLevel, TransRecordLocal } from '../store/interface';
+import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { defalutShowCurrencys } from './constants';
 
@@ -810,5 +810,30 @@ export const hasNoWallet = () => {
         });
 
         return;
+    }
+};
+
+// 解析交易状态
+export const parseStatusShow = (status:TxStatus) => {
+    if (status === TxStatus.PENDING) {
+        return {
+            text:'打包中',
+            icon:'pending.png'
+        };
+    } else if (status === TxStatus.CONFIRMED) {
+        return {
+            text:'已确认',
+            icon:'pending.png'
+        };
+    } else if (status === TxStatus.FAILED) {
+        return {
+            text:'交易失败',
+            icon:'fail.png'
+        };
+    } else {
+        return {
+            text:'完成',
+            icon:'icon_right2.png'
+        };
     }
 };

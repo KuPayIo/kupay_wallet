@@ -8,7 +8,7 @@ import { estimateMinerFee, transfer } from '../../../net/pullWallet';
 import { MinerFeeLevel, priorityMap, TransRecordLocal, TxStatus } from '../../../store/interface';
 import { timeOfArrival } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { addRecord, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, popPswBox, timestampFormat } from '../../../utils/tools';
+import { addRecord, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, popPswBox } from '../../../utils/tools';
 import { wei2Eth } from '../../../utils/unitTools';
 
 interface Props {
@@ -155,9 +155,9 @@ export class Transfer extends Widget {
             minerFeeLevel
         };
 
-        popNew('app-view-wallet-transaction-transactionDetails', tx);
-
+        popNew('app-view-wallet-transaction-transactionDetails', { tx });
         addRecord(this.props.currencyName, this.state.fromAddr, tx);
+        this.ok && this.ok();
 
     }
 }

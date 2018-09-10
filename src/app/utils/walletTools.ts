@@ -110,9 +110,6 @@ export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) =
     try {
         const cipher = new Cipher();
         const r = cipher.decrypt(hash, gwlt.vault);
-        // console.log('VerifyIdentidy hash', hash, gwlt.vault, passwd, r);
-
-        dataCenter.setHash(wallet.walletId, hash);
 
         return true;
     } catch (error) {
@@ -132,8 +129,6 @@ export const getMnemonic = async (wallet, passwd) => {
         const cipher = new Cipher();
         const r = cipher.decrypt(hash, gwlt.vault);
 
-        dataCenter.setHash(wallet.walletId, hash);
-
         return toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {
         console.log(error);
@@ -149,11 +144,8 @@ export const getMnemonicHexstr = async (wallet, passwd) => {
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
-        const r = cipher.decrypt(hash, gwlt.vault);
 
-        dataCenter.setHash(wallet.walletId, hash);
-
-        return r;
+        return cipher.decrypt(hash, gwlt.vault);
     } catch (error) {
         console.log(error);
 
