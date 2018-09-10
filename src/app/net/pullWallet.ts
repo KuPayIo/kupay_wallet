@@ -2,17 +2,19 @@
  * 主动向钱包通讯
  */
 // ===================================================== 导入
+import { defaultEthToAddr, ERC20Tokens } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
-import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
 import { GlobalWallet } from '../core/globalWallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
+import { priorityMap } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 // tslint:disable-next-line:max-line-length
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
+import { formatBalance } from '../utils/tools';
 import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 // ===================================================== 导出
 
@@ -53,28 +55,27 @@ export const transfer = async (psw:string,fromAddr:string,toAddr:string,gasPrice
  * @param currencyName 货币名称
  * @param options 可选项,货币为ETH或ERC20时必传
  */
-export const estimateMinerFee = async (currencyName:string,options?:{toAddr:string;info?:any;pay?:number;gasPrice?:number}) => {
-    console.log('options',options);
+export const estimateMinerFee = async (currencyName:string) => {
+    const toAddr = defaultEthToAddr;
+    const pay = 0;
     let gasLimit = 21000;
-    let fee = 0;
+    const btcMinerFee:any = {};
     if (currencyName === 'ETH') {
-        gasLimit = await estimateGasETH(options.toAddr,options.info);
-        fee = gasLimit * wei2Eth(options.gasPrice);
+        gasLimit = await estimateGasETH(toAddr);
     } else if (currencyName === 'BTC') {
         // todo 获取BTC矿工费估值
-        const nbBlocks = 12;
-        const feeObj = await estimateMinerFeeBTC(nbBlocks);
-        console.log('feeObj----------',feeObj);
-        gasLimit = 0;
-        fee = feeObj[nbBlocks];
+        for (const k in priorityMap) {
+            const nbBlocks = priorityMap[k];
+            const feeObj = await estimateMinerFeeBTC(nbBlocks);
+            btcMinerFee[nbBlocks] = formatBalance(feeObj[nbBlocks]);
+        }
     } else if (ERC20Tokens[currencyName]) {
-        gasLimit = await estimateGasERC20(currencyName,options.toAddr,options.pay);
-        fee = gasLimit * wei2Eth(options.gasPrice);
+        gasLimit = await estimateGasERC20(currencyName,toAddr,pay);
     }
 
     return {
-        minerFee:fee,
-        gasLimit
+        gasLimit,
+        btcMinerFee
     };
 };
 // =====================================================ETH
@@ -185,9 +186,10 @@ export const sendRawTransactionETH = async (signedTx) => {
 // 预估ETH ERC20Token的gas limit
 export const estimateGasERC20 = (currencyName:string,toAddr:string,amount:number) => {
     const api = new EthApi();
+
     const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
 
-    return api.estimateGas({ to: ERC20Tokens[currencyName], data: transferCode });
+    return api.estimateGas({ to: ERC20Tokens[currencyName].contractAddr, data: transferCode });
 };
 
 /**
@@ -236,7 +238,7 @@ const doERC20TokenTransfer = async (wlt: EthWallet, fromAddr: string, toAddr: st
 
 // ==================================================BTC
 // 预估BTC矿工费
-export const estimateMinerFeeBTC = async (nbBlocks: number = 2) => {
+export const estimateMinerFeeBTC = async (nbBlocks: number = 12) => {
     return BtcApi.estimateFee(nbBlocks);
 };
 

@@ -26,7 +26,7 @@
                 <app-components1-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components1-checkbox-checkbox>
                 <span w-class="user-protocol" on-tap="agreementClick">隐私条约</span>
             </div>
-            <div ev-btn-tap="createClick" ><app-components-btn-btn>{"name":"完成","types":"big","color":"white"}</app-components-btn-btn></div>
+            <div ev-btn-tap="createClick" w-class="btn"><app-components-btn-btn>{"name":"完成","types":"big","color":"white"}</app-components-btn-btn></div>
         </div>
     </div>
 </div>

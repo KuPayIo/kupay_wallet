@@ -1,13 +1,13 @@
 /**
  * ETH wallet implementation
  */
-import { sleep } from '../../utils/tools';
+import { ERC20Tokens } from '../../config';
 import { config } from '../config';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
 import { Web3 } from '../thirdparty/web3.min';
 import { Api } from './api';
-import { ERC20Tokens, minABI } from './tokens';
+import { minABI } from './tokens';
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/
@@ -217,8 +217,8 @@ export class EthWallet {
         return gwlt;
     }
 
-    public static tokenOperations(method: string, tokenName: string, toAddr?: string, amount?: number): string {
-        const tokenAddress = ERC20Tokens[tokenName];
+    public static tokenOperations(method: string, tokenName: string, toAddr?: string, amount?: number | string): string {
+        const tokenAddress = ERC20Tokens[tokenName].contractAddr;
         if (tokenAddress === undefined) {
             throw new Error('This token doesn\'t supported');
         }
@@ -411,7 +411,6 @@ export class EthWallet {
         for (i = 0; ; i++) {
             const addr = this.selectAddress(i);
             const res = await this.api.getAllTransactionsOf(addr);
-            sleep(200);
             if (res === undefined || res.hasOwnProperty('error')) {
                 throw new Error('Response error!');
             }
@@ -435,7 +434,6 @@ export class EthWallet {
         for (i = 0; ; i++) {
             const addr = this.selectAddress(i);
             const res = await this.api.getTokenTransferEvents(contractAddress, addr);
-            // sleep(1000);
             if (res === undefined || res.hasOwnProperty('error')) {
                 throw new Error('Response error!');
             }

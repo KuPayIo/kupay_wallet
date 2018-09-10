@@ -84,8 +84,6 @@ export class GlobalWallet {
 
         gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
 
-        dataCenter.setHash(gwlt._glwtId, hash);
-
         // 更新内存数据中心
         gwlt._addrs.forEach(item => {
             dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
@@ -112,8 +110,6 @@ export class GlobalWallet {
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
 
         gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
-
-        // dataCenter.setHash(gwlt._glwtId, hash);
 
         // dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
         // dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
@@ -296,8 +292,6 @@ export class GlobalWallet {
         const oldVault = cipher.decrypt(oldHash, this._vault);
         this._vault = cipher.encrypt(newHash, oldVault);
 
-        // 更新hash
-        dataCenter.setHash(walletId, newHash);
     }
 
 }

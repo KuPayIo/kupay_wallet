@@ -2,10 +2,11 @@
  * 首页
  */
 // ================================ 导入
+import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { setUserInfo } from '../../net/pull';
-import { UserInfo } from '../../store/interface';
+import { login, setUserInfo } from '../../net/pull';
+import { LoginState, UserInfo } from '../../store/interface';
 import { find, register } from '../../store/store';
 
 // ================================ 导出
@@ -76,7 +77,7 @@ export class App extends Widget {
 
 register('level_2_page_loaded',(loaded:boolean) => {
     const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-    // dataCenter.init();
+    dataCenter.init();
 });
 
 register('level_3_page_loaded',(loaded:boolean) => {
@@ -88,11 +89,23 @@ register('level_3_page_loaded',(loaded:boolean) => {
     }
 });
 
-// 头像变化
+// 用户信息变化
 register('userInfo',(userInfo:UserInfo) => {
     const conRandom = find('conRandom');
-    if (conRandom) {
-        setUserInfo(userInfo);
+    if (conRandom && !userInfo.fromServer) {
+        setUserInfo();
     }
-   
+});
+
+// 连接建立 登录
+register('conRandom',(conRandom:string) => {
+    // popNew('app-components-modalBoxInput-modalBoxInput',{ itype:'password',title:'请登录',content:[] },(r) => {
+    //     login(r);
+    // });
+});
+
+register('loginState',(loginState:LoginState) => {
+    if (loginState === LoginState.logined) {
+        setUserInfo();
+    }
 });
