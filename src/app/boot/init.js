@@ -403,6 +403,8 @@ pi_modules.ajax.exports = (function () {
 	module.ERR_NORMAL = "ERR_NORMAL";
 	module.ERR_LOCATION = "ERR_LOCATION";
 	module.ERR_JSON = "ERR_JSON";
+	module.severIp = winit.severIp
+	module.severPort = winit.severPort
 
 	/**
 	 * @description URL增加随机参数
