@@ -10,8 +10,8 @@ interface Props {
 
 export class KeyBoard extends Widget {
     public props: Props;
-    public ok:(value:string)=>void;
-    public cancel:()=>void;
+    public ok:(value:string) => void;
+    public cancel:() => void;
     constructor() {
         super();
     }
@@ -33,20 +33,20 @@ export class KeyBoard extends Widget {
      * 键盘点击事件处理
      */
     public boardItemClick(ind:number) {
-        let val = this.state.numbers[ind];
+        const val = this.state.numbers[ind];
 
-        if(val !=='' && val !== 'x'){
+        if (val !== '' && val !== 'x') {
             this.state.pswArr.push(val);
             this.paint();
-        }else if(val==='x'){
+        } else if (val === 'x') {
             this.clearClick();
-        }else{
+        } else {
             return;
         }
 
         if (this.state.pswArr.length === 6) {
             setTimeout(() => {
-                this.ok&& this.ok(this.state.pswArr.join(''));
+                this.ok && this.ok(this.state.pswArr.join(''));
             }, 100);
         }
     }
@@ -60,8 +60,8 @@ export class KeyBoard extends Widget {
         this.paint();
     }
 
-    public close(){
-        this.cancel&& this.cancel();
+    public close() {
+        this.cancel && this.cancel();
     }
 
 }
