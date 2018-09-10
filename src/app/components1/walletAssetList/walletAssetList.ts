@@ -1,19 +1,16 @@
 /**
  * wallet home asset list
  */
+import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
     assetList:[];
 }
 export class WalletAssetList extends Widget {
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-    }
+    public props:Props;
 
-    public init() {
-        // console.log('props--------------',this.props.assetList);
+    public itemClick(e:any,index:number) {
+        notify(e.node,'ev-item-click',{ index }); 
     }
-
 }

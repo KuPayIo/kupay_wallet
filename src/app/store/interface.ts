@@ -40,13 +40,27 @@ export enum RedEnvelopeType {
     Invite = '99'
 }
 
-// 3档gasPrice
-export enum GasPriceLevel {
-    STANDARD = 'standard',
-    FAST = 'fast',
-    FASTEST = 'fastest'
+// 矿工费等级
+export enum MinerFeeLevel {
+    STANDARD,
+    FAST,
+    FASTEST
 }
 
+// btc矿工费等级
+export const priorityMap = {
+    [MinerFeeLevel.STANDARD]: 6,
+    [MinerFeeLevel.FAST]: 3,
+    [MinerFeeLevel.FASTEST]: 2
+};
+
+// 交易状态
+export enum TxStatus {
+    PENDING, // 打包中
+    CONFIRMED, // 确认
+    FAILED, // 失败
+    SUCCESS// 成功
+}
 // store数据管理
 export interface Store {
     // 基础数据
@@ -100,6 +114,7 @@ export interface Store {
  * 云端用户基础数据
  */
 export interface UserInfo {
+    fromServer:boolean;// 数据来源
     nickName:string;// 昵称
     avatar:string;// 头像
 }
@@ -166,18 +181,18 @@ export interface TransactionRecord {
 export interface TransRecordLocal {
     hash:number | string; // 交易hash
     // tslint:disable-next-line:no-reserved-keywords
-    type:string;// 转账  充值 收款
+    txType:number;// 交易类型 1 转账 2 收款
     fromAddr:string;// 转账地址
     toAddr:string;// 收币地址
     pay:number;// 转账金额
     time:number;// 时间戳
-    showTime:string;// 时间显示
-    result:string;// 交易结果
+    status:TxStatus;// 交易状态
+    confirmBlock:number;// 确认区块数
     info:string;// 交易额外信息
     currencyName:string;// 货币名称
     fee:number;// 矿工费
     nonce:number;// nonce
-    gasPriceLevel:string;// gasPrice档次
+    minerFeeLevel:MinerFeeLevel;// 矿工费档次
 }
 
 /**

@@ -1,0 +1,95 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+.body{
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px 20px;
+}
+.container{
+    flex: 1 0 0;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom:35px; 
+    border-radius: 12px;
+}
+.item{
+    margin: 0 10px;
+    border-bottom: 1px solid #dbdbe5;
+    padding: 30px 20px 0;
+}
+.inner-tip{
+    font-size: 28px;
+    color: #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.balance{
+    color: #318de6;
+}
+.input-father{
+    position: relative;
+    height: 90px;
+    margin-top: 10px;
+}
+.input-father1{
+    position: relative;
+    height: 80px;
+    margin-top: 10px;
+}
+.from-addr{
+    height: 80px;
+    display: flex;
+    align-items: center;
+    color: #222;
+    font-size: 28px;
+    margin-top: 10px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+.speed-time{
+    font-size: 36px;
+    color: #222;
+    height: 90px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+}
+.balance-value{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 20px;
+    font-size: 36px;
+    color:#ccc;
+}
+.speed{
+    margin-left: 10px;
+    color: #F17835;
+}
+.choose-fee{
+    display: flex;
+    justify-content: space-between;
+    font-size: 28px;
+    color: #222222;
+    align-items: center;
+    margin-top: 20px;
+    padding: 0 30px;
+}
+.fees{
+    display: flex;
+    color: #318de6;
+    align-items: center;
+}
+.fee{
+    margin-right: 30px;
+}
+.btn{
+    margin: 0 40px;
+}

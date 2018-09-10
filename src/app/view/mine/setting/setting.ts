@@ -2,11 +2,10 @@
  * setting
  */
 // =============================================导入
-import { Widget } from '../../../../pi/widget/widget';
-import { register, find, updateStore } from '../../../store/store';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
 import { LockScreen } from '../../../store/interface';
-import { popNew } from '../../../../pi/ui/root';
+import { find, register, updateStore } from '../../../store/store';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 import { lockScreenVerify } from '../../../utils/tools';
 // ================================================导出
@@ -20,7 +19,7 @@ export class Setting extends Widget {
         super();
     }
 
-    public create(){
+    public create() {
         
         this.state = {
             lockScreenPsw:'',  // 锁屏密码

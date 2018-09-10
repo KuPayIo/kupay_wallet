@@ -69,7 +69,7 @@ export const createWalletRandom = async (option) => {
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
     updateStore('salt', salt);
-    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar });
+    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
 
     openAndGetRandom();
 };
@@ -103,7 +103,7 @@ export const createWalletByImage = async (option:any) => {
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
     updateStore('salt', salt);
-    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar });
+    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
 
     openAndGetRandom();
 
@@ -176,7 +176,7 @@ export const importWalletByMnemonic = async (option) => {
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
     updateStore('salt', salt);
-    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar });
+    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
     openAndGetRandom();
 
     return true;

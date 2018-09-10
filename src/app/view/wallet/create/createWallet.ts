@@ -3,11 +3,12 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { dataCenter } from '../../../logic/dataCenter';
 import { createWallet } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { CreateWalletType } from '../../../store/interface';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-
+import { forelet,WIDGET_NAME } from './home';
 interface Props {
     itype:CreateWalletType;
     imageBase64?:string;// 图片base64
@@ -111,6 +112,12 @@ export class CreateWallet extends Widget {
             option.fragment2 = this.props.fragment2;
         }
         await createWallet(this.state.itype,option);
+        // 刷新本地钱包
+        dataCenter.refresh();
+        const w: any = forelet.getWidget(WIDGET_NAME);
+        if (w) {
+            w.ok && w.ok();
+        }
         this.ok && this.ok();
         popNew('app-components-modalBox-modalBox',{ 
             title:'创建成功',

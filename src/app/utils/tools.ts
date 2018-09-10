@@ -5,9 +5,9 @@ import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
 import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { Addr, GasPriceLevel } from '../store/interface';
+import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
-import { defalutShowCurrencys, supportCurrencyList } from './constants';
+import { defalutShowCurrencys } from './constants';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -255,6 +255,13 @@ export const formatBalance = (banlance: number) => {
 };
 
 /**
+ * 余额格式化
+ */
+export const formatBalanceValue = (value: number) => {
+    return value.toFixed(2);
+};
+
+/**
  * 字符串转u8Arr
  * 
  * @param str 输入字符串
@@ -405,15 +412,7 @@ export const reductionCipherMnemonic = (cipherMnemonic: string) => {
 };
 
 /**
- * 余额格式化
- */
-export const formatBalanceValue = (value: number) => {
-    return value.toFixed(2);
-};
-
-/**
  * 获取指定货币下余额总数
- * @param addrs 指定货币下的地址
  * @param currencyName 货币名称
  */
 export const fetchBalanceOfCurrency = (currencyName: string) => {
@@ -452,7 +451,7 @@ export const fetchTotalAssets = () => {
         
     });
 
-    return totalAssets;
+    return totalAssets.toFixed(2);
 };
 /**
  * 获取异或值
@@ -541,11 +540,9 @@ export const popPswBox = async () => {
 const openMessageboxPsw = (): Promise<string> => {
     // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {
-        popNew('app-components-message-messageboxPrompt', { title: '输入密码', content: '', inputType: 'password' }, (ok: string) => {
-            // this.windowSet.delete(foreletName);
-            resolve(ok);
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype:'password',title:'请输入密码',content:[] }, (r: string) => {
+            resolve(r);
         }, (cancel: string) => {
-            // this.windowSet.delete(foreletName);
             reject(cancel);
         });
 
@@ -645,22 +642,22 @@ export const unicodeArray2Str = (arr) => {
 /**
  * 添加交易记录到本地
  */
-export const addRecord = (currencyName, currentAddr, record) => {
-    const addr = getAddrById(currentAddr, currencyName);
-    if (!addr) return;
+export const addRecord = (currencyName, currentAddr, tx:TransRecordLocal) => {
+    const addrInfo = getAddrById(currentAddr, currencyName);
+    if (!addrInfo) return;
     let resend = false;
-    for (let i = addr.record.length - 1;i >= 0 ;i--) {
-        if (addr.record[i].nonce === record.nonce) {
-            addr.record.splice(i,1,record);
+    for (let i = addrInfo.record.length - 1;i >= 0 ;i--) {
+        if (addrInfo.record[i].nonce === tx.nonce) {
+            addrInfo.record.splice(i,1,tx);
             resend = true;
             break;
         }
     }
     if (!resend) {
-        addr.record.push(record);
+        addrInfo.record.push(tx);
     }
     
-    resetAddrById(currentAddr, currencyName, addr, true);
+    resetAddrById(currentAddr, currencyName, addrInfo, true);
 };
 
 /**
@@ -734,20 +731,8 @@ export const lockScreenHash = (psw) => {
 // ==========================================================new version tools
 
 // 获取gasPrice
-export const fetchGasPrice = (gasPriceLevel:GasPriceLevel | string) => {
-    return find('gasPrice')[gasPriceLevel];
-};
-
-// 获取下个等级的gasPriceLevel
-export const fetchNextGasPriceLevel = (gasPriceLevel:GasPriceLevel | string) => {
-    let next = GasPriceLevel.FASTEST;
-    if (gasPriceLevel === GasPriceLevel.STANDARD) {
-        next = GasPriceLevel.FAST;
-    } else if (gasPriceLevel === GasPriceLevel.FAST) {
-        next = GasPriceLevel.FASTEST;
-    }
-    
-    return next;
+export const fetchGasPrice = (minerFeeLevel:MinerFeeLevel) => {
+    return find('gasPrice')[minerFeeLevel];
 };
 
 // 获取默认币种汇率
@@ -807,4 +792,48 @@ export const fetchWalletAssetList = () => {
     }
 
     return assetList;
+};
+
+/**
+ * 没有创建钱包时
+ */
+export const hasNoWallet = () => {
+    const wallet = find('curWallet');
+    if (!wallet) {
+        popNew('app-components-modalBox-modalBox',{ 
+            title:'提示',
+            content:'你还没有登录，去登录使用更多功能吧',
+            sureText:'去登录',
+            cancelText:'暂时不' 
+        },() => {
+            popNew('app-view-wallet-create-home');
+        });
+
+        return;
+    }
+};
+
+// 解析交易状态
+export const parseStatusShow = (status:TxStatus) => {
+    if (status === TxStatus.PENDING) {
+        return {
+            text:'打包中',
+            icon:'pending.png'
+        };
+    } else if (status === TxStatus.CONFIRMED) {
+        return {
+            text:'已确认',
+            icon:'pending.png'
+        };
+    } else if (status === TxStatus.FAILED) {
+        return {
+            text:'交易失败',
+            icon:'fail.png'
+        };
+    } else {
+        return {
+            text:'完成',
+            icon:'icon_right2.png'
+        };
+    }
 };
