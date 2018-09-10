@@ -3,12 +3,12 @@
  * 
  */
 // ============================== 导入
+import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAward, getMining, getDividend, getDividHistory } from '../../../net/pull';
+import { getAward, getDividend, getDividHistory, getMining } from '../../../net/pull';
 import { find, register } from '../../../store/store';
-import { Json } from '../../../../pi/lang/type';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -60,7 +60,7 @@ export class Dividend extends Widget {
      */
     public initData() {
         const data = find('dividTotal');
-        if(data){
+        if (data) {
             this.state.totalDivid = data.totalDivid;
             this.state.totalDays = data.totalDays;
             this.state.thisDivid = data.thisDivid;
@@ -68,8 +68,9 @@ export class Dividend extends Widget {
         }
 
         const history = find('dividHistory');
+        // tslint:disable-next-line:max-line-length
         // const history = [{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"}]
-        if(history){
+        if (history) {
             this.state.dividHistory = history;
             this.state.more = false;
         }
@@ -79,10 +80,10 @@ export class Dividend extends Widget {
     /**
      * 页面滑动
      */
-    public scroll(){
-        if(document.getElementById('content').scrollTop > 0){
+    public scroll() {
+        if (document.getElementById('content').scrollTop > 0) {
             this.state.scroll = true;
-            if(this.state.scroll){
+            if (this.state.scroll) {
                 this.paint();
             }
 

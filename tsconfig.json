@@ -6,6 +6,8 @@
         "module": "es2015",
         "moduleResolution": "node",
         "noUnusedLocals": true,
-        "noUnusedParameters": true
+        "noUnusedParameters": true,
+        "tslint.enable": true,
+        "tslint.autoFixOnSave": true
     }
 }

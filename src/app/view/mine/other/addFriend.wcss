@@ -30,11 +30,7 @@
 .address{
     margin:13px 26px 40px 170px;
     font-size: 28px;
+    line-height: 30px;
     color: #222222;
     word-wrap: break-word;
-}
-.qrcode{
-    width: 350px;
-    height: 350px;
-    margin-bottom: 50px;
 }
