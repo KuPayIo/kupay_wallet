@@ -224,6 +224,8 @@ pi_modules.store.exports = (function () {
 	module.ERR_DELETE = "ERR_DELETE";
 	module.ERR_ITERATE = "ERR_ITERATE";
 	module.ERR_CLEAR = "ERR_CLEAR";
+	module.severIp = winit.severIp
+	module.severPort = winit.severPort
 	/**
 	 * @description 判断是否支持IndexedDB
 	 * @example
@@ -403,8 +405,6 @@ pi_modules.ajax.exports = (function () {
 	module.ERR_NORMAL = "ERR_NORMAL";
 	module.ERR_LOCATION = "ERR_LOCATION";
 	module.ERR_JSON = "ERR_JSON";
-	module.severIp = winit.severIp
-	module.severPort = winit.severPort
 
 	/**
 	 * @description URL增加随机参数
