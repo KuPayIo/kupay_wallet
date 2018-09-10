@@ -1,5 +1,6 @@
 .groupcard{
     width: auto;
+    position: relative;
     border-radius: 16px;
     margin: 30px 20px;
     position: relative;
@@ -42,9 +43,10 @@
     display: inline-block;
 }
 .history{
+    position: relative;
     height: auto;
     width: auto;
-    margin: 63px 20px 0;
+    margin: 60px 20px 0;
     border-radius: 12px;
     background-color: rgba(255, 255, 255, 1);
     box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
@@ -53,7 +55,6 @@
     overflow-y: auto;
     height: 100%;
     overflow-x: hidden;
-    background: linear-gradient(#F94E4D, #F6A050);
 }
 .historyTitle{
     padding-left: 30px;

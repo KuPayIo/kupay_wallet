@@ -35,9 +35,10 @@ export const run = (cb): void => {
     // popNew('app-view-wallet-create-createWalletByImage');
     // popNew('app-view-wallet-import-home');
     // popNew('app-view-play-home-home');
-    // popNew('app-view-earn-home-home');
+    // popNew('app-view-earn-redEnvelope-redEnvHistory');
+    // popNew('app-view-earn-mining-dividend',{ ktBalance:0 });
     // popNew('app-view-mine-home-home');
-    // popNew('app-view-mine-setting-setting');
+    // popNew('app-view-mine-setting-phone');
     // popNew('app-components-keyBoard-keyBoard');
     // popNewPage();
     // 后台切前台

@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { find } from '../../../store/store';
 import { copyToClipboard } from '../../../utils/tools';
 
 export class Home extends Widget {
@@ -24,8 +25,14 @@ export class Home extends Widget {
             address:'FGGF1512151512sd78d4s51af45466',
             userName:'用户名',
             userHead:'../../../res/image/default_avater_big.png',
-            close:false
+            close:false,
+            hasWallet:true
         };
+        const wallet = find('curWallet');
+        if (wallet) {
+            this.state.hasWallet = true;
+        }
+        this.paint();
     }
 
     public backPrePage() {

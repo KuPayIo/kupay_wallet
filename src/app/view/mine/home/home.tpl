@@ -3,6 +3,7 @@
         <div w-class="topBack">
             <img src="{{it1.userHead}}" w-class="userHead"/>
             <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
+            {{if it1.hasWallet}}
             <div w-class="addFriend">
                 <img src="../../../res/image/01.png" w-class="scanImg"/>
                 <img src="../../../res/image/19.png" w-class="scanImg" on-tap="showMyQrcode"/>
@@ -12,6 +13,9 @@
                 <span w-class="addrNum">{{it1.address}}</span>
                 <img src="../../../res/image1/42.png" w-class="copy" on-tap="copyAddr"/>
             </div>
+            {{else}}
+            <div w-class="userName">点击头像登录</div>            
+            {{end}}
 
         </div>
 
