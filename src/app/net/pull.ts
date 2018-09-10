@@ -93,12 +93,18 @@ export const login = async (passwd:string) => {
     }
 };
 
+const defaultConUser = '0x00000000000000000000000000000000000000000';
 /**
  * 开启连接并获取验证随机数
  */
 export const openAndGetRandom = async () => {
     const wallet = find('curWallet');
-    if (!wallet) return;
+    if (!wallet) {
+        setUrl(`ws://${conIp}:2081`);
+        updateStore('conUser', defaultConUser);
+        
+        return doOpen();
+    }
     const oldUser = find('conUser');
     if (oldUser === wallet.walletId) return;
     // const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
@@ -122,7 +128,11 @@ const doOpen = async () => {
     return new Promise((resolve, reject) => {
         open(async (con) => {
             try {
-                await getRandom();
+                const oldUser = find('conUser');
+                if (oldUser !== defaultConUser) {
+                    await getRandom();
+                }
+                
                 resolve(true);
             } catch (error) {
                 reject(false);

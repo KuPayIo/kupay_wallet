@@ -249,32 +249,38 @@ export class DataCenter {
 
     private async parseEthERC20TokenTransactionDetails(addr: string, currencyName: string) {
         const api = new EthApi();
-        const contractAddress = ERC20Tokens[currencyName];
-        const res = await api.getTokenTransferEvents(contractAddress, addr);
-        const list = [];
-        const transactions = find('transactions') || [];
-        res.result.forEach(v => {
-            if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr) && (v1.currencyName === currencyName))) return;
-            // 移除缓存记录
-            this.removeRecordAtAddr(addr, v.hash);
-            // info--input  0x636573--ces
-
-            const record = {
-                hash: v.hash,
-                from: v.from,
-                to: v.to,
-                value: parseFloat(v.value),
-                fees: parseFloat(v.gasUsed) * parseFloat(v.gasPrice),
-                time: parseInt(v.timeStamp, 10) * 1000,
-                info: '',
-                currencyName,
-                addr
-            };
-            list.push(record);
-        });
-        if (list.length > 0) {
-            this.setTransactionLocalStorage(transactions.concat(list));
+        const contractAddress = ERC20Tokens[currencyName].contractAddr;
+        try{
+            const res = await api.getTokenTransferEvents(contractAddress, addr);
+            // console.log('parseEthERC20TokenTransactionDetails-=-=-=-=-=-',res);
+            const list = [];
+            const transactions = find('transactions') || [];
+            res.result.forEach(v => {
+                if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr) && (v1.currencyName === currencyName))) return;
+                // 移除缓存记录
+                this.removeRecordAtAddr(addr, v.hash);
+                // info--input  0x636573--ces
+    
+                const record = {
+                    hash: v.hash,
+                    from: v.from,
+                    to: v.to,
+                    value: parseFloat(v.value),
+                    fees: parseFloat(v.gasUsed) * parseFloat(v.gasPrice),
+                    time: parseInt(v.timeStamp, 10) * 1000,
+                    info: '',
+                    currencyName,
+                    addr
+                };
+                list.push(record);
+            });
+            if (list.length > 0) {
+                this.setTransactionLocalStorage(transactions.concat(list));
+            }
+        }catch(err){
+            console.log('parseEthERC20TokenTransactionDetails------',err);
         }
+        
     }
     private async parseEthTransactionDetails(addr: string) {
         const api = new EthApi();
@@ -403,7 +409,7 @@ export class DataCenter {
             const balanceOfCode = EthWallet.tokenOperations('balanceof', currencyName, addr);
             // console.log('balanceOfCode',balanceOfCode);
             const api = new EthApi();
-            api.ethCall(ERC20Tokens[currencyName], balanceOfCode).then(r => {
+            api.ethCall(ERC20Tokens[currencyName].contractAddr, balanceOfCode).then(r => {
                 // tslint:disable-next-line:radix
                 const num = ethTokenDivideDecimals(Number(r), currencyName);
                 // console.log(currencyName,num);
@@ -519,7 +525,7 @@ export class DataCenter {
     private async checkEthERC20TokenAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
         const mnemonic = await getMnemonic(wallet, '');
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
-        const cnt = await ethWallet.scanTokenUsedAddress(ERC20Tokens[currencyRecord.currencyName]);
+        const cnt = await ethWallet.scanTokenUsedAddress(ERC20Tokens[currencyRecord.currencyName].contractAddr);
         const addrs: Addr[] = [];
 
         for (let i = 1; i < cnt; i++) {

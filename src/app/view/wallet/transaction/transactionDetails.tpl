@@ -6,7 +6,9 @@
         <div w-class="status-container">
             <img src="../../../res/image/{{it1.statusIcon}}" w-class="status-icon"/>
             <div w-class="status">{{it1.statusShow}}</div>
-            <div w-class="resend-btn">重新发送</div>
+            {{if it1.canResend}}
+            <div w-class="resend-btn" on-tap="resendClick">重新发送</div>
+            {{end}}
         </div>
         <div w-class="detail-top">
             <div w-class="amount">{{it1.txType === 1 ? '-' : '+'}}{{it1.pay}}&nbsp;{{it1.currencyName}}</div>

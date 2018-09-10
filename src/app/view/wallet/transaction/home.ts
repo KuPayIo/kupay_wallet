@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { Addr } from '../../../store/interface';
 import { getBorn, register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, parseStatusShow, timestampFormat } from '../../../utils/tools';
+import { formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, parseStatusShow, timestampFormat, parseTxTypeShow } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -39,6 +39,7 @@ export class TransactionHome extends Widget {
             rate,
             txList
         };
+        this.paint();
     }
     // 解析txList
     public parseTxList() {
@@ -48,6 +49,7 @@ export class TransactionHome extends Widget {
         txList.forEach(item => {
             item.TimeShow = timestampFormat(item.time).slice(5);
             item.statusShow =  parseStatusShow(item.status).text; 
+            item.txTypeShow = parseTxTypeShow(item.txType);
         });
 
         return txList;
@@ -65,6 +67,6 @@ export class TransactionHome extends Widget {
 register('addrs',(addrs:Addr[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        // w.userInfoChange(userInfo);
+        w.init();
     }
 });

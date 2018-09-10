@@ -157,7 +157,7 @@ export const getMnemonicHexstr = async (wallet, passwd) => {
  * 获取某个地址的交易记录
  */
 export const fetchTransactionList = (addr:string,currencyName:string) => {
-    if (!addr) return;
+    if (!addr) return [];
     // 从缓存中取出对应地址的交易记录
     const transactions = find('transactions') || [];
     let txList = [];

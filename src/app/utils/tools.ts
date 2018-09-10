@@ -5,7 +5,7 @@ import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
 import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus } from '../store/interface';
+import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { defalutShowCurrencys } from './constants';
 
@@ -441,7 +441,7 @@ export const fetchBalanceOfCurrency = (currencyName: string) => {
  */
 export const fetchTotalAssets = () => {
     const wallet = find('curWallet');
-    if (!wallet) return;
+    if (!wallet) return '0.00';
     let totalAssets = 0;
     wallet.currencyRecords.forEach(item => {
         if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
@@ -603,6 +603,7 @@ export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
             return addrs[i].balance;
         }
     }
+    return 0;
 };
 // 时间戳格式化 毫秒为单位
 export const timestampFormat = (timestamp: number) => {
@@ -735,6 +736,13 @@ export const fetchGasPrice = (minerFeeLevel:MinerFeeLevel) => {
     return find('gasPrice')[minerFeeLevel];
 };
 
+// 获取gasPrice
+export const fetchPriority = (minerFeeLevel:MinerFeeLevel) => {
+    if(minerFeeLevel === MinerFeeLevel.STANDARD) return 'low';
+    if(minerFeeLevel === MinerFeeLevel.FAST) return 'medium';
+    if(minerFeeLevel === MinerFeeLevel.FASTEST) return 'high';
+};
+
 // 获取默认币种汇率
 export const fetchDefaultExchangeRateJson = () => {
     const rateJson = new Map<string,any>();
@@ -797,7 +805,7 @@ export const fetchWalletAssetList = () => {
 /**
  * 没有创建钱包时
  */
-export const hasNoWallet = () => {
+export const hasWallet = () => {
     const wallet = find('curWallet');
     if (!wallet) {
         popNew('app-components-modalBox-modalBox',{ 
@@ -809,8 +817,9 @@ export const hasNoWallet = () => {
             popNew('app-view-wallet-create-home');
         });
 
-        return;
+        return false;
     }
+    return true;
 };
 
 // 解析交易状态
@@ -836,4 +845,68 @@ export const parseStatusShow = (status:TxStatus) => {
             icon:'icon_right2.png'
         };
     }
+};
+
+// 解析转账类型
+export const parseTxTypeShow = (txType:TxType)=>{
+    if(txType === TxType.RECEIPT){
+        return '收款';
+    }
+    return '转账';
+}
+
+ // 解析是否可以重发
+ export const canResend = (tx)=>{
+    if(tx.status !== TxStatus.PENDING) return false;
+    if(tx.minerFeeLevel === MinerFeeLevel.FASTEST) return false;
+    return true;
+}
+
+/**
+ * 获取钱包资产列表是否添加
+ */
+export const fetchWalletAssetListAdded = () => {
+    const wallet = find('curWallet');
+    const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
+    const assetList = [];
+    for (const k in MainChainCoin) {
+        const item:any = {};
+        if (MainChainCoin.hasOwnProperty(k)) {
+            item.currencyName = k;
+            item.description = MainChainCoin[k].description;
+            if(showCurrencys.indexOf(k) >= 0){
+                item.added = true;
+            }else{
+                item.added = false;
+            }
+            if(defalutShowCurrencys.indexOf(k) >= 0){
+                item.canSwtiched = false;
+            }else{
+                item.canSwtiched = true;
+            }
+            assetList.push(item);
+        }
+        
+    }
+
+    for (const k in ERC20Tokens) {
+        const item:any = {};
+        if (ERC20Tokens.hasOwnProperty(k)) {
+            item.currencyName = k;
+            item.description = ERC20Tokens[k].description;
+            if(showCurrencys.indexOf(k) >= 0){
+                item.added = true;
+            }else{
+                item.added = false;
+            }
+            if(defalutShowCurrencys.indexOf(k) >= 0){
+                item.canSwtiched = false;
+            }else{
+                item.canSwtiched = true;
+            }
+            assetList.push(item);
+        }
+    }
+
+    return assetList;
 };

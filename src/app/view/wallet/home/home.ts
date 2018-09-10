@@ -49,3 +49,12 @@ register('userInfo',(userInfo:UserInfo) => {
         w.userInfoChange(userInfo);
     }
 });
+
+// register('curWallet',(curWallet)=>{
+//     console.log('-----------------------');
+//     const w: any = forelet.getWidget(WIDGET_NAME);
+//     if (w) {
+//         // w.init();
+//         // w.paint();
+//     }
+// });

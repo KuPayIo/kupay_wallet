@@ -10,9 +10,11 @@ import { timeOfArrival } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { addRecord, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, popPswBox } from '../../../utils/tools';
 import { wei2Eth } from '../../../utils/unitTools';
+import { resendTransfer } from '../../../logic/localWallet';
 
 interface Props {
     currencyName:string;
+    tx?:TransRecordLocal;
 }
 export class Transfer extends Widget {
     public ok:() => void;
@@ -33,15 +35,19 @@ export class Transfer extends Widget {
             };
             list.push(obj);
         }
-        const curLevel:MinerFeeLevel = MinerFeeLevel.STANDARD;
+        const tx = this.props.tx;
+        console.log(tx);
+        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1: MinerFeeLevel.STANDARD;
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
-            toAddr:'',
-            amount:0,
+            toAddr:tx ? tx.toAddr : '',
+            amount:tx ? tx.pay : 0,
             balance:getCurrentAddrBalanceByCurrencyName(this.props.currencyName),
             minerFee:list[curLevel].minerFee,
             minerFeeList:list,
-            curLevel
+            curLevel,
+            minLevel:curLevel,
+            inputDisabled:tx ? true : false
         };
         this.updateMinerFeeList();
         
@@ -70,14 +76,16 @@ export class Transfer extends Widget {
         this.ok && this.ok();
     }
     public speedDescClick() {
-        popNew('app-components-modalBox-modalBox1',{ title:'到账速度',content:'到账速度受矿工费影响，缺少到账速度说明文字',tips:'转账时不能全部转完，要预留出矿工费' });
+        const content = "到账速度受网络拥堵影响，拥堵时支付较高矿工费的交易会优先确认。我们把交易速度分为三个标准，并附上参考时间，您可以任意选择，矿工费可以激励矿工优先打包您的交易，如果矿工费过低，矿工没有动力去打包你的交易，可能会将您的交易延后处理。";
+        popNew('app-components-modalBox-modalBox1',{ title:'到账速度',content,tips:'转账时不能全部转完，要预留出矿工费' });
     }
 
     public chooseMinerFee() {
         popNew('app-components-modalBox-chooseModalBox',{ 
             currencyName:this.props.currencyName,
             minerFeeList:this.state.minerFeeList,
-            curLevel:this.state.curLevel },(index) => {
+            curLevel:this.state.curLevel,
+            minLevel:this.state.minLevel },(index) => {
                 this.state.curLevel = this.state.minerFeeList[index].level;
                 this.state.minerFee = this.state.minerFeeList[index].minerFee;
                 this.paint();
@@ -114,7 +122,7 @@ export class Transfer extends Widget {
             return;
         }
 
-        const gasPrice = fetchGasPrice(this.state.curLevel);
+        const minerFeeLevel = this.state.curLevel;
         const currencyName = this.props.currencyName;
         const fromAddr = this.state.fromAddr;
         const toAddr = this.state.toAddr;
@@ -122,7 +130,13 @@ export class Transfer extends Widget {
         const passwd = await popPswBox();
         if (!passwd) return;
         const loading = popNew('app-components1-loading-loading', { text: '交易中...' });
-        const ret = await transfer(passwd,fromAddr,toAddr,gasPrice,pay,currencyName);
+        let ret;
+        if(!this.props.tx){
+            ret = await transfer(passwd,fromAddr,toAddr,pay,currencyName,minerFeeLevel);
+        }else{
+            ret = await resendTransfer(passwd,this.props.tx);
+        }
+        
         if (!ret) {
             loading.callback(loading.widget);
 
@@ -137,7 +151,7 @@ export class Transfer extends Widget {
     /**
      * 显示交易详情
      */
-    public showTransactionDetails(hash: string,nonce:number,minerFeeLevel:MinerFeeLevel) {
+    public showTransactionDetails(hash:string|number,nonce:number,minerFeeLevel:MinerFeeLevel) {
         const t = new Date();
         const tx:TransRecordLocal = {
             hash,

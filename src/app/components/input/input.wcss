@@ -27,3 +27,7 @@
     font-size: 32px;
 }
 
+.pi-input__inner-disabled{
+    color: #c0c4cc;
+    cursor: not-allowed;
+}

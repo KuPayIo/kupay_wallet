@@ -1,4 +1,4 @@
-<div class="new-page">
+<div class="new-page" w-class="new-page">
     <div w-class="title-container">
         <div w-class="user-container">
             <img src="{{it1.avatar ? it1.avatar : '../../../res/image1/default_avatar.png'}}" w-class="avatar"/>
@@ -15,6 +15,6 @@
         </div>
     </div>
     {{for i,v of it1.tabs}} {{let isActive = i===it1.activeNum}}
-    <widget w-tag={{v.components}} style="visibility: {{isActive ? 'visible' : 'hidden'}}; z-index:{{isActive ? 0 : -1}}; position:absolute; width:100%;height:100%;">{isActive:{{isActive}}}</widget>
+    <widget w-tag={{v.components}} style="visibility: {{isActive ? 'visible' : 'hidden'}}; z-index:{{isActive ? 0 : -1}};  width:100%;{{isActive ? 'flex:1 0 0;' : ''}}">{isActive:{{isActive}}}</widget>
     {{end}}
 </div>

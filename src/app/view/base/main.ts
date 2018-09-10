@@ -31,7 +31,7 @@ export const run = (cb): void => {
     openAndGetRandom();
     // dataCenter.init();
     popNew('app-view-base-app');
-    // popNew('app-view-wallet-transaction-home',{ currencyName:'ETH' });
+    // popNew('app-view-wallet-localWallet-addAsset');
     // popNew('app-view-wallet-transaction-transfer',{ currencyName:'ETH' });
     // const t = new Date();
     // const tx:TransRecordLocal = {
