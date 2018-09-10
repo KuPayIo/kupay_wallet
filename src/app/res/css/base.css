@@ -28,23 +28,23 @@ div{
 
 
 @keyframes switchWalletPageIn{
-    0% {background-color: rgba(0, 0, 0, 0);}
-    100% {background-color: rgba(0, 0, 0, 0.2);}
+    0% {background-color: #2220;}
+    100% {background-color: #2225;}
 }
 
 @keyframes switchWalletPageOut{
-    0% {background-color: rgba(0, 0, 0, 0.2);}
-    100% {background-color: rgba(0, 0, 0, 0);}
+    0% {background-color: #2225;}
+    100% {background-color: #2220;}
 }
 
 @keyframes switchWalletIn{
-    0% {width: 0px;}
-    100% {width: 356px;}
+    0% {margin-left: -630px;flex: 0;}
+    100% {margin-left: 0px;flex: 1;}
 }
 
 @keyframes switchWalletOut{
-    0% {width: 356px;}
-    100% {width: 0px;}
+    0% {margin-left: 0px;flex: 1;}
+    100% {margin-left: -630px;flex: 0;}
 }
 #addressMessageBox .addressInput textarea:focus{
     border: 2px solid rgb(220, 223, 230)!important;

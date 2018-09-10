@@ -16,10 +16,6 @@ export class PlayHome extends Widget {
         super();
     }
 
-    public create(){
-        super.create();
-    }
-
     public backPrePage() {
         this.ok && this.ok();
     }

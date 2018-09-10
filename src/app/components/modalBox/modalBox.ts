@@ -8,6 +8,7 @@ interface Props {
     content:string;
     sureText:string;
     cancelText:string;
+    style?:string; // 修改content的样式
 }
 export class ModalBox extends Widget {
     public props: Props;

@@ -2,11 +2,11 @@
  * 挖矿及矿山排名
  */
 // ============================== 导入
+import { Json } from '../../../../pi/lang/type';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find, register } from '../../../store/store';
-import { Json } from '../../../../pi/lang/type';
 import { getMineRank, getMiningRank } from '../../../net/pull';
+import { find, register } from '../../../store/store';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,7 +20,7 @@ export class DividendItem extends Widget {
         more:boolean;
         miningTotal:number;
         mineTotal:number;
-    }
+    };
     constructor() {
         super();
     }
@@ -41,31 +41,30 @@ export class DividendItem extends Widget {
         this.initEvent();
     }
     
-
     /**
      * 获取更新数据
      */
     public async initData() {
+        // tslint:disable-next-line:max-line-length
         // const data = [{index:"001",name:"德邦一号",num:25222325,img:"../../res/image/cloud_icon_cloud.png"},{index:"002",name:"德邦一号",num:25222325,img:"../../res/image/cloud_icon_cloud.png"},{index:"003",name:"德邦一号",num:25222325,img:"../../res/image/cloud_icon_cloud.png"},{index:"004",name:"德邦一号",num:25222325,img:"../../res/image/cloud_icon_cloud.png"},{index:"005",name:"德邦一号",num:25222325,img:"../../res/image/cloud_icon_cloud.png"},{index:"006",name:"德邦一号",num:25222325,img:"../../res/image/cloud_icon_cloud.png"},{index:"007",name:"德邦一号",num:25222325,img:"../../res/image/cloud_icon_cloud.png"},{index:"008",name:"德邦一号",num:25222325,img:"../../res/image/cloud_icon_cloud.png"},{index:"009",name:"德邦一号",num:25222325,img:"../../res/image/cloud_icon_cloud.png"},];    
         let data = null;
-        if(this.props.fg === 0){
+        if (this.props.fg === 0) {
             data = find('miningRank');
-            if(data){
+            if (data) {
                 this.state.data = data.miningRank;
             }
-        }else{
+        } else {
             data = find('mineRank');
-            if(data){
+            if (data) {
                 this.state.data = data.mineRank;
             }
         }
-        const mining = find("miningTotal");
-        if(mining){
+        const mining = find('miningTotal');
+        if (mining) {
             this.state.mineTotal = mining.totalNum;
-            this.state.miningTotal = mining.holdNum
+            this.state.miningTotal = mining.holdNum;
         }
 
-        
         this.paint();
     }
 

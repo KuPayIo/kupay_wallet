@@ -4,8 +4,8 @@
 // ================================ 导入
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find, register } from '../../../store/store';
 import { getMiningHistory } from '../../../net/pull';
+import { find, register } from '../../../store/store';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,7 +20,7 @@ export class Dividend extends Widget {
 
     public create() {
         super.create();
-        this.state={
+        this.state = {
             data:[],
             more:false
         }; 
@@ -33,11 +33,12 @@ export class Dividend extends Widget {
      */
     public async initData() {
         const data = find('miningHistory');  
+        // tslint:disable-next-line:max-line-length
         // const data = [{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'}];    
         // const data=[];      
-       if(data){
+        if (data) {
             this.state.data = data; 
-       }
+        }
         this.paint();
     }
 
