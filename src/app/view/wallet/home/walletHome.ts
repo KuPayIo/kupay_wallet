@@ -1,8 +1,9 @@
 /**
  * wallet home
  */
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { fetchWalletAssetList, hasNoWallet } from '../../../utils/tools';
+import { fetchTotalAssets, fetchWalletAssetList, hasNoWallet } from '../../../utils/tools';
 
 export class WalletHome extends Widget {
     public create() {
@@ -11,6 +12,7 @@ export class WalletHome extends Widget {
     }
     public init() {
         this.state = {
+            totalAsset:fetchTotalAssets(),
             assetList:fetchWalletAssetList()
         };
     }
@@ -22,6 +24,7 @@ export class WalletHome extends Widget {
     // 条目点击
     public itemClick(e:any) {
         hasNoWallet();
-        console.log(e.index);
+        const index = e.index;
+        popNew('app-view-wallet-transaction-home',{ currencyName:this.state.assetList[index].currencyName });
     }
 }

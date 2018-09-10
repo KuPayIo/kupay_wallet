@@ -3,7 +3,7 @@
  */
 import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { CurrencyType, CurrencyTypeReverse, LoginState } from '../store/interface';
+import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog,paseProductList,pasePurchaseRecord } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
@@ -874,9 +874,9 @@ export const fetchGasPrices = async () => {
         const res = await requestAsync(msg);
         
         const gasPrice = {
-            standard:Number(res.standard),
-            fast:Number(res.fast),
-            fastest:Number(res.fastest)
+            [MinerFeeLevel.STANDARD]:Number(res.standard),
+            [MinerFeeLevel.FAST]:Number(res.fast),
+            [MinerFeeLevel.FASTEST]:Number(res.fastest)
         };
         updateStore('gasPrice',gasPrice);
 

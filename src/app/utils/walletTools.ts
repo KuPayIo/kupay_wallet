@@ -1,99 +1,19 @@
 /**
  * 和第3方库相关的一些工具函数
  */
-import { isNumber } from '../../pi/util/util';
+import { ERC20Tokens } from '../config';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
-import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../logic/dataCenter';
-import { Addr } from '../store/interface';
+import { Addr, TxStatus } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { lang } from './constants';
-import { calcHashValuePromise, formatBalance, hexstrToU8Array } from './tools';
-import { ethTokenDivideDecimals, sat2Btc, wei2Eth } from './unitTools';
-
-/**
- * 获取有效的货币
- * 
- * @param perNum 转化前数据
- * @param currencyName  当前货币类型
- * @param conversionType 转化类型
- * @param isWei 是否wei转化
- */
-export const effectiveCurrency = (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean) => {
-
-    const r: any = { num: 0, show: '', conversionShow: '' };
-    const rate: any = dataCenter.getExchangeRate(currencyName);
-    let num;
-    if (currencyName === 'ETH') {
-        num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (currencyName === 'BTC') {
-        num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
-    }
-    num = formatBalance(num);
-    r.num = num;
-    r.show = `${num} ${currencyName}`;
-    r.conversionShow = `≈${(num * rate[conversionType]).toFixed(2)} ${conversionType}`;
-
-    return r;
-
-};
-
-/**
- * 获取有效的货币不需要转化
- * 
- * @param perNum 转化前数据
- * @param currencyName  当前货币类型
- * @param isWei 是否wei转化effectiveCurrencyNoConversion
- */
-export const effectiveCurrencyNoConversion = (perNum: any, currencyName: string, isMinUnit: boolean) => {
-    const r: any = { num: 0, show: '', conversionShow: '' };
-    let num;
-    if (currencyName === 'ETH') {
-        num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (currencyName === 'BTC') {
-        num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
-    }
-    r.num = num;
-    r.show = `${formatBalance(num)} ${currencyName}`;
-
-    return r;
-
-};
-
-/**
- * 获取有效的货币不需要转化
- * 
- * @param perNum 转化前数据
- * @param currencyName  当前货币类型
- * @param isMinUnit 是否是最小单位
- * 
- */
-export const effectiveCurrencyStableConversion = (perNum: any, currencyName: string, conversionType: string, isMinUnit: boolean) => {
-    const rate: any = dataCenter.getExchangeRate(currencyName);
-    const r: any = { num: 0, conversionShow: '' };
-    let num;
-    if (currencyName === 'ETH') {
-        num = isMinUnit ? wei2Eth(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (currencyName === 'BTC') {
-        num = isMinUnit ? sat2Btc(!isNumber(perNum) ? perNum.toNumber() : perNum) : perNum;
-    } else if (ERC20Tokens[currencyName]) {
-        num = isMinUnit ? ethTokenDivideDecimals(!isNumber(perNum) ? perNum.toNumber() : perNum, currencyName) : perNum;
-    }
-    r.num = num;
-    r.conversionShow = (num * rate[conversionType]).toFixed(2);
-
-    return r;
-
-};
+import { calcHashValuePromise, getAddrById, hexstrToU8Array, parseDate, timestampFormat } from './tools';
+import { smallUnit2LargeUnit } from './unitTools';
 
 /**
  * 获取新的地址信息
@@ -239,4 +159,52 @@ export const getMnemonicHexstr = async (wallet, passwd) => {
 
         return '';
     }
+};
+
+/**
+ * 获取某个地址的交易记录
+ */
+export const fetchTransactionList = (addr:string,currencyName:string) => {
+    if (!addr) return;
+    // 从缓存中取出对应地址的交易记录
+    const transactions = find('transactions') || [];
+    let txList = [];
+    if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
+        txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
+    } else if (currencyName === 'BTC') {
+        txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName).map(v => {
+            if (v.inputs.indexOf(addr) >= 0) {
+                v.from = addr;
+                v.to = v.outputs[0];
+            } else {
+                v.from = v.inputs[0];
+                v.to = addr;
+            }
+
+            return v;
+        });
+    }
+
+    txList = txList.map(v => {
+        const pay = smallUnit2LargeUnit(currencyName,v.value);
+        const fee = smallUnit2LargeUnit(ERC20Tokens[currencyName] ? 'ETH' : currencyName,v.fees);
+        const isFromMe = v.from.toLowerCase() === addr.toLowerCase();
+
+        return {
+            hash: v.hash,
+            txType: isFromMe ? 1 : 2,
+            fromAddr: v.from,
+            toAddr: v.to,
+            pay,
+            fee,
+            time: v.time,
+            status: TxStatus.SUCCESS,
+            info: v.info,
+            currencyName: currencyName
+        };
+    });
+
+    const addrInfo = getAddrById(addr,currencyName);
+
+    return txList.concat(addrInfo.record).sort((a, b) => b.time - a.time);
 };

@@ -6,6 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { UserInfo } from '../../../store/interface';
 import { register } from '../../../store/store';
+import { fetchTotalAssets } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -26,7 +27,8 @@ export class Home extends Widget {
                 components:'app-view-wallet-home-walletHome'
             }],
             activeNum:1,
-            avatar:''
+            avatar:'',
+            totalAsset:fetchTotalAssets()
         };
     }
     public tabsChangeClick(event: any, value: number) {

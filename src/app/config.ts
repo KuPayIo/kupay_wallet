@@ -270,6 +270,10 @@ export const MainChainCoin = {
         rate:{ CNY:0.03,USD:0.19 }
     }
 };
+
+// 默认ETH ERC20转账地址,预估矿工费的时候使用
+export const defaultEthToAddr = '0x040e7783A06e9b994F6e90DF5b2933C03F1b8F21';
+
 // tslint:disable
 export const Config = {
     // 隐私条款

@@ -1,12 +1,12 @@
+import { ERC20Tokens } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
-import { ERC20Tokens } from '../core/eth/tokens';
 import { EthWallet } from '../core/eth/wallet';
 import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
 import { Addr, CurrencyRecord, Wallet } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
-import { btcNetwork, defaultExchangeRateJson, ethTokenTransferCode, lang } from '../utils/constants';
+import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
 import { getAddrsAll, getAddrsByCurrencyName, getDefaultAddr } from '../utils/tools';
 import { btc2Sat, ethTokenDivideDecimals, sat2Btc, wei2Eth } from '../utils/unitTools';
 import { getMnemonic } from '../utils/walletTools';
@@ -38,6 +38,7 @@ export class DataCenter {
      * 初始化
      */
     public init() {
+
         // 启动定时器更新
         if (!this.timerRef) this.openCheckFast();
         if (!this.timerRef1) this.openCheck();
@@ -46,6 +47,14 @@ export class DataCenter {
         this.updateFastList.push(['exchangeRate', 'ETH']);
         this.updateFastList.push(['exchangeRate', 'BTC']);
 
+        // this.refresh();
+
+        // if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
+    }
+    /**
+     * 刷新本地钱包
+     */
+    public refresh() {
         // 从缓存中获取地址进行初始化
         const addrs = find('addrs');
         if (addrs) {
@@ -63,24 +72,6 @@ export class DataCenter {
                 }
             });
         }
-
-        // if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
-    }
-
-    public initStore() {
-        // 初始化默认兑换汇率列表
-        const rateJson = defaultExchangeRateJson;
-        const m = new Map();
-        for (const key in rateJson) {
-            if (rateJson.hasOwnProperty(key)) {
-                m.set(key, rateJson[key]);
-            }
-        }
-        updateStore('exchangeRateJson', m);
-
-        // 初始化货币信息列表
-        // updateStore('exchangeRateJson', (config.dev_mode === 'dev') ? supportCurrencyListTest : supportCurrencyListMain);
-
     }
 
     /**
@@ -124,90 +115,13 @@ export class DataCenter {
     }
 
     /**
-     * 通过地址获取所有的交易记录
-     */
-    public getAllTransactionsByAddr(addr: string, currencyName: string) {
-        // 从缓存中取出对应地址的交易记录
-        const transactions = find('transactions') || [];
-
-        // return transactions.filter(v => v.addr === addr);
-
-        let list = [];
-        if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
-            list = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
-        } else if (currencyName === 'BTC') {
-            list = transactions.filter(v => v.addr === addr && v.currencyName === currencyName).map(v => {
-                if (v.inputs.indexOf(addr) >= 0) {
-                    v.from = addr;
-                    v.to = v.outputs[0];
-                } else {
-                    v.from = v.inputs[0];
-                    v.to = addr;
-                }
-
-                return v;
-            });
-        }
-
-        return list;
-    }
-
-    /**
-     * 获取汇率
-     */
-    public getExchangeRate(currencyName: string) {
-        return find('exchangeRateJson', currencyName);
-    }
-    /**
      * 更新记录
      */
     public updatetTransaction(addr: string, currencyName: string) {
         this.updateFastList.push(['balance', addr, currencyName]);
         this.updateFastList.push(['transaction', addr, currencyName]);
     }
-    /**
-     * 添加常用联系人地址
-     */
-    public addTopContacts(currencyName: string, addresse: string, tags: string) {
-        let topContacts = find('TopContacts');
-        if (!topContacts) {
-            topContacts = [];
-        }
-        const item = {
-            currencyName,
-            tags,
-            addresse
-        };
-        topContacts.push(item);
-        updateStore('TopContacts', topContacts);
-    }
-    /**
-     * 获取常用联系人地址
-     */
-    public getTopContacts(currencyName: string) {
-        let topContacts = find('TopContacts');
-        if (!topContacts) {
-            topContacts = [];
-        }
-        topContacts = topContacts.filter(v => v.currencyName === currencyName);
-
-        return topContacts;
-    }
-
-    /**
-     * 设置缓存hash
-     */
-    public setHash(key: string, hash: string) {
-        if (!key) return;
-        updateStore('hashMap', getBorn('hashMap').set(key, hash));
-    }
-    /**
-     * 获取缓存hash
-     */
-    public getHash(key: string) {
-        return find('hashMap', key);
-    }
-
+    
     // 获取币币交易交易记录
     public fetchCurrencyExchangeTx() {
         const wallet = find('curWallet');
@@ -219,70 +133,19 @@ export class DataCenter {
 
     }
 
-    // /**
-    //  * 设置连接用户
-    //  */
-    // public getUser() {
-    //     return find('conUser');
-    // }
-    // /**
-    //  * 获取连接用户
-    //  */
-    // public setUser(user: string) {
-    //     updateStore('conUser', user);
-    // }
-
-    // /**
-    //  * 设置连接用户
-    //  */
-    // public getUserPublicKey() {
-    //     return find('conUserPublicKey');
-    // }
-    // /**
-    //  * 获取连接用户
-    //  */
-    // public setUserPublicKey(publicKey: string) {
-    //     updateStore('conUserPublicKey', publicKey);
-    // }
-
-    // /**
-    //  * 设置连接随机数
-    //  */
-    // public getConRandom() {
-    //     return find('conRandom');
-    // }
-    // /**
-    //  * 获取连接随机数
-    //  */
-    // public setConRandom(random: string) {
-    //     updateStore('conRandom', random);
-    // }
-
-    // /**
-    //  * 设置连接随机数
-    //  */
-    // public getConUid() {
-    //     return find('conUid');
-    // }
-    // /**
-    //  * 获取连接随机数
-    //  */
-    // public setConUid(uid: number) {
-    //     updateStore('conUid', uid);
-    // }
-
     /****************************************************************************************************
      * 私有函数
      ******************************************************************************************/
 
     // 快速检测
     private openCheckFast() {
+        this.refresh();
         this.timerRef = setTimeout(() => {
             this.timerRef = 0;
             this.openCheckFast();
-        }, 1 * 1000);
-        if (this.updateFastList.length > 0) {
-            const update = this.updateFastList.shift();
+        }, 10 * 1000);
+        for (let i = 0;i < this.updateFastList.length; i ++) {
+            const update = this.updateFastList[i];
             // console.log('openCheck updateFastList', update);
             switch (update[0]) {
                 case 'transaction': this.parseTransactionDetails(update[1], update[2]); break;
@@ -292,9 +155,22 @@ export class DataCenter {
                 case 'shapeShiftCoins': getShapeShiftCoins();break;
                 default:
             }
-
-            return;
         }
+        this.updateFastList = [];
+        // if (this.updateFastList.length > 0) {
+        //     const update = this.updateFastList.shift();
+        //     // console.log('openCheck updateFastList', update);
+        //     switch (update[0]) {
+        //         case 'transaction': this.parseTransactionDetails(update[1], update[2]); break;
+        //         // case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
+        //         case 'balance': this.updateBalance(update[1], update[2]); break;
+        //         case 'exchangeRate': this.exchangeRate(update[1]); break;
+        //         case 'shapeShiftCoins': getShapeShiftCoins();break;
+        //         default:
+        //     }
+
+        //     return;
+        // }
     }
 
     // 普通检测
@@ -310,7 +186,7 @@ export class DataCenter {
         }
 
         // 检查地址--放于最后一步
-        this.checkAddr();
+        // this.checkAddr();
     }
 
     // 币币交易记录定时器
@@ -390,7 +266,7 @@ export class DataCenter {
                 value: parseFloat(v.value),
                 fees: parseFloat(v.gasUsed) * parseFloat(v.gasPrice),
                 time: parseInt(v.timeStamp, 10) * 1000,
-                info: '无',
+                info: '',
                 currencyName,
                 addr
             };

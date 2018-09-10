@@ -77,7 +77,7 @@ export class App extends Widget {
 
 register('level_2_page_loaded',(loaded:boolean) => {
     const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-    // dataCenter.init();
+    dataCenter.init();
 });
 
 register('level_3_page_loaded',(loaded:boolean) => {
