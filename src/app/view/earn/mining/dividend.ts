@@ -80,7 +80,7 @@ export class Dividend extends Widget {
     /**
      * 页面滑动
      */
-    public scroll() {
+    public pageScroll() {
         if (document.getElementById('content').scrollTop > 0) {
             this.state.scroll = true;
             if (this.state.scroll) {

@@ -4,7 +4,7 @@
 // =================================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { regPhone } from '../../../net/pull';
+import { regPhone, sendCode } from '../../../net/pull';
 // =================================================导出
 export class BindPhone extends Widget {
     public ok: () => void;
@@ -16,7 +16,8 @@ export class BindPhone extends Widget {
         this.state = {
             phone:'',
             code:'',
-            phoneReg: /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/
+            phoneReg: /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/,
+            isSuccess:false
         };
     }
 
@@ -39,14 +40,16 @@ export class BindPhone extends Widget {
             return;
         }
         await regPhone(this.state.phone, this.state.code);
+        // this.state.isSuccess = false;
         this.ok();
     }
 
     /**
-     * 电话号码改变
+     * 获取验证码
      */
-    public phoneChange(e: any) {
+    public async phoneChange(e: any) {
         this.state.phone = e.value;
+        await sendCode(this.state.phone, this.state.oldCode);
     }
 
     /**

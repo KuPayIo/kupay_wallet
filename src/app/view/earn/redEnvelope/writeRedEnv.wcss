@@ -1,0 +1,14 @@
+.content{
+    margin: 30px 20px;
+    position: relative;
+}
+.totalNum{
+    height: 90px;
+    line-height: 90px;
+    color: rgba(17, 17, 17, 1);
+    font-size: 64px;
+    text-align: center;
+    font-weight: 600;
+    margin-top: 80px;
+    margin-bottom: 30px;
+}

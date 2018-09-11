@@ -11,7 +11,7 @@ import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { openAndGetRandom } from '../../net/pull';
-import { LockScreen, TransRecordLocal, TxStatus } from '../../store/interface';
+import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
 
@@ -55,9 +55,11 @@ export const run = (cb): void => {
     // popNew('app-view-wallet-create-createWalletByImage');
     // popNew('app-view-wallet-import-home');
     // popNew('app-view-play-home-home');
-    // popNew('app-view-earn-mining-rankList');
-    // popNew('app-view-mine-other-privacypolicy');
-    // popNew('app-view-mine-setting-itemList');
+    // popNew('app-view-earn-redEnvelope-redEnvHistory');
+    // popNew('app-view-earn-mining-dividend',{ ktBalance:0 });
+    // popNew('app-view-mine-home-home');
+    // popNew('app-view-mine-setting-phone');
+    // popNew('app-components-keyBoard-keyBoard');
     // popNewPage();
     // 后台切前台
     // backToFront();
