@@ -2,7 +2,7 @@
  * 交易详情页面
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { parseAccount, parseStatusShow, timestampFormat, canResend } from '../../../utils/tools';
+import { parseAccount, parseStatusShow, timestampFormat, canResend, copyToClipboard, popNewMessage } from '../../../utils/tools';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { popNew } from '../../../../pi/ui/root';
 
@@ -26,13 +26,13 @@ export class TransactionDetails extends Widget {
         const obj = parseStatusShow(tx.status);
         this.state = {
             ...tx,
-            hash:parseAccount(tx.hash),
+            hashShow:parseAccount(tx.hash),
             timeShow:timestampFormat(tx.time),
             statusShow:obj.text,
             statusIcon:obj.icon,
             minerFeeUnit:tx.currencyName !== 'BTC' ? 'ETH' : 'BTC',
             canResend:canResend(tx),
-            qrcode:`https://ropsten.etherscan.io/tx/${tx.fromAddr}`
+            qrcode:`https://ropsten.etherscan.io/tx/${tx.hash}`
         };
     }
     public backPrePage() {
@@ -42,4 +42,22 @@ export class TransactionDetails extends Widget {
     public resendClick(){
         popNew('app-view-wallet-transaction-transfer',{tx:this.props.tx,currencyName:this.props.tx.currencyName});
     }
+
+    public copyToAddr(){
+        copyToClipboard(this.state.toAddr);
+        popNewMessage('复制成功');
+    }
+    public copyFromAddr(){
+        copyToClipboard(this.state.fromAddr);
+        popNewMessage('复制成功');
+    }
+    public copyHash(){
+        copyToClipboard(this.state.hash);
+        popNewMessage('复制成功');
+    }
+    public copyEtherscan(){
+        copyToClipboard(this.state.qrcode);
+        popNewMessage('复制成功');
+    }
+
 }

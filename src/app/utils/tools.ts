@@ -110,6 +110,44 @@ export const getAddrsByCurrencyName = (wallet: any, currencyName: string) => {
 
     return retAddrs;
 };
+
+/**
+ * 获取钱包下指定货币类型的所有地址信息
+ * @param wallet wallet obj
+ */
+export const getAddrsInfoByCurrencyName = (currencyName: string) => {
+    const wallet = find('curWallet');
+    const currencyRecords = wallet.currencyRecords;
+    const retAddrInfo = [];
+    const len = currencyRecords.length;
+    for (let i = 0; i < len; i++) {
+        if (currencyRecords[i].currencyName === currencyName) {
+            for(let j = 0;j < currencyRecords[i].addrs.length; j++){
+                const addr = currencyRecords[i].addrs[j];
+                const obj = {
+                    addr,
+                    balance:getAddrInfoByAddr(addr,currencyName).balance
+                }
+                retAddrInfo.push(obj);
+            }
+            break;
+        }
+    }
+
+
+    return retAddrInfo;
+};
+
+ /**
+     * 通过地址获取地址余额
+     */
+export const getAddrInfoByAddr = (addr: string, currencyName: string)=> {
+    const addrs = find('addrs') || [];
+
+    return addrs.filter(v => v.addr === addr && v.currencyName === currencyName)[0];
+}
+
+
 // 随机生成RGB颜色
 export const randomRgbColor = () => { 
     const r = Math.floor(Math.random() * 256);
@@ -258,7 +296,7 @@ export const formatBalance = (banlance: number) => {
  * 余额格式化
  */
 export const formatBalanceValue = (value: number) => {
-    return value.toFixed(2);
+    return Number(value.toFixed(2));
 };
 
 /**
@@ -451,7 +489,7 @@ export const fetchTotalAssets = () => {
         
     });
 
-    return totalAssets.toFixed(2);
+    return formatBalanceValue(totalAssets);
 };
 /**
  * 获取异或值
@@ -533,6 +571,15 @@ export const popPswBox = async () => {
         return;
     }
 };
+
+//弹出提示框
+export const popNewMessage = (content:string) =>{
+    return popNew('app-components-message-message',{content});
+}
+//弹出loading
+export const popNewLoading = (text:string) => {
+    return popNew('app-components1-loading-loading',{text});
+}
 
 /**
  * 打开密码输入框
@@ -771,7 +818,7 @@ export const fetchWalletAssetList = () => {
     const assetList = [];
     for (const k in MainChainCoin) {
         const item:any = {};
-        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
+        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0 && k !== 'KT') {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             const balance = fetchBalanceOfCurrency(k);
@@ -779,7 +826,7 @@ export const fetchWalletAssetList = () => {
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(balance * cny);
             const gain = Math.random();
-            item.gain =  gain > 0.5 ? gain.toFixed(2) : -gain.toFixed(2);
+            item.gain =  gain > 0.5 ? formatBalanceValue(gain) : formatBalanceValue(-gain);
             assetList.push(item);
         }
         
@@ -871,7 +918,7 @@ export const fetchWalletAssetListAdded = () => {
     const assetList = [];
     for (const k in MainChainCoin) {
         const item:any = {};
-        if (MainChainCoin.hasOwnProperty(k)) {
+        if (MainChainCoin.hasOwnProperty(k) && k!== 'KT') {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             if(showCurrencys.indexOf(k) >= 0){
@@ -910,3 +957,17 @@ export const fetchWalletAssetListAdded = () => {
 
     return assetList;
 };
+
+
+ /**
+ * 初始化地址对象
+ */
+export const initAddr = (address: string, currencyName: string, addrName?: string): Addr =>{
+    return {
+        addr: address,
+        addrName: addrName || getDefaultAddr(address),
+        record: [],
+        balance: 0,
+        currencyName: currencyName
+    };
+}

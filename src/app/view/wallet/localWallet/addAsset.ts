@@ -12,8 +12,11 @@ export class AddAsset extends Widget{
         this.init();
     }
     public init() {
+        const assetList = fetchWalletAssetListAdded()
         this.state = {
-            assetList:fetchWalletAssetListAdded()
+            assetList,
+            searchText:"",
+            showAssetList:assetList
         };
         console.log(this.state);
     }
@@ -41,5 +44,23 @@ export class AddAsset extends Widget{
         wallet.showCurrencys = showCurrencys;
 
         updateStore('curWallet', wallet);
+    }
+
+    public searchTextChange(e:any){
+        this.state.searchText = e.value;
+        if (this.state.searchText) {
+            this.state.showAssetList = this.state.assetList.filter(v => v.currencyName.toLowerCase().indexOf(this.state.searchText.toLowerCase()) >= 0);
+        }else{
+            this.state.showAssetList = this.state.assetList;
+        }
+        this.paint();
+    }
+
+    public searchTextClear(){
+        this.state.showAssetList = this.state.assetList;
+        this.paint();
+    }
+    public searchClick(){
+        
     }
 }

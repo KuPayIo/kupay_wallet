@@ -14,7 +14,7 @@
             <div w-class="amount">{{it1.txType === 1 ? '-' : '+'}}{{it1.pay}}&nbsp;{{it1.currencyName}}</div>
             <div w-class="item">
                 <div w-class="tag">收币地址</div>
-                <div w-class="content"><span>{{it1.toAddr}}</span><img src="../../../res/image/copy.png" w-class="copy"/></div>
+                <div w-class="content"><span>{{it1.toAddr}}</span><img src="../../../res/image/copy.png" w-class="copy" on-tap="copyToAddr"/></div>
             </div>
             <div w-class="item">
                 <div w-class="tag">矿工费</div>
@@ -32,15 +32,15 @@
             </div>
             <div w-class="item">
                 <div w-class="tag">交易号</div>
-                <div w-class="content"><span>{{it1.hash}}</span><img src="../../../res/image/copy.png" w-class="copy"/></div>
+                <div w-class="content"><span>{{it1.hashShow}}</span><img src="../../../res/image/copy.png" w-class="copy" on-tap="copyHash"/></div>
             </div>
             <div w-class="item">
                 <div w-class="tag">发币地址</div>
-                <div w-class="content"><span>{{it1.fromAddr}}</span><img src="../../../res/image/copy.png" w-class="copy"/></div>
+                <div w-class="content"><span>{{it1.fromAddr}}</span><img src="../../../res/image/copy.png" w-class="copy" on-tap="copyFromAddr"/></div>
             </div>
             <div w-class="qrcode-container">
                 <app-components-qrcode-qrcode>{value:{{it1.qrcode}},size:200}</app-components-qrcode-qrcode>
-                <div w-class="copy-ethersacn">复制地址</div>
+                <div w-class="copy-ethersacn" on-tap="copyEtherscan">复制地址</div>
             </div>
         </div>
     </div>

@@ -32,7 +32,8 @@ export class WalletHome extends Widget {
     public itemClick(e:any) {
         if(!hasWallet()) return;
         const index = e.index;
-        popNew('app-view-wallet-transaction-home',{ currencyName:this.state.assetList[index].currencyName });
+        const v = this.state.assetList[index];
+        popNew('app-view-wallet-transaction-home',{ currencyName:v.currencyName,gain:v.gain });
     }
 
     
@@ -40,6 +41,7 @@ export class WalletHome extends Widget {
 
 // ==================本地
 
+// 当前钱包变化
 register('curWallet',(curWallet)=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -48,7 +50,7 @@ register('curWallet',(curWallet)=>{
     }
 });
 
-
+//地址变化
 register('addrs',(addrs)=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -56,3 +58,12 @@ register('addrs',(addrs)=>{
         w.paint();
     }
 });
+// 汇率变化
+register('exchangeRateJson',(exchangeRateJson)=>{
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
+    }
+});
+

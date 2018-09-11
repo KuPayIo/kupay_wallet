@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    <div w-class="top-head">
+    <div w-class="top-head" ev-next-click="doScanClick">
         <app-components1-topBar-topBar>{"title":"{{it.currencyName}}转账",background:"#fff",nextImg:"scan.png"}</app-components1-topBar-topBar>
     </div>
     <div w-class="body">

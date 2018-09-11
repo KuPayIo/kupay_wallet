@@ -11,6 +11,7 @@ import { timeOfArrival } from '../../../utils/constants';
 import { addRecord, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, popPswBox } from '../../../utils/tools';
 import { wei2Eth } from '../../../utils/unitTools';
 import { resendTransfer } from '../../../logic/localWallet';
+import { doScanQrCode } from '../../../logic/native';
 
 interface Props {
     currencyName:string;
@@ -173,5 +174,12 @@ export class Transfer extends Widget {
         addRecord(this.props.currencyName, this.state.fromAddr, tx);
         this.ok && this.ok();
 
+    }
+
+    public doScanClick(){
+        doScanQrCode((res)=>{
+            this.state.toAddr = res;
+            this.paint();
+        });
     }
 }

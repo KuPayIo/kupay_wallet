@@ -12,9 +12,10 @@ import { find, updateStore } from '../store/store';
 import { ahash } from '../utils/ahash';
 import { defalutShowCurrencys, lang } from '../utils/constants';
 import { restoreSecret } from '../utils/secretsBase';
-import { calcHashValuePromise, getXOR, hexstrToU8Array, u8ArrayToHexstr, popPswBox, fetchGasPrice, formatBalance, addRecord } from '../utils/tools';
+import { calcHashValuePromise, getXOR, hexstrToU8Array, u8ArrayToHexstr, popPswBox, fetchGasPrice, formatBalance, addRecord, popNewLoading, popNewMessage } from '../utils/tools';
 import { transfer, estimateGasETH, estimateMinerFeeBTC, signRawTransactionETH, sendRawTransactionETH } from '../net/pullWallet';
 import { wei2Eth, eth2Wei } from '../utils/unitTools';
+import { getMnemonic, addNewAddr } from '../utils/walletTools';
 
 /**
  * 创建钱包
@@ -317,3 +318,24 @@ export const resendChargeTransfer = async (psw:string,txRecord:TransRecordLocal)
     addRecord(txRecord.currencyName, fromAddr, record);
 };
 //================================重发
+
+
+
+/**
+ * 添加新地址
+ */
+export const createNewAddr = async (passwd:string,currencyName:string) => {
+    const close = popNewLoading('添加中...');
+    const wallet = find('curWallet');
+    const mnemonic = await getMnemonic(wallet, passwd);
+    close.callback(close.widget);
+    if (mnemonic) {
+        const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
+        const address = GlobalWallet.getWltAddrByMnemonic(mnemonic, currencyName, currencyRecord.addrs.length);
+        if (!address) return;
+        addNewAddr(currencyName, address, '');
+        popNewMessage('添加成功');
+    } else {
+        popNewMessage('密码错误');
+    }
+}

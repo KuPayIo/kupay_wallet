@@ -79,7 +79,10 @@
 .quotes{
     color: #222;
 }
-.up-down{
+.up{
+    color: #E31F5A;
+}
+.down{
     color: #4bc05b;
 }
 .body{

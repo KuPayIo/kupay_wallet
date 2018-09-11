@@ -32,7 +32,7 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     // popNew('app-view-wallet-localWallet-addAsset');
-    // popNew('app-view-wallet-transaction-transfer',{ currencyName:'ETH' });
+    // popNew('app-view-wallet-transaction-chooseAddr',{ currencyName:'ETH' });
     // const t = new Date();
     // const tx:TransRecordLocal = {
     //     hash:'0x960f0db2771931ac8d71569a6824793870ac1621396e232146048438d94e734e',

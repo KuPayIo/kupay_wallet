@@ -7,7 +7,7 @@ import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
 import { Addr, CurrencyRecord, Wallet } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
-import { getAddrsAll, getAddrsByCurrencyName, getDefaultAddr } from '../utils/tools';
+import { getAddrsAll, getAddrsByCurrencyName, initAddr } from '../utils/tools';
 import { btc2Sat, ethTokenDivideDecimals, sat2Btc, wei2Eth } from '../utils/unitTools';
 import { getMnemonic } from '../utils/walletTools';
 /**
@@ -68,28 +68,16 @@ export class DataCenter {
             });
             addrs.forEach(v => {
                 if (list.indexOf(v.addr) >= 0 && wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
-                    this.addAddr(v.addr, v.addrName, v.currencyName);
+                    this.updateAddrInfo(v.addr, v.currencyName);
                 }
             });
         }
     }
 
     /**
-     * 初始化地址对象
+     * updateAddrInfo
      */
-    public initAddr(address: string, currencyName: string, addrName?: string): Addr {
-        return {
-            addr: address,
-            addrName: addrName || getDefaultAddr(address),
-            record: [],
-            balance: 0,
-            currencyName: currencyName
-        };
-    }
-    /**
-     * addAddr
-     */
-    public addAddr(addr: string, addrName: string, currencyName: string) {
+    public updateAddrInfo(addr: string, currencyName: string) {
         this.updatetTransaction(addr, currencyName);
     }
 
@@ -252,7 +240,7 @@ export class DataCenter {
         const contractAddress = ERC20Tokens[currencyName].contractAddr;
         try{
             const res = await api.getTokenTransferEvents(contractAddress, addr);
-            // console.log('parseEthERC20TokenTransactionDetails-=-=-=-=-=-',res);
+            console.log('parseEthERC20TokenTransactionDetails-=-=-=-=-=-',res);
             const list = [];
             const transactions = find('transactions') || [];
             res.result.forEach(v => {
@@ -492,7 +480,7 @@ export class DataCenter {
         for (let i = 1; i < cnt; i++) {
             const address = ethWallet.selectAddress(i);
             currencyRecord.addrs.push(address);
-            addrs.push(this.initAddr(address, 'ETH'));
+            addrs.push(initAddr(address, 'ETH'));
         }
 
         return addrs;
@@ -512,7 +500,7 @@ export class DataCenter {
         for (let i = 1; i < cnt; i++) {
             const address = btcWallet.derive(i);
             currencyRecord.addrs.push(address);
-            addrs.push(this.initAddr(address, 'BTC'));
+            addrs.push(initAddr(address, 'BTC'));
         }
         btcWallet.lock();
 
@@ -531,7 +519,7 @@ export class DataCenter {
         for (let i = 1; i < cnt; i++) {
             const address = ethWallet.selectAddress(i);
             currencyRecord.addrs.push(address);
-            addrs.push(this.initAddr(address, currencyRecord.currencyName));
+            addrs.push(initAddr(address, currencyRecord.currencyName));
         }
 
         return addrs;
