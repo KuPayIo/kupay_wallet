@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { Addr } from '../../../store/interface';
 import { getBorn, register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, parseStatusShow, timestampFormat } from '../../../utils/tools';
+import { formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, parseStatusShow, timestampFormat, parseTxTypeShow } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -16,10 +16,13 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
     currencyName:string;
+    gain:number;
 }
 export class TransactionHome extends Widget {
     public props:Props;
+
     public ok:() => void;
+    
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -30,13 +33,13 @@ export class TransactionHome extends Widget {
     public init() {
         const currencyName = this.props.currencyName;
         const balance = formatBalance(getCurrentAddrBalanceByCurrencyName(currencyName));
-        const rate = getBorn('exchangeRateJson').get(currencyName).CNY;
+        const rate =  getBorn('exchangeRateJson').get(currencyName).CNY;
         const balanceValue =  rate * balance;
         const txList = this.parseTxList();
         this.state = {
             balance,
             balanceValue:formatBalanceValue(balanceValue),
-            rate,
+            rate:formatBalanceValue(rate),
             txList
         };
     }
@@ -44,10 +47,12 @@ export class TransactionHome extends Widget {
     public parseTxList() {
         const currencyName = this.props.currencyName;
         const curAddr = getCurrentAddrByCurrencyName(currencyName);
+        
         const txList = fetchTransactionList(curAddr,currencyName);
         txList.forEach(item => {
             item.TimeShow = timestampFormat(item.time).slice(5);
             item.statusShow =  parseStatusShow(item.status).text; 
+            item.txTypeShow = parseTxTypeShow(item.txType);
         });
 
         return txList;
@@ -59,12 +64,44 @@ export class TransactionHome extends Widget {
     public doTransferClick() {
         popNew('app-view-wallet-transaction-transfer',{ currencyName:this.props.currencyName });
     }
+
+    public doReceiptClick(){
+        popNew('app-view-wallet-transaction-receipt',{ currencyName:this.props.currencyName });
+    }
+
+    public chooseAddrClick(){
+        popNew('app-view-wallet-transaction-chooseAddr',{ currencyName:this.props.currencyName });
+    }
+    public updateRate(){
+        this.state.rate = formatBalanceValue(getBorn('exchangeRateJson').get(this.props.currencyName).CNY);
+        this.paint();
+    }
 }
 
 // ==========================本地
+//地址变化
 register('addrs',(addrs:Addr[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        // w.userInfoChange(userInfo);
+        w.init();
+        w.paint();
+    }
+});
+
+// 汇率变化
+register('exchangeRateJson',(exchangeRateJson)=>{
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateRate();
+    }
+});
+
+
+//当前钱包变化
+register('curWallet',(addrs:Addr[]) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
     }
 });

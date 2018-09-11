@@ -237,7 +237,7 @@ export class BTCWallet {
      * @returns {Promise<string>} Transaction hash of this transaction
      * @memberof BTCWallet
      */
-    public async buildRawTransaction(output: Output, priority: PRIORITY): Promise<[string, number]> {
+    public async buildRawTransaction(output: Output, priority: PRIORITY | string): Promise<[string, number]> {
         if (!this.isInitialized) {
             throw new Error('Wallet uninitialized!');
         }

@@ -31,7 +31,27 @@ export const run = (cb): void => {
     openAndGetRandom();
     // dataCenter.init();
     popNew('app-view-base-app');
-    // popNew('app-view-wallet-create-createWallet');
+    // popNew('app-view-wallet-localWallet-addAsset');
+    // popNew('app-view-wallet-transaction-chooseAddr',{ currencyName:'ETH' });
+    // const t = new Date();
+    // const tx:TransRecordLocal = {
+    //     hash:'0x960f0db2771931ac8d71569a6824793870ac1621396e232146048438d94e734e',
+    //     txType:1,
+    //     fromAddr: '0x040e7783a06e9b994f6e90df5b2933c03f1b8f21',
+    //     toAddr: '0x040e7783a06e9b994f6e90df5b2933c03f1b8f21',
+    //     pay: 0.01,
+    //     time: t.getTime(),
+    //     status:TxStatus.PENDING,
+    //     confirmBlock: 0,
+    //     info: '',
+    //     currencyName: 'ETH',
+    //     fee: 0.0001,
+    //     nonce:15,
+    //     minerFeeLevel:0
+    // };
+    // popNew('app-view-wallet-transaction-transactionDetails',{ tx });
+    
+    // popNew('app-view-wallet-create-home');
     // popNew('app-view-wallet-create-createWalletByImage');
     // popNew('app-view-wallet-import-home');
     // popNew('app-view-play-home-home');

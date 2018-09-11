@@ -18,7 +18,7 @@ interface Props {
     placeHolder?:string;
     itype?:string;
     style?:string;
-    autofocus?:boolean;
+    disabled?:boolean;
 }
 
 interface State {
@@ -44,6 +44,7 @@ export class Input extends Widget {
         if (props.input) {
             this.state.currentValue = props.input;
         }
+        console.log('000000000',props);
     }
 
     public change(event:any) {

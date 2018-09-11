@@ -61,6 +61,13 @@ export enum TxStatus {
     FAILED, // 失败
     SUCCESS// 成功
 }
+// 交易类型
+export enum TxType {
+    THRANSFER = 1, //普通转账
+    RECEIPT, //收款
+    RECHARGE,//充值
+    EXCHANGE //币币兑换
+}
 // store数据管理
 export interface Store {
     // 基础数据
@@ -180,8 +187,7 @@ export interface TransactionRecord {
  */
 export interface TransRecordLocal {
     hash:number | string; // 交易hash
-    // tslint:disable-next-line:no-reserved-keywords
-    txType:number;// 交易类型 1 转账 2 收款
+    txType:TxType;// 交易类型 1 转账 2 收款 3 充值 4 币币兑换转账
     fromAddr:string;// 转账地址
     toAddr:string;// 收币地址
     pay:number;// 转账金额

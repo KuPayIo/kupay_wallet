@@ -1,5 +1,7 @@
 .asset-container{
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
 }
 .total-asset-container{
     height: 120px;
@@ -17,4 +19,9 @@
 .add-asset{
     width: 45px;
     height: 45px;
+}
+.asset-list{
+    flex: 1 0 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }

@@ -5,7 +5,7 @@ import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
 import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus } from '../store/interface';
+import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { defalutShowCurrencys } from './constants';
 
@@ -110,6 +110,44 @@ export const getAddrsByCurrencyName = (wallet: any, currencyName: string) => {
 
     return retAddrs;
 };
+
+/**
+ * 获取钱包下指定货币类型的所有地址信息
+ * @param wallet wallet obj
+ */
+export const getAddrsInfoByCurrencyName = (currencyName: string) => {
+    const wallet = find('curWallet');
+    const currencyRecords = wallet.currencyRecords;
+    const retAddrInfo = [];
+    const len = currencyRecords.length;
+    for (let i = 0; i < len; i++) {
+        if (currencyRecords[i].currencyName === currencyName) {
+            for(let j = 0;j < currencyRecords[i].addrs.length; j++){
+                const addr = currencyRecords[i].addrs[j];
+                const obj = {
+                    addr,
+                    balance:getAddrInfoByAddr(addr,currencyName).balance
+                }
+                retAddrInfo.push(obj);
+            }
+            break;
+        }
+    }
+
+
+    return retAddrInfo;
+};
+
+ /**
+     * 通过地址获取地址余额
+     */
+export const getAddrInfoByAddr = (addr: string, currencyName: string)=> {
+    const addrs = find('addrs') || [];
+
+    return addrs.filter(v => v.addr === addr && v.currencyName === currencyName)[0];
+}
+
+
 // 随机生成RGB颜色
 export const randomRgbColor = () => { 
     const r = Math.floor(Math.random() * 256);
@@ -258,7 +296,7 @@ export const formatBalance = (banlance: number) => {
  * 余额格式化
  */
 export const formatBalanceValue = (value: number) => {
-    return value.toFixed(2);
+    return Number(value.toFixed(2));
 };
 
 /**
@@ -441,7 +479,7 @@ export const fetchBalanceOfCurrency = (currencyName: string) => {
  */
 export const fetchTotalAssets = () => {
     const wallet = find('curWallet');
-    if (!wallet) return;
+    if (!wallet) return '0.00';
     let totalAssets = 0;
     wallet.currencyRecords.forEach(item => {
         if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
@@ -451,7 +489,7 @@ export const fetchTotalAssets = () => {
         
     });
 
-    return totalAssets.toFixed(2);
+    return formatBalanceValue(totalAssets);
 };
 /**
  * 获取异或值
@@ -534,6 +572,15 @@ export const popPswBox = async () => {
     }
 };
 
+//弹出提示框
+export const popNewMessage = (content:string) =>{
+    return popNew('app-components-message-message',{content});
+}
+//弹出loading
+export const popNewLoading = (text:string) => {
+    return popNew('app-components1-loading-loading',{text});
+}
+
 /**
  * 打开密码输入框
  */
@@ -603,6 +650,7 @@ export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
             return addrs[i].balance;
         }
     }
+    return 0;
 };
 // 时间戳格式化 毫秒为单位
 export const timestampFormat = (timestamp: number) => {
@@ -735,6 +783,13 @@ export const fetchGasPrice = (minerFeeLevel:MinerFeeLevel) => {
     return find('gasPrice')[minerFeeLevel];
 };
 
+// 获取gasPrice
+export const fetchPriority = (minerFeeLevel:MinerFeeLevel) => {
+    if(minerFeeLevel === MinerFeeLevel.STANDARD) return 'low';
+    if(minerFeeLevel === MinerFeeLevel.FAST) return 'medium';
+    if(minerFeeLevel === MinerFeeLevel.FASTEST) return 'high';
+};
+
 // 获取默认币种汇率
 export const fetchDefaultExchangeRateJson = () => {
     const rateJson = new Map<string,any>();
@@ -763,7 +818,7 @@ export const fetchWalletAssetList = () => {
     const assetList = [];
     for (const k in MainChainCoin) {
         const item:any = {};
-        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
+        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0 && k !== 'KT') {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             const balance = fetchBalanceOfCurrency(k);
@@ -771,7 +826,7 @@ export const fetchWalletAssetList = () => {
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(balance * cny);
             const gain = Math.random();
-            item.gain =  gain > 0.5 ? gain.toFixed(2) : -gain.toFixed(2);
+            item.gain =  gain > 0.5 ? formatBalanceValue(gain) : formatBalanceValue(-gain);
             assetList.push(item);
         }
         
@@ -797,7 +852,7 @@ export const fetchWalletAssetList = () => {
 /**
  * 没有创建钱包时
  */
-export const hasNoWallet = () => {
+export const hasWallet = () => {
     const wallet = find('curWallet');
     if (!wallet) {
         popNew('app-components-modalBox-modalBox',{ 
@@ -809,8 +864,9 @@ export const hasNoWallet = () => {
             popNew('app-view-wallet-create-home');
         });
 
-        return;
+        return false;
     }
+    return true;
 };
 
 // 解析交易状态
@@ -837,3 +893,81 @@ export const parseStatusShow = (status:TxStatus) => {
         };
     }
 };
+
+// 解析转账类型
+export const parseTxTypeShow = (txType:TxType)=>{
+    if(txType === TxType.RECEIPT){
+        return '收款';
+    }
+    return '转账';
+}
+
+ // 解析是否可以重发
+ export const canResend = (tx)=>{
+    if(tx.status !== TxStatus.PENDING) return false;
+    if(tx.minerFeeLevel === MinerFeeLevel.FASTEST) return false;
+    return true;
+}
+
+/**
+ * 获取钱包资产列表是否添加
+ */
+export const fetchWalletAssetListAdded = () => {
+    const wallet = find('curWallet');
+    const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
+    const assetList = [];
+    for (const k in MainChainCoin) {
+        const item:any = {};
+        if (MainChainCoin.hasOwnProperty(k) && k!== 'KT') {
+            item.currencyName = k;
+            item.description = MainChainCoin[k].description;
+            if(showCurrencys.indexOf(k) >= 0){
+                item.added = true;
+            }else{
+                item.added = false;
+            }
+            if(defalutShowCurrencys.indexOf(k) >= 0){
+                item.canSwtiched = false;
+            }else{
+                item.canSwtiched = true;
+            }
+            assetList.push(item);
+        }
+        
+    }
+
+    for (const k in ERC20Tokens) {
+        const item:any = {};
+        if (ERC20Tokens.hasOwnProperty(k)) {
+            item.currencyName = k;
+            item.description = ERC20Tokens[k].description;
+            if(showCurrencys.indexOf(k) >= 0){
+                item.added = true;
+            }else{
+                item.added = false;
+            }
+            if(defalutShowCurrencys.indexOf(k) >= 0){
+                item.canSwtiched = false;
+            }else{
+                item.canSwtiched = true;
+            }
+            assetList.push(item);
+        }
+    }
+
+    return assetList;
+};
+
+
+ /**
+ * 初始化地址对象
+ */
+export const initAddr = (address: string, currencyName: string, addrName?: string): Addr =>{
+    return {
+        addr: address,
+        addrName: addrName || getDefaultAddr(address),
+        record: [],
+        balance: 0,
+        currencyName: currencyName
+    };
+}
