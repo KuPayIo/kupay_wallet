@@ -6,7 +6,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { fetchRealUser, getCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
+import { CurrencyType, RedEnvelopeType } from '../../../store/interface';
 import { find, getBorn, register, updateStore } from '../../../store/store';
+import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -19,7 +21,7 @@ interface State {
     showPin:boolean;
     totalAmount:number;
     // tslint:disable-next-line:no-reserved-keywords
-    number:number;
+    totalNum:number;
     oneAmount:number;
     message:string;
     realUser:object;
@@ -37,12 +39,12 @@ export class WriteRedEnv extends Widget {
         const realUser = getBorn('realUserMap').get(find('conUser'));
         this.state = {
             list:[],
-            selected:1,
+            selected:0,
             showPin:false,
             totalAmount:0,   
-            number:0,
+            totalNum:0,
             oneAmount:0,
-            message:'恭喜发财 万事如意',
+            message:'',
             realUser
         };
         const list = [
@@ -77,7 +79,7 @@ export class WriteRedEnv extends Widget {
         if (this.state.showPin) {
             this.state.totalAmount = this.state.oneAmount;
         } else {
-            this.state.totalAmount = this.state.oneAmount * this.state.number;
+            this.state.totalAmount = this.state.oneAmount * this.state.totalNum;
         }
         this.paint();
     }
@@ -90,7 +92,7 @@ export class WriteRedEnv extends Widget {
             this.state.totalAmount = e.value;            
         } else {
             this.state.oneAmount = e.value;
-            this.state.totalAmount = this.state.oneAmount * this.state.number;
+            this.state.totalAmount = this.state.oneAmount * this.state.totalNum;
         }
         this.paint();
     }
@@ -99,9 +101,9 @@ export class WriteRedEnv extends Widget {
      * 修改数量
      */
     public changeNumber(e:any) {
-        this.state.number = e.value;
+        this.state.totalNum = e.value;
         if (!this.state.showPin) {
-            this.state.totalAmount = this.state.oneAmount * this.state.number;
+            this.state.totalAmount = this.state.oneAmount * this.state.totalNum;
         }
         this.paint();
     }
@@ -115,7 +117,7 @@ export class WriteRedEnv extends Widget {
     }
 
     /**
-     * 发红包
+     * 点击发红包按钮
      */
     public async send() {
         if (this.state.totalAmount === 0) {
@@ -123,7 +125,7 @@ export class WriteRedEnv extends Widget {
 
             return;
         }       
-        if (this.state.number === 0) {
+        if (this.state.totalNum === 0) {
             popNew('app-components-message-message', { content: '请输入要发送红包数量' });
 
             return;
@@ -147,33 +149,68 @@ export class WriteRedEnv extends Widget {
 
         //     return;
         // }
-        // const close = popNew('app-components1-loading-loading', { text: '加载中...' });
-        // const lm = this.state.message;
-        // const rtype = this.state.showPin ? 1 :0; // 0 等额红包  1 拼手气红包
-        // const ctype = Number(CurrencyType[curCoin.name]);
-        // const totalAmount = Number(this.state.totalAmount);
-        // // tslint:disable-next-line:no-reserved-keywords
-        // const number = this.state.number;
-        // const rid = await sendRedEnvlope(rtype, ctype, totalAmount, number, lm);
-        // close.callback(close.widget);
-        // if (!rid) return;
 
         this.inputBlur();
-        popNew('app-view-earn-redEnvelope-sendRedEnv', { message:this.state.message });
+        // tslint:disable-next-line:prefer-template
+        const mess1 = '发出：' + this.state.totalAmount + curCoin.name + '个';
+        // tslint:disable-next-line:prefer-template
+        const mess2 = '类型：' + (this.state.showPin ? '普通红包' :'拼手气红包');
+        popNew('app-components-modalBoxInput-modalBoxInput',{ 
+            // tslint:disable-next-line:prefer-template
+            title: curCoin.name + '红包',
+            content:[mess1,mess2],
+            placeholder:'输入密码',
+            itype:'password' }, 
+            (r) => {
+                const wallet = find('curWallet');
+                // const fg = VerifyIdentidy(wallet,r);
+                const fg = true;
+                if (fg) {
+                    this.sendRedEnv();
+                } else {
+                    popNew('app-components-message-message',{ content:'密码错误，请重新输入' });
+                }
+            }
+        );
+        
+    }
+
+    /**
+     * 实际发红包
+     */
+    public async sendRedEnv() {
+        const close = popNew('app-components1-loading-loading', { text: '红包准备中...' });
+        const curCoin = this.state.list[this.state.selected];
+        const lm = this.state.message;  // 留言
+        const rtype = this.state.showPin ? 1 :0; // 0 等额红包  1 拼手气红包
+        const ctype = Number(CurrencyType[curCoin.name]);  // 货币类型
+        const totalAmount = Number(this.state.totalAmount);   // 红包总金额
+        const totalNum = this.state.totalNum;    // 红包总个数
+        // const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm);
+        const rid = 1234;
+        close.callback(close.widget);
+        if (!rid) return;
+    
+        popNew('app-view-earn-redEnvelope-sendRedEnv', { 
+            message:this.state.message,
+            rid,
+            rtype:rtype,
+            cname:curCoin.name 
+        });
         this.state.oneAmount = 0;
-        this.state.number = 0;
+        this.state.totalNum = 0;
         this.state.totalAmount = 0;
         this.state.message = '';
         this.paint();
-        // updateStore('sHisRec', undefined);// 更新红包记录
-        // getCloudBalance();// 更新余额
-        // if (!this.state.showPin) {
-        //     // tslint:disable-next-line:max-line-length
-        //     console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
-        // } else {
-        //     // tslint:disable-next-line:max-line-length
-        //     console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
-        // }
+        updateStore('sHisRec', undefined);// 更新红包记录
+        getCloudBalance();// 更新余额
+        if (!this.state.showPin) {
+            // tslint:disable-next-line:max-line-length
+            console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
+        } else {
+            // tslint:disable-next-line:max-line-length
+            console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
+        }
     }
 
     /**
@@ -185,6 +222,7 @@ export class WriteRedEnv extends Widget {
             inputs[i].blur();
         }
     }
+
 }
 // =====================================本地
 register('cloudBalance', cloudBalance => {

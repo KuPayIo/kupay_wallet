@@ -1,5 +1,5 @@
 <div w-class="item">
-    <img src="../../res/image/{{it.img}}" w-class="itemImg"/>
+    <img src="{{it.img}}" w-class="itemImg"/>
     <div style="display: inline-block;flex: 1 0 0;">
         <div w-class="itemName">
             <span w-class="itemLeft">{{it.name}}</span>

@@ -1,0 +1,49 @@
+.content{
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-top: -1px;
+    position: relative;
+}
+.topBack{
+    text-align: center;
+    color: #888888;
+    font-size: 28px;
+    margin-top: -90px;
+    margin-bottom: 60px;
+}
+.topBackimg{
+    height: 147px;
+    width: 100%;
+}
+.userHead{
+    height: 180px;
+    width: 180px;
+}
+.bottom{
+    background: #fff;
+    border-radius: 12px;
+    left: 20px;
+    right: 20px;
+    bottom: 118px;
+    top: 600px;
+    position: absolute;
+}
+.tips{
+    font-size: 28px;
+    padding-left: 30px;
+    height: 100px;
+    line-height: 100px;
+    text-align: left;
+    color: #888888;
+    border-bottom: 1px solid #DBDBE5;
+}
+.other{
+    font-size: 28px;
+    background: #F8BC45;
+    color: #fff;
+    height: 35px;
+    line-height: 35px;
+    display: inline-block;
+    margin-left: 10px;
+}
