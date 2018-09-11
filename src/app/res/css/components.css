@@ -259,7 +259,7 @@ svg:not(:root), symbol, image, marker, pattern, foreignObject {
 .miningNum{
     font-size: 40px;
     opacity: 0;
-    position: absolute;
+    position: relative;
     margin-top: -245px;
     text-align: center;
     width: 100%;

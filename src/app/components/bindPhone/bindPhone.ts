@@ -6,10 +6,10 @@
 
 // =================================================导入
 import { popNew } from '../../../pi/ui/root';
+import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { sendCode } from '../../net/pull';
-import { notify } from '../../../pi/widget/event';
-import { updateStore, find } from '../../store/store';
+import { find, updateStore } from '../../store/store';
 // =================================================导出
 export class BindPhone extends Widget {
     public ok: () => void;
@@ -48,7 +48,7 @@ export class BindPhone extends Widget {
         }
         await sendCode(this.state.phone, this.state.oldCode);
         updateStore('lastGetSmsCodeTime', new Date().getTime());
-        notify('ev-getCode',{value:this.state.phone});
+        notify(event.node,'ev-getCode',{ value:this.state.phone });
         this.state.countdown = this.state.limitTime;
         this.paint();
     }

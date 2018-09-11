@@ -39,7 +39,7 @@ export class PlayHome extends Widget {
             page:[
                 'app-view-earn-mining-rankList',
                 'app-view-earn-mining-dividend',
-                'app-view-earn-mining-dividend',
+                'app-view-earn-redEnvelope-writeRedEnv',
                 'app-view-earn-mining-dividend',
                 'app-view-earn-mining-addMine'
             ]
