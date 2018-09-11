@@ -6,7 +6,7 @@ import { dataCenter } from '../logic/dataCenter';
 import { Addr, CurrencyRecord } from '../store/interface';
 import { find } from '../store/store';
 import { btcNetwork, lang, strength } from '../utils/constants';
-import { calcHashValuePromise, u8ArrayToHexstr } from '../utils/tools';
+import { calcHashValuePromise, u8ArrayToHexstr, initAddr } from '../utils/tools';
 import { getMnemonic } from '../utils/walletTools';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
@@ -86,7 +86,7 @@ export class GlobalWallet {
 
         // 更新内存数据中心
         gwlt._addrs.forEach(item => {
-            dataCenter.addAddr(item.addr, item.addrName, item.currencyName);
+            dataCenter.updateAddrInfo(item.addr, item.currencyName);
         });
 
         return gwlt;
@@ -233,7 +233,7 @@ export class GlobalWallet {
             addrs: [address],
             updateAddr: false
         };
-        const addr: Addr = dataCenter.initAddr(address, 'ETH');
+        const addr: Addr = initAddr(address, 'ETH');
 
         return {
             currencyRecord,
@@ -254,7 +254,7 @@ export class GlobalWallet {
             updateAddr: false
         };
 
-        const addr: Addr = dataCenter.initAddr(address, 'BTC');
+        const addr: Addr = initAddr(address, 'BTC');
 
         return {
             currencyRecord,

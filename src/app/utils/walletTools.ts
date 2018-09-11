@@ -12,7 +12,7 @@ import { dataCenter } from '../logic/dataCenter';
 import { Addr, TxStatus } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { lang } from './constants';
-import { calcHashValuePromise, getAddrById, hexstrToU8Array, parseDate, timestampFormat } from './tools';
+import { calcHashValuePromise, getAddrById, hexstrToU8Array, parseDate, timestampFormat, initAddr } from './tools';
 import { smallUnit2LargeUnit } from './unitTools';
 
 /**
@@ -57,9 +57,9 @@ export const addNewAddr = (currencyName, address, addrName) => {
             currencyRecord.currentAddr = address;
         }
     });
-    const newAddrInfo: Addr = dataCenter.initAddr(address, currencyName, addrName);
+    const newAddrInfo: Addr = initAddr(address, currencyName, addrName);
     addrs.push(newAddrInfo);
-    dataCenter.addAddr(address, addrName, currencyName);
+    dataCenter.updateAddrInfo(address, addrName);
     updateStore('addrs', addrs);
     updateStore('curWallet', wallet);
 
@@ -157,7 +157,7 @@ export const getMnemonicHexstr = async (wallet, passwd) => {
  * 获取某个地址的交易记录
  */
 export const fetchTransactionList = (addr:string,currencyName:string) => {
-    if (!addr) return;
+    if (!addr) return [];
     // 从缓存中取出对应地址的交易记录
     const transactions = find('transactions') || [];
     let txList = [];

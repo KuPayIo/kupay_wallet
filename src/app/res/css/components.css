@@ -1,6 +1,8 @@
 /** √ */
 
-
+input:disabled{
+    background-color: #fff;
+}
 /** - */
 .checkbox1_indeterminate::before{
     content: "";

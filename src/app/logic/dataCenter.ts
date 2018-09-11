@@ -7,7 +7,7 @@ import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
 import { Addr, CurrencyRecord, Wallet } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
-import { getAddrsAll, getAddrsByCurrencyName, getDefaultAddr } from '../utils/tools';
+import { getAddrsAll, getAddrsByCurrencyName, initAddr } from '../utils/tools';
 import { btc2Sat, ethTokenDivideDecimals, sat2Btc, wei2Eth } from '../utils/unitTools';
 import { getMnemonic } from '../utils/walletTools';
 /**
@@ -68,28 +68,16 @@ export class DataCenter {
             });
             addrs.forEach(v => {
                 if (list.indexOf(v.addr) >= 0 && wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
-                    this.addAddr(v.addr, v.addrName, v.currencyName);
+                    this.updateAddrInfo(v.addr, v.currencyName);
                 }
             });
         }
     }
 
     /**
-     * 初始化地址对象
+     * updateAddrInfo
      */
-    public initAddr(address: string, currencyName: string, addrName?: string): Addr {
-        return {
-            addr: address,
-            addrName: addrName || getDefaultAddr(address),
-            record: [],
-            balance: 0,
-            currencyName: currencyName
-        };
-    }
-    /**
-     * addAddr
-     */
-    public addAddr(addr: string, addrName: string, currencyName: string) {
+    public updateAddrInfo(addr: string, currencyName: string) {
         this.updatetTransaction(addr, currencyName);
     }
 
@@ -249,32 +237,38 @@ export class DataCenter {
 
     private async parseEthERC20TokenTransactionDetails(addr: string, currencyName: string) {
         const api = new EthApi();
-        const contractAddress = ERC20Tokens[currencyName];
-        const res = await api.getTokenTransferEvents(contractAddress, addr);
-        const list = [];
-        const transactions = find('transactions') || [];
-        res.result.forEach(v => {
-            if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr) && (v1.currencyName === currencyName))) return;
-            // 移除缓存记录
-            this.removeRecordAtAddr(addr, v.hash);
-            // info--input  0x636573--ces
-
-            const record = {
-                hash: v.hash,
-                from: v.from,
-                to: v.to,
-                value: parseFloat(v.value),
-                fees: parseFloat(v.gasUsed) * parseFloat(v.gasPrice),
-                time: parseInt(v.timeStamp, 10) * 1000,
-                info: '',
-                currencyName,
-                addr
-            };
-            list.push(record);
-        });
-        if (list.length > 0) {
-            this.setTransactionLocalStorage(transactions.concat(list));
+        const contractAddress = ERC20Tokens[currencyName].contractAddr;
+        try{
+            const res = await api.getTokenTransferEvents(contractAddress, addr);
+            console.log('parseEthERC20TokenTransactionDetails-=-=-=-=-=-',res);
+            const list = [];
+            const transactions = find('transactions') || [];
+            res.result.forEach(v => {
+                if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr) && (v1.currencyName === currencyName))) return;
+                // 移除缓存记录
+                this.removeRecordAtAddr(addr, v.hash);
+                // info--input  0x636573--ces
+    
+                const record = {
+                    hash: v.hash,
+                    from: v.from,
+                    to: v.to,
+                    value: parseFloat(v.value),
+                    fees: parseFloat(v.gasUsed) * parseFloat(v.gasPrice),
+                    time: parseInt(v.timeStamp, 10) * 1000,
+                    info: '',
+                    currencyName,
+                    addr
+                };
+                list.push(record);
+            });
+            if (list.length > 0) {
+                this.setTransactionLocalStorage(transactions.concat(list));
+            }
+        }catch(err){
+            console.log('parseEthERC20TokenTransactionDetails------',err);
         }
+        
     }
     private async parseEthTransactionDetails(addr: string) {
         const api = new EthApi();
@@ -403,7 +397,7 @@ export class DataCenter {
             const balanceOfCode = EthWallet.tokenOperations('balanceof', currencyName, addr);
             // console.log('balanceOfCode',balanceOfCode);
             const api = new EthApi();
-            api.ethCall(ERC20Tokens[currencyName], balanceOfCode).then(r => {
+            api.ethCall(ERC20Tokens[currencyName].contractAddr, balanceOfCode).then(r => {
                 // tslint:disable-next-line:radix
                 const num = ethTokenDivideDecimals(Number(r), currencyName);
                 // console.log(currencyName,num);
@@ -486,7 +480,7 @@ export class DataCenter {
         for (let i = 1; i < cnt; i++) {
             const address = ethWallet.selectAddress(i);
             currencyRecord.addrs.push(address);
-            addrs.push(this.initAddr(address, 'ETH'));
+            addrs.push(initAddr(address, 'ETH'));
         }
 
         return addrs;
@@ -506,7 +500,7 @@ export class DataCenter {
         for (let i = 1; i < cnt; i++) {
             const address = btcWallet.derive(i);
             currencyRecord.addrs.push(address);
-            addrs.push(this.initAddr(address, 'BTC'));
+            addrs.push(initAddr(address, 'BTC'));
         }
         btcWallet.lock();
 
@@ -519,13 +513,13 @@ export class DataCenter {
     private async checkEthERC20TokenAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
         const mnemonic = await getMnemonic(wallet, '');
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
-        const cnt = await ethWallet.scanTokenUsedAddress(ERC20Tokens[currencyRecord.currencyName]);
+        const cnt = await ethWallet.scanTokenUsedAddress(ERC20Tokens[currencyRecord.currencyName].contractAddr);
         const addrs: Addr[] = [];
 
         for (let i = 1; i < cnt; i++) {
             const address = ethWallet.selectAddress(i);
             currencyRecord.addrs.push(address);
-            addrs.push(this.initAddr(address, currencyRecord.currencyName));
+            addrs.push(initAddr(address, currencyRecord.currencyName));
         }
 
         return addrs;

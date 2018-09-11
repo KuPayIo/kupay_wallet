@@ -40,6 +40,11 @@ export class Home extends Widget {
         this.state.avatar = userInfo.avatar;
         this.paint();
     }
+
+    public updateTotalAsset(){
+        this.state.totalAsset = fetchTotalAssets();
+        this.paint();
+    }
 }
 
 // ==========================本地
@@ -47,5 +52,14 @@ register('userInfo',(userInfo:UserInfo) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.userInfoChange(userInfo);
+    }
+});
+
+
+// 汇率变化
+register('exchangeRateJson',(exchangeRateJson)=>{
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateTotalAsset();
     }
 });

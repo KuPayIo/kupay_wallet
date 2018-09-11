@@ -6,13 +6,16 @@ import { base64ToArrayBuffer } from '../../pi/util/base64';
 import { drawImg } from '../../pi/util/canvas';
 import { generateByHash, sha3, toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { openAndGetRandom } from '../net/pull';
-import { Addr, CreateWalletType, Wallet } from '../store/interface';
+import { openAndGetRandom, getBankAddr, rechargeToServer } from '../net/pull';
+import { Addr, CreateWalletType, Wallet, TransRecordLocal, TxType, MinerFeeLevel, priorityMap } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { ahash } from '../utils/ahash';
 import { defalutShowCurrencys, lang } from '../utils/constants';
 import { restoreSecret } from '../utils/secretsBase';
-import { calcHashValuePromise, getXOR, hexstrToU8Array, u8ArrayToHexstr } from '../utils/tools';
+import { calcHashValuePromise, getXOR, hexstrToU8Array, u8ArrayToHexstr, popPswBox, fetchGasPrice, formatBalance, addRecord, popNewLoading, popNewMessage } from '../utils/tools';
+import { transfer, estimateGasETH, estimateMinerFeeBTC, signRawTransactionETH, sendRawTransactionETH } from '../net/pullWallet';
+import { wei2Eth, eth2Wei } from '../utils/unitTools';
+import { getMnemonic, addNewAddr } from '../utils/walletTools';
 
 /**
  * 创建钱包
@@ -192,3 +195,147 @@ export const importWalletByFragment = async (option) => {
     option.mnemonic = mnemonic;
     await importWalletByMnemonic(option);
 };
+
+
+
+
+//================================重发
+/**
+ * 交易重发
+ */
+export const resendTransfer = async (psw:string,txRecord:TransRecordLocal) => {
+    console.log('----------resendTransfer--------------');
+    if (txRecord.txType === TxType.THRANSFER || txRecord.txType === TxType.EXCHANGE) {
+        resendNormalTransfer(psw,txRecord);
+    } else if (txRecord.txType === TxType.RECHARGE) {
+        resendChargeTransfer(psw,txRecord);
+    }
+};
+/**
+ * 普通转账重发
+ */
+export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal) => {
+    console.log('----------resendNormalTransfer--------------');
+    const loading = popNew('app-components1-loading-loading', { text: '重发中...' });
+    const fromAddr = txRecord.fromAddr;
+    const toAddr = txRecord.toAddr;
+    const nextMinerFeeLevel = txRecord.minerFeeLevel + 1;
+    const pay = txRecord.pay;
+    const info = txRecord.info;
+    const nonce = txRecord.nonce;
+    const currencyName = txRecord.currencyName;
+    let minerFee = 0;
+    if(currencyName === 'BTC'){
+            const nbBlocks = priorityMap[nextMinerFeeLevel];
+            const feeObj = await estimateMinerFeeBTC(nbBlocks);
+            minerFee = formatBalance(feeObj[nbBlocks]);
+    }else{
+        const gasLimit = await estimateGasETH(toAddr,info);
+        minerFee = wei2Eth(gasLimit * fetchGasPrice(nextMinerFeeLevel))
+    }
+    
+    const ret = await transfer(psw,fromAddr,toAddr,pay,currencyName,nextMinerFeeLevel,info,nonce);
+    if (!ret) {
+        loading.callback(loading.widget);
+
+        return;
+    }
+    loading.callback(loading.widget);
+    popNew('app-components-message-message',{ content:'重发成功'});
+    const t = new Date();
+    const record:TransRecordLocal = {
+        ...txRecord,
+        hash:ret.hash,
+        minerFeeLevel:nextMinerFeeLevel,
+        time: t.getTime(),
+        fee: minerFee
+    };
+    popNew('app-view-wallet-transaction-transactionDetails', record);
+    console.log('record============',record);
+    addRecord(txRecord.currencyName, txRecord.fromAddr, record);
+        
+};
+
+/**
+ * 充值重发
+ */
+export const resendChargeTransfer = async (psw:string,txRecord:TransRecordLocal) => {
+    const close = popNew('app-components1-loading-loading', { text: '重发中...' });
+    const toAddr = await getBankAddr();
+    if (!toAddr) {
+        close.callback(close.widget);
+
+        return;
+    }
+    const fromAddr = txRecord.fromAddr;
+    const nextMinerFeeLevel = txRecord.minerFeeLevel + 1;
+    const gasPrice = fetchGasPrice(nextMinerFeeLevel);
+    const pay = txRecord.pay;
+    const info = txRecord.info;
+    const nonce = txRecord.nonce;
+    const currencyName = txRecord.currencyName;
+    let minerFee = 0;
+    if(currencyName === 'BTC'){
+            const nbBlocks = priorityMap[nextMinerFeeLevel];
+            const feeObj = await estimateMinerFeeBTC(nbBlocks);
+            minerFee = formatBalance(feeObj[nbBlocks]);
+    }else{
+        const gasLimit = await estimateGasETH(toAddr,info);
+        minerFee = wei2Eth(gasLimit * fetchGasPrice(nextMinerFeeLevel))
+    }
+    const obj = await signRawTransactionETH(psw,fromAddr,toAddr,pay,nextMinerFeeLevel,info,nonce);
+    if (!obj) {
+        close.callback(close.widget);
+
+        return;
+    }
+    const signedTX = obj.signedTx;
+    const hash = `0x${obj.hash}`;
+    const canTransfer = await rechargeToServer(fromAddr,toAddr,hash,nonce,gasPrice,eth2Wei(pay));
+    if (!canTransfer) {
+        close.callback(close.widget);
+
+        return;
+    }
+    const h = await sendRawTransactionETH(signedTX);
+    if (!h) {
+        close.callback(close.widget);
+
+        return;
+    }
+    close.callback(close.widget);
+    popNew('app-components-message-message',{ content:'重发成功'});
+    // 维护本地交易记录
+    const t = new Date();
+    const record:TransRecordLocal = {
+        ...txRecord,
+        hash: h,
+        time: t.getTime(),
+        fee: minerFee,
+        minerFeeLevel:nextMinerFeeLevel
+    };
+    popNew('app-view-wallet-transaction-transactionDetails', record);
+    addRecord(txRecord.currencyName, fromAddr, record);
+};
+//================================重发
+
+
+
+/**
+ * 添加新地址
+ */
+export const createNewAddr = async (passwd:string,currencyName:string) => {
+    const close = popNewLoading('添加中...');
+    const wallet = find('curWallet');
+    const mnemonic = await getMnemonic(wallet, passwd);
+    close.callback(close.widget);
+    if (mnemonic) {
+        const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
+        const address = GlobalWallet.getWltAddrByMnemonic(mnemonic, currencyName, currencyRecord.addrs.length);
+        if (!address) return;
+        addNewAddr(currencyName, address, '');
+        popNewMessage('添加成功');
+    } else {
+        popNewMessage('密码错误');
+    }
+}

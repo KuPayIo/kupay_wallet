@@ -17,4 +17,5 @@
         </div>
     </div>
     {{end}}
+    <div w-class="space"></div>
 </div>
