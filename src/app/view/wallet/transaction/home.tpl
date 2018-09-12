@@ -23,7 +23,7 @@
         <div w-class="tx-list-container">
             {{if it1.txList.length === 0}}
             <div w-class="no-recode">
-                <img src="../../../res/image/qrcode.png" w-class="no-recode-icon"/>
+                <img src="../../../res/image/dividend_history_none.png" w-class="no-recode-icon"/>
                 <div w-class="no-recode-text">还没有记录哦</div>
             </div>
             {{end}}

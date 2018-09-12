@@ -21,13 +21,13 @@ export enum LoginState {
     logerror
 }
 
-// 货币类型
+// 云端货币类型
 export enum CurrencyType {
     KT = 100,
     ETH
 }
 
-// 枚举货币类型
+// 枚举云端货币类型
 export const CurrencyTypeReverse = {
     100: 'KT',
     101: 'ETH'
@@ -81,6 +81,7 @@ export interface Store {
     readedPriAgr: boolean;// 隐私协议阅读与否
     loginState: LoginState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
+    coinGain:Map<string,number>;//货币涨跌
     // 本地钱包
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包
@@ -105,8 +106,8 @@ export interface Store {
     mineRank:MineRank;// 矿山排名
     miningRank:MiningRank;// 挖矿排名
     mineItemJump:string;// 矿山增加项目跳转详情 
-    rechargeLogs:RechargeWithdrawalLog[];// 充值记录
-    withdrawLogs:RechargeWithdrawalLog[];// 提现记录
+    rechargeLogs:Map<CurrencyType, RechargeWithdrawalLog[]>;// 充值记录
+    withdrawLogs:Map<CurrencyType, RechargeWithdrawalLog[]>;// 提现记录
     // 地址管理
     TopContacts:TopContact[];// 常用联系人列表
     // shapeShift

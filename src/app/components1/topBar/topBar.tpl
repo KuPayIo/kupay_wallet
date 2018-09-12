@@ -3,7 +3,7 @@
 <div w-class="outer {{flag1?'':'outer-bottom'}}" style="background: {{it.background}}">
     <div w-class="ga-top-banner" >
         <div w-class="left-container">
-            <img on-tap="backPrePage" src="../../res/image/{{flag ? '12.png' : 'left_arrow_blue.png'}}" w-class="ga-back" />
+            <img on-tap="backPrePage" src="../../res/image/{{flag ? 'left_arrow_white.png' : 'left_arrow_blue.png'}}" w-class="ga-back" />
             <span on-tap="backPrePage"  style="color: {{flag?'#fff':''}}">{{it.title}}</span>
         </div>
         {{if it.nextImg}}

@@ -78,7 +78,7 @@ export class PlayHome extends Widget {
      */
     public miningDetail() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-otherModalBox-otherModalBox',{ title:'挖矿说明',content:'完成任务会产生相应的KT，KT被储存在矿山中，每日可挖取矿储量的25%，最高10000KT，如果当天领取额度低于100，且矿山剩余大于100，则按照100领取，若储矿量小于100KT，则把剩下的一次性挖完。挖矿结算后，挖到的数量将从储矿量中减去。',tips:'曾经拥有1000KT才具有提现权限' });
+        popNew('app-components-modalBox-modalBox1',{ title:'挖矿说明',content:'完成任务会产生相应的KT，KT被储存在矿山中，每日可挖取矿储量的25%，最高10000KT，如果当天领取额度低于100，且矿山剩余大于100，则按照100领取，若储矿量小于100KT，则把剩下的一次性挖完。挖矿结算后，挖到的数量将从储矿量中减去。',tips:'曾经拥有1000KT才具有提现权限' });
     }
 
     /**

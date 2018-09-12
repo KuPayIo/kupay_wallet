@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { UserInfo } from '../../../store/interface';
 import { register } from '../../../store/store';
-import { fetchTotalAssets } from '../../../utils/tools';
+import { fetchTotalAssets, fetchCloudTotalAssets, formatBalanceValue } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -28,7 +28,7 @@ export class Home extends Widget {
             }],
             activeNum:1,
             avatar:'',
-            totalAsset:fetchTotalAssets()
+            totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets())
         };
     }
     public tabsChangeClick(event: any, value: number) {
@@ -42,7 +42,7 @@ export class Home extends Widget {
     }
 
     public updateTotalAsset(){
-        this.state.totalAsset = fetchTotalAssets();
+        this.state.totalAsset = formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets());
         this.paint();
     }
 }
@@ -58,6 +58,14 @@ register('userInfo',(userInfo:UserInfo) => {
 
 // 汇率变化
 register('exchangeRateJson',(exchangeRateJson)=>{
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateTotalAsset();
+    }
+});
+
+// 云端余额变化
+register('cloudBalance',(cloudBalance)=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
