@@ -1,0 +1,10 @@
+.inputBox{
+    height: 110px;
+    margin: 70px 20px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+}
+.btn{
+    margin: 110px 60px 40px;
+}

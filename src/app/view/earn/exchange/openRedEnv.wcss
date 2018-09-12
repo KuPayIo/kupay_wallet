@@ -37,6 +37,9 @@
     width: 200px;
     height: 200px;
 }
+.sendRedBtnClick{
+    animation: rotated 1s infinite;
+}
 .clear{
     position: absolute;
     right: 30px;

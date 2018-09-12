@@ -7,6 +7,7 @@
  * itype:输入数据类型，text，number，password
  * style:额外的CSS样式
  * isShowPin:拼字样是否需要显示，默认false
+ * input:输入框填充数据
  */
 import { Widget } from '../../../pi/widget/widget';
 
@@ -17,6 +18,7 @@ interface Props {
     itype?:string;
     style?:string;
     isShowPin?:boolean;
+    input?:string;
 }
 
 export class BasicInput extends Widget {
