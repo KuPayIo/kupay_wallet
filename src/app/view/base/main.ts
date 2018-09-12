@@ -14,6 +14,7 @@ import { openAndGetRandom } from '../../net/pull';
 import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
+import { fetchCoinGain } from '../../utils/tools';
 
 // ============================== 导出
 export const forelet = new Forelet();
@@ -29,10 +30,15 @@ export const run = (cb): void => {
     // 初始化localstorage
     initLocalStorageStore();
     openAndGetRandom();
+
+    //模拟异步获取货币涨跌幅度
+    setTimeout(()=>{
+        fetchCoinGain();
+    },500);
     // dataCenter.init();
     popNew('app-view-base-app');
     // popNew('app-view-wallet-localWallet-addAsset');
-    // popNew('app-view-wallet-transaction-chooseAddr',{ currencyName:'ETH' });
+    // popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:'ETH' });
     // const t = new Date();
     // const tx:TransRecordLocal = {
     //     hash:'0x960f0db2771931ac8d71569a6824793870ac1621396e232146048438d94e734e',
@@ -59,7 +65,7 @@ export const run = (cb): void => {
     // popNew('app-view-earn-redEnvelope-inviteRedEnvelope',{});
     // popNew('app-view-earn-mining-dividend',{ ktBalance:0 });
     // popNew('app-view-earn-exchange-exchange');
-    popNew('app-view-mine-setting-phone');
+    // popNew('app-view-mine-setting-phone');
     // popNew('app-components-keyBoard-keyBoard');
     // popNewPage();
     // 后台切前台

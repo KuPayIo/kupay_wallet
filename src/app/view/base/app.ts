@@ -5,9 +5,9 @@
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { login, setUserInfo } from '../../net/pull';
+import { login, setUserInfo, fetchRealUser } from '../../net/pull';
 import { LoginState, UserInfo } from '../../store/interface';
-import { find, register } from '../../store/store';
+import { find, register, getBorn } from '../../store/store';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -98,11 +98,11 @@ register('userInfo',(userInfo:UserInfo) => {
 });
 
 // 连接建立 登录
-register('conRandom',(conRandom:string) => {
-    // popNew('app-components-modalBoxInput-modalBoxInput',{ itype:'password',title:'请登录',content:[] },(r) => {
-    //     login(r);
-    // });
-});
+// register('conRandom',(conRandom:string) => {
+//     popNew('app-components-modalBoxInput-modalBoxInput',{ itype:'password',title:'请登录',content:[] },(r) => {
+//         login(r);
+//     });
+// });
 
 register('loginState',(loginState:LoginState) => {
     if (loginState === LoginState.logined) {

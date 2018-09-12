@@ -5,7 +5,7 @@ import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
 import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
+import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, CurrencyType, CurrencyTypeReverse } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { defalutShowCurrencys } from './constants';
 
@@ -294,7 +294,7 @@ export const formatBalance = (banlance: number) => {
  * 余额格式化
  */
 export const formatBalanceValue = (value: number) => {
-    return Number(value.toFixed(2));
+    return value.toFixed(2);
 };
 
 /**
@@ -477,7 +477,7 @@ export const fetchBalanceOfCurrency = (currencyName: string) => {
  */
 export const fetchTotalAssets = () => {
     const wallet = find('curWallet');
-    if (!wallet) return '0.00';
+    if (!wallet) return 0;
     let totalAssets = 0;
     wallet.currencyRecords.forEach(item => {
         if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
@@ -487,7 +487,7 @@ export const fetchTotalAssets = () => {
         
     });
 
-    return formatBalanceValue(totalAssets);
+    return totalAssets;
 };
 /**
  * 获取异或值
@@ -809,9 +809,10 @@ export const fetchDefaultExchangeRateJson = () => {
 };
 
 /**
- * 获取钱包资产列表
+ * 获取本地钱包资产列表
  */
 export const fetchWalletAssetList = () => {
+    const coinGain = getBorn('coinGain');
     const wallet = find('curWallet');
     const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
     const assetList = [];
@@ -824,8 +825,7 @@ export const fetchWalletAssetList = () => {
             const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(balance * cny);
-            const gain = Math.random();
-            item.gain =  gain > 0.5 ? formatBalanceValue(gain) : formatBalanceValue(-gain);
+            item.gain =  coinGain.get(k) || formatBalanceValue(0);
             assetList.push(item);
         }
         
@@ -840,13 +840,51 @@ export const fetchWalletAssetList = () => {
             const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(balance * cny);
-            item.gain = 0.04;
+            item.gain =  coinGain.get(k) || formatBalanceValue(0);
             assetList.push(item);
         }
     }
 
     return assetList;
 };
+
+
+
+/**
+ * 获取云端钱包资产列表
+ */
+export const fetchCloudWalletAssetList = () => {
+    const coinGain = getBorn('coinGain');
+    const assetList = [];
+    for (const k in CurrencyType) {
+        const item:any = {};
+        if (MainChainCoin.hasOwnProperty(k)) {
+            item.currencyName = k;
+            item.description = MainChainCoin[k].description;
+            const balance = getBorn('cloudBalance').get(CurrencyType[k]) || 0;
+            const cny = getBorn('exchangeRateJson').get(k).CNY;
+            item.balance = formatBalance(balance);
+            item.balanceValue = formatBalanceValue(balance * cny);
+            item.gain =  coinGain.get(k) || formatBalanceValue(0);
+            assetList.push(item);
+        }
+        
+    }
+
+    return assetList;
+};
+
+/**
+ * 获取云端总资产
+ */
+export const fetchCloudTotalAssets = () =>{
+    const cloudBalance = getBorn('cloudBalance');
+    let totalAssets = 0;
+    for(let [k,v] of cloudBalance){
+        totalAssets += v * find('exchangeRateJson',CurrencyTypeReverse[k]).CNY;
+    }
+    return totalAssets;
+}
 
 /**
  * 没有创建钱包时
@@ -971,8 +1009,30 @@ export const initAddr = (address: string, currencyName: string, addrName?: strin
         balance: 0,
         currencyName: currencyName
     };
-};
+}
 
+// 获取货币的涨跌情况
+export const fetchCoinGain = ()=>{
+    const coinGain = getBorn('coinGain');
+    for (const k in MainChainCoin) {
+        const item:any = {};
+        if (MainChainCoin.hasOwnProperty(k)) {
+            const gain = Math.random();
+            item.gain =  gain > 0.5 ? formatBalanceValue(gain) : formatBalanceValue(-gain);
+            coinGain.set(k,item.gain);
+        }
+        
+    }
+
+    for (const k in ERC20Tokens) {
+        const item:any = {};
+        if (ERC20Tokens.hasOwnProperty(k)) {
+            const gain = Math.random();
+            item.gain =  gain > 0.5 ? formatBalanceValue(gain) : formatBalanceValue(-gain);
+            coinGain.set(k,item.gain);
+        }
+    }
+}
 /**
  * 转化rtype
  */

@@ -1,29 +1,25 @@
 /**
- * 转账
+ * Recharge
  */
-import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-import { ERC20Tokens } from '../../../config';
-import { estimateMinerFee, transfer, resendNormalTransfer } from '../../../net/pullWallet';
-import { MinerFeeLevel, priorityMap, TransRecordLocal, TxStatus } from '../../../store/interface';
-import { timeOfArrival } from '../../../utils/constants';
-// tslint:disable-next-line:max-line-length
-import { fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, popPswBox } from '../../../utils/tools';
-import { wei2Eth } from '../../../utils/unitTools';
-import { doScanQrCode } from '../../../logic/native';
-
-interface Props {
+import { Widget } from "../../../../pi/widget/widget";
+import { popNew } from "../../../../pi/ui/root";
+import { ERC20Tokens } from "../../../config";
+import { timeOfArrival } from "../../../utils/constants";
+import { TransRecordLocal, MinerFeeLevel, priorityMap, TxStatus } from "../../../store/interface";
+import { getCurrentAddrByCurrencyName, getCurrentAddrBalanceByCurrencyName, fetchGasPrice, popPswBox } from "../../../utils/tools";
+import { estimateMinerFee, recharge } from "../../../net/pullWallet";
+import { wei2Eth } from "../../../utils/unitTools";
+interface Props{
     currencyName:string;
     tx?:TransRecordLocal;
 }
-export class Transfer extends Widget {
-    public ok:() => void;
-    public async setProps(props:Props,oldProps:Props) {
+export class Recharge extends Widget{
+    public props:Props;
+    public ok:()=>void;
+    public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-       
     }
-
     public async init() {
         const cn = (this.props.currencyName === 'ETH' || ERC20Tokens[this.props.currencyName]) ? 'ETH' : 'BTC';
         const toa = timeOfArrival[cn];
@@ -40,7 +36,6 @@ export class Transfer extends Widget {
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1: MinerFeeLevel.STANDARD;
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
-            toAddr:tx ? tx.toAddr : '',
             amount:tx ? tx.pay : 0,
             balance:getCurrentAddrBalanceByCurrencyName(this.props.currencyName),
             minerFee:list[curLevel].minerFee,
@@ -72,7 +67,8 @@ export class Transfer extends Widget {
         this.state.minerFee = list[this.state.curLevel].minerFee;
         this.paint();
     }
-    public backPrePage() {
+
+    public backPrePage(){
         this.ok && this.ok();
     }
     public speedDescClick() {
@@ -80,6 +76,13 @@ export class Transfer extends Widget {
         popNew('app-components-modalBox-modalBox1',{ title:'到账速度',content,tips:'转账时不能全部转完，要预留出矿工费' });
     }
 
+     // 提币金额变化
+     public amountChange(e:any) {
+        this.state.amount = Number(e.value);
+        this.paint();
+    }
+
+    //选择矿工费
     public chooseMinerFee() {
         popNew('app-components-modalBox-chooseModalBox',{ 
             currencyName:this.props.currencyName,
@@ -91,27 +94,11 @@ export class Transfer extends Widget {
                 this.paint();
             });
     }
-    // 收款地址变化
-    public toAddrChange(e:any) {
-        this.state.toAddr = e.value;
-        this.paint();
-    }
-
-    // 转账金额变化
-    public amountChange(e:any) {
-        this.state.amount = Number(e.value);
-        this.paint();
-    }
 
     // 转账
     public async nextClick() {
-        if (!this.state.toAddr) {
-            popNew('app-components-message-message', {  content: '请输入收款地址' });
-
-            return;
-        }
         if (!this.state.amount) {
-            popNew('app-components-message-message', { content: '请输入转账金额'});
+            popNew('app-components-message-message', { content: '请输入转账金额' });
 
             return;
         }
@@ -121,47 +108,32 @@ export class Transfer extends Widget {
 
             return;
         }
-
         const minerFeeLevel = this.state.curLevel;
         const currencyName = this.props.currencyName;
         const fromAddr = this.state.fromAddr;
-        const toAddr = this.state.toAddr;
         const pay = this.state.amount;
         const passwd = await popPswBox();
         if (!passwd) return;
         const t = new Date();
+        const oldTx = this.props.tx;
         const tx:TransRecordLocal = {
             hash:"",
-            txType:1,
-            fromAddr,
-            toAddr,
-            pay: pay,
+            txType:3,
+            fromAddr: fromAddr,
+            toAddr: "",
+            pay,
             time: t.getTime(),
             status:TxStatus.PENDING,
             confirmBlock: 0,
             info: '',
-            currencyName,
+            currencyName: currencyName,
             fee: this.state.minerFee,
-            nonce:undefined,
+            nonce:oldTx && oldTx.nonce,
             minerFeeLevel
         };
-        let ret;
-        if(!this.props.tx){
-            ret = await transfer(passwd,tx);
-        }else{
-            const tx = {...this.props.tx};
-            tx.minerFeeLevel = minerFeeLevel;
-            ret = await resendNormalTransfer(passwd,tx);
-        }
-        if (ret) {
+        const ret = recharge(passwd,tx);
+        if(ret){
             this.ok && this.ok();
         }
-    }
-
-    public doScanClick(){
-        doScanQrCode((res)=>{
-            this.state.toAddr = res;
-            this.paint();
-        });
     }
 }
