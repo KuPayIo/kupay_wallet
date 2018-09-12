@@ -1,0 +1,50 @@
+.content{
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-top: -1px;
+    position: relative;
+}
+.topBack{
+    height: 420px;
+    background: #3EB4F1;
+    text-align: center;
+    color: #fff;
+    font-size: 28px;
+}
+.topBackimg{
+    position: absolute;
+    right: 0;
+    top: 20px;
+    height: 400px;
+    width: auto;
+}
+.userHead{
+    height: 120px;
+    width: 120px;
+    margin-top: 60px;
+}
+.bottom{
+    background: #fff;
+    border-radius: 12px;
+    left: 20px;
+    right: 20px;
+    top: 390px;
+    bottom: 118px;
+    position: absolute;
+}
+.tips{
+    font-size: 28px;
+    padding-left: 30px;
+    height: 100px;
+    line-height: 100px;
+    text-align: left;
+    color: #888888;
+    border-bottom: 1px solid #DBDBE5;
+}
+.endMess{
+    color: rgba(204, 204, 204, 1);
+    font-size: 28px;
+    text-align: center;
+    padding: 100px 0;
+}

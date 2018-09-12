@@ -7,7 +7,7 @@
             <span on-tap="backPrePage"  style="color: {{flag?'#fff':''}}">{{it.title}}</span>
         </div>
         {{if it.nextImg}}
-        <img on-tap="goNext" src="../../res/image/{{it.nextImg}}" w-class="ga-next" />
+        <img on-tap="goNext" src="{{it.nextImg}}" w-class="ga-next" />
         {{end}}
     </div>
 </div>
