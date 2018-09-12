@@ -64,7 +64,7 @@ export const run = (cb): void => {
     // popNew('app-view-earn-redEnvelope-redEnvDetail',{ type:1 });
     // popNew('app-view-earn-redEnvelope-writeRedEnv');
     // popNew('app-view-earn-mining-dividend',{ ktBalance:0 });
-    popNew('app-view-earn-exchange-exchange');
+    // popNew('app-view-earn-exchange-exchange');
     // popNew('app-view-mine-setting-phone');
     // popNew('app-components-keyBoard-keyBoard');
     // popNewPage();

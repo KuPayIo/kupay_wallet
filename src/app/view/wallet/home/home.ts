@@ -42,7 +42,7 @@ export class Home extends Widget {
     }
 
     public updateTotalAsset(){
-        this.state.totalAsset = fetchTotalAssets() + fetchCloudTotalAssets();
+        this.state.totalAsset = formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets());
         this.paint();
     }
 }

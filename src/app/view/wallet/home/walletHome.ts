@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { fetchTotalAssets, fetchWalletAssetList, hasWallet } from '../../../utils/tools';
+import { fetchTotalAssets, fetchWalletAssetList, hasWallet, formatBalanceValue } from '../../../utils/tools';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { register } from '../../../store/store';
 // ================================ 导出
@@ -18,7 +18,7 @@ export class WalletHome extends Widget {
     }
     public init() {
         this.state = {
-            totalAsset:fetchTotalAssets(),
+            totalAsset:formatBalanceValue(fetchTotalAssets()),
             assetList:fetchWalletAssetList()
         };
     }

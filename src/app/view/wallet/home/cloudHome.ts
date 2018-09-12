@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { hasWallet, fetchCloudWalletAssetList, fetchCloudTotalAssets } from '../../../utils/tools';
+import { hasWallet, fetchCloudWalletAssetList, fetchCloudTotalAssets, formatBalanceValue } from '../../../utils/tools';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { register } from '../../../store/store';
 // ================================ 导出
@@ -18,7 +18,7 @@ export class CloudHome extends Widget {
     }
     public init() {
         this.state = {
-            totalAsset:fetchCloudTotalAssets(),
+            totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
             assetList:fetchCloudWalletAssetList()
         };
     }
