@@ -67,3 +67,11 @@ register('exchangeRateJson',(exchangeRateJson)=>{
     }
 });
 
+// 货币涨跌幅度变化
+register('coinGain',(coinGain)=>{
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
+    }
+});

@@ -117,7 +117,7 @@ export const initStore = () => {
 type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
- 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo';
+ 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo' | 'coinGain';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -152,6 +152,7 @@ const store = <Store>{
     userInfo:null,// 用户头像base64
     readedPriAgr: false, // 是否阅读隐私协议
     loginState: LoginState.init,// 连接状态
+    coinGain:new Map<string,number>(),
     // 本地钱包
     walletList: <Wallet[]>[],// 钱包数据
     curWallet: <Wallet>null,// 当前钱包
@@ -177,8 +178,8 @@ const store = <Store>{
     mineRank: <MineRank>null,// 矿山排名
     miningRank: <MiningRank>null,// 挖矿排名
     mineItemJump: '',// 矿山增加项目跳转详情
-    rechargeLogs:<RechargeWithdrawalLog[]>[],// 充值记录
-    withdrawLogs:<RechargeWithdrawalLog[]>[],// 提现记录
+    rechargeLogs:new Map<CurrencyType, RechargeWithdrawalLog[]>(),// 充值记录
+    withdrawLogs:new Map<CurrencyType, RechargeWithdrawalLog[]>(),// 提现记录
     // shapeshift
     shapeShiftCoins: <ShapeShiftCoin[]>[],// shapeShift 支持的币种
     shapeShiftMarketInfo:<MarketInfo>null,// shapeshift 汇率相关

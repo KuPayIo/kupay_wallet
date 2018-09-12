@@ -567,7 +567,6 @@ export const doChat = async () => {
  * 获取指定货币流水
  */
 export const getAccountDetail = async (coin: string,start = '') => {
-    console.log('coin----------',coin,CurrencyType[coin]);
     const msg = { 
         type: 'wallet/account@get_detail', 
         param: { 
@@ -580,6 +579,7 @@ export const getAccountDetail = async (coin: string,start = '') => {
     try {
         const res = await requestAsync(msg);
         const detail = parseCloudAccountDetail(coin, res.value);
+        console.log('parseCloudAccountDetail-----------',detail);
         updateStore('accountDetail',getBorn('accountDetail').set(coin, detail));
     } catch (err) {
         console.log(err);
@@ -728,10 +728,11 @@ export const withdrawFromServer = async (toAddr:string,coin:number,value:string)
 /**
  * 充值历史记录
  */
-export const getRechargeLogs = async (start = '') => {
+export const getRechargeLogs = async (coin: string,start = '') => {
     const msg = {
         type: 'wallet/bank@pay_log',
         param: {
+            coin:CurrencyType[coin],
             start,
             count:PAGELIMIT
         }
@@ -739,7 +740,8 @@ export const getRechargeLogs = async (start = '') => {
 
     try {
         const res = await requestAsync(msg);
-        updateStore('rechargeLogs',parseRechargeWithdrawalLog(res.value));
+        const detail = parseRechargeWithdrawalLog(res.value);
+        updateStore('rechargeLogs',getBorn('rechargeLogs').set(coin, detail));
 
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -751,10 +753,11 @@ export const getRechargeLogs = async (start = '') => {
 /**
  * 提现历史记录
  */
-export const getWithdrawLogs = async (start = '') => {
+export const getWithdrawLogs = async (coin: string,start = '') => {
     const msg = {
         type: 'wallet/bank@to_cash_log',
         param: {
+            coin:CurrencyType[coin],
             start,
             count:PAGELIMIT
         }
@@ -762,7 +765,8 @@ export const getWithdrawLogs = async (start = '') => {
 
     try {
         const res = await requestAsync(msg);
-        updateStore('withdrawLogs',parseRechargeWithdrawalLog(res.value));
+        const detail = parseRechargeWithdrawalLog(res.value);
+        updateStore('withdrawLogs',getBorn('withdrawLogs').set(coin, detail));
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -896,6 +900,7 @@ export const fetchGasPrices = async () => {
     }
 };
 
+// 获取真实用户
 export const fetchRealUser = async () => {
     const msg = {
         type: 'wallet/user@get_real_user',
@@ -915,3 +920,4 @@ export const fetchRealUser = async () => {
 
     } 
 };
+

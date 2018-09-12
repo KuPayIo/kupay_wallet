@@ -38,15 +38,15 @@ export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[
         switch (itype) {
             case TaskSid.mines:
                 behavior = '挖矿';
-                behaviorIcon = 'cloud_others_drag.png';
+                behaviorIcon = 'behavior1010.png';
                 break;
             case TaskSid.inviteFriends:
                 behavior = '邀请红包';
-                behaviorIcon = 'cloud_others_pockets.png';
+                behaviorIcon = 'behavior_red_bag.png';
                 break;
             case TaskSid.redEnvelope: 
                 behavior = amount > 0 ? '领红包' : '发红包';
-                behaviorIcon = 'cloud_others_pockets.png';
+                behaviorIcon = 'behavior_red_bag.png';
                 break;
             case TaskSid.recharge:
                 behavior = '充值';
@@ -58,7 +58,7 @@ export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[
                 break;
             case TaskSid.financialManagement:
                 behavior = '理财买入';
-                behaviorIcon = 'financialManagement_icon_cloud.png';
+                behaviorIcon = 'behavior_manage_money_port.png';
                 break;
             default:
                 behavior = isArray(v[2]) ? unicodeArray2Str(v[2]) : v[2];
@@ -69,7 +69,7 @@ export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[
             amount,
             behavior,
             behaviorIcon,
-            time: timestampFormat(v[3])
+            time: v[3]
         });
     });
 
@@ -222,7 +222,6 @@ export const parseRechargeWithdrawalLog = (val) => {
     for (let i = 0; i < val.length;i++) {
         const record = {
             time:val[i][0],
-            timeShow:timestampFormat(val[i][0]),
             amount:wei2Eth(val[i][1]),
             status:val[i][2],
             statusShow:parseRechargeWithdrawalLogStatus(val[i][2]),
