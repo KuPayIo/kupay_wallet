@@ -52,11 +52,11 @@ export class WriteRedEnv extends Widget {
             { img:'../../res/image/currency/BTC.png',name:'BTC',num:0.01 },
             { img:'../../res/image/currency/ETH.png',name:'ETH',num:0.5 }
         ];
-        // for (const i in list) {
-        //     list[i].num = find('cloudBalance', CurrencyType[list[i].name]) || 0;
+        for (const i in list) {
+            list[i].num = find('cloudBalance', CurrencyType[list[i].name]) || 0;
             
-        //     console.log(list[i].num);
-        // }
+            console.log(list[i].num);
+        }
         this.state.list = list;
         if (!realUser) {
             fetchRealUser();
@@ -144,11 +144,11 @@ export class WriteRedEnv extends Widget {
         if (this.state.message === '') {
             this.state.message = '恭喜发财 万事如意';
         }
-        // if (!this.state.realUser) {
-        //     popNew('app-components-message-message', { content: '您不是真实用户' });
+        if (!this.state.realUser) {
+            popNew('app-components-message-message', { content: '您不是真实用户' });
 
-        //     return;
-        // }
+            return;
+        }
 
         this.inputBlur();
         // tslint:disable-next-line:prefer-template
@@ -163,8 +163,7 @@ export class WriteRedEnv extends Widget {
             itype:'password' }, 
             (r) => {
                 const wallet = find('curWallet');
-                // const fg = VerifyIdentidy(wallet,r);
-                const fg = true;
+                const fg = VerifyIdentidy(wallet,r);
                 if (fg) {
                     this.sendRedEnv();
                 } else {
@@ -186,8 +185,7 @@ export class WriteRedEnv extends Widget {
         const ctype = Number(CurrencyType[curCoin.name]);  // 货币类型
         const totalAmount = Number(this.state.totalAmount);   // 红包总金额
         const totalNum = this.state.totalNum;    // 红包总个数
-        // const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm);
-        const rid = 1234;
+        const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm);
         close.callback(close.widget);
         if (!rid) return;
     
