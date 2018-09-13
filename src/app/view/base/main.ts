@@ -37,7 +37,11 @@ export const run = (cb): void => {
     },500);
     // dataCenter.init();
     popNew('app-view-base-app');
-    // popNew('app-view-wallet-backup-shareMnemonic',{mnemonic:"pair theme cage asset march devote help atom else crater bubble permit"});
+    // popNew('app-view-wallet-financialManagement-home');
+    // popNew('app-view-wallet-backup-shareMnemonic',{
+    //     mnemonic:"pair theme cage asset march devote help atom else crater bubble permit",
+    //     fragments:["CAFWwva3bglwwyAsxu4HTkCYLo/itdpe/x1vnpLxRXgp7A==", "CAKsmfFz3BLgm0BYkcEOnIAuYf5tobfbaiBe9KldDZRiDQ==", "CAP6WwfEshuQWGB0Vy8J0sC3r9HjrWdTGcC60ks5NTtbUg=="]
+    // });
     // popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:'ETH' });
     // const t = new Date();
     // const tx:TransRecordLocal = {

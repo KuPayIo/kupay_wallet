@@ -13,6 +13,10 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Home extends Widget {
+    public ok:()=>void;
+    public backPrePage(){
+        this.ok && this.ok();
+    }
     public create() {
         super.create();
         this.init();
@@ -20,10 +24,10 @@ export class Home extends Widget {
     public init() {
         this.state = {
             tabs:[{
-                tab:'云账户',
-                components:'app-view-wallet-home-cloudHome'
+                tab:'推荐理财',
+                components:'app-view-wallet-financialManagement-recommendFM'
             },{
-                tab:'本地钱包',
+                tab:'我的理财',
                 components:'app-view-wallet-home-walletHome'
             }],
             activeNum:0,
@@ -36,38 +40,6 @@ export class Home extends Widget {
         this.paint();
     }
 
-    public userInfoChange(userInfo:UserInfo) {
-        this.state.avatar = userInfo.avatar;
-        this.paint();
-    }
-
-    public updateTotalAsset(){
-        this.state.totalAsset = formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets());
-        this.paint();
-    }
 }
 
 // ==========================本地
-register('userInfo',(userInfo:UserInfo) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.userInfoChange(userInfo);
-    }
-});
-
-
-// 汇率变化
-register('exchangeRateJson',(exchangeRateJson)=>{
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateTotalAsset();
-    }
-});
-
-// 云端余额变化
-register('cloudBalance',(cloudBalance)=>{
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateTotalAsset();
-    }
-});

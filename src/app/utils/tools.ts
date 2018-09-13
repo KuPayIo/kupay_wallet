@@ -528,12 +528,8 @@ export const copyToClipboard = (copyText) => {
 /**
  * 获取memery hash
  */
-export const calcHashValuePromise = async (pwd, salt, walletId, useCache: boolean = true) => {
+export const calcHashValuePromise = async (pwd, salt) => {
     let hash;
-    if (useCache && walletId) {
-        hash = find('hashMap',walletId);
-        if (hash) return hash;
-    }
 
     const argonHash = new ArgonHash();
     argonHash.init();
@@ -1031,4 +1027,20 @@ export const fetchCoinGain = ()=>{
             coinGain.set(k,item.gain);
         }
     }
+}
+
+
+/**
+ * 获取某id理财产品持有量，不算已经赎回的
+ */
+export const fetchHoldedProductAmount = (id:string) =>{
+    const purchaseRecord = find('purchaseRecord');
+    let holdAmout = 0;
+    for (let i = 0;i < purchaseRecord.length;i++) {
+        const one = purchaseRecord[i];
+        if (one.id.toString() === id && one.state === 1) {
+            holdAmout += one.amount;
+        }
+    }
+    return holdAmout;
 }

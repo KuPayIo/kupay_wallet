@@ -580,7 +580,7 @@ export const Config = {
  */
 export const financialProductList = {
     60001:{
-        id:'60001',// 产品id
+        id:60001,// 产品id
         title: '优选理财-随存随取',// 产品标题
         profit: '8%',// 预期年化收益
         productName: 'ETH资管第1期',// 产品名称
@@ -608,3 +608,4 @@ export const withdrawMinerFee = {
     ETH:0.01,
     BTC:0.001
 }
+

@@ -11,9 +11,12 @@ import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../logic/dataCenter';
 import { Addr, TxStatus } from '../store/interface';
 import { find, updateStore } from '../store/store';
-import { lang } from './constants';
-import { calcHashValuePromise, getAddrById, hexstrToU8Array, parseDate, timestampFormat, initAddr } from './tools';
+import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
+import { calcHashValuePromise, getAddrById, hexstrToU8Array, initAddr, popNewMessage, popNewLoading } from './tools';
 import { smallUnit2LargeUnit } from './unitTools';
+import { buyProduct, getCloudBalance, getPurchaseRecord } from '../net/pull';
+import { shareSecret } from './secretsBase';
+import { arrayBufferToBase64 } from '../../pi/util/base64';
 
 /**
  * 获取新的地址信息
@@ -104,7 +107,7 @@ export const effectiveAddr = (currencyName: string, addr: string): [boolean, str
  * 验证身份
  */
 export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) => {
-    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId, useCache);
+    const hash = await calcHashValuePromise(passwd, find('salt'));
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
 
     try {
@@ -119,11 +122,12 @@ export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) =
     }
 };
 
+
 /**
  * 获取助记词
  */
 export const getMnemonic = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId);
+    const hash = await calcHashValuePromise(passwd, find('salt'));
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -139,8 +143,7 @@ export const getMnemonic = async (wallet, passwd) => {
 /**
  * 获取助记词16进制字符串
  */
-export const getMnemonicHexstr = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, find('salt'), wallet.walletId);
+export const getMnemonicHexstr = (wallet, hash) => {
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -200,3 +203,63 @@ export const fetchTransactionList = (addr:string,currencyName:string) => {
 
     return txList.concat(addrInfo.record).sort((a, b) => b.time - a.time);
 };
+
+
+// 购买理财
+export const purchaseProduct = async (psw:string,productId:string,amount:number) => {
+    const close = popNewLoading('正在购买...');    
+    const pswCorrect = await VerifyIdentidy(find('curWallet'),psw,false);
+    if (!pswCorrect) {
+        close.callback(close.widget);
+        popNewMessage('密码不正确');    
+        return;
+    }
+    const data = await buyProduct(productId,amount);
+    close.callback(close.widget);
+    getCloudBalance();
+    console.log('data',data);
+    getPurchaseRecord();// 购买之后获取购买记录
+    return data;
+}
+
+//获取助记词片段
+export const fetchMnemonicFragment =  (hash) =>{
+    const mnemonicHexstr =  getMnemonicHexstr(find('curWallet'),hash);
+    if(!mnemonicHexstr) return;
+    const shares = shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
+            .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
+    console.log('fetchMnemonicFragment-----------',shares);
+    return shares;
+}
+
+// 备份助记词
+export const backupMnemonic = async (passwd:string) =>{
+    const close = popNewLoading('导出中...');
+    const hash = await calcHashValuePromise(passwd, find('salt'));
+    close.callback(close.widget);
+    const mnemonic = getMnemonicByHash(hash);
+    const fragments = fetchMnemonicFragment(hash);
+    if(!mnemonic){
+        popNewMessage('密码错误');
+        return;
+    }
+    return {
+        mnemonic,
+        fragments
+    }
+}
+
+//根据hash获取助记词
+export const getMnemonicByHash = (hash:string)=>{
+    const gwlt = GlobalWallet.fromJSON(find('curWallet').gwlt);
+    try {
+        const cipher = new Cipher();
+        const r = cipher.decrypt(hash, gwlt.vault);
+
+        return toMnemonic(lang, hexstrToU8Array(r));
+    } catch (error) {
+        console.log(error);
+
+        return '';
+    }
+}

@@ -16,8 +16,8 @@ interface Props {
 
 export class BaseShare extends Widget {
     public props: Props;
-    public ok: () => void;
-    public cancel: () => void;
+    public ok: (success:boolean) => void;
+    public cancel: (success:boolean) => void;
     constructor() {
         super();
     }
@@ -61,8 +61,8 @@ export class BaseShare extends Widget {
         stp.init();
         if (this.props.shareType === ShareToPlatforms.TYPE_LINK) {
             stp.shareLink({
-                success: (result) => { this.ok(); },
-                fail: (result) => { this.cancel(); },
+                success: (result) => { this.ok(true); },
+                fail: (result) => { this.cancel(false); },
                 webName: this.props.webName || '钱包',
                 url: this.props.url,
                 title: this.props.title,
@@ -72,8 +72,8 @@ export class BaseShare extends Widget {
             });
         } else {
             stp.shareCode({
-                success: (result) => { this.ok(); },
-                fail: (result) => { this.cancel(); },
+                success: (result) => { this.ok(true); },
+                fail: (result) => { this.cancel(false); },
                 content: this.props.text,
                 type: this.props.shareType,
                 platform: platform

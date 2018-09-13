@@ -23,24 +23,34 @@ import { getMnemonic, addNewAddr } from '../utils/walletTools';
 export const createWallet = async (itype:CreateWalletType,option:any) => {
     if (itype === CreateWalletType.Random) {
         const close = popNew('app-components1-loading-loading', { text: '创建中...' });
-        await createWalletRandom(option);
+        const hash = await calcHashValuePromise(option.psw, find('salt'));
+        createWalletRandom(hash,option);
         close.callback(close.widget);
+        return hash;
     } else if (itype === CreateWalletType.Image) {
         const close = popNew('app-components1-loading-loading', { text: '创建中...' });
-        await createWalletByImage(option);
+        const hash = await calcHashValuePromise(option.psw, find('salt'));
+        createWalletByImage(hash,option);
         close.callback(close.widget);
+        return hash;
     } else if (itype === CreateWalletType.StrandarImport) {
         const close = popNew('app-components1-loading-loading', { text: '导入中...' });
-        await importWalletByMnemonic(option);
+        const hash = await calcHashValuePromise(option.psw, find('salt'));
+        importWalletByMnemonic(hash,option);
         close.callback(close.widget);
+        return hash;
     } else if (itype === CreateWalletType.ImageImport) {
         const close = popNew('app-components1-loading-loading', { text: '导入中...' });
-        await createWalletByImage(option);
+        const hash = await calcHashValuePromise(option.psw, find('salt'));
+        createWalletByImage(hash,option);
         close.callback(close.widget);
+        return hash;
     } else if (itype === CreateWalletType.FragmentImport) {
         const close = popNew('app-components1-loading-loading', { text: '导入中...' });
-        await importWalletByFragment(option);
+        const hash = await calcHashValuePromise(option.psw, find('salt'));
+        importWalletByFragment(hash,option);
         close.callback(close.widget);
+        return hash;
     }
    
 };
@@ -48,9 +58,9 @@ export const createWallet = async (itype:CreateWalletType,option:any) => {
 /**
  * 随机创建钱包
  */
-export const createWalletRandom = async (option) => {
+export const createWalletRandom = (hash:string,option) => {
     const salt = find('salt');
-    const gwlt = await GlobalWallet.generate(option.psw, option.nickName,salt);
+    const gwlt = GlobalWallet.generate(hash, option.nickName);
     // 创建钱包基础数据
     const wallet: Wallet = {
         walletId: gwlt.glwtId,
@@ -79,14 +89,14 @@ export const createWalletRandom = async (option) => {
  * 图片创建钱包
  * @param option 参数
  */
-export const createWalletByImage = async (option:any) => {
+export const createWalletByImage = async (hash:string,option:any) => {
     const ahash:any = await getImageAhash(option.imageBase64);
-    const hash = await imgToHash(ahash,option.imagePsw);
+    const vault = await imgToHash(ahash,option.imagePsw);
 
     const walletList: Wallet[] = find('walletList');
     const addrs: Addr[] = find('addrs');
     const salt = find('salt');
-    const gwlt = await GlobalWallet.generate(option.psw, option.nickName, salt, hash);
+    const gwlt = GlobalWallet.generate(hash, option.nickName, vault);
     // 创建钱包基础数据
     const wallet: Wallet = {
         walletId: gwlt.glwtId,
@@ -136,7 +146,7 @@ const getImageAhash = (imageBase64:string) => {
  */
 const imgToHash = async (ahash:string, imagePsw:string) => {
     const sha3Hash = sha3(ahash + imagePsw, false);
-    const hash = await calcHashValuePromise(sha3Hash, find('salt'), null);
+    const hash = await calcHashValuePromise(sha3Hash, find('salt'));
     const sha3Hash1 = sha3(hash, true);
     const len = sha3Hash1.length;
     // 生成助记词的随机数仅需要128位即可，这里对256位随机数进行折半取异或的处理
@@ -150,14 +160,14 @@ const imgToHash = async (ahash:string, imagePsw:string) => {
 /**
  * 通过助记词导入钱包
  */
-export const importWalletByMnemonic = async (option) => {
+export const importWalletByMnemonic = async (hash:string,option) => {
     const walletList: Wallet[] = find('walletList');
     const salt = find('salt');
     const addrs: Addr[] = find('addrs') || [];
 
     let gwlt = null;
     console.time('import');
-    gwlt = await GlobalWallet.fromMnemonic(option.mnemonic, option.psw, salt);
+    gwlt = GlobalWallet.fromMnemonic(hash,option.mnemonic);
     console.timeEnd('import');
    
     gwlt.nickName = option.nickName;
@@ -186,12 +196,12 @@ export const importWalletByMnemonic = async (option) => {
 /**
  * 冗余助记词导入
  */
-export const importWalletByFragment = async (option) => {
+export const importWalletByFragment = async (hash:string,option) => {
     const shares = [option.fragment1, option.fragment2].map(v => u8ArrayToHexstr(new Uint8Array(base64ToArrayBuffer(v))));
     const comb = restoreSecret(shares);
     const mnemonic = toMnemonic(lang, hexstrToU8Array(comb));
     option.mnemonic = mnemonic;
-    await importWalletByMnemonic(option);
+    importWalletByMnemonic(hash,option);
 };
 
 

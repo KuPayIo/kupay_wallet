@@ -9,6 +9,7 @@ import { selectImage } from '../../../logic/native';
 import { CreateWalletType } from '../../../store/interface';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { forelet,WIDGET_NAME } from './home';
+import { getMnemonicByHash, fetchMnemonicFragment } from '../../../utils/walletTools';
 interface Props {
     itype:CreateWalletType;
     imageBase64?:string;// 图片base64
@@ -111,7 +112,9 @@ export class CreateWallet extends Widget {
             option.fragment1 = this.props.fragment1;
             option.fragment2 = this.props.fragment2;
         }
-        await createWallet(this.state.itype,option);
+        const hash = await createWallet(this.state.itype,option);
+        const mnemonic = getMnemonicByHash(hash);
+        const fragments = fetchMnemonicFragment(hash);
         // 刷新本地钱包
         dataCenter.refresh();
         const w: any = forelet.getWidget(WIDGET_NAME);
@@ -125,7 +128,7 @@ export class CreateWallet extends Widget {
             sureText:'备份',
             cancelText:'暂时不' 
         },() => {
-            // popNew('app-view-wallet-create-createEnter');
+            popNew('app-view-wallet-backup-index',{mnemonic,fragments});
         });
     }
 }

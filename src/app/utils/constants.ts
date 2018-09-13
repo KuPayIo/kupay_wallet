@@ -94,3 +94,8 @@ export const timeOfArrival = {
         time:'0-30分钟'
     }]
 };
+
+//助记词片段分享最大数
+export const MAX_SHARE_LEN = 3;
+//助记词片段分享最小数
+export const MIN_SHARE_LEN = 2;
