@@ -1,7 +1,7 @@
 <div w-class="modal-mask" >
     <div w-class="body">
         <img src="../../../res/image/redEnvBack.png" style="height: auto;width: 100%;position: fixed;"/>
-        <img w-class="clear" src="../../../res/image/30_gray.png" on-tap="backPrePage"/>
+        <img w-class="clear" src="../../../res/image/whiteClose.png" on-tap="backPrePage"/>
         <div w-class="title">红包准备好了</div>
         <div w-class="content">{{it.message}}</div>
         <div style="position: absolute;margin-top: 590px;text-align: center;width: 100%;">

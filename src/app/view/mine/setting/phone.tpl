@@ -7,16 +7,16 @@
         {{if !it1.isSuccess}}
         <div w-class="verify">验证码有误</div>
         {{end}}
-        <div w-class="code" ev-input-change="codeChange" id="code">
-            <app-components1-input-input>{itype:"number",style:"font-size:64px;color:#368FE5;letter-spacing: 70px;padding:0;"}</app-components1-input-input>
+        <div w-class="code" id="code" >
+            {{% <app-components1-input-input>{itype:"number",style:"font-size:64px;color:#368FE5;letter-spacing: 100px;"}</app-components1-input-input>}}
         </div>
-        <div style="text-align: center;">
-            <div w-class="codeBottom"></div>
-            <div w-class="codeBottom"></div>
-            <div w-class="codeBottom"></div>
-            <div w-class="codeBottom"></div>
-            <div w-class="codeBottom"></div>
-            <div w-class="codeBottom"></div>
+        <div style="text-align: center;" ev-input-change="codeChange" ev-input-focus="codeFocus">
+            {{for ind,val of [1,2,3,4]}}
+            <div w-class="codeBottom" id="codeInput{{ind}}">
+                <app-components-input-input>{{it1.inputDefault}}</app-components-input-input>
+            </div>
+            {{end}}
+            
         </div>
     </div>
 </div>

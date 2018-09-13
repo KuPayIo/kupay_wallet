@@ -23,7 +23,7 @@
 }
 .codeBottom{
     border-bottom: 3px solid #368FE5;
-    width: 90px;
-    margin-right: 18px;
+    width: 20%;
+    margin-right: 4%;
     display: inline-block;
 }

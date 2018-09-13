@@ -2,9 +2,9 @@ import { isArray } from '../../pi/net/websocket/util';
 import { deepCopy } from '../../pi/util/util';
 import { financialProductList } from '../config';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, GetDateDiff, timestampFormat,timestampFormatToDate,unicodeArray2Str } from '../utils/tools';
+import { formatBalance, GetDateDiff, parseRtype,timestampFormat,timestampFormatToDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
-import { AccountDetail, CurrencyType, CurrencyTypeReverse, PurchaseRecordOne,TaskSid } from './interface';
+import { AccountDetail, CRecDetail, CurrencyType, CurrencyTypeReverse,PurchaseRecordOne, RedBag, SHisRec, SRecDetail, TaskSid } from './interface';
 import { find } from './store';
 /**
  * 解析数据
@@ -167,7 +167,7 @@ export const parseMiningRank = (data) => {
 };
 
 /**
- * 
+ * 解析矿山增加记录
  */
 export const parseMineDetail = (detail) => {
     const list = [
@@ -300,6 +300,97 @@ export const paseProductList = (res:any) => {
     }
 
     return result;
+};
+/**
+ * 解析发送红包历史记录
+ */
+export const parseSendRedEnvLog = (value) => {
+    const sHisRec = find('sHisRec');
+    const rList:SRecDetail[] = sHisRec && sHisRec.list || [];
+    const sendNumber = value[0];
+    const start = value[1];
+    const recordList:SRecDetail[] = [];
+    const r = value[2];
+    for (let i = 0; i < r.length;i++) {
+        const currencyName = CurrencyTypeReverse[r[i][2]];
+        const record:SRecDetail = {
+            rid:r[i][0].toString(),
+            rtype:r[i][1],
+            ctype:r[i][2],
+            ctypeShow:currencyName,
+            amount:smallUnit2LargeUnit(currencyName,r[i][3]),
+            time:r[i][4],
+            timeShow:timestampFormat(r[i][4]),
+            codes:r[i][5]
+        };
+        recordList.push(record);
+    }
+   
+    return {
+        start,
+        sendNumber,
+        list:rList.concat(recordList)
+    };
+};
+/**
+ * 解析红包兑换历史记录
+ */
+export const parseConvertLog = (value) => {
+    const cHisRec = find('cHisRec');
+    const rList:CRecDetail[] = cHisRec && cHisRec.list || [];
+    const convertNumber = value[0];
+    const startNext = value[1];
+    const recordList:CRecDetail[] = [];
+    const r = value[2];
+    for (let i = 0; i < r.length;i++) {
+        const currencyName = CurrencyTypeReverse[r[i][3]];
+        const record: CRecDetail = {
+            suid: r[i][0],
+            rid: r[i][1],
+            rtype: r[i][2],
+            rtypeShow: parseRtype(r[i][2]),
+            ctype: r[i][3],
+            ctypeShow:currencyName,
+            amount: smallUnit2LargeUnit(currencyName, r[i][4]),
+            time: r[i][5],
+            timeShow: timestampFormat(r[i][5])
+        };
+        recordList.push(record);
+    }
+    
+    return {
+        start:startNext,
+        convertNumber,
+        list:rList.concat(recordList)
+    };
+};
+
+/**
+ * 解析红包兑换详情
+ */
+export const parseExchangeDetail = (value) => {
+    const data = value[1];
+    const redBagList:RedBag[] = [];
+    let curNum = 0;    
+    for (let i = 0;i < data.length;i++) {
+        const amount = smallUnit2LargeUnit(CurrencyTypeReverse[data[i][3]],data[i][4]);
+        if (data[i][1] !== 0 && data[i][5] !== 0) {
+            const redBag:RedBag = {
+                suid:data[i][0],
+                cuid:data[i][1],
+                rtype:data[i][2],
+                ctype:data[i][3],
+                amount,
+                time:data[i][5],
+                timeShow:timestampFormat(data[i][5])
+            };
+            redBagList.push(redBag);
+            curNum ++;
+        }
+    }
+    const message = unicodeArray2Str(value[0]);
+
+    return [redBagList, message, curNum, data.length]; // 兑换人员列表，红包留言，已兑换个数，总个数
 };
 // ===================================================== 本地
 

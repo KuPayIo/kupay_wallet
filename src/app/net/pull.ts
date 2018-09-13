@@ -5,7 +5,7 @@ import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseMineDetail, parseMineRank, parseMiningRank, parseRechargeWithdrawalLog,paseProductList,pasePurchaseRecord } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExchangeDetail, parseMineDetail, parseMineRank,parseMiningRank,parseRechargeWithdrawalLog, parseSendRedEnvLog, paseProductList, pasePurchaseRecord } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
@@ -389,9 +389,11 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
     }
 
     try {
-        const res = await requestAsync(msg);
+        requestAsync(msg).then(detail => {
+            const data = parseSendRedEnvLog(detail);
+            updateStore('sHisRec',data);
+        });
 
-        return res.value;
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -422,9 +424,11 @@ export const queryConvertLog = async (start) => {
     }
 
     try {
-        const res = await requestAsync(msg);
+        requestAsync(msg).then(detail => {
+            const data = parseConvertLog(detail);
+            updateStore('cHisRec',data);
+        });
 
-        return res.value;
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -445,9 +449,10 @@ export const queryDetailLog = async (rid: string) => {
     };
 
     try {
-        const res = await requestAsync(msg);
+        requestAsync(msg).then(detail => {
+            return parseExchangeDetail(detail);
+        });
 
-        return res.value;
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -629,9 +634,9 @@ export const regPhone = async (phone: number, code: number) => {
     return requestAsync(msg).catch(error => {
         console.log(error);
         if (error.type === -300) {
-            popNew('app-components-message-message', { itype: 'error', center: true, content: `验证码失效，请重新获取` });
+            popNew('app-components-message-message', { content: `验证码失效，请重新获取` });
         } else {
-            popNew('app-components-message-message', { itype: 'error', center: true, content: `错误${error.type}` });
+            popNew('app-components-message-message', { content: `错误${error.type}` });
         }
     });
 };

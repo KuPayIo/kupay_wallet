@@ -46,26 +46,26 @@ export class Exchange extends Widget {
 
             return;
         }
-        // const close = popNew('app-components1-loading-loading', { text: '兑换中...' });        
-        // const value: any = await this.convertRedEnvelope(code);
-        // close.callback(close.widget);
-        // if (!value) return;
-        // updateStore('cHisRec',undefined);
-        // getCloudBalance();
-        // const r: any = await this.queryDesc(code);
+        const close = popNew('app-components1-loading-loading', { text: '兑换中...' });        
+        const value: any = await this.convertRedEnvelope(code);
+        close.callback(close.widget);
+        if (!value) return;
+        updateStore('cHisRec',undefined);
+        getCloudBalance();
+        const r: any = await this.queryDesc(code);
 
-        // const redEnvelope = {
-        //     message: r.value,
-        //     ctype: value[0],
-        //     amount: smallUnit2LargeUnit(CurrencyTypeReverse[value[0]], value[1]),
-        //     rtype: code.slice(0, 2)
-        // };
         const redEnvelope = {
-            message: '红包红包',
-            ctype: 100,
-            amount: 1,
-            rtype:'00'
+            message: r.value,
+            ctype: value[0],
+            amount: smallUnit2LargeUnit(CurrencyTypeReverse[value[0]], value[1]),
+            rtype: code.slice(0, 2)
         };
+        // const redEnvelope = {
+        //     message: '红包红包',
+        //     ctype: 100,
+        //     amount: 1,
+        //     rtype:'00'
+        // };
         popNew('app-view-earn-exchange-openRedEnv', redEnvelope);
         this.state.cid = '';
         this.paint();
@@ -85,8 +85,8 @@ export class Exchange extends Widget {
         const perCode = code.slice(0, 2);
         const validCode = code.slice(2);
         let value = [];
-        if (perCode === RedEnvelopeType.Normal) {
-            value = await convertRedBag(validCode);
+        if (perCode === RedEnvelopeType.Normal || perCode === RedEnvelopeType.Random) {
+            value = await convertRedBag(validCode);  // 兑换普通红包，拼手气红包
         } else if (perCode === RedEnvelopeType.Invite) {
             const data = await getData('convertRedEnvelope');
             if (data.value) {
@@ -94,12 +94,12 @@ export class Exchange extends Widget {
 
                 return;
             }
-            value = await inputInviteCdKey(validCode);
+            value = await inputInviteCdKey(validCode);  // 兑换邀请红包
             if (!value) return;
             value = [CurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
         } else {
-            popNew('app-components-message-message', { itype: 'error', content: '兑换码错误', center: true });
+            popNew('app-components-message-message', { content: '兑换码错误' });
 
             return null;
         }
@@ -114,11 +114,11 @@ export class Exchange extends Widget {
         const perCode = code.slice(0, 2);
         const validCode = code.slice(2);
         let res = { result: -1, value: '' };
-        if (perCode === RedEnvelopeType.Normal) {
-            res = await queryRedBagDesc(validCode);
-        } else if (perCode === RedEnvelopeType.Invite) {
+        if (perCode === RedEnvelopeType.Invite) {
             res.result = 1;
             res.value = 'KuPay大礼包';
+        } else {
+            res = await queryRedBagDesc(validCode);
         }
 
         return res;

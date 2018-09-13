@@ -4,11 +4,17 @@
 import { Json } from '../../../../pi/lang/type';
 import { Widget } from '../../../../pi/widget/widget';
 import { queryDetailLog } from '../../../net/pull';
-import { RedBag } from '../../../store/interface';
-import { timestampFormat, unicodeArray2Str } from '../../../utils/tools';
-import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 
+interface Props {
+    rtype:number;  // 0 等额红包  1 拼手气红包
+    rid:string;  // 红包ID
+    curNum:number;  // 已领取个数
+    totalNum:number;  // 总红包个数
+    amount:number;  // 红包总金额
+    ctypeShow:string;  // 货币类型名称
+}
 export class RedEnvDetail extends Widget {
+    public props:Props;
     public ok: () => void;
 
     public setProps(props: Json, oldProps?: Json)  {
@@ -16,11 +22,11 @@ export class RedEnvDetail extends Widget {
         this.state = {
             message:'恭喜发财 万事如意',
             redBagList:[
-                { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                { cuid:111,amount:1,timeShow:'04-30 14:32:00' } 
+                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
+                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
+                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
+                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
+                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' } 
             ],
             scroll:false,
             showPin:this.props.rtype === 1  // 0 等额红包  1 拼手气红包
@@ -31,25 +37,8 @@ export class RedEnvDetail extends Widget {
     public async initData() {
         const value = await queryDetailLog(this.props.rid);
         if (!value) return;
-        const data = value[1];
-        const redBagList:RedBag[] = [];
-        for (let i = 0;i < data.length;i++) {
-            const amount = smallUnit2LargeUnit(this.props.ctypeShow,data[i][4]);
-            if (data[i][1] !== 0 && data[i][5] !== 0) {
-                const redBag:RedBag = {
-                    suid:data[i][0],
-                    cuid:data[i][1],
-                    rtype:data[i][2],
-                    ctype:data[i][3],
-                    amount,
-                    time:data[i][5],
-                    timeShow:timestampFormat(data[i][5])
-                };
-                redBagList.push(redBag);
-            }
-        }
-        this.state.message = unicodeArray2Str(value[0]);
-        this.state.redBagList = redBagList;
+        this.state.redBagList = value[0];        
+        this.state.message = value[1];
         this.paint();
     }
 

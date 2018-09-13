@@ -62,7 +62,7 @@ export const run = (cb): void => {
     // popNew('app-view-wallet-import-home');
     // popNew('app-view-earn-home-home',{});
     // popNew('app-view-earn-redEnvelope-redEnvDetail',{ type:1 });
-    // popNew('app-view-earn-redEnvelope-writeRedEnv');
+    // popNew('app-view-earn-redEnvelope-inviteRedEnvelope',{});
     // popNew('app-view-earn-mining-dividend',{ ktBalance:0 });
     // popNew('app-view-earn-exchange-exchange');
     // popNew('app-view-mine-setting-phone');
