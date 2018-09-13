@@ -5,11 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { queryDetailLog, querySendRedEnvelopeRecord } from '../../../net/pull';
-import { CurrencyTypeReverse, RedBag, SHisRec, SRecDetail } from '../../../store/interface';
-import { find, updateStore } from '../../../store/store';
+import { find } from '../../../store/store';
 import { PAGELIMIT } from '../../../utils/constants';
-import { timestampFormat } from '../../../utils/tools';
-import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -18,12 +15,12 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface State {
     recordList:any[];
-    start:string;
-    refresh:boolean;
-    hasMore:boolean;
-    showMoreTips:boolean;
-    sendNumber:number;
-    isScroll:boolean;
+    start:string; // 下一次从服务器获取记录时的start
+    refresh:boolean; // 是否可以请求更多数据
+    hasMore:boolean; // 是否还有更多记录
+    showMoreTips:boolean; // 是否显示底部加载更多提示
+    sendNumber:number; // 总发出红包个数
+    isScroll:boolean; // 是否滑动页面
 }
 
 export class RedEnvHistory extends Widget {
@@ -32,32 +29,46 @@ export class RedEnvHistory extends Widget {
 
     public create() {
         super.create();
-        this.initData();
-    }
-
-    public initData() {
         this.state = {
             recordList:[
-                { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
-                { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
-                { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
-                { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 }               
+                // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
+                // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
+                // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
+                // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 }               
             ],
-            start:undefined,// 下一次从服务器获取记录时的start
-            refresh:true,// 是否可以请求更多数据
-            hasMore:false, // 是否还有更多记录
-            showMoreTips:false, // 是否显示底部加载更多提示
-            sendNumber:0,  // 总发出红包个数
-            isScroll:false // 是否滑动页面
+            start:undefined,
+            refresh:true,
+            hasMore:false, 
+            showMoreTips:false, 
+            sendNumber:0,  
+            isScroll:false 
         };
-        this.loadMore();
+        this.initData();
         for (const i in this.state.recordList) {
             this.state.recordList[i].totalNum = 0;
             this.state.recordList[i].curNum = 0;
         }
         this.initRecordList();
-        console.log(this.state.recordList.length);
-        // this.paint();
+    }
+
+    /**
+     * 更新数据
+     */
+    public initData() {
+        const sHisRec = find('sHisRec');
+        if (sHisRec) {
+            const hList = sHisRec.list;
+            if (hList && hList.length > this.state.recordList.length) {
+                console.log('load more from local');
+            } else {
+                console.log('load more from server');
+                querySendRedEnvelopeRecord(this.state.start);
+            }
+        } else {
+            console.log('load more from server');
+            querySendRedEnvelopeRecord(this.state.start);
+        }
+        this.loadMore();    
     }
 
     /**
@@ -84,27 +95,11 @@ export class RedEnvHistory extends Widget {
         this.ok && this.ok();
     }
 
-    /**
-     * 获取数据
-     */
+    // 实际加载数据
     public loadMore() {
-        const sHisRec = find('sHisRec');
-        if (sHisRec) {
-            const hList = sHisRec.list;
-            if (hList && hList.length > this.state.recordList.length) {
-                this.loadMoreFromLocal();
-            } else {
-                this.loadMoreFromServer(this.state.start);
-            }
-        } else {
-            this.loadMoreFromServer(this.state.start);
-        }
-    }
-
-    // 从本地缓存加载更多
-    public loadMoreFromLocal() {
         console.log('load more from local');
         const sHisRec = find('sHisRec');
+        if (!sHisRec) return;
         const hList = sHisRec.list;
         const start = this.state.recordList.length;
 
@@ -113,47 +108,6 @@ export class RedEnvHistory extends Widget {
         this.state.start = sHisRec.start;
         this.state.hasMore = this.state.sendNumber > this.state.recordList.length;
         this.state.showMoreTips = this.state.sendNumber >= PAGELIMIT;
-        this.paint();
-    }
-
-    // 向服务器请求更多记录
-    public async loadMoreFromServer(bStart?:string) {
-        console.log('load more from server');
-        const sHisRec = find('sHisRec');
-        const rList:SRecDetail[] = sHisRec && sHisRec.list || [];
-        const value = await querySendRedEnvelopeRecord(bStart);
-        if (!value) return;
-        const sendNumber = value[0];
-        const start = value[1];
-        const recordList:SRecDetail[] = [];
-        const r = value[2];
-        for (let i = 0; i < r.length;i++) {
-            const currencyName = CurrencyTypeReverse[r[i][2]];
-            const record:SRecDetail = {
-                rid:r[i][0].toString(),
-                rtype:r[i][1],
-                ctype:r[i][2],
-                ctypeShow:currencyName,
-                amount:smallUnit2LargeUnit(currencyName,r[i][3]),
-                time:r[i][4],
-                timeShow:timestampFormat(r[i][4]),
-                codes:r[i][5]
-            };
-            recordList.push(record);
-        }
-        this.state.sendNumber = sendNumber;
-        this.state.recordList = this.state.recordList.concat(recordList);
-        this.state.start = start;
-        this.state.hasMore = sendNumber > this.state.recordList.length;
-        this.state.showMoreTips = sendNumber >= PAGELIMIT;
-        const sHisRecNew:SHisRec = {
-            start,
-            sendNumber,
-            list:rList.concat(recordList)
-        };
-        if (sendNumber > 0) {
-            updateStore('sHisRec',sHisRecNew);
-        }
         this.paint();
     }
 
@@ -185,7 +139,7 @@ export class RedEnvHistory extends Widget {
     }
 
     /**
-     * 
+     * 查看详情
      */
     public goDetail(ind:number) {
         popNew('app-view-earn-redEnvelope-redEnvDetail',this.state.recordList[ind]);

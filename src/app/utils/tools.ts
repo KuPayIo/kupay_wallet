@@ -122,31 +122,29 @@ export const getAddrsInfoByCurrencyName = (currencyName: string) => {
     const len = currencyRecords.length;
     for (let i = 0; i < len; i++) {
         if (currencyRecords[i].currencyName === currencyName) {
-            for(let j = 0;j < currencyRecords[i].addrs.length; j++){
+            for (let j = 0;j < currencyRecords[i].addrs.length; j++) {
                 const addr = currencyRecords[i].addrs[j];
                 const obj = {
                     addr,
                     balance:getAddrInfoByAddr(addr,currencyName).balance
-                }
+                };
                 retAddrInfo.push(obj);
             }
             break;
         }
     }
 
-
     return retAddrInfo;
 };
 
- /**
-     * 通过地址获取地址余额
-     */
-export const getAddrInfoByAddr = (addr: string, currencyName: string)=> {
+/**
+ * 通过地址获取地址余额
+ */
+export const getAddrInfoByAddr = (addr: string, currencyName: string) => {
     const addrs = find('addrs') || [];
 
     return addrs.filter(v => v.addr === addr && v.currencyName === currencyName)[0];
-}
-
+};
 
 // 随机生成RGB颜色
 export const randomRgbColor = () => { 
@@ -568,14 +566,14 @@ export const popPswBox = async () => {
     }
 };
 
-//弹出提示框
-export const popNewMessage = (content:string) =>{
-    return popNew('app-components-message-message',{content});
-}
-//弹出loading
+// 弹出提示框
+export const popNewMessage = (content:string) => {
+    return popNew('app-components-message-message',{ content });
+};
+// 弹出loading
 export const popNewLoading = (text:string) => {
-    return popNew('app-components1-loading-loading',{text});
-}
+    return popNew('app-components1-loading-loading',{ text });
+};
 
 /**
  * 打开密码输入框
@@ -646,6 +644,7 @@ export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
             return addrs[i].balance;
         }
     }
+
     return 0;
 };
 // 时间戳格式化 毫秒为单位
@@ -781,9 +780,9 @@ export const fetchGasPrice = (minerFeeLevel:MinerFeeLevel) => {
 
 // 获取gasPrice
 export const fetchPriority = (minerFeeLevel:MinerFeeLevel) => {
-    if(minerFeeLevel === MinerFeeLevel.STANDARD) return 'low';
-    if(minerFeeLevel === MinerFeeLevel.FAST) return 'medium';
-    if(minerFeeLevel === MinerFeeLevel.FASTEST) return 'high';
+    if (minerFeeLevel === MinerFeeLevel.STANDARD) return 'low';
+    if (minerFeeLevel === MinerFeeLevel.FAST) return 'medium';
+    if (minerFeeLevel === MinerFeeLevel.FASTEST) return 'high';
 };
 
 // 获取默认币种汇率
@@ -900,6 +899,7 @@ export const hasWallet = () => {
 
         return false;
     }
+
     return true;
 };
 
@@ -929,19 +929,21 @@ export const parseStatusShow = (status:TxStatus) => {
 };
 
 // 解析转账类型
-export const parseTxTypeShow = (txType:TxType)=>{
-    if(txType === TxType.RECEIPT){
+export const parseTxTypeShow = (txType:TxType) => {
+    if (txType === TxType.RECEIPT) {
         return '收款';
     }
+
     return '转账';
-}
+};
 
  // 解析是否可以重发
- export const canResend = (tx)=>{
-    if(tx.status !== TxStatus.PENDING) return false;
-    if(tx.minerFeeLevel === MinerFeeLevel.FASTEST) return false;
+export const canResend = (tx) => {
+    if (tx.status !== TxStatus.PENDING) return false;
+    if (tx.minerFeeLevel === MinerFeeLevel.FASTEST) return false;
+
     return true;
-}
+};
 
 /**
  * 获取钱包资产列表是否添加
@@ -952,17 +954,17 @@ export const fetchWalletAssetListAdded = () => {
     const assetList = [];
     for (const k in MainChainCoin) {
         const item:any = {};
-        if (MainChainCoin.hasOwnProperty(k) && k!== 'KT') {
+        if (MainChainCoin.hasOwnProperty(k) && k !== 'KT') {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
-            if(showCurrencys.indexOf(k) >= 0){
+            if (showCurrencys.indexOf(k) >= 0) {
                 item.added = true;
-            }else{
+            } else {
                 item.added = false;
             }
-            if(defalutShowCurrencys.indexOf(k) >= 0){
+            if (defalutShowCurrencys.indexOf(k) >= 0) {
                 item.canSwtiched = false;
-            }else{
+            } else {
                 item.canSwtiched = true;
             }
             assetList.push(item);
@@ -975,14 +977,14 @@ export const fetchWalletAssetListAdded = () => {
         if (ERC20Tokens.hasOwnProperty(k)) {
             item.currencyName = k;
             item.description = ERC20Tokens[k].description;
-            if(showCurrencys.indexOf(k) >= 0){
+            if (showCurrencys.indexOf(k) >= 0) {
                 item.added = true;
-            }else{
+            } else {
                 item.added = false;
             }
-            if(defalutShowCurrencys.indexOf(k) >= 0){
+            if (defalutShowCurrencys.indexOf(k) >= 0) {
                 item.canSwtiched = false;
-            }else{
+            } else {
                 item.canSwtiched = true;
             }
             assetList.push(item);
@@ -992,11 +994,10 @@ export const fetchWalletAssetListAdded = () => {
     return assetList;
 };
 
-
- /**
+/**
  * 初始化地址对象
  */
-export const initAddr = (address: string, currencyName: string, addrName?: string): Addr =>{
+export const initAddr = (address: string, currencyName: string, addrName?: string): Addr => {
     return {
         addr: address,
         addrName: addrName || getDefaultAddr(address),
@@ -1028,8 +1029,16 @@ export const fetchCoinGain = ()=>{
         }
     }
 }
+/**
+ * 转化rtype
+ */
+export const parseRtype = (rType) => {
+    if (rType === 0) return '普通红包';
+    if (rType === 1) return '随机红包';
+    if (rType === 99) return '邀请红包';
 
-
+    return '';
+};
 /**
  * 获取某id理财产品持有量，不算已经赎回的
  */

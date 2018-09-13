@@ -1,9 +1,10 @@
 /**
  * 做任务
  */
+import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineDetail, getMineItemJump } from '../../../net/pull';
+import { getInviteCode, getMineDetail, getMineItemJump } from '../../../net/pull';
 import { find, register } from '../../../store/store';
 
 // ================================ 导出
@@ -83,13 +84,22 @@ export class Dividend extends Widget {
      * 挖矿项目跳转
      * @param ind 挖矿项目参数
      */
-    public goDetail(ind:number) {
+    public async goDetail(ind:number) {
         if (!this.state.data[ind].isComplete) {
             const itemJump = this.state.data[ind].itemJump;
             getMineItemJump(itemJump);
-            // if (itemJump === 'buyFinancial') {
-            //     this.backPrePage();
-            // }
+
+            if (itemJump === 'shareFriend') {  // 邀请红包
+                popNew('app-view-earn-redEnvelope-sendRedEnv',{
+                    // rid:await getInviteCode(),
+                    rid:111,
+                    rtype:99,
+                    message:'恭喜发财 万事如意'
+                });
+            }
+            if (itemJump === 'bindPhone') {
+                popNew('app-view-mine-setting-phone');
+            }
         }
     }
 
