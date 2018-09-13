@@ -9,7 +9,12 @@
                 <img src="../../../res/image1/41_blue.png" w-class="miningDetail" on-tap="miningDetail"/>
             </div>
 
-            <div w-class="totalNum">{{it1.ktBalance}}</div>
+            <div w-class="totalNum" id="mining">
+                {{it1.ktBalance}}
+                <span class="miningNum" style="animation:{{it1.doMining?'miningEnlarge 0.3s linear':''}}">
+                    +{{it1.mines}}
+                </span>  
+            </div>
 
             <div w-class="titleMode">
                 <div w-class="totalTitle">

@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find, register, updateStore } from '../../../store/store';
+import { find, updateStore } from '../../../store/store';
 import { lockScreenVerify } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
@@ -46,7 +46,7 @@ export class Setting extends Widget {
         if (wallet) {
             // gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             const gwlt = JSON.parse(wallet.gwlt);
-            this.state.userHead = wallet.avatar;
+            this.state.userHead = wallet.avatar ? wallet.avatar :'../../../res/image/default_avater_big.png';
             this.state.userName = gwlt.nickName;
             this.state.wallet = wallet;
         }
@@ -70,6 +70,9 @@ export class Setting extends Widget {
         if (this.state.wallet) {
             return true;
         }
+        popNew('app-components-modalBox-modalBox',{ title:'提示',content:'你还没有登录，去登录使用更多功能吧',sureText:'去登录',cancelText:'暂时不' },() => {
+            popNew('app-view-wallet-create-home');
+        });
         
         return false;
     }
@@ -77,13 +80,12 @@ export class Setting extends Widget {
      * 处理锁屏开关切换
      */
     public onSwitchChange() {
-        this.judgeWallet();
         if (this.state.openLockScreen) {   // 如果锁屏开关打开则直接关闭
             const ls = find('lockScreen');
             ls.open = !this.state.openLockScreen;
             updateStore('lockScreen',ls);
-        } else {
-            popNew('app-components-keyBoard-keyBoard',{ title:'设置锁屏密码' },(r) => {
+        } else if (this.state.wallet) {
+            popNew('app-components-keyboard-keyboard',{ title:'设置锁屏密码' },(r) => {
                 console.error(r);
                 this.state.lockScreenPsw = r;
                 this.reSetLockPsw();
@@ -92,6 +94,12 @@ export class Setting extends Widget {
                 this.closeLockPsw();
 
                 return false;
+            });
+        } else {
+            popNew('app-components-modalBox-modalBox',{ title:'提示',content:'你还没有登录，去登录使用更多功能吧',sureText:'去登录',cancelText:'暂时不' },() => {
+                popNew('app-view-wallet-create-home');
+            },() => {
+                this.closeLockPsw();
             });
         }
         this.state.openLockScreen = !this.state.openLockScreen;
@@ -111,7 +119,7 @@ export class Setting extends Widget {
      * 重复锁屏密码
      */
     public reSetLockPsw() {
-        popNew('app-components-keyBoard-keyBoard',{ title:'重复锁屏密码' },(r) => {
+        popNew('app-components-keyboard-keyboard',{ title:'重复锁屏密码' },(r) => {
             console.error(r);
             if (this.state.lockScreenPsw !== r) {
                 popNew('app-components-message-message',{ content:'密码不一致' });
@@ -135,7 +143,7 @@ export class Setting extends Widget {
                 const fg = VerifyIdentidy(wallet,r);
                 // const fg = true;
                 if (fg) {
-                    popNew('app-components-keyBoard-keyBoard',{ title:'设置锁屏密码' },(r) => {
+                    popNew('app-components-keyboard-keyboard',{ title:'设置锁屏密码' },(r) => {
                         console.error(r);
                         this.state.lockScreenPsw = r;
                         this.reSetLockPsw();
@@ -148,9 +156,9 @@ export class Setting extends Widget {
                 } 
             });
         } else {
-            popNew('app-components-keyBoard-keyBoard',{ title:this.state.errorTips[ind] },(r) => {
+            popNew('app-components-keyboard-keyboard',{ title:this.state.errorTips[ind] },(r) => {
                 if (lockScreenVerify(r)) {
-                    popNew('app-components-keyBoard-keyBoard',{ title:'设置锁屏密码' },(r) => {
+                    popNew('app-components-keyboard-keyboard',{ title:'设置锁屏密码' },(r) => {
                         console.error(r);
                         this.state.lockScreenPsw = r;
                         this.reSetLockPsw();
@@ -172,7 +180,9 @@ export class Setting extends Widget {
      * 点击切换基础属性
      */
     public itemClick(ind:number) {
-        this.judgeWallet();
+        if (!this.judgeWallet()) {
+            return;
+        }
         if (ind === 0) {
             popNew('app-view-mine-setting-phone');
         } else if (ind === 1) {
@@ -188,7 +198,9 @@ export class Setting extends Widget {
      * 点击可输入用户名
      */
     public changeInput() {
-        this.judgeWallet();
+        if (!this.judgeWallet()) {
+            return;
+        }
         this.state.userInput = true;
         this.paint();
     }
@@ -212,6 +224,9 @@ export class Setting extends Widget {
      * 注销账户
      */
     public logOut() {
+        if (!this.judgeWallet()) {
+            return;
+        }
         popNew('app-components-modalBox-modalBox',{ title:'注销账户',content:'注销前请确认已备份助记词，以便下次用它恢复。',sureText:'备份',cancelText:'继续注销' },() => {
             console.log('备份');
         },() => {

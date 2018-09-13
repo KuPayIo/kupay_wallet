@@ -1,4 +1,4 @@
-<div class="new-page" style="background: linear-gradient(#F94E4D, #F6A050);" ev-back-click="backPrePage" ev-next-click="goDetail">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goDetail">
     {{if !it1.scroll}}
     <app-components1-topBar-topBar>{"title":"领分红",nextImg:"../../res/image/41_white.png",background:"#F94E4D" }</app-components1-topBar-topBar>
     {{else}}
@@ -22,9 +22,9 @@
             <app-components-threeParaCard-threeParaCard>{"name":["年华收益","本次分红","已分红天数"],"data":[{{it1.yearIncome}},{{it1.thisDivid}},{{it1.totalDays}}] }</app-components-threeParaCard-threeParaCard>
         </div>
 
-        <div id="miningBtn" style="text-align: center;margin-top: 180px;height: 200px;">
-            <div w-class="miningBtn" class="miningBtnClick" on-tap="doMining" style="color: #fff;animation:{{it1.isAbleBtn?'change 0.2s':''}}" >领分红</div>
-            <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
+        <div id="dividendBtn" style="text-align: center;margin-top: 180px;height: 200px;">
+            <div w-class="miningBtn" on-tap="doMining" style="color: #fff;animation:{{it1.isAbleBtn?'dividendChange 0.2s':''}}" >领分红</div>
+            <div class="dividendNum" style="animation:{{it1.doMining?'dividendMove 0.5s':''}}">
                 <span>+{{it1.thisDivid}}</span>
             </div>  
         </div> 
@@ -46,13 +46,12 @@
                 </div>
                 {{end}}
                 
-                {{if it1.dividHistory.length>0 && !it1.more}}
+                {{if it1.dividHistory.length>0}}
                 <div w-class="endMess">到此结束啦^_^</div>
                 {{end}}
             </div>
         </div>
 
-        <div style="height: 118px;"></div>
     </div>
     
 </div>

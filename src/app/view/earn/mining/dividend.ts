@@ -1,5 +1,5 @@
 /**
- * 挖矿总信息页面  
+ * 领分红  
  * 
  */
 // ============================== 导入
@@ -28,15 +28,18 @@ export class Dividend extends Widget {
             totalDays:0,
             thisDivid:0,
             yearIncome: '暂未分红' ,
-            doMining:false,  // 点击挖矿，数字动画效果执行
+            doMining:false,  // 点击领分红，数字动画效果执行
             firstClick:true,
-            isAbleBtn:false,  // 点击挖矿，按钮动画效果执行
+            isAbleBtn:false,  // 点击领分红，按钮动画效果执行
             miningNum:` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
                 <span>+{{it1.thisNum}}</span>
             </div>`,
             scroll:false,
-            dividHistory:[], // 分红历史记录
-            more:true, // 是否还有更多历史记录
+            dividHistory:[  // 分红历史记录
+                { num:0.02,time:'04-30  14:32:00' },
+                { num:0.02,time:'04-30  14:32:00' },
+                { num:0.02,time:'04-30  14:32:00' }
+            ],
             ktBalance:this.props.ktBalance  // KT持有量 
         };
 
@@ -67,13 +70,10 @@ export class Dividend extends Widget {
             this.state.yearIncome = Number(data.yearIncome) === 0 ? '暂未分红' :data.yearIncome;
         }
 
-        const history = find('dividHistory');
-        // tslint:disable-next-line:max-line-length
-        // const history = [{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"},{num:0.02,time:"04-30  14:32:00"}]
-        if (history) {
-            this.state.dividHistory = history;
-            this.state.more = false;
-        }
+        // const history = find('dividHistory');
+        // if (history) {
+        //     this.state.dividHistory = history;
+        // }
         this.paint();
     }
 
@@ -97,8 +97,8 @@ export class Dividend extends Widget {
      * 点击领分红
      */
     public async doMining() {
-        if (this.state.thisDivid > 0 && this.state.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的挖矿操作并刷新数据
-            await getAward();
+        if (this.state.thisDivid > 0 && this.state.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的领分红操作并刷新数据
+            // await getAward();  // 领分红
             this.state.firstClick = false;
 
             setTimeout(() => {// 数字动画效果执行完后刷新页面
@@ -109,19 +109,19 @@ export class Dividend extends Widget {
 
         } else {  // 添加一个新的数字动画效果并移除旧的
             const child = document.createElement('div');
-            child.setAttribute('class','miningNum');
-            child.setAttribute('style','animation:move 0.5s');
+            child.setAttribute('class','dividendNum');
+            child.setAttribute('style','animation:dividendMove 0.5s');
             // tslint:disable-next-line:no-inner-html
             child.innerHTML = '<span>+0</span>';
-            document.getElementsByClassName('miningNum').item(0).remove();
-            document.getElementById('miningBtn').appendChild(child);
+            document.getElementsByClassName('dividendNum').item(0).remove();
+            document.getElementById('dividendBtn').appendChild(child);
             
         }
         this.state.doMining = true;        
         this.state.isAbleBtn = true;
         this.paint();
 
-        setTimeout(() => {// 按钮动画效果执行完后将挖矿状态改为未点击状态，则可以再次点击
+        setTimeout(() => {// 按钮动画效果执行完后将领分红状态改为未点击状态，则可以再次点击
             this.state.isAbleBtn = false;
             this.paint();
         },100);

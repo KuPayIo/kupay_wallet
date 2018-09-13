@@ -1,24 +1,25 @@
-<div class="new-page" ev-back-click="backPrePage" style="background-color: #F2F2F2;">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <app-components1-topBar-topBar>{title:"挖矿记录" }</app-components1-topBar-topBar>
-    <div style="height: 100%;overflow-x: hidden;overflow-y: auto;" id="historylist" on-scroll="getMoreList">
+    <div w-class="historylist" id="historylist" on-scroll="getMoreList">
 
         <div w-class="history">
             {{for ind,val of it1.data}}
-            <app-components-fourParaItem-fourParaItem>{"name":"挖矿","data":{{val.num+' ETH'}},"time":{{val.time}} }</app-components-fourParaItem-fourParaItem>
+            <div style="{{ind>0?'background: #ffffff;':''}}">
+                <app-components-fourParaItem-fourParaItem>{"name":"挖矿","data":{{val.num+' ETH'}},"time":{{val.time}} }</app-components-fourParaItem-fourParaItem>
+            </div>
             {{end}}
 
             {{if it1.data.length>0 && !it1.more}}
             <div w-class="endMess">到此结束啦^_^</div>
             {{end}}
+
+            {{if it1.data.length==0}}
+            <div w-class="historyNone">
+                <img src="../../../res/image/dividend_history_none.png" style="width: 200px;height: 200px;margin-bottom: 20px;"/>
+                <div>还没有记录哦</div>
+            </div>
+            {{end}}
         </div>
         
-        {{if it1.data.length==0}}
-        <div w-class="historyNone">
-            <img src="../../../res/image/dividend_history_none.png" style="width: 200px;height: 200px;"/>
-            <div>还没有记录哦</div>
-        </div>
-        {{end}}
-        
-        <div style="height: 118px;" id="more"></div>
     </div>
 </div>

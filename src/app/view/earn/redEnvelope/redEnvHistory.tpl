@@ -1,17 +1,17 @@
-<div class="new-page" ev-back-click="backPrePage">
+<div class="new-page" ev-back-click="backPrePage" w-class="new-page">
     {{if !it1.isScroll}}
     <app-components1-topBar-topBar>{"title":"红包记录",background:"#F46262" }</app-components1-topBar-topBar>
     {{else}}
     <app-components1-topBar-topBar>{"title":"红包记录"}</app-components1-topBar-topBar>
     {{end}}
-    <div w-class="content" on-scroll="pageScroll" id="content">
+    <div w-class="content" on-scroll="getMoreList" id="redEnvHistory">
         <img src="../../../res/image/redEnvtop1.png" w-class="topBackimg"/>
-        <div id="records">
+        <div id="historyRecords" w-class="records">
         
             <div w-class="topBack">
                 <img src="../../../res/image/default_avater_big.png" w-class="userHead"/>
                 <div style="margin-top: 20px;">共发出</div>
-                <div><span style="font-size: 64px;">{{it1.sendNumber}}</span>个红包</div>
+                <div style="margin-bottom: 90px;"><span style="font-size: 64px;">{{it1.sendNumber}}</span>个红包</div>
             </div>
             <div w-class="bottom">
                 {{if it1.recordList.length==0}}
@@ -34,8 +34,6 @@
 
             </div>
             
-            <div style="height: 128px;"></div>
-
         </div>
     </div>
 </div>

@@ -1,7 +1,7 @@
-<div class="new-page" style="background: #F2F2F2;" ev-back-click="backPrePage">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <app-components1-topBar-topBar>{"title":"做任务"}</app-components1-topBar-topBar>
 
-    <div style="overflow-y: auto;overflow-x: hidden;height: 100%;">
+    <div style="overflow-y: auto;overflow-x: hidden;flex: 1 0 0;">
         <div w-class="content">
             {{for ind,val of it1.data}}
             <div on-tap="show({{ind}})" ev-imgAndBtn-tap="goDetail({{ind}})">
@@ -15,7 +15,6 @@
             {{end}}
         </div>
         
-        <div style="height: 128px;"></div>
     </div>
     
 </div>

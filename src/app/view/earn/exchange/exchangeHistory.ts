@@ -32,7 +32,6 @@ export class ExchangeHistory extends Widget {
             recordList:[
                 // { rid:111,rtype:'00',rtypeShow:'拼手气红包',ctypeShow:'ETH',timeShow:'04-30 14:32:00',amount:1 },       
                 // { rid:111,rtype:'00',rtypeShow:'普通红包',ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
-                // { rid:111,rtype:'00',rtypeShow:'拼手气红包',ctypeShow:'ETH',timeShow:'04-30 14:32:00',amount:1 },
                 // { rid:111,rtype:'00',rtypeShow:'拼手气红包',ctypeShow:'ETH',timeShow:'04-30 14:32:00',amount:1 }                
             ],
             recordListShow:[],
@@ -83,6 +82,7 @@ export class ExchangeHistory extends Widget {
 
         for (const i in this.state.recordList) {            
             const value = queryDetailLog(this.state.recordList[i].rid);
+            console.error(value);
             if (!value) return;
             this.state.recordList[i].curNum = value[2];            
             this.state.recordList[i].totalNum = value[3];
@@ -170,9 +170,9 @@ export class ExchangeHistory extends Widget {
      * 页面滑动，加载更多数据
      */
     public getMoreList() {
-        const oh1 = document.getElementById('content').offsetHeight;
-        const oh2 = document.getElementById('records').offsetHeight;
-        const scrollTop = document.getElementById('content').scrollTop; 
+        const oh1 = document.getElementById('exchangeHistoryContent').offsetHeight;
+        const oh2 = document.getElementById('exchangeHistoryRecords').offsetHeight;
+        const scrollTop = document.getElementById('exchangeHistoryContent').scrollTop; 
         if (this.state.hasMore && this.state.refresh && (oh2 - oh1 - scrollTop) < 20) {
             this.state.refresh = false;
             console.log('加载中，请稍后~~~');

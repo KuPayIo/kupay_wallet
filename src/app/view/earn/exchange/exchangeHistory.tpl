@@ -1,17 +1,17 @@
-<div class="new-page" ev-back-click="backPrePage">
-    {{if !it1.scroll}}
+<div class="new-page" ev-back-click="backPrePage" w-class="new-page">
+    {{if !it1.isScroll}}
     <app-components1-topBar-topBar>{"title":"兑换记录",background:"#3EB4F1" }</app-components1-topBar-topBar>
     {{else}}
     <app-components1-topBar-topBar>{"title":"兑换记录"}</app-components1-topBar-topBar>
     {{end}}
-    <div w-class="content" on-scroll="getMoreList" id="content">
-        <div id="records">
+    <div w-class="content" on-scroll="getMoreList" id="exchangeHistoryContent">
+        <div id="exchangeHistoryRecords" w-class="records">
             <img src="../../../res/image/redEnvtop1.png" w-class="topBackimg"/>
             
             <div w-class="topBack">
                 <img src="../../../res/image/default_avater_big.png" w-class="userHead"/>
                 <div style="margin-top: 20px;">共兑换</div>
-                <div><span style="font-size: 64px;">{{it1.convertNumberShow}}</span>个礼包</div>
+                <div style="margin-bottom: 90px;"><span style="font-size: 64px;">{{it1.convertNumberShow}}</span>个礼包</div>
             </div>
             <div w-class="bottom">
                 {{if it1.recordListShow.length==0}}
@@ -34,7 +34,6 @@
 
             </div>
             
-            <div style="height: 128px;"></div>
         </div>
     </div>
 </div>
