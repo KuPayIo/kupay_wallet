@@ -213,3 +213,20 @@ export const createNewAddr = async (passwd:string,currencyName:string) => {
         popNewMessage('密码错误');
     }
 }
+
+// 删除助记词
+export const  deleteMnemonic = () =>{
+    const curWalletId = find('curWallet').walletId;
+    const walletList: Wallet[] = find('walletList').map(v => {
+        if (v.walletId === this.props.walletId) {
+            // isUpdate = true;
+            const gwlt = GlobalWallet.fromJSON(v.gwlt);
+            gwlt.mnemonicBackup = true;
+            v.gwlt = gwlt.toJSON();
+            if (curWalletId === this.props.walletId) updateStore('curWallet', v);
+        }
+        
+        return v;
+    });
+    updateStore('walletList', walletList);
+}

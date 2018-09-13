@@ -224,8 +224,6 @@ pi_modules.store.exports = (function () {
 	module.ERR_DELETE = "ERR_DELETE";
 	module.ERR_ITERATE = "ERR_ITERATE";
 	module.ERR_CLEAR = "ERR_CLEAR";
-	module.severIp = winit.severIp;
-	module.severPort = winit.severPort;
 	/**
 	 * @description 判断是否支持IndexedDB
 	 * @example
@@ -620,6 +618,18 @@ pi_modules.load.exports = (function () {
 	module.isNativeBrowser = function () {
 		return isNative;
 	};
+
+	/**
+	 * 
+	 */
+	module.initLocal = function (cb) {
+		if (localSign) {
+			setTimeout(cb, 0);
+			return;
+		}
+		localInit(cb);
+	}
+
 	/**
 	 * @description 检查文件是否会从本地加载, 返回 true | false | undefined
 	 * @example
@@ -740,13 +750,17 @@ pi_modules.load.exports = (function () {
 		return s;
 	}
 	// 本地加载
-	var localInit = function () {
+	var localInit = function (cb) {
 		localStore = store.create(storeName);
 		store.init(localStore, function () {
 			store.read(localStore, "", function (value) {
 				if (value) {
 					localSign = value;
-					localInitCheck(false);
+					if (cb) {
+						cb();
+					} else {
+						localInitCheck(false);
+					}
 				} else if (isNative) {
 
 					ajax.get(depend.domains[0] + depend.rootPath() + ".depend", undefined, undefined, ajax.RESP_TYPE_TEXT, 0, function (r) {
@@ -760,14 +774,26 @@ pi_modules.load.exports = (function () {
 							info = arr[i];
 							localSign[info.path] = "-" + info.sign;
 						}
-						localInitCheck(true);
+						if (cb) {
+							cb();
+						} else {
+							localInitCheck(true);
+						}
 					}, function (r) {
 						localSign = {};
-						localInitCheck(false);
+						if (cb) {
+							cb();
+						} else {
+							localInitCheck(false);
+						}
 					});
 				} else {
 					localSign = {};
-					localInitCheck(false);
+					if (cb) {
+						cb();
+					} else {
+						localInitCheck(false);
+					}
 				}
 			}, alert);
 		}, alert);
@@ -1597,6 +1623,7 @@ pi_modules.commonjs.exports = (function () {
 		var info = mod.info;
 		loadJS({
 			mod: mod,
+			// Naive模式下：&$forceServer=1使得js代码到服务器加载，而不是本地asset拦截
 			src: depend.domains[0] + depend.rootPath() + info.path + "?" + info.sign + "&$forceServer=1"
 		});
 	};
@@ -1785,7 +1812,7 @@ pi_modules.update.exports = (function () {
 	var domain = undefined;
 	var rootPath = undefined;
 	var newIndexJSStr = undefined;
-	var isNative = navigator.userAgent.indexOf("YINENG_ANDROID") >= 0;
+	var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
 	
 	/**
 	 * 
@@ -1800,6 +1827,14 @@ pi_modules.update.exports = (function () {
 
 		setResInfoServer(depend.domains, rootPath + bootDir, function () {
 		});
+	}
+
+	module.needForceUpdate = function () {
+		var need = !!localStorage.getItem("$$nativeIsUpdating");
+		if (need) {
+			alert("上次版本还没有更新完毕，必须更新");
+		}
+		return need;
 	}
 
 	/**
@@ -1873,25 +1908,26 @@ pi_modules.update.exports = (function () {
 
 	function startUpdate(updateProcessCb) {
 		// 先下载.depend
-		var url = domain + rootPath + ".depend?" + Math.random() + "&$forceServer=1";
-		ajax.get(url, {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (data) {
-
-			dependFileData = data;
-
-			var str = data.substring(data.indexOf('['), data.lastIndexOf(']') + 1);
-			pi_modules.depend.exports.init(JSON.parse(str), rootPath);
-
-			var dependData = JSON.parse(str);
-
-			downloadNewFiles(dependData, function (files) {
-				saveBootFiles(files);
-				finishUpdate();
-			}, function (e) {
-				alert("更新：下载新文件错误, e = " + e.path);
-			}, updateProcessCb);
-		}, function () {
-			alert("更新：下载.depend错误");
-		});
+		load.initLocal(function () {
+			var url = domain + rootPath + ".depend?" + Math.random() + "&$forceServer=1";
+			ajax.get(url, {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (data) {
+	
+				dependFileData = data;
+	
+				var str = data.substring(data.indexOf('['), data.lastIndexOf(']') + 1);
+				pi_modules.depend.exports.init(JSON.parse(str), rootPath);
+				var dependData = JSON.parse(str);
+	
+				downloadNewFiles(dependData, function (files) {
+					saveBootFiles(files);
+					finishUpdate();
+				}, function (e) {
+					alert("更新：下载新文件错误, e = " + e.path);
+				}, updateProcessCb);
+			}, function () {
+				alert("更新：下载.depend错误");
+			});
+		})
 	}
 
 	function finishUpdate() {
@@ -1915,7 +1951,9 @@ pi_modules.update.exports = (function () {
 			rpath = rootPath.slice(1);
 		}
 		bootFiles[rpath + ".depend"] = stringToArrayBuffer(dependFileData);
-		bootFiles[rpath + bootDir + "index.js"] = stringToArrayBuffer(newIndexJSStr);
+		if (newIndexJSStr) {
+			bootFiles[rpath + bootDir + "index.js"] = stringToArrayBuffer(newIndexJSStr);
+		}
 
 		for (var path in files) {
 			if (path.indexOf(bootDir) === 0 && bootFiles[rpath + path] === undefined) {
@@ -1926,7 +1964,12 @@ pi_modules.update.exports = (function () {
 		for (var path in bootFiles) {
 			var str = arrayBufferToBase64(bootFiles[path]);
 			console.log("JSIntercept.saveFile, path = " + path + ", size = " + str.length);
-			JSIntercept.saveFile(path, str);
+			
+			if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+				window.JSIntercept.saveFile(path, str);
+			} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+				window.webkit.messageHandlers.JSIntercept.postMessage([path, str]);
+			}
 		}
 	}
 
@@ -1944,7 +1987,8 @@ pi_modules.update.exports = (function () {
 
 			// 本地没有的才需要下载
 			if (!load.isLocal(info.path) && info.size > 0) {
-				if (info.path !== bootDir + "index.js") {
+				// 当index.js还没有下载的时候，必须进去
+				if (!newIndexJSStr || info.path !== bootDir + "index.js") {
 					console.log("update, downloadNewFiles: ", info);
 					downloads.push(info);
 				}

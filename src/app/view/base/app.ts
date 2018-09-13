@@ -33,7 +33,7 @@ export class App extends Widget {
             old: this.old,
             loading,
             tabBarList: [{
-                text: '玩',
+                text: '玩1',
                 icon: 'play.png',
                 iconActive: 'play_active.png',
                 components: 'app-view-play-home-home'

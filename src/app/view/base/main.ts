@@ -37,7 +37,7 @@ export const run = (cb): void => {
     },500);
     // dataCenter.init();
     popNew('app-view-base-app');
-    // popNew('app-view-wallet-localWallet-addAsset');
+    // popNew('app-view-wallet-backup-shareMnemonic',{mnemonic:"pair theme cage asset march devote help atom else crater bubble permit"});
     // popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:'ETH' });
     // const t = new Date();
     // const tx:TransRecordLocal = {

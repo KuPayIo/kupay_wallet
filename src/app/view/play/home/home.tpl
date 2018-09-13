@@ -1,7 +1,7 @@
 <div class="new-page" style="height: 100%;width: 100%;background: #fff;overflow-y: auto;overflow-x: hidden;" ev-btn-tap="doTap">
     <div style="font-size: 32px;margin: 50px 0;">**************按钮****************</div>
     
-    <app-components-btn-btn>{"name":"塞钱进红包","types":"big","color":"blue"}</app-components-btn-btn>
+    <app-components-btn-btn >{"name":"区块英雄","types":"big","color":"blue"}</app-components-btn-btn>
     <app-components-btn-btn>{"name":"塞钱进红包","types":"big"}</app-components-btn-btn>
     <app-components-btn-btn>{"name":"塞钱进红包","types":"big","style":"width:280px;"}</app-components-btn-btn>
     <app-components-btn-btn>{"name":"做任务","types":"small"}</app-components-btn-btn>
