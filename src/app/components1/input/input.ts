@@ -51,6 +51,7 @@ export class Input extends Widget {
         if (oldProps) {
             this.changeInputValue();
         }
+       
     }
 
     public change(event:any) {
