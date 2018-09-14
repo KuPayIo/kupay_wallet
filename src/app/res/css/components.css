@@ -252,15 +252,14 @@ svg:not(:root), symbol, image, marker, pattern, foreignObject {
     }
 }
 
-/* 领分红数字上移效果 */
+/* 领分红数字上移放大效果 */
 @keyframes dividendMove{
-    0%   {color:red;font-size: 40px;opacity: 1;margin-top: -245px;}
-    50%  {color:orangered;font-size: 45px;opacity: 0.5;margin-top: -280px;}
-    100% {color:orange;font-size: 50px;opacity: 0.1;margin-top: -300px;}
+    0%   {transform: scale(0.1);margin-top: -245px;}
+    100% {transform: scale(1);color: rgba(255,0,0,0.1);margin-top: -300px;}
 }
 .dividendNum{
-    font-size: 40px;
-    opacity: 0;
+    font-size: 70px;
+    transform: scale(0);
     position: relative;
     margin-top: -245px;
     text-align: center;
@@ -285,13 +284,12 @@ svg:not(:root), symbol, image, marker, pattern, foreignObject {
 }
 /* 挖矿数字放大效果 */
 @keyframes miningEnlarge{
-    0%   {transform: scale(0.6);opacity: 0}
-    100% {transform: scale(1);opacity: 1}
+    0%   {font-size: 20px;}
+    100% {font-size: 72px;color: rgba(255,0,0,0.1)}
 }
 .miningNum{
-    font-size: 50px;
+    font-size: 0px;
     color:red;
-    opacity: 0;
-    position: absolute;
-    left: 200px;
+    position: relative;
+    margin-left: 20px;
 }

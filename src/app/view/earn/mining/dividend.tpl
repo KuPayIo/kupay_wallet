@@ -18,13 +18,13 @@
             </div>    
         </div>      
         
-        <div style="margin-top: 10px;position: relative;">
+        <div style="margin-top: 10px;transform: translateZ(-1px);">
             <app-components-threeParaCard-threeParaCard>{"name":["年华收益","本次分红","已分红天数"],"data":[{{it1.yearIncome}},{{it1.thisDivid}},{{it1.totalDays}}] }</app-components-threeParaCard-threeParaCard>
         </div>
 
         <div id="dividendBtn" style="text-align: center;margin-top: 180px;height: 200px;">
             <div w-class="miningBtn" on-tap="doMining" style="color: #fff;animation:{{it1.isAbleBtn?'dividendChange 0.2s':''}}" >领分红</div>
-            <div class="dividendNum" style="animation:{{it1.doMining?'dividendMove 0.5s':''}}">
+            <div class="dividendNum" style="animation:{{it1.doMining?'dividendMove 1s':''}}">
                 <span>+{{it1.thisDivid}}</span>
             </div>  
         </div> 

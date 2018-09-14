@@ -31,7 +31,7 @@ export class Dividend extends Widget {
             doMining:false,  // 点击领分红，数字动画效果执行
             firstClick:true,
             isAbleBtn:false,  // 点击领分红，按钮动画效果执行
-            miningNum:` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
+            miningNum:` <div class="miningNum" style="animation:{{it1.doMining?'move 1s':''}}">
                 <span>+{{it1.thisNum}}</span>
             </div>`,
             scroll:false,
