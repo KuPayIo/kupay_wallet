@@ -13,11 +13,9 @@ export class ExchangeDetail extends Widget {
         this.state = {
             message:'恭喜发财 万事如意',
             redBagList:[
-                { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                { cuid:111,amount:1,timeShow:'04-30 14:32:00' }                    
+                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
+                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
+                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' }                    
             ],
             scroll:false,
             showPin:this.props.rtype === 1  // 0 等额红包  1 拼手气红包
@@ -32,7 +30,7 @@ export class ExchangeDetail extends Widget {
      * 页面滑动
      */
     public pageScroll() {
-        if (document.getElementById('content').scrollTop > 0) {
+        if (document.getElementById('exchangeDetail').scrollTop > 0) {
             this.state.scroll = true;
             if (this.state.scroll) {
                 this.paint();

@@ -1,9 +1,15 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
 .content{
-    height: 100%;
+    flex: 1 0 0;
     overflow-x: hidden;
     overflow-y: auto;
     margin-top: -1px;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 .topBack{
     text-align: center;
@@ -22,12 +28,11 @@
 }
 .bottom{
     background: #fff;
-    border-radius: 12px;
-    left: 20px;
-    right: 20px;
-    bottom: 118px;
-    top: 600px;
-    position: absolute;
+    border-radius: 12px 12px 0 0;
+    flex-basis: 100%;
+    transform: translateY(-20px);
+    margin: 0 20px -20px;
+    padding-bottom: 20px;
 }
 .tips{
     font-size: 28px;

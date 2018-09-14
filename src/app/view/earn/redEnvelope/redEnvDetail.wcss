@@ -1,9 +1,15 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
 .content{
-    height: 100%;
+    flex: 1 0 0;
     overflow-x: hidden;
     overflow-y: auto;
     margin-top: -1px;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 .topBack{
     text-align: center;
@@ -22,12 +28,11 @@
 }
 .bottom{
     background: #fff;
-    border-radius: 12px;
-    left: 20px;
-    right: 20px;
-    top: 420px;
-    bottom: 118px;
-    position: absolute;
+    border-radius: 12px 12px 0 0;
+    flex-basis: 100%;
+    transform: translateY(-20px);
+    margin: 0 20px -20px;
+    padding-bottom: 20px;
 }
 .tips{
     font-size: 28px;
@@ -46,4 +51,10 @@
     line-height: 35px;
     display: inline-block;
     margin-left: 10px;
+}
+.endMess{
+    color: rgba(204, 204, 204, 1);
+    font-size: 28px;
+    text-align: center;
+    padding: 100px 0;
 }

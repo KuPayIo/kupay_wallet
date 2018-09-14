@@ -4,7 +4,7 @@ import { financialProductList } from '../config';
 // tslint:disable-next-line:max-line-length
 import { formatBalance, GetDateDiff, parseRtype,timestampFormat,timestampFormatToDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
-import { AccountDetail, CRecDetail, CurrencyType, CurrencyTypeReverse,PurchaseRecordOne, RedBag, SHisRec, SRecDetail, TaskSid } from './interface';
+import { AccountDetail, CRecDetail, CurrencyType, CurrencyTypeReverse,PurchaseRecordOne, RedBag, SRecDetail, TaskSid } from './interface';
 import { find } from './store';
 /**
  * 解析数据

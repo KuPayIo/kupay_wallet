@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { find } from '../../../store/store';
-import { copyToClipboard, popPswBox, popNewLoading } from '../../../utils/tools';
+import { copyToClipboard, popPswBox, getFirstEthAddr } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 export class Home extends Widget {
@@ -27,11 +27,16 @@ export class Home extends Widget {
             userName:'用户名',
             userHead:'../../../res/image/default_avater_big.png',
             close:false,
-            hasWallet:true
+            hasWallet:false
         };
         const wallet = find('curWallet');
+        const addr = getFirstEthAddr(); 
         if (wallet) {
             this.state.hasWallet = true;
+            const gwlt = JSON.parse(wallet.gwlt);
+            this.state.userHead = wallet.avatar ? wallet.avatar :'../../../res/image/default_avater_big.png';
+            this.state.userName = gwlt.nickName;
+            this.state.address = addr;
         }
         this.paint();
     }
@@ -90,5 +95,12 @@ export class Home extends Widget {
      */
     public showMyQrcode() {
         popNew('app-view-mine-other-addFriend');
+    }
+
+    /**
+     * 创建钱包
+     */
+    public login() {
+        popNew('app-view-wallet-create-home');
     }
 }

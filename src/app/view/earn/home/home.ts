@@ -32,17 +32,22 @@ export class PlayHome extends Widget {
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
             mines: 0,// 今日可挖数量
-            isAbleBtn: false, // 挖矿按钮是否可点击
-            hasWallet:true, // 是否已经创建钱包
+            hasWallet:false, // 是否已经创建钱包
             mineLast:0,// 矿山剩余量
             rankNum:1,// 挖矿排名
             page:[
                 'app-view-earn-mining-rankList',
                 'app-view-earn-mining-dividend',
                 'app-view-earn-redEnvelope-writeRedEnv',
-                'app-view-earn-mining-dividend',
+                'app-view-earn-exchange-exchange',
                 'app-view-earn-mining-addMine'
-            ]
+            ],
+            doMining:false,  // 点击挖矿，数字动画效果执行
+            firstClick:true,
+            isAbleBtn:false,  // 点击挖矿，按钮动画效果执行
+            miningNum:` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
+                <span>+{{it1.thisNum}}</span>
+            </div>`
         };
 
         this.initDate();
@@ -50,6 +55,20 @@ export class PlayHome extends Widget {
             this.initEvent();
         }
         
+    }
+
+    /**
+     * 判断当前用户是否已经创建钱包
+     */
+    public judgeWallet() {
+        if (this.state.hasWallet) {
+            return true;
+        }
+        popNew('app-components-modalBox-modalBox',{ title:'提示',content:'你还没有登录，去登录使用更多功能吧',sureText:'去登录',cancelText:'暂时不' },() => {
+            popNew('app-view-wallet-create-home');
+        });
+        
+        return false;
     }
 
     /**
@@ -70,6 +89,9 @@ export class PlayHome extends Widget {
      * 跳转到下一页
      */
     public goNextPage(ind:number) {
+        if (!this.judgeWallet()) {
+            return;
+        }
         popNew(this.state.page[ind],{ ktBalance:this.state.ktBalance });
     }
 
@@ -85,18 +107,48 @@ export class PlayHome extends Widget {
      * 点击挖矿按钮
      */
     public async doPadding() {
-        if (this.state.isAbleBtn) {
-            const r = await getAward();
-            if (r.result !== 1) {
-                popNew('app-components-message-message', { itype: 'outer', center: true, content: `挖矿失败(${r.result})` });
-    
-                return;
-            }
-            popNew('app-components-message-message', { itype: 'outer', center: true, content: '挖矿成功' });
-            this.state.isAbleBtn = false;
-            this.initEvent();
-            this.paint();
+        if (!this.judgeWallet()) {
+            return;
         }
+        if (this.state.mines > 0 && this.state.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的挖矿操作并刷新数据
+            await getAward();
+            this.state.firstClick = false;
+
+            setTimeout(() => {// 数字动画效果执行完后刷新页面
+                this.initEvent();
+                this.paint();
+            },300);
+
+        } else {  // 添加一个新的数字动画效果并移除旧的
+            const child = document.createElement('span');
+            child.setAttribute('class','miningNum');
+            child.setAttribute('style','animation:miningEnlarge 0.5s');
+            // tslint:disable-next-line:no-inner-html
+            child.innerHTML = '<span>+0</span>';
+            document.getElementsByClassName('miningNum').item(0).remove();
+            document.getElementById('mining').appendChild(child);
+            
+        }
+        this.state.doMining = true;        
+        this.state.isAbleBtn = true;
+        this.paint();
+
+        setTimeout(() => {// 按钮动画效果执行完后将领分红状态改为未点击状态，则可以再次点击
+            this.state.isAbleBtn = false;
+            this.paint();
+        },100);
+        // if (this.state.isAbleBtn) {
+        //     const r = await getAward();
+        //     if (r.result !== 1) {
+        //         popNew('app-components-message-message', { itype: 'outer', center: true, content: `挖矿失败(${r.result})` });
+    
+        //         return;
+        //     }
+        //     popNew('app-components-message-message', { itype: 'outer', center: true, content: '挖矿成功' });
+        //     this.state.isAbleBtn = false;
+        //     this.initEvent();
+        //     this.paint();
+        // }
         
     }
 
@@ -118,9 +170,9 @@ export class PlayHome extends Widget {
     private async initDate() {
         this.refreshCloudBalance();
 
-        const walletList = find('walletList');
-        if (!walletList || walletList.length === 0) {
-            this.state.hasWallet = false;
+        const wallet = find('curWallet');
+        if (wallet) {
+            this.state.hasWallet = true;
         }
 
         const mining = find('miningTotal');

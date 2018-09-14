@@ -31,8 +31,8 @@ export const run = (cb): void => {
     initLocalStorageStore();
     openAndGetRandom();
 
-    //模拟异步获取货币涨跌幅度
-    setTimeout(()=>{
+    // 模拟异步获取货币涨跌幅度
+    setTimeout(() => {
         fetchCoinGain();
     },500);
     // dataCenter.init();
@@ -66,10 +66,10 @@ export const run = (cb): void => {
     // popNew('app-view-wallet-import-home');
     // popNew('app-view-earn-home-home',{});
     // popNew('app-view-earn-redEnvelope-redEnvDetail',{ type:1 });
-    // popNew('app-view-earn-redEnvelope-inviteRedEnvelope',{});
-    // popNew('app-view-earn-mining-dividend',{ ktBalance:0 });
-    // popNew('app-view-earn-exchange-exchange');
-    // popNew('app-view-mine-setting-phone');
+    // popNew('app-view-earn-redEnvelope-redEnvHistory');
+    // popNew('app-view-earn-mining-rankList');
+    // popNew('app-view-earn-exchange-exchangeHistory');
+    popNew('app-view-mine-setting-setting');
     // popNew('app-components-keyBoard-keyBoard');
     // popNewPage();
     // 后台切前台

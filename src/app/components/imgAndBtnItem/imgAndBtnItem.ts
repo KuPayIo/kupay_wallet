@@ -22,7 +22,7 @@ interface Props {
 }
 // ================================ 导出
 
-export class imgAndBtnItem extends Widget {
+export class ImgAndBtnItem extends Widget {
     public props:Props;
     public ok: () => void;
     constructor() {

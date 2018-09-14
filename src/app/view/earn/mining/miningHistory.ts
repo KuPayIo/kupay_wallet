@@ -24,8 +24,8 @@ export class Dividend extends Widget {
             data:[],
             more:false
         }; 
-        this.initData();
         getMiningHistory();
+        // this.initData();
     }
     
     /**
@@ -33,9 +33,6 @@ export class Dividend extends Widget {
      */
     public async initData() {
         const data = find('miningHistory');  
-        // tslint:disable-next-line:max-line-length
-        // const data = [{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'},{num:0.00,time:'04-30  14:32:00'}];    
-        // const data=[];      
         if (data) {
             this.state.data = data; 
         }

@@ -12,7 +12,7 @@ export class Aboutus extends Widget {
         super();
         this.state = {
             data:[
-                { value:'协议及隐私',components:'privacypolicy$' },
+                { value:'协议及隐私',components:'app-view-mine-other-privacypolicy' },
                 { value:'版本更新',components:'' },
                 { value:'分享下载链接',components:'' }
             ]

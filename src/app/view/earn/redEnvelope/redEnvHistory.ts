@@ -33,13 +33,12 @@ export class RedEnvHistory extends Widget {
             recordList:[
                 // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
                 // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
-                // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
                 // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 }               
             ],
             start:undefined,
             refresh:true,
             hasMore:false, 
-            showMoreTips:false, 
+            showMoreTips:true, 
             sendNumber:0,  
             isScroll:false 
         };
@@ -115,9 +114,9 @@ export class RedEnvHistory extends Widget {
      * 页面滑动，加载更多列表
      */
     public getMoreList() {
-        const h1 = document.getElementById('content').offsetHeight; 
-        const h2 = document.getElementById('records').offsetHeight; 
-        const scrollTop = document.getElementById('content').scrollTop; 
+        const h1 = document.getElementById('redEnvHistory').offsetHeight; 
+        const h2 = document.getElementById('historyRecords').offsetHeight; 
+        const scrollTop = document.getElementById('redEnvHistory').scrollTop; 
         if (this.state.hasMore && this.state.refresh && (h2 - h1 - scrollTop) < 20) {
             this.state.refresh = false;
             console.log('加载中，请稍后~~~');
