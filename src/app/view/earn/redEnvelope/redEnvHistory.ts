@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { queryDetailLog, querySendRedEnvelopeRecord } from '../../../net/pull';
+import { getInviteCodeDetail, queryDetailLog, querySendRedEnvelopeRecord } from '../../../net/pull';
 import { find } from '../../../store/store';
 import { PAGELIMIT } from '../../../utils/constants';
 
@@ -53,7 +53,7 @@ export class RedEnvHistory extends Widget {
     /**
      * 更新数据
      */
-    public initData() {
+    public async initData() {
         const sHisRec = find('sHisRec');
         if (sHisRec) {
             const hList = sHisRec.list;
@@ -67,6 +67,8 @@ export class RedEnvHistory extends Widget {
             console.log('load more from server');
             querySendRedEnvelopeRecord(this.state.start);
         }
+        const data = await getInviteCodeDetail();
+        console.log(data);
         this.loadMore();    
     }
 

@@ -28,7 +28,7 @@
                     {{end}}
                 {{end}}
 
-                {{if it1.showMoreTips}}
+                {{if it1.showMoreTips && it1.recordList.length>0}}
                 <div w-class="endMess" id="more">到此结束啦^_^</div>
                 {{end}}
 
