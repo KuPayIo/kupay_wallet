@@ -5,8 +5,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { LockScreen } from '../../../store/interface';
 import { find, updateStore } from '../../../store/store';
-import { lockScreenVerify } from '../../../utils/tools';
+import { lockScreenHash, lockScreenVerify } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -125,7 +126,12 @@ export class Setting extends Widget {
                 popNew('app-components-message-message',{ content:'密码不一致' });
                 this.reSetLockPsw();
             } else {
-                updateStore('lockScreen',{ psw:this.state.lockScreenPsw,open:this.state.openLockScreen });
+                const hash256 = lockScreenHash(r);
+                const ls:LockScreen = find('lockScreen'); 
+                ls.psw = hash256;
+                ls.open = true;
+                updateStore('lockScreen',ls);
+                popNew('app-components-message-message',{ content:'设置成功' });
             }
         },() => {
             this.closeLockPsw();

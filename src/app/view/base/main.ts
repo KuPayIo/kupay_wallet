@@ -65,7 +65,7 @@ export const run = (cb): void => {
     // popNew('app-view-earn-redEnvelope-redEnvHistory');
     // popNew('app-view-earn-mining-rankList');
     // popNew('app-view-earn-exchange-exchangeHistory');
-    popNew('app-view-mine-setting-setting');
+    // popNew('app-view-mine-setting-setting');
     // popNew('app-components-keyBoard-keyBoard');
     // popNewPage();
     // 后台切前台
