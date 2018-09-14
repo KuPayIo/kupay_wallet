@@ -74,7 +74,7 @@ export class Input extends Widget {
         notify(event.node,'ev-input-focus',{});
         this.paint();
     }
-    
+
     // 清空文本框
     public clearClickListener(event:any) {
         this.state.currentValue = '';
@@ -88,4 +88,5 @@ export class Input extends Widget {
         const childNode = getRealNode(child);
         (<any>childNode).value = this.state.currentValue;
     }
+
 }

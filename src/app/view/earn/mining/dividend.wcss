@@ -1,9 +1,14 @@
+.new-page{
+    background: linear-gradient(#F94E4D, #F6A050);
+    display: flex;
+    flex-direction: column;
+}
 .groupcard{
     width: auto;
     position: relative;
+    transform: translateZ(-1px);
     border-radius: 16px;
     margin: 30px 20px;
-    position: relative;
     background-color: rgba(255, 255, 255, 1);
     box-shadow: 0px 4px 30px 0px rgba(39, 52, 125, 0.25);
 }
@@ -44,17 +49,18 @@
 }
 .history{
     position: relative;
+    transform: translateZ(-1px);
     height: auto;
     width: auto;
     margin: 60px 20px 0;
-    border-radius: 12px;
+    border-radius: 12px 12px 0 0;
     background-color: rgba(255, 255, 255, 1);
     box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
 }
 .content{
     overflow-y: auto;
-    height: 100%;
     overflow-x: hidden;
+    flex: 1 0 0;
 }
 .historyTitle{
     padding-left: 30px;

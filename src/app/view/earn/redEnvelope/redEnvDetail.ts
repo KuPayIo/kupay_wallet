@@ -24,8 +24,6 @@ export class RedEnvDetail extends Widget {
             redBagList:[
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' } 
             ],
             scroll:false,
@@ -50,7 +48,7 @@ export class RedEnvDetail extends Widget {
      * 页面滑动
      */
     public pageScroll() {
-        if (document.getElementById('content').scrollTop > 0) {
+        if (document.getElementById('redEnvDetail').scrollTop > 0) {
             this.state.scroll = true;
             if (this.state.scroll) {
                 this.paint();

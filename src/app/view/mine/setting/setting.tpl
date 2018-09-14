@@ -2,10 +2,10 @@
     <app-components1-topBar-topBar>{"title":"设置"}</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="userHead">
-            <img src={{it1.userHead}} w-class="headImg"/>
+            <img src="{{it1.userHead}}" w-class="headImg"/>
             <span w-class="headName" ev-input-change="userNameChange">
                 {{if it1.userInput}}
-                <app-components-input-input>{input:{{it1.userName}},placeHolder:"请输入昵称",autofocus:"autofocus" }</app-components-input-input>
+                <app-components1-input-input>{input:{{it1.userName}},placeHolder:"请输入昵称",autofocus:"autofocus" }</app-components1-input-input>
                 {{else}}
                 {{it1.userName}}
                 {{end}}

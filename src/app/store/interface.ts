@@ -63,10 +63,10 @@ export enum TxStatus {
 }
 // 交易类型
 export enum TxType {
-    THRANSFER = 1, //普通转账
-    RECEIPT, //收款
-    RECHARGE,//充值
-    EXCHANGE //币币兑换
+    THRANSFER = 1, // 普通转账
+    RECEIPT, // 收款
+    RECHARGE,// 充值
+    EXCHANGE // 币币兑换
 }
 // store数据管理
 export interface Store {
@@ -81,7 +81,7 @@ export interface Store {
     readedPriAgr: boolean;// 隐私协议阅读与否
     loginState: LoginState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
-    coinGain:Map<string,number>;//货币涨跌
+    coinGain:Map<string,number>;// 货币涨跌
     // 本地钱包
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包

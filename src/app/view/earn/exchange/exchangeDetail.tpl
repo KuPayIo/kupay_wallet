@@ -1,10 +1,10 @@
-<div class="new-page">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     {{if !it1.scroll}}
     <app-components1-topBar-topBar>{"title":"红包详情",background:"#DF5E5E" }</app-components1-topBar-topBar>
     {{else}}
     <app-components1-topBar-topBar>{"title":"红包详情"}</app-components1-topBar-topBar>
     {{end}}
-    <div w-class="content" on-scroll="pageScroll" id="content">
+    <div w-class="content" on-scroll="pageScroll" id="exchangeDetail">
         <img src="../../../res/image/redEnvDetail.png" w-class="topBackimg"/>
         <div w-class="topBack">
             <img src="../../../res/image/default_avater_big.png" w-class="userHead"/>
@@ -19,6 +19,5 @@
             {{end}}
         </div>
 
-        <div style="height: 128px;"></div>
     </div>
 </div>

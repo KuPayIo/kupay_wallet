@@ -75,6 +75,7 @@ export class BindPhone extends Widget {
             //     document.getElementById('codeInput' + (ind - 1)).getElementsByTagName('input')[0].focus();
             // }
         }
+        
         if (this.state.code.length === 4) {
             this.doSure();
         }

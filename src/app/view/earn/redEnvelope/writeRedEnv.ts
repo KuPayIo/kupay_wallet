@@ -52,10 +52,10 @@ export class WriteRedEnv extends Widget {
             { img:'../../res/image/currency/BTC.png',name:'BTC',num:0.01 },
             { img:'../../res/image/currency/ETH.png',name:'ETH',num:0.5 }
         ];
+        const data = getBorn('cloudBalance');
+        console.error(data);
         for (const i in list) {
-            list[i].num = find('cloudBalance', CurrencyType[list[i].name]) || 0;
-            
-            console.log(list[i].num);
+            list[i].num = data.get(CurrencyType[list[i].name]) || 0;
         }
         this.state.list = list;
         if (!realUser) {

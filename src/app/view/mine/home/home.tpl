@@ -1,7 +1,7 @@
 <div class="new-page" w-class="mine {{it1.close?'mineHide':''}}">
     <div w-class="left {{it1.close?'leftHide':''}}">
         <div w-class="topBack">
-            <img src="{{it1.userHead}}" w-class="userHead"/>
+            <img src="{{it1.userHead}}" w-class="userHead" on-tap="login"/>
             <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
             {{if it1.hasWallet}}
             <div w-class="addFriend">
