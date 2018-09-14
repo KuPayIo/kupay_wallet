@@ -630,13 +630,12 @@ export const sendCode = async (phone: number, num: number) => {
  */
 export const regPhone = async (phone: number, code: number) => {
     const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
-
+    
     return requestAsync(msg).catch(error => {
-        console.log(error);
         if (error.type === -300) {
-            popNew('app-components-message-message', { content: `验证码失效，请重新获取` });
+            popNew('app-components-message-message', { itype: 'error', center: true, content: `验证码已失效` });
         } else {
-            popNew('app-components-message-message', { content: `错误${error.type}` });
+            popNew('app-components-message-message', { itype: 'error', center: true, content: `错误${error.type}` });
         }
     });
 };

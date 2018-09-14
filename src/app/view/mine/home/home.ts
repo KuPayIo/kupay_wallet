@@ -101,6 +101,9 @@ export class Home extends Widget {
      * 创建钱包
      */
     public login() {
+        if (this.state.hasWallet) {
+            return;
+        }
         popNew('app-view-wallet-create-home');
     }
 }
