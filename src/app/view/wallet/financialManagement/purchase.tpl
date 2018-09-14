@@ -5,12 +5,12 @@
                 确认付款
             </span>
             <span>
-                {{it1.spend}}&nbsp;{{it.product.coninType}}
+                {{it1.spend}}&nbsp;{{it.product.coinType}}
             </span>
             <img src="../../../res/image/close_blue.png"  w-class="closeBtn" on-tap="close"/>
         </div>
         <div w-class="details">
-            <p>购买单价：{{it.product.unitPrice}}{{it.product.coninType}}</p>
+            <p>购买单价：{{it.product.unitPrice}}{{it.product.coinType}}</p>
             <p>产品名称：{{it.product.productName}}</p>
             <p>购买份数：{{it.amount}}份</p>
             <p>年化收益：{{it.product.profit}}</p>

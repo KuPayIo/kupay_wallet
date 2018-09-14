@@ -28,7 +28,7 @@ export class Home extends Widget {
                 components:'app-view-wallet-financialManagement-recommendFM'
             },{
                 tab:'我的理财',
-                components:'app-view-wallet-home-walletHome'
+                components:'app-view-wallet-financialManagement-holdedFM'
             }],
             activeNum:0,
             avatar:'',

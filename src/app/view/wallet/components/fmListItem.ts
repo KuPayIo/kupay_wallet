@@ -12,6 +12,6 @@ export class FmListItem extends Widget{
         this.init();
     }
     public init() {
-        console.log(this.props.product);
+        // console.log(this.props.product);
     }
 }

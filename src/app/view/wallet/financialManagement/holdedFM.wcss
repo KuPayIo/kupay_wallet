@@ -1,0 +1,14 @@
+.list{
+    margin: 30px 20px;
+}
+.no-recode{
+}
+.no-recode-icon{
+    margin-top: 210px;
+}
+.no-recode-text{
+    margin-top: 20px;
+    font-size: 32px;
+    line-height: 45px;
+    color: #888;
+}

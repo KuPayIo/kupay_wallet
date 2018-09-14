@@ -20,7 +20,7 @@
         <div w-class="row5">{{it.product.productIntroduction}}</div>
         <div w-class="title">详细信息</div>
         <div w-class="detail-box">
-            <div w-class="detail">价格：{{it.product.unitPrice}}&nbsp;{{it.product.coninType}}/份</div>
+            <div w-class="detail">价格：{{it.product.unitPrice}}&nbsp;{{it.product.coinType}}/份</div>
             <div w-class="detail">剩余：15%</div>
             <div w-class="detail">锁定期：无</div>
         </div>
@@ -30,7 +30,7 @@
         </div>
         <div w-class="select-num">
             <span w-class="unit-price">
-                {{it.product.unitPrice}}&nbsp;{{it.product.coninType}}
+                {{it.product.unitPrice}}&nbsp;{{it.product.coinType}}
             </span>
             <div w-class="right-box">
                 <img w-class="sub" on-tap="minus" src="../../../res/image/less.png"/>

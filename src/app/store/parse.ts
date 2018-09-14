@@ -239,15 +239,15 @@ export const parseRechargeWithdrawalLog = (val) => {
 const getproductById = (id:string) => {
     const productList = find('productList');
     for (let i = 0;i < productList.length;i++) {
-        if (productList[i].id === `${id}`) {
+        if (productList[i].id === id) {
             return productList[i];
         }
     }
 
     return null;
 };
-export const pasePurchaseRecord = (res:any) => {
-    
+
+export const parsePurchaseRecord = (res:any) => {
     const record = [];
     for (let i = 0;i < res.value.length;i++) {
         const item = res.value[i];
@@ -280,13 +280,13 @@ export const pasePurchaseRecord = (res:any) => {
 /**
  * 解析理财产品列表数据
  */
-export const paseProductList = (res:any) => {
+export const parseProductList = (res:any) => {
     const result = [];
     for (let i = 0;i < res.value.length;i++) {
         const item = res.value[i];
         const id = item[0];
-        const product = deepCopy(financialProductList[id]);
-        product.coninType = CurrencyTypeReverse[`${item[1]}`];
+        const product = financialProductList[id];
+        product.coinType = CurrencyTypeReverse[`${item[1]}`];
         product.unitPrice = wei2Eth(item[2]);
         product.total = item[3];
         product.surplus = item[3] - item[4];

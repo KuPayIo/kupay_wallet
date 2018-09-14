@@ -582,11 +582,11 @@ export const financialProductList = {
     60001:{
         id:60001,// 产品id
         title: '优选理财-随存随取',// 产品标题
-        profit: '8%',// 预期年化收益
+        profit: '8',// 预期年化收益
         productName: 'ETH资管第1期',// 产品名称
         productDescribe: '赎回T+0到账 | 0.1 ETH/份',// 首页显示的产品描述
         unitPrice: null,// 单价
-        coninType:'',// 购买币种
+        coinType:'',// 购买币种
         days: 'T+0',// 锁定日期
         total:0,// 产品总量
         surplus: 0,// 剩余量

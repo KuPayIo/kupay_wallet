@@ -45,6 +45,13 @@ export class CloudHome extends Widget {
         this.paint();
     }
     
+    public optimalClick(){
+        popNew('app-view-wallet-financialManagement-home');
+    }
+    public fmItemClick(e:any,index:number){
+        const product = this.state.productList[index];
+        popNew('app-view-wallet-financialManagement-productDetail',{product});
+    }
 }
 
 // =======================本地

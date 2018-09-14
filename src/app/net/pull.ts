@@ -5,7 +5,7 @@ import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExchangeDetail, parseMineDetail, parseMineRank,parseMiningRank,parseRechargeWithdrawalLog, parseSendRedEnvLog, paseProductList, pasePurchaseRecord } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExchangeDetail, parseMineDetail, parseMineRank,parseMiningRank,parseRechargeWithdrawalLog, parseSendRedEnvLog, parsePurchaseRecord, parseProductList } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
@@ -791,7 +791,7 @@ export const getProductList = async () => {
     
     try {
         const res = await requestAsync(msg);
-        const result = paseProductList(res);
+        const result = parseProductList(res);
         updateStore('productList',result);
 
         return result;
@@ -850,7 +850,7 @@ export const getPurchaseRecord = async (start = '') => {
     try {
         const res = await requestAsync(msg);
         console.log('getPurchaseRecord',res);
-        const record = pasePurchaseRecord(res);
+        const record = parsePurchaseRecord(res);
         updateStore('purchaseRecord',record);
 
     } catch (err) {
