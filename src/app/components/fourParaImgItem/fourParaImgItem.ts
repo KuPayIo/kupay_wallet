@@ -26,7 +26,10 @@ export class FourParaImgItem extends Widget {
     constructor() {
         super();
     }
-
+    public setProps(props: Props, oldProps: Props) {
+        super.setProps(props,oldProps);
+        console.log('FourParaImgItem',props);
+    }
     public backPrePage() {
         this.ok && this.ok();
     }

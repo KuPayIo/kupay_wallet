@@ -35,7 +35,7 @@
         </div>
         <div w-class="totalNum">{{it1.totalAmount+" "+item.name}}</div>
         <div style="margin: 0 40px;" ev-btn-tap="send">
-            <app-components-btn-btn>{"name":"塞钱进红包","types":"big","style":"background:#F46262;"}</app-components-btn-btn>
+            <app-components1-btn-btn>{"name":"塞钱进红包","types":"big","style":"background:#F46262;"}</app-components1-btn-btn>
         </div>
         <div style="font-size: 24px;color: #888888;text-align: center;margin-top: 40px;">使用云账户里的余额发红包</div>
     </form>

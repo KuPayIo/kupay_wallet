@@ -838,7 +838,6 @@ export const buyProduct = async (pid:any,count:any) => {
  * 购买记录
  */
 export const getPurchaseRecord = async (start = '') => {
-
     const msg = {
         type: 'wallet/manage_money@get_pay_list',
         param: {

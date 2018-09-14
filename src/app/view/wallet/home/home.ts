@@ -7,6 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { UserInfo } from '../../../store/interface';
 import { register } from '../../../store/store';
 import { fetchTotalAssets, fetchCloudTotalAssets, formatBalanceValue } from '../../../utils/tools';
+import { popNew } from '../../../../pi/ui/root';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -26,7 +27,7 @@ export class Home extends Widget {
                 tab:'本地钱包',
                 components:'app-view-wallet-home-walletHome'
             }],
-            activeNum:0,
+            activeNum:1,
             avatar:'',
             totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets())
         };
@@ -44,6 +45,13 @@ export class Home extends Widget {
     public updateTotalAsset(){
         this.state.totalAsset = formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets());
         this.paint();
+    }
+
+    /**
+     * 打开我的设置
+     */
+    public showMine() {
+        popNew('app-view-mine-home-home');
     }
 }
 

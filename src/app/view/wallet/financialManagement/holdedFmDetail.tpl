@@ -35,6 +35,6 @@
             <div w-class="detail">锁定期：{{it.product.lockday}}</div>
         </div>
         <div w-class="read">阅读声明</div>
-        <div ev-btn-tap="redemptionClick" w-class="btn"><app-components-btn-btn>{"name":"赎回","types":"big","color":"blue"}</app-components-btn-btn></div>
+        <div ev-btn-tap="redemptionClick" w-class="btn"><app-components1-btn-btn>{"name":"赎回","types":"big","color":"blue"}</app-components1-btn-btn></div>
     </div>
 </div>

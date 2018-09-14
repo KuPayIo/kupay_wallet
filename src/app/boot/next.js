@@ -88,17 +88,14 @@ winit.initNext = function () {
 
 			var sourceList = [
 				"pi/ui/",
-				"app/components/",
 				"app/components1/",
 				"app/res/css/",
 				"app/res/js/",
-				"app/logic/",
-				// "app/view/base/",
-				// "app/view/play/home/",
-				// "app/view/chat/home/",
-				// "app/view/earn/home/",
-				// "app/view/wallet/home/",
-				"app/view/"
+				"app/view/base/",
+				"app/view/play/home/",
+				"app/view/chat/home/",
+				"app/view/earn/home/",
+				"app/view/wallet/home/"
 			]
 			console.time('firstload');
 			var suffixCfg = util.getDefaultSuffixCfg();

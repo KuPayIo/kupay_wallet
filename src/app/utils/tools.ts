@@ -682,6 +682,7 @@ export const unicodeArray2Str = (arr) => {
     return str;
 };
 
+
 /**
  * 添加交易记录到本地
  */
@@ -1052,4 +1053,33 @@ export const fetchHoldedProductAmount = (id:string) =>{
         }
     }
     return holdAmout;
+}
+
+/**
+ * 计算剩余百分比
+ */
+export const calPercent = (surplus:number,total:number) =>{
+    if(surplus === total){
+        return {
+            left:0,
+            use:100
+        }
+    }
+    if(surplus <= total/10){
+        return {
+            left:1,
+            use:99
+        }
+    }
+    if(surplus > total / 10 * 9){
+        return {
+            left:99,
+            use:1
+        }
+    }
+    const r = Number((surplus / total).toFixed(2));
+    return {
+        left:r*100,
+        use:100-r*100
+    }
 }

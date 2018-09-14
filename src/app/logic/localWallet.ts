@@ -228,12 +228,12 @@ export const createNewAddr = async (passwd:string,currencyName:string) => {
 export const  deleteMnemonic = () =>{
     const curWalletId = find('curWallet').walletId;
     const walletList: Wallet[] = find('walletList').map(v => {
-        if (v.walletId === this.props.walletId) {
+        if (v.walletId === curWalletId) {
             // isUpdate = true;
             const gwlt = GlobalWallet.fromJSON(v.gwlt);
             gwlt.mnemonicBackup = true;
             v.gwlt = gwlt.toJSON();
-            if (curWalletId === this.props.walletId) updateStore('curWallet', v);
+            updateStore('curWallet', v);
         }
         
         return v;

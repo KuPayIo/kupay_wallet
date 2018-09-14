@@ -5,8 +5,8 @@ import { Widget } from "../../../../pi/widget/widget";
 import { Product, PurchaseRecordOne } from "../../../store/interface";
 import { getPurchaseRecord } from "../../../net/pull";
 import { Forelet } from "../../../../pi/widget/forelet";
-import { register } from "../../../store/store";
-import { fetchHoldedProductAmount } from "../../../utils/tools";
+import { register, find } from "../../../store/store";
+import { fetchHoldedProductAmount, hasWallet, calPercent } from "../../../utils/tools";
 import { popNew } from "../../../../pi/ui/root";
 
 // ====================================================导出
@@ -27,13 +27,19 @@ export class productDetail extends Widget{
         this.init();
     }
     public init() {
-        //获取购买记录
-        getPurchaseRecord();
+        if(find('conUid')){
+            //获取购买记录
+            getPurchaseRecord();
+        }
+        const product = this.props.product;
+        const res = calPercent(product.surplus,product.total)
         this.state = {
             holdedAmout:0,
-            amount:1
+            amount:1,
+            leftPercent:  res.left,
+            usePercent: res.use
         }
-        console.log(this.props.product)
+        console.log(this.props.product);
     }
 
     // 减少购买数量
@@ -61,6 +67,7 @@ export class productDetail extends Widget{
     }
 
     public purchaseClicked(){
+        if(!hasWallet()) return;
         popNew('app-view-wallet-financialManagement-productStatement',{product:this.props.product,amount:this.state.amount});
     }
 }

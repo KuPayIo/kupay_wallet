@@ -5,6 +5,6 @@
         <div w-class="agree-choose" ev-checkbox-click="checkBoxClick">
             <app-components1-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components1-checkbox-checkbox>
         </div>
-        <div ev-btn-tap="nextClick" w-class="btn"><app-components-btn-btn>{"name":"我已阅读","types":"big","color":"white"}</app-components-btn-btn></div>
+        <div ev-btn-tap="nextClick" w-class="btn"><app-components1-btn-btn>{"name":"我已阅读","types":"big","color":"white"}</app-components1-btn-btn></div>
     </div>
 </div>

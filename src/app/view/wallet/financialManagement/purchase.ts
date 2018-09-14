@@ -4,7 +4,7 @@
 // ===============================================导入
 import { Widget } from '../../../../pi/widget/widget';
 import { Product } from '../../../store/interface';
-import { formatBalance, popPswBox } from '../../../utils/tools';
+import { formatBalance, popPswBox, hasWallet } from '../../../utils/tools';
 import { purchaseProduct } from '../../../utils/walletTools';
 // ==================================================导出
 interface Props{

@@ -23,7 +23,7 @@
 			</div>
 			
 			<div w-class="btnBox">
-				<div ev-btn-tap="nextStepClick" w-class="btn"><app-components-btn-btn>{"name":"确定","types":"big","color":"blue"}</app-components-btn-btn></div>
+				<div ev-btn-tap="nextStepClick" w-class="btn"><app-components1-btn-btn>{"name":"确定","types":"big","color":"blue"}</app-components1-btn-btn></div>
 			</div>
 		</div>
 	</div>

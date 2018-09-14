@@ -30,7 +30,6 @@ export const run = (cb): void => {
     // 初始化localstorage
     initLocalStorageStore();
     openAndGetRandom();
-
     // 模拟异步获取货币涨跌幅度
     setTimeout(() => {
         fetchCoinGain();
@@ -61,7 +60,7 @@ export const run = (cb): void => {
     // };
     // popNew('app-view-wallet-transaction-transactionDetails',{ tx });
     
-    // popNew('app-view-wallet-create-home');
+    // popNew('app-view-wallet-create-createWallet');
     // popNew('app-view-wallet-create-createWalletByImage');
     // popNew('app-view-wallet-import-home');
     // popNew('app-view-earn-home-home',{});
@@ -69,7 +68,7 @@ export const run = (cb): void => {
     // popNew('app-view-earn-redEnvelope-redEnvHistory');
     // popNew('app-view-earn-mining-rankList');
     // popNew('app-view-earn-exchange-exchangeHistory');
-    popNew('app-view-mine-setting-setting');
+    // popNew('app-view-mine-setting-setting');
     // popNew('app-components-keyBoard-keyBoard');
     // popNewPage();
     // 后台切前台

@@ -9,7 +9,8 @@ import { selectImage } from '../../../logic/native';
 import { CreateWalletType } from '../../../store/interface';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { forelet,WIDGET_NAME } from './home';
-import { getMnemonicByHash, fetchMnemonicFragment } from '../../../utils/walletTools';
+import { getMnemonicByHash, fetchMnemonicFragment, playerName } from '../../../utils/walletTools';
+import { resize } from '../../../../pi/widget/resize/resize';
 interface Props {
     itype:CreateWalletType;
     imageBase64?:string;// 图片base64
@@ -28,7 +29,7 @@ export class CreateWallet extends Widget {
     public init() {
         this.state = {
             itype:CreateWalletType.Random,
-            walletName: '李铁柱',
+            walletName: playerName(),
             walletPsw: '',
             walletPswConfirm: '',
             pswEqualed:false,
@@ -73,8 +74,15 @@ export class CreateWallet extends Widget {
             // tslint:disable-next-line:max-line-length
             this.state.avatarHtml = `<div style="background-image: url(${base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
             this.state.avatar = base64;
+            resize({ url:base64, width: 140, ratio: 0.3, type: "jpeg" },(res)=>{
+                console.log('resize---------',res);
+            });
             this.paint();
         });
+    }
+    public randomPlayName(){
+        this.state.walletName = playerName();
+        this.paint();
     }
     public async createClick() {
         if (!this.state.userProtocolReaded) {

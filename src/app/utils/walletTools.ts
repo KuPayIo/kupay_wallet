@@ -12,11 +12,12 @@ import { dataCenter } from '../logic/dataCenter';
 import { Addr, TxStatus } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
-import { calcHashValuePromise, getAddrById, hexstrToU8Array, initAddr, popNewMessage, popNewLoading } from './tools';
+import { calcHashValuePromise, getAddrById, hexstrToU8Array, initAddr, popNewMessage, popNewLoading, unicodeArray2Str } from './tools';
 import { smallUnit2LargeUnit } from './unitTools';
 import { buyProduct, getCloudBalance, getPurchaseRecord } from '../net/pull';
 import { shareSecret } from './secretsBase';
 import { arrayBufferToBase64 } from '../../pi/util/base64';
+import { nameWare } from './nameWareHouse';
 
 /**
  * 获取新的地址信息
@@ -263,3 +264,15 @@ export const getMnemonicByHash = (hash:string)=>{
         return '';
     }
 }
+
+
+/**
+ * 获取随机名字
+ */
+export const playerName = function () {
+	var num1 = nameWare[0].length;
+	var num2 = nameWare[1].length;
+	var name="";
+	name= unicodeArray2Str(nameWare[0][Math.floor(Math.random()*num1)])+ unicodeArray2Str(nameWare[1][Math.floor(Math.random()*num2)]);
+	return name;
+};

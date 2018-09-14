@@ -17,6 +17,6 @@
             <p>锁定期：{{it.product.lockday}}</p>       
         </div>
         <div w-class="tag">如果云账户余额不够，将自动从本地钱包中扣款</div>
-        <div ev-btn-tap="purchaseClicked" w-class="btn"><app-components-btn-btn>{"name":"确认","types":"big","color":"white"}</app-components-btn-btn></div>
+        <div ev-btn-tap="purchaseClicked" w-class="btn"><app-components1-btn-btn>{"name":"确认","types":"big","color":"white"}</app-components1-btn-btn></div>
     </div>
 </div>

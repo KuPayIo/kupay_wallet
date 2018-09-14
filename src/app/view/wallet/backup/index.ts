@@ -9,6 +9,10 @@ interface Props {
     fragments: [];
 }
 export class BackupIndex extends Widget{
+    public ok:()=>void;
+    public backPrePage(){
+        this.ok && this.ok();
+    }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -16,9 +20,9 @@ export class BackupIndex extends Widget{
     public init(){
     }
     public standardBackupClick(){
-        popNew('app-view-wallet-backup-backupMnemonicWordConfirm',{mnemonic:this.props.mnemonic});
+        popNew('app-view-wallet-backup-backupMnemonicWordConfirm',{mnemonic:this.props.mnemonic},()=>{this.ok && this.ok()});
     }
     public fragmentsBackupClick(){
-        popNew('app-view-wallet-backup-shareMnemonic',{fragments:this.props.fragments});
+        popNew('app-view-wallet-backup-shareMnemonic',{fragments:this.props.fragments},()=>{this.ok && this.ok()});
     }
 }

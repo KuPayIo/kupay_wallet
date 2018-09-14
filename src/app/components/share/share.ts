@@ -36,7 +36,7 @@ export class BaseShare extends Widget {
     }
 
     public backPrePage() {
-        this.cancel && this.cancel();
+        this.cancel && this.cancel(false);
     }
 
     public shareToWechat() {

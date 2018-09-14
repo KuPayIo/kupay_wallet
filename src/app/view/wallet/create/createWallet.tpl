@@ -18,7 +18,7 @@
             </div>
             <div w-class="name-box" ev-input-change="walletNameChange">
                 <app-components1-input-input>{input:{{it1.walletName}}}</app-components1-input-input>
-                <div w-class="random">随机</div>
+                <img w-class="random" src="../../../res/image/dice.png" on-tap="randomPlayName"/>
             </div>
             <div ev-psw-change="pswChange"><app-components-password-password>{hideTips:true}</app-components-password-password></div>
             <div w-class="input-father" ev-input-change="pswConfirmChange"><app-components-input-suffixInput>{itype:"password",placeHolder:"重复密码",clearable:true,available:{{it1.pswEqualed}}}</app-components-input-suffixInput></div>
@@ -26,7 +26,7 @@
                 <app-components1-checkbox-checkbox>{itype:"false",text:"我已经认证阅读并同意"}</app-components1-checkbox-checkbox>
                 <span w-class="user-protocol" on-tap="agreementClick">隐私条约</span>
             </div>
-            <div ev-btn-tap="createClick" w-class="btn"><app-components-btn-btn>{"name":"完成","types":"big","color":"white"}</app-components-btn-btn></div>
+            <div ev-btn-tap="createClick" w-class="btn"><app-components1-btn-btn>{"name":"完成","types":"big","color":"white"}</app-components1-btn-btn></div>
         </div>
     </div>
 </div>

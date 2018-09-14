@@ -7,8 +7,8 @@
                {{it.mnemonic}}
             </div>
             <div w-class="btn-container">
-                <div ev-btn-tap="standardBackupClick" w-class="btn"><app-components-btn-btn>{"name":"我已妥善保管","types":"big","color":"blue"}</app-components-btn-btn></div>
-                <div ev-btn-tap="fragmentsBackupClick" w-class="btn"><app-components-btn-btn>{"name":"请好友协助保管","types":"big","color":"white"}</app-components-btn-btn></div>
+                <div ev-btn-tap="standardBackupClick" w-class="btn"><app-components1-btn-btn>{"name":"我已妥善保管","types":"big","color":"blue"}</app-components1-btn-btn></div>
+                <div ev-btn-tap="fragmentsBackupClick" w-class="btn"><app-components1-btn-btn>{"name":"请好友协助保管","types":"big","color":"white"}</app-components1-btn-btn></div>
             </div>
         </div>
     </div>

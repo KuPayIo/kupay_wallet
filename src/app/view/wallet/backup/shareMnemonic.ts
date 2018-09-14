@@ -3,6 +3,7 @@
  */
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
+import { ShareToPlatforms } from "../../../../pi/browser/shareToPlatforms";
 interface Props {
     fragments:[];
 }
@@ -29,9 +30,22 @@ export class ShareMnemonic extends Widget{
     //分享
     public shareItemClick(e:any,index:number){
         const fragment = this.props.fragments[index];
-        popNew('app-components-share-share',{ text:fragment },(success)=>{
+        popNew('app-components-share-share',{ text:fragment,shareType:ShareToPlatforms.TYPE_IMG },(success)=>{
             this.state.successList[index] = true;
             this.paint();
+            this.allShared();
         });
+    }
+
+    public allShared(){
+        let allShared = true;
+        for(let i=0;i<this.state.successList.length;i++){
+            if(!this.state.successList[i]){
+                allShared = false;
+            }
+        }
+        if(allShared){
+            this.ok && this.ok();
+        }
     }
 }

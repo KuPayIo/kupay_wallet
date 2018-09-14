@@ -4,6 +4,6 @@
         <app-components1-input-input>{placeHolder:"输入兑换码，领取红包",style:"border-radius:12px;",input:{{it1.cid}} }</app-components1-input-input>
     </div>
     <div w-class="btn" ev-btn-tap="convertClick">
-        <app-components-btn-btn>{name:"兑换",color:"blue"}</app-components-btn-btn>
+        <app-components1-btn-btn>{name:"兑换",color:"blue"}</app-components1-btn-btn>
     </div>
 </div>

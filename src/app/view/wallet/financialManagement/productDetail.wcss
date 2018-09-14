@@ -49,7 +49,6 @@
     margin-top: 35px;
 }
 .progress{
-    width: 75%;
     height: 100%;
     background-color: #10e8dd;
 }
@@ -57,15 +56,15 @@
     flex: 1 0 0;
     background-color: #1152c4;
     position: relative;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
 }
 .sold{
     font-size: 24px;
-    line-height: 24px;
+    line-height: 33px;
     color: #fff;
-    position: absolute;
-    top: 50%;
-    left: 75%;
-    transform: translate(-100%,-50%);
+    flex-shrink: 0;
 }
 .bottom-box{
     background-color: #fff;

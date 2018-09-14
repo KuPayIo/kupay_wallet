@@ -168,8 +168,6 @@ export const signRawTransactionETH = async (psw:string,fromAddr:string,toAddr:st
                 const localNonce = nonceMap.get(fromAddr);
                 const chainNonce = await api.getTransactionCount(fromAddr);
                 nonce = localNonce && localNonce >= chainNonce ? localNonce : chainNonce;
-                nonceMap.set(fromAddr,nonce + 1);
-                updateStore('nonceMap',nonceMap);
             }
             const gasLimit = await estimateGasETH(toAddr,info);
             const txObj = {
@@ -536,6 +534,9 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
 
         return;
     }
+    const nonceMap = getBorn('nonceMap');
+    nonceMap.set(fromAddr,nonce + 1);
+    updateStore('nonceMap',nonceMap);
     close.callback(close.widget);
     popNew('app-components-message-message',{ content:'充值成功'});
     // 维护本地交易记录
@@ -571,7 +572,7 @@ export const withdraw = async (passwd:string,toAddr:string,currencyName:string,a
     close.callback(close.widget);
     if (success) {
         popNew('app-components-message-message',{content:'提现成功' });
-        getWithdrawLogs();
+        getWithdrawLogs(currencyName);
         getCloudBalance();
     }
    
