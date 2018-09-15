@@ -9,17 +9,21 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExcha
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { popPswBox, transDate } from '../utils/tools';
+import { popPswBox, transDate, getFirstEthAddr } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
+import { sign } from '../core/genmnemonic';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
 export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
+
 // export const conPort = '8080';
 export const conPort = pi_modules.store.exports.severPort || '80';
+console.log("conIp=",conIp);
+console.log("conPort=",conPort);
 // 分享链接前缀
-// export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-export const sharePerUrl = `http://127.0.0.1:80/wallet/app/boot/share.html`;
+export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
+// export const sharePerUrl = `http://127.0.0.1:80/wallet/app/boot/share.html`;
 /**
  * 通用的异步通信
  */
@@ -93,6 +97,26 @@ export const login = async (passwd:string) => {
     }
 };
 
+/**
+ * 创建钱包后默认登录
+ * @param mnemonic 助记词
+ */
+export const defaultLogin = async (hash:string) =>{
+    const getMnemonicByHash = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonicByHash;
+    const mnemonic = getMnemonicByHash(hash);
+    const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
+    const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
+    const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
+    const msgLogin = { type: 'login', param: { sign: signStr } };
+    updateStore('loginState', LoginState.logining);
+    const res: any = await requestAsync(msgLogin);
+    if (res.result === 1) {
+        updateStore('loginState', LoginState.logined);
+    } else {
+        updateStore('loginState', LoginState.logerror);
+    }
+}
+
 const defaultConUser = '0x00000000000000000000000000000000000000000';
 /**
  * 开启连接并获取验证随机数
@@ -160,9 +184,19 @@ export const getRandom = async () => {
     const resp = await requestAsync(msg);
     updateStore('conRandom', resp.rand);
     updateStore('conUid', resp.uid);
+    //余额
     getCloudBalance();
+    //eth gasPrice
     fetchGasPrices();
+    // btc fees
+    fetchBtcFees();
+    //用户基础信息
     getUserInfo([resp.uid]);
+    const hash = getBorn('hashMap').get(getFirstEthAddr());
+    if(hash){
+        defaultLogin(hash);
+    }
+    
 };
 
 /**
@@ -896,6 +930,32 @@ export const fetchGasPrices = async () => {
             [MinerFeeLevel.FASTEST]:Number(res.fastest)
         };
         updateStore('gasPrice',gasPrice);
+
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+    }
+};
+
+/**
+ * 获取gasPrice
+ */
+export const fetchBtcFees = async () => {
+    const msg = {
+        type: 'wallet/bank@get_fees',
+        param: {}
+    };
+    
+    try {
+        const res = await requestAsync(msg);
+        const obj = JSON.parse(res.btc);
+        console.log('fetchBtcFees------------',obj);
+        const btcMinerFee = {
+            [MinerFeeLevel.STANDARD]:Number(obj.low_fee_per_kb),
+            [MinerFeeLevel.FAST]:Number(obj.medium_fee_per_kb),
+            [MinerFeeLevel.FASTEST]:Number(obj.high_fee_per_kb)
+        };
+        updateStore('btcMinerFee',btcMinerFee);
 
     } catch (err) {
         showError(err && (err.result || err.type));

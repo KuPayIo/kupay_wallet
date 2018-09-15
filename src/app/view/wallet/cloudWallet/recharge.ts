@@ -5,10 +5,10 @@ import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
 import { ERC20Tokens } from "../../../config";
 import { timeOfArrival } from "../../../utils/constants";
-import { TransRecordLocal, MinerFeeLevel, priorityMap, TxStatus } from "../../../store/interface";
-import { getCurrentAddrByCurrencyName, getCurrentAddrBalanceByCurrencyName, fetchGasPrice, popPswBox } from "../../../utils/tools";
+import { TransRecordLocal, MinerFeeLevel, TxStatus } from "../../../store/interface";
+import { getCurrentAddrByCurrencyName, getCurrentAddrBalanceByCurrencyName, fetchGasPrice, popPswBox, fetchBtcMinerFee } from "../../../utils/tools";
 import { estimateMinerFee, recharge } from "../../../net/pullWallet";
-import { wei2Eth } from "../../../utils/unitTools";
+import { wei2Eth, sat2Btc } from "../../../utils/unitTools";
 interface Props{
     currencyName:string;
     tx?:TransRecordLocal;
@@ -54,12 +54,12 @@ export class Recharge extends Widget{
         const list = [];
         const obj = await estimateMinerFee(this.props.currencyName);
         const gasLimit = obj.gasLimit;
-        const btcMinerFee = obj.btcMinerFee;
+        // const btcMinerFee = obj.btcMinerFee;
         for (let i = 0;i < toa.length;i++) {
             const obj = {
                 ...toa[i],
                 // tslint:disable-next-line:max-line-length
-                minerFee: cn === 'ETH' ? wei2Eth(gasLimit * fetchGasPrice(toa[i].level)) : btcMinerFee[priorityMap[toa[i].level]]
+                minerFee: cn === 'ETH' ? wei2Eth(gasLimit * fetchGasPrice(toa[i].level)) : sat2Btc(fetchBtcMinerFee(toa[i].level))
             };
             list.push(obj);
         } 

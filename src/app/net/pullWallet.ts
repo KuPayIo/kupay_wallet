@@ -13,7 +13,7 @@ import { priorityMap, MinerFeeLevel, TransRecordLocal, CurrencyType } from '../s
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { formatBalance, fetchGasPrice, fetchPriority, addRecord } from '../utils/tools';
+import { formatBalance, fetchGasPrice, addRecord, fetchBtcMinerFee } from '../utils/tools';
 import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { isNumber } from '../../pi/util/util';
 import { popNew } from '../../pi/ui/root';
@@ -75,16 +75,18 @@ export const estimateMinerFee = async (currencyName:string) => {
     const toAddr = defaultEthToAddr;
     const pay = 0;
     let gasLimit = 21000;
-    const btcMinerFee:any = {};
+    let btcMinerFee;
     if (currencyName === 'ETH') {
         gasLimit = await estimateGasETH(toAddr);
     } else if (currencyName === 'BTC') {
         // todo 获取BTC矿工费估值
-        for (const k in priorityMap) {
-            const nbBlocks = priorityMap[k];
-            const feeObj = await estimateMinerFeeBTC(nbBlocks);
-            btcMinerFee[nbBlocks] = formatBalance(feeObj[nbBlocks]);
-        }
+        // for (const k in priorityMap) {
+        //     const nbBlocks = priorityMap[k];
+        //     const feeObj = await estimateMinerFeeBTC(nbBlocks);
+        //     console.log('estimateMinerFee---------------',feeObj);
+        //     btcMinerFee[nbBlocks] = formatBalance(feeObj[nbBlocks]);
+        // }
+        btcMinerFee = find('btcMinerFee');
     } else if (ERC20Tokens[currencyName]) {
         gasLimit = await estimateGasERC20(currencyName,toAddr,pay);
     }
@@ -288,7 +290,7 @@ export const doBtcTransfer = async (wlt:BTCWallet,txRecord:TransRecordLocal) => 
     wlt.unlock();
     await wlt.init();
 
-    const retArr = await wlt.buildRawTransaction(output, fetchPriority(minerFeeLevel) || 'medium');
+    const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
     wlt.lock();
     const rawHexString: string = retArr[0];
 

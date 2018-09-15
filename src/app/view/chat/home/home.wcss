@@ -3,6 +3,6 @@
     flex-direction: column;
 }
 .games1{
-    height: 950px;
     margin: 30px;
+    height: 1100px;
 }

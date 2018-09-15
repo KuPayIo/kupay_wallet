@@ -54,7 +54,8 @@
 }
 .row4{
     flex: 1 0 0;
-    background-color: #1152c4;
+    background-color: rgba(17, 82, 196, .2);
+
     position: relative;
     padding: 0 20px;
     display: flex;

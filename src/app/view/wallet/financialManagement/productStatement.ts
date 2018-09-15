@@ -32,4 +32,7 @@ export class ProductStatement extends Widget{
         popNew('app-view-wallet-financialManagement-purchase',{product:this.props.product,amount:this.props.amount});
         this.ok && this.ok();
     }
+    public closePage(){
+        this.ok && this.ok();
+    }
 }

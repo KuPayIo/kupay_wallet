@@ -1,3 +1,3 @@
-<div class="new-page" style="height: 100%;width: 100%;background: #fff;overflow-y: auto;overflow-x: hidden;" ev-btn-tap="doTap">
-    <div w-class="btn btn-blue"></div>
+<div class="new-page" w-class="new-page">
+    <img src="../../../res/image/games1.png" w-class="games1"/>
 </div>

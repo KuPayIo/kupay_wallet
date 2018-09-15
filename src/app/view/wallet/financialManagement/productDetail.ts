@@ -33,6 +33,7 @@ export class productDetail extends Widget{
         }
         const product = this.props.product;
         const res = calPercent(product.surplus,product.total)
+        console.log(res);
         this.state = {
             holdedAmout:0,
             amount:1,

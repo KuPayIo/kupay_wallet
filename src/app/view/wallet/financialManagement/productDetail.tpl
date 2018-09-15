@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
 <div>
-    <app-components1-topBar-topBar>{"title":"ETH资管第2期",background:"#fff"}</app-components1-topBar-topBar>
+    <app-components1-topBar-topBar>{"title":{{it.product.productName}},background:"#fff"}</app-components1-topBar-topBar>
     <div w-class="top-head">
         <div w-class="row1">
             <div w-class="col1">

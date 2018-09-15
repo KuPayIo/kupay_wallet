@@ -18,7 +18,7 @@ export class CloudWalletHome extends Widget{
     }
     public init() {
         const currencyName = this.props.currencyName;
-        const rate =  getBorn('exchangeRateJson').get(currencyName).CNY;
+        const rate =   getBorn('exchangeRateJson').get(currencyName).CNY;
         const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
         const balanceValue = formatBalanceValue(rate * balance);
         this.state = {
@@ -34,7 +34,7 @@ export class CloudWalletHome extends Widget{
             }],
             activeNum:0,
             gain:getBorn('coinGain').get(currencyName) || formatBalanceValue(0),
-            rate,
+            rate:formatBalanceValue(rate),
             balance,
             balanceValue
         };

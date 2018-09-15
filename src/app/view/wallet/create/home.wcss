@@ -17,8 +17,6 @@
 .create-logo{
     margin-top: 250px;
     margin-bottom: 80px;
-    width: 200px;
-    height: 200px;
     align-self: center;
 }
 .import{

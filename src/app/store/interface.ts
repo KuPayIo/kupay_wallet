@@ -49,9 +49,9 @@ export enum MinerFeeLevel {
 
 // btc矿工费等级
 export const priorityMap = {
-    [MinerFeeLevel.STANDARD]: 6,
-    [MinerFeeLevel.FAST]: 3,
-    [MinerFeeLevel.FASTEST]: 2
+    [MinerFeeLevel.STANDARD]: 36,
+    [MinerFeeLevel.FAST]: 18,
+    [MinerFeeLevel.FASTEST]: 12
 };
 
 // 交易状态
@@ -91,6 +91,7 @@ export interface Store {
     ERC20TokenDecimals:Object;// ERC20精度
     nonceMap:Map<string,number>;// 维护本地的nonce
     gasPrice:object;// gasPrice档次(3档)
+    btcMinerFee:object;//btn minerFee档次(3档)
     realUserMap:Map<string,boolean>;// 真实用户map
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
@@ -399,20 +400,20 @@ export interface RechargeWithdrawalLog {
 }
 
 export enum TaskSid {
-    createWlt = 1001,// 创建钱包
-    firstChargeEth,// 首次转入
-    bindPhone,// 注册手机
-    chargeEth,// 存币
-    inviteFriends,// 邀请真实好友
-    buyFinancial = 1007,// 购买理财产品
-    transfer,// 交易奖励
-    bonus,// 分红
-    mines,// 挖矿
-    chat,// 聊天
-    redEnvelope = 'red_bag_port', // 红包
-    recharge = 'bank_db',// 充值
-    withdraw = 'bank_port',// 提现
-    financialManagement = 'manage_money_port' // 理财
+    recharge = 301,// 充值
+    withdraw = 302,// 提现
+    createWlt = 311,// 创建钱包
+    firstChargeEth = 312,// 首次转入
+    bindPhone = 313,// 注册手机
+    chargeEth = 314,// 存币
+    inviteFriends = 315,// 邀请真实好友
+    buyFinancial = 316,// 购买理财产品
+    transfer = 317,// 交易奖励
+    bonus = 318,// 分红
+    mines = 319,// 挖矿
+    chat = 320,// 聊天
+    financialManagement = 330, // 理财
+    redEnvelope = 340 // 红包
 }
 
 export interface AccountDetail {

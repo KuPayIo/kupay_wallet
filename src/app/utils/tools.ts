@@ -779,11 +779,9 @@ export const fetchGasPrice = (minerFeeLevel:MinerFeeLevel) => {
     return find('gasPrice')[minerFeeLevel];
 };
 
-// 获取gasPrice
-export const fetchPriority = (minerFeeLevel:MinerFeeLevel) => {
-    if (minerFeeLevel === MinerFeeLevel.STANDARD) return 'low';
-    if (minerFeeLevel === MinerFeeLevel.FAST) return 'medium';
-    if (minerFeeLevel === MinerFeeLevel.FASTEST) return 'high';
+// 获取btc miner fee
+export const fetchBtcMinerFee = (minerFeeLevel:MinerFeeLevel) => {
+    return find('btcMinerFee')[minerFeeLevel];
 };
 
 // 获取默认币种汇率
@@ -1059,22 +1057,22 @@ export const fetchHoldedProductAmount = (id:string) =>{
  * 计算剩余百分比
  */
 export const calPercent = (surplus:number,total:number) =>{
-    if(surplus === total){
+    if(surplus === 0){
         return {
             left:0,
             use:100
         }
     }
-    if(surplus <= total/10){
+    if(surplus === total){
+        return {
+            left:100,
+            use:0
+        }
+    }
+    if(surplus <= total/100){
         return {
             left:1,
             use:99
-        }
-    }
-    if(surplus > total / 10 * 9){
-        return {
-            left:99,
-            use:1
         }
     }
     const r = Number((surplus / total).toFixed(2));
@@ -1082,4 +1080,27 @@ export const calPercent = (surplus:number,total:number) =>{
         left:r*100,
         use:100-r*100
     }
+}
+
+/**
+ * base64 to blob
+ */
+export const base64ToBlob = (base64:string) =>{
+    let arr = base64.split(',');
+    let mime = arr[0].match(/:(.*?);/)[1];
+    let bstr = atob(arr[1]);
+    let n = bstr.length;
+    let u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+}
+/**
+ * 图片base64转file格式
+ */
+export const base64ToFile = (base64:string) => {
+    const blob = base64ToBlob(base64);
+    const newFile = new File([blob], 'test.jpeg', {type: blob.type});
+    console.log(newFile);
 }
