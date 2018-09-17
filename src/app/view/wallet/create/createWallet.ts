@@ -11,10 +11,9 @@ import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { forelet,WIDGET_NAME } from './home';
 import { getMnemonicByHash, fetchMnemonicFragment, playerName } from '../../../utils/walletTools';
 import { resize } from '../../../../pi/widget/resize/resize';
-import { base64ToFile, getFirstEthAddr } from '../../../utils/tools';
-import { GlobalWallet } from '../../../core/globalWallet';
-import { defaultLogin } from '../../../net/pull';
-import { updateStore, find, getBorn } from '../../../store/store';
+import { updateStore, getBorn } from '../../../store/store';
+import { getFirstEthAddr } from '../../../utils/tools';
+import { uploadFile } from '../../../net/pull';
 interface Props {
     itype:CreateWalletType;
     imageBase64?:string;// 图片base64
@@ -80,15 +79,7 @@ export class CreateWallet extends Widget {
                 // tslint:disable-next-line:max-line-length
                 this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
                 this.state.avatar = res.base64;
-                base64ToFile(res.base64);
                 this.paint();
-                // fetch('http://127.0.0.1/service/upload')
-                //     .then(function(response) {
-                //         return response.json();
-                //     })
-                //     .then(function(myJson) {
-                //         console.log(myJson);
-                //     });
             });
         });
     }
@@ -133,6 +124,9 @@ export class CreateWallet extends Widget {
             option.fragment2 = this.props.fragment2;
         }
         const hash = await createWallet(this.state.itype,option);
+        if(this.state.avatar){
+            uploadFile(this.state.avatar);
+        }
         const hashMap = getBorn('hashMap');
         hashMap.set(getFirstEthAddr(),hash);
         updateStore("hashMap",hashMap);

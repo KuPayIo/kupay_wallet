@@ -4,7 +4,7 @@ import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
-import { Addr, CurrencyRecord, Wallet } from '../store/interface';
+import { Addr, CurrencyRecord, Wallet, TransRecordLocal } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
 import { getAddrsAll, getAddrsByCurrencyName, initAddr } from '../utils/tools';
@@ -47,7 +47,7 @@ export class DataCenter {
         this.updateFastList.push(['exchangeRate', 'ETH']);
         this.updateFastList.push(['exchangeRate', 'BTC']);
 
-        // this.refresh();
+        this.refresh();
 
         // if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
     }
@@ -145,20 +145,6 @@ export class DataCenter {
             }
         }
         this.updateFastList = [];
-        // if (this.updateFastList.length > 0) {
-        //     const update = this.updateFastList.shift();
-        //     // console.log('openCheck updateFastList', update);
-        //     switch (update[0]) {
-        //         case 'transaction': this.parseTransactionDetails(update[1], update[2]); break;
-        //         // case 'BtcTransactionTxref': this.parseBtcTransactionTxrefDetails(update[1], update[2]); break;
-        //         case 'balance': this.updateBalance(update[1], update[2]); break;
-        //         case 'exchangeRate': this.exchangeRate(update[1]); break;
-        //         case 'shapeShiftCoins': getShapeShiftCoins();break;
-        //         default:
-        //     }
-
-        //     return;
-        // }
     }
 
     // 普通检测
@@ -189,7 +175,7 @@ export class DataCenter {
         if (!walletList || walletList.length <= 0) return;
         const list = [];
         walletList.forEach((v, i) => {
-            if (dataCenter.getHash(v.walletId)) {
+            if (getBorn('hashMap').get(v.walletId)) {
                 v.currencyRecords.forEach((v1, i1) => {
                     if (!v1.updateAddr) list.push([i, i1]);
                 });
@@ -278,12 +264,14 @@ export class DataCenter {
         // const hashList = [];
         const transactions = find('transactions') || [];
         ethTrans.forEach(v => {
+            api.getBlockNumber().then(console.log);
+            api.getTransaction(v.hash).then(console.log);
             if (transactions.some(v1 => (v1.hash === v.hash) && (v1.addr === addr))) return;
             // 移除缓存记录
             this.removeRecordAtAddr(addr, v.hash);
             // info--input  0x636573--ces
 
-            const record = {
+            const record:TransRecordLocal = {
                 hash: v.hash,
                 from: v.from,
                 to: v.to,
@@ -296,6 +284,7 @@ export class DataCenter {
             };
             list.push(record);
             // hashList.push(v.hash);
+            
         });
         if (list.length > 0) {
             this.setTransactionLocalStorage(transactions.concat(list));

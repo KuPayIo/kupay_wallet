@@ -9,7 +9,7 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExcha
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { popPswBox, transDate, getFirstEthAddr } from '../utils/tools';
+import { popPswBox, transDate, getFirstEthAddr, base64ToFile, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 import { sign } from '../core/genmnemonic';
 
@@ -24,6 +24,12 @@ console.log("conPort=",conPort);
 // 分享链接前缀
 export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 // export const sharePerUrl = `http://127.0.0.1:80/wallet/app/boot/share.html`;
+
+//上传图片url
+export const uploadFileUrl = `http://${conIp}/service/upload`;
+
+// 上传的文件url前缀
+export const uploadFileUrlPrefix = `http://${conIp}/service/get_file?sid=`;
 /**
  * 通用的异步通信
  */
@@ -582,7 +588,12 @@ export const getUserInfo = async (uids: [number]) => {
 
     try {
         const res = await requestAsync(msg);
-        console.log('------------',res);
+        if(res.value[0]){
+            const userInfo = JSON.parse(unicodeArray2Str(res.value[0]))
+            userInfo.fromServer = true;
+            updateStore('userInfo',userInfo);
+            console.log('------------',userInfo);
+        }
     } catch (err) {
         console.log(err);
         showError(err && (err.result || err.type));
@@ -983,3 +994,33 @@ export const fetchRealUser = async () => {
 
     } 
 };
+
+
+//上传文件
+export const uploadFile = async (base64)=>{
+    const file = base64ToFile(base64);
+    const formData = new FormData();
+    formData.append('upload',file);
+    fetch(uploadFileUrl, {
+        body: formData, // must match 'Content-Type' header
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, same-origin, *omit
+        headers: {
+            'user-agent': 'Mozilla/4.0 MDN Example'
+        },
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'no-cors', // no-cors, cors, *same-origin
+        redirect: 'follow', // manual, *follow, error
+        referrer: 'no-referrer' // *client, no-referrer
+        }).then(response => response.json())
+        .then(res=>{
+        console.log('!!!!!!!!!!!',res);
+        if(res.result === 1){
+            const sid = res.sid;
+            const userInfo = find('userInfo');
+            userInfo.avatar = sid;
+            userInfo.fromServer = false;
+            updateStore('userInfo',userInfo);
+        }
+    });
+}

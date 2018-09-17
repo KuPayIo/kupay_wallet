@@ -104,8 +104,12 @@ register('userInfo',(userInfo:UserInfo) => {
 //     });
 // });
 
+//登录状态成功
 register('loginState',(loginState:LoginState) => {
     if (loginState === LoginState.logined) {
-        setUserInfo();
+        const userInfo = find('userInfo');
+        if(!userInfo.fromServer){
+            setUserInfo();
+        }
     }
 });

@@ -8,6 +8,7 @@ import { Cipher } from '../core/crypto/cipher';
 import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, CurrencyType, CurrencyTypeReverse } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { defalutShowCurrencys } from './constants';
+import { uploadFileUrlPrefix } from '../net/pull';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -1101,6 +1102,22 @@ export const base64ToBlob = (base64:string) =>{
  */
 export const base64ToFile = (base64:string) => {
     const blob = base64ToBlob(base64);
-    const newFile = new File([blob], 'test.jpeg', {type: blob.type});
+    const newFile = new File([blob], 'avatar.jpeg', {type: blob.type});
     console.log(newFile);
+    return newFile;
+}
+
+/**
+ * 获取用户基本信息
+ */
+export const getUserInfo = ()=>{
+    const userInfo = find('userInfo');
+    let avatar = userInfo.avatar;
+    if(avatar && avatar.indexOf('data:image') < 0){
+        avatar = `${uploadFileUrlPrefix}${avatar}`;
+    }
+    return {
+        ...userInfo,
+        avatar
+    }
 }

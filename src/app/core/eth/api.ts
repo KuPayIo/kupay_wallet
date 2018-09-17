@@ -89,6 +89,18 @@ export class Api {
             });
         });
     }
+    public getBlockNumber():Promise<string>{
+        return new Promise((resolve, reject) => {
+            initWeb3();
+            web3.eth.getBlockNumber((err, val) => {
+                if (!err) {
+                    return resolve(val);
+                } else {
+                    return reject(err);
+                }
+            });
+        });
+    }
 
     public getTransactionReceipt(hash: string): Promise<string> {
         return new Promise((resolve, reject) => {

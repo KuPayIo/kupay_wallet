@@ -77,7 +77,7 @@ export interface Store {
     conUserPublicKey: string;// 连接用户公钥
     conRandom: string;// 连接随机数
     conUid: number;// 连接uid
-    userInfo:string;// 用户头像base64
+    userInfo:any;// 用户头像base64
     readedPriAgr: boolean;// 隐私协议阅读与否
     loginState: LoginState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
@@ -86,7 +86,7 @@ export interface Store {
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包
     addrs: Addr[];// 地址数据
-    transactions: TransactionRecord[];// 交易记录
+    transactions: TransRecordLocal[];// 交易记录
     exchangeRateJson: Map<string, any>;// 兑换汇率列表
     ERC20TokenDecimals:Object;// ERC20精度
     nonceMap:Map<string,number>;// 维护本地的nonce
@@ -169,20 +169,20 @@ export interface Addr {
     record: any[];// 记录缓存
 }
 
-/**
- * 交易记录
- */
-export interface TransactionRecord {
-    addr: string;// 地址
-    currencyName: string;// 货币类型
-    fees: number;// 矿工费
-    hash: number;// 交易hash
-    info: string;// 描述
-    time: number;// 时间
-    value: number;// 交易量
-    inputs?: string[];// 输入地址列表
-    outputs?: string[];// 输出地址列表
-}
+// /**
+//  * 交易记录
+//  */
+// export interface TransactionRecord {
+//     addr: string;// 地址
+//     currencyName: string;// 货币类型
+//     fees: number;// 矿工费
+//     hash: number;// 交易hash
+//     info: string;// 描述
+//     time: number;// 时间
+//     value: number;// 交易量
+//     inputs?: string[];// 输入地址列表
+//     outputs?: string[];// 输出地址列表
+// }
 
 /**
  * 本地缓存交易记录
@@ -195,7 +195,7 @@ export interface TransRecordLocal {
     pay:number;// 转账金额
     time:number;// 时间戳
     status:TxStatus;// 交易状态
-    confirmBlock:number;// 确认区块数
+    confirmBlock:number;// 已确认区块数
     info:string;// 交易额外信息
     currencyName:string;// 货币名称
     fee:number;// 矿工费

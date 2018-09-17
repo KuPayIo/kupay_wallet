@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { UserInfo } from '../../../store/interface';
 import { register } from '../../../store/store';
-import { fetchTotalAssets, fetchCloudTotalAssets, formatBalanceValue } from '../../../utils/tools';
+import { fetchTotalAssets, fetchCloudTotalAssets, formatBalanceValue, getUserInfo } from '../../../utils/tools';
 import { popNew } from '../../../../pi/ui/root';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -19,6 +19,7 @@ export class Home extends Widget {
         this.init();
     }
     public init() {
+        const userInfo = getUserInfo();
         this.state = {
             tabs:[{
                 tab:'云账户',
@@ -28,7 +29,7 @@ export class Home extends Widget {
                 components:'app-view-wallet-home-walletHome'
             }],
             activeNum:1,
-            avatar:'',
+            avatar:userInfo.avatar,
             totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets())
         };
     }
@@ -37,7 +38,8 @@ export class Home extends Widget {
         this.paint();
     }
 
-    public userInfoChange(userInfo:UserInfo) {
+    public userInfoChange() {
+        const userInfo = getUserInfo();
         this.state.avatar = userInfo.avatar;
         this.paint();
     }
@@ -59,7 +61,7 @@ export class Home extends Widget {
 register('userInfo',(userInfo:UserInfo) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.userInfoChange(userInfo);
+        w.userInfoChange();
     }
 });
 
