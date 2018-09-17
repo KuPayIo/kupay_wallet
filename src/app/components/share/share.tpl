@@ -8,16 +8,16 @@
                 <span>微信</span>
             </div>
             <div w-class="ga-share-platform" on-tap="shareToFriends">
-                <img src="../../res/image/img_share_moments.png" w-class="ga-share-icon{{it1.showCount}}" />
+                <img src="../../res/image/img_share_wechatArea.png" w-class="ga-share-icon{{it1.showCount}}" />
                 <span>朋友圈</span>
             </div>
             <div w-class="ga-share-platform" on-tap="shareToQQSpace">
-                <img src="../../res/image/img_share_moments.png" w-class="ga-share-icon{{it1.showCount}}" />
+                <img src="../../res/image/img_share_qqArea.png" w-class="ga-share-icon{{it1.showCount}}" />
                 <span>QQ空间</span>
             </div>
             {{if it1.isShowQQ}}
             <div w-class="ga-share-platform" on-tap="shareToQQ">
-                <img src="../../res/image/img_share_moments.png" w-class="ga-share-icon{{it1.showCount}}" />
+                <img src="../../res/image/img_share_qq.png" w-class="ga-share-icon{{it1.showCount}}" />
                 <span>QQ</span>
             </div>
             {{end}}
