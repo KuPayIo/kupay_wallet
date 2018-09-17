@@ -2,6 +2,8 @@
  * 主动向钱包通讯
  */
 // ===================================================== 导入
+import { popNew } from '../../pi/ui/root';
+import { isNumber } from '../../pi/util/util';
 import { defaultEthToAddr, ERC20Tokens } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
@@ -9,16 +11,14 @@ import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { GlobalWallet } from '../core/globalWallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
-import { priorityMap, MinerFeeLevel, TransRecordLocal, CurrencyType } from '../store/interface';
+import { CurrencyType, MinerFeeLevel, priorityMap, TransRecordLocal } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { formatBalance, fetchGasPrice, fetchPriority, addRecord } from '../utils/tools';
+import { addRecord, fetchGasPrice, fetchPriority, formatBalance } from '../utils/tools';
 import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
-import { isNumber } from '../../pi/util/util';
-import { popNew } from '../../pi/ui/root';
-import { getBankAddr, rechargeToServer, withdrawFromServer, getWithdrawLogs, getCloudBalance } from './pull';
 import { VerifyIdentidy } from '../utils/walletTools';
+import { getBankAddr, getCloudBalance, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './pull';
 // ===================================================== 导出
 
 /**
@@ -50,19 +50,20 @@ export const transfer = async (psw:string,txRecord:TransRecordLocal) => {
     } catch (error) {
         console.log(error.message);
         doErrorShow(error);
-    }finally{
+    } finally {
         loading.callback(loading.widget);
     }
-    if(ret){
+    if (ret) {
         const tx = {
             ...txRecord,
             hash:ret.hash,
             nonce:ret.nonce
-        }
+        };
         popNew('app-view-wallet-transaction-transactionDetails', { tx });
         addRecord(currencyName, fromAddr, tx);
         popNew('app-components-message-message',{ content:'转账成功' });
     }
+
     return ret;
 };
 
@@ -297,9 +298,6 @@ export const doBtcTransfer = async (wlt:BTCWallet,txRecord:TransRecordLocal) => 
     return BtcApi.sendRawTransaction(rawHexString);
 };
 
-
-
-
 // ===================================================shapeShift相关start
 /**
  * 获取shapeShift所支持的币种
@@ -436,9 +434,7 @@ export const getTransactionsByAddr = async (addr: string) => {
 
 // ===================================================== 本地
 
-
-
-//================================重发
+// ================================重发
 
 /**
  * 普通转账重发
@@ -470,24 +466,24 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
     } catch (error) {
         console.log(error.message);
         doErrorShow(error);
-    }finally{
+    } finally {
         loading.callback(loading.widget);
     }
-    if(ret){
+    if (ret) {
         const t = new Date();
         const tx = {
             ...txRecord,
             hash:ret.hash,
             time: t.getTime()
-        }
+        };
         popNew('app-view-wallet-transaction-transactionDetails', { tx });
         addRecord(currencyName, fromAddr, tx);
         popNew('app-components-message-message',{ content:'重发成功' });
     }
+
     return ret;
 };
-//================================重发
-
+// ================================重发
 
 /**
  * 充值
@@ -501,19 +497,19 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
         return;
     }
     const fromAddr = txRecord.fromAddr;
-    const minerFeeLevel = txRecord.minerFeeLevel
+    const minerFeeLevel = txRecord.minerFeeLevel;
     const gasPrice = fetchGasPrice(minerFeeLevel);
     const pay = txRecord.pay;
     const info = txRecord.info;
     const currencyName = txRecord.currencyName;
     let minerFee = 0;
-    if(currencyName === 'BTC'){
+    if (currencyName === 'BTC') {
         const nbBlocks = priorityMap[minerFeeLevel];
         const feeObj = await estimateMinerFeeBTC(nbBlocks);
         minerFee = formatBalance(feeObj[nbBlocks]);
-    }else{
+    } else {
         const gasLimit = await estimateGasETH(toAddr,info);
-        minerFee = wei2Eth(gasLimit * fetchGasPrice(minerFeeLevel))
+        minerFee = wei2Eth(gasLimit * fetchGasPrice(minerFeeLevel));
     }
     const obj = await signRawTransactionETH(psw,fromAddr,toAddr,pay,minerFeeLevel,info);
     if (!obj) {
@@ -537,7 +533,7 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
         return;
     }
     close.callback(close.widget);
-    popNew('app-components-message-message',{ content:'充值成功'});
+    popNew('app-components-message-message',{ content:'充值成功' });
     // 维护本地交易记录
     const t = new Date();
     const record:TransRecordLocal = {
@@ -549,20 +545,20 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
         fee: minerFee,
         minerFeeLevel:minerFeeLevel
     };
-    popNew('app-view-wallet-transaction-transactionDetails', {tx:record});
+    popNew('app-view-wallet-transaction-transactionDetails', { tx:record });
     addRecord(currencyName, fromAddr, record);
+    
     return h;
 };
 
-
 // 提现
-export const withdraw = async (passwd:string,toAddr:string,currencyName:string,amount:number | string) =>{
+export const withdraw = async (passwd:string,toAddr:string,currencyName:string,amount:number | string) => {
     const wallet = find('curWallet');
     const close = popNew('app-components1-loading-loading', { text: '正在提现...' });
     const verify = await VerifyIdentidy(wallet,passwd);
     if (!verify) {
         close.callback(close.widget);
-        popNew('app-components-message-message',{ content:'密码错误'});
+        popNew('app-components-message-message',{ content:'密码错误' });
 
         return;
     }
@@ -570,10 +566,10 @@ export const withdraw = async (passwd:string,toAddr:string,currencyName:string,a
     const success = await withdrawFromServer(toAddr,coin,eth2Wei(amount));
     close.callback(close.widget);
     if (success) {
-        popNew('app-components-message-message',{content:'提现成功' });
+        popNew('app-components-message-message',{ content:'提现成功' });
         getWithdrawLogs();
         getCloudBalance();
     }
    
     return success;
-}
+};

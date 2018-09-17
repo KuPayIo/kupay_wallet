@@ -39,15 +39,13 @@ export class DataCenter {
      */
     public init() {
 
-        // 启动定时器更新
-        if (!this.timerRef) this.openCheckFast();
-        if (!this.timerRef1) this.openCheck();
-
         this.updateFastList.push(['shapeShiftCoins']);
         this.updateFastList.push(['exchangeRate', 'ETH']);
         this.updateFastList.push(['exchangeRate', 'BTC']);
-
-        // this.refresh();
+        // 启动定时器更新
+        if (!this.timerRef) this.openCheckFast();
+        if (!this.timerRef1) this.openCheck();
+        this.refresh();
 
         // if (!this.currencyExchangeTimer) this.currencyExchangeTimerStart();
     }
@@ -238,7 +236,7 @@ export class DataCenter {
     private async parseEthERC20TokenTransactionDetails(addr: string, currencyName: string) {
         const api = new EthApi();
         const contractAddress = ERC20Tokens[currencyName].contractAddr;
-        try{
+        try {
             const res = await api.getTokenTransferEvents(contractAddress, addr);
             console.log('parseEthERC20TokenTransactionDetails-=-=-=-=-=-',res);
             const list = [];
@@ -265,7 +263,7 @@ export class DataCenter {
             if (list.length > 0) {
                 this.setTransactionLocalStorage(transactions.concat(list));
             }
-        }catch(err){
+        } catch (err) {
             console.log('parseEthERC20TokenTransactionDetails------',err);
         }
         

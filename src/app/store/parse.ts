@@ -107,10 +107,13 @@ export const parseMineRank = (data) => {
     }
     const data1 = [];
     for (let i = 0; i < data.value.length && i < 10; i++) {
+        const user = unicodeArray2Str(data.value[i][1]);
+        const userData = user ? JSON.parse(user) :'' ;
         data1.push({
-            index: i + 1,
-            name: data.value[i][1] === '' ? '昵称未设置' : data.value[i][1],
-            num: kpt2kt(data.value[i][2])
+            index: data.value[i][3],
+            name: userData ? userData.nickName :'昵称未设置',
+            avater: userData ? userData.avatar :'',
+            num : kpt2kt(data.value[i][2])
         });
     }
     mineData.mineRank = data1;
@@ -155,9 +158,12 @@ export const parseMiningRank = (data) => {
     }
     const data2 = [];
     for (let i = 0; i < data.value.length && i < 10; i++) {
+        const user = unicodeArray2Str(data.value[i][1]);
+        const userData = user ? JSON.parse(user) :'';
         data2.push({
-            index: i + 1,
-            name: data.value[i][1] === '' ? '昵称未设置' : data.value[i][1],
+            index: data.value[i][3],
+            name: userData ? userData.nickName :'昵称未设置',
+            avater: userData ? userData.avatar :'',
             num: kpt2kt(data.value[i][2])
         });
     }

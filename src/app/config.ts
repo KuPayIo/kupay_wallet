@@ -262,7 +262,7 @@ export const MainChainCoin = {
         rate:{ CNY: 3337.01, USD: 517.42 }
     },
     BTC:{
-        description:'Bit coin',
+        description:'Bitcoin',
         rate:{ CNY: 42868.55, USD: 6598.71 }
     },
     KT:{
