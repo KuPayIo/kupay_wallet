@@ -132,9 +132,6 @@ export class CreateWallet extends Widget {
         updateStore("hashMap",hashMap);
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
-
-        // 刷新本地钱包
-        dataCenter.refresh();
         const w: any = forelet.getWidget(WIDGET_NAME);
         if (w) {
             w.ok && w.ok();

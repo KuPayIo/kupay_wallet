@@ -19,6 +19,7 @@ import { isNumber } from '../../pi/util/util';
 import { popNew } from '../../pi/ui/root';
 import { getBankAddr, rechargeToServer, withdrawFromServer, getWithdrawLogs, getCloudBalance } from './pull';
 import { VerifyIdentidy } from '../utils/walletTools';
+import { dataCenter } from '../logic/dataCenter';
 // ===================================================== 导出
 
 /**
@@ -60,7 +61,11 @@ export const transfer = async (psw:string,txRecord:TransRecordLocal) => {
             nonce:ret.nonce
         }
         popNew('app-view-wallet-transaction-transactionDetails', { tx });
-        addRecord(currencyName, fromAddr, tx);
+        // addRecord(currencyName, fromAddr, tx);
+        const trans = find('transactions');
+        trans.push(tx);
+        updateStore('transactions',trans);
+        dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
         popNew('app-components-message-message',{ content:'转账成功' });
     }
     return ret;
@@ -134,9 +139,7 @@ export const doEthTransfer = async (wlt:EthWallet,txRecord:TransRecordLocal) => 
         value: eth2Wei(pay),
         data: info
     };
-    console.log('txObj------------------',txObj);
     const tx = wlt.signRawTransaction(txObj);
-    console.log('tx------------------',tx);
     try {
         const hash = await api.sendRawTransaction(tx);
         if (!isNumber(nonce)) {

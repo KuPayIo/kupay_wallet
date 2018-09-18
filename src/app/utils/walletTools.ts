@@ -168,37 +168,9 @@ export const fetchTransactionList = (addr:string,currencyName:string) => {
     if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
         txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
     } else if (currencyName === 'BTC') {
-        txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName).map(v => {
-            if (v.inputs.indexOf(addr) >= 0) {
-                v.from = addr;
-                v.to = v.outputs[0];
-            } else {
-                v.from = v.inputs[0];
-                v.to = addr;
-            }
-
-            return v;
-        });
+        txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
     }
 
-    txList = txList.map(v => {
-        const pay = smallUnit2LargeUnit(currencyName,v.value);
-        const fee = smallUnit2LargeUnit(ERC20Tokens[currencyName] ? 'ETH' : currencyName,v.fees);
-        const isFromMe = v.from.toLowerCase() === addr.toLowerCase();
-
-        return {
-            hash: v.hash,
-            txType: isFromMe ? 1 : 2,
-            fromAddr: v.from,
-            toAddr: v.to,
-            pay,
-            fee,
-            time: v.time,
-            status: TxStatus.SUCCESS,
-            info: v.info,
-            currencyName: currencyName
-        };
-    });
 
     const addrInfo = getAddrById(addr,currencyName);
 

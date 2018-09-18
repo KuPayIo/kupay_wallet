@@ -132,13 +132,15 @@ export class Transfer extends Widget {
         const t = new Date();
         const tx:TransRecordLocal = {
             hash:"",
+            addr:fromAddr,
             txType:1,
             fromAddr,
             toAddr,
             pay: pay,
             time: t.getTime(),
             status:TxStatus.PENDING,
-            confirmBlock: 0,
+            confirmedBlockNumber: 0,
+            needConfirmedBlockNumber:0,
             info: '',
             currencyName,
             fee: this.state.minerFee,

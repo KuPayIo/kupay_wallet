@@ -57,9 +57,9 @@ export const priorityMap = {
 // 交易状态
 export enum TxStatus {
     PENDING, // 打包中
-    CONFIRMED, // 确认
+    CONFIRMED, // 确认 >= 1个区块确认
     FAILED, // 失败
-    SUCCESS// 成功
+    SUCCESS// 成功  一定的区块确认后认为succss
 }
 // 交易类型
 export enum TxType {
@@ -189,18 +189,20 @@ export interface Addr {
  */
 export interface TransRecordLocal {
     hash:number | string; // 交易hash
+    addr:string;//哪个地址的交易
     txType:TxType;// 交易类型 1 转账 2 收款 3 充值 4 币币兑换转账
     fromAddr:string;// 转账地址
     toAddr:string;// 收币地址
     pay:number;// 转账金额
     time:number;// 时间戳
     status:TxStatus;// 交易状态
-    confirmBlock:number;// 已确认区块数
+    confirmedBlockNumber:number;// 已确认区块数
+    needConfirmedBlockNumber:number;//需要确认得区块数
     info:string;// 交易额外信息
     currencyName:string;// 货币名称
     fee:number;// 矿工费
     nonce:number;// nonce
-    minerFeeLevel:MinerFeeLevel;// 矿工费档次
+    minerFeeLevel?:MinerFeeLevel;// 矿工费档次
 }
 
 /**

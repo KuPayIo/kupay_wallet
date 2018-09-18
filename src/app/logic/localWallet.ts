@@ -14,6 +14,7 @@ import { defalutShowCurrencys, lang } from '../utils/constants';
 import { restoreSecret } from '../utils/secretsBase';
 import { calcHashValuePromise, getXOR, hexstrToU8Array, u8ArrayToHexstr, popNewLoading, popNewMessage } from '../utils/tools';
 import { getMnemonic, addNewAddr } from '../utils/walletTools';
+import { dataCenter } from './dataCenter';
 
 /**
  * 创建钱包
@@ -26,30 +27,40 @@ export const createWallet = async (itype:CreateWalletType,option:any) => {
         const hash = await calcHashValuePromise(option.psw, find('salt'));
         createWalletRandom(hash,option);
         close.callback(close.widget);
+        // 刷新本地钱包
+        dataCenter.refreshAllTx();
         return hash;
     } else if (itype === CreateWalletType.Image) {
         const close = popNew('app-components1-loading-loading', { text: '创建中...' });
         const hash = await calcHashValuePromise(option.psw, find('salt'));
         createWalletByImage(hash,option);
         close.callback(close.widget);
+        // 刷新本地钱包
+        dataCenter.refreshAllTx();
         return hash;
     } else if (itype === CreateWalletType.StrandarImport) {
         const close = popNew('app-components1-loading-loading', { text: '导入中...' });
         const hash = await calcHashValuePromise(option.psw, find('salt'));
         importWalletByMnemonic(hash,option);
         close.callback(close.widget);
+        // 刷新本地钱包
+        dataCenter.refreshAllTx();
         return hash;
     } else if (itype === CreateWalletType.ImageImport) {
         const close = popNew('app-components1-loading-loading', { text: '导入中...' });
         const hash = await calcHashValuePromise(option.psw, find('salt'));
         createWalletByImage(hash,option);
         close.callback(close.widget);
+        // 刷新本地钱包
+        dataCenter.refreshAllTx();
         return hash;
     } else if (itype === CreateWalletType.FragmentImport) {
         const close = popNew('app-components1-loading-loading', { text: '导入中...' });
         const hash = await calcHashValuePromise(option.psw, find('salt'));
         importWalletByFragment(hash,option);
         close.callback(close.widget);
+        // 刷新本地钱包
+        dataCenter.refreshAllTx();
         return hash;
     }
    

@@ -83,11 +83,6 @@ export class GlobalWallet {
 
         gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
 
-        // 更新内存数据中心
-        gwlt._addrs.forEach(item => {
-            dataCenter.updateAddrInfo(item.addr, item.currencyName);
-        });
-
         return gwlt;
     }
 

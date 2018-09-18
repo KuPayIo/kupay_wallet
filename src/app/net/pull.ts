@@ -112,6 +112,7 @@ export const defaultLogin = async (hash:string) =>{
     const mnemonic = getMnemonicByHash(hash);
     const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
+    console.log("================",wlt.exportPrivateKey());
     const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
     const msgLogin = { type: 'login', param: { sign: signStr } };
     updateStore('loginState', LoginState.logining);

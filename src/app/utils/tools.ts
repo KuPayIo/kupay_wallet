@@ -7,7 +7,7 @@ import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, CurrencyType, CurrencyTypeReverse } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
-import { defalutShowCurrencys } from './constants';
+import { defalutShowCurrencys, currencyConfirmBlockNumber } from './constants';
 import { uploadFileUrlPrefix } from '../net/pull';
 
 export const depCopy = (v: any): any => {
@@ -69,7 +69,7 @@ export const getAddrById = (addrId: string, currencyName: string): Addr => {
  * @param data  新地址
  * @param notified 是否通知数据发生改变 
  */
-export const resetAddrById = (addrId: string, currencyName: string, data: Addr, notified?: boolean) => {
+export const resetAddrById = (addrId: string, currencyName: string, data: Addr) => {
     let list: Addr[] = find('addrs') || [];
     list = list.map(v => {
         if (v.addr === addrId && v.currencyName === currencyName) return data;
@@ -904,7 +904,8 @@ export const hasWallet = () => {
 };
 
 // 解析交易状态
-export const parseStatusShow = (status:TxStatus) => {
+export const parseStatusShow = (tx:TransRecordLocal) => {
+    const status = tx.status;
     if (status === TxStatus.PENDING) {
         return {
             text:'打包中',
@@ -912,7 +913,7 @@ export const parseStatusShow = (status:TxStatus) => {
         };
     } else if (status === TxStatus.CONFIRMED) {
         return {
-            text:'已确认',
+            text:`已确认 ${tx.confirmedBlockNumber}/${tx.needConfirmedBlockNumber}`,
             icon:'pending.png'
         };
     } else if (status === TxStatus.FAILED) {
@@ -922,7 +923,7 @@ export const parseStatusShow = (status:TxStatus) => {
         };
     } else {
         return {
-            text:'完成',
+            text:'已完成',
             icon:'icon_right2.png'
         };
     }
@@ -1119,5 +1120,20 @@ export const getUserInfo = ()=>{
     return {
         ...userInfo,
         avatar
+    }
+}
+
+/**
+ * 获取区块确认数
+ */
+export const getConfirmBlockNumber = (currencyName:string,amount:number)=>{
+    if(ERC20Tokens[currencyName]){
+        return currencyConfirmBlockNumber["ERC20"];
+    }
+    const confirmBlockNumbers = currencyConfirmBlockNumber[currencyName];
+    for(let i = 0;i< confirmBlockNumbers.length;i++){
+        if(amount < confirmBlockNumbers[i].value){
+            return confirmBlockNumbers[i].number;
+        }
     }
 }

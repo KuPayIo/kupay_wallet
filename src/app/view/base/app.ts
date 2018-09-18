@@ -2,7 +2,6 @@
  * 首页
  */
 // ================================ 导入
-import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { login, setUserInfo, fetchRealUser } from '../../net/pull';
@@ -71,6 +70,7 @@ export class App extends Widget {
     }
 
 }
+
 
 // ===================================================== 本地
 // ===================================================== 立即执行
