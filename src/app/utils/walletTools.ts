@@ -129,6 +129,7 @@ export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) =
  */
 export const getMnemonic = async (wallet, passwd) => {
     const hash = await calcHashValuePromise(passwd, find('salt'));
+    console.log('hash-------',hash);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -209,6 +210,7 @@ export const fetchMnemonicFragment =  (hash) =>{
 export const backupMnemonic = async (passwd:string) =>{
     const close = popNewLoading('导出中...');
     const hash = await calcHashValuePromise(passwd, find('salt'));
+    console.log('hash!!!!!!!!!!!!',hash);
     close.callback(close.widget);
     const mnemonic = getMnemonicByHash(hash);
     const fragments = fetchMnemonicFragment(hash);

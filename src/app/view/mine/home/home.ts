@@ -63,7 +63,7 @@ export class Home extends Widget {
      */
     public itemClick(ind:number) {
         if (ind === 0) {
-            console.log('账户');
+            popNew('app-view-mine-account-home');
         } else if (ind === 5) {
             window.open('https://github.com/KuPayIo/kupay_wallet');
         } else {

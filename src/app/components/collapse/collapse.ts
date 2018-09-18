@@ -1,12 +1,17 @@
 /**
  * Collapse 折叠面板的逻辑处理
  */
+import { notify } from '../../../pi/widget/event';
+import { getRealNode } from '../../../pi/widget/painter';
+import { Widget } from '../../../pi/widget/widget';
+
 interface CollapseItem {
     title:string;// 标题
-    htmlStr:string;// 内容
+    icon:string;
+    textList:any[];
 }
 interface Props {
-    htmlStrList:CollapseItem[];// html标签string
+    collapseList:CollapseItem[];// 折叠对象数组
     accordion?:boolean;// 是否以手风琴模式显示
 }
 
@@ -16,12 +21,6 @@ interface State {
     currentExpArr?:boolean[];// 当前展开item数组 accordion = false 使用
     isExpanded:object;// 判断当前item是否展开
 }
-// ==========================================导入
-import { notify } from '../../../pi/widget/event';
-import { getRealNode } from '../../../pi/widget/painter';
-import { Widget } from '../../../pi/widget/widget';
-// ==============================================导出
-
 export class Collapse extends Widget {
     public props: Props;
     public state: State;
@@ -38,7 +37,7 @@ export class Collapse extends Widget {
             };
         } else {
             const currentExpArr = [];
-            for (let i = 0; i < props.htmlStrList.length;i++) {
+            for (let i = 0; i < props.collapseList.length;i++) {
                 currentExpArr[i] = false;
             }
             this.state = {
@@ -79,7 +78,8 @@ export class Collapse extends Widget {
     // 判断当前item是否展开
     public isExpanded(index:number) {
         if (this.props.accordion) {
-            return this.state.currentExpIndex === index;
+            // tslint:disable-next-line:triple-equals
+            return this.state.currentExpIndex == index;
         }
 
         return this.state.currentExpArr[index];
@@ -100,5 +100,9 @@ export class Collapse extends Widget {
         }
         const scrollHeight = currentItemPanelNode.scrollHeight;
         currentItemPanelNode.style.height = `${scrollHeight}px`;
+    }
+
+    public itemClick(e:any,collapseListIndex:number,textListIndex:number) {
+        notify(e.node,'ev-collapse-item-click',{ collapseListIndex,textListIndex });
     }
 }

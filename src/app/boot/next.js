@@ -95,7 +95,9 @@ winit.initNext = function () {
 				"app/view/play/home/",
 				"app/view/chat/home/",
 				"app/view/earn/home/",
-				"app/view/wallet/home/"
+				"app/view/wallet/home/",
+				"app/view/mine/",
+				"app/components/"
 			]
 			console.time('firstload');
 			var suffixCfg = util.getDefaultSuffixCfg();
