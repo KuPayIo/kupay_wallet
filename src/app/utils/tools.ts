@@ -5,7 +5,7 @@ import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
 import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { Addr, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, CurrencyType, CurrencyTypeReverse } from '../store/interface';
+import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { defalutShowCurrencys } from './constants';
 
@@ -613,8 +613,11 @@ export const getByteLen = (val) => {
 export const currencyExchangeAvailable = () => {
     const shapeshiftCoins = find('shapeShiftCoins');
     const currencyArr = [];
-    for (let i = 0; i < supportCurrencyList.length; i++) {
-        currencyArr.push(supportCurrencyList[i].name);
+    for (const i in MainChainCoin) {
+        currencyArr.push(i);
+    }
+    for (const i in ERC20Tokens) {
+        currencyArr.push(i);
     }
 
     return shapeshiftCoins.filter(item => {
@@ -848,8 +851,6 @@ export const fetchWalletAssetList = () => {
     return assetList;
 };
 
-
-
 /**
  * 获取云端钱包资产列表
  */
@@ -877,14 +878,14 @@ export const fetchCloudWalletAssetList = () => {
 /**
  * 获取云端总资产
  */
-export const fetchCloudTotalAssets = () =>{
+export const fetchCloudTotalAssets = () => {
     const cloudBalance = getBorn('cloudBalance');
     let totalAssets = 0;
-    for(let [k,v] of cloudBalance){
+    for (const [k,v] of cloudBalance) {
         totalAssets += v * find('exchangeRateJson',CurrencyTypeReverse[k]).CNY;
     }
     return totalAssets;
-}
+};
 
 /**
  * 没有创建钱包时
@@ -1009,10 +1010,10 @@ export const initAddr = (address: string, currencyName: string, addrName?: strin
         balance: 0,
         currencyName: currencyName
     };
-}
+};
 
 // 获取货币的涨跌情况
-export const fetchCoinGain = ()=>{
+export const fetchCoinGain = () => {
     const coinGain = getBorn('coinGain');
     for (const k in MainChainCoin) {
         const item:any = {};
@@ -1032,7 +1033,7 @@ export const fetchCoinGain = ()=>{
             coinGain.set(k,item.gain);
         }
     }
-}
+};
 /**
  * 转化rtype
  */

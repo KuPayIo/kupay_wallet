@@ -1,13 +1,13 @@
 .mine{
     display: flex;
     color: #323232 50%;
-    animation: switchWalletPageIn ease-in-out .2s forwards;
+    animation: switchWalletPageIn linear .2s forwards;
     margin-bottom: 110px;
     overflow: hidden;
     background: #2225;        
 }
 .mineHide{
-    animation: switchWalletPageOut ease-in-out .2s forwards;
+    animation: switchWalletPageOut linear .2s forwards;
 }
 .topBack{
     height: 400px;
@@ -40,13 +40,14 @@
 }
 .left{
     flex: 1;
-    animation: switchWalletIn ease-in-out .2s forwards;
+    animation: switchWalletIn linear .2s forwards;
 }
 .leftHide{
-    animation: switchWalletOut ease-in-out .2s forwards;
+    animation: switchWalletOut linear .2s forwards;
 }
 .right{
     width: 120px;
+    opacity: 0;
 }
 .leftContent{
     background: #fff;

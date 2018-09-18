@@ -67,7 +67,7 @@ export class RedEnvHistory extends Widget {
             console.log('load more from server');
             querySendRedEnvelopeRecord(this.state.start);
         }
-        const data = await getInviteCodeDetail();
+        const data = await getInviteCodeDetail(); // 获取邀请红包记录
         console.log(data);
         this.loadMore();    
     }

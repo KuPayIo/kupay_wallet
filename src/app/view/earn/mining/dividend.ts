@@ -15,6 +15,7 @@ import { find, register } from '../../../store/store';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class Dividend extends Widget {
     public ok: () => void;
     constructor() {
@@ -36,9 +37,9 @@ export class Dividend extends Widget {
             </div>`,
             scroll:false,
             dividHistory:[  // 分红历史记录
-                { num:0.02,time:'04-30  14:32:00' },
-                { num:0.02,time:'04-30  14:32:00' },
-                { num:0.02,time:'04-30  14:32:00' }
+                // { num:0.02,time:'04-30  14:32:00' },
+                // { num:0.02,time:'04-30  14:32:00' },
+                // { num:0.02,time:'04-30  14:32:00' }
             ],
             ktBalance:this.props.ktBalance  // KT持有量 
         };

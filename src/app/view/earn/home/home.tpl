@@ -64,6 +64,8 @@
             <img src="../../../res/image1/25_gray.png" style="width: 40px;height: 40px;margin-right: 50px;"/>
         </div>
 
-        <img src="../../../res/image1/Card.png" style="height: 250px;margin: 35px 20px;"/>
+        <div style="margin: 35px 20px;">
+            <img src="../../../res/image1/Card.png" style="height: 250px;width: 100%;"/>
+        </div>
     </div>    
 </div>

@@ -22,7 +22,7 @@
             {{elseif rank<100}}
                 {{: rank="0"+rank}}
             {{end}}
-            <app-components-imgRankItem-imgRankItem>{"name":{{val.name}},"describe":{{desc+val.num+" KT"}},"img":"../../res/image/addMine_create.png","rank":{{rank}} }</app-components-imgRankItem-imgRankItem>
+            <app-components-imgRankItem-imgRankItem>{"name":{{val.name}},"describe":{{desc+val.num+" KT"}},"img":{{val.avatar?val.avatar:"../../res/image/addMine_create.png"}},"rank":{{rank}} }</app-components-imgRankItem-imgRankItem>
         {{end}}
 
         {{if it1.data.length>0 && !it1.more}}
