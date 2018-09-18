@@ -684,26 +684,6 @@ export const unicodeArray2Str = (arr) => {
 };
 
 
-/**
- * 添加交易记录到本地
- */
-export const addRecord = (currencyName, currentAddr, tx:TransRecordLocal) => {
-    const addrInfo = getAddrById(currentAddr, currencyName);
-    if (!addrInfo) return;
-    let resend = false;
-    for (let i = addrInfo.record.length - 1;i >= 0 ;i--) {
-        if (addrInfo.record[i].nonce === tx.nonce) {
-            addrInfo.record.splice(i,1,tx);
-            resend = true;
-            break;
-        }
-    }
-    if (!resend) {
-        addrInfo.record.push(tx);
-    }
-    
-    resetAddrById(currentAddr, currencyName, addrInfo, true);
-};
 
 /**
  * 计算日期间隔

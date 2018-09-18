@@ -13,7 +13,7 @@ import { priorityMap, MinerFeeLevel, TransRecordLocal, CurrencyType } from '../s
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { formatBalance, fetchGasPrice, addRecord, fetchBtcMinerFee } from '../utils/tools';
+import { formatBalance, fetchGasPrice, fetchBtcMinerFee } from '../utils/tools';
 import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { isNumber } from '../../pi/util/util';
 import { popNew } from '../../pi/ui/root';
@@ -484,7 +484,10 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
             time: t.getTime()
         }
         popNew('app-view-wallet-transaction-transactionDetails', { tx });
-        addRecord(currencyName, fromAddr, tx);
+        const trans = find('transactions');
+        trans.push(tx);
+        updateStore('transactions',trans);
+        dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
         popNew('app-components-message-message',{ content:'重发成功' });
     }
     return ret;
@@ -556,7 +559,10 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
         minerFeeLevel:minerFeeLevel
     };
     popNew('app-view-wallet-transaction-transactionDetails', {tx:record});
-    addRecord(currencyName, fromAddr, record);
+    const trans = find('transactions');
+    trans.push(record);
+    updateStore('transactions',trans);
+    dataCenter.refreshTrans(record.fromAddr,record.currencyName);
     return h;
 };
 
