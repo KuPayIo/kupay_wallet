@@ -293,3 +293,16 @@ svg:not(:root), symbol, image, marker, pattern, foreignObject {
     position: relative;
     margin-left: 20px;
 }
+/* 我的帮助问题列表样式 */
+ul{
+    list-style: none;
+    padding: 0;
+}
+li{
+    margin: 10px 0;
+}
+.ansLI{
+    font-weight: 600;
+    margin: 10px 0;
+    color: #222222;
+}

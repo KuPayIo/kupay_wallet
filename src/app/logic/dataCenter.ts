@@ -44,6 +44,9 @@ export class DataCenter {
         // const api = new EthApi();
         // api.getTransactionReceipt("0xa5663410fc3322bc1acfd33510e4f6f06cb10092fdb096a779f21d1d2a1199e1").then(console.log);
         // api.getTransaction("0xa5663410fc3322bc1acfd33510e4f6f06cb10092fdb096a779f21d1d2a1199e1").then(console.log);
+        this.updateFastList.push(['shapeShiftCoins']);
+        this.updateFastList.push(['exchangeRate', 'ETH']);
+        this.updateFastList.push(['exchangeRate', 'BTC']);
         // 启动定时器更新
         // if (!this.timerRef) this.openAddrTxCheck();
         // if (!this.timerRef1) this.openCheck();
@@ -191,12 +194,12 @@ export class DataCenter {
     private async parseEthERC20TokenTransactionDetails(addr: string, currencyName: string) {
         const api = new EthApi();
         const contractAddress = ERC20Tokens[currencyName].contractAddr;
-        try{
+        try {
             const res = await api.getTokenTransferEvents(contractAddress, addr);
             res.result.forEach(v => {
                 this.getERC20TransactionByHash(currencyName,v.hash,addr);
             });
-        }catch(err){
+        } catch (err) {
             console.log('parseEthERC20TokenTransactionDetails------',err);
         }
         

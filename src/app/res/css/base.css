@@ -28,13 +28,13 @@ div{
 
 
 @keyframes switchWalletPageIn{
-    0% {background-color: #2220;}
-    100% {background-color: #2225;}
+    0% {background-color: rgba(2, 2, 2, 0);}
+    100% {background-color: rgba(2, 2, 2, 0.5);}
 }
 
 @keyframes switchWalletPageOut{
-    0% {background-color: #2225;}
-    100% {background-color: #2220;}
+    0% {background-color: rgba(2, 2, 2, 0.5);}
+    100% {background-color: rgba(2, 2, 2, 0);}
 }
 
 @keyframes switchWalletIn{

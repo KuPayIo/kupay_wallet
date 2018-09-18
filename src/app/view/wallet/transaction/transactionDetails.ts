@@ -1,10 +1,10 @@
 /**
  * 交易详情页面
  */
-import { Widget } from '../../../../pi/widget/widget';
-import { parseAccount, parseStatusShow, timestampFormat, canResend, copyToClipboard, popNewMessage } from '../../../utils/tools';
-import { Forelet } from '../../../../pi/widget/forelet';
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -39,23 +39,23 @@ export class TransactionDetails extends Widget {
         this.ok && this.ok();
     }
 
-    public resendClick(){
-        popNew('app-view-wallet-transaction-transfer',{tx:this.props.tx,currencyName:this.props.tx.currencyName});
+    public resendClick() {
+        popNew('app-view-wallet-transaction-transfer',{ tx:this.props.tx,currencyName:this.props.tx.currencyName });
     }
 
-    public copyToAddr(){
+    public copyToAddr() {
         copyToClipboard(this.state.toAddr);
         popNewMessage('复制成功');
     }
-    public copyFromAddr(){
+    public copyFromAddr() {
         copyToClipboard(this.state.fromAddr);
         popNewMessage('复制成功');
     }
-    public copyHash(){
+    public copyHash() {
         copyToClipboard(this.state.hash);
         popNewMessage('复制成功');
     }
-    public copyEtherscan(){
+    public copyEtherscan() {
         copyToClipboard(this.state.qrcode);
         popNewMessage('复制成功');
     }

@@ -2,13 +2,11 @@
  * choose currency
  */
 import { Widget } from '../../../pi/widget/widget';
-import { CurrencyType } from '../../store/interface';
-import { getBorn } from '../../store/store';
 import { formatBalance, getCurrentAddrBalanceByCurrencyName } from '../../utils/tools';
 
 interface Props {
-    currencyList:string[];
-    isLocal:boolean;
+    list:string[];
+    selected:number;
 }
 export class ChooseCurrency extends Widget {
     public ok:(index:number) => void;
@@ -19,23 +17,28 @@ export class ChooseCurrency extends Widget {
     }
     public init() {
         const currencyShowList = [];
-        this.props.currencyList.forEach(item => {
+        this.props.list.forEach(item => {
             // tslint:disable-next-line:max-line-length
-            const balance = this.props.isLocal ? getCurrentAddrBalanceByCurrencyName(item) : getBorn('cloudBalance').get(CurrencyType[item]);
+            const balance = getCurrentAddrBalanceByCurrencyName(item);
             currencyShowList.push({
-                currencyName:item,
-                balance:formatBalance(balance)
+                name:item,
+                balance:formatBalance(balance),
+                // tslint:disable-next-line:prefer-template
+                img:'../../res/image/currency/' + item + '.png'
             });
         });
         this.state = {
-            currencyShowList
+            currencyShowList,
+            selected:this.props.selected
         };
     }
 
-    public currencyItemClick(e:any,index:number) {
-        this.ok && this.ok(index);
+    public changeSelect(e:any,ind:number) {
+        this.state.selected = ind;
+        this.paint();
+        setTimeout(() => {
+            this.ok && this.ok(ind);
+        }, 100);
     }
-    public backClick() {
-        this.cancel && this.cancel();
-    } 
+    
 }
