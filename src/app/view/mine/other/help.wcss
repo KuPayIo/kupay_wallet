@@ -1,6 +1,11 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
 .content{
-    height: 100%;
+    flex: 1 0 0;
     overflow-x: hidden;
     overflow-y: auto;
-    padding-top: 20px;
+    padding: 20px 0;
+    transform: translateZ(-1px);
 }

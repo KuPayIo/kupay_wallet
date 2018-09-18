@@ -29,7 +29,7 @@ export class Home extends Widget {
                 totalNum:0,
                 fg:1
             }],
-            activeNum:1
+            activeNum:0
         };
         this.initData();
         this.initEvent();
