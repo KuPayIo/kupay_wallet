@@ -14,6 +14,6 @@
     </div>
     
     <div style="width: 100%;position: absolute;bottom: 60px;">
-        <app-components-btn-btn>{name:"保存修改",color:"blue",style:"margin:0 60px;"}</app-components-btn-btn>
+        <app-components1-btn-btn>{name:"保存修改",color:"blue",style:"margin:0 60px;"}</app-components1-btn-btn>
     </div>
 </div>

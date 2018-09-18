@@ -1,0 +1,145 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.top-head{
+    height: 420px;
+    background-color: #3790e6;
+    display: flex;
+    flex-direction: column;
+}
+.row1{
+    display: flex;
+    margin: 85px 50px 0;
+}
+.col1{
+    display: flex;
+    flex-direction: column;
+    
+}
+.col2{
+    display: flex;
+    flex-direction: column;
+    margin-left: 240px;
+}
+.desc{
+    line-height: 33px;
+    opacity: 0.7;
+    color: #fff;
+    font-size: 24px;
+}
+.content{
+    line-height: 100px;
+    color: #fff;
+    font-size: 72px;
+    margin-top: 20px;
+}
+.row2{
+    line-height: 28px;
+    opacity: 0.7;
+    color: #fff;
+    font-size: 20px;
+    margin: 35px 50px 0;
+}
+.row3{
+    height: 5px;
+    position: relative;
+    margin-top: 35px;
+}
+.progress{
+    height: 100%;
+    background-color: #10e8dd;
+}
+.row4{
+    flex: 1 0 0;
+    background-color: rgba(17, 82, 196, .2);
+
+    position: relative;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+}
+.sold{
+    font-size: 24px;
+    line-height: 33px;
+    color: #fff;
+    flex-shrink: 0;
+}
+.bottom-box{
+    background-color: #fff;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    margin: 30px 20px 20px;
+    padding: 30px;
+    color: #222;
+}
+.row5{
+    font-size: 28px;
+    line-height: 40px;
+}
+.title{
+    font-size: 36px;
+    line-height: 50px;
+    margin-top: 65px;
+}
+.detail-box{
+    margin-top: 30px;
+}
+.detail{
+    font-size: 32px;
+    line-height: 50px;
+}
+.unit{
+    line-height: 50px;
+    font-size: 36px;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+}
+.limit{
+    display: flex;
+    align-items: center;
+    font-size: 28px;
+    line-height: 40px;
+    color: #203260;
+}
+.limit-number{
+    color: #f17835;
+}
+.select-num{
+    margin-top: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #222;
+}
+.unit-price{
+    line-height: 50px;
+    font-size: 36px;
+}
+.right-box{
+    width: 326px;
+    height: 80px;
+    left: 374px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    font-size: 36px;
+    line-height: 50px;
+}
+.read{
+    margin-top: 20px;
+    font-size: 28px;
+    line-height: 40px;
+    color: #1a70dd;
+}
+.btn{
+    padding: 0 10px;
+    margin-top: 60px;
+}

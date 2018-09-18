@@ -1,0 +1,37 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+.body{
+    flex: 1 0 0;
+    padding: 30px 20px 20px;
+    display: flex;
+    flex-direction: column;
+}
+.bottom-box{
+    border-radius: 12px;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    margin-top: 30px;
+    position: relative;
+    flex: 1 0 0;
+}
+.mnemonic-container{
+    margin: 20px;
+    height: 410px;
+    border: 1px solid #888;
+    border-radius: 2px;
+    font-size:36px;
+    line-height:50px;
+    color:#222;
+    padding:20px;
+}
+.btn-container{
+    position: absolute;
+    left: 40px;
+    right: 40px;
+    bottom: 35px;
+}
+.btn{
+    margin-top: 30px;
+}

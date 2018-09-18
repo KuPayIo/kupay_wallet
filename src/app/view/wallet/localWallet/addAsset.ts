@@ -2,8 +2,9 @@
  * add asset 
  */
 import { Widget } from "../../../../pi/widget/widget";
-import { fetchWalletAssetListAdded } from "../../../utils/tools";
+import { fetchWalletAssetListAdded, getCurrentAddrInfo } from "../../../utils/tools";
 import { find, updateStore } from "../../../store/store";
+import { dataCenter } from "../../../logic/dataCenter";
 
 export class AddAsset extends Widget{
     public ok:()=>void;
@@ -38,6 +39,8 @@ export class AddAsset extends Widget{
         const oldIndex = showCurrencys.indexOf(currencys.currencyName);
         if (added && oldIndex < 0) {
             showCurrencys.push(currencys.currencyName);
+            const curAddr = getCurrentAddrInfo(currencys.currencyName)
+            dataCenter.updateAddrInfo(curAddr.addr, currencys.currencyName);
         } else{
             showCurrencys.splice(oldIndex, 1);
         }

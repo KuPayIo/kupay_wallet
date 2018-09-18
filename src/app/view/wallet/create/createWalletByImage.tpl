@@ -14,7 +14,7 @@
                 </div>
                 {{end}}
             </div>
-            <div ev-btn-tap="nextClick" w-class="btn"><app-components-btn-btn>{"name":"下一步","types":"big","color":"blue"}</app-components-btn-btn></div>
+            <div ev-btn-tap="nextClick" w-class="btn"><app-components1-btn-btn>{"name":"下一步","types":"big","color":"blue"}</app-components1-btn-btn></div>
         </div>
     </div>
 </div>

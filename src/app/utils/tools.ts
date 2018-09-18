@@ -7,7 +7,8 @@ import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
-import { defalutShowCurrencys } from './constants';
+import { defalutShowCurrencys, currencyConfirmBlockNumber } from './constants';
+import { uploadFileUrlPrefix } from '../net/pull';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -68,7 +69,7 @@ export const getAddrById = (addrId: string, currencyName: string): Addr => {
  * @param data  新地址
  * @param notified 是否通知数据发生改变 
  */
-export const resetAddrById = (addrId: string, currencyName: string, data: Addr, notified?: boolean) => {
+export const resetAddrById = (addrId: string, currencyName: string, data: Addr) => {
     let list: Addr[] = find('addrs') || [];
     list = list.map(v => {
         if (v.addr === addrId && v.currencyName === currencyName) return data;
@@ -526,12 +527,8 @@ export const copyToClipboard = (copyText) => {
 /**
  * 获取memery hash
  */
-export const calcHashValuePromise = async (pwd, salt, walletId, useCache: boolean = true) => {
+export const calcHashValuePromise = async (pwd, salt) => {
     let hash;
-    if (useCache && walletId) {
-        hash = find('hashMap',walletId);
-        if (hash) return hash;
-    }
 
     const argonHash = new ArgonHash();
     argonHash.init();
@@ -689,26 +686,7 @@ export const unicodeArray2Str = (arr) => {
     return str;
 };
 
-/**
- * 添加交易记录到本地
- */
-export const addRecord = (currencyName, currentAddr, tx:TransRecordLocal) => {
-    const addrInfo = getAddrById(currentAddr, currencyName);
-    if (!addrInfo) return;
-    let resend = false;
-    for (let i = addrInfo.record.length - 1;i >= 0 ;i--) {
-        if (addrInfo.record[i].nonce === tx.nonce) {
-            addrInfo.record.splice(i,1,tx);
-            resend = true;
-            break;
-        }
-    }
-    if (!resend) {
-        addrInfo.record.push(tx);
-    }
-    
-    resetAddrById(currentAddr, currencyName, addrInfo, true);
-};
+
 
 /**
  * 计算日期间隔
@@ -785,11 +763,9 @@ export const fetchGasPrice = (minerFeeLevel:MinerFeeLevel) => {
     return find('gasPrice')[minerFeeLevel];
 };
 
-// 获取gasPrice
-export const fetchPriority = (minerFeeLevel:MinerFeeLevel) => {
-    if (minerFeeLevel === MinerFeeLevel.STANDARD) return 'low';
-    if (minerFeeLevel === MinerFeeLevel.FAST) return 'medium';
-    if (minerFeeLevel === MinerFeeLevel.FASTEST) return 'high';
+// 获取btc miner fee
+export const fetchBtcMinerFee = (minerFeeLevel:MinerFeeLevel) => {
+    return find('btcMinerFee')[minerFeeLevel];
 };
 
 // 获取默认币种汇率
@@ -909,7 +885,8 @@ export const hasWallet = () => {
 };
 
 // 解析交易状态
-export const parseStatusShow = (status:TxStatus) => {
+export const parseStatusShow = (tx:TransRecordLocal) => {
+    const status = tx.status;
     if (status === TxStatus.PENDING) {
         return {
             text:'打包中',
@@ -917,7 +894,7 @@ export const parseStatusShow = (status:TxStatus) => {
         };
     } else if (status === TxStatus.CONFIRMED) {
         return {
-            text:'已确认',
+            text:`已确认 ${tx.confirmedBlockNumber}/${tx.needConfirmedBlockNumber}`,
             icon:'pending.png'
         };
     } else if (status === TxStatus.FAILED) {
@@ -927,7 +904,7 @@ export const parseStatusShow = (status:TxStatus) => {
         };
     } else {
         return {
-            text:'完成',
+            text:'已完成',
             icon:'icon_right2.png'
         };
     }
@@ -1044,3 +1021,100 @@ export const parseRtype = (rType) => {
 
     return '';
 };
+/**
+ * 获取某id理财产品持有量，不算已经赎回的
+ */
+export const fetchHoldedProductAmount = (id:string) =>{
+    const purchaseRecord = find('purchaseRecord');
+    let holdAmout = 0;
+    for (let i = 0;i < purchaseRecord.length;i++) {
+        const one = purchaseRecord[i];
+        if (one.id.toString() === id && one.state === 1) {
+            holdAmout += one.amount;
+        }
+    }
+    return holdAmout;
+}
+
+/**
+ * 计算剩余百分比
+ */
+export const calPercent = (surplus:number,total:number) =>{
+    if(surplus === 0){
+        return {
+            left:0,
+            use:100
+        }
+    }
+    if(surplus === total){
+        return {
+            left:100,
+            use:0
+        }
+    }
+    if(surplus <= total/100){
+        return {
+            left:1,
+            use:99
+        }
+    }
+    const r = Number((surplus / total).toFixed(2));
+    return {
+        left:r*100,
+        use:100-r*100
+    }
+}
+
+/**
+ * base64 to blob
+ */
+export const base64ToBlob = (base64:string) =>{
+    let arr = base64.split(',');
+    let mime = arr[0].match(/:(.*?);/)[1];
+    let bstr = atob(arr[1]);
+    let n = bstr.length;
+    let u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+}
+/**
+ * 图片base64转file格式
+ */
+export const base64ToFile = (base64:string) => {
+    const blob = base64ToBlob(base64);
+    const newFile = new File([blob], 'avatar.jpeg', {type: blob.type});
+    console.log(newFile);
+    return newFile;
+}
+
+/**
+ * 获取用户基本信息
+ */
+export const getUserInfo = ()=>{
+    const userInfo = find('userInfo');
+    let avatar = userInfo.avatar;
+    if(avatar && avatar.indexOf('data:image') < 0){
+        avatar = `${uploadFileUrlPrefix}${avatar}`;
+    }
+    return {
+        ...userInfo,
+        avatar
+    }
+}
+
+/**
+ * 获取区块确认数
+ */
+export const getConfirmBlockNumber = (currencyName:string,amount:number)=>{
+    if(ERC20Tokens[currencyName]){
+        return currencyConfirmBlockNumber["ERC20"];
+    }
+    const confirmBlockNumbers = currencyConfirmBlockNumber[currencyName];
+    for(let i = 0;i< confirmBlockNumbers.length;i++){
+        if(amount < confirmBlockNumbers[i].value){
+            return confirmBlockNumbers[i].number;
+        }
+    }
+}

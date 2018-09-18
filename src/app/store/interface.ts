@@ -49,17 +49,17 @@ export enum MinerFeeLevel {
 
 // btc矿工费等级
 export const priorityMap = {
-    [MinerFeeLevel.STANDARD]: 6,
-    [MinerFeeLevel.FAST]: 3,
-    [MinerFeeLevel.FASTEST]: 2
+    [MinerFeeLevel.STANDARD]: 36,
+    [MinerFeeLevel.FAST]: 18,
+    [MinerFeeLevel.FASTEST]: 12
 };
 
 // 交易状态
 export enum TxStatus {
     PENDING, // 打包中
-    CONFIRMED, // 确认
+    CONFIRMED, // 确认 >= 1个区块确认
     FAILED, // 失败
-    SUCCESS// 成功
+    SUCCESS// 成功  一定的区块确认后认为succss
 }
 // 交易类型
 export enum TxType {
@@ -77,7 +77,7 @@ export interface Store {
     conUserPublicKey: string;// 连接用户公钥
     conRandom: string;// 连接随机数
     conUid: number;// 连接uid
-    userInfo:string;// 用户头像base64
+    userInfo:any;// 用户头像base64
     readedPriAgr: boolean;// 隐私协议阅读与否
     loginState: LoginState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
@@ -86,11 +86,12 @@ export interface Store {
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包
     addrs: Addr[];// 地址数据
-    transactions: TransactionRecord[];// 交易记录
+    transactions: TransRecordLocal[];// 交易记录
     exchangeRateJson: Map<string, any>;// 兑换汇率列表
     ERC20TokenDecimals:Object;// ERC20精度
     nonceMap:Map<string,number>;// 维护本地的nonce
     gasPrice:object;// gasPrice档次(3档)
+    btcMinerFee:object;//btn minerFee档次(3档)
     realUserMap:Map<string,boolean>;// 真实用户map
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
@@ -168,38 +169,40 @@ export interface Addr {
     record: any[];// 记录缓存
 }
 
-/**
- * 交易记录
- */
-export interface TransactionRecord {
-    addr: string;// 地址
-    currencyName: string;// 货币类型
-    fees: number;// 矿工费
-    hash: number;// 交易hash
-    info: string;// 描述
-    time: number;// 时间
-    value: number;// 交易量
-    inputs?: string[];// 输入地址列表
-    outputs?: string[];// 输出地址列表
-}
+// /**
+//  * 交易记录
+//  */
+// export interface TransactionRecord {
+//     addr: string;// 地址
+//     currencyName: string;// 货币类型
+//     fees: number;// 矿工费
+//     hash: number;// 交易hash
+//     info: string;// 描述
+//     time: number;// 时间
+//     value: number;// 交易量
+//     inputs?: string[];// 输入地址列表
+//     outputs?: string[];// 输出地址列表
+// }
 
 /**
  * 本地缓存交易记录
  */
 export interface TransRecordLocal {
     hash:number | string; // 交易hash
+    addr:string;//哪个地址的交易
     txType:TxType;// 交易类型 1 转账 2 收款 3 充值 4 币币兑换转账
     fromAddr:string;// 转账地址
     toAddr:string;// 收币地址
     pay:number;// 转账金额
     time:number;// 时间戳
     status:TxStatus;// 交易状态
-    confirmBlock:number;// 确认区块数
+    confirmedBlockNumber:number;// 已确认区块数
+    needConfirmedBlockNumber:number;//需要确认得区块数
     info:string;// 交易额外信息
     currencyName:string;// 货币名称
     fee:number;// 矿工费
     nonce:number;// nonce
-    minerFeeLevel:MinerFeeLevel;// 矿工费档次
+    minerFeeLevel?:MinerFeeLevel;// 矿工费档次
 }
 
 /**
@@ -399,20 +402,20 @@ export interface RechargeWithdrawalLog {
 }
 
 export enum TaskSid {
-    createWlt = 1001,// 创建钱包
-    firstChargeEth,// 首次转入
-    bindPhone,// 注册手机
-    chargeEth,// 存币
-    inviteFriends,// 邀请真实好友
-    buyFinancial = 1007,// 购买理财产品
-    transfer,// 交易奖励
-    bonus,// 分红
-    mines,// 挖矿
-    chat,// 聊天
-    redEnvelope = 'red_bag_port', // 红包
-    recharge = 'bank_db',// 充值
-    withdraw = 'bank_port',// 提现
-    financialManagement = 'manage_money_port' // 理财
+    recharge = 301,// 充值
+    withdraw = 302,// 提现
+    createWlt = 311,// 创建钱包
+    firstChargeEth = 312,// 首次转入
+    bindPhone = 313,// 注册手机
+    chargeEth = 314,// 存币
+    inviteFriends = 315,// 邀请真实好友
+    buyFinancial = 316,// 购买理财产品
+    transfer = 317,// 交易奖励
+    bonus = 318,// 分红
+    mines = 319,// 挖矿
+    chat = 320,// 聊天
+    financialManagement = 330, // 理财
+    redEnvelope = 340 // 红包
 }
 
 export interface AccountDetail {
