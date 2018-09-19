@@ -682,6 +682,9 @@ export const getFirstEthAddr = () => {
 // unicode数组转字符串
 export const unicodeArray2Str = (arr) => {
     let str = '';
+    if (!arr || arr === 'null') {
+        return str;
+    }
     for (let i = 0; i < arr.length; i++) {
         str += String.fromCharCode(arr[i]);
     }

@@ -28,7 +28,7 @@ export class Dividend extends Widget {
             totalDivid:0,
             totalDays:0,
             thisDivid:0,
-            yearIncome: '暂未分红' ,
+            yearIncome: this.config.value.noneYearIncome,
             doMining:false,  // 点击领分红，数字动画效果执行
             firstClick:true,
             isAbleBtn:false,  // 点击领分红，按钮动画效果执行
@@ -68,13 +68,13 @@ export class Dividend extends Widget {
             this.state.totalDivid = data.totalDivid;
             this.state.totalDays = data.totalDays;
             this.state.thisDivid = data.thisDivid;
-            this.state.yearIncome = Number(data.yearIncome) === 0 ? '暂未分红' :data.yearIncome;
+            this.state.yearIncome = Number(data.yearIncome) === 0 ? this.config.value.noneYearIncome :data.yearIncome;
         }
 
-        // const history = find('dividHistory');
-        // if (history) {
-        //     this.state.dividHistory = history;
-        // }
+        const history = find('dividHistory');
+        if (history) {
+            this.state.dividHistory = history;
+        }
         this.paint();
     }
 

@@ -20,54 +20,55 @@ export class Dividend extends Widget {
 
     public create() {
         super.create();
+        const cfg = this.config.value;
         this.state = {
             data:[
                 {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_create.png',
-                    itemName: '创建钱包',
-                    itemShort:'矿储量+300KT',
-                    itemDetail: '创建钱包赠送300KT',
+                    itemName: cfg.data[0][0],
+                    itemShort:cfg.data[0][1],
+                    itemDetail: cfg.data[0][2],
                     itemJump: 'walletCreate',
                     show:false
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_verify.png',
-                    itemName: '验证手机号',
-                    itemShort:'矿储量+2500KT',
-                    itemDetail: '手机号注册可提现，额外赠送2500KT',
+                    itemName: cfg.data[1][0],
+                    itemShort: cfg.data[1][1],
+                    itemDetail: cfg.data[1][2],
                     itemJump: 'bindPhone',
                     show:false                
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_store.png',
-                    itemName: '存币送ETH',
-                    itemShort:'矿储量+1000KT',                
-                    itemDetail: '存币到自己的钱包地址，首次存币送1000KT，2-4个送2000，4-8个送4000，8-16个送6000，16-32个送8000,32以上送10000封顶。',
+                    itemName: cfg.data[2][0],
+                    itemShort: cfg.data[2][1],                
+                    itemDetail: cfg.data[2][2],
                     itemJump: 'storeCoin',
                     show:false
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_share.png',
-                    itemName: '与好友分享',
-                    itemShort:'一起分享0.5ETH',  
-                    itemDetail: '成功邀请一人送500KT和0.01ETH。',
+                    itemName: cfg.data[3][0],
+                    itemShort: cfg.data[3][1],  
+                    itemDetail: cfg.data[3][2],
                     itemJump: 'shareFriend',
                     show:false
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_buy.png',
-                    itemName: '购买理财',
-                    itemShort:'首次购买额外+1500KT',
-                    itemDetail: '每购买1ETH等价的理财产品每天送100KT，购买当日额外赠送500KT，首次购买额外赠送1500KT，总量封顶',
+                    itemName: cfg.data[4][0],
+                    itemShort: cfg.data[4][1],
+                    itemDetail: cfg.data[4][2],
                     itemJump: 'buyFinancial',
                     show:false
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_chat.png',
-                    itemName: '聊天',
-                    itemShort:'聊天+700KT',
-                    itemDetail: '首次参与聊天赠送700',
+                    itemName: cfg.data[5][0],
+                    itemShort: cfg.data[5][1],
+                    itemDetail: cfg.data[5][2],
                     itemJump: 'toChat',
                     show:false
                 }
@@ -90,11 +91,13 @@ export class Dividend extends Widget {
             getMineItemJump(itemJump);
 
             if (itemJump === 'shareFriend') {  // 邀请红包
+                const inviteCodeInfo = await getInviteCode();
+                if (inviteCodeInfo.result !== 1) return;
+                
                 popNew('app-view-earn-redEnvelope-sendRedEnv',{
-                    // rid:await getInviteCode(),
-                    rid:111,
+                    rid:inviteCodeInfo.cid,
                     rtype:99,
-                    message:'恭喜发财 万事如意'
+                    message:this.config.value.defaultMess
                 });
             }
             if (itemJump === 'bindPhone') {

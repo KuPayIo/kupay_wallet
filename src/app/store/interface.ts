@@ -261,8 +261,6 @@ export interface MineRankItem {
  * 矿山排名
  */
 export interface MineRank {
-    mineSecond:boolean;  // 矿山排名第二名是否存在
-    mineThird:boolean;   // 矿山排名第三名是否存在
     minePage:number;  // 矿山排名列表页码
     mineMore:boolean;  // 矿山排名是否还有更多  
     mineList:any[];  // 矿山排名总列表
@@ -274,13 +272,11 @@ export interface MineRank {
  * 挖矿排名
  */
 export interface MiningRank {
-    miningSecond:boolean;  // 挖矿排名第二名是否存在
-    miningThird:boolean;   // 挖矿排名第三名是否存在
     miningPage:number;  // 挖矿排名列表页码
     miningMore:boolean;  // 挖矿排名是否还有更多  
     miningList:any[];  // 挖矿排名总列表
     miningRank:MineRankItem[];  // 挖矿排名分页数据
-    miningFirst:boolean; // 挖矿排名是否有人
+    myRank:number; // 当前用户的排名
 }
 
 /**
@@ -303,6 +299,8 @@ export interface SRecDetail {
     time:number;// 时间
     timeShow:string;
     codes:string[];// 兑换码
+    // curNum:number;// 已兑换数量
+    // totalNum:number;// 红包总数量
 }
 
 /**
@@ -326,6 +324,8 @@ export interface CRecDetail {
     amount: number;// 金额
     time: number;// 时间
     timeShow:string;
+    // curNum:number;// 已兑换数量
+    // totalNum:number;// 红包总数量
 }
 /**
  * 红包详情

@@ -64,7 +64,7 @@ export const run = (cb): void => {
     // popNew('app-view-earn-redEnvelope-redEnvDetail',{ type:1 });
     // popNew('app-view-earn-redEnvelope-redEnvHistory');
     // popNew('app-view-wallet-coinConvert-coinConvert',{ currencyName:'ETH' });
-    // popNew('app-view-earn-exchange-exchangeHistory');
+    // popNew('app-view-earn-exchange-exchange');
     // popNew('app-view-mine-setting-setting');
     // popNew('app-components-chooseCurrency-chooseCurrency',{ list:['KT','ETH','BTC'],selected:1 });
     // popNewPage();

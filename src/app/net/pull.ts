@@ -5,7 +5,7 @@ import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExchangeDetail, parseMineDetail, parseMineRank,parseMiningRank,parseRechargeWithdrawalLog, parseSendRedEnvLog, paseProductList, pasePurchaseRecord } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExchangeDetail, parseMineDetail, parseMineRank,parseMiningRank,parseMyInviteRedEnv, parseRechargeWithdrawalLog, parseSendRedEnvLog, paseProductList, pasePurchaseRecord } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
@@ -299,8 +299,9 @@ export const inputInviteCdKey = async (code) => {
  */
 export const getInviteCodeDetail = async () => {
     const msg = { type: 'wallet/cloud@get_invite_code_detail', param: {} };
+    const data = await requestAsync(msg);
 
-    return requestAsync(msg);
+    return parseMyInviteRedEnv(data.value);
 };
 
 /**
@@ -311,7 +312,7 @@ export const getInviteCodeDetail = async () => {
  * @param count 红包数量
  * @param lm 留言
  */
-export const sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
+export const  sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
     const msg = {
         type: 'emit_red_bag',
         param: {
@@ -369,7 +370,7 @@ export const queryRedBagDesc = async (cid: string) => {
 /**
  * 查询发送红包记录
  */
-export const querySendRedEnvelopeRecord = async (start?: string) => {
+export const querySendRedEnvelopeRecord = (start?: string) => {
     let msg;
     if (start) {
         msg = {
@@ -389,8 +390,8 @@ export const querySendRedEnvelopeRecord = async (start?: string) => {
     }
 
     try {
-        requestAsync(msg).then(detail => {
-            const data = parseSendRedEnvLog(detail);
+        requestAsync(msg).then(async detail => {
+            const data = parseSendRedEnvLog(detail.value);
             updateStore('sHisRec',data);
         });
 
@@ -447,12 +448,13 @@ export const queryDetailLog = async (rid: string) => {
             rid
         }
     };
+    if (rid === '-1') return;
 
     try {
-        requestAsync(msg).then(detail => {
-            return parseExchangeDetail(detail);
-        });
-
+        const detail = await requestAsync(msg);
+        
+        return parseExchangeDetail(detail.value);
+        
     } catch (err) {
         showError(err && (err.result || err.type));
 

@@ -11,7 +11,7 @@ export class ExchangeDetail extends Widget {
     public setProps(props: Json, oldProps?: Json)  {
         super.setProps(props,oldProps);
         this.state = {
-            message:'恭喜发财 万事如意',
+            message:this.props.message ? this.props.message :this.config.value.defaultMess,
             redBagList:[
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
@@ -42,8 +42,8 @@ export class ExchangeDetail extends Widget {
         }
     }
 
-    public initData() {
-        const value = queryDetailLog(this.props.rid);
+    public async initData() {
+        const value = await queryDetailLog(this.props.rid);
         if (!value) return;
         this.state.redBagList = value[0];        
         this.state.message = value[1];

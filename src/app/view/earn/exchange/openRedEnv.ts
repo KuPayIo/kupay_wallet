@@ -8,7 +8,7 @@ import { RedEnvelopeType } from '../../../store/interface';
 interface Props {
     rtype:string;
     message: string;
-    ctype: number;
+    ctypeShow: string;
     amount: number;
 }
 export class OpenRedEnvelope extends Widget {
@@ -17,11 +17,11 @@ export class OpenRedEnvelope extends Widget {
         super.setProps(props,oldProps);
         let tag = '';
         if (props.rtype === RedEnvelopeType.Normal) {
-            tag = '您收到一个红包';
+            tag = this.config.value.tips[0];
         } else if (props.rtype === RedEnvelopeType.Random) {
-            tag = '金额随机，试试手气';
+            tag = this.config.value.tips[1];
         } else if (props.rtype === RedEnvelopeType.Invite) {
-            tag = '您收到一个邀请红包';
+            tag = this.config.value.tips[2];
         }
         this.state = {
             tag,
@@ -38,7 +38,7 @@ export class OpenRedEnvelope extends Widget {
         setTimeout(() => {
             popNew('app-view-earn-exchange-exchangeDetail',this.props);
             
-            popNew('app-components-message-message',{ content:'兑换成功' });
+            popNew('app-components-message-message',{ content:this.config.value.successMess });
             this.backPrePage();
         },800);
        
