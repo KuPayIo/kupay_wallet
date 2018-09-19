@@ -41,4 +41,7 @@ export class ChooseCurrency extends Widget {
         }, 100);
     }
     
+    public close(){
+        this.cancel && this.cancel();
+    }
 }

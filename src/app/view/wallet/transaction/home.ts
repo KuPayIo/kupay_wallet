@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { Addr } from '../../../store/interface';
 import { getBorn, register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, parseStatusShow, timestampFormat, parseTxTypeShow, getCurrentAddrInfo } from '../../../utils/tools';
+import { formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, parseStatusShow, timestampFormat, parseTxTypeShow, getCurrentAddrInfo, currencyExchangeAvailable } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
 import { dataCenter } from '../../../logic/dataCenter';
 // ============================导出
@@ -37,11 +37,13 @@ export class TransactionHome extends Widget {
         const rate =  getBorn('exchangeRateJson').get(currencyName).CNY;
         const balanceValue =  rate * balance;
         const txList = this.parseTxList();
+        const canConvert = this.canConvert();
         this.state = {
             balance,
             balanceValue:formatBalanceValue(balanceValue),
             rate:formatBalanceValue(rate),
-            txList
+            txList,
+            canConvert
         };
         
     }
@@ -57,6 +59,15 @@ export class TransactionHome extends Widget {
         });
 
         return txList;
+    }
+    public canConvert(){
+        const convertCurrencys = currencyExchangeAvailable();
+        for(let i = 0;i < convertCurrencys.length;i++){
+            if(convertCurrencys[i].symbol === this.props.currencyName){
+                return true;
+            }
+        }
+        return false;
     }
     public txListItemClick(e:any,index:number) {
         popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.state.txList[index].hash });

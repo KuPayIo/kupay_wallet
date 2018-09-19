@@ -221,8 +221,8 @@ export class CoinConvert extends Widget {
 
             return;
         }
-
-        const passwd = await popPswBox();
+        const content = [`发出：${outAmount}${outCurrency}`,`收到：${this.state.receiveAmount}${this.state.inCurrency}`];
+        const passwd = await popPswBox(content);
         if (!passwd) return;
         // await openBasePage('app-view-currencyExchange-exchangeConfirm',{
         //     outCurrency,

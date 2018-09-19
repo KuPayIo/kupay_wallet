@@ -135,15 +135,10 @@ svg:not(:root), symbol, image, marker, pattern, foreignObject {
 .pi-collapse-item:last-child .pi-collapse-item-panel{
     border-bottom: 1px solid transparent !important;
 }
-.pi-collapse-item:last-child .pi-collapse-head{
-    border-bottom: 1px solid #e5e5e5;
-}
 .pi-collapse-item-active .pi-collapse-item-panel .pi-collapse-text-item:last-child .pi-collapse-text{
     border-bottom: 1px solid transparent !important;
 }
-.pi-collapse-item-active .pi-collapse-head{
-    border-bottom: 1px solid #e5e5e5;
-}
+
 
 .message_open{
     transform: translateX(-50%);

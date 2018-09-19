@@ -234,8 +234,13 @@ export const getRandom = async () => {
     fetchGasPrices();
     // btc fees
     fetchBtcFees();
-    //用户基础信息
-    getUserInfo([resp.uid]);
+    const flag = find('flag');
+    //第一次创建不需要更新
+    if(!flag.created){
+        //用户基础信息
+        getUserInfo([resp.uid]);
+    }
+   
     const hash = getBorn('hashMap').get(getFirstEthAddr());
     if(hash){
         defaultLogin(hash);
@@ -632,10 +637,10 @@ export const getUserInfo = async (uids: [number]) => {
     try {
         const res = await requestAsync(msg);
         if(res.value[0]){
-            const userInfo = JSON.parse(unicodeArray2Str(res.value[0]))
+            const userInfo = JSON.parse(unicodeArray2Str(res.value[0]));
             userInfo.fromServer = true;
+            console.log(userInfo);
             updateStore('userInfo',userInfo);
-            console.log('------------',userInfo);
         }
     } catch (err) {
         console.log(err);

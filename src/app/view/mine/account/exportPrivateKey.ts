@@ -85,8 +85,7 @@ export class ExportPrivateKey extends Widget {
 
     public collapseItemClick(e: any) {
         const privateKey = this.state.collapseList[e.collapseListIndex].textList[e.textListIndex];
-        popNew('app-components-message-messagebox', {
-            itype: 'extra',
+        popNew('app-components-modalBox-modalBox2', {
             title: '导出私钥',
             content: '私钥未经加密，导出存在风险，千万不要丢失、泄露或发送给其他人！',
             extraInfo: privateKey,

@@ -72,6 +72,7 @@ export enum TxType {
 }
 // store数据管理
 export interface Store {
+    flag:any;//代码过程中需要使用的标识
     // 基础数据
     hashMap: Map<string, string>;// 输入密码后hash缓存
     salt: string;// 盐--加密时使用

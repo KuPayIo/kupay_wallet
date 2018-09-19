@@ -119,7 +119,7 @@ type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walle
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
  'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo' | 'coinGain' |
- 'btcMinerFee' | 'token';
+ 'btcMinerFee' | 'token' | 'flag';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -144,6 +144,7 @@ const handlerMap: HandlerMap = new HandlerMap();
 
 // tslint:disable-next-line:no-object-literal-type-assertion
 const store = <Store>{
+    flag:{},
     // 基础数据
     hashMap: new Map<string, string>(),// 输入密码后hash缓存
     salt: '',// 盐--加密时使用
