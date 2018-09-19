@@ -197,8 +197,10 @@ export class DataCenter {
         try {
             const res = await api.getTokenTransferEvents(contractAddress, addr);
             res.result.forEach(v => {
-                if(!this.neededUpdate(currencyName,v.hash,addr)) return;
-                this.getERC20TransactionByHash(currencyName,v.hash,addr);
+                if(this.neededUpdate(currencyName,v.hash,addr)){
+                    this.getERC20TransactionByHash(currencyName,v.hash,addr);
+                }
+                
             });
         } catch (err) {
             console.log('parseEthERC20TokenTransactionDetails------',err);
@@ -222,8 +224,10 @@ export class DataCenter {
         const ethTrans = this.filterEthTrans(r.result);
         for(let i = 0;i < ethTrans.length;i++){
             const hash = ethTrans[i].hash;
-            if(!this.neededUpdate('ETH',hash,addr)) return;
-            this.getEthTransactionByHash(hash,addr);
+            if(this.neededUpdate('ETH',hash,addr)){
+                this.getEthTransactionByHash(hash,addr);
+            };
+            
         }
     }
     // 解析btc交易详情

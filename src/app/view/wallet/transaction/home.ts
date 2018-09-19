@@ -59,7 +59,7 @@ export class TransactionHome extends Widget {
         return txList;
     }
     public txListItemClick(e:any,index:number) {
-        popNew('app-view-wallet-transaction-transactionDetails',{ tx:this.state.txList[index] });
+        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.state.txList[index].hash });
     }
 
     public doTransferClick() {
@@ -117,7 +117,7 @@ register('curWallet',() => {
 });
 
 //交易记录变化
-register('transactions',(addrs:Addr[]) => {
+register('transactions',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

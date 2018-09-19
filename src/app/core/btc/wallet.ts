@@ -237,7 +237,7 @@ export class BTCWallet {
      * @returns {Promise<string>} Transaction hash of this transaction
      * @memberof BTCWallet
      */
-    public async buildRawTransaction(output: Output, minerFee: number): Promise<[string, number]> {
+    public async buildRawTransaction(output: Output, minerFee: number): Promise<[string, number,string]> {
         if (!this.isInitialized) {
             throw new Error('Wallet uninitialized!');
         }
@@ -281,6 +281,7 @@ export class BTCWallet {
             .from(collected)
             .to(output.toAddr, output.amount)
             .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
+            .enableRBF()
             .sign(keySet);
 
         console.log('rawTx:', rawTx);
@@ -289,7 +290,7 @@ export class BTCWallet {
         const serialized = rawTx.serialize(true);
         console.log('serialized:', serialized);
 
-        return [serialized, rawTx.getFee()];
+        return [serialized, rawTx.getFee(),rawTx.hash()];
     }
 
     // TODO: we should distinguish `confirmed`, `unconfirmed` and `spendable`

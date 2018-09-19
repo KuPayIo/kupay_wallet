@@ -8,6 +8,7 @@ interface Props {
 }
 export class ChooseWithdrawAddr extends Widget {
     public ok:(index:number) => void;
+    public cancel:()=>void;
     public props:Props;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
@@ -19,5 +20,8 @@ export class ChooseWithdrawAddr extends Widget {
 
     public chooseAddrClick(e:any,index:number) {
         this.ok && this.ok(index);
+    }
+    public doClick(){
+        this.cancel && this.cancel();
     }
 }

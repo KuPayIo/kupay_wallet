@@ -1,5 +1,6 @@
 import { setMsgHandler } from "../../pi/net/ui/con_mgr";
 import { popNewMessage } from "../utils/tools";
+import { getCloudBalance } from "./pull";
 
 /**
  * 后端主动推消息给后端
@@ -14,6 +15,10 @@ import { popNewMessage } from "../utils/tools";
 export const initPush = ()=>{
     setMsgHandler('event_pay_ok',(res)=>{
         popNewMessage('充值已到账');
+        const value = res.value.toJSNumber();
+        getCloudBalance().then(res=>{
+            console.log('服务器推送成功 云端余额更新==========================',res);
+        });
         console.log('服务器推送成功==========================',res);
     });
 }

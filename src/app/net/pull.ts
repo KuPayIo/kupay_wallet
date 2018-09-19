@@ -12,6 +12,7 @@ import { showError } from '../utils/toolMessages';
 import { popPswBox, transDate, getFirstEthAddr, base64ToFile, unicodeArray2Str, fetchDeviceId, decrypt, encrypt } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 import { sign } from '../core/genmnemonic';
+import { MainChainCoin } from '../config';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
@@ -246,9 +247,14 @@ export const getRandom = async () => {
  * 获取所有的货币余额
  */
 export const getCloudBalance = () => {
-    const msg = { type: 'wallet/account@get', param: { list: `[${CurrencyType.KT}, ${CurrencyType.ETH}]` } };
-    requestAsync(msg).then(balanceInfo => {
-        // console.log('balanceInfo', balanceInfo);
+    const list = [];
+    for(let k in CurrencyType){
+        if(MainChainCoin.hasOwnProperty(k))
+        list.push(CurrencyType[k]);
+    }
+    const msg = { type: 'wallet/account@get', param: { list:`[${list}]` } };
+    return requestAsync(msg).then(balanceInfo => {
+        console.log('balanceInfo', balanceInfo);
         updateStore('cloudBalance', parseCloudBalance(balanceInfo));
     });
 };

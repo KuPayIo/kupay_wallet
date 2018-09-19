@@ -24,13 +24,15 @@ export enum LoginState {
 // 云端货币类型
 export enum CurrencyType {
     KT = 100,
-    ETH
+    ETH,
+    BTC
 }
 
 // 枚举云端货币类型
 export const CurrencyTypeReverse = {
     100: 'KT',
-    101: 'ETH'
+    101: 'ETH',
+    102:'BTC'
 };
 
 // 红包类型

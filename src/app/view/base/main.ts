@@ -16,6 +16,7 @@ import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
 import { fetchCoinGain } from '../../utils/tools';
 import { initPush } from '../../net/push';
+import { bufferToU64 } from '../../../pi/bigint/util';
 
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";

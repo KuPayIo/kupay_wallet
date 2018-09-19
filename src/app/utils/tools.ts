@@ -645,7 +645,7 @@ export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
     const addrs = find('addrs');
     for (let i = 0; i < addrs.length; i++) {
         if ((addrs[i].currencyName === currencyName) && (addrs[i].addr === curAddr)) {
-            return addrs[i].balance;
+            return addrs[i].balance || 0;
         }
     }
 
@@ -907,6 +907,16 @@ export const parseStatusShow = (tx:TransRecordLocal) => {
         };
     }
 };
+
+
+export const fetchTxByHash = (hash:string)=>{
+    const trans = find('transactions');
+    for(let i = 0;i< trans.length;i++){
+        if(trans[i].hash === hash){
+            return trans[i];
+        }
+    }
+}
 
 // 解析转账类型
 export const parseTxTypeShow = (txType:TxType) => {
