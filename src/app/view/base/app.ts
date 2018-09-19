@@ -100,9 +100,9 @@ register('userInfo',(userInfo:UserInfo) => {
 
 // 连接建立 登录
 register('conRandom',(conRandom:string) => {
-    popNew('app-components-modalBoxInput-modalBoxInput',{ itype:'password',title:'请登录',content:[] },(r) => {
-        login(r);
-    });
+    // popNew('app-components-modalBoxInput-modalBoxInput',{ itype:'password',title:'请登录',content:[] },(r) => {
+    //     login(r);
+    // });
 });
 
 //登录状态成功

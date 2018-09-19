@@ -7,7 +7,7 @@
                 <div w-class="balance">{{it1.balance}}</div>
                 <div w-class="balance-value">￥{{it1.balanceValue}}</div>
             </div>
-            <div w-class="btn-exchange">换币</div>
+            <div w-class="btn-exchange" on-tap="convertCurrencyClick">换币</div>
         </div>
         <div w-class="operating">
             <div w-class="operating-item" on-tap="doTransferClick"><img src="../../../res/image/transfer.png" w-class="icon"/><span>转账</span></div>

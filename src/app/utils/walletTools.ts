@@ -166,16 +166,8 @@ export const fetchTransactionList = (addr:string,currencyName:string) => {
     // 从缓存中取出对应地址的交易记录
     const transactions = find('transactions') || [];
     let txList = [];
-    if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
-        txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
-    } else if (currencyName === 'BTC') {
-        txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
-    }
-
-
-    const addrInfo = getAddrById(addr,currencyName);
-
-    return txList.concat(addrInfo.record).sort((a, b) => b.time - a.time);
+    txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
+    return txList.sort((a, b) => b.time - a.time);
 };
 
 

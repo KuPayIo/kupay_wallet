@@ -197,6 +197,7 @@ export class DataCenter {
         try {
             const res = await api.getTokenTransferEvents(contractAddress, addr);
             res.result.forEach(v => {
+                if(!this.neededUpdate(currencyName,v.hash,addr)) return;
                 this.getERC20TransactionByHash(currencyName,v.hash,addr);
             });
         } catch (err) {
@@ -204,13 +205,24 @@ export class DataCenter {
         }
         
     }
+
+    private neededUpdate(currencyName:string,hash:string,addr){
+        const txList = fetchTransactionList(addr,currencyName);
+        for(let i= 0;i<txList.length;i++){
+            if(txList[i].hash === hash && txList[i].currencyName === currencyName && txList[i].status === TxStatus.SUCCESS){
+                return false;
+            }
+        }
+        return true;
+    }
     // 解析eth交易详情
     private async parseEthTransactionDetails(addr: string) {
         const api = new EthApi();
         const r: any = await api.getAllTransactionsOf(addr);
         const ethTrans = this.filterEthTrans(r.result);
         for(let i = 0;i < ethTrans.length;i++){
-            const hash =ethTrans[i].hash;
+            const hash = ethTrans[i].hash;
+            if(!this.neededUpdate('ETH',hash,addr)) return;
             this.getEthTransactionByHash(hash,addr);
         }
     }

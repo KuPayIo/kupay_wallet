@@ -119,7 +119,7 @@ export const doEthTransfer = async (wlt:EthWallet,txRecord:TransRecordLocal) => 
     const api = new EthApi();
     const fromAddr = txRecord.fromAddr;
     const toAddr = txRecord.toAddr;
-    const minerFeeLevel = txRecord.minerFeeLevel;
+    const minerFeeLevel = txRecord.minerFeeLevel || MinerFeeLevel.STANDARD;
     const pay = txRecord.pay;
     const info = txRecord.info;
     const nonce = txRecord.nonce;

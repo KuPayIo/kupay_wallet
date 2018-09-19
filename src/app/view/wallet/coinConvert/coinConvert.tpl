@@ -32,8 +32,8 @@
         {{if it1.outAmount >= it1.outBalance}}
         <div style="text-align: center;color: #F5A264;">手续费不足</div>
         {{end}}
-        <div w-class="sureBtn">
-            <app-components-btn-btn>{name:"兑换",color:"blue"}</app-components-btn-btn>
+        <div w-class="sureBtn" ev-btn-tap="sureClick">
+            <app-components1-btn-btn>{name:"兑换",color:"blue"}</app-components1-btn-btn>
         </div>
     
     </div>

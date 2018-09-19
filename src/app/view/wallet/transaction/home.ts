@@ -82,6 +82,10 @@ export class TransactionHome extends Widget {
         this.init();
         this.paint();
     }
+
+    public convertCurrencyClick(){
+        popNew('app-view-wallet-coinConvert-coinConvert',{currencyName:this.props.currencyName});
+    }
 }
 
 // ==========================本地
