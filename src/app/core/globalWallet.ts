@@ -73,8 +73,7 @@ export class GlobalWallet {
     /**
      * 通过助记词导入钱包
      */
-    public static async fromMnemonic(mnemonic: string, passwd: string, salt: string): Promise<GlobalWallet> {
-        const hash = await calcHashValuePromise(passwd, salt, null);
+    public static fromMnemonic(hash:string,mnemonic: string){
         const gwlt = new GlobalWallet();
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
         
@@ -83,11 +82,6 @@ export class GlobalWallet {
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
 
         gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
-
-        // 更新内存数据中心
-        gwlt._addrs.forEach(item => {
-            dataCenter.updateAddrInfo(item.addr, item.currencyName);
-        });
 
         return gwlt;
     }
@@ -98,8 +92,7 @@ export class GlobalWallet {
      * @param walletName  wallet name
      * @param passphrase passphrase
      */
-    public static async generate(passwd: string, walletName: string, salt: string, vault?: Uint8Array) {
-        const hash = await calcHashValuePromise(passwd, salt, null);
+    public static generate(hash:string, walletName: string, vault?: Uint8Array) {
         const gwlt = new GlobalWallet();
         gwlt._nickName = walletName;
         vault = vault || generateRandomValues(strength);
@@ -283,10 +276,10 @@ export class GlobalWallet {
     /**
      * 修改密码
      */
-    public async passwordChange(oldPsw: string, newPsw: string, walletId: string) {
+    public async passwordChange(oldPsw: string, newPsw: string) {
         const salt = find('salt');
-        const oldHash = await calcHashValuePromise(oldPsw, salt, walletId);
-        const newHash = await calcHashValuePromise(newPsw, salt, null);
+        const oldHash = await calcHashValuePromise(oldPsw, salt);
+        const newHash = await calcHashValuePromise(newPsw, salt);
         // console.log('passwordChange hash', oldHash, this._vault, oldPsw, newHash, newPsw);
 
         const oldVault = cipher.decrypt(oldHash, this._vault);

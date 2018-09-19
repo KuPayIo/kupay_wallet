@@ -58,7 +58,7 @@ export class Withdraw extends Widget{
     }
 
     public chooseWithdrawAddr(){
-        popNew('app-view-wallet-cloudWallet-components-choosetWithdrawAddr',{addrsInfo:this.state.withdrawAddrInfo},(index)=>{
+        popNew('app-view-wallet-components-choosetWithdrawAddr',{addrsInfo:this.state.withdrawAddrInfo},(index)=>{
             const addrsInfo = this.state.withdrawAddrInfo;
             for(let i = 0;i<addrsInfo.length;i++){
                 if(i === index){

@@ -11,7 +11,7 @@
             <span>完成</span>
         </div>
         {{else}}
-        <app-components-btn-btn>{"name":{{it.btnName}},types:"small","color":"orange","style":{{it.style}}}</app-components-btn-btn>
+        <app-components1-btn-btn>{"name":{{it.btnName}},types:"small","color":"orange","style":{{it.style}}}</app-components1-btn-btn>
         {{end}}
     </div>
 </div>

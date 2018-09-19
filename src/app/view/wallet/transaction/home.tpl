@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="chooseAddrClick">
     <div w-class="top-head">
-        <app-components1-topBar-topBar>{"title":{{it.currencyName}},background:"linear-gradient(to right,#38CFE7,#318DE6)",nextImg:"location.png"}</app-components1-topBar-topBar>
+        <app-components1-topBar-topBar>{"title":{{it.currencyName}},background:"linear-gradient(to right,#38CFE7,#318DE6)",nextImg:"../../res/image/location.png"}</app-components1-topBar-topBar>
         <div w-class="head">
             <img src="../../../res/image/currency/{{it.currencyName}}.png" w-class="currency-icon"/>
             <div w-class="asset-container">
@@ -30,7 +30,7 @@
             <div w-class="tx-list">
                 {{for i,v of it1.txList}}
                 <div on-tap="txListItemClick(e,{{i}})">
-                <app-components-fourParaImgItem-fourParaImgItem>{"name":{{v.txTypeShow}},"data":{{v.pay}},"time":{{v.TimeShow}},"describe":{{v.statusShow}},img:{{v.txType === 1 ? "transfer_icon.png" : "receive_icon.png"}}}</app-components-fourParaImgItem-fourParaImgItem>
+                <app-components-fourParaImgItem-fourParaImgItem>{"name":{{v.txTypeShow}},"data":{{v.pay}},"time":{{v.TimeShow}},"describe":{{v.statusShow}},img:"../../res/image/{{v.txType === 1 ? "transfer_icon.png" : "receive_icon.png"}}"}</app-components-fourParaImgItem-fourParaImgItem>
                 </div>
                 {{end}}
             </div>

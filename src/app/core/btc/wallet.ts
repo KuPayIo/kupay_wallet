@@ -237,7 +237,7 @@ export class BTCWallet {
      * @returns {Promise<string>} Transaction hash of this transaction
      * @memberof BTCWallet
      */
-    public async buildRawTransaction(output: Output, priority: PRIORITY | string): Promise<[string, number]> {
+    public async buildRawTransaction(output: Output, minerFee: number): Promise<[string, number]> {
         if (!this.isInitialized) {
             throw new Error('Wallet uninitialized!');
         }
@@ -253,8 +253,7 @@ export class BTCWallet {
             medium: 3,
             high: 2
         };
-        const fee = await BtcApi.estimateFee(priorityMap[priority]);
-
+        // const fee = await BtcApi.estimateFee(priorityMap[priority]);
         // sort by transaction confirmations
         this.utxos.sort((a, b) => a.confirmations - b.confirmations);
 
@@ -278,7 +277,7 @@ export class BTCWallet {
         console.log('keyset length: ', keySet.length);
 
         output.amount = bitcore.Unit.fromBTC(output.amount).toSatoshis();
-        const rawTx = new bitcore.Transaction().feePerKb(bitcore.Unit.fromBTC(fee[priorityMap[priority]]).toSatoshis())
+        const rawTx = new bitcore.Transaction().feePerKb(minerFee)
             .from(collected)
             .to(output.toAddr, output.amount)
             .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)

@@ -4,7 +4,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { find } from '../../../store/store';
-import { copyToClipboard, getFirstEthAddr } from '../../../utils/tools';
+import { copyToClipboard, popPswBox, getFirstEthAddr } from '../../../utils/tools';
+import { backupMnemonic } from '../../../utils/walletTools';
 
 export class Home extends Widget {
     public ok:() => void;
@@ -47,8 +48,14 @@ export class Home extends Widget {
     /**
      * 备份
      */
-    public backUp() {
-        console.log('备份');
+    public async backUp() {
+        const psw = await popPswBox();
+        if(!psw) return;
+        const ret = await backupMnemonic(psw);
+        if(ret){
+            popNew('app-view-wallet-backup-index',{...ret});
+            this.ok && this.ok();
+        }
     }
 
     /**

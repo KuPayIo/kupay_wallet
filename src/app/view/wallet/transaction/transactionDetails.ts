@@ -23,7 +23,7 @@ export class TransactionDetails extends Widget {
     }
     public init() {
         const tx = this.props.tx;
-        const obj = parseStatusShow(tx.status);
+        const obj = parseStatusShow(tx);
         this.state = {
             ...tx,
             hashShow:parseAccount(tx.hash),

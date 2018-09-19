@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page">
     <div w-class="title-container">
         <div w-class="user-container">
-            <img src="{{it1.avatar ? it1.avatar : '../../../res/image1/default_avatar.png'}}" w-class="avatar"/>
+            <img src="{{it1.avatar ? it1.avatar : '../../../res/image1/default_avatar.png'}}" w-class="avatar" on-tap="showMine"/>
             <div w-class="total-asset">￥{{it1.totalAsset}}</div>
         </div>
         <div w-class="nav-wrap">

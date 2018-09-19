@@ -2,7 +2,6 @@
  * 首页
  */
 // ================================ 导入
-import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { fetchRealUser, login, setUserInfo } from '../../net/pull';
@@ -33,7 +32,7 @@ export class App extends Widget {
             old: this.old,
             loading,
             tabBarList: [{
-                text: '玩',
+                text: '玩1',
                 icon: 'play.png',
                 iconActive: 'play_active.png',
                 components: 'app-view-play-home-home'
@@ -72,6 +71,7 @@ export class App extends Widget {
 
 }
 
+
 // ===================================================== 本地
 // ===================================================== 立即执行
 
@@ -104,8 +104,12 @@ register('userInfo',(userInfo:UserInfo) => {
 //     });
 // });
 
+//登录状态成功
 register('loginState',(loginState:LoginState) => {
     if (loginState === LoginState.logined) {
-        setUserInfo();
+        const userInfo = find('userInfo');
+        if(!userInfo.fromServer){
+            setUserInfo();
+        }
     }
 });

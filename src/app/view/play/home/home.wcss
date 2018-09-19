@@ -1,0 +1,8 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+.games1{
+    height: 950px;
+    margin: 30px;
+}

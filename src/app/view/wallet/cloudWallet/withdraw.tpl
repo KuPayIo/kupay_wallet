@@ -46,7 +46,7 @@
                 {{if it1.balance < = it1.amount}}
                 <div w-class="tip">余额不足</div>
                 {{end}}
-                <div ev-btn-tap="withdrawClick" w-class="btn"><app-components-btn-btn>{"name":"提币","types":"big","color":"blue"}</app-components-btn-btn></div>
+                <div ev-btn-tap="withdrawClick" w-class="btn"><app-components1-btn-btn>{"name":"提币","types":"big","color":"blue"}</app-components1-btn-btn></div>
             </div>    
         </div>
     </div>
