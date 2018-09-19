@@ -9,7 +9,7 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExcha
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { popPswBox, transDate, getFirstEthAddr, base64ToFile, unicodeArray2Str } from '../utils/tools';
+import { popPswBox, transDate, getFirstEthAddr, base64ToFile, unicodeArray2Str, fetchDeviceId, decrypt, encrypt } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 import { sign } from '../core/genmnemonic';
 
@@ -103,6 +103,42 @@ export const login = async (passwd:string) => {
     }
 };
 
+/**
+ * 申请自动登录token
+ */
+export const applyAutoLogin = ()=>{
+    const msg = { 
+        type: 'wallet/user@set_auto_login', 
+        param: { 
+            device_id: fetchDeviceId()
+        }
+    }
+    requestAsync(msg).then(res => {
+        const deviceId = fetchDeviceId();
+        const decryptToken = encrypt(res.token,deviceId);
+        updateStore('token',decryptToken);
+    });
+}
+
+/**
+ * 自动登录
+ */
+export const autoLogin = ()=>{
+    const deviceId = fetchDeviceId();
+    const token = decrypt(find('token'),deviceId)
+    const msg = { 
+        type: 'wallet/user@auto_login', 
+        param: { 
+            device_id: deviceId,
+            timestamp:new Date().getTime(),
+            token,
+            random:find('conRandom')
+        }
+    }
+    requestAsync(msg).then(res => {
+        console.log('自动登录成功-----------',res);
+    });
+}
 /**
  * 创建钱包后默认登录
  * @param mnemonic 助记词

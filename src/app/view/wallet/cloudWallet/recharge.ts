@@ -5,7 +5,7 @@ import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
 import { ERC20Tokens } from "../../../config";
 import { timeOfArrival } from "../../../utils/constants";
-import { TransRecordLocal, MinerFeeLevel, TxStatus } from "../../../store/interface";
+import { TransRecordLocal, MinerFeeLevel, TxStatus, TxType } from "../../../store/interface";
 import { getCurrentAddrByCurrencyName, getCurrentAddrBalanceByCurrencyName, fetchGasPrice, popPswBox, fetchBtcMinerFee } from "../../../utils/tools";
 import { estimateMinerFee, recharge } from "../../../net/pullWallet";
 import { wei2Eth, sat2Btc } from "../../../utils/unitTools";
@@ -118,18 +118,20 @@ export class Recharge extends Widget{
         const oldTx = this.props.tx;
         const tx:TransRecordLocal = {
             hash:"",
-            txType:3,
-            fromAddr: fromAddr,
+            txType:TxType.RECHARGE,
+            fromAddr,
             toAddr: "",
             pay,
             time: t.getTime(),
             status:TxStatus.PENDING,
-            confirmBlock: 0,
+            confirmedBlockNumber: 0,
+            needConfirmedBlockNumber:0,
             info: '',
             currencyName: currencyName,
             fee: this.state.minerFee,
             nonce:oldTx && oldTx.nonce,
-            minerFeeLevel
+            minerFeeLevel,
+            addr:fromAddr
         };
         const ret = recharge(passwd,tx);
         if(ret){

@@ -715,13 +715,11 @@ export const timestampFormatToDate = (timestamp: number) => {
     
     return `${year}-${month}-${day}`;
 };
-// 加密盐值
-const salt = 'KuPay';
 /**
  * 密码加密
  * @param plainText 需要加密的文本
  */
-export const encrypt = (plainText: string) => {
+export const encrypt = (plainText: string,salt:string) => {
     const cipher = new Cipher();
 
     return cipher.encrypt(salt, plainText);
@@ -731,7 +729,7 @@ export const encrypt = (plainText: string) => {
  * 密码解密
  * @param cipherText 需要解密的文本
  */
-export const decrypt = (cipherText: string) => {
+export const decrypt = (cipherText: string,salt:string) => {
     const cipher = new Cipher();
 
     return cipher.decrypt(salt, cipherText);
@@ -1117,4 +1115,12 @@ export const getConfirmBlockNumber = (currencyName:string,amount:number)=>{
             return confirmBlockNumbers[i].number;
         }
     }
+}
+
+/**
+ * 获取设备唯一id
+ */
+export const fetchDeviceId = ()=>{
+
+    return getFirstEthAddr();
 }

@@ -82,6 +82,7 @@ export interface Store {
     loginState: LoginState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
     coinGain:Map<string,number>;// 货币涨跌
+    token:string;//自动登录token
     // 本地钱包
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包
