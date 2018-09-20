@@ -8,8 +8,8 @@ import { estimateMinerFee, transfer, resendNormalTransfer } from '../../../net/p
 import { MinerFeeLevel, priorityMap, TransRecordLocal, TxStatus } from '../../../store/interface';
 import { timeOfArrival } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, popPswBox } from '../../../utils/tools';
-import { wei2Eth } from '../../../utils/unitTools';
+import { fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, popPswBox, fetchBtcMinerFee } from '../../../utils/tools';
+import { wei2Eth, sat2Btc } from '../../../utils/unitTools';
 import { doScanQrCode } from '../../../logic/native';
 
 interface Props {
@@ -59,12 +59,12 @@ export class Transfer extends Widget {
         const list = [];
         const obj = await estimateMinerFee(this.props.currencyName);
         const gasLimit = obj.gasLimit;
-        const btcMinerFee = obj.btcMinerFee;
+        // const btcMinerFee = obj.btcMinerFee;
         for (let i = 0;i < toa.length;i++) {
             const obj = {
                 ...toa[i],
                 // tslint:disable-next-line:max-line-length
-                minerFee: cn === 'ETH' ? wei2Eth(gasLimit * fetchGasPrice(toa[i].level)) : btcMinerFee[priorityMap[toa[i].level]]
+                minerFee: cn === 'ETH' ? wei2Eth(gasLimit * fetchGasPrice(toa[i].level)) : sat2Btc(fetchBtcMinerFee(toa[i].level))
             };
             list.push(obj);
         } 
@@ -132,13 +132,15 @@ export class Transfer extends Widget {
         const t = new Date();
         const tx:TransRecordLocal = {
             hash:"",
+            addr:fromAddr,
             txType:1,
             fromAddr,
             toAddr,
             pay: pay,
             time: t.getTime(),
             status:TxStatus.PENDING,
-            confirmBlock: 0,
+            confirmedBlockNumber: 0,
+            needConfirmedBlockNumber:0,
             info: '',
             currencyName,
             fee: this.state.minerFee,

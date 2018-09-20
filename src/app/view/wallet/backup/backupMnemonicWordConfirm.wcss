@@ -1,0 +1,80 @@
+
+.new-page{
+	display: flex;
+	flex-direction: column;
+}
+.body{
+	padding: 20px;
+	flex: 1 0 0;
+	display: flex;
+	flex-direction: column;
+}
+.bodyTitle{
+	color: #222;
+	font-size: 36px;
+	margin: 45px 30px 0;
+	line-height: 50px;
+}
+.screen{
+	height: 410px;
+	box-sizing: border-box;
+	padding: 20px 30px 30px;
+	background: #fff;
+	margin-top: 35px;
+	font-size: 32px;
+	line-height: 45px;
+	border-radius: 12px;
+	box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	color: #fff;
+}
+.screenItem{
+	min-width: 180px;
+	height: 80px;
+	background-color: #318de6;
+	border-radius: 2px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex: 1 0 0;
+}
+.bottom-box{
+	border-radius: 12px;
+	box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+	background: #fff;
+	flex: 1 0 0;
+	position: relative;
+	margin-top: 30px;
+	padding: 0 30px;
+}
+.itemsBox{
+	margin-top: 30px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+.item{
+	min-width: 180px;
+	height: 80px;
+	font-size: 32px;
+	line-height: 80px;
+	text-align: center;
+	border: 1px dashed #A0ACC0;
+	flex: 1 0 0;
+	background-color: #318de6;
+	color: #fff;
+}
+.checked{
+	background-color: #fff;
+	color: #979797;
+}
+.btnBox{
+	position: absolute;
+	bottom: 35px;
+	left: 35px;
+	right: 35px;
+}
+

@@ -21,7 +21,7 @@
                 <div w-class="content"><span>{{it1.fee}}&nbsp;{{it1.minerFeeUnit}}</span></div>
             </div>
             <div w-class="item">
-                <div w-class="tag">矿工费</div>
+                <div w-class="tag">备注</div>
                 <div w-class="content"><span>{{it1.info ? it1.info : "无"}}</span></div>
             </div>
         </div>

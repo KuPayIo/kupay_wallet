@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <div w-class="top-head" ev-next-click="doScanClick">
-        <app-components1-topBar-topBar>{"title":"{{it.currencyName}}转账",background:"#fff",nextImg:"scan.png"}</app-components1-topBar-topBar>
+        <app-components1-topBar-topBar>{"title":"{{it.currencyName}}转账",background:"#fff",nextImg:"../../res/image/scan.png"}</app-components1-topBar-topBar>
     </div>
     <div w-class="body">
         <div w-class="container">
@@ -41,7 +41,7 @@
                     <div w-class="fees"><span w-class="fee">{{it1.minerFee}}</span><img src="../../../res/image/right_arrow_blue.png"/></div>
                 </div>
             </div>
-            <div ev-btn-tap="nextClick" w-class="btn"><app-components-btn-btn>{"name":"下一步","types":"big","color":"blue"}</app-components-btn-btn></div>
+            <div ev-btn-tap="nextClick" w-class="btn"><app-components1-btn-btn>{"name":"下一步","types":"big","color":"blue"}</app-components1-btn-btn></div>
         </div>
     </div>
 </div>

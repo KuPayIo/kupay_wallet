@@ -88,21 +88,22 @@
 .body{
     flex: 1 0 0;
     display: flex;
-    margin-top: 30px;
-}
-.tx-list-container{
-    flex: 1 0 0;
+    flex-direction: column;
+    padding: 30px 30px 0;
     overflow-x: hidden;
     overflow-y: auto;
+}
+.tx-list-container{
     border-radius: 12px;
     background-color: #fff;
     box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
-    margin: 0 30px;
     padding: 0 10px;
     position: relative;
+    flex-basis: 100%;
 }
 .tx-list{
     position: relative;  
+    background-color: #fff;
 }
 .no-recode{
     width: 100%;

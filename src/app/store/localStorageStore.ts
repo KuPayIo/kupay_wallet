@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { getFirstEthAddr } from '../utils/tools';
-import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TopContact, TransactionRecord, Wallet } from './interface';
+import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TopContact, TransRecordLocal, Wallet } from './interface';
 import { register, updateStore } from './store';
 // ===================================================== 导出
 
@@ -30,7 +30,7 @@ export const initLocalStorageStore = () => {
         localStorage.setItem('addrs', JSON.stringify(addrs));
     });
     
-    register('transactions', (transactions: TransactionRecord[]) => {
+    register('transactions', (transactions: TransRecordLocal[]) => {
         localStorage.setItem('transactions', JSON.stringify(transactions));
     });
     

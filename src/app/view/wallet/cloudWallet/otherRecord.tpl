@@ -9,7 +9,7 @@
     <div w-class="record-list">
         {{for i,v of it1.recordList}}
         <div on-tap="recordListItemClick(e,{{i}})" w-class="item-container">
-        <app-components-fourParaImgItem-fourParaImgItem>{"name":{{v.behavior}},"data":{{v.amountShow}},"time":{{v.timeShow}},img:{{v.iconShow}}}</app-components-fourParaImgItem-fourParaImgItem>
+        <app-components-fourParaImgItem-fourParaImgItem>{"name":{{v.behavior}},"data":{{v.amountShow}},"time":{{v.timeShow}},img:{{'../../res/image/' + v.iconShow}}}</app-components-fourParaImgItem-fourParaImgItem>
         </div>
         {{end}}
     </div>

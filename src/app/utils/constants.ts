@@ -14,7 +14,7 @@ export const PAGELIMIT = 10;
 export const defaultEthToken = [];
 
 // 默认显示货币列表
-export const defalutShowCurrencys = ['ETH', 'BTC','KT'];
+export const defalutShowCurrencys = ['ETH', 'BTC'];
 
 //
 export const strength = 128;
@@ -94,3 +94,52 @@ export const timeOfArrival = {
         time:'0-30分钟'
     }]
 };
+
+//助记词片段分享最大数
+export const MAX_SHARE_LEN = 3;
+//助记词片段分享最小数
+export const MIN_SHARE_LEN = 2;
+
+
+// 交易所需区块确认数
+export const currencyConfirmBlockNumber = {
+    ETH:[{
+        value:1,
+        number:7
+    },{
+        value:2,
+        number:12
+    },{
+        value:4,
+        number:16
+    },{
+        value:7,
+        number:20
+    },{
+        value:10,
+        number:30
+    },{
+        value:Number.MAX_VALUE,
+        number:40
+    }],
+    BTC:[{
+        value:0.1,
+        number:2
+    },{
+        value:0.2,
+        number:3
+    },{
+        value:0.4,
+        number:4
+    },{
+        value:0.7,
+        number:5
+    },{
+        value:1,
+        number:6
+    },{
+        value:Number.MAX_VALUE,
+        number:7
+    }],
+    ERC20:7
+}

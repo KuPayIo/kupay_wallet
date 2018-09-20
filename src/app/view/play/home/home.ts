@@ -22,7 +22,7 @@ export class PlayHome extends Widget {
     }
 
     public doTap() {
-        console.log('hahhahahhahah');
+        window.open("http://192.168.33.105:8088/dst/client/boot/index.html?user=111");
     }
 
     public getCode(event:any) {

@@ -7,7 +7,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog,ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransactionRecord, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog,ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransRecordLocal, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -117,7 +117,8 @@ export const initStore = () => {
 type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
- 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo' | 'coinGain';
+ 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo' | 'coinGain' |
+ 'btcMinerFee';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -149,7 +150,7 @@ const store = <Store>{
     conUserPublicKey: '',// 连接用户公钥
     conRandom: '',// 连接随机数
     conUid: 0,// 连接uid
-    userInfo:null,// 用户头像base64
+    userInfo:{},// 用户头像base64
     readedPriAgr: false, // 是否阅读隐私协议
     loginState: LoginState.init,// 连接状态
     coinGain:new Map<string,number>(),
@@ -157,12 +158,13 @@ const store = <Store>{
     walletList: <Wallet[]>[],// 钱包数据
     curWallet: <Wallet>null,// 当前钱包
     addrs: <Addr[]>[],// 地址数据
-    transactions: <TransactionRecord[]>[],// 交易记录
+    transactions: <TransRecordLocal[]>[],// 交易记录
     exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
     ERC20TokenDecimals:null,// ERC20精度
     lockScreen: <LockScreen>null, // 锁屏密码相关
     nonceMap:new Map<string,number>(),// 本地nonce维护
     gasPrice:{},// gasPrice分档次
+    btcMinerFee:{},//btc minerfee 分档次
     realUserMap:new Map<string,boolean>(),// 本地真实用户map
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额

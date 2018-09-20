@@ -11,7 +11,7 @@
             <div w-class="content">
                 <div w-class="qrcode-container"><app-components-qrcode-qrcode>{value:{{it1.fromAddr}},size:400}</app-components-qrcode-qrcode></div>
                 <div w-class="addr-container">{{it1.fromAddr}}<img src="../../../res/image/copy.png" w-class="copy" on-tap="copyClick"/></div>
-                <div w-class="btn-container" ev-btn-tap="shareClick"><app-components-btn-btn>{"name":"分享好友","types":"big","color":"white"}</app-components-btn-btn></div>
+                <div w-class="btn-container" ev-btn-tap="shareClick"><app-components1-btn-btn>{"name":"分享好友","types":"big","color":"white"}</app-components1-btn-btn></div>
             </div>
         </div>
     </div>

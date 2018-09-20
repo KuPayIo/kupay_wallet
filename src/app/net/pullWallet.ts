@@ -15,10 +15,11 @@ import { CurrencyType, MinerFeeLevel, priorityMap, TransRecordLocal } from '../s
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { addRecord, fetchGasPrice, fetchPriority, formatBalance } from '../utils/tools';
+import { formatBalance, fetchGasPrice, fetchBtcMinerFee } from '../utils/tools';
 import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { VerifyIdentidy } from '../utils/walletTools';
-import { getBankAddr, getCloudBalance, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './pull';
+import { dataCenter } from '../logic/dataCenter';
+import { getBankAddr, rechargeToServer, withdrawFromServer, getWithdrawLogs, getCloudBalance } from './pull';
 // ===================================================== 导出
 
 /**
@@ -60,7 +61,11 @@ export const transfer = async (psw:string,txRecord:TransRecordLocal) => {
             nonce:ret.nonce
         };
         popNew('app-view-wallet-transaction-transactionDetails', { tx });
-        addRecord(currencyName, fromAddr, tx);
+        // addRecord(currencyName, fromAddr, tx);
+        const trans = find('transactions');
+        trans.push(tx);
+        updateStore('transactions',trans);
+        dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
         popNew('app-components-message-message',{ content:'转账成功' });
     }
 
@@ -76,16 +81,18 @@ export const estimateMinerFee = async (currencyName:string) => {
     const toAddr = defaultEthToAddr;
     const pay = 0;
     let gasLimit = 21000;
-    const btcMinerFee:any = {};
+    let btcMinerFee;
     if (currencyName === 'ETH') {
         gasLimit = await estimateGasETH(toAddr);
     } else if (currencyName === 'BTC') {
         // todo 获取BTC矿工费估值
-        for (const k in priorityMap) {
-            const nbBlocks = priorityMap[k];
-            const feeObj = await estimateMinerFeeBTC(nbBlocks);
-            btcMinerFee[nbBlocks] = formatBalance(feeObj[nbBlocks]);
-        }
+        // for (const k in priorityMap) {
+        //     const nbBlocks = priorityMap[k];
+        //     const feeObj = await estimateMinerFeeBTC(nbBlocks);
+        //     console.log('estimateMinerFee---------------',feeObj);
+        //     btcMinerFee[nbBlocks] = formatBalance(feeObj[nbBlocks]);
+        // }
+        btcMinerFee = find('btcMinerFee');
     } else if (ERC20Tokens[currencyName]) {
         gasLimit = await estimateGasERC20(currencyName,toAddr,pay);
     }
@@ -133,9 +140,7 @@ export const doEthTransfer = async (wlt:EthWallet,txRecord:TransRecordLocal) => 
         value: eth2Wei(pay),
         data: info
     };
-    console.log('txObj------------------',txObj);
     const tx = wlt.signRawTransaction(txObj);
-    console.log('tx------------------',tx);
     try {
         const hash = await api.sendRawTransaction(tx);
         if (!isNumber(nonce)) {
@@ -169,8 +174,6 @@ export const signRawTransactionETH = async (psw:string,fromAddr:string,toAddr:st
                 const localNonce = nonceMap.get(fromAddr);
                 const chainNonce = await api.getTransactionCount(fromAddr);
                 nonce = localNonce && localNonce >= chainNonce ? localNonce : chainNonce;
-                nonceMap.set(fromAddr,nonce + 1);
-                updateStore('nonceMap',nonceMap);
             }
             const gasLimit = await estimateGasETH(toAddr,info);
             const txObj = {
@@ -291,7 +294,7 @@ export const doBtcTransfer = async (wlt:BTCWallet,txRecord:TransRecordLocal) => 
     wlt.unlock();
     await wlt.init();
 
-    const retArr = await wlt.buildRawTransaction(output, fetchPriority(minerFeeLevel) || 'medium');
+    const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
     wlt.lock();
     const rawHexString: string = retArr[0];
 
@@ -477,7 +480,10 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
             time: t.getTime()
         };
         popNew('app-view-wallet-transaction-transactionDetails', { tx });
-        addRecord(currencyName, fromAddr, tx);
+        const trans = find('transactions');
+        trans.push(tx);
+        updateStore('transactions',trans);
+        dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
         popNew('app-components-message-message',{ content:'重发成功' });
     }
 
@@ -532,6 +538,9 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
 
         return;
     }
+    const nonceMap = getBorn('nonceMap');
+    nonceMap.set(fromAddr,nonce + 1);
+    updateStore('nonceMap',nonceMap);
     close.callback(close.widget);
     popNew('app-components-message-message',{ content:'充值成功' });
     // 维护本地交易记录
@@ -546,7 +555,10 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
         minerFeeLevel:minerFeeLevel
     };
     popNew('app-view-wallet-transaction-transactionDetails', { tx:record });
-    addRecord(currencyName, fromAddr, record);
+    const trans = find('transactions');
+    trans.push(record);
+    updateStore('transactions',trans);
+    dataCenter.refreshTrans(record.fromAddr,record.currencyName);
     
     return h;
 };
@@ -567,7 +579,7 @@ export const withdraw = async (passwd:string,toAddr:string,currencyName:string,a
     close.callback(close.widget);
     if (success) {
         popNew('app-components-message-message',{ content:'提现成功' });
-        getWithdrawLogs();
+        getWithdrawLogs(currencyName);
         getCloudBalance();
     }
    
