@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page">
+<div class="new-page" w-class="new-page" on-page="doClose">
     <div w-class="main">
         <div w-class="title">地址</div>
         <div w-class="list-container">

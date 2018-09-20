@@ -8,6 +8,7 @@ import {
 } from './util';
 import { decode as xxtea64Decode, encode as xxtea64Encode } from './xxtea64';
 import { deflateSync, inflateSync } from './zlib';
+import { u64Merge, bufferToU64 } from '../../bigint/util';
 
 const random = (seed) => {
 	const r = seed ^ 123459876;
@@ -254,7 +255,12 @@ const mDecode = (msg, jbuf, offset, length) => {
 			tempArray = readU8Array(jbuf, 4);
 			tempArray.offset = 0;
 			param[k] = readInt32(tempArray);
-		} else if (t === TAG.STRING_TAG) {
+		}else if (t === TAG.BIG_INT_TAG) {
+            tempArray = readU8Array(jbuf, len - 1);
+            tempArray.offset = 0;
+			param[k] = bufferToU64(new Uint8Array(tempArray.buf),false);
+			// param[k] = u64Merge(tempArray);
+        } else if (t === TAG.STRING_TAG) {
 			param[k] = readString({ buf: utf8ToChar(readU8Array(jbuf, len - 1).buf) });
 		} else if (t === TAG.BIN_TAG) {
 			param[k] = readU8Array(jbuf, len - 1).buf;

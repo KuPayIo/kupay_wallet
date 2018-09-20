@@ -129,6 +129,7 @@ export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) =
  */
 export const getMnemonic = async (wallet, passwd) => {
     const hash = await calcHashValuePromise(passwd, find('salt'));
+    console.log('hash-------',hash);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -165,16 +166,8 @@ export const fetchTransactionList = (addr:string,currencyName:string) => {
     // 从缓存中取出对应地址的交易记录
     const transactions = find('transactions') || [];
     let txList = [];
-    if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
-        txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
-    } else if (currencyName === 'BTC') {
-        txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
-    }
-
-
-    const addrInfo = getAddrById(addr,currencyName);
-
-    return txList.concat(addrInfo.record).sort((a, b) => b.time - a.time);
+    txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
+    return txList.sort((a, b) => b.time - a.time);
 };
 
 
@@ -209,6 +202,7 @@ export const fetchMnemonicFragment =  (hash) =>{
 export const backupMnemonic = async (passwd:string) =>{
     const close = popNewLoading('导出中...');
     const hash = await calcHashValuePromise(passwd, find('salt'));
+    console.log('hash!!!!!!!!!!!!',hash);
     close.callback(close.widget);
     const mnemonic = getMnemonicByHash(hash);
     const fragments = fetchMnemonicFragment(hash);

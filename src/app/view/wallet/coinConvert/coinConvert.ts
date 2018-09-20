@@ -8,18 +8,22 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../../net/pullWallet';
-import { MarketInfo, TransRecordLocal } from '../../../store/interface';
-import { find, getBorn, register, updateStore } from '../../../store/store';
+import { MarketInfo, TransRecordLocal, MinerFeeLevel, TxType, TxStatus } from '../../../store/interface';
+import { getBorn, register, updateStore } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { addRecord, currencyExchangeAvailable, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, openBasePage, parseDate, popPswBox } from '../../../utils/tools';
-import { wei2Eth } from '../../../utils/unitTools';
+import { currencyExchangeAvailable, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, popPswBox, popNewMessage, fetchBtcMinerFee } from '../../../utils/tools';
+import { wei2Eth, sat2Btc } from '../../../utils/unitTools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+interface Props{
+    currencyName:string;
+}
 export class CoinConvert extends Widget {
+    public props:Props;
     public ok: () => void;
     
     public backPrePage() {
@@ -31,7 +35,7 @@ export class CoinConvert extends Widget {
      */
     public rateDetail() {
         // tslint:disable-next-line:prefer-template
-        const tips = '矿工费 ' + this.state.minerFee + ' ' + this.state.inCurrency;
+        const tips = '矿工费 ' + this.state.inMinerFee + ' ' + this.state.inCurrency;
         // tslint:disable-next-line:max-line-length
         popNew('app-components-modalBox-modalBox1',{ title:'汇率说明',content:'换币服务由shapeshift平台提供支持，换币汇率取决于国内外主流交易平台的实时相对价格，另外加上矿工费用及shapeshift平台收取的约0.5%服务费用。换币实际所得数量会因为实时价格有所浮动。换币矿工费会通过计算近期交易中矿工费得出',tips:tips });
     }
@@ -62,7 +66,8 @@ export class CoinConvert extends Widget {
             maxLimit:0,
             minimum:0,
             rate:0,
-            minerFee:0,
+            outMinerFee:0,
+            inMinerFee:0,
             timer:0,
             outBalance:0,
             outAmount:0,
@@ -71,7 +76,19 @@ export class CoinConvert extends Widget {
             curInAddr:''
         };
         this.init();
+        this.updateMinerFee();
     }
+
+    // 更新矿工费
+    public async updateMinerFee() {
+        const cn = (this.props.currencyName === 'ETH' || ERC20Tokens[this.props.currencyName]) ? 'ETH' : 'BTC';
+        const obj = await estimateMinerFee(this.props.currencyName);
+        const gasLimit = obj.gasLimit;
+        const minerFee = cn === 'ETH' ? wei2Eth(gasLimit * fetchGasPrice(MinerFeeLevel.STANDARD)) : sat2Btc(fetchBtcMinerFee(MinerFeeLevel.STANDARD))
+        this.state.outMinerFee = minerFee;
+        this.paint();
+    }
+
     public destroy() {
         clearTimeout(this.state.timer);
 
@@ -98,7 +115,7 @@ export class CoinConvert extends Widget {
         this.state.maxLimit = marketInfo.maxLimit;
         this.state.minimum = marketInfo.minimum;
         this.state.rate = marketInfo.rate;
-        this.state.minerFee = marketInfo.minerFee;
+        this.state.inMinerFee = marketInfo.minerFee;
         this.paint();
     }
     // 定时获取兑率等信息 30s更新一次
@@ -186,56 +203,36 @@ export class CoinConvert extends Widget {
     /**
      * 点击兑换
      */
-    // tslint:disable-next-line:max-func-body-length
     public async sureClick() {
         const outAmount = this.state.outAmount;
         const outCurrency = this.state.outCurrency;
         if (outAmount <= 0) {
-            popNew('app-components-message-message',{ itype:'error',content:'输入发出数量',center:true });
+            popNewMessage('输入发出数量');
 
             return;
         }
         if (outAmount >= this.state.outBalance) {
-            popNew('app-components-message-message',{ itype:'error',content:'余额不足',center:true });
+            popNewMessage('余额不足');
 
             return;
         }
         if (outAmount > this.state.maxLimit || outAmount < this.state.minimum) {
-            popNew('app-components-message-message',{ itype:'error',content:'换币数量必须在最小数量和最大数量之间',center:true });
+            popNewMessage('换币数量必须在最小数量和最大数量之间');
 
             return;
         }
-
-        const loading = popNew('app-components1-loading-loading', { text: '矿工费预估中...' });
-        let gasLimit = 0;
-        let fee = 0;
-        const gasPrice = fetchGasPrice(GasPriceLevel.STANDARD);
-        try {
-            const obj = await estimateMinerFee(outCurrency,{ toAddr:this.state.curOutAddr,gasPrice,pay:this.state.outAmount });
-            fee = obj.minerFee;
-            gasLimit = obj.gasLimit;
-        } catch (err) {
-            console.error(err);
-        } finally {
-            console.log('gasLimit',gasLimit);
-            loading.callback(loading.widget);
-        }
+        const content = [`发出：${outAmount}${outCurrency}`,`收到：${this.state.receiveAmount}${this.state.inCurrency}`];
+        const passwd = await popPswBox(content);
+        if (!passwd) return;
+        // await openBasePage('app-view-currencyExchange-exchangeConfirm',{
+        //     outCurrency,
+        //     outAmount,
+        //     inCurrency:this.state.inCurrency,
+        //     inAmount:outAmount * this.state.rate,
+        //     fee
+        // });
         
-        await openBasePage('app-view-currencyExchange-exchangeConfirm',{
-            outCurrency,
-            outAmount,
-            inCurrency:this.state.inCurrency,
-            inAmount:outAmount * this.state.rate,
-            fee
-        });
-        
-        const wallet = find('curWallet');
-        let passwd;
-        if (!find('hashMap',wallet.walletId)) {
-            passwd = await popPswBox();
-            if (!passwd) return;
-        }
-        const close = popNew('app-components_level_1-loading-loading', { text: '交易中...' });
+        const close = popNew('app-components1-loading-loading', { text: '交易中...' });
         const withdrawalAddress = this.state.curInAddr; // 入账币种的地址
         const returnAddress =  this.state.curOutAddr;// 失败后的退款地址
         const pair = this.state.pair;// 交易对
@@ -249,21 +246,38 @@ export class CoinConvert extends Widget {
                 return;
             }
             const depositAddress = returnData.deposit;
-            const ret = await transfer(passwd,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,outCurrency);
+            const t = new Date();
+            const record:TransRecordLocal = {
+                hash:"",
+                txType: TxType.EXCHANGE,
+                fromAddr: this.state.curOutAddr,
+                toAddr: depositAddress,
+                pay: outAmount,
+                time: t.getTime(),
+                info: '',
+                currencyName: outCurrency,
+                fee: this.state.outMinerFee,
+                nonce:undefined,
+                addr:this.state.curOutAddr,
+                status:TxStatus.PENDING,
+                confirmedBlockNumber:0,
+                needConfirmedBlockNumber:0,
+                minerFeeLevel:MinerFeeLevel.STANDARD
+            };
+            
+            const ret = await transfer(passwd,record);
             close.callback(close.widget);
             if (!ret) {
                 return;
             }
             const hash = ret.hash;
-            const nonce = ret.nonce;
-               // tslint:disable-next-line:max-line-length
-            this.setTemRecord(hash,this.state.curOutAddr,depositAddress,this.state.gasPrice,gasLimit,outAmount,nonce,outCurrency,this.state.inCurrency,this.state.rate);
-            popNew('app-view-currencyExchange-currencyExchangeRecord', { currencyName:outCurrency });
+            this.setTemRecord(hash,this.state.curOutAddr,outAmount,outCurrency,this.state.inCurrency,this.state.rate);
+            popNew('app-view-wallet-coinConvert-convertHistory', { currencyName:outCurrency });
             this.init();
             this.paint();
         },(err) => {
             console.error(err);
-            popNew('app-components-message-message',{ itype:'error',content:'出错啦',center:true });
+            popNewMessage("出错啦");
             close.callback(close.widget);
             this.init();
             this.paint();
@@ -275,7 +289,7 @@ export class CoinConvert extends Widget {
 
     // 临时记录
     // tslint:disable-next-line:max-line-length
-    public setTemRecord(hash: string,fromAddr:string,toAddr:string,gasPrice:number,gasLimit:number,pay:number,nonce:number,outCurrency:string,inCurrency:string,rate:number) {
+    public setTemRecord(hash: string,fromAddr:string,pay:number,outCurrency:string,inCurrency:string,rate:number) {
         const t = new Date();
         // 币币兑换交易记录
         const tx = {
@@ -299,24 +313,6 @@ export class CoinConvert extends Widget {
         shapeShiftTxs.list.push(tx);
         shapeShiftTxsMap.set(addrLowerCase,shapeShiftTxs);
         updateStore('shapeShiftTxsMap',shapeShiftTxsMap);
-
-        // 币币兑换出货币种交易记录
-        const record:TransRecordLocal = {
-            hash,
-            type: '转账',
-            fromAddr: fromAddr,
-            toAddr: toAddr,
-            pay: pay,
-            time: t.getTime(),
-            showTime: parseDate(t),
-            result: '交易中',
-            info: '',
-            currencyName: outCurrency,
-            fee: wei2Eth(gasLimit * gasPrice),
-            nonce,
-            gasPriceLevel:GasPriceLevel.STANDARD
-        };
-        addRecord(outCurrency, fromAddr, record);
     }
     
 }

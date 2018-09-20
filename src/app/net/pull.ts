@@ -10,8 +10,9 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExcha
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { base64ToFile, getFirstEthAddr, popPswBox, transDate, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, getFirstEthAddr, popPswBox, transDate, unicodeArray2Str, fetchDeviceId, encrypt, decrypt } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
+import { MainChainCoin } from '../config';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
@@ -103,6 +104,42 @@ export const login = async (passwd:string) => {
     }
 };
 
+/**
+ * 申请自动登录token
+ */
+export const applyAutoLogin = ()=>{
+    const msg = { 
+        type: 'wallet/user@set_auto_login', 
+        param: { 
+            device_id: fetchDeviceId()
+        }
+    }
+    requestAsync(msg).then(res => {
+        const deviceId = fetchDeviceId();
+        const decryptToken = encrypt(res.token,deviceId);
+        updateStore('token',decryptToken);
+    });
+}
+
+/**
+ * 自动登录
+ */
+export const autoLogin = ()=>{
+    const deviceId = fetchDeviceId();
+    const token = decrypt(find('token'),deviceId)
+    const msg = { 
+        type: 'wallet/user@auto_login', 
+        param: { 
+            device_id: deviceId,
+            timestamp:new Date().getTime(),
+            token,
+            random:find('conRandom')
+        }
+    }
+    requestAsync(msg).then(res => {
+        console.log('自动登录成功-----------',res);
+    });
+}
 /**
  * 创建钱包后默认登录
  * @param mnemonic 助记词
@@ -197,8 +234,13 @@ export const getRandom = async () => {
     fetchGasPrices();
     // btc fees
     fetchBtcFees();
-    // 用户基础信息
-    getUserInfo([resp.uid]);
+    const flag = find('flag');
+    //第一次创建不需要更新
+    if(!flag.created){
+        //用户基础信息
+        getUserInfo([resp.uid]);
+    }
+   
     const hash = getBorn('hashMap').get(getFirstEthAddr());
     if (hash) {
         defaultLogin(hash);
@@ -210,9 +252,14 @@ export const getRandom = async () => {
  * 获取所有的货币余额
  */
 export const getCloudBalance = () => {
-    const msg = { type: 'wallet/account@get', param: { list: `[${CurrencyType.KT}, ${CurrencyType.ETH}]` } };
-    requestAsync(msg).then(balanceInfo => {
-        // console.log('balanceInfo', balanceInfo);
+    const list = [];
+    for(let k in CurrencyType){
+        if(MainChainCoin.hasOwnProperty(k))
+        list.push(CurrencyType[k]);
+    }
+    const msg = { type: 'wallet/account@get', param: { list:`[${list}]` } };
+    return requestAsync(msg).then(balanceInfo => {
+        console.log('balanceInfo', balanceInfo);
         updateStore('cloudBalance', parseCloudBalance(balanceInfo));
     });
 };
@@ -591,11 +638,11 @@ export const getUserInfo = async (uids: [number]) => {
 
     try {
         const res = await requestAsync(msg);
-        if (res.value[0]) {
+        if(res.value[0]){
             const userInfo = JSON.parse(unicodeArray2Str(res.value[0]));
             userInfo.fromServer = true;
+            console.log(userInfo);
             updateStore('userInfo',userInfo);
-            console.log('------------',userInfo);
         }
     } catch (err) {
         console.log(err);
@@ -780,7 +827,7 @@ export const withdrawFromServer = async (toAddr:string,coin:number,value:string)
 /**
  * 充值历史记录
  */
-export const getRechargeLogs = async (coin: string,start = '') => {
+export const getRechargeLogs = async (coin: string,start = '1537328970053') => {
     const msg = {
         type: 'wallet/bank@pay_log',
         param: {

@@ -4,9 +4,10 @@
 // ================================ 导入
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { fetchRealUser, login, setUserInfo } from '../../net/pull';
+import { login, setUserInfo, fetchRealUser, applyAutoLogin, autoLogin } from '../../net/pull';
 import { LoginState, UserInfo } from '../../store/interface';
 import { find, getBorn, register } from '../../store/store';
+import { popNew } from '../../../pi/ui/root';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -97,11 +98,15 @@ register('userInfo',(userInfo:UserInfo) => {
 });
 
 // 连接建立 登录
-// register('conRandom',(conRandom:string) => {
-//     popNew('app-components-modalBoxInput-modalBoxInput',{ itype:'password',title:'请登录',content:[] },(r) => {
-//         login(r);
-//     });
-// });
+register('conRandom',(conRandom:string) => {
+    if(find('token')){
+        autoLogin();
+    }
+    // popNew('app-components-modalBoxInput-modalBoxInput',{ itype:'password',title:'请登录',content:[] },(r) => {
+    //     login(r);
+        
+    // });
+});
 
 // 登录状态成功
 register('loginState',(loginState:LoginState) => {
@@ -109,6 +114,9 @@ register('loginState',(loginState:LoginState) => {
         const userInfo = find('userInfo');
         if (!userInfo.fromServer) {
             setUserInfo();
+        }
+        if(!find('token')){
+            applyAutoLogin();
         }
     }
 });

@@ -197,6 +197,7 @@ export const importWalletByMnemonic = async (hash:string,option) => {
     walletList.push(wallet);
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
+    
     updateStore('salt', salt);
     updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
     openAndGetRandom();

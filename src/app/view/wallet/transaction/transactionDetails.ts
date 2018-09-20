@@ -4,7 +4,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
+import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage, timestampFormat, fetchTxByHash } from '../../../utils/tools';
+import { register } from '../../../store/store';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -12,7 +13,7 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
-    tx:any;
+    hash:string;
 }
 export class TransactionDetails extends Widget {
     public props:Props;
@@ -22,10 +23,10 @@ export class TransactionDetails extends Widget {
         this.init();
     }
     public init() {
-        const tx = this.props.tx;
+        const tx = fetchTxByHash(this.props.hash);
         const obj = parseStatusShow(tx);
         this.state = {
-            ...tx,
+            tx,
             hashShow:parseAccount(tx.hash),
             timeShow:timestampFormat(tx.time),
             statusShow:obj.text,
@@ -40,19 +41,19 @@ export class TransactionDetails extends Widget {
     }
 
     public resendClick() {
-        popNew('app-view-wallet-transaction-transfer',{ tx:this.props.tx,currencyName:this.props.tx.currencyName });
+        popNew('app-view-wallet-transaction-transfer',{ tx:this.state.tx,currencyName:this.state.tx.currencyName });
     }
 
     public copyToAddr() {
-        copyToClipboard(this.state.toAddr);
+        copyToClipboard(this.state.tx.toAddr);
         popNewMessage('复制成功');
     }
     public copyFromAddr() {
-        copyToClipboard(this.state.fromAddr);
+        copyToClipboard(this.state.tx.fromAddr);
         popNewMessage('复制成功');
     }
     public copyHash() {
-        copyToClipboard(this.state.hash);
+        copyToClipboard(this.state.tx.hash);
         popNewMessage('复制成功');
     }
     public copyEtherscan() {
@@ -60,4 +61,17 @@ export class TransactionDetails extends Widget {
         popNewMessage('复制成功');
     }
 
+    public updateTransaction(){
+        // this.state.tx = fetchTxByHash(this.props.hash);
+        this.init();
+        this.paint();
+    }
 }
+
+//交易记录变化
+register('transactions',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateTransaction();
+    }
+});

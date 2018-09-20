@@ -26,7 +26,7 @@
                     <div w-class="otherNum">{{it1.mines}}</div>
                 </div>
                 <div ev-btn-tap="doPadding">
-                    <app-components-btn-btn>{name:{{_cfg.btnName}},"types":"small"}</app-components-btn-btn>
+                    <app-components1-btn-btn>{name:{{_cfg.btnName}},"types":"small"}</app-components1-btn-btn>
                 </div>
             </div>
 
