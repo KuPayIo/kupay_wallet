@@ -2,7 +2,7 @@
 <html lang="zh-cmn-Hans">
 
 <head>
-	<title>钱包</title>
+	<title>红包</title>
 	<meta charset="utf-8">
 	<meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
@@ -58,9 +58,12 @@
 
 	<style>
 		body {
-			background-color: #0A1476 !important;
+			background-color: rgba(0, 0, 0, 0) !important;
 		}
-
+		@keyframes rotated{
+			0% {transform: rotateY(0deg);}
+			100% {transform: rotateY(360deg);}
+		}
         @keyframes opacity2{
             0%{opacity:0}
             100%{opacity:1;}
@@ -82,10 +85,7 @@
 			align-items: center;
 			position: absolute;
 			z-index: 9998;
-			background-image: url(../res/image/bg_open.png);
-			background-position: center;
-			background-repeat: no-repeat;
-			background-size: 239px 188px;
+			background-size: cover;
 		}
 
 		.aside {
@@ -151,38 +151,21 @@
 					winit.win[k] = 1;
 			}
 			winit.startTime = Date.now();
-			var name = "wallet"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
+			var name = "share"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
 			// winit.debug = !remote;
-			// winit.debug = false;
-			winit.debug = true;
+			winit.debug = true
 			// winit.debug = location.host.indexOf('192.168.31') > -1;
 			main = location.port ? main + ":" + location.port : main;
-			winit.isLoc = location.protocol.indexOf("file")>=0
 
 			var needCDN = true;
 
 			winit.domains = [location.protocol + "//" + (remote ? needCDN ? "" + remote : "" + remote : "") + main, location.protocol +
 				"//" + remote + main
 			];
-			if(winit.isLoc){
-				winit.domains = [ "file:///android_asset/res", "file:///android_asset/res" ];
-			}
-			// todo 发版本时需动态设置服务器ip及端口
-			// //----------本地-------
-			winit.severIp = "127.0.0.1";
-			winit.severPort = "80";
-			// winit.severIp = "192.168.33.113";
-			// winit.severPort = "80";
-			//---------国内------
-			// winit.severIp = "47.75.254.166";
-			// winit.severPort = "8080";
 
-			// -----------香港------
-			// winit.severIp = "47.75.210.96";
-			// winit.severPort = "8080";
 			// 读取JS的Function
 			winit.loadJS = function (roots, url, charset, callback, errText, i) {
 				var u, n, head;
@@ -213,13 +196,9 @@
 			winit.init = function () {};
 			winit.flags = {};
 			winit.start = function () {
-				if(winit.isLoc){
-					winit.loadJS([winit.domains[1]], "/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,"load index error");
-					return;
-				}
 				if (winit.debug) winit.loadJS([winit.domains[1]], "/wallet/app/boot/hotfix.js", "utf8", winit.initFail,
 					"load hotupdate error");
-				winit.loadJS([winit.domains[1]], "/wallet/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,
+				winit.loadJS([winit.domains[1]], "/wallet/app/boot/shareIndex.js?" + Math.random(), "utf8", winit.initFail,
 					"load index error");
 			};
 			if (document.hidden === true)

@@ -31,7 +31,6 @@ export class DividendItem extends Widget {
             totalNum:this.props.totalNum,
             more:false
         };
-        console.log('》》》》》',this.props);
     }
 
 }

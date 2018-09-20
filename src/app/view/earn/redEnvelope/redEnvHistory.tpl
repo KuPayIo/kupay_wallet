@@ -23,7 +23,7 @@
                     <div w-class="tips">过期未被领取的红包已退回云端账户</div>
                     {{for ind,val of it1.recordList}}
                     <div on-tap="goDetail({{ind}})">
-                        <app-components-fourParaItem-fourParaItem>{name:{{val.rtype==0?'普通红包':'拼手气红包'}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},describe:{{val.curNum+"/"+val.totalNum+"个"}} }</app-components-fourParaItem-fourParaItem>
+                        <app-components-fourParaItem-fourParaItem>{name:{{it1.rtypeShow[val.rtype]}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},describe:{{val.curNum+"/"+val.totalNum+"个"}} }</app-components-fourParaItem-fourParaItem>
                     </div>
                     {{end}}
                 {{end}}

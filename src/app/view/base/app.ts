@@ -6,7 +6,7 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { login, setUserInfo, fetchRealUser, applyAutoLogin, autoLogin } from '../../net/pull';
 import { LoginState, UserInfo } from '../../store/interface';
-import { find, register, getBorn } from '../../store/store';
+import { find, getBorn, register } from '../../store/store';
 import { popNew } from '../../../pi/ui/root';
 
 // ================================ 导出

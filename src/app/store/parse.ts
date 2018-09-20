@@ -4,7 +4,8 @@ import { financialProductList } from '../config';
 // tslint:disable-next-line:max-line-length
 import { formatBalance, GetDateDiff, parseRtype,timestampFormat,timestampFormatToDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
-import { AccountDetail, CRecDetail, CurrencyType, CurrencyTypeReverse,PurchaseRecordOne, RedBag, SRecDetail, TaskSid } from './interface';
+// tslint:disable-next-line:max-line-length
+import { AccountDetail, CRecDetail, CurrencyType, CurrencyTypeReverse,MineRank, MiningRank, PurchaseRecordOne, RedBag, SRecDetail, TaskSid } from './interface';
 import { find } from './store';
 /**
  * 解析数据
@@ -80,31 +81,16 @@ export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[
  * 处理矿山排名列表
  */
 export const parseMineRank = (data) => {
-    const mineData: any = {
-        mineSecond: false,
-        mineThird: false,
+    const mineData: MineRank = {
         minePage: 1,
         mineMore: false,
         mineList: data.value,
-        mineRank: [
-            {
-                index: 1,
-                name: '昵称未设置',
-                num: '0'
-            }
-        ],
+        mineRank: [],
         myRank: data.me
     };
     if (data.value.length > 10) {
         mineData.mineMore = true;
-        mineData.mineSecond = true;
-        mineData.mineThird = true;
-    } else if (data.value.length > 2) {
-        mineData.mineSecond = true;
-        mineData.mineThird = true;
-    } else if (data.value.length > 1) {
-        mineData.mineSecond = true;
-    }
+    } 
     const data1 = [];
     for (let i = 0; i < data.value.length && i < 10; i++) {
         const user = unicodeArray2Str(data.value[i][1]);
@@ -125,37 +111,17 @@ export const parseMineRank = (data) => {
  * 处理挖矿排名列表
  */
 export const parseMiningRank = (data) => {
-    const miningData: any = {
-        miningSecond: false,
-        miningThird: false,
-        miningFirst: true,
+    const miningData: MiningRank = {
         miningPage: 1,
         miningMore: false,
         miningList: data.value,
-        miningRank: [
-            {
-                index: 1,
-                name: '昵称未设置',
-                num: '0'
-            }
-        ]
+        miningRank: [],
+        myRank:data.me
     };
-    if (data.value === '') {
-        miningData.miningFirst = false;
-        
-        return miningData;
-    }
 
     if (data.value.length > 10) {
         miningData.miningMore = true;
-        miningData.miningSecond = true;
-        miningData.miningThird = true;
-    } else if (data.value.length > 2) {
-        miningData.miningSecond = true;
-        miningData.miningThird = true;
-    } else if (data.value.length > 1) {
-        miningData.miningSecond = true;
-    }
+    } 
     const data2 = [];
     for (let i = 0; i < data.value.length && i < 10; i++) {
         const user = unicodeArray2Str(data.value[i][1]);
@@ -319,6 +285,7 @@ export const parseSendRedEnvLog = (value) => {
     const r = value[2];
     for (let i = 0; i < r.length;i++) {
         const currencyName = CurrencyTypeReverse[r[i][2]];
+        
         const record:SRecDetail = {
             rid:r[i][0].toString(),
             rtype:r[i][1],
@@ -328,6 +295,7 @@ export const parseSendRedEnvLog = (value) => {
             time:r[i][4],
             timeShow:timestampFormat(r[i][4]),
             codes:r[i][5]
+           
         };
         recordList.push(record);
     }
@@ -338,18 +306,20 @@ export const parseSendRedEnvLog = (value) => {
         list:rList.concat(recordList)
     };
 };
+
 /**
  * 解析红包兑换历史记录
  */
-export const parseConvertLog = (value) => {
+export const parseConvertLog = (data) => {
     const cHisRec = find('cHisRec');
     const rList:CRecDetail[] = cHisRec && cHisRec.list || [];
-    const convertNumber = value[0];
-    const startNext = value[1];
+    const convertNumber = data.value[0];
+    const startNext = data.value[1];
     const recordList:CRecDetail[] = [];
-    const r = value[2];
+    const r = data.value[2];
     for (let i = 0; i < r.length;i++) {
         const currencyName = CurrencyTypeReverse[r[i][3]];
+        
         const record: CRecDetail = {
             suid: r[i][0],
             rid: r[i][1],
@@ -360,6 +330,7 @@ export const parseConvertLog = (value) => {
             amount: smallUnit2LargeUnit(currencyName, r[i][4]),
             time: r[i][5],
             timeShow: timestampFormat(r[i][5])
+            
         };
         recordList.push(record);
     }
@@ -397,6 +368,34 @@ export const parseExchangeDetail = (value) => {
     const message = unicodeArray2Str(value[0]);
 
     return [redBagList, message, curNum, data.length]; // 兑换人员列表，红包留言，已兑换个数，总个数
+};
+
+/**
+ * 解析我的邀请红包被领取记录
+ */
+export const parseMyInviteRedEnv = (value) => {
+    if (value) return;
+    const data = value[1];
+    const redBagList:RedBag[] = [];
+    let curNum = 0;    
+    for (let i = 0;i < data.length;i++) {
+        const amount = smallUnit2LargeUnit('ETH',data[i][1][0]);
+        if (data[i][1] !== 0 && data[i][5] !== 0) {
+            const redBag:RedBag = {
+                suid:0,
+                cuid:data[i][0],
+                rtype:99,
+                ctype:100,
+                amount,
+                time:0,
+                timeShow:''
+            };
+            redBagList.push(redBag);
+            curNum ++;
+        }
+    }
+    
+    return [redBagList,curNum];
 };
 // ===================================================== 本地
 

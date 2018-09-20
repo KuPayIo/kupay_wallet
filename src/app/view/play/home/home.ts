@@ -31,7 +31,7 @@ export class PlayHome extends Widget {
 
     public modalBox() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-modalBoxInput-modalBoxInput',{ title:'确认兑换',content:['输出：0.01ETH','输入：0.5KT'],sureText:'确定',cancelText:'取消',placeholder:'输入密码',itype:'password' });
+        // popNew('app-components-modalBoxInput-modalBoxInput',{ title:'确认兑换',content:['输出：0.01ETH','输入：0.5KT'],sureText:'确定',cancelText:'取消',placeholder:'输入密码',itype:'password' });
     }
 
     public modalBoxSure(e:any) {

@@ -19,14 +19,16 @@ export class Home extends Widget {
         super.create();
         this.state = {
             tabs:[{
-                tab:'挖矿排名',
+                tab:this.config.value.tabs[0],
                 data:[],
                 totalNum:0,
+                myRank:1,
                 fg:0
             },{
-                tab:'矿山排名',
+                tab:this.config.value.tabs[1],
                 data:[],
                 totalNum:0,
+                myRank:1,
                 fg:1
             }],
             activeNum:0
@@ -42,11 +44,13 @@ export class Home extends Widget {
         const data1 = find('miningRank');
         if (data1) {
             this.state.tabs[0].data = data1.miningRank;
+            this.state.tabs[0].myRank = data1.myRank;
         }
         
         const data2 = find('mineRank');
         if (data2) {
             this.state.tabs[1].data = data2.mineRank;
+            this.state.tabs[1].myRank = data2.myRank;
         }
 
         const mining = find('miningTotal');
