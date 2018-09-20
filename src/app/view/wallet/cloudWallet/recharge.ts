@@ -6,7 +6,7 @@ import { popNew } from "../../../../pi/ui/root";
 import { ERC20Tokens } from "../../../config";
 import { timeOfArrival } from "../../../utils/constants";
 import { TransRecordLocal, MinerFeeLevel, TxStatus, TxType } from "../../../store/interface";
-import { getCurrentAddrByCurrencyName, getCurrentAddrBalanceByCurrencyName, fetchGasPrice, popPswBox, fetchBtcMinerFee } from "../../../utils/tools";
+import { getCurrentAddrByCurrencyName, getCurrentAddrBalanceByCurrencyName, fetchGasPrice, popPswBox, fetchBtcMinerFee, popNewMessage } from "../../../utils/tools";
 import { estimateMinerFee, recharge } from "../../../net/pullWallet";
 import { wei2Eth, sat2Btc } from "../../../utils/unitTools";
 interface Props{
@@ -98,13 +98,13 @@ export class Recharge extends Widget{
     // 转账
     public async nextClick() {
         if (!this.state.amount) {
-            popNew('app-components-message-message', { content: '请输入转账金额' });
+            popNewMessage('请输入转账金额');
 
             return;
         }
 
         if (this.state.balance < this.state.amount + this.state.minerFee) {
-            popNew('app-components-message-message', { content: '余额不足' });
+            popNewMessage('余额不足');
 
             return;
         }

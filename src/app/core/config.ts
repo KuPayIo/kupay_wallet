@@ -9,7 +9,7 @@ export const config = {
     dev: {
         //https://api.blockcypher.com/v1/btc/main
         // tslint:disable-next-line:no-http-string
-        BtcApiBaseUrl: 'http://192.168.33.202:3002/insight-api',
+        BtcApiBaseUrl: 'http://192.168.33.115:3002/insight-api',
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
         // https://ropsten.infura.io/Y4zS49bjsYwtRU3Tt4Yj
         // http://192.168.33.115:8545

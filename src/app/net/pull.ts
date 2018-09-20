@@ -825,7 +825,7 @@ export const withdrawFromServer = async (toAddr:string,coin:number,value:string)
 /**
  * 充值历史记录
  */
-export const getRechargeLogs = async (coin: string,start = '') => {
+export const getRechargeLogs = async (coin: string,start = '1537328970053') => {
     const msg = {
         type: 'wallet/bank@pay_log',
         param: {

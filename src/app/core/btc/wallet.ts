@@ -290,7 +290,7 @@ export class BTCWallet {
         const serialized = rawTx.serialize(true);
         console.log('serialized:', serialized);
 
-        return [serialized, rawTx.getFee(),rawTx.hash()];
+        return [serialized, rawTx.getFee(),rawTx.hash];
     }
 
     // TODO: we should distinguish `confirmed`, `unconfirmed` and `spendable`

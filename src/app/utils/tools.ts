@@ -556,7 +556,7 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
     });
 };
 
-export const popPswBox = async (content?) => {
+export const popPswBox = async (content=[]) => {
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
         const psw = await openMessageboxPsw(content);
