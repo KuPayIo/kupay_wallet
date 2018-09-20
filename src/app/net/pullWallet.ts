@@ -19,7 +19,7 @@ import { formatBalance, fetchGasPrice, fetchBtcMinerFee } from '../utils/tools';
 import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { VerifyIdentidy } from '../utils/walletTools';
 import { dataCenter } from '../logic/dataCenter';
-import { getBankAddr, rechargeToServer, withdrawFromServer, getWithdrawLogs, getCloudBalance } from './pull';
+import { getBankAddr, rechargeToServer, withdrawFromServer, getWithdrawLogs, getCloudBalance, getBtcBankAddr } from './pull';
 // ===================================================== 导出
 
 /**
@@ -542,7 +542,14 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
  */
 export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
     const close = popNew('app-components1-loading-loading', { text: '正在充值...' });
-    const toAddr = await getBankAddr();
+    const currencyName = txRecord.currencyName;
+    let toAddr;
+    if(currencyName === 'ETH'){
+        toAddr = await getBankAddr();
+    }else{
+        toAddr = await getBtcBankAddr();
+    }
+    
     if (!toAddr) {
         close.callback(close.widget);
 
@@ -553,7 +560,7 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
     const gasPrice = fetchGasPrice(minerFeeLevel);
     const pay = txRecord.pay;
     const info = txRecord.info;
-    const currencyName = txRecord.currencyName;
+    
     let minerFee = 0;
     if (currencyName === 'BTC') {
         const nbBlocks = priorityMap[minerFeeLevel];

@@ -752,11 +752,30 @@ export const getMineItemJump = async(itemJump) => {
 
 // ===============================充值提现
 /**
- * 获取服务端钱包地址
+ * 获取服务端eth钱包地址
  */
 export const getBankAddr = async () => {
     const msg = {
         type: 'wallet/bank@get_bank_addr',
+        param: { }
+    };
+
+    try {
+        const res = await requestAsync(msg);
+
+        return res.value;
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
+};
+/**
+ * 获取服务端btc钱包地址
+ */
+export const getBtcBankAddr = async () => {
+    const msg = {
+        type: 'wallet/bank@get_btc_bank_addr',
         param: { }
     };
 
