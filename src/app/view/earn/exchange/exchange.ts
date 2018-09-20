@@ -5,6 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+// tslint:disable-next-line:max-line-length
 import { convertRedBag, getCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType } from '../../../store/interface';
 import {  updateStore } from '../../../store/store';
@@ -29,7 +30,7 @@ export class Exchange extends Widget {
         };
     }
     public backPrePage() {
-        this.ok && this.ok();
+        this.ok && this.ok(); 
     }
 
     // 输入兑换码
@@ -42,11 +43,11 @@ export class Exchange extends Widget {
         this.inputBlur();
         const code = this.state.cid.trim();
         if (code.length <= 0) {
-            popNew('app-components-message-message', { itype: 'error', content: '请输入兑换码', center: true });
+            popNew('app-components-message-message', { itype: 'error', content: this.config.value.errorList[0], center: true });
 
             return;
         }
-        const close = popNew('app-components1-loading-loading', { text: '兑换中...' });        
+        const close = popNew('app-components1-loading-loading', { text: this.config.value.loading });        
         const value: any = await this.convertRedEnvelope(code);
         close.callback(close.widget);
         if (!value) return;
@@ -56,16 +57,11 @@ export class Exchange extends Widget {
 
         const redEnvelope = {
             message: r.value,
-            ctype: value[0],
+            ctypeShow: CurrencyTypeReverse[value[0]],
             amount: smallUnit2LargeUnit(CurrencyTypeReverse[value[0]], value[1]),
             rtype: code.slice(0, 2)
         };
-        // const redEnvelope = {
-        //     message: '红包红包',
-        //     ctype: 100,
-        //     amount: 1,
-        //     rtype:'00'
-        // };
+        
         popNew('app-view-earn-exchange-openRedEnv', redEnvelope);
         this.state.cid = '';
         this.paint();
@@ -99,7 +95,7 @@ export class Exchange extends Widget {
             value = [CurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
         } else {
-            popNew('app-components-message-message', { content: '兑换码错误' });
+            popNew('app-components-message-message', { content: this.config.value.errorList[1] });
 
             return null;
         }
@@ -116,7 +112,7 @@ export class Exchange extends Widget {
         let res = { result: -1, value: '' };
         if (perCode === RedEnvelopeType.Invite) {
             res.result = 1;
-            res.value = 'KuPay大礼包';
+            res.value = this.config.value.defaultMess;
         } else {
             res = await queryRedBagDesc(validCode);
         }

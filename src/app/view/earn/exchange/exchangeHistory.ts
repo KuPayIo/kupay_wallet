@@ -2,13 +2,18 @@
  * ExchangeHistory
  */
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getData, queryConvertLog, queryDetailLog } from '../../../net/pull';
-import { CRecDetail, CurrencyType, CurrencyTypeReverse } from '../../../store/interface';
-import { find, updateStore } from '../../../store/store';
+import { CRecDetail, CurrencyType } from '../../../store/interface';
+import { find, register, updateStore } from '../../../store/store';
 import { PAGELIMIT } from '../../../utils/constants';
 import { parseRtype, timestampFormat } from '../../../utils/tools';
-
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface State {
     recordList:any[];
     recordListShow:any[];
@@ -26,7 +31,7 @@ export class ExchangeHistory extends Widget {
     public ok: () => void;
     public state:State;
 
-    public create() {
+    public async create() {
         super.create();
         this.state = {
             recordList:[
@@ -45,11 +50,6 @@ export class ExchangeHistory extends Widget {
             inviteObj:null
         };
         this.initData();
-        for (const i in this.state.recordList) {
-            this.state.recordList[i].totalNum = 0;
-            this.state.recordList[i].curNum = 0;
-        }
-        this.initRecordList();
         
     }
 
@@ -57,6 +57,8 @@ export class ExchangeHistory extends Widget {
      * 更新数据
      */
     public initData() {
+        this.getInviteRedEnvelope();     
+                               
         const cHisRec = find('cHisRec');
         if (cHisRec) {
             const hList = cHisRec.list;
@@ -71,29 +73,30 @@ export class ExchangeHistory extends Widget {
             queryConvertLog(this.state.start);
         }
         this.loadMore();    
-        this.getInviteRedEnvelope();            
     }
 
     /**
-     * 刷新红包历史纪录中的已领取数量
+     * 返回上一页
      */
-    public initRecordList() {
-        this.state.recordListShow = this.state.recordList;
-
-        for (const i in this.state.recordList) {            
-            const value = queryDetailLog(this.state.recordList[i].rid);
-            console.error(value);
-            if (!value) return;
-            this.state.recordList[i].curNum = value[2];            
-            this.state.recordList[i].totalNum = value[3];
-        }
-
-        this.innerPaint();
-        
-    }
-
     public backPrePage() {
         this.ok && this.ok();
+    }
+
+    /**
+     * 更新红包领取详情
+     */
+    public async initRedEnv() {
+        for (const i in this.state.recordList) {
+            const data = await queryDetailLog(this.state.recordList[i].rid);
+            if (data) {
+                this.state.recordList[i].curNum = data[2];
+                this.state.recordList[i].totalNum = data[3];
+            } else {
+                this.state.recordList[i].curNum = 0;
+                this.state.recordList[i].totalNum = 0;
+            }
+        }
+        this.paint();
     }
 
     /**
@@ -117,19 +120,21 @@ export class ExchangeHistory extends Widget {
         if (data.value && data.value !== '$nil') {
             this.state.inviteObj = {
                 suid: 0,
-                rid: 0,
+                rid: -1,
                 rtype: 99,
                 rtypeShow: parseRtype(99),
                 ctype: CurrencyType.ETH,
                 ctypeShow: 'ETH',
                 amount: 0.15,
                 time: data.value,
-                timeShow: timestampFormat(data.value)
+                timeShow: timestampFormat(data.value)               
+
             };
             updateStore('inviteRedBagRec',this.state.inviteObj);
             this.innerPaint();
         }
     }
+
     // 每次paint前对邀请红包做处理
     public innerPaint() {
         if (!this.state.inviteObj) {
@@ -163,6 +168,7 @@ export class ExchangeHistory extends Widget {
         this.state.start = cHisRec.start;
         this.state.hasMore = this.state.convertNumber > this.state.recordList.length;
         this.state.showMoreTips = this.state.convertNumber >= PAGELIMIT;
+        this.initRedEnv();        
         this.innerPaint();
     }
 
@@ -175,7 +181,7 @@ export class ExchangeHistory extends Widget {
         const scrollTop = document.getElementById('exchangeHistoryContent').scrollTop; 
         if (this.state.hasMore && this.state.refresh && (oh2 - oh1 - scrollTop) < 20) {
             this.state.refresh = false;
-            console.log('加载中，请稍后~~~');
+            console.log(this.config.value.loading);
             setTimeout(() => {
                 this.initData();
                 this.state.refresh = true;
@@ -193,3 +199,10 @@ export class ExchangeHistory extends Widget {
         }
     }
 }
+// =====================================本地
+register('cHisRec', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.loadMore();
+    }
+});

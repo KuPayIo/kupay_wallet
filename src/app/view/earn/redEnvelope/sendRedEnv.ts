@@ -40,6 +40,7 @@ export class SendRedEnv extends Widget {
             title,
             content:this.props.message
         });
+        console.error(url);
         // this.backPrePage();
     }
 

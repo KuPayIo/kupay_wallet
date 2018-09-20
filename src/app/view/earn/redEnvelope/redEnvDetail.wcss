@@ -30,9 +30,9 @@
     background: #fff;
     border-radius: 12px 12px 0 0;
     flex-basis: 100%;
-    transform: translateY(-20px);
-    margin: 0 20px -20px;
-    padding-bottom: 20px;
+    margin: 0px 20px;
+    padding-bottom: 120px;
+    position: relative;
 }
 .tips{
     font-size: 28px;
@@ -53,8 +53,17 @@
     margin-left: 10px;
 }
 .endMess{
-    color: rgba(204, 204, 204, 1);
-    font-size: 28px;
+    color: #888888;
+    font-size: 24px;
     text-align: center;
-    padding: 100px 0;
+    padding-top: 20px;
+    line-height: 40px;
+    position: absolute;
+    width: 100%;
+    bottom: 20px;
+}
+.againSend{
+    color: rgba(49, 141, 230, 1);
+    text-decoration:underline;
+    font-size: 28px;
 }

@@ -1,9 +1,12 @@
 /**
  * RedEnvDetail
  */
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { Json } from '../../../../pi/lang/type';
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { queryDetailLog } from '../../../net/pull';
+import { getInviteCode, queryDetailLog, sharePerUrl } from '../../../net/pull';
+import { RedEnvelopeType } from '../../../store/interface';
 
 interface Props {
     rtype:number;  // 0 等额红包  1 拼手气红包
@@ -22,6 +25,8 @@ export class RedEnvDetail extends Widget {
         this.state = {
             message:'恭喜发财 万事如意',
             redBagList:[
+                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
+                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' } 
@@ -58,5 +63,35 @@ export class RedEnvDetail extends Widget {
             this.state.scroll = false;
             this.paint();
         }
+    }
+
+    /**
+     * 继续发送红包
+     */
+    public async againSend() {
+        let url = '';
+        let title = '';
+        if (this.props.rtype === 0) {
+            // tslint:disable-next-line:max-line-length
+            url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}`;
+            title = '普通红包'; 
+        } else if (this.props.rtype === 1) {
+            // tslint:disable-next-line:max-line-length
+            url = `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}`;
+            title = '拼手气红包'; 
+        } else if (this.props.rid === '-1') {
+            const inviteCodeInfo = await getInviteCode();
+            if (inviteCodeInfo.result !== 1) return;
+                
+            url = `${sharePerUrl}?cid=${inviteCodeInfo.cid}&type=${RedEnvelopeType.Invite}`;
+            title = '邀请红包';
+        }
+        popNew('app-components-share-share', { 
+            shareType: ShareToPlatforms.TYPE_LINK,
+            url,
+            title,
+            content:this.state.message
+        });
+        console.error(url);
     }
 }

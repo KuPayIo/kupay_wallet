@@ -64,7 +64,7 @@ export class PlayHome extends Widget {
         if (this.state.hasWallet) {
             return true;
         }
-        popNew('app-components-modalBox-modalBox',{ title:'提示',content:'你还没有登录，去登录使用更多功能吧',sureText:'去登录',cancelText:'暂时不' },() => {
+        popNew('app-components-modalBox-modalBox',this.config.value.login,() => {
             popNew('app-view-wallet-create-home');
         });
         
@@ -98,9 +98,9 @@ export class PlayHome extends Widget {
     /**
      * 挖矿说明
      */
-    public miningDetail() {
+    public miningDesc() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-modalBox-modalBox1',{ title:'挖矿说明',content:'完成任务会产生相应的KT，KT被储存在矿山中，每日可挖取矿储量的25%，最高10000KT，如果当天领取额度低于100，且矿山剩余大于100，则按照100领取，若储矿量小于100KT，则把剩下的一次性挖完。挖矿结算后，挖到的数量将从储矿量中减去。',tips:'曾经拥有1000KT才具有提现权限' });
+        popNew('app-components-modalBox-modalBox1',this.config.value.miningDesc);
     }
 
     /**
@@ -137,18 +137,6 @@ export class PlayHome extends Widget {
             this.state.isAbleBtn = false;
             this.paint();
         },100);
-        // if (this.state.isAbleBtn) {
-        //     const r = await getAward();
-        //     if (r.result !== 1) {
-        //         popNew('app-components-message-message', { itype: 'outer', center: true, content: `挖矿失败(${r.result})` });
-    
-        //         return;
-        //     }
-        //     popNew('app-components-message-message', { itype: 'outer', center: true, content: '挖矿成功' });
-        //     this.state.isAbleBtn = false;
-        //     this.initEvent();
-        //     this.paint();
-        // }
         
     }
 

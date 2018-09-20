@@ -53,7 +53,6 @@ export class WriteRedEnv extends Widget {
             { img:'../../res/image/currency/ETH.png',name:'ETH',num:0.5 }
         ];
         const data = getBorn('cloudBalance');
-        console.error(data);
         for (const i in list) {
             list[i].num = data.get(CurrencyType[list[i].name]) || 0;
         }
@@ -101,7 +100,7 @@ export class WriteRedEnv extends Widget {
      * 修改数量
      */
     public changeNumber(e:any) {
-        this.state.totalNum = e.value;
+        this.state.totalNum = Number(e.value);
         if (!this.state.showPin) {
             this.state.totalAmount = this.state.oneAmount * this.state.totalNum;
         }
@@ -161,11 +160,14 @@ export class WriteRedEnv extends Widget {
             content:[mess1,mess2],
             placeholder:'输入密码',
             itype:'password' }, 
-            (r) => {
+            async (r) => {
+                const close = popNew('app-components1-loading-loading', { text: '红包准备中...' });
                 const wallet = find('curWallet');
-                const fg = VerifyIdentidy(wallet,r);
+                const fg = await VerifyIdentidy(wallet,r);
                 if (fg) {
                     this.sendRedEnv();
+                    close.callback(close.widget);
+
                 } else {
                     popNew('app-components-message-message',{ content:'密码错误，请重新输入' });
                 }
@@ -178,7 +180,7 @@ export class WriteRedEnv extends Widget {
      * 实际发红包
      */
     public async sendRedEnv() {
-        const close = popNew('app-components1-loading-loading', { text: '红包准备中...' });
+        
         const curCoin = this.state.list[this.state.selected];
         const lm = this.state.message;  // 留言
         const rtype = this.state.showPin ? 1 :0; // 0 等额红包  1 拼手气红包
@@ -186,7 +188,7 @@ export class WriteRedEnv extends Widget {
         const totalAmount = Number(this.state.totalAmount);   // 红包总金额
         const totalNum = this.state.totalNum;    // 红包总个数
         const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm);
-        close.callback(close.widget);
+        
         if (!rid) return;
     
         popNew('app-view-earn-redEnvelope-sendRedEnv', { 

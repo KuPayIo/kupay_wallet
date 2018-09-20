@@ -165,7 +165,6 @@ export class Setting extends Widget {
             popNew('app-components-keyboard-keyboard',{ title:this.state.errorTips[ind] },(r) => {
                 if (lockScreenVerify(r)) {
                     popNew('app-components-keyboard-keyboard',{ title:'设置锁屏密码' },(r) => {
-                        console.error(r);
                         this.state.lockScreenPsw = r;
                         this.reSetLockPsw();
                         
@@ -220,7 +219,7 @@ export class Setting extends Widget {
             const walletList = find('walletList');
             const gwlt = this.state.wallet.gwlt;
             gwlt.nickName = e.value;
-            this.state.wallet.gwlt = gwlt.toJSON();
+            this.state.wallet.gwlt = JSON.parse(gwlt);
             updateStore('walletList', walletList);
             updateStore('curWallet', this.state.wallet);
         }
@@ -234,6 +233,7 @@ export class Setting extends Widget {
             return;
         }
         popNew('app-components-modalBox-modalBox',{ title:'注销账户',content:'注销前请确认已备份助记词，以便下次用它恢复。',sureText:'备份',cancelText:'继续注销' },() => {
+            // popNew('');
             console.log('备份');
         },() => {
             popNew('app-components-modalBox-modalBox',{ title:'',content:'请再次确认您已备份了助记词，否则您的账户资产将永久丢失！',style:'color:#F7931A;' },() => {
