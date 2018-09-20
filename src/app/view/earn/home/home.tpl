@@ -27,7 +27,6 @@
                 </div>
                 <div ev-btn-tap="doPadding">
                     <app-components-btn-btn>{name:{{_cfg.btnName}},"types":"small"}</app-components-btn-btn>
-                  
                 </div>
             </div>
 

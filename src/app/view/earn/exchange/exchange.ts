@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType } from '../../../store/interface';
-import {  updateStore } from '../../../store/store';
+import {  find, updateStore } from '../../../store/store';
 import { showError } from '../../../utils/toolMessages';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
 
@@ -26,8 +26,13 @@ export class Exchange extends Widget {
     }
     public init() {
         this.state = {
-            cid: ''
+            cid: '',
+            cfgData:this.config.value.simpleChinese
         };
+        const lan = find('languageSet');
+        if (lan) {
+            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
+        }
     }
     public backPrePage() {
         this.ok && this.ok(); 
@@ -43,11 +48,11 @@ export class Exchange extends Widget {
         this.inputBlur();
         const code = this.state.cid.trim();
         if (code.length <= 0) {
-            popNew('app-components-message-message', { itype: 'error', content: this.config.value.errorList[0], center: true });
+            popNew('app-components-message-message', { itype: 'error', content: this.state.cfgData.errorList[0], center: true });
 
             return;
         }
-        const close = popNew('app-components1-loading-loading', { text: this.config.value.loading });        
+        const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });        
         const value: any = await this.convertRedEnvelope(code);
         close.callback(close.widget);
         if (!value) return;
@@ -95,7 +100,7 @@ export class Exchange extends Widget {
             value = [CurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
         } else {
-            popNew('app-components-message-message', { content: this.config.value.errorList[1] });
+            popNew('app-components-message-message', { content: this.state.cfgData.errorList[1] });
 
             return null;
         }
@@ -112,7 +117,7 @@ export class Exchange extends Widget {
         let res = { result: -1, value: '' };
         if (perCode === RedEnvelopeType.Invite) {
             res.result = 1;
-            res.value = this.config.value.defaultMess;
+            res.value = this.state.cfgData.defaultMess;
         } else {
             res = await queryRedBagDesc(validCode);
         }

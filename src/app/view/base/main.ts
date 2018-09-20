@@ -21,8 +21,8 @@ import { fetchCoinGain } from '../../utils/tools';
 // import { create } from "../../../pi/net/rpc";
 // import { Struct } from "../../../pi/struct/struct_mgr";
 
-let client;
-let rpc;
+// let client;
+// let rpc;
 // ============================== 导出
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
@@ -44,10 +44,7 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     // popNew('app-view-wallet-financialManagement-home');
-    // popNew('app-view-wallet-backup-shareMnemonic',{
-    //     mnemonic:"pair theme cage asset march devote help atom else crater bubble permit",
-    //     fragments:["CAFWwva3bglwwyAsxu4HTkCYLo/itdpe/x1vnpLxRXgp7A==", "CAKsmfFz3BLgm0BYkcEOnIAuYf5tobfbaiBe9KldDZRiDQ==", "CAP6WwfEshuQWGB0Vy8J0sC3r9HjrWdTGcC60ks5NTtbUg=="]
-    // });
+   
     // popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:'ETH' });
     // const t = new Date();
     // const tx:TransRecordLocal = {
@@ -88,10 +85,8 @@ export const run = (cb): void => {
     
     // test();
 
-    
     // test();
     
-  
 };
 // const rpcFunc = (req:Struct, respClass:Function, callback:Function, timeout: number) => {
 //     rpc(req, (r:Struct) =>{

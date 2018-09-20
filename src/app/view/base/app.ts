@@ -71,7 +71,6 @@ export class App extends Widget {
 
 }
 
-
 // ===================================================== 本地
 // ===================================================== 立即执行
 
@@ -104,11 +103,11 @@ register('userInfo',(userInfo:UserInfo) => {
 //     });
 // });
 
-//登录状态成功
+// 登录状态成功
 register('loginState',(loginState:LoginState) => {
     if (loginState === LoginState.logined) {
         const userInfo = find('userInfo');
-        if(!userInfo.fromServer){
+        if (!userInfo.fromServer) {
             setUserInfo();
         }
     }
