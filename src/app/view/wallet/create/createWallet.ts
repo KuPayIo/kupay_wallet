@@ -3,7 +3,6 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../logic/dataCenter';
 import { createWallet } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { CreateWalletType } from '../../../store/interface';
@@ -127,6 +126,7 @@ export class CreateWallet extends Widget {
         if(this.state.avatar){
             uploadFile(this.state.avatar);
         }
+        updateStore("flag",{created:true});
         const hashMap = getBorn('hashMap');
         hashMap.set(getFirstEthAddr(),hash);
         updateStore("hashMap",hashMap);

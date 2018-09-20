@@ -84,26 +84,26 @@ export class ConvertHistory extends Widget {
     public inHashClick(e:any,index:number) {
         const tx = this.state.txsShow[index];
         const inHash = tx.inputTXID;
-        const transactions = find('transactions');
-        let record = null;
-        transactions.forEach(item => {
-            if (item.hash === inHash) {
-                record = {
-                    tx:tx
-                };
-            }
-        });
-        if (!record) {
-            const curAddrInfo = getCurrentAddrInfo(tx.inputCurrency);
-            curAddrInfo.record.forEach(item => {
-                if (item.id === inHash) {
-                    record = {
-                        ...item
-                    };
-                }
-            });
-        }
-        // popNew('app-view-wallet-transaction-transactionDetails',{ ...record });
+        // const transactions = find('transactions');
+        // let record = null;
+        // transactions.forEach(item => {
+        //     if (item.hash === inHash) {
+        //         record = {
+        //             tx:tx
+        //         };
+        //     }
+        // });
+        // if (!record) {
+        //     const curAddrInfo = getCurrentAddrInfo(tx.inputCurrency);
+        //     curAddrInfo.record.forEach(item => {
+        //         if (item.id === inHash) {
+        //             record = {
+        //                 ...item
+        //             };
+        //         }
+        //     });
+        // }
+        popNew('app-view-wallet-transaction-transactionDetails',{ hash:inHash });
     }
 
     /**
@@ -113,17 +113,17 @@ export class ConvertHistory extends Widget {
         const tx = this.state.txsShow[index];
         if (tx.status !== 'complete') return;
         const outHash = tx.outputTXID;
-        const transactions = find('transactions');
-        let record = null;
-        transactions.forEach(item => {
-            if (item.hash === outHash) {
-                record = {
-                    tx:tx
-                };
-            }
-        });
-        if (!record) return;
-        // popNew('app-view-wallet-transaction-transactionDetails',record);
+        // const transactions = find('transactions');
+        // let record = null;
+        // transactions.forEach(item => {
+        //     if (item.hash === outHash) {
+        //         record = {
+        //             tx:tx
+        //         };
+        //     }
+        // });
+        // if (!record) return;
+        popNew('app-view-wallet-transaction-transactionDetails',{hash:outHash});
     }
 }
 

@@ -12,6 +12,8 @@ const TAG = {
 	SMALL_ATOM_TAG: 115,
 	// 短整数标记
 	SMALL_INT_TAG: 97,
+	// 大整数标记
+    BIG_INT_TAG: 101,
 	// 整数标记
 	INT_TAG: 98,
 	// 长整数标记

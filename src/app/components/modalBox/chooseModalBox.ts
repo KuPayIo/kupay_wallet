@@ -11,6 +11,7 @@ interface Props {
 }
 export class ChooseModalBox extends Widget {
     public ok:(index:number) => void;
+    public cancel:()=>void;
     public props:Props;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
@@ -29,5 +30,9 @@ export class ChooseModalBox extends Widget {
         // this.state.level = chooseLevel;
         // this.paint();
         this.ok && this.ok(index);
+    }
+
+    public doClose(){
+        this.cancel && this.cancel();
     }
 }

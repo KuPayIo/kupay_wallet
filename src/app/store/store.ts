@@ -87,6 +87,7 @@ export const initStore = () => {
     store.curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
     // 从localStorage中取readedPriAgr
     store.readedPriAgr = findByLoc('readedPriAgr');
+    store.token = findByLoc('token');
     // 从localStorage中取lockScreen
     store.lockScreen = findByLoc('lockScreen') || {};
     store.ERC20TokenDecimals = findByLoc('ERC20TokenDecimals') || {};
@@ -118,7 +119,7 @@ type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walle
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
  'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo' | 'coinGain' |
- 'btcMinerFee';
+ 'btcMinerFee' | 'token' | 'flag';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -128,7 +129,7 @@ type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' | 'level_3
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
  'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals' | 'lastGetSmsCodeTime' | 'nonceMap'|
- 'realUserMap';
+ 'realUserMap' | 'token';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -143,6 +144,7 @@ const handlerMap: HandlerMap = new HandlerMap();
 
 // tslint:disable-next-line:no-object-literal-type-assertion
 const store = <Store>{
+    flag:{},
     // 基础数据
     hashMap: new Map<string, string>(),// 输入密码后hash缓存
     salt: '',// 盐--加密时使用
@@ -154,6 +156,7 @@ const store = <Store>{
     readedPriAgr: false, // 是否阅读隐私协议
     loginState: LoginState.init,// 连接状态
     coinGain:new Map<string,number>(),
+    token:"",//自动登录token
     // 本地钱包
     walletList: <Wallet[]>[],// 钱包数据
     curWallet: <Wallet>null,// 当前钱包

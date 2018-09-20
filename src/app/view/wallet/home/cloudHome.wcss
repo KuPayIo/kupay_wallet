@@ -28,3 +28,8 @@
 .fm-list{
     margin-top: 35px;
 }
+.container{
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-bottom: 130px;
+}

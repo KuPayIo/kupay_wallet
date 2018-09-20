@@ -16,10 +16,12 @@
                 <span style="color: #3790E6;flex: 1 0 0;">{{item.inputTXID_show}}</span>
                 <span>-{{item.inputAmount}}</span>
             </div>
+            {{if item.status === 'complete'}}
             <div w-class="itemRow outmess" on-tap="outHashClick(e,{{ind}})">
                 <span style="color: #3790E6;flex: 1 0 0;">{{item.outputTXID_show}}</span>
                 <span>+{{item.outputAmount}}</span>
             </div>
+            {{end}}
         </div>
         {{end}}
 

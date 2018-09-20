@@ -15,6 +15,8 @@ import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
 import { fetchCoinGain } from '../../utils/tools';
+import { initPush } from '../../net/push';
+import { bufferToU64 } from '../../../pi/bigint/util';
 
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
@@ -36,6 +38,8 @@ export const run = (cb): void => {
     initStore();
     // 初始化localstorage
     initLocalStorageStore();
+    //主动推送初始化
+    initPush();
     openAndGetRandom();
     // 模拟异步获取货币涨跌幅度
     setTimeout(() => {
@@ -43,7 +47,7 @@ export const run = (cb): void => {
     },500);
     // dataCenter.init();
     popNew('app-view-base-app');
-    // popNew('app-view-wallet-financialManagement-home');
+    // popNew('app-view-mine-account-home');
     // popNew('app-view-wallet-backup-shareMnemonic',{
     //     mnemonic:"pair theme cage asset march devote help atom else crater bubble permit",
     //     fragments:["CAFWwva3bglwwyAsxu4HTkCYLo/itdpe/x1vnpLxRXgp7A==", "CAKsmfFz3BLgm0BYkcEOnIAuYf5tobfbaiBe9KldDZRiDQ==", "CAP6WwfEshuQWGB0Vy8J0sC3r9HjrWdTGcC60ks5NTtbUg=="]

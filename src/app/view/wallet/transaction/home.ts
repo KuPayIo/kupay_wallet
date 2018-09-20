@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { Addr } from '../../../store/interface';
 import { getBorn, register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, parseStatusShow, timestampFormat, parseTxTypeShow, getCurrentAddrInfo } from '../../../utils/tools';
+import { formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, parseStatusShow, timestampFormat, parseTxTypeShow, getCurrentAddrInfo, currencyExchangeAvailable } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
 import { dataCenter } from '../../../logic/dataCenter';
 // ============================导出
@@ -37,11 +37,13 @@ export class TransactionHome extends Widget {
         const rate =  getBorn('exchangeRateJson').get(currencyName).CNY;
         const balanceValue =  rate * balance;
         const txList = this.parseTxList();
+        const canConvert = this.canConvert();
         this.state = {
             balance,
             balanceValue:formatBalanceValue(balanceValue),
             rate:formatBalanceValue(rate),
-            txList
+            txList,
+            canConvert
         };
         
     }
@@ -58,8 +60,17 @@ export class TransactionHome extends Widget {
 
         return txList;
     }
+    public canConvert(){
+        const convertCurrencys = currencyExchangeAvailable();
+        for(let i = 0;i < convertCurrencys.length;i++){
+            if(convertCurrencys[i].symbol === this.props.currencyName){
+                return true;
+            }
+        }
+        return false;
+    }
     public txListItemClick(e:any,index:number) {
-        popNew('app-view-wallet-transaction-transactionDetails',{ tx:this.state.txList[index] });
+        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.state.txList[index].hash });
     }
 
     public doTransferClick() {
@@ -81,6 +92,10 @@ export class TransactionHome extends Widget {
     public updateTransaction(){
         this.init();
         this.paint();
+    }
+
+    public convertCurrencyClick(){
+        popNew('app-view-wallet-coinConvert-coinConvert',{currencyName:this.props.currencyName});
     }
 }
 
@@ -113,7 +128,7 @@ register('curWallet',() => {
 });
 
 //交易记录变化
-register('transactions',(addrs:Addr[]) => {
+register('transactions',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

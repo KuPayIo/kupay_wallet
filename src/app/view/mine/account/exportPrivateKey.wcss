@@ -1,0 +1,12 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+.container{
+    flex: 1 0 0;
+    margin: 30px 20px 0;
+}
+.currency-container{
+    overflow-x: hidden;
+    overflow-y: auto;
+}

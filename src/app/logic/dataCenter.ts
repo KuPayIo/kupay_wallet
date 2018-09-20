@@ -26,6 +26,7 @@ export class DataCenter {
     private txTimerList = [];
     // 余额定时器列表
     private balanceTimerList = [];
+    private btcTimerHash = 'btc--timer--hash';
 
     /**
      * 初始化
@@ -78,12 +79,17 @@ export class DataCenter {
 
     // 根据地址刷新交易记录
     public async refreshTrans(addr:string,currencyName:string){
-        const txList = fetchTransactionList(addr,currencyName);
-        for(let i = 0;i < txList.length;i++){
-            const timerItem = this.fetchTimerItem(txList[i].hash);
-            if(timerItem) continue;
-            this.timerUpdateTx(addr,currencyName,txList[i].hash);
-
+        if(currencyName === 'BTC'){
+            const timerItem = this.fetchTimerItem(this.btcTimerHash);
+            if(timerItem) return;
+            this.timerUpdateTx(addr,currencyName,undefined);
+        }else{
+            const txList = fetchTransactionList(addr,currencyName);
+            for(let i = 0;i < txList.length;i++){
+                const timerItem = this.fetchTimerItem(txList[i].hash);
+                if(timerItem) continue;
+                this.timerUpdateTx(addr,currencyName,txList[i].hash);
+            }
         }
     }
 
@@ -197,12 +203,25 @@ export class DataCenter {
         try {
             const res = await api.getTokenTransferEvents(contractAddress, addr);
             res.result.forEach(v => {
-                this.getERC20TransactionByHash(currencyName,v.hash,addr);
+                if(this.neededUpdate(currencyName,v.hash,addr)){
+                    this.getERC20TransactionByHash(currencyName,v.hash,addr);
+                }
+                
             });
         } catch (err) {
             console.log('parseEthERC20TokenTransactionDetails------',err);
         }
         
+    }
+
+    private neededUpdate(currencyName:string,hash:string,addr){
+        const txList = fetchTransactionList(addr,currencyName);
+        for(let i= 0;i<txList.length;i++){
+            if(txList[i].hash === hash && txList[i].currencyName === currencyName && txList[i].status === TxStatus.SUCCESS){
+                return false;
+            }
+        }
+        return true;
     }
     // 解析eth交易详情
     private async parseEthTransactionDetails(addr: string) {
@@ -210,13 +229,17 @@ export class DataCenter {
         const r: any = await api.getAllTransactionsOf(addr);
         const ethTrans = this.filterEthTrans(r.result);
         for(let i = 0;i < ethTrans.length;i++){
-            const hash =ethTrans[i].hash;
-            this.getEthTransactionByHash(hash,addr);
+            const hash = ethTrans[i].hash;
+            if(this.neededUpdate('ETH',hash,addr)){
+                this.getEthTransactionByHash(hash,addr);
+            };
+            
         }
     }
     // 解析btc交易详情
     private async parseBtcTransactionDetails(addr: string) {
         const info = await BtcApi.getAddrTxHistory(addr);
+        console.log('定时更新交易',{info,addr,time:new Date().getTime()});
         if (!info) return;
         if (info.txs) {
             info.txs.forEach(v => {
@@ -392,7 +415,7 @@ export class DataCenter {
             needConfirmedBlockNumber,
             info:"",
             currencyName: 'BTC',
-            fee: btc2Sat(tx.fees),
+            fee: tx.fees,
             nonce:-1,
         }
         this.updateTransactionLocalStorage(record);
@@ -640,16 +663,36 @@ export class DataCenter {
 
     //定时更新交易
     private async timerUpdateTx(addr:string,currencyName:string,hash:string){
-        const tx = this.fetchTxByHash(addr,currencyName,hash);
-        const status = tx.status;
-        if(status === TxStatus.SUCCESS) return tx;
-        this.updateTxStatus(tx.hash,currencyName,addr);
-        const delay = this.calUpdateDelay(tx);
+        let tx:any = {
+            hash:this.btcTimerHash
+        };
+        let delay;
+        if(currencyName === 'BTC'){
+            const txList = fetchTransactionList(addr,currencyName);
+            let minDelay = Number.MAX_VALUE;
+            for(let i = 0;i< txList.length;i++){
+                const tmpDelay = this.calUpdateDelay(txList[i]);
+                if(tmpDelay && tmpDelay < minDelay){
+                    minDelay = tmpDelay;
+                }
+            }
+            if(minDelay < Number.MAX_VALUE){
+                delay = minDelay;
+            }
+        }else{
+            tx = this.fetchTxByHash(addr,currencyName,hash);
+            delay = this.calUpdateDelay(tx);
+            const status = tx.status;
+            if(status === TxStatus.SUCCESS) return tx;
+        }
+        this.updateTxStatus(tx && tx.hash,currencyName,addr);
         if(!delay) return;
+        console.log(`${currencyName}--------delay`,delay);
         const timer = setTimeout(()=>{
             this.timerUpdateTx(addr,currencyName,hash);
         },delay);
         this.resetTimer(tx.hash,timer);
+
     }
 
     private fetchTxByHash(addr:string,currencyName:string,hash:string){
@@ -705,7 +748,7 @@ export class DataCenter {
         
     }
 
-    // 计算更新delay
+    // 计算更新eth delay
     private calUpdateDelay(tx:TransRecordLocal){
         const second = 1000;
         const minute = 60 * second;
@@ -734,9 +777,8 @@ export class DataCenter {
                 return 10 * second; 
             }
         }
-        
-
     }
+
 
     private popTimer(hash:string | number){
         let index = -1;

@@ -130,4 +130,9 @@ export const initLocalStorageStore = () => {
     register('realUserMap',(realUserMap:Map<string,boolean>) => {
         setLocalStorage('realUserMap',realUserMap);
     });
+
+     // 本地realUserMap
+     register('token',(token:string) => {
+        setLocalStorage('token',token);
+    });
 };

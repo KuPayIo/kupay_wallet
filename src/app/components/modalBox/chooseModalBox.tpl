@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page">
+<div class="new-page" w-class="new-page" on-tap="doClose">
     <div w-class="main">
         <div w-class="title">矿工费</div>
         <div w-class="list-container">

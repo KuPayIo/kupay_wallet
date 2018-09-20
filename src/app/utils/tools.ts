@@ -556,10 +556,10 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
     });
 };
 
-export const popPswBox = async () => {
+export const popPswBox = async (content=[]) => {
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
-        const psw = await openMessageboxPsw();
+        const psw = await openMessageboxPsw(content);
 
         return psw;
     } catch (error) {
@@ -579,10 +579,10 @@ export const popNewLoading = (text:string) => {
 /**
  * 打开密码输入框
  */
-const openMessageboxPsw = (): Promise<string> => {
+const openMessageboxPsw = (content?): Promise<string> => {
     // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype:'password',title:'请输入密码',content:[] }, (r: string) => {
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype:'password',title:'请输入密码',content }, (r: string) => {
             resolve(r);
         }, (cancel: string) => {
             reject(cancel);
@@ -645,7 +645,7 @@ export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
     const addrs = find('addrs');
     for (let i = 0; i < addrs.length; i++) {
         if ((addrs[i].currencyName === currencyName) && (addrs[i].addr === curAddr)) {
-            return addrs[i].balance;
+            return addrs[i].balance || 0;
         }
     }
 
@@ -718,13 +718,11 @@ export const timestampFormatToDate = (timestamp: number) => {
     
     return `${year}-${month}-${day}`;
 };
-// 加密盐值
-const salt = 'KuPay';
 /**
  * 密码加密
  * @param plainText 需要加密的文本
  */
-export const encrypt = (plainText: string) => {
+export const encrypt = (plainText: string,salt:string) => {
     const cipher = new Cipher();
 
     return cipher.encrypt(salt, plainText);
@@ -734,7 +732,7 @@ export const encrypt = (plainText: string) => {
  * 密码解密
  * @param cipherText 需要解密的文本
  */
-export const decrypt = (cipherText: string) => {
+export const decrypt = (cipherText: string,salt:string) => {
     const cipher = new Cipher();
 
     return cipher.decrypt(salt, cipherText);
@@ -912,6 +910,16 @@ export const parseStatusShow = (tx:TransRecordLocal) => {
         };
     }
 };
+
+
+export const fetchTxByHash = (hash:string)=>{
+    const trans = find('transactions');
+    for(let i = 0;i< trans.length;i++){
+        if(trans[i].hash === hash){
+            return trans[i];
+        }
+    }
+}
 
 // 解析转账类型
 export const parseTxTypeShow = (txType:TxType) => {
@@ -1120,4 +1128,12 @@ export const getConfirmBlockNumber = (currencyName:string,amount:number)=>{
             return confirmBlockNumbers[i].number;
         }
     }
+}
+
+/**
+ * 获取设备唯一id
+ */
+export const fetchDeviceId = ()=>{
+
+    return getFirstEthAddr();
 }

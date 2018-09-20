@@ -66,7 +66,7 @@ export const bufferToU64 = (buf: Uint8Array, littleEnd?: boolean): bigInt.BigInt
     } else {
         const view = new DataView(buf.buffer);
 
-        return bigInt(view.getUint32(0)).multiply(bigInt(0x100000000)).add(bigInt(view.getUint32(1)));
+        return bigInt(view.getUint32(0)).multiply(bigInt(0x100000000)).add(bigInt(view.getUint32(4)));
     }
 };
 
@@ -81,7 +81,7 @@ export const bufferToU128 = (buf: Uint8Array, littleEnd?: boolean): bigInt.BigIn
         const view = new DataView(buf.buffer);
 
         // tslint:disable-next-line:max-line-length
-        return bigInt(view.getUint32(0)).multiply(bigInt('0x1000000000000000000000000').add(bigInt(view.getUint32(1)).multiply(bigInt('0x10000000000000000')))).add(bigInt(view.getUint32(2)).multiply(bigInt('0x100000000'))).add(bigInt(view.getUint32(3)));
+        return bigInt(view.getUint32(0)).multiply(bigInt('0x1000000000000000000000000').add(bigInt(view.getUint32(4)).multiply(bigInt('0x10000000000000000')))).add(bigInt(view.getUint32(8)).multiply(bigInt('0x100000000'))).add(bigInt(view.getUint32(12)));
     }
 };
 
