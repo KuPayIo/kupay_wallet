@@ -3,15 +3,15 @@
  */
 import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
+import { sign } from '../core/genmnemonic';
 import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExchangeDetail, parseMineDetail, parseMineRank,parseMiningRank,parseMyInviteRedEnv, parseRechargeWithdrawalLog, parseSendRedEnvLog, paseProductList, pasePurchaseRecord } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExchangeDetail, parseMineDetail, parseMineRank,parseMiningRank,parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { popPswBox, transDate, getFirstEthAddr, base64ToFile, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, getFirstEthAddr, popPswBox, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
-import { sign } from '../core/genmnemonic';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
@@ -19,13 +19,13 @@ export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 
 // export const conPort = '8080';
 export const conPort = pi_modules.store.exports.severPort || '80';
-console.log("conIp=",conIp);
-console.log("conPort=",conPort);
+console.log('conIp=',conIp);
+console.log('conPort=',conPort);
 // 分享链接前缀
 export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 // export const sharePerUrl = `http://127.0.0.1:80/wallet/app/boot/share.html`;
 
-//上传图片url
+// 上传图片url
 export const uploadFileUrl = `http://${conIp}/service/upload`;
 
 // 上传的文件url前缀
@@ -107,12 +107,12 @@ export const login = async (passwd:string) => {
  * 创建钱包后默认登录
  * @param mnemonic 助记词
  */
-export const defaultLogin = async (hash:string) =>{
+export const defaultLogin = async (hash:string) => {
     const getMnemonicByHash = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonicByHash;
     const mnemonic = getMnemonicByHash(hash);
     const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
-    console.log("================",wlt.exportPrivateKey());
+    console.log('================',wlt.exportPrivateKey());
     const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
     const msgLogin = { type: 'login', param: { sign: signStr } };
     updateStore('loginState', LoginState.logining);
@@ -122,7 +122,7 @@ export const defaultLogin = async (hash:string) =>{
     } else {
         updateStore('loginState', LoginState.logerror);
     }
-}
+};
 
 const defaultConUser = '0x00000000000000000000000000000000000000000';
 /**
@@ -191,16 +191,16 @@ export const getRandom = async () => {
     const resp = await requestAsync(msg);
     updateStore('conRandom', resp.rand);
     updateStore('conUid', resp.uid);
-    //余额
+    // 余额
     getCloudBalance();
-    //eth gasPrice
+    // eth gasPrice
     fetchGasPrices();
     // btc fees
     fetchBtcFees();
-    //用户基础信息
+    // 用户基础信息
     getUserInfo([resp.uid]);
     const hash = getBorn('hashMap').get(getFirstEthAddr());
-    if(hash){
+    if (hash) {
         defaultLogin(hash);
     }
     
@@ -591,8 +591,8 @@ export const getUserInfo = async (uids: [number]) => {
 
     try {
         const res = await requestAsync(msg);
-        if(res.value[0]){
-            const userInfo = JSON.parse(unicodeArray2Str(res.value[0]))
+        if (res.value[0]) {
+            const userInfo = JSON.parse(unicodeArray2Str(res.value[0]));
             userInfo.fromServer = true;
             updateStore('userInfo',userInfo);
             console.log('------------',userInfo);
@@ -998,9 +998,8 @@ export const fetchRealUser = async () => {
     } 
 };
 
-
-//上传文件
-export const uploadFile = async (base64)=>{
+// 上传文件
+export const uploadFile = async (base64) => {
     const file = base64ToFile(base64);
     const formData = new FormData();
     formData.append('upload',file);
@@ -1015,15 +1014,15 @@ export const uploadFile = async (base64)=>{
         mode: 'no-cors', // no-cors, cors, *same-origin
         redirect: 'follow', // manual, *follow, error
         referrer: 'no-referrer' // *client, no-referrer
-        }).then(response => response.json())
-        .then(res=>{
-        console.log('!!!!!!!!!!!',res);
-        if(res.result === 1){
-            const sid = res.sid;
-            const userInfo = find('userInfo');
-            userInfo.avatar = sid;
-            userInfo.fromServer = false;
-            updateStore('userInfo',userInfo);
-        }
-    });
-}
+    }).then(response => response.json())
+        .then(res => {
+            console.log('!!!!!!!!!!!',res);
+            if (res.result === 1) {
+                const sid = res.sid;
+                const userInfo = find('userInfo');
+                userInfo.avatar = sid;
+                userInfo.fromServer = false;
+                updateStore('userInfo',userInfo);
+            }
+        });
+};
