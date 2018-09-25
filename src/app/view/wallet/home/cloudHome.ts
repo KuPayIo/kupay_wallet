@@ -6,7 +6,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { hasWallet, fetchCloudWalletAssetList, fetchCloudTotalAssets, formatBalanceValue } from '../../../utils/tools';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { register } from '../../../store/store';
-import { getProductList } from '../../../net/pull';
+import { getProductList, getCloudBalance } from '../../../net/pull';
 import { Product } from '../../../store/interface';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,6 +20,10 @@ export class CloudHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
+        if (this.props.isActive) {
+            getProductList();
+            getCloudBalance();
+        }
     }
     public init() {
         this.state = {
@@ -27,9 +31,6 @@ export class CloudHome extends Widget {
             assetList:fetchCloudWalletAssetList(),
             productList:[]
         };
-        if (this.props.isActive) {
-            getProductList();
-        }
     }
 
     // 条目点击

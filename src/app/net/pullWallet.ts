@@ -11,11 +11,11 @@ import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { GlobalWallet } from '../core/globalWallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
-import { CurrencyType, MinerFeeLevel, priorityMap, TransRecordLocal } from '../store/interface';
+import { CurrencyType, MinerFeeLevel, TransRecordLocal } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { formatBalance, fetchGasPrice, fetchBtcMinerFee } from '../utils/tools';
+import { fetchGasPrice, fetchBtcMinerFee } from '../utils/tools';
 import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth, btc2Sat } from '../utils/unitTools';
 import { VerifyIdentidy } from '../utils/walletTools';
 import { dataCenter } from '../logic/dataCenter';
@@ -301,6 +301,22 @@ export const doBtcTransfer = async (wlt:BTCWallet,txRecord:TransRecordLocal) => 
 
     return BtcApi.sendRawTransaction(rawHexString);
 };
+
+/**
+ * btc重发
+ */
+export const resendBtcTransfer = async (wlt:BTCWallet,txRecord:TransRecordLocal) => {
+    const minerFeeLevel = txRecord.minerFeeLevel;
+    const hash = txRecord.hash;
+    wlt.unlock();
+    await wlt.init();
+
+    const retArr = await wlt.resendTx(hash, fetchBtcMinerFee(minerFeeLevel));
+    wlt.lock();
+    const rawHexString: string = retArr.rawTx;
+    // console.log(rawHexString);
+    return BtcApi.sendRawTransaction(rawHexString);
+};
 /**
  * BTC交易签名
  */
@@ -502,10 +518,10 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
                 ret = await doEthTransfer(<any>wlt,txRecord);
                 console.log('--------------ret',ret);
             } else if (currencyName === 'BTC') {
-                const res = await doBtcTransfer(<any>wlt, txRecord);
+                const res = await resendBtcTransfer(<any>wlt, txRecord);
                 ret = {
                     hash:res.txid,
-                    nonce:0
+                    nonce:-1
                 };
             } else if (ERC20Tokens[currencyName]) {
                 ret = await doERC20TokenTransfer(<any>wlt,txRecord);

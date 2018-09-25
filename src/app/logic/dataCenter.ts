@@ -7,9 +7,9 @@ import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
 import { Addr, CurrencyRecord, Wallet, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
-import { getAddrsAll, getAddrsByCurrencyName, initAddr, getConfirmBlockNumber, getAddrById, resetAddrById } from '../utils/tools';
-import { btc2Sat, ethTokenDivideDecimals, sat2Btc, wei2Eth, smallUnit2LargeUnit } from '../utils/unitTools';
-import { getMnemonic, fetchTransactionList } from '../utils/walletTools';
+import { getAddrsAll, getAddrsByCurrencyName, initAddr, getConfirmBlockNumber } from '../utils/tools';
+import { ethTokenDivideDecimals, sat2Btc, wei2Eth, smallUnit2LargeUnit } from '../utils/unitTools';
+import { getMnemonic, fetchTransactionList, fetchLocalTxByHash } from '../utils/walletTools';
 import { BigNumber } from '../res/js/bignumber';
 /**
  * 创建事件处理器表
@@ -26,7 +26,6 @@ export class DataCenter {
     private txTimerList = [];
     // 余额定时器列表
     private balanceTimerList = [];
-    private btcTimerHash = 'btc--timer--hash';
 
     /**
      * 初始化
@@ -282,9 +281,11 @@ export class DataCenter {
         const status = parseInt(res1.status) === 1 ? (confirmedBlockNumber >= needConfirmedBlockNumber ? TxStatus.SUCCESS : TxStatus.CONFIRMED) : TxStatus.FAILED;
         const gasPrice = new BigNumber(res2.gasPrice);
         const fee = wei2Eth(gasPrice.times(res1.gasUsed)); 
+        const localTx = fetchLocalTxByHash(addr,'BTC',hash);
         const record:TransRecordLocal = {
+            ...localTx,
             hash: hash,
-            txType:addr.toLowerCase() === res1.from.toLowerCase() ? TxType.THRANSFER : TxType.RECEIPT,
+            txType:addr.toLowerCase() === res1.from.toLowerCase() ? (localTx ? localTx.txType : TxType.TRANSFER) : TxType.RECEIPT,
             fromAddr: res1.from,
             toAddr: res1.to,
             pay,
@@ -323,9 +324,11 @@ export class DataCenter {
         const status = parseInt(res1.status) === 1 ? (confirmedBlockNumber >= needConfirmedBlockNumber ? TxStatus.SUCCESS : TxStatus.CONFIRMED) : TxStatus.FAILED;
         const gasPrice = new BigNumber(res2.gasPrice);
         const fee = wei2Eth(gasPrice.times(res1.gasUsed));
+        const localTx = fetchLocalTxByHash(addr,'BTC',hash);
         const record:TransRecordLocal = {
+            ...localTx,
             hash: hash,
-            txType:addr.toLowerCase() === res1.from.toLowerCase() ? TxType.THRANSFER : TxType.RECEIPT,
+            txType:addr.toLowerCase() === res1.from.toLowerCase() ? (localTx ? localTx.txType : TxType.TRANSFER) : TxType.RECEIPT,
             fromAddr: res1.from,
             toAddr,
             pay,
@@ -406,10 +409,13 @@ export class DataCenter {
         const pay = value;
         const needConfirmedBlockNumber = getConfirmBlockNumber('BTC',pay); 
         const status = tx.confirmations > 0 ? (tx.confirmations >= needConfirmedBlockNumber ? TxStatus.SUCCESS : TxStatus.CONFIRMED) : TxStatus.PENDING;
+        const hash = tx.txid;
+        const localTx = fetchLocalTxByHash(addr,'BTC',hash);
         const record:TransRecordLocal = {
+            ...localTx,
             hash: tx.txid,
             addr: addr,
-            txType:addr === fromAddr ? TxType.THRANSFER : TxType.RECEIPT,
+            txType:addr === fromAddr ? (localTx ? localTx.txType : TxType.TRANSFER) : TxType.RECEIPT,
             fromAddr,
             toAddr,
             pay,
@@ -650,7 +656,7 @@ export class DataCenter {
 
     //定时更新交易
     private async timerUpdateTx(addr:string,currencyName:string,hash:string){
-        const tx = this.fetchTxByHash(addr,currencyName,hash);
+        const tx = fetchLocalTxByHash(addr,currencyName,hash);
         const delay = this.calUpdateDelay(tx);
         const status = tx.status;
         if(status === TxStatus.SUCCESS) return tx;
@@ -664,14 +670,6 @@ export class DataCenter {
 
     }
 
-    private fetchTxByHash(addr:string,currencyName:string,hash:string){
-        const txList = fetchTransactionList(addr,currencyName);
-        for(let i = 0; i < txList.length;i++){
-            if(txList[i].hash === hash){
-                return txList[i];
-            }
-        }
-    }
     //通过hash获取timer item
     private fetchTimerItem(hash:string | number){
         let timerItem;

@@ -65,7 +65,7 @@ export enum TxStatus {
 }
 // 交易类型
 export enum TxType {
-    THRANSFER = 1, // 普通转账
+    TRANSFER = 1, // 普通转账
     RECEIPT, // 收款
     RECHARGE,// 充值
     EXCHANGE // 币币兑换
@@ -192,7 +192,7 @@ export interface Addr {
  * 本地缓存交易记录
  */
 export interface TransRecordLocal {
-    hash:number | string; // 交易hash
+    hash:string; // 交易hash
     addr:string;// 哪个地址的交易
     txType:TxType;// 交易类型 1 转账 2 收款 3 充值 4 币币兑换转账
     fromAddr:string;// 转账地址
@@ -408,16 +408,16 @@ export interface RechargeWithdrawalLog {
 export enum TaskSid {
     recharge = 301,// 充值
     withdraw = 302,// 提现
-    createWlt = 311,// 创建钱包
-    firstChargeEth = 312,// 首次转入
-    bindPhone = 313,// 注册手机
-    chargeEth = 314,// 存币
-    inviteFriends = 315,// 邀请真实好友
-    buyFinancial = 316,// 购买理财产品
-    transfer = 317,// 交易奖励
-    bonus = 318,// 分红
-    mines = 319,// 挖矿
-    chat = 320,// 聊天
+    createWlt = 1001,// 创建钱包
+    firstChargeEth = 1002,// 首次转入
+    bindPhone = 1003,// 注册手机
+    chargeEth = 1004,// 存币
+    inviteFriends = 1005,// 邀请真实好友
+    buyFinancial = 1007,// 购买理财产品
+    transfer = 1008,// 交易奖励
+    bonus = 1009,// 分红
+    mines = 1010,// 挖矿
+    chat = 1011,// 聊天
     financialManagement = 330, // 理财
     redEnvelope = 340 // 红包
 }

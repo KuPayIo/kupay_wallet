@@ -954,8 +954,8 @@ export const getRechargeLogs = async (coin: string,start?) => {
 
     try {
         const res = await requestAsync(msg);
-        const nextStart = res.start && res.start.toJSNumber();
-        const detail = parseRechargeWithdrawalLog(res.value);
+        const nextStart = res.start && (coin === 'ETH') ? res.start.toJSNumber() : res.start;
+        const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
         const rechargeLogsMap = getBorn('rechargeLogs');
         const rechargeLogs = rechargeLogsMap.get(CurrencyType[coin]) || {list:[]};
@@ -1013,7 +1013,7 @@ export const getWithdrawLogs = async (coin: string,start?) => {
     try {
         const res = await requestAsync(msg);
         const nextStart = res.start && res.start.toJSNumber();
-        const detail = parseRechargeWithdrawalLog(res.value);
+        const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
         const withdrawLogsMap = getBorn('withdrawLogs');
         const withdrawLogs = withdrawLogsMap.get(CurrencyType[coin]) || {list:[]};
