@@ -281,9 +281,11 @@ export class DataCenter {
         const status = parseInt(res1.status) === 1 ? (confirmedBlockNumber >= needConfirmedBlockNumber ? TxStatus.SUCCESS : TxStatus.CONFIRMED) : TxStatus.FAILED;
         const gasPrice = new BigNumber(res2.gasPrice);
         const fee = wei2Eth(gasPrice.times(res1.gasUsed)); 
+        const localTx = fetchLocalTxByHash(addr,'BTC',hash);
         const record:TransRecordLocal = {
+            ...localTx,
             hash: hash,
-            txType:addr.toLowerCase() === res1.from.toLowerCase() ? TxType.THRANSFER : TxType.RECEIPT,
+            txType:addr.toLowerCase() === res1.from.toLowerCase() ? (localTx ? localTx.txType : TxType.TRANSFER) : TxType.RECEIPT,
             fromAddr: res1.from,
             toAddr: res1.to,
             pay,
@@ -322,9 +324,11 @@ export class DataCenter {
         const status = parseInt(res1.status) === 1 ? (confirmedBlockNumber >= needConfirmedBlockNumber ? TxStatus.SUCCESS : TxStatus.CONFIRMED) : TxStatus.FAILED;
         const gasPrice = new BigNumber(res2.gasPrice);
         const fee = wei2Eth(gasPrice.times(res1.gasUsed));
+        const localTx = fetchLocalTxByHash(addr,'BTC',hash);
         const record:TransRecordLocal = {
+            ...localTx,
             hash: hash,
-            txType:addr.toLowerCase() === res1.from.toLowerCase() ? TxType.THRANSFER : TxType.RECEIPT,
+            txType:addr.toLowerCase() === res1.from.toLowerCase() ? (localTx ? localTx.txType : TxType.TRANSFER) : TxType.RECEIPT,
             fromAddr: res1.from,
             toAddr,
             pay,
@@ -405,10 +409,13 @@ export class DataCenter {
         const pay = value;
         const needConfirmedBlockNumber = getConfirmBlockNumber('BTC',pay); 
         const status = tx.confirmations > 0 ? (tx.confirmations >= needConfirmedBlockNumber ? TxStatus.SUCCESS : TxStatus.CONFIRMED) : TxStatus.PENDING;
+        const hash = tx.txid;
+        const localTx = fetchLocalTxByHash(addr,'BTC',hash);
         const record:TransRecordLocal = {
+            ...localTx,
             hash: tx.txid,
             addr: addr,
-            txType:addr === fromAddr ? TxType.THRANSFER : TxType.RECEIPT,
+            txType:addr === fromAddr ? (localTx ? localTx.txType : TxType.TRANSFER) : TxType.RECEIPT,
             fromAddr,
             toAddr,
             pay,

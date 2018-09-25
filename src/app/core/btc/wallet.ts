@@ -318,6 +318,7 @@ export class BTCWallet {
             throw new Error("Transaction has been succeed")
         }
 
+
         const vin = txInfo.vin;
         const vout = txInfo.vout;
         const utxos = [];
@@ -345,6 +346,7 @@ export class BTCWallet {
             utxos.push(utxo);
         }
 
+
         const tx = new bitcore.Transaction();
 
         for (let i = 0; i < vout.length; i++) {
@@ -355,16 +357,19 @@ export class BTCWallet {
             }
         }
 
+
         const keySet = [];
         for (let i = 0; i < utxos.length; i++) {
             keySet.push(this.privateKeyOf(this.usedAdresses[utxos[i].address]));
         }
+
 
         tx.from(utxos)
             .change(this.derive(0))
             .enableRBF()
             .feePerKb(minerFee)
             .sign(keySet);
+
 
         return {
             "rawTx": tx.serialize(),

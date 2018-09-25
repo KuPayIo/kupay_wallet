@@ -9,7 +9,6 @@ import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLoca
 import { find, getBorn, updateStore } from '../store/store';
 import { defalutShowCurrencys, currencyConfirmBlockNumber } from './constants';
 import { uploadFileUrlPrefix } from '../net/pull';
-import { fetchTransactionList } from './walletTools';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -912,15 +911,6 @@ export const parseStatusShow = (tx:TransRecordLocal) => {
     }
 };
 
-
-export const fetchTxByHash = (hash:string)=>{
-    const trans = find('transactions');
-    for(let i = 0;i< trans.length;i++){
-        if(trans[i].hash === hash){
-            return trans[i];
-        }
-    }
-}
 
 // 解析转账类型
 export const parseTxTypeShow = (txType:TxType) => {

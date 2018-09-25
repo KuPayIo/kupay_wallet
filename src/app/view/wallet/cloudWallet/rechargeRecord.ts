@@ -45,9 +45,8 @@ export class RechargeRecord extends Widget{
         this.paint();
     }
     public parseRecordList(list){
-        const currencyName = this.props.currencyName;
         list.forEach((item)=>{
-            const txDetail = fetchLocalTxByHash1(currencyName,item.hash);
+            const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             console.log(txDetail);
             item.statusShow = obj.text;
@@ -60,10 +59,9 @@ export class RechargeRecord extends Widget{
     }
 
     public updateTransaction(){
-        const currencyName = this.props.currencyName;
         const list = this.state.recordList;
         list.forEach(item=>{
-            const txDetail = fetchLocalTxByHash1(currencyName,item.hash);
+            const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
         });

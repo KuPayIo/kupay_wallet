@@ -4,8 +4,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage, timestampFormat, fetchTxByHash } from '../../../utils/tools';
+import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
 import { register } from '../../../store/store';
+import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { TxType } from '../../../store/interface';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -23,7 +25,8 @@ export class TransactionDetails extends Widget {
         this.init();
     }
     public init() {
-        const tx = fetchTxByHash(this.props.hash);
+        const tx = fetchLocalTxByHash1(this.props.hash);
+        console.log(tx);
         const obj = parseStatusShow(tx);
         this.state = {
             tx,
@@ -41,7 +44,13 @@ export class TransactionDetails extends Widget {
     }
 
     public resendClick() {
-        popNew('app-view-wallet-transaction-transfer',{ tx:this.state.tx,currencyName:this.state.tx.currencyName });
+        const tx = this.state.tx;
+        if(tx.txType === TxType.RECHARGE){
+            popNew('app-view-wallet-cloudWallet-recharge',{ tx,currencyName:this.state.tx.currencyName });
+        }else{
+            popNew('app-view-wallet-transaction-transfer',{ tx,currencyName:this.state.tx.currencyName });
+        }
+        
     }
 
     public copyToAddr() {

@@ -185,10 +185,10 @@ export const fetchLocalTxByHash = (addr:string,currencyName:string,hash:string)=
 /**
  * 根据交易hash获取所有地址上本地交易详情
  */
-export const fetchLocalTxByHash1 = (currencyName:string,hash:string)=>{
+export const fetchLocalTxByHash1 = (hash:string)=>{
     const txList = find('transactions') || [];
     for(let i = 0; i < txList.length;i++){
-        if(txList[i].hash === hash && txList[i].currencyName === currencyName){
+        if(txList[i].hash === hash){
             return txList[i];
         }
     }
