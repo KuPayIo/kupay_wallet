@@ -912,15 +912,6 @@ export const parseStatusShow = (tx:TransRecordLocal) => {
 };
 
 
-export const fetchTxByHash = (hash:string)=>{
-    const trans = find('transactions');
-    for(let i = 0;i< trans.length;i++){
-        if(trans[i].hash === hash){
-            return trans[i];
-        }
-    }
-}
-
 // 解析转账类型
 export const parseTxTypeShow = (txType:TxType) => {
     if (txType === TxType.RECEIPT) {
@@ -1137,3 +1128,5 @@ export const fetchDeviceId = ()=>{
 
     return getFirstEthAddr();
 }
+
+
