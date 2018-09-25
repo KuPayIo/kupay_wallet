@@ -6,6 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../net/pull';
 import { RedEnvelopeType } from '../../../store/interface';
+import { find } from '../../../store/store';
 
 interface Props {
     rid: string;
@@ -16,6 +17,19 @@ export class SendRedEnv extends Widget {
     public props: Props;
     public ok: () => void;
 
+    public create() {
+        super.create();
+        
+        let cfg = this.config.value.simpleChinese;
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
+        this.state = {
+            cfgData:cfg
+        };
+    }
+
     /**
      * 发红包
      */
@@ -25,14 +39,14 @@ export class SendRedEnv extends Widget {
         if (this.props.rtype === 0) {
             // tslint:disable-next-line:max-line-length
             url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}`;
-            title = '普通红包'; 
+            title = this.state.cfgData.RedEnvType[0]; 
         } else if (this.props.rtype === 1) {
             // tslint:disable-next-line:max-line-length
             url = `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}`;
-            title = '拼手气红包'; 
+            title = this.state.cfgData.RedEnvType[1]; 
         } else {
             url = `${sharePerUrl}?cid=${this.props.rid}&type=${RedEnvelopeType.Invite}`;
-            title = '邀请红包';
+            title = this.state.cfgData.RedEnvType[2];
         }
         popNew('app-components-share-share', { 
             shareType: ShareToPlatforms.TYPE_LINK,

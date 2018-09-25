@@ -156,7 +156,7 @@ const store = <Store>{
     readedPriAgr: false, // 是否阅读隐私协议
     loginState: LoginState.init,// 连接状态
     coinGain:new Map<string,number>(),
-    token:"",//自动登录token
+    token:'',// 自动登录token
     // 本地钱包
     walletList: <Wallet[]>[],// 钱包数据
     curWallet: <Wallet>null,// 当前钱包

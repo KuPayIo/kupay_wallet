@@ -72,7 +72,7 @@ export enum TxType {
 }
 // store数据管理
 export interface Store {
-    flag:any;//代码过程中需要使用的标识
+    flag:any;// 代码过程中需要使用的标识
     // 基础数据
     hashMap: Map<string, string>;// 输入密码后hash缓存
     salt: string;// 盐--加密时使用
@@ -85,7 +85,7 @@ export interface Store {
     loginState: LoginState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
     coinGain:Map<string,number>;// 货币涨跌
-    token:string;//自动登录token
+    token:string;// 自动登录token
     // 本地钱包
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包

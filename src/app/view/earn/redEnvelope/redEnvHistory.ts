@@ -22,6 +22,7 @@ interface State {
     sendNumber:number; // 总发出红包个数
     isScroll:boolean; // 是否滑动页面
     rtypeShow:string[]; // 红包类型
+    cfgData:any;
 }
 
 export class RedEnvHistory extends Widget {
@@ -30,6 +31,11 @@ export class RedEnvHistory extends Widget {
 
     public async create() {
         super.create();
+        let cfg = this.config.value.simpleChinese;
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
         this.state = {
             recordList:[
                 // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
@@ -43,10 +49,11 @@ export class RedEnvHistory extends Widget {
             sendNumber:0,  
             isScroll:false,
             rtypeShow:[
-                '普通红包',
-                '拼手气红包',
-                '邀请红包'
-            ] 
+                cfg.redEnvType[0],
+                cfg.redEnvType[1],
+                cfg.redEnvType[2]
+            ],
+            cfgData: cfg
         };
         this.initData();
     }
@@ -133,7 +140,6 @@ export class RedEnvHistory extends Widget {
         const scrollTop = document.getElementById('redEnvHistory').scrollTop; 
         if (this.state.hasMore && this.state.refresh && (h2 - h1 - scrollTop) < 20) {
             this.state.refresh = false;
-            console.log('加载中，请稍后~~~');
             setTimeout(() => {
                 this.loadMore();
                 this.state.refresh = true;

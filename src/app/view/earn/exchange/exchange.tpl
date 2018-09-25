@@ -4,6 +4,6 @@
         <app-components1-input-input>{placeHolder:{{it1.cfgData.inputPlaceholder}},style:"border-radius:12px;",input:{{it1.cid}} }</app-components1-input-input>
     </div>
     <div w-class="btn" ev-btn-tap="convertClick">
-        <app-components-btn-btn>{name:{{it1.cfgData.btnName}},color:"blue"}</app-components-btn-btn>
+        <app-components1-btn-btn>{name:{{it1.cfgData.btnName}},color:"blue"}</app-components1-btn-btn>
     </div>
 </div>

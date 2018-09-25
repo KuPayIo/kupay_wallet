@@ -16,6 +16,7 @@ import { formatBalance } from '../../../utils/tools';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class PlayHome extends Widget {
     public ok: () => void;
     constructor() {
@@ -47,7 +48,8 @@ export class PlayHome extends Widget {
             isAbleBtn:false,  // 点击挖矿，按钮动画效果执行
             miningNum:` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
                 <span>+{{it1.thisNum}}</span>
-            </div>`
+            </div>`,
+            cfgData:this.config.value.simpleChinese
         };
 
         this.initDate();
@@ -64,7 +66,7 @@ export class PlayHome extends Widget {
         if (this.state.hasWallet) {
             return true;
         }
-        popNew('app-components-modalBox-modalBox',this.config.value.login,() => {
+        popNew('app-components-modalBox-modalBox',this.state.cfgData.login,() => {
             popNew('app-view-wallet-create-home');
         });
         
@@ -100,7 +102,7 @@ export class PlayHome extends Widget {
      */
     public miningDesc() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-modalBox-modalBox1',this.config.value.miningDesc);
+        popNew('app-components-modalBox-modalBox1',this.state.cfgData.miningDesc);
     }
 
     /**
@@ -180,6 +182,10 @@ export class PlayHome extends Widget {
             this.state.rankNum = rank.myRank;
         }
         
+        const lan = find('languageSet');
+        if (lan) {
+            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
+        }
     }
 
     /**

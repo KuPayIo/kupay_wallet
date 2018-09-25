@@ -5,6 +5,7 @@
 import { Json } from '../../../../pi/lang/type';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { find } from '../../../store/store';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -18,6 +19,7 @@ export class DividendItem extends Widget {
         data:any[];
         totalNum:number;
         more:boolean;
+        cfgData:any;
     };
 
     public backPrePage() {
@@ -29,8 +31,14 @@ export class DividendItem extends Widget {
         this.state = {
             data:this.props.data,
             totalNum:this.props.totalNum,
-            more:false
+            more:false,
+            cfgData:this.config.value.simpleChinese
         };
+
+        const lan = find('languageSet');
+        if (lan) {
+            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
+        }
     }
 
 }
