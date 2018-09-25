@@ -3,7 +3,7 @@
  */
 import { Widget } from "../../../../pi/widget/widget";
 import { getAccountDetail } from "../../../net/pull";
-import { register } from "../../../store/store";
+import { register, getBorn } from "../../../store/store";
 import { Forelet } from "../../../../pi/widget/forelet";
 import { CurrencyType, AccountDetail } from "../../../store/interface";
 import { timestampFormat } from "../../../utils/tools";
@@ -27,12 +27,20 @@ export class otherRecord extends Widget{
             getAccountDetail(this.props.currencyName);
         }
         this.state = {
-            recordList:[]
+            recordList:[],
+            nextStart:0,
+            canLoadMore:false,
+            isRefreshing:false
         }
     }
-    public updateRecordList(accountDetail:Map<CurrencyType | string, AccountDetail[]>) {
-        const list = accountDetail.get(this.props.currencyName);
+    public updateRecordList() {
+        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]);
+        console.log(accountDetail);
+        const list = accountDetail.list;
+        this.state.nextStart = accountDetail.start;
+        this.state.canLoadMore = accountDetail.canLoadMore;
         this.state.recordList = this.parseRecordList(list);
+        this.state.isRefreshing = false;
         this.paint();
     }
     public parseRecordList(list){
@@ -44,11 +52,26 @@ export class otherRecord extends Widget{
 
         return list;
     }
+
+    public loadMore(){
+        getAccountDetail(this.props.currencyName,this.state.nextStart);
+    }
+    public getMoreList(){
+        const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
+        const h2 = document.getElementById('recharge-content-container').offsetHeight; 
+        const scrollTop = document.getElementById('recharge-scroller-container').scrollTop; 
+        if (this.state.canLoadMore && !this.state.isRefreshing && (h2 - h1 - scrollTop) < 20) {
+            this.state.isRefreshing = true;
+            this.paint();
+            console.log('加载中，请稍后~~~');
+            this.loadMore();
+        } 
+    }
 }
 
-register('accountDetail', (accountDetail) => {
+register('accountDetail', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.updateRecordList(accountDetail);
+        w.updateRecordList();
     }
 });

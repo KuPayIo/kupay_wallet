@@ -246,13 +246,6 @@ export class BTCWallet {
             throw new Error('Insufficient totalBalance!');
         }
 
-        // TODO: check error
-        // let fee: any;
-        const priorityMap = {
-            low: 6,
-            medium: 3,
-            high: 2
-        };
         // const fee = await BtcApi.estimateFee(priorityMap[priority]);
         // sort by transaction confirmations
         this.utxos.sort((a, b) => a.confirmations - b.confirmations);
@@ -311,6 +304,74 @@ export class BTCWallet {
         }
 
         return sum;
+    }
+
+    public async resendTx(originTxid: string, minerFee: number): Promise<any> {
+        let txInfo;
+        try {
+            txInfo = await BtcApi.getTxInfo(originTxid);
+        } catch (_) {
+            throw new Error("Re-send an unknown transaction");
+        }
+
+        if (txInfo.confirmations > 0 && txInfo.blockheight !== -1) {
+            throw new Error("Transaction has been succeed")
+        }
+
+        const vin = txInfo.vin;
+        const vout = txInfo.vout;
+        const utxos = [];
+        let fromAddr = "";
+
+        for (let i = 0; i < vin.length; i++) {
+            const id = vin[i].txid;
+            const vout = vin[i].vout;
+            const address = vin[i].addr;
+            fromAddr = address;
+            const satoshis = vin[i].valueSat;
+
+            const addr = bitcore.Address.fromString(address);
+            const script = bitcore.Script.buildPublicKeyHashOut(addr);
+            const scriptPubkey = script.toHex();
+
+            const utxo = new bitcore.Transaction.UnspentOutput({
+                "txid": id,
+                "vout": vout,
+                "address": address,
+                "scriptPubKey": scriptPubkey,
+                "satoshis": satoshis
+            });
+
+            utxos.push(utxo);
+        }
+
+        const tx = new bitcore.Transaction();
+
+        for (let i = 0; i < vout.length; i++) {
+            if (vout[i].scriptPubKey.addresses[0] !== fromAddr) {
+                const value = bitcore.Unit.formBTC(vout[i].value).toSatoshis();
+                const address = vout[i].scriptPubKey.addresses[0];
+                tx.to(address, value);
+            }
+        }
+
+        const keySet = [];
+        for (let i = 0; i < utxos.length; i++) {
+            keySet.push(this.privateKeyOf(this.usedAdresses[utxos[i].address]));
+        }
+
+        tx.from(utxos)
+            .change(this.derive(0))
+            .enableRBF()
+            .feePerKb(minerFee)
+            .sign(keySet);
+
+        return {
+            "rawTx": tx.serialize(),
+            "originTxid": originTxid,
+            "newTxid": tx.hash,
+            "fee": tx.getFee()
+        }
     }
 
     public async init(): Promise<void> {

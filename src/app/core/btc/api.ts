@@ -84,6 +84,18 @@ export const BtcApi = {
         return sendRequest(endpoint);
     },
 
+    estimateMinerFee: async (): Promise<any> => {
+        // use blockcypher.com at present
+        let response = await fetch("https://api.blockcypher.com/v1/btc/main");
+        let json = await response.json();
+
+        return {
+            "high": json.high_fee_per_kb,
+            "medium": json.medium_fee_per_kb,
+            "low": json.low_fee_per_kb
+        }
+    },
+
     getExchangeRate: async (): Promise<any> => {
         const data = await sendRequest(BTC_MARKET_PRICE_ORACLE_URL);
 
