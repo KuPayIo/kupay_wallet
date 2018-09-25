@@ -3,7 +3,7 @@
  */
 import { Widget } from "../../../../pi/widget/widget";
 import { getRechargeLogs, getWithdrawLogs } from "../../../net/pull";
-import { register } from "../../../store/store";
+import { register, getBorn } from "../../../store/store";
 import { Forelet } from "../../../../pi/widget/forelet";
 import { CurrencyType, AccountDetail, RechargeWithdrawalLog } from "../../../store/interface";
 import { timestampFormat } from "../../../utils/tools";
@@ -27,14 +27,23 @@ export class WithdrawRecord extends Widget{
             getWithdrawLogs(this.props.currencyName);
         }
         this.state = {
-            recordList:[]
+            recordList:[],
+            nextStart:0,
+            canLoadMore:false,
+            isRefreshing:false
         }
     }
-    public updateRecordList(withdrawLogs:Map<CurrencyType | string, RechargeWithdrawalLog[]>) {
-        const list = withdrawLogs.get(this.props.currencyName);
+    public updateRecordList() {
+        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]);
+        console.log(withdrawLogs);
+        const list = withdrawLogs.list;
+        this.state.nextStart = withdrawLogs.start;
+        this.state.canLoadMore = withdrawLogs.canLoadMore;
         this.state.recordList = this.parseRecordList(list);
+        this.state.isRefreshing = false;
         this.paint();
     }
+
     public parseRecordList(list){
         list.forEach((item)=>{
             item.behavior = '充值';
@@ -45,11 +54,25 @@ export class WithdrawRecord extends Widget{
 
         return list;
     }
+    public loadMore(){
+        getWithdrawLogs(this.props.currencyName,this.state.nextStart);
+    }
+    public getMoreList(){
+        const h1 = document.getElementById('withdraw-scroller-container').offsetHeight; 
+        const h2 = document.getElementById('withdraw-content-container').offsetHeight; 
+        const scrollTop = document.getElementById('withdraw-scroller-container').scrollTop; 
+        if (this.state.canLoadMore && !this.state.isRefreshing && (h2 - h1 - scrollTop) < 20) {
+            this.state.isRefreshing = true;
+            this.paint();
+            console.log('加载中，请稍后~~~');
+            this.loadMore();
+        } 
+    }
 }
 
-register('withdrawLogs', (withdrawLogs) => {
+register('withdrawLogs', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.updateRecordList(withdrawLogs);
+        w.updateRecordList();
     }
 });

@@ -667,26 +667,51 @@ export const doChat = async () => {
  * 获取指定货币流水
  */
 export const getAccountDetail = async (coin: string,start = '') => {
-    const msg = { 
-        type: 'wallet/account@get_detail', 
-        param: { 
-            coin:CurrencyType[coin],
-            start,
-            count:PAGELIMIT
-        } 
-    };
+    let msg;
+    if(start){
+        msg = {
+            type: 'wallet/account@get_detail',
+            param: {
+                coin:CurrencyType[coin],
+                start,
+                count:PAGELIMIT
+            }
+        };
+    }else{
+        msg = {
+            type: 'wallet/account@get_detail',
+            param: {
+                coin:CurrencyType[coin],
+                count:PAGELIMIT
+            }
+        };
+    }
+   
 
     try {
         const res = await requestAsync(msg);
-        const detail = parseCloudAccountDetail(coin, res.value);
-        console.log('parseCloudAccountDetail-----------',detail);
-        updateStore('accountDetail',getBorn('accountDetail').set(coin, detail));
+        const nextStart = res.start && res.start.toJSNumber();
+        const detail = parseCloudAccountDetail(coin,res.value);
+        const canLoadMore = detail.length >= PAGELIMIT;
+        const accountDetailMap = getBorn('accountDetail');
+        const accountDetail = accountDetailMap.get(CurrencyType[coin]) || {list:[]};
+        if(!start){
+            accountDetail.list = detail;
+        }else{
+            accountDetail.list.push(...detail);
+        }
+        
+        accountDetail.start = nextStart;
+        accountDetail.canLoadMore = canLoadMore;
+        accountDetailMap.set(CurrencyType[coin],accountDetail)
+        updateStore('accountDetail',accountDetailMap);
+
     } catch (err) {
-        console.log(err);
         showError(err && (err.result || err.type));
 
         return;
     }
+
 };
 
 /**
@@ -752,7 +777,7 @@ export const getMineItemJump = async(itemJump) => {
 
 // ===============================充值提现
 /**
- * 获取服务端钱包地址
+ * 获取服务端eth钱包地址
  */
 export const getBankAddr = async () => {
     const msg = {
@@ -771,10 +796,29 @@ export const getBankAddr = async () => {
     }
 };
 /**
+ * 获取服务端btc钱包地址
+ */
+export const getBtcBankAddr = async () => {
+    const msg = {
+        type: 'wallet/bank@get_btc_bank_addr',
+        param: { }
+    };
+
+    try {
+        const res = await requestAsync(msg);
+
+        return res.value;
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
+};
+/**
  * 向服务器发起充值请求
  */
 // tslint:disable-next-line:max-line-length
-export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:string | number,coin:number= 101) => {
+export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:string,coin:number= 101) => {
     const msg = {
         type: 'wallet/bank@pay',
         param: {
@@ -790,6 +834,33 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
     try {
         const res = await requestAsync(msg);
         console.log('rechargeToServer',res);
+        
+        return true;
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return false;
+    }
+
+};
+
+/**
+ * 向服务器发起充值请求
+ */
+// tslint:disable-next-line:max-line-length
+export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,fees:number) => {
+    const msg = {
+        type: 'wallet/bank@btc_pay',
+        param: {
+            to:toAddr,
+            tx,
+            value,
+            fees
+        }
+    };
+    try {
+        const res = await requestAsync(msg);
+        console.log('btcRechargeToServer',res);
         
         return true;
     } catch (err) {
@@ -824,23 +895,78 @@ export const withdrawFromServer = async (toAddr:string,coin:number,value:string)
         return false;
     }
 };
+
 /**
- * 充值历史记录
+ * btc提现
  */
-export const getRechargeLogs = async (coin: string,start = '1537328970053') => {
+export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
     const msg = {
-        type: 'wallet/bank@pay_log',
+        type: 'wallet/bank@btc_to_cash',
         param: {
-            coin:CurrencyType[coin],
-            start,
-            count:PAGELIMIT
+            to:toAddr,
+            value
         }
     };
 
     try {
         const res = await requestAsync(msg);
+        console.log('btcWithdrawFromServer',res);
+
+        return true;
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return false;
+    }
+};
+
+
+/**
+ * 充值历史记录
+ */
+export const getRechargeLogs = async (coin: string,start?) => {
+    let type;
+    if(coin === 'BTC'){
+        type = 'wallet/bank@btc_pay_log';
+    }else{
+        type = 'wallet/bank@pay_log';
+    }
+    let msg;
+    if(start){
+        msg = {
+            type,
+            param: {
+                start,
+                count:PAGELIMIT
+            }
+        };
+    }else{
+        msg = {
+            type,
+            param: {
+                count:PAGELIMIT
+            }
+        };
+    }
+   
+
+    try {
+        const res = await requestAsync(msg);
+        const nextStart = res.start && res.start.toJSNumber();
         const detail = parseRechargeWithdrawalLog(res.value);
-        updateStore('rechargeLogs',getBorn('rechargeLogs').set(coin, detail));
+        const canLoadMore = detail.length >= PAGELIMIT;
+        const rechargeLogsMap = getBorn('rechargeLogs');
+        const rechargeLogs = rechargeLogsMap.get(CurrencyType[coin]) || {list:[]};
+        if(!start){
+            rechargeLogs.list = detail;
+        }else{
+            rechargeLogs.list.push(...detail);
+        }
+        
+        rechargeLogs.start = nextStart;
+        rechargeLogs.canLoadMore = canLoadMore;
+        rechargeLogsMap.set(CurrencyType[coin],rechargeLogs)
+        updateStore('rechargeLogs',rechargeLogsMap);
 
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -849,23 +975,57 @@ export const getRechargeLogs = async (coin: string,start = '1537328970053') => {
     }
 };
 
+
+
 /**
  * 提现历史记录
  */
-export const getWithdrawLogs = async (coin: string,start = '') => {
-    const msg = {
-        type: 'wallet/bank@to_cash_log',
-        param: {
-            coin:CurrencyType[coin],
-            start,
-            count:PAGELIMIT
-        }
-    };
+export const getWithdrawLogs = async (coin: string,start?) => {
+    let type;
+    if(coin === 'BTC'){
+        type = 'wallet/bank@btc_to_cash_log';
+    }else{
+        type = 'wallet/bank@to_cash_log';
+    }
+    let msg;
+    if(start){
+        msg = {
+            type,
+            param: {
+                coin:CurrencyType[coin],
+                start,
+                count:PAGELIMIT
+            }
+        };
+    }else{
+        msg = {
+            type,
+            param: {
+                coin:CurrencyType[coin],
+                count:PAGELIMIT
+            }
+        };
+    }
+   
 
     try {
         const res = await requestAsync(msg);
+        const nextStart = res.start && res.start.toJSNumber();
         const detail = parseRechargeWithdrawalLog(res.value);
-        updateStore('withdrawLogs',getBorn('withdrawLogs').set(coin, detail));
+        const canLoadMore = detail.length >= PAGELIMIT;
+        const withdrawLogsMap = getBorn('withdrawLogs');
+        const withdrawLogs = withdrawLogsMap.get(CurrencyType[coin]) || {list:[]};
+        if(!start){
+            withdrawLogs.list = detail;
+        }else{
+            withdrawLogs.list.push(...detail);
+        }
+        
+        withdrawLogs.start = nextStart;
+        withdrawLogs.canLoadMore = canLoadMore;
+        withdrawLogsMap.set(CurrencyType[coin],withdrawLogs)
+        updateStore('withdrawLogs',withdrawLogsMap);
+
     } catch (err) {
         showError(err && (err.result || err.type));
 
