@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div w-class="bottom-container">
-                {{if it1.balance < = it1.amount}}
+                {{if it1.balance < it1.amount + it1.minerFee}}
                 <div w-class="tip">余额不足</div>
                 {{end}}
                 <div ev-btn-tap="withdrawClick" w-class="btn"><app-components1-btn-btn>{"name":"提币","types":"big","color":"blue"}</app-components1-btn-btn></div>

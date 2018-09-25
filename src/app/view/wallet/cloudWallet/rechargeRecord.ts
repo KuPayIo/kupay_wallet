@@ -22,11 +22,11 @@ export class RechargeRecord extends Widget{
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-    }
-    public init() {
         if(this.props.isActive){
             getRechargeLogs(this.props.currencyName);
         }
+    }
+    public init() {
         this.state = {
             recordList:[],
             nextStart:0,
@@ -96,4 +96,4 @@ register('transactions',()=>{
     if (w) {
         w.updateTransaction();
     }
-})
+});

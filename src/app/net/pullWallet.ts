@@ -11,7 +11,7 @@ import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { GlobalWallet } from '../core/globalWallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
-import { CurrencyType, MinerFeeLevel, TransRecordLocal } from '../store/interface';
+import { CurrencyType, MinerFeeLevel, TransRecordLocal, TxType, TxStatus } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
@@ -65,7 +65,7 @@ export const transfer = async (psw:string,txRecord:TransRecordLocal) => {
         const trans = find('transactions');
         trans.push(tx);
         updateStore('transactions',trans);
-        dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
+        dataCenter.refreshTrans(tx.addr,tx.currencyName);
         popNew('app-components-message-message',{ content:'转账成功' });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
@@ -541,9 +541,18 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
             time: t.getTime()
         };
         
+        const oldHash = txRecord.hash;
+        let index = -1;
         const trans = find('transactions');
-        trans.push(tx);
+        for(let i= 0;i< trans.length;i++){
+            if(trans[i].hash === oldHash){
+                index = i;
+                break;
+            }
+        }
+        trans.splice(index,1,tx); //删除重发前的本地记录
         updateStore('transactions',trans);
+        dataCenter.clearTimer(oldHash);//删除定时器
         dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
         popNew('app-components-message-message',{ content:'重发成功' });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
@@ -551,6 +560,63 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
 
     return ret;
 };
+
+
+
+
+
+
+
+/**
+ * 充值重发
+ */
+export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
+    console.log('----------resendNormalTransfer--------------');
+    const loading = popNew('app-components1-loading-loading', { text: '重发中...' });
+    let h;
+    try {
+        
+        if(txRecord.currencyName === 'BTC'){
+            h = await btcRecharge(psw,txRecord);
+        }else{
+            h = await ethRecharge(psw,txRecord);
+        }
+    } catch (error) {
+        console.log(error.message);
+        doErrorShow(error);
+    } finally {
+        loading.callback(loading.widget);
+    }
+    if (h) {
+        const t = new Date();
+        const tx = {
+            ...txRecord,
+            hash:h,
+            time: t.getTime()
+        };
+        
+        const oldHash = txRecord.hash;
+        let index = -1;
+        const trans = find('transactions');
+        for(let i= 0;i< trans.length;i++){
+            if(trans[i].hash === oldHash){
+                index = i;
+                break;
+            }
+        }
+        trans.splice(index,1,tx); //删除重发前的本地记录
+        updateStore('transactions',trans);
+        dataCenter.clearTimer(oldHash);//删除定时器
+        dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
+        popNew('app-components-message-message',{ content:'重发成功' });
+        popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
+    }
+
+    return h;
+};
+
+
+
 // ================================重发
 
 export const recharge = async (psw:string,txRecord:TransRecordLocal)=>{
@@ -685,11 +751,11 @@ export const withdraw = async (passwd:string,toAddr:string,currencyName:string,a
     if(currencyName === 'BTC'){
         return btcWithdraw(passwd,toAddr,amount);
     }else{
-        return ethWithdraw(passwd,toAddr,currencyName,amount);
+        return ethWithdraw(passwd,toAddr,amount);
     }
 }
 // eth提现
-export const ethWithdraw = async (passwd:string,toAddr:string,currencyName:string,amount:number | string) => {
+export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
     const wallet = find('curWallet');
     const close = popNew('app-components1-loading-loading', { text: '正在提现...' });
     const verify = await VerifyIdentidy(wallet,passwd);
@@ -699,13 +765,27 @@ export const ethWithdraw = async (passwd:string,toAddr:string,currencyName:strin
 
         return;
     }
-    const coin = Number(CurrencyType[currencyName]);
-    const success = await withdrawFromServer(toAddr,coin,eth2Wei(amount));
+    const success = await withdrawFromServer(toAddr,eth2Wei(amount));
     close.callback(close.widget);
     if (success) {
         popNew('app-components-message-message',{ content:'提现成功' });
-        getWithdrawLogs(currencyName);
-        getCloudBalance();
+        const tx:TransRecordLocal = {
+            hash:"",
+            addr:toAddr,
+            txType:TxType.RECEIPT,
+            fromAddr:"",
+            toAddr,
+            pay: Number(amount),
+            time: new Date().getTime(),
+            status:TxStatus.PENDING,
+            confirmedBlockNumber: 0,
+            needConfirmedBlockNumber:0,
+            info: '',
+            currencyName:'ETH',
+            fee: 0,
+            nonce:undefined
+        };
+        dataCenter.timerUpdateTxWithdraw(tx);
     }
    
     return success;
@@ -730,7 +810,23 @@ export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | st
     close.callback(close.widget);
     if (success) {
         popNew('app-components-message-message',{ content:'提现成功' });
-        getCloudBalance();
+        const tx:TransRecordLocal = {
+            hash:"",
+            addr:toAddr,
+            txType:TxType.RECEIPT,
+            fromAddr:"",
+            toAddr,
+            pay: Number(amount),
+            time: new Date().getTime(),
+            status:TxStatus.PENDING,
+            confirmedBlockNumber: 0,
+            needConfirmedBlockNumber:0,
+            info: '',
+            currencyName:'BTC',
+            fee: 0,
+            nonce:undefined
+        };
+        dataCenter.timerUpdateTxWithdraw(tx);
     }
    
     return success;

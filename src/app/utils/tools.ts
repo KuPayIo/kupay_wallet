@@ -887,6 +887,12 @@ export const hasWallet = () => {
 
 // 解析交易状态
 export const parseStatusShow = (tx:TransRecordLocal) => {
+    if(!tx){
+        return {
+            text:'打包中',
+            icon:'pending.png'
+        }; 
+    }
     const status = tx.status;
     if (status === TxStatus.PENDING) {
         return {
