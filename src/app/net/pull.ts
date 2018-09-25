@@ -3,6 +3,7 @@
  */
 import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
+import { MainChainCoin } from '../config';
 import { sign } from '../core/genmnemonic';
 import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
 // tslint:disable-next-line:max-line-length
@@ -10,9 +11,8 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExcha
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { base64ToFile, getFirstEthAddr, popPswBox, transDate, unicodeArray2Str, fetchDeviceId, encrypt, decrypt } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, popPswBox, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
-import { MainChainCoin } from '../config';
 
 // export const conIp = '47.106.176.185';
 declare var pi_modules: any;
@@ -107,26 +107,26 @@ export const login = async (passwd:string) => {
 /**
  * 申请自动登录token
  */
-export const applyAutoLogin = ()=>{
+export const applyAutoLogin = () => {
     const msg = { 
         type: 'wallet/user@set_auto_login', 
         param: { 
             device_id: fetchDeviceId()
         }
-    }
+    };
     requestAsync(msg).then(res => {
         const deviceId = fetchDeviceId();
         const decryptToken = encrypt(res.token,deviceId);
         updateStore('token',decryptToken);
     });
-}
+};
 
 /**
  * 自动登录
  */
-export const autoLogin = ()=>{
+export const autoLogin = () => {
     const deviceId = fetchDeviceId();
-    const token = decrypt(find('token'),deviceId)
+    const token = decrypt(find('token'),deviceId);
     const msg = { 
         type: 'wallet/user@auto_login', 
         param: { 
@@ -135,11 +135,11 @@ export const autoLogin = ()=>{
             token,
             random:find('conRandom')
         }
-    }
+    };
     requestAsync(msg).then(res => {
         console.log('自动登录成功-----------',res);
     });
-}
+};
 /**
  * 创建钱包后默认登录
  * @param mnemonic 助记词
@@ -237,9 +237,9 @@ export const getRandom = async () => {
     //获取真实用户
     fetchRealUser();
     const flag = find('flag');
-    //第一次创建不需要更新
-    if(!flag.created){
-        //用户基础信息
+    // 第一次创建不需要更新
+    if (!flag.created) {
+        // 用户基础信息
         getUserInfo([resp.uid]);
     }
    
@@ -255,11 +255,13 @@ export const getRandom = async () => {
  */
 export const getCloudBalance = () => {
     const list = [];
-    for(let k in CurrencyType){
-        if(MainChainCoin.hasOwnProperty(k))
-        list.push(CurrencyType[k]);
+    for (const k in CurrencyType) {
+        if (MainChainCoin.hasOwnProperty(k)) {
+            list.push(CurrencyType[k]);
+        }
     }
     const msg = { type: 'wallet/account@get', param: { list:`[${list}]` } };
+    
     return requestAsync(msg).then(balanceInfo => {
         console.log('balanceInfo', balanceInfo);
         updateStore('cloudBalance', parseCloudBalance(balanceInfo));
@@ -640,7 +642,7 @@ export const getUserInfo = async (uids: [number]) => {
 
     try {
         const res = await requestAsync(msg);
-        if(res.value[0]){
+        if (res.value[0]) {
             const userInfo = JSON.parse(unicodeArray2Str(res.value[0]));
             userInfo.fromServer = true;
             console.log(userInfo);

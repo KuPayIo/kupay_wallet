@@ -6,14 +6,14 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { ERC20Tokens } from '../../../config';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { EthWallet } from '../../../core/eth/wallet';
 import { find } from '../../../store/store';
 import { btcNetwork, lang } from '../../../utils/constants';
-import { ERC20Tokens } from '../../../config';
 
 // ================================================导出
-interface Props{
+interface Props {
     mnemonic:string;
 }
 // tslint:disable-next-line:no-reserved-keywords
@@ -69,8 +69,14 @@ export class ExportPrivateKey extends Widget {
             collapseList.push(obj);
         }
         
+        let cfg = this.config.value.simpleChinese;
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
         this.state = {
-            collapseList
+            collapseList,
+            cfgData:cfg
         };
         console.log(this.state.collapseList);
     }
@@ -86,10 +92,10 @@ export class ExportPrivateKey extends Widget {
     public collapseItemClick(e: any) {
         const privateKey = this.state.collapseList[e.collapseListIndex].textList[e.textListIndex];
         popNew('app-components-modalBox-modalBox2', {
-            title: '导出私钥',
-            content: '私钥未经加密，导出存在风险，千万不要丢失、泄露或发送给其他人！',
+            title: this.state.cfgData.modalBox[0],
+            content: this.state.cfgData.modalBox[1],
             extraInfo: privateKey,
-            copyBtnText: '复制',
+            copyBtnText: this.state.cfgData.modalBox[2],
             contentStyle: 'color:#F17835;'
         });
     }
@@ -117,6 +123,7 @@ export class ExportPrivateKey extends Widget {
             keys.push(privateKey);
         }
         wlt.lock();
+
         return keys;
     }
 

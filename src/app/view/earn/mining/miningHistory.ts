@@ -22,7 +22,8 @@ export class Dividend extends Widget {
         super.create();
         this.state = {
             data:[],
-            more:false
+            more:false,
+            cfgData:this.config.value.simpleChinese
         }; 
         getMiningHistory();
         // this.initData();
@@ -35,6 +36,11 @@ export class Dividend extends Widget {
         const data = find('miningHistory');  
         if (data) {
             this.state.data = data; 
+        }
+
+        const lan = find('languageSet');
+        if (lan) {
+            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
         }
         this.paint();
     }

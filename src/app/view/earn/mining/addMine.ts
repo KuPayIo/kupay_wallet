@@ -20,7 +20,11 @@ export class Dividend extends Widget {
 
     public create() {
         super.create();
-        const cfg = this.config.value;
+        let cfg = this.config.value.simpleChinese;
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
         this.state = {
             data:[
                 {
@@ -72,7 +76,9 @@ export class Dividend extends Widget {
                     itemJump: 'toChat',
                     show:false
                 }
-            ]};
+            ],
+            cfgData:cfg
+        };
         this.initData();
         getMineDetail();
     }
@@ -97,7 +103,7 @@ export class Dividend extends Widget {
                 popNew('app-view-earn-redEnvelope-sendRedEnv',{
                     rid:inviteCodeInfo.cid,
                     rtype:99,
-                    message:this.config.value.defaultMess
+                    message:this.state.cfgData.defaultMess
                 });
             }
             if (itemJump === 'bindPhone') {
@@ -126,6 +132,7 @@ export class Dividend extends Widget {
                 this.state.data[i].isComplete = detail[i].isComplete;
             }
         }
+
         this.paint();
         
     }

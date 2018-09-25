@@ -5,10 +5,10 @@ import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
 import { ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
-import { find, getBorn, updateStore } from '../store/store';
-import { defalutShowCurrencys, currencyConfirmBlockNumber } from './constants';
 import { uploadFileUrlPrefix } from '../net/pull';
+import { Addr, CurrencyType, CurrencyTypeReverse, LanguageSet, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
+import { find, getBorn, updateStore } from '../store/store';
+import { currencyConfirmBlockNumber, defalutShowCurrencys } from './constants';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -689,8 +689,6 @@ export const unicodeArray2Str = (arr) => {
     return str;
 };
 
-
-
 /**
  * 计算日期间隔
  */
@@ -861,6 +859,7 @@ export const fetchCloudTotalAssets = () => {
     for (const [k,v] of cloudBalance) {
         totalAssets += v * find('exchangeRateJson',CurrencyTypeReverse[k]).CNY;
     }
+
     return totalAssets;
 };
 
@@ -1032,7 +1031,7 @@ export const parseRtype = (rType) => {
 /**
  * 获取某id理财产品持有量，不算已经赎回的
  */
-export const fetchHoldedProductAmount = (id:string) =>{
+export const fetchHoldedProductAmount = (id:string) => {
     const purchaseRecord = find('purchaseRecord');
     let holdAmout = 0;
     for (let i = 0;i < purchaseRecord.length;i++) {
@@ -1041,87 +1040,92 @@ export const fetchHoldedProductAmount = (id:string) =>{
             holdAmout += one.amount;
         }
     }
+
     return holdAmout;
-}
+};
 
 /**
  * 计算剩余百分比
  */
-export const calPercent = (surplus:number,total:number) =>{
-    if(surplus === 0){
+export const calPercent = (surplus:number,total:number) => {
+    if (surplus === 0) {
         return {
             left:0,
             use:100
-        }
+        };
     }
-    if(surplus === total){
+    if (surplus === total) {
         return {
             left:100,
             use:0
-        }
+        };
     }
-    if(surplus <= total/100){
+    if (surplus <= total / 100) {
         return {
             left:1,
             use:99
-        }
+        };
     }
     const r = Number((surplus / total).toFixed(2));
+
     return {
-        left:r*100,
-        use:100-r*100
-    }
-}
+        left:r * 100,
+        use:100 - r * 100
+    };
+};
 
 /**
  * base64 to blob
  */
-export const base64ToBlob = (base64:string) =>{
-    let arr = base64.split(',');
-    let mime = arr[0].match(/:(.*?);/)[1];
-    let bstr = atob(arr[1]);
+export const base64ToBlob = (base64:string) => {
+    const arr = base64.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
     let n = bstr.length;
-    let u8arr = new Uint8Array(n);
+    const u8arr = new Uint8Array(n);
     while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
+        u8arr[n] = bstr.charCodeAt(n);
     }
+
     return new Blob([u8arr], { type: mime });
-}
+};
 /**
  * 图片base64转file格式
  */
 export const base64ToFile = (base64:string) => {
     const blob = base64ToBlob(base64);
-    const newFile = new File([blob], 'avatar.jpeg', {type: blob.type});
+    const newFile = new File([blob], 'avatar.jpeg', { type: blob.type });
     console.log(newFile);
+
     return newFile;
-}
+};
 
 /**
  * 获取用户基本信息
  */
-export const getUserInfo = ()=>{
+export const getUserInfo = () => {
     const userInfo = find('userInfo');
     let avatar = userInfo.avatar;
-    if(avatar && avatar.indexOf('data:image') < 0){
+    if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
     }
+
     return {
         ...userInfo,
         avatar
-    }
-}
+    };
+};
 
 /**
  * 获取区块确认数
  */
-export const getConfirmBlockNumber = (currencyName:string,amount:number)=>{
-    if(ERC20Tokens[currencyName]){
-        return currencyConfirmBlockNumber["ERC20"];
+export const getConfirmBlockNumber = (currencyName:string,amount:number) => {
+    if (ERC20Tokens[currencyName]) {
+        return currencyConfirmBlockNumber.ERC20;
     }
     const confirmBlockNumbers = currencyConfirmBlockNumber[currencyName];
-    for(let i = 0;i< confirmBlockNumbers.length;i++){
-        if(amount < confirmBlockNumbers[i].value){
+    for (let i = 0;i < confirmBlockNumbers.length;i++) {
+        if (amount < confirmBlockNumbers[i].value) {
             return confirmBlockNumbers[i].number;
         }
     }

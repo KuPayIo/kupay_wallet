@@ -25,6 +25,7 @@ interface State {
     oneAmount:number;
     message:string;
     realUser:object;
+    cfgData:any;
 }
 
 export class WriteRedEnv extends Widget {
@@ -37,6 +38,11 @@ export class WriteRedEnv extends Widget {
 
     public create() {
         const realUser = getBorn('realUserMap').get(find('conUser'));
+        let cfg = this.config.value.simpleChinese;
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
         this.state = {
             list:[],
             selected:0,
@@ -45,7 +51,8 @@ export class WriteRedEnv extends Widget {
             totalNum:0,
             oneAmount:0,
             message:'',
-            realUser
+            realUser,
+            cfgData:cfg
         };
         const list = [
             { img:'../../res/image/currency/KT.png',name:'KT',num:500 },
@@ -120,48 +127,46 @@ export class WriteRedEnv extends Widget {
      */
     public async send() {
         if (this.state.totalAmount === 0) {
-            popNew('app-components-message-message', { content: '请输入要发送红包金额' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }       
         if (this.state.totalNum === 0) {
-            popNew('app-components-message-message', { content: '请输入要发送红包数量' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
         const curCoin = this.state.list[this.state.selected];
         if (this.state.totalAmount > curCoin.num) {
-            popNew('app-components-message-message', { content: '余额不足' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[3] });
 
             return;
         }
         if (this.state.message.length > 20) {
-            popNew('app-components-message-message', { content: '留言最多20个字' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[4] });
 
             return;
         }
         if (this.state.message === '') {
-            this.state.message = '恭喜发财 万事如意';
+            this.state.message = this.state.cfgData.messTitle[1];
         }
         if (!this.state.realUser) {
-            popNew('app-components-message-message', { content: '您不是真实用户' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[5] });
 
             return;
         }
 
         this.inputBlur();
-        // tslint:disable-next-line:prefer-template
-        const mess1 = '发出：' + this.state.totalAmount + curCoin.name + '个';
-        // tslint:disable-next-line:prefer-template
-        const mess2 = '类型：' + (this.state.showPin ? '普通红包' :'拼手气红包');
+        const mess1 = this.state.cfgData.phrase[0] + this.state.totalAmount + curCoin.name + this.state.cfgData.phrase[1];
+        // tslint:disable-next-line:max-line-length
+        const mess2 = this.state.cfgData.phrase[2] + (this.state.showPin ? this.state.cfgData.redEnvType[0] : this.state.cfgData.redEnvType[1]);
         popNew('app-components-modalBoxInput-modalBoxInput',{ 
-            // tslint:disable-next-line:prefer-template
-            title: curCoin.name + '红包',
+            title: curCoin.name + this.state.cfgData.phrase[3],
             content:[mess1,mess2],
-            placeholder:'输入密码',
+            placeholder:this.state.cfgData.phrase[4],
             itype:'password' }, 
             async (r) => {
-                const close = popNew('app-components1-loading-loading', { text: '红包准备中...' });
+                const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
                 const wallet = find('curWallet');
                 const fg = await VerifyIdentidy(wallet,r);
                 if (fg) {
@@ -169,7 +174,7 @@ export class WriteRedEnv extends Widget {
                     close.callback(close.widget);
 
                 } else {
-                    popNew('app-components-message-message',{ content:'密码错误，请重新输入' });
+                    popNew('app-components-message-message',{ content:this.state.cfgData.tips[6] });
                 }
             }
         );
@@ -225,7 +230,7 @@ export class WriteRedEnv extends Widget {
 
 }
 // =====================================本地
-register('cloudBalance', cloudBalance => {
+register('cloudBalance', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();

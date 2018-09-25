@@ -5,6 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { regPhone } from '../../../net/pull';
+import { find } from '../../../store/store';
 // =================================================导出
 export class BindPhone extends Widget {
     public ok: () => void;
@@ -13,10 +14,16 @@ export class BindPhone extends Widget {
     }
     public create() {
         super.create();
+        let cfg = this.config.value.simpleChinese;
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
         this.state = {
-            phone:'13333333333',
+            phone:'',
             code:[],
-            isSuccess:true
+            isSuccess:true,
+            cfgData:cfg
         };
     }
 
@@ -29,7 +36,7 @@ export class BindPhone extends Widget {
      */
     public async doSure() {
         if (!this.state.phone) {
-            popNew('app-components-message-message', { content: `请先获取验证码` });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips });
             this.state.code = [];
             this.paint();
 
