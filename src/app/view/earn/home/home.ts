@@ -186,6 +186,7 @@ export class PlayHome extends Widget {
         if (lan) {
             this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
         }
+        this.paint();
     }
 
     /**

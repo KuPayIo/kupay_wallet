@@ -20,6 +20,7 @@ export class FAQ extends Widget {
             htmlStrList:Config.helpAnswer,
             cfgData:cfg
         };
+        console.log(this.state.htmlStrList);
     }
 
     public backPrePage() {
