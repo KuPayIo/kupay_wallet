@@ -2,10 +2,11 @@
  * radioList
  * {list:[],selected:1}
  * list:数据列表
- * selected:被选中的是第几项，不传则不选中任何一项
+ * selected:被选中的是第几项，不传则默认选中第一项
  */
 // =============================================导入
 import { Json } from '../../../pi/lang/type';
+import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 // ================================================导出
 interface Props {
@@ -30,8 +31,12 @@ export class RadioList extends Widget {
         this.ok && this.ok();
     }
 
-    public changeSelect(ind:number) {
+    public changeSelect(e:any,ind:number) {
         this.state.selected = ind;
         this.paint();
+        setTimeout(() => {
+            notify(e.node,'ev-radioList-change',{ value:ind });
+            
+        }, 100);
     }
 }

@@ -1,11 +1,9 @@
 /**
  * mnemonic backup confirm page
  */
-import { Widget } from "../../../../pi/widget/widget";
-import { shuffle, popNewMessage } from "../../../utils/tools";
-import { deleteMnemonic } from "../../../logic/localWallet";
-
-
+import { Widget } from '../../../../pi/widget/widget';
+import { deleteMnemonic } from '../../../logic/localWallet';
+import { popNewMessage, shuffle } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;
@@ -80,12 +78,11 @@ export class BackupMnemonicWordConfirm extends Widget {
     }
 
     public confirmedMnemonicItemClick(e: Event, v: number) {
-        if(v >= this.state.confirmedMnemonic.length) return;
+        if (v >= this.state.confirmedMnemonic.length) return;
         const arr = this.state.confirmedMnemonic.splice(v, 1);
         arr[0].isActive = false;
         this.paint();
     }
-
 
     private compareMnemonicEqualed(): boolean {
         let isEqualed = true;

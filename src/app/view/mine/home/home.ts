@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { find } from '../../../store/store';
-import { copyToClipboard, popPswBox, getFirstEthAddr, getUserInfo } from '../../../utils/tools';
+import { copyToClipboard, getFirstEthAddr, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 export class Home extends Widget {
@@ -15,20 +15,26 @@ export class Home extends Widget {
     }
     public init() {
         const userInfo = getUserInfo();
+        let cfg = this.config.value.simpleChinese;
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
         this.state = {
             list:[
-                { img:'../../../res/image1/28.png',name:'账户',components:'' },
-                { img:'../../../res/image1/10.png',name:'帮助',components:'app-view-mine-other-help' },
-                { img:'../../../res/image1/21.png',name:'设置',components:'app-view-mine-setting-setting' },
-                { img:'../../../res/image1/23.png',name:'联系我们',components:'app-view-mine-other-contanctUs' },
-                { img:'../../../res/image1/24.png',name:'关于KuPay',components:'app-view-mine-other-aboutus' },
-                { img:'../../../res/image1/43.png',name:'GitHub Repository',components:'' }
+                { img:'../../../res/image1/28.png',name: cfg.itemTitle[0],components:'' },
+                { img:'../../../res/image1/10.png',name: cfg.itemTitle[1],components:'app-view-mine-other-help' },
+                { img:'../../../res/image1/21.png',name: cfg.itemTitle[2],components:'app-view-mine-setting-setting' },
+                { img:'../../../res/image1/23.png',name: cfg.itemTitle[3],components:'app-view-mine-other-contanctUs' },
+                { img:'../../../res/image1/24.png',name: cfg.itemTitle[4],components:'app-view-mine-other-aboutus' },
+                { img:'../../../res/image1/43.png',name: 'GitHub Repository',components:'' }
             ],
             address:'FGGF1512151512sd78d4s51af45466',
             userName:userInfo.nickName,
             avatar:userInfo.avatar,
             close:false,
-            hasWallet:false
+            hasWallet:false,
+            cfgData:cfg
         };
         const wallet = find('curWallet');
         const addr = getFirstEthAddr(); 
@@ -48,10 +54,10 @@ export class Home extends Widget {
      */
     public async backUp() {
         const psw = await popPswBox();
-        if(!psw) return;
+        if (!psw) return;
         const ret = await backupMnemonic(psw);
-        if(ret){
-            popNew('app-view-wallet-backup-index',{...ret});
+        if (ret) {
+            popNew('app-view-wallet-backup-index',{ ...ret });
             this.ok && this.ok();
         }
     }
@@ -75,7 +81,7 @@ export class Home extends Widget {
      */
     public copyAddr() {
         copyToClipboard(this.state.address);
-        popNew('app-components-message-message',{ content:'复制成功' });
+        popNew('app-components-message-message',{ content:this.state.cfgData.tips });
     }
 
     /**

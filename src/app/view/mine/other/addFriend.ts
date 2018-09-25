@@ -11,10 +11,17 @@ export class AddFriend extends Widget {
     public ok:() => void;
     public create() {
         super.create();
+
+        let cfg = this.config.value.simpleChinese;
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
         this.state = {
-            userName:'用户名',
+            userName:cfg.defaultName,
             userHead:'../../../res/image/default_avater_big.png',
-            address:'FGGF1512151512sd78d4s51d8d44s51d8d4fd0260hg'
+            address:'FGGF1512151512sd78d4s51d8d44s51d8d4fd0260hg',
+            cfgData:cfg
         };
         this.initData();
     }
@@ -51,6 +58,6 @@ export class AddFriend extends Widget {
      */
     public copyAddr() {
         copyToClipboard(this.state.address);
-        popNew('app-components-message-message',{ content:'复制成功' });
+        popNew('app-components-message-message',{ content:this.state.cfgData.tips });
     }
 }
