@@ -17,21 +17,27 @@ export class Home extends Widget {
 
     public create() {
         super.create();
+        let cfg = this.config.value.simpleChinese; 
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
         this.state = {
             tabs:[{
-                tab:this.config.value.tabs[0],
+                tab:cfg.tabs[0],
                 data:[],
                 totalNum:0,
                 myRank:1,
                 fg:0
             },{
-                tab:this.config.value.tabs[1],
+                tab:cfg.tabs[1],
                 data:[],
                 totalNum:0,
                 myRank:1,
                 fg:1
             }],
-            activeNum:0
+            activeNum:0,
+            cfgData:cfg
         };
         this.initData();
         this.initEvent();

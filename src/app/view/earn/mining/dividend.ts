@@ -28,7 +28,7 @@ export class Dividend extends Widget {
             totalDivid:0,
             totalDays:0,
             thisDivid:0,
-            yearIncome: this.config.value.noneYearIncome,
+            yearIncome: 0,
             doMining:false,  // 点击领分红，数字动画效果执行
             firstClick:true,
             isAbleBtn:false,  // 点击领分红，按钮动画效果执行
@@ -41,7 +41,8 @@ export class Dividend extends Widget {
                 // { num:0.02,time:'04-30  14:32:00' },
                 // { num:0.02,time:'04-30  14:32:00' }
             ],
-            ktBalance:this.props.ktBalance  // KT持有量 
+            ktBalance:this.props.ktBalance,  // KT持有量 
+            cfgData:this.config.value.simpleChinese
         };
 
         this.initData();
@@ -68,12 +69,17 @@ export class Dividend extends Widget {
             this.state.totalDivid = data.totalDivid;
             this.state.totalDays = data.totalDays;
             this.state.thisDivid = data.thisDivid;
-            this.state.yearIncome = Number(data.yearIncome) === 0 ? this.config.value.noneYearIncome :data.yearIncome;
+            this.state.yearIncome = Number(data.yearIncome) === 0 ? this.state.cfgData.noneYearIncome :data.yearIncome;
         }
 
         const history = find('dividHistory');
         if (history) {
             this.state.dividHistory = history;
+        }
+
+        const lan = find('languageSet');
+        if (lan) {
+            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
         }
         this.paint();
     }

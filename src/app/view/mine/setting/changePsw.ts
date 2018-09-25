@@ -16,10 +16,16 @@ export class ChangePSW extends Widget {
 
     public create() {
         super.create();
+        let cfg = this.config.value.simpleChinese;
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
         this.state = {
             oldPassword:'',
             newPassword:'',
-            rePassword:''
+            rePassword:'',
+            cfgData:cfg
         };
     }
 
@@ -50,19 +56,21 @@ export class ChangePSW extends Widget {
         }
         // 判断两次输入的密码是否相同
         if (!pswEqualed(newPassword, rePassword)) {
-            popNew('app-components-message-messagebox', { itype: 'alert', title: '提示！', content: '两次输入的密码不一致！' });
+            // tslint:disable-next-line:max-line-length
+            popNew('app-components-message-messagebox', { itype: 'alert', title: this.state.cfgData.tips[0], content: this.state.cfgData.tips[1] });
 
             return;
         }
         if (!walletPswAvailable(newPassword)) {
-            popNew('app-components-message-messagebox', { itype: 'alert', title: '提示！', content: '密码不符合规则！密码至少8位字符，可包含英文、数字、特殊字符！' });
+            // tslint:disable-next-line:max-line-length
+            popNew('app-components-message-messagebox', { itype: 'alert', title: this.state.cfgData.tips[0], content: this.state.cfgData.tips[2] });
 
             return;
         }
         // 验证全部通过，开始设置新密码
-        const loading = popNew('app-components_level_1-loading-loading', { text: '修改中...' });
+        const loading = popNew('app-components_level_1-loading-loading', { text: this.state.cfgData.loading });
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        await gwlt.passwordChange(this.state.oldPassword, newPassword, wallet.walletId);
+        await gwlt.passwordChange(this.state.oldPassword, newPassword);
         wallet.gwlt = gwlt.toJSON();
         updateStore('walletList', walletList);
         loading.callback(loading.widget);

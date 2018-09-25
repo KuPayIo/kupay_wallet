@@ -7,24 +7,24 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
+import { bufferToU64 } from '../../../pi/bigint/util';
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { openAndGetRandom } from '../../net/pull';
+import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
 import { fetchCoinGain } from '../../utils/tools';
-import { initPush } from '../../net/push';
-import { bufferToU64 } from '../../../pi/bigint/util';
 
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
 // import { create } from "../../../pi/net/rpc";
 // import { Struct } from "../../../pi/struct/struct_mgr";
 
-let client;
-let rpc;
+// let client;
+// let rpc;
 // ============================== 导出
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
@@ -38,7 +38,7 @@ export const run = (cb): void => {
     initStore();
     // 初始化localstorage
     initLocalStorageStore();
-    //主动推送初始化
+    // 主动推送初始化
     initPush();
     openAndGetRandom();
     // 模拟异步获取货币涨跌幅度
@@ -48,10 +48,7 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     // popNew('app-view-mine-account-home');
-    // popNew('app-view-wallet-backup-shareMnemonic',{
-    //     mnemonic:"pair theme cage asset march devote help atom else crater bubble permit",
-    //     fragments:["CAFWwva3bglwwyAsxu4HTkCYLo/itdpe/x1vnpLxRXgp7A==", "CAKsmfFz3BLgm0BYkcEOnIAuYf5tobfbaiBe9KldDZRiDQ==", "CAP6WwfEshuQWGB0Vy8J0sC3r9HjrWdTGcC60ks5NTtbUg=="]
-    // });
+   
     // popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:'ETH' });
     // const t = new Date();
     // const tx:TransRecordLocal = {
@@ -92,10 +89,8 @@ export const run = (cb): void => {
     
     // test();
 
-    
     // test();
     
-  
 };
 // const rpcFunc = (req:Struct, respClass:Function, callback:Function, timeout: number) => {
 //     rpc(req, (r:Struct) =>{

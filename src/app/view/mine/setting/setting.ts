@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { LockScreen } from '../../../store/interface';
-import { find, updateStore } from '../../../store/store';
+import { find, register, updateStore } from '../../../store/store';
 import { lockScreenHash, lockScreenVerify } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
@@ -21,28 +21,34 @@ export class Setting extends Widget {
     }
 
     public create() {
-        
+        super.create();
+        this.initData();
+    }
+
+    public initData() {
+        let cfg = this.config.value.simpleChinese;
+        const lan = find('languageSet');
+        if (lan) {
+            cfg = this.config.value[lan.languageList[lan.selected]];
+        }
         this.state = {
             lockScreenPsw:'',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
             lockScreenTitle: '',  // 锁屏密码页面标题
             numberOfErrors: 0,  // 锁屏密码输入错误次数
-            errorTips: ['请输入原来的密码', '已错误1次，还有两次机会', '最后1次，否则密码将会重置'],
+            errorTips: cfg.errorTips,
             itemList:[ 
-                { title:'语言',list:['简体中文','繁体中文','English'],selected:0 },
-                { title:'货币单位',list:['CNY','USD'],selected:0 },
-                { title:'涨跌颜色',list:['红涨绿跌','红跌绿涨'],selected:0 }
+                { title: cfg.itemTitle[3],list: cfg.languageSet,selected:0 },
+                { title: cfg.itemTitle[4],list: ['CNY','USD'],selected:0 },
+                { title: cfg.itemTitle[5],list: cfg.changeColor,selected:0 }
             ],
             userHead:'../../../res/image/default_avater_big.png',   // 用户头像
-            userName:'还没有钱包',  // 用户名称
+            userName:cfg.defaultName,  // 用户名称
             userInput:false,  // 是否显示输入框
-            wallet:null  
+            wallet:null,
+            cfgData:cfg  
         };
-        this.initData();
-        
-    }
 
-    public initData() {
         const wallet = find('curWallet');
         if (wallet) {
             // gwlt = GlobalWallet.fromJSON(wallet.gwlt);
@@ -71,7 +77,8 @@ export class Setting extends Widget {
         if (this.state.wallet) {
             return true;
         }
-        popNew('app-components-modalBox-modalBox',{ title:'提示',content:'你还没有登录，去登录使用更多功能吧',sureText:'去登录',cancelText:'暂时不' },() => {
+        // tslint:disable-next-line:max-line-length
+        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox1,() => {
             popNew('app-view-wallet-create-home');
         });
         
@@ -86,7 +93,7 @@ export class Setting extends Widget {
             ls.open = !this.state.openLockScreen;
             updateStore('lockScreen',ls);
         } else if (this.state.wallet) {
-            popNew('app-components-keyboard-keyboard',{ title:'设置锁屏密码' },(r) => {
+            popNew('app-components-keyboard-keyboard',{ title: this.state.cfgData.keyboardTitle[0] },(r) => {
                 console.error(r);
                 this.state.lockScreenPsw = r;
                 this.reSetLockPsw();
@@ -97,7 +104,8 @@ export class Setting extends Widget {
                 return false;
             });
         } else {
-            popNew('app-components-modalBox-modalBox',{ title:'提示',content:'你还没有登录，去登录使用更多功能吧',sureText:'去登录',cancelText:'暂时不' },() => {
+            // tslint:disable-next-line:max-line-length
+            popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox1,() => {
                 popNew('app-view-wallet-create-home');
             },() => {
                 this.closeLockPsw();
@@ -120,10 +128,10 @@ export class Setting extends Widget {
      * 重复锁屏密码
      */
     public reSetLockPsw() {
-        popNew('app-components-keyboard-keyboard',{ title:'重复锁屏密码' },(r) => {
+        popNew('app-components-keyboard-keyboard',{ title: this.state.cfgData.keyboardTitle[1] },(r) => {
             console.error(r);
             if (this.state.lockScreenPsw !== r) {
-                popNew('app-components-message-message',{ content:'密码不一致' });
+                popNew('app-components-message-message',{ content:this.state.cfgData.tips[0] });
                 this.reSetLockPsw();
             } else {
                 const hash256 = lockScreenHash(r);
@@ -131,7 +139,7 @@ export class Setting extends Widget {
                 ls.psw = hash256;
                 ls.open = true;
                 updateStore('lockScreen',ls);
-                popNew('app-components-message-message',{ content:'设置成功' });
+                popNew('app-components-message-message',{ content:this.state.cfgData.tips[1] });
             }
         },() => {
             this.closeLockPsw();
@@ -144,12 +152,12 @@ export class Setting extends Widget {
     public oldLockPsw(ind:number) {
         if (ind > 2) {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components-modalBoxInput-modalBoxInput',{ title:'重置锁屏',content:['错误次数过多，已被锁定，请验证当前钱包密码后重置。'],placeholder:'输入密码' },(r) => {
+            popNew('app-components-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput,(r) => {
                 const wallet = find('curWallet');
                 const fg = VerifyIdentidy(wallet,r);
                 // const fg = true;
                 if (fg) {
-                    popNew('app-components-keyboard-keyboard',{ title:'设置锁屏密码' },(r) => {
+                    popNew('app-components-keyboard-keyboard',{ title:this.state.cfg.keyboardTitle[0] },(r) => {
                         console.error(r);
                         this.state.lockScreenPsw = r;
                         this.reSetLockPsw();
@@ -164,7 +172,7 @@ export class Setting extends Widget {
         } else {
             popNew('app-components-keyboard-keyboard',{ title:this.state.errorTips[ind] },(r) => {
                 if (lockScreenVerify(r)) {
-                    popNew('app-components-keyboard-keyboard',{ title:'设置锁屏密码' },(r) => {
+                    popNew('app-components-keyboard-keyboard',{ title:this.state.cfg.keyboardTitle[0] },(r) => {
                         this.state.lockScreenPsw = r;
                         this.reSetLockPsw();
                         
@@ -195,7 +203,13 @@ export class Setting extends Widget {
         } else {
             const data = this.state.itemList[ind - 2];
             console.log(data);
-            popNew('app-view-mine-setting-itemList',data);
+            popNew('app-view-mine-setting-itemList',data,(index) => {
+                this.state.itemList[ind - 2].selected = index;
+                // if (ind === 2) {
+                //     updateStore('languageSet',{ selected:index,languageList:this.state.cfgData.languageSet });  // 更新语言设置
+                // }
+                this.paint();
+            });
         }
     }
 
@@ -232,13 +246,19 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-components-modalBox-modalBox',{ title:'注销账户',content:'注销前请确认已备份助记词，以便下次用它恢复。',sureText:'备份',cancelText:'继续注销' },() => {
+        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox2,() => {
             // popNew('');
             console.log('备份');
         },() => {
-            popNew('app-components-modalBox-modalBox',{ title:'',content:'请再次确认您已备份了助记词，否则您的账户资产将永久丢失！',style:'color:#F7931A;' },() => {
+            popNew('app-components-modalBox-modalBox',{ title:'',content:this.state.cfgData.tips[2],style:'color:#F7931A;' },() => {
                 console.log('注销账户');
             });
         });
     }
 }
+register('languageSet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});

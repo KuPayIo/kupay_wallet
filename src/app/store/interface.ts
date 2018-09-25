@@ -72,7 +72,7 @@ export enum TxType {
 }
 // store数据管理
 export interface Store {
-    flag:any;//代码过程中需要使用的标识
+    flag:any;// 代码过程中需要使用的标识
     // 基础数据
     hashMap: Map<string, string>;// 输入密码后hash缓存
     salt: string;// 盐--加密时使用
@@ -85,7 +85,7 @@ export interface Store {
     loginState: LoginState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
     coinGain:Map<string,number>;// 货币涨跌
-    token:string;//自动登录token
+    token:string;// 自动登录token
     // 本地钱包
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包
@@ -95,7 +95,7 @@ export interface Store {
     ERC20TokenDecimals:Object;// ERC20精度
     nonceMap:Map<string,number>;// 维护本地的nonce
     gasPrice:object;// gasPrice档次(3档)
-    btcMinerFee:object;//btn minerFee档次(3档)
+    btcMinerFee:object;// btn minerFee档次(3档)
     realUserMap:Map<string,boolean>;// 真实用户map
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
@@ -193,7 +193,7 @@ export interface Addr {
  */
 export interface TransRecordLocal {
     hash:string; // 交易hash
-    addr:string;//哪个地址的交易
+    addr:string;// 哪个地址的交易
     txType:TxType;// 交易类型 1 转账 2 收款 3 充值 4 币币兑换转账
     fromAddr:string;// 转账地址
     toAddr:string;// 收币地址
@@ -201,7 +201,7 @@ export interface TransRecordLocal {
     time:number;// 时间戳
     status:TxStatus;// 交易状态
     confirmedBlockNumber:number;// 已确认区块数
-    needConfirmedBlockNumber:number;//需要确认得区块数
+    needConfirmedBlockNumber:number;// 需要确认得区块数
     info:string;// 交易额外信息
     currencyName:string;// 货币名称
     fee:number;// 矿工费
@@ -475,4 +475,10 @@ export interface PurchaseRecordOne {
     productIntroduction: number;// 产品简介
     lockday:string;// 锁定期
     state:any;
+}
+
+// 语言配置
+export interface LanguageSet {
+    selected:number; // 当前选中的语言，0 简体中文，1 繁体中文，2 英文
+    languageList:['simpleChinese','tranditionalChinese','English']; // 语言列表
 }

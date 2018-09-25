@@ -5,7 +5,7 @@
         <div w-class="groupCard">
             <div w-class="titleMode">
                 <img src="../../../res/image1/mine_makmoney.png" w-class="makeMoney"/>
-                <span w-class="totalTitle">{{_cfg.totalTitle}}</span>
+                <span w-class="totalTitle">{{it1.cfgData.totalTitle}}</span>
                 <img src="../../../res/image1/41_blue.png" w-class="miningDesc" on-tap="miningDesc"/>
             </div>
 
@@ -18,15 +18,15 @@
 
             <div w-class="titleMode">
                 <div w-class="totalTitle">
-                    <div>{{_cfg.leftTitle}}</div>
+                    <div>{{it1.cfgData.leftTitle}}</div>
                     <div w-class="otherNum">{{it1.mineLast}}</div>
                 </div>
                 <div w-class="totalTitle">
-                    <div>{{_cfg.rightTitle}}</div>
+                    <div>{{it1.cfgData.rightTitle}}</div>
                     <div w-class="otherNum">{{it1.mines}}</div>
                 </div>
                 <div ev-btn-tap="doPadding">
-                    <app-components1-btn-btn>{name:{{_cfg.btnName}},"types":"small"}</app-components1-btn-btn>
+                    <app-components1-btn-btn>{name:{{it1.cfgData.btnName}},"types":"small"}</app-components1-btn-btn>
                 </div>
             </div>
 
@@ -34,8 +34,8 @@
 
             <div w-class="titleMode" on-tap="goNextPage(0)">
                 <img src="../../../res/image1/mine_top.png" w-class="rankTop"/>
-                <span w-class="miningTitle" style="flex: 1;">{{_cfg.miningTitle}}</span>
-                <span w-class="miningTitle">{{_cfg.tips[0] + it1.rankNum + _cfg.tips[1]}}</span>
+                <span w-class="miningTitle" style="flex: 1;">{{it1.cfgData.miningTitle}}</span>
+                <span w-class="miningTitle">{{it1.cfgData.tips[0] + it1.rankNum + it1.cfgData.tips[1]}}</span>
                 <img src="../../../res/image1/25_blue.png" w-class="rankList"/>
             </div>
         </div>
@@ -43,24 +43,24 @@
         <div w-class="menuCard">
             <div w-class="oneBtn" on-tap="goNextPage(1)">
                 <img src="../../../res/image1/btn_yun_1.png" w-class="btnImg"/>
-                <div w-class="btnMess">{{_cfg.btnMess[0]}}</div>
+                <div w-class="btnMess">{{it1.cfgData.btnMess[0]}}</div>
             </div>
             <div w-class="oneBtn" on-tap="goNextPage(2)">
                 <img src="../../../res/image1/btn_yun_2.png" w-class="btnImg"/>
-                <div w-class="btnMess">{{_cfg.btnMess[1]}}</div>
+                <div w-class="btnMess">{{it1.cfgData.btnMess[1]}}</div>
             </div>
             <div w-class="oneBtn" on-tap="goNextPage(3)">
                 <img src="../../../res/image1/btn_yun_3.png" w-class="btnImg"/>
-                <div w-class="btnMess">{{_cfg.btnMess[2]}}</div>
+                <div w-class="btnMess">{{it1.cfgData.btnMess[2]}}</div>
             </div>
             <div w-class="oneBtn" on-tap="goNextPage(4)">
                 <img src="../../../res/image1/btn_yun_4.png" w-class="btnImg"/>
-                <div w-class="btnMess">{{_cfg.btnMess[3]}}</div>
+                <div w-class="btnMess">{{it1.cfgData.btnMess[3]}}</div>
             </div>
         </div>
 
         <div style="display: flex;align-items: center;">
-            <span style="font-size: 36px;font-weight: 600;margin-left: 50px;flex: 1;">{{_cfg.welfare}}</span>
+            <span style="font-size: 36px;font-weight: 600;margin-left: 50px;flex: 1;">{{it1.cfgData.welfare}}</span>
             <img src="../../../res/image1/25_gray.png" style="width: 40px;height: 40px;margin-right: 50px;"/>
         </div>
 

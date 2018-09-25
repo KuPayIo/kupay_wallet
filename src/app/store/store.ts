@@ -7,7 +7,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendItem, DividTotal, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog,ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransRecordLocal, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendItem, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne,RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransRecordLocal, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -119,7 +119,7 @@ type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walle
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
  'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo' | 'coinGain' |
- 'btcMinerFee' | 'token' | 'flag';
+ 'btcMinerFee' | 'token' | 'flag' | 'languageSet';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -156,7 +156,7 @@ const store = <Store>{
     readedPriAgr: false, // 是否阅读隐私协议
     loginState: LoginState.init,// 连接状态
     coinGain:new Map<string,number>(),
-    token:"",//自动登录token
+    token:'',// 自动登录token
     // 本地钱包
     walletList: <Wallet[]>[],// 钱包数据
     curWallet: <Wallet>null,// 当前钱包
@@ -167,7 +167,7 @@ const store = <Store>{
     lockScreen: <LockScreen>null, // 锁屏密码相关
     nonceMap:new Map<string,number>(),// 本地nonce维护
     gasPrice:{},// gasPrice分档次
-    btcMinerFee:{},//btc minerfee 分档次
+    btcMinerFee:{},// btc minerfee 分档次
     realUserMap:new Map<string,boolean>(),// 本地真实用户map
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
@@ -197,5 +197,6 @@ const store = <Store>{
     productList:  <Product[]>[],
     // 已购买理财产品
     purchaseRecord:<PurchaseRecordOne[]>[],
-    lastGetSmsCodeTime:0
+    lastGetSmsCodeTime:0,
+    languageSet:<LanguageSet>null
 };

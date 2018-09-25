@@ -25,6 +25,7 @@ interface State {
     convertNumberShow:number; // 兑换总数
     isScroll:boolean;  // 页面是否滑动
     inviteObj:CRecDetail; // 邀请红包对象
+    cfgData:any; 
 }
 
 export class ExchangeHistory extends Widget {
@@ -47,7 +48,8 @@ export class ExchangeHistory extends Widget {
             refresh:true,
             hasMore:false, 
             showMoreTips:false, 
-            inviteObj:null
+            inviteObj:null,
+            cfgData:this.config.value.simpleChinese
         };
         this.initData();
         
@@ -57,6 +59,10 @@ export class ExchangeHistory extends Widget {
      * 更新数据
      */
     public initData() {
+        const lan = find('languageSet');
+        if (lan) {
+            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
+        }
         this.getInviteRedEnvelope();     
                                
         const cHisRec = find('cHisRec');
@@ -181,7 +187,7 @@ export class ExchangeHistory extends Widget {
         const scrollTop = document.getElementById('exchangeHistoryContent').scrollTop; 
         if (this.state.hasMore && this.state.refresh && (oh2 - oh1 - scrollTop) < 20) {
             this.state.refresh = false;
-            console.log(this.config.value.loading);
+            console.log(this.state.cfgData.loading);
             setTimeout(() => {
                 this.initData();
                 this.state.refresh = true;

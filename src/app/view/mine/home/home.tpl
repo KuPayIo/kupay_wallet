@@ -14,7 +14,7 @@
                 <img src="../../../res/image1/42.png" w-class="copy" on-tap="copyAddr"/>
             </div>
             {{else}}
-            <div w-class="userName">点击头像登录</div>            
+            <div w-class="userName">{{it1.cfgData.defaultUserName}}</div>            
             {{end}}
 
         </div>
@@ -25,7 +25,7 @@
                     <img src={{val.img}} w-class="itemImg"/>
                     <span w-class="itemName">{{val.name}}</span>
                     {{if ind==0}}
-                    <div w-class="backup" on-tap="backUp">备份</div>
+                    <div w-class="backup" on-tap="backUp">{{it1.cfgData.backUp}}</div>
                     {{end}}
                 </div>
                 {{if ind == 2}}

@@ -1,5 +1,5 @@
 <div class="new-page" ev-next-click="share" ev-back-click="backPrePage">
-    <app-components1-topBar-topBar>{"title":"我的二维码",nextImg:"../../res/image/09.png"}</app-components1-topBar-topBar>
+    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},nextImg:"../../res/image/09.png"}</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="title">
             <img src={{it1.userHead}} w-class="userHead"/>
@@ -10,7 +10,7 @@
         </div>
         <div style="text-align: center;">
             <app-components-qrcode-qrcode>{value:{{it1.address}},size:"350"}</app-components-qrcode-qrcode>
-            <div style="font-size: 32px;color: #222222;margin-top: 50px;">扫码添加KuPay好友</div>
+            <div style="font-size: 32px;color: #222222;margin-top: 50px;">{{it1.cfgData.shortMess}}</div>
         </div>
     </div>
 </div>
