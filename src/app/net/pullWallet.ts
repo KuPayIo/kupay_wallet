@@ -16,10 +16,10 @@ import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 import { formatBalance, fetchGasPrice, fetchBtcMinerFee } from '../utils/tools';
-import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
+import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth, btc2Sat } from '../utils/unitTools';
 import { VerifyIdentidy } from '../utils/walletTools';
 import { dataCenter } from '../logic/dataCenter';
-import { getBankAddr, rechargeToServer, withdrawFromServer, getWithdrawLogs, getCloudBalance, getBtcBankAddr } from './pull';
+import { getBankAddr, rechargeToServer, withdrawFromServer, getWithdrawLogs, getCloudBalance, getBtcBankAddr, btcRechargeToServer, btcWithdrawFromServer } from './pull';
 // ===================================================== 导出
 
 /**
@@ -537,19 +537,19 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
 };
 // ================================重发
 
-/**
- * 充值
- */
-export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
-    const close = popNew('app-components1-loading-loading', { text: '正在充值...' });
-    const currencyName = txRecord.currencyName;
-    let toAddr;
-    if(currencyName === 'ETH'){
-        toAddr = await getBankAddr();
+export const recharge = async (psw:string,txRecord:TransRecordLocal)=>{
+    if(txRecord.currencyName === 'BTC'){
+        return btcRecharge(psw,txRecord);
     }else{
-        toAddr = await getBtcBankAddr();
+        return ethRecharge(psw,txRecord);
     }
-    
+}
+/**
+ * eth充值
+ */
+export const ethRecharge = async (psw:string,txRecord:TransRecordLocal) => {
+    const close = popNew('app-components1-loading-loading', { text: '正在充值...' });
+    const toAddr = await getBankAddr();
     if (!toAddr) {
         close.callback(close.widget);
 
@@ -560,55 +560,28 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
     const gasPrice = fetchGasPrice(minerFeeLevel);
     const pay = txRecord.pay;
     const info = txRecord.info;
-    
-    let minerFee = 0;
-    if (currencyName === 'BTC') {
-        const nbBlocks = priorityMap[minerFeeLevel];
-        const feeObj = await estimateMinerFeeBTC(nbBlocks);
-        minerFee = formatBalance(feeObj[nbBlocks]);
-    } else {
-        const gasLimit = await estimateGasETH(toAddr,info);
-        minerFee = wei2Eth(gasLimit * fetchGasPrice(minerFeeLevel));
-    }
-    let signedTX;
-    let hash;
+    const gasLimit = await estimateGasETH(toAddr,info);
+    const minerFee = wei2Eth(gasLimit * fetchGasPrice(minerFeeLevel));
     let nonce = txRecord.nonce;
-    if(currencyName === 'BTC'){
-        const arr =  await signRawTransactionBTC(psw,fromAddr,toAddr,pay,minerFeeLevel);
-        if(!arr){
-            close.callback(close.widget);
+    const obj = await signRawTransactionETH(psw,fromAddr,toAddr,pay,minerFeeLevel,info,nonce);
+    if (!obj) {
+        close.callback(close.widget);
 
-            return;
-        }
-        signedTX = arr[0];
-        hash = arr[2];
-        nonce = -1;
-    }else{
-        const obj = await signRawTransactionETH(psw,fromAddr,toAddr,pay,minerFeeLevel,info,nonce);
-        if (!obj) {
-            close.callback(close.widget);
-    
-            return;
-        }
-        signedTX = obj.signedTx;
-        hash = `0x${obj.hash}`;
-        nonce = Number(obj.nonce);
+        return;
     }
+    const signedTX = obj.signedTx;
+    const hash = `0x${obj.hash}`;
+    nonce = Number(obj.nonce);
     const canTransfer = await rechargeToServer(fromAddr,toAddr,hash,nonce,gasPrice,eth2Wei(pay));
     if (!canTransfer) {
         close.callback(close.widget);
 
         return;
     }
-    let h;
-    if(currencyName === 'BTC'){
-        h = await sendRawTransactionBTC(signedTX);
-    }else{
-        h = await sendRawTransactionETH(signedTX);
-    }
+    const h = await sendRawTransactionETH(signedTX);
     close.callback(close.widget);
     if (!h) return;
-    if(currencyName !== 'BTC' && txRecord.nonce){
+    if(!txRecord.nonce){
         const nonceMap = getBorn('nonceMap');
         nonceMap.set(fromAddr,nonce + 1);
         updateStore('nonceMap',nonceMap);
@@ -634,8 +607,73 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
     return h;
 };
 
-// 提现
-export const withdraw = async (passwd:string,toAddr:string,currencyName:string,amount:number | string) => {
+
+/**
+ * btc充值
+ */
+export const btcRecharge = async (psw:string,txRecord:TransRecordLocal) => {
+    const close = popNew('app-components1-loading-loading', { text: '正在充值...' });
+    const toAddr = await getBtcBankAddr();
+    
+    if (!toAddr) {
+        close.callback(close.widget);
+
+        return;
+    }
+    const fromAddr = txRecord.fromAddr;
+    const minerFeeLevel = txRecord.minerFeeLevel;
+    const pay = txRecord.pay;
+    const minerFee = fetchBtcMinerFee(minerFeeLevel);
+    const arr =  await signRawTransactionBTC(psw,fromAddr,toAddr,pay,minerFeeLevel);
+    if(!arr){
+        close.callback(close.widget);
+
+        return;
+    }
+    const signedTX = arr[0];
+    const hash = arr[2];
+    const canTransfer = await btcRechargeToServer(toAddr,hash,btc2Sat(pay).toString(),minerFee);
+    if (!canTransfer) {
+        close.callback(close.widget);
+
+        return;
+    }
+    const h = await sendRawTransactionBTC(signedTX);
+    
+    close.callback(close.widget);
+    if (!h) return;
+    popNew('app-components-message-message',{ content:'充值成功' });
+    // 维护本地交易记录
+    const t = new Date();
+    const record:TransRecordLocal = {
+        ...txRecord,
+        hash,
+        toAddr,
+        time: t.getTime(),
+        fee: minerFee,
+        minerFeeLevel:minerFeeLevel
+    };
+    const trans = find('transactions');
+    trans.push(record);
+    updateStore('transactions',trans);
+    dataCenter.refreshTrans(record.fromAddr,record.currencyName);
+    popNew('app-view-wallet-transaction-transactionDetails', { hash:record.hash });
+    return h;
+};
+
+/**
+ * 
+ * 提现
+ */
+export const withdraw = async (passwd:string,toAddr:string,currencyName:string,amount:number | string) =>{
+    if(currencyName === 'BTC'){
+        return btcWithdraw(passwd,toAddr,amount);
+    }else{
+        return ethWithdraw(passwd,toAddr,currencyName,amount);
+    }
+}
+// eth提现
+export const ethWithdraw = async (passwd:string,toAddr:string,currencyName:string,amount:number | string) => {
     const wallet = find('curWallet');
     const close = popNew('app-components1-loading-loading', { text: '正在提现...' });
     const verify = await VerifyIdentidy(wallet,passwd);
@@ -651,6 +689,31 @@ export const withdraw = async (passwd:string,toAddr:string,currencyName:string,a
     if (success) {
         popNew('app-components-message-message',{ content:'提现成功' });
         getWithdrawLogs(currencyName);
+        getCloudBalance();
+    }
+   
+    return success;
+};
+
+
+
+
+
+// btc提现
+export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
+    const wallet = find('curWallet');
+    const close = popNew('app-components1-loading-loading', { text: '正在提现...' });
+    const verify = await VerifyIdentidy(wallet,passwd);
+    if (!verify) {
+        close.callback(close.widget);
+        popNew('app-components-message-message',{ content:'密码错误' });
+
+        return;
+    }
+    const success = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString());
+    close.callback(close.widget);
+    if (success) {
+        popNew('app-components-message-message',{ content:'提现成功' });
         getCloudBalance();
     }
    
