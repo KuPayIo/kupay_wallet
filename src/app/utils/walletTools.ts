@@ -170,6 +170,29 @@ export const fetchTransactionList = (addr:string,currencyName:string) => {
     return txList.sort((a, b) => b.time - a.time);
 };
 
+/**
+ * 根据交易hash获取指定地址上本地交易详情
+ */
+export const fetchLocalTxByHash = (addr:string,currencyName:string,hash:string)=>{
+    const txList = fetchTransactionList(addr,currencyName);
+    for(let i = 0; i < txList.length;i++){
+        if(txList[i].hash === hash){
+            return txList[i];
+        }
+    }
+}
+
+/**
+ * 根据交易hash获取所有地址上本地交易详情
+ */
+export const fetchLocalTxByHash1 = (currencyName:string,hash:string)=>{
+    const txList = find('transactions') || [];
+    for(let i = 0; i < txList.length;i++){
+        if(txList[i].hash === hash && txList[i].currencyName === currencyName){
+            return txList[i];
+        }
+    }
+}
 
 // 购买理财
 export const purchaseProduct = async (psw:string,productId:string,amount:number) => {

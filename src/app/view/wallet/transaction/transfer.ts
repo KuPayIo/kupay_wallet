@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { estimateMinerFee, transfer, resendNormalTransfer } from '../../../net/pullWallet';
-import { MinerFeeLevel, priorityMap, TransRecordLocal, TxStatus } from '../../../store/interface';
+import { MinerFeeLevel, TransRecordLocal, TxStatus } from '../../../store/interface';
 import { timeOfArrival } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, popPswBox, fetchBtcMinerFee } from '../../../utils/tools';

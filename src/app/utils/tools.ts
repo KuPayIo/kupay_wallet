@@ -9,6 +9,7 @@ import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLoca
 import { find, getBorn, updateStore } from '../store/store';
 import { defalutShowCurrencys, currencyConfirmBlockNumber } from './constants';
 import { uploadFileUrlPrefix } from '../net/pull';
+import { fetchTransactionList } from './walletTools';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -1137,3 +1138,5 @@ export const fetchDeviceId = ()=>{
 
     return getFirstEthAddr();
 }
+
+

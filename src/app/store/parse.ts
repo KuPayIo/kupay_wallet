@@ -3,7 +3,7 @@ import { deepCopy } from '../../pi/util/util';
 import { financialProductList } from '../config';
 // tslint:disable-next-line:max-line-length
 import { formatBalance, GetDateDiff, parseRtype,timestampFormat,timestampFormatToDate, unicodeArray2Str } from '../utils/tools';
-import { kpt2kt, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
+import { kpt2kt, smallUnit2LargeUnit, wei2Eth, sat2Btc } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
 import { AccountDetail, CRecDetail, CurrencyType, CurrencyTypeReverse,MineRank, MiningRank, PurchaseRecordOne, RedBag, SRecDetail, TaskSid } from './interface';
 import { find } from './store';
@@ -189,18 +189,29 @@ export const parseMineDetail = (detail) => {
 /**
  * 解析充值提现记录
  */
-export const parseRechargeWithdrawalLog = (val) => {
+export const parseRechargeWithdrawalLog = (coin,val) => {
     const infoList = [];
-    for (let i = 0; i < val.length;i++) {
-        const record = {
-            time:val[i][0],
-            amount:wei2Eth(val[i][1]),
-            status:val[i][2],
-            statusShow:parseRechargeWithdrawalLogStatus(val[i][2]),
-            hash:val[i][3]
-        };
-        infoList.push(record);
+    if(coin === 'BTC'){
+        for (let i = 0; i < val.length;i++) {
+            const record = {
+                time:val[i][3],
+                amount:sat2Btc(val[i][1]),
+                hash:val[i][2][0]
+            };
+            infoList.push(record);
+        }
+    }else{
+        for (let i = 0; i < val.length;i++) {
+            const record = {
+                time:val[i][0],
+                amount:wei2Eth(val[i][1]),
+                hash:val[i][3]
+            };
+            infoList.push(record);
+        }
     }
+    
+    
     
     return infoList;
 };
@@ -399,16 +410,4 @@ export const parseMyInviteRedEnv = (value) => {
 };
 // ===================================================== 本地
 
-const parseRechargeWithdrawalLogStatus = (status:number) => {
-    let statusShow;
-    switch (status) {
-        case -2:statusShow = '取消';break;
-        case -1:statusShow = '错误';break;
-        case 0:statusShow = '发送中';break;
-        case 1:statusShow = '完成';break;
-        default:
-    }
-
-    return statusShow;
-};
 // ===================================================== 立即执行
