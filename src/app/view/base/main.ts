@@ -7,7 +7,6 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { bufferToU64 } from '../../../pi/bigint/util';
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
@@ -17,7 +16,6 @@ import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
 import { fetchCoinGain } from '../../utils/tools';
-import { BTCWallet, Output } from '../../core/btc/wallet';
 
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
