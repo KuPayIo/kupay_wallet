@@ -24,7 +24,7 @@ interface State {
     totalNum:number;
     oneAmount:number;
     message:string;
-    realUser:object;
+    realUser:boolean;
     cfgData:any;
 }
 
@@ -67,6 +67,30 @@ export class WriteRedEnv extends Widget {
         if (!realUser) {
             fetchRealUser();
         }
+    }
+
+    /**
+     * 更新真实用户
+     */
+    public updateRealUser(realUserMap:Map<string,boolean>) {
+        this.state.realUser = realUserMap.get(find('conUser'));
+    }
+
+    /**
+     * 更新余额
+     */
+    public updateBalance() {
+        const list = [
+            { img:'../../res/image/currency/KT.png',name:'KT',num:500 },
+            { img:'../../res/image/currency/BTC.png',name:'BTC',num:0.01 },
+            { img:'../../res/image/currency/ETH.png',name:'ETH',num:0.5 }
+        ];
+        const data = getBorn('cloudBalance');
+        for (const i in list) {
+            list[i].num = data.get(CurrencyType[list[i].name]) || 0;
+        }
+        this.state.list = list;
+        this.paint();
     }
 
     public backPrePage() {

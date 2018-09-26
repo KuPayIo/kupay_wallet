@@ -39,14 +39,14 @@ export class SendRedEnv extends Widget {
         if (this.props.rtype === 0) {
             // tslint:disable-next-line:max-line-length
             url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}`;
-            title = this.state.cfgData.RedEnvType[0]; 
+            title = this.state.cfgData.redEnvType[0]; 
         } else if (this.props.rtype === 1) {
             // tslint:disable-next-line:max-line-length
             url = `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}`;
-            title = this.state.cfgData.RedEnvType[1]; 
+            title = this.state.cfgData.redEnvType[1]; 
         } else {
             url = `${sharePerUrl}?cid=${this.props.rid}&type=${RedEnvelopeType.Invite}`;
-            title = this.state.cfgData.RedEnvType[2];
+            title = this.state.cfgData.redEnvType[2];
         }
         popNew('app-components-share-share', { 
             shareType: ShareToPlatforms.TYPE_LINK,
