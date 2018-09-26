@@ -17,7 +17,7 @@
                 {{if it1.recordListShow.length==0}}
                     <div style="text-align: center;">
                         <img src="../../../res/image/exchangeEmpty.png" style="width: 200px;height: 200px;margin-top: 210px;"/>
-                        <div style="font-size: 32px;color: #888888;margin-top: 20px;">{{it1.cfgData.tip[2]}}</div>
+                        <div style="font-size: 32px;color: #888888;margin-top: 20px;">{{it1.cfgData.tips[2]}}</div>
                     </div>
                 {{else}}
                     <div w-class="tips">{{it1.cfgData.tips[3]}}</div>

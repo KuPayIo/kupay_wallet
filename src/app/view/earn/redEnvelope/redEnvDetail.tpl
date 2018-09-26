@@ -2,7 +2,7 @@
     {{if !it1.scroll}}
     <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},background:"#DF5E5E" }</app-components1-topBar-topBar>
     {{else}}
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}}}</app-components1-topBar-topBar>
+    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
     {{end}}
     <div w-class="content" on-scroll="pageScroll" id="redEnvDetail">
         <img src="../../../res/image/redEnvDetail.png" w-class="topBackimg"/>

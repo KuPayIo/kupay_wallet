@@ -23,8 +23,8 @@ export const conPort = pi_modules.store.exports.severPort || '80';
 console.log('conIp=',conIp);
 console.log('conPort=',conPort);
 // 分享链接前缀
-export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-// export const sharePerUrl = `http://127.0.0.1:80/wallet/app/boot/share.html`;
+// export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
+export const sharePerUrl = `http://127.0.0.1:80/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 上传图片url
 export const uploadFileUrl = `http://${conIp}/service/upload`;
@@ -672,7 +672,7 @@ export const doChat = async () => {
  */
 export const getAccountDetail = async (coin: string,start = '') => {
     let msg;
-    if(start){
+    if (start) {
         msg = {
             type: 'wallet/account@get_detail',
             param: {
@@ -681,7 +681,7 @@ export const getAccountDetail = async (coin: string,start = '') => {
                 count:PAGELIMIT
             }
         };
-    }else{
+    } else {
         msg = {
             type: 'wallet/account@get_detail',
             param: {
@@ -691,23 +691,22 @@ export const getAccountDetail = async (coin: string,start = '') => {
         };
     }
    
-
     try {
         const res = await requestAsync(msg);
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
         const accountDetailMap = getBorn('accountDetail');
-        const accountDetail = accountDetailMap.get(CurrencyType[coin]) || {list:[]};
-        if(!start){
+        const accountDetail = accountDetailMap.get(CurrencyType[coin]) || { list:[] };
+        if (!start) {
             accountDetail.list = detail;
-        }else{
+        } else {
             accountDetail.list.push(...detail);
         }
         
         accountDetail.start = nextStart;
         accountDetail.canLoadMore = canLoadMore;
-        accountDetailMap.set(CurrencyType[coin],accountDetail)
+        accountDetailMap.set(CurrencyType[coin],accountDetail);
         updateStore('accountDetail',accountDetailMap);
 
     } catch (err) {
@@ -923,13 +922,12 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
     }
 };
 
-
 /**
  * 充值历史记录
  */
 export const getRechargeLogs = async (coin: string,start?) => {
     let type;
-    if(coin === 'BTC'){
+    if (coin === 'BTC') {
         type = 'wallet/bank@btc_pay_log';
     }else if( coin === 'ETH'){
         type = 'wallet/bank@pay_log';
@@ -937,7 +935,7 @@ export const getRechargeLogs = async (coin: string,start?) => {
         return;
     }
     let msg;
-    if(start){
+    if (start) {
         msg = {
             type,
             param: {
@@ -945,7 +943,7 @@ export const getRechargeLogs = async (coin: string,start?) => {
                 count:PAGELIMIT
             }
         };
-    }else{
+    } else {
         msg = {
             type,
             param: {
@@ -954,23 +952,22 @@ export const getRechargeLogs = async (coin: string,start?) => {
         };
     }
    
-
     try {
         const res = await requestAsync(msg);
         const nextStart = res.start && (coin === 'ETH') ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
         const rechargeLogsMap = getBorn('rechargeLogs');
-        const rechargeLogs = rechargeLogsMap.get(CurrencyType[coin]) || {list:[]};
-        if(!start){
+        const rechargeLogs = rechargeLogsMap.get(CurrencyType[coin]) || { list:[] };
+        if (!start) {
             rechargeLogs.list = detail;
-        }else{
+        } else {
             rechargeLogs.list.push(...detail);
         }
         
         rechargeLogs.start = nextStart;
         rechargeLogs.canLoadMore = canLoadMore;
-        rechargeLogsMap.set(CurrencyType[coin],rechargeLogs)
+        rechargeLogsMap.set(CurrencyType[coin],rechargeLogs);
         updateStore('rechargeLogs',rechargeLogsMap);
 
     } catch (err) {
@@ -980,14 +977,12 @@ export const getRechargeLogs = async (coin: string,start?) => {
     }
 };
 
-
-
 /**
  * 提现历史记录
  */
 export const getWithdrawLogs = async (coin: string,start?) => {
     let type;
-    if(coin === 'BTC'){
+    if (coin === 'BTC') {
         type = 'wallet/bank@btc_to_cash_log';
     }else if(coin === 'ETH'){
         type = 'wallet/bank@to_cash_log';
@@ -995,7 +990,7 @@ export const getWithdrawLogs = async (coin: string,start?) => {
         return;
     }
     let msg;
-    if(start){
+    if (start) {
         msg = {
             type,
             param: {
@@ -1003,7 +998,7 @@ export const getWithdrawLogs = async (coin: string,start?) => {
                 count:PAGELIMIT
             }
         };
-    }else{
+    } else {
         msg = {
             type,
             param: {
@@ -1012,23 +1007,22 @@ export const getWithdrawLogs = async (coin: string,start?) => {
         };
     }
    
-
     try {
         const res = await requestAsync(msg);
         const nextStart = res.start && res.start.toJSNumber();
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
         const withdrawLogsMap = getBorn('withdrawLogs');
-        const withdrawLogs = withdrawLogsMap.get(CurrencyType[coin]) || {list:[]};
-        if(!start){
+        const withdrawLogs = withdrawLogsMap.get(CurrencyType[coin]) || { list:[] };
+        if (!start) {
             withdrawLogs.list = detail;
-        }else{
+        } else {
             withdrawLogs.list.push(...detail);
         }
         
         withdrawLogs.start = nextStart;
         withdrawLogs.canLoadMore = canLoadMore;
-        withdrawLogsMap.set(CurrencyType[coin],withdrawLogs)
+        withdrawLogsMap.set(CurrencyType[coin],withdrawLogs);
         updateStore('withdrawLogs',withdrawLogsMap);
 
     } catch (err) {
