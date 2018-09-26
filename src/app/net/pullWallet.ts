@@ -295,9 +295,12 @@ export const doBtcTransfer = async (wlt:BTCWallet,txRecord:TransRecordLocal) => 
     wlt.unlock();
     await wlt.init();
 
-    const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
+    // const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
+    const retArr = await wlt.buildRawTransactionFromSingleAddress(fromAddr,output, fetchBtcMinerFee(minerFeeLevel))
     wlt.lock();
-    const rawHexString: string = retArr[0];
+    // const rawHexString: string = retArr[0];
+    // console.log('rawTx',rawHexString);
+    const rawHexString: string = retArr['rawTx'];
 
     return BtcApi.sendRawTransaction(rawHexString);
 };
@@ -336,7 +339,8 @@ export const signRawTransactionBTC = async (psw:string,fromAddr:string,toAddr:st
             wlt.unlock();
             await wlt.init();
 
-            const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
+            // const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
+            const retArr = await wlt.buildRawTransactionFromSingleAddress(fromAddr,output, fetchBtcMinerFee(minerFeeLevel));
             wlt.lock();
 
             return retArr;
@@ -519,6 +523,7 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
                 console.log('--------------ret',ret);
             } else if (currencyName === 'BTC') {
                 const res = await resendBtcTransfer(<any>wlt, txRecord);
+                console.log('btc res-----',res);
                 ret = {
                     hash:res.txid,
                     nonce:-1
@@ -707,15 +712,16 @@ export const btcRecharge = async (psw:string,txRecord:TransRecordLocal) => {
     const minerFeeLevel = txRecord.minerFeeLevel;
     const pay = txRecord.pay;
     const minerFee = fetchBtcMinerFee(minerFeeLevel);
-    const arr =  await signRawTransactionBTC(psw,fromAddr,toAddr,pay,minerFeeLevel);
-    if(!arr){
+    const obj =  await signRawTransactionBTC(psw,fromAddr,toAddr,pay,minerFeeLevel);
+    if(!obj){
         close.callback(close.widget);
 
         return;
     }
-    const signedTX = arr[0];
-    const hash = arr[2];
-    const canTransfer = await btcRechargeToServer(toAddr,hash,btc2Sat(pay).toString(),minerFee);
+    const oldHash = txRecord.hash;
+    const signedTX = obj['rawTx'];
+    const hash = obj['hash'];
+    const canTransfer = await btcRechargeToServer(toAddr,hash,btc2Sat(pay).toString(),minerFee,oldHash);
     if (!canTransfer) {
         close.callback(close.widget);
 
@@ -767,12 +773,12 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
 
         return;
     }
-    const success = await withdrawFromServer(toAddr,eth2Wei(amount));
+    const hash = await withdrawFromServer(toAddr,eth2Wei(amount));
     close.callback(close.widget);
-    if (success) {
+    if (hash) {
         popNew('app-components-message-message',{ content:'提现成功' });
         const tx:TransRecordLocal = {
-            hash:"",
+            hash,
             addr:toAddr,
             txType:TxType.RECEIPT,
             fromAddr:"",
@@ -787,11 +793,11 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
             fee: 0,
             nonce:undefined
         };
-        // dataCenter.timerUpdateTxWithdraw(tx);
+        dataCenter.timerUpdateTxWithdraw(tx);
         getWithdrawLogs('ETH');
     }
    
-    return success;
+    return hash;
 };
 
 
@@ -809,12 +815,12 @@ export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | st
 
         return;
     }
-    const success = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString());
+    const hash = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString());
     close.callback(close.widget);
-    if (success) {
+    if (hash) {
         popNew('app-components-message-message',{ content:'提现成功' });
         const tx:TransRecordLocal = {
-            hash:"",
+            hash,
             addr:toAddr,
             txType:TxType.RECEIPT,
             fromAddr:"",
@@ -833,5 +839,5 @@ export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | st
         getWithdrawLogs('BTC');
     }
    
-    return success;
+    return hash;
 };

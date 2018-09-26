@@ -661,13 +661,15 @@ export class DataCenter {
     public async timerUpdateTxWithdraw(tx:TransRecordLocal){
         const addr = tx.addr;
         const currencyName = tx.currencyName;
+        const hash = tx.hash;
+        const newTx = fetchLocalTxByHash(addr,currencyName,hash);
         const delay = this.calUpdateDelay(tx);
         const status = tx.status;
-        if(status === TxStatus.SUCCESS) return tx;
+        if(status === TxStatus.SUCCESS) return;
         this.updateTxStatus(tx && tx.hash,currencyName,addr);
         if(!delay) return;
         const timer = setTimeout(()=>{
-            this.timerUpdateTxWithdraw(tx);
+            this.timerUpdateTxWithdraw(newTx || tx);
         },delay);
         this.resetTimer(tx.hash,timer);
     }

@@ -7,7 +7,7 @@ import { ERC20Tokens } from "../../../config";
 import { timeOfArrival } from "../../../utils/constants";
 import { TransRecordLocal, MinerFeeLevel, TxStatus, TxType } from "../../../store/interface";
 import { getCurrentAddrByCurrencyName, getCurrentAddrBalanceByCurrencyName, fetchGasPrice, popPswBox, fetchBtcMinerFee, popNewMessage } from "../../../utils/tools";
-import { estimateMinerFee, recharge } from "../../../net/pullWallet";
+import { estimateMinerFee, recharge, resendRecharge } from "../../../net/pullWallet";
 import { wei2Eth, sat2Btc } from "../../../utils/unitTools";
 interface Props{
     currencyName:string;
@@ -133,7 +133,14 @@ export class Recharge extends Widget{
             minerFeeLevel,
             addr:fromAddr
         };
-        const ret = recharge(passwd,tx);
+        let ret;
+        if(this.props.tx){
+            tx.hash = this.props.tx.hash;
+            ret = resendRecharge(passwd,tx);
+        }else{
+            ret = recharge(passwd,tx);
+        }
+        
         if(ret){
             this.ok && this.ok();
         }

@@ -17,6 +17,7 @@ import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
 import { fetchCoinGain } from '../../utils/tools';
+import { BTCWallet, Output } from '../../core/btc/wallet';
 
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
@@ -90,6 +91,19 @@ export const run = (cb): void => {
     // test();
 
     // test();
+
+    // let wallet = new BTCWallet();
+    // wallet.coinSelector("mjkzmtEEmJt7F6k5nMfJCEuXdcuFqJ37cN", 0.1 * 1e8).then(r => {
+    //     console.log("utxo", r)
+    // });
+
+    // let output = new Output();
+    // output.amount = 0.001;
+    // output.toAddr = "mzJ1AAKQpMj5eaCL3b4oNuSantXmVgz2tM"
+
+    // wallet.buildRawTransactionFromSingleAddress("mjkzmtEEmJt7F6k5nMfJCEuXdcuFqJ37cN", output, 10000).then(r => {
+    //     console.log("rawtx", r)
+    // })
     
 };
 // const rpcFunc = (req:Struct, respClass:Function, callback:Function, timeout: number) => {

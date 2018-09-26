@@ -851,14 +851,16 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
  * 向服务器发起充值请求
  */
 // tslint:disable-next-line:max-line-length
-export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,fees:number) => {
+export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,fees:number,oldHash:string) => {
+    const old_tx = oldHash || 'none';
     const msg = {
         type: 'wallet/bank@btc_pay',
         param: {
             to:toAddr,
             tx,
             value,
-            fees
+            fees,
+            old_tx
         }
     };
     try {
@@ -890,11 +892,11 @@ export const withdrawFromServer = async (toAddr:string,value:string) => {
         const res = await requestAsync(msg);
         console.log('withdrawFromServer',res);
 
-        return true;
+        return res.txid;
     } catch (err) {
         showError(err && (err.result || err.type));
 
-        return false;
+        return;
     }
 };
 
@@ -914,11 +916,11 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
         const res = await requestAsync(msg);
         console.log('btcWithdrawFromServer',res);
 
-        return true;
+        return res.txid;
     } catch (err) {
         showError(err && (err.result || err.type));
 
-        return false;
+        return ;
     }
 };
 
