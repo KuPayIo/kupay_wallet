@@ -286,6 +286,63 @@ export class BTCWallet {
         return [serialized, rawTx.getFee(),rawTx.hash];
     }
 
+    async coinSelector(address: string, amount: number): Promise<any> {
+        //TODO: what if utxos is not an array
+        const utxos = await BtcApi.getAddrUnspent(address);
+
+        for (let i = 0; i < utxos.length; i++) {
+            if (utxos[i].satoshis === amount) {
+                return utxos[i];
+            }
+        }
+
+        const picked = utxos.filter(u => u.satoshis < amount);
+        let sum = 0;
+        for (let i = 0; i < picked.length; i++) {
+            sum += picked[i].satoshis;
+        }
+
+        if (sum === amount) {
+            return picked;
+        }
+
+        if (sum < amount) {
+            for (let i = 0; i < utxos.length; i++) {
+                if (utxos[i].satoshis > amount) {
+                    return utxos[i];
+                }
+            }
+        }
+
+        utxos.sort((x, y) => x.satoshis < y.satoshis);
+        let accumlated = 0;
+        let result = [];
+        for (let i = 0; i < utxos.length; i++) {
+            accumlated += utxos[i].satoshis;
+            result.push(utxos[i]);
+            if (accumlated > amount) {
+                return result;
+            }
+        }
+    }
+
+    public async buildRawTransactionFromSingleAddress(address: string, output: Output, minerFee: number): Promise<any> {
+        let utxos = await this.coinSelector(address, output.amount * 1e8 + minerFee);
+
+        output.amount = bitcore.Unit.fromBTC(output.amount).toSatoshis();
+        const rawTx = new bitcore.Transaction().feePerKb(minerFee)
+            .from(utxos)
+            .to(output.toAddr, output.amount)
+            .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
+            .enableRBF()
+            .sign(this.privateKeyOf(this.usedAdresses[address]))
+
+        return {
+            "rawTx": rawTx.serialize(true),
+            "fee": rawTx.getFee()
+        }
+    }
+
     // TODO: we should distinguish `confirmed`, `unconfirmed` and `spendable`
     public async calcBalance(address?: string): Promise<number> {
         let sum = 0;
