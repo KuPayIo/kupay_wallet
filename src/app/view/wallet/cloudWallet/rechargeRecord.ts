@@ -51,7 +51,7 @@ export class RechargeRecord extends Widget{
             console.log(txDetail);
             item.statusShow = obj.text;
             item.behavior = '充值';
-            item.amountShow = item.amount >= 0 ? `+${item.amount}` : `${item.amount}`;
+            item.amountShow = `+${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_charge_icon.png`;
         });

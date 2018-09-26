@@ -27,7 +27,6 @@ export class WithdrawRecord extends Widget{
         }
     }
     public init() {
-        
         this.state = {
             recordList:[],
             nextStart:0,
@@ -51,10 +50,10 @@ export class WithdrawRecord extends Widget{
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = '充值';
-            item.amountShow = item.amount >= 0 ? `+${item.amount}` : `${item.amount}`;
+            item.behavior = '提币';
+            item.amountShow = `-${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
-            item.iconShow = `cloud_charge_icon.png`;
+            item.iconShow = `cloud_withdraw_icon.png`;
         });
 
         return list;

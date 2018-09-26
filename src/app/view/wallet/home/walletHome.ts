@@ -22,6 +22,12 @@ export class WalletHome extends Widget {
             assetList:fetchWalletAssetList()
         };
     }
+
+    public updateBalance(){
+        this.state.totalAsset = formatBalanceValue(fetchTotalAssets());
+        this.state.assetList = fetchWalletAssetList();
+        this.paint();
+    }
     // 添加资产
     public addAssetClick() {
         if(!hasWallet()) return;
@@ -42,36 +48,32 @@ export class WalletHome extends Widget {
 // ==================本地
 
 // 当前钱包变化
-register('curWallet',(curWallet)=>{
+register('curWallet',()=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
-        w.paint();
+        w.updateBalance();
     }
 });
 
 //地址变化
-register('addrs',(addrs)=>{
+register('addrs',()=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
-        w.paint();
+        w.updateBalance();
     }
 });
 // 汇率变化
-register('exchangeRateJson',(exchangeRateJson)=>{
+register('exchangeRateJson',()=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
-        w.paint();
+        w.updateBalance();
     }
 });
 
 // 货币涨跌幅度变化
-register('coinGain',(coinGain)=>{
+register('coinGain',()=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
-        w.paint();
+        w.updateBalance();
     }
 });

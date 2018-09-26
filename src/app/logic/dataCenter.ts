@@ -81,6 +81,8 @@ export class DataCenter {
     public async refreshTrans(addr:string,currencyName:string){
         const txList = fetchTransactionList(addr,currencyName);
         for(let i = 0;i < txList.length;i++){
+            const timerItem = this.fetchTimerItem(txList[i].hash);
+            if(timerItem) continue;
             this.timerUpdateTx(addr,currencyName,txList[i].hash);
         }
     }
@@ -266,8 +268,6 @@ export class DataCenter {
     //获取eth交易详情
     private async getEthTransactionByHash(hash:string,addr:string){
         if(!hash) return;
-        const timerItem = this.fetchTimerItem(hash);
-        if(timerItem) return;
         const api = new EthApi();
         const res1:any = await api.getTransactionReceipt(hash);
         if(!res1) return;
@@ -311,8 +311,6 @@ export class DataCenter {
     //获取erc20交易详情
     private async getERC20TransactionByHash(currencyName:string,hash:string,addr:string){
         if(!hash) return;
-        const timerItem = this.fetchTimerItem(hash);
-        if(timerItem) return;
         const api = new EthApi();
         const res1:any = await api.getTransactionReceipt(hash);
         if(!res1) return;
@@ -356,8 +354,6 @@ export class DataCenter {
     // 获取btc交易详情
     public async getBTCTransactionByHash(hash:string,addr:string){
         if(!hash) return;
-        const timerItem = this.fetchTimerItem(hash);
-        if(timerItem) return;
         const v = await BtcApi.getTxInfo(hash);
         this.parseBtcTransactionTxRecord(addr, v);
     }

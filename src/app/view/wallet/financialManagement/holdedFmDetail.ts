@@ -15,12 +15,23 @@ export class holdedFmDetail extends Widget{
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         console.log(this.props.product);
+        const stateShow = props.product.state === 1 ? '收益中' : '已赎回';
+        const stateBg = props.product.state === 1 ? '' : 'bg1';
+        const btnText = props.product.state === 1 ? '赎回' : '已赎回';
+        const btnBgColor = props.product.state === 1 ? 'blue' : 'white';
+        this.state = {
+            stateShow,
+            stateBg,
+            btnText,
+            btnBgColor
+        }
     }
     public backPrePage(){
         this.ok && this.ok();
     }
 
     public async redemptionClick(){
+        if(this.props.product.state !== 1) return;
         const psw = await popPswBox();
         if(!psw) return;
         const close = popNewLoading('赎回中...');

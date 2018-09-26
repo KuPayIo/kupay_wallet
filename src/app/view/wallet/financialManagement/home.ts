@@ -4,14 +4,15 @@
 // ==============================导入
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { UserInfo } from '../../../store/interface';
-import { register } from '../../../store/store';
 import { fetchTotalAssets, fetchCloudTotalAssets, formatBalanceValue } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+interface Props{
+    activeNum:number;
+}
 export class Home extends Widget {
     public ok:()=>void;
     public backPrePage(){
@@ -20,6 +21,10 @@ export class Home extends Widget {
     public create() {
         super.create();
         this.init();
+    }
+    public setProps(props:Props,oldProps:Props){
+        super.setProps(props,oldProps);
+        this.state.activeNum = props.activeNum;
     }
     public init() {
         this.state = {

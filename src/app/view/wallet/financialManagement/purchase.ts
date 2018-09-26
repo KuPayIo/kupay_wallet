@@ -4,12 +4,14 @@
 // ===============================================导入
 import { Widget } from '../../../../pi/widget/widget';
 import { Product, CurrencyType, TransRecordLocal, TxStatus, MinerFeeLevel, TxType } from '../../../store/interface';
-import { formatBalance, popPswBox, hasWallet, getCurrentAddrBalanceByCurrencyName, popNewMessage, getCurrentAddrByCurrencyName, fetchGasPrice } from '../../../utils/tools';
+import { formatBalance, popPswBox, getCurrentAddrBalanceByCurrencyName, popNewMessage, getCurrentAddrByCurrencyName, fetchGasPrice } from '../../../utils/tools';
 import { purchaseProduct } from '../../../utils/walletTools';
 import { getBorn } from '../../../store/store';
 import { recharge } from '../../../net/pullWallet';
 import { defaultGasLimit } from '../../../utils/constants';
 import { wei2Eth } from '../../../utils/unitTools';
+import { forelet,WIDGET_NAME } from './productDetail';
+import { popNew } from '../../../../pi/ui/root';
 // ==================================================导出
 interface Props{
     product:Product;
@@ -43,7 +45,12 @@ export class ProductDetail extends Widget {
         const psw = await popPswBox();
         if(!psw) return;
         if(this.state.cloudBalance >= this.state.spend){
-            purchaseProduct(psw,this.props.product.id,this.props.amount);
+            const success = await purchaseProduct(psw,this.props.product.id,this.props.amount);
+            if(success){
+                const w: any = forelet.getWidget(WIDGET_NAME);
+                w.ok && w.ok();
+                popNew('app-view-wallet-financialManagement-home',{activeNum:1})
+            }
         }else if(this.state.cloudBalance + this.state.localBalance >= this.state.spend){
             const fromAddr = getCurrentAddrByCurrencyName('ETH');
             const pay = this.state.spend - this.state.cloudBalance;
@@ -64,7 +71,11 @@ export class ProductDetail extends Widget {
                 minerFeeLevel:MinerFeeLevel.STANDARD,
                 addr:fromAddr
             };
-            recharge(psw,tx);
+            const h = await recharge(psw,tx);
+            if(h){
+                const w: any = forelet.getWidget(WIDGET_NAME);
+                w.ok && w.ok();
+            }
         }else{
             popNewMessage('余额不足');
         }

@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { hasWallet, fetchCloudWalletAssetList, fetchCloudTotalAssets, formatBalanceValue } from '../../../utils/tools';
 import { Forelet } from '../../../../pi/widget/forelet';
-import { register } from '../../../store/store';
+import { register, find } from '../../../store/store';
 import { getProductList, getCloudBalance } from '../../../net/pull';
 import { Product } from '../../../store/interface';
 // ================================ 导出
@@ -29,7 +29,7 @@ export class CloudHome extends Widget {
         this.state = {
             totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
             assetList:fetchCloudWalletAssetList(),
-            productList:[]
+            productList:find("productList")||[]
         };
     }
 
@@ -46,6 +46,12 @@ export class CloudHome extends Widget {
         this.paint();
     }
     
+
+    public updateBalance(){
+        this.state.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
+        this.state.assetList = fetchCloudWalletAssetList();
+        this.paint();
+    }
     public optimalClick(){
         popNew('app-view-wallet-financialManagement-home');
     }
@@ -58,29 +64,26 @@ export class CloudHome extends Widget {
 // =======================本地
 
 // 汇率变化
-register('exchangeRateJson',(exchangeRateJson)=>{
+register('exchangeRateJson',()=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
-        w.paint();
+        w.updateBalance();
     }
 });
 
 // 云端余额变化
-register('cloudBalance',(cloudBalance)=>{
+register('cloudBalance',()=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
-        w.paint();
+        w.updateBalance();
     }
 });
 
 // 货币涨跌幅度变化
-register('coinGain',(coinGain)=>{
+register('coinGain',()=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
-        w.paint();
+        w.updateBalance();
     }
 });
 

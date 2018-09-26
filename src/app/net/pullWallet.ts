@@ -19,7 +19,7 @@ import { fetchGasPrice, fetchBtcMinerFee } from '../utils/tools';
 import { eth2Wei, ethTokenMultiplyDecimals, wei2Eth, btc2Sat } from '../utils/unitTools';
 import { VerifyIdentidy } from '../utils/walletTools';
 import { dataCenter } from '../logic/dataCenter';
-import { getBankAddr, rechargeToServer, withdrawFromServer, getWithdrawLogs, getCloudBalance, getBtcBankAddr, btcRechargeToServer, btcWithdrawFromServer } from './pull';
+import { getBankAddr, rechargeToServer, withdrawFromServer, getWithdrawLogs, getCloudBalance, getBtcBankAddr, btcRechargeToServer, btcWithdrawFromServer, getRechargeLogs } from './pull';
 // ===================================================== 导出
 
 /**
@@ -685,6 +685,7 @@ export const ethRecharge = async (psw:string,txRecord:TransRecordLocal) => {
     trans.push(record);
     updateStore('transactions',trans);
     dataCenter.refreshTrans(record.fromAddr,record.currencyName);
+    getRechargeLogs('ETH');
     popNew('app-view-wallet-transaction-transactionDetails', { hash:record.hash });
     return h;
 };
@@ -739,6 +740,7 @@ export const btcRecharge = async (psw:string,txRecord:TransRecordLocal) => {
     trans.push(record);
     updateStore('transactions',trans);
     dataCenter.refreshTrans(record.fromAddr,record.currencyName);
+    getRechargeLogs('BTC');
     popNew('app-view-wallet-transaction-transactionDetails', { hash:record.hash });
     return h;
 };
@@ -785,7 +787,8 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
             fee: 0,
             nonce:undefined
         };
-        dataCenter.timerUpdateTxWithdraw(tx);
+        // dataCenter.timerUpdateTxWithdraw(tx);
+        getWithdrawLogs('ETH');
     }
    
     return success;
@@ -827,6 +830,7 @@ export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | st
             nonce:undefined
         };
         dataCenter.timerUpdateTxWithdraw(tx);
+        getWithdrawLogs('BTC');
     }
    
     return success;
