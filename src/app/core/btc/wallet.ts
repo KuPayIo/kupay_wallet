@@ -265,6 +265,8 @@ export class BTCWallet {
             keySet.push(this.privateKeyOf(this.usedAdresses[collected[i].address]));
         }
 
+        console.log('keyset', keySet);
+
         console.log('collected: ', collected);
         console.log('accumlated: ', accumlated);
         console.log('keyset length: ', keySet.length);
@@ -324,6 +326,8 @@ export class BTCWallet {
                 return result;
             }
         }
+
+        return [];
     }
 
     public async buildRawTransactionFromSingleAddress(address: string, output: Output, minerFee: number): Promise<any> {
@@ -335,11 +339,15 @@ export class BTCWallet {
             .to(output.toAddr, output.amount)
             .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
             .enableRBF()
-            .sign(this.privateKeyOf(this.usedAdresses[address]))
-
+            .sign([this.privateKeyOf(0)])
+        
+        console.log("usedAddress", this.usedAdresses)
+        console.log("addres", address)
+        console.log("privateKey", this.privateKeyOf(this.usedAdresses[address.trim()]).toString())
         return {
             "rawTx": rawTx.serialize(true),
-            "fee": rawTx.getFee()
+            "fee": rawTx.getFee(),
+            "hash":rawTx.hash
         }
     }
 
@@ -408,7 +416,7 @@ export class BTCWallet {
 
         for (let i = 0; i < vout.length; i++) {
             if (vout[i].scriptPubKey.addresses[0] !== fromAddr) {
-                const value = bitcore.Unit.formBTC(vout[i].value).toSatoshis();
+                const value = bitcore.Unit.fromBTC(vout[i].value).toSatoshis();
                 const address = vout[i].scriptPubKey.addresses[0];
                 tx.to(address, value);
             }
@@ -475,7 +483,7 @@ export class BTCWallet {
     public async scanUsedAddress(): Promise<number> {
         let count = 0;
         let i = 0;
-        this.usedAdresses = [];
+        this.usedAdresses = {};
         for (i = 0; ; i++) {
             const addr = this.derive(i);
             const res = await BtcApi.getAddrTxHistory(addr);

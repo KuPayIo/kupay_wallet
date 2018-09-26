@@ -50,7 +50,7 @@ export class TransactionDetails extends Widget {
         }else{
             popNew('app-view-wallet-transaction-transfer',{ tx,currencyName:this.state.tx.currencyName });
         }
-        
+        this.ok && this.ok();
     }
 
     public copyToAddr() {

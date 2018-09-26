@@ -886,6 +886,12 @@ export const hasWallet = () => {
 
 // 解析交易状态
 export const parseStatusShow = (tx:TransRecordLocal) => {
+    if(!tx){
+        return {
+            text:'打包中',
+            icon:'pending.png'
+        }; 
+    }
     const status = tx.status;
     if (status === TxStatus.PENDING) {
         return {
@@ -1030,7 +1036,7 @@ export const fetchHoldedProductAmount = (id:string) => {
     let holdAmout = 0;
     for (let i = 0;i < purchaseRecord.length;i++) {
         const one = purchaseRecord[i];
-        if (one.id.toString() === id && one.state === 1) {
+        if (one.id === id && one.state === 1) {
             holdAmout += one.amount;
         }
     }

@@ -28,6 +28,9 @@
     border-bottom-left-radius: 12px;
     border-top-left-radius: 12px;
 }
+.status-gray{
+    background-color: #ccc;
+}
 .row2{
     display: flex;
     justify-content: space-between;

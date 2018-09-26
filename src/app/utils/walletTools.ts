@@ -129,7 +129,6 @@ export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) =
  */
 export const getMnemonic = async (wallet, passwd) => {
     const hash = await calcHashValuePromise(passwd, find('salt'));
-    console.log('hash-------',hash);
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -205,9 +204,12 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
     }
     const data = await buyProduct(productId,amount);
     close.callback(close.widget);
-    getCloudBalance();
-    console.log('data',data);
-    getPurchaseRecord();// 购买之后获取购买记录
+    if(data){
+        popNewMessage('购买成功');
+        getCloudBalance();
+        console.log('data',data);
+        getPurchaseRecord();// 购买之后获取购买记录
+    }
     return data;
 }
 

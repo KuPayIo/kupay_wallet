@@ -7,7 +7,6 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { bufferToU64 } from '../../../pi/bigint/util';
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
@@ -90,6 +89,19 @@ export const run = (cb): void => {
     // test();
 
     // test();
+
+    // let wallet = new BTCWallet();
+    // wallet.coinSelector("mjkzmtEEmJt7F6k5nMfJCEuXdcuFqJ37cN", 0.1 * 1e8).then(r => {
+    //     console.log("utxo", r)
+    // });
+
+    // let output = new Output();
+    // output.amount = 0.001;
+    // output.toAddr = "mzJ1AAKQpMj5eaCL3b4oNuSantXmVgz2tM"
+
+    // wallet.buildRawTransactionFromSingleAddress("mjkzmtEEmJt7F6k5nMfJCEuXdcuFqJ37cN", output, 10000).then(r => {
+    //     console.log("rawtx", r)
+    // })
     
 };
 // const rpcFunc = (req:Struct, respClass:Function, callback:Function, timeout: number) => {
