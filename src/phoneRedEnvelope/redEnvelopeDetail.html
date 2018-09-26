@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width,initial-scale=0.5,maximum-scale=0.5,user-scalable=0">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+</head>
+<body>
+    <div ev-back-click="backPrePage" class="detail-new-page">
+        <div class="detail-main">
+            <div class="detail-scroll-container">
+                <div class="detail-top">
+                    <div class="detail-head"><div class="detail-head-inner"></div></div>
+                    <div class="detail-leave-message" id="message">恭喜发财 万事如意</div>
+                    <div class="detail-amount"><span id="amount">1</span><span class="detail-currency-name" id="currencyName">KT</span></div>
+                    <div class="detail-input-father">
+                        <div class="input-father" id="code">000000</div>
+                        <div class="detail-copy-btn" onclick="copyBtnClick()">复制红包码</div>
+                    </div>
+                    <div class="detail-receive" onclick="receiveClick()">立即领取红包金额</div>
+                </div>
+                
+                <div class="detail-bottom" id="detailBottom">
+                    <div class="detail-title" id="detailTitle">已领取1/2，共10 KT</div>
+                    <div class="detail-list"  id="detailList">
+                        <!-- 已领取红包用户列表 -->
+                    </div>
+                </div>
+
+                <div class="detail-rule">
+                    <div class="detail-rule-title">红包领取规则</div>
+                    <div class="detail-rule-list">
+                        <div class="detail-rule-item">1.安装KuPay，创建钱包</div>
+                        <div class="detail-rule-item">2.在钱包里点击发现-发红包</div>
+                        <div class="detail-rule-item">3.输入收到的红包码，红包金额将自动到账</div>
+                        <div class="detail-rule-item">4.同一个红包，每人只能领取一次</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+const props = JSON.parse(window.localStorage.takeRedBag);
+(function init(){
+    document.getElementById('message').innerText = props.leaveMsg;
+    document.getElementById('amount').innerText = props.amount;
+    document.getElementById('currencyName').innerText = CurrencyTypeReverse[props.ctype];
+    document.getElementById('code').innerText = props.cidShow;
+})();
+
+if(props.rtype!==99){
+    getDetail();
+}
+/**
+ * 复制兑换码
+ */
+ function copyBtnClick(){
+    copyToClipboard(props.cidShow);
+}
+
+function getDetail(){
+    const res = querydetail(props.uid,props.rid);
+    console.log(res);
+
+    if (res.result !== 1) {
+        alert('出错啦');
+        return;
+    }
+    const l = res.value[1];
+    const redBagList = [];
+    let totalAmount = 0;
+    for (let i = 0;i < l.length;i++) {
+        const amount = smallUnit2LargeUnitString(CurrencyTypeReverse[props.ctype],l[i][4]);
+        totalAmount += amount;
+        if (l[i][1] !== 0 && l[i][5] !== 0) {
+            user = JSON.parse(userDetails([l[i][1]]).value[0]);
+            console.log(user);
+            
+            const redBag = {
+                suid:l[i][0],
+                uid:l[i][1],
+                rtype:l[i][2],
+                ctype:l[i][3],
+                amount,
+                time:l[i][5],
+                timeShow:timestampFormat(l[i][5]),
+                userName:user.nickName
+            };
+            redBagList.push(redBag);
+        }
+        
+    }
+    totalNumber = l.length;
+    convertedNumber = redBagList.length;
+    totalAmount = totalAmount;
+
+    document.getElementById('detailBottom').style.display = 'block';
+    document.getElementById('detailTitle').innerText = '已领取'+convertedNumber+'/'+totalNumber+'，共'+totalAmount+ CurrencyTypeReverse[props.ctype];
+    // 领取红包，其他用户获得的红包列表
+    if(!redBagList){
+        return;
+    }
+    for(const i in redBagList){
+        var item = document.createElement('div');
+        item.setAttribute('class','detail-item');
+        item.innerHTML = ' <img src="image/img_avatar1.png" class="detail-avator"/>'+
+            '<div class="detail-item-right">'+
+                '<div class="detail-box1">'+
+                    '<div class="detail-name" id="userName">'+redBagList[i].userName+'</div>'+
+                    '<div id="userAmount">'+redBagList[i].amount+'&nbsp;'+CurrencyTypeReverse[redBagList[i].ctype]+'</div>'+
+                '</div>'+
+                '<div class="detail-box2">'+
+                    '<div class="detail-time" id="timeShow">'+redBagList[i].timeShow+'</div>'+
+                    '<div class="detail-best"></div>'+
+                '</div>'+
+            '</div>';
+        document.getElementById('detailList').appendChild(item);
+    }
+    
+}
+
+</script>
+</html>

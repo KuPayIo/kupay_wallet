@@ -5,9 +5,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { setUserInfo } from '../../../net/pull';
 import { LockScreen } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
-import { lockScreenHash, lockScreenVerify } from '../../../utils/tools';
+import { getLanguage, getUserInfo, lockScreenHash, lockScreenVerify } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -26,11 +27,7 @@ export class Setting extends Widget {
     }
 
     public initData() {
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
+        const cfg = getLanguage(this);
         this.state = {
             lockScreenPsw:'',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
@@ -49,12 +46,14 @@ export class Setting extends Widget {
             cfgData:cfg  
         };
 
+        const userInfo = find('userInfo');
+        if (userInfo) {
+            // gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+            this.state.userHead = userInfo.avatar ? userInfo.avatar :'../../../res/image/default_avater_big.png';
+            this.state.userName = userInfo.nickName;
+        }
         const wallet = find('curWallet');
         if (wallet) {
-            // gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-            const gwlt = JSON.parse(wallet.gwlt);
-            this.state.userHead = wallet.avatar ? wallet.avatar :'../../../res/image/default_avater_big.png';
-            this.state.userName = gwlt.nickName;
             this.state.wallet = wallet;
         }
         const ls = find('lockScreen');
@@ -230,12 +229,10 @@ export class Setting extends Widget {
     public userNameChange(e:any) {
         if (e.value !== this.state.userName) {
             this.state.userName = e.value;
-            const walletList = find('walletList');
-            const gwlt = this.state.wallet.gwlt;
-            gwlt.nickName = e.value;
-            this.state.wallet.gwlt = JSON.parse(gwlt);
-            updateStore('walletList', walletList);
-            updateStore('curWallet', this.state.wallet);
+            const userInfo = find('userInfo');
+            userInfo.nickName = e.value;
+            updateStore('userInfo',userInfo);
+            setUserInfo();
         }
     }
 

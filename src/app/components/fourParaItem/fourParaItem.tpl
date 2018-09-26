@@ -1,6 +1,8 @@
 <div w-class="item">
     <div w-class="itemName">
-        <span w-class="itemleft">{{it.name}}</span>
+        <span w-class="itemleft">{{it.name}}
+            {{if it.showPin}}<span w-class="other">拼</span>{{end}}
+        </span>
         <span>{{it.data}}</span>
     </div>
     <div w-class="itemTime">

@@ -3,22 +3,14 @@
  */
 // ===============================================导入
 import { Widget } from '../../../../pi/widget/widget';
-import { find } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 // ==================================================导出
 
 export class ContanctUs extends Widget {
     public ok: () => void;
     public create() {
         super.create();
-        this.init();
-    }
-
-    public init() {
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
+        const cfg = getLanguage(this);
         this.state = {
             data:[
                 { value: cfg.itemTitle[0],desc:'www.Kupay.io' },
@@ -28,6 +20,7 @@ export class ContanctUs extends Widget {
             cfgData:cfg
         };
     }
+
     public backPrePage() {
         this.ok && this.ok();
     }

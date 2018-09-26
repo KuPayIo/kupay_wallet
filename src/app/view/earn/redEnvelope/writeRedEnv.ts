@@ -8,6 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { fetchRealUser, getCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
 import { CurrencyType, RedEnvelopeType } from '../../../store/interface';
 import { find, getBorn, register, updateStore } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -38,11 +39,6 @@ export class WriteRedEnv extends Widget {
 
     public create() {
         const realUser = getBorn('realUserMap').get(find('conUser'));
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
         this.state = {
             list:[],
             selected:0,
@@ -52,7 +48,7 @@ export class WriteRedEnv extends Widget {
             oneAmount:0,
             message:'',
             realUser,
-            cfgData:cfg
+            cfgData:getLanguage(this)
         };
         const list = [
             { img:'../../res/image/currency/KT.png',name:'KT',num:500 },
@@ -183,7 +179,7 @@ export class WriteRedEnv extends Widget {
         this.inputBlur();
         const mess1 = this.state.cfgData.phrase[0] + this.state.totalAmount + curCoin.name + this.state.cfgData.phrase[1];
         // tslint:disable-next-line:max-line-length
-        const mess2 = this.state.cfgData.phrase[2] + (this.state.showPin ? this.state.cfgData.redEnvType[0] : this.state.cfgData.redEnvType[1]);
+        const mess2 = this.state.cfgData.phrase[2] + (this.state.showPin ? this.state.cfgData.redEnvType[1] : this.state.cfgData.redEnvType[0]);
         popNew('app-components-modalBoxInput-modalBoxInput',{ 
             title: curCoin.name + this.state.cfgData.phrase[3],
             content:[mess1,mess2],

@@ -4,9 +4,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getInviteCode, getInviteCodeDetail, queryDetailLog, querySendRedEnvelopeRecord } from '../../../net/pull';
+import { getInviteCodeDetail, queryDetailLog, querySendRedEnvelopeRecord } from '../../../net/pull';
 import { find, register } from '../../../store/store';
 import { PAGELIMIT } from '../../../utils/constants';
+import { getLanguage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -31,11 +32,7 @@ export class RedEnvHistory extends Widget {
 
     public async create() {
         super.create();
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
+        const cfg = getLanguage(this);
         this.state = {
             recordList:[
                 // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
@@ -119,7 +116,7 @@ export class RedEnvHistory extends Widget {
      */
     public async initRedEn() {
         for (const i in this.state.recordList) {
-            const data = await queryDetailLog(this.state.recordList[i].rid);
+            const data = await queryDetailLog(find('conUid'),this.state.recordList[i].rid);
             if (data) {
                 this.state.recordList[i].curNum = data[2];
                 this.state.recordList[i].totalNum = data[3];

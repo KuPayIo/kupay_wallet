@@ -38,7 +38,7 @@
     height: 200px;
 }
 .sendRedBtnClick{
-    animation: rotated 1s infinite;
+    animation: rotated 1s ease-in-out infinite;
 }
 .clear{
     position: absolute;

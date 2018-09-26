@@ -8,7 +8,7 @@
         <img src="../../../res/image/redEnvDetail.png" w-class="topBackimg"/>
         <div w-class="topBack">
             <img src="../../../res/image/default_avater_big.png" w-class="userHead"/>
-            <div style="margin: 30px 0 10px;font-size: 30px;color: #222222;">{{it1.cfgData.defaultUserName}}
+            <div style="margin: 30px 0 10px;font-size: 30px;color: #222222;">{{it1.userName}}
                 {{if it1.showPin}}<span w-class="other">{{it1.cfgData.pin}}</span>{{end}}
             </div>
             <div>{{it1.message}}</div>
@@ -18,9 +18,9 @@
             {{if it.rtype==99}}
                 <div w-class="tips">{{it1.cfgData.tips[0]}}</div>
             {{else}}
-                <div w-class="tips">{{it1.cfgData.tips[1]}}{{it.curNum+"/"+it.totalNum}}，{{it1.cfgData.tips[2]}}{{it.amount+it.ctypeShow}}</div>
+                <div w-class="tips">{{it1.cfgData.tips[1]}}{{it1.curNum+"/"+it1.totalNum}}，{{it1.cfgData.tips[2]}}{{it1.totalAmount+it.ctypeShow}}</div>
                 {{for ind,val of it1.redBagList}}
-                    <app-components-fourParaImgItem-fourParaImgItem>{name:{{it1.cfgData.defaultUserName}},data:{{val.amount+" "+it.ctypeShow}},time:{{val.timeShow}},img:"../../res/image/default_avater_big.png"}</app-components-fourParaImgItem-fourParaImgItem>
+                    <app-components-fourParaImgItem-fourParaImgItem>{name:{{val.userName}},data:{{val.amount+" "+it.ctypeShow}},time:{{val.timeShow}},img:"../../res/image/default_avater_big.png",describe:{{it1.greatUser==ind?it1.cfgData.greatUser:""}} }</app-components-fourParaImgItem-fourParaImgItem>
                 {{end}}
             {{end}}
         </div>

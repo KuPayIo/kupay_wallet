@@ -9,7 +9,7 @@
         <div w-class="topBack">
             <img src="../../../res/image/default_avater_big.png" w-class="userHead"/>
             <div style="margin: 30px 0 10px;font-size: 30px;color: #222222;">
-                {{it1.cfgData.defaultUserName}}
+                {{it1.userName}}
                 {{if it1.showPin}}<span w-class="other">{{it1.cfgData.pin}}</span>{{end}}
             </div>
             <div>{{it1.message}}</div>
@@ -17,13 +17,15 @@
         <div w-class="bottom">
             <div w-class="tips">{{it1.cfgData.tips[0] + it.curNum + "/" + it.totalNum}}，{{it1.cfgData.tips[1] + it.amount + it.ctypeShow}}</div>
             {{for ind,val of it1.redBagList}}
-                <app-components-fourParaImgItem-fourParaImgItem>{name:{{it1.cfgData.defaultUserName}},data:{{val.amount+" "+it.ctypeShow}},time:{{val.timeShow}},img:"../../res/image/default_avater_big.png"}</app-components-fourParaImgItem-fourParaImgItem>
+                <app-components-fourParaImgItem-fourParaImgItem>{name:{{val.userName}},data:{{val.amount+" "+it.ctypeShow}},time:{{val.timeShow}},img:"../../res/image/default_avater_big.png",describe:{{it1.greatUser==ind?it1.cfgData.greatUser:""}} }</app-components-fourParaImgItem-fourParaImgItem>
             {{end}}
 
+            {{if it.curNum < it.totalNum}}
             <div w-class="endMess">
                 <div w-class="againSend" on-tap="againSend">{{it1.cfgData.tips[2]}}</div>
                 <div>{{it1.cfgData.tips[3]}}</div>
             </div>
+            {{end}}
         </div>
 
     </div>

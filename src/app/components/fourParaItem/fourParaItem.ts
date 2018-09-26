@@ -15,6 +15,7 @@ interface Props {
     data:string;
     time:string;
     describe?:string;
+    showPin?:boolean;
 }
 // ================================ 导出
 

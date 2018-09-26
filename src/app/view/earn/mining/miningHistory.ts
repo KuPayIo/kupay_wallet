@@ -6,6 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMiningHistory } from '../../../net/pull';
 import { find, register } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -23,7 +24,7 @@ export class Dividend extends Widget {
         this.state = {
             data:[],
             more:false,
-            cfgData:this.config.value.simpleChinese
+            cfgData:getLanguage(this)
         }; 
         getMiningHistory();
         // this.initData();
@@ -38,10 +39,6 @@ export class Dividend extends Widget {
             this.state.data = data; 
         }
 
-        const lan = find('languageSet');
-        if (lan) {
-            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
-        }
         this.paint();
     }
 

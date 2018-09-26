@@ -7,6 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { find, updateStore } from '../../../store/store';
 import { pswEqualed, walletPswAvailable } from '../../../utils/account';
+import { getLanguage } from '../../../utils/tools';
 // ================================================导出
 export class ChangePSW extends Widget {
     public ok: () => void;
@@ -16,16 +17,11 @@ export class ChangePSW extends Widget {
 
     public create() {
         super.create();
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
         this.state = {
             oldPassword:'',
             newPassword:'',
             rePassword:'',
-            cfgData:cfg
+            cfgData:getLanguage(this)
         };
     }
 

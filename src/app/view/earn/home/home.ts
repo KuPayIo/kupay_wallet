@@ -9,7 +9,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getAward, getCloudBalance, getMineRank, getMining } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
-import { formatBalance } from '../../../utils/tools';
+import { formatBalance, getLanguage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -25,10 +25,6 @@ export class PlayHome extends Widget {
 
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
-        this.init();
-    }
-    
-    public init(): void {
         this.state = {
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
@@ -49,16 +45,15 @@ export class PlayHome extends Widget {
             miningNum:` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
                 <span>+{{it1.thisNum}}</span>
             </div>`,
-            cfgData:this.config.value.simpleChinese
+            cfgData:getLanguage(this)
         };
 
         this.initDate();
         if (this.props.isActive) {
             this.initEvent();
         }
-        
     }
-
+    
     /**
      * 判断当前用户是否已经创建钱包
      */
@@ -182,10 +177,6 @@ export class PlayHome extends Widget {
             this.state.rankNum = rank.myRank;
         }
         
-        const lan = find('languageSet');
-        if (lan) {
-            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
-        }
         this.paint();
     }
 

@@ -5,19 +5,14 @@
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { find } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 // =========================================导出
 export class Aboutus extends Widget {
     public ok: () => void;
    
     public create() {
         super.create();
-
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
+        const cfg = getLanguage(this);
         this.state = {
             data:[
                 { value: cfg.itemTitle[0],components:'app-view-mine-other-privacypolicy' },

@@ -3,7 +3,7 @@ import { deepCopy } from '../../pi/util/util';
 import { financialProductList } from '../config';
 // tslint:disable-next-line:max-line-length
 import { formatBalance, GetDateDiff, parseRtype,timestampFormat,timestampFormatToDate, unicodeArray2Str } from '../utils/tools';
-import { kpt2kt, smallUnit2LargeUnit, wei2Eth, sat2Btc } from '../utils/unitTools';
+import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
 import { AccountDetail, CRecDetail, CurrencyType, CurrencyTypeReverse,MineRank, MiningRank, PurchaseRecordOne, RedBag, SRecDetail, TaskSid } from './interface';
 import { find } from './store';
@@ -191,7 +191,7 @@ export const parseMineDetail = (detail) => {
  */
 export const parseRechargeWithdrawalLog = (coin,val) => {
     const infoList = [];
-    if(coin === 'BTC'){
+    if (coin === 'BTC') {
         for (let i = 0; i < val.length;i++) {
             const record = {
                 time:val[i][3],
@@ -200,7 +200,7 @@ export const parseRechargeWithdrawalLog = (coin,val) => {
             };
             infoList.push(record);
         }
-    }else{
+    } else {
         for (let i = 0; i < val.length;i++) {
             const record = {
                 time:val[i][0],
@@ -210,8 +210,6 @@ export const parseRechargeWithdrawalLog = (coin,val) => {
             infoList.push(record);
         }
     }
-    
-    
     
     return infoList;
 };
@@ -333,7 +331,7 @@ export const parseConvertLog = (data) => {
         
         const record: CRecDetail = {
             suid: r[i][0],
-            rid: r[i][1],
+            rid: r[i][1].toString(),
             rtype: r[i][2],
             rtypeShow: parseRtype(r[i][2]),
             ctype: r[i][3],
@@ -359,7 +357,8 @@ export const parseConvertLog = (data) => {
 export const parseExchangeDetail = (value) => {
     const data = value[1];
     const redBagList:RedBag[] = [];
-    let curNum = 0;    
+    let curNum = 0;  
+    let totalAmount = 0;  
     for (let i = 0;i < data.length;i++) {
         const amount = smallUnit2LargeUnit(CurrencyTypeReverse[data[i][3]],data[i][4]);
         if (data[i][1] !== 0 && data[i][5] !== 0) {
@@ -375,10 +374,11 @@ export const parseExchangeDetail = (value) => {
             redBagList.push(redBag);
             curNum ++;
         }
+        totalAmount += amount;
     }
     const message = unicodeArray2Str(value[0]);
 
-    return [redBagList, message, curNum, data.length]; // 兑换人员列表，红包留言，已兑换个数，总个数
+    return [redBagList, message, curNum, data.length, totalAmount]; // 兑换人员列表，红包留言，已兑换个数，总个数，红包总金额
 };
 
 /**
