@@ -80,7 +80,7 @@ export class Withdraw extends Widget{
 
             return;
         }
-        if (Number(this.state.amount) > this.state.balance) {
+        if (Number(this.state.amount) + this.state.minerFee > this.state.balance) {
             popNewMessage(`余额不足`);
 
             return;

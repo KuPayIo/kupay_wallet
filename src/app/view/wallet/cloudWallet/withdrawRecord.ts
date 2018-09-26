@@ -2,11 +2,12 @@
  * other record
  */
 import { Widget } from "../../../../pi/widget/widget";
-import { getRechargeLogs, getWithdrawLogs } from "../../../net/pull";
+import { getWithdrawLogs } from "../../../net/pull";
 import { register, getBorn } from "../../../store/store";
 import { Forelet } from "../../../../pi/widget/forelet";
-import { CurrencyType, AccountDetail, RechargeWithdrawalLog } from "../../../store/interface";
-import { timestampFormat } from "../../../utils/tools";
+import { CurrencyType } from "../../../store/interface";
+import { timestampFormat, parseStatusShow } from "../../../utils/tools";
+import { fetchLocalTxByHash1 } from "../../../utils/walletTools";
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -21,11 +22,11 @@ export class WithdrawRecord extends Widget{
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-    }
-    public init() {
         if(this.props.isActive){
             getWithdrawLogs(this.props.currencyName);
         }
+    }
+    public init() {
         this.state = {
             recordList:[],
             nextStart:0,
@@ -46,14 +47,27 @@ export class WithdrawRecord extends Widget{
 
     public parseRecordList(list){
         list.forEach((item)=>{
-            item.behavior = '充值';
-            item.amountShow = item.amount >= 0 ? `+${item.amount}` : `${item.amount}`;
+            const txDetail = fetchLocalTxByHash1(item.hash);
+            const obj = parseStatusShow(txDetail);
+            item.statusShow = obj.text;
+            item.behavior = '提币';
+            item.amountShow = `-${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
-            item.iconShow = `cloud_charge_icon.png`;
+            item.iconShow = `cloud_withdraw_icon.png`;
         });
 
         return list;
     }
+    public updateTransaction(){
+        const list = this.state.recordList;
+        list.forEach(item=>{
+            const txDetail = fetchLocalTxByHash1(item.hash);
+            const obj = parseStatusShow(txDetail);
+            item.statusShow = obj.text;
+        });
+        this.paint();
+    }
+    
     public loadMore(){
         getWithdrawLogs(this.props.currencyName,this.state.nextStart);
     }
@@ -70,9 +84,21 @@ export class WithdrawRecord extends Widget{
     }
 }
 
+
+//====================================
+
 register('withdrawLogs', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();
+    }
+});
+
+
+//本地交易变化,更新状态
+register('transactions',()=>{
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateTransaction();
     }
 });

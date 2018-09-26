@@ -267,6 +267,7 @@ export class DataCenter {
 
     //获取eth交易详情
     private async getEthTransactionByHash(hash:string,addr:string){
+        if(!hash) return;
         const api = new EthApi();
         const res1:any = await api.getTransactionReceipt(hash);
         if(!res1) return;
@@ -309,6 +310,7 @@ export class DataCenter {
 
     //获取erc20交易详情
     private async getERC20TransactionByHash(currencyName:string,hash:string,addr:string){
+        if(!hash) return;
         const api = new EthApi();
         const res1:any = await api.getTransactionReceipt(hash);
         if(!res1) return;
@@ -351,6 +353,7 @@ export class DataCenter {
 
     // 获取btc交易详情
     public async getBTCTransactionByHash(hash:string,addr:string){
+        if(!hash) return;
         const v = await BtcApi.getTxInfo(hash);
         this.parseBtcTransactionTxRecord(addr, v);
     }
@@ -380,6 +383,7 @@ export class DataCenter {
      * 解析btc交易详情记录
      */
     private parseBtcTransactionTxRecord(addr: string, tx: any) {
+        if(!tx) return;
         let value = 0;
         const inputs = tx.vin.map(v => {
             return v.addr ;
@@ -653,6 +657,22 @@ export class DataCenter {
         }
     }
 
+    //定时更新交易
+    public async timerUpdateTxWithdraw(tx:TransRecordLocal){
+        const addr = tx.addr;
+        const currencyName = tx.currencyName;
+        const hash = tx.hash;
+        const newTx = fetchLocalTxByHash(addr,currencyName,hash);
+        const delay = this.calUpdateDelay(tx);
+        const status = tx.status;
+        if(status === TxStatus.SUCCESS) return;
+        this.updateTxStatus(tx && tx.hash,currencyName,addr);
+        if(!delay) return;
+        const timer = setTimeout(()=>{
+            this.timerUpdateTxWithdraw(newTx || tx);
+        },delay);
+        this.resetTimer(tx.hash,timer);
+    }
 
     //定时更新交易
     private async timerUpdateTx(addr:string,currencyName:string,hash:string){
@@ -671,7 +691,7 @@ export class DataCenter {
     }
 
     //通过hash获取timer item
-    private fetchTimerItem(hash:string | number){
+    private fetchTimerItem(hash:string){
         let timerItem;
         for(let i = 0;i< this.txTimerList.length;i++){
             if(this.txTimerList[i].hash === hash){
@@ -682,7 +702,7 @@ export class DataCenter {
     }
 
     //通过hash清楚定时器
-    private clearTimer(hash:string | number){
+    public clearTimer(hash:string){
         let timerItem;
         for(let i = 0;i< this.txTimerList.length;i++){
             if(this.txTimerList[i].hash === hash){

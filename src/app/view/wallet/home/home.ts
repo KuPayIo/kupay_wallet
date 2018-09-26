@@ -4,7 +4,6 @@
 // ==============================导入
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { UserInfo } from '../../../store/interface';
 import { register } from '../../../store/store';
 import { fetchTotalAssets, fetchCloudTotalAssets, formatBalanceValue, getUserInfo } from '../../../utils/tools';
 import { popNew } from '../../../../pi/ui/root';
@@ -58,7 +57,7 @@ export class Home extends Widget {
 }
 
 // ==========================本地
-register('userInfo',(userInfo:UserInfo) => {
+register('userInfo',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.userInfoChange();
@@ -67,7 +66,7 @@ register('userInfo',(userInfo:UserInfo) => {
 
 
 // 汇率变化
-register('exchangeRateJson',(exchangeRateJson)=>{
+register('exchangeRateJson',()=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
@@ -75,7 +74,7 @@ register('exchangeRateJson',(exchangeRateJson)=>{
 });
 
 // 云端余额变化
-register('cloudBalance',(cloudBalance)=>{
+register('cloudBalance',()=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();

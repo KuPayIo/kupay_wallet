@@ -234,6 +234,8 @@ export const getRandom = async () => {
     fetchGasPrices();
     // btc fees
     fetchBtcFees();
+    //获取真实用户
+    fetchRealUser();
     const flag = find('flag');
     // 第一次创建不需要更新
     if (!flag.created) {
@@ -709,7 +711,7 @@ export const getAccountDetail = async (coin: string,start = '') => {
    
     try {
         const res = await requestAsync(msg);
-        const nextStart = res.start && res.start.toJSNumber();
+        const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
         const accountDetailMap = getBorn('accountDetail');
@@ -867,14 +869,16 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
  * 向服务器发起充值请求
  */
 // tslint:disable-next-line:max-line-length
-export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,fees:number) => {
+export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,fees:number,oldHash:string) => {
+    const old_tx = oldHash || 'none';
     const msg = {
         type: 'wallet/bank@btc_pay',
         param: {
             to:toAddr,
             tx,
             value,
-            fees
+            fees,
+            old_tx
         }
     };
     try {
@@ -893,12 +897,11 @@ export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,f
 /**
  * 提现
  */
-export const withdrawFromServer = async (toAddr:string,coin:number,value:string) => {
+export const withdrawFromServer = async (toAddr:string,value:string) => {
     const msg = {
         type: 'wallet/bank@to_cash',
         param: {
             to:toAddr,
-            coin,
             value
         }
     };
@@ -907,11 +910,11 @@ export const withdrawFromServer = async (toAddr:string,coin:number,value:string)
         const res = await requestAsync(msg);
         console.log('withdrawFromServer',res);
 
-        return true;
+        return res.txid;
     } catch (err) {
         showError(err && (err.result || err.type));
 
-        return false;
+        return;
     }
 };
 
@@ -931,11 +934,11 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
         const res = await requestAsync(msg);
         console.log('btcWithdrawFromServer',res);
 
-        return true;
+        return res.txid;
     } catch (err) {
         showError(err && (err.result || err.type));
 
-        return false;
+        return ;
     }
 };
 
@@ -946,8 +949,10 @@ export const getRechargeLogs = async (coin: string,start?) => {
     let type;
     if (coin === 'BTC') {
         type = 'wallet/bank@btc_pay_log';
-    } else {
+    }else if( coin === 'ETH'){
         type = 'wallet/bank@pay_log';
+    }else{ // KT
+        return;
     }
     let msg;
     if (start) {
@@ -999,15 +1004,16 @@ export const getWithdrawLogs = async (coin: string,start?) => {
     let type;
     if (coin === 'BTC') {
         type = 'wallet/bank@btc_to_cash_log';
-    } else {
+    }else if(coin === 'ETH'){
         type = 'wallet/bank@to_cash_log';
+    }else{//KT
+        return;
     }
     let msg;
     if (start) {
         msg = {
             type,
             param: {
-                coin:CurrencyType[coin],
                 start,
                 count:PAGELIMIT
             }
@@ -1016,7 +1022,6 @@ export const getWithdrawLogs = async (coin: string,start?) => {
         msg = {
             type,
             param: {
-                coin:CurrencyType[coin],
                 count:PAGELIMIT
             }
         };

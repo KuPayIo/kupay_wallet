@@ -1,7 +1,7 @@
 <div w-class="item" on-tap="productItemClick">
     <div w-class="row1">
         <div>{{it.product.productName}}</div>
-        <div w-class="status">收益中</div>
+        <div w-class="status {{it1.stateBg}}">{{it1.stateShow}}</div>
     </div>
     <div w-class="row2">
         <div w-class="col">
@@ -10,7 +10,7 @@
         </div>
         <div w-class="col">
             <div w-class="tag">昨日收益({{it.product.coinType}})</div>
-            <div w-class="tag2">0.0023</div>
+            <div w-class="tag2">{{it.product.yesterdayIncoming}}</div>
         </div>
         <div w-class="col">
             <div w-class="tag">累计</div>

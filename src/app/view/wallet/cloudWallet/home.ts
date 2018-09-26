@@ -2,10 +2,16 @@
  * cloud wallet home
  */
 import { Widget } from "../../../../pi/widget/widget";
-import { getBorn } from "../../../store/store";
+import { getBorn, register } from "../../../store/store";
 import { popNewMessage, formatBalanceValue } from "../../../utils/tools";
 import { popNew } from "../../../../pi/ui/root";
 import { CurrencyType } from "../../../store/interface";
+import { Forelet } from "../../../../pi/widget/forelet";
+// ===================================================== 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props{
     currencyName:string;
 }
@@ -40,6 +46,12 @@ export class CloudWalletHome extends Widget{
         };
     }
 
+    public updateBalance(){
+        const currencyName = this.props.currencyName;
+        this.state.balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
+        this.state.balanceValue = formatBalanceValue(this.state.rate * this.state.balance);
+        this.paint();
+    }
     public tabsChangeClick(event: any, value: number) {
         this.state.activeNum = value;
         this.paint();
@@ -62,3 +74,13 @@ export class CloudWalletHome extends Widget{
         popNew('app-view-wallet-cloudWallet-withdraw',{currencyName:this.props.currencyName});
     }
 }
+
+//===========================
+
+//余额变化
+register('cloudBalance', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateBalance();
+    }
+});

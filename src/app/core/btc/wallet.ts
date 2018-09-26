@@ -265,6 +265,8 @@ export class BTCWallet {
             keySet.push(this.privateKeyOf(this.usedAdresses[collected[i].address]));
         }
 
+        console.log('keyset', keySet);
+
         console.log('collected: ', collected);
         console.log('accumlated: ', accumlated);
         console.log('keyset length: ', keySet.length);
@@ -284,6 +286,69 @@ export class BTCWallet {
         console.log('serialized:', serialized);
 
         return [serialized, rawTx.getFee(),rawTx.hash];
+    }
+
+    async coinSelector(address: string, amount: number): Promise<any> {
+        //TODO: what if utxos is not an array
+        const utxos = await BtcApi.getAddrUnspent(address);
+
+        for (let i = 0; i < utxos.length; i++) {
+            if (utxos[i].satoshis === amount) {
+                return utxos[i];
+            }
+        }
+
+        const picked = utxos.filter(u => u.satoshis < amount);
+        let sum = 0;
+        for (let i = 0; i < picked.length; i++) {
+            sum += picked[i].satoshis;
+        }
+
+        if (sum === amount) {
+            return picked;
+        }
+
+        if (sum < amount) {
+            for (let i = 0; i < utxos.length; i++) {
+                if (utxos[i].satoshis > amount) {
+                    return utxos[i];
+                }
+            }
+        }
+
+        utxos.sort((x, y) => x.satoshis < y.satoshis);
+        let accumlated = 0;
+        let result = [];
+        for (let i = 0; i < utxos.length; i++) {
+            accumlated += utxos[i].satoshis;
+            result.push(utxos[i]);
+            if (accumlated > amount) {
+                return result;
+            }
+        }
+
+        return [];
+    }
+
+    public async buildRawTransactionFromSingleAddress(address: string, output: Output, minerFee: number): Promise<any> {
+        let utxos = await this.coinSelector(address, output.amount * 1e8 + minerFee);
+
+        output.amount = bitcore.Unit.fromBTC(output.amount).toSatoshis();
+        const rawTx = new bitcore.Transaction().feePerKb(minerFee)
+            .from(utxos)
+            .to(output.toAddr, output.amount)
+            .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
+            .enableRBF()
+            .sign([this.privateKeyOf(0)])
+        
+        console.log("usedAddress", this.usedAdresses)
+        console.log("addres", address)
+        console.log("privateKey", this.privateKeyOf(this.usedAdresses[address.trim()]).toString())
+        return {
+            "rawTx": rawTx.serialize(true),
+            "fee": rawTx.getFee(),
+            "hash":rawTx.hash
+        }
     }
 
     // TODO: we should distinguish `confirmed`, `unconfirmed` and `spendable`
@@ -351,7 +416,7 @@ export class BTCWallet {
 
         for (let i = 0; i < vout.length; i++) {
             if (vout[i].scriptPubKey.addresses[0] !== fromAddr) {
-                const value = bitcore.Unit.formBTC(vout[i].value).toSatoshis();
+                const value = bitcore.Unit.fromBTC(vout[i].value).toSatoshis();
                 const address = vout[i].scriptPubKey.addresses[0];
                 tx.to(address, value);
             }
@@ -418,7 +483,7 @@ export class BTCWallet {
     public async scanUsedAddress(): Promise<number> {
         let count = 0;
         let i = 0;
-        this.usedAdresses = [];
+        this.usedAdresses = {};
         for (i = 0; ; i++) {
             const addr = this.derive(i);
             const res = await BtcApi.getAddrTxHistory(addr);
