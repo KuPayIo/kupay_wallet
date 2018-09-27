@@ -2,19 +2,22 @@
  * wallet home 
  */
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find } from '../../../store/store';
+import { find, register } from '../../../store/store';
 import { copyToClipboard, getFirstEthAddr, getLanguage, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Home extends Widget {
     public ok:() => void;
     public create() {
         super.create();
-        this.init();
-    }
-    public init() {
-        const userInfo = getUserInfo();
         const cfg = getLanguage(this);
         this.state = {
             list:[
@@ -25,18 +28,30 @@ export class Home extends Widget {
                 { img:'../../../res/image1/24.png',name: cfg.itemTitle[4],components:'app-view-mine-other-aboutus' },
                 { img:'../../../res/image1/43.png',name: 'GitHub Repository',components:'' }
             ],
-            address:'FGGF1512151512sd78d4s51af45466',
-            userName:userInfo.nickName,
-            avatar:userInfo.avatar,
+            address:'',
+            userName:'',
+            avatar:'',
             close:false,
             hasWallet:false,
             cfgData:cfg
         };
+        this.initData();
+    }
+
+    /**
+     * 更新数据
+     */
+    public initData() {
+        const userInfo = find('userInfo');
+        if (userInfo) {
+            this.state.userName = userInfo.nickName;
+            this.state.avatar = userInfo.avatar;
+        }
+
         const wallet = find('curWallet');
-        const addr = getFirstEthAddr(); 
         if (wallet) {
             this.state.hasWallet = true;
-            this.state.address = addr;
+            this.state.address = getFirstEthAddr();
         }
         this.paint();
     }
@@ -63,7 +78,13 @@ export class Home extends Widget {
      */
     public itemClick(ind:number) {
         if (ind === 0) {
-            popNew('app-view-mine-account-home');
+            if (this.state.hasWallet) {
+                popNew('app-view-mine-account-home');
+            } else {
+                popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox,() => {
+                    popNew('app-view-wallet-create-home');
+                });
+            }
         } else if (ind === 5) {
             window.open('https://github.com/KuPayIo/kupay_wallet');
         } else {
@@ -108,3 +129,18 @@ export class Home extends Widget {
         popNew('app-view-wallet-create-home');
     }
 }
+
+// ===================================================== 本地
+// ===================================================== 立即执行
+register('curWallet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initDate();
+    }
+});
+register('userInfo', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initDate();
+    }
+});

@@ -36,7 +36,7 @@ export class Message extends Widget {
             setTimeout(() => {
                 this.ok && this.ok();
             }, 300);
-        }, 3000);
+        }, 2000);
     }
 
 }

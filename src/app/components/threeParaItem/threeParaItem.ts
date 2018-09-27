@@ -1,4 +1,6 @@
-
+/**
+ * ThreeParaItem
+ */
 // ================================ 导入
 import { Widget } from '../../../pi/widget/widget';
 

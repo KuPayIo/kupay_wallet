@@ -2,7 +2,7 @@
     <div w-class="top"></div>
     <div w-class="bottom">
         <div w-class="title">
-            <div style="margin-left: 50px;">选择货币</div>
+            <div style="margin-left: 50px;">{{it1.cfgData.selectCoin}}</div>
             <img src="../../res/image/30_gray.png" w-class="close" on-tap="close"/>
         </div>
         <div style="overflow-x: hidden;overflow-y: auto;height: 100%;">

@@ -9,7 +9,9 @@
  * isShowPin:拼字样是否需要显示，默认false
  * input:输入框填充数据
  */
+import { Json } from '../../../pi/lang/type';
 import { Widget } from '../../../pi/widget/widget';
+import { getLanguage } from '../../utils/tools';
 
 interface Props {
     prepend: string;
@@ -25,5 +27,12 @@ export class BasicInput extends Widget {
     public props: Props;
     constructor() {
         super();
+    }
+
+    public setProps(props:Json,oldProps:JSON) {
+        super.setProps(props,oldProps);
+        this.state = {
+            cfgData:getLanguage(this)
+        };
     }
 }

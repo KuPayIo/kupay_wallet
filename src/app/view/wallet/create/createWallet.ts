@@ -2,17 +2,17 @@
  * create wallet
  */
 import { popNew } from '../../../../pi/ui/root';
+import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { CreateWalletType } from '../../../store/interface';
-import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { forelet,WIDGET_NAME } from './home';
-import { getMnemonicByHash, fetchMnemonicFragment, playerName } from '../../../utils/walletTools';
-import { resize } from '../../../../pi/widget/resize/resize';
-import { updateStore, getBorn } from '../../../store/store';
-import { getFirstEthAddr } from '../../../utils/tools';
 import { uploadFile } from '../../../net/pull';
+import { CreateWalletType } from '../../../store/interface';
+import { getBorn, updateStore } from '../../../store/store';
+import { pswEqualed, walletNameAvailable } from '../../../utils/account';
+import { getFirstEthAddr } from '../../../utils/tools';
+import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
+import { forelet,WIDGET_NAME } from './home';
 interface Props {
     itype:CreateWalletType;
     imageBase64?:string;// 图片base64
@@ -72,7 +72,7 @@ export class CreateWallet extends Widget {
     }
     public selectImageClick() {
         selectImage((width, height, base64) => {
-            resize({ url:base64, width: 140, ratio: 0.3, type: "jpeg" },(res)=>{
+            resize({ url:base64, width: 140, ratio: 0.3, type: 'jpeg' },(res) => {
                 console.log('resize---------',res);
                 this.state.chooseImage = true;
                 // tslint:disable-next-line:max-line-length
@@ -82,7 +82,7 @@ export class CreateWallet extends Widget {
             });
         });
     }
-    public randomPlayName(){
+    public randomPlayName() {
         this.state.walletName = playerName();
         this.paint();
     }
@@ -123,13 +123,13 @@ export class CreateWallet extends Widget {
             option.fragment2 = this.props.fragment2;
         }
         const hash = await createWallet(this.state.itype,option);
-        if(this.state.avatar){
+        if (this.state.avatar) {
             uploadFile(this.state.avatar);
         }
-        updateStore("flag",{created:true});
+        updateStore('flag',{ created:true });
         const hashMap = getBorn('hashMap');
         hashMap.set(getFirstEthAddr(),hash);
-        updateStore("hashMap",hashMap);
+        updateStore('hashMap',hashMap);
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
         const w: any = forelet.getWidget(WIDGET_NAME);
@@ -143,8 +143,7 @@ export class CreateWallet extends Widget {
             sureText:'备份',
             cancelText:'暂时不' 
         },() => {
-            popNew('app-view-wallet-backup-index',{mnemonic,fragments});
+            popNew('app-view-wallet-backup-index',{ mnemonic,fragments });
         });
     }
 }
-

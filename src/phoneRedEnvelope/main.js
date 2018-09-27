@@ -1,21 +1,25 @@
 // ==========================================静态变量,静态方法
 
-// 货币类型
+// 云端货币类型
 const CurrencyType = {
     KT: 100,
-    ETH: 101
+    ETH: 101,
+    BTC: 102
 }
+
+// 枚举云端货币类型
+const CurrencyTypeReverse = {
+    100: 'KT',
+    101: 'ETH',
+    102:'BTC'
+};
+
 // 不同红包类型
 const RedEnvelopeType = {
     Normal: '00',
     Random: '01',
     Invite: '99'
 }
-// 枚举货币类型
-const CurrencyTypeReverse = {
-    100: 'KT',
-    101: 'ETH'
-};
 // 复制到剪切板
 const copyToClipboard = (copyText) => {
     const input = document.createElement('input');
