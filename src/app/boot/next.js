@@ -120,7 +120,7 @@ winit.initNext = function () {
 				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
 				root.cfg.full = false; //PC模式
 				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
-				index.run(() => {
+				index.run(function(){
 					// 关闭读取界面
 					document.body.removeChild(document.getElementById('rcmj_loading_log'));
 				});

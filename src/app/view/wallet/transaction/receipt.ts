@@ -31,6 +31,9 @@ export class Receipt extends Widget{
     }
 
     public shareClick(){
-        popNew('app-components-share-share',{text:this.state.from,shareType:ShareToPlatforms.TYPE_IMG});
+        popNew('app-components-share-share',{text:this.state.fromAddr,shareType:ShareToPlatforms.TYPE_IMG},()=>{
+            popNewMessage('分享成功');
+            this.ok && this.ok();
+        });
     }
 }

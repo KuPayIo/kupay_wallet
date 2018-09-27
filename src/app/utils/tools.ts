@@ -1104,13 +1104,20 @@ export const base64ToFile = (base64:string) => {
  */
 export const getUserInfo = () => {
     const userInfo = find('userInfo');
+    let nickName = userInfo.nickName;
+    if(!nickName){
+        const wallet = find('curWallet');
+        if(wallet){
+            nickName = JSON.parse(wallet.gwlt).nickName;
+        }
+    }
     let avatar = userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
     }
 
     return {
-        ...userInfo,
+        nickName,
         avatar
     };
 };

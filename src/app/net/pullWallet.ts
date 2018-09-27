@@ -342,7 +342,26 @@ export const signRawTransactionBTC = async (psw:string,fromAddr:string,toAddr:st
             // const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
             const retArr = await wlt.buildRawTransactionFromSingleAddress(fromAddr,output, fetchBtcMinerFee(minerFeeLevel));
             wlt.lock();
+            return retArr;
+        }
+    } catch (error) {
+        doErrorShow(error);
+    }
+};
 
+/**
+ * BTC重发交易签名
+ */
+export const resendSignRawTransactionBTC = async (hash:string,psw:string,fromAddr:string,minerFeeLevel:MinerFeeLevel) => {
+    const wallet = find('curWallet');
+    try {
+        const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, 'BTC');
+        if (addrIndex >= 0) {
+            const wlt:BTCWallet = await GlobalWallet.createWlt('BTC', psw, wallet, addrIndex);
+            wlt.unlock();
+            await wlt.init();
+            const retArr = await wlt.resendTx(hash, fetchBtcMinerFee(minerFeeLevel));
+            wlt.lock();
             return retArr;
         }
     } catch (error) {
@@ -568,23 +587,19 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
 
 
 
-
-
-
-
 /**
  * 充值重发
  */
 export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
-    console.log('----------resendNormalTransfer--------------');
+    console.log('----------resendRecharge--------------');
     const loading = popNew('app-components1-loading-loading', { text: '重发中...' });
-    let h;
+    let tx;
     try {
         
         if(txRecord.currencyName === 'BTC'){
-            h = await btcRecharge(psw,txRecord);
+            tx = await resendBtcRecharge(psw,txRecord);
         }else{
-            h = await ethRecharge(psw,txRecord);
+            tx = await ethRecharge(psw,txRecord);
         }
     } catch (error) {
         console.log(error.message);
@@ -592,14 +607,7 @@ export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
     } finally {
         loading.callback(loading.widget);
     }
-    if (h) {
-        const t = new Date();
-        const tx = {
-            ...txRecord,
-            hash:h,
-            time: t.getTime()
-        };
-        
+    if (tx) {
         const oldHash = txRecord.hash;
         let index = -1;
         const trans = find('transactions');
@@ -613,11 +621,12 @@ export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
         updateStore('transactions',trans);
         dataCenter.clearTimer(oldHash);//删除定时器
         dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
+        getRechargeLogs(tx.currencyName);
         popNew('app-components-message-message',{ content:'重发成功' });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
 
-    return h;
+    return tx.hash;
 };
 
 
@@ -625,23 +634,31 @@ export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
 // ================================重发
 
 export const recharge = async (psw:string,txRecord:TransRecordLocal)=>{
+    let tx;
+    const close = popNew('app-components1-loading-loading', { text: '正在充值...' });
     if(txRecord.currencyName === 'BTC'){
-        return btcRecharge(psw,txRecord);
+        tx = await btcRecharge(psw,txRecord);
     }else{
-        return ethRecharge(psw,txRecord);
+        tx = await ethRecharge(psw,txRecord);
     }
+    close.callback(close.widget);
+    if(tx){
+        popNew('app-components-message-message',{ content:'充值成功' });
+        const trans = find('transactions');
+        trans.push(tx);
+        updateStore('transactions',trans);
+        dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
+        getRechargeLogs(tx.currencyName);
+        popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
+    }
+    return tx.hash;
 }
 /**
  * eth充值
  */
 export const ethRecharge = async (psw:string,txRecord:TransRecordLocal) => {
-    const close = popNew('app-components1-loading-loading', { text: '正在充值...' });
     const toAddr = await getBankAddr();
-    if (!toAddr) {
-        close.callback(close.widget);
-
-        return;
-    }
+    if (!toAddr) return;
     const fromAddr = txRecord.fromAddr;
     const minerFeeLevel = txRecord.minerFeeLevel;
     const gasPrice = fetchGasPrice(minerFeeLevel);
@@ -651,22 +668,13 @@ export const ethRecharge = async (psw:string,txRecord:TransRecordLocal) => {
     const minerFee = wei2Eth(gasLimit * fetchGasPrice(minerFeeLevel));
     let nonce = txRecord.nonce;
     const obj = await signRawTransactionETH(psw,fromAddr,toAddr,pay,minerFeeLevel,info,nonce);
-    if (!obj) {
-        close.callback(close.widget);
-
-        return;
-    }
+    if (!obj) return;
     const signedTX = obj.signedTx;
     const hash = `0x${obj.hash}`;
     nonce = Number(obj.nonce);
     const canTransfer = await rechargeToServer(fromAddr,toAddr,hash,nonce,gasPrice,eth2Wei(pay));
-    if (!canTransfer) {
-        close.callback(close.widget);
-
-        return;
-    }
+    if (!canTransfer) return;
     const h = await sendRawTransactionETH(signedTX);
-    close.callback(close.widget);
     if (!h) return;
     if(!txRecord.nonce){
         const nonceMap = getBorn('nonceMap');
@@ -674,7 +682,7 @@ export const ethRecharge = async (psw:string,txRecord:TransRecordLocal) => {
         updateStore('nonceMap',nonceMap);
     }
     
-    popNew('app-components-message-message',{ content:'充值成功' });
+    
     // 维护本地交易记录
     const t = new Date();
     const record:TransRecordLocal = {
@@ -686,13 +694,7 @@ export const ethRecharge = async (psw:string,txRecord:TransRecordLocal) => {
         fee: minerFee,
         minerFeeLevel:minerFeeLevel
     };
-    const trans = find('transactions');
-    trans.push(record);
-    updateStore('transactions',trans);
-    dataCenter.refreshTrans(record.fromAddr,record.currencyName);
-    getRechargeLogs('ETH');
-    popNew('app-view-wallet-transaction-transactionDetails', { hash:record.hash });
-    return h;
+    return record;
 };
 
 
@@ -700,38 +702,22 @@ export const ethRecharge = async (psw:string,txRecord:TransRecordLocal) => {
  * btc充值
  */
 export const btcRecharge = async (psw:string,txRecord:TransRecordLocal) => {
-    const close = popNew('app-components1-loading-loading', { text: '正在充值...' });
     const toAddr = await getBtcBankAddr();
     
-    if (!toAddr) {
-        close.callback(close.widget);
-
-        return;
-    }
+    if (!toAddr) return;
     const fromAddr = txRecord.fromAddr;
     const minerFeeLevel = txRecord.minerFeeLevel;
     const pay = txRecord.pay;
     const minerFee = fetchBtcMinerFee(minerFeeLevel);
     const obj =  await signRawTransactionBTC(psw,fromAddr,toAddr,pay,minerFeeLevel);
-    if(!obj){
-        close.callback(close.widget);
-
-        return;
-    }
+    if(!obj) return;
     const oldHash = txRecord.hash;
     const signedTX = obj['rawTx'];
     const hash = obj['hash'];
     const canTransfer = await btcRechargeToServer(toAddr,hash,btc2Sat(pay).toString(),minerFee,oldHash);
-    if (!canTransfer) {
-        close.callback(close.widget);
-
-        return;
-    }
+    if (!canTransfer) return;
     const h = await sendRawTransactionBTC(signedTX);
-    
-    close.callback(close.widget);
     if (!h) return;
-    popNew('app-components-message-message',{ content:'充值成功' });
     // 维护本地交易记录
     const t = new Date();
     const record:TransRecordLocal = {
@@ -742,13 +728,41 @@ export const btcRecharge = async (psw:string,txRecord:TransRecordLocal) => {
         fee: minerFee,
         minerFeeLevel:minerFeeLevel
     };
-    const trans = find('transactions');
-    trans.push(record);
-    updateStore('transactions',trans);
-    dataCenter.refreshTrans(record.fromAddr,record.currencyName);
-    getRechargeLogs('BTC');
-    popNew('app-view-wallet-transaction-transactionDetails', { hash:record.hash });
-    return h;
+    return record;
+};
+
+
+
+/**
+ * btc重发充值
+ */
+export const resendBtcRecharge = async (psw:string,txRecord:TransRecordLocal) => {
+    const toAddr = await getBtcBankAddr();
+    
+    if (!toAddr) return;
+    const fromAddr = txRecord.fromAddr;
+    const minerFeeLevel = txRecord.minerFeeLevel;
+    const pay = txRecord.pay;
+    const minerFee = fetchBtcMinerFee(minerFeeLevel);
+    const ret =  await resendSignRawTransactionBTC(txRecord.hash,psw,fromAddr,minerFeeLevel);
+    if(!ret) return;
+    const oldHash = txRecord.hash;
+    const hash = ret['newTxid'];
+    const signedTx = ret['rawTx'];
+    const canTransfer = await btcRechargeToServer(toAddr,hash,btc2Sat(pay).toString(),minerFee,oldHash);
+    if (!canTransfer) return;
+    const h = await sendRawTransactionBTC(signedTx);
+    if (!h) return;
+    // 维护本地交易记录
+    const t = new Date();
+    const record:TransRecordLocal = {
+        ...txRecord,
+        hash,
+        time: t.getTime(),
+        fee: minerFee,
+        minerFeeLevel:minerFeeLevel
+    };
+    return record;
 };
 
 /**
