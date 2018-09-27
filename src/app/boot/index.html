@@ -143,7 +143,6 @@
 			top: 0;
 			bottom: 0;
 			background-color: #fff;
-			display: none;
 		}
 		.slide{
 			position: relative;
@@ -287,26 +286,72 @@
 			</div>
 		</div>
 	</div>
-	<!-- <div class="swiper-container" id="swiper-container">
-		<div class="swiper-wrapper">
-			<div class="swiper-slide slide">
-				<img src="../res/image/slider1.png" />
-			</div>
-			<div class="swiper-slide slide">
-				<img src="../res/image/slider2.png" />
-			</div>
-			<div class="swiper-slide slide">
-				<img src="../res/image/slider3.png" />
-			</div>
-			<div class="swiper-slide slide">
-				<img src="../res/image/slider4.png" />
-				<div class="btn-start">立即体验</div>
+	<!-- <div id="root-swiper">
+		<div class="swiper-container" id="swiper-container">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide slide">
+					<img src="../res/image/slider1.png" />
+				</div>
+				<div class="swiper-slide slide">
+					<img src="../res/image/slider2.png" />
+				</div>
+				<div class="swiper-slide slide">
+					<img src="../res/image/slider3.png" />
+				</div>
+				<div class="swiper-slide slide">
+					<img src="../res/image/slider4.png" />
+					<div class="btn-start">立即体验</div>
+				</div>
 			</div>
 		</div>
 	</div> -->
 </body>
 <script src="./swiper.min.js"></script>
 <script type="text/javascript">
+// (function(){
+// 	var cfg = {
+//     width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+// };
+
+// var browserAdaptive = function() {
+//     if (!root) {
+//         return;
+//     }
+//     var clientWidth = document.documentElement.clientWidth;
+//     var clientHeight = document.documentElement.clientHeight;
+//     oldHeight = clientHeight;
+//     rootWidth = cfg.width;
+//     rootHeight = cfg.height;
+//     let scaleW = clientWidth / rootWidth;
+//     let scaleH = clientHeight / rootHeight;
+//     if (cfg.wscale >= cfg.hscale) {
+//         // 宽度比例变动
+//         if (scaleW > scaleH * (cfg.wscale + 1)) {
+//             // 大于规定的比例
+//             rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+//         } else {
+//             rootWidth = (clientWidth / scaleH) | 0;
+//         }
+//         rootScale = scaleW = scaleH;
+//     } else {
+//         // 高度比例变动
+//         if (scaleH > scaleW * (cfg.hscale + 1)) {
+//             rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+//         } else {
+//             rootHeight = (clientHeight / scaleW) | 0;
+//         }
+//         rootScale = scaleH = scaleW;
+//     }
+//     rootX = (clientWidth - rootWidth) / 2;
+//     rootY = (clientHeight - rootHeight) / 2;
+// 	var cssText = 'position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+// 	var rootSwiper = document.querySelector('#root-swiper');
+// 	rootSwiper.style.cssText = cssText;
+// };
+
+// browserAdaptive();
+// })();
+
 // var mySwiper = new Swiper('.swiper-container', {
 // 	autoplay: true,//可选选项，自动滑动
 // })

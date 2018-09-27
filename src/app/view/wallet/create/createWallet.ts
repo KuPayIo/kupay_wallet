@@ -11,7 +11,7 @@ import { forelet,WIDGET_NAME } from './home';
 import { getMnemonicByHash, fetchMnemonicFragment, playerName } from '../../../utils/walletTools';
 import { resize } from '../../../../pi/widget/resize/resize';
 import { updateStore, getBorn } from '../../../store/store';
-import { getFirstEthAddr } from '../../../utils/tools';
+import { getFirstEthAddr, popNewMessage } from '../../../utils/tools';
 import { uploadFile } from '../../../net/pull';
 interface Props {
     itype:CreateWalletType;
@@ -123,6 +123,9 @@ export class CreateWallet extends Widget {
             option.fragment2 = this.props.fragment2;
         }
         const hash = await createWallet(this.state.itype,option);
+        if(!hash){
+            popNewMessage('创建失败');
+        }
         if(this.state.avatar){
             uploadFile(this.state.avatar);
         }

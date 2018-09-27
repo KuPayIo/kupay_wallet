@@ -34,6 +34,7 @@ export class CreateWalletByImage extends Widget {
             // tslint:disable-next-line:max-line-length
             this.state.imageHtml = `<div style="background-image: url(${base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;"></div>`;
             this.state.imageBase64 = base64;
+            // console.log(base64);
             this.paint();
         });
     }

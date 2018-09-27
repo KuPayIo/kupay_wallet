@@ -71,6 +71,8 @@ export class BaseShare extends Widget {
                 platform: platform
             });
         } else {
+            console.log('share text====',this.props.text);
+            console.log('share type====',this.props.shareType);
             stp.shareCode({
                 success: (result) => { this.ok(true); },
                 fail: (result) => { this.cancel(false); },
