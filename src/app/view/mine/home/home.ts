@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { openNewActivity } from '../../../logic/native';
 import { find, register } from '../../../store/store';
 import { copyToClipboard, getFirstEthAddr, getLanguage, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
@@ -19,6 +20,15 @@ export class Home extends Widget {
     public create() {
         super.create();
         const cfg = getLanguage(this);
+        const wallet = find('curWallet');
+        let hasBackupMnemonic = false;
+        let hasWallet = false;
+        let address = '';
+        if (wallet) {
+            hasWallet = true;
+            address = getFirstEthAddr();
+            hasBackupMnemonic = JSON.parse(wallet.gwlt).mnemonicBackup;
+        }
         this.state = {
             list:[
                 { img:'../../../res/image1/28.png',name: cfg.itemTitle[0],components:'' },
@@ -28,11 +38,12 @@ export class Home extends Widget {
                 { img:'../../../res/image1/24.png',name: cfg.itemTitle[4],components:'app-view-mine-other-aboutus' },
                 { img:'../../../res/image1/43.png',name: 'GitHub Repository',components:'' }
             ],
-            address:'',
+            address,
             userName:'',
             avatar:'',
             close:false,
-            hasWallet:false,
+            hasWallet,
+            hasBackupMnemonic,
             cfgData:cfg
         };
         this.initData();
@@ -86,7 +97,8 @@ export class Home extends Widget {
                 });
             }
         } else if (ind === 5) {
-            window.open('https://github.com/KuPayIo/kupay_wallet');
+            // window.open('https://github.com/KuPayIo/kupay_wallet');
+            openNewActivity('https://github.com/KuPayIo/kupay_wallet');
         } else {
             popNew(this.state.list[ind].components);
         }

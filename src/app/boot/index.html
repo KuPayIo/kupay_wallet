@@ -56,6 +56,7 @@
 	<!--百度禁止转码-->
 	<meta http-equiv="Cache-Control" content="no-siteapp" />
 
+	<link href="./swiper.min.css" rel="stylesheet" type="text/css">
 	<style>
 		body {
 			background-color: #0A1476 !important;
@@ -134,6 +135,40 @@
 			margin: 5px 0px;
 			padding: 0px;
 		}
+
+		#swiper-container{
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			background-color: #fff;
+		}
+		.slide{
+			position: relative;
+			width: 100%;
+			height: 100%;
+		}
+		.slide img{
+			width: 100%;
+			height: 100%;
+		}
+		.btn-start{
+			position: absolute;
+			bottom: 180px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 220px;
+			height: 90px;
+			border-radius: 12px;
+			background-color: rgba(70, 150, 249, 1);
+			left: 303px;
+			color: rgba(255, 255, 255, 1);
+			font-size: 36px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 	</style>
 
 
@@ -172,10 +207,10 @@
 			}
 			// todo 发版本时需动态设置服务器ip及端口
 			// //----------本地-------
-			winit.severIp = "127.0.0.1";
-			winit.severPort = "80";
-			// winit.severIp = "192.168.33.113";
+			// winit.severIp = "127.0.0.1";
 			// winit.severPort = "80";
+			winit.severIp = "192.168.33.113";
+			winit.severPort = "80";
 			//---------国内------
 			// winit.severIp = "47.75.254.166";
 			// winit.severPort = "8080";
@@ -250,10 +285,80 @@
 
 			</div>
 		</div>
-
 	</div>
+	<!-- <div id="root-swiper">
+		<div class="swiper-container" id="swiper-container">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide slide">
+					<img src="../res/image/slider1.png" />
+				</div>
+				<div class="swiper-slide slide">
+					<img src="../res/image/slider2.png" />
+				</div>
+				<div class="swiper-slide slide">
+					<img src="../res/image/slider3.png" />
+				</div>
+				<div class="swiper-slide slide">
+					<img src="../res/image/slider4.png" />
+					<div class="btn-start">立即体验</div>
+				</div>
+			</div>
+		</div>
+	</div> -->
 </body>
+<script src="./swiper.min.js"></script>
 <script type="text/javascript">
+// (function(){
+// 	var cfg = {
+//     width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+// };
 
+// var browserAdaptive = function() {
+//     if (!root) {
+//         return;
+//     }
+//     var clientWidth = document.documentElement.clientWidth;
+//     var clientHeight = document.documentElement.clientHeight;
+//     oldHeight = clientHeight;
+//     rootWidth = cfg.width;
+//     rootHeight = cfg.height;
+//     let scaleW = clientWidth / rootWidth;
+//     let scaleH = clientHeight / rootHeight;
+//     if (cfg.wscale >= cfg.hscale) {
+//         // 宽度比例变动
+//         if (scaleW > scaleH * (cfg.wscale + 1)) {
+//             // 大于规定的比例
+//             rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+//         } else {
+//             rootWidth = (clientWidth / scaleH) | 0;
+//         }
+//         rootScale = scaleW = scaleH;
+//     } else {
+//         // 高度比例变动
+//         if (scaleH > scaleW * (cfg.hscale + 1)) {
+//             rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+//         } else {
+//             rootHeight = (clientHeight / scaleW) | 0;
+//         }
+//         rootScale = scaleH = scaleW;
+//     }
+//     rootX = (clientWidth - rootWidth) / 2;
+//     rootY = (clientHeight - rootHeight) / 2;
+// 	var cssText = 'position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+// 	var rootSwiper = document.querySelector('#root-swiper');
+// 	rootSwiper.style.cssText = cssText;
+// };
+
+// browserAdaptive();
+// })();
+
+// var mySwiper = new Swiper('.swiper-container', {
+// 	autoplay: true,//可选选项，自动滑动
+// })
+// var btnStart = document.querySelector('.btn-start');
+// btnStart.onclick = function(){
+// 	console.log(11111);
+// 	document.body.removeChild(document.querySelector('#swiper-container'));
+// }
 </script>
 </html>

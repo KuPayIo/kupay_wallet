@@ -240,7 +240,7 @@ export const getRandom = async () => {
     // 第一次创建不需要更新
     if (!flag.created) {
         // 用户基础信息
-        getUserInfo([resp.uid]);
+        getUserInfoFromServer([resp.uid]);
     }
    
     const hash = getBorn('hashMap').get(getFirstEthAddr());
@@ -637,7 +637,7 @@ export const setUserInfo = async () => {
 /**
  * 获取当前用户信息
  */
-export const getUserInfo = async (uids: [number]) => {
+export const getUserInfoFromServer = async (uids: [number]) => {
     const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
 
     try {
@@ -976,7 +976,7 @@ export const getRechargeLogs = async (coin: string,start?) => {
    
     try {
         const res = await requestAsync(msg);
-        const nextStart = res.start && (coin === 'ETH') ? res.start.toJSNumber() : res.start;
+        const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
         const rechargeLogsMap = getBorn('rechargeLogs');
@@ -1032,7 +1032,7 @@ export const getWithdrawLogs = async (coin: string,start?) => {
    
     try {
         const res = await requestAsync(msg);
-        const nextStart = res.start && res.start.toJSNumber();
+        const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
         const withdrawLogsMap = getBorn('withdrawLogs');

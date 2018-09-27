@@ -1,6 +1,7 @@
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
 import { popNew } from '../../pi/ui/root';
+import { WebViewHelper } from '../../pi/browser/webViewHelper';
 
 /**
  * 一些底层操作
@@ -49,3 +50,18 @@ export const doScanQrCode = (ok?,cancel?) => {
         }
     });
 };
+
+
+/**
+ * 打开新网页
+ */
+export const openNewActivity = (url:string,title:string="测试")=>{
+    let newWebView = new WebViewHelper();
+    newWebView.init();
+    newWebView.open({
+        success: (result) => {}, 
+        fail: (result) => {}, 
+        loadUrl: url,
+        title
+    })
+}

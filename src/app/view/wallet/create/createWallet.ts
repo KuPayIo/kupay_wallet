@@ -10,7 +10,7 @@ import { uploadFile } from '../../../net/pull';
 import { CreateWalletType } from '../../../store/interface';
 import { getBorn, updateStore } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { getFirstEthAddr } from '../../../utils/tools';
+import { getFirstEthAddr, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
 interface Props {
@@ -123,6 +123,9 @@ export class CreateWallet extends Widget {
             option.fragment2 = this.props.fragment2;
         }
         const hash = await createWallet(this.state.itype,option);
+        if (!hash) {
+            popNewMessage('创建失败');
+        }
         if (this.state.avatar) {
             uploadFile(this.state.avatar);
         }

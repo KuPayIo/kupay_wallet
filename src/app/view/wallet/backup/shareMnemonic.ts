@@ -4,6 +4,8 @@
 import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
 import { ShareToPlatforms } from "../../../../pi/browser/shareToPlatforms";
+import { deleteMnemonic } from "../../../logic/localWallet";
+import { popNewMessage } from "../../../utils/tools";
 interface Props {
     fragments:[];
 }
@@ -45,6 +47,8 @@ export class ShareMnemonic extends Widget{
             }
         }
         if(allShared){
+            deleteMnemonic();
+            popNewMessage('备份完成');
             this.ok && this.ok();
         }
     }

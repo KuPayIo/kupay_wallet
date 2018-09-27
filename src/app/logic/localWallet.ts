@@ -33,7 +33,7 @@ export const createWallet = async (itype:CreateWalletType,option:any) => {
     } else if (itype === CreateWalletType.Image) {
         const close = popNew('app-components1-loading-loading', { text: '创建中...' });
         const hash = await calcHashValuePromise(option.psw, find('salt'));
-        createWalletByImage(hash,option);
+        await createWalletByImage(hash,option);
         close.callback(close.widget);
         // 刷新本地钱包
         dataCenter.refreshAllTx();
@@ -49,7 +49,7 @@ export const createWallet = async (itype:CreateWalletType,option:any) => {
     } else if (itype === CreateWalletType.ImageImport) {
         const close = popNew('app-components1-loading-loading', { text: '导入中...' });
         const hash = await calcHashValuePromise(option.psw, find('salt'));
-        createWalletByImage(hash,option);
+        await createWalletByImage(hash,option);
         close.callback(close.widget);
         // 刷新本地钱包
         dataCenter.refreshAllTx();
@@ -101,9 +101,11 @@ export const createWalletRandom = (hash:string,option) => {
  * @param option 参数
  */
 export const createWalletByImage = async (hash:string,option:any) => {
+    console.log('createWalletByImage-------',hash,option);
     const ahash:any = await getImageAhash(option.imageBase64);
     const vault = await imgToHash(ahash,option.imagePsw);
-
+    console.log('ahash-------',ahash);
+    console.log('vault-------',vault);
     const walletList: Wallet[] = find('walletList');
     const addrs: Addr[] = find('addrs');
     const salt = find('salt');
@@ -128,7 +130,6 @@ export const createWalletByImage = async (hash:string,option:any) => {
     updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
 
     openAndGetRandom();
-
 };
 
 /**
@@ -152,12 +153,12 @@ const getImageAhash = (imageBase64:string) => {
 
 /**
  * 
- * @param ahash ahash
  * @param imagePsw 图片密码
+ * @param ahash ahash
  */
 const imgToHash = async (ahash:string, imagePsw:string) => {
     const sha3Hash = sha3(ahash + imagePsw, false);
-    const hash = await calcHashValuePromise(sha3Hash, find('salt'));
+    const hash = await calcHashValuePromise(sha3Hash);
     const sha3Hash1 = sha3(hash, true);
     const len = sha3Hash1.length;
     // 生成助记词的随机数仅需要128位即可，这里对256位随机数进行折半取异或的处理
@@ -171,7 +172,7 @@ const imgToHash = async (ahash:string, imagePsw:string) => {
 /**
  * 通过助记词导入钱包
  */
-export const importWalletByMnemonic = async (hash:string,option) => {
+export const importWalletByMnemonic = (hash:string,option) => {
     const walletList: Wallet[] = find('walletList');
     const salt = find('salt');
     const addrs: Addr[] = find('addrs') || [];

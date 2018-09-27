@@ -2,12 +2,11 @@
  * 首页
  */
 // ================================ 导入
-import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { applyAutoLogin, autoLogin, fetchRealUser, login, setUserInfo } from '../../net/pull';
+import { applyAutoLogin, autoLogin, setUserInfo } from '../../net/pull';
 import { LoginState, UserInfo } from '../../store/interface';
-import { find, getBorn, register } from '../../store/store';
+import { find, register } from '../../store/store';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -33,7 +32,7 @@ export class App extends Widget {
             old: this.old,
             loading,
             tabBarList: [{
-                text: '玩1',
+                text: '玩',
                 icon: 'play.png',
                 iconActive: 'play_active.png',
                 components: 'app-view-play-home-home'

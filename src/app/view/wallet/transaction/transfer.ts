@@ -162,6 +162,7 @@ export class Transfer extends Widget {
 
     public doScanClick(){
         doScanQrCode((res)=>{
+            console.log(res);
             this.state.toAddr = res;
             this.paint();
         });
