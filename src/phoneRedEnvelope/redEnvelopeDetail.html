@@ -42,6 +42,7 @@
             </div>
         </div>
     </div>
+
 </body>
 <script>
 
@@ -68,7 +69,7 @@ function getDetail(){
     console.log(res);
 
     if (res.result !== 1) {
-        alert('出错啦');
+        popMessage("出错啦！");
         return;
     }
     const l = res.value[1];
