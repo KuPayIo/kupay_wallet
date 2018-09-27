@@ -1065,7 +1065,7 @@ export const calPercent = (surplus:number,total:number) => {
             use:99
         };
     }
-    const r = Number((surplus / total).toFixed(2));
+    const r = Number((surplus / total).toString().slice(0,4));
 
     return {
         left:r * 100,

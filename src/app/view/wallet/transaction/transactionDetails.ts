@@ -8,6 +8,8 @@ import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessag
 import { register } from '../../../store/store';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 import { TxType } from '../../../store/interface';
+import { etherscanUrl, blockchainUrl } from '../../../utils/constants';
+import { openNewActivity } from '../../../logic/native';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -28,6 +30,8 @@ export class TransactionDetails extends Widget {
         const tx = fetchLocalTxByHash1(this.props.hash);
         console.log(tx);
         const obj = parseStatusShow(tx);
+        const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
+        const webText = tx.currencyName === 'BTC' ? '打开blockchain' : "打开etherscan";
         this.state = {
             tx,
             hashShow:parseAccount(tx.hash),
@@ -36,7 +40,8 @@ export class TransactionDetails extends Widget {
             statusIcon:obj.icon,
             minerFeeUnit:tx.currencyName !== 'BTC' ? 'ETH' : 'BTC',
             canResend:canResend(tx),
-            qrcode:`https://ropsten.etherscan.io/tx/${tx.hash}`
+            qrcode:`${qrcodePrefix}${tx.hash}`,
+            webText
         };
     }
     public backPrePage() {
@@ -65,9 +70,8 @@ export class TransactionDetails extends Widget {
         copyToClipboard(this.state.tx.hash);
         popNewMessage('复制成功');
     }
-    public copyEtherscan() {
-        copyToClipboard(this.state.qrcode);
-        popNewMessage('复制成功');
+    public openNewWeb() {
+        openNewActivity(this.state.qrcode);
     }
 
     public updateTransaction(){
