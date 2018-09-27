@@ -56,6 +56,7 @@
 	<!--百度禁止转码-->
 	<meta http-equiv="Cache-Control" content="no-siteapp" />
 
+	<link href="./swiper.min.css" rel="stylesheet" type="text/css">
 	<style>
 		body {
 			background-color: #0A1476 !important;
@@ -133,6 +134,41 @@
 		p {
 			margin: 5px 0px;
 			padding: 0px;
+		}
+
+		#swiper-container{
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			background-color: #fff;
+			display: none;
+		}
+		.slide{
+			position: relative;
+			width: 100%;
+			height: 100%;
+		}
+		.slide img{
+			width: 100%;
+			height: 100%;
+		}
+		.btn-start{
+			position: absolute;
+			bottom: 180px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 220px;
+			height: 90px;
+			border-radius: 12px;
+			background-color: rgba(70, 150, 249, 1);
+			left: 303px;
+			color: rgba(255, 255, 255, 1);
+			font-size: 36px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 	</style>
 
@@ -250,10 +286,34 @@
 
 			</div>
 		</div>
-
+	</div>
+	<div class="swiper-container" id="swiper-container">
+		<div class="swiper-wrapper">
+			<div class="swiper-slide slide">
+				<img src="../res/image/slider1.png" />
+			</div>
+			<div class="swiper-slide slide">
+				<img src="../res/image/slider2.png" />
+			</div>
+			<div class="swiper-slide slide">
+				<img src="../res/image/slider3.png" />
+			</div>
+			<div class="swiper-slide slide">
+				<img src="../res/image/slider4.png" />
+				<div class="btn-start">立即体验</div>
+			</div>
+		</div>
 	</div>
 </body>
+<script src="./swiper.min.js"></script>
 <script type="text/javascript">
-
+var mySwiper = new Swiper('.swiper-container', {
+	autoplay: true,//可选选项，自动滑动
+})
+var btnStart = document.querySelector('.btn-start');
+btnStart.onclick = function(){
+	console.log(11111);
+	document.body.removeChild(document.querySelector('#swiper-container'));
+}
 </script>
 </html>

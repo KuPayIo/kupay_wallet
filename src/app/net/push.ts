@@ -15,7 +15,7 @@ import { getCloudBalance } from './pull';
 export const initPush = () => {
     setMsgHandler('event_pay_ok',(res) => {
         popNewMessage('充值已到账');
-        const value = res.value.toJSNumber() || res.value;
+        const value = res.value.toJSNumber ? res.value.toJSNumber() : res.value;
         getCloudBalance().then(res => {
             console.log('服务器推送成功 云端余额更新==========================',res);
         });

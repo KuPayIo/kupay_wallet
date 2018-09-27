@@ -342,7 +342,26 @@ export const signRawTransactionBTC = async (psw:string,fromAddr:string,toAddr:st
             // const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
             const retArr = await wlt.buildRawTransactionFromSingleAddress(fromAddr,output, fetchBtcMinerFee(minerFeeLevel));
             wlt.lock();
+            return retArr;
+        }
+    } catch (error) {
+        doErrorShow(error);
+    }
+};
 
+/**
+ * BTC重发交易签名
+ */
+export const resendSignRawTransactionBTC = async (hash:string,psw:string,fromAddr:string,minerFeeLevel:MinerFeeLevel) => {
+    const wallet = find('curWallet');
+    try {
+        const addrIndex = GlobalWallet.getWltAddrIndex(wallet, fromAddr, 'BTC');
+        if (addrIndex >= 0) {
+            const wlt:BTCWallet = await GlobalWallet.createWlt('BTC', psw, wallet, addrIndex);
+            wlt.unlock();
+            await wlt.init();
+            const retArr = await wlt.resendTx(hash, fetchBtcMinerFee(minerFeeLevel));
+            wlt.lock();
             return retArr;
         }
     } catch (error) {
@@ -578,7 +597,7 @@ export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
     try {
         
         if(txRecord.currencyName === 'BTC'){
-            tx = await btcRecharge(psw,txRecord);
+            tx = await resendBtcRecharge(psw,txRecord);
         }else{
             tx = await ethRecharge(psw,txRecord);
         }
@@ -705,6 +724,40 @@ export const btcRecharge = async (psw:string,txRecord:TransRecordLocal) => {
         ...txRecord,
         hash,
         toAddr,
+        time: t.getTime(),
+        fee: minerFee,
+        minerFeeLevel:minerFeeLevel
+    };
+    return record;
+};
+
+
+
+/**
+ * btc重发充值
+ */
+export const resendBtcRecharge = async (psw:string,txRecord:TransRecordLocal) => {
+    const toAddr = await getBtcBankAddr();
+    
+    if (!toAddr) return;
+    const fromAddr = txRecord.fromAddr;
+    const minerFeeLevel = txRecord.minerFeeLevel;
+    const pay = txRecord.pay;
+    const minerFee = fetchBtcMinerFee(minerFeeLevel);
+    const ret =  await resendSignRawTransactionBTC(txRecord.hash,psw,fromAddr,minerFeeLevel);
+    if(!ret) return;
+    const oldHash = txRecord.hash;
+    const hash = ret['newTxid'];
+    const signedTx = ret['rawTx'];
+    const canTransfer = await btcRechargeToServer(toAddr,hash,btc2Sat(pay).toString(),minerFee,oldHash);
+    if (!canTransfer) return;
+    const h = await sendRawTransactionBTC(signedTx);
+    if (!h) return;
+    // 维护本地交易记录
+    const t = new Date();
+    const record:TransRecordLocal = {
+        ...txRecord,
+        hash,
         time: t.getTime(),
         fee: minerFee,
         minerFeeLevel:minerFeeLevel
