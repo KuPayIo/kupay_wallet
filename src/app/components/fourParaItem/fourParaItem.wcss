@@ -23,3 +23,12 @@
 .itemleft{
     flex: 1;
 }
+.other{
+    font-size: 28px;
+    background: #F8BC45;
+    color: #fff;
+    height: 35px;
+    line-height: 35px;
+    display: inline-block;
+    margin-left: 10px;
+}

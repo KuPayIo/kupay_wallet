@@ -8,8 +8,9 @@ import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType } from '../../../store/interface';
-import {  find, updateStore } from '../../../store/store';
+import {  updateStore } from '../../../store/store';
 import { showError } from '../../../utils/toolMessages';
+import { getLanguage } from '../../../utils/tools';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
 
 // ================================ 导出
@@ -22,18 +23,12 @@ export class Exchange extends Widget {
     public ok: () => void;
     public create() {
         super.create();
-        this.init();
-    }
-    public init() {
         this.state = {
             cid: '',
-            cfgData:this.config.value.simpleChinese
+            cfgData:getLanguage(this)
         };
-        const lan = find('languageSet');
-        if (lan) {
-            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
-        }
     }
+    
     public backPrePage() {
         this.ok && this.ok(); 
     }

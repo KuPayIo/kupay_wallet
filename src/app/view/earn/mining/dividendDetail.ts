@@ -4,7 +4,7 @@
 // ================================ 导入
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,13 +20,9 @@ export class PlayHome extends Widget {
     public create() {
         super.create();
         this.state = {
-            cfgData:this.config.value.simpleChinese
+            cfgData:getLanguage(this)
         };
         
-        const lan = find('languageSet');
-        if (lan) {
-            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
-        }
     }
 
     public backPrePage() {

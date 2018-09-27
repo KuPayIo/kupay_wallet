@@ -11,6 +11,7 @@ import { BTCWallet } from '../../../core/btc/wallet';
 import { EthWallet } from '../../../core/eth/wallet';
 import { find } from '../../../store/store';
 import { btcNetwork, lang } from '../../../utils/constants';
+import { getLanguage } from '../../../utils/tools';
 
 // ================================================导出
 interface Props {
@@ -69,14 +70,9 @@ export class ExportPrivateKey extends Widget {
             collapseList.push(obj);
         }
         
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
         this.state = {
             collapseList,
-            cfgData:cfg
+            cfgData:getLanguage(this)
         };
         console.log(this.state.collapseList);
     }

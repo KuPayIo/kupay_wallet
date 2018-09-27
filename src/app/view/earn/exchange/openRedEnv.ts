@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { RedEnvelopeType } from '../../../store/interface';
-import { find } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 
 interface Props {
     rtype:string;
@@ -16,26 +16,21 @@ export class OpenRedEnvelope extends Widget {
     public ok:() => void;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
+        
         this.state = {
-            cfgData:this.config.value.simpleChinese
+            tag:'',
+            openClick:false,
+            cfgData:getLanguage(this)
         };
-        const lan = find('languageSet');
-        if (lan) {
-            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
-        }
 
-        let tag = '';
         if (props.rtype === RedEnvelopeType.Normal) {
-            tag = this.state.cfgData.tips[0];
+            this.state.tag = this.state.cfgData.tips[0];
         } else if (props.rtype === RedEnvelopeType.Random) {
-            tag = this.state.cfgData.tips[1];
+            this.state.tag = this.state.cfgData.tips[1];
         } else if (props.rtype === RedEnvelopeType.Invite) {
-            tag = this.state.cfgData.tips[2];
+            this.state.tag = this.state.cfgData.tips[2];
         }
-        this.state = {
-            tag,
-            openClick:false
-        };
+        
     }
 
     /**

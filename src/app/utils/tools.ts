@@ -556,7 +556,7 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
     });
 };
 
-export const popPswBox = async (content=[]) => {
+export const popPswBox = async (content= []) => {
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
         const psw = await openMessageboxPsw(content);
@@ -916,7 +916,6 @@ export const parseStatusShow = (tx:TransRecordLocal) => {
     }
 };
 
-
 // 解析转账类型
 export const parseTxTypeShow = (txType:TxType) => {
     if (txType === TxType.RECEIPT) {
@@ -1129,14 +1128,24 @@ export const getConfirmBlockNumber = (currencyName:string,amount:number) => {
             return confirmBlockNumbers[i].number;
         }
     }
-}
+};
 
 /**
  * 获取设备唯一id
  */
-export const fetchDeviceId = ()=>{
+export const fetchDeviceId = () => {
 
     return getFirstEthAddr();
-}
+};
 
-
+/**
+ * 获取语言设置
+ */
+export const getLanguage = (w) => {
+    const lan = find('languageSet');
+    if (lan) {
+        return w.config.value[lan.languageList[lan.selected]];
+    }
+    
+    return w.config.value.simpleChinese;
+};

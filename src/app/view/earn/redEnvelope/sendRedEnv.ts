@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../net/pull';
 import { RedEnvelopeType } from '../../../store/interface';
-import { find } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 
 interface Props {
     rid: string;
@@ -19,14 +19,8 @@ export class SendRedEnv extends Widget {
 
     public create() {
         super.create();
-        
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
         this.state = {
-            cfgData:cfg
+            cfgData:getLanguage(this)
         };
     }
 
