@@ -5,9 +5,10 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { getInviteCode, queryDetailLog, sharePerUrl } from '../../../net/pull';
+import { getInviteCode, getUserList, queryDetailLog, sharePerUrl } from '../../../net/pull';
 import { RedEnvelopeType } from '../../../store/interface';
 import { find } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 
 interface Props {
     rtype:number;  // 0 等额红包  1 拼手气红包
@@ -23,33 +24,42 @@ export class RedEnvDetail extends Widget {
 
     public setProps(props: Json, oldProps?: Json)  {
         super.setProps(props,oldProps);
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
+        const cfg = getLanguage(this);
         this.state = {
             message:cfg.message,
             redBagList:[
-                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
-                // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' } 
             ],
             scroll:false,
             showPin:this.props.rtype === 1,  // 0 等额红包  1 拼手气红包
-            cfgData:cfg
+            cfgData:cfg,
+            greatAmount:0,
+            greatUser:-1
         };
         this.initData();
     }
 
     public async initData() {
-        const value = await queryDetailLog(this.props.rid);
+        const value = await queryDetailLog(find('conUid'),this.props.rid);
         if (!value) return;
         this.state.redBagList = value[0];        
         this.state.message = value[1];
 
+        const user = find('userInfo');
+        if (!user) return;
+        this.state.userName = user ? user.nickName :this.state.cfgData.defaultUserName;
+
+        const redBagList = value[0];
+        for (const i in redBagList) {
+            const user = await getUserList([redBagList[i].cuid]);
+            this.state.redBagList[i].userName = user ? user.nickName :this.state.cfgData.defaultUserName;
+            if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.state.greatAmount < redBagList[i].amount) {
+                this.state.greatAmount = redBagList.amount;
+                this.state.greatUser = i;
+            }
+        }
         this.paint();
     }
 

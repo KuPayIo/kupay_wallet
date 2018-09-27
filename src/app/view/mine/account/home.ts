@@ -9,7 +9,7 @@ import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
 import { find, updateStore } from '../../../store/store';
 import { walletNameAvailable } from '../../../utils/account';
-import { getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { getLanguage, getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
 
 export class AccountHome extends Widget {
@@ -24,17 +24,12 @@ export class AccountHome extends Widget {
         const gwlt = wallet ? JSON.parse(wallet.gwlt) : null;
         const backup = gwlt.mnemonicBackup;
 
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
         this.state = {
             avatar:userInfo.avatar,
             nickName:userInfo.nickName,
             isUpdatingWalletName: false,
             backup,
-            cfgData:cfg
+            cfgData:getLanguage(this)
         };
     }
     public backPrePage() {

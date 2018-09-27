@@ -7,8 +7,9 @@ import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAward, getDividend, getDividHistory, getMining } from '../../../net/pull';
+import { getDividend, getDividHistory, getMining } from '../../../net/pull';
 import { find, register } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -42,7 +43,7 @@ export class Dividend extends Widget {
                 // { num:0.02,time:'04-30  14:32:00' }
             ],
             ktBalance:this.props.ktBalance,  // KT持有量 
-            cfgData:this.config.value.simpleChinese
+            cfgData:getLanguage(this)
         };
 
         this.initData();
@@ -77,10 +78,6 @@ export class Dividend extends Widget {
             this.state.dividHistory = history;
         }
 
-        const lan = find('languageSet');
-        if (lan) {
-            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
-        }
         this.paint();
     }
 

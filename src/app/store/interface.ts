@@ -323,7 +323,7 @@ export interface CHisRec {
  */
 export interface CRecDetail {
     suid: number;// 发送者uid
-    rid: number;// 红包id
+    rid: string;// 红包id
     rtype: number;// 红包类型 0-普通红包，1-拼手气红包，99-邀请红包
     rtypeShow:string;
     ctype: number;// 币种

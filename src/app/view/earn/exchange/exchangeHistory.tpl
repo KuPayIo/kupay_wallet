@@ -23,8 +23,7 @@
                     <div w-class="tips">{{it1.cfgData.tips[3]}}</div>
                     {{for ind,val of it1.recordListShow}}
                     <div on-tap="goDetail({{ind}})">
-                        {{let desc=val.totalNum?val.curNum + "/" + val.totalNum + it1.cfgData.tips[4]:""}}
-                        <app-components-fourParaItem-fourParaItem>{ name:{{val.rtypeShow}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},describe:{{desc}} }</app-components-fourParaItem-fourParaItem>
+                        <app-components-fourParaItem-fourParaItem>{ name:{{val.userName}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},showPin:{{val.rtype==1}} }</app-components-fourParaItem-fourParaItem>
                     </div>
                     {{end}}
                 {{end}}

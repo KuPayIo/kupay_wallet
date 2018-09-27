@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.5,maximum-scale=0.5,user-scalable=0">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+</head>
+<body>
+    <div class="redEnv-new-page">
+        <div class="redEnv-main">
+            <div class="redEnv-leave-message" id="message">恭喜发财 万事如意</div>
+            <div class="redEnv-tag" id="describe">您收到一个邀请红包</div>
+            <img src="image/open.png" class="redEnv-open" onclick="openRedEnvelopeClick()" id="openRedEnv"/>
+            <div class="redEnv-look">看看大家手气></div>
+        </div>
+    </div>
+</body>
+<script>
+
+const search = window.location.search;
+const itype = parseUrlParams(search,'type');
+if(window.localStorage.takeRedBag){
+    // window.location.href = './redEnvelopeDetail.html';
+}
+var state = {};
+switch (itype) {
+    case RedEnvelopeType.Normal:
+        state = {
+            type:itype,
+            rid:parseUrlParams(search,'rid'),
+            lm:window.decodeURIComponent(parseUrlParams(search,'lm')),
+            desc:'您收到一个红包',
+        };
+        break;
+    case RedEnvelopeType.Random:
+        state = {
+            type:itype,
+            rid:parseUrlParams(search,'rid'),
+            lm:window.decodeURIComponent(parseUrlParams(search,'lm')),
+            desc:'金额随机，试试手气',
+        };
+        break;
+    case RedEnvelopeType.Invite:
+        state = {
+            type:itype,
+            cid:parseUrlParams(search,'cid'),
+            lm:'KuPay大礼包',
+            desc:'您收到一个邀请红包',
+        };
+        break;
+    default:
+}
+(function init(){
+    document.getElementById('message').innerText = state.lm;
+    document.getElementById('describe').innerText = state.desc;
+})();
+
+ /**
+ * 点击开红包
+ */
+function openRedEnvelopeClick() {
+    document.getElementById("openRedEnv").classList.add("redEnv-open-animate");
+    setTimeout(() => {
+        document.getElementById("openRedEnv").classList.remove("redEnv-open-animate");
+    }, 1000);
+    switch (state.type) {
+        case RedEnvelopeType.Normal:
+        case RedEnvelopeType.Random:
+            openNormalRedEnvelope();
+            break; 
+        case RedEnvelopeType.Invite:
+            openInviteRedEnvelope();
+            break;
+        default:
+    }
+}
+
+
+/**
+ * 开邀请红包
+ */
+ function openInviteRedEnvelope() {
+    setTimeout(() => {
+        const redEnvelope = {
+            rid:'0',
+            uid:0,
+            rtype:99,
+            ctype:CurrencyType.ETH,
+            cid:state.cid,
+            cidShow:`${RedEnvelopeType.Invite}${state.cid}`,
+            amount:0.015,
+            leaveMsg:'KuPay大礼包'
+        };
+        window.localStorage.takeRedBag=JSON.stringify(redEnvelope);
+        window.location.href = './redEnvelopeDetail.html';
+    },500);
+}
+
+/**
+ * 开普通红包
+ */
+function openNormalRedEnvelope() {
+    const res = JSON.parse(takeRedEnvelope(state.rid));
+    setTimeout(async () => {
+        switch (res.result) {
+            case 1:
+                const v = res.value;
+                const redEnvelope = {
+                    rid:state.rid,
+                    uid:v[0],
+                    rtype:v[1],
+                    ctype:v[2],
+                    cid:v[3],
+                    cidShow:`${RedEnvelopeType.Normal}${v[3]}`,
+                    amount:smallUnit2LargeUnitString(CurrencyTypeReverse[v[2]],v[4]),
+                    leaveMsg:v[5]
+                };
+                window.localStorage.takeRedBag = JSON.stringify(redEnvelope);
+                window.location.href = './redEnvelopeDetail.html';
+                break;
+            case 701:
+                alert("红包不存在");
+                break;
+            case 702:
+                alert("红包已领完");
+                break;
+            case 703:
+                alert("红包已过期");
+                break;
+            case 704:
+                alert("红包已领取过");
+                break;
+            default:
+                alert("出错啦");   
+        }
+    },500);
+}
+
+</script>
+</html>

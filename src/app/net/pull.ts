@@ -375,7 +375,7 @@ export const getInviteCode = async () => {
 export const inputInviteCdKey = async (code) => {
     const msg = { type: 'wallet/cloud@input_cd_key', param: { code: code } };
     try {
-        await requestLogined(msg);
+        await requestAsync(msg);
 
         return [];
     } catch (err) {
@@ -417,7 +417,7 @@ export const  sendRedEnvlope = async (rtype: number, ctype: number, totalAmount:
     };
 
     try {
-        const res = await requestLogined(msg);
+        const res = await requestAsync(msg);
 
         return res.value;
     } catch (err) {
@@ -434,7 +434,7 @@ export const convertRedBag = async (cid) => {
     const msg = { type: 'convert_red_bag', param: { cid: cid } };
 
     try {
-        const res = await requestLogined(msg);
+        const res = await requestAsync(msg);
 
         return res.value;
     } catch (err) {
@@ -532,11 +532,11 @@ export const queryConvertLog = async (start) => {
 /**
  * 查询某个红包兑换详情
  */
-export const queryDetailLog = async (rid: string) => {
+export const queryDetailLog = async (uid:number,rid: string) => {
     const msg = {
         type: 'query_detail_log',
         param: {
-            uid: find('conUid'),
+            uid,
             rid
         }
     };
@@ -635,7 +635,7 @@ export const setUserInfo = async () => {
 };
 
 /**
- * 批量获取用户信息
+ * 获取当前用户信息
  */
 export const getUserInfoFromServer = async (uids: [number]) => {
     const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
@@ -650,6 +650,24 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         }
     } catch (err) {
         console.log(err);
+        showError(err && (err.result || err.type));
+
+        return;
+    }
+};
+
+/**
+ * 批量获取用户信息
+ */
+export const getUserList = async(uids:number[]) => {
+    const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+
+    try {
+        const res = await requestAsync(msg);
+        if (res.value[0]) {
+            return JSON.parse(unicodeArray2Str(res.value[0]));
+        }
+    } catch (err) {
         showError(err && (err.result || err.type));
 
         return;

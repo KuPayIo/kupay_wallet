@@ -5,7 +5,7 @@
 import { Json } from '../../../../pi/lang/type';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -32,13 +32,9 @@ export class DividendItem extends Widget {
             data:this.props.data,
             totalNum:this.props.totalNum,
             more:false,
-            cfgData:this.config.value.simpleChinese
+            cfgData:getLanguage(this)
         };
 
-        const lan = find('languageSet');
-        if (lan) {
-            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
-        }
     }
 
 }

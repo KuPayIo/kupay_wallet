@@ -1,0 +1,339 @@
+.ga-new-page{
+    background-color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.ga-main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "PingFangSC-Regular";
+}
+.ga-logo{
+    width: 150px;
+    height: 150px;
+    margin-top: 220px;
+}
+.ga-title{
+    line-height: 40px;
+    color: rgba(17, 17, 17, 1);
+    font-size: 28px;
+    text-align: center;
+    margin-top: 40px;
+}
+.ga-download-btn{
+    width: 400px;
+    height: 100px;
+    border-radius: 100px;
+    background-color: rgba(26, 112, 221, 1);
+    margin-top: 120px;
+    font-size: 32px;
+    color: rgba(255, 255, 255, .87);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ga-version{
+    margin-top: 34px;
+    line-height: 40px;
+    color: rgba(142, 150, 171, 1);
+    font-size: 28px;
+
+}
+.ga-installation-tutorial{
+    border-top: 1px solid #e5e5ee;
+    margin-top: 40px;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+}
+.ga-install-title{
+    line-height: 45px;
+    color: rgba(17, 17, 17, 1);
+    font-size: 32px;
+    text-align: center;
+    margin-top: 80px;
+}
+.ga-steps{
+    display: flex;
+    flex-direction: column;
+    font-size: 28px;
+    line-height: 40px;
+}
+.ga-step-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+.ga-box{
+    align-self: stretch;
+    padding-left: 100px;
+}
+.ga-step-tag{
+    color: #a0acc0;
+    margin-right: 20px;
+}
+.ga-step-content{
+    color: #111;
+}
+.ga-step-img{
+    width: 250px;
+    height: 250px;
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+.tipsPage{
+    background-image: url(image/tips.png);
+    background-repeat: no-repeat;
+    background-color: rgba(0, 0, 0, .6);
+    background-size: contain;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: none;
+}
+.redEnv-new-page{
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "PingFangSC-Regular";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.redEnv-main{
+    width: 690px;
+    height: 1000px;
+    border-radius: 12px;
+    background-color: rgba(194, 62, 62, 1);
+    box-shadow: 0px 2px 8px 0px rgba(12, 15, 35, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+    background-image: url(image/redEnvelopes2.png);
+    background-size:cover;
+    background-repeat: no-repeat; 
+    position: relative;
+}
+.redEnv-leave-message{
+    width: 576px;
+    height: 90px;
+    line-height: 90px;
+    font-size: 64px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 270px;
+}
+.redEnv-tag{
+    line-height: 50px;
+    font-size: 36px;
+    text-align: center;
+    margin-top: 60px;
+}
+.redEnv-open{
+    position: absolute;
+    width: 195px;
+    height: 195px;
+    bottom: 230px;
+}
+.redEnv-look{
+    position: absolute;
+    font-size: 28px;
+    line-height: 40px;
+    bottom: 120px;
+}
+@keyframes rotated{
+    0% {transform: rotateY(0deg);}
+    100% {transform: rotateY(360deg);}
+}
+.redEnv-open-animate{
+    animation: rotated 1s ease-in-out infinite;
+}
+
+.detail-new-page{
+    display: flex;
+    flex-direction: column;
+    font-family: "PingFangSC-Regular";
+    font-size: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: #fff;
+}
+.detail-main{
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+.detail-top{
+    background-image: url(image/redEnvelopeDetail_bg.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.detail-scroll-container{
+    flex: 1 0 0;
+}
+.detail-head{
+    margin-top: 20px;
+    height: 195px;
+    width: 195px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffd9a9;
+    border-radius: 50%;
+}
+.detail-head-inner{
+    width: 177px;
+    height: 177px;
+    border-radius: 50%;
+    background-image: url(image/img_avatar1.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 177px 177px;
+}
+.detail-leave-message{
+    line-height: 40px;
+    color: rgba(32, 50, 96, 1);
+    font-size: 28px;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.detail-amount{
+    line-height: 90px;
+    color: rgba(26, 112, 221, 1);
+    font-size: 64px;
+    text-align: center;
+    margin: 30px auto 40px;
+}
+.detail-currency-name{
+    font-size: 36px;
+    margin-left: 10px;
+}
+.detail-input-father{
+    width: 690px;
+    height: 80px;
+    border-radius: 6px;
+    border: 1px solid #e5e5ee;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 32px;
+    color: #8e96ab;
+}
+.input-father{
+    flex: 1 0 0;
+    margin-left: 40px;
+}
+.detail-copy-btn{
+    width: 195px;
+    height: 63px;
+    border-radius: 6px;
+    background-color: rgba(223, 94, 94, 1);
+    font-size: 32px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 14px;
+}
+.detail-receive{
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 32px;
+    width: 690px;
+    height: 80px;
+    border-radius: 6px;
+    background-color: rgba(26, 112, 221, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0;
+}
+.detail-bottom{
+    background-color: #fff;
+    display: none;
+}
+.detail-title{
+    height: 100px;
+    display: flex;
+    align-items: center;
+    color: rgba(160, 172, 192, 1);
+    font-size: 28px;
+    border-bottom: 1px solid #e5e5ee;
+    padding: 0 30px;
+}
+.detail-item{
+    height: 170px;
+    border-bottom: 1px solid #e5e5ee;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+    font-family: "PingFangSC-Medium";
+}
+.detail-avator{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+.detail-item-right{
+    margin-left: 30px;
+    flex: 1 0 0;
+}
+.detail-box1{
+    line-height: 50px;
+    color: rgba(17, 17, 17, 0.87);
+    font-size: 36px;
+    display: flex;
+}
+.detail-box2{
+    line-height: 33px;
+    color: rgba(142, 150, 171, 0.87);
+    font-size: 24px;
+    display: flex;
+    margin-top: 10px;
+}
+.detail-name{
+    flex: 1 0 0;
+}
+.detail-time{
+    flex: 1 0 0;
+}
+.detail-best{
+    color: rgba(255, 169, 103, 0.87);
+}
+.detail-rule{
+    line-height: 42px;
+    color: rgba(160, 172, 192, 1);
+    font-size: 28px;
+    font-family: "SourceHanSansCN-Regular";
+    padding: 72px 30px;
+    background-color: #fff;
+    flex: 1 0 0;
+}
+.detail-rule-title{
+    text-align: center;
+}
+.detail-rule-list{
+    margin-top: 40px;
+}
+.detail-rule-item{
+    margin-top: 15px;
+}

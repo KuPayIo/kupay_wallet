@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { find } from '../../../store/store';
-import { copyToClipboard, getFirstEthAddr, getUserInfo, popPswBox } from '../../../utils/tools';
+import { copyToClipboard, getFirstEthAddr, getLanguage, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 export class Home extends Widget {
@@ -15,11 +15,7 @@ export class Home extends Widget {
     }
     public init() {
         const userInfo = getUserInfo();
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
+        const cfg = getLanguage(this);
         this.state = {
             list:[
                 { img:'../../../res/image1/28.png',name: cfg.itemTitle[0],components:'' },

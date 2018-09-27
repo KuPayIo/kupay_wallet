@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { regPhone } from '../../../net/pull';
-import { find } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 // =================================================导出
 export class BindPhone extends Widget {
     public ok: () => void;
@@ -14,16 +14,11 @@ export class BindPhone extends Widget {
     }
     public create() {
         super.create();
-        let cfg = this.config.value.simpleChinese;
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
         this.state = {
             phone:'',
             code:[],
             isSuccess:true,
-            cfgData:cfg
+            cfgData:getLanguage(this)
         };
     }
 

@@ -4,11 +4,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getData, queryConvertLog, queryDetailLog } from '../../../net/pull';
+import { getData, getUserList, queryConvertLog } from '../../../net/pull';
 import { CRecDetail, CurrencyType } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
 import { PAGELIMIT } from '../../../utils/constants';
-import { parseRtype, timestampFormat } from '../../../utils/tools';
+import { getLanguage, parseRtype, timestampFormat, unicodeArray2Str } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -25,6 +25,7 @@ interface State {
     convertNumberShow:number; // 兑换总数
     isScroll:boolean;  // 页面是否滑动
     inviteObj:CRecDetail; // 邀请红包对象
+    userList:any[]; // 用户信息列表
     cfgData:any; 
 }
 
@@ -49,7 +50,8 @@ export class ExchangeHistory extends Widget {
             hasMore:false, 
             showMoreTips:false, 
             inviteObj:null,
-            cfgData:this.config.value.simpleChinese
+            userList:[],
+            cfgData:getLanguage(this)
         };
         this.initData();
         
@@ -59,10 +61,7 @@ export class ExchangeHistory extends Widget {
      * 更新数据
      */
     public initData() {
-        const lan = find('languageSet');
-        if (lan) {
-            this.state.cfgData = this.config.value[lan.languageList[lan.selected]];
-        }
+       
         this.getInviteRedEnvelope();     
                                
         const cHisRec = find('cHisRec');
@@ -93,15 +92,10 @@ export class ExchangeHistory extends Widget {
      */
     public async initRedEnv() {
         for (const i in this.state.recordList) {
-            const data = await queryDetailLog(this.state.recordList[i].rid);
-            if (data) {
-                this.state.recordList[i].curNum = data[2];
-                this.state.recordList[i].totalNum = data[3];
-            } else {
-                this.state.recordList[i].curNum = 0;
-                this.state.recordList[i].totalNum = 0;
-            }
+            const data = await getUserList([this.state.recordList[i].suid]);
+            this.state.recordList[i].userName = data ? data.nickName :this.state.cfgData.defaultName;
         }
+        
         this.paint();
     }
 
@@ -126,7 +120,7 @@ export class ExchangeHistory extends Widget {
         if (data.value && data.value !== '$nil') {
             this.state.inviteObj = {
                 suid: 0,
-                rid: -1,
+                rid: '-1',
                 rtype: 99,
                 rtypeShow: parseRtype(99),
                 ctype: CurrencyType.ETH,
@@ -163,7 +157,7 @@ export class ExchangeHistory extends Widget {
     /**
      * 实际加载数据
      */
-    public loadMore() {
+    public async loadMore() {
         const cHisRec = find('cHisRec');
         if (!cHisRec) return;
         const hList = cHisRec.list;
@@ -174,7 +168,7 @@ export class ExchangeHistory extends Widget {
         this.state.start = cHisRec.start;
         this.state.hasMore = this.state.convertNumber > this.state.recordList.length;
         this.state.showMoreTips = this.state.convertNumber >= PAGELIMIT;
-        this.initRedEnv();        
+        await this.initRedEnv();        
         this.innerPaint();
     }
 

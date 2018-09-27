@@ -6,6 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMineRank, getMiningRank } from '../../../net/pull';
 import { find, register } from '../../../store/store';
+import { getLanguage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -17,11 +18,7 @@ export class Home extends Widget {
 
     public create() {
         super.create();
-        let cfg = this.config.value.simpleChinese; 
-        const lan = find('languageSet');
-        if (lan) {
-            cfg = this.config.value[lan.languageList[lan.selected]];
-        }
+        const cfg = getLanguage(this); 
         this.state = {
             tabs:[{
                 tab:cfg.tabs[0],
@@ -71,7 +68,7 @@ export class Home extends Widget {
     /**
      * 导航栏切换
      */
-    public tabsChangeClick(e: any, value: number) {
+    public tabsChangeClick(value: number) {
         this.state.activeNum = value;
         this.paint();
     }
