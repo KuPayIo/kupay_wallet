@@ -527,7 +527,7 @@ export const copyToClipboard = (copyText) => {
 /**
  * 获取memery hash
  */
-export const calcHashValuePromise = async (pwd, salt) => {
+export const calcHashValuePromise = async (pwd, salt?) => {
     let hash;
 
     const argonHash = new ArgonHash();

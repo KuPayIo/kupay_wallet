@@ -6,6 +6,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { find } from '../../../store/store';
 import { copyToClipboard, getFirstEthAddr, getLanguage, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
+import { openNewActivity } from '../../../logic/native';
 
 export class Home extends Widget {
     public ok:() => void;
@@ -16,6 +17,15 @@ export class Home extends Widget {
     public init() {
         const userInfo = getUserInfo();
         const cfg = getLanguage(this);
+        const wallet = find('curWallet');
+        let hasBackupMnemonic = false;
+        let hasWallet = false;
+        let address ="";
+        if (wallet) {
+            hasWallet = true;
+            address = getFirstEthAddr();
+            hasBackupMnemonic = JSON.parse(wallet.gwlt).mnemonicBackup;
+        }
         this.state = {
             list:[
                 { img:'../../../res/image1/28.png',name: cfg.itemTitle[0],components:'' },
@@ -25,20 +35,14 @@ export class Home extends Widget {
                 { img:'../../../res/image1/24.png',name: cfg.itemTitle[4],components:'app-view-mine-other-aboutus' },
                 { img:'../../../res/image1/43.png',name: 'GitHub Repository',components:'' }
             ],
-            address:'FGGF1512151512sd78d4s51af45466',
+            address,
             userName:userInfo.nickName,
             avatar:userInfo.avatar,
             close:false,
-            hasWallet:false,
+            hasWallet,
+            hasBackupMnemonic,
             cfgData:cfg
         };
-        const wallet = find('curWallet');
-        const addr = getFirstEthAddr(); 
-        if (wallet) {
-            this.state.hasWallet = true;
-            this.state.address = addr;
-        }
-        this.paint();
     }
 
     public backPrePage() {
@@ -65,7 +69,8 @@ export class Home extends Widget {
         if (ind === 0) {
             popNew('app-view-mine-account-home');
         } else if (ind === 5) {
-            window.open('https://github.com/KuPayIo/kupay_wallet');
+            // window.open('https://github.com/KuPayIo/kupay_wallet');
+            openNewActivity('https://github.com/KuPayIo/kupay_wallet');
         } else {
             popNew(this.state.list[ind].components);
         }
