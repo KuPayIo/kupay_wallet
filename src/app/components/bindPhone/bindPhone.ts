@@ -20,7 +20,7 @@ export class BindPhone extends Widget {
         super.create();
         this.state = {
             oldCode: 86,
-            codeList: ['86','44','49','1','852','81'],
+            codeList: ['86','886','44','49','1','852','81'],
             isShowNewCode: false,
             countdown: 0,
             phone: '',
