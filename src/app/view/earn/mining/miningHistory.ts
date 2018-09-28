@@ -5,7 +5,8 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMiningHistory } from '../../../net/pull';
-import { find, register } from '../../../store/store';
+import { find, getBorn, register } from '../../../store/store';
+import { PAGELIMIT } from '../../../utils/constants';
 import { getLanguage } from '../../../utils/tools';
 
 // ================================ 导出
@@ -23,11 +24,12 @@ export class Dividend extends Widget {
         super.create();
         this.state = {
             data:[],
-            more:false,
-            cfgData:getLanguage(this)
+            hasMore:false,
+            cfgData:getLanguage(this),
+            start:0,
+            refresh:true
         }; 
-        getMiningHistory();
-        // this.initData();
+        this.initData();
     }
     
     /**
@@ -36,8 +38,19 @@ export class Dividend extends Widget {
     public async initData() {
         const data = find('miningHistory');  
         if (data) {
-            this.state.data = data; 
+            const hList = data.list;
+            if (hList && hList.length > this.state.data.length) {
+                console.log('load more from local');
+                  
+            } else {
+                console.log('load more from server');
+                getMiningHistory(this.state.start);
+            }
+        } else {
+            console.log('load more from server');
+            getMiningHistory(this.state.start);
         }
+        this.loadMore();  
 
         this.paint();
     }
@@ -47,43 +60,39 @@ export class Dividend extends Widget {
     }
 
     /**
-     * 滚动加载更多列表数据
-     * h1 滚动条高度+滚动模块的可见高度=当前屏幕最底端高度
-     * h2 最低端元素的绝对高度
+     *  实际加载数据
      */
-    // public getMoreList() {
-    //     const h1 = document.getElementById('historylist').scrollTop + document.getElementById('historylist').offsetHeight; 
-    //     const h2 = document.getElementById('more').offsetTop; 
-    //     if (h2 - h1 < 20 && this.state.refresh) {
-    //         this.state.refresh = false;
-    //         console.log('加载中，请稍后~~~');
-    //         setTimeout(() => {
-    //             this.state.data.push({
-                    
-    //                 num:0.02,
-    //                 time:'04-27 14:32:00',
-    //                 total:'2.2'
-    //             },{
-                    
-    //                 num:'0.032',
-    //                 time:'04-24 14:32:00',
-    //                 total:'7.2'
-    //             },{
-                    
-    //                 num:'0.052',
-    //                 time:'04-21 14:32:00',
-    //                 total:'1.2'
-    //             });
-    //             this.state.refresh = true;
-    //             this.paint();
-    //         }, 1000);
-    //     } 
-    // }
+    public async loadMore() {
+        const data = find('miningHistory');  
+        if (!data) return;
+        const hList = data.list;
+        const start = this.state.data.length;
+        this.state.data = this.state.data.concat(hList.slice(start,start + PAGELIMIT));
+        this.state.start = data.start;
+        this.state.hasMore = data.canLoadMore;
+        this.paint();
+    }
+    /**
+     * 滚动加载更多列表数据
+     */
+    public getMoreList() {
+        const h1 = document.getElementById('historylist').offsetHeight; 
+        const h2 = document.getElementById('history').offsetHeight; 
+        const scrollTop = document.getElementById('historylist').scrollTop; 
+        if (this.state.hasMore && this.state.refresh && (h2 - h1 - scrollTop) < 20) {
+            this.state.refresh = false;
+            console.log('加载中，请稍后~~~');
+            setTimeout(() => {
+                this.loadMore();
+                this.state.refresh = true;
+            }, 1000);
+        } 
+    }
 }
 
 register('miningHistory', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initData();
+        w.loadMore();
     }
 });

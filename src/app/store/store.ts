@@ -7,7 +7,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendItem, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne,RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransRecordLocal, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendHistory, DividendItem, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product,PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransRecordLocal, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -177,8 +177,8 @@ const store = <Store>{
     inviteRedBagRec: <CHisRec>null,// 邀请红包记录
     miningTotal: <MiningTotal>null, // 挖矿汇总信息
     dividTotal: <DividTotal>null,// 分红汇总信息
-    miningHistory: <DividendItem[]>[],// 挖矿历史记录
-    dividHistory: <DividendItem[]>[],// 分红历史记录
+    miningHistory: <DividendHistory>null,// 挖矿历史记录
+    dividHistory: <DividendHistory>null,// 分红历史记录
     addMine: <AddMineItem[]>[],// 矿山增加项目
     mineRank: <MineRank>null,// 矿山排名
     miningRank: <MiningRank>null,// 挖矿排名

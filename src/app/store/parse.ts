@@ -1,8 +1,9 @@
 import { isArray } from '../../pi/net/websocket/util';
 import { deepCopy } from '../../pi/util/util';
 import { financialProductList } from '../config';
+import { PAGELIMIT } from '../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, GetDateDiff, parseRtype,timestampFormat,timestampFormatToDate, unicodeArray2Str } from '../utils/tools';
+import { formatBalance, GetDateDiff, parseRtype,timestampFormat,timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
 import { AccountDetail, CRecDetail, CurrencyType, CurrencyTypeReverse,MineRank, MiningRank, PurchaseRecordOne, RedBag, SRecDetail, TaskSid } from './interface';
@@ -136,6 +137,54 @@ export const parseMiningRank = (data) => {
     miningData.miningRank = data2;
     
     return miningData;
+};
+/**
+ * 解析挖矿历史记录
+ */
+export const parseMiningHistory = (data) => {
+    const list = [];
+    for (let i = 0; i < data.value.length; i++) {
+        list.push({
+            num: kpt2kt(data.value[i][0]),
+            total: kpt2kt(data.value[i][1]),
+            time: transDate(new Date(data.value[i][2]))
+        });
+    }
+      
+    const miningHistory = find('miningHistory');
+    const rList = miningHistory && miningHistory.list || [];
+    const start = data.start; 
+    const canLoadMore = list.length > PAGELIMIT;
+
+    return {
+        list:rList.concat(list),
+        start,
+        canLoadMore
+    };
+};
+/**
+ * 解析分红历史记录
+ */
+export const parseDividHistory = (data) => {
+    const list = [];
+    for (let i = 0; i < data.value.length; i++) {
+        list.push({
+            num: kpt2kt(data.value[i][0]),
+            total: kpt2kt(data.value[i][1]),
+            time: transDate(new Date(data.value[i][2]))
+        });
+    }
+      
+    const dividHistory = find('dividHistory');
+    const rList = dividHistory && dividHistory.list || [];
+    const start = data.start; 
+    const canLoadMore = list.length > PAGELIMIT;
+
+    return {
+        list:rList.concat(list),
+        start,
+        canLoadMore
+    };
 };
 
 /**

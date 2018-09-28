@@ -6,7 +6,7 @@ import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAward, getCloudBalance, getMineRank, getMining } from '../../../net/pull';
+import { getAward, getCloudBalance, getMining, getMiningRank } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
 import { formatBalance, getLanguage } from '../../../utils/tools';
@@ -172,7 +172,7 @@ export class PlayHome extends Widget {
             this.state.isAbleBtn = false;
         }
 
-        const rank = find('mineRank');
+        const rank = find('miningRank');
         if (rank) {
             this.state.rankNum = rank.myRank;
         }
@@ -187,7 +187,7 @@ export class PlayHome extends Widget {
         // 这里发起通信
         getCloudBalance();
         getMining();
-        getMineRank(100);
+        getMiningRank(100);
     }
 
 }
@@ -207,7 +207,7 @@ register('miningTotal', () => {
         w.initDate();
     }
 });
-register('mineRank', () => {
+register('miningRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initDate();

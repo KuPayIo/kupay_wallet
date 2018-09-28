@@ -7,7 +7,7 @@ import { MainChainCoin } from '../config';
 import { sign } from '../core/genmnemonic';
 import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExchangeDetail, parseMineDetail, parseMineRank,parseMiningRank,parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
@@ -338,7 +338,7 @@ export const getMining = async () => {
 /**
  * 获取挖矿历史记录
  */
-export const getMiningHistory = async (start = '') => {
+export const getMiningHistory = async (start = 0) => {
     const msg = { 
         type: 'wallet/cloud@get_pool_detail', 
         param: {
@@ -347,15 +347,8 @@ export const getMiningHistory = async (start = '') => {
         } 
     };
     requestAsync(msg).then(data => {
-        const list = [];
-        for (let i = 0; i < data.value.length; i++) {
-            list.push({
-                num: kpt2kt(data.value[i][0]),
-                total: kpt2kt(data.value[i][1]),
-                time: transDate(new Date(data.value[i][2]))
-            });
-        }
-        updateStore('miningHistory', list);
+        const miningHistory = parseMiningHistory(data);
+        updateStore('miningHistory', miningHistory);
     });
 };
 
@@ -585,7 +578,7 @@ export const getMineDetail = async (start = '') => {
 /**
  * 获取分红历史记录
  */
-export const getDividHistory = async (start = '') => {
+export const getDividHistory = async (start = 0) => {
     const msg = { 
         type: 'wallet/cloud@get_bonus_info', 
         param: {
@@ -594,15 +587,8 @@ export const getDividHistory = async (start = '') => {
         } 
     };
     requestAsync(msg).then(data => {
-        const list = [];
-        for (let i = 0; i < data.value.length; i++) {
-            list.push({
-                num: wei2Eth(data.value[i][1][0]),
-                total: wei2Eth(data.value[i][1][1]),
-                time: transDate(new Date(data.value[i][0]))
-            });
-        }
-        updateStore('dividHistory', list);
+        const dividHistory = parseDividHistory(data);
+        updateStore('dividHistory', dividHistory);
     });
 };
 
