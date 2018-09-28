@@ -1,4 +1,5 @@
 import { Widget } from '../../../pi/widget/widget';
+import { getLanguage } from '../../utils/tools';
 
 /**
  * loading逻辑处理
@@ -11,6 +12,7 @@ interface Props {
 interface State {
     startTime:number;
     circular:string;// svg内容
+    cfgData:any;
 }
 export class Loading extends Widget {
     public props: Props;
@@ -30,7 +32,8 @@ export class Loading extends Widget {
             <circle cx='50' cy='50' r='20' fill='none' class="pi-path">
             </circle>
             </svg>`,
-            startTime:new Date().getTime()
+            startTime:new Date().getTime(),
+            cfgData:getLanguage(this)
         };
     }
     public close() {

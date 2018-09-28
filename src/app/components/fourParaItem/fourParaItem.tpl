@@ -1,7 +1,7 @@
 <div w-class="item">
     <div w-class="itemName">
         <span w-class="itemleft">{{it.name}}
-            {{if it.showPin}}<span w-class="other">拼</span>{{end}}
+            {{if it.showPin}}<span w-class="other">{{it1.cfgData.pin}}</span>{{end}}
         </span>
         <span>{{it.data}}</span>
     </div>

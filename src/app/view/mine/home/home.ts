@@ -2,25 +2,28 @@
  * wallet home 
  */
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find } from '../../../store/store';
+import { openNewActivity } from '../../../logic/native';
+import { find, register } from '../../../store/store';
 import { copyToClipboard, getFirstEthAddr, getLanguage, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
-import { openNewActivity } from '../../../logic/native';
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Home extends Widget {
     public ok:() => void;
     public create() {
         super.create();
-        this.init();
-    }
-    public init() {
-        const userInfo = getUserInfo();
         const cfg = getLanguage(this);
         const wallet = find('curWallet');
         let hasBackupMnemonic = false;
         let hasWallet = false;
-        let address ="";
+        let address = '';
         if (wallet) {
             hasWallet = true;
             address = getFirstEthAddr();
@@ -36,13 +39,32 @@ export class Home extends Widget {
                 { img:'../../../res/image1/43.png',name: 'GitHub Repository',components:'' }
             ],
             address,
-            userName:userInfo.nickName,
-            avatar:userInfo.avatar,
+            userName:'',
+            avatar:'',
             close:false,
             hasWallet,
             hasBackupMnemonic,
             cfgData:cfg
         };
+        this.initData();
+    }
+
+    /**
+     * 更新数据
+     */
+    public initData() {
+        const userInfo = find('userInfo');
+        if (userInfo) {
+            this.state.userName = userInfo.nickName;
+            this.state.avatar = userInfo.avatar;
+        }
+
+        const wallet = find('curWallet');
+        if (wallet) {
+            this.state.hasWallet = true;
+            this.state.address = getFirstEthAddr();
+        }
+        this.paint();
     }
 
     public backPrePage() {
@@ -67,14 +89,20 @@ export class Home extends Widget {
      */
     public itemClick(ind:number) {
         if (ind === 0) {
-            popNew('app-view-mine-account-home');
+            if (this.state.hasWallet) {
+                popNew('app-view-mine-account-home');
+            } else {
+                popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox,() => {
+                    popNew('app-view-wallet-create-home');
+                });
+            }
         } else if (ind === 5) {
             // window.open('https://github.com/KuPayIo/kupay_wallet');
             openNewActivity('https://github.com/KuPayIo/kupay_wallet');
         } else {
             popNew(this.state.list[ind].components);
         }
-        this.ok && this.ok();
+        this.backPrePage();
     }
 
     /**
@@ -101,6 +129,7 @@ export class Home extends Widget {
      */
     public showMyQrcode() {
         popNew('app-view-mine-other-addFriend');
+        this.backPrePage();
     }
 
     /**
@@ -111,5 +140,21 @@ export class Home extends Widget {
             return;
         }
         popNew('app-view-wallet-create-home');
+        this.backPrePage();
     }
 }
+
+// ===================================================== 本地
+// ===================================================== 立即执行
+register('curWallet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initDate();
+    }
+});
+register('userInfo', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initDate();
+    }
+});

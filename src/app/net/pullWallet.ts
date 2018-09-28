@@ -296,7 +296,7 @@ export const doBtcTransfer = async (wlt:BTCWallet,txRecord:TransRecordLocal) => 
     await wlt.init();
 
     // const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
-    const retArr = await wlt.buildRawTransactionFromSingleAddress(fromAddr,output, fetchBtcMinerFee(minerFeeLevel))
+    const retArr = await wlt.buildRawTransactionFromSingleAddress(fromAddr,output, fetchBtcMinerFee(minerFeeLevel));
     wlt.lock();
     // const rawHexString: string = retArr[0];
     // console.log('rawTx',rawHexString);
@@ -568,15 +568,15 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
         const oldHash = txRecord.hash;
         let index = -1;
         const trans = find('transactions');
-        for(let i= 0;i< trans.length;i++){
+        for(let i= 0;i < trans.length;i++){
             if(trans[i].hash === oldHash){
                 index = i;
                 break;
             }
         }
-        trans.splice(index,1,tx); //删除重发前的本地记录
+        trans.splice(index,1,tx); // 删除重发前的本地记录
         updateStore('transactions',trans);
-        dataCenter.clearTimer(oldHash);//删除定时器
+        dataCenter.clearTimer(oldHash);// 删除定时器
         dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
         popNew('app-components-message-message',{ content:'重发成功' });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
@@ -617,9 +617,9 @@ export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
                 break;
             }
         }
-        trans.splice(index,1,tx); //删除重发前的本地记录
+        trans.splice(index,1,tx); // 删除重发前的本地记录
         updateStore('transactions',trans);
-        dataCenter.clearTimer(oldHash);//删除定时器
+        dataCenter.clearTimer(oldHash);// 删除定时器
         dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
         getRechargeLogs(tx.currencyName);
         popNew('app-components-message-message',{ content:'重发成功' });
@@ -628,8 +628,6 @@ export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
 
     return tx.hash;
 };
-
-
 
 // ================================重发
 
@@ -697,7 +695,6 @@ export const ethRecharge = async (psw:string,txRecord:TransRecordLocal) => {
     return record;
 };
 
-
 /**
  * btc充值
  */
@@ -712,8 +709,8 @@ export const btcRecharge = async (psw:string,txRecord:TransRecordLocal) => {
     const obj =  await signRawTransactionBTC(psw,fromAddr,toAddr,pay,minerFeeLevel);
     if(!obj) return;
     const oldHash = txRecord.hash;
-    const signedTX = obj['rawTx'];
-    const hash = obj['hash'];
+    const signedTX = obj.rawTx;
+    const hash = obj.hash;
     const canTransfer = await btcRechargeToServer(toAddr,hash,btc2Sat(pay).toString(),minerFee,oldHash);
     if (!canTransfer) return;
     const h = await sendRawTransactionBTC(signedTX);
@@ -769,10 +766,10 @@ export const resendBtcRecharge = async (psw:string,txRecord:TransRecordLocal) =>
  * 
  * 提现
  */
-export const withdraw = async (passwd:string,toAddr:string,currencyName:string,amount:number | string) =>{
+export const withdraw = async (passwd:string,toAddr:string,currencyName:string,amount:number | string) => {
     if(currencyName === 'BTC'){
         return btcWithdraw(passwd,toAddr,amount);
-    }else{
+    } else {
         return ethWithdraw(passwd,toAddr,amount);
     }
 }
@@ -795,7 +792,7 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
             hash,
             addr:toAddr,
             txType:TxType.RECEIPT,
-            fromAddr:"",
+            fromAddr:'',
             toAddr,
             pay: Number(amount),
             time: new Date().getTime(),
@@ -813,10 +810,6 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
    
     return hash;
 };
-
-
-
-
 
 // btc提现
 export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
@@ -837,7 +830,7 @@ export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | st
             hash,
             addr:toAddr,
             txType:TxType.RECEIPT,
-            fromAddr:"",
+            fromAddr:'',
             toAddr,
             pay: Number(amount),
             time: new Date().getTime(),

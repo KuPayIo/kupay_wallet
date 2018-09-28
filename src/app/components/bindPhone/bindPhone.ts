@@ -9,6 +9,7 @@ import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { sendCode } from '../../net/pull';
+import { getLanguage } from '../../utils/tools';
 // =================================================导出
 export class BindPhone extends Widget {
     public ok: () => void;
@@ -19,12 +20,13 @@ export class BindPhone extends Widget {
         super.create();
         this.state = {
             oldCode: 86,
-            codeList: ['86','44','49','1','852','81'],
+            codeList: ['86','886','44','49','1','852','81'],
             isShowNewCode: false,
             countdown: 0,
             phone: '',
             limitTime: 60,
-            phoneReg: /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/
+            phoneReg: /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/,
+            cfgData:getLanguage(this)
         };
         // const t = find('lastGetSmsCodeTime'); // 不保留获取验证码倒计时
         // if (t) {
@@ -41,7 +43,7 @@ export class BindPhone extends Widget {
      */
     public async getCode(event:any) {
         if (!this.state.phone || !(this.state.phoneReg.test(this.state.phone))) {
-            popNew('app-components-message-message', { itype: 'warn', center: true, content: `请输入正确的手机号` });
+            popNew('app-components-message-message', { itype: 'warn', center: true, content: this.state.cfgData.tips });
 
             return;
         }

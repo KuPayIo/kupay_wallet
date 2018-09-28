@@ -12,6 +12,7 @@
 import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
+import { getLanguage } from '../../utils/tools';
 
 // ================================ 导出
 interface Props {
@@ -30,6 +31,7 @@ export class ImgRankItem extends Widget {
         showTips:boolean;
         isSuccess:boolean;
         showIcon:boolean;
+        cfgData:any;
     };
     constructor() {
         super();
@@ -42,7 +44,8 @@ export class ImgRankItem extends Widget {
             secret:0,
             showTips:true,
             isSuccess:false,
-            showIcon:false
+            showIcon:false,
+            cfgData:getLanguage(this)
         };
     }
 
@@ -87,8 +90,8 @@ export class ImgRankItem extends Widget {
     /**
      * 选中输入框后图标切换
      */
-    public iconChange(ind:number){
-        if(ind===1 && this.state.password!=''){
+    public iconChange(ind:number) {
+        if (this.state.password !== '') {
             this.state.showIcon = true;
         } else {
             this.state.showIcon = false;
@@ -99,7 +102,7 @@ export class ImgRankItem extends Widget {
     /**
      * 情况输入框
      */
-    public clear(){
+    public clear() {
         this.state.password = '';
         this.state.secret = 0;
         this.paint(true);

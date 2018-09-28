@@ -25,6 +25,15 @@ export class PlayHome extends Widget {
 
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
+        this.init();
+        if (this.props.isActive && this.state.hasWallet) {
+            this.initEvent();
+        }
+    }
+    /**
+     * 初始化数据
+     */
+    public init() {
         this.state = {
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
@@ -49,11 +58,7 @@ export class PlayHome extends Widget {
         };
 
         this.initDate();
-        if (this.props.isActive) {
-            this.initEvent();
-        }
     }
-    
     /**
      * 判断当前用户是否已经创建钱包
      */
@@ -138,26 +143,21 @@ export class PlayHome extends Widget {
     }
 
     /**
-     * 刷新云端余额
+     * 获取更新数据
      */
-    public refreshCloudBalance() {
+    private initDate() {
+        const wallet = find('curWallet');
+        if (!wallet) {
+            this.paint();
+
+            return;
+        }
+        this.state.hasWallet = true;
+        
         const cloudBalance = getBorn('cloudBalance');
         if (cloudBalance) {
             this.state.ktBalance = formatBalance(cloudBalance.get(CurrencyType.KT));
             this.state.ethBalance = formatBalance(cloudBalance.get(CurrencyType.ETH));
-        }
-        this.paint();
-    }
-
-    /**
-     * 获取更新数据
-     */
-    private async initDate() {
-        this.refreshCloudBalance();
-
-        const wallet = find('curWallet');
-        if (wallet) {
-            this.state.hasWallet = true;
         }
 
         const mining = find('miningTotal');
@@ -197,7 +197,7 @@ export class PlayHome extends Widget {
 register('cloudBalance', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.refreshCloudBalance();
+        w.initDate();
     }
 });
 
@@ -211,5 +211,11 @@ register('mineRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initDate();
+    }
+});
+register('curWallet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init(); // 注销钱包后初始化
     }
 });

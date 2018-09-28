@@ -103,8 +103,12 @@ export class Dividend extends Widget {
                     message:this.state.cfgData.defaultMess
                 });
             }
-            if (itemJump === 'bindPhone') {
+            if (itemJump === 'bindPhone') {  // 绑定手机
                 popNew('app-view-mine-setting-phone');
+            }
+
+            if (itemJump === 'buyFinancial') {  // 购买理财 
+                popNew('app-view-wallet-financialManagement-home');
             }
         }
     }

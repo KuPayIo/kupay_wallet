@@ -122,19 +122,19 @@ function openNormalRedEnvelope() {
                 window.location.href = './redEnvelopeDetail.html';
                 break;
             case 701:
-                alert("红包不存在");
+                popMessage("红包不存在");
                 break;
             case 702:
-                alert("红包已领完");
+                popMessage("红包已领完");
                 break;
             case 703:
-                alert("红包已过期");
+                popMessage("红包已过期");
                 break;
             case 704:
-                alert("红包已领取过");
+                popMessage("红包已领取过");
                 break;
             default:
-                alert("出错啦");   
+                popMessage("出错啦");   
         }
     },500);
 }

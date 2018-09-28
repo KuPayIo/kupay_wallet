@@ -3,24 +3,23 @@
  */
 import { Widget } from '../../../pi/widget/widget';
 import { MinerFeeLevel } from '../../store/interface';
+import { getLanguage } from '../../utils/tools';
 interface Props {
     currencyName:string;
-    minerFeeList:[];
+    minerFeeList:any[];
     curLevel:MinerFeeLevel;
     minLevel?:MinerFeeLevel;
 }
 export class ChooseModalBox extends Widget {
     public ok:(index:number) => void;
-    public cancel:()=>void;
+    public cancel:() => void;
     public props:Props;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.init();
-    }
-    public init() {
         this.state = {
             minerFeeList:this.props.minerFeeList,
-            level:this.props.curLevel ? this.props.curLevel : MinerFeeLevel.STANDARD
+            level:this.props.curLevel ? this.props.curLevel : MinerFeeLevel.STANDARD,
+            cfgData:getLanguage(this)
         };
     }
 
@@ -32,7 +31,7 @@ export class ChooseModalBox extends Widget {
         this.ok && this.ok(index);
     }
 
-    public doClose(){
+    public doClose() {
         this.cancel && this.cancel();
     }
 }

@@ -4,11 +4,11 @@
             <span>+{{it1.oldCode}}</span>
             <img src="../../res/image/15.png" style="width: 40px;height:40px;margin-left: 10px;"/>
         </div>
-        <div w-class="phoneInput"><app-components1-input-input>{placeHolder:"手机号",itype:"number"}</app-components1-input-input></div>
+        <div w-class="phoneInput"><app-components1-input-input>{placeHolder:{{it1.cfgData.phone}},itype:"number"}</app-components1-input-input></div>
         {{if it1.countdown>0}}
-        <div w-class="text-code">{{it1.countdown}}秒</div>
+        <div w-class="text-code">{{it1.countdown + it1.cfgData.second}}</div>
         {{else}}
-        <div w-class="text-code" on-tap="getCode">获取验证码</div>
+        <div w-class="text-code" on-tap="getCode">{{it1.cfgData.getCode}}</div>
         {{end}} 
     </div>
 

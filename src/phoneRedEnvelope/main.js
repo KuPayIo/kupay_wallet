@@ -1,23 +1,27 @@
-// ==========================================静态变量
+// ==========================================静态变量,静态方法
 
-// 货币类型
+// 云端货币类型
 const CurrencyType = {
     KT: 100,
-    ETH: 101
+    ETH: 101,
+    BTC: 102
 }
+
+// 枚举云端货币类型
+const CurrencyTypeReverse = {
+    100: 'KT',
+    101: 'ETH',
+    102:'BTC'
+};
+
 // 不同红包类型
 const RedEnvelopeType = {
     Normal: '00',
     Random: '01',
     Invite: '99'
 }
-// 枚举货币类型
-const CurrencyTypeReverse = {
-    100: 'KT',
-    101: 'ETH'
-};
 // 复制到剪切板
-const copyToClipboard = (copyText)=> {
+const copyToClipboard = (copyText) => {
     const input = document.createElement('input');
     input.setAttribute('readonly', 'readonly');
     input.setAttribute('value', copyText);
@@ -29,8 +33,24 @@ const copyToClipboard = (copyText)=> {
         document.execCommand('copy');
     }
     document.body.removeChild(input);
-    alert("复制成功");
+    popMessage("复制成功");
 };
+// 弹出提示框
+const popMessage = (str) => {
+    const element = document.createElement('div');
+    element.setAttribute("class","messageMain");
+    element.innerHTML = str;
+    document.body.appendChild(element);
+    setTimeout(() => {
+        element.setAttribute("style","animation: popUpMess 0.3s forwards");
+    }, 100);
+    setTimeout(() => {
+        element.setAttribute("style","animation: removeMess 0.3s forwards");
+        setTimeout(() => {
+            document.body.removeChild(element);
+        }, 300);
+    }, 2000);
+}
 // 解析url参数
 const parseUrlParams = (search, key) => {
     const ret = search.match(new RegExp(`(\\?|&)${key}=(.*?)(&|$)`));
@@ -104,16 +124,12 @@ function downloadClick() {
 function closeTips(){
     document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:none;');
 }
-
 /**
  * 立即领取红包金额
  */
 function receiveClick(){
     window.location.href = './download.html';
 }
-
-
-
 /**
  * 普通红包开红包
  */
@@ -133,7 +149,6 @@ function takeRedEnvelope(rid){
     
     return xmlhttp.responseText;
 }
-
 /**
  * 查询红包领取详情
  */
@@ -153,7 +168,6 @@ function querydetail(uid,rid) {
 
     return JSON.parse(xmlhttp.responseText);
 }
-
 /**
  * 批量查询用户的基础信息
  */

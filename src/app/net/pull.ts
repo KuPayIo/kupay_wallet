@@ -24,7 +24,7 @@ console.log('conIp=',conIp);
 console.log('conPort=',conPort);
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-export const sharePerUrl = `http://127.0.0.1:80/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+export const sharePerUrl = `http://192.168.33.96:80/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 上传图片url
 export const uploadFileUrl = `http://${conIp}/service/upload`;
@@ -234,7 +234,7 @@ export const getRandom = async () => {
     fetchGasPrices();
     // btc fees
     fetchBtcFees();
-    //获取真实用户
+    // 获取真实用户
     fetchRealUser();
     const flag = find('flag');
     // 第一次创建不需要更新
@@ -870,6 +870,7 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
  */
 // tslint:disable-next-line:max-line-length
 export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,fees:number,oldHash:string) => {
+    // tslint:disable-next-line:variable-name
     const old_tx = oldHash || 'none';
     const msg = {
         type: 'wallet/bank@btc_pay',
@@ -946,12 +947,13 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
  * 充值历史记录
  */
 export const getRechargeLogs = async (coin: string,start?) => {
+    // tslint:disable-next-line:no-reserved-keywords
     let type;
     if (coin === 'BTC') {
         type = 'wallet/bank@btc_pay_log';
-    }else if( coin === 'ETH'){
+    } else if (coin === 'ETH') {
         type = 'wallet/bank@pay_log';
-    }else{ // KT
+    } else { // KT
         return;
     }
     let msg;
@@ -1001,12 +1003,13 @@ export const getRechargeLogs = async (coin: string,start?) => {
  * 提现历史记录
  */
 export const getWithdrawLogs = async (coin: string,start?) => {
+    // tslint:disable-next-line:no-reserved-keywords
     let type;
     if (coin === 'BTC') {
         type = 'wallet/bank@btc_to_cash_log';
-    }else if(coin === 'ETH'){
+    } else if (coin === 'ETH') {
         type = 'wallet/bank@to_cash_log';
-    }else{//KT
+    } else {// KT
         return;
     }
     let msg;
@@ -1251,4 +1254,19 @@ export const uploadFile = async (base64) => {
                 updateStore('userInfo',userInfo);
             }
         });
+};
+
+/**
+ * 语言设置
+ */
+export const languageSet = {
+    simpleChinese:{
+        
+    },
+    tranditionalChinese:{
+
+    },
+    english:{
+
+    }
 };

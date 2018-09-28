@@ -8,8 +8,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { setUserInfo } from '../../../net/pull';
 import { LockScreen } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
-import { getLanguage, getUserInfo, lockScreenHash, lockScreenVerify } from '../../../utils/tools';
-import { VerifyIdentidy } from '../../../utils/walletTools';
+import { getLanguage, getUserInfo, lockScreenHash, lockScreenVerify, popPswBox } from '../../../utils/tools';
+import { backupMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -23,10 +23,6 @@ export class Setting extends Widget {
 
     public create() {
         super.create();
-        this.initData();
-    }
-
-    public initData() {
         const cfg = getLanguage(this);
         this.state = {
             lockScreenPsw:'',  // 锁屏密码
@@ -45,12 +41,14 @@ export class Setting extends Widget {
             wallet:null,
             cfgData:cfg  
         };
+        this.initData();
+    }
 
+    public initData() {
         const userInfo = find('userInfo');
         if (userInfo) {
-            // gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             this.state.userHead = userInfo.avatar ? userInfo.avatar :'../../../res/image/default_avater_big.png';
-            this.state.userName = userInfo.nickName;
+            this.state.userName = userInfo.nickName ? userInfo.nickName :this.state.cfgData.defaultName;
         }
         const wallet = find('curWallet');
         if (wallet) {
@@ -76,7 +74,6 @@ export class Setting extends Widget {
         if (this.state.wallet) {
             return true;
         }
-        // tslint:disable-next-line:max-line-length
         popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox1,() => {
             popNew('app-view-wallet-create-home');
         });
@@ -237,6 +234,19 @@ export class Setting extends Widget {
     }
 
     /**
+     * 备份
+     */
+    public async backUp() {
+        const psw = await popPswBox();
+        if (!psw) return;
+        const ret = await backupMnemonic(psw);
+        if (ret) {
+            popNew('app-view-wallet-backup-index',{ ...ret });
+            this.ok && this.ok();
+        }
+    }
+
+    /**
      * 注销账户
      */
     public logOut() {
@@ -244,10 +254,13 @@ export class Setting extends Widget {
             return;
         }
         popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox2,() => {
-            // popNew('');
+            this.backUp();
             console.log('备份');
         },() => {
             popNew('app-components-modalBox-modalBox',{ title:'',content:this.state.cfgData.tips[2],style:'color:#F7931A;' },() => {
+                updateStore('curWallet',null);
+                updateStore('userInfo',null);
+                this.backPrePage();
                 console.log('注销账户');
             });
         });

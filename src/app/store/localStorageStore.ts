@@ -132,7 +132,7 @@ export const initLocalStorageStore = () => {
     });
 
      // 本地realUserMap
-     register('token',(token:string) => {
+    register('token',(token:string) => {
         setLocalStorage('token',token);
     });
 };
