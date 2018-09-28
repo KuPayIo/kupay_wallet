@@ -15,7 +15,7 @@ import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
-import { fetchCoinGain } from '../../utils/tools';
+import { fetchCoinGain, mnemonicFragmentEncrypt, mnemonicFragmentDecrypt } from '../../utils/tools';
 
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
@@ -48,7 +48,10 @@ export const run = (cb): void => {
     popNew('app-view-base-app');
     // popNew('app-view-mine-account-home');
    
-    
+    const fragments = mnemonicFragmentEncrypt(['abcdefghklmnopqrstuvwxwz','abcdefghklmnopqrstuvwxwz'.toUpperCase()]);
+    console.log(fragments);
+    console.log(mnemonicFragmentDecrypt(fragments[0]));
+    console.log(mnemonicFragmentDecrypt(fragments[1]));
     // popNewPage();
     // 后台切前台
     // backToFront();
