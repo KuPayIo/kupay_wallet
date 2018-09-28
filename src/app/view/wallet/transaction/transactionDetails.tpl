@@ -40,7 +40,7 @@
             </div>
             <div w-class="qrcode-container">
                 <app-components-qrcode-qrcode>{value:{{it1.qrcode}},size:200}</app-components-qrcode-qrcode>
-                <div w-class="copy-ethersacn" on-tap="copyEtherscan">复制地址</div>
+                <div w-class="copy-ethersacn" on-tap="openNewWeb">{{it1.webText}}</div>
             </div>
         </div>
     </div>

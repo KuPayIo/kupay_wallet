@@ -5,7 +5,7 @@ import { Widget } from "../../../../pi/widget/widget";
 import { popNew } from "../../../../pi/ui/root";
 import { ShareToPlatforms } from "../../../../pi/browser/shareToPlatforms";
 import { deleteMnemonic } from "../../../logic/localWallet";
-import { popNewMessage } from "../../../utils/tools";
+import { popNewMessage, mnemonicFragmentEncrypt } from "../../../utils/tools";
 interface Props {
     fragments:[];
 }
@@ -21,17 +21,20 @@ export class ShareMnemonic extends Widget{
     }
     public init(){
         const len = this.props.fragments.length;
+        const encryptFragments = mnemonicFragmentEncrypt(this.props.fragments);
+        console.log(encryptFragments);
         const successList = [];
         for(let i = 0;i <len;i ++){
             successList[i] = false;
         }
         this.state = {
+            encryptFragments,
             successList
         }
     }
     //分享
     public shareItemClick(e:any,index:number){
-        const fragment = this.props.fragments[index];
+        const fragment = this.state.encryptFragments[index];
         popNew('app-components-share-share',{ text:fragment,shareType:ShareToPlatforms.TYPE_IMG },(success)=>{
             this.state.successList[index] = true;
             this.paint();

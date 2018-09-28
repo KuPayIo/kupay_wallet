@@ -8,7 +8,7 @@
                 <img src="../../../res/image/number{{i + 1}}.png"/>
                 <div w-class="share-box">
                     <div w-class="share-title">分享给好友</div>
-                    <div w-class="share-fragment">{{it.fragments[i]}}</div>
+                    <div w-class="share-fragment">{{it1.encryptFragments[i]}}</div>
                 </div>
                 <div w-class="choose-box">
                     {{if v}}

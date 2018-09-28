@@ -272,7 +272,7 @@ export class CoinConvert extends Widget {
             }
             const hash = ret.hash;
             this.setTemRecord(hash,this.state.curOutAddr,outAmount,outCurrency,this.state.inCurrency,this.state.rate);
-            popNew('app-view-wallet-coinConvert-convertHistory', { currencyName:outCurrency });
+            // popNew('app-view-wallet-coinConvert-convertHistory', { currencyName:outCurrency });
             this.init();
             this.paint();
         },(err) => {

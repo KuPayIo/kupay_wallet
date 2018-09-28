@@ -1065,7 +1065,7 @@ export const calPercent = (surplus:number,total:number) => {
             use:99
         };
     }
-    const r = Number((surplus / total).toFixed(2));
+    const r = Number((surplus / total).toString().slice(0,4));
 
     return {
         left:r * 100,
@@ -1156,3 +1156,47 @@ export const getLanguage = (w) => {
     
     return w.config.value.simpleChinese;
 };
+
+
+/**
+ * 助记词片段分享加密
+ * 为了便于识别用户使用的是同一组密钥，会在分享出去的密钥的第2/4/6/8/10/12加上一个相同的随机数
+ */
+export const mnemonicFragmentEncrypt = (fragments:string[])=>{
+    const len = 6;
+    const randomArr = [];
+    for(let i = 0;i < len;i++){
+        const random = Math.floor(Math.random() * 10);
+        randomArr.push(random);
+    }
+    const retFragments = [];
+    for(let i = 0;i < fragments.length;i ++){
+        const fragmentArr = fragments[i].split("");
+        let j = 1;
+        while(2 * j <= 12){
+            fragmentArr.splice(2 * j - 1,0,randomArr[j - 1]);
+            j++;
+        }
+        retFragments.push(fragmentArr.join(""));
+    }
+    return retFragments;
+}
+
+/**
+ * 助记词片段分享解密
+ * 为了便于识别用户使用的是同一组密钥，会在分享出去的密钥的第2/4/6/8/10/12加上一个相同的随机数
+ */
+export const mnemonicFragmentDecrypt = (fragment:string)=>{
+    const fragmentArr = fragment.split("");
+    const randomArr = [];
+    let j = 6;
+    while(j > 0){
+        const delRandom = fragmentArr.splice(2 * j - 1,1);
+        j--;
+        randomArr.push(delRandom);
+    }
+    return {
+        fragment:fragmentArr.join(""),
+        randomStr:randomArr.reverse().join("")
+    }
+}

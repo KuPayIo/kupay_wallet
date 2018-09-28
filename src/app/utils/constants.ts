@@ -143,3 +143,9 @@ export const currencyConfirmBlockNumber = {
     }],
     ERC20:7
 }
+
+// 
+export const etherscanUrl = 'https://ropsten.etherscan.io/tx/';
+
+
+export const blockchainUrl = 'https://testnet.blockchain.info/tx/';
