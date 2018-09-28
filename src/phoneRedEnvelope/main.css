@@ -337,3 +337,25 @@
 .detail-rule-item{
     margin-top: 15px;
 }
+.messageMain{
+    position: fixed;
+    left: 50%;
+    bottom: 100px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.9);
+    line-height: 45px;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 32px;
+    text-align: center;
+    padding: 18px 25px;
+    transform: translateX(-50%);
+    opacity: 0;
+}
+@keyframes popUpMess{
+    0%{opacity: 0; transform: translate(-50%,0)}
+    100%{opacity: 1; transform: translate(-50%,-150%)}
+}
+@keyframes removeMess{
+    0%{opacity: 1; transform: translate(-50%,-150%)}
+    100%{opacity: 0; transform: translate(-50%,0)}
+}

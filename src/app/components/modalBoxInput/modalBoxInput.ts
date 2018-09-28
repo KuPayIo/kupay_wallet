@@ -10,6 +10,7 @@
  * 外部监听 ev-sure，ev-forgetPsw 事件,event.value获取输入框中数据  
  */
 import { Widget } from '../../../pi/widget/widget';
+import { getLanguage } from '../../utils/tools';
 
 interface Props {
     title:string;
@@ -26,8 +27,10 @@ export class ModalBoxInput extends Widget {
 
     public create() {
         super.create();
-        this.state = { currentValue:'' };
-        this.config = { value: { group: 'top' } };
+        this.state = { 
+            currentValue:'',
+            cfgData:getLanguage(this)
+        };
     }
     /**
      * 点击取消按钮

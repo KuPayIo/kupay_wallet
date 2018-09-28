@@ -35,6 +35,8 @@ export class RedEnvDetail extends Widget {
             scroll:false,
             showPin:this.props.rtype === 1,  // 0 等额红包  1 拼手气红包
             cfgData:cfg,
+            userName:cfg.defaultUserName,
+            userHead:'../../res/image/default_avater_big.png',
             greatAmount:0,
             greatUser:-1
         };
@@ -49,12 +51,14 @@ export class RedEnvDetail extends Widget {
 
         const user = find('userInfo');
         if (!user) return;
-        this.state.userName = user ? user.nickName :this.state.cfgData.defaultUserName;
+        this.state.userName = user.nickName ? user.nickName :this.state.cfgData.defaultUserName;
+        this.state.userHead = user.avatar ? user.avatar :'../../res/image/default_avater_big.png';
 
         const redBagList = value[0];
         for (const i in redBagList) {
             const user = await getUserList([redBagList[i].cuid]);
-            this.state.redBagList[i].userName = user ? user.nickName :this.state.cfgData.defaultUserName;
+            this.state.redBagList[i].userName = user.nickName ? user.nickName :this.state.cfgData.defaultUserName;
+            this.state.redBagList[i].avatar = user.avatar ? user.avatar :'../../res/image/default_avater_big.png'; 
             if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.state.greatAmount < redBagList[i].amount) {
                 this.state.greatAmount = redBagList.amount;
                 this.state.greatUser = i;

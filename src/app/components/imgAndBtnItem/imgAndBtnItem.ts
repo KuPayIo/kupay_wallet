@@ -11,6 +11,7 @@
 // ================================ 导入
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
+import { getLanguage } from '../../utils/tools';
 
 interface Props {
     img:string;
@@ -27,6 +28,13 @@ export class ImgAndBtnItem extends Widget {
     public ok: () => void;
     constructor() {
         super();
+    }
+
+    public setProps(props:JSON,oldProps:JSON) {
+        super.setProps(props,oldProps);
+        this.state = {
+            cfgData:getLanguage(this)
+        };
     }
 
     public backPrePage() {

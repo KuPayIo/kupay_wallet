@@ -5,7 +5,7 @@ import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
-    assetList:[];
+    assetList:any[];
 }
 export class WalletAssetList extends Widget {
     public props:Props;

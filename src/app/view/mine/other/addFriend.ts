@@ -23,12 +23,11 @@ export class AddFriend extends Widget {
     }
 
     public initData() {
-        const wallet = find('curWallet');
+        const user = find('userInfo');
         const addr = getFirstEthAddr(); 
-        if (wallet) {
-            const gwlt = JSON.parse(wallet.gwlt);
-            this.state.userHead = wallet.avatar ? wallet.avatar :'../../../res/image/default_avater_big.png';
-            this.state.userName = gwlt.nickName;
+        if (user) {
+            this.state.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
+            this.state.userName = user.nickName;
             this.state.address = addr;
         }
         this.paint();

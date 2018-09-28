@@ -65,7 +65,7 @@ winit.initNext = function () {
 		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 
-	alert('next start');
+	// alert('next start');
 	// 更新模块
 	var updateMod = pi_modules.update.exports;
 	updateMod.setServerInfo("app/boot/");

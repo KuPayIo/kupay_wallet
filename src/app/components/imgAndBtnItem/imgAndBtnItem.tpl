@@ -8,7 +8,7 @@
         {{if it.isComplete}}
         <div w-class="mybtn">
             <img src="../../res/image/32_white.png" style="width: 40px;height: 40px;margin-right: 10px;vertical-align: middle;"/>
-            <span>完成</span>
+            <span>{{it1.cfgData.complete}}</span>
         </div>
         {{else}}
         <app-components1-btn-btn>{"name":{{it.btnName}},types:"small","color":"orange","style":{{it.style}}}</app-components1-btn-btn>
