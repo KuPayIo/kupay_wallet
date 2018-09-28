@@ -102,7 +102,7 @@ export class Home extends Widget {
         } else {
             popNew(this.state.list[ind].components);
         }
-        this.ok && this.ok();
+        this.backPrePage();
     }
 
     /**
@@ -129,6 +129,7 @@ export class Home extends Widget {
      */
     public showMyQrcode() {
         popNew('app-view-mine-other-addFriend');
+        this.backPrePage();
     }
 
     /**
@@ -139,6 +140,7 @@ export class Home extends Widget {
             return;
         }
         popNew('app-view-wallet-create-home');
+        this.backPrePage();
     }
 }
 

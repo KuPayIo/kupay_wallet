@@ -16,8 +16,8 @@ export class Aboutus extends Widget {
         this.state = {
             data:[
                 { value: cfg.itemTitle[0],components:'app-view-mine-other-privacypolicy' },
-                { value: cfg.itemTitle[0],components:'' },
-                { value: cfg.itemTitle[0],components:'' }
+                { value: cfg.itemTitle[1],components:'' },
+                { value: cfg.itemTitle[2],components:'' }
             ],
             cfgData:cfg
         };

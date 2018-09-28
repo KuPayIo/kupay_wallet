@@ -20,11 +20,13 @@
     position: relative;
     justify-content: center;
     align-items: center;
-    color: #fff8;
+    color: #fff;
+    opacity: 0.5;
     border-bottom: 6px solid transparent;
 }
 .is-active{
     color: #fff;
+    opacity: 1;
     border-bottom: 6px solid #fff;
 }
 .user-container{
