@@ -24,7 +24,7 @@ console.log('conIp=',conIp);
 console.log('conPort=',conPort);
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-export const sharePerUrl = `http://192.168.33.96:80/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+export const sharePerUrl = `http://${conIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 上传图片url
 export const uploadFileUrl = `http://${conIp}/service/upload`;
