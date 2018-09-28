@@ -3,8 +3,7 @@
  */
 // =============================================导入
 import { Widget } from '../../../../pi/widget/widget';
-import { getLanguage } from '../../../utils/tools';
-import { Config } from '../../base/config';
+import { getLanguage, getStaticLanguage } from '../../../utils/tools';
 // ================================================导出
 export class FAQ extends Widget {
     public ok: () => void;
@@ -12,7 +11,7 @@ export class FAQ extends Widget {
     public create() {
         super.create();
         this.state = {        
-            htmlStrList:Config.helpAnswer,
+            htmlStrList:getStaticLanguage().helpAnswer,
             cfgData:getLanguage(this)
         };
     }

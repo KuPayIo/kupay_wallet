@@ -7,6 +7,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { applyAutoLogin, autoLogin, setUserInfo } from '../../net/pull';
 import { LoginState, UserInfo } from '../../store/interface';
 import { find, register } from '../../store/store';
+import { getLanguage } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -26,35 +27,37 @@ export class App extends Widget {
         this.old[isActive] = true;
         const loading = localStorage.getItem('level_3_page_loaded') ? false : true;
         localStorage.removeItem('level_3_page_loaded');
+        const cfg = getLanguage(this);
         this.state = {
             type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
             isActive,
             old: this.old,
             loading,
             tabBarList: [{
-                text: '玩',
+                text: cfg.taps[0],
                 icon: 'play.png',
                 iconActive: 'play_active.png',
                 components: 'app-view-play-home-home'
             },
             {
-                text: '聊',
+                text: cfg.taps[1],
                 icon: 'chat.png',
                 iconActive: 'chat_active.png',
                 components: 'app-view-chat-home-home'
             },
             {
-                text: '赚',
+                text: cfg.taps[2],
                 icon: 'earn.png',
                 iconActive: 'earn_active.png',
                 components: 'app-view-earn-home-home'
             }, 
             {
-                text: '钱',
+                text: cfg.taps[3],
                 icon: 'wallet.png',  
                 iconActive: 'wallet_active.png',
                 components: 'app-view-wallet-home-home'
-            }]
+            }],
+            cfgData:cfg
 
         };
     }

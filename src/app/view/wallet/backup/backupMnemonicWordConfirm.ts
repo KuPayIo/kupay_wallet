@@ -3,7 +3,7 @@
  */
 import { Widget } from '../../../../pi/widget/widget';
 import { deleteMnemonic } from '../../../logic/localWallet';
-import { popNewMessage, shuffle } from '../../../utils/tools';
+import { getLanguage, popNewMessage, shuffle } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;
@@ -25,7 +25,8 @@ export class BackupMnemonicWordConfirm extends Widget {
             mnemonic,
             nullMnemonic:[0,0,0,0,0,0,0,0,0,0,0,0],
             confirmedMnemonic: [],
-            shuffledMnemonic
+            shuffledMnemonic,
+            cfgData:getLanguage(this)
         };
     }
     
@@ -56,10 +57,10 @@ export class BackupMnemonicWordConfirm extends Widget {
 
     public nextStepClick() {
         if (!this.compareMnemonicEqualed()) {
-            popNewMessage('助记词错误，请重新输入');
+            popNewMessage(this.state.cfgData.tips[0]);
         } else {
             deleteMnemonic();
-            popNewMessage('备份完成');
+            popNewMessage(this.state.cfgData.tips[1]);
             this.ok && this.ok();
         }
     }

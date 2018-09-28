@@ -1,9 +1,8 @@
 import { isArray } from '../../pi/net/websocket/util';
 import { deepCopy } from '../../pi/util/util';
-import { financialProductList } from '../config';
 import { PAGELIMIT } from '../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, GetDateDiff, parseRtype,timestampFormat,timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
+import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
 import { AccountDetail, CRecDetail, CurrencyType, CurrencyTypeReverse,MineRank, MiningRank, PurchaseRecordOne, RedBag, SRecDetail, TaskSid } from './interface';
@@ -39,27 +38,27 @@ export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[
         let behaviorIcon = '';
         switch (itype) {
             case TaskSid.mines:
-                behavior = '挖矿';
+                behavior = getStaticLanguage().cloudAccountDetail.types[0];
                 behaviorIcon = 'behavior1010.png';
                 break;
             case TaskSid.inviteFriends:
-                behavior = '邀请红包';
+                behavior = getStaticLanguage().cloudAccountDetail.types[1];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
             case TaskSid.redEnvelope: 
-                behavior = amount > 0 ? '领红包' : '发红包';
+                behavior = amount > 0 ? getStaticLanguage().cloudAccountDetail.types[2] : getStaticLanguage().cloudAccountDetail.types[3];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
             case TaskSid.recharge:
-                behavior = '充值';
+                behavior = getStaticLanguage().cloudAccountDetail.types[4];
                 behaviorIcon = 'cloud_charge_icon.png';
                 break;
             case TaskSid.withdraw:
-                behavior = '提现';
+                behavior = getStaticLanguage().cloudAccountDetail.types[5];
                 behaviorIcon = 'cloud_withdraw_icon.png';
                 break;
             case TaskSid.financialManagement:
-                behavior = '理财买入';
+                behavior = getStaticLanguage().cloudAccountDetail.types[6];
                 behaviorIcon = 'behavior_manage_money_port.png';
                 break;
             default:
@@ -98,7 +97,7 @@ export const parseMineRank = (data) => {
         const userData = user ? JSON.parse(user) :'' ;
         data1.push({
             index: data.value[i][3],
-            name: userData ? userData.nickName :'昵称未设置',
+            name: userData ? userData.nickName :getStaticLanguage().userInfo.name,
             avater: userData ? userData.avatar :'',
             num : kpt2kt(data.value[i][2])
         });
@@ -129,7 +128,7 @@ export const parseMiningRank = (data) => {
         const userData = user ? JSON.parse(user) :'';
         data2.push({
             index: data.value[i][3],
-            name: userData ? userData.nickName :'昵称未设置',
+            name: userData ? userData.nickName :getStaticLanguage().userInfo.name,
             avater: userData ? userData.avatar :'',
             num: kpt2kt(data.value[i][2])
         });
@@ -315,7 +314,7 @@ export const parseProductList = (res:any) => {
     for (let i = 0;i < res.value.length;i++) {
         const item = res.value[i];
         const id = item[0];
-        const product = financialProductList[id];
+        const product = getStaticLanguage().financialProductList[id];
         product.coinType = CurrencyTypeReverse[`${item[1]}`];
         product.unitPrice = wei2Eth(item[2]);
         product.total = item[3];

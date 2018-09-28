@@ -3,10 +3,11 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { getLanguage } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;
-    fragments: [];
+    fragments: any[];
 }
 export class BackupIndex extends Widget {
     public ok:() => void;
@@ -15,10 +16,11 @@ export class BackupIndex extends Widget {
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.init();
+        this.state = {
+            cfgData:getLanguage(this)
+        };
     }
-    public init() {
-    }
+    
     public standardBackupClick() {
         popNew('app-view-wallet-backup-backupMnemonicWordConfirm',{ mnemonic:this.props.mnemonic },() => {this.ok && this.ok();});
     }

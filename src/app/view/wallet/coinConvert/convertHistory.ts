@@ -9,7 +9,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getTransactionsByAddr } from '../../../net/pullWallet';
 import { ShapeShiftTx, ShapeShiftTxs } from '../../../store/interface';
 import { find, register } from '../../../store/store';
-import { getCurrentAddrByCurrencyName, getCurrentAddrInfo, parseAccount, timestampFormat } from '../../../utils/tools';
+import { getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, timestampFormat } from '../../../utils/tools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -30,9 +30,10 @@ export class ConvertHistory extends Widget {
 
     public async init() {
         this.state = {
-            txsShow:[]
+            txsShow:[],
+            cfgData:getLanguage(this)
         };
-        const close = popNew('app-components1-loading-loading',{ text:'加载中...' });
+        const close = popNew('app-components1-loading-loading',{ text:this.state.cfgData.loading });
         const addr = getCurrentAddrByCurrencyName(this.props.currencyName);
         await getTransactionsByAddr(addr);
         close.callback(close.widget);
@@ -55,13 +56,13 @@ export class ConvertHistory extends Widget {
             // tslint:disable-next-line:variable-name
             let status_class = '';
             if (tx.status === 'complete') {
-                status_show = '兑换成功';
+                status_show = this.state.cfgData.tips[1];
                 status_class = '';
             } else if (tx.status === 'failed') {
-                status_show = '兑换失败';
+                status_show = this.state.cfgData.tips[2];
                 status_class = 'isActive';   // 做个标记，提醒
             } else {
-                status_show = '兑换中';
+                status_show = this.state.cfgData.tips[3];
                 status_class = 'isActive';  // 做个标记，提醒
             }
             txsShow.push({
@@ -123,7 +124,7 @@ export class ConvertHistory extends Widget {
         //     }
         // });
         // if (!record) return;
-        popNew('app-view-wallet-transaction-transactionDetails',{hash:outHash});
+        popNew('app-view-wallet-transaction-transactionDetails',{ hash:outHash });
     }
 }
 

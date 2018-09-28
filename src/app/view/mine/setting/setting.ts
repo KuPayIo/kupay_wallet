@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { setUserInfo } from '../../../net/pull';
 import { LockScreen } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
-import { getLanguage, getUserInfo, lockScreenHash, lockScreenVerify, popPswBox } from '../../../utils/tools';
+import { getLanguage, lockScreenHash, lockScreenVerify, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords

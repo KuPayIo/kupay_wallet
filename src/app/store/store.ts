@@ -171,6 +171,7 @@ const store = <Store>{
     realUserMap:new Map<string,boolean>(),// 本地真实用户map
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
+    // tslint:disable-next-line:type-literal-delimiter
     accountDetail: new Map<CurrencyType, {list:AccountDetail[],start:number,canLoadMore:boolean}>(),// 云端账户详情
     sHisRec: <SHisRec>null, // 发送红包记录
     cHisRec: <CHisRec>null,// 兑换红包记录
@@ -183,7 +184,9 @@ const store = <Store>{
     mineRank: <MineRank>null,// 矿山排名
     miningRank: <MiningRank>null,// 挖矿排名
     mineItemJump: '',// 矿山增加项目跳转详情
+    // tslint:disable-next-line:type-literal-delimiter
     rechargeLogs:new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>(),// 充值记录
+    // tslint:disable-next-line:type-literal-delimiter
     withdrawLogs:new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>(),// 提现记录
     // shapeshift
     shapeShiftCoins: <ShapeShiftCoin[]>[],// shapeShift 支持的币种

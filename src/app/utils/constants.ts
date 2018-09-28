@@ -95,11 +95,10 @@ export const timeOfArrival = {
     }]
 };
 
-//助记词片段分享最大数
+// 助记词片段分享最大数
 export const MAX_SHARE_LEN = 3;
-//助记词片段分享最小数
+// 助记词片段分享最小数
 export const MIN_SHARE_LEN = 2;
-
 
 // 交易所需区块确认数
 export const currencyConfirmBlockNumber = {
@@ -142,10 +141,9 @@ export const currencyConfirmBlockNumber = {
         number:7
     }],
     ERC20:7
-}
+};
 
 // 
 export const etherscanUrl = 'https://ropsten.etherscan.io/tx/';
-
 
 export const blockchainUrl = 'https://testnet.blockchain.info/tx/';

@@ -3,10 +3,11 @@
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
-import { ERC20Tokens, MainChainCoin } from '../config';
+import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { uploadFileUrlPrefix } from '../net/pull';
-import { Addr, CurrencyType, CurrencyTypeReverse, LanguageSet, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
+// tslint:disable-next-line:max-line-length
+import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys } from './constants';
 
@@ -886,7 +887,7 @@ export const hasWallet = () => {
 
 // 解析交易状态
 export const parseStatusShow = (tx:TransRecordLocal) => {
-    if(!tx){
+    if (!tx) {
         return {
             text:'打包中',
             icon:'pending.png'
@@ -1105,9 +1106,9 @@ export const base64ToFile = (base64:string) => {
 export const getUserInfo = () => {
     const userInfo = find('userInfo');
     let nickName = userInfo.nickName;
-    if(!nickName){
+    if (!nickName) {
         const wallet = find('curWallet');
-        if(wallet){
+        if (wallet) {
             nickName = JSON.parse(wallet.gwlt).nickName;
         }
     }
@@ -1146,7 +1147,7 @@ export const fetchDeviceId = () => {
 };
 
 /**
- * 获取语言设置
+ * 根据当前语言设置获取静态文字，对于组件模块
  */
 export const getLanguage = (w) => {
     const lan = find('languageSet');
@@ -1157,46 +1158,62 @@ export const getLanguage = (w) => {
     return w.config.value.simpleChinese;
 };
 
+/**
+ * 根据当前语言设置获取静态文字，对于单独的ts文件
+ */
+export const getStaticLanguage = () => {
+    const lan = find('languageSet');
+    if (lan) {
+        return Config[lan.languageList[lan.selected]];
+    }
+
+    return Config.simpleChinese;
+};
 
 /**
  * 助记词片段分享加密
  * 为了便于识别用户使用的是同一组密钥，会在分享出去的密钥的第2/4/6/8/10/12加上一个相同的随机数
  */
-export const mnemonicFragmentEncrypt = (fragments:string[])=>{
+export const mnemonicFragmentEncrypt = (fragments:string[]) => {
     const len = 6;
     const randomArr = [];
-    for(let i = 0;i < len;i++){
+    for (let i = 0;i < len;i++) {
         const random = Math.floor(Math.random() * 10);
         randomArr.push(random);
     }
     const retFragments = [];
-    for(let i = 0;i < fragments.length;i ++){
-        const fragmentArr = fragments[i].split("");
+    for (let i = 0;i < fragments.length;i ++) {
+        const fragmentArr = fragments[i].split('');
         let j = 1;
-        while(2 * j <= 12){
+        // tslint:disable-next-line:binary-expression-operand-order
+        while (2 * j <= 12) {
+            // tslint:disable-next-line:binary-expression-operand-order
             fragmentArr.splice(2 * j - 1,0,randomArr[j - 1]);
             j++;
         }
-        retFragments.push(fragmentArr.join(""));
+        retFragments.push(fragmentArr.join(''));
     }
+    
     return retFragments;
-}
+};
 
 /**
  * 助记词片段分享解密
  * 为了便于识别用户使用的是同一组密钥，会在分享出去的密钥的第2/4/6/8/10/12加上一个相同的随机数
  */
-export const mnemonicFragmentDecrypt = (fragment:string)=>{
-    const fragmentArr = fragment.split("");
+export const mnemonicFragmentDecrypt = (fragment:string) => {
+    const fragmentArr = fragment.split('');
     const randomArr = [];
     let j = 6;
-    while(j > 0){
+    while (j > 0) {
+        // tslint:disable-next-line:binary-expression-operand-order
         const delRandom = fragmentArr.splice(2 * j - 1,1);
         j--;
         randomArr.push(delRandom);
     }
+
     return {
-        fragment:fragmentArr.join(""),
-        randomStr:randomArr.reverse().join("")
-    }
-}
+        fragment:fragmentArr.join(''),
+        randomStr:randomArr.reverse().join('')
+    };
+};
