@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { CreateWalletType } from '../../../store/interface';
+import { getLanguage } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
 
 export class StandardImport extends Widget {
@@ -16,7 +17,8 @@ export class StandardImport extends Widget {
         this.state = {
             mnemonic:'',
             psw:'',
-            pswConfirm:''
+            pswConfirm:'',
+            cfgData:getLanguage(this)
         };
     }
     public inputChange(r:any) {
@@ -25,7 +27,7 @@ export class StandardImport extends Widget {
     }
     public nextClick(e:any) {
         if (this.state.mnemonic.length <= 0) {
-            popNew('app-components-message-message', { content: '请输入助记词' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips });
 
             return;
         }

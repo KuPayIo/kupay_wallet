@@ -4,13 +4,13 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
-import { estimateMinerFee, transfer, resendNormalTransfer } from '../../../net/pullWallet';
+import { doScanQrCode } from '../../../logic/native';
+import { estimateMinerFee, resendNormalTransfer, transfer } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
 import { timeOfArrival } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, popPswBox, fetchBtcMinerFee } from '../../../utils/tools';
-import { wei2Eth, sat2Btc } from '../../../utils/unitTools';
-import { doScanQrCode } from '../../../logic/native';
+import { fetchBtcMinerFee, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popPswBox } from '../../../utils/tools';
+import { sat2Btc, wei2Eth } from '../../../utils/unitTools';
 
 interface Props {
     currencyName:string;
@@ -37,7 +37,7 @@ export class Transfer extends Widget {
         }
         const tx = this.props.tx;
         console.log(tx);
-        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1: MinerFeeLevel.STANDARD;
+        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.STANDARD;
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             toAddr:tx ? tx.toAddr : '',
@@ -47,7 +47,8 @@ export class Transfer extends Widget {
             minerFeeList:list,
             curLevel,
             minLevel:curLevel,
-            inputDisabled:tx ? true : false
+            inputDisabled:tx ? true : false,
+            cfgData:getLanguage(this)
         };
         this.updateMinerFeeList();
         
@@ -76,8 +77,7 @@ export class Transfer extends Widget {
         this.ok && this.ok();
     }
     public speedDescClick() {
-        const content = "到账速度受网络拥堵影响，拥堵时支付较高矿工费的交易会优先确认。我们把交易速度分为三个标准，并附上参考时间，您可以任意选择，矿工费可以激励矿工优先打包您的交易，如果矿工费过低，矿工没有动力去打包你的交易，可能会将您的交易延后处理。";
-        popNew('app-components-modalBox-modalBox1',{ title:'到账速度',content,tips:'转账时不能全部转完，要预留出矿工费' });
+        popNew('app-components-modalBox-modalBox1',this.state.cfgData.modalBox);
     }
 
     public chooseMinerFee() {
@@ -106,18 +106,18 @@ export class Transfer extends Widget {
     // 转账
     public async nextClick() {
         if (!this.state.toAddr) {
-            popNew('app-components-message-message', {  content: '请输入收款地址' });
+            popNew('app-components-message-message', {  content: this.state.cfgData.tips[0] });
 
             return;
         }
         if (!this.state.amount) {
-            popNew('app-components-message-message', { content: '请输入转账金额'});
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }
 
         if (this.state.balance < this.state.amount + this.state.minerFee) {
-            popNew('app-components-message-message', { content: '余额不足' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
@@ -131,7 +131,7 @@ export class Transfer extends Widget {
         if (!passwd) return;
         const t = new Date();
         const tx:TransRecordLocal = {
-            hash:"",
+            hash:'',
             addr:fromAddr,
             txType:TxType.TRANSFER,
             fromAddr,
@@ -148,10 +148,10 @@ export class Transfer extends Widget {
             minerFeeLevel
         };
         let ret;
-        if(!this.props.tx){
+        if (!this.props.tx) {
             ret = await transfer(passwd,tx);
-        }else{
-            const tx = {...this.props.tx};
+        } else {
+            const tx = { ...this.props.tx };
             tx.minerFeeLevel = minerFeeLevel;
             ret = await resendNormalTransfer(passwd,tx);
         }
@@ -160,8 +160,8 @@ export class Transfer extends Widget {
         }
     }
 
-    public doScanClick(){
-        doScanQrCode((res)=>{
+    public doScanClick() {
+        doScanQrCode((res) => {
             console.log(res);
             this.state.toAddr = res;
             this.paint();

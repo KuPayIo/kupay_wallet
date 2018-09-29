@@ -3,14 +3,14 @@
         <div w-class="top-bar-container">
             <img on-tap="backPrePage" src="../../../res/image/left_arrow_blue.png" w-class="ga-back" />
             <div w-class="input-father" ev-input-change="searchTextChange" ev-input-clear="searchTextClear"><app-components-input-suffixInput>{placeHolder:"Search",clearable:{{true}},style:"background-color:#f3f6f9;"}</app-components-input-suffixInput></div>
-            <div on-tap="searchClick">搜索</div>
+            <div on-tap="searchClick">{{it1.cfgData.search}}</div>
         </div>
     </div>
     <div w-class="body">
         {{if it1.showAssetList.length <= 0}}
         <div w-class="no-record">
             <img src="../../../res/image/search_no.png" w-class="no-record-icon"/>
-            <div>没有找到您想要的</div>
+            <div>{{it1.cfgData.noneRes}}</div>
         </div>
         {{else}}
         <div w-class="asset-list">

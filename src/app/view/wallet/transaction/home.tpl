@@ -8,25 +8,25 @@
                 <div w-class="balance-value">￥{{it1.balanceValue}}</div>
             </div>
             {{if it1.canConvert}}
-            <div w-class="btn-exchange" on-tap="convertCurrencyClick">换币</div>
+            <div w-class="btn-exchange" on-tap="convertCurrencyClick">{{it1.cfgData.tabs[0]}}</div>
             {{end}}
         </div>
         <div w-class="operating">
-            <div w-class="operating-item" on-tap="doTransferClick"><img src="../../../res/image/transfer.png" w-class="icon"/><span>转账</span></div>
+            <div w-class="operating-item" on-tap="doTransferClick"><img src="../../../res/image/transfer.png" w-class="icon"/><span>{{it1.cfgData.tabs[1]}}</span></div>
             <div w-class="line"></div>
-            <div w-class="operating-item" on-tap="doReceiptClick"><img src="../../../res/image/19.png" w-class="icon"/><span>收款</span></div>
+            <div w-class="operating-item" on-tap="doReceiptClick"><img src="../../../res/image/19.png" w-class="icon"/><span>{{it1.cfgData.tabs[2]}}</span></div>
         </div>
     </div>
     <div w-class="show-container">
-        <div w-class="quotes">行情&nbsp;￥{{it1.rate}}/{{it.currencyName}}</div>
-        <div w-class="{{it.gain > 0 ? 'up' : 'down'}}">今日&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
+        <div w-class="quotes">{{it1.cfgData.tabs[3]}}&nbsp;￥{{it1.rate}}/{{it.currencyName}}</div>
+        <div w-class="{{it.gain > 0 ? 'up' : 'down'}}">{{it1.cfgData.tabs[4]}}&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
     </div>
     <div w-class="body">
         <div w-class="tx-list-container">
             {{if it1.txList.length === 0}}
             <div w-class="no-recode">
                 <img src="../../../res/image/dividend_history_none.png" w-class="no-recode-icon"/>
-                <div w-class="no-recode-text">还没有记录哦</div>
+                <div w-class="no-recode-text">{{it1.cfgData.noneRes}}</div>
             </div>
             {{end}}
             <div w-class="tx-list">

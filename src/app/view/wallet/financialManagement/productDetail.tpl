@@ -4,32 +4,32 @@
     <div w-class="top-head">
         <div w-class="row1">
             <div w-class="col1">
-                <div w-class="desc">预期年化收益</div>
+                <div w-class="desc">{{it1.cfgData.profit}}</div>
                 <div w-class="content">{{it.product.profit}}%</div>
             </div>
             <div w-class="col2">
-                <div w-class="desc">持续天数</div>
+                <div w-class="desc">{{it1.cfgData.days}}</div>
                 <div w-class="content">{{it.product.days}}</div>
             </div>
         </div>
-        <div w-class="row2">以上利率均为预期年化结算利率，以实际回报为准</div>
+        <div w-class="row2">{{it1.cfgData.mess}}</div>
         <div w-class="row3"><div w-class="progress" style="width:{{it1.usePercent}}%;"></div></div>
         <div w-class="row4">
             <div style="width:{{it1.usePercent}}%;"></div>
-            <div w-class="sold" >已售&nbsp;{{it1.usePercent}}%</div>
+            <div w-class="sold" >{{it1.cfgData.tips[0]}}&nbsp;{{it1.usePercent}}%</div>
         </div>
     </div>
     <div w-class="bottom-box">
         <div w-class="row5">{{it.product.productIntroduction}}</div>
-        <div w-class="title">详细信息</div>
+        <div w-class="title">{{it1.cfgData.tips[1]}}</div>
         <div w-class="detail-box">
-            <div w-class="detail">价格：{{it.product.unitPrice}}&nbsp;{{it.product.coinType}}/份</div>
-            <div w-class="detail">剩余：{{it1.leftPercent}}%</div>
-            <div w-class="detail">锁定期：无</div>
+            <div w-class="detail">{{it1.cfgData.detail[0] + it.product.unitPrice}}&nbsp;{{it.product.coinType + "/" + it1.cfgData.tips[4]}}</div>
+            <div w-class="detail">{{it1.cfgData.detail[1] + it1.leftPercent}}%</div>
+            <div w-class="detail">{{it1.cfgData.detail[2]}}</div>
         </div>
         <div w-class="unit">
-            <span>单价/份</span>
-            <div w-class="limit"><span>（</span><span w-class="limit-number">限购{{it.product.limit}}份</span><span>）</span></div>
+            <span>{{it1.cfgData.tips[2]}}</span>
+            <div w-class="limit"><span>（</span><span w-class="limit-number">{{it1.cfgData.tips[3] + it.product.limit + it1.cfgData.tips[4]}}</span><span>）</span></div>
         </div>
         <div w-class="select-num">
             <span w-class="unit-price">
@@ -41,8 +41,8 @@
                 <img w-class="plus" on-tap="add" src="../../../res/image/add_gray.png" />
             </div>
         </div>
-        <div w-class="read">阅读声明</div>
-        <div ev-btn-tap="purchaseClicked" w-class="btn"><app-components1-btn-btn>{"name":"购买","types":"big","color":"blue"}</app-components1-btn-btn></div>
+        <div w-class="read">{{it1.cfgData.readAgree}}</div>
+        <div ev-btn-tap="purchaseClicked" w-class="btn"><app-components1-btn-btn>{"name":{{it1.cfgData.btnName}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
     </div>
 </div>
 </div>

@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <div w-class="title-container">
-        <app-components1-topBar-topBar>{"title":"优选理财",background:"linear-gradient(to right,#38CFE7,#318DE6)"}</app-components1-topBar-topBar>
+        <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6)"}</app-components1-topBar-topBar>
         <div w-class="nav-wrap">
             <div w-class="nav">
                 {{for i,v of it1.tabs}} {{let isActive = i===it1.activeNum}}

@@ -5,8 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode } from '../../../logic/native';
 import { CreateWalletType } from '../../../store/interface';
+import { getLanguage, mnemonicFragmentDecrypt } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
-import { mnemonicFragmentDecrypt } from '../../../utils/tools';
 
 export class FragmentImport extends Widget {
     public ok: () => void;
@@ -17,7 +17,8 @@ export class FragmentImport extends Widget {
     public init() {
         this.state = {
             fragment1:'',
-            fragment2:''
+            fragment2:'',
+            cfgData:getLanguage(this)
         };
     }
     public backPrePage() {
@@ -40,17 +41,17 @@ export class FragmentImport extends Widget {
     }
     public nextClick() {
         if (!this.state.fragment1) {
-            popNew('app-components-message-message', { content: '请输入片段1' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[0] });
 
             return;
         }
         if (!this.state.fragment2) {
-            popNew('app-components-message-message', { content: '请输入片段2' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }
         if (this.state.fragment1 === this.state.fragment2) {
-            popNew('app-components-message-message', { content: '两次输入的片段一致' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
@@ -61,10 +62,11 @@ export class FragmentImport extends Widget {
         const decryptFragement2 = obj2.fragment;
         const random2 = obj2.randomStr;
         if (random1 !== random2) {
-            popNew('app-components-message-message', { content: '此片段不是同一组密钥' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[3] });
 
             return;
         }
+        // tslint:disable-next-line:max-line-length
         popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.FragmentImport,fragment1:decryptFragement1,fragment2:decryptFragement2 });
         const w:any = forelet.getWidget(WIDGET_NAME);
         if (w) {

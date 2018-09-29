@@ -6,6 +6,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
 import { CreateWalletType } from '../../../store/interface';
 import { pswEqualed } from '../../../utils/account';
+import { getLanguage } from '../../../utils/tools';
 
 export class CreateWalletByImage extends Widget {
     public ok: () => void;
@@ -21,7 +22,8 @@ export class CreateWalletByImage extends Widget {
             imagePsw:'',
             imagePswAvailable:false,
             imgagePswConfirm:'',
-            pswEqualed:false
+            pswEqualed:false,
+            cfgData:getLanguage(this)
 
         };
     }
@@ -58,7 +60,7 @@ export class CreateWalletByImage extends Widget {
 
     public nextClick() {
         if (!this.state.pswEqualed) {
-            popNew('app-components-message-message', { content: '两次输入密码不一致' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips });
 
             return;
         }

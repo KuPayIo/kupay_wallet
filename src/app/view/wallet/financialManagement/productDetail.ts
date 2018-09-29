@@ -1,25 +1,25 @@
 /**
  * 理财详情
  */
-import { Widget } from "../../../../pi/widget/widget";
-import { Product, PurchaseRecordOne } from "../../../store/interface";
-import { getPurchaseRecord } from "../../../net/pull";
-import { Forelet } from "../../../../pi/widget/forelet";
-import { register, find } from "../../../store/store";
-import { fetchHoldedProductAmount, hasWallet, calPercent } from "../../../utils/tools";
-import { popNew } from "../../../../pi/ui/root";
+import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { getPurchaseRecord } from '../../../net/pull';
+import { Product, PurchaseRecordOne } from '../../../store/interface';
+import { find, register } from '../../../store/store';
+import { calPercent, fetchHoldedProductAmount, getLanguage, hasWallet } from '../../../utils/tools';
 
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-interface Props{
+interface Props {
     product:Product;
 }
-export class productDetail extends Widget{
-    public ok:()=>void;
-    public backPrePage(){
+export class ProductDetail extends Widget {
+    public ok:() => void;
+    public backPrePage() {
         this.ok && this.ok();
     }
     public setProps(props:Props,oldProps:Props) {
@@ -27,19 +27,20 @@ export class productDetail extends Widget{
         this.init();
     }
     public init() {
-        if(find('conUid')){
-            //获取购买记录
+        if (find('conUid')) {
+            // 获取购买记录
             getPurchaseRecord();
         }
         const product = this.props.product;
-        const res = calPercent(product.surplus,product.total)
+        const res = calPercent(product.surplus,product.total);
         console.log(res);
         this.state = {
             holdedAmout:0,
             amount:1,
             leftPercent:  res.left,
-            usePercent: res.use
-        }
+            usePercent: res.use,
+            cfgData:getLanguage(this)
+        };
         console.log(this.props.product);
     }
 
@@ -54,7 +55,7 @@ export class productDetail extends Widget{
     // 增加购买数量
     public add(e:any) {
         const limit = Number(this.props.product.limit);
-        //超过限购量直接返回
+        // 超过限购量直接返回
         if (this.state.amount + this.state.holdedAmout >= limit) {
             return;
         }
@@ -62,17 +63,16 @@ export class productDetail extends Widget{
         this.paint();
     }
 
-    //购买记录改变
+    // 购买记录改变
     public updatePurchaseRecord(purchaseRecord:PurchaseRecordOne[]) {
         this.state.holdedAmout = fetchHoldedProductAmount(this.props.product.id);
     }
 
-    public purchaseClicked(){
-        if(!hasWallet()) return;
-        popNew('app-view-wallet-financialManagement-productStatement',{product:this.props.product,amount:this.state.amount});
+    public purchaseClicked() {
+        if (!hasWallet()) return;
+        popNew('app-view-wallet-financialManagement-productStatement',{ product:this.props.product,amount:this.state.amount });
     }
 }
-
 
 // =====================================本地
 register('purchaseRecord', async (purchaseRecord) => {

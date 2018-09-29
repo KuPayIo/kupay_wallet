@@ -11,6 +11,6 @@
             </div>
             {{end}}
         </div>
-        <div w-class="add-addr" on-tap="addAddrClick"><span>添加地址</span><img src="../../../res/image/add.png" w-class="add-icon"/></div>
+        <div w-class="add-addr" on-tap="addAddrClick"><span>{{it1.cfgData.addAddr}}</span><img src="../../../res/image/add.png" w-class="add-icon"/></div>
     </div>
 </div>

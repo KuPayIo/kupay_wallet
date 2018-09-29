@@ -1,27 +1,27 @@
 /**
  * add asset 
  */
-import { Widget } from "../../../../pi/widget/widget";
-import { fetchWalletAssetListAdded, getCurrentAddrInfo } from "../../../utils/tools";
-import { find, updateStore } from "../../../store/store";
-import { dataCenter } from "../../../logic/dataCenter";
+import { Widget } from '../../../../pi/widget/widget';
+import { dataCenter } from '../../../logic/dataCenter';
+import { find, updateStore } from '../../../store/store';
+import { fetchWalletAssetListAdded, getCurrentAddrInfo } from '../../../utils/tools';
 
-export class AddAsset extends Widget{
-    public ok:()=>void;
+export class AddAsset extends Widget {
+    public ok:() => void;
     public create() {
         super.create();
         this.init();
     }
     public init() {
-        const assetList = fetchWalletAssetListAdded()
+        const assetList = fetchWalletAssetListAdded();
         this.state = {
             assetList,
-            searchText:"",
+            searchText:'',
             showAssetList:assetList
         };
         console.log(this.state);
     }
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
     /**
@@ -39,9 +39,9 @@ export class AddAsset extends Widget{
         const oldIndex = showCurrencys.indexOf(currencys.currencyName);
         if (added && oldIndex < 0) {
             showCurrencys.push(currencys.currencyName);
-            const curAddr = getCurrentAddrInfo(currencys.currencyName)
+            const curAddr = getCurrentAddrInfo(currencys.currencyName);
             dataCenter.updateAddrInfo(curAddr.addr, currencys.currencyName);
-        } else{
+        } else {
             showCurrencys.splice(oldIndex, 1);
         }
         wallet.showCurrencys = showCurrencys;
@@ -49,21 +49,22 @@ export class AddAsset extends Widget{
         updateStore('curWallet', wallet);
     }
 
-    public searchTextChange(e:any){
+    public searchTextChange(e:any) {
         this.state.searchText = e.value;
         if (this.state.searchText) {
+            // tslint:disable-next-line:max-line-length
             this.state.showAssetList = this.state.assetList.filter(v => v.currencyName.toLowerCase().indexOf(this.state.searchText.toLowerCase()) >= 0);
-        }else{
+        } else {
             this.state.showAssetList = this.state.assetList;
         }
         this.paint();
     }
 
-    public searchTextClear(){
+    public searchTextClear() {
         this.state.showAssetList = this.state.assetList;
         this.paint();
     }
-    public searchClick(){
+    public searchClick() {
         
     }
 }
