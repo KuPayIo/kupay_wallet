@@ -10,6 +10,7 @@
  */
 // ================================ 导入
 import { Json } from '../../../pi/lang/type';
+import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { getLanguage } from '../../utils/tools';
@@ -64,6 +65,13 @@ export class ImgRankItem extends Widget {
         const limit = this.props.limit ? this.props.limit :1;
         const length = this.props.length ? this.props.length :8;
         
+        if (!this.availableJudge(psw) && psw.length > 0) {
+            popNew('app-components-message-message',{ content:this.state.cfgData.disAvailable });
+            this.paint();
+            
+            return;
+        }
+
         if (psw.length < length && psw.length > 0) {
             secret = 1; 
             this.state.showTips = true;
@@ -72,15 +80,15 @@ export class ImgRankItem extends Widget {
             secret = this.strongJudge(psw);
         }
 
-        if (limit === 1 && psw.length >= length) { // 只限制最小长度，满足条件抛出事件
+        if (limit === 1 && psw.length >= length) { // 符合最小长度限制
             this.state.showTips = this.props.hideTips ? false :true;
             this.state.isSuccess = true;
             notify(event.node,'ev-psw-change',{ password:psw,success:true });
-        } else if (limit === 2 && secret > 1) {  // 限制最小长度和两种数据类型，满足条件抛出事件
+        } else if (limit === 2 && secret > 1) {  // 符合最小长度和包含两种数据类型以上限制
             this.state.showTips = this.props.hideTips ? false :true;
             this.state.isSuccess = true;
             notify(event.node,'ev-psw-change',{ password:psw,success:true });
-        } else {
+        } else {  // 不符合规则限制
             notify(event.node,'ev-psw-change',{ password:psw,success:false });
         }
         this.state.secret = secret > 3 ? 3 :secret; // 只有三种强度水平显示
@@ -90,7 +98,7 @@ export class ImgRankItem extends Widget {
     /**
      * 选中输入框后图标切换
      */
-    public iconChange(ind:number) {
+    public iconChange() {
         if (this.state.password !== '') {
             this.state.showIcon = true;
         } else {
@@ -107,6 +115,14 @@ export class ImgRankItem extends Widget {
         this.state.secret = 0;
         this.paint(true);
     }
+    /**
+     * 判断输入的字符是否符合规则
+     */
+    public availableJudge(psw:string) {
+        const reg = /^[0-9a-zA-Z! “ # $ % & ‘ ( ) * + , \- . / : ; < = > ? @ \[ \] ^ _ ` { \| } ~]+$/;
+        
+        return reg.test(psw);
+    }
 
     /**
      * 判断密码强度
@@ -116,7 +132,7 @@ export class ImgRankItem extends Widget {
         const reg1 = /[0-9]+/; 
         const reg2 = /[a-z]+/; 
         const reg3 = /[A-Z]+/;
-        const reg4 = /[^0-9a-zA-Z]+/;
+        const reg4 = /[! “ # $ % & ‘ ( ) * + , - . / : ; < = > ? @ \[ \] ^ _ ` { \| } ~]+/; // 特殊字符集
         let num = 0;
         if (reg1.test(psw)) {
             num++;

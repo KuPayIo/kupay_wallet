@@ -1,8 +1,8 @@
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
+import { SystemInfoProvider } from '../../pi/browser/systemInfoProvider';
 import { WebViewHelper } from '../../pi/browser/webViewHelper';
 import { popNew } from '../../pi/ui/root';
-import { SystemInfoProvider } from '../../pi/browser/systemInfoProvider';
 
 /**
  * 一些底层操作
@@ -66,19 +66,18 @@ export const openNewActivity = (url:string,title:string= '测试') => {
     });
 };
 
-
 /**
  * 获取设备信息
  */
-export const getDeviceInfo = ()=>{
-    let systemInfo = new SystemInfoProvider();
+export const getDeviceInfo = () => {
+    const systemInfo = new SystemInfoProvider();
     systemInfo.init();
     systemInfo.getDeviceInfo({
         success: (result) => {
-            console.log("获取设备的系统信息成功\t" + result)
+            console.log('获取设备的系统信息成功\t' + result);
         }
         , fail: (result) => {
-            console.log("获取设备的系统信息失败\t" + result)
+            console.log('获取设备的系统信息失败\t' + result);
         }
     });
-}
+};

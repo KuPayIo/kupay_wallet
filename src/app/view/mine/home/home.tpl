@@ -24,7 +24,7 @@
                 <div w-class="item" on-tap="itemClick({{ind}})">
                     <img src={{val.img}} w-class="itemImg"/>
                     <span w-class="itemName">{{val.name}}</span>
-                    {{if ind==0 && !it1.hasBackupMnemonic}}
+                    {{if ind==0 && !it1.hasBackupMnemonic && it1.hasWallet}}
                     <div w-class="backup" on-tap="backUp">{{it1.cfgData.backUp}}</div>
                     {{end}}
                 </div>

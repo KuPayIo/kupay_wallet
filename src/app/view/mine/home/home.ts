@@ -137,9 +137,10 @@ export class Home extends Widget {
      */
     public login() {
         if (this.state.hasWallet) {
-            return;
+            popNew('app-view-mine-account-home');
+        } else {
+            popNew('app-view-wallet-create-home');
         }
-        popNew('app-view-wallet-create-home');
         this.backPrePage();
     }
 }

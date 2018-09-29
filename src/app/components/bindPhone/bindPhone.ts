@@ -20,7 +20,7 @@ export class BindPhone extends Widget {
         super.create();
         this.state = {
             oldCode: 86,
-            codeList: ['86','886','44','49','1','852','81'],
+            codeList: ['86','886'],
             isShowNewCode: false,
             countdown: 0,
             phone: '',
@@ -43,7 +43,7 @@ export class BindPhone extends Widget {
      */
     public async getCode(event:any) {
         if (!this.state.phone || !(this.state.phoneReg.test(this.state.phone))) {
-            popNew('app-components-message-message', { itype: 'warn', center: true, content: this.state.cfgData.tips });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips });
 
             return;
         }

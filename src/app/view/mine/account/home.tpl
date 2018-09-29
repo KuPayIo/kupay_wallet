@@ -3,7 +3,7 @@
     <div w-class="body">
         <div w-class="head-container">
             <img w-class="avatar" src="{{it1.avatar ? it1.avatar : '../../../res/image1/default_avatar.png'}}" on-tap="uploadAvatar"/>
-            <input id="walletNameInput" w-class="edit-input" value="{{it1.nickName}}" on-blur="walletNameInputBlur" on-focus="walletNameInputFocus"/>
+            <input id="walletNameInput" w-class="edit-input" value="{{it1.nickName}}" on-blur="walletNameInputBlur" on-focus="walletNameInputFocus" maxlength="10"/>
             <img src="../../../res/image/edit.png" w-class="edit"/>
         </div>
         <div w-class="other">

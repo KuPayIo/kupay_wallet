@@ -3,9 +3,9 @@
     <div w-class="content">
         <div w-class="userHead">
             <img src="{{it1.userHead}}" w-class="headImg"/>
-            <span w-class="headName" ev-input-change="userNameChange">
+            <span w-class="headName" ev-input-change="userNameChange" ev-input-blur="userNameConfirm">
                 {{if it1.userInput}}
-                <app-components1-input-input>{input:{{it1.userName}},placeHolder:{{it1.cfgData.itemTitle[0]}},autofocus:"autofocus" }</app-components1-input-input>
+                <app-components1-input-input>{input:{{it1.userName}},placeHolder:{{it1.cfgData.itemTitle[0]}},autofocus:"autofocus",maxLength:10 }</app-components1-input-input>
                 {{else}}
                 {{it1.userName}}
                 {{end}}
