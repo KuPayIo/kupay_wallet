@@ -88,7 +88,7 @@ export const createWalletRandom = (hash:string,option) => {
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
     updateStore('salt', salt);
-    const addrs: Addr[] = find('addrs');
+    const addrs: Addr[] = find('addrs') || [];
     addrs.push(...gwlt.addrs);
     updateStore('addrs', addrs);
     updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
@@ -105,7 +105,7 @@ export const createWalletByImage = async (hash:string,option:any) => {
     const ahash:any = await getImageAhash(option.imageBase64);
     const vault = await imgToHash(ahash,option.imagePsw);
     const walletList: Wallet[] = find('walletList');
-    const addrs: Addr[] = find('addrs');
+    const addrs: Addr[] = find('addrs') || [];
     const salt = find('salt');
     const gwlt = GlobalWallet.generate(hash, option.nickName, vault);
     // 创建钱包基础数据

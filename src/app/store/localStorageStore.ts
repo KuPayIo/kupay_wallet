@@ -37,6 +37,8 @@ export const initLocalStorageStore = () => {
                 }
             }
             locWallets.walletList.splice(index,1);
+            locWallets.salt = "";
+            locWallets.curWalletId = "";
         }else{
             locWallets.walletList = locWallets.walletList.map(v => {
                 if (v.walletId === curWallet.walletId) {
@@ -62,6 +64,7 @@ export const initLocalStorageStore = () => {
     });
 
     register('addrs', (addrs: Addr[]) => {
+        if(!addrs) return;
         const firstEthAddr = getFirstEthAddr();
         const addrsMap = new Map<string,Addr[]>(getLocalStorage('addrsMap'));
         addrsMap.set(firstEthAddr,addrs);
@@ -69,17 +72,13 @@ export const initLocalStorageStore = () => {
     });
     
     register('transactions', (transactions: TransRecordLocal[]) => {
+        if(!transactions) return;
         const firstEthAddr = getFirstEthAddr();
-        const transactionsMap = new Map<string,TransRecordLocal[]>(getLocalStorage(''));
+        const transactionsMap = new Map<string,TransRecordLocal[]>(getLocalStorage('transactionsMap'));
         transactionsMap.set(firstEthAddr,transactions);
         localStorage.setItem('transactionsMap', JSON.stringify(transactionsMap));
     });
     
-    
-    // 注册是否已阅读隐私协议
-    register('readedPriAgr', (readed: boolean) => {
-        setLocalStorage('readedPriAgr', readed);
-    });
     
     // 锁屏相关
     register('lockScreen', (ls: LockScreen) => {
@@ -140,7 +139,7 @@ export const initLocalStorageStore = () => {
         setLocalStorage('realUserMap',realUserMap);
     });
 
-     // 本地realUserMap
+     // 本地token
     register('token',(token:string) => {
         setLocalStorage('token',token);
     });

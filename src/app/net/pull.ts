@@ -228,6 +228,7 @@ const doOpen = async () => {
  * 获取随机数
  */
 export const getRandom = async () => {
+    if(!find('conUser')) return;
     const msg = { type: 'get_random', param: { account: find('conUser').slice(2), pk: `04${find('conUserPublicKey')}` } };
     const resp = await requestAsync(msg);
     updateStore('conRandom', resp.rand);
@@ -618,6 +619,7 @@ export const getData = async (key) => {
  * 设置用户基础信息
  */
 export const setUserInfo = async () => {
+    if(find("loginState") !== LoginState.logined) return;
     const userInfo = find('userInfo');
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
@@ -1208,6 +1210,7 @@ export const fetchRealUser = async () => {
         const res = await requestAsync(msg);
         const realUserMap = getBorn('realUserMap');
         const conUser = find('conUser');
+        if(!conUser) return;
         realUserMap.set(conUser,res.value === 'false' ? false : true);
         updateStore('realUserMap',realUserMap);
         

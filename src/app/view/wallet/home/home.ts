@@ -29,7 +29,7 @@ export class Home extends Widget {
                 components:'app-view-wallet-home-walletHome'
             }],
             activeNum:1,
-            avatar:userInfo.avatar,
+            avatar:userInfo && userInfo.avatar,
             totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets()),
             cfgData:cfg
         };
@@ -41,6 +41,7 @@ export class Home extends Widget {
 
     public userInfoChange() {
         const userInfo = getUserInfo();
+        if(!userInfo) return;
         this.state.avatar = userInfo.avatar;
         this.paint();
     }
