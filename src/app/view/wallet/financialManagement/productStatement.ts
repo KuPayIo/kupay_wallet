@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { Product } from '../../../store/interface';
-import { getStaticLanguage } from '../../../utils/tools';
+import { getLanguage, getStaticLanguage } from '../../../utils/tools';
 interface Props {
     product:Product;
     amount:number;
@@ -19,7 +19,8 @@ export class ProductStatement extends Widget {
     public init() {
         this.state = {
             statement:getStaticLanguage().notice,
-            readed:false
+            readed:false,
+            cfgData:getLanguage(this)
         };
     }
     public checkBoxClick(e: any) {

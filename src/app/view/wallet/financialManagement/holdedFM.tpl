@@ -2,7 +2,7 @@
     {{if it1.purchaseRecord.length === 0}}
     <div w-class="no-recode">
         <img src="../../../res/image/dividend_history_none.png" w-class="no-recode-icon"/>
-        <div w-class="no-recode-text">还没有买过理财</div>
+        <div w-class="no-recode-text">{{it1.cfgData.noneMess}}</div>
     </div>
     {{else}}
     <div w-class="list">

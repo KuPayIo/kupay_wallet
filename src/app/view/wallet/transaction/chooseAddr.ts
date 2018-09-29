@@ -1,15 +1,15 @@
 /**
  * choose addr
  */
-import { Widget } from "../../../../pi/widget/widget";
-import { getAddrsInfoByCurrencyName, parseAccount, getCurrentAddrInfo, popPswBox } from "../../../utils/tools";
-import { createNewAddr } from "../../../logic/localWallet";
-import { find, updateStore } from "../../../store/store";
+import { Widget } from '../../../../pi/widget/widget';
+import { createNewAddr } from '../../../logic/localWallet';
+import { find, updateStore } from '../../../store/store';
+import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, popPswBox } from '../../../utils/tools';
 
 interface Props {
     currencyName: string;
 }
-export class ChooseAddr extends Widget{
+export class ChooseAddr extends Widget {
     public props: Props;
     public ok: () => void;
     public setProps(props: Props, oldProps: Props): void {
@@ -19,25 +19,27 @@ export class ChooseAddr extends Widget{
 
     public init(): void {
         this.state = {
-            addrsInfo:this.parseAddrsInfo()
+            addrsInfo:this.parseAddrsInfo(),
+            cfgData:getLanguage(this)
         };
     }
 
-    public parseAddrsInfo(){
+    public parseAddrsInfo() {
         const addrsInfo = getAddrsInfoByCurrencyName(this.props.currencyName);
         const curAddr = getCurrentAddrInfo(this.props.currencyName).addr;
-        addrsInfo.forEach(item=>{
+        addrsInfo.forEach(item => {
             item.addrShow = parseAccount(item.addr);
             item.isChoosed = item.addr === curAddr;
         });
+
         return addrsInfo;
     }
 
-    public maskClick(){
+    public maskClick() {
         this.ok && this.ok();
     }
 
-    public addrItemClick(e:any,index:number){
+    public addrItemClick(e:any,index:number) {
         if (!this.state.addrsInfo[index].isChoosed) {
             const wallet = find('curWallet');
             const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
@@ -49,9 +51,9 @@ export class ChooseAddr extends Widget{
         this.ok && this.ok();
     }
 
-    public async addAddrClick(){
+    public async addAddrClick() {
         const psw = await popPswBox();
-        if(!psw) return;
+        if (!psw) return;
         this.ok && this.ok();
         createNewAddr(psw,this.props.currencyName);
     }

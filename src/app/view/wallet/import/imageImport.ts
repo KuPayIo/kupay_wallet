@@ -5,6 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
 import { CreateWalletType } from '../../../store/interface';
+import { getLanguage } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
 
 export class ImageImport extends Widget {
@@ -19,7 +20,8 @@ export class ImageImport extends Widget {
             imageBase64:'',
             imageHtml:'',
             imagePsw:'',
-            imagePswAvailable:false
+            imagePswAvailable:false,
+            cfgData:getLanguage(this)
         };
     }
     public backPrePage() {
@@ -47,12 +49,12 @@ export class ImageImport extends Widget {
 
     public nextClick() {
         if (!this.state.imageBase64) {
-            popNew('app-components-message-message', { content: '请选择要导入的图片' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[0] });
 
             return;
         }
         if (!this.state.imagePsw) {
-            popNew('app-components-message-message', { content: '请输入图片密码' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }
