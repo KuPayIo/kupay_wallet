@@ -7,7 +7,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendHistory, DividendItem, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product,PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransRecordLocal, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product,PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -74,13 +74,14 @@ export const unregister = (keyName: KeyName, cb: Function): void => {
  * 初始化store
  */
 export const initStore = () => {
+    const firstEthAddr = getFirstEthAddr();
     // 从localStorage中取wallets
     const wallets = findByLoc('wallets');
     store.walletList = (wallets && wallets.walletList) || [];
     // 从localStorage中取addrs
-    store.addrs = findByLoc('addrs') || [];
+    store.addrs = new Map<string,Addr[]>(findByLoc('addrsMap')).get(firstEthAddr) || [];
     // 从localStorage中取transactions
-    store.transactions = findByLoc('transactions') || [];
+    store.transactions = new Map<string,TransRecordLocal[]>(findByLoc('transactionsMap')).get(firstEthAddr) || [];
     // 从localStorage中的wallets中初始化salt
     store.salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
     // 从localStorage中的wallets中初始化curWallet
@@ -102,8 +103,6 @@ export const initStore = () => {
     store.inviteRedBagRec = inviteRedBagRecMap.get(getFirstEthAddr());
    // 从localStorage中取inviteRedBagRecMap
     store.shapeShiftTxsMap = new Map(findByLoc('shapeShiftTxsMap'));
-    // 从localStorage中取常用联系人列表
-    store.TopContacts = findByLoc('TopContacts') || [];
     // 从localStorage中取nonceMap
     store.nonceMap = new Map<string,number>(findByLoc('nonceMap'));
     // 从localStorage中取realUserMap
@@ -127,8 +126,8 @@ type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo' | 'shapeShiftTx
 
 type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 // ============================================ 本地
-type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
- 'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals' | 'lastGetSmsCodeTime' | 'nonceMap'|
+type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
+ 'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'ERC20TokenDecimals' | 'lastGetSmsCodeTime' | 'nonceMap'|
  'realUserMap' | 'token';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
@@ -193,8 +192,6 @@ const store = <Store>{
     shapeShiftMarketInfo:<MarketInfo>null,// shapeshift 汇率相关
     shapeShiftTxs:<ShapeShiftTxs>null,// shapeshift 交易记录
     shapeShiftTxsMap:new Map<string,ShapeShiftTxs>(),// shapeshift 交易记录Map
-    // 地址管理
-    TopContacts: <TopContact[]>[],// 常用联系人列表 
     // 理财
     // 所有理财产品
     productList:  <Product[]>[],

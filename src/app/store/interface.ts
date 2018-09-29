@@ -116,8 +116,6 @@ export interface Store {
     rechargeLogs:Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>;// 充值记录
     // tslint:disable-next-line:type-literal-delimiter
     withdrawLogs:Map<CurrencyType,{list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>;// 提现记录
-    // 地址管理
-    TopContacts:TopContact[];// 常用联系人列表
     // shapeShift
     shapeShiftCoins:ShapeShiftCoin[];// shapeShift 支持的币种
     shapeShiftMarketInfo:MarketInfo;// shapeShift 汇率相关
@@ -441,12 +439,6 @@ export interface AccountDetail {
     time: number;// 时间
 }
 
-// 常用联系人数据结构
-export interface TopContact {
-    currencyName: string;// 货币名称
-    tags: string;// 地址标签
-    addresse: string;// 地址
-}
 
 // 理财产品数据结构
 export interface Product {
