@@ -56,11 +56,13 @@ export class BackupMnemonicWordConfirm extends Widget {
     }
 
     public nextStepClick() {
-        if (!this.compareMnemonicEqualed()) {
+        if (this.state.confirmedMnemonic.length === 0) {
             popNewMessage(this.state.cfgData.tips[0]);
+        } else if (!this.compareMnemonicEqualed()) {
+            popNewMessage(this.state.cfgData.tips[1]);
         } else {
             deleteMnemonic();
-            popNewMessage(this.state.cfgData.tips[1]);
+            popNewMessage(this.state.cfgData.tips[2]);
             this.ok && this.ok();
         }
     }

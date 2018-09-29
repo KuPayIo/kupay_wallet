@@ -20,7 +20,6 @@ import { fetchCoinGain, mnemonicFragmentDecrypt, mnemonicFragmentEncrypt } from 
 
 import { getDeviceInfo } from '../../logic/native';
 
-
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
 // import { create } from "../../../pi/net/rpc";

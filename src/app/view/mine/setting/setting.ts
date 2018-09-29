@@ -15,6 +15,7 @@ import { backupMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class Setting extends Widget {
     public ok: () => void;
     constructor() {
@@ -125,7 +126,6 @@ export class Setting extends Widget {
      */
     public reSetLockPsw() {
         popNew('app-components-keyboard-keyboard',{ title: this.state.cfgData.keyboardTitle[1] },(r) => {
-            console.error(r);
             if (this.state.lockScreenPsw !== r) {
                 popNew('app-components-message-message',{ content:this.state.cfgData.tips[0] });
                 this.reSetLockPsw();
@@ -153,8 +153,7 @@ export class Setting extends Widget {
                 const fg = VerifyIdentidy(wallet,r);
                 // const fg = true;
                 if (fg) {
-                    popNew('app-components-keyboard-keyboard',{ title:this.state.cfg.keyboardTitle[0] },(r) => {
-                        console.error(r);
+                    popNew('app-components-keyboard-keyboard',{ title:this.state.cfgData.keyboardTitle[0] },(r) => {
                         this.state.lockScreenPsw = r;
                         this.reSetLockPsw();
                         
@@ -168,7 +167,7 @@ export class Setting extends Widget {
         } else {
             popNew('app-components-keyboard-keyboard',{ title:this.state.errorTips[ind] },(r) => {
                 if (lockScreenVerify(r)) {
-                    popNew('app-components-keyboard-keyboard',{ title:this.state.cfg.keyboardTitle[0] },(r) => {
+                    popNew('app-components-keyboard-keyboard',{ title:this.state.cfgData.keyboardTitle[0] },(r) => {
                         this.state.lockScreenPsw = r;
                         this.reSetLockPsw();
                         
@@ -221,13 +220,21 @@ export class Setting extends Widget {
     }
 
     /**
-     * 用户名修改
+     * 监听用户名修改
      */
     public userNameChange(e:any) {
         if (e.value !== this.state.userName) {
             this.state.userName = e.value;
-            const userInfo = find('userInfo');
-            userInfo.nickName = e.value;
+        }
+    }
+
+    /**
+     * 取消聚焦后更新用户名
+     */
+    public userNameConfirm() {
+        const userInfo = find('userInfo');
+        if (userInfo.nickName !== this.state.userName) {
+            userInfo.nickName = this.state.userName;
             updateStore('userInfo',userInfo);
             setUserInfo();
         }
@@ -265,7 +272,26 @@ export class Setting extends Widget {
         });
     }
 }
+// ================================================本地，立即执行
 register('languageSet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+register('userInfo', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+register('curWallet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+register('lockScreen', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

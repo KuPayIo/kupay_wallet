@@ -786,7 +786,7 @@ KuPay团队
                 purchaseDate: '无',// 起购日
                 interestDate: '无',// 起息日
                 endDate: '无',// 结束日
-                productIntroduction: 'ETH资管第1期是KuPay退出的一种固定收益类，回报稳定、无风险定期产品。',// 产品介绍
+                productIntroduction: 'ETH资管第1期是KuPay推出的一种固定收益类，回报稳定、无风险定期产品。',// 产品介绍
                 limit: '5',// 购买上限
                 lockday:'无',// 锁定期
                 isSoldOut:true// 是否售完

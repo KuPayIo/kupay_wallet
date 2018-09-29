@@ -9,7 +9,7 @@
     position: relative;
     height: 216px;
     background-image: linear-gradient(to right,#38CFE7,#318DE6);
-    padding-top: 66px;
+    padding-top: 40px;
 }
 .nav-wrap{
     position: absolute;
@@ -17,14 +17,12 @@
     left: 0;
     right: 0;
 }
-
 .nav{
     white-space: nowrap;
     position: relative;
     display: flex;
     padding: 0 75px;
 }
-
 .nav-item{
     box-sizing: border-box;
     height: 86px;
@@ -42,8 +40,6 @@
     opacity: .5;
     border-bottom: 6px solid transparent;
 }
-
-
 .is-active{
     color: #fff;
     opacity: 1;
@@ -52,15 +48,15 @@
 .user-container{
     display: flex;
     align-items: center;
-    padding-left: 30px;
 }
 .avatar{
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    border: 24px solid transparent;
+    margin: 0 5px;
 }
 .total-asset{
     font-size: 32px;
     color: #fff;
-    margin-left: 30px;
 }

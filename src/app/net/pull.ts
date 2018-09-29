@@ -27,6 +27,9 @@ console.log('conPort=',conPort);
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 export const sharePerUrl = `http://192.168.33.96:80/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
+// 分享下载链接
+export const shareDownload = `http://192.168.33.96:80/wallet/phoneRedEnvelope/download.html`;
+
 // 上传图片url
 export const uploadFileUrl = `http://${conIp}/service/upload`;
 
@@ -340,7 +343,7 @@ export const getMining = async () => {
 /**
  * 获取挖矿历史记录
  */
-export const getMiningHistory = async (start = 0) => {
+export const getMiningHistory = async (start = '') => {
     const msg = { 
         type: 'wallet/cloud@get_pool_detail', 
         param: {
@@ -580,7 +583,7 @@ export const getMineDetail = async (start = '') => {
 /**
  * 获取分红历史记录
  */
-export const getDividHistory = async (start = 0) => {
+export const getDividHistory = async (start = '') => {
     const msg = { 
         type: 'wallet/cloud@get_bonus_info', 
         param: {

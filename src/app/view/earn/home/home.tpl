@@ -61,10 +61,10 @@
 
         <div style="display: flex;align-items: center;">
             <span style="font-size: 36px;font-weight: 600;margin-left: 50px;flex: 1;">{{it1.cfgData.welfare}}</span>
-            <img src="../../../res/image1/25_gray.png" style="width: 40px;height: 40px;margin-right: 50px;"/>
+            <img src="../../../res/image1/25_gray.png" w-class="welfareImg"/>
         </div>
 
-        <div style="margin: 35px 20px;">
+        <div style="margin: 15px 20px;">
             <img src="../../../res/image1/Card.png" style="height: 250px;width: 100%;"/>
         </div>
     </div>    

@@ -59,8 +59,13 @@ export class CreateWalletByImage extends Widget {
     }
 
     public nextClick() {
+        if (!this.state.chooseImage) {
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[0] });
+
+            return;
+        }
         if (!this.state.pswEqualed) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }

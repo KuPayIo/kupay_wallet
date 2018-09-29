@@ -5,8 +5,8 @@
             <img src={{it1.userHead}} w-class="userHead"/>
             <span w-class="userName">{{it1.userName}}</span>
         </div>
-        <div w-class="address">{{it1.address}}
-            <img src="../../../res/image/42.png" style="width: 30px;height:30px;margin-left: 15px;vertical-align: middle;" on-tap="copyAddr"/>
+        <div w-class="address" on-tap="copyAddr">{{it1.address}}
+            <img src="../../../res/image/42.png" w-class="copy"/>
         </div>
         <div style="text-align: center;">
             <app-components-qrcode-qrcode>{value:{{it1.address}},size:"350"}</app-components-qrcode-qrcode>

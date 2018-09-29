@@ -96,13 +96,18 @@ export class CreateWallet extends Widget {
 
             return;
         }
-        if (!this.state.walletPswAvailable) {
+        if (!this.state.walletPsw || !this.state.walletPswConfirm) {
             popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }
-        if (!this.state.pswEqualed) {
+        if (!this.state.walletPswAvailable) {
             popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
+
+            return;
+        }
+        if (!this.state.pswEqualed) {
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[3] });
 
             return;
         }
@@ -144,5 +149,12 @@ export class CreateWallet extends Widget {
         popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox,() => {
             popNew('app-view-wallet-backup-index',{ mnemonic,fragments });
         });
+    }
+
+    /**
+     * 查看隐私条约
+     */
+    public agreementClick() {
+        popNew('app-view-mine-other-privacypolicy');
     }
 }

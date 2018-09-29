@@ -9,9 +9,9 @@
                 <img src="../../../res/image/19.png" w-class="scanImg" on-tap="showMyQrcode"/>
             </div>
             <div w-class="userName">{{it1.userName}}</div>
-            <div w-class="address">
+            <div w-class="address" on-tap="copyAddr">
                 <span w-class="addrNum">{{it1.address}}</span>
-                <img src="../../../res/image1/42.png" w-class="copy" on-tap="copyAddr"/>
+                <img src="../../../res/image1/42.png" w-class="copy"/>
             </div>
             {{else}}
             <div w-class="userName">{{it1.cfgData.defaultUserName}}</div>            
@@ -24,7 +24,7 @@
                 <div w-class="item" on-tap="itemClick({{ind}})">
                     <img src={{val.img}} w-class="itemImg"/>
                     <span w-class="itemName">{{val.name}}</span>
-                    {{if ind==0 && !it1.hasBackupMnemonic}}
+                    {{if ind==0 && !it1.hasBackupMnemonic && it1.hasWallet}}
                     <div w-class="backup" on-tap="backUp">{{it1.cfgData.backUp}}</div>
                     {{end}}
                 </div>

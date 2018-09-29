@@ -47,7 +47,7 @@ export class Dividend extends Widget {
             cfgData:getLanguage(this),
             hasMore:false,
             refresh:true,
-            start:0
+            start:''
         };
 
         this.initData();
