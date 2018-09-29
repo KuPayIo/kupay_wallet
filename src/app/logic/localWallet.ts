@@ -84,13 +84,13 @@ export const createWalletRandom = (hash:string,option) => {
     wallet.currencyRecords.push(...gwlt.currencyRecords);
 
     const walletList: Wallet[] = find('walletList');
-    const addrs: Addr[] = find('addrs');
-    addrs.push(...gwlt.addrs);
-    updateStore('addrs', addrs);
     walletList.push(wallet);
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
     updateStore('salt', salt);
+    const addrs: Addr[] = find('addrs');
+    addrs.push(...gwlt.addrs);
+    updateStore('addrs', addrs);
     updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
 
     openAndGetRandom();
@@ -104,8 +104,6 @@ export const createWalletByImage = async (hash:string,option:any) => {
     console.log('createWalletByImage-------',hash,option);
     const ahash:any = await getImageAhash(option.imageBase64);
     const vault = await imgToHash(ahash,option.imagePsw);
-    console.log('ahash-------',ahash);
-    console.log('vault-------',vault);
     const walletList: Wallet[] = find('walletList');
     const addrs: Addr[] = find('addrs');
     const salt = find('salt');
@@ -120,13 +118,12 @@ export const createWalletByImage = async (hash:string,option:any) => {
     };
 
     wallet.currencyRecords.push(...gwlt.currencyRecords);
-
-    addrs.push(...gwlt.addrs);
-    updateStore('addrs', addrs);
     walletList.push(wallet);
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
     updateStore('salt', salt);
+    addrs.push(...gwlt.addrs);
+    updateStore('addrs', addrs);
     updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
 
     openAndGetRandom();
@@ -193,13 +190,12 @@ export const importWalletByMnemonic = (hash:string,option) => {
     };
     wallet.currencyRecords.push(...gwlt.currencyRecords);
 
-    addrs.push(...gwlt.addrs);
-    updateStore('addrs', addrs);
     walletList.push(wallet);
     updateStore('walletList', walletList);
     updateStore('curWallet', wallet);
-    
     updateStore('salt', salt);
+    addrs.push(...gwlt.addrs);
+    updateStore('addrs', addrs);
     updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
     openAndGetRandom();
 
