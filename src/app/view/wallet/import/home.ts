@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getLanguage } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -16,15 +17,16 @@ export class ImportHome extends Widget {
         this.init();
     }
     public init() {
+        const cfg = getLanguage(this);
         this.state = {
             tabList:[{
-                tab:'助记词',
+                tab:cfg.tabs[0],
                 components:'app-view-wallet-import-standardImport'
             },{
-                tab:'照片',
+                tab:cfg.tabs[1],
                 components:'app-view-wallet-import-imageImport'
             },{
-                tab:'片段',
+                tab:cfg.tabs[2],
                 components:'app-view-wallet-import-fragmentImport'
             }]
         };
@@ -35,12 +37,7 @@ export class ImportHome extends Widget {
     public importSuccess() {
         console.log('-----------success');
         this.ok && this.ok();
-        popNew('app-components-modalBox-modalBox',{ 
-            title:'导入成功',
-            content:'记得删除助记词片段的本地记录，以免被盗取。',
-            sureText:'好的',
-            cancelText:'知道了' 
-        },() => {
+        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox,() => {
             // popNew('app-view-wallet-create-createEnter');
         });
     }

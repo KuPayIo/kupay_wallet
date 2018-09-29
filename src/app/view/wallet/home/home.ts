@@ -2,11 +2,11 @@
  * wallet home 
  */
 // ==============================导入
+import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { register } from '../../../store/store';
-import { fetchTotalAssets, fetchCloudTotalAssets, formatBalanceValue, getUserInfo } from '../../../utils/tools';
-import { popNew } from '../../../../pi/ui/root';
+import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getLanguage, getUserInfo } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -19,17 +19,19 @@ export class Home extends Widget {
     }
     public init() {
         const userInfo = getUserInfo();
+        const cfg = getLanguage(this);
         this.state = {
             tabs:[{
-                tab:'云账户',
+                tab:cfg.tabs[0],
                 components:'app-view-wallet-home-cloudHome'
             },{
-                tab:'本地钱包',
+                tab:cfg.tabs[1],
                 components:'app-view-wallet-home-walletHome'
             }],
             activeNum:1,
             avatar:userInfo.avatar,
-            totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets())
+            totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets()),
+            cfgData:cfg
         };
     }
     public tabsChangeClick(event: any, value: number) {
@@ -43,7 +45,7 @@ export class Home extends Widget {
         this.paint();
     }
 
-    public updateTotalAsset(){
+    public updateTotalAsset() {
         this.state.totalAsset = formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets());
         this.paint();
     }
@@ -64,9 +66,8 @@ register('userInfo',() => {
     }
 });
 
-
 // 汇率变化
-register('exchangeRateJson',()=>{
+register('exchangeRateJson',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
@@ -74,7 +75,7 @@ register('exchangeRateJson',()=>{
 });
 
 // 云端余额变化
-register('cloudBalance',()=>{
+register('cloudBalance',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
