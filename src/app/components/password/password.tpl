@@ -1,7 +1,7 @@
 <div>
-    <div w-class="pswInput" ev-input-change="pswChange" ev-input-focus="iconChange(1)">
+    <div w-class="pswInput" ev-input-change="pswChange" ev-input-focus="iconChange()">
         <div style="flex: 1">
-            <app-components1-input-input>{itype:"password",placeHolder:{{it.placeHolder?it.placeHolder:it1.cfgData.password}} }</app-components1-input-input>
+            <app-components1-input-input>{itype:"password",placeHolder:{{it.placeHolder?it.placeHolder:it1.cfgData.password}},input:{{it1.password}} }</app-components1-input-input>
         </div>
         {{if it1.isSuccess}}
         <img src="../../res/image/icon_right2.png" w-class="successPic"/>

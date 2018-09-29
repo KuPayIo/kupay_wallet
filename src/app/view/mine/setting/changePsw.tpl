@@ -2,13 +2,13 @@
     <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="inputItem" ev-input-change="oldPswChange">
-            <app-components1-input-input>{placeHolder:{{it1.cfgData.itemTitle[0]}},itype:"password",clearable:true }</app-components1-input-input>
+            <app-components1-input-input>{placeHolder:{{it1.cfgData.itemTitle[0]}},itype:"password",clearable:true,autofocus:true }</app-components1-input-input>
         </div>
         <div style="margin: 0 10px;" ev-psw-change="newPswChange">
             <app-components-password-password>{placeHolder:{{it1.cfgData.itemTitle[1]}},hideTips:true }</app-components-password-password>
         </div>
         <div w-class="inputItem" ev-input-change="rePswChange">
-            <app-components-input-suffixInput>{itype:"password",placeHolder:"重复密码",clearable:true,available:{{it1.pswEqualed}} }</app-components-input-suffixInput>
+            <app-components-input-suffixInput>{itype:"password",placeHolder:{{it1.cfgData.itemTitle[2]}},clearable:true,available:{{it1.pswEqualed}} }</app-components-input-suffixInput>
         </div>
         
     </div>

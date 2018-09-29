@@ -17,11 +17,11 @@
                 {{end}}
             </div>
             <div w-class="name-box" ev-input-change="walletNameChange">
-                <app-components1-input-input>{input:{{it1.walletName}}}</app-components1-input-input>
+                <app-components1-input-input>{input:{{it1.walletName}},maxLength:10}</app-components1-input-input>
                 <img w-class="random" src="../../../res/image/dice.png" on-tap="randomPlayName"/>
             </div>
             <div ev-psw-change="pswChange"><app-components-password-password>{hideTips:true}</app-components-password-password></div>
-            <div w-class="input-father" ev-input-change="pswConfirmChange"><app-components-input-suffixInput>{itype:"password",placeHolder:{{it1.cfgData.iputPlace}},clearable:true,available:{{it1.pswEqualed}}}</app-components-input-suffixInput></div>
+            <div w-class="input-father" ev-input-change="pswConfirmChange"><app-components-input-suffixInput>{itype:"password",placeHolder:{{it1.cfgData.inputPlace}},clearable:true,available:{{it1.pswEqualed}}}</app-components-input-suffixInput></div>
             <div w-class="registered-protocol" ev-checkbox-click="checkBoxClick">
                 <app-components1-checkbox-checkbox>{itype:"false",text:{{it1.cfgData.readAgree}} }</app-components1-checkbox-checkbox>
                 <span w-class="user-protocol" on-tap="agreementClick">{{it1.cfgData.agreement}}</span>

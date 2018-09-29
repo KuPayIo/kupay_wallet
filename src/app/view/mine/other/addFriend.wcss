@@ -34,3 +34,10 @@
     color: #222222;
     word-wrap: break-word;
 }
+.copy{
+    width: 30px;
+    height:30px;
+    margin-left: 15px;
+    vertical-align: middle;
+    border: 10px solid transparent;
+}

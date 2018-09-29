@@ -152,7 +152,7 @@ export const parseMiningHistory = (data) => {
       
     const miningHistory = find('miningHistory');
     const rList = miningHistory && miningHistory.list || [];
-    const start = data.start; 
+    const start = String(data.start); 
     const canLoadMore = list.length > PAGELIMIT;
 
     return {
@@ -176,7 +176,7 @@ export const parseDividHistory = (data) => {
       
     const dividHistory = find('dividHistory');
     const rList = dividHistory && dividHistory.list || [];
-    const start = data.start; 
+    const start = String(data.start); 
     const canLoadMore = list.length > PAGELIMIT;
 
     return {

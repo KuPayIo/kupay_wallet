@@ -28,7 +28,8 @@ export class ImportHome extends Widget {
             },{
                 tab:cfg.tabs[2],
                 components:'app-view-wallet-import-fragmentImport'
-            }]
+            }],
+            cfgData:getLanguage(this)
         };
     }
     public backPrePage() {

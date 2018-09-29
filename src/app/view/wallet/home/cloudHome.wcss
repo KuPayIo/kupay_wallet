@@ -19,17 +19,23 @@
 .fm-title{
     display: flex;
     justify-content: space-between;
-    padding: 0 30px;
+    padding-left: 30px;
+    padding-right: 10px;
     align-items: center;
     font-size: 36px;
     line-height: 50px;
     color: #222;
 }
 .fm-list{
-    margin-top: 35px;
+    margin-top: 15px;
 }
 .container{
     overflow-x: hidden;
     overflow-y: auto;
     margin-bottom: 130px;
+}
+.fmImg{
+    height: 40px;
+    width: 40px;
+    border: 20px solid transparent;
 }

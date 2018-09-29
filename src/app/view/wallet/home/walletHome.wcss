@@ -8,7 +8,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 30px;
+    padding-left: 30px;
+    padding-right: 10px;
     margin-top: 30px;
 }
 .total-asset{
@@ -19,6 +20,7 @@
 .add-asset{
     width: 45px;
     height: 45px;
+    border: 20px solid transparent;
 }
 .asset-list{
     flex: 1 0 0;

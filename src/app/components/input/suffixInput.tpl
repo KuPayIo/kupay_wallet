@@ -10,6 +10,7 @@
         on-input="change"
         on-blur="blur"
         on-focus="focus"
+        autofocus="false"
     />
     {{if it1.showClear}}<img w-class="pi-input__suffix" src="../../res/image/{{it.available ? 'icon_right2' : 'fail'}}.png" on-tap="clearClickListener"/>{{end}}
 </div>
