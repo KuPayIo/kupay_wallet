@@ -4,7 +4,7 @@
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../logic/dataCenter';
 import { find, updateStore } from '../../../store/store';
-import { fetchWalletAssetListAdded, getCurrentAddrInfo } from '../../../utils/tools';
+import { fetchWalletAssetListAdded, getCurrentAddrInfo, getLanguage } from '../../../utils/tools';
 
 export class AddAsset extends Widget {
     public ok:() => void;
@@ -17,7 +17,8 @@ export class AddAsset extends Widget {
         this.state = {
             assetList,
             searchText:'',
-            showAssetList:assetList
+            showAssetList:assetList,
+            cfgData:getLanguage(this)
         };
         console.log(this.state);
     }

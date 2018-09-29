@@ -10,7 +10,7 @@
                 {{it1.userName}}
                 {{end}}
             </span>
-            <img src="../../../res/image/edit.png" style="width: 40px;height: 40px;margin-right: 30px;" on-tap="changeInput"/>
+            <img src="../../../res/image/edit.png" w-class="nameEdit" on-tap="changeInput"/>
         </div>
 
         <div style="margin-bottom: 30px;">

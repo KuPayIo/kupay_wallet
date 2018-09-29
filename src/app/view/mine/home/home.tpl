@@ -9,9 +9,9 @@
                 <img src="../../../res/image/19.png" w-class="scanImg" on-tap="showMyQrcode"/>
             </div>
             <div w-class="userName">{{it1.userName}}</div>
-            <div w-class="address">
+            <div w-class="address" on-tap="copyAddr">
                 <span w-class="addrNum">{{it1.address}}</span>
-                <img src="../../../res/image1/42.png" w-class="copy" on-tap="copyAddr"/>
+                <img src="../../../res/image1/42.png" w-class="copy"/>
             </div>
             {{else}}
             <div w-class="userName">{{it1.cfgData.defaultUserName}}</div>            

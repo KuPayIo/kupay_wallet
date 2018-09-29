@@ -28,11 +28,14 @@
 .ga-back{
     width: 40px;
     height: 40px;
-    margin: 0 30px;
+    margin: 0 15px;
+    border: 15px solid transparent;
+    line-height: 88px;
 }
 .ga-next{
     width: 40px;
     height: 40px;
-    margin: 0 30px;
+    margin: 0 15px;
+    border: 15px solid transparent;
     line-height: 88px;
 }
