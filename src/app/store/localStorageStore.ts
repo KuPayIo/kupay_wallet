@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { getFirstEthAddr } from '../utils/tools';
-import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TopContact, TransRecordLocal, Wallet } from './interface';
+import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TransRecordLocal, Wallet } from './interface';
 import { register, updateStore } from './store';
 // ===================================================== 导出
 
@@ -26,25 +26,27 @@ export const initLocalStorageStore = () => {
         localStorage.setItem('wallets', JSON.stringify(locWallets));
     });
     
-    register('addrs', (addrs: Addr[]) => {
-        localStorage.setItem('addrs', JSON.stringify(addrs));
-    });
-    
-    register('transactions', (transactions: TransRecordLocal[]) => {
-        localStorage.setItem('transactions', JSON.stringify(transactions));
-    });
-    
     register('curWallet', (curWallet: Wallet) => {
         const locWallets = JSON.parse(localStorage.getItem('wallets'));
-        if (!curWallet || !locWallets || locWallets.walletList.length <= 0) return;
-        locWallets.walletList = locWallets.walletList.map(v => {
-            if (v.walletId === curWallet.walletId) {
-                v = curWallet;
-                locWallets.curWalletId = curWallet.walletId;
+        if (!curWallet){
+            let index = -1;
+            for(let i =0 ;i< locWallets.walletList.length;i++){
+                if(locWallets.curWalletId === locWallets.walletList[i].walletId){
+                    index = i;
+                    break;
+                }
             }
-    
-            return v;
-        });
+            locWallets.walletList.splice(index,1);
+        }else{
+            locWallets.walletList = locWallets.walletList.map(v => {
+                if (v.walletId === curWallet.walletId) {
+                    v = curWallet;
+                    locWallets.curWalletId = curWallet.walletId;
+                }
+        
+                return v;
+            });
+        }
         localStorage.setItem('wallets', JSON.stringify(locWallets));
 
         // ===============================更新walletList
@@ -58,6 +60,21 @@ export const initLocalStorageStore = () => {
         locWallets.salt = salt;
         localStorage.setItem('wallets', JSON.stringify(locWallets));
     });
+
+    register('addrs', (addrs: Addr[]) => {
+        const firstEthAddr = getFirstEthAddr();
+        const addrsMap = new Map<string,Addr[]>(getLocalStorage('addrsMap'));
+        addrsMap.set(firstEthAddr,addrs);
+        localStorage.setItem('addrsMap', JSON.stringify(addrsMap));
+    });
+    
+    register('transactions', (transactions: TransRecordLocal[]) => {
+        const firstEthAddr = getFirstEthAddr();
+        const transactionsMap = new Map<string,TransRecordLocal[]>(getLocalStorage(''));
+        transactionsMap.set(firstEthAddr,transactions);
+        localStorage.setItem('transactionsMap', JSON.stringify(transactionsMap));
+    });
+    
     
     // 注册是否已阅读隐私协议
     register('readedPriAgr', (readed: boolean) => {
@@ -103,20 +120,12 @@ export const initLocalStorageStore = () => {
         setLocalStorage('inviteRedBagRecMap', inviteRedBagRecMap);
     });
     
-    // 常用联系人
-    register('TopContacts', (TopContacts: TopContact[]) => {
-        setLocalStorage('TopContacts', TopContacts);
-    });
     
     // shapeshift交易记录
     register('shapeShiftTxsMap',(shapeShiftTxsMap:Map<string,ShapeShiftTxs>) => {
         setLocalStorage('shapeShiftTxsMap',shapeShiftTxsMap);
     });
     
-    // ERC20精度
-    register('ERC20TokenDecimals',(ERC20TokenDecimals:Object) => {
-        setLocalStorage('ERC20TokenDecimals',ERC20TokenDecimals);
-    });
 
     register('lastGetSmsCodeTime',(lastGetSmsCodeTime:number) => {
         setLocalStorage('lastGetSmsCodeTime',lastGetSmsCodeTime);
