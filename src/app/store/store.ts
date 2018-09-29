@@ -76,10 +76,12 @@ export const unregister = (keyName: KeyName, cb: Function): void => {
  * 初始化store
  */
 export const initStore = () => {
-    const firstEthAddr = getFirstEthAddr();
     // 从localStorage中取wallets
     const wallets = findByLoc('wallets');
     store.walletList = (wallets && wallets.walletList) || [];
+    store.curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
+    const firstEthAddr = getFirstEthAddr();
+  
     // 从localStorage中取addrs
     store.addrs = new Map<string,Addr[]>(findByLoc('addrsMap')).get(firstEthAddr) || [];
     // 从localStorage中取transactions
@@ -87,7 +89,7 @@ export const initStore = () => {
     // 从localStorage中的wallets中初始化salt
     store.salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
     // 从localStorage中的wallets中初始化curWallet
-    store.curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
+    
     // 从localStorage中取readedPriAgr
     store.token = findByLoc('token');
     // 从localStorage中取lockScreen
