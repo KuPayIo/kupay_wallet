@@ -70,6 +70,8 @@ export const register = (keyName: KeyName, cb: Function): void => {
 export const unregister = (keyName: KeyName, cb: Function): void => {
     handlerMap.remove(keyName, <any>cb);
 };
+
+
 /**
  * 初始化store
  */
@@ -87,11 +89,9 @@ export const initStore = () => {
     // 从localStorage中的wallets中初始化curWallet
     store.curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
     // 从localStorage中取readedPriAgr
-    store.readedPriAgr = findByLoc('readedPriAgr');
     store.token = findByLoc('token');
     // 从localStorage中取lockScreen
     store.lockScreen = findByLoc('lockScreen') || {};
-    store.ERC20TokenDecimals = findByLoc('ERC20TokenDecimals') || {};
     // 从localStorage中取sHisRecMap
     const sHisRecMap = new Map<string,SHisRec>(findByLoc('sHisRecMap'));
     store.sHisRec = sHisRecMap.get(getFirstEthAddr());
@@ -122,12 +122,12 @@ type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walle
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
-type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo' | 'shapeShiftTxs';
+type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo';
 
 type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
- 'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'ERC20TokenDecimals' | 'lastGetSmsCodeTime' | 'nonceMap'|
+ 'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'|
  'realUserMap' | 'token';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
@@ -151,8 +151,7 @@ const store = <Store>{
     conUserPublicKey: '',// 连接用户公钥
     conRandom: '',// 连接随机数
     conUid: 0,// 连接uid
-    userInfo:{},// 用户头像base64
-    readedPriAgr: false, // 是否阅读隐私协议
+    userInfo:null,// 用户头像base64
     loginState: LoginState.init,// 连接状态
     coinGain:new Map<string,number>(),
     token:'',// 自动登录token
@@ -162,7 +161,6 @@ const store = <Store>{
     addrs: <Addr[]>[],// 地址数据
     transactions: <TransRecordLocal[]>[],// 交易记录
     exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
-    ERC20TokenDecimals:null,// ERC20精度
     lockScreen: <LockScreen>null, // 锁屏密码相关
     nonceMap:new Map<string,number>(),// 本地nonce维护
     gasPrice:{},// gasPrice分档次
@@ -190,7 +188,6 @@ const store = <Store>{
     // shapeshift
     shapeShiftCoins: <ShapeShiftCoin[]>[],// shapeShift 支持的币种
     shapeShiftMarketInfo:<MarketInfo>null,// shapeshift 汇率相关
-    shapeShiftTxs:<ShapeShiftTxs>null,// shapeshift 交易记录
     shapeShiftTxsMap:new Map<string,ShapeShiftTxs>(),// shapeshift 交易记录Map
     // 理财
     // 所有理财产品
@@ -200,3 +197,40 @@ const store = <Store>{
     lastGetSmsCodeTime:0,
     languageSet:<LanguageSet>null
 };
+
+
+//重置云端数据
+export const logoutInit = ()=>{
+    updateStore('loginState',LoginState.init);
+    updateStore('flag',{});
+    updateStore('salt',"");
+    updateStore('conUser','');
+    updateStore('conUserPublicKey','');
+    updateStore('conRandom','');
+    updateStore('conUid','');
+    updateStore('userInfo',null);
+    updateStore('curWallet',null);
+    updateStore('addrs',null);
+    updateStore('transactions',null);
+    updateStore('lockScreen',null);
+    updateStore('sHisRec',null);
+    updateStore('cHisRec',null);
+    updateStore('inviteRedBagRec',null);
+    updateStore('token',"");
+    updateStore('cloudBalance',new Map<CurrencyType, number>());
+    updateStore('accountDetail',new Map<CurrencyType, {list:AccountDetail[],start:number,canLoadMore:boolean}>());
+    updateStore('miningTotal',<MiningTotal>null);
+    updateStore('dividTotal',<DividTotal>null);
+    updateStore('miningHistory',<DividendHistory>null);
+    updateStore('dividHistory',<DividendHistory>null);
+    updateStore('addMine', <AddMineItem[]>[]);
+    updateStore('mineRank', <MineRank>null);
+    updateStore('miningRank', <MiningRank>null);
+    updateStore('mineItemJump', "");
+    updateStore('rechargeLogs', new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>());
+    updateStore('withdrawLogs',new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>());
+    updateStore('shapeShiftTxsMap', new Map<string,ShapeShiftTxs>());
+    updateStore('productList',  <Product[]>[]);
+    updateStore('purchaseRecord', <PurchaseRecordOne[]>[]);
+   
+}

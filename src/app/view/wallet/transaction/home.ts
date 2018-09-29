@@ -112,7 +112,7 @@ register('addrs',(addrs:Addr[]) => {
 });
 
 // 汇率变化
-register('exchangeRateJson',(exchangeRateJson) => {
+register('exchangeRateJson',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRate();

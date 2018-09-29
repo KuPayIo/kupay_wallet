@@ -25,7 +25,7 @@ import { nameWare } from './nameWareHouse';
 export const getNewAddrInfo = (currencyName, wallet) => {
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
-    const addrs = find('addrs');
+    const addrs = find('addrs') || [];
     const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
 
     let address;

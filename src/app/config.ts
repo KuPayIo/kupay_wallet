@@ -267,7 +267,7 @@ export const MainChainCoin = {
     },
     KT:{
         description:'KT',
-        rate:{ CNY:0.03,USD:0.19 }
+        rate:{ CNY:0.00, USD:0.00 }
     }
 };
 

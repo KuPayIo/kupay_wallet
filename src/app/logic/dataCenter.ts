@@ -59,7 +59,7 @@ export class DataCenter {
      */
     public refreshAllTx() {
         // 从缓存中获取地址进行初始化
-        const addrs = find('addrs');
+        const addrs = find('addrs') || [];
         if (addrs) {
             const wallet = find('curWallet');
             if (!wallet) return;
@@ -152,7 +152,7 @@ export class DataCenter {
         });
 
         if (list[0]) {
-            let addrs = find('addrs');
+            let addrs = find('addrs') || [];
             const wallet = walletList[list[0][0]];
             const currencyRecord: CurrencyRecord = wallet.currencyRecords[list[0][1]];
             console.log('checkAddr', currencyRecord.currencyName);
@@ -248,7 +248,7 @@ export class DataCenter {
 
     //更新本地交易记录
     private updateTransactionLocalStorage(tx:TransRecordLocal){
-        const trans = find('transactions');
+        const trans = find('transactions') || [];
         let index = -1;
         for(let i = 0; i < trans.length;i++){
             if(trans[i].hash === tx.hash){

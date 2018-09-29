@@ -123,6 +123,7 @@ export class CreateWallet extends Widget {
             option.fragment1 = this.props.fragment1;
             option.fragment2 = this.props.fragment2;
         }
+        updateStore('flag',{ created:true });
         const hash = await createWallet(this.state.itype,option);
         if (!hash) {
             popNewMessage(this.state.cfgData.tips[3]);
@@ -130,7 +131,6 @@ export class CreateWallet extends Widget {
         if (this.state.avatar) {
             uploadFile(this.state.avatar);
         }
-        updateStore('flag',{ created:true });
         const hashMap = getBorn('hashMap');
         hashMap.set(getFirstEthAddr(),hash);
         updateStore('hashMap',hashMap);
