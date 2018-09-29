@@ -3,7 +3,7 @@
         {{if it1.recordList.length <= 0}}
         <div w-class="no-recode">
             <img src="../../../res/image/dividend_history_none.png" w-class="no-recode-icon"/>
-            <div w-class="no-recode-text">还没有记录哦</div>
+            <div w-class="no-recode-text">{{it1.cfgData.noneRecords}}</div>
         </div>
         {{end}}
         <div w-class="record-list" id="recharge-content-container">

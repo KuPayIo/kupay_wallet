@@ -9,6 +9,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getDividend, getDividHistory, getMining } from '../../../net/pull';
 import { find, register } from '../../../store/store';
+import { PAGELIMIT } from '../../../utils/constants';
 import { getLanguage } from '../../../utils/tools';
 
 // ================================ 导出
@@ -37,13 +38,16 @@ export class Dividend extends Widget {
                 <span>+{{it1.thisNum}}</span>
             </div>`,
             scroll:false,
-            dividHistory:[  // 分红历史记录
+            data:[  // 分红历史记录
                 // { num:0.02,time:'04-30  14:32:00' },
                 // { num:0.02,time:'04-30  14:32:00' },
                 // { num:0.02,time:'04-30  14:32:00' }
             ],
             ktBalance:this.props.ktBalance,  // KT持有量 
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            hasMore:false,
+            refresh:true,
+            start:0
         };
 
         this.initData();
@@ -73,19 +77,55 @@ export class Dividend extends Widget {
             this.state.yearIncome = Number(data.yearIncome) === 0 ? this.state.cfgData.noneYearIncome :data.yearIncome;
         }
 
-        const history = find('dividHistory');
+        const history = find('dividHistory');  
         if (history) {
-            this.state.dividHistory = history;
+            const hList = history.list;
+            if (hList && hList.length > this.state.data.length) {
+                console.log('load more from local');
+                  
+            } else {
+                console.log('load more from server');
+                getDividHistory(this.state.start);
+            }
+        } else {
+            console.log('load more from server');
+            getDividHistory(this.state.start);
         }
 
+        this.loadMore();
+        this.paint();
+    }
+    /**
+     *  本地实际加载数据
+     */
+    public async loadMore() {
+        const data = find('dividHistory');  
+        if (!data) return;
+        const hList = data.list;
+        const start = this.state.data.length;
+        this.state.data = this.state.data.concat(hList.slice(start,start + PAGELIMIT));
+        this.state.start = data.start;
+        this.state.hasMore = data.canLoadMore;
         this.paint();
     }
 
     /**
-     * 页面滑动
+     * 滚动加载更多列表数据
      */
-    public pageScroll() {
-        if (document.getElementById('content').scrollTop > 0) {
+    public getMoreList() {
+        const h1 = document.getElementById('historylist').offsetHeight; 
+        const h2 = document.getElementById('history').offsetHeight; 
+        const scrollTop = document.getElementById('historylist').scrollTop; 
+        if (this.state.hasMore && this.state.refresh && (h2 - h1 - scrollTop) < 20) {
+            this.state.refresh = false;
+            console.log('加载中，请稍后~~~');
+            setTimeout(() => {
+                this.loadMore();
+                this.state.refresh = true;
+            }, 1000);
+        } 
+
+        if (scrollTop > 0) {
             this.state.scroll = true;
             if (this.state.scroll) {
                 this.paint();
@@ -152,6 +192,6 @@ register('dividTotal', () => {
 register('dividHistory', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initData();
+        w.loadMore();
     }
 });

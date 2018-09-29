@@ -99,19 +99,22 @@ export interface Store {
     realUserMap:Map<string,boolean>;// 真实用户map
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
+    // tslint:disable-next-line:type-literal-delimiter
     accountDetail: Map<CurrencyType, {list:AccountDetail[],start:number,canLoadMore:boolean}>;// 云端账户详情
     sHisRec:SHisRec;// 发送红包记录
     cHisRec:CHisRec;// 兑换红包记录
     inviteRedBagRec:CHisRec;// 邀请红包记录
     miningTotal:MiningTotal;// 挖矿汇总信息
     dividTotal:DividTotal;// 分红汇总信息
-    miningHistory:DividendItem[];// 挖矿历史记录
-    dividHistory:DividendItem[];// 分红历史记录
+    miningHistory:DividendHistory;// 挖矿历史记录
+    dividHistory:DividendHistory;// 分红历史记录
     addMine:AddMineItem[];// 矿山增加项目
     mineRank:MineRank;// 矿山排名
     miningRank:MiningRank;// 挖矿排名
     mineItemJump:string;// 矿山增加项目跳转详情 
+    // tslint:disable-next-line:type-literal-delimiter
     rechargeLogs:Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>;// 充值记录
+    // tslint:disable-next-line:type-literal-delimiter
     withdrawLogs:Map<CurrencyType,{list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>;// 提现记录
     // 地址管理
     TopContacts:TopContact[];// 常用联系人列表
@@ -239,12 +242,21 @@ export interface DividTotal {
 }
 
 /**
- * 挖矿，分红历史记录
+ * 挖矿，分红历史记录单项
  */
 export interface DividendItem {
     num:number;
     time:string;
     total:number;
+}
+
+/**
+ * 挖矿，分红历史记录
+ */
+export interface DividendHistory {
+    list:DividendItem[];
+    start:number;
+    canLoadMore:boolean;
 }
 
 /**

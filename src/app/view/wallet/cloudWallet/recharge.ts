@@ -1,21 +1,22 @@
 /**
  * Recharge
  */
-import { Widget } from "../../../../pi/widget/widget";
-import { popNew } from "../../../../pi/ui/root";
-import { ERC20Tokens } from "../../../config";
-import { timeOfArrival } from "../../../utils/constants";
-import { TransRecordLocal, MinerFeeLevel, TxStatus, TxType } from "../../../store/interface";
-import { getCurrentAddrByCurrencyName, getCurrentAddrBalanceByCurrencyName, fetchGasPrice, popPswBox, fetchBtcMinerFee, popNewMessage } from "../../../utils/tools";
-import { estimateMinerFee, recharge, resendRecharge } from "../../../net/pullWallet";
-import { wei2Eth, sat2Btc } from "../../../utils/unitTools";
-interface Props{
+import { popNew } from '../../../../pi/ui/root';
+import { Widget } from '../../../../pi/widget/widget';
+import { ERC20Tokens } from '../../../config';
+import { estimateMinerFee, recharge, resendRecharge } from '../../../net/pullWallet';
+import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
+import { timeOfArrival } from '../../../utils/constants';
+// tslint:disable-next-line:max-line-length
+import { fetchBtcMinerFee, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { sat2Btc, wei2Eth } from '../../../utils/unitTools';
+interface Props {
     currencyName:string;
     tx?:TransRecordLocal;
 }
-export class Recharge extends Widget{
+export class Recharge extends Widget {
     public props:Props;
-    public ok:()=>void;
+    public ok:() => void;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -33,7 +34,7 @@ export class Recharge extends Widget{
         }
         const tx = this.props.tx;
         console.log(tx);
-        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1: MinerFeeLevel.STANDARD;
+        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.STANDARD;
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             amount:tx ? tx.pay : 0,
@@ -42,7 +43,8 @@ export class Recharge extends Widget{
             minerFeeList:list,
             curLevel,
             minLevel:curLevel,
-            inputDisabled:tx ? true : false
+            inputDisabled:tx ? true : false,
+            cfgData:getLanguage(this)
         };
         this.updateMinerFeeList();
         
@@ -68,21 +70,20 @@ export class Recharge extends Widget{
         this.paint();
     }
 
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
     public speedDescClick() {
-        const content = "到账速度受网络拥堵影响，拥堵时支付较高矿工费的交易会优先确认。我们把交易速度分为三个标准，并附上参考时间，您可以任意选择，矿工费可以激励矿工优先打包您的交易，如果矿工费过低，矿工没有动力去打包你的交易，可能会将您的交易延后处理。";
-        popNew('app-components-modalBox-modalBox1',{ title:'到账速度',content,tips:'转账时不能全部转完，要预留出矿工费' });
+        popNew('app-components-modalBox-modalBox1',this.state.cfgData.modalBox);
     }
 
      // 提币金额变化
-     public amountChange(e:any) {
+    public amountChange(e:any) {
         this.state.amount = Number(e.value);
         this.paint();
     }
 
-    //选择矿工费
+    // 选择矿工费
     public chooseMinerFee() {
         popNew('app-components-modalBox-chooseModalBox',{ 
             currencyName:this.props.currencyName,
@@ -98,13 +99,13 @@ export class Recharge extends Widget{
     // 转账
     public async nextClick() {
         if (!this.state.amount) {
-            popNewMessage('请输入转账金额');
+            popNewMessage(this.state.cfgData.tips[0]);
 
             return;
         }
 
         if (this.state.balance < this.state.amount + this.state.minerFee) {
-            popNewMessage('余额不足');
+            popNewMessage(this.state.cfgData.tips[1]);
 
             return;
         }
@@ -117,10 +118,10 @@ export class Recharge extends Widget{
         const t = new Date();
         const oldTx = this.props.tx;
         const tx:TransRecordLocal = {
-            hash:"",
+            hash:'',
             txType:TxType.RECHARGE,
             fromAddr,
-            toAddr: "",
+            toAddr: '',
             pay,
             time: t.getTime(),
             status:TxStatus.PENDING,
@@ -134,14 +135,14 @@ export class Recharge extends Widget{
             addr:fromAddr
         };
         let ret;
-        if(this.props.tx){
+        if (this.props.tx) {
             tx.hash = this.props.tx.hash;
             ret = resendRecharge(passwd,tx);
-        }else{
+        } else {
             ret = recharge(passwd,tx);
         }
         
-        if(ret){
+        if (ret) {
             this.ok && this.ok();
         }
     }

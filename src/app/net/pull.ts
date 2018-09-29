@@ -7,11 +7,12 @@ import { MainChainCoin } from '../config';
 import { sign } from '../core/genmnemonic';
 import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseExchangeDetail, parseMineDetail, parseMineRank,parseMiningRank,parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, popPswBox, transDate, unicodeArray2Str } from '../utils/tools';
+// tslint:disable-next-line:max-line-length
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -86,7 +87,7 @@ export const requestLogined = async (msg: any) => {
  */
 export const login = async (passwd:string) => {
     if (find('loginState') === LoginState.logined) return;
-    const close = popNew('app-components1-loading-loading', { text: '登录中...' });
+    const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().userInfo.loading });
     const wallet = find('curWallet');
     const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
     const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
@@ -98,7 +99,7 @@ export const login = async (passwd:string) => {
     close.callback(close.widget);
     if (res.result === 1) {
         updateStore('loginState', LoginState.logined);
-        popNew('app-components-message-message',{ content:'登录成功' });
+        popNew('app-components-message-message',{ content:getStaticLanguage().userInfo.loginSuccess });
     } else {
         updateStore('loginState', LoginState.logerror);
     }
@@ -338,7 +339,7 @@ export const getMining = async () => {
 /**
  * 获取挖矿历史记录
  */
-export const getMiningHistory = async (start = '') => {
+export const getMiningHistory = async (start = 0) => {
     const msg = { 
         type: 'wallet/cloud@get_pool_detail', 
         param: {
@@ -347,15 +348,8 @@ export const getMiningHistory = async (start = '') => {
         } 
     };
     requestAsync(msg).then(data => {
-        const list = [];
-        for (let i = 0; i < data.value.length; i++) {
-            list.push({
-                num: kpt2kt(data.value[i][0]),
-                total: kpt2kt(data.value[i][1]),
-                time: transDate(new Date(data.value[i][2]))
-            });
-        }
-        updateStore('miningHistory', list);
+        const miningHistory = parseMiningHistory(data);
+        updateStore('miningHistory', miningHistory);
     });
 };
 
@@ -585,7 +579,7 @@ export const getMineDetail = async (start = '') => {
 /**
  * 获取分红历史记录
  */
-export const getDividHistory = async (start = '') => {
+export const getDividHistory = async (start = 0) => {
     const msg = { 
         type: 'wallet/cloud@get_bonus_info', 
         param: {
@@ -594,15 +588,8 @@ export const getDividHistory = async (start = '') => {
         } 
     };
     requestAsync(msg).then(data => {
-        const list = [];
-        for (let i = 0; i < data.value.length; i++) {
-            list.push({
-                num: wei2Eth(data.value[i][1][0]),
-                total: wei2Eth(data.value[i][1][1]),
-                time: transDate(new Date(data.value[i][0]))
-            });
-        }
-        updateStore('dividHistory', list);
+        const dividHistory = parseDividHistory(data);
+        updateStore('dividHistory', dividHistory);
     });
 };
 
@@ -774,9 +761,10 @@ export const regPhone = async (phone: number, code: number) => {
     
     return requestAsync(msg).catch(error => {
         if (error.type === -300) {
-            popNew('app-components-message-message', { itype: 'error', center: true, content: `验证码已失效` });
+            popNew('app-components-message-message', { itype: 'error', center: true, content: getStaticLanguage().userInfo.bindPhone });
         } else {
-            popNew('app-components-message-message', { itype: 'error', center: true, content: `错误${error.type}` });
+            // tslint:disable-next-line:max-line-length
+            popNew('app-components-message-message', { itype: 'error', center: true, content: getStaticLanguage().userInfo.wrong + error.type });
         }
     });
 };

@@ -5,16 +5,16 @@
     </div>
     <div w-class="row2">
         <div w-class="col">
-            <div w-class="tag">持有({{it.product.unitPrice}}/份)</div>
-            <div w-class="tag1">{{it.product.amount}}份</div>
+            <div w-class="tag">{{it1.cfgData.tips[0] + "("+it.product.unitPrice +"/"+ it1.cfgData.tips[1]}})</div>
+            <div w-class="tag1">{{it.product.amount + it1.cfgData.tips[1]}}</div>
         </div>
         <div w-class="col">
-            <div w-class="tag">昨日收益({{it.product.coinType}})</div>
+            <div w-class="tag">{{it1.cfgData.tips[2] +"("+ it.product.coinType}})</div>
             <div w-class="tag2">{{it.product.yesterdayIncoming}}</div>
         </div>
         <div w-class="col">
-            <div w-class="tag">累计</div>
-            <div w-class="tag1">{{it.product.days}}天</div>
+            <div w-class="tag">{{it1.cfgData.tips[3]}}</div>
+            <div w-class="tag1">{{it.product.days + it1.cfgData.tips[4]}}</div>
         </div>
     </div>
 </div>

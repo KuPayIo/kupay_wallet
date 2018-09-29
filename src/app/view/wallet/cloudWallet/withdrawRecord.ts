@@ -1,28 +1,28 @@
 /**
  * other record
  */
-import { Widget } from "../../../../pi/widget/widget";
-import { getWithdrawLogs } from "../../../net/pull";
-import { register, getBorn } from "../../../store/store";
-import { Forelet } from "../../../../pi/widget/forelet";
-import { CurrencyType } from "../../../store/interface";
-import { timestampFormat, parseStatusShow } from "../../../utils/tools";
-import { fetchLocalTxByHash1 } from "../../../utils/walletTools";
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { getWithdrawLogs } from '../../../net/pull';
+import { CurrencyType } from '../../../store/interface';
+import { getBorn, register } from '../../../store/store';
+import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
+import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-interface Props{
+interface Props {
     currencyName:string;
     isActive:boolean;
 }
-export class WithdrawRecord extends Widget{
+export class WithdrawRecord extends Widget {
     public props:Props;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        if(this.props.isActive){
+        if (this.props.isActive) {
             getWithdrawLogs(this.props.currencyName);
         }
     }
@@ -31,8 +31,9 @@ export class WithdrawRecord extends Widget{
             recordList:[],
             nextStart:0,
             canLoadMore:false,
-            isRefreshing:false
-        }
+            isRefreshing:false,
+            cfgData:getLanguage(this)
+        };
     }
     public updateRecordList() {
         const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]);
@@ -45,12 +46,13 @@ export class WithdrawRecord extends Widget{
         this.paint();
     }
 
-    public parseRecordList(list){
-        list.forEach((item)=>{
+    // tslint:disable-next-line:typedef
+    public parseRecordList(list) {
+        list.forEach((item) => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = '提币';
+            item.behavior = this.state.cfgData.recharge;
             item.amountShow = `-${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_withdraw_icon.png`;
@@ -58,9 +60,9 @@ export class WithdrawRecord extends Widget{
 
         return list;
     }
-    public updateTransaction(){
+    public updateTransaction() {
         const list = this.state.recordList;
-        list.forEach(item=>{
+        list.forEach(item => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
@@ -68,10 +70,10 @@ export class WithdrawRecord extends Widget{
         this.paint();
     }
     
-    public loadMore(){
+    public loadMore() {
         getWithdrawLogs(this.props.currencyName,this.state.nextStart);
     }
-    public getMoreList(){
+    public getMoreList() {
         const h1 = document.getElementById('withdraw-scroller-container').offsetHeight; 
         const h2 = document.getElementById('withdraw-content-container').offsetHeight; 
         const scrollTop = document.getElementById('withdraw-scroller-container').scrollTop; 
@@ -84,8 +86,7 @@ export class WithdrawRecord extends Widget{
     }
 }
 
-
-//====================================
+// ====================================
 
 register('withdrawLogs', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -94,9 +95,8 @@ register('withdrawLogs', () => {
     }
 });
 
-
-//本地交易变化,更新状态
-register('transactions',()=>{
+// 本地交易变化,更新状态
+register('transactions',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

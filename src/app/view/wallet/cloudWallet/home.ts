@@ -1,23 +1,23 @@
 /**
  * cloud wallet home
  */
-import { Widget } from "../../../../pi/widget/widget";
-import { getBorn, register } from "../../../store/store";
-import { popNewMessage, formatBalanceValue } from "../../../utils/tools";
-import { popNew } from "../../../../pi/ui/root";
-import { CurrencyType } from "../../../store/interface";
-import { Forelet } from "../../../../pi/widget/forelet";
+import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { CurrencyType } from '../../../store/interface';
+import { getBorn, register } from '../../../store/store';
+import { formatBalanceValue, getLanguage, popNewMessage } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-interface Props{
+interface Props {
     currencyName:string;
 }
-export class CloudWalletHome extends Widget{
+export class CloudWalletHome extends Widget {
     public props:Props;
-    public ok:()=>void;
+    public ok:() => void;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -27,26 +27,28 @@ export class CloudWalletHome extends Widget{
         const rate =   getBorn('exchangeRateJson').get(currencyName).CNY;
         const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
         const balanceValue = formatBalanceValue(rate * balance);
+        const cfg = getLanguage(this); 
         this.state = {
             tabs:[{
-                tab:'其他',
+                tab:cfg.other,
                 components:'app-view-wallet-cloudWallet-otherRecord'
             },{
-                tab:'充值',
+                tab:cfg.recharge,
                 components:'app-view-wallet-cloudWallet-rechargeRecord'
             },{
-                tab:'提币',
+                tab:cfg.withdraw,
                 components:'app-view-wallet-cloudWallet-withdrawRecord'
             }],
             activeNum:0,
             gain:getBorn('coinGain').get(currencyName) || formatBalanceValue(0),
             rate:formatBalanceValue(rate),
             balance,
-            balanceValue
+            balanceValue,
+            cfgData:cfg
         };
     }
 
-    public updateBalance(){
+    public updateBalance() {
         const currencyName = this.props.currencyName;
         this.state.balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
         this.state.balanceValue = formatBalanceValue(this.state.rate * this.state.balance);
@@ -56,28 +58,30 @@ export class CloudWalletHome extends Widget{
         this.state.activeNum = value;
         this.paint();
     }
-    public backPrePage(){
+    public backPrePage() {
         this.ok && this.ok();
     }
-    public rechargeClick(){
-        if(this.props.currencyName === 'KT'){
-            popNewMessage('敬请期待');
+    public rechargeClick() {
+        if (this.props.currencyName === 'KT') {
+            popNewMessage(this.state.cfgData.tips);
+
             return;
         }
-        popNew('app-view-wallet-cloudWallet-recharge',{currencyName:this.props.currencyName});
+        popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
     }
-    public withdrawClick(){
-        if(this.props.currencyName === 'KT'){
-            popNewMessage('敬请期待');
+    public withdrawClick() {
+        if (this.props.currencyName === 'KT') {
+            popNewMessage(this.state.cfgData.tips);
+
             return;
         }
-        popNew('app-view-wallet-cloudWallet-withdraw',{currencyName:this.props.currencyName});
+        popNew('app-view-wallet-cloudWallet-withdraw',{ currencyName:this.props.currencyName });
     }
 }
 
-//===========================
+// ===========================
 
-//余额变化
+// 余额变化
 register('cloudBalance', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {

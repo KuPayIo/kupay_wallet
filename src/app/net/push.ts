@@ -1,5 +1,5 @@
 import { setMsgHandler } from '../../pi/net/ui/con_mgr';
-import { popNewMessage } from '../utils/tools';
+import { getStaticLanguage, popNewMessage } from '../utils/tools';
 import { getCloudBalance } from './pull';
 
 /**
@@ -14,7 +14,7 @@ import { getCloudBalance } from './pull';
 // 主动推送
 export const initPush = () => {
     setMsgHandler('event_pay_ok',(res) => {
-        popNewMessage('充值已到账');
+        popNewMessage(getStaticLanguage().transfer.rechargeTips);
         const value = res.value.toJSNumber ? res.value.toJSNumber() : res.value;
         getCloudBalance().then(res => {
             console.log('服务器推送成功 云端余额更新==========================',res);

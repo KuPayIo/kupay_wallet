@@ -10,7 +10,7 @@ import { uploadFile } from '../../../net/pull';
 import { CreateWalletType } from '../../../store/interface';
 import { getBorn, updateStore } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { getFirstEthAddr, popNewMessage } from '../../../utils/tools';
+import { getFirstEthAddr, getLanguage, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
 interface Props {
@@ -39,7 +39,8 @@ export class CreateWallet extends Widget {
             walletPswAvailable:false,
             chooseImage:false,
             avatar:'',
-            avatarHtml:''
+            avatarHtml:'',
+            cfgData:getLanguage(this)
         };
     }
 
@@ -91,17 +92,17 @@ export class CreateWallet extends Widget {
             return;
         }
         if (!walletNameAvailable(this.state.walletName)) {
-            popNew('app-components-message-message', { content: '请输入1-10位钱包名' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[0] });
 
             return;
         }
         if (!this.state.walletPswAvailable) {
-            popNew('app-components-message-message', { content: '密码格式不正确' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }
         if (!this.state.pswEqualed) {
-            popNew('app-components-message-message', { content: '两次输入密码不一致' });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
@@ -124,7 +125,7 @@ export class CreateWallet extends Widget {
         }
         const hash = await createWallet(this.state.itype,option);
         if (!hash) {
-            popNewMessage('创建失败');
+            popNewMessage(this.state.cfgData.tips[3]);
         }
         if (this.state.avatar) {
             uploadFile(this.state.avatar);
@@ -140,12 +141,7 @@ export class CreateWallet extends Widget {
             w.ok && w.ok();
         }
         this.ok && this.ok();
-        popNew('app-components-modalBox-modalBox',{ 
-            title:'创建成功',
-            content:'记得备份，如果忘记账户就找不回来了。',
-            sureText:'备份',
-            cancelText:'暂时不' 
-        },() => {
+        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox,() => {
             popNew('app-view-wallet-backup-index',{ mnemonic,fragments });
         });
     }

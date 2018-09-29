@@ -7,7 +7,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { popNew, backCall } from '../../../pi/ui/root';
+import { backCall, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { openAndGetRandom } from '../../net/pull';
@@ -15,8 +15,11 @@ import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
-import { fetchCoinGain } from '../../utils/tools';
+
+import { fetchCoinGain, mnemonicFragmentDecrypt, mnemonicFragmentEncrypt } from '../../utils/tools';
+
 import { getDeviceInfo } from '../../logic/native';
+
 
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";

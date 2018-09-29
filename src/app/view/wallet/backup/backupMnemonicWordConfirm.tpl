@@ -1,8 +1,8 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-	<app-components1-topBar-topBar>{title:"备份助记词"}</app-components1-topBar-topBar>
+	<app-components1-topBar-topBar>{title:{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
 	<div w-class="body">
 		<div w-class="bodyTitle">
-			按序选择输入助记词
+			{{it1.cfgData.bodyTitle}} 
 		</div>
 		<div w-class="screen">
 			 {{for index,item of it1.nullMnemonic}}
@@ -23,7 +23,7 @@
 			</div>
 			
 			<div w-class="btnBox">
-				<div ev-btn-tap="nextStepClick" w-class="btn"><app-components1-btn-btn>{"name":"确定","types":"big","color":"blue"}</app-components1-btn-btn></div>
+				<div ev-btn-tap="nextStepClick" w-class="btn"><app-components1-btn-btn>{"name":{{it1.cfgData.sure}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
 			</div>
 		</div>
 	</div>

@@ -1,37 +1,38 @@
 /**
  * other record
  */
-import { Widget } from "../../../../pi/widget/widget";
-import { getAccountDetail } from "../../../net/pull";
-import { register, getBorn } from "../../../store/store";
-import { Forelet } from "../../../../pi/widget/forelet";
-import { CurrencyType, AccountDetail } from "../../../store/interface";
-import { timestampFormat } from "../../../utils/tools";
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { getAccountDetail } from '../../../net/pull';
+import { CurrencyType } from '../../../store/interface';
+import { getBorn, register } from '../../../store/store';
+import { getLanguage, timestampFormat } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-interface Props{
+interface Props {
     currencyName:string;
     isActive:boolean;
 }
-export class otherRecord extends Widget{
+export class OtherRecord extends Widget {
     public props:Props;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
-        if(this.props.isActive){
+        if (this.props.isActive) {
             getAccountDetail(this.props.currencyName);
         }
         this.state = {
             recordList:[],
             nextStart:0,
             canLoadMore:false,
-            isRefreshing:false
-        }
+            isRefreshing:false,
+            cfgData:getLanguage(this)
+        };
     }
     public updateRecordList() {
         const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]);
@@ -43,8 +44,9 @@ export class otherRecord extends Widget{
         this.state.isRefreshing = false;
         this.paint();
     }
-    public parseRecordList(list){
-        list.forEach((item)=>{
+    // tslint:disable-next-line:typedef
+    public parseRecordList(list) {
+        list.forEach((item) => {
             item.amountShow = item.amount >= 0 ? `+${item.amount}` : `${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `${item.behaviorIcon}`;
@@ -53,10 +55,10 @@ export class otherRecord extends Widget{
         return list;
     }
 
-    public loadMore(){
+    public loadMore() {
         getAccountDetail(this.props.currencyName,this.state.nextStart);
     }
-    public getMoreList(){
+    public getMoreList() {
         const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
         const h2 = document.getElementById('recharge-content-container').offsetHeight; 
         const scrollTop = document.getElementById('recharge-scroller-container').scrollTop; 

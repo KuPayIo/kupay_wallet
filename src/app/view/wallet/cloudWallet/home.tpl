@@ -3,7 +3,7 @@
         <app-components1-topBar-topBar>{"title":{{it.currencyName}},background:"linear-gradient(to right,#38CFE7,#318DE6)"}</app-components1-topBar-topBar>
         <div w-class="head2">
             <div w-class="head2-left"><span w-class="balance">{{it1.balance}}</span><span w-class="balance-value">￥{{it1.balanceValue}}</span></div>
-            <div w-class="head2-right"><span w-class="btn" on-tap="rechargeClick">充值</span><span w-class="btn btn-withdraw" on-tap="withdrawClick">提币</span></div>
+            <div w-class="head2-right"><span w-class="btn" on-tap="rechargeClick">{{it1.cfgData.recharge}}</span><span w-class="btn btn-withdraw" on-tap="withdrawClick">{{it1.cfgData.recharge}}</span></div>
         </div>
         <div w-class="nav-wrap">
             <div w-class="nav">
@@ -16,8 +16,8 @@
         </div>
     </div>
     <div w-class="show-container">
-        <div w-class="quotes">行情&nbsp;￥{{it1.rate}}/{{it.currencyName}}</div>
-        <div w-class="{{it1.gain > 0 ? 'up' : 'down'}}">今日&nbsp;{{it1.gain > 0 ? '+' : ''}}{{it1.gain}}%</div>
+        <div w-class="quotes">{{it1.cfgData.quotation}}&nbsp;￥{{it1.rate}}/{{it.currencyName}}</div>
+        <div w-class="{{it1.gain > 0 ? 'up' : 'down'}}">{{it1.cfgData.today}}&nbsp;{{it1.gain > 0 ? '+' : ''}}{{it1.gain}}%</div>
     </div>
     <div w-class="body">
         {{for i,v of it1.tabs}} {{let isActive = i===it1.activeNum}}

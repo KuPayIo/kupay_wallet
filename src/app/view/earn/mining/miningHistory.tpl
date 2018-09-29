@@ -2,14 +2,14 @@
     <app-components1-topBar-topBar>{title:{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="historylist" id="historylist" on-scroll="getMoreList">
 
-        <div w-class="history">
+        <div w-class="history" id="history">
             {{for ind,val of it1.data}}
             <div style="{{ind>0?'background: #ffffff;':''}}">
                 <app-components-fourParaItem-fourParaItem>{"name":{{it1.cfgData.itemName}},"data":{{val.num+' ETH'}},"time":{{val.time}} }</app-components-fourParaItem-fourParaItem>
             </div>
             {{end}}
 
-            {{if it1.data.length>0 && !it1.more}}
+            {{if it1.data.length>0 && !it1.hasMore}}
             <div w-class="endMess">{{it1.cfgData.tips[0]}}^_^</div>
             {{end}}
 

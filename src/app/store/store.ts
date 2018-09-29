@@ -7,7 +7,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendItem, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne,RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransRecordLocal, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendHistory, DividendItem, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product,PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTx, ShapeShiftTxs, SHisRec, Store, TopContact, TransRecordLocal, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -171,19 +171,22 @@ const store = <Store>{
     realUserMap:new Map<string,boolean>(),// 本地真实用户map
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额
+    // tslint:disable-next-line:type-literal-delimiter
     accountDetail: new Map<CurrencyType, {list:AccountDetail[],start:number,canLoadMore:boolean}>(),// 云端账户详情
     sHisRec: <SHisRec>null, // 发送红包记录
     cHisRec: <CHisRec>null,// 兑换红包记录
     inviteRedBagRec: <CHisRec>null,// 邀请红包记录
     miningTotal: <MiningTotal>null, // 挖矿汇总信息
     dividTotal: <DividTotal>null,// 分红汇总信息
-    miningHistory: <DividendItem[]>[],// 挖矿历史记录
-    dividHistory: <DividendItem[]>[],// 分红历史记录
+    miningHistory: <DividendHistory>null,// 挖矿历史记录
+    dividHistory: <DividendHistory>null,// 分红历史记录
     addMine: <AddMineItem[]>[],// 矿山增加项目
     mineRank: <MineRank>null,// 矿山排名
     miningRank: <MiningRank>null,// 挖矿排名
     mineItemJump: '',// 矿山增加项目跳转详情
+    // tslint:disable-next-line:type-literal-delimiter
     rechargeLogs:new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>(),// 充值记录
+    // tslint:disable-next-line:type-literal-delimiter
     withdrawLogs:new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>(),// 提现记录
     // shapeshift
     shapeShiftCoins: <ShapeShiftCoin[]>[],// shapeShift 支持的币种
