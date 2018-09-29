@@ -125,7 +125,7 @@ type MapName = 'exchangeRateJson' | 'hashMap';
 
 type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo' | 'shapeShiftTxs';
 
-type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' | 'level_3_page_loaded';
+type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrs' | 'transactions' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
  'inviteRedBagRecMap' | 'shapeShiftTxsMap' | 'TopContacts' | 'ERC20TokenDecimals' | 'lastGetSmsCodeTime' | 'nonceMap'|
