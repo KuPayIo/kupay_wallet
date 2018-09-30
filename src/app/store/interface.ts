@@ -81,7 +81,6 @@ export interface Store {
     conRandom: string;// 连接随机数
     conUid: number;// 连接uid
     userInfo:any;// 用户头像base64
-    readedPriAgr: boolean;// 隐私协议阅读与否
     loginState: LoginState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
     coinGain:Map<string,number>;// 货币涨跌
@@ -92,7 +91,6 @@ export interface Store {
     addrs: Addr[];// 地址数据
     transactions: TransRecordLocal[];// 交易记录
     exchangeRateJson: Map<string, any>;// 兑换汇率列表
-    ERC20TokenDecimals:Object;// ERC20精度
     nonceMap:Map<string,number>;// 维护本地的nonce
     gasPrice:object;// gasPrice档次(3档)
     btcMinerFee:object;// btn minerFee档次(3档)
@@ -119,7 +117,6 @@ export interface Store {
     // shapeShift
     shapeShiftCoins:ShapeShiftCoin[];// shapeShift 支持的币种
     shapeShiftMarketInfo:MarketInfo;// shapeShift 汇率相关
-    shapeShiftTxs:ShapeShiftTxs;// shapeshift 交易记录
     shapeShiftTxsMap:Map<string,ShapeShiftTxs>;// shapeshift 交易记录Map
     lastGetSmsCodeTime:number;
 }

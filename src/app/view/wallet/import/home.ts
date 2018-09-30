@@ -19,6 +19,7 @@ export class ImportHome extends Widget {
     public init() {
         const cfg = getLanguage(this);
         this.state = {
+            cfgData:cfg,
             tabList:[{
                 tab:cfg.tabs[0],
                 components:'app-view-wallet-import-standardImport'
