@@ -15,17 +15,20 @@ export const selectImage = (ok?,cancel?) => {
     image.selectFromLocal({
         success: (width, height, result) => {
             ok && ok(width, height, result);
-            close.callback(close.widget);
+            close && close.callback(close.widget);
         },
         fail: (result) => {
             cancel && cancel(result);
-            close.callback(close.widget);
+            close && close.callback(close.widget);
         },
         useCamera: 1,
         single: 1,
         max: 1
     });
-    const close = popNew('app-components1-loading-loading', { text: '导入中...' });
+    let close;
+    setTimeout(()=>{
+        close = popNew('app-components1-loading-loading', { text: '导入中...' });
+    },100);
 };
 
 /**

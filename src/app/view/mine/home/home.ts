@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { find, register } from '../../../store/store';
-import { copyToClipboard, getFirstEthAddr, getLanguage, popPswBox } from '../../../utils/tools';
+import { copyToClipboard, getFirstEthAddr, getLanguage, popPswBox, getUserInfo } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出
@@ -53,7 +53,7 @@ export class Home extends Widget {
      * 更新数据
      */
     public initData() {
-        const userInfo = find('userInfo');
+        const userInfo = getUserInfo();
         if (userInfo) {
             this.state.userName = userInfo.nickName;
             this.state.avatar = userInfo.avatar;

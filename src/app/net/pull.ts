@@ -140,8 +140,12 @@ export const autoLogin = () => {
             random:find('conRandom')
         }
     };
+    updateStore('loginState', LoginState.logining);
     requestAsync(msg).then(res => {
+        updateStore('loginState', LoginState.logined);
         console.log('自动登录成功-----------',res);
+    }).catch(()=>{
+        updateStore('loginState', LoginState.logerror);
     });
 };
 /**
