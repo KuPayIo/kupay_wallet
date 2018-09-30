@@ -225,7 +225,11 @@ export class DataCenter {
         for(let i = 0;i < ethTrans.length;i++){
             const hash = ethTrans[i].hash;
             if(this.neededUpdate('ETH',hash,addr)){
-                this.getEthTransactionByHash(hash,addr);
+                this.getEthTransactionByHash(hash,addr).then(()=>{
+                    const timerItem = this.fetchTimerItem(hash);
+                    if(timerItem) return;
+                    this.timerUpdateTx(addr,'ETH',hash);
+                });
             };
             
         }
