@@ -119,7 +119,7 @@ export class ImgRankItem extends Widget {
      * 判断输入的字符是否符合规则
      */
     public availableJudge(psw:string) {
-        const reg = /^[0-9a-zA-Z! “ # $ % & ‘ ( ) * + , \- . / : ; < = > ? @ \[ \] ^ _ ` { \| } ~]+$/;
+        const reg = /^[0-9a-zA-Z!“#$%&‘()*+,\-./:;<=>?@\[\]^_`{\|}~]+$/;
         
         return reg.test(psw);
     }
@@ -132,7 +132,7 @@ export class ImgRankItem extends Widget {
         const reg1 = /[0-9]+/; 
         const reg2 = /[a-z]+/; 
         const reg3 = /[A-Z]+/;
-        const reg4 = /[! “ # $ % & ‘ ( ) * + , - . / : ; < = > ? @ \[ \] ^ _ ` { \| } ~]+/; // 特殊字符集
+        const reg4 = /[!“#$%&‘()*+,\-./:;<=>?@\[\]^_`{\|}~]+/; // 特殊字符集
         let num = 0;
         if (reg1.test(psw)) {
             num++;
