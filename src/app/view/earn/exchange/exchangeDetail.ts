@@ -42,14 +42,11 @@ export class ExchangeDetail extends Widget {
     public pageScroll() {
         if (document.getElementById('exchangeDetail').scrollTop > 0) {
             this.state.scroll = true;
-            if (this.state.scroll) {
-                this.paint();
-            }
-
         } else {
             this.state.scroll = false;
-            this.paint();
         }
+        this.paint();
+        
     }
 
     public async initData() {

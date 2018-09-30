@@ -7,7 +7,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product,PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product,PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, VerPhone, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -71,7 +71,6 @@ export const unregister = (keyName: KeyName, cb: Function): void => {
     handlerMap.remove(keyName, <any>cb);
 };
 
-
 /**
  * 初始化store
  */
@@ -120,7 +119,7 @@ type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walle
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
  'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo' | 'coinGain' |
- 'btcMinerFee' | 'token' | 'flag' | 'languageSet';
+ 'btcMinerFee' | 'token' | 'flag' | 'languageSet' | 'verPhone';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -197,15 +196,15 @@ const store = <Store>{
     // 已购买理财产品
     purchaseRecord:<PurchaseRecordOne[]>[],
     lastGetSmsCodeTime:0,
-    languageSet:<LanguageSet>null
+    languageSet:<LanguageSet>null,
+    verPhone:<number>null  // 验证手机号码
 };
 
-
-//重置云端数据
-export const logoutInit = ()=>{
+// 重置云端数据
+export const logoutInit = () => {
     updateStore('loginState',LoginState.init);
     updateStore('flag',{});
-    updateStore('salt',"");
+    updateStore('salt','');
     updateStore('conUser','');
     updateStore('conUserPublicKey','');
     updateStore('conRandom','');
@@ -218,7 +217,7 @@ export const logoutInit = ()=>{
     updateStore('sHisRec',null);
     updateStore('cHisRec',null);
     updateStore('inviteRedBagRec',null);
-    updateStore('token',"");
+    updateStore('token','');
     updateStore('cloudBalance',new Map<CurrencyType, number>());
     updateStore('accountDetail',new Map<CurrencyType, {list:AccountDetail[],start:number,canLoadMore:boolean}>());
     updateStore('miningTotal',<MiningTotal>null);
@@ -228,11 +227,11 @@ export const logoutInit = ()=>{
     updateStore('addMine', <AddMineItem[]>[]);
     updateStore('mineRank', <MineRank>null);
     updateStore('miningRank', <MiningRank>null);
-    updateStore('mineItemJump', "");
+    updateStore('mineItemJump', '');
     updateStore('rechargeLogs', new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>());
     updateStore('withdrawLogs',new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>());
     updateStore('shapeShiftTxsMap', new Map<string,ShapeShiftTxs>());
     updateStore('productList',  <Product[]>[]);
     updateStore('purchaseRecord', <PurchaseRecordOne[]>[]);
    
-}
+};

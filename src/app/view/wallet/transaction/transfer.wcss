@@ -30,7 +30,7 @@
     align-items: center;
 }
 .balance{
-    color: #318de6;
+    color: #888888;
 }
 .input-father{
     position: relative;
@@ -71,25 +71,26 @@
 }
 .speed{
     margin-left: 10px;
-    color: #F17835;
+    color: #318DE6;
 }
 .choose-fee{
     display: flex;
-    justify-content: space-between;
     font-size: 28px;
-    color: #222222;
+    color: #888888;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 10px;
     padding: 0 30px;
 }
-.fees{
-    display: flex;
-    color: #318de6;
-    align-items: center;
-}
-.fee{
-    margin-right: 30px;
+.descImg{
+    width: 40px;
+    height: 40px;
+    border: 20px solid transparent;
 }
 .btn{
     margin: 0 40px;
+}
+.scanImg{
+    width: 40px;
+    height: 40px;
+    border: 20px solid transparent;
 }
