@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { openNewActivity } from '../../../logic/native';
+import { doScanQrCode, openNewActivity } from '../../../logic/native';
 import { find, register } from '../../../store/store';
 import { copyToClipboard, getFirstEthAddr, getLanguage, popPswBox, getUserInfo } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
@@ -122,6 +122,15 @@ export class Home extends Widget {
             this.backPrePage();
         }, 200);
         this.paint();
+    }
+
+    /**
+     * 扫描二维码
+     */
+    public scanQrcode() {
+        doScanQrCode((res) => {
+            console.log(res);
+        });
     }
 
     /**

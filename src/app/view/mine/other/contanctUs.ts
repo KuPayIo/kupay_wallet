@@ -14,9 +14,9 @@ export class ContanctUs extends Widget {
         const cfg = getLanguage(this);
         this.state = {
             data:[
-                { value: cfg.itemTitle[0],desc:'www.Kupay.io' },
+                { value: cfg.itemTitle[0],desc:'www.Kuplay.io' },
                 { value: cfg.itemTitle[1],desc:cfg.itemTitle[2] },
-                { value: cfg.itemTitle[3],desc:'KuPay' }
+                { value: cfg.itemTitle[3],desc:'KuPlay' }
             ],
             cfgData:cfg
         };

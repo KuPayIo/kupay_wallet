@@ -16,7 +16,7 @@
         <div style="margin-bottom: 30px;">
             <div w-class="mode">
                 <div on-tap="itemClick(0)">
-                    <app-components-basicItem-basicItem>{name:{{it1.cfgData.itemTitle[1]}},describe:{{it1.cfgData.bindPhone}},style:"margin:0;"}</app-components-basicItem-basicItem>
+                    <app-components-basicItem-basicItem>{name:{{it1.cfgData.itemTitle[1]}},describe:{{it1.phone}},style:"margin:0;"}</app-components-basicItem-basicItem>
                 </div>
                 <div on-tap="itemClick(1)">
                     <app-components-basicItem-basicItem>{name:{{it1.cfgData.itemTitle[2]}},style:"margin:0;border:none;"}</app-components-basicItem-basicItem>

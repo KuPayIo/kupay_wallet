@@ -8,6 +8,7 @@ import { GlobalWallet } from '../../../core/globalWallet';
 import { find } from '../../../store/store';
 import { pswEqualed } from '../../../utils/account';
 import { getLanguage } from '../../../utils/tools';
+import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 export class ChangePSW extends Widget {
     public ok: () => void;
@@ -69,12 +70,19 @@ export class ChangePSW extends Widget {
         // 判断两次输入的密码是否相同
         if (!this.state.pswEqualed) {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components-message-messagebox', { content: this.state.cfgData.tips[2] });
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
-        // 验证全部通过，开始设置新密码
         const loading = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
+        const fg = await VerifyIdentidy(wallet,oldPassword);
+        // 判断原密码是否正确
+        if (!fg) {
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[3] });
+            loading.callback(loading.widget);
+
+            return;
+        }
         const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
         await gwlt.passwordChange(oldPassword, newPassword);
         wallet.gwlt = gwlt.toJSON();

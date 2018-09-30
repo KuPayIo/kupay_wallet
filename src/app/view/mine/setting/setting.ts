@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { setUserInfo } from '../../../net/pull';
 import { LockScreen } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
-import { getLanguage, lockScreenHash, lockScreenVerify, popPswBox, logoutAccount } from '../../../utils/tools';
+import { getLanguage, lockScreenHash, lockScreenVerify, logoutAccount, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -40,6 +40,7 @@ export class Setting extends Widget {
             userName:cfg.defaultName,  // 用户名称
             userInput:false,  // 是否显示输入框
             wallet:null,
+            phone:cfg.bindPhone,
             cfgData:cfg  
         };
         this.initData();
@@ -59,6 +60,11 @@ export class Setting extends Widget {
         if (ls) {
             this.state.lockScreenPsw = ls.psw;
             this.state.openLockScreen = ls.psw && ls.open !== false;
+        }
+        const bphone = find('verPhone');
+        if (bphone) {
+            const str = String(bphone).substr(3,6);
+            this.state.phone = bphone.replace(str,'******');
         }
         
         this.paint();
@@ -148,9 +154,9 @@ export class Setting extends Widget {
     public oldLockPsw(ind:number) {
         if (ind > 2) {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput,(r) => {
+            popNew('app-components-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput,async (r) => {
                 const wallet = find('curWallet');
-                const fg = VerifyIdentidy(wallet,r);
+                const fg = await VerifyIdentidy(wallet,r);
                 // const fg = true;
                 if (fg) {
                     popNew('app-components-keyboard-keyboard',{ title:this.state.cfgData.keyboardTitle[0] },(r) => {
@@ -292,6 +298,12 @@ register('curWallet', () => {
     }
 });
 register('lockScreen', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+register('verPhone', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

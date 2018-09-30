@@ -8,6 +8,7 @@ import { getLanguage, getStaticLanguage } from '../../../utils/tools';
 interface Props {
     product:Product;
     amount:number;
+    fg:number; // 点击阅读声明进入为1，否则是点击购买进入
 }
 export class ProductStatement extends Widget {
     public ok:() => void;
@@ -30,7 +31,9 @@ export class ProductStatement extends Widget {
 
     public nextClick() {
         if (!this.state.readed) return;
-        popNew('app-view-wallet-financialManagement-purchase',{ product:this.props.product,amount:this.props.amount });
+        if (!this.props.fg) {
+            popNew('app-view-wallet-financialManagement-purchase',{ product:this.props.product,amount:this.props.amount });
+        }
         this.ok && this.ok();
     }
     public closePage() {

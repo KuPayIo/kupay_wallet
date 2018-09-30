@@ -436,7 +436,6 @@ export interface AccountDetail {
     time: number;// 时间
 }
 
-
 // 理财产品数据结构
 export interface Product {
     id:string;

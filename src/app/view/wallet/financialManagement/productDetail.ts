@@ -39,7 +39,8 @@ export class ProductDetail extends Widget {
             amount:1,
             leftPercent:  res.left,
             usePercent: res.use,
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            isScroll:false
         };
         console.log(this.props.product);
     }
@@ -68,9 +69,31 @@ export class ProductDetail extends Widget {
         this.state.holdedAmout = fetchHoldedProductAmount(this.props.product.id);
     }
 
+    // 页面滚动
+    public pageScroll() {
+        if (document.getElementById('body').scrollTop > 0) {
+            this.state.isScroll = true;
+            
+        } else {
+            this.state.isScroll = false;
+        }
+        this.paint();
+        
+    }
+
+    /**
+     * 点击购买按钮
+     */
     public purchaseClicked() {
         if (!hasWallet()) return;
         popNew('app-view-wallet-financialManagement-productStatement',{ product:this.props.product,amount:this.state.amount });
+    }
+
+    /**
+     * 点击阅读声明
+     */
+    public readAgree() {
+        popNew('app-view-wallet-financialManagement-productStatement',{ fg:1 });        
     }
 }
 

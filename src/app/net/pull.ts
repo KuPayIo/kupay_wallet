@@ -232,7 +232,7 @@ const doOpen = async () => {
  * 获取随机数
  */
 export const getRandom = async () => {
-    if(!find('conUser')) return;
+    if (!find('conUser')) return;
     const msg = { type: 'get_random', param: { account: find('conUser').slice(2), pk: `04${find('conUserPublicKey')}` } };
     const resp = await requestAsync(msg);
     updateStore('conRandom', resp.rand);
@@ -623,7 +623,7 @@ export const getData = async (key) => {
  * 设置用户基础信息
  */
 export const setUserInfo = async () => {
-    if(find("loginState") !== LoginState.logined) return;
+    if (find('loginState') !== LoginState.logined) return;
     const userInfo = find('userInfo');
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
@@ -759,7 +759,13 @@ export const getMiningRank = async (num: number) => {
 export const sendCode = async (phone: number, num: number) => {
     const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
 
-    return requestAsync(msg);
+    try {
+        return requestAsync(msg);
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
 };
 
 /**
@@ -768,14 +774,13 @@ export const sendCode = async (phone: number, num: number) => {
 export const regPhone = async (phone: number, code: number) => {
     const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
     
-    return requestAsync(msg).catch(error => {
-        if (error.type === -300) {
-            popNew('app-components-message-message', { itype: 'error', center: true, content: getStaticLanguage().userInfo.bindPhone });
-        } else {
-            // tslint:disable-next-line:max-line-length
-            popNew('app-components-message-message', { itype: 'error', center: true, content: getStaticLanguage().userInfo.wrong + error.type });
-        }
-    });
+    try {
+        return requestAsync(msg);
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
 };
 
 /**
@@ -1214,7 +1219,7 @@ export const fetchRealUser = async () => {
         const res = await requestAsync(msg);
         const realUserMap = getBorn('realUserMap');
         const conUser = find('conUser');
-        if(!conUser) return;
+        if (!conUser) return;
         realUserMap.set(conUser,res.value === 'false' ? false : true);
         updateStore('realUserMap',realUserMap);
         

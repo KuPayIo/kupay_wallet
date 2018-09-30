@@ -1,6 +1,7 @@
 /**
  * 和第3方库相关的一些工具函数
  */
+import { arrayBufferToBase64 } from '../../pi/util/base64';
 import { ERC20Tokens } from '../config';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
@@ -9,14 +10,13 @@ import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../logic/dataCenter';
+import { buyProduct, getCloudBalance, getPurchaseRecord } from '../net/pull';
 import { Addr } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
-import { calcHashValuePromise, hexstrToU8Array, initAddr, popNewMessage, popNewLoading, unicodeArray2Str } from './tools';
-import { buyProduct, getCloudBalance, getPurchaseRecord } from '../net/pull';
-import { shareSecret } from './secretsBase';
-import { arrayBufferToBase64 } from '../../pi/util/base64';
 import { nameWare } from './nameWareHouse';
+import { shareSecret } from './secretsBase';
+import { calcHashValuePromise, hexstrToU8Array, initAddr, popNewLoading, popNewMessage, unicodeArray2Str } from './tools';
 
 /**
  * 获取新的地址信息
@@ -122,7 +122,6 @@ export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) =
     }
 };
 
-
 /**
  * 获取助记词
  */
@@ -171,26 +170,26 @@ export const fetchTransactionList = (addr:string,currencyName:string) => {
 /**
  * 根据交易hash获取指定地址上本地交易详情
  */
-export const fetchLocalTxByHash = (addr:string,currencyName:string,hash:string)=>{
+export const fetchLocalTxByHash = (addr:string,currencyName:string,hash:string) => {
     const txList = fetchTransactionList(addr,currencyName);
-    for(let i = 0; i < txList.length;i++){
-        if(txList[i].hash === hash){
+    for (let i = 0; i < txList.length;i++) {
+        if (txList[i].hash === hash) {
             return txList[i];
         }
     }
-}
+};
 
 /**
  * 根据交易hash获取所有地址上本地交易详情
  */
-export const fetchLocalTxByHash1 = (hash:string)=>{
+export const fetchLocalTxByHash1 = (hash:string) => {
     const txList = find('transactions') || [];
-    for(let i = 0; i < txList.length;i++){
-        if(txList[i].hash === hash){
+    for (let i = 0; i < txList.length;i++) {
+        if (txList[i].hash === hash) {
             return txList[i];
         }
     }
-}
+};
 
 // 购买理财
 export const purchaseProduct = async (psw:string,productId:string,amount:number) => {
@@ -203,45 +202,45 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
     }
     const data = await buyProduct(productId,amount);
     close.callback(close.widget);
-    if(data){
+    if (data) {
         popNewMessage('购买成功');
         getCloudBalance();
         console.log('data',data);
         getPurchaseRecord();// 购买之后获取购买记录
     }
     return data;
-}
+};
 
-//获取助记词片段
-export const fetchMnemonicFragment =  (hash) =>{
+// 获取助记词片段
+export const fetchMnemonicFragment =  (hash) => {
     const mnemonicHexstr =  getMnemonicHexstr(find('curWallet'),hash);
-    if(!mnemonicHexstr) return;
+    if (!mnemonicHexstr) return;
     const shares = shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
             .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
     console.log('fetchMnemonicFragment-----------',shares);
     return shares;
-}
+};
 
 // 备份助记词
-export const backupMnemonic = async (passwd:string) =>{
+export const backupMnemonic = async (passwd:string) => {
     const close = popNewLoading('导出中...');
     const hash = await calcHashValuePromise(passwd, find('salt'));
     console.log('hash!!!!!!!!!!!!',hash);
     close.callback(close.widget);
     const mnemonic = getMnemonicByHash(hash);
     const fragments = fetchMnemonicFragment(hash);
-    if(!mnemonic){
+    if (!mnemonic) {
         popNewMessage('密码错误');
         return;
     }
     return {
         mnemonic,
         fragments
-    }
-}
+    };
+};
 
-//根据hash获取助记词
-export const getMnemonicByHash = (hash:string)=>{
+// 根据hash获取助记词
+export const getMnemonicByHash = (hash:string) => {
     const gwlt = GlobalWallet.fromJSON(find('curWallet').gwlt);
     try {
         const cipher = new Cipher();
@@ -253,16 +252,15 @@ export const getMnemonicByHash = (hash:string)=>{
 
         return '';
     }
-}
-
+};
 
 /**
  * 获取随机名字
  */
 export const playerName = function () {
-	var num1 = nameWare[0].length;
-	var num2 = nameWare[1].length;
-	var name="";
-	name= unicodeArray2Str(nameWare[0][Math.floor(Math.random()*num1)])+ unicodeArray2Str(nameWare[1][Math.floor(Math.random()*num2)]);
-	return name;
+    const num1 = nameWare[0].length;
+    const num2 = nameWare[1].length;
+    let name = '';
+    name = unicodeArray2Str(nameWare[0][Math.floor(Math.random() * num1)]) + unicodeArray2Str(nameWare[1][Math.floor(Math.random() * num2)]);
+    return name;
 };
