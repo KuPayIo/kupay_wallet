@@ -205,7 +205,7 @@ const store = <Store>{
 export const logoutInit = ()=>{
     updateStore('loginState',LoginState.init);
     updateStore('flag',{});
-    updateStore('salt',"");
+    updateStore('salt',cryptoRandomInt().toString());
     updateStore('conUser','');
     updateStore('conUserPublicKey','');
     updateStore('conRandom','');
