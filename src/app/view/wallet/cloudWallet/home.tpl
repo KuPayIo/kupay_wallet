@@ -3,7 +3,7 @@
         <app-components1-topBar-topBar>{"title":{{it.currencyName}},background:"linear-gradient(to right,#38CFE7,#318DE6)"}</app-components1-topBar-topBar>
         <div w-class="head2">
             <div w-class="head2-left"><span w-class="balance">{{it1.balance}}</span><span w-class="balance-value">￥{{it1.balanceValue}}</span></div>
-            <div w-class="head2-right"><span w-class="btn" on-tap="rechargeClick">{{it1.cfgData.recharge}}</span><span w-class="btn btn-withdraw" on-tap="withdrawClick">{{it1.cfgData.recharge}}</span></div>
+            <div w-class="head2-right"><span w-class="btn" on-tap="rechargeClick">{{it1.cfgData.recharge}}</span><span w-class="btn btn-withdraw" on-tap="withdrawClick">{{it1.cfgData.withdraw}}</span></div>
         </div>
         <div w-class="nav-wrap">
             <div w-class="nav">

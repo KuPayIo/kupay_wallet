@@ -145,13 +145,11 @@ export class RedEnvHistory extends Widget {
 
         if (scrollTop > 0) {
             this.state.isScroll = true;
-            if (this.state.isScroll) {
-                this.paint();
-            }
         } else {
             this.state.isScroll = false;
-            this.paint();
         }
+        this.paint();
+        
     }
 
     /**

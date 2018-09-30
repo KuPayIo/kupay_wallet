@@ -77,14 +77,11 @@ export class RedEnvDetail extends Widget {
     public pageScroll() {
         if (document.getElementById('redEnvDetail').scrollTop > 0) {
             this.state.scroll = true;
-            if (this.state.scroll) {
-                this.paint();
-            }
-
         } else {
             this.state.scroll = false;
-            this.paint();
         }
+        this.paint();
+        
     }
 
     /**

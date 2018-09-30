@@ -4,7 +4,7 @@
         <div w-class="aboutus-img">
             <img src="../../../res/image/img_logo.png" w-class="logoimg"/>
         </div>
-        <div w-class="version">V0.0.1</div>
+        <div w-class="version">V1.0</div>
         <div w-class="shortmess">{{it1.cfgData.shortMess}}</div>
         
         {{for ind,val of it1.data}}

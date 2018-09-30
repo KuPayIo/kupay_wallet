@@ -30,7 +30,7 @@
             <div w-class="detail">{{it1.cfgData.details[0] + it.product.purchaseDate}}</div>
             <div w-class="detail">{{it1.cfgData.details[1] + it.product.unitPrice}}{{it.product.coinType}}</div>
             <div w-class="detail">{{it1.cfgData.details[2] + it.product.productName}}</div>
-            <div w-class="detail">{{it1.cfgData.details[3] + it.product.amount it1.cfgData.per }}</div>
+            <div w-class="detail">{{it1.cfgData.details[3] + it.product.amount + it1.cfgData.per }}</div>
             <div w-class="detail">{{it1.cfgData.details[4] + it.product.profit}}%</div>
             <div w-class="detail">{{it1.cfgData.details[5] + it.product.lockday}}</div>
         </div>
