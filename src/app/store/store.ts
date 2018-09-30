@@ -210,8 +210,8 @@ export const logoutInit = ()=>{
     updateStore('conUserPublicKey','');
     updateStore('conRandom','');
     updateStore('conUid','');
-    updateStore('userInfo',null);
     updateStore('curWallet',null);
+    updateStore('userInfo',null);
     updateStore('addrs',null);
     updateStore('transactions',null);
     updateStore('lockScreen',null);

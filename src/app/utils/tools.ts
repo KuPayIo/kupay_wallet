@@ -1228,9 +1228,6 @@ export const mnemonicFragmentDecrypt = (fragment:string) => {
  * 注销账户
  */
 export const logoutAccount = ()=>{
-    updateStore('curWallet',null);
-    updateStore('userInfo',null);
     logoutInit();
-    closeCon();
     openAndGetRandom();
 }
