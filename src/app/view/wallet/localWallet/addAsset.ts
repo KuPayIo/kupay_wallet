@@ -30,7 +30,7 @@ export class AddAsset extends Widget {
      */
     public onSwitchChange(e: any, index: number) {
         const added = e.newType;
-        const currencys = this.state.assetList[index];
+        const currencys = this.state.showAssetList[index];
         currencys.added = added;
         this.paint();
 

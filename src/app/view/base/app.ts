@@ -95,7 +95,7 @@ register('level_2_page_loaded',(loaded:boolean) => {
 // 用户信息变化
 register('userInfo',(userInfo:UserInfo) => {
     const conRandom = find('conRandom');
-    if (conRandom  && (!userInfo || !userInfo.fromServer)) {
+    if (conRandom  && userInfo && !userInfo.fromServer) {
         setUserInfo();
     }
 });

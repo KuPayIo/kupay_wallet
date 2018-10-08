@@ -25,10 +25,10 @@ console.log('conIp=',conIp);
 console.log('conPort=',conPort);
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-export const sharePerUrl = `http://192.168.33.96:80/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
-export const shareDownload = `http://192.168.33.96:80/wallet/phoneRedEnvelope/download.html`;
+export const shareDownload = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/download.html`;
 
 // 上传图片url
 export const uploadFileUrl = `http://${conIp}/service/upload`;
@@ -140,8 +140,12 @@ export const autoLogin = () => {
             random:find('conRandom')
         }
     };
+    updateStore('loginState', LoginState.logining);
     requestAsync(msg).then(res => {
+        updateStore('loginState', LoginState.logined);
         console.log('自动登录成功-----------',res);
+    }).catch(()=>{
+        updateStore('loginState', LoginState.logerror);
     });
 };
 /**

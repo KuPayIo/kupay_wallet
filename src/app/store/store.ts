@@ -204,13 +204,13 @@ const store = <Store>{
 export const logoutInit = () => {
     updateStore('loginState',LoginState.init);
     updateStore('flag',{});
-    updateStore('salt','');
+    updateStore('salt',cryptoRandomInt().toString());
     updateStore('conUser','');
     updateStore('conUserPublicKey','');
     updateStore('conRandom','');
     updateStore('conUid','');
-    updateStore('userInfo',null);
     updateStore('curWallet',null);
+    updateStore('userInfo',null);
     updateStore('addrs',null);
     updateStore('transactions',null);
     updateStore('lockScreen',null);

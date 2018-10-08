@@ -67,6 +67,7 @@ export const transfer = async (psw:string,txRecord:TransRecordLocal) => {
         trans.push(tx);
         updateStore('transactions',trans);
         dataCenter.refreshTrans(tx.addr,tx.currencyName);
+        dataCenter.timerUpdateBalance();
         popNew('app-components-message-message',{ content:getStaticLanguage().transfer.transSuccess });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
@@ -582,6 +583,7 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
         updateStore('transactions',trans);
         dataCenter.clearTimer(oldHash);// 删除定时器
         dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
+        dataCenter.timerUpdateBalance();
         popNew('app-components-message-message',{ content:getStaticLanguage().transfer.againSuccess });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
@@ -623,6 +625,7 @@ export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
         updateStore('transactions',trans);
         dataCenter.clearTimer(oldHash);// 删除定时器
         dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
+        dataCenter.timerUpdateBalance();
         getRechargeLogs(tx.currencyName);
         popNew('app-components-message-message',{ content:getStaticLanguage().transfer.againSuccess });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
@@ -648,6 +651,7 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
         trans.push(tx);
         updateStore('transactions',trans);
         dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
+        dataCenter.timerUpdateBalance();
         getRechargeLogs(tx.currencyName);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }

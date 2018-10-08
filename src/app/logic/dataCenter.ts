@@ -225,7 +225,11 @@ export class DataCenter {
         for(let i = 0;i < ethTrans.length;i++){
             const hash = ethTrans[i].hash;
             if(this.neededUpdate('ETH',hash,addr)){
-                this.getEthTransactionByHash(hash,addr);
+                this.getEthTransactionByHash(hash,addr).then(()=>{
+                    const timerItem = this.fetchTimerItem(hash);
+                    if(timerItem) return;
+                    this.timerUpdateTx(addr,'ETH',hash);
+                });
             };
             
         }
@@ -437,10 +441,10 @@ export class DataCenter {
     }
 
     //定时器更新余额
-    private timerUpdateBalance(){
-        this.balanceTimerList.forEach(item=>{
-            clearTimeout(item.timer);
-        });
+    public timerUpdateBalance(){
+        // this.balanceTimerList.forEach(item=>{
+        //     clearTimeout(item.timer);
+        // });
         const wallet = find('curWallet');
         if(!wallet) return;
         const showCurrencys = wallet.showCurrencys;
@@ -478,18 +482,11 @@ export class DataCenter {
      * 更新余额
      */
     private updateBalance(addr: string, currencyName: string) {
-        const timerItem = this.fetchBalanceTimer(addr,currencyName);
-        if(timerItem){
-            clearTimeout(timerItem.timer);
-        }
         if (ERC20Tokens[currencyName]) {
             const balanceOfCode = EthWallet.tokenOperations('balanceof', currencyName, addr);
-            // console.log('balanceOfCode',balanceOfCode);
             const api = new EthApi();
             api.ethCall(ERC20Tokens[currencyName].contractAddr, balanceOfCode).then(r => {
-                // tslint:disable-next-line:radix
                 const num = ethTokenDivideDecimals(Number(r), currencyName);
-                // console.log(currencyName,num);
                 this.setBalance(addr, currencyName, num);
             });
         }
@@ -508,20 +505,24 @@ export class DataCenter {
                 break;
             default:
         }
+        const timerItem = this.fetchBalanceTimer(addr,currencyName);
         const delay = this.getBalanceUpdateDelay(addr,currencyName);
+        if(timerItem && timerItem.delay > delay){
+            clearTimeout(timerItem.timer);
+        }
+        console.log('定时更新余额',{
+            delay,
+            addr,
+            currencyName,
+            time:new Date().getTime()
+        });
         const timer = setTimeout(()=>{
-            console.log('定时更新余额',{
-                delay,
-                addr,
-                currencyName,
-                time:new Date().getTime()
-            });
             this.updateBalance(addr,currencyName);
         },delay);
-        this.resetBalanceTimerList(addr,currencyName,timer);
+        this.resetBalanceTimerList(addr,currencyName,timer,delay);
     }
     //重置余额定时器列表
-    private resetBalanceTimerList(addr:string,currencyName:string,timer:any){
+    private resetBalanceTimerList(addr:string,currencyName:string,timer:any,delay:number){
         let index = -1;
         for(let i = 0;i< this.balanceTimerList.length;i++){
             if(this.balanceTimerList[i].addr === addr && this.balanceTimerList[i].currencyName === currencyName){
@@ -532,7 +533,8 @@ export class DataCenter {
         const timerObj ={
             addr,
             currencyName,
-            timer
+            timer,
+            delay
         }
         if(index >= 0){
             this.balanceTimerList.splice(index,1,timerObj);
