@@ -54,7 +54,6 @@ export const run = (cb): void => {
     // popNewPage();
     // 后台切前台
     // backToFront();
-    console.log(isValidAddress('0xb56489e1eb642c7c8285be8279a157ccbb6334do','ETH'));
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();

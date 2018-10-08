@@ -263,12 +263,15 @@ export const getRandom = async () => {
  * 获取所有的货币余额
  */
 export const getCloudBalance = () => {
+    if(!find('conRandom')) return;
     const list = [];
+    list.push(CurrencyType['KT']);
     for (const k in CurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
             list.push(CurrencyType[k]);
         }
     }
+    
     const msg = { type: 'wallet/account@get', param: { list:`[${list}]` } };
     
     return requestAsync(msg).then(balanceInfo => {

@@ -5,6 +5,14 @@
 // tslint:disable-next-line:variable-name
 export const dev_mode = 'dev';
 
+/**
+ * 版本号 api没有修改每次以偶数递增
+ * api有修改  以奇数表示
+ * 功能增加修改 1.0.0 ---> 1.2.0
+ * bug修复 1.0.0--->1.0.2
+ * 此版本号和更新版本号格式不相同,上架需要修改此两处,以后会把这两处合并为一处
+ */
+export const version = '1.0.0';
 // 主网erc20
 const ERC20TokensMainnet = {
     BNB:{
@@ -264,12 +272,9 @@ export const MainChainCoin = {
     BTC:{
         description:'Bitcoin',
         rate:{ CNY: 42868.55, USD: 6598.71 }
-    },
-    KT:{
-        description:'KuPlay Token',
-        rate:{ CNY:0.00, USD:0.00 }
     }
 };
+
 
 // 默认ETH ERC20转账地址,预估矿工费的时候使用
 export const defaultEthToAddr = '0x040e7783A06e9b994F6e90DF5b2933C03F1b8F21';

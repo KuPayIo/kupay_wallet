@@ -1,5 +1,4 @@
 import { isArray } from '../../pi/net/websocket/util';
-import { deepCopy } from '../../pi/util/util';
 import { PAGELIMIT } from '../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
@@ -21,7 +20,7 @@ export const parseCloudBalance = (balanceInfo): Map<CurrencyType, number> => {
         const each = balanceInfo.value[i];
         m.set(each[0], smallUnit2LargeUnit(CurrencyTypeReverse[each[0]], each[1]));
     }
-
+    m.set(CurrencyType.CNYT,0);
     return m;
 };
 

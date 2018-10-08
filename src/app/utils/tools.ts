@@ -785,6 +785,8 @@ export const fetchDefaultExchangeRateJson = () => {
         }
     }
 
+    rateJson.set('KT',{ CNY: 0, USD: 0 });
+    rateJson.set('CNYT',{ CNY: 1, USD: 6 });
     return rateJson;
 };
 
@@ -798,7 +800,7 @@ export const fetchWalletAssetList = () => {
     const assetList = [];
     for (const k in MainChainCoin) {
         const item:any = {};
-        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0 && k !== 'KT') {
+        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             const balance = fetchBalanceOfCurrency(k);
@@ -834,6 +836,24 @@ export const fetchWalletAssetList = () => {
 export const fetchCloudWalletAssetList = () => {
     const coinGain = getBorn('coinGain');
     const assetList = [];
+    const ktBalance = getBorn('cloudBalance').get(CurrencyType['KT']) || 0;
+    const ktCny = getBorn('exchangeRateJson').get('KT').CNY;
+    const ktItem = {
+        currencyName :'KT',
+        description:'KuPlay Token',
+        balance:formatBalance(ktBalance),
+        balanceValue:formatBalanceValue(ktBalance * ktCny),
+        gain:formatBalanceValue(0),
+    }
+    assetList.push(ktItem);
+    const cnytItem = {
+        currencyName :'CNYT',
+        description:'CNYT',
+        balance:0,
+        balanceValue:'0.00',
+        gain:formatBalanceValue(0),
+    }
+    assetList.push(cnytItem);
     for (const k in CurrencyType) {
         const item:any = {};
         if (MainChainCoin.hasOwnProperty(k)) {
@@ -846,9 +866,9 @@ export const fetchCloudWalletAssetList = () => {
             item.gain =  coinGain.get(k) || formatBalanceValue(0);
             assetList.push(item);
         }
-        
     }
 
+    
     return assetList;
 };
 
