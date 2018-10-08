@@ -41,8 +41,7 @@ export class Home extends Widget {
 
     public userInfoChange() {
         const userInfo = getUserInfo();
-        if(!userInfo) return;
-        this.state.avatar = userInfo.avatar;
+        this.state.avatar = userInfo.avatar || '';
         this.paint();
     }
 

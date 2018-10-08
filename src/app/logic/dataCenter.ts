@@ -35,8 +35,8 @@ export class DataCenter {
         getShapeShiftCoins();
         this.exchangeRate('ETH');
         this.exchangeRate('BTC');
-        this.timerUpdateBalance();//更新余额
         this.refreshAllTx();
+        this.refreshBalance();//更新余额
         // f7a398978d4f9153f9ec7736cbdf7753ed096e230250ae08a4aa1ccea16878e3
         // BtcApi.getAddrTxHistory('miXYqeEJWkf52UyifMYozkCaDYmSVymQTb').then(res=>{
         //     console.error('getAddrTxHistory!!!!!!!!!',res);
@@ -440,8 +440,8 @@ export class DataCenter {
         console.log('定时更新交易',{tx:record,time:new Date().getTime()});
     }
 
-    //定时器更新余额
-    public timerUpdateBalance(){
+    // 刷新余额
+    public refreshBalance(){
         // this.balanceTimerList.forEach(item=>{
         //     clearTimeout(item.timer);
         // });
@@ -452,15 +452,36 @@ export class DataCenter {
         showCurrencys.forEach(currencyName=>{
             const addrs1 = getAddrsByCurrencyName(wallet,currencyName);
             addrs1.forEach(addr=>{
-                this.updateBalance(addr,currencyName);
+                this.timerUpdateBalance(addr,currencyName);
             });
         });
+    }
+
+    //定时器更新余额
+    public timerUpdateBalance(addr:string,currencyName:string){
+        this.updateBalance(addr,currencyName);
+        const timerItem = this.fetchBalanceTimer(addr,currencyName);
+        const delay = this.getBalanceUpdateDelay(addr,currencyName);
+        console.log('定时更新余额',{
+            delay,
+            addr,
+            currencyName,
+            time:new Date().getTime()
+        });
+        if(timerItem && timerItem.delay > delay){
+            clearTimeout(timerItem.timer);
+        };
+        const timer = setTimeout(()=>{
+            this.timerUpdateBalance(addr,currencyName);
+        },delay);
+        this.resetBalanceTimerList(addr,currencyName,timer,delay);
     }
 
     //获取余额更新间隔
     private getBalanceUpdateDelay(addr:string,currencyName:string){
         const second = 1000;
         const minute = 60 * second;
+        // const minute = 1 * second;
         const txList = fetchTransactionList(addr,currencyName);
         const now = new Date().getTime();
         let delay = 5 * minute;//默认5分钟更新
@@ -471,7 +492,7 @@ export class DataCenter {
             if(txList[i].status === TxStatus.PENDING && now - txList[i].time < 10 * minute){
                 delay = 10 * second;
                 if(currencyName === 'BTC'){
-                    delay = 10 *minute;
+                    delay = 10 * minute;
                 }
                 break;
             }
@@ -505,21 +526,6 @@ export class DataCenter {
                 break;
             default:
         }
-        const timerItem = this.fetchBalanceTimer(addr,currencyName);
-        const delay = this.getBalanceUpdateDelay(addr,currencyName);
-        if(timerItem && timerItem.delay > delay){
-            clearTimeout(timerItem.timer);
-        }
-        console.log('定时更新余额',{
-            delay,
-            addr,
-            currencyName,
-            time:new Date().getTime()
-        });
-        const timer = setTimeout(()=>{
-            this.updateBalance(addr,currencyName);
-        },delay);
-        this.resetBalanceTimerList(addr,currencyName,timer,delay);
     }
     //重置余额定时器列表
     private resetBalanceTimerList(addr:string,currencyName:string,timer:any,delay:number){

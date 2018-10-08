@@ -94,8 +94,8 @@ register('level_2_page_loaded',(loaded:boolean) => {
 
 // 用户信息变化
 register('userInfo',(userInfo:UserInfo) => {
-    const conRandom = find('conRandom');
-    if (conRandom  && userInfo && !userInfo.fromServer) {
+    const loginState = find('loginState');
+    if (loginState === LoginState.logined && userInfo && !userInfo.fromServer) {
         setUserInfo();
     }
 });
@@ -105,17 +105,13 @@ register('conRandom',(conRandom:string) => {
     if (conRandom && find('token') ) {
         autoLogin();
     }
-    // popNew('app-components-modalBoxInput-modalBoxInput',{ itype:'password',title:'请登录',content:[] },(r) => {
-    //     login(r);
-        
-    // });
 });
 
 // 登录状态成功
 register('loginState',(loginState:LoginState) => {
     if (loginState === LoginState.logined) {
         const userInfo = find('userInfo');
-        if (!userInfo.fromServer) {
+        if (userInfo && !userInfo.fromServer) {
             setUserInfo();
         }
         if (!find('token')) {
