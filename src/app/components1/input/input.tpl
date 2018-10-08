@@ -14,5 +14,5 @@
         on-blur="blur"
         on-focus="focus"
     />
-    {{if it1.showClear}}<img w-class="pi-input__suffix" src="../../res/image/btn_img_close.png" on-tap="clearClickListener"/>{{end}}
+    {{if it1.showClear}}<img w-class="clearBtn" src="../../res/image/btn_img_close.png" on-tap="clearClickListener"/>{{end}}
 </div>

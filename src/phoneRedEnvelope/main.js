@@ -1,19 +1,72 @@
 // ==========================================静态变量,静态方法
 
+// 语言文字
+const Config= {
+    simpleChinese:{ 
+        copySuccess:"复制成功",
+        shortMess:"KuPlay安全的一站式资产管理平台",
+        immeDownload:"立即下载",
+        installTutorial:"Android安装教程",
+        step1:"点击“立即下载”按钮下载安装文件",
+        step2:"成功安装KuPay",
+        step3:"进入APP并创建钱包",
+        redEnvMess:[
+            "恭喜发财 万事如意",
+            "KuPay大礼包"
+        ],
+        redEnvDesc:[
+            "您收到一个红包",
+            "金额随机，试试手气",
+            "您收到一个邀请红包"
+        ],
+        redEnvLook:"看看大家手气",
+        errorList:[
+            "红包不存在",
+            "红包已领完",
+            "红包已过期",
+            "红包已领取过",
+            "出错啦"
+        ],
+        copyBtn:"复制红包码",
+        receiveBtn:"立即领取红包金额",
+        tips:[
+            "已领取",
+            "共",
+            "红包领取规则",
+            "1.安装KuPay，创建钱包",
+            "2.在钱包里点击发现-发红包",
+            "3.输入收到的红包码，红包金额将自动到账",
+            "4.同一个红包，每人只能领取一次"
+        ]
+    },
+    tranditionalChinese:{
+
+    },
+    english:{
+
+    }
+}
+// 获取当前语言设置
+const getLanguage = () => {
+    const search = window.location.search;
+    const lan = parseUrlParams(search,'lan');
+    if(!lan){
+        return Config.simpleChinese;
+    }
+    return Config[lan];
+}
 // 云端货币类型
 const CurrencyType = {
     KT: 100,
     ETH: 101,
     BTC: 102
 }
-
 // 枚举云端货币类型
 const CurrencyTypeReverse = {
     100: 'KT',
     101: 'ETH',
     102:'BTC'
 };
-
 // 不同红包类型
 const RedEnvelopeType = {
     Normal: '00',
@@ -33,7 +86,7 @@ const copyToClipboard = (copyText) => {
         document.execCommand('copy');
     }
     document.body.removeChild(input);
-    popMessage("复制成功");
+    popMessage(getLanguage().copySuccess);
 };
 // 弹出提示框
 const popMessage = (str) => {

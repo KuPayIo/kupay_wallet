@@ -7,7 +7,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product,PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, VerPhone, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product,PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet } from './interface';
 
 // ============================================ 导出
 /**
