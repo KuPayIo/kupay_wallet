@@ -65,7 +65,7 @@ winit.initNext = function () {
 		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 
-	// alert('next start');
+	alert('next start');
 	var loadImages = function (util, fm) {
 
 		var suffixCfg = {

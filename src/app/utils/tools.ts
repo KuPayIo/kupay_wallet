@@ -10,7 +10,6 @@ import { uploadFileUrlPrefix, openAndGetRandom } from '../net/pull';
 import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore, initStore, logoutInit } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, resendInterval } from './constants';
-import { closeCon } from '../../pi/net/ui/con_mgr';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));

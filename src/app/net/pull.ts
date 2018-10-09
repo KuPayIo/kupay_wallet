@@ -1255,7 +1255,7 @@ export const uploadFile = async (base64) => {
             console.log('!!!!!!!!!!!',res);
             if (res.result === 1) {
                 const sid = res.sid;
-                const userInfo = find('userInfo');
+                const userInfo = find('userInfo') || {};
                 userInfo.avatar = sid;
                 userInfo.fromServer = false;
                 updateStore('userInfo',userInfo);
@@ -1277,3 +1277,22 @@ export const languageSet = {
 
     }
 };
+
+
+export const fetchKLine = ()=>{
+    const url = "https://api.huobi.pro/market/history/kline?period=1day&size=200&symbol=btcusdt";
+    fetch(uploadFileUrl, {
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, same-origin, *omit
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36'
+        },
+        method: 'GET', // *GET, POST, PUT, DELETE, etc.
+        mode: 'no-cors', // no-cors, cors, *same-origin
+        redirect: 'follow', // manual, *follow, error
+        referrer: 'no-referrer' // *client, no-referrer
+    }).then(response => response.json())
+        .then(res => {
+            console.log('!!!!!!!!!!!',res);
+        });
+}
