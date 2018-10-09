@@ -74,7 +74,8 @@ export class TransactionDetails extends Widget {
         popNewMessage(this.state.cfgData.tips[2]);
     }
     public openNewWeb() {
-        openNewActivity(this.state.qrcode);
+        const title = this.state.tx.currencyName === 'BTC' ? 'Blockchain' : 'Etherscan';
+        openNewActivity(this.state.qrcode,title);
     }
 
     public updateTransaction() {

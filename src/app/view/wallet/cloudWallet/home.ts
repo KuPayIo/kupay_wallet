@@ -64,7 +64,7 @@ export class CloudWalletHome extends Widget {
         this.ok && this.ok();
     }
     public rechargeClick() {
-        if (this.props.currencyName === 'KT') {
+        if (this.props.currencyName === 'KT' || this.props.currencyName === 'CNYT') {
             popNewMessage(this.state.cfgData.tips);
 
             return;
@@ -72,7 +72,7 @@ export class CloudWalletHome extends Widget {
         popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
     }
     public withdrawClick() {
-        if (this.props.currencyName === 'KT') {
+        if (this.props.currencyName === 'KT' || this.props.currencyName === 'CNYT') {
             popNewMessage(this.state.cfgData.tips);
 
             return;

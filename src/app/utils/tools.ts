@@ -4,13 +4,13 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { closeCon } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { Config, ERC20Tokens, MainChainCoin } from '../config';
+import { Config, ERC20Tokens, MainChainCoin, version } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, initStore, logoutInit, updateStore } from '../store/store';
-import { currencyConfirmBlockNumber, defalutShowCurrencys } from './constants';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, resendInterval } from './constants';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -785,6 +785,8 @@ export const fetchDefaultExchangeRateJson = () => {
         }
     }
 
+    rateJson.set('KT',{ CNY: 0, USD: 0 });
+    rateJson.set('CNYT',{ CNY: 1, USD: 6 });
     return rateJson;
 };
 
@@ -798,7 +800,7 @@ export const fetchWalletAssetList = () => {
     const assetList = [];
     for (const k in MainChainCoin) {
         const item:any = {};
-        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0 && k !== 'KT') {
+        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             const balance = fetchBalanceOfCurrency(k);
@@ -834,6 +836,24 @@ export const fetchWalletAssetList = () => {
 export const fetchCloudWalletAssetList = () => {
     const coinGain = getBorn('coinGain');
     const assetList = [];
+    const ktBalance = getBorn('cloudBalance').get(CurrencyType['KT']) || 0;
+    const ktCny = getBorn('exchangeRateJson').get('KT').CNY;
+    const ktItem = {
+        currencyName :'KT',
+        description:'KuPlay Token',
+        balance:formatBalance(ktBalance),
+        balanceValue:formatBalanceValue(ktBalance * ktCny),
+        gain:formatBalanceValue(0),
+    }
+    assetList.push(ktItem);
+    const cnytItem = {
+        currencyName :'CNYT',
+        description:'CNYT',
+        balance:0,
+        balanceValue:'0.00',
+        gain:formatBalanceValue(0),
+    }
+    assetList.push(cnytItem);
     for (const k in CurrencyType) {
         const item:any = {};
         if (MainChainCoin.hasOwnProperty(k)) {
@@ -846,9 +866,9 @@ export const fetchCloudWalletAssetList = () => {
             item.gain =  coinGain.get(k) || formatBalanceValue(0);
             assetList.push(item);
         }
-        
     }
 
+    
     return assetList;
 };
 
@@ -931,7 +951,9 @@ export const parseTxTypeShow = (txType:TxType) => {
 export const canResend = (tx) => {
     if (tx.status !== TxStatus.PENDING) return false;
     if (tx.minerFeeLevel === MinerFeeLevel.FASTEST) return false;
-
+    const startTime = tx.time;
+    const now = new Date().getTime();
+    if(now - startTime < resendInterval) return false;
     return true;
 };
 
@@ -1109,15 +1131,14 @@ export const base64ToFile = (base64:string) => {
  */
 export const getUserInfo = () => {
     const userInfo = find('userInfo');
-    if (!userInfo) return;
-    let nickName = userInfo.nickName;
+    let nickName = userInfo && userInfo.nickName;
     if (!nickName) {
         const wallet = find('curWallet');
         if (wallet) {
             nickName = JSON.parse(wallet.gwlt).nickName;
         }
     }
-    let avatar = userInfo.avatar;
+    let avatar = userInfo && userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
     }
@@ -1229,4 +1250,29 @@ export const mnemonicFragmentDecrypt = (fragment:string) => {
 export const logoutAccount = () => {
     logoutInit();
     openAndGetRandom();
-};
+}
+
+/**
+ * 判断是否是有效的货币地址
+ */
+export const isValidAddress = (addr:string,currencyName:string)=>{
+    if(currencyName === 'BTC'){
+
+    }else{
+        return isETHValidAddress(addr);
+    }
+}
+
+/**
+ * 判断是否是有效的ETH地址
+ */
+const isETHValidAddress = (addr:string)=>{
+    if (!addr || !addr.startsWith("0x") || addr.length !== 42) return false;
+    if(isNaN(Number(addr))) return false;
+    return true;
+}
+
+//获取当前显示版本号
+export const getCurShowVersion = ()=>{
+    return version.slice(0,version.length - 5);
+}

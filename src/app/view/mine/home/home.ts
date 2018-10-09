@@ -102,7 +102,7 @@ export class Home extends Widget {
             }
         } else if (ind === 5) {
             // window.open('https://github.com/KuPayIo/kupay_wallet');
-            openNewActivity('https://github.com/KuPayIo/kupay_wallet');
+            openNewActivity('https://github.com/KuPayIo/kupay_wallet','KuPay');
         } else {
             popNew(this.state.list[ind].components);
         }

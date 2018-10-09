@@ -143,7 +143,7 @@ export const currencyConfirmBlockNumber = {
     ERC20:7
 };
 
-// 
+// 打开第三方查询网址eth
 export const etherscanUrl = 'https://ropsten.etherscan.io/tx/';
-
+// 打开第三方查询网址btc
 export const blockchainUrl = 'https://testnet.blockchain.info/tx/';

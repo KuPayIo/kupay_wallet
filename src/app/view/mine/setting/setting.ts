@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { setUserInfo } from '../../../net/pull';
 import { LockScreen } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
-import { getLanguage, lockScreenHash, lockScreenVerify, logoutAccount, popPswBox } from '../../../utils/tools';
+import { getLanguage, lockScreenHash, lockScreenVerify, logoutAccount, popPswBox, getUserInfo } from '../../../utils/tools';
 import { backupMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -53,8 +53,7 @@ export class Setting extends Widget {
     }
 
     public initData() {
-        
-        const userInfo = find('userInfo');
+        const userInfo = getUserInfo();
         if (userInfo) {
             this.state.userHead = userInfo.avatar ? userInfo.avatar :'../../../res/image/default_avater_big.png';
             this.state.userName = userInfo.nickName ? userInfo.nickName :this.state.cfgData.defaultName;

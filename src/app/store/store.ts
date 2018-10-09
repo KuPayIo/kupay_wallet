@@ -115,14 +115,22 @@ export const initStore = () => {
     store.languageSet = findByLoc('languageSet');
     // 初始话化涨跌颜色设置
     store.changeColor = findByLoc('changeColor');
+    store.gasPrice = findByLoc('gasPrice') || {};
+    store.btcMinerFee = findByLoc('btcMinerFee') || {};
+
 };
 
 // tslint:disable-next-line:max-line-length
 type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
+<<<<<<< .mine
  'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo' | 'coinGain' |
  'btcMinerFee' | 'token' | 'flag' | 'verPhone';
+=======
+ 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord' | 'userInfo' | 'coinGain' | 'token' | 'flag' | 'languageSet' | 'verPhone';
+
+>>>>>>> .theirs
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -131,8 +139,13 @@ type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo';
 type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
+<<<<<<< .mine
  'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'| 'languageSet' | 'changeColor' | 
 'realUserMap' | 'token';
+=======
+ 'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'|
+ 'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee';
+>>>>>>> .theirs
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -167,8 +180,8 @@ const store = <Store>{
     exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
     lockScreen: <LockScreen>null, // 锁屏密码相关
     nonceMap:new Map<string,number>(),// 本地nonce维护
-    gasPrice:{},// gasPrice分档次
-    btcMinerFee:{},// btc minerfee 分档次
+    gasPrice:null,// gasPrice分档次
+    btcMinerFee:null,// btc minerfee 分档次
     realUserMap:new Map<string,boolean>(),// 本地真实用户map
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额

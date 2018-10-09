@@ -23,6 +23,7 @@ export enum LoginState {
 
 // 云端货币类型
 export enum CurrencyType {
+    CNYT = 99,//临时
     KT = 100,
     ETH,
     BTC
@@ -30,6 +31,7 @@ export enum CurrencyType {
 
 // 枚举云端货币类型
 export const CurrencyTypeReverse = {
+    99 : 'CNYT',
     100: 'KT',
     101: 'ETH',
     102:'BTC'

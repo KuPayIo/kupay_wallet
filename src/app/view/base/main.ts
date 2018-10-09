@@ -16,7 +16,7 @@ import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
 
-import { fetchCoinGain, mnemonicFragmentDecrypt, mnemonicFragmentEncrypt } from '../../utils/tools';
+import { fetchCoinGain, mnemonicFragmentDecrypt, mnemonicFragmentEncrypt, isValidAddress } from '../../utils/tools';
 
 import { getDeviceInfo } from '../../logic/native';
 
@@ -54,7 +54,6 @@ export const run = (cb): void => {
     // popNewPage();
     // 后台切前台
     // backToFront();
-
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
