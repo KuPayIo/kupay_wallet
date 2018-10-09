@@ -1276,5 +1276,5 @@ const isETHValidAddress = (addr:string) => {
 
 // 获取当前显示版本号
 export const getCurShowVersion = () => {
-    return version.slice(0,version.length - 5);
+    return version.slice(0,version.length - 7);
 };

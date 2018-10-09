@@ -1255,7 +1255,7 @@ export const uploadFile = async (base64) => {
             console.log('!!!!!!!!!!!',res);
             if (res.result === 1) {
                 const sid = res.sid;
-                const userInfo = find('userInfo');
+                const userInfo = find('userInfo') || {};
                 userInfo.avatar = sid;
                 userInfo.fromServer = false;
                 updateStore('userInfo',userInfo);
