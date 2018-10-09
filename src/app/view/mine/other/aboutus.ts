@@ -6,7 +6,7 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { shareDownload } from '../../../net/pull';
-import { getLanguage, popNewMessage, getCurShowVersion } from '../../../utils/tools';
+import { getLanguage, popNewMessage, getLocalVersion } from '../../../utils/tools';
 // =========================================导出
 declare var pi_modules;
 export class Aboutus extends Widget {
@@ -16,7 +16,7 @@ export class Aboutus extends Widget {
         super.create();
         const cfg = getLanguage(this);
         this.state = {
-            version:getCurShowVersion(),
+            version:getLocalVersion(),
             data:[
                 { value: cfg.itemTitle[0],components:'app-view-mine-other-privacypolicy' },
                 { value: cfg.itemTitle[1],components:'' },

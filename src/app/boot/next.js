@@ -65,6 +65,8 @@ winit.initNext = function () {
 		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 
+	var needUpdate = false;
+
 	// alert('next start');
 	var loadImages = function (util, fm) {
 
@@ -77,7 +79,11 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 
-			loadDir1(util, fm);
+			updateMod.checkUpdate(function (need) {
+				needUpdate = need;
+
+				loadDir1(util, fm);
+			});
 		});
 	}
 
@@ -139,18 +145,12 @@ winit.initNext = function () {
 			var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
 			updatedStore('level_2_page_loaded', true);
 
-			// 测试更新模块
-			updateMod.checkUpdate(function (needUpdate) {
-				if (!needUpdate) return;
-
+			if (needUpdate) {
 				// 注：必须堵住原有的界面操作，不允许任何触发操作
-
 				updateMod.update(function (e) {
 					console.log("update progress: ", e);
 				});
-			});
-
-
+			}
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
