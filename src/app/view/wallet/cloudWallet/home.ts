@@ -46,7 +46,8 @@ export class CloudWalletHome extends Widget {
             balance,
             balanceValue,
             cfgData:cfg,
-            redUP:color.selected === 0
+            redUp:color ? color.selected === 0 :true
+
         };
     }
 
