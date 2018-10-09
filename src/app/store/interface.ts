@@ -23,7 +23,7 @@ export enum LoginState {
 
 // 云端货币类型
 export enum CurrencyType {
-    CNYT = 99,//临时
+    CNYT = 99,// 临时
     KT = 100,
     ETH,
     BTC

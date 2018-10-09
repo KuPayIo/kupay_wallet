@@ -124,13 +124,8 @@ export const initStore = () => {
 type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
-<<<<<<< .mine
- 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo' | 'coinGain' |
- 'btcMinerFee' | 'token' | 'flag' | 'verPhone';
-=======
- 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord' | 'userInfo' | 'coinGain' | 'token' | 'flag' | 'languageSet' | 'verPhone';
-
->>>>>>> .theirs
+'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord' | 'userInfo' | 'coinGain' |
+'token' | 'flag' | 'verPhone';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -139,13 +134,8 @@ type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo';
 type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
-<<<<<<< .mine
- 'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'| 'languageSet' | 'changeColor' | 
-'realUserMap' | 'token';
-=======
- 'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'|
- 'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee';
->>>>>>> .theirs
+ 'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'| 'languageSet' | 'changeColor' |
+'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
