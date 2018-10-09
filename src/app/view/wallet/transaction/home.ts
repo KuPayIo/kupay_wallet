@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../logic/dataCenter';
 import { Addr } from '../../../store/interface';
-import { getBorn, register } from '../../../store/store';
+import { find, getBorn, register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
@@ -39,13 +39,15 @@ export class TransactionHome extends Widget {
         const balanceValue =  rate * balance;
         const txList = this.parseTxList();
         const canConvert = this.canConvert();
+        const color = find('changeColor');
         this.state = {
             balance,
             balanceValue:formatBalanceValue(balanceValue),
             rate:formatBalanceValue(rate),
             txList,
             canConvert,
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            redUp:color.selected === 0
         };
         
     }

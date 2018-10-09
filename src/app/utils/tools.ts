@@ -2,15 +2,15 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
+import { closeCon } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { uploadFileUrlPrefix, openAndGetRandom } from '../net/pull';
+import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
-import { find, getBorn, updateStore, initStore, logoutInit } from '../store/store';
+import { find, getBorn, initStore, logoutInit, updateStore } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys } from './constants';
-import { closeCon } from '../../pi/net/ui/con_mgr';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -1005,7 +1005,7 @@ export const fetchCoinGain = () => {
         if (MainChainCoin.hasOwnProperty(k)) {
             const gain = Math.random();
             item.gain =  gain > 0.5 ? formatBalanceValue(gain) : formatBalanceValue(-gain);
-            if(k === 'KT'){
+            if (k === 'KT') {
                 item.gain = 0;
             }
             coinGain.set(k,item.gain);
@@ -1109,7 +1109,7 @@ export const base64ToFile = (base64:string) => {
  */
 export const getUserInfo = () => {
     const userInfo = find('userInfo');
-    if(!userInfo) return;
+    if (!userInfo) return;
     let nickName = userInfo.nickName;
     if (!nickName) {
         const wallet = find('curWallet');
@@ -1223,11 +1223,10 @@ export const mnemonicFragmentDecrypt = (fragment:string) => {
     };
 };
 
-
 /**
  * 注销账户
  */
-export const logoutAccount = ()=>{
+export const logoutAccount = () => {
     logoutInit();
     openAndGetRandom();
-}
+};

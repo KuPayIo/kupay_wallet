@@ -22,6 +22,7 @@ export class WalletHome extends Widget {
             assetList:fetchWalletAssetList(),
             cfgData:getLanguage(this)
         };
+        this.paint();
     }
 
     public updateBalance() {
@@ -75,5 +76,11 @@ register('coinGain',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
+    }
+});
+register('languageSet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
     }
 });

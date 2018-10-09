@@ -7,7 +7,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, CHisRec, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal, Product,PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, ChangeColor, CHisRec, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal,Product, PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -111,7 +111,10 @@ export const initStore = () => {
 
     // 初始化默认兑换汇率列表
     store.exchangeRateJson = fetchDefaultExchangeRateJson();
-
+    // 初始化语言设置
+    store.languageSet = findByLoc('languageSet');
+    // 初始话化涨跌颜色设置
+    store.changeColor = findByLoc('changeColor');
 };
 
 // tslint:disable-next-line:max-line-length
@@ -119,7 +122,7 @@ type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walle
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
  'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord'| 'gasPrice' | 'userInfo' | 'coinGain' |
- 'btcMinerFee' | 'token' | 'flag' | 'languageSet' | 'verPhone';
+ 'btcMinerFee' | 'token' | 'flag' | 'verPhone';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
 
@@ -128,8 +131,8 @@ type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo';
 type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
- 'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'|
- 'realUserMap' | 'token';
+ 'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'| 'languageSet' | 'changeColor' | 
+'realUserMap' | 'token';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -196,7 +199,8 @@ const store = <Store>{
     // 已购买理财产品
     purchaseRecord:<PurchaseRecordOne[]>[],
     lastGetSmsCodeTime:0,
-    languageSet:<LanguageSet>null,
+    languageSet:<LanguageSet>null, // 语言设置
+    changeColor:<ChangeColor>null, // 涨跌颜色设置
     verPhone:<number>null  // 验证手机号码
 };
 

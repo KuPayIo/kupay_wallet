@@ -1,7 +1,7 @@
 .mine{
     display: flex;
     animation: switchWalletPageIn linear .2s forwards;
-    margin-bottom: 110px;
+    /* margin-bottom: 110px; */
     overflow: hidden;
     background: rgba(2, 2, 2, 0.5);        
 }

@@ -1,7 +1,5 @@
 .asset-container{
     padding: 0 20px;
-    display: flex;
-    flex-direction: column;
 }
 .total-asset-container{
     height: 120px;
@@ -30,9 +28,8 @@
     margin-top: 15px;
 }
 .container{
-    overflow-x: hidden;
-    overflow-y: auto;
-    margin-bottom: 130px;
+    margin-bottom: 120px;
+    flex: 1 0 0;
 }
 .fmImg{
     height: 40px;

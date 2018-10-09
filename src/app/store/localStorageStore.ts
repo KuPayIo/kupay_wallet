@@ -28,18 +28,18 @@ export const initLocalStorageStore = () => {
     
     register('curWallet', (curWallet: Wallet) => {
         const locWallets = JSON.parse(localStorage.getItem('wallets'));
-        if (!curWallet){
+        if (!curWallet) {
             let index = -1;
-            for(let i =0 ;i< locWallets.walletList.length;i++){
-                if(locWallets.curWalletId === locWallets.walletList[i].walletId){
+            for (let i = 0 ;i < locWallets.walletList.length;i++) {
+                if (locWallets.curWalletId === locWallets.walletList[i].walletId) {
                     index = i;
                     break;
                 }
             }
             locWallets.walletList.splice(index,1);
-            locWallets.salt = "";
-            locWallets.curWalletId = "";
-        }else{
+            locWallets.salt = '';
+            locWallets.curWalletId = '';
+        } else {
             locWallets.walletList = locWallets.walletList.map(v => {
                 if (v.walletId === curWallet.walletId) {
                     v = curWallet;
@@ -64,7 +64,7 @@ export const initLocalStorageStore = () => {
     });
 
     register('addrs', (addrs: Addr[]) => {
-        if(!addrs) return;
+        if (!addrs) return;
         const firstEthAddr = getFirstEthAddr();
         const addrsMap = new Map<string,Addr[]>(getLocalStorage('addrsMap'));
         addrsMap.set(firstEthAddr,addrs);
@@ -72,13 +72,12 @@ export const initLocalStorageStore = () => {
     });
     
     register('transactions', (transactions: TransRecordLocal[]) => {
-        if(!transactions) return;
+        if (!transactions) return;
         const firstEthAddr = getFirstEthAddr();
         const transactionsMap = new Map<string,TransRecordLocal[]>(getLocalStorage('transactionsMap'));
         transactionsMap.set(firstEthAddr,transactions);
         localStorage.setItem('transactionsMap', JSON.stringify(transactionsMap));
     });
-    
     
     // 锁屏相关
     register('lockScreen', (ls: LockScreen) => {
@@ -119,13 +118,11 @@ export const initLocalStorageStore = () => {
         setLocalStorage('inviteRedBagRecMap', inviteRedBagRecMap);
     });
     
-    
     // shapeshift交易记录
     register('shapeShiftTxsMap',(shapeShiftTxsMap:Map<string,ShapeShiftTxs>) => {
         setLocalStorage('shapeShiftTxsMap',shapeShiftTxsMap);
     });
     
-
     register('lastGetSmsCodeTime',(lastGetSmsCodeTime:number) => {
         setLocalStorage('lastGetSmsCodeTime',lastGetSmsCodeTime);
     });
@@ -142,5 +139,15 @@ export const initLocalStorageStore = () => {
      // 本地token
     register('token',(token:string) => {
         setLocalStorage('token',token);
+    });
+
+    // 语言设置
+    register('languageSet',(language) => {
+        setLocalStorage('languageSet',language);
+    });
+
+    // 涨跌颜色设置
+    register('changeColor',(language) => {
+        setLocalStorage('changeColor',language);
     });
 };

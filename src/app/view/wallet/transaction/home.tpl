@@ -19,7 +19,11 @@
     </div>
     <div w-class="show-container">
         <div w-class="quotes">{{it1.cfgData.tabs[3]}}&nbsp;￥{{it1.rate}}/{{it.currencyName}}</div>
+        {{if it1.redUp}}
         <div w-class="{{it.gain > 0 ? 'up' : 'down'}}">{{it1.cfgData.tabs[4]}}&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
+        {{else}}
+        <div w-class="{{it.gain > 0 ? 'down' : 'up'}}">{{it1.cfgData.tabs[4]}}&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
+        {{end}}
     </div>
     <div w-class="body">
         <div w-class="tx-list-container">

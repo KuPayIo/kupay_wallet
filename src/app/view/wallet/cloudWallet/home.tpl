@@ -17,7 +17,11 @@
     </div>
     <div w-class="show-container">
         <div w-class="quotes">{{it1.cfgData.quotation}}&nbsp;￥{{it1.rate}}/{{it.currencyName}}</div>
+        {{if it1.redUP}}
         <div w-class="{{it1.gain > 0 ? 'up' : 'down'}}">{{it1.cfgData.today}}&nbsp;{{it1.gain > 0 ? '+' : ''}}{{it1.gain}}%</div>
+        {{else}}
+        <div w-class="{{it1.gain > 0 ? 'down' : 'up'}}">{{it1.cfgData.today}}&nbsp;{{it1.gain > 0 ? '+' : ''}}{{it1.gain}}%</div>
+        {{end}}
     </div>
     <div w-class="body">
         {{for i,v of it1.tabs}} {{let isActive = i===it1.activeNum}}

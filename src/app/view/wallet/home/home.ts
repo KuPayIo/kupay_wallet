@@ -33,6 +33,7 @@ export class Home extends Widget {
             totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets()),
             cfgData:cfg
         };
+        this.paint();
     }
     public tabsChangeClick(event: any, value: number) {
         this.state.activeNum = value;
@@ -41,7 +42,7 @@ export class Home extends Widget {
 
     public userInfoChange() {
         const userInfo = getUserInfo();
-        if(!userInfo) return;
+        if (!userInfo) return;
         this.state.avatar = userInfo.avatar;
         this.paint();
     }
@@ -80,5 +81,11 @@ register('cloudBalance',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
+    }
+});
+register('languageSet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
     }
 });
