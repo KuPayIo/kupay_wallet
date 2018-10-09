@@ -143,4 +143,14 @@ export const initLocalStorageStore = () => {
     register('token',(token:string) => {
         setLocalStorage('token',token);
     });
+
+    // 缓存gasPrice
+    register('gasPrice',(gasPrice)=>{
+        setLocalStorage('gasPrice',gasPrice);
+    });
+
+     // 缓存gasPrice
+     register('btcMinerFee',(btcMinerFee)=>{
+        setLocalStorage('btcMinerFee',btcMinerFee);
+    });
 };

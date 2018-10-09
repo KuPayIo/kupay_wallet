@@ -98,7 +98,7 @@ export class Home extends Widget {
             }
         } else if (ind === 5) {
             // window.open('https://github.com/KuPayIo/kupay_wallet');
-            openNewActivity('https://github.com/KuPayIo/kupay_wallet');
+            openNewActivity('https://github.com/KuPayIo/kupay_wallet','KuPay');
         } else {
             popNew(this.state.list[ind].components);
         }
@@ -159,12 +159,12 @@ export class Home extends Widget {
 register('curWallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });
 register('userInfo', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });

@@ -4,7 +4,7 @@
 // ===============================================导入
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
-import { getLanguage } from '../../../utils/tools';
+import { getLanguage, getCurShowVersion } from '../../../utils/tools';
 // ==================================================导出
 
 export class ContanctUs extends Widget {
@@ -13,6 +13,7 @@ export class ContanctUs extends Widget {
         super.create();
         const cfg = getLanguage(this);
         this.state = {
+            version:getCurShowVersion(),
             data:[
                 { value: cfg.itemTitle[0],desc:'www.Kuplay.io' },
                 { value: cfg.itemTitle[1],desc:cfg.itemTitle[2] },
@@ -31,7 +32,7 @@ export class ContanctUs extends Widget {
             // 点击KuPay官网
             case 0:
                 // window.open('http://www.KuPay.io'); 
-                openNewActivity('http://www.KuPay.io');
+                openNewActivity('http://www.KuPay.io','KuPay');
                 break;
             // KuPay小助手
             case 1:

@@ -57,7 +57,7 @@ export const doScanQrCode = (ok?,cancel?) => {
 /**
  * 打开新网页
  */
-export const openNewActivity = (url:string,title:string= '测试') => {
+export const openNewActivity = (url:string,title:string= '') => {
     const newWebView = new WebViewHelper();
     newWebView.init();
     newWebView.open({

@@ -263,12 +263,15 @@ export const getRandom = async () => {
  * 获取所有的货币余额
  */
 export const getCloudBalance = () => {
+    if(!find('conRandom')) return;
     const list = [];
+    list.push(CurrencyType['KT']);
     for (const k in CurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
             list.push(CurrencyType[k]);
         }
     }
+    
     const msg = { type: 'wallet/account@get', param: { list:`[${list}]` } };
     
     return requestAsync(msg).then(balanceInfo => {
@@ -638,8 +641,9 @@ export const getUserInfoFromServer = async (uids: [number]) => {
 
     try {
         const res = await requestAsync(msg);
-        if (res.value[0]) {
-            const userInfo = JSON.parse(unicodeArray2Str(res.value[0]));
+        const userInfoStr = unicodeArray2Str(res.value[0]);
+        if (userInfoStr) {
+            const userInfo = JSON.parse(userInfoStr);
             userInfo.fromServer = true;
             console.log(userInfo);
             updateStore('userInfo',userInfo);

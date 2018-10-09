@@ -53,7 +53,7 @@ export class ShareMnemonic extends Widget {
         if (allShared) {
             deleteMnemonic();
             popNewMessage(this.state.cfgData.tips);
-            this.ok && this.ok();
+            // this.ok && this.ok();
         }
     }
 }
