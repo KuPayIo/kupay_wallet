@@ -26,22 +26,22 @@ div{
     background: rgba(255,255,255,0.80);
 }
 
-
+/* 侧边栏覆盖层进入 */
 @keyframes switchWalletPageIn{
     0% {background-color: rgba(2, 2, 2, 0);}
     100% {background-color: rgba(2, 2, 2, 0.5);}
 }
-
+/* 侧边栏覆盖层出去 */
 @keyframes switchWalletPageOut{
     0% {background-color: rgba(2, 2, 2, 0.5);}
     100% {background-color: rgba(2, 2, 2, 0);}
 }
-
+/* 侧边栏进入 */
 @keyframes switchWalletIn{
     0% {margin-left: -630px;flex: 0;}
     100% {margin-left: 0px;flex: 1;}
 }
-
+/* 侧边栏出去 */
 @keyframes switchWalletOut{
     0% {margin-left: 0px;flex: 1;}
     100% {margin-left: -630px;flex: 0;}
@@ -53,9 +53,21 @@ div{
     border: none !important;
     outline: none !important;
 }
-
+/* 开红包按钮转动 */
 @keyframes rotated{
     0% {transform: rotateY(0deg);}
     100% {transform: rotateY(360deg);}
 }
-
+/* 密码输入框下方线条颜色变化 */
+@keyframes line1{
+    0% {flex:0;width: 0;}
+    100% {flex:1}
+}
+@keyframes line2{
+    0% {flex:0;width: 0;}    
+    100% {flex:1}
+}
+@keyframes line3{
+    0% {flex:0;width: 0;}
+    100% {flex:1}
+}

@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType } from '../../../store/interface';
-import { getBorn, register } from '../../../store/store';
+import { find, getBorn, register } from '../../../store/store';
 import { formatBalanceValue, getLanguage, popNewMessage } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -28,6 +28,7 @@ export class CloudWalletHome extends Widget {
         const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
         const balanceValue = formatBalanceValue(rate * balance);
         const cfg = getLanguage(this); 
+        const color = find('changeColor');
         this.state = {
             tabs:[{
                 tab:cfg.other,
@@ -44,7 +45,8 @@ export class CloudWalletHome extends Widget {
             rate:formatBalanceValue(rate),
             balance,
             balanceValue,
-            cfgData:cfg
+            cfgData:cfg,
+            redUP:color.selected === 0
         };
     }
 

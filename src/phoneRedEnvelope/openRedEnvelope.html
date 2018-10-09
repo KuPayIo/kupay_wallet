@@ -14,7 +14,7 @@
             <div class="redEnv-leave-message" id="message">恭喜发财 万事如意</div>
             <div class="redEnv-tag" id="describe">您收到一个邀请红包</div>
             <img src="image/open.png" class="redEnv-open" onclick="openRedEnvelopeClick()" id="openRedEnv"/>
-            <div class="redEnv-look">看看大家手气></div>
+            <div class="redEnv-look" id="look">看看大家手气></div>
         </div>
     </div>
 </body>
@@ -22,6 +22,7 @@
 
 const search = window.location.search;
 const itype = parseUrlParams(search,'type');
+const lan = getLanguage();
 if(window.localStorage.takeRedBag){
     // window.location.href = './redEnvelopeDetail.html';
 }
@@ -32,7 +33,7 @@ switch (itype) {
             type:itype,
             rid:parseUrlParams(search,'rid'),
             lm:window.decodeURIComponent(parseUrlParams(search,'lm')),
-            desc:'您收到一个红包',
+            desc:lan.redEnvDesc[0],
         };
         break;
     case RedEnvelopeType.Random:
@@ -40,15 +41,15 @@ switch (itype) {
             type:itype,
             rid:parseUrlParams(search,'rid'),
             lm:window.decodeURIComponent(parseUrlParams(search,'lm')),
-            desc:'金额随机，试试手气',
+            desc:lan.redEnvDesc[1],
         };
         break;
     case RedEnvelopeType.Invite:
         state = {
             type:itype,
             cid:parseUrlParams(search,'cid'),
-            lm:'KuPay大礼包',
-            desc:'您收到一个邀请红包',
+            lm:lan.redEnvDesc[2],
+            desc:lan.redEnvDesc[3],
         };
         break;
     default:
@@ -56,6 +57,7 @@ switch (itype) {
 (function init(){
     document.getElementById('message').innerText = state.lm;
     document.getElementById('describe').innerText = state.desc;
+    document.getElementById('look').innerText = lan.redEnvLook;
 })();
 
  /**
@@ -92,7 +94,7 @@ function openRedEnvelopeClick() {
             cid:state.cid,
             cidShow:`${RedEnvelopeType.Invite}${state.cid}`,
             amount:0.015,
-            leaveMsg:'KuPay大礼包'
+            leaveMsg:lan.redEnvDesc[2]
         };
         window.localStorage.takeRedBag=JSON.stringify(redEnvelope);
         window.location.href = './redEnvelopeDetail.html';
@@ -122,19 +124,19 @@ function openNormalRedEnvelope() {
                 window.location.href = './redEnvelopeDetail.html';
                 break;
             case 701:
-                popMessage("红包不存在");
+                popMessage(lan.errorList[0]);
                 break;
             case 702:
-                popMessage("红包已领完");
+                popMessage(lan.errorList[1]);
                 break;
             case 703:
-                popMessage("红包已过期");
+                popMessage(lan.errorList[2]);
                 break;
             case 704:
-                popMessage("红包已领取过");
+                popMessage(lan.errorList[3]);
                 break;
             default:
-                popMessage("出错啦");   
+                popMessage(lan.errorList[4]);   
         }
     },500);
 }

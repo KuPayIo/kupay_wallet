@@ -219,3 +219,9 @@ register('curWallet', () => {
         w.init(); // 注销钱包后初始化
     }
 });
+register('languageSet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});

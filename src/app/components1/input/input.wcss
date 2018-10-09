@@ -49,13 +49,14 @@
     cursor: not-allowed;
     font-size: 32px;
 }
-.pi-input__suffix{
+.clearBtn{
     display: inline-block;
     width: 36px;
     height: 36px;
     border-radius: 50%;
+    border: 15px solid transparent;
     position: absolute;
-    right: 15px;
+    right: 0;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;

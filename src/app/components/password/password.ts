@@ -10,7 +10,6 @@
  */
 // ================================ 导入
 import { Json } from '../../../pi/lang/type';
-import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { getLanguage } from '../../utils/tools';
@@ -65,13 +64,6 @@ export class ImgRankItem extends Widget {
         const limit = this.props.limit ? this.props.limit :1;
         const length = this.props.length ? this.props.length :8;
         
-        if (!this.availableJudge(psw) && psw.length > 0) {
-            popNew('app-components-message-message',{ content:this.state.cfgData.disAvailable });
-            this.paint();
-            
-            return;
-        }
-
         if (psw.length < length && psw.length > 0) {
             secret = 1; 
             this.state.showTips = true;
@@ -115,14 +107,6 @@ export class ImgRankItem extends Widget {
         this.state.secret = 0;
         this.paint(true);
     }
-    /**
-     * 判断输入的字符是否符合规则
-     */
-    public availableJudge(psw:string) {
-        const reg = /^[0-9a-zA-Z!“#$%&‘()*+,\-./:;<=>?@\[\]^_`{\|}~]+$/;
-        
-        return reg.test(psw);
-    }
 
     /**
      * 判断密码强度
@@ -132,7 +116,7 @@ export class ImgRankItem extends Widget {
         const reg1 = /[0-9]+/; 
         const reg2 = /[a-z]+/; 
         const reg3 = /[A-Z]+/;
-        const reg4 = /[!“#$%&‘()*+,\-./:;<=>?@\[\]^_`{\|}~]+/; // 特殊字符集
+        const reg4 = /[!"#$%&'()*+,\-./:;<=>?@\[\]^_`{\|}~]+/; // 特殊字符集
         let num = 0;
         if (reg1.test(psw)) {
             num++;

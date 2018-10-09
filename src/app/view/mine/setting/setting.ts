@@ -24,7 +24,13 @@ export class Setting extends Widget {
 
     public create() {
         super.create();
+        this.init();
+    }
+    
+    public init() {
         const cfg = getLanguage(this);
+        const lan = find('languageSet');
+        const color = find('changeColor');
         this.state = {
             lockScreenPsw:'',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
@@ -32,9 +38,9 @@ export class Setting extends Widget {
             numberOfErrors: 0,  // 锁屏密码输入错误次数
             errorTips: cfg.errorTips,
             itemList:[ 
-                { title: cfg.itemTitle[3],list: cfg.languageSet,selected:0 },
+                { title: cfg.itemTitle[3],list: cfg.languageSet,selected:lan ? lan.selected :0 },
                 { title: cfg.itemTitle[4],list: ['CNY','USD'],selected:0 },
-                { title: cfg.itemTitle[5],list: cfg.changeColor,selected:0 }
+                { title: cfg.itemTitle[5],list: cfg.changeColor,selected:color ? color.selected :0 }
             ],
             userHead:'../../../res/image/default_avater_big.png',   // 用户头像
             userName:cfg.defaultName,  // 用户名称
@@ -206,9 +212,19 @@ export class Setting extends Widget {
             console.log(data);
             popNew('app-view-mine-setting-itemList',data,(index) => {
                 this.state.itemList[ind - 2].selected = index;
-                // if (ind === 2) {
-                //     updateStore('languageSet',{ selected:index,languageList:this.state.cfgData.languageSet });  // 更新语言设置
-                // }
+                if (ind === 2) {
+                    // tslint:disable-next-line:max-line-length
+                    updateStore('languageSet',{ // 更新语言设置
+                        selected:index === 2 ? 0 :index,
+                        languageList:['simpleChinese','tranditionalChinese','English'] 
+                    }); 
+                } else if (ind === 4) {
+                    // tslint:disable-next-line:max-line-length
+                    updateStore('changeColor',{ // 更新涨跌颜色设置
+                        selected:index,
+                        colorList:['redUp','greenUp']
+                    }); 
+                }
                 this.paint();
             });
         }
@@ -282,7 +298,7 @@ export class Setting extends Widget {
 register('languageSet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initData();
+        w.init();
     }
 });
 register('userInfo', () => {

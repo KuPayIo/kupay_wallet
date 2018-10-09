@@ -1262,18 +1262,3 @@ export const uploadFile = async (base64) => {
             }
         });
 };
-
-/**
- * 语言设置
- */
-export const languageSet = {
-    simpleChinese:{
-        
-    },
-    tranditionalChinese:{
-
-    },
-    english:{
-
-    }
-};

@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
 import { find, register } from '../../../store/store';
-import { copyToClipboard, getFirstEthAddr, getLanguage, popPswBox, getUserInfo } from '../../../utils/tools';
+import { copyToClipboard, getFirstEthAddr, getLanguage, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出
@@ -19,6 +19,10 @@ export class Home extends Widget {
     public ok:() => void;
     public create() {
         super.create();
+        this.init();
+    }
+
+    public init() {
         const cfg = getLanguage(this);
         const wallet = find('curWallet');
         let hasBackupMnemonic = false;
@@ -80,7 +84,7 @@ export class Home extends Widget {
         const ret = await backupMnemonic(psw);
         if (ret) {
             popNew('app-view-wallet-backup-index',{ ...ret });
-            this.ok && this.ok();
+            // this.backPrePage();
         }
     }
 
@@ -102,7 +106,7 @@ export class Home extends Widget {
         } else {
             popNew(this.state.list[ind].components);
         }
-        this.backPrePage();
+        // this.backPrePage();
     }
 
     /**
@@ -138,7 +142,7 @@ export class Home extends Widget {
      */
     public showMyQrcode() {
         popNew('app-view-mine-other-addFriend');
-        this.backPrePage();
+        // this.backPrePage();
     }
 
     /**
@@ -150,7 +154,7 @@ export class Home extends Widget {
         } else {
             popNew('app-view-wallet-create-home');
         }
-        this.backPrePage();
+        // this.backPrePage();
     }
 }
 
@@ -166,5 +170,11 @@ register('userInfo', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
+    }
+});
+register('languageSet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
     }
 });

@@ -18,9 +18,9 @@
                     <div class="detail-amount"><span id="amount">1</span><span class="detail-currency-name" id="currencyName">KT</span></div>
                     <div class="detail-input-father">
                         <div class="input-father" id="code">000000</div>
-                        <div class="detail-copy-btn" onclick="copyBtnClick()">复制红包码</div>
+                        <div class="detail-copy-btn" onclick="copyBtnClick()" id="copyBtn">复制红包码</div>
                     </div>
-                    <div class="detail-receive" onclick="receiveClick()">立即领取红包金额</div>
+                    <div class="detail-receive" onclick="receiveClick()" id="receiveBtn">立即领取红包金额</div>
                 </div>
                 
                 <div class="detail-bottom" id="detailBottom">
@@ -31,12 +31,9 @@
                 </div>
 
                 <div class="detail-rule">
-                    <div class="detail-rule-title">红包领取规则</div>
-                    <div class="detail-rule-list">
-                        <div class="detail-rule-item">1.安装KuPay，创建钱包</div>
-                        <div class="detail-rule-item">2.在钱包里点击发现-发红包</div>
-                        <div class="detail-rule-item">3.输入收到的红包码，红包金额将自动到账</div>
-                        <div class="detail-rule-item">4.同一个红包，每人只能领取一次</div>
+                    <div class="detail-rule-title" id="ruleTitle">红包领取规则</div>
+                    <div class="detail-rule-list" id="ruleList">
+                       <!-- 红包领取规则介绍 -->
                     </div>
                 </div>
             </div>
@@ -47,11 +44,19 @@
 <script>
 
 const props = JSON.parse(window.localStorage.takeRedBag);
+const lan = getLanguage();
 (function init(){
     document.getElementById('message').innerText = props.leaveMsg;
     document.getElementById('amount').innerText = props.amount;
     document.getElementById('currencyName').innerText = CurrencyTypeReverse[props.ctype];
     document.getElementById('code').innerText = props.cidShow;
+    document.getElementById('copyBtn').innerText = lan.copyBtn;
+    document.getElementById('receiveBtn').innerText = lan.receiveBtn;
+    document.getElementById('ruleTitle').innerText = lan.tips[2];
+    document.getElementById("ruleList").innerHTML = "<div class='detail-rule-item'>"+lan.tips[3]+"</div>"+
+                        "<div class='detail-rule-item'>"+lan.tips[4]+"</div>"+
+                        "<div class='detail-rule-item'>"+lan.tips[5]+"</div>"+
+                        "<div class='detail-rule-item'>"+lan.tips[6]+"</div>"
 })();
 
 if(props.rtype!==99){
@@ -69,7 +74,7 @@ function getDetail(){
     console.log(res);
 
     if (res.result !== 1) {
-        popMessage("出错啦！");
+        popMessage(lan.errorList[4]);
         return;
     }
     const l = res.value[1];
@@ -101,7 +106,7 @@ function getDetail(){
     totalAmount = totalAmount;
 
     document.getElementById('detailBottom').style.display = 'block';
-    document.getElementById('detailTitle').innerText = '已领取'+convertedNumber+'/'+totalNumber+'，共'+totalAmount+ CurrencyTypeReverse[props.ctype];
+    document.getElementById('detailTitle').innerText = lan.tips[0]+convertedNumber+'/'+totalNumber+'，'+lan.tips[1]+totalAmount+ CurrencyTypeReverse[props.ctype];
     // 领取红包，其他用户获得的红包列表
     if(!redBagList){
         return;
