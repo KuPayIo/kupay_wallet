@@ -411,7 +411,6 @@ export class DataCenter {
             nonce:-1,
         }
         this.updateTransactionLocalStorage(record);
-        console.log('定时更新交易',{tx:record,time:new Date().getTime()});
     }
 
 
@@ -631,6 +630,7 @@ export class DataCenter {
         },delay);
         this.resetTxTimer(hash,timer);
         console.log('定时更新交易记录',{
+            currencyName,
             hash,
             delay,
             timer,
