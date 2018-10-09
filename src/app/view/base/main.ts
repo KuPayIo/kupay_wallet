@@ -16,7 +16,7 @@ import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
 
-import { fetchCoinGain, mnemonicFragmentDecrypt, mnemonicFragmentEncrypt, isValidAddress } from '../../utils/tools';
+import { fetchCoinGain, isValidAddress, mnemonicFragmentDecrypt, mnemonicFragmentEncrypt } from '../../utils/tools';
 
 import { getDeviceInfo } from '../../logic/native';
 
@@ -49,11 +49,12 @@ export const run = (cb): void => {
     },500);
     // dataCenter.init();
     popNew('app-view-base-app');
-    // popNew('app-view-mine-account-privateDetail');
-    getDeviceInfo();
+    // popNew('app-components-keyboard-keyboard',{ title:'哈哈哈哈' });
+    // popNew('app-view-mine-home-home');
+    // getDeviceInfo();
     // popNewPage();
     // 后台切前台
-    // backToFront();
+    backToFront();
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
@@ -103,14 +104,14 @@ export const run = (cb): void => {
  */
 const popNewPage = () => {
     const readedPriAgr = find('readedPriAgr');
-    if (readedPriAgr) {
+    if (!readedPriAgr) {
         popNew('app-view-base-app');
         if (ifNeedUnlockScreen()) {
-            popNew('app-view-mine-lockScreen-unlockScreen-unlockScreen',{ firstEnter:true });
+            // popNew('app-components-keyboard-keyboard',{ title:'哈哈哈哈' });
         }
 
     } else {
-        popNew('app-view-guidePages-privacyAgreement');
+        // popNew('app-view-guidePages-privacyAgreement');
     }
 };
 const checkUpdate = () => {
@@ -124,7 +125,7 @@ const checkUpdate = () => {
 const backToFront = () => {
     (<any>window).handle_app_lifecycle_listener = (iType: string) => {
         if ((iType === 'onAppResumed') && ifNeedUnlockScreen()) {
-            popNew('app-view-mine-lockScreen-unlockScreen-unlockScreen',{ firstEnter:false });
+            popNew('app-view-mine-setting-lockScreenPage');
         } else if (iType === 'onBackPressed') {
             backCall();
             // (<any>window).onpopstate();
@@ -139,7 +140,7 @@ const backToFront = () => {
  * 是否需要解锁屏幕
  */
 const ifNeedUnlockScreen = () => {
-    const unlockScreen = document.querySelector('#unlock-screen');
+    const unlockScreen = document.getElementById('keyboard');
     if (unlockScreen) return false;
     const ls: LockScreen = find('lockScreen');
     const lockScreenPsw = ls.psw;

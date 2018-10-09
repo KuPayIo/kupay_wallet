@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { setUserInfo } from '../../../net/pull';
 import { LockScreen } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
-import { getLanguage, lockScreenHash, lockScreenVerify, logoutAccount, popPswBox, getUserInfo } from '../../../utils/tools';
+import { getLanguage, getUserInfo, lockScreenHash, lockScreenVerify, logoutAccount, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -125,6 +125,13 @@ export class Setting extends Widget {
     }
 
     /**
+     * 修改锁屏密码
+     */
+    public lockScreen() {
+        popNew('app-view-mine-setting-lockScreenPage');
+    }
+
+    /**
      * 关闭锁屏开关
      */
     public closeLockPsw() {
@@ -152,48 +159,6 @@ export class Setting extends Widget {
         },() => {
             this.closeLockPsw();
         });
-    }
-
-    /**
-     * 输入原锁屏密码
-     */
-    public oldLockPsw(ind:number) {
-        if (ind > 2) {
-            // tslint:disable-next-line:max-line-length
-            popNew('app-components-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput,async (r) => {
-                const wallet = find('curWallet');
-                const fg = await VerifyIdentidy(wallet,r);
-                // const fg = true;
-                if (fg) {
-                    popNew('app-components-keyboard-keyboard',{ title:this.state.cfgData.keyboardTitle[0] },(r) => {
-                        this.state.lockScreenPsw = r;
-                        this.reSetLockPsw();
-                        
-                    },() => {
-                        this.closeLockPsw();
-
-                        return false;
-                    });
-                } 
-            });
-        } else {
-            popNew('app-components-keyboard-keyboard',{ title:this.state.errorTips[ind] },(r) => {
-                if (lockScreenVerify(r)) {
-                    popNew('app-components-keyboard-keyboard',{ title:this.state.cfgData.keyboardTitle[0] },(r) => {
-                        this.state.lockScreenPsw = r;
-                        this.reSetLockPsw();
-                        
-                    },() => {
-                        this.closeLockPsw();
-
-                        return false;
-                    });
-                } else {
-                    this.oldLockPsw(++ind);
-                }
-            });
-        }
-        
     }
 
     /**
