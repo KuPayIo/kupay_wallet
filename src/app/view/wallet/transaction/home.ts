@@ -46,7 +46,7 @@ export class TransactionHome extends Widget {
             txList,
             canConvert,
             cfgData:getLanguage(this),
-            redUp:color.selected === 0
+            redUp:color ? color.selected === 0 :true
         };
         
     }

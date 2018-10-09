@@ -11,7 +11,7 @@
                 <div w-class="description">{{v.description}}</div>
                 <div w-class="balance-container">
                     <div w-class="balance-value">￥{{v.balanceValue}}</div>
-                    {{if it1.redUp}}
+                    {{if it.redUp}}
                     <div w-class="gain {{v.gain >= 0 ? 'gain-up' : 'gain-down'}}">{{v.gain >= 0 ? '+' : ''}}{{v.gain}}%</div>
                     {{else}}
                     <div w-class="gain {{v.gain >= 0 ? 'gain-down' : 'gain-up'}}">{{v.gain >= 0 ? '+' : ''}}{{v.gain}}%</div>
