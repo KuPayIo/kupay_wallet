@@ -2,13 +2,14 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
+import { closeCon } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { Config, ERC20Tokens, MainChainCoin, version } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { uploadFileUrlPrefix, openAndGetRandom } from '../net/pull';
+import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
-import { find, getBorn, updateStore, initStore, logoutInit } from '../store/store';
+import { find, getBorn, initStore, logoutInit, updateStore } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, resendInterval } from './constants';
 
 export const depCopy = (v: any): any => {
@@ -1026,7 +1027,7 @@ export const fetchCoinGain = () => {
         if (MainChainCoin.hasOwnProperty(k)) {
             const gain = Math.random();
             item.gain =  gain > 0.5 ? formatBalanceValue(gain) : formatBalanceValue(-gain);
-            if(k === 'KT'){
+            if (k === 'KT') {
                 item.gain = 0;
             }
             coinGain.set(k,item.gain);
@@ -1243,11 +1244,10 @@ export const mnemonicFragmentDecrypt = (fragment:string) => {
     };
 };
 
-
 /**
  * 注销账户
  */
-export const logoutAccount = ()=>{
+export const logoutAccount = () => {
     logoutInit();
     openAndGetRandom();
 }
@@ -1274,5 +1274,5 @@ const isETHValidAddress = (addr:string)=>{
 
 //获取当前显示版本号
 export const getCurShowVersion = ()=>{
-    return version.slice(0,version.length - 5);
+    return version.slice(0,version.length - 7);
 }

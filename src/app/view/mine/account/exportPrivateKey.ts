@@ -134,6 +134,13 @@ export class ExportPrivateKey extends Widget {
 
         return keys;
     }
+
+    /**
+     * 查看私钥解释
+     */
+    public goDetail() {
+        popNew('app-view-mine-account-privateDetail');
+    }
 }
 
 // ==================================================本地

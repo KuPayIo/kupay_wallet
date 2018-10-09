@@ -32,6 +32,7 @@ export class CloudHome extends Widget {
             productList:find('productList') || [],
             cfgData:getLanguage(this)
         };
+        this.paint();
     }
 
     // 条目点击
@@ -94,4 +95,10 @@ register('productList', async (productList) => {
         w.updateProductList(productList);
     }
     
+});
+register('languageSet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
 });

@@ -13,26 +13,26 @@
     <div class="ga-new-page">
         <div class="ga-main">
             <img class="ga-logo" src="image/img_logo.png"/>
-            <div class="ga-title">KuPay安全的一站式资产管理平台</div>
-            <div class="ga-download-btn" onclick="downloadClick()">立即下载</div>
-            <div class="ga-version">V1.0.1</div>
+            <div class="ga-title" id="title">KuPay安全的一站式资产管理平台</div>
+            <div class="ga-download-btn" onclick="downloadClick()" id="download">立即下载</div>
+            <div class="ga-version">V1.0</div>
             <div class="ga-installation-tutorial">
-                <div class="ga-install-title">Android安装教程</div>
+                <div class="ga-install-title" id="installTutorial">Android安装教程</div>
                 <div class="ga-steps">
                     <div class="ga-step-item">
-                        <div class="ga-box"><span class="ga-step-tag">step&nbsp;1</span><span class="ga-step-content">点击“立即下载”按钮下载安装文件</span></div>
+                        <div class="ga-box"><span class="ga-step-tag">step&nbsp;1</span><span class="ga-step-content" id="step1">点击“立即下载”按钮下载安装文件</span></div>
                         <img src="image/img_logo.png" class="ga-step-img"/>
                     </div>
                 </div>
                 <div class="ga-steps">
                     <div class="ga-step-item">
-                        <div class="ga-box"><span class="ga-step-tag">step&nbsp;2</span><span class="ga-step-content">成功安装KuPay</span></div>
+                        <div class="ga-box"><span class="ga-step-tag">step&nbsp;2</span><span class="ga-step-content" id="step2">成功安装KuPay</span></div>
                         <img src="image/img_logo.png" class="ga-step-img"/>
                     </div>
                 </div>
                 <div class="ga-steps">
                     <div class="ga-step-item">
-                        <div class="ga-box"><span class="ga-step-tag">step&nbsp;3</span><span class="ga-step-content">进入APP并创建钱包</span></div>
+                        <div class="ga-box"><span class="ga-step-tag">step&nbsp;3</span><span class="ga-step-content" id="step3">进入APP并创建钱包</span></div>
                         <img src="image/img_logo.png" class="ga-step-img"/>
                     </div>
                 </div>
@@ -43,4 +43,13 @@
 
     <div class="tipsPage" onclick="closeTips()"></div>
 </body>
+<script>
+    const cfg = getLanguage();
+    document.getElementById('title').innerText = cfg.shortMess;
+    document.getElementById('download').innerText = cfg.immeDownload;
+    document.getElementById('installTutorial').innerText = cfg.installTutorial;
+    document.getElementById('step1').innerText = cfg.step1;
+    document.getElementById('step2').innerText = cfg.step2;
+    document.getElementById('step3').innerText = cfg.step3;
+</script>
 </html>

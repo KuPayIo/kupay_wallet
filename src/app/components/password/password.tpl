@@ -10,7 +10,7 @@
         {{end}}
     </div>
 
-    <div style="display: flex;">
+    <div style="display: flex;flex: 3;">
         <div w-class="line line{{it1.secret>0?it1.secret:''}}"></div>
         <div w-class="line line{{it1.secret>1?it1.secret:''}}"></div>
         <div w-class="line line{{it1.secret>2?it1.secret:''}}"></div>
