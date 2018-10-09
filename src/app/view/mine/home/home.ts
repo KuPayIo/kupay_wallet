@@ -159,12 +159,12 @@ export class Home extends Widget {
 register('curWallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });
 register('userInfo', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });

@@ -3,7 +3,7 @@
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
-import { Config, ERC20Tokens, MainChainCoin } from '../config';
+import { Config, ERC20Tokens, MainChainCoin, version } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { uploadFileUrlPrefix, openAndGetRandom } from '../net/pull';
 // tslint:disable-next-line:max-line-length
@@ -1271,4 +1271,9 @@ const isETHValidAddress = (addr:string)=>{
     if (!addr || !addr.startsWith("0x") || addr.length !== 42) return false;
     if(isNaN(Number(addr))) return false;
     return true;
+}
+
+//获取当前显示版本号
+export const getCurShowVersion = ()=>{
+    return version.slice(0,version.length - 5);
 }

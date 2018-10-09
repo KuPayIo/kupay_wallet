@@ -4,8 +4,7 @@
 // ===============================================导入
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
-import { getLanguage } from '../../../utils/tools';
-import { version } from '../../../config';
+import { getLanguage, getCurShowVersion } from '../../../utils/tools';
 // ==================================================导出
 
 export class ContanctUs extends Widget {
@@ -14,7 +13,7 @@ export class ContanctUs extends Widget {
         super.create();
         const cfg = getLanguage(this);
         this.state = {
-            version,
+            version:getCurShowVersion(),
             data:[
                 { value: cfg.itemTitle[0],desc:'www.Kuplay.io' },
                 { value: cfg.itemTitle[1],desc:cfg.itemTitle[2] },

@@ -12,7 +12,7 @@ export const dev_mode = 'dev';
  * bug修复 1.0.0--->1.0.2
  * 此版本号和更新版本号格式不相同,上架需要修改此两处,以后会把这两处合并为一处
  */
-export const version = '1.0.0';
+export const version = '0.1.0.68e7';
 // 主网erc20
 const ERC20TokensMainnet = {
     BNB:{
