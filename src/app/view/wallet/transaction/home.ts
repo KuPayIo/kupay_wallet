@@ -28,8 +28,7 @@ export class TransactionHome extends Widget {
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        dataCenter.refreshTrans(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
-        dataCenter.refreshBalance();
+        dataCenter.updateAddrInfo(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
         this.init();
     }
     public init() {

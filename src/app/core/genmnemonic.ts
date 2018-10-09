@@ -189,3 +189,26 @@ const wordArrayToByteArray = (data) => {
 
     return a;
 };
+
+/**
+ * yuqiang
+ * 判断助记词是否合法
+ * 
+ */
+export const isValidMnemonic = (language: LANGUAGE, mnemonic: string) => {
+    mnemonic = splitWords(mnemonic);
+    if (mnemonic.length === 0 || mnemonic.length % 3 > 0) {
+        return false;
+    }
+    const wordlist = WORDLISTS[language];
+
+    for (let i = 0; i < mnemonic.length; i++) {
+        const word = mnemonic[i];
+        const wordIndex = wordlist.indexOf(word);
+        if (wordIndex === -1) {
+            return false;
+        }
+    }
+
+    return true;
+}

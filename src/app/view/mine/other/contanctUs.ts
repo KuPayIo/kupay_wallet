@@ -33,7 +33,7 @@ export class ContanctUs extends Widget {
             // 点击KuPay官网
             case 0:
                 // window.open('http://www.KuPay.io'); 
-                openNewActivity('http://www.KuPay.io');
+                openNewActivity('http://www.KuPay.io','KuPay');
                 break;
             // KuPay小助手
             case 1:

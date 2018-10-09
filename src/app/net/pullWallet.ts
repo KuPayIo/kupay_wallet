@@ -66,8 +66,7 @@ export const transfer = async (psw:string,txRecord:TransRecordLocal) => {
         const trans = find('transactions');
         trans.push(tx);
         updateStore('transactions',trans);
-        dataCenter.refreshTrans(tx.addr,tx.currencyName);
-        dataCenter.refreshBalance();
+        dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         popNew('app-components-message-message',{ content:getStaticLanguage().transfer.transSuccess });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
@@ -581,9 +580,8 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
         }
         trans.splice(index,1,tx); // 删除重发前的本地记录
         updateStore('transactions',trans);
-        dataCenter.clearTimer(oldHash);// 删除定时器
-        dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
-        dataCenter.refreshBalance();
+        dataCenter.clearTxTimer(oldHash);// 删除定时器
+        dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         popNew('app-components-message-message',{ content:getStaticLanguage().transfer.againSuccess });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
@@ -623,9 +621,8 @@ export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
         }
         trans.splice(index,1,tx); // 删除重发前的本地记录
         updateStore('transactions',trans);
-        dataCenter.clearTimer(oldHash);// 删除定时器
-        dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
-        dataCenter.refreshBalance();
+        dataCenter.clearTxTimer(oldHash);// 删除定时器
+        dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         getRechargeLogs(tx.currencyName);
         popNew('app-components-message-message',{ content:getStaticLanguage().transfer.againSuccess });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
@@ -650,8 +647,7 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
         const trans = find('transactions');
         trans.push(tx);
         updateStore('transactions',trans);
-        dataCenter.refreshTrans(tx.fromAddr,tx.currencyName);
-        dataCenter.refreshBalance();
+        dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         getRechargeLogs(tx.currencyName);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
