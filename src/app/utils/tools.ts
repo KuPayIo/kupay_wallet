@@ -1274,7 +1274,19 @@ const isETHValidAddress = (addr:string) => {
     return true;
 };
 
-// 获取当前显示版本号
-export const getCurShowVersion = () => {
-    return version.slice(0,version.length - 7);
-};
+
+
+declare var pi_modules;
+
+//获取本地版本号
+export const getLocalVersion = ()=>{
+    const updateMod = pi_modules.update.exports;
+    return updateMod.getLocalVersion();
+}
+
+//获取远端版本号
+export const getRemoteVersion = ()=>{
+    const updateMod = pi_modules.update.exports;
+    return updateMod.getRemoteVersion();
+}
+
