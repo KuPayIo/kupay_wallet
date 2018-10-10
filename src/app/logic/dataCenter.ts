@@ -751,6 +751,22 @@ export class DataCenter {
     }
 }
 
+//==========================三方接口=======================================
+
+// 获取美元对人民币汇率
+export const fetchUSD2CNYRate = ()=>{
+    fetch('http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4',{
+        mode: 'no-cors'
+    })
+    .then(res=>{
+        return res.json()
+    })
+    .then(function(res) {
+      console.log('汇率',res);
+    });
+}
+//======================================================================
+
 // ============================================ 立即执行
 /**
  * 消息处理列表
