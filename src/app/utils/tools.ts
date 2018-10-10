@@ -2,14 +2,12 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
-import { closeCon } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { Config, ERC20Tokens, MainChainCoin, version } from '../config';
+import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
-// tslint:disable-next-line:max-line-length
 import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
-import { find, getBorn, initStore, logoutInit, updateStore } from '../store/store';
+import { find, getBorn, logoutInit, updateStore } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, resendInterval } from './constants';
 
 export const depCopy = (v: any): any => {
