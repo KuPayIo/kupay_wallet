@@ -21,10 +21,10 @@ export class Transfer extends Widget {
     public async setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-       
     }
 
     public async init() {
+        // if(this.props.currencyName ===)
         const cn = (this.props.currencyName === 'ETH' || ERC20Tokens[this.props.currencyName]) ? 'ETH' : 'BTC';
         const toa = timeOfArrival[cn];
         const list = [];

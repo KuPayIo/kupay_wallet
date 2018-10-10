@@ -2,7 +2,6 @@
  * global wallet
  */
 import { ERC20Tokens } from '../config';
-import { dataCenter } from '../logic/dataCenter';
 import { Addr, CurrencyRecord } from '../store/interface';
 import { find } from '../store/store';
 import { btcNetwork, lang, strength } from '../utils/constants';
@@ -21,7 +20,7 @@ export class GlobalWallet {
     private _nickName: string;
     private _currencyRecords: CurrencyRecord[] = [];
     private _addrs: Addr[] = [];
-    private _vault: string;
+    private _vault: string;//加密后的随机数种子
     private _mnemonicBackup: boolean = false;// 助记词备份
     private _publicKey: string;
 

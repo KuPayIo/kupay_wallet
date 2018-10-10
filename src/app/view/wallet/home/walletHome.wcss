@@ -1,5 +1,7 @@
 .asset-container{
     padding: 0 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .total-asset-container{
     height: 120px;
