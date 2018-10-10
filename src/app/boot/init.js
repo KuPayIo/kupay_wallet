@@ -736,7 +736,9 @@ pi_modules.load.exports = (function () {
 	 * @description 创建加载对象
 	 * @example
 	 */
-	module.create = function (files /*:Array<Info>*/ , successCallback /*:function*/ , errorCallback /*:function*/ , processCallback /*:function*/ ) {
+	module.create = function (files /*:Array<Info>*/ ,
+		successCallback /*:function*/ , errorCallback /*:function*/ , processCallback, /*:function*/
+		saveSuccessCallback /*:function*/ , saveErrorCallback /*:function*/ , saveProcessCallback /*:function*/ ) {
 		return {
 			// 多个下载文件
 			files: files,
@@ -747,6 +749,12 @@ pi_modules.load.exports = (function () {
 			onerror: errorCallback || empty,
 			// 加载进度的回调函数
 			onprocess: processCallback || empty,
+			// 保存成功的回调函数
+			onSaveSuccess: saveSuccessCallback || empty,
+			// 保存失败的回调函数
+			onSaveError: saveErrorCallback || empty,
+			// 保存进度的回调函数
+			onSaveProcess: saveProcessCallback || empty,
 			// 所有加载的文件数量
 			loadAmount: 0,
 			/*:number*/
@@ -758,6 +766,9 @@ pi_modules.load.exports = (function () {
 			/*:number*/
 			// 下载到的文件数量
 			downCount: 0,
+			/*:number*/
+			// 保存了的文件数量
+			saveCount: 0,
 			/*:number*/
 			// 下载的总文件长度
 			total: 0,
@@ -1395,6 +1406,17 @@ pi_modules.load.exports = (function () {
 			if (count < 0) {
 				store.write(localStore, "", localSign);
 			}
+
+			// save回调
+			load.saveCount++;
+			load.onSaveProcess({
+				type: "saveFile",
+				total: load.downAmount,
+				count: load.saveCount
+			});
+			if (load.saveCount >= load.downAmount) {
+				load.onSaveSuccess(load.fileMap);
+			}
 		};
 		for (i = count; i >= 0; i--) {
 			info = files[i];
@@ -1417,7 +1439,7 @@ pi_modules.load.exports = (function () {
 	return module;
 })();
 
-// 异步模块请求加载， AMD规范允许输出的模块兼容CommonJS规范， 类似： define(function (require, exports, module){ var someModule = require("someModule");
+// 异步模块请求加载， AMD规范允许输出的模块兼容CommonJS规范， 类似： define(function (require1, exports, module){ var someModule = require1("someModule");
 pi_modules.commonjs = {
 	id: 'commonjs',
 	exports: undefined,
@@ -1891,7 +1913,11 @@ pi_modules.commonjs.exports = (function () {
 })();
 
 // 更新模块
-pi_modules.update = { id: 'update', exports: undefined, loaded: true };
+pi_modules.update = {
+	id: 'update',
+	exports: undefined,
+	loaded: true
+};
 pi_modules.update.exports = (function () {
 	var module = function mod_update() {};
 
@@ -1908,7 +1934,21 @@ pi_modules.update.exports = (function () {
 	var rootPath = undefined;
 	var newIndexJSStr = undefined;
 	var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
-	
+
+	var localVersion = [];
+	var remoteVersion = [];
+
+	var saveID = 0;
+	var saveMap = {};
+
+	window.handle_update_save = function (saveID) {
+		if (saveID in saveMap) {
+			var callback = saveMap[saveID];
+			delete saveMap[saveID];
+			callback && callback();
+		}
+	}
+
 	/**
 	 * 
 	 * @param {string} bootDirectory 引导目录
@@ -1920,8 +1960,21 @@ pi_modules.update.exports = (function () {
 		domain = depend.domains[0];
 		rootPath = depend.rootPath();
 
-		setResInfoServer(depend.domains, rootPath + bootDir, function () {
-		});
+		setResInfoServer(depend.domains, rootPath + bootDir, function () {});
+	}
+
+	/**
+	 * 取本地版本，返回数组 [大版本号, 小版本号, 更新版本号, 日期]
+	 */
+	module.getLocalVersion = function () {
+		return localVersion;
+	}
+
+	/**
+	 * 取远端版本，返回数组 [大版本号, 小版本号, 更新版本号, 日期]
+	 */
+	module.getRemoteVersion = function () {
+		return remoteVersion;
 	}
 
 	module.needForceUpdate = function () {
@@ -1950,8 +2003,7 @@ pi_modules.update.exports = (function () {
 			var oldVersion = getIndexVersion(indexJSStr);
 			// 检查是否需要更新
 			checkNeedUpdate(oldVersion, callback);
-		}, function () {
-		});
+		}, function () {});
 	}
 
 	/**
@@ -1971,27 +2023,26 @@ pi_modules.update.exports = (function () {
 	// 从index.js的版本号检查是否需要更新
 	function checkNeedUpdate(oldVersion, okCB, failCB) {
 
+		remoteVersion = localVersion = oldVersion;
+
 		// 强制取服务器的index.js
 		ajax.get(domain + rootPath + bootDir + "index.js?" + Math.random() + "&$forceServer=1", {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
 
 			newIndexJSStr = indexJSStr;
 
 			var newVersion = getIndexVersion(indexJSStr);
-			var newMain = newVersion[0],
-				newSub = newVersion[1];
-
-			var oldMain = oldVersion[0],
-				oldSub = oldVersion[1];
+			
+			remoteVersion = newVersion;
 
 			var needUpdate = !!localStorage.getItem("$$nativeIsUpdating");
 			if (needUpdate) {
 				alert("上次版本还没有更新完毕，必须更新");
-			} else if (oldMain !== newMain) {
-				// 主版本号不同，必须强制更新
+			} else if (oldVersion[0] !== newVersion[0] || oldVersion[1] !== newVersion[1]) {
+				// 第一，第二版本号 不同，必须强制更新
 				needUpdate = true;
 				alert("版本有重大变化，必须更新");
-			} else if (oldSub !== newSub) {
-				// 小版本号不同，提示用户更新
+			} else if (oldVersion[2] !== newVersion[2]) {
+				// 第三版本号 不同，提示用户更新
 				needUpdate = confirm("有新的版本，需要更新吗？");
 			}
 
@@ -2014,8 +2065,7 @@ pi_modules.update.exports = (function () {
 				var dependData = JSON.parse(str);
 	
 				downloadNewFiles(dependData, function (files) {
-					saveBootFiles(files);
-					finishUpdate();
+					saveBootFiles(files, finishUpdate);
 				}, function (e) {
 					alert("更新：下载新文件错误, e = " + e.path);
 				}, updateProcessCb);
@@ -2038,32 +2088,44 @@ pi_modules.update.exports = (function () {
 		});
 	}
 
-	function saveBootFiles(files) {
+	function saveBootFiles(files, callback) {
 		var bootFiles = {};
-		
+		var saveCount = 0;
 		var rpath = rootPath;
 		if (rootPath.indexOf("/") === 0) {
 			rpath = rootPath.slice(1);
 		}
+		
+		++saveCount;
 		bootFiles[rpath + ".depend"] = butil.utf8Encode(dependFileData).buffer;
 		if (newIndexJSStr) {
+			++saveCount;
 			bootFiles[rpath + bootDir + "index.js"] = butil.utf8Encode(newIndexJSStr).buffer;
 		}
 
 		for (var path in files) {
 			if (path.indexOf(bootDir) === 0 && bootFiles[rpath + path] === undefined) {
+				++saveCount;
 				bootFiles[rpath + path] = files[path];
+			}
+		}
+
+		var cb = function () {
+			if (--saveCount === 0) {
+				callback();
 			}
 		}
 
 		for (var path in bootFiles) {
 			var str = arrayBufferToBase64(bootFiles[path]);
 			console.log("JSIntercept.saveFile, path = " + path + ", size = " + str.length);
+
+			saveMap[++saveID] = cb;
 			
 			if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
-				window.JSIntercept.saveFile(path, str);
+				window.JSIntercept.saveFile(path, str, saveID);
 			} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
-				window.webkit.messageHandlers.JSIntercept.postMessage([path, str]);
+				window.webkit.messageHandlers.JSIntercept.postMessage([path, str, saveID]);
 			}
 		}
 	}
@@ -2097,7 +2159,7 @@ pi_modules.update.exports = (function () {
 			return;
 		}
 
-		var down = load.create(downloads, okCB, failCB, updateProcessCb);
+		var down = load.create(downloads, undefined, undefined, undefined, okCB, failCB, updateProcessCb);
 		load.start(down);
 	}
 
@@ -2131,13 +2193,13 @@ pi_modules.update.exports = (function () {
 
 	// 取indexjs的版本号
 	function getIndexVersion(indexJS) {
-		// 第一行是：// !version=xx.xx
-		var regex = /\/\/\s*!version=(\d+)\.(\d+)/;
+		// 第一行是：// !version=major.minor.update.date
+		var regex = /\/\/\s*!version=(\d+)\.(\d+)\.(\d+)\.(\d+)/;
 		var result = indexJS.match(regex);
-		if (!result || result.length !== 3) {
-			throw new Error("index.js must have version at first line, format like: // !version=1.2")
+		if (!result || result.length !== 5) {
+			throw new Error("index.js must have version at first line, format like: // !version=1.0.0.100916")
 		}
-		return [result[1], result[2]];
+		return [result[1], result[2], result[3], result[4]];
 	}
 
 	function arrayBufferToBase64(buffer) {

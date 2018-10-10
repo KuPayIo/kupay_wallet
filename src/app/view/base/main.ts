@@ -16,7 +16,7 @@ import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
 
-import { fetchCoinGain, mnemonicFragmentDecrypt, mnemonicFragmentEncrypt, isValidAddress } from '../../utils/tools';
+import { fetchCoinGain } from '../../utils/tools';
 
 import { getDeviceInfo } from '../../logic/native';
 
@@ -43,12 +43,14 @@ export const run = (cb): void => {
     // 主动推送初始化
     initPush();
     openAndGetRandom();
+    // fetchUSD2CNYRate();
     // 模拟异步获取货币涨跌幅度
     setTimeout(() => {
         fetchCoinGain();
     },500);
     // dataCenter.init();
     popNew('app-view-base-app');
+    // popNew('app-view-wallet-home-home');
     // popNew('app-view-mine-account-privateDetail');
     getDeviceInfo();
     // popNewPage();
