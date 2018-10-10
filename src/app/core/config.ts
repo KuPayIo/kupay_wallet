@@ -21,7 +21,7 @@ export const config = {
     prod: {
         BtcApiBaseUrl: 'http://39.104.129.43:3001/insight-api',
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
-        EthApiBaseUrl: 'http://39.104.185.112:37298',
+        EthApiBaseUrl: 'https://mainnet.infura.io/Y4zS49bjsYwtRU3Tt4Yj',
         EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY',
         EthscanRopstenUrl: 'http://api.etherscan.io/api?module=account&action=txlist&address=',
         EthscanRopstenTokenTransferEvent: 'https://api.etherscan.io/api?module=account&action=tokentx'

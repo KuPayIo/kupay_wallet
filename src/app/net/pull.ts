@@ -271,12 +271,13 @@ export const getCloudBalance = () => {
             list.push(CurrencyType[k]);
         }
     }
-    
     const msg = { type: 'wallet/account@get', param: { list:`[${list}]` } };
     
     return requestAsync(msg).then(balanceInfo => {
         console.log('balanceInfo', balanceInfo);
         updateStore('cloudBalance', parseCloudBalance(balanceInfo));
+    }).catch((res)=>{
+        updateStore('cloudBalance', parseCloudBalance(null));
     });
 };
 

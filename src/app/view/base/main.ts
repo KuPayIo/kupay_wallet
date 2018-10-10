@@ -7,7 +7,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { backCall, popNew } from '../../../pi/ui/root';
+import { backCall, popNew, backList } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { openAndGetRandom } from '../../net/pull';
@@ -21,6 +21,7 @@ import { fetchCoinGain } from '../../utils/tools';
 
 
 import { getDeviceInfo } from '../../logic/native';
+import { fetchUSD2CNYRate } from '../../logic/dataCenter';
 
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
@@ -129,6 +130,7 @@ const backToFront = () => {
         if ((iType === 'onAppResumed') && ifNeedUnlockScreen()) {
             popNew('app-view-mine-setting-lockScreenPage');
         } else if (iType === 'onBackPressed') {
+            if(backList.length === 1) return;
             backCall();
             // (<any>window).onpopstate();
             // widget.ok && widget.ok();

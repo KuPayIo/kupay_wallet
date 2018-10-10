@@ -78,17 +78,11 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-
-			updateMod.checkUpdate(function (need) {
-				needUpdate = need;
-
-				loadDir1(util, fm);
-			});
+			loadDir1(util, fm);
 		});
 	}
 
 	var loadDir1 = function (util, fm) {
-
 		var sourceList = [
 			"pi/ui/",
 			"app/components1/",
@@ -144,13 +138,16 @@ winit.initNext = function () {
 
 			var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
 			updatedStore('level_2_page_loaded', true);
-
-			if (needUpdate) {
-				// 注：必须堵住原有的界面操作，不允许任何触发操作
-				updateMod.update(function (e) {
-					console.log("update progress: ", e);
-				});
-			}
+			updateMod.checkUpdate(function (need) {
+				needUpdate = need;
+				if (needUpdate) {
+					// 注：必须堵住原有的界面操作，不允许任何触发操作
+					updateMod.update(function (e) {
+						console.log("update progress: ", e);
+					});
+				}
+			});
+			
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);

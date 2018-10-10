@@ -134,7 +134,7 @@ export class Api {
      * @memberof Api
      */
     public estimateGas(obj: { to: any; data: any }): Promise<number> {
-
+        console.log('erc20 addr=====',obj.to);
         return new Promise((resolve, reject) => {
             initWeb3();
             if (obj.data) {
