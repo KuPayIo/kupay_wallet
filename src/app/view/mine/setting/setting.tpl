@@ -41,7 +41,7 @@
                     <app-components-switch-switch>{types:{{it1.openLockScreen}} }</app-components-switch-switch>
                 </div>
                 {{if it1.openLockScreen}}
-                <div w-class="item" on-tap="oldLockPsw(0)" style="border-bottom: none;">
+                <div w-class="item" on-tap="lockScreen" style="border-bottom: none;">
                     <span w-class="itemName">{{it1.cfgData.itemTitle[7]}}</span>
                 </div>
                 {{end}}

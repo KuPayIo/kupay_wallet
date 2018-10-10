@@ -11,6 +11,7 @@
 .body{
     background-color: #fff;
     padding: 30px;
+    padding-bottom: 0;
     position: relative;
     top: 50%;
     transform: translateY(-50%);
@@ -33,15 +34,15 @@
 .btns{
     display: flex;
     justify-content: flex-end;
-    margin-top: 30px;
     font-size: 28px;
     line-height: 40px;
 }
 .btn-cancel{
     color: #888;
+    border: 30px solid transparent;
 }
 .btn-ok{
     color:#3294e6;
-    margin-left: 70px;
-    margin-right: 26px;
+    margin-left: 40px;
+    border: 30px solid transparent;
 }
