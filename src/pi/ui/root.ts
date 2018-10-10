@@ -452,7 +452,7 @@ let rootWidget: Widget = null;
 // 组对象表
 const groupMap: Map<string, Group> = new Map();
 // 返回记录
-const backList: Back[] = [];
+export const backList: Back[] = [];
 // 禁止返回
 let forbidBack: boolean = false;
 // 禁止默认滚动

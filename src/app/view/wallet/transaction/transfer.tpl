@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    <div w-class="top-head" ev-next-click="doScanClick">
+    <div w-class="top-head">
         <app-components1-topBar-topBar>{"title":"{{it.currencyName+ it1.cfgData.topBarTitle}}",background:"#fff"}</app-components1-topBar-topBar>
     </div>
     <div w-class="body">
@@ -13,7 +13,7 @@
                     </div>
                 </div>
                 <div w-class="item" style="padding: 10px 0 0 20px;">
-                    <div w-class="inner-tip"><span>{{it1.cfgData.tags[2]}}</span><img src="../../../res/image/scan.png" w-class="scanImg"/></div>
+                    <div w-class="inner-tip"><span>{{it1.cfgData.tags[2]}}</span><img src="../../../res/image/scan.png" w-class="scanImg" on-tap="doScanClick"/></div>
                     <div w-class="input-father1" ev-input-change="toAddrChange">
                         <app-components-input-input>{placeHolder:{{it1.cfgData.inputPlace[1]}},style:"padding:0;font-size:28px;",input:{{it1.toAddr}},disabled:{{it1.inputDisabled}}}</app-components-input-input>
                     </div>

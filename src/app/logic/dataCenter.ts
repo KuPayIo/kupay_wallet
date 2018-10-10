@@ -7,7 +7,7 @@ import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
 import { Addr, CurrencyRecord, Wallet, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
-import { getAddrsAll, initAddr, getConfirmBlockNumber } from '../utils/tools';
+import { getAddrsAll, initAddr, getConfirmBlockNumber, formatBalance } from '../utils/tools';
 import { ethTokenDivideDecimals, sat2Btc, wei2Eth, smallUnit2LargeUnit } from '../utils/unitTools';
 import { getMnemonic, fetchTransactionList, fetchLocalTxByHash } from '../utils/walletTools';
 import { BigNumber } from '../res/js/bignumber';
@@ -362,31 +362,27 @@ export class DataCenter {
      */
     private parseBtcTransactionTxRecord(addr: string, tx: any) {
         if(!tx) return;
-        let value = 0;
-        const inputs = tx.vin.map(v => {
-            return v.addr ;
-        });
-        const outputs = tx.vout.map(v => {
-            if (!value) {
-                if (inputs.indexOf(addr) >= 0) {
-                    value = parseFloat(v.value);
-                } else if (addr === v.scriptPubKey.addresses[0]) {
-                    value = parseFloat(v.value);
-                }
+        const vin = tx.vin;
+        let fromIndex = 0;
+        for(let i = 0;i< vin.length;i++){
+            if(vin[i].addr === addr){
+                fromIndex = i;
+                break;
             }
-
-            return v.scriptPubKey.addresses[0];
-        });
-
-        let fromAddr;
-        let toAddr;
-        if (inputs && inputs.indexOf(addr) >= 0) {
-            fromAddr = addr;
-            toAddr = outputs[0];
-        } else {
-            fromAddr = inputs[0];
-            toAddr = addr;
         }
+
+        const vout = tx.vout;
+        let toIndex = 0;
+        for(let i = 0;i< vout.length;i++){
+            if(vout[i].scriptPubKey.addresses &&  vout[i].scriptPubKey.addresses[0] === addr){
+                toIndex = i;
+                break;
+            }
+        }
+        const fromAddr = vin[fromIndex].addr || '未知';
+        const toAddr = vout[toIndex].scriptPubKey.addresses;
+        const value = formatBalance(Number(vout[toIndex].value));
+
 
         const pay = value;
         const needConfirmedBlockNumber = getConfirmBlockNumber('BTC',pay); 
@@ -752,11 +748,15 @@ export class DataCenter {
 }
 
 //==========================三方接口=======================================
-
+//http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4 测试
+//http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=37223&sign=7987216e841c32aa08d0ea0dcbf65eed
 // 获取美元对人民币汇率
 export const fetchUSD2CNYRate = ()=>{
-    fetch('http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4',{
-        mode: 'no-cors'
+    fetch('http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=37223&sign=7987216e841c32aa08d0ea0dcbf65eed',{
+        mode: 'no-cors',
+        headers:{
+            'Content-Type': 'application/json'
+        },
     })
     .then(res=>{
         return res.json()
