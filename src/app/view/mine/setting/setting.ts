@@ -8,8 +8,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { setUserInfo } from '../../../net/pull';
 import { LockScreen } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
-import { getLanguage, getUserInfo, lockScreenHash, lockScreenVerify, logoutAccount, popPswBox } from '../../../utils/tools';
-import { backupMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
+import { getLanguage, lockScreenHash, logoutAccount, popPswBox } from '../../../utils/tools';
+import { backupMnemonic } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -53,10 +53,16 @@ export class Setting extends Widget {
     }
 
     public initData() {
-        const userInfo = getUserInfo();
+        const userInfo = find('userInfo');
         if (userInfo) {
             this.state.userHead = userInfo.avatar ? userInfo.avatar :'../../../res/image/default_avater_big.png';
             this.state.userName = userInfo.nickName ? userInfo.nickName :this.state.cfgData.defaultName;
+            const bphone = userInfo.bphone;
+            if (bphone) {
+                const str = String(bphone).substr(3,6);
+                this.state.phone = bphone.replace(str,'******');
+            }
+            
         }
         const wallet = find('curWallet');
         if (wallet) {
@@ -66,11 +72,6 @@ export class Setting extends Widget {
         if (ls) {
             this.state.lockScreenPsw = ls.psw;
             this.state.openLockScreen = ls.psw && ls.open !== false;
-        }
-        const bphone = find('verPhone');
-        if (bphone) {
-            const str = String(bphone).substr(3,6);
-            this.state.phone = bphone.replace(str,'******');
         }
         
         this.paint();
@@ -99,7 +100,7 @@ export class Setting extends Widget {
     public onSwitchChange() {
         if (this.state.openLockScreen) {   // 如果锁屏开关打开则直接关闭
             const ls = find('lockScreen');
-            ls.open = !this.state.openLockScreen;
+            ls.open = !ls.open;
             updateStore('lockScreen',ls);
         } else if (this.state.wallet) {
             popNew('app-components-keyboard-keyboard',{ title: this.state.cfgData.keyboardTitle[0] },(r) => {
@@ -279,12 +280,6 @@ register('curWallet', () => {
     }
 });
 register('lockScreen', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.initData();
-    }
-});
-register('verPhone', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

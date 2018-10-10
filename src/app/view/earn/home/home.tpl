@@ -1,6 +1,6 @@
 <div class="new-page">
     <div w-class="topBack">
-        <img src="../../../res/image1/default_avatar.png" w-class="userHead" on-tap="showMine"/>
+        <div><img src="../../../res/image1/default_avatar.png" w-class="userHead" on-tap="showMine"/></div>
         <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
         <div w-class="groupCard">
             <div w-class="titleMode">
@@ -26,7 +26,7 @@
                     <div w-class="otherNum">{{it1.mines}}</div>
                 </div>
                 <div ev-btn-tap="doPadding">
-                    <app-components1-btn-btn>{name:{{it1.cfgData.btnName}},"types":"small"}</app-components1-btn-btn>
+                    <app-components1-btn-btn>{name:{{it1.cfgData.btnName}},"types":"small"}</app-components1-btn-btn>                    
                 </div>
             </div>
 

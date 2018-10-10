@@ -65,10 +65,12 @@ export class LockScreenPage extends Widget {
      */
     public oldLockPsw(ind:number) {
         if (ind > 2) {
+            const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
             // tslint:disable-next-line:max-line-length
             popNew('app-components-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput,async (r) => {
                 const wallet = find('curWallet');
                 const fg = await VerifyIdentidy(wallet,r);
+                close.callback(close.widget);
                 // const fg = true;
                 if (fg) {
                     popNew('app-components-keyboard-keyboard',{ title:this.state.cfgData.keyboardTitle[0] },(r) => {
@@ -99,7 +101,5 @@ export class LockScreenPage extends Widget {
                 }
             });
         }
-        
     }
-
 }

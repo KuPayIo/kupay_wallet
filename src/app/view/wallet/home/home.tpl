@@ -15,6 +15,6 @@
         </div>
     </div>
     {{for i,v of it1.tabs}} {{let isActive = i===it1.activeNum}}
-    <widget w-tag={{v.components}} style="visibility: {{isActive ? 'visible' : 'hidden'}}; z-index:{{isActive ? 0 : -1}};  width:100%;{{isActive ? 'flex:1 0 0;overflow: hidden auto;' : 'height: 0;'}}">{isActive:{{isActive}}}</widget>
+    <widget w-tag={{v.components}} style="visibility: {{isActive ? 'visible' : 'hidden'}}; z-index:{{isActive ? 0 : -1}};  width:100%;{{isActive ? 'flex:1 0 0;overflow-x: hidden;overflow-y: auto;' : 'height: 0;'}}">{isActive:{{isActive}}}</widget>
     {{end}}
 </div>

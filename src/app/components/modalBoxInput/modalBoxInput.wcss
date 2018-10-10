@@ -11,6 +11,7 @@
 .body{
     background-color: #fff;
     padding: 30px;
+    padding-bottom: 0;
     position: relative;
     top: 50%;
     transform: translateY(-50%);
@@ -31,7 +32,6 @@
 .btns{
     display: flex;
     justify-content: flex-end;
-    margin-top: 30px;
     font-size: 28px;
     line-height: 40px;
 }
@@ -40,12 +40,14 @@
     flex: 1;
     text-align: center;
     margin-right: 20px;
+    border: 30px solid transparent;
 }
 .btn-ok{
     color:#3294e6;
     flex: 1;
     margin-left: 20px;    
     text-align: center;    
+    border: 30px solid transparent;
 }
 .forgetPsw{
     color: #3294e6;

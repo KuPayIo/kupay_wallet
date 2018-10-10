@@ -5,6 +5,7 @@
  * activeColor:选中后的颜色
  * inactiveColor：未选中的颜色
  */
+import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 
@@ -16,13 +17,16 @@ interface Props {
 
 export class Switch extends Widget {
     public props: Props;
-    constructor() {
-        super();
+    public setProps(oldProps:Json,props:Json) {
+        super.setProps(oldProps,props);
+        this.state = {
+            types:this.props.types
+        };
     }
     public doClick(event: any) {
-        const oldType = !!this.props.types;
+        const oldType = !!this.state.types;
         const newType = !oldType;
-        this.props.types = newType;
+        this.state.types = newType;
         notify(event.node, 'ev-switch-click', { oldType: oldType, newType: newType });
         this.paint();
     }
