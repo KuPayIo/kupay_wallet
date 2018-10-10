@@ -237,7 +237,7 @@ export class DataCenter {
         const trans = find('transactions') || [];
         let index = -1;
         for(let i = 0; i < trans.length;i++){
-            if(trans[i].hash === tx.hash){
+            if(trans[i].hash === tx.hash && trans[i].currencyName === tx.currencyName){
                 index = i;
                 break;
             }
