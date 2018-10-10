@@ -26,11 +26,13 @@ export class CloudHome extends Widget {
         }
     }
     public init() {
+        const color = find('changeColor');
         this.state = {
             totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
             assetList:fetchCloudWalletAssetList(),
             productList:find('productList') || [],
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            redUp:color ? color.selected === 0 :true
         };
         this.paint();
     }
@@ -97,6 +99,12 @@ register('productList', async (productList) => {
     
 });
 register('languageSet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});
+register('changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

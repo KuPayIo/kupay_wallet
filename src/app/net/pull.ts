@@ -144,7 +144,7 @@ export const autoLogin = () => {
     requestAsync(msg).then(res => {
         updateStore('loginState', LoginState.logined);
         console.log('自动登录成功-----------',res);
-    }).catch(()=>{
+    }).catch(() => {
         updateStore('loginState', LoginState.logerror);
     });
 };
@@ -263,9 +263,9 @@ export const getRandom = async () => {
  * 获取所有的货币余额
  */
 export const getCloudBalance = () => {
-    if(!find('conRandom')) return;
+    if (!find('conRandom')) return;
     const list = [];
-    list.push(CurrencyType['KT']);
+    list.push(CurrencyType.KT);
     for (const k in CurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
             list.push(CurrencyType[k]);

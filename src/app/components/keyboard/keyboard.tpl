@@ -1,4 +1,4 @@
-<div class="new-page" w-class="body">
+<div class="new-page" w-class="body" id="keyboard">
     <div w-class="top"></div>
     <div w-class="bottom">
         <div w-class="title">

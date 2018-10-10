@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { register } from '../../../store/store';
+import { find, register } from '../../../store/store';
 import { fetchTotalAssets, fetchWalletAssetList, formatBalanceValue, getLanguage, hasWallet } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -17,10 +17,12 @@ export class WalletHome extends Widget {
         this.init();
     }
     public init() {
+        const color = find('changeColor');
         this.state = {
             totalAsset:formatBalanceValue(fetchTotalAssets()),
             assetList:fetchWalletAssetList(),
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            redUp:color ? color.selected === 0 :true
         };
         this.paint();
     }
@@ -79,6 +81,12 @@ register('coinGain',() => {
     }
 });
 register('languageSet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});
+register('changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
