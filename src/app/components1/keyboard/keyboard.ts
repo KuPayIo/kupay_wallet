@@ -1,11 +1,12 @@
 /**
  * pasword screen
  */
+import { Json } from '../../../pi/lang/type';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
     title: string;
-    forgetPsw?:boolean;
+    closePage?:boolean;
 }
 
 export class KeyBoard extends Widget {
@@ -16,8 +17,8 @@ export class KeyBoard extends Widget {
         super();
     }
 
-    public create() {
-        super.create();
+    public setProps(oldProps:Json,props:Json) {
+        super.setProps(oldProps,props);
         this.init();
     }
 
@@ -25,7 +26,8 @@ export class KeyBoard extends Widget {
         this.state = {
             defArr:[1,2,3,4,5,6],
             numbers:[1,2,3,4,5,6,7,8,9,'',0,'x'],
-            pswArr:[]
+            pswArr:[],
+            closePage:this.props.closePage ? false :true
         };
     }
 

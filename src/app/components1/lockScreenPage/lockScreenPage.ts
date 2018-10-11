@@ -30,6 +30,8 @@ export class LockScreenPage extends Widget {
         };
         if (this.props.firstFg) {   // true表示设置锁屏密码，首次打开此界面
             this.setLockPsw();
+        } else if (this.props.open) {
+            this.unLockScreen(0);
         } else {
             this.oldLockPsw(0);
         }
@@ -100,11 +102,37 @@ export class LockScreenPage extends Widget {
                 if (lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
                     this.setLockPsw();
                 } else {
-                    if (this.props.open) {  // 进入APP解锁屏幕
-                        this.close(true);
-                    } else {
-                        this.oldLockPsw(++ind);
-                    }
+                    this.oldLockPsw(++ind);
+                }
+            });
+        }
+    }
+
+    /**
+     * 首次进入APP解锁屏幕
+     */
+    public unLockScreen(ind:number) {
+        if (ind > 2) {
+            const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
+            // tslint:disable-next-line:max-line-length
+            popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput,async (r) => {
+                const wallet = find('curWallet');
+                const fg = await VerifyIdentidy(wallet,r);
+                close.callback(close.widget);
+                // const fg = true;
+                if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
+                    this.setLockPsw();
+                } else {
+                    popNew('app-components1-message-message',{ content:this.state.cfgData.tips[2] });
+                } 
+            });
+        } else {
+            const title = this.state.errorTips[ind === 0 ? 3 :ind];
+            popNew('app-components1-keyboard-keyboard',{ title:title,closePage:1 },(r) => {
+                if (lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
+                    this.close(true);
+                } else {
+                    this.unLockScreen(++ind);
                 }
             });
         }
