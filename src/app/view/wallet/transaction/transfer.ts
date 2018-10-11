@@ -3,15 +3,18 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { ERC20Tokens } from '../../../config';
 import { doScanQrCode } from '../../../logic/native';
-import { estimateMinerFee, resendNormalTransfer, transfer } from '../../../net/pullWallet';
+import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { timeOfArrival } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { fetchBtcMinerFee, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popPswBox } from '../../../utils/tools';
-import { sat2Btc, wei2Eth } from '../../../utils/unitTools';
-
+import { getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popPswBox, fetchMinerFeeList } from '../../../utils/tools';
+import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
+import { Forelet } from '../../../../pi/widget/forelet';
+import { register } from '../../../store/store';
+// ============================导出
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
     currencyName:string;
     tx?:TransRecordLocal;
@@ -24,17 +27,12 @@ export class Transfer extends Widget {
     }
 
     public async init() {
-        // if(this.props.currencyName ===)
-        const cn = (this.props.currencyName === 'ETH' || ERC20Tokens[this.props.currencyName]) ? 'ETH' : 'BTC';
-        const toa = timeOfArrival[cn];
-        const list = [];
-        for (let i = 0;i < toa.length;i++) {
-            const obj = {
-                ...toa[i],
-                minerFee:'0.000000'
-            };
-            list.push(obj);
+        if(this.props.currencyName === 'BTC'){
+            fetchBtcFees();
+        }else{
+            fetchGasPrices();
         }
+        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
         const tx = this.props.tx;
         console.log(tx);
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.STANDARD;
@@ -43,34 +41,19 @@ export class Transfer extends Widget {
             toAddr:tx ? tx.toAddr : '',
             amount:tx ? tx.pay : 0,
             balance:getCurrentAddrBalanceByCurrencyName(this.props.currencyName),
-            minerFee:list[curLevel].minerFee,
-            minerFeeList:list,
+            minerFee:minerFeeList[curLevel].minerFee,
+            minerFeeList,
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false,
             cfgData:getLanguage(this)
         };
-        this.updateMinerFeeList();
-        
     }
-    // 更新矿工费
-    public async updateMinerFeeList() {
-        const cn = (this.props.currencyName === 'ETH' || ERC20Tokens[this.props.currencyName]) ? 'ETH' : 'BTC';
-        const toa = timeOfArrival[cn];
-        const list = [];
-        const obj = await estimateMinerFee(this.props.currencyName);
-        const gasLimit = obj.gasLimit;
-        // const btcMinerFee = obj.btcMinerFee;
-        for (let i = 0;i < toa.length;i++) {
-            const obj = {
-                ...toa[i],
-                // tslint:disable-next-line:max-line-length
-                minerFee: cn === 'ETH' ? wei2Eth(gasLimit * fetchGasPrice(toa[i].level)) : sat2Btc(fetchBtcMinerFee(toa[i].level))
-            };
-            list.push(obj);
-        } 
-        this.state.minerFeeList = list;
-        this.state.minerFee = list[this.state.curLevel].minerFee;
+
+    public updateMinerFeeList(){
+        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
+        this.state.minerFeeList = minerFeeList;
+        this.state.minerFee = minerFeeList[this.state.curLevel].minerFee;
         this.paint();
     }
     public backPrePage() {
@@ -169,3 +152,19 @@ export class Transfer extends Widget {
         });
     }
 }
+
+// gasPrice变化
+register('gasPrice',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateMinerFeeList();
+    }
+});
+
+// btcMinerFee变化
+register('btcMinerFee',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateMinerFeeList();
+    }
+});

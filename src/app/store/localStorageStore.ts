@@ -146,6 +146,11 @@ export const initLocalStorageStore = () => {
         setLocalStorage('gasPrice',gasPrice);
     });
 
+    // gasLimitMap
+    register('gasLimitMap',(gasLimitMap)=>{
+        setLocalStorage('gasLimitMap',gasLimitMap);
+    });
+
      // 缓存gasPrice
     register('btcMinerFee',(btcMinerFee) => {
         setLocalStorage('btcMinerFee',btcMinerFee);
