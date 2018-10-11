@@ -3,7 +3,9 @@
     <div w-class="bottom">
         <div w-class="title">
             <div style="text-align: center;width: 100%">{{it.title}}</div>
+            {{if it1.closePage}}
             <img src="../../res/image/30_gray.png" w-class="close" on-tap="close"/>
+            {{end}}
         </div>
         <div w-class="dots">
             {{for ind,val of it1.defArr}}

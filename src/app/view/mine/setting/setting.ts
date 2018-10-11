@@ -6,10 +6,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { setUserInfo } from '../../../net/pull';
-import { LockScreen } from '../../../store/interface';
 import { find, register, updateStore } from '../../../store/store';
-import { getLanguage, getUserInfo, lockScreenHash, lockScreenVerify, logoutAccount, popPswBox } from '../../../utils/tools';
-import { backupMnemonic, VerifyIdentidy } from '../../../utils/walletTools';
+import { getLanguage, logoutAccount, popPswBox } from '../../../utils/tools';
+import { backupMnemonic } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -53,10 +52,16 @@ export class Setting extends Widget {
     }
 
     public initData() {
-        const userInfo = getUserInfo();
+        const userInfo = find('userInfo');
         if (userInfo) {
             this.state.userHead = userInfo.avatar ? userInfo.avatar :'../../../res/image/default_avater_big.png';
             this.state.userName = userInfo.nickName ? userInfo.nickName :this.state.cfgData.defaultName;
+            const bphone = userInfo.bphone;
+            if (bphone) {
+                const str = String(bphone).substr(3,6);
+                this.state.phone = bphone.replace(str,'******');
+            }
+            
         }
         const wallet = find('curWallet');
         if (wallet) {
@@ -66,11 +71,6 @@ export class Setting extends Widget {
         if (ls) {
             this.state.lockScreenPsw = ls.psw;
             this.state.openLockScreen = ls.psw && ls.open !== false;
-        }
-        const bphone = find('verPhone');
-        if (bphone) {
-            const str = String(bphone).substr(3,6);
-            this.state.phone = bphone.replace(str,'******');
         }
         
         this.paint();
@@ -99,18 +99,17 @@ export class Setting extends Widget {
     public onSwitchChange() {
         if (this.state.openLockScreen) {   // 如果锁屏开关打开则直接关闭
             const ls = find('lockScreen');
-            ls.open = !this.state.openLockScreen;
+            ls.open = !ls.open;
+            this.state.openLockScreen = false;
             updateStore('lockScreen',ls);
         } else if (this.state.wallet) {
-            popNew('app-components-keyboard-keyboard',{ title: this.state.cfgData.keyboardTitle[0] },(r) => {
-                console.error(r);
-                this.state.lockScreenPsw = r;
-                this.reSetLockPsw();
-                
-            },() => {
-                this.closeLockPsw();
-
-                return false;
+            popNew('app-components1-lockScreenPage-lockScreenPage',{ firstFg:true },(r) => {
+                if (!r) {
+                    this.closeLockPsw();
+                    this.state.openLockScreen = false;
+                } else {
+                    this.state.openLockScreen = true;
+                }
             });
         } else {
             // tslint:disable-next-line:max-line-length
@@ -120,15 +119,15 @@ export class Setting extends Widget {
                 this.closeLockPsw();
             });
         }
-        this.state.openLockScreen = !this.state.openLockScreen;
-        this.paint();
+        
+        this.paint(true);
     }
 
     /**
      * 修改锁屏密码
      */
     public lockScreen() {
-        popNew('app-view-mine-setting-lockScreenPage');
+        popNew('app-components1-lockScreenPage-lockScreenPage',{ firstFg:false });
     }
 
     /**
@@ -138,27 +137,6 @@ export class Setting extends Widget {
         this.state.openLockScreen = false;
         this.state.lockScreenPsw = '';
         this.paint();
-    }
-
-    /**
-     * 重复锁屏密码
-     */
-    public reSetLockPsw() {
-        popNew('app-components-keyboard-keyboard',{ title: this.state.cfgData.keyboardTitle[1] },(r) => {
-            if (this.state.lockScreenPsw !== r) {
-                popNew('app-components-message-message',{ content:this.state.cfgData.tips[0] });
-                this.reSetLockPsw();
-            } else {
-                const hash256 = lockScreenHash(r);
-                const ls:LockScreen = find('lockScreen'); 
-                ls.psw = hash256;
-                ls.open = true;
-                updateStore('lockScreen',ls);
-                popNew('app-components-message-message',{ content:this.state.cfgData.tips[1] });
-            }
-        },() => {
-            this.closeLockPsw();
-        });
     }
 
     /**
@@ -279,12 +257,6 @@ register('curWallet', () => {
     }
 });
 register('lockScreen', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.initData();
-    }
-});
-register('verPhone', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

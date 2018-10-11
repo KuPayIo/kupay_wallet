@@ -26,7 +26,7 @@
                 input:{{it1.totalNum}}
             }</app-components-basicInput-basicInput>
         </div>
-        <div style="margin: 10px 0;">
+        <div style="margin: 10px 0;" ev-input-change="changeMessage">
             <app-components-basicInput-basicInput>{
                 prepend:{{it1.cfgData.messTitle[0]}},
                 placeholder:{{it1.cfgData.messTitle[1]}},

@@ -24,6 +24,7 @@
 .userHead{
     height: 180px;
     width: 180px;
+    border-radius: 50%;
 }
 .bottom{
     background: #fff;
