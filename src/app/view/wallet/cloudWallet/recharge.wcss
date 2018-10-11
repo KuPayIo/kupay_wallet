@@ -74,14 +74,13 @@
     font-size: 28px;
     color: #222222;
     align-items: center;
-    margin-top: 20px;
-    padding: 0 30px;
+    padding: 0px 10px;
+    border: 20px solid transparent;
 }
 .speed-time{
     font-size: 36px;
     color: #222;
     height: 90px;
-    margin-top: 10px;
     display: flex;
     align-items: center;
 }
