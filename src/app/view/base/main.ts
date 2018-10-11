@@ -105,7 +105,6 @@ export const run = (cb): void => {
 const popNewPage = () => {
     const readedPriAgr = find('readedPriAgr');
     if (!readedPriAgr) {
-        popNew('app-view-base-app');
         if (ifNeedUnlockScreen()) {
             popNew('app-components1-lockScreenPage-lockScreenPage',{ firstFg:false,open:true });
         }
