@@ -67,6 +67,9 @@ export class Home extends Widget {
         if (wallet) {
             this.state.hasWallet = true;
             this.state.address = getFirstEthAddr();
+        }else{
+            this.state.hasWallet = false;
+            this.state.address = "";
         }
         this.paint();
     }

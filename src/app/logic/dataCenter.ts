@@ -4,12 +4,12 @@ import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { getShapeShiftCoins, getTransactionsByAddr, estimateGasERC20 } from '../net/pullWallet';
-import { Addr, CurrencyRecord, Wallet, TransRecordLocal, TxStatus, TxType } from '../store/interface';
-import { find, getBorn, updateStore } from '../store/store';
+import { Addr, CurrencyRecord, TransRecordLocal, TxStatus, TxType } from '../store/interface';
+import { find, getBorn, updateStore, register } from '../store/store';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
 import { getAddrsAll, initAddr, getConfirmBlockNumber, formatBalance } from '../utils/tools';
 import { ethTokenDivideDecimals, sat2Btc, wei2Eth, smallUnit2LargeUnit } from '../utils/unitTools';
-import { getMnemonic, fetchTransactionList, fetchLocalTxByHash } from '../utils/walletTools';
+import { fetchTransactionList, fetchLocalTxByHash, getMnemonicByHash } from '../utils/walletTools';
 import { BigNumber } from '../res/js/bignumber';
 /**
  * 创建事件处理器表
@@ -25,6 +25,7 @@ export class DataCenter {
     private txTimerList = [];
     // 余额定时器列表
     private balanceTimerList = [];
+    private checkAddrTimer;
 
     /**
      * 初始化
@@ -110,38 +111,97 @@ export class DataCenter {
         }, 30 * 1000);
     }
 
-    //检查地址
-    private async checkAddr() {
-        const walletList = find('walletList');
-        if (!walletList || walletList.length <= 0) return;
-        const list = [];
-        walletList.forEach((v, i) => {
-            if (getBorn('hashMap').get(v.walletId)) {
-                v.currencyRecords.forEach((v1, i1) => {
-                    if (!v1.updateAddr) list.push([i, i1]);
+    private timerCheckAddr(needCheckAddr: CurrencyRecord[]){
+        const record: CurrencyRecord = needCheckAddr.shift();
+        if(!record){
+            return;
+        };
+        console.log('checkAddr', record.currencyName);
+        if (record.currencyName === 'ETH') {
+            this.checkEthAddr(record).then(addAddrs=>{
+                if (addAddrs.length > 0) {
+                    let addrs = find('addrs');
+                    addrs = addrs.concat(addAddrs);
+                    updateStore('addrs', addrs);
+                    addAddrs.forEach(item=>{
+                        this.timerUpdateBalance(item.addr,'ETH');
+                    });
+                }
+                const wallet = find('curWallet');
+                wallet.currencyRecords = wallet.currencyRecords.map(item=>{
+                    if(item.currencyName === record.currencyName){
+                        item.updateAddr = true;
+                        addAddrs.forEach(addrInfo=>{
+                            item.addrs.push(addrInfo.addr);
+                        });
+                        
+                    }
+                    return item;
                 });
-            }
-        });
-
-        if (list[0]) {
-            let addrs = find('addrs') || [];
-            const wallet = walletList[list[0][0]];
-            const currencyRecord: CurrencyRecord = wallet.currencyRecords[list[0][1]];
-            console.log('checkAddr', currencyRecord.currencyName);
-            let addAddrs;
-            if (currencyRecord.currencyName === 'ETH') {
-                addAddrs = await this.checkEthAddr(wallet, currencyRecord);
-            } else if (currencyRecord.currencyName === 'BTC') {
-                addAddrs = await this.checkBtcAddr(wallet, currencyRecord);
-            } else if (ERC20Tokens[currencyRecord.currencyName]) {
-                addAddrs = await this.checkEthERC20TokenAddr(wallet, currencyRecord);
-            }
-            if (addAddrs.length > 0) {
-                addrs = addrs.concat(addAddrs);
-                updateStore('addrs', addrs);
-            }
-            currencyRecord.updateAddr = true;
-            updateStore('walletList', walletList);
+                updateStore('curWallet',wallet);
+            });
+        } else if (record.currencyName === 'BTC') {
+            this.checkBtcAddr(record).then(addAddrs=>{
+                if (addAddrs.length > 0) {
+                    let addrs = find('addrs');
+                    addrs = addrs.concat(addAddrs);
+                    updateStore('addrs', addrs);
+                    addAddrs.forEach(item=>{
+                        this.timerUpdateBalance(item.addr,'ETH');
+                    });
+                }
+                const wallet = find('curWallet');
+                wallet.currencyRecords = wallet.currencyRecords.map(item=>{
+                    if(item.currencyName === record.currencyName){
+                        item.updateAddr = true;
+                        addAddrs.forEach(addrInfo=>{
+                            item.addrs.push(addrInfo.addr);
+                        });
+                    }
+                    return item;
+                });
+                updateStore('curWallet',wallet);
+            });;
+        } else if (ERC20Tokens[record.currencyName]) {
+            this.checkEthERC20TokenAddr(record).then(addAddrs=>{
+                if (addAddrs.length > 0) {
+                    let addrs = find('addrs');
+                    addrs = addrs.concat(addAddrs);
+                    updateStore('addrs', addrs);
+                    addAddrs.forEach(item=>{
+                        this.timerUpdateBalance(item.addr,'ETH');
+                    });
+                }
+                const wallet = find('curWallet');
+                wallet.currencyRecords = wallet.currencyRecords.map(item=>{
+                    if(item.currencyName === record.currencyName){
+                        item.updateAddr = true;
+                        addAddrs.forEach(addrInfo=>{
+                            item.addrs.push(addrInfo.addr);
+                        });
+                    }
+                    return item;
+                });
+                updateStore('curWallet',wallet);
+            });;
+        } 
+        this.checkAddrTimer = setTimeout(() => {
+            this.timerCheckAddr(needCheckAddr);
+        }, 1000);
+    }
+    //检查地址
+    public async checkAddr(){
+        const wallet = find('curWallet');
+        if(!wallet) return;
+        if (getBorn('hashMap').get(wallet.walletId)) {
+            const currencyRecord: CurrencyRecord[] = wallet.currencyRecords;
+            const needCheckAddr = [];
+            currencyRecord.forEach(item=>{
+                if(!item.updateAddr){
+                    needCheckAddr.push(item);
+                }
+            });
+            this.timerCheckAddr(needCheckAddr);
         }
     }
 
@@ -576,8 +636,8 @@ export class DataCenter {
     /**
      * 检查eth地址
      */
-    private async checkEthAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
-        const mnemonic = await getMnemonic(wallet, '');
+    private async checkEthAddr(currencyRecord: CurrencyRecord) {
+        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(find('curWallet').walletId));
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanUsedAddress();
         const addrs: Addr[] = [];
@@ -594,8 +654,8 @@ export class DataCenter {
     /**
      * 检查btc地址
      */
-    private async checkBtcAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
-        const mnemonic = await getMnemonic(wallet, '');
+    private async checkBtcAddr(currencyRecord: CurrencyRecord) {
+        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(find('curWallet').walletId));
         const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         btcWallet.unlock();
         const cnt = await btcWallet.scanUsedAddress();
@@ -615,8 +675,8 @@ export class DataCenter {
     /**
      * 检查eth erc20 token地址
      */
-    private async checkEthERC20TokenAddr(wallet: Wallet, currencyRecord: CurrencyRecord) {
-        const mnemonic = await getMnemonic(wallet, '');
+    private async checkEthERC20TokenAddr(currencyRecord: CurrencyRecord) {
+        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(find('curWallet').walletId));
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanTokenUsedAddress(ERC20Tokens[currencyRecord.currencyName].contractAddr);
         const addrs: Addr[] = [];
@@ -789,3 +849,10 @@ export const fetchUSD2CNYRate = ()=>{
  * 消息处理列表
  */
 export const dataCenter: DataCenter = new DataCenter();
+
+//检查地址
+register('hashMap',()=>{
+    setTimeout(()=>{
+        dataCenter.checkAddr();
+    },200);
+});

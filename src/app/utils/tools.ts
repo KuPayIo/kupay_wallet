@@ -530,12 +530,14 @@ export const copyToClipboard = (copyText) => {
  */
 export const calcHashValuePromise = async (pwd, salt?) => {
     let hash;
-
     const argonHash = new ArgonHash();
     argonHash.init();
-    // tslint:disable-next-line:no-unnecessary-local-variable
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
-
+    if(getFirstEthAddr()){
+        const hashMap = getBorn('hashMap');
+        hashMap.set(getFirstEthAddr(),hash);
+        updateStore('hashMap',hashMap);
+    }
     return hash;
 };
 
@@ -1275,13 +1277,19 @@ declare var pi_modules;
 // 获取本地版本号
 export const getLocalVersion = () => {
     const updateMod = pi_modules.update.exports;
-    return updateMod.getLocalVersion();
+    const versionArr = updateMod.getLocalVersion();
+    const versionStr = versionArr.join('.');
+    const version = versionStr.slice(0,versionStr.length - 7);
+    return version;
 };
 
 // 获取远端版本号
 export const getRemoteVersion = () => {
     const updateMod = pi_modules.update.exports;
-    return updateMod.getRemoteVersion();
+    const versionArr = updateMod.getRemoteVersion();
+    const versionStr = versionArr.join('.');
+    const version = versionStr.slice(0,versionStr.length - 7);
+    return version;
 }
 
 
