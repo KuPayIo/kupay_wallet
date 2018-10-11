@@ -142,16 +142,16 @@ export const initLocalStorageStore = () => {
     });
 
     // 缓存gasPrice
-    register('gasPrice',(gasPrice)=>{
+    register('gasPrice',(gasPrice) => {
         setLocalStorage('gasPrice',gasPrice);
     });
 
      // 缓存gasPrice
-     register('btcMinerFee',(btcMinerFee)=>{
+    register('btcMinerFee',(btcMinerFee) => {
         setLocalStorage('btcMinerFee',btcMinerFee);
     });
 
- 	// 语言设置
+     // 语言设置
     register('languageSet',(language) => {
         setLocalStorage('languageSet',language);
     });

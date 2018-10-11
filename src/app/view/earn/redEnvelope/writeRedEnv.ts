@@ -135,6 +135,14 @@ export class WriteRedEnv extends Widget {
     }
 
     /**
+     * 修改留言
+     */
+    public changeMessage(e:any) {
+        this.state.message = e.value;
+        this.paint();
+    }
+
+    /**
      * 切换货币
      */
     public changeCoin(e:any) {
@@ -189,10 +197,9 @@ export class WriteRedEnv extends Widget {
                 const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
                 const wallet = find('curWallet');
                 const fg = await VerifyIdentidy(wallet,r);
+                close.callback(close.widget);
                 if (fg) {
                     this.sendRedEnv();
-                    close.callback(close.widget);
-
                 } else {
                     popNew('app-components-message-message',{ content:this.state.cfgData.tips[6] });
                 }
@@ -217,7 +224,7 @@ export class WriteRedEnv extends Widget {
         if (!rid) return;
     
         popNew('app-view-earn-redEnvelope-sendRedEnv', { 
-            message:this.state.message,
+            message:lm,
             rid,
             rtype:rtype,
             cname:curCoin.name 

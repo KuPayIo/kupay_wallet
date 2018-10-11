@@ -682,6 +682,9 @@ export const unicodeArray2Str = (arr) => {
     if (!arr || arr === 'null') {
         return str;
     }
+    if (typeof arr === 'string') {   // 如果本身是字符串直接返回
+        return arr;
+    }
     for (let i = 0; i < arr.length; i++) {
         str += String.fromCharCode(arr[i]);
     }
@@ -1266,19 +1269,16 @@ const isETHValidAddress = (addr:string) => {
     return true;
 };
 
-
-
 declare var pi_modules;
 
-//获取本地版本号
-export const getLocalVersion = ()=>{
+// 获取本地版本号
+export const getLocalVersion = () => {
     const updateMod = pi_modules.update.exports;
     return updateMod.getLocalVersion();
-}
+};
 
-//获取远端版本号
-export const getRemoteVersion = ()=>{
+// 获取远端版本号
+export const getRemoteVersion = () => {
     const updateMod = pi_modules.update.exports;
     return updateMod.getRemoteVersion();
-}
-
+};

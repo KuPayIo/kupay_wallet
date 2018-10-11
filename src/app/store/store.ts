@@ -226,6 +226,7 @@ export const logoutInit = () => {
     updateStore('inviteRedBagRec',null);
     updateStore('token','');
     updateStore('cloudBalance',new Map<CurrencyType, number>());
+    // tslint:disable-next-line:type-literal-delimiter
     updateStore('accountDetail',new Map<CurrencyType, {list:AccountDetail[],start:number,canLoadMore:boolean}>());
     updateStore('miningTotal',<MiningTotal>null);
     updateStore('dividTotal',<DividTotal>null);
@@ -235,7 +236,9 @@ export const logoutInit = () => {
     updateStore('mineRank', <MineRank>null);
     updateStore('miningRank', <MiningRank>null);
     updateStore('mineItemJump', '');
+    // tslint:disable-next-line:type-literal-delimiter
     updateStore('rechargeLogs', new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>());
+    // tslint:disable-next-line:type-literal-delimiter
     updateStore('withdrawLogs',new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>());
     updateStore('shapeShiftTxsMap', new Map<string,ShapeShiftTxs>());
     updateStore('productList',  <Product[]>[]);

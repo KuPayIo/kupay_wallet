@@ -32,7 +32,6 @@
 .item{
     height: 120px;
     line-height: 120px;
-    margin: 0 20px;
     border-bottom: 1px solid #DBDBE5;
     display: flex;
     align-items: center;

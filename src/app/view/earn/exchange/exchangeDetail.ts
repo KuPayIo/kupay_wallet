@@ -11,8 +11,9 @@ export class ExchangeDetail extends Widget {
 
     public setProps(props: Json, oldProps?: Json)  {
         super.setProps(props,oldProps);
+        const cfg = getLanguage(this);
         this.state = {
-            message:'',
+            message:this.props.message ? this.props.message :cfg.defaultMess,
             redBagList:[
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
@@ -20,7 +21,7 @@ export class ExchangeDetail extends Widget {
             ],
             scroll:false,
             showPin:this.props.rtype === 1,  // 0 等额红包  1 拼手气红包
-            cfgData:getLanguage(this),
+            cfgData:cfg,
             userName:'',
             curNum:0,
             totalNum:0,
@@ -28,7 +29,6 @@ export class ExchangeDetail extends Widget {
             greatUser:-1,
             greatAmount:0
         };
-        this.state.message = this.props.message ? this.props.message :this.state.cfgData.defaultMess;
         this.initData();
     }
 

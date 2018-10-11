@@ -16,7 +16,14 @@
         <div style="margin-bottom: 30px;">
             <div w-class="mode">
                 <div on-tap="itemClick(0)">
+                    {{if it1.phone.indexOf('*') > 0}}
+                    <div w-class="item" ev-switch-click="onSwitchChange" style="{{it1.openLockScreen?'':'border-bottom: none;'}}">
+                        <span w-class="itemName">{{it1.cfgData.itemTitle[1]}}</span>
+                        <span style="margin-right: 30px;color: rgba(136, 136, 136, 0.87);font-size: 28px;">{{it1.phone}}</span>
+                    </div>
+                    {{else}}
                     <app-components-basicItem-basicItem>{name:{{it1.cfgData.itemTitle[1]}},describe:{{it1.phone}},style:"margin:0;"}</app-components-basicItem-basicItem>
+                    {{end}}
                 </div>
                 <div on-tap="itemClick(1)">
                     <app-components-basicItem-basicItem>{name:{{it1.cfgData.itemTitle[2]}},style:"margin:0;border:none;"}</app-components-basicItem-basicItem>
@@ -38,7 +45,9 @@
             <div w-class="mode">
                 <div w-class="item" ev-switch-click="onSwitchChange" style="{{it1.openLockScreen?'':'border-bottom: none;'}}">
                     <span w-class="itemName">{{it1.cfgData.itemTitle[6]}}</span>
-                    <app-components-switch-switch>{types:{{it1.openLockScreen}} }</app-components-switch-switch>
+                    <span style="margin-right: 30px">
+                        <app-components-switch-switch>{types:{{it1.openLockScreen}} }</app-components-switch-switch>
+                    </span>
                 </div>
                 {{if it1.openLockScreen}}
                 <div w-class="item" on-tap="lockScreen" style="border-bottom: none;">

@@ -164,6 +164,7 @@ export const fetchTransactionList = (addr:string,currencyName:string) => {
     const transactions = find('transactions') || [];
     let txList = [];
     txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
+    
     return txList.sort((a, b) => b.time - a.time);
 };
 
@@ -173,6 +174,7 @@ export const fetchTransactionList = (addr:string,currencyName:string) => {
 export const fetchLocalTxByHash = (addr:string,currencyName:string,hash:string) => {
     const txList = fetchTransactionList(addr,currencyName);
     for (let i = 0; i < txList.length;i++) {
+        // tslint:disable-next-line:possible-timing-attack
         if (txList[i].hash === hash) {
             return txList[i];
         }
@@ -185,6 +187,7 @@ export const fetchLocalTxByHash = (addr:string,currencyName:string,hash:string) 
 export const fetchLocalTxByHash1 = (hash:string) => {
     const txList = find('transactions') || [];
     for (let i = 0; i < txList.length;i++) {
+        // tslint:disable-next-line:possible-timing-attack
         if (txList[i].hash === hash) {
             return txList[i];
         }
@@ -198,6 +201,7 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
     if (!pswCorrect) {
         close.callback(close.widget);
         popNewMessage('密码不正确');    
+        
         return;
     }
     const data = await buyProduct(productId,amount);
@@ -208,6 +212,7 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
         console.log('data',data);
         getPurchaseRecord();// 购买之后获取购买记录
     }
+    
     return data;
 };
 
@@ -218,6 +223,7 @@ export const fetchMnemonicFragment =  (hash) => {
     const shares = shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
             .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
     console.log('fetchMnemonicFragment-----------',shares);
+    
     return shares;
 };
 
@@ -231,8 +237,10 @@ export const backupMnemonic = async (passwd:string) => {
     const fragments = fetchMnemonicFragment(hash);
     if (!mnemonic) {
         popNewMessage('密码错误');
+        
         return;
     }
+
     return {
         mnemonic,
         fragments
@@ -257,10 +265,12 @@ export const getMnemonicByHash = (hash:string) => {
 /**
  * 获取随机名字
  */
-export const playerName = function () {
+export const playerName =  () => {
     const num1 = nameWare[0].length;
     const num2 = nameWare[1].length;
     let name = '';
+    // tslint:disable-next-line:max-line-length
     name = unicodeArray2Str(nameWare[0][Math.floor(Math.random() * num1)]) + unicodeArray2Str(nameWare[1][Math.floor(Math.random() * num2)]);
+    
     return name;
 };
