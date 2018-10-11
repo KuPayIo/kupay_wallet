@@ -21,7 +21,7 @@
     font-size: 36px;
     font-weight: 600;
     position: relative;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid rgba(229, 229, 238, 1);
 }
 .close{
     position: absolute;
@@ -34,7 +34,7 @@
     display: flex;
     align-items: center;
     height: 120px;
-    border-bottom: 1px solid #ccc8;
+    border-bottom: 1px solid #ccc;
     justify-content: center;
 }
 .oneDot{
@@ -58,7 +58,7 @@
     box-sizing: border-box;
     width: 33%;
     height: 110px;
-    border-bottom:1px solid #ccc8;
+    border-bottom:1px solid #ccc;
     font-family: "SFNSDisplay";
     font-size: 40px;
     color: #0B0817;
@@ -66,5 +66,5 @@
     text-align: center;
 }
 .oneNumMore{
-    border-right: 1px solid #ccc8;    
+    border-right: 1px solid #ccc;   
 }
