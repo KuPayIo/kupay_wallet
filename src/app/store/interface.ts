@@ -96,6 +96,7 @@ export interface Store {
     nonceMap:Map<string,number>;// 维护本地的nonce
     gasPrice:object;// gasPrice档次(3档)
     btcMinerFee:object;// btn minerFee档次(3档)
+    gasLimitMap:Map<string,number>;//gasLimit
     realUserMap:Map<string,boolean>;// 真实用户map
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额

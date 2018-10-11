@@ -62,7 +62,8 @@ export const addNewAddr = (currencyName, address, addrName) => {
     });
     const newAddrInfo: Addr = initAddr(address, currencyName, addrName);
     addrs.push(newAddrInfo);
-    dataCenter.updateAddrInfo(address, addrName);
+    dataCenter.updateAddrInfo(address, currencyName);
+    dataCenter.fetchErc20GasLimit(currencyName);
     updateStore('addrs', addrs);
     updateStore('curWallet', wallet);
 

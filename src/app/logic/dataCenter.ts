@@ -1,9 +1,9 @@
-import { ERC20Tokens } from '../config';
+import { ERC20Tokens, defaultEthToAddr } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
-import { getShapeShiftCoins, getTransactionsByAddr } from '../net/pullWallet';
+import { getShapeShiftCoins, getTransactionsByAddr, estimateGasERC20 } from '../net/pullWallet';
 import { Addr, CurrencyRecord, Wallet, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore } from '../store/store';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
@@ -35,6 +35,7 @@ export class DataCenter {
         this.exchangeRate('ETH');
         this.exchangeRate('BTC');
         this.refreshAllTx();
+        this.initErc20GasLimit();
     }
     /**
      * 刷新本地钱包
@@ -67,7 +68,23 @@ export class DataCenter {
         this.timerUpdateBalance(addr,currencyName); //定时更新余额
     }
 
-
+    public initErc20GasLimit(){
+        const wallet = find('curWallet');
+        if (!wallet) return;
+        wallet.showCurrencys.forEach(currencyName=>{
+            if(ERC20Tokens[currencyName]){
+                this.fetchErc20GasLimit(currencyName);
+            }
+        });
+    }
+    public fetchErc20GasLimit(currencyName){
+        const defaultPay = 100;
+        estimateGasERC20(currencyName,defaultEthToAddr,defaultPay).then(res=>{
+            const gasLimitMap = getBorn('gasLimitMap');
+            gasLimitMap.set(currencyName,res * 2);
+            updateStore('gasLimitMap',gasLimitMap);
+        });
+    }
     
     // 获取币币交易交易记录
     public fetchCurrencyExchangeTx() {
