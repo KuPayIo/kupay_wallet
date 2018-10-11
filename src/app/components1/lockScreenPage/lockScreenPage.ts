@@ -28,7 +28,7 @@ export class LockScreenPage extends Widget {
             lockScreenPsw:'',  // 锁屏密码
             openLockScreen: false // 是否打开锁屏开关 
         };
-        if (this.props.firstFg) {
+        if (this.props.firstFg) {   // true表示设置锁屏密码，首次打开此界面
             this.setLockPsw();
         } else {
             this.oldLockPsw(0);
@@ -100,7 +100,11 @@ export class LockScreenPage extends Widget {
                 if (lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
                     this.setLockPsw();
                 } else {
-                    this.oldLockPsw(++ind);
+                    if (this.props.open) {  // 进入APP解锁屏幕
+                        this.close(true);
+                    } else {
+                        this.oldLockPsw(++ind);
+                    }
                 }
             });
         }

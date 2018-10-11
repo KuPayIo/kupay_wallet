@@ -7,7 +7,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { backCall, popNew, backList } from '../../../pi/ui/root';
+import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { openAndGetRandom } from '../../net/pull';
@@ -18,8 +18,8 @@ import { find, initStore } from '../../store/store';
 
 import { fetchCoinGain, isValidAddress, mnemonicFragmentDecrypt, mnemonicFragmentEncrypt } from '../../utils/tools';
 
-import { getDeviceInfo } from '../../logic/native';
 import { fetchUSD2CNYRate } from '../../logic/dataCenter';
+import { getDeviceInfo } from '../../logic/native';
 
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
@@ -52,7 +52,7 @@ export const run = (cb): void => {
     popNew('app-view-base-app');
     // popNew('app-view-mine-home-home');
     // getDeviceInfo();
-    // popNewPage();
+    popNewPage();
     // 后台切前台
     backToFront();
     // 解决进入时闪一下问题
@@ -107,7 +107,7 @@ const popNewPage = () => {
     if (!readedPriAgr) {
         popNew('app-view-base-app');
         if (ifNeedUnlockScreen()) {
-            // popNew('app-components-keyboard-keyboard',{ title:'哈哈哈哈' });
+            popNew('app-components1-lockScreenPage-lockScreenPage',{ firstFg:false,open:true });
         }
 
     } else {
@@ -125,9 +125,9 @@ const checkUpdate = () => {
 const backToFront = () => {
     (<any>window).handle_app_lifecycle_listener = (iType: string) => {
         if ((iType === 'onAppResumed') && ifNeedUnlockScreen()) {
-            popNew('app-view-mine-setting-lockScreenPage');
+            popNew('app-components1-lockScreenPage-lockScreenPage',{ firstFg:false,open:true });
         } else if (iType === 'onBackPressed') {
-            if(backList.length === 1) return;
+            if (backList.length === 1) return;
             backCall();
             // (<any>window).onpopstate();
             // widget.ok && widget.ok();
