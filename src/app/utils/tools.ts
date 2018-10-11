@@ -8,7 +8,8 @@ import { Cipher } from '../core/crypto/cipher';
 import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
 import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, logoutInit, updateStore } from '../store/store';
-import { currencyConfirmBlockNumber, defalutShowCurrencys, resendInterval } from './constants';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, resendInterval, timeOfArrival, defaultGasLimit } from './constants';
+import { wei2Eth, sat2Btc } from './unitTools';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -1282,3 +1283,25 @@ export const getRemoteVersion = ()=>{
     return updateMod.getRemoteVersion();
 }
 
+
+// 更新矿工费
+export const fetchMinerFeeList = (currencyName) => {
+    const cn = (currencyName === 'ETH' || ERC20Tokens[currencyName]) ? 'ETH' : 'BTC';
+    const toa = timeOfArrival[cn];
+    const minerFeeList = [];
+    for (let i = 0;i < toa.length;i++) {
+        let minerFee = 0;
+        if(cn === 'ETH'){
+            const gasLimit = getBorn('gasLimitMap').get(currencyName) || defaultGasLimit;
+            minerFee = wei2Eth(gasLimit * fetchGasPrice(toa[i].level))
+        }else{
+            minerFee = sat2Btc(fetchBtcMinerFee(toa[i].level))
+        }
+        const obj = {
+            ...toa[i],
+            minerFee
+        };
+        minerFeeList.push(obj);
+    } 
+    return minerFeeList;
+}

@@ -116,6 +116,7 @@ export const initStore = () => {
     // 初始话化涨跌颜色设置
     store.changeColor = findByLoc('changeColor');
     store.gasPrice = findByLoc('gasPrice') || {};
+    store.gasLimitMap = new Map<string,number>(findByLoc('gasLimitMap'));
     store.btcMinerFee = findByLoc('btcMinerFee') || {};
 
 };
@@ -135,7 +136,7 @@ type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
  'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'| 'languageSet' | 'changeColor' |
-'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee';
+'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee' | 'gasLimitMap';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -172,6 +173,7 @@ const store = <Store>{
     nonceMap:new Map<string,number>(),// 本地nonce维护
     gasPrice:null,// gasPrice分档次
     btcMinerFee:null,// btc minerfee 分档次
+    gasLimitMap:new Map<string,number>(),//gasLimit
     realUserMap:new Map<string,boolean>(),// 本地真实用户map
     // 云端数据
     cloudBalance: new Map<CurrencyType, number>(),// 云端账户余额

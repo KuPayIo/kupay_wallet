@@ -42,6 +42,7 @@ export class AddAsset extends Widget {
             showCurrencys.push(currencys.currencyName);
             const curAddr = getCurrentAddrInfo(currencys.currencyName);
             dataCenter.updateAddrInfo(curAddr.addr, currencys.currencyName);
+            dataCenter.fetchErc20GasLimit(currencys.currencyName);
         } else {
             showCurrencys.splice(oldIndex, 1);
         }
