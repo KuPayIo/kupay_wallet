@@ -40,6 +40,7 @@
 }
 .left{
     flex: 1;
+    height: 100%;
     animation: switchWalletIn linear .2s forwards;
 }
 .leftHide{

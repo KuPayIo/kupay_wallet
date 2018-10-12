@@ -1,20 +1,17 @@
 .modal-mask{
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
     padding: 0 75px;
-    background-color: rgba(50, 50, 50, 0.5);
+    background-color: rgba(0, 0, 0, .6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .body{
     background-color: #fff;
+    box-sizing: border-box;
     padding: 30px;
     padding-bottom: 0;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+    width: 570px;
     border-radius: 12px;
     box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
 }
