@@ -6,7 +6,7 @@ import { popNew } from '../../pi/ui/root';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
-import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
+import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, currency2USDT } from '../store/interface';
 import { find, getBorn, logoutInit, updateStore } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, resendInterval, timeOfArrival, defaultGasLimit } from './constants';
 import { wei2Eth, sat2Btc } from './unitTools';
@@ -799,7 +799,6 @@ export const fetchDefaultExchangeRateJson = () => {
  * 获取本地钱包资产列表
  */
 export const fetchWalletAssetList = () => {
-    const coinGain = getBorn('coinGain');
     const wallet = find('curWallet');
     const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
     const assetList = [];
@@ -812,7 +811,7 @@ export const fetchWalletAssetList = () => {
             const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(balance * cny);
-            item.gain =  coinGain.get(k) || formatBalanceValue(0);
+            item.gain =  fetchCoinGain(k);
             assetList.push(item);
         }
         
@@ -827,7 +826,7 @@ export const fetchWalletAssetList = () => {
             const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(balance * cny);
-            item.gain =  coinGain.get(k) || formatBalanceValue(0);
+            item.gain =  fetchCoinGain(k);
             assetList.push(item);
         }
     }
@@ -839,7 +838,6 @@ export const fetchWalletAssetList = () => {
  * 获取云端钱包资产列表
  */
 export const fetchCloudWalletAssetList = () => {
-    const coinGain = getBorn('coinGain');
     const assetList = [];
     const ktBalance = getBorn('cloudBalance').get(CurrencyType.KT) || 0;
     const ktCny = getBorn('exchangeRateJson').get('KT').CNY;
@@ -868,7 +866,7 @@ export const fetchCloudWalletAssetList = () => {
             const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(balance * cny);
-            item.gain =  coinGain.get(k) || formatBalanceValue(0);
+            item.gain =  fetchCoinGain(k);
             assetList.push(item);
         }
     }
@@ -1025,29 +1023,10 @@ export const initAddr = (address: string, currencyName: string, addrName?: strin
 };
 
 // 获取货币的涨跌情况
-export const fetchCoinGain = () => {
-    const coinGain = getBorn('coinGain');
-    for (const k in MainChainCoin) {
-        const item:any = {};
-        if (MainChainCoin.hasOwnProperty(k)) {
-            const gain = Math.random();
-            item.gain =  gain > 0.5 ? formatBalanceValue(gain) : formatBalanceValue(-gain);
-            if (k === 'KT') {
-                item.gain = 0;
-            }
-            coinGain.set(k,item.gain);
-        }
-        
-    }
-
-    for (const k in ERC20Tokens) {
-        const item:any = {};
-        if (ERC20Tokens.hasOwnProperty(k)) {
-            const gain = Math.random();
-            item.gain =  gain > 0.5 ? formatBalanceValue(gain) : formatBalanceValue(-gain);
-            coinGain.set(k,item.gain);
-        }
-    }
+export const fetchCoinGain = (currencyName:string) => {
+    const currency2USDT:currency2USDT = getBorn('currency2USDTMap').get(currencyName);
+    if(!currency2USDT) return formatBalanceValue(0);
+    return formatBalanceValue((currency2USDT.close - currency2USDT.open) / currency2USDT.open);
 };
 /**
  * 转化rtype
@@ -1314,3 +1293,5 @@ export const fetchMinerFeeList = (currencyName) => {
     } 
     return minerFeeList;
 }
+
+

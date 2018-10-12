@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { getFirstEthAddr } from '../utils/tools';
-import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TransRecordLocal, Wallet } from './interface';
+import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TransRecordLocal, Wallet, currency2USDT } from './interface';
 import { register, updateStore } from './store';
 // ===================================================== 导出
 
@@ -142,17 +142,17 @@ export const initLocalStorageStore = () => {
     });
 
     // 缓存gasPrice
-    register('gasPrice',(gasPrice) => {
+    register('gasPrice',(gasPrice:object) => {
         setLocalStorage('gasPrice',gasPrice);
     });
 
     // gasLimitMap
-    register('gasLimitMap',(gasLimitMap)=>{
+    register('gasLimitMap',(gasLimitMap:Map<string,number>)=>{
         setLocalStorage('gasLimitMap',gasLimitMap);
     });
 
      // 缓存gasPrice
-    register('btcMinerFee',(btcMinerFee) => {
+    register('btcMinerFee',(btcMinerFee:object) => {
         setLocalStorage('btcMinerFee',btcMinerFee);
     });
 
@@ -162,7 +162,17 @@ export const initLocalStorageStore = () => {
     });
 
     // 涨跌颜色设置
-    register('changeColor',(language) => {
-        setLocalStorage('changeColor',language);
+    register('changeColor',(changeColor) => {
+        setLocalStorage('changeColor',changeColor);
+    });
+
+    // 人民币美元汇率
+    register('USD2CNYRate',(USD2CNYRate:number) => {
+        setLocalStorage('USD2CNYRate',USD2CNYRate);
+    });
+
+     // 货币对比USDT的比率
+     register('currency2USDTMap',(currency2USDTMap:Map<string,currency2USDT>) => {
+        setLocalStorage('currency2USDTMap',currency2USDTMap);
     });
 };

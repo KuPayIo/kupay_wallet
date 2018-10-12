@@ -1,4 +1,4 @@
-import { ERC20Tokens, defaultEthToAddr } from '../config';
+import { ERC20Tokens, defaultEthToAddr, MainChainCoin } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
@@ -7,10 +7,11 @@ import { getShapeShiftCoins, getTransactionsByAddr, estimateGasERC20 } from '../
 import { Addr, CurrencyRecord, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore, register } from '../store/store';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
-import { getAddrsAll, initAddr, getConfirmBlockNumber, formatBalance } from '../utils/tools';
+import { getAddrsAll, initAddr, getConfirmBlockNumber, formatBalance, formatBalanceValue } from '../utils/tools';
 import { ethTokenDivideDecimals, sat2Btc, wei2Eth, smallUnit2LargeUnit } from '../utils/unitTools';
 import { fetchTransactionList, fetchLocalTxByHash, getMnemonicByHash } from '../utils/walletTools';
 import { BigNumber } from '../res/js/bignumber';
+import { fetchUSD2CNYRate, fetchCurrency2USDTRate } from '../net/pull3';
 /**
  * 创建事件处理器表
  * @example
@@ -33,6 +34,10 @@ export class DataCenter {
     public init() {
         //获取shapeshift支持货币
         getShapeShiftCoins();
+        // 更新人民币美元汇率
+        this.updateUSD2CNYRate();
+        //更新货币对比USDT的比率
+        this.updateCurrency2USDTRate();
         this.exchangeRate('ETH');
         this.exchangeRate('BTC');
         this.refreshAllTx();
@@ -822,55 +827,69 @@ export class DataCenter {
             }
         }
     }
-}
 
-//==========================三方接口=======================================
-//http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4 测试
-//http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=37223&sign=7987216e841c32aa08d0ea0dcbf65eed
-// 获取美元对人民币汇率
-export const fetchUSD2CNYRate = ()=>{
-    $.ajax({
-        type          : 'get',
-        async         : false,
-        url           : 'http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=37223&sign=7987216e841c32aa08d0ea0dcbf65eed&format=json&jsoncallback=data',
-        dataType      : 'jsonp',
-        jsonp         : 'callback',
-        jsonpCallback : 'data',
-        success       : function(data){
-            if(data.success!='1'){
-                alert(data.msgid+' '+data.msg);
-                return;
+    /**
+     * 整点更新人民币美元汇率
+     */
+    private updateUSD2CNYRate(){
+        const nextPoint = new Date();
+        nextPoint.setHours(nextPoint.getHours() + 1);
+        nextPoint.setMinutes(0);
+        nextPoint.setSeconds(0);
+        // nextPoint.setSeconds(nextPoint.getSeconds() + 10);
+        const delay = nextPoint.getTime() - new Date().getTime();
+        console.log('updateUSD2CNYRate nextPoint-------',nextPoint);
+        console.log('updateUSD2CNYRate delay-------',delay);
+        fetchUSD2CNYRate().then((res:any) => {
+            if(res.success == '1'){
+                const rate = Number(res.result.rate);
+                updateStore('USD2CNYRate',rate);
             }
-            //遍历
-            var description = "";
-            for(var i in data.result){
-                var property=data.result[i];
-                description+=i+" = "+property+"\n";
-            }
-            alert(description);
-        },
-        error:function(){
-            alert('fail');
+        });
+        setTimeout(()=>{
+            this.updateUSD2CNYRate();
+        },delay);
+    }
+
+    /**
+     * 整点更新货币对比USDT的比率
+     */
+    private updateCurrency2USDTRate(){
+        const nextPoint = new Date();
+        const seconds = nextPoint.getSeconds();
+        const delaySeconds = seconds < 30 ? 30 - seconds : 60 - seconds;
+        const delay = delaySeconds * 1000;
+        console.log('updateCurrency2USDTRate',nextPoint);
+        
+        const currencyList = [];
+        for(let k in MainChainCoin){
+            currencyList.push(k);
         }
-    });
-    // fetch('http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=37223&sign=7987216e841c32aa08d0ea0dcbf65eed&format=xml&jsoncallback=data',{
-    //     mode: 'no-cors',
-    // })
-    // .then(res=>{
-    //     console.log(res);
-    //     return res.json()
-    // })
-    // .then(function(res) {
-    //     console.log('汇率', res);
-    // }).catch(function (e) {
-    //     console.log("错误：", e);
-    // });
+        for(let k in ERC20Tokens){
+            currencyList.push(k);
+        }
+        currencyList.forEach(currencyName=>{
+            fetchCurrency2USDTRate(currencyName).then((res:any) =>{
+                if(res.status === 'ok'){
+                    const currency2USDTMap = getBorn('currency2USDTMap');
+                    const close = res.data[0].close;
+                    const open = res.data[0].open;
+                    currency2USDTMap.set(currencyName,{
+                        open,
+                        close
+                    });
+                    updateStore('currency2USDTMap',currency2USDTMap);
+                }
+            }).catch(res=>{
+                console.log('fetchCurrency2USDTRate err');
+            });
+        });
+        setTimeout(()=>{
+            this.updateCurrency2USDTRate();
+        },delay);
+    }
 }
 
-const data = (res)=>{
-    console.log('汇率222222222222222', res);
-}
-//======================================================================
 
 // ============================================ 立即执行
 /**
