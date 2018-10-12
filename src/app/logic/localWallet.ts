@@ -218,6 +218,7 @@ export const importWalletByFragment = async (hash:string,option) => {
  * 添加新地址
  */
 export const createNewAddr = async (passwd:string,currencyName:string) => {
+    console.time('createNewAddr');
     const close = popNewLoading('添加中...');
     const wallet = find('curWallet');
     const mnemonic = await getMnemonic(wallet, passwd);
@@ -231,6 +232,7 @@ export const createNewAddr = async (passwd:string,currencyName:string) => {
     } else {
         popNewMessage('密码错误');
     }
+    console.timeEnd('createNewAddr');
 }
 
 // 删除助记词

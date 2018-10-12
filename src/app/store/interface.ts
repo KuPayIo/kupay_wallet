@@ -85,7 +85,6 @@ export interface Store {
     userInfo:any;// 用户头像base64
     loginState: LoginState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
-    coinGain:Map<string,number>;// 货币涨跌
     token:string;// 自动登录token
     // 本地钱包
     walletList: Wallet[];// 钱包数据
@@ -124,8 +123,14 @@ export interface Store {
     lastGetSmsCodeTime:number;
     languageSet:LanguageSet;
     changeColor:ChangeColor;
+    USD2CNYRate:number;//人民币美元汇率
+    currency2USDTMap:Map<string,currency2USDT>;//货币对比USDT的比率
 }
 
+export interface currency2USDT{
+    open:number; //开盘价
+    close:number; //收盘价
+}
 /**
  * 云端用户基础数据
  */

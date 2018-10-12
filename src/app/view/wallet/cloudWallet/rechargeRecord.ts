@@ -8,6 +8,7 @@ import { CurrencyType } from '../../../store/interface';
 import { getBorn, register } from '../../../store/store';
 import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { popNew } from '../../../../pi/ui/root';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -83,6 +84,9 @@ export class RechargeRecord extends Widget {
             console.log('加载中，请稍后~~~');
             this.loadMore();
         } 
+    }
+    public recordListItemClick(e:any,index:number){
+        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.state.recordList[index].hash });
     }
 }
 

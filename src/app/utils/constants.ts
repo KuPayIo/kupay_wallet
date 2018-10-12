@@ -147,3 +147,7 @@ export const currencyConfirmBlockNumber = {
 export const etherscanUrl = 'https://ropsten.etherscan.io/tx/';
 // 打开第三方查询网址btc
 export const blockchainUrl = 'https://testnet.blockchain.info/tx/';
+//火币api access key
+const huobiApiAccessKey = '6fd70042-c5e4c618-d6e619ec-ecfa2';
+//火币API
+export const huobiApi = `https://api.huobipro.com/market/history/kline?period=1day&size=1&AccessKeyId=${huobiApiAccessKey}&symbol=`;

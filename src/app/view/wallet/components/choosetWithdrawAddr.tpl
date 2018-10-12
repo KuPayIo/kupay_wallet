@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page" on-page="doClose">
+<div class="new-page" w-class="new-page" on-tap="doClose">
     <div w-class="main">
         <div w-class="title">{{it1.cfgData.title}}</div>
         <div w-class="list-container">
@@ -7,7 +7,7 @@
                 <div w-class="item-left">{{v.addrShow}}</div>
                 <div w-class="item-right">{{v.balance}}</div>
                 {{if v.isChoosed}}
-                <img src="../../../../res/image/right.png" w-class="choosed"/>
+                <img src="../../../res/image/right.png" w-class="choosed"/>
                 {{end}}
             </div>
             {{end}}
