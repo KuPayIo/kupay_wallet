@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
-import { formatBalanceValue, getLanguage, popNewMessage } from '../../../utils/tools';
+import { formatBalanceValue, getLanguage, popNewMessage, fetchCoinGain } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -41,7 +41,7 @@ export class CloudWalletHome extends Widget {
                 components:'app-view-wallet-cloudWallet-withdrawRecord'
             }],
             activeNum:0,
-            gain:getBorn('coinGain').get(currencyName) || formatBalanceValue(0),
+            gain:fetchCoinGain(currencyName),
             rate:formatBalanceValue(rate),
             balance,
             balanceValue,

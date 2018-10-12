@@ -42,10 +42,6 @@ export class ModalBox2 extends Widget {
     }
 
     private init() {
-        setTimeout(() => {
-            this.state.isShow = true;
-            this.paint();
-        }, 100);
     }
 
 }

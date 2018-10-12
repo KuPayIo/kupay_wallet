@@ -3,6 +3,7 @@ import { QRCode } from '../../pi/browser/qrcode';
 import { SystemInfoProvider } from '../../pi/browser/systemInfoProvider';
 import { WebViewHelper } from '../../pi/browser/webViewHelper';
 import { popNew } from '../../pi/ui/root';
+import { HttpHelper } from '../../pi/browser/httpHelper';
 
 /**
  * 一些底层操作
@@ -83,3 +84,43 @@ export const getDeviceInfo = () => {
         }
     });
 };
+
+/**
+ * get 请求
+ */
+export const getRequest = (url:string) => {
+    return new Promise((resolve,reject)=>{
+        let httpHelper = new HttpHelper();
+        httpHelper.init();
+        httpHelper.getConnection({
+                url,
+                success: (result) => {
+                    resolve(result);
+                }
+                , fail: (result) => {
+                    reject(result);
+                }
+            }
+        );
+    });
+    
+}
+
+/**
+ * post 请求
+ */
+export const postRequest = (url:string,param:any) =>{
+    let httpHelper = new HttpHelper();
+    httpHelper.init();
+    httpHelper.postConnection({
+            url,
+            json:JSON.stringify(param),
+            success: (result) => {
+                alert("请求结果\t" + result)
+            }
+            , fail: (result) => {
+                alert("请求失败 错误信息\t" + result)
+            }
+        }
+    );
+}

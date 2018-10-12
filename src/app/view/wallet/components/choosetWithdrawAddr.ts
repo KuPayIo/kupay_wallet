@@ -22,7 +22,8 @@ export class ChooseWithdrawAddr extends Widget {
     public chooseAddrClick(e:any,index:number) {
         this.ok && this.ok(index);
     }
-    public doClick() {
+    public doClose() {
         this.cancel && this.cancel();
     }
+
 }

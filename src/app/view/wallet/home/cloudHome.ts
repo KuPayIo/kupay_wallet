@@ -83,7 +83,7 @@ register('cloudBalance',() => {
 });
 
 // 货币涨跌幅度变化
-register('coinGain',() => {
+register('currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();

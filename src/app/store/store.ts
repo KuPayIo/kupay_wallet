@@ -7,7 +7,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, ChangeColor, CHisRec, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal,Product, PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, ChangeColor, CHisRec, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank, MiningTotal,Product, PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet, currency2USDT } from './interface';
 
 // ============================================ 导出
 /**
@@ -118,6 +118,8 @@ export const initStore = () => {
     store.gasPrice = findByLoc('gasPrice') || {};
     store.gasLimitMap = new Map<string,number>(findByLoc('gasLimitMap'));
     store.btcMinerFee = findByLoc('btcMinerFee') || {};
+    store.USD2CNYRate = findByLoc('USD2CNYRate') || 0;
+    store.currency2USDTMap = new Map<string,currency2USDT>(findByLoc('currency2USDTMap'));
 
 };
 
@@ -125,7 +127,7 @@ export const initStore = () => {
 type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walletList' | 'curWallet' | 'addrs' | 'salt' | 'transactions' | 'cloudBalance' | 'conUser' | 
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
-'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord' | 'userInfo' | 'coinGain' |
+'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord' | 'userInfo' | 
 'token' | 'flag' | 'verPhone';
 
 type MapName = 'exchangeRateJson' | 'hashMap';
@@ -136,7 +138,7 @@ type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
  'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'| 'languageSet' | 'changeColor' |
-'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee' | 'gasLimitMap';
+'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee' | 'gasLimitMap' | 'USD2CNYRate' | 'currency2USDTMap';
 const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
@@ -161,7 +163,6 @@ const store = <Store>{
     conUid: 0,// 连接uid
     userInfo:null,// 用户头像base64
     loginState: LoginState.init,// 连接状态
-    coinGain:new Map<string,number>(),
     token:'',// 自动登录token
     // 本地钱包
     walletList: <Wallet[]>[],// 钱包数据
@@ -206,7 +207,9 @@ const store = <Store>{
     lastGetSmsCodeTime:0,
     languageSet:<LanguageSet>null, // 语言设置
     changeColor:<ChangeColor>null, // 涨跌颜色设置
-    verPhone:<number>null  // 验证手机号码
+    verPhone:<number>null, // 验证手机号码
+    USD2CNYRate:0,//人民币美元汇率
+    currency2USDTMap:new Map<string,currency2USDT>()
 };
 
 // 重置云端数据
@@ -228,7 +231,6 @@ export const logoutInit = () => {
     updateStore('inviteRedBagRec',null);
     updateStore('token','');
     updateStore('cloudBalance',new Map<CurrencyType, number>());
-    // tslint:disable-next-line:type-literal-delimiter
     updateStore('accountDetail',new Map<CurrencyType, {list:AccountDetail[],start:number,canLoadMore:boolean}>());
     updateStore('miningTotal',<MiningTotal>null);
     updateStore('dividTotal',<DividTotal>null);
@@ -238,9 +240,7 @@ export const logoutInit = () => {
     updateStore('mineRank', <MineRank>null);
     updateStore('miningRank', <MiningRank>null);
     updateStore('mineItemJump', '');
-    // tslint:disable-next-line:type-literal-delimiter
     updateStore('rechargeLogs', new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>());
-    // tslint:disable-next-line:type-literal-delimiter
     updateStore('withdrawLogs',new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>());
     updateStore('shapeShiftTxsMap', new Map<string,ShapeShiftTxs>());
     updateStore('productList',  <Product[]>[]);

@@ -15,12 +15,6 @@ import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
-
-import { fetchCoinGain, isValidAddress, mnemonicFragmentDecrypt, mnemonicFragmentEncrypt } from '../../utils/tools';
-
-import { fetchUSD2CNYRate } from '../../logic/dataCenter';
-import { getDeviceInfo } from '../../logic/native';
-
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
 // import { create } from "../../../pi/net/rpc";
@@ -44,10 +38,6 @@ export const run = (cb): void => {
     // 主动推送初始化
     initPush();
     openAndGetRandom();
-    // 模拟异步获取货币涨跌幅度
-    setTimeout(() => {
-        fetchCoinGain();
-    },500);
     // dataCenter.init();
     popNew('app-view-base-app');
     // popNew('app-view-chat-home-home');
@@ -59,8 +49,14 @@ export const run = (cb): void => {
     setTimeout(() => {
         if (cb) cb();
     },20);
-    
+    // getRequest('https://api.huobipro.com/market/history/kline?period=1day&size=1&symbol=omgusdt&AccessKeyId=6fd70042-c5e4c618-d6e619ec-ecfa2')
+    // .then(result=>{
+    //     alert("111请求结果\t" + result)
+    // }).catch(result=>{
+    //     alert("请求失败 错误信息\t" + result)
+    // });
 };
+
 // const rpcFunc = (req:Struct, respClass:Function, callback:Function, timeout: number) => {
 //     rpc(req, (r:Struct) =>{
 //         if(!respClass || r instanceof respClass){
