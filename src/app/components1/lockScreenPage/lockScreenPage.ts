@@ -133,9 +133,9 @@ export class LockScreenPage extends Widget {
      * 进入APP三次解锁屏幕失败后验证身份
      */
     public verifyPsw() {
-        const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
         // tslint:disable-next-line:max-line-length
         popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput2,async (r) => {
+            const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
             const wallet = find('curWallet');
             const fg = await VerifyIdentidy(wallet,r);
             close.callback(close.widget);
@@ -146,10 +146,12 @@ export class LockScreenPage extends Widget {
                 popNew('app-components1-message-message',{ content:this.state.cfgData.tips[2] });
                 this.verifyPsw();
             } 
-        },() => {
-            close.callback(close.widget);
-            const exitApp = new ExitApp();
-            exitApp.init();
+        },(fg) => {
+            if (fg) {
+                const exitApp = new ExitApp();
+                exitApp.init();
+                exitApp.exitApplication({});
+            }
         });
     }
 }

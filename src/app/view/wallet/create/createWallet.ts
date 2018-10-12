@@ -85,6 +85,10 @@ export class CreateWallet extends Widget {
     }
     public randomPlayName() {
         this.state.walletName = playerName();
+        document.getElementById('random').classList.add('random');
+        setTimeout(() => {
+            document.getElementById('random').classList.remove('random');
+        }, 1000);
         this.paint();
     }
     public async createClick() {

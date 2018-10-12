@@ -11,7 +11,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
+import { getLanguage, logoutAccount } from '../../utils/tools';
 
 interface Props {
     title:string;
@@ -24,7 +24,7 @@ interface Props {
 export class ModalBoxInput extends Widget {
     public props: Props;
     public ok: (value:string) => void;
-    public cancel: () => void;
+    public cancel: (fg:boolean) => void;   // fg为true表示退出APP，false表示仅关闭当前页面
 
     public create() {
         super.create();
@@ -36,21 +36,25 @@ export class ModalBoxInput extends Widget {
     /**
      * 点击取消按钮
      */
-    public cancelBtnClick(e:any) {
-        this.cancel && this.cancel();
+    public cancelBtnClick() {
+        this.cancel && this.cancel(true);
     }
     /**
      * 点击确认按钮
      */
-    public okBtnClick(e:any) {
+    public okBtnClick() {
         this.ok && this.ok(this.state.currentValue);
     }
     /**
      * 忘记密码
      */
-    public foegetPsw(e:any) {
-        // this.ok && this.ok();  
-        // popNew('app-components-modalBox-modalBox');      
+    public foegetPsw() {
+        this.cancel && this.cancel(false);
+        popNew('app-components1-modalBox-modalBox',this.state.cfgData.modalBox,() => {
+            logoutAccount();
+        },() => {
+            popNew('app-components1-modalBoxInput-modalBoxInput',this.props);
+        });      
     }
     /**
      * 输入框变化
