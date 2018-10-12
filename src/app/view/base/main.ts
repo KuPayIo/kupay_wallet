@@ -59,7 +59,8 @@ export const run = (cb): void => {
     setTimeout(() => {
         if (cb) cb();
     },20);
-    
+    fetchUSD2CNYRate();
+    console.log('----------------------------------');
 };
 // const rpcFunc = (req:Struct, respClass:Function, callback:Function, timeout: number) => {
 //     rpc(req, (r:Struct) =>{

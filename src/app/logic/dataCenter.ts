@@ -829,18 +829,46 @@ export class DataCenter {
 //http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=37223&sign=7987216e841c32aa08d0ea0dcbf65eed
 // 获取美元对人民币汇率
 export const fetchUSD2CNYRate = ()=>{
-    fetch('http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=37223&sign=7987216e841c32aa08d0ea0dcbf65eed',{
-        mode: 'no-cors',
-        headers:{
-            'Content-Type': 'application/json'
+    $.ajax({
+        type          : 'get',
+        async         : false,
+        url           : 'http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=37223&sign=7987216e841c32aa08d0ea0dcbf65eed&format=json&jsoncallback=data',
+        dataType      : 'jsonp',
+        jsonp         : 'callback',
+        jsonpCallback : 'data',
+        success       : function(data){
+            if(data.success!='1'){
+                alert(data.msgid+' '+data.msg);
+                return;
+            }
+            //遍历
+            var description = "";
+            for(var i in data.result){
+                var property=data.result[i];
+                description+=i+" = "+property+"\n";
+            }
+            alert(description);
         },
-    })
-    .then(res=>{
-        return res.json()
-    })
-    .then(function(res) {
-      console.log('汇率',res);
+        error:function(){
+            alert('fail');
+        }
     });
+    // fetch('http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=37223&sign=7987216e841c32aa08d0ea0dcbf65eed&format=xml&jsoncallback=data',{
+    //     mode: 'no-cors',
+    // })
+    // .then(res=>{
+    //     console.log(res);
+    //     return res.json()
+    // })
+    // .then(function(res) {
+    //     console.log('汇率', res);
+    // }).catch(function (e) {
+    //     console.log("错误：", e);
+    // });
+}
+
+const data = (res)=>{
+    console.log('汇率222222222222222', res);
 }
 //======================================================================
 
