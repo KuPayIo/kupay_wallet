@@ -27,21 +27,25 @@
                     <app-components-input-input>{itype:"number",placeHolder:{{it1.cfgData.inputPlace}},style:"padding:0;",input:{{it1.amount}}}</app-components-input-input>
                 </div>
             </div>
-            <div w-class="item1">
-                <div w-class="inner-tip"><span>{{it1.cfgData.phrase[2]}}</span><img src="../../../res/image/right_arrow_blue.png" on-tap="chooseWithdrawAddr"/></div>
-                <div w-class="input-father1" >
-                    {{it1.withdrawAddr}}
-                </div>
+
+            <div w-class="inner-tip" on-tap="chooseWithdrawAddr">
+                <span style="padding-left: 30px;">{{it1.cfgData.phrase[2]}}</span>
+                <img src="../../../res/image/right_arrow_blue.png" style="border: 20px solid transparent;margin-right: 10px;"/>
             </div>
+            <div w-class="input-father1" >
+                {{it1.withdrawAddr}}
+            </div>
+
             <div w-class="item2">
                 <div w-class="inner-tip" >
                     <div>
                         <span>{{it1.cfgData.phrase[3]}}</span>
                         <span w-class="fee">{{it1.minerFee}}&nbsp;{{it.currencyName}}</span>
                     </div>
-                    <img src="../../../res/image/41_blue.png" on-tap="minerFeeDescClick"/>
+                    <img src="../../../res/image/41_blue.png" on-tap="minerFeeDescClick" style="border: 20px solid transparent;"/>
                 </div>
             </div>
+
             <div w-class="bottom-container">
                 {{if it1.balance < it1.amount + it1.minerFee}}
                 <div w-class="tip">{{it1.cfgData.phrase[4]}}</div>

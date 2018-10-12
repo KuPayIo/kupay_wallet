@@ -33,7 +33,7 @@
                         <span>{{it1.cfgData.phrase[2]}}</span>
                         <span w-class="speed">{{it1.minerFeeList[it1.curLevel].text}}</span>
                     </div>
-                    <img src="../../../res/image/41_blue.png" on-tap="speedDescClick"/>
+                    <img src="../../../res/image/41_blue.png" on-tap="speedDescClick" style="border: 20px solid transparent;margin: -20px;"/>
                 </div>
                 <div w-class="speed-time">
                     {{it1.minerFeeList[it1.curLevel].time}}

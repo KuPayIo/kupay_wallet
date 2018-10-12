@@ -1,6 +1,7 @@
 /**
  * pasword screen
  */
+import { ExitApp } from '../../../pi/browser/exitApp';
 import { Json } from '../../../pi/lang/type';
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
@@ -86,7 +87,7 @@ export class LockScreenPage extends Widget {
         if (ind > 2) {
             const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
             // tslint:disable-next-line:max-line-length
-            popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput,async (r) => {
+            popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput1,async (r) => {
                 const wallet = find('curWallet');
                 const fg = await VerifyIdentidy(wallet,r);
                 close.callback(close.widget);
@@ -96,6 +97,8 @@ export class LockScreenPage extends Widget {
                 } else {
                     popNew('app-components1-message-message',{ content:this.state.cfgData.tips[2] });
                 } 
+            },() => {
+                close.callback(close.widget);
             });
         } else {
             popNew('app-components1-keyboard-keyboard',{ title:this.state.errorTips[ind] },(r) => {
@@ -109,23 +112,11 @@ export class LockScreenPage extends Widget {
     }
 
     /**
-     * 首次进入APP解锁屏幕
+     * 进入APP解锁屏幕
      */
     public unLockScreen(ind:number) {
         if (ind > 2) {
-            const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
-            // tslint:disable-next-line:max-line-length
-            popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput,async (r) => {
-                const wallet = find('curWallet');
-                const fg = await VerifyIdentidy(wallet,r);
-                close.callback(close.widget);
-                // const fg = true;
-                if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
-                    this.setLockPsw();
-                } else {
-                    popNew('app-components1-message-message',{ content:this.state.cfgData.tips[2] });
-                } 
-            });
+            this.verifyPsw();
         } else {
             const title = this.state.errorTips[ind === 0 ? 3 :ind];
             popNew('app-components1-keyboard-keyboard',{ title:title,closePage:1 },(r) => {
@@ -136,5 +127,29 @@ export class LockScreenPage extends Widget {
                 }
             });
         }
+    }
+
+    /**
+     * 进入APP三次解锁屏幕失败后验证身份
+     */
+    public verifyPsw() {
+        const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
+        // tslint:disable-next-line:max-line-length
+        popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput2,async (r) => {
+            const wallet = find('curWallet');
+            const fg = await VerifyIdentidy(wallet,r);
+            close.callback(close.widget);
+            // const fg = true;
+            if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
+                this.setLockPsw();
+            } else {  // 进入APP验证身份失败后再次进入验证身份步骤
+                popNew('app-components1-message-message',{ content:this.state.cfgData.tips[2] });
+                this.verifyPsw();
+            } 
+        },() => {
+            close.callback(close.widget);
+            const exitApp = new ExitApp();
+            exitApp.init();
+        });
     }
 }

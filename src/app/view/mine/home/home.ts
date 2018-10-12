@@ -67,6 +67,7 @@ export class Home extends Widget {
         if (wallet) {
             this.state.hasWallet = true;
             this.state.address = getFirstEthAddr();
+            this.state.hasBackupMnemonic = JSON.parse(wallet.gwlt).mnemonicBackup;            
         }
         this.paint();
     }
@@ -169,7 +170,7 @@ register('curWallet', () => {
 register('userInfo', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initData();
+        w.init();
     }
 });
 register('languageSet', () => {
