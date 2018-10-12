@@ -11,7 +11,7 @@ import { BTCWallet } from '../../../core/btc/wallet';
 import { EthWallet } from '../../../core/eth/wallet';
 import { find } from '../../../store/store';
 import { btcNetwork, lang } from '../../../utils/constants';
-import { getLanguage } from '../../../utils/tools';
+import { getAddrInfoByAddr, getLanguage } from '../../../utils/tools';
 
 // ================================================导出
 interface Props {
@@ -55,7 +55,7 @@ export class ExportPrivateKey extends Widget {
             switch (currencyName) {
                 case 'ETH':
                     const ethKeys = this.exportPrivateKeyETH(addrs);
-                    obj.textList.push(...ethKeys);
+                    obj.textList.push(ethKeys);
                     break;
                 case 'BTC':
                     const btcKeys = this.exportPrivateKeyBTC(addrs);
@@ -64,7 +64,7 @@ export class ExportPrivateKey extends Widget {
                 default:
             }
             if (ERC20Tokens[currencyName]) {
-                const erc20TokenKeys = this.exportPrivateKeyERC20Token(addrs);
+                const erc20TokenKeys = this.exportPrivateKeyERC20Token(addrs,currencyName);
                 obj.textList.push(...erc20TokenKeys);
             }
             collapseList.push(obj);
@@ -86,7 +86,7 @@ export class ExportPrivateKey extends Widget {
     }
 
     public collapseItemClick(e: any) {
-        const privateKey = this.state.collapseList[e.collapseListIndex].textList[e.textListIndex];
+        const privateKey = this.state.collapseList[e.collapseListIndex].textList[e.textListIndex].privateKey;
         popNew('app-components-modalBox-modalBox2', {
             title: this.state.cfgData.modalBox[0],
             content: this.state.cfgData.modalBox[1],
@@ -103,7 +103,9 @@ export class ExportPrivateKey extends Widget {
         for (let j = 0; j < addrs.length; j++) {
             const wlt = firstWlt.selectAddressWlt(j);
             const privateKey = wlt.exportPrivateKey();
-            keys.push(privateKey);
+            const addr = addrs[j];
+            const balance = getAddrInfoByAddr(addr,'ETH').balance;
+            keys.push({ addr,balance,privateKey });
         }
 
         return keys;
@@ -116,20 +118,24 @@ export class ExportPrivateKey extends Widget {
         wlt.unlock();
         for (let j = 0; j < addrs.length; j++) {
             const privateKey = wlt.privateKeyOf(j);
-            keys.push(privateKey);
+            const addr = addrs[j];
+            const balance = getAddrInfoByAddr(addr,'BTC').balance;
+            keys.push({ addr,balance,privateKey });
         }
         wlt.lock();
 
         return keys;
     }
 
-    public exportPrivateKeyERC20Token(addrs: string[]) {
+    public exportPrivateKeyERC20Token(addrs: string[],currencyName:string) {
         const keys = [];
         const firstWlt = EthWallet.fromMnemonic(this.props.mnemonic, lang);
         for (let j = 0; j < addrs.length; j++) {
             const wlt = firstWlt.selectAddressWlt(j);
             const privateKey = wlt.exportPrivateKey();
-            keys.push(privateKey);
+            const addr = addrs[j];
+            const balance = getAddrInfoByAddr(addr,currencyName).balance;
+            keys.push({ addr,balance,privateKey });
         }
 
         return keys;

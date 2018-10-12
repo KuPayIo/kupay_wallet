@@ -93,9 +93,10 @@
 }
 .random{
     position: absolute;
-    right: 30px;
+    right: 0;
     top: 50%;
     transform: translateY(-50%);
+    border: 20px solid transparent;
 }
 .input-father{
     height: 110px;

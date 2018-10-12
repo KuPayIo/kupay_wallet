@@ -54,7 +54,7 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 15px solid transparent;
+    border: 20px solid transparent;
     position: absolute;
     right: 0;
     top: 50%;
