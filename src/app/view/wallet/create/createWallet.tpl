@@ -17,8 +17,8 @@
                 {{end}}
             </div>
             <div w-class="name-box" ev-input-change="walletNameChange">
-                <app-components1-input-input>{input:{{it1.walletName}},maxLength:10}</app-components1-input-input>
-                <img w-class="random" src="../../../res/image/dice.png" on-tap="randomPlayName"/>
+                <widget w-tag="app-components1-input-input" style="flex: 1;">{input:{{it1.walletName}},maxLength:10}</widget>
+                <img w-class="random" src="../../../res/image/dice.png" on-tap="randomPlayName" id="random"/>
             </div>
             <div ev-psw-change="pswChange"><app-components-password-password>{hideTips:true}</app-components-password-password></div>
             <div w-class="input-father" ev-input-change="pswConfirmChange"><app-components-input-suffixInput>{itype:"password",placeHolder:{{it1.cfgData.inputPlace}},clearable:true,available:{{it1.pswEqualed}}}</app-components-input-suffixInput></div>

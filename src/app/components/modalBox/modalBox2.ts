@@ -35,7 +35,6 @@ export class ModalBox2 extends Widget {
         this.cancel && this.cancel();
     }
 
-
     public copyBtnClick(e:any) {
         copyToClipboard(this.props.extraInfo);
         popNew('app-components-message-message', { itype: 'success', content: '复制成功', center: true });

@@ -34,7 +34,8 @@
     height: 36px;
     border-radius: 50%;
     position: absolute;
-    right: 20px;
+    right: 0;
+    border: 20px solid transparent;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
