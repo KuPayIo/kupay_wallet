@@ -301,3 +301,11 @@ li{
     margin: 10px 0;
     color: #222222;
 }
+/* 创建钱包点击骰子旋转效果 */
+@keyframes rotating{
+    0%{transform: rotate(0);}
+    100%{transform: rotate(360deg);}
+}
+.random{
+    animation: rotating 1s;
+}

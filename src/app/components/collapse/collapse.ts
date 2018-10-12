@@ -45,7 +45,6 @@ export class Collapse extends Widget {
                 isExpanded:this.isExpanded.bind(this)
             };
         }
-        
     }
     
     public clickItemListener(event:any,index:number) {

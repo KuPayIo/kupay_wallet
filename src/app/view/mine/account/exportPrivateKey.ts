@@ -55,7 +55,7 @@ export class ExportPrivateKey extends Widget {
             switch (currencyName) {
                 case 'ETH':
                     const ethKeys = this.exportPrivateKeyETH(addrs);
-                    obj.textList.push(ethKeys);
+                    obj.textList.push(...ethKeys);
                     break;
                 case 'BTC':
                     const btcKeys = this.exportPrivateKeyBTC(addrs);
@@ -74,7 +74,6 @@ export class ExportPrivateKey extends Widget {
             collapseList,
             cfgData:getLanguage(this)
         };
-        console.log(this.state.collapseList);
     }
     
     public backPrePage() {

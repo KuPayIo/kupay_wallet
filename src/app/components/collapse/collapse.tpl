@@ -1,5 +1,5 @@
 <div w-class="pi-collapse" class="pi-collapse">
-    {{for index,CollapseItem in it.collapseList}}
+    {{for index,CollapseItem of it.collapseList}}
     <div class="pi-collapse-item {{it1.isExpanded(index) ? 'pi-collapse-item-active' : ''}}" w-class="pi-collapse-item">
         <div w-class="pi-collapse-head" on-tap="clickItemListener(e,{{index}})" class="pi-collapse-head">
             <div w-class="ga-icon-container"><img src="{{CollapseItem.icon}}" w-class="ga-icon"/></div>

@@ -77,6 +77,8 @@
     font-size: 32px;
     line-height: 45px;
     border-bottom:1px solid #dbdbe5;
+    display: flex;
+    align-items: center;
 }
 .name{
     outline: 0;
@@ -92,10 +94,8 @@
     line-height: 45px;
 }
 .random{
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    height: 40px;
+    width: 40px;
     border: 20px solid transparent;
 }
 .input-father{
