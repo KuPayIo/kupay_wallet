@@ -2,7 +2,21 @@
     display: flex;
     flex-direction: column;
 }
-.games1{
-    margin: 30px;
-    height: 1100px;
+.topBack{
+    height: 550px;
+    background:linear-gradient(to right,#318DE6,#38CFE7);
+}
+.userHead{
+    width: 40px;
+    height: 40px;
+    margin: 40px 5px 0;
+    border: 24px solid transparent;
+}
+.backImg{
+    position: absolute;
+    top: 0px;
+    right: 0;
+    width: 276px;
+    height: 341px;
+    border-radius: 18px;
 }

@@ -1,4 +1,3 @@
-//!version=0.1.2.100917
 
 
 'use strict';

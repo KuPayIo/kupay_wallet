@@ -47,7 +47,7 @@
 }
 .item2{
     margin: 0 10px;
-    padding: 30px 20px 0;
+    padding: 10px 0 0 20px;
 }
 .inner-tip{
     font-size: 28px;
@@ -67,7 +67,6 @@
 .input-father1{
     position: relative;
     height: 80px;
-    margin-top: 10px;
     font-size: 28px;
     display: flex;
     align-items: center;
@@ -75,6 +74,8 @@
     overflow: hidden;
     text-overflow:ellipsis;
     white-space: nowrap;
+    border-bottom: 1px solid #dbdbe5;
+    margin: 0 30px;
 }
 .fee{
     margin-left: 10px;

@@ -26,9 +26,8 @@ export class PlayHome extends Widget {
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.init();
-        if (this.props.isActive && this.state.hasWallet) {
-            this.initEvent();
-        }
+        this.initEvent();
+        
     }
     /**
      * 初始化数据
@@ -56,7 +55,7 @@ export class PlayHome extends Widget {
             </div>`,
             cfgData:getLanguage(this)
         };
-
+        
         this.initDate();
     }
     /**
@@ -185,9 +184,11 @@ export class PlayHome extends Widget {
      */
     private initEvent() {
         // 这里发起通信
-        getCloudBalance();
-        getMining();
-        getMiningRank(100);
+        if (this.props.isActive && this.state.hasWallet) {
+            getCloudBalance();
+            getMining();
+            getMiningRank(100);
+        }
     }
 
 }
@@ -217,6 +218,7 @@ register('curWallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init(); // 注销钱包后初始化
+        w.initEvent();
     }
 });
 register('languageSet', () => {

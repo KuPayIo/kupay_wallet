@@ -50,7 +50,7 @@ export const run = (cb): void => {
     },500);
     // dataCenter.init();
     popNew('app-view-base-app');
-    // popNew('app-view-mine-home-home');
+    // popNew('app-view-chat-home-home');
     // getDeviceInfo();
     popNewPage();
     // 后台切前台
