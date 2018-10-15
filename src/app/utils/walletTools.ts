@@ -129,9 +129,7 @@ export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) =
  * 获取助记词
  */
 export const getMnemonic = async (wallet, passwd) => {
-    console.time('cal hash');
     const hash = await calcHashValuePromise(passwd, find('salt'));
-    console.timeEnd('cal hash');
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();

@@ -532,7 +532,9 @@ export const calcHashValuePromise = async (pwd, salt?) => {
     let hash;
     const argonHash = new ArgonHash();
     argonHash.init();
+    console.time('argonHash');
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
+    console.timeEnd('argonHash');
     if(getFirstEthAddr()){
         const hashMap = getBorn('hashMap');
         hashMap.set(getFirstEthAddr(),hash);
@@ -1223,13 +1225,21 @@ export const mnemonicFragmentDecrypt = (fragment:string) => {
 };
 
 /**
- * 注销账户
+ * 注销账户并删除数据
  */
 export const logoutAccount = () => {
     logoutInit();
     openAndGetRandom();
 };
 
+/**
+ * 注销账户保留数据
+ */
+export const logoutAccountSave = () => {
+    updateStore('flag',{logoutAccountSave:true});
+    logoutInit();
+    openAndGetRandom();
+};
 /**
  * 判断是否是有效的货币地址
  */

@@ -4,7 +4,7 @@
 // ===================================================== 导入
 import { getFirstEthAddr } from '../utils/tools';
 import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TransRecordLocal, Wallet, currency2USDT } from './interface';
-import { register, updateStore } from './store';
+import { register, updateStore, find } from './store';
 // ===================================================== 导出
 
 // ===================================================== 本地
@@ -29,16 +29,21 @@ export const initLocalStorageStore = () => {
     register('curWallet', (curWallet: Wallet) => {
         const locWallets = JSON.parse(localStorage.getItem('wallets'));
         if (!curWallet) {
-            let index = -1;
-            for (let i = 0 ;i < locWallets.walletList.length;i++) {
-                if (locWallets.curWalletId === locWallets.walletList[i].walletId) {
-                    index = i;
-                    break;
+            const  logoutAccountSave = find('flag').logoutAccountSave;
+            if(logoutAccountSave){
+                locWallets.curWalletId = '';
+            }else{
+                let index = -1;
+                for (let i = 0 ;i < locWallets.walletList.length;i++) {
+                    if (locWallets.curWalletId === locWallets.walletList[i].walletId) {
+                        index = i;
+                        break;
+                    }
                 }
+                locWallets.walletList.splice(index,1);
+                locWallets.salt = '';
+                locWallets.curWalletId = '';
             }
-            locWallets.walletList.splice(index,1);
-            locWallets.salt = '';
-            locWallets.curWalletId = '';
         } else {
             locWallets.walletList = locWallets.walletList.map(v => {
                 if (v.walletId === curWallet.walletId) {

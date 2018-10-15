@@ -46,6 +46,9 @@ export class WalletHome extends Widget {
         popNew('app-view-wallet-transaction-home',{ currencyName:v.currencyName,gain:v.gain });
     }
 
+    public refresh(){
+        // const neededRefreshCount = dataCenter.refreshAllTx();
+    }
 }
 
 // ==================本地

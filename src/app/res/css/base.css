@@ -71,3 +71,12 @@ div{
     0% {flex:0;width: 0;}
     100% {flex:1}
 }
+
+@keyframes refreshingRotated{
+    0% {transform: rotateZ(0deg);}
+    100% {transform: rotateZ(360deg);}
+}
+
+.refreshing{
+   animation: refreshingRotated 1s infinite;
+}

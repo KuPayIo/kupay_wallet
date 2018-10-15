@@ -79,36 +79,35 @@ export const initStore = () => {
     const wallets = findByLoc('wallets');
     store.walletList = (wallets && wallets.walletList) || [];
     store.curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
-    const firstEthAddr = getFirstEthAddr();
-  
-    // 从localStorage中取addrs
-    store.addrs = new Map<string,Addr[]>(findByLoc('addrsMap')).get(firstEthAddr) || [];
-    // 从localStorage中取transactions
-    store.transactions = new Map<string,TransRecordLocal[]>(findByLoc('transactionsMap')).get(firstEthAddr) || [];
     // 从localStorage中的wallets中初始化salt
     store.salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
-    // 从localStorage中的wallets中初始化curWallet
-    
-    // 从localStorage中取readedPriAgr
+
+    const firstEthAddr = getFirstEthAddr();
+    if(firstEthAddr){
+        // 从localStorage中取addrs
+        store.addrs = new Map<string,Addr[]>(findByLoc('addrsMap')).get(firstEthAddr) || [];
+        // 从localStorage中取transactions
+        store.transactions = new Map<string,TransRecordLocal[]>(findByLoc('transactionsMap')).get(firstEthAddr) || [];
+        // 从localStorage中取sHisRecMap
+        const sHisRecMap = new Map<string,SHisRec>(findByLoc('sHisRecMap'));
+        store.sHisRec = sHisRecMap.get(firstEthAddr);
+        // 从localStorage中取cHisRecMap
+        const cHisRecMap = new Map<string,CHisRec>(findByLoc('cHisRecMap'));
+        store.cHisRec = cHisRecMap.get(firstEthAddr);
+        // 从localStorage中取inviteRedBagRecMap
+        const inviteRedBagRecMap = new Map<string,CHisRec>(findByLoc('inviteRedBagRecMap'));
+        store.inviteRedBagRec = inviteRedBagRecMap.get(firstEthAddr);
+    }
+  
     store.token = findByLoc('token');
     // 从localStorage中取lockScreen
     store.lockScreen = findByLoc('lockScreen') || {};
-    // 从localStorage中取sHisRecMap
-    const sHisRecMap = new Map<string,SHisRec>(findByLoc('sHisRecMap'));
-    store.sHisRec = sHisRecMap.get(getFirstEthAddr());
-    // 从localStorage中取cHisRecMap
-    const cHisRecMap = new Map<string,CHisRec>(findByLoc('cHisRecMap'));
-    store.cHisRec = cHisRecMap.get(getFirstEthAddr());
-    // 从localStorage中取inviteRedBagRecMap
-    const inviteRedBagRecMap = new Map<string,CHisRec>(findByLoc('inviteRedBagRecMap'));
-    store.inviteRedBagRec = inviteRedBagRecMap.get(getFirstEthAddr());
    // 从localStorage中取inviteRedBagRecMap
     store.shapeShiftTxsMap = new Map(findByLoc('shapeShiftTxsMap'));
     // 从localStorage中取nonceMap
     store.nonceMap = new Map<string,number>(findByLoc('nonceMap'));
     // 从localStorage中取realUserMap
     store.realUserMap = new Map<string,boolean>(findByLoc('realUserMap'));
-
     // 初始化默认兑换汇率列表
     store.exchangeRateJson = fetchDefaultExchangeRateJson();
     // 初始化语言设置
@@ -139,7 +138,8 @@ type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
  'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'| 'languageSet' | 'changeColor' |
 'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee' | 'gasLimitMap' | 'USD2CNYRate' | 'currency2USDTMap';
-const findByLoc = (keyName: LocKeyName): any => {
+
+export const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
     return value instanceof Object ? depCopy(value) : value;
@@ -217,8 +217,6 @@ const store = <Store>{
 // 重置云端数据
 export const logoutInit = () => {
     updateStore('loginState',LoginState.init);
-    updateStore('flag',{});
-    updateStore('salt',cryptoRandomInt().toString());
     updateStore('conUser','');
     updateStore('conUserPublicKey','');
     updateStore('conRandom','');
@@ -245,7 +243,6 @@ export const logoutInit = () => {
     updateStore('rechargeLogs', new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>());
     updateStore('withdrawLogs',new Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>());
     updateStore('shapeShiftTxsMap', new Map<string,ShapeShiftTxs>());
-    updateStore('productList',  <Product[]>[]);
     updateStore('purchaseRecord', <PurchaseRecordOne[]>[]);
-   
+    updateStore('flag',{});
 };
