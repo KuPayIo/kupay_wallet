@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { setUserInfo } from '../../../net/pull';
 import { find, register, updateStore } from '../../../store/store';
-import { getLanguage, logoutAccount, popPswBox } from '../../../utils/tools';
+import { getLanguage, logoutAccount, popPswBox, logoutAccountSave } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -230,7 +230,7 @@ export class Setting extends Widget {
             console.log('备份');
         },() => {
             popNew('app-components-modalBox-modalBox',{ title:'',content:this.state.cfgData.tips[2],style:'color:#F7931A;' },() => {
-                logoutAccount();
+                logoutAccountSave();
                 this.backPrePage();
                 console.log('注销账户');
             });

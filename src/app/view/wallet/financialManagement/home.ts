@@ -5,6 +5,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getLanguage } from '../../../utils/tools';
+import { getProductList, getPurchaseRecord } from '../../../net/pull';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -25,6 +26,8 @@ export class Home extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.state.activeNum = props.activeNum;
+        getProductList();
+        getPurchaseRecord();
     }
     public init() {
         const cfg = getLanguage(this);
@@ -39,7 +42,8 @@ export class Home extends Widget {
             activeNum:0,
             avatar:'',
             totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets()),
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            refreshing:false
         };
     }
     public tabsChangeClick(event: any, value: number) {
@@ -47,6 +51,23 @@ export class Home extends Widget {
         this.paint();
     }
 
+    public refreshClick(){
+        this.state.refreshing = true;
+        this.paint();
+        if(this.state.activeNum === 0){
+            getProductList().then(()=>{
+                this.state.refreshing = false;
+                console.log('getProductList refresh');
+                this.paint();
+            });
+        }else{
+            getPurchaseRecord().then(()=>{
+                this.state.refreshing = false;
+                console.log('getPurchaseRecord refresh');
+                this.paint();
+            });
+        }
+    }
 }
 
 // ==========================本地

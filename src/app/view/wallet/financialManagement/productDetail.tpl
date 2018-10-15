@@ -41,9 +41,9 @@
                     {{it.product.unitPrice}}&nbsp;{{it.product.coinType}}
                 </span>
                 <div w-class="right-box">
-                    <img w-class="sub" on-tap="minus" src="../../../res/image/less.png"/>
+                    <img w-class="sub" on-down="minus" src="../../../res/image/less.png"/>
                     <span>{{it1.amount}}</span>
-                    <img w-class="plus" on-tap="add" src="../../../res/image/add_gray.png" />
+                    <img w-class="plus" on-down="add" src="../../../res/image/add_gray.png" />
                 </div>
             </div>
             <div w-class="read" on-tap="readAgree">{{it1.cfgData.readAgree}}</div>
