@@ -12,7 +12,7 @@ import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -1254,6 +1254,7 @@ export const uploadFile = async (base64) => {
     }).then(response => response.json())
         .then(res => {
             console.log('!!!!!!!!!!!',res);
+            popNewMessage('图片上传成功');
             if (res.result === 1) {
                 const sid = res.sid;
                 const userInfo = find('userInfo') || {};

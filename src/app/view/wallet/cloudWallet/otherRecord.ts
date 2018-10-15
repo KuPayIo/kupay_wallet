@@ -26,10 +26,11 @@ export class OtherRecord extends Widget {
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName);
         }
+        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]);
         this.state = {
-            recordList:[],
-            nextStart:0,
-            canLoadMore:false,
+            recordList:this.parseRecordList(accountDetail.list),
+            nextStart:accountDetail.start,
+            canLoadMore:accountDetail.canLoadMore,
             isRefreshing:false,
             cfgData:getLanguage(this)
         };

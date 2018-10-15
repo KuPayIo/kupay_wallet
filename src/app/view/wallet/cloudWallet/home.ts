@@ -7,6 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
 import { formatBalanceValue, getLanguage, popNewMessage, fetchCoinGain } from '../../../utils/tools';
+import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -21,6 +22,9 @@ export class CloudWalletHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
+        getAccountDetail(props.currencyName);
+        getRechargeLogs(props.currencyName);
+        getWithdrawLogs(props.currencyName);
     }
     public init() {
         const currencyName = this.props.currencyName;
