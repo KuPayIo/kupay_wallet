@@ -47,6 +47,7 @@ export class DataCenter {
      * 刷新本地钱包
      */
     public refreshAllTx() {
+        let neededRefreshCount = 0;
         // 从缓存中获取地址进行初始化
         const addrs = find('addrs') || [];
         if (addrs) {
@@ -61,9 +62,12 @@ export class DataCenter {
             addrs.forEach(v => {
                 if (list.indexOf(v.addr) >= 0 && wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
                     this.updateAddrInfo(v.addr, v.currencyName);
+                    neededRefreshCount++;
                 }
             });
         }
+
+        return neededRefreshCount;
     }
 
     /**
@@ -553,11 +557,11 @@ export class DataCenter {
     /**
      * 更新余额
      */
-    private updateBalance(addr: string, currencyName: string) {
+    public updateBalance(addr: string, currencyName: string) {
         if (ERC20Tokens[currencyName]) {
             const balanceOfCode = EthWallet.tokenOperations('balanceof', currencyName, addr);
             const api = new EthApi();
-            api.ethCall(ERC20Tokens[currencyName].contractAddr, balanceOfCode).then(r => {
+            return api.ethCall(ERC20Tokens[currencyName].contractAddr, balanceOfCode).then(r => {
                 const num = ethTokenDivideDecimals(Number(r), currencyName);
                 this.setBalance(addr, currencyName, num);
             });
@@ -565,16 +569,14 @@ export class DataCenter {
         switch (currencyName) {
             case 'ETH':
                 const api = new EthApi();
-                api.getBalance(addr).then(r => {
+                return api.getBalance(addr).then(r => {
                     const num = wei2Eth(r.result);
                     this.setBalance(addr, currencyName, num);
                 });
-                break;
             case 'BTC':
-                BtcApi.getBalance(addr).then(r => {
+                return BtcApi.getBalance(addr).then(r => {
                     this.setBalance(addr, currencyName, sat2Btc(r));
                 });
-                break;
             default:
         }
     }

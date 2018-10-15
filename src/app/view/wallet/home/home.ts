@@ -5,11 +5,13 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { register } from '../../../store/store';
+import { register, find } from '../../../store/store';
 import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getLanguage, getUserInfo } from '../../../utils/tools';
+import { getCloudBalance } from '../../../net/pull';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
+declare var pi_modules : any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Home extends Widget {
@@ -31,7 +33,8 @@ export class Home extends Widget {
             activeNum:1,
             avatar:userInfo && userInfo.avatar,
             totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets()),
-            cfgData:cfg
+            cfgData:cfg,
+            refreshing:false
         };
         this.paint();
     }
@@ -56,6 +59,44 @@ export class Home extends Widget {
      */
     public showMine() {
         popNew('app-view-mine-home-home');
+    }
+
+    public refreshClick(){
+        this.state.refreshing = true;
+        this.paint();
+        let neededRefreshCount = 1;
+        getCloudBalance().then(()=>{
+            neededRefreshCount--;
+            if(neededRefreshCount === 0){
+                this.state.refreshing = false;
+                this.paint();
+            }
+        });
+        // 从缓存中获取地址进行初始化
+        const addrs = find('addrs') || [];
+        if (addrs) {
+            const wallet = find('curWallet');
+            if (!wallet) return;
+            let list = [];
+            wallet.currencyRecords.forEach(v => {
+                if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
+                    list = list.concat(v.addrs);
+                }
+            });
+            const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+            addrs.forEach(v => {
+                if (list.indexOf(v.addr) >= 0 && wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
+                    neededRefreshCount++;
+                    dataCenter.updateBalance(v.addr, v.currencyName).then(()=>{
+                        neededRefreshCount--;
+                        if(neededRefreshCount === 0){
+                            this.state.refreshing = false;
+                            this.paint();
+                        }
+                    });
+                }
+            });
+        }
     }
 }
 
@@ -82,6 +123,7 @@ register('cloudBalance',() => {
         w.updateTotalAsset();
     }
 });
+
 register('languageSet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {

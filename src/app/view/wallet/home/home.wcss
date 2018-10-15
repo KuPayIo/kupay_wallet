@@ -49,6 +49,14 @@
 .user-container{
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding-right: 30px;
+}
+.box{
+    display: flex;
+    align-items: center;
+    position: relative;
 }
 .avatar{
     width: 40px;
@@ -60,4 +68,10 @@
 .total-asset{
     font-size: 32px;
     color: #fff;
+}
+.refresh{
+    top: 500px;
+}
+.refreshing{
+    top: 500px;
 }
