@@ -1,14 +1,12 @@
 /**
  * other record
  */
-import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getRechargeLogs } from '../../../net/pull';
+import { getAccountDetail } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { getBorn, register } from '../../../store/store';
-import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
-import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { getLanguage, timestampFormat } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,16 +16,17 @@ interface Props {
     currencyName:string;
     isActive:boolean;
 }
-export class RechargeRecord extends Widget {
+
+export class TotalRecord extends Widget {
     public props:Props;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        if (this.props.isActive) {
-            getRechargeLogs(this.props.currencyName);
-        }
     }
     public init() {
+        if (this.props.isActive) {
+            getAccountDetail(this.props.currencyName,0);
+        }
         this.state = {
             recordList:[],
             nextStart:0,
@@ -37,11 +36,11 @@ export class RechargeRecord extends Widget {
         };
     }
     public updateRecordList() {
-        const rechargeLogs = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]);
-        console.log(rechargeLogs);
-        const list = rechargeLogs.list;
-        this.state.nextStart = rechargeLogs.start;
-        this.state.canLoadMore = rechargeLogs.canLoadMore;
+        const accountDetail = getBorn('totalLogs').get(CurrencyType[this.props.currencyName]);
+        console.log(accountDetail);
+        const list = accountDetail.list;
+        this.state.nextStart = accountDetail.start;
+        this.state.canLoadMore = accountDetail.canLoadMore;
         this.state.recordList = this.parseRecordList(list);
         this.state.isRefreshing = false;
         this.paint();
@@ -49,30 +48,16 @@ export class RechargeRecord extends Widget {
     // tslint:disable-next-line:typedef
     public parseRecordList(list) {
         list.forEach((item) => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            console.log(txDetail);
-            item.statusShow = obj.text;
-            item.behavior = this.state.cfgData.recharge;
-            item.amountShow = `+${item.amount}`;
+            item.amountShow = item.amount >= 0 ? `+${item.amount}` : `${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
-            item.iconShow = `cloud_charge_icon.png`;
+            item.iconShow = `${item.behaviorIcon}`;
         });
 
         return list;
     }
 
-    public updateTransaction() {
-        const list = this.state.recordList;
-        list.forEach(item => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
-        });
-        this.paint();
-    }
     public loadMore() {
-        getRechargeLogs(this.props.currencyName,this.state.nextStart);
+        getAccountDetail(this.props.currencyName,0,this.state.nextStart);
     }
     public getMoreList() {
         const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
@@ -85,22 +70,11 @@ export class RechargeRecord extends Widget {
             this.loadMore();
         } 
     }
-    public recordListItemClick(e:any,index:number) {
-        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.state.recordList[index].hash });
-    }
 }
 
-register('rechargeLogs', () => {
+register('totalLogs', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();
-    }
-});
-
-// 本地交易变化,更新状态
-register('transactions',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateTransaction();
     }
 });

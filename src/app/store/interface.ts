@@ -95,7 +95,7 @@ export interface Store {
     nonceMap:Map<string,number>;// 维护本地的nonce
     gasPrice:object;// gasPrice档次(3档)
     btcMinerFee:object;// btn minerFee档次(3档)
-    gasLimitMap:Map<string,number>;//gasLimit
+    gasLimitMap:Map<string,number>;// gasLimit
     realUserMap:Map<string,boolean>;// 真实用户map
     // 云端数据
     cloudBalance: Map<CurrencyType, number>;// 云端账户余额
@@ -116,6 +116,8 @@ export interface Store {
     rechargeLogs:Map<CurrencyType, {list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>;// 充值记录
     // tslint:disable-next-line:type-literal-delimiter
     withdrawLogs:Map<CurrencyType,{list:RechargeWithdrawalLog[],start:number,canLoadMore:boolean}>;// 提现记录
+    // tslint:disable-next-line:type-literal-delimiter
+    totalLogs:Map<CurrencyType,{list:AccountDetail[],start:number,canLoadMore:boolean}>;// 全部云端记录
     // shapeShift
     shapeShiftCoins:ShapeShiftCoin[];// shapeShift 支持的币种
     shapeShiftMarketInfo:MarketInfo;// shapeShift 汇率相关
@@ -123,13 +125,14 @@ export interface Store {
     lastGetSmsCodeTime:number;
     languageSet:LanguageSet;
     changeColor:ChangeColor;
-    USD2CNYRate:number;//人民币美元汇率
-    currency2USDTMap:Map<string,currency2USDT>;//货币对比USDT的比率
+    USD2CNYRate:number;// 人民币美元汇率
+    currency2USDTMap:Map<string,currency2USDT>;// 货币对比USDT的比率
 }
 
-export interface currency2USDT{
-    open:number; //开盘价
-    close:number; //收盘价
+// tslint:disable-next-line:class-name
+export interface currency2USDT {
+    open:number; // 开盘价
+    close:number; // 收盘价
 }
 /**
  * 云端用户基础数据

@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
-import { formatBalanceValue, getLanguage, popNewMessage, fetchCoinGain } from '../../../utils/tools';
+import { fetchCoinGain, formatBalanceValue, getLanguage, popNewMessage } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -31,6 +31,9 @@ export class CloudWalletHome extends Widget {
         const color = find('changeColor');
         this.state = {
             tabs:[{
+                tab:cfg.total,
+                components:'app-view-wallet-cloudWallet-totalRecord'
+            },{
                 tab:cfg.other,
                 components:'app-view-wallet-cloudWallet-otherRecord'
             },{

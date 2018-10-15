@@ -91,7 +91,6 @@ register('level_2_page_loaded',(loaded:boolean) => {
     }
 });
 
-
 // 用户信息变化
 register('userInfo',(userInfo:UserInfo) => {
     const loginState = find('loginState');
@@ -102,7 +101,7 @@ register('userInfo',(userInfo:UserInfo) => {
 
 // 连接建立 登录
 register('conRandom',(conRandom:string) => {
-    if (conRandom && find('token') ) {
+    if (conRandom && find('token')) {
         autoLogin();
     }
 });

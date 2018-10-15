@@ -8,9 +8,11 @@ import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
 import { recharge, resendRecharge } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/store';
+// tslint:disable-next-line:max-line-length
 import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 
 // ============================导出
+// tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
@@ -122,9 +124,9 @@ export class Recharge extends Widget {
         let ret;
         if (this.props.tx) {
             tx.hash = this.props.tx.hash;
-            ret = resendRecharge(passwd,tx);
+            ret = await resendRecharge(passwd,tx);
         } else {
-            ret = recharge(passwd,tx);
+            ret = await recharge(passwd,tx);
         }
         
         if (ret) {
