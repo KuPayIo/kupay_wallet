@@ -133,7 +133,9 @@ export class CreateWallet extends Widget {
             option.fragment2 = this.props.fragment2;
         }
         updateStore('flag',{ created:true });
+        console.time('create wallet');
         const hash = await createWallet(this.state.itype,option);
+        console.timeEnd('create wallet');
         if (!hash) {
             popNewMessage(this.state.cfgData.tips[3]);
         }

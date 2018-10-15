@@ -94,14 +94,22 @@ export class GlobalWallet {
     public static generate(hash:string, walletName: string, vault?: Uint8Array) {
         const gwlt = new GlobalWallet();
         gwlt._nickName = walletName;
+        console.time('generateRandomValues');
         vault = vault || generateRandomValues(strength);
+        console.timeEnd('generateRandomValues');
+        console.time('encrypt');
         gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
+        console.timeEnd('encrypt');
         // console.log('generate hash', hash, gwlt._vault, passwd, u8ArrayToHexstr(vault));
-
+        console.time('toMnemonic');
         const mnemonic = toMnemonic(lang, vault);
+        console.timeEnd('toMnemonic');
+        console.time('initGwlt');
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
-
+        console.timeEnd('initGwlt');
+        console.time('getPublicKeyByMnemonic');
         gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
+        console.timeEnd('getPublicKeyByMnemonic');
 
         // dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
         // dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);

@@ -23,9 +23,15 @@ import { dataCenter } from './dataCenter';
  */
 export const createWallet = async (itype:CreateWalletType,option:any) => {
     if (itype === CreateWalletType.Random) {
+        console.time('popNewloading');
         const close = popNew('app-components1-loading-loading', { text: '创建中...' });
+        console.timeEnd('popNewloading');
+        console.time('calcHashValuePromise');
         const hash = await calcHashValuePromise(option.psw, find('salt'));
+        console.timeEnd('calcHashValuePromise');
+        console.time('createWalletRandom');
         createWalletRandom(hash,option);
+        console.timeEnd('createWalletRandom');
         close.callback(close.widget);
         // 刷新本地钱包
         dataCenter.refreshAllTx();
@@ -71,7 +77,9 @@ export const createWallet = async (itype:CreateWalletType,option:any) => {
  */
 export const createWalletRandom = (hash:string,option) => {
     const salt = find('salt');
+    console.time('GlobalWallet generate');
     const gwlt = GlobalWallet.generate(hash, option.nickName);
+    console.timeEnd('GlobalWallet generate');
     // 创建钱包基础数据
     const wallet: Wallet = {
         walletId: gwlt.glwtId,

@@ -117,6 +117,7 @@ export class DataCenter {
     }
 
     private timerCheckAddr(needCheckAddr: CurrencyRecord[]){
+        if(!find('curWallet')) return;
         const record: CurrencyRecord = needCheckAddr.shift();
         if(!record){
             return;
@@ -133,6 +134,7 @@ export class DataCenter {
                     });
                 }
                 const wallet = find('curWallet');
+                if(!wallet) return;
                 wallet.currencyRecords = wallet.currencyRecords.map(item=>{
                     if(item.currencyName === record.currencyName){
                         item.updateAddr = true;
@@ -156,6 +158,7 @@ export class DataCenter {
                     });
                 }
                 const wallet = find('curWallet');
+                if(!wallet) return;
                 wallet.currencyRecords = wallet.currencyRecords.map(item=>{
                     if(item.currencyName === record.currencyName){
                         item.updateAddr = true;
@@ -178,6 +181,7 @@ export class DataCenter {
                     });
                 }
                 const wallet = find('curWallet');
+                if(!wallet) return;
                 wallet.currencyRecords = wallet.currencyRecords.map(item=>{
                     if(item.currencyName === record.currencyName){
                         item.updateAddr = true;
@@ -642,7 +646,9 @@ export class DataCenter {
      * 检查eth地址
      */
     private async checkEthAddr(currencyRecord: CurrencyRecord) {
-        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(find('curWallet').walletId));
+        const wallet = find('curWallet');
+        if(!wallet) return [];
+        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(wallet.walletId));
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanUsedAddress();
         const addrs: Addr[] = [];
@@ -660,7 +666,9 @@ export class DataCenter {
      * 检查btc地址
      */
     private async checkBtcAddr(currencyRecord: CurrencyRecord) {
-        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(find('curWallet').walletId));
+        const wallet = find('curWallet');
+        if(!wallet) return [];
+        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(wallet.walletId));
         const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         btcWallet.unlock();
         const cnt = await btcWallet.scanUsedAddress();
@@ -681,7 +689,9 @@ export class DataCenter {
      * 检查eth erc20 token地址
      */
     private async checkEthERC20TokenAddr(currencyRecord: CurrencyRecord) {
-        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(find('curWallet').walletId));
+        const wallet = find('curWallet');
+        if(!wallet) return [];
+        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(wallet.walletId));
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanTokenUsedAddress(ERC20Tokens[currencyRecord.currencyName].contractAddr);
         const addrs: Addr[] = [];

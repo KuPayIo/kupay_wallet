@@ -4,7 +4,7 @@ import { huobiApi } from "../utils/constants";
 //==========================三方接口=======================================
 //http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4 测试
 //http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=37223&sign=7987216e841c32aa08d0ea0dcbf65eed
-
+//https://api.huobipro.com/market/history/kline?symbol=btcusdt&period=1day&size=1&AccessKeyId=6fd70042-c5e4c618-d6e619ec-ecfa2
 // 获取美元对人民币汇率
 export const fetchUSD2CNYRate = ()=>{
     return new Promise(resolve=>{
