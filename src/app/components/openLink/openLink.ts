@@ -3,40 +3,16 @@
  */
 import { Widget } from '../../../pi/widget/widget';
 
-interface Props {
-    content: string;
-}
-
-export class Message extends Widget {
-    public props: Props;
+export class OpenLink extends Widget {
     public ok: () => void;
+    public cancel:() => void;
 
-    constructor() {
-        super();
-    }
-    public create() {
-        super.create();
-        this.config = { value: { group: 'pop_tip' } };
+    public openClick() {
+        this.ok && this.ok();
     }
 
-    public setProps(props: Props, oldProps: Props): void {
-        super.setProps(props, oldProps);
-        this.state = { isShow: false };
-        this.init();
+    public cancelClick() {
+        this.cancel && this.cancel();
     }
-
-    private init() {
-        setTimeout(() => {
-            this.state.isShow = true;
-            this.paint();
-        }, 100);
-        setTimeout(() => {
-            this.state.isShow = false;
-            this.paint();
-            setTimeout(() => {
-                this.ok && this.ok();
-            }, 300);
-        }, 2000);
-    }
-
+   
 }

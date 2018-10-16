@@ -76,7 +76,8 @@ export class PlayHome extends Widget {
      * 打开我的设置
      */
     public showMine() {
-        popNew('app-view-mine-home-home');
+        // popNew('app-view-mine-home-home');
+        popNew('app-components-openLink-openLink');
     }
 
     /**
