@@ -23,6 +23,8 @@ export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 export const conPort = pi_modules.store.exports.severPort || '80';
 console.log('conIp=',conIp);
 console.log('conPort=',conPort);
+
+export const thirdUrlPre = `http://${conIp}:${conPort}/data/proxy?`;
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;

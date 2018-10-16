@@ -38,8 +38,6 @@ export class DataCenter {
         this.updateUSD2CNYRate();
         //更新货币对比USDT的比率
         this.updateCurrency2USDTRate();
-        this.exchangeRate('ETH');
-        this.exchangeRate('BTC');
         this.refreshAllTx();
         this.initErc20GasLimit();
     }
@@ -627,23 +625,6 @@ export class DataCenter {
 // ===============================余额更新相关=======================================================
 
 
-    // 汇率获取更新
-    private async exchangeRate(currencyName: string) {
-        switch (currencyName) {
-            case 'ETH':
-                const ethApi: EthApi = new EthApi();
-                const ethRate = await ethApi.getExchangeRate();
-                updateStore('exchangeRateJson', getBorn('exchangeRateJson').set('ETH', ethRate));
-                break;
-            case 'BTC':
-                const btcRate = await BtcApi.getExchangeRate();
-                updateStore('exchangeRateJson', getBorn('exchangeRateJson').set('BTC', btcRate));
-                break;
-            default:
-        }
-
-    }
-
     /**
      * 检查eth地址
      */
@@ -854,6 +835,7 @@ export class DataCenter {
         console.log('updateUSD2CNYRate delay-------',delay);
         fetchUSD2CNYRate().then((res:any) => {
             if(res.success == '1'){
+                console.log('updateUSD2CNYRate',res);
                 const rate = Number(res.result.rate);
                 updateStore('USD2CNYRate',rate);
             }

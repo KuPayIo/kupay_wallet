@@ -117,13 +117,6 @@ register('userInfo',() => {
     }
 });
 
-// 汇率变化
-register('exchangeRateJson',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateTotalAsset();
-    }
-});
 
 // 云端余额变化
 register('cloudBalance',() => {

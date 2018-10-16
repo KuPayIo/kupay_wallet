@@ -66,13 +66,6 @@ export class CloudHome extends Widget {
 
 // =======================本地
 
-// 汇率变化
-register('exchangeRateJson',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateBalance();
-    }
-});
 
 // 云端余额变化
 register('cloudBalance',() => {

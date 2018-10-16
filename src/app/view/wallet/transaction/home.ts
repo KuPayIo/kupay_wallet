@@ -8,7 +8,7 @@ import { dataCenter } from '../../../logic/dataCenter';
 import { Addr } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
+import { currencyExchangeAvailable, formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseStatusShow, parseTxTypeShow, timestampFormat, fetchBalanceValueOfCoin } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -34,15 +34,14 @@ export class TransactionHome extends Widget {
     public init() {
         const currencyName = this.props.currencyName;
         const balance = formatBalance(getCurrentAddrBalanceByCurrencyName(currencyName));
-        const rate =  getBorn('exchangeRateJson').get(currencyName).CNY;
-        const balanceValue =  rate * balance;
+        const balanceValue =   fetchBalanceValueOfCoin(currencyName,balance);
         const txList = this.parseTxList();
         const canConvert = this.canConvert();
         const color = find('changeColor');
         this.state = {
             balance,
             balanceValue:formatBalanceValue(balanceValue),
-            rate:formatBalanceValue(rate),
+            rate:fetchBalanceValueOfCoin(currencyName,1),
             txList,
             canConvert,
             cfgData:getLanguage(this),
@@ -89,7 +88,7 @@ export class TransactionHome extends Widget {
         popNew('app-view-wallet-transaction-chooseAddr',{ currencyName:this.props.currencyName });
     }
     public updateRate() {
-        this.state.rate = formatBalanceValue(getBorn('exchangeRateJson').get(this.props.currencyName).CNY);
+        this.state.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
         this.paint();
     }
 
@@ -113,13 +112,6 @@ register('addrs',(addrs:Addr[]) => {
     }
 });
 
-// 汇率变化
-register('exchangeRateJson',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateRate();
-    }
-});
 
 // 当前钱包变化
 register('curWallet',() => {
@@ -135,5 +127,22 @@ register('transactions',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();
+    }
+});
+
+// 汇率变化
+register('USD2CNYRate', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateRate();
+    }
+});
+
+
+// 涨跌幅变化
+register('currency2USDTMap', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateRate();
     }
 });

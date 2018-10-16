@@ -1,5 +1,4 @@
-import { getRequest } from "../logic/native";
-import { huobiApi } from "../utils/constants";
+import { thirdUrlPre } from "./pull";
 
 //==========================三方接口=======================================
 //http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4 测试
@@ -7,22 +6,9 @@ import { huobiApi } from "../utils/constants";
 //https://api.huobipro.com/market/history/kline?symbol=btcusdt&period=1day&size=1&AccessKeyId=6fd70042-c5e4c618-d6e619ec-ecfa2
 // 获取美元对人民币汇率
 export const fetchUSD2CNYRate = ()=>{
-    return new Promise(resolve=>{
-        setTimeout(()=>{
-            const ret = {
-                "success":"1",
-                "result":{
-                    "status":"ALREADY",
-                    "scur":"USD",
-                    "tcur":"CNY",
-                    "ratenm":"美元/人民币",
-                    "rate":"6.903500",
-                    "update":"2018-10-12 10:15:08"
-                }
-            }
-            resolve(ret);
-        },1500);
-    });
+    const url3Prefix = 'http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY';
+    const url = `${thirdUrlPre}url=${encodeURIComponent(url3Prefix)}&type=rite`;
+    return fetch(url).then(res=>res.json());
 }
 
 
@@ -32,8 +18,10 @@ export const fetchUSD2CNYRate = ()=>{
 export const fetchCurrency2USDTRate = (currencyName:string)=>{
     if(currencyName === 'USDT') return;
     const symbol = `${currencyName.toLowerCase()}usdt`;
-    const url = `${huobiApi}${symbol}`
-    return getRequest(url);
+    const url3Prefix = `https://api.huobipro.com/market/history/kline?symbol=${symbol}`;
+    const url = `${thirdUrlPre}url=${encodeURIComponent(url3Prefix)}&type=kline`;
+    return fetch(url).then(res=>res.json());
 }
 
 //======================================================================
+

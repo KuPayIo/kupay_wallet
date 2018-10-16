@@ -68,13 +68,6 @@ register('addrs',() => {
         w.updateBalance();
     }
 });
-// 汇率变化
-register('exchangeRateJson',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateBalance();
-    }
-});
 
 // 货币涨跌幅度变化
 register('currency2USDTMap',() => {

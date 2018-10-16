@@ -27,7 +27,7 @@ export class WithdrawRecord extends Widget {
         }
     }
     public init() {
-        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]);
+        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
         this.state = {
             recordList:this.parseRecordList(withdrawLogs.list),
             nextStart:withdrawLogs.start,
@@ -37,7 +37,7 @@ export class WithdrawRecord extends Widget {
         };
     }
     public updateRecordList() {
-        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]);
+        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
         console.log(withdrawLogs);
         const list = withdrawLogs.list;
         this.state.nextStart = withdrawLogs.start;

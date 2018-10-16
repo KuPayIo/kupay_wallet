@@ -6,7 +6,7 @@ import { popNew } from '../../pi/ui/root';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
-import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, currency2USDT } from '../store/interface';
+import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, currency2USDT, CurrencyUnit } from '../store/interface';
 import { find, getBorn, logoutInit, updateStore } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, resendInterval, timeOfArrival, defaultGasLimit } from './constants';
 import { wei2Eth, sat2Btc } from './unitTools';
@@ -475,23 +475,6 @@ export const fetchBalanceOfCurrency = (currencyName: string) => {
 };
 
 /**
- * 获取总资产
- */
-export const fetchTotalAssets = () => {
-    const wallet = find('curWallet');
-    if (!wallet) return 0;
-    let totalAssets = 0;
-    wallet.currencyRecords.forEach(item => {
-        if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
-            const balance = fetchBalanceOfCurrency(item.currencyName);
-            totalAssets += balance * find('exchangeRateJson',item.currencyName).CNY;
-        }
-        
-    });
-
-    return totalAssets;
-};
-/**
  * 获取异或值
  * @param first 前段
  * @param second 后段
@@ -775,27 +758,54 @@ export const fetchBtcMinerFee = (minerFeeLevel:MinerFeeLevel) => {
     return find('btcMinerFee')[minerFeeLevel];
 };
 
-// 获取默认币种汇率
-export const fetchDefaultExchangeRateJson = () => {
-    const rateJson = new Map<string,any>();
-    // 主链汇率
-    for (const k in MainChainCoin) {
-        if (MainChainCoin.hasOwnProperty(k)) {
-            rateJson.set(k,MainChainCoin[k].rate);
-        }
-    }
-    // erc20汇率
-    for (const k in ERC20Tokens) {
-        if (ERC20Tokens.hasOwnProperty(k)) {
-            rateJson.set(k,ERC20Tokens[k].rate);
-        }
-    }
 
-    rateJson.set('KT',{ CNY: 0, USD: 0 });
-    rateJson.set('CNYT',{ CNY: 1, USD: 6 });
+/**
+ * 获取总资产
+ */
+export const fetchTotalAssets = () => {
+    const wallet = find('curWallet');
+    if (!wallet) return 0;
+    let totalAssets = 0;
+    wallet.currencyRecords.forEach(item => {
+        if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
+            const balance = fetchBalanceOfCurrency(item.currencyName);
+            totalAssets += fetchBalanceValueOfCoin(item.currencyName,balance);
+        }
+        
+    });
 
-    return rateJson;
+    return totalAssets;
 };
+/**
+ * 获取云端总资产
+ */
+export const fetchCloudTotalAssets = () => {
+    const cloudBalance = getBorn('cloudBalance');
+    let totalAssets = 0;
+    for (const [k,v] of cloudBalance) {
+        totalAssets += fetchBalanceValueOfCoin(CurrencyTypeReverse[k],v);
+    }
+
+    return  totalAssets;
+};
+
+/**
+ * 获取某个币种对应的货币价值
+ */
+export const fetchBalanceValueOfCoin =(currencyName:string,balance:number)=>{
+    let balanceValue = 0;
+    const USD2CNYRate = find('USD2CNYRate');
+    const currency2USDTMap = getBorn('currency2USDTMap');
+    const currency2USDT = currency2USDTMap.get(currencyName) || {open:0,close:0};
+    const currencyUnit = find('currencyUnit');
+
+    if(currencyUnit === CurrencyUnit.CNY){
+        balanceValue = balance * currency2USDT.close * USD2CNYRate;
+    }else if(currencyUnit === CurrencyUnit.USD){
+        balanceValue = balance * currency2USDT.close;
+    }
+    return balanceValue;
+}
 
 /**
  * 获取本地钱包资产列表
@@ -810,9 +820,8 @@ export const fetchWalletAssetList = () => {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             const balance = fetchBalanceOfCurrency(k);
-            const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(balance * cny);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
             item.gain =  fetchCoinGain(k);
             assetList.push(item);
         }
@@ -825,9 +834,8 @@ export const fetchWalletAssetList = () => {
             item.currencyName = k;
             item.description = ERC20Tokens[k].description;
             const balance = fetchBalanceOfCurrency(k);
-            const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(balance * cny);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
             item.gain =  fetchCoinGain(k);
             assetList.push(item);
         }
@@ -842,12 +850,11 @@ export const fetchWalletAssetList = () => {
 export const fetchCloudWalletAssetList = () => {
     const assetList = [];
     const ktBalance = getBorn('cloudBalance').get(CurrencyType.KT) || 0;
-    const ktCny = getBorn('exchangeRateJson').get('KT').CNY;
     const ktItem = {
         currencyName :'KT',
         description:'KuPlay Token',
         balance:formatBalance(ktBalance),
-        balanceValue:formatBalanceValue(ktBalance * ktCny),
+        balanceValue:formatBalanceValue(fetchBalanceValueOfCoin('KT',ktBalance)),
         gain:formatBalanceValue(0)
     };
     assetList.push(ktItem);
@@ -865,9 +872,8 @@ export const fetchCloudWalletAssetList = () => {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             const balance = getBorn('cloudBalance').get(CurrencyType[k]) || 0;
-            const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(balance * cny);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
             item.gain =  fetchCoinGain(k);
             assetList.push(item);
         }
@@ -876,18 +882,7 @@ export const fetchCloudWalletAssetList = () => {
     return assetList;
 };
 
-/**
- * 获取云端总资产
- */
-export const fetchCloudTotalAssets = () => {
-    const cloudBalance = getBorn('cloudBalance');
-    let totalAssets = 0;
-    for (const [k,v] of cloudBalance) {
-        totalAssets += v * find('exchangeRateJson',CurrencyTypeReverse[k]).CNY;
-    }
 
-    return totalAssets;
-};
 
 /**
  * 没有创建钱包时
