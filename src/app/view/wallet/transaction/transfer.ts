@@ -2,16 +2,17 @@
  * 转账
  */
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode } from '../../../logic/native';
+import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
 import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-// tslint:disable-next-line:max-line-length
-import { getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popPswBox, fetchMinerFeeList } from '../../../utils/tools';
-import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
-import { Forelet } from '../../../../pi/widget/forelet';
 import { register } from '../../../store/store';
+// tslint:disable-next-line:max-line-length
+import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popPswBox } from '../../../utils/tools';
 // ============================导出
+// tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
@@ -27,9 +28,9 @@ export class Transfer extends Widget {
     }
 
     public async init() {
-        if(this.props.currencyName === 'BTC'){
+        if (this.props.currencyName === 'BTC') {
             fetchBtcFees();
-        }else{
+        } else {
             fetchGasPrices();
         }
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
@@ -50,7 +51,7 @@ export class Transfer extends Widget {
         };
     }
 
-    public updateMinerFeeList(){
+    public updateMinerFeeList() {
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
         this.state.minerFeeList = minerFeeList;
         this.state.minerFee = minerFeeList[this.state.curLevel].minerFee;

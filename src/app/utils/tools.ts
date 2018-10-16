@@ -6,10 +6,10 @@ import { popNew } from '../../pi/ui/root';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
-import { Addr, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, currency2USDT } from '../store/interface';
+import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, logoutInit, updateStore } from '../store/store';
-import { currencyConfirmBlockNumber, defalutShowCurrencys, resendInterval, timeOfArrival, defaultGasLimit } from './constants';
-import { wei2Eth, sat2Btc } from './unitTools';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
+import { sat2Btc, wei2Eth } from './unitTools';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -535,7 +535,7 @@ export const calcHashValuePromise = async (pwd, salt?) => {
     console.time('argonHash');
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
     console.timeEnd('argonHash');
-    if(getFirstEthAddr()){
+    if (getFirstEthAddr()) {
         const hashMap = getBorn('hashMap');
         hashMap.set(getFirstEthAddr(),hash);
         updateStore('hashMap',hashMap);
@@ -1027,7 +1027,7 @@ export const initAddr = (address: string, currencyName: string, addrName?: strin
 // 获取货币的涨跌情况
 export const fetchCoinGain = (currencyName:string) => {
     const currency2USDT:currency2USDT = getBorn('currency2USDTMap').get(currencyName);
-    if(!currency2USDT) return formatBalanceValue(0);
+    if (!currency2USDT) return formatBalanceValue(0);
     return formatBalanceValue((currency2USDT.close - currency2USDT.open) / currency2USDT.open);
 };
 /**
@@ -1117,7 +1117,7 @@ export const base64ToFile = (base64:string) => {
  */
 export const getUserInfo = () => {
     const userInfo = find('userInfo');
-    let nickName = userInfo && userInfo.nickName;
+    const nickName = userInfo && userInfo.nickName;
     let avatar = userInfo && userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
@@ -1236,7 +1236,7 @@ export const logoutAccount = () => {
  * 注销账户保留数据
  */
 export const logoutAccountSave = () => {
-    updateStore('flag',{logoutAccountSave:true});
+    updateStore('flag',{ logoutAccountSave:true });
     logoutInit();
     openAndGetRandom();
 };
@@ -1279,8 +1279,7 @@ export const getRemoteVersion = () => {
     const versionStr = versionArr.join('.');
     const version = versionStr.slice(0,versionStr.length - 7);
     return version;
-}
-
+};
 
 // 更新矿工费
 export const fetchMinerFeeList = (currencyName) => {
@@ -1289,11 +1288,11 @@ export const fetchMinerFeeList = (currencyName) => {
     const minerFeeList = [];
     for (let i = 0;i < toa.length;i++) {
         let minerFee = 0;
-        if(cn === 'ETH'){
+        if (cn === 'ETH') {
             const gasLimit = getBorn('gasLimitMap').get(currencyName) || defaultGasLimit;
-            minerFee = wei2Eth(gasLimit * fetchGasPrice(toa[i].level))
-        }else{
-            minerFee = sat2Btc(fetchBtcMinerFee(toa[i].level))
+            minerFee = wei2Eth(gasLimit * fetchGasPrice(toa[i].level));
+        } else {
+            minerFee = sat2Btc(fetchBtcMinerFee(toa[i].level));
         }
         const obj = {
             ...toa[i],
@@ -1302,6 +1301,4 @@ export const fetchMinerFeeList = (currencyName) => {
         minerFeeList.push(obj);
     } 
     return minerFeeList;
-}
-
-
+};

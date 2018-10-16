@@ -1,6 +1,8 @@
 .topBack{
-    height: 550px;
+    height: 422px;
+    padding-top: 30px;
     background:linear-gradient(to right,#318DE6,#38CFE7);
+    flex-shrink: 0;
 }
 .userHead{
     width: 40px;
@@ -17,7 +19,7 @@
     border-radius: 18px;
 }
 .groupCard{
-    margin: 30px 20px;
+    margin: 0 20px 30px;
     height: 480px;
     border-radius: 12px;
     background-color: rgba(255, 255, 255, 1);
@@ -28,6 +30,7 @@
     align-items: center;
     padding-top: 20px;
     padding-left: 30px;
+    position: relative;
 }
 .makeMoney{
     width: 70px;
@@ -42,10 +45,9 @@
 .miningDesc{
     width: 40px;
     height: 40px;
-    margin-right: 10px;
     border: 20px solid transparent;
     position: absolute;
-    right: 20px;
+    right: 10px;
 }
 .totalNum{
     height: 100px;
@@ -111,4 +113,30 @@
     height: 40px;
     margin-right: 30px;
     border: 20px solid transparent;
+}
+.refreshBtn{
+    width: 40px;
+    height: 40px;
+    margin: 40px 5px 0;
+    border: 24px solid transparent;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.topBar{
+    background: linear-gradient(to right, rgb(49, 141, 230), rgb(56, 207, 231));
+    margin-bottom: -1px;
+}
+.topBar1{
+    border-bottom: 2px solid #cccccc;
+}
+.contain{
+    flex: 1 0 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.bottomMode{
+    height: 110px;
+    background: transparent;
+    flex-shrink: 0;
 }

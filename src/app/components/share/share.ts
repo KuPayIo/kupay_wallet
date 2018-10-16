@@ -6,13 +6,13 @@ import { Widget } from '../../../pi/widget/widget';
 import { getLanguage } from '../../utils/tools';
 
 interface Props {
-    text: string;
+    text?: string;
     shareType: number;
-    webName: string;
-    url: string;
-    title: string;
-    content: string;
-    comment: string;
+    webName?: string;
+    url?: string;
+    title?: string;
+    content?: string;
+    comment?: string;
 }
 
 export class BaseShare extends Widget {
@@ -71,6 +71,12 @@ export class BaseShare extends Widget {
                 title: this.props.title,
                 content: this.props.content,
                 comment: this.props.comment || '',
+                platform: platform
+            });
+        } else if (this.props.shareType === ShareToPlatforms.TYPE_SCREEN) {
+            stp.shareScreenShot({
+                success: (result) => { this.ok(true); },
+                fail: (result) => { this.cancel(false); },
                 platform: platform
             });
         } else {

@@ -1,6 +1,6 @@
-<div class="new-page" w-class="new-page" ev-back-click="backPrePage">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="shareScreen">
     <div w-class="top-head">
-        <app-components1-topBar-topBar>{"title":{{it1.tx.txType === 1 ? it1.cfgData.topBarTitle[0] : it1.cfgData.topBarTitle[1]}},background:"linear-gradient(to right,#38CFE7,#318DE6)"}</app-components1-topBar-topBar>
+        <app-components1-topBar-topBar>{"title":{{it1.tx.txType === 1 ? it1.cfgData.topBarTitle[0] : it1.cfgData.topBarTitle[1]}},background:"linear-gradient(to right,#38CFE7,#318DE6)",nextImg:"../../res/image/share_white.png"}</app-components1-topBar-topBar>
     </div>
     <div w-class="body">
         <div w-class="status-container">
@@ -38,9 +38,9 @@
                 <div w-class="tag">{{it1.cfgData.tags[5]}}</div>
                 <div w-class="content"><span>{{it1.tx.fromAddr}}</span><img src="../../../res/image/copy.png" w-class="copy" on-tap="copyFromAddr"/></div>
             </div>
-            <div w-class="qrcode-container">
+            <div w-class="qrcode-container" on-tap="openNewWeb">
                 <app-components-qrcode-qrcode>{value:{{it1.qrcode}},size:200}</app-components-qrcode-qrcode>
-                <div w-class="copy-ethersacn" on-tap="openNewWeb">{{it1.webText}}</div>
+                <div w-class="copy-ethersacn">{{it1.webText}}</div>
             </div>
         </div>
     </div>
