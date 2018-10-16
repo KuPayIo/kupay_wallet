@@ -89,18 +89,18 @@ export class Transfer extends Widget {
     // 转账
     public async nextClick() {
         if (!this.state.toAddr) {
-            popNew('app-components-message-message', {  content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', {  content: this.state.cfgData.tips[0] });
 
             return;
         }
         if (!this.state.amount) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }
 
         if (this.state.balance < this.state.amount + this.state.minerFee) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }

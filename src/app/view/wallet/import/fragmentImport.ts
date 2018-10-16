@@ -41,17 +41,17 @@ export class FragmentImport extends Widget {
     }
     public nextClick() {
         if (!this.state.fragment1) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[0] });
 
             return;
         }
         if (!this.state.fragment2) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }
         if (this.state.fragment1 === this.state.fragment2) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
@@ -62,7 +62,7 @@ export class FragmentImport extends Widget {
         const decryptFragement2 = obj2.fragment;
         const random2 = obj2.randomStr;
         if (random1 !== random2) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[3] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });
 
             return;
         }

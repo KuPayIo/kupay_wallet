@@ -62,10 +62,19 @@ export class Home extends Widget {
     }
 
     public refreshClick(){
+        if(this.state.refreshing){
+            return;
+        }
         this.state.refreshing = true;
         this.paint();
         let neededRefreshCount = 1;
         getCloudBalance().then(()=>{
+            neededRefreshCount--;
+            if(neededRefreshCount === 0){
+                this.state.refreshing = false;
+                this.paint();
+            }
+        }).catch(()=>{
             neededRefreshCount--;
             if(neededRefreshCount === 0){
                 this.state.refreshing = false;

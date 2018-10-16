@@ -574,7 +574,7 @@ export const popPswBox = async (content= []) => {
 
 // 弹出提示框
 export const popNewMessage = (content:string) => {
-    return popNew('app-components-message-message',{ content });
+    return popNew('app-components1-message-message',{ content });
 };
 // 弹出loading
 export const popNewLoading = (text:string) => {

@@ -2,8 +2,6 @@
  * 消息框
  */
 import { Widget } from '../../widget/widget';
-import { notify } from '../../widget/event';
-import { remove } from '../../ui/root';
 
 interface Props {
     type: string;

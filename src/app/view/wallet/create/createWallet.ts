@@ -96,22 +96,22 @@ export class CreateWallet extends Widget {
             return;
         }
         if (!walletNameAvailable(this.state.walletName)) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[0] });
 
             return;
         }
         if (!this.state.walletPsw || !this.state.walletPswConfirm) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }
         if (!this.state.walletPswAvailable) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
         if (!this.state.pswEqualed) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[3] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });
 
             return;
         }

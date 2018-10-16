@@ -44,7 +44,7 @@ export class Aboutus extends Widget {
                     console.log("update progress: ", e);
                 });
     });
-            // popNew('app-components-message-message', { content: this.state.cfgData.tips });
+            // popNew('app-components1-message-message', { content: this.state.cfgData.tips });
         } else {
             // TODO 分享下载
             popNew('app-components-share-share', { shareType: ShareToPlatforms.TYPE_LINK, url: shareDownload }, (result) => {

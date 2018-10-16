@@ -12,7 +12,7 @@ import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage, popNewLoading } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -102,7 +102,7 @@ export const login = async (passwd:string) => {
     close.callback(close.widget);
     if (res.result === 1) {
         updateStore('loginState', LoginState.logined);
-        popNew('app-components-message-message',{ content:getStaticLanguage().userInfo.loginSuccess });
+        popNew('app-components1-message-message',{ content:getStaticLanguage().userInfo.loginSuccess });
     } else {
         updateStore('loginState', LoginState.logerror);
     }
@@ -234,28 +234,36 @@ const doOpen = async () => {
 export const getRandom = async () => {
     if (!find('conUser')) return;
     const msg = { type: 'get_random', param: { account: find('conUser').slice(2), pk: `04${find('conUserPublicKey')}` } };
-    const resp = await requestAsync(msg);
-    updateStore('conRandom', resp.rand);
-    updateStore('conUid', resp.uid);
-    // 余额
-    getCloudBalance();
-    // eth gasPrice
-    fetchGasPrices();
-    // btc fees
-    fetchBtcFees();
-    // 获取真实用户
-    fetchRealUser();
-    const flag = find('flag');
-    // 第一次创建不需要更新
-    if (!flag.created) {
-        // 用户基础信息
-        getUserInfoFromServer([resp.uid]);
+    try{
+        const resp = await requestAsync(msg);
+        updateStore('conRandom', resp.rand);
+        updateStore('conUid', resp.uid);
+        // 余额
+        getCloudBalance();
+        // eth gasPrice
+        fetchGasPrices();
+        // btc fees
+        fetchBtcFees();
+        // 获取真实用户
+        fetchRealUser();
+        const flag = find('flag');
+        // 第一次创建不需要更新
+        if (!flag.created) {
+            // 用户基础信息
+            getUserInfoFromServer([resp.uid]);
+        }
+       
+        const hash = getBorn('hashMap').get(getFirstEthAddr());
+        if (hash) {
+            defaultLogin(hash);
+        }
+    }catch(resp){
+        console.log('getRandom----------',resp);
+        if(resp.type === 1014){
+            popNew('app-components1-modalBox-modalBox',{title:'踢下线',content:"您将把别人踢下线"});
+        }
     }
-   
-    const hash = getBorn('hashMap').get(getFirstEthAddr());
-    if (hash) {
-        defaultLogin(hash);
-    }
+    
     
 };
 
@@ -263,7 +271,7 @@ export const getRandom = async () => {
  * 获取所有的货币余额
  */
 export const getCloudBalance = () => {
-    if (!find('conRandom')) return;
+    if (!find('conRandom')) return Promise.reject('连接服务器失败');
     const list = [];
     list.push(CurrencyType.KT);
     for (const k in CurrencyType) {
@@ -1209,7 +1217,6 @@ export const fetchBtcFees = async () => {
 
     } catch (err) {
         showError(err && (err.result || err.type));
-
     }
 };
 
