@@ -16,7 +16,8 @@ export enum ConState {
     init = 0,
     opening,
     opened,
-    closed
+    closed,
+    noReconnect //禁止重连
 }
 
 /**
@@ -381,7 +382,7 @@ const waitTimeout = 20 * 1000;
 const closeTimeout = 20 * 10 * 1000;
 
 // 心跳时间
-const pingTime = 10 * 1000;
+const pingTime = 100 * 1000;
 
 // 用户长时间未发起通信，关闭链接
 const noneReqTimeout = 10 * 60 * 1000;
@@ -400,7 +401,7 @@ let doClose = false;
 // 状态改变的CB
 const stateChangeArr = [];
 // 设置连接状态
-const setConState = (s: number) => {
+export const setConState = (s: number) => {
     if (conState === s) {
         return;
     }

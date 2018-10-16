@@ -16,6 +16,12 @@ export const fetchUSD2CNYRate = ()=>{
  * 获取货币对比USDT的比率
  */
 export const fetchCurrency2USDTRate = (currencyName:string)=>{
+    return new Promise((resolve)=>{
+        setTimeout(()=>{
+            const ret = {"status":"ok","ch":"market.btcusdt.kline.1day","ts":1539670505329,"data":[{"id":1539619200,"open":6905.170000000000000000,"close":6850.000000000000000000,"low":6654.000000000000000000,"high":6955.000000000000000000,"amount":7731.728723947506305218,"vol":52437756.909877504971432664790000000000000000,"count":47136}]};
+            resolve(ret);
+        },1500);
+    });
     if(currencyName === 'USDT') return;
     const symbol = `${currencyName.toLowerCase()}usdt`;
     const url3Prefix = `https://api.huobipro.com/market/history/kline?symbol=${symbol}`;

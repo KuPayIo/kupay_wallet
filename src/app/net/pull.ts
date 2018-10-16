@@ -9,10 +9,10 @@ import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '..
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
-import { PAGELIMIT } from '../utils/constants';
+import { PAGELIMIT, CMD } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage, popNewLoading } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -221,7 +221,7 @@ const doOpen = async () => {
         }, async () => {
             updateStore('loginState', LoginState.init);
             try {
-                await doOpen();
+                // await doOpen();
                 resolve(true);
             } catch (error) {
                 reject(false);
@@ -233,9 +233,20 @@ const doOpen = async () => {
 /**
  * 获取随机数
  */
-export const getRandom = async () => {
+export const getRandom = async (cmd?:number,client?:any) => {
     if (!find('conUser')) return;
-    const msg = { type: 'get_random', param: { account: find('conUser').slice(2), pk: `04${find('conUserPublicKey')}` } };
+    const param:any = {
+        account: find('conUser').slice(2), 
+        pk: `04${find('conUserPublicKey')}`
+    };
+    if(cmd){
+        param.cmd = cmd;
+        param.client = JSON.stringify(client);
+    }
+    const msg = { 
+        type: 'get_random', 
+        param
+    };
     try{
         const resp = await requestAsync(msg);
         updateStore('conRandom', resp.rand);
@@ -262,7 +273,11 @@ export const getRandom = async () => {
     }catch(resp){
         console.log('getRandom----------',resp);
         if(resp.type === 1014){
-            popNew('app-components1-modalBox-modalBox',{title:'踢下线',content:"您将把别人踢下线"});
+            popNew('app-components1-modalBox-modalBox',{title:'踢下线',content:"您将把别人踢下线"},()=>{
+                getRandom(CMD.FORCELOGOUT,'android 14');
+            },()=>{
+                getRandom(CMD.FORCELOGOUT,'android 14');
+            });
         }
     }
     

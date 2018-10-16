@@ -436,6 +436,7 @@ export class DataCenter {
 
     // 过滤eth交易记录，过滤掉token的交易记录
     private filterEthTrans(trans: any[]) {
+        
         return trans.filter(item => {
             if (item.to.length === 0) return false;
             if (item.input.indexOf(ethTokenTransferCode) === 0) return false;
@@ -450,6 +451,7 @@ export class DataCenter {
      */
     private parseBtcTransactionTxRecord(addr: string, tx: any) {
         if(!tx) return;
+        
         const vin = tx.vin;
         let fromIndex = 0;
         for(let i = 0;i< vin.length;i++){
@@ -458,16 +460,25 @@ export class DataCenter {
                 break;
             }
         }
+        const fromAddr = vin[fromIndex].addr || '未知';
 
         const vout = tx.vout;
         let toIndex = 0;
         for(let i = 0;i< vout.length;i++){
-            if(vout[i].scriptPubKey.addresses &&  vout[i].scriptPubKey.addresses[0] === addr){
-                toIndex = i;
-                break;
+            if(fromAddr === addr){
+                if(vout[i].scriptPubKey.addresses){
+                    toIndex = i;
+                    break;
+                }
+            }else{
+                if(vout[i].scriptPubKey.addresses && vout[i].scriptPubKey.addresses[0] === addr){
+                    toIndex = i;
+                    break;
+                }
             }
+            
         }
-        const fromAddr = vin[fromIndex].addr || '未知';
+        
         const toAddr = vout[toIndex].scriptPubKey.addresses;
         const value = formatBalance(Number(vout[toIndex].value));
 
@@ -853,7 +864,7 @@ export class DataCenter {
         const seconds = nextPoint.getSeconds();
         const delaySeconds = seconds < 30 ? 30 - seconds : 60 - seconds;
         const delay = delaySeconds * 1000;
-        console.log('updateCurrency2USDTRate',nextPoint);
+        // console.log('updateCurrency2USDTRate',nextPoint);
         
         const currencyList = [];
         for(let k in MainChainCoin){

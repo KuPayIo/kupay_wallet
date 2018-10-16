@@ -41,7 +41,7 @@ export class TransactionHome extends Widget {
         this.state = {
             balance,
             balanceValue:formatBalanceValue(balanceValue),
-            rate:fetchBalanceValueOfCoin(currencyName,1),
+            rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
             txList,
             canConvert,
             cfgData:getLanguage(this),

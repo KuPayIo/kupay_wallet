@@ -296,6 +296,7 @@ export const formatBalance = (banlance: number) => {
  * 余额格式化
  */
 export const formatBalanceValue = (value: number) => {
+    if(value === 0) return '0.00';
     return value.toFixed(2);
 };
 
