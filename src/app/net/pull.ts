@@ -688,6 +688,7 @@ export const doChat = async () => {
 
 /**
  * 获取指定货币流水
+ * filter（0表示不过滤，1表示过滤）
  */
 export const getAccountDetail = async (coin: string,filter:number,start = '') => {
     let msg;

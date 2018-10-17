@@ -430,9 +430,10 @@ export const parseExchangeDetail = (value) => {
             redBagList.push(redBag);
             curNum ++;
         }
-        totalAmount += amount;
+        totalAmount += Number(data[i][4]);
     }
     const message = unicodeArray2Str(value[0]);
+    totalAmount = smallUnit2LargeUnit(CurrencyTypeReverse[data[0][3]],totalAmount);
 
     return [redBagList, message, curNum, data.length, totalAmount]; // 兑换人员列表，红包留言，已兑换个数，总个数，红包总金额
 };

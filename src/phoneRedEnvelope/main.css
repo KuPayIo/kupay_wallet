@@ -141,19 +141,17 @@
     margin-top: 60px;
 }
 .redEnv-open-div{
-    width: 100%;
     text-align: center;
-    position: absolute;
-    bottom: 230px;
+    margin-top: 110px;
 }
 .redEnv-open{
-    width: 195px;
-    height: 195px;
+    width: 200px;
+    height: 200px;
 }
 .redEnv-look{
     font-size: 28px;
     line-height: 40px;
-    margin-top: 350px;
+    margin-top: 60px;
     text-align: center;
 }
 @keyframes rotated{
