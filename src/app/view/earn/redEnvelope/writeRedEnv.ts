@@ -155,7 +155,7 @@ export class WriteRedEnv extends Widget {
      */
     public async send() {
         if (this.state.totalNum === 0) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
@@ -166,12 +166,12 @@ export class WriteRedEnv extends Widget {
         }       
         const curCoin = this.state.list[this.state.selected];
         if (this.state.totalAmount > curCoin.num) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[3] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });
 
             return;
         }
         if (this.state.message.length > 20) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[4] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[4] });
 
             return;
         }
@@ -179,7 +179,7 @@ export class WriteRedEnv extends Widget {
             this.state.message = this.state.cfgData.messTitle[1];
         }
         if (!this.state.realUser) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[5] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[5] });
 
             return;
         }
@@ -201,7 +201,7 @@ export class WriteRedEnv extends Widget {
                 if (fg) {
                     this.sendRedEnv();
                 } else {
-                    popNew('app-components-message-message',{ content:this.state.cfgData.tips[6] });
+                    popNew('app-components1-message-message',{ content:this.state.cfgData.tips[6] });
                 }
             }
         );

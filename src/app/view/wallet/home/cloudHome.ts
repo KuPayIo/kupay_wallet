@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getCloudBalance, getProductList } from '../../../net/pull';
 import { Product } from '../../../store/interface';
 import { find, register } from '../../../store/store';
-import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getLanguage, hasWallet } from '../../../utils/tools';
+import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getLanguage, hasWallet, getCurrencyUnitSymbol } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -32,7 +32,8 @@ export class CloudHome extends Widget {
             assetList:fetchCloudWalletAssetList(),
             productList:find('productList') || [],
             cfgData:getLanguage(this),
-            redUp:color ? color.selected === 0 :true
+            redUp:color ? color.selected === 0 :true,
+            currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         this.paint();
     }
@@ -62,17 +63,17 @@ export class CloudHome extends Widget {
         const product = this.state.productList[index];
         popNew('app-view-wallet-financialManagement-productDetail',{ product });
     }
+
+    public currencyUnitChange() {
+        this.state.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
+        this.state.assetList = fetchCloudWalletAssetList();
+        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.paint();
+    }
 }
 
 // =======================本地
 
-// 汇率变化
-register('exchangeRateJson',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateBalance();
-    }
-});
 
 // 云端余额变化
 register('cloudBalance',() => {
@@ -110,3 +111,13 @@ register('changeColor', () => {
         w.init();
     }
 });
+
+
+// 货币单位变化
+register('currencyUnit',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.currencyUnitChange();
+    }
+});
+

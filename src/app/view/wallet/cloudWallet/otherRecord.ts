@@ -26,16 +26,17 @@ export class OtherRecord extends Widget {
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName,1);
         }
+        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
         this.state = {
-            recordList:[],
-            nextStart:0,
-            canLoadMore:false,
+            recordList:this.parseRecordList(accountDetail.list),
+            nextStart:accountDetail.start,
+            canLoadMore:accountDetail.canLoadMore,
             isRefreshing:false,
             cfgData:getLanguage(this)
         };
     }
     public updateRecordList() {
-        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]);
+        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
         console.log(accountDetail);
         const list = accountDetail.list;
         this.state.nextStart = accountDetail.start;

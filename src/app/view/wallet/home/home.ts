@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { register, find } from '../../../store/store';
-import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getLanguage, getUserInfo } from '../../../utils/tools';
+import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getLanguage, getUserInfo, getCurrencyUnitSymbol } from '../../../utils/tools';
 import { getCloudBalance } from '../../../net/pull';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -34,7 +34,8 @@ export class Home extends Widget {
             avatar:userInfo && userInfo.avatar,
             totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets()),
             cfgData:cfg,
-            refreshing:false
+            refreshing:false,
+            currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         this.paint();
     }
@@ -54,6 +55,12 @@ export class Home extends Widget {
         this.paint();
     }
 
+    public currencyUnitChange() {
+        this.state.totalAsset = formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets());
+        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.paint();
+    }
+
     /**
      * 打开我的设置
      */
@@ -62,10 +69,19 @@ export class Home extends Widget {
     }
 
     public refreshClick(){
+        if(this.state.refreshing){
+            return;
+        }
         this.state.refreshing = true;
         this.paint();
         let neededRefreshCount = 1;
         getCloudBalance().then(()=>{
+            neededRefreshCount--;
+            if(neededRefreshCount === 0){
+                this.state.refreshing = false;
+                this.paint();
+            }
+        }).catch(()=>{
             neededRefreshCount--;
             if(neededRefreshCount === 0){
                 this.state.refreshing = false;
@@ -108,13 +124,6 @@ register('userInfo',() => {
     }
 });
 
-// 汇率变化
-register('exchangeRateJson',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateTotalAsset();
-    }
-});
 
 // 云端余额变化
 register('cloudBalance',() => {
@@ -130,3 +139,22 @@ register('languageSet', () => {
         w.init();
     }
 });
+
+
+// 货币涨跌幅度变化
+register('currency2USDTMap',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateTotalAsset();
+    }
+});
+
+
+// 货币单位变化
+register('currencyUnit',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.currencyUnitChange();
+    }
+});
+

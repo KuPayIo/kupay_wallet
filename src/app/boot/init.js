@@ -867,8 +867,7 @@ pi_modules.load.exports = (function () {
 						localInitCheck(false);
 					}
 				} else if (isNative) {
-
-					ajax.get(depend.domains[0] + depend.rootPath() + ".depend", undefined, undefined, ajax.RESP_TYPE_TEXT, 0, function (r) {
+					ajax.get(depend.domains[0] + depend.rootPath() + "depend", undefined, undefined, ajax.RESP_TYPE_TEXT, 0, function (r) {
 						localSign = {};
 						var i = r.indexOf("["),
 							j = r.lastIndexOf("]"),
@@ -1934,7 +1933,8 @@ pi_modules.update.exports = (function () {
 	var rootPath = undefined;
 	var newIndexJSStr = undefined;
 	var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
-
+	
+	var isIntercept = true;
 	var localVersion = [];
 	var remoteVersion = [];
 
@@ -1950,12 +1950,19 @@ pi_modules.update.exports = (function () {
 	}
 
 	/**
+	 * 告诉更新系统，底层是否拦截
+	 */
+	module.setIntercept = function (isTrue) {
+		isIntercept = isTrue;
+	}
+
+	/**
 	 * 
 	 * @param {string} bootDirectory 引导目录
 	 */
 	module.setServerInfo = function (bootDirectory) {
-		if (!isNative) return;
-		
+		if (!isNative || !isIntercept) return;
+
 		bootDir = bootDirectory;
 		domain = depend.domains[0];
 		rootPath = depend.rootPath();
@@ -1990,8 +1997,8 @@ pi_modules.update.exports = (function () {
 	 * @param {*} callback callback(isNeedUpdate)
 	 */
 	module.checkUpdate = function (callback) {
-		
-		if (!isNative) {
+
+		if (!isNative || !isIntercept) {
 			setTimeout(function () {
 				callback(false);
 			}, 0);
@@ -2012,6 +2019,11 @@ pi_modules.update.exports = (function () {
 	 * 更新成功，会自动刷新页面
 	 */
 	module.update = function (updateProcessCb) {
+		
+		if (!isNative || !isIntercept) {
+			return;
+		}
+
 		localStorage.setItem("$$nativeIsUpdating", "1");
 
 		// 不拦截，webview正常模式
@@ -2059,9 +2071,7 @@ pi_modules.update.exports = (function () {
 			ajax.get(url, {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (data) {
 	
 				dependFileData = data;
-				
-				alert(data);
-				
+
 				var str = data.substring(data.indexOf('['), data.lastIndexOf(']') + 1);
 				pi_modules.depend.exports.init(JSON.parse(str), rootPath);
 				var dependData = JSON.parse(str);

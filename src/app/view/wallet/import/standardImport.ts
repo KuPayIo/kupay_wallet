@@ -29,12 +29,12 @@ export class StandardImport extends Widget {
     }
     public nextClick(e:any) {
         if (this.state.mnemonic.length <= 0) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips });
 
             return;
         }
         if(!isValidMnemonic(lang,this.state.mnemonic)){
-            popNew('app-components-message-message', { content: this.state.cfgData.invalidMnemonicTips });
+            popNew('app-components1-message-message', { content: this.state.cfgData.invalidMnemonicTips });
 
             return;
         }

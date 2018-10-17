@@ -3,7 +3,7 @@
         <div w-class="user-container">
             <div w-class="box">
             <img src="{{it1.avatar ? it1.avatar : '../../../res/image1/default_avatar.png'}}" w-class="avatar" on-tap="showMine"/>
-            <div w-class="total-asset">￥{{it1.totalAsset}}</div>
+            <div w-class="total-asset">{{it1.currencyUnitSymbol}}{{it1.totalAsset}}</div>
             </div>
             <img src="../../../res/image1/refresh_white.png" w-class="refresh" on-tap="refreshClick" class="{{it1.refreshing ? 'refreshing' : ''}}"/>
         </div>

@@ -49,12 +49,6 @@ export const run = (cb): void => {
     setTimeout(() => {
         if (cb) cb();
     },20);
-    // getRequest('https://api.huobipro.com/market/history/kline?period=1day&size=1&symbol=omgusdt&AccessKeyId=6fd70042-c5e4c618-d6e619ec-ecfa2')
-    // .then(result=>{
-    //     alert("111请求结果\t" + result)
-    // }).catch(result=>{
-    //     alert("请求失败 错误信息\t" + result)
-    // });
 };
 
 // const rpcFunc = (req:Struct, respClass:Function, callback:Function, timeout: number) => {
@@ -138,7 +132,7 @@ const backToFront = () => {
 const ifNeedUnlockScreen = () => {
     const unlockScreen = document.getElementById('keyboard');
     if (unlockScreen) return false;
-    const ls: LockScreen = find('lockScreen');
+    const ls: LockScreen = find('lockScreen') || {};
     const lockScreenPsw = ls.psw;
     const openLockScreen = ls.open !== false;
 

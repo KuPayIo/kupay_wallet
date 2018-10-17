@@ -6,7 +6,8 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
-import { fetchCoinGain, formatBalanceValue, getLanguage, popNewMessage } from '../../../utils/tools';
+import { fetchCoinGain, formatBalanceValue, getLanguage, popNewMessage, fetchBalanceValueOfCoin } from '../../../utils/tools';
+import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -21,12 +22,15 @@ export class CloudWalletHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
+        getAccountDetail(props.currencyName,0);
+        getAccountDetail(props.currencyName,1);
+        getRechargeLogs(props.currencyName);
+        getWithdrawLogs(props.currencyName);
     }
     public init() {
         const currencyName = this.props.currencyName;
-        const rate =   getBorn('exchangeRateJson').get(currencyName).CNY;
-        const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
-        const balanceValue = formatBalanceValue(rate * balance);
+        const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]) || 0;
+        const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
         const cfg = getLanguage(this); 
         const color = find('changeColor');
         this.state = {
@@ -45,7 +49,7 @@ export class CloudWalletHome extends Widget {
             }],
             activeNum:0,
             gain:fetchCoinGain(currencyName),
-            rate:formatBalanceValue(rate),
+            rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
             balance,
             balanceValue,
             cfgData:cfg,
@@ -55,8 +59,8 @@ export class CloudWalletHome extends Widget {
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        this.state.balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
-        this.state.balanceValue = formatBalanceValue(this.state.rate * this.state.balance);
+        this.state.balance = getBorn('cloudBalance').get(CurrencyType[currencyName]) || 0;
+        this.state.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,this.state.balance));
         this.paint();
     }
     public tabsChangeClick(event: any, value: number) {
@@ -88,6 +92,23 @@ export class CloudWalletHome extends Widget {
 
 // 余额变化
 register('cloudBalance', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateBalance();
+    }
+});
+
+// 汇率变化
+register('USD2CNYRate', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateBalance();
+    }
+});
+
+
+// 涨跌幅变化
+register('currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();

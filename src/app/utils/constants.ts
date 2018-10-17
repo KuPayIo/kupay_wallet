@@ -151,3 +151,9 @@ export const blockchainUrl = 'https://testnet.blockchain.info/tx/';
 const huobiApiAccessKey = '6fd70042-c5e4c618-d6e619ec-ecfa2';
 //火币API
 export const huobiApi = `https://api.huobipro.com/market/history/kline?period=1day&size=1&AccessKeyId=${huobiApiAccessKey}&symbol=`;
+
+
+export enum CMD {
+    FORCELOGOUT = 1, //强制下线保留数据
+    FORCELOGOUTDEL = 2 //强制下线删除数据
+} 

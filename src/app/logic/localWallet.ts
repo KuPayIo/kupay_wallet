@@ -6,7 +6,6 @@ import { base64ToArrayBuffer } from '../../pi/util/base64';
 import { drawImg } from '../../pi/util/canvas';
 import { generateByHash, sha3, toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { openAndGetRandom } from '../net/pull';
 import { Addr, CreateWalletType, Wallet } from '../store/interface';
 import { find, updateStore } from '../store/store';
 import { ahash } from '../utils/ahash';
@@ -101,7 +100,6 @@ export const createWalletRandom = (hash:string,option) => {
     updateStore('addrs', addrs);
     updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
 
-    openAndGetRandom();
 };
 
 /**
@@ -134,7 +132,6 @@ export const createWalletByImage = async (hash:string,option:any) => {
     updateStore('addrs', addrs);
     updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
 
-    openAndGetRandom();
 };
 
 /**
@@ -205,7 +202,6 @@ export const importWalletByMnemonic = (hash:string,option) => {
     addrs.push(...gwlt.addrs);
     updateStore('addrs', addrs);
     updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
-    openAndGetRandom();
 
     return true;
 };

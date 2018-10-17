@@ -91,7 +91,6 @@ export interface Store {
     curWallet: Wallet;// 当前钱包
     addrs: Addr[];// 地址数据
     transactions: TransRecordLocal[];// 交易记录
-    exchangeRateJson: Map<string, any>;// 兑换汇率列表
     nonceMap:Map<string,number>;// 维护本地的nonce
     gasPrice:object;// gasPrice档次(3档)
     btcMinerFee:object;// btn minerFee档次(3档)
@@ -124,6 +123,7 @@ export interface Store {
     shapeShiftTxsMap:Map<string,ShapeShiftTxs>;// shapeshift 交易记录Map
     lastGetSmsCodeTime:number;
     languageSet:LanguageSet;
+    currencyUnit:CurrencyUnit;//货币单位
     changeColor:ChangeColor;
     USD2CNYRate:number;// 人民币美元汇率
     currency2USDTMap:Map<string,currency2USDT>;// 货币对比USDT的比率
@@ -500,4 +500,10 @@ export interface LanguageSet {
 export interface ChangeColor {
     selected:number; // 当前选中的涨颜色，0 红涨绿跌(红)，1 红跌绿涨(绿)
     colorList:['redUp','greenUp']; // 颜色列表
+}
+
+// 货币单位配置
+export enum CurrencyUnit {
+    CNY,
+    USD
 }

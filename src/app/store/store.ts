@@ -5,9 +5,9 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { depCopy, fetchDefaultExchangeRateJson, getFirstEthAddr } from '../utils/tools';
+import { depCopy, getFirstEthAddr } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, ChangeColor, CHisRec, currency2USDT, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank,MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet } from './interface';
+import { AccountDetail,AddMineItem, Addr, ChangeColor, CHisRec, currency2USDT, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank,MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet, CurrencyUnit } from './interface';
 
 // ============================================ 导出
 /**
@@ -77,11 +77,10 @@ export const unregister = (keyName: KeyName, cb: Function): void => {
 export const initStore = () => {
     // 从localStorage中取wallets
     const wallets = findByLoc('wallets');
-    store.walletList = (wallets && wallets.walletList) || [];
     store.curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
     // 从localStorage中的wallets中初始化salt
     store.salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
-
+    store.walletList = (wallets && wallets.walletList) || [];
     const firstEthAddr = getFirstEthAddr();
     if(firstEthAddr){
         // 从localStorage中取addrs
@@ -108,12 +107,12 @@ export const initStore = () => {
     store.nonceMap = new Map<string,number>(findByLoc('nonceMap'));
     // 从localStorage中取realUserMap
     store.realUserMap = new Map<string,boolean>(findByLoc('realUserMap'));
-    // 初始化默认兑换汇率列表
-    store.exchangeRateJson = fetchDefaultExchangeRateJson();
     // 初始化语言设置
     store.languageSet = findByLoc('languageSet');
     // 初始话化涨跌颜色设置
     store.changeColor = findByLoc('changeColor');
+    // 货币单位设置
+    store.currencyUnit = findByLoc('currencyUnit');
     store.gasPrice = findByLoc('gasPrice') || {};
     store.gasLimitMap = new Map<string,number>(findByLoc('gasLimitMap'));
     store.btcMinerFee = findByLoc('btcMinerFee') || {};
@@ -127,9 +126,9 @@ type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walle
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord' | 'userInfo' | 'totalLogs' |
-'token' | 'flag' | 'verPhone';
+'token' | 'flag' | 'verPhone' ;
 
-type MapName = 'exchangeRateJson' | 'hashMap';
+type MapName = 'hashMap';
 
 type shapeShiftName = 'shapeShiftCoins' | 'shapeShiftMarketInfo';
 
@@ -137,7 +136,7 @@ type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
  'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'| 'languageSet' | 'changeColor' |
-'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee' | 'gasLimitMap' | 'USD2CNYRate' | 'currency2USDTMap';
+'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee' | 'gasLimitMap' | 'USD2CNYRate' | 'currency2USDTMap' | 'currencyUnit';
 
 export const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
@@ -169,7 +168,6 @@ const store = <Store>{
     curWallet: <Wallet>null,// 当前钱包
     addrs: <Addr[]>[],// 地址数据
     transactions: <TransRecordLocal[]>[],// 交易记录
-    exchangeRateJson: new Map<string, any>(),// 兑换汇率列表
     lockScreen: <LockScreen>null, // 锁屏密码相关
     nonceMap:new Map<string,number>(),// 本地nonce维护
     gasPrice:null,// gasPrice分档次
@@ -209,12 +207,13 @@ const store = <Store>{
     lastGetSmsCodeTime:0,
     languageSet:<LanguageSet>null, // 语言设置
     changeColor:<ChangeColor>null, // 涨跌颜色设置
+    currencyUnit:CurrencyUnit.CNY,
     verPhone:<number>null, // 验证手机号码
     USD2CNYRate:0,// 人民币美元汇率
     currency2USDTMap:new Map<string,currency2USDT>()
 };
 
-// 重置云端数据
+// 登出
 export const logoutInit = () => {
     updateStore('loginState',LoginState.init);
     updateStore('conUser','');
@@ -225,7 +224,6 @@ export const logoutInit = () => {
     updateStore('userInfo',null);
     updateStore('addrs',null);
     updateStore('transactions',null);
-    updateStore('lockScreen',null);
     updateStore('sHisRec',null);
     updateStore('cHisRec',null);
     updateStore('inviteRedBagRec',null);
@@ -245,4 +243,40 @@ export const logoutInit = () => {
     updateStore('shapeShiftTxsMap', new Map<string,ShapeShiftTxs>());
     updateStore('purchaseRecord', <PurchaseRecordOne[]>[]);
     updateStore('flag',{});
+};
+
+
+// 登入
+export const loginInit = () => {
+    const wallets = findByLoc('wallets');
+    const curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
+    updateStore('curWallet',curWallet);
+    const walletList = (wallets && wallets.walletList) || [];
+    updateStore('walletList',walletList);
+    // 从localStorage中的wallets中初始化salt
+    const salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
+    updateStore('salt',salt);
+
+    const firstEthAddr = getFirstEthAddr();
+    if(firstEthAddr){
+        // 从localStorage中取addrs
+        const addrs = new Map<string,Addr[]>(findByLoc('addrsMap')).get(firstEthAddr) || [];
+        updateStore('addrs',addrs);
+        // 从localStorage中取transactions
+        const transactions = new Map<string,TransRecordLocal[]>(findByLoc('transactionsMap')).get(firstEthAddr) || [];
+        updateStore('transactions',transactions);
+        // 从localStorage中取sHisRecMap
+        const sHisRecMap = new Map<string,SHisRec>(findByLoc('sHisRecMap'));
+        const sHisRec = sHisRecMap.get(firstEthAddr);
+        updateStore('sHisRec',sHisRec);
+        // 从localStorage中取cHisRecMap
+        const cHisRecMap = new Map<string,CHisRec>(findByLoc('cHisRecMap'));
+        const cHisRec = cHisRecMap.get(firstEthAddr);
+        updateStore('cHisRec',cHisRec);
+        // 从localStorage中取inviteRedBagRecMap
+        const inviteRedBagRecMap = new Map<string,CHisRec>(findByLoc('inviteRedBagRecMap'));
+        const inviteRedBagRec = inviteRedBagRecMap.get(firstEthAddr);
+        updateStore('inviteRedBagRec',inviteRedBagRec);
+    }
+    updateStore('token',findByLoc('token'));
 };

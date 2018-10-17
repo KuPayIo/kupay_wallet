@@ -56,21 +56,21 @@ export class ChangePSW extends Widget {
         const rePassword = this.state.rePassword;
         const wallet = find('curWallet');
         if (!oldPassword || !newPassword || !rePassword) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[0] });
 
             return;
         }
         // 判断输入的密码是否符合规则
         if (!this.state.pswAvailable) {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }
         // 判断两次输入的密码是否相同
         if (!this.state.pswEqualed) {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[2] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
@@ -78,7 +78,7 @@ export class ChangePSW extends Widget {
         const fg = await VerifyIdentidy(wallet,oldPassword);
         // 判断原密码是否正确
         if (!fg) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[3] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });
             loading.callback(loading.widget);
 
             return;

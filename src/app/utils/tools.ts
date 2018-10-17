@@ -6,10 +6,12 @@ import { popNew } from '../../pi/ui/root';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
-import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
-import { find, getBorn, logoutInit, updateStore } from '../store/store';
+import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, CurrencyUnit, Wallet } from '../store/interface';
+import { find, getBorn, logoutInit, updateStore, initStore, loginInit } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
+import { store } from '../../pi/lang/mod';
+import { setConState, ConState } from '../../pi/net/ui/con_mgr';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -296,6 +298,7 @@ export const formatBalance = (banlance: number) => {
  * 余额格式化
  */
 export const formatBalanceValue = (value: number) => {
+    if(value === 0) return '0.00';
     return value.toFixed(2);
 };
 
@@ -475,23 +478,6 @@ export const fetchBalanceOfCurrency = (currencyName: string) => {
 };
 
 /**
- * 获取总资产
- */
-export const fetchTotalAssets = () => {
-    const wallet = find('curWallet');
-    if (!wallet) return 0;
-    let totalAssets = 0;
-    wallet.currencyRecords.forEach(item => {
-        if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
-            const balance = fetchBalanceOfCurrency(item.currencyName);
-            totalAssets += balance * find('exchangeRateJson',item.currencyName).CNY;
-        }
-        
-    });
-
-    return totalAssets;
-};
-/**
  * 获取异或值
  * @param first 前段
  * @param second 后段
@@ -574,7 +560,7 @@ export const popPswBox = async (content= []) => {
 
 // 弹出提示框
 export const popNewMessage = (content:string) => {
-    return popNew('app-components-message-message',{ content });
+    return popNew('app-components1-message-message',{ content });
 };
 // 弹出loading
 export const popNewLoading = (text:string) => {
@@ -775,27 +761,54 @@ export const fetchBtcMinerFee = (minerFeeLevel:MinerFeeLevel) => {
     return find('btcMinerFee')[minerFeeLevel];
 };
 
-// 获取默认币种汇率
-export const fetchDefaultExchangeRateJson = () => {
-    const rateJson = new Map<string,any>();
-    // 主链汇率
-    for (const k in MainChainCoin) {
-        if (MainChainCoin.hasOwnProperty(k)) {
-            rateJson.set(k,MainChainCoin[k].rate);
-        }
-    }
-    // erc20汇率
-    for (const k in ERC20Tokens) {
-        if (ERC20Tokens.hasOwnProperty(k)) {
-            rateJson.set(k,ERC20Tokens[k].rate);
-        }
-    }
 
-    rateJson.set('KT',{ CNY: 0, USD: 0 });
-    rateJson.set('CNYT',{ CNY: 1, USD: 6 });
+/**
+ * 获取总资产
+ */
+export const fetchTotalAssets = () => {
+    const wallet = find('curWallet');
+    if (!wallet) return 0;
+    let totalAssets = 0;
+    wallet.currencyRecords.forEach(item => {
+        if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
+            const balance = fetchBalanceOfCurrency(item.currencyName);
+            totalAssets += fetchBalanceValueOfCoin(item.currencyName,balance);
+        }
+        
+    });
 
-    return rateJson;
+    return totalAssets;
 };
+/**
+ * 获取云端总资产
+ */
+export const fetchCloudTotalAssets = () => {
+    const cloudBalance = getBorn('cloudBalance');
+    let totalAssets = 0;
+    for (const [k,v] of cloudBalance) {
+        totalAssets += fetchBalanceValueOfCoin(CurrencyTypeReverse[k],v);
+    }
+
+    return  totalAssets;
+};
+
+/**
+ * 获取某个币种对应的货币价值
+ */
+export const fetchBalanceValueOfCoin =(currencyName:string,balance:number)=>{
+    let balanceValue = 0;
+    const USD2CNYRate = find('USD2CNYRate');
+    const currency2USDTMap = getBorn('currency2USDTMap');
+    const currency2USDT = currency2USDTMap.get(currencyName) || {open:0,close:0};
+    const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
+
+    if(currencyUnit === CurrencyUnit.CNY){
+        balanceValue = balance * currency2USDT.close * USD2CNYRate;
+    }else if(currencyUnit === CurrencyUnit.USD){
+        balanceValue = balance * currency2USDT.close;
+    }
+    return balanceValue;
+}
 
 /**
  * 获取本地钱包资产列表
@@ -810,9 +823,8 @@ export const fetchWalletAssetList = () => {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             const balance = fetchBalanceOfCurrency(k);
-            const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(balance * cny);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
             item.gain =  fetchCoinGain(k);
             assetList.push(item);
         }
@@ -825,9 +837,8 @@ export const fetchWalletAssetList = () => {
             item.currencyName = k;
             item.description = ERC20Tokens[k].description;
             const balance = fetchBalanceOfCurrency(k);
-            const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(balance * cny);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
             item.gain =  fetchCoinGain(k);
             assetList.push(item);
         }
@@ -842,12 +853,11 @@ export const fetchWalletAssetList = () => {
 export const fetchCloudWalletAssetList = () => {
     const assetList = [];
     const ktBalance = getBorn('cloudBalance').get(CurrencyType.KT) || 0;
-    const ktCny = getBorn('exchangeRateJson').get('KT').CNY;
     const ktItem = {
         currencyName :'KT',
         description:'KuPlay Token',
         balance:formatBalance(ktBalance),
-        balanceValue:formatBalanceValue(ktBalance * ktCny),
+        balanceValue:formatBalanceValue(fetchBalanceValueOfCoin('KT',ktBalance)),
         gain:formatBalanceValue(0)
     };
     assetList.push(ktItem);
@@ -865,9 +875,8 @@ export const fetchCloudWalletAssetList = () => {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             const balance = getBorn('cloudBalance').get(CurrencyType[k]) || 0;
-            const cny = getBorn('exchangeRateJson').get(k).CNY;
             item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(balance * cny);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
             item.gain =  fetchCoinGain(k);
             assetList.push(item);
         }
@@ -876,18 +885,7 @@ export const fetchCloudWalletAssetList = () => {
     return assetList;
 };
 
-/**
- * 获取云端总资产
- */
-export const fetchCloudTotalAssets = () => {
-    const cloudBalance = getBorn('cloudBalance');
-    let totalAssets = 0;
-    for (const [k,v] of cloudBalance) {
-        totalAssets += v * find('exchangeRateJson',CurrencyTypeReverse[k]).CNY;
-    }
 
-    return totalAssets;
-};
 
 /**
  * 没有创建钱包时
@@ -1227,7 +1225,7 @@ export const mnemonicFragmentDecrypt = (fragment:string) => {
 /**
  * 注销账户并删除数据
  */
-export const logoutAccount = () => {
+export const logoutAccountDel = () => {
     logoutInit();
     openAndGetRandom();
 };
@@ -1235,9 +1233,19 @@ export const logoutAccount = () => {
 /**
  * 注销账户保留数据
  */
-export const logoutAccountSave = () => {
+export const logoutAccount = () => {
     updateStore('flag',{ logoutAccountSave:true });
     logoutInit();
+    openAndGetRandom();
+};
+
+/**
+ * 登录成功
+ */
+export const loginSuccess = (wallet:Wallet) => {
+    updateStore('curWallet',wallet);
+    setConState(ConState.init);
+    loginInit();
     openAndGetRandom();
 };
 /**
@@ -1301,4 +1309,16 @@ export const fetchMinerFeeList = (currencyName) => {
         minerFeeList.push(obj);
     } 
     return minerFeeList;
-};
+}
+
+/**
+ * 获取货币单位符号 $ ￥
+ */
+export const getCurrencyUnitSymbol = ()=>{
+    const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
+    if(currencyUnit === CurrencyUnit.CNY){
+        return '￥';
+    }else if(currencyUnit === CurrencyUnit.USD){
+        return '$';
+    }
+}
