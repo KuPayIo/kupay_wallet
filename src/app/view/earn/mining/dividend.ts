@@ -172,6 +172,13 @@ export class Dividend extends Widget {
     }
 
     /**
+     * 刷新页面
+     */
+    public refreshPage() {
+        this.initEvent();
+    }
+
+    /**
      * 初始化事件
      */
     private initEvent() {

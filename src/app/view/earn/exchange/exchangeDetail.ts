@@ -23,6 +23,7 @@ export class ExchangeDetail extends Widget {
             showPin:this.props.rtype === 1,  // 0 等额红包  1 拼手气红包
             cfgData:cfg,
             userName:'',
+            userHead:'../../../res/image/default_avater_big.png',
             curNum:0,
             totalNum:0,
             totalAmount:0,
@@ -60,7 +61,8 @@ export class ExchangeDetail extends Widget {
 
         const user = await getUserList([this.props.suid]);
         if (!user) return;
-        this.state.userName = user.nickName;
+        this.state.userName = user.nickName ? user.nickName :this.state.cfgData.defaultUserName;
+        this.state.userHead = user.avatar ? user.avatar :'../../res/image/default_avater_big.png';
 
         const redBagList = value[0];
         for (let i = 0;i < redBagList.length;i++) {

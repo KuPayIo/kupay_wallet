@@ -9,5 +9,8 @@
         {{if it.nextImg}}
         <img on-tap="goNext" src="{{it.nextImg}}" w-class="ga-next" />
         {{end}}
+        {{if it.refreshImg}}
+        <img on-tap="refreshPage" src="{{it.refreshImg}}" w-class="refreshBtn" class="{{it1.refresh?'refreshing':''}}"/>
+        {{end}}
     </div>
 </div>
