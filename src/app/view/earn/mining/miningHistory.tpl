@@ -5,7 +5,7 @@
         <div w-class="history" id="history">
             {{for ind,val of it1.data}}
             <div style="{{ind>0?'background: #ffffff;':''}}">
-                <app-components-fourParaItem-fourParaItem>{"name":{{it1.cfgData.itemName}},"data":{{val.num+' ETH'}},"time":{{val.time}} }</app-components-fourParaItem-fourParaItem>
+                <app-components-fourParaItem-fourParaItem>{"name":{{it1.cfgData.itemName}},"data":{{val.num+' KT'}},"time":{{val.time}} }</app-components-fourParaItem-fourParaItem>
             </div>
             {{end}}
 

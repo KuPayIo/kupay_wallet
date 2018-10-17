@@ -53,7 +53,10 @@ export class PlayHome extends Widget {
             miningNum:` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
                 <span>+{{it1.thisNum}}</span>
             </div>`,
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            scroll:false,
+            scrollHeight:0,
+            refresh:false
         };
         
         this.initDate();
@@ -142,6 +145,40 @@ export class PlayHome extends Widget {
     }
 
     /**
+     * 屏幕滑动
+     */
+    public scrollPage() {
+        const scrollTop = document.getElementById('contain').scrollTop; 
+        this.state.scrollHeight = scrollTop;
+        if (scrollTop > 0) {
+            this.state.scroll = true;
+            if (this.state.scroll) {
+                this.paint();
+            }
+
+        } else {
+            this.state.scroll = false;
+            this.paint();
+        }
+    }
+
+    /**
+     * 刷新页面
+     */
+    public refreshPage() {
+        this.state.refresh = true;
+        this.paint();
+        setTimeout(() => {
+            getCloudBalance();
+            getMining();
+            getMiningRank(100);
+            this.state.refresh = false;
+            this.paint();
+        }, 1000);
+        
+    }
+
+    /**
      * 获取更新数据
      */
     private initDate() {
@@ -164,8 +201,8 @@ export class PlayHome extends Widget {
             if (mining.thisNum > 0) {
                 this.state.isAbleBtn = true;
             }
-            this.state.mines = mining.thisNum;
-            this.state.mineLast = mining.totalNum - mining.holdNum;
+            this.state.mines = formatBalance(mining.thisNum);
+            this.state.mineLast = formatBalance(mining.totalNum - mining.holdNum);
 
         } else {
             this.state.isAbleBtn = false;

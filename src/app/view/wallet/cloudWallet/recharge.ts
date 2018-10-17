@@ -2,15 +2,17 @@
  * Recharge
  */
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
 import { recharge, resendRecharge } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox, fetchMinerFeeList } from '../../../utils/tools';
 import { register } from '../../../store/store';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
+// tslint:disable-next-line:max-line-length
+import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 
 // ============================导出
+// tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
@@ -27,9 +29,9 @@ export class Recharge extends Widget {
         this.init();
     }
     public async init() {
-        if(this.props.currencyName === 'BTC'){
+        if (this.props.currencyName === 'BTC') {
             fetchBtcFees();
-        }else{
+        } else {
             fetchGasPrices();
         }
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
@@ -49,7 +51,7 @@ export class Recharge extends Widget {
         };
         
     }
-    public updateMinerFeeList(){
+    public updateMinerFeeList() {
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
         this.state.minerFeeList = minerFeeList;
         this.state.minerFee = minerFeeList[this.state.curLevel].minerFee;
@@ -122,9 +124,9 @@ export class Recharge extends Widget {
         let ret;
         if (this.props.tx) {
             tx.hash = this.props.tx.hash;
-            ret = resendRecharge(passwd,tx);
+            ret = await resendRecharge(passwd,tx);
         } else {
-            ret = recharge(passwd,tx);
+            ret = await recharge(passwd,tx);
         }
         
         if (ret) {

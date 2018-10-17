@@ -24,7 +24,7 @@ export class OtherRecord extends Widget {
     }
     public init() {
         if (this.props.isActive) {
-            getAccountDetail(this.props.currencyName);
+            getAccountDetail(this.props.currencyName,1);
         }
         this.state = {
             recordList:[],
@@ -56,7 +56,7 @@ export class OtherRecord extends Widget {
     }
 
     public loadMore() {
-        getAccountDetail(this.props.currencyName,this.state.nextStart);
+        getAccountDetail(this.props.currencyName,1,this.state.nextStart);
     }
     public getMoreList() {
         const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 

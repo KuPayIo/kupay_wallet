@@ -2059,7 +2059,9 @@ pi_modules.update.exports = (function () {
 			ajax.get(url, {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (data) {
 	
 				dependFileData = data;
-	
+				
+				alert(data);
+				
 				var str = data.substring(data.indexOf('['), data.lastIndexOf(']') + 1);
 				pi_modules.depend.exports.init(JSON.parse(str), rootPath);
 				var dependData = JSON.parse(str);

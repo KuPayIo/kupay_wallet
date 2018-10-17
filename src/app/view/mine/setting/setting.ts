@@ -198,7 +198,7 @@ export class Setting extends Widget {
      */
     public userNameConfirm() {
         const userInfo = find('userInfo');
-        if (userInfo.nickName !== this.state.userName) {
+        if (userInfo.nickName !== this.state.userName && this.state.userName !== '') {
             userInfo.nickName = this.state.userName;
             updateStore('userInfo',userInfo);
             setUserInfo();

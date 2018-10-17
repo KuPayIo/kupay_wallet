@@ -1,4 +1,4 @@
-<div w-class="modal-mask">
+<div w-class="modal-mask" class="new-page">
     <div w-class="body">
         <div w-class="title">{{it.title}}</div>
         <div w-class="content" style="{{it.style?it.style:''}}">{{it.content}}</div>

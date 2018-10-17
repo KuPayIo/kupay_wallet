@@ -56,7 +56,7 @@
 	<!--百度禁止转码-->
 	<meta http-equiv="Cache-Control" content="no-siteapp" />
 
-	<!-- <link href="./swiper.min.css" rel="stylesheet" type="text/css"> -->
+	<link href="./swiper.min.css" rel="stylesheet" type="text/css">
 	<style>
 		body {
 			background-color: #0A1476 !important;
@@ -161,8 +161,7 @@
 			width: 220px;
 			height: 90px;
 			border-radius: 12px;
-			background-color: rgba(70, 150, 249, 1);
-			left: 303px;
+			background-color: #3574FA;
 			color: rgba(255, 255, 255, 1);
 			font-size: 36px;
 			display: flex;
@@ -211,8 +210,8 @@
 			// winit.severPort = "80";
 			winit.severIp = "192.168.9.29";
 			winit.severPort = "80";
-			winit.severIp = "192.168.9.15";
-			winit.severPort = "80";
+			// winit.severIp = "192.168.9.15";
+			// winit.severPort = "80";
 			//---------国内------
 			// winit.severIp = "47.75.254.166";
 			// winit.severPort = "8080";
@@ -288,27 +287,27 @@
 			</div>
 		</div>
 	</div>
-	<!-- <div id="root-swiper">
+	
 		<div class="swiper-container" id="swiper-container">
 			<div class="swiper-wrapper">
 				<div class="swiper-slide slide">
-					<img src="../res/image/slider1.png" />
+					<img src="../res/image1/guide1.png" />
 				</div>
 				<div class="swiper-slide slide">
-					<img src="../res/image/slider2.png" />
+					<img src="../res/image1/guide2.png" />
 				</div>
 				<div class="swiper-slide slide">
-					<img src="../res/image/slider3.png" />
+					<img src="../res/image1/guide3.png" />
 				</div>
 				<div class="swiper-slide slide">
-					<img src="../res/image/slider4.png" />
-					<div class="btn-start">立即体验</div>
+					<img src="../res/image1/guide4.png" />
+					<div style="transform:  scale(0.5)"><div class="btn-start">立即体验</div></div>
 				</div>
 			</div>
+			<div class="swiper-pagination"></div>
 		</div>
-	</div> -->
 </body>
-<!-- <script src="./swiper.min.js"></script> -->
+<script src="./swiper.min.js"></script>
 <script type="text/javascript">
 // (function(){
 // 	var cfg = {
@@ -316,9 +315,9 @@
 // };
 
 // var browserAdaptive = function() {
-//     if (!root) {
-//         return;
-//     }
+//     // if (!root) {
+//     //     return;
+//     // }
 //     var clientWidth = document.documentElement.clientWidth;
 //     var clientHeight = document.documentElement.clientHeight;
 //     oldHeight = clientHeight;
@@ -354,13 +353,26 @@
 // browserAdaptive();
 // })();
 
-// var mySwiper = new Swiper('.swiper-container', {
-// 	autoplay: true,//可选选项，自动滑动
-// })
-// var btnStart = document.querySelector('.btn-start');
-// btnStart.onclick = function(){
-// 	console.log(11111);
-// 	document.body.removeChild(document.querySelector('#swiper-container'));
-// }
+
+setTimeout(() => {
+	var mySwiper = new Swiper('.swiper-container', {
+      pagination: {
+		el: '.swiper-pagination',
+		dynamicBullets: true
+      },
+    });
+	if(!localStorage.firstInApp){
+		document.querySelector('#swiper-container').setAttribute('style','z-index:9999;')
+		localStorage.firstInApp = true;
+	}else{
+		document.body.removeChild(document.querySelector('#swiper-container'));
+	}
+}, 1000);
+
+var btnStart = document.querySelector('.btn-start');
+btnStart.onclick = function(){
+	console.log(11111);
+	document.body.removeChild(document.querySelector('#swiper-container'));
+}
 </script>
 </html>

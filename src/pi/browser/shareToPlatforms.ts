@@ -6,7 +6,8 @@ import { NativeObject, ParamType, registerSign } from './native';
 export class ShareToPlatforms extends NativeObject {
     public static TYPE_IMG: number = 1;// 二维码图片
     public static TYPE_TEXT: number = 2;// 文本
-    public static TYPE_LINK: number = 3;// 文本
+    public static TYPE_LINK: number = 3;// 链接
+    public static TYPE_SCREEN: number = 4;// 截图
 
     public static PLATFORM_DEFAULT: number = -1;// 默认
     public static PLATFORM_WEBCHAT: number = 1;// 微信
@@ -26,6 +27,20 @@ export class ShareToPlatforms extends NativeObject {
     public shareLink(param: any) {
         this.call('shareLink', param);
     }
+    /**
+     * 生成截图
+     */
+    public makeScreenShot(param:any) {
+        this.call('getScreenShot',param);
+    }
+
+    /**
+     * 分享截图
+     */
+    public shareScreenShot(param:any) {
+        this.call('shareScreen',param);
+    }
+
 }
 
 registerSign(ShareToPlatforms, {
@@ -67,5 +82,13 @@ registerSign(ShareToPlatforms, {
             name: 'platform',// 要分享到的平台：1、微信 2、朋友圈 3、QQ空间 4、QQ 5、所有平台(当你传5的时候！不用写界面、底层会自动弹出界面)
             type: ParamType.Number
         }
+    ],
+    getScreenShot: [],
+    shareScreen: [
+        {
+            name: 'platform',
+            type: ParamType.Number
+        }
     ]
+
 });

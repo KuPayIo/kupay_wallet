@@ -276,7 +276,7 @@ export const getCloudBalance = () => {
     return requestAsync(msg).then(balanceInfo => {
         console.log('balanceInfo', balanceInfo);
         updateStore('cloudBalance', parseCloudBalance(balanceInfo));
-    }).catch((res)=>{
+    }).catch((res) => {
         updateStore('cloudBalance', parseCloudBalance(null));
     });
 };
@@ -689,7 +689,7 @@ export const doChat = async () => {
 /**
  * 获取指定货币流水
  */
-export const getAccountDetail = async (coin: string,start = '') => {
+export const getAccountDetail = async (coin: string,filter:number,start = '') => {
     let msg;
     if (start) {
         msg = {
@@ -697,6 +697,7 @@ export const getAccountDetail = async (coin: string,start = '') => {
             param: {
                 coin:CurrencyType[coin],
                 start,
+                filter,
                 count:PAGELIMIT
             }
         };
@@ -705,6 +706,7 @@ export const getAccountDetail = async (coin: string,start = '') => {
             type: 'wallet/account@get_detail',
             param: {
                 coin:CurrencyType[coin],
+                filter,
                 count:PAGELIMIT
             }
         };
@@ -715,18 +717,33 @@ export const getAccountDetail = async (coin: string,start = '') => {
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
-        const accountDetailMap = getBorn('accountDetail');
-        const accountDetail = accountDetailMap.get(CurrencyType[coin]) || { list:[] };
-        if (!start) {
-            accountDetail.list = detail;
-        } else {
-            accountDetail.list.push(...detail);
-        }
+        if (filter === 1) {
+            const accountDetailMap = getBorn('accountDetail');
+            const accountDetail = accountDetailMap.get(CurrencyType[coin]) || { list:[] };
+            if (!start) {
+                accountDetail.list = detail;
+            } else {
+                accountDetail.list.push(...detail);
+            }
         
-        accountDetail.start = nextStart;
-        accountDetail.canLoadMore = canLoadMore;
-        accountDetailMap.set(CurrencyType[coin],accountDetail);
-        updateStore('accountDetail',accountDetailMap);
+            accountDetail.start = nextStart;
+            accountDetail.canLoadMore = canLoadMore;
+            accountDetailMap.set(CurrencyType[coin],accountDetail);
+            updateStore('accountDetail',accountDetailMap);
+        } else {
+            const totalLogMap = getBorn('totalLogs');
+            const totalLogs = totalLogMap.get(CurrencyType[coin]) || { list:[] };
+            if (!start) {
+                totalLogs.list = detail;
+            } else {
+                totalLogs.list.push(...detail);
+            }
+        
+            totalLogs.start = nextStart;
+            totalLogs.canLoadMore = canLoadMore;
+            totalLogMap.set(CurrencyType[coin],totalLogs);
+            updateStore('totalLogs',totalLogMap);
+        }
 
     } catch (err) {
         showError(err && (err.result || err.type));

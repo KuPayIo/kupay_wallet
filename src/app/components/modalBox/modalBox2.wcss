@@ -5,6 +5,7 @@
     left: 0;
     right: 0;
     text-align: center;
+    background: rgba(50, 50, 50, 0.5);
 }
 
 .main{

@@ -116,6 +116,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
     color: #fff;
     background-image: url(image/redEnvelopes2.png);
     background-size:cover;
@@ -139,17 +140,21 @@
     text-align: center;
     margin-top: 60px;
 }
-.redEnv-open{
+.redEnv-open-div{
+    width: 100%;
+    text-align: center;
     position: absolute;
-    width: 195px;
-    height: 195px;
     bottom: 230px;
 }
+.redEnv-open{
+    width: 195px;
+    height: 195px;
+}
 .redEnv-look{
-    position: absolute;
     font-size: 28px;
     line-height: 40px;
-    bottom: 120px;
+    margin-top: 350px;
+    text-align: center;
 }
 @keyframes rotated{
     0% {transform: rotateY(0deg);}
