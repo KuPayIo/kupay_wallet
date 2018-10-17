@@ -1,6 +1,6 @@
 <div w-class="asset-container">
     <div w-class="total-asset-container">
-        <div w-class="total-asset">{{it1.cfgData.totalAmount}}￥{{it1.totalAsset}}</div>
+        <div w-class="total-asset">{{it1.cfgData.totalAmount}}{{it1.currencyUnitSymbol}}{{it1.totalAsset}}</div>
     </div>
     <div w-class="container">
         <div w-class="asset-list" ev-item-click="itemClick">

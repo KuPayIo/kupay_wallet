@@ -3,7 +3,7 @@
  */
 // ===================================================== 导入
 import { getFirstEthAddr } from '../utils/tools';
-import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TransRecordLocal, Wallet, currency2USDT } from './interface';
+import { Addr, CHisRec, LockScreen, ShapeShiftTxs,SHisRec, TransRecordLocal, Wallet, currency2USDT, CurrencyUnit } from './interface';
 import { register, updateStore, find } from './store';
 // ===================================================== 导出
 
@@ -170,6 +170,12 @@ export const initLocalStorageStore = () => {
     register('changeColor',(changeColor) => {
         setLocalStorage('changeColor',changeColor);
     });
+
+    // 涨跌颜色设置
+    register('currencyUnit',(currencyUnit:CurrencyUnit) => {
+        setLocalStorage('currencyUnit',currencyUnit);
+    });
+
 
     // 人民币美元汇率
     register('USD2CNYRate',(USD2CNYRate:number) => {

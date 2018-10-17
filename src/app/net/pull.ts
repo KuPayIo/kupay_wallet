@@ -233,15 +233,16 @@ const doOpen = async () => {
 /**
  * 获取随机数
  */
-export const getRandom = async (cmd?:number,client?:any) => {
+export const getRandom = async (cmd?:number) => {
     if (!find('conUser')) return;
+    const client = "android 20";
     const param:any = {
         account: find('conUser').slice(2), 
-        pk: `04${find('conUserPublicKey')}`
+        pk: `04${find('conUserPublicKey')}`,
+        client:JSON.stringify(client)
     };
     if(cmd){
         param.cmd = cmd;
-        param.client = JSON.stringify(client);
     }
     const msg = { 
         type: 'get_random', 
@@ -274,9 +275,9 @@ export const getRandom = async (cmd?:number,client?:any) => {
         console.log('getRandom----------',resp);
         if(resp.type === 1014){
             popNew('app-components1-modalBox-modalBox',{title:'踢下线',content:"您将把别人踢下线"},()=>{
-                getRandom(CMD.FORCELOGOUT,'android 14');
+                getRandom(CMD.FORCELOGOUT);
             },()=>{
-                getRandom(CMD.FORCELOGOUT,'android 14');
+                getRandom(CMD.FORCELOGOUTDEL);
             });
         }
     }

@@ -112,6 +112,8 @@ export const initStore = () => {
     store.languageSet = findByLoc('languageSet');
     // 初始话化涨跌颜色设置
     store.changeColor = findByLoc('changeColor');
+    // 货币单位设置
+    store.currencyUnit = findByLoc('currencyUnit');
     store.gasPrice = findByLoc('gasPrice') || {};
     store.gasLimitMap = new Map<string,number>(findByLoc('gasLimitMap'));
     store.btcMinerFee = findByLoc('btcMinerFee') || {};

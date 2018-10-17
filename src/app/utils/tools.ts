@@ -1223,7 +1223,7 @@ export const mnemonicFragmentDecrypt = (fragment:string) => {
 /**
  * 注销账户并删除数据
  */
-export const logoutAccount = () => {
+export const logoutAccountDel = () => {
     logoutInit();
     openAndGetRandom();
 };
@@ -1231,7 +1231,7 @@ export const logoutAccount = () => {
 /**
  * 注销账户保留数据
  */
-export const logoutAccountSave = () => {
+export const logoutAccount = () => {
     updateStore('flag',{logoutAccountSave:true});
     logoutInit();
     openAndGetRandom();
@@ -1300,4 +1300,14 @@ export const fetchMinerFeeList = (currencyName) => {
     return minerFeeList;
 }
 
-
+/**
+ * 获取货币单位符号 $ ￥
+ */
+export const getCurrencyUnitSymbol = ()=>{
+    const currencyUnit = find('currencyUnit');
+    if(currencyUnit === CurrencyUnit.CNY){
+        return '￥';
+    }else if(currencyUnit === CurrencyUnit.USD){
+        return '$';
+    }
+}

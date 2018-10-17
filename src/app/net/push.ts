@@ -1,6 +1,8 @@
 import { setMsgHandler, setConState, ConState } from '../../pi/net/ui/con_mgr';
-import { getStaticLanguage, popNewMessage } from '../utils/tools';
-import { getCloudBalance } from './pull';
+import { getStaticLanguage, popNewMessage, logoutAccount, logoutAccountDel } from '../utils/tools';
+import { getCloudBalance, getRandom } from './pull';
+import { popNew } from '../../pi/ui/root';
+import { CMD } from '../utils/constants';
 
 /**
  * 后端主动推消息给后端
@@ -17,6 +19,15 @@ export const initPush = () => {
     setMsgHandler('cmd',(res) => {
         console.log('强制下线==========================',res);
         setConState(ConState.noReconnect);
+        const cmd = res.cmd;
+        if(cmd === CMD.FORCELOGOUT){
+            logoutAccount();
+        }else if(cmd === CMD.FORCELOGOUTDEL){
+            logoutAccountDel();
+        }
+        popNew('app-components1-modalBox-modalBox',{title:'强制下线',content:"您将强制下线"},()=>{
+        },()=>{
+        });
     });
 
 
