@@ -341,9 +341,12 @@ export const parseProductList = (res:any) => {
 /**
  * 解析发送红包历史记录
  */
-export const parseSendRedEnvLog = (value) => {
+export const parseSendRedEnvLog = (value,sta) => {
     const sHisRec = find('sHisRec');
-    const rList:SRecDetail[] = sHisRec && sHisRec.list || [];
+    let rList:SRecDetail[] = [];
+    if (sta) {
+        rList = sHisRec && sHisRec.list || [];
+    }
     const sendNumber = value[0];
     const start = value[1];
     const recordList:SRecDetail[] = [];
@@ -375,9 +378,12 @@ export const parseSendRedEnvLog = (value) => {
 /**
  * 解析红包兑换历史记录
  */
-export const parseConvertLog = (data) => {
+export const parseConvertLog = (data,sta) => {
     const cHisRec = find('cHisRec');
-    const rList:CRecDetail[] = cHisRec && cHisRec.list || [];
+    let rList:CRecDetail[] = [];
+    if (sta) {
+        rList = cHisRec && cHisRec.list || [];
+    }
     const convertNumber = data.value[0];
     const startNext = data.value[1];
     const recordList:CRecDetail[] = [];

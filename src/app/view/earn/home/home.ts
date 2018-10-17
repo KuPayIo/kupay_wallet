@@ -169,13 +169,10 @@ export class PlayHome extends Widget {
         this.state.refresh = true;
         this.paint();
         setTimeout(() => {
-            getCloudBalance();
-            getMining();
-            getMiningRank(100);
             this.state.refresh = false;
             this.paint();
         }, 1000);
-        
+        this.initEvent();
     }
 
     /**

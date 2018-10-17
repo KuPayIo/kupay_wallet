@@ -41,7 +41,41 @@ const Config= {
         ]
     },
     tranditionalChinese:{
-
+        copySuccess:"複製成功",
+        shortMess:"KuPlay安全的一站式資產管理平台",
+        immeDownload:"立即下載",
+        installTutorial:"Android安裝教程",
+        step1:"點擊“立即下載”按鈕下載安裝文件",
+        step2:"成功安裝KuPay",
+        step3:"進入APP並創建錢包",
+        redEnvMess:[
+            "恭喜發財 萬事如意",
+            "KuPay大禮包"
+        ],
+        redEnvDesc:[
+            "您收到一個紅包",
+            "金額隨機，試試手氣",
+            "您收到一個邀請紅包"
+        ],
+        redEnvLook:"看看大家手氣",
+        errorList:[
+            "紅包不存在",
+            "紅包已領完",
+            "紅包已過期",
+            "紅包已領取過",
+            "出錯啦"
+        ],
+        copyBtn:"複製紅包碼",
+        receiveBtn:"立即領取紅包金額",
+        tips:[
+            "已領取",
+            "共",
+            "紅包領取規則",
+            "1.安裝KuPay，創建錢包",
+            "2.在錢包裡點擊發現-發紅包",
+            "3.輸入收到的紅包碼，紅包金額將自動到賬",
+            "4.同一個紅包，每人只能領取一次"
+        ]
     },
     english:{
 
@@ -50,9 +84,15 @@ const Config= {
 // 获取当前语言设置
 const getLanguage = () => {
     const search = window.location.search;
-    const lan = parseUrlParams(search,'lan');
-    if(!lan){
+    let lan = parseUrlParams(search,'lan');
+    if(!lan && !localStorage.language){
+        localStorage.language = 'simpleChinese'
         return Config.simpleChinese;
+    }
+    if(lan){
+        localStorage.language = lan;
+    }else{
+        lan = localStorage.language;
     }
     return Config[lan];
 }

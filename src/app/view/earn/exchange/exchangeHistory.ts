@@ -24,7 +24,7 @@ interface State {
     convertNumber:number; // 兑换总数，不包含邀请红包
     convertNumberShow:number; // 兑换总数
     isScroll:boolean;  // 页面是否滑动
-    inviteObj:CRecDetail; // 邀请红包对象
+    inviteObj:any; // 邀请红包对象
     userList:any[]; // 用户信息列表
     cfgData:any; 
 }
@@ -127,8 +127,8 @@ export class ExchangeHistory extends Widget {
                 ctypeShow: 'ETH',
                 amount: 0.15,
                 time: data.value,
-                timeShow: timestampFormat(data.value)               
-
+                timeShow: timestampFormat(data.value),
+                userName:this.state.cfgData.inviteRedEnv
             };
             updateStore('inviteRedBagRec',this.state.inviteObj);
             this.innerPaint();
@@ -194,6 +194,13 @@ export class ExchangeHistory extends Widget {
             this.state.isScroll = false;
         }
         this.paint();
+    }
+
+    /**
+     * 页面刷新
+     */
+    public refreshPage() {
+        queryConvertLog();
     }
 }
 // =====================================本地

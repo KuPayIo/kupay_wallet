@@ -6,6 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../net/pull';
 import { RedEnvelopeType } from '../../../store/interface';
+import { find } from '../../../store/store';
 import { getLanguage } from '../../../utils/tools';
 
 interface Props {
@@ -30,16 +31,18 @@ export class SendRedEnv extends Widget {
     public sendRedEnv() {
         let url = '';
         let title = '';
+        const lanSet = find('languageSet');
+        const lan = lanSet.languageList[lanSet.selected];
         if (this.props.rtype === 0) {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}`;
+            url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[0]; 
         } else if (this.props.rtype === 1) {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}`;
+            url = `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[1]; 
         } else {
-            url = `${sharePerUrl}?cid=${this.props.rid}&type=${RedEnvelopeType.Invite}`;
+            url = `${sharePerUrl}?cid=${this.props.rid}&type=${RedEnvelopeType.Invite}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[2];
         }
         popNew('app-components-share-share', { 

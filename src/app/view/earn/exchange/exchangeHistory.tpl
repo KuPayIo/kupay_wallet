@@ -1,8 +1,8 @@
-<div class="new-page" ev-back-click="backPrePage" w-class="new-page">
+<div class="new-page" ev-back-click="backPrePage" w-class="new-page" ev-refresh-click="refreshPage">
     {{if !it1.isScroll}}
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},background:"#3EB4F1" }</app-components1-topBar-topBar>
+    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},background:"#3EB4F1",refreshImg:"../../res/image1/refresh_white.png" }</app-components1-topBar-topBar>
     {{else}}
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},refreshImg:"../../res/image1/refresh_blue.png" }</app-components1-topBar-topBar>
     {{end}}
     <div w-class="content" on-scroll="getMoreList" id="exchangeHistoryContent">
         <div id="exchangeHistoryRecords" w-class="records">

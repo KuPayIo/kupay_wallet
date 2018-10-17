@@ -7,6 +7,7 @@
  * nextImg:右侧图标路径
  */
 // ================================ 导入
+import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 
@@ -15,20 +16,44 @@ interface Props {
     nextImg?:string;
     centerTitle?:boolean;
     background?:string;
+    refreshImg?:string;
 }
 
 // ================================ 导出
 export class TopBar extends Widget {
     public props:Props;
-    constructor() {
-        super();
+    
+    public setProps(oldProps:Json,props:Json) {
+        super.setProps(oldProps,props);
+        this.state = {
+            refresh:false
+        };
     }
 
+    /**
+     * 返回上一页
+     */
     public backPrePage(event:any) {
         notify(event.node,'ev-back-click',{});
     }
 
+    /**
+     * 跳转到下一页
+     */
     public goNext(event:any) {
         notify(event.node,'ev-next-click',{});
+    }
+
+    /**
+     * 刷新当前页
+     */
+    public refreshPage(event:any) {
+        this.state.refresh = true;
+        this.paint();
+        notify(event.node,'ev-refresh-click',{});
+        setTimeout(() => {
+            this.state.refresh = false;
+            this.paint();
+        }, 1000);
     }
 }
