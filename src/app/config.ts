@@ -868,7 +868,14 @@ KuPay团队
             '余额不足',
             'gas过低',
             '出错啦'
-        ]
+        ],
+        //钱包创建成功
+        createSuccess:{ 
+            "title":"创建成功",
+            "content":"记得备份，如果忘记账户就找不回来了。",
+            "sureText":"备份",
+            "cancelText":"暂时不" 
+        }
 
     },
     /**

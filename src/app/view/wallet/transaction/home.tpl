@@ -5,7 +5,7 @@
             <img src="../../../res/image/currency/{{it.currencyName}}.png" w-class="currency-icon"/>
             <div w-class="asset-container">
                 <div w-class="balance">{{it1.balance}}</div>
-                <div w-class="balance-value">￥{{it1.balanceValue}}</div>
+                <div w-class="balance-value">{{it1.currencyUnitSymbol}}{{it1.balanceValue}}</div>
             </div>
             {{if it1.canConvert}}
             <div w-class="btn-exchange" on-tap="convertCurrencyClick">{{it1.cfgData.tabs[0]}}</div>
@@ -18,7 +18,7 @@
         </div>
     </div>
     <div w-class="show-container">
-        <div w-class="quotes">{{it1.cfgData.tabs[3]}}&nbsp;￥{{it1.rate}}/{{it.currencyName}}</div>
+        <div w-class="quotes">{{it1.cfgData.tabs[3]}}&nbsp;{{it1.currencyUnitSymbol}}{{it1.rate}}/{{it.currencyName}}</div>
         {{if it1.redUp}}
         <div w-class="{{it.gain > 0 ? 'up' : 'down'}}">{{it1.cfgData.tabs[4]}}&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
         {{else}}

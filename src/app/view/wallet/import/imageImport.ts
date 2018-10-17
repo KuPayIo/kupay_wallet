@@ -49,12 +49,12 @@ export class ImageImport extends Widget {
 
     public nextClick() {
         if (!this.state.imageBase64) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[0] });
 
             return;
         }
         if (!this.state.imagePsw) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
         }

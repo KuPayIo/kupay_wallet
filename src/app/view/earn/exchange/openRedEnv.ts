@@ -42,7 +42,7 @@ export class OpenRedEnvelope extends Widget {
         setTimeout(() => {
             popNew('app-view-earn-exchange-exchangeDetail',this.props);
             
-            popNew('app-components-message-message',{ content:this.state.cfgData.successMess });
+            popNew('app-components1-message-message',{ content:this.state.cfgData.successMess });
             this.backPrePage();
         },800);
        

@@ -56,6 +56,6 @@ export class AddFriend extends Widget {
      */
     public copyAddr() {
         copyToClipboard(this.state.address);
-        popNew('app-components-message-message',{ content:this.state.cfgData.tips });
+        popNew('app-components1-message-message',{ content:this.state.cfgData.tips });
     }
 }

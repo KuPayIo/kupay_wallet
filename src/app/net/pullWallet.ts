@@ -67,7 +67,7 @@ export const transfer = async (psw:string,txRecord:TransRecordLocal) => {
         trans.push(tx);
         updateStore('transactions',trans);
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-        popNew('app-components-message-message',{ content:getStaticLanguage().transfer.transSuccess });
+        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.transSuccess });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
 
@@ -582,7 +582,7 @@ export const resendNormalTransfer = async (psw:string,txRecord:TransRecordLocal)
         updateStore('transactions',trans);
         dataCenter.clearTxTimer(oldHash);// 删除定时器
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-        popNew('app-components-message-message',{ content:getStaticLanguage().transfer.againSuccess });
+        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.againSuccess });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
 
@@ -624,7 +624,7 @@ export const resendRecharge = async (psw:string,txRecord:TransRecordLocal) => {
         dataCenter.clearTxTimer(oldHash);// 删除定时器
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         getRechargeLogs(tx.currencyName);
-        popNew('app-components-message-message',{ content:getStaticLanguage().transfer.againSuccess });
+        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.againSuccess });
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
 
@@ -643,7 +643,7 @@ export const recharge = async (psw:string,txRecord:TransRecordLocal) => {
     }
     close.callback(close.widget);
     if (tx) {
-        popNew('app-components-message-message',{ content:getStaticLanguage().transfer.rechargeSuccess });
+        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.rechargeSuccess });
         const trans = find('transactions');
         trans.push(tx);
         updateStore('transactions',trans);
@@ -786,14 +786,14 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
     const verify = await VerifyIdentidy(wallet,passwd);
     if (!verify) {
         close.callback(close.widget);
-        popNew('app-components-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
+        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
 
         return;
     }
     const hash = await withdrawFromServer(toAddr,eth2Wei(amount));
     close.callback(close.widget);
     if (hash) {
-        popNew('app-components-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
+        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
         const tx:TransRecordLocal = {
             hash,
             addr:toAddr,
@@ -824,14 +824,14 @@ export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | st
     const verify = await VerifyIdentidy(wallet,passwd);
     if (!verify) {
         close.callback(close.widget);
-        popNew('app-components-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
+        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
 
         return;
     }
     const hash = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString());
     close.callback(close.widget);
     if (hash) {
-        popNew('app-components-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
+        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
         const tx:TransRecordLocal = {
             hash,
             addr:toAddr,

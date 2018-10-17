@@ -43,7 +43,7 @@ export class Exchange extends Widget {
         this.inputBlur();
         const code = this.state.cid.trim();
         if (code.length <= 0) {
-            popNew('app-components-message-message', { itype: 'error', content: this.state.cfgData.errorList[0], center: true });
+            popNew('app-components1-message-message', { itype: 'error', content: this.state.cfgData.errorList[0], center: true });
 
             return;
         }
@@ -95,7 +95,7 @@ export class Exchange extends Widget {
             value = [CurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
         } else {
-            popNew('app-components-message-message', { content: this.state.cfgData.errorList[1] });
+            popNew('app-components1-message-message', { content: this.state.cfgData.errorList[1] });
 
             return null;
         }

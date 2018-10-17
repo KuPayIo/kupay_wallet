@@ -66,7 +66,7 @@ export class Input extends Widget {
         }
         // 密码输入时检验非法字符
         if (this.props.itype === 'password' && !this.availableJudge(currentValue) && currentValue.length > 0) {
-            popNew('app-components-message-message',{ content:this.state.cfgData.disAvailable });
+            popNew('app-components1-message-message',{ content:this.state.cfgData.disAvailable });
             currentValue = currentValue.slice(0,currentValue.length - 1); 
         }
         this.state.currentValue = currentValue;

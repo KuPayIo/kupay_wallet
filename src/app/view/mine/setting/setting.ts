@@ -7,8 +7,9 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { setUserInfo } from '../../../net/pull';
 import { find, register, updateStore } from '../../../store/store';
-import { getLanguage, logoutAccount, popPswBox, logoutAccountSave } from '../../../utils/tools';
+import { getLanguage, popPswBox, logoutAccountDel } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
+import { CurrencyUnit } from '../../../store/interface';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -30,6 +31,7 @@ export class Setting extends Widget {
         const cfg = getLanguage(this);
         const lan = find('languageSet');
         const color = find('changeColor');
+        const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
         this.state = {
             lockScreenPsw:'',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
@@ -38,7 +40,7 @@ export class Setting extends Widget {
             errorTips: cfg.errorTips,
             itemList:[ 
                 { title: cfg.itemTitle[3],list: cfg.languageSet,selected:lan ? lan.selected :0 },
-                { title: cfg.itemTitle[4],list: ['CNY','USD'],selected:0 },
+                { title: cfg.itemTitle[4],list: cfg.currencyUnit,selected:currencyUnit },
                 { title: cfg.itemTitle[5],list: cfg.changeColor,selected:color ? color.selected :0 }
             ],
             userHead:'../../../res/image/default_avater_big.png',   // 用户头像
@@ -46,7 +48,8 @@ export class Setting extends Widget {
             userInput:false,  // 是否显示输入框
             wallet:null,
             phone:cfg.bindPhone,
-            cfgData:cfg  
+            cfgData:cfg,
+
         };
         this.initData();
     }
@@ -150,7 +153,7 @@ export class Setting extends Widget {
             popNew('app-view-mine-setting-phone');
         } else if (ind === 1) {
             popNew('app-view-mine-setting-changePsw');
-        } else {
+        }else {
             const data = this.state.itemList[ind - 2];
             console.log(data);
             popNew('app-view-mine-setting-itemList',data,(index) => {
@@ -161,6 +164,14 @@ export class Setting extends Widget {
                         selected:index === 2 ? 0 :index,
                         languageList:['simpleChinese','tranditionalChinese','English'] 
                     }); 
+                }else if (ind === 3) {
+                    let currencyUnit;
+                    if(index === 0){
+                        currencyUnit = CurrencyUnit.CNY;
+                    }else{
+                        currencyUnit = CurrencyUnit.USD;
+                    }
+                    updateStore('currencyUnit',currencyUnit); 
                 } else if (ind === 4) {
                     // tslint:disable-next-line:max-line-length
                     updateStore('changeColor',{ // 更新涨跌颜色设置
@@ -230,7 +241,7 @@ export class Setting extends Widget {
             console.log('备份');
         },() => {
             popNew('app-components-modalBox-modalBox',{ title:'',content:this.state.cfgData.tips[2],style:'color:#F7931A;' },() => {
-                logoutAccountSave();
+                logoutAccountDel();
                 this.backPrePage();
                 console.log('注销账户');
             });

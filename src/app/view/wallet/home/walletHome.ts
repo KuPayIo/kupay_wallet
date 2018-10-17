@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { find, register } from '../../../store/store';
-import { fetchTotalAssets, fetchWalletAssetList, formatBalanceValue, getLanguage, hasWallet } from '../../../utils/tools';
+import { fetchTotalAssets, fetchWalletAssetList, formatBalanceValue, getLanguage, hasWallet, getCurrencyUnitSymbol } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -22,7 +22,8 @@ export class WalletHome extends Widget {
             totalAsset:formatBalanceValue(fetchTotalAssets()),
             assetList:fetchWalletAssetList(),
             cfgData:getLanguage(this),
-            redUp:color ? color.selected === 0 :true
+            redUp:color ? color.selected === 0 :true,
+            currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         this.paint();
     }
@@ -49,6 +50,13 @@ export class WalletHome extends Widget {
     public refresh(){
         // const neededRefreshCount = dataCenter.refreshAllTx();
     }
+
+    public currencyUnitChange() {
+        this.state.totalAsset = formatBalanceValue(fetchTotalAssets());
+        this.state.assetList = fetchWalletAssetList();
+        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.paint();
+    }
 }
 
 // ==================本地
@@ -68,13 +76,6 @@ register('addrs',() => {
         w.updateBalance();
     }
 });
-// 汇率变化
-register('exchangeRateJson',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateBalance();
-    }
-});
 
 // 货币涨跌幅度变化
 register('currency2USDTMap',() => {
@@ -83,15 +84,27 @@ register('currency2USDTMap',() => {
         w.updateBalance();
     }
 });
+
 register('languageSet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
+
 register('changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
+
+
+// 货币单位变化
+register('currencyUnit',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.currencyUnitChange();
+    }
+});
+

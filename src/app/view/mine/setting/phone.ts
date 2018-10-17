@@ -32,7 +32,7 @@ export class BindPhone extends Widget {
      */
     public async doSure() {
         if (!this.state.phone) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips });
             this.state.code = [];
             this.paint();
 

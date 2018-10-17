@@ -241,7 +241,7 @@ export class CoinConvert extends Widget {
         const pair = this.state.pair;// 交易对
         beginShift(withdrawalAddress,returnAddress,pair,async (returnData) => {
             if (returnData.error) {
-                popNew('app-components-message-message',{ content:this.state.cfgData.messages[3] });
+                popNew('app-components1-message-message',{ content:this.state.cfgData.messages[3] });
                 close.callback(close.widget);
                 this.init();
                 this.paint();

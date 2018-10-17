@@ -43,7 +43,7 @@ export class BindPhone extends Widget {
      */
     public async getCode(event:any) {
         if (!this.state.phone || !(this.state.phoneReg.test(this.state.phone))) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips });
+            popNew('app-components1-message-message', { content: this.state.cfgData.tips });
 
             return;
         }

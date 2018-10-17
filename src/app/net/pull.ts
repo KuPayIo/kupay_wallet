@@ -1,7 +1,7 @@
 /**
  * 主动向后端通讯
  */
-import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
+import { closeCon, open, request, setUrl, getConState, ConState } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
 import { sign } from '../core/genmnemonic';
@@ -9,10 +9,10 @@ import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '..
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
-import { PAGELIMIT } from '../utils/constants';
+import { PAGELIMIT, CMD } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -23,6 +23,9 @@ export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 export const conPort = pi_modules.store.exports.severPort || '80';
 console.log('conIp=',conIp);
 console.log('conPort=',conPort);
+
+// export const thirdUrlPre = `http://${conIp}:${conPort}/data/proxy?`;
+export const thirdUrlPre = `http://47.75.254.166:8080/data/proxy?`;
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
@@ -102,7 +105,7 @@ export const login = async (passwd:string) => {
     close.callback(close.widget);
     if (res.result === 1) {
         updateStore('loginState', LoginState.logined);
-        popNew('app-components-message-message',{ content:getStaticLanguage().userInfo.loginSuccess });
+        popNew('app-components1-message-message',{ content:getStaticLanguage().userInfo.loginSuccess });
     } else {
         updateStore('loginState', LoginState.logerror);
     }
@@ -231,31 +234,77 @@ const doOpen = async () => {
 /**
  * 获取随机数
  */
-export const getRandom = async () => {
+export const getRandom = async (cmd?:number) => {
     if (!find('conUser')) return;
-    const msg = { type: 'get_random', param: { account: find('conUser').slice(2), pk: `04${find('conUserPublicKey')}` } };
-    const resp = await requestAsync(msg);
-    updateStore('conRandom', resp.rand);
-    updateStore('conUid', resp.uid);
-    // 余额
-    getCloudBalance();
-    // eth gasPrice
-    fetchGasPrices();
-    // btc fees
-    fetchBtcFees();
-    // 获取真实用户
-    fetchRealUser();
+    const client = "android 20";
+    const param:any = {
+        account: find('conUser').slice(2), 
+        pk: `04${find('conUserPublicKey')}`,
+        client:JSON.stringify(client)
+    };
+    if(cmd){
+        param.cmd = cmd;
+    }
+    const msg = { 
+        type: 'get_random', 
+        param
+    };
+    try{
+        const resp = await requestAsync(msg);
+        updateStore('conRandom', resp.rand);
+        updateStore('conUid', resp.uid);
+        // 余额
+        getCloudBalance();
+        // eth gasPrice
+        fetchGasPrices();
+        // btc fees
+        fetchBtcFees();
+        // 获取真实用户
+        fetchRealUser();
+        const flag = find('flag');
+        // 第一次创建不需要更新
+        if (!flag.created) {
+            // 用户基础信息
+            getUserInfoFromServer([resp.uid]);
+        }
+       
+        const hash = getBorn('hashMap').get(getFirstEthAddr());
+        if (hash) {
+            defaultLogin(hash);
+        }
+    }catch(resp){
+        console.log('getRandom----------',resp);
+        if(resp.type === 1014){
+            popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',
+            {title:"检测到在其它设备有登录",content:"清除其它设备账户信息"},(deleteAccount:boolean)=>{
+                if(deleteAccount){
+                    getRandom(CMD.FORCELOGOUTDEL);
+                }else{
+                    getRandom(CMD.FORCELOGOUT);
+                }
+                const flag = find('flag');
+                // 第一次创建检查是否有登录后弹框提示备份
+                if (flag.created) {
+                    updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
+                }
+            },()=>{
+                getRandom(CMD.FORCELOGOUT);
+                const flag = find('flag');
+                // 第一次创建检查是否有登录后弹框提示备份
+                if (flag.created) {
+                    updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
+                }
+            });
+        }
+        return;
+    }
     const flag = find('flag');
-    // 第一次创建不需要更新
-    if (!flag.created) {
-        // 用户基础信息
-        getUserInfoFromServer([resp.uid]);
+    // 第一次创建检查是否有登录后弹框提示备份
+    if (flag.created) {
+        updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
     }
-   
-    const hash = getBorn('hashMap').get(getFirstEthAddr());
-    if (hash) {
-        defaultLogin(hash);
-    }
+    
+    
     
 };
 
@@ -263,7 +312,7 @@ export const getRandom = async () => {
  * 获取所有的货币余额
  */
 export const getCloudBalance = () => {
-    if (!find('conRandom')) return;
+    if (!find('conRandom')) return Promise.reject();
     const list = [];
     list.push(CurrencyType.KT);
     for (const k in CurrencyType) {
@@ -1227,7 +1276,6 @@ export const fetchBtcFees = async () => {
 
     } catch (err) {
         showError(err && (err.result || err.type));
-
     }
 };
 
@@ -1272,6 +1320,7 @@ export const uploadFile = async (base64) => {
     }).then(response => response.json())
         .then(res => {
             console.log('!!!!!!!!!!!',res);
+            popNewMessage('图片上传成功');
             if (res.result === 1) {
                 const sid = res.sid;
                 const userInfo = find('userInfo') || {};

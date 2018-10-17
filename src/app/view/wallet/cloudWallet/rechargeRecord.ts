@@ -28,16 +28,17 @@ export class RechargeRecord extends Widget {
         }
     }
     public init() {
+        const rechargeLogs = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
         this.state = {
-            recordList:[],
-            nextStart:0,
-            canLoadMore:false,
+            recordList:this.parseRecordList(rechargeLogs.list),
+            nextStart:rechargeLogs.start,
+            canLoadMore:rechargeLogs.canLoadMore,
             isRefreshing:false,
             cfgData:getLanguage(this)
         };
     }
     public updateRecordList() {
-        const rechargeLogs = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]);
+        const rechargeLogs = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
         console.log(rechargeLogs);
         const list = rechargeLogs.list;
         this.state.nextStart = rechargeLogs.start;

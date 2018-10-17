@@ -11,7 +11,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage, logoutAccount } from '../../utils/tools';
+import { getLanguage, logoutAccount, logoutAccountDel } from '../../utils/tools';
 
 interface Props {
     title:string;
@@ -51,7 +51,7 @@ export class ModalBoxInput extends Widget {
     public foegetPsw() {
         this.cancel && this.cancel(false);
         popNew('app-components1-modalBox-modalBox',this.state.cfgData.modalBox,() => {
-            logoutAccount();
+            logoutAccountDel();
         },() => {
             popNew('app-components1-modalBoxInput-modalBoxInput',this.props);
         });      
