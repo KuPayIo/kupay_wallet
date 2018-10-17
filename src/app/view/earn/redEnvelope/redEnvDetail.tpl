@@ -7,7 +7,7 @@
     <div w-class="content" on-scroll="pageScroll" id="redEnvDetail">
         <img src="../../../res/image/redEnvDetail.png" w-class="topBackimg"/>
         <div w-class="topBack">
-            <img src={{it1.userHead}} w-class="userHead"/>
+            <img src="{{it1.userHead}}" w-class="userHead"/>
             <div style="margin: 30px 0 10px;font-size: 30px;color: #222222;">
                 {{it1.userName}}
                 {{if it1.showPin}}<span w-class="other">{{it1.cfgData.pin}}</span>{{end}}
@@ -20,7 +20,7 @@
                 <app-components-fourParaImgItem-fourParaImgItem>{name:{{val.userName}},data:{{val.amount+" "+it.ctypeShow}},time:{{val.timeShow}},img:{{val.avatar}},describe:{{it1.greatUser==ind?it1.cfgData.greatUser:""}} }</app-components-fourParaImgItem-fourParaImgItem>
             {{end}}
 
-            {{if it.curNum < it.totalNum}}
+            {{if it.curNum < it.totalNum && !it.outDate}}
             <div w-class="endMess">
                 <div w-class="againSend" on-tap="againSend">{{it1.cfgData.tips[2]}}</div>
                 <div>{{it1.cfgData.tips[3]}}</div>

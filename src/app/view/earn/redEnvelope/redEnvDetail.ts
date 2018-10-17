@@ -17,6 +17,7 @@ interface Props {
     totalNum:number;  // 总红包个数
     amount:number;  // 红包总金额
     ctypeShow:string;  // 货币类型名称
+    outDate?:boolean;  // 红包是否已过期
 }
 export class RedEnvDetail extends Widget {
     public props:Props;
@@ -90,19 +91,21 @@ export class RedEnvDetail extends Widget {
     public async againSend() {
         let url = '';
         let title = '';
+        const lanSet = find('languageSet');
+        const lan = lanSet.languageList[lanSet.selected];
         if (this.props.rtype === 0) {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}`;
+            url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[0]; 
         } else if (this.props.rtype === 1) {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}`;
+            url = `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[1]; 
         } else if (this.props.rid === '-1') {
             const inviteCodeInfo = await getInviteCode();
             if (inviteCodeInfo.result !== 1) return;
                 
-            url = `${sharePerUrl}?cid=${inviteCodeInfo.cid}&type=${RedEnvelopeType.Invite}`;
+            url = `${sharePerUrl}?cid=${inviteCodeInfo.cid}&type=${RedEnvelopeType.Invite}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[2];
         }
         popNew('app-components-share-share', { 

@@ -1,5 +1,6 @@
-<div class="new-page" ev-next-click="share" ev-back-click="backPrePage">
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},nextImg:"../../res/image/09.png"}</app-components1-topBar-topBar>
+<div class="new-page" ev-next-click="share" ev-back-click="backPrePage" w-class="new-page">
+    <img src="../../../res/image1/topbar_backimg.png" style="position: absolute;top: 0;right: 0;"/>
+    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},nextImg:"../../res/image/share_white.png",background:"transparent"}</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="title">
             <img src={{it1.userHead}} w-class="userHead"/>

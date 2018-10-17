@@ -5,7 +5,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMiningHistory } from '../../../net/pull';
-import { find, getBorn, register } from '../../../store/store';
+import { find, register } from '../../../store/store';
 import { PAGELIMIT } from '../../../utils/constants';
 import { getLanguage } from '../../../utils/tools';
 
@@ -22,6 +22,10 @@ export class Dividend extends Widget {
 
     public create() {
         super.create();
+        this.init();
+    }
+    
+    public init() {
         this.state = {
             data:[],
             hasMore:false,
@@ -31,7 +35,7 @@ export class Dividend extends Widget {
         }; 
         this.initData();
     }
-    
+
     /**
      * 获取更新数据
      */
@@ -87,6 +91,13 @@ export class Dividend extends Widget {
                 this.state.refresh = true;
             }, 1000);
         } 
+    }
+
+    /**
+     * 刷新页面
+     */
+    public refreshPage() {
+        this.init();
     }
 }
 

@@ -7,7 +7,7 @@
     <div w-class="content" on-scroll="pageScroll" id="exchangeDetail">
         <img src="../../../res/image/redEnvDetail.png" w-class="topBackimg"/>
         <div w-class="topBack">
-            <img src="../../../res/image/default_avater_big.png" w-class="userHead"/>
+            <img src="{{it1.userHead}}" w-class="userHead"/>
             <div style="margin: 30px 0 10px;font-size: 30px;color: #222222;">{{it1.userName}}
                 {{if it1.showPin}}<span w-class="other">{{it1.cfgData.pin}}</span>{{end}}
             </div>

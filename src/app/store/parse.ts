@@ -341,9 +341,12 @@ export const parseProductList = (res:any) => {
 /**
  * 解析发送红包历史记录
  */
-export const parseSendRedEnvLog = (value) => {
+export const parseSendRedEnvLog = (value,sta) => {
     const sHisRec = find('sHisRec');
-    const rList:SRecDetail[] = sHisRec && sHisRec.list || [];
+    let rList:SRecDetail[] = [];
+    if (sta) {
+        rList = sHisRec && sHisRec.list || [];
+    }
     const sendNumber = value[0];
     const start = value[1];
     const recordList:SRecDetail[] = [];
@@ -375,9 +378,12 @@ export const parseSendRedEnvLog = (value) => {
 /**
  * 解析红包兑换历史记录
  */
-export const parseConvertLog = (data) => {
+export const parseConvertLog = (data,sta) => {
     const cHisRec = find('cHisRec');
-    const rList:CRecDetail[] = cHisRec && cHisRec.list || [];
+    let rList:CRecDetail[] = [];
+    if (sta) {
+        rList = cHisRec && cHisRec.list || [];
+    }
     const convertNumber = data.value[0];
     const startNext = data.value[1];
     const recordList:CRecDetail[] = [];
@@ -430,9 +436,10 @@ export const parseExchangeDetail = (value) => {
             redBagList.push(redBag);
             curNum ++;
         }
-        totalAmount += amount;
+        totalAmount += Number(data[i][4]);
     }
     const message = unicodeArray2Str(value[0]);
+    totalAmount = smallUnit2LargeUnit(CurrencyTypeReverse[data[0][3]],totalAmount);
 
     return [redBagList, message, curNum, data.length, totalAmount]; // 兑换人员列表，红包留言，已兑换个数，总个数，红包总金额
 };

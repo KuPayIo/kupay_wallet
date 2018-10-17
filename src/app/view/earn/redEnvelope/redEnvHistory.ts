@@ -45,11 +45,7 @@ export class RedEnvHistory extends Widget {
             showMoreTips:true, 
             sendNumber:0,  
             isScroll:false,
-            rtypeShow:[
-                cfg.redEnvType[0],
-                cfg.redEnvType[1],
-                cfg.redEnvType[2]
-            ],
+            rtypeShow:cfg.redEnvType,
             cfgData: cfg
         };
         this.initData();
@@ -116,6 +112,7 @@ export class RedEnvHistory extends Widget {
      */
     public async initRedEn() {
         for (const i in this.state.recordList) {
+            this.state.recordList[i].outDate = Number(this.state.recordList[i].time) + (60 * 60 * 24 * 1000) < new Date().getTime();
             const data = await queryDetailLog(find('conUid'),this.state.recordList[i].rid);
             if (data) {
                 this.state.recordList[i].curNum = data[2];
@@ -157,6 +154,13 @@ export class RedEnvHistory extends Widget {
      */
     public goDetail(ind:number) {
         popNew('app-view-earn-redEnvelope-redEnvDetail',this.state.recordList[ind]);
+    }
+
+    /**
+     * 刷新页面
+     */
+    public refreshPage() {
+        querySendRedEnvelopeRecord('');
     }
 }
 // =====================================本地

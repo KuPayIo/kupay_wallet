@@ -236,13 +236,13 @@ export class WriteRedEnv extends Widget {
         this.paint();
         updateStore('sHisRec', undefined);// 更新红包记录
         getCloudBalance();// 更新余额
-        if (!this.state.showPin) {
-            // tslint:disable-next-line:max-line-length
-            console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
-        } else {
-            // tslint:disable-next-line:max-line-length
-            console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
-        }
+        // if (!this.state.showPin) {
+        //     // tslint:disable-next-line:max-line-length
+        //     console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
+        // } else {
+        //     // tslint:disable-next-line:max-line-length
+        //     console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
+        // }
     }
 
     /**

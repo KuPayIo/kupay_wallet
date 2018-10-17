@@ -82,6 +82,13 @@ export class Home extends Widget {
     } 
 
     /**
+     * 刷新页面
+     */
+    public refreshPage() { 
+        this.initEvent();
+    }
+
+    /**
      * 更新事件
      */
     public initEvent() {

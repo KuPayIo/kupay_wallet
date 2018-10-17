@@ -1,8 +1,8 @@
-<div class="new-page" ev-back-click="backPrePage" w-class="new-page">
+<div class="new-page" ev-back-click="backPrePage" w-class="new-page" ev-refresh-click="refreshPage">
     {{if !it1.isScroll}}
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},background:"#F46262" }</app-components1-topBar-topBar>
+    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},background:"#F46262",refreshImg:"../../res/image1/refresh_white.png" }</app-components1-topBar-topBar>
     {{else}}
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},refreshImg:"../../res/image1/refresh_blue.png" }</app-components1-topBar-topBar>
     {{end}}
     <div w-class="content" on-scroll="getMoreList" id="redEnvHistory">
         <img src="../../../res/image/redEnvtop1.png" w-class="topBackimg"/>
@@ -23,7 +23,8 @@
                     <div w-class="tips">{{it1.cfgData.tips[3]}}</div>
                     {{for ind,val of it1.recordList}}
                     <div on-tap="goDetail({{ind}})">
-                        <app-components-fourParaItem-fourParaItem>{name:{{it1.rtypeShow[val.rtype]}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},describe:{{val.curNum+"/"+val.totalNum + it1.cfgData.tips[4]}} }</app-components-fourParaItem-fourParaItem>
+                        {{let desc = val.curNum+"/"+val.totalNum + it1.cfgData.tips[4]}}
+                        <app-components-fourParaItem-fourParaItem>{name:{{it1.rtypeShow[val.rtype]}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},describe:{{val.outDate ? it1.cfgData.outDate :desc}} }</app-components-fourParaItem-fourParaItem>
                     </div>
                     {{end}}
                 {{end}}

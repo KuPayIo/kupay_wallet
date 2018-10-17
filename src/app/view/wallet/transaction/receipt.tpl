@@ -1,6 +1,7 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
+    <img src="../../../res/image1/topbar_backimg.png" style="position: absolute;top: 0;right: 0;"/>
     <div w-class="top-head" ev-next-click="doScanClick">
-        <app-components1-topBar-topBar>{"title":"{{it.currencyName + it1.cfgData.topBarTitle}}",background:"#fff"}</app-components1-topBar-topBar>
+        <app-components1-topBar-topBar>{"title":"{{it.currencyName + it1.cfgData.topBarTitle}}",background:"transparent"}</app-components1-topBar-topBar>
     </div>
     <div w-class="body">
         <div w-class="main">

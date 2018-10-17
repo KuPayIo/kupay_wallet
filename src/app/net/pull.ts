@@ -538,7 +538,7 @@ export const querySendRedEnvelopeRecord = (start?: string) => {
 
     try {
         requestAsync(msg).then(async detail => {
-            const data = parseSendRedEnvLog(detail.value);
+            const data = parseSendRedEnvLog(detail.value,start);
             updateStore('sHisRec',data);
         });
 
@@ -552,7 +552,7 @@ export const querySendRedEnvelopeRecord = (start?: string) => {
 /**
  * 查询红包兑换记录
  */
-export const queryConvertLog = async (start) => {
+export const queryConvertLog = async (start?:string) => {
     let msg;
     if (start) {
         msg = {
@@ -573,7 +573,7 @@ export const queryConvertLog = async (start) => {
 
     try {
         requestAsync(msg).then(detail => {
-            const data = parseConvertLog(detail);
+            const data = parseConvertLog(detail,start);
             updateStore('cHisRec',data);
         });
 
@@ -737,6 +737,7 @@ export const doChat = async () => {
 
 /**
  * 获取指定货币流水
+ * filter（0表示不过滤，1表示过滤）
  */
 export const getAccountDetail = async (coin: string,filter:number,start = '') => {
     let msg;
