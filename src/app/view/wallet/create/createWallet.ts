@@ -6,11 +6,11 @@ import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { uploadFile } from '../../../net/pull';
+import { uploadFile, openAndGetRandom } from '../../../net/pull';
 import { CreateWalletType } from '../../../store/interface';
-import { getBorn, updateStore } from '../../../store/store';
+import { getBorn, updateStore, register } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { getFirstEthAddr, getLanguage, popNewMessage } from '../../../utils/tools';
+import { getFirstEthAddr, getLanguage, popNewMessage, getStaticLanguage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
 interface Props {
@@ -132,7 +132,6 @@ export class CreateWallet extends Widget {
             option.fragment1 = this.props.fragment1;
             option.fragment2 = this.props.fragment2;
         }
-        updateStore('flag',{ created:true });
         console.time('create wallet');
         const hash = await createWallet(this.state.itype,option);
         console.timeEnd('create wallet');
@@ -147,14 +146,14 @@ export class CreateWallet extends Widget {
         updateStore('hashMap',hashMap);
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
+        updateStore('flag',{ created:true,mnemonic,fragments });
+        openAndGetRandom();
+        
         const w: any = forelet.getWidget(WIDGET_NAME);
         if (w) {
             w.ok && w.ok();
         }
         this.ok && this.ok();
-        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox,() => {
-            popNew('app-view-wallet-backup-index',{ mnemonic,fragments });
-        });
     }
 
     /**
@@ -164,3 +163,12 @@ export class CreateWallet extends Widget {
         popNew('app-view-mine-other-privacypolicy');
     }
 }
+
+// 登录状态成功
+register('flag',(flag:any) => {
+    if (flag.promptBackup) {
+        popNew('app-components-modalBox-modalBox',getStaticLanguage().createSuccess,() => {
+            popNew('app-view-wallet-backup-index',{ mnemonic:flag.mnemonic,fragments:flag.fragments });
+        });
+    }
+});

@@ -1,7 +1,7 @@
 import { setMsgHandler, setConState, ConState } from '../../pi/net/ui/con_mgr';
 import { getStaticLanguage, popNewMessage, logoutAccount, logoutAccountDel } from '../utils/tools';
 import { getCloudBalance, getRandom } from './pull';
-import { popNew } from '../../pi/ui/root';
+import { popNew, backList, backCall } from '../../pi/ui/root';
 import { CMD } from '../utils/constants';
 
 /**
@@ -25,8 +25,21 @@ export const initPush = () => {
         }else if(cmd === CMD.FORCELOGOUTDEL){
             logoutAccountDel();
         }
-        popNew('app-components1-modalBox-modalBox',{title:'强制下线',content:"您将强制下线"},()=>{
+        popNew('app-components1-modalBox-modalBox',{
+            sureText:"重新登录",
+            cancelText:"退出",
+            title:'下线通知',
+            content:"您的账户已被下线，如非本人操作，则助记词可能已泄露。"
         },()=>{
+            // for(let i = backList.length - 1;i > 0;i++){
+            //     console.log('-------------',i);
+            //     backCall();
+            // }
+            popNew('app-view-wallet-create-home');
+        },()=>{
+            for(let i = backList.length - 1;i > 0;i++){
+                backCall();
+            }
         });
     });
 

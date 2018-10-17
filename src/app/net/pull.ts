@@ -1,7 +1,7 @@
 /**
  * 主动向后端通讯
  */
-import { closeCon, open, request, setUrl } from '../../pi/net/ui/con_mgr';
+import { closeCon, open, request, setUrl, getConState, ConState } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
 import { sign } from '../core/genmnemonic';
@@ -24,7 +24,8 @@ export const conPort = pi_modules.store.exports.severPort || '80';
 console.log('conIp=',conIp);
 console.log('conPort=',conPort);
 
-export const thirdUrlPre = `http://${conIp}:${conPort}/data/proxy?`;
+// export const thirdUrlPre = `http://${conIp}:${conPort}/data/proxy?`;
+export const thirdUrlPre = `http://47.75.254.166:8080/data/proxy?`;
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
@@ -221,7 +222,7 @@ const doOpen = async () => {
         }, async () => {
             updateStore('loginState', LoginState.init);
             try {
-                // await doOpen();
+                await doOpen();
                 resolve(true);
             } catch (error) {
                 reject(false);
@@ -274,13 +275,35 @@ export const getRandom = async (cmd?:number) => {
     }catch(resp){
         console.log('getRandom----------',resp);
         if(resp.type === 1014){
-            popNew('app-components1-modalBox-modalBox',{title:'踢下线',content:"您将把别人踢下线"},()=>{
-                getRandom(CMD.FORCELOGOUT);
+            popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',
+            {title:"检测到在其它设备有登录",content:"清除其它设备账户信息"},(deleteAccount:boolean)=>{
+                if(deleteAccount){
+                    getRandom(CMD.FORCELOGOUTDEL);
+                }else{
+                    getRandom(CMD.FORCELOGOUT);
+                }
+                const flag = find('flag');
+                // 第一次创建检查是否有登录后弹框提示备份
+                if (flag.created) {
+                    updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
+                }
             },()=>{
-                getRandom(CMD.FORCELOGOUTDEL);
+                getRandom(CMD.FORCELOGOUT);
+                const flag = find('flag');
+                // 第一次创建检查是否有登录后弹框提示备份
+                if (flag.created) {
+                    updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
+                }
             });
         }
+        return;
     }
+    const flag = find('flag');
+    // 第一次创建检查是否有登录后弹框提示备份
+    if (flag.created) {
+        updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
+    }
+    
     
     
 };
@@ -289,7 +312,7 @@ export const getRandom = async (cmd?:number) => {
  * 获取所有的货币余额
  */
 export const getCloudBalance = () => {
-    if (!find('conRandom')) return Promise.reject('连接服务器失败');
+    if (!find('conRandom')) return Promise.reject();
     const list = [];
     list.push(CurrencyType.KT);
     for (const k in CurrencyType) {

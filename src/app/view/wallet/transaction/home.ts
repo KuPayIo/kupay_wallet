@@ -8,7 +8,7 @@ import { dataCenter } from '../../../logic/dataCenter';
 import { Addr } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseStatusShow, parseTxTypeShow, timestampFormat, fetchBalanceValueOfCoin } from '../../../utils/tools';
+import { currencyExchangeAvailable, formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseStatusShow, parseTxTypeShow, timestampFormat, fetchBalanceValueOfCoin, getCurrencyUnitSymbol } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -34,7 +34,7 @@ export class TransactionHome extends Widget {
     public init() {
         const currencyName = this.props.currencyName;
         const balance = formatBalance(getCurrentAddrBalanceByCurrencyName(currencyName));
-        const balanceValue =   fetchBalanceValueOfCoin(currencyName,balance);
+        const balanceValue =  fetchBalanceValueOfCoin(currencyName,balance);
         const txList = this.parseTxList();
         const canConvert = this.canConvert();
         const color = find('changeColor');
@@ -45,7 +45,8 @@ export class TransactionHome extends Widget {
             txList,
             canConvert,
             cfgData:getLanguage(this),
-            redUp:color ? color.selected === 0 :true
+            redUp:color ? color.selected === 0 :true,
+            currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         
     }
@@ -100,6 +101,13 @@ export class TransactionHome extends Widget {
     public convertCurrencyClick() {
         popNew('app-view-wallet-coinConvert-coinConvert',{ currencyName:this.props.currencyName });
     }
+
+    public currencyUnitChange(){
+        this.state.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
+        this.state.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,this.state.balance));
+        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.paint();
+    }
 }
 
 // ==========================本地
@@ -144,5 +152,15 @@ register('currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRate();
+    }
+});
+
+
+
+// 货币单位变化
+register('currencyUnit',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.currencyUnitChange();
     }
 });

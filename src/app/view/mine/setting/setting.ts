@@ -31,7 +31,7 @@ export class Setting extends Widget {
         const cfg = getLanguage(this);
         const lan = find('languageSet');
         const color = find('changeColor');
-        const currencyUnit = find('currencyUnit');
+        const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
         this.state = {
             lockScreenPsw:'',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 

@@ -77,11 +77,10 @@ export const unregister = (keyName: KeyName, cb: Function): void => {
 export const initStore = () => {
     // 从localStorage中取wallets
     const wallets = findByLoc('wallets');
-    store.walletList = (wallets && wallets.walletList) || [];
     store.curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
     // 从localStorage中的wallets中初始化salt
     store.salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
-
+    store.walletList = (wallets && wallets.walletList) || [];
     const firstEthAddr = getFirstEthAddr();
     if(firstEthAddr){
         // 从localStorage中取addrs
@@ -214,7 +213,7 @@ const store = <Store>{
     currency2USDTMap:new Map<string,currency2USDT>()
 };
 
-// 重置云端数据
+// 登出
 export const logoutInit = () => {
     updateStore('loginState',LoginState.init);
     updateStore('conUser','');
@@ -225,7 +224,6 @@ export const logoutInit = () => {
     updateStore('userInfo',null);
     updateStore('addrs',null);
     updateStore('transactions',null);
-    updateStore('lockScreen',null);
     updateStore('sHisRec',null);
     updateStore('cHisRec',null);
     updateStore('inviteRedBagRec',null);
@@ -245,4 +243,40 @@ export const logoutInit = () => {
     updateStore('shapeShiftTxsMap', new Map<string,ShapeShiftTxs>());
     updateStore('purchaseRecord', <PurchaseRecordOne[]>[]);
     updateStore('flag',{});
+};
+
+
+// 登入
+export const loginInit = () => {
+    const wallets = findByLoc('wallets');
+    const curWallet = wallets && wallets.walletList.length > 0 && wallets.walletList.filter(v => v.walletId === wallets.curWalletId)[0];
+    updateStore('curWallet',curWallet);
+    const walletList = (wallets && wallets.walletList) || [];
+    updateStore('walletList',walletList);
+    // 从localStorage中的wallets中初始化salt
+    const salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
+    updateStore('salt',salt);
+
+    const firstEthAddr = getFirstEthAddr();
+    if(firstEthAddr){
+        // 从localStorage中取addrs
+        const addrs = new Map<string,Addr[]>(findByLoc('addrsMap')).get(firstEthAddr) || [];
+        updateStore('addrs',addrs);
+        // 从localStorage中取transactions
+        const transactions = new Map<string,TransRecordLocal[]>(findByLoc('transactionsMap')).get(firstEthAddr) || [];
+        updateStore('transactions',transactions);
+        // 从localStorage中取sHisRecMap
+        const sHisRecMap = new Map<string,SHisRec>(findByLoc('sHisRecMap'));
+        const sHisRec = sHisRecMap.get(firstEthAddr);
+        updateStore('sHisRec',sHisRec);
+        // 从localStorage中取cHisRecMap
+        const cHisRecMap = new Map<string,CHisRec>(findByLoc('cHisRecMap'));
+        const cHisRec = cHisRecMap.get(firstEthAddr);
+        updateStore('cHisRec',cHisRec);
+        // 从localStorage中取inviteRedBagRecMap
+        const inviteRedBagRecMap = new Map<string,CHisRec>(findByLoc('inviteRedBagRecMap'));
+        const inviteRedBagRec = inviteRedBagRecMap.get(firstEthAddr);
+        updateStore('inviteRedBagRec',inviteRedBagRec);
+    }
+    updateStore('token',findByLoc('token'));
 };

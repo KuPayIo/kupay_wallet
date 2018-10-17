@@ -127,5 +127,7 @@ export class AccountHome extends Widget {
                 uploadFile(this.state.avatar);
             });
         });
+
+     
     }
 }

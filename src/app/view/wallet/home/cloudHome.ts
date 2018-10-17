@@ -32,7 +32,8 @@ export class CloudHome extends Widget {
             assetList:fetchCloudWalletAssetList(),
             productList:find('productList') || [],
             cfgData:getLanguage(this),
-            redUp:color ? color.selected === 0 :true
+            redUp:color ? color.selected === 0 :true,
+            currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         this.paint();
     }

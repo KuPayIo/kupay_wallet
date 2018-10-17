@@ -29,7 +29,7 @@ export class CloudWalletHome extends Widget {
     }
     public init() {
         const currencyName = this.props.currencyName;
-        const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
+        const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]) || 0;
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
         const cfg = getLanguage(this); 
         const color = find('changeColor');
@@ -59,7 +59,7 @@ export class CloudWalletHome extends Widget {
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        this.state.balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
+        this.state.balance = getBorn('cloudBalance').get(CurrencyType[currencyName]) || 0;
         this.state.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,this.state.balance));
         this.paint();
     }

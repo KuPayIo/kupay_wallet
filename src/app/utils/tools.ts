@@ -6,10 +6,12 @@ import { popNew } from '../../pi/ui/root';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
-import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, CurrencyUnit } from '../store/interface';
-import { find, getBorn, logoutInit, updateStore } from '../store/store';
+import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, CurrencyUnit, Wallet } from '../store/interface';
+import { find, getBorn, logoutInit, updateStore, initStore, loginInit } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
+import { store } from '../../pi/lang/mod';
+import { setConState, ConState } from '../../pi/net/ui/con_mgr';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -798,7 +800,7 @@ export const fetchBalanceValueOfCoin =(currencyName:string,balance:number)=>{
     const USD2CNYRate = find('USD2CNYRate');
     const currency2USDTMap = getBorn('currency2USDTMap');
     const currency2USDT = currency2USDTMap.get(currencyName) || {open:0,close:0};
-    const currencyUnit = find('currencyUnit');
+    const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
 
     if(currencyUnit === CurrencyUnit.CNY){
         balanceValue = balance * currency2USDT.close * USD2CNYRate;
@@ -1236,6 +1238,16 @@ export const logoutAccount = () => {
     logoutInit();
     openAndGetRandom();
 };
+
+/**
+ * 登录成功
+ */
+export const loginSuccess = (wallet:Wallet) => {
+    updateStore('curWallet',wallet);
+    setConState(ConState.init);
+    loginInit();
+    openAndGetRandom();
+};
 /**
  * 判断是否是有效的货币地址
  */
@@ -1303,7 +1315,7 @@ export const fetchMinerFeeList = (currencyName) => {
  * 获取货币单位符号 $ ￥
  */
 export const getCurrencyUnitSymbol = ()=>{
-    const currencyUnit = find('currencyUnit');
+    const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
     if(currencyUnit === CurrencyUnit.CNY){
         return '￥';
     }else if(currencyUnit === CurrencyUnit.USD){

@@ -49,7 +49,6 @@ export const run = (cb): void => {
     setTimeout(() => {
         if (cb) cb();
     },20);
-    
 };
 
 // const rpcFunc = (req:Struct, respClass:Function, callback:Function, timeout: number) => {
@@ -133,7 +132,7 @@ const backToFront = () => {
 const ifNeedUnlockScreen = () => {
     const unlockScreen = document.getElementById('keyboard');
     if (unlockScreen) return false;
-    const ls: LockScreen = find('lockScreen');
+    const ls: LockScreen = find('lockScreen') || {};
     const lockScreenPsw = ls.psw;
     const openLockScreen = ls.open !== false;
 
