@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyType } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
-import { formatBalanceValue, getLanguage, popNewMessage, fetchCoinGain, fetchBalanceValueOfCoin } from '../../../utils/tools';
+import { fetchCoinGain, formatBalanceValue, getLanguage, popNewMessage, fetchBalanceValueOfCoin } from '../../../utils/tools';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -22,7 +22,8 @@ export class CloudWalletHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        getAccountDetail(props.currencyName);
+        getAccountDetail(props.currencyName,0);
+        getAccountDetail(props.currencyName,1);
         getRechargeLogs(props.currencyName);
         getWithdrawLogs(props.currencyName);
     }
@@ -34,6 +35,9 @@ export class CloudWalletHome extends Widget {
         const color = find('changeColor');
         this.state = {
             tabs:[{
+                tab:cfg.total,
+                components:'app-view-wallet-cloudWallet-totalRecord'
+            },{
                 tab:cfg.other,
                 components:'app-view-wallet-cloudWallet-otherRecord'
             },{

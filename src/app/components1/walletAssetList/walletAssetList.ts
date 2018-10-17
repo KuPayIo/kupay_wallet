@@ -15,6 +15,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
     assetList:any[];
     redUp:boolean;
+    currencyUnitSymbol:string;
 }
 export class WalletAssetList extends Widget {
     public props:Props;

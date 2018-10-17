@@ -1,0 +1,29 @@
+.new-page{
+    background: rgba(50, 50, 50, 0.5);
+}
+.btns{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.openBtn{
+    margin: 0 20px;
+    height: 100px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    font-size: 32px;
+    color: #318DE6;
+    text-align: center;
+    line-height: 100px;
+}
+.cancelBtn{
+    margin: 10px 20px 30px;
+    height: 100px;
+    border-radius: 12px;
+    font-size: 32px;    
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    line-height: 100px;
+}

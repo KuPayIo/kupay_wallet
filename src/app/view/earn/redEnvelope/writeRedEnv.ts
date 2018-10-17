@@ -154,16 +154,16 @@ export class WriteRedEnv extends Widget {
      * 点击发红包按钮
      */
     public async send() {
-        if (this.state.totalAmount === 0) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
-
-            return;
-        }       
         if (this.state.totalNum === 0) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
+        if (this.state.oneAmount === 0 || this.state.totalAmount === 0) {
+            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
+
+            return;
+        }       
         const curCoin = this.state.list[this.state.selected];
         if (this.state.totalAmount > curCoin.num) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });

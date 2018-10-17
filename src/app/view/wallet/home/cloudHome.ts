@@ -65,6 +65,7 @@ export class CloudHome extends Widget {
 
     public currencyUnitChange() {
         this.state.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
+        this.state.assetList = fetchCloudWalletAssetList();
         this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }

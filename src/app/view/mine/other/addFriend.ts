@@ -37,7 +37,10 @@ export class AddFriend extends Widget {
      * 分享二维码
      */
     public share() {
-        popNew('app-components-share-share', { text: this.state.address, shareType: ShareToPlatforms.TYPE_IMG }, (result) => {
+        popNew('app-components-share-share', { 
+            text: this.state.address, 
+            shareType: ShareToPlatforms.TYPE_IMG 
+        }, (result) => {
             // alert(result);
         }, (result) => {
             // alert(result);

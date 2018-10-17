@@ -16,7 +16,8 @@ interface Props {
     currencyName:string;
     isActive:boolean;
 }
-export class OtherRecord extends Widget {
+
+export class TotalRecord extends Widget {
     public props:Props;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
@@ -24,19 +25,18 @@ export class OtherRecord extends Widget {
     }
     public init() {
         if (this.props.isActive) {
-            getAccountDetail(this.props.currencyName,1);
+            getAccountDetail(this.props.currencyName,0);
         }
-        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
         this.state = {
-            recordList:this.parseRecordList(accountDetail.list),
-            nextStart:accountDetail.start,
-            canLoadMore:accountDetail.canLoadMore,
+            recordList:[],
+            nextStart:0,
+            canLoadMore:false,
             isRefreshing:false,
             cfgData:getLanguage(this)
         };
     }
     public updateRecordList() {
-        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
+        const accountDetail = getBorn('totalLogs').get(CurrencyType[this.props.currencyName]);
         console.log(accountDetail);
         const list = accountDetail.list;
         this.state.nextStart = accountDetail.start;
@@ -57,7 +57,7 @@ export class OtherRecord extends Widget {
     }
 
     public loadMore() {
-        getAccountDetail(this.props.currencyName,1,this.state.nextStart);
+        getAccountDetail(this.props.currencyName,0,this.state.nextStart);
     }
     public getMoreList() {
         const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
@@ -72,7 +72,7 @@ export class OtherRecord extends Widget {
     }
 }
 
-register('accountDetail', () => {
+register('totalLogs', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();

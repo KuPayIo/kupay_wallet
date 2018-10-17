@@ -53,6 +53,7 @@ export class WalletHome extends Widget {
 
     public currencyUnitChange() {
         this.state.totalAsset = formatBalanceValue(fetchTotalAssets());
+        this.state.assetList = fetchWalletAssetList();
         this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }

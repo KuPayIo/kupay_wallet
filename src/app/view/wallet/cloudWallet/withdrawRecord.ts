@@ -53,7 +53,7 @@ export class WithdrawRecord extends Widget {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.state.cfgData.withdrawText;
+            item.behavior = this.state.cfgData.withdraw;
             item.amountShow = `-${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_withdraw_icon.png`;

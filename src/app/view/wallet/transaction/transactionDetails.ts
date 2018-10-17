@@ -1,6 +1,7 @@
 /**
  * 交易详情页面
  */
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
@@ -74,14 +75,33 @@ export class TransactionDetails extends Widget {
         popNewMessage(this.state.cfgData.tips[2]);
     }
     public openNewWeb() {
-        const title = this.state.tx.currencyName === 'BTC' ? 'Blockchain' : 'Etherscan';
-        openNewActivity(this.state.qrcode,title);
+        popNew('app-components-openLink-openLink',{},() => {
+            const title = this.state.tx.currencyName === 'BTC' ? 'Blockchain' : 'Etherscan';
+            openNewActivity(this.state.qrcode,title);
+        });
     }
 
     public updateTransaction() {
         // this.state.tx = fetchTxByHash(this.props.hash);
         this.init();
         this.paint();
+    }
+
+    /**
+     * 分享截图
+     */
+    public shareScreen() {
+        const stp = new ShareToPlatforms();
+        stp.init();
+        stp.makeScreenShot({
+            success: (result) => { 
+                popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
+            },
+            fail: (result) => { 
+                popNew('app-components-message-message',{ content:this.state.cfgData.shareScreen });
+            }
+        });
+        console.log('aaaaaaaaaaaa');
     }
 }
 

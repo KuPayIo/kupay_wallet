@@ -13,7 +13,7 @@
         <div class="redEnv-main">
             <div class="redEnv-leave-message" id="message">恭喜发财 万事如意</div>
             <div class="redEnv-tag" id="describe">您收到一个邀请红包</div>
-            <img src="image/open.png" class="redEnv-open" onclick="openRedEnvelopeClick()" id="openRedEnv"/>
+            <div class="redEnv-open-div"><img src="image/open.png" class="redEnv-open" onclick="openRedEnvelopeClick()" id="openRedEnv"/></div>
             <div class="redEnv-look" id="look">看看大家手气></div>
         </div>
     </div>
@@ -48,8 +48,8 @@ switch (itype) {
         state = {
             type:itype,
             cid:parseUrlParams(search,'cid'),
-            lm:lan.redEnvDesc[2],
-            desc:lan.redEnvDesc[3],
+            lm:lan.redEnvMess[1],
+            desc:lan.redEnvDesc[2],
         };
         break;
     default:
@@ -139,6 +139,7 @@ function openNormalRedEnvelope() {
                 popMessage(lan.errorList[4]);   
         }
     },500);
+    alert(res);
 }
 
 </script>

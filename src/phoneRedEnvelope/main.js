@@ -1,5 +1,6 @@
 // ==========================================静态变量,静态方法
 
+const urlHead = "http://192.169.9.29:8099";
 // 语言文字
 const Config= {
     simpleChinese:{ 
@@ -197,7 +198,7 @@ function takeRedEnvelope(rid){
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	}
     
-	xmlhttp.open("GET","http://127.0.0.1:8099/red_bag/take_red_bag?rid="+rid,false);
+	xmlhttp.open("GET",urlHead+"/red_bag/take_red_bag?rid="+rid,false);
     xmlhttp.send();
     
     return xmlhttp.responseText;
@@ -216,7 +217,7 @@ function querydetail(uid,rid) {
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	}
     
-	xmlhttp.open("GET","http://127.0.0.1:8099/red_bag/query_detail_log?rid="+rid+"&uid="+uid,false);
+	xmlhttp.open("GET",urlHead+"/red_bag/query_detail_log?rid="+rid+"&uid="+uid,false);
     xmlhttp.send();
 
     return JSON.parse(xmlhttp.responseText);
@@ -235,7 +236,7 @@ function userDetails(uids){
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	}
     
-	xmlhttp.open("GET","http://127.0.0.1:8099/user/get_infos?list="+`[${uids.toString()}]`,false);
+	xmlhttp.open("GET",urlHead+"/user/get_infos?list="+`[${uids.toString()}]`,false);
     xmlhttp.send();
 
     return JSON.parse(xmlhttp.responseText);
