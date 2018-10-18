@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goDetail" ev-refresh-click="refreshPage">
     {{if !it1.scroll}}
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},nextImg:"../../res/image/41_white.png",background:"#F94E4D",refreshImg:"../../res/image1/refresh_white.png" }</app-components1-topBar-topBar>
+    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},nextImg:"../../res/image/41_white.png",background:"transparent",refreshImg:"../../res/image1/refresh_white.png" }</app-components1-topBar-topBar>
     {{else}}
     <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},nextImg:"../../res/image/41_blue.png",refreshImg:"../../res/image1/refresh_blue.png"}</app-components1-topBar-topBar>
     {{end}}

@@ -3,7 +3,7 @@
     flex-direction: column;
 }
 .topBack{
-    height: 550px;
+    height: 128px;
     background:linear-gradient(to right,#318DE6,#38CFE7);
 }
 .userHead{
@@ -19,4 +19,26 @@
     width: 276px;
     height: 341px;
     border-radius: 18px;
+}
+.refreshBtn{
+    width: 40px;
+    height: 40px;
+    margin: 40px 5px 0px;
+    border: 24px solid transparent;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+.emptyImg{
+    width: 200px;
+    height: 200px;
+    margin-top: 400px;
+}
+.emptyText{
+    height: 45px;
+    line-height: 45px;
+    color: rgba(136, 136, 136, 1);
+    font-size: 32px;
+    text-align: center;
+    margin-top: 20px;
 }
