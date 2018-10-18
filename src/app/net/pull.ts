@@ -24,8 +24,7 @@ export const conPort = pi_modules.store.exports.severPort || '80';
 console.log('conIp=',conIp);
 console.log('conPort=',conPort);
 
-// export const thirdUrlPre = `http://${conIp}:${conPort}/data/proxy?`;
-export const thirdUrlPre = `http://47.75.254.166:8080/data/proxy?`;
+export const thirdUrlPre = `http://${conIp}:${conPort}/data/proxy?`;
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
@@ -1266,7 +1265,6 @@ export const fetchBtcFees = async () => {
     try {
         const res = await requestAsync(msg);
         const obj = JSON.parse(res.btc);
-        console.log('fetchBtcFees------------',obj);
         const btcMinerFee = {
             [MinerFeeLevel.STANDARD]:Number(obj.low_fee_per_kb),
             [MinerFeeLevel.FAST]:Number(obj.medium_fee_per_kb),
