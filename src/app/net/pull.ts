@@ -1,7 +1,7 @@
 /**
  * 主动向后端通讯
  */
-import { closeCon, open, request, setUrl, getConState, ConState } from '../../pi/net/ui/con_mgr';
+import { closeCon, ConState, getConState, open, request, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
 import { sign } from '../core/genmnemonic';
@@ -9,10 +9,10 @@ import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '..
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
-import { PAGELIMIT, CMD } from '../utils/constants';
+import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, getUserInfo, popNewMessage, popPswBox, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -236,20 +236,20 @@ const doOpen = async () => {
  */
 export const getRandom = async (cmd?:number) => {
     if (!find('conUser')) return;
-    const client = "android 20";
+    const client = 'android 20';
     const param:any = {
         account: find('conUser').slice(2), 
         pk: `04${find('conUserPublicKey')}`,
         client:JSON.stringify(client)
     };
-    if(cmd){
+    if (cmd) {
         param.cmd = cmd;
     }
     const msg = { 
         type: 'get_random', 
         param
     };
-    try{
+    try {
         const resp = await requestAsync(msg);
         updateStore('conRandom', resp.rand);
         updateStore('conUid', resp.uid);
@@ -272,27 +272,27 @@ export const getRandom = async (cmd?:number) => {
         if (hash) {
             defaultLogin(hash);
         }
-    }catch(resp){
+    } catch (resp) {
         console.log('getRandom----------',resp);
-        if(resp.type === 1014){
+        if (resp.type === 1014) {
             popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',
-            {title:"检测到在其它设备有登录",content:"清除其它设备账户信息"},(deleteAccount:boolean)=>{
-                if(deleteAccount){
+            { title:'检测到在其它设备有登录',content:'清除其它设备账户信息' },(deleteAccount:boolean) => {
+                if (deleteAccount) {
                     getRandom(CMD.FORCELOGOUTDEL);
-                }else{
+                } else {
                     getRandom(CMD.FORCELOGOUT);
                 }
                 const flag = find('flag');
                 // 第一次创建检查是否有登录后弹框提示备份
                 if (flag.created) {
-                    updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
+                    updateStore('flag',{ promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments });
                 }
-            },()=>{
+            },() => {
                 getRandom(CMD.FORCELOGOUT);
                 const flag = find('flag');
                 // 第一次创建检查是否有登录后弹框提示备份
                 if (flag.created) {
-                    updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
+                    updateStore('flag',{ promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments });
                 }
             });
         }
@@ -301,10 +301,8 @@ export const getRandom = async (cmd?:number) => {
     const flag = find('flag');
     // 第一次创建检查是否有登录后弹框提示备份
     if (flag.created) {
-        updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
+        updateStore('flag',{ promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments });
     }
-    
-    
     
 };
 
@@ -844,7 +842,10 @@ export const sendCode = async (phone: number, num: number) => {
  * 注册手机
  */
 export const regPhone = async (phone: number, code: number) => {
-    const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
+    const bphone = getUserInfo().bphone;
+    // tslint:disable-next-line:variable-name
+    const old_phone =  bphone ? bphone :'';
+    const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code } };
     
     try {
         return await requestAsync(msg);

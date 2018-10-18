@@ -21,7 +21,7 @@
             <app-components-basicInput-basicInput>{
                 prepend:{{it1.cfgData.countTitle[0]}},
                 placeholder:"0",
-                itype:"number",
+                itype:"integer",
                 append:{{it1.cfgData.countTitle[1]}},
                 input:{{it1.totalNum}}
             }</app-components-basicInput-basicInput>

@@ -2,15 +2,21 @@
  * account home
  */
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
-import { find, updateStore } from '../../../store/store';
+import { find, register, updateStore } from '../../../store/store';
 import { walletNameAvailable } from '../../../utils/account';
 import { getLanguage, getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class AccountHome extends Widget {
     public ok:() => void;
@@ -163,3 +169,15 @@ export class AccountHome extends Widget {
         this.paint();
     }
 }
+register('userInfo', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});
+register('curWallet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});

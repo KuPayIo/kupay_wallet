@@ -83,7 +83,7 @@ export class Transfer extends Widget {
 
     // 转账金额变化
     public amountChange(e:any) {
-        this.state.amount = Number(e.value);
+        this.state.amount = e.value;
         this.paint();
     }
 
@@ -100,7 +100,7 @@ export class Transfer extends Widget {
             return;
         }
 
-        if (this.state.balance < this.state.amount + this.state.minerFee) {
+        if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
@@ -115,7 +115,7 @@ export class Transfer extends Widget {
         const currencyName = this.props.currencyName;
         const fromAddr = this.state.fromAddr;
         const toAddr = this.state.toAddr;
-        const pay = this.state.amount;
+        const pay = Number(this.state.amount);
         const passwd = await popPswBox();
         if (!passwd) return;
         const t = new Date();
@@ -149,6 +149,9 @@ export class Transfer extends Widget {
         }
     }
 
+    /**
+     * 扫描二维码
+     */
     public doScanClick() {
         if (this.props.tx) return;
         doScanQrCode((res) => {
@@ -157,6 +160,7 @@ export class Transfer extends Widget {
             this.paint();
         });
     }
+
 }
 
 // gasPrice变化

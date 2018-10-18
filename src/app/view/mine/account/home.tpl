@@ -1,7 +1,7 @@
 <div class="new-page" ev-back-click="backPrePage" on-tap="pageClick">
     <app-components1-topBar-topBar>{title:{{it1.cfgData.topBarTitle}},background:"#fff"}</app-components1-topBar-topBar>
     <div w-class="body">
-        <div w-class="head-container">
+        <div w-class="head-container" class="pi-input">
             <img w-class="avatar" src="{{it1.avatar}}" on-tap="uploadAvatar"/>
             {{if it1.userInput}}
                 <input id="walletNameInput" w-class="edit-input" value="{{it1.nickName}}" on-blur="walletNameInputBlur" on-focus="walletNameInputFocus" maxlength="10" autofocus="autofocus" placeholder="{{it1.cfgData.defaultName}}"/>

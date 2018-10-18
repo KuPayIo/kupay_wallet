@@ -5,7 +5,7 @@
  * placeHolder?: 提示文字
  * disabled?: 是否禁用
  * clearable?: 是否可清空
- * itype?: 输入框类型 text number password
+ * itype?: 输入框类型 text number password integer
  * style?: 样式
  * autofocus?: 是否自动获取焦点
  * maxLength?: 输入最大长度，仅对text和password类型输入有效
@@ -55,7 +55,6 @@ export class Input extends Widget {
         if (oldProps) {
             this.changeInputValue();
         }
-       
     }
 
     public change(event:any) {
@@ -69,6 +68,15 @@ export class Input extends Widget {
             popNew('app-components1-message-message',{ content:this.state.cfgData.disAvailable });
             currentValue = currentValue.slice(0,currentValue.length - 1); 
         }
+        // 数字输入时检验输入格式
+        if (this.props.itype === 'number' && !this.numberJudge(currentValue) && currentValue.length > 0) {
+            currentValue = currentValue.slice(0,currentValue.length - 1); 
+        }
+        // 整数输入时检验输入格式
+        if (this.props.itype === 'integer' && !this.integerJudge(currentValue) && currentValue.length > 0) {
+            currentValue = currentValue.slice(0,currentValue.length - 1); 
+        }
+
         this.state.currentValue = currentValue;
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
         
@@ -110,5 +118,24 @@ export class Input extends Widget {
         const reg = /^[0-9a-zA-Z!"#$%&'()*+,\-./:;<=>?@\[\]^_`{\|}~]+$/;
         
         return reg.test(psw);
+    }
+
+    /**
+     * 判断输入是否是数字
+     */
+    public numberJudge(num:string) {
+        const reg = /(^[1-9][0-9]*\.|^0\.)[0-9]*$/;
+        const reg1 = /^([1-9][0-9]*|0)$/;
+
+        return reg.test(num) || reg1.test(num);
+    }
+
+    /**
+     * 判断是否是整数
+     */
+    public integerJudge(num:string) {
+        const reg = /^[1-9][0-9]*$/;
+        
+        return reg.test(num);
     }
 }
