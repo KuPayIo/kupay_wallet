@@ -5,8 +5,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { regPhone } from '../../../net/pull';
-import { find, updateStore } from '../../../store/store';
-import { getLanguage } from '../../../utils/tools';
+import { updateStore } from '../../../store/store';
+import { getLanguage, getUserInfo } from '../../../utils/tools';
 // =================================================导出
 export class BindPhone extends Widget {
     public ok: () => void;
@@ -40,7 +40,7 @@ export class BindPhone extends Widget {
         }
         const data = await regPhone(this.state.phone, this.state.code.join(''));
         if (data && data.result === 1) {
-            const userinfo = find('userInfo');
+            const userinfo = getUserInfo();
             userinfo.bphone = this.state.phone;
             userinfo.fromServer = false;
             updateStore('userInfo',userinfo);

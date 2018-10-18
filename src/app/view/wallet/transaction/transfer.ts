@@ -10,7 +10,7 @@ import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popPswBox } from '../../../utils/tools';
+import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -102,6 +102,11 @@ export class Transfer extends Widget {
 
         if (this.state.balance < this.state.amount + this.state.minerFee) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
+
+            return;
+        }
+        if (!judgeAddressAvailable(this.props.currencyName,this.state.toAddr)) {
+            popNew('app-components1-message-message', {  content: this.state.cfgData.tips[3] });
 
             return;
         }

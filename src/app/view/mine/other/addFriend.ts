@@ -4,8 +4,7 @@
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { find } from '../../../store/store';
-import { copyToClipboard, getFirstEthAddr, getLanguage } from '../../../utils/tools';
+import { copyToClipboard, getFirstEthAddr, getLanguage, getUserInfo } from '../../../utils/tools';
 
 export class AddFriend extends Widget {
     public ok:() => void;
@@ -23,7 +22,7 @@ export class AddFriend extends Widget {
     }
 
     public initData() {
-        const user = find('userInfo');
+        const user = getUserInfo();
         const addr = getFirstEthAddr(); 
         if (user) {
             this.state.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';

@@ -26,6 +26,11 @@
     width: 180px;
     border-radius: 50%;
 }
+.userName{
+    margin: 30px 0 10px;
+    font-size: 30px;
+    color: #222222;
+}
 .bottom{
     background: #fff;
     border-radius: 12px 12px 0 0;
@@ -50,4 +55,10 @@
     line-height: 35px;
     display: inline-block;
     margin-left: 10px;
+}
+.describe{
+    font-size: 72px;
+    color: #222222;
+    font-weight: 600;
+    margin: 50px 0 90px;
 }

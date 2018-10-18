@@ -26,18 +26,21 @@ export class AccountHome extends Widget {
         const cfg = getLanguage(this);
 
         this.state = {
-            avatar:userInfo.avatar,
-            nickName:userInfo.nickName,
+            avatar:'',
+            nickName:'',
             isUpdatingWalletName: false,
             phone:cfg.bindPhone,
             backup,
             cfgData:cfg,
             userInput:false
         };
-        const bphone = find('userInfo').bphone;
-        if (bphone) {
-            const str = String(bphone).substr(3,6);
-            this.state.phone = bphone.replace(str,'******');
+        if (userInfo) {
+            if (userInfo.bphone) {
+                const str = String(userInfo.bphone).substr(3,6);
+                this.state.phone = userInfo.bphone.replace(str,'******');
+            }
+            this.state.nickName = userInfo.nickName ? userInfo.nickName :cfg.defaultName;
+            this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
         }
     }
     public backPrePage() {
@@ -60,7 +63,7 @@ export class AccountHome extends Widget {
             gwlt.nickName = v;
             wallet.gwlt = gwlt.toJSON();
             updateStore('curWallet', wallet);
-            const userInfo = find('userInfo');
+            const userInfo = getUserInfo();
             userInfo.nickName = v;
             userInfo.fromServer = false;
             updateStore('userInfo',userInfo);

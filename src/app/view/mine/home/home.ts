@@ -59,8 +59,8 @@ export class Home extends Widget {
     public initData() {
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.state.userName = userInfo.nickName;
-            this.state.avatar = userInfo.avatar;
+            this.state.userName = userInfo.nickName ? userInfo.nickName :this.state.defaultUserName;
+            this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
         }
 
         const wallet = find('curWallet');
@@ -68,9 +68,9 @@ export class Home extends Widget {
             this.state.hasWallet = true;
             this.state.address = getFirstEthAddr();
             this.state.hasBackupMnemonic = JSON.parse(wallet.gwlt).mnemonicBackup;            
-        }else{
+        } else {
             this.state.hasWallet = false;
-            this.state.address = "";
+            this.state.address = '';
         }
         this.paint();
     }

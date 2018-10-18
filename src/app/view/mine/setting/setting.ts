@@ -42,11 +42,7 @@ export class Setting extends Widget {
                 { title: cfg.itemTitle[1],list: cfg.currencyUnit,selected:currencyUnit },
                 { title: cfg.itemTitle[2],list: cfg.changeColor,selected:color ? color.selected :0 }
             ],
-            userHead:'../../../res/image/default_avater_big.png',   // 用户头像
-            userName:cfg.defaultName,  // 用户名称
-            userInput:false,  // 是否显示输入框
             wallet:null,
-            phone:cfg.bindPhone,
             cfgData:cfg
 
         };
@@ -54,17 +50,6 @@ export class Setting extends Widget {
     }
 
     public initData() {
-        const userInfo = find('userInfo');
-        if (userInfo) {
-            this.state.userHead = userInfo.avatar ? userInfo.avatar :'../../../res/image/default_avater_big.png';
-            this.state.userName = userInfo.nickName ? userInfo.nickName :this.state.cfgData.defaultName;
-            const bphone = userInfo.bphone;
-            if (bphone) {
-                const str = String(bphone).substr(3,6);
-                this.state.phone = bphone.replace(str,'******');
-            }
-            
-        }
         const wallet = find('curWallet');
         if (wallet) {
             this.state.wallet = wallet;
