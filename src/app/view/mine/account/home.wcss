@@ -7,6 +7,7 @@
     align-items: center;
     padding: 0 30px;
     background-color: #fff;
+    border-radius: 12px;
 }
 .avatar{
     height: 120px;
@@ -17,6 +18,7 @@
     flex: 1 0 0;
     margin: 0 20px 0 30px;
     height: 60px;
+    line-height: 60px;
     appearance:none;
     border: none;
     outline: 0;
@@ -44,7 +46,8 @@
 .item-title{
     font-size: 28px;
     color: #222;
-    padding: 0 20px;
+    margin-left: 20px;
+    font-weight: 600;
 }
 .tag{
     font-size: 28px;
@@ -52,4 +55,7 @@
     margin-right: 20px;
     flex: 1 0 0;
     text-align: right;
+}
+.rightArrow{
+    margin-right: 20px;
 }

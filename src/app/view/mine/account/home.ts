@@ -23,14 +23,22 @@ export class AccountHome extends Widget {
         const wallet = find('curWallet');
         const gwlt = wallet ? JSON.parse(wallet.gwlt) : null;
         const backup = gwlt.mnemonicBackup;
+        const cfg = getLanguage(this);
 
         this.state = {
             avatar:userInfo.avatar,
             nickName:userInfo.nickName,
             isUpdatingWalletName: false,
+            phone:cfg.bindPhone,
             backup,
-            cfgData:getLanguage(this)
+            cfgData:cfg,
+            userInput:false
         };
+        const bphone = find('userInfo').bphone;
+        if (bphone) {
+            const str = String(bphone).substr(3,6);
+            this.state.phone = bphone.replace(str,'******');
+        }
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -128,6 +136,27 @@ export class AccountHome extends Widget {
             });
         });
 
-     
+    }
+
+    /**
+     * 绑定手机号
+     */
+    public changePhone() {
+        popNew('app-view-mine-setting-phone');
+    }
+
+    /**
+     * 修改密码
+     */
+    public changePsw() {
+        popNew('app-view-mine-setting-changePsw');
+    }
+
+    /**
+     * 点击可输入用户名
+     */
+    public changeInput() {
+        this.state.userInput = true;
+        this.paint();
     }
 }
