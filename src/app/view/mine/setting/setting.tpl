@@ -1,7 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage">
     <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="content">
-
         <div style="margin: 30px 0;">
             <div w-class="mode">
                 {{for ind,val of it1.itemList}}
