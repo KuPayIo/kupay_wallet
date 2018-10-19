@@ -26,7 +26,7 @@ export class OtherRecord extends Widget {
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName,1);
         }
-        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
+        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
         this.state = {
             recordList:this.parseRecordList(accountDetail.list),
             nextStart:accountDetail.start,
@@ -36,7 +36,8 @@ export class OtherRecord extends Widget {
         };
     }
     public updateRecordList() {
-        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
+        if (!this.state) return;
+        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
         console.log(accountDetail);
         const list = accountDetail.list;
         this.state.nextStart = accountDetail.start;

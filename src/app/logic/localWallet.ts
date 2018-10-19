@@ -98,7 +98,7 @@ export const createWalletRandom = (hash:string,option) => {
     const addrs: Addr[] = find('addrs') || [];
     addrs.push(...gwlt.addrs);
     updateStore('addrs', addrs);
-    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
+    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar});
 
 };
 
@@ -130,7 +130,7 @@ export const createWalletByImage = async (hash:string,option:any) => {
     updateStore('salt', salt);
     addrs.push(...gwlt.addrs);
     updateStore('addrs', addrs);
-    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
+    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar});
 
 };
 
@@ -201,8 +201,7 @@ export const importWalletByMnemonic = (hash:string,option) => {
     updateStore('salt', salt);
     addrs.push(...gwlt.addrs);
     updateStore('addrs', addrs);
-    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar,fromServer:false });
-
+    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar});
     return true;
 };
 

@@ -4,6 +4,7 @@
 // ================================ 导入
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { openNewActivity } from '../../../logic/native';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,8 +21,8 @@ export class PlayHome extends Widget {
         this.ok && this.ok();
     }
 
-    public doTap() {
-        window.open('http://192.168.33.105:8088/dst/client/boot/index.html?user=111');
+    public enterGames1Click() {
+        openNewActivity('http://39.104.203.151:8080/client/boot/index.html');
     }
 
     public getCode(event:any) {

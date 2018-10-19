@@ -142,8 +142,8 @@ export const initLocalStorageStore = () => {
     });
 
      // 本地token
-    register('token',(token:string) => {
-        setLocalStorage('token',token);
+    register('tokenMap',(tokenMap:Map<string,string>) => {
+        setLocalStorage('tokenMap',tokenMap);
     });
 
     // 缓存gasPrice

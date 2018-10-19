@@ -14,7 +14,7 @@ export const PAGELIMIT = 10;
 export const defaultEthToken = [];
 
 // 默认显示货币列表
-export const defalutShowCurrencys = ['ETH', 'BTC'];
+export const defalutShowCurrencys = ['ETH', 'BTC','BNB','VEN','OMG','ZRX'];
 
 //
 export const strength = 128;

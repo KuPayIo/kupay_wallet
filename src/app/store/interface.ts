@@ -98,7 +98,7 @@ export interface Store {
     loginState: LoginState;// 登录状态
     conState:ConState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
-    token:string;// 自动登录token
+    tokenMap:Map<string,string>;// 自动登录token
     // 本地钱包
     walletList: Wallet[];// 钱包数据
     curWallet: Wallet;// 当前钱包
@@ -151,7 +151,6 @@ export interface currency2USDT {
  * 云端用户基础数据
  */
 export interface UserInfo {
-    fromServer:boolean;// 数据来源
     nickName:string;// 昵称
     avatar:string;// 头像
     bphone:string;// 绑定手机号

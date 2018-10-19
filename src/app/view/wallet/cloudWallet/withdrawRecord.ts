@@ -38,6 +38,7 @@ export class WithdrawRecord extends Widget {
         this.state.recordList = this.parseRecordList(withdrawLogs.list);
     }
     public updateRecordList() {
+        if (!this.state) return;
         const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
         console.log(withdrawLogs);
         const list = withdrawLogs.list;

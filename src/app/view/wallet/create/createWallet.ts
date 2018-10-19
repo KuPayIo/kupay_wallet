@@ -2,11 +2,10 @@
  * create wallet
  */
 import { popNew } from '../../../../pi/ui/root';
-import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { uploadFile, openAndGetRandom } from '../../../net/pull';
+import { uploadFile, getRandom } from '../../../net/pull';
 import { CreateWalletType } from '../../../store/interface';
 import { getBorn, updateStore, register } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
@@ -14,6 +13,7 @@ import { getFirstEthAddr, getLanguage, popNewMessage, getStaticLanguage } from '
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
 import { localUrlPre } from '../../../utils/constants';
+import { resize } from '../../../../pi/widget/resize/resize';
 interface Props {
     itype:CreateWalletType;
     imageBase64?:string;// 图片base64
@@ -73,25 +73,25 @@ export class CreateWallet extends Widget {
         this.paint();
     }
     public selectImageClick() {
-        // selectImage((width, height, base64) => {
-        //     resize({ url:base64, width: 140, ratio: 0.3, type: 'jpeg' },(res) => {
-        //         console.log('resize---------',res);
-        //         this.state.chooseImage = true;
-        //         // tslint:disable-next-line:max-line-length
-        //         this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
-        //         this.state.avatar = res.base64;
-        //         this.paint();
-        //     });
-        // });
-
-
-        selectImage((path) => {
-            this.state.chooseImage = true;
-            // this.state.avatarHtml = `<div style="background-image: url(${localUrlPre}${path});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
-            this.state.avatarHtml = `<img src='${localUrlPre}${path}' style='width: 100%;height: 100%;position: absolute;top: 0;'/>`
-            this.state.avatar = `${localUrlPre}${path}`;
-            this.paint();
+        selectImage((width, height, base64) => {
+            resize({ url:base64, width: 140, ratio: 0.3, type: 'jpeg' },(res) => {
+                console.log('resize---------',res);
+                this.state.chooseImage = true;
+                // tslint:disable-next-line:max-line-length
+                this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+                this.state.avatar = res.base64;
+                this.paint();
+            });
         });
+
+
+        // selectImage((path) => {
+        //     this.state.chooseImage = true;
+        //     // this.state.avatarHtml = `<div style="background-image: url(${localUrlPre}${path});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+        //     this.state.avatarHtml = `<img src='${localUrlPre}${path}' style='width: 100%;height: 100%;position: absolute;top: 0;'/>`
+        //     this.state.avatar = `${localUrlPre}${path}`;
+        //     this.paint();
+        // });
 
     }
     public randomPlayName() {
@@ -158,7 +158,7 @@ export class CreateWallet extends Widget {
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
         updateStore('flag',{ created:true,mnemonic,fragments });
-        openAndGetRandom();
+        getRandom();
         
         const w: any = forelet.getWidget(WIDGET_NAME);
         if (w) {

@@ -97,7 +97,7 @@ export const initStore = () => {
         store.inviteRedBagRec = inviteRedBagRecMap.get(firstEthAddr);
     }
   
-    store.token = findByLoc('token');
+    store.tokenMap = new Map<string,string>(findByLoc('tokenMap'));
     // 从localStorage中取lockScreen
     store.lockScreen = findByLoc('lockScreen') || {};
    // 从localStorage中取inviteRedBagRecMap
@@ -125,7 +125,7 @@ type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walle
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord' | 'userInfo' | 'totalLogs' |
-'token' | 'flag' | 'verPhone' | 'conState';
+'tokenMap' | 'flag' | 'verPhone' | 'conState';
 
 type MapName = 'hashMap';
 
@@ -135,7 +135,7 @@ type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
 // ============================================ 本地
 type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 'lockScreen' | 'sHisRecMap' | 'cHisRecMap' |
  'inviteRedBagRecMap' | 'shapeShiftTxsMap'  | 'lastGetSmsCodeTime' | 'nonceMap'| 'languageSet' | 'changeColor' |
-'realUserMap' | 'token' | 'gasPrice' | 'btcMinerFee' | 'gasLimitMap' | 'USD2CNYRate' | 'currency2USDTMap' | 'currencyUnit';
+'realUserMap' | 'tokenMap' | 'gasPrice' | 'btcMinerFee' | 'gasLimitMap' | 'USD2CNYRate' | 'currency2USDTMap' | 'currencyUnit';
 
 export const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
@@ -162,7 +162,7 @@ const store = <Store>{
     userInfo:null,// 用户头像base64
     loginState: LoginState.init,// 登录状态
     conState:ConState.init,// 连接状态
-    token:'',// 自动登录token
+    tokenMap:new Map<string,string>(),// 自动登录token
     // 本地钱包
     walletList: <Wallet[]>[],// 钱包数据
     curWallet: <Wallet>null,// 当前钱包
@@ -227,7 +227,6 @@ export const logoutInit = () => {
     updateStore('sHisRec',null);
     updateStore('cHisRec',null);
     updateStore('inviteRedBagRec',null);
-    updateStore('token','');
     updateStore('cloudBalance',new Map<CurrencyType, number>());
     updateStore('accountDetail',new Map<CurrencyType, {list:AccountDetail[],start:number,canLoadMore:boolean}>());
     updateStore('miningTotal',<MiningTotal>null);
@@ -277,5 +276,4 @@ export const loginInit = () => {
         const inviteRedBagRec = inviteRedBagRecMap.get(firstEthAddr);
         updateStore('inviteRedBagRec',inviteRedBagRec);
     }
-    updateStore('token',findByLoc('token'));
 };

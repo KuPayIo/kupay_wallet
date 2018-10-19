@@ -7,7 +7,7 @@ import { getShapeShiftCoins, getTransactionsByAddr, estimateGasERC20 } from '../
 import { Addr, CurrencyRecord, TransRecordLocal, TxStatus, TxType } from '../store/interface';
 import { find, getBorn, updateStore, register } from '../store/store';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
-import { getAddrsAll, initAddr, getConfirmBlockNumber, formatBalance, formatBalanceValue } from '../utils/tools';
+import { getAddrsAll, initAddr, getConfirmBlockNumber, formatBalance, formatBalanceValue, parseTransferExtraInfo } from '../utils/tools';
 import { ethTokenDivideDecimals, sat2Btc, wei2Eth, smallUnit2LargeUnit } from '../utils/unitTools';
 import { fetchTransactionList, fetchLocalTxByHash, getMnemonicByHash } from '../utils/walletTools';
 import { BigNumber } from '../res/js/bignumber';
@@ -366,7 +366,7 @@ export class DataCenter {
             pay,
             fee,
             time: res3.timestamp * 1000,
-            info: res2.input,
+            info: parseTransferExtraInfo(res2.input),
             currencyName: 'ETH',
             status,
             confirmedBlockNumber,
@@ -406,7 +406,7 @@ export class DataCenter {
             pay,
             fee,
             time: res3.timestamp * 1000,
-            info: '',
+            info: '无',
             currencyName,
             status,
             confirmedBlockNumber,
@@ -500,7 +500,7 @@ export class DataCenter {
             status,
             confirmedBlockNumber:tx.confirmations,
             needConfirmedBlockNumber,
-            info:"",
+            info:"无",
             currencyName: 'BTC',
             fee: tx.fees,
             nonce:-1,

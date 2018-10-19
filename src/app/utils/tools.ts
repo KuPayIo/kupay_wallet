@@ -1115,7 +1115,6 @@ export const getUserInfo = () => {
     const userInfo = find('userInfo');
     const nickName = userInfo && userInfo.nickName;
     const bphone = userInfo && userInfo.bphone;
-    const fromServer = userInfo && userInfo.fromServer;
     let avatar = userInfo && userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
@@ -1124,8 +1123,7 @@ export const getUserInfo = () => {
     return {
         nickName,
         avatar,
-        bphone,
-        fromServer
+        bphone
     };
 };
 
@@ -1346,3 +1344,10 @@ export const judgeAddressAvailable = (ctype:string,addr:string) => {
         return /(^0x)[0-9a-fA-f]{40}$/.test(addr);
     }
 };
+
+/**
+ * 解析交易的额外信息
+ */
+export const parseTransferExtraInfo = (input:string)=>{
+    return input == '0x' ? '无' : input;
+}

@@ -39,6 +39,7 @@ export class RechargeRecord extends Widget {
         this.state.recordList = this.parseRecordList(rechargeLogs.list);
     }
     public updateRecordList() {
+        if (!this.state) return;
         const rechargeLogs = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
         console.log(rechargeLogs);
         const list = rechargeLogs.list;

@@ -1,7 +1,7 @@
 /**
  * 主动向后端通讯
  */
-import { closeCon, open, request, setUrl, setDoClose } from './con_mgr';
+import { open, request, setUrl } from './con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
 import { sign } from '../core/genmnemonic';
@@ -12,7 +12,7 @@ import { find, getBorn, updateStore } from '../store/store';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage, checkCreateAccount } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, unicodeArray2Str, popNewMessage, checkCreateAccount, getUserInfo } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -33,7 +33,7 @@ export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/o
 export const shareDownload = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/download.html`;
 
 // 上传图片url
-export const uploadFileUrl = `http://${conIp}/service/upload`;
+export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;
 
 // 上传的文件url前缀
 export const uploadFileUrlPrefix = `http://${conIp}/service/get_file?sid=`;
@@ -95,7 +95,9 @@ export const applyAutoLogin = () => {
     requestAsync(msg).then(res => {
         const deviceId = fetchDeviceId();
         const decryptToken = encrypt(res.token,deviceId);
-        updateStore('token',decryptToken);
+        const tokenMap = getBorn('tokenMap');
+        tokenMap.set(getFirstEthAddr(),decryptToken);
+        updateStore('tokenMap',tokenMap);
     });
 };
 
@@ -104,7 +106,7 @@ export const applyAutoLogin = () => {
  */
 export const autoLogin = () => {
     const deviceId = fetchDeviceId();
-    const token = decrypt(find('token'),deviceId);
+    const token = decrypt(getBorn('tokenMap').get(getFirstEthAddr()),deviceId);
     const msg = { 
         type: 'wallet/user@auto_login', 
         param: { 
@@ -143,19 +145,11 @@ export const defaultLogin = async (hash:string) => {
     }
 };
 
-const defaultConUser = '0x00000000000000000000000000000000000000000';
+// const defaultConUser = '0x00000000000000000000000000000000000000000';
 /**
  * 开启连接并获取验证随机数
  */
 export const openAndGetRandom = async () => {
-    const wallet = find('curWallet');
-    if (!wallet) {
-        updateStore('conUser', defaultConUser);
-    }else{
-        const gwlt = JSON.parse(wallet.gwlt);
-        updateStore('conUser', wallet.walletId);
-        updateStore('conUserPublicKey', gwlt.publicKey);
-    }
     doOpen();
 };
 
@@ -165,10 +159,7 @@ export const openAndGetRandom = async () => {
 const conSuccess = () =>{
     const conState = find('conState');
     console.log('ws con success',conState);
-    const oldUser = find('conUser');
-    if (oldUser !== defaultConUser) {
-        getRandom();
-    }
+    getRandom();
 }
 
 /**
@@ -194,15 +185,13 @@ const conClose = () =>{
 const conReOpen = ()=>{
     const conState = find('conState');
     console.log('ws con reOpen',conState);
-    getRandom();
+    // getRandom();
 }
 /**
  * 打开连接
  */
 const doOpen =  () => {
-    closeCon();
     setUrl(wsUrl);
-    setDoClose(false);
     open(conSuccess,conError,conClose,conReOpen);
 };
 
@@ -210,7 +199,11 @@ const doOpen =  () => {
  * 获取随机数
  */
 export const getRandom = async (cmd?:number) => {
-
+    const wallet = find('curWallet');
+    if (!wallet) return;
+    const gwlt = JSON.parse(wallet.gwlt);
+    updateStore('conUser', wallet.walletId);
+    updateStore('conUserPublicKey', gwlt.publicKey);
     const client = "android 20";
 
     const param:any = {
@@ -229,26 +222,14 @@ export const getRandom = async (cmd?:number) => {
         const resp = await requestAsync(msg);
         updateStore('conRandom', resp.rand);
         updateStore('conUid', resp.uid);
-        // 余额
-        getCloudBalance();
-        // eth gasPrice
-        fetchGasPrices();
-        // btc fees
-        fetchBtcFees();
-        // 获取真实用户
-        fetchRealUser();
-        // 用户基础信息
-        getUserInfoFromServer([resp.uid]);
-       
-        const hash = getBorn('hashMap').get(getFirstEthAddr());
-        if (hash) {
-            defaultLogin(hash);
-        }
+        afterGetRandomAction();
     } catch (resp) {
         console.log('getRandom----------',resp);
         if (resp.type === 1014) {
-            popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',
-            { title:'检测到在其它设备有登录',content:'清除其它设备账户信息' },(deleteAccount:boolean) => {
+            popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
+                title:'检测到在其它设备有登录',
+                content:'清除其它设备账户信息' 
+            },(deleteAccount:boolean) => {
                 if (deleteAccount) {
                     getRandom(CMD.FORCELOGOUTDEL);
                 } else {
@@ -263,8 +244,28 @@ export const getRandom = async (cmd?:number) => {
         return;
     }
     checkCreateAccount();
-    
 };
+
+/**
+ * 获取随机数之后的动作
+ */
+const afterGetRandomAction = ()=>{
+    // 余额
+    getCloudBalance();
+    // eth gasPrice
+    fetchGasPrices();
+    // btc fees
+    fetchBtcFees();
+    // 获取真实用户
+    fetchRealUser();
+    // 用户基础信息
+    getUserInfoFromServer(find('conUid'));
+
+    const hash = getBorn('hashMap').get(getFirstEthAddr());
+    if (hash) {
+        defaultLogin(hash);
+    }
+}
 
 /**
  * 获取所有的货币余额
@@ -659,6 +660,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
             console.log(userInfo);
             updateStore('userInfo',userInfo);
         }
+        
     } catch (err) {
         console.log(err);
         showError(err && (err.result || err.type));

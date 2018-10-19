@@ -49,6 +49,7 @@ export class TotalRecord extends Widget {
      * 更新交易列表
      */
     public updateRecordList() {
+        if (!this.state) return;
         const data1 = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
         this.state.rechargeNext = data1.start;
         this.state.rechargeList = this.parseRechargeList(data1.list);
