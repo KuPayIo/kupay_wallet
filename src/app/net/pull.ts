@@ -177,6 +177,7 @@ const conError = (err) =>{
 const conClose = () =>{
     const conState = find('conState');
     console.log('ws con close',conState);
+    popNewMessage('连接已断开')
 }
 
 /**
