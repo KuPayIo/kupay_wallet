@@ -44,7 +44,6 @@ export class Input extends Widget {
         if (props.input) {
             this.state.currentValue = props.input;
         }
-        console.log('000000000',props);
     }
 
     public change(event:any) {

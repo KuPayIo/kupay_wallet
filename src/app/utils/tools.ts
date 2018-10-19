@@ -2,16 +2,17 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
+import { store } from '../../pi/lang/mod';
+import { ConState, setConState } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
-import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, CurrencyUnit, Wallet } from '../store/interface';
-import { find, getBorn, logoutInit, updateStore, initStore, loginInit } from '../store/store';
+// tslint:disable-next-line:max-line-length
+import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, Wallet } from '../store/interface';
+import { find, getBorn, initStore, loginInit, logoutInit, updateStore } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
-import { store } from '../../pi/lang/mod';
-import { setConState, ConState } from '../../pi/net/ui/con_mgr';
 
 export const depCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -298,7 +299,7 @@ export const formatBalance = (banlance: number) => {
  * 余额格式化
  */
 export const formatBalanceValue = (value: number) => {
-    if(value === 0) return '0.00';
+    if (value === 0) return '0.00';
     return value.toFixed(2);
 };
 
@@ -761,7 +762,6 @@ export const fetchBtcMinerFee = (minerFeeLevel:MinerFeeLevel) => {
     return find('btcMinerFee')[minerFeeLevel];
 };
 
-
 /**
  * 获取总资产
  */
@@ -795,20 +795,20 @@ export const fetchCloudTotalAssets = () => {
 /**
  * 获取某个币种对应的货币价值
  */
-export const fetchBalanceValueOfCoin =(currencyName:string,balance:number)=>{
+export const fetchBalanceValueOfCoin = (currencyName:string,balance:number) => {
     let balanceValue = 0;
     const USD2CNYRate = find('USD2CNYRate');
     const currency2USDTMap = getBorn('currency2USDTMap');
-    const currency2USDT = currency2USDTMap.get(currencyName) || {open:0,close:0};
+    const currency2USDT = currency2USDTMap.get(currencyName) || { open:0,close:0 };
     const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
 
-    if(currencyUnit === CurrencyUnit.CNY){
+    if (currencyUnit === CurrencyUnit.CNY) {
         balanceValue = balance * currency2USDT.close * USD2CNYRate;
-    }else if(currencyUnit === CurrencyUnit.USD){
+    } else if (currencyUnit === CurrencyUnit.USD) {
         balanceValue = balance * currency2USDT.close;
     }
     return balanceValue;
-}
+};
 
 /**
  * 获取本地钱包资产列表
@@ -884,8 +884,6 @@ export const fetchCloudWalletAssetList = () => {
 
     return assetList;
 };
-
-
 
 /**
  * 没有创建钱包时
@@ -1116,6 +1114,8 @@ export const base64ToFile = (base64:string) => {
 export const getUserInfo = () => {
     const userInfo = find('userInfo');
     const nickName = userInfo && userInfo.nickName;
+    const bphone = userInfo && userInfo.bphone;
+    const fromServer = userInfo && userInfo.fromServer;
     let avatar = userInfo && userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
@@ -1123,7 +1123,9 @@ export const getUserInfo = () => {
 
     return {
         nickName,
-        avatar
+        avatar,
+        bphone,
+        fromServer
     };
 };
 
@@ -1307,27 +1309,40 @@ export const fetchMinerFeeList = (currencyName) => {
         minerFeeList.push(obj);
     } 
     return minerFeeList;
-}
+};
 
 /**
  * 获取货币单位符号 $ ￥
  */
-export const getCurrencyUnitSymbol = ()=>{
+export const getCurrencyUnitSymbol = () => {
     const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
-    if(currencyUnit === CurrencyUnit.CNY){
+    if (currencyUnit === CurrencyUnit.CNY) {
         return '￥';
-    }else if(currencyUnit === CurrencyUnit.USD){
+    } else if (currencyUnit === CurrencyUnit.USD) {
         return '$';
     }
-}
+};
 
 /**
  * 检查是否是创建账户,通知弹窗备份
  */
-export const checkCreateAccount = () =>{
+export const checkCreateAccount = () => {
     const flag = find('flag');
     // 第一次创建检查是否有登录后弹框提示备份
     if (flag.created) {
-        updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
+        updateStore('flag',{ promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments });
     }
-}
+};
+
+/**
+ * 判断地址是否合法
+ * @param ctype 货币名称
+ * @param str 地址
+ */
+export const judgeAddressAvailable = (ctype:string,addr:string) => {
+    if (ctype === 'BTC') {
+        return /^[0-9a-zA-Z]{26,34}$/.test(addr);
+    } else {
+        return /(^0x)[0-9a-fA-f]{40}$/.test(addr);
+    }
+};

@@ -3,5 +3,5 @@
     {{if it.describe && it.describe!=""}}
     <span w-class="itemDesc">{{it.describe}}</span>
     {{end}}
-    <img src="../../res/image/right_arrow2_gray.png" w-class="itemImg"/>
+    <img src="../../res/image/right_arrow_blue.png" w-class="itemImg"/>
 </div>

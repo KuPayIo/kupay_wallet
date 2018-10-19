@@ -137,7 +137,7 @@ export interface Store {
     shapeShiftTxsMap:Map<string,ShapeShiftTxs>;// shapeshift 交易记录Map
     lastGetSmsCodeTime:number;
     languageSet:LanguageSet;
-    currencyUnit:CurrencyUnit;//货币单位
+    currencyUnit:CurrencyUnit;// 货币单位
     changeColor:ChangeColor;
     USD2CNYRate:number;// 人民币美元汇率
     currency2USDTMap:Map<string,currency2USDT>;// 货币对比USDT的比率
@@ -155,6 +155,7 @@ export interface UserInfo {
     fromServer:boolean;// 数据来源
     nickName:string;// 昵称
     avatar:string;// 头像
+    bphone:string;// 绑定手机号
 }
 /**
  * localstorage wallet object

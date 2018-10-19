@@ -5,11 +5,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { setUserInfo } from '../../../net/pull';
-import { find, register, updateStore } from '../../../store/store';
-import { getLanguage, popPswBox, logoutAccountDel } from '../../../utils/tools';
-import { backupMnemonic } from '../../../utils/walletTools';
 import { CurrencyUnit } from '../../../store/interface';
+import { find, register, updateStore } from '../../../store/store';
+import { getLanguage, logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
+import { backupMnemonic } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -39,33 +38,18 @@ export class Setting extends Widget {
             numberOfErrors: 0,  // 锁屏密码输入错误次数
             errorTips: cfg.errorTips,
             itemList:[ 
-                { title: cfg.itemTitle[3],list: cfg.languageSet,selected:lan ? lan.selected :0 },
-                { title: cfg.itemTitle[4],list: cfg.currencyUnit,selected:currencyUnit },
-                { title: cfg.itemTitle[5],list: cfg.changeColor,selected:color ? color.selected :0 }
+                { title: cfg.itemTitle[0],list: cfg.languageSet,selected:lan ? lan.selected :0 },
+                { title: cfg.itemTitle[1],list: cfg.currencyUnit,selected:currencyUnit },
+                { title: cfg.itemTitle[2],list: cfg.changeColor,selected:color ? color.selected :0 }
             ],
-            userHead:'../../../res/image/default_avater_big.png',   // 用户头像
-            userName:cfg.defaultName,  // 用户名称
-            userInput:false,  // 是否显示输入框
             wallet:null,
-            phone:cfg.bindPhone,
-            cfgData:cfg,
+            cfgData:cfg
 
         };
         this.initData();
     }
 
     public initData() {
-        const userInfo = find('userInfo');
-        if (userInfo) {
-            this.state.userHead = userInfo.avatar ? userInfo.avatar :'../../../res/image/default_avater_big.png';
-            this.state.userName = userInfo.nickName ? userInfo.nickName :this.state.cfgData.defaultName;
-            const bphone = userInfo.bphone;
-            if (bphone) {
-                const str = String(bphone).substr(3,6);
-                this.state.phone = bphone.replace(str,'******');
-            }
-            
-        }
         const wallet = find('curWallet');
         if (wallet) {
             this.state.wallet = wallet;
@@ -127,13 +111,6 @@ export class Setting extends Widget {
     }
 
     /**
-     * 修改锁屏密码
-     */
-    public lockScreen() {
-        popNew('app-components1-lockScreenPage-lockScreenPage',{ firstFg:false });
-    }
-
-    /**
      * 关闭锁屏开关
      */
     public closeLockPsw() {
@@ -149,71 +126,33 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        if (ind === 0) {
-            popNew('app-view-mine-setting-phone');
-        } else if (ind === 1) {
-            popNew('app-view-mine-setting-changePsw');
-        }else {
-            const data = this.state.itemList[ind - 2];
-            console.log(data);
-            popNew('app-view-mine-setting-itemList',data,(index) => {
-                this.state.itemList[ind - 2].selected = index;
-                if (ind === 2) {
+        const data = this.state.itemList[ind];
+        console.log(data);
+        popNew('app-view-mine-setting-itemList',data,(index) => {
+            this.state.itemList[ind].selected = index;
+            if (ind === 0) {
                     // tslint:disable-next-line:max-line-length
-                    updateStore('languageSet',{ // 更新语言设置
-                        selected:index === 2 ? 0 :index,
-                        languageList:['simpleChinese','tranditionalChinese','English'] 
-                    }); 
-                }else if (ind === 3) {
-                    let currencyUnit;
-                    if(index === 0){
-                        currencyUnit = CurrencyUnit.CNY;
-                    }else{
-                        currencyUnit = CurrencyUnit.USD;
-                    }
-                    updateStore('currencyUnit',currencyUnit); 
-                } else if (ind === 4) {
-                    // tslint:disable-next-line:max-line-length
-                    updateStore('changeColor',{ // 更新涨跌颜色设置
-                        selected:index,
-                        colorList:['redUp','greenUp']
-                    }); 
+                updateStore('languageSet',{ // 更新语言设置
+                    selected:index === 2 ? 0 :index,
+                    languageList:['simpleChinese','tranditionalChinese','English'] 
+                }); 
+            } else if (ind === 1) {
+                let currencyUnit;
+                if (index === 0) {
+                    currencyUnit = CurrencyUnit.CNY;
+                } else {
+                    currencyUnit = CurrencyUnit.USD;
                 }
-                this.paint();
-            });
-        }
-    }
-
-    /**
-     * 点击可输入用户名
-     */
-    public changeInput() {
-        if (!this.judgeWallet()) {
-            return;
-        }
-        this.state.userInput = true;
-        this.paint();
-    }
-
-    /**
-     * 监听用户名修改
-     */
-    public userNameChange(e:any) {
-        if (e.value !== this.state.userName) {
-            this.state.userName = e.value;
-        }
-    }
-
-    /**
-     * 取消聚焦后更新用户名
-     */
-    public userNameConfirm() {
-        const userInfo = find('userInfo');
-        if (userInfo.nickName !== this.state.userName && this.state.userName !== '') {
-            userInfo.nickName = this.state.userName;
-            updateStore('userInfo',userInfo);
-            setUserInfo();
-        }
+                updateStore('currencyUnit',currencyUnit); // 更新货币单位
+            } else if (ind === 2) {
+                    // tslint:disable-next-line:max-line-length
+                updateStore('changeColor',{ // 更新涨跌颜色设置
+                    selected:index,
+                    colorList:['redUp','greenUp']
+                }); 
+            }
+            this.paint();
+        });
     }
 
     /**
@@ -230,7 +169,7 @@ export class Setting extends Widget {
     }
 
     /**
-     * 注销账户
+     * 退出账户不删除信息
      */
     public logOut() {
         if (!this.judgeWallet()) {
@@ -241,9 +180,26 @@ export class Setting extends Widget {
             console.log('备份');
         },() => {
             popNew('app-components-modalBox-modalBox',{ title:'',content:this.state.cfgData.tips[2],style:'color:#F7931A;' },() => {
+                logoutAccount();
+                this.backPrePage();
+            });
+        });
+    }
+
+    /**
+     * 注销账户
+     */
+    public logOutDel() {
+        if (!this.judgeWallet()) {
+            return;
+        }
+        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox3,() => {
+            this.backUp();
+            console.log('备份');
+        },() => {
+            popNew('app-components-modalBox-modalBox',{ title:'',content:this.state.cfgData.tips[2],style:'color:#F7931A;' },() => {
                 logoutAccountDel();
                 this.backPrePage();
-                console.log('注销账户');
             });
         });
     }

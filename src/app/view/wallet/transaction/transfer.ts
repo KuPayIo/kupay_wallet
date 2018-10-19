@@ -10,7 +10,7 @@ import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popPswBox } from '../../../utils/tools';
+import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -47,7 +47,8 @@ export class Transfer extends Widget {
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false,
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            amountShow:''
         };
     }
 
@@ -83,7 +84,7 @@ export class Transfer extends Widget {
 
     // 转账金额变化
     public amountChange(e:any) {
-        this.state.amount = Number(e.value);
+        this.state.amount = e.value;
         this.paint();
     }
 
@@ -100,8 +101,13 @@ export class Transfer extends Widget {
             return;
         }
 
-        if (this.state.balance < this.state.amount + this.state.minerFee) {
+        if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
+
+            return;
+        }
+        if (!judgeAddressAvailable(this.props.currencyName,this.state.toAddr)) {
+            popNew('app-components1-message-message', {  content: this.state.cfgData.tips[3] });
 
             return;
         }
@@ -110,7 +116,7 @@ export class Transfer extends Widget {
         const currencyName = this.props.currencyName;
         const fromAddr = this.state.fromAddr;
         const toAddr = this.state.toAddr;
-        const pay = this.state.amount;
+        const pay = Number(this.state.amount);
         const passwd = await popPswBox();
         if (!passwd) return;
         const t = new Date();
@@ -144,6 +150,9 @@ export class Transfer extends Widget {
         }
     }
 
+    /**
+     * 扫描二维码
+     */
     public doScanClick() {
         if (this.props.tx) return;
         doScanQrCode((res) => {
@@ -152,6 +161,7 @@ export class Transfer extends Widget {
             this.paint();
         });
     }
+
 }
 
 // gasPrice变化

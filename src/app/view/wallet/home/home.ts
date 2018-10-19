@@ -5,9 +5,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { register, find } from '../../../store/store';
-import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getLanguage, getUserInfo, getCurrencyUnitSymbol } from '../../../utils/tools';
 import { getCloudBalance } from '../../../net/pull';
+import { find, register } from '../../../store/store';
+// tslint:disable-next-line:max-line-length
+import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, getUserInfo } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -68,22 +69,22 @@ export class Home extends Widget {
         popNew('app-view-mine-home-home');
     }
 
-    public refreshClick(){
-        if(this.state.refreshing){
+    public refreshClick() {
+        if (this.state.refreshing) {
             return;
         }
         this.state.refreshing = true;
         this.paint();
         let neededRefreshCount = 1;
-        getCloudBalance().then(()=>{
+        getCloudBalance().then(() => {
             neededRefreshCount--;
-            if(neededRefreshCount === 0){
+            if (neededRefreshCount === 0) {
                 this.state.refreshing = false;
                 this.paint();
             }
-        }).catch(()=>{
+        }).catch(() => {
             neededRefreshCount--;
-            if(neededRefreshCount === 0){
+            if (neededRefreshCount === 0) {
                 this.state.refreshing = false;
                 this.paint();
             }
@@ -103,9 +104,9 @@ export class Home extends Widget {
             addrs.forEach(v => {
                 if (list.indexOf(v.addr) >= 0 && wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
                     neededRefreshCount++;
-                    dataCenter.updateBalance(v.addr, v.currencyName).then(()=>{
+                    dataCenter.updateBalance(v.addr, v.currencyName).then(() => {
                         neededRefreshCount--;
-                        if(neededRefreshCount === 0){
+                        if (neededRefreshCount === 0) {
                             this.state.refreshing = false;
                             this.paint();
                         }
@@ -124,7 +125,6 @@ register('userInfo',() => {
     }
 });
 
-
 // 云端余额变化
 register('cloudBalance',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -140,7 +140,6 @@ register('languageSet', () => {
     }
 });
 
-
 // 货币涨跌幅度变化
 register('currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -149,7 +148,6 @@ register('currency2USDTMap',() => {
     }
 });
 
-
 // 货币单位变化
 register('currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -157,4 +155,3 @@ register('currencyUnit',() => {
         w.currencyUnitChange();
     }
 });
-

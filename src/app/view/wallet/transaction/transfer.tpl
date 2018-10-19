@@ -8,8 +8,8 @@
                 <div w-class="item">
                     <div w-class="inner-tip"><span>{{it.currencyName+ it1.cfgData.tags[0]}}</span><span w-class="balance">{{it1.cfgData.tags[1]}}&nbsp;{{it1.balance}}</span></div>
                     <div w-class="input-father" ev-input-change="amountChange">
-                        <app-components-input-input>{itype:"number",placeHolder:{{it1.cfgData.inputPlace[0]}},style:"padding:0;font-size:36px;",input:{{it1.amount}},disabled:{{it1.inputDisabled}}}</app-components-input-input>
                         <div w-class="balance-value">≈￥0.00</div>
+                        <widget w-tag="app-components1-input-input">{itype:"number",placeHolder:{{it1.cfgData.inputPlace[0]}},style:"padding:0;font-size:36px;background:transparent;",input:{{it1.amount}},disabled:{{it1.inputDisabled}} }</widget>
                     </div>
                 </div>
                 <div w-class="item" style="padding: 10px 0 0 20px;">

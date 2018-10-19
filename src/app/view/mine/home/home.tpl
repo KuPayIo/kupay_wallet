@@ -1,7 +1,7 @@
 <div class="new-page" w-class="mine {{it1.close?'mineHide':''}}">
     <div w-class="left {{it1.close?'leftHide':''}}">
         <div w-class="topBack">
-            <img src="{{it1.avatar ? it1.avatar : '../../../res/image/default_avater_big.png'}}" w-class="userHead" on-tap="login"/>
+            <img src={{it1.avatar}} w-class="userHead" on-tap="login"/>
             <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
             {{if it1.hasWallet}}
             <div w-class="addFriend">
@@ -14,7 +14,7 @@
                 <img src="../../../res/image1/42.png" w-class="copy"/>
             </div>
             {{else}}
-            <div w-class="userName">{{it1.cfgData.defaultUserName}}</div>            
+            <div w-class="userName">{{it1.cfgData.defaultName}}</div>            
             {{end}}
 
         </div>

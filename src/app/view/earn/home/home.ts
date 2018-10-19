@@ -9,7 +9,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getAward, getCloudBalance, getMining, getMiningRank } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
-import { formatBalance, getLanguage } from '../../../utils/tools';
+import { formatBalance, getLanguage, getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -56,7 +56,8 @@ export class PlayHome extends Widget {
             cfgData:getLanguage(this),
             scroll:false,
             scrollHeight:0,
-            refresh:false
+            refresh:false,
+            avatar:'../../../res/image1/default_avatar.png'
         };
         
         this.initDate();
@@ -208,6 +209,11 @@ export class PlayHome extends Widget {
         const rank = find('miningRank');
         if (rank) {
             this.state.rankNum = rank.myRank;
+        }
+
+        const userInfo = getUserInfo();
+        if (userInfo) {
+            this.state.avatar = userInfo.avatar ? userInfo.avatar :'../../../res/image1/default_avatar.png';
         }
         
         this.paint();

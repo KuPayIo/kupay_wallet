@@ -2,15 +2,21 @@
  * account home
  */
 import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
-import { find, updateStore } from '../../../store/store';
+import { find, register, updateStore } from '../../../store/store';
 import { walletNameAvailable } from '../../../utils/account';
 import { getLanguage, getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class AccountHome extends Widget {
     public ok:() => void;
@@ -23,14 +29,25 @@ export class AccountHome extends Widget {
         const wallet = find('curWallet');
         const gwlt = wallet ? JSON.parse(wallet.gwlt) : null;
         const backup = gwlt.mnemonicBackup;
+        const cfg = getLanguage(this);
 
         this.state = {
-            avatar:userInfo.avatar,
-            nickName:userInfo.nickName,
+            avatar:'',
+            nickName:'',
             isUpdatingWalletName: false,
+            phone:cfg.bindPhone,
             backup,
-            cfgData:getLanguage(this)
+            cfgData:cfg,
+            userInput:false
         };
+        if (userInfo) {
+            if (userInfo.bphone) {
+                const str = String(userInfo.bphone).substr(3,6);
+                this.state.phone = userInfo.bphone.replace(str,'******');
+            }
+            this.state.nickName = userInfo.nickName ? userInfo.nickName :cfg.defaultName;
+            this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
+        }
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -52,7 +69,7 @@ export class AccountHome extends Widget {
             gwlt.nickName = v;
             wallet.gwlt = gwlt.toJSON();
             updateStore('curWallet', wallet);
-            const userInfo = find('userInfo');
+            const userInfo = getUserInfo();
             userInfo.nickName = v;
             updateStore('userInfo',userInfo);
         }
@@ -127,6 +144,39 @@ export class AccountHome extends Widget {
             });
         });
 
-     
+    }
+
+    /**
+     * 绑定手机号
+     */
+    public changePhone() {
+        popNew('app-view-mine-setting-phone');
+    }
+
+    /**
+     * 修改密码
+     */
+    public changePsw() {
+        popNew('app-view-mine-setting-changePsw');
+    }
+
+    /**
+     * 点击可输入用户名
+     */
+    public changeInput() {
+        this.state.userInput = true;
+        this.paint();
     }
 }
+register('userInfo', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});
+register('curWallet', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});

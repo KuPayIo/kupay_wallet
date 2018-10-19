@@ -2,11 +2,11 @@
     {{if it1.scroll}}
     {{let opca = it1.scrollHeight/100}}
     <div style="background:rgba(255, 255, 255, {{opca}})" w-class="topBar1">
-        <img src="../../../res/image/contact.png" w-class="userHead" on-tap="showMine"/>
+        <img src={{it1.avatar}} w-class="userHead" on-tap="showMine"/>
     </div>
     {{else}}
     <div w-class="topBar">
-        <img src="../../../res/image1/default_avatar.png" w-class="userHead" on-tap="showMine"/>
+        <img src={{it1.avatar}} w-class="userHead" on-tap="showMine"/>
     </div>
     {{end}}
     <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>

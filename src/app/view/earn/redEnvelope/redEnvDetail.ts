@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCode, getUserList, queryDetailLog, sharePerUrl } from '../../../net/pull';
 import { RedEnvelopeType } from '../../../store/interface';
 import { find } from '../../../store/store';
-import { getLanguage } from '../../../utils/tools';
+import { getLanguage, getUserInfo } from '../../../utils/tools';
 
 interface Props {
     rtype:number;  // 0 等额红包  1 拼手气红包
@@ -50,10 +50,10 @@ export class RedEnvDetail extends Widget {
         this.state.redBagList = value[0];        
         this.state.message = value[1];
 
-        const user = find('userInfo');
+        const user = getUserInfo();
         if (!user) return;
         this.state.userName = user.nickName ? user.nickName :this.state.cfgData.defaultUserName;
-        this.state.userHead = user.avatar ? user.avatar :'../../res/image/default_avater_big.png';
+        this.state.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
 
         const redBagList = value[0];
         for (const i in redBagList) {
@@ -92,7 +92,13 @@ export class RedEnvDetail extends Widget {
         let url = '';
         let title = '';
         const lanSet = find('languageSet');
-        const lan = lanSet.languageList[lanSet.selected];
+        let lan:any;
+        if (lanSet) {
+            lan = [lanSet.languageList[lanSet.selected]];
+        } else {
+            lan = 'simpleChinese';
+        }
+        
         if (this.props.rtype === 0) {
             // tslint:disable-next-line:max-line-length
             url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}&lan=${lan}`;

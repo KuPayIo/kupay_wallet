@@ -32,7 +32,13 @@ export class SendRedEnv extends Widget {
         let url = '';
         let title = '';
         const lanSet = find('languageSet');
-        const lan = lanSet.languageList[lanSet.selected];
+        let lan:any;
+        if (lanSet) {
+            lan = [lanSet.languageList[lanSet.selected]];
+        } else {
+            lan = 'simpleChinese';
+        }
+        
         if (this.props.rtype === 0) {
             // tslint:disable-next-line:max-line-length
             url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;

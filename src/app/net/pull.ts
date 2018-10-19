@@ -9,7 +9,7 @@ import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '..
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { find, getBorn, updateStore } from '../store/store';
-import { PAGELIMIT, CMD } from '../utils/constants';
+import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
 import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage, checkCreateAccount } from '../utils/tools';
@@ -210,20 +210,22 @@ const doOpen =  () => {
  * 获取随机数
  */
 export const getRandom = async (cmd?:number) => {
+
     const client = "android 20";
+
     const param:any = {
         account: find('conUser').slice(2), 
         pk: `04${find('conUserPublicKey')}`,
         client:JSON.stringify(client)
     };
-    if(cmd){
+    if (cmd) {
         param.cmd = cmd;
     }
     const msg = { 
         type: 'get_random', 
         param
     };
-    try{
+    try {
         const resp = await requestAsync(msg);
         updateStore('conRandom', resp.rand);
         updateStore('conUid', resp.uid);
@@ -242,18 +244,18 @@ export const getRandom = async (cmd?:number) => {
         if (hash) {
             defaultLogin(hash);
         }
-    }catch(resp){
+    } catch (resp) {
         console.log('getRandom----------',resp);
-        if(resp.type === 1014){
+        if (resp.type === 1014) {
             popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',
-            {title:"检测到在其它设备有登录",content:"清除其它设备账户信息"},(deleteAccount:boolean)=>{
-                if(deleteAccount){
+            { title:'检测到在其它设备有登录',content:'清除其它设备账户信息' },(deleteAccount:boolean) => {
+                if (deleteAccount) {
                     getRandom(CMD.FORCELOGOUTDEL);
-                }else{
+                } else {
                     getRandom(CMD.FORCELOGOUT);
                 }
                 checkCreateAccount();
-            },()=>{
+            },() => {
                 getRandom(CMD.FORCELOGOUT);
                 checkCreateAccount();
             });
@@ -803,7 +805,10 @@ export const sendCode = async (phone: number, num: number) => {
  * 注册手机
  */
 export const regPhone = async (phone: number, code: number) => {
-    const msg = { type: 'wallet/user@reg_phone', param: { phone, code } };
+    const bphone = getUserInfo().bphone;
+    // tslint:disable-next-line:variable-name
+    const old_phone =  bphone ? bphone :'';
+    const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code } };
     
     try {
         return await requestAsync(msg);
