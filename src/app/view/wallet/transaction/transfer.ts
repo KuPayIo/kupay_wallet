@@ -10,7 +10,7 @@ import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -85,6 +85,7 @@ export class Transfer extends Widget {
     // 转账金额变化
     public amountChange(e:any) {
         this.state.amount = e.value;
+        this.state.amountShow = formatBalance(fetchBalanceValueOfCoin(this.props.currencyName,e.value));
         this.paint();
     }
 
