@@ -1024,7 +1024,7 @@ export const initAddr = (address: string, currencyName: string, addrName?: strin
 export const fetchCoinGain = (currencyName:string) => {
     const currency2USDT:currency2USDT = getBorn('currency2USDTMap').get(currencyName);
     if (!currency2USDT) return formatBalanceValue(0);
-    return formatBalanceValue((currency2USDT.close - currency2USDT.open) / currency2USDT.open);
+    return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
 };
 /**
  * 转化rtype
