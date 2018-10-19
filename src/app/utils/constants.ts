@@ -152,8 +152,15 @@ const huobiApiAccessKey = '6fd70042-c5e4c618-d6e619ec-ecfa2';
 //火币API
 export const huobiApi = `https://api.huobipro.com/market/history/kline?period=1day&size=1&AccessKeyId=${huobiApiAccessKey}&symbol=`;
 
-
+/**
+ * 一些指令
+ */
 export enum CMD {
     FORCELOGOUT = 1, //强制下线保留数据
     FORCELOGOUTDEL = 2 //强制下线删除数据
 } 
+
+/**
+ * 调用本地文件url前缀
+ */
+export const localUrlPre = "file:///";

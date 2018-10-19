@@ -13,6 +13,7 @@ import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { getFirstEthAddr, getLanguage, popNewMessage, getStaticLanguage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
+import { localUrlPre } from '../../../utils/constants';
 interface Props {
     itype:CreateWalletType;
     imageBase64?:string;// 图片base64
@@ -72,16 +73,26 @@ export class CreateWallet extends Widget {
         this.paint();
     }
     public selectImageClick() {
-        selectImage((width, height, base64) => {
-            resize({ url:base64, width: 140, ratio: 0.3, type: 'jpeg' },(res) => {
-                console.log('resize---------',res);
-                this.state.chooseImage = true;
-                // tslint:disable-next-line:max-line-length
-                this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
-                this.state.avatar = res.base64;
-                this.paint();
-            });
+        // selectImage((width, height, base64) => {
+        //     resize({ url:base64, width: 140, ratio: 0.3, type: 'jpeg' },(res) => {
+        //         console.log('resize---------',res);
+        //         this.state.chooseImage = true;
+        //         // tslint:disable-next-line:max-line-length
+        //         this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+        //         this.state.avatar = res.base64;
+        //         this.paint();
+        //     });
+        // });
+
+
+        selectImage((path) => {
+            this.state.chooseImage = true;
+            // this.state.avatarHtml = `<div style="background-image: url(${localUrlPre}${path});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+            this.state.avatarHtml = `<img src='${localUrlPre}${path}' style='width: 100%;height: 100%;position: absolute;top: 0;'/>`
+            this.state.avatar = `${localUrlPre}${path}`;
+            this.paint();
         });
+
     }
     public randomPlayName() {
         this.state.walletName = playerName();

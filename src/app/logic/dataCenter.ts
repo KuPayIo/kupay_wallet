@@ -842,11 +842,11 @@ export class DataCenter {
         nextPoint.setSeconds(0);
         // nextPoint.setSeconds(nextPoint.getSeconds() + 10);
         const delay = nextPoint.getTime() - new Date().getTime();
-        console.log('updateUSD2CNYRate nextPoint-------',nextPoint);
-        console.log('updateUSD2CNYRate delay-------',delay);
+        // console.log('updateUSD2CNYRate nextPoint-------',nextPoint);
+        // console.log('updateUSD2CNYRate delay-------',delay);
         fetchUSD2CNYRate().then((res:any) => {
             if(res.success == '1'){
-                console.log('updateUSD2CNYRate',res);
+                // console.log('updateUSD2CNYRate',res);
                 const rate = Number(res.result.rate);
                 updateStore('USD2CNYRate',rate);
             }
@@ -886,7 +886,7 @@ export class DataCenter {
                     updateStore('currency2USDTMap',currency2USDTMap);
                 }
             }).catch(res=>{
-                console.log('fetchCurrency2USDTRate err');
+                // console.log('fetchCurrency2USDTRate err');
             });
         });
         setTimeout(()=>{

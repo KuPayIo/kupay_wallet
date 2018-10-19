@@ -9,7 +9,7 @@ import { getStaticLanguage } from './tools';
  */
 // tslint:disable-next-line:cyclomatic-complexity
 export const showError = (result, str?) => {
-    if (result === 1) return;
+    if (result == 1) return;
     if (!str) {
         switch (result) {
             case 600: str = getStaticLanguage().errorList[600]; break;

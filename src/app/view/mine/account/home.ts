@@ -71,7 +71,6 @@ export class AccountHome extends Widget {
             updateStore('curWallet', wallet);
             const userInfo = getUserInfo();
             userInfo.nickName = v;
-            userInfo.fromServer = false;
             updateStore('userInfo',userInfo);
         }
         input.value = v;
