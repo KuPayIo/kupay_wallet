@@ -6,26 +6,18 @@ import { NativeObject, ParamType, registerSign } from './native';
 export class ImagePicker extends NativeObject {
     /**
      * 从本地选择图片
-     * 调用成功返回
-     * 手机上的路径
      * @param param 参数
      */
     public selectFromLocal(param: any) {
         this.call('chooseImage', param);
     }
+
     /**
-     * 传入路径(手机上的路径)->Ahash
-     * @param param 
+     * 打开相机拍摄
+     * @param param 参数
      */
-    public calculateAHash(param:any){
-        this.call('calcAHash',param)
-    }
-    /**
-     * 传入路径(手机上的路径)->Base64
-     * @param param 
-     */
-    public calculateBase64(param:any){
-        this.call('calcBase64',param)
+    public openCamera(param: any) {
+        // todo
     }
 }
 
@@ -43,26 +35,5 @@ registerSign(ImagePicker, {
             name: 'max',// 可以选择多张的情况下最大可以选择的张数
             type: ParamType.Number
         }
-    ],
-    calcAHash: [
-        {
-            /*
-             * 文件在手机里面的路径、传入路径可计算AHash
-             * 这个值会在调用 chooseImage(int, int, int)的时候获得
-             * 传回这个路径之后用于在WebView展示出用户选择的图片
-             * 而不再是传Base64的字符串了~
-             */
-            name: 'path',
-            type: ParamType.String
-        }
-    ],
-    calcBase64: [{
-        /*
-         * 文件在手机里面的路径、传入路径可计算Base64
-         * 这个值会在调用 chooseImage(int, int, int)的时候获得
-         * 传回这个路径之后用于在WebView展示出用户选择的图片
-         */
-        name: 'path',
-        type: ParamType.String
-    }]
+    ]
 });

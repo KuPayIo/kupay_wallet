@@ -6,8 +6,8 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { applyAutoLogin, autoLogin, setUserInfo } from '../../net/pull';
 import { LoginState, UserInfo } from '../../store/interface';
-import { find, register } from '../../store/store';
-import { getLanguage } from '../../utils/tools';
+import { find, register, getBorn } from '../../store/store';
+import { getLanguage, getFirstEthAddr } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -101,7 +101,7 @@ register('userInfo',(userInfo:UserInfo) => {
 
 // 连接建立 登录
 register('conRandom',(conRandom:string) => {
-    if (conRandom && find('token')) {
+    if (conRandom && getBorn('tokenMap').get(getFirstEthAddr())) {
         autoLogin();
     }
 });
@@ -110,10 +110,10 @@ register('conRandom',(conRandom:string) => {
 register('loginState',(loginState:LoginState) => {
     if (loginState === LoginState.logined) {
         const userInfo = find('userInfo');
-        // if (userInfo) {
-        //     setUserInfo();
-        // }
-        if (!find('token')) {
+        if (userInfo) {
+            setUserInfo();
+        }
+        if (!getBorn('tokenMap').get(getFirstEthAddr())) {
             applyAutoLogin();
         }
     }

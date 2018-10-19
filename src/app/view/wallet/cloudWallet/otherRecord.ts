@@ -36,6 +36,7 @@ export class OtherRecord extends Widget {
         };
     }
     public updateRecordList() {
+        if(!this.state) return;
         const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
         console.log(accountDetail);
         const list = accountDetail.list;

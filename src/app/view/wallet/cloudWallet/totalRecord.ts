@@ -36,6 +36,7 @@ export class TotalRecord extends Widget {
         };
     }
     public updateRecordList() {
+        if(!this.state) return;
         const accountDetail = getBorn('totalLogs').get(CurrencyType[this.props.currencyName]);
         console.log(accountDetail);
         const list = accountDetail.list;
