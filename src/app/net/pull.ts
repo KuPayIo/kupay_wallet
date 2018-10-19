@@ -33,7 +33,7 @@ export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/o
 export const shareDownload = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/download.html`;
 
 // 上传图片url
-export const uploadFileUrl = `http://${conIp}/service/upload`;
+export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;
 
 // 上传的文件url前缀
 export const uploadFileUrlPrefix = `http://${conIp}/service/get_file?sid=`;

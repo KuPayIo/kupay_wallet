@@ -37,6 +37,7 @@ export class WithdrawRecord extends Widget {
         };
     }
     public updateRecordList() {
+        if(!this.state) return;
         const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
         console.log(withdrawLogs);
         const list = withdrawLogs.list;

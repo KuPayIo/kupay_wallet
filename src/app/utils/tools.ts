@@ -1344,3 +1344,10 @@ export const judgeAddressAvailable = (ctype:string,addr:string) => {
         return /(^0x)[0-9a-fA-f]{40}$/.test(addr);
     }
 };
+
+/**
+ * 解析交易的额外信息
+ */
+export const parseTransferExtraInfo = (input:string)=>{
+    return input == '0x' ? '无' : input;
+}
