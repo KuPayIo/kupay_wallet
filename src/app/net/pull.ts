@@ -200,6 +200,7 @@ const conReOpen = ()=>{
  * 打开连接
  */
 const doOpen =  () => {
+    closeCon();
     setUrl(wsUrl);
     setDoClose(false);
     open(conSuccess,conError,conClose,conReOpen);
@@ -209,7 +210,6 @@ const doOpen =  () => {
  * 获取随机数
  */
 export const getRandom = async (cmd?:number) => {
-    if (!find('conUser')) return;
     const client = "android 20";
     const param:any = {
         account: find('conUser').slice(2), 
