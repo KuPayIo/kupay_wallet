@@ -6,7 +6,7 @@
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
-import { AccountDetail,AddMineItem, Addr, ChangeColor, CHisRec, currency2USDT, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank,MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet, CurrencyUnit, ConState } from './interface';
+import { AccountDetail,AddMineItem, Addr, ChangeColor, CHisRec, ConState, currency2USDT, CurrencyType, CurrencyUnit, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo,MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet } from './interface';
 
 // ============================================ 导出
 /**
@@ -81,7 +81,7 @@ export const initStore = () => {
     store.salt = (wallets && wallets.salt) || cryptoRandomInt().toString();
     store.walletList = (wallets && wallets.walletList) || [];
     const firstEthAddr = getFirstEthAddr();
-    if(firstEthAddr){
+    if (firstEthAddr) {
         // 从localStorage中取addrs
         store.addrs = new Map<string,Addr[]>(findByLoc('addrsMap')).get(firstEthAddr) || [];
         // 从localStorage中取transactions
@@ -161,7 +161,7 @@ const store = <Store>{
     conUid: 0,// 连接uid
     userInfo:null,// 用户头像base64
     loginState: LoginState.init,// 登录状态
-    conState:ConState.init,//连接状态
+    conState:ConState.init,// 连接状态
     tokenMap:new Map<string,string>(),// 自动登录token
     // 本地钱包
     walletList: <Wallet[]>[],// 钱包数据
@@ -244,7 +244,6 @@ export const logoutInit = () => {
     updateStore('flag',{});
 };
 
-
 // 登入
 export const loginInit = () => {
     const wallets = findByLoc('wallets');
@@ -257,7 +256,7 @@ export const loginInit = () => {
     updateStore('salt',salt);
 
     const firstEthAddr = getFirstEthAddr();
-    if(firstEthAddr){
+    if (firstEthAddr) {
         // 从localStorage中取addrs
         const addrs = new Map<string,Addr[]>(findByLoc('addrsMap')).get(firstEthAddr) || [];
         updateStore('addrs',addrs);

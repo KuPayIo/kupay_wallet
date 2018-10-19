@@ -167,7 +167,7 @@ export const randomRgbColor = () => {
 export const parseAccount = (str: string) => {
     if (str.length <= 29) return str;
 
-    return `${str.slice(0, 8)}...${str.slice(str.length - 8, str.length)}`;
+    return `${str.slice(0, 6)}...${str.slice(str.length - 6, str.length)}`;
 };
 
 export const getDefaultAddr = (addr: number | string) => {

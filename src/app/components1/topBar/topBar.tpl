@@ -6,6 +6,9 @@
             <img on-tap="backPrePage" src="../../res/image/{{flag ? 'left_arrow_white.png' : 'left_arrow_blue.png'}}" w-class="ga-back" />
             <span on-tap="backPrePage"  style="color: {{flag?'#fff':''}}">{{it.title}}</span>
         </div>
+        {{if it.text}}
+        <span w-class="text" on-tap="goNext">{{it.text}}</span>
+        {{end}}
         {{if it.nextImg}}
         <img on-tap="goNext" src="{{it.nextImg}}" w-class="ga-next" />
         {{end}}

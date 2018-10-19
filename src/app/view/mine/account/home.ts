@@ -55,6 +55,7 @@ export class AccountHome extends Widget {
     public walletNameInputBlur(e: any) {
         const v = e.currentTarget.value.trim();
         const input: any = document.querySelector('#walletNameInput');
+        this.state.userInput = false;
         if (!walletNameAvailable(v)) {
             popNewMessage(this.state.cfgData.tips[0]);
             input.value = this.state.nickName;
@@ -75,6 +76,7 @@ export class AccountHome extends Widget {
         }
         input.value = v;
         this.state.isUpdatingWalletName = false;
+        this.paint();
     }
 
      // 修改钱包名称
