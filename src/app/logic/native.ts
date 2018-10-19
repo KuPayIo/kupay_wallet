@@ -9,13 +9,42 @@ import { HttpHelper } from '../../pi/browser/httpHelper';
  * 一些底层操作
  */
 
+// export const selectImage = (ok?,cancel?) => {
+//     console.log('选择图片');
+//     const image = new ImagePicker();
+//     image.init();
+//     image.selectFromLocal({
+//         success: (width, height, result) => {
+//             ok && ok(width, height, result);
+//             close && close.callback(close.widget);
+//         },
+//         fail: (result) => {
+//             cancel && cancel(result);
+//             close && close.callback(close.widget);
+//         },
+//         useCamera: 1,
+//         single: 1,
+//         max: 1
+//     });
+//     let close;
+//     setTimeout(()=>{
+//         close = popNew('app-components1-loading-loading', { text: '导入中...' });
+//     },100);
+// };
+
+/**
+ * 从相机选择图片
+ * @param ok 成功回调
+ * @param cancel 失败回调
+ */
 export const selectImage = (ok?,cancel?) => {
     console.log('选择图片');
     const image = new ImagePicker();
     image.init();
     image.selectFromLocal({
-        success: (width, height, result) => {
-            ok && ok(width, height, result);
+        success: (path) => {
+            console.log('selectFromLocal-----',path);
+            ok && ok(path);
             close && close.callback(close.widget);
         },
         fail: (result) => {

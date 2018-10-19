@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getLanguage, popNewLoading, popNewMessage, loginSuccess } from '../../../utils/tools';
-import { find } from '../../../store/store';
+import { find, updateStore } from '../../../store/store';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -29,13 +29,44 @@ export class CreateEnter extends Widget {
         });
         console.log(accountList);
         this.state = {
-            walletList,
             cfgData:getLanguage(this),
             login:false,
             accountList,
             selectedAccountIndex:0,
-            psw:""
+            psw:"",
+            showMoreUser:false,
+            popHeight:this.calPopBoxHeight(accountList.length)
         };
+    }
+    public calPopBoxHeight(len:number){
+        const itemNum = 4;
+        const oneHeight = 101;
+        let totalHeight = itemNum * oneHeight;
+        
+        if(len <= itemNum){
+            totalHeight = len * oneHeight;
+        }
+        return totalHeight;
+    }
+    public delUserAccount(e:any,index:number){
+        this.state.accountList.splice(index,1);
+        const walletList = find('walletList');
+        walletList.splice(index,1);
+        updateStore('walletList',walletList);
+        if(walletList.length <= 0){
+            this.state.login = false;
+        }
+        this.state.popHeight = this.calPopBoxHeight(this.state.accountList.length);
+        if(index === this.state.selectedAccountIndex){
+            this.state.selectedAccountIndex = 0;
+        }
+        this.paint();
+    }
+    
+    public chooseCurUser(e:any,index:number){
+        this.state.selectedAccountIndex = index;
+        this.state.showMoreUser = false;
+        this.paint();
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -66,8 +97,9 @@ export class CreateEnter extends Widget {
             popNewMessage('密码不能为空');
             return;
         }
+        const walletList = find('walletList');
         const close = popNewLoading('登录中');
-        const wallet = this.state.walletList[this.state.selectedAccountIndex];
+        const wallet = walletList[this.state.selectedAccountIndex];
         console.log(this.state.psw);
         const verify = await VerifyIdentidy(wallet,this.state.psw);
 
@@ -78,5 +110,10 @@ export class CreateEnter extends Widget {
         }
         loginSuccess(wallet);
         this.ok && this.ok();
+    }
+
+    public popMoreUser(){
+        this.state.showMoreUser = !this.state.showMoreUser;
+        this.paint();
     }
 }

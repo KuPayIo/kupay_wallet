@@ -1,8 +1,8 @@
-import { setMsgHandler, setConState, ConState } from '../../pi/net/ui/con_mgr';
 import { getStaticLanguage, popNewMessage, logoutAccount, logoutAccountDel } from '../utils/tools';
-import { getCloudBalance, getRandom } from './pull';
+import { getCloudBalance } from './pull';
 import { popNew, backList, backCall } from '../../pi/ui/root';
 import { CMD } from '../utils/constants';
+import { setMsgHandler, setConState, closeCon } from './con_mgr';
 
 /**
  * 后端主动推消息给后端
@@ -18,7 +18,8 @@ export const initPush = () => {
     //监听指令事件
     setMsgHandler('cmd',(res) => {
         console.log('强制下线==========================',res);
-        setConState(ConState.noReconnect);
+        // 手动关闭可以阻止重新连接
+        closeCon();
         const cmd = res.cmd;
         if(cmd === CMD.FORCELOGOUT){
             logoutAccount();
@@ -31,15 +32,8 @@ export const initPush = () => {
             title:'下线通知',
             content:"您的账户已被下线，如非本人操作，则助记词可能已泄露。"
         },()=>{
-            // for(let i = backList.length - 1;i > 0;i++){
-            //     console.log('-------------',i);
-            //     backCall();
-            // }
             popNew('app-view-wallet-create-home');
         },()=>{
-            for(let i = backList.length - 1;i > 0;i++){
-                backCall();
-            }
         });
     });
 

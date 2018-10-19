@@ -1,7 +1,7 @@
 /**
  * 主动向后端通讯
  */
-import { closeCon, open, request, setUrl, getConState, ConState } from '../../pi/net/ui/con_mgr';
+import { closeCon, open, request, setUrl, setDoClose } from './con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
 import { sign } from '../core/genmnemonic';
@@ -12,7 +12,7 @@ import { find, getBorn, updateStore } from '../store/store';
 import { PAGELIMIT, CMD } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, popPswBox, unicodeArray2Str, popNewMessage, checkCreateAccount } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -37,6 +37,9 @@ export const uploadFileUrl = `http://${conIp}/service/upload`;
 
 // 上传的文件url前缀
 export const uploadFileUrlPrefix = `http://${conIp}/service/get_file?sid=`;
+
+//websock连接url
+const wsUrl = `ws://${conIp}:2081`;
 /**
  * 通用的异步通信
  */
@@ -53,37 +56,6 @@ export const requestAsync = async (msg: any): Promise<any> => {
             }
         });
     });
-};
-/**
- * 验证登录的异步通信
- */
-export const requestLogined = async (msg: any) => {
-    if (find('loginState') === LoginState.logined) {
-        return requestAsync(msg);
-    } else {
-        const wallet = find('curWallet');
-        let passwd = '';
-        if (!find('hashMap',wallet.walletId)) {
-            passwd = await popPswBox();
-            if (!passwd) return;
-        }
-        const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
-        const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
-        const wlt = await GlobalWallet.createWlt('ETH', passwd, wallet, 0);
-        const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
-        const msgLogin = { type: 'login', param: { sign: signStr } };
-        updateStore('loginState', LoginState.logining);
-        const res: any = await requestAsync(msgLogin);
-        if (res.result === 1) {
-            updateStore('loginState', LoginState.logined);
-
-            return requestAsync(msg);
-        }
-        updateStore('loginState', LoginState.logerror);
-
-        return;
-    }
-
 };
 
 /**
@@ -178,56 +150,59 @@ const defaultConUser = '0x00000000000000000000000000000000000000000';
 export const openAndGetRandom = async () => {
     const wallet = find('curWallet');
     if (!wallet) {
-        setUrl(`ws://${conIp}:2081`);
         updateStore('conUser', defaultConUser);
-        
-        return doOpen();
-    }
-    const oldUser = find('conUser');
-    if (oldUser === wallet.walletId) return;
-    // const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-    const gwlt = JSON.parse(wallet.gwlt);
-    if (oldUser) {
-        closeCon();
+    }else{
+        const gwlt = JSON.parse(wallet.gwlt);
         updateStore('conUser', wallet.walletId);
         updateStore('conUserPublicKey', gwlt.publicKey);
-
-        return;
     }
-    setUrl(`ws://${conIp}:2081`);
-    updateStore('conUser', wallet.walletId);
-    updateStore('conUserPublicKey', gwlt.publicKey);
-
-    return doOpen();
-
+    doOpen();
 };
 
-const doOpen = async () => {
-    return new Promise((resolve, reject) => {
-        open(async (con) => {
-            try {
-                const oldUser = find('conUser');
-                if (oldUser !== defaultConUser) {
-                    await getRandom();
-                }
-                
-                resolve(true);
-            } catch (error) {
-                reject(false);
-            }
-        }, (result) => {
-            console.log(`open错误信息为${result}`);
-            reject(result);
-        }, async () => {
-            updateStore('loginState', LoginState.init);
-            try {
-                await doOpen();
-                resolve(true);
-            } catch (error) {
-                reject(false);
-            }
-        });
-    });
+/**
+ * 连接成功回调
+ */
+const conSuccess = () =>{
+    const conState = find('conState');
+    console.log('ws con success',conState);
+    const oldUser = find('conUser');
+    if (oldUser !== defaultConUser) {
+        getRandom();
+    }
+}
+
+/**
+ * 连接出错回调
+ */
+const conError = (err) =>{
+    const conState = find('conState');
+    console.log(`ws con error ${conState}`,err);
+    checkCreateAccount();
+}
+
+/**
+ * 连接关闭回调
+ */
+const conClose = () =>{
+    const conState = find('conState');
+    console.log('ws con close',conState);
+}
+
+/**
+ * 重新连接回调
+ */
+const conReOpen = ()=>{
+    const conState = find('conState');
+    console.log('ws con reOpen',conState);
+    getRandom();
+}
+/**
+ * 打开连接
+ */
+const doOpen =  () => {
+    setUrl(wsUrl);
+    setDoClose(false);
+    open(conSuccess,conError,conClose,conReOpen);
 };
 
 /**
@@ -260,12 +235,8 @@ export const getRandom = async (cmd?:number) => {
         fetchBtcFees();
         // 获取真实用户
         fetchRealUser();
-        const flag = find('flag');
-        // 第一次创建不需要更新
-        if (!flag.created) {
-            // 用户基础信息
-            getUserInfoFromServer([resp.uid]);
-        }
+        // 用户基础信息
+        getUserInfoFromServer([resp.uid]);
        
         const hash = getBorn('hashMap').get(getFirstEthAddr());
         if (hash) {
@@ -281,29 +252,15 @@ export const getRandom = async (cmd?:number) => {
                 }else{
                     getRandom(CMD.FORCELOGOUT);
                 }
-                const flag = find('flag');
-                // 第一次创建检查是否有登录后弹框提示备份
-                if (flag.created) {
-                    updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
-                }
+                checkCreateAccount();
             },()=>{
                 getRandom(CMD.FORCELOGOUT);
-                const flag = find('flag');
-                // 第一次创建检查是否有登录后弹框提示备份
-                if (flag.created) {
-                    updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
-                }
+                checkCreateAccount();
             });
         }
         return;
     }
-    const flag = find('flag');
-    // 第一次创建检查是否有登录后弹框提示备份
-    if (flag.created) {
-        updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
-    }
-    
-    
+    checkCreateAccount();
     
 };
 
@@ -311,7 +268,6 @@ export const getRandom = async (cmd?:number) => {
  * 获取所有的货币余额
  */
 export const getCloudBalance = () => {
-    if (!find('conRandom')) return Promise.reject();
     const list = [];
     list.push(CurrencyType.KT);
     for (const k in CurrencyType) {
@@ -692,8 +648,12 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         const res = await requestAsync(msg);
         const userInfoStr = unicodeArray2Str(res.value[0]);
         if (userInfoStr) {
-            const userInfo = JSON.parse(userInfoStr);
-            userInfo.fromServer = true;
+            const localUserInfo = find('userInfo');
+            const serverUserInfo = JSON.parse(userInfoStr);
+            const userInfo = {
+                ...localUserInfo,
+                ...serverUserInfo
+            }
             console.log(userInfo);
             updateStore('userInfo',userInfo);
         }
@@ -1323,7 +1283,6 @@ export const uploadFile = async (base64) => {
                 const sid = res.sid;
                 const userInfo = find('userInfo') || {};
                 userInfo.avatar = sid;
-                userInfo.fromServer = false;
                 updateStore('userInfo',userInfo);
             }
         });

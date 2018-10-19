@@ -59,11 +59,37 @@
     align-self: stretch;
 }
 .users{
+    position: relative;
+}
+.pop-box{
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    background-color: #fff;
+    z-index: 1;
+    height: 0px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: all .3s ease-in-out;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.1);
+
+}
+.user-item{
     display: flex;
     height: 100px;
     align-items: center;
     position: relative;
     padding: 0 60px;
+}
+.user-item2{
+    display: flex;
+    height: 100px;
+    align-items: center;
+    position: relative;
+    padding: 0 15px;
+    margin: 0 15px;
+    border-bottom: 1px solid #ccc;
 }
 .avatar{
     width: 60px;
@@ -77,6 +103,10 @@
 .more{
     position: absolute;
     right: 60px;
+}
+.del{
+    position: absolute;
+    right: 15px;
 }
 .input-father{
     margin: 0 60px 30px;
