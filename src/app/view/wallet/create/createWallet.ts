@@ -2,11 +2,10 @@
  * create wallet
  */
 import { popNew } from '../../../../pi/ui/root';
-import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { uploadFile, openAndGetRandom } from '../../../net/pull';
+import { uploadFile, getRandom } from '../../../net/pull';
 import { CreateWalletType } from '../../../store/interface';
 import { getBorn, updateStore, register } from '../../../store/store';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
@@ -158,7 +157,7 @@ export class CreateWallet extends Widget {
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
         updateStore('flag',{ created:true,mnemonic,fragments });
-        openAndGetRandom();
+        getRandom();
         
         const w: any = forelet.getWidget(WIDGET_NAME);
         if (w) {

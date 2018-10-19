@@ -42,7 +42,6 @@ export class BindPhone extends Widget {
         if (data && data.result === 1) {
             const userinfo = getUserInfo();
             userinfo.bphone = this.state.phone;
-            userinfo.fromServer = false;
             updateStore('userInfo',userinfo);
             this.ok();
         } else {
