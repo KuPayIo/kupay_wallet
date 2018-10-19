@@ -47,7 +47,8 @@ export class Transfer extends Widget {
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false,
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            amountShow:''
         };
     }
 
