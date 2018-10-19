@@ -277,5 +277,4 @@ export const loginInit = () => {
         const inviteRedBagRec = inviteRedBagRecMap.get(firstEthAddr);
         updateStore('inviteRedBagRec',inviteRedBagRec);
     }
-    updateStore('tokenMap',findByLoc('tokenMap'));
 };
