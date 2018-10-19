@@ -47,3 +47,11 @@
     border: 15px solid transparent;
     line-height: 88px;
 }
+.text{
+    height: 33px;
+    line-height: 33px;
+    color: rgba(255, 255, 255, 1);
+    font-size: 24px;
+    text-align: right;
+    margin-right: -20px;
+}

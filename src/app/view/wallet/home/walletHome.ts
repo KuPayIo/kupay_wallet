@@ -5,7 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { find, register } from '../../../store/store';
-import { fetchTotalAssets, fetchWalletAssetList, formatBalanceValue, getLanguage, hasWallet, getCurrencyUnitSymbol } from '../../../utils/tools';
+// tslint:disable-next-line:max-line-length
+import { fetchTotalAssets, fetchWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -47,7 +48,7 @@ export class WalletHome extends Widget {
         popNew('app-view-wallet-transaction-home',{ currencyName:v.currencyName,gain:v.gain });
     }
 
-    public refresh(){
+    public refresh() {
         // const neededRefreshCount = dataCenter.refreshAllTx();
     }
 
@@ -99,7 +100,6 @@ register('changeColor', () => {
     }
 });
 
-
 // 货币单位变化
 register('currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -107,4 +107,3 @@ register('currencyUnit',() => {
         w.currencyUnitChange();
     }
 });
-

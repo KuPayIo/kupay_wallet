@@ -80,7 +80,6 @@
     margin-right: 60px;
 }
 
-
 .is-active{
     color: #fff;
     opacity: 1;

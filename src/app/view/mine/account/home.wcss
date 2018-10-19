@@ -5,7 +5,7 @@
     height: 150px;
     display: flex;
     align-items: center;
-    padding: 0 30px;
+    padding-left: 30px;
     background-color: #fff;
     border-radius: 12px;
 }
@@ -15,7 +15,7 @@
     border-radius: 50%;
 }
 .edit-input{
-    flex: 1 0 0;
+    width: 100%;
     margin: 0 20px 0 30px;
     height: 60px;
     line-height: 60px;
@@ -28,6 +28,7 @@
 .edit{
     width: 40px;
     height: 40px;
+    border: 30px solid transparent;
 }
 .other{
     margin-top: 30px;

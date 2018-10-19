@@ -17,6 +17,7 @@ interface Props {
     centerTitle?:boolean;
     background?:string;
     refreshImg?:string;
+    text?:string;
 }
 
 // ================================ 导出

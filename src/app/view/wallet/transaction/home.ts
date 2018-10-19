@@ -5,10 +5,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../logic/dataCenter';
-import { Addr } from '../../../store/interface';
-import { find, getBorn, register } from '../../../store/store';
+import { Addr, TxType } from '../../../store/interface';
+import { find, register } from '../../../store/store';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, formatBalance, formatBalanceValue, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseStatusShow, parseTxTypeShow, timestampFormat, fetchBalanceValueOfCoin, getCurrencyUnitSymbol } from '../../../utils/tools';
+import { currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -38,15 +38,30 @@ export class TransactionHome extends Widget {
         const txList = this.parseTxList();
         const canConvert = this.canConvert();
         const color = find('changeColor');
+        const cfg = getLanguage(this);
+        const addr = parseAccount(getCurrentAddrByCurrencyName(currencyName));
+        
         this.state = {
             balance,
             balanceValue:formatBalanceValue(balanceValue),
             rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
             txList,
             canConvert,
-            cfgData:getLanguage(this),
+            cfgData:cfg,
             redUp:color ? color.selected === 0 :true,
-            currencyUnitSymbol:getCurrencyUnitSymbol()
+            currencyUnitSymbol:getCurrencyUnitSymbol(),
+            tabs:[{
+                tab:'全部',
+                list:txList
+            },{
+                tab:'转账',
+                list:this.transferList(txList)
+            },{
+                tab:'收款',
+                list:this.receiptList(txList)
+            }],
+            activeNum:0,
+            address:addr
         };
         
     }
@@ -63,6 +78,30 @@ export class TransactionHome extends Widget {
 
         return txList;
     }
+    /**
+     * 转账记录
+     */
+    public transferList(txList:any[]) {
+        return txList.filter((item,ind,arr) => {
+            return item.txType !== TxType.RECEIPT;
+        });
+    }
+    /**
+     * 收款记录
+     */
+    public receiptList(txList:any[]) {
+        return txList.filter((item,ind,arr) => {
+            return item.txType === TxType.RECEIPT;
+        });
+    }
+    /**
+     * tab切换
+     */
+    public tabsChangeClick(value: number) {
+        this.state.activeNum = value;
+        this.paint();
+    }
+
     public canConvert() {
         const convertCurrencys = currencyExchangeAvailable();
         for (let i = 0;i < convertCurrencys.length;i++) {
@@ -102,7 +141,7 @@ export class TransactionHome extends Widget {
         popNew('app-view-wallet-coinConvert-coinConvert',{ currencyName:this.props.currencyName });
     }
 
-    public currencyUnitChange(){
+    public currencyUnitChange() {
         this.state.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
         this.state.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,this.state.balance));
         this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
@@ -119,7 +158,6 @@ register('addrs',(addrs:Addr[]) => {
         w.paint();
     }
 });
-
 
 // 当前钱包变化
 register('curWallet',() => {
@@ -146,7 +184,6 @@ register('USD2CNYRate', () => {
     }
 });
 
-
 // 涨跌幅变化
 register('currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -154,8 +191,6 @@ register('currency2USDTMap', () => {
         w.updateRate();
     }
 });
-
-
 
 // 货币单位变化
 register('currencyUnit',() => {

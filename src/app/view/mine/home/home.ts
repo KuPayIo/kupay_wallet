@@ -59,7 +59,7 @@ export class Home extends Widget {
     public initData() {
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.state.userName = userInfo.nickName ? userInfo.nickName :this.state.defaultUserName;
+            this.state.userName = userInfo.nickName ? userInfo.nickName :this.state.cfgData.defaultUserName;
             this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
         }
 

@@ -4,10 +4,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
 import { find, getBorn, register } from '../../../store/store';
-import { fetchCoinGain, formatBalanceValue, getLanguage, popNewMessage, fetchBalanceValueOfCoin } from '../../../utils/tools';
-import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
+import { fetchBalanceValueOfCoin, fetchCoinGain, formatBalanceValue, getLanguage, popNewMessage } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -22,10 +22,7 @@ export class CloudWalletHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        getAccountDetail(props.currencyName,0);
-        getAccountDetail(props.currencyName,1);
-        getRechargeLogs(props.currencyName);
-        getWithdrawLogs(props.currencyName);
+        this.initEvent();
     }
     public init() {
         const currencyName = this.props.currencyName;
@@ -86,6 +83,23 @@ export class CloudWalletHome extends Widget {
         }
         popNew('app-view-wallet-cloudWallet-withdraw',{ currencyName:this.props.currencyName });
     }
+
+    /**
+     * 更新事件
+     */
+    public initEvent() {
+        getAccountDetail(this.props.currencyName,0);
+        getAccountDetail(this.props.currencyName,1);
+        getRechargeLogs(this.props.currencyName);
+        getWithdrawLogs(this.props.currencyName);
+    }
+
+    /**
+     * 刷新页面
+     */
+    public refreshPage() {
+        this.initEvent();
+    }
 }
 
 // ===========================
@@ -105,7 +119,6 @@ register('USD2CNYRate', () => {
         w.updateBalance();
     }
 });
-
 
 // 涨跌幅变化
 register('currency2USDTMap', () => {
