@@ -1227,7 +1227,6 @@ export const mnemonicFragmentDecrypt = (fragment:string) => {
  */
 export const logoutAccountDel = () => {
     logoutInit();
-    openAndGetRandom();
 };
 
 /**
@@ -1236,7 +1235,6 @@ export const logoutAccountDel = () => {
 export const logoutAccount = () => {
     updateStore('flag',{ logoutAccountSave:true });
     logoutInit();
-    openAndGetRandom();
 };
 
 /**
@@ -1320,5 +1318,16 @@ export const getCurrencyUnitSymbol = ()=>{
         return '￥';
     }else if(currencyUnit === CurrencyUnit.USD){
         return '$';
+    }
+}
+
+/**
+ * 检查是否是创建账户,通知弹窗备份
+ */
+export const checkCreateAccount = () =>{
+    const flag = find('flag');
+    // 第一次创建检查是否有登录后弹框提示备份
+    if (flag.created) {
+        updateStore('flag',{promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments})
     }
 }

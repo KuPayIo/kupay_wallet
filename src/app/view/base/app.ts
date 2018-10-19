@@ -94,7 +94,7 @@ register('level_2_page_loaded',(loaded:boolean) => {
 // 用户信息变化
 register('userInfo',(userInfo:UserInfo) => {
     const loginState = find('loginState');
-    if (loginState === LoginState.logined && userInfo && !userInfo.fromServer) {
+    if (loginState === LoginState.logined && userInfo) {
         setUserInfo();
     }
 });
@@ -110,9 +110,9 @@ register('conRandom',(conRandom:string) => {
 register('loginState',(loginState:LoginState) => {
     if (loginState === LoginState.logined) {
         const userInfo = find('userInfo');
-        if (userInfo && !userInfo.fromServer) {
-            setUserInfo();
-        }
+        // if (userInfo) {
+        //     setUserInfo();
+        // }
         if (!find('token')) {
             applyAutoLogin();
         }

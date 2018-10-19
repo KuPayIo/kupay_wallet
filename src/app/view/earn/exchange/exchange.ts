@@ -86,12 +86,16 @@ export class Exchange extends Widget {
         } else if (perCode === RedEnvelopeType.Invite) {
             const data = await getData('convertRedEnvelope');
             if (data.value) {
-                showError(-2);
+                showError(-99);
 
                 return;
             }
             value = await inputInviteCdKey(validCode);  // 兑换邀请红包
-            if (!value) return;
+            if (!value) {
+                showError(-98);
+                
+                return;
+            }
             value = [CurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
         } else {

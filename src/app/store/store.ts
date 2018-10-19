@@ -6,8 +6,7 @@
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { depCopy, getFirstEthAddr } from '../utils/tools';
-// tslint:disable-next-line:max-line-length
-import { AccountDetail,AddMineItem, Addr, ChangeColor, CHisRec, currency2USDT, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank,MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet, CurrencyUnit } from './interface';
+import { AccountDetail,AddMineItem, Addr, ChangeColor, CHisRec, currency2USDT, CurrencyType, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo, MineRank, MiningRank,MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet, CurrencyUnit, ConState } from './interface';
 
 // ============================================ 导出
 /**
@@ -126,7 +125,7 @@ type KeyName = MapName | LocKeyName | shapeShiftName | loadingEventName | 'walle
 'conUserPublicKey' | 'conRandom' | 'conUid' | 'loginState' | 'miningTotal' | 'miningHistory' | 'mineItemJump' |
 'dividHistory' | 'accountDetail' | 'dividTotal' | 'addMine' | 'mineRank' | 'miningRank' | 'sHisRec' | 'cHisRec' |
 'inviteRedBagRec' | 'rechargeLogs' | 'withdrawLogs' | 'productList' | 'purchaseRecord' | 'userInfo' | 'totalLogs' |
-'token' | 'flag' | 'verPhone' ;
+'token' | 'flag' | 'verPhone' | 'conState';
 
 type MapName = 'hashMap';
 
@@ -161,7 +160,8 @@ const store = <Store>{
     conRandom: '',// 连接随机数
     conUid: 0,// 连接uid
     userInfo:null,// 用户头像base64
-    loginState: LoginState.init,// 连接状态
+    loginState: LoginState.init,// 登录状态
+    conState:ConState.init,//连接状态
     token:'',// 自动登录token
     // 本地钱包
     walletList: <Wallet[]>[],// 钱包数据

@@ -1,3 +1,4 @@
+
 /**
  * 内存中的数据结构
  */
@@ -20,6 +21,18 @@ export enum LoginState {
     logouted,
     logerror
 }
+
+/**
+ * @description 枚举连接状态
+ */
+export enum ConState {
+    init = 0,
+    opening,
+    opened,
+    closed,
+    noReconnect //禁止重连
+}
+
 
 // 云端货币类型
 export enum CurrencyType {
@@ -83,7 +96,8 @@ export interface Store {
     conRandom: string;// 连接随机数
     conUid: number;// 连接uid
     userInfo:any;// 用户头像base64
-    loginState: LoginState;// 连接状态
+    loginState: LoginState;// 登录状态
+    conState:ConState;//连接状态
     lockScreen:LockScreen;// 锁屏相关
     token:string;// 自动登录token
     // 本地钱包
