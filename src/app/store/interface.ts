@@ -30,9 +30,8 @@ export enum ConState {
     opening,
     opened,
     closed,
-    noReconnect //禁止重连
+    noReconnect // 禁止重连
 }
-
 
 // 云端货币类型
 export enum CurrencyType {
@@ -97,7 +96,7 @@ export interface Store {
     conUid: number;// 连接uid
     userInfo:any;// 用户头像base64
     loginState: LoginState;// 登录状态
-    conState:ConState;//连接状态
+    conState:ConState;// 连接状态
     lockScreen:LockScreen;// 锁屏相关
     token:string;// 自动登录token
     // 本地钱包

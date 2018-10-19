@@ -27,17 +27,18 @@ export class WithdrawRecord extends Widget {
         }
     }
     public init() {
-        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
+        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
         this.state = {
-            recordList:this.parseRecordList(withdrawLogs.list),
+            recordList:[],
             nextStart:withdrawLogs.start,
             canLoadMore:withdrawLogs.canLoadMore,
             isRefreshing:false,
             cfgData:getLanguage(this)
         };
+        this.state.recordList = this.parseRecordList(withdrawLogs.list);
     }
     public updateRecordList() {
-        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || {list:[],start:0,canLoadMore:false};
+        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
         console.log(withdrawLogs);
         const list = withdrawLogs.list;
         this.state.nextStart = withdrawLogs.start;

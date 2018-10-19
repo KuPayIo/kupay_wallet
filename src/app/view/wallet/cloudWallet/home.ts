@@ -89,7 +89,6 @@ export class CloudWalletHome extends Widget {
      */
     public initEvent() {
         getAccountDetail(this.props.currencyName,0);
-        getAccountDetail(this.props.currencyName,1);
         getRechargeLogs(this.props.currencyName);
         getWithdrawLogs(this.props.currencyName);
     }
