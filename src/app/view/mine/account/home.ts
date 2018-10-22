@@ -52,6 +52,16 @@ export class AccountHome extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
+
+    public attach() {
+        if (this.state.userInput) {
+            document.getElementById('walletNameInput').focus();
+        }
+    }
+
+    /**
+     * 修改名字输入框取消聚焦
+     */
     public walletNameInputBlur(e: any) {
         const v = e.currentTarget.value.trim();
         const input: any = document.querySelector('#walletNameInput');
@@ -84,6 +94,9 @@ export class AccountHome extends Widget {
         this.state.isUpdatingWalletName = true;
     }
 
+    /**
+     * 点击页面
+     */
     public pageClick() {
         if (this.state.isUpdatingWalletName) {
             const walletNameInput: any = document.querySelector('#walletNameInput');

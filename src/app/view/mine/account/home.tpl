@@ -5,7 +5,7 @@
             <img w-class="avatar" src="{{it1.avatar}}" on-tap="uploadAvatar"/>
             <div style="flex: 1 0 0;">
             {{if it1.userInput}}
-                <input id="walletNameInput" w-class="edit-input" value="{{it1.nickName}}" on-blur="walletNameInputBlur" on-focus="walletNameInputFocus" maxlength="10" autofocus="autofocus" placeholder="{{it1.cfgData.defaultName}}"/>
+                <input id="walletNameInput" w-class="edit-input" value="{{it1.nickName}}" on-blur="walletNameInputBlur" on-focus="walletNameInputFocus" maxlength="10" placeholder="{{it1.cfgData.defaultName}}"/>
             {{else}}
                 <span w-class="edit-input">{{it1.nickName}}</span>
             {{end}}

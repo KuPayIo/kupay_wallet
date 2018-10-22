@@ -13,7 +13,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
-import { getRealNode } from '../../../pi/widget/painter';
+import { getRealNode, paintCmd3 } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
 import { getLanguage } from '../../utils/tools';
 
@@ -27,19 +27,19 @@ interface Props {
     autofocus?:boolean;
     maxLength?:number;
 }
-
 interface State {
     currentValue:string;
     focused:boolean;
     showClear:boolean;
     cfgData:any;
 }
+
 export class Input extends Widget {
     public props: Props;
     public state: State;
-    constructor() {
-        super();
-    }
+    // tslint:disable-next-line:no-unnecessary-field-initialization
+    public readOnly: boolean = undefined;
+    
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
         let currentValue = '';
@@ -52,11 +52,41 @@ export class Input extends Widget {
             showClear:false,
             cfgData:getLanguage(this)
         };
-        if (oldProps) {
-            this.changeInputValue();
+    }
+    /**
+     * 绘制方法
+     * @param reset 表示新旧数据差异很大，不做差异计算，直接生成dom
+     */
+    public paint(reset: boolean): void {
+        if (!this.tree) {
+            super.paint(reset);
+        }
+        if (!this.props) {
+            this.props = {};
+        }
+        
+        const r = this.props.disabled;
+        if (this.readOnly !== r) {
+            this.readOnly = r;
+            paintCmd3(this.getInput(), 'readOnly', r || 'false');
         }
     }
+    /**
+     * 添加到dom树后调用，在渲染循环内调用
+     */
+    public attach(): void {
+        this.props.autofocus && this.getInput().focus();
+    }
+    /**
+     * 获取真实输入框dom
+     */
+    public getInput() {
+        return getRealNode((<any>this.tree).children[0]);
+    }
 
+    /**
+     * 输入事件
+     */
     public change(event:any) {
         let currentValue = event.currentTarget.value;
         // 最大长度限制
@@ -81,20 +111,25 @@ export class Input extends Widget {
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
         
         notify(event.node,'ev-input-change',{ value:this.state.currentValue });
-        this.changeInputValue();
-        this.paint();
+        (<any>this.getInput()).value = currentValue;
     }
-    public blur(event:any) {
+
+    /**
+     * 失焦事件
+     */
+    public onBlur(event:any) {
         this.state.focused = false;
         this.state.showClear = false;
         notify(event.node,'ev-input-blur',{});
-        this.paint();
     }
-    public focus(event:any) {
+
+    /**
+     * 聚焦事件
+     */
+    public onFocus(event:any) {
         this.state.focused = true;
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
         notify(event.node,'ev-input-focus',{});
-        this.paint();
     }
    
     // 清空文本框
@@ -102,13 +137,6 @@ export class Input extends Widget {
         this.state.currentValue = '';
         notify(event.node,'ev-input-clear',{});
         this.paint(true);
-    }
-
-    // 设置input value
-    public changeInputValue() {
-        const child = (<any>this.tree).children[0];
-        const childNode = getRealNode(child);
-        (<any>childNode).value = this.state.currentValue;
     }
 
     /**
