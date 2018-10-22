@@ -13,7 +13,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
-import { getRealNode, paintCmd3 } from '../../../pi/widget/painter';
+import { getRealNode, paintCmd3, paintWidget } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
 import { getLanguage } from '../../utils/tools';
 
@@ -32,6 +32,7 @@ interface State {
     focused:boolean;
     showClear:boolean;
     cfgData:any;
+    inputLock:boolean; // 中文输入结束标记，未结束时不执行change方法
 }
 
 export class Input extends Widget {
@@ -48,26 +49,23 @@ export class Input extends Widget {
             currentValue,
             focused: false,
             showClear:false,
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            inputLock:false
         };
     }
     /**
      * 绘制方法
      * @param reset 表示新旧数据差异很大，不做差异计算，直接生成dom
      */
-    public paint(reset: boolean): void {
+    public paint(reset?: boolean): void {
         if (!this.tree) {
             super.paint(reset);
         }
         if (!this.props) {
             this.props = {};
         }
-        
-        if (this.props.disabled) {
-            paintCmd3(this.getInput(), 'readOnly', true);
-        } else {
-            paintCmd3(this.getInput(), 'readOnly', false);
-        }
+        paintCmd3(this.getInput(), 'readOnly', this.props.disabled || false);
+        paintWidget(this, reset);
     }
     /**
      * 添加到dom树后调用，在渲染循环内调用
@@ -83,9 +81,26 @@ export class Input extends Widget {
     }
 
     /**
+     * 用户开始进行非直接输入的时候触发，而在非直接输入结束。
+     */
+    public compositionstart() {
+        this.state.inputLock = true;
+    }
+    
+    /**
+     * 用户输入完成,点击候选词或确认按钮时触发
+     */
+    public compositionend() {
+        this.state.inputLock = false;
+    }
+
+    /**
      * 输入事件
      */
     public change(event:any) {
+        if (this.state.inputLock) {
+            return;
+        }
         let currentValue = event.currentTarget.value;
         // 最大长度限制
         if (this.props.maxLength) {
@@ -110,7 +125,7 @@ export class Input extends Widget {
         
         notify(event.node,'ev-input-change',{ value:this.state.currentValue });
         (<any>this.getInput()).value = currentValue;
-        this.paint(true);
+        this.paint();
     }
 
     /**
@@ -120,6 +135,7 @@ export class Input extends Widget {
         this.state.focused = false;
         this.state.showClear = false;
         notify(event.node,'ev-input-blur',{ value:this.state.currentValue });
+        this.paint();
     }
 
     /**
@@ -129,6 +145,7 @@ export class Input extends Widget {
         this.state.focused = true;
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
         notify(event.node,'ev-input-focus',{});
+        this.paint();
     }
    
     // 清空文本框

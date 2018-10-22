@@ -34,7 +34,7 @@ export class BindPhone extends Widget {
         if (!this.state.phone) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips });
             this.state.code = [];
-            this.paint();
+            this.paint(true);
 
             return;
         }
@@ -47,7 +47,7 @@ export class BindPhone extends Widget {
         } else {
             this.state.isSuccess = false;
             this.state.code = [];
-            this.paint();
+            this.paint(true);
         }
     }
 
@@ -62,14 +62,16 @@ export class BindPhone extends Widget {
      * 验证码改变
      */
     public codeChange(e: any) {
-        if (e.value) {
-            this.state.code.push(e.value);
+        const v = e.currentTarget.value;
+        console.log(e.key);
+        if (v) {
+            this.state.code.push(v);
             const ind = this.state.code.length;
             // tslint:disable-next-line:prefer-template
-            document.getElementById('codeInput' + (ind - 1)).getElementsByTagName('input')[0].blur();
-            if (ind < 4) {
+            document.getElementById('codeInput' + (ind - 1)).blur();
+            if (ind < 4) { 
                 // tslint:disable-next-line:prefer-template
-                document.getElementById('codeInput' + ind).getElementsByTagName('input')[0].focus();
+                document.getElementById('codeInput' + ind).focus();
             }
         } 
         this.paint();
@@ -85,8 +87,17 @@ export class BindPhone extends Widget {
     public codeFocus() {
         const ind = this.state.code.length < 4 ? this.state.code.length : 3;
         // tslint:disable-next-line:prefer-template
-        document.getElementById('codeInput' + ind).getElementsByTagName('input')[0].focus() ;
+        document.getElementById('codeInput' + ind).focus() ;
         this.paint();
+    }
+
+    /**
+     * 判断是否是整数
+     */
+    public integerJudge(num:string) {
+        const reg = /^[0-9]$/;
+        
+        return reg.test(num);
     }
 
 }
