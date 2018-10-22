@@ -37,8 +37,6 @@ interface State {
 export class Input extends Widget {
     public props: Props;
     public state: State;
-    // tslint:disable-next-line:no-unnecessary-field-initialization
-    public readOnly: boolean = undefined;
     
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
@@ -65,10 +63,10 @@ export class Input extends Widget {
             this.props = {};
         }
         
-        const r = this.props.disabled;
-        if (this.readOnly !== r) {
-            this.readOnly = r;
-            paintCmd3(this.getInput(), 'readOnly', r || 'false');
+        if (this.props.disabled) {
+            paintCmd3(this.getInput(), 'readOnly', true);
+        } else {
+            paintCmd3(this.getInput(), 'readOnly', false);
         }
     }
     /**
@@ -112,6 +110,7 @@ export class Input extends Widget {
         
         notify(event.node,'ev-input-change',{ value:this.state.currentValue });
         (<any>this.getInput()).value = currentValue;
+        this.paint(true);
     }
 
     /**
@@ -120,7 +119,7 @@ export class Input extends Widget {
     public onBlur(event:any) {
         this.state.focused = false;
         this.state.showClear = false;
-        notify(event.node,'ev-input-blur',{});
+        notify(event.node,'ev-input-blur',{ value:this.state.currentValue });
     }
 
     /**

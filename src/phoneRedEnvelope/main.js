@@ -1,7 +1,7 @@
 // ==========================================静态变量,静态方法
 
-// const urlHead = "http://192.168.9.29:8099";
-const urlHead = "http://127.0.0.1:8099";
+const urlHead = "http://192.168.9.29:8099";
+// const urlHead = "http://127.0.0.1:8099";
 
 // 语言文字
 const Config= {

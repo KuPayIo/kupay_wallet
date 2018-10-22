@@ -1,14 +1,10 @@
-<div class="new-page" ev-back-click="backPrePage" on-tap="pageClick">
+<div class="new-page" ev-back-click="backPrePage">
     <app-components1-topBar-topBar>{title:{{it1.cfgData.topBarTitle}},background:"#fff"}</app-components1-topBar-topBar>
     <div w-class="body">
         <div w-class="head-container" class="pi-input">
             <img w-class="avatar" src="{{it1.avatar}}" on-tap="uploadAvatar"/>
-            <div style="flex: 1 0 0;">
-            {{if it1.userInput}}
-                <input id="walletNameInput" w-class="edit-input" value="{{it1.nickName}}" on-blur="walletNameInputBlur" on-focus="walletNameInputFocus" maxlength="10" placeholder="{{it1.cfgData.defaultName}}"/>
-            {{else}}
-                <span w-class="edit-input">{{it1.nickName}}</span>
-            {{end}}
+            <div style="flex: 1 0 0;" ev-input-blur="walletNameInputBlur" ev-input-focus="walletNameInputFocus" on-tap="walletNameInputFocus">
+                <app-components1-input-input>{input:{{it1.nickName}},maxLength:10,autofocus:true,placeHolder:{{it1.cfgData.defaultName}},disabled:{{!it1.userInput}} }</app-components1-input-input>
             </div>
             <img src="../../../res/image/edit_blue.png" w-class="edit" on-tap="changeInput"/>
             
