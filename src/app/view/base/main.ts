@@ -10,7 +10,7 @@ declare const module;
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
-import { openAndGetRandom } from '../../net/pull';
+import { openConnect } from '../../net/pull';
 import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
@@ -37,7 +37,7 @@ export const run = (cb): void => {
     initLocalStorageStore();
     // 主动推送初始化
     initPush();
-    openAndGetRandom();
+    openConnect();
     // dataCenter.init();
     popNew('app-view-base-app');
     // popNew('app-view-chat-home-home');

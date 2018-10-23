@@ -707,6 +707,7 @@ export class DataCenter {
         if(status === TxStatus.SUCCESS) return tx;
         if(!delay) return;
         this.updateTxStatus(hash,currencyName,addr);
+        this.clearTxTimer(hash);
         const timer = setTimeout(()=>{
             this.timerUpdateTx(addr,currencyName,hash);
         },delay);
@@ -851,9 +852,9 @@ export class DataCenter {
                 updateStore('USD2CNYRate',rate);
             }
         });
-        setTimeout(()=>{
-            this.updateUSD2CNYRate();
-        },delay);
+        // setTimeout(()=>{
+        //     this.updateUSD2CNYRate();
+        // },delay);
     }
 
     /**
@@ -889,9 +890,9 @@ export class DataCenter {
                 // console.log('fetchCurrency2USDTRate err');
             });
         });
-        setTimeout(()=>{
-            this.updateCurrency2USDTRate();
-        },delay);
+        // setTimeout(()=>{
+        //     this.updateCurrency2USDTRate();
+        // },delay);
     }
 }
 

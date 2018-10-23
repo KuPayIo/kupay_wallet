@@ -149,9 +149,6 @@ export class CreateWallet extends Widget {
         if (!hash) {
             popNewMessage(this.state.cfgData.tips[3]);
         }
-        if (this.state.avatar) {
-            uploadFile(this.state.avatar);
-        }
         const hashMap = getBorn('hashMap');
         hashMap.set(getFirstEthAddr(),hash);
         updateStore('hashMap',hashMap);

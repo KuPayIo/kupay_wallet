@@ -5,7 +5,7 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { depCopy, getFirstEthAddr } from '../utils/tools';
+import { deepCopy, getFirstEthAddr } from '../utils/tools';
 import { AccountDetail,AddMineItem, Addr, ChangeColor, CHisRec, ConState, currency2USDT, CurrencyType, CurrencyUnit, DividendHistory, DividTotal, LanguageSet, LockScreen, LoginState, MarketInfo,MineRank, MiningRank, MiningTotal, Product, PurchaseRecordOne, RechargeWithdrawalLog, ShapeShiftCoin, ShapeShiftTxs, SHisRec, Store, TransRecordLocal, Wallet } from './interface';
 
 // ============================================ 导出
@@ -18,22 +18,22 @@ export const find = (keyName: KeyName, id?: number | string): any => {
     if (!id) {
         const value = store[keyName];
         if (!(value instanceof Map)) {
-            return value instanceof Object ? depCopy(value) : value;
+            return value instanceof Object ? deepCopy(value) : value;
         }
         const arr = [];
         for (const [, v] of value) {
             arr.push(v);
         }
 
-        return depCopy(arr);
+        return deepCopy(arr);
     }
     const value = store[keyName].get(id);
     if (value instanceof Map) {
         const result = value.get(id);
 
-        return result && depCopy(result);
+        return result && deepCopy(result);
     } else {
-        return value && depCopy(value);
+        return value && deepCopy(value);
     }
 };
 
@@ -140,7 +140,7 @@ type LocKeyName = 'wallets' | 'addrsMap' | 'transactionsMap' | 'readedPriAgr' | 
 export const findByLoc = (keyName: LocKeyName): any => {
     const value = JSON.parse(localStorage.getItem(keyName));
 
-    return value instanceof Object ? depCopy(value) : value;
+    return value;
 };
 
 // ============================================ 立即执行

@@ -16,7 +16,7 @@ import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/inte
 import { find, getBorn, updateStore } from '../store/store';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { fetchBtcMinerFee, fetchGasPrice, getStaticLanguage } from '../utils/tools';
+import { fetchBtcMinerFee, fetchGasPrice, getStaticLanguage, popNewMessage } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
