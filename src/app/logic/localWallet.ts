@@ -14,6 +14,7 @@ import { restoreSecret } from '../utils/secretsBase';
 import { calcHashValuePromise, getXOR, hexstrToU8Array, u8ArrayToHexstr, popNewLoading, popNewMessage } from '../utils/tools';
 import { getMnemonic, addNewAddr } from '../utils/walletTools';
 import { dataCenter } from './dataCenter';
+import { uploadFile } from '../net/pull';
 
 /**
  * 创建钱包
@@ -98,7 +99,10 @@ export const createWalletRandom = (hash:string,option) => {
     const addrs: Addr[] = find('addrs') || [];
     addrs.push(...gwlt.addrs);
     updateStore('addrs', addrs);
-    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar});
+    updateStore('userInfo',{ nickName:option.nickName});
+    if (option.avatar) {
+        uploadFile(option.avatar);
+    }
 
 };
 
@@ -130,7 +134,10 @@ export const createWalletByImage = async (hash:string,option:any) => {
     updateStore('salt', salt);
     addrs.push(...gwlt.addrs);
     updateStore('addrs', addrs);
-    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar});
+    updateStore('userInfo',{ nickName:option.nickName});
+    if (option.avatar) {
+        uploadFile(option.avatar);
+    }
 
 };
 
@@ -201,7 +208,10 @@ export const importWalletByMnemonic = (hash:string,option) => {
     updateStore('salt', salt);
     addrs.push(...gwlt.addrs);
     updateStore('addrs', addrs);
-    updateStore('userInfo',{ nickName:option.nickName,avatar:option.avatar});
+    updateStore('userInfo',{ nickName:option.nickName});
+    if (option.avatar) {
+        uploadFile(option.avatar);
+    }
     return true;
 };
 

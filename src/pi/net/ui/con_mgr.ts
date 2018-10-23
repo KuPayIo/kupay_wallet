@@ -71,6 +71,7 @@ export const open = (
             }
         }
     });
+    clearTimeout(pingTimer);
     ping(reOpenCallback);
     timeout += now();
     const cfg = { encode: false, isText: (commonjs.flags.os.name === 'Android') && (commonjs.flags.os.version < '4.4.0') };
@@ -138,6 +139,43 @@ export const request = (msg: any, cb: Function, timeout?: number) => {
 export const send = (msg: any) => {
     con.send(msg);
 };
+
+
+// 钱包项目获取随机数后底层登录(注意和上层登录不同)
+export const randomLogin = (userx: string, uType: string, password: string, cb: Function, reOpenCallback?: Function, timeout?: number) => {
+    if (con === null) {
+        if (conState !== ConState.init) {
+            throw new Error(`login, invalid state: ${conState}`);
+        }
+
+        return open(() => {
+            randomLogin(userx, uType, password, cb, reOpenCallback, timeout);
+        }, (result) => {
+            // callTime(cb, [result], "login");
+            cb([result]);
+        }, null, reOpenCallback, timeout);
+    }
+    con.request({ type: 'login', param: { userType: uType, password: password, user: userx } }, (result) => {
+        console.log('randomLogin-----',result);
+        if (result.error) {
+            setLoginState(LoginState.logerror);
+            result.result = result.error;
+            // callTime(cb, [result], "logerror");
+            cb([result]);
+        } else {
+            setLoginState(LoginState.logined);
+            requestWaits();
+            user = userx;
+            userType = uType;
+            tempPassword = result.password;
+            result.result = 1;
+            // callTime(cb, [result], "login");
+            cb([result]);
+        }
+    }, timeout || defaultTimeout);
+    setLoginState(LoginState.logining);
+};
+
 
 /**
  * 登录
@@ -382,7 +420,10 @@ const waitTimeout = 20 * 1000;
 const closeTimeout = 20 * 10 * 1000;
 
 // 心跳时间
-const pingTime = 100 * 1000;
+const pingTime = 10 * 1000;
+
+// 心跳定时器
+let pingTimer = 0;
 
 // 用户长时间未发起通信，关闭链接
 const noneReqTimeout = 10 * 60 * 1000;
@@ -400,6 +441,7 @@ let doClose = false;
 
 // 状态改变的CB
 const stateChangeArr = [];
+
 // 设置连接状态
 export const setConState = (s: number) => {
     if (conState === s) {
@@ -408,6 +450,7 @@ export const setConState = (s: number) => {
     conState = s;
     show();
 };
+
 // 设置登录状态
 const setLoginState = (s: number) => {
     if (loginState === s) {
@@ -417,15 +460,24 @@ const setLoginState = (s: number) => {
     show();
 };
 
+//设置底层重登录信息
+export const setBottomLayerReloginMsg = (user_:string,userType_:string | number,tempPassword_:string)=>{
+    user = user_;
+    userType = userType_;
+    tempPassword = tempPassword_;
+}
 /**
  * 重新打开连接
  */
 const reopen = (reOpenCallback?: Function) => {
+    console.log('reopen start-=------');
     if (doClose) return;
     open(() => {
-        if (loginState === LoginState.logined || loginState === LoginState.relogining) {
-            relogin();
-        }
+        console.log('reopen callback loginState',loginState);
+        relogin();
+        // if (loginState === LoginState.logined || loginState === LoginState.relogining) {
+        //     relogin();
+        // }
         if (reOpenCallback) reOpenCallback();
     }, null, reOpenCallback);
 };
@@ -433,7 +485,11 @@ const reopen = (reOpenCallback?: Function) => {
  * 重登录
  */
 const relogin = () => {
+    console.log('user',user);
+    console.log('userType',userType);
+    console.log('password',tempPassword);
     request({ type: 'relogin', param: { user: user, userType: userType, password: tempPassword } }, (result) => {
+        console.log('relogin success----',result);
         if (result.error) {
             setLoginState(LoginState.logerror);
             reloginCallback && reloginCallback({ type: 'logerror', result: result });
@@ -458,6 +514,7 @@ const requestWaits = () => {
  */
 const ping = (reOpenCallback: Function) => {
     const func = () => {
+        // console.log("ping",new Date().getTime());
         if (conState === ConState.closed) {
             reopen(reOpenCallback);
         } else if (conState === ConState.opened) {
@@ -469,9 +526,11 @@ const ping = (reOpenCallback: Function) => {
                 con.send({ type: 'app@time', param: { ctime: now() } });
             }
         }
-        setTimeout(func, pingTime);
+        pingTimer = setTimeout(func, pingTime);
     };
-    setTimeout(func, pingTime);
+    // if (!pingTimer) {
+        pingTimer = setTimeout(func, pingTime);
+    // }
 };
 
 /**
