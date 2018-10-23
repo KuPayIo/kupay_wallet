@@ -1,6 +1,7 @@
 /**
  * other record
  */
+import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
@@ -114,6 +115,15 @@ export class TotalRecord extends Widget {
         });
 
         return list;
+    }
+
+    /**
+     * 查看详情界面
+     */
+    public recordListItemClick(e:any,index:number) {
+        if (this.state.recordList[index].hash) {
+            popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.state.recordList[index].hash });
+        }
     }
 
     /**

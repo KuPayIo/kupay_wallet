@@ -6,8 +6,8 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { applyAutoLogin, autoLogin, setUserInfo, fetchGasPrices, fetchBtcFees, fetchRealUser, getCloudBalance, getUserInfoFromServer, defaultLogin } from '../../net/pull';
 import { LoginState, UserInfo } from '../../store/interface';
-import { find, register, getBorn } from '../../store/store';
-import { getLanguage, getFirstEthAddr } from '../../utils/tools';
+import { find, getBorn, register } from '../../store/store';
+import { getFirstEthAddr, getLanguage } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
