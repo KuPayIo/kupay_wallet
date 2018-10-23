@@ -27,3 +27,18 @@
     margin-right: 4%;
     display: inline-block;
 }
+.codeInput{
+    font-size:64px;
+    color:#368FE5;
+    text-align:center;
+    background-image: none;
+    border: none;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 100%;
+    line-height: 40px;
+    outline: 0px;
+    transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1) 0s;
+    width: 100%;
+    padding: 30px;
+}

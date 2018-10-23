@@ -7,7 +7,7 @@ import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { selectImage } from '../../../logic/native';
-import { uploadFile } from '../../../net/pull';
+import { setUserInfo, uploadFile } from '../../../net/pull';
 import { find, register, updateStore } from '../../../store/store';
 import { walletNameAvailable } from '../../../utils/account';
 import { getLanguage, getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
@@ -52,13 +52,15 @@ export class AccountHome extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
+
+    /**
+     * 修改名字输入框取消聚焦
+     */
     public walletNameInputBlur(e: any) {
-        const v = e.currentTarget.value.trim();
-        const input: any = document.querySelector('#walletNameInput');
+        const v = e.value;
         this.state.userInput = false;
         if (!walletNameAvailable(v)) {
             popNewMessage(this.state.cfgData.tips[0]);
-            input.value = this.state.nickName;
             this.state.isUpdatingWalletName = false;
 
             return;
@@ -73,8 +75,8 @@ export class AccountHome extends Widget {
             const userInfo = getUserInfo();
             userInfo.nickName = v;
             updateStore('userInfo',userInfo);
+            setUserInfo();
         }
-        input.value = v;
         this.state.isUpdatingWalletName = false;
         this.paint();
     }
@@ -84,21 +86,7 @@ export class AccountHome extends Widget {
         this.state.isUpdatingWalletName = true;
     }
 
-    public pageClick() {
-        if (this.state.isUpdatingWalletName) {
-            const walletNameInput: any = document.querySelector('#walletNameInput');
-            walletNameInput.blur();
-
-            return;
-        }
-    }
-
     public async backupWalletClick() {
-        if (this.state.isUpdatingWalletName) {
-            this.pageClick();
-
-            return;
-        }
         const psw = await popPswBox();
         if (!psw) return;
         const ret = await backupMnemonic(psw);
@@ -110,11 +98,6 @@ export class AccountHome extends Widget {
 
     // 导出私钥
     public async exportPrivateKeyClick() {
-        if (this.state.isUpdatingWalletName) {
-            this.pageClick();
-
-            return;
-        }
         const wallet = find('curWallet');
         const psw = await popPswBox();
         if (!psw) return;

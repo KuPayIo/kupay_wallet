@@ -5,7 +5,7 @@
 // tslint:disable-next-line:variable-name
 export const dev_mode = 'dev';
 
-export const cloudCurrency = ['KT','CNYT','ETH','BTC'] 
+export const cloudCurrency = ['KT','CNYT','ETH','BTC']; 
 // 主网erc20
 const ERC20TokensMainnet = {
     BNB:{
@@ -860,21 +860,21 @@ KuPay团队
             2033: '已售罄', 
             '-98': '无效的兑换码',
             '-99': '你已经兑换了同类型的兑换码',
-            default: '网络异常,请稍后重试'
+            default: '网络异常，请稍后重试'
         },
         // 转账相关错误列表
         transError:[
             '密码错误',
             '余额不足',
             'gas过低',
-            '出错啦'
+            '交易失败'
         ],
-        //钱包创建成功
+        // 钱包创建成功
         createSuccess:{ 
-            "title":"创建成功",
-            "content":"记得备份，如果忘记账户就找不回来了。",
-            "sureText":"备份",
-            "cancelText":"暂时不" 
+            title:'创建成功',
+            content:'记得备份，如果忘记账户就找不回来了。',
+            sureText:'备份',
+            cancelText:'暂时不' 
         }
 
     },
@@ -1463,15 +1463,22 @@ KuPay团队
             2033: '已售罄', 
             '-98': '無效的兌換碼',
             '-99': '你已經兌換了同類型的兌換碼',
-            default: '出錯啦'
+            default: '网络异常，请稍后重试'
         },
         // 转账相关错误列表
         transError:[
             '密碼錯誤',
             '餘額不足',
             'gas過低',
-            '出錯啦'
-        ]
+            '交易失败'
+        ],
+        // 钱包创建成功
+        createSuccess:{ 
+            title:'創建成功',
+            content:'記得備份，如果忘記賬戶就找不回來了。',
+            sureText:'備份',
+            cancelText:'暫時不' 
+        }
     },
     /**
      * 英语

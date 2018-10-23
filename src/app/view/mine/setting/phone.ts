@@ -34,7 +34,7 @@ export class BindPhone extends Widget {
         if (!this.state.phone) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips });
             this.state.code = [];
-            this.paint();
+            this.setCode();
 
             return;
         }
@@ -47,7 +47,7 @@ export class BindPhone extends Widget {
         } else {
             this.state.isSuccess = false;
             this.state.code = [];
-            this.paint();
+            this.setCode();
         }
     }
 
@@ -59,34 +59,66 @@ export class BindPhone extends Widget {
     }
 
     /**
+     * 手动为验证码输入框赋值
+     */
+    public setCode() {
+        for (const i in [1,2,3,4]) {
+            // tslint:disable-next-line:prefer-template
+            (<any>document.getElementById('codeInput' + i)).value = this.state.code[i];
+        }
+        this.codeFocus();
+    }
+
+    /**
      * 验证码改变
      */
     public codeChange(e: any) {
-        if (e.value) {
-            this.state.code.push(e.value);
+        const v = Number(e.key) ? e.key :e.currentTarget.value.slice(-1);
+        // const v = e.currentTarget.value.slice(-1);
+        if (e.key === 'Backspace') {
+            this.state.code.pop();
             const ind = this.state.code.length;
+            if (ind >= 0) {
             // tslint:disable-next-line:prefer-template
-            document.getElementById('codeInput' + (ind - 1)).getElementsByTagName('input')[0].blur();
-            if (ind < 4) {
-                // tslint:disable-next-line:prefer-template
-                document.getElementById('codeInput' + ind).getElementsByTagName('input')[0].focus();
+                document.getElementById('codeInput' + ind).focus();
             }
-        } 
+            this.setCode();
+            
+        } else if (this.integerJudge(v)) {
+            this.state.code.push(v);
+            const ind = this.state.code.length;
+            if (ind < 4) {
+            // tslint:disable-next-line:prefer-template
+                document.getElementById('codeInput' + ind).focus();
+            }
+        }
+        console.log(v,this.state.code.length);
         this.paint();
         
-        if (this.state.code.length === 4) {
-            this.doSure();
-        }
+        setTimeout(() => {
+            if (this.state.code.length === 4) {
+                this.doSure();
+            }
+        }, 100);
     }
 
     /**
      * 验证码输入框聚焦
      */
     public codeFocus() {
-        const ind = this.state.code.length < 4 ? this.state.code.length : 3;
+        const ind = this.state.code.length; 
         // tslint:disable-next-line:prefer-template
-        document.getElementById('codeInput' + ind).getElementsByTagName('input')[0].focus() ;
+        document.getElementById('codeInput' + ind).focus();
         this.paint();
+    }
+
+    /**
+     * 判断是否是整数
+     */
+    public integerJudge(num:string) {
+        const reg = /^[0-9]$/;
+        
+        return reg.test(num);
     }
 
 }
