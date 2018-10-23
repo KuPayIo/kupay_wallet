@@ -11,7 +11,7 @@ import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, Wallet } from '../store/interface';
 import { find, getBorn, initStore, loginInit, logoutInit, updateStore } from '../store/store';
-import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, notSwtichShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
 
 export const depCopy = (v: any): any => {
@@ -127,11 +127,11 @@ export const getAddrsInfoByCurrencyName = (currencyName: string) => {
     const len = currencyRecords.length;
     for (let i = 0; i < len; i++) {
         if (currencyRecords[i].currencyName === currencyName) {
-            for (let j = 0;j < currencyRecords[i].addrs.length; j++) {
+            for (let j = 0; j < currencyRecords[i].addrs.length; j++) {
                 const addr = currencyRecords[i].addrs[j];
                 const obj = {
                     addr,
-                    balance:getAddrInfoByAddr(addr,currencyName).balance
+                    balance: getAddrInfoByAddr(addr, currencyName).balance
                 };
                 retAddrInfo.push(obj);
             }
@@ -152,7 +152,7 @@ export const getAddrInfoByAddr = (addr: string, currencyName: string) => {
 };
 
 // 随机生成RGB颜色
-export const randomRgbColor = () => { 
+export const randomRgbColor = () => {
     const r = Math.floor(Math.random() * 256);
     const g = Math.floor(Math.random() * 256);
     const b = Math.floor(Math.random() * 256);
@@ -463,7 +463,7 @@ export const fetchBalanceOfCurrency = (currencyName: string) => {
     const localAddrs = find('addrs') || [];
     let balance = 0;
     let addrs = [];
-    for (let i = 0; i < wallet.currencyRecords.length;i++) {
+    for (let i = 0; i < wallet.currencyRecords.length; i++) {
         if (wallet.currencyRecords[i].currencyName === currencyName) {
             addrs = wallet.currencyRecords[i].addrs;
             break;
@@ -524,8 +524,8 @@ export const calcHashValuePromise = async (pwd, salt?) => {
     console.timeEnd('argonHash');
     if (getFirstEthAddr()) {
         const hashMap = getBorn('hashMap');
-        hashMap.set(getFirstEthAddr(),hash);
-        updateStore('hashMap',hashMap);
+        hashMap.set(getFirstEthAddr(), hash);
+        updateStore('hashMap', hashMap);
     }
     return hash;
 };
@@ -548,7 +548,7 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
     });
 };
 
-export const popPswBox = async (content= []) => {
+export const popPswBox = async (content = []) => {
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
         const psw = await openMessageboxPsw(content);
@@ -560,12 +560,12 @@ export const popPswBox = async (content= []) => {
 };
 
 // 弹出提示框
-export const popNewMessage = (content:string) => {
-    return popNew('app-components1-message-message',{ content });
+export const popNewMessage = (content: string) => {
+    return popNew('app-components1-message-message', { content });
 };
 // 弹出loading
-export const popNewLoading = (text:string) => {
-    return popNew('app-components1-loading-loading',{ text });
+export const popNewLoading = (text: string) => {
+    return popNew('app-components1-loading-loading', { text });
 };
 
 /**
@@ -574,7 +574,7 @@ export const popNewLoading = (text:string) => {
 const openMessageboxPsw = (content?): Promise<string> => {
     // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype:'password',title:'请输入密码',content }, (r: string) => {
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: '请输入密码', content }, (r: string) => {
             resolve(r);
         }, (cancel: string) => {
             reject(cancel);
@@ -633,7 +633,7 @@ export const getCurrentAddrByCurrencyName = (currencyName: string) => {
 // 根据货币名获取当前正在使用的地址的余额
 export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
     const curAddr = getCurrentAddrByCurrencyName(currencyName);
-    console.log('curAddr',curAddr);
+    console.log('curAddr', curAddr);
     const addrs = find('addrs') || [];
     for (let i = 0; i < addrs.length; i++) {
         if ((addrs[i].currencyName === currencyName) && (addrs[i].addr === curAddr)) {
@@ -687,19 +687,19 @@ export const unicodeArray2Str = (arr) => {
 /**
  * 计算日期间隔
  */
-export const GetDateDiff = (startDate,endDate) => {
-    let Y =   `${startDate.getFullYear()}-`;
-    let M =   `${(startDate.getMonth() + 1 < 10 ? `0${(startDate.getMonth() + 1)}` : startDate.getMonth() + 1)}-`;
+export const GetDateDiff = (startDate, endDate) => {
+    let Y = `${startDate.getFullYear()}-`;
+    let M = `${(startDate.getMonth() + 1 < 10 ? `0${(startDate.getMonth() + 1)}` : startDate.getMonth() + 1)}-`;
     let D = `${startDate.getDate()}`;
-    startDate = new Date(`${Y}${M}${D}`); 
-    const startTime = startDate.getTime();  
-    Y =   `${endDate.getFullYear()}-`;
-    M =   `${(endDate.getMonth() + 1 < 10 ? `0${(endDate.getMonth() + 1)}` : endDate.getMonth() + 1)}-`;
+    startDate = new Date(`${Y}${M}${D}`);
+    const startTime = startDate.getTime();
+    Y = `${endDate.getFullYear()}-`;
+    M = `${(endDate.getMonth() + 1 < 10 ? `0${(endDate.getMonth() + 1)}` : endDate.getMonth() + 1)}-`;
     D = `${endDate.getDate()}`;
-    endDate = new Date(`${Y}${M}${D}`); 
+    endDate = new Date(`${Y}${M}${D}`);
     const endTime = endDate.getTime();
 
-    return  Math.floor(Math.abs((startTime - endTime)) / (1000 * 60 * 60 * 24));    
+    return Math.floor(Math.abs((startTime - endTime)) / (1000 * 60 * 60 * 24));
 };
 
 // 时间戳格式化 毫秒为单位
@@ -708,14 +708,14 @@ export const timestampFormatToDate = (timestamp: number) => {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : `0${date.getMonth() + 1}`;
     const day = date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`;
-    
+
     return `${year}-${month}-${day}`;
 };
 /**
  * 密码加密
  * @param plainText 需要加密的文本
  */
-export const encrypt = (plainText: string,salt:string) => {
+export const encrypt = (plainText: string, salt: string) => {
     const cipher = new Cipher();
 
     return cipher.encrypt(salt, plainText);
@@ -725,7 +725,7 @@ export const encrypt = (plainText: string,salt:string) => {
  * 密码解密
  * @param cipherText 需要解密的文本
  */
-export const decrypt = (cipherText: string,salt:string) => {
+export const decrypt = (cipherText: string, salt: string) => {
     const cipher = new Cipher();
 
     return cipher.decrypt(salt, cipherText);
@@ -753,12 +753,12 @@ export const lockScreenHash = (psw) => {
 // ==========================================================new version tools
 
 // 获取gasPrice
-export const fetchGasPrice = (minerFeeLevel:MinerFeeLevel) => {
+export const fetchGasPrice = (minerFeeLevel: MinerFeeLevel) => {
     return find('gasPrice')[minerFeeLevel];
 };
 
 // 获取btc miner fee
-export const fetchBtcMinerFee = (minerFeeLevel:MinerFeeLevel) => {
+export const fetchBtcMinerFee = (minerFeeLevel: MinerFeeLevel) => {
     return find('btcMinerFee')[minerFeeLevel];
 };
 
@@ -772,9 +772,9 @@ export const fetchTotalAssets = () => {
     wallet.currencyRecords.forEach(item => {
         if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
             const balance = fetchBalanceOfCurrency(item.currencyName);
-            totalAssets += fetchBalanceValueOfCoin(item.currencyName,balance);
+            totalAssets += fetchBalanceValueOfCoin(item.currencyName, balance);
         }
-        
+
     });
 
     return totalAssets;
@@ -785,21 +785,21 @@ export const fetchTotalAssets = () => {
 export const fetchCloudTotalAssets = () => {
     const cloudBalance = getBorn('cloudBalance');
     let totalAssets = 0;
-    for (const [k,v] of cloudBalance) {
-        totalAssets += fetchBalanceValueOfCoin(CurrencyTypeReverse[k],v);
+    for (const [k, v] of cloudBalance) {
+        totalAssets += fetchBalanceValueOfCoin(CurrencyTypeReverse[k], v);
     }
 
-    return  totalAssets;
+    return totalAssets;
 };
 
 /**
  * 获取某个币种对应的货币价值
  */
-export const fetchBalanceValueOfCoin = (currencyName:string,balance:number) => {
+export const fetchBalanceValueOfCoin = (currencyName: string, balance: number) => {
     let balanceValue = 0;
     const USD2CNYRate = find('USD2CNYRate');
     const currency2USDTMap = getBorn('currency2USDTMap');
-    const currency2USDT = currency2USDTMap.get(currencyName) || { open:0,close:0 };
+    const currency2USDT = currency2USDTMap.get(currencyName) || { open: 0, close: 0 };
     const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
 
     if (currencyUnit === CurrencyUnit.CNY) {
@@ -818,28 +818,28 @@ export const fetchWalletAssetList = () => {
     const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
     const assetList = [];
     for (const k in MainChainCoin) {
-        const item:any = {};
+        const item: any = {};
         if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             const balance = fetchBalanceOfCurrency(k);
             item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
-            item.gain =  fetchCoinGain(k);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
+            item.gain = fetchCoinGain(k);
             assetList.push(item);
         }
-        
+
     }
 
     for (const k in ERC20Tokens) {
-        const item:any = {};
+        const item: any = {};
         if (ERC20Tokens.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
             item.currencyName = k;
             item.description = ERC20Tokens[k].description;
             const balance = fetchBalanceOfCurrency(k);
             item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
-            item.gain =  fetchCoinGain(k);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
+            item.gain = fetchCoinGain(k);
             assetList.push(item);
         }
     }
@@ -854,30 +854,30 @@ export const fetchCloudWalletAssetList = () => {
     const assetList = [];
     const ktBalance = getBorn('cloudBalance').get(CurrencyType.KT) || 0;
     const ktItem = {
-        currencyName :'KT',
-        description:'KuPlay Token',
-        balance:formatBalance(ktBalance),
-        balanceValue:formatBalanceValue(fetchBalanceValueOfCoin('KT',ktBalance)),
-        gain:formatBalanceValue(0)
+        currencyName: 'KT',
+        description: 'KuPlay Token',
+        balance: formatBalance(ktBalance),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
+        gain: formatBalanceValue(0)
     };
     assetList.push(ktItem);
     const cnytItem = {
-        currencyName :'CNYT',
-        description:'CNYT',
-        balance:0,
-        balanceValue:'0.00',
-        gain:formatBalanceValue(0)
+        currencyName: 'CNYT',
+        description: 'CNYT',
+        balance: 0,
+        balanceValue: '0.00',
+        gain: formatBalanceValue(0)
     };
     assetList.push(cnytItem);
     for (const k in CurrencyType) {
-        const item:any = {};
+        const item: any = {};
         if (MainChainCoin.hasOwnProperty(k)) {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
             const balance = getBorn('cloudBalance').get(CurrencyType[k]) || 0;
             item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
-            item.gain =  fetchCoinGain(k);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
+            item.gain = fetchCoinGain(k);
             assetList.push(item);
         }
     }
@@ -891,12 +891,12 @@ export const fetchCloudWalletAssetList = () => {
 export const hasWallet = () => {
     const wallet = find('curWallet');
     if (!wallet) {
-        popNew('app-components-modalBox-modalBox',{ 
-            title:'提示',
-            content:'你还没有登录，去登录使用更多功能吧',
-            sureText:'去登录',
-            cancelText:'暂时不' 
-        },() => {
+        popNew('app-components-modalBox-modalBox', {
+            title: '提示',
+            content: '你还没有登录，去登录使用更多功能吧',
+            sureText: '去登录',
+            cancelText: '暂时不'
+        }, () => {
             popNew('app-view-wallet-create-home');
         });
 
@@ -907,39 +907,39 @@ export const hasWallet = () => {
 };
 
 // 解析交易状态
-export const parseStatusShow = (tx:TransRecordLocal) => {
+export const parseStatusShow = (tx: TransRecordLocal) => {
     if (!tx) {
         return {
-            text:'打包中',
-            icon:'pending.png'
-        }; 
+            text: '打包中',
+            icon: 'pending.png'
+        };
     }
     const status = tx.status;
     if (status === TxStatus.PENDING) {
         return {
-            text:'打包中',
-            icon:'pending.png'
+            text: '打包中',
+            icon: 'pending.png'
         };
     } else if (status === TxStatus.CONFIRMED) {
         return {
-            text:`已确认 ${tx.confirmedBlockNumber}/${tx.needConfirmedBlockNumber}`,
-            icon:'pending.png'
+            text: `已确认 ${tx.confirmedBlockNumber}/${tx.needConfirmedBlockNumber}`,
+            icon: 'pending.png'
         };
     } else if (status === TxStatus.FAILED) {
         return {
-            text:'交易失败',
-            icon:'fail.png'
+            text: '交易失败',
+            icon: 'fail.png'
         };
     } else {
         return {
-            text:'已完成',
-            icon:'icon_right2.png'
+            text: '已完成',
+            icon: 'icon_right2.png'
         };
     }
 };
 
 // 解析转账类型
-export const parseTxTypeShow = (txType:TxType) => {
+export const parseTxTypeShow = (txType: TxType) => {
     if (txType === TxType.RECEIPT) {
         return '收款';
     }
@@ -947,7 +947,7 @@ export const parseTxTypeShow = (txType:TxType) => {
     return '转账';
 };
 
- // 解析是否可以重发
+// 解析是否可以重发
 export const canResend = (tx) => {
     if (tx.status !== TxStatus.PENDING) return false;
     if (tx.minerFeeLevel === MinerFeeLevel.FASTEST) return false;
@@ -966,7 +966,7 @@ export const fetchWalletAssetListAdded = () => {
     const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
     const assetList = [];
     for (const k in MainChainCoin) {
-        const item:any = {};
+        const item: any = {};
         if (MainChainCoin.hasOwnProperty(k) && k !== 'KT') {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
@@ -975,18 +975,18 @@ export const fetchWalletAssetListAdded = () => {
             } else {
                 item.added = false;
             }
-            if (defalutShowCurrencys.indexOf(k) >= 0) {
+            if (notSwtichShowCurrencys.indexOf(k) >= 0) {
                 item.canSwtiched = false;
             } else {
                 item.canSwtiched = true;
             }
             assetList.push(item);
         }
-        
+
     }
 
     for (const k in ERC20Tokens) {
-        const item:any = {};
+        const item: any = {};
         if (ERC20Tokens.hasOwnProperty(k)) {
             item.currencyName = k;
             item.description = ERC20Tokens[k].description;
@@ -995,7 +995,7 @@ export const fetchWalletAssetListAdded = () => {
             } else {
                 item.added = false;
             }
-            if (defalutShowCurrencys.indexOf(k) >= 0) {
+            if (notSwtichShowCurrencys.indexOf(k) >= 0) {
                 item.canSwtiched = false;
             } else {
                 item.canSwtiched = true;
@@ -1003,7 +1003,6 @@ export const fetchWalletAssetListAdded = () => {
             assetList.push(item);
         }
     }
-
     return assetList;
 };
 
@@ -1021,8 +1020,8 @@ export const initAddr = (address: string, currencyName: string, addrName?: strin
 };
 
 // 获取货币的涨跌情况
-export const fetchCoinGain = (currencyName:string) => {
-    const currency2USDT:currency2USDT = getBorn('currency2USDTMap').get(currencyName);
+export const fetchCoinGain = (currencyName: string) => {
+    const currency2USDT: currency2USDT = getBorn('currency2USDTMap').get(currencyName);
     if (!currency2USDT) return formatBalanceValue(0);
     return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
 };
@@ -1039,10 +1038,10 @@ export const parseRtype = (rType) => {
 /**
  * 获取某id理财产品持有量，不算已经赎回的
  */
-export const fetchHoldedProductAmount = (id:string) => {
+export const fetchHoldedProductAmount = (id: string) => {
     const purchaseRecord = find('purchaseRecord');
     let holdAmout = 0;
-    for (let i = 0;i < purchaseRecord.length;i++) {
+    for (let i = 0; i < purchaseRecord.length; i++) {
         const one = purchaseRecord[i];
         if (one.id === id && one.state === 1) {
             holdAmout += one.amount;
@@ -1055,37 +1054,37 @@ export const fetchHoldedProductAmount = (id:string) => {
 /**
  * 计算剩余百分比
  */
-export const calPercent = (surplus:number,total:number) => {
+export const calPercent = (surplus: number, total: number) => {
     if (surplus === 0) {
         return {
-            left:0,
-            use:100
+            left: 0,
+            use: 100
         };
     }
     if (surplus === total) {
         return {
-            left:100,
-            use:0
+            left: 100,
+            use: 0
         };
     }
     if (surplus <= total / 100) {
         return {
-            left:1,
-            use:99
+            left: 1,
+            use: 99
         };
     }
-    const r = Number((surplus / total).toString().slice(0,4));
+    const r = Number((surplus / total).toString().slice(0, 4));
 
     return {
-        left:r * 100,
-        use:100 - r * 100
+        left: r * 100,
+        use: 100 - r * 100
     };
 };
 
 /**
  * base64 to blob
  */
-export const base64ToBlob = (base64:string) => {
+export const base64ToBlob = (base64: string) => {
     const arr = base64.split(',');
     const mime = arr[0].match(/:(.*?);/)[1];
     const bstr = atob(arr[1]);
@@ -1100,7 +1099,7 @@ export const base64ToBlob = (base64:string) => {
 /**
  * 图片base64转file格式
  */
-export const base64ToFile = (base64:string) => {
+export const base64ToFile = (base64: string) => {
     const blob = base64ToBlob(base64);
     const newFile = new File([blob], 'avatar.jpeg', { type: blob.type });
     console.log(newFile);
@@ -1130,12 +1129,12 @@ export const getUserInfo = () => {
 /**
  * 获取区块确认数
  */
-export const getConfirmBlockNumber = (currencyName:string,amount:number) => {
+export const getConfirmBlockNumber = (currencyName: string, amount: number) => {
     if (ERC20Tokens[currencyName]) {
         return currencyConfirmBlockNumber.ERC20;
     }
     const confirmBlockNumbers = currencyConfirmBlockNumber[currencyName];
-    for (let i = 0;i < confirmBlockNumbers.length;i++) {
+    for (let i = 0; i < confirmBlockNumbers.length; i++) {
         if (amount < confirmBlockNumbers[i].value) {
             return confirmBlockNumbers[i].number;
         }
@@ -1158,7 +1157,7 @@ export const getLanguage = (w) => {
     if (lan) {
         return w.config.value[lan.languageList[lan.selected]];
     }
-    
+
     return w.config.value.simpleChinese;
 };
 
@@ -1178,26 +1177,26 @@ export const getStaticLanguage = () => {
  * 助记词片段分享加密
  * 为了便于识别用户使用的是同一组密钥，会在分享出去的密钥的第2/4/6/8/10/12加上一个相同的随机数
  */
-export const mnemonicFragmentEncrypt = (fragments:string[]) => {
+export const mnemonicFragmentEncrypt = (fragments: string[]) => {
     const len = 6;
     const randomArr = [];
-    for (let i = 0;i < len;i++) {
+    for (let i = 0; i < len; i++) {
         const random = Math.floor(Math.random() * 10);
         randomArr.push(random);
     }
     const retFragments = [];
-    for (let i = 0;i < fragments.length;i ++) {
+    for (let i = 0; i < fragments.length; i++) {
         const fragmentArr = fragments[i].split('');
         let j = 1;
         // tslint:disable-next-line:binary-expression-operand-order
         while (2 * j <= 12) {
             // tslint:disable-next-line:binary-expression-operand-order
-            fragmentArr.splice(2 * j - 1,0,randomArr[j - 1]);
+            fragmentArr.splice(2 * j - 1, 0, randomArr[j - 1]);
             j++;
         }
         retFragments.push(fragmentArr.join(''));
     }
-    
+
     return retFragments;
 };
 
@@ -1205,20 +1204,20 @@ export const mnemonicFragmentEncrypt = (fragments:string[]) => {
  * 助记词片段分享解密
  * 为了便于识别用户使用的是同一组密钥，会在分享出去的密钥的第2/4/6/8/10/12加上一个相同的随机数
  */
-export const mnemonicFragmentDecrypt = (fragment:string) => {
+export const mnemonicFragmentDecrypt = (fragment: string) => {
     const fragmentArr = fragment.split('');
     const randomArr = [];
     let j = 6;
     while (j > 0) {
         // tslint:disable-next-line:binary-expression-operand-order
-        const delRandom = fragmentArr.splice(2 * j - 1,1);
+        const delRandom = fragmentArr.splice(2 * j - 1, 1);
         j--;
         randomArr.push(delRandom);
     }
 
     return {
-        fragment:fragmentArr.join(''),
-        randomStr:randomArr.reverse().join('')
+        fragment: fragmentArr.join(''),
+        randomStr: randomArr.reverse().join('')
     };
 };
 
@@ -1233,15 +1232,15 @@ export const logoutAccountDel = () => {
  * 注销账户保留数据
  */
 export const logoutAccount = () => {
-    updateStore('flag',{ logoutAccountSave:true });
+    updateStore('flag', { logoutAccountSave: true });
     logoutInit();
 };
 
 /**
  * 登录成功
  */
-export const loginSuccess = (wallet:Wallet) => {
-    updateStore('curWallet',wallet);
+export const loginSuccess = (wallet: Wallet) => {
+    updateStore('curWallet', wallet);
     setConState(ConState.init);
     loginInit();
     openAndGetRandom();
@@ -1249,7 +1248,7 @@ export const loginSuccess = (wallet:Wallet) => {
 /**
  * 判断是否是有效的货币地址
  */
-export const isValidAddress = (addr:string,currencyName:string) => {
+export const isValidAddress = (addr: string, currencyName: string) => {
     if (currencyName === 'BTC') {
         // todo
     } else {
@@ -1260,7 +1259,7 @@ export const isValidAddress = (addr:string,currencyName:string) => {
 /**
  * 判断是否是有效的ETH地址
  */
-const isETHValidAddress = (addr:string) => {
+const isETHValidAddress = (addr: string) => {
     if (!addr || !addr.startsWith('0x') || addr.length !== 42) return false;
     if (isNaN(Number(addr))) return false;
 
@@ -1274,7 +1273,7 @@ export const getLocalVersion = () => {
     const updateMod = pi_modules.update.exports;
     const versionArr = updateMod.getLocalVersion();
     const versionStr = versionArr.join('.');
-    const version = versionStr.slice(0,versionStr.length - 7);
+    const version = versionStr.slice(0, versionStr.length - 7);
     return version;
 };
 
@@ -1283,7 +1282,7 @@ export const getRemoteVersion = () => {
     const updateMod = pi_modules.update.exports;
     const versionArr = updateMod.getRemoteVersion();
     const versionStr = versionArr.join('.');
-    const version = versionStr.slice(0,versionStr.length - 7);
+    const version = versionStr.slice(0, versionStr.length - 7);
     return version;
 };
 
@@ -1292,7 +1291,7 @@ export const fetchMinerFeeList = (currencyName) => {
     const cn = (currencyName === 'ETH' || ERC20Tokens[currencyName]) ? 'ETH' : 'BTC';
     const toa = timeOfArrival[cn];
     const minerFeeList = [];
-    for (let i = 0;i < toa.length;i++) {
+    for (let i = 0; i < toa.length; i++) {
         let minerFee = 0;
         if (cn === 'ETH') {
             const gasLimit = getBorn('gasLimitMap').get(currencyName) || defaultGasLimit;
@@ -1305,7 +1304,7 @@ export const fetchMinerFeeList = (currencyName) => {
             minerFee
         };
         minerFeeList.push(obj);
-    } 
+    }
     return minerFeeList;
 };
 
@@ -1328,7 +1327,7 @@ export const checkCreateAccount = () => {
     const flag = find('flag');
     // 第一次创建检查是否有登录后弹框提示备份
     if (flag.created) {
-        updateStore('flag',{ promptBackup:true,mnemonic:flag.mnemonic,fragments:flag.fragments });
+        updateStore('flag', { promptBackup: true, mnemonic: flag.mnemonic, fragments: flag.fragments });
     }
 };
 
@@ -1337,7 +1336,7 @@ export const checkCreateAccount = () => {
  * @param ctype 货币名称
  * @param str 地址
  */
-export const judgeAddressAvailable = (ctype:string,addr:string) => {
+export const judgeAddressAvailable = (ctype: string, addr: string) => {
     if (ctype === 'BTC') {
         return /^[0-9a-zA-Z]{26,34}$/.test(addr);
     } else {
@@ -1348,6 +1347,6 @@ export const judgeAddressAvailable = (ctype:string,addr:string) => {
 /**
  * 解析交易的额外信息
  */
-export const parseTransferExtraInfo = (input:string)=>{
+export const parseTransferExtraInfo = (input: string) => {
     return input == '0x' ? '无' : input;
 }
