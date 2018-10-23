@@ -1000,7 +1000,7 @@ export const fetchWalletAssetListAdded = () => {
             } else {
                 item.canSwtiched = true;
             }
-            assetList.push(item);
+            assetList.push(item); 
         }
     }
     return assetList;
