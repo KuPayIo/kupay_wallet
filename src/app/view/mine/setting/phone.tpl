@@ -11,7 +11,7 @@
         <div style="text-align: center;margin-top: 60px;">
             {{for ind,val of [1,2,3,4]}}
             <div w-class="codeBottom">
-                <input type="number" w-class="codeInput" value="{{it1.code[ind]}}" id="codeInput{{ind}}" on-input="codeChange" on-focus="codeFocus"/>
+                <input type="number" w-class="codeInput" id="codeInput{{ind}}" on-keyup="codeChange" on-focus="codeFocus"/>
             </div>
             {{end}}
             
