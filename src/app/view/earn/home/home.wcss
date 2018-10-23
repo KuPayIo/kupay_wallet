@@ -9,6 +9,7 @@
     height: 40px;
     margin: 40px 5px 0;
     border: 24px solid transparent;
+    border-radius: 50%;    
 }
 .backImg{
     position: absolute;
