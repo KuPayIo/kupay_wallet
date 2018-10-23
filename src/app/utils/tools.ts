@@ -504,8 +504,11 @@ export const copyToClipboard = (copyText) => {
     input.setAttribute('value', copyText);
     input.setAttribute('style', 'position:absolute;top:-9999px;');
     document.body.appendChild(input);
-    input.setSelectionRange(0, 9999);
-    input.select();
+    if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        input.setSelectionRange(0, 9999);
+    } else {
+        input.select();
+    }
     if (document.execCommand('copy')) {
         document.execCommand('copy');
     }
@@ -1348,6 +1351,6 @@ export const judgeAddressAvailable = (ctype:string,addr:string) => {
 /**
  * 解析交易的额外信息
  */
-export const parseTransferExtraInfo = (input:string)=>{
-    return input == '0x' ? '无' : input;
-}
+export const parseTransferExtraInfo = (input:string) => {
+    return input === '0x' ? '无' : input;
+};

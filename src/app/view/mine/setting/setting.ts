@@ -25,25 +25,25 @@ export class Setting extends Widget {
         super.create();
         this.init();
     }
-    
+
     public init() {
         const cfg = getLanguage(this);
         const lan = find('languageSet');
         const color = find('changeColor');
         const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
         this.state = {
-            lockScreenPsw:'',  // 锁屏密码
+            lockScreenPsw: '',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
             lockScreenTitle: '',  // 锁屏密码页面标题
             numberOfErrors: 0,  // 锁屏密码输入错误次数
             errorTips: cfg.errorTips,
-            itemList:[ 
-                { title: cfg.itemTitle[0],list: cfg.languageSet,selected:lan ? lan.selected :0 },
-                { title: cfg.itemTitle[1],list: cfg.currencyUnit,selected:currencyUnit },
-                { title: cfg.itemTitle[2],list: cfg.changeColor,selected:color ? color.selected :0 }
+            itemList: [
+                { title: cfg.itemTitle[0], list: cfg.languageSet, selected: lan ? lan.selected : 0 },
+                { title: cfg.itemTitle[1], list: cfg.currencyUnit, selected: currencyUnit },
+                { title: cfg.itemTitle[2], list: cfg.changeColor, selected: color ? color.selected : 0 }
             ],
-            wallet:null,
-            cfgData:cfg
+            wallet: null,
+            cfgData: cfg
 
         };
         this.initData();
@@ -59,7 +59,7 @@ export class Setting extends Widget {
             this.state.lockScreenPsw = ls.psw;
             this.state.openLockScreen = ls.psw && ls.open !== false;
         }
-        
+
         this.paint();
     }
 
@@ -74,10 +74,10 @@ export class Setting extends Widget {
         if (this.state.wallet) {
             return true;
         }
-        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox1,() => {
+        popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
             popNew('app-view-wallet-create-home');
         });
-        
+
         return false;
     }
     /**
@@ -88,9 +88,9 @@ export class Setting extends Widget {
             const ls = find('lockScreen');
             ls.open = !ls.open;
             this.state.openLockScreen = false;
-            updateStore('lockScreen',ls);
+            updateStore('lockScreen', ls);
         } else if (this.state.wallet) {
-            popNew('app-components1-lockScreenPage-lockScreenPage',{ firstFg:true },(r) => {
+            popNew('app-components1-lockScreenPage-lockScreenPage', { firstFg: true }, (r) => {
                 if (!r) {
                     this.closeLockPsw();
                     this.state.openLockScreen = false;
@@ -100,13 +100,13 @@ export class Setting extends Widget {
             });
         } else {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox1,() => {
+            popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
                 popNew('app-view-wallet-create-home');
-            },() => {
+            }, () => {
                 this.closeLockPsw();
             });
         }
-        
+
         this.paint(true);
     }
 
@@ -122,20 +122,20 @@ export class Setting extends Widget {
     /**
      * 点击切换基础属性
      */
-    public itemClick(ind:number) {
+    public itemClick(ind: number) {
         if (!this.judgeWallet()) {
             return;
         }
         const data = this.state.itemList[ind];
         console.log(data);
-        popNew('app-view-mine-setting-itemList',data,(index) => {
+        popNew('app-view-mine-setting-itemList', data, (index) => {
             this.state.itemList[ind].selected = index;
             if (ind === 0) {
-                    // tslint:disable-next-line:max-line-length
-                updateStore('languageSet',{ // 更新语言设置
-                    selected:index === 2 ? 0 :index,
-                    languageList:['simpleChinese','tranditionalChinese','English'] 
-                }); 
+                // tslint:disable-next-line:max-line-length
+                updateStore('languageSet', { // 更新语言设置
+                    selected: index === 2 ? 0 : index,
+                    languageList: ['simpleChinese', 'tranditionalChinese', 'English']
+                });
             } else if (ind === 1) {
                 let currencyUnit;
                 if (index === 0) {
@@ -143,13 +143,13 @@ export class Setting extends Widget {
                 } else {
                     currencyUnit = CurrencyUnit.USD;
                 }
-                updateStore('currencyUnit',currencyUnit); // 更新货币单位
+                updateStore('currencyUnit', currencyUnit); // 更新货币单位
             } else if (ind === 2) {
-                    // tslint:disable-next-line:max-line-length
-                updateStore('changeColor',{ // 更新涨跌颜色设置
-                    selected:index,
-                    colorList:['redUp','greenUp']
-                }); 
+                // tslint:disable-next-line:max-line-length
+                updateStore('changeColor', { // 更新涨跌颜色设置
+                    selected: index,
+                    colorList: ['redUp', 'greenUp']
+                });
             }
             this.paint();
         });
@@ -163,7 +163,7 @@ export class Setting extends Widget {
         if (!psw) return;
         const ret = await backupMnemonic(psw);
         if (ret) {
-            popNew('app-view-wallet-backup-index',{ ...ret });
+            popNew('app-view-wallet-backup-index', { ...ret });
             this.ok && this.ok();
         }
     }
@@ -175,11 +175,11 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox2,() => {
+        popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox2, () => {
             this.backUp();
             console.log('备份');
-        },() => {
-            popNew('app-components-modalBox-modalBox',{ title:'',content:this.state.cfgData.tips[2],style:'color:#F7931A;' },() => {
+        }, () => {
+            popNew('app-components-modalBox-modalBox', { title: '', content: this.state.cfgData.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccount();
                 this.backPrePage();
             });
@@ -193,11 +193,11 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox3,() => {
+        popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox3, () => {
             this.backUp();
             console.log('备份');
-        },() => {
-            popNew('app-components-modalBox-modalBox',{ title:'',content:this.state.cfgData.tips[2],style:'color:#F7931A;' },() => {
+        }, () => {
+            popNew('app-components-modalBox-modalBox', { title: '', content: this.state.cfgData.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccountDel();
                 this.backPrePage();
             });

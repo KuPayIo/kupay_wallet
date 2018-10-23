@@ -48,7 +48,12 @@ export class AccountHome extends Widget {
             this.state.nickName = userInfo.nickName ? userInfo.nickName :cfg.defaultName;
             this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
         }
+        this.paint();
     }
+    
+    /**
+     * 返回上一页
+     */
     public backPrePage() {
         this.ok && this.ok();
     }

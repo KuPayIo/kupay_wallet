@@ -48,9 +48,10 @@ export class LockScreenPage extends Widget {
 
     /**
      * 关闭页面
+     * fg 锁屏密码是否设置成功
      */
     public close(fg:boolean) {
-        this.ok && this.ok(fg);
+        this.ok && this.ok(fg);  
     }
 
     /**
@@ -74,6 +75,7 @@ export class LockScreenPage extends Widget {
             if (this.state.lockScreenPsw !== r) {
                 popNew('app-components1-message-message',{ content:this.state.cfgData.tips[0] });
                 this.reSetLockPsw();
+                this.close(false);
             } else {
                 const hash256 = lockScreenHash(r);
                 const ls:LockScreen = find('lockScreen'); 
@@ -81,8 +83,8 @@ export class LockScreenPage extends Widget {
                 ls.open = true;
                 updateStore('lockScreen',ls);
                 popNew('app-components1-message-message',{ content:this.state.cfgData.tips[1] });
+                this.close(true);
             }
-            this.close(true);
         },() => {
             this.close(false);
         });
@@ -151,7 +153,7 @@ export class LockScreenPage extends Widget {
                 close.callback(close.widget);
                 if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
                     this.setLockPsw();
-                } else {  // 进入APP验证身份失败后再次进入验证身份步骤
+                } else {  // 验证身份失败后再次进入验证身份步骤
                     popNew('app-components1-message-message',{ content:this.state.cfgData.tips[2] });
                     this.verifyPsw();
                 } 

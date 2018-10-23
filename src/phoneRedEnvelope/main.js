@@ -118,13 +118,17 @@ const RedEnvelopeType = {
 }
 // 复制到剪切板
 const copyToClipboard = (copyText) => {
+    
     const input = document.createElement('input');
     input.setAttribute('readonly', 'readonly');
     input.setAttribute('value', copyText);
     input.setAttribute('style', 'position:absolute;top:-9999px;');
     document.body.appendChild(input);
-    input.setSelectionRange(0, 9999);
-    input.select();
+    if(navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        input.setSelectionRange(0, 9999);
+    } else {
+        input.select();
+    }
     if (document.execCommand('copy')) {
         document.execCommand('copy');
     }

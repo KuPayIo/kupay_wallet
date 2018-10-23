@@ -90,7 +90,7 @@ export class BindPhone extends Widget {
             if (ind < 4) {
             // tslint:disable-next-line:prefer-template
                 document.getElementById('codeInput' + ind).focus();
-            }
+            } 
         }
         console.log(v,this.state.code.length);
         this.paint();
@@ -99,7 +99,7 @@ export class BindPhone extends Widget {
             if (this.state.code.length === 4) {
                 this.doSure();
             }
-        }, 100);
+        }, 300);
     }
 
     /**
