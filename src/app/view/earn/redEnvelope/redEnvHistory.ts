@@ -21,9 +21,10 @@ interface State {
     hasMore:boolean; // 是否还有更多记录
     showMoreTips:boolean; // 是否显示底部加载更多提示
     sendNumber:number; // 总发出红包个数
-    isScroll:boolean; // 是否滑动页面
+    scroll:boolean; // 是否滑动页面
     rtypeShow:string[]; // 红包类型
     cfgData:any;
+    scrollHeight:number;// 页面上滑的高度
 }
 
 export class RedEnvHistory extends Widget {
@@ -44,9 +45,10 @@ export class RedEnvHistory extends Widget {
             hasMore:false, 
             showMoreTips:true, 
             sendNumber:0,  
-            isScroll:false,
+            scroll:false,
             rtypeShow:cfg.redEnvType,
-            cfgData: cfg
+            cfgData: cfg,
+            scrollHeight:0
         };
         this.initData();
     }
@@ -132,6 +134,7 @@ export class RedEnvHistory extends Widget {
         const h1 = document.getElementById('redEnvHistory').offsetHeight; 
         const h2 = document.getElementById('historyRecords').offsetHeight; 
         const scrollTop = document.getElementById('redEnvHistory').scrollTop; 
+        this.state.scrollHeight = scrollTop;
         if (this.state.hasMore && this.state.refresh && (h2 - h1 - scrollTop) < 20) {
             this.state.refresh = false;
             setTimeout(() => {
@@ -141,9 +144,9 @@ export class RedEnvHistory extends Widget {
         } 
 
         if (scrollTop > 0) {
-            this.state.isScroll = true;
+            this.state.scroll = true;
         } else {
-            this.state.isScroll = false;
+            this.state.scroll = false;
         }
         this.paint();
         

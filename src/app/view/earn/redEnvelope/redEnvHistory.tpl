@@ -1,9 +1,5 @@
 <div class="new-page" ev-back-click="backPrePage" w-class="new-page" ev-refresh-click="refreshPage">
-    {{if !it1.isScroll}}
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},background:"#F46262",refreshImg:"../../res/image1/refresh_white.png" }</app-components1-topBar-topBar>
-    {{else}}
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},refreshImg:"../../res/image1/refresh_blue.png" }</app-components1-topBar-topBar>
-    {{end}}
+    
     <div w-class="content" on-scroll="getMoreList" id="redEnvHistory">
         <img src="../../../res/image/redEnvtop1.png" w-class="topBackimg"/>
         <div id="historyRecords" w-class="records">
@@ -36,5 +32,14 @@
             </div>
             
         </div>
+    </div>
+
+    {{let opca = it1.scrollHeight/200}}
+    <div w-class="ga-top-banner" style="{{it1.scroll?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':'background:transparent;'}}">
+        <div w-class="left-container">
+            <img on-tap="backPrePage" src="../../../res/image/{{it1.scroll ? 'left_arrow_blue.png' : 'left_arrow_white.png'}}" w-class="ga-back" />
+            <span on-tap="backPrePage"  style="color: {{it1.scroll ? '#222':'#fff'}}">{{it1.cfgData.topBarTitle}}</span>
+        </div>
+        <img on-tap="refreshPage" src="../../../res/image1/{{it1.scroll?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" class="{{it1.topRefresh?'refreshing':''}}"/>
     </div>
 </div>
