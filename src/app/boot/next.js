@@ -97,6 +97,7 @@ winit.initNext = function () {
 
 		console.time('firstload');
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+			// console.log(fm);
 			console.timeEnd('firstload');
 
 			var tab = util.loadCssRes(fileMap);

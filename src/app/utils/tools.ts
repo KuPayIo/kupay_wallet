@@ -2,19 +2,18 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
-import { store } from '../../pi/lang/mod';
 import { ConState, setConState } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { openAndGetRandom, uploadFileUrlPrefix } from '../net/pull';
+import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, Wallet } from '../store/interface';
-import { find, getBorn, initStore, loginInit, logoutInit, updateStore } from '../store/store';
+import { find, getBorn, loginInit, logoutInit, updateStore } from '../store/store';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
 
-export const depCopy = (v: any): any => {
+export const deepCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
 };
 
@@ -1244,7 +1243,7 @@ export const loginSuccess = (wallet:Wallet) => {
     updateStore('curWallet',wallet);
     setConState(ConState.init);
     loginInit();
-    openAndGetRandom();
+    openConnect();
 };
 /**
  * 判断是否是有效的货币地址

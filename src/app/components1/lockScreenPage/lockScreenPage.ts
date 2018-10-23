@@ -9,7 +9,6 @@ import { Widget } from '../../../pi/widget/widget';
 import { LockScreen } from '../../store/interface';
 import { find, register, updateStore } from '../../store/store';
 import { getLanguage, lockScreenHash, lockScreenVerify } from '../../utils/tools';
-import { VerifyIdentidy } from '../../utils/walletTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -97,6 +96,7 @@ export class LockScreenPage extends Widget {
             // tslint:disable-next-line:max-line-length
             popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput1,async (r) => {
                 const wallet = find('curWallet');
+                const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
                 const fg = await VerifyIdentidy(wallet,r);
                 close.callback(close.widget);
                 // const fg = true;
@@ -147,6 +147,7 @@ export class LockScreenPage extends Widget {
             const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
             if (this.state.loading) {
                 const wallet = find('curWallet');
+                const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
                 const fg = await VerifyIdentidy(wallet,r);
                 close.callback(close.widget);
                 if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
