@@ -23,7 +23,7 @@ interface State {
     totalAmount:number;
     // tslint:disable-next-line:no-reserved-keywords
     totalNum:number;
-    oneAmount:number;
+    oneAmount:number; 
     message:string;
     realUser:boolean;
     cfgData:any;
@@ -32,10 +32,6 @@ interface State {
 export class WriteRedEnv extends Widget {
     public ok: () => void;
     public state:State;
-    constructor() {
-        super();
-        
-    }
 
     public create() {
         const realUser = getBorn('realUserMap').get(find('conUser'));
@@ -68,8 +64,8 @@ export class WriteRedEnv extends Widget {
     /**
      * 更新真实用户
      */
-    public updateRealUser(realUserMap:Map<string,boolean>) {
-        this.state.realUser = realUserMap.get(find('conUser'));
+    public updateRealUser() {
+        this.state.realUser = getBorn('realUserMap').get(find('conUser'));
     }
 
     /**
@@ -94,6 +90,7 @@ export class WriteRedEnv extends Widget {
     }
 
     public goHistory() {
+        this.paint(true);  // 强制关闭下拉框
         popNew('app-view-earn-redEnvelope-redEnvHistory');
     }
 
@@ -264,9 +261,9 @@ register('cloudBalance', () => {
     }
 });
 
-register('realUserMap',realUserMap => {
+register('realUserMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.updateRealUser(realUserMap);
+        w.updateRealUser();
     }
 });

@@ -25,6 +25,7 @@ interface State {
     rtypeShow:string[]; // 红包类型
     cfgData:any;
     scrollHeight:number;// 页面上滑的高度
+    topRefresh:boolean; // 头部刷新按钮
 }
 
 export class RedEnvHistory extends Widget {
@@ -48,7 +49,8 @@ export class RedEnvHistory extends Widget {
             scroll:false,
             rtypeShow:cfg.redEnvType,
             cfgData: cfg,
-            scrollHeight:0
+            scrollHeight:0,
+            topRefresh:false
         };
         this.initData();
     }
@@ -163,6 +165,12 @@ export class RedEnvHistory extends Widget {
      * 刷新页面
      */
     public refreshPage() {
+        this.state.topRefresh = true;
+        this.paint();
+        setTimeout(() => {
+            this.state.topRefresh = false;
+            this.paint();
+        }, 1000);
         querySendRedEnvelopeRecord('');
     }
 }

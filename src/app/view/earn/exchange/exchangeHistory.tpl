@@ -1,4 +1,4 @@
-<div class="new-page" ev-back-click="backPrePage" w-class="new-page" ev-refresh-click="refreshPage">
+<div class="new-page" w-class="new-page">
     <div w-class="content" on-scroll="getMoreList" id="exchangeHistoryContent">
         <div id="exchangeHistoryRecords" w-class="records">
             <img src="../../../res/image/redEnvtop1.png" w-class="topBackimg"/>

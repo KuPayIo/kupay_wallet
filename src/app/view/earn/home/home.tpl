@@ -67,7 +67,8 @@
             </div>
 
             <div style="margin: 15px 20px;">
-                <img src="../../../res/image1/Card.png" style="height: 250px;width: 100%;"/>
+                <img src="../../../res/image1/activity1.png" style="height: 250px;width: 100%;"/>
+                <img src="../../../res/image1/activity2.png" style="height: 250px;width: 100%;margin-top: 30px;"/>
             </div>
         </div>  
     </div>

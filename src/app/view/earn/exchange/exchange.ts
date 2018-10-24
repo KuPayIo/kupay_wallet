@@ -43,7 +43,7 @@ export class Exchange extends Widget {
         this.inputBlur();
         const code = this.state.cid.trim();
         if (code.length <= 0) {
-            popNew('app-components1-message-message', { itype: 'error', content: this.state.cfgData.errorList[0], center: true });
+            popNew('app-components1-message-message', { content: this.state.cfgData.errorList[0] });
 
             return;
         }
@@ -86,14 +86,12 @@ export class Exchange extends Widget {
         } else if (perCode === RedEnvelopeType.Invite) {
             const data = await getData('convertRedEnvelope');
             if (data.value) {
-                showError(-99);
+                showError('-99');
 
                 return;
             }
             value = await inputInviteCdKey(validCode);  // 兑换邀请红包
-            if (!value) {
-                showError(-98);
-                
+            if (!value) {               
                 return;
             }
             value = [CurrencyType.ETH, eth2Wei(0.015).toString()];

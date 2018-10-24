@@ -28,6 +28,7 @@ interface State {
     userList:any[]; // 用户信息列表
     cfgData:any; 
     scrollHeight:number;
+    topRefresh:boolean; // 头部刷新按钮
 }
 
 export class ExchangeHistory extends Widget {
@@ -53,7 +54,8 @@ export class ExchangeHistory extends Widget {
             inviteObj:null,
             userList:[],
             cfgData:getLanguage(this),
-            scrollHeight:0
+            scrollHeight:0,
+            topRefresh:false
         };
         this.initData();
         
@@ -203,6 +205,12 @@ export class ExchangeHistory extends Widget {
      * 页面刷新
      */
     public refreshPage() {
+        this.state.topRefresh = true;
+        this.paint();
+        setTimeout(() => {
+            this.state.topRefresh = false;
+            this.paint();
+        }, 1000);
         queryConvertLog();
     }
 }
