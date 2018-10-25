@@ -35,9 +35,9 @@ export class DataCenter {
         //获取shapeshift支持货币
         getShapeShiftCoins();
         // 更新人民币美元汇率
-        this.updateUSD2CNYRate();
+        //this.updateUSD2CNYRate();
         //更新货币对比USDT的比率
-        this.updateCurrency2USDTRate();
+        //this.updateCurrency2USDTRate();
         this.refreshAllTx();
         this.initErc20GasLimit();
     }
