@@ -2,8 +2,8 @@
     <div w-class="top-bar">
         <div w-class="top-bar-container">
             <img on-tap="backPrePage" src="../../../res/image/left_arrow_blue.png" w-class="ga-back" />
-            <div w-class="input-father" ev-input-change="searchTextChange" ev-input-clear="searchTextClear"><app-components-input-suffixInput>{placeHolder:"Search",clearable:{{true}},style:"background-color:#f3f6f9;"}</app-components-input-suffixInput></div>
-            <div on-tap="searchClick">{{it1.cfgData.search}}</div>
+            <div w-class="input-father" ev-input-change="searchTextChange" ev-input-clear="searchTextClear"><app-components1-input-input>{placeHolder:"Search",clearable:"true",style:"background-color:#f3f6f9;"}</app-components1-input-input></div>
+            <div on-tap="searchClick" style="border: 24px solid transparent;">{{it1.cfgData.search}}</div>
         </div>
     </div>
     <div w-class="body">

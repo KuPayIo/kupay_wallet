@@ -13,7 +13,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
-import { getRealNode } from '../../../pi/widget/painter';
+import { getRealNode, paintCmd3, paintWidget } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
 import { getLanguage } from '../../utils/tools';
 
@@ -27,19 +27,18 @@ interface Props {
     autofocus?:boolean;
     maxLength?:number;
 }
-
 interface State {
     currentValue:string;
     focused:boolean;
     showClear:boolean;
     cfgData:any;
+    inputLock:boolean; // 中文输入结束标记，未结束时不执行change方法
 }
+
 export class Input extends Widget {
     public props: Props;
     public state: State;
-    constructor() {
-        super();
-    }
+    
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
         let currentValue = '';
@@ -50,14 +49,58 @@ export class Input extends Widget {
             currentValue,
             focused: false,
             showClear:false,
-            cfgData:getLanguage(this)
+            cfgData:getLanguage(this),
+            inputLock:false
         };
-        if (oldProps) {
-            this.changeInputValue();
+    }
+    /**
+     * 绘制方法
+     * @param reset 表示新旧数据差异很大，不做差异计算，直接生成dom
+     */
+    public paint(reset?: boolean): void {
+        if (!this.tree) {
+            super.paint(reset);
         }
+        if (!this.props) {
+            this.props = {};
+        }
+        paintCmd3(this.getInput(), 'readOnly', this.props.disabled || false);
+        paintWidget(this, reset);
+    }
+    /**
+     * 添加到dom树后调用，在渲染循环内调用
+     */
+    public attach(): void {
+        this.props.autofocus && this.getInput().focus();
+    }
+    /**
+     * 获取真实输入框dom
+     */
+    public getInput() {
+        return getRealNode((<any>this.tree).children[0]);
     }
 
+    /**
+     * 用户开始进行非直接输入的时候触发，而在非直接输入结束。
+     */
+    public compositionstart() {
+        this.state.inputLock = true;
+    }
+    
+    /**
+     * 用户输入完成,点击候选词或确认按钮时触发
+     */
+    public compositionend() {
+        this.state.inputLock = false;
+    }
+
+    /**
+     * 输入事件
+     */
     public change(event:any) {
+        if (this.state.inputLock) {
+            return;
+        }
         let currentValue = event.currentTarget.value;
         // 最大长度限制
         if (this.props.maxLength) {
@@ -81,16 +124,24 @@ export class Input extends Widget {
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
         
         notify(event.node,'ev-input-change',{ value:this.state.currentValue });
-        this.changeInputValue();
+        (<any>this.getInput()).value = currentValue;
         this.paint();
     }
-    public blur(event:any) {
+
+    /**
+     * 失焦事件
+     */
+    public onBlur(event:any) {
         this.state.focused = false;
         this.state.showClear = false;
-        notify(event.node,'ev-input-blur',{});
+        notify(event.node,'ev-input-blur',{ value:this.state.currentValue });
         this.paint();
     }
-    public focus(event:any) {
+
+    /**
+     * 聚焦事件
+     */
+    public onFocus(event:any) {
         this.state.focused = true;
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
         notify(event.node,'ev-input-focus',{});
@@ -102,13 +153,6 @@ export class Input extends Widget {
         this.state.currentValue = '';
         notify(event.node,'ev-input-clear',{});
         this.paint(true);
-    }
-
-    // 设置input value
-    public changeInputValue() {
-        const child = (<any>this.tree).children[0];
-        const childNode = getRealNode(child);
-        (<any>childNode).value = this.state.currentValue;
     }
 
     /**

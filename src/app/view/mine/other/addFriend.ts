@@ -26,7 +26,7 @@ export class AddFriend extends Widget {
         const addr = getFirstEthAddr(); 
         if (user) {
             this.state.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
-            this.state.userName = user.nickName;
+            this.state.userName = user.nickName ? user.nickName :this.state.cfgData.defaultName;
             this.state.address = addr;
         }
         this.paint();

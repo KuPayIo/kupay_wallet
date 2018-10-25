@@ -17,8 +17,8 @@
 .edit-input{
     width: 100%;
     margin: 0 20px 0 30px;
-    height: 60px;
-    line-height: 60px;
+    height: 150px;
+    line-height: 150px;
     appearance:none;
     border: none;
     outline: 0;

@@ -2,7 +2,7 @@ import { getStaticLanguage, popNewMessage, logoutAccount, logoutAccountDel } fro
 import { getCloudBalance } from './pull';
 import { popNew, backList, backCall } from '../../pi/ui/root';
 import { CMD } from '../utils/constants';
-import { setMsgHandler, setConState, closeCon } from './con_mgr';
+import { setMsgHandler, closeCon } from '../../pi/net/ui/con_mgr';
 
 /**
  * 后端主动推消息给后端
