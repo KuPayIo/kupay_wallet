@@ -1,6 +1,6 @@
 <div class="new-page" style="display: flex;flex-direction: column;">
     
-    <div w-class="contain" id="contain" on-scroll="scrollPage" >
+    <div w-class="contain" on-scroll="scrollPage" >
         <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
         <div w-class="topBack">
             

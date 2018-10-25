@@ -112,9 +112,9 @@ export class WriteRedEnv extends Widget {
      */
     public changeAmount(e:any) {
         if (this.state.showPin) {
-            this.state.totalAmount = e.value;            
+            this.state.totalAmount = Number(e.value);            
         } else {
-            this.state.oneAmount = e.value;
+            this.state.oneAmount = Number(e.value);
             this.state.totalAmount = this.state.oneAmount * this.state.totalNum;
         }
         this.paint();
@@ -156,7 +156,7 @@ export class WriteRedEnv extends Widget {
 
             return;
         }
-        if (this.state.oneAmount === 0 || this.state.totalAmount === 0) {
+        if (this.state.oneAmount === 0 && this.state.totalAmount === 0) {
             popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;

@@ -12,3 +12,9 @@
     margin-top: 80px;
     margin-bottom: 30px;
 }
+.changeType{
+    color: #3988E8;
+    height: 100px;
+    line-height: 100px;
+    display: inline-block;
+}
