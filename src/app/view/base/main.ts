@@ -122,13 +122,13 @@ const backToFront = () => {
                 exitApp.init();
                 exitApp.ToHome({});
             }
-        } else {
-            backCall();
+            else {
+                backCall();
+            }
+            // (<any>window).onpopstate();
+            // widget.ok && widget.ok();
         }
-        // (<any>window).onpopstate();
-        // widget.ok && widget.ok();
-    }
-};
+    };
 };
 
 // ============================== 立即执行
