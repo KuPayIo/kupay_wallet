@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
-import { find, register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { copyToClipboard, getFirstEthAddr, getLanguage, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
@@ -24,7 +24,7 @@ export class Home extends Widget {
 
     public init() {
         const cfg = getLanguage(this);
-        const wallet = find('curWallet');
+        const wallet = getStore('wallet');
         let hasBackupMnemonic = false;
         let hasWallet = false;
         let address = '';
@@ -63,7 +63,7 @@ export class Home extends Widget {
             this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
         }
 
-        const wallet = find('curWallet');
+        const wallet = getStore('wallet');
         if (wallet) {
             this.state.hasWallet = true;
             this.state.address = getFirstEthAddr();
@@ -164,7 +164,7 @@ export class Home extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-register('curWallet', () => {
+register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
