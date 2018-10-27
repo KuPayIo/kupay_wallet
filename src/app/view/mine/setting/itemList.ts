@@ -21,5 +21,7 @@ export class ItemList extends Widget {
 
     public changeSelect(e:any) {
         this.state.selected = e.value;
+        console.log(this.props.title);
+        
     }
 }

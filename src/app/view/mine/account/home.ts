@@ -104,6 +104,7 @@ export class AccountHome extends Widget {
         const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
         try {
             const mnemonic = await getMnemonic(wallet, psw);
+            close.callback(close.widget);
             if (mnemonic) {
                 popNew('app-view-mine-account-exportPrivateKey', { mnemonic });
             } else {
@@ -111,9 +112,10 @@ export class AccountHome extends Widget {
             }
         } catch (error) {
             console.log(error);
+            close.callback(close.widget);
             popNewMessage(this.state.cfgData.tips[1]);
         }
-        close.callback(close.widget);
+        
     }
 
     public uploadAvatar() {

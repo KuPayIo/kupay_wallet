@@ -23,7 +23,7 @@ export class Setting extends Widget {
 
     public create() {
         super.create();
-        this.init();
+        this.init(); 
     }
     
     public init() {
@@ -44,7 +44,6 @@ export class Setting extends Widget {
             ],
             wallet:null,
             cfgData:cfg
-
         };
         this.initData();
     }
@@ -59,8 +58,7 @@ export class Setting extends Widget {
             this.state.lockScreenPsw = ls.psw;
             this.state.openLockScreen = ls.psw && ls.open !== false;
         }
-        
-        this.paint();
+        this.paint();        
     }
 
     public backPrePage() {
@@ -77,7 +75,6 @@ export class Setting extends Widget {
         popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox1,() => {
             popNew('app-view-wallet-create-home');
         });
-        
         return false;
     }
     /**
@@ -106,7 +103,6 @@ export class Setting extends Widget {
                 this.closeLockPsw();
             });
         }
-        
         this.paint(true);
     }
 
