@@ -7,7 +7,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { backCall, backList, popNew } from '../../../pi/ui/root';
+import { backCall, backList, popNew, popMessage } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { openConnect } from '../../net/pull';
@@ -15,6 +15,7 @@ import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { initLocalStorageStore } from '../../store/localStorageStore';
 import { find, initStore } from '../../store/store';
+import { ExitApp } from '../../../pi/browser/exitApp';
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
 // import { create } from "../../../pi/net/rpc";
@@ -48,7 +49,7 @@ export const run = (cb): void => {
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
-    },20);
+    }, 20);
 };
 
 // const rpcFunc = (req:Struct, respClass:Function, callback:Function, timeout: number) => {
@@ -96,7 +97,7 @@ const popNewPage = () => {
     const readedPriAgr = find('readedPriAgr');
     if (!readedPriAgr) {
         if (ifNeedUnlockScreen()) {
-            popNew('app-components1-lockScreenPage-lockScreenPage',{ firstFg:false,open:true });
+            popNew('app-components1-lockScreenPage-lockScreenPage', { firstFg: false, open: true });
         }
 
     } else {
@@ -114,10 +115,16 @@ const checkUpdate = () => {
 const backToFront = () => {
     (<any>window).handle_app_lifecycle_listener = (iType: string) => {
         if ((iType === 'onAppResumed') && ifNeedUnlockScreen()) {
-            popNew('app-components1-lockScreenPage-lockScreenPage',{ firstFg:false,open:true });
+            popNew('app-components1-lockScreenPage-lockScreenPage', { firstFg: false, open: true });
         } else if (iType === 'onBackPressed') {
-            if (backList.length === 1) return;
-            backCall();
+            if (backList.length === 1) {
+                const exitApp = new ExitApp();
+                exitApp.init();
+                exitApp.ToHome({});
+            }
+            else {
+                backCall();
+            }
             // (<any>window).onpopstate();
             // widget.ok && widget.ok();
         }
