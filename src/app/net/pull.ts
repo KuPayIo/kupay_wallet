@@ -72,9 +72,7 @@ export const applyAutoLogin = () => {
     requestAsync(msg).then(res => {
         const deviceId = fetchDeviceId();
         const decryptToken = encrypt(res.token,deviceId);
-        const tokenMap = getBorn('tokenMap');
-        tokenMap.set(getFirstEthAddr(),decryptToken);
-        updateStore('tokenMap',tokenMap);
+        setStore('user/token',decryptToken);
     });
 };
 
@@ -83,22 +81,20 @@ export const applyAutoLogin = () => {
  */
 export const autoLogin = (serverTimestamp:number) => {
     const deviceId = fetchDeviceId();
-    const token = decrypt(getBorn('tokenMap').get(getFirstEthAddr()),deviceId);
+    const token = decrypt(getStore('user/token'),deviceId);
     const msg = { 
         type: 'wallet/user@auto_login', 
         param: { 
             device_id: deviceId,
             timestamp:serverTimestamp,
             token,
-            random:find('conRandom')
+            random:getStore('user/conRandom')
         }
     };
-    updateStore('loginState', LoginState.logining);
     requestAsync(msg).then(res => {
-        updateStore('loginState', LoginState.logined);
+        setStore('user/isLogin', true);
         console.log('自动登录成功-----------',res);
     }).catch(() => {
-        updateStore('loginState', LoginState.logerror);
     });
 };
 /**
@@ -112,14 +108,11 @@ export const defaultLogin = async (hash:string) => {
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
     console.log('================',wlt.exportPrivateKey());
     const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
-    const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
+    const signStr = sign(getStore('user/conRandom'), wlt.exportPrivateKey());
     const msgLogin = { type: 'login', param: { sign: signStr } };
-    updateStore('loginState', LoginState.logining);
     const res: any = await requestAsync(msgLogin);
     if (res.result === 1) {
-        updateStore('loginState', LoginState.logined);
-    } else {
-        updateStore('loginState', LoginState.logerror);
+        setStore('user/isLogin', true);
     }
 };
 
@@ -167,13 +160,10 @@ const conReOpen = ()=>{
 export const getRandom = async (cmd?:number) => {
     const wallet = getStore('wallet');
     if (!wallet) return;
-    const gwlt = JSON.parse(wallet.gwlt);
-    updateStore('conUser', wallet.walletId);
-    updateStore('conUserPublicKey', gwlt.publicKey);
     const client = "android 20";
     const param:any = {
-        account: find('conUser').slice(2), 
-        pk: `04${find('conUserPublicKey')}`,
+        account: getStore('user/id').slice(2), 
+        pk: `04${getStore('user/publicKey')}`,
         client:JSON.stringify(client)
     };
     if (cmd) {
@@ -185,8 +175,8 @@ export const getRandom = async (cmd?:number) => {
     };
     try {
         const resp = await requestAsync(msg);
-        updateStore('conRandom', resp.rand);
-        updateStore('conUid', resp.uid);
+        setStore('user/conRandom', resp.rand);
+        setStore('user/conUid', resp.uid);
         afterGetRandomAction(resp.timestamp.value);
         setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
     } catch (resp) {
@@ -214,15 +204,16 @@ export const getRandom = async (cmd?:number) => {
 const afterGetRandomAction = (serverTimestamp:number) =>{
     // eth gasPrice
     fetchGasPrices();
+
     // btc fees
     fetchBtcFees();
 
-    const hash = getBorn('hashMap').get(getFirstEthAddr());
-    if (hash) {
-        defaultLogin(hash);
+    const secretHash = getStore('user/secretHash');
+    if (secretHash) {
+        defaultLogin(secretHash);
     }
 
-    if (getBorn('tokenMap').get(getFirstEthAddr())) {
+    if (getStore('user/token')) {
         autoLogin(serverTimestamp);
     }
 }
@@ -595,8 +586,8 @@ export const getData = async (key) => {
  * 设置用户基础信息
  */
 export const setUserInfo = async () => {
-    if (find('loginState') !== LoginState.logined) return;
-    const userInfo = find('userInfo');
+    if (getStore('user/isLogin')) return;
+    const userInfo = getStore('user/info');
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
     return requestAsync(msg);
@@ -1169,11 +1160,11 @@ export const fetchGasPrices = async () => {
         const res = await requestAsync(msg);
         
         const gasPrice = {
-            [MinerFeeLevel.STANDARD]:Number(res.standard),
-            [MinerFeeLevel.FAST]:Number(res.fast),
-            [MinerFeeLevel.FASTEST]:Number(res.fastest)
+            [MinerFeeLevel.Standard]:Number(res.standard),
+            [MinerFeeLevel.Fast]:Number(res.fast),
+            [MinerFeeLevel.Fastest]:Number(res.fastest)
         };
-        updateStore('gasPrice',gasPrice);
+        setStore('third/gasPrice',gasPrice);
 
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -1194,11 +1185,11 @@ export const fetchBtcFees = async () => {
         const res = await requestAsync(msg);
         const obj = JSON.parse(res.btc);
         const btcMinerFee = {
-            [MinerFeeLevel.STANDARD]:Number(obj.low_fee_per_kb),
-            [MinerFeeLevel.FAST]:Number(obj.medium_fee_per_kb),
-            [MinerFeeLevel.FASTEST]:Number(obj.high_fee_per_kb)
+            [MinerFeeLevel.Standard]:Number(obj.low_fee_per_kb),
+            [MinerFeeLevel.Fast]:Number(obj.medium_fee_per_kb),
+            [MinerFeeLevel.Fastest]:Number(obj.high_fee_per_kb)
         };
-        updateStore('btcMinerFee',btcMinerFee);
+        setStore('third/btcMinerFee',btcMinerFee);
 
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -1214,11 +1205,11 @@ export const fetchRealUser = async () => {
     
     try {
         const res = await requestAsync(msg);
-        const realUserMap = getBorn('realUserMap');
-        const conUser = find('conUser');
+        const conUser = getStore('user/id');
         if (!conUser) return;
-        realUserMap.set(conUser,res.value === 'false' ? false : true);
-        updateStore('realUserMap',realUserMap);
+        const userInfo  = getStore('user/info');
+        userInfo.isRealUser = res.value !== 'false' ;
+        setStore('user/info',userInfo);
         
     } catch (err) {
         console.log('wallet/user@get_real_user--------',err);

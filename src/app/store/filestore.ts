@@ -7,17 +7,33 @@ import { register, getStore } from './memstore';
 // ===================================================== 导出
 
 /**
+ * 获取所有的账户列表
+ */
+export const getAllAccount = () => {
+    const localAcccounts = getLocalStorage('accounts',{currenctId:'',accounts:[]});
+    return localAcccounts.accounts; 
+}
+
+/**
+ * 获取当前账户
+ */
+export const getCurrentAccount = () => {
+    const localAcccounts = getLocalStorage('accounts',{currenctId:'',accounts:[]});
+    return localAcccounts.accounts[localAcccounts.currenctId];
+}
+
+
+/**
  * 注册文件数据库监听
  */
 export const registerFileStore = () => {
     register('user', () => {
         accountChange();
     });
-    register('user/id', () => {
+    register('user/token', () => {
         accountChange();
     });
-
-    register('user/token', () => {
+    register('wallet', () => {
         accountChange();
     });
 
