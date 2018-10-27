@@ -3,9 +3,9 @@
     <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},nextImg:"../../res/image/26_white.png",background:"#F46262;"}</app-components1-topBar-topBar>
 
     <form w-class="content" ev-selectBox-change="changeCoin" id="content">
-        <app-components-selectBox-selectBox>{list:{{it1.list}},selected:{{it1.selected}} }</app-components-selectBox-selectBox>
-        <div style="font-size: 28px;color: #888888;margin: 30px;">{{it1.cfgData.changePin[0]}} {{it1.showPin ? it1.cfgData.changePin[1] : it1.cfgData.changePin[2]}} {{it1.cfgData.changePin[3]}}
-            <span style="color: #3988E8;" on-tap="changePin">{{it1.showPin? it1.cfgData.redEnvType[0] : it1.cfgData.redEnvType[1]}}</span>
+        <app-components-selectBox-selectBox>{list:{{it1.list}},selected:{{it1.selected}},forceHide:{{it1.forceHide}} }</app-components-selectBox-selectBox>
+        <div style="font-size: 28px;color: #888888;margin: 0 30px;">{{it1.cfgData.changePin[0]}} {{it1.showPin ? it1.cfgData.changePin[1] : it1.cfgData.changePin[2]}} {{it1.cfgData.changePin[3]}}
+            <span w-class="changeType" on-tap="changePin">{{it1.showPin? it1.cfgData.redEnvType[0] : it1.cfgData.redEnvType[1]}}</span>
         </div>
         <div ev-input-change="changeAmount">
             <app-components-basicInput-basicInput>{

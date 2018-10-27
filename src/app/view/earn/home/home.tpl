@@ -1,18 +1,7 @@
 <div class="new-page" style="display: flex;flex-direction: column;">
-    {{if it1.scroll}}
-    {{let opca = it1.scrollHeight/100}}
-    <div style="background:rgba(255, 255, 255, {{opca}})" w-class="topBar1">
-        <img src={{it1.avatar}} w-class="userHead" on-tap="showMine"/>
-    </div>
-    {{else}}
-    <div w-class="topBar">
-        <img src={{it1.avatar}} w-class="userHead" on-tap="showMine"/>
-    </div>
-    {{end}}
-    <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
-    <img src="../../../res/image1/{{it1.scroll?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" on-tap="refreshPage" class="{{it1.refresh ?'refreshing':''}}"/>
-
-    <div w-class="contain" id="contain" on-scroll="scrollPage" >
+    
+    <div w-class="contain" on-scroll="scrollPage" >
+        <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
         <div w-class="topBack">
             
             <div w-class="groupCard">
@@ -78,9 +67,15 @@
             </div>
 
             <div style="margin: 15px 20px;">
-                <img src="../../../res/image1/Card.png" style="height: 250px;width: 100%;"/>
+                <img src="../../../res/image1/activity1.png" style="height: 250px;width: 100%;"/>
+                <img src="../../../res/image1/activity2.png" style="height: 250px;width: 100%;margin-top: 30px;"/>
             </div>
         </div>  
     </div>
+    {{let opca = it1.scrollHeight/200}}
+    <div style="{{it1.scroll?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':''}}" w-class="topBar">
+        <img src={{it1.avatar}} w-class="userHead" on-tap="showMine"/>
+    </div>
+    <img src="../../../res/image1/{{it1.scroll?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" on-tap="refreshPage" class="{{it1.refresh ?'refreshing':''}}"/>
     <div w-class="bottomMode"></div>
 </div>
