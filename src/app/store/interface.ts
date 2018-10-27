@@ -7,15 +7,15 @@
  * 全局store数据
  */
 export interface Store {
-    user: User,          // 账号
-    wallet: Wallet,      // 钱包
-    cloud: Cloud,        // 云端
-    activity: Activity,  // 活动：红包，挖矿，分成，理财
+    user: User;          // 账号
+    wallet: Wallet;      // 钱包
+    cloud: Cloud;        // 云端
+    activity: Activity;  // 活动：红包，挖矿，分成，理财
     
-    setting: Setting     // 设置
+    setting: Setting;     // 设置
 
-    third: Third,        // 第三方通信数据，如：shapeshift...
-    flags: object,       // 全局的标识
+    third: Third;        // 第三方通信数据，如：shapeshift...
+    flags: object;       // 全局的标识
 }
 
 /**
@@ -45,7 +45,7 @@ export enum CloudCurrencyType {
     CNYT = 99, // 临时 人民币
     KT = 100,  // KT
     ETH,       // ETH 
-    BTC,       // BTC
+    BTC       // BTC
 }
 
 /**
@@ -67,7 +67,6 @@ export enum TxStatus {
     Success      // 成功  一定的区块确认后认为succss
 }
 
-
 /**
  * 交易类型
  */
@@ -83,121 +82,121 @@ export enum TxType {
  */
 export interface User {
     
-    id: string,            // 该账号的id
+    id: string;            // 该账号的id
 
-    isLogin: boolean,      // 登录状态
+    isLogin: boolean;      // 登录状态
     
-    token: string,         // 自动登录token
-    conRandom: string,     // 连接随机数
-    publicKey: string,     // 用户公钥, 第一个以太坊地址的公钥
+    token: string;         // 自动登录token
+    conRandom: string;     // 连接随机数
+    publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
 
-    salt: string,          // 加密 盐值
-    secrectHash: string,   // 密码hash缓存   
+    salt: string;          // 加密 盐值
+    secrectHash: string;   // 密码hash缓存   
     
-    info: UserInfo,        // 基本信息
+    info: UserInfo;        // 基本信息
 }
 
 /**
  * 当前用户前端数据
  */
 export interface Cloud {
-    cloudWallets: Map<CloudCurrencyType, CloudWallet>,     // 云端钱包相关数据, 余额  充值提现记录...
+    cloudWallets: Map<CloudCurrencyType, CloudWallet>;     // 云端钱包相关数据, 余额  充值提现记录...
 }
 
 /**
  * 第三方通信数据，如：shapeshift...
  */
 export interface Third {
-    gasPrice: GasPrice,                // gasPrice分档次
-    btcMinerFee: BtcMinerFee,          // btc minerfee 分档次
-    gasLimitMap: Map<string, number>,  // 各种货币转账需要的gasLimit
+    gasPrice: GasPrice;                // gasPrice分档次
+    btcMinerFee: BtcMinerFee;          // btc minerfee 分档次
+    gasLimitMap: Map<string, number>;  // 各种货币转账需要的gasLimit
 
     // shapeshift
-    shapeShiftCoins: ShapeShiftCoin[],            // shapeShift 支持的币种
-    shapeShiftMarketInfo: MarketInfo,             // shapeshift 汇率相关
-    shapeShiftTxsMap: Map<string, ShapeShiftTxs>, // shapeshift 交易记录Map
+    shapeShiftCoins: ShapeShiftCoin[];            // shapeShift 支持的币种
+    shapeShiftMarketInfo: MarketInfo;             // shapeshift 汇率相关
+    shapeShiftTxsMap: Map<string, ShapeShiftTxs>; // shapeshift 交易记录Map
 
-    rate: number,                                 // 货币的美元汇率
-    currency2USDTMap: Map<string, Currency2USDT>  // k线  --> 计算涨跌幅
+    rate: number;                                 // 货币的美元汇率
+    currency2USDTMap: Map<string, Currency2USDT>;  // k线  --> 计算涨跌幅
 }
 
 /**
  * 用户设置
  */
 export interface Setting {
-    lockScreen: LockScreen,       // 锁屏
-    language: string,             // 语言
-    changeColor: string,          // 涨跌颜色设置，默认：红跌绿张
-    currencyUnit: string,         // 显示哪个国家的货币
+    lockScreen: LockScreen;       // 锁屏
+    language: string;             // 语言
+    changeColor: string;          // 涨跌颜色设置，默认：红跌绿张
+    currencyUnit: string;         // 显示哪个国家的货币
 }
 
 /**
  * 红包模块
  */
 export interface LuckyMoney {
-    sends: LuckyMoneySendHistory,          // 发送红包记录
-    exchange: LuckyMoneyExchangeHistory,   // 兑换红包记录
-    invite: LuckyMoneyExchangeHistory,     // 邀请红包记录
+    sends: LuckyMoneySendHistory;          // 发送红包记录
+    exchange: LuckyMoneyExchangeHistory;   // 兑换红包记录
+    invite: LuckyMoneyExchangeHistory;     // 邀请红包记录
 }
 
 /**
  * 挖矿模块
  */
 export interface Mining {
-    total: MiningTotal,       // 挖矿汇总信息
-    history: DividendHistory, // 挖矿历史记录
-    addMine: AddMineItem[],   // 矿山增加项目
-    mineRank: MineRank,       // 矿山排名
-    miningRank: MiningRank,   // 挖矿排名
-    itemJump: string,         // 矿山增加项目跳转详情
+    total: MiningTotal;       // 挖矿汇总信息
+    history: DividendHistory; // 挖矿历史记录
+    addMine: AddMineItem[];   // 矿山增加项目
+    mineRank: MineRank;       // 矿山排名
+    miningRank: MiningRank;   // 挖矿排名
+    itemJump: string;         // 矿山增加项目跳转详情
 }
 
 /**
  * 分红模块
  */
 export interface Dividend {
-    total: DividendTotal,         // 分红汇总信息
-    history: DividendHistory,     // 分红历史记录
+    total: DividendTotal;         // 分红汇总信息
+    history: DividendHistory;     // 分红历史记录
 }
 
 /**
  * 理财模块
  */
 export interface FinancialManagement {
-    products: Product[],                  // 所有理财产品
-    purchaseHistories: PurchaseHistory[], // 已购买理财产品
+    products: Product[];                  // 所有理财产品
+    purchaseHistories: PurchaseHistory[]; // 已购买理财产品
 }
 
 /**
  * 活动
  */
 export interface Activity {
-    luckyMoney: LuckyMoney,                   // 红包
-    mining: Mining,                           // 挖矿
-    dividend: Dividend,                       // 分红
-    financialManagement: FinancialManagement, // 理财
+    luckyMoney: LuckyMoney;                   // 红包
+    mining: Mining;                           // 挖矿
+    dividend: Dividend;                       // 分红
+    financialManagement: FinancialManagement; // 理财
 }
 
 /**
  * 云端钱包
  */
 export interface CloudWallet {
-    balance: number,   // 余额
+    balance: number;   // 余额
     rechargeLogs: {    // 充值记录
-        list: RechargeWithdrawalLog[],
-        start: number,
-        canLoadMore: boolean
-    },
+        list: RechargeWithdrawalLog[];
+        start: number;
+        canLoadMore: boolean;
+    };
     withdrawLogs: {    // 提现记录
-        list: RechargeWithdrawalLog[],
-        start: number,
-        canLoadMore: boolean
-    },
+        list: RechargeWithdrawalLog[];
+        start: number;
+        canLoadMore: boolean;
+    };
     otherLogs: {       // 云端流水详情
-        list: OtherLogs[],
-        start: number,
-        canLoadMore: boolean
-    },
+        list: OtherLogs[];
+        start: number;
+        canLoadMore: boolean;
+    };
 }
 
 /**
@@ -212,21 +211,20 @@ export interface Currency2USDT {
  * 云端用户基础数据
  */
 export interface UserInfo {
-    nickName: string,      // 昵称
-    avatar: string,        // 头像
-    phoneNumber: string,   // 手机号
-    isRealUser: boolean    // 是否是真实用户
+    nickName: string;      // 昵称
+    avatar: string;        // 头像
+    phoneNumber: string;   // 手机号
+    isRealUser: boolean;    // 是否是真实用户
 }
-
 
 /**
  * 钱包对象
  */
 export interface Wallet {
-    vault: string,                      // 钱包核心
-    isBackup: boolean,                  // 备份助记词与否
-    showCurrencys: string[],            // 显示的货币列表
-    currencyRecords: CurrencyRecord[],  // 支持的所有货币记录
+    vault: string;                      // 钱包核心
+    isBackup: boolean;                  // 备份助记词与否
+    showCurrencys: string[];            // 显示的货币列表
+    currencyRecords: CurrencyRecord[];  // 支持的所有货币记录
     
 }
 
@@ -283,18 +281,18 @@ export enum MinerFeeLevel {
  * 每个档次的gas价格
  */
 export interface GasPrice {
-    [MinerFeeLevel.Standard]: number,  // 标准
-    [MinerFeeLevel.Fast]: number,      // 快
-    [MinerFeeLevel.Fastest]: number    // 最快
-};
+    [MinerFeeLevel.Standard]: number;  // 标准
+    [MinerFeeLevel.Fast]: number;      // 快
+    [MinerFeeLevel.Fastest]: number;    // 最快
+}
 
 /**
  * 每个档次的btc矿工费
  */
 export interface BtcMinerFee {
-    [MinerFeeLevel.Standard]: number,       // 标准
-    [MinerFeeLevel.Fast]: number,           // 快
-    [MinerFeeLevel.Fastest]: number         // 最快
+    [MinerFeeLevel.Standard]: number;       // 标准
+    [MinerFeeLevel.Fast]: number;           // 快
+    [MinerFeeLevel.Fastest]: number;         // 最快
 }
 
 /**
@@ -432,6 +430,7 @@ export interface LuckyMoneyDetail {
  * shapeShift支持的货币类型
  */
 export interface ShapeShiftCoin {
+    // tslint:disable-next-line:no-reserved-keywords
     symbol: string;          // 货币类型
     status: string;          // 状态
     name: string;            // 货币全称
@@ -543,7 +542,6 @@ export interface PurchaseHistory {
     state: number;                  // 状态
 }
 
-
 /**
  * 锁屏密码相关
  */
@@ -552,4 +550,3 @@ export interface LockScreen {
     open?: boolean;         // 锁屏功能是否打开
     locked?: boolean;       // 是否3次解锁机会都用完
 }
-

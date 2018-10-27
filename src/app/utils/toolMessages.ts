@@ -9,7 +9,7 @@ import { getStaticLanguage } from './tools';
  */
 // tslint:disable-next-line:cyclomatic-complexity
 export const showError = (result, str?) => {
-    if (result == 1) return;
+    if (result === 1) return;
     if (!str) {
         switch (result) {
             case 600: str = getStaticLanguage().errorList[600]; break;
@@ -44,8 +44,8 @@ export const showError = (result, str?) => {
             case 2031: str = getStaticLanguage().errorList[2031]; break;
             case 2032: str = getStaticLanguage().errorList[2032]; break;
             case 2033: str = getStaticLanguage().errorList[2033]; break;
-            case -1: str = getStaticLanguage().errorList[-1]; break;
-            case -2: str = getStaticLanguage().errorList[-2]; break;
+            case '-98': str = getStaticLanguage().errorList['-98']; break;
+            case '-99': str = getStaticLanguage().errorList['-99']; break;
             default: str = getStaticLanguage().errorList.default;
         }
     }

@@ -5,7 +5,7 @@ const urlHead = "http://47.244.59.13:8099";
 
 // 语言文字
 const Config= {
-    simpleChinese:{ 
+    zh_Hans:{ 
         copySuccess:"复制成功",
         shortMess:"KuPlay安全的一站式资产管理平台",
         immeDownload:"立即下载",
@@ -42,7 +42,7 @@ const Config= {
             "4.同一个红包，每人只能领取一次"
         ]
     },
-    tranditionalChinese:{
+    zh_Hant:{
         copySuccess:"複製成功",
         shortMess:"KuPlay安全的一站式資產管理平台",
         immeDownload:"立即下載",
@@ -79,7 +79,7 @@ const Config= {
             "4.同一個紅包，每人只能領取一次"
         ]
     },
-    english:{
+    'en':{
 
     }
 }
@@ -88,8 +88,8 @@ const getLanguage = () => {
     const search = window.location.search;
     let lan = parseUrlParams(search,'lan');
     if(!lan && !localStorage.language){
-        localStorage.language = 'simpleChinese'
-        return Config.simpleChinese;
+        localStorage.language = 'zh_Hans'
+        return Config.zh_Hans;
     }
     if(lan){
         localStorage.language = lan;
@@ -118,13 +118,17 @@ const RedEnvelopeType = {
 }
 // 复制到剪切板
 const copyToClipboard = (copyText) => {
+    
     const input = document.createElement('input');
     input.setAttribute('readonly', 'readonly');
     input.setAttribute('value', copyText);
     input.setAttribute('style', 'position:absolute;top:-9999px;');
     document.body.appendChild(input);
-    input.setSelectionRange(0, 9999);
-    input.select();
+    if(navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        input.setSelectionRange(0, 9999);
+    } else {
+        input.select();
+    }
     if (document.execCommand('copy')) {
         document.execCommand('copy');
     }
