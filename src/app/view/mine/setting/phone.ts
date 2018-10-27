@@ -66,7 +66,6 @@ export class BindPhone extends Widget {
             // tslint:disable-next-line:prefer-template
             (<any>document.getElementById('codeInput' + i)).value = this.state.code[i];
         }
-        this.codeFocus();
     }
 
     /**
@@ -79,7 +78,7 @@ export class BindPhone extends Widget {
             this.state.code.pop();
             const ind = this.state.code.length;
             if (ind >= 0) {
-            // tslint:disable-next-line:prefer-template
+                // tslint:disable-next-line:prefer-template
                 document.getElementById('codeInput' + ind).focus();
             }
             this.setCode();
@@ -87,10 +86,12 @@ export class BindPhone extends Widget {
         } else if (this.integerJudge(v)) {
             this.state.code.push(v);
             const ind = this.state.code.length;
-            if (ind < 4) {
             // tslint:disable-next-line:prefer-template
+            document.getElementById('codeInput' + (ind - 1)).blur();
+            if (ind < 4) {
+                // tslint:disable-next-line:prefer-template
                 document.getElementById('codeInput' + ind).focus();
-            }
+            } 
         }
         console.log(v,this.state.code.length);
         this.paint();
@@ -99,7 +100,7 @@ export class BindPhone extends Widget {
             if (this.state.code.length === 4) {
                 this.doSure();
             }
-        }, 100);
+        }, 300);
     }
 
     /**

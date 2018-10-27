@@ -36,7 +36,7 @@ export class SendRedEnv extends Widget {
         if (lanSet) {
             lan = [lanSet.languageList[lanSet.selected]];
         } else {
-            lan = 'simpleChinese';
+            lan = 'zh_Hans';
         }
         
         if (this.props.rtype === 0) {

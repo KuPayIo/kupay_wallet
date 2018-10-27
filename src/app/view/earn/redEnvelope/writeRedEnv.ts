@@ -23,7 +23,7 @@ interface State {
     totalAmount:number;
     // tslint:disable-next-line:no-reserved-keywords
     totalNum:number;
-    oneAmount:number;
+    oneAmount:number; 
     message:string;
     realUser:boolean;
     cfgData:any;
@@ -32,10 +32,6 @@ interface State {
 export class WriteRedEnv extends Widget {
     public ok: () => void;
     public state:State;
-    constructor() {
-        super();
-        
-    }
 
     public create() {
         const realUser = getBorn('realUserMap').get(find('conUser'));
@@ -68,8 +64,8 @@ export class WriteRedEnv extends Widget {
     /**
      * 更新真实用户
      */
-    public updateRealUser(realUserMap:Map<string,boolean>) {
-        this.state.realUser = realUserMap.get(find('conUser'));
+    public updateRealUser() {
+        this.state.realUser = getBorn('realUserMap').get(find('conUser'));
     }
 
     /**
@@ -94,6 +90,7 @@ export class WriteRedEnv extends Widget {
     }
 
     public goHistory() {
+        this.paint(true);  // 强制关闭下拉框
         popNew('app-view-earn-redEnvelope-redEnvHistory');
     }
 
@@ -115,9 +112,9 @@ export class WriteRedEnv extends Widget {
      */
     public changeAmount(e:any) {
         if (this.state.showPin) {
-            this.state.totalAmount = e.value;            
+            this.state.totalAmount = Number(e.value);            
         } else {
-            this.state.oneAmount = e.value;
+            this.state.oneAmount = Number(e.value);
             this.state.totalAmount = this.state.oneAmount * this.state.totalNum;
         }
         this.paint();
@@ -159,7 +156,7 @@ export class WriteRedEnv extends Widget {
 
             return;
         }
-        if (this.state.oneAmount === 0 || this.state.totalAmount === 0) {
+        if (this.state.oneAmount === 0 && this.state.totalAmount === 0) {
             popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
@@ -264,9 +261,9 @@ register('cloudBalance', () => {
     }
 });
 
-register('realUserMap',realUserMap => {
+register('realUserMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.updateRealUser(realUserMap);
+        w.updateRealUser();
     }
 });

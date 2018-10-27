@@ -4,8 +4,8 @@
 // ==============================导入
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getLanguage } from '../../../utils/tools';
 import { getProductList, getPurchaseRecord } from '../../../net/pull';
+import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getLanguage } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -51,17 +51,17 @@ export class Home extends Widget {
         this.paint();
     }
 
-    public refreshClick(){
+    public refreshClick() {
         this.state.refreshing = true;
         this.paint();
-        if(this.state.activeNum === 0){
-            getProductList().then(()=>{
+        if (this.state.activeNum === 0) {
+            getProductList().then(() => {
                 this.state.refreshing = false;
                 console.log('getProductList refresh');
                 this.paint();
             });
-        }else{
-            getPurchaseRecord().then(()=>{
+        } else {
+            getPurchaseRecord().then(() => {
                 this.state.refreshing = false;
                 console.log('getPurchaseRecord refresh');
                 this.paint();

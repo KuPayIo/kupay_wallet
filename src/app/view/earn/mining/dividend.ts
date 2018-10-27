@@ -38,6 +38,7 @@ export class Dividend extends Widget {
                 <span>+{{it1.thisNum}}</span>
             </div>`,
             scroll:false,
+            scrollHeight:0,
             data:[  // 分红历史记录
                 // { num:0.02,time:'04-30  14:32:00' },
                 // { num:0.02,time:'04-30  14:32:00' },
@@ -47,6 +48,7 @@ export class Dividend extends Widget {
             cfgData:getLanguage(this),
             hasMore:false,
             refresh:true,
+            topRefresh:false,
             start:''
         };
 
@@ -116,6 +118,8 @@ export class Dividend extends Widget {
         const h1 = document.getElementById('historylist').offsetHeight; 
         const h2 = document.getElementById('history').offsetHeight; 
         const scrollTop = document.getElementById('historylist').scrollTop; 
+        this.state.scrollHeight = scrollTop;
+        
         if (this.state.hasMore && this.state.refresh && (h2 - h1 - scrollTop) < 20) {
             this.state.refresh = false;
             console.log('加载中，请稍后~~~');
@@ -130,7 +134,6 @@ export class Dividend extends Widget {
             if (this.state.scroll) {
                 this.paint();
             }
-
         } else {
             this.state.scroll = false;
             this.paint();
@@ -175,6 +178,12 @@ export class Dividend extends Widget {
      * 刷新页面
      */
     public refreshPage() {
+        this.state.topRefresh = true;
+        this.paint();
+        setTimeout(() => {
+            this.state.topRefresh = false;
+            this.paint();
+        }, 1000);
         this.initEvent();
     }
 

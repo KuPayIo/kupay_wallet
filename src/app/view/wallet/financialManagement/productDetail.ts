@@ -40,7 +40,8 @@ export class ProductDetail extends Widget {
             leftPercent:  res.left,
             usePercent: res.use,
             cfgData:getLanguage(this),
-            isScroll:false
+            scroll:false,
+            scrollHeight:0
         };
         console.log(this.props.product);
     }
@@ -71,11 +72,12 @@ export class ProductDetail extends Widget {
 
     // 页面滚动
     public pageScroll() {
-        if (document.getElementById('body').scrollTop > 0) {
-            this.state.isScroll = true;
-            
+        const scrollTop = document.getElementById('body').scrollTop;
+        this.state.scrollHeight = scrollTop; 
+        if (scrollTop > 0) {
+            this.state.scroll = true;
         } else {
-            this.state.isScroll = false;
+            this.state.scroll = false;
         }
         this.paint();
         

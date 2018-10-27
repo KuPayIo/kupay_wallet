@@ -5,6 +5,7 @@
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { getRealNode, paintWidget } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAward, getCloudBalance, getMining, getMiningRank } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
@@ -29,6 +30,7 @@ export class PlayHome extends Widget {
         this.initEvent();
         
     }
+
     /**
      * 初始化数据
      */
@@ -48,7 +50,7 @@ export class PlayHome extends Widget {
                 'app-view-earn-mining-addMine'
             ],
             doMining:false,  // 点击挖矿，数字动画效果执行
-            firstClick:true,
+            firstClick:true, // 第一次点击挖矿按钮标记
             isAbleBtn:false,  // 点击挖矿，按钮动画效果执行
             miningNum:` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
                 <span>+{{it1.thisNum}}</span>
@@ -59,8 +61,10 @@ export class PlayHome extends Widget {
             refresh:false,
             avatar:'../../../res/image1/default_avatar.png'
         };
-        
         this.initDate();
+        if (this.tree) {
+            this.scrollPage();
+        }
     }
     /**
      * 判断当前用户是否已经创建钱包
@@ -138,7 +142,7 @@ export class PlayHome extends Widget {
         this.state.isAbleBtn = true;
         this.paint();
 
-        setTimeout(() => {// 按钮动画效果执行完后将领分红状态改为未点击状态，则可以再次点击
+        setTimeout(() => {// 按钮动画效果执行完后将挖矿状态改为未点击状态，则可以再次点击
             this.state.isAbleBtn = false;
             this.paint();
         },100);
@@ -149,7 +153,7 @@ export class PlayHome extends Widget {
      * 屏幕滑动
      */
     public scrollPage() {
-        const scrollTop = document.getElementById('contain').scrollTop; 
+        const scrollTop = getRealNode((<any>this.tree).children[0]).scrollTop; 
         this.state.scrollHeight = scrollTop;
         if (scrollTop > 0) {
             this.state.scroll = true;
