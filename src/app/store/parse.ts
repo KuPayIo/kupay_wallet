@@ -5,8 +5,7 @@ import { PAGELIMIT } from '../utils/constants';
 import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail, CRecDetail, CloudCurrencyType, CurrencyTypeReverse,MineRank, MiningRank, PurchaseRecordOne, RedBag, SRecDetail, TaskSid } from './interface';
-import { find } from './memstore';
+import { CloudCurrencyType, MineRank, MiningRank, TaskSid } from './interface';
 /**
  * 解析数据
  */

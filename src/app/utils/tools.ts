@@ -1145,7 +1145,7 @@ export const fetchDeviceId = () => {
  * 根据当前语言设置获取静态文字，对于组件模块
  */
 export const getLanguage = (w) => {
-    const lan = getStore('setting/language','simpleChinese');
+    const lan = getStore('setting/language','zh_Hans');
     // if (lan) {
     //     return w.config.value[lan.languageList[lan.selected]];
     // }
@@ -1157,7 +1157,7 @@ export const getLanguage = (w) => {
  * 根据当前语言设置获取静态文字，对于单独的ts文件
  */
 export const getStaticLanguage = () => {
-    const lan = getStore('setting/language','simpleChinese');
+    const lan = getStore('setting/language','zh_Hans');
     // if (lan) {
     //     return Config[lan.languageList[lan.selected]];
     // }

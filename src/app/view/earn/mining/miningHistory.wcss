@@ -36,6 +36,7 @@
     font-size: 32px;
     margin-top: 20px;
     padding-top: 170px;
+    height: 100%;
 }
 .endMess{
     color: rgba(204, 204, 204, 1);

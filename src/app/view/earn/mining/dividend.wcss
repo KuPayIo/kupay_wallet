@@ -61,6 +61,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1 0 0;
+    padding-top: 128px;
 }
 .historyTitle{
     padding-left: 30px;
@@ -98,4 +99,45 @@
     font-size: 28px;
     text-align: center;
     padding: 70px 0;
+}
+.ga-top-banner{
+    background-color: #fff;
+    position: absolute;
+    padding-top: 40px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #222;
+    box-sizing: border-box;
+    height: 128px;
+}
+.left-container{
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    font-size: 36px;
+    line-height: 88px;
+}
+.ga-back{
+    width: 40px;
+    height: 40px;
+    margin: 0 15px;
+    border: 15px solid transparent;
+    line-height: 88px;
+}
+.ga-next{
+    width: 40px;
+    height: 40px;
+    margin: 0 15px;
+    border: 15px solid transparent;
+    line-height: 88px;
+}
+.refreshBtn{
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+    margin-left: -15px;
+    border: 15px solid transparent;
+    line-height: 88px;
 }

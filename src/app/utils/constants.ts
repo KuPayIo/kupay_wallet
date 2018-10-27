@@ -16,6 +16,9 @@ export const defaultEthToken = [];
 // 默认显示货币列表
 export const defalutShowCurrencys = ['ETH', 'BTC','BNB','VEN','OMG','ZRX'];
 
+// 默认不可更改显示货币列表
+export const notSwtichShowCurrencys = ['ETH', 'BTC'];
+
 //
 export const strength = 128;
 
