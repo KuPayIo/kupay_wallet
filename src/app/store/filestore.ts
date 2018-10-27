@@ -110,12 +110,12 @@ const accountChange = () => {
 
     const storeCloudWallets: Map<CloudCurrencyType, LocalCloudWallet> = getStore('cloud/cloudWallets');
     const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>();
-    
+
     for (let [k, v] of storeCloudWallets) {
         const cloudWallet: LocalCloudWallet = { balance: v.balance };
         localCloudWallets.set(k, cloudWallet);
     }
-    
+
     const newAccount: Account = {
         user: localUser,
         wallet: getStore('wallet'),
@@ -124,8 +124,24 @@ const accountChange = () => {
 
     localAccounts.currenctId = storeUser.id;
     localAccounts.accounts[storeUser.id] = newAccount;
-    
+
     setLocalStorage('accounts', localAccounts);
 }
+
+
+// 语言设置
+register('languageSet', (language) => {
+    setLocalStorage('languageSet', language);
+});
+
+// 涨跌颜色设置
+register('changeColor', (changeColor) => {
+    setLocalStorage('changeColor', changeColor);
+});
+
+// 涨跌颜色设置
+register('currencyUnit', (currencyUnit) => {
+    setLocalStorage('currencyUnit', currencyUnit);
+});
 
 
