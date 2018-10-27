@@ -506,13 +506,13 @@ export interface PurchaseRecordOne {
 // 语言配置
 export interface LanguageSet {
     selected:number; // 当前选中的语言，0 简体中文，1 繁体中文，2 英文
-    languageList:['simpleChinese','tranditionalChinese','English']; // 语言列表
+    languageList:string[]; // 语言列表
 }
 
 // 涨跌颜色配置
 export interface ChangeColor {
     selected:number; // 当前选中的涨颜色，0 红涨绿跌(红)，1 红跌绿涨(绿)
-    colorList:['redUp','greenUp']; // 颜色列表
+    colorList:string[]; // 颜色列表
 }
 
 // 货币单位配置

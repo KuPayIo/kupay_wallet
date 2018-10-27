@@ -11,7 +11,7 @@
             </div>
             <div w-class="bottom">
                 {{if it1.recordList.length==0}}
-                    <div style="text-align: center;">
+                    <div style="text-align: center;height: 100%;">
                         <img src="../../../res/image/redEnvEmpty.png" style="width: 200px;height: 200px;margin-top: 210px;"/>
                         <div style="font-size: 32px;color: #888888;margin-top: 20px;">{{it1.cfgData.tips[2]}}</div>
                     </div>

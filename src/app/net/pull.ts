@@ -141,12 +141,12 @@ const conSuccess = () =>{
     const conState = find('conState');
     console.log('ws con success',conState);
     getRandom();
-}
+};
 
 /**
  * 连接出错回调
  */
-const conError = (err) =>{
+const conError = (err) => {
     const conState = find('conState');
     console.log(`ws con error ${conState}`,err);
     checkCreateAccount();
@@ -155,16 +155,16 @@ const conError = (err) =>{
 /**
  * 连接关闭回调
  */
-const conClose = () =>{
+const conClose = () => {
     const conState = find('conState');
     console.log('ws con close',conState);
     popNewMessage('连接已断开')
-}
+};
 
 /**
  * 重新连接回调
  */
-const conReOpen = ()=>{
+const conReOpen = ()=> {
     const conState = find('conState');
     console.log('ws con reOpen',conState);
 }
@@ -178,7 +178,7 @@ export const getRandom = async (cmd?:number) => {
     const gwlt = JSON.parse(wallet.gwlt);
     updateStore('conUser', wallet.walletId);
     updateStore('conUserPublicKey', gwlt.publicKey);
-    const client = "android 20";
+    const client = 'android 20';
     const param:any = {
         account: find('conUser').slice(2), 
         pk: `04${find('conUserPublicKey')}`,
@@ -219,7 +219,7 @@ export const getRandom = async (cmd?:number) => {
     checkCreateAccount();
 };
 
-const afterGetRandomAction = (serverTimestamp:number) =>{
+const afterGetRandomAction = (serverTimestamp:number) => {
     // eth gasPrice
     fetchGasPrices();
     // btc fees
@@ -235,10 +235,10 @@ const afterGetRandomAction = (serverTimestamp:number) =>{
     }
 }
 
-//底层登录成功回调
-const bottomLayerLoginCB = (res)=>{
+// 底层登录成功回调
+const bottomLayerLoginCB = (res) => {
     console.log('bottomLayerLoginCB',res);
-}
+};
 /**
  * 获取所有的货币余额
  */
@@ -628,7 +628,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
             const userInfo = {
                 ...localUserInfo,
                 ...serverUserInfo
-            }
+            };
             console.log(userInfo);
             updateStore('userInfo',userInfo);
         }

@@ -134,7 +134,7 @@ export class Setting extends Widget {
                 // tslint:disable-next-line:max-line-length
                 updateStore('languageSet', { // 更新语言设置
                     selected: index === 2 ? 0 : index,
-                    languageList: ['simpleChinese', 'tranditionalChinese', 'English']
+                    languageList: ['zh_Hans', 'zh_Hant', 'en']
                 });
             } else if (ind === 1) {
                 let currencyUnit;

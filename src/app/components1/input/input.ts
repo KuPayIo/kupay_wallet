@@ -114,10 +114,16 @@ export class Input extends Widget {
         // 数字输入时检验输入格式
         if (this.props.itype === 'number' && !this.numberJudge(currentValue) && currentValue.length > 0) {
             currentValue = currentValue.slice(0,currentValue.length - 1); 
+            if (!this.numberJudge(currentValue)) {
+                currentValue = currentValue.slice(0,currentValue.length - 1); 
+            }
         }
         // 整数输入时检验输入格式
         if (this.props.itype === 'integer' && !this.integerJudge(currentValue) && currentValue.length > 0) {
             currentValue = currentValue.slice(0,currentValue.length - 1); 
+            if (!this.integerJudge(currentValue)) {
+                currentValue = currentValue.slice(0,currentValue.length - 1); 
+            }
         }
 
         this.state.currentValue = currentValue;

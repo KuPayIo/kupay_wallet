@@ -34,7 +34,6 @@ export class AccountHome extends Widget {
         this.state = {
             avatar:'',
             nickName:'',
-            isUpdatingWalletName: false,
             phone:cfg.bindPhone,
             backup,
             cfgData:cfg,
@@ -61,34 +60,32 @@ export class AccountHome extends Widget {
     /**
      * 修改名字输入框取消聚焦
      */
-    public walletNameInputBlur(e: any) {
-        const v = e.value;
+    public walletNameInputBlur() {
+        const v = this.state.nickName;
+        const userInfo = getUserInfo();
         this.state.userInput = false;
         if (!walletNameAvailable(v)) {
             popNewMessage(this.state.cfgData.tips[0]);
-            this.state.isUpdatingWalletName = false;
 
             return;
         }
-        if (v !== this.state.nickName) {
-            this.state.nickName = v;
+        if (v !== userInfo.nickName) {
             const wallet = find('curWallet');
             const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
             gwlt.nickName = v;
             wallet.gwlt = gwlt.toJSON();
             updateStore('curWallet', wallet);
-            const userInfo = getUserInfo();
+            
             userInfo.nickName = v;
             updateStore('userInfo',userInfo);
             setUserInfo();
         }
-        this.state.isUpdatingWalletName = false;
         this.paint();
     }
 
      // 修改钱包名称
-    public walletNameInputFocus() {
-        this.state.isUpdatingWalletName = true;
+    public walletNameInputChange(e:any) {
+        this.state.nickName = e.value;
     }
 
     public async backupWalletClick() {

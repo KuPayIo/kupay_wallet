@@ -11,7 +11,7 @@ import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, Wallet } from '../store/interface';
 
 import { find, getBorn, initStore, loginInit, logoutInit, updateStore } from '../store/store';
-import { currencyConfirmBlockNumber, defalutShowCurrencys, notSwtichShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 
 import { sat2Btc, wei2Eth } from './unitTools';
 
@@ -1162,7 +1162,7 @@ export const getLanguage = (w) => {
         return w.config.value[lan.languageList[lan.selected]];
     }
 
-    return w.config.value.simpleChinese;
+    return w.config.value.zh_Hans;
 };
 
 /**
@@ -1174,7 +1174,7 @@ export const getStaticLanguage = () => {
         return Config[lan.languageList[lan.selected]];
     }
 
-    return Config.simpleChinese;
+    return Config.zh_Hans;
 };
 
 /**
