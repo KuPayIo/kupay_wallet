@@ -7,10 +7,15 @@ export class ExitApp extends NativeObject {
     public exitApplication(param: any) {
         this.call('confirmExit', param);
     }
+
+    public ToHome(param: any) {
+        this.call('backToHome', param);
+    }
 }
 
 registerSign(ExitApp, {
-    confirmExit: []
+    confirmExit: [],
+    backToHome: []
 });
 
 // let exit = new ExitApp();
@@ -20,6 +25,6 @@ registerSign(ExitApp, {
 
 //             }
 //             , fail: (result) => {
-                
+
 //             }
 //         })

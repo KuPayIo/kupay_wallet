@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMineRank, getMiningRank } from '../../../net/pull';
-import { find, register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -44,19 +44,19 @@ export class Home extends Widget {
      * 获取更新数据
      */
     public initData() {
-        const data1 = find('miningRank');
+        const data1 = getStore('activity/mining/miningRank');
         if (data1) {
             this.state.tabs[0].data = data1.miningRank;
             this.state.tabs[0].myRank = data1.myRank;
         }
         
-        const data2 = find('mineRank');
+        const data2 = getStore('activity/mining/mineRank');
         if (data2) {
             this.state.tabs[1].data = data2.mineRank;
             this.state.tabs[1].myRank = data2.myRank;
         }
 
-        const mining = find('miningTotal');
+        const mining = getStore('miningTotal');
         if (mining) {
             this.state.tabs[1].totalNum = mining.totalNum;
             this.state.tabs[0].totalNum = mining.holdNum;
@@ -97,13 +97,13 @@ export class Home extends Widget {
     }
 }
 
-register('miningRank', () => {
+register('activity/mining/activity/mining/miningRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-register('mineRank', () => {
+register('activity/mining/mineRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

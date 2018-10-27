@@ -6,7 +6,7 @@ import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAward, getCloudBalance, getMining, getMiningRank } from '../../../net/pull';
+import { getAward,getServerCloudBalance, getMining, getMiningRank } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { register, getStore, getCloudBalances } from '../../../store/memstore';
 import { formatBalance, getLanguage, getUserInfo } from '../../../utils/tools';
@@ -148,8 +148,8 @@ export class PlayHome extends Widget {
     /**
      * 屏幕滑动
      */
-    public scrollPage() {
-        const scrollTop = document.getElementById('contain').scrollTop; 
+    public scrollPage(e:any) {
+        const scrollTop = e.target.scrollTop; 
         this.state.scrollHeight = scrollTop;
         if (scrollTop > 0) {
             this.state.scroll = true;
@@ -225,7 +225,7 @@ export class PlayHome extends Widget {
     private initEvent() {
         // 这里发起通信
         if (this.props.isActive && this.state.hasWallet) {
-            getCloudBalance();
+            getServerCloudBalance();
             getMining();
             getMiningRank(100);
         }
@@ -254,14 +254,14 @@ register('miningRank', () => {
         w.initDate();
     }
 });
-register('curWallet', () => {
+register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init(); // 注销钱包后初始化
         w.initEvent();
     }
 });
-register('languageSet', () => {
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

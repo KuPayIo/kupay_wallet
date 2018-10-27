@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { CurrencyUnit } from '../../../store/interface';
+// import { CurrencyUnit } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { getLanguage, logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
@@ -205,17 +205,13 @@ export class Setting extends Widget {
         });
     }
 }
+
+
 // ================================================本地，立即执行
 register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-    }
-});
-register('userInfo', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.initData();
     }
 });
 register('wallet', () => {

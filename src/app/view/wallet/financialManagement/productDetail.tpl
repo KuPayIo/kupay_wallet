@@ -1,9 +1,4 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    {{if !it1.isScroll}}
-    <app-components1-topBar-topBar>{"title":{{it.product.productName}},background:"linear-gradient(to right,#328EE6, #38CEE7);"}</app-components1-topBar-topBar>
-    {{else}}
-    <app-components1-topBar-topBar>{"title":{{it.product.productName}}}</app-components1-topBar-topBar>
-    {{end}}
     <div w-class="body" on-scroll="pageScroll" id="body">
         <div w-class="top-head">
             <div w-class="row1">
@@ -41,13 +36,20 @@
                     {{it.product.unitPrice}}&nbsp;{{it.product.coinType}}
                 </span>
                 <div w-class="right-box">
-                    <img w-class="sub" on-down="minus" src="../../../res/image/less.png"/>
+                    <img w-class="sub" on-down="minus" src="../../../res/image/less_blue.png"/>
                     <span>{{it1.amount}}</span>
-                    <img w-class="plus" on-down="add" src="../../../res/image/add_gray.png" />
+                    <img w-class="plus" on-down="add" src="../../../res/image/add.png" />
                 </div>
             </div>
             <div w-class="read" on-tap="readAgree">{{it1.cfgData.readAgree}}</div>
             <div ev-btn-tap="purchaseClicked" w-class="btn"><app-components1-btn-btn>{"name":{{it1.cfgData.btnName}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
+        </div>
+    </div>
+    {{let opca = it1.scrollHeight/200}}
+    <div w-class="ga-top-banner" style="{{it1.scroll?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':'background:transparent;'}}">
+        <div w-class="left-container">
+            <img on-tap="backPrePage" src="../../../res/image/{{it1.scroll ? 'left_arrow_blue.png' : 'left_arrow_white.png'}}" w-class="ga-back" />
+            <span on-tap="backPrePage"  style="color: {{it1.scroll ? '#222':'#fff'}}">{{it.product.productName}}</span>
         </div>
     </div>
 </div>

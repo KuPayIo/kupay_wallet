@@ -8,7 +8,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getDividend, getDividHistory, getMining } from '../../../net/pull';
-import { find, register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
 import { getLanguage } from '../../../utils/tools';
 
@@ -69,7 +69,7 @@ export class Dividend extends Widget {
      * 获取更新数据
      */
     public initData() {
-        const data = find('dividTotal');
+        const data = getStore('dividTotal');
         if (data) {
             this.state.totalDivid = data.totalDivid;
             this.state.totalDays = data.totalDays;
@@ -77,7 +77,7 @@ export class Dividend extends Widget {
             this.state.yearIncome = Number(data.yearIncome) === 0 ? this.state.cfgData.noneYearIncome :data.yearIncome;
         }
 
-        const history = find('dividHistory');  
+        const history = getStore('dividHistory');  
         if (history) {
             const hList = history.list;
             if (hList && hList.length > this.state.data.length) {
@@ -99,7 +99,7 @@ export class Dividend extends Widget {
      *  本地实际加载数据
      */
     public async loadMore() {
-        const data = find('dividHistory');  
+        const data = getStore('dividHistory');  
         if (!data) return;
         const hList = data.list;
         const start = this.state.data.length;

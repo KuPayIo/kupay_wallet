@@ -1,5 +1,5 @@
 import { getStaticLanguage, popNewMessage, logoutAccount, logoutAccountDel } from '../utils/tools';
-import { getCloudBalance } from './pull';
+import { getServerCloudBalance } from './pull';
 import { popNew, backList, backCall } from '../../pi/ui/root';
 import { CMD } from '../utils/constants';
 import { setMsgHandler, closeCon } from '../../pi/net/ui/con_mgr';
@@ -42,7 +42,7 @@ export const initPush = () => {
     setMsgHandler('event_pay_ok',(res) => {
         popNewMessage(getStaticLanguage().transfer.rechargeTips);
         const value = res.value.toJSNumber ? res.value.toJSNumber() : res.value;
-        getCloudBalance().then(res => {
+        getServerCloudBalance().then(res => {
             console.log('服务器推送成功 云端余额更新==========================',res);
         });
         console.log('服务器推送成功==========================',res);

@@ -30,7 +30,7 @@ export const getStore = (path: string, defaultValue = undefined) => {
  */
 export const setStore = (path: string, data: any, notified = true) => {
     const keyArr = path.split('/');
-    
+
     // 原有的最后一个键
     const lastKey = keyArr.pop();
 
@@ -71,9 +71,9 @@ export const unregister = (keyName: string, cb: Function): void => {
  */
 export const getCloudBalances = () => {
     const cloudWallets = store.cloud.cloudWallets;
-    const cloudBalances = new Map<CloudCurrencyType,number>();
-    for(let [key,val] of cloudWallets){
-        cloudBalances.set(key,val.balance || 0);
+    const cloudBalances = new Map<CloudCurrencyType, number>();
+    for (let [key, val] of cloudWallets) {
+        cloudBalances.set(key, val.balance || 0);
     }
 
     return cloudBalances;
@@ -103,7 +103,7 @@ export const initStore = () => {
 const handlerMap: HandlerMap = new HandlerMap();
 
 
-const initUser = (filesUser,filesWallet) => {
+const initUser = (filesUser, filesWallet) => {
     store.user.id = filesUser.id;
     store.user.token = filesUser.token;
     store.user.publicKey = filesUser.publicKey;
@@ -163,7 +163,14 @@ const store: Store = {
     },
     activity: {
         luckyMoney: null,                   // 红包
-        mining: null,                       // 挖矿
+        mining: {
+            total: null,      // 挖矿汇总信息
+            history: null, // 挖矿历史记录
+            addMine: [],  // 矿山增加项目
+            mineRank: null,      // 矿山排名
+            miningRank: null,  // 挖矿排名
+            itemJump: null
+        },                       // 挖矿
         dividend: null,                     // 分红
         financialManagement: null,          // 理财
     },
