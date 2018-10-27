@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { selectImage } from '../../../logic/native';
 import { setUserInfo, uploadFile } from '../../../net/pull';
-import { find, register, updateStore } from '../../../store/store';
+import { find, register, updateStore } from '../../../store/memstore';
 import { walletNameAvailable } from '../../../utils/account';
 import { getLanguage, getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';

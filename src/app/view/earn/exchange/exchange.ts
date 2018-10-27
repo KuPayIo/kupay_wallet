@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType } from '../../../store/interface';
-import {  updateStore } from '../../../store/store';
+import {  updateStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
 import { getLanguage } from '../../../utils/tools';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';

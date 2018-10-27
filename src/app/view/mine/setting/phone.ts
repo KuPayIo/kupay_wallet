@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { regPhone } from '../../../net/pull';
-import { updateStore } from '../../../store/store';
+import { updateStore } from '../../../store/memstore';
 import { getLanguage, getUserInfo } from '../../../utils/tools';
 // =================================================导出
 export class BindPhone extends Widget {

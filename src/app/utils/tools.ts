@@ -8,8 +8,8 @@ import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
-import { Addr, currency2USDT, CurrencyType, CurrencyTypeReverse, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, Wallet } from '../store/interface';
-import { find, getBorn, loginInit, logoutInit, updateStore } from '../store/store';
+import { Addr, currency2USDT, CurrencyType, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, Wallet, CloudCurrencyType } from '../store/interface';
+import { find, getBorn, loginInit, logoutInit, updateStore, getStore, getCloudBalances } from '../store/memstore';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
 
@@ -457,7 +457,7 @@ export const reductionCipherMnemonic = (cipherMnemonic: string) => {
  * @param currencyName 货币名称
  */
 export const fetchBalanceOfCurrency = (currencyName: string) => {
-    const wallet = find('curWallet');
+    const wallet = getStore('wallet');
     if (!wallet) return 0;
     const localAddrs = find('addrs') || [];
     let balance = 0;
@@ -765,7 +765,7 @@ export const fetchBtcMinerFee = (minerFeeLevel:MinerFeeLevel) => {
  * 获取总资产
  */
 export const fetchTotalAssets = () => {
-    const wallet = find('curWallet');
+    const wallet = getStore('wallet');
     if (!wallet) return 0;
     let totalAssets = 0;
     wallet.currencyRecords.forEach(item => {
@@ -782,10 +782,10 @@ export const fetchTotalAssets = () => {
  * 获取云端总资产
  */
 export const fetchCloudTotalAssets = () => {
-    const cloudBalance = getBorn('cloudBalance');
+    const cloudBalances = getCloudBalances();
     let totalAssets = 0;
-    for (const [k,v] of cloudBalance) {
-        totalAssets += fetchBalanceValueOfCoin(CurrencyTypeReverse[k],v);
+    for (const [k,v] of cloudBalances) {
+        totalAssets += fetchBalanceValueOfCoin(k,v);
     }
 
     return  totalAssets;
@@ -794,16 +794,16 @@ export const fetchCloudTotalAssets = () => {
 /**
  * 获取某个币种对应的货币价值
  */
-export const fetchBalanceValueOfCoin = (currencyName:string,balance:number) => {
+export const fetchBalanceValueOfCoin = (currencyName:string | CloudCurrencyType,balance:number) => {
     let balanceValue = 0;
-    const USD2CNYRate = find('USD2CNYRate');
-    const currency2USDTMap = getBorn('currency2USDTMap');
+    const USD2CNYRate = getStore('third/rate',0);
+    const currency2USDTMap = getStore('third/currency2USDTMap');
     const currency2USDT = currency2USDTMap.get(currencyName) || { open:0,close:0 };
-    const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
+    const currencyUnit = getStore('setting/currencyUnit','CNY');
 
-    if (currencyUnit === CurrencyUnit.CNY) {
+    if (currencyUnit === 'CNY') {
         balanceValue = balance * currency2USDT.close * USD2CNYRate;
-    } else if (currencyUnit === CurrencyUnit.USD) {
+    } else if (currencyUnit === 'USD') {
         balanceValue = balance * currency2USDT.close;
     }
     return balanceValue;
@@ -813,7 +813,7 @@ export const fetchBalanceValueOfCoin = (currencyName:string,balance:number) => {
  * 获取本地钱包资产列表
  */
 export const fetchWalletAssetList = () => {
-    const wallet = find('curWallet');
+    const wallet = getStore('wallet');
     const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
     const assetList = [];
     for (const k in MainChainCoin) {
@@ -851,7 +851,8 @@ export const fetchWalletAssetList = () => {
  */
 export const fetchCloudWalletAssetList = () => {
     const assetList = [];
-    const ktBalance = getBorn('cloudBalance').get(CurrencyType.KT) || 0;
+    const cloudBalances = getCloudBalances();
+    const ktBalance = cloudBalances.get(CloudCurrencyType.KT) || 0;
     const ktItem = {
         currencyName :'KT',
         description:'KuPlay Token',
@@ -868,12 +869,12 @@ export const fetchCloudWalletAssetList = () => {
         gain:formatBalanceValue(0)
     };
     assetList.push(cnytItem);
-    for (const k in CurrencyType) {
+    for (const k in CloudCurrencyType) {
         const item:any = {};
         if (MainChainCoin.hasOwnProperty(k)) {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
-            const balance = getBorn('cloudBalance').get(CurrencyType[k]) || 0;
+            const balance = cloudBalances.get(CloudCurrencyType[CloudCurrencyType[k]]) || 0;
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
             item.gain =  fetchCoinGain(k);
@@ -1006,22 +1007,22 @@ export const fetchWalletAssetListAdded = () => {
     return assetList;
 };
 
-/**
- * 初始化地址对象
- */
-export const initAddr = (address: string, currencyName: string, addrName?: string): Addr => {
-    return {
-        addr: address,
-        addrName: addrName || getDefaultAddr(address),
-        record: [],
-        balance: 0,
-        currencyName: currencyName
-    };
-};
+// /**
+//  * 初始化地址对象
+//  */
+// export const initAddr = (address: string, currencyName: string, addrName?: string): Addr => {
+//     return {
+//         addr: address,
+//         addrName: addrName || getDefaultAddr(address),
+//         record: [],
+//         balance: 0,
+//         currencyName: currencyName
+//     };
+// };
 
 // 获取货币的涨跌情况
 export const fetchCoinGain = (currencyName:string) => {
-    const currency2USDT:currency2USDT = getBorn('currency2USDTMap').get(currencyName);
+    const currency2USDT:currency2USDT = getStore('third/currency2USDTMap').get(currencyName);
     if (!currency2USDT) return formatBalanceValue(0);
     return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
 };
@@ -1111,7 +1112,7 @@ export const base64ToFile = (base64:string) => {
  * 获取用户基本信息
  */
 export const getUserInfo = () => {
-    const userInfo = find('userInfo');
+    const userInfo = getStore('user/info');
     const nickName = userInfo && userInfo.nickName;
     const bphone = userInfo && userInfo.bphone;
     let avatar = userInfo && userInfo.avatar;
@@ -1153,24 +1154,24 @@ export const fetchDeviceId = () => {
  * 根据当前语言设置获取静态文字，对于组件模块
  */
 export const getLanguage = (w) => {
-    const lan = find('languageSet');
-    if (lan) {
-        return w.config.value[lan.languageList[lan.selected]];
-    }
+    const lan = getStore('setting/language','simpleChinese');
+    // if (lan) {
+    //     return w.config.value[lan.languageList[lan.selected]];
+    // }
     
-    return w.config.value.simpleChinese;
+    return w.config.value[lan];
 };
 
 /**
  * 根据当前语言设置获取静态文字，对于单独的ts文件
  */
 export const getStaticLanguage = () => {
-    const lan = find('languageSet');
-    if (lan) {
-        return Config[lan.languageList[lan.selected]];
-    }
+    const lan = getStore('setting/language','simpleChinese');
+    // if (lan) {
+    //     return Config[lan.languageList[lan.selected]];
+    // }
 
-    return Config.simpleChinese;
+    return Config[lan];
 };
 
 /**
@@ -1312,10 +1313,10 @@ export const fetchMinerFeeList = (currencyName) => {
  * 获取货币单位符号 $ ￥
  */
 export const getCurrencyUnitSymbol = () => {
-    const currencyUnit = find('currencyUnit') || CurrencyUnit.CNY;
-    if (currencyUnit === CurrencyUnit.CNY) {
+    const currencyUnit = getStore('setting/currencyUnit','CNY');
+    if (currencyUnit === 'CNY') {
         return '￥';
-    } else if (currencyUnit === CurrencyUnit.USD) {
+    } else if (currencyUnit === 'USD') {
         return '$';
     }
 };

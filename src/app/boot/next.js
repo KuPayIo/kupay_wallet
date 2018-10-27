@@ -137,14 +137,15 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 
-			var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
-			updatedStore('level_2_page_loaded', true);
+			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
+			setStore('flags/level_2_page_loaded', true);
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
 
 
+	
 	// 更新模块
 	var updateMod = pi_modules.update.exports;
 	updateMod.setIntercept(true);

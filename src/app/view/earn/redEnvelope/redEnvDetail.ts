@@ -7,7 +7,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCode, getUserList, queryDetailLog, sharePerUrl } from '../../../net/pull';
 import { RedEnvelopeType } from '../../../store/interface';
-import { find } from '../../../store/store';
+import { find } from '../../../store/memstore';
 import { getLanguage, getUserInfo } from '../../../utils/tools';
 
 interface Props {

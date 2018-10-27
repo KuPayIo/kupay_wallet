@@ -8,7 +8,7 @@ import { doScanQrCode } from '../../../logic/native';
 import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
 import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { register } from '../../../store/store';
+import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
 // ============================导出
@@ -20,6 +20,7 @@ interface Props {
     currencyName:string;
     tx?:TransRecordLocal;
 }
+
 export class Transfer extends Widget {
     public ok:() => void;
     public async setProps(props:Props,oldProps:Props) {

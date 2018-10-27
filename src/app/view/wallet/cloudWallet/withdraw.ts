@@ -6,7 +6,6 @@ import { Widget } from '../../../../pi/widget/widget';
 import { withdrawMinerFee } from '../../../config';
 import { withdraw } from '../../../net/pullWallet';
 import { CurrencyType } from '../../../store/interface';
-import { find, getBorn } from '../../../store/store';
 import { withdrawLimit } from '../../../utils/constants';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
 interface Props {

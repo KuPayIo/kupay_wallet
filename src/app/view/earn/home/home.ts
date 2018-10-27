@@ -7,8 +7,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAward, getCloudBalance, getMining, getMiningRank } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
-import { find, getBorn, register } from '../../../store/store';
+import { CloudCurrencyType } from '../../../store/interface';
+import { register, getStore, getCloudBalances } from '../../../store/memstore';
 import { formatBalance, getLanguage, getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
@@ -180,7 +180,7 @@ export class PlayHome extends Widget {
      * 获取更新数据
      */
     private initDate() {
-        const wallet = find('curWallet');
+        const wallet = getStore('wallet');
         if (!wallet) {
             this.paint();
 
@@ -188,13 +188,14 @@ export class PlayHome extends Widget {
         }
         this.state.hasWallet = true;
         
-        const cloudBalance = getBorn('cloudBalance');
-        if (cloudBalance) {
-            this.state.ktBalance = formatBalance(cloudBalance.get(CurrencyType.KT));
-            this.state.ethBalance = formatBalance(cloudBalance.get(CurrencyType.ETH));
+        const cloudBalances = getCloudBalances();
+
+        if (cloudBalances) {
+            this.state.ktBalance = formatBalance(cloudBalances.get(CloudCurrencyType.KT));
+            this.state.ethBalance = formatBalance(cloudBalances.get(CloudCurrencyType.ETH));
         }
 
-        const mining = find('miningTotal');
+        const mining = getStore('activity/mining');
         if (mining) {
             if (mining.thisNum > 0) {
                 this.state.isAbleBtn = true;
@@ -206,9 +207,8 @@ export class PlayHome extends Widget {
             this.state.isAbleBtn = false;
         }
 
-        const rank = find('miningRank');
-        if (rank) {
-            this.state.rankNum = rank.myRank;
+        if (mining && mining.mineRank) {
+            this.state.rankNum = mining.mineRank.myRank;
         }
 
         const userInfo = getUserInfo();

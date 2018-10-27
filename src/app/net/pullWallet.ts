@@ -13,7 +13,7 @@ import { GlobalWallet } from '../core/globalWallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../logic/dataCenter';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../store/interface';
-import { find, getBorn, updateStore } from '../store/store';
+import { find, getBorn, updateStore } from '../store/memstore';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 import { fetchBtcMinerFee, fetchGasPrice, getStaticLanguage, popNewMessage } from '../utils/tools';

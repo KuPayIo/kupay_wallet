@@ -5,8 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getCloudBalance } from '../../../net/pull';
-import { find, register } from '../../../store/store';
+import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, getUserInfo } from '../../../utils/tools';
 // ============================导出

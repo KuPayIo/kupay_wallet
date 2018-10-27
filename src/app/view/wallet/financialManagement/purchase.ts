@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { recharge } from '../../../net/pullWallet';
 import { CurrencyType, MinerFeeLevel, Product, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { getBorn } from '../../../store/store';
+import { getBorn } from '../../../store/memstore';
 import { defaultGasLimit } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { fetchGasPrice, formatBalance, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';

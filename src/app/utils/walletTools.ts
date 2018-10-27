@@ -12,7 +12,7 @@ import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../logic/dataCenter';
 import { buyProduct, getCloudBalance, getPurchaseRecord } from '../net/pull';
 import { Addr } from '../store/interface';
-import { find, updateStore } from '../store/store';
+import { find, updateStore } from '../store/memstore';
 import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
 import { nameWare } from './nameWareHouse';
 import { shareSecret } from './secretsBase';

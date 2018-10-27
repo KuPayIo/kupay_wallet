@@ -5,8 +5,8 @@
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { applyAutoLogin, autoLogin, setUserInfo, fetchGasPrices, fetchBtcFees, fetchRealUser, getCloudBalance, getUserInfoFromServer, defaultLogin } from '../../net/pull';
-import { LoginState, UserInfo } from '../../store/interface';
-import { find, getBorn, register } from '../../store/store';
+import { UserInfo } from '../../store/interface';
+import { register } from '../../store/memstore';
 import { getFirstEthAddr, getLanguage } from '../../utils/tools';
 
 // ================================ 导出
@@ -80,9 +80,9 @@ export class App extends Widget {
 // ===================================================== 本地
 // ===================================================== 立即执行
 
-register('level_2_page_loaded',(loaded:boolean) => {
-    const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-    dataCenter.init();
+register('flags/level_2_page_loaded',(loaded:boolean) => {
+    // const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+    // dataCenter.init();
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.closeLoading();

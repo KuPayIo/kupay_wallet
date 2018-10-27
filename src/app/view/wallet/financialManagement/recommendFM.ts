@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList } from '../../../net/pull';
 import { Product } from '../../../store/interface';
-import { register } from '../../../store/store';
+import { register } from '../../../store/memstore';
 
 interface Props {
     isActive:boolean;

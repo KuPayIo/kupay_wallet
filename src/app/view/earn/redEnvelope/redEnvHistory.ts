@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCodeDetail, queryDetailLog, querySendRedEnvelopeRecord } from '../../../net/pull';
-import { find, register } from '../../../store/store';
+import { find, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
 import { getLanguage } from '../../../utils/tools';
 

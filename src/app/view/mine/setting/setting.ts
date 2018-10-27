@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { CurrencyUnit } from '../../../store/interface';
-import { find, register, updateStore } from '../../../store/store';
+import { find, register, updateStore } from '../../../store/memstore';
 import { getLanguage, logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 // ================================================导出

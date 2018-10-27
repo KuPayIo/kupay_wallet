@@ -2,7 +2,7 @@
 /**
  * 和账号相关的工具
  */
-import { find } from '../store/store';
+import { find } from '../store/memstore';
 import { walletNumLimit } from './constants';
 import { getStrLen, shuffle } from './tools';
 

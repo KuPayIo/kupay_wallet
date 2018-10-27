@@ -3,7 +3,7 @@
  */
 import { Widget } from '../../../../pi/widget/widget';
 import { createNewAddr } from '../../../logic/localWallet';
-import { find, updateStore } from '../../../store/store';
+import { find, updateStore } from '../../../store/memstore';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, popPswBox } from '../../../utils/tools';
 
 interface Props {

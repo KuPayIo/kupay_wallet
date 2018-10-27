@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../net/pull';
 import { RedEnvelopeType } from '../../../store/interface';
-import { find } from '../../../store/store';
+import { find } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 
 interface Props {

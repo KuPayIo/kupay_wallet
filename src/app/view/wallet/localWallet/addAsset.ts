@@ -3,7 +3,7 @@
  */
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../logic/dataCenter';
-import { find, updateStore } from '../../../store/store';
+import { find, updateStore } from '../../../store/memstore';
 import { fetchWalletAssetListAdded, getCurrentAddrInfo, getLanguage } from '../../../utils/tools';
 
 export class AddAsset extends Widget {

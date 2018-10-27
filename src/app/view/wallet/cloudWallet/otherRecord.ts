@@ -5,7 +5,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
-import { getBorn, register } from '../../../store/store';
+import { getBorn, register } from '../../../store/memstore';
 import { getLanguage, timestampFormat } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords

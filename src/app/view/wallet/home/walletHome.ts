@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find, register } from '../../../store/store';
+import { register, getStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchTotalAssets, fetchWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
 // ================================ 导出
@@ -18,12 +18,12 @@ export class WalletHome extends Widget {
         this.init();
     }
     public init() {
-        const color = find('changeColor');
+        const color = getStore('setting/changeColor','redUp');
         this.state = {
             totalAsset:formatBalanceValue(fetchTotalAssets()),
             assetList:fetchWalletAssetList(),
             cfgData:getLanguage(this),
-            redUp:color ? color.selected === 0 :true,
+            redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         this.paint();

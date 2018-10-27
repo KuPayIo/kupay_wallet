@@ -5,7 +5,7 @@ import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { getShapeShiftCoins, getTransactionsByAddr, estimateGasERC20 } from '../net/pullWallet';
 import { Addr, CurrencyRecord, TransRecordLocal, TxStatus, TxType } from '../store/interface';
-import { find, getBorn, updateStore, register } from '../store/store';
+import { find, getBorn, updateStore, register } from '../store/memstore';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
 import { getAddrsAll, initAddr, getConfirmBlockNumber, formatBalance, formatBalanceValue, parseTransferExtraInfo } from '../utils/tools';
 import { ethTokenDivideDecimals, sat2Btc, wei2Eth, smallUnit2LargeUnit } from '../utils/unitTools';

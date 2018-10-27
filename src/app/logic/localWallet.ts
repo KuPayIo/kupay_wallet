@@ -1,266 +1,275 @@
 /**
  * 本地钱包相关操作
  */
-import { popNew } from '../../pi/ui/root';
-import { base64ToArrayBuffer } from '../../pi/util/base64';
-import { drawImg } from '../../pi/util/canvas';
-import { generateByHash, sha3, toMnemonic } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
-import { Addr, CreateWalletType, Wallet } from '../store/interface';
-import { find, updateStore } from '../store/store';
-import { ahash } from '../utils/ahash';
-import { defalutShowCurrencys, lang } from '../utils/constants';
-import { restoreSecret } from '../utils/secretsBase';
-import { calcHashValuePromise, getXOR, hexstrToU8Array, u8ArrayToHexstr, popNewLoading, popNewMessage } from '../utils/tools';
-import { getMnemonic, addNewAddr } from '../utils/walletTools';
-import { dataCenter } from './dataCenter';
-import { uploadFile } from '../net/pull';
+import { popNew } from "../../pi/ui/root";
+import { base64ToArrayBuffer } from "../../pi/util/base64";
+import { drawImg } from "../../pi/util/canvas";
+import { generateByHash, sha3, toMnemonic } from "../core/genmnemonic";
+import { GlobalWallet } from "../core/globalWallet";
+import { Wallet } from "../store/interface";
+import { getStore } from "../store/memstore";
+import { ahash } from "../utils/ahash";
+import { defalutShowCurrencys, lang } from "../utils/constants";
+import { restoreSecret } from "../utils/secretsBase";
+import {
+  calcHashValuePromise,
+  getXOR,
+  hexstrToU8Array,
+  u8ArrayToHexstr,
+  popNewLoading,
+  popNewMessage
+} from "../utils/tools";
+import { getMnemonic, addNewAddr } from "../utils/walletTools";
+import { dataCenter } from "./dataCenter";
+import { uploadFile } from "../net/pull";
+
+interface Option {
+  psw: string; // 密码
+  imageBase64?: string; // 图片base64
+  imagePsw?: string; // 图片密码
+  mnemonic?: string; // 助记词
+  fragment1?: string; // 片段1
+  fragment2?: string; // 片段2
+}
+
+/**
+ * 创建钱包的方式
+ */
+export enum CreateWalletType {
+  Random = 1, // 普通随机创建
+  Image, // 通过图片创建
+  StrandarImport, // 普通导入
+  ImageImport, // 图片导入
+  FragmentImport // 片段导入
+}
 
 /**
  * 创建钱包
  * @param itype 创建钱包方式 1 随机 2 图片 3 标准导入 4 照片导入 5 片段导入
  * @param option 相关参数
  */
-export const createWallet = async (itype:CreateWalletType,option:any) => {
-    if (itype === CreateWalletType.Random) {
-        console.time('popNewloading');
-        const close = popNew('app-components1-loading-loading', { text: '创建中...' });
-        console.timeEnd('popNewloading');
-        console.time('calcHashValuePromise');
-        const hash = await calcHashValuePromise(option.psw, find('salt'));
-        console.timeEnd('calcHashValuePromise');
-        console.time('createWalletRandom');
-        createWalletRandom(hash,option);
-        console.timeEnd('createWalletRandom');
-        close.callback(close.widget);
-        // 刷新本地钱包
-        dataCenter.refreshAllTx();
-        return hash;
-    } else if (itype === CreateWalletType.Image) {
-        const close = popNew('app-components1-loading-loading', { text: '创建中...' });
-        const hash = await calcHashValuePromise(option.psw, find('salt'));
-        await createWalletByImage(hash,option);
-        close.callback(close.widget);
-        // 刷新本地钱包
-        dataCenter.refreshAllTx();
-        return hash;
-    } else if (itype === CreateWalletType.StrandarImport) {
-        const close = popNew('app-components1-loading-loading', { text: '导入中...' });
-        const hash = await calcHashValuePromise(option.psw, find('salt'));
-        importWalletByMnemonic(hash,option);
-        close.callback(close.widget);
-        // 刷新本地钱包
-        dataCenter.refreshAllTx();
-        return hash;
-    } else if (itype === CreateWalletType.ImageImport) {
-        const close = popNew('app-components1-loading-loading', { text: '导入中...' });
-        const hash = await calcHashValuePromise(option.psw, find('salt'));
-        await createWalletByImage(hash,option);
-        close.callback(close.widget);
-        // 刷新本地钱包
-        dataCenter.refreshAllTx();
-        return hash;
-    } else if (itype === CreateWalletType.FragmentImport) {
-        const close = popNew('app-components1-loading-loading', { text: '导入中...' });
-        const hash = await calcHashValuePromise(option.psw, find('salt'));
-        importWalletByFragment(hash,option);
-        close.callback(close.widget);
-        // 刷新本地钱包
-        dataCenter.refreshAllTx();
-        return hash;
-    }
-   
+export const createWallet = async (itype: CreateWalletType, option: Option) => {
+  if (itype === CreateWalletType.Random) {
+    const close = popNew("app-components1-loading-loading", {
+      text: "创建中..."
+    });
+    const secrectHash = await createWalletRandom(option);
+    close.callback(close.widget);
+    // 刷新本地钱包
+    dataCenter.refreshAllTx();
+    return secrectHash;
+  } else if (itype === CreateWalletType.Image) {
+    const close = popNew("app-components1-loading-loading", {
+      text: "创建中..."
+    });
+    const secrectHash = await createWalletByImage(option);
+    close.callback(close.widget);
+    // 刷新本地钱包
+    dataCenter.refreshAllTx();
+    return secrectHash;
+  } else if (itype === CreateWalletType.StrandarImport) {
+    const close = popNew("app-components1-loading-loading", {
+      text: "导入中..."
+    });
+    const hash = await calcHashValuePromise(option.psw, getStore("user/salt"));
+    importWalletByMnemonic(hash, option);
+    close.callback(close.widget);
+    // 刷新本地钱包
+    dataCenter.refreshAllTx();
+    return hash;
+  } else if (itype === CreateWalletType.ImageImport) {
+    const close = popNew("app-components1-loading-loading", {
+      text: "导入中..."
+    });
+    const hash = await calcHashValuePromise(option.psw, getStore("user/salt"));
+    await createWalletByImage(hash, option);
+    close.callback(close.widget);
+    // 刷新本地钱包
+    dataCenter.refreshAllTx();
+    return hash;
+  } else if (itype === CreateWalletType.FragmentImport) {
+    const close = popNew("app-components1-loading-loading", {
+      text: "导入中..."
+    });
+    const hash = await calcHashValuePromise(option.psw, getStore("user/salt"));
+    importWalletByFragment(hash, option);
+    close.callback(close.widget);
+    // 刷新本地钱包
+    dataCenter.refreshAllTx();
+    return hash;
+  }
 };
 
 /**
  * 随机创建钱包
  */
-export const createWalletRandom = (hash:string,option) => {
-    const salt = find('salt');
-    console.time('GlobalWallet generate');
-    const gwlt = GlobalWallet.generate(hash, option.nickName);
-    console.timeEnd('GlobalWallet generate');
-    // 创建钱包基础数据
-    const wallet: Wallet = {
-        walletId: gwlt.glwtId,
-        avatar: '',
-        gwlt: gwlt.toJSON(),
-        showCurrencys: defalutShowCurrencys,
-        currencyRecords: []
-    };
-
-    wallet.currencyRecords.push(...gwlt.currencyRecords);
-
-    const walletList: Wallet[] = find('walletList');
-    walletList.push(wallet);
-    updateStore('walletList', walletList);
-    updateStore('curWallet', wallet);
-    updateStore('salt', salt);
-    const addrs: Addr[] = find('addrs') || [];
-    addrs.push(...gwlt.addrs);
-    updateStore('addrs', addrs);
-    updateStore('userInfo',{ nickName:option.nickName});
-    if (option.avatar) {
-        uploadFile(option.avatar);
-    }
-
+export const createWalletRandom = async (option: Option) => {
+  const secrectHash = await calcHashValuePromise(
+    option.psw,
+    getStore("user/salt")
+  );
+  const gwlt = GlobalWallet.generate(secrectHash);
+  // 创建钱包基础数据
+  const wallet: Wallet = {
+    vault: gwlt.vault,
+    isBackup: gwlt.isBackup,
+    showCurrencys: defalutShowCurrencys,
+    currencyRecords: gwlt.currencyRecords
+  };
+  return secrectHash;
 };
 
 /**
  * 图片创建钱包
  * @param option 参数
  */
-export const createWalletByImage = async (hash:string,option:any) => {
-    console.log('createWalletByImage-------',hash,option);
-    const ahash:any = await getImageAhash(option.imageBase64);
-    const vault = await imgToHash(ahash,option.imagePsw);
-    const walletList: Wallet[] = find('walletList');
-    const addrs: Addr[] = find('addrs') || [];
-    const salt = find('salt');
-    const gwlt = GlobalWallet.generate(hash, option.nickName, vault);
-    // 创建钱包基础数据
-    const wallet: Wallet = {
-        walletId: gwlt.glwtId,
-        avatar: '',
-        gwlt: gwlt.toJSON(),
-        showCurrencys: defalutShowCurrencys,
-        currencyRecords: []
-    };
-
-    wallet.currencyRecords.push(...gwlt.currencyRecords);
-    walletList.push(wallet);
-    updateStore('walletList', walletList);
-    updateStore('curWallet', wallet);
-    updateStore('salt', salt);
-    addrs.push(...gwlt.addrs);
-    updateStore('addrs', addrs);
-    updateStore('userInfo',{ nickName:option.nickName});
-    if (option.avatar) {
-        uploadFile(option.avatar);
-    }
-
+export const createWalletByImage = async (option: Option) => {
+  const secrectHash = await calcHashValuePromise(
+    option.psw,
+    getStore("user/salt")
+  );
+  const ahash = await getImageAhash(option.imageBase64);
+  const vault = await imgToHash(ahash, option.imagePsw);
+  const gwlt = GlobalWallet.generate(secrectHash, vault);
+   // 创建钱包基础数据
+   const wallet: Wallet = {
+    vault: gwlt.vault,
+    isBackup: gwlt.isBackup,
+    showCurrencys: defalutShowCurrencys,
+    currencyRecords: gwlt.currencyRecords
+  };
+  return secrectHash;
 };
 
 /**
  * 获取图片ahash
  * @param imageBase64 base64
  */
-const getImageAhash = (imageBase64:string) => {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-            const ab = drawImg(img);
-            const r = ahash(new Uint8Array(ab), img.width, img.height, 4);
-            resolve(r);
-        };
-        img.onerror = (e) => {
-            reject(e);
-        };
-        img.src = imageBase64;
-    });
+const getImageAhash = (imageBase64: string):Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const ab = drawImg(img);
+      const r = ahash(new Uint8Array(ab), img.width, img.height, 4);
+      resolve(r);
+    };
+    img.onerror = e => {
+      reject(e);
+    };
+    img.src = imageBase64;
+  });
 };
 
 /**
- * 
+ *
  * @param imagePsw 图片密码
  * @param ahash ahash
  */
-const imgToHash = async (ahash:string, imagePsw:string) => {
-    const sha3Hash = sha3(ahash + imagePsw, false);
-    const hash = await calcHashValuePromise(sha3Hash);
-    const sha3Hash1 = sha3(hash, true);
-    const len = sha3Hash1.length;
-    // 生成助记词的随机数仅需要128位即可，这里对256位随机数进行折半取异或的处理
-    const sha3Hash2 = getXOR(sha3Hash1.slice(0, len / 2), sha3Hash1.slice(len / 2));
-    // console.log(choosedImg, inputWords, sha3Hash, hash, sha3Hash1, sha3Hash2);
+const imgToHash = async (ahash: string, imagePsw: string) => {
+  const sha3Hash = sha3(ahash + imagePsw, false);
+  const hash = await calcHashValuePromise(sha3Hash);
+  const sha3Hash1 = sha3(hash, true);
+  const len = sha3Hash1.length;
+  // 生成助记词的随机数仅需要128位即可，这里对256位随机数进行折半取异或的处理
+  const sha3Hash2 = getXOR(
+    sha3Hash1.slice(0, len / 2),
+    sha3Hash1.slice(len / 2)
+  );
+  // console.log(choosedImg, inputWords, sha3Hash, hash, sha3Hash1, sha3Hash2);
 
-    return generateByHash(sha3Hash2);
-
+  return generateByHash(sha3Hash2);
 };
 
 /**
  * 通过助记词导入钱包
  */
-export const importWalletByMnemonic = (hash:string,option) => {
-    const walletList: Wallet[] = find('walletList');
-    const salt = find('salt');
-    const addrs: Addr[] = find('addrs') || [];
+export const importWalletByMnemonic = (hash: string, option: Option) => {
+  const walletList: Wallet[] = find("walletList");
+  const salt = getStore("user/salt");
+  const addrs: Addr[] = find("addrs") || [];
 
-    let gwlt = null;
-    console.time('import');
-    gwlt = GlobalWallet.fromMnemonic(hash,option.mnemonic);
-    console.timeEnd('import');
-   
-    gwlt.nickName = option.nickName;
+  let gwlt = null;
+  console.time("import");
+  gwlt = GlobalWallet.fromMnemonic(hash, option.mnemonic);
+  console.timeEnd("import");
 
-    const wallet: Wallet = {
-        walletId: gwlt.glwtId,
-        avatar: '',
-        gwlt: gwlt.toJSON(),
-        showCurrencys: defalutShowCurrencys,
-        currencyRecords: []
-    };
-    wallet.currencyRecords.push(...gwlt.currencyRecords);
+  gwlt.nickName = option.nickName;
 
-    walletList.push(wallet);
-    updateStore('walletList', walletList);
-    updateStore('curWallet', wallet);
-    updateStore('salt', salt);
-    addrs.push(...gwlt.addrs);
-    updateStore('addrs', addrs);
-    updateStore('userInfo',{ nickName:option.nickName});
-    if (option.avatar) {
-        uploadFile(option.avatar);
-    }
-    return true;
+  const wallet: Wallet = {
+    walletId: gwlt.glwtId,
+    avatar: "",
+    gwlt: gwlt.toJSON(),
+    showCurrencys: defalutShowCurrencys,
+    currencyRecords: []
+  };
+  wallet.currencyRecords.push(...gwlt.currencyRecords);
+
+  walletList.push(wallet);
+  updateStore("walletList", walletList);
+  updateStore("curWallet", wallet);
+  updateStore("salt", salt);
+  addrs.push(...gwlt.addrs);
+  updateStore("addrs", addrs);
+  updateStore("userInfo", { nickName: option.nickName });
+  if (option.avatar) {
+    uploadFile(option.avatar);
+  }
+  return true;
 };
 
 /**
  * 冗余助记词导入
  */
-export const importWalletByFragment = async (hash:string,option) => {
-    const shares = [option.fragment1, option.fragment2].map(v => u8ArrayToHexstr(new Uint8Array(base64ToArrayBuffer(v))));
-    const comb = restoreSecret(shares);
-    const mnemonic = toMnemonic(lang, hexstrToU8Array(comb));
-    option.mnemonic = mnemonic;
-    importWalletByMnemonic(hash,option);
+export const importWalletByFragment = async (hash: string, option: Option) => {
+  const shares = [option.fragment1, option.fragment2].map(v =>
+    u8ArrayToHexstr(new Uint8Array(base64ToArrayBuffer(v)))
+  );
+  const comb = restoreSecret(shares);
+  const mnemonic = toMnemonic(lang, hexstrToU8Array(comb));
+  option.mnemonic = mnemonic;
+  importWalletByMnemonic(hash, option);
 };
-
 
 /**
  * 添加新地址
  */
-export const createNewAddr = async (passwd:string,currencyName:string) => {
-    console.time('createNewAddr');
-    const close = popNewLoading('添加中...');
-    const wallet = find('curWallet');
-    const mnemonic = await getMnemonic(wallet, passwd);
-    close.callback(close.widget);
-    if (mnemonic) {
-        const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
-        const address = GlobalWallet.getWltAddrByMnemonic(mnemonic, currencyName, currencyRecord.addrs.length);
-        if (!address) return;
-        addNewAddr(currencyName, address, '');
-        popNewMessage('添加成功');
-    } else {
-        popNewMessage('密码错误');
-    }
-    console.timeEnd('createNewAddr');
-}
+export const createNewAddr = async (passwd: string, currencyName: string) => {
+  console.time("createNewAddr");
+  const close = popNewLoading("添加中...");
+  const wallet = find("curWallet");
+  const mnemonic = await getMnemonic(wallet, passwd);
+  close.callback(close.widget);
+  if (mnemonic) {
+    const currencyRecord = wallet.currencyRecords.filter(
+      v => v.currencyName === currencyName
+    )[0];
+    const address = GlobalWallet.getWltAddrByMnemonic(
+      mnemonic,
+      currencyName,
+      currencyRecord.addrs.length
+    );
+    if (!address) return;
+    addNewAddr(currencyName, address, "");
+    popNewMessage("添加成功");
+  } else {
+    popNewMessage("密码错误");
+  }
+  console.timeEnd("createNewAddr");
+};
 
 // 删除助记词
-export const  deleteMnemonic = () =>{
-    const curWalletId = find('curWallet').walletId;
-    const walletList: Wallet[] = find('walletList').map(v => {
-        if (v.walletId === curWalletId) {
-            // isUpdate = true;
-            const gwlt = GlobalWallet.fromJSON(v.gwlt);
-            gwlt.mnemonicBackup = true;
-            v.gwlt = gwlt.toJSON();
-            updateStore('curWallet', v);
-        }
-        
-        return v;
-    });
-    updateStore('walletList', walletList);
-}
+export const deleteMnemonic = () => {
+  const curWalletId = find("curWallet").walletId;
+  const walletList: Wallet[] = find("walletList").map(v => {
+    if (v.walletId === curWalletId) {
+      // isUpdate = true;
+      const gwlt = GlobalWallet.fromJSON(v.gwlt);
+      gwlt.mnemonicBackup = true;
+      v.gwlt = gwlt.toJSON();
+      updateStore("curWallet", v);
+    }
+
+    return v;
+  });
+  updateStore("walletList", walletList);
+};

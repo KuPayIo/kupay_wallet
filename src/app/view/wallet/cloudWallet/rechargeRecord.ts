@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getRechargeLogs } from '../../../net/pull';
 import { CurrencyType } from '../../../store/interface';
-import { getBorn, register } from '../../../store/store';
+import { getBorn, register } from '../../../store/memstore';
 import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 // ===================================================== 导出

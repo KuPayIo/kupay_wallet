@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
-import { find } from '../../../store/store';
+import { find } from '../../../store/memstore';
 import { pswEqualed } from '../../../utils/account';
 import { getLanguage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';

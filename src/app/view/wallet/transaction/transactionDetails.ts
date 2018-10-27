@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { TxType } from '../../../store/interface';
-import { register } from '../../../store/store';
+import { register } from '../../../store/memstore';
 import { blockchainUrl, etherscanUrl } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { canResend, copyToClipboard, getLanguage, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';

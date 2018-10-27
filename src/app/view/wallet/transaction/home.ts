@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../logic/dataCenter';
 import { Addr, TxType } from '../../../store/interface';
-import { find, register } from '../../../store/store';
+import { find, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';

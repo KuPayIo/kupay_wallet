@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
 import { recharge, resendRecharge } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { register } from '../../../store/store';
+import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 

@@ -4,9 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getCloudBalance, getProductList } from '../../../net/pull';
+import { getProductList, getServerCloudBalance } from '../../../net/pull';
 import { Product } from '../../../store/interface';
-import { find, register } from '../../../store/store';
+import { register, getStore } from '../../../store/memstore';
 import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getLanguage, hasWallet, getCurrencyUnitSymbol } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -22,17 +22,17 @@ export class CloudHome extends Widget {
         this.init();
         if(props.isActive){
             getProductList();
-            getCloudBalance();
+            getServerCloudBalance();
         }
     }
     public init() {
-        const color = find('changeColor');
+        const color = getStore('setting/changeColor','redUp');
         this.state = {
             totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
             assetList:fetchCloudWalletAssetList(),
-            productList:find('productList') || [],
+            productList:getStore('activity/financialManagement',[]),
             cfgData:getLanguage(this),
-            redUp:color ? color.selected === 0 :true,
+            redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         this.paint();

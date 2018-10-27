@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMineRank, getMiningRank } from '../../../net/pull';
-import { find, register } from '../../../store/store';
+import { find, register } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getLanguage, popNewLoading, popNewMessage, loginSuccess } from '../../../utils/tools';
-import { find, updateStore } from '../../../store/store';
+import { find, updateStore } from '../../../store/memstore';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords

@@ -5,7 +5,7 @@ import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getCurrencyUnitSymbol } from '../../utils/tools';
-import { register } from '../../store/store';
+import { register } from '../../store/memstore';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

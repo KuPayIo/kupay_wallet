@@ -5,8 +5,8 @@ import { PAGELIMIT } from '../utils/constants';
 import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
-import { AccountDetail, CRecDetail, CurrencyType, CurrencyTypeReverse,MineRank, MiningRank, PurchaseRecordOne, RedBag, SRecDetail, TaskSid } from './interface';
-import { find } from './store';
+import { AccountDetail, CRecDetail, CloudCurrencyType, CurrencyTypeReverse,MineRank, MiningRank, PurchaseRecordOne, RedBag, SRecDetail, TaskSid } from './interface';
+import { find } from './memstore';
 /**
  * 解析数据
  */
@@ -15,20 +15,20 @@ import { find } from './store';
 /**
  * 解析云端账号余额
  */
-export const parseCloudBalance = (balanceInfo): Map<CurrencyType, number> => {
-    const m = new Map<CurrencyType, number>();
+export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> => {
+    const m = new Map<CloudCurrencyType, number>();
     if (!balanceInfo) {
         for (let i = 0; i < cloudCurrency.length;i++) {
-            m.set(CurrencyTypeReverse[cloudCurrency[i]],0);
+            m.set(cloudCurrency[cloudCurrency[i]],0);
         }
 
         return m;
     }
     for (let i = 0; i < balanceInfo.value.length; i++) {
         const each = balanceInfo.value[i];
-        m.set(each[0], smallUnit2LargeUnit(CurrencyTypeReverse[each[0]], each[1]));
+        m.set(each[0], smallUnit2LargeUnit(cloudCurrency[each[0]], each[1]));
     }
-    m.set(CurrencyType.CNYT,0);
+    m.set(CloudCurrencyType.CNYT,0);
     
     return m;
 };

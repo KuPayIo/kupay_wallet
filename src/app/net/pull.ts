@@ -4,10 +4,10 @@
 import { open, request, setUrl, randomLogin, setBottomLayerReloginMsg, getSeverTime } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
-import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
+import { CloudCurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel, CloudCurrencyType } from '../store/interface';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
-import { find, getBorn, updateStore } from '../store/store';
+import { find, getBorn, updateStore, getStore, setStore } from '../store/memstore';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
@@ -138,8 +138,6 @@ export const openConnect = async () => {
  * 连接成功回调
  */
 const conSuccess = () =>{
-    const conState = find('conState');
-    console.log('ws con success',conState);
     getRandom();
 }
 
@@ -147,8 +145,6 @@ const conSuccess = () =>{
  * 连接出错回调
  */
 const conError = (err) =>{
-    const conState = find('conState');
-    console.log(`ws con error ${conState}`,err);
     checkCreateAccount();
 }
 
@@ -156,8 +152,6 @@ const conError = (err) =>{
  * 连接关闭回调
  */
 const conClose = () =>{
-    const conState = find('conState');
-    console.log('ws con close',conState);
     popNewMessage('连接已断开')
 }
 
@@ -165,15 +159,13 @@ const conClose = () =>{
  * 重新连接回调
  */
 const conReOpen = ()=>{
-    const conState = find('conState');
-    console.log('ws con reOpen',conState);
 }
 
 /**
  * 获取随机数
  */
 export const getRandom = async (cmd?:number) => {
-    const wallet = find('curWallet');
+    const wallet = getStore('wallet');
     if (!wallet) return;
     const gwlt = JSON.parse(wallet.gwlt);
     updateStore('conUser', wallet.walletId);
@@ -235,35 +227,32 @@ const afterGetRandomAction = (serverTimestamp:number) =>{
     }
 }
 
-//底层登录成功回调
-const bottomLayerLoginCB = (res)=>{
-    console.log('bottomLayerLoginCB',res);
-}
+
 /**
  * 获取所有的货币余额
  */
-export const getCloudBalance = () => {
+export const getServerCloudBalance = () => {
     const list = [];
-    list.push(CurrencyType.KT);
-    for (const k in CurrencyType) {
+    list.push(CloudCurrencyType.KT);
+    for (const k in CloudCurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
-            list.push(CurrencyType[k]);
+            list.push(CloudCurrencyType[k]);
         }
     }
     const msg = { type: 'wallet/account@get', param: { list:`[${list}]` } };
     
     return requestAsync(msg).then(balanceInfo => {
         console.log('balanceInfo', balanceInfo);
-        updateStore('cloudBalance', parseCloudBalance(balanceInfo));
+        // setStore('cloudBalance', parseCloudBalance(balanceInfo));
     }).catch((res) => {
-        updateStore('cloudBalance', parseCloudBalance(null));
+        // setStore('cloudBalance', parseCloudBalance(null));
     });
 };
 
 /**
  * 获取指定类型的货币余额
  */
-export const getBalance = async (currencyType: CurrencyType) => {
+export const getBalance = async (currencyType: CloudCurrencyType) => {
     const msg = { type: 'wallet/account@get', param: { list: `[${currencyType}]` } };
     requestAsync(msg).then(r => {
         // todo 这里更新余额
@@ -680,7 +669,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         msg = {
             type: 'wallet/account@get_detail',
             param: {
-                coin:CurrencyType[coin],
+                coin:CloudCurrencyType[coin],
                 start,
                 filter,
                 count:PAGELIMIT
@@ -690,7 +679,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         msg = {
             type: 'wallet/account@get_detail',
             param: {
-                coin:CurrencyType[coin],
+                coin:CloudCurrencyType[coin],
                 filter,
                 count:PAGELIMIT
             }
@@ -704,7 +693,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         const canLoadMore = detail.length >= PAGELIMIT;
         if (filter === 1) {
             const accountDetailMap = getBorn('accountDetail');
-            const accountDetail = accountDetailMap.get(CurrencyType[coin]) || { list:[] };
+            const accountDetail = accountDetailMap.get(CloudCurrencyType[coin]) || { list:[] };
             if (!start) {
                 accountDetail.list = detail;
             } else {
@@ -713,11 +702,11 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         
             accountDetail.start = nextStart;
             accountDetail.canLoadMore = canLoadMore;
-            accountDetailMap.set(CurrencyType[coin],accountDetail);
+            accountDetailMap.set(CloudCurrencyType[coin],accountDetail);
             updateStore('accountDetail',accountDetailMap);
         } else {
             const totalLogMap = getBorn('totalLogs');
-            const totalLogs = totalLogMap.get(CurrencyType[coin]) || { list:[] };
+            const totalLogs = totalLogMap.get(CloudCurrencyType[coin]) || { list:[] };
             if (!start) {
                 totalLogs.list = detail;
             } else {
@@ -726,7 +715,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         
             totalLogs.start = nextStart;
             totalLogs.canLoadMore = canLoadMore;
-            totalLogMap.set(CurrencyType[coin],totalLogs);
+            totalLogMap.set(CloudCurrencyType[coin],totalLogs);
             updateStore('totalLogs',totalLogMap);
         }
 
@@ -992,7 +981,7 @@ export const getRechargeLogs = async (coin: string,start?) => {
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
         const rechargeLogsMap = getBorn('rechargeLogs');
-        const rechargeLogs = rechargeLogsMap.get(CurrencyType[coin]) || { list:[] };
+        const rechargeLogs = rechargeLogsMap.get(CloudCurrencyType[coin]) || { list:[] };
         if (!start) {
             rechargeLogs.list = detail;
         } else {
@@ -1001,7 +990,7 @@ export const getRechargeLogs = async (coin: string,start?) => {
         
         rechargeLogs.start = nextStart;
         rechargeLogs.canLoadMore = canLoadMore;
-        rechargeLogsMap.set(CurrencyType[coin],rechargeLogs);
+        rechargeLogsMap.set(CloudCurrencyType[coin],rechargeLogs);
         updateStore('rechargeLogs',rechargeLogsMap);
 
     } catch (err) {
@@ -1048,7 +1037,7 @@ export const getWithdrawLogs = async (coin: string,start?) => {
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
         const withdrawLogsMap = getBorn('withdrawLogs');
-        const withdrawLogs = withdrawLogsMap.get(CurrencyType[coin]) || { list:[] };
+        const withdrawLogs = withdrawLogsMap.get(CloudCurrencyType[coin]) || { list:[] };
         if (!start) {
             withdrawLogs.list = detail;
         } else {
@@ -1057,7 +1046,7 @@ export const getWithdrawLogs = async (coin: string,start?) => {
         
         withdrawLogs.start = nextStart;
         withdrawLogs.canLoadMore = canLoadMore;
-        withdrawLogsMap.set(CurrencyType[coin],withdrawLogs);
+        withdrawLogsMap.set(CloudCurrencyType[coin],withdrawLogs);
         updateStore('withdrawLogs',withdrawLogsMap);
 
     } catch (err) {

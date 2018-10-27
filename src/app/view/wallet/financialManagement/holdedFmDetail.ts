@@ -4,7 +4,7 @@
 import { Widget } from '../../../../pi/widget/widget';
 import { buyBack, getPurchaseRecord } from '../../../net/pull';
 import { PurchaseRecordOne } from '../../../store/interface';
-import { find } from '../../../store/store';
+import { find } from '../../../store/memstore';
 import { getLanguage, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 interface Props {

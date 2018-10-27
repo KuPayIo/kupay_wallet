@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getData, getUserList, queryConvertLog } from '../../../net/pull';
 import { CRecDetail, CurrencyType } from '../../../store/interface';
-import { find, register, updateStore } from '../../../store/store';
+import { find, register, updateStore } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
 import { getLanguage, parseRtype, timestampFormat, unicodeArray2Str } from '../../../utils/tools';
 // ================================ 导出

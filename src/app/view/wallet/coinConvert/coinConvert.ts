@@ -9,7 +9,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../../net/pullWallet';
 import { MarketInfo, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { getBorn, register, updateStore } from '../../../store/store';
+import { getBorn, register, updateStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, fetchBtcMinerFee, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 import { sat2Btc, wei2Eth } from '../../../utils/unitTools';

@@ -7,7 +7,7 @@ import { createWallet } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { uploadFile, getRandom } from '../../../net/pull';
 import { CreateWalletType } from '../../../store/interface';
-import { getBorn, updateStore, register } from '../../../store/store';
+import { getBorn, updateStore, register } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { getFirstEthAddr, getLanguage, popNewMessage, getStaticLanguage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';

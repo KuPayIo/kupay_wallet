@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { fetchRealUser, getCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
 import { CurrencyType, RedEnvelopeType } from '../../../store/interface';
-import { find, getBorn, register, updateStore } from '../../../store/store';
+import { find, getBorn, register, updateStore } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
