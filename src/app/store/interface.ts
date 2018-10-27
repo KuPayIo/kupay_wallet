@@ -86,12 +86,13 @@ export interface User {
 
     isLogin: boolean;      // 登录状态
     
-    token: string;         // 自动登录token
-    conRandom: string;     // 连接随机数
-    publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
+    token: string,         // 自动登录token
+    conRandom: string,     // 连接随机数
+    conUid:string;         // 服务器连接uid
+    publicKey: string,     // 用户公钥, 第一个以太坊地址的公钥
 
-    salt: string;          // 加密 盐值
-    secrectHash: string;   // 密码hash缓存   
+    salt: string,          // 加密 盐值
+    secretHash: string,   // 密码hash缓存   
     
     info: UserInfo;        // 基本信息
 }

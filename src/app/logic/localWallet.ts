@@ -7,7 +7,7 @@ import { drawImg } from "../../pi/util/canvas";
 import { generateByHash, sha3, toMnemonic } from "../core/genmnemonic";
 import { GlobalWallet } from "../core/globalWallet";
 import { Wallet } from "../store/interface";
-import { getStore } from "../store/memstore";
+import { getStore, setStore } from "../store/memstore";
 import { ahash } from "../utils/ahash";
 import { defalutShowCurrencys, lang } from "../utils/constants";
 import { restoreSecret } from "../utils/secretsBase";
@@ -25,6 +25,7 @@ import { uploadFile } from "../net/pull";
 
 interface Option {
   psw: string; // 密码
+  nickName:string;      // 昵称
   imageBase64?: string; // 图片base64
   imagePsw?: string; // 图片密码
   mnemonic?: string; // 助记词
@@ -56,7 +57,7 @@ export const createWallet = async (itype: CreateWalletType, option: Option) => {
     const secrectHash = await createWalletRandom(option);
     close.callback(close.widget);
     // 刷新本地钱包
-    dataCenter.refreshAllTx();
+    // dataCenter.refreshAllTx();
     return secrectHash;
   } else if (itype === CreateWalletType.Image) {
     const close = popNew("app-components1-loading-loading", {
@@ -116,6 +117,16 @@ export const createWalletRandom = async (option: Option) => {
     showCurrencys: defalutShowCurrencys,
     currencyRecords: gwlt.currencyRecords
   };
+  const user = getStore('user');
+  user.id = gwlt.glwtId;
+  user.publicKey = gwlt.publicKey;
+  user.secretHash = secrectHash;
+  user.info = {
+    ...user.info,
+    nickName:option.nickName
+  }
+  setStore('user',user);
+  setStore('wallet',wallet)
   return secrectHash;
 };
 

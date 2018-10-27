@@ -4,9 +4,9 @@
 // ================================ 导入
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { applyAutoLogin, autoLogin, setUserInfo, fetchGasPrices, fetchBtcFees, fetchRealUser, getCloudBalance, getUserInfoFromServer, defaultLogin } from '../../net/pull';
+import { applyAutoLogin, autoLogin, setUserInfo, fetchGasPrices, fetchBtcFees, fetchRealUser, getCloudBalance, getUserInfoFromServer, defaultLogin, getServerCloudBalance } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
-import { register } from '../../store/memstore';
+import { register, getStore } from '../../store/memstore';
 import { getFirstEthAddr, getLanguage } from '../../utils/tools';
 
 // ================================ 导出
@@ -102,21 +102,21 @@ register('userInfo',(userInfo:UserInfo) => {
 
 
 // 登录状态成功
-register('loginState',(loginState:LoginState) => {
-    if (loginState === LoginState.logined) {
+register('user/isLogin',(isLogin:boolean) => {
+    if (isLogin) {
          // 余额
-        getCloudBalance();
+        getServerCloudBalance();
         
         // 获取真实用户
         fetchRealUser();
         // 用户基础信息
-        getUserInfoFromServer(find('conUid'));
+        getUserInfoFromServer(getStore('user/conUid'));
         
-        const userInfo = find('userInfo');
+        const userInfo = getStore('user/info');
         if (userInfo) {
             setUserInfo();
         }
-        if (!getBorn('tokenMap').get(getFirstEthAddr())) {
+        if (!getStore('user/token')) {
             applyAutoLogin();
         }
     }

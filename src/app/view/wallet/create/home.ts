@@ -5,8 +5,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getLanguage, popNewLoading, popNewMessage, loginSuccess } from '../../../utils/tools';
-import { find, updateStore } from '../../../store/memstore';
 import { VerifyIdentidy } from '../../../utils/walletTools';
+import { getStore } from '../../../store/memstore';
+import { getAllAccount } from '../../../store/filestore';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -21,7 +22,7 @@ export class CreateEnter extends Widget {
         
     }
     public init(){
-        const walletList = find('walletList');
+        const walletList = getAllAccount();
         const accountList = [];
         walletList.forEach(item=>{
             const nickName = JSON.parse(item.gwlt).nickName;

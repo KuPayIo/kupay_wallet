@@ -5,7 +5,7 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { Accounts } from './filestore';
+import { Accounts, getCurrentAccount } from './filestore';
 import { CloudCurrencyType, CloudWallet, Currency2USDT, ShapeShiftTxs, Store } from './interface';
 
 // ============================================ 导出
@@ -85,7 +85,7 @@ export const getCloudBalances = () => {
  */
 export const initStore = () => {
 
-    // initUser(null,null);
+    initUser();
 
     // initSettings(null);
 
@@ -104,17 +104,23 @@ export const initStore = () => {
  */
 const handlerMap: HandlerMap = new HandlerMap();
 
-const initUser = (filesUser,filesWallet) => {
-    store.user.id = filesUser.id;
-    store.user.token = filesUser.token;
-    store.user.publicKey = filesUser.publicKey;
-    store.user.salt = filesUser.salt || cryptoRandomInt().toString();
+const initUser = () => {
+    const curAccount = getCurrentAccount();
+    if(!curAccount) {
+        store.user.salt = cryptoRandomInt().toString();
+        return;
+    };
+    const fileUser = curAccount.user;
+    store.user.id = fileUser.id;
+    store.user.token = fileUser.token;
+    store.user.publicKey = fileUser.publicKey;
+    store.user.salt = fileUser.salt;
     store.user.info = {
-        ...filesUser.info
+        ...fileUser.info
     };
 
     store.wallet = {
-        ...filesWallet
+        ...curAccount.wallet
     };
 };
 
@@ -130,15 +136,6 @@ const initThird = (third) => {
     store.third.currency2USDTMap = new Map<string, Currency2USDT>(third && third.currency2USDTMap);
 };
 
-/**
- * 获取当前account
- * @param accounts 账户
- */
-const getCurrentAccount = (accounts: Accounts) => {
-    if (!accounts || !accounts.currenctId) return;
-    
-    return accounts.accounts[accounts.currenctId];
-};
 
 // 全局内存数据库
 const store: Store = {
@@ -147,9 +144,10 @@ const store: Store = {
         isLogin: false,              // 登录状态
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
+        conUid:'',                   // 服务器连接uid
         publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
         salt: '',                    // 加密 盐值
-        secrectHash: '',             // 密码hash缓存   
+        secretHash: '',             // 密码hash缓存   
         info: {                      // 用户基本信息
             nickName: '',      // 昵称
             avatar: '',        // 头像

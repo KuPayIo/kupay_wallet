@@ -21,7 +21,7 @@ import {
   Currency2USDT
 } from "../../store/interface";
 import { registerFileStore } from "../../store/filestore";
-import { getStore, setStore } from "../../store/memstore";
+import { getStore, setStore, initStore } from "../../store/memstore";
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
 // import { create } from "../../../pi/net/rpc";
@@ -39,7 +39,7 @@ export const run = (cb): void => {
   // 数据检查
   checkUpdate();
   // 初始化数据
-  // initStore();
+  initStore();
   registerFileStore();
   // 主动推送初始化
   initPush();

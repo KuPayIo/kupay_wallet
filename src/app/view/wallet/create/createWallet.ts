@@ -3,11 +3,10 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { createWallet } from '../../../logic/localWallet';
+import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { uploadFile, getRandom } from '../../../net/pull';
-import { CreateWalletType } from '../../../store/interface';
-import { getBorn, updateStore, register } from '../../../store/memstore';
+import { register, setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { getFirstEthAddr, getLanguage, popNewMessage, getStaticLanguage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
@@ -128,8 +127,7 @@ export class CreateWallet extends Widget {
         }
         const option:any = {
             psw:this.state.walletPsw,
-            nickName:this.state.walletName,
-            avatar:this.state.avatar
+            nickName:this.state.walletName
         };
         if (this.state.itype === CreateWalletType.Image) {
             option.imageBase64 = this.props.imageBase64;
@@ -149,12 +147,9 @@ export class CreateWallet extends Widget {
         if (!hash) {
             popNewMessage(this.state.cfgData.tips[3]);
         }
-        const hashMap = getBorn('hashMap');
-        hashMap.set(getFirstEthAddr(),hash);
-        updateStore('hashMap',hashMap);
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
-        updateStore('flag',{ created:true,mnemonic,fragments });
+        setStore('flags',{ created:true,mnemonic,fragments });
         getRandom();
         
         const w: any = forelet.getWidget(WIDGET_NAME);
@@ -173,10 +168,10 @@ export class CreateWallet extends Widget {
 }
 
 // 登录状态成功
-register('flag',(flag:any) => {
-    if (flag.promptBackup) {
+register('flags',(flags:any) => {
+    if (flags.promptBackup) {
         popNew('app-components-modalBox-modalBox',getStaticLanguage().createSuccess,() => {
-            popNew('app-view-wallet-backup-index',{ mnemonic:flag.mnemonic,fragments:flag.fragments });
+            popNew('app-view-wallet-backup-index',{ mnemonic:flags.mnemonic,fragments:flags.fragments });
         });
     }
 });

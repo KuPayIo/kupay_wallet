@@ -12,7 +12,7 @@ import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../logic/dataCenter';
 import { buyProduct, getCloudBalance, getPurchaseRecord } from '../net/pull';
 import { Addr } from '../store/interface';
-import { find, updateStore } from '../store/memstore';
+import { find, updateStore, getStore } from '../store/memstore';
 import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
 import { nameWare } from './nameWareHouse';
 import { shareSecret } from './secretsBase';
@@ -145,12 +145,12 @@ export const getMnemonic = async (wallet, passwd) => {
 /**
  * 获取助记词16进制字符串
  */
-export const getMnemonicHexstr = (wallet, hash) => {
-    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+export const getMnemonicHexstr = (hash) => {
+    const wallet = getStore('wallet');
     try {
         const cipher = new Cipher();
 
-        return cipher.decrypt(hash, gwlt.vault);
+        return cipher.decrypt(hash, wallet.vault);
     } catch (error) {
         console.log(error);
 
@@ -221,7 +221,7 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
 
 // 获取助记词片段
 export const fetchMnemonicFragment =  (hash) => {
-    const mnemonicHexstr =  getMnemonicHexstr(find('curWallet'),hash);
+    const mnemonicHexstr =  getMnemonicHexstr(hash);
     if (!mnemonicHexstr) return;
     const shares = shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
             .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
@@ -252,10 +252,10 @@ export const backupMnemonic = async (passwd:string) => {
 
 // 根据hash获取助记词
 export const getMnemonicByHash = (hash:string) => {
-    const gwlt = GlobalWallet.fromJSON(find('curWallet').gwlt);
+    const wallet = getStore('wallet');
     try {
         const cipher = new Cipher();
-        const r = cipher.decrypt(hash, gwlt.vault);
+        const r = cipher.decrypt(hash, wallet.vault);
 
         return toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {
