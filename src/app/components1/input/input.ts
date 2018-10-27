@@ -81,10 +81,12 @@ export class Input extends Widget {
     }
 
     /**
-     * 用户开始进行非直接输入的时候触发，而在非直接输入结束。
+     * 用户开始进行非直接输入(中文输入)的时候触发，而在非直接输入结束。
      */
     public compositionstart() {
-        this.state.inputLock = true;
+        if (this.props.itype === 'text') {
+            this.state.inputLock = true;
+        }
     }
     
     /**
@@ -112,18 +114,15 @@ export class Input extends Widget {
             currentValue = currentValue.slice(0,currentValue.length - 1); 
         }
         // 数字输入时检验输入格式
-        if (this.props.itype === 'number' && !this.numberJudge(currentValue) && currentValue.length > 0) {
-            currentValue = currentValue.slice(0,currentValue.length - 1); 
+        if (this.props.itype === 'number' && currentValue.length > 0) {
+            currentValue = currentValue.replace(/[^\d\.]/g,''); 
             if (!this.numberJudge(currentValue)) {
                 currentValue = currentValue.slice(0,currentValue.length - 1); 
             }
         }
         // 整数输入时检验输入格式
-        if (this.props.itype === 'integer' && !this.integerJudge(currentValue) && currentValue.length > 0) {
-            currentValue = currentValue.slice(0,currentValue.length - 1); 
-            if (!this.integerJudge(currentValue)) {
-                currentValue = currentValue.slice(0,currentValue.length - 1); 
-            }
+        if (this.props.itype === 'integer' && currentValue.length > 0) {
+            currentValue = currentValue.replace(/[\D]/g,''); 
         }
 
         this.state.currentValue = currentValue;
@@ -162,7 +161,7 @@ export class Input extends Widget {
     }
 
     /**
-     * 判断输入的字符是否符合规则
+     * 判断输入的密码是否符合规则
      */
     public availableJudge(psw:string) {
         const reg = /^[0-9a-zA-Z!"#$%&'()*+,\-./:;<=>?@\[\]^_`{\|}~]+$/;
@@ -171,7 +170,7 @@ export class Input extends Widget {
     }
 
     /**
-     * 判断输入是否是数字
+     * 判断输入是否是正确的数字格式
      */
     public numberJudge(num:string) {
         const reg = /(^[1-9][0-9]*\.|^0\.)[0-9]*$/;
@@ -180,12 +179,4 @@ export class Input extends Widget {
         return reg.test(num) || reg1.test(num);
     }
 
-    /**
-     * 判断是否是整数
-     */
-    public integerJudge(num:string) {
-        const reg = /^[1-9][0-9]*$/;
-        
-        return reg.test(num);
-    }
 }

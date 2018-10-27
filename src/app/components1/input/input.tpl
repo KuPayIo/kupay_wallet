@@ -1,5 +1,4 @@
-{{: ty = it.itype ? it.itype : 'text'}}
-{{: ty = ty == 'integer'?'number': ty}}
+{{: ty = it.itype == 'password'?'password': 'text'}}
 <div w-class="pi-input-box" class="pi-input">
     <input 
         w-class="pi-input__inner" 
