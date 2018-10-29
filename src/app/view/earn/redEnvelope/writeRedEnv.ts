@@ -233,7 +233,7 @@ export class WriteRedEnv extends Widget {
         this.state.totalAmount = 0;
         this.state.message = '';
         this.paint();
-        setStore('sHisRec', undefined);// 更新红包记录
+        setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
         getServerCloudBalance();// 更新余额
         // if (!this.state.showPin) {
         //     // tslint:disable-next-line:max-line-length

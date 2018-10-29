@@ -12,7 +12,7 @@
                 </div>
 
                 <div w-class="totalNum" id="mining">
-                    {{it1.ktBalance}}
+                    {{it1.holdMines}}
                     <span class="miningNum" style="animation:{{it1.doMining?'miningEnlarge 0.3s linear':''}}">
                         +{{it1.mines}}
                     </span>  

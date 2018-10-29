@@ -36,13 +36,14 @@ export class PlayHome extends Widget {
         this.state = {
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
+            holdMines:0,//累计挖矿
             mines: 0,// 今日可挖数量
             hasWallet:false, // 是否已经创建钱包
             mineLast:0,// 矿山剩余量
             rankNum:1,// 挖矿排名
             page:[
                 'app-view-earn-mining-rankList',
-                'app-view-earn-mining-dividend',
+                'app-view-earn-ktBalance-dividend',
                 'app-view-earn-redEnvelope-writeRedEnv',
                 'app-view-earn-exchange-exchange',
                 'app-view-earn-mining-addMine'
@@ -202,7 +203,7 @@ export class PlayHome extends Widget {
             }
             this.state.mines = formatBalance(miningTotal.thisNum);
             this.state.mineLast = formatBalance(miningTotal.totalNum - miningTotal.holdNum);
-
+            this.state.holdMines = formatBalance(miningTotal.holdNum);
         } else {
             this.state.isAbleBtn = false;
         }
