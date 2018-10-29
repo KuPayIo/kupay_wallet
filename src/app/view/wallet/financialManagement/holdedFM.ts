@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPurchaseRecord } from '../../../net/pull';
-import { PurchaseRecordOne } from '../../../store/interface';
+import { PurchaseHistory } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 
@@ -32,7 +32,7 @@ export class HoldedFM extends Widget {
         }
     }
 
-    public updatePurchaseRecord(purchaseRecord:PurchaseRecordOne[]) {
+    public updatePurchaseRecord(purchaseRecord:PurchaseHistory[]) {
         this.state.purchaseRecord = purchaseRecord;
         this.paint();
     }
@@ -44,7 +44,7 @@ export class HoldedFM extends Widget {
 }
 
 // =====================================本地
-register('purchaseRecord', async (purchaseRecord) => {
+register('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updatePurchaseRecord(purchaseRecord);

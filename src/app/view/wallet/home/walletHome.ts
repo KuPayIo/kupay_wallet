@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { register, getStore } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchTotalAssets, fetchWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
 // ================================ 导出

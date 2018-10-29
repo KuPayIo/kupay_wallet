@@ -8,8 +8,8 @@ import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
-import { Addr, currency2USDT, CurrencyType, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, Wallet, CloudCurrencyType } from '../store/interface';
-import { find, getBorn, loginInit, logoutInit, updateStore, getStore, getCloudBalances, setStore } from '../store/memstore';
+import { Addr, CloudCurrencyType, currency2USDT, CurrencyType, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, Wallet } from '../store/interface';
+import { find, getBorn, getCloudBalances, getStore, loginInit, logoutInit, setStore, updateStore } from '../store/memstore';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
 
@@ -461,12 +461,12 @@ export const fetchBalanceOfCurrency = (currencyName: string) => {
     if (!wallet) return 0;
     let balance = 0;
     let currencyRecord = null;
-    for(let item of wallet.currencyRecords){
-        if(item.currencyName === currencyName){
+    for (const item of wallet.currencyRecords) {
+        if (item.currencyName === currencyName) {
             currencyRecord = item;
         }
     }
-    for(let addrInfo of currencyRecord.addrs){
+    for (const addrInfo of currencyRecord.addrs) {
         balance += addrInfo.balance;
     }
 
@@ -1031,7 +1031,7 @@ export const parseRtype = (rType) => {
  * 获取某id理财产品持有量，不算已经赎回的
  */
 export const fetchHoldedProductAmount = (id:string) => {
-    const purchaseRecord = find('purchaseRecord');
+    const purchaseRecord = getStore('activity/financialManagement/purchaseHistories');
     let holdAmout = 0;
     for (let i = 0;i < purchaseRecord.length;i++) {
         const one = purchaseRecord[i];
@@ -1339,6 +1339,6 @@ export const judgeAddressAvailable = (ctype:string,addr:string) => {
 /**
  * 解析交易的额外信息
  */
-export const parseTransferExtraInfo = (input:string)=>{
-    return input == '0x' ? '无' : input;
-}
+export const parseTransferExtraInfo = (input:string) => {
+    return input === '0x' ? '无' : input;
+};

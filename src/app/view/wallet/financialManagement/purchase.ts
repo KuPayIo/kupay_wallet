@@ -5,8 +5,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { recharge } from '../../../net/pullWallet';
-import { CurrencyType, MinerFeeLevel, Product, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { getBorn } from '../../../store/memstore';
+import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../store/interface';
+import { getStore } from '../../../store/memstore';
 import { defaultGasLimit } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { fetchGasPrice, formatBalance, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
@@ -31,7 +31,7 @@ export class ProductDetail extends Widget {
     }
     public init() {
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
-        const cloudBalance = getBorn('cloudBalance').get(CurrencyType.ETH);
+        const cloudBalance = getStore('cloudBalance').get(CloudCurrencyType.ETH);
         const localBalance = getCurrentAddrBalanceByCurrencyName('ETH');
         this.state = {
             spend,
@@ -56,21 +56,21 @@ export class ProductDetail extends Widget {
         } else if (this.state.cloudBalance + this.state.localBalance >= this.state.spend) {
             const fromAddr = getCurrentAddrByCurrencyName('ETH');
             const pay = this.state.spend - this.state.cloudBalance;
-            const tx:TransRecordLocal = {
+            const tx:TxHistory = {
                 hash:'',
-                txType:TxType.RECHARGE,
+                txType:TxType.Recharge,
                 fromAddr,
                 toAddr: '',
                 pay,
                 time: new Date().getTime(),
-                status:TxStatus.PENDING,
+                status:TxStatus.Pending,
                 confirmedBlockNumber: 0,
                 needConfirmedBlockNumber:0,
                 info: '',
                 currencyName: 'ETH',
-                fee: wei2Eth(defaultGasLimit * fetchGasPrice(MinerFeeLevel.STANDARD)),
+                fee: wei2Eth(defaultGasLimit * fetchGasPrice(MinerFeeLevel.Standard)),
                 nonce:0,
-                minerFeeLevel:MinerFeeLevel.STANDARD,
+                minerFeeLevel:MinerFeeLevel.Standard,
                 addr:fromAddr
             };
             const h = await recharge(psw,tx);

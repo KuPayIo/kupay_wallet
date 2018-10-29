@@ -106,10 +106,10 @@ const handlerMap: HandlerMap = new HandlerMap();
 
 const initUser = () => {
     const curAccount = getCurrentAccount();
-    if(!curAccount) {
+    if (!curAccount) {
         store.user.salt = cryptoRandomInt().toString();
         return;
-    };
+    }
     const fileUser = curAccount.user;
     store.user.id = fileUser.id;
     store.user.token = fileUser.token;
@@ -135,7 +135,6 @@ const initThird = (third) => {
     store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third && third.shapeShiftTxsMap);
     store.third.currency2USDTMap = new Map<string, Currency2USDT>(third && third.currency2USDTMap);
 };
-
 
 // 全局内存数据库
 const store: Store = {
@@ -163,7 +162,10 @@ const store: Store = {
         luckyMoney: null,                   // 红包
         mining: null,                       // 挖矿
         dividend: null,                     // 分红
-        financialManagement: null          // 理财
+        financialManagement: {          // 理财
+            products:null,
+            purchaseHistories:null
+        }
     },
     setting: {
         lockScreen: null,         // 锁屏
