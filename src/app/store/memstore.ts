@@ -6,7 +6,7 @@
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Accounts, getCurrentAccount } from './filestore';
-import { CloudCurrencyType, CloudWallet, Currency2USDT, ShapeShiftTxs, Store } from './interface';
+import { CloudCurrencyType, CloudWallet, Currency2USDT, LockScreen, ShapeShiftTxs, Store } from './interface';
 
 // ============================================ 导出
 /**
@@ -168,7 +168,11 @@ const store: Store = {
         }
     },
     setting: {
-        lockScreen: null,         // 锁屏
+        lockScreen: {         // 锁屏
+            psw:'',
+            open:false,
+            locked:false
+        },
         language: '',             // 语言
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
         currencyUnit: ''         // 显示哪个国家的货币

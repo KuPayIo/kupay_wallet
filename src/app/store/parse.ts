@@ -6,6 +6,7 @@ import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampForma
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
 import { CloudCurrencyType, MineRank, MiningRank, PurchaseHistory, TaskSid } from './interface';
+import { getStore } from './memstore';
 /**
  * 解析数据
  */
@@ -273,7 +274,7 @@ export const parseRechargeWithdrawalLog = (coin,val) => {
  * 解析购买记录
  */
 const getproductById = (id:string) => {
-    const productList = find('productList');
+    const productList = getStore('activity/financialManagement/products');
     for (let i = 0;i < productList.length;i++) {
         if (productList[i].id === id) {
             return productList[i];

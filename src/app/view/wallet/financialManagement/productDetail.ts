@@ -37,7 +37,7 @@ export class ProductDetail extends Widget {
         this.state = {
             holdedAmout:0,
             amount:1,
-            leftPercent:  res.left,
+            leftPercent: res.left,
             usePercent: res.use,
             cfgData:getLanguage(this),
             scroll:false,

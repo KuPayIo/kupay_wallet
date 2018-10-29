@@ -730,14 +730,14 @@ export const sha256 = (data: string) => {
 
 // 锁屏密码验证
 export const lockScreenVerify = (psw) => {
-    const hash256 = sha256(psw + find('salt'));
-    const localHash256 = find('lockScreen').psw;
+    const hash256 = sha256(psw + getStore('user/salt'));
+    const localHash256 = getStore('setting/lockScreen').psw;
 
     return hash256 === localHash256;
 };
 // 锁屏密码hash算法
 export const lockScreenHash = (psw) => {
-    return sha256(psw + find('salt'));
+    return sha256(psw + getStore('user/salt'));
 };
 
 // ==========================================================new version tools
@@ -1105,7 +1105,7 @@ export const base64ToFile = (base64:string) => {
 export const getUserInfo = () => {
     const userInfo = getStore('user/info');
     const nickName = userInfo && userInfo.nickName;
-    const bphone = userInfo && userInfo.bphone;
+    const phoneNumber = userInfo && userInfo.phoneNumber;
     let avatar = userInfo && userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
@@ -1114,7 +1114,7 @@ export const getUserInfo = () => {
     return {
         nickName,
         avatar,
-        bphone
+        phoneNumber
     };
 };
 

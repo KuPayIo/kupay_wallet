@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { GlobalWallet } from '../../../core/globalWallet';
 import { selectImage } from '../../../logic/native';
 import { setUserInfo, uploadFile } from '../../../net/pull';
-import { find, register, updateStore } from '../../../store/memstore';
+import { getStore, register, setStore } from '../../../store/memstore';
 import { walletNameAvailable } from '../../../utils/account';
 import { getLanguage, getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
@@ -26,9 +26,8 @@ export class AccountHome extends Widget {
     }
     public init() {
         const userInfo = getUserInfo();
-        const wallet = find('curWallet');
-        const gwlt = wallet ? JSON.parse(wallet.gwlt) : null;
-        const backup = gwlt.mnemonicBackup;
+        const wallet = getStore('wallet');
+        const backup = wallet.isBackup;
         const cfg = getLanguage(this);
 
         this.state = {
@@ -41,9 +40,9 @@ export class AccountHome extends Widget {
             userInput:false
         };
         if (userInfo) {
-            if (userInfo.bphone) {
-                const str = String(userInfo.bphone).substr(3,6);
-                this.state.phone = userInfo.bphone.replace(str,'******');
+            if (userInfo.phoneNumber) {
+                const str = String(userInfo.phoneNumber).substr(3,6);
+                this.state.phone = userInfo.phoneNumber.replace(str,'******');
             }
             this.state.nickName = userInfo.nickName ? userInfo.nickName :cfg.defaultName;
             this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
@@ -67,14 +66,9 @@ export class AccountHome extends Widget {
         }
         if (v !== this.state.nickName) {
             this.state.nickName = v;
-            const wallet = find('curWallet');
-            const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-            gwlt.nickName = v;
-            wallet.gwlt = gwlt.toJSON();
-            updateStore('curWallet', wallet);
             const userInfo = getUserInfo();
             userInfo.nickName = v;
-            updateStore('userInfo',userInfo);
+            setStore('user/info',userInfo);
             setUserInfo();
         }
         this.state.isUpdatingWalletName = false;
@@ -98,7 +92,7 @@ export class AccountHome extends Widget {
 
     // 导出私钥
     public async exportPrivateKeyClick() {
-        const wallet = find('curWallet');
+        const wallet = getStore('wallet');
         const psw = await popPswBox();
         if (!psw) return;
         const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
@@ -153,13 +147,13 @@ export class AccountHome extends Widget {
         this.paint();
     }
 }
-register('userInfo', () => {
+register('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-register('curWallet', () => {
+register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

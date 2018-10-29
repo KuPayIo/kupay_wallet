@@ -4,9 +4,8 @@
         <div style="margin: 30px 0;">
             <div w-class="mode">
                 {{for ind,val of it1.itemList}}
-                {{let item = val.list[val.selected]}}
                 <div on-tap="itemClick({{ind}})">
-                    <app-components-basicItem-basicItem>{name:{{it1.cfgData.itemTitle[ind]}},describe:{{item}} }</app-components-basicItem-basicItem>
+                    <app-components-basicItem-basicItem>{name:{{it1.cfgData.itemTitle[ind]}},describe:{{val.list[val.selected]}} }</app-components-basicItem-basicItem>
                 </div>
                 {{end}}
                 <div w-class="item" ev-switch-click="onSwitchChange" style="border-bottom: none;">
