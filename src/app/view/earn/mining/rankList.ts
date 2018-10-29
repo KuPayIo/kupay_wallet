@@ -47,13 +47,13 @@ export class Home extends Widget {
     public initData() {
         const data1 = getStore('activity/mining/miningRank');
         if (data1) {
-            this.state.tabs[0].data = data1.miningRank;
+            this.state.tabs[0].data = data1.rank;
             this.state.tabs[0].myRank = data1.myRank;
         }
         
         const data2 = getStore('activity/mining/mineRank');
         if (data2) {
-            this.state.tabs[1].data = data2.mineRank;
+            this.state.tabs[1].data = data2.rank;
             this.state.tabs[1].myRank = data2.myRank;
         }
 
@@ -98,7 +98,7 @@ export class Home extends Widget {
     }
 }
 
-register('activity/mining/activity/mining/miningRank', () => {
+register('activity/mining/miningRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
