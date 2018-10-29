@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getServerCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
-import { CloudCurrencyType, CurrencyTypeReverse, LuckyMoneyType } from '../../../store/interface';
+import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import {  setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
 import { getLanguage } from '../../../utils/tools';
@@ -57,8 +57,8 @@ export class Exchange extends Widget {
 
         const redEnvelope = {
             message: r.value,
-            ctypeShow: CurrencyTypeReverse[value[0]],
-            amount: smallUnit2LargeUnit(CurrencyTypeReverse[value[0]], value[1]),
+            ctypeShow: CloudCurrencyType[value[0]],
+            amount: smallUnit2LargeUnit(CloudCurrencyType[value[0]], value[1]),
             rtype: code.slice(0, 2)
         };
         

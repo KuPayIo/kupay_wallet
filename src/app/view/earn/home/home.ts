@@ -44,9 +44,9 @@ export class PlayHome extends Widget {
             page:[
                 'app-view-earn-mining-rankList', //挖矿排名
                 'app-view-earn-mining-dividend', //领分红
-                'app-view-earn-redEnvelope-writeRedEnv',
-                'app-view-earn-exchange-exchange',
-                'app-view-earn-mining-addMine'
+                'app-view-earn-redEnvelope-writeRedEnv', //发红包
+                'app-view-earn-exchange-exchange', //兑换
+                'app-view-earn-mining-addMine'  //任务
             ],
             doMining:false,  // 点击挖矿，数字动画效果执行
             firstClick:true,

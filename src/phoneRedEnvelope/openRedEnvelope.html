@@ -117,7 +117,7 @@ function openNormalRedEnvelope() {
                     ctype:v[2],
                     cid:v[3],
                     cidShow:`${RedEnvelopeType.Normal}${v[3]}`,
-                    amount:smallUnit2LargeUnitString(CurrencyTypeReverse[v[2]],v[4]),
+                    amount:smallUnit2LargeUnitString(CloudCurrencyType[v[2]],v[4]),
                     leaveMsg:v[5]
                 };
                 window.localStorage.takeRedBag = JSON.stringify(redEnvelope);

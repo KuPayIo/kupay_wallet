@@ -47,7 +47,7 @@ const lan = getLanguage();
 (function init(){
     document.getElementById('message').innerText = props.leaveMsg;
     document.getElementById('amount').innerText = props.amount;
-    document.getElementById('currencyName').innerText = CurrencyTypeReverse[props.ctype];
+    document.getElementById('currencyName').innerText = CloudCurrencyType[props.ctype];
     document.getElementById('code').innerText = props.cidShow;
     document.getElementById('copyBtn').innerText = lan.copyBtn;
     document.getElementById('receiveBtn').innerText = lan.receiveBtn;
@@ -80,7 +80,7 @@ function getDetail(){
     const redBagList = [];
     let totalAmount = 0;
     for (let i = 0;i < l.length;i++) {
-        const amount = smallUnit2LargeUnitString(CurrencyTypeReverse[props.ctype],l[i][4]);
+        const amount = smallUnit2LargeUnitString(CloudCurrencyType[props.ctype],l[i][4]);
         totalAmount += amount;
         if (l[i][1] !== 0 && l[i][5] !== 0) {
             user = JSON.parse(userDetails([l[i][1]]).value[0]);
@@ -105,7 +105,7 @@ function getDetail(){
     totalAmount = totalAmount;
 
     document.getElementById('detailBottom').style.display = 'block';
-    document.getElementById('detailTitle').innerText = lan.tips[0]+convertedNumber+'/'+totalNumber+'，'+lan.tips[1]+totalAmount+ CurrencyTypeReverse[props.ctype];
+    document.getElementById('detailTitle').innerText = lan.tips[0]+convertedNumber+'/'+totalNumber+'，'+lan.tips[1]+totalAmount+ CloudCurrencyType[props.ctype];
     // 领取红包，其他用户获得的红包列表
     if(!redBagList){
         return;
@@ -117,7 +117,7 @@ function getDetail(){
             '<div class="detail-item-right">'+
                 '<div class="detail-box1">'+
                     '<div class="detail-name" id="userName">'+redBagList[i].userName+'</div>'+
-                    '<div id="userAmount">'+redBagList[i].amount+'&nbsp;'+CurrencyTypeReverse[redBagList[i].ctype]+'</div>'+
+                    '<div id="userAmount">'+redBagList[i].amount+'&nbsp;'+CloudCurrencyType[redBagList[i].ctype]+'</div>'+
                 '</div>'+
                 '<div class="detail-box2">'+
                     '<div class="detail-time" id="timeShow">'+redBagList[i].timeShow+'</div>'+

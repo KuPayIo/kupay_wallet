@@ -12,7 +12,7 @@ import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../logic/dataCenter';
 import { buyProduct, getCloudBalance, getPurchaseRecord } from '../net/pull';
 import { Addr } from '../store/interface';
-import { find, updateStore, getStore } from '../store/memstore';
+import { setStore, getStore } from '../store/memstore';
 import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
 import { nameWare } from './nameWareHouse';
 import { shareSecret } from './secretsBase';
@@ -25,7 +25,7 @@ import { calcHashValuePromise, hexstrToU8Array, initAddr, popNewLoading, popNewM
 export const getNewAddrInfo = (currencyName, wallet) => {
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
-    const addrs = find('addrs') || [];
+    const addrs = getStore('addrs') || [];
     const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
 
     let address;
@@ -52,8 +52,8 @@ export const getNewAddrInfo = (currencyName, wallet) => {
  * @param wltJson 新的地址钱包对象
  */
 export const addNewAddr = (currencyName, address, addrName) => {
-    const wallet = find('curWallet');
-    const addrs: Addr[] = find('addrs') || [];
+    const wallet = getStore('wallet');
+    const addrs: Addr[] = getStore('addrs') || [];
     wallet.currencyRecords.forEach(currencyRecord => {
         if (currencyRecord.currencyName === currencyName) {
             currencyRecord.addrs.push(address);
@@ -66,8 +66,8 @@ export const addNewAddr = (currencyName, address, addrName) => {
     if(ERC20Tokens[currencyName]){
         dataCenter.fetchErc20GasLimit(currencyName);
     }
-    updateStore('addrs', addrs);
-    updateStore('curWallet', wallet);
+    setStore('addrs', addrs);
+    setStore('wallet', wallet);
 
     return newAddrInfo;
 };
@@ -109,13 +109,13 @@ export const effectiveAddr = (currencyName: string, addr: string): [boolean, str
 /**
  * 验证身份
  */
-export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) => {
-    const hash = await calcHashValuePromise(passwd, find('salt'));
-    const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
+export const VerifyIdentidy = async (passwd:string) => {
+    const wallet = getStore('wallet');
+    const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
 
     try {
         const cipher = new Cipher();
-        const r = cipher.decrypt(hash, gwlt.vault);
+        const r = cipher.decrypt(hash, wallet.vault);
 
         return true;
     } catch (error) {
@@ -125,11 +125,12 @@ export const VerifyIdentidy = async (wallet, passwd, useCache: boolean = true) =
     }
 };
 
+
 /**
  * 获取助记词
  */
 export const getMnemonic = async (wallet, passwd) => {
-    const hash = await calcHashValuePromise(passwd, find('salt'));
+    const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
     const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
     try {
         const cipher = new Cipher();
@@ -164,7 +165,7 @@ export const getMnemonicHexstr = (hash) => {
 export const fetchTransactionList = (addr:string,currencyName:string) => {
     if (!addr) return [];
     // 从缓存中取出对应地址的交易记录
-    const transactions = find('transactions') || [];
+    const transactions = getStore('transactions') || [];
     let txList = [];
     txList = transactions.filter(v => v.addr === addr && v.currencyName === currencyName);
     
@@ -188,7 +189,7 @@ export const fetchLocalTxByHash = (addr:string,currencyName:string,hash:string) 
  * 根据交易hash获取所有地址上本地交易详情
  */
 export const fetchLocalTxByHash1 = (hash:string) => {
-    const txList = find('transactions') || [];
+    const txList = getStore('transactions') || [];
     for (let i = 0; i < txList.length;i++) {
         // tslint:disable-next-line:possible-timing-attack
         if (txList[i].hash === hash) {
@@ -200,7 +201,7 @@ export const fetchLocalTxByHash1 = (hash:string) => {
 // 购买理财
 export const purchaseProduct = async (psw:string,productId:string,amount:number) => {
     const close = popNewLoading('正在购买...');    
-    const pswCorrect = await VerifyIdentidy(find('curWallet'),psw,false);
+    const pswCorrect = await VerifyIdentidy(getStore('curWallet'),psw,false);
     if (!pswCorrect) {
         close.callback(close.widget);
         popNewMessage('密码不正确');    
@@ -233,7 +234,7 @@ export const fetchMnemonicFragment =  (hash) => {
 // 备份助记词
 export const backupMnemonic = async (passwd:string) => {
     const close = popNewLoading('导出中...');
-    const hash = await calcHashValuePromise(passwd, find('salt'));
+    const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
     console.log('hash!!!!!!!!!!!!',hash);
     close.callback(close.widget);
     const mnemonic = getMnemonicByHash(hash);

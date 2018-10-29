@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPurchaseRecord } from '../../../net/pull';
 import { Product, PurchaseRecordOne } from '../../../store/interface';
-import { find, register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { calPercent, fetchHoldedProductAmount, getLanguage, hasWallet } from '../../../utils/tools';
 
 // ====================================================导出
@@ -27,7 +27,7 @@ export class ProductDetail extends Widget {
         this.init();
     }
     public init() {
-        if (find('conUid')) {
+        if (getStore('user/conUid')) {
             // 获取购买记录
             getPurchaseRecord();
         }

@@ -5,7 +5,8 @@ import { PAGELIMIT } from '../utils/constants';
 import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
-import { CloudCurrencyType, MineRank, MiningRank, TaskSid } from './interface';
+import { CloudCurrencyType, MineRank, MiningRank, TaskSid, LuckyMoneySendDetail, LuckyMoneyExchangeDetail, LuckyMoneyDetail } from './interface';
+import { getStore} from './memstore';
 /**
  * 解析数据
  */
@@ -44,27 +45,27 @@ export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[
         let behavior = '';
         let behaviorIcon = '';
         switch (itype) {
-            case TaskSid.mines:
+            case TaskSid.Mining:
                 behavior = getStaticLanguage().cloudAccountDetail.types[0];
                 behaviorIcon = 'behavior1010.png';
                 break;
-            case TaskSid.inviteFriends:
+            case TaskSid.InviteFriends:
                 behavior = getStaticLanguage().cloudAccountDetail.types[1];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
-            case TaskSid.redEnvelope: 
+            case TaskSid.LuckyMoney: 
                 behavior = amount > 0 ? getStaticLanguage().cloudAccountDetail.types[2] : getStaticLanguage().cloudAccountDetail.types[3];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
-            case TaskSid.recharge:
+            case TaskSid.Recharge:
                 behavior = getStaticLanguage().cloudAccountDetail.types[4];
                 behaviorIcon = 'cloud_charge_icon.png';
                 break;
-            case TaskSid.withdraw:
+            case TaskSid.Withdraw:
                 behavior = getStaticLanguage().cloudAccountDetail.types[5];
                 behaviorIcon = 'cloud_withdraw_icon.png';
                 break;
-            case TaskSid.financialManagement:
+            case TaskSid.FinancialManagement:
                 behavior = getStaticLanguage().cloudAccountDetail.types[6];
                 behaviorIcon = 'behavior_manage_money_port.png';
                 break;
@@ -89,14 +90,13 @@ export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[
  */
 export const parseMineRank = (data) => {
     const mineData: MineRank = {
-        minePage: 1,
-        mineMore: false,
-        mineList: data.value,
-        mineRank: [],
+        page: 1,
+        isMore: false,
+        rank: [],
         myRank: data.me
     };
     if (data.value.length > 10) {
-        mineData.mineMore = true;
+        mineData.isMore = true;
     } 
     const data1 = [];
     for (let i = 0; i < data.value.length && i < 10; i++) {
@@ -109,7 +109,7 @@ export const parseMineRank = (data) => {
             num : kpt2kt(data.value[i][2])
         });
     }
-    mineData.mineRank = data1;
+    mineData.rank = data1;
     
     return mineData;
 };
@@ -119,15 +119,14 @@ export const parseMineRank = (data) => {
  */
 export const parseMiningRank = (data) => {
     const miningData: MiningRank = {
-        miningPage: 1,
-        miningMore: false,
-        miningList: data.value,
-        miningRank: [],
+        page: 1,
+        isMore: false,
+        rank: [],
         myRank:data.me
     };
 
     if (data.value.length > 10) {
-        miningData.miningMore = true;
+        miningData.isMore = true;
     } 
     const data2 = [];
     for (let i = 0; i < data.value.length && i < 10; i++) {
@@ -140,7 +139,7 @@ export const parseMiningRank = (data) => {
             num: kpt2kt(data.value[i][2])
         });
     }
-    miningData.miningRank = data2;
+    miningData.rank = data2;
     
     return miningData;
 };
@@ -157,7 +156,7 @@ export const parseMiningHistory = (data) => {
         });
     }
       
-    const miningHistory = find('miningHistory');
+    const miningHistory = getStore('activity/mining/history');
     const rList = miningHistory && miningHistory.list || [];
     const start = String(data.start); 
     const canLoadMore = list.length > PAGELIMIT;
@@ -181,7 +180,7 @@ export const parseDividHistory = (data) => {
         });
     }
       
-    const dividHistory = find('dividHistory');
+    const dividHistory = getStore('dividHistory');
     const rList = dividHistory && dividHistory.list || [];
     const start = String(data.start); 
     const canLoadMore = list.length > PAGELIMIT;
@@ -220,19 +219,19 @@ export const parseMineDetail = (detail) => {
     ];
     if (detail.value.length !== 0) {
         for (let i = 0; i < detail.value.length; i++) {
-            if (detail.value[i][0] === TaskSid.createWlt) {// 创建钱包
+            if (detail.value[i][0] === TaskSid.CreateWallet) {// 创建钱包
                 list[0].isComplete = true;
                 list[0].itemNum = kpt2kt(detail.value[i][1]);
-            } else if (detail.value[i][0] === TaskSid.bindPhone) {// 注册手机号
+            } else if (detail.value[i][0] === TaskSid.BindPhone) {// 注册手机号
                 list[1].isComplete = true;
                 list[1].itemNum = kpt2kt(detail.value[i][1]);
-            } else if (detail.value[i][0] === TaskSid.chargeEth) {// 存币
+            } else if (detail.value[i][0] === TaskSid.ChargeEth) {// 存币
                 list[2].itemNum = kpt2kt(detail.value[i][1]);
-            } else if (detail.value[i][0] === TaskSid.inviteFriends) {// 与好友分享
+            } else if (detail.value[i][0] === TaskSid.InviteFriends) {// 与好友分享
                 list[3].itemNum = kpt2kt(detail.value[i][1]);
-            } else if (detail.value[i][0] === TaskSid.buyFinancial) {// 购买理财
+            } else if (detail.value[i][0] === TaskSid.BuyFinancial) {// 购买理财
                 list[4].itemNum = kpt2kt(detail.value[i][1]);
-            } else if (detail.value[i][0] === TaskSid.chat) {// 聊天
+            } else if (detail.value[i][0] === TaskSid.Chat) {// 聊天
                 list[5].isComplete = true;
                 list[5].itemNum = kpt2kt(detail.value[i][1]);
             }
@@ -273,7 +272,7 @@ export const parseRechargeWithdrawalLog = (coin,val) => {
  * 解析购买记录
  */
 const getproductById = (id:string) => {
-    const productList = find('productList');
+    const productList = getStore('productList');
     for (let i = 0;i < productList.length;i++) {
         if (productList[i].id === id) {
             return productList[i];
@@ -322,7 +321,7 @@ export const parseProductList = (res:any) => {
         const item = res.value[i];
         const id = item[0];
         const product = getStaticLanguage().financialProductList[id];
-        product.coinType = CurrencyTypeReverse[`${item[1]}`];
+        product.coinType = CloudCurrencyType[`${item[1]}`];
         product.unitPrice = wei2Eth(item[2]);
         product.total = item[3];
         product.surplus = item[3] - item[4];
@@ -341,19 +340,19 @@ export const parseProductList = (res:any) => {
  * 解析发送红包历史记录
  */
 export const parseSendRedEnvLog = (value,sta) => {
-    const sHisRec = find('sHisRec');
-    let rList:SRecDetail[] = [];
+    const sHisRec = getStore('activity/luckyMoney/sends');
+    let rList:LuckyMoneySendDetail[] = [];
     if (sta) {
         rList = sHisRec && sHisRec.list || [];
     }
     const sendNumber = value[0];
     const start = value[1];
-    const recordList:SRecDetail[] = [];
+    const recordList:LuckyMoneySendDetail[] = [];
     const r = value[2];
     for (let i = 0; i < r.length;i++) {
-        const currencyName = CurrencyTypeReverse[r[i][2]];
+        const currencyName = CloudCurrencyType[r[i][2]];
         
-        const record:SRecDetail = {
+        const record:LuckyMoneySendDetail = {
             rid:r[i][0].toString(),
             rtype:r[i][1],
             ctype:r[i][2],
@@ -378,19 +377,19 @@ export const parseSendRedEnvLog = (value,sta) => {
  * 解析红包兑换历史记录
  */
 export const parseConvertLog = (data,sta) => {
-    const cHisRec = find('cHisRec');
-    let rList:CRecDetail[] = [];
+    const cHisRec = getStore('activity/luckyMoney/exchange');
+    let rList:LuckyMoneyExchangeDetail[] = [];
     if (sta) {
         rList = cHisRec && cHisRec.list || [];
     }
     const convertNumber = data.value[0];
     const startNext = data.value[1];
-    const recordList:CRecDetail[] = [];
+    const recordList:LuckyMoneyExchangeDetail[] = [];
     const r = data.value[2];
     for (let i = 0; i < r.length;i++) {
-        const currencyName = CurrencyTypeReverse[r[i][3]];
+        const currencyName = CloudCurrencyType[r[i][3]];
         
-        const record: CRecDetail = {
+        const record: LuckyMoneyExchangeDetail = {
             suid: r[i][0],
             rid: r[i][1].toString(),
             rtype: r[i][2],
@@ -417,13 +416,13 @@ export const parseConvertLog = (data,sta) => {
  */
 export const parseExchangeDetail = (value) => {
     const data = value[1];
-    const redBagList:RedBag[] = [];
+    const redBagList:LuckyMoneyDetail[] = [];
     let curNum = 0;  
     let totalAmount = 0;  
     for (let i = 0;i < data.length;i++) {
-        const amount = smallUnit2LargeUnit(CurrencyTypeReverse[data[i][3]],data[i][4]);
+        const amount = smallUnit2LargeUnit(CloudCurrencyType[data[i][3]],data[i][4]);
         if (data[i][1] !== 0 && data[i][5] !== 0) {
-            const redBag:RedBag = {
+            const redBag:LuckyMoneyDetail = {
                 suid:data[i][0],
                 cuid:data[i][1],
                 rtype:data[i][2],
@@ -438,7 +437,7 @@ export const parseExchangeDetail = (value) => {
         totalAmount += Number(data[i][4]);
     }
     const message = unicodeArray2Str(value[0]);
-    totalAmount = smallUnit2LargeUnit(CurrencyTypeReverse[data[0][3]],totalAmount);
+    totalAmount = smallUnit2LargeUnit(CloudCurrencyType[data[0][3]],totalAmount);
 
     return [redBagList, message, curNum, data.length, totalAmount]; // 兑换人员列表，红包留言，已兑换个数，总个数，红包总金额
 };
@@ -449,12 +448,12 @@ export const parseExchangeDetail = (value) => {
 export const parseMyInviteRedEnv = (value) => {
     if (value) return;
     const data = value[1];
-    const redBagList:RedBag[] = [];
+    const redBagList:LuckyMoneyDetail[] = [];
     let curNum = 0;    
     for (let i = 0;i < data.length;i++) {
         const amount = smallUnit2LargeUnit('ETH',data[i][1][0]);
         if (data[i][1] !== 0 && data[i][5] !== 0) {
-            const redBag:RedBag = {
+            const redBag:LuckyMoneyDetail = {
                 suid:0,
                 cuid:data[i][0],
                 rtype:99,

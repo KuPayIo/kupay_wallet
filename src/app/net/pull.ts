@@ -4,7 +4,7 @@
 import { open, request, setUrl, randomLogin, setBottomLayerReloginMsg, getSeverTime } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
-import { CloudCurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel, CloudCurrencyType } from '../store/interface';
+import { CloudCurrencyType, CloudCurrencyType, LoginState, MinerFeeLevel, CloudCurrencyType } from '../store/interface';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { getBorn, getStore, setStore } from '../store/memstore';
@@ -369,13 +369,13 @@ export const getInviteCodeDetail = async () => {
  * @param count 红包数量
  * @param lm 留言
  */
-export const  sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
+export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
     const msg = {
         type: 'emit_red_bag',
         param: {
             type: rtype,
             priceType: ctype,
-            totalPrice: largeUnit2SmallUnit(CurrencyTypeReverse[ctype], totalAmount),
+            totalPrice: largeUnit2SmallUnit(CloudCurrencyType[ctype], totalAmount),
             count: redEnvelopeNumber,
             desc: lm
         }
@@ -449,7 +449,7 @@ export const querySendRedEnvelopeRecord = (start?: string) => {
     try {
         requestAsync(msg).then(async detail => {
             const data = parseSendRedEnvLog(detail.value,start);
-            setStore('sHisRec',data);
+            setStore('activity/luckyMoney/sends',data);
         });
 
     } catch (err) {
@@ -484,7 +484,7 @@ export const queryConvertLog = async (start?:string) => {
     try {
         requestAsync(msg).then(detail => {
             const data = parseConvertLog(detail,start);
-            setStore('cHisRec',data);
+            setStore('activity/luckyMoney/exchange',data);
         });
 
     } catch (err) {
@@ -543,7 +543,7 @@ export const getMineDetail = async (start = '') => {
     };
     requestAsync(msg).then(detail => {
         const list = parseMineDetail(detail);
-        setStore('addMine', list);
+        setStore('activity/mining/addMine', list);
     });
 };
 
@@ -785,7 +785,7 @@ export const getProxy = async () => {
  * 矿山增加项目跳转详情
  */
 export const getMineItemJump = async(itemJump) => {
-    setStore('mineItemJump',itemJump);
+    setStore('activity/mining/itemJump',itemJump);
 };
 
 // ===============================充值提现
