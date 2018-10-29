@@ -9,7 +9,7 @@ import { Cipher } from '../core/crypto/cipher';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { Addr, CloudCurrencyType, currency2USDT, CurrencyType, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, Wallet } from '../store/interface';
-import { find, getBorn, getCloudBalances, getStore, loginInit, logoutInit, setStore, updateStore } from '../store/memstore';
+import { getCloudBalances, getStore, loginInit, logoutInit, setStore } from '../store/memstore';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
 
@@ -48,8 +48,8 @@ export const getWalletIndexByWalletId = (wallets, walletId) => {
  * @param currencyName 货币类型
  */
 export const getCurrentAddrInfo = (currencyName: string) => {
-    const addrs = find('addrs') || [];
-    const wallet = find('curWallet');
+    const addrs = getStore('addrs') || [];
+    const wallet = getStore('curWallet');
     const currencyRecord = wallet.currencyRecords.filter(item => item.currencyName === currencyName)[0];
     // tslint:disable-next-line:no-unnecessary-local-variable
     const addrInfo = addrs.filter(item => item.addr === currencyRecord.currentAddr && item.currencyName === currencyName)[0];
@@ -61,7 +61,7 @@ export const getCurrentAddrInfo = (currencyName: string) => {
  * @param addrId  address id
  */
 export const getAddrById = (addrId: string, currencyName: string): Addr => {
-    const list: Addr[] = find('addrs') || [];
+    const list: Addr[] = getStore('addrs') || [];
 
     return list.filter(v => v.addr === addrId && v.currencyName === currencyName)[0];
 };
@@ -73,13 +73,13 @@ export const getAddrById = (addrId: string, currencyName: string): Addr => {
  * @param notified 是否通知数据发生改变 
  */
 export const resetAddrById = (addrId: string, currencyName: string, data: Addr) => {
-    let list: Addr[] = find('addrs') || [];
+    let list: Addr[] = getStore('addrs') || [];
     list = list.map(v => {
         if (v.addr === addrId && v.currencyName === currencyName) return data;
 
         return v;
     });
-    updateStore('addrs', list);
+    setStore('addrs', list);
 };
 
 /**
@@ -120,7 +120,7 @@ export const getAddrsByCurrencyName = (wallet: any, currencyName: string) => {
  * @param wallet wallet obj
  */
 export const getAddrsInfoByCurrencyName = (currencyName: string) => {
-    const wallet = find('curWallet');
+    const wallet = getStore('curWallet');
     const currencyRecords = wallet.currencyRecords;
     const retAddrInfo = [];
     const len = currencyRecords.length;
@@ -145,7 +145,7 @@ export const getAddrsInfoByCurrencyName = (currencyName: string) => {
  * 通过地址获取地址余额
  */
 export const getAddrInfoByAddr = (addr: string, currencyName: string) => {
-    const addrs = find('addrs') || [];
+    const addrs = getStore('addrs') || [];
 
     return addrs.filter(v => v.addr === addr && v.currencyName === currencyName)[0];
 };
@@ -299,6 +299,7 @@ export const formatBalance = (banlance: number) => {
  */
 export const formatBalanceValue = (value: number) => {
     if (value === 0) return '0.00';
+
     return value.toFixed(2);
 };
 
@@ -520,6 +521,7 @@ export const calcHashValuePromise = async (pwd, salt?) => {
     console.time('argonHash');
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
     console.timeEnd('argonHash');
+
     return hash;
 };
 
@@ -593,7 +595,7 @@ export const getByteLen = (val) => {
 
 // 计算支持的币币兑换的币种
 export const currencyExchangeAvailable = () => {
-    const shapeshiftCoins = find('shapeShiftCoins');
+    const shapeshiftCoins = getStore('shapeShiftCoins');
     const currencyArr = [];
     for (const i in MainChainCoin) {
         currencyArr.push(i);
@@ -609,7 +611,7 @@ export const currencyExchangeAvailable = () => {
 
 // 根据货币名获取当前正在使用的地址
 export const getCurrentAddrByCurrencyName = (currencyName: string) => {
-    const wallet = find('curWallet');
+    const wallet = getStore('curWallet');
     const currencyRecords = wallet.currencyRecords;
     let curAddr = '';
 
@@ -627,7 +629,7 @@ export const getCurrentAddrByCurrencyName = (currencyName: string) => {
 export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
     const curAddr = getCurrentAddrByCurrencyName(currencyName);
     console.log('curAddr',curAddr);
-    const addrs = find('addrs') || [];
+    const addrs = getStore('addrs') || [];
     for (let i = 0; i < addrs.length; i++) {
         if ((addrs[i].currencyName === currencyName) && (addrs[i].addr === curAddr)) {
             return addrs[i].balance || 0;
@@ -747,12 +749,12 @@ export const lockScreenHash = (psw) => {
 
 // 获取gasPrice
 export const fetchGasPrice = (minerFeeLevel:MinerFeeLevel) => {
-    return find('gasPrice')[minerFeeLevel];
+    return getStore('gasPrice')[minerFeeLevel];
 };
 
 // 获取btc miner fee
 export const fetchBtcMinerFee = (minerFeeLevel:MinerFeeLevel) => {
-    return find('btcMinerFee')[minerFeeLevel];
+    return getStore('btcMinerFee')[minerFeeLevel];
 };
 
 /**
@@ -800,6 +802,7 @@ export const fetchBalanceValueOfCoin = (currencyName:string | CloudCurrencyType,
     } else if (currencyUnit === 'USD') {
         balanceValue = balance * currency2USDT.close;
     }
+
     return balanceValue;
 };
 
@@ -909,17 +912,17 @@ export const parseStatusShow = (tx:TransRecordLocal) => {
         }; 
     }
     const status = tx.status;
-    if (status === TxStatus.PENDING) {
+    if (status === TxStatus.Pending) {
         return {
             text:'打包中',
             icon:'pending.png'
         };
-    } else if (status === TxStatus.CONFIRMED) {
+    } else if (status === TxStatus.Confirmed) {
         return {
             text:`已确认 ${tx.confirmedBlockNumber}/${tx.needConfirmedBlockNumber}`,
             icon:'pending.png'
         };
-    } else if (status === TxStatus.FAILED) {
+    } else if (status === TxStatus.Failed) {
         return {
             text:'交易失败',
             icon:'fail.png'
@@ -934,7 +937,7 @@ export const parseStatusShow = (tx:TransRecordLocal) => {
 
 // 解析转账类型
 export const parseTxTypeShow = (txType:TxType) => {
-    if (txType === TxType.RECEIPT) {
+    if (txType === TxType.Receipt) {
         return '收款';
     }
 
@@ -943,8 +946,8 @@ export const parseTxTypeShow = (txType:TxType) => {
 
  // 解析是否可以重发
 export const canResend = (tx) => {
-    if (tx.status !== TxStatus.PENDING) return false;
-    if (tx.minerFeeLevel === MinerFeeLevel.FASTEST) return false;
+    if (tx.status !== TxStatus.Pending) return false;
+    if (tx.minerFeeLevel === MinerFeeLevel.Fastest) return false;
     const startTime = tx.time;
     const now = new Date().getTime();
     if (now - startTime < resendInterval) return false;
@@ -956,7 +959,7 @@ export const canResend = (tx) => {
  * 获取钱包资产列表是否添加
  */
 export const fetchWalletAssetListAdded = () => {
-    const wallet = find('curWallet');
+    const wallet = getStore('curWallet');
     const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
     const assetList = [];
     for (const k in MainChainCoin) {
@@ -1018,6 +1021,7 @@ export const fetchWalletAssetListAdded = () => {
 export const fetchCoinGain = (currencyName:string) => {
     const currency2USDT:currency2USDT = getStore('third/currency2USDTMap').get(currencyName);
     if (!currency2USDT) return formatBalanceValue(0);
+
     return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
 };
 /**
@@ -1227,7 +1231,7 @@ export const logoutAccountDel = () => {
  * 注销账户保留数据
  */
 export const logoutAccount = () => {
-    updateStore('flag',{ logoutAccountSave:true });
+    setStore('flag',{ logoutAccountSave:true });
     logoutInit();
 };
 
@@ -1235,7 +1239,7 @@ export const logoutAccount = () => {
  * 登录成功
  */
 export const loginSuccess = (wallet:Wallet) => {
-    updateStore('curWallet',wallet);
+    setStore('curWallet',wallet);
     setConState(ConState.init);
     loginInit();
     openConnect();
@@ -1268,7 +1272,9 @@ export const getLocalVersion = () => {
     const updateMod = pi_modules.update.exports;
     const versionArr = updateMod.getLocalVersion();
     const versionStr = versionArr.join('.');
+    // tslint:disable-next-line:no-unnecessary-local-variable
     const version = versionStr.slice(0,versionStr.length - 7);
+    
     return version;
 };
 
@@ -1277,7 +1283,9 @@ export const getRemoteVersion = () => {
     const updateMod = pi_modules.update.exports;
     const versionArr = updateMod.getRemoteVersion();
     const versionStr = versionArr.join('.');
+    // tslint:disable-next-line:no-unnecessary-local-variable
     const version = versionStr.slice(0,versionStr.length - 7);
+    
     return version;
 };
 
@@ -1289,7 +1297,7 @@ export const fetchMinerFeeList = (currencyName) => {
     for (let i = 0;i < toa.length;i++) {
         let minerFee = 0;
         if (cn === 'ETH') {
-            const gasLimit = getBorn('gasLimitMap').get(currencyName) || defaultGasLimit;
+            const gasLimit = getStore('gasLimitMap').get(currencyName) || defaultGasLimit;
             minerFee = wei2Eth(gasLimit * fetchGasPrice(toa[i].level));
         } else {
             minerFee = sat2Btc(fetchBtcMinerFee(toa[i].level));
@@ -1300,6 +1308,7 @@ export const fetchMinerFeeList = (currencyName) => {
         };
         minerFeeList.push(obj);
     } 
+
     return minerFeeList;
 };
 

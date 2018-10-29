@@ -99,13 +99,13 @@ register('activity/financialManagement/products', async (productList) => {
     }
     
 });
-register('languageSet', () => {
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-register('changeColor', () => {
+register('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -113,7 +113,7 @@ register('changeColor', () => {
 });
 
 // 货币单位变化
-register('currencyUnit',() => {
+register('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();
