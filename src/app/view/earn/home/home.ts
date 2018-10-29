@@ -42,8 +42,8 @@ export class PlayHome extends Widget {
             mineLast:0,// 矿山剩余量
             rankNum:1,// 挖矿排名
             page:[
-                'app-view-earn-mining-rankList',
-                'app-view-earn-ktBalance-dividend',
+                'app-view-earn-mining-rankList', //挖矿排名
+                'app-view-earn-mining-dividend', //领分红
                 'app-view-earn-redEnvelope-writeRedEnv',
                 'app-view-earn-exchange-exchange',
                 'app-view-earn-mining-addMine'

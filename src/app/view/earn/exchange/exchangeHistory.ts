@@ -5,10 +5,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getData, getUserList, queryConvertLog } from '../../../net/pull';
-import { CRecDetail, CurrencyType } from '../../../store/interface';
-import { find, register, updateStore } from '../../../store/memstore';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getStore, register, setStore } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { getLanguage, parseRtype, timestampFormat, unicodeArray2Str } from '../../../utils/tools';
+import { getLanguage, parseRtype, timestampFormat } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -64,7 +64,7 @@ export class ExchangeHistory extends Widget {
        
         this.getInviteRedEnvelope();     
                                
-        const cHisRec = find('cHisRec');
+        const cHisRec = getStore('activity/luckyMoney/exchange');
         if (cHisRec) {
             const hList = cHisRec.list;
             if (hList && hList.length > this.state.recordList.length) {
@@ -108,7 +108,7 @@ export class ExchangeHistory extends Widget {
 
     // 获取邀请红包记录
     public async getInviteRedEnvelope() {
-        const inviteRedBagRec = find('inviteRedBagRec');
+        const inviteRedBagRec = getStore('activity/luckyMoney/invite');
         if (inviteRedBagRec) {
             console.log('inviteRedBagRec from local');
             this.state.inviteObj = inviteRedBagRec;
@@ -123,14 +123,14 @@ export class ExchangeHistory extends Widget {
                 rid: '-1',
                 rtype: 99,
                 rtypeShow: parseRtype(99),
-                ctype: CurrencyType.ETH,
+                ctype: CloudCurrencyType.ETH,
                 ctypeShow: 'ETH',
                 amount: 0.15,
                 time: data.value,
                 timeShow: timestampFormat(data.value),
                 userName:this.state.cfgData.inviteRedEnv
             };
-            updateStore('inviteRedBagRec',this.state.inviteObj);
+            setStore('activity/luckyMoney/invite',this.state.inviteObj);
             this.innerPaint();
         }
     }
@@ -158,7 +158,7 @@ export class ExchangeHistory extends Widget {
      * 实际加载数据
      */
     public async loadMore() {
-        const cHisRec = find('cHisRec');
+        const cHisRec = getStore('activity/luckyMoney/exchange');
         if (!cHisRec) return;
         const hList = cHisRec.list;
         const start = this.state.recordList.length;
@@ -204,7 +204,7 @@ export class ExchangeHistory extends Widget {
     }
 }
 // =====================================本地
-register('cHisRec', () => {
+register('activity/luckyMoney/exchange', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();
