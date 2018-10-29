@@ -31,7 +31,8 @@ export class ProductDetail extends Widget {
     }
     public init() {
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
-        const cloudBalance = getStore('cloudBalance').get(CloudCurrencyType.ETH);
+        const cloud = getStore('cloud');
+        const cloudBalance = cloud.get(CloudCurrencyType.ETH).balance;
         const localBalance = getCurrentAddrBalanceByCurrencyName('ETH');
         this.state = {
             spend,
