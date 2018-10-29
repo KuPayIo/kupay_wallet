@@ -6,7 +6,7 @@
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Accounts, getCurrentAccount } from './filestore';
-import { CloudCurrencyType, CloudWallet, Currency2USDT, ShapeShiftTxs, Store } from './interface';
+import { CloudCurrencyType, CloudWallet, Currency2USDT, LockScreen, ShapeShiftTxs, Store } from './interface';
 
 // ============================================ 导出
 /**
@@ -106,10 +106,10 @@ const handlerMap: HandlerMap = new HandlerMap();
 
 const initUser = () => {
     const curAccount = getCurrentAccount();
-    if(!curAccount) {
+    if (!curAccount) {
         store.user.salt = cryptoRandomInt().toString();
         return;
-    };
+    }
     const fileUser = curAccount.user;
     store.user.id = fileUser.id;
     store.user.token = fileUser.token;
@@ -135,7 +135,6 @@ const initThird = (third) => {
     store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third && third.shapeShiftTxsMap);
     store.third.currency2USDTMap = new Map<string, Currency2USDT>(third && third.currency2USDTMap);
 };
-
 
 // 全局内存数据库
 const store: Store = {
@@ -163,10 +162,17 @@ const store: Store = {
         luckyMoney: null,                   // 红包
         mining: null,                       // 挖矿
         dividend: null,                     // 分红
-        financialManagement: null          // 理财
+        financialManagement: {          // 理财
+            products:null,
+            purchaseHistories:null
+        }
     },
     setting: {
-        lockScreen: null,         // 锁屏
+        lockScreen: {         // 锁屏
+            psw:'',
+            open:false,
+            locked:false
+        },
         language: '',             // 语言
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
         currencyUnit: ''         // 显示哪个国家的货币

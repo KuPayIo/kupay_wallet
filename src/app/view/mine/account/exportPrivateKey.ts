@@ -9,7 +9,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { EthWallet } from '../../../core/eth/wallet';
-import { find } from '../../../store/memstore';
+import { getStore } from '../../../store/memstore';
 import { btcNetwork, lang } from '../../../utils/constants';
 import { getAddrInfoByAddr, getLanguage } from '../../../utils/tools';
 
@@ -30,7 +30,7 @@ export class ExportPrivateKey extends Widget {
     }
 
     public init() {
-        const wallet = find('curWallet');
+        const wallet = getStore('curWallet');
         let showCurrency = wallet.showCurrencys;
         if (!wallet || !showCurrency) {
             showCurrency = [];

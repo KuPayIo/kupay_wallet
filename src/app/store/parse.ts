@@ -5,7 +5,8 @@ import { PAGELIMIT } from '../utils/constants';
 import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
-import { CloudCurrencyType, MineRank, MiningRank, TaskSid } from './interface';
+import { CloudCurrencyType, MineRank, MiningRank, PurchaseHistory, TaskSid } from './interface';
+import { getStore } from './memstore';
 /**
  * 解析数据
  */
@@ -273,7 +274,7 @@ export const parseRechargeWithdrawalLog = (coin,val) => {
  * 解析购买记录
  */
 const getproductById = (id:string) => {
-    const productList = find('productList');
+    const productList = getStore('activity/financialManagement/products');
     for (let i = 0;i < productList.length;i++) {
         if (productList[i].id === id) {
             return productList[i];
@@ -289,7 +290,7 @@ export const parsePurchaseRecord = (res:any) => {
         const item = res.value[i];
         const id = item[0];
         const product = getproductById(id);
-        const result:PurchaseRecordOne = {
+        const result:PurchaseHistory = {
             id,
             yesterdayIncoming:wei2Eth(item[2]),
             totalIncoming:wei2Eth(item[4]),
@@ -322,7 +323,7 @@ export const parseProductList = (res:any) => {
         const item = res.value[i];
         const id = item[0];
         const product = getStaticLanguage().financialProductList[id];
-        product.coinType = CurrencyTypeReverse[`${item[1]}`];
+        product.coinType = CloudCurrencyType[`${item[1]}`];
         product.unitPrice = wei2Eth(item[2]);
         product.total = item[3];
         product.surplus = item[3] - item[4];

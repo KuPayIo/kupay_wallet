@@ -8,7 +8,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAward, getCloudBalance, getMining, getMiningRank } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
-import { register, getStore, getCloudBalances } from '../../../store/memstore';
+import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { formatBalance, getLanguage, getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出

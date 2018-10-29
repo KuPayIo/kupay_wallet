@@ -31,7 +31,7 @@ export class RadioList extends Widget {
         this.ok && this.ok();
     }
 
-    public changeSelect(e:any,ind:number) {
+    public changeSelect(e:any,ind:any) {
         this.state.selected = ind;
         this.paint();
         setTimeout(() => {

@@ -1,17 +1,17 @@
 /**
  * 主动向后端通讯
  */
-import { open, request, setUrl, randomLogin, setBottomLayerReloginMsg, getSeverTime } from '../../pi/net/ui/con_mgr';
+import { getSeverTime, open, randomLogin, request, setBottomLayerReloginMsg, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
-import { CloudCurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel, CloudCurrencyType } from '../store/interface';
+import { CloudCurrencyType, CloudCurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
+import { find, getBorn, getStore, setStore, updateStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
-import { find, getBorn, updateStore, getStore, setStore } from '../store/memstore';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, unicodeArray2Str, popNewMessage, checkCreateAccount, getUserInfo } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -37,7 +37,7 @@ export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;
 // 上传的文件url前缀
 export const uploadFileUrlPrefix = `http://${conIp}:${conPort}/service/get_file?sid=`;
 
-//websock连接url
+// websock连接url
 const wsUrl = `ws://${conIp}:2081`;
 /**
  * 通用的异步通信
@@ -56,8 +56,6 @@ export const requestAsync = async (msg: any): Promise<any> => {
         });
     });
 };
-
-
 
 /**
  * 申请自动登录token
@@ -116,8 +114,6 @@ export const defaultLogin = async (hash:string) => {
     }
 };
 
-
-
 // const defaultConUser = '0x00000000000000000000000000000000000000000';
 /**
  * 开启连接
@@ -130,29 +126,29 @@ export const openConnect = async () => {
 /**
  * 连接成功回调
  */
-const conSuccess = () =>{
+const conSuccess = () => {
     getRandom();
-}
+};
 
 /**
  * 连接出错回调
  */
-const conError = (err) =>{
+const conError = (err) => {
     checkCreateAccount();
-}
+};
 
 /**
  * 连接关闭回调
  */
-const conClose = () =>{
-    popNewMessage('连接已断开')
-}
+const conClose = () => {
+    popNewMessage('连接已断开');
+};
 
 /**
  * 重新连接回调
  */
-const conReOpen = ()=>{
-}
+const conReOpen = () => {
+};
 
 /**
  * 获取随机数
@@ -160,7 +156,7 @@ const conReOpen = ()=>{
 export const getRandom = async (cmd?:number) => {
     const wallet = getStore('wallet');
     if (!wallet) return;
-    const client = "android 20";
+    const client = 'android 20';
     const param:any = {
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
@@ -201,7 +197,7 @@ export const getRandom = async (cmd?:number) => {
     checkCreateAccount();
 };
 
-const afterGetRandomAction = (serverTimestamp:number) =>{
+const afterGetRandomAction = (serverTimestamp:number) => {
     // eth gasPrice
     fetchGasPrices();
 
@@ -216,8 +212,7 @@ const afterGetRandomAction = (serverTimestamp:number) =>{
     if (getStore('user/token')) {
         autoLogin(serverTimestamp);
     }
-}
-
+};
 
 /**
  * 获取所有的货币余额
@@ -608,7 +603,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
             const userInfo = {
                 ...localUserInfo,
                 ...serverUserInfo
-            }
+            };
             console.log(userInfo);
             updateStore('userInfo',userInfo);
         }
@@ -1060,7 +1055,7 @@ export const getProductList = async () => {
     try {
         const res = await requestAsync(msg);
         const result = parseProductList(res);
-        updateStore('productList',result);
+        setStore('activity/financialManagement/products',result);
 
         return result;
     } catch (err) {
@@ -1103,7 +1098,7 @@ export const buyProduct = async (pid:any,count:any) => {
 };
 
 /**
- * 购买记录
+ * 理财购买记录
  */
 export const getPurchaseRecord = async (start = '') => {
     const msg = {
@@ -1118,7 +1113,7 @@ export const getPurchaseRecord = async (start = '') => {
         const res = await requestAsync(msg);
         console.log('getPurchaseRecord',res);
         const record = parsePurchaseRecord(res);
-        updateStore('purchaseRecord',record);
+        setStore('activity/financialManagement/purchaseHistories',record);
 
     } catch (err) {
         showError(err && (err.result || err.type));
