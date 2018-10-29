@@ -4,9 +4,9 @@
 // ================================ 导入
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { applyAutoLogin, autoLogin, setUserInfo, fetchGasPrices, fetchBtcFees, fetchRealUser, getCloudBalance, getUserInfoFromServer, defaultLogin, getServerCloudBalance } from '../../net/pull';
+import { applyAutoLogin, autoLogin, defaultLogin, fetchBtcFees, fetchGasPrices, fetchRealUser, getCloudBalance, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
-import { register, getStore } from '../../store/memstore';
+import { getStore, register } from '../../store/memstore';
 import { getFirstEthAddr, getLanguage } from '../../utils/tools';
 
 // ================================ 导出
@@ -81,8 +81,8 @@ export class App extends Widget {
 // ===================================================== 立即执行
 
 register('flags/level_2_page_loaded',(loaded:boolean) => {
-    // const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-    // dataCenter.init();
+    const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+    dataCenter.init();
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.closeLoading();
@@ -98,8 +98,6 @@ register('userInfo',(userInfo:UserInfo) => {
         setUserInfo();
     }
 });
-
-
 
 // 登录状态成功
 register('user/isLogin',(isLogin:boolean) => {
@@ -122,12 +120,9 @@ register('user/isLogin',(isLogin:boolean) => {
     }
 });
 
-
-
 /**
  * 获取随机数之后的动作
  */
-const afterGetRandomAction = ()=>{
+const afterGetRandomAction = () => {
 
-    
-}
+};

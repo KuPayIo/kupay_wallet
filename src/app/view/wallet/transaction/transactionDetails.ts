@@ -54,7 +54,7 @@ export class TransactionDetails extends Widget {
 
     public resendClick() {
         const tx = this.state.tx;
-        if (tx.txType === TxType.RECHARGE) {
+        if (tx.txType === TxType.Recharge) {
             popNew('app-view-wallet-cloudWallet-recharge',{ tx,currencyName:this.state.tx.currencyName });
         } else {
             popNew('app-view-wallet-transaction-transfer',{ tx,currencyName:this.state.tx.currencyName });
@@ -106,7 +106,7 @@ export class TransactionDetails extends Widget {
 }
 
 // 交易记录变化
-register('transactions',() => {
+register('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

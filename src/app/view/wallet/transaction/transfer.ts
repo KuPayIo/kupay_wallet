@@ -7,10 +7,10 @@ import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode } from '../../../logic/native';
 import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
 import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
-import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
+import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,7 +18,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
     currencyName:string;
-    tx?:TransRecordLocal;
+    tx?:TxHistory;
 }
 
 export class Transfer extends Widget {
@@ -36,13 +36,12 @@ export class Transfer extends Widget {
         }
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
         const tx = this.props.tx;
-        console.log(tx);
-        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.STANDARD;
+        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             toAddr:tx ? tx.toAddr : '',
             amount:tx ? tx.pay : 0,
-            balance:getCurrentAddrBalanceByCurrencyName(this.props.currencyName),
+            balance:getCurrentAddrInfo(this.props.currencyName).balance,
             minerFee:minerFeeList[curLevel].minerFee,
             minerFeeList,
             curLevel,
@@ -124,15 +123,15 @@ export class Transfer extends Widget {
         const passwd = await popPswBox();
         if (!passwd) return;
         const t = new Date();
-        const tx:TransRecordLocal = {
+        const tx:TxHistory = {
             hash:'',
             addr:fromAddr,
-            txType:TxType.TRANSFER,
+            txType:TxType.Transfer,
             fromAddr,
             toAddr,
             pay: pay,
             time: t.getTime(),
-            status:TxStatus.PENDING,
+            status:TxStatus.Pending,
             confirmedBlockNumber: 0,
             needConfirmedBlockNumber:0,
             info: '',
@@ -169,7 +168,7 @@ export class Transfer extends Widget {
 }
 
 // gasPrice变化
-register('gasPrice',() => {
+register('third/gasPrice',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();
@@ -177,7 +176,7 @@ register('gasPrice',() => {
 });
 
 // btcMinerFee变化
-register('btcMinerFee',() => {
+register('third/btcMinerFee',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();

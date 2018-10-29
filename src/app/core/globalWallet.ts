@@ -2,7 +2,8 @@
  * global wallet
  */
 import { ERC20Tokens } from '../config';
-import { CurrencyRecord, AddrInfo } from '../store/interface';
+import { AddrInfo, CurrencyRecord } from '../store/interface';
+import { getStore } from '../store/memstore';
 import { btcNetwork, lang, strength } from '../utils/constants';
 import { calcHashValuePromise, u8ArrayToHexstr } from '../utils/tools';
 import { getMnemonic } from '../utils/walletTools';
@@ -17,7 +18,7 @@ const cipher = new Cipher();
 export class GlobalWallet {
     private _glwtId: string;
     private _currencyRecords: CurrencyRecord[] = [];
-    private _vault: string;//加密后的随机数种子
+    private _vault: string;// 加密后的随机数种子
     private _isBackup: boolean = false;// 助记词备份
     private _publicKey: string;
 
@@ -57,7 +58,7 @@ export class GlobalWallet {
     /**
      * 通过助记词导入钱包
      */
-    public static fromMnemonic(secrectHash:string,mnemonic: string){
+    public static fromMnemonic(secrectHash:string,mnemonic: string) {
         const gwlt = new GlobalWallet();
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
         
@@ -89,9 +90,9 @@ export class GlobalWallet {
     /**
      * 动态创建钱包(地址)对象
      */
-    public static async createWlt(currencyName: string, passwd: string, wallet: any, i: number) {
+    public static async createWlt(currencyName: string, passwd: string, i: number) {
         // todo
-        const mnemonic = await getMnemonic(wallet, passwd);
+        const mnemonic = await getMnemonic(passwd);
 
         return this.createWltByMnemonic(mnemonic, currencyName, i);
     }
@@ -136,16 +137,6 @@ export class GlobalWallet {
         return addr;
     }
 
-    /**
-     * 获取钱包地址的位置
-     */
-    public static getWltAddrIndex(wallet: any, addr: string, currencyName: string): number {
-        const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
-        if (!currencyRecord) return -1;
-
-        return currencyRecord.addrs.indexOf(addr);
-    }
-
     /*****************************************
      * 私有静态函数
      * ************************************************************
@@ -173,9 +164,17 @@ export class GlobalWallet {
         }
         // ETH代币创建
         ethTokenList.forEach(tokenName => {
+            const ethAddrInfo = ethCurrencyRecord.addrs[0];
+            const erc20AddrInfo:AddrInfo = {
+                addr: ethAddrInfo.addr,               
+                balance: 0,                
+                txHistory: [],          
+                nonce: 0 
+            };
             const tokenRecord = {
                 ...ethCurrencyRecord,
-                currencyName: tokenName
+                currencyName: tokenName,
+                addrs:[erc20AddrInfo]
             };
             gwlt._currencyRecords.push(tokenRecord);
         });
@@ -191,7 +190,8 @@ export class GlobalWallet {
             balance: 0,              // 余额
             txHistory: [],         // 交易记录
             nonce: 0                  // 本地维护的nonce(对BTC无效)
-        }
+        };
+        // tslint:disable-next-line:no-unnecessary-local-variable
         const currencyRecord: CurrencyRecord = {
             currencyName: 'ETH',
             currentAddr: address,
@@ -213,7 +213,8 @@ export class GlobalWallet {
             balance: 0,              // 余额
             txHistory: [],         // 交易记录
             nonce: 0                  // 本地维护的nonce(对BTC无效)
-        }
+        };
+        // tslint:disable-next-line:no-unnecessary-local-variable
         const currencyRecord: CurrencyRecord = {
             currencyName: 'BTC',
             currentAddr: address,
@@ -245,7 +246,7 @@ export class GlobalWallet {
      * 修改密码
      */
     public async passwordChange(oldPsw: string, newPsw: string) {
-        const salt = find('salt');
+        const salt = getStore('user/salt');
         const oldHash = await calcHashValuePromise(oldPsw, salt);
         const newHash = await calcHashValuePromise(newPsw, salt);
 

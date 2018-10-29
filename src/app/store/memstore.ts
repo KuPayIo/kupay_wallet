@@ -5,7 +5,7 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { Accounts, getCurrentAccount } from './filestore';
+import { getCurrentAccount } from './filestore';
 import { CloudCurrencyType, CloudWallet, Currency2USDT, ShapeShiftTxs, Store } from './interface';
 
 // ============================================ 导出
@@ -106,10 +106,11 @@ const handlerMap: HandlerMap = new HandlerMap();
 
 const initUser = () => {
     const curAccount = getCurrentAccount();
-    if(!curAccount) {
+    if (!curAccount) {
         store.user.salt = cryptoRandomInt().toString();
+        
         return;
-    };
+    }
     const fileUser = curAccount.user;
     store.user.id = fileUser.id;
     store.user.token = fileUser.token;
@@ -135,7 +136,6 @@ const initThird = (third) => {
     store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third && third.shapeShiftTxsMap);
     store.third.currency2USDTMap = new Map<string, Currency2USDT>(third && third.currency2USDTMap);
 };
-
 
 // 全局内存数据库
 const store: Store = {

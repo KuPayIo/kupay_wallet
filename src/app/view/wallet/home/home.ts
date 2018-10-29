@@ -5,9 +5,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getServerCloudBalance } from '../../../net/pull';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, getUserInfo } from '../../../utils/tools';
+import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, getUserInfo } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -32,12 +33,11 @@ export class Home extends Widget {
             }],
             activeNum:1,
             avatar:userInfo && userInfo.avatar,
-            totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets()),
+            totalAsset:formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets()),
             cfgData:cfg,
             refreshing:false,
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
-        this.paint();
     }
     public tabsChangeClick(event: any, value: number) {
         this.state.activeNum = value;
@@ -51,12 +51,12 @@ export class Home extends Widget {
     }
 
     public updateTotalAsset() {
-        this.state.totalAsset = formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets());
+        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
         this.paint();
     }
 
     public currencyUnitChange() {
-        this.state.totalAsset = formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets());
+        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
         this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
@@ -75,7 +75,7 @@ export class Home extends Widget {
         this.state.refreshing = true;
         this.paint();
         let neededRefreshCount = 1;
-        getCloudBalance().then(() => {
+        getServerCloudBalance().then(() => {
             neededRefreshCount--;
             if (neededRefreshCount === 0) {
                 this.state.refreshing = false;
@@ -132,25 +132,18 @@ register('cloudBalance',() => {
     }
 });
 
-register('languageSet', () => {
+register('setting', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+        w.paint();
     }
 });
 
 // 货币涨跌幅度变化
-register('currency2USDTMap',() => {
+register('third/currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
-    }
-});
-
-// 货币单位变化
-register('currencyUnit',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.currencyUnitChange();
     }
 });

@@ -5,7 +5,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList, getPurchaseRecord } from '../../../net/pull';
-import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getLanguage } from '../../../utils/tools';
+import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getLanguage } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -41,7 +41,7 @@ export class Home extends Widget {
             }],
             activeNum:0,
             avatar:'',
-            totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets()),
+            totalAsset:formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets()),
             cfgData:getLanguage(this),
             refreshing:false
         };

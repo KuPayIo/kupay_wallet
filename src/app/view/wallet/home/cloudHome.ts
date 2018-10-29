@@ -6,8 +6,9 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList, getServerCloudBalance } from '../../../net/pull';
 import { Product } from '../../../store/interface';
-import { register, getStore } from '../../../store/memstore';
-import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getLanguage, hasWallet, getCurrencyUnitSymbol } from '../../../utils/tools';
+import { getStore, register } from '../../../store/memstore';
+// tslint:disable-next-line:max-line-length
+import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -20,7 +21,7 @@ export class CloudHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        if(props.isActive){
+        if (props.isActive) {
             getProductList();
             getServerCloudBalance();
         }
@@ -74,7 +75,6 @@ export class CloudHome extends Widget {
 
 // =======================本地
 
-
 // 云端余额变化
 register('cloudBalance',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -112,7 +112,6 @@ register('changeColor', () => {
     }
 });
 
-
 // 货币单位变化
 register('currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -120,4 +119,3 @@ register('currencyUnit',() => {
         w.currencyUnitChange();
     }
 });
-
