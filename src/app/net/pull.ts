@@ -560,7 +560,7 @@ export const getDividHistory = async (start = '') => {
     };
     requestAsync(msg).then(data => {
         const dividHistory = parseDividHistory(data);
-        setStore('dividHistory', dividHistory);
+        setStore('activity/dividend/history', dividHistory);
     });
 };
 

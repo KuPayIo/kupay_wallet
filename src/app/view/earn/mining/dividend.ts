@@ -29,6 +29,7 @@ export class Dividend extends Widget {
         this.state = {
             totalDivid:0,
             totalDays:0,
+            topRefresh:false,//顶部手动刷新
             thisDivid:0,
             yearIncome: 0,
             scrollHeight:0,  //页面滚动高度
@@ -177,6 +178,12 @@ export class Dividend extends Widget {
      * 刷新页面
      */
     public refreshPage() {
+        this.state.topRefresh = true;
+        this.paint();
+        setTimeout(() => {
+            this.state.topRefresh = false;
+            this.paint();
+        }, 1000);
         this.initEvent();
     }
 

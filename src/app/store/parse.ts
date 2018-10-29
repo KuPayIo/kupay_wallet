@@ -180,7 +180,7 @@ export const parseDividHistory = (data) => {
         });
     }
       
-    const dividHistory = getStore('dividHistory');
+    const dividHistory = getStore('activity/dividend/history');
     const rList = dividHistory && dividHistory.list || [];
     const start = String(data.start); 
     const canLoadMore = list.length > PAGELIMIT;
