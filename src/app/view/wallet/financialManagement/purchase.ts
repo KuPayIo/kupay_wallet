@@ -5,8 +5,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { recharge } from '../../../net/pullWallet';
-import { CurrencyType, MinerFeeLevel, Product, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { getBorn } from '../../../store/memstore';
+import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../store/interface';
+import { getStore } from '../../../store/memstore';
 import { defaultGasLimit } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
@@ -31,7 +31,8 @@ export class ProductDetail extends Widget {
     }
     public init() {
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
-        const cloudBalance = getBorn('cloudBalance').get(CurrencyType.ETH);
+        const cloud = getStore('cloud');
+        const cloudBalance = cloud.get(CloudCurrencyType.ETH).balance;
         const localBalance = getCurrentAddrInfo('ETH').balance;
         this.state = {
             spend,
@@ -56,7 +57,7 @@ export class ProductDetail extends Widget {
         } else if (this.state.cloudBalance + this.state.localBalance >= this.state.spend) {
             const fromAddr = getCurrentAddrByCurrencyName('ETH');
             const pay = this.state.spend - this.state.cloudBalance;
-            const tx:TransRecordLocal = {
+            const tx:TxHistory = {
                 hash:'',
                 txType:TxType.Recharge,
                 fromAddr,

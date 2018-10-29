@@ -66,7 +66,7 @@ export const getCurrentAddrInfo = (currencyName: string) => {
  * @param addrId  address id
  */
 export const getAddrById = (addrId: string, currencyName: string): Addr => {
-    const list: Addr[] = find('addrs') || [];
+    const list: Addr[] = getStore('addrs') || [];
 
     return list.filter(v => v.addr === addrId && v.currencyName === currencyName)[0];
 };
@@ -78,13 +78,13 @@ export const getAddrById = (addrId: string, currencyName: string): Addr => {
  * @param notified 是否通知数据发生改变 
  */
 export const resetAddrById = (addrId: string, currencyName: string, data: Addr) => {
-    let list: Addr[] = find('addrs') || [];
+    let list: Addr[] = getStore('addrs') || [];
     list = list.map(v => {
         if (v.addr === addrId && v.currencyName === currencyName) return data;
 
         return v;
     });
-    updateStore('addrs', list);
+    setStore('addrs', list);
 };
 
 /**
@@ -137,7 +137,7 @@ export const getAddrsInfoByCurrencyName = (currencyName: string) => {
  * 通过地址获取地址余额
  */
 export const getAddrInfoByAddr = (addr: string, currencyName: string) => {
-    const addrs = find('addrs') || [];
+    const addrs = getStore('addrs') || [];
 
     return addrs.filter(v => v.addr === addr && v.currencyName === currencyName)[0];
 };
@@ -291,6 +291,7 @@ export const formatBalance = (banlance: number) => {
  */
 export const formatBalanceValue = (value: number) => {
     if (value === 0) return '0.00';
+
     return value.toFixed(2);
 };
 
@@ -491,8 +492,11 @@ export const copyToClipboard = (copyText) => {
     input.setAttribute('value', copyText);
     input.setAttribute('style', 'position:absolute;top:-9999px;');
     document.body.appendChild(input);
-    input.setSelectionRange(0, 9999);
-    input.select();
+    if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        input.setSelectionRange(0, 9999);
+    } else {
+        input.select();
+    }
     if (document.execCommand('copy')) {
         document.execCommand('copy');
     }
@@ -509,6 +513,7 @@ export const calcHashValuePromise = async (pwd, salt?) => {
     console.time('argonHash');
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
     console.timeEnd('argonHash');
+
     return hash;
 };
 
@@ -623,12 +628,12 @@ export const timestampFormat = (timestamp: number) => {
 
 // 获取当前钱包第一个ETH地址
 export const getFirstEthAddr = () => {
-    const wallet = find('curWallet');
+    const wallet = getStore('wallet');
     if (!wallet) return;
     const currencyRecords = wallet.currencyRecords;
     for (let i = 0; i < currencyRecords.length; i++) {
         if (currencyRecords[i].currencyName === 'ETH') {
-            return currencyRecords[i].addrs[0];
+            return currencyRecords[i].addrs[0].addr;
         }
     }
 };
@@ -705,14 +710,14 @@ export const sha256 = (data: string) => {
 
 // 锁屏密码验证
 export const lockScreenVerify = (psw) => {
-    const hash256 = sha256(psw + find('salt'));
-    const localHash256 = find('lockScreen').psw;
+    const hash256 = sha256(psw + getStore('user/salt'));
+    const localHash256 = getStore('setting/lockScreen').psw;
 
     return hash256 === localHash256;
 };
 // 锁屏密码hash算法
 export const lockScreenHash = (psw) => {
-    return sha256(psw + find('salt'));
+    return sha256(psw + getStore('user/salt'));
 };
 
 // ==========================================================new version tools
@@ -995,7 +1000,7 @@ export const parseRtype = (rType) => {
  * 获取某id理财产品持有量，不算已经赎回的
  */
 export const fetchHoldedProductAmount = (id:string) => {
-    const purchaseRecord = find('purchaseRecord');
+    const purchaseRecord = getStore('activity/financialManagement/purchaseHistories');
     let holdAmout = 0;
     for (let i = 0;i < purchaseRecord.length;i++) {
         const one = purchaseRecord[i];
@@ -1069,7 +1074,7 @@ export const base64ToFile = (base64:string) => {
 export const getUserInfo = () => {
     const userInfo = getStore('user/info');
     const nickName = userInfo && userInfo.nickName;
-    const bphone = userInfo && userInfo.bphone;
+    const phoneNumber = userInfo && userInfo.phoneNumber;
     let avatar = userInfo && userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
@@ -1078,7 +1083,7 @@ export const getUserInfo = () => {
     return {
         nickName,
         avatar,
-        bphone
+        phoneNumber
     };
 };
 
@@ -1188,7 +1193,7 @@ export const logoutAccountDel = () => {
  * 注销账户保留数据
  */
 export const logoutAccount = () => {
-    updateStore('flag',{ logoutAccountSave:true });
+    setStore('flag',{ logoutAccountSave:true });
     logoutInit();
 };
 
@@ -1196,7 +1201,7 @@ export const logoutAccount = () => {
  * 登录成功
  */
 export const loginSuccess = (wallet:Wallet) => {
-    updateStore('curWallet',wallet);
+    setStore('curWallet',wallet);
     setConState(ConState.init);
     loginInit();
     openConnect();

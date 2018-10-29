@@ -31,7 +31,7 @@ export class CloudHome extends Widget {
         this.state = {
             totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
             assetList:fetchCloudWalletAssetList(),
-            productList:getStore('activity/financialManagement',[]),
+            productList:getStore('activity/financialManagement/products',[]),
             cfgData:getLanguage(this),
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
@@ -76,7 +76,7 @@ export class CloudHome extends Widget {
 // =======================本地
 
 // 云端余额变化
-register('cloudBalance',() => {
+register('cloud/cloudWallets',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -92,20 +92,20 @@ register('currency2USDTMap',() => {
 });
 
 // 理财产品变化
-register('productList', async (productList) => {
+register('activity/financialManagement/products', async (productList) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateProductList(productList);
     }
     
 });
-register('languageSet', () => {
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-register('changeColor', () => {
+register('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -113,7 +113,7 @@ register('changeColor', () => {
 });
 
 // 货币单位变化
-register('currencyUnit',() => {
+register('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();
