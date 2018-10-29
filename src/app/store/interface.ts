@@ -274,7 +274,7 @@ export interface TxHistory {
  * 矿工费3档次
  */
 export enum MinerFeeLevel {
-    Standard = 1,     // 标准
+    Standard,         // 标准
     Fast,             // 快
     Fastest           // 最快
 }

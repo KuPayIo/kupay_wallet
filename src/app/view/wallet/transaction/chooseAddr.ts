@@ -3,7 +3,7 @@
  */
 import { Widget } from '../../../../pi/widget/widget';
 import { createNewAddr } from '../../../logic/localWallet';
-import { find, updateStore } from '../../../store/memstore';
+import { getStore, setStore } from '../../../store/memstore';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, popPswBox } from '../../../utils/tools';
 
 interface Props {
@@ -41,11 +41,11 @@ export class ChooseAddr extends Widget {
 
     public addrItemClick(e:any,index:number) {
         if (!this.state.addrsInfo[index].isChoosed) {
-            const wallet = find('curWallet');
-            const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
-            if (currencyRecord) {
-                currencyRecord.currentAddr = this.state.addrsInfo[index].addr;
-                updateStore('curWallet', wallet);
+            const wallet = getStore('wallet');
+            const record = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
+            if (record) {
+                record.currentAddr = this.state.addrsInfo[index].addr;
+                setStore('wallet/currencyRecords', wallet.currencyRecords);
             }
         }
         this.ok && this.ok();

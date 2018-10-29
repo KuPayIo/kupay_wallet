@@ -11,7 +11,7 @@ import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../../
 import { MarketInfo, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
 import { getBorn, register, updateStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, fetchBtcMinerFee, fetchGasPrice, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { currencyExchangeAvailable, fetchBtcMinerFee, fetchGasPrice, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 import { sat2Btc, wei2Eth } from '../../../utils/unitTools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -102,7 +102,7 @@ export class CoinConvert extends Widget {
         this.setPair();
         // 获取出币币种的余额和当前使用地址
         this.state.curOutAddr = getCurrentAddrByCurrencyName(this.state.outCurrency);
-        this.state.outBalance = getCurrentAddrBalanceByCurrencyName(this.state.outCurrency);
+        this.state.outBalance = getCurrentAddrInfo(this.state.outCurrency).balance;
         // 获取入币币种的当前使用地址
         this.state.curInAddr = getCurrentAddrByCurrencyName(this.state.inCurrency);
         this.marketInfoUpdated();
@@ -252,7 +252,7 @@ export class CoinConvert extends Widget {
             const t = new Date();
             const record:TransRecordLocal = {
                 hash:'',
-                txType: TxType.EXCHANGE,
+                txType: TxType.Exchange,
                 fromAddr: this.state.curOutAddr,
                 toAddr: depositAddress,
                 pay: outAmount,
@@ -262,10 +262,10 @@ export class CoinConvert extends Widget {
                 fee: this.state.outMinerFee,
                 nonce:undefined,
                 addr:this.state.curOutAddr,
-                status:TxStatus.PENDING,
+                status:TxStatus.Pending,
                 confirmedBlockNumber:0,
                 needConfirmedBlockNumber:0,
-                minerFeeLevel:MinerFeeLevel.STANDARD
+                minerFeeLevel:MinerFeeLevel.Standard
             };
             
             const ret = await transfer(passwd,record);

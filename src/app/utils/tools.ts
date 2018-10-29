@@ -8,8 +8,8 @@ import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
-import { Addr, CloudCurrencyType, currency2USDT, CurrencyType, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxStatus, TxType, Wallet } from '../store/interface';
-import { getCloudBalances, getStore, loginInit, logoutInit, setStore } from '../store/memstore';
+import { Addr, CloudCurrencyType, currency2USDT, CurrencyType, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxHistory, TxStatus, TxType, Wallet } from '../store/interface';
+import { find, getBorn, getCloudBalances, getStore, loginInit, logoutInit, setStore, updateStore } from '../store/memstore';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
 
@@ -48,13 +48,18 @@ export const getWalletIndexByWalletId = (wallets, walletId) => {
  * @param currencyName 货币类型
  */
 export const getCurrentAddrInfo = (currencyName: string) => {
-    const addrs = getStore('addrs') || [];
-    const wallet = getStore('curWallet');
-    const currencyRecord = wallet.currencyRecords.filter(item => item.currencyName === currencyName)[0];
-    // tslint:disable-next-line:no-unnecessary-local-variable
-    const addrInfo = addrs.filter(item => item.addr === currencyRecord.currentAddr && item.currencyName === currencyName)[0];
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === currencyName) {
+            for (const addrInfo of record.addrs) {
+                if (addrInfo.addr === record.currentAddr) {
+                    return addrInfo;
+                }
+            }
+        }
+    }
 
-    return addrInfo;
+    return;
 };
 /**
  * 通过地址id获取地址信息
@@ -120,25 +125,12 @@ export const getAddrsByCurrencyName = (wallet: any, currencyName: string) => {
  * @param wallet wallet obj
  */
 export const getAddrsInfoByCurrencyName = (currencyName: string) => {
-    const wallet = getStore('curWallet');
-    const currencyRecords = wallet.currencyRecords;
-    const retAddrInfo = [];
-    const len = currencyRecords.length;
-    for (let i = 0; i < len; i++) {
-        if (currencyRecords[i].currencyName === currencyName) {
-            for (let j = 0;j < currencyRecords[i].addrs.length; j++) {
-                const addr = currencyRecords[i].addrs[j];
-                const obj = {
-                    addr,
-                    balance:getAddrInfoByAddr(addr,currencyName).balance
-                };
-                retAddrInfo.push(obj);
-            }
-            break;
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === currencyName) {
+            return record.addrs;
         }
     }
-
-    return retAddrInfo;
 };
 
 /**
@@ -595,7 +587,7 @@ export const getByteLen = (val) => {
 
 // 计算支持的币币兑换的币种
 export const currencyExchangeAvailable = () => {
-    const shapeshiftCoins = getStore('shapeShiftCoins');
+    const shapeshiftCoins = getStore('third/shapeShiftCoins',[]);
     const currencyArr = [];
     for (const i in MainChainCoin) {
         currencyArr.push(i);
@@ -611,33 +603,16 @@ export const currencyExchangeAvailable = () => {
 
 // 根据货币名获取当前正在使用的地址
 export const getCurrentAddrByCurrencyName = (currencyName: string) => {
-    const wallet = getStore('curWallet');
-    const currencyRecords = wallet.currencyRecords;
-    let curAddr = '';
-
-    for (let i = 0; i < currencyRecords.length; i++) {
-        if (currencyRecords[i].currencyName === currencyName) {
-            curAddr = currencyRecords[i].currentAddr;
-            break;
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === currencyName) {
+            return record.currentAddr;
         }
     }
 
-    return curAddr;
+    return;
 };
 
-// 根据货币名获取当前正在使用的地址的余额
-export const getCurrentAddrBalanceByCurrencyName = (currencyName: string) => {
-    const curAddr = getCurrentAddrByCurrencyName(currencyName);
-    console.log('curAddr',curAddr);
-    const addrs = getStore('addrs') || [];
-    for (let i = 0; i < addrs.length; i++) {
-        if ((addrs[i].currencyName === currencyName) && (addrs[i].addr === curAddr)) {
-            return addrs[i].balance || 0;
-        }
-    }
-
-    return 0;
-};
 // 时间戳格式化 毫秒为单位
 export const timestampFormat = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -749,18 +724,18 @@ export const lockScreenHash = (psw) => {
 
 // 获取gasPrice
 export const fetchGasPrice = (minerFeeLevel:MinerFeeLevel) => {
-    return getStore('gasPrice')[minerFeeLevel];
+    return getStore('third/gasPrice')[minerFeeLevel];
 };
 
 // 获取btc miner fee
 export const fetchBtcMinerFee = (minerFeeLevel:MinerFeeLevel) => {
-    return getStore('btcMinerFee')[minerFeeLevel];
+    return getStore('third/btcMinerFee')[minerFeeLevel];
 };
 
 /**
  * 获取总资产
  */
-export const fetchTotalAssets = () => {
+export const fetchLocalTotalAssets = () => {
     const wallet = getStore('wallet');
     if (!wallet) return 0;
     let totalAssets = 0;
@@ -947,7 +922,7 @@ export const parseTxTypeShow = (txType:TxType) => {
  // 解析是否可以重发
 export const canResend = (tx) => {
     if (tx.status !== TxStatus.Pending) return false;
-    if (tx.minerFeeLevel === MinerFeeLevel.Fastest) return false;
+    if (tx.minerFeeLevel === MinerFeeLevel.Fast) return false;
     const startTime = tx.time;
     const now = new Date().getTime();
     if (now - startTime < resendInterval) return false;
@@ -959,8 +934,8 @@ export const canResend = (tx) => {
  * 获取钱包资产列表是否添加
  */
 export const fetchWalletAssetListAdded = () => {
-    const wallet = getStore('curWallet');
-    const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
+    const wallet = getStore('wallet');
+    const showCurrencys = wallet.showCurrencys || defalutShowCurrencys;
     const assetList = [];
     for (const k in MainChainCoin) {
         const item:any = {};
@@ -1003,19 +978,6 @@ export const fetchWalletAssetListAdded = () => {
 
     return assetList;
 };
-
-// /**
-//  * 初始化地址对象
-//  */
-// export const initAddr = (address: string, currencyName: string, addrName?: string): Addr => {
-//     return {
-//         addr: address,
-//         addrName: addrName || getDefaultAddr(address),
-//         record: [],
-//         balance: 0,
-//         currencyName: currencyName
-//     };
-// };
 
 // 获取货币的涨跌情况
 export const fetchCoinGain = (currencyName:string) => {
@@ -1272,10 +1234,8 @@ export const getLocalVersion = () => {
     const updateMod = pi_modules.update.exports;
     const versionArr = updateMod.getLocalVersion();
     const versionStr = versionArr.join('.');
-    // tslint:disable-next-line:no-unnecessary-local-variable
-    const version = versionStr.slice(0,versionStr.length - 7);
-    
-    return version;
+
+    return versionStr.slice(0,versionStr.length - 7);
 };
 
 // 获取远端版本号
@@ -1283,10 +1243,8 @@ export const getRemoteVersion = () => {
     const updateMod = pi_modules.update.exports;
     const versionArr = updateMod.getRemoteVersion();
     const versionStr = versionArr.join('.');
-    // tslint:disable-next-line:no-unnecessary-local-variable
-    const version = versionStr.slice(0,versionStr.length - 7);
-    
-    return version;
+
+    return versionStr.slice(0,versionStr.length - 7);
 };
 
 // 更新矿工费
@@ -1297,7 +1255,7 @@ export const fetchMinerFeeList = (currencyName) => {
     for (let i = 0;i < toa.length;i++) {
         let minerFee = 0;
         if (cn === 'ETH') {
-            const gasLimit = getStore('gasLimitMap').get(currencyName) || defaultGasLimit;
+            const gasLimit = getStore('third/gasLimitMap').get(currencyName) || defaultGasLimit;
             minerFee = wei2Eth(gasLimit * fetchGasPrice(toa[i].level));
         } else {
             minerFee = sat2Btc(fetchBtcMinerFee(toa[i].level));
@@ -1353,4 +1311,105 @@ export const judgeAddressAvailable = (ctype:string,addr:string) => {
  */
 export const parseTransferExtraInfo = (input:string) => {
     return input === '0x' ? '无' : input;
+};
+
+/**
+ * 更新本地交易记录
+ */
+export const updateLocalTx = (tx: TxHistory) => {
+    const wallet = getStore('wallet');
+    const currencyName = tx.currencyName;
+    const addr = tx.addr;
+    wallet.currencyRecords.forEach(record => {
+        if (record.currencyName === currencyName && record.currentAddr === addr) {
+            record.addrs.forEach(addrInfo => {
+                if (addrInfo.addr === addr) {
+                    let index = -1;
+                    const txHistory = addrInfo.txHistory;
+                    for (let i = 0; i < txHistory.length; i++) {
+                        if (txHistory[i].hash === tx.hash) {
+                            index = i;
+                            break;
+                        }
+                    }
+                    if (index >= 0) {
+                        txHistory.splice(index, 1, tx);
+                    } else {
+                        txHistory.push(tx);
+                    }
+                }
+            });
+        }
+    });
+    
+    setStore('wallet/currencyRecords', wallet.currencyRecords);
+};
+
+/**
+ * 删除本地交易记录
+ */
+export const  deletLocalTx = (tx: TxHistory) => {
+    const wallet = getStore('wallet');
+    const currencyName = tx.currencyName;
+    const addr = tx.addr;
+    wallet.currencyRecords.forEach(record => {
+        if (record.currencyName === currencyName) {
+            record.addrs.forEach(addrInfo => {
+                if (addrInfo.addr === addr) {
+                    let index = -1;
+                    const txHistory = addrInfo.txHistory;
+                    for (let i = 0; i < txHistory.length; i++) {
+                        if (txHistory[i].hash === tx.hash) {
+                            index = i;
+                            break;
+                        }
+                    }
+                    if (index >= 0) {
+                        txHistory.splice(index, 1);
+                    }
+                }
+            });
+        }
+    });
+    
+    setStore('wallet/currencyRecords', wallet.currencyRecords);
+};
+
+/**
+ * 获取某个地址的nonce
+ * 只取ETH地址下的nonce
+ */
+export const getEthNonce = (addr:string) => {
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === 'ETH') {
+            for (const addrInfo of record.addrs) {
+                if (addrInfo.addr === addr) {
+                    return addrInfo.nonce;
+                }
+            }
+        }
+        
+    }
+};
+
+/**
+ * 设置某个地址的nonce
+ * 只设置ETH地址下的nonce
+ */
+export const setEthNonce = (newNonce:number,addr:string) => {
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === 'ETH') {
+            for (const addrInfo of record.addrs) {
+                if (addrInfo.addr === addr) {
+                    addrInfo.nonce = newNonce;
+                    setStore('wallet',wallet);
+
+                    return;
+                }
+            }
+        }
+        
+    }
 };

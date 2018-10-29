@@ -9,7 +9,7 @@ import { recharge, resendRecharge } from '../../../net/pullWallet';
 import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -41,7 +41,7 @@ export class Recharge extends Widget {
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             amount:tx ? tx.pay : 0,
-            balance:getCurrentAddrBalanceByCurrencyName(this.props.currencyName),
+            balance:getCurrentAddrInfo(this.props.currencyName).balance,
             minerFee:minerFeeList[curLevel].minerFee,
             minerFeeList,
             curLevel,
@@ -106,12 +106,12 @@ export class Recharge extends Widget {
         const oldTx = this.props.tx;
         const tx:TransRecordLocal = {
             hash:'',
-            txType:TxType.RECHARGE,
+            txType:TxType.Receipt,
             fromAddr,
             toAddr: '',
             pay,
             time: t.getTime(),
-            status:TxStatus.PENDING,
+            status:TxStatus.Pending,
             confirmedBlockNumber: 0,
             needConfirmedBlockNumber:0,
             info: '',

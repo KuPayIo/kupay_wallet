@@ -4,9 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
-import { CreateWalletType } from '../../../store/interface';
 import { getLanguage } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
+import { CreateWalletType } from '../../../logic/localWallet';
 
 export class ImageImport extends Widget {
     public ok: () => void;

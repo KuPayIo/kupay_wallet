@@ -5,7 +5,7 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { Accounts, getCurrentAccount } from './filestore';
+import { getCurrentAccount } from './filestore';
 import { CloudCurrencyType, CloudWallet, Currency2USDT, LockScreen, ShapeShiftTxs, Store } from './interface';
 
 // ============================================ 导出
@@ -108,6 +108,7 @@ const initUser = () => {
     const curAccount = getCurrentAccount();
     if (!curAccount) {
         store.user.salt = cryptoRandomInt().toString();
+        
         return;
     }
     const fileUser = curAccount.user;

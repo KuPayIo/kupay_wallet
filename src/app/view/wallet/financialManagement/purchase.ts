@@ -9,7 +9,7 @@ import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType 
 import { getStore } from '../../../store/memstore';
 import { defaultGasLimit } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { fetchGasPrice, formatBalance, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 import { wei2Eth } from '../../../utils/unitTools';
 import { purchaseProduct } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './productDetail';
@@ -33,7 +33,7 @@ export class ProductDetail extends Widget {
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
         const cloud = getStore('cloud');
         const cloudBalance = cloud.get(CloudCurrencyType.ETH).balance;
-        const localBalance = getCurrentAddrBalanceByCurrencyName('ETH');
+        const localBalance = getCurrentAddrInfo('ETH').balance;
         this.state = {
             spend,
             cloudBalance,

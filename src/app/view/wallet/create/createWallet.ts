@@ -2,17 +2,17 @@
  * create wallet
  */
 import { popNew } from '../../../../pi/ui/root';
+import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { uploadFile, getRandom } from '../../../net/pull';
+import { getRandom, uploadFile } from '../../../net/pull';
 import { register, setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { getFirstEthAddr, getLanguage, popNewMessage, getStaticLanguage } from '../../../utils/tools';
+import { localUrlPre } from '../../../utils/constants';
+import { getFirstEthAddr, getLanguage, getStaticLanguage, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
-import { localUrlPre } from '../../../utils/constants';
-import { resize } from '../../../../pi/widget/resize/resize';
 interface Props {
     itype:CreateWalletType;
     imageBase64?:string;// 图片base64
@@ -83,9 +83,9 @@ export class CreateWallet extends Widget {
             });
         });
 
-
         // selectImage((path) => {
         //     this.state.chooseImage = true;
+        // tslint:disable-next-line:max-line-length
         //     // this.state.avatarHtml = `<div style="background-image: url(${localUrlPre}${path});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
         //     this.state.avatarHtml = `<img src='${localUrlPre}${path}' style='width: 100%;height: 100%;position: absolute;top: 0;'/>`
         //     this.state.avatar = `${localUrlPre}${path}`;
