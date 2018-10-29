@@ -59,8 +59,7 @@ export class PlayHome extends Widget {
             refresh:false,
             avatar:'../../../res/image1/default_avatar.png'
         };
-        
-        this.initDate();
+        this.initData();
     }
     /**
      * 判断当前用户是否已经创建钱包
@@ -179,7 +178,7 @@ export class PlayHome extends Widget {
     /**
      * 获取更新数据
      */
-    private initDate() {
+    private initData() {
         const wallet = getStore('wallet');
         if (!wallet) {
             this.paint();
@@ -194,28 +193,28 @@ export class PlayHome extends Widget {
             this.state.ktBalance = formatBalance(cloudBalances.get(CloudCurrencyType.KT));
             this.state.ethBalance = formatBalance(cloudBalances.get(CloudCurrencyType.ETH));
         }
-
-        const mining = getStore('activity/mining');
-        if (mining) {
-            if (mining.thisNum > 0) {
+        
+        
+        const miningTotal = getStore('activity/mining/total');
+        if (miningTotal) {
+            if (miningTotal.thisNum > 0) {
                 this.state.isAbleBtn = true;
             }
-            this.state.mines = formatBalance(mining.thisNum);
-            this.state.mineLast = formatBalance(mining.totalNum - mining.holdNum);
+            this.state.mines = formatBalance(miningTotal.thisNum);
+            this.state.mineLast = formatBalance(miningTotal.totalNum - miningTotal.holdNum);
 
         } else {
             this.state.isAbleBtn = false;
         }
 
-        if (mining && mining.mineRank) {
-            this.state.rankNum = mining.mineRank.myRank;
+        if (miningTotal && miningTotal.mineRank) {
+            this.state.rankNum = miningTotal.mineRank.myRank;
         }
 
         const userInfo = getUserInfo();
         if (userInfo) {
             this.state.avatar = userInfo.avatar ? userInfo.avatar :'../../../res/image1/default_avatar.png';
         }
-        
         this.paint();
     }
 
@@ -235,23 +234,23 @@ export class PlayHome extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-register('cloudBalance', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });
 
-register('miningTotal', () => {
+register('activity/mining/total', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });
-register('miningRank', () => {
+register('activity/mining/miningRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });
 register('wallet', () => {

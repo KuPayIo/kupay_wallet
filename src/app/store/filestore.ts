@@ -122,6 +122,7 @@ const accountChange = () => {
     const storeCloudWallets: Map<CloudCurrencyType, LocalCloudWallet> = getStore('cloud/cloudWallets');
     const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>();
 
+
     for (const [k, v] of storeCloudWallets) {
         const cloudWallet: LocalCloudWallet = { balance: v.balance };
         localCloudWallets.set(k, cloudWallet);
@@ -135,5 +136,5 @@ const accountChange = () => {
 
     localAccounts.currenctId = storeUser.id;
     localAccounts.accounts[storeUser.id] = newAccount;
-
     setLocalStorage('accounts', localAccounts);
+};

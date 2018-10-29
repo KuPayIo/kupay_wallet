@@ -648,7 +648,7 @@ export const timestampFormat = (timestamp: number) => {
 
 // 获取当前钱包第一个ETH地址
 export const getFirstEthAddr = () => {
-    const wallet = getStore('curWallet');
+    const wallet = getStore('wallet');
     if (!wallet) return;
     const currencyRecords = wallet.currencyRecords;
     for (let i = 0; i < currencyRecords.length; i++) {

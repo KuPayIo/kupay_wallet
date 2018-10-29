@@ -41,6 +41,7 @@ export class Home extends Widget {
     }
 
     /**
+     * 
      * 获取更新数据
      */
     public initData() {
@@ -56,7 +57,7 @@ export class Home extends Widget {
             this.state.tabs[1].myRank = data2.myRank;
         }
 
-        const mining = getStore('miningTotal');
+        const mining = getStore('activity/mining/total');
         if (mining) {
             this.state.tabs[1].totalNum = mining.totalNum;
             this.state.tabs[0].totalNum = mining.holdNum;
@@ -109,7 +110,7 @@ register('activity/mining/mineRank', () => {
         w.initData();
     }
 });
-register('miningTotal', () => {
+register('activity/mining/total', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

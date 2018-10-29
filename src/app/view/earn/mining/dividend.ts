@@ -31,6 +31,7 @@ export class Dividend extends Widget {
             totalDays:0,
             thisDivid:0,
             yearIncome: 0,
+            scrollHeight:0,  //页面滚动高度
             doMining:false,  // 点击领分红，数字动画效果执行
             firstClick:true,
             isAbleBtn:false,  // 点击领分红，按钮动画效果执行
@@ -69,7 +70,7 @@ export class Dividend extends Widget {
      * 获取更新数据
      */
     public initData() {
-        const data = getStore('dividTotal');
+        const data = getStore('activity/dividend/total');
         if (data) {
             this.state.totalDivid = data.totalDivid;
             this.state.totalDays = data.totalDays;
@@ -77,7 +78,7 @@ export class Dividend extends Widget {
             this.state.yearIncome = Number(data.yearIncome) === 0 ? this.state.cfgData.noneYearIncome :data.yearIncome;
         }
 
-        const history = getStore('dividHistory');  
+        const history = getStore('activity/dividend/history');  
         if (history) {
             const hList = history.list;
             if (hList && hList.length > this.state.data.length) {
@@ -99,7 +100,7 @@ export class Dividend extends Widget {
      *  本地实际加载数据
      */
     public async loadMore() {
-        const data = getStore('dividHistory');  
+        const data = getStore('activity/dividend/history');  
         if (!data) return;
         const hList = data.list;
         const start = this.state.data.length;
@@ -112,10 +113,11 @@ export class Dividend extends Widget {
     /**
      * 滚动加载更多列表数据
      */
-    public getMoreList() {
+    public getMoreList(e:any) {
         const h1 = document.getElementById('historylist').offsetHeight; 
         const h2 = document.getElementById('history').offsetHeight; 
-        const scrollTop = document.getElementById('historylist').scrollTop; 
+        const scrollTop = e.target.scrollTop;
+        this.state.scrollHeight = scrollTop; 
         if (this.state.hasMore && this.state.refresh && (h2 - h1 - scrollTop) < 20) {
             this.state.refresh = false;
             console.log('加载中，请稍后~~~');
@@ -190,13 +192,13 @@ export class Dividend extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-register('dividTotal', () => {
+register('activity/dividend/total', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-register('dividHistory', () => {
+register('activity/dividend/history', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();

@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCodeDetail, queryDetailLog, querySendRedEnvelopeRecord } from '../../../net/pull';
-import { find, register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
 import { getLanguage } from '../../../utils/tools';
 
@@ -68,7 +68,7 @@ export class RedEnvHistory extends Widget {
             });
         }
 
-        const sHisRec = find('sHisRec');
+        const sHisRec = getStore('sHisRec');
         if (sHisRec) {
             const hList = sHisRec.list;
             if (hList && hList.length > this.state.recordList.length) {
@@ -94,7 +94,7 @@ export class RedEnvHistory extends Widget {
 
     // 实际加载数据
     public async loadMore() {
-        const sHisRec = find('sHisRec');
+        const sHisRec = getStore('sHisRec');
         if (!sHisRec) return;
         const hList = sHisRec.list;
         const start = this.state.recordList.length;
@@ -113,7 +113,7 @@ export class RedEnvHistory extends Widget {
     public async initRedEn() {
         for (const i in this.state.recordList) {
             this.state.recordList[i].outDate = Number(this.state.recordList[i].time) + (60 * 60 * 24 * 1000) < new Date().getTime();
-            const data = await queryDetailLog(find('conUid'),this.state.recordList[i].rid);
+            const data = await queryDetailLog(getStore('conUid'),this.state.recordList[i].rid);
             if (data) {
                 this.state.recordList[i].curNum = data[2];
                 this.state.recordList[i].totalNum = data[3];

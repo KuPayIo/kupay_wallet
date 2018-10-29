@@ -5,7 +5,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMiningHistory } from '../../../net/pull';
-import { find, register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
 import { getLanguage } from '../../../utils/tools';
 
@@ -40,7 +40,7 @@ export class Dividend extends Widget {
      * 获取更新数据
      */
     public async initData() {
-        const data = find('miningHistory');  
+        const data = getStore('activity/mining/history');  
         if (data) {
             const hList = data.list;
             if (hList && hList.length > this.state.data.length) {
@@ -67,7 +67,7 @@ export class Dividend extends Widget {
      *  实际加载数据
      */
     public async loadMore() {
-        const data = find('miningHistory');  
+        const data = getStore('activity/mining/history');  
         if (!data) return;
         const hList = data.list;
         const start = this.state.data.length;
@@ -101,7 +101,7 @@ export class Dividend extends Widget {
     }
 }
 
-register('miningHistory', () => {
+register('activity/mining/history', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();

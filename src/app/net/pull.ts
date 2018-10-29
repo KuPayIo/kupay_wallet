@@ -7,7 +7,7 @@ import { MainChainCoin } from '../config';
 import { CloudCurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel, CloudCurrencyType } from '../store/interface';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
-import { find, getBorn, updateStore, getStore, setStore } from '../store/memstore';
+import { getBorn, getStore, setStore } from '../store/memstore';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
@@ -266,7 +266,7 @@ export const getDividend = async () => {
             thisDivid: wei2Eth(data.value[2]),
             yearIncome: yearIncome
         };
-        updateStore('dividTotal', dividend);
+        setStore('dividTotal', dividend);
     });
 };
 
@@ -303,7 +303,7 @@ export const getMining = async () => {
             holdNum: holdNum
         };
         console.log('-------------------',mining);
-        updateStore('miningTotal', mining);
+        setStore('activity/mining/total', mining);
     });
 };
 
@@ -320,7 +320,7 @@ export const getMiningHistory = async (start = '') => {
     };
     requestAsync(msg).then(data => {
         const miningHistory = parseMiningHistory(data);
-        updateStore('miningHistory', miningHistory);
+        setStore('activity/mining/history', miningHistory);
     });
 };
 
@@ -449,7 +449,7 @@ export const querySendRedEnvelopeRecord = (start?: string) => {
     try {
         requestAsync(msg).then(async detail => {
             const data = parseSendRedEnvLog(detail.value,start);
-            updateStore('sHisRec',data);
+            setStore('sHisRec',data);
         });
 
     } catch (err) {
@@ -484,7 +484,7 @@ export const queryConvertLog = async (start?:string) => {
     try {
         requestAsync(msg).then(detail => {
             const data = parseConvertLog(detail,start);
-            updateStore('cHisRec',data);
+            setStore('cHisRec',data);
         });
 
     } catch (err) {
@@ -543,7 +543,7 @@ export const getMineDetail = async (start = '') => {
     };
     requestAsync(msg).then(detail => {
         const list = parseMineDetail(detail);
-        updateStore('addMine', list);
+        setStore('addMine', list);
     });
 };
 
@@ -560,7 +560,7 @@ export const getDividHistory = async (start = '') => {
     };
     requestAsync(msg).then(data => {
         const dividHistory = parseDividHistory(data);
-        updateStore('dividHistory', dividHistory);
+        setStore('dividHistory', dividHistory);
     });
 };
 
@@ -610,7 +610,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
                 ...serverUserInfo
             }
             console.log(userInfo);
-            updateStore('userInfo',userInfo);
+            setStore('userInfo',userInfo);
         }
         
     } catch (err) {
@@ -694,7 +694,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
             accountDetail.start = nextStart;
             accountDetail.canLoadMore = canLoadMore;
             accountDetailMap.set(CloudCurrencyType[coin],accountDetail);
-            updateStore('accountDetail',accountDetailMap);
+            setStore('accountDetail',accountDetailMap);
         } else {
             const totalLogMap = getBorn('totalLogs');
             const totalLogs = totalLogMap.get(CloudCurrencyType[coin]) || { list:[] };
@@ -707,7 +707,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
             totalLogs.start = nextStart;
             totalLogs.canLoadMore = canLoadMore;
             totalLogMap.set(CloudCurrencyType[coin],totalLogs);
-            updateStore('totalLogs',totalLogMap);
+            setStore('totalLogs',totalLogMap);
         }
 
     } catch (err) {
@@ -725,7 +725,7 @@ export const getMineRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
     requestAsync(msg).then(data => {
         const mineData = parseMineRank(data);
-        updateStore('mineRank', mineData);
+        setStore('mineRank', mineData);
     });
 };
 
@@ -736,7 +736,7 @@ export const getMiningRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
     requestAsync(msg).then(data => {
         const miningData = parseMiningRank(data);
-        updateStore('miningRank', miningData);
+        setStore('activity/mining/miningRank', miningData);
     });
 };
 
@@ -785,7 +785,7 @@ export const getProxy = async () => {
  * 矿山增加项目跳转详情
  */
 export const getMineItemJump = async(itemJump) => {
-    updateStore('mineItemJump',itemJump);
+    setStore('mineItemJump',itemJump);
 };
 
 // ===============================充值提现
@@ -982,7 +982,7 @@ export const getRechargeLogs = async (coin: string,start?) => {
         rechargeLogs.start = nextStart;
         rechargeLogs.canLoadMore = canLoadMore;
         rechargeLogsMap.set(CloudCurrencyType[coin],rechargeLogs);
-        updateStore('rechargeLogs',rechargeLogsMap);
+        setStore('rechargeLogs',rechargeLogsMap);
 
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -1038,7 +1038,7 @@ export const getWithdrawLogs = async (coin: string,start?) => {
         withdrawLogs.start = nextStart;
         withdrawLogs.canLoadMore = canLoadMore;
         withdrawLogsMap.set(CloudCurrencyType[coin],withdrawLogs);
-        updateStore('withdrawLogs',withdrawLogsMap);
+        setStore('withdrawLogs',withdrawLogsMap);
 
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -1060,7 +1060,7 @@ export const getProductList = async () => {
     try {
         const res = await requestAsync(msg);
         const result = parseProductList(res);
-        updateStore('productList',result);
+        setStore('productList',result);
 
         return result;
     } catch (err) {
@@ -1118,7 +1118,7 @@ export const getPurchaseRecord = async (start = '') => {
         const res = await requestAsync(msg);
         console.log('getPurchaseRecord',res);
         const record = parsePurchaseRecord(res);
-        updateStore('purchaseRecord',record);
+        setStore('purchaseRecord',record);
 
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -1242,7 +1242,7 @@ export const uploadFile = async (base64) => {
                 const sid = res.sid;
                 const userInfo = find('userInfo') || {};
                 userInfo.avatar = sid;
-                updateStore('userInfo',userInfo);
+                setStore('userInfo',userInfo);
             }
         });
 };
