@@ -194,7 +194,7 @@ export class WriteRedEnv extends Widget {
             itype:'password' }, 
             async (r) => {
                 const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
-                const wallet = getStore('curWallet');
+                const wallet = getStore('wallet');
                 const fg = await VerifyIdentidy(wallet,r);
                 close.callback(close.widget);
                 if (fg) {
