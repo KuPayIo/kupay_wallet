@@ -499,8 +499,11 @@ export const copyToClipboard = (copyText) => {
     input.setAttribute('value', copyText);
     input.setAttribute('style', 'position:absolute;top:-9999px;');
     document.body.appendChild(input);
-    input.setSelectionRange(0, 9999);
-    input.select();
+    if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        input.setSelectionRange(0, 9999);
+    } else {
+        input.select();
+    }
     if (document.execCommand('copy')) {
         document.execCommand('copy');
     }
@@ -648,12 +651,12 @@ export const timestampFormat = (timestamp: number) => {
 
 // 获取当前钱包第一个ETH地址
 export const getFirstEthAddr = () => {
-    const wallet = find('curWallet');
+    const wallet = getStore('wallet');
     if (!wallet) return;
     const currencyRecords = wallet.currencyRecords;
     for (let i = 0; i < currencyRecords.length; i++) {
         if (currencyRecords[i].currencyName === 'ETH') {
-            return currencyRecords[i].addrs[0];
+            return currencyRecords[i].addrs[0].addr;
         }
     }
 };

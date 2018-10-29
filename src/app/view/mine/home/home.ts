@@ -60,7 +60,7 @@ export class Home extends Widget {
         const wallet = getStore('wallet');
         if (wallet) {
             this.state.hasWallet = true;
-            // this.state.address = getFirstEthAddr();
+            this.state.address = getFirstEthAddr();
             this.state.hasBackupMnemonic = wallet.isBackup;            
         } else {
             this.state.hasWallet = false;
@@ -164,7 +164,7 @@ register('wallet', () => {
         w.initData();
     }
 });
-register('User/info', () => {
+register('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
