@@ -222,13 +222,13 @@ export class PlayHome extends Widget {
     /**
      * 初始化事件
      */
-    private initEvent() {
+    private async initEvent() {
         // 这里发起通信
         if (this.props.isActive && this.state.hasWallet) {
-            getServerCloudBalance();
-            getMining();
-            getMiningRank(100);
-            this.paint();
+            await getServerCloudBalance();
+            await getMining();
+            await getMiningRank(100);
+            this.init();
         }
     }
 
@@ -258,8 +258,9 @@ register('activity/mining/miningRank', () => {
 register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init(); // 注销钱包后初始化
         w.initEvent();
+        // w.init(); // 注销钱包后初始化
+        
     }
 });
 register('setting/language', () => {
