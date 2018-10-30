@@ -92,7 +92,7 @@ register('flags/level_2_page_loaded',(loaded:boolean) => {
 });
 
 // 用户信息变化
-register('userInfo',(userInfo:UserInfo) => {
+register('user/info',(userInfo:UserInfo) => {
     const isLogin = getStore('user/isLogin');
     if (isLogin && userInfo) {
         setUserInfo();
@@ -111,7 +111,8 @@ register('user/isLogin',(isLogin:boolean) => {
         getUserInfoFromServer(getStore('user/conUid'));
         
         const userInfo = getStore('user/info');
-        if (userInfo) {
+        const flags = getStore('flags');
+        if (flags.created && userInfo) {
             setUserInfo();
         }
         if (!getStore('user/token')) {

@@ -9,7 +9,7 @@ import { EthWallet } from '../core/eth/wallet';
 import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
 import { estimateGasERC20,getShapeShiftCoins,getTransactionsByAddr } from '../net/pullWallet';
 import { BigNumber } from '../res/js/bignumber';
-import { CurrencyRecord,TxHistory,TxStatus,TxType } from '../store/interface';
+import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
 import { getStore,register,setStore } from '../store/memstore';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
 import { formatBalance,formatBalanceValue,getAddrsAll,getConfirmBlockNumber,parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
@@ -235,7 +235,7 @@ export class DataCenter {
 
     private timerCheckAddr(needCheckAddr: CurrencyRecord[]) {
         clearTimeout(this.checkAddrTimer);
-        if (!find('curWallet')) return;
+        if (!getStore('wallet')) return;
         const record: CurrencyRecord = needCheckAddr.shift();
         if (!record) {
             return;
@@ -702,12 +702,12 @@ export class DataCenter {
      * 检查eth地址
      */
     private async checkEthAddr(currencyRecord: CurrencyRecord) {
-        const wallet = find('curWallet');
+        const wallet = getStore('wallet');
         if (!wallet) return [];
-        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(wallet.walletId));
+        const mnemonic = getMnemonicByHash(getStore('user/secretHash'));
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanUsedAddress();
-        const addrs: Addr[] = [];
+        const addrs: AddrInfo[] = [];
 
         for (let i = 1; i < cnt; i++) {
             const address = ethWallet.selectAddress(i);

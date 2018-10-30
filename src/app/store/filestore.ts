@@ -161,6 +161,9 @@ const registerAccountChange = () => {
     register('user/token', () => {
         accountChange();
     });
+    register('user/info', () => {
+        accountChange();
+    });
     register('wallet', () => {
         accountChange();
     });

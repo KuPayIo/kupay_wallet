@@ -9,6 +9,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { EthWallet } from '../../../core/eth/wallet';
+import { AddrInfo } from '../../../store/interface';
 import { getStore } from '../../../store/memstore';
 import { btcNetwork, lang } from '../../../utils/constants';
 import { getAddrInfoByAddr, getLanguage } from '../../../utils/tools';
@@ -96,45 +97,45 @@ export class ExportPrivateKey extends Widget {
     }
 
     // 导出以太坊私钥
-    public exportPrivateKeyETH(addrs: string[]) {
+    public exportPrivateKeyETH(addrs: AddrInfo[]) {
         const keys = [];
         const firstWlt = EthWallet.fromMnemonic(this.props.mnemonic, lang);
         for (let j = 0; j < addrs.length; j++) {
             const wlt = firstWlt.selectAddressWlt(j);
             const privateKey = wlt.exportPrivateKey();
             const addr = addrs[j];
-            const balance = getAddrInfoByAddr(addr,'ETH').balance;
-            keys.push({ addr,balance,privateKey });
+            const balance = getAddrInfoByAddr(addr.addr,'ETH').balance;
+            keys.push({ addr:addr.addr,balance,privateKey });
         }
 
         return keys;
     }
 
     // 导出BTC私钥
-    public exportPrivateKeyBTC(addrs: string[]) {
+    public exportPrivateKeyBTC(addrs: AddrInfo[]) {
         const keys = [];
         const wlt = BTCWallet.fromMnemonic(this.props.mnemonic, btcNetwork, lang);
         wlt.unlock();
         for (let j = 0; j < addrs.length; j++) {
             const privateKey = wlt.privateKeyOf(j);
             const addr = addrs[j];
-            const balance = getAddrInfoByAddr(addr,'BTC').balance;
-            keys.push({ addr,balance,privateKey });
+            const balance = getAddrInfoByAddr(addr.addr,'BTC').balance;
+            keys.push({ addr:addr.addr,balance,privateKey });
         }
         wlt.lock();
 
         return keys;
     }
 
-    public exportPrivateKeyERC20Token(addrs: string[],currencyName:string) {
+    public exportPrivateKeyERC20Token(addrs: AddrInfo[],currencyName:string) {
         const keys = [];
         const firstWlt = EthWallet.fromMnemonic(this.props.mnemonic, lang);
         for (let j = 0; j < addrs.length; j++) {
             const wlt = firstWlt.selectAddressWlt(j);
             const privateKey = wlt.exportPrivateKey();
             const addr = addrs[j];
-            const balance = getAddrInfoByAddr(addr,currencyName).balance;
-            keys.push({ addr,balance,privateKey });
+            const balance = getAddrInfoByAddr(addr.addr,currencyName).balance;
+            keys.push({ addr:addr.addr,balance,privateKey });
         }
 
         return keys;

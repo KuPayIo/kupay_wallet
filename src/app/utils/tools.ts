@@ -137,9 +137,16 @@ export const getAddrsInfoByCurrencyName = (currencyName: string) => {
  * 通过地址获取地址余额
  */
 export const getAddrInfoByAddr = (addr: string, currencyName: string) => {
-    const addrs = getStore('addrs') || [];
-
-    return addrs.filter(v => v.addr === addr && v.currencyName === currencyName)[0];
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === currencyName) {
+            for (const addrInfo of record.addrs) {
+                if (addrInfo.addr === addr) {
+                    return addrInfo;
+                }
+            }
+        }
+    }
 };
 
 // 随机生成RGB颜色
@@ -1061,9 +1068,10 @@ export const base64ToFile = (base64:string) => {
  */
 export const getUserInfo = () => {
     const userInfo = getStore('user/info');
-    const nickName = userInfo && userInfo.nickName;
-    const phoneNumber = userInfo && userInfo.phoneNumber;
-    let avatar = userInfo && userInfo.avatar;
+    const nickName = userInfo.nickName;
+    const phoneNumber = userInfo.phoneNumber;
+    const isRealUser = userInfo.isRealUser;
+    let avatar = userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
     }
@@ -1071,7 +1079,8 @@ export const getUserInfo = () => {
     return {
         nickName,
         avatar,
-        phoneNumber
+        phoneNumber,
+        isRealUser
     };
 };
 
