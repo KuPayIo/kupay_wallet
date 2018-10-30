@@ -26,6 +26,7 @@ export class WalletHome extends Widget {
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
+        this.paint();
     }
 
     public updateBalance() {
@@ -93,11 +94,23 @@ register('third/rate',() => {
         w.updateBalance();
     }
 });
-
-register('setting', () => {
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
+    }
+});
+register('setting/changeColor', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});
+
+// 货币单位变化
+register('setting/currencyUnit',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.currencyUnitChange();
     }
 });
