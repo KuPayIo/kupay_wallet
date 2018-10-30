@@ -24,15 +24,9 @@ export class Home extends Widget {
 
     public init() {
         const cfg = getLanguage(this);
-        const wallet = getStore('wallet');
-        let hasBackupMnemonic = false;
-        let hasWallet = false;
-        let address = '';
-        if (wallet) {
-            hasWallet = true;
-            address = getFirstEthAddr();
-            hasBackupMnemonic = JSON.parse(wallet.gwlt).mnemonicBackup;
-        }
+        const hasBackupMnemonic = false;
+        const hasWallet = false;
+        const address = '';
         this.state = {
             list:[
                 { img:'../../../res/image1/28.png',name: cfg.itemTitle[0],components:'' },
@@ -67,7 +61,7 @@ export class Home extends Widget {
         if (wallet) {
             this.state.hasWallet = true;
             this.state.address = getFirstEthAddr();
-            this.state.hasBackupMnemonic = JSON.parse(wallet.gwlt).mnemonicBackup;            
+            this.state.hasBackupMnemonic = wallet.isBackup;            
         } else {
             this.state.hasWallet = false;
             this.state.address = '';
@@ -170,13 +164,13 @@ register('wallet', () => {
         w.initData();
     }
 });
-register('userInfo', () => {
+register('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
+        w.initData();
     }
 });
-register('languageSet', () => {
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

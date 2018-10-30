@@ -5,7 +5,6 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-// import { CurrencyUnit } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { getLanguage, logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
@@ -28,9 +27,9 @@ export class Setting extends Widget {
 
     public init() {
         const cfg = getLanguage(this);
-        const lan = getStore('setting/language');
-        const color = getStore('setting/changeColor');
-        const currencyUnit = getStore('setting/currencyUnit');
+        const lan = getStore('setting/language', 'zh_Hans');
+        const unit = getStore('setting/currencyUnit','CNY');        
+        const color = getStore('setting/changeColor', 'redUp');
         this.state = {
             lockScreenPsw: '',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
@@ -38,9 +37,9 @@ export class Setting extends Widget {
             numberOfErrors: 0,  // 锁屏密码输入错误次数
             errorTips: cfg.errorTips,
             itemList: [
-                { title: cfg.itemTitle[0], list: cfg.languageSet, selected: lan ? lan.selected : 0 },
-                { title: cfg.itemTitle[1], list: cfg.currencyUnit, selected: currencyUnit },
-                { title: cfg.itemTitle[2], list: cfg.changeColor, selected: color ? color.selected : 0 }
+                { title: cfg.itemTitle[0], list: cfg.languageSet, selected: lan, flag:0 },
+                { title: cfg.itemTitle[1], list: cfg.currencyUnit, selected: unit, flag:1 },
+                { title: cfg.itemTitle[2], list: cfg.changeColor, selected: color, flag:2 }
             ],
             wallet: null,
             cfgData: cfg
@@ -74,9 +73,10 @@ export class Setting extends Widget {
         if (this.state.wallet) {
             return true;
         }
-        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox1,() => {
+        popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
             popNew('app-view-wallet-create-home');
         });
+
         return false;
     }
     /**
@@ -88,10 +88,8 @@ export class Setting extends Widget {
             ls.open = !ls.open;
             this.state.openLockScreen = false;
             setStore('setting/lockScreen', ls);
-            this.paint(true);
-        } else {
-            if (this.state.wallet) {
-                popNew('app-components1-lockScreenPage-lockScreenPage', { firstFg: true }, (r) => {
+        } else if (this.state.wallet) {
+            popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
                     if (!r) {
                         this.closeLockPsw();
                         this.state.openLockScreen = false;
@@ -101,13 +99,13 @@ export class Setting extends Widget {
                 });
             } else {
                 // tslint:disable-next-line:max-line-length
-                popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
+            popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
                     popNew('app-view-wallet-create-home');
-                }, () => {
+            }, () => {
                     this.closeLockPsw();
                 });
             }
-        }
+
         this.paint(true);
     }
 
@@ -128,33 +126,8 @@ export class Setting extends Widget {
             return;
         }
         const data = this.state.itemList[ind];
-        console.log(data);
-        popNew('app-view-mine-setting-itemList', data, (index) => {
-            this.state.itemList[ind].selected = index;
-            if (ind === 0) {
-                // tslint:disable-next-line:max-line-length
-                setStore('setting/language', { // 更新语言设置
-                    selected: index === 2 ? 0 : index,
-                    languageList: ['simpleChinese', 'tranditionalChinese', 'English']
-                });
-            } else if (ind === 1) {
-                let currencyUnit;
-                if (index === 0) {
-                    currencyUnit = CurrencyUnit.CNY;
-                } else {
-                    currencyUnit = CurrencyUnit.USD;
+        popNew('app-view-mine-setting-itemList', data);
                 }
-                setStore('setting/currencyUnit', currencyUnit); // 更新货币单位
-            } else if (ind === 2) {
-                // tslint:disable-next-line:max-line-length
-                setStore('setting/changeColor', { // 更新涨跌颜色设置
-                    selected: index,
-                    colorList: ['redUp', 'greenUp']
-                });
-            }
-            this.paint();
-        });
-    }
 
     /**
      * 备份
@@ -214,13 +187,25 @@ register('setting/language', () => {
         w.init();
     }
 });
-register('wallet', () => {
+register('setting/currencyUnit', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});
+register('setting/changeColor', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});
+register('setting/lockScreen', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-register('setting/lockScreen', () => {
+register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

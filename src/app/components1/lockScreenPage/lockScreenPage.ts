@@ -7,7 +7,7 @@ import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { LockScreen } from '../../store/interface';
-import { find, register, updateStore } from '../../store/memstore';
+import { getStore, register, setStore  } from '../../store/memstore';
 import { getLanguage, lockScreenHash, lockScreenVerify } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -36,11 +36,11 @@ export class LockScreenPage extends Widget {
             openLockScreen: false, // 是否打开锁屏开关 
             loading:false
         };
-        if (this.props.firstFg) {   // true表示设置锁屏密码，首次打开此界面
+        if (this.props.setting) {   // true表示设置锁屏密码
             this.setLockPsw();
-        } else if (this.props.open) {
+        } else if (this.props.open) {  // true表示打开app解锁屏幕
             this.unLockScreen(0);
-        } else {
+        } else {  // 修改锁屏密码前，输入原锁屏密码
             this.oldLockPsw(0);
         }
     }
@@ -75,10 +75,10 @@ export class LockScreenPage extends Widget {
                 this.reSetLockPsw();
             } else {
                 const hash256 = lockScreenHash(r);
-                const ls:LockScreen = find('lockScreen'); 
+                const ls:LockScreen = getStore('setting/lockScreen'); 
                 ls.psw = hash256;
                 ls.open = true;
-                updateStore('lockScreen',ls);
+                setStore('setting/lockScreen',ls);
                 popNew('app-components1-message-message',{ content:this.state.cfgData.tips[1] });
             }
             this.close(true);
@@ -95,7 +95,7 @@ export class LockScreenPage extends Widget {
             const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
             // tslint:disable-next-line:max-line-length
             popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput1,async (r) => {
-                const wallet = find('curWallet');
+                const wallet = getStore('wallet');
                 const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
                 const fg = await VerifyIdentidy(wallet,r);
                 close.callback(close.widget);
@@ -123,8 +123,8 @@ export class LockScreenPage extends Widget {
      * 进入APP解锁屏幕
      */
     public unLockScreen(ind:number) {
-        if (ind > 2) {
-            this.judgeLoading();
+        const ls:LockScreen = getStore('setting/lockScreen');
+        if (ls.locked || ind > 2) {
             this.verifyPsw();
         } else {
             const title = this.state.errorTips[ind === 0 ? 3 :ind];
@@ -146,7 +146,7 @@ export class LockScreenPage extends Widget {
         popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput2,async (r) => {
             const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
             if (this.state.loading) {
-                const wallet = find('curWallet');
+                const wallet = getStore('wallet');
                 const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
                 const fg = await VerifyIdentidy(wallet,r);
                 close.callback(close.widget);
@@ -170,17 +170,16 @@ export class LockScreenPage extends Widget {
      * 判断资源加载完成
      */
     public judgeLoading() {
-        const loaded = find('level_2_page_loaded');
-        if (loaded || localStorage.loadingSuccess) {
+        const loaded = getStore('flags');
+        if (loaded) {
             this.state.loading = true;
             this.paint();
         }
     }
 }
-register('level_2_page_loaded',(loaded:boolean) => {
+register('flags',(loaded:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.judgeLoading();
-        localStorage.loadingSuccess = true;
     }
 });

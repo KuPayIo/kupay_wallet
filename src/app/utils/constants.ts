@@ -71,28 +71,28 @@ export const withdrawLimit = {
 // 不同矿工费的到账时间
 export const timeOfArrival = {
     ETH:[{
-        level:MinerFeeLevel.STANDARD,
+        level:MinerFeeLevel.Standard,
         text:'标准',
         time:'1-3分钟'
     },{
-        level:MinerFeeLevel.FAST,
+        level:MinerFeeLevel.Fast,
         text:'快',
         time:'30-60秒'
     },{
-        level:MinerFeeLevel.FASTEST,
+        level:MinerFeeLevel.Fastest,
         text:'最快',
         time:'10-30秒'
     }],
     BTC:[{
-        level:MinerFeeLevel.STANDARD,
+        level:MinerFeeLevel.Standard,
         text:'标准',
         time:'2-3小时'
     },{
-        level:MinerFeeLevel.FAST,
+        level:MinerFeeLevel.Fast,
         text:'快',
         time:'0.5-1小时'
     },{
-        level:MinerFeeLevel.FASTEST,
+        level:MinerFeeLevel.Fastest,
         text:'最快',
         time:'0-30分钟'
     }]
@@ -150,20 +150,20 @@ export const currencyConfirmBlockNumber = {
 export const etherscanUrl = 'https://ropsten.etherscan.io/tx/';
 // 打开第三方查询网址btc
 export const blockchainUrl = 'https://testnet.blockchain.info/tx/';
-//火币api access key
+// 火币api access key
 const huobiApiAccessKey = '6fd70042-c5e4c618-d6e619ec-ecfa2';
-//火币API
+// 火币API
 export const huobiApi = `https://api.huobipro.com/market/history/kline?period=1day&size=1&AccessKeyId=${huobiApiAccessKey}&symbol=`;
 
 /**
  * 一些指令
  */
 export enum CMD {
-    FORCELOGOUT = 1, //强制下线保留数据
-    FORCELOGOUTDEL = 2 //强制下线删除数据
+    FORCELOGOUT = 1, // 强制下线保留数据
+    FORCELOGOUTDEL = 2 // 强制下线删除数据
 } 
 
 /**
  * 调用本地文件url前缀
  */
-export const localUrlPre = "file:///";
+export const localUrlPre = 'file:///';

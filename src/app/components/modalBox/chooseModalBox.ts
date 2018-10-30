@@ -18,7 +18,7 @@ export class ChooseModalBox extends Widget {
         super.setProps(props,oldProps);
         this.state = {
             minerFeeList:this.props.minerFeeList,
-            level:this.props.curLevel ? this.props.curLevel : MinerFeeLevel.STANDARD,
+            level:this.props.curLevel ? this.props.curLevel : MinerFeeLevel.Standard,
             cfgData:getLanguage(this)
         };
     }
