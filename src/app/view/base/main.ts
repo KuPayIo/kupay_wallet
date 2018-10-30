@@ -7,22 +7,22 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { backCall, backList, popNew } from "../../../pi/ui/root";
-import { Forelet } from "../../../pi/widget/forelet";
-import { addWidget } from "../../../pi/widget/util";
-import { openConnect } from "../../net/pull";
-import { initPush } from "../../net/push";
+import { backCall, backList, popNew } from '../../../pi/ui/root';
+import { Forelet } from '../../../pi/widget/forelet';
+import { addWidget } from '../../../pi/widget/util';
+import { openConnect } from '../../net/pull';
+import { initPush } from '../../net/push';
+import { registerFileStore } from '../../store/filestore';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import {
-  LockScreen,
-  Store,
   CloudCurrencyType,
   CloudWallet,
+  Currency2USDT,
+  LockScreen,
   ShapeShiftTxs,
-  Currency2USDT
-} from "../../store/interface";
-import { registerFileStore } from "../../store/filestore";
-import { getStore, setStore, initStore } from "../../store/memstore";
+  Store
+} from '../../store/interface';
+import { getCloudBalances, getStore, initStore, setStore } from '../../store/memstore';
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
 // import { create } from "../../../pi/net/rpc";
@@ -32,30 +32,31 @@ import { getStore, setStore, initStore } from "../../store/memstore";
 // let rpc;
 // ============================== 导出
 export const forelet = new Forelet();
-export const WIDGET_NAME = module.id.replace(/\//g, "-");
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void => {
-  addWidget(document.body, "pi-ui-root");
-  // 设置开发环境
-  // eth代币精度初始化
-  // 数据检查
-  checkUpdate();
-  // 初始化数据
-  initStore();
-  registerFileStore();
-  // 主动推送初始化
-  initPush();
-  openConnect();
-  // dataCenter.init();
-  popNew("app-view-base-app");
-  // popNew('app-view-chat-home-home');
-  // getDeviceInfo();
-  // popNewPage();
-  // 后台切前台
-  backToFront();
-  // 解决进入时闪一下问题
-  setTimeout(() => {
-    if (cb) cb();
-  }, 20);
+    addWidget(document.body, 'pi-ui-root');
+    // 设置开发环境
+    // eth代币精度初始化
+    // 数据检查
+    checkUpdate();
+    // 初始化数据
+    initStore();
+    registerFileStore();
+    console.log(getCloudBalances());
+    // 主动推送初始化
+    initPush();
+    openConnect();
+    // dataCenter.init();
+    popNew('app-view-base-app');
+    // popNew('app-view-chat-home-home');
+    // getDeviceInfo();
+    // popNewPage();
+    // 后台切前台
+    backToFront();
+    // 解决进入时闪一下问题
+    setTimeout(() => {
+        if (cb) cb();
+    }, 20);
 };
 
 // const rpcFunc = (req:Struct, respClass:Function, callback:Function, timeout: number) => {
@@ -100,17 +101,17 @@ export const run = (cb): void => {
  * 界面入口
  */
 const popNewPage = () => {
-  const readedPriAgr = getStore("readedPriAgr");
-  if (!readedPriAgr) {
-    if (ifNeedUnlockScreen()) {
-      popNew("app-components1-lockScreenPage-lockScreenPage", {
-        firstFg: false,
-        open: true
-      });
-    }
-  } else {
+    const readedPriAgr = getStore('readedPriAgr');
+    if (!readedPriAgr) {
+        if (ifNeedUnlockScreen()) {
+            popNew('app-components1-lockScreenPage-lockScreenPage', {
+                firstFg: false,
+                open: true
+            });
+        }
+    } else {
     // popNew('app-view-guidePages-privacyAgreement');
-  }
+    }
 };
 const checkUpdate = () => {
   // todo

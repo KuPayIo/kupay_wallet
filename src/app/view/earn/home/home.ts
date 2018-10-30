@@ -191,8 +191,8 @@ export class PlayHome extends Widget {
         const cloudBalances = getCloudBalances();
 
         if (cloudBalances) {
-            this.state.ktBalance = formatBalance(cloudBalances.get(CloudCurrencyType.KT));
-            this.state.ethBalance = formatBalance(cloudBalances.get(CloudCurrencyType.ETH));
+            this.state.ktBalance = formatBalance(cloudBalances.get(CloudCurrencyType.KT).balance);
+            this.state.ethBalance = formatBalance(cloudBalances.get(CloudCurrencyType.ETH).balance);
         }
         
         

@@ -38,6 +38,12 @@ export const getCurrentAccount = () => {
 };
 
 /**
+ * 获取3方数据
+ */
+export const getThird = () => {
+    return getLocalStorage('third');
+};
+/**
  * 注册文件数据库监听
  */
 export const registerFileStore = () => {
@@ -50,7 +56,7 @@ const setLocalStorage = (key: string, data: any) => {
     localStorage.setItem(key, JSON.stringify(data));
 };
 
-const getLocalStorage = (key: string, defaultValue: any) => {
+const getLocalStorage = (key: string, defaultValue = undefined) => {
     return JSON.parse(localStorage.getItem(key)) || defaultValue;
 };
 
@@ -182,9 +188,7 @@ const accountChange = () => {
         info: storeUser.info
     };
 
-    const storeCloudWallets: Map<CloudCurrencyType, LocalCloudWallet> = getStore(
-    'cloud/cloudWallets'
-  );
+    const storeCloudWallets: Map<CloudCurrencyType, LocalCloudWallet> = getStore('cloud/cloudWallets');
     const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>();
 
     for (const [k, v] of storeCloudWallets) {

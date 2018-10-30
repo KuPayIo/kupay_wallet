@@ -5,7 +5,6 @@
 // tslint:disable-next-line:variable-name
 export const dev_mode = 'dev';
 
-export const cloudCurrency = ['KT','CNYT','ETH','BTC']; 
 // 主网erc20
 const ERC20TokensMainnet = {
     BNB:{

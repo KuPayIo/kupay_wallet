@@ -192,6 +192,7 @@ export const getRandom = async (cmd?:number) => {
                 checkCreateAccount();
             });
         }
+        
         return;
     }
     checkCreateAccount();
@@ -229,9 +230,16 @@ export const getServerCloudBalance = () => {
     
     return requestAsync(msg).then(balanceInfo => {
         console.log('balanceInfo', balanceInfo);
-        // setStore('cloudBalance', parseCloudBalance(balanceInfo));
+        const cloudBalances = parseCloudBalance(balanceInfo);
+        const cloudWallets = getStore('cloud/cloudWallets');
+        for (const [key,value] of cloudBalances) {
+            const cloudWallet = cloudWallets.get(key);
+            cloudWallet.balance = value;
+        }
+        
+        setStore('cloud/cloudWallets',cloudWallets);
     }).catch((res) => {
-        // setStore('cloudBalance', parseCloudBalance(null));
+        console.log(res);
     });
 };
 
@@ -677,34 +685,17 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
-        if (filter === 1) {
-            const accountDetailMap = getBorn('accountDetail');
-            const accountDetail = accountDetailMap.get(CloudCurrencyType[coin]) || { list:[] };
-            if (!start) {
-                accountDetail.list = detail;
-            } else {
-                accountDetail.list.push(...detail);
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            if (filter === 1) {
+                cloudWallet.otherLogs.list.push(...detail);
+            
+                cloudWallet.otherLogs.start = nextStart;
+                cloudWallet.otherLogs.canLoadMore = canLoadMore;
+                setStore('cloud/cloudWallets',cloudWallets);
             }
-        
-            accountDetail.start = nextStart;
-            accountDetail.canLoadMore = canLoadMore;
-            accountDetailMap.set(CloudCurrencyType[coin],accountDetail);
-            setStore('accountDetail',accountDetailMap);
-        } else {
-            const totalLogMap = getBorn('totalLogs');
-            const totalLogs = totalLogMap.get(CloudCurrencyType[coin]) || { list:[] };
-            if (!start) {
-                totalLogs.list = detail;
-            } else {
-                totalLogs.list.push(...detail);
-            }
-        
-            totalLogs.start = nextStart;
-            totalLogs.canLoadMore = canLoadMore;
-            totalLogMap.set(CloudCurrencyType[coin],totalLogs);
-            setStore('totalLogs',totalLogMap);
         }
-
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -966,19 +957,15 @@ export const getRechargeLogs = async (coin: string,start?) => {
         const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
-        const rechargeLogsMap = getBorn('rechargeLogs');
-        const rechargeLogs = rechargeLogsMap.get(CloudCurrencyType[coin]) || { list:[] };
-        if (!start) {
-            rechargeLogs.list = detail;
-        } else {
-            rechargeLogs.list.push(...detail);
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            cloudWallet.rechargeLogs.list.push(...detail);
+            cloudWallet.rechargeLogs.start = nextStart;
+            cloudWallet.rechargeLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
         }
         
-        rechargeLogs.start = nextStart;
-        rechargeLogs.canLoadMore = canLoadMore;
-        rechargeLogsMap.set(CloudCurrencyType[coin],rechargeLogs);
-        setStore('rechargeLogs',rechargeLogsMap);
-
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -1022,19 +1009,15 @@ export const getWithdrawLogs = async (coin: string,start?) => {
         const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
-        const withdrawLogsMap = getBorn('withdrawLogs');
-        const withdrawLogs = withdrawLogsMap.get(CloudCurrencyType[coin]) || { list:[] };
-        if (!start) {
-            withdrawLogs.list = detail;
-        } else {
-            withdrawLogs.list.push(...detail);
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            cloudWallet.withdrawLogs.list.push(...detail);
+            cloudWallet.withdrawLogs.start = nextStart;
+            cloudWallet.withdrawLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
         }
         
-        withdrawLogs.start = nextStart;
-        withdrawLogs.canLoadMore = canLoadMore;
-        withdrawLogsMap.set(CloudCurrencyType[coin],withdrawLogs);
-        setStore('withdrawLogs',withdrawLogsMap);
-
     } catch (err) {
         showError(err && (err.result || err.type));
 
