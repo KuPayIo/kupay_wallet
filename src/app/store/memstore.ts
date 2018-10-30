@@ -73,11 +73,10 @@ export const unregister = (keyName: string, cb: Function): void => {
  */
 export const getCloudBalances = () => {
     const cloudWallets = store.cloud.cloudWallets;
-    const cloudBalances = new Map<CloudCurrencyType,number>();
-    for (const [key,val] of cloudWallets) {
-        cloudBalances.set(key,val.balance || 0);
+    const cloudBalances = new Map<CloudCurrencyType, number>();
+    for (const [key, val] of cloudWallets) {
+        cloudBalances.set(key, val.balance || 0);
     }
-    
     return cloudBalances;
 };
 /**
@@ -107,18 +106,18 @@ const handlerMap: HandlerMap = new HandlerMap();
 const initAccount = () => {
     const curAccount = getCurrentAccount();
     if (curAccount) {
-        const fileUser = curAccount.user;
-        store.user.id = fileUser.id;
-        store.user.token = fileUser.token;
-        store.user.publicKey = fileUser.publicKey;
-        store.user.salt = fileUser.salt;
-        store.user.info = {
-            ...fileUser.info
-        };
+    const fileUser = curAccount.user;
+    store.user.id = fileUser.id;
+    store.user.token = fileUser.token;
+    store.user.publicKey = fileUser.publicKey;
+    store.user.salt = fileUser.salt;
+    store.user.info = {
+        ...fileUser.info
+    };
     
-        store.wallet = {
-            ...curAccount.wallet
-        };
+    store.wallet = {
+        ...curAccount.wallet
+    };
     } else {
         store.user.salt = cryptoRandomInt().toString();
     }
@@ -184,12 +183,12 @@ const store: Store = {
             sends: null,          // 发送红包记录
             exchange: null,       // 兑换红包记录
             invite: null          // 邀请红包记录
-        },                 
+        },
         mining: {
             total: null,      // 挖矿汇总信息
             history: null, // 挖矿历史记录
             addMine: [],  // 矿山增加项目
-            mineRank: null,      // 矿山排名
+            mineRank: null,    // 矿山排名
             miningRank: null,  // 挖矿排名
             itemJump: null
         },                       // 挖矿
@@ -198,15 +197,15 @@ const store: Store = {
             history: null       // 分红历史记录
         },
         financialManagement: {          // 理财
-            products:null,
-            purchaseHistories:null
+            products: null,
+            purchaseHistories: null
         }
     },
     setting: {
         lockScreen: {         // 锁屏
-            psw:'',
-            open:false,
-            locked:false
+            psw: '',
+            open: false,
+            locked: false
         },
         language: '',             // 语言
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张

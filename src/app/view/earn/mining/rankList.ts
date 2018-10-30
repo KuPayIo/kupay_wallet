@@ -45,13 +45,13 @@ export class Home extends Widget {
      * 获取更新数据
      */
     public initData() {
-        const data1 = getStore('activity/mining/miningRank');
+        const data1 = getStore('activity/mining/miningRank');  //挖矿排名
         if (data1) {
             this.state.tabs[0].data = data1.rank;
             this.state.tabs[0].myRank = data1.myRank;
         }
         
-        const data2 = getStore('activity/mining/mineRank');
+        const data2 = getStore('activity/mining/mineRank');   //矿山排名
         if (data2) {
             this.state.tabs[1].data = data2.rank;
             this.state.tabs[1].myRank = data2.myRank;
