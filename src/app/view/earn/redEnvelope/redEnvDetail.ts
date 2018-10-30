@@ -6,8 +6,8 @@ import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCode, getUserList, queryDetailLog, sharePerUrl } from '../../../net/pull';
-import { RedEnvelopeType } from '../../../store/interface';
-import { find } from '../../../store/memstore';
+import { LuckyMoneyType } from '../../../store/interface';
+import { getStore } from '../../../store/memstore';
 import { getLanguage, getUserInfo } from '../../../utils/tools';
 
 interface Props {
@@ -45,7 +45,7 @@ export class RedEnvDetail extends Widget {
     }
 
     public async initData() {
-        const value = await queryDetailLog(find('conUid'),this.props.rid);
+        const value = await queryDetailLog(getStore('user/conUid'),this.props.rid);
         if (!value) return;
         this.state.redBagList = value[0];        
         this.state.message = value[1];
@@ -91,27 +91,27 @@ export class RedEnvDetail extends Widget {
     public async againSend() {
         let url = '';
         let title = '';
-        const lanSet = find('languageSet');
+        const lanSet = getStore('setting/language');
         let lan:any;
         if (lanSet) {
             lan = [lanSet.languageList[lanSet.selected]];
         } else {
-            lan = 'simpleChinese';
+            lan = 'zh_Hans';
         }
         
         if (this.props.rtype === 0) {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}&lan=${lan}`;
+            url = `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[0]; 
         } else if (this.props.rtype === 1) {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}&lan=${lan}`;
+            url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[1]; 
         } else if (this.props.rid === '-1') {
             const inviteCodeInfo = await getInviteCode();
             if (inviteCodeInfo.result !== 1) return;
                 
-            url = `${sharePerUrl}?cid=${inviteCodeInfo.cid}&type=${RedEnvelopeType.Invite}&lan=${lan}`;
+            url = `${sharePerUrl}?cid=${inviteCodeInfo.cid}&type=${LuckyMoneyType.Invite}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[2];
         }
         popNew('app-components-share-share', { 

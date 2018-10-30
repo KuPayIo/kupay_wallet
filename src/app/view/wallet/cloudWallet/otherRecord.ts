@@ -4,8 +4,8 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
-import { getBorn, register } from '../../../store/memstore';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getStore, register } from '../../../store/memstore';
 import { getLanguage, timestampFormat } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -26,7 +26,7 @@ export class OtherRecord extends Widget {
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName,1);
         }
-        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
         this.state = {
             recordList:this.parseRecordList(accountDetail.list),
             nextStart:accountDetail.start,
@@ -37,7 +37,7 @@ export class OtherRecord extends Widget {
     }
     public updateRecordList() {
         if (!this.state) return;
-        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
         console.log(accountDetail);
         const list = accountDetail.list;
         this.state.nextStart = accountDetail.start;

@@ -5,9 +5,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { fetchRealUser, getCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
-import { CurrencyType, RedEnvelopeType } from '../../../store/interface';
-import { find, getBorn, register, updateStore } from '../../../store/memstore';
+import { fetchRealUser, getServerCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
+import { getStore, register, setStore } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
@@ -38,7 +38,6 @@ export class WriteRedEnv extends Widget {
     }
 
     public create() {
-        const realUser = getBorn('realUserMap').get(find('conUser'));
         this.state = {
             list:[],
             selected:0,
@@ -47,7 +46,7 @@ export class WriteRedEnv extends Widget {
             totalNum:0,
             oneAmount:0,
             message:'',
-            realUser,
+            realUser:getStore('user/info/isRealUser'),
             cfgData:getLanguage(this)
         };
         const list = [
@@ -55,12 +54,12 @@ export class WriteRedEnv extends Widget {
             { img:'../../res/image/currency/BTC.png',name:'BTC',num:0.01 },
             { img:'../../res/image/currency/ETH.png',name:'ETH',num:0.5 }
         ];
-        const data = getBorn('cloudBalance');
+        const data = getStore('cloud/cloudWallets');    
         for (const i in list) {
-            list[i].num = data.get(CurrencyType[list[i].name]) || 0;
+            list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
         }
         this.state.list = list;
-        if (!realUser) {
+        if (!this.state.realUser) {
             fetchRealUser();
         }
     }
@@ -68,8 +67,8 @@ export class WriteRedEnv extends Widget {
     /**
      * 更新真实用户
      */
-    public updateRealUser(realUserMap:Map<string,boolean>) {
-        this.state.realUser = realUserMap.get(find('conUser'));
+    public updateRealUser() {
+        this.state.realUser = getStore('user/info/isRealUser');
     }
 
     /**
@@ -81,9 +80,9 @@ export class WriteRedEnv extends Widget {
             { img:'../../res/image/currency/BTC.png',name:'BTC',num:0.01 },
             { img:'../../res/image/currency/ETH.png',name:'ETH',num:0.5 }
         ];
-        const data = getBorn('cloudBalance');
+        const data = getStore('cloud/cloudWallets');
         for (const i in list) {
-            list[i].num = data.get(CurrencyType[list[i].name]) || 0;
+            list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
         }
         this.state.list = list;
         this.paint();
@@ -163,7 +162,7 @@ export class WriteRedEnv extends Widget {
             popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
-        }       
+        } 
         const curCoin = this.state.list[this.state.selected];
         if (this.state.totalAmount > curCoin.num) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });
@@ -195,8 +194,7 @@ export class WriteRedEnv extends Widget {
             itype:'password' }, 
             async (r) => {
                 const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
-                const wallet = find('curWallet');
-                const fg = await VerifyIdentidy(wallet,r);
+                const fg = await VerifyIdentidy(r);
                 close.callback(close.widget);
                 if (fg) {
                     this.sendRedEnv();
@@ -215,8 +213,8 @@ export class WriteRedEnv extends Widget {
         
         const curCoin = this.state.list[this.state.selected];
         const lm = this.state.message;  // 留言
-        const rtype = this.state.showPin ? 1 :0; // 0 等额红包  1 拼手气红包
-        const ctype = Number(CurrencyType[curCoin.name]);  // 货币类型
+        const rtype = this.state.showPin ? LuckyMoneyType.Random :LuckyMoneyType.Normal; // 0 等额红包  1 拼手气红包
+        const ctype = Number(CloudCurrencyType[curCoin.name]);  // 货币类型
         const totalAmount = Number(this.state.totalAmount);   // 红包总金额
         const totalNum = this.state.totalNum;    // 红包总个数
         const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm);
@@ -234,14 +232,14 @@ export class WriteRedEnv extends Widget {
         this.state.totalAmount = 0;
         this.state.message = '';
         this.paint();
-        updateStore('sHisRec', undefined);// 更新红包记录
-        getCloudBalance();// 更新余额
+        setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
+        getServerCloudBalance();// 更新余额
         // if (!this.state.showPin) {
         //     // tslint:disable-next-line:max-line-length
-        //     console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
+        //     console.log('url', `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
         // } else {
         //     // tslint:disable-next-line:max-line-length
-        //     console.log('url', `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
+        //     console.log('url', `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
         // }
     }
 
@@ -257,16 +255,16 @@ export class WriteRedEnv extends Widget {
 
 }
 // =====================================本地
-register('cloudBalance', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
     }
 });
 
-register('realUserMap',realUserMap => {
+register('user/info/isRealUser',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.updateRealUser(realUserMap);
+        w.updateRealUser();
     }
 });

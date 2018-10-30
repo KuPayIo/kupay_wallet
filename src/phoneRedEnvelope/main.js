@@ -105,7 +105,7 @@ const CurrencyType = {
     BTC: 102
 }
 // 枚举云端货币类型
-const CurrencyTypeReverse = {
+const CloudCurrencyType = {
     100: 'KT',
     101: 'ETH',
     102:'BTC'

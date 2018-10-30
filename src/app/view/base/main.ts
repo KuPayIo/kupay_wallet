@@ -7,6 +7,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
+import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
@@ -21,7 +22,7 @@ import {
   ShapeShiftTxs,
   Store
 } from '../../store/interface';
-import { getStore, initStore, setStore } from '../../store/memstore';
+import { getCloudBalances, getStore, initStore, setStore } from '../../store/memstore';
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
 // import { create } from "../../../pi/net/rpc";
@@ -34,24 +35,25 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void => {
     addWidget(document.body, 'pi-ui-root');
-  // 设置开发环境
-  // eth代币精度初始化
-  // 数据检查
+    // 设置开发环境
+    // eth代币精度初始化
+    // 数据检查
     checkUpdate();
-  // 初始化数据
+    // 初始化数据
     initStore();
     registerFileStore();
-  // 主动推送初始化
+    console.log(getCloudBalances());
+    // 主动推送初始化
     initPush();
     openConnect();
-  // dataCenter.init();
+    // dataCenter.init();
     popNew('app-view-base-app');
-  // popNew('app-view-chat-home-home');
-  // getDeviceInfo();
+    // popNew('app-view-chat-home-home');
+    // getDeviceInfo();
     popNewPage();
-  // 后台切前台
+    // 后台切前台
     backToFront();
-  // 解决进入时闪一下问题
+    // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
     }, 20);
@@ -120,8 +122,13 @@ const backToFront = () => {
                 openApp: true
             });
         } else if (iType === 'onBackPressed') {
-            if (backList.length === 1) return;
-            backCall();
+            if (backList.length === 1) {
+                const exitApp = new ExitApp();
+                exitApp.init();
+                exitApp.ToHome({});
+            } else {
+                backCall();
+            }
       // (<any>window).onpopstate();
       // widget.ok && widget.ok();
         }
@@ -257,5 +264,5 @@ const test = () => {
         flags: {}
     };
     console.log(store);
-    setStore('user',store.user);
+    setStore('user', store.user);
 };

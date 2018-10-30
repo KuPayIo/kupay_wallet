@@ -5,7 +5,7 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { getCurrentAccount, getSetting } from './filestore';
+import { getCurrentAccount, getSetting, getThird } from './filestore';
 import { CloudCurrencyType, CloudWallet, Currency2USDT, LockScreen, ShapeShiftTxs, Store } from './interface';
 
 // ============================================ 导出
@@ -32,7 +32,7 @@ export const getStore = (path: string, defaultValue = undefined) => {
  */
 export const setStore = (path: string, data: any, notified = true) => {
     const keyArr = path.split('/');
-    
+
     // 原有的最后一个键
     const lastKey = keyArr.pop();
 
@@ -77,7 +77,7 @@ export const getCloudBalances = () => {
     for (const [key,val] of cloudWallets) {
         cloudBalances.set(key,val.balance || 0);
     }
-
+    
     return cloudBalances;
 };
 /**
@@ -85,11 +85,11 @@ export const getCloudBalances = () => {
  */
 export const initStore = () => {
 
-    initUser();
+    initAccount();
 
     initSettings();
 
-    // initThird(null);
+    initThird();
 
 };
 
@@ -104,7 +104,7 @@ export const initStore = () => {
  */
 const handlerMap: HandlerMap = new HandlerMap();
 
-const initUser = () => {
+const initAccount = () => {
     const curAccount = getCurrentAccount();
     if (!curAccount) {
         store.user.salt = cryptoRandomInt().toString();
@@ -123,6 +123,21 @@ const initUser = () => {
     store.wallet = {
         ...curAccount.wallet
     };
+
+    const cloudWallets = new Map<CloudCurrencyType, CloudWallet>();
+    for (const key in CloudCurrencyType) {
+        const isValueProperty = parseInt(key, 10) >= 0;
+        if (isValueProperty) {
+            const cloudWallet = {
+                balance:0,
+                rechargeLogs:{ list:[],start:0,canLoadMore:false },
+                withdrawLogs:{ list:[],start:0,canLoadMore:false },
+                otherLogs:{ list:[],start:0,canLoadMore:false }
+            };
+            cloudWallets.set(CloudCurrencyType[CloudCurrencyType[key]],cloudWallet);
+        }
+    }
+    store.cloud.cloudWallets = cloudWallets;
 };
 
 const initSettings = () => {
@@ -132,10 +147,15 @@ const initSettings = () => {
     };
 };
 
-const initThird = (third) => {
-    store.third.gasLimitMap = new Map<string, number>(third && third.gasLimitMap);
-    store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third && third.shapeShiftTxsMap);
-    store.third.currency2USDTMap = new Map<string, Currency2USDT>(third && third.currency2USDTMap);
+const initThird = () => {
+    const third = getThird();
+    if (!third) return;
+    store.third.gasPrice = third.gasPrice;
+    store.third.btcMinerFee = third.btcMinerFee;
+    store.third.rate = third.rate;
+    store.third.gasLimitMap = new Map<string, number>(third.gasLimitMap);
+    store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third.shapeShiftTxsMap);
+    store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
 };
 
 // 全局内存数据库
@@ -145,7 +165,7 @@ const store: Store = {
         isLogin: false,              // 登录状态
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
-        conUid:'',                   // 服务器连接uid
+        conUid: '',                   // 服务器连接uid
         publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
         salt: '',                    // 加密 盐值
         secretHash: '',             // 密码hash缓存   
@@ -161,9 +181,23 @@ const store: Store = {
         cloudWallets: new Map<CloudCurrencyType, CloudWallet>()     // 云端钱包相关数据, 余额  充值提现记录...
     },
     activity: {
-        luckyMoney: null,                   // 红包
-        mining: null,                       // 挖矿
-        dividend: null,                     // 分红
+        luckyMoney: {
+            sends: null,          // 发送红包记录
+            exchange: null,       // 兑换红包记录
+            invite: null          // 邀请红包记录
+        },                 
+        mining: {
+            total: null,      // 挖矿汇总信息
+            history: null, // 挖矿历史记录
+            addMine: [],  // 矿山增加项目
+            mineRank: null,      // 矿山排名
+            miningRank: null,  // 挖矿排名
+            itemJump: null
+        },                       // 挖矿
+        dividend: {
+            total: null,         // 分红汇总信息
+            history: null       // 分红历史记录
+        },
         financialManagement: {          // 理财
             products:null,
             purchaseHistories:null

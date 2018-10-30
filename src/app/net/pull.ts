@@ -192,6 +192,7 @@ export const getRandom = async (cmd?:number) => {
                 checkCreateAccount();
             });
         }
+        
         return;
     }
     checkCreateAccount();
@@ -229,9 +230,16 @@ export const getServerCloudBalance = () => {
     
     return requestAsync(msg).then(balanceInfo => {
         console.log('balanceInfo', balanceInfo);
-        // setStore('cloudBalance', parseCloudBalance(balanceInfo));
+        const cloudBalances = parseCloudBalance(balanceInfo);
+        const cloudWallets = getStore('cloud/cloudWallets');
+        for (const [key,value] of cloudBalances) {
+            const cloudWallet = cloudWallets.get(key);
+            cloudWallet.balance = value;
+        }
+        
+        setStore('cloud/cloudWallets',cloudWallets);
     }).catch((res) => {
-        // setStore('cloudBalance', parseCloudBalance(null));
+        console.log(res);
     });
 };
 
@@ -261,7 +269,7 @@ export const getDividend = async () => {
             thisDivid: wei2Eth(data.value[2]),
             yearIncome: yearIncome
         };
-        updateStore('dividTotal', dividend);
+        setStore('dividTotal', dividend);
     });
 };
 
@@ -298,7 +306,7 @@ export const getMining = async () => {
             holdNum: holdNum
         };
         console.log('-------------------',mining);
-        updateStore('miningTotal', mining);
+        setStore('activity/mining/total', mining);
     });
 };
 
@@ -315,7 +323,7 @@ export const getMiningHistory = async (start = '') => {
     };
     requestAsync(msg).then(data => {
         const miningHistory = parseMiningHistory(data);
-        updateStore('miningHistory', miningHistory);
+        setStore('activity/mining/history', miningHistory);
     });
 };
 
@@ -364,13 +372,13 @@ export const getInviteCodeDetail = async () => {
  * @param count 红包数量
  * @param lm 留言
  */
-export const  sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
+export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
     const msg = {
         type: 'emit_red_bag',
         param: {
             type: rtype,
             priceType: ctype,
-            totalPrice: largeUnit2SmallUnit(CurrencyTypeReverse[ctype], totalAmount),
+            totalPrice: largeUnit2SmallUnit(CloudCurrencyType[ctype], totalAmount),
             count: redEnvelopeNumber,
             desc: lm
         }
@@ -444,7 +452,7 @@ export const querySendRedEnvelopeRecord = (start?: string) => {
     try {
         requestAsync(msg).then(async detail => {
             const data = parseSendRedEnvLog(detail.value,start);
-            updateStore('sHisRec',data);
+            setStore('activity/luckyMoney/sends',data);
         });
 
     } catch (err) {
@@ -479,7 +487,7 @@ export const queryConvertLog = async (start?:string) => {
     try {
         requestAsync(msg).then(detail => {
             const data = parseConvertLog(detail,start);
-            updateStore('cHisRec',data);
+            setStore('activity/luckyMoney/exchange',data);
         });
 
     } catch (err) {
@@ -538,7 +546,7 @@ export const getMineDetail = async (start = '') => {
     };
     requestAsync(msg).then(detail => {
         const list = parseMineDetail(detail);
-        updateStore('addMine', list);
+        setStore('activity/mining/addMine', list);
     });
 };
 
@@ -555,7 +563,7 @@ export const getDividHistory = async (start = '') => {
     };
     requestAsync(msg).then(data => {
         const dividHistory = parseDividHistory(data);
-        updateStore('dividHistory', dividHistory);
+        setStore('activity/dividend/history', dividHistory);
     });
 };
 
@@ -605,7 +613,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
                 ...serverUserInfo
             };
             console.log(userInfo);
-            updateStore('userInfo',userInfo);
+            setStore('userInfo',userInfo);
         }
         
     } catch (err) {
@@ -677,34 +685,17 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
-        if (filter === 1) {
-            const accountDetailMap = getBorn('accountDetail');
-            const accountDetail = accountDetailMap.get(CloudCurrencyType[coin]) || { list:[] };
-            if (!start) {
-                accountDetail.list = detail;
-            } else {
-                accountDetail.list.push(...detail);
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            if (filter === 1) {
+                cloudWallet.otherLogs.list.push(...detail);
+            
+                cloudWallet.otherLogs.start = nextStart;
+                cloudWallet.otherLogs.canLoadMore = canLoadMore;
+                setStore('cloud/cloudWallets',cloudWallets);
             }
-        
-            accountDetail.start = nextStart;
-            accountDetail.canLoadMore = canLoadMore;
-            accountDetailMap.set(CloudCurrencyType[coin],accountDetail);
-            updateStore('accountDetail',accountDetailMap);
-        } else {
-            const totalLogMap = getBorn('totalLogs');
-            const totalLogs = totalLogMap.get(CloudCurrencyType[coin]) || { list:[] };
-            if (!start) {
-                totalLogs.list = detail;
-            } else {
-                totalLogs.list.push(...detail);
-            }
-        
-            totalLogs.start = nextStart;
-            totalLogs.canLoadMore = canLoadMore;
-            totalLogMap.set(CloudCurrencyType[coin],totalLogs);
-            updateStore('totalLogs',totalLogMap);
         }
-
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -720,7 +711,7 @@ export const getMineRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
     requestAsync(msg).then(data => {
         const mineData = parseMineRank(data);
-        updateStore('mineRank', mineData);
+        setStore('mineRank', mineData);
     });
 };
 
@@ -731,7 +722,7 @@ export const getMiningRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
     requestAsync(msg).then(data => {
         const miningData = parseMiningRank(data);
-        updateStore('miningRank', miningData);
+        setStore('activity/mining/miningRank', miningData);
     });
 };
 
@@ -780,7 +771,7 @@ export const getProxy = async () => {
  * 矿山增加项目跳转详情
  */
 export const getMineItemJump = async(itemJump) => {
-    updateStore('mineItemJump',itemJump);
+    setStore('activity/mining/itemJump',itemJump);
 };
 
 // ===============================充值提现
@@ -966,19 +957,15 @@ export const getRechargeLogs = async (coin: string,start?) => {
         const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
-        const rechargeLogsMap = getBorn('rechargeLogs');
-        const rechargeLogs = rechargeLogsMap.get(CloudCurrencyType[coin]) || { list:[] };
-        if (!start) {
-            rechargeLogs.list = detail;
-        } else {
-            rechargeLogs.list.push(...detail);
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            cloudWallet.rechargeLogs.list.push(...detail);
+            cloudWallet.rechargeLogs.start = nextStart;
+            cloudWallet.rechargeLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
         }
         
-        rechargeLogs.start = nextStart;
-        rechargeLogs.canLoadMore = canLoadMore;
-        rechargeLogsMap.set(CloudCurrencyType[coin],rechargeLogs);
-        updateStore('rechargeLogs',rechargeLogsMap);
-
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -1022,19 +1009,15 @@ export const getWithdrawLogs = async (coin: string,start?) => {
         const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
-        const withdrawLogsMap = getBorn('withdrawLogs');
-        const withdrawLogs = withdrawLogsMap.get(CloudCurrencyType[coin]) || { list:[] };
-        if (!start) {
-            withdrawLogs.list = detail;
-        } else {
-            withdrawLogs.list.push(...detail);
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            cloudWallet.withdrawLogs.list.push(...detail);
+            cloudWallet.withdrawLogs.start = nextStart;
+            cloudWallet.withdrawLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
         }
         
-        withdrawLogs.start = nextStart;
-        withdrawLogs.canLoadMore = canLoadMore;
-        withdrawLogsMap.set(CloudCurrencyType[coin],withdrawLogs);
-        updateStore('withdrawLogs',withdrawLogsMap);
-
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -1237,7 +1220,7 @@ export const uploadFile = async (base64) => {
                 const sid = res.sid;
                 const userInfo = find('userInfo') || {};
                 userInfo.avatar = sid;
-                updateStore('userInfo',userInfo);
+                setStore('userInfo',userInfo);
             }
         });
 };
