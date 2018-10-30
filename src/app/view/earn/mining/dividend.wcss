@@ -111,6 +111,7 @@
     color: #222;
     box-sizing: border-box;
     height: 128px;
+    top: 0;
 }
 .left-container{
     flex: 1 0 0;

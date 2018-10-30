@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { recharge } from '../../../net/pullWallet';
 import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../store/interface';
-import { getStore } from '../../../store/memstore';
+import { getCloudBalances } from '../../../store/memstore';
 import { defaultGasLimit } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
@@ -31,8 +31,7 @@ export class ProductDetail extends Widget {
     }
     public init() {
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
-        const cloud = getStore('cloud');
-        const cloudBalance = cloud.get(CloudCurrencyType.ETH).balance;
+        const cloudBalance = getCloudBalances().get(CloudCurrencyType.ETH);
         const localBalance = getCurrentAddrInfo('ETH').balance;
         this.state = {
             spend,

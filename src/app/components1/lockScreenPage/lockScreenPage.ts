@@ -38,11 +38,9 @@ export class LockScreenPage extends Widget {
         };
         if (this.props.setting) {   // true表示设置锁屏密码
             this.setLockPsw();
-        } else if (this.props.open) {  // true表示打开app解锁屏幕
+        } else if (this.props.openApp) {  // true表示打开app解锁屏幕
             this.unLockScreen(0);
-        } else {  // 修改锁屏密码前，输入原锁屏密码
-            this.oldLockPsw(0);
-        }
+        } 
     }
 
     /**
@@ -57,7 +55,6 @@ export class LockScreenPage extends Widget {
      */
     public setLockPsw() {
         popNew('app-components1-keyboard-keyboard',{ title: this.state.cfgData.keyboardTitle[0] },(r) => {
-            console.error(r);
             this.state.lockScreenPsw = r;
             this.reSetLockPsw();
         },() => {
@@ -88,38 +85,6 @@ export class LockScreenPage extends Widget {
     }
 
     /**
-     * 输入原锁屏密码
-     */
-    public oldLockPsw(ind:number) {
-        if (ind > 2) {
-            const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
-            // tslint:disable-next-line:max-line-length
-            popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput1,async (r) => {
-                const wallet = getStore('wallet');
-                const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
-                const fg = await VerifyIdentidy(wallet,r);
-                close.callback(close.widget);
-                // const fg = true;
-                if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
-                    this.setLockPsw();
-                } else {
-                    popNew('app-components1-message-message',{ content:this.state.cfgData.tips[2] });
-                } 
-            },() => {
-                close.callback(close.widget);
-            });
-        } else {
-            popNew('app-components1-keyboard-keyboard',{ title:this.state.errorTips[ind] },(r) => {
-                if (lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
-                    this.setLockPsw();
-                } else {
-                    this.oldLockPsw(++ind);
-                }
-            });
-        }
-    }
-
-    /**
      * 进入APP解锁屏幕
      */
     public unLockScreen(ind:number) {
@@ -146,12 +111,15 @@ export class LockScreenPage extends Widget {
         popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput2,async (r) => {
             const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
             if (this.state.loading) {
-                const wallet = getStore('wallet');
                 const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
-                const fg = await VerifyIdentidy(wallet,r);
+                const fg = await VerifyIdentidy(r);
                 close.callback(close.widget);
                 if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
+                    const ls:LockScreen = getStore('setting/lockScreen');
+                    ls.locked = false;
+                    setStore('setting/lockScreen',ls);
                     this.setLockPsw();
+                    
                 } else {  // 进入APP验证身份失败后再次进入验证身份步骤
                     popNew('app-components1-message-message',{ content:this.state.cfgData.tips[2] });
                     this.verifyPsw();
@@ -159,6 +127,9 @@ export class LockScreenPage extends Widget {
             }
         },(fg) => {
             if (fg) {
+                const ls:LockScreen = getStore('setting/lockScreen');
+                ls.locked = true;
+                setStore('setting/lockScreen',ls);
                 const exitApp = new ExitApp();
                 exitApp.init();
                 exitApp.exitApplication({});
@@ -170,14 +141,14 @@ export class LockScreenPage extends Widget {
      * 判断资源加载完成
      */
     public judgeLoading() {
-        const loaded = getStore('flags');
+        const loaded = getStore('flags/level_2_page_loaded');
         if (loaded) {
             this.state.loading = true;
             this.paint();
         }
     }
 }
-register('flags',(loaded:boolean) => {
+register('flags/level_2_page_loaded',(loaded:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.judgeLoading();

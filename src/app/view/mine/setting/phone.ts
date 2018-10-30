@@ -66,7 +66,6 @@ export class BindPhone extends Widget {
             // tslint:disable-next-line:prefer-template
             (<any>document.getElementById('codeInput' + i)).value = this.state.code[i];
         }
-        this.codeFocus();
     }
 
     /**
@@ -87,6 +86,8 @@ export class BindPhone extends Widget {
         } else if (this.integerJudge(v)) {
             this.state.code.push(v);
             const ind = this.state.code.length;
+            // tslint:disable-next-line:prefer-template
+            document.getElementById('codeInput' + (ind - 1)).blur();
             if (ind < 4) {
             // tslint:disable-next-line:prefer-template
                 document.getElementById('codeInput' + ind).focus();
