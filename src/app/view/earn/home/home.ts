@@ -121,7 +121,6 @@ export class PlayHome extends Widget {
 
             setTimeout(() => {// 数字动画效果执行完后刷新页面
                 this.initEvent();
-                this.paint();
             },300);
 
         } else {  // 添加一个新的数字动画效果并移除旧的
@@ -168,12 +167,13 @@ export class PlayHome extends Widget {
      */
     public refreshPage() {
         this.state.refresh = true;
+        this.initEvent();   
         this.paint();
         setTimeout(() => {
             this.state.refresh = false;
             this.paint();
         }, 1000);
-        this.initEvent();
+        
     }
 
     /**
@@ -228,6 +228,7 @@ export class PlayHome extends Widget {
             getServerCloudBalance();
             getMining();
             getMiningRank(100);
+            this.paint();
         }
     }
 

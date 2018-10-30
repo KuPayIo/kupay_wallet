@@ -28,7 +28,7 @@ export class Setting extends Widget {
     public init() {
         const cfg = getLanguage(this);
         const lan = getStore('setting/language', 'zh_Hans');
-        const unit = getStore('setting/currencyUnit','CNY');        
+        const unit = getStore('setting/currencyUnit', 'CNY');
         const color = getStore('setting/changeColor', 'redUp');
         this.state = {
             lockScreenPsw: '',  // 锁屏密码
@@ -37,9 +37,9 @@ export class Setting extends Widget {
             numberOfErrors: 0,  // 锁屏密码输入错误次数
             errorTips: cfg.errorTips,
             itemList: [
-                { title: cfg.itemTitle[0], list: cfg.languageSet, selected: lan, flag:0 },
-                { title: cfg.itemTitle[1], list: cfg.currencyUnit, selected: unit, flag:1 },
-                { title: cfg.itemTitle[2], list: cfg.changeColor, selected: color, flag:2 }
+                { title: cfg.itemTitle[0], list: cfg.languageSet, selected: lan, flag: 0 },
+                { title: cfg.itemTitle[1], list: cfg.currencyUnit, selected: unit, flag: 1 },
+                { title: cfg.itemTitle[2], list: cfg.changeColor, selected: color, flag: 2 }
             ],
             wallet: null,
             cfgData: cfg
@@ -90,21 +90,21 @@ export class Setting extends Widget {
             setStore('setting/lockScreen', ls);
         } else if (this.state.wallet) {
             popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
-                    if (!r) {
-                        this.closeLockPsw();
-                        this.state.openLockScreen = false;
-                    } else {
-                        this.state.openLockScreen = true;
-                    }
-                });
-            } else {
-                // tslint:disable-next-line:max-line-length
-            popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
-                    popNew('app-view-wallet-create-home');
-            }, () => {
+                if (!r) {
                     this.closeLockPsw();
-                });
-            }
+                    this.state.openLockScreen = false;
+                } else {
+                    this.state.openLockScreen = true;
+                }
+            });
+        } else {
+            // tslint:disable-next-line:max-line-length
+            popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
+                popNew('app-view-wallet-create-home');
+            }, () => {
+                this.closeLockPsw();
+            });
+        }
 
         this.paint(true);
     }
@@ -127,7 +127,7 @@ export class Setting extends Widget {
         }
         const data = this.state.itemList[ind];
         popNew('app-view-mine-setting-itemList', data);
-                }
+    }
 
     /**
      * 备份
