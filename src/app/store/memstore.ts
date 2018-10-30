@@ -5,7 +5,7 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { getCurrentAccount } from './filestore';
+import { getCurrentAccount, getSetting } from './filestore';
 import { CloudCurrencyType, CloudWallet, Currency2USDT, LockScreen, ShapeShiftTxs, Store } from './interface';
 
 // ============================================ 导出
@@ -87,7 +87,7 @@ export const initStore = () => {
 
     initUser();
 
-    // initSettings(null);
+    initSettings();
 
     // initThird(null);
 
@@ -125,7 +125,8 @@ const initUser = () => {
     };
 };
 
-const initSettings = (setting) => {
+const initSettings = () => {
+    const setting = getSetting();
     store.setting = {
         ...setting
     };

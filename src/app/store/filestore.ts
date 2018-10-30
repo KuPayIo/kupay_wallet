@@ -8,6 +8,7 @@ import {
   Currency2USDT,
   CurrencyRecord,
   GasPrice,
+  Setting,
   UserInfo
 } from './interface';
 import { getStore, register } from './memstore';
@@ -38,11 +39,27 @@ export const getCurrentAccount = () => {
 };
 
 /**
+ * 获取setting数据
+ */
+export const getSetting = () => {
+    return getLocalStorage('setting',{
+        language:'zh_Hans',
+        changeColor:'redUp',
+        currencyUnit:'CNY',
+        lockScreen:{
+            open:false,
+            psw:''
+        }
+    });
+};
+
+/**
  * 注册文件数据库监听
  */
 export const registerFileStore = () => {
     registerAccountChange(); // 监听账户变化
     registerThirdChange(); // 监听3方数据变化
+    registerSettingChange(); // 监听setting数据变化
 };
 
 // ===================================================== 本地
@@ -166,6 +183,24 @@ const registerThirdChange = () => {
 };
 
 /**
+ * setting数据变化监听
+ */
+const registerSettingChange = () => {
+    register('setting/language',() => {
+        settingChange();
+    });
+    register('setting/changeColor',() => {
+        settingChange();
+    });
+    register('setting/currencyUnit',() => {
+        settingChange();
+    });
+    register('setting/lockScreen',() => {
+        settingChange();
+    });
+};
+
+/**
  * 当前账户变化
  */
 const accountChange = () => {
@@ -216,4 +251,17 @@ const thirdChange = () => {
         currency2USDTMap: getStore('third/currency2USDTMap')
     };
     setLocalStorage('third', localThird);
+};
+
+/**
+ * setting数据变化
+ */
+const settingChange = () => {
+    const localSetting:Setting = {
+        language:getStore('setting/language'),
+        changeColor:getStore('setting/changeColor'),
+        currencyUnit:getStore('setting/currencyUnit'),
+        lockScreen:getStore('setting/lockScreen')
+    };
+    setLocalStorage('setting',localSetting);
 };

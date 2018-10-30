@@ -218,7 +218,7 @@ export const fetchMnemonicFragment =  (hash) => {
 // 备份助记词
 export const backupMnemonic = async (passwd:string) => {
     const close = popNewLoading('导出中...');
-    const hash = await calcHashValuePromise(passwd, find('salt'));
+    const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
     console.log('hash!!!!!!!!!!!!',hash);
     close.callback(close.widget);
     const mnemonic = getMnemonicByHash(hash);
