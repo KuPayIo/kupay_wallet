@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCode, getMineDetail, getMineItemJump } from '../../../net/pull';
-import { find, register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 
 // ================================ 导出
@@ -99,7 +99,7 @@ export class Dividend extends Widget {
                 
                 popNew('app-view-earn-redEnvelope-sendRedEnv',{
                     rid:inviteCodeInfo.cid,
-                    rtype:99,
+                    rtype:'99',
                     message:this.state.cfgData.defaultMess
                 });
             }
@@ -125,7 +125,7 @@ export class Dividend extends Widget {
      * 获取更新数据
      */
     public async initData() {  
-        const detail = find('addMine');
+        const detail = getStore('activity/mining/addMine');        
         // tslint:disable-next-line:max-line-length
         // const detail = [{isComplete:true},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false}];
         if (detail) {
@@ -139,7 +139,7 @@ export class Dividend extends Widget {
     }
 }
 
-register('addMine', () => {
+register('activity/mining/addMine', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

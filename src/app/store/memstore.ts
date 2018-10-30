@@ -32,7 +32,7 @@ export const getStore = (path: string, defaultValue = undefined) => {
  */
 export const setStore = (path: string, data: any, notified = true) => {
     const keyArr = path.split('/');
-    
+
     // 原有的最后一个键
     const lastKey = keyArr.pop();
 
@@ -76,6 +76,9 @@ export const getCloudBalances = () => {
     const cloudBalances = new Map<CloudCurrencyType,number>();
     for (const [key,val] of cloudWallets) {
         cloudBalances.set(key,val.balance || 0);
+    const cloudBalances = new Map<CloudCurrencyType, number>();
+    for (const [key, val] of cloudWallets) {
+        cloudBalances.set(key, val.balance || 0);
     }
 
     return cloudBalances;
@@ -144,7 +147,7 @@ const store: Store = {
         isLogin: false,              // 登录状态
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
-        conUid:'',                   // 服务器连接uid
+        conUid: '',                   // 服务器连接uid
         publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
         salt: '',                    // 加密 盐值
         secretHash: '',             // 密码hash缓存   
@@ -160,9 +163,23 @@ const store: Store = {
         cloudWallets: new Map<CloudCurrencyType, CloudWallet>()     // 云端钱包相关数据, 余额  充值提现记录...
     },
     activity: {
-        luckyMoney: null,                   // 红包
-        mining: null,                       // 挖矿
-        dividend: null,                     // 分红
+        luckyMoney: {
+            sends: null,          // 发送红包记录
+            exchange: null,       // 兑换红包记录
+            invite: null          // 邀请红包记录
+        },                 
+        mining: {
+            total: null,      // 挖矿汇总信息
+            history: null, // 挖矿历史记录
+            addMine: [],  // 矿山增加项目
+            mineRank: null,      // 矿山排名
+            miningRank: null,  // 挖矿排名
+            itemJump: null
+        },                       // 挖矿
+        dividend: {
+            total: null,         // 分红汇总信息
+            history: null,       // 分红历史记录
+        },
         financialManagement: {          // 理财
             products:null,
             purchaseHistories:null

@@ -12,6 +12,7 @@ import { Forelet } from "../../../pi/widget/forelet";
 import { addWidget } from "../../../pi/widget/util";
 import { openConnect } from "../../net/pull";
 import { initPush } from "../../net/push";
+import { ExitApp } from '../../../pi/browser/exitApp';
 import {
   LockScreen,
   Store,
@@ -127,8 +128,13 @@ const backToFront = () => {
         open: true
       });
     } else if (iType === "onBackPressed") {
-      if (backList.length === 1) return;
-      backCall();
+      if (backList.length === 1) {
+        const exitApp = new ExitApp();
+        exitApp.init();
+        exitApp.ToHome({});
+      } else {
+        backCall();
+      }
       // (<any>window).onpopstate();
       // widget.ok && widget.ok();
     }
@@ -263,5 +269,5 @@ const test = () => {
     flags: {}
   };
   console.log(store);
-  setStore('user',store.user);
+  setStore('user', store.user);
 };

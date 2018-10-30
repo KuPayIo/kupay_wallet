@@ -5,13 +5,13 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../net/pull';
-import { RedEnvelopeType } from '../../../store/interface';
-import { find } from '../../../store/memstore';
+import { LuckyMoneyType } from '../../../store/interface';
+import { getStore } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 
 interface Props {
     rid: string;
-    rtype:number;  // 0 等额红包  1 拼手气红包  99 邀请红包
+    rtype:string;  // '00' 等额红包  '01' 拼手气红包  '99' 邀请红包
     message: string;
 }
 export class SendRedEnv extends Widget {
@@ -31,24 +31,18 @@ export class SendRedEnv extends Widget {
     public sendRedEnv() {
         let url = '';
         let title = '';
-        const lanSet = find('languageSet');
-        let lan:any;
-        if (lanSet) {
-            lan = [lanSet.languageList[lanSet.selected]];
-        } else {
-            lan = 'simpleChinese';
-        }
+        const lan = getStore('setting/language','zh_Hans');
         
-        if (this.props.rtype === 0) {
+        if (this.props.rtype === '00') {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${RedEnvelopeType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
+            url = `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[0]; 
-        } else if (this.props.rtype === 1) {
+        } else if (this.props.rtype === '01') {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${RedEnvelopeType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
+            url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[1]; 
         } else {
-            url = `${sharePerUrl}?cid=${this.props.rid}&type=${RedEnvelopeType.Invite}&lan=${lan}`;
+            url = `${sharePerUrl}?cid=${this.props.rid}&type=${LuckyMoneyType.Invite}&lan=${lan}`;
             title = this.state.cfgData.redEnvType[2];
         }
         popNew('app-components-share-share', { 

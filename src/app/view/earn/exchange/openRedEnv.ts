@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { RedEnvelopeType } from '../../../store/interface';
+import { LuckyMoneyType } from '../../../store/interface';
 import { getLanguage } from '../../../utils/tools';
 
 interface Props {
@@ -23,11 +23,11 @@ export class OpenRedEnvelope extends Widget {
             cfgData:getLanguage(this)
         };
 
-        if (props.rtype === RedEnvelopeType.Normal) {
+        if (props.rtype === LuckyMoneyType.Normal) {
             this.state.tag = this.state.cfgData.tips[0];
-        } else if (props.rtype === RedEnvelopeType.Random) {
+        } else if (props.rtype === LuckyMoneyType.Random) {
             this.state.tag = this.state.cfgData.tips[1];
-        } else if (props.rtype === RedEnvelopeType.Invite) {
+        } else if (props.rtype === LuckyMoneyType.Invite) {
             this.state.tag = this.state.cfgData.tips[2];
         }
         

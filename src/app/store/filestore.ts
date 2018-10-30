@@ -62,7 +62,7 @@ const getLocalStorage = (key: string, defaultValue: any) => {
  * 本地所有账户
  */
 export interface Accounts {
-    currenctId: string; // 当前账户id
+    currenctId: string;  // 当前账户id
     accounts: {
     // 所有账户
         [key: string]: Account;
@@ -82,35 +82,35 @@ export interface Account {
  * 当前用户数据
  */
 export interface LocalUser {
-    id: string; // 该账号的id (第一个ETH地址)
-    token: string; // 自动登录token
-    publicKey: string; // 用户公钥, 第一个以太坊地址的公钥
-    salt: string; // 加密 盐值
-    info: UserInfo; // 基本信息
+    id: string;            // 该账号的id (第一个ETH地址)
+    token: string;         // 自动登录token
+    publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
+    salt: string;          // 加密 盐值
+    info: UserInfo;        // 基本信息
 }
 
 /**
  * 当前用户前端数据
  */
 export interface LocalCloud {
-    cloudWallets: Map<CloudCurrencyType, LocalCloudWallet>; // 云端钱包相关数据, 余额  充值提现记录...
+    cloudWallets: Map<CloudCurrencyType, LocalCloudWallet>;     // 云端钱包相关数据, 余额  充值提现记录...
 }
 
 /**
  * 云端钱包
  */
 export interface LocalCloudWallet {
-    balance: number; // 余额
+    balance: number;   // 余额
 }
 
 /**
  * 钱包对象
  */
 export interface LocalWallet {
-    vault: string; // 钱包核心
-    isBackup: boolean; // 备份助记词与否
-    showCurrencys: string[]; // 显示的货币列表
-    currencyRecords: CurrencyRecord[]; // 支持的所有货币记录
+    vault: string;                      // 钱包核心
+    isBackup: boolean;                  // 备份助记词与否
+    showCurrencys: string[];            // 显示的货币列表
+    currencyRecords: CurrencyRecord[];  // 支持的所有货币记录
 }
 
 /**
