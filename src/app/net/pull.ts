@@ -726,7 +726,7 @@ export const getMineRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
     requestAsync(msg).then(data => {
         const mineData = parseMineRank(data);
-        setStore('mineRank', mineData);
+        setStore('activity/mining/mineRank', mineData);
     });
 };
 
