@@ -4,8 +4,8 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getWithdrawLogs } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
-import { register } from '../../../store/memstore';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getStore, register } from '../../../store/memstore';
 import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 // ===================================================== 导出
@@ -27,7 +27,7 @@ export class WithdrawRecord extends Widget {
         }
     }
     public init() {
-        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        const withdrawLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
         this.state = {
             recordList:[],
             nextStart:withdrawLogs.start,
@@ -39,7 +39,7 @@ export class WithdrawRecord extends Widget {
     }
     public updateRecordList() {
         if (!this.state) return;
-        const withdrawLogs = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        const withdrawLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
         console.log(withdrawLogs);
         const list = withdrawLogs.list;
         this.state.nextStart = withdrawLogs.start;

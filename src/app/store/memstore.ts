@@ -5,7 +5,7 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { getCurrentAccount } from './filestore';
+import { getCurrentAccount, getThird } from './filestore';
 import { CloudCurrencyType, CloudWallet, Currency2USDT, LockScreen, ShapeShiftTxs, Store } from './interface';
 
 // ============================================ 导出
@@ -85,11 +85,11 @@ export const getCloudBalances = () => {
  */
 export const initStore = () => {
 
-    initUser();
+    initAccount();
 
     // initSettings(null);
 
-    // initThird(null);
+    initThird();
 
 };
 
@@ -104,7 +104,7 @@ export const initStore = () => {
  */
 const handlerMap: HandlerMap = new HandlerMap();
 
-const initUser = () => {
+const initAccount = () => {
     const curAccount = getCurrentAccount();
     if (!curAccount) {
         store.user.salt = cryptoRandomInt().toString();
@@ -123,6 +123,21 @@ const initUser = () => {
     store.wallet = {
         ...curAccount.wallet
     };
+
+    const cloudWallets = new Map<CloudCurrencyType, CloudWallet>();
+    for (const key in CloudCurrencyType) {
+        const isValueProperty = parseInt(key, 10) >= 0;
+        if (isValueProperty) {
+            const cloudWallet = {
+                balance:0,
+                rechargeLogs:{ list:[],start:0,canLoadMore:false },
+                withdrawLogs:{ list:[],start:0,canLoadMore:false },
+                otherLogs:{ list:[],start:0,canLoadMore:false }
+            };
+            cloudWallets.set(CloudCurrencyType[CloudCurrencyType[key]],cloudWallet);
+        }
+    }
+    store.cloud.cloudWallets = cloudWallets;
 };
 
 const initSettings = (setting) => {
@@ -131,10 +146,15 @@ const initSettings = (setting) => {
     };
 };
 
-const initThird = (third) => {
-    store.third.gasLimitMap = new Map<string, number>(third && third.gasLimitMap);
-    store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third && third.shapeShiftTxsMap);
-    store.third.currency2USDTMap = new Map<string, Currency2USDT>(third && third.currency2USDTMap);
+const initThird = () => {
+    const third = getThird();
+    if (!third) return;
+    store.third.gasPrice = third.gasPrice;
+    store.third.btcMinerFee = third.btcMinerFee;
+    store.third.rate = third.rate;
+    store.third.gasLimitMap = new Map<string, number>(third.gasLimitMap);
+    store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third.shapeShiftTxsMap);
+    store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
 };
 
 // 全局内存数据库

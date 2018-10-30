@@ -5,8 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
-import { register } from '../../../store/memstore';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getStore, register } from '../../../store/memstore';
 import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 // ===================================================== 导出
@@ -51,15 +51,16 @@ export class TotalRecord extends Widget {
      */
     public updateRecordList() {
         if (!this.state) return;
-        const data1 = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        const cloudWallets = getStore('cloud/cloudWallets');
+        const data1 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
         this.state.rechargeNext = data1.start;
         this.state.rechargeList = this.parseRechargeList(data1.list);
 
-        const data2 = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        const data2 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
         this.state.otherNext = data2.start;
         this.state.otherList = this.parseOtherList(data2.list);
         
-        const data3 = getBorn('withdrawLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        const data3 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
         this.state.withdrawNext = data3.start;
         this.state.withdrawList = this.parseWithdrawList(data3.list);
 
