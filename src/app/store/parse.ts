@@ -1,12 +1,10 @@
 import { isArray } from '../../pi/net/websocket/util';
-import { cloudCurrency } from '../config';
 import { PAGELIMIT } from '../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
-import { CloudCurrencyType, MineRank, MiningRank, PurchaseHistory, TaskSid } from './interface';
-import { CloudCurrencyType, MineRank, MiningRank, TaskSid, LuckyMoneySendDetail, LuckyMoneyExchangeDetail, LuckyMoneyDetail } from './interface';
+import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, MiningRank, TaskSid } from './interface';
 import { getStore } from './memstore';
 /**
  * 解析数据
@@ -18,16 +16,9 @@ import { getStore } from './memstore';
  */
 export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> => {
     const m = new Map<CloudCurrencyType, number>();
-    if (!balanceInfo) {
-        for (let i = 0; i < cloudCurrency.length;i++) {
-            m.set(cloudCurrency[cloudCurrency[i]],0);
-        }
-
-        return m;
-    }
     for (let i = 0; i < balanceInfo.value.length; i++) {
         const each = balanceInfo.value[i];
-        m.set(each[0], smallUnit2LargeUnit(cloudCurrency[each[0]], each[1]));
+        m.set(each[0], smallUnit2LargeUnit(CloudCurrencyType[each[0]], each[1]));
     }
     m.set(CloudCurrencyType.CNYT,0);
     
@@ -37,7 +28,7 @@ export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> =
 /**
  * 解析云端账号详情
  */
-export const parseCloudAccountDetail = (coinType: string, infos): AccountDetail[] => {
+export const parseCloudAccountDetail = (coinType: string, infos) => {
     if (!infos) return [];
     const list = [];
     infos.forEach(v => {

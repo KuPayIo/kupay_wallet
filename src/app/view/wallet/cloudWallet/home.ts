@@ -5,8 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
-import { find, getBorn, register } from '../../../store/memstore';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { fetchBalanceValueOfCoin, fetchCoinGain, formatBalanceValue, getLanguage, popNewMessage } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -22,14 +22,13 @@ export class CloudWalletHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        this.initEvent();
     }
     public init() {
         const currencyName = this.props.currencyName;
-        const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]) || 0;
+        const balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
         const cfg = getLanguage(this); 
-        const color = find('changeColor');
+        const color = getStore('setting/changeColor','redUp');
         this.state = {
             tabs:[{
                 tab:cfg.total,
@@ -56,7 +55,7 @@ export class CloudWalletHome extends Widget {
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        this.state.balance = getBorn('cloudBalance').get(CurrencyType[currencyName]) || 0;
+        this.state.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
         this.state.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,this.state.balance));
         this.paint();
     }

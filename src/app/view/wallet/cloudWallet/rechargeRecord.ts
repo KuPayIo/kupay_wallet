@@ -5,8 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getRechargeLogs } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
-import { getBorn, register } from '../../../store/memstore';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getStore, register } from '../../../store/memstore';
 import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 // ===================================================== 导出
@@ -28,7 +28,7 @@ export class RechargeRecord extends Widget {
         }
     }
     public init() {
-        const rechargeLogs = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
         this.state = {
             recordList:[],
             nextStart:rechargeLogs.start,
@@ -40,7 +40,7 @@ export class RechargeRecord extends Widget {
     }
     public updateRecordList() {
         if (!this.state) return;
-        const rechargeLogs = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
         console.log(rechargeLogs);
         const list = rechargeLogs.list;
         this.state.nextStart = rechargeLogs.start;

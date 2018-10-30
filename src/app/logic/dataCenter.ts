@@ -344,6 +344,7 @@ export class DataCenter {
         try {
             const api = new EthApi();
             const r: any = await api.getAllTransactionsOf(addr);
+            console.log(r);
             const ethTrans = this.filterEthTrans(r.result);
             const localTxList = fetchTransactionList(addr, 'ETH');
             const allTxHash = [];
@@ -887,18 +888,16 @@ export class DataCenter {
         nextPoint.setHours(nextPoint.getHours() + 1);
         nextPoint.setMinutes(0);
         nextPoint.setSeconds(0);
-    // nextPoint.setSeconds(nextPoint.getSeconds() + 10);
-    // console.log('updateUSDRate nextPoint-------',nextPoint);
-    // console.log('updateUSDRate delay-------',delay);
+        const delay = nextPoint.getTime() - new Date().getTime();
         fetchUSD2CNYRate().then((res: any) => {
             if (res.success === '1') {
                 const rate = Number(res.result.rate);
                 setStore('third/rate', rate);
             }
         });
-    // setTimeout(()=>{
-    //     this.updateUSDRate();
-    // },delay);
+        setTimeout(() => {
+            this.updateUSDRate();
+        },delay);
     }
 
   /**
