@@ -5,7 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { fetchRealUser, getServerCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
+import { getRealUser, getServerCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
@@ -60,7 +60,7 @@ export class WriteRedEnv extends Widget {
         }
         this.state.list = list;
         if (!this.state.realUser) {
-            fetchRealUser();
+            getRealUser();
         }
     }
 

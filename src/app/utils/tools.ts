@@ -626,18 +626,6 @@ export const timestampFormat = (timestamp: number) => {
     return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
 };
 
-// 获取当前钱包第一个ETH地址
-export const getFirstEthAddr = () => {
-    const wallet = getStore('wallet');
-    if (!wallet) return;
-    const currencyRecords = wallet.currencyRecords;
-    for (let i = 0; i < currencyRecords.length; i++) {
-        if (currencyRecords[i].currencyName === 'ETH') {
-            return currencyRecords[i].addrs[0].addr;
-        }
-    }
-};
-
 // unicode数组转字符串
 export const unicodeArray2Str = (arr) => {
     let str = '';
@@ -846,7 +834,7 @@ export const fetchCloudWalletAssetList = () => {
         if (MainChainCoin.hasOwnProperty(k)) {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
-            const balance = cloudBalances.get(CloudCurrencyType[CloudCurrencyType[k]]) || 0;
+            const balance = cloudBalances.get(CloudCurrencyType[k]) || 0;
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
             item.gain =  fetchCoinGain(k);
