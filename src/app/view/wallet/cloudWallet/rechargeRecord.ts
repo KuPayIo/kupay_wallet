@@ -41,7 +41,6 @@ export class RechargeRecord extends Widget {
     public updateRecordList() {
         if (!this.state) return;
         const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
-        console.log(rechargeLogs);
         const list = rechargeLogs.list;
         this.state.nextStart = rechargeLogs.start;
         this.state.canLoadMore = rechargeLogs.canLoadMore;

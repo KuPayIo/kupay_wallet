@@ -11,7 +11,7 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDivid
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getStaticLanguage, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -606,7 +606,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         const res = await requestAsync(msg);
         const userInfoStr = unicodeArray2Str(res.value[0]);
         if (userInfoStr) {
-            const localUserInfo = find('userInfo');
+            const localUserInfo = getStore('user/info');
             const serverUserInfo = JSON.parse(userInfoStr);
             const userInfo = {
                 ...localUserInfo,
@@ -689,8 +689,12 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
             const cloudWallets = getStore('cloud/cloudWallets');
             const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
             if (filter === 1) {
-                cloudWallet.otherLogs.list.push(...detail);
-            
+                if (start) {
+                    cloudWallet.otherLogs.list.push(...detail);
+                } else {
+                    cloudWallet.otherLogs.list = detail;
+                }
+                
                 cloudWallet.otherLogs.start = nextStart;
                 cloudWallet.otherLogs.canLoadMore = canLoadMore;
                 setStore('cloud/cloudWallets',cloudWallets);
@@ -911,7 +915,6 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
 
     try {
         const res = await requestAsync(msg);
-        console.log('btcWithdrawFromServer',res);
 
         return res.txid;
     } catch (err) {
@@ -960,7 +963,11 @@ export const getRechargeLogs = async (coin: string,start?) => {
         if (detail.length > 0) {
             const cloudWallets = getStore('cloud/cloudWallets');
             const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
-            cloudWallet.rechargeLogs.list.push(...detail);
+            if (start) {
+                cloudWallet.rechargeLogs.list.push(...detail);
+            } else {
+                cloudWallet.rechargeLogs.list = detail;
+            }
             cloudWallet.rechargeLogs.start = nextStart;
             cloudWallet.rechargeLogs.canLoadMore = canLoadMore;
             setStore('cloud/cloudWallets',cloudWallets);
@@ -1012,7 +1019,11 @@ export const getWithdrawLogs = async (coin: string,start?) => {
         if (detail.length > 0) {
             const cloudWallets = getStore('cloud/cloudWallets');
             const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
-            cloudWallet.withdrawLogs.list.push(...detail);
+            if (start) {
+                cloudWallet.withdrawLogs.list.push(...detail);
+            } else {
+                cloudWallet.withdrawLogs.list = detail;
+            }
             cloudWallet.withdrawLogs.start = nextStart;
             cloudWallet.withdrawLogs.canLoadMore = canLoadMore;
             setStore('cloud/cloudWallets',cloudWallets);
@@ -1175,7 +1186,7 @@ export const fetchBtcFees = async () => {
 };
 
 // 获取真实用户
-export const fetchRealUser = async () => {
+export const getRealUser = async () => {
     const msg = {
         type: 'wallet/user@get_real_user',
         param: {}

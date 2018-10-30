@@ -40,7 +40,6 @@ export class WithdrawRecord extends Widget {
     public updateRecordList() {
         if (!this.state) return;
         const withdrawLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
-        console.log(withdrawLogs);
         const list = withdrawLogs.list;
         this.state.nextStart = withdrawLogs.start;
         this.state.canLoadMore = withdrawLogs.canLoadMore;

@@ -30,7 +30,7 @@ export class ExportPrivateKey extends Widget {
     }
 
     public init() {
-        const wallet = getStore('curWallet');
+        const wallet = getStore('wallet');
         let showCurrency = wallet.showCurrencys;
         if (!wallet || !showCurrency) {
             showCurrency = [];

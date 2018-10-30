@@ -16,7 +16,7 @@ import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
+import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
@@ -607,9 +607,7 @@ export const recharge = async (psw:string,txRecord:TxHistory) => {
     close.callback(close.widget);
     if (tx) {
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.rechargeSuccess });
-        const trans = find('transactions');
-        trans.push(tx);
-        updateStore('transactions',trans);
+        updateLocalTx(tx);
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         getRechargeLogs(tx.currencyName);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
@@ -641,9 +639,7 @@ export const ethRecharge = async (psw:string,txRecord:TxHistory) => {
     const h = await sendRawTransactionETH(signedTX);
     if (!h) return;
     if (!txRecord.nonce) {
-        const nonceMap = getBorn('nonceMap');
-        nonceMap.set(fromAddr,nonce + 1);
-        updateStore('nonceMap',nonceMap);
+        setEthNonce(nonce + 1,fromAddr);
     }
     
     // 维护本地交易记录
@@ -744,9 +740,8 @@ export const withdraw = async (passwd:string,toAddr:string,currencyName:string,a
 };
 // eth提现
 export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
-    const wallet = find('curWallet');
     const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.withdraw });
-    const verify = await VerifyIdentidy(wallet,passwd);
+    const verify = await VerifyIdentidy(passwd);
     if (!verify) {
         close.callback(close.widget);
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
@@ -782,9 +777,8 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
 
 // btc提现
 export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
-    const wallet = find('curWallet');
     const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.withdraw });
-    const verify = await VerifyIdentidy(wallet,passwd);
+    const verify = await VerifyIdentidy(passwd);
     if (!verify) {
         close.callback(close.widget);
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });

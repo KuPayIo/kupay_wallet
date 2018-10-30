@@ -5,7 +5,7 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { getCurrentAccount, getThird } from './filestore';
+import { getCurrentAccount, getSetting, getThird } from './filestore';
 import { CloudCurrencyType, CloudWallet, Currency2USDT, LockScreen, ShapeShiftTxs, Store } from './interface';
 
 // ============================================ 导出
@@ -86,7 +86,7 @@ export const initStore = () => {
 
     initAccount();
 
-    // initSettings(null);
+    initSettings();
 
     initThird();
 
@@ -105,11 +105,7 @@ const handlerMap: HandlerMap = new HandlerMap();
 
 const initAccount = () => {
     const curAccount = getCurrentAccount();
-    if (!curAccount) {
-        store.user.salt = cryptoRandomInt().toString();
-
-        return;
-    }
+    if (curAccount) {
     const fileUser = curAccount.user;
     store.user.id = fileUser.id;
     store.user.token = fileUser.token;
@@ -118,11 +114,14 @@ const initAccount = () => {
     store.user.info = {
         ...fileUser.info
     };
-
+    
     store.wallet = {
         ...curAccount.wallet
     };
-
+    } else {
+        store.user.salt = cryptoRandomInt().toString();
+    }
+    
     const cloudWallets = new Map<CloudCurrencyType, CloudWallet>();
     for (const key in CloudCurrencyType) {
         const isValueProperty = parseInt(key, 10) >= 0;
@@ -139,7 +138,8 @@ const initAccount = () => {
     store.cloud.cloudWallets = cloudWallets;
 };
 
-const initSettings = (setting) => {
+const initSettings = () => {
+    const setting = getSetting();
     store.setting = {
         ...setting
     };
