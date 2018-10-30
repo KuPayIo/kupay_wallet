@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getServerCloudBalance } from '../../../net/pull';
-import { register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, getUserInfo } from '../../../utils/tools';
 // ============================导出
@@ -88,31 +88,31 @@ export class Home extends Widget {
                 this.paint();
             }
         });
-        // 从缓存中获取地址进行初始化
-        const addrs = find('addrs') || [];
-        if (addrs) {
-            const wallet = find('curWallet');
-            if (!wallet) return;
-            let list = [];
-            wallet.currencyRecords.forEach(v => {
-                if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
-                    list = list.concat(v.addrs);
+
+        const wallet = getStore('wallet');
+        if (!wallet) return;
+        const list = [];
+        wallet.currencyRecords.forEach(v => {
+            if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
+                v.addrs.forEach(addrInfo => {
+                    list.push({ addr: addrInfo.addr, currencyName: v.currencyName });
+                });
+                
+            }
+        });
+       
+        const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+        list.forEach(v => {
+            neededRefreshCount++;
+            dataCenter.updateBalance(v.addr, v.currencyName).then(() => {
+                neededRefreshCount--;
+                if (neededRefreshCount === 0) {
+                    this.state.refreshing = false;
+                    this.paint();
                 }
             });
-            const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-            addrs.forEach(v => {
-                if (list.indexOf(v.addr) >= 0 && wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
-                    neededRefreshCount++;
-                    dataCenter.updateBalance(v.addr, v.currencyName).then(() => {
-                        neededRefreshCount--;
-                        if (neededRefreshCount === 0) {
-                            this.state.refreshing = false;
-                            this.paint();
-                        }
-                    });
-                }
-            });
-        }
+        });
+        
     }
 }
 
@@ -125,7 +125,7 @@ register('userInfo',() => {
 });
 
 // 云端余额变化
-register('cloudBalance',() => {
+register('cloud/cloudWallet',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();

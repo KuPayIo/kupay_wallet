@@ -41,7 +41,7 @@ export class TotalRecord extends Widget {
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName,1);
             getWithdrawLogs(this.props.currencyName);
-            getRechargeLogs(this.state.currencyName);
+            getRechargeLogs(this.props.currencyName);
         }
         this.updateRecordList();
     }
@@ -64,7 +64,7 @@ export class TotalRecord extends Widget {
         this.state.withdrawNext = data3.start;
         this.state.withdrawList = this.parseWithdrawList(data3.list);
 
-        this.state.recordList = this.state.rechargeList.concat(this.state.otherList,this.state.withdrawList);
+        this.state.recordList = [].concat(this.state.rechargeList,this.state.otherList,this.state.withdrawList);
         this.state.recordList.sort((v1,v2) => {
             return v2.time - v1.time;
         });
@@ -107,7 +107,6 @@ export class TotalRecord extends Widget {
         list.forEach((item) => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
-            console.log(txDetail);
             item.statusShow = obj.text;
             item.behavior = this.state.cfgData.recharge;
             item.amountShow = `+${item.amount}`;
@@ -165,26 +164,16 @@ export class TotalRecord extends Widget {
     }
 }
 
-register('rechargeLogs', () => {
+// 云端记录变化
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();
     }
 });
-register('accountDetail', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateRecordList();
-    }
-});
-register('withdrawLogs', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateRecordList();
-    }
-});
+
 // 本地交易变化,更新状态
-register('transactions',() => {
+register('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

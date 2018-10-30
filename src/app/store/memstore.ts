@@ -106,24 +106,23 @@ const handlerMap: HandlerMap = new HandlerMap();
 
 const initAccount = () => {
     const curAccount = getCurrentAccount();
-    if (!curAccount) {
+    if (curAccount) {
+        const fileUser = curAccount.user;
+        store.user.id = fileUser.id;
+        store.user.token = fileUser.token;
+        store.user.publicKey = fileUser.publicKey;
+        store.user.salt = fileUser.salt;
+        store.user.info = {
+            ...fileUser.info
+        };
+    
+        store.wallet = {
+            ...curAccount.wallet
+        };
+    } else {
         store.user.salt = cryptoRandomInt().toString();
-        
-        return;
     }
-    const fileUser = curAccount.user;
-    store.user.id = fileUser.id;
-    store.user.token = fileUser.token;
-    store.user.publicKey = fileUser.publicKey;
-    store.user.salt = fileUser.salt;
-    store.user.info = {
-        ...fileUser.info
-    };
-
-    store.wallet = {
-        ...curAccount.wallet
-    };
-
+    
     const cloudWallets = new Map<CloudCurrencyType, CloudWallet>();
     for (const key in CloudCurrencyType) {
         const isValueProperty = parseInt(key, 10) >= 0;

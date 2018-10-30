@@ -4,10 +4,10 @@
 // ================================ 导入
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { applyAutoLogin, autoLogin, defaultLogin, fetchBtcFees, fetchGasPrices, fetchRealUser, getCloudBalance, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
+import { applyAutoLogin, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
 import { getStore, register } from '../../store/memstore';
-import { getFirstEthAddr, getLanguage } from '../../utils/tools';
+import { getLanguage } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -93,8 +93,8 @@ register('flags/level_2_page_loaded',(loaded:boolean) => {
 
 // 用户信息变化
 register('userInfo',(userInfo:UserInfo) => {
-    const loginState = find('loginState');
-    if (loginState === LoginState.logined && userInfo) {
+    const isLogin = getStore('user/isLogin');
+    if (isLogin && userInfo) {
         setUserInfo();
     }
 });
@@ -106,7 +106,7 @@ register('user/isLogin',(isLogin:boolean) => {
         getServerCloudBalance();
         
         // 获取真实用户
-        fetchRealUser();
+        getRealUser();
         // 用户基础信息
         getUserInfoFromServer(getStore('user/conUid'));
         
@@ -119,10 +119,3 @@ register('user/isLogin',(isLogin:boolean) => {
         }
     }
 });
-
-/**
- * 获取随机数之后的动作
- */
-const afterGetRandomAction = () => {
-
-};

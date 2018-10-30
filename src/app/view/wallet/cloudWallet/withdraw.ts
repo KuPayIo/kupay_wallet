@@ -5,7 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { withdrawMinerFee } from '../../../config';
 import { withdraw } from '../../../net/pullWallet';
-import { CurrencyType } from '../../../store/interface';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getCloudBalances, getStore } from '../../../store/memstore';
 import { withdrawLimit } from '../../../utils/constants';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
 interface Props {
@@ -21,7 +22,7 @@ export class Withdraw extends Widget {
     public init() {
         const currencyName = this.props.currencyName;
         const minerFee = withdrawMinerFee[currencyName];
-        const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
+        const balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
         this.state = {
             balance,
             amount:0,
@@ -84,7 +85,7 @@ export class Withdraw extends Widget {
 
             return;
         }
-        const realUser = getBorn('realUserMap').get(find('conUser'));
+        const realUser = getStore('user/info/isRealUser');
         if (!realUser) {
             popNewMessage(this.state.cfgData.tips[2]);
 

@@ -38,7 +38,6 @@ export class OtherRecord extends Widget {
     public updateRecordList() {
         if (!this.state) return;
         const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
-        console.log(accountDetail);
         const list = accountDetail.list;
         this.state.nextStart = accountDetail.start;
         this.state.canLoadMore = accountDetail.canLoadMore;

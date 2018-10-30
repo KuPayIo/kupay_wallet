@@ -129,8 +129,8 @@ export const getAddrsInfoByCurrencyName = (currencyName: string) => {
     for (const record of wallet.currencyRecords) {
         if (record.currencyName === currencyName) {
             return record.addrs;
-            }
         }
+    }
 };
 
 /**
@@ -493,9 +493,9 @@ export const copyToClipboard = (copyText) => {
     input.setAttribute('style', 'position:absolute;top:-9999px;');
     document.body.appendChild(input);
     if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
-    input.setSelectionRange(0, 9999);
+        input.setSelectionRange(0, 9999);
     } else {
-    input.select();
+        input.select();
     }
     if (document.execCommand('copy')) {
         document.execCommand('copy');
@@ -624,18 +624,6 @@ export const timestampFormat = (timestamp: number) => {
     const seconds = date.getSeconds() >= 10 ? date.getSeconds() : `0${date.getSeconds()}`;
 
     return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
-};
-
-// 获取当前钱包第一个ETH地址
-export const getFirstEthAddr = () => {
-    const wallet = getStore('wallet');
-    if (!wallet) return;
-    const currencyRecords = wallet.currencyRecords;
-    for (let i = 0; i < currencyRecords.length; i++) {
-        if (currencyRecords[i].currencyName === 'ETH') {
-            return currencyRecords[i].addrs[0].addr;
-        }
-    }
 };
 
 // unicode数组转字符串
@@ -846,7 +834,7 @@ export const fetchCloudWalletAssetList = () => {
         if (MainChainCoin.hasOwnProperty(k)) {
             item.currencyName = k;
             item.description = MainChainCoin[k].description;
-            const balance = cloudBalances.get(CloudCurrencyType[CloudCurrencyType[k]]) || 0;
+            const balance = cloudBalances.get(CloudCurrencyType[k]) || 0;
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k,balance));
             item.gain =  fetchCoinGain(k);
