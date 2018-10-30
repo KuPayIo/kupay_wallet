@@ -188,7 +188,7 @@ const store: Store = {
             total: null,      // 挖矿汇总信息
             history: null, // 挖矿历史记录
             addMine: [],  // 矿山增加项目
-            mineRank: null,      // 矿山排名
+            mineRank: null,    // 矿山排名
             miningRank: null,  // 挖矿排名
             itemJump: null
         },                       // 挖矿

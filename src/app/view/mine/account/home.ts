@@ -97,7 +97,7 @@ export class AccountHome extends Widget {
         if (!psw) return;
         const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
         try {
-            const mnemonic = await getMnemonic(wallet, psw);
+            const mnemonic = await getMnemonic(psw);
             if (mnemonic) {
                 popNew('app-view-mine-account-exportPrivateKey', { mnemonic });
             } else {

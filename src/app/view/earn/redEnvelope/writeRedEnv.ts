@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { fetchRealUser, getServerCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType, CloudWallet } from '../../../store/interface';
-import { getStore, register, setStore } from '../../../store/memstore';
+import { getStore, register, setStore, getCloudBalances } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
@@ -49,17 +49,7 @@ export class WriteRedEnv extends Widget {
             realUser: getStore('user/info/isRealUser'),
             cfgData: getLanguage(this)
         };
-        const list = [
-            { img: '../../res/image/currency/KT.png', name: 'KT', num: 500 },
-            { img: '../../res/image/currency/BTC.png', name: 'BTC', num: 0.01 },
-            { img: '../../res/image/currency/ETH.png', name: 'ETH', num: 0.5 }
-        ];
-        const data = getStore('cloud/cloudWallets');
-        for (const i in list) {
-            let currencyObj: CloudWallet = data.get(CloudCurrencyType[list[i].name]);
-            list[i].num = currencyObj.balance || 0;
-        }
-        this.state.list = list;
+        this.updateBalance();
         if (!this.state.realUser) {
             fetchRealUser();
         }
@@ -81,9 +71,9 @@ export class WriteRedEnv extends Widget {
             { img: '../../res/image/currency/BTC.png', name: 'BTC', num: 0.01 },
             { img: '../../res/image/currency/ETH.png', name: 'ETH', num: 0.5 }
         ];
-        const data = getStore('cloud/cloudWallets');
+        const data = getCloudBalances();
         for (const i in list) {
-            list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
+            list[i].num = data.get(CloudCurrencyType[list[i].name])||0;
         }
         this.state.list = list;
         this.paint();

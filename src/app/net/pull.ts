@@ -711,7 +711,7 @@ export const getMineRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
     requestAsync(msg).then(data => {
         const mineData = parseMineRank(data);
-        setStore('mineRank', mineData);
+        setStore('activity/mining/mineRank', mineData);
     });
 };
 
@@ -745,7 +745,7 @@ export const sendCode = async (phone: number, num: number) => {
  * 注册手机
  */
 export const regPhone = async (phone: number, code: number) => {
-    const bphone = getUserInfo().bphone;
+    const bphone = getUserInfo().phoneNumber;
     // tslint:disable-next-line:variable-name
     const old_phone =  bphone ? bphone :'';
     const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code } };
