@@ -6,7 +6,7 @@ import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAward, getCloudBalance, getMining, getMiningRank } from '../../../net/pull';
+import { getAward,getServerCloudBalance, getMining, getMiningRank } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { formatBalance, getLanguage, getUserInfo } from '../../../utils/tools';
@@ -36,16 +36,17 @@ export class PlayHome extends Widget {
         this.state = {
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
+            holdMines:0,//累计挖矿
             mines: 0,// 今日可挖数量
             hasWallet:false, // 是否已经创建钱包
             mineLast:0,// 矿山剩余量
             rankNum:1,// 挖矿排名
             page:[
-                'app-view-earn-mining-rankList',
-                'app-view-earn-mining-dividend',
-                'app-view-earn-redEnvelope-writeRedEnv',
-                'app-view-earn-exchange-exchange',
-                'app-view-earn-mining-addMine'
+                'app-view-earn-mining-rankList', //挖矿排名
+                'app-view-earn-mining-dividend', //领分红
+                'app-view-earn-redEnvelope-writeRedEnv', //发红包
+                'app-view-earn-exchange-exchange', //兑换
+                'app-view-earn-mining-addMine'  //任务
             ],
             doMining:false,  // 点击挖矿，数字动画效果执行
             firstClick:true,
@@ -59,8 +60,7 @@ export class PlayHome extends Widget {
             refresh:false,
             avatar:'../../../res/image1/default_avatar.png'
         };
-        
-        this.initDate();
+        this.initData();
     }
     /**
      * 判断当前用户是否已经创建钱包
@@ -148,8 +148,8 @@ export class PlayHome extends Widget {
     /**
      * 屏幕滑动
      */
-    public scrollPage() {
-        const scrollTop = document.getElementById('contain').scrollTop; 
+    public scrollPage(e:any) {
+        const scrollTop = e.target.scrollTop; 
         this.state.scrollHeight = scrollTop;
         if (scrollTop > 0) {
             this.state.scroll = true;
@@ -179,7 +179,7 @@ export class PlayHome extends Widget {
     /**
      * 获取更新数据
      */
-    private initDate() {
+    private initData() {
         const wallet = getStore('wallet');
         if (!wallet) {
             this.paint();
@@ -194,28 +194,28 @@ export class PlayHome extends Widget {
             this.state.ktBalance = formatBalance(cloudBalances.get(CloudCurrencyType.KT));
             this.state.ethBalance = formatBalance(cloudBalances.get(CloudCurrencyType.ETH));
         }
-
-        const mining = getStore('activity/mining');
-        if (mining) {
-            if (mining.thisNum > 0) {
+        
+        
+        const miningTotal = getStore('activity/mining/total');
+        if (miningTotal) {
+            if (miningTotal.thisNum > 0) {
                 this.state.isAbleBtn = true;
             }
-            this.state.mines = formatBalance(mining.thisNum);
-            this.state.mineLast = formatBalance(mining.totalNum - mining.holdNum);
-
+            this.state.mines = formatBalance(miningTotal.thisNum);
+            this.state.mineLast = formatBalance(miningTotal.totalNum - miningTotal.holdNum);
+            this.state.holdMines = formatBalance(miningTotal.holdNum);
         } else {
             this.state.isAbleBtn = false;
         }
 
-        if (mining && mining.mineRank) {
-            this.state.rankNum = mining.mineRank.myRank;
+        if (miningTotal && miningTotal.mineRank) {
+            this.state.rankNum = miningTotal.mineRank.myRank;
         }
 
         const userInfo = getUserInfo();
         if (userInfo) {
             this.state.avatar = userInfo.avatar ? userInfo.avatar :'../../../res/image1/default_avatar.png';
         }
-        
         this.paint();
     }
 
@@ -225,7 +225,7 @@ export class PlayHome extends Widget {
     private initEvent() {
         // 这里发起通信
         if (this.props.isActive && this.state.hasWallet) {
-            getCloudBalance();
+            getServerCloudBalance();
             getMining();
             getMiningRank(100);
         }
@@ -235,33 +235,33 @@ export class PlayHome extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-register('cloudBalance', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });
 
-register('miningTotal', () => {
+register('activity/mining/total', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });
-register('miningRank', () => {
+register('activity/mining/miningRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });
-register('curWallet', () => {
+register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init(); // 注销钱包后初始化
         w.initEvent();
     }
 });
-register('languageSet', () => {
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

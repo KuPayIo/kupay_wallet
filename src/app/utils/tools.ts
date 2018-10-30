@@ -129,8 +129,8 @@ export const getAddrsInfoByCurrencyName = (currencyName: string) => {
     for (const record of wallet.currencyRecords) {
         if (record.currencyName === currencyName) {
             return record.addrs;
+            }
         }
-    }
 };
 
 /**
@@ -493,9 +493,9 @@ export const copyToClipboard = (copyText) => {
     input.setAttribute('style', 'position:absolute;top:-9999px;');
     document.body.appendChild(input);
     if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
-        input.setSelectionRange(0, 9999);
+    input.setSelectionRange(0, 9999);
     } else {
-        input.select();
+    input.select();
     }
     if (document.execCommand('copy')) {
         document.execCommand('copy');

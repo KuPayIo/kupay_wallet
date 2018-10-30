@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
 import { recharge, resendRecharge } from '../../../net/pullWallet';
-import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
+import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
@@ -19,7 +19,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
     currencyName:string;
-    tx?:TransRecordLocal;
+    tx?:TxHistory;
 }
 export class Recharge extends Widget {
     public props:Props;
@@ -37,7 +37,7 @@ export class Recharge extends Widget {
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
         const tx = this.props.tx;
         console.log(tx);
-        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.STANDARD;
+        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             amount:tx ? tx.pay : 0,
@@ -104,7 +104,7 @@ export class Recharge extends Widget {
         if (!passwd) return;
         const t = new Date();
         const oldTx = this.props.tx;
-        const tx:TransRecordLocal = {
+        const tx:TxHistory = {
             hash:'',
             txType:TxType.Receipt,
             fromAddr,

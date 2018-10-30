@@ -12,7 +12,7 @@ import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../logic/dataCenter';
 import { buyProduct, getCloudBalance, getPurchaseRecord } from '../net/pull';
 import { Addr } from '../store/interface';
-import { find, getStore, updateStore } from '../store/memstore';
+import { setStore, getStore } from '../store/memstore';
 import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
 import { nameWare } from './nameWareHouse';
 import { shareSecret } from './secretsBase';
@@ -25,7 +25,7 @@ import { calcHashValuePromise, hexstrToU8Array, initAddr, popNewLoading, popNewM
 export const getNewAddrInfo = (currencyName, wallet) => {
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
-    const addrs = find('addrs') || [];
+    const addrs = getStore('addrs') || [];
     const firstAddr = addrs.filter(v => v.addr === currencyRecord.addrs[0])[0];
 
     let address;
@@ -96,6 +96,7 @@ export const VerifyIdentidy = async (passwd:string) => {
         return false;
     }
 };
+
 
 /**
  * 获取助记词
@@ -185,7 +186,7 @@ export const fetchLocalTxByHash1 = (hash:string) => {
 // 购买理财
 export const purchaseProduct = async (psw:string,productId:string,amount:number) => {
     const close = popNewLoading('正在购买...');    
-    const pswCorrect = await VerifyIdentidy(find('curWallet'),psw,false);
+    const pswCorrect = await VerifyIdentidy(getStore('curWallet'),psw,false);
     if (!pswCorrect) {
         close.callback(close.widget);
         popNewMessage('密码不正确');    
@@ -218,7 +219,7 @@ export const fetchMnemonicFragment =  (hash) => {
 // 备份助记词
 export const backupMnemonic = async (passwd:string) => {
     const close = popNewLoading('导出中...');
-    const hash = await calcHashValuePromise(passwd, find('salt'));
+    const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
     console.log('hash!!!!!!!!!!!!',hash);
     close.callback(close.widget);
     const mnemonic = getMnemonicByHash(hash);

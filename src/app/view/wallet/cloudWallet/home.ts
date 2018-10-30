@@ -22,7 +22,6 @@ export class CloudWalletHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        this.initEvent();
     }
     public init() {
         const currencyName = this.props.currencyName;

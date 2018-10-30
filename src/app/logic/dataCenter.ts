@@ -344,6 +344,7 @@ export class DataCenter {
         try {
             const api = new EthApi();
             const r: any = await api.getAllTransactionsOf(addr);
+            console.log(r);
             const ethTrans = this.filterEthTrans(r.result);
             const localTxList = fetchTransactionList(addr, 'ETH');
             const allTxHash = [];
