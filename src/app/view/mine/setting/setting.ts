@@ -98,7 +98,7 @@ export class Setting extends Widget {
                 }
             });
         } else {
-            // tslint:disable-next-line:max-line-length
+                // tslint:disable-next-line:max-line-length
             popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
                 popNew('app-view-wallet-create-home');
             }, () => {
@@ -178,7 +178,6 @@ export class Setting extends Widget {
         });
     }
 }
-
 
 // ================================================本地，立即执行
 register('setting/language', () => {

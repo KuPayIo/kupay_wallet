@@ -35,14 +35,14 @@ export class DataCenter {
    * 初始化
    */
     public init() {
-    // 获取shapeshift支持货币
-    // getShapeShiftCoins();
-    // 更新人民币美元汇率
+        // 获取shapeshift支持货币
+        // getShapeShiftCoins();
+        // 更新人民币美元汇率
         this.updateUSDRate();
-    // 更新货币对比USDT的比率
-    // this.updateCurrency2USDTRate();
+        // 更新货币对比USDT的比率
+        this.updateCurrency2USDTRate();
         this.refreshAllTx();
-    // this.initErc20GasLimit();
+        // this.initErc20GasLimit();
     }
   /**
    * 刷新本地钱包
@@ -908,7 +908,6 @@ export class DataCenter {
         const seconds = nextPoint.getSeconds();
         const delaySeconds = seconds < 30 ? 30 - seconds : 60 - seconds;
         const delay = delaySeconds * 1000;
-    // console.log('updateCurrency2USDTRate',nextPoint);
 
         const currencyList = [];
         for (const k in MainChainCoin) {
@@ -935,9 +934,9 @@ export class DataCenter {
           // console.log('fetchCurrency2USDTRate err');
         });
         });
-    // setTimeout(()=>{
-    //     this.updateCurrency2USDTRate();
-    // },delay);
+        setTimeout(() => {
+            this.updateCurrency2USDTRate();
+        },delay);
     }
 }
 
