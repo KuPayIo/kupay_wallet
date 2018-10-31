@@ -117,7 +117,15 @@ export class Home extends Widget {
 }
 
 // ==========================本地
-register('userInfo',() => {
+register('user/id',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
+    }
+});
+
+register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.userInfoChange();

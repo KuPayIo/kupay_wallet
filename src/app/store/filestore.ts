@@ -20,26 +20,40 @@ import { getStore, register } from './memstore';
 export const getAllAccount = () => {
     const localAcccounts = getLocalStorage('accounts', {
         currenctId: '',
-        accounts: []
+        accounts: {}
     });
+    const accounts = [];
+    for (const key in localAcccounts.accounts) {
+        accounts.push(localAcccounts.accounts[key]);
+    }
 
-    return localAcccounts.accounts;
+    return accounts;
 };
 
+/**
+ * 删除账户
+ */
+export const deleteAccount = (id:string) => {
+    const localAcccounts = getLocalStorage('accounts', {
+        currenctId: '',
+        accounts: {}
+    });
+    delete localAcccounts.accounts[id];
+    setLocalStorage('accounts',localAcccounts);
+};
 /**
  * 获取当前账户
  */
 export const getCurrentAccount = () => {
     const localAcccounts = getLocalStorage('accounts', {
         currenctId: '',
-        accounts: []
+        accounts: {}
     });
 
     return localAcccounts.accounts[localAcccounts.currenctId];
 };
 
 /**
-
  * 获取3方数据
  */
 export const getThird = () => {
@@ -158,6 +172,9 @@ const registerAccountChange = () => {
     register('user', () => {
         accountChange();
     });
+    register('user/id', () => {
+        accountChange();
+    });
     register('user/token', () => {
         accountChange();
     });
@@ -220,6 +237,21 @@ const accountChange = () => {
         currenctId: '',
         accounts: {}
     });
+    
+    if (!storeUser.id) {
+        const flags = getStore('flags');
+        const saveAccount = flags.saveAccount;
+        if (saveAccount) {
+            localAccounts.currenctId = '';
+            setLocalStorage('accounts', localAccounts);
+        } else {
+            delete localAccounts.accounts[localAccounts.currenctId];
+            localAccounts.currenctId = '';
+            setLocalStorage('accounts', localAccounts);
+        }
+        
+        return;
+    }
     const localUser: LocalUser = {
         id: storeUser.id,
         token: storeUser.token,
@@ -244,7 +276,7 @@ const accountChange = () => {
 
     localAccounts.currenctId = storeUser.id;
     localAccounts.accounts[storeUser.id] = newAccount;
-
+    
     setLocalStorage('accounts', localAccounts);
 };
 

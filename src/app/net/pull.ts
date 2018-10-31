@@ -1235,7 +1235,7 @@ export const uploadFile = async (base64) => {
             'user-agent': 'Mozilla/4.0 MDN Example'
         },
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'no-cors', // no-cors, cors, *same-origin
+        mode: 'cors', // no-cors, cors, *same-origin
         redirect: 'follow', // manual, *follow, error
         referrer: 'no-referrer' // *client, no-referrer
     }).then(response => response.json())

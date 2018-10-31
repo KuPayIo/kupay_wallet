@@ -8,7 +8,7 @@ import { GlobalWallet } from '../../../core/globalWallet';
 import { getStore } from '../../../store/memstore';
 import { pswEqualed } from '../../../utils/account';
 import { getLanguage } from '../../../utils/tools';
-import { VerifyIdentidy } from '../../../utils/walletTools';
+import { passwordChange, VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 export class ChangePSW extends Widget {
     public ok: () => void;
@@ -83,9 +83,7 @@ export class ChangePSW extends Widget {
 
             return;
         }
-        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        await gwlt.passwordChange(oldPassword, newPassword);
-        wallet.gwlt = gwlt.toJSON();
+        await passwordChange(oldPassword, newPassword);
         loading.callback(loading.widget);
         this.backPrePage();
     }
