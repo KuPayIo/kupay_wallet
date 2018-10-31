@@ -9,7 +9,7 @@ import { EthWallet } from '../core/eth/wallet';
 import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
 import { estimateGasERC20,getShapeShiftCoins,getTransactionsByAddr } from '../net/pullWallet';
 import { BigNumber } from '../res/js/bignumber';
-import { CurrencyRecord,TxHistory,TxStatus,TxType } from '../store/interface';
+import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
 import { getStore,register,setStore } from '../store/memstore';
 import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
 import { formatBalance,formatBalanceValue,getAddrsAll,getConfirmBlockNumber,parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
@@ -35,14 +35,14 @@ export class DataCenter {
    * 初始化
    */
     public init() {
-    // 获取shapeshift支持货币
-    // getShapeShiftCoins();
-    // 更新人民币美元汇率
+        // 获取shapeshift支持货币
+        // getShapeShiftCoins();
+        // 更新人民币美元汇率
         this.updateUSDRate();
-    // 更新货币对比USDT的比率
-    // this.updateCurrency2USDTRate();
+        // 更新货币对比USDT的比率
+        this.updateCurrency2USDTRate();
         this.refreshAllTx();
-    // this.initErc20GasLimit();
+        // this.initErc20GasLimit();
     }
   /**
    * 刷新本地钱包
@@ -235,7 +235,7 @@ export class DataCenter {
 
     private timerCheckAddr(needCheckAddr: CurrencyRecord[]) {
         clearTimeout(this.checkAddrTimer);
-        if (!find('curWallet')) return;
+        if (!getStore('wallet')) return;
         const record: CurrencyRecord = needCheckAddr.shift();
         if (!record) {
             return;
@@ -702,12 +702,12 @@ export class DataCenter {
      * 检查eth地址
      */
     private async checkEthAddr(currencyRecord: CurrencyRecord) {
-        const wallet = find('curWallet');
+        const wallet = getStore('wallet');
         if (!wallet) return [];
-        const mnemonic = getMnemonicByHash(getBorn('hashMap').get(wallet.walletId));
+        const mnemonic = getMnemonicByHash(getStore('user/secretHash'));
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanUsedAddress();
-        const addrs: Addr[] = [];
+        const addrs: AddrInfo[] = [];
 
         for (let i = 1; i < cnt; i++) {
             const address = ethWallet.selectAddress(i);
@@ -908,7 +908,6 @@ export class DataCenter {
         const seconds = nextPoint.getSeconds();
         const delaySeconds = seconds < 30 ? 30 - seconds : 60 - seconds;
         const delay = delaySeconds * 1000;
-    // console.log('updateCurrency2USDTRate',nextPoint);
 
         const currencyList = [];
         for (const k in MainChainCoin) {
@@ -935,9 +934,9 @@ export class DataCenter {
           // console.log('fetchCurrency2USDTRate err');
         });
         });
-    // setTimeout(()=>{
-    //     this.updateCurrency2USDTRate();
-    // },delay);
+        setTimeout(() => {
+            this.updateCurrency2USDTRate();
+        },delay);
     }
 }
 

@@ -111,7 +111,8 @@ register('user/isLogin',(isLogin:boolean) => {
         getUserInfoFromServer(getStore('user/conUid'));
         
         const userInfo = getStore('user/info');
-        if (userInfo) {
+        const flags = getStore('flags');
+        if (flags.created && userInfo) {
             setUserInfo();
         }
         if (!getStore('user/token')) {
