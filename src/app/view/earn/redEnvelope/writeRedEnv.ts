@@ -6,8 +6,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getRealUser, getServerCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
-import { CloudCurrencyType, LuckyMoneyType, CloudWallet } from '../../../store/interface';
-import { getStore, register, setStore, getCloudBalances } from '../../../store/memstore';
+import { CloudCurrencyType, CloudWallet, LuckyMoneyType } from '../../../store/interface';
+import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
@@ -73,7 +73,7 @@ export class WriteRedEnv extends Widget {
         ];
         const data = getCloudBalances();
         for (const i in list) {
-            list[i].num = data.get(CloudCurrencyType[list[i].name])||0;
+            list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
         }
         this.state.list = list;
         this.paint();
