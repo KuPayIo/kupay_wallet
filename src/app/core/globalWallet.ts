@@ -242,17 +242,4 @@ export class GlobalWallet {
         return JSON.stringify(wlt);
     }
 
-    /**
-     * 修改密码
-     */
-    public async passwordChange(oldPsw: string, newPsw: string) {
-        const salt = getStore('user/salt');
-        const oldHash = await calcHashValuePromise(oldPsw, salt);
-        const newHash = await calcHashValuePromise(newPsw, salt);
-
-        const oldVault = cipher.decrypt(oldHash, this._vault);
-        this._vault = cipher.encrypt(newHash, oldVault);
-
-    }
-
 }

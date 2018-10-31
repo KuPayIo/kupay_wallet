@@ -8,15 +8,12 @@ import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
-import { dataCenter } from '../logic/dataCenter';
-import { buyProduct, getCloudBalance, getPurchaseRecord } from '../net/pull';
-import { Addr } from '../store/interface';
-import { setStore, getStore } from '../store/memstore';
+import { buyProduct, getPurchaseRecord, getServerCloudBalance } from '../net/pull';
+import { getStore, setStore } from '../store/memstore';
 import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
 import { nameWare } from './nameWareHouse';
 import { shareSecret } from './secretsBase';
-import { calcHashValuePromise, hexstrToU8Array, initAddr, popNewLoading, popNewMessage, unicodeArray2Str } from './tools';
+import { calcHashValuePromise, decrypt, encrypt, hexstrToU8Array, popNewLoading, popNewMessage, unicodeArray2Str } from './tools';
 
 /**
  * 获取新的地址信息
@@ -79,7 +76,7 @@ export const effectiveAddr = (currencyName: string, addr: string): [boolean, str
 };
 
 /**
- * 验证身份
+ * 验证当前账户身份
  */
 export const VerifyIdentidy = async (passwd:string) => {
     const wallet = getStore('wallet');
@@ -97,7 +94,23 @@ export const VerifyIdentidy = async (passwd:string) => {
     }
 };
 
+/**
+ * 验证某个账户身份
+ */
+export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) => {
+    const hash = await calcHashValuePromise(passwd, salt);
 
+    try {
+        const cipher = new Cipher();
+        const r = cipher.decrypt(hash, vault);
+
+        return true;
+    } catch (error) {
+        console.log(error);
+
+        return false;
+    }
+};
 /**
  * 获取助记词
  */
@@ -186,7 +199,7 @@ export const fetchLocalTxByHash1 = (hash:string) => {
 // 购买理财
 export const purchaseProduct = async (psw:string,productId:string,amount:number) => {
     const close = popNewLoading('正在购买...');    
-    const pswCorrect = await VerifyIdentidy(getStore('curWallet'),psw,false);
+    const pswCorrect = await VerifyIdentidy(psw);
     if (!pswCorrect) {
         close.callback(close.widget);
         popNewMessage('密码不正确');    
@@ -197,7 +210,7 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
     close.callback(close.widget);
     if (data) {
         popNewMessage('购买成功');
-        getCloudBalance();
+        getServerCloudBalance();
         console.log('data',data);
         getPurchaseRecord();// 购买之后获取购买记录
     }
@@ -278,4 +291,17 @@ export const getWltAddrIndex = (addr: string, currencyName: string) => {
     }
 
     return -1;
+};
+
+/**
+ * 修改密码
+ */
+export const passwordChange = async (oldPsw: string, newPsw: string) => {
+    const salt = getStore('user/salt');
+    const oldHash = await calcHashValuePromise(oldPsw, salt);
+    const newHash = await calcHashValuePromise(newPsw, salt);
+    const wallet = getStore('wallet');
+    const oldVault = decrypt(wallet.vault, oldHash);
+    wallet.vault = encrypt(oldVault, newHash);
+    setStore('wallet',wallet);
 };

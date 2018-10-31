@@ -141,16 +141,18 @@ export class CreateWallet extends Widget {
             option.fragment1 = this.props.fragment1;
             option.fragment2 = this.props.fragment2;
         }
-        console.time('create wallet');
         const hash = await createWallet(this.state.itype,option);
-        console.timeEnd('create wallet');
         if (!hash) {
             popNewMessage(this.state.cfgData.tips[3]);
         }
+
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
         setStore('flags',{ created:true,mnemonic,fragments });
         getRandom();
+        if (this.state.avatar) {
+            uploadFile(this.state.avatar);
+        }
         
         const w: any = forelet.getWidget(WIDGET_NAME);
         if (w) {
