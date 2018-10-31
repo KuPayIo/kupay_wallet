@@ -63,8 +63,10 @@ export class Exchange extends Widget {
         };
         
         popNew('app-view-earn-exchange-openRedEnv', redEnvelope);
-        this.state.cid = '';
-        this.paint();
+        setTimeout(() => {
+            this.state.cid = '';
+            this.paint();
+        }, 100);
     }
 
     /**

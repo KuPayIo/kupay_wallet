@@ -87,11 +87,11 @@ export const parseMineRank = (data) => {
         rank: [],
         myRank: data.me
     };
-    if (data.value.length > 10) {
+    if (data.value.length > 100) {
         mineData.isMore = true;
     } 
     const data1 = [];
-    for (let i = 0; i < data.value.length && i < 10; i++) {
+    for (let i = 0; i < data.value.length && i < 100; i++) {
         const user = unicodeArray2Str(data.value[i][1]);
         const userData = user ? JSON.parse(user) :'' ;
         data1.push({
@@ -117,11 +117,11 @@ export const parseMiningRank = (data) => {
         myRank:data.me
     };
 
-    if (data.value.length > 10) {
+    if (data.value.length > 100) {
         miningData.isMore = true;
     } 
     const data2 = [];
-    for (let i = 0; i < data.value.length && i < 10; i++) {
+    for (let i = 0; i < data.value.length && i < 100; i++) {
         const user = unicodeArray2Str(data.value[i][1]);
         const userData = user ? JSON.parse(user) :'';
         data2.push({

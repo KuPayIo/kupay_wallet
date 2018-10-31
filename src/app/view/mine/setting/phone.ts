@@ -38,7 +38,7 @@ export class BindPhone extends Widget {
 
             return;
         }
-        const data = await regPhone(this.state.phone, Number(this.state.code.join('')));
+        const data = await regPhone(this.state.phone, this.state.code.join(''));
         if (data && data.result === 1) {
             const userinfo = getUserInfo();
             userinfo.phoneNumber = this.state.phone;
