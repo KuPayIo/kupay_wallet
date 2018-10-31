@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getFirstEthAddr, getLanguage, getUserInfo, popPswBox } from '../../../utils/tools';
+import { copyToClipboard, getLanguage, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出
@@ -60,7 +60,7 @@ export class Home extends Widget {
         const wallet = getStore('wallet');
         if (wallet) {
             this.state.hasWallet = true;
-            this.state.address = getFirstEthAddr();
+            this.state.address = getStore('user/id');
             this.state.hasBackupMnemonic = wallet.isBackup;            
         } else {
             this.state.hasWallet = false;

@@ -10,7 +10,7 @@ import { getRandom, uploadFile } from '../../../net/pull';
 import { register, setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { localUrlPre } from '../../../utils/constants';
-import { getFirstEthAddr, getLanguage, getStaticLanguage, popNewMessage } from '../../../utils/tools';
+import { getLanguage, getStaticLanguage, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
 interface Props {

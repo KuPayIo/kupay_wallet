@@ -5,7 +5,6 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
-import { GlobalWallet } from '../../../core/globalWallet';
 import { selectImage } from '../../../logic/native';
 import { setUserInfo, uploadFile } from '../../../net/pull';
 import { getStore, register, setStore } from '../../../store/memstore';
@@ -92,12 +91,11 @@ export class AccountHome extends Widget {
 
     // 导出私钥
     public async exportPrivateKeyClick() {
-        const wallet = getStore('wallet');
         const psw = await popPswBox();
         if (!psw) return;
         const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
         try {
-            const mnemonic = await getMnemonic(wallet, psw);
+            const mnemonic = await getMnemonic(psw);
             if (mnemonic) {
                 popNew('app-view-mine-account-exportPrivateKey', { mnemonic });
             } else {

@@ -28,7 +28,7 @@ export class Setting extends Widget {
     public init() {
         const cfg = getLanguage(this);
         const lan = getStore('setting/language', 'zh_Hans');
-        const unit = getStore('setting/currencyUnit','CNY');        
+        const unit = getStore('setting/currencyUnit', 'CNY');
         const color = getStore('setting/changeColor', 'redUp');
         this.state = {
             lockScreenPsw: '',  // 锁屏密码
@@ -37,9 +37,9 @@ export class Setting extends Widget {
             numberOfErrors: 0,  // 锁屏密码输入错误次数
             errorTips: cfg.errorTips,
             itemList: [
-                { title: cfg.itemTitle[0], list: cfg.languageSet, selected: lan, flag:0 },
-                { title: cfg.itemTitle[1], list: cfg.currencyUnit, selected: unit, flag:1 },
-                { title: cfg.itemTitle[2], list: cfg.changeColor, selected: color, flag:2 }
+                { title: cfg.itemTitle[0], list: cfg.languageSet, selected: lan, flag: 0 },
+                { title: cfg.itemTitle[1], list: cfg.currencyUnit, selected: unit, flag: 1 },
+                { title: cfg.itemTitle[2], list: cfg.changeColor, selected: color, flag: 2 }
             ],
             wallet: null,
             cfgData: cfg
