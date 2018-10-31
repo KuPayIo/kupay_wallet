@@ -1,17 +1,17 @@
 /**
  * 主动向后端通讯
  */
-import { getSeverTime, open, randomLogin, request, setBottomLayerReloginMsg, setUrl } from '../../pi/net/ui/con_mgr';
+import { open, request, setBottomLayerReloginMsg, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
-import { CloudCurrencyType, CloudCurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
-import { find, getBorn, getStore, setStore, updateStore } from '../store/memstore';
+import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
+import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getStaticLanguage, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -613,7 +613,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
                 ...serverUserInfo
             };
             console.log(userInfo);
-            setStore('userInfo',userInfo);
+            setStore('user/info',userInfo);
         }
         
     } catch (err) {

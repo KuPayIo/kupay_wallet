@@ -38,15 +38,18 @@ export class AccountHome extends Widget {
             cfgData:cfg,
             userInput:false
         };
-        if (userInfo) {
-            if (userInfo.phoneNumber) {
-                const str = String(userInfo.phoneNumber).substr(3,6);
-                this.state.phone = userInfo.phoneNumber.replace(str,'******');
-            }
-            this.state.nickName = userInfo.nickName ? userInfo.nickName :cfg.defaultName;
-            this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
+        if (userInfo.phoneNumber) {
+            const str = String(userInfo.phoneNumber).substr(3,6);
+            this.state.phone = userInfo.phoneNumber.replace(str,'******');
         }
+        this.state.nickName = userInfo.nickName ? userInfo.nickName :cfg.defaultName;
+        this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
+        this.paint();
     }
+
+    /**
+     * 返回上一页
+     */
     public backPrePage() {
         this.ok && this.ok();
     }
