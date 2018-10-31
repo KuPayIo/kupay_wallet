@@ -128,9 +128,8 @@ export class Input extends Widget {
         this.state.currentValue = currentValue;
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
         
-        notify(event.node,'ev-input-change',{ value:this.state.currentValue });
         (<any>this.getInput()).value = currentValue;
-        this.paint();
+        notify(event.node,'ev-input-change',{ value:this.state.currentValue });        
     }
 
     /**
@@ -156,8 +155,8 @@ export class Input extends Widget {
     // 清空文本框
     public clearClickListener(event:any) {
         this.state.currentValue = '';
-        notify(event.node,'ev-input-clear',{});
-        this.paint(true);
+        (<any>this.getInput()).value = '';
+        notify(event.node,'ev-input-clear',{});        
     }
 
     /**

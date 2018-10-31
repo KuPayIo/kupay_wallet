@@ -6,7 +6,7 @@ import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAward, getServerCloudBalance, getMining, getMiningRank } from '../../../net/pull';
+import { getAward, getMining, getMiningRank, getServerCloudBalance } from '../../../net/pull';
 import { CloudCurrencyType, Mining } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { formatBalance, getLanguage, getUserInfo } from '../../../utils/tools';
@@ -36,17 +36,17 @@ export class PlayHome extends Widget {
         this.state = {
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
-            holdMines: 0,//累计挖矿
+            holdMines: 0,// 累计挖矿
             mines: 0,// 今日可挖数量
             hasWallet: false, // 是否已经创建钱包
             mineLast: 0,// 矿山剩余量
             rankNum: 1,// 挖矿排名
             page: [
-                'app-view-earn-mining-rankList', //挖矿排名
-                'app-view-earn-mining-dividend', //领分红
-                'app-view-earn-redEnvelope-writeRedEnv', //发红包
-                'app-view-earn-exchange-exchange', //兑换
-                'app-view-earn-mining-addMine'  //任务
+                'app-view-earn-mining-rankList', // 挖矿排名
+                'app-view-earn-mining-dividend', // 领分红
+                'app-view-earn-redEnvelope-writeRedEnv', // 发红包
+                'app-view-earn-exchange-exchange', // 兑换
+                'app-view-earn-mining-addMine'  // 任务
             ],
             doMining: false,  // 点击挖矿，数字动画效果执行
             firstClick: true,
@@ -195,7 +195,6 @@ export class PlayHome extends Widget {
             this.state.ethBalance = formatBalance(cloudBalances.get(CloudCurrencyType.ETH));
         }
 
-
         const mining: Mining = getStore('activity/mining');
         if (mining.total) {
             if (mining.total.thisNum > 0) {
@@ -281,5 +280,11 @@ register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+    }
+});
+register('user/conRandom', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initEvent();
     }
 });
