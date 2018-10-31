@@ -4,7 +4,6 @@
 import { Widget } from '../../../../pi/widget/widget';
 import { buyBack, getPurchaseRecord } from '../../../net/pull';
 import { PurchaseHistory } from '../../../store/interface';
-import { getStore } from '../../../store/memstore';
 import { getLanguage, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 interface Props {
@@ -37,7 +36,7 @@ export class HoldedFmDetail extends Widget {
         const psw = await popPswBox();
         if (!psw) return;
         const close = popNewLoading(this.state.cfgData.loading);
-        const verify = await VerifyIdentidy(getStore('user/wallet'),psw);
+        const verify = await VerifyIdentidy(psw);
         if (!verify) {
             popNewMessage(this.state.cfgData.tips[0]);
             close.callback(close.widget);
