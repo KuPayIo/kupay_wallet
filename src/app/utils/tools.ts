@@ -2,15 +2,16 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
-import { ConState, setConState } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
+import { Account } from '../store/filestore';
 // tslint:disable-next-line:max-line-length
-import { Addr, CloudCurrencyType, currency2USDT, CurrencyType, CurrencyUnit, MinerFeeLevel, TransRecordLocal, TxHistory, TxStatus, TxType, Wallet } from '../store/interface';
-import { find, getBorn, getCloudBalances, getStore, loginInit, logoutInit, setStore, updateStore } from '../store/memstore';
-import { currencyConfirmBlockNumber, defalutShowCurrencys, notSwtichShowCurrencys, defaultGasLimit, resendInterval, timeOfArrival } from './constants';
+import { AddrInfo, CloudCurrencyType, CloudWallet, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
+import { getCloudBalances, getStore,initAccount, setStore } from '../store/memstore';
+// tslint:disable-next-line:max-line-length
+import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
 
 export const deepCopy = (v: any): any => {
@@ -60,31 +61,6 @@ export const getCurrentAddrInfo = (currencyName: string) => {
     }
 
     return;
-};
-/**
- * 通过地址id获取地址信息
- * @param addrId  address id
- */
-export const getAddrById = (addrId: string, currencyName: string): Addr => {
-    const list: Addr[] = getStore('addrs') || [];
-
-    return list.filter(v => v.addr === addrId && v.currencyName === currencyName)[0];
-};
-
-/**
- * 通过地址id重置地址
- * @param addrId address id
- * @param data  新地址
- * @param notified 是否通知数据发生改变 
- */
-export const resetAddrById = (addrId: string, currencyName: string, data: Addr) => {
-    let list: Addr[] = getStore('addrs') || [];
-    list = list.map(v => {
-        if (v.addr === addrId && v.currencyName === currencyName) return data;
-
-        return v;
-    });
-    setStore('addrs', list);
 };
 
 /**
@@ -137,9 +113,16 @@ export const getAddrsInfoByCurrencyName = (currencyName: string) => {
  * 通过地址获取地址余额
  */
 export const getAddrInfoByAddr = (addr: string, currencyName: string) => {
-    const addrs = getStore('addrs') || [];
-
-    return addrs.filter(v => v.addr === addr && v.currencyName === currencyName)[0];
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === currencyName) {
+            for (const addrInfo of record.addrs) {
+                if (addrInfo.addr === addr) {
+                    return addrInfo;
+                }
+            }
+        }
+    }
 };
 
 // 随机生成RGB颜色
@@ -867,7 +850,7 @@ export const hasWallet = () => {
 };
 
 // 解析交易状态
-export const parseStatusShow = (tx: TransRecordLocal) => {
+export const parseStatusShow = (tx: TxHistory) => {
     if (!tx) {
         return {
             text: '打包中',
@@ -969,7 +952,7 @@ export const fetchWalletAssetListAdded = () => {
 
 // 获取货币的涨跌情况
 export const fetchCoinGain = (currencyName: string) => {
-    const currency2USDT: currency2USDT = getStore('third/currency2USDTMap').get(currencyName);
+    const currency2USDT: Currency2USDT = getStore('third/currency2USDTMap').get(currencyName);
     if (!currency2USDT) return formatBalanceValue(0);
 
     return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
@@ -1061,9 +1044,10 @@ export const base64ToFile = (base64: string) => {
  */
 export const getUserInfo = () => {
     const userInfo = getStore('user/info');
-    const nickName = userInfo && userInfo.nickName;
-    const phoneNumber = userInfo && userInfo.phoneNumber;
-    let avatar = userInfo && userInfo.avatar;
+    const nickName = userInfo.nickName;
+    const phoneNumber = userInfo.phoneNumber;
+    const isRealUser = userInfo.isRealUser;
+    let avatar = userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
     }
@@ -1071,7 +1055,8 @@ export const getUserInfo = () => {
     return {
         nickName,
         avatar,
-        phoneNumber
+        phoneNumber,
+        isRealUser
     };
 };
 
@@ -1174,24 +1159,63 @@ export const mnemonicFragmentDecrypt = (fragment: string) => {
  * 注销账户并删除数据
  */
 export const logoutAccountDel = () => {
-    logoutInit();
+    const user = {
+        id: '',                      // 该账号的id
+        isLogin: false,              // 登录状态
+        token: '',                   // 自动登录token
+        conRandom: '',               // 连接随机数
+        conUid: '',                   // 服务器连接uid
+        publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
+        salt: '',                    // 加密 盐值
+        secretHash: '',             // 密码hash缓存   
+        info: {                      // 用户基本信息
+            nickName: '',           // 昵称
+            avatar: '',            // 头像
+            phoneNumber: '',       // 手机号
+            isRealUser: false    // 是否是真实用户
+        }
+    };
+    const cloud = {
+        cloudWallets: new Map<CloudCurrencyType, CloudWallet>()     // 云端钱包相关数据, 余额  充值提现记录...
+    };
+    setStore('user',user,false);
+    setStore('wallet',null,false);
+    setStore('cloud',cloud,false);
+    setStore('user/id','');
 };
 
 /**
  * 注销账户保留数据
  */
 export const logoutAccount = () => {
-    setStore('flag', { logoutAccountSave: true });
-    logoutInit();
+    setStore('flags', { saveAccount:true });
+    logoutAccountDel();
 };
 
 /**
  * 登录成功
  */
-export const loginSuccess = (wallet: Wallet) => {
-    setStore('curWallet', wallet);
-    setConState(ConState.init);
-    loginInit();
+export const loginSuccess = (account: Account) => {
+    // 创建钱包基础数据
+    // const wallet: Wallet = {
+    //     vault: gwlt.vault,
+    //     isBackup: gwlt.isBackup,
+    //     showCurrencys: defalutShowCurrencys,
+    //     currencyRecords: gwlt.currencyRecords
+    // };
+    // const user = getStore('user');
+    // user.id = gwlt.glwtId;
+    // user.publicKey = gwlt.publicKey;
+    // user.secretHash = secrectHash;
+    // user.info = {
+    //     ...user.info,
+    //     nickName: option.nickName
+    // };
+    // setStore('user', user);
+    // setStore('wallet', wallet);
+
+    initAccount(account);
+    setStore('user/id',account.user.id);
     openConnect();
 };
 /**

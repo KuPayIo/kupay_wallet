@@ -93,6 +93,7 @@ export const autoLogin = (serverTimestamp:number) => {
         setStore('user/isLogin', true);
         console.log('自动登录成功-----------',res);
     }).catch(() => {
+        // console.log();
     });
 };
 /**
@@ -148,6 +149,7 @@ const conClose = () => {
  * 重新连接回调
  */
 const conReOpen = () => {
+    // console.log();
 };
 
 /**
@@ -589,7 +591,7 @@ export const getData = async (key) => {
  * 设置用户基础信息
  */
 export const setUserInfo = async () => {
-    if (getStore('user/isLogin')) return;
+    if (!getStore('user/isLogin')) return;
     const userInfo = getStore('user/info');
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
@@ -608,12 +610,21 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         if (userInfoStr) {
             const localUserInfo = getStore('user/info');
             const serverUserInfo = JSON.parse(userInfoStr);
-            const userInfo = {
-                ...localUserInfo,
-                ...serverUserInfo
-            };
-            console.log(userInfo);
-            setStore('user/info',userInfo);
+            let isSame = true;
+            for (const key in localUserInfo) {
+                if (localUserInfo[key] !== serverUserInfo[key]) {
+                    isSame = false;
+                }
+            }
+            if (!isSame) {
+                const userInfo = {
+                    ...serverUserInfo,
+                    ...localUserInfo
+                };
+                console.log(userInfo);
+                setStore('user/info',userInfo);
+            }
+            
         }
         
     } catch (err) {
@@ -1197,8 +1208,12 @@ export const getRealUser = async () => {
         const conUser = getStore('user/id');
         if (!conUser) return;
         const userInfo  = getStore('user/info');
-        userInfo.isRealUser = res.value !== 'false' ;
-        setStore('user/info',userInfo);
+        const isRealUser = res.value !== 'false';
+        
+        if (isRealUser !== userInfo.isRealUser) {
+            userInfo.isRealUser =  isRealUser;
+            setStore('user/info',userInfo);
+        }
         
     } catch (err) {
         console.log('wallet/user@get_real_user--------',err);
@@ -1220,7 +1235,7 @@ export const uploadFile = async (base64) => {
             'user-agent': 'Mozilla/4.0 MDN Example'
         },
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'no-cors', // no-cors, cors, *same-origin
+        mode: 'cors', // no-cors, cors, *same-origin
         redirect: 'follow', // manual, *follow, error
         referrer: 'no-referrer' // *client, no-referrer
     }).then(response => response.json())
@@ -1229,9 +1244,9 @@ export const uploadFile = async (base64) => {
             popNewMessage('图片上传成功');
             if (res.result === 1) {
                 const sid = res.sid;
-                const userInfo = find('userInfo') || {};
+                const userInfo = getStore('user/info');
                 userInfo.avatar = sid;
-                setStore('userInfo',userInfo);
+                setStore('user/info',userInfo);
             }
         });
 };

@@ -61,6 +61,13 @@ export class WalletHome extends Widget {
 }
 
 // ==================本地
+register('user/id',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
+    }
+});
 
 // 钱包记录变化
 register('wallet',() => {

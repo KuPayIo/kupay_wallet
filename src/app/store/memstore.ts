@@ -5,7 +5,7 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { getCurrentAccount, getSetting, getThird } from './filestore';
+import { Account, getCurrentAccount, getSetting, getThird } from './filestore';
 import { CloudCurrencyType, CloudWallet, Currency2USDT, LockScreen, ShapeShiftTxs, Store } from './interface';
 
 // ============================================ 导出
@@ -77,14 +77,14 @@ export const getCloudBalances = () => {
     for (const [key, val] of cloudWallets) {
         cloudBalances.set(key, val.balance || 0);
     }
+    
     return cloudBalances;
 };
 /**
  * 初始化store
  */
 export const initStore = () => {
-
-    initAccount();
+    initAccount(getCurrentAccount());
 
     initSettings();
 
@@ -103,21 +103,20 @@ export const initStore = () => {
  */
 const handlerMap: HandlerMap = new HandlerMap();
 
-const initAccount = () => {
-    const curAccount = getCurrentAccount();
+export const initAccount = (curAccount:Account) => {
     if (curAccount) {
-    const fileUser = curAccount.user;
-    store.user.id = fileUser.id;
-    store.user.token = fileUser.token;
-    store.user.publicKey = fileUser.publicKey;
-    store.user.salt = fileUser.salt;
-    store.user.info = {
-        ...fileUser.info
-    };
+        const fileUser = curAccount.user;
+        store.user.id = fileUser.id;
+        store.user.token = fileUser.token;
+        store.user.publicKey = fileUser.publicKey;
+        store.user.salt = fileUser.salt;
+        store.user.info = {
+            ...fileUser.info
+        };
     
-    store.wallet = {
-        ...curAccount.wallet
-    };
+        store.wallet = {
+            ...curAccount.wallet
+        };
     } else {
         store.user.salt = cryptoRandomInt().toString();
     }
@@ -168,9 +167,9 @@ const store: Store = {
         salt: '',                    // 加密 盐值
         secretHash: '',             // 密码hash缓存   
         info: {                      // 用户基本信息
-            nickName: '',      // 昵称
-            avatar: '',        // 头像
-            phoneNumber: '',   // 手机号
+            nickName: '',           // 昵称
+            avatar: '',            // 头像
+            phoneNumber: '',       // 手机号
             isRealUser: false    // 是否是真实用户
         }
     },

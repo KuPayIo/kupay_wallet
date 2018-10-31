@@ -94,12 +94,9 @@ export const createWallet = async (itype: CreateWalletType, option: Option) => {
  * 随机创建钱包
  */
 export const createWalletRandom = async (option: Option) => {
-    const secrectHash = await calcHashValuePromise(
-    option.psw,
-    getStore('user/salt')
-  );
+    const secrectHash = await calcHashValuePromise(option.psw,getStore('user/salt'));
     const gwlt = GlobalWallet.generate(secrectHash);
-  // 创建钱包基础数据
+    // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
         isBackup: gwlt.isBackup,
@@ -125,14 +122,11 @@ export const createWalletRandom = async (option: Option) => {
  * @param option 参数
  */
 export const createWalletByImage = async (option: Option) => {
-    const secrectHash = await calcHashValuePromise(
-    option.psw,
-    getStore('user/salt')
-  );
+    const secrectHash = await calcHashValuePromise(option.psw,getStore('user/salt'));
     const ahash = await getImageAhash(option.imageBase64);
     const vault = await imgToHash(ahash, option.imagePsw);
     const gwlt = GlobalWallet.generate(secrectHash, vault);
-  // 创建钱包基础数据
+    // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
         isBackup: gwlt.isBackup,

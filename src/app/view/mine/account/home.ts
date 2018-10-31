@@ -71,7 +71,6 @@ export class AccountHome extends Widget {
             const userInfo = getUserInfo();
             userInfo.nickName = v;
             setStore('user/info',userInfo);
-            setUserInfo();
         }
         this.state.isUpdatingWalletName = false;
         this.paint();
@@ -148,12 +147,14 @@ export class AccountHome extends Widget {
         this.paint();
     }
 }
+
 register('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
+
 register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {

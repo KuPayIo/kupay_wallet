@@ -4,10 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getLanguage, popNewLoading, popNewMessage, loginSuccess } from '../../../utils/tools';
-import { VerifyIdentidy } from '../../../utils/walletTools';
-import { getStore } from '../../../store/memstore';
-import { getAllAccount } from '../../../store/filestore';
+import { deleteAccount, getAllAccount } from '../../../store/filestore';
+import { getLanguage, loginSuccess, popNewLoading, popNewMessage } from '../../../utils/tools';
+import { VerifyIdentidy, VerifyIdentidy1 } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -21,12 +20,12 @@ export class CreateEnter extends Widget {
         this.init();
         
     }
-    public init(){
+    public init() {
         const walletList = getAllAccount();
         const accountList = [];
-        walletList.forEach(item=>{
-            const nickName = JSON.parse(item.gwlt).nickName;
-            accountList.push({nickName});
+        walletList.forEach(item => {
+            const nickName = item.user.info.nickName;
+            accountList.push({ nickName });
         });
         console.log(accountList);
         this.state = {
@@ -34,37 +33,37 @@ export class CreateEnter extends Widget {
             login:false,
             accountList,
             selectedAccountIndex:0,
-            psw:"",
+            psw:'',
             showMoreUser:false,
             popHeight:this.calPopBoxHeight(accountList.length)
         };
     }
-    public calPopBoxHeight(len:number){
+    public calPopBoxHeight(len:number) {
         const itemNum = 4;
         const oneHeight = 101;
         let totalHeight = itemNum * oneHeight;
         
-        if(len <= itemNum){
+        if (len <= itemNum) {
             totalHeight = len * oneHeight;
         }
+
         return totalHeight;
     }
-    public delUserAccount(e:any,index:number){
-        this.state.accountList.splice(index,1);
-        const walletList = find('walletList');
-        walletList.splice(index,1);
-        updateStore('walletList',walletList);
-        if(walletList.length <= 0){
+    public delUserAccount(e:any,index:number) {
+        const delAccount = this.state.accountList.splice(index,1)[0];
+        deleteAccount(delAccount.user.id);
+        if (getAllAccount().length <= 0) {
             this.state.login = false;
-        }
-        this.state.popHeight = this.calPopBoxHeight(this.state.accountList.length);
-        if(index === this.state.selectedAccountIndex){
-            this.state.selectedAccountIndex = 0;
+        } else {
+            this.state.popHeight = this.calPopBoxHeight(this.state.accountList.length);
+            if (index === this.state.selectedAccountIndex) {
+                this.state.selectedAccountIndex = 0;
+            }
         }
         this.paint();
     }
     
-    public chooseCurUser(e:any,index:number){
+    public chooseCurUser(e:any,index:number) {
         this.state.selectedAccountIndex = index;
         this.state.showMoreUser = false;
         this.paint();
@@ -81,39 +80,41 @@ export class CreateEnter extends Widget {
     public createStandardClick() {
         popNew('app-view-wallet-create-createWallet');
     }
-    public switch2LoginClick(){
+    public switch2LoginClick() {
         this.state.login = true;
         this.paint();
     }
-    public switch2CreateClick(){
+    public switch2CreateClick() {
         this.state.login = false;
         this.paint();
     }
 
-    public pswChange(e){
+    public pswChange(e:any) {
         this.state.psw = e.value;
     }
-    public async loginClick(){
-        if(this.state.psw.length <= 0){
+    public async loginClick() {
+        if (this.state.psw.length <= 0) {
             popNewMessage('密码不能为空');
+
             return;
         }
-        const walletList = find('walletList');
+        const walletList = getAllAccount();
         const close = popNewLoading('登录中');
-        const wallet = walletList[this.state.selectedAccountIndex];
+        const account = walletList[this.state.selectedAccountIndex];
         console.log(this.state.psw);
-        const verify = await VerifyIdentidy(wallet,this.state.psw);
+        const verify = await VerifyIdentidy1(this.state.psw,account.wallet.vault,account.user.salt);
 
         close.callback(close.widget);
-        if(!verify){
+        if (!verify) {
             popNewMessage('密码错误');
+
             return;
         }
-        loginSuccess(wallet);
+        loginSuccess(account);
         this.ok && this.ok();
     }
 
-    public popMoreUser(){
+    public popMoreUser() {
         this.state.showMoreUser = !this.state.showMoreUser;
         this.paint();
     }

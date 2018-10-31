@@ -36,7 +36,6 @@ export class CloudHome extends Widget {
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
-        this.paint();
     }
 
     // 条目点击
@@ -74,6 +73,13 @@ export class CloudHome extends Widget {
 }
 
 // =======================本地
+register('user/id',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
+    }
+});
 
 // 云端余额变化
 register('cloud/cloudWallets',() => {
