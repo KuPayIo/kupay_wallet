@@ -3,13 +3,14 @@
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
+import { cryptoRandomInt } from '../../pi/util/math';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 import { Account } from '../store/filestore';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, CloudCurrencyType, CloudWallet, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
-import { getCloudBalances, getStore,initAccount, setStore } from '../store/memstore';
+import { getCloudBalances, getStore,initAccount, initCloudWallets, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
@@ -727,7 +728,7 @@ export const fetchCloudTotalAssets = () => {
     const cloudBalances = getCloudBalances();
     let totalAssets = 0;
     for (const [k, v] of cloudBalances) {
-        totalAssets += fetchBalanceValueOfCoin(k, v);
+        totalAssets += fetchBalanceValueOfCoin(CloudCurrencyType[k], v);
     }
 
     return totalAssets;
@@ -1166,7 +1167,7 @@ export const logoutAccountDel = () => {
         conRandom: '',               // 连接随机数
         conUid: '',                   // 服务器连接uid
         publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
-        salt: '',                    // 加密 盐值
+        salt: cryptoRandomInt().toString(),                    // 加密 盐值
         secretHash: '',             // 密码hash缓存   
         info: {                      // 用户基本信息
             nickName: '',           // 昵称
@@ -1176,7 +1177,7 @@ export const logoutAccountDel = () => {
         }
     };
     const cloud = {
-        cloudWallets: new Map<CloudCurrencyType, CloudWallet>()     // 云端钱包相关数据, 余额  充值提现记录...
+        cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
     };
     setStore('user',user,false);
     setStore('wallet',null,false);

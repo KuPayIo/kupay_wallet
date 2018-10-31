@@ -80,6 +80,28 @@ export const getCloudBalances = () => {
     
     return cloudBalances;
 };
+
+/**
+ * 初始化cloudWallets
+ */
+export const initCloudWallets = () => {
+    const cloudWallets = new Map<CloudCurrencyType, CloudWallet>();
+    for (const key in CloudCurrencyType) {
+        const isValueProperty = parseInt(key, 10) >= 0;
+        if (isValueProperty) {
+            const cloudWallet = {
+                balance:0,
+                rechargeLogs:{ list:[],start:0,canLoadMore:false },
+                withdrawLogs:{ list:[],start:0,canLoadMore:false },
+                otherLogs:{ list:[],start:0,canLoadMore:false }
+            };
+            cloudWallets.set(CloudCurrencyType[CloudCurrencyType[key]],cloudWallet);
+        }
+    }
+
+    return cloudWallets;
+};
+
 /**
  * 初始化store
  */
@@ -120,21 +142,6 @@ export const initAccount = (curAccount:Account) => {
     } else {
         store.user.salt = cryptoRandomInt().toString();
     }
-    
-    const cloudWallets = new Map<CloudCurrencyType, CloudWallet>();
-    for (const key in CloudCurrencyType) {
-        const isValueProperty = parseInt(key, 10) >= 0;
-        if (isValueProperty) {
-            const cloudWallet = {
-                balance:0,
-                rechargeLogs:{ list:[],start:0,canLoadMore:false },
-                withdrawLogs:{ list:[],start:0,canLoadMore:false },
-                otherLogs:{ list:[],start:0,canLoadMore:false }
-            };
-            cloudWallets.set(CloudCurrencyType[CloudCurrencyType[key]],cloudWallet);
-        }
-    }
-    store.cloud.cloudWallets = cloudWallets;
 };
 
 const initSettings = () => {
@@ -175,7 +182,7 @@ const store: Store = {
     },
     wallet: null,
     cloud: {
-        cloudWallets: new Map<CloudCurrencyType, CloudWallet>()     // 云端钱包相关数据, 余额  充值提现记录...
+        cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
     },
     activity: {
         luckyMoney: {

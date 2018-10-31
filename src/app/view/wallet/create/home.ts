@@ -25,7 +25,8 @@ export class CreateEnter extends Widget {
         const accountList = [];
         walletList.forEach(item => {
             const nickName = item.user.info.nickName;
-            accountList.push({ nickName });
+            const id = item.user.id;
+            accountList.push({ nickName,id });
         });
         console.log(accountList);
         this.state = {
@@ -51,7 +52,7 @@ export class CreateEnter extends Widget {
     }
     public delUserAccount(e:any,index:number) {
         const delAccount = this.state.accountList.splice(index,1)[0];
-        deleteAccount(delAccount.user.id);
+        deleteAccount(delAccount.id);
         if (getAllAccount().length <= 0) {
             this.state.login = false;
         } else {
