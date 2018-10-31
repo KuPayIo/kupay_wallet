@@ -178,7 +178,7 @@ export class PlayHome extends Widget {
 
     /**
      * 获取更新数据
-     */
+     */     
     private initData() {
         const wallet = getStore('wallet');
         if (!wallet) {
@@ -241,6 +241,13 @@ register('cloud/cloudWallets', () => {
     }
 });
 
+register('activity/mining/addMine', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initEvent();
+    }
+});
+
 register('activity/mining/total', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -264,7 +271,7 @@ register('activity/mining/miningRank', () => {
 register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        // w.initEvent();
+        w.initEvent();
         w.init(); // 注销钱包后初始化
         
     }
