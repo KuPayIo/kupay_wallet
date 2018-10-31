@@ -26,7 +26,7 @@ export class PlayHome extends Widget {
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.init();
-        this.initEvent();
+        this.refreshPage();
 
     }
     /**
@@ -167,8 +167,8 @@ export class PlayHome extends Widget {
      */
     public refreshPage() {
         this.state.refresh = true;
-        this.initEvent();
         this.paint();
+        this.initEvent();
         setTimeout(() => {
             this.state.refresh = false;
             this.paint();
@@ -224,10 +224,9 @@ export class PlayHome extends Widget {
     private initEvent() {
         // 这里发起通信
         if (this.props.isActive && this.state.hasWallet) {
-            getServerCloudBalance();
-            getMining();
-            getMiningRank(100);
-            this.paint();
+             getServerCloudBalance();
+             getMining();
+             getMiningRank(100);
         }
     }
 
@@ -248,6 +247,14 @@ register('activity/mining/total', () => {
         w.initData();
     }
 });
+
+register('user/conRandom', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.refreshPage();
+    }
+});
+
 register('activity/mining/miningRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -257,8 +264,9 @@ register('activity/mining/miningRank', () => {
 register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
+        // w.initEvent();
         w.init(); // 注销钱包后初始化
-        w.initEvent();
+        
     }
 });
 register('setting/language', () => {

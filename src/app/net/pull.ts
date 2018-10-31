@@ -378,7 +378,7 @@ export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount:
     const msg = {
         type: 'emit_red_bag',
         param: {
-            type: rtype,
+            type: Number(rtype),
             priceType: ctype,
             totalPrice: largeUnit2SmallUnit(CloudCurrencyType[ctype], totalAmount),
             count: redEnvelopeNumber,
@@ -759,7 +759,7 @@ export const sendCode = async (phone: number, num: number) => {
 /**
  * 注册手机
  */
-export const regPhone = async (phone: number, code: number) => {
+export const regPhone = async (phone: number, code: string) => {
     const bphone = getUserInfo().phoneNumber;
     // tslint:disable-next-line:variable-name
     const old_phone =  bphone ? bphone :'';
