@@ -7,7 +7,6 @@ import { drawImg } from '../../pi/util/canvas';
 import { ERC20Tokens } from '../config';
 import { generateByHash, sha3, toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { uploadFile } from '../net/pull';
 import { AddrInfo, Wallet } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 import { ahash } from '../utils/ahash';
@@ -111,8 +110,8 @@ export const createWalletRandom = async (option: Option) => {
         ...user.info,
         nickName: option.nickName
     };
+    setStore('wallet', wallet,false);
     setStore('user', user);
-    setStore('wallet', wallet);
 
     return secrectHash;
 };
@@ -141,8 +140,8 @@ export const createWalletByImage = async (option: Option) => {
         ...user.info,
         nickName: option.nickName
     };
+    setStore('wallet', wallet,false);
     setStore('user', user);
-    setStore('wallet', wallet);
 
     return secrectHash;
 };
@@ -210,8 +209,8 @@ export const importWalletByMnemonic = async (option: Option) => {
         ...user.info,
         nickName: option.nickName
     };
+    setStore('wallet', wallet,false);
     setStore('user', user);
-    setStore('wallet', wallet);
     
     return secrectHash;
 };

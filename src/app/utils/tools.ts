@@ -2,6 +2,7 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
+import { closeCon } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
@@ -9,7 +10,7 @@ import { Cipher } from '../core/crypto/cipher';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 import { Account } from '../store/filestore';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, CloudCurrencyType, CloudWallet, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
+import { AddrInfo, CloudCurrencyType, CloudWallet, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType, User } from '../store/interface';
 import { getCloudBalances, getStore,initAccount, initCloudWallets, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
@@ -1179,10 +1180,11 @@ export const logoutAccountDel = () => {
     const cloud = {
         cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
     };
-    setStore('user',user,false);
+    
     setStore('wallet',null,false);
     setStore('cloud',cloud,false);
-    setStore('user/id','');
+    setStore('user',user);
+    closeCon();
 };
 
 /**
@@ -1197,26 +1199,24 @@ export const logoutAccount = () => {
  * 登录成功
  */
 export const loginSuccess = (account: Account) => {
-    // 创建钱包基础数据
-    // const wallet: Wallet = {
-    //     vault: gwlt.vault,
-    //     isBackup: gwlt.isBackup,
-    //     showCurrencys: defalutShowCurrencys,
-    //     currencyRecords: gwlt.currencyRecords
-    // };
-    // const user = getStore('user');
-    // user.id = gwlt.glwtId;
-    // user.publicKey = gwlt.publicKey;
-    // user.secretHash = secrectHash;
-    // user.info = {
-    //     ...user.info,
-    //     nickName: option.nickName
-    // };
-    // setStore('user', user);
-    // setStore('wallet', wallet);
-
-    initAccount(account);
-    setStore('user/id',account.user.id);
+    const fileUser = account.user;
+    const user:User = {
+        isLogin: false,
+        conRandom:'',
+        conUid:'',
+        secretHash:'',
+        id : fileUser.id,
+        token : fileUser.token,
+        publicKey : fileUser.publicKey,
+        salt : fileUser.salt,
+        info : { ...fileUser.info }
+    };
+   
+    const wallet = {
+        ...account.wallet
+    };
+    setStore('wallet',wallet,false);
+    setStore('user',user);
     openConnect();
 };
 /**
