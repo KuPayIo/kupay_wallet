@@ -1,17 +1,17 @@
 /**
  * 主动向后端通讯
  */
-import { getSeverTime, open, randomLogin, request, setBottomLayerReloginMsg, setUrl } from '../../pi/net/ui/con_mgr';
+import { open, request, setBottomLayerReloginMsg, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
-import { CloudCurrencyType, CloudCurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
-import { find, getBorn, getStore, setStore, updateStore } from '../store/memstore';
+import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
+import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -606,14 +606,14 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         const res = await requestAsync(msg);
         const userInfoStr = unicodeArray2Str(res.value[0]);
         if (userInfoStr) {
-            const localUserInfo = find('userInfo');
+            const localUserInfo = getStore('user/info');
             const serverUserInfo = JSON.parse(userInfoStr);
             const userInfo = {
                 ...localUserInfo,
                 ...serverUserInfo
             };
             console.log(userInfo);
-            setStore('userInfo',userInfo);
+            setStore('user/info',userInfo);
         }
         
     } catch (err) {
@@ -745,7 +745,7 @@ export const sendCode = async (phone: number, num: number) => {
  * 注册手机
  */
 export const regPhone = async (phone: number, code: number) => {
-    const bphone = getUserInfo().bphone;
+    const bphone = getUserInfo().phoneNumber;
     // tslint:disable-next-line:variable-name
     const old_phone =  bphone ? bphone :'';
     const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code } };

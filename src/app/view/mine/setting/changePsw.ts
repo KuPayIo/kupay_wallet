@@ -4,11 +4,9 @@
 // =============================================导入
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GlobalWallet } from '../../../core/globalWallet';
-import { find } from '../../../store/memstore';
 import { pswEqualed } from '../../../utils/account';
 import { getLanguage } from '../../../utils/tools';
-import { VerifyIdentidy } from '../../../utils/walletTools';
+import { passwordChange, VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 export class ChangePSW extends Widget {
     public ok: () => void;
@@ -54,7 +52,6 @@ export class ChangePSW extends Widget {
         const oldPassword = this.state.oldPassword;
         const newPassword = this.state.newPassword;
         const rePassword = this.state.rePassword;
-        const wallet = find('curWallet');
         if (!oldPassword || !newPassword || !rePassword) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips[0] });
 
@@ -75,7 +72,7 @@ export class ChangePSW extends Widget {
             return;
         }
         const loading = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
-        const fg = await VerifyIdentidy(wallet,oldPassword);
+        const fg = await VerifyIdentidy(oldPassword);
         // 判断原密码是否正确
         if (!fg) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });
@@ -83,9 +80,7 @@ export class ChangePSW extends Widget {
 
             return;
         }
-        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        await gwlt.passwordChange(oldPassword, newPassword);
-        wallet.gwlt = gwlt.toJSON();
+        await passwordChange(oldPassword, newPassword);
         loading.callback(loading.widget);
         this.backPrePage();
     }

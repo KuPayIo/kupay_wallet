@@ -90,21 +90,21 @@ export class Setting extends Widget {
             setStore('setting/lockScreen', ls);
         } else if (this.state.wallet) {
             popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
-                    if (!r) {
-                        this.closeLockPsw();
-                        this.state.openLockScreen = false;
-                    } else {
-                        this.state.openLockScreen = true;
-                    }
-                });
-            } else {
+                if (!r) {
+                    this.closeLockPsw();
+                    this.state.openLockScreen = false;
+                } else {
+                    this.state.openLockScreen = true;
+                }
+            });
+        } else {
                 // tslint:disable-next-line:max-line-length
             popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
-                    popNew('app-view-wallet-create-home');
+                popNew('app-view-wallet-create-home');
             }, () => {
-                    this.closeLockPsw();
-                });
-            }
+                this.closeLockPsw();
+            });
+        }
 
         this.paint(true);
     }
@@ -127,7 +127,7 @@ export class Setting extends Widget {
         }
         const data = this.state.itemList[ind];
         popNew('app-view-mine-setting-itemList', data);
-                }
+    }
 
     /**
      * 备份
@@ -178,7 +178,6 @@ export class Setting extends Widget {
         });
     }
 }
-
 
 // ================================================本地，立即执行
 register('setting/language', () => {
