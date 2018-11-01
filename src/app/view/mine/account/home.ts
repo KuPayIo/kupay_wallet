@@ -68,7 +68,7 @@ export class AccountHome extends Widget {
         }
         if (v !== this.state.nickName) {
             this.state.nickName = v;
-            const userInfo = getUserInfo();
+            const userInfo = getStore('user/info');
             userInfo.nickName = v;
             setStore('user/info',userInfo);
         }

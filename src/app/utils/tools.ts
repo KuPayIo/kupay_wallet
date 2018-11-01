@@ -1333,7 +1333,7 @@ export const updateLocalTx = (tx: TxHistory) => {
     const currencyName = tx.currencyName;
     const addr = tx.addr;
     wallet.currencyRecords.forEach(record => {
-        if (record.currencyName === currencyName && record.currentAddr === addr) {
+        if (record.currencyName === currencyName) {
             record.addrs.forEach(addrInfo => {
                 if (addrInfo.addr === addr) {
                     let index = -1;

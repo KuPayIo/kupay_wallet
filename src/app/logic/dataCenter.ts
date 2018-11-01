@@ -120,7 +120,7 @@ export class DataCenter {
             const currencyRecord: CurrencyRecord[] = wallet.currencyRecords;
             const needCheckAddr = [];
             currencyRecord.forEach(item => {
-                if (!item.updateAddr) {
+                if (!item.updateAddr && wallet.showCurrencys.indexOf(item.currencyName) > 0) {
                     needCheckAddr.push(item);
                 }
             });
@@ -643,11 +643,13 @@ export class DataCenter {
     private  addUserdAddrs(currencyName:string,addrs:AddrInfo[]) {
         const wallet = getStore('wallet');
         const record = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
-        record.addrs.push(...addrs);
-        setStore('wallet/currencyRecords',wallet.currencyRecords);
-        addrs.forEach(addrInfo => {
-            dataCenter.updateAddrInfo(addrInfo.addr, currencyName);
-        });
+        if (addrs.length > 0) {
+            record.addrs.push(...addrs);
+            setStore('wallet/currencyRecords',wallet.currencyRecords);
+            addrs.forEach(addrInfo => {
+                dataCenter.updateAddrInfo(addrInfo.addr, currencyName);
+            });
+        }
     }
     /**
      * 检查eth地址
