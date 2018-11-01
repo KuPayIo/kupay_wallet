@@ -5,8 +5,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getRealUser, getServerCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
-import { CloudCurrencyType, CloudWallet, LuckyMoneyType } from '../../../store/interface';
+import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
@@ -76,7 +76,7 @@ export class WriteRedEnv extends Widget {
             list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
         }
         this.state.list = list;
-        this.paint();
+        this.paint(true);
     }
 
     public backPrePage() {
@@ -212,21 +212,22 @@ export class WriteRedEnv extends Widget {
         const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm);
 
         if (!rid) return;
-
+        setTimeout(() => {
+            this.state.oneAmount = 0;
+            this.state.totalNum = 0;
+            this.state.totalAmount = 0;
+            this.state.message = '';
+            getServerCloudBalance();// 更新余额
+            setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
+            this.paint(true);
+        },100);
         popNew('app-view-earn-redEnvelope-sendRedEnv', {
             message: lm,
             rid,
             rtype: rtype,
             cname: curCoin.name
         });
-        this.state.oneAmount = 0;
-        this.state.totalNum = 0;
-        this.state.totalAmount = 0;
-        this.state.message = '';
-        this.updateBalance();
-        this.paint(true);
-        setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
-        getServerCloudBalance();// 更新余额
+
 
         // if (!this.state.showPin) {
         //     // tslint:disable-next-line:max-line-length

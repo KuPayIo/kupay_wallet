@@ -238,7 +238,6 @@ export const getServerCloudBalance = () => {
             const cloudWallet = cloudWallets.get(key);
             cloudWallet.balance = value;
         }
-        
         setStore('cloud/cloudWallets',cloudWallets);
     }).catch((res) => {
         console.log(res);

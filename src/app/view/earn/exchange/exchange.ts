@@ -59,13 +59,15 @@ export class Exchange extends Widget {
             message: r.value,
             ctypeShow: CloudCurrencyType[value[0]],
             amount: smallUnit2LargeUnit(CloudCurrencyType[value[0]], value[1]),
-            rtype: code.slice(0, 2)
+            rtype: code.slice(0, 2),
+            rid:code,
+            // suid:
         };
         
         popNew('app-view-earn-exchange-openRedEnv', redEnvelope);
         setTimeout(() => {
             this.state.cid = '';
-            this.paint();
+            this.paint(true);
         }, 100);
     }
 
