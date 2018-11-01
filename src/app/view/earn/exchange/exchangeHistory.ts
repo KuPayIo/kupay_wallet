@@ -47,6 +47,7 @@ export class ExchangeHistory extends Widget {
             convertNumberShow:0,
             isScroll:false,
             start:undefined,
+            topRefresh:false,
             refresh:true,
             hasMore:false, 
             showMoreTips:false, 
@@ -201,7 +202,7 @@ export class ExchangeHistory extends Widget {
      * 页面刷新
      */
     public refreshPage() {
-        queryConvertLog(this.state.start);
+        queryConvertLog();
         this.state.topRefresh = true;
         this.paint();
         setTimeout(() => {

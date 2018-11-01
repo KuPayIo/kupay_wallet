@@ -94,7 +94,7 @@ export class RedEnvDetail extends Widget {
         const lanSet = getStore('setting/language');
         let lan:any;
         if (lanSet) {
-            lan = [lanSet.languageList[lanSet.selected]];
+            lan = lanSet;
         } else {
             lan = 'zh_Hans';
         }

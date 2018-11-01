@@ -223,9 +223,11 @@ export class WriteRedEnv extends Widget {
         this.state.totalNum = 0;
         this.state.totalAmount = 0;
         this.state.message = '';
-        this.paint();
+        this.updateBalance();
+        this.paint(true);
         setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
         getServerCloudBalance();// 更新余额
+
         // if (!this.state.showPin) {
         //     // tslint:disable-next-line:max-line-length
         //     console.log('url', `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);
