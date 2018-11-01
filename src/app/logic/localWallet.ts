@@ -83,8 +83,9 @@ export const createWallet = async (itype: CreateWalletType, option: Option) => {
         close.callback(close.widget);
     }
 
-  // 刷新本地钱包
+    // 刷新本地钱包
     dataCenter.refreshAllTx();
+    dataCenter.initErc20GasLimit();
 
     return secrectHash;
 };
@@ -232,7 +233,7 @@ export const importWalletByFragment = async (option: Option) => {
 };
 
 /**
- * 添加新地址
+ * 创建新地址
  */
 export const createNewAddr = async (passwd: string, currencyName: string) => {
     const close = popNewLoading('添加中...');

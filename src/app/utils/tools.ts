@@ -10,8 +10,8 @@ import { Cipher } from '../core/crypto/cipher';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 import { Account } from '../store/filestore';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, CloudCurrencyType, CloudWallet, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType, User } from '../store/interface';
-import { getCloudBalances, getStore,initAccount, initCloudWallets, setStore } from '../store/memstore';
+import { AddrInfo, CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType, User } from '../store/interface';
+import { getCloudBalances, getStore, initCloudWallets, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
@@ -495,9 +495,8 @@ export const calcHashValuePromise = async (pwd, salt?) => {
     let hash;
     const argonHash = new ArgonHash();
     argonHash.init();
-    console.time('argonHash');
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
-    console.timeEnd('argonHash');
+    setStore('user/secretHash',hash);
 
     return hash;
 };

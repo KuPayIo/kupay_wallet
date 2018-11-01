@@ -226,6 +226,7 @@ const registerSettingChange = () => {
     register('setting/lockScreen',() => {
         settingChange();
     });
+
 };
 
 /**
