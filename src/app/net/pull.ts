@@ -245,7 +245,6 @@ export const getServerCloudBalance = () => {
             const cloudWallet = cloudWallets.get(key);
             cloudWallet.balance = value;
         }
-        
         setStore('cloud/cloudWallets',cloudWallets);
     }).catch((res) => {
         console.log(res);
@@ -413,7 +412,7 @@ export const convertRedBag = async (cid) => {
     try {
         const res = await requestAsync(msg);
 
-        return res.value;
+        return res;
     } catch (err) {
         showError(err && (err.result || err.type));
 

@@ -38,6 +38,7 @@ export class Home extends Widget {
             refreshing:false,
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
+        this.paint();
     }
     public tabsChangeClick(event: any, value: number) {
         this.state.activeNum = value;
@@ -104,7 +105,6 @@ register('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
     }
 });
 
@@ -123,11 +123,10 @@ register('cloud/cloudWallet',() => {
     }
 });
 
-register('setting', () => {
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
     }
 });
 

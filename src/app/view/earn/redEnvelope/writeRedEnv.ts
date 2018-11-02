@@ -5,8 +5,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getRealUser, getServerCloudBalance, sendRedEnvlope, sharePerUrl } from '../../../net/pull';
-import { CloudCurrencyType, CloudWallet, LuckyMoneyType } from '../../../store/interface';
+import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
@@ -38,6 +38,7 @@ export class WriteRedEnv extends Widget {
     }
 
     public create() {
+        super.create();
         this.state = {
             list: [],
             selected: 0,
@@ -76,7 +77,7 @@ export class WriteRedEnv extends Widget {
             list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
         }
         this.state.list = list;
-        this.paint();
+        this.paint(true);
     }
 
     public backPrePage() {
@@ -175,7 +176,7 @@ export class WriteRedEnv extends Widget {
         }
 
         this.inputBlur();
-        const mess1 = this.state.cfgData.phrase[0] + this.state.totalAmount + curCoin.name + this.state.cfgData.phrase[1];
+        const mess1 = this.state.cfgData.phrase[0] + this.state.oneAmount + curCoin.name +" / "+this.state.totalNum+ this.state.cfgData.phrase[1];
         // tslint:disable-next-line:max-line-length
         const mess2 = this.state.cfgData.phrase[2] + (this.state.showPin ? this.state.cfgData.redEnvType[1] : this.state.cfgData.redEnvType[0]);
         popNew('app-components-modalBoxInput-modalBoxInput', {
@@ -212,20 +213,23 @@ export class WriteRedEnv extends Widget {
         const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm);
 
         if (!rid) return;
-
+        setTimeout(() => {
+            this.state.oneAmount = 0;
+            this.state.totalNum = 0;
+            this.state.totalAmount = 0;
+            this.state.message = '';
+            getServerCloudBalance();// 更新余额
+            setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
+            this.paint(true);
+        });
         popNew('app-view-earn-redEnvelope-sendRedEnv', {
             message: lm,
             rid,
             rtype: rtype,
             cname: curCoin.name
         });
-        this.state.oneAmount = 0;
-        this.state.totalNum = 0;
-        this.state.totalAmount = 0;
-        this.state.message = '';
-        this.paint();
-        setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
-        getServerCloudBalance();// 更新余额
+
+
         // if (!this.state.showPin) {
         //     // tslint:disable-next-line:max-line-length
         //     console.log('url', `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);

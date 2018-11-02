@@ -4,6 +4,7 @@
 const urlHead = "http://47.75.254.166:8099";
 // const urlHead = "http://127.0.0.1:8099";
 
+
 // 语言文字
 const Config= {
     zh_Hans:{ 
