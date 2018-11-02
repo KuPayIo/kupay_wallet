@@ -22,7 +22,7 @@ export class PlayHome extends Widget {
     }
 
     public enterGames1Click() {
-        openNewActivity('http://39.104.203.151:8080/client/boot/index.html');
+        openNewActivity('http://39.104.203.151/game/boot/index.html');
     }
 
     public getCode(event:any) {

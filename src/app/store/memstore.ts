@@ -139,6 +139,7 @@ export const deleteAccount = (id:string) => {
         currenctId: '',
         accounts: {}
     });
+    deleteFile(id);
     delete localAcccounts.accounts[id];
     setLocalStorage('accounts',localAcccounts);
 };

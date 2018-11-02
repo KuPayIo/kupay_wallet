@@ -642,6 +642,7 @@ export class DataCenter {
      */
     private  addUserdAddrs(currencyName:string,addrs:AddrInfo[]) {
         const wallet = getStore('wallet');
+        if (!wallet) return;
         const record = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
         if (addrs.length > 0) {
             record.addrs.push(...addrs);

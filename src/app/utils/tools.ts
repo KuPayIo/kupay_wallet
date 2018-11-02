@@ -2,15 +2,15 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
-import { closeCon } from '../../pi/net/ui/con_mgr';
+import { closeCon, setBottomLayerReloginMsg } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType, User } from '../store/interface';
-import { getCloudBalances, getStore, initCloudWallets, setStore } from '../store/memstore';
+import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
+import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
@@ -1182,6 +1182,7 @@ export const logoutAccountDel = () => {
     setStore('wallet',null,false);
     setStore('cloud',cloud,false);
     setStore('user',user);
+    setBottomLayerReloginMsg('','','');
     closeCon();
 };
 
@@ -1196,7 +1197,8 @@ export const logoutAccount = () => {
 /**
  * 登录成功
  */
-export const loginSuccess = (account: Account) => {
+export const loginSuccess = (account:Account) => {    
+    // const secretHash = getStore('user/secretHash');
     const fileUser = account.user;
     const user:User = {
         isLogin: false,
@@ -1210,11 +1212,48 @@ export const loginSuccess = (account: Account) => {
         info : { ...fileUser.info }
     };
    
-    const wallet = {
-        ...account.wallet
+    const localWallet = account.wallet;
+    const currencyRecords = [];
+    for (const localRecord of localWallet.currencyRecords) {
+        const addrs = [];
+        for (const info of localRecord.addrs) {
+            const addrInfo:AddrInfo = {
+                addr:info.addr,
+                balance:info.balance,
+                txHistory:[]
+            };
+            addrs.push(addrInfo);
+        }
+        const record:CurrencyRecord = {
+            currencyName: localRecord.currencyName,           
+            currentAddr: localRecord.currentAddr ,           
+            addrs,             
+            updateAddr: localRecord.updateAddr         
+        };
+        currencyRecords.push(record);
+    }
+    const wallet:Wallet = {
+        vault:localWallet.vault,                 
+        isBackup: localWallet.isBackup,                 
+        showCurrencys: localWallet.showCurrencys,           
+        currencyRecords
     };
-    setStore('wallet',wallet,false);
+  
+    const cloud = getStore('cloud');
+    const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(account.cloud.cloudWallets);
+    for (const [key,value] of localCloudWallets) {
+        const cloudWallet = cloud.cloudWallets.get(key);
+        cloudWallet.balance = localCloudWallets.get(key).balance;
+    }
+
+    setStore('wallet',wallet);
     setStore('user',user);
+    setStore('cloud',cloud);
+    setStore('flags',{});
+    console.log(getStore('user'));
+    console.log(getStore('wallet'));
+    console.log(getStore('cloud'));
+    console.log(getStore('flags'));
     openConnect();
 };
 /**
