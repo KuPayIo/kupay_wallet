@@ -175,7 +175,7 @@ export class WriteRedEnv extends Widget {
         }
 
         this.inputBlur();
-        const mess1 = this.state.cfgData.phrase[0] + this.state.totalAmount + curCoin.name + this.state.cfgData.phrase[1];
+        const mess1 = this.state.cfgData.phrase[0] + this.state.oneAmount + curCoin.name +" / "+this.state.totalNum+ this.state.cfgData.phrase[1];
         // tslint:disable-next-line:max-line-length
         const mess2 = this.state.cfgData.phrase[2] + (this.state.showPin ? this.state.cfgData.redEnvType[1] : this.state.cfgData.redEnvType[0]);
         popNew('app-components-modalBoxInput-modalBoxInput', {
