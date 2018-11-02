@@ -14,7 +14,7 @@
         </table>
     </div>
     {{end}}
-    <div w-class="body {{it.showBoder?'body_boder':''}}" style="{{it.maxHeight?'max-height: '+it.maxHeight +'px;overflow-y: auto;':''}}">
+    <div w-class="body {{it.showBoder?'body_boder':''}}" style="{{it.maxHeight?'max-height: '+it.maxHeight +'px;overflow-y: auto;-webkit-overflow-scrolling: touch;':''}}">
         <table w-class="table">
             <tbody>
                 {{for i,v of it.datas}}

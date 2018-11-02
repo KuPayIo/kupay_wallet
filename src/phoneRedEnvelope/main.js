@@ -217,7 +217,12 @@ const timestampFormat = (timestamp) => {
  * 下载APP
  */
 function downloadClick() {
-    document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
+    var ua = navigator.userAgent.toLowerCase();
+    if(ua.match(/MicroMessenger/i) == "micromessenger"){
+        document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
+    }else{
+        location.href = "image/tips.png";
+    }
 }
 /**
  * 关闭覆盖层

@@ -4,12 +4,13 @@
 // ================================ 导入
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAward, getMining, getMiningRank, getServerCloudBalance } from '../../../net/pull';
 import { CloudCurrencyType, Mining } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
-import { formatBalance, getLanguage, getUserInfo } from '../../../utils/tools';
+import { formatBalance, getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -19,9 +20,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class PlayHome extends Widget {
     public ok: () => void;
-    constructor() {
-        super();
-    }
+    public language:any;
 
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
@@ -33,6 +32,8 @@ export class PlayHome extends Widget {
      * 初始化数据
      */
     public init() {
+        this.language = this.config.value[getLang()];
+        
         this.state = {
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
@@ -54,7 +55,6 @@ export class PlayHome extends Widget {
             miningNum: ` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
                 <span>+{{it1.thisNum}}</span>
             </div>`,
-            cfgData: getLanguage(this),
             scroll: false,
             scrollHeight: 0,
             refresh: false,
@@ -69,7 +69,7 @@ export class PlayHome extends Widget {
         if (this.state.hasWallet) {
             return true;
         }
-        popNew('app-components-modalBox-modalBox', this.state.cfgData.login, () => {
+        popNew('app-components-modalBox-modalBox', this.language.login, () => {
             popNew('app-view-wallet-create-home');
         });
 
@@ -105,7 +105,7 @@ export class PlayHome extends Widget {
      */
     public miningDesc() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-modalBox-modalBox1', this.state.cfgData.miningDesc);
+        popNew('app-components-modalBox-modalBox1', this.language.miningDesc);
     }
 
     /**
@@ -177,6 +177,13 @@ export class PlayHome extends Widget {
     }
 
     /**
+     * 进入活动详情
+     */
+    public doActivity() {
+        popNew('app-view-earn-mining-addMine');
+    }
+
+    /**
      * 获取更新数据
      */     
     private initData() {
@@ -224,9 +231,9 @@ export class PlayHome extends Widget {
     private initEvent() {
         // 这里发起通信
         if (this.props.isActive && this.state.hasWallet) {
-             getServerCloudBalance();
-             getMining();
-             getMiningRank(100);
+            getServerCloudBalance();
+            getMining();
+            getMiningRank(100);
         }
     }
 
@@ -276,10 +283,11 @@ register('wallet', () => {
         
     }
 });
-register('setting/language', () => {
+register('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
+        w.language = w.config.value[r];
+        w.paint();
     }
 });
 register('user/conRandom', () => {

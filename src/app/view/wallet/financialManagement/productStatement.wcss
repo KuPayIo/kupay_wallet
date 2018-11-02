@@ -25,6 +25,7 @@
     line-height: 44px;
     overflow-x: hidden;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     white-space: pre-wrap;
     flex: 1 0 0;
 }
