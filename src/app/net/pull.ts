@@ -120,8 +120,14 @@ export const defaultLogin = async (hash:string) => {
  * 开启连接
  */
 export const openConnect = async () => {
-    setUrl(wsUrl);
-    open(conSuccess,conError,conClose,conReOpen);
+    const conState = getConState();
+    if (conState === ConState.opened) {
+        getRandom();
+    } else {
+        setUrl(wsUrl);
+        open(conSuccess,conError,conClose,conReOpen);
+    }
+    
 };
 
 /**
