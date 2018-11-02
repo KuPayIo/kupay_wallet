@@ -6,5 +6,6 @@
     flex: 1 0 0;
     overflow-x: hidden;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: 20px 0;
 }

@@ -5,7 +5,7 @@
             <div style="margin-left: 50px;">{{it1.cfgData.selectCoin}}</div>
             <img src="../../res/image/30_gray.png" w-class="close" on-tap="close"/>
         </div>
-        <div style="overflow-x: hidden;overflow-y: auto;height: 100%;">
+        <div style="overflow-x: hidden;overflow-y: auto;height: 100%;-webkit-overflow-scrolling: touch;">
             {{for ind,val of it1.currencyShowList}}
             <div w-class="new-code" on-tap="changeSelect(e,{{ind}})">
                 <img src={{val.img}} style="width: 50px;height: 50px;"/>

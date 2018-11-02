@@ -1,6 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage" w-class="new-page">
     <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
-    <div style="overflow-x: hidden;overflow-y: auto;flex: 1">
+    <div style="overflow-x: hidden;overflow-y: auto;flex: 1 0 0;-webkit-overflow-scrolling: touch;">
         <div w-class="content">
             <div w-class="title">{{it1.cfgData.title1}}</div>
             <div style="padding: 0 30px;line-height: 50px;">

@@ -60,6 +60,7 @@
 .content{
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     flex: 1 0 0;
     padding-top: 128px;
 }
