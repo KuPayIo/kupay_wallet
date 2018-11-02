@@ -24,7 +24,7 @@ interface State {
     showMoreTips:boolean; // 是否显示底部加载更多提示
     convertNumber:number; // 兑换总数，不包含邀请红包
     convertNumberShow:number; // 兑换总数
-    isScroll:boolean;  // 页面是否滑动
+    scrollHeight:number;  // 页面滑动高度
     inviteObj:any; // 邀请红包对象
     userList:any[]; // 用户信息列表
     cfgData:any; 
@@ -45,7 +45,7 @@ export class ExchangeHistory extends Widget {
             recordListShow:[],
             convertNumber:0,
             convertNumberShow:0,
-            isScroll:false,
+            scrollHeight:0,
             start:undefined,
             topRefresh:false,
             refresh:true,
@@ -181,6 +181,7 @@ export class ExchangeHistory extends Widget {
         const oh1 = document.getElementById('exchangeHistoryContent').offsetHeight;
         const oh2 = document.getElementById('exchangeHistoryRecords').offsetHeight;
         const scrollTop = document.getElementById('exchangeHistoryContent').scrollTop; 
+        this.state.scrollHeight = scrollTop;
         if (this.state.hasMore && this.state.refresh && (oh2 - oh1 - scrollTop) < 20) {
             this.state.refresh = false;
             console.log(this.state.cfgData.loading);
@@ -189,12 +190,6 @@ export class ExchangeHistory extends Widget {
                 this.state.refresh = true;
             }, 500); 
         } 
-
-        if (scrollTop > 0) {
-            this.state.isScroll = true;
-        } else {
-            this.state.isScroll = false;
-        }
         this.paint();
     }
 

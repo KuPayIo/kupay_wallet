@@ -12,7 +12,7 @@ import { getLanguage } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
-declare var pi_modules : any;
+declare var pi_modules: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class App extends Widget {
@@ -36,32 +36,33 @@ export class App extends Widget {
             isActive,
             old: this.old,
             loading,
-            tabBarList: [{
-                text: cfg.taps[0],
-                icon: 'play.png',
-                iconActive: 'play_active.png',
-                components: 'app-view-play-home-home'
-            },
-            {
-                text: cfg.taps[1],
-                icon: 'chat.png',
-                iconActive: 'chat_active.png',
-                components: 'app-view-chat-home-home'
-            },
-            {
-                text: cfg.taps[2],
-                icon: 'earn.png',
-                iconActive: 'earn_active.png',
-                components: 'app-view-earn-home-home'
-            }, 
-            {
-                text: cfg.taps[3],
-                icon: 'wallet.png',  
-                iconActive: 'wallet_active.png',
-                components: 'app-view-wallet-home-home'
-            }],
-            cfgData:cfg
-
+            tabBarList: [
+                {
+                    text: cfg.taps[0],
+                    icon: 'play.png',
+                    iconActive: 'play_active.png',
+                    components: 'app-view-play-home-home'
+                },
+                {
+                    text: cfg.taps[1],
+                    icon: 'chat.png',
+                    iconActive: 'chat_active.png',
+                    components: 'app-view-chat-home-home'
+                },
+                {
+                    text: cfg.taps[2],
+                    icon: 'earn.png',
+                    iconActive: 'earn_active.png',
+                    components: 'app-view-earn-home-home'
+                },
+                {
+                    text: cfg.taps[3],
+                    icon: 'wallet.png',
+                    iconActive: 'wallet_active.png',
+                    components: 'app-view-wallet-home-home'
+                }
+            ],
+            cfgData: cfg
         };
     }
     public closeLoading() {
@@ -80,19 +81,19 @@ export class App extends Widget {
 // ===================================================== 本地
 // ===================================================== 立即执行
 
-register('flags/level_2_page_loaded',(loaded:boolean) => {
+register('flags/level_2_page_loaded', (loaded: boolean) => {
     const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
     dataCenter.init();
-    const w:any = forelet.getWidget(WIDGET_NAME);
+    const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.closeLoading();
     } else { // 处理导航页过程中资源已经加载完毕
-        localStorage.setItem('level_2_page_loaded','1');
+        localStorage.setItem('level_2_page_loaded', '1');
     }
 });
 
 // 用户信息变化
-register('user/info',(userInfo:UserInfo) => {
+register('user/info', (userInfo: UserInfo) => {
     const isLogin = getStore('user/isLogin');
     if (isLogin && userInfo) {
         setUserInfo();
@@ -100,16 +101,16 @@ register('user/info',(userInfo:UserInfo) => {
 });
 
 // 登录状态成功
-register('user/isLogin',(isLogin:boolean) => {
+register('user/isLogin', (isLogin: boolean) => {
     if (isLogin) {
-         // 余额
+        // 余额
         getServerCloudBalance();
-        
+
         // 获取真实用户
         getRealUser();
         // 用户基础信息
         getUserInfoFromServer(getStore('user/conUid'));
-        
+
         const userInfo = getStore('user/info');
         const flags = getStore('flags');
         if (flags.created && userInfo) {
