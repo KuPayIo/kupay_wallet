@@ -6,7 +6,6 @@
     flex: 1 0 0;
     overflow-x: hidden;
     overflow-y: auto;
-    margin-top: -1px;
     position: relative;
     display: flex;
     flex-direction: column;
