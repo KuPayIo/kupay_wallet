@@ -19,7 +19,6 @@ interface State {
     recordListShow:any[];
     start:string; // 下一次从服务器获取记录时的start
     refresh:boolean; // 是否加载更多数据
-    topRefresh:boolean;//顶部手动刷新
     hasMore:boolean; // 是否还有更多记录
     showMoreTips:boolean; // 是否显示底部加载更多提示
     convertNumber:number; // 兑换总数，不包含邀请红包
