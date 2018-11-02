@@ -20,10 +20,11 @@ export class App extends Widget {
     public create() {
         super.create();
         this.init();
+        this.setList();
     }
 
     public init(): void {
-        const isActive = 3;
+        const isActive = 'wallet';
         this.old[isActive] = true;
 
         const cfg = getLanguage(this);
@@ -36,43 +37,59 @@ export class App extends Widget {
             isActive,
             old: this.old,
             loading,
-            tabBarList: [
-                {
+            allTabBar: {
+                play: {
+                    identfy: 'play',
                     text: cfg.taps[0],
                     icon: 'play.png',
                     iconActive: 'play_active.png',
                     components: 'app-view-play-home-home'
                 },
-                {
+                chat: {
+                    identfy: 'chat',
                     text: cfg.taps[1],
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
                     components: 'app-view-chat-home-home'
                 },
-                {
+                earn: {
+                    identfy: 'earn',
                     text: cfg.taps[2],
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
                     components: 'app-view-earn-home-home'
                 },
-                {
+                wallet: {
+                    identfy: 'wallet',
                     text: cfg.taps[3],
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
                     components: 'app-view-wallet-home-home'
                 }
-            ],
+            },
+
+            tabBarCfg: ['earn', 'wallet'],
+            tabBarList: [],
             cfgData: cfg
         };
+    }
+
+    public setList() {
+        let resList = [];
+        for (let item of this.state.tabBarCfg) {
+            resList.push(this.state.allTabBar[item]);
+        }   
+        this.state.tabBarList = resList;
     }
     public closeLoading() {
         this.state.loading = false;
         this.paint();
     }
     public async tabBarChangeListener(event: any, index: number) {
-        if (this.state.isActive === index) return;
-        this.state.isActive = index;
-        this.old[index] = true;
+        let identfy = this.state.tabBarList[index].identfy;
+        if (this.state.isActive === identfy) return;
+        this.state.isActive = identfy;
+        this.old[identfy] = true;
         this.paint();
     }
 
