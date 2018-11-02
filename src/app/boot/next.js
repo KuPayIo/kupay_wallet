@@ -164,9 +164,14 @@ winit.initNext = function () {
 					console.log("update progress: ", e);
 				});
 			}else{
-				pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util"], {}, function (mods, fm) {
+				pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang"], {}, function (mods, fm) {
 					var html = mods[0],
-						util = mods[1];
+						util = mods[1],
+						lang = mods[2];
+
+					const setting = JSON.parse(localStorage.getItem('setting'));
+					lang.setLang(setting && setting.language || 'zh_Hans');  // 初始化语言为简体中文
+
 		
 					// 判断是否第一次进入,决定是显示片头界面还是开始界面
 					var userinfo = html.getCookie("userinfo");
