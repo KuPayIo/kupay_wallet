@@ -13,7 +13,6 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { openConnect } from '../../net/pull';
 import { initPush } from '../../net/push';
-import { registerFileStore } from '../../store/filestore';
 import {
   CloudCurrencyType,
   CloudWallet,
@@ -41,7 +40,6 @@ export const run = (cb): void => {
     checkUpdate();
     // 初始化数据
     initStore();
-    registerFileStore();
     // 主动推送初始化
     initPush();
     openConnect();

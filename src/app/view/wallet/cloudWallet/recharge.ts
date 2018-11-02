@@ -106,7 +106,7 @@ export class Recharge extends Widget {
         const oldTx = this.props.tx;
         const tx:TxHistory = {
             hash:'',
-            txType:TxType.Receipt,
+            txType:TxType.Recharge,
             fromAddr,
             toAddr: '',
             pay,

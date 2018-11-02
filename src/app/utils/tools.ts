@@ -2,14 +2,15 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
+import { closeCon, setBottomLayerReloginMsg } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
+import { cryptoRandomInt } from '../../pi/util/math';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
-import { Account } from '../store/filestore';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, CloudCurrencyType, CloudWallet, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
-import { getCloudBalances, getStore,initAccount, setStore } from '../store/memstore';
+import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
+import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
@@ -493,9 +494,8 @@ export const calcHashValuePromise = async (pwd, salt?) => {
     let hash;
     const argonHash = new ArgonHash();
     argonHash.init();
-    console.time('argonHash');
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
-    console.timeEnd('argonHash');
+    setStore('user/secretHash',hash);
 
     return hash;
 };
@@ -727,7 +727,7 @@ export const fetchCloudTotalAssets = () => {
     const cloudBalances = getCloudBalances();
     let totalAssets = 0;
     for (const [k, v] of cloudBalances) {
-        totalAssets += fetchBalanceValueOfCoin(k, v);
+        totalAssets += fetchBalanceValueOfCoin(CloudCurrencyType[k], v);
     }
 
     return totalAssets;
@@ -1166,7 +1166,7 @@ export const logoutAccountDel = () => {
         conRandom: '',               // 连接随机数
         conUid: '',                   // 服务器连接uid
         publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
-        salt: '',                    // 加密 盐值
+        salt: cryptoRandomInt().toString(),                    // 加密 盐值
         secretHash: '',             // 密码hash缓存   
         info: {                      // 用户基本信息
             nickName: '',           // 昵称
@@ -1176,12 +1176,14 @@ export const logoutAccountDel = () => {
         }
     };
     const cloud = {
-        cloudWallets: new Map<CloudCurrencyType, CloudWallet>()     // 云端钱包相关数据, 余额  充值提现记录...
+        cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
     };
-    setStore('user',user,false);
+    
     setStore('wallet',null,false);
     setStore('cloud',cloud,false);
-    setStore('user/id','');
+    setStore('user',user);
+    setBottomLayerReloginMsg('','','');
+    closeCon();
 };
 
 /**
@@ -1195,27 +1197,63 @@ export const logoutAccount = () => {
 /**
  * 登录成功
  */
-export const loginSuccess = (account: Account) => {
-    // 创建钱包基础数据
-    // const wallet: Wallet = {
-    //     vault: gwlt.vault,
-    //     isBackup: gwlt.isBackup,
-    //     showCurrencys: defalutShowCurrencys,
-    //     currencyRecords: gwlt.currencyRecords
-    // };
-    // const user = getStore('user');
-    // user.id = gwlt.glwtId;
-    // user.publicKey = gwlt.publicKey;
-    // user.secretHash = secrectHash;
-    // user.info = {
-    //     ...user.info,
-    //     nickName: option.nickName
-    // };
-    // setStore('user', user);
-    // setStore('wallet', wallet);
+export const loginSuccess = (account:Account) => {    
+    // const secretHash = getStore('user/secretHash');
+    const fileUser = account.user;
+    const user:User = {
+        isLogin: false,
+        conRandom:'',
+        conUid:'',
+        secretHash:'',
+        id : fileUser.id,
+        token : fileUser.token,
+        publicKey : fileUser.publicKey,
+        salt : fileUser.salt,
+        info : { ...fileUser.info }
+    };
+   
+    const localWallet = account.wallet;
+    const currencyRecords = [];
+    for (const localRecord of localWallet.currencyRecords) {
+        const addrs = [];
+        for (const info of localRecord.addrs) {
+            const addrInfo:AddrInfo = {
+                addr:info.addr,
+                balance:info.balance,
+                txHistory:[]
+            };
+            addrs.push(addrInfo);
+        }
+        const record:CurrencyRecord = {
+            currencyName: localRecord.currencyName,           
+            currentAddr: localRecord.currentAddr ,           
+            addrs,             
+            updateAddr: localRecord.updateAddr         
+        };
+        currencyRecords.push(record);
+    }
+    const wallet:Wallet = {
+        vault:localWallet.vault,                 
+        isBackup: localWallet.isBackup,                 
+        showCurrencys: localWallet.showCurrencys,           
+        currencyRecords
+    };
+  
+    const cloud = getStore('cloud');
+    const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(account.cloud.cloudWallets);
+    for (const [key,value] of localCloudWallets) {
+        const cloudWallet = cloud.cloudWallets.get(key);
+        cloudWallet.balance = localCloudWallets.get(key).balance;
+    }
 
-    initAccount(account);
-    setStore('user/id',account.user.id);
+    setStore('wallet',wallet);
+    setStore('user',user);
+    setStore('cloud',cloud);
+    setStore('flags',{});
+    console.log(getStore('user'));
+    console.log(getStore('wallet'));
+    console.log(getStore('cloud'));
+    console.log(getStore('flags'));
     openConnect();
 };
 /**
@@ -1333,7 +1371,7 @@ export const updateLocalTx = (tx: TxHistory) => {
     const currencyName = tx.currencyName;
     const addr = tx.addr;
     wallet.currencyRecords.forEach(record => {
-        if (record.currencyName === currencyName && record.currentAddr === addr) {
+        if (record.currencyName === currencyName) {
             record.addrs.forEach(addrInfo => {
                 if (addrInfo.addr === addr) {
                     let index = -1;
