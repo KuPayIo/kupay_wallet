@@ -120,7 +120,7 @@ export class DataCenter {
             const currencyRecord: CurrencyRecord[] = wallet.currencyRecords;
             const needCheckAddr = [];
             currencyRecord.forEach(item => {
-                if (!item.updateAddr && wallet.showCurrencys.indexOf(item.currencyName) > 0) {
+                if (!item.updateAddr && wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
                     needCheckAddr.push(item);
                 }
             });

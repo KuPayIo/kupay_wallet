@@ -5,10 +5,23 @@
 // ============================================ 导入
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { Account, getCurrentAccount, getSetting, getThird } from './filestore';
-import { CloudCurrencyType, CloudWallet, Currency2USDT, LockScreen, ShapeShiftTxs, Store } from './interface';
+import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
+// tslint:disable-next-line:max-line-length
+import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, ShapeShiftTxs, Store, TxHistory, UserInfo, Wallet } from './interface';
 
 // ============================================ 导出
+
+/**
+ * 初始化store
+ */
+export const initStore = () => {
+    registerFileStore();    // 注册监听
+    initAccount();          // 账户初始化
+    initSettings();         // 设置初始化
+    initThird();            // 三方数据初始化
+    initFile();             // indexDb数据初始化
+};
+
 /**
  * 根据路径获取数据
  */
@@ -103,31 +116,89 @@ export const initCloudWallets = () => {
 };
 
 /**
- * 初始化store
+ * 获取所有的账户列表
  */
-export const initStore = () => {
-    initAccount(getCurrentAccount());
+export const getAllAccount = () => {
+    const localAcccounts = getLocalStorage('accounts', {
+        currenctId: '',
+        accounts: {}
+    });
+    const accounts = [];
+    for (const key in localAcccounts.accounts) {
+        accounts.push(localAcccounts.accounts[key]);
+    }
 
-    initSettings();
-
-    initThird();
-
+    return accounts;
 };
 
-// type loadingEventName = 'level_1_page_loaded' | 'level_2_page_loaded' ;
+/**
+ * 删除账户
+ */
+export const deleteAccount = (id:string) => {
+    const localAcccounts = getLocalStorage('accounts', {
+        currenctId: '',
+        accounts: {}
+    });
+    delete localAcccounts.accounts[id];
+    setLocalStorage('accounts',localAcccounts);
+};
 
-// ============================================ 本地
-
-// ============================================ 立即执行
+// ===================================================本地
+/**
+ * indexDB数据初始化
+ */
+const initFile = () => {
+    console.time('initFile');
+    initFileStore().then(() => {
+        if (!store.user.id) return;
+        getFile(store.user.id,(value,key) => {
+            console.timeEnd('initFile');
+            if (!value) return;
+            initTxHistory(value);
+            console.log('store init success',store);
+        },() => {
+            console.log('read error');
+        });
+    });
+};
 
 /**
- * 消息处理列表
+ * 初始化历史记录
+ * @param fileTxHistorys indexDb存储的历史记录
  */
-const handlerMap: HandlerMap = new HandlerMap();
+const initTxHistory = (fileTxHistorys:FileTxHistory[]) => {
+    const currencyRecords = store.wallet.currencyRecords;
+    for (const record of currencyRecords) {
+        for (const addrInfo of record.addrs) {
+            addrInfo.txHistory = getTxHistory(fileTxHistorys,record.currencyName,addrInfo.addr);
+        }
+    }
+};
 
-export const initAccount = (curAccount:Account) => {
+/**
+ * 获取历史记录
+ */
+const getTxHistory = (fileTxHistorys:FileTxHistory[],currencyName:string,addr:string) => {
+    for (const fileTxHistory of fileTxHistorys) {
+        if (fileTxHistory.currencyName === currencyName && fileTxHistory.addr === addr) {
+            return fileTxHistory.txHistory;
+        }
+    }
+};
+
+/**
+ * 账户初始化
+ */
+const initAccount = () => {
+    const localAcccounts = getLocalStorage('accounts', {
+        currenctId: '',
+        accounts: {}
+    });
+    const curAccount = localAcccounts.accounts[localAcccounts.currenctId];
     if (curAccount) {
         const fileUser = curAccount.user;
+
+        // store.user init
         store.user.id = fileUser.id;
         store.user.token = fileUser.token;
         store.user.publicKey = fileUser.publicKey;
@@ -136,23 +207,69 @@ export const initAccount = (curAccount:Account) => {
             ...fileUser.info
         };
     
-        store.wallet = {
-            ...curAccount.wallet
+        // store.cloud init
+        const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(curAccount.cloud.cloudWallets);
+        for (const [key,value] of localCloudWallets) {
+            const cloudWallet = store.cloud.cloudWallets.get(key);
+            cloudWallet.balance = localCloudWallets.get(key).balance;
+        }
+
+        // store.wallet init
+        const localWallet = curAccount.wallet;
+        const currencyRecords = [];
+        for (const localRecord of localWallet.currencyRecords) {
+            const addrs = [];
+            for (const info of localRecord.addrs) {
+                const addrInfo:AddrInfo = {
+                    addr:info.addr,
+                    balance:info.balance,
+                    txHistory:[]
+                };
+                addrs.push(addrInfo);
+            }
+            const record:CurrencyRecord = {
+                currencyName: localRecord.currencyName,           
+                currentAddr: localRecord.currentAddr ,           
+                addrs,             
+                updateAddr: localRecord.updateAddr         
+            };
+            currencyRecords.push(record);
+        }
+        const wallet:Wallet = {
+            vault:localWallet.vault,                 
+            isBackup: localWallet.isBackup,                 
+            showCurrencys: localWallet.showCurrencys,           
+            currencyRecords
         };
+        store.wallet = wallet;
     } else {
         store.user.salt = cryptoRandomInt().toString();
     }
 };
 
+/**
+ * 设置初始
+ */
 const initSettings = () => {
-    const setting = getSetting();
+    const setting = getLocalStorage('setting',{
+        language:'zh_Hans',
+        changeColor:'redUp',
+        currencyUnit:'CNY',
+        lockScreen:{
+            open:false,
+            psw:''
+        }
+    });
     store.setting = {
         ...setting
     };
 };
 
+/**
+ * 三方数据初始
+ */
 const initThird = () => {
-    const third = getThird();
+    const third = getLocalStorage('third');
     if (!third) return;
     store.third.gasPrice = third.gasPrice;
     store.third.btcMinerFee = third.btcMinerFee;
@@ -161,6 +278,203 @@ const initThird = () => {
     store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third.shapeShiftTxsMap);
     store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
 };
+
+/**
+ * 注册文件数据库监听
+ */
+const registerFileStore = () => {
+    registerAccountChange(); // 监听账户变化
+    registerThirdChange(); // 监听3方数据变化
+    registerSettingChange(); // 监听setting数据变化
+};
+
+/**
+ * 账户相关变化监听
+ */
+const registerAccountChange = () => {
+    register('user', () => {
+        accountChange();
+    });
+    register('user/id', () => {
+        accountChange();
+    });
+    register('user/token', () => {
+        accountChange();
+    });
+    register('user/info', () => {
+        accountChange();
+    });
+    register('wallet', () => {
+        accountChange();
+    });
+    register('wallet/currencyRecords', () => {
+        accountChange();
+    });
+    register('cloud/cloudWallets',() => {
+        accountChange();
+    });
+};
+
+/**
+ * 3方数据变化监听
+ */
+const registerThirdChange = () => {
+    register('third/gasPrice', () => {
+        thirdChange();
+    });
+    register('third/btcMinerFee', () => {
+        thirdChange();
+    });
+    register('third/gasLimitMap', () => {
+        thirdChange();
+    });
+    register('third/rate', () => {
+        thirdChange();
+    });
+    register('third/currency2USDTMap', () => {
+        thirdChange();
+    });
+};
+
+/**
+ * setting数据变化监听
+ */
+const registerSettingChange = () => {
+    register('setting/language',() => {
+        settingChange();
+    });
+    register('setting/changeColor',() => {
+        settingChange();
+    });
+    register('setting/currencyUnit',() => {
+        settingChange();
+    });
+    register('setting/lockScreen',() => {
+        settingChange();
+    });
+
+};
+
+/**
+ * 当前账户变化
+ */
+const accountChange = () => {
+    const storeUser = getStore('user');
+    const localAccounts = getLocalStorage('accounts', {
+        currenctId: '',
+        accounts: {}
+    });
+    
+    if (!storeUser.id) {
+        const flags = getStore('flags');
+        const saveAccount = flags.saveAccount;
+        if (saveAccount) {
+            localAccounts.currenctId = '';
+            setLocalStorage('accounts', localAccounts);
+        } else {
+            deleteFile(localAccounts.currenctId);
+            delete localAccounts.accounts[localAccounts.currenctId];
+            localAccounts.currenctId = '';
+            setLocalStorage('accounts', localAccounts);
+            
+        }
+        
+        return;
+    }
+    const localUser: LocalUser = {
+        id: storeUser.id,
+        token: storeUser.token,
+        publicKey: storeUser.publicKey,
+        salt: storeUser.salt,
+        info: storeUser.info
+    };
+
+    const storeCloudWallets: Map<CloudCurrencyType, LocalCloudWallet> = getStore('cloud/cloudWallets');
+    const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>();
+
+    for (const [k, v] of storeCloudWallets) {
+        const cloudWallet: LocalCloudWallet = { balance: v.balance };
+        localCloudWallets.set(k, cloudWallet);
+    }
+
+    const wallet = getStore('wallet');
+    const fileTxHistorys = [];
+    const localCurrencyRecords = wallet.currencyRecords.map(record => {
+        const addrs = record.addrs.map(info => {
+            const fileTxHistory:FileTxHistory = {
+                currencyName:record.currencyName,
+                addr:info.addr,
+                txHistory:info.txHistory
+            };
+            fileTxHistorys.push(fileTxHistory);
+
+            return {
+                addr:info.addr,
+                balance:info.balance
+            };
+        });
+
+        return {
+            ...record,
+            addrs
+        };
+    });
+    
+    const localWallet:LocalWallet = {
+        vault: wallet.vault,                      
+        isBackup: wallet.isBackup,               
+        showCurrencys: wallet.showCurrencys,       
+        currencyRecords: localCurrencyRecords
+    };
+    const newAccount: Account = {
+        user: localUser,
+        wallet: localWallet,
+        cloud: { cloudWallets: localCloudWallets }
+    };
+
+    localAccounts.currenctId = storeUser.id;
+    localAccounts.accounts[storeUser.id] = newAccount;
+    
+    setLocalStorage('accounts', localAccounts);
+    writeFile(storeUser.id,fileTxHistorys);
+
+};
+
+/**
+ * 第3方数据变化
+ */
+const thirdChange = () => {
+    const localThird: LocalThird = {
+        gasPrice: getStore('third/gasPrice'),
+        btcMinerFee: getStore('third/btcMinerFee'),
+        gasLimitMap: getStore('third/gasLimitMap'),
+        rate: getStore('third/rate'),
+        currency2USDTMap: getStore('third/currency2USDTMap')
+    };
+    setLocalStorage('third', localThird);
+};
+
+/**
+ * setting数据变化
+ */
+const settingChange = () => {
+    const localSetting:Setting = {
+        language:getStore('setting/language'),
+        changeColor:getStore('setting/changeColor'),
+        currencyUnit:getStore('setting/currencyUnit'),
+        lockScreen:getStore('setting/lockScreen')
+    };
+    setLocalStorage('setting',localSetting);
+};
+
+// ======================================================== 本地
+
+// ============================================ 立即执行
+
+/**
+ * 消息处理列表
+ */
+const handlerMap: HandlerMap = new HandlerMap();
 
 // 全局内存数据库
 const store: Store = {
@@ -177,7 +491,7 @@ const store: Store = {
             nickName: '',           // 昵称
             avatar: '',            // 头像
             phoneNumber: '',       // 手机号
-            isRealUser: false    // 是否是真实用户
+            isRealUser: false      // 是否是真实用户
         }
     },
     wallet: null,
@@ -232,3 +546,96 @@ const store: Store = {
     },
     flags: {}
 };
+
+// =======================localStorage interface===============================
+
+/**
+ * 本地所有账户
+ */
+export interface Accounts {
+    currenctId: string;  // 当前账户id
+    accounts: {
+    // 所有账户
+        [key: string]: Account;
+    };
+}
+
+/**
+ * 本地账户数据
+ */
+export interface Account {
+    user: LocalUser;
+    wallet: LocalWallet;
+    cloud: LocalCloud;
+}
+
+/**
+ * 当前用户数据
+ */
+export interface LocalUser {
+    id: string;            // 该账号的id (第一个ETH地址)
+    token: string;         // 自动登录token
+    publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
+    salt: string;          // 加密 盐值
+    info: UserInfo;        // 基本信息
+}
+
+export interface LocalCurrencyRecord {
+    currencyName: string;            // 货币名称
+    currentAddr: string;             // 当前正在使用的地址
+    addrs: LocalAddrInfo[];          // 所有的地址
+    updateAddr: boolean;             // 地址是否已经更新
+}
+
+/**
+ * 地址对象
+ */
+export interface LocalAddrInfo {
+    addr: string;                    // 地址
+    balance: number;                 // 余额
+}
+/**
+ * 当前用户前端数据
+ */
+export interface LocalCloud {
+    cloudWallets: Map<CloudCurrencyType, LocalCloudWallet>;     // 云端钱包相关数据, 余额  充值提现记录...
+}
+
+/**
+ * 云端钱包
+ */
+export interface LocalCloudWallet {
+    balance: number;   // 余额
+}
+
+/**
+ * 钱包对象
+ */
+export interface LocalWallet {
+    vault: string;                      // 钱包核心
+    isBackup: boolean;                  // 备份助记词与否
+    showCurrencys: string[];            // 显示的货币列表
+    currencyRecords: LocalCurrencyRecord[];  // 支持的所有货币记录
+}
+
+/**
+ * 本地3方数据
+ */
+export interface LocalThird {
+    gasPrice: GasPrice; // gasPrice分档次
+    btcMinerFee: BtcMinerFee; // btc minerfee 分档次
+    gasLimitMap: Map<string, number>; // 各种货币转账需要的gasLimit
+
+    rate: number; // 货币的美元汇率
+    currency2USDTMap: Map<string, Currency2USDT>; // k线  --> 计算涨跌幅
+}
+
+/**
+ * indexDB历史记录
+ */
+export interface FileTxHistory {
+    currencyName:string;
+    addr:string;
+    txHistory:TxHistory[];
+}
+// =======================================================

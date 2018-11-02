@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { deleteAccount, getAllAccount } from '../../../store/filestore';
+import { deleteAccount, getAllAccount } from '../../../store/memstore';
 import { getLanguage, loginSuccess, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { VerifyIdentidy, VerifyIdentidy1 } from '../../../utils/walletTools';
 // ============================导出
