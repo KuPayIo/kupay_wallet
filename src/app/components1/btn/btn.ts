@@ -12,7 +12,7 @@ import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
-    name:string;
+    name:any;
     types?:string;
     color?:string;
     style?:string;
@@ -22,10 +22,11 @@ interface Props {
 export class Btn extends Widget {
     public props:Props;
     public ok: () => void;
-    constructor() {
-        super();
+    public setProps(props:JSON) {
+        super.setProps(props);
         this.state = {
-            isAbleBtn:false
+            isAbleBtn:false,
+            isString:typeof this.props.name === 'string'
         };
     }
 

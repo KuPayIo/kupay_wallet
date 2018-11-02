@@ -2,6 +2,7 @@
  * 首页
  */
 // ================================ 导入
+import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { applyAutoLogin, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
@@ -137,4 +138,9 @@ register('user/isLogin', (isLogin: boolean) => {
             applyAutoLogin();
         }
     }
+});
+
+// 语言配置
+register('setting/language',(r) => {
+    setLang(r);
 });

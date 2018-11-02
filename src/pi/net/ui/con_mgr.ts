@@ -16,8 +16,7 @@ export enum ConState {
     init = 0,
     opening,
     opened,
-    closed,
-    noReconnect //禁止重连
+    closed
 }
 
 /**
@@ -53,6 +52,7 @@ export const setUrl = (url: string) => {
 let lastRequest = null;
 export const open = (
     callback: Function, errorCallback: Function, closeCallback?: Function, reOpenCallback?: Function, timeout?: number) => {
+    console.log('open');
     timeout = timeout || defaultTimeout;
     let lastError;
     // 接收后台推送服务器时间，并设置成服务器时间
@@ -60,6 +60,7 @@ export const open = (
         if (msg.type === 'closed') {
             setConState(ConState.closed);
             if (closeCallback) closeCallback();
+            console.log('--------连接断开-------');
             // alert(`服务器主动断掉了链接，最后的信息为：${JSON.stringify(lastRequest)}`)
         } else if (msg.msg) {
             if (msg.msg.type === 'echo_time') {
@@ -71,7 +72,6 @@ export const open = (
             }
         }
     });
-    clearTimeout(pingTimer);
     ping(reOpenCallback);
     timeout += now();
     const cfg = { encode: false, isText: (commonjs.flags.os.name === 'Android') && (commonjs.flags.os.version < '4.4.0') };
@@ -88,7 +88,6 @@ export const open = (
                 Connect.open(conUrl, cfg, func, 10000);
             }, 3000);
         } else {
-            doClose = false;
             con = result;
             setConState(ConState.opened);
             con.send({ type: 'app@time', param: { ctime: now() } });
@@ -139,43 +138,6 @@ export const request = (msg: any, cb: Function, timeout?: number) => {
 export const send = (msg: any) => {
     con.send(msg);
 };
-
-
-// 钱包项目获取随机数后底层登录(注意和上层登录不同)
-export const randomLogin = (userx: string, uType: string, password: string, cb: Function, reOpenCallback?: Function, timeout?: number) => {
-    if (con === null) {
-        if (conState !== ConState.init) {
-            throw new Error(`login, invalid state: ${conState}`);
-        }
-
-        return open(() => {
-            randomLogin(userx, uType, password, cb, reOpenCallback, timeout);
-        }, (result) => {
-            // callTime(cb, [result], "login");
-            cb([result]);
-        }, null, reOpenCallback, timeout);
-    }
-    con.request({ type: 'login', param: { userType: uType, password: password, user: userx } }, (result) => {
-        console.log('randomLogin-----',result);
-        if (result.error) {
-            setLoginState(LoginState.logerror);
-            result.result = result.error;
-            // callTime(cb, [result], "logerror");
-            cb([result]);
-        } else {
-            setLoginState(LoginState.logined);
-            requestWaits();
-            user = userx;
-            userType = uType;
-            tempPassword = result.password;
-            result.result = 1;
-            // callTime(cb, [result], "login");
-            cb([result]);
-        }
-    }, timeout || defaultTimeout);
-    setLoginState(LoginState.logining);
-};
-
 
 /**
  * 登录
@@ -352,7 +314,6 @@ export const stateChangeUnregister = (index) => {
  */
 export const closeCon = () => {
     if (con) {
-        doClose = true;
         con.close();
         setConState(ConState.closed);
         con = null;
@@ -436,8 +397,6 @@ let serverTime = 0;
 let localTime = 0;
 // 通讯时间，ping的来回时间
 let pingpong = 0;
-// 手动关闭
-let doClose = false;
 
 // 状态改变的CB
 const stateChangeArr = [];
@@ -460,18 +419,18 @@ const setLoginState = (s: number) => {
     show();
 };
 
-//设置底层重登录信息
-export const setBottomLayerReloginMsg = (user_:string,userType_:string | number,tempPassword_:string)=>{
+// 设置底层重登录信息
+export const setBottomLayerReloginMsg = (user_:string,userType_:string | number,tempPassword_:string) => {
     user = user_;
     userType = userType_;
     tempPassword = tempPassword_;
-}
+};
+
 /**
  * 重新打开连接
  */
 const reopen = (reOpenCallback?: Function) => {
     console.log('reopen start-=------');
-    if (doClose) return;
     open(() => {
         console.log('reopen callback loginState',loginState);
         relogin();
@@ -489,11 +448,11 @@ const relogin = () => {
     console.log('userType',userType);
     console.log('password',tempPassword);
     request({ type: 'relogin', param: { user: user, userType: userType, password: tempPassword } }, (result) => {
-        console.log('relogin success----',result);
         if (result.error) {
             setLoginState(LoginState.logerror);
             reloginCallback && reloginCallback({ type: 'logerror', result: result });
         } else {
+            console.log('relogin success----',result);
             setLoginState(LoginState.logined);
             requestWaits();
             reloginCallback && reloginCallback({ type: 'relogin', result: result });
@@ -514,7 +473,7 @@ const requestWaits = () => {
  */
 const ping = (reOpenCallback: Function) => {
     const func = () => {
-        // console.log("ping",new Date().getTime());
+        console.log('ping',new Date().getTime());
         if (conState === ConState.closed) {
             reopen(reOpenCallback);
         } else if (conState === ConState.opened) {
@@ -528,9 +487,10 @@ const ping = (reOpenCallback: Function) => {
         }
         pingTimer = setTimeout(func, pingTime);
     };
-    // if (!pingTimer) {
+    if (!pingTimer) {
         pingTimer = setTimeout(func, pingTime);
-    // }
+    }
+    
 };
 
 /**

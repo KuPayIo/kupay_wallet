@@ -1,7 +1,7 @@
 /**
  * 主动向后端通讯
  */
-import { open, request, setBottomLayerReloginMsg, setUrl } from '../../pi/net/ui/con_mgr';
+import { closeCon, ConState, getConState, open, request, setBottomLayerReloginMsg, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
 import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
@@ -120,8 +120,14 @@ export const defaultLogin = async (hash:string) => {
  * 开启连接
  */
 export const openConnect = async () => {
-    setUrl(wsUrl);
-    open(conSuccess,conError,conClose,conReOpen);
+    const conState = getConState();
+    if (conState === ConState.opened) {
+        getRandom();
+    } else {
+        setUrl(wsUrl);
+        open(conSuccess,conError,conClose,conReOpen);
+    }
+    
 };
 
 /**
@@ -143,6 +149,7 @@ const conError = (err) => {
  */
 const conClose = () => {
     popNewMessage('连接已断开');
+    closeCon();
 };
 
 /**
@@ -201,12 +208,6 @@ export const getRandom = async (cmd?:number) => {
 };
 
 const afterGetRandomAction = (serverTimestamp:number) => {
-    // eth gasPrice
-    fetchGasPrices();
-
-    // btc fees
-    fetchBtcFees();
-
     const secretHash = getStore('user/secretHash');
     if (secretHash) {
         defaultLogin(secretHash);
@@ -215,6 +216,12 @@ const afterGetRandomAction = (serverTimestamp:number) => {
     if (getStore('user/token')) {
         autoLogin(serverTimestamp);
     }
+
+     // eth gasPrice
+    fetchGasPrices();
+
+     // btc fees
+    fetchBtcFees();
 };
 
 /**

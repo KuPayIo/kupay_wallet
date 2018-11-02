@@ -152,7 +152,7 @@ export const fetchTransactionList = (addr:string,currencyName:string) => {
     if (!wallet) return [];
     const txList = [];
     wallet.currencyRecords.forEach(record => {
-        if (record.currencyName === currencyName && record.currentAddr === addr) {
+        if (record.currencyName === currencyName) {
             record.addrs.forEach(addrInfo => {
                 if (addrInfo.addr === addr) {
                     txList.push(...addrInfo.txHistory);

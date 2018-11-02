@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="chooseAddrClick">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="chooseAddrClick" ev-refresh-click="refreshClick">
     <div w-class="top-head">
         <app-components1-topBar-topBar>{"title":{{it.currencyName}},background:"transparent",nextImg:"../../res/image/location.png",refreshImg:"../../res/image1/refresh_white.png",text:{{it1.address}}}</app-components1-topBar-topBar>
         <div w-class="head">
