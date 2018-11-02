@@ -1,4 +1,4 @@
-import { closeCon, setMsgHandler } from '../../pi/net/ui/con_mgr';
+import { closeCon, setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { backCall, backList, popNew } from '../../pi/ui/root';
 import { CMD } from '../utils/constants';
 import { getStaticLanguage, logoutAccount, logoutAccountDel, popNewMessage } from '../utils/tools';
@@ -20,12 +20,14 @@ export const initPush = () => {
         console.log('强制下线==========================',res);
         // 手动关闭可以阻止重新连接
         closeCon();
+        setBottomLayerReloginMsg('','','');
         const cmd = res.cmd;
         if (cmd === CMD.FORCELOGOUT) {
             logoutAccount();
         } else if (cmd === CMD.FORCELOGOUTDEL) {
             logoutAccountDel();
         }
+        
         popNew('app-components1-modalBox-modalBox',{
             sureText:'重新登录',
             cancelText:'退出',

@@ -25,7 +25,7 @@ export class PlayHome extends Widget {
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.init();
-        this.refreshPage();
+        this.initEvent();
 
     }
     /**
@@ -60,6 +60,10 @@ export class PlayHome extends Widget {
             refresh: false,
             avatar: '../../../res/image1/default_avatar.png'
         };
+        setTimeout(()=>{
+            this.scrollPage();
+        })
+        
         this.initData();
     }
     /**
@@ -147,8 +151,8 @@ export class PlayHome extends Widget {
     /**
      * 屏幕滑动
      */
-    public scrollPage(e: any) {
-        const scrollTop = e.target.scrollTop;
+    public scrollPage() {
+        const scrollTop = document.getElementById('earn-home').scrollTop;
         this.state.scrollHeight = scrollTop;
         if (scrollTop > 0) {
             this.state.scroll = true;

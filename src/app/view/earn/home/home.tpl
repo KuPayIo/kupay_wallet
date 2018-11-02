@@ -1,6 +1,6 @@
 <div class="new-page" style="display: flex;flex-direction: column;">
     
-    <div w-class="contain" on-scroll="scrollPage" >
+    <div w-class="contain" on-scroll="scrollPage" id="earn-home">
         <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
         <div w-class="topBack">
             
@@ -72,8 +72,10 @@
             </div>
         </div>  
     </div>
-    {{let opca = it1.scrollHeight/200}}
-    <div style="{{it1.scroll?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 1px solid #cccccc;':''}}" w-class="topBar">
+
+    {{let opca = it1.scrollHeight/100}}
+    <div style="{{it1.scroll?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':''}}" w-class="topBar">
+
         <img src={{it1.avatar}} w-class="userHead" on-tap="showMine"/>
     </div>
     <img src="../../../res/image1/{{it1.scroll?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" on-tap="refreshPage" class="{{it1.refresh ?'refreshing':''}}"/>

@@ -38,6 +38,7 @@ export class Home extends Widget {
             refreshing:false,
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
+        this.paint();
     }
     public tabsChangeClick(event: any, value: number) {
         this.state.activeNum = value;
@@ -74,21 +75,7 @@ export class Home extends Widget {
         }
         this.state.refreshing = true;
         this.paint();
-        let neededRefreshCount = 1;
-        getServerCloudBalance().then(() => {
-            neededRefreshCount--;
-            if (neededRefreshCount === 0) {
-                this.state.refreshing = false;
-                this.paint();
-            }
-        }).catch(() => {
-            neededRefreshCount--;
-            if (neededRefreshCount === 0) {
-                this.state.refreshing = false;
-                this.paint();
-            }
-        });
-
+        getServerCloudBalance();
         const wallet = getStore('wallet');
         if (!wallet) return;
         const list = [];
@@ -103,25 +90,21 @@ export class Home extends Widget {
        
         const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
         list.forEach(v => {
-            neededRefreshCount++;
-            dataCenter.updateBalance(v.addr, v.currencyName).then(() => {
-                neededRefreshCount--;
-                if (neededRefreshCount === 0) {
-                    this.state.refreshing = false;
-                    this.paint();
-                }
-            });
+            dataCenter.updateBalance(v.addr, v.currencyName);
         });
         
+        setTimeout(() => {
+            this.state.refreshing = false;
+            this.paint();
+        },1000);
     }
 }
 
 // ==========================本地
-register('user/id',() => {
+register('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
     }
 });
 
@@ -140,11 +123,10 @@ register('cloud/cloudWallet',() => {
     }
 });
 
-register('setting', () => {
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
     }
 });
 
