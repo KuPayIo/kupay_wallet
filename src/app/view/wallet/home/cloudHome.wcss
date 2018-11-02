@@ -2,6 +2,7 @@
     padding: 0 20px;
     overflow-x: hidden;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 .total-asset-container{
     height: 120px;

@@ -2,6 +2,7 @@
     background-color: #fff;
     overflow-x: hidden;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 .ga-main{
     display: flex;
@@ -177,6 +178,7 @@
 .detail-main{
     overflow-x: hidden;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
 }

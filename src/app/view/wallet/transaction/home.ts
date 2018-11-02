@@ -142,6 +142,10 @@ export class TransactionHome extends Widget {
         this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
+
+    public refreshClick() {
+        dataCenter.updateAddrInfo(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
+    }
 }
 
 // ==========================本地

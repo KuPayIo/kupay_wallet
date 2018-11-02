@@ -96,6 +96,7 @@
     padding: 30px 30px 10px;
     overflow-x: hidden;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 .tx-list-container{
     border-radius: 12px;

@@ -4,9 +4,9 @@
 // ================================ 导入
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { openNewActivity } from '../../../logic/native';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -18,27 +18,6 @@ export class PlayHome extends Widget {
     public props:Json = {
         refresh:false
     };
-
-    public backPrePage() {
-        this.ok && this.ok();
-    }
-
-    public enterGames1Click() {
-        openNewActivity('http://39.104.203.151/game/boot/index.html');
-    }
-
-    public getCode(event:any) {
-        console.log(event.phone);
-    }
-
-    public modalBox() {
-        // tslint:disable-next-line:max-line-length
-        // popNew('app-components-modalBoxInput-modalBoxInput',{ title:'确认兑换',content:['输出：0.01ETH','输入：0.5KT'],sureText:'确定',cancelText:'取消',placeholder:'输入密码',itype:'password' });
-    }
-
-    public modalBoxSure(e:any) {
-        console.log(e.value);
-    }
 
     public showMine() {
         popNew('app-view-mine-home-home');
@@ -54,6 +33,10 @@ export class PlayHome extends Widget {
             this.props.refresh = false;
             this.paint();
         }, 1000);
+    }
 
+    public login() {
+        const content = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
+        popNew('app-components-message-message',{ content:content[getLang()] });
     }
 }

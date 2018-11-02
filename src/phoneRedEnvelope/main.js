@@ -1,7 +1,9 @@
 // ==========================================静态变量,静态方法
 
+// const urlHead = "http://47.244.59.13:8099";
 const urlHead = "http://47.75.254.166:8099";
-// const urlHead = "http://192.168.7.71:8099";
+// const urlHead = "http://127.0.0.1:8099";
+
 
 // 语言文字
 const Config= {
@@ -216,7 +218,12 @@ const timestampFormat = (timestamp) => {
  * 下载APP
  */
 function downloadClick() {
-    document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
+    var ua = navigator.userAgent.toLowerCase();
+    if(ua.match(/MicroMessenger/i) == "micromessenger"){
+        document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
+    }else{
+        location.href = "image/tips.png";
+    }
 }
 /**
  * 关闭覆盖层

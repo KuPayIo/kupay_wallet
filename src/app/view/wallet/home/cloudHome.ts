@@ -73,7 +73,7 @@ export class CloudHome extends Widget {
 }
 
 // =======================本地
-register('user/id',() => {
+register('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
