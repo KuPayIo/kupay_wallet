@@ -38,6 +38,7 @@ export class WriteRedEnv extends Widget {
     }
 
     public create() {
+        super.create();
         this.state = {
             list: [],
             selected: 0,
@@ -220,7 +221,7 @@ export class WriteRedEnv extends Widget {
             getServerCloudBalance();// 更新余额
             setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
             this.paint(true);
-        },100);
+        });
         popNew('app-view-earn-redEnvelope-sendRedEnv', {
             message: lm,
             rid,

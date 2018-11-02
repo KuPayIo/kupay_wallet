@@ -48,20 +48,20 @@ export class Exchange extends Widget {
             return;
         }
         const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });        
-        const value: any = await this.convertRedEnvelope(code);
+        const res: any = await this.convertRedEnvelope(code);
         close.callback(close.widget);
-        if (!value) return;
+        if (!res.value) return;
         setStore('activity/luckyMoney/exchange',undefined);
         getServerCloudBalance();
         const r: any = await this.queryDesc(code);
 
         const redEnvelope = {
             message: r.value,
-            ctypeShow: CloudCurrencyType[value[0]],
-            amount: smallUnit2LargeUnit(CloudCurrencyType[value[0]], value[1]),
+            ctypeShow: CloudCurrencyType[res.value[0]],
+            amount: smallUnit2LargeUnit(CloudCurrencyType[res.value[0]], res.value[1]),
             rtype: code.slice(0, 2),
-            rid:code,
-            // suid:
+            rid:res.rid,
+            suid:res.src_id
         };
         
         popNew('app-view-earn-exchange-openRedEnv', redEnvelope);
