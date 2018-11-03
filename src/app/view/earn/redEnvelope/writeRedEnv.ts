@@ -10,6 +10,7 @@ import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -32,6 +33,7 @@ interface State {
 export class WriteRedEnv extends Widget {
     public ok: () => void;
     public state: State;
+    public language:any;
     constructor() {
         super();
 
@@ -39,6 +41,7 @@ export class WriteRedEnv extends Widget {
 
     public create() {
         super.create();
+        this.language = this.config.value[getLang()]
         this.state = {
             list: [],
             selected: 0,
@@ -48,7 +51,7 @@ export class WriteRedEnv extends Widget {
             oneAmount: 0,
             message: '',
             realUser: getStore('user/info/isRealUser'),
-            cfgData: getLanguage(this)
+            cfgData: this.language
         };
         this.updateBalance();
         if (!this.state.realUser) {
@@ -146,12 +149,12 @@ export class WriteRedEnv extends Widget {
      * 点击发红包按钮
      */
     public async send() {
-        if (this.state.totalNum === 0) {
+        if (this.state.totalNum == 0) {
             popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
 
             return;
         }
-        if (this.state.oneAmount === 0 && this.state.totalAmount === 0) {
+        if (this.state.oneAmount == 0 && this.state.totalAmount == 0) {
             popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
 
             return;
@@ -264,5 +267,13 @@ register('user/info/isRealUser', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRealUser();
+    }
+});
+
+register('setting/language', (r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.language = w.config.value[r];
+        w.paint();
     }
 });

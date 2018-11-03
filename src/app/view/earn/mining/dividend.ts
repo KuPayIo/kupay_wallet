@@ -10,7 +10,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getDividend, getDividHistory, getMining } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { getLanguage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,12 +20,14 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Dividend extends Widget {
     public ok: () => void;
+    public language:any;
     constructor() {
         super();
     }
 
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
+        this.language = this.config.value[getLang()];
         this.state = {
             totalDivid:0,
             totalDays:0,
@@ -46,7 +48,7 @@ export class Dividend extends Widget {
                 // { num:0.02,time:'04-30  14:32:00' }
             ],
             ktBalance:this.props.ktBalance,  // KT持有量 
-            cfgData:getLanguage(this),
+            cfgData:this.language,
             hasMore:false,
             refresh:true,
             start:''
@@ -209,5 +211,13 @@ register('activity/dividend/history', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();
+    }
+});
+
+register('setting/language', (r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.language = w.config.value[r];
+        w.paint();
     }
 });

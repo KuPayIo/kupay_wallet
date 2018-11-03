@@ -8,6 +8,7 @@ import { getInviteCodeDetail, queryDetailLog, querySendRedEnvelopeRecord } from 
 import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
 import { getLanguage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -30,11 +31,12 @@ interface State {
 
 export class RedEnvHistory extends Widget {
     public ok: () => void;
+    public language:any;
     public state:State;
 
     public async create() {
         super.create();
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
             recordList:[
                 // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
@@ -47,8 +49,8 @@ export class RedEnvHistory extends Widget {
             showMoreTips:true, 
             sendNumber:0,  
             scroll:false,
-            rtypeShow:cfg.redEnvType,
-            cfgData: cfg,
+            rtypeShow:this.language.redEnvType,
+            cfgData: this.language,
             scrollHeight:0,
             topRefresh:false
         };
@@ -179,5 +181,13 @@ register('activity/luckyMoney/sends', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();
+    }
+});
+
+register('setting/language', (r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.language = w.config.value[r];
+        w.paint();
     }
 });

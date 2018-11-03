@@ -10,13 +10,13 @@
             {{end}}
 
             {{if it1.data.length>0 && !it1.hasMore}}
-            <div w-class="endMess">{{it1.cfgData.tips[0]}}^_^</div>
+            <div w-class="endMess"><pi-ui-lang>{"zh_Hans":"到此结束啦","zh_Hant":"到此結束啦","en":""}</pi-ui-lang>^_^</div>
             {{end}}
 
             {{if it1.data.length==0}}
             <div w-class="historyNone">
                 <img src="../../../res/image/dividend_history_none.png" style="width: 200px;height: 200px;margin-bottom: 20px;"/>
-                <div>{{it1.cfgData.tips[1]}}</div>
+                <div><pi-ui-lang>{"zh_Hans":"还没有记录哦","zh_Hant":"還沒有記錄哦","en":""}</pi-ui-lang></div>
             </div>
             {{end}}
         </div>

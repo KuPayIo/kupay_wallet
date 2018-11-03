@@ -266,13 +266,6 @@ register('activity/mining/total', () => {
     }
 });
 
-register('user/conRandom', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.refreshPage();
-    }
-});
-
 register('activity/mining/miningRank', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -297,6 +290,7 @@ register('setting/language', (r) => {
 register('user/conRandom', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
+        w.initData();
         w.initEvent();
     }
 });

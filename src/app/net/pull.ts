@@ -538,7 +538,16 @@ export const queryDetailLog = async (uid:number,rid: string) => {
 export const getAward = async () => {
     const msg = { type: 'wallet/cloud@get_award', param: {} };
 
-    return requestAsync(msg);
+    try {
+        const detail = await requestAsync(msg);
+        
+        return detail;
+        
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
 };
 
 /**
