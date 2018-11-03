@@ -272,7 +272,7 @@ register('activity/mining/miningRank', () => {
         w.initData();
     }
 });
-register('wallet', () => {
+register('activity', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initEvent();
