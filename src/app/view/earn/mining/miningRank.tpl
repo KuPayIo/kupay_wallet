@@ -17,8 +17,11 @@
                 {{end}}
             </div>
         </div>
+        {{: leftTitle = {"zh_Hans":"矿山总量","zh_Hant":"礦山總量","en":""} }}
+        {{: rightTitle = {"zh_Hans":"挖矿","zh_Hant":"挖礦","en":""} }}
+
         {{for ind,val of it1.data}}
-            {{let desc = it.fg==1? it1.cfgData.leftTitle : it1.cfgData.rightTitle}}
+            {{let desc = it.fg==1? leftTitle : rightTitle}}
             {{let rank = val.index}}
             
             {{if rank<10}}
@@ -26,7 +29,7 @@
             {{elseif rank<100}}
                 {{: rank="0"+rank}}
             {{end}}
-            <app-components-imgRankItem-imgRankItem>{"name":{{val.name}},"describe":{{desc+val.num+" KT"}},"img":{{val.avatar?val.avatar:"../../res/image/addMine_create.png"}},"rank":{{rank}} }</app-components-imgRankItem-imgRankItem>
+            <app-components-imgRankItem-imgRankItem>{"name":{{val.name}},"describe":{{desc}},"descNumber":{{val.num+" KT"}},"img":{{val.avatar?val.avatar:"../../res/image/addMine_create.png"}},"rank":{{rank}} }</app-components-imgRankItem-imgRankItem>
         {{end}}
 
         {{if it1.data.length>0 && !it1.more}}

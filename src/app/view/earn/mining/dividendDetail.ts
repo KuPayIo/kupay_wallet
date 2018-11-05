@@ -22,10 +22,6 @@ export class PlayHome extends Widget {
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.state = {
-            cfgData:this.language
-        };
-        
     }
 
     public backPrePage() {

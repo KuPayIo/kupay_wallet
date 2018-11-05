@@ -31,7 +31,6 @@ export class Dividend extends Widget {
         this.state = {
             data:[],
             hasMore:false,
-            cfgData:this.language,
             start:'',
             refresh:true
         }; 

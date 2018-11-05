@@ -20,7 +20,8 @@
             </div>
 
             <div style="margin-top: 10px;transform: translateZ(-1px);">
-                <app-components-threeParaCard-threeParaCard>{"name":{{it1.cfgData.threeCard}},"data":[{{it1.yearIncome}},{{it1.thisDivid}},{{it1.totalDays}}]
+                {{: threeCard=[{zh_Hans:"年化收益",zh_Hant:"年化收益",en:""},{zh_Hans:"本次分红",zh_Hant:"本次分紅",en:""},{zh_Hans:"已分红天数",zh_Hant:"已分紅天數",en:""}]}}
+                <app-components-threeParaCard-threeParaCard>{"name":{{threeCard}},"data":[{{it1.yearIncome}},{{it1.thisDivid}},{{it1.totalDays}}]
                     }</app-components-threeParaCard-threeParaCard>
             </div>
 
@@ -65,7 +66,7 @@
         </div>
     </div>
 
-    {{let opca = it1.scrollHeight/200}}
+    {{let opca = it1.scrollHeight/100}}
     <div w-class="ga-top-banner" style="{{it1.scroll?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':'background:transparent;'}}">
         <div w-class="left-container">
             <img on-tap="backPrePage" src="../../../res/image/{{it1.scroll ? 'left_arrow_blue.png' : 'left_arrow_white.png'}}"

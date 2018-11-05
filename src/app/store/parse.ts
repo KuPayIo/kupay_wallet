@@ -98,7 +98,7 @@ export const parseMineRank = (data) => {
             index: data.value[i][3],
             name: userData ? userData.nickName :getStaticLanguage().userInfo.name,
             avater: userData ? userData.avatar :'',
-            num : kpt2kt(data.value[i][2])
+            num : formatBalance(kpt2kt(data.value[i][2]))
         });
     }
     mineData.rank = data1;
@@ -128,7 +128,7 @@ export const parseMiningRank = (data) => {
             index: data.value[i][3],
             name: userData ? userData.nickName :getStaticLanguage().userInfo.name,
             avater: userData ? userData.avatar :'',
-            num: kpt2kt(data.value[i][2])
+            num: formatBalance(kpt2kt(data.value[i][2]))
         });
     }
     miningData.rank = data2;
@@ -142,7 +142,7 @@ export const parseMiningHistory = (data) => {
     const list = [];
     for (let i = 0; i < data.value.length; i++) {
         list.push({
-            num: kpt2kt(data.value[i][0]),
+            num: formatBalance(kpt2kt(data.value[i][0])),
             total: kpt2kt(data.value[i][1]),
             time: transDate(new Date(data.value[i][2]))
         });

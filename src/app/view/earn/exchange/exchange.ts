@@ -8,10 +8,10 @@ import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getServerCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
-import {  setStore } from '../../../store/memstore';
+import { setStore, register } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
-import { getLanguage } from '../../../utils/tools';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -21,11 +21,12 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Exchange extends Widget {
     public ok: () => void;
+    public language:any;
     public create() {
         super.create();
+        this.language = this.config.value[getLang()];
         this.state = {
             cid: '',
-            cfgData:getLanguage(this)
         };
     }
     
@@ -43,11 +44,11 @@ export class Exchange extends Widget {
         this.inputBlur();
         const code = this.state.cid.trim();
         if (code.length <= 0) {
-            popNew('app-components1-message-message', { itype: 'error', content: this.state.cfgData.errorList[0], center: true });
+            popNew('app-components1-message-message', { itype: 'error', content: this.language.errorList[0], center: true });
 
             return;
         }
-        const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });        
+        const close = popNew('app-components1-loading-loading', { text: this.language.loading });        
         const res: any = await this.convertRedEnvelope(code);
         close.callback(close.widget);
         if (!res.value) return;
@@ -103,7 +104,7 @@ export class Exchange extends Widget {
             value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
         } else {
-            popNew('app-components1-message-message', { content: this.state.cfgData.errorList[1] });
+            popNew('app-components1-message-message', { content: this.language.errorList[1] });
 
             return null;
         }
@@ -120,7 +121,7 @@ export class Exchange extends Widget {
         let res = { result: -1, value: '' };
         if (perCode === LuckyMoneyType.Invite) {
             res.result = 1;
-            res.value = this.state.cfgData.defaultMess;
+            res.value = this.language.defaultMess;
         } else {
             res = await queryRedBagDesc(validCode);
         }
@@ -137,3 +138,11 @@ export class Exchange extends Widget {
         }
     }
 }
+
+register('setting/language', (r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.language = w.config.value[r];
+        w.paint();
+    }
+});

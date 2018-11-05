@@ -23,20 +23,19 @@ export class Home extends Widget {
         this.language = this.config.value[getLang()];
         this.state = {
             tabs:[{
-                tab:this.language.tabs[0],
+                tab:'0',
                 data:[],
                 totalNum:0,
                 myRank:1,
                 fg:0
             },{
-                tab:this.language.tabs[1],
+                tab:'1',
                 data:[],
                 totalNum:0,
                 myRank:1,
                 fg:1
             }],
             activeNum:0,
-            cfgData:this.language
         };
         this.initData();
         this.initEvent();

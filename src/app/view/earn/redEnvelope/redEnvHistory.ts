@@ -7,7 +7,6 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCodeDetail, queryDetailLog, querySendRedEnvelopeRecord } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { getLanguage } from '../../../utils/tools';
 import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
@@ -23,8 +22,6 @@ interface State {
     showMoreTips:boolean; // 是否显示底部加载更多提示
     sendNumber:number; // 总发出红包个数
     scroll:boolean; // 是否滑动页面
-    rtypeShow:string[]; // 红包类型
-    cfgData:any;
     scrollHeight:number;// 页面上滑的高度
     topRefresh:boolean; // 头部刷新按钮
 }
@@ -49,8 +46,6 @@ export class RedEnvHistory extends Widget {
             showMoreTips:true, 
             sendNumber:0,  
             scroll:false,
-            rtypeShow:this.language.redEnvType,
-            cfgData: this.language,
             scrollHeight:0,
             topRefresh:false
         };

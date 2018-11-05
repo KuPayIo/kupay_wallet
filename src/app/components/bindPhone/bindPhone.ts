@@ -9,15 +9,25 @@ import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { sendCode } from '../../net/pull';
-import { getLanguage } from '../../utils/tools';
-// =================================================导出
+import { getLang } from '../../../pi/util/lang';
+import { register } from '../../store/memstore';
+import { Forelet } from '../../../pi/widget/forelet';
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class BindPhone extends Widget {
     public ok: () => void;
+    public language:any;
     constructor() {
         super();
     }
     public create(): void {
         super.create();
+        this.language = this.config.value[getLang()];
         this.state = {
             oldCode: 86,
             codeList: ['86','886'],
@@ -25,7 +35,6 @@ export class BindPhone extends Widget {
             countdown: 0,
             phone: '',
             limitTime: 60,
-            cfgData:getLanguage(this)
         };
         // const t = find('lastGetSmsCodeTime'); // 不保留获取验证码倒计时
         // if (t) {
@@ -42,7 +51,7 @@ export class BindPhone extends Widget {
      */
     public async getCode(event:any) {
         if (!this.state.phone || !this.phoneJudge()) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips });
+            popNew('app-components1-message-message', { content: this.language.tips });
 
             return;
         }
@@ -101,3 +110,11 @@ export class BindPhone extends Widget {
     }
 
 }
+
+register('setting/language', (r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.language = w.config.value[r];
+        w.paint();
+    }
+});

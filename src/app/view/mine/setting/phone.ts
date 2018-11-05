@@ -5,21 +5,29 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { regPhone, getMineDetail } from '../../../net/pull';
-import { setStore } from '../../../store/memstore';
-import { getLanguage, getUserInfo } from '../../../utils/tools';
-// =================================================导出
+import { setStore, register } from '../../../store/memstore';
+import { getUserInfo } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
+import { Forelet } from '../../../../pi/widget/forelet';
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class BindPhone extends Widget {
     public ok: () => void;
+    public language:any;
     constructor() {
         super();
     }
     public create() {
         super.create();
+        this.language = this.config.value[getLang()];
         this.state = {
             phone:'',
             code:[],
             isSuccess:true,
-            cfgData:getLanguage(this)
         };
     }
 
@@ -32,7 +40,7 @@ export class BindPhone extends Widget {
      */
     public async doSure() {
         if (!this.state.phone) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips });
+            popNew('app-components1-message-message', { content: this.language.tips });
             this.state.code = [];
             this.setCode();
 
@@ -122,5 +130,12 @@ export class BindPhone extends Widget {
         
         return reg.test(num);
     }
-
 }
+
+register('setting/language', (r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.language = w.config.value[r];
+        w.paint();
+    }
+});

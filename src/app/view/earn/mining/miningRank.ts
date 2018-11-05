@@ -22,7 +22,6 @@ export class DividendItem extends Widget {
         data:any[];
         totalNum:number;
         more:boolean;
-        cfgData:any;
     };
 
     public backPrePage() {
@@ -36,7 +35,6 @@ export class DividendItem extends Widget {
             data:this.props.data,
             totalNum:this.props.totalNum,
             more:false,
-            cfgData:this.language
         };
 
     }

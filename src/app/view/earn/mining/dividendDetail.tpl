@@ -1,5 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage">
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
+        {{: topBarTitle = {"zh_Hans":"分红说明","zh_Hant":"分紅說明","en":""} }}
+    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="title">
             <pi-ui-lang>{"zh_Hans":"如何分红？","zh_Hant":"如何分紅？","en":""}</pi-ui-lang>

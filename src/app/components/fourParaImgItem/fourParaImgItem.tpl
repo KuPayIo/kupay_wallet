@@ -1,8 +1,10 @@
 <div w-class="item">
-    <img src="{{it.img}}" w-class="itemImg"/>
+    <img src="{{it.img}}" w-class="itemImg" />
     <div style="display: inline-block;flex: 1 0 0;">
         <div w-class="itemName">
-            <span w-class="itemLeft">{{it.name}}</span>
+            <span w-class="itemLeft">
+                <pi-ui-lang>{{it.name}}</pi-ui-lang>
+            </span>
             <span>{{it.data}}</span>
         </div>
         <div w-class="itemTime">

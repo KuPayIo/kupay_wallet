@@ -48,7 +48,6 @@ export class Dividend extends Widget {
                 // { num:0.02,time:'04-30  14:32:00' }
             ],
             ktBalance:this.props.ktBalance,  // KT持有量 
-            cfgData:this.language,
             hasMore:false,
             refresh:true,
             start:''
@@ -78,7 +77,7 @@ export class Dividend extends Widget {
             this.state.totalDivid = data.totalDivid;
             this.state.totalDays = data.totalDays;
             this.state.thisDivid = data.thisDivid;
-            this.state.yearIncome = Number(data.yearIncome) === 0 ? this.state.cfgData.noneYearIncome :data.yearIncome;
+            this.state.yearIncome = Number(data.yearIncome) === 0 ? this.language.noneYearIncome :data.yearIncome;
         }
 
         const history = getStore('activity/dividend/history');  
