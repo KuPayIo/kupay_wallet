@@ -110,7 +110,6 @@ export const request = (msg: any, cb: Function, timeout?: number) => {
             show();
         }, waitTimeout);
         lastRequest = msg;
-        console.log(msg.type, JSON.stringify(msg.param), '---------start-------------');
         con.request(msg, (r) => {
             console.log(msg.type, JSON.stringify(msg.param), '----------------------', r);
             if (r.error) {

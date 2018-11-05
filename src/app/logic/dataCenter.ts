@@ -38,14 +38,38 @@ export class DataCenter {
         // 获取shapeshift支持货币
         getShapeShiftCoins();
         // 更新人民币美元汇率
-        // this.updateUSDRate();
+        this.updateUSDRate();
         // 更新货币对比USDT的比率
         // this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
+        this.refreshAllBalance();
     }
-  /**
-   * 刷新本地钱包
-   */
+    /**
+     * 刷新所有余额
+     */
+    public refreshAllBalance() {
+        let neededRefreshCount = 0;
+        const wallet = getStore('wallet');
+        if (!wallet) return;
+        const list = [];
+        wallet.currencyRecords.forEach(v => {
+            if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
+                v.addrs.forEach((addrInfo) => {
+                    list.push({ addr: addrInfo.addr, currencyName: v.currencyName });
+                });
+                
+            }
+        });
+        list.forEach(v => {
+            this.timerUpdateBalance(v.addr, v.currencyName);
+            neededRefreshCount++;
+        });
+
+        return neededRefreshCount;
+    }
+    /**
+     * 刷新本地钱包
+     */
     public refreshAllTx() {
         let neededRefreshCount = 0;
         const wallet = getStore('wallet');
@@ -890,10 +914,23 @@ export class DataCenter {
         currencyList.forEach(currencyName => {
             fetchCurrency2USDTRate(currencyName)
         .then((res: any) => {
-            if (res.status === 'ok') {
+            // 火币
+            // if (res.status === 'ok') {
+            //     const currency2USDTMap = getStore('third/currency2USDTMap');
+            //     const close = res.data[0].close;
+            //     const open = res.data[0].open;
+            //     currency2USDTMap.set(currencyName, {
+            //         open,
+            //         close
+            //     });
+            //     setStore('third/currency2USDTMap', currency2USDTMap);
+            // }
+
+            // okey
+            if (!res.error_code) {
                 const currency2USDTMap = getStore('third/currency2USDTMap');
-                const close = res.data[0].close;
-                const open = res.data[0].open;
+                const close = res.ticker.sell;
+                const open = res.data.buy;
                 currency2USDTMap.set(currencyName, {
                     open,
                     close

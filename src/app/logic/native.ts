@@ -47,6 +47,7 @@ export const selectImage = (ok?,cancel?) => {
 //             close && close.callback(close.widget);
 //         },
 //         fail: (result) => {
+//             console.log('selectFromLocal-----',result);
 //             cancel && cancel(result);
 //             close && close.callback(close.widget);
 //         },
@@ -55,7 +56,7 @@ export const selectImage = (ok?,cancel?) => {
 //         max: 1
 //     });
 //     let close;
-//     setTimeout(()=>{
+//     setTimeout(() => {
 //         close = popNew('app-components1-loading-loading', { text: '导入中...' });
 //     },100);
 // };

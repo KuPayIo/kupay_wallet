@@ -58,6 +58,20 @@ export const requestAsync = async (msg: any): Promise<any> => {
 };
 
 /**
+ * 通用的异步通信 需要登录
+ */
+export const requestAsyncNeedLogin = async (msg: any) => {
+    const isLogin = getStore('user/isLogin');
+    if (!isLogin) {
+        const secretHash = getStore('user/secretHash');
+        await defaultLogin(secretHash,getStore('user/conRandom'));
+    }
+
+    return requestAsync(msg);
+    
+};
+
+/**
  * 申请自动登录token
  */
 export const applyAutoLogin = () => {
@@ -77,14 +91,13 @@ export const applyAutoLogin = () => {
 /**
  * 自动登录
  */
-export const autoLogin = (serverTimestamp:number,conRandom:string) => {
+export const autoLogin = (conRandom:string) => {
     const deviceId = fetchDeviceId();
     const token = decrypt(getStore('user/token'),deviceId);
     const msg = { 
         type: 'wallet/user@auto_login', 
         param: { 
             device_id: deviceId,
-            timestamp:serverTimestamp,
             token,
             random:conRandom
         }
@@ -93,20 +106,14 @@ export const autoLogin = (serverTimestamp:number,conRandom:string) => {
         setStore('user/isLogin', true);
         console.log('自动登录成功-----------',res);
     }).catch((res) => {
-        // console.log();
-        if (res.type === 1012) { // 超时  需要重新获取服务器时间
-            // closeCon();
-            // openConnect();
-        } else {
-            setStore('user/token','');
-        }
+        setStore('user/token','');
     });
 };
 /**
  * 创建钱包后默认登录
  * @param mnemonic 助记词
  */
-export const defaultLogin = (hash:string,conRandom:string) => {
+export const defaultLogin = async (hash:string,conRandom:string) => {
     const getMnemonicByHash = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonicByHash;
     const mnemonic = getMnemonicByHash(hash);
     const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
@@ -115,7 +122,8 @@ export const defaultLogin = (hash:string,conRandom:string) => {
     const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
     const signStr = sign(conRandom, wlt.exportPrivateKey());
     const msgLogin = { type: 'login', param: { sign: signStr } };
-    requestAsync(msgLogin).then(() => {
+
+    return requestAsync(msgLogin).then(() => {
         applyAutoLogin();
         setStore('user/isLogin', true);
     });
@@ -134,6 +142,8 @@ setReloginCallback((res) => {
     const rtype = res.type;
     if (rtype === 'logerror') {  //  重登录失败，登录流程重走一遍
         openConnect();
+    } else {
+        setStore('user/isLogin',true);
     }
 });
 /**
@@ -170,6 +180,7 @@ const conError = (err) => {
  */
 const conClose = () => {
     console.log('con close');
+    setStore('user/isLogin',false);
     popNewMessage('连接已断开');
 };
 
@@ -203,10 +214,10 @@ export const getRandom = async (cmd?:number) => {
     };
     try {
         const resp = await requestAsync(msg);
-        const serverTimestamp = resp.timestamp.value;
+        // const serverTimestamp = resp.timestamp.value;
         const conRandom = resp.rand;
         if (getStore('user/token')) {
-            autoLogin(serverTimestamp,conRandom);
+            autoLogin(conRandom);
         }
         const secretHash = getStore('user/secretHash');
         if (secretHash) {

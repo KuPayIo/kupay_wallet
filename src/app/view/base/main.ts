@@ -45,6 +45,7 @@ export const run = (cb): void => {
     openConnect();
     // dataCenter.init();
     popNew('app-view-base-app');
+    // popNew('app-view-base-localImg');
     // popNew('app-view-chat-home-home');
     // getDeviceInfo();
     popNewPage();
