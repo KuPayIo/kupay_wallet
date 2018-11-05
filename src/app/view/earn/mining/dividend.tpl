@@ -51,14 +51,6 @@
             </div>
         </div>
     </div>
-
-    {{let opca = it1.scrollHeight/200}}
-    <div w-class="ga-top-banner" style="{{it1.scroll?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':'background:transparent;'}}">
-        <div w-class="left-container">
-            <img on-tap="backPrePage" src="../../../res/image/{{it1.scroll ? 'left_arrow_blue.png' : 'left_arrow_white.png'}}" w-class="ga-back" />
-            <span on-tap="backPrePage"  style="color: {{it1.scroll ? '#222':'#fff'}}">{{it1.cfgData.topBarTitle}}</span>
-        </div>
-        <img on-tap="goDetail" src="../../../res/image/{{it1.scroll?'41_blue.png':'41_white.png'}}" w-class="ga-next" />
-        <img on-tap="refreshPage" src="../../../res/image1/{{it1.scroll?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" class="{{it1.topRefresh?'refreshing':''}}"/>
-    </div>
+   
+    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{it1.cfgData.topBarTitle}},nextImg:{{it1.scrollHeight>0?"../../res/image/41_blue.png":"../../res/image/41_white.png"}} }</app-components1-topBar-topBar2>
 </div>

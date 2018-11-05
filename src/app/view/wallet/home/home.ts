@@ -62,13 +62,6 @@ export class Home extends Widget {
         this.paint();
     }
 
-    /**
-     * 打开我的设置
-     */
-    public showMine() {
-        popNew('app-view-mine-home-home');
-    }
-
     public refreshClick() {
         if (this.state.refreshing) {
             return;
