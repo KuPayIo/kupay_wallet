@@ -32,9 +32,16 @@ export class Receipt extends Widget {
     }
 
     public shareClick() {
-        popNew('app-components-share-share',{ text:this.state.fromAddr,shareType:ShareToPlatforms.TYPE_IMG },() => {
-            popNewMessage(this.state.cfgData.tips[1]);
-            this.ok && this.ok();
+        
+        const stp = new ShareToPlatforms();
+        stp.init();
+        stp.makeScreenShot({
+            success: (result) => { 
+                popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
+            },
+            fail: (result) => { 
+                popNew('app-components-message-message',{ content:this.state.cfgData.tips[1] });
+            }
         });
     }
 }

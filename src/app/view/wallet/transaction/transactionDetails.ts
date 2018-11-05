@@ -101,7 +101,6 @@ export class TransactionDetails extends Widget {
                 popNew('app-components-message-message',{ content:this.state.cfgData.shareScreen });
             }
         });
-        console.log('aaaaaaaaaaaa');
     }
 }
 

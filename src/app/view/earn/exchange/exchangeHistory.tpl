@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refreshPage">
     <div w-class="content" on-scroll="getMoreList" id="exchangeHistoryContent">
         <div id="exchangeHistoryRecords" w-class="records">
             <img src="../../../res/image/redEnvtop1.png" w-class="topBackimg"/>
@@ -32,14 +32,5 @@
         </div>
     </div>
 
-
-    {{let opca = it1.scrollHeight/100}}
-    <div w-class="ga-top-banner" style="{{it1.scrollHeight>0?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':'background:transparent;'}}">
-
-        <div w-class="left-container">
-            <img on-tap="backPrePage" src="../../../res/image/{{it1.scrollHeight> 0? 'left_arrow_blue.png' : 'left_arrow_white.png'}}" w-class="ga-back" />
-            <span on-tap="backPrePage"  style="color: {{it1.scrollHeight>0 ? '#222':'#fff'}}">{{it1.cfgData.topBarTitle}}</span>
-        </div>
-        <img on-tap="refreshPage" src="../../../res/image1/{{it1.scrollHeight>0?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" class="{{it1.topRefresh?'refreshing':''}}"/>
-    </div>
+    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar2>
 </div>

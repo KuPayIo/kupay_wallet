@@ -42,7 +42,8 @@ export class Home extends Widget {
             close:false,
             hasWallet,
             hasBackupMnemonic,
-            cfgData:cfg
+            cfgData:cfg,
+            offline:false
         };
         this.initData();
     }
@@ -182,5 +183,11 @@ register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+    }
+});
+register('setting/offline',(r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.state.offline = r;
     }
 });

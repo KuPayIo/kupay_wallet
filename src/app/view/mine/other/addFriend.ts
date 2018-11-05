@@ -37,13 +37,15 @@ export class AddFriend extends Widget {
      * 分享二维码
      */
     public share() {
-        popNew('app-components-share-share', { 
-            text: this.state.address, 
-            shareType: ShareToPlatforms.TYPE_IMG 
-        }, (result) => {
-            // alert(result);
-        }, (result) => {
-            // alert(result);
+        const stp = new ShareToPlatforms();
+        stp.init();
+        stp.makeScreenShot({
+            success: (result) => { 
+                popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
+            },
+            fail: (result) => { 
+                popNew('app-components-message-message',{ content:this.state.cfgData.tips[1] });
+            }
         });
     }
 
@@ -56,6 +58,6 @@ export class AddFriend extends Widget {
      */
     public copyAddr() {
         copyToClipboard(this.state.address);
-        popNew('app-components1-message-message',{ content:this.state.cfgData.tips });
+        popNew('app-components1-message-message',{ content:this.state.cfgData.tips[0] });
     }
 }
