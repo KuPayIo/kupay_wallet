@@ -5,7 +5,7 @@
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { applyAutoLogin, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
+import { applyAutoLogin, fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
 import { getStore, register } from '../../store/memstore';
 import { getLanguage } from '../../utils/tools';
@@ -117,10 +117,16 @@ register('user/isLogin', (isLogin: boolean) => {
         if (flags.created && userInfo) {
             setUserInfo();
         }
-        if (!getStore('user/token')) {
-            applyAutoLogin();
-        }
     }
+});
+
+// 获取随机数成功
+register('user/conRandom',() => {
+    // eth gasPrice
+    fetchGasPrices();
+
+     // btc fees
+    fetchBtcFees();
 });
 
 // 语言配置

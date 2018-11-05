@@ -36,12 +36,11 @@ export class DataCenter {
    */
     public init() {
         // 获取shapeshift支持货币
-        // getShapeShiftCoins();
+        getShapeShiftCoins();
         // 更新人民币美元汇率
         // this.updateUSDRate();
         // 更新货币对比USDT的比率
         // this.updateCurrency2USDTRate();
-        this.refreshAllTx();
         this.initErc20GasLimit();
     }
   /**
@@ -183,6 +182,7 @@ export class DataCenter {
                 });
             case 'BTC':
                 return BtcApi.getBalance(addr).then(r => {
+                    if (!r) return;
                     this.setBalance(addr, currencyName, sat2Btc(r));
                 });
             default:
@@ -283,7 +283,7 @@ export class DataCenter {
         try {
             const api = new EthApi();
             const r: any = await api.getAllTransactionsOf(addr);
-            console.log(r);
+            // console.log(r);
             const ethTrans = this.filterEthTrans(r.result);
             const localTxList = fetchTransactionList(addr, 'ETH');
             const allTxHash = [];
@@ -646,11 +646,12 @@ export class DataCenter {
         const record = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
         if (addrs.length > 0) {
             record.addrs.push(...addrs);
-            setStore('wallet/currencyRecords',wallet.currencyRecords);
             addrs.forEach(addrInfo => {
                 dataCenter.updateAddrInfo(addrInfo.addr, currencyName);
             });
         }
+        record.updateAddr = true;
+        setStore('wallet/currencyRecords',wallet.currencyRecords);
     }
     /**
      * 检查eth地址

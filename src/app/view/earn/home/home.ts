@@ -60,9 +60,9 @@ export class PlayHome extends Widget {
             refresh: false,
             avatar: '../../../res/image1/default_avatar.png'
         };
-        setTimeout(()=>{
+        setTimeout(() => {
             this.scrollPage();
-        })
+        });
         
         this.initData();
     }

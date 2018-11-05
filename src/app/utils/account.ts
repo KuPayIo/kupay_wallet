@@ -2,7 +2,6 @@
 /**
  * 和账号相关的工具
  */
-import { find } from '../store/memstore';
 import { walletNumLimit } from './constants';
 import { getStrLen, shuffle } from './tools';
 
@@ -45,15 +44,6 @@ export const pswEqualed = (psw1, psw2) => {
     if (!psw1 || !psw2) return false;
     
     return psw1.trim() === psw2.trim();
-};
-
-/**
- * 钱包数量是否合乎规则
- */
-export const walletCountAvailable = () => {
-    const walletList = find('walletList');
-
-    return walletList ? walletList.length < walletNumLimit : true;
 };
 
 /**
@@ -120,26 +110,4 @@ export const nickNameInterception = (name: string): string => {
     }
 
     return ret;
-};
-
-/**
- * 随机获取头像
- */
-export const getAvatarRandom = (): string => {
-    // tslint:disable-next-line:max-line-length
-    const avatarsSrc = ['img_avatar1.png', 'img_avatar2.png', 'img_avatar3.png', 'img_avatar4.png', 'img_avatar5.png', 'img_avatar6.png', 'img_avatar7.png', 'img_avatar8.png', 'img_avatar9.png', 'img_avatar10.png'];
-    const walletList = find('walletList');
-    const avatarUsed = [];
-    if (walletList) {
-        walletList.forEach(item => {
-            avatarUsed.push(item.avatar);
-        });
-    }
-    const avatarAvailable = avatarsSrc.filter(item => {
-        return avatarUsed.indexOf(item) === -1;
-    });
-    const shuffledAvatars = shuffle(avatarAvailable);
-    const avatar = shuffledAvatars.splice(0, 1);
-
-    return avatar[0];
 };

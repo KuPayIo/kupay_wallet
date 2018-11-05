@@ -75,6 +75,10 @@ export class Home extends Widget {
         }
         this.state.refreshing = true;
         this.paint();
+        setTimeout(() => {
+            this.state.refreshing = false;
+            this.paint();
+        },1000);
         getServerCloudBalance();
         const wallet = getStore('wallet');
         if (!wallet) return;
@@ -92,11 +96,6 @@ export class Home extends Widget {
         list.forEach(v => {
             dataCenter.updateBalance(v.addr, v.currencyName);
         });
-        
-        setTimeout(() => {
-            this.state.refreshing = false;
-            this.paint();
-        },1000);
     }
 }
 

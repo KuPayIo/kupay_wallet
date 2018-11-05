@@ -52,7 +52,6 @@ export const setUrl = (url: string) => {
 let lastRequest = null;
 export const open = (
     callback: Function, errorCallback: Function, closeCallback?: Function, reOpenCallback?: Function, timeout?: number) => {
-    console.log('open');
     timeout = timeout || defaultTimeout;
     let lastError;
     // 接收后台推送服务器时间，并设置成服务器时间
@@ -95,8 +94,8 @@ export const open = (
             callback([result]);
         }
     };
-    Connect.open(conUrl, cfg, func, 10000);
     setConState(ConState.opening);
+    Connect.open(conUrl, cfg, func, 10000);
 };
 
 /**
@@ -111,6 +110,7 @@ export const request = (msg: any, cb: Function, timeout?: number) => {
             show();
         }, waitTimeout);
         lastRequest = msg;
+        console.log(msg.type, JSON.stringify(msg.param), '---------start-------------');
         con.request(msg, (r) => {
             console.log(msg.type, JSON.stringify(msg.param), '----------------------', r);
             if (r.error) {
@@ -444,9 +444,10 @@ const reopen = (reOpenCallback?: Function) => {
  * 重登录
  */
 const relogin = () => {
-    console.log('user',user);
-    console.log('userType',userType);
-    console.log('password',tempPassword);
+    // console.log('user',user);
+    // console.log('userType',userType);
+    // console.log('password',tempPassword);
+    if (!user) return;
     request({ type: 'relogin', param: { user: user, userType: userType, password: tempPassword } }, (result) => {
         if (result.error) {
             setLoginState(LoginState.logerror);
@@ -465,7 +466,7 @@ const relogin = () => {
  * 将所有等待申请列表全部请求
  */
 const requestWaits = () => {
-    waitArray.map(elem => request(elem.msg, elem.cb, defaultTimeout));
+    // waitArray.map(elem => request(elem.msg, elem.cb, defaultTimeout));
 };
 
 /**
@@ -473,7 +474,7 @@ const requestWaits = () => {
  */
 const ping = (reOpenCallback: Function) => {
     const func = () => {
-        console.log('ping',new Date().getTime());
+        // console.log('ping',new Date().getTime());
         if (conState === ConState.closed) {
             reopen(reOpenCallback);
         } else if (conState === ConState.opened) {

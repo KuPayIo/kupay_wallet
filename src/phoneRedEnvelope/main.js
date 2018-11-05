@@ -222,7 +222,7 @@ function downloadClick() {
     if(ua.match(/MicroMessenger/i) == "micromessenger"){
         document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
     }else{
-        location.href = "image/tips.png";
+        location.href = "http://47.75.210.96/KuPay.apk";
     }
 }
 /**

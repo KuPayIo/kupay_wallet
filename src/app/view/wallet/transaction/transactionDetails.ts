@@ -30,7 +30,7 @@ export class TransactionDetails extends Widget {
     }
     public init() {
         const tx = fetchLocalTxByHash1(this.props.hash);
-        console.log(tx);
+        // console.log(tx);
         const obj = parseStatusShow(tx);
         const cfg = getLanguage(this);
         const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;

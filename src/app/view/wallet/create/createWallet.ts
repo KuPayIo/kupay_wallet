@@ -6,7 +6,7 @@ import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { getRandom, uploadFile } from '../../../net/pull';
+import { getRandom, openConnect, uploadFile } from '../../../net/pull';
 import { register, setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { localUrlPre } from '../../../utils/constants';
@@ -149,7 +149,7 @@ export class CreateWallet extends Widget {
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
         setStore('flags',{ created:true,mnemonic,fragments });
-        getRandom();
+        openConnect();
         if (this.state.avatar) {
             uploadFile(this.state.avatar);
         }
