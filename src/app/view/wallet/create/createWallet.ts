@@ -7,10 +7,10 @@ import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { getRandom, openConnect, uploadFile } from '../../../net/pull';
-import { register, setStore } from '../../../store/memstore';
+import { getStore, register, setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { localUrlPre } from '../../../utils/constants';
-import { getLanguage, getStaticLanguage, popNewMessage } from '../../../utils/tools';
+import { checkCreateAccount, getLanguage, getStaticLanguage, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
 interface Props {
@@ -148,7 +148,12 @@ export class CreateWallet extends Widget {
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
         setStore('flags',{ created:true,mnemonic,fragments });
-        openConnect();
+        if (getStore('user/offline')) {
+            checkCreateAccount();
+        } else {
+            openConnect();
+        }
+        
         if (this.state.avatar) {
             uploadFile(this.state.avatar);
         }

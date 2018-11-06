@@ -166,6 +166,7 @@ export const openConnect = async () => {
  */
 const conSuccess = () => {
     console.log('con success');
+    setStore('user/offline',false);
     getRandom();
 };
 
@@ -174,7 +175,9 @@ const conSuccess = () => {
  */
 const conError = (err) => {
     console.log('con error');
+    setStore('user/offline',true);
     checkCreateAccount();
+    
 };
 
 /**
@@ -183,7 +186,7 @@ const conError = (err) => {
 const conClose = () => {
     console.log('con close');
     setStore('user/isLogin',false);
-    popNewMessage('连接已断开');
+    setStore('user/offline',true);
 };
 
 /**
@@ -191,6 +194,7 @@ const conClose = () => {
  */
 const conReOpen = () => {
     console.log('con reopen');
+    setStore('user/offline',false);
     // console.log();
 };
 

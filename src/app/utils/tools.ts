@@ -1233,6 +1233,10 @@ export const logoutAccountDel = () => {
     setStore('setting',setting);
     setBottomLayerReloginMsg('','','');
     closeCon();
+    setTimeout(() => {
+        openConnect();
+    },100);
+    
 };
 
 /**
@@ -1251,6 +1255,7 @@ export const loginSuccess = (account:Account) => {
     const fileUser = account.user;
     const user:User = {
         isLogin: false,
+        offline:true,
         conRandom:'',
         conUid:'',
         secretHash:'',

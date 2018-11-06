@@ -64,6 +64,6 @@ export class TopBar extends Widget {
         }, 1000);
     }
 }
-register('setting/offline',(r) => {
+register('user/offline',(r) => {
     forelet.paint(r);
 });
