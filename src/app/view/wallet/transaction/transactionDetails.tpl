@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="shareScreen">
     <div w-class="top-head">
-        <app-components1-topBar-topBar>{"title":{{it1.tx.txType === 1 ? it1.cfgData.topBarTitle[0] : it1.cfgData.topBarTitle[1]}},background:"transparent",nextImg:"../../res/image/share_white.png"}</app-components1-topBar-topBar>
+        <widget w-tag="app-components1-topBar-topBar">{"title":{{it1.tx.txType === 1 ? it1.cfgData.topBarTitle[0] : it1.cfgData.topBarTitle[1]}},background:"linear-gradient(to right,#38CFE7,#318DE6);position: fixed;",nextImg:"../../res/image/share_white.png"}</widget>
     </div>
     <div w-class="body">
         <div w-class="status-container">

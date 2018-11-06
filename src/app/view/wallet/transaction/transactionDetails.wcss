@@ -1,10 +1,13 @@
 .new-page{
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .top-head{
     height: 400px;
     background:linear-gradient(to right,#38CFE7,#318DE6);
+    flex-shrink: 0;
 }
 .body{
     flex: 1 0 0;

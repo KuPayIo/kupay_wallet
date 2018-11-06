@@ -1,6 +1,6 @@
 {{let opca = it.scrollHeight/200 || 0}}
 <div>
-    <div style="{{opca>0?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':''}}" w-class="topBar">
+    <div style="{{opca>0?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 1px solid #cccccc;':''}}" w-class="topBar">
         <img src="{{it.avatar ? it.avatar : '../../res/image1/default_avatar.png'}}" w-class="userHead" on-tap="showMine"/>
         {{if it.text}}
         <div w-class="total-asset">{{it.text}}</div>
