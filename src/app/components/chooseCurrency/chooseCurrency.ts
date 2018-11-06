@@ -16,7 +16,7 @@ export class ChooseCurrency extends Widget {
         const currencyShowList = [];
         this.props.list.forEach(item => {
             // tslint:disable-next-line:max-line-length
-            const balance = getCurrentAddrInfo(item).balance(item);
+            const balance = getCurrentAddrInfo(item).balance;
             currencyShowList.push({
                 name:item,
                 balance:formatBalance(balance),

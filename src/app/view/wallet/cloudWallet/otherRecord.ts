@@ -72,7 +72,7 @@ export class OtherRecord extends Widget {
     }
 }
 
-register('accountDetail', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();

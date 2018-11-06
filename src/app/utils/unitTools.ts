@@ -10,7 +10,7 @@ import { formatBalance } from './tools';
  */
 export const smallUnit2LargeUnit = (currencyName: string, amount: string | number): number => {
     if (currencyName === 'ETH') {
-        return formatBalance(wei2Eth(amount));
+        return formatBalance(wei2Eth(Number(amount)));
     } else if (currencyName === 'KT') {
         return formatBalance(kpt2kt(Number(amount)));
     } else if (currencyName === 'BTC') {

@@ -611,9 +611,10 @@ export const recharge = async (psw:string,txRecord:TxHistory) => {
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         getRechargeLogs(tx.currencyName);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
+        
+        return tx.hash;
     }
 
-    return tx.hash;
 };
 /**
  * eth充值

@@ -84,6 +84,7 @@ export interface User {
     
     id: string;            // 该账号的id
 
+    offline:boolean;       // 连接状态
     isLogin: boolean;      // 登录状态
     
     token: string;         // 自动登录token

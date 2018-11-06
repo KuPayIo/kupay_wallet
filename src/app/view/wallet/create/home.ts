@@ -28,7 +28,6 @@ export class CreateEnter extends Widget {
             const id = item.user.id;
             accountList.push({ nickName,id });
         });
-        console.log(accountList);
         this.state = {
             cfgData:getLanguage(this),
             login:false,

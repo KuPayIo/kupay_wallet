@@ -6,11 +6,11 @@ import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { getRandom, uploadFile } from '../../../net/pull';
-import { register, setStore } from '../../../store/memstore';
+import { getRandom, openConnect, uploadFile } from '../../../net/pull';
+import { getStore, register, setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { localUrlPre } from '../../../utils/constants';
-import { getLanguage, getStaticLanguage, popNewMessage } from '../../../utils/tools';
+import { checkCreateAccount, getLanguage, getStaticLanguage, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
 interface Props {
@@ -84,11 +84,10 @@ export class CreateWallet extends Widget {
         });
 
         // selectImage((path) => {
+        //     console.log('img url path ',path);
         //     this.state.chooseImage = true;
-        // tslint:disable-next-line:max-line-length
-        //     // this.state.avatarHtml = `<div style="background-image: url(${localUrlPre}${path});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
-        //     this.state.avatarHtml = `<img src='${localUrlPre}${path}' style='width: 100%;height: 100%;position: absolute;top: 0;'/>`
-        //     this.state.avatar = `${localUrlPre}${path}`;
+        //     this.state.avatarHtml = `<img src='file:///${path}?timestamp=${new Date().getTime()}' style='width: 100%;height: 100%;position: absolute;top: 0;'/>`;
+        //     // this.state.avatar = `${localUrlPre}${path}`;
         //     this.paint();
         // });
 
@@ -149,7 +148,12 @@ export class CreateWallet extends Widget {
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
         setStore('flags',{ created:true,mnemonic,fragments });
-        getRandom();
+        if (getStore('user/offline')) {
+            checkCreateAccount();
+        } else {
+            openConnect();
+        }
+        
         if (this.state.avatar) {
             uploadFile(this.state.avatar);
         }
