@@ -103,7 +103,7 @@ export class CloudWalletHome extends Widget {
 // ===========================
 
 // 余额变化
-register('cloudBalance', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -111,7 +111,7 @@ register('cloudBalance', () => {
 });
 
 // 汇率变化
-register('USD2CNYRate', () => {
+register('third/USD2CNYRate', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -119,7 +119,7 @@ register('USD2CNYRate', () => {
 });
 
 // 涨跌幅变化
-register('currency2USDTMap', () => {
+register('third/currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();

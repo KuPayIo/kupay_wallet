@@ -878,7 +878,7 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
         }
     };
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
         console.log('rechargeToServer',res);
         
         return true;

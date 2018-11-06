@@ -843,6 +843,7 @@ export const hasWallet = () => {
             cancelText: '暂时不'
         }, () => {
             popNew('app-view-wallet-create-home');
+            // popNew('app-view-base-localImg');
         });
 
         return false;
@@ -1204,10 +1205,17 @@ export const logoutAccountDel = () => {
             purchaseHistories: null
         }
     };
+
+    const setting = getStore('setting');
+    setting.lockScreen = {
+        ...setting.lockScreen,
+        locked:false
+    };
     setStore('wallet',null,false);
     setStore('cloud',cloud,false);
     setStore('user',user);
     setStore('activity',activity);
+    setStore('setting',setting);
     setBottomLayerReloginMsg('','','');
     closeCon();
 };

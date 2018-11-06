@@ -44,8 +44,8 @@ export const run = (cb): void => {
     initPush();
     openConnect();
     // dataCenter.init();
+    // setStore('user/token','');
     popNew('app-view-base-app');
-    // popNew('app-view-base-localImg');
     // popNew('app-view-chat-home-home');
     // getDeviceInfo();
     popNewPage();

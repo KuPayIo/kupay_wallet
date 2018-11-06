@@ -111,6 +111,7 @@ export class CoinConvert extends Widget {
     // 设置币币兑换的pair  如btc_eth
     public setPair() {
         this.state.pair = `${this.state.outCurrency.toLowerCase()}_${this.state.inCurrency.toLowerCase()}`;
+        // this.state.pair = `${this.state.outCurrency}_${this.state.inCurrency}`;
     }
     // 重置汇率相关显示
     public resetMarketInfo(marketInfo:MarketInfo) {

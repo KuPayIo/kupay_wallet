@@ -136,7 +136,7 @@ export class Recharge extends Widget {
 }
 
 // gasPrice变化
-register('gasPrice',() => {
+register('third/gasPrice',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();
@@ -144,7 +144,7 @@ register('gasPrice',() => {
 });
 
 // btcMinerFee变化
-register('btcMinerFee',() => {
+register('third/btcMinerFee',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();
