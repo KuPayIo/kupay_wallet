@@ -13,14 +13,7 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { openConnect } from '../../net/pull';
 import { initPush } from '../../net/push';
-import {
-  CloudCurrencyType,
-  CloudWallet,
-  Currency2USDT,
-  LockScreen,
-  ShapeShiftTxs,
-  Store
-} from '../../store/interface';
+import { LockScreen } from '../../store/interface';
 import { getCloudBalances, getStore, initStore, setStore } from '../../store/memstore';
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
@@ -45,6 +38,7 @@ export const run = (cb): void => {
     openConnect();
     // dataCenter.init();
     popNew('app-view-base-app');
+    console.timeEnd('home enter');
     // popNew('app-view-chat-home-home');
     // getDeviceInfo();
     popNewPage();

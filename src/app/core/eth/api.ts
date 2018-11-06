@@ -89,7 +89,7 @@ export class Api {
             });
         });
     }
-    public getBlockNumber():Promise<string>{
+    public getBlockNumber():Promise<string> {
         return new Promise((resolve, reject) => {
             initWeb3();
             web3.eth.getBlockNumber((err, val) => {
@@ -101,7 +101,7 @@ export class Api {
             });
         });
     }
-    public getBlock(blockHash:string):Promise<string>{
+    public getBlock(blockHash:string):Promise<string> {
         return new Promise((resolve, reject) => {
             initWeb3();
             web3.eth.getBlock(blockHash,(err, val) => {
@@ -134,13 +134,13 @@ export class Api {
      * @memberof Api
      */
     public estimateGas(obj: { to: any; data: any }): Promise<number> {
-        console.log('erc20 addr=====',obj.to);
+        // console.log('erc20 addr=====',obj.to);
         return new Promise((resolve, reject) => {
             initWeb3();
             if (obj.data) {
-                console.log('obj.data1-------------',obj.data);
+                // console.log('obj.data1-------------',obj.data);
                 obj.data = web3.toHex(obj.data);
-                console.log('obj.data2-------------',obj.data);
+                // console.log('obj.data2-------------',obj.data);
             }
             web3.eth.estimateGas(obj, (err, res) => {
                 if (!err) {

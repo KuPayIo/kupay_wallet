@@ -92,7 +92,7 @@ export class RechargeRecord extends Widget {
     }
 }
 
-register('rechargeLogs', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();
@@ -100,7 +100,7 @@ register('rechargeLogs', () => {
 });
 
 // 本地交易变化,更新状态
-register('transactions',() => {
+register('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

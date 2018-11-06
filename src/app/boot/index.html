@@ -191,7 +191,7 @@
 			winit.store = name;
 			// winit.debug = !remote;
 			// winit.debug = false;
-			winit.debug = true;
+			winit.debug = false;
 			// winit.debug = location.host.indexOf('192.168.31') > -1;
 			main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
@@ -210,13 +210,13 @@
 			// winit.severPort = "80";
 			// winit.severIp = "47.244.59.13";
 			// winit.severPort = "80";
-			winit.severIp = "192.168.9.29";
-			winit.severPort = "80";
+			// winit.severIp = "192.168.9.29";
+			// winit.severPort = "80";
 			//luobing
 			// winit.severIp = "192.168.9.25";
 			// winit.severPort = "80";
-			// winit.severIp = "192.168.9.15";
-			// winit.severPort = "80";			
+			winit.severIp = "192.168.9.15";
+			winit.severPort = "80";			
 			//---------国内------
 			// winit.severIp = "47.75.254.166";
 			// winit.severPort = "80";
@@ -355,7 +355,7 @@
 // browserAdaptive();
 // })();
 
-
+console.time('home enter');
 setTimeout(() => {
 	var mySwiper = new Swiper('.swiper-container', {
       pagination: {
@@ -373,7 +373,6 @@ setTimeout(() => {
 
 var btnStart = document.querySelector('.btn-start');
 btnStart.onclick = function(){
-	console.log(11111);
 	document.body.removeChild(document.querySelector('#swiper-container'));
 }
 </script>

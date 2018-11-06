@@ -185,7 +185,7 @@ register('setting/language', () => {
         w.init();
     }
 });
-register('setting/offline',(r) => {
+register('user/offline',(r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.state.offline = r;

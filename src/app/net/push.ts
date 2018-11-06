@@ -18,8 +18,6 @@ export const initPush = () => {
     // 监听指令事件
     setMsgHandler('cmd',(res) => {
         console.log('强制下线==========================',res);
-        // 手动关闭可以阻止重新连接
-        closeCon();
         setBottomLayerReloginMsg('','','');
         const cmd = res.cmd;
         if (cmd === CMD.FORCELOGOUT) {
