@@ -59,6 +59,13 @@ export const requestAsync = async (msg: any): Promise<any> => {
 
 /**
  * 通用的异步通信 需要登录
+ * 
+ * 需要登录权限的接口
+ * emit_red_bag  发红包
+ * to_cash       eth提现
+ * btc_to_cash   btc提现
+ * manage_money@buy    购买理财
+ * manage_money@sell   出售理财
  */
 export const requestAsyncNeedLogin = async (msg: any) => {
     const isLogin = getStore('user/isLogin');
@@ -424,7 +431,7 @@ export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount:
     };
 
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
 
         return res.value;
     } catch (err) {
@@ -884,7 +891,7 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
         }
     };
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsync(msg);
         console.log('rechargeToServer',res);
         
         return true;
@@ -939,7 +946,7 @@ export const withdrawFromServer = async (toAddr:string,value:string) => {
     };
 
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
         console.log('withdrawFromServer',res);
 
         return res.txid;
@@ -963,7 +970,7 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
     };
 
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
 
         return res.txid;
     } catch (err) {
@@ -1124,7 +1131,7 @@ export const buyProduct = async (pid:any,count:any) => {
     };
     
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
         console.log('buyProduct',res);
         if (res.result === 1) {
             getProductList();
@@ -1174,7 +1181,7 @@ export const buyBack = async (timeStamp:any) => {
     };
     
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
         console.log('buyBack',res);
 
         return true;
