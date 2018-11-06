@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refreshPage">
 
     <div w-class="content" on-scroll="getMoreList" id="redEnvHistory">
         <img src="../../../res/image/redEnvtop1.png" w-class="topBackimg" />
@@ -7,10 +7,10 @@
             <div w-class="topBack">
                 <img src="../../../res/image/default_avater_big.png" w-class="userHead" />
                 <div style="margin-top: 20px;">
-                    <pi-ui-lang>{"zh_Hans":"å…±å‘å‡º","zh_Hant":"å…±ç™¼å‡º","en":""}</pi-ui-lang>
+                    <pi-ui-lang>{"zh_Hans":"¹²·¢³ö","zh_Hant":"¹²°l³ö","en":""}</pi-ui-lang>
                 </div>
                 <div style="margin-bottom: 90px;"><span style="font-size: 64px;">{{it1.sendNumber}}</span>
-                    <pi-ui-lang>{"zh_Hans":"ä¸ªçº¢åŒ…","zh_Hant":"å€‹ç´…åŒ…","en":""}</pi-ui-lang>
+                    <pi-ui-lang>{"zh_Hans":"¸öºì°ü","zh_Hant":"‚€¼t°ü","en":""}</pi-ui-lang>
                 </div>
             </div>
             <div w-class="bottom">
@@ -18,17 +18,17 @@
                     <div style="text-align: center;height: 100%;">
                         <img src="../../../res/image/redEnvEmpty.png" style="width: 200px;height: 200px;margin-top: 210px;" />
                         <div style="font-size: 32px;color: #888888;margin-top: 20px;">
-                        <pi-ui-lang>{"zh_Hans":"è¯•è¯•å‘ä¸€ä¸ªçº¢åŒ…","zh_Hant":"è©¦è©¦ç™¼ä¸€å€‹ç´…åŒ…","en":""}</pi-ui-lang></div>
+                        <pi-ui-lang>{"zh_Hans":"ÊÔÊÔ·¢Ò»¸öºì°ü","zh_Hant":"Ô‡Ô‡°lÒ»‚€¼t°ü","en":""}</pi-ui-lang></div>
                     </div>
                 {{else}}
                     <div w-class="tips">
-                        <pi-ui-lang>{"zh_Hans":"24å°æ—¶æœªè¢«é¢†å–çš„çº¢åŒ…å·²é€€å›äº‘è´¦æˆ·","zh_Hant":"24å°æ™‚æœªè¢«é ˜å–çš„ç´…åŒ…å·²é€€å›é›²è³¬æˆ¶","en":""}</pi-ui-lang>
+                        <pi-ui-lang>{"zh_Hans":"24Ğ¡Ê±Î´±»ÁìÈ¡µÄºì°üÒÑÍË»ØÔÆÕË»§","zh_Hant":"24Ğ¡•rÎ´±»îIÈ¡µÄ¼t°üÒÑÍË»Øë…Ù~‘ô","en":""}</pi-ui-lang>
                     </div>
                     {{for ind,val of it1.recordList}}
                     <div on-tap="goDetail({{ind}})">
-                        {{let desc = {"zh_Hans":val.curNum+"/"+val.totalNum + "ä¸ª","zh_Hant":val.curNum+"/"+val.totalNum + "å€‹","en":""} }}
-                        {{let outDate = {"zh_Hans":"å·²è¿‡æœŸ","zh_Hant":"å·²éæœŸ","en":""} }}	
-                        {{let rtypeShow = [{"zh_Hans":"æ™®é€šçº¢åŒ…","zh_Hant":"æ™®é€šç´…åŒ…","en":""},{"zh_Hans":"æ‹¼æ‰‹æ°”çº¢åŒ…","zh_Hant":"æ‹¼æ‰‹æ°£ç´…åŒ…","en":""},{"zh_Hans":"é‚€è¯·çº¢åŒ…","zh_Hant":"é‚€è«‹ç´…åŒ…","en":""}] }}
+                        {{let desc = {"zh_Hans":val.curNum+"/"+val.totalNum + "¸ö","zh_Hant":val.curNum+"/"+val.totalNum + "‚€","en":""} }}
+                        {{let outDate = {"zh_Hans":"ÒÑ¹ıÆÚ","zh_Hant":"ÒÑß^ÆÚ","en":""} }}	
+                        {{let rtypeShow = [{"zh_Hans":"ÆÕÍ¨ºì°ü","zh_Hant":"ÆÕÍ¨¼t°ü","en":""},{"zh_Hans":"Æ´ÊÖÆøºì°ü","zh_Hant":"Æ´ÊÖšâ¼t°ü","en":""},{"zh_Hans":"ÑûÇëºì°ü","zh_Hant":"ÑûÕˆ¼t°ü","en":""}] }}
 
                         <app-components-fourParaItem-fourParaItem>
                             {name:{{rtypeShow[val.rtype]}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},describe:{{val.outDate ? outDate :desc}} }
@@ -38,23 +38,13 @@
                 {{end}}
 
                 {{if it1.showMoreTips && it1.recordList.length>0}}
-                <div w-class="endMess" id="more"><pi-ui-lang>{"zh_Hans":"åˆ°æ­¤ç»“æŸå•¦","zh_Hant":"åˆ°æ­¤çµæŸå•¦","en":""}</pi-ui-lang>^_^</div>
+                <div w-class="endMess" id="more"><pi-ui-lang>{"zh_Hans":"µ½´Ë½áÊøÀ²","zh_Hant":"µ½´Ë½YÊøÀ²","en":""}</pi-ui-lang>^_^</div>
                 {{end}}
 
             </div>
 
         </div>
     </div>
-
-    {{let opca = it1.scrollHeight/100}}
-    <div w-class="ga-top-banner" style="{{it1.scroll?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':'background:transparent;'}}">
-        <div w-class="left-container">
-            <img on-tap="backPrePage" src="../../../res/image/{{it1.scroll ? 'left_arrow_blue.png' : 'left_arrow_white.png'}}" w-class="ga-back" />
-            <span on-tap="backPrePage" style="color: {{it1.scroll ? '#222':'#fff'}}">
-                <pi-ui-lang>{"zh_Hans":"çº¢åŒ…è®°å½•","zh_Hant":"ç´…åŒ…è¨˜éŒ„","en":""}</pi-ui-lang>
-            </span>
-        </div>
-        <img on-tap="refreshPage" src="../../../res/image1/{{it1.scroll?'refresh_blue.png':'refresh_white.png'}}"
-            w-class="refreshBtn" class="{{it1.topRefresh?'refreshing':''}}" />
-    </div>
+   {{: topBarTitle = {"zh_Hans":"ºì°ü¼ÇÂ¼","zh_Hant":"¼t°üÓ›ä›","en":""} }}	
+    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
 </div>

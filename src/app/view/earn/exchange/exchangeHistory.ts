@@ -54,7 +54,7 @@ export class ExchangeHistory extends Widget {
             showMoreTips:false, 
             inviteObj:null,
             userList:[],
-            scrollHeight:0,
+            scrollHeight:0
         };
         this.initData();
         

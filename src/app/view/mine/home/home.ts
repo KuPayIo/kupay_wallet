@@ -44,6 +44,7 @@ export class Home extends Widget {
             close:false,
             hasWallet,
             hasBackupMnemonic,
+            offline:false
         };
         this.initData();
     }
@@ -184,5 +185,11 @@ register('setting/language', (r) => {
     if (w) {
         w.language = w.config.value[r];
         w.paint();
+    }
+});
+register('setting/offline',(r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.state.offline = r;
     }
 });
