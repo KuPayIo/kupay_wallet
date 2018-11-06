@@ -66,7 +66,7 @@ export class Recharge extends Widget {
 
      // 提币金额变化
     public amountChange(e:any) {
-        this.state.amount = Number(e.value);
+        this.state.amount = e.value;
         this.paint();
     }
 
@@ -91,7 +91,7 @@ export class Recharge extends Widget {
             return;
         }
 
-        if (this.state.balance < this.state.amount + this.state.minerFee) {
+        if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
             popNewMessage(this.state.cfgData.tips[1]);
 
             return;
@@ -99,7 +99,7 @@ export class Recharge extends Widget {
         const minerFeeLevel = this.state.curLevel;
         const currencyName = this.props.currencyName;
         const fromAddr = this.state.fromAddr;
-        const pay = this.state.amount;
+        const pay = Number(this.state.amount);
         const passwd = await popPswBox();
         if (!passwd) return;
         const t = new Date();

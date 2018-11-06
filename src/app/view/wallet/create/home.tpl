@@ -35,7 +35,7 @@
             </div>
         </div>
         <div w-class="input-father" ev-input-change="pswChange">
-            <app-components-input-input>{placeHolder:"输入密码",itype:"password"}</app-components-input-input>
+            <app-components1-input-input>{placeHolder:"输入密码",itype:"password"}</app-components1-input-input>
         </div>
         <div ev-btn-tap="loginClick"><app-components1-btn-btn>{"name":{{it1.cfgData.btnName[2]}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
         <div w-class="container2">

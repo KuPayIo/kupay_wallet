@@ -24,7 +24,7 @@
             <div w-class="item1">
                 <div w-class="inner-tip"><span>{{it1.cfgData.phrase[0]}}</span><span w-class="balance">{{it1.cfgData.phrase[1]}}&nbsp;{{it1.balance}}</span></div>
                 <div w-class="input-father" ev-input-change="amountChange">
-                    <app-components-input-input>{itype:"number",placeHolder:{{it1.cfgData.inputPlace}},style:"padding:0;",input:{{it1.amount}}}</app-components-input-input>
+                    <app-components1-input-input>{itype:"number",placeHolder:{{it1.cfgData.inputPlace}},style:"padding:0;",input:{{it1.amount}}}</app-components1-input-input>
                 </div>
             </div>
 
