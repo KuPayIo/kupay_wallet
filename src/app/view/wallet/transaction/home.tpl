@@ -9,7 +9,7 @@
                 <div w-class="balance-value">{{it1.currencyUnitSymbol}}{{it1.balanceValue}}</div>
             </div>
             {{if it1.canConvert}}
-            <div w-class="btn-exchange" on-tap="convertCurrencyClick">{{it1.cfgData.tabs[0]}}</div>
+            <div w-class="btn-exchange" on-tap="convertCurrencyClick"><pi-ui-lang>{"zh_Hans":"换币","zh_Hant":"換幣","en":""}</pi-ui-lang></div>
             {{end}}
         </div>
         <div w-class="nav">
@@ -21,11 +21,11 @@
         </div>
     </div>
     <div w-class="show-container">
-        <div w-class="quotes">{{it1.cfgData.tabs[3]}}&nbsp;{{it1.currencyUnitSymbol}}{{it1.rate}}/{{it.currencyName}}</div>
+        <div w-class="quotes"><pi-ui-lang>{"zh_Hans":"行情","zh_Hant":"行情","en":""}</pi-ui-lang>&nbsp;{{it1.currencyUnitSymbol}}{{it1.rate}}/{{it.currencyName}}</div>
         {{if it1.redUp}}
-        <div w-class="{{it.gain > 0 ? 'up' : 'down'}}">{{it1.cfgData.tabs[4]}}&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
+        <div w-class="{{it.gain > 0 ? 'up' : 'down'}}"><pi-ui-lang>{"zh_Hans":"今日","zh_Hant":"今日","en":""}</pi-ui-lang>&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
         {{else}}
-        <div w-class="{{it.gain > 0 ? 'down' : 'up'}}">{{it1.cfgData.tabs[4]}}&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
+        <div w-class="{{it.gain > 0 ? 'down' : 'up'}}"><pi-ui-lang>{"zh_Hans":"今日","zh_Hant":"今日","en":""}</pi-ui-lang>&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
         {{end}}
     </div>
     <div w-class="body">
@@ -33,7 +33,7 @@
             {{if it1.txList.length === 0}}
             <div w-class="no-recode">
                 <img src="../../../res/image/dividend_history_none.png" w-class="no-recode-icon"/>
-                <div w-class="no-recode-text">{{it1.cfgData.noneRes}}</div>
+                <div w-class="no-recode-text"><pi-ui-lang>{"zh_Hans":"还没有记录哦","zh_Hant":"還沒有記錄哦","en":""}</pi-ui-lang></div>
             </div>
             {{end}}
             <div w-class="tx-list">
