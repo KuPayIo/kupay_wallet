@@ -74,15 +74,16 @@ export const requestAsyncNeedLogin = async (msg: any) => {
 /**
  * 申请自动登录token
  */
-export const applyAutoLogin = () => {
+export const applyAutoLogin = async () => {
+    const id = await fetchDeviceId();
+    const deviceId = id.toString();
     const msg = { 
         type: 'wallet/user@set_auto_login', 
         param: { 
-            device_id: fetchDeviceId()
+            device_id:deviceId
         }
     };
     requestAsync(msg).then(res => {
-        const deviceId = fetchDeviceId();
         const decryptToken = encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
     });
@@ -91,9 +92,10 @@ export const applyAutoLogin = () => {
 /**
  * 自动登录
  */
-export const autoLogin = (conRandom:string) => {
-    const deviceId = fetchDeviceId();
-    const token = decrypt(getStore('user/token'),deviceId);
+export const autoLogin = async (conRandom:string) => {
+    const deviceId = await fetchDeviceId();
+    console.log('deviceId -------',deviceId);
+    const token = decrypt(getStore('user/token'),deviceId.toString());
     const msg = { 
         type: 'wallet/user@auto_login', 
         param: { 

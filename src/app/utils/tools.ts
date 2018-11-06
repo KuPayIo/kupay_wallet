@@ -7,6 +7,7 @@ import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
+import { getDeviceId } from '../logic/native';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 import { getFile } from '../store/filestore';
 // tslint:disable-next-line:max-line-length
@@ -1081,9 +1082,23 @@ export const getConfirmBlockNumber = (currencyName: string, amount: number) => {
 /**
  * 获取设备唯一id
  */
-export const fetchDeviceId = () => {
-
-    return getStore('user/id');
+export const fetchDeviceId = async () => {
+    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
+        return new Promise((resolve,reject) => {
+            const hash256 = sha256(getStore('user/id'));
+            resolve(hash256);
+        });
+    } else {// ============================mobile
+        return new Promise((resolve,reject) => {
+            getDeviceId((deviceId:string) => {
+                const hash256 = sha256(deviceId + getStore('user/id'));
+                resolve(hash256);
+            },(err) => {
+                reject(err);
+            });
+        });
+    }
+   
 };
 
 /**

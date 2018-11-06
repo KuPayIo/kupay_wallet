@@ -2,7 +2,6 @@
  * wallet home 
  */
 // ==============================导入
-import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getServerCloudBalance } from '../../../net/pull';
@@ -60,13 +59,6 @@ export class Home extends Widget {
         this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
         this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
-    }
-
-    /**
-     * 打开我的设置
-     */
-    public showMine() {
-        popNew('app-view-mine-home-home');
     }
 
     public refreshClick() {
@@ -134,5 +126,12 @@ register('third/currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
+    }
+});
+// 货币单位变化
+register('setting/currencyUnit',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.currencyUnitChange();
     }
 });

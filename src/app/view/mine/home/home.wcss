@@ -118,3 +118,15 @@
     margin-right: 50px;
     border: 10px solid transparent;
 }
+.offline{
+    height: 40px;
+    line-height: 40px;
+    margin-left: 20px;
+    opacity: 0.8;
+    padding: 0 15px;
+    font-size: 24px;
+    color: #fff;
+    border-radius: 6px;
+    background-color: rgba(34, 34, 34, 1);
+    display: inline-block;
+}

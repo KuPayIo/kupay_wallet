@@ -485,6 +485,7 @@ const handlerMap: HandlerMap = new HandlerMap();
 const store: Store = {
     user: {
         id: '',                      // 该账号的id
+        isConnected:false,           // 连接状态
         isLogin: false,              // 登录状态
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
@@ -494,9 +495,9 @@ const store: Store = {
         secretHash: '',             // 密码hash缓存   
         info: {                      // 用户基本信息
             nickName: '',           // 昵称
-            avatar: '',            // 头像
-            phoneNumber: '',       // 手机号
-            isRealUser: false      // 是否是真实用户
+            avatar: '',             // 头像
+            phoneNumber: '',        // 手机号
+            isRealUser: false       // 是否是真实用户
         }
     },
     wallet: null,

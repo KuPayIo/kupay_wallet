@@ -21,7 +21,6 @@ interface State {
     hasMore:boolean; // 是否还有更多记录
     showMoreTips:boolean; // 是否显示底部加载更多提示
     sendNumber:number; // 总发出红包个数
-    scroll:boolean; // 是否滑动页面
     rtypeShow:string[]; // 红包类型
     cfgData:any;
     scrollHeight:number;// 页面上滑的高度
@@ -46,7 +45,6 @@ export class RedEnvHistory extends Widget {
             hasMore:false, 
             showMoreTips:true, 
             sendNumber:0,  
-            scroll:false,
             rtypeShow:cfg.redEnvType,
             cfgData: cfg,
             scrollHeight:0,

@@ -58,7 +58,7 @@ export class PlayHome extends Widget {
             scroll: false,
             scrollHeight: 0,
             refresh: false,
-            avatar: '../../../res/image1/default_avatar.png'
+            avatar: '../../res/image1/default_avatar.png'
         };
         setTimeout(() => {
             this.scrollPage();
@@ -224,7 +224,7 @@ export class PlayHome extends Widget {
 
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image1/default_avatar.png';
+            this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
         }
         this.paint();
     }

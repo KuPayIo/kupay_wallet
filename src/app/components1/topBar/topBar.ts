@@ -9,7 +9,9 @@
 // ================================ 导入
 import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
+import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { register } from '../../store/memstore';
 
 interface Props {
     title:string;
@@ -18,17 +20,21 @@ interface Props {
     background?:string;
     refreshImg?:string;
     text?:string;
+    refresh?:boolean;
 }
 
 // ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class TopBar extends Widget {
     public props:Props;
     
     public setProps(oldProps:Json,props:Json) {
         super.setProps(oldProps,props);
-        this.state = {
-            refresh:false
-        };
+        this.props.refresh = false;
     }
 
     /**
@@ -49,12 +55,15 @@ export class TopBar extends Widget {
      * 刷新当前页
      */
     public refreshPage(event:any) {
-        this.state.refresh = true;
+        this.props.refresh = true;
         this.paint();
         notify(event.node,'ev-refresh-click',{});
         setTimeout(() => {
-            this.state.refresh = false;
+            this.props.refresh = false;
             this.paint();
         }, 1000);
     }
 }
+register('setting/offline',(r) => {
+    forelet.paint(r);
+});

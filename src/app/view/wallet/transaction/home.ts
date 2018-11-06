@@ -48,7 +48,7 @@ export class TransactionHome extends Widget {
             txList,
             canConvert,
             cfgData:cfg,
-            redUp:color ? color.selected === 0 :true,
+            redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol(),
             tabs:[{
                 tab:'全部',

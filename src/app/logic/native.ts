@@ -1,6 +1,6 @@
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
-import { SystemInfoProvider } from '../../pi/browser/systemInfoProvider';
+import { DeviceIdProvider } from '../../pi/browser/systemInfoProvider';
 import { WebViewHelper } from '../../pi/browser/webViewHelper';
 import { popNew } from '../../pi/ui/root';
 
@@ -101,15 +101,17 @@ export const openNewActivity = (url:string,title:string= '') => {
 /**
  * 获取设备信息
  */
-export const getDeviceInfo = () => {
-    const systemInfo = new SystemInfoProvider();
+export const getDeviceId = (okCB?,errCB?) => {
+    const systemInfo = new DeviceIdProvider();
     systemInfo.init();
-    systemInfo.getDeviceInfo({
+    systemInfo.getDriverId({
         success: (result) => {
-            console.log('获取设备的系统信息成功\t' + result);
+            console.log('获取设备的唯一id成功\t' + result);
+            okCB && okCB(result);
         }
         , fail: (result) => {
-            console.log('获取设备的系统信息失败\t' + result);
+            console.log('获取设备的唯一id失败\t' + result);
+            errCB && errCB(result);
         }
     });
 };
