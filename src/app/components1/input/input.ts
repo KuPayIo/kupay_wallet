@@ -69,6 +69,7 @@ export class Input extends Widget {
             this.props = {};
         }
         paintCmd3(this.getInput(), 'readOnly', this.props.disabled || false);
+        (<any>this.getInput()).value = this.state.currentValue;
         paintWidget(this, reset);
     }
     /**

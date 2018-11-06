@@ -34,7 +34,6 @@ export class WriteRedEnv extends Widget {
     public language:any;
     constructor() {
         super();
-
     }
 
     public create() {
@@ -230,7 +229,6 @@ export class WriteRedEnv extends Widget {
             rtype: rtype,
             cname: curCoin.name
         });
-
 
         // if (!this.state.showPin) {
         //     // tslint:disable-next-line:max-line-length

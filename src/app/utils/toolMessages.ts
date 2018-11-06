@@ -44,7 +44,6 @@ export const showError = (result, str?) => {
             case 2031: str = getStaticLanguage().errorList[2031]; break;
             case 2032: str = getStaticLanguage().errorList[2032]; break;
             case 2033: str = getStaticLanguage().errorList[2033]; break;
-            case '-98': str = getStaticLanguage().errorList['-98']; break;
             case '-99': str = getStaticLanguage().errorList['-99']; break;
             default: str = getStaticLanguage().errorList.default;
         }

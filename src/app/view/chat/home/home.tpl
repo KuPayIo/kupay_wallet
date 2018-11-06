@@ -1,8 +1,7 @@
 <div class="new-page">
     <div w-class="topBack">
         <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
-        <img src="../../../res/image1/default_avatar.png" w-class="userHead" on-tap="showMine"/>
-        <img src="../../../res/image1/refresh_white.png" w-class="refreshBtn" on-tap="refreshPage" class="{{it.refresh ?'refreshing':''}}"/>
+        <app-components1-topBar-topBar1>{avatar:{{it.avatar}} }</app-components1-topBar-topBar1>
     </div>
     <div style="text-align: center;">
         <img src="../../../res/image/chatEmpty.png" w-class="emptyImg"/>
