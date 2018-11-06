@@ -42,7 +42,7 @@ export class Withdraw extends Widget {
 
      // 提币金额变化
     public amountChange(e:any) {
-        this.state.amount = Number(e.value);
+        this.state.amount = e.value;
         this.paint();
     }
 

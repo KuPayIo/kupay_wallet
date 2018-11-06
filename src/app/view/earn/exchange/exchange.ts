@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
-import { convertRedBag, getServerCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
+import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import {  setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
@@ -90,13 +90,12 @@ export class Exchange extends Widget {
         } else if (perCode === LuckyMoneyType.Invite) {
             const data = await getData('convertRedEnvelope');
             if (data.value) {
-                showError(-99);
+                showError('-99');
 
                 return;
             }
             value = await inputInviteCdKey(validCode);  // 兑换邀请红包
             if (!value) {
-                showError(-98);
                 
                 return;
             }
