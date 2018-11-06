@@ -2,7 +2,6 @@
  * wallet home 
  */
 // ==============================导入
-import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getServerCloudBalance } from '../../../net/pull';
@@ -128,5 +127,12 @@ register('third/currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
+    }
+});
+// 货币单位变化
+register('setting/currencyUnit',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.currencyUnitChange();
     }
 });
