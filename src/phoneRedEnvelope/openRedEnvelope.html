@@ -24,7 +24,10 @@ const search = window.location.search;
 const itype = parseUrlParams(search,'type');
 const lan = getLanguage();
 if(window.localStorage.takeRedBag){
-    window.location.href = './redEnvelopeDetail.html';
+    let localRid = JSON.parse(window.localStorage.takeRedBag).rid;
+    if(parseUrlParams(search,'rid')==localRid){
+        window.location.href = './redEnvelopeDetail.html';
+    }
 }
 var state = {};
 switch (itype) {
@@ -106,6 +109,7 @@ function openRedEnvelopeClick() {
  */
 function openNormalRedEnvelope() {
     const res = JSON.parse(takeRedEnvelope(state.rid));
+    
     setTimeout(async () => {
         switch (res.result) {
             case 1:

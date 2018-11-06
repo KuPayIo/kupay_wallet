@@ -10,6 +10,7 @@ import { LuckyMoneyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { getLanguage, getUserInfo } from '../../../utils/tools';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { getLang } from '../../../../pi/util/lang';
 
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -33,9 +34,9 @@ export class RedEnvDetail extends Widget {
 
     public setProps(props: Json, oldProps?: Json)  {
         super.setProps(props,oldProps);
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
-            message:cfg.message,
+            message:this.language.message,
             redBagList:[
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
@@ -43,7 +44,7 @@ export class RedEnvDetail extends Widget {
             ],
             scroll:false,
             showPin:this.props.rtype === 1,  // 0 等额红包  1 拼手气红包
-            userName:cfg.defaultUserName,
+            userName:this.language.defaultUserName,
             userHead:'../../res/image/default_avater_big.png',
             greatAmount:0,
             greatUser:-1

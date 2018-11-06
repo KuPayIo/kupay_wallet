@@ -81,7 +81,8 @@ export class RedEnvHistory extends Widget {
             console.log('load more from server');
             querySendRedEnvelopeRecord(this.state.start);
         }
-        this.loadMore();  
+        this.loadMore(); 
+        this.paint(); 
     }
 
     /**
@@ -112,14 +113,14 @@ export class RedEnvHistory extends Widget {
     public async initRedEn() {
         for (const i in this.state.recordList) {
             this.state.recordList[i].outDate = Number(this.state.recordList[i].time) + (60 * 60 * 24 * 1000) < new Date().getTime();
-            const data = await queryDetailLog(getStore('user/conUid'),this.state.recordList[i].rid);
-            if (data) {
-                this.state.recordList[i].curNum = data[2];
-                this.state.recordList[i].totalNum = data[3];
-            } else {
-                this.state.recordList[i].curNum = 0;
-                this.state.recordList[i].totalNum = 0;
-            }
+            // const data = await queryDetailLog(getStore('user/conUid'),this.state.recordList[i].rid);
+            // if (data) {
+            //     this.state.recordList[i].curNum = data[2];
+            //     this.state.recordList[i].totalNum = data[3];
+            // } else {
+            //     this.state.recordList[i].curNum = 0;
+            //     this.state.recordList[i].totalNum = 0;
+            // }
         }
         this.paint();
     }

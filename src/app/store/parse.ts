@@ -343,7 +343,7 @@ export const parseSendRedEnvLog = (value,sta) => {
     const r = value[2];
     for (let i = 0; i < r.length;i++) {
         const currencyName = CloudCurrencyType[r[i][2]];
-        
+        let otherDetail = parseExchangeDetail(r[i][6]);
         const record:LuckyMoneySendDetail = {
             rid:r[i][0].toString(),
             rtype:r[i][1],
@@ -352,7 +352,9 @@ export const parseSendRedEnvLog = (value,sta) => {
             amount:smallUnit2LargeUnit(currencyName,r[i][3]),
             time:r[i][4],
             timeShow:timestampFormat(r[i][4]),
-            codes:r[i][5]
+            codes:r[i][5],
+            curNum:otherDetail[2]||0,
+            totalNum:otherDetail[3]||0
            
         };
         recordList.push(record);
