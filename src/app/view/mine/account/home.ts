@@ -9,7 +9,7 @@ import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { walletNameAvailable } from '../../../utils/account';
-import { getLanguage, getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
 import { getLang } from '../../../../pi/util/lang';
 // ================================ 导出
@@ -35,7 +35,7 @@ export class AccountHome extends Widget {
             avatar:'',
             nickName:'',
             isUpdatingWalletName: false,
-            phone:this.language.bindPhone,
+            phone:'',
             backup,
             userInput:false
         };
@@ -81,9 +81,9 @@ export class AccountHome extends Widget {
     public walletNameInputFocus() {
         this.state.isUpdatingWalletName = true;
     }
-
+    //备份助记词
     public async backupWalletClick() {
-        const psw = await popPswBox();
+        const psw = await popPswBox(this.language.modalBoxInputTitle);
         if (!psw) return;
         const ret = await backupMnemonic(psw);
         if (ret) {
@@ -94,7 +94,7 @@ export class AccountHome extends Widget {
 
     // 导出私钥
     public async exportPrivateKeyClick() {
-        const psw = await popPswBox();
+        const psw = await popPswBox(this.language.modalBoxInputTitle);
         if (!psw) return;
         const close = popNew('app-components1-loading-loading', { text: this.language.loading });
         try {

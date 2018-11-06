@@ -20,6 +20,7 @@
                 {"zh_Hans":"导出私钥","zh_Hant":"導出私鑰","en":""}] }}
                 
                 {{: phone = {"zh_Hans":it1.phone,"zh_Hant":it1.phone,"en":""} }}
+                {{: bindPhone = {"zh_Hans":"未设置","zh_Hant":"未設置","en":""} }}
 
                 {{if it1.phone.indexOf('*') > 0}}
                 <div w-class="other-item" ev-switch-click="onSwitchChange">
@@ -29,7 +30,7 @@
                     </span>
                 </div>
                 {{else}}
-                <app-components-basicItem-basicItem>{name:{{itemTitle[0]}},describe:{{phone}}}</app-components-basicItem-basicItem>
+                <app-components-basicItem-basicItem>{name:{{itemTitle[0]}},describe:{{bindPhone}}}</app-components-basicItem-basicItem>
                 {{end}}
             </div>
             <div on-tap="changePsw">

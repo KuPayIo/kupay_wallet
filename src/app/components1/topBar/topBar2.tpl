@@ -2,7 +2,9 @@
 <div w-class="ga-top-banner" style="{{opca>0?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':'background:transparent;'}}">
     <div w-class="left-container">
         <img on-tap="backPrePage" src="../../res/image/{{opca>0 ? 'left_arrow_blue.png' : 'left_arrow_white.png'}}" w-class="ga-back" />
-        <span on-tap="backPrePage"  style="color: {{opca>0 ? '#222':'#fff'}}">{{it.text}}</span>
+        <span on-tap="backPrePage"  style="color: {{opca>0 ? '#222':'#fff'}}">
+            <pi-ui-lang>{{it.text}}</pi-ui-lang>
+        </span>
         {{if it1}}
         <widget w-tag="pi-ui-lang" w-class="offline">{zh_Hans:"离线",zh_Hant:"離線",en:"Offline"}</widget>
         {{end}}

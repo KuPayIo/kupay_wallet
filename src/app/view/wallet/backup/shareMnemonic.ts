@@ -5,18 +5,21 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { deleteMnemonic } from '../../../logic/localWallet';
-import { getLanguage, mnemonicFragmentEncrypt, popNewMessage } from '../../../utils/tools';
+import { mnemonicFragmentEncrypt, popNewMessage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 interface Props {
     fragments:any[];
 }
 export class ShareMnemonic extends Widget {
     public props:Props;
+    public language:any;
     public ok:() => void;
     public backPrePage() {
         this.ok && this.ok();
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
+        this.language = this.config.value[getLang()];
         this.init();
     }
     public init() {
@@ -29,8 +32,7 @@ export class ShareMnemonic extends Widget {
         }
         this.state = {
             encryptFragments,
-            successList,
-            cfgData:getLanguage(this)
+            successList
         };
     }
     // 分享
@@ -52,7 +54,7 @@ export class ShareMnemonic extends Widget {
         }
         if (allShared) {
             deleteMnemonic();
-            popNewMessage(this.state.cfgData.tips);
+            popNewMessage(this.language.tips);
             // this.ok && this.ok();
         }
     }

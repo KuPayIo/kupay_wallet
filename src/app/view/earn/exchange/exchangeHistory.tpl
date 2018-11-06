@@ -5,10 +5,10 @@
             
             <div w-class="topBack">
                 <img src="../../../res/image/default_avater_big.png" w-class="userHead"/>
-                <div style="margin-top: 20px;"><pi-ui-lang>{"zh_Hans":"¹²¶Ò»»","zh_Hant":"¹²ƒ¶“Q","en":""}</pi-ui-lang></div>
+                <div style="margin-top: 20px;"><pi-ui-lang>{"zh_Hans":"å…±å…‘æ¢","zh_Hant":"å…±å…Œæ›","en":""}</pi-ui-lang></div>
                 <div style="margin-bottom: 90px;">
                     <span style="font-size: 64px;">{{it1.convertNumberShow}}</span>
-                    <pi-ui-lang>{"zh_Hans":"¸öÀñ°ü","zh_Hant":"‚€¶Y°ü","en":""}</pi-ui-lang>
+                    <pi-ui-lang>{"zh_Hans":"ä¸ªç¤¼åŒ…","zh_Hant":"å€‹ç¦®åŒ…","en":""}</pi-ui-lang>
                 </div>
             </div>
             <div w-class="bottom">
@@ -16,12 +16,12 @@
                     <div style="text-align: center;height: 100%;">
                         <img src="../../../res/image/exchangeEmpty.png" style="width: 200px;height: 200px;margin-top: 210px;"/>
                         <div style="font-size: 32px;color: #888888;margin-top: 20px;">
-                            <pi-ui-lang>{"zh_Hans":"»¹Ã»ÓĞ¶Ò»»¹ıÀñÎï","zh_Hant":"ß€›]ÓĞƒ¶“Qß^¶YÎï","en":""}</pi-ui-lang>
+                            <pi-ui-lang>{"zh_Hans":"è¿˜æ²¡æœ‰å…‘æ¢è¿‡ç¤¼ç‰©","zh_Hant":"é‚„æ²’æœ‰å…Œæ›éç¦®ç‰©","en":""}</pi-ui-lang>
                         </div>
                     </div>
                 {{else}}
                     <div w-class="tips">
-                        <pi-ui-lang>{"zh_Hans":"24Ğ¡Ê±Î´±»ÁìÈ¡µÄºì°üÒÑÍË»ØÔÆÕË»§","zh_Hant":"24Ğ¡•rÎ´±»îIÈ¡µÄ¼t°üÒÑÍË»Øë…Ù~‘ô","en":""}</pi-ui-lang>
+                        <pi-ui-lang>{"zh_Hans":"24å°æ—¶æœªè¢«é¢†å–çš„çº¢åŒ…å·²é€€å›äº‘è´¦æˆ·","zh_Hant":"24å°æ™‚æœªè¢«é ˜å–çš„ç´…åŒ…å·²é€€å›é›²è³¬æˆ¶","en":""}</pi-ui-lang>
                     </div>
                     {{for ind,val of it1.recordListShow}}
                     <div on-tap="goDetail({{ind}})">
@@ -32,7 +32,7 @@
                 {{end}}
 
                 {{if it1.showMoreTips}}
-                <div w-class="endMess" id="more"><pi-ui-lang>{"zh_Hans":"µ½´Ë½áÊøÀ²","zh_Hant":"µ½´Ë½YÊøÀ²","en":""}</pi-ui-lang>^_^</div>
+                <div w-class="endMess" id="more"><pi-ui-lang>{"zh_Hans":"åˆ°æ­¤ç»“æŸå•¦","zh_Hant":"åˆ°æ­¤çµæŸå•¦","en":""}</pi-ui-lang>^_^</div>
                 {{end}}
 
             </div>
@@ -40,6 +40,6 @@
         </div>
     </div>
 
-    {{: topBarTitle = {"zh_Hans":"¶Ò»»¼ÇÂ¼","zh_Hant":"ƒ¶“QÓ›ä›","en":""} }}	
+    {{: topBarTitle = {"zh_Hans":"å…‘æ¢è®°å½•","zh_Hant":"å…Œæ›è¨˜éŒ„","en":""} }}	
 <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
 </div>

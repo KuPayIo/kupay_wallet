@@ -11,7 +11,8 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage, logoutAccount, logoutAccountDel } from '../../utils/tools';
+import { logoutAccount, logoutAccountDel } from '../../utils/tools';
+import { getLang } from '../../../pi/util/lang';
 
 interface Props {
     title:string;
@@ -23,14 +24,15 @@ interface Props {
 }
 export class ModalBoxInput extends Widget {
     public props: Props;
+    public language:any;
     public ok: (value:string) => void;
     public cancel: (fg:boolean) => void;   // fg为true表示退出APP，false表示仅关闭当前页面
 
     public create() {
         super.create();
+        this.language = this.config.value[getLang()];
         this.state = { 
             currentValue:'',
-            cfgData:getLanguage(this)
         };
     }
     /**
@@ -50,7 +52,7 @@ export class ModalBoxInput extends Widget {
      */
     public foegetPsw() {
         this.cancel && this.cancel(false);
-        popNew('app-components1-modalBox-modalBox',this.state.cfgData.modalBox,() => {
+        popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {
             logoutAccountDel();
         },() => {
             popNew('app-components1-modalBoxInput-modalBoxInput',this.props);

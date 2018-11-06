@@ -95,10 +95,3 @@ export class ChangePSW extends Widget {
     }
 }
 
-register('setting/language', (r) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.language = w.config.value[r];
-        w.paint();
-    }
-});
