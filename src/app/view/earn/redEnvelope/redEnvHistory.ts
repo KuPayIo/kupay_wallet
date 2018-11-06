@@ -139,12 +139,6 @@ export class RedEnvHistory extends Widget {
                 this.state.refresh = true;
             }, 500); 
         } 
-
-        if (scrollTop > 0) {
-            this.state.scroll = true;
-        } else {
-            this.state.scroll = false;
-        }
         this.paint();
         
     }

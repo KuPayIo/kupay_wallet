@@ -1,6 +1,7 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="chooseAddrClick" ev-refresh-click="refreshClick">
     <div w-class="top-head">
-        <app-components1-topBar-topBar>{"title":{{it.currencyName}},background:"transparent",nextImg:"../../res/image/location.png",refreshImg:"../../res/image1/refresh_white.png",text:{{it1.address}}}</app-components1-topBar-topBar>
+        {{: topBarTitle = {"zh_Hans":it.currencyName,"zh_Hant":it.currencyName,"en":""} }}
+        <app-components1-topBar-topBar>{"title":{{topBarTitle}},background:"transparent",nextImg:"../../res/image/location.png",refreshImg:"../../res/image1/refresh_white.png",text:{{it1.address}}}</app-components1-topBar-topBar>
         <div w-class="head">
             <img src="../../../res/image/currency/{{it.currencyName}}.png" w-class="currency-icon"/>
             <div w-class="asset-container">
@@ -45,8 +46,12 @@
         </div>
     </div>
     <div w-class="operating">
-        <div w-class="operating-item" on-tap="doTransferClick"><img src="../../../res/image/transfer.png" w-class="icon"/><span>{{it1.cfgData.tabs[1]}}</span></div>
+        <div w-class="operating-item" on-tap="doTransferClick"><img src="../../../res/image/transfer.png" w-class="icon"/>
+            <span><pi-ui-lang>{"zh_Hans":"转账","zh_Hant":"轉賬","en":""}</pi-ui-lang></span>
+        </div>
         <div w-class="line"></div>
-        <div w-class="operating-item" on-tap="doReceiptClick" style="background: #318DE6;"><img src="../../../res/image/19.png" w-class="icon"/><span>{{it1.cfgData.tabs[2]}}</span></div>
+        <div w-class="operating-item" on-tap="doReceiptClick" style="background: #318DE6;"><img src="../../../res/image/19.png" w-class="icon"/>
+            <span><pi-ui-lang>{"zh_Hans":"收款","zh_Hant":"收款","en":""}</pi-ui-lang></span>
+        </div>
     </div>
 </div>
