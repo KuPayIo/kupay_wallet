@@ -1,7 +1,7 @@
 /**
  * 主动向后端通讯
  */
-import { closeCon, ConState, getConState, open, request, setBottomLayerReloginMsg, setUrl } from '../../pi/net/ui/con_mgr';
+import { ConState, getConState, open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
 import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
@@ -26,10 +26,10 @@ console.log('conPort=',conPort);
 export const thirdUrlPre = `http://${conIp}:${conPort}/data/proxy?`;
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+export const sharePerUrl = `http://${conIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
-export const shareDownload = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/download.html`;
+export const shareDownload = `http://${conIp}/wallet/phoneRedEnvelope/download.html`;
 
 // 上传图片url
 export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;
@@ -58,17 +58,39 @@ export const requestAsync = async (msg: any): Promise<any> => {
 };
 
 /**
+ * 通用的异步通信 需要登录
+ * 
+ * 需要登录权限的接口
+ * emit_red_bag  发红包
+ * to_cash       eth提现
+ * btc_to_cash   btc提现
+ * manage_money@buy    购买理财
+ * manage_money@sell   出售理财
+ */
+export const requestAsyncNeedLogin = async (msg: any) => {
+    const isLogin = getStore('user/isLogin');
+    if (!isLogin) {
+        const secretHash = getStore('user/secretHash');
+        await defaultLogin(secretHash,getStore('user/conRandom'));
+    }
+
+    return requestAsync(msg);
+    
+};
+
+/**
  * 申请自动登录token
  */
-export const applyAutoLogin = () => {
+export const applyAutoLogin = async () => {
+    const id = await fetchDeviceId();
+    const deviceId = id.toString();
     const msg = { 
         type: 'wallet/user@set_auto_login', 
         param: { 
-            device_id: fetchDeviceId()
+            device_id:deviceId
         }
     };
     requestAsync(msg).then(res => {
-        const deviceId = fetchDeviceId();
         const decryptToken = encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
     });
@@ -77,63 +99,81 @@ export const applyAutoLogin = () => {
 /**
  * 自动登录
  */
-export const autoLogin = (serverTimestamp:number) => {
-    const deviceId = fetchDeviceId();
-    const token = decrypt(getStore('user/token'),deviceId);
+export const autoLogin = async (conRandom:string) => {
+    const deviceId = await fetchDeviceId();
+    console.log('deviceId -------',deviceId);
+    const token = decrypt(getStore('user/token'),deviceId.toString());
     const msg = { 
         type: 'wallet/user@auto_login', 
         param: { 
             device_id: deviceId,
-            timestamp:serverTimestamp,
             token,
-            random:getStore('user/conRandom')
+            random:conRandom
         }
     };
     requestAsync(msg).then(res => {
         setStore('user/isLogin', true);
         console.log('自动登录成功-----------',res);
-    }).catch(() => {
-        // console.log();
+    }).catch((res) => {
+        setStore('user/token','');
     });
 };
 /**
  * 创建钱包后默认登录
  * @param mnemonic 助记词
  */
-export const defaultLogin = async (hash:string) => {
+export const defaultLogin = async (hash:string,conRandom:string) => {
     const getMnemonicByHash = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonicByHash;
     const mnemonic = getMnemonicByHash(hash);
     const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
     console.log('================',wlt.exportPrivateKey());
     const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
-    const signStr = sign(getStore('user/conRandom'), wlt.exportPrivateKey());
+    const signStr = sign(conRandom, wlt.exportPrivateKey());
     const msgLogin = { type: 'login', param: { sign: signStr } };
-    const res: any = await requestAsync(msgLogin);
-    if (res.result === 1) {
+
+    return requestAsync(msgLogin).then(() => {
+        applyAutoLogin();
         setStore('user/isLogin', true);
-    }
+    });
+
 };
 
 // const defaultConUser = '0x00000000000000000000000000000000000000000';
+// stateChangeRegister((res) => {
+//     const conState = res.con;
+//     const login = res.login;
+//     console.log('stateChangeRegister--------------',res);
+// });
+
+// 设置重登录回调
+setReloginCallback((res) => {
+    const rtype = res.type;
+    if (rtype === 'logerror') {  //  重登录失败，登录流程重走一遍
+        openConnect();
+    } else {
+        setStore('user/isLogin',true);
+    }
+});
 /**
  * 开启连接
  */
 export const openConnect = async () => {
-    const conState = getConState();
-    if (conState === ConState.opened) {
-        getRandom();
-    } else {
-        setUrl(wsUrl);
-        open(conSuccess,conError,conClose,conReOpen);
-    }
-    
+    // const conState = getConState();
+    // if (conState === ConState.opened) {
+    //     getRandom();
+    // } else {
+    setUrl(wsUrl);
+    open(conSuccess,conError,conClose,conReOpen);
+    // }
 };
 
 /**
  * 连接成功回调
  */
 const conSuccess = () => {
+    console.log('con success');
+    setStore('user/offline',false);
     getRandom();
 };
 
@@ -141,21 +181,27 @@ const conSuccess = () => {
  * 连接出错回调
  */
 const conError = (err) => {
+    console.log('con error');
+    setStore('user/offline',true);
     checkCreateAccount();
+    
 };
 
 /**
  * 连接关闭回调
  */
 const conClose = () => {
-    popNewMessage('连接已断开');
-    closeCon();
+    console.log('con close');
+    setStore('user/isLogin',false);
+    setStore('user/offline',true);
 };
 
 /**
  * 重新连接回调
  */
 const conReOpen = () => {
+    console.log('con reopen');
+    setStore('user/offline',false);
     // console.log();
 };
 
@@ -163,6 +209,7 @@ const conReOpen = () => {
  * 获取随机数
  */
 export const getRandom = async (cmd?:number) => {
+    console.log('getRandom--------------');
     const wallet = getStore('wallet');
     if (!wallet) return;
     const client = 'android 20';
@@ -180,10 +227,21 @@ export const getRandom = async (cmd?:number) => {
     };
     try {
         const resp = await requestAsync(msg);
-        setStore('user/conRandom', resp.rand);
-        setStore('user/conUid', resp.uid);
-        afterGetRandomAction(resp.timestamp.value);
+        // const serverTimestamp = resp.timestamp.value;
+        const conRandom = resp.rand;
+        if (getStore('user/token')) {
+            autoLogin(conRandom);
+        }
+        const secretHash = getStore('user/secretHash');
+        if (secretHash) {
+            defaultLogin(secretHash,conRandom);
+        }
+
         setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
+        
+        setStore('user/conUid', resp.uid);
+        setStore('user/conRandom', conRandom);
+        checkCreateAccount();
     } catch (resp) {
         if (resp.type === 1014) {
             popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
@@ -201,27 +259,7 @@ export const getRandom = async (cmd?:number) => {
                 checkCreateAccount();
             });
         }
-        
-        return;
     }
-    checkCreateAccount();
-};
-
-const afterGetRandomAction = (serverTimestamp:number) => {
-    const secretHash = getStore('user/secretHash');
-    if (secretHash) {
-        defaultLogin(secretHash);
-    }
-
-    if (getStore('user/token')) {
-        autoLogin(serverTimestamp);
-    }
-
-     // eth gasPrice
-    fetchGasPrices();
-
-     // btc fees
-    fetchBtcFees();
 };
 
 /**
@@ -393,7 +431,7 @@ export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount:
     };
 
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
 
         return res.value;
     } catch (err) {
@@ -410,6 +448,7 @@ export const convertRedBag = async (cid) => {
     const msg = { type: 'convert_red_bag', param: { cid: cid } };
 
     try {
+        // tslint:disable-next-line:no-unnecessary-local-variable
         const res = await requestAsync(msg);
 
         return res;
@@ -916,7 +955,7 @@ export const withdrawFromServer = async (toAddr:string,value:string) => {
     };
 
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
         console.log('withdrawFromServer',res);
 
         return res.txid;
@@ -940,7 +979,7 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
     };
 
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
 
         return res.txid;
     } catch (err) {
@@ -1101,7 +1140,7 @@ export const buyProduct = async (pid:any,count:any) => {
     };
     
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
         console.log('buyProduct',res);
         if (res.result === 1) {
             getProductList();
@@ -1151,7 +1190,7 @@ export const buyBack = async (timeStamp:any) => {
     };
     
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
         console.log('buyBack',res);
 
         return true;

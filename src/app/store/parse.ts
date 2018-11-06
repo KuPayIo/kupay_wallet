@@ -4,7 +4,7 @@ import { PAGELIMIT } from '../utils/constants';
 import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
-import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, MiningRank, TaskSid } from './interface';
+import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, MiningRank, PurchaseHistory, TaskSid } from './interface';
 import { getStore } from './memstore';
 /**
  * 解析数据

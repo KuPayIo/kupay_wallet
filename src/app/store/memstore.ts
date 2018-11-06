@@ -149,14 +149,14 @@ export const deleteAccount = (id:string) => {
  * indexDB数据初始化
  */
 const initFile = () => {
-    console.time('initFile');
+    // console.time('initFile');
     initFileStore().then(() => {
         if (!store.user.id) return;
         getFile(store.user.id,(value,key) => {
-            console.timeEnd('initFile');
+            // console.timeEnd('initFile');
             if (!value) return;
             initTxHistory(value);
-            console.log('store init success',store);
+            // console.log('store init success',store);
         },() => {
             console.log('read error');
         });
@@ -400,33 +400,37 @@ const accountChange = () => {
 
     const wallet = getStore('wallet');
     const fileTxHistorys = [];
-    const localCurrencyRecords = wallet.currencyRecords.map(record => {
-        const addrs = record.addrs.map(info => {
-            const fileTxHistory:FileTxHistory = {
-                currencyName:record.currencyName,
-                addr:info.addr,
-                txHistory:info.txHistory
-            };
-            fileTxHistorys.push(fileTxHistory);
-
+    let localWallet:LocalWallet = null;
+    if (wallet) {
+        const localCurrencyRecords = wallet.currencyRecords.map(record => {
+            const addrs = record.addrs.map(info => {
+                const fileTxHistory:FileTxHistory = {
+                    currencyName:record.currencyName,
+                    addr:info.addr,
+                    txHistory:info.txHistory
+                };
+                fileTxHistorys.push(fileTxHistory);
+    
+                return {
+                    addr:info.addr,
+                    balance:info.balance
+                };
+            });
+    
             return {
-                addr:info.addr,
-                balance:info.balance
+                ...record,
+                addrs
             };
         });
-
-        return {
-            ...record,
-            addrs
+        
+        localWallet = {
+            vault: wallet.vault,                      
+            isBackup: wallet.isBackup,               
+            showCurrencys: wallet.showCurrencys,       
+            currencyRecords: localCurrencyRecords
         };
-    });
+    }
     
-    const localWallet:LocalWallet = {
-        vault: wallet.vault,                      
-        isBackup: wallet.isBackup,               
-        showCurrencys: wallet.showCurrencys,       
-        currencyRecords: localCurrencyRecords
-    };
     const newAccount: Account = {
         user: localUser,
         wallet: localWallet,
@@ -481,6 +485,7 @@ const handlerMap: HandlerMap = new HandlerMap();
 const store: Store = {
     user: {
         id: '',                      // 该账号的id
+        offline:true,               // 连接状态
         isLogin: false,              // 登录状态
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
@@ -490,9 +495,9 @@ const store: Store = {
         secretHash: '',             // 密码hash缓存   
         info: {                      // 用户基本信息
             nickName: '',           // 昵称
-            avatar: '',            // 头像
-            phoneNumber: '',       // 手机号
-            isRealUser: false      // 是否是真实用户
+            avatar: '',             // 头像
+            phoneNumber: '',        // 手机号
+            isRealUser: false       // 是否是真实用户
         }
     },
     wallet: null,

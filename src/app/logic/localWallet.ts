@@ -12,14 +12,7 @@ import { getStore, setStore } from '../store/memstore';
 import { ahash } from '../utils/ahash';
 import { defalutShowCurrencys, lang } from '../utils/constants';
 import { restoreSecret } from '../utils/secretsBase';
-import {
-  calcHashValuePromise,
-  getXOR,
-  hexstrToU8Array,
-  popNewLoading,
-  popNewMessage,
-  u8ArrayToHexstr
-} from '../utils/tools';
+import { calcHashValuePromise,getXOR,hexstrToU8Array,popNewLoading,popNewMessage,u8ArrayToHexstr } from '../utils/tools';
 import { getMnemonic } from '../utils/walletTools';
 import { dataCenter } from './dataCenter';
 

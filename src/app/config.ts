@@ -7,249 +7,239 @@ export const dev_mode = 'dev';
 
 // 主网erc20
 const ERC20TokensMainnet = {
-    BNB: {
-        contractAddr: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52',
-        description: 'BNB',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    TRX:{
+        contractAddr:'0xf230b790e05390fc8295f4d3f60332c93bed42e2',
+        description:'TRON',
+        decimals:6
     },
-    VEN: {
-        contractAddr: '0xd850942ef8811f2a866692a623011bde52a462c1',
-        description: 'VeChain',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    BNB:{
+        contractAddr:'0xB8c77482e45F1F44dE1745F52C74426C631bDD52',
+        description:'Binance Coin',
+        decimals:18
     },
-    OMG: {
-        contractAddr: '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07',
-        description: 'OmiseGO',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    WTC:{
+        contractAddr:'0xb7cb1c96db6b22b0d3d9536e0108d062bd488f74',
+        description:'Walton',
+        decimals:18
     },
-    ZRX: {
-        contractAddr: '0xe41d2489571d322189246dafa5ebde1f4699f498',
-        description: 'ZRX',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    VEN:{
+        contractAddr:'0xd850942ef8811f2a866692a623011bde52a462c1',
+        description:'VeChain',
+        decimals:18
     },
-    MKR: {
-        contractAddr: '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
-        description: 'Maker',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    MKR:{
+        contractAddr:'0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
+        description:'Maker',
+        decimals:18
     },
-    BAT: {
-        contractAddr: '0x0d8775f648430679a709e98d2b0cb6250d2887ef',
-        description: 'BAT',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    OMG:{
+        contractAddr:'0xd26114cd6EE289AccF82350c8d8487fedB8A0C07',
+        description:'OmiseGO',
+        decimals:18
     },
-    XUC: {
-        contractAddr: '0xc324a2f6b05880503444451b8b27e6f9e63287cb',
-        description: 'ExchangeUnion',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    ZRX:{
+        contractAddr:'0xe41d2489571d322189246dafa5ebde1f4699f498',
+        description:'ZRX',
+        decimals:18
     },
-    REP: {
-        contractAddr: '0x1985365e9f78359a9B6AD760e32412f4a445E862',
-        description: 'Reputation',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    ZIL:{
+        contractAddr:'0x05f4a42e251f2d52b8ed15e9fedaacfcef1fad27',
+        description:'Zilliqa',
+        decimals:12
     },
-    BTM: {
-        contractAddr: '0xcb97e65f07da24d46bcdd078ebebd7c6e6e3d750',
-        description: 'Bytom',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    AE:{
+        contractAddr:'0x5ca9a71b1d01849c0a95490cc00559717fcf0d1d',
+        description:'Aeternity',
+        decimals:18
     },
-    GNT: {
-        contractAddr: '0xa74476443119A942dE498590Fe1f2454d7D4aC0d',
-        description: 'Golem',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    ICX:{
+        contractAddr:'0xb5a5f22694352c15b00323844ad545abb2b11028',
+        description:'ICON',
+        decimals:18
     },
-    PPT: {
-        contractAddr: '0xd4fa1460f537bb9085d22c7bccb5dd450ef28e3a',
-        description: 'Populous',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    BTM:{
+        contractAddr:'0xcb97e65f07da24d46bcdd078ebebd7c6e6e3d750',
+        description:'Bytom',
+        decimals:8
     },
-    SNT: {
-        contractAddr: '0x744d70fdbe2ba4cf95131626614a1763df805b9e',
-        description: 'StatusNetwork',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    LINK:{
+        contractAddr:'0x514910771af9ca656af840dff83e8264ecf986ca',
+        description:'BAChainLinkT',
+        decimals:18
     },
-    AION: {
-        contractAddr: '0x4CEdA7906a5Ed2179785Cd3A40A69ee8bc99C466',
-        description: 'AION',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    REP:{
+        contractAddr:'0x1985365e9f78359a9B6AD760e32412f4a445E862',
+        description:'Reputation',
+        decimals:18
     },
-    FUN: {
-        contractAddr: '0x419d0d8bdd9af5e606ae2232ed285aff190e711b',
-        description: 'FunFair',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    GNT:{
+        contractAddr:'0xa74476443119A942dE498590Fe1f2454d7D4aC0d',
+        description:'Golem',
+        decimals:18
     },
-    KNC: {
-        contractAddr: '0xdd974d5c2e2928dea5f71b9825b8b646686bd200',
-        description: 'KyberNetwork',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    XPA:{
+        contractAddr:'0x90528aeb3a2b736b780fd1b6c478bb7e1d643170',
+        description:'XPlay',
+        decimals:18
     },
-    MCO: {
-        contractAddr: '0xb63b606ac810a52cca15e44bb630fd42d8d1d83d',
-        description: 'Monaco',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    PPT:{
+        contractAddr:'0xd4fa1460f537bb9085d22c7bccb5dd450ef28e3a',
+        description:'Populous',
+        decimals:8
     },
-    POWR: {
-        contractAddr: '0x595832f8fc6bf59c85c527fec3740a1b7a361269',
-        description: 'PowerLedger',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    SNT:{
+        contractAddr:'0x744d70fdbe2ba4cf95131626614a1763df805b9e',
+        description:'StatusNetwork',
+        decimals:18
     },
-    MANA: {
-        contractAddr: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942',
-        description: 'Decentraland',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    PRL:{
+        contractAddr:'0x1844b21593262668b7248d0f57a220caaba46ab9',
+        description:'Oyster Pearl',
+        decimals:18
     },
-    KIN: {
-        contractAddr: '0x818Fc6C2Ec5986bc6E2CBf00939d90556aB12ce5',
-        description: 'Kin',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    KCS:{
+        contractAddr:'0x039b5649a59967e3e936d7471f9c3700100ee1ab',
+        description:'KuCoin Shares',
+        decimals:6
     },
-    VERI: {
-        contractAddr: '0x8f3470A7388c05eE4e7AF3d01D8C722b0FF52374',
-        description: 'Veritaseum',
-        decimals: 18,
-        rate: { CNY: 1, USD: 1 }
+    IOST:{
+        contractAddr:'0xfa1a856cfa3409cfa145fa4e20eb270df3eb21ab',
+        description:'IOStoken',
+        decimals:18
+    },
+    AION:{
+        contractAddr:'0x4CEdA7906a5Ed2179785Cd3A40A69ee8bc99C466',
+        description:'AION',
+        decimals:8
+    },
+    LRC:{
+        contractAddr:'0xef68e7c694f40c8202821edf525de3782458639f',
+        description:'Loopring ',
+        decimals:18
+    },
+    DGD:{
+        contractAddr:'0xe0b7927c4af23765cb51314a0e0521a9645f0e2a',
+        description:'DigixDAO',
+        decimals:9
     }
 };
 
 // 测试网erc20
 const ERC20TokensTestnet = {
-    BNB: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'BNB',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    TRX:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'TRON',
+        decimals:18
     },
-    VEN: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'VeChain',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    BNB:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Binance Coin',
+        decimals:18
     },
-    OMG: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'OmiseGO',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    WTC:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Walton',
+        decimals:18
     },
-    ZRX: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'ZRX',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    VEN:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'VeChain',
+        decimals:18
     },
-    MKR: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'Maker',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    MKR:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Maker',
+        decimals:18
     },
-    BAT: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'BAT',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    OMG:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'OmiseGO',
+        decimals:18
     },
-    XUC: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'ExchangeUnion',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    ZRX:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'ZRX',
+        decimals:18
     },
-    REP: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'Reputation',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    ZIL:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Zilliqa',
+        decimals:12
     },
-    BTM: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'Bytom',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    AE:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Aeternity',
+        decimals:18
     },
-    GNT: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'Golem',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    ICX:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'ICON',
+        decimals:18
     },
-    PPT: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'Populous',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    BTM:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Bytom',
+        decimals:8
     },
-    SNT: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'StatusNetwork',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    LINK:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'BAChainLinkT',
+        decimals:18
     },
-    AION: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'AION',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    REP:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Reputation',
+        decimals:18
     },
-    FUN: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'FunFair',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    GNT:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Golem',
+        decimals:18
     },
-    KNC: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'KyberNetwork',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    XPA:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'XPlay',
+        decimals:18
     },
-    MCO: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'Monaco',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    PPT:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Populous',
+        decimals:8
     },
-    POWR: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'PowerLedger',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    SNT:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'StatusNetwork',
+        decimals:18
     },
-    MANA: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'Decentraland',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    PRL:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Oyster Pearl',
+        decimals:18
     },
-    KIN: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'Kin',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    KCS:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'KuCoin Shares',
+        decimals:6
     },
-    VERI: {
-        contractAddr: '0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
-        description: 'Veritaseum',
-        decimals: 8,
-        rate: { CNY: 1, USD: 1 }
+    IOST:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'IOStoken',
+        decimals:18
+    },
+    AION:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'AION',
+        decimals:8
+    },
+    LRC:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'Loopring ',
+        decimals:18
+    },
+    DGD:{
+        contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'DigixDAO',
+        decimals:9
     }
 };
 // 导出ERC20Tokens

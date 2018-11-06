@@ -7,10 +7,12 @@ import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
+import { getDeviceId } from '../logic/native';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
+import { getFile } from '../store/filestore';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
-import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
+import { Account, FileTxHistory, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
@@ -265,7 +267,8 @@ export const urlParams = (url: string, key: string) => {
  * @param banlance 金额
  */
 export const formatBalance = (banlance: number) => {
-    if (!banlance) return 0;
+    banlance = Number(banlance);
+    if (!banlance) return '0.00';
 
     return Number(banlance.toFixed(6));
 };
@@ -841,6 +844,7 @@ export const hasWallet = () => {
             cancelText: '暂时不'
         }, () => {
             popNew('app-view-wallet-create-home');
+            // popNew('app-view-base-localImg');
         });
 
         return false;
@@ -1078,9 +1082,23 @@ export const getConfirmBlockNumber = (currencyName: string, amount: number) => {
 /**
  * 获取设备唯一id
  */
-export const fetchDeviceId = () => {
-
-    return getStore('user/id');
+export const fetchDeviceId = async () => {
+    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
+        return new Promise((resolve,reject) => {
+            const hash256 = sha256(getStore('user/id'));
+            resolve(hash256);
+        });
+    } else {// ============================mobile
+        return new Promise((resolve,reject) => {
+            getDeviceId((deviceId:string) => {
+                const hash256 = sha256(deviceId + getStore('user/id'));
+                resolve(hash256);
+            },(err) => {
+                reject(err);
+            });
+        });
+    }
+   
 };
 
 /**
@@ -1179,11 +1197,46 @@ export const logoutAccountDel = () => {
         cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
     };
     
+    const activity = {
+        luckyMoney: {
+            sends: null,          // 发送红包记录
+            exchange: null,       // 兑换红包记录
+            invite: null          // 邀请红包记录
+        },
+        mining: {
+            total: null,      // 挖矿汇总信息
+            history: null, // 挖矿历史记录
+            addMine: [],  // 矿山增加项目
+            mineRank: null,    // 矿山排名
+            miningRank: null,  // 挖矿排名
+            itemJump: null
+        },                       // 挖矿
+        dividend: {
+            total: null,         // 分红汇总信息
+            history: null       // 分红历史记录
+        },
+        financialManagement: {          // 理财
+            products: null,
+            purchaseHistories: null
+        }
+    };
+
+    const setting = getStore('setting');
+    setting.lockScreen = {
+        ...setting.lockScreen,
+        locked:false
+    };
     setStore('wallet',null,false);
     setStore('cloud',cloud,false);
     setStore('user',user);
+    setStore('activity',activity);
+    setStore('setting',setting);
     setBottomLayerReloginMsg('','','');
     closeCon();
+    setTimeout(() => {
+        openConnect();
+    },100);
+    
 };
 
 /**
@@ -1202,6 +1255,7 @@ export const loginSuccess = (account:Account) => {
     const fileUser = account.user;
     const user:User = {
         isLogin: false,
+        offline:true,
         conRandom:'',
         conUid:'',
         secretHash:'',
@@ -1246,16 +1300,13 @@ export const loginSuccess = (account:Account) => {
         cloudWallet.balance = localCloudWallets.get(key).balance;
     }
 
-    setStore('wallet',wallet);
+    setStore('wallet',wallet,false);
+    setStore('cloud',cloud,false);
     setStore('user',user);
-    setStore('cloud',cloud);
     setStore('flags',{});
-    console.log(getStore('user'));
-    console.log(getStore('wallet'));
-    console.log(getStore('cloud'));
-    console.log(getStore('flags'));
     openConnect();
 };
+
 /**
  * 判断是否是有效的货币地址
  */
@@ -1368,6 +1419,7 @@ export const parseTransferExtraInfo = (input: string) => {
  */
 export const updateLocalTx = (tx: TxHistory) => {
     const wallet = getStore('wallet');
+    if (!wallet) return;
     const currencyName = tx.currencyName;
     const addr = tx.addr;
     wallet.currencyRecords.forEach(record => {

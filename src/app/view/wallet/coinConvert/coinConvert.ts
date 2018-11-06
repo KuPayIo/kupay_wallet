@@ -8,8 +8,8 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../../net/pullWallet';
-import { MarketInfo, MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { getBorn, register, updateStore } from '../../../store/memstore';
+import { MarketInfo, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
+import { getStore, register, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, fetchBtcMinerFee, fetchGasPrice, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 import { sat2Btc, wei2Eth } from '../../../utils/unitTools';
@@ -86,7 +86,7 @@ export class CoinConvert extends Widget {
         const obj = await estimateMinerFee(this.props.currencyName);
         const gasLimit = obj.gasLimit;
         // tslint:disable-next-line:max-line-length
-        const minerFee = cn === 'ETH' ? wei2Eth(gasLimit * fetchGasPrice(MinerFeeLevel.STANDARD)) : sat2Btc(fetchBtcMinerFee(MinerFeeLevel.STANDARD));
+        const minerFee = cn === 'ETH' ? wei2Eth(gasLimit * fetchGasPrice(MinerFeeLevel.Standard)) : sat2Btc(fetchBtcMinerFee(MinerFeeLevel.Standard));
         this.state.outMinerFee = minerFee;
         this.paint();
     }
@@ -111,6 +111,7 @@ export class CoinConvert extends Widget {
     // 设置币币兑换的pair  如btc_eth
     public setPair() {
         this.state.pair = `${this.state.outCurrency.toLowerCase()}_${this.state.inCurrency.toLowerCase()}`;
+        // this.state.pair = `${this.state.outCurrency}_${this.state.inCurrency}`;
     }
     // 重置汇率相关显示
     public resetMarketInfo(marketInfo:MarketInfo) {
@@ -250,7 +251,7 @@ export class CoinConvert extends Widget {
             }
             const depositAddress = returnData.deposit;
             const t = new Date();
-            const record:TransRecordLocal = {
+            const record:TxHistory = {
                 hash:'',
                 txType: TxType.Exchange,
                 fromAddr: this.state.curOutAddr,
@@ -279,7 +280,7 @@ export class CoinConvert extends Widget {
             this.init();
             this.paint();
         },(err) => {
-            console.error(err);
+            console.log(err);
             popNewMessage(this.state.cfgData.messages[3]);
             close.callback(close.widget);
             this.init();
@@ -311,17 +312,17 @@ export class CoinConvert extends Widget {
         };
         console.log('tx',tx);
         const addrLowerCase = this.state.curOutAddr.toLowerCase();
-        const shapeShiftTxsMap = getBorn('shapeShiftTxsMap');
+        const shapeShiftTxsMap = getStore('third/shapeShiftTxsMap');
         const shapeShiftTxs =  shapeShiftTxsMap.get(addrLowerCase) || { addr:addrLowerCase,list:[] };
         shapeShiftTxs.list.push(tx);
         shapeShiftTxsMap.set(addrLowerCase,shapeShiftTxs);
-        updateStore('shapeShiftTxsMap',shapeShiftTxsMap);
+        setStore('third/shapeShiftTxsMap',shapeShiftTxsMap);
     }
     
 }
 
 // =====================================本地
-register('shapeShiftMarketInfo', marketInfo => {
+register('third/shapeShiftMarketInfo', marketInfo => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.resetMarketInfo(marketInfo);

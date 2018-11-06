@@ -8,7 +8,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getTransactionsByAddr } from '../../../net/pullWallet';
 import { ShapeShiftTx, ShapeShiftTxs } from '../../../store/interface';
-import { find, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, timestampFormat } from '../../../utils/tools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -130,7 +130,7 @@ export class ConvertHistory extends Widget {
 
 // =================================本地
 
-register('shapeShiftTxsMap', shapeShiftTxsMap => {
+register('third/shapeShiftTxsMap', shapeShiftTxsMap => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.shapeShiftTxsUpdate(shapeShiftTxsMap);
