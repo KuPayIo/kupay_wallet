@@ -3,12 +3,12 @@
  */
 // =================================================导入
 import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-import { regPhone, getMineDetail } from '../../../net/pull';
-import { setStore, register } from '../../../store/memstore';
-import { getUserInfo } from '../../../utils/tools';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { getMineDetail, regPhone } from '../../../net/pull';
+import { setStore } from '../../../store/memstore';
+import { getUserInfo } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -27,7 +27,7 @@ export class BindPhone extends Widget {
         this.state = {
             phone:'',
             code:[],
-            isSuccess:true,
+            isSuccess:true
         };
     }
 
@@ -119,6 +119,7 @@ export class BindPhone extends Widget {
         const ind = this.state.code.length; 
         // tslint:disable-next-line:prefer-template
         document.getElementById('codeInput' + ind).focus();
+        this.state.isSuccess = true;
         this.paint();
     }
 
