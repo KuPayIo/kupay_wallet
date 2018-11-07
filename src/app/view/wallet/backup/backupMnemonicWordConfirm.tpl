@@ -22,8 +22,8 @@
 				{{end}}
 			</div>
 			
-			<div w-class="btnBox">
-				<div ev-btn-tap="nextStepClick" w-class="btn"><app-components1-btn-btn>{"name":{{it1.cfgData.sure}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
+			<div w-class="btnBox" ev-btn-tap="nextStepClick">
+				<app-components1-btn-btn>{"name":{{it1.cfgData.sure}},"types":"big","color":"blue"}</app-components1-btn-btn>
 			</div>
 		</div>
 	</div>

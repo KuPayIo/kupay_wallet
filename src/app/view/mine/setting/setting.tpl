@@ -16,6 +16,7 @@
                 </div>
             </div>
 
+            {{if it1.wallet}}
             <div w-class="mode">
                 <div w-class="item" on-tap="logOut">
                     <span w-class="itemName">{{it1.cfgData.itemTitle[4]}}</span>
@@ -24,7 +25,7 @@
                     <span w-class="itemName" style="color: #F5A264;">{{it1.cfgData.itemTitle[5]}}</span>
                 </div>
             </div>
-
+            {{end}}
         </div>
         <div style="height: 128px;"></div>
     </div>

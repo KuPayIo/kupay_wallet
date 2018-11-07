@@ -19,9 +19,6 @@ export class BaseShare extends Widget {
     public props: Props;
     public ok: (success:boolean) => void;
     public cancel: (success:boolean) => void;
-    constructor() {
-        super();
-    }
 
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);

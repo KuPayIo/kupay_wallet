@@ -1,5 +1,5 @@
 {{let opca = it.scrollHeight/200 || 0}}
-<div w-class="ga-top-banner" style="{{opca>0?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 2px solid #cccccc;':'background:transparent;'}}">
+<div w-class="ga-top-banner" style="{{opca>0?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 1px solid #cccccc;':'background:transparent;'}}">
     <div w-class="left-container">
         <img on-tap="backPrePage" src="../../res/image/{{opca>0 ? 'left_arrow_blue.png' : 'left_arrow_white.png'}}" w-class="ga-back" />
         <span on-tap="backPrePage"  style="color: {{opca>0 ? '#222':'#fff'}}">{{it.text}}</span>

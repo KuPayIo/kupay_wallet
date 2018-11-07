@@ -3,10 +3,10 @@
     width: 100%;
     position: relative;
     padding-top: 40px;
+    height: 127px;
 }
 .outer-bottom{
     border-bottom: 1px solid #cccccc;
-    margin-bottom: -1px;
 }
 .ga-top-banner{
     width: 100%;
@@ -16,7 +16,6 @@
     position: relative;
     color: #222;
     box-sizing: border-box;
-    height: 88px;
 }
 .left-container{
     flex: 1 0 0;
