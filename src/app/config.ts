@@ -799,7 +799,8 @@ KuPay团队
             loading: '登录中...',
             exporting: '导出中...',
             loginSuccess: '登录成功',
-            wrong: '错误'
+            wrong: '错误',
+            PswBoxInputTitle: '请输入密码'
         },
         // 转账交易相关信息
         transfer: {
@@ -1402,7 +1403,8 @@ KuPay团队
             loading: '登錄中...',
             exporting: '導出中...',
             loginSuccess: '登錄成功',
-            wrong: '錯誤'
+            wrong: '錯誤',
+            PswBoxInputTitle: '請輸入密碼'
         },
         // 转账交易相关信息
         transfer: {

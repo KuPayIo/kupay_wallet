@@ -8,6 +8,7 @@ import { getPurchaseRecord } from '../../../net/pull';
 import { Product, PurchaseHistory } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { calPercent, fetchHoldedProductAmount, getLanguage, hasWallet } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -19,6 +20,7 @@ interface Props {
 }
 export class ProductDetail extends Widget {
     public ok:() => void;
+    public language:any;
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -27,6 +29,7 @@ export class ProductDetail extends Widget {
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         if (getStore('user/conUid')) {
             // 获取购买记录
             getPurchaseRecord();
@@ -39,7 +42,6 @@ export class ProductDetail extends Widget {
             amount:1,
             leftPercent:  res.left,
             usePercent: res.use,
-            cfgData:getLanguage(this),
             scroll:false,
             scrollHeight:0
         };

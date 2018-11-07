@@ -16,6 +16,7 @@ import { Account, FileTxHistory, getCloudBalances, getStore, initCloudWallets, L
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
+import { getLang } from '../../pi/util/lang';
 
 export const deepCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -521,9 +522,10 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
     });
 };
 
-export const popPswBox = async (BoxInputTitle?,content = []) => {
+export const popPswBox = async (content = []) => {
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
+        let BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
         const psw = await openMessageboxPsw(BoxInputTitle,content);
 
         return psw;

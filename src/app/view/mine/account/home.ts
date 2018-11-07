@@ -83,7 +83,7 @@ export class AccountHome extends Widget {
     }
     //备份助记词
     public async backupWalletClick() {
-        const psw = await popPswBox(this.language.modalBoxInputTitle);
+        const psw = await popPswBox();
         if (!psw) return;
         const ret = await backupMnemonic(psw);
         if (ret) {
@@ -94,7 +94,7 @@ export class AccountHome extends Widget {
 
     // 导出私钥
     public async exportPrivateKeyClick() {
-        const psw = await popPswBox(this.language.modalBoxInputTitle);
+        const psw = await popPswBox();
         if (!psw) return;
         const close = popNew('app-components1-loading-loading', { text: this.language.loading });
         try {

@@ -12,6 +12,7 @@ import { blockchainUrl, etherscanUrl } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { canResend, copyToClipboard, getLanguage, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -24,17 +25,18 @@ interface Props {
 export class TransactionDetails extends Widget {
     public props:Props;
     public ok:() => void;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const tx = fetchLocalTxByHash1(this.props.hash);
         // console.log(tx);
         const obj = parseStatusShow(tx);
-        const cfg = getLanguage(this);
         const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
-        const webText = tx.currencyName === 'BTC' ? cfg.tips[0] : cfg.tips[1];
+        const webText = tx.currencyName === 'BTC' ? this.language.tips[0] : this.language.tips[1];
         this.state = {
             tx,
             hashShow:parseAccount(tx.hash),
@@ -45,7 +47,6 @@ export class TransactionDetails extends Widget {
             canResend:canResend(tx),
             qrcode:`${qrcodePrefix}${tx.hash}`,
             webText,
-            cfgData:cfg
         };
     }
     public backPrePage() {
@@ -64,15 +65,15 @@ export class TransactionDetails extends Widget {
 
     public copyToAddr() {
         copyToClipboard(this.state.tx.toAddr);
-        popNewMessage(this.state.cfgData.tips[2]);
+        popNewMessage(this.language.tips[2]);
     }
     public copyFromAddr() {
         copyToClipboard(this.state.tx.fromAddr);
-        popNewMessage(this.state.cfgData.tips[2]);
+        popNewMessage(this.language.tips[2]);
     }
     public copyHash() {
         copyToClipboard(this.state.tx.hash);
-        popNewMessage(this.state.cfgData.tips[2]);
+        popNewMessage(this.language.tips[2]);
     }
     public openNewWeb() {
         popNew('app-components-openLink-openLink',{},() => {
@@ -98,7 +99,7 @@ export class TransactionDetails extends Widget {
                 popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
             },
             fail: (result) => { 
-                popNew('app-components-message-message',{ content:this.state.cfgData.shareScreen });
+                popNew('app-components-message-message',{ content:this.language.shareScreen });
             }
         });
     }

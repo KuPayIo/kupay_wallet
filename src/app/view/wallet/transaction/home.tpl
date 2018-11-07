@@ -13,9 +13,14 @@
             {{end}}
         </div>
         <div w-class="nav">
+            {{: tabs = [
+                {"zh_Hans":"全部","zh_Hant":"全部","en":""},
+                {"zh_Hans":"转账","zh_Hant":"轉賬","en":""},
+                {"zh_Hans":"收款","zh_Hant":"收款","en":""}] }}
+
             {{for i,v of it1.tabs}} {{let isActive = i===it1.activeNum}}
             <div w-class="nav-item {{isActive ? 'is-active' : ''}}" on-tap="tabsChangeClick({{i}})">
-                {{v.tab}}
+                <pi-ui-lang>{{tabs[i]}}</pi-ui-lang>
             </div>
             {{end}}
         </div>

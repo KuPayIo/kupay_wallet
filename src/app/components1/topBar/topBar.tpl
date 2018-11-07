@@ -5,7 +5,8 @@
         <div w-class="left-container">
             <img on-tap="backPrePage" src="../../res/image/{{flag ? 'left_arrow_white.png' : 'left_arrow_blue.png'}}" w-class="ga-back" />
             <span on-tap="backPrePage"  style="color: {{flag?'#fff':''}}">
-                <pi-ui-lang>{{it.title}}</pi-ui-lang></span>
+                <pi-ui-lang>{{it.title}}</pi-ui-lang>
+            </span>
             {{if it1}}
             <widget w-tag="pi-ui-lang" w-class="offline">{zh_Hans:"离线",zh_Hant:"離線",en:"Offline"}</widget>
             {{end}}

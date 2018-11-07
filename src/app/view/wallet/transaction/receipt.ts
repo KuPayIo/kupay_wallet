@@ -5,6 +5,7 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { copyToClipboard, getCurrentAddrByCurrencyName, getLanguage, popNewMessage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 interface Props {
     currencyName:string;
@@ -12,6 +13,7 @@ interface Props {
 export class Receipt extends Widget {
     public ok:() => void;
     public props:Props;
+    public language:any;
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -20,15 +22,15 @@ export class Receipt extends Widget {
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
-            cfgData:getLanguage(this)
         };
     }
 
     public copyClick() {
         copyToClipboard(this.state.fromAddr);
-        popNewMessage(this.state.cfgData.tips[0]);
+        popNewMessage(this.language.tips[0]);
     }
 
     public shareClick() {
@@ -40,7 +42,7 @@ export class Receipt extends Widget {
                 popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
             },
             fail: (result) => { 
-                popNew('app-components-message-message',{ content:this.state.cfgData.tips[1] });
+                popNew('app-components-message-message',{ content:this.language.tips[1] });
             }
         });
     }

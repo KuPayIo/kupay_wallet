@@ -10,6 +10,7 @@ import { getTransactionsByAddr } from '../../../net/pullWallet';
 import { ShapeShiftTx, ShapeShiftTxs } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 import { getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, timestampFormat } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,6 +19,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class ConvertHistory extends Widget {
     public ok: () => void;
+    public language:any;
     
     public setProps(props:Json,oldProps:Json) {
         super.setProps(props,oldProps);
@@ -29,11 +31,11 @@ export class ConvertHistory extends Widget {
     }
 
     public async init() {
+        this.language = this.config.value[getLang()];
         this.state = {
             txsShow:[],
-            cfgData:getLanguage(this)
         };
-        const close = popNew('app-components1-loading-loading',{ text:this.state.cfgData.loading });
+        const close = popNew('app-components1-loading-loading',{ text:this.language.loading });
         const addr = getCurrentAddrByCurrencyName(this.props.currencyName);
         await getTransactionsByAddr(addr);
         close.callback(close.widget);
@@ -56,13 +58,13 @@ export class ConvertHistory extends Widget {
             // tslint:disable-next-line:variable-name
             let status_class = '';
             if (tx.status === 'complete') {
-                status_show = this.state.cfgData.tips[1];
+                status_show = this.language.tips[1];
                 status_class = '';
             } else if (tx.status === 'failed') {
-                status_show = this.state.cfgData.tips[2];
+                status_show = this.language.tips[2];
                 status_class = 'isActive';   // 做个标记，提醒
             } else {
-                status_show = this.state.cfgData.tips[3];
+                status_show = this.language.tips[3];
                 status_class = 'isActive';  // 做个标记，提醒
             }
             txsShow.push({

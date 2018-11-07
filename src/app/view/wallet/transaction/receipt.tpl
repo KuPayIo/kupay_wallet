@@ -1,18 +1,22 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <img src="../../../res/image1/topbar_backimg.png" style="position: absolute;top: 0;right: 0;"/>
     <div w-class="top-head" ev-next-click="doScanClick">
-        <app-components1-topBar-topBar>{"title":"{{it.currencyName + it1.cfgData.topBarTitle}}",background:"transparent"}</app-components1-topBar-topBar>
+        {{: topBarTitle = {"zh_Hans":it.currencyName +"收款","zh_Hant":it.currencyName +"收款","en":""} }}
+        <app-components1-topBar-topBar>{"title":{{topBarTitle}},background:"transparent"}</app-components1-topBar-topBar>
     </div>
     <div w-class="body">
         <div w-class="main">
             <div w-class="title">
                 <img src="../../../res/image1/default_avatar.png" w-class="avatar"/>
-                <div>{{it1.cfgData.title}}</div>
+                <div><pi-ui-lang>{"zh_Hans":"向他人收款","zh_Hant":"向他人收款","en":""}</pi-ui-lang></div>
             </div>
             <div w-class="content">
                 <div w-class="qrcode-container"><app-components-qrcode-qrcode>{value:{{it1.fromAddr}},size:400}</app-components-qrcode-qrcode></div>
                 <div w-class="addr-container" on-tap="copyClick">{{it1.fromAddr}}<img src="../../../res/image/copy.png" w-class="copy" /></div>
-                <div w-class="btn-container" ev-btn-tap="shareClick"><app-components1-btn-btn>{"name":{{it1.cfgData.btnName}},"types":"big","color":"white"}</app-components1-btn-btn></div>
+                <div w-class="btn-container" ev-btn-tap="shareClick">
+                    {{: btnName = {"zh_Hans":"分享好友","zh_Hant":"分享好友","en":""} }}
+                    <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"white"}</app-components1-btn-btn>
+                </div>
             </div>
         </div>
     </div>
