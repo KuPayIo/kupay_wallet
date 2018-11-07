@@ -10,6 +10,7 @@ import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/inter
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -24,11 +25,13 @@ interface Props {
 export class Recharge extends Widget {
     public props:Props;
     public ok:() => void;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public async init() {
+        this.language = this.config.value[getLang()];
         if (this.props.currencyName === 'BTC') {
             fetchBtcFees();
         } else {
@@ -61,7 +64,7 @@ export class Recharge extends Widget {
         this.ok && this.ok();
     }
     public speedDescClick() {
-        popNew('app-components-modalBox-modalBox1',this.state.cfgData.modalBox);
+        popNew('app-components-modalBox-modalBox1',this.language.modalBox);
     }
 
      // 提币金额变化
@@ -86,13 +89,13 @@ export class Recharge extends Widget {
     // 转账
     public async nextClick() {
         if (!this.state.amount) {
-            popNewMessage(this.state.cfgData.tips[0]);
+            popNewMessage(this.language.tips[0]);
 
             return;
         }
 
         if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
-            popNewMessage(this.state.cfgData.tips[1]);
+            popNewMessage(this.language.tips[1]);
 
             return;
         }
