@@ -5,7 +5,7 @@
         <div w-class="head">
             <img src="../../../res/image/currency/{{it.currencyName}}.png" w-class="currency-icon"/>
             <div w-class="asset-container">
-                <div w-class="balance">{{it1.balance}}</div>
+                <div w-class="balance">{{it1.balance || it1.balance.toFixed(2)}}</div>
                 <div w-class="balance-value">{{it1.currencyUnitSymbol}}{{it1.balanceValue}}</div>
             </div>
             {{if it1.canConvert}}

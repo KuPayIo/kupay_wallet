@@ -5,7 +5,7 @@
         <div w-class="right-container">
             <div w-class="top-container">
                 <div w-class="currency-name">{{v.currencyName}}</div>
-                <div w-class="balance">{{v.balance}}</div>
+                <div w-class="balance">{{v.balance || v.balance.toFixed(2)}}</div>
             </div>
             <div w-class="bottom-container">
                 <div w-class="description">{{v.description}}</div>
