@@ -6,11 +6,12 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
-import { setUserInfo, uploadFile } from '../../../net/pull';
+import { uploadFile } from '../../../net/pull';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { walletNameAvailable } from '../../../utils/account';
-import { getLanguage, getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -19,30 +20,30 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class AccountHome extends Widget {
     public ok:() => void;
+    public language:any;
     public create() {
         super.create();
+        this.language = this.config.value[getLang()];
         this.init();
     }
     public init() {
         const userInfo = getUserInfo();
         const wallet = getStore('wallet');
         const backup = wallet.isBackup;
-        const cfg = getLanguage(this);
 
         this.state = {
             avatar:'',
             nickName:'',
             isUpdatingWalletName: false,
-            phone:cfg.bindPhone,
+            phone:'',
             backup,
-            cfgData:cfg,
             userInput:false
         };
         if (userInfo.phoneNumber) {
             const str = String(userInfo.phoneNumber).substr(3,6);
             this.state.phone = userInfo.phoneNumber.replace(str,'******');
         }
-        this.state.nickName = userInfo.nickName ? userInfo.nickName :cfg.defaultName;
+        this.state.nickName = userInfo.nickName ? userInfo.nickName :this.language.defaultName;
         this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
         this.paint();
     }
@@ -61,7 +62,7 @@ export class AccountHome extends Widget {
         const v = e.value;
         this.state.userInput = false;
         if (!walletNameAvailable(v)) {
-            popNewMessage(this.state.cfgData.tips[0]);
+            popNewMessage(this.language.tips[0]);
             this.state.isUpdatingWalletName = false;
 
             return;
@@ -80,7 +81,7 @@ export class AccountHome extends Widget {
     public walletNameInputFocus() {
         this.state.isUpdatingWalletName = true;
     }
-
+    //备份助记词
     public async backupWalletClick() {
         const psw = await popPswBox();
         if (!psw) return;
@@ -95,17 +96,17 @@ export class AccountHome extends Widget {
     public async exportPrivateKeyClick() {
         const psw = await popPswBox();
         if (!psw) return;
-        const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
+        const close = popNew('app-components1-loading-loading', { text: this.language.loading });
         try {
             const mnemonic = await getMnemonic(psw);
             if (mnemonic) {
                 popNew('app-view-mine-account-exportPrivateKey', { mnemonic });
             } else {
-                popNewMessage(this.state.cfgData.tips[1]);
+                popNewMessage(this.language.tips[1]);
             }
         } catch (error) {
             console.log(error);
-            popNewMessage(this.state.cfgData.tips[1]);
+            popNewMessage(this.language.tips[1]);
         }
         close.callback(close.widget);
     }
@@ -159,5 +160,13 @@ register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+    }
+});
+
+register('setting/language', (r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.language = w.config.value[r];
+        w.paint();
     }
 });

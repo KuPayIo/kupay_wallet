@@ -5,17 +5,15 @@
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { getLanguage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ==================================================导出
 
 export class WechatQrcode extends Widget {
     public ok: () => void;
+    public language:any;
     public create() {
         super.create();
-        const cfg = getLanguage(this);
-        this.state = {
-            cfgData:cfg
-        };
+        this.language = this.config.value[getLang()];
     }
 
     public backPrePage() {
@@ -30,7 +28,7 @@ export class WechatQrcode extends Widget {
                 popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
             },
             fail: (result) => { 
-                popNew('app-components-message-message',{ content:this.state.cfgData.shareScreen });
+                popNew('app-components-message-message',{ content:this.language.shareScreen });
             }
         });
         console.log('截图截图截图');

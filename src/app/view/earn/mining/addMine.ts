@@ -7,6 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCode, getMineDetail, getMineItemJump } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -15,66 +16,66 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Dividend extends Widget {
     public ok: () => void;
+    public language: any;
     constructor() {
         super();
     }
 
     public create() {
         super.create();
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
-            data:[
+            data: [
                 {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_create.png',
-                    itemName: cfg.data[0][0],
-                    itemShort:cfg.data[0][1],
-                    itemDetail: cfg.data[0][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
                     itemJump: 'walletCreate',
-                    show:false
+                    show: false
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_verify.png',
-                    itemName: cfg.data[1][0],
-                    itemShort: cfg.data[1][1],
-                    itemDetail: cfg.data[1][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
                     itemJump: 'bindPhone',
-                    show:false                
+                    show: false
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_store.png',
-                    itemName: cfg.data[2][0],
-                    itemShort: cfg.data[2][1],                
-                    itemDetail: cfg.data[2][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
                     itemJump: 'storeCoin',
-                    show:false
+                    show: false
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_share.png',
-                    itemName: cfg.data[3][0],
-                    itemShort: cfg.data[3][1],  
-                    itemDetail: cfg.data[3][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
                     itemJump: 'shareFriend',
-                    show:false
+                    show: false
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_buy.png',
-                    itemName: cfg.data[4][0],
-                    itemShort: cfg.data[4][1],
-                    itemDetail: cfg.data[4][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
                     itemJump: 'buyFinancial',
-                    show:false
+                    show: false
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_chat.png',
-                    itemName: cfg.data[5][0],
-                    itemShort: cfg.data[5][1],
-                    itemDetail: cfg.data[5][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
                     itemJump: 'toChat',
-                    show:false
+                    show: false
                 }
             ],
-            cfgData:cfg
         };
         this.initData();
         getMineDetail();
@@ -88,7 +89,7 @@ export class Dividend extends Widget {
      * 挖矿项目跳转
      * @param ind 挖矿项目参数
      */
-    public async goDetail(ind:number) {
+    public async goDetail(ind: number) {
         if (!this.state.data[ind].isComplete) {
             const itemJump = this.state.data[ind].itemJump;
             getMineItemJump(itemJump);
@@ -96,11 +97,11 @@ export class Dividend extends Widget {
             if (itemJump === 'shareFriend') {  // 邀请红包
                 const inviteCodeInfo = await getInviteCode();
                 if (inviteCodeInfo.result !== 1) return;
-                
-                popNew('app-view-earn-redEnvelope-sendRedEnv',{
-                    rid:inviteCodeInfo.cid,
-                    rtype:'99',
-                    message:this.state.cfgData.defaultMess
+
+                popNew('app-view-earn-redEnvelope-sendRedEnv', {
+                    rid: inviteCodeInfo.cid,
+                    rtype: '99',
+                    message: this.language.defaultMess
                 });
             }
             if (itemJump === 'bindPhone') {  // 绑定手机
@@ -116,7 +117,7 @@ export class Dividend extends Widget {
     /**
      * 展示或隐藏详细描述
      */
-    public show(ind:number) {
+    public show(ind: number) {
         this.state.data[ind].show = !this.state.data[ind].show;
         this.paint();
     }
@@ -124,8 +125,8 @@ export class Dividend extends Widget {
     /**
      * 获取更新数据
      */
-    public async initData() {  
-        const detail = getStore('activity/mining/addMine');        
+    public async initData() {
+        const detail = getStore('activity/mining/addMine');
         // tslint:disable-next-line:max-line-length
         // const detail = [{isComplete:true},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false}];
         if (detail) {
@@ -135,7 +136,7 @@ export class Dividend extends Widget {
         }
 
         this.paint();
-        
+
     }
 }
 

@@ -6,8 +6,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStore, register, setStore } from '../../../store/memstore';
-import { getLanguage, logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
+import { logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -16,6 +17,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Setting extends Widget {
     public ok: () => void;
+    public language: any;
     constructor() {
         super();
     }
@@ -26,7 +28,7 @@ export class Setting extends Widget {
     }
 
     public init() {
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         const lan = getStore('setting/language', 'zh_Hans');
         const unit = getStore('setting/currencyUnit', 'CNY');
         const color = getStore('setting/changeColor', 'redUp');
@@ -35,15 +37,12 @@ export class Setting extends Widget {
             openLockScreen: false,  // 是否打开锁屏开关 
             lockScreenTitle: '',  // 锁屏密码页面标题
             numberOfErrors: 0,  // 锁屏密码输入错误次数
-            errorTips: cfg.errorTips,
             itemList: [
-                { title: cfg.itemTitle[0], list: cfg.languageSet, selected: lan, flag: 0 },
-                { title: cfg.itemTitle[1], list: cfg.currencyUnit, selected: unit, flag: 1 },
-                { title: cfg.itemTitle[2], list: cfg.changeColor, selected: color, flag: 2 }
+                { title: this.language.itemTitle[0], list: this.language.languageSet, selected: lan, flag: 0 },
+                { title: this.language.itemTitle[1], list: this.language.currencyUnit, selected: unit, flag: 1 },
+                { title: this.language.itemTitle[2], list: this.language.changeColor, selected: color, flag: 2 }
             ],
             wallet: null,
-            cfgData: cfg
-
         };
         this.initData();
     }
@@ -73,7 +72,7 @@ export class Setting extends Widget {
         if (this.state.wallet) {
             return true;
         }
-        popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
+        popNew('app-components-modalBox-modalBox', this.language.modalBox1, () => {
             popNew('app-view-wallet-create-home');
         });
 
@@ -98,8 +97,8 @@ export class Setting extends Widget {
                 }
             });
         } else {
-                // tslint:disable-next-line:max-line-length
-            popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox1, () => {
+            // tslint:disable-next-line:max-line-length
+            popNew('app-components-modalBox-modalBox', this.language.modalBox1, () => {
                 popNew('app-view-wallet-create-home');
             }, () => {
                 this.closeLockPsw();
@@ -149,11 +148,11 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox2, () => {
+        popNew('app-components-modalBox-modalBox', this.language.modalBox2, () => {
             this.backUp();
             console.log('备份');
         }, () => {
-            popNew('app-components-modalBox-modalBox', { title: '', content: this.state.cfgData.tips[2], style: 'color:#F7931A;' }, () => {
+            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccount();
                 this.backPrePage();
             });
@@ -167,11 +166,11 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-components-modalBox-modalBox', this.state.cfgData.modalBox3, () => {
+        popNew('app-components-modalBox-modalBox', this.language.modalBox3, () => {
             this.backUp();
             console.log('备份');
         }, () => {
-            popNew('app-components-modalBox-modalBox', { title: '', content: this.state.cfgData.tips[2], style: 'color:#F7931A;' }, () => {
+            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccountDel();
                 this.backPrePage();
             });
@@ -180,9 +179,10 @@ export class Setting extends Widget {
 }
 
 // ================================================本地，立即执行
-register('setting/language', () => {
+register('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
+        w.language = w.config.value[r];
         w.init();
     }
 });
@@ -208,5 +208,12 @@ register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
+    }
+});
+
+register('user',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
     }
 });

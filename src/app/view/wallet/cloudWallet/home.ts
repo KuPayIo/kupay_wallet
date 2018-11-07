@@ -8,6 +8,7 @@ import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { fetchBalanceValueOfCoin, fetchCoinGain, formatBalanceValue, getLanguage, popNewMessage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -19,28 +20,29 @@ interface Props {
 export class CloudWalletHome extends Widget {
     public props:Props;
     public ok:() => void;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const currencyName = this.props.currencyName;
         const balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
-        const cfg = getLanguage(this); 
         const color = getStore('setting/changeColor','redUp');
         this.state = {
             tabs:[{
-                tab:cfg.total,
+                tab:this.language.total,
                 components:'app-view-wallet-cloudWallet-totalRecord'
             },{
-                tab:cfg.other,
+                tab:this.language.other,
                 components:'app-view-wallet-cloudWallet-otherRecord'
             },{
-                tab:cfg.recharge,
+                tab:this.language.recharge,
                 components:'app-view-wallet-cloudWallet-rechargeRecord'
             },{
-                tab:cfg.withdraw,
+                tab:this.language.withdraw,
                 components:'app-view-wallet-cloudWallet-withdrawRecord'
             }],
             activeNum:0,
@@ -48,7 +50,6 @@ export class CloudWalletHome extends Widget {
             rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
             balance,
             balanceValue,
-            cfgData:cfg,
             redUp:color === 'redUp'
         };
     }
@@ -68,7 +69,7 @@ export class CloudWalletHome extends Widget {
     }
     public rechargeClick() {
         if (this.props.currencyName === 'KT' || this.props.currencyName === 'CNYT') {
-            popNewMessage(this.state.cfgData.tips);
+            popNewMessage(this.language.tips);
 
             return;
         }
@@ -76,7 +77,7 @@ export class CloudWalletHome extends Widget {
     }
     public withdrawClick() {
         if (this.props.currencyName === 'KT' || this.props.currencyName === 'CNYT') {
-            popNewMessage(this.state.cfgData.tips);
+            popNewMessage(this.language.tips);
 
             return;
         }

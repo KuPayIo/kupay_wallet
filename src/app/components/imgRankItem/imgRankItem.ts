@@ -14,6 +14,7 @@ interface Props {
     name:string;
     rank:string;
     describe?:string;
+    descNumber?:string;
 }
 // ================================ 导出
 

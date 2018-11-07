@@ -14,8 +14,20 @@
             <app-components1-input-input>{placeHolder: {{it.placeholder?it.placeholder:""}},itype:{{it.itype?it.itype:"text"}},style:"padding:0;font-size:28px;" }</app-components1-input-input>
         </div>
         <div w-class="btns">
-            <div w-class="btn-cancel" on-tap="cancelBtnClick">{{it.cancelText ? it.cancelText : it1.cfgData.cancelText}}</div>
-            <div w-class="btn-ok" on-tap="okBtnClick">{{it.sureText ? it.sureText : it1.cfgData.sureText}}</div>
+            {{if it.cancelText}}
+                {{: cancelText = {"zh_Hans":it.cancelText,"zh_Hant":it.cancelText,"en":""} }}
+            {{else}}
+                {{: cancelText = {"zh_Hans":"取消","zh_Hant":"取消","en":""} }}
+            {{end}}
+
+            {{if it.sureText}}
+                {{: sureText = {"zh_Hans":it.sureText,"zh_Hant":it.sureText,"en":""} }}
+            {{else}}
+                {{: sureText = {"zh_Hans":"确定","zh_Hant":"確定","en":""} }}
+            {{end}}
+            
+            <div w-class="btn-cancel" on-tap="cancelBtnClick"><pi-ui-lang>{{cancelText}}</pi-ui-lang></div>
+            <div w-class="btn-ok" on-tap="okBtnClick"><pi-ui-lang>{{sureText}}</pi-ui-lang></div>
         </div>
     </div>
 </div>

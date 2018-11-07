@@ -7,7 +7,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getServerCloudBalance } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, getUserInfo } from '../../../utils/tools';
+import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -15,25 +16,25 @@ declare var pi_modules : any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Home extends Widget {
+    public language:any;
     public create() {
         super.create();
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const userInfo = getUserInfo();
-        const cfg = getLanguage(this);
         this.state = {
             tabs:[{
-                tab:cfg.tabs[0],
+                tab:{"zh_Hans":"云账户","zh_Hant":"雲賬戶","en":""},
                 components:'app-view-wallet-home-cloudHome'
             },{
-                tab:cfg.tabs[1],
+                tab:{"zh_Hans":"本地钱包","zh_Hant":"本地錢包","en":""},
                 components:'app-view-wallet-home-walletHome'
             }],
             activeNum:1,
             avatar:userInfo && userInfo.avatar,
             totalAsset:formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets()),
-            cfgData:cfg,
             refreshing:false,
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };

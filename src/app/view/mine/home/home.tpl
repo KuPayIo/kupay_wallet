@@ -20,18 +20,33 @@
                 <img src="../../../res/image1/42.png" w-class="copy"/>
             </div>
             {{else}}
-            <div w-class="userName">{{it1.cfgData.defaultName}}</div>            
+            <div w-class="userName">
+                <pi-ui-lang>{"zh_Hans":"点击头像登陆","zh_Hant":"點擊頭像登錄","en":""}</pi-ui-lang>
+            </div>            
             {{end}}
 
         </div>
 
         <div w-class="leftContent">
+            {{: itemName = 
+            [{"zh_Hans":"账户","zh_Hant":"賬戶","en":""},
+            {"zh_Hans":"帮助","zh_Hant":"幫助","en":""},
+            {"zh_Hans":"设置","zh_Hant":"設置","en":""},
+            {"zh_Hans":"联系我们","zh_Hant":"聯繫我們","en":""},
+            {"zh_Hans":"关于KuPay","zh_Hant":"關於KuPay","en":""},
+            {"zh_Hans":"GitHub Repository","zh_Hant":"GitHub Repository","en":""}] }}
+
+
             {{for ind,val of it1.list}}
                 <div w-class="item" on-tap="itemClick({{ind}})">
                     <img src={{val.img}} w-class="itemImg"/>
-                    <span w-class="itemName">{{val.name}}</span>
+                    <span w-class="itemName">
+                        <pi-ui-lang>{{itemName[ind]}}</pi-ui-lang>
+                    </span>
                     {{if ind==0 && !it1.hasBackupMnemonic && it1.hasWallet}}
-                    <div w-class="backup" on-tap="backUp">{{it1.cfgData.backUp}}</div>
+                    <div w-class="backup" on-tap="backUp">
+                        <pi-ui-lang>{"zh_Hans":"备份","zh_Hant":"備份","en":""}</pi-ui-lang>
+                    </div>
                     {{end}}
                 </div>
                 {{if ind == 2}}

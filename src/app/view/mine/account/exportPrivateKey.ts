@@ -13,6 +13,7 @@ import { AddrInfo } from '../../../store/interface';
 import { getStore } from '../../../store/memstore';
 import { btcNetwork, lang } from '../../../utils/constants';
 import { getAddrInfoByAddr, getLanguage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ================================================导出
 interface Props {
@@ -25,8 +26,10 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class ExportPrivateKey extends Widget {
     public ok: () => void;
+    public language:any;
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
+        this.language = this.config.value[getLang()];
         this.init();
     }
 
@@ -88,10 +91,10 @@ export class ExportPrivateKey extends Widget {
     public collapseItemClick(e: any) {
         const privateKey = this.state.collapseList[e.collapseListIndex].textList[e.textListIndex].privateKey;
         popNew('app-components-modalBox-modalBox2', {
-            title: this.state.cfgData.modalBox[0],
-            content: this.state.cfgData.modalBox[1],
+            title: this.language.modalBox[0],
+            content: this.language.modalBox[1],
             extraInfo: privateKey,
-            copyBtnText: this.state.cfgData.modalBox[2],
+            copyBtnText: this.language.modalBox[2],
             contentStyle: 'color:#F17835;'
         });
     }

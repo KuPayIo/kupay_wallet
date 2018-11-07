@@ -10,7 +10,8 @@ import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -23,12 +24,14 @@ interface Props {
 
 export class Transfer extends Widget {
     public ok:() => void;
+    public language:any;
     public async setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
 
     public async init() {
+        this.language = this.config.value[getLang()];
         if (this.props.currencyName === 'BTC') {
             fetchBtcFees();
         } else {
@@ -47,7 +50,6 @@ export class Transfer extends Widget {
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false,
-            cfgData:getLanguage(this),
             amountShow:'0.00',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
@@ -63,9 +65,9 @@ export class Transfer extends Widget {
         this.ok && this.ok();
     }
     public speedDescClick() {
-        popNew('app-components-modalBox-modalBox1',this.state.cfgData.modalBox);
+        popNew('app-components-modalBox-modalBox1',this.language.modalBox);
     }
-
+    //到账速度
     public chooseMinerFee() {
         popNew('app-components-modalBox-chooseModalBox',{ 
             currencyName:this.props.currencyName,
@@ -94,23 +96,23 @@ export class Transfer extends Widget {
     // 转账
     public async nextClick() {
         if (!this.state.toAddr) {
-            popNew('app-components1-message-message', {  content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', {  content: this.language.tips[0] });
 
             return;
         }
         if (!this.state.amount) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
+            popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
         }
 
         if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
+            popNew('app-components1-message-message', { content: this.language.tips[2] });
 
             return;
         }
         if (!judgeAddressAvailable(this.props.currencyName,this.state.toAddr)) {
-            popNew('app-components1-message-message', {  content: this.state.cfgData.tips[3] });
+            popNew('app-components1-message-message', {  content: this.language.tips[3] });
 
             return;
         }

@@ -6,7 +6,8 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMineRank, getMiningRank } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
-import { getLanguage } from '../../../utils/tools';
+// import { getLanguage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -15,26 +16,26 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Home extends Widget {
     public ok:() => void;
+    public language:any;
 
     public create() {
         super.create();
-        const cfg = getLanguage(this); 
+        this.language = this.config.value[getLang()];
         this.state = {
             tabs:[{
-                tab:cfg.tabs[0],
+                tab:'0',
                 data:[],
                 totalNum:0,
                 myRank:1,
                 fg:0
             },{
-                tab:cfg.tabs[1],
+                tab:'1',
                 data:[],
                 totalNum:0,
                 myRank:1,
                 fg:1
             }],
             activeNum:0,
-            cfgData:cfg
         };
         this.initData();
         this.initEvent();

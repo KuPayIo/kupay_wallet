@@ -26,7 +26,8 @@
 .topBackimg{
     position: absolute;
     right: 0;
-    top: 148px;
+
+    top: 150px;
     height: 400px;
     width: auto;
 }

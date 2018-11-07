@@ -11,8 +11,9 @@ import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../../
 import { MarketInfo, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, fetchBtcMinerFee, fetchGasPrice, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { currencyExchangeAvailable, fetchBtcMinerFee, fetchGasPrice, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { sat2Btc, wei2Eth } from '../../../utils/unitTools';
+import { getLang } from '../../../../pi/util/lang';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -25,7 +26,8 @@ interface Props {
 export class CoinConvert extends Widget {
     public props:Props;
     public ok: () => void;
-    
+    public language:any;
+
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -35,9 +37,9 @@ export class CoinConvert extends Widget {
      */
     public rateDetail() {
         // tslint:disable-next-line:prefer-template
-        const tips = this.state.cfgData.tips[5] + this.state.inMinerFee + ' ' + this.state.inCurrency;
+        const tips = this.language.tips[5] + this.state.inMinerFee + ' ' + this.state.inCurrency;
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-modalBox-modalBox1',{ title:this.state.cfgData.title,content:this.state.cfgData.content,tips:tips });
+        popNew('app-components-modalBox-modalBox1',{ title:this.language.title,content:this.language.content,tips:tips });
     }
 
     /**
@@ -49,6 +51,7 @@ export class CoinConvert extends Widget {
 
     public setProps(props:Json,oldProps:Json) {
         super.setProps(props,oldProps);
+        this.language = this.config.value[getLang()];
         const data = currencyExchangeAvailable();
         const dataList = [];
         data.forEach(element => {
@@ -74,7 +77,6 @@ export class CoinConvert extends Widget {
             receiveAmount:0,
             curOutAddr:'',
             curInAddr:'',
-            cfgData:getLanguage(this)
         };
         this.init();
         this.updateMinerFee();
@@ -97,6 +99,7 @@ export class CoinConvert extends Widget {
         return super.destroy();
     }
     public init() {
+
         this.state.outAmount = 0;
         this.state.receiveAmount = 0;
         this.setPair();
@@ -210,22 +213,22 @@ export class CoinConvert extends Widget {
         const outAmount = this.state.outAmount;
         const outCurrency = this.state.outCurrency;
         if (outAmount <= 0) {
-            popNewMessage(this.state.cfgData.messages[0]);
+            popNewMessage(this.language.messages[0]);
 
             return;
         }
         if (outAmount >= this.state.outBalance) {
-            popNewMessage(this.state.cfgData.messages[1]);
+            popNewMessage(this.language.messages[1]);
 
             return;
         }
         if (outAmount > this.state.maxLimit || outAmount < this.state.minimum) {
-            popNewMessage(this.state.cfgData.messages[2]);
+            popNewMessage(this.language.messages[2]);
 
             return;
         }
         // tslint:disable-next-line:max-line-length
-        const content = [this.state.cfgData.tips[6] + outAmount + outCurrency,this.state.cfgData.tips[7] + this.state.receiveAmount + this.state.inCurrency];
+        const content = [this.language.tips[6] + outAmount + outCurrency,this.language.tips[7] + this.state.receiveAmount + this.state.inCurrency];
         const passwd = await popPswBox(content);
         if (!passwd) return;
         // await openBasePage('app-view-currencyExchange-exchangeConfirm',{
@@ -236,13 +239,13 @@ export class CoinConvert extends Widget {
         //     fee
         // });
         
-        const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
+        const close = popNew('app-components1-loading-loading', { text: this.language.loading });
         const withdrawalAddress = this.state.curInAddr; // 入账币种的地址
         const returnAddress =  this.state.curOutAddr;// 失败后的退款地址
         const pair = this.state.pair;// 交易对
         beginShift(withdrawalAddress,returnAddress,pair,async (returnData) => {
             if (returnData.error) {
-                popNew('app-components1-message-message',{ content:this.state.cfgData.messages[3] });
+                popNew('app-components1-message-message',{ content:this.language.messages[3] });
                 close.callback(close.widget);
                 this.init();
                 this.paint();
@@ -281,7 +284,7 @@ export class CoinConvert extends Widget {
             this.paint();
         },(err) => {
             console.log(err);
-            popNewMessage(this.state.cfgData.messages[3]);
+            popNewMessage(this.language.messages[3]);
             close.callback(close.widget);
             this.init();
             this.paint();

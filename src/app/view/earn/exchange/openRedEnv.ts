@@ -3,8 +3,16 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { LuckyMoneyType } from '../../../store/interface';
 import { getLanguage } from '../../../utils/tools';
+import { register } from '../../../store/memstore';
+import { getLang } from '../../../../pi/util/lang';
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
     rtype:string;
@@ -14,21 +22,21 @@ interface Props {
 }
 export class OpenRedEnvelope extends Widget {
     public ok:() => void;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        
+        this.language = this.config.value[getLang()];
         this.state = {
             tag:'',
             openClick:false,
-            cfgData:getLanguage(this)
         };
 
         if (props.rtype === LuckyMoneyType.Normal) {
-            this.state.tag = this.state.cfgData.tips[0];
+            this.state.tag = this.language.tips[0];
         } else if (props.rtype === LuckyMoneyType.Random) {
-            this.state.tag = this.state.cfgData.tips[1];
+            this.state.tag = this.language.tips[1];
         } else if (props.rtype === LuckyMoneyType.Invite) {
-            this.state.tag = this.state.cfgData.tips[2];
+            this.state.tag = this.language.tips[2];
         }
         
     }
@@ -42,7 +50,7 @@ export class OpenRedEnvelope extends Widget {
         setTimeout(() => {
             popNew('app-view-earn-exchange-exchangeDetail',this.props);
             
-            popNew('app-components1-message-message',{ content:this.state.cfgData.successMess });
+            popNew('app-components1-message-message',{ content:this.language.successMess });
             this.backPrePage();
         },800);
        

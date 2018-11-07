@@ -8,6 +8,8 @@ import { cryptoRandomInt } from '../../pi/util/math';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, ShapeShiftTxs, Store, TxHistory, UserInfo, Wallet } from './interface';
+import { LocalLanguageMgr, appLanguageList } from '../../pi/browser/localLanguage';
+import { setLang } from '../../pi/util/lang';
 
 // ============================================ 导出
 
@@ -90,7 +92,7 @@ export const getCloudBalances = () => {
     for (const [key, val] of cloudWallets) {
         cloudBalances.set(key, val.balance || 0);
     }
-    
+
     return cloudBalances;
 };
 
@@ -103,12 +105,12 @@ export const initCloudWallets = () => {
         const isValueProperty = parseInt(key, 10) >= 0;
         if (isValueProperty) {
             const cloudWallet = {
-                balance:0,
-                rechargeLogs:{ list:[],start:0,canLoadMore:false },
-                withdrawLogs:{ list:[],start:0,canLoadMore:false },
-                otherLogs:{ list:[],start:0,canLoadMore:false }
+                balance: 0,
+                rechargeLogs: { list: [], start: 0, canLoadMore: false },
+                withdrawLogs: { list: [], start: 0, canLoadMore: false },
+                otherLogs: { list: [], start: 0, canLoadMore: false }
             };
-            cloudWallets.set(CloudCurrencyType[CloudCurrencyType[key]],cloudWallet);
+            cloudWallets.set(CloudCurrencyType[CloudCurrencyType[key]], cloudWallet);
         }
     }
 
@@ -134,14 +136,14 @@ export const getAllAccount = () => {
 /**
  * 删除账户
  */
-export const deleteAccount = (id:string) => {
+export const deleteAccount = (id: string) => {
     const localAcccounts = getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
     });
     deleteFile(id);
     delete localAcccounts.accounts[id];
-    setLocalStorage('accounts',localAcccounts);
+    setLocalStorage('accounts', localAcccounts);
 };
 
 // ===================================================本地
@@ -152,12 +154,12 @@ const initFile = () => {
     // console.time('initFile');
     initFileStore().then(() => {
         if (!store.user.id) return;
-        getFile(store.user.id,(value,key) => {
+        getFile(store.user.id, (value, key) => {
             // console.timeEnd('initFile');
             if (!value) return;
             initTxHistory(value);
             // console.log('store init success',store);
-        },() => {
+        }, () => {
             console.log('read error');
         });
     });
@@ -167,11 +169,11 @@ const initFile = () => {
  * 初始化历史记录
  * @param fileTxHistorys indexDb存储的历史记录
  */
-const initTxHistory = (fileTxHistorys:FileTxHistory[]) => {
+const initTxHistory = (fileTxHistorys: FileTxHistory[]) => {
     const currencyRecords = store.wallet.currencyRecords;
     for (const record of currencyRecords) {
         for (const addrInfo of record.addrs) {
-            addrInfo.txHistory = getTxHistory(fileTxHistorys,record.currencyName,addrInfo.addr);
+            addrInfo.txHistory = getTxHistory(fileTxHistorys, record.currencyName, addrInfo.addr);
         }
     }
 };
@@ -179,7 +181,7 @@ const initTxHistory = (fileTxHistorys:FileTxHistory[]) => {
 /**
  * 获取历史记录
  */
-const getTxHistory = (fileTxHistorys:FileTxHistory[],currencyName:string,addr:string) => {
+const getTxHistory = (fileTxHistorys: FileTxHistory[], currencyName: string, addr: string) => {
     for (const fileTxHistory of fileTxHistorys) {
         if (fileTxHistory.currencyName === currencyName && fileTxHistory.addr === addr) {
             return fileTxHistory.txHistory;
@@ -207,10 +209,10 @@ const initAccount = () => {
         store.user.info = {
             ...fileUser.info
         };
-    
+
         // store.cloud init
         const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(curAccount.cloud.cloudWallets);
-        for (const [key,value] of localCloudWallets) {
+        for (const [key, value] of localCloudWallets) {
             const cloudWallet = store.cloud.cloudWallets.get(key);
             cloudWallet.balance = localCloudWallets.get(key).balance;
         }
@@ -221,25 +223,25 @@ const initAccount = () => {
         for (const localRecord of localWallet.currencyRecords) {
             const addrs = [];
             for (const info of localRecord.addrs) {
-                const addrInfo:AddrInfo = {
-                    addr:info.addr,
-                    balance:info.balance,
-                    txHistory:[]
+                const addrInfo: AddrInfo = {
+                    addr: info.addr,
+                    balance: info.balance,
+                    txHistory: []
                 };
                 addrs.push(addrInfo);
             }
-            const record:CurrencyRecord = {
-                currencyName: localRecord.currencyName,           
-                currentAddr: localRecord.currentAddr ,           
-                addrs,             
-                updateAddr: localRecord.updateAddr         
+            const record: CurrencyRecord = {
+                currencyName: localRecord.currencyName,
+                currentAddr: localRecord.currentAddr,
+                addrs,
+                updateAddr: localRecord.updateAddr
             };
             currencyRecords.push(record);
         }
-        const wallet:Wallet = {
-            vault:localWallet.vault,                 
-            isBackup: localWallet.isBackup,                 
-            showCurrencys: localWallet.showCurrencys,           
+        const wallet: Wallet = {
+            vault: localWallet.vault,
+            isBackup: localWallet.isBackup,
+            showCurrencys: localWallet.showCurrencys,
             currencyRecords
         };
         store.wallet = wallet;
@@ -252,18 +254,39 @@ const initAccount = () => {
  * 设置初始
  */
 const initSettings = () => {
-    const setting = getLocalStorage('setting',{
-        language:'zh_Hans',
-        changeColor:'redUp',
-        currencyUnit:'CNY',
-        lockScreen:{
-            open:false,
-            psw:''
-        }
+    let langNum;
+    const appLanguage = new LocalLanguageMgr();
+    appLanguage.init();
+    appLanguage.getSysLan({
+        success: (localLan) => {
+            langNum = parseInt(localLan);
+            const setting = getLocalStorage('setting', {
+                language:0,
+                changeColor: 'redUp',
+                currencyUnit: 'CNY',
+                lockScreen: {
+                    open: false,
+                    psw: ''
+                }
+            });
+            if(langNum && setting.language===0){
+                if(langNum===2||langNum===3){
+                    setting.language = appLanguageList[langNum];
+                    setLang(appLanguageList[langNum]);
+                }else{
+                    setting.language = "zh_Hans";
+                }
+                
+            }
+            store.setting = {
+                ...setting
+            };
+        },
+        fail: (result) => { }
     });
-    store.setting = {
-        ...setting
-    };
+
+
+
 };
 
 /**
@@ -311,7 +334,7 @@ const registerAccountChange = () => {
     register('wallet/currencyRecords', () => {
         accountChange();
     });
-    register('cloud/cloudWallets',() => {
+    register('cloud/cloudWallets', () => {
         accountChange();
     });
 };
@@ -341,16 +364,16 @@ const registerThirdChange = () => {
  * setting数据变化监听
  */
 const registerSettingChange = () => {
-    register('setting/language',() => {
+    register('setting/language', () => {
         settingChange();
     });
-    register('setting/changeColor',() => {
+    register('setting/changeColor', () => {
         settingChange();
     });
-    register('setting/currencyUnit',() => {
+    register('setting/currencyUnit', () => {
         settingChange();
     });
-    register('setting/lockScreen',() => {
+    register('setting/lockScreen', () => {
         settingChange();
     });
 
@@ -365,7 +388,7 @@ const accountChange = () => {
         currenctId: '',
         accounts: {}
     });
-    
+
     if (!storeUser.id) {
         const flags = getStore('flags');
         const saveAccount = flags.saveAccount;
@@ -377,9 +400,9 @@ const accountChange = () => {
             delete localAccounts.accounts[localAccounts.currenctId];
             localAccounts.currenctId = '';
             setLocalStorage('accounts', localAccounts);
-            
+
         }
-        
+
         return;
     }
     const localUser: LocalUser = {
@@ -400,37 +423,37 @@ const accountChange = () => {
 
     const wallet = getStore('wallet');
     const fileTxHistorys = [];
-    let localWallet:LocalWallet = null;
+    let localWallet: LocalWallet = null;
     if (wallet) {
         const localCurrencyRecords = wallet.currencyRecords.map(record => {
             const addrs = record.addrs.map(info => {
-                const fileTxHistory:FileTxHistory = {
-                    currencyName:record.currencyName,
-                    addr:info.addr,
-                    txHistory:info.txHistory
+                const fileTxHistory: FileTxHistory = {
+                    currencyName: record.currencyName,
+                    addr: info.addr,
+                    txHistory: info.txHistory
                 };
                 fileTxHistorys.push(fileTxHistory);
-    
+
                 return {
-                    addr:info.addr,
-                    balance:info.balance
+                    addr: info.addr,
+                    balance: info.balance
                 };
             });
-    
+
             return {
                 ...record,
                 addrs
             };
         });
-        
+
         localWallet = {
-            vault: wallet.vault,                      
-            isBackup: wallet.isBackup,               
-            showCurrencys: wallet.showCurrencys,       
+            vault: wallet.vault,
+            isBackup: wallet.isBackup,
+            showCurrencys: wallet.showCurrencys,
             currencyRecords: localCurrencyRecords
         };
     }
-    
+
     const newAccount: Account = {
         user: localUser,
         wallet: localWallet,
@@ -439,9 +462,9 @@ const accountChange = () => {
 
     localAccounts.currenctId = storeUser.id;
     localAccounts.accounts[storeUser.id] = newAccount;
-    
+
     setLocalStorage('accounts', localAccounts);
-    writeFile(storeUser.id,fileTxHistorys);
+    writeFile(storeUser.id, fileTxHistorys);
 
 };
 
@@ -463,13 +486,13 @@ const thirdChange = () => {
  * setting数据变化
  */
 const settingChange = () => {
-    const localSetting:Setting = {
-        language:getStore('setting/language'),
-        changeColor:getStore('setting/changeColor'),
-        currencyUnit:getStore('setting/currencyUnit'),
-        lockScreen:getStore('setting/lockScreen')
+    const localSetting: Setting = {
+        language: getStore('setting/language'),
+        changeColor: getStore('setting/changeColor'),
+        currencyUnit: getStore('setting/currencyUnit'),
+        lockScreen: getStore('setting/lockScreen')
     };
-    setLocalStorage('setting',localSetting);
+    setLocalStorage('setting', localSetting);
 };
 
 // ======================================================== 本地
@@ -485,7 +508,7 @@ const handlerMap: HandlerMap = new HandlerMap();
 const store: Store = {
     user: {
         id: '',                      // 该账号的id
-        offline:true,               // 连接状态
+        offline: true,               // 连接状态
         isLogin: false,              // 登录状态
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
@@ -561,7 +584,7 @@ const store: Store = {
 export interface Accounts {
     currenctId: string;  // 当前账户id
     accounts: {
-    // 所有账户
+        // 所有账户
         [key: string]: Account;
     };
 }
@@ -640,8 +663,8 @@ export interface LocalThird {
  * indexDB历史记录
  */
 export interface FileTxHistory {
-    currencyName:string;
-    addr:string;
-    txHistory:TxHistory[];
+    currencyName: string;
+    addr: string;
+    txHistory: TxHistory[];
 }
 // =======================================================

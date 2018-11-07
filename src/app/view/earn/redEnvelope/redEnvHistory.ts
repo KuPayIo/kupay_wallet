@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCodeDetail, queryDetailLog, querySendRedEnvelopeRecord } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { getLanguage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -21,19 +21,18 @@ interface State {
     hasMore:boolean; // 是否还有更多记录
     showMoreTips:boolean; // 是否显示底部加载更多提示
     sendNumber:number; // 总发出红包个数
-    rtypeShow:string[]; // 红包类型
-    cfgData:any;
     scrollHeight:number;// 页面上滑的高度
     topRefresh:boolean; // 头部刷新按钮
 }
 
 export class RedEnvHistory extends Widget {
     public ok: () => void;
+    public language:any;
     public state:State;
 
     public async create() {
         super.create();
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
             recordList:[
                 // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
@@ -45,8 +44,6 @@ export class RedEnvHistory extends Widget {
             hasMore:false, 
             showMoreTips:true, 
             sendNumber:0,  
-            rtypeShow:cfg.redEnvType,
-            cfgData: cfg,
             scrollHeight:0,
             topRefresh:false
         };
@@ -84,7 +81,8 @@ export class RedEnvHistory extends Widget {
             console.log('load more from server');
             querySendRedEnvelopeRecord(this.state.start);
         }
-        this.loadMore();  
+        this.loadMore(); 
+        this.paint(); 
     }
 
     /**
@@ -115,14 +113,14 @@ export class RedEnvHistory extends Widget {
     public async initRedEn() {
         for (const i in this.state.recordList) {
             this.state.recordList[i].outDate = Number(this.state.recordList[i].time) + (60 * 60 * 24 * 1000) < new Date().getTime();
-            const data = await queryDetailLog(getStore('user/conUid'),this.state.recordList[i].rid);
-            if (data) {
-                this.state.recordList[i].curNum = data[2];
-                this.state.recordList[i].totalNum = data[3];
-            } else {
-                this.state.recordList[i].curNum = 0;
-                this.state.recordList[i].totalNum = 0;
-            }
+            // const data = await queryDetailLog(getStore('user/conUid'),this.state.recordList[i].rid);
+            // if (data) {
+            //     this.state.recordList[i].curNum = data[2];
+            //     this.state.recordList[i].totalNum = data[3];
+            // } else {
+            //     this.state.recordList[i].curNum = 0;
+            //     this.state.recordList[i].totalNum = 0;
+            // }
         }
         this.paint();
     }
@@ -142,12 +140,6 @@ export class RedEnvHistory extends Widget {
                 this.state.refresh = true;
             }, 500); 
         } 
-
-        if (scrollTop > 0) {
-            this.state.scroll = true;
-        } else {
-            this.state.scroll = false;
-        }
         this.paint();
         
     }

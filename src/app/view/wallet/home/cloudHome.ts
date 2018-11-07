@@ -9,6 +9,7 @@ import { Product } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,6 +19,7 @@ interface Props {
     isActive:boolean;
 }
 export class CloudHome extends Widget {
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -27,12 +29,12 @@ export class CloudHome extends Widget {
         }
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const color = getStore('setting/changeColor','redUp');
         this.state = {
             totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
             assetList:fetchCloudWalletAssetList(),
             productList:getStore('activity/financialManagement/products',[]),
-            cfgData:getLanguage(this),
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };

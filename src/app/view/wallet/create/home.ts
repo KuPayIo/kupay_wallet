@@ -5,8 +5,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { deleteAccount, getAllAccount } from '../../../store/memstore';
-import { getLanguage, loginSuccess, popNewLoading, popNewMessage } from '../../../utils/tools';
+import { loginSuccess, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { VerifyIdentidy, VerifyIdentidy1 } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -14,6 +15,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class CreateEnter extends Widget {
     public ok: () => void;
+    public language:any;
 
     public create() {
         super.create();
@@ -21,6 +23,7 @@ export class CreateEnter extends Widget {
         
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const walletList = getAllAccount();
         const accountList = [];
         walletList.forEach(item => {
@@ -29,7 +32,6 @@ export class CreateEnter extends Widget {
             accountList.push({ nickName,id });
         });
         this.state = {
-            cfgData:getLanguage(this),
             login:false,
             accountList,
             selectedAccountIndex:0,
@@ -71,12 +73,15 @@ export class CreateEnter extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
+    // 图片创建
     public createByImgClick() {
         popNew('app-view-wallet-create-createWalletByImage');
     }
+    //已有账户
     public walletImportClicke() {
         popNew('app-view-wallet-import-home');
     }
+    //普通创建
     public createStandardClick() {
         popNew('app-view-wallet-create-createWallet');
     }

@@ -6,7 +6,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { getLanguage, timestampFormat } from '../../../utils/tools';
+import { timestampFormat } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,11 +19,13 @@ interface Props {
 }
 export class OtherRecord extends Widget {
     public props:Props;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName,1);
         }
@@ -32,7 +35,6 @@ export class OtherRecord extends Widget {
             nextStart:accountDetail.start,
             canLoadMore:accountDetail.canLoadMore,
             isRefreshing:false,
-            cfgData:getLanguage(this)
         };
     }
     public updateRecordList() {
