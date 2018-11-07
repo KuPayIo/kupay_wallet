@@ -26,10 +26,10 @@ export class Home extends Widget {
         const userInfo = getUserInfo();
         this.state = {
             tabs:[{
-                tab:this.language.tabs[0],
+                tab:{"zh_Hans":"云账户","zh_Hant":"雲賬戶","en":""},
                 components:'app-view-wallet-home-cloudHome'
             },{
-                tab:this.language.tabs[1],
+                tab:{"zh_Hans":"本地钱包","zh_Hant":"本地錢包","en":""},
                 components:'app-view-wallet-home-walletHome'
             }],
             activeNum:1,

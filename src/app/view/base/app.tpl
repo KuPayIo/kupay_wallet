@@ -25,7 +25,9 @@
     {{for index,item of it1.tabBarList}}
     <div w-class="ga-tab-bar-item {{it1.isActive == item.identfy ? 'ga-tab-bar-item-active' : ''}}" on-down="tabBarChangeListener(e,{{index}})">
         <img src="../../res/image1/{{it1.isActive == item.identfy ? item.iconActive : item.icon}}" w-class="ga-tab-bar-icon" />
-        <span w-class="ga-tab-bar-text">{{item.text}}</span>
+        <span w-class="ga-tab-bar-text">
+            <pi-ui-lang>{{item.text}}</pi-ui-lang>
+        </span>
     </div>
     {{end}}
 </div>

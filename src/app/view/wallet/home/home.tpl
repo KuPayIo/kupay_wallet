@@ -6,7 +6,7 @@
             <div w-class="nav">
                 {{for i,v of it1.tabs}} {{let isActive = i===it1.activeNum}}
                 <div w-class="nav-item {{isActive ? 'is-active' : ''}}" on-tap="tabsChangeClick(e,{{i}})">
-                    {{v.tab}}
+                    <pi-ui-lang>{{v.tab}}</pi-ui-lang>
                 </div>
                 {{end}}
             </div>

@@ -2,7 +2,7 @@
  * 首页
  */
 // ================================ 导入
-import { setLang } from '../../../pi/util/lang';
+import { setLang, getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { applyAutoLogin, fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
@@ -18,6 +18,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class App extends Widget {
     public old: any = {};
+    public language:any;
     public create() {
         super.create();
         this.init();
@@ -27,8 +28,7 @@ export class App extends Widget {
     public init(): void {
         const isActive = 'wallet';
         this.old[isActive] = true;
-
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
 
         const loading = localStorage.getItem('level_2_page_loaded') ? false : true;
         localStorage.removeItem('level_2_page_loaded');
@@ -41,28 +41,28 @@ export class App extends Widget {
             allTabBar: {
                 play: {
                     identfy: 'play',
-                    text: cfg.taps[0],
+                    text: {"zh_Hans":"玩","zh_Hant":"玩","en":""},
                     icon: 'play.png',
                     iconActive: 'play_active.png',
                     components: 'app-view-play-home-home'
                 },
                 chat: {
                     identfy: 'chat',
-                    text: cfg.taps[1],
+                    text: {"zh_Hans":"聊","zh_Hant":"聊","en":""},
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
                     components: 'app-view-chat-home-home'
                 },
                 earn: {
                     identfy: 'earn',
-                    text: cfg.taps[2],
+                    text: {"zh_Hans":"赚","zh_Hant":"賺","en":""},
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
                     components: 'app-view-earn-home-home'
                 },
                 wallet: {
                     identfy: 'wallet',
-                    text: cfg.taps[3],
+                    text: {"zh_Hans":"钱","zh_Hant":"錢","en":""},
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
                     components: 'app-view-wallet-home-home'
@@ -71,7 +71,6 @@ export class App extends Widget {
 
             tabBarCfg: ['earn', 'wallet'],
             tabBarList: [],
-            cfgData: cfg
         };
     }
 

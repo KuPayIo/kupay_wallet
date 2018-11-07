@@ -210,3 +210,10 @@ register('wallet', () => {
         w.initData();
     }
 });
+
+register('user',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});
