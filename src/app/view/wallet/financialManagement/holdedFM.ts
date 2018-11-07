@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getPurchaseRecord } from '../../../net/pull';
 import { PurchaseHistory } from '../../../store/interface';
 import { register } from '../../../store/memstore';
-import { getLanguage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -18,14 +18,15 @@ interface Props {
     isActive:boolean;
 }
 export class HoldedFM extends Widget {
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         this.state = {
             purchaseRecord:[],
-            cfgData:getLanguage(this)
         };
         if (this.props.isActive) {
             getPurchaseRecord();

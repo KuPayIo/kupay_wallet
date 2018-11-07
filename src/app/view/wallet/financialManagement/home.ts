@@ -5,7 +5,8 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList, getPurchaseRecord } from '../../../net/pull';
-import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getLanguage } from '../../../utils/tools';
+import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -16,6 +17,7 @@ interface Props {
 }
 export class Home extends Widget {
     public ok:() => void;
+    public language:any;
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -30,19 +32,18 @@ export class Home extends Widget {
         getPurchaseRecord();
     }
     public init() {
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
             tabs:[{
-                tab:cfg.tabs[0],
+                tab:this.language.tabs[0],
                 components:'app-view-wallet-financialManagement-recommendFM'
             },{
-                tab:cfg.tabs[1],
+                tab:this.language.tabs[1],
                 components:'app-view-wallet-financialManagement-holdedFM'
             }],
             activeNum:0,
             avatar:'',
             totalAsset:formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets()),
-            cfgData:getLanguage(this),
             refreshing:false
         };
     }

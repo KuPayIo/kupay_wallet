@@ -27,7 +27,7 @@
             <div w-class="row4">
                 <div style="width:{{it1.usePercent}}%;"></div>
                 <div w-class="sold" >
-                    <pi-ui-lang>{{tips[0]}}</pi-ui-lang>&nbsp;{{it1.usePercent}}%
+                    <pi-ui-lang>{{tips[0]}}</pi-ui-lang> &nbsp;{{it1.usePercent}}%
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@
             <div w-class="detail-box">
                 <div w-class="detail">
                     <pi-ui-lang>{{detail[0]}}</pi-ui-lang>
-                    {{it.product.unitPrice}}&nbsp;{{it.product.coinType}} + "/"
+                    <span>{{it.product.unitPrice}}&nbsp;{{it.product.coinType}} /
                     <pi-ui-lang>{{tips[4]}}</pi-ui-lang>
                 </div>
                 <div w-class="detail">

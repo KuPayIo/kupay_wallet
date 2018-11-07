@@ -8,7 +8,12 @@
         <div w-class="desc">{{it.product.productDescribe}}</div>
     </div>
 
-    {{: saleOut = {"zh_Hans":"售罄","zh_Hant":"售罄","en":""} }}
+    
+    {{if it.product.surplus === 0 }}
+        {{: centerText = {"zh_Hans":"售罄","zh_Hant":"售罄","en":""} }}
+    {{else}}
+        {{: centerText = Math.floor(it.product.surplus / it.product.total * 100) + '%' }}
+    {{end}}
     <app-components-ringProgressBar-ringProgressBar>
         {
             "width":80,
@@ -16,7 +21,7 @@
             "activeColor":"#f48e35",
             "activePercent":{{1 - it.product.surplus / it.product.total}},
             "centerStyle":"fontSize:28px;color:#f7931a;",
-            "centerText":{{it.product.surplus === 0 ? {{saleOut}} : Math.floor(it.product.surplus / it.product.total * 100) + '%' }}
+            "centerText":{{centerText}}
         }
     </app-components-ringProgressBar-ringProgressBar>
 </div>

@@ -3,24 +3,25 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { getLanguage } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
 import { lang } from '../../../utils/constants';
 import { isValidMnemonic } from '../../../core/genmnemonic';
 import { CreateWalletType } from '../../../logic/localWallet';
+import { getLang } from '../../../../pi/util/lang';
 
 export class StandardImport extends Widget {
     public ok: () => void;
+    public language:any;
     public create() {
         super.create();
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         this.state = {
             mnemonic:'',
             psw:'',
             pswConfirm:'',
-            cfgData:getLanguage(this)
         };
     }
     public inputChange(r:any) {
@@ -29,12 +30,12 @@ export class StandardImport extends Widget {
     }
     public nextClick(e:any) {
         if (this.state.mnemonic.length <= 0) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips });
+            popNew('app-components1-message-message', { content: this.language.tips });
 
             return;
         }
         if(!isValidMnemonic(lang,this.state.mnemonic)){
-            popNew('app-components1-message-message', { content: this.state.cfgData.invalidMnemonicTips });
+            popNew('app-components1-message-message', { content: this.language.invalidMnemonicTips });
 
             return;
         }
