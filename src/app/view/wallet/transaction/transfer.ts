@@ -2,6 +2,7 @@
  * 转账
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode } from '../../../logic/native';
@@ -11,7 +12,6 @@ import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/inter
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -67,7 +67,7 @@ export class Transfer extends Widget {
     public speedDescClick() {
         popNew('app-components-modalBox-modalBox1',this.language.modalBox);
     }
-    //到账速度
+    // 到账速度
     public chooseMinerFee() {
         popNew('app-components-modalBox-chooseModalBox',{ 
             currencyName:this.props.currencyName,

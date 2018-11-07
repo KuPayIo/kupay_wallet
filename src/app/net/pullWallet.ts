@@ -16,7 +16,7 @@ import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx } from '../utils/tools';
+import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
@@ -40,10 +40,16 @@ export const transfer = async (psw:string,txRecord:TxHistory) => {
                 console.log('--------------ret',ret);
             } else if (currencyName === 'BTC') {
                 const res = await doBtcTransfer(<any>wlt, txRecord);
-                ret = {
-                    hash:res.txid,
-                    nonce:0
-                };
+                if (!res) {
+                    popNewMessage('交易失败');
+
+                } else {
+                    ret = {
+                        hash:res.txid,
+                        nonce:0
+                    };
+                }
+                
             } else if (ERC20Tokens[currencyName]) {
                 ret = await doERC20TokenTransfer(<any>wlt,txRecord);
             }
@@ -58,8 +64,10 @@ export const transfer = async (psw:string,txRecord:TxHistory) => {
         const tx = {
             ...txRecord,
             hash:ret.hash,
-            nonce:ret.nonce
+            nonce:ret.nonce,
+            time:new Date().getTime()
         };
+        console.log('transfer success',tx);
         updateLocalTx(tx);
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.transSuccess });
@@ -284,6 +292,7 @@ export const doBtcTransfer = async (wlt:BTCWallet,txRecord:TxHistory) => {
     // const rawHexString: string = retArr[0];
     // console.log('rawTx',rawHexString);
     const rawHexString: string = retArr.rawTx;
+    console.log('rawTx==========',rawHexString);
 
     return BtcApi.sendRawTransaction(rawHexString);
 };

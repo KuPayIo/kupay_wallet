@@ -10,7 +10,7 @@
             <div w-class="new-code" on-tap="changeSelect(e,{{ind}})">
                 <img src={{val.img}} style="width: 50px;height: 50px;"/>
                 <span w-class="prepend">{{val.name}}</span>
-                <span w-class="append" style="margin-right: {{it1.selected==ind?'20px':'60px'}}">{{val.balance}}</span>
+                <span w-class="append" style="margin-right: {{it1.selected==ind?'20px':'60px'}}">{{val.balance || val.balance.toFixed(2)}}</span>
                 {{if it1.selected==ind}}
                 <img src="../../res/image/16.png" style="width: 40px;height: 40px;"/>
                 {{end}}

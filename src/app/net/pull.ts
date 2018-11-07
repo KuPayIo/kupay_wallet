@@ -645,7 +645,6 @@ export const getData = async (key) => {
  * 设置用户基础信息
  */
 export const setUserInfo = async () => {
-    if (!getStore('user/isLogin')) return;
     const userInfo = getStore('user/info');
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
@@ -664,6 +663,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         if (userInfoStr) {
             const localUserInfo = getStore('user/info');
             const serverUserInfo = JSON.parse(userInfoStr);
+            console.log(serverUserInfo);
             let isSame = true;
             for (const key in localUserInfo) {
                 if (localUserInfo[key] !== serverUserInfo[key]) {
@@ -675,7 +675,6 @@ export const getUserInfoFromServer = async (uids: [number]) => {
                     ...serverUserInfo,
                     ...localUserInfo
                 };
-                console.log(userInfo);
                 setStore('user/info',userInfo);
             }
             

@@ -3,15 +3,15 @@
  */
 // ============================== 导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
-import { setStore, register } from '../../../store/memstore';
+import { register, setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
-import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -26,7 +26,7 @@ export class Exchange extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
         this.state = {
-            cid: '',
+            cid: ''
         };
     }
     
@@ -91,7 +91,7 @@ export class Exchange extends Widget {
         } else if (perCode === LuckyMoneyType.Invite) {
             const data = await getData('convertRedEnvelope');
             if (data.value) {
-                showError('-99');
+                showError(-99);
 
                 return;
             }

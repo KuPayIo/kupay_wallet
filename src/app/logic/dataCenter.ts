@@ -36,9 +36,9 @@ export class DataCenter {
    */
     public init() {
         // 获取shapeshift支持货币
-        getShapeShiftCoins();
+        // getShapeShiftCoins();
         // 更新人民币美元汇率
-        this.updateUSDRate();
+        // this.updateUSDRate();
         // 更新货币对比USDT的比率
         // this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
@@ -644,6 +644,7 @@ export class DataCenter {
    */
     private setBalance(addr: string, currencyName: string, num: number) {
         const wallet = getStore('wallet');
+        if (!wallet) return;
         for (const record of wallet.currencyRecords) {
             if (record.currencyName === currencyName) {
                 for (const addrInfo of record.addrs) {
@@ -929,8 +930,8 @@ export class DataCenter {
             // okey
             if (!res.error_code) {
                 const currency2USDTMap = getStore('third/currency2USDTMap');
-                const close = res.ticker.sell;
-                const open = res.data.buy;
+                const close = Number(res.ticker.sell);
+                const open = Number(res.ticker.buy);
                 currency2USDTMap.set(currencyName, {
                     open,
                     close

@@ -134,12 +134,12 @@ export const pop = (w: Widget, ok?: Callback, cancel?: Callback,
     if (back === undefined || back === 'cancel') {
         b.callback = () => {
             close.callback(close.widget);
-            cancel('back');
+            cancel && cancel('back');
         };
     } else if (back === 'next') {
         b.callback = () => {
             close.callback(close.widget);
-            cancel('back');
+            cancel && cancel('back');
             backCall();
         };
     } else if (back !== 'force') {
