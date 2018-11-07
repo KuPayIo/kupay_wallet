@@ -2,7 +2,8 @@
     <div w-class="threedata">
         {{for ind,val of it.name}}
         <div w-class="data">
-            <div w-class="data-title">{{val}}</div>
+            <div w-class="data-title">
+                <pi-ui-lang>{{val}}</pi-ui-lang></div>
             <div w-class="data-num" style="{{it.style}}">{{it.data[ind]}}</div>
         </div>
             {{if it.name.length-1>ind}}

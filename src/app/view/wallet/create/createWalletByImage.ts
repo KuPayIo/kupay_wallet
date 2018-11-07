@@ -5,16 +5,18 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
 import { pswEqualed } from '../../../utils/account';
-import { getLanguage } from '../../../utils/tools';
 import { CreateWalletType } from '../../../logic/localWallet';
+import { getLang } from '../../../../pi/util/lang';
 
 export class CreateWalletByImage extends Widget {
     public ok: () => void;
+    public language:any;
     public create() {
         super.create();
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         this.state = {
             chooseImage:false,
             imageBase64:'',
@@ -23,8 +25,6 @@ export class CreateWalletByImage extends Widget {
             imagePswAvailable:false,
             imgagePswConfirm:'',
             pswEqualed:false,
-            cfgData:getLanguage(this)
-
         };
     }
     public backPrePage() {
@@ -60,12 +60,12 @@ export class CreateWalletByImage extends Widget {
 
     public nextClick() {
         if (!this.state.chooseImage) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', { content: this.language.tips[0] });
 
             return;
         }
         if (!this.state.pswEqualed) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
+            popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
         }

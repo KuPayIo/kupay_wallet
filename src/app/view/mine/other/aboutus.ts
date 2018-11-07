@@ -7,22 +7,23 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { shareDownload } from '../../../net/pull';
 import { getLanguage, getLocalVersion, popNewMessage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // =========================================导出
 declare var pi_modules;
 export class Aboutus extends Widget {
     public ok: () => void;
+    public language :any;
    
     public create() {
         super.create();
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
             version:getLocalVersion(),
             data:[
-                { value: cfg.itemTitle[0],components:'app-view-mine-other-privacypolicy' },
-                { value: cfg.itemTitle[1],components:'' },
-                { value: cfg.itemTitle[2],components:'' }
+                { value: this.language.itemTitle[0],components:'app-view-mine-other-privacypolicy' },
+                { value: this.language.itemTitle[1],components:'' },
+                { value: this.language.itemTitle[2],components:'' }
             ],
-            cfgData:cfg
         };
     }
 

@@ -6,6 +6,8 @@ import { Json } from '../../../../pi/lang/type';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getLanguage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
+import { register } from '../../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -15,11 +17,11 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class DividendItem extends Widget {
     public ok: () => void;
+    public language:any;
     public state:{
         data:any[];
         totalNum:number;
         more:boolean;
-        cfgData:any;
     };
 
     public backPrePage() {
@@ -28,13 +30,13 @@ export class DividendItem extends Widget {
 
     public setProps(props: Json, oldProps?: Json)  {
         super.setProps(props,oldProps);
+        this.language = this.config.value[getLang()];
         this.state = {
             data:this.props.data,
             totalNum:this.props.totalNum,
             more:false,
-            cfgData:getLanguage(this)
         };
 
     }
-
 }
+

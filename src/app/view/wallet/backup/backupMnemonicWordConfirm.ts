@@ -3,7 +3,8 @@
  */
 import { Widget } from '../../../../pi/widget/widget';
 import { deleteMnemonic } from '../../../logic/localWallet';
-import { getLanguage, popNewMessage, shuffle } from '../../../utils/tools';
+import { popNewMessage, shuffle } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 interface Props {
     mnemonic: string;
@@ -11,11 +12,13 @@ interface Props {
 
 export class BackupMnemonicWordConfirm extends Widget {
     public ok: () => void;
+    public language:any;
     constructor() {
         super();
     }
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
+        this.language = this.config.value[getLang()];
         this.init();
     }
     public init() {
@@ -26,7 +29,6 @@ export class BackupMnemonicWordConfirm extends Widget {
             nullMnemonic:[0,0,0,0,0,0,0,0,0,0,0,0],
             confirmedMnemonic: [],
             shuffledMnemonic,
-            cfgData:getLanguage(this)
         };
     }
     
@@ -57,12 +59,12 @@ export class BackupMnemonicWordConfirm extends Widget {
 
     public nextStepClick() {
         if (this.state.confirmedMnemonic.length === 0) {
-            popNewMessage(this.state.cfgData.tips[0]);
+            popNewMessage(this.language.tips[0]);
         } else if (!this.compareMnemonicEqualed()) {
-            popNewMessage(this.state.cfgData.tips[1]);
+            popNewMessage(this.language.tips[1]);
         } else {
             deleteMnemonic();
-            popNewMessage(this.state.cfgData.tips[2]);
+            popNewMessage(this.language.tips[2]);
             this.ok && this.ok();
         }
     }

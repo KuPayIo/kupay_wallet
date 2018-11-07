@@ -9,8 +9,9 @@
  * placeholder:输入框提示语
  * 外部监听 ev-sure，ev-forgetPsw 事件,event.value获取输入框中数据  
  */
+import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
+import { getLanguage, logoutAccountDel } from '../../utils/tools';
 
 interface Props {
     title:string;
@@ -23,7 +24,7 @@ interface Props {
 export class ModalBoxInput extends Widget {
     public props: Props;
     public ok: (value:string) => void;
-    public cancel: () => void;
+    public cancel: () => void;   
 
     public create() {
         super.create();
@@ -48,7 +49,10 @@ export class ModalBoxInput extends Widget {
      * 忘记密码
      */
     public foegetPsw(e:any) {
-        // this.ok && this.ok();        
+        this.cancel && this.cancel();
+        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox,() => {
+            logoutAccountDel();
+        });        
     }
     /**
      * 输入框变化

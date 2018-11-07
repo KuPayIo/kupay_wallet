@@ -15,7 +15,7 @@ import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { getRealNode, paintCmd3, paintWidget } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
+import { getLang } from '../../../pi/util/lang';
 
 interface Props {
     input?:string;
@@ -31,16 +31,21 @@ interface State {
     currentValue:string;
     focused:boolean;
     showClear:boolean;
-    cfgData:any;
     inputLock:boolean; // 中文输入结束标记，未结束时不执行change方法
 }
 
 export class Input extends Widget {
     public props: Props;
     public state: State;
+    public language :any;
     
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
+        this.language = this.config.value[getLang()];
+        if(this.props.placeHolder){
+            this.props.placeHolder = this.props.placeHolder[getLang()];
+        }
+        
         let currentValue = '';
         if (props.input) {
             currentValue = props.input;
@@ -49,7 +54,6 @@ export class Input extends Widget {
             currentValue,
             focused: false,
             showClear:false,
-            cfgData:getLanguage(this),
             inputLock:false
         };
     }
@@ -111,7 +115,7 @@ export class Input extends Widget {
         }
         // 密码输入时检验非法字符
         if (this.props.itype === 'password' && !this.availableJudge(currentValue) && currentValue.length > 0) {
-            popNew('app-components1-message-message',{ content:this.state.cfgData.disAvailable });
+            popNew('app-components1-message-message',{ content:this.language.disAvailable });
             currentValue = currentValue.slice(0,currentValue.length - 1); 
         }
         // 数字输入时检验输入格式

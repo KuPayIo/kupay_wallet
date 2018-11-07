@@ -1,18 +1,31 @@
 <div class="new-page" w-class="new-page" >
+
     <div w-class="logo"></div>
-    <div ev-back-click="backPrePage" w-class="title-container"><app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},"background":"rgba(0,0,0,0)" }</app-components1-topBar-topBar></div>
+    <div ev-back-click="backPrePage" w-class="title-container">
+        {{: topBarTitle = {"zh_Hans":"登陆","zh_Hant":"登錄","en":""} }}
+        <app-components1-topBar-topBar>{"title":{{topBarTitle}},"background":"rgba(0,0,0,0)" }</app-components1-topBar-topBar>
+    </div>
+
     {{if !it1.login}}
     <div w-class="body1">
-        <div ev-btn-tap="createStandardClick"><app-components1-btn-btn>{"name":{{it1.cfgData.btnName[0]}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
-        <div ev-btn-tap="createByImgClick"><app-components1-btn-btn>{"name":{{it1.cfgData.btnName[1]}},"types":"big","color":"white"}</app-components1-btn-btn></div>
+        <div ev-btn-tap="createStandardClick">
+            {{: btnName = [
+                {"zh_Hans":"创建标准账户","zh_Hant":"創建標準賬戶","en":""},
+                {"zh_Hans":"使用照片创建账户","zh_Hant":"使用照片創建賬戶","en":""},
+                {"zh_Hans":"登陆","zh_Hant":"登錄","en":""}] }}
+            <app-components1-btn-btn>{"name":{{btnName[0]}},"types":"big","color":"blue"}</app-components1-btn-btn>
+        </div>
+        <div ev-btn-tap="createByImgClick">
+            <app-components1-btn-btn>{"name":{{btnName[1]}},"types":"big","color":"white"}</app-components1-btn-btn>
+        </div>
         <div w-class="container1">
             <div w-class="box" on-tap="switch2LoginClick"  style="{{ it1.accountList.length > 0 ? '' : 'width:0px;overflow: hidden;'}} ">
                 <img src="../../../res/image/avatar1.png" w-class="img-logo"/>
-                <div w-class="tag" >{{it1.cfgData.login}}</div>
+                <div w-class="tag" ><pi-ui-lang>{"zh_Hans":"登陆账户","zh_Hant":"登錄賬戶","en":""}</pi-ui-lang></div>
             </div>
             <div w-class="box" on-tap="walletImportClicke">
                 <img src="../../../res/image/right_arrow2_blue.png" w-class="img-logo"/>
-                <div w-class="tag" >{{it1.cfgData.hasWallet}}</div>
+                <div w-class="tag" ><pi-ui-lang>{"zh_Hans":"已有账户","zh_Hant":"已有賬戶","en":""}</pi-ui-lang></div>
             </div>
         </div>
     </div>
@@ -35,17 +48,18 @@
             </div>
         </div>
         <div w-class="input-father" ev-input-change="pswChange">
-            <app-components1-input-input>{placeHolder:"输入密码",itype:"password"}</app-components1-input-input>
+            {{: inputHolder = {"zh_Hans":"输入密码","zh_Hant":"輸入密碼","en":""} }}
+            <app-components1-input-input>{placeHolder:{{inputHolder}},itype:"password"}</app-components1-input-input>
         </div>
-        <div ev-btn-tap="loginClick"><app-components1-btn-btn>{"name":{{it1.cfgData.btnName[2]}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
+        <div ev-btn-tap="loginClick"><app-components1-btn-btn>{"name":{{btnName[2]}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
         <div w-class="container2">
             <div w-class="box" on-tap="switch2CreateClick">
                 <img src="../../../res/image/avatar1.png" w-class="img-logo"/>
-                <div w-class="tag" >{{it1.cfgData.create}}</div>
+                <div w-class="tag" ><pi-ui-lang>{"zh_Hans":"创建新账户","zh_Hant":"創建新賬戶","en":""}</pi-ui-lang></div>
             </div>
             <div w-class="box" on-tap="walletImportClicke">
                 <img src="../../../res/image/right_arrow2_blue.png" w-class="img-logo"/>
-                <div w-class="tag" >{{it1.cfgData.hasWallet}}</div>
+                <div w-class="tag" ><pi-ui-lang>{"zh_Hans":"已有账户","zh_Hant":"已有賬戶","en":""}</pi-ui-lang></div>
             </div>
         </div>
     </div>

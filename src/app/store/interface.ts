@@ -392,6 +392,8 @@ export interface LuckyMoneySendDetail {
     time: number;               // 时间
     timeShow: string;           // 时间显示格式
     codes: string[];            // 兑换码
+    curNum: number;             // 红包已兑换个数
+    totalNum:number;            // 总个数
 }
 
 /**

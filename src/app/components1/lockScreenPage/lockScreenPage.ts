@@ -115,8 +115,12 @@ export class LockScreenPage extends Widget {
                 const fg = await VerifyIdentidy(r);
                 close.callback(close.widget);
                 if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
-                    const ls:LockScreen = getStore('setting/lockScreen');
-                    ls.locked = false;
+                    let ls:LockScreen = getStore('setting/lockScreen');
+                    ls = {
+                        psw:'',
+                        open:false,
+                        locked:false
+                    };
                     setStore('setting/lockScreen',ls);
                     this.setLockPsw();
                     

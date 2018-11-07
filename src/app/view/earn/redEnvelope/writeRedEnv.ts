@@ -8,8 +8,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
-import { getLanguage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -26,15 +26,19 @@ interface State {
     oneAmount: number;
     message: string;
     realUser: boolean;
-    cfgData: any;
 }
 
 export class WriteRedEnv extends Widget {
     public ok: () => void;
     public state: State;
+    public language:any;
+    constructor() {
+        super();
+    }
 
     public create() {
         super.create();
+        this.language = this.config.value[getLang()]
         this.state = {
             list: [],
             selected: 0,
@@ -44,7 +48,6 @@ export class WriteRedEnv extends Widget {
             oneAmount: 0,
             message: '',
             realUser: getStore('user/info/isRealUser'),
-            cfgData: getLanguage(this)
         };
         this.updateBalance();
         if (!this.state.realUser) {
@@ -102,6 +105,7 @@ export class WriteRedEnv extends Widget {
      */
     public changeAmount(e: any) {
         if (this.state.showPin) {
+            this.state.oneAmount = e.value;
             this.state.totalAmount = e.value;
         } else {
             this.state.oneAmount = e.value;
@@ -141,54 +145,55 @@ export class WriteRedEnv extends Widget {
      * 点击发红包按钮
      */
     public async send() {
-        if (this.state.totalNum === 0) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
+        if (this.state.totalNum == 0) {
+            popNew('app-components1-message-message', { content: this.language.tips[2] });
 
             return;
         }
-        if (this.state.oneAmount === 0 || this.state.totalAmount === 0) {
-            popNew('app-components-message-message', { content: this.state.cfgData.tips[1] });
+        if (this.state.oneAmount == 0 && this.state.totalAmount == 0) {
+            popNew('app-components-message-message', { content: this.language.tips[1] });
 
             return;
         }
         const curCoin = this.state.list[this.state.selected];
         if (this.state.totalAmount > curCoin.num) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });
+            popNew('app-components1-message-message', { content: this.language.tips[3] });
 
             return;
         }
         if (this.state.message.length > 20) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[4] });
+            popNew('app-components1-message-message', { content: this.language.tips[4] });
 
             return;
         }
         if (this.state.message === '') {
-            this.state.message = this.state.cfgData.messTitle[1];
+            this.state.message = this.language.messTitle[1];
         }
         if (!this.state.realUser) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[5] });
+            popNew('app-components1-message-message', { content: this.language.tips[5] });
 
             return;
         }
 
         this.inputBlur();
-        const mess1 = this.state.cfgData.phrase[0] + this.state.oneAmount + curCoin.name + ' / ' + this.state.totalNum + this.state.cfgData.phrase[1];
+        
+        const mess1 = this.language.phrase[0] + this.state.totalAmount + curCoin.name +" / "+this.state.totalNum+ this.language.phrase[1];
         // tslint:disable-next-line:max-line-length
-        const mess2 = this.state.cfgData.phrase[2] + (this.state.showPin ? this.state.cfgData.redEnvType[1] : this.state.cfgData.redEnvType[0]);
+        const mess2 = this.language.phrase[2] + (this.state.showPin ? this.language.redEnvType[1] : this.language.redEnvType[0]);
         popNew('app-components-modalBoxInput-modalBoxInput', {
-            title: curCoin.name + this.state.cfgData.phrase[3],
+            title: curCoin.name + this.language.phrase[3],
             content: [mess1, mess2],
-            placeholder: this.state.cfgData.phrase[4],
+            placeholder: this.language.phrase[4],
             itype: 'password'
         },
             async (r) => {
-                const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
+                const close = popNew('app-components1-loading-loading', { text: this.language.loading });
                 const fg = await VerifyIdentidy(r);
                 close.callback(close.widget);
                 if (fg) {
                     this.sendRedEnv();
                 } else {
-                    popNew('app-components1-message-message', { content: this.state.cfgData.tips[6] });
+                    popNew('app-components1-message-message', { content: this.language.tips[6] });
                 }
             }
         );

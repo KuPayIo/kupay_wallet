@@ -10,7 +10,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getDividend, getDividHistory, getMining } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { getLanguage } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,12 +20,14 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Dividend extends Widget {
     public ok: () => void;
+    public language:any;
     constructor() {
         super();
     }
 
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
+        this.language = this.config.value[getLang()];
         this.state = {
             totalDivid:0,
             totalDays:0,
@@ -46,7 +48,6 @@ export class Dividend extends Widget {
                 // { num:0.02,time:'04-30  14:32:00' }
             ],
             ktBalance:this.props.ktBalance,  // KT持有量 
-            cfgData:getLanguage(this),
             hasMore:false,
             refresh:true,
             start:''
@@ -76,7 +77,7 @@ export class Dividend extends Widget {
             this.state.totalDivid = data.totalDivid;
             this.state.totalDays = data.totalDays;
             this.state.thisDivid = data.thisDivid;
-            this.state.yearIncome = Number(data.yearIncome) === 0 ? this.state.cfgData.noneYearIncome :data.yearIncome;
+            this.state.yearIncome = Number(data.yearIncome) === 0 ? this.language.noneYearIncome :data.yearIncome;
         }
 
         const history = getStore('activity/dividend/history');  

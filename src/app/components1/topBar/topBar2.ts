@@ -7,7 +7,6 @@ import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
-    avatar:string;
     scroll?:boolean;
     scrollHeight?:number;
     refreshImg?:string;

@@ -2,7 +2,7 @@
  * 和第3方库相关的一些工具函数
  */
 import { arrayBufferToBase64 } from '../../pi/util/base64';
-import { ERC20Tokens } from '../config';
+import { ERC20Tokens, Config } from '../config';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
@@ -14,6 +14,7 @@ import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
 import { nameWare } from './nameWareHouse';
 import { shareSecret } from './secretsBase';
 import { calcHashValuePromise, decrypt, encrypt, hexstrToU8Array, popNewLoading, popNewMessage, unicodeArray2Str } from './tools';
+import { getLang } from '../../pi/util/lang';
 
 /**
  * 获取新的地址信息
@@ -231,14 +232,14 @@ export const fetchMnemonicFragment =  (hash) => {
 
 // 备份助记词
 export const backupMnemonic = async (passwd:string) => {
-    const close = popNewLoading('导出中...');
+    const close = popNewLoading(Config[getLang()].userInfo.exporting);
     const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
     console.log('hash!!!!!!!!!!!!',hash);
     close.callback(close.widget);
     const mnemonic = getMnemonicByHash(hash);
     const fragments = fetchMnemonicFragment(hash);
     if (!mnemonic) {
-        popNewMessage('密码错误');
+        popNewMessage(Config[getLang()].transError[0]);
         
         return;
     }

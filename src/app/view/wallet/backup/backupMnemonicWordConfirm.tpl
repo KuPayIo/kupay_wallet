@@ -1,8 +1,9 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-	<app-components1-topBar-topBar>{title:{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
+	{{: topBarTitle = {"zh_Hans":"备份助记词","zh_Hant":"備份助記詞","en":""} }}
+	<app-components1-topBar-topBar>{title:{{topBarTitle}} }</app-components1-topBar-topBar>
 	<div w-class="body">
 		<div w-class="bodyTitle">
-			{{it1.cfgData.bodyTitle}} 
+			<pi-ui-lang>{"zh_Hans":"按序选择输入助记词","zh_Hant":"按序選擇輸入助記詞","en":""}</pi-ui-lang>
 		</div>
 		<div w-class="screen">
 			 {{for index,item of it1.nullMnemonic}}
@@ -22,8 +23,11 @@
 				{{end}}
 			</div>
 			
+
 			<div w-class="btnBox">
-				<div ev-btn-tap="nextStepClick" w-class="btn"><app-components1-btn-btn>{"name":{{it1.cfgData.sure}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
+				{{: sure = {"zh_Hans":"确定","zh_Hant":"確定","en":""} }}
+				<div ev-btn-tap="nextStepClick" w-class="btn"><app-components1-btn-btn>{"name":{{sure}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
+
 			</div>
 		</div>
 	</div>

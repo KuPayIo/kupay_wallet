@@ -2,7 +2,7 @@
  * 首页
  */
 // ================================ 导入
-import { setLang } from '../../../pi/util/lang';
+import { setLang, getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
@@ -18,16 +18,17 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class App extends Widget {
     public old: any = {};
+    public language:any;
     public create() {
         super.create();
         this.init();
+        this.setList();
     }
 
     public init(): void {
-        const isActive = 3;
+        const isActive = 'wallet';
         this.old[isActive] = true;
-
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
 
         const loading = localStorage.getItem('level_2_page_loaded') ? false : true;
         localStorage.removeItem('level_2_page_loaded');
@@ -37,43 +38,58 @@ export class App extends Widget {
             isActive,
             old: this.old,
             loading,
-            tabBarList: [
-                {
-                    text: cfg.taps[0],
+            allTabBar: {
+                play: {
+                    identfy: 'play',
+                    text: {"zh_Hans":"玩","zh_Hant":"玩","en":""},
                     icon: 'play.png',
                     iconActive: 'play_active.png',
                     components: 'app-view-play-home-home'
                 },
-                {
-                    text: cfg.taps[1],
+                chat: {
+                    identfy: 'chat',
+                    text: {"zh_Hans":"聊","zh_Hant":"聊","en":""},
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
                     components: 'app-view-chat-home-home'
                 },
-                {
-                    text: cfg.taps[2],
+                earn: {
+                    identfy: 'earn',
+                    text: {"zh_Hans":"赚","zh_Hant":"賺","en":""},
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
                     components: 'app-view-earn-home-home'
                 },
-                {
-                    text: cfg.taps[3],
+                wallet: {
+                    identfy: 'wallet',
+                    text: {"zh_Hans":"钱","zh_Hant":"錢","en":""},
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
                     components: 'app-view-wallet-home-home'
                 }
-            ],
-            cfgData: cfg
+            },
+
+            tabBarCfg: ['earn', 'wallet'],
+            tabBarList: [],
         };
+    }
+
+    public setList() {
+        let resList = [];
+        for (let item of this.state.tabBarCfg) {
+            resList.push(this.state.allTabBar[item]);
+        }   
+        this.state.tabBarList = resList;
     }
     public closeLoading() {
         this.state.loading = false;
         this.paint();
     }
     public async tabBarChangeListener(event: any, index: number) {
-        if (this.state.isActive === index) return;
-        this.state.isActive = index;
-        this.old[index] = true;
+        let identfy = this.state.tabBarList[index].identfy;
+        if (this.state.isActive === identfy) return;
+        this.state.isActive = identfy;
+        this.old[identfy] = true;
         this.paint();
     }
 

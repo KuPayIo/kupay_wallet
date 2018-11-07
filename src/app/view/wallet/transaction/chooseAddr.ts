@@ -5,6 +5,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { createNewAddr } from '../../../logic/localWallet';
 import { getStore, setStore } from '../../../store/memstore';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, popPswBox } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 
 interface Props {
     currencyName: string;
@@ -12,15 +13,16 @@ interface Props {
 export class ChooseAddr extends Widget {
     public props: Props;
     public ok: () => void;
+    public language:any;
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
         this.init();
     }
 
     public init(): void {
+        this.language = this.config.value[getLang()];
         this.state = {
-            addrsInfo:this.parseAddrsInfo(),
-            cfgData:getLanguage(this)
+            addrsInfo:this.parseAddrsInfo()
         };
     }
 

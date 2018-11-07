@@ -16,6 +16,7 @@ import { Account, FileTxHistory, getCloudBalances, getStore, initCloudWallets, L
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
+import { getLang } from '../../pi/util/lang';
 
 export const deepCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -524,7 +525,8 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
 export const popPswBox = async (content = []) => {
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
-        const psw = await openMessageboxPsw(content);
+        let BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
+        const psw = await openMessageboxPsw(BoxInputTitle,content);
 
         return psw;
     } catch (error) {
@@ -544,10 +546,10 @@ export const popNewLoading = (text: string) => {
 /**
  * 打开密码输入框
  */
-const openMessageboxPsw = (content?): Promise<string> => {
+const openMessageboxPsw = (BoxInputTitle?,content?): Promise<string> => {
     // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: '请输入密码', content }, (r: string) => {
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
             resolve(r);
         }, (cancel: string) => {
             reject(cancel);
@@ -1223,8 +1225,8 @@ export const logoutAccountDel = () => {
 
     const setting = getStore('setting');
     setting.lockScreen = {
-        ...setting.lockScreen,
-        locked:false
+        psw:'',
+        open:false
     };
     setStore('wallet',null,false);
     setStore('cloud',cloud,false);

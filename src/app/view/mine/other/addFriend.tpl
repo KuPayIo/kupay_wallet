@@ -1,6 +1,7 @@
 <div class="new-page" ev-next-click="share" ev-back-click="backPrePage" w-class="new-page">
     <img src="../../../res/image1/topbar_backimg.png" style="position: absolute;top: 0;right: 0;"/>
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}},nextImg:"../../res/image/share_white.png",background:"transparent"}</app-components1-topBar-topBar>
+    {{: topBarTitle = {"zh_Hans":"我的二维码","zh_Hant":"我的二維碼","en":""} }}
+    <app-components1-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/share_white.png",background:"transparent"}</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="title">
             <img src={{it1.userHead}} w-class="userHead"/>
@@ -11,7 +12,9 @@
         </div>
         <div style="text-align: center;">
             <app-components-qrcode-qrcode>{value:{{it1.address}},size:"350"}</app-components-qrcode-qrcode>
-            <div style="font-size: 32px;color: #222222;margin-top: 50px;">{{it1.cfgData.shortMess}}</div>
+            <div style="font-size: 32px;color: #222222;margin-top: 50px;">
+                <pi-ui-lang>{"zh_Hans":"扫码添加KuPay好友","zh_Hant":"掃碼添加KuPay好友","en":""}</pi-ui-lang>
+            </div>
         </div>
     </div>
 </div>

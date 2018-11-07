@@ -1,11 +1,12 @@
 <div class="new-page" ev-back-click="backPrePage">
-    <app-components1-topBar-topBar>{"title":{{it1.cfgData.topBarTitle}} }</app-components1-topBar-topBar>
+    {{: topBarTitle = {"zh_Hans":"手机号码","zh_Hant":"手機號碼","en":""} }}
+    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
     <div style="margin: 30px 20px;" ev-getCode="phoneChange">
         <app-components-bindPhone-bindPhone></app-components-bindPhone-bindPhone>
     </div>
     <div w-class="content">
         {{if !it1.isSuccess}}
-        <div w-class="verify">{{it1.cfgData.warn}}</div>
+        <div w-class="verify"><pi-ui-lang>{"zh_Hans":"验证码有误","zh_Hant":"驗證碼有誤","en":""}</pi-ui-lang></div>
         {{end}}
         
         <div style="text-align: center;margin-top: 60px;">

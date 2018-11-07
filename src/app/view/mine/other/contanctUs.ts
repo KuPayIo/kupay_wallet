@@ -5,22 +5,23 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
-import { getLanguage, getLocalVersion } from '../../../utils/tools';
+import { getLocalVersion } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ==================================================导出
 
 export class ContanctUs extends Widget {
     public ok: () => void;
+    public language:any;
     public create() {
         super.create();
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
             version:getLocalVersion(),
             data:[
-                { value: cfg.itemTitle[0],desc:'www.Kuplay.io' },
-                { value: cfg.itemTitle[1],desc:cfg.itemTitle[2] },
-                { value: cfg.itemTitle[3],desc:'KuPlay' }
+                { value: this.language.itemTitle[0],desc:'www.Kuplay.io' },
+                { value: this.language.itemTitle[1],desc:this.language.itemTitle[2] },
+                { value: this.language.itemTitle[3],desc:'KuPlay' }
             ],
-            cfgData:cfg
         };
     }
 

@@ -7,8 +7,9 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
+import { parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -21,11 +22,13 @@ interface Props {
 
 export class TotalRecord extends Widget {
     public props:Props;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         this.state = {
             recordList:[], // 全部记录
             otherList:[],  // 其他记录
@@ -36,7 +39,6 @@ export class TotalRecord extends Widget {
             withdrawNext:0, // 提币下一页标记
             canLoadMore:false,
             isRefreshing:false,
-            cfgData:getLanguage(this)
         };
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName,1);
@@ -92,7 +94,7 @@ export class TotalRecord extends Widget {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.state.cfgData.withdraw;
+            item.behavior = this.language.withdraw;
             item.amountShow = `-${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_withdraw_icon.png`;
@@ -108,7 +110,7 @@ export class TotalRecord extends Widget {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.state.cfgData.recharge;
+            item.behavior = this.language.recharge;
             item.amountShow = `+${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_charge_icon.png`;
