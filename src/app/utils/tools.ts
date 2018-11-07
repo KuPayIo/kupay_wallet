@@ -1225,8 +1225,8 @@ export const logoutAccountDel = () => {
 
     const setting = getStore('setting');
     setting.lockScreen = {
-        ...setting.lockScreen,
-        locked:false
+        psw:'',
+        open:false
     };
     setStore('wallet',null,false);
     setStore('cloud',cloud,false);

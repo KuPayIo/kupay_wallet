@@ -10,13 +10,13 @@ import { formatBalance } from './tools';
  */
 export const smallUnit2LargeUnit = (currencyName: string, amount: string | number): number => {
     if (currencyName === 'ETH') {
-        return formatBalance(wei2Eth(Number(amount)));
+        return formatBalance(wei2Eth(parseInt(amount)));
     } else if (currencyName === 'KT') {
-        return formatBalance(kpt2kt(Number(amount)));
+        return formatBalance(kpt2kt(parseInt(amount)));
     } else if (currencyName === 'BTC') {
-        return formatBalance(sat2Btc(Number(amount)));
+        return formatBalance(sat2Btc(parseInt(amount)));
     } else { // erc20
-        return formatBalance(ethTokenDivideDecimals(Number(amount),currencyName));
+        return formatBalance(ethTokenDivideDecimals(parseInt(amount),currencyName));
     }
 };
 

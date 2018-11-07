@@ -11,8 +11,10 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+
 import { logoutAccount, logoutAccountDel } from '../../utils/tools';
 import { getLang } from '../../../pi/util/lang';
+
 
 interface Props {
     title:string;
@@ -26,7 +28,7 @@ export class ModalBoxInput extends Widget {
     public props: Props;
     public language:any;
     public ok: (value:string) => void;
-    public cancel: (fg:boolean) => void;   // fg为true表示退出APP，false表示仅关闭当前页面
+    public cancel: (fg:boolean) => void;   // fg为true表示退出APP，false表示忘记密码删除钱包
 
     public create() {
         super.create();

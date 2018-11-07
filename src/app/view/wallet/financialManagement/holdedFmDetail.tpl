@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    <div w-class="title-container">
-        {{: topBarTitle = {"zh_Hans":it.product.productName,"zh_Hant":it.product.productName,"en":""} }}
-        <app-components1-topBar-topBar>{"title":{{topBarTitle}},background:"#fff"}</app-components1-topBar-topBar>
+
+    <div w-class="body" on-scroll="pageScroll" id="body">
+
         <div w-class="head1 {{'head1-' + it1.stateBg}}">
             {{: tags = [
                 {"zh_Hans":"昨日收益","zh_Hant":"昨日收益","en":""},
@@ -37,6 +37,7 @@
                 </div>
             </div>
         </div>
+
     </div>
     <div w-class="bottom-box">
         <div w-class="row5">{{it.product.productIntroduction}}</div>
@@ -53,6 +54,10 @@
         <div ev-btn-tap="redemptionClick" w-class="btn">
             {{: btnName = {"zh_Hans":it1.btnText,"zh_Hant":it1.btnText,"en":""} }}
             <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":{{it1.btnBgColor}}}</app-components1-btn-btn>
+
         </div>
     </div>
+  {{: topBarTitle = {"zh_Hans":it.product.productName,"zh_Hant":it.product.productName,"en":""} }}
+    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
+    
 </div>

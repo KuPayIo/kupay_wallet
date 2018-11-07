@@ -4,10 +4,10 @@
     background-color: #fff;
 }
 .logo{
-    background-image: url(../../../res/image/login_bg.png);
     background-size: contain;
     background-repeat: no-repeat;
-    height: 770px;
+    height: 55%;
+    width: 100%;
 }
 .title-container{
     position: absolute;

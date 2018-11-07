@@ -76,11 +76,8 @@
             </div>
         </div>
     </div>
-    {{let opca = it1.scrollHeight/100}}
-    <div w-class="ga-top-banner" style="{{it1.scroll?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 1px solid #cccccc;':'background:transparent;'}}">
-        <div w-class="left-container">
-            <img on-tap="backPrePage" src="../../../res/image/{{it1.scroll ? 'left_arrow_blue.png' : 'left_arrow_white.png'}}" w-class="ga-back" />
-            <span on-tap="backPrePage"  style="color: {{it1.scroll ? '#222':'#fff'}}">{{it.product.productName}}</span>
-        </div>
-    </div>
+
+    
+    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{it.product.productName}} }</app-components1-topBar-topBar2>
+
 </div>

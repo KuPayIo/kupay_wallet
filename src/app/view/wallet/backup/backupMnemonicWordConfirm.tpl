@@ -23,9 +23,11 @@
 				{{end}}
 			</div>
 			
+
 			<div w-class="btnBox">
 				{{: sure = {"zh_Hans":"确定","zh_Hant":"確定","en":""} }}
 				<div ev-btn-tap="nextStepClick" w-class="btn"><app-components1-btn-btn>{"name":{{sure}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
+
 			</div>
 		</div>
 	</div>

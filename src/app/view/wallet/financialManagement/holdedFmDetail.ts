@@ -21,6 +21,7 @@ export class HoldedFmDetail extends Widget {
         const btnBgColor = props.product.state === 1 ? 'blue' : 'white';
         this.state = {
             stateShow,
+            scrollHeight:0,
             stateBg,
             btnText,
             btnBgColor,
@@ -51,5 +52,13 @@ export class HoldedFmDetail extends Widget {
         } else {
             popNewMessage(this.state.cfgData.tips[2]);
         }
+    }
+
+     // 页面滚动
+    public pageScroll() {
+        const scrollTop = document.getElementById('body').scrollTop;
+        this.state.scrollHeight = scrollTop;
+        this.paint();
+        
     }
 }

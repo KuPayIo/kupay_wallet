@@ -42,7 +42,7 @@ export class ProductDetail extends Widget {
             amount:1,
             leftPercent:  res.left,
             usePercent: res.use,
-            scroll:false,
+
             scrollHeight:0
         };
         console.log(this.props.product);
@@ -76,11 +76,6 @@ export class ProductDetail extends Widget {
     public pageScroll() {
         const scrollTop = document.getElementById('body').scrollTop;
         this.state.scrollHeight = scrollTop;
-        if (scrollTop > 0) {
-            this.state.scroll = true;
-        } else {
-            this.state.scroll = false;
-        }
         this.paint();
         
     }

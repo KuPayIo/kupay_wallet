@@ -118,12 +118,12 @@ export class Setting extends Widget {
     }
 
     /**
-     * 点击切换基础属性
+     * 点击切换基础属性 
      */
     public itemClick(ind: number) {
-        if (!this.judgeWallet()) {
-            return;
-        }
+        // if (!this.judgeWallet()) {
+        //     return;
+        // }
         const data = this.state.itemList[ind];
         popNew('app-view-mine-setting-itemList', data);
     }
