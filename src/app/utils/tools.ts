@@ -897,7 +897,7 @@ export const parseTxTypeShow = (txType: TxType) => {
 // 解析是否可以重发
 export const canResend = (tx) => {
     if (tx.status !== TxStatus.Pending) return false;
-    if (tx.minerFeeLevel === MinerFeeLevel.Fast) return false;
+    if (tx.minerFeeLevel === MinerFeeLevel.Fastest) return false;
     const startTime = tx.time;
     const now = new Date().getTime();
     if (now - startTime < resendInterval) return false;

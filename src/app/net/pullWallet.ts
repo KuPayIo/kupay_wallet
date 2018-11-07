@@ -64,8 +64,10 @@ export const transfer = async (psw:string,txRecord:TxHistory) => {
         const tx = {
             ...txRecord,
             hash:ret.hash,
-            nonce:ret.nonce
+            nonce:ret.nonce,
+            time:new Date().getTime()
         };
+        console.log('transfer success',tx);
         updateLocalTx(tx);
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.transSuccess });

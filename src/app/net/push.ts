@@ -32,9 +32,18 @@ export const initPush = () => {
             title:'下线通知',
             content:'您的账户已被下线，如非本人操作，则助记词可能已泄露。'
         },() => {
-            popNew('app-view-wallet-create-home');
+            setTimeout(() => {
+                for (let i = backList.length;i > 1;i--) {
+                    backCall();
+                }
+                popNew('app-view-wallet-create-home');
+            },100);
         },() => {
-            // console.log();
+            setTimeout(() => {
+                for (let i = backList.length;i > 1;i--) {
+                    backCall();
+                }
+            },100);
         });
     });
 

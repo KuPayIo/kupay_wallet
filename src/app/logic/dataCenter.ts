@@ -644,6 +644,7 @@ export class DataCenter {
    */
     private setBalance(addr: string, currencyName: string, num: number) {
         const wallet = getStore('wallet');
+        if (!wallet) return;
         for (const record of wallet.currencyRecords) {
             if (record.currencyName === currencyName) {
                 for (const addrInfo of record.addrs) {
