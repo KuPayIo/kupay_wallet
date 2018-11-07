@@ -268,7 +268,7 @@ export const urlParams = (url: string, key: string) => {
  */
 export const formatBalance = (banlance: number) => {
     banlance = Number(banlance);
-    if (!banlance) return '0.00';
+    if (!banlance) return 0;
 
     return Number(banlance.toFixed(6));
 };
@@ -1390,7 +1390,8 @@ export const checkCreateAccount = () => {
     const flags = getStore('flags');
     // 第一次创建检查是否有登录后弹框提示备份
     if (flags.created) {
-        setStore('flags', { promptBackup: true, mnemonic: flags.mnemonic, fragments: flags.fragments });
+        flags.promptBackup = true;
+        setStore('flags', flags);
     }
 };
 

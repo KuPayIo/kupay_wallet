@@ -1,3 +1,4 @@
+import { shapeshiftApiPublicKey } from '../utils/constants';
 import { thirdUrlPre } from './pull';
 
 // ==========================三方接口=======================================
@@ -31,3 +32,35 @@ export const fetchCurrency2USDTRate = (currencyName:string) => {
 };
 
 // ======================================================================
+
+/**
+ * 获取货币对比USDT的比率
+ */
+export const shapeshiftMarketinfo = () => {
+    const url = `https://shapeshift.io/marketinfo/btc_ltc`;
+
+    return fetch(url).then(res => res.json()).then(json => {
+        console.log('shapeshiftMarketinfo------',json);
+    });
+};
+
+export const shapeshiftShift = () => {
+    const url = `https://cors.shapeshift.io/shift`;
+    const data = {
+        withdrawal:'0x5041F19dC1659E33848cc0f77cbF7447de562917',
+        pair:'btc_eth',
+        apiKey:shapeshiftApiPublicKey
+    };
+
+    return fetch(url, {
+        body:data,
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization:'Bearer CZfRLxjor2E49vTfTZDjaeeR78nMMi1rKypV9GRBsmt2'
+        },
+        method: 'POST',
+        mode:'cors'
+    }).then(res => res.json()).then(json => {
+        console.log('shapeshiftShift------',json);
+    });
+};

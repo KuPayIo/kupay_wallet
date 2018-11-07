@@ -35,7 +35,8 @@ export enum TaskSid {
     Mining = 1010,             // 挖矿
     Chat = 1011,               // 聊天
     FinancialManagement = 330, // 理财
-    LuckyMoney = 340           // 红包
+    LuckyMoney = 340,           // 红包
+    LuckyMoneyRetreat = 341     // 回退红包
 }
 
 /**

@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
-import { setUserInfo, uploadFile } from '../../../net/pull';
+import { uploadFile } from '../../../net/pull';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { walletNameAvailable } from '../../../utils/account';
 import { getLanguage, getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';

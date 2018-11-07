@@ -61,6 +61,10 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
                 behavior = getStaticLanguage().cloudAccountDetail.types[6];
                 behaviorIcon = 'behavior_manage_money_port.png';
                 break;
+            case TaskSid.LuckyMoneyRetreat:
+                behavior = getStaticLanguage().cloudAccountDetail.types[7];
+                behaviorIcon = 'behavior_red_bag.png';
+                break;
             default:
                 behavior = isArray(v[2]) ? unicodeArray2Str(v[2]) : v[2];
         }
