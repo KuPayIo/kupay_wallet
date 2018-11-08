@@ -1240,8 +1240,8 @@ export const logoutAccountDel = () => {
         }
     };
 
-    const setting = getStore('setting');
-    setting.lockScreen = {
+    let lockScreen = getStore('setting/lockScreen');
+    lockScreen = {
         psw:'',
         open:false
     };
@@ -1249,7 +1249,7 @@ export const logoutAccountDel = () => {
     setStore('cloud',cloud,false);
     setStore('user',user);
     setStore('activity',activity);
-    setStore('setting',setting);
+    setStore('setting/lockScreen',lockScreen);
     setBottomLayerReloginMsg('','','');
     closeCon();
     setTimeout(() => {

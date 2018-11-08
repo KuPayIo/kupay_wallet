@@ -4,12 +4,12 @@
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { Json } from '../../../pi/lang/type';
 import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { LockScreen } from '../../store/interface';
 import { getStore, register, setStore  } from '../../store/memstore';
 import { getLanguage, lockScreenHash, lockScreenVerify } from '../../utils/tools';
-import { getLang } from '../../../pi/util/lang';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -91,6 +91,8 @@ export class LockScreenPage extends Widget {
     public unLockScreen(ind:number) {
         const ls:LockScreen = getStore('setting/lockScreen');
         if (ls.locked || ind > 2) {
+            ls.locked = true;
+            setStore('setting/lockScreen',ls);
             this.verifyPsw();
         } else {
             const title = this.state.errorTips[ind === 0 ? 3 :ind];
@@ -132,9 +134,6 @@ export class LockScreenPage extends Widget {
             }
         },(fg) => {
             if (fg) {  // 退出app
-                const ls:LockScreen = getStore('setting/lockScreen');
-                ls.locked = true;
-                setStore('setting/lockScreen',ls);
                 const exitApp = new ExitApp();
                 exitApp.init();
                 exitApp.exitApplication({});

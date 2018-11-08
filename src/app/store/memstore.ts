@@ -261,15 +261,17 @@ const initSettings = () => {
         success: (localLan) => {
             // tslint:disable-next-line:radix
             langNum = parseInt(localLan);
-            // if(langNum && setting.language===0){
-            //     if(langNum===2||langNum===3){
-            //         setting.language = appLanguageList[langNum];
-            //         setLang(appLanguageList[langNum]);
-            //     }else{
-            //         setting.language = "zh_Hans";
-            //     }
-                
-            // }
+            const localSet = getLocalStorage('setting');
+            if (!localSet) {
+                if (langNum === 2 || langNum === 3) {
+                    setLang(appLanguageList[langNum]);
+                    store.setting.language = appLanguageList[langNum];
+                } else {
+                    setLang('zh_Hans');
+                    store.setting.language = 'zh_Hans';
+                }
+            }
+            
         },
         fail: (result) => { }
     });
