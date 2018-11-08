@@ -1,5 +1,9 @@
 <div w-class="item">
-    <span w-class="itemRank">{{it.rank}}</span>
+    {{if parseInt(it.rank)<=3 }}
+        <img src="../../res/image/goldmedal{{it.rank}}.png" width="40px" height="60px" w-class="goldmedalRankImg"/>
+    {{else}}
+        <span w-class="itemRank">{{it.rank}}</span>
+    {{end}}    
     <img src="{{it.img}}" w-class="itemImg" />
     <div style="display: inline-block;flex: 1 0 0;">
         <div w-class="itemName">{{it.name}}</div>
