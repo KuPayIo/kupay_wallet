@@ -76,7 +76,6 @@ export class ExportPrivateKey extends Widget {
         
         this.state = {
             collapseList,
-            cfgData:getLanguage(this)
         };
     }
     

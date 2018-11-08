@@ -44,7 +44,7 @@ export class ContanctUs extends Widget {
                 popNew('app-view-mine-other-wechatQrcode',{ fg:1 });
                 break;
             default:
-                console.log(this.state.cfgData.tips);
+                // console.log(this.state.cfgData.tips);
         }
     }
 }

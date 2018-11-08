@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getPurchaseRecord } from '../../../net/pull';
 import { Product, PurchaseHistory } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { calPercent, fetchHoldedProductAmount, getLanguage, hasWallet } from '../../../utils/tools';
+import { calPercent, fetchHoldedProductAmount, hasWallet } from '../../../utils/tools';
 import { getLang } from '../../../../pi/util/lang';
 
 // ====================================================导出

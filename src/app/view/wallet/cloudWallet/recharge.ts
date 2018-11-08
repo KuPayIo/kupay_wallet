@@ -50,7 +50,6 @@ export class Recharge extends Widget {
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false,
-            cfgData:getLanguage(this)
         };
         
     }

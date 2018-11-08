@@ -9,6 +9,7 @@ import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUs
 import { UserInfo } from '../../store/interface';
 import { getStore, register } from '../../store/memstore';
 import { getLanguage } from '../../utils/tools';
+import { findModulConfig } from '../../modulConfig';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -75,6 +76,7 @@ export class App extends Widget {
     }
 
     public setList() {
+        // findModulConfig('app');
         let resList = [];
         for (let item of this.state.tabBarCfg) {
             resList.push(this.state.allTabBar[item]);
