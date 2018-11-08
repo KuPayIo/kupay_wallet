@@ -3,11 +3,9 @@
  */
 // ============================== 导入
 import { Json } from '../../../../pi/lang/type';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getLanguage } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
-import { register } from '../../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -34,9 +32,8 @@ export class DividendItem extends Widget {
         this.state = {
             data:this.props.data,
             totalNum:this.props.totalNum,
-            more:false,
+            more:false
         };
 
     }
 }
-
