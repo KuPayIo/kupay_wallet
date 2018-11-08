@@ -1,3 +1,7 @@
 .new-page{
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.product-list{
     padding: 30px 20px;
 }

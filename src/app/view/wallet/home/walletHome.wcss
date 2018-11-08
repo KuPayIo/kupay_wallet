@@ -25,4 +25,5 @@
 }
 .asset-list{
     flex: 1 0 0;
+    margin-bottom: 120px;
 }

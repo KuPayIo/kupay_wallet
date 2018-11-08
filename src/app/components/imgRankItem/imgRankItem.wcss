@@ -33,3 +33,9 @@
     font-size: 28px;
     margin-right: 30px;
 }
+
+.goldmedalRankImg{
+    height:56px;
+    width:40px;
+    margin-right: 30px;
+}
