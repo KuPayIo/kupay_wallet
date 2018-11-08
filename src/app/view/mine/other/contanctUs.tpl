@@ -12,7 +12,7 @@
         
         {{: itemName = [
         {"zh_Hans":"官方网站","zh_Hant":"官方網站","en":""},
-        {"zh_Hans":"微信客服","zh_Hant":"微信客服","en":""},
+        {"zh_Hans":"微信小助手","zh_Hant":"微信小助手","en":""},
         {"zh_Hans":"微信公众号","zh_Hant":"微信公眾號","en":""}] }}
         {{for ind,val of it1.data}}
             <div on-tap="itemClick(e,{{ind}})">

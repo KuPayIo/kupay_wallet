@@ -7,7 +7,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
-import { getUserInfo } from '../../../utils/tools';
+import { getUserInfo, popNewMessage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -60,5 +60,9 @@ export class PlayHome extends Widget {
             this.paint();
         }, 1000);
 
+    }
+
+    public gameClick() {
+        popNewMessage('敬请期待');
     }
 }
