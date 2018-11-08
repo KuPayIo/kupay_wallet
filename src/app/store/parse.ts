@@ -1,4 +1,5 @@
 import { isArray } from '../../pi/net/websocket/util';
+import { uploadFileUrlPrefix } from '../net/pull';
 import { PAGELIMIT } from '../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
@@ -98,10 +99,14 @@ export const parseMineRank = (data) => {
     for (let i = 0; i < data.value.length && i < 100; i++) {
         const user = unicodeArray2Str(data.value[i][1]);
         const userData = user ? JSON.parse(user) :'' ;
+        let avatar = userData ? userData.avatar :'';
+        if (avatar && avatar.indexOf('data:image') < 0) {
+            avatar = `${uploadFileUrlPrefix}${avatar}`;
+        }
         data1.push({
             index: data.value[i][3],
             name: userData ? userData.nickName :getStaticLanguage().userInfo.name,
-            avater: userData ? userData.avatar :'',
+            avatar,
             num : formatBalance(kpt2kt(data.value[i][2]))
         });
     }
@@ -128,10 +133,14 @@ export const parseMiningRank = (data) => {
     for (let i = 0; i < data.value.length && i < 100; i++) {
         const user = unicodeArray2Str(data.value[i][1]);
         const userData = user ? JSON.parse(user) :'';
+        let avatar = userData ? userData.avatar :'';
+        if (avatar && avatar.indexOf('data:image') < 0) {
+            avatar = `${uploadFileUrlPrefix}${avatar}`;
+        }
         data2.push({
             index: data.value[i][3],
             name: userData ? userData.nickName :getStaticLanguage().userInfo.name,
-            avater: userData ? userData.avatar :'',
+            avatar,
             num: formatBalance(kpt2kt(data.value[i][2]))
         });
     }
@@ -347,7 +356,7 @@ export const parseSendRedEnvLog = (value,sta) => {
     const r = value[2];
     for (let i = 0; i < r.length;i++) {
         const currencyName = CloudCurrencyType[r[i][2]];
-        let otherDetail = parseExchangeDetail(r[i][6]);
+        const otherDetail = parseExchangeDetail(r[i][6]);
         const record:LuckyMoneySendDetail = {
             rid:r[i][0].toString(),
             rtype:r[i][1],
@@ -357,8 +366,8 @@ export const parseSendRedEnvLog = (value,sta) => {
             time:r[i][4],
             timeShow:timestampFormat(r[i][4]),
             codes:r[i][5],
-            curNum:otherDetail[2]||0,
-            totalNum:otherDetail[3]||0
+            curNum:otherDetail[2] || 0,
+            totalNum:otherDetail[3] || 0
            
         };
         recordList.push(record);
