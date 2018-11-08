@@ -32,7 +32,7 @@ export class LockScreenPage extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         this.state = {
-            errorTips: this.language,
+            errorTips: this.language.errorTips,
             lockScreenPsw:'',  // 锁屏密码
             openLockScreen: false, // 是否打开锁屏开关 
             loading:false
