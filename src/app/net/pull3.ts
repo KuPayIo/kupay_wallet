@@ -48,7 +48,7 @@ export const fetchCurrency2USDTRate = (currencyName:string) => {
     const url = `https://www.okex.com/api/v1/ticker.do?symbol=${symbol}`;
     
     return getThirdFromServer(url).then(res => {
-        const str = xorDecode(res.value,res.pk);
+        const str = xorDecode1(res.value,res.pk);
 
         return JSON.parse(str);
     }); 
