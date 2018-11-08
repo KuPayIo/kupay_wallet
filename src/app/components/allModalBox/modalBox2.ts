@@ -26,11 +26,6 @@ export class ModalBox2 extends Widget {
         this.config = { value: { group: 'top' } };
     }
 
-    public setProps(props: Props, oldProps: Props): void {
-        super.setProps(props, oldProps);
-        this.init();
-    }
-
     public quitClick() {
         this.cancel && this.cancel();
     }
@@ -39,9 +34,6 @@ export class ModalBox2 extends Widget {
         copyToClipboard(this.props.extraInfo);
         popNew('app-components1-message-message', { itype: 'success', content: '复制成功', center: true });
         this.ok && this.ok();
-    }
-
-    private init() {
     }
 
 }

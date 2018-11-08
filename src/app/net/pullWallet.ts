@@ -16,6 +16,7 @@ import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
+// tslint:disable-next-line:max-line-length
 import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
@@ -41,7 +42,7 @@ export const transfer = async (psw:string,txRecord:TxHistory) => {
             } else if (currencyName === 'BTC') {
                 const res = await doBtcTransfer(<any>wlt, txRecord);
                 if (!res) {
-                    popNewMessage('交易失败');
+                    popNewMessage(getStaticLanguage().transfer.transferFailed);
 
                 } else {
                     ret = {
@@ -780,6 +781,7 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
         };
         dataCenter.timerUpdateTxWithdraw(tx);
         getWithdrawLogs('ETH');
+        updateLocalTx(tx);
     }
    
     return hash;
@@ -817,6 +819,7 @@ export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | st
         };
         dataCenter.timerUpdateTxWithdraw(tx);
         getWithdrawLogs('BTC');
+        updateLocalTx(tx);
     }
    
     return hash;

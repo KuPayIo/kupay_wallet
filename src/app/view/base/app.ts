@@ -2,14 +2,12 @@
  * 首页
  */
 // ================================ 导入
-import { setLang, getLang } from '../../../pi/util/lang';
+import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
 import { getStore, register } from '../../store/memstore';
-import { getLanguage } from '../../utils/tools';
-import { findModulConfig } from '../../modulConfig';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -42,28 +40,28 @@ export class App extends Widget {
             allTabBar: {
                 play: {
                     identfy: 'play',
-                    text: {"zh_Hans":"玩","zh_Hant":"玩","en":""},
+                    text: { zh_Hans:'玩',zh_Hant:'玩',en:'' },
                     icon: 'play.png',
                     iconActive: 'play_active.png',
                     components: 'app-view-play-home-home'
                 },
                 chat: {
                     identfy: 'chat',
-                    text: {"zh_Hans":"聊","zh_Hant":"聊","en":""},
+                    text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
                     components: 'app-view-chat-home-home'
                 },
                 earn: {
                     identfy: 'earn',
-                    text: {"zh_Hans":"赚","zh_Hant":"賺","en":""},
+                    text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
                     components: 'app-view-earn-home-home'
                 },
                 wallet: {
                     identfy: 'wallet',
-                    text: {"zh_Hans":"钱","zh_Hant":"錢","en":""},
+                    text: { zh_Hans:'钱',zh_Hant:'錢',en:'' },
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
                     components: 'app-view-wallet-home-home'
@@ -71,14 +69,14 @@ export class App extends Widget {
             },
 
             tabBarCfg: ['play','chat','earn', 'wallet'],
-            tabBarList: [],
+            tabBarList: []
         };
     }
 
     public setList() {
         // findModulConfig('app');
-        let resList = [];
-        for (let item of this.state.tabBarCfg) {
+        const resList = [];
+        for (const item of this.state.tabBarCfg) {
             resList.push(this.state.allTabBar[item]);
         }   
         this.state.tabBarList = resList;
@@ -88,7 +86,7 @@ export class App extends Widget {
         this.paint();
     }
     public async tabBarChangeListener(event: any, index: number) {
-        let identfy = this.state.tabBarList[index].identfy;
+        const identfy = this.state.tabBarList[index].identfy;
         if (this.state.isActive === identfy) return;
         this.state.isActive = identfy;
         this.old[identfy] = true;

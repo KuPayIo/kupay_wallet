@@ -54,10 +54,10 @@ export class BindPhone extends Widget {
             getMineDetail();
             this.ok();
         } else {
-            this.state.isSuccess = false;
             this.state.code = [];
             this.setCode();
         }
+        this.paint();
     }
 
     /**
@@ -119,7 +119,6 @@ export class BindPhone extends Widget {
         const ind = this.state.code.length; 
         // tslint:disable-next-line:prefer-template
         document.getElementById('codeInput' + ind).focus();
-        this.state.isSuccess = true;
         this.paint();
     }
 

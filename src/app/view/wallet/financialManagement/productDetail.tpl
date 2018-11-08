@@ -42,7 +42,6 @@
                     <span>
                         {{it.product.unitPrice}}&nbsp;{{it.product.coinType}}/<pi-ui-lang>{{tips[4]}}</pi-ui-lang>
                     </span>
-                    </span>
                 </div>
                 <div w-class="detail">
                     <pi-ui-lang>{{detail[1]}}</pi-ui-lang> {{it1.leftPercent}}%

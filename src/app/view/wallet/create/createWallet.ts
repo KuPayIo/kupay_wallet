@@ -2,6 +2,7 @@
  * create wallet
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
@@ -13,7 +14,6 @@ import { localUrlPre } from '../../../utils/constants';
 import { checkCreateAccount, getLanguage, getStaticLanguage, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
-import { getLang } from '../../../../pi/util/lang';
 interface Props {
     itype:CreateWalletType;
     imageBase64?:string;// 图片base64
@@ -43,7 +43,7 @@ export class CreateWallet extends Widget {
             walletPswAvailable:false,
             chooseImage:false,
             avatar:'',
-            avatarHtml:'',
+            avatarHtml:''
         };
     }
 
@@ -179,7 +179,7 @@ export class CreateWallet extends Widget {
 // 登录状态成功
 register('flags',(flags:any) => {
     if (flags.promptBackup) {
-        popNew('app-components-modalBox-modalBox',getStaticLanguage().createSuccess,() => {
+        popNew('app-components1-modalBox-modalBox',getStaticLanguage().createSuccess,() => {
             popNew('app-view-wallet-backup-index',{ mnemonic:flags.mnemonic,fragments:flags.fragments });
         });
     }

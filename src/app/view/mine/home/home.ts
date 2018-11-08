@@ -2,13 +2,13 @@
  * wallet home 
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
 import { getStore, register } from '../../../store/memstore';
 import { copyToClipboard, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
-import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -96,7 +96,7 @@ export class Home extends Widget {
             if (this.state.hasWallet) {
                 popNew('app-view-mine-account-home');
             } else {
-                popNew('app-components-modalBox-modalBox',this.language.modalBox,() => {
+                popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {
                     popNew('app-view-wallet-create-home');
                 });
             }

@@ -3,12 +3,12 @@
  */
 // =============================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
-import { getLang } from '../../../../pi/util/lang';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -42,7 +42,7 @@ export class Setting extends Widget {
                 { title: this.language.itemTitle[1], list: this.language.currencyUnit, selected: unit, flag: 1 },
                 { title: this.language.itemTitle[2], list: this.language.changeColor, selected: color, flag: 2 }
             ],
-            wallet: null,
+            wallet: null
         };
         this.initData();
     }
@@ -72,7 +72,7 @@ export class Setting extends Widget {
         if (this.state.wallet) {
             return true;
         }
-        popNew('app-components-modalBox-modalBox', this.language.modalBox1, () => {
+        popNew('app-components1-modalBox-modalBox', this.language.modalBox1, () => {
             popNew('app-view-wallet-create-home');
         });
 
@@ -98,7 +98,7 @@ export class Setting extends Widget {
             });
         } else {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components-modalBox-modalBox', this.language.modalBox1, () => {
+            popNew('app-components1-modalBox-modalBox', this.language.modalBox1, () => {
                 popNew('app-view-wallet-create-home');
             }, () => {
                 this.closeLockPsw();
@@ -148,11 +148,11 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-components-modalBox-modalBox', this.language.modalBox2, () => {
+        popNew('app-components1-modalBox-modalBox', this.language.modalBox2, () => {
             this.backUp();
             console.log('备份');
         }, () => {
-            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
+            popNew('app-components1-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccount();
                 this.backPrePage();
             });
@@ -166,11 +166,11 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-components-modalBox-modalBox', this.language.modalBox3, () => {
+        popNew('app-components1-modalBox-modalBox', this.language.modalBox3, () => {
             this.backUp();
             console.log('备份');
         }, () => {
-            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
+            popNew('app-components1-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccountDel();
                 this.backPrePage();
             });
