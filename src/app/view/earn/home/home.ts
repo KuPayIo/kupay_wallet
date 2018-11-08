@@ -73,7 +73,7 @@ export class PlayHome extends Widget {
         if (this.state.hasWallet) {
             return true;
         }
-        popNew('app-components-modalBox-modalBox', this.language.login, () => {
+        popNew('app-components1-modalBox-modalBox', this.language.login, () => {
             popNew('app-view-wallet-create-home');
         });
 
@@ -109,7 +109,7 @@ export class PlayHome extends Widget {
      */
     public miningDesc() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-modalBox-modalBox1', this.language.miningDesc);
+        popNew('app-components-allModalBox-modalBox1', this.language.miningDesc);
     }
 
     /**

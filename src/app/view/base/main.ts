@@ -15,7 +15,6 @@ import { openConnect } from '../../net/pull';
 import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { getStore, initStore } from '../../store/memstore';
-import { hexstrToU16Array, hexstrToU8Array, xorDecode, xorDecode1 } from '../../utils/tools';
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
 // import { create } from "../../../pi/net/rpc";

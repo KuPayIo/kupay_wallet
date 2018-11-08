@@ -1,6 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"账户","zh_Hant":"賬戶","en":""} }}
-    <app-components1-topBar-topBar>{title:{{topBarTitle}},background:"#fff"}</app-components1-topBar-topBar>
+    <app-components1-topBar-topBar>{title:{{topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="body">
         <div w-class="head-container" class="pi-input">
             <img w-class="avatar" src="{{it1.avatar}}" on-tap="uploadAvatar"/>
@@ -37,6 +37,7 @@
                 <app-components-basicItem-basicItem>{name:{{itemTitle[1]}},style:"margin:0;border:none;"}</app-components-basicItem-basicItem>
             </div>
         </div>
+        
         <div w-class="other">
             <div w-class="other-item" on-tap="backupWalletClick">
                 <div w-class="item-title"><pi-ui-lang>{{itemTitle[2]}}</pi-ui-lang></div>
@@ -45,7 +46,7 @@
                 {{end}}
                 <img src="../../../res/image/right_arrow_blue.png" w-class="rightArrow"/>
             </div>
-            <div w-class="other-item" on-tap="exportPrivateKeyClick">
+            <div w-class="other-item" on-tap="exportPrivateKeyClick" style="border-bottom: none;">
                 <div w-class="item-title"><pi-ui-lang>{{itemTitle[4]}}</pi-ui-lang></div>
                 <img src="../../../res/image/right_arrow_blue.png" w-class="rightArrow"/>
             </div>

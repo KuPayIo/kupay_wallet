@@ -12,9 +12,8 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 
-import { logoutAccount, logoutAccountDel } from '../../utils/tools';
 import { getLang } from '../../../pi/util/lang';
-
+import { logoutAccountDel } from '../../utils/tools';
 
 interface Props {
     title:string;
@@ -23,18 +22,19 @@ interface Props {
     cancelText?:string;
     placeholder?:boolean;
     itype?:string;
+    lockScreen?:boolean; // 解锁屏幕失败，验证身份进入该页面
 }
 export class ModalBoxInput extends Widget {
     public props: Props;
     public language:any;
     public ok: (value:string) => void;
-    public cancel: (fg:boolean) => void;   // fg为true表示退出APP，false表示忘记密码删除钱包
+    public cancel: (fg:boolean) => void;   // fg为true表示退出APP(或点击取消)，false表示忘记密码删除钱包
 
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
         this.state = { 
-            currentValue:'',
+            currentValue:''
         };
     }
     /**
@@ -54,10 +54,12 @@ export class ModalBoxInput extends Widget {
      */
     public foegetPsw() {
         this.cancel && this.cancel(false);
-        popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {
+        popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {  // 确认删除钱包
             logoutAccountDel();
-        },() => {
-            popNew('app-components1-modalBoxInput-modalBoxInput',this.props);
+        },() => {   // 取消删除钱包
+            if (this.props.lockScreen) {
+                popNew('app-components1-modalBoxInput-modalBoxInput',this.props);
+            }
         });      
     }
     /**

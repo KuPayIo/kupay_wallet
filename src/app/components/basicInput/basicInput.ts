@@ -11,7 +11,6 @@
  */
 import { Json } from '../../../pi/lang/type';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
 
 interface Props {
     prepend: string;
@@ -31,8 +30,6 @@ export class BasicInput extends Widget {
 
     public setProps(props:Json,oldProps:JSON) {
         super.setProps(props,oldProps);
-        this.state = {
-            cfgData:getLanguage(this)
-        };
+        this.state = {};
     }
 }

@@ -65,11 +65,11 @@ export class Transfer extends Widget {
         this.ok && this.ok();
     }
     public speedDescClick() {
-        popNew('app-components-modalBox-modalBox1',this.language.modalBox);
+        popNew('app-components-allModalBox-modalBox1',this.language.modalBox);
     }
     // 到账速度
     public chooseMinerFee() {
-        popNew('app-components-modalBox-chooseModalBox',{ 
+        popNew('app-components-allModalBox-chooseModalBox',{ 
             currencyName:this.props.currencyName,
             minerFeeList:this.state.minerFeeList,
             curLevel:this.state.curLevel,

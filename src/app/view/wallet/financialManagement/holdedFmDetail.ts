@@ -1,12 +1,13 @@
 /**
  * 购买的理财详情
  */
+import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { buyBack, getPurchaseRecord } from '../../../net/pull';
 import { PurchaseHistory } from '../../../store/interface';
 import { popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
-import { getLang } from '../../../../pi/util/lang';
 interface Props {
     product:PurchaseHistory;
 }
@@ -26,7 +27,7 @@ export class HoldedFmDetail extends Widget {
             scrollHeight:0,
             stateBg,
             btnText,
-            btnBgColor,
+            btnBgColor
         };
     }
     public backPrePage() {
@@ -61,5 +62,12 @@ export class HoldedFmDetail extends Widget {
         this.state.scrollHeight = scrollTop;
         this.paint();
         
+    }
+
+    /**
+     * 点击阅读声明
+     */
+    public readAgree() {
+        popNew('app-view-wallet-financialManagement-productStatement',{ fg:1 });        
     }
 }

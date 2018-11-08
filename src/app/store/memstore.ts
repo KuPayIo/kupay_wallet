@@ -3,8 +3,9 @@
  * @author donghr
  */
 // ============================================ 导入
-import { LocalLanguageMgr } from '../../pi/browser/localLanguage';
+import { appLanguageList, LocalLanguageMgr } from '../../pi/browser/localLanguage';
 import { HandlerMap } from '../../pi/util/event';
+import { setLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
@@ -258,16 +259,19 @@ const initSettings = () => {
     appLanguage.init();
     appLanguage.getSysLan({
         success: (localLan) => {
+            // tslint:disable-next-line:radix
             langNum = parseInt(localLan);
-            // if(langNum && setting.language===0){
-            //     if(langNum===2||langNum===3){
-            //         setting.language = appLanguageList[langNum];
-            //         setLang(appLanguageList[langNum]);
-            //     }else{
-            //         setting.language = "zh_Hans";
-            //     }
-                
-            // }
+            const localSet = getLocalStorage('setting');
+            if (!localSet) {
+                if (langNum === 2 || langNum === 3) {
+                    setLang(appLanguageList[langNum]);
+                    store.setting.language = appLanguageList[langNum];
+                } else {
+                    setLang('zh_Hans');
+                    store.setting.language = 'zh_Hans';
+                }
+            }
+            
         },
         fail: (result) => { }
     });

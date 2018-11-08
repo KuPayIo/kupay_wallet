@@ -5,6 +5,7 @@
 import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { findModulConfig } from '../../modulConfig';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
 import { getStore, register } from '../../store/memstore';
@@ -25,7 +26,7 @@ export class App extends Widget {
     }
 
     public init(): void {
-        const isActive = 'wallet';
+        const isActive = 'APP_WALLET';
         this.old[isActive] = true;
         this.language = this.config.value[getLang()];
 
@@ -39,45 +40,45 @@ export class App extends Widget {
             loading,
             allTabBar: {
                 play: {
-                    identfy: 'play',
+                    modulName: 'APP_PLAY',
                     text: { zh_Hans:'玩',zh_Hant:'玩',en:'' },
                     icon: 'play.png',
                     iconActive: 'play_active.png',
                     components: 'app-view-play-home-home'
                 },
                 chat: {
-                    identfy: 'chat',
+                    modulName: 'APP_CHAT',
                     text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
                     components: 'app-view-chat-home-home'
                 },
                 earn: {
-                    identfy: 'earn',
+                    modulName: 'APP_EARN',
                     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
                     components: 'app-view-earn-home-home'
                 },
                 wallet: {
-                    identfy: 'wallet',
+                    modulName: 'APP_WALLET',
                     text: { zh_Hans:'钱',zh_Hant:'錢',en:'' },
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
                     components: 'app-view-wallet-home-home'
                 }
             },
-
-            tabBarCfg: ['play','chat','earn', 'wallet'],
             tabBarList: []
         };
     }
 
     public setList() {
-        // findModulConfig('app');
         const resList = [];
-        for (const item of this.state.tabBarCfg) {
-            resList.push(this.state.allTabBar[item]);
+        for (const item in this.state.allTabBar) {
+            this.state.allTabBar[item];
+            if (findModulConfig(this.state.allTabBar[item].modulName)) {
+                resList.push(this.state.allTabBar[item]);
+            }   
         }   
         this.state.tabBarList = resList;
     }
@@ -86,7 +87,7 @@ export class App extends Widget {
         this.paint();
     }
     public async tabBarChangeListener(event: any, index: number) {
-        const identfy = this.state.tabBarList[index].identfy;
+        const identfy = this.state.tabBarList[index].modulName;
         if (this.state.isActive === identfy) return;
         this.state.isActive = identfy;
         this.old[identfy] = true;

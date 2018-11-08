@@ -1,7 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-
     <div w-class="body" on-scroll="pageScroll" id="body">
-
         <div w-class="head1 {{'head1-' + it1.stateBg}}">
             {{: tags = [
                 {"zh_Hans":"昨日收益","zh_Hant":"昨日收益","en":""},
@@ -38,25 +36,25 @@
             </div>
         </div>
 
-    </div>
-    <div w-class="bottom-box">
-        <div w-class="row5">{{it.product.productIntroduction}}</div>
-        <div w-class="title"><pi-ui-lang>{"zh_Hans":"其他信息","zh_Hant":"其他信息","en":""}</pi-ui-lang></div>
-        <div w-class="detail-box">
-            <div w-class="detail"><pi-ui-lang>{{details[0]}}</pi-ui-lang> {{it.product.purchaseDate}}</div>
-            <div w-class="detail"><pi-ui-lang>{{details[1]}}</pi-ui-lang> {{it.product.unitPrice}}{{it.product.coinType}}</div>
-            <div w-class="detail"><pi-ui-lang>{{details[2]}}</pi-ui-lang> {{it.product.productName}}</div>
-            <div w-class="detail"><pi-ui-lang>{{details[3]}}</pi-ui-lang> {{it.product.amount}} <pi-ui-lang>{"zh_Hans":"份","zh_Hant":"份","en":""}</pi-ui-lang></div>
-            <div w-class="detail"><pi-ui-lang>{{details[4]}}</pi-ui-lang> {{it.product.profit}}%</div>
-            <div w-class="detail"><pi-ui-lang>{{details[5]}}</pi-ui-lang> {{it.product.lockday}}</div>
+        <div w-class="bottom-box">
+            <div w-class="row5">{{it.product.productIntroduction}}</div>
+            <div w-class="title"><pi-ui-lang>{"zh_Hans":"其他信息","zh_Hant":"其他信息","en":""}</pi-ui-lang></div>
+            <div w-class="detail-box">
+                <div w-class="detail"><pi-ui-lang>{{details[0]}}</pi-ui-lang> {{it.product.purchaseDate}}</div>
+                <div w-class="detail"><pi-ui-lang>{{details[1]}}</pi-ui-lang> {{it.product.unitPrice}}{{it.product.coinType}}</div>
+                <div w-class="detail"><pi-ui-lang>{{details[2]}}</pi-ui-lang> {{it.product.productName}}</div>
+                <div w-class="detail"><pi-ui-lang>{{details[3]}}</pi-ui-lang> {{it.product.amount}} <pi-ui-lang>{"zh_Hans":"份","zh_Hant":"份","en":""}</pi-ui-lang></div>
+                <div w-class="detail"><pi-ui-lang>{{details[4]}}</pi-ui-lang> {{it.product.profit}}%</div>
+                <div w-class="detail"><pi-ui-lang>{{details[5]}}</pi-ui-lang> {{it.product.lockday}}</div>
+            </div>
+            <div w-class="read" on-tap="readAgree"><pi-ui-lang>{"zh_Hans":"阅读声明","zh_Hant":"閱讀聲明","en":""}</pi-ui-lang></div>
+            <div ev-btn-tap="redemptionClick" w-class="btn">
+                {{: btnName = {"zh_Hans":it1.btnText,"zh_Hant":it1.btnText,"en":""} }}
+                <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":{{it1.btnBgColor}}}</app-components1-btn-btn>
+            </div>
         </div>
-        <div w-class="read"><pi-ui-lang>{"zh_Hans":"阅读声明","zh_Hant":"閱讀聲明","en":""}</pi-ui-lang></div>
-        <div ev-btn-tap="redemptionClick" w-class="btn">
-            {{: btnName = {"zh_Hans":it1.btnText,"zh_Hant":it1.btnText,"en":""} }}
-            <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":{{it1.btnBgColor}}}</app-components1-btn-btn>
-
-        </div>
     </div>
+    
   {{: topBarTitle = {"zh_Hans":it.product.productName,"zh_Hant":it.product.productName,"en":""} }}
     <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
     

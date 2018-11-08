@@ -2,6 +2,7 @@
  * account home
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
@@ -11,7 +12,6 @@ import { getStore, register, setStore } from '../../../store/memstore';
 import { walletNameAvailable } from '../../../utils/account';
 import { getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
-import { getLang } from '../../../../pi/util/lang';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -81,7 +81,7 @@ export class AccountHome extends Widget {
     public walletNameInputFocus() {
         this.state.isUpdatingWalletName = true;
     }
-    //备份助记词
+    // 备份助记词
     public async backupWalletClick() {
         const psw = await popPswBox();
         if (!psw) return;

@@ -8,6 +8,7 @@ import { getInviteCode, getMineDetail, getMineItemJump } from '../../../net/pull
 import { getStore, register } from '../../../store/memstore';
 import { getLanguage } from '../../../utils/tools';
 import { getLang } from '../../../../pi/util/lang';
+import { findModulConfig } from '../../../modulConfig';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -33,7 +34,8 @@ export class Dividend extends Widget {
                     itemShort: '',
                     itemDetail: '',
                     itemJump: 'walletCreate',
-                    show: false
+                    show: false,
+                    modulIsShow:true
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_verify.png',
@@ -41,7 +43,8 @@ export class Dividend extends Widget {
                     itemShort: '',
                     itemDetail: '',
                     itemJump: 'bindPhone',
-                    show: false
+                    show: false,
+                    modulIsShow:true
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_store.png',
@@ -49,7 +52,8 @@ export class Dividend extends Widget {
                     itemShort: '',
                     itemDetail: '',
                     itemJump: 'storeCoin',
-                    show: false
+                    show: false,
+                    modulIsShow:true
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_share.png',
@@ -57,7 +61,8 @@ export class Dividend extends Widget {
                     itemShort: '',
                     itemDetail: '',
                     itemJump: 'shareFriend',
-                    show: false
+                    show: false,
+                    modulIsShow:true
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_buy.png',
@@ -65,7 +70,8 @@ export class Dividend extends Widget {
                     itemShort: '',
                     itemDetail: '',
                     itemJump: 'buyFinancial',
-                    show: false
+                    show: false,
+                    modulIsShow:findModulConfig("FINANCIAL_SERVICES")
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_chat.png',
@@ -73,7 +79,8 @@ export class Dividend extends Widget {
                     itemShort: '',
                     itemDetail: '',
                     itemJump: 'toChat',
-                    show: false
+                    show: false,
+                    modulIsShow:findModulConfig("APP_CHAT")
                 }
             ],
         };

@@ -553,6 +553,7 @@ export const popPswBox = async (content = []) => {
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
+        // tslint:disable-next-line:no-unnecessary-local-variable
         const psw = await openMessageboxPsw(BoxInputTitle,content);
 
         return psw;
@@ -576,7 +577,7 @@ export const popNewLoading = (text: string) => {
 const openMessageboxPsw = (BoxInputTitle?,content?): Promise<string> => {
     // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
+        popNew('app-components1-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
             resolve(r);
         }, (cancel: string) => {
             reject(cancel);
@@ -866,7 +867,7 @@ export const fetchCloudWalletAssetList = () => {
 export const hasWallet = () => {
     const wallet = getStore('wallet');
     if (!wallet) {
-        popNew('app-components-modalBox-modalBox', {
+        popNew('app-components1-modalBox-modalBox', {
             title: '提示',
             content: '你还没有登录，去登录使用更多功能吧',
             sureText: '去登录',
@@ -1250,8 +1251,8 @@ export const logoutAccountDel = () => {
         }
     };
 
-    const setting = getStore('setting');
-    setting.lockScreen = {
+    let lockScreen = getStore('setting/lockScreen');
+    lockScreen = {
         psw:'',
         open:false
     };
@@ -1259,7 +1260,7 @@ export const logoutAccountDel = () => {
     setStore('cloud',cloud,false);
     setStore('user',user);
     setStore('activity',activity);
-    setStore('setting',setting);
+    setStore('setting/lockScreen',lockScreen);
     setBottomLayerReloginMsg('','','');
     closeCon();
     setTimeout(() => {
