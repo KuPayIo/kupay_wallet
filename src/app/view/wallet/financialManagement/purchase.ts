@@ -3,6 +3,7 @@
  */
 // ===============================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { recharge } from '../../../net/pullWallet';
 import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../store/interface';
@@ -13,7 +14,6 @@ import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentA
 import { wei2Eth } from '../../../utils/unitTools';
 import { purchaseProduct } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './productDetail';
-import { getLang } from '../../../../pi/util/lang';
 // ==================================================导出
 interface Props {
     product:Product;
@@ -39,7 +39,7 @@ export class ProductDetail extends Widget {
         this.state = {
             spend,
             cloudBalance,
-            localBalance,
+            localBalance
         }; 
     }
     public close() {
@@ -53,7 +53,6 @@ export class ProductDetail extends Widget {
             if (success) {
                 const w: any = forelet.getWidget(WIDGET_NAME);
                 w.ok && w.ok();
-                popNew('app-view-wallet-financialManagement-home',{ activeNum:1 });
             }
         } else if (this.state.cloudBalance + this.state.localBalance >= this.state.spend) {
             const fromAddr = getCurrentAddrByCurrencyName('ETH');

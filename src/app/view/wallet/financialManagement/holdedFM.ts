@@ -2,12 +2,12 @@
  * HoldedFM
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPurchaseRecord } from '../../../net/pull';
 import { PurchaseHistory } from '../../../store/interface';
 import { register } from '../../../store/memstore';
-import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -26,7 +26,7 @@ export class HoldedFM extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         this.state = {
-            purchaseRecord:[],
+            purchaseRecord:[]
         };
         if (this.props.isActive) {
             getPurchaseRecord();
@@ -38,10 +38,6 @@ export class HoldedFM extends Widget {
         this.paint();
     }
 
-    public fmListItemClick(e:any,index:number) {
-        const product = this.state.productList[index];
-        popNew('app-view-wallet-financialManagement-productDetail',{ product });
-    }
 }
 
 // =====================================本地

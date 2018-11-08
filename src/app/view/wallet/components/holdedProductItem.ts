@@ -3,16 +3,16 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { PurchaseRecordOne } from '../../../store/interface';
+import { PurchaseHistory } from '../../../store/interface';
 import { getLanguage } from '../../../utils/tools';
 
 interface Props {
-    product:PurchaseRecordOne;
+    product:PurchaseHistory;
+    index:number;
 }
 export class HoldedProductItem extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        console.log(this.props.product);
         const cfg = getLanguage(this);
         const stateShow = props.product.state === 1 ? cfg.tips[5] : cfg.tips[6];
         const stateBg = props.product.state === 1 ? '' : 'status-gray';
@@ -23,6 +23,6 @@ export class HoldedProductItem extends Widget {
         };
     }
     public productItemClick() {
-        popNew('app-view-wallet-financialManagement-holdedFmDetail',{ product:this.props.product });
+        popNew('app-view-wallet-financialManagement-holdedFmDetail',this.props);
     }
 }
