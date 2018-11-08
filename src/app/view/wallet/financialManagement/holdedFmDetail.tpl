@@ -47,7 +47,7 @@
                 <div w-class="detail"><pi-ui-lang>{{details[4]}}</pi-ui-lang> {{it.product.profit}}%</div>
                 <div w-class="detail"><pi-ui-lang>{{details[5]}}</pi-ui-lang> {{it.product.lockday}}</div>
             </div>
-            <div w-class="read"><pi-ui-lang>{"zh_Hans":"阅读声明","zh_Hant":"閱讀聲明","en":""}</pi-ui-lang></div>
+            <div w-class="read" on-tap="readAgree"><pi-ui-lang>{"zh_Hans":"阅读声明","zh_Hant":"閱讀聲明","en":""}</pi-ui-lang></div>
             <div ev-btn-tap="redemptionClick" w-class="btn">
                 {{: btnName = {"zh_Hans":it1.btnText,"zh_Hant":it1.btnText,"en":""} }}
                 <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":{{it1.btnBgColor}}}</app-components1-btn-btn>
