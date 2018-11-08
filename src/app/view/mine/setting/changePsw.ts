@@ -90,7 +90,7 @@ export class ChangePSW extends Widget {
         }
         await passwordChange(oldPassword, newPassword);
         loading.callback(loading.widget);
-        popNew('app-components1-message-message', { content: this.state.cfgData.tips[4] });
+        popNew('app-components1-message-message', { content: this.language.tips[4] });
         this.backPrePage();
     }
 }

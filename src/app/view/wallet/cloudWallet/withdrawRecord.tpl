@@ -3,7 +3,7 @@
     {{if it1.recordList.length <= 0}}
     <div w-class="no-recode">
         <img src="../../../res/image/dividend_history_none.png" w-class="no-recode-icon"/>
-        <div w-class="no-recode-text">{{it1.cfgData.noneRecords}}</div>
+        <div w-class="no-recode-text"><pi-ui-lang>{"zh_Hans":"还没有记录哦","zh_Hant":"還沒有記錄哦","en":""}</pi-ui-lang></div>
     </div>
     {{end}}
     <div w-class="record-list" id="withdraw-content-container">

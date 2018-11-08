@@ -8,6 +8,7 @@ import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -19,6 +20,7 @@ interface Props {
 }
 export class WithdrawRecord extends Widget {
     public props:Props;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -27,13 +29,13 @@ export class WithdrawRecord extends Widget {
         }
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const withdrawLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
         this.state = {
             recordList:[],
             nextStart:withdrawLogs.start,
             canLoadMore:withdrawLogs.canLoadMore,
             isRefreshing:false,
-            cfgData:getLanguage(this)
         };
         this.state.recordList = this.parseRecordList(withdrawLogs.list);
     }
@@ -54,7 +56,7 @@ export class WithdrawRecord extends Widget {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.state.cfgData.withdraw;
+            item.behavior = this.language.withdraw;
             item.amountShow = `-${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_withdraw_icon.png`;

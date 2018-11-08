@@ -43,7 +43,7 @@
             {{end}}
             <div w-class="tx-list">
                 {{for i,v of it1.tabs[it1.activeNum].list}}
-                <div on-tap="txListItemClick(e,{{i}})">
+                <div on-tap="txListItemClick(e,{{i}})">  
                 <app-components-fourParaImgItem-fourParaImgItem>{"name":{{v.txTypeShow}},"data":{{v.pay}},"time":{{v.TimeShow}},"describe":{{v.statusShow}},img:"../../res/image/{{v.txType === 2 ? "receive_icon.png" : "transfer_icon.png"}}"}</app-components-fourParaImgItem-fourParaImgItem>
                 </div>
                 {{end}}

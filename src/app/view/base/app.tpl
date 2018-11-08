@@ -21,7 +21,7 @@
 {{end}}
 </div>
 
-<div w-class="ga-bottom-tab-bar-container" >
+<div w-class="ga-bottom-tab-bar-container">
     {{for index,item of it1.tabBarList}}
     <div w-class="ga-tab-bar-item {{it1.isActive == item.identfy ? 'ga-tab-bar-item-active' : ''}}" on-down="tabBarChangeListener(e,{{index}})">
         <img src="../../res/image1/{{it1.isActive == item.identfy ? item.iconActive : item.icon}}" w-class="ga-tab-bar-icon" />
