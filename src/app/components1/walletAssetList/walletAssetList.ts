@@ -4,7 +4,6 @@
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { register } from '../../store/memstore';
 import { getCurrencyUnitSymbol } from '../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -30,16 +29,4 @@ export class WalletAssetList extends Widget {
         notify(e.node,'ev-item-click',{ index }); 
     }
 
-    public currencyUnitChange() {
-        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
-        this.paint();
-    }
 }
-
-// 货币单位变化
-register('currencyUnit',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.currencyUnitChange();
-    }
-});

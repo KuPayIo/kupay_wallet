@@ -2,6 +2,7 @@
  * cloud home
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList, getServerCloudBalance } from '../../../net/pull';
@@ -9,7 +10,6 @@ import { Product } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -38,6 +38,7 @@ export class CloudHome extends Widget {
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
+        this.paint();
     }
 
     // 条目点击
