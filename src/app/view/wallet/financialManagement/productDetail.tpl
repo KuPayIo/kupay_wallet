@@ -40,8 +40,8 @@
                 <div w-class="detail">
                     <pi-ui-lang>{{detail[0]}}</pi-ui-lang>
                     <span>
-                        {{it.product.unitPrice}}&nbsp;{{it.product.coinType}}/
-                        <pi-ui-lang>{{tips[4]}}</pi-ui-lang>
+                        {{it.product.unitPrice}}&nbsp;{{it.product.coinType}}/<pi-ui-lang>{{tips[4]}}</pi-ui-lang>
+                    </span>
                     </span>
                 </div>
                 <div w-class="detail">
@@ -79,7 +79,6 @@
             </div>
         </div>
     </div>
-    
     <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{it.product.productName}} }</app-components1-topBar-topBar2>
 
 </div>

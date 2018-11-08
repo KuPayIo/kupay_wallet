@@ -2,13 +2,13 @@
  * cloud wallet home
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
-import { fetchBalanceValueOfCoin, fetchCoinGain, formatBalanceValue, getLanguage, popNewMessage } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
+import { fetchBalanceValueOfCoin, fetchCoinGain, formatBalanceValue, getCurrencyUnitSymbol, popNewMessage } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -50,7 +50,8 @@ export class CloudWalletHome extends Widget {
             rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
             balance,
             balanceValue,
-            redUp:color === 'redUp'
+            currencyUnitSymbol:getCurrencyUnitSymbol(),
+            redUp: color === 'redUp'
         };
     }
 
