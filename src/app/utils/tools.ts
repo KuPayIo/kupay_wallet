@@ -4,6 +4,7 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { closeCon, setBottomLayerReloginMsg } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
+import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
@@ -16,7 +17,6 @@ import { Account, FileTxHistory, getCloudBalances, getStore, initCloudWallets, L
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
-import { getLang } from '../../pi/util/lang';
 
 export const deepCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -390,6 +390,22 @@ export const hexstrToU8Array = (str: string) => {
 };
 
 /**
+ * 十六进制字符串转u8数组
+ * 
+ * @param str 输入字符串
+ */
+export const hexstrToU16Array = (str: string) => {
+    // if (str.length % 2 > 0) str = `0${str}`;
+
+    const r = new Uint8Array(str.length);
+    for (let i = 0; i < str.length; i++) {
+        r[i] = parseInt(str.charAt(i), 16);
+    }
+
+    return r;
+};
+
+/**
  * u8数组转十六进制字符串
  * 
  * @param u8Array 输入数组
@@ -525,7 +541,7 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
 export const popPswBox = async (content = []) => {
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
-        let BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
+        const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
         const psw = await openMessageboxPsw(BoxInputTitle,content);
 
         return psw;
@@ -1517,4 +1533,21 @@ export const setEthNonce = (newNonce: number, addr: string) => {
         }
 
     }
+};
+
+/**
+ * 异或运算
+ */
+export const doXor = (str:string, key:string) => {
+    const ord = []; 
+    let res = '';
+
+    let i;
+    for (i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
+
+    for (i = 0; i < str.length; i++) {
+        res += String.fromCharCode(ord[str.substr(i, 1)] ^ ord[key.substr(i %    key.length, 1)]);
+    }
+
+    return(res);
 };
