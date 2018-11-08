@@ -90,7 +90,7 @@ export class ExportPrivateKey extends Widget {
 
     public collapseItemClick(e: any) {
         const privateKey = this.state.collapseList[e.collapseListIndex].textList[e.textListIndex].privateKey;
-        popNew('app-components-modalBox-modalBox2', {
+        popNew('app-components-allModalBox-modalBox2', {
             title: this.language.modalBox[0],
             content: this.language.modalBox[1],
             extraInfo: privateKey,

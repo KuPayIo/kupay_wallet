@@ -130,7 +130,7 @@ export class LockScreenPage extends Widget {
                 } 
             }
         },(fg) => {
-            if (fg) {
+            if (fg) {  // 退出app
                 const ls:LockScreen = getStore('setting/lockScreen');
                 ls.locked = true;
                 setStore('setting/lockScreen',ls);

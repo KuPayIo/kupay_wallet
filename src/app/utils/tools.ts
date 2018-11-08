@@ -4,6 +4,7 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { closeCon, setBottomLayerReloginMsg } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
+import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
@@ -16,7 +17,6 @@ import { Account, FileTxHistory, getCloudBalances, getStore, initCloudWallets, L
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
-import { getLang } from '../../pi/util/lang';
 
 export const deepCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
@@ -525,7 +525,8 @@ export const openBasePage = (foreletName: string, foreletParams: any = {}): Prom
 export const popPswBox = async (content = []) => {
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
-        let BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
+        const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
+        // tslint:disable-next-line:no-unnecessary-local-variable
         const psw = await openMessageboxPsw(BoxInputTitle,content);
 
         return psw;
@@ -549,7 +550,7 @@ export const popNewLoading = (text: string) => {
 const openMessageboxPsw = (BoxInputTitle?,content?): Promise<string> => {
     // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
+        popNew('app-components1-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
             resolve(r);
         }, (cancel: string) => {
             reject(cancel);
@@ -839,7 +840,7 @@ export const fetchCloudWalletAssetList = () => {
 export const hasWallet = () => {
     const wallet = getStore('wallet');
     if (!wallet) {
-        popNew('app-components-modalBox-modalBox', {
+        popNew('app-components1-modalBox-modalBox', {
             title: '提示',
             content: '你还没有登录，去登录使用更多功能吧',
             sureText: '去登录',

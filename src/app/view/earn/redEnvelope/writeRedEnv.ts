@@ -3,13 +3,13 @@
  */
 // =============================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
 import { VerifyIdentidy } from '../../../utils/walletTools';
-import { getLang } from '../../../../pi/util/lang';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -38,7 +38,7 @@ export class WriteRedEnv extends Widget {
 
     public create() {
         super.create();
-        this.language = this.config.value[getLang()]
+        this.language = this.config.value[getLang()];
         this.state = {
             list: [],
             selected: 0,
@@ -47,7 +47,7 @@ export class WriteRedEnv extends Widget {
             totalNum: 0,
             oneAmount: 0,
             message: '',
-            realUser: getStore('user/info/isRealUser'),
+            realUser: getStore('user/info/isRealUser')
         };
         this.updateBalance();
         if (!this.state.realUser) {
@@ -145,12 +145,12 @@ export class WriteRedEnv extends Widget {
      * 点击发红包按钮
      */
     public async send() {
-        if (this.state.totalNum == 0) {
+        if (this.state.totalNum === 0) {
             popNew('app-components1-message-message', { content: this.language.tips[2] });
 
             return;
         }
-        if (this.state.oneAmount == 0 && this.state.totalAmount == 0) {
+        if (this.state.oneAmount === 0 && this.state.totalAmount === 0) {
             popNew('app-components-message-message', { content: this.language.tips[1] });
 
             return;
@@ -177,10 +177,10 @@ export class WriteRedEnv extends Widget {
 
         this.inputBlur();
         
-        const mess1 = this.language.phrase[0] + this.state.totalAmount + curCoin.name +" / "+this.state.totalNum+ this.language.phrase[1];
+        const mess1 = this.language.phrase[0] + this.state.totalAmount + curCoin.name + ' / ' + this.state.totalNum + this.language.phrase[1];
         // tslint:disable-next-line:max-line-length
         const mess2 = this.language.phrase[2] + (this.state.showPin ? this.language.redEnvType[1] : this.language.redEnvType[0]);
-        popNew('app-components-modalBoxInput-modalBoxInput', {
+        popNew('app-components1-modalBoxInput-modalBoxInput', {
             title: curCoin.name + this.language.phrase[3],
             content: [mess1, mess2],
             placeholder: this.language.phrase[4],
