@@ -37,6 +37,7 @@
                 <app-components-basicItem-basicItem>{name:{{itemTitle[1]}},style:"margin:0;border:none;"}</app-components-basicItem-basicItem>
             </div>
         </div>
+        
         <div w-class="other">
             <div w-class="other-item" on-tap="backupWalletClick">
                 <div w-class="item-title"><pi-ui-lang>{{itemTitle[2]}}</pi-ui-lang></div>
