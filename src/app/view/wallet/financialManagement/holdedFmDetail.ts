@@ -3,20 +3,29 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { buyBack, getPurchaseRecord } from '../../../net/pull';
 import { PurchaseHistory } from '../../../store/interface';
+import { register } from '../../../store/memstore';
 import { popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 interface Props {
     product:PurchaseHistory;
+    index:number;
 }
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class HoldedFmDetail extends Widget {
     public ok:() => void;
     public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        console.log(this.props.product);
+        // console.log(this.props.product);
         this.language = this.config.value[getLang()];
         const stateShow = props.product.state === 1 ? this.language.phrase[0] : this.language.phrase[1];
         const stateBg = props.product.state === 1 ? '' : 'bg1';
@@ -71,3 +80,15 @@ export class HoldedFmDetail extends Widget {
         popNew('app-view-wallet-financialManagement-productStatement',{ fg:1 });        
     }
 }
+register('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        const data = {
+            product:purchaseRecord[w.props.index],
+            index:w.props.index
+        };
+        w.setProps(data);
+        w.paint();
+    }
+    
+});
