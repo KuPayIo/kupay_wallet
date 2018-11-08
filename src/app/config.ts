@@ -813,7 +813,8 @@ KuPay团队
             withdraw: '正在提现...',
             withdrawSuccess: '提现成功',
             wrongPsw: '密码错误',
-            rechargeTips: '充值已到账'
+            rechargeTips: '充值已到账',
+            transferFailed: '交易失败'
         },
         // 后台对应错误列表
         errorList: {
@@ -1417,7 +1418,8 @@ KuPay团队
             withdraw: '正在提現...',
             withdrawSuccess: '提現成功',
             wrongPsw: '密碼錯誤',
-            rechargeTips: '充值已到賬'
+            rechargeTips: '充值已到賬',
+            transferFailed:'交易失敗'
         },
         // 后台对应错误列表
         errorList: {

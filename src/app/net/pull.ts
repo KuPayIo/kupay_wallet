@@ -3,6 +3,7 @@
  */
 import { ConState, getConState, open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
+import { cryptoRandomInt } from '../../pi/util/math';
 import { MainChainCoin } from '../config';
 import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
@@ -11,7 +12,7 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDivid
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, doXor, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -175,6 +176,7 @@ const conSuccess = () => {
     console.log('con success');
     setStore('user/offline',false);
     getRandom();
+    // const third = getThirdData('http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4');
 };
 
 /**
@@ -1302,4 +1304,39 @@ export const uploadFile = async (base64) => {
                 setStore('user/info',userInfo);
             }
         });
+};
+
+const stringToHex = (str) => {
+    let val = '';
+    for (let i = 0; i < str.length; i++) {
+        val += str.charCodeAt(i).toString(16);
+    }
+    return val;
+};
+/**
+ * 获取第三方数据
+ */
+export const getThirdData = async (url:string) => {
+    const key = cryptoRandomInt().toString(); 
+    const xorUrl = stringToHex(doXor(url,key));
+    // const xorUrl = stringToHex('http://www.baidu.com');
+    // const ab = str2ab(doXor(url,key));
+    console.log('======',xorUrl);
+    const param = {
+        key,
+        url:xorUrl
+    };
+    const msg = {
+        type: 'wallet/proxy@handle',
+        param
+    };
+    console.log(msg);
+    try {
+        const res = await requestAsync(msg);
+        console.log('getThirdData--------',res);
+        const str = doXor(res.value,res.pk);
+        console.log('getThirdData--------',str);
+    } catch (err) {
+        console.log('wallet/proxy@handle--------',err);
+    } 
 };
