@@ -39,7 +39,7 @@ export class CoinConvert extends Widget {
         // tslint:disable-next-line:prefer-template
         const tips = this.language.tips[5] + this.state.inMinerFee + ' ' + this.state.inCurrency;
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-modalBox-modalBox1',{ title:this.language.title,content:this.language.content,tips:tips });
+        popNew('app-components-allModalBox-modalBox1',{ title:this.language.title,content:this.language.content,tips:tips });
     }
 
     /**

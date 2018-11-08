@@ -39,7 +39,7 @@ export class Withdraw extends Widget {
         this.ok && this.ok();
     }
     public minerFeeDescClick() {
-        popNew('app-components-modalBox-modalBox1',this.language.modalBox);
+        popNew('app-components-allModalBox-modalBox1',this.language.modalBox);
     }
 
      // 提币金额变化

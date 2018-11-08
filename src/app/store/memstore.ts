@@ -3,13 +3,13 @@
  * @author donghr
  */
 // ============================================ 导入
+import { appLanguageList, LocalLanguageMgr } from '../../pi/browser/localLanguage';
 import { HandlerMap } from '../../pi/util/event';
+import { setLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, ShapeShiftTxs, Store, TxHistory, UserInfo, Wallet } from './interface';
-import { LocalLanguageMgr, appLanguageList } from '../../pi/browser/localLanguage';
-import { setLang } from '../../pi/util/lang';
 
 // ============================================ 导出
 
@@ -259,16 +259,19 @@ const initSettings = () => {
     appLanguage.init();
     appLanguage.getSysLan({
         success: (localLan) => {
+            // tslint:disable-next-line:radix
             langNum = parseInt(localLan);
-            // if(langNum && setting.language===0){
-            //     if(langNum===2||langNum===3){
-            //         setting.language = appLanguageList[langNum];
-            //         setLang(appLanguageList[langNum]);
-            //     }else{
-            //         setting.language = "zh_Hans";
-            //     }
-                
-            // }
+            const localSet = getLocalStorage('setting');
+            if (!localSet) {
+                if (langNum === 2 || langNum === 3) {
+                    setLang(appLanguageList[langNum]);
+                    store.setting.language = appLanguageList[langNum];
+                } else {
+                    setLang('zh_Hans');
+                    store.setting.language = 'zh_Hans';
+                }
+            }
+            
         },
         fail: (result) => { }
     });
