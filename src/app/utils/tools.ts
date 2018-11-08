@@ -309,6 +309,17 @@ export const str2arr = (str) => {
 
     return new Uint8Array(arr32.buffer, 0, 32);
 };
+// ArrayBuffer转16进度字符串示例
+export const ab2hex = (buffer) => {
+    const hexArr = Array.prototype.map.call(
+      new Uint8Array(buffer),
+       (bit) => {
+           return ('00' + bit.toString(16)).slice(-2);
+       }
+    );
+    return hexArr.join('');
+};
+  
 /**
  * u16Arr转字符串
  * 
@@ -1536,9 +1547,31 @@ export const setEthNonce = (newNonce: number, addr: string) => {
 };
 
 /**
- * 异或运算
+ * 异或编码
  */
-export const doXor = (str:string, key:string) => {
+export const xorEncode = (str:string, key:string) => {
+    const ord = []; 
+    let res = '';
+
+    let i;
+    for (i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
+
+    for (i = 0; i < str.length; i++) {
+        const code = ord[str.substr(i, 1)] ^ ord[key.substr(i %    key.length, 1)];
+        if (code < 16) {
+            res += `0${code.toString(16)}`;
+        } else {
+            res += code.toString(16);
+        }
+    }
+
+    return res;
+};
+
+/**
+ * 异或解码
+ */
+export const xorDecode = (str:string, key:string) => {
     const ord = []; 
     let res = '';
 
@@ -1549,5 +1582,5 @@ export const doXor = (str:string, key:string) => {
         res += String.fromCharCode(ord[str.substr(i, 1)] ^ ord[key.substr(i %    key.length, 1)]);
     }
 
-    return(res);
+    return res;
 };

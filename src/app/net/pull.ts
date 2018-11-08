@@ -1,7 +1,7 @@
 /**
  * 主动向后端通讯
  */
-import { ConState, getConState, open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { MainChainCoin } from '../config';
@@ -12,7 +12,7 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDivid
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, doXor, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str, xorEncode } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -27,7 +27,8 @@ console.log('conPort=',conPort);
 export const thirdUrlPre = `http://${conIp}:${conPort}/data/proxy?`;
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-export const sharePerUrl = `http://${conIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+export const sharePerUrl = `http://app.kuplay.io/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+// export const sharePerUrl = `http://${conIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
 export const shareDownload = `http://${conIp}/wallet/phoneRedEnvelope/download.html`;
@@ -176,7 +177,6 @@ const conSuccess = () => {
     console.log('con success');
     setStore('user/offline',false);
     getRandom();
-    // const third = getThirdData('http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4');
 };
 
 /**
@@ -580,6 +580,7 @@ export const getAward = async () => {
     const msg = { type: 'wallet/cloud@get_award', param: {} };
 
     try {
+        // tslint:disable-next-line:no-unnecessary-local-variable
         const detail = await requestAsync(msg);
         
         return detail;
@@ -1306,37 +1307,21 @@ export const uploadFile = async (base64) => {
         });
 };
 
-const stringToHex = (str) => {
-    let val = '';
-    for (let i = 0; i < str.length; i++) {
-        val += str.charCodeAt(i).toString(16);
-    }
-    return val;
-};
 /**
  * 获取第三方数据
  */
-export const getThirdData = async (url:string) => {
+export const getThirdFromServer = async (url:string) => {
     const key = cryptoRandomInt().toString(); 
-    const xorUrl = stringToHex(doXor(url,key));
-    // const xorUrl = stringToHex('http://www.baidu.com');
-    // const ab = str2ab(doXor(url,key));
-    console.log('======',xorUrl);
+    const xorEncodeUrl = xorEncode(url,key);
+
     const param = {
         key,
-        url:xorUrl
+        url:xorEncodeUrl
     };
     const msg = {
         type: 'wallet/proxy@handle',
         param
     };
-    console.log(msg);
-    try {
-        const res = await requestAsync(msg);
-        console.log('getThirdData--------',res);
-        const str = doXor(res.value,res.pk);
-        console.log('getThirdData--------',str);
-    } catch (err) {
-        console.log('wallet/proxy@handle--------',err);
-    } 
+
+    return requestAsync(msg);
 };

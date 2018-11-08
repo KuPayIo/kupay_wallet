@@ -3,13 +3,12 @@
  * @author donghr
  */
 // ============================================ 导入
+import { LocalLanguageMgr } from '../../pi/browser/localLanguage';
 import { HandlerMap } from '../../pi/util/event';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, ShapeShiftTxs, Store, TxHistory, UserInfo, Wallet } from './interface';
-import { LocalLanguageMgr, appLanguageList } from '../../pi/browser/localLanguage';
-import { setLang } from '../../pi/util/lang';
 
 // ============================================ 导出
 
