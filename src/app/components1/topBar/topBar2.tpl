@@ -6,7 +6,7 @@
             {{if typeof(it.text)=="string"}}
                 {{it.text}}
             {{else}}
-                <pi-ui-lang>{{it.text}}</pi-ui-lang>
+            <pi-ui-lang>{{it.text}}</pi-ui-lang>
             {{end}}
         </span>
         {{if it1}}

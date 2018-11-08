@@ -9,6 +9,7 @@ import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -20,6 +21,7 @@ interface Props {
 }
 export class RechargeRecord extends Widget {
     public props:Props;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -28,13 +30,13 @@ export class RechargeRecord extends Widget {
         }
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
         this.state = {
             recordList:[],
             nextStart:rechargeLogs.start,
             canLoadMore:rechargeLogs.canLoadMore,
-            isRefreshing:false,
-            cfgData:getLanguage(this)
+            isRefreshing:false
         };
         this.state.recordList = this.parseRecordList(rechargeLogs.list);
     }
@@ -55,7 +57,7 @@ export class RechargeRecord extends Widget {
             const obj = parseStatusShow(txDetail);
             console.log(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.state.cfgData.recharge;
+            item.behavior = this.language.recharge;
             item.amountShow = `+${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_charge_icon.png`;

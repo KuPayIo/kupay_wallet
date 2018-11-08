@@ -390,6 +390,22 @@ export const hexstrToU8Array = (str: string) => {
 };
 
 /**
+ * 十六进制字符串转u8数组
+ * 
+ * @param str 输入字符串
+ */
+export const hexstrToU16Array = (str: string) => {
+    // if (str.length % 2 > 0) str = `0${str}`;
+
+    const r = new Uint8Array(str.length);
+    for (let i = 0; i < str.length; i++) {
+        r[i] = parseInt(str.charAt(i), 16);
+    }
+
+    return r;
+};
+
+/**
  * u8数组转十六进制字符串
  * 
  * @param u8Array 输入数组
@@ -1518,4 +1534,21 @@ export const setEthNonce = (newNonce: number, addr: string) => {
         }
 
     }
+};
+
+/**
+ * 异或运算
+ */
+export const doXor = (str:string, key:string) => {
+    const ord = []; 
+    let res = '';
+
+    let i;
+    for (i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
+
+    for (i = 0; i < str.length; i++) {
+        res += String.fromCharCode(ord[str.substr(i, 1)] ^ ord[key.substr(i %    key.length, 1)]);
+    }
+
+    return(res);
 };

@@ -252,6 +252,13 @@ register('cloud/cloudWallets', () => {
     }
 });
 
+register('user',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});
+
 register('activity/mining/addMine', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {

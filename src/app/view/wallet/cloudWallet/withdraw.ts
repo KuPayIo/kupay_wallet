@@ -9,17 +9,20 @@ import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore } from '../../../store/memstore';
 import { withdrawLimit } from '../../../utils/constants';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 interface Props {
     currencyName:string;
 }
 export class Withdraw extends Widget {
     public props:Props;
     public ok:() => void;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const currencyName = this.props.currencyName;
         const minerFee = withdrawMinerFee[currencyName];
         const balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
@@ -29,7 +32,6 @@ export class Withdraw extends Widget {
             minerFee,
             withdrawAddr:getCurrentAddrInfo(currencyName).addr,
             withdrawAddrInfo:this.parseAddrsInfo(),
-            cfgData:getLanguage(this)
         };
     }
 
@@ -37,7 +39,7 @@ export class Withdraw extends Widget {
         this.ok && this.ok();
     }
     public minerFeeDescClick() {
-        popNew('app-components-allModalBox-modalBox1',this.state.cfgData.modalBox);
+        popNew('app-components-allModalBox-modalBox1',this.language.modalBox);
     }
 
      // 提币金额变化
@@ -76,18 +78,18 @@ export class Withdraw extends Widget {
         const currencyName = this.props.currencyName;
         const limit = withdrawLimit[currencyName];
         if (Number(this.state.amount) < limit) {
-            popNewMessage(this.state.cfgData.tips[0] + limit + currencyName);
+            popNewMessage(this.language.tips[0] + limit + currencyName);
 
             return;
         }
         if (Number(this.state.amount) + this.state.minerFee > this.state.balance) {
-            popNewMessage(this.state.cfgData.tips[1]);
+            popNewMessage(this.language.tips[1]);
 
             return;
         }
         const realUser = getStore('user/info/isRealUser');
         if (!realUser) {
-            popNewMessage(this.state.cfgData.tips[2]);
+            popNewMessage(this.language.tips[2]);
 
             return;
         }

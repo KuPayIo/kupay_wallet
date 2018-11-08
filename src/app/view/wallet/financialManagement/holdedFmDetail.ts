@@ -4,20 +4,22 @@
 import { Widget } from '../../../../pi/widget/widget';
 import { buyBack, getPurchaseRecord } from '../../../net/pull';
 import { PurchaseHistory } from '../../../store/interface';
-import { getLanguage, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
+import { popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 interface Props {
     product:PurchaseHistory;
 }
 export class HoldedFmDetail extends Widget {
     public ok:() => void;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         console.log(this.props.product);
-        const cfg = getLanguage(this);
-        const stateShow = props.product.state === 1 ? cfg.phrase[0] : cfg.phrase[1];
+        this.language = this.config.value[getLang()];
+        const stateShow = props.product.state === 1 ? this.language.phrase[0] : this.language.phrase[1];
         const stateBg = props.product.state === 1 ? '' : 'bg1';
-        const btnText = props.product.state === 1 ? cfg.phrase[2] : cfg.phrase[1];
+        const btnText = props.product.state === 1 ? this.language.phrase[2] : this.language.phrase[1];
         const btnBgColor = props.product.state === 1 ? 'blue' : 'white';
         this.state = {
             stateShow,
@@ -25,7 +27,6 @@ export class HoldedFmDetail extends Widget {
             stateBg,
             btnText,
             btnBgColor,
-            cfgData:cfg
         };
     }
     public backPrePage() {
@@ -36,10 +37,10 @@ export class HoldedFmDetail extends Widget {
         if (this.props.product.state !== 1) return;
         const psw = await popPswBox();
         if (!psw) return;
-        const close = popNewLoading(this.state.cfgData.loading);
+        const close = popNewLoading(this.language.loading);
         const verify = await VerifyIdentidy(psw);
         if (!verify) {
-            popNewMessage(this.state.cfgData.tips[0]);
+            popNewMessage(this.language.tips[0]);
             close.callback(close.widget);
 
             return;
@@ -47,10 +48,10 @@ export class HoldedFmDetail extends Widget {
         const result = await buyBack(this.props.product.purchaseTimeStamp);
         close.callback(close.widget);
         if (result) {
-            popNewMessage(this.state.cfgData.tips[1]);
+            popNewMessage(this.language.tips[1]);
             getPurchaseRecord();
         } else {
-            popNewMessage(this.state.cfgData.tips[2]);
+            popNewMessage(this.language.tips[2]);
         }
     }
 

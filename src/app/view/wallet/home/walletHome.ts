@@ -22,7 +22,6 @@ export class WalletHome extends Widget {
         this.state = {
             totalAsset:formatBalanceValue(fetchLocalTotalAssets()),
             assetList:fetchWalletAssetList(),
-            cfgData:getLanguage(this),
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };

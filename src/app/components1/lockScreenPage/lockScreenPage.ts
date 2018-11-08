@@ -9,6 +9,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { LockScreen } from '../../store/interface';
 import { getStore, register, setStore  } from '../../store/memstore';
 import { getLanguage, lockScreenHash, lockScreenVerify } from '../../utils/tools';
+import { getLang } from '../../../pi/util/lang';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,6 +19,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class LockScreenPage extends Widget {
     public ok:(fg:boolean) => void;
+    public language:any;
     constructor() {
         super();
     }
@@ -28,10 +30,9 @@ export class LockScreenPage extends Widget {
     }
 
     public init() {
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
-            cfgData:cfg,
-            errorTips: cfg.errorTips,
+            errorTips: this.language.errorTips,
             lockScreenPsw:'',  // 锁屏密码
             openLockScreen: false, // 是否打开锁屏开关 
             loading:false
@@ -54,7 +55,7 @@ export class LockScreenPage extends Widget {
      * 设置锁屏密码
      */
     public setLockPsw() {
-        popNew('app-components1-keyboard-keyboard',{ title: this.state.cfgData.keyboardTitle[0] },(r) => {
+        popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[0] },(r) => {
             this.state.lockScreenPsw = r;
             this.reSetLockPsw();
         },() => {
@@ -66,9 +67,9 @@ export class LockScreenPage extends Widget {
      * 重复锁屏密码
      */
     public reSetLockPsw() {
-        popNew('app-components1-keyboard-keyboard',{ title: this.state.cfgData.keyboardTitle[1] },(r) => {
+        popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[1] },(r) => {
             if (this.state.lockScreenPsw !== r) {
-                popNew('app-components1-message-message',{ content:this.state.cfgData.tips[0] });
+                popNew('app-components1-message-message',{ content:this.language.tips[0] });
                 this.reSetLockPsw();
             } else {
                 const hash256 = lockScreenHash(r);
@@ -76,7 +77,7 @@ export class LockScreenPage extends Widget {
                 ls.psw = hash256;
                 ls.open = true;
                 setStore('setting/lockScreen',ls);
-                popNew('app-components1-message-message',{ content:this.state.cfgData.tips[1] });
+                popNew('app-components1-message-message',{ content:this.language.tips[1] });
             }
             this.close(true);
         },() => {
@@ -108,8 +109,8 @@ export class LockScreenPage extends Widget {
      */
     public verifyPsw() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components1-modalBoxInput-modalBoxInput',this.state.cfgData.modalBoxInput2,async (r) => {
-            const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading }); 
+        popNew('app-components1-modalBoxInput-modalBoxInput',this.language.modalBoxInput2,async (r) => {
+            const close = popNew('app-components1-loading-loading', { text: this.language.loading }); 
             if (this.state.loading) {
                 const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
                 const fg = await VerifyIdentidy(r);
@@ -125,7 +126,7 @@ export class LockScreenPage extends Widget {
                     this.setLockPsw();
                     
                 } else {  // 进入APP验证身份失败后再次进入验证身份步骤
-                    popNew('app-components1-message-message',{ content:this.state.cfgData.tips[2] });
+                    popNew('app-components1-message-message',{ content:this.language.tips[2] });
                     this.verifyPsw();
                 } 
             }

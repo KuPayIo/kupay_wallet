@@ -261,30 +261,30 @@ const initSettings = () => {
         success: (localLan) => {
             // tslint:disable-next-line:radix
             langNum = parseInt(localLan);
-            const setting = getLocalStorage('setting', {
-                language:0,
-                changeColor: 'redUp',
-                currencyUnit: 'CNY',
-                lockScreen: {
-                    open: false,
-                    psw: ''
-                }
-            });
-            if (langNum && setting.language === 0) {
-                if (langNum === 2 || langNum === 3) {
-                    setting.language = appLanguageList[langNum];
-                    setLang(appLanguageList[langNum]);
-                } else {
-                    setting.language = 'zh_Hans';
-                }
+            // if(langNum && setting.language===0){
+            //     if(langNum===2||langNum===3){
+            //         setting.language = appLanguageList[langNum];
+            //         setLang(appLanguageList[langNum]);
+            //     }else{
+            //         setting.language = "zh_Hans";
+            //     }
                 
-            }
-            store.setting = {
-                ...setting
-            };
+            // }
         },
         fail: (result) => { }
     });
+    const setting = getLocalStorage('setting', {
+        language:'zh_Hans',
+        changeColor: 'redUp',
+        currencyUnit: 'CNY',
+        lockScreen: {
+            open: false,
+            psw: ''
+        }
+    });
+    store.setting = {
+        ...setting
+    };
 
 };
 

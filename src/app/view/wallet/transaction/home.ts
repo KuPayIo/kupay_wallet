@@ -47,7 +47,6 @@ export class TransactionHome extends Widget {
             rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
             txList,
             canConvert,
-            cfgData:cfg,
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol(),
             tabs:[{
