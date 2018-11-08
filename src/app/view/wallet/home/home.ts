@@ -2,13 +2,13 @@
  * wallet home 
  */
 // ==============================导入
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getServerCloudBalance } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -26,10 +26,10 @@ export class Home extends Widget {
         const userInfo = getUserInfo();
         this.state = {
             tabs:[{
-                tab:{"zh_Hans":"云账户","zh_Hant":"雲賬戶","en":""},
+                tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },
                 components:'app-view-wallet-home-cloudHome'
             },{
-                tab:{"zh_Hans":"本地钱包","zh_Hant":"本地錢包","en":""},
+                tab:{ zh_Hans:'本地钱包',zh_Hant:'本地錢包',en:'' },
                 components:'app-view-wallet-home-walletHome'
             }],
             activeNum:1,

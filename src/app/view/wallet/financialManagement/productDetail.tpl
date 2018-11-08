@@ -22,6 +22,7 @@
                 {"zh_Hans":"价格：","zh_Hant":"價格：","en":""},
                 {"zh_Hans":"剩余：","zh_Hant":"剩餘：","en":""},
                 {"zh_Hans":"锁定期：无","zh_Hant":"鎖定期：無","en":""}] }}
+
             <div w-class="row2"><pi-ui-lang>{"zh_Hans":"以上利率均为预期年化结算利率，以实际回报为准","zh_Hant":"以上利率均為預期年化結算利率，以實際回報為準","en":""}</pi-ui-lang></div>
             <div w-class="row3"><div w-class="progress" style="width:{{it1.usePercent}}%;"></div></div>
             <div w-class="row4">
@@ -38,8 +39,10 @@
             <div w-class="detail-box">
                 <div w-class="detail">
                     <pi-ui-lang>{{detail[0]}}</pi-ui-lang>
-                    <span>{{it.product.unitPrice}}&nbsp;{{it.product.coinType}} /
-                    <pi-ui-lang>{{tips[4]}}</pi-ui-lang>
+                    <span>
+                        {{it.product.unitPrice}}&nbsp;{{it.product.coinType}}/<pi-ui-lang>{{tips[4]}}</pi-ui-lang>
+                    </span>
+                    </span>
                 </div>
                 <div w-class="detail">
                     <pi-ui-lang>{{detail[1]}}</pi-ui-lang> {{it1.leftPercent}}%
@@ -76,8 +79,6 @@
             </div>
         </div>
     </div>
-
-    
     <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{it.product.productName}} }</app-components1-topBar-topBar2>
 
 </div>

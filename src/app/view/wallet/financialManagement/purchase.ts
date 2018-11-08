@@ -13,6 +13,7 @@ import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentA
 import { wei2Eth } from '../../../utils/unitTools';
 import { purchaseProduct } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './productDetail';
+import { getLang } from '../../../../pi/util/lang';
 // ==================================================导出
 interface Props {
     product:Product;
@@ -21,6 +22,7 @@ interface Props {
 export class ProductDetail extends Widget {
     public props:Props;
     public ok: () => void;
+    public language:any;
     constructor() {
         super();
     }
@@ -30,6 +32,7 @@ export class ProductDetail extends Widget {
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
         const cloudBalance = getCloudBalances().get(CloudCurrencyType.ETH);
         const localBalance = getCurrentAddrInfo('ETH').balance;
@@ -37,7 +40,6 @@ export class ProductDetail extends Widget {
             spend,
             cloudBalance,
             localBalance,
-            cfgData:getLanguage(this)
         }; 
     }
     public close() {
@@ -79,7 +81,7 @@ export class ProductDetail extends Widget {
                 w.ok && w.ok();
             }
         } else {
-            popNewMessage(this.state.cfgData.tips);
+            popNewMessage(this.language.tips);
         }
         this.ok && this.ok();
     }

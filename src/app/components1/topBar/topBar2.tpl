@@ -3,7 +3,11 @@
     <div w-class="left-container">
         <img on-tap="backPrePage" src="../../res/image/{{opca>0 ? 'left_arrow_blue.png' : 'left_arrow_white.png'}}" w-class="ga-back" />
         <span on-tap="backPrePage"  style="color: {{opca>0 ? '#222':'#fff'}}">
+            {{if typeof(it.text)=="string"}}
+                {{it.text}}
+            {{else}}
             <pi-ui-lang>{{it.text}}</pi-ui-lang>
+            {{end}}
         </span>
         {{if it1}}
         <widget w-tag="pi-ui-lang" w-class="offline">{zh_Hans:"离线",zh_Hant:"離線",en:"Offline"}</widget>

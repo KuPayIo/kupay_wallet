@@ -28,9 +28,9 @@
     <div w-class="show-container">
         <div w-class="quotes"><pi-ui-lang>{"zh_Hans":"行情","zh_Hant":"行情","en":""}</pi-ui-lang>&nbsp;{{it1.currencyUnitSymbol}}{{it1.rate}}/{{it.currencyName}}</div>
         {{if it1.redUp}}
-        <div w-class="{{it.gain > 0 ? 'up' : 'down'}}"><pi-ui-lang>{"zh_Hans":"今日","zh_Hant":"今日","en":""}</pi-ui-lang>&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
+        <div w-class="{{it.gain >= 0 ? 'up' : 'down'}}"><pi-ui-lang>{"zh_Hans":"今日","zh_Hant":"今日","en":""}</pi-ui-lang>&nbsp;{{it.gain >= 0 ? '+' : ''}}{{it.gain}}%</div>
         {{else}}
-        <div w-class="{{it.gain > 0 ? 'down' : 'up'}}"><pi-ui-lang>{"zh_Hans":"今日","zh_Hant":"今日","en":""}</pi-ui-lang>&nbsp;{{it.gain > 0 ? '+' : ''}}{{it.gain}}%</div>
+        <div w-class="{{it.gain >= 0 ? 'down' : 'up'}}"><pi-ui-lang>{"zh_Hans":"今日","zh_Hant":"今日","en":""}</pi-ui-lang>&nbsp;{{it.gain >= 0 ? '+' : ''}}{{it.gain}}%</div>
         {{end}}
     </div>
     <div w-class="body">
@@ -43,7 +43,7 @@
             {{end}}
             <div w-class="tx-list">
                 {{for i,v of it1.tabs[it1.activeNum].list}}
-                <div on-tap="txListItemClick(e,{{i}})">
+                <div on-tap="txListItemClick(e,{{i}})">  
                 <app-components-fourParaImgItem-fourParaImgItem>{"name":{{v.txTypeShow}},"data":{{v.pay}},"time":{{v.TimeShow}},"describe":{{v.statusShow}},img:"../../res/image/{{v.txType === 2 ? "receive_icon.png" : "transfer_icon.png"}}"}</app-components-fourParaImgItem-fourParaImgItem>
                 </div>
                 {{end}}

@@ -12,6 +12,7 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { getLanguage, logoutAccountDel } from '../../utils/tools';
+import { getLang } from '../../../pi/util/lang';
 
 interface Props {
     title:string;
@@ -24,13 +25,14 @@ interface Props {
 export class ModalBoxInput extends Widget {
     public props: Props;
     public ok: (value:string) => void;
-    public cancel: () => void;   
+    public cancel: () => void; 
+    public language:any;  
 
     public create() {
         super.create();
+        this.language = this.config.value[getLang()];
         this.state = { 
             currentValue:'',
-            cfgData:getLanguage(this)
         };
     }
     /**
@@ -50,7 +52,7 @@ export class ModalBoxInput extends Widget {
      */
     public foegetPsw(e:any) {
         this.cancel && this.cancel();
-        popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox,() => {
+        popNew('app-components-modalBox-modalBox',this.language.modalBox,() => {
             logoutAccountDel();
         });        
     }
