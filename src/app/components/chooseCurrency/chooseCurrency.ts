@@ -2,7 +2,7 @@
  * choose currency
  */
 import { Widget } from '../../../pi/widget/widget';
-import { formatBalance, getCurrentAddrInfo, getLanguage } from '../../utils/tools';
+import { formatBalance, getCurrentAddrInfo } from '../../utils/tools';
 
 interface Props {
     list:string[];
@@ -27,7 +27,6 @@ export class ChooseCurrency extends Widget {
         this.state = {
             currencyShowList,
             selected:this.props.selected,
-            cfgData:getLanguage(this)
         };
     }
 

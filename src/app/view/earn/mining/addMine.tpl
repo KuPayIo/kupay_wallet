@@ -37,15 +37,17 @@
             itemDetail:{"zh_Hans":"首次参与聊天赠送700KT","zh_Hant":"首次參與聊天贈送700KT","en":""}
             }] }}
             {{for ind,val of it1.data}}
-            <div on-tap="show({{ind}})" ev-imgAndBtn-tap="goDetail({{ind}})">
-                <app-components-imgAndBtnItem-imgAndBtnItem>{"name":{{addMineList[ind].itemName}},"describe":{{addMineList[ind].itemShort}},"img":{{val.itemImg}},"btnName":{{btnName}},isComplete:{{val.isComplete}}
-                    }</app-components-imgAndBtnItem-imgAndBtnItem>
-                {{if val.show}}
-                <div w-class="itemDetail">
-                   <pi-ui-lang>{{addMineList[ind].itemDetail}}</pi-ui-lang> 
+                {{if val.modulIsShow}}
+                <div on-tap="show({{ind}})" ev-imgAndBtn-tap="goDetail({{ind}})">
+                    <app-components-imgAndBtnItem-imgAndBtnItem>{"name":{{addMineList[ind].itemName}},"describe":{{addMineList[ind].itemShort}},"img":{{val.itemImg}},"btnName":{{btnName}},isComplete:{{val.isComplete}}
+                        }</app-components-imgAndBtnItem-imgAndBtnItem>
+                    {{if val.show}}
+                    <div w-class="itemDetail">
+                        <pi-ui-lang>{{addMineList[ind].itemDetail}}</pi-ui-lang> 
+                    </div>
+                    {{end}}
                 </div>
                 {{end}}
-            </div>
             {{end}}
         </div>
 

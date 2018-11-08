@@ -3,7 +3,6 @@
  */
 import { Widget } from '../../../pi/widget/widget';
 import { MinerFeeLevel } from '../../store/interface';
-import { getLanguage } from '../../utils/tools';
 interface Props {
     currencyName:string;
     minerFeeList:any[];
@@ -19,7 +18,6 @@ export class ChooseModalBox extends Widget {
         this.state = {
             minerFeeList:this.props.minerFeeList,
             level:this.props.curLevel ? this.props.curLevel : MinerFeeLevel.Standard,
-            cfgData:getLanguage(this)
         };
     }
 

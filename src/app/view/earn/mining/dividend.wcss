@@ -63,6 +63,7 @@
     -webkit-overflow-scrolling: touch;
     flex: 1 0 0;
     padding-top: 128px;
+    z-index:0;
 }
 .historyTitle{
     padding-left: 30px;

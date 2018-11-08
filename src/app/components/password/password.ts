@@ -12,7 +12,6 @@
 import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
 
 // ================================ 导出
 interface Props {
@@ -31,7 +30,6 @@ export class ImgRankItem extends Widget {
         showTips:boolean;
         isSuccess:boolean;
         showIcon:boolean;
-        cfgData:any;
     };
     constructor() {
         super();
@@ -45,7 +43,6 @@ export class ImgRankItem extends Widget {
             showTips:true,
             isSuccess:false,
             showIcon:false,
-            cfgData:getLanguage(this)
         };
     }
 
