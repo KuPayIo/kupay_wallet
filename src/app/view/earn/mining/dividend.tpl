@@ -2,7 +2,7 @@
 
     <div w-class="content" on-scroll="getMoreList" id="historylist">
         <div id="history">
-            <div style="text-align: center;position: fixed;width: 100%;top: 330px;">
+            <div style="text-align: center;position: absolute;width: 100%;top: 330px;z-index: -2;">
                 <img src="../../../res/image/dividend_background.png" style="width: 611px;height: 800px;" />
             </div>
 

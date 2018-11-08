@@ -1,5 +1,4 @@
 import { Widget } from '../../../../pi/widget/widget';
-import { getLanguage } from '../../../utils/tools';
 
 /**
  * 地址选择框
@@ -14,9 +13,7 @@ export class ChooseWithdrawAddr extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         console.log(props);
-        this.state = {
-            cfgData:getLanguage(this)
-        };
+        this.state = {};
     }
 
     public chooseAddrClick(e:any,index:number) {

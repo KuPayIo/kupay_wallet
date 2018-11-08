@@ -13,8 +13,15 @@
                 {{else}}
                 <widget w-tag="pi-ui-html" w-class="ui-html">{{it1.imageHtml}}</widget>
                 <div w-class="image-psw-container" on-tap="imagePswClick">
-                    <div w-class="input-father" ev-input-change="imagePswChange"><app-components-input-suffixInput>{itype:"password",placeHolder:{{it1.cfgData.inputPlace[0]}},clearable:true,available:{{it1.imagePswAvailable}}}</app-components-input-suffixInput></div>
-                    <div w-class="input-father1" ev-input-change="imagePswConfirmChange"><app-components-input-suffixInput>{itype:"password",placeHolder:{{it1.cfgData.inputPlace[1]}},clearable:true,available:{{it1.pswEqualed}}}</app-components-input-suffixInput></div>
+                    {{: inputPlace = [
+                        {"zh_Hans":"为照片设置密码","zh_Hant":"為照片設置密碼","en":""},
+                        {"zh_Hans":"重复照片密码","zh_Hant":"重複照片密碼","en":""}] }}
+                    <div w-class="input-father" ev-input-change="imagePswChange">
+                        <app-components-input-suffixInput>{itype:"password",placeHolder:{{inputPlace[0]}},clearable:true,available:{{it1.imagePswAvailable}}}</app-components-input-suffixInput>
+                    </div>
+                    <div w-class="input-father1" ev-input-change="imagePswConfirmChange">
+                        <app-components-input-suffixInput>{itype:"password",placeHolder:{{inputPlace[1]}},clearable:true,available:{{it1.pswEqualed}}}</app-components-input-suffixInput>
+                    </div>
                 </div>
                 {{end}}
             </div>

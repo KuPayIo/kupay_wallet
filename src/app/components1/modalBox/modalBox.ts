@@ -2,7 +2,7 @@
  * modalbox
  */
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
+
 
 interface Props {
     title: string;
@@ -18,9 +18,7 @@ export class ModalBox extends Widget {
 
     public create() {
         super.create();
-        this.state = {
-            cfgData: getLanguage(this)
-        };
+        this.state = {};
     }
     public cancelBtnClick(e: any) {
         this.cancel && this.cancel();
