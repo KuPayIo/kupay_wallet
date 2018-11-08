@@ -29,8 +29,8 @@
     display: none;
 }
 .ga-tab-bar-icon{
-    width: 36px;
-    height: 36px;
+    width: 48px;
+    height: 48px;
 }
 .ga-tab-bar-text{
     font-size: 20px;

@@ -6,6 +6,7 @@
         <div w-class="asset-list" ev-item-click="itemClick">
             <app-components1-walletAssetList-walletAssetList>{ assetList:{{it1.assetList}},redUp:{{it1.redUp}},currencyUnitSymbol:{{it1.currencyUnitSymbol}} }</app-components1-walletAssetList-walletAssetList>
         </div>
+        {{if it.financialModulIsShow}}
         <div w-class="fm-container">
             <div w-class="fm-title" >
                 <div><pi-ui-lang>{"zh_Hans":"优选理财","zh_Hant":"優選理財","en":""}</pi-ui-lang></div>
@@ -20,5 +21,6 @@
                 {{end}}
             </div>
         </div>
+        {{end}}
     </div>
 </div>
