@@ -18,9 +18,7 @@ export class ModalBox extends Widget {
 
     public create() {
         super.create();
-        this.state = {
-            cfgData: getLanguage(this)
-        };
+        this.state = {};
     }
     public cancelBtnClick(e: any) {
         this.cancel && this.cancel();

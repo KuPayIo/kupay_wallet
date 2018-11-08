@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" on-tap="doClose">
     <div w-class="main">
-        <div w-class="title">{{it1.cfgData.title}}</div>
+        <div w-class="title"><pi-ui-lang>{"zh_Hans":"矿工费","zh_Hant":"礦工費","en":""}</pi-ui-lang></div>
         <div w-class="list-container">
             {{for i,v of it1.minerFeeList}}
             <div w-class="list-item" on-tap="chooseMinerLevel(e,{{i}})">

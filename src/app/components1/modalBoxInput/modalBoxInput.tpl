@@ -2,7 +2,9 @@
     <div w-class="body">
         <div w-class="title">
             {{it.title}}
-            <span w-class="forgetPsw" on-tap="foegetPsw">{{it1.cfgData.forgetPsw}}</span>
+            <span w-class="forgetPsw" on-tap="foegetPsw">
+                <pi-ui-lang>{"zh_Hans":"忘记密码？","zh_Hant":"忘記密碼？","en":""}</pi-ui-lang>
+            </span>
         </div>
         <div w-class="content">
             {{for ind,val of it.content}}
