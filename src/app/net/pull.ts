@@ -12,7 +12,7 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDivid
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str, xorEncode } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str, xorDecode, xorEncode } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -24,7 +24,7 @@ export const conPort = pi_modules.store.exports.severPort || '80';
 console.log('conIp=',conIp);
 console.log('conPort=',conPort);
 
-export const thirdUrlPre = `http://${conIp}:${conPort}/data/proxy?`;
+export const thirdUrlPre = `http://${conIp}:${conPort}/proxy`;
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 export const sharePerUrl = `http://app.kuplay.io/wallet/phoneRedEnvelope/openRedEnvelope.html`;
@@ -1305,23 +1305,4 @@ export const uploadFile = async (base64) => {
                 setStore('user/info',userInfo);
             }
         });
-};
-
-/**
- * 获取第三方数据
- */
-export const getThirdFromServer = async (url:string) => {
-    const key = cryptoRandomInt().toString(); 
-    const xorEncodeUrl = xorEncode(url,key);
-
-    const param = {
-        key,
-        url:xorEncodeUrl
-    };
-    const msg = {
-        type: 'wallet/proxy@handle',
-        param
-    };
-
-    return requestAsync(msg);
 };

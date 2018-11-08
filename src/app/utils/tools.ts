@@ -1553,10 +1553,9 @@ export const xorEncode = (str:string, key:string) => {
     const ord = []; 
     let res = '';
 
-    let i;
-    for (i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
+    for (let i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
 
-    for (i = 0; i < str.length; i++) {
+    for (let i = 0; i < str.length; i++) {
         const code = ord[str.substr(i, 1)] ^ ord[key.substr(i %    key.length, 1)];
         if (code < 16) {
             res += `0${code.toString(16)}`;
@@ -1569,17 +1568,32 @@ export const xorEncode = (str:string, key:string) => {
 };
 
 /**
- * 异或解码
+ * 异或解码 直接解析字符串
  */
 export const xorDecode = (str:string, key:string) => {
     const ord = []; 
     let res = '';
 
-    let i;
-    for (i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
+    for (let i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
 
-    for (i = 0; i < str.length; i++) {
+    for (let i = 0; i < str.length; i++) {
         res += String.fromCharCode(ord[str.substr(i, 1)] ^ ord[key.substr(i %    key.length, 1)]);
+    }
+
+    return res;
+};
+
+/**
+ * 异或解码 解析16进制
+ */
+export const xorDecode1 = (str:string, key:string) => {
+    const u8arr = hexstrToU8Array(str);
+    const ord = []; 
+    let res = '';
+
+    for (let i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
+    for (let i = 0; i < u8arr.length;i++) {
+        res += String.fromCharCode(u8arr[i] ^ ord[key.substr(i %    key.length, 1)]);
     }
 
     return res;

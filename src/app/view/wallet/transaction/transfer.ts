@@ -100,7 +100,7 @@ export class Transfer extends Widget {
 
             return;
         }
-        if (!this.state.amount) {
+        if (!Number(this.state.amount)) {
             popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
