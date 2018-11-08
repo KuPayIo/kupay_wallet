@@ -39,3 +39,6 @@
     width: 40px;
     border: 20px solid transparent;
 }
+.space{
+    height: 60px;
+}

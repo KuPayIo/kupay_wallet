@@ -45,6 +45,3 @@
 .gain-down{
     color: #4bc05b;
 }
-.space{
-    height: 120px;
-}
