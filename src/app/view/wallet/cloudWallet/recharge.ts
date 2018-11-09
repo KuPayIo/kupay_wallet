@@ -2,6 +2,7 @@
  * Recharge
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
@@ -10,7 +11,6 @@ import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/inter
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -49,7 +49,7 @@ export class Recharge extends Widget {
             minerFeeList,
             curLevel,
             minLevel:curLevel,
-            inputDisabled:tx ? true : false,
+            inputDisabled:tx ? true : false
         };
         
     }

@@ -1,5 +1,5 @@
 .new-page{
-    background: linear-gradient(#F94E4D, #F6A050);
+    background: linear-gradient(#2830E0, #EC42FF);
     display: flex;
     flex-direction: column;
 }
@@ -36,7 +36,7 @@
     color: #203260;
 }
 .miningBtn{
-    background-image: linear-gradient(-180deg, #FFAB6B 0%, #FF7339 100%);
+    background-image: linear-gradient(-180deg, #FF20D7 0%, #FF6A32 100%);
     box-shadow: 0 4px 30px 0 rgba(39,52,125,0.25);
     border-radius: 100px;
     width: 200px;

@@ -9,14 +9,12 @@ declare const module;
 
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
-import { utf8Decode } from '../../../pi/util/util';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
-import { getThirdData, openConnect } from '../../net/pull';
+import { openConnect } from '../../net/pull';
 import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
-import { getCloudBalances, getStore, initStore, setStore } from '../../store/memstore';
-import { hexstrToU8Array } from '../../utils/tools';
+import { getStore, initStore } from '../../store/memstore';
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
 // import { create } from "../../../pi/net/rpc";
@@ -41,10 +39,7 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     console.timeEnd('home enter');
-    // console.log('doxor========',doXor('594647440f191e4544431b54505b57411b555e5f','12345'));
-    // console.log(str,hexstrToU8Array(str),utf8Decode(hexstrToU8Array(str)));
     // popNew('app-view-chat-home-home');
-    // getDeviceInfo();
     popNewPage();
     // 后台切前台
     backToFront();

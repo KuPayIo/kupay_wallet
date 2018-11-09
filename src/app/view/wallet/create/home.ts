@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { deleteAccount, getAllAccount } from '../../../store/memstore';
 import { loginSuccess, popNewLoading, popNewMessage } from '../../../utils/tools';
-import { VerifyIdentidy, VerifyIdentidy1 } from '../../../utils/walletTools';
+import { VerifyIdentidy1 } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -37,7 +37,8 @@ export class CreateEnter extends Widget {
             selectedAccountIndex:0,
             psw:'',
             showMoreUser:false,
-            popHeight:this.calPopBoxHeight(accountList.length)
+            popHeight:this.calPopBoxHeight(accountList.length),
+            forceCloseMoreUser:false
         };
     }
     public calPopBoxHeight(len:number) {
@@ -50,6 +51,10 @@ export class CreateEnter extends Widget {
         }
 
         return totalHeight;
+    }
+    public closePopBox() {
+        this.state.showMoreUser = false;
+        this.paint();
     }
     public delUserAccount(e:any,index:number) {
         const delAccount = this.state.accountList.splice(index,1)[0];
@@ -67,8 +72,7 @@ export class CreateEnter extends Widget {
     
     public chooseCurUser(e:any,index:number) {
         this.state.selectedAccountIndex = index;
-        this.state.showMoreUser = false;
-        this.paint();
+        this.closePopBox();
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -79,7 +83,10 @@ export class CreateEnter extends Widget {
     }
     // 已有账户
     public walletImportClicke() {
+        this.state.forceCloseMoreUser = true;
+        this.paint();
         popNew('app-view-wallet-import-home');
+        
     }
     // 普通创建
     public createStandardClick() {
