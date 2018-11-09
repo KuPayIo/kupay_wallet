@@ -255,10 +255,8 @@ export const getRandom = async (cmd?:number) => {
                 } else {
                     getRandom(CMD.FORCELOGOUT);
                 }
-                checkCreateAccount();
             },() => {
                 getRandom(CMD.FORCELOGOUT);
-                checkCreateAccount();
             });
         }
     }
@@ -676,11 +674,14 @@ export const getUserInfoFromServer = async (uids: [number]) => {
             if (!isSame) {
                 const userInfo = {
                     ...serverUserInfo,
-                    ...localUserInfo
+                    nickName:localUserInfo.nickName,
+                    avatar:localUserInfo.avatar
                 };
                 setStore('user/info',userInfo);
             }
             
+        } else {
+            setUserInfo();
         }
         
     } catch (err) {

@@ -112,8 +112,7 @@ register('flags/level_2_page_loaded', (loaded: boolean) => {
 
 // 用户信息变化
 register('user/info', (userInfo: UserInfo) => {
-    const isLogin = getStore('user/isLogin');
-    if (isLogin && userInfo) {
+    if (userInfo) {
         setUserInfo();
     }
 });
@@ -128,12 +127,7 @@ register('user/isLogin', (isLogin: boolean) => {
         getRealUser();
         // 用户基础信息
         getUserInfoFromServer(getStore('user/conUid'));
-
-        const userInfo = getStore('user/info');
-        const flags = getStore('flags');
-        if (flags.created && userInfo) {
-            setUserInfo();
-        }
+        
     }
 });
 
