@@ -6,6 +6,7 @@ import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -15,24 +16,27 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class DividendItem extends Widget {
     public ok: () => void;
-    public language:any;
-    public state:{
-        data:any[];
-        totalNum:number;
-        more:boolean;
+    public language: any;
+    public state: {
+        data: any[];
+        userImg: string;
+        totalNum: number;
+        more: boolean;
     };
 
     public backPrePage() {
         this.ok && this.ok();
     }
 
-    public setProps(props: Json, oldProps?: Json)  {
-        super.setProps(props,oldProps);
+    public setProps(props: Json, oldProps?: Json) {
+        super.setProps(props, oldProps);
         this.language = this.config.value[getLang()];
+        const userInfo = getUserInfo();
         this.state = {
-            data:this.props.data,
-            totalNum:this.props.totalNum,
-            more:false
+            data: this.props.data,
+            userImg: userInfo.avatar || '../../../res/image/default_miningList.png',
+            totalNum: this.props.totalNum,
+            more: false
         };
 
     }

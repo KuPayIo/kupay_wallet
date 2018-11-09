@@ -6,7 +6,6 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCode, getMineDetail, getMineItemJump } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
-import { getLanguage } from '../../../utils/tools';
 import { getLang } from '../../../../pi/util/lang';
 import { findModulConfig } from '../../../modulConfig';
 

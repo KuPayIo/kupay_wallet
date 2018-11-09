@@ -5,12 +5,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { findModulConfig } from '../../../modulConfig';
 import { getProductList, getServerCloudBalance } from '../../../net/pull';
 import { Product } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
-import { findModulConfig } from '../../../modulConfig';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -23,7 +23,7 @@ export class CloudHome extends Widget {
     public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.props.financialModulIsShow = findModulConfig("FINANCIAL_SERVICES"); //优选理财模块配置
+        this.props.financialModulIsShow = findModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
         this.init();
         if (props.isActive) {
             getProductList();
@@ -38,7 +38,7 @@ export class CloudHome extends Widget {
             assetList:fetchCloudWalletAssetList(),
             productList:getStore('activity/financialManagement/products',[]),
             redUp:color === 'redUp',
-            currencyUnitSymbol:getCurrencyUnitSymbol(),
+            currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         this.paint();
     }

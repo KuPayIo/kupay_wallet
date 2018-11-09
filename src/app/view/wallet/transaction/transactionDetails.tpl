@@ -23,12 +23,12 @@
         <div w-class="detail-top">
 
             {{: tags = [
-                {"zh_Hans":"全部","zh_Hant":"收幣地址","en":""},
-                {"zh_Hans":"转账","zh_Hant":"礦工費","en":""},
-                {"zh_Hans":"收款","zh_Hant":"備註","en":""},
-                {"zh_Hans":"收款","zh_Hant":"交易時間","en":""},
-                {"zh_Hans":"收款","zh_Hant":"交易號","en":""},
-                {"zh_Hans":"收款","zh_Hant":"發幣地址","en":""}] }}
+                {"zh_Hans":"收币地址","zh_Hant":"收幣地址","en":""},
+                {"zh_Hans":"矿工费","zh_Hant":"礦工費","en":""},
+                {"zh_Hans":"备注","zh_Hant":"備註","en":""},
+                {"zh_Hans":"交易时间","zh_Hant":"交易時間","en":""},
+                {"zh_Hans":"交易号","zh_Hant":"交易號","en":""},
+                {"zh_Hans":"发币地址","zh_Hant":"發幣地址","en":""}] }}
 
 
             <div w-class="amount">{{it1.tx.txType === 1 ? '-' : '+'}}{{it1.tx.pay}}&nbsp;{{it1.tx.currencyName}}</div>
@@ -55,7 +55,7 @@
                 <div w-class="content"><span>{{it1.hashShow}}</span><img src="../../../res/image/copy.png" w-class="copy" /></div>
             </div>
             <div w-class="item" on-tap="copyFromAddr">
-                <div w-class="tag"><pi-ui-lang>{{tags[4]}}</pi-ui-lang></div>
+                <div w-class="tag"><pi-ui-lang>{{tags[5]}}</pi-ui-lang></div>
                 <div w-class="content"><span>{{it1.tx.fromAddr}}</span><img src="../../../res/image/copy.png" w-class="copy" /></div>
             </div>
             <div w-class="qrcode-container" on-tap="openNewWeb">
