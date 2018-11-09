@@ -200,6 +200,18 @@ const kpt2kt = (num) => {
     return num / Math.pow(10, 9);
 };
 
+/**
+ * wei 2 eth
+ */
+export const wei2Eth = (amount) => {
+    const decimals = BigNumber('1000000000000000000');
+    const wei = new BigNumber(amount);
+    
+    const balance = wei.div(decimals);
+
+    return formatBalance(Number(balance.toString(10)));
+};
+
 // 时间戳格式化 毫秒为单位
 const timestampFormat = (timestamp) => {
     const date = new Date(timestamp);

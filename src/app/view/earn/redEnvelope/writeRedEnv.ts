@@ -26,6 +26,7 @@ interface State {
     oneAmount: number;
     message: string;
     realUser: boolean;
+    forceHide:boolean;
 }
 
 export class WriteRedEnv extends Widget {
@@ -47,7 +48,8 @@ export class WriteRedEnv extends Widget {
             totalNum: 0,
             oneAmount: 0,
             message: '',
-            realUser: getStore('user/info/isRealUser')
+            realUser: getStore('user/info/isRealUser'),
+            forceHide:false
         };
         this.updateBalance();
         if (!this.state.realUser) {
@@ -84,7 +86,13 @@ export class WriteRedEnv extends Widget {
     }
 
     public goHistory() {
+        this.state.forceHide = true;
+        this.paint();
         popNew('app-view-earn-redEnvelope-redEnvHistory');
+        setTimeout(() => {
+            this.state.forceHide = false;
+            this.paint();
+        }, 100);
     }
 
     /**
