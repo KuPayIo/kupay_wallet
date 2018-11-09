@@ -37,10 +37,11 @@ export class DataCenter {
     public init() {
         // 获取shapeshift支持货币
         // getShapeShiftCoins();
+
         // 更新人民币美元汇率
-        // this.updateUSDRate();
+        this.updateUSDRate();
         // 更新货币对比USDT的比率
-        // this.updateCurrency2USDTRate();
+        this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
         this.refreshAllBalance();
     }
@@ -876,9 +877,9 @@ export class DataCenter {
         }
     }
 
-  /**
-   * 整点更新人民币美元汇率
-   */
+    /**
+     * 整点更新人民币美元汇率
+     */
     private updateUSDRate() {
         const nextPoint = new Date();
         nextPoint.setHours(nextPoint.getHours() + 1);
@@ -896,9 +897,9 @@ export class DataCenter {
         },delay);
     }
 
-  /**
-   * 整点更新货币对比USDT的比率
-   */
+    /**
+     * 整点更新货币对比USDT的比率
+     */
     private updateCurrency2USDTRate() {
         const nextPoint = new Date();
         const seconds = nextPoint.getSeconds();

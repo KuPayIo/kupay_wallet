@@ -5,6 +5,9 @@
 .topBack{
     height: 128px;
     background:linear-gradient(to right,#318DE6,#38CFE7);
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
 }
 .userHead{
     width: 40px;
@@ -30,8 +33,7 @@
     right: 0px;
 }
 .games1{
-    height: 950px;
-    margin: 30px 20px;
+    height: 800px;
 }
 .title{
     height: 50px;
@@ -42,4 +44,43 @@
     margin-left: 50px;
     margin-top: 30px;
     font-weight: 600;
+}
+.body{
+    padding: 30px 20px 130px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+}
+.hot-games{
+    margin-top: 60px;
+}
+.hot-game-title{
+    font-size: 36px;
+    color: #222222;
+    line-height: 50px;
+    font-family: "PingFangSC-Medium";
+    margin-bottom: 35px;
+}
+.item{
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 12px;
+    margin-bottom: 50px;
+}
+.item-box{
+    height: 180px;
+    padding: 0 25px;
+}
+.game-desc{
+    font-size: 28px;
+    color: #222222;
+    margin-top: 30px;
+    line-height: 40px;
+}
+.game-title{
+    font-size: 48px;
+    color: #222222;
+    line-height: 67px;
 }

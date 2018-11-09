@@ -67,6 +67,7 @@ export const doErrorShow = (err:Error) => {
         case 'insufficient funds for gas * price + value':showStr = getStaticLanguage().transError[1];break;
         case 'insufficient funds' : showStr = getStaticLanguage().transError[1];break;
         case 'intrinsic gas too low':showStr = getStaticLanguage().transError[2];break;
+        case 'nonce too low':showStr = getStaticLanguage().transError[3];break;
         default: showStr = err.message || getStaticLanguage().transError[3];
     }
     popNew('app-components1-message-message', { content: showStr });

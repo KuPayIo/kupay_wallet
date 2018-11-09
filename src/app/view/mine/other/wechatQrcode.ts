@@ -4,8 +4,8 @@
 // ===============================================导入
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
 import { getLang } from '../../../../pi/util/lang';
+import { Widget } from '../../../../pi/widget/widget';
 // ==================================================导出
 
 export class WechatQrcode extends Widget {

@@ -37,7 +37,7 @@
                 <div w-class="name">{{it1.accountList[it1.selectedAccountIndex].nickName}}</div>
                 <img src="../../../res/image/40.png" w-class="more" />
             </div>
-            <div w-class="pop-box" style="height:{{it1.showMoreUser ? it1.popHeight : 0}}px; ">
+            <div w-class="pop-box" style="height:{{it1.showMoreUser ? it1.popHeight : 0}}px; {{it1.forceCloseMoreUser ? 'display:none;' : ''}} ">
                 {{for index,item of it1.accountList}}
                 <div w-class="user-item2" on-tap="chooseCurUser(e,{{index}})">
                     <img src="../../../res/image1/default_avatar.png" w-class="avatar"/>

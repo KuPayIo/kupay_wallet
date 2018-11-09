@@ -3,6 +3,7 @@
 // const urlHead = "http://47.244.59.13:8099";
 const urlHead = "http://app.kuplay.io:8099";
 // const urlHead = "http://192.168.7.71:8099";
+// const urlHead = "http://47.244.29.209:8099";
 
 
 // 语言文字
@@ -219,10 +220,10 @@ const timestampFormat = (timestamp) => {
  */
 function downloadClick() {
     var ua = navigator.userAgent.toLowerCase();
-    if(ua.match(/MicroMessenger/i) == "micromessenger"){
+    if(ua.match(/MicroMessenger/i) == "micromessenger" || ua.match(/mqqbrowser/i)){
         document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
     }else{
-        location.href = "http://47.75.210.96/KuPay.apk";
+        location.href = "http://app.kuplay.io/KuPlay.apk";
     }
 }
 /**
