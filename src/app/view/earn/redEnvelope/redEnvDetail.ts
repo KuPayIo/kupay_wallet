@@ -4,13 +4,13 @@
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getInviteCode, getUserList, queryDetailLog, sharePerUrl } from '../../../net/pull';
+import { getInviteCode, getUserList, queryDetailLog, sharePerUrl, uploadFileUrlPrefix } from '../../../net/pull';
 import { LuckyMoneyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { getLanguage, getUserInfo } from '../../../utils/tools';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { getLang } from '../../../../pi/util/lang';
 
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -67,7 +67,8 @@ export class RedEnvDetail extends Widget {
         for (const i in redBagList) {
             const user = await getUserList([redBagList[i].cuid]);
             this.state.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
-            this.state.redBagList[i].avatar = user.avatar ? user.avatar :'../../res/image/default_avater_big.png'; 
+            // tslint:disable-next-line:max-line-length
+            this.state.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png'; 
             if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.state.greatAmount < redBagList[i].amount) {
                 this.state.greatAmount = redBagList.amount;
                 this.state.greatUser = i;
@@ -131,4 +132,3 @@ export class RedEnvDetail extends Widget {
         console.error(url);
     }
 }
-
