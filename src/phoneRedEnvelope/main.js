@@ -3,6 +3,7 @@
 // const urlHead = "http://47.244.59.13:8099";
 // const urlHead = "http://app.kuplay.io:8099";
 const urlHead = "http://192.168.7.71:8099";
+// const urlHead = "http://47.244.29.209:8099";
 
 
 // 语言文字
@@ -199,6 +200,18 @@ const kpt2kt = (num) => {
     return num / Math.pow(10, 9);
 };
 
+/**
+ * wei 2 eth
+ */
+export const wei2Eth = (amount) => {
+    const decimals = BigNumber('1000000000000000000');
+    const wei = new BigNumber(amount);
+    
+    const balance = wei.div(decimals);
+
+    return formatBalance(Number(balance.toString(10)));
+};
+
 // 时间戳格式化 毫秒为单位
 const timestampFormat = (timestamp) => {
     const date = new Date(timestamp);
@@ -219,10 +232,10 @@ const timestampFormat = (timestamp) => {
  */
 function downloadClick() {
     var ua = navigator.userAgent.toLowerCase();
-    if(ua.match(/MicroMessenger/i) == "micromessenger"){
+    if(ua.match(/MicroMessenger/i) == "micromessenger" || ua.match(/mqqbrowser/i)){
         document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
     }else{
-        location.href = "http://47.75.210.96/KuPay.apk";
+        location.href = "http://app.kuplay.io/KuPlay.apk";
     }
 }
 /**

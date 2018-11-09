@@ -4,11 +4,12 @@
 // ================================ 导入
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { register } from '../../../store/memstore';
-import { getUserInfo } from '../../../utils/tools';
+import { getUserInfo, popNewMessage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -17,9 +18,11 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
     public ok: () => void;
+    public language:any;
 
     public setProps(props:Json) {
         super.setProps(props);
+        this.language = this.config.value[getLang()];
         const userInfo = getUserInfo();
         if (userInfo) {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
@@ -58,6 +61,10 @@ export class PlayHome extends Widget {
             this.paint();
         }, 1000);
 
+    }
+
+    public gameClick() {
+        popNewMessage(this.language.tips);
     }
 }
 register('user/info',() => {

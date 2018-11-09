@@ -7,11 +7,10 @@ import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { getRandom, openConnect, uploadFile } from '../../../net/pull';
+import { openConnect, uploadFile } from '../../../net/pull';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { localUrlPre } from '../../../utils/constants';
-import { checkCreateAccount, getLanguage, getStaticLanguage, popNewMessage } from '../../../utils/tools';
+import { checkCreateAccount, getStaticLanguage, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
 interface Props {
@@ -182,5 +181,7 @@ register('flags',(flags:any) => {
         popNew('app-components1-modalBox-modalBox',getStaticLanguage().createSuccess,() => {
             popNew('app-view-wallet-backup-index',{ mnemonic:flags.mnemonic,fragments:flags.fragments });
         });
+        flags.promptBackup = false;
+        setStore('flags',flags,false);
     }
 });

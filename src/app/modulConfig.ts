@@ -1,5 +1,5 @@
 /**
- * app模块配置
+ *  app模块配置
  */
 
 // ---------app模块----------------------------
@@ -7,7 +7,7 @@ export const appModulConfig = {
     APP_CHAT: true,            // 聊天模块
     APP_WALLET: true,           // 钱包模块
     APP_EARN: true,             // 赚钱模块
-    APP_PLAY: false,            // 游戏模块
+    APP_PLAY: true,            // 游戏模块
     FINANCIAL_SERVICES: true   // 优选理财
 };
 

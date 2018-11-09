@@ -15,6 +15,7 @@ import { Widget } from '../../../pi/widget/widget';
 interface Props {
     list:any[];
     selected:number;
+    forceHide?:boolean; // 是否强制关闭下拉框
 }
 export class SelectBox extends Widget {
     public ok: () => void;

@@ -5,10 +5,10 @@
 import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { findModulConfig } from '../../modulConfig';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
 import { getStore, register } from '../../store/memstore';
-import { findModulConfig } from '../../modulConfig';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -75,8 +75,8 @@ export class App extends Widget {
     public setList() {
         const resList = [];
         for (const item in this.state.allTabBar) {
-            this.state.allTabBar[item]
-            if(findModulConfig(this.state.allTabBar[item].modulName)){
+            this.state.allTabBar[item];
+            if (findModulConfig(this.state.allTabBar[item].modulName)) {
                 resList.push(this.state.allTabBar[item]);
             }   
         }   
@@ -144,6 +144,7 @@ register('user/conRandom',() => {
 
      // btc fees
     fetchBtcFees();
+
 });
 
 // 语言配置
