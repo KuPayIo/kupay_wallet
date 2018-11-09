@@ -43,6 +43,10 @@
                         }</app-components-imgAndBtnItem-imgAndBtnItem>
                     {{if val.show}}
                     <div w-class="itemDetail">
+                        <div style="color:rgb(50, 148, 230)">
+                            <span style="position: relative;left: 0px;">已成功：0人</span>
+                            <span style="float: right">已获取：0KT/0ETH</span>
+                        </div>
                         <pi-ui-lang>{{addMineList[ind].itemDetail}}</pi-ui-lang> 
                     </div>
                     {{end}}
