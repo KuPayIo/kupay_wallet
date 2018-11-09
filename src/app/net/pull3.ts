@@ -17,7 +17,7 @@ export const getThirdFromServer = async (url:string) => {
     }
     const timestamp = parseInt(date.getTime() / 1000);
     const realUrl = `${thirdUrlPre}?key=${key}&url=${xorEncodeUrl}&timestamp=${timestamp}`;
-    console.log(realUrl);
+    // console.log(realUrl);
 
     return fetch(realUrl).then(res => res.json());
 

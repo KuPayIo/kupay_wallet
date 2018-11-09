@@ -4,6 +4,7 @@
 // ================================ 导入
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
@@ -16,6 +17,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
     public ok: () => void;
+    public language:any;
     public props:Json = {
         refresh:false,
         avatar:'../../res/image1/default_avatar.png'
@@ -23,6 +25,7 @@ export class PlayHome extends Widget {
 
     public create() {
         super.create();
+        this.language = this.config.value[getLang()];
         const userInfo = getUserInfo();
         if (userInfo) {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
@@ -63,6 +66,6 @@ export class PlayHome extends Widget {
     }
 
     public gameClick() {
-        popNewMessage('敬请期待');
+        popNewMessage(this.language.tips);
     }
 }
