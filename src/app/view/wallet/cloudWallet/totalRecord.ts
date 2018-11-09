@@ -2,6 +2,7 @@
  * other record
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
@@ -9,7 +10,6 @@ import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
-import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -38,7 +38,7 @@ export class TotalRecord extends Widget {
             rechargeNext:0, // 充值下一页标记
             withdrawNext:0, // 提币下一页标记
             canLoadMore:false,
-            isRefreshing:false,
+            isRefreshing:false
         };
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName,1);
