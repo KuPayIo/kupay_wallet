@@ -259,6 +259,13 @@ register('user',() => {
     }
 });
 
+register('user/info',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+
 register('activity/mining/addMine', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
