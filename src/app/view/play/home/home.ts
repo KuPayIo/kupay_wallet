@@ -7,6 +7,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
+import { register } from '../../../store/memstore';
 import { getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
@@ -16,16 +17,13 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
     public ok: () => void;
-    public props:Json = {
-        refresh:false,
-        avatar:'../../res/image1/default_avatar.png'
-    };
 
-    public create() {
-        super.create();
+    public setProps(props:Json) {
+        super.setProps(props);
         const userInfo = getUserInfo();
         if (userInfo) {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
+            this.props.refresh = false;
         }
     }
 
@@ -62,3 +60,13 @@ export class PlayHome extends Widget {
 
     }
 }
+register('user/info',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        const userInfo = getUserInfo();
+        if (userInfo) {
+            w.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
+        }
+        w.paint();
+    }
+});
