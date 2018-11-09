@@ -5,6 +5,8 @@
 const urlHead = "http://192.168.7.71:8099";
 // const urlHead = "http://47.244.29.209:8099";
 
+// 上传的文件url前缀
+const uploadFileUrlPrefix = `http://${conIp}:${conPort}/service/get_file?sid=`;
 
 // 语言文字
 const Config= {

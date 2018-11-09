@@ -95,7 +95,8 @@ function getDetail(){
                 amount,
                 time:l[i][5],
                 timeShow:timestampFormat(l[i][5]),
-                userName:user.nickName
+                userName:user.nickName,
+                avatar:user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'./image/img_avatar1.png'
             };
             redBagList.push(redBag);
         }
@@ -114,7 +115,7 @@ function getDetail(){
     for(const i in redBagList){
         var item = document.createElement('div');
         item.setAttribute('class','detail-item');
-        item.innerHTML = ' <img src="image/img_avatar1.png" class="detail-avator"/>'+
+        item.innerHTML = ' <img src="'+redBagList[i].avatar+'" class="detail-avator"/>'+
             '<div class="detail-item-right">'+
                 '<div class="detail-box1">'+
                     '<div class="detail-name" id="userName">'+redBagList[i].userName+'</div>'+
