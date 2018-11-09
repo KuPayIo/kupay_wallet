@@ -4,7 +4,7 @@
         <app-components1-topBar-topBar1>{avatar:{{it.avatar}} }</app-components1-topBar-topBar1>
     </div>
     <div w-class="body">
-        <img src="../../../res/image1/game1.png" w-class="games1" on-tap="enterGames1Click"/>
+        <img src="../../../res/image1/game1.jpg" w-class="games1" on-tap="enterGames1Click"/>
         <div w-class="hot-games">
             <div w-class="hot-game-title"><pi-ui-lang>{"zh_Hans":"热门DApp","zh_Hant":"熱門DApp","en":""}</pi-ui-lang></div>
             <div w-class="item" on-tap="gameClick">

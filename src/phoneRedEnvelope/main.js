@@ -220,10 +220,10 @@ const timestampFormat = (timestamp) => {
  */
 function downloadClick() {
     var ua = navigator.userAgent.toLowerCase();
-    if(ua.match(/MicroMessenger/i) == "micromessenger"){
+    if(ua.match(/MicroMessenger/i) == "micromessenger" || ua.match(/mqqbrowser/i)){
         document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
     }else{
-        location.href = "http://47.75.210.96/KuPay.apk";
+        location.href = "http://app.kuplay.io/KuPlay.apk";
     }
 }
 /**
