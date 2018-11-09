@@ -43,9 +43,10 @@ export const fetchUSD2CNYRate = () => {
  * 获取货币对比USDT的比率
  */
 export const fetchCurrency2USDTRate = (currencyName:string) => {
+    // https://www.okex.com/api/v1/kline.do?symbol=ltc_btc&type=1min&size=1
     // tslint:disable-next-line:no-reserved-keywords
     const symbol = `${currencyName.toLowerCase()}_usdt`;
-    const url = `https://www.okex.com/api/v1/ticker.do?symbol=${symbol}`;
+    const url = `https://www.okex.com/api/v1/kline.do?symbol=${symbol}&type=1day&size=1`;
     
     return getThirdFromServer(url).then(res => {
         const str = xorDecode1(res.value,res.pk);
