@@ -1,10 +1,10 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goDetail" ev-refresh-click="refreshPage">
-
+    <div style="text-align: center;position: absolute;width: 100%;top: 150px;z-index: 0;">
+        <img src="../../../res/image/dividend_background.png" style="width: 570px;" />
+    </div>
     <div w-class="content" on-scroll="getMoreList" id="historylist">
         <div id="history">
-            <div style="text-align: center;position: absolute;width: 100%;top: 330px;z-index: -2;">
-                <img src="../../../res/image/dividend_background.png" style="width: 611px;height: 800px;" />
-            </div>
+            
 
             <div w-class="groupcard">
                 <div w-class="dividend-title">
