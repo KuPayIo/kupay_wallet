@@ -1,8 +1,8 @@
 // ==========================================静态变量,静态方法
 
 // const urlHead = "http://47.244.59.13:8099";
-// const urlHead = "http://app.kuplay.io:8099";
-const urlHead = "http://192.168.7.71:8099";
+const urlHead = "http://app.kuplay.io:8099";
+// const urlHead = "http://192.168.7.71:8099";
 // const urlHead = "http://47.244.29.209:8099";
 
 
@@ -203,7 +203,7 @@ const kpt2kt = (num) => {
 /**
  * wei 2 eth
  */
-export const wei2Eth = (amount) => {
+const wei2Eth = (amount) => {
     const decimals = BigNumber('1000000000000000000');
     const wei = new BigNumber(amount);
     
