@@ -3,6 +3,7 @@
  */
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
@@ -12,7 +13,6 @@ import { blockchainUrl, etherscanUrl } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { canResend, copyToClipboard, getLanguage, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
-import { getLang } from '../../../../pi/util/lang';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -46,7 +46,7 @@ export class TransactionDetails extends Widget {
             minerFeeUnit:tx.currencyName !== 'BTC' ? 'ETH' : 'BTC',
             canResend:canResend(tx),
             qrcode:`${qrcodePrefix}${tx.hash}`,
-            webText,
+            webText
         };
     }
     public backPrePage() {

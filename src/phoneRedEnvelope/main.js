@@ -1,8 +1,8 @@
 // ==========================================静态变量,静态方法
 
 // const urlHead = "http://47.244.59.13:8099";
-const urlHead = "http://app.kuplay.io:8099";
-// const urlHead = "http://192.168.7.71:8099";
+// const urlHead = "http://app.kuplay.io:8099";
+const urlHead = "http://192.168.7.71:8099";
 
 
 // 语言文字

@@ -24,7 +24,7 @@
             {
             itemName:{"zh_Hans":"与好友分享","zh_Hant":"與好友分享","en":""},
             itemShort:{"zh_Hans":"一起分享0.5ETH","zh_Hant":"一起分享0.5ETH","en":""},
-            itemDetail:{"zh_Hans":"成功邀請一人送500KT和0.01ETH。","zh_Hant":"成功邀請一人送500KT和0.01ETH。","en":""}
+            itemDetail:{"zh_Hans":"成功邀请一人送500KT和0.01ETH。成功的标准是对方达到1000KT。","zh_Hant":"成功邀請一人送500KT和0.01ETH。成功的標準是對方達到1000KT。","en":""}
             },
             {
             itemName:{"zh_Hans":"购买理财","zh_Hant":"購買理財","en":""},
