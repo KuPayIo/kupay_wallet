@@ -3,7 +3,7 @@
     <div w-class="history">
         <div w-class="item">
             <span w-class="itemRank">{{it.myRank}}</span>
-            <img src="../../../res/image/default_miningList.png" w-class="itemImg"/>
+            <img src="{{it1.userImg}}"  w-class="itemImg"/>
             <div style="display: inline-block;flex: 1 0 0;">
                 <div w-class="itemName"><pi-ui-lang>{"zh_Hans":"我","zh_Hant":"我","en":""}</pi-ui-lang></div>
                 {{if it.fg==1}}
