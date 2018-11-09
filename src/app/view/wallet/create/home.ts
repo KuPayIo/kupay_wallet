@@ -2,12 +2,12 @@
  * create a wallet
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { deleteAccount, getAllAccount } from '../../../store/memstore';
 import { loginSuccess, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { VerifyIdentidy, VerifyIdentidy1 } from '../../../utils/walletTools';
-import { getLang } from '../../../../pi/util/lang';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -77,11 +77,11 @@ export class CreateEnter extends Widget {
     public createByImgClick() {
         popNew('app-view-wallet-create-createWalletByImage');
     }
-    //已有账户
+    // 已有账户
     public walletImportClicke() {
         popNew('app-view-wallet-import-home');
     }
-    //普通创建
+    // 普通创建
     public createStandardClick() {
         popNew('app-view-wallet-create-createWallet');
     }

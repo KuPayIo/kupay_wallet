@@ -4,10 +4,10 @@
 // =======================================导入
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { shareDownload } from '../../../net/pull';
 import { getLocalVersion, popNewMessage } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 // =========================================导出
 declare var pi_modules;
 export class Aboutus extends Widget {
@@ -23,7 +23,7 @@ export class Aboutus extends Widget {
                 { value: this.language.itemTitle[0], components: 'app-view-mine-other-privacypolicy' },
                 { value: this.language.itemTitle[1], components: '' },
                 { value: this.language.itemTitle[2], components: '' }
-            ],
+            ]
         };
     }
 
@@ -49,10 +49,15 @@ export class Aboutus extends Widget {
             // popNew('app-components-message-message', { content: this.state.cfgData.tips });
         } else {
             // TODO 分享下载
-            popNew('app-components-share-share', { shareType: ShareToPlatforms.TYPE_LINK, url: shareDownload }, (result) => {
-                // alert(result);
-            }, (result) => {
-                // alert(result);
+            popNew('app-components-share-share', { 
+                shareType: ShareToPlatforms.TYPE_LINK,
+                url: shareDownload,
+                title:'kuplay钱包',
+                content:'我正在使用kuplay，邀您一起来使用！' 
+            },() => {
+                this.backPrePage();
+            },() => {
+                this.backPrePage();
             });
             console.error(shareDownload);
         }
