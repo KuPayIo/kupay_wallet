@@ -3,9 +3,9 @@
  */
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { copyToClipboard, getCurrentAddrByCurrencyName, getLanguage, popNewMessage } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 
 interface Props {
     currencyName:string;
@@ -24,7 +24,7 @@ export class Receipt extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         this.state = {
-            fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
+            fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName)
         };
     }
 

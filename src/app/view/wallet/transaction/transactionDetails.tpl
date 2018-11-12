@@ -14,7 +14,7 @@
         <div w-class="status-container">
             <img src="../../../res/image/{{it1.statusIcon}}" w-class="status-icon"/>
             <div w-class="status">{{it1.statusShow}}</div>
-            {{if it1.canResend}}
+            {{if it1.canResend && (it1.tx.txType ===1) }}
             <div w-class="resend-btn" on-tap="resendClick">
                 <pi-ui-lang>{"zh_Hans":"重新发送","zh_Hant":"重新發送","en":""}</pi-ui-lang>
             </div>
