@@ -105,7 +105,9 @@ export class Dividend extends Widget {
         if (!this.state.data[ind].isComplete) {
             const itemJump = this.state.data[ind].itemJump;
             getMineItemJump(itemJump);
-
+            if (itemJump === 'walletCreate') {  // 创建钱包
+                popNew('app-view-wallet-creat-home');
+            }
             if (itemJump === 'shareFriend') {  // 邀请红包
                 const inviteCodeInfo = await getInviteCode();
                 if (inviteCodeInfo.result !== 1) return;
