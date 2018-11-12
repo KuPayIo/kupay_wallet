@@ -25,6 +25,32 @@ export const initStore = () => {
 };
 
 /**
+ * 判断是否是对象
+ */
+const isObject = (value:any) => {
+    const vtype = typeof value;
+
+    return value !== null && (vtype === 'object' || vtype === 'function');
+};
+
+/**
+ * 数据深拷贝
+ */
+export const deepCopy = (v: any): any => {
+    if (!v || !isObject(v)) return v;
+    if (v instanceof Map) {
+        return new Map(JSON.parse(JSON.stringify(v)));
+    }
+
+    const newobj = v.constructor === Array ? [] : {};
+    for (const i in v) {
+        newobj[i] = isObject(v[i]) ? deepCopy(v[i]) : v[i];
+    }
+
+    return newobj;
+};
+
+/**
  * 根据路径获取数据
  */
 export const getStore = (path: string, defaultValue = undefined) => {
@@ -39,7 +65,7 @@ export const getStore = (path: string, defaultValue = undefined) => {
         }
     }
 
-    return ret || defaultValue;
+    return deepCopy(ret) || defaultValue;
 };
 
 /**
@@ -48,6 +74,13 @@ export const getStore = (path: string, defaultValue = undefined) => {
 export const setStore = (path: string, data: any, notified = true) => {
     const keyArr = path.split('/');
 
+    const notifyPath = [];
+    for (let i = 0;i < keyArr.length;i++) {
+        // tslint:disable-next-line:prefer-template
+        const path = i === 0 ? keyArr[i] : notifyPath[i - 1] + '/' + keyArr[i];
+        notifyPath.push(path);
+    }
+    // console.log(notifyPath);
     // 原有的最后一个键
     const lastKey = keyArr.pop();
 
@@ -62,10 +95,12 @@ export const setStore = (path: string, data: any, notified = true) => {
         }
     }
 
-    parent[lastKey] = data;
+    parent[lastKey] = deepCopy(data);
 
     if (notified) {
-        handlerMap.notify(path, [data]);
+        for (let i = notifyPath.length - 1;i >= 0;i --) {
+            handlerMap.notify(notifyPath[i], [getStore(notifyPath[i])]);
+        }
     }
 };
 
