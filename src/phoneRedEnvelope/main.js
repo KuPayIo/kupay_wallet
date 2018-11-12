@@ -1,12 +1,14 @@
 // ==========================================静态变量,静态方法
 
-// const urlHead = "http://47.244.59.13:8099";
-// const urlHead = "http://app.kuplay.io:8099";
-const urlHead = "http://192.168.7.71:8099";
-// const urlHead = "http://47.244.29.209:8099";
+const serverIp = 'http://app.kuplay.io'
+// const serverIp = "http://47.244.59.13";
+// const serverIp = "http://47.244.29.209";
+
+const urlHead = serverIp+":8099";
+
 
 // 上传的文件url前缀
-const uploadFileUrlPrefix = `http://${conIp}:${conPort}/service/get_file?sid=`;
+const uploadFileUrlPrefix = serverIp+`/service/get_file?sid=`;
 
 // 语言文字
 const Config= {
@@ -165,14 +167,14 @@ const parseUrlParams = (search, key) => {
 // 根据货币类型小单位转大单位 
 const smallUnit2LargeUnitString = (currencyName,amount) => {
     if (currencyName === 'ETH') {
-        const pow = amount.length - 15;
-        let num = Number(amount.slice(0,15));
-        num = wei2Eth(num);
-        num  = num * Math.pow(10,pow);
 
-        return formatBalance(num);
-    } else if (currencyName === 'KT') {
-        return formatBalance(kpt2kt(Number(amount)));
+        return formatBalance(wei2Eth(amount));
+    } else if (currencyName === 'BTC') {
+
+        return formatBalance(sat2Btc(amount));
+    } else {
+
+        return formatBalance(kpt2kt(amount));
     }
 };
 // unicode数组转字符串
@@ -203,7 +205,7 @@ const kpt2kt = (num) => {
 };
 
 /**
- * wei 2 eth
+ * wei转eth
  */
 export const wei2Eth = (amount) => {
     const decimals = BigNumber('1000000000000000000');
@@ -212,6 +214,15 @@ export const wei2Eth = (amount) => {
     const balance = wei.div(decimals);
 
     return formatBalance(Number(balance.toString(10)));
+};
+
+/**
+ * sat转btc
+ */
+export const sat2Btc = (num) => {
+    num = Number(num);
+
+    return num / Math.pow(10, 8);
 };
 
 // 时间戳格式化 毫秒为单位
