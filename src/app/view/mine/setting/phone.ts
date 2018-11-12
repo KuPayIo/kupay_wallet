@@ -7,7 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMineDetail, regPhone } from '../../../net/pull';
-import { setStore } from '../../../store/memstore';
+import { getStore, setStore } from '../../../store/memstore';
 import { getUserInfo } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -48,7 +48,7 @@ export class BindPhone extends Widget {
         }
         const data = await regPhone(this.state.phone, this.state.code.join(''));
         if (data && data.result === 1) {
-            const userinfo = getUserInfo();
+            const userinfo = getStore('user/info');
             userinfo.phoneNumber = this.state.phone;
             setStore('user/info',userinfo);
             getMineDetail();

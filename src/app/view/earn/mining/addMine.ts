@@ -2,12 +2,12 @@
  * 做任务
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { findModulConfig } from '../../../modulConfig';
 import { getInviteCode, getMineDetail, getMineItemJump } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
-import { getLang } from '../../../../pi/util/lang';
-import { findModulConfig } from '../../../modulConfig';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -32,8 +32,9 @@ export class Dividend extends Widget {
                     itemName: '',
                     itemShort: '',
                     itemDetail: '',
+                    itemKT:'',
                     itemJump: 'walletCreate',
-                    show: false,
+                    detailShow: false,
                     modulIsShow:true
                 }, {
                     isComplete: false,
@@ -41,8 +42,9 @@ export class Dividend extends Widget {
                     itemName: '',
                     itemShort: '',
                     itemDetail: '',
+                    itemKT:'',
                     itemJump: 'bindPhone',
-                    show: false,
+                    detailShow: false,
                     modulIsShow:true
                 }, {
                     isComplete: false,
@@ -50,8 +52,9 @@ export class Dividend extends Widget {
                     itemName: '',
                     itemShort: '',
                     itemDetail: '',
+                    itemKT:'',
                     itemJump: 'storeCoin',
-                    show: false,
+                    detailShow: false,
                     modulIsShow:true
                 }, {
                     isComplete: false,
@@ -59,8 +62,9 @@ export class Dividend extends Widget {
                     itemName: '',
                     itemShort: '',
                     itemDetail: '',
+                    itemKT:'',
                     itemJump: 'shareFriend',
-                    show: false,
+                    detailShow: false,
                     modulIsShow:true
                 }, {
                     isComplete: false,
@@ -68,20 +72,22 @@ export class Dividend extends Widget {
                     itemName: '',
                     itemShort: '',
                     itemDetail: '',
+                    itemKT:'',
                     itemJump: 'buyFinancial',
-                    show: false,
-                    modulIsShow:findModulConfig("FINANCIAL_SERVICES")
+                    detailShow: false,
+                    modulIsShow:findModulConfig('FINANCIAL_SERVICES')
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_chat.png',
                     itemName: '',
                     itemShort: '',
                     itemDetail: '',
+                    itemKT:'',
                     itemJump: 'toChat',
-                    show: false,
-                    modulIsShow:findModulConfig("APP_CHAT")
+                    detailShow: false,
+                    modulIsShow:findModulConfig('APP_CHAT')
                 }
-            ],
+            ]
         };
         this.initData();
         getMineDetail();
@@ -124,7 +130,7 @@ export class Dividend extends Widget {
      * 展示或隐藏详细描述
      */
     public show(ind: number) {
-        this.state.data[ind].show = !this.state.data[ind].show;
+        this.state.data[ind].detailShow = !this.state.data[ind].detailShow;
         this.paint();
     }
 
@@ -138,6 +144,7 @@ export class Dividend extends Widget {
         if (detail) {
             for (const i in detail) {
                 this.state.data[i].isComplete = detail[i].isComplete;
+                this.state.data[i].itemKT = detail[i].itemNum;
             }
         }
 
