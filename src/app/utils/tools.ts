@@ -10,17 +10,12 @@ import { Config, ERC20Tokens, MainChainCoin } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { getDeviceId } from '../logic/native';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
-import { getFile } from '../store/filestore';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
 import { Account, FileTxHistory, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
-
-export const deepCopy = (v: any): any => {
-    return JSON.parse(JSON.stringify(v));
-};
 
 /**
  * 获取指定id的钱包

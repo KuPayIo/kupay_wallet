@@ -9,6 +9,7 @@ declare var pi_modules;
 const mod = pi_modules.store.exports;
 
 const impl = mod.create('wallet', 'store');
+let initSuccess = false;
 
 /**
  * indexDb初始化
@@ -16,6 +17,7 @@ const impl = mod.create('wallet', 'store');
 export const initFileStore = () => {
     return new Promise((resolve, reject) => {
         mod.init(impl, () => {
+            initSuccess = true;
             resolve();
         }, () => {
             reject();
@@ -27,6 +29,7 @@ export const initFileStore = () => {
  * 往indexdb写数据
  */
 export const writeFile = (key: string,data:any,okCB?,errCB?) => {
+    if (!initSuccess) return;
     mod.write(impl,key,data,okCB,errCB);
 };
 
@@ -34,6 +37,7 @@ export const writeFile = (key: string,data:any,okCB?,errCB?) => {
  * 从indexdb读数据
  */
 export const getFile = (key: string,okCB,errCB) => {
+    if (!initSuccess) return;
     mod.read(impl,key,okCB,errCB);
 };
 
@@ -41,6 +45,7 @@ export const getFile = (key: string,okCB,errCB) => {
  * 从indexDb删除数据
  */
 export const deleteFile = (key: string,okCB?,errCB?) => {
+    if (!initSuccess) return;
     mod.delete(impl,key,okCB,errCB);
 };
 /**
