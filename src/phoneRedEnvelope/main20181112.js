@@ -1,6 +1,7 @@
 // ==========================================静态变量,静态方法
 
-const serverIp = 'http://app.kuplay.io'
+const serverIp = window.location.origin;
+// const serverIp = 'http://app.kuplay.io'
 // const serverIp = "http://47.244.59.13";
 // const serverIp = "http://47.244.29.209";
 

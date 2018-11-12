@@ -44,7 +44,7 @@ export class Home extends Widget {
             close:false,
             hasWallet,
             hasBackupMnemonic,
-            offline:false
+            offline:getStore('user/offline',false)
         };
         this.initData();
     }
