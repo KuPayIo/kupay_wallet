@@ -219,7 +219,7 @@ const wei2Eth = (amount) => {
 /**
  * sat转btc
  */
-export const sat2Btc = (num) => {
+const sat2Btc = (num) => {
     num = Number(num);
 
     return num / Math.pow(10, 8);
