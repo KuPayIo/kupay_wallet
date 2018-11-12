@@ -339,11 +339,11 @@ export class BTCWallet {
             .to(output.toAddr, output.amount)
             .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
             .enableRBF()
-            .sign([this.privateKeyOf(0)]);
+            .sign([this.privateKeyOf(this.usedAdresses[address.trim()])]);
         
         console.log('usedAddress', this.usedAdresses);
         console.log('addres', address);
-        console.log('privateKey', this.privateKeyOf(this.usedAdresses[address.trim()]).toString());
+    
         return {
             rawTx: rawTx.serialize(true),
             fee: rawTx.getFee(),
