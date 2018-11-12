@@ -184,6 +184,9 @@ export class PlayHome extends Widget {
      * 进入活动详情
      */
     public doActivity() {
+        if (!this.judgeWallet()) {
+            return;
+        }
         popNew('app-view-earn-mining-addMine');
     }
 
