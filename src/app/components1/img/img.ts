@@ -19,8 +19,5 @@ export class WalletImg extends Widget {
     // tslint:disable-next-line:no-unnecessary-override
     public setProps(props:JSON) {
         super.setProps(props);
-        // tslint:disable-next-line:no-debugger
-        debugger;
-        
     }
 }
