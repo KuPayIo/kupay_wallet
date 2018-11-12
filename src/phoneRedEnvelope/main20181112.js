@@ -207,7 +207,7 @@ const kpt2kt = (num) => {
 /**
  * wei转eth
  */
-export const wei2Eth = (amount) => {
+const wei2Eth = (amount) => {
     const decimals = BigNumber('1000000000000000000');
     const wei = new BigNumber(amount);
     
@@ -219,7 +219,7 @@ export const wei2Eth = (amount) => {
 /**
  * sat转btc
  */
-export const sat2Btc = (num) => {
+const sat2Btc = (num) => {
     num = Number(num);
 
     return num / Math.pow(10, 8);
