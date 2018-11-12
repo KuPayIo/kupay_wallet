@@ -308,7 +308,9 @@ const initSettings = () => {
             }
             
         },
-        fail: (result) => { }
+        fail: (result) => {
+            console.log(result);
+        }
     });
     const setting = getLocalStorage('setting', {
         language:'zh_Hans',
@@ -355,22 +357,10 @@ const registerAccountChange = () => {
     register('user', () => {
         accountChange();
     });
-    register('user/id', () => {
-        accountChange();
-    });
-    register('user/token', () => {
-        accountChange();
-    });
-    register('user/info', () => {
-        accountChange();
-    });
     register('wallet', () => {
         accountChange();
     });
-    register('wallet/currencyRecords', () => {
-        accountChange();
-    });
-    register('cloud/cloudWallets', () => {
+    register('cloud', () => {
         accountChange();
     });
 };
@@ -379,19 +369,7 @@ const registerAccountChange = () => {
  * 3方数据变化监听
  */
 const registerThirdChange = () => {
-    register('third/gasPrice', () => {
-        thirdChange();
-    });
-    register('third/btcMinerFee', () => {
-        thirdChange();
-    });
-    register('third/gasLimitMap', () => {
-        thirdChange();
-    });
-    register('third/rate', () => {
-        thirdChange();
-    });
-    register('third/currency2USDTMap', () => {
+    register('third', () => {
         thirdChange();
     });
 };
@@ -400,19 +378,9 @@ const registerThirdChange = () => {
  * setting数据变化监听
  */
 const registerSettingChange = () => {
-    register('setting/language', () => {
+    register('setting', () => {
         settingChange();
     });
-    register('setting/changeColor', () => {
-        settingChange();
-    });
-    register('setting/currencyUnit', () => {
-        settingChange();
-    });
-    register('setting/lockScreen', () => {
-        settingChange();
-    });
-
 };
 
 /**

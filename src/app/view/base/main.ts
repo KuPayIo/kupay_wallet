@@ -14,7 +14,7 @@ import { addWidget } from '../../../pi/widget/util';
 import { openConnect } from '../../net/pull';
 import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
-import { deepCopy, getStore, initStore } from '../../store/memstore';
+import { deepCopy, getStore, initStore, setStore } from '../../store/memstore';
 // import{getTransaction as Account, Transation, getTokenTransaction as Token, TokenTransations} from "../../../index/rpc_call.s";
 // import { Client } from "../../../pi/net/mqtt_c";
 // import { create } from "../../../pi/net/rpc";
