@@ -44,7 +44,7 @@ export class AccountHome extends Widget {
             this.state.phone = userInfo.phoneNumber.replace(str,'******');
         }
         this.state.nickName = userInfo.nickName ? userInfo.nickName :this.language.defaultName;
-        this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
+        this.state.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
         this.paint();
     }
 

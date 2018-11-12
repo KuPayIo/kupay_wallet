@@ -56,7 +56,7 @@ export class Home extends Widget {
         const userInfo = getUserInfo();
         if (userInfo) {
             this.state.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
-            this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
+            this.state.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
         }
 
         const wallet = getStore('wallet');

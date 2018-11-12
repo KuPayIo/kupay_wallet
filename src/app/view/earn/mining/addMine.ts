@@ -8,6 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { findModulConfig } from '../../../modulConfig';
 import { getInviteCode, getMineDetail, getMineItemJump } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
+import { popNewMessage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -105,25 +106,29 @@ export class Dividend extends Widget {
         if (!this.state.data[ind].isComplete) {
             const itemJump = this.state.data[ind].itemJump;
             getMineItemJump(itemJump);
-            if (itemJump === 'walletCreate') {  // 创建钱包
-                popNew('app-view-wallet-create-home');
-            }
-            if (itemJump === 'shareFriend') {  // 邀请红包
-                const inviteCodeInfo = await getInviteCode();
-                if (inviteCodeInfo.result !== 1) return;
 
-                popNew('app-view-earn-redEnvelope-sendRedEnv', {
-                    rid: inviteCodeInfo.cid,
-                    rtype: '99',
-                    message: this.language.defaultMess
-                });
-            }
-            if (itemJump === 'bindPhone') {  // 绑定手机
-                popNew('app-view-mine-setting-phone');
-            }
+            switch (itemJump) {
+                case 'walletCreate':                  // 创建钱包
+                    popNew('app-view-wallet-create-home');
+                    break;
+                case 'shareFriend':                  // 邀请红包
+                    const inviteCodeInfo = await getInviteCode();
+                    if (inviteCodeInfo.result !== 1) return;
 
-            if (itemJump === 'buyFinancial') {  // 购买理财 
-                popNew('app-view-wallet-financialManagement-home');
+                    popNew('app-view-earn-redEnvelope-sendRedEnv', {
+                        rid: inviteCodeInfo.cid,
+                        rtype: '99',
+                        message: this.language.defaultMess
+                    });
+                    break;
+                case 'bindPhone':                   // 绑定手机
+                    popNew('app-view-mine-setting-phone');
+                    break;
+                case 'buyFinancial':                // 购买理财
+                    popNew('app-view-wallet-financialManagement-home');
+                    break;
+                default:
+                    popNewMessage(this.language.tips);
             }
         }
     }

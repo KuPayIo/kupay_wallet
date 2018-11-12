@@ -21,8 +21,6 @@
     font-size: 24px;
 }
 .itemImg{
-    width: 80px;
-    height: 80px;
     border-radius: 40px;
     margin-right: 20px;
 }
