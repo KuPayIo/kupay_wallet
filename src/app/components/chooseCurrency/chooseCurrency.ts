@@ -26,7 +26,7 @@ export class ChooseCurrency extends Widget {
         });
         this.state = {
             currencyShowList,
-            selected:this.props.selected,
+            selected:this.props.selected
         };
     }
 
