@@ -675,7 +675,8 @@ export const getUserInfoFromServer = async (uids: [number]) => {
                 const userInfo = {
                     ...serverUserInfo,
                     nickName:localUserInfo.nickName,
-                    avatar:localUserInfo.avatar
+                    avatar:localUserInfo.avatar,
+                    isRealUser:localUserInfo.isRealUser
                 };
                 setStore('user/info',userInfo);
             }

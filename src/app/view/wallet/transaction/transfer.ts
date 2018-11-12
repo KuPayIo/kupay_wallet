@@ -5,6 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { ERC20Tokens } from '../../../config';
 import { doScanQrCode } from '../../../logic/native';
 import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
 import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
@@ -106,11 +107,20 @@ export class Transfer extends Widget {
             return;
         }
 
-        if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
-            popNew('app-components1-message-message', { content: this.language.tips[2] });
-
-            return;
+        if (ERC20Tokens[this.props.currencyName]) {
+            if (this.state.balance < Number(this.state.amount) || this.state.minerFee > getCurrentAddrInfo('ETH').balance) {
+                popNew('app-components1-message-message', { content: this.language.tips[2] });
+    
+                return;
+            }
+        } else {
+            if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
+                popNew('app-components1-message-message', { content: this.language.tips[2] });
+    
+                return;
+            }
         }
+        
         if (!judgeAddressAvailable(this.props.currencyName,this.state.toAddr)) {
             popNew('app-components1-message-message', {  content: this.language.tips[3] });
 
