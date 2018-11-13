@@ -94,6 +94,11 @@ export class CloudWalletHome extends Widget {
         getWithdrawLogs(this.props.currencyName);
     }
 
+    public currencyUnitChange() {
+        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.paint();
+    }
+
     /**
      * 刷新页面
      */
@@ -125,5 +130,13 @@ register('third/currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
+    }
+});
+
+// 货币单位变化
+register('setting/currencyUnit',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.currencyUnitChange();
     }
 });

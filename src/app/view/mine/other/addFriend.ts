@@ -3,10 +3,11 @@
  */
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-import { getStore } from '../../../store/memstore';
-import { copyToClipboard, getLanguage, getUserInfo } from '../../../utils/tools';
 import { getLang } from '../../../../pi/util/lang';
+import { Widget } from '../../../../pi/widget/widget';
+import { findModulConfig } from '../../../modulConfig';
+import { getStore } from '../../../store/memstore';
+import { copyToClipboard, getUserInfo } from '../../../utils/tools';
 
 export class AddFriend extends Widget {
     public ok:() => void;
@@ -18,6 +19,7 @@ export class AddFriend extends Widget {
             userName:this.language.defaultName,
             userHead:'../../../res/image/default_avater_big.png',
             address:'FGGF1512151512sd78d4s51d8d44s51d8d4fd0260hg',
+            walletName:findModulConfig('WALLET_NAME')
         };
         this.initData();
     }

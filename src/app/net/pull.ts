@@ -5,6 +5,7 @@ import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } f
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { MainChainCoin } from '../config';
+import { findModulConfig } from '../modulConfig';
 import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
@@ -21,6 +22,9 @@ export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 
 // export const conPort = '8080';
 export const conPort = pi_modules.store.exports.severPort || '80';
+
+// walletName
+const walletName = findModulConfig('WALLET_NAME');
 console.log('conIp=',conIp);
 console.log('conPort=',conPort);
 
@@ -31,7 +35,7 @@ export const sharePerUrl = `http://app.kuplay.io/wallet/phoneRedEnvelope/openRed
 // export const sharePerUrl = `http://${conIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
-export const shareDownload = `http://${conIp}/wallet/phoneRedEnvelope/download.html`;
+export const shareDownload = `http://${conIp}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
 
 // 上传图片url
 export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;

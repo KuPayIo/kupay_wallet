@@ -6,6 +6,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
+import { findModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
 import { copyToClipboard, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
@@ -44,7 +45,8 @@ export class Home extends Widget {
             close:false,
             hasWallet,
             hasBackupMnemonic,
-            offline:getStore('user/offline',false)
+            offline:false,
+            walletName : findModulConfig('WALLET_NAME')
         };
         this.initData();
     }

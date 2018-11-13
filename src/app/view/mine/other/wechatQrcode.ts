@@ -6,6 +6,7 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { findModulConfig } from '../../../modulConfig';
 // ==================================================导出
 
 export class WechatQrcode extends Widget {
@@ -14,6 +15,9 @@ export class WechatQrcode extends Widget {
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
+        this.state = {
+            walletName:findModulConfig('WALLET_NAME')
+        };
     }
 
     public backPrePage() {

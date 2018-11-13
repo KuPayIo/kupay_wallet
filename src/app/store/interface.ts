@@ -11,7 +11,7 @@ export interface Store {
     wallet: Wallet;      // 钱包
     cloud: Cloud;        // 云端
     activity: Activity;  // 活动：红包，挖矿，分成，理财
-    
+
     setting: Setting;     // 设置
 
     third: Third;        // 第三方通信数据，如：shapeshift...
@@ -82,20 +82,20 @@ export enum TxType {
  * 当前用户数据
  */
 export interface User {
-    
+
     id: string;            // 该账号的id
 
-    offline:boolean;       // 连接状态
+    offline: boolean;       // 连接状态
     isLogin: boolean;      // 登录状态
-    
+
     token: string;         // 自动登录token
     conRandom: string;     // 连接随机数
-    conUid:string;         // 服务器连接uid
+    conUid: string;         // 服务器连接uid
     publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
 
     salt: string;          // 加密 盐值
     secretHash: string;   // 密码hash缓存   
-    
+
     info: UserInfo;        // 基本信息
 }
 
@@ -228,7 +228,7 @@ export interface Wallet {
     isBackup: boolean;                  // 备份助记词与否
     showCurrencys: string[];            // 显示的货币列表
     currencyRecords: CurrencyRecord[];  // 支持的所有货币记录
-    
+
 }
 
 /**
@@ -393,7 +393,7 @@ export interface LuckyMoneySendDetail {
     timeShow: string;           // 时间显示格式
     codes: string[];            // 兑换码
     curNum: number;             // 红包已兑换个数
-    totalNum:number;            // 总个数
+    totalNum: number;            // 总个数
 }
 
 /**

@@ -38,7 +38,6 @@ export class TransactionHome extends Widget {
         const txList = this.parseTxList();
         const canConvert = this.canConvert();
         const color = getStore('setting/changeColor','redUp');
-        const cfg = getLanguage(this);
         const addr = parseAccount(getCurrentAddrByCurrencyName(currencyName));
         
         this.state = {

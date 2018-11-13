@@ -1,12 +1,12 @@
 <div class="new-page" ev-back-click="backPrePage">
-    {{: topBarTitle = {"zh_Hans":"关于KuPlay","zh_Hant":"關於KuPlay","en":""} }}
+    {{: topBarTitle = {"zh_Hans":"关于"+it1.walletName,"zh_Hant":"關於"+it1.walletName,"en":""} }}
     <app-components1-topBar-topBar>{title:{{topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="aboutus-img">
             <img src="../../../res/image/img_logo.png" w-class="logoimg"/>
         </div>
         <div w-class="version">V{{it1.version}}</div>
-        {{: shortMess = {"zh_Hans":"KuPlay是一款功能全面、简单易用的钱包应用。","zh_Hant":"KuPlay是一款功能全面、簡單易用的錢包應用。","en":""} }}
+        {{: shortMess = {"zh_Hans":it1.walletName+"是一款功能全面、简单易用的钱包应用。","zh_Hant":it1.walletName+"是一款功能全面、簡單易用的錢包應用。","en":""} }}
         <div w-class="shortmess">
             <pi-ui-lang>{{shortMess}}</pi-ui-lang>
         </div>

@@ -6,6 +6,7 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { findModulConfig } from '../../../modulConfig';
 import { shareDownload } from '../../../net/pull';
 import { getLocalVersion, popNewMessage } from '../../../utils/tools';
 // =========================================导出
@@ -23,7 +24,8 @@ export class Aboutus extends Widget {
                 { value: this.language.itemTitle[0], components: 'app-view-mine-other-privacypolicy' },
                 { value: this.language.itemTitle[1], components: '' },
                 { value: this.language.itemTitle[2], components: '' }
-            ]
+            ],
+            walletName:findModulConfig('WALLET_NAME')
         };
     }
 
@@ -52,8 +54,8 @@ export class Aboutus extends Widget {
             popNew('app-components-share-share', { 
                 shareType: ShareToPlatforms.TYPE_LINK,
                 url: shareDownload,
-                title:'kuplay钱包',
-                content:'我正在使用kuplay，邀您一起来使用！' 
+                title:`${this.state.walletName}钱包`,
+                content:`我正在使用${this.state.walletName}，邀您一起来使用！` 
             },() => {
                 this.backPrePage();
             },() => {

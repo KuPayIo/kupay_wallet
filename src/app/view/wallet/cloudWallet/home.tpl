@@ -20,7 +20,7 @@
         </div>
     </div>
     <div w-class="show-container">
-        <div w-class="quotes"><pi-ui-lang>{"zh_Hans":"行情","zh_Hant":"行情","en":""}</pi-ui-lang>&nbsp;￥{{it1.rate}}/{{it.currencyName}}</div>
+        <div w-class="quotes"><pi-ui-lang>{"zh_Hans":"行情","zh_Hant":"行情","en":""}</pi-ui-lang>&nbsp;{{it1.currencyUnitSymbol}}{{it1.rate}}/{{it.currencyName}}</div>
         {{if it1.redUp}}
         <div w-class="{{it1.gain >= 0 ? 'up' : 'down'}}"><pi-ui-lang>{"zh_Hans":"今日","zh_Hant":"今日","en":""}</pi-ui-lang>&nbsp;{{it1.gain >= 0 ? '+' : ''}}{{it1.gain}}%</div>
         {{else}}
