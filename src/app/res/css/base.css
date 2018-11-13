@@ -38,13 +38,13 @@ div{
 }
 /* 侧边栏进入 */
 @keyframes switchWalletIn{
-    0% {transform: translate(-630px,0px);flex: 0;}
-    100% {transform: translate(0px,0px);flex: 1;}
+    0% {transform: translateX(-630px);}
+    100% {transform: translateX(0);}
 }
-/* 侧边栏出去 */
+/* 侧边栏出去 */ 
 @keyframes switchWalletOut{
-    0% {transform: translate(0px,0px);flex: 1;}
-    100% {transform: translate(-630px,0px);flex: 0;}
+    0% {transform: translateX(0);}
+    100% {transform: translateX(-630px);}
 }
 #addressMessageBox .addressInput textarea:focus{
     border: 2px solid rgb(220, 223, 230)!important;
