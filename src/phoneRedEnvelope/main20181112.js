@@ -6,6 +6,13 @@ const urlHead = serverIp+":8099";
 // 上传的文件url前缀
 const uploadFileUrlPrefix = serverIp+`/service/get_file?sid=`;
 
+// 解析url参数
+const parseUrlParams = (search, key) => {
+    const ret = search.match(new RegExp(`(\\?|&)${key}=(.*?)(&|$)`));
+
+    return ret && decodeURIComponent(ret[2]);
+};
+
 // 获取当前语言设置
 const getLanguage = () => {
     const search = window.location.search;
@@ -32,19 +39,21 @@ const getWalletName = () =>{
     }
 }
 
+const walletName = getWalletName();
+
 // 语言文字
 const Config= {
     zh_Hans:{ 
         copySuccess:"复制成功",
-        shortMess:"安全的一站式资产管理平台",
+        shortMess:walletName+"安全的一站式资产管理平台",
         immeDownload:"立即下载",
         installTutorial:"Android安装教程",
         step1:"点击“立即下载”按钮下载安装文件",
-        step2:"成功安装",
+        step2:walletName+"成功安装",
         step3:"进入APP并创建钱包",
         redEnvMess:[
             "恭喜发财 万事如意",
-            getWalletName()+"大礼包"
+            walletName+"大礼包"
         ],
         redEnvDesc:[
             "您收到一个红包",
@@ -65,7 +74,7 @@ const Config= {
             "已领取",
             "共",
             "红包领取规则",
-            "1.安装"+getWalletName()+"，创建钱包",
+            "1.安装"+walletName+"，创建钱包",
             "2.在钱包里点击发现-发红包",
             "3.输入收到的红包码，红包金额将自动到账",
             "4.同一个红包，每人只能领取一次"
@@ -73,15 +82,15 @@ const Config= {
     },
     zh_Hant:{
         copySuccess:"複製成功",
-        shortMess:"安全的一站式資產管理平台",
+        shortMess:walletName+"安全的一站式資產管理平台",
         immeDownload:"立即下載",
         installTutorial:"Android安裝教程",
         step1:"點擊“立即下載”按鈕下載安裝文件",
-        step2:"成功安裝",
+        step2:walletName+"成功安裝",
         step3:"進入APP並創建錢包",
         redEnvMess:[
             "恭喜發財 萬事如意",
-            getWalletName()+"大禮包"
+            walletName+"大禮包"
         ],
         redEnvDesc:[
             "您收到一個紅包",
@@ -102,7 +111,7 @@ const Config= {
             "已領取",
             "共",
             "紅包領取規則",
-            "1.安裝"+getWalletName()+"，創建錢包",
+            "1.安裝"+walletName+"，創建錢包",
             "2.在錢包裡點擊發現-發紅包",
             "3.輸入收到的紅包碼，紅包金額將自動到賬",
             "4.同一個紅包，每人只能領取一次"
@@ -166,12 +175,7 @@ const popMessage = (str) => {
         }, 300);
     }, 2000);
 }
-// 解析url参数
-const parseUrlParams = (search, key) => {
-    const ret = search.match(new RegExp(`(\\?|&)${key}=(.*?)(&|$)`));
 
-    return ret && decodeURIComponent(ret[2]);
-};
 // 根据货币类型小单位转大单位 
 const smallUnit2LargeUnitString = (currencyName,amount) => {
     if (currencyName === 'ETH') {

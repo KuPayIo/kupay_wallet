@@ -8,7 +8,7 @@ export const appModulConfig = {
     APP_WALLET: true,           // 钱包模块
     APP_EARN: false,             // 赚钱模块
     APP_PLAY: true,            // 游戏模块
-    FINANCIAL_SERVICES: false,   // 优选理财
+    FINANCIAL_SERVICES: true,   // 优选理财
     WALLET_NAME: 'ZxPay'           // 钱包名字
 
 };
