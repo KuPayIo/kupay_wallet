@@ -8,7 +8,7 @@
                 <div w-class="balance">{{v.balance || v.balance.toFixed(2)}}</div>
             </div>
             <div w-class="bottom-container">
-                <div w-class="description">{{v.description}}</div>
+                <div w-class="description">&nbsp;≈{{it.currencyUnitSymbol}}{{v.rate}}/{{v.currencyName}}</div>
                 <div w-class="balance-container">
                     <div w-class="balance-value">{{it.currencyUnitSymbol}}{{v.balanceValue}}</div>
                     {{if it.redUp}}

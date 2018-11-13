@@ -21,7 +21,7 @@
             </div>
             {{else}}
             <div w-class="userName">
-                <pi-ui-lang>{"zh_Hans":"点击头像登陆","zh_Hant":"點擊頭像登錄","en":""}</pi-ui-lang>
+                <pi-ui-lang>{"zh_Hans":"点击头像登录","zh_Hant":"點擊頭像登錄","en":""}</pi-ui-lang>
             </div>            
             {{end}}
 

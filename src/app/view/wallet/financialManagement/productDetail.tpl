@@ -74,7 +74,7 @@
             <div w-class="read" on-tap="readAgree"><pi-ui-lang>{"zh_Hans":"阅读声明","zh_Hant":"閱讀聲明","en":""}</pi-ui-lang></div>
             <div ev-btn-tap="purchaseClicked" w-class="btn">
                 {{: btnName = {"zh_Hans":"购买","zh_Hant":"購買","en":""} }}
-                <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"blue"}</app-components1-btn-btn>
+                <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"gray"}</app-components1-btn-btn>
             </div>
         </div>
     </div>

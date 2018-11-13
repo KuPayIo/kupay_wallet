@@ -22,6 +22,7 @@ export const initPush = () => {
         const cmd = res.cmd;
         if (cmd === CMD.FORCELOGOUT) {
             logoutAccount();
+            
         } else if (cmd === CMD.FORCELOGOUTDEL) {
             logoutAccountDel();
         }
