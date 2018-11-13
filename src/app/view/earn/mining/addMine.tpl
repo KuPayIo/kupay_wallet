@@ -41,8 +41,21 @@
                 <div on-tap="show({{ind}})" ev-imgAndBtn-tap="goDetail({{ind}})">
                     <app-components-imgAndBtnItem-imgAndBtnItem>{"name":{{addMineList[ind].itemName}},"describe":{{addMineList[ind].itemShort}},"img":{{val.itemImg}},"btnName":{{btnName}},isComplete:{{val.isComplete}}
                         }</app-components-imgAndBtnItem-imgAndBtnItem>
-                    {{if val.show}}
+                    {{if val.detailShow}}
                     <div w-class="itemDetail">
+                        {{if val.itemJump === 'shareFriend'}}
+                        <div w-class="itemCompleteDetail">
+                            <span>
+                                <pi-ui-lang>{"zh_Hans":"已成功：","zh_Hant":"已成功：","en":""}</pi-ui-lang>
+                                {{val.itemKT/500}}
+                                <pi-ui-lang>{"zh_Hans":"人","zh_Hant":"人","en":""}</pi-ui-lang>
+                            </span>
+                            <span>
+                                <pi-ui-lang>{"zh_Hans":"已获得：","zh_Hant":"已獲得：","en":""}</pi-ui-lang>
+                                {{val.itemKT}}KT&nbsp;/&nbsp;{{(val.itemKT/500)*0.01}}ETH
+                            </span>
+                        </div>
+                        {{end}}
                         <pi-ui-lang>{{addMineList[ind].itemDetail}}</pi-ui-lang> 
                     </div>
                     {{end}}

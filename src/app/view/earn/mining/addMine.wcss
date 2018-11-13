@@ -15,3 +15,9 @@
     font-size: 28px;
     border-bottom: 1px solid rgb(219, 219, 229);
 }
+
+.itemCompleteDetail{
+    color:rgb(50, 148, 230);
+    display:flex;
+    justify-content:space-between;
+}

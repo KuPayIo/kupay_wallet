@@ -184,6 +184,9 @@ export class PlayHome extends Widget {
      * 进入活动详情
      */
     public doActivity() {
+        if (!this.judgeWallet()) {
+            return;
+        }
         popNew('app-view-earn-mining-addMine');
     }
 
@@ -224,7 +227,7 @@ export class PlayHome extends Widget {
 
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
+            this.state.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image1/default_avatar.png';
         }
         this.paint();
     }
@@ -238,6 +241,8 @@ export class PlayHome extends Widget {
             getServerCloudBalance();
             getMining();
             getMiningRank(100);
+            // // tslint:disable-next-line:no-debugger
+            // debugger;
         }
     }
 
@@ -289,7 +294,6 @@ register('activity/mining/miningRank', () => {
 register('activity', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initEvent();
         w.init(); // 注销钱包后初始化
         
     }
