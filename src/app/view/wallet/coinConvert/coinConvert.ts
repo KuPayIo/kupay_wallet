@@ -4,6 +4,7 @@
 // =======================================导入
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
@@ -13,7 +14,6 @@ import { getStore, register, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, fetchBtcMinerFee, fetchGasPrice, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { sat2Btc, wei2Eth } from '../../../utils/unitTools';
-import { getLang } from '../../../../pi/util/lang';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -76,7 +76,7 @@ export class CoinConvert extends Widget {
             outAmount:0,
             receiveAmount:0,
             curOutAddr:'',
-            curInAddr:'',
+            curInAddr:''
         };
         this.init();
         this.updateMinerFee();
@@ -126,6 +126,7 @@ export class CoinConvert extends Widget {
     }
     // 定时获取兑率等信息 30s更新一次
     public marketInfoUpdated() {
+        clearTimeout(this.state.timer);
         getMarketInfo(this.state.pair);
         this.state.timer = setTimeout(() => {
             this.marketInfoUpdated();
