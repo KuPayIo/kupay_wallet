@@ -33,7 +33,7 @@
             {"zh_Hans":"帮助","zh_Hant":"幫助","en":""},
             {"zh_Hans":"设置","zh_Hant":"設置","en":""},
             {"zh_Hans":"联系我们","zh_Hant":"聯繫我們","en":""},
-            {"zh_Hans":"关于KuPay","zh_Hant":"關於KuPay","en":""},
+            {"zh_Hans":"关于" +it1.walletName,"zh_Hant":"關於" +it1.walletName,"en":""},
             {"zh_Hans":"GitHub Repository","zh_Hant":"GitHub Repository","en":""}] }}
 
 
