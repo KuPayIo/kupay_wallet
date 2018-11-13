@@ -4,6 +4,7 @@
 
 // =========================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
@@ -13,7 +14,6 @@ import { AddrInfo } from '../../../store/interface';
 import { getStore } from '../../../store/memstore';
 import { btcNetwork, lang } from '../../../utils/constants';
 import { getAddrInfoByAddr, getLanguage } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 
 // ================================================导出
 interface Props {
@@ -75,7 +75,7 @@ export class ExportPrivateKey extends Widget {
         }
         
         this.state = {
-            collapseList,
+            collapseList
         };
     }
     

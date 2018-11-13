@@ -44,7 +44,13 @@
                 <div w-class="item" style="border-bottom: none">
                     <div w-class="inner-tip" on-tap="chooseMinerFee">
                         <span style="flex: 1"><pi-ui-lang>{{tags[4]}}</pi-ui-lang></span>
-                        <span w-class="speed">{{it1.minerFeeList[it1.curLevel].text}}</span>
+                        <span w-class="speed">
+                            {{if typeof(it1.minerFeeList[it1.curLevel].text) ==='string'}}
+                                {{it1.minerFeeList[it1.curLevel].text}}
+                            {{else}}
+                                <pi-ui-lang>{{it1.minerFeeList[it1.curLevel].text}}</pi-ui-lang>
+                            {{end}}
+                        </span>
                         <img src="../../../res/image/right_arrow_blue.png"/>
                     </div>
                     

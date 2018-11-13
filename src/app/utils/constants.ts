@@ -76,29 +76,29 @@ export const withdrawLimit = {
 export const timeOfArrival = {
     ETH:[{
         level:MinerFeeLevel.Standard,
-        text:Config[getLang()].minerFee.standard,// 标准
-        time:`1-3${Config[getLang()].minerFee.minute}`
+        text:{ zh_Hans:'标准',zh_Hant:'標準',en:'' },// 标准
+        time:{ zh_Hans:'1-3分钟',zh_Hant:'1-3分鐘',en:'' }
     },{
         level:MinerFeeLevel.Fast,
-        text:Config[getLang()].minerFee.fast,// 快
-        time:`30-60${Config[getLang()].minerFee.second}`
+        text:{ zh_Hans:'快',zh_Hant:'快',en:'' },// 快
+        time:{ zh_Hans:'30-60秒',zh_Hant:'30-60秒',en:'' }
     },{
         level:MinerFeeLevel.Fastest,
-        text:Config[getLang()].minerFee.fastest,// 最快
-        time:`10-30${Config[getLang()].minerFee.second}`
+        text:{ zh_Hans:'最快',zh_Hant:'最快',en:'' },// 最快
+        time:{ zh_Hans:'10-30秒',zh_Hant:'10-30秒',en:'' }
     }],
     BTC:[{
         level:MinerFeeLevel.Standard,
-        text:Config[getLang()].minerFee.standard,// 标准
-        time:`2-3${Config[getLang()].minerFee.hour}`
+        text:{ zh_Hans:'标准',zh_Hant:'標準',en:'' },// 标准
+        time:{ zh_Hans:'2-3小时',zh_Hant:'2-3小時',en:'' }
     },{
         level:MinerFeeLevel.Fast,
-        text:Config[getLang()].minerFee.fast,// 快
-        time:`0.5-1${Config[getLang()].minerFee.hour}`
+        text:{ zh_Hans:'快',zh_Hant:'快',en:'' },// 快
+        time:{ zh_Hans:'0.5-1小时',zh_Hant:'0.5-1小時',en:'' }
     },{
         level:MinerFeeLevel.Fastest,
-        text:Config[getLang()].minerFee.fastest,// 最快
-        time:`0-30${Config[getLang()].minerFee.minute}`
+        text:{ zh_Hans:'最快',zh_Hant:'最快',en:'' },// 最快
+        time:{ zh_Hans:'1-30分钟',zh_Hant:'1-30分鐘',en:'' }
     }]
 };
 

@@ -327,7 +327,7 @@ const initSettings = () => {
     store.setting = {
         ...setting
     };
-    setLang(defaultSetting.DEFAULT_LANGUAGE);
+    setLang(setting.language);
 
 };
 
