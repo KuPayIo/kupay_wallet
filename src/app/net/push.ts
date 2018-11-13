@@ -27,10 +27,10 @@ export const initPush = () => {
         }
         
         popNew('app-components1-modalBox-modalBox',{
-            sureText:'重新登录',
-            cancelText:'退出',
-            title:'下线通知',
-            content:'您的账户已被下线，如非本人操作，则助记词可能已泄露。'
+            sureText:{ zh_Hans:'重新登录',zh_Hant:'重新登錄',en:'' },
+            cancelText:{ zh_Hans:'退出',zh_Hant:'退出',en:'' },
+            title:{ zh_Hans:'下线通知',zh_Hant:'下線通知',en:'' },
+            content:{ zh_Hans:'您的账户已被下线，如非本人操作，则助记词可能已泄露。',zh_Hant:'您的賬戶已被下線，如非本人操作，則助記詞可能已洩露。',en:'' }
         },() => {
             setTimeout(() => {
                 for (let i = backList.length;i > 1;i--) {

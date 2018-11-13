@@ -7,6 +7,8 @@ import { appLanguageList, LocalLanguageMgr } from '../../pi/browser/localLanguag
 import { HandlerMap } from '../../pi/util/event';
 import { setLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
+import { defaultSetting } from '../config';
+import { findModulConfig } from '../modulConfig';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, ShapeShiftTxs, Store, TxHistory, UserInfo, Wallet } from './interface';
@@ -289,6 +291,7 @@ const initAccount = () => {
  * 设置初始
  */
 const initSettings = () => {
+
     let langNum;
     const appLanguage = new LocalLanguageMgr();
     appLanguage.init();
@@ -302,8 +305,8 @@ const initSettings = () => {
                     setLang(appLanguageList[langNum]);
                     store.setting.language = appLanguageList[langNum];
                 } else {
-                    setLang('zh_Hans');
-                    store.setting.language = 'zh_Hans';
+                    setLang(defaultSetting.DEFAULT_LANGUAGE);
+                    store.setting.language = defaultSetting.DEFAULT_LANGUAGE;
                 }
             }
             
@@ -313,9 +316,9 @@ const initSettings = () => {
         }
     });
     const setting = getLocalStorage('setting', {
-        language:'zh_Hans',
-        changeColor: 'redUp',
-        currencyUnit: 'CNY',
+        language:defaultSetting.DEFAULT_LANGUAGE,
+        changeColor: defaultSetting.DEFAULT_CHANGECOLOR,
+        currencyUnit: defaultSetting.DEFAULT_CURRENCY,
         lockScreen: {
             open: false,
             psw: ''
@@ -324,6 +327,7 @@ const initSettings = () => {
     store.setting = {
         ...setting
     };
+    setLang(defaultSetting.DEFAULT_LANGUAGE);
 
 };
 
