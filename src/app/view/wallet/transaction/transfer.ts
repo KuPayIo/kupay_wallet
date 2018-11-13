@@ -6,13 +6,15 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
+import { dataCenter } from '../../../logic/dataCenter';
 import { doScanQrCode } from '../../../logic/native';
 import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
-import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
-import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
+import { resendNormalTransfer, transfer, TxPayload } from '../../../net/pullWallet';
+import { MinerFeeLevel, TxHistory } from '../../../store/interface';
 import { register } from '../../../store/memstore';
+import { doErrorShow } from '../../../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getStaticLanguage, judgeAddressAvailable, popPswBox, updateLocalTx } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -132,37 +134,38 @@ export class Transfer extends Widget {
         const fromAddr = this.state.fromAddr;
         const toAddr = this.state.toAddr;
         const pay = Number(this.state.amount);
+        const txPayload:TxPayload = {
+            fromAddr,    
+            toAddr,      
+            pay,        
+            currencyName,
+            fee:this.state.minerFee,            
+            minerFeeLevel 
+        };
         const passwd = await popPswBox();
         if (!passwd) return;
-        const t = new Date();
-        const tx:TxHistory = {
-            hash:'',
-            addr:fromAddr,
-            txType:TxType.Transfer,
-            fromAddr,
-            toAddr,
-            pay: pay,
-            time: t.getTime(),
-            status:TxStatus.Pending,
-            confirmedBlockNumber: 0,
-            needConfirmedBlockNumber:0,
-            info: '',
-            currencyName,
-            fee: this.state.minerFee,
-            nonce:undefined,
-            minerFeeLevel
-        };
         let ret;
         if (!this.props.tx) {
-            ret = await transfer(passwd,tx);
+            const loading = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.loading });
+            ret = await transfer(passwd,txPayload,(tx:TxHistory) => {
+                updateLocalTx(tx);
+                dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+                popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.transSuccess });
+                popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
+                this.ok && this.ok();
+            },(error) => {
+                doErrorShow(error);
+            });
+            loading.callback(loading.widget);
         } else {
             const tx = { ...this.props.tx };
             tx.minerFeeLevel = minerFeeLevel;
             ret = await resendNormalTransfer(passwd,tx);
+            if (ret) {
+                this.ok && this.ok();
+            }
         }
-        if (ret) {
-            this.ok && this.ok();
-        }
+        
     }
 
     /**
