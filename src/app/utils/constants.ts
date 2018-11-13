@@ -1,4 +1,5 @@
-import { dev_mode } from '../config';
+import { getLang } from '../../pi/util/lang';
+import { Config, dev_mode } from '../config';
 import { MinerFeeLevel } from '../store/interface';
 
 /**
@@ -75,29 +76,29 @@ export const withdrawLimit = {
 export const timeOfArrival = {
     ETH:[{
         level:MinerFeeLevel.Standard,
-        text:'标准',
-        time:'1-3分钟'
+        text:Config[getLang()].minerFee.standard,// 标准
+        time:`1-3${Config[getLang()].minerFee.minute}`
     },{
         level:MinerFeeLevel.Fast,
-        text:'快',
-        time:'30-60秒'
+        text:Config[getLang()].minerFee.fast,// 快
+        time:`30-60${Config[getLang()].minerFee.second}`
     },{
         level:MinerFeeLevel.Fastest,
-        text:'最快',
-        time:'10-30秒'
+        text:Config[getLang()].minerFee.fastest,// 最快
+        time:`10-30${Config[getLang()].minerFee.second}`
     }],
     BTC:[{
         level:MinerFeeLevel.Standard,
-        text:'标准',
-        time:'2-3小时'
+        text:Config[getLang()].minerFee.standard,// 标准
+        time:`2-3${Config[getLang()].minerFee.hour}`
     },{
         level:MinerFeeLevel.Fast,
-        text:'快',
-        time:'0.5-1小时'
+        text:Config[getLang()].minerFee.fast,// 快
+        time:`0.5-1${Config[getLang()].minerFee.hour}`
     },{
         level:MinerFeeLevel.Fastest,
-        text:'最快',
-        time:'0-30分钟'
+        text:Config[getLang()].minerFee.fastest,// 最快
+        time:`0-30${Config[getLang()].minerFee.minute}`
     }]
 };
 

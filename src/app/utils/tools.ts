@@ -866,10 +866,10 @@ export const hasWallet = () => {
     const wallet = getStore('wallet');
     if (!wallet) {
         popNew('app-components1-modalBox-modalBox', {
-            title: '提示',
-            content: '你还没有登录，去登录使用更多功能吧',
-            sureText: '去登录',
-            cancelText: '暂时不'
+            title: { zh_Hans:'提示',zh_Hant:'提示',en:'' },
+            content: { zh_Hans:'你还没有登录，去登录使用更多功能吧',zh_Hant:'你還沒有登錄，去登錄使用更多功能吧',en:'' },
+            sureText: { zh_Hans:'去登录',zh_Hant:'去登錄',en:'' },
+            cancelText: { zh_Hans:'暂时不',zh_Hant:'暫時不',en:'' }
         }, () => {
             popNew('app-view-wallet-create-home');
             // popNew('app-view-base-localImg');
@@ -885,29 +885,29 @@ export const hasWallet = () => {
 export const parseStatusShow = (tx: TxHistory) => {
     if (!tx) {
         return {
-            text: '打包中',
+            text: Config[getLang()].transfer.packing,// 打包
             icon: 'pending.png'
         };
     }
     const status = tx.status;
     if (status === TxStatus.Pending) {
         return {
-            text: '打包中',
+            text: Config[getLang()].transfer.packing,// 打包
             icon: 'pending.png'
         };
     } else if (status === TxStatus.Confirmed) {
         return {
-            text: `已确认 ${tx.confirmedBlockNumber}/${tx.needConfirmedBlockNumber}`,
+            text: `${Config[getLang()].transfer.confirmed} ${tx.confirmedBlockNumber}/${tx.needConfirmedBlockNumber}`,// 已确认
             icon: 'pending.png'
         };
     } else if (status === TxStatus.Failed) {
         return {
-            text: '交易失败',
+            text: Config[getLang()].transfer.transferFailed,// 交易失败
             icon: 'fail.png'
         };
     } else {
         return {
-            text: '已完成',
+            text: Config[getLang()].transfer.completed,// 已完成
             icon: 'icon_right2.png'
         };
     }
@@ -916,10 +916,10 @@ export const parseStatusShow = (tx: TxHistory) => {
 // 解析转账类型
 export const parseTxTypeShow = (txType: TxType) => {
     if (txType === TxType.Receipt) {
-        return '收款';
+        return Config[getLang()].transfer.receipt;// 收款
     }
 
-    return '转账';
+    return Config[getLang()].transfer.transfer;// 转账
 };
 
 // 解析是否可以重发
@@ -993,9 +993,9 @@ export const fetchCoinGain = (currencyName: string) => {
  * 转化rtype
  */
 export const parseRtype = (rType) => {
-    if (rType === 0) return '普通红包';
-    if (rType === 1) return '随机红包';
-    if (rType === 99) return '邀请红包';
+    if (rType === 0) return Config[getLang()].luckeyMoney.ordinary; // 普通
+    if (rType === 1) return Config[getLang()].luckeyMoney.random; // 随机
+    if (rType === 99) return Config[getLang()].luckeyMoney.invite; // 邀请
 
     return '';
 };

@@ -199,18 +199,18 @@ export const fetchLocalTxByHash1 = (hash:string) => {
 
 // 购买理财
 export const purchaseProduct = async (psw:string,productId:string,amount:number) => {
-    const close = popNewLoading('正在购买...');    
+    const close = popNewLoading(Config[getLang()].bugProduct.buying);  // 购买中  
     const pswCorrect = await VerifyIdentidy(psw);
     if (!pswCorrect) {
         close.callback(close.widget);
-        popNewMessage('密码不正确');    
+        popNewMessage(Config[getLang()].bugProduct.wrong);  // 密码错误  
         
         return;
     }
     const data = await buyProduct(productId,amount);
     close.callback(close.widget);
     if (data) {
-        popNewMessage('购买成功');
+        popNewMessage(Config[getLang()].bugProduct.buySuccess); // 购买成功
         getServerCloudBalance();
         console.log('data',data);
         getPurchaseRecord();// 购买之后获取购买记录

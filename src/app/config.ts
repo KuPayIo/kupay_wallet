@@ -797,6 +797,28 @@ ${walletName}团队
                 '红包退回'
             ]
         },
+        // 红包相关
+        luckeyMoney:{
+            ordinary:'普通红包',
+            random:'随机红包',
+            invite:'邀请红包'
+        },
+        // 购买理财
+        bugProduct:{
+            buying:'正在购买...',
+            buySuccess:'购买成功',
+            wrong:'密码错误'
+        },
+        // 矿工费相关
+        minerFee:{
+            standard:'标准',
+            fast:'快',
+            fastest:'慢',
+            minute:'分钟',
+            second:'秒',
+            hour:'小时'
+        },
+
         // 账户相关信息
         userInfo: {
             name: '昵称未设置',
@@ -808,6 +830,10 @@ ${walletName}团队
         },
         // 转账交易相关信息
         transfer: {
+            receipt:'收款',
+            transfer:'转账',
+            packing:'打包中',
+            confirmed:'已确认',
             loading: '交易中...',
             transSuccess: '转账成功',
             againSend: '重发中...',
@@ -818,7 +844,8 @@ ${walletName}团队
             withdrawSuccess: '提现成功',
             wrongPsw: '密码错误',
             rechargeTips: '充值已到账',
-            transferFailed: '交易失败'
+            transferFailed: '交易失败',
+            completed:'已完成'
         },
         // 后台对应错误列表
         errorList: {
@@ -1406,6 +1433,27 @@ ${walletName}团队
                 '紅包退回'
             ]
         },
+        // 红包相关
+        luckeyMoney:{
+            ordinary:'普通紅包',
+            random:'隨機紅包',
+            invite:'邀請紅包'
+        },
+        // 购买理财
+        bugProduct:{
+            buying:'正在購買...',
+            buySuccess:'購買成功',
+            wrong:'密碼錯誤'
+        },
+        // 矿工费相关
+        minerFee:{
+            standard:'標準',
+            fast:'快',
+            fastest:'最快',
+            minute:'分鐘',
+            second:'秒',
+            hour:'小時'
+        },
         // 账户相关信息
         userInfo: {
             name: '暱稱未設置',
@@ -1417,6 +1465,10 @@ ${walletName}团队
         },
         // 转账交易相关信息
         transfer: {
+            receipt:'收款',
+            transfer:'轉帳',
+            packing:'打包中',
+            confirmed:'已確認',
             loading: '交易中...',
             transSuccess: '轉賬成功',
             againSend: '重發中...',
@@ -1427,7 +1479,8 @@ ${walletName}团队
             withdrawSuccess: '提現成功',
             wrongPsw: '密碼錯誤',
             rechargeTips: '充值已到賬',
-            transferFailed:'交易失敗'
+            transferFailed:'交易失敗',
+            completed:'已完成'
         },
         // 后台对应错误列表
         errorList: {
@@ -1497,4 +1550,13 @@ ${walletName}团队
 export const withdrawMinerFee = {
     ETH: 0.01,
     BTC: 0.001
+};
+
+/**
+ * 初始化设置
+ */
+export const defaultSetting = {
+    DEFAULT_LANGUAGE:'zh_Hans',   // 默认语言 zh_Hans(中文简体),zh_Hant(中文繁体)
+    DEFAULT_CURRENCY:'CNY',       // 默认货币 CNY,USD
+    DEFAULT_CHANGECOLOR:'redUp'   // 默认涨跌颜色 redUp(红涨),greenUp(绿涨)
 };
