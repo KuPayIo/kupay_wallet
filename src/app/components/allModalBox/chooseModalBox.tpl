@@ -4,8 +4,22 @@
         <div w-class="list-container">
             {{for i,v of it1.minerFeeList}}
             <div w-class="list-item" on-tap="chooseMinerLevel(e,{{i}})">
-                <div w-class="item-left">{{v.time}}：{{v.minerFee}}&nbsp;{{it.currencyName}}</div>
-                <div w-class="item-right">{{v.text}}</div>
+                <div w-class="item-left">
+                    {{if typeof(v.time) === 'string'}}
+                        {{v.time}}
+                    {{else}}
+                        <pi-ui-lang>{{v.time}}</pi-ui-lang>
+                    {{end}}
+                    
+                    ：{{v.minerFee}}&nbsp;{{it.currencyName}}
+                </div>
+                <div w-class="item-right">
+                    {{if typeof(v.text) ==='string' }}
+                        {{v.text}}
+                    {{else}}    
+                        <pi-ui-lang>{{v.text}}</pi-ui-lang>
+                    {{end}}
+                </div>
                 {{if v.level === it1.level}}
                 <img src="../../res/image/right.png" w-class="choosed"/>
                 {{end}}
