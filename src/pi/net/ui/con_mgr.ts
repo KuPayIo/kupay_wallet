@@ -358,7 +358,7 @@ let user: string = '0';
 let userType: string | number = 0;
 
 /**
- * 登录成功后，生成临时密码，在重登陆需要配合使用
+ * 登录成功后，生成临时密码，在重登录需要配合使用
  */
 let tempPassword: string = '';
 

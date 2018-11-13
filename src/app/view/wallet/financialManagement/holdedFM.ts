@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPurchaseRecord } from '../../../net/pull';
 import { PurchaseHistory } from '../../../store/interface';
-import { register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -28,7 +28,7 @@ export class HoldedFM extends Widget {
         this.state = {
             purchaseRecord:[]
         };
-        if (this.props.isActive) {
+        if (this.props.isActive && getStore('user/conUid')) {
             getPurchaseRecord();
         }
     }

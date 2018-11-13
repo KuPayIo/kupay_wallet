@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getPurchaseRecord } from '../../../net/pull';
 import { Product, PurchaseHistory } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { calPercent, fetchHoldedProductAmount, hasWallet } from '../../../utils/tools';
+import { calPercent, fetchHoldedProductAmount, hasWallet, popNewMessage } from '../../../utils/tools';
 
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -84,6 +84,8 @@ export class ProductDetail extends Widget {
      * 点击购买按钮
      */
     public purchaseClicked() {
+        popNewMessage(this.language.tip);
+        return;
         if (!hasWallet()) return;
         popNew('app-view-wallet-financialManagement-productStatement',{ product:this.props.product,amount:this.state.amount });
     }

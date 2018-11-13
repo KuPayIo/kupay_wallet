@@ -6,6 +6,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList, getPurchaseRecord } from '../../../net/pull';
+import { getStore } from '../../../store/memstore';
 import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -29,7 +30,10 @@ export class Home extends Widget {
         super.setProps(props,oldProps);
         this.state.activeNum = props.activeNum;
         getProductList();
-        getPurchaseRecord();
+        if (getStore('user/id')) {
+            getPurchaseRecord();
+        }
+       
     }
     public init() {
         this.language = this.config.value[getLang()];
