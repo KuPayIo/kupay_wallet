@@ -7,7 +7,7 @@
         </div>
         <div w-class="version">V{{it1.version}}</div>
         <div w-class="shortmess">
-            <pi-ui-lang>{"zh_Hans":"KuPlay是一款功能全面、简单易用的钱包应用。","zh_Hant":"KuPlay是一款功能全面、簡單易用的錢包應用。","en":""}</pi-ui-lang>
+            <pi-ui-lang>{"zh_Hans": "{{it1.walletName}}是一款功能全面、简单易用的钱包应用。","zh_Hant": "{{it1.walletName}}是一款功能全面、簡單易用的錢包應用。","en":""}</pi-ui-lang>
         </div>
         
         {{: itemName = [

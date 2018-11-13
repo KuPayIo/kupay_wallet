@@ -37,12 +37,13 @@
 </body>
 <script src="main20181112.js"></script>
 <script>
+    const walletName = getWalletName();
     const cfg = getLanguage();
-    document.getElementById('title').innerText = cfg.shortMess;
+    document.getElementById('title').innerText = walletName+cfg.shortMess;
     document.getElementById('download').innerText = cfg.immeDownload;
     document.getElementById('installTutorial').innerText = cfg.installTutorial;
     document.getElementById('step1').innerText = cfg.step1;
-    document.getElementById('step2').innerText = cfg.step2;
-    document.getElementById('step3').innerText = cfg.step3;
+    document.getElementById('step2').innerText = cfg.step2+walletName;
+    // document.getElementById('step3').innerText = cfg.step3;
 </script>
 </html>

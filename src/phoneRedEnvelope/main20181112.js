@@ -1,28 +1,50 @@
 // ==========================================静态变量,静态方法
 
-const serverIp = 'http://app.kuplay.io'
-// const serverIp = "http://47.244.59.13";
-// const serverIp = "http://47.244.29.209";
-
+const serverIp = window.location.origin;
 const urlHead = serverIp+":8099";
-
 
 // 上传的文件url前缀
 const uploadFileUrlPrefix = serverIp+`/service/get_file?sid=`;
+
+// 获取当前语言设置
+const getLanguage = () => {
+    const search = window.location.search;
+    let lan = parseUrlParams(search,'lan');
+    if(!lan && !localStorage.language){
+        localStorage.language = 'zh_Hans'
+        return Config.zh_Hans;
+    }
+    if(lan){
+        localStorage.language = lan;
+    }else{
+        lan = localStorage.language;
+    }
+    return Config[lan];
+}
+// 获取钱包名字
+const getWalletName = () =>{
+    const search = window.location.search;
+    let walletName = parseUrlParams(search,'walletName');
+    if(walletName){        
+        return walletName;
+    }else{
+        return 'KuPay';
+    }
+}
 
 // 语言文字
 const Config= {
     zh_Hans:{ 
         copySuccess:"复制成功",
-        shortMess:"KuPlay安全的一站式资产管理平台",
+        shortMess:"安全的一站式资产管理平台",
         immeDownload:"立即下载",
         installTutorial:"Android安装教程",
         step1:"点击“立即下载”按钮下载安装文件",
-        step2:"成功安装KuPay",
+        step2:"成功安装",
         step3:"进入APP并创建钱包",
         redEnvMess:[
             "恭喜发财 万事如意",
-            "KuPay大礼包"
+            getWalletName()+"大礼包"
         ],
         redEnvDesc:[
             "您收到一个红包",
@@ -43,7 +65,7 @@ const Config= {
             "已领取",
             "共",
             "红包领取规则",
-            "1.安装KuPay，创建钱包",
+            "1.安装"+getWalletName()+"，创建钱包",
             "2.在钱包里点击发现-发红包",
             "3.输入收到的红包码，红包金额将自动到账",
             "4.同一个红包，每人只能领取一次"
@@ -51,15 +73,15 @@ const Config= {
     },
     zh_Hant:{
         copySuccess:"複製成功",
-        shortMess:"KuPlay安全的一站式資產管理平台",
+        shortMess:"安全的一站式資產管理平台",
         immeDownload:"立即下載",
         installTutorial:"Android安裝教程",
         step1:"點擊“立即下載”按鈕下載安裝文件",
-        step2:"成功安裝KuPay",
+        step2:"成功安裝",
         step3:"進入APP並創建錢包",
         redEnvMess:[
             "恭喜發財 萬事如意",
-            "KuPay大禮包"
+            getWalletName()+"大禮包"
         ],
         redEnvDesc:[
             "您收到一個紅包",
@@ -80,7 +102,7 @@ const Config= {
             "已領取",
             "共",
             "紅包領取規則",
-            "1.安裝KuPay，創建錢包",
+            "1.安裝"+getWalletName()+"，創建錢包",
             "2.在錢包裡點擊發現-發紅包",
             "3.輸入收到的紅包碼，紅包金額將自動到賬",
             "4.同一個紅包，每人只能領取一次"
@@ -90,21 +112,7 @@ const Config= {
 
     }
 }
-// 获取当前语言设置
-const getLanguage = () => {
-    const search = window.location.search;
-    let lan = parseUrlParams(search,'lan');
-    if(!lan && !localStorage.language){
-        localStorage.language = 'zh_Hans'
-        return Config.zh_Hans;
-    }
-    if(lan){
-        localStorage.language = lan;
-    }else{
-        lan = localStorage.language;
-    }
-    return Config[lan];
-}
+
 // 云端货币类型
 const CurrencyType = {
     KT: 100,

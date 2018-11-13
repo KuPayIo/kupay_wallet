@@ -6,6 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { findModulConfig } from '../../../modulConfig';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
@@ -26,7 +27,8 @@ export class Exchange extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
         this.state = {
-            cid: ''
+            cid: '',
+            walletName:findModulConfig('WALLET_NAME')
         };
     }
     
@@ -120,7 +122,7 @@ export class Exchange extends Widget {
         let res = { result: -1, value: '' };
         if (perCode === LuckyMoneyType.Invite) {
             res.result = 1;
-            res.value = this.language.defaultMess;
+            res.value = `${this.state.walletName}${this.language.defaultMess}`;
         } else {
             res = await queryRedBagDesc(validCode);
         }

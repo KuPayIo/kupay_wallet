@@ -1,5 +1,5 @@
 <div class="new-page" ev-back-click="backPrePage">
-        {{: topBarTitle = {"zh_Hans":"分红说明","zh_Hant":"分紅說明","en":""} }}
+    {{: topBarTitle = {"zh_Hans":"分红说明","zh_Hant":"分紅說明","en":""} }}
     <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="title">
@@ -36,8 +36,8 @@
             </p>
             <p>
                 <pi-ui-lang>{
-                    "zh_Hans":"5、KuPay拥有最终解释权。",
-                    "zh_Hant":"5、KuPay擁有最終解釋權。",
+                    "zh_Hans":"5、{{it1.walletName}}拥有最终解释权。",
+                    "zh_Hant":"5、{{it1.walletName}}擁有最終解釋權。",
                     "en":""}
                 </pi-ui-lang>
             </p>

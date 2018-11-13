@@ -2,11 +2,12 @@
  * create a wallet by image
  */
 import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-import { selectImage } from '../../../logic/native';
-import { pswEqualed } from '../../../utils/account';
-import { CreateWalletType } from '../../../logic/localWallet';
 import { getLang } from '../../../../pi/util/lang';
+import { Widget } from '../../../../pi/widget/widget';
+import { CreateWalletType } from '../../../logic/localWallet';
+import { selectImage } from '../../../logic/native';
+import { findModulConfig } from '../../../modulConfig';
+import { pswEqualed } from '../../../utils/account';
 
 export class CreateWalletByImage extends Widget {
     public ok: () => void;
@@ -25,6 +26,7 @@ export class CreateWalletByImage extends Widget {
             imagePswAvailable:false,
             imgagePswConfirm:'',
             pswEqualed:false,
+            walletName:findModulConfig('WALLET_NAME')
         };
     }
     public backPrePage() {

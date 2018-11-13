@@ -3,7 +3,7 @@
     <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="body">
         {{: tipsCardTitle = {"zh_Hans":"选择颜色丰富的照片","zh_Hant":"選擇顏色豐富的照片","en":""} }}
-        {{: tipsCardContent = {"zh_Hans":"照片和照片密码是您找回账号的唯一凭证，一旦丢失，KuPay将无法恢复您的账号和资产。照片和照片密码无法修改，请务必牢记并妥善保管。","zh_Hant":"照片和照片密碼是您找回賬號的唯一憑證，一旦丟失，KuPay將無法恢復您的賬號和資產。照片和照片密碼無法修改，請務必牢記並妥善保管。","en":""} }}
+        {{: tipsCardContent = {"zh_Hans":"照片和照片密码是您找回账号的唯一凭证，一旦丢失，"+it1.walletName+"将无法恢复您的账号和资产。照片和照片密码无法修改，请务必牢记并妥善保管。","zh_Hant":"照片和照片密碼是您找回賬號的唯一憑證，一旦丟失，"+it1.walletName+"將無法恢復您的賬號和資產。照片和照片密碼無法修改，請務必牢記並妥善保管。","en":""} }}
         <app-view-wallet-components-tipsCard>{title:{{tipsCardTitle}},content:{{tipsCardContent}},contentStyle:"color:#ef3838" }</app-view-wallet-components-tipsCard>
         <div w-class="bottom-box">
             <div w-class="choose-image-container" on-tap="selectImageClick">

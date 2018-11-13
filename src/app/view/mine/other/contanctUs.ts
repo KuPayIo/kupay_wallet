@@ -3,10 +3,11 @@
  */
 // ===============================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
+import { findModulConfig } from '../../../modulConfig';
 import { getLocalVersion } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 // ==================================================导出
 
 export class ContanctUs extends Widget {
@@ -18,10 +19,11 @@ export class ContanctUs extends Widget {
         this.state = {
             version:getLocalVersion(),
             data:[
-                { value: this.language.itemTitle[0],desc:'www.Kuplay.io' },
-                { value: this.language.itemTitle[1],desc:this.language.itemTitle[2] },
-                { value: this.language.itemTitle[3],desc:'KuPlay' }
+                { value: this.language.itemTitle[0],desc:`www.${findModulConfig('WALLET_NAME')}.io` },
+                { value: this.language.itemTitle[1],desc:findModulConfig('WALLET_NAME') + this.language.itemTitle[2] },
+                { value: this.language.itemTitle[3],desc:findModulConfig('WALLET_NAME') }
             ],
+            walletName:findModulConfig('WALLET_NAME')
         };
     }
 

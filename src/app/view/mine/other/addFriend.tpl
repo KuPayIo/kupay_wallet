@@ -13,7 +13,7 @@
         <div style="text-align: center;">
             <app-components-qrcode-qrcode>{value:{{it1.address}},size:"350"}</app-components-qrcode-qrcode>
             <div style="font-size: 32px;color: #222222;margin-top: 50px;">
-                <pi-ui-lang>{"zh_Hans":"扫码添加KuPay好友","zh_Hant":"掃碼添加KuPay好友","en":""}</pi-ui-lang>
+                <pi-ui-lang>{"zh_Hans":"扫码添加{{it1.walletName}}好友","zh_Hant":"掃碼添加{{it1.walletName}}好友","en":""}</pi-ui-lang>
             </div>
         </div>
     </div>
