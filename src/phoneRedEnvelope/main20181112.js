@@ -1,11 +1,7 @@
 // ==========================================静态变量,静态方法
 
-const serverIp = 'http://app.kuplay.io'
-// const serverIp = "http://47.244.59.13";
-// const serverIp = "http://47.244.29.209";
-
+const serverIp = window.location.origin;
 const urlHead = serverIp+":8099";
-
 
 // 上传的文件url前缀
 const uploadFileUrlPrefix = serverIp+`/service/get_file?sid=`;

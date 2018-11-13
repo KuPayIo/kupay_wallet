@@ -85,7 +85,7 @@ export const transfer = async (psw:string,txPayload:TxPayload,success?:Function,
             };
             success(tx);
         } else {
-            fail({ message:'send transaction failed' });
+            throw new Error('send transaction failed');
         }
     } catch (error) {
         fail(error);

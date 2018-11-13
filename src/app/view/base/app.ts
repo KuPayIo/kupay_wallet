@@ -79,6 +79,9 @@ export class App extends Widget {
             if (findModulConfig(this.state.allTabBar[item].modulName)) {
                 resList.push(this.state.allTabBar[item]);
             }   
+        }
+        if (resList.length === 0) {
+            resList.push(this.state.allTabBar.wallet);
         }   
         this.state.tabBarList = resList;
     }

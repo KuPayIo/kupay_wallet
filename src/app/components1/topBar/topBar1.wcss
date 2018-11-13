@@ -17,10 +17,7 @@
     align-items: center;
 }
 .userHead{
-    width: 48px;
-    height: 48px;
-    border: 2px solid #ffffff;
-    border-radius: 50%;    
+    border: 2px solid #ffffff;  
     margin: 0 20px;
 }
 .total-asset{
