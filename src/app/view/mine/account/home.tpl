@@ -44,11 +44,11 @@
                 {{if !it1.backup}}
                 <div w-class="tag"><pi-ui-lang>{{itemTitle[3]}}</pi-ui-lang></div>
                 {{end}}
-                <img src="../../../res/image/right_arrow_blue.png" w-class="rightArrow"/>
+                <img src="app/res/image/right_arrow2_gray.png" w-class="rightArrow"/>
             </div>
             <div w-class="other-item" on-tap="exportPrivateKeyClick" style="border-bottom: none;">
                 <div w-class="item-title"><pi-ui-lang>{{itemTitle[4]}}</pi-ui-lang></div>
-                <img src="../../../res/image/right_arrow_blue.png" w-class="rightArrow"/>
+                <img src="app/res/image/right_arrow2_gray.png" w-class="rightArrow"/>
             </div>
         </div>
     </div>
