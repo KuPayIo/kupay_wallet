@@ -36,7 +36,7 @@ export class DataCenter {
    */
     public init() {
         // 获取shapeshift支持货币
-        // getShapeShiftCoins();
+        getShapeShiftCoins();
 
         // 更新人民币美元汇率
         this.updateUSDRate();

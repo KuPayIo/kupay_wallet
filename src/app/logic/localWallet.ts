@@ -261,3 +261,10 @@ export const deleteMnemonic = () => {
     wallet.isBackup = true;
     setStore('wallet',wallet);
 };
+
+/**
+ * 获取第一个ETH地址
+ */
+export const getFirstEthAddr = () => {
+    return getStore('user/id');
+};

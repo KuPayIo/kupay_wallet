@@ -1,5 +1,5 @@
 import { shapeshiftApiPublicKey } from '../utils/constants';
-import { xorDecode, xorDecode1, xorEncode } from '../utils/tools';
+import { xorDecode1, xorEncode } from '../utils/tools';
 import { thirdUrlPre } from './pull';
 
 // ==========================三方接口=======================================
