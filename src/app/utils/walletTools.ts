@@ -2,7 +2,8 @@
  * 和第3方库相关的一些工具函数
  */
 import { arrayBufferToBase64 } from '../../pi/util/base64';
-import { ERC20Tokens, Config } from '../config';
+import { getLang } from '../../pi/util/lang';
+import { Config, ERC20Tokens } from '../config';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
@@ -14,7 +15,6 @@ import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
 import { nameWare } from './nameWareHouse';
 import { shareSecret } from './secretsBase';
 import { calcHashValuePromise, decrypt, encrypt, hexstrToU8Array, popNewLoading, popNewMessage, unicodeArray2Str } from './tools';
-import { getLang } from '../../pi/util/lang';
 
 /**
  * 获取新的地址信息
@@ -199,18 +199,18 @@ export const fetchLocalTxByHash1 = (hash:string) => {
 
 // 购买理财
 export const purchaseProduct = async (psw:string,productId:string,amount:number) => {
-    const close = popNewLoading('正在购买...');    
+    const close = popNewLoading(Config[getLang()].bugProduct.buying);  // 购买中  
     const pswCorrect = await VerifyIdentidy(psw);
     if (!pswCorrect) {
         close.callback(close.widget);
-        popNewMessage('密码不正确');    
+        popNewMessage(Config[getLang()].bugProduct.wrong);  // 密码错误  
         
         return;
     }
     const data = await buyProduct(productId,amount);
     close.callback(close.widget);
     if (data) {
-        popNewMessage('购买成功');
+        popNewMessage(Config[getLang()].bugProduct.buySuccess); // 购买成功
         getServerCloudBalance();
         console.log('data',data);
         getPurchaseRecord();// 购买之后获取购买记录

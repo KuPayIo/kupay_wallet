@@ -14,5 +14,5 @@
         {{end}}
     
     {{end}}
-    <img src="../../res/image/right_arrow_blue.png" w-class="itemImg"/>
+    <img src="app/res/image/right_arrow2_gray.png" w-class="itemImg"/>
 </div>
