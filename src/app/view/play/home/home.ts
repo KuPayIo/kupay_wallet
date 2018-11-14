@@ -11,6 +11,8 @@ import { openNewActivity } from '../../../logic/native';
 import { register } from '../../../store/memstore';
 import { getUserInfo, popNewMessage } from '../../../utils/tools';
 
+import { WebViewManager } from "../../../../pi/browser/webview";
+
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -36,6 +38,10 @@ export class PlayHome extends Widget {
 
     public enterGames1Click() {
         openNewActivity('http://39.104.203.151/game/boot/index.html');
+    }
+
+    public enterGames2Click() {
+        WebViewManager.open("game2", 'http://192.168.9.28/wallet/dapp/web3.html?' + Math.random(), "game2");
     }
 
     public getCode(event:any) {

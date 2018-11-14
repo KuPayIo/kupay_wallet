@@ -18,6 +18,17 @@ let web3;
 const LANGUAGES = { english: 0, chinese_simplified: 1, chinese_traditional: 2 };
 const DEFAULT_DERIVE_PATH = 'm/44\'/60\'/0\'/0/0';
 
+/**
+ * 供其他的webview调用
+ */
+export const rpcProviderSendAsync = (payload, callback) => {
+    initWeb3();
+
+    if (web3 && web3.currentProvider && web3.currentProvider.sendAsync) {
+        web3.currentProvider.sendAsync(payload, callback);
+    }
+}
+
 // currently use the default config
 export interface Transaction {
     to: string;
