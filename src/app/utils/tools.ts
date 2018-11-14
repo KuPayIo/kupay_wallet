@@ -558,11 +558,11 @@ export const popPswBox = async (content = []) => {
 };
 
 // 弹出提示框
-export const popNewMessage = (content: string) => {
+export const popNewMessage = (content: any) => {
     return popNew('app-components1-message-message', { content });
 };
 // 弹出loading
-export const popNewLoading = (text: string) => {
+export const popNewLoading = (text: any) => {
     return popNew('app-components1-loading-loading', { text });
 };
 

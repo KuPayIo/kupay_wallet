@@ -2,7 +2,7 @@
 
     <img src="../../../res/image/login_bg.png" w-class="logo"/>
     <div ev-back-click="backPrePage" w-class="title-container">
-        {{: topBarTitle = {"zh_Hans":"登陆","zh_Hant":"登錄","en":""} }}
+        {{: topBarTitle = {"zh_Hans":"登录","zh_Hant":"登錄","en":""} }}
         <app-components1-topBar-topBar>{"title":{{topBarTitle}},"background":"rgba(0,0,0,0)" }</app-components1-topBar-topBar>
     </div>
 
@@ -12,7 +12,7 @@
             {{: btnName = [
                 {"zh_Hans":"创建标准账户","zh_Hant":"創建標準賬戶","en":""},
                 {"zh_Hans":"使用照片创建账户","zh_Hant":"使用照片創建賬戶","en":""},
-                {"zh_Hans":"登陆","zh_Hant":"登錄","en":""}] }}
+                {"zh_Hans":"登录","zh_Hant":"登錄","en":""}] }}
             <app-components1-btn-btn>{"name":{{btnName[0]}},"types":"big","color":"blue"}</app-components1-btn-btn>
         </div>
         <div ev-btn-tap="createByImgClick">
@@ -21,7 +21,7 @@
         <div w-class="container1">
             <div w-class="box" on-tap="switch2LoginClick"  style="{{ it1.accountList.length > 0 ? '' : 'width:0px;overflow: hidden;'}} ">
                 <img src="../../../res/image/avatar1.png" w-class="img-logo"/>
-                <div w-class="tag" ><pi-ui-lang>{"zh_Hans":"登陆账户","zh_Hant":"登錄賬戶","en":""}</pi-ui-lang></div>
+                <div w-class="tag" ><pi-ui-lang>{"zh_Hans":"登录账户","zh_Hant":"登錄賬戶","en":""}</pi-ui-lang></div>
             </div>
             <div w-class="box" on-tap="walletImportClicke">
                 <img src="../../../res/image/right_arrow2_blue.png" w-class="img-logo"/>
