@@ -1,11 +1,11 @@
 .mine{
-    animation: switchWalletPageIn .2s forwards;
+    animation: switchWalletPageIn .2s forwards ease-out;
     /* margin-bottom: 110px; */
     overflow: hidden;
     background: rgba(2, 2, 2, 0.5);        
 }
 .mineHide{
-    animation: switchWalletPageOut .2s forwards;
+    animation: switchWalletPageOut .2s forwards ease-out;
 }
 .topBack{
     height: 400px;
@@ -39,10 +39,10 @@
 .left{
     height: 100%;
     margin-right: 120px;
-    animation: switchWalletIn .2s forwards;
+    animation: switchWalletIn .2s forwards ease-out;
 }
 .leftHide{
-    animation: switchWalletOut .2s forwards;
+    animation: switchWalletOut .2s forwards ease-out;
 }
 .right{
     width: 120px;

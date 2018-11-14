@@ -132,92 +132,92 @@ const ERC20TokensTestnet = {
     TRX:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'TRON',
-        decimals:18
+        decimals:6
     },
     BNB:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Binance Coin',
-        decimals:18
+        decimals:6
     },
     WTC:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Walton',
-        decimals:18
+        decimals:6
     },
     VEN:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'VeChain',
-        decimals:18
+        decimals:6
     },
     MKR:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Maker',
-        decimals:18
+        decimals:6
     },
     OMG:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'OmiseGO',
-        decimals:18
+        decimals:6
     },
     ZRX:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'ZRX',
-        decimals:18
+        decimals:6
     },
     ZIL:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Zilliqa',
-        decimals:12
+        decimals:6
     },
     AE:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Aeternity',
-        decimals:18
+        decimals:6
     },
     ICX:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'ICON',
-        decimals:18
+        decimals:6
     },
     BTM:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Bytom',
-        decimals:8
+        decimals:6
     },
     LINK:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'BAChainLinkT',
-        decimals:18
+        decimals:6
     },
     REP:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Reputation',
-        decimals:18
+        decimals:6
     },
     GNT:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Golem',
-        decimals:18
+        decimals:6
     },
     XPA:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'XPlay',
-        decimals:18
+        decimals:6
     },
     PPT:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Populous',
-        decimals:8
+        decimals:6
     },
     SNT:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'StatusNetwork',
-        decimals:18
+        decimals:6
     },
     PRL:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Oyster Pearl',
-        decimals:18
+        decimals:6
     },
     KCS:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
@@ -227,22 +227,22 @@ const ERC20TokensTestnet = {
     IOST:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'IOStoken',
-        decimals:18
+        decimals:6
     },
     AION:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'AION',
-        decimals:8
+        decimals:6
     },
     LRC:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'Loopring ',
-        decimals:18
+        decimals:6
     },
     DGD:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'DigixDAO',
-        decimals:9
+        decimals:6
     }
 };
 // 导出ERC20Tokens

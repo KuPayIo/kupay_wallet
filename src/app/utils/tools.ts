@@ -796,6 +796,7 @@ export const fetchWalletAssetList = () => {
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
             item.gain = fetchCoinGain(k);
+            item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
             assetList.push(item);
         }
 
@@ -809,6 +810,7 @@ export const fetchWalletAssetList = () => {
             const balance = fetchBalanceOfCurrency(k);
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
+            item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
             item.gain = fetchCoinGain(k);
             assetList.push(item);
         }
@@ -849,6 +851,7 @@ export const fetchCloudWalletAssetList = () => {
             item.balance = formatBalance(balance);
             item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
             item.gain = fetchCoinGain(k);
+            item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
             assetList.push(item);
         }
     }
@@ -1205,6 +1208,7 @@ export const logoutAccountDel = () => {
     const user = {
         id: '',                      // 该账号的id
         isLogin: false,              // 登录状态
+        offline:true,                // 在线状态
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
         conUid: '',                   // 服务器连接uid
@@ -1416,6 +1420,7 @@ export const checkCreateAccount = () => {
     // 第一次创建检查是否有登录后弹框提示备份
     if (flags.created) {
         flags.promptBackup = true;
+        flags.created = false;
         setStore('flags', flags);
     }
 };

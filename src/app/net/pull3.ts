@@ -28,8 +28,8 @@ export const getThirdFromServer = async (url:string) => {
 // https://api.huobipro.com/market/history/kline?symbol=btcusdt&period=1day&size=1&AccessKeyId=6fd70042-c5e4c618-d6e619ec-ecfa2
 // 获取美元对人民币汇率
 export const fetchUSD2CNYRate = () => {
-    const sign = '7987216e841c32aa08d0ea0dcbf65eed';
-    const appkey = '37223';
+    const sign = '2ce17bfdcb19060cac834341e493c5e1';
+    const appkey = '38071';
     const url = `http://api.k780.com/?app=finance.rate&scur=USD&tcur=CNY&appkey=${appkey}&sign=${sign}`;
     
     return getThirdFromServer(url).then(res => {

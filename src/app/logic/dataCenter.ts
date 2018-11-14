@@ -36,12 +36,12 @@ export class DataCenter {
    */
     public init() {
         // 获取shapeshift支持货币
-        getShapeShiftCoins();
+        // getShapeShiftCoins();
 
         // 更新人民币美元汇率
-        // this.updateUSDRate();
+        this.updateUSDRate();
         // 更新货币对比USDT的比率
-        // this.updateCurrency2USDTRate();
+        this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
         this.refreshAllBalance();
     }

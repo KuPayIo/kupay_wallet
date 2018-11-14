@@ -45,3 +45,8 @@
     border: 2px solid #fff;
     box-shadow: none;
 }
+.btn-gray{
+    background: #ccc;
+    border: 2px solid #fff;
+    box-shadow: none;
+}
