@@ -46,31 +46,31 @@ export const createWallet = async (itype: CreateWalletType, option: Option) => {
     let secrectHash;
     if (itype === CreateWalletType.Random) {
         const close = popNew('app-components1-loading-loading', {
-            text: '创建中...'
+            text: { zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' }
         });
         secrectHash = await createWalletRandom(option);
         close.callback(close.widget);
     } else if (itype === CreateWalletType.Image) {
         const close = popNew('app-components1-loading-loading', {
-            text: '创建中...'
+            text: { zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' }
         });
         secrectHash = await createWalletByImage(option);
         close.callback(close.widget);
     } else if (itype === CreateWalletType.StrandarImport) {
         const close = popNew('app-components1-loading-loading', {
-            text: '导入中...'
+            text: { zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' }
         });
         secrectHash = await importWalletByMnemonic(option);
         close.callback(close.widget);
     } else if (itype === CreateWalletType.ImageImport) {
         const close = popNew('app-components1-loading-loading', {
-            text: '导入中...'
+            text: { zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' }
         });
         secrectHash = await createWalletByImage(option);
         close.callback(close.widget);
     } else if (itype === CreateWalletType.FragmentImport) {
         const close = popNew('app-components1-loading-loading', {
-            text: '导入中...'
+            text: { zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' }
         });
         secrectHash = await importWalletByFragment(option);
         close.callback(close.widget);
@@ -229,7 +229,7 @@ export const importWalletByFragment = async (option: Option) => {
  * 创建新地址
  */
 export const createNewAddr = async (passwd: string, currencyName: string) => {
-    const close = popNewLoading('添加中...');
+    const close = popNewLoading({ zh_Hans:'添加中...',zh_Hant:'添加中...',en:'' });
     const wallet = getStore('wallet');
     const mnemonic = await getMnemonic(passwd);
     close.callback(close.widget);
@@ -249,9 +249,9 @@ export const createNewAddr = async (passwd: string, currencyName: string) => {
             dataCenter.fetchErc20GasLimit(currencyName);
         }
         setStore('wallet/currencyRecords',wallet.currencyRecords);
-        popNewMessage('添加成功');
+        popNewMessage({ zh_Hans:'添加成功',zh_Hant:'添加成功',en:'' });
     } else {
-        popNewMessage('密码错误');
+        popNewMessage({ zh_Hans:'密码错误',zh_Hant:'密碼錯誤',en:'' });
     }
 };
 

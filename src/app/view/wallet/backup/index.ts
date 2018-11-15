@@ -23,9 +23,9 @@ export class BackupIndex extends Widget {
     }
     
     public standardBackupClick() {
-        popNew('app-view-wallet-backup-backupMnemonicWordConfirm',{ mnemonic:this.props.mnemonic },() => {this.ok && this.ok();});
+        popNew('app-view-wallet-backup-backupMnemonicWordConfirm',{ mnemonic:this.props.mnemonic });
     }
     public fragmentsBackupClick() {
-        popNew('app-view-wallet-backup-shareMnemonic',{ fragments:this.props.fragments },() => {this.ok && this.ok();});
+        popNew('app-view-wallet-backup-shareMnemonic',{ fragments:this.props.fragments });
     }
 }

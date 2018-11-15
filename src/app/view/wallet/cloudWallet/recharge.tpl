@@ -39,17 +39,19 @@
                 <div w-class="inner-tip" >
                     <div>
                             <pi-ui-lang>{{phrase[2]}}</pi-ui-lang>
-                        <span w-class="speed">{{it1.minerFeeList[it1.curLevel].text}}</span>
+                        <span w-class="speed">
+                            <pi-ui-lang>{{it1.minerFeeList[it1.curLevel].text}}</pi-ui-lang>
+                        </span>
                     </div>
                     <img src="../../../res/image/41_blue.png" on-tap="speedDescClick" style="border: 20px solid transparent;margin: -20px;"/>
                 </div>
                 <div w-class="speed-time">
-                    {{it1.minerFeeList[it1.curLevel].time}}
+                    <pi-ui-lang>{{it1.minerFeeList[it1.curLevel].time}}</pi-ui-lang>
                 </div>
             </div>
             <div w-class="choose-fee" on-tap="chooseMinerFee">
                     <pi-ui-lang>{{phrase[3]}}</pi-ui-lang>
-                <div w-class="fees"><span w-class="fee">{{it1.minerFee}}</span><img src="../../../res/image/right_arrow_blue.png"/></div>
+                <div w-class="fees"><span w-class="fee">{{it1.minerFee+it.currencyName}}</span><img src="../../../res/image/right_arrow_blue.png"/></div>
             </div>
             <div w-class="bottom-container">
                 {{if it1.balance <= it1.amount + it1.minerFee}}

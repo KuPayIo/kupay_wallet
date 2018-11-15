@@ -27,7 +27,7 @@ export const selectImage = (ok?,cancel?) => {
     });
     let close;
     setTimeout(() => {
-        close = popNew('app-components1-loading-loading', { text: '导入中...' });
+        close = popNew('app-components1-loading-loading', { text: { zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' } });
     },100);
 };
 
