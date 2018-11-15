@@ -43,7 +43,7 @@
                             <pi-ui-lang>{{it1.minerFeeList[it1.curLevel].text}}</pi-ui-lang>
                         </span>
                     </div>
-                    <img src="../../../res/image/41_blue.png" on-tap="speedDescClick" style="border: 20px solid transparent;margin: -20px;"/>
+                    <img src="../../../res/image/41_gray.png" on-tap="speedDescClick" style="border: 20px solid transparent;margin: -20px;"/>
                 </div>
                 <div w-class="speed-time">
                     <pi-ui-lang>{{it1.minerFeeList[it1.curLevel].time}}</pi-ui-lang>

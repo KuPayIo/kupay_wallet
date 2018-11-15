@@ -66,5 +66,5 @@
         </div>
     </div>
    {{: topBarTitle = {"zh_Hans":"领分红","zh_Hant":"領分紅","en":""} }}	
-    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{topBarTitle}},nextImg:{{it1.scrollHeight>0?"../../res/image/41_blue.png":"../../res/image/41_white.png"}} }</app-components1-topBar-topBar2>
+    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{topBarTitle}},nextImg:{{it1.scrollHeight>0?"../../res/image/41_gray.png":"../../res/image/41_white.png"}} }</app-components1-topBar-topBar2>
 </div>

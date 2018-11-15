@@ -34,7 +34,7 @@
 
         <div w-class="rate">
             <span style="flex: 1 0 0;"><pi-ui-lang>{{tips[1]}}</pi-ui-lang>&nbsp;<span style="color: #F5A264;">1&nbsp;{{it1.outCurrency}}={{it1.rate}}&nbsp;{{it1.inCurrency}}</span></span>
-            <img src="../../../res/image/41_blue.png" w-class="messImg" on-tap="rateDetail"/>
+            <img src="../../../res/image/41_gray.png" w-class="messImg" on-tap="rateDetail"/>
         </div>
         
         <div style="flex: 1 0 0;">

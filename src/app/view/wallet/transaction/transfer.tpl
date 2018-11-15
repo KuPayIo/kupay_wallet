@@ -51,13 +51,13 @@
                                 <pi-ui-lang>{{it1.minerFeeList[it1.curLevel].text}}</pi-ui-lang>
                             {{end}}
                         </span>
-                        <img src="../../../res/image/right_arrow_blue.png"/>
+                        <img src="app/res/image/down_arrow_gray.png"/>
                     </div>
                     
                 </div>
                 <div w-class="choose-fee">
                     <span><pi-ui-lang>{{tags[5]}}</pi-ui-lang>&nbsp;{{it1.minerFee}}</span>
-                    <img src="../../../res/image/41_blue.png" on-tap="speedDescClick" w-class="descImg"/>
+                    <img src="../../../res/image/41_gray.png" on-tap="speedDescClick" w-class="descImg"/>
                 </div>
             </div>
             {{: btnName = {"zh_Hans":"下一步","zh_Hant":"下一步","en":""} }}
