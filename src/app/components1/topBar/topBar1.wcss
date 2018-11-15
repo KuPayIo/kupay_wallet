@@ -18,7 +18,7 @@
 }
 .userHead{
     border: 2px solid #ffffff;  
-    margin: 0 20px;
+    margin: 20px;
 }
 .total-asset{
     font-size: 32px;

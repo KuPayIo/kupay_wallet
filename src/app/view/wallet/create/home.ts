@@ -106,19 +106,19 @@ export class CreateEnter extends Widget {
     }
     public async loginClick() {
         if (this.state.psw.length <= 0) {
-            popNewMessage('密码不能为空');
+            popNewMessage({ zh_Hans:'密码不能为空',zh_Hant:'密碼不能為空',en:'' });
 
             return;
         }
         const walletList = getAllAccount();
-        const close = popNewLoading('登录中');
+        const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
         const account = walletList[this.state.selectedAccountIndex];
         console.log(this.state.psw);
         const verify = await VerifyIdentidy1(this.state.psw,account.wallet.vault,account.user.salt);
 
         close.callback(close.widget);
         if (!verify) {
-            popNewMessage('密码错误');
+            popNewMessage({ zh_Hans:'密码错误',zh_Hant:'密碼錯誤',en:'' });
 
             return;
         }

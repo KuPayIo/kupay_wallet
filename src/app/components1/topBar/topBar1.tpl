@@ -1,7 +1,9 @@
 {{let opca = it.scrollHeight/200 || 0}}
 <div>
     <div style="{{opca>0?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 1px solid #cccccc;':''}}" w-class="topBar">
-        <widget w-tag="app-components1-img-img" w-class="userHead" on-tap="showMine">{imgURL:{{it.avatar ? it.avatar : 'app/res/image1/default_avatar.png'}},width:"48px;"}</widget>
+        <div on-tap="showMine">
+            <widget w-tag="app-components1-img-img" w-class="userHead" >{imgURL:{{it.avatar ? it.avatar : 'app/res/image1/default_avatar.png'}},width:"48px;"}</widget>
+        </div>
         {{if it.text}}
         <div w-class="total-asset">{{it.text}}</div>
         {{end}}
