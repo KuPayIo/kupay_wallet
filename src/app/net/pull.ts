@@ -213,6 +213,7 @@ const conReOpen = () => {
 
 /**
  * 获取随机数
+ * flag:0 普通用户注册，1注册即为真实用户
  */
 export const getRandom = async (cmd?:number) => {
     console.log('getRandom--------------');
@@ -222,7 +223,8 @@ export const getRandom = async (cmd?:number) => {
     const param:any = {
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
-        client:JSON.stringify(client)
+        client:JSON.stringify(client),
+        flag:1
     };
     if (cmd) {
         param.cmd = cmd;
@@ -804,11 +806,28 @@ export const getMiningRank = async (num: number) => {
 };
 
 /**
+ * 验证手机号是否被注册
+ */
+export const verifyPhone = async(phone:number) => {
+    const msg = { type: 'wallet/user@check_phone', param: { phone } };
+    try {
+        return await requestAsync(msg); 
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
+};
+
+/**
  * 发送验证码
  */
 export const sendCode = async (phone: number, num: number) => {
+    const v = await verifyPhone(phone);
+    if (!v) {
+        return;
+    }
     const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
-
     try {
         return await requestAsync(msg);
     } catch (err) {
