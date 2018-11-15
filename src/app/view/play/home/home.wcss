@@ -34,6 +34,9 @@
 }
 .games1{
     height: 800px;
+    background-color: #fff;
+    border-radius: 12px;
+    margin-bottom: 50px;
 }
 .title{
     height: 50px;

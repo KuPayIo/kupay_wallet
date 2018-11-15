@@ -282,15 +282,16 @@ export const playerName =  () => {
  * 获取钱包地址的位置
  */
 export const getWltAddrIndex = (addr: string, currencyName: string) => {
+    
     const wallet = getStore('wallet');
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     const addrs = currencyRecord.addrs;
     for (let i = 0;i < addrs.length;i++) {
-        if (addrs[i].addr === addr) {
+        if (addrs[i].addr.toLocaleLowerCase() === addr.toLocaleLowerCase()) {
             return i;
         }
     }
-
+    
     return -1;
 };
 

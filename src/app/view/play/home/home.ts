@@ -11,7 +11,8 @@ import { openNewActivity } from '../../../logic/native';
 import { register } from '../../../store/memstore';
 import { getUserInfo, popNewMessage } from '../../../utils/tools';
 
-import { WebViewManager } from "../../../../pi/browser/webview";
+import { WebViewManager } from '../../../../pi/browser/webview';
+import { transfer3 } from '../../../net/pullWallet';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -41,7 +42,11 @@ export class PlayHome extends Widget {
     }
 
     public enterGames2Click() {
-        WebViewManager.open("game2", 'http://192.168.9.28/wallet/dapp/web3.html?' + Math.random(), "game2");
+        // http://47.244.59.13/web-rinkeby/index.html
+        WebViewManager.open('Crypto Fishing', 'http://47.244.59.13/web-rinkeby/index.html?' + Math.random(), 'Crypto Fishing');
+        // transfer3('123456789',{ abc:'123' },(err,hash) => {
+        //     console.log(`err is ${err}, hash is ${hash}`);
+        // });
     }
 
     public getCode(event:any) {

@@ -128,7 +128,7 @@ const ERC20TokensMainnet = {
 };
 
 // 测试网erc20
-const ERC20TokensTestnet = {
+const ERC20TokensRosten = {
     TRX:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'TRON',
@@ -241,6 +241,125 @@ const ERC20TokensTestnet = {
     },
     DGD:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
+        description:'DigixDAO',
+        decimals:6
+    }
+};
+
+// 测试网rinkeby erc20
+const ERC20TokensTestnet = {
+    TRX:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'TRON',
+        decimals:6
+    },
+    BNB:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Binance Coin',
+        decimals:6
+    },
+    WTC:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Walton',
+        decimals:6
+    },
+    VEN:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'VeChain',
+        decimals:6
+    },
+    MKR:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Maker',
+        decimals:6
+    },
+    OMG:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'OmiseGO',
+        decimals:6
+    },
+    ZRX:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'ZRX',
+        decimals:6
+    },
+    ZIL:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Zilliqa',
+        decimals:6
+    },
+    AE:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Aeternity',
+        decimals:6
+    },
+    ICX:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'ICON',
+        decimals:6
+    },
+    BTM:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Bytom',
+        decimals:6
+    },
+    LINK:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'BAChainLinkT',
+        decimals:6
+    },
+    REP:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Reputation',
+        decimals:6
+    },
+    GNT:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Golem',
+        decimals:6
+    },
+    XPA:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'XPlay',
+        decimals:6
+    },
+    PPT:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Populous',
+        decimals:6
+    },
+    SNT:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'StatusNetwork',
+        decimals:6
+    },
+    PRL:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Oyster Pearl',
+        decimals:6
+    },
+    KCS:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'KuCoin Shares',
+        decimals:6
+    },
+    IOST:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'IOStoken',
+        decimals:6
+    },
+    AION:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'AION',
+        decimals:6
+    },
+    LRC:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
+        description:'Loopring ',
+        decimals:6
+    },
+    DGD:{
+        contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
         description:'DigixDAO',
         decimals:6
     }
@@ -1556,7 +1675,7 @@ export const withdrawMinerFee = {
  * 初始化设置
  */
 export const defaultSetting = {
-    DEFAULT_LANGUAGE:'zh_Hant',   // 默认语言 zh_Hans(中文简体),zh_Hant(中文繁体)
+    DEFAULT_LANGUAGE:'zh_Hans',   // 默认语言 zh_Hans(中文简体),zh_Hant(中文繁体)
     DEFAULT_CURRENCY:'CNY',       // 默认货币 CNY,USD
     DEFAULT_CHANGECOLOR:'redUp'   // 默认涨跌颜色 redUp(红涨),greenUp(绿涨)
 };

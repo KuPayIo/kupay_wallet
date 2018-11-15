@@ -11,12 +11,12 @@ export const config = {
         // tslint:disable-next-line:no-http-string
         BtcApiBaseUrl: 'http://39.104.129.43:3002/insight-api',
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
-        // https://ropsten.infura.io/Y4zS49bjsYwtRU3Tt4Yj
-        // http://192.168.33.115:8545
-        EthApiBaseUrl: 'https://ropsten.infura.io/Y4zS49bjsYwtRU3Tt4Yj',
+        // https://rinkeby.infura.io/Y4zS49bjsYwtRU3Tt4Yj
+        // http://192.168.33.115:8545       rinkeby
+        EthApiBaseUrl: 'https://rinkeby.infura.io/Y4zS49bjsYwtRU3Tt4Yj',
         EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY',
-        EthscanRopstenUrl: 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=',
-        EthscanRopstenTokenTransferEvent: 'https://api-ropsten.etherscan.io/api?module=account&action=tokentx'
+        EthscanRopstenUrl: 'http://api-rinkeby.etherscan.io/api?module=account&action=txlist&address=',
+        EthscanRopstenTokenTransferEvent: 'https://api-rinkeby.etherscan.io/api?module=account&action=tokentx'
     },
     prod: {
         BtcApiBaseUrl: 'http://39.104.129.43:3001/insight-api',

@@ -2,6 +2,8 @@
  * ETH wallet implementation
  */
 import { ERC20Tokens } from '../../config';
+import { getFirstEthAddr } from '../../logic/localWallet';
+import { transfer3, TxPayload } from '../../net/pullWallet';
 import { config } from '../config';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
@@ -22,12 +24,47 @@ const DEFAULT_DERIVE_PATH = 'm/44\'/60\'/0\'/0/0';
  * 供其他的webview调用
  */
 export const rpcProviderSendAsync = (payload, callback) => {
-    initWeb3();
+    initWeb3();    
+    
+    if (payload.method === 'eth_accounts') {
+        let addr = getFirstEthAddr();
+        addr = addr ? [addr] : [];
+        callback(null,{ jsonrpc: '2.0', result: addr, id: payload.id });
+    } else if (payload.method === 'eth_sendTransaction') {
+        const ethPayload = {
+            fromAddr:payload.params[0].from,
+            toAddr:payload.params[0].to,
+            pay:payload.params[0].value,
+            currencyName:'ETH',
+            fee:0.000273,
+            minerFeeLevel:0,
+            data:payload.params[0].data
+        };    
+        // payload.passwd = '123456789';
+        // alert(`payload is ${JSON.stringify(payload)}`);
+        try {
+            const promise = transfer3(payload.passwd,ethPayload);
 
-    if (web3 && web3.currentProvider && web3.currentProvider.sendAsync) {
-        web3.currentProvider.sendAsync(payload, callback);
+            promise.then(([err, hash]) => {
+                console.log(`wallet rpcProviderSendAsync err is ${err}, hash is ${hash}`);
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null, { jsonrpc: '2.0', result: hash, id: payload.id });
+                }
+            }).catch(() => {
+                console.log(`wallet rpcProviderSendAsync err is catch`);
+            });
+        } catch (e) {
+            console.log(`transfer3 catch throw`);
+        }
+        
+    } else {
+        if (web3 && web3.currentProvider && web3.currentProvider.sendAsync) {
+            web3.currentProvider.sendAsync(payload, callback);
+        }
     }
-}
+};
 
 // currently use the default config
 export interface Transaction {
