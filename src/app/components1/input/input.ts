@@ -12,10 +12,10 @@
  * 外部可监听 ev-input-change，ev-input-blur，ev-input-focus，ev-input-clear事件
  */
 import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { getRealNode, paintCmd3, paintWidget } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
-import { getLang } from '../../../pi/util/lang';
 
 interface Props {
     input?:string;
@@ -26,6 +26,7 @@ interface Props {
     style?:string;
     autofocus?:boolean;
     maxLength?:number;
+    notUnderLine?:boolean;
 }
 interface State {
     currentValue:string;
@@ -42,7 +43,7 @@ export class Input extends Widget {
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
-        if(this.props.placeHolder){
+        if (this.props.placeHolder) {
             this.props.placeHolder = this.props.placeHolder[getLang()];
         }
         
@@ -129,12 +130,13 @@ export class Input extends Widget {
         if (this.props.itype === 'integer' && currentValue.length > 0) {
             currentValue = currentValue.replace(/[\D]/g,''); 
         }
-
         this.state.currentValue = currentValue;
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
         
         (<any>this.getInput()).value = currentValue;
-        notify(event.node,'ev-input-change',{ value:this.state.currentValue });        
+        notify(event.node,'ev-input-change',{ value:this.state.currentValue }); 
+        this.state.focused = true;
+        this.paint();  
     }
 
     /**
@@ -160,8 +162,10 @@ export class Input extends Widget {
     // 清空文本框
     public clearClickListener(event:any) {
         this.state.currentValue = '';
+        this.state.showClear = false;
         (<any>this.getInput()).value = '';
-        notify(event.node,'ev-input-clear',{});        
+        notify(event.node,'ev-input-clear',{});  
+        this.paint();      
     }
 
     /**

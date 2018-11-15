@@ -3,12 +3,12 @@
  */
 // =============================================导入
 import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-import { pswEqualed } from '../../../utils/account';
-import { passwordChange, VerifyIdentidy } from '../../../utils/walletTools';
-import { register } from '../../../store/memstore';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { register } from '../../../store/memstore';
+import { pswEqualed } from '../../../utils/account';
+import { passwordChange, VerifyIdentidy } from '../../../utils/walletTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -52,6 +52,20 @@ export class ChangePSW extends Widget {
         this.state.pswEqualed = pswEqualed(this.state.newPassword, this.state.rePassword) && this.state.pswAvailable;
         this.paint();
     }
+    public pswClear(pswType: number) {
+        switch (pswType) {
+            case 0:
+                this.state.oldPassword = '';
+                break;
+            case 1:
+                this.state.newPassword = '';
+                break;
+            case 2:
+                this.state.rePassword = '';
+                break;
+            default:
+        }
+    }
 
     /**
      * 点击确认按钮
@@ -94,4 +108,3 @@ export class ChangePSW extends Widget {
         this.backPrePage();
     }
 }
-

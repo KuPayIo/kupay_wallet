@@ -1,4 +1,4 @@
-<div w-class="pi-input-box" class="pi-input">
+<div w-class="pi-input-box input-focused-{{it1.focused}}" class="pi-input">
     <input 
         w-class="pi-input__inner" 
         class="pi-input"

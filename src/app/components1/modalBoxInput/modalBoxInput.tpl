@@ -12,8 +12,8 @@
             {{end}}
         </div>
 
-        <div style="height: 90px;border-bottom: 1px solid #3294E6;" ev-input-change="change">
-            <app-components1-input-input>{placeHolder: {{it.placeholder?it.placeholder:""}},itype:{{it.itype?it.itype:"text"}},style:"padding:0;font-size:28px;" }</app-components1-input-input>
+        <div style="height: 90px;" ev-input-change="change">
+            <app-components1-input-input>{placeHolder: {{it.placeholder?it.placeholder:""}},itype:{{it.itype?it.itype:"text"}},style:"padding:0;font-size:28px;",underLine:true }</app-components1-input-input>
         </div>
         <div w-class="btns">
             {{if it.cancelText}}

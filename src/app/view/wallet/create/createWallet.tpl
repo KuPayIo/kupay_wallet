@@ -23,7 +23,7 @@
                 <widget w-tag="app-components1-input-input" style="flex: 1;">{input:{{it1.walletName}},maxLength:10}</widget>
                 <img w-class="random" src="../../../res/image/dice.png" on-tap="randomPlayName" id="random"/>
             </div>
-            <div ev-psw-change="pswChange"><app-components-password-password>{hideTips:true}</app-components-password-password></div>
+            <div ev-psw-change="pswChange" ev-psw-clear="pwsClear"><app-components-password-password>{hideTips:true}</app-components-password-password></div>
             <div w-class="input-father" ev-input-change="pswConfirmChange">
                 {{: inputPlace = {"zh_Hans":"重复密码","zh_Hant":"重複密碼","en":""} }}
                 <app-components-input-suffixInput>{itype:"password",placeHolder:{{inputPlace}},clearable:true,available:{{it1.pswEqualed}}}</app-components-input-suffixInput>
