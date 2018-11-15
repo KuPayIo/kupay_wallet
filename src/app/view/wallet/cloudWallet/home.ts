@@ -68,6 +68,7 @@ export class CloudWalletHome extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
+    // 充值
     public rechargeClick() {
         if (this.props.currencyName === 'KT' || this.props.currencyName === 'CNYT') {
             popNewMessage(this.language.tips);
@@ -76,6 +77,7 @@ export class CloudWalletHome extends Widget {
         }
         popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
     }
+    // 提币
     public withdrawClick() {
         if (this.props.currencyName === 'KT' || this.props.currencyName === 'CNYT') {
             popNewMessage(this.language.tips);

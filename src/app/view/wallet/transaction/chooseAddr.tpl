@@ -4,7 +4,7 @@
             {{for i,v of it1.addrsInfo}}
             <div w-class="item" on-tap="addrItemClick(e,{{i}})">
                 <div w-class="addr">{{v.addrShow}}</div>
-                <div w-class="balance">{{v.balance || v.balance.toFixed(2)}}</div>
+                <div w-class="balance">{{v.balance%1===0?v.balance.toFixed(2):v.balance}}</div>
                 {{if v.isChoosed}}
                 <img src="../../../res/image/right.png" w-class="choosed"/>
                 {{end}}

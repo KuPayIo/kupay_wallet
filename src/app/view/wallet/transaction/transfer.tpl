@@ -21,7 +21,7 @@
                 <div w-class="item">
                     <div w-class="inner-tip">
                         <span>{{it.currencyName}} <pi-ui-lang>{{tags[0]}}</pi-ui-lang></span> 
-                        <span w-class="balance"><pi-ui-lang>{{tags[1]}}</pi-ui-lang>&nbsp;{{it1.balance || it1.balance.toFixed(2)}}</span>
+                        <span w-class="balance"><pi-ui-lang>{{tags[1]}}</pi-ui-lang>&nbsp;{{it1.balance.toFixed(2)}}</span>
                     </div>
                     <div w-class="input-father" ev-input-change="amountChange">
                         <div w-class="balance-value">≈{{it1.currencyUnitSymbol+" "+it1.amountShow}}</div>
