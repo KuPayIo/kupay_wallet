@@ -31,11 +31,12 @@ export class PlayHome extends Widget {
         this.web3Promise = new Promise((resolve) => {
             const path = 'app/core/thirdparty/web3_rpc.js.txt';
             loadDir([path], undefined, undefined, undefined, fileMap => {
-                let content = '';
                 const arr = new Uint8Array(fileMap[path]);
-                for (let i = 0; i < arr.length; ++i) {
-                    content += String.fromCharCode(arr[i]);
-                }
+                // for (let i = 0; i < arr.length; ++i) {
+                //     content += String.fromCharCode(arr[i]);
+                // }
+                // content = decodeURIComponent(escape(atob(content)));
+                const content = new TextDecoder().decode(arr);
                 resolve(content);
             }, () => {}, () => {});
         });
