@@ -35,7 +35,7 @@ export class ContanctUs extends Widget {
         switch (ind) {
             // 点击KuPay官网
             case 0:
-                openNewActivity('http://www.KuPay.io','KuPay');
+                openNewActivity('http://www.KuPay.io',this.state.walletName);
                 break;
             // KuPay小助手
             case 1:
