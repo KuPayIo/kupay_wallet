@@ -28,10 +28,10 @@
     flex: 1 0 0;
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     padding: 20px 20px;
     margin-bottom: 45px;
-    -webkit-overflow-scrolling : touch;
 }
 .no-record{
     display: flex;

@@ -70,6 +70,7 @@
     height: 0px;
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     transition: all .3s ease-in-out;
     border-radius: 12px;

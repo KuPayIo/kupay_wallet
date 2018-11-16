@@ -3,6 +3,8 @@
     flex-direction: column;
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 .top-head{
     height: 400px;

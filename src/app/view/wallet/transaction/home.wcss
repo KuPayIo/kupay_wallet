@@ -97,6 +97,7 @@
     padding: 30px 30px 10px;
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
 }
 .tx-list-container{
