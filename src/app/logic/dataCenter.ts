@@ -42,8 +42,8 @@ export class DataCenter {
         this.updateUSDRate();
         // 更新货币对比USDT的比率
         this.updateCurrency2USDTRate();
-        // this.initErc20GasLimit();
-        this.refreshAllBalance();
+        this.initErc20GasLimit();
+        this.refreshAllTx();
     }
     /**
      * 刷新所有余额

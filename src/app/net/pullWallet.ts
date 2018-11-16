@@ -752,6 +752,7 @@ export const recharge = async (psw:string,txRecord:TxHistory) => {
     if (tx) {
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.rechargeSuccess });
         updateLocalTx(tx);
+        console.log(`recharge tx is `,tx);
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         getRechargeLogs(tx.currencyName);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });

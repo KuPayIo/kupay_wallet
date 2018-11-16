@@ -33,7 +33,7 @@ export class TransactionDetails extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         const tx = fetchLocalTxByHash1(this.props.hash);
-        // console.log(tx);
+        console.log(`transactionDetails tx is `,tx);
         const obj = parseStatusShow(tx);
         const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
         const webText = tx.currencyName === 'BTC' ? this.language.tips[0] : this.language.tips[1];

@@ -1,21 +1,27 @@
 /**
  * ETH api
  */
+import { DevMode } from '../../config';
 import { config } from '../config';
 import { Web3 } from '../thirdparty/web3.min';
 
 let web3;
 /* tslint:disable:no-var-keyword */
-if (config.dev_mode === 'dev') {
-    var ETH_API_BASE_URL = config.dev.EthApiBaseUrl;
-    var ETH_MARKET_PRICE_ORACLE_URL = config.dev.EthMarketPriceOracleUrl;
-    var ETHSCAN_ROPSTEN_API_URL = config.dev.EthscanRopstenUrl;
-    var ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config.dev.EthscanRopstenTokenTransferEvent;
-} else if (config.dev_mode === 'prod') {
-    ETH_API_BASE_URL = config.prod.EthApiBaseUrl;
-    ETH_MARKET_PRICE_ORACLE_URL = config.prod.EthMarketPriceOracleUrl;
-    ETHSCAN_ROPSTEN_API_URL = config.prod.EthscanRopstenUrl;
-    ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config.prod.EthscanRopstenTokenTransferEvent;
+if (config.dev_mode === DevMode.Ropsten) {
+    var ETH_API_BASE_URL = config[DevMode.Ropsten].EthApiBaseUrl;
+    var ETH_MARKET_PRICE_ORACLE_URL = config[DevMode.Ropsten].EthMarketPriceOracleUrl;
+    var ETHSCAN_ROPSTEN_API_URL = config[DevMode.Ropsten].EthscanRopstenUrl;
+    var ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config[DevMode.Ropsten].EthscanRopstenTokenTransferEvent;
+} else if (config.dev_mode === DevMode.Rinkeby) {
+    ETH_API_BASE_URL = config[DevMode.Rinkeby].EthApiBaseUrl;
+    ETH_MARKET_PRICE_ORACLE_URL = config[DevMode.Rinkeby].EthMarketPriceOracleUrl;
+    ETHSCAN_ROPSTEN_API_URL = config[DevMode.Rinkeby].EthscanRopstenUrl;
+    ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config[DevMode.Rinkeby].EthscanRopstenTokenTransferEvent;
+} else if (config.dev_mode === DevMode.Prod) {
+    ETH_API_BASE_URL = config[DevMode.Prod].EthApiBaseUrl;
+    ETH_MARKET_PRICE_ORACLE_URL = config[DevMode.Prod].EthMarketPriceOracleUrl;
+    ETHSCAN_ROPSTEN_API_URL = config[DevMode.Prod].EthscanRopstenUrl;
+    ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT = config[DevMode.Prod].EthscanRopstenTokenTransferEvent;
 }
 
 /* tslint:disable:prefer-template */
@@ -140,7 +146,7 @@ export class Api {
             if (obj.data) {
                 // console.log('obj.data1-------------',obj.data);
                 obj.data = web3.toHex(obj.data);
-                // console.log('obj.data2-------------',obj.data);
+                console.log('obj.data2-------------',obj);
             }
             web3.eth.estimateGas(obj, (err, res) => {
                 if (!err) {

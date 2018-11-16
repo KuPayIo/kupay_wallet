@@ -3,9 +3,16 @@ import { findModulConfig } from './modulConfig';
 /**
  * config file
  */
-// dev--开发，prod--发布
+/**
+ * 环境配置
+ */
+export enum DevMode {
+    Prod = 'prod',      // 发布环境
+    Ropsten = 'ropsten',   // ropsten测试环境
+    Rinkeby = 'rinkeby'   // rinkeby测试环境
+}
 // tslint:disable-next-line:variable-name
-export const dev_mode = 'dev';
+export const dev_mode:DevMode = DevMode.Rinkeby;
 const walletName = findModulConfig('WALLET_NAME');
 
 // 主网erc20
@@ -128,7 +135,7 @@ const ERC20TokensMainnet = {
 };
 
 // 测试网erc20
-const ERC20TokensRosten = {
+const ERC20TokensRopsten = {
     TRX:{
         contractAddr:'0xBC23ef0B97954a0F7e0402A66B3EB5171DE19702',
         description:'TRON',
@@ -247,7 +254,7 @@ const ERC20TokensRosten = {
 };
 
 // 测试网rinkeby erc20
-const ERC20TokensTestnet = {
+const ERC20TokensRinkeby = {
     TRX:{
         contractAddr:'0x06561C88B07600d9cF423e6238502733c9Ca4c5B',
         description:'TRON',
@@ -364,8 +371,23 @@ const ERC20TokensTestnet = {
         decimals:6
     }
 };
+const getERC20Tokens = () => {
+    let erc20Tokens = ERC20TokensMainnet;
+    switch (dev_mode) {
+        case DevMode.Ropsten:
+            erc20Tokens = ERC20TokensRopsten;
+            break;
+        case DevMode.Rinkeby:
+            erc20Tokens = ERC20TokensRinkeby;
+            break;
+        default: 
+            erc20Tokens = ERC20TokensMainnet;
+    }
+    
+    return erc20Tokens;
+};
 // 导出ERC20Tokens
-export const ERC20Tokens = dev_mode === 'dev' ? ERC20TokensTestnet : ERC20TokensMainnet;
+export const ERC20Tokens = getERC20Tokens(); 
 
 // 主网的币种
 export const MainChainCoin = {

@@ -1,15 +1,16 @@
 /**
  * Api v2
  */
+import { DevMode } from '../../config';
 import { config } from '../config';
 
 /* tslint:disable:no-var-keyword */
-if (config.dev_mode === 'dev') {
-    var BTC_API_BASE_URL = config.dev.BtcApiBaseUrl;
-    var BTC_MARKET_PRICE_ORACLE_URL = config.dev.BtcMarketPriceOracleUrl;
-} else if (config.dev_mode === 'prod') {
-    BTC_API_BASE_URL = config.prod.BtcApiBaseUrl;
-    BTC_MARKET_PRICE_ORACLE_URL = config.prod.BtcMarketPriceOracleUrl;
+if (config.dev_mode === DevMode.Prod) {
+    var BTC_API_BASE_URL = config[DevMode.Prod].BtcApiBaseUrl;
+    var BTC_MARKET_PRICE_ORACLE_URL = config[DevMode.Prod].BtcMarketPriceOracleUrl;
+} else {
+    BTC_API_BASE_URL = config[DevMode.Ropsten].BtcApiBaseUrl;
+    BTC_MARKET_PRICE_ORACLE_URL = config[DevMode.Ropsten].BtcMarketPriceOracleUrl;
 }
 
 type BlanceType = 'balance' | 'totalReceived' | 'totalSent' | 'unconfirmed';
@@ -86,14 +87,14 @@ export const BtcApi = {
 
     estimateMinerFee: async (): Promise<any> => {
         // use blockcypher.com at present
-        let response = await fetch("https://api.blockcypher.com/v1/btc/main");
-        let json = await response.json();
+        const response = await fetch('https://api.blockcypher.com/v1/btc/main');
+        const json = await response.json();
 
         return {
-            "high": json.high_fee_per_kb,
-            "medium": json.medium_fee_per_kb,
-            "low": json.low_fee_per_kb
-        }
+            high: json.high_fee_per_kb,
+            medium: json.medium_fee_per_kb,
+            low: json.low_fee_per_kb
+        };
     },
 
     getExchangeRate: async (): Promise<any> => {
