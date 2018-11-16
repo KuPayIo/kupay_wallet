@@ -1,7 +1,7 @@
 <div class="new-page" ev-back-click="backPrePage" w-class="new-page">
     {{: topBarTitle = {"zh_Hans":"私钥","zh_Hant":"私鑰","en":""} }}
     <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
-    <div style="overflow-x: hidden;overflow-y: auto;flex: 1 0 0;-webkit-overflow-scrolling: touch;">
+    <div style="overflow-x: hidden;overflow-y: auto;flex: 1 0 0;-webkit-overflow-scrolling: touch;scroll-behavior: smooth;">
         <div w-class="content">
             {{: title = [{"zh_Hans":"什么是私钥？","zh_Hant":"什麼是私鑰？","en":""},
             {"zh_Hans":"如何使用私钥？","zh_Hant":"如何使用私鑰？","en":""}] }}
