@@ -31,6 +31,7 @@ export const rpcProviderSendAsync = (payload, callback) => {
         addr = addr ? [addr] : [];
         callback(null,{ jsonrpc: '2.0', result: addr, id: payload.id });
     } else if (payload.method === 'eth_sendTransaction') {
+        // alert(`payload is ${JSON.stringify(payload)}`);
         const ethPayload = {
             fromAddr:payload.params[0].from,
             toAddr:payload.params[0].to,

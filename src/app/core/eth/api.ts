@@ -140,18 +140,19 @@ export class Api {
      * @memberof Api
      */
     public estimateGas(obj: { to: any; data: any }): Promise<number> {
-        // console.log('erc20 addr=====',obj.to);
         return new Promise((resolve, reject) => {
             initWeb3();
             if (obj.data) {
-                // console.log('obj.data1-------------',obj.data);
                 obj.data = web3.toHex(obj.data);
-                console.log('obj.data2-------------',obj);
             }
             web3.eth.estimateGas(obj, (err, res) => {
                 if (!err) {
+                    // console.log(obj,res);
+
                     return resolve(res);
                 } else {
+                    // console.log(obj,err);
+
                     return reject(err);
                 }
             });

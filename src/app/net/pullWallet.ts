@@ -4,6 +4,7 @@
 // ===================================================== 导入
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
+import { Collapse } from '../components/collapse/collapse1';
 import { defaultEthToAddr, ERC20Tokens } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
@@ -76,7 +77,9 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
             const api = new EthApi();
             const nonce = txRecord.nonce;
             const localNonce = getEthNonce(fromAddr);
-            // let gasLimit = await api.estimateGas({ to: txPayload.toAddr, data: txPayload.data });
+            // 0xe209a49a0000000000000000000000000000000000000000000000000000000000000001
+            // toAddr  0x0e7f42cdf739c06dd3c1c32fab5e50ec9620102a
+            // api.estimateGas({ to: txPayload.toAddr, data: txPayload.data });
             // TODO  直接使用预估出来的gasLimit交易有可能失败   零时解决
             const gasLimit = Math.floor(21000 * 10);
             let newNonce = nonce;
@@ -349,6 +352,8 @@ export const estimateGasERC20 = (currencyName:string,toAddr:string,amount:number
     const api = new EthApi();
 
     const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
+
+    console.log('estimateGasERC201111111111111111111111111111',{ to: ERC20Tokens[currencyName].contractAddr, data: transferCode });
 
     return api.estimateGas({ to: ERC20Tokens[currencyName].contractAddr, data: transferCode });
 };
