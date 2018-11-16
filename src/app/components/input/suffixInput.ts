@@ -9,10 +9,10 @@
  * style?: 样式
  * 外部可监听 ev-input-change，ev-input-blur，ev-input-focus，ev-input-clear事件
  */
+import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { getRealNode } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
-import { getLang } from '../../../pi/util/lang';
 
 interface Props {
     available:boolean;// 输入的内容是否可用,false 后缀显示叉 true显示勾
@@ -44,7 +44,7 @@ export class SuffixInput extends Widget {
     }
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
-        if(props.placeHolder){
+        if (props.placeHolder) {
             this.props.placeHolder = this.props.placeHolder[getLang()];
         }
         if (props.input) {

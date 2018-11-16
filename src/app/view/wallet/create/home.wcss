@@ -113,5 +113,4 @@
 .input-father{
     margin: 0 60px 30px;
     height: 100px;
-    border-bottom: 1px solid #ccc;
 }

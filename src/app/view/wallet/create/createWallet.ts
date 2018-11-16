@@ -73,6 +73,12 @@ export class CreateWallet extends Widget {
         this.state.pswEqualed = pswEqualed(this.state.walletPsw, this.state.walletPswConfirm);
         this.paint();
     }
+
+    // 清除密码
+    public pwsClear() {
+        this.state.walletPsw = '';  
+        this.paint();
+    }
     public selectImageClick() {
         selectImage((width, height, base64) => {
             resize({ url:base64, width: 140, ratio: 0.3, type: 'jpeg' },(res) => {
@@ -103,26 +109,28 @@ export class CreateWallet extends Widget {
         this.paint();
     }
     public async createClick() {
-        if (!this.state.userProtocolReaded) {
-            return;
-        }
         if (!walletNameAvailable(this.state.walletName)) {
             popNew('app-components1-message-message', { content: this.language.tips[0] });
-
+            
             return;
         }
         if (!this.state.walletPsw || !this.state.walletPswConfirm) {
             popNew('app-components1-message-message', { content: this.language.tips[1] });
-
+            
             return;
         }
         if (!this.state.walletPswAvailable) {
             popNew('app-components1-message-message', { content: this.language.tips[2] });
-
+            
             return;
         }
         if (!this.state.pswEqualed) {
             popNew('app-components1-message-message', { content: this.language.tips[3] });
+            
+            return;
+        }
+        if (!this.state.userProtocolReaded) {
+            popNew('app-components1-message-message', { content: this.language.tips[5] });
 
             return;
         }
