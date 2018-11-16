@@ -56,7 +56,7 @@
                     
                 </div>
                 <div w-class="choose-fee">
-                    <span><pi-ui-lang>{{tags[5]}}</pi-ui-lang>&nbsp;{{it1.minerFee}}</span>
+                    <span on-tap="speedDescClick"><pi-ui-lang>{{tags[5]}}</pi-ui-lang>&nbsp;{{it1.minerFee}}</span>
                     <img src="../../../res/image/41_gray.png" on-tap="speedDescClick" w-class="descImg"/>
                 </div>
             </div>

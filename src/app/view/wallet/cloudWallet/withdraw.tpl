@@ -50,7 +50,7 @@
                         <pi-ui-lang>{{phrase[3]}}</pi-ui-lang>
                         <span w-class="fee">{{it1.minerFee}}&nbsp;{{it.currencyName}}</span>
                     </div>
-                    <img src="../../../res/image/41_gray.png" on-tap="minerFeeDescClick" style="border: 20px solid transparent;"/>
+                    <img src="../../../res/image/41_gray.png" on-tap="minerFeeDescClick" style="border: 20px solid transparent;width: 32px;"/>
                 </div>
             </div>
 
