@@ -36,8 +36,8 @@ export class Home extends Widget {
                 { img:'../../../res/image1/10.png',name: '',components:'app-view-mine-other-help' },
                 { img:'../../../res/image1/21.png',name: '',components:'app-view-mine-setting-setting' },
                 { img:'../../../res/image1/23.png',name: '',components:'app-view-mine-other-contanctUs' },
-                { img:'../../../res/image1/24.png',name: '',components:'app-view-mine-other-aboutus' },
-                { img:'../../../res/image1/43.png',name: '',components:'' }
+                { img:'../../../res/image1/24.png',name: '',components:'app-view-mine-other-aboutus' }
+                
             ],
             address,
             userName:'',
@@ -48,6 +48,9 @@ export class Home extends Widget {
             offline:false,
             walletName : findModulConfig('WALLET_NAME')
         };
+        if (findModulConfig('GITHUB')) {
+            this.state.list.push({ img:'../../../res/image1/43.png',name: '',components:'' });
+        }
         this.initData();
     }
 

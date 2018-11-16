@@ -47,7 +47,7 @@ export class Transfer extends Widget {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             toAddr:tx ? tx.toAddr : '',
             amount:tx ? tx.pay : 0,
-            balance:getCurrentAddrInfo(this.props.currencyName).balance,
+            balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
             minerFee:minerFeeList[curLevel].minerFee,
             minerFeeList,
             curLevel,

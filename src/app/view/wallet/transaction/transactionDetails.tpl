@@ -34,7 +34,7 @@
             <div w-class="amount">{{it1.tx.txType === 1 ? '-' : '+'}}{{it1.tx.pay}}&nbsp;{{it1.tx.currencyName}}</div>
             <div w-class="item" on-tap="copyToAddr">
                 <div w-class="tag"><pi-ui-lang>{{tags[0]}}</pi-ui-lang></div>
-                <div w-class="content"><span>{{it1.tx.toAddr}}</span><img src="../../../res/image/copy.png" w-class="copy"/></div>
+                <div w-class="content"><span>{{it1.tx.toAddr}}</span><img src="app/res/image/copy_gray.png" width="30px" w-class="copy"/></div>
             </div>
             <div w-class="item">
                 <div w-class="tag"><pi-ui-lang>{{tags[1]}}</pi-ui-lang></div>
@@ -52,11 +52,11 @@
             </div>
             <div w-class="item" on-tap="copyHash">
                 <div w-class="tag"><pi-ui-lang>{{tags[4]}}</pi-ui-lang></div>
-                <div w-class="content"><span>{{it1.hashShow}}</span><img src="../../../res/image/copy.png" w-class="copy" /></div>
+                <div w-class="content"><span>{{it1.hashShow}}</span><img src="app/res/image/copy_gray.png" width="30px" w-class="copy" /></div>
             </div>
             <div w-class="item" on-tap="copyFromAddr">
                 <div w-class="tag"><pi-ui-lang>{{tags[5]}}</pi-ui-lang></div>
-                <div w-class="content"><span>{{it1.tx.fromAddr}}</span><img src="../../../res/image/copy.png" w-class="copy" /></div>
+                <div w-class="content"><span>{{it1.tx.fromAddr}}</span><img src="app/res/image/copy_gray.png" width="30px" w-class="copy" /></div>
             </div>
             <div w-class="qrcode-container" on-tap="openNewWeb">
                 <app-components-qrcode-qrcode>{value:{{it1.qrcode}},size:200}</app-components-qrcode-qrcode>

@@ -3,7 +3,7 @@
     <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="aboutus-img">
-            <img src="../../../res/image/img_logo.png" w-class="logoimg"/>
+            <img src="{{it1.walletLogo}}" w-class="logoimg"/>
         </div>
         <div w-class="version">V{{it1.version}}</div>
         <div w-class="shortmess">

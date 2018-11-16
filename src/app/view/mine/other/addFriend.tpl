@@ -8,7 +8,7 @@
             <span w-class="userName">{{it1.userName}}</span>
         </div>
         <div w-class="address" on-tap="copyAddr">{{it1.address}}
-            <img src="../../../res/image/42.png" w-class="copy"/>
+            <img src="../../../res/image/copy_gray.png" width="30px" w-class="copy"/>
         </div>
         <div style="text-align: center;">
             <app-components-qrcode-qrcode>{value:{{it1.address}},size:"350"}</app-components-qrcode-qrcode>
