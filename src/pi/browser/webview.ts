@@ -12,8 +12,8 @@ export class WebViewManager extends NativeObject {
      * 注：webViewName不能和已有的WebView重复，如果相同，抛异常
      * 注：主WebView的名字是"default"
      */
-    static open(webViewName: string, url: string, title: string) {
-        webViewMgr.call("openWebView", { webViewName, url, title });
+    static open(webViewName: string, url: string, title: string, injectContent: string) {
+        webViewMgr.call("openWebView", { webViewName, url, title, injectContent });
     }
 
     /**
@@ -97,7 +97,10 @@ registerSign(WebViewManager, {
     }, {
         name: "title",
         type: ParamType.String
-    }],
+    }, {
+        name: "injectContent",
+        type: ParamType.String
+    }],    
     closeWebView: [{
         name: "webViewName",
         type: ParamType.String

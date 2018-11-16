@@ -1,18 +1,18 @@
 /**
  * play home 
  */
-// ================================ 导入
+ // ================================ 导入
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { register } from '../../../store/memstore';
 import { getUserInfo, popNewMessage } from '../../../utils/tools';
 
 import { WebViewManager } from '../../../../pi/browser/webview';
-import { transfer3 } from '../../../net/pullWallet';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,9 +20,27 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
+    
     public ok: () => void;
     public language:any;
+    public web3Promise: Promise<string>;
+    
+    constructor() {
+        super();
 
+        this.web3Promise = new Promise((resolve) => {
+            const path = 'app/core/thirdparty/web3_rpc.js.txt';
+            loadDir([path], undefined, undefined, undefined, fileMap => {
+                let content = '';
+                const arr = new Uint8Array(fileMap[path]);
+                for (let i = 0; i < arr.length; ++i) {
+                    content += String.fromCharCode(arr[i]);
+                }
+                resolve(content);
+            }, () => {}, () => {});
+        });
+    }
+    
     public setProps(props:Json) {
         super.setProps(props);
         this.language = this.config.value[getLang()];
@@ -42,11 +60,11 @@ export class PlayHome extends Widget {
     }
 
     public enterGames2Click() {
-        // http://47.244.59.13/web-rinkeby/index.html
-        WebViewManager.open('Crypto Fishing', 'http://47.244.59.13/web-rinkeby/index.html?' + Math.random(), 'Crypto Fishing');
-        // transfer3('123456789',{ abc:'123' },(err,hash) => {
-        //     console.log(`err is ${err}, hash is ${hash}`);
-        // });
+        const gameTitle = 'Crypto Fishing';
+        const gameUrl = 'http://47.244.59.13/web-rinkeby/index.html';
+        this.web3Promise.then(content => {
+            WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+        });
     }
 
     public getCode(event:any) {

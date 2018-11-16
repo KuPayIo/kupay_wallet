@@ -2,8 +2,8 @@
  * ETH wallet implementation
  */
 import { ERC20Tokens } from '../../config';
-import { getFirstEthAddr } from '../../logic/localWallet';
-import { transfer3, TxPayload } from '../../net/pullWallet';
+import { getCurrentEthAddr } from '../../logic/localWallet';
+import { transfer3 } from '../../net/pullWallet';
 import { config } from '../config';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
@@ -27,7 +27,7 @@ export const rpcProviderSendAsync = (payload, callback) => {
     initWeb3();    
     
     if (payload.method === 'eth_accounts') {
-        let addr = getFirstEthAddr();
+        let addr = getCurrentEthAddr();
         addr = addr ? [addr] : [];
         callback(null,{ jsonrpc: '2.0', result: addr, id: payload.id });
     } else if (payload.method === 'eth_sendTransaction') {
@@ -36,12 +36,8 @@ export const rpcProviderSendAsync = (payload, callback) => {
             toAddr:payload.params[0].to,
             pay:payload.params[0].value,
             currencyName:'ETH',
-            fee:0.000273,
-            minerFeeLevel:0,
             data:payload.params[0].data
         };    
-        // payload.passwd = '123456789';
-        // alert(`payload is ${JSON.stringify(payload)}`);
         try {
             const promise = transfer3(payload.passwd,ethPayload);
 

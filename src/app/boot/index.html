@@ -83,7 +83,7 @@
 			align-items: center;
 			position: absolute;
 			z-index: 9998;
-			background-image: url(../res/image/bg_open.png);
+			background-image: url(../res/image/bg_open.jpg);
 			background-position: center;
 			background-repeat: no-repeat;
 			background-size: 239px 188px;
@@ -193,7 +193,7 @@
 			winit.store = name;
 			// winit.debug = !remote;
 			// winit.debug = false;
-			winit.debug = true;
+			winit.debug = false;
 			// winit.debug = location.host.indexOf('192.168.31') > -1;
 			main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
@@ -221,6 +221,9 @@
 			// winit.severIp = "192.168.9.15";
 			// winit.severPort = "80";			
 			//---------国内------
+			// winit.severIp = "app.kuplay.io";
+			// winit.severPort = "80";
+
 			winit.severIp = "test.kuplay.io";
 			winit.severPort = "80";
 			// winit.severIp = "47.244.29.209";
