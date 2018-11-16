@@ -148,8 +148,11 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-components1-modalBox-modalBox', this.language.modalBox2, () => {
-            this.backUp();
+        const backup = this.state.wallet.isBackup;
+        popNew('app-components1-modalBox-modalBox', backup ? this.language.modalBox2[1] :this.language.modalBox2[0] , () => {
+            if (!backup) {
+                this.backUp();
+            }
             console.log('备份');
         }, () => {
             popNew('app-components1-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
@@ -166,8 +169,11 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-components1-modalBox-modalBox', this.language.modalBox3, () => {
-            this.backUp();
+        const backup = this.state.wallet.isBackup;
+        popNew('app-components1-modalBox-modalBox', backup ? this.language.modalBox3[1] :this.language.modalBox3[0] , () => {
+            if (!backup) {
+                this.backUp();
+            }
             console.log('备份');
         }, () => {
             popNew('app-components1-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {

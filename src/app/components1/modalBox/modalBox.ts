@@ -3,7 +3,6 @@
  */
 import { Widget } from '../../../pi/widget/widget';
 
-
 interface Props {
     title: string;
     content: string;
