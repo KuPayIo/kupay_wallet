@@ -49,6 +49,7 @@
     padding: 30px 20px 130px;
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
