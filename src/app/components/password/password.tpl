@@ -1,6 +1,6 @@
 <div>
-    <div w-class="pswInput" ev-input-change="pswChange" ev-input-focus="iconChange()">
-        <div style="flex: 1">
+    <div w-class="pswInput" ev-input-change="pswChange" ev-input-blur="pswBlur()" ev-input-focus="iconChange()">
+        <div style="flex: 1;height: 100%;">
             {{if it.placeHolder}}
                 {{: placeHolder = it.placeHolder }}
             {{else}}
@@ -15,7 +15,7 @@
         {{end}}
     </div>
 
-    <div style="display: flex;flex: 3;">
+    <div w-class="pseRank-line" style="display: flex;flex: 3;">
         <div w-class="line line{{it1.secret>0?it1.secret:''}}"></div>
         <div w-class="line line{{it1.secret>1?it1.secret:''}}"></div>
         <div w-class="line line{{it1.secret>2?it1.secret:''}}"></div>

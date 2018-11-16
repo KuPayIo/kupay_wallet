@@ -6,12 +6,12 @@
 
 // =================================================导入
 import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
+import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { sendCode } from '../../net/pull';
-import { getLang } from '../../../pi/util/lang';
 import { register } from '../../store/memstore';
-import { Forelet } from '../../../pi/widget/forelet';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -34,7 +34,7 @@ export class BindPhone extends Widget {
             isShowNewCode: false,
             countdown: 0,
             phone: '',
-            limitTime: 60,
+            limitTime: 60
         };
         // const t = find('lastGetSmsCodeTime'); // 不保留获取验证码倒计时
         // if (t) {

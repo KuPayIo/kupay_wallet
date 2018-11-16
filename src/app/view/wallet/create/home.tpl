@@ -5,14 +5,15 @@
         {{: topBarTitle = {"zh_Hans":"登录","zh_Hant":"登錄","en":""} }}
         <app-components1-topBar-topBar>{"title":{{topBarTitle}},"background":"rgba(0,0,0,0)" }</app-components1-topBar-topBar>
     </div>
+    
+    {{: btnName = [
+        {"zh_Hans":"创建标准账户","zh_Hant":"創建標準賬戶","en":""},
+        {"zh_Hans":"使用照片创建账户","zh_Hant":"使用照片創建賬戶","en":""},
+        {"zh_Hans":"登录","zh_Hant":"登錄","en":""}] }}
 
     {{if !it1.login}}
     <div w-class="body1">
         <div ev-btn-tap="createStandardClick">
-            {{: btnName = [
-                {"zh_Hans":"创建标准账户","zh_Hant":"創建標準賬戶","en":""},
-                {"zh_Hans":"使用照片创建账户","zh_Hant":"使用照片創建賬戶","en":""},
-                {"zh_Hans":"登录","zh_Hant":"登錄","en":""}] }}
             <app-components1-btn-btn>{"name":{{btnName[0]}},"types":"big","color":"blue"}</app-components1-btn-btn>
         </div>
         <div ev-btn-tap="createByImgClick">

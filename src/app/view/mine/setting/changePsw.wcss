@@ -12,6 +12,5 @@
 }
 .inputItem{
     height: 110px;
-    border-bottom: 2px solid #DBDBE5;
     margin: 0 10px;
 }

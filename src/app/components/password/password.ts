@@ -6,7 +6,7 @@
  * tips:下方提示语句
  * imit:强度限制，只限制长度传1，长度加两种数据类型传2，默认是1
  * placeHolder：输入框中提示文字
- * 监听 ev-pswSuccess 事件，event.password 获取密码值,event.success 获取当前密码是否符合规则
+ * 监听 ev-pswSuccess 事件，event.password 获取密码值,event.success 获取当前密码是否符合规则 ev-input-clear清除
  */
 // ================================ 导入
 import { Json } from '../../../pi/lang/type';
@@ -40,9 +40,9 @@ export class ImgRankItem extends Widget {
         this.state = {
             password:'',
             secret:0,
-            showTips:true,
+            showTips:false,
             isSuccess:false,
-            showIcon:false,
+            showIcon:false
         };
     }
 
@@ -84,6 +84,14 @@ export class ImgRankItem extends Widget {
         this.paint();
     }
 
+    public pswBlur() {
+        if (!this.state.password) {
+            this.state.showTips = false;
+            this.state.showIcon = false;
+        }
+        this.paint();
+    }
+
     /**
      * 选中输入框后图标切换
      */
@@ -99,9 +107,11 @@ export class ImgRankItem extends Widget {
     /**
      * 情况输入框
      */
-    public clear() {
+    public clear(event:any) {
         this.state.password = '';
         this.state.secret = 0;
+        this.state.showIcon = false;
+        notify(event.node,'ev-psw-clear',{});
         this.paint(true);
     }
 

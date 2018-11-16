@@ -1,5 +1,5 @@
 {{: ty = it.itype == 'password' ? 'password' : 'text'}}
-<div w-class="pi-input-box" class="pi-input">
+<div w-class="pi-input-box {{it.notUnderLine?'':'input-focused-'+it1.focused}}" class="pi-input">
     <input 
         w-class="pi-input__inner" 
         style="{{it.style ? it.style : ''}}"

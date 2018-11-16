@@ -6,7 +6,7 @@
             <widget w-tag="app-components1-img-img" on-tap="uploadAvatar">{imgURL:{{it1.avatar}},width:"120px;"}</widget>
             <div style="flex: 1 0 0;" ev-input-blur="walletNameInputBlur" ev-input-change="walletNameInputChange">
                 {{: defaultName = {"zh_Hans":"昵称未设置","zh_Hant":"暱稱未設置","en":""} }}
-                <app-components1-input-input>{input:{{it1.nickName}},maxLength:10,autofocus:true,placeHolder:{{defaultName}},disabled:{{!it1.userInput}} }</app-components1-input-input>
+                <app-components1-input-input>{input:{{it1.nickName}},maxLength:10,autofocus:true,placeHolder:{{defaultName}},disabled:{{!it1.userInput}},notUnderLine:true }</app-components1-input-input>
             </div>
             <img src="../../../res/image/edit_blue.png" w-class="edit" on-tap="changeInput"/>
             

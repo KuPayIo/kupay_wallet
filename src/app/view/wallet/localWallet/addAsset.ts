@@ -1,11 +1,11 @@
 /**
  * add asset 
  */
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../logic/dataCenter';
 import { getStore, setStore } from '../../../store/memstore';
 import { fetchWalletAssetListAdded, getCurrentAddrInfo, getLanguage } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 
 export class AddAsset extends Widget {
     public ok:() => void;
@@ -20,7 +20,7 @@ export class AddAsset extends Widget {
         this.state = {
             assetList,
             searchText:'',
-            showAssetList:assetList,
+            showAssetList:assetList
         };
         console.log(this.state);
     }
