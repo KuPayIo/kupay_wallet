@@ -3,7 +3,10 @@
         {{: topBarTitle = {"zh_Hans":it.currencyName,"zh_Hant":it.currencyName,"en":""} }}
         <app-components1-topBar-topBar>{"title":{{topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6)",refreshImg:"../../res/image1/refresh_white.png"}</app-components1-topBar-topBar>
         <div w-class="head2">
-            <div w-class="head2-left"><span w-class="balance">{{it1.balance}}</span><span w-class="balance-value">{{it1.currencyUnitSymbol}}{{it1.balanceValue}}</span></div>
+            <div w-class="head2-left">
+                <span w-class="balance">{{it1.balance.toFixed(2)}}</span>
+                <span w-class="balance-value">{{it1.currencyUnitSymbol}}{{it1.balanceValue}}</span>
+            </div>
             <div w-class="head2-right">
                 <span w-class="btn" on-tap="rechargeClick"><pi-ui-lang>{"zh_Hans":"充值","zh_Hant":"充值","en":""}</pi-ui-lang></span>
                 <span w-class="btn btn-withdraw" on-tap="withdrawClick"><pi-ui-lang>{"zh_Hans":"提币","zh_Hant":"提幣","en":""}</pi-ui-lang></span>

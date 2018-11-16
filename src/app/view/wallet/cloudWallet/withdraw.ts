@@ -2,6 +2,7 @@
  * Withdraw
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { withdrawMinerFee } from '../../../config';
 import { withdraw } from '../../../net/pullWallet';
@@ -9,7 +10,6 @@ import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore } from '../../../store/memstore';
 import { withdrawLimit } from '../../../utils/constants';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 interface Props {
     currencyName:string;
 }
@@ -31,7 +31,7 @@ export class Withdraw extends Widget {
             amount:0,
             minerFee,
             withdrawAddr:getCurrentAddrInfo(currencyName).addr,
-            withdrawAddrInfo:this.parseAddrsInfo(),
+            withdrawAddrInfo:this.parseAddrsInfo()
         };
     }
 
