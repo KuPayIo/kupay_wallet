@@ -17,7 +17,7 @@
             
             <div w-class="address" on-tap="copyAddr">
                 <span w-class="addrNum">{{it1.address}}</span>
-                <img src="../../../res/image1/42.png" w-class="copy"/>
+                <img src="../../../res/image/copy_write.png" width="40px" w-class="copy"/>
             </div>
             {{else}}
             <div w-class="userName">

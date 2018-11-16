@@ -78,7 +78,6 @@ div{
 }
 @keyframes fourParaImgItemShow{
     0%{opacity:0;transform: translateY(180px);}
-    70%{opacity:0.2;transform: translateY(50px);}
     100%{opacity:1;transform: translateY(0px);}
 }
 .refreshing{

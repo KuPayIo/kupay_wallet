@@ -19,10 +19,11 @@ export class ContanctUs extends Widget {
         this.state = {
             version:getLocalVersion(),
             data:[
-                { value: this.language.itemTitle[0],desc:`www.${findModulConfig('WALLET_NAME')}.io` },
+                { value: this.language.itemTitle[0],desc:findModulConfig('WALLET_WEBSITE') },
                 { value: this.language.itemTitle[1],desc:findModulConfig('WALLET_NAME') + this.language.itemTitle[2] },
                 { value: this.language.itemTitle[3],desc:findModulConfig('WALLET_NAME') }
             ],
+            walletLogo:findModulConfig('WALLET_LOGO'),
             walletName:findModulConfig('WALLET_NAME')
         };
     }
@@ -33,9 +34,9 @@ export class ContanctUs extends Widget {
 
     public itemClick(e:any,ind:any) {
         switch (ind) {
-            // 点击KuPay官网
+            // 点击钱包官网
             case 0:
-                openNewActivity('http://www.KuPay.io',this.state.walletName);
+                openNewActivity(this.state.data[0].desc,this.state.walletName);
                 break;
             // KuPay小助手
             case 1:

@@ -25,6 +25,7 @@ export class Aboutus extends Widget {
                 { value: this.language.itemTitle[1], components: '' },
                 { value: this.language.itemTitle[2], components: '' }
             ],
+            walletLogo:findModulConfig('WALLET_LOGO'),
             walletName:findModulConfig('WALLET_NAME')
         };
     }

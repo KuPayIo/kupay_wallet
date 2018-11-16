@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" >
 
-    <img src="../../../res/image/login_bg.png" w-class="logo"/>
+    <img src="{{it1.loginImg}}" w-class="logo"/>
     <div ev-back-click="backPrePage" w-class="title-container">
         {{: topBarTitle = {"zh_Hans":"登录","zh_Hant":"登錄","en":""} }}
         <app-components1-topBar-topBar>{"title":{{topBarTitle}},"background":"rgba(0,0,0,0)" }</app-components1-topBar-topBar>

@@ -21,7 +21,7 @@
                 <div w-class="item">
                     <div w-class="inner-tip">
                         <span>{{it.currencyName}} <pi-ui-lang>{{tags[0]}}</pi-ui-lang></span> 
-                        <span w-class="balance"><pi-ui-lang>{{tags[1]}}</pi-ui-lang>&nbsp;{{it1.balance.toFixed(2)}}</span>
+                        <span w-class="balance"><pi-ui-lang>{{tags[1]}}</pi-ui-lang>&nbsp;{{it1.balance%1===0?it1.balance.toFixed(2):it1.balance}}</span>
                     </div>
                     <div w-class="input-father" ev-input-change="amountChange">
                         <div w-class="balance-value">≈{{it1.currencyUnitSymbol+" "+it1.amountShow}}</div>
@@ -51,7 +51,7 @@
                                 <pi-ui-lang>{{it1.minerFeeList[it1.curLevel].text}}</pi-ui-lang>
                             {{end}}
                         </span>
-                        <img src="app/res/image/down_arrow_gray.png"/>
+                        <img src="app/res/image/down_arrow_gray.png" width="32px"/>
                     </div>
                     
                 </div>
