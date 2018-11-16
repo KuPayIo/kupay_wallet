@@ -16,7 +16,9 @@ export class WechatQrcode extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
         this.state = {
-            walletName:findModulConfig('WALLET_NAME')
+            walletName:findModulConfig('WALLET_NAME'),
+            wachatHelperQrcode:findModulConfig('WECHAT_HELPER'),
+            wachatQrcode:findModulConfig('WECHAT_ACCOUNT')
         };
     }
 

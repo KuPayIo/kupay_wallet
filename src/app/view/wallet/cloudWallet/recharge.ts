@@ -10,7 +10,7 @@ import { recharge, resendRecharge } from '../../../net/pullWallet';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchMinerFeeList, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -44,7 +44,7 @@ export class Recharge extends Widget {
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             amount:tx ? tx.pay : 0,
-            balance:getCurrentAddrInfo(this.props.currencyName).balance,
+            balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
             minerFee:minerFeeList[curLevel].minerFee,
             minerFeeList,
             curLevel,

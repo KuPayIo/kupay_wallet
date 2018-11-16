@@ -114,8 +114,6 @@
     width: 400px;
 }
 .copy{
-    width: 40px;
-    height: 40px;
     margin-left: 40px;
     margin-right: 50px;
     border: 10px solid transparent;

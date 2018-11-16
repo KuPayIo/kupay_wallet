@@ -3,7 +3,7 @@
     <app-components1-topBar-topBar>{title:{{topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="aboutus-img">
-            <img src="../../../res/image/img_logo.jpg" w-class="logoimg"/>
+            <img src="{{it1.walletLogo}}" w-class="logoimg"/>
         </div>
         <div w-class="version">V{{it1.version}}</div>
         {{: shortMess = {"zh_Hans":it1.walletName+"是一款功能全面、简单易用的钱包应用。","zh_Hant":it1.walletName+"是一款功能全面、簡單易用的錢包應用。","en":""} }}

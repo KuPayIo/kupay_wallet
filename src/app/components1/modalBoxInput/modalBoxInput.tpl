@@ -13,7 +13,7 @@
         </div>
 
         <div style="height: 90px;" ev-input-change="change">
-            <app-components1-input-input>{placeHolder: {{it.placeholder?it.placeholder:""}},itype:{{it.itype?it.itype:"text"}},style:"padding:0;font-size:28px;",underLine:true }</app-components1-input-input>
+            <app-components1-input-input>{placeHolder: {{it.placeholder?it.placeholder:""}},itype:{{it.itype?it.itype:"text"}},style:"padding:0;font-size:28px;",underLine:true,autofocus:true }</app-components1-input-input>
         </div>
         <div w-class="btns">
             {{if it.cancelText}}
