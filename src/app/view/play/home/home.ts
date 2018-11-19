@@ -10,7 +10,7 @@ import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { register } from '../../../store/memstore';
-import { getUserInfo, popNewMessage } from '../../../utils/tools';
+import { getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
 
 import { WebViewManager } from '../../../../pi/browser/webview';
 
@@ -50,6 +50,12 @@ export class PlayHome extends Widget {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
             this.props.refresh = false;
         }
+        this.props.gameList = [
+            {
+                title:'Crypto Fishing',
+                url:'http://47.244.59.13/web-rinkeby/index.html'
+            }
+        ];
     }
 
     public backPrePage() {
@@ -61,6 +67,7 @@ export class PlayHome extends Widget {
     }
 
     public enterGames2Click() {
+        if (!hasWallet()) return;
         const gameTitle = 'Crypto Fishing';
         const gameUrl = 'http://47.244.59.13/web-rinkeby/index.html';
         this.web3Promise.then(content => {
@@ -93,8 +100,17 @@ export class PlayHome extends Widget {
 
     }
 
-    public gameClick() {
-        popNewMessage(this.language.tips);
+    public gameClick(num:number) {
+        if (!hasWallet()) return;
+        if (!this.props.gameList[num]) {
+            popNewMessage(this.language.tips);
+        } else {
+            const gameTitle = this.props.gameList[num].title;
+            const gameUrl =   this.props.gameList[num].url;
+            this.web3Promise.then(content => {
+                WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+            });
+        }
     }
 }
 register('user/info',() => {
