@@ -140,7 +140,7 @@ export class Api {
      * @memberof Api
      */
     // tslint:disable-next-line:no-reserved-keywords
-    public estimateGas(obj: { to: any; from: any ;value:any;data: any }): Promise<number> {
+    public estimateGas(obj: { to: any; from?: any ;value?:any;data: any }): Promise<number> {
         return new Promise((resolve, reject) => {
             initWeb3();
             if (obj.data) {

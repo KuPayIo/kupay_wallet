@@ -171,3 +171,8 @@ export enum CMD {
  * 调用本地文件url前缀
  */
 export const localUrlPre = 'file:///';
+
+/**
+ * 预估出来的erc20 gasLimit倍数
+ */
+export const erc20GasLimitRate = 2;

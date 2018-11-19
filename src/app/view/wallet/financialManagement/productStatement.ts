@@ -20,7 +20,7 @@ export class ProductStatement extends Widget {
     public init() {
         this.state = {
             statement:getStaticLanguage().notice,
-            readed:false,
+            readed:false
         };
     }
     public checkBoxClick(e: any) {
