@@ -20,6 +20,9 @@ export const defalutShowCurrencys = ['ETH', 'BTC','TRX','BNB','WTC','VEN'];
 // 默认不可更改显示货币列表
 export const notSwtichShowCurrencys = ['ETH', 'BTC'];
 
+// 默认不可更改显示货币列表
+export const notSwtichShowCurrencys = ['ETH', 'BTC'];
+
 //
 export const strength = 128;
 
