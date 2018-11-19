@@ -4,12 +4,13 @@
 // ================================ 导入
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAward, getCloudBalance, getMining, getMiningRank } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
-import { find, getBorn, register } from '../../../store/store';
-import { formatBalance, getLanguage, getUserInfo } from '../../../utils/tools';
+import { getAward, getMining, getMiningRank, getServerCloudBalance } from '../../../net/pull';
+import { CloudCurrencyType, Mining } from '../../../store/interface';
+import { getCloudBalances, getStore, register } from '../../../store/memstore';
+import { formatBalance, getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -19,9 +20,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class PlayHome extends Widget {
     public ok: () => void;
-    constructor() {
-        super();
-    }
+    public language:any;
 
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
@@ -33,19 +32,22 @@ export class PlayHome extends Widget {
      * 初始化数据
      */
     public init() {
+        this.language = this.config.value[getLang()];
+        
         this.state = {
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
+            holdMines: 0,// 累计挖矿
             mines: 0,// 今日可挖数量
             hasWallet: false, // 是否已经创建钱包
             mineLast: 0,// 矿山剩余量
             rankNum: 1,// 挖矿排名
             page: [
-                'app-view-earn-mining-rankList',
-                'app-view-earn-mining-dividend',
-                'app-view-earn-redEnvelope-writeRedEnv',
-                'app-view-earn-exchange-exchange',
-                'app-view-earn-mining-addMine'
+                'app-view-earn-mining-rankList', // 挖矿排名
+                'app-view-earn-mining-dividend', // 领分红
+                'app-view-earn-redEnvelope-writeRedEnv', // 发红包
+                'app-view-earn-exchange-exchange', // 兑换
+                'app-view-earn-mining-addMine'  // 任务
             ],
             doMining: false,  // 点击挖矿，数字动画效果执行
             firstClick: true,
@@ -53,14 +55,16 @@ export class PlayHome extends Widget {
             miningNum: ` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
                 <span>+{{it1.thisNum}}</span>
             </div>`,
-            cfgData: getLanguage(this),
             scroll: false,
             scrollHeight: 0,
             refresh: false,
-            avatar: '../../../res/image1/default_avatar.png'
+            avatar: '../../res/image1/default_avatar.png'
         };
-
-        this.initDate();
+        setTimeout(() => {
+            this.scrollPage();
+        });
+        
+        this.initData();
     }
     /**
      * 判断当前用户是否已经创建钱包
@@ -69,7 +73,7 @@ export class PlayHome extends Widget {
         if (this.state.hasWallet) {
             return true;
         }
-        popNew('app-components-modalBox-modalBox', this.state.cfgData.login, () => {
+        popNew('app-components1-modalBox-modalBox', this.language.login, () => {
             popNew('app-view-wallet-create-home');
         });
 
@@ -105,7 +109,7 @@ export class PlayHome extends Widget {
      */
     public miningDesc() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-modalBox-modalBox1', this.state.cfgData.miningDesc);
+        popNew('app-components-allModalBox-modalBox1', this.language.miningDesc);
     }
 
     /**
@@ -121,7 +125,6 @@ export class PlayHome extends Widget {
 
             setTimeout(() => {// 数字动画效果执行完后刷新页面
                 this.initEvent();
-                this.paint();
             }, 300);
 
         } else {  // 添加一个新的数字动画效果并移除旧的
@@ -149,7 +152,7 @@ export class PlayHome extends Widget {
      * 屏幕滑动
      */
     public scrollPage() {
-        const scrollTop = document.getElementById('contain').scrollTop;
+        const scrollTop = document.getElementById('earn-home').scrollTop;
         this.state.scrollHeight = scrollTop;
         if (scrollTop > 0) {
             this.state.scroll = true;
@@ -169,18 +172,29 @@ export class PlayHome extends Widget {
     public refreshPage() {
         this.state.refresh = true;
         this.paint();
+        this.initEvent();
         setTimeout(() => {
             this.state.refresh = false;
             this.paint();
         }, 1000);
-        this.initEvent();
+
+    }
+
+    /**
+     * 进入活动详情
+     */
+    public doActivity() {
+        if (!this.judgeWallet()) {
+            return;
+        }
+        popNew('app-view-earn-mining-addMine');
     }
 
     /**
      * 获取更新数据
-     */
-    private initDate() {
-        const wallet = find('curWallet');
+     */     
+    private initData() {
+        const wallet = getStore('wallet');
         if (!wallet) {
             this.paint();
 
@@ -188,34 +202,33 @@ export class PlayHome extends Widget {
         }
         this.state.hasWallet = true;
 
-        const cloudBalance = getBorn('cloudBalance');
-        if (cloudBalance) {
-            this.state.ktBalance = formatBalance(cloudBalance.get(CurrencyType.KT));
-            this.state.ethBalance = formatBalance(cloudBalance.get(CurrencyType.ETH));
+        const cloudBalances = getCloudBalances();
+
+        if (cloudBalances) {
+            this.state.ktBalance = formatBalance(cloudBalances.get(CloudCurrencyType.KT));
+            this.state.ethBalance = formatBalance(cloudBalances.get(CloudCurrencyType.ETH));
         }
 
-        const mining = find('miningTotal');
-        if (mining) {
-            if (mining.thisNum > 0) {
+        const mining: Mining = getStore('activity/mining');
+        if (mining.total) {
+            if (mining.total.thisNum > 0) {
                 this.state.isAbleBtn = true;
             }
-            this.state.mines = formatBalance(mining.thisNum);
-            this.state.mineLast = formatBalance(mining.totalNum - mining.holdNum);
-
+            this.state.mines = formatBalance(mining.total.thisNum);
+            this.state.mineLast = formatBalance(mining.total.totalNum - mining.total.holdNum);
+            this.state.holdMines = formatBalance(mining.total.holdNum);
         } else {
             this.state.isAbleBtn = false;
         }
 
-        const rank = find('miningRank');
-        if (rank) {
-            this.state.rankNum = rank.myRank;
+        if (mining.total && mining.miningRank) {
+            this.state.rankNum = mining.miningRank.myRank;
         }
 
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image1/default_avatar.png';
+            this.state.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image1/default_avatar.png';
         }
-
         this.paint();
     }
 
@@ -225,9 +238,11 @@ export class PlayHome extends Widget {
     private initEvent() {
         // 这里发起通信
         if (this.props.isActive && this.state.hasWallet) {
-            getCloudBalance();
+            getServerCloudBalance();
             getMining();
             getMiningRank(100);
+            // // tslint:disable-next-line:no-debugger
+            // debugger;
         }
     }
 
@@ -235,35 +250,65 @@ export class PlayHome extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-register('cloudBalance', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initDate();
+        w.initData();
     }
 });
 
-register('miningTotal', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.initDate();
-    }
-});
-register('miningRank', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.initDate();
-    }
-});
-register('curWallet', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.init(); // 注销钱包后初始化
-        w.initEvent();
-    }
-});
-register('languageSet', () => {
+register('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+    }
+});
+
+register('user/info',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+
+register('activity/mining/addMine', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initEvent();
+    }
+});
+
+register('activity/mining/total', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+
+register('activity/mining/miningRank', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+register('activity', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init(); // 注销钱包后初始化
+        
+    }
+});
+register('setting/language', (r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.language = w.config.value[r];
+        w.paint();
+    }
+});
+register('user/conRandom', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+        w.initEvent();
     }
 });
