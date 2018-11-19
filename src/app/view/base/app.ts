@@ -103,8 +103,11 @@ export class App extends Widget {
 // ===================================================== 立即执行
 
 register('flags/level_2_page_loaded', (loaded: boolean) => {
-    const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-    dataCenter.init();
+    setTimeout(() => {
+        const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+        dataCenter.init();
+    },2000);
+    
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.closeLoading();

@@ -12,7 +12,8 @@ import { getStore, setStore } from '../store/memstore';
 import { ahash } from '../utils/ahash';
 import { defalutShowCurrencys, lang } from '../utils/constants';
 import { restoreSecret } from '../utils/secretsBase';
-import { calcHashValuePromise,getXOR,hexstrToU8Array,popNewLoading,popNewMessage,u8ArrayToHexstr } from '../utils/tools';
+// tslint:disable-next-line:max-line-length
+import { calcHashValuePromise,getCurrentAddrInfo,getXOR,hexstrToU8Array,popNewLoading,popNewMessage, u8ArrayToHexstr } from '../utils/tools';
 import { getMnemonic } from '../utils/walletTools';
 import { dataCenter } from './dataCenter';
 
@@ -267,4 +268,11 @@ export const deleteMnemonic = () => {
  */
 export const getFirstEthAddr = () => {
     return getStore('user/id');
+};
+
+/**
+ * 获取当前正在使用的ETH地址
+ */
+export const getCurrentEthAddr = () => {
+    return getCurrentAddrInfo('ETH').addr;
 };

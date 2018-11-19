@@ -1,6 +1,7 @@
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
 import { DeviceIdProvider } from '../../pi/browser/systemInfoProvider';
+import { WebViewManager } from '../../pi/browser/webview';
 import { WebViewHelper } from '../../pi/browser/webViewHelper';
 import { popNew } from '../../pi/ui/root';
 
@@ -88,14 +89,7 @@ export const doScanQrCode = (ok?,cancel?) => {
  * 打开新网页
  */
 export const openNewActivity = (url:string,title:string= '') => {
-    const newWebView = new WebViewHelper();
-    newWebView.init();
-    newWebView.open({
-        success: (result) => {}, 
-        fail: (result) => {}, 
-        loadUrl: url,
-        title
-    });
+    WebViewManager.open(title, `${url}?${Math.random()}`, title, '');
 };
 
 /**

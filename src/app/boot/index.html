@@ -83,7 +83,7 @@
 			align-items: center;
 			position: absolute;
 			z-index: 9998;
-			background-image: url(../res/image/bg_open.png);
+			background-image: url(../res/image/bg_open.jpg);
 			background-position: center;
 			background-repeat: no-repeat;
 			background-size: 239px 188px;
@@ -187,7 +187,7 @@
 					winit.win[k] = 1;
 			}
 			winit.startTime = Date.now();
-			var name = "wallet"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
+			var name = "cubo"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
@@ -223,6 +223,10 @@
 			//---------国内------
 			winit.severIp = "app.kuplay.io";
 			winit.severPort = "80";
+
+			// winit.severIp = "test.kuplay.io";
+			// winit.severPort = "80";
+
 			// winit.severIp = "47.244.29.209";
 			// winit.severPort = "80";
 
@@ -260,9 +264,9 @@
 					winit.loadJS([winit.domains[1]], "/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,"load index error");
 					return;
 				}
-				if (winit.debug) winit.loadJS([winit.domains[1]], "/wallet/app/boot/hotfix.js", "utf8", winit.initFail,
+				if (winit.debug) winit.loadJS([winit.domains[1]], "/cubo/app/boot/hotfix.js", "utf8", winit.initFail,
 					"load hotupdate error");
-				winit.loadJS([winit.domains[1]], "/wallet/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,
+				winit.loadJS([winit.domains[1]], "/cubo/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,
 					"load index error");
 			};
 			if (document.hidden === true)

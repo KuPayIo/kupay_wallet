@@ -4,6 +4,7 @@
 // ===================================================== 导入
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
+import { Collapse } from '../components/collapse/collapse1';
 import { defaultEthToAddr, ERC20Tokens } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
@@ -17,7 +18,7 @@ import { getStore, setStore } from '../store/memstore';
 import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getConfirmBlockNumber, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
+import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
@@ -31,6 +32,85 @@ export interface TxPayload {
     fee:number;             // 矿工费
     minerFeeLevel:MinerFeeLevel;   // 矿工费等级
 }
+
+export interface TxPayload3 {
+    fromAddr:string;        // 转出地址
+    toAddr:string;          // 转入地址
+    pay:string;             // 转账金额
+    currencyName:string;    // 转账货币
+    data:string;
+}
+
+/**
+ * 普通转账
+ */
+export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
+    const fromAddr = txPayload.fromAddr;
+    const currencyName = txPayload.currencyName;
+    const minerFeeLevel = MinerFeeLevel.Standard;
+    const minerFeeList = fetchMinerFeeList(currencyName);
+    const fee = minerFeeList[minerFeeLevel].minerFee;
+    const txRecord:TxHistory = {
+        hash:'',
+        addr:fromAddr,
+        txType:TxType.Transfer,
+        fromAddr,
+        toAddr:txPayload.toAddr,
+        pay: wei2Eth(txPayload.pay),
+        time: 0,
+        status:TxStatus.Pending,
+        confirmedBlockNumber: 0,
+        needConfirmedBlockNumber:0,
+        info: '',
+        currencyName,
+        fee,
+        nonce:undefined,
+        minerFeeLevel
+    };
+
+    try {        
+        const addrIndex = getWltAddrIndex(fromAddr, currencyName);
+        let hash;
+        if (addrIndex >= 0) {    
+            // alert(1);
+            const wlt = await GlobalWallet.createWlt(currencyName, psw, addrIndex);
+            const api = new EthApi();
+            const nonce = txRecord.nonce;
+            const localNonce = getEthNonce(fromAddr);
+            // 0xe209a49a0000000000000000000000000000000000000000000000000000000000000001
+            // toAddr  0x0e7f42cdf739c06dd3c1c32fab5e50ec9620102a
+            // api.estimateGas({ to: txPayload.toAddr, data: txPayload.data });
+            // TODO  直接使用预估出来的gasLimit交易有可能失败   零时解决
+            const gasLimit = Math.floor(21000 * 10);
+            let newNonce = nonce;
+            if (!isNumber(nonce)) {
+                const chainNonce = await api.getTransactionCount(fromAddr);
+                newNonce = localNonce && localNonce >= chainNonce ? localNonce : chainNonce;
+            }
+            const txObj = {
+                to: txPayload.toAddr,
+                nonce: newNonce,
+                gasPrice: fetchGasPrice(minerFeeLevel),
+                gasLimit: gasLimit,
+                value: txPayload.pay,
+                data: txPayload.data
+            };         
+            const tx = wlt.signRawTransaction(txObj);
+            hash = await api.sendRawTransaction(tx);
+        }
+        if (hash) {
+            txRecord.hash = hash;
+            updateLocalTx(txRecord);
+            dataCenter.updateAddrInfo(txRecord.addr,txRecord.currencyName);
+
+            return [undefined,hash];
+        } else {
+            return ['send transaction failed'];
+        }
+    } catch (error) {
+        return [error,undefined];
+    }
+};
 
 /**
  * 普通转账
@@ -675,6 +755,7 @@ export const recharge = async (psw:string,txRecord:TxHistory) => {
     if (tx) {
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.rechargeSuccess });
         updateLocalTx(tx);
+        console.log(`recharge tx is `,tx);
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         getRechargeLogs(tx.currencyName);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });

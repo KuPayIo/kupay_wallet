@@ -1,8 +1,8 @@
-// !version=0.1.10.111318
+// !version=0.1.11.111618
 
 'use strict';
 document.body.style.backgroundColor="#2F2F2F";
-winit.path="/wallet/";//"/pi/0.1/";
+winit.path="/cubo/";//"/pi/0.1/";
 winit.loadJS(winit.domains, winit.path+'app/boot/init.js?'+Math.random(), "utf8", winit.initFail, "load init error");
 winit.loadJS(winit.domains, winit.path+'app/boot/next.js?'+Math.random(), "utf8", winit.initFail, "load next error");
 if(winit.isLoc){

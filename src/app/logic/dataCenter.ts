@@ -43,7 +43,7 @@ export class DataCenter {
         // 更新货币对比USDT的比率
         this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
-        this.refreshAllBalance();
+        this.refreshAllTx();
     }
     /**
      * 刷新所有余额
@@ -461,6 +461,7 @@ export class DataCenter {
         const blockHeight = Number(await api.getBlockNumber());
         const confirmedBlockNumber = blockHeight - res1.blockNumber + 1;
         const obj = this.parseErc20Input(res2.input);
+        if (!obj) return;
         const pay = smallUnit2LargeUnit(currencyName, obj.pay);
         const toAddr = obj.toAddr;
         const needConfirmedBlockNumber = getConfirmBlockNumber(currencyName, pay);
@@ -493,6 +494,7 @@ export class DataCenter {
      * 解析erc20 input
      */
     private parseErc20Input(input: string) {
+        if (!input.startsWith('0xa9059cbb')) return;
         const toAddr = `0x${input.slice(34, 74)}`;
         const pay = Number(`0x${input.slice(74)}`);
 

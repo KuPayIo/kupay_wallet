@@ -12,7 +12,7 @@ import { getDeviceId } from '../logic/native';
 import { openConnect, uploadFileUrlPrefix } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
-import { Account, FileTxHistory, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
+import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
@@ -1456,7 +1456,7 @@ export const updateLocalTx = (tx: TxHistory) => {
     wallet.currencyRecords.forEach(record => {
         if (record.currencyName === currencyName) {
             record.addrs.forEach(addrInfo => {
-                if (addrInfo.addr === addr) {
+                if (addrInfo.addr.toLowerCase() === addr.toLowerCase()) {
                     let index = -1;
                     const txHistory = addrInfo.txHistory;
                     for (let i = 0; i < txHistory.length; i++) {

@@ -41,6 +41,12 @@ export const run = (cb): void => {
     console.timeEnd('home enter');
     // popNew('app-view-chat-home-home');
     popNewPage();
+    // setTimeout(() => {
+    //     const api = new EthApi();
+    //     const data = '0xe209a49a0000000000000000000000000000000000000000000000000000000000000001';
+    //     const toAddr = '0x0e7f42cdf739c06dd3c1c32fab5e50ec9620102a';
+    //     api.estimateGas({ to:toAddr, data: data });
+    // },5000);
     // 后台切前台
     backToFront();
     // 解决进入时闪一下问题

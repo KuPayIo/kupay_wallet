@@ -1,5 +1,5 @@
 import { getLang } from '../../pi/util/lang';
-import { Config, dev_mode } from '../config';
+import { Config, dev_mode, DevMode } from '../config';
 import { MinerFeeLevel } from '../store/interface';
 
 /**
@@ -25,7 +25,7 @@ export const strength = 128;
 
 // todo 测试网络与正式网络切换
 // btc网络
-export const btcNetwork = dev_mode === 'dev' ? 'testnet' : 'mainnet';
+export const btcNetwork = dev_mode === DevMode.Prod ? 'mainnet' : 'testnet';
 
 // 语言
 export const lang = 'english';
