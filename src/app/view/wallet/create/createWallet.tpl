@@ -35,7 +35,7 @@
             </div>
             <div ev-btn-tap="createClick" w-class="btn">
                 {{: btnName = {"zh_Hans":"完成","zh_Hant":"完成","en":""} }}
-                <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"blue"}</app-components1-btn-btn>
+                <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"blue","cannotClick":{{!it1.userProtocolReaded}} }</app-components1-btn-btn>
             </div>
         </div>
     </div>
