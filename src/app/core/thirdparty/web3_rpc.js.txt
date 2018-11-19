@@ -4845,7 +4845,7 @@ require = (function () {
                 </div>`;
                 document.body.appendChild(div);
 
-                document.querySelector("#pi-psw").focus();
+                // document.querySelector("#pi-psw").focus();
             }
             /**
              * Should be used to make async request
