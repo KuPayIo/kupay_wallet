@@ -15,6 +15,7 @@ import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
 import { formatBalance,getAddrsAll,getConfirmBlockNumber,parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
 import { ethTokenDivideDecimals,sat2Btc,smallUnit2LargeUnit,wei2Eth } from '../utils/unitTools';
 import { fetchLocalTxByHash,fetchTransactionList,getMnemonicByHash } from '../utils/walletTools';
+import { getCurrentEthAddr } from './localWallet';
 /**
  * 创建事件处理器表
  * @example
@@ -115,7 +116,8 @@ export class DataCenter {
      */
     public fetchErc20GasLimit(currencyName:string) {
         const defaultPay = 100;
-        estimateGasERC20(currencyName, defaultEthToAddr, defaultPay).then(res => {
+        const fromAddr = getCurrentEthAddr();
+        estimateGasERC20(currencyName, defaultEthToAddr,fromAddr, defaultPay).then(res => {
             const gasLimitMap = getStore('third/gasLimitMap');
             gasLimitMap.set(currencyName, res * 2);
             setStore('third/gasLimitMap', gasLimitMap);
