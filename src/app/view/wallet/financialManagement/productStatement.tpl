@@ -8,7 +8,7 @@
         </div>
         <div ev-btn-tap="nextClick" w-class="btn">
             {{: btnName = {"zh_Hans":"我已阅读","zh_Hant":"我已閱讀","en":""} }}
-            <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"white"}</app-components1-btn-btn>
+            <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"blue","cannotClick":{{!it1.readed}}}</app-components1-btn-btn>
         </div>
     </div>
 </div>
