@@ -353,8 +353,6 @@ export const estimateGasERC20 = (currencyName:string,toAddr:string,amount:number
 
     const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
 
-    console.log('estimateGasERC201111111111111111111111111111',{ to: ERC20Tokens[currencyName].contractAddr, data: transferCode });
-
     return api.estimateGas({ to: ERC20Tokens[currencyName].contractAddr, data: transferCode });
 };
 

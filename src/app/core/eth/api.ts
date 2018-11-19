@@ -147,11 +147,11 @@ export class Api {
             }
             web3.eth.estimateGas(obj, (err, res) => {
                 if (!err) {
-                    // console.log(obj,res);
+                    console.log(obj,res);
 
                     return resolve(res);
                 } else {
-                    // console.log(obj,err);
+                    console.log(obj,err);
 
                     return reject(err);
                 }
