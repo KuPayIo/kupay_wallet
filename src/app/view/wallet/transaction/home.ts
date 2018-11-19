@@ -49,13 +49,13 @@ export class TransactionHome extends Widget {
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol(),
             tabs:[{
-                tab:cfg.tabs[5],
+                tab:'全部',
                 list:txList
             },{
-                tab:cfg.tabs[1],
+                tab:'转账',
                 list:this.transferList(txList)
             },{
-                tab:cfg.tabs[2],
+                tab:'收款',
                 list:this.receiptList(txList)
             }],
             activeNum:0,
