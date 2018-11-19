@@ -1,10 +1,15 @@
 .new-page{
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 .top-head{
     height: 400px;
     background:linear-gradient(to right,#38CFE7,#318DE6);
+    flex-shrink: 0;
 }
 .body{
     flex: 1 0 0;
@@ -60,8 +65,6 @@
 }
 .copy{
     margin-left: 10px;
-    width: 28px;
-    height: 28px;
 }
 .detail-bottom{
     line-height: 50px;

@@ -1,9 +1,9 @@
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
-import { SystemInfoProvider } from '../../pi/browser/systemInfoProvider';
+import { DeviceIdProvider } from '../../pi/browser/systemInfoProvider';
+import { WebViewManager } from '../../pi/browser/webview';
 import { WebViewHelper } from '../../pi/browser/webViewHelper';
 import { popNew } from '../../pi/ui/root';
-import { HttpHelper } from '../../pi/browser/httpHelper';
 
 /**
  * 一些底层操作
@@ -27,8 +27,8 @@ export const selectImage = (ok?,cancel?) => {
         max: 1
     });
     let close;
-    setTimeout(()=>{
-        close = popNew('app-components1-loading-loading', { text: '导入中...' });
+    setTimeout(() => {
+        close = popNew('app-components1-loading-loading', { text: { zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' } });
     },100);
 };
 
@@ -48,6 +48,7 @@ export const selectImage = (ok?,cancel?) => {
 //             close && close.callback(close.widget);
 //         },
 //         fail: (result) => {
+//             console.log('selectFromLocal-----',result);
 //             cancel && cancel(result);
 //             close && close.callback(close.widget);
 //         },
@@ -56,7 +57,7 @@ export const selectImage = (ok?,cancel?) => {
 //         max: 1
 //     });
 //     let close;
-//     setTimeout(()=>{
+//     setTimeout(() => {
 //         close = popNew('app-components1-loading-loading', { text: '导入中...' });
 //     },100);
 // };
@@ -88,68 +89,23 @@ export const doScanQrCode = (ok?,cancel?) => {
  * 打开新网页
  */
 export const openNewActivity = (url:string,title:string= '') => {
-    const newWebView = new WebViewHelper();
-    newWebView.init();
-    newWebView.open({
-        success: (result) => {}, 
-        fail: (result) => {}, 
-        loadUrl: url,
-        title
-    });
+    WebViewManager.open(title, `${url}?${Math.random()}`, title, '');
 };
 
 /**
  * 获取设备信息
  */
-export const getDeviceInfo = () => {
-    const systemInfo = new SystemInfoProvider();
+export const getDeviceId = (okCB?,errCB?) => {
+    const systemInfo = new DeviceIdProvider();
     systemInfo.init();
-    systemInfo.getDeviceInfo({
+    systemInfo.getDriverId({
         success: (result) => {
-            console.log('获取设备的系统信息成功\t' + result);
+            console.log('获取设备的唯一id成功\t' + result);
+            okCB && okCB(result);
         }
         , fail: (result) => {
-            console.log('获取设备的系统信息失败\t' + result);
+            console.log('获取设备的唯一id失败\t' + result);
+            errCB && errCB(result);
         }
     });
 };
-
-/**
- * get 请求
- */
-export const getRequest = (url:string) => {
-    return new Promise((resolve,reject)=>{
-        let httpHelper = new HttpHelper();
-        httpHelper.init();
-        httpHelper.getConnection({
-                url,
-                success: (result) => {
-                    resolve(result);
-                }
-                , fail: (result) => {
-                    reject(result);
-                }
-            }
-        );
-    });
-    
-}
-
-/**
- * post 请求
- */
-export const postRequest = (url:string,param:any) =>{
-    let httpHelper = new HttpHelper();
-    httpHelper.init();
-    httpHelper.postConnection({
-            url,
-            json:JSON.stringify(param),
-            success: (result) => {
-                alert("请求结果\t" + result)
-            }
-            , fail: (result) => {
-                alert("请求失败 错误信息\t" + result)
-            }
-        }
-    );
-}

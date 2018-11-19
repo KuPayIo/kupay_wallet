@@ -2,8 +2,9 @@
  * backup index
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { getLanguage } from '../../../utils/tools';
+import { findModulConfig } from '../../../modulConfig';
 
 interface Props {
     mnemonic: string;
@@ -11,20 +12,20 @@ interface Props {
 }
 export class BackupIndex extends Widget {
     public ok:() => void;
+    public language : any;
     public backPrePage() {
         this.ok && this.ok();
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.state = {
-            cfgData:getLanguage(this)
-        };
+        this.props.walletName = findModulConfig('WALLET_NAME');
+        this.language = this.config.value[getLang()];
     }
     
     public standardBackupClick() {
-        popNew('app-view-wallet-backup-backupMnemonicWordConfirm',{ mnemonic:this.props.mnemonic },() => {this.ok && this.ok();});
+        popNew('app-view-wallet-backup-backupMnemonicWordConfirm',{ mnemonic:this.props.mnemonic });
     }
     public fragmentsBackupClick() {
-        popNew('app-view-wallet-backup-shareMnemonic',{ fragments:this.props.fragments },() => {this.ok && this.ok();});
+        popNew('app-view-wallet-backup-shareMnemonic',{ fragments:this.props.fragments });
     }
 }

@@ -2,7 +2,7 @@
  * choose currency
  */
 import { Widget } from '../../../pi/widget/widget';
-import { formatBalance, getCurrentAddrBalanceByCurrencyName, getLanguage } from '../../utils/tools';
+import { formatBalance, getCurrentAddrInfo } from '../../utils/tools';
 
 interface Props {
     list:string[];
@@ -16,7 +16,7 @@ export class ChooseCurrency extends Widget {
         const currencyShowList = [];
         this.props.list.forEach(item => {
             // tslint:disable-next-line:max-line-length
-            const balance = getCurrentAddrBalanceByCurrencyName(item);
+            const balance = getCurrentAddrInfo(item).balance;
             currencyShowList.push({
                 name:item,
                 balance:formatBalance(balance),
@@ -26,8 +26,7 @@ export class ChooseCurrency extends Widget {
         });
         this.state = {
             currencyShowList,
-            selected:this.props.selected,
-            cfgData:getLanguage(this)
+            selected:this.props.selected
         };
     }
 

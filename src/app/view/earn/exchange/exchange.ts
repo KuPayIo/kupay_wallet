@@ -3,14 +3,15 @@
  */
 // ============================== 导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { findModulConfig } from '../../../modulConfig';
 // tslint:disable-next-line:max-line-length
-import { convertRedBag, getCloudBalance, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
-import { CurrencyType, CurrencyTypeReverse, RedEnvelopeType } from '../../../store/interface';
-import {  updateStore } from '../../../store/store';
+import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
+import { register, setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
-import { getLanguage } from '../../../utils/tools';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
 
 // ================================ 导出
@@ -21,11 +22,13 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Exchange extends Widget {
     public ok: () => void;
+    public language:any;
     public create() {
         super.create();
+        this.language = this.config.value[getLang()];
         this.state = {
             cid: '',
-            cfgData:getLanguage(this)
+            walletName:findModulConfig('WALLET_NAME')
         };
     }
     
@@ -43,28 +46,32 @@ export class Exchange extends Widget {
         this.inputBlur();
         const code = this.state.cid.trim();
         if (code.length <= 0) {
-            popNew('app-components1-message-message', { itype: 'error', content: this.state.cfgData.errorList[0], center: true });
+            popNew('app-components1-message-message', { itype: 'error', content: this.language.errorList[0], center: true });
 
             return;
         }
-        const close = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });        
-        const value: any = await this.convertRedEnvelope(code);
+        const close = popNew('app-components1-loading-loading', { text: this.language.loading });        
+        const res: any = await this.convertRedEnvelope(code);
         close.callback(close.widget);
-        if (!value) return;
-        updateStore('cHisRec',undefined);
-        getCloudBalance();
+        if (!res.value) return;
+        setStore('activity/luckyMoney/exchange',undefined);
+        getServerCloudBalance();
         const r: any = await this.queryDesc(code);
 
         const redEnvelope = {
             message: r.value,
-            ctypeShow: CurrencyTypeReverse[value[0]],
-            amount: smallUnit2LargeUnit(CurrencyTypeReverse[value[0]], value[1]),
-            rtype: code.slice(0, 2)
+            ctypeShow: CloudCurrencyType[res.value[0]],
+            amount: smallUnit2LargeUnit(CloudCurrencyType[res.value[0]], res.value[1]),
+            rtype: code.slice(0, 2),
+            rid:res.rid,
+            suid:res.src_id
         };
         
         popNew('app-view-earn-exchange-openRedEnv', redEnvelope);
-        this.state.cid = '';
-        this.paint();
+        setTimeout(() => {
+            this.state.cid = '';
+            this.paint(true);
+        }, 100);
     }
 
     /**
@@ -81,9 +88,9 @@ export class Exchange extends Widget {
         const perCode = code.slice(0, 2);
         const validCode = code.slice(2);
         let value = [];
-        if (perCode === RedEnvelopeType.Normal || perCode === RedEnvelopeType.Random) {
+        if (perCode === LuckyMoneyType.Normal || perCode === LuckyMoneyType.Random) {
             value = await convertRedBag(validCode);  // 兑换普通红包，拼手气红包
-        } else if (perCode === RedEnvelopeType.Invite) {
+        } else if (perCode === LuckyMoneyType.Invite) {
             const data = await getData('convertRedEnvelope');
             if (data.value) {
                 showError(-99);
@@ -92,14 +99,13 @@ export class Exchange extends Widget {
             }
             value = await inputInviteCdKey(validCode);  // 兑换邀请红包
             if (!value) {
-                showError(-98);
                 
                 return;
             }
-            value = [CurrencyType.ETH, eth2Wei(0.015).toString()];
+            value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
         } else {
-            popNew('app-components1-message-message', { content: this.state.cfgData.errorList[1] });
+            popNew('app-components1-message-message', { content: this.language.errorList[1] });
 
             return null;
         }
@@ -114,9 +120,9 @@ export class Exchange extends Widget {
         const perCode = code.slice(0, 2);
         const validCode = code.slice(2);
         let res = { result: -1, value: '' };
-        if (perCode === RedEnvelopeType.Invite) {
+        if (perCode === LuckyMoneyType.Invite) {
             res.result = 1;
-            res.value = this.state.cfgData.defaultMess;
+            res.value = `${this.state.walletName}${this.language.defaultMess}`;
         } else {
             res = await queryRedBagDesc(validCode);
         }

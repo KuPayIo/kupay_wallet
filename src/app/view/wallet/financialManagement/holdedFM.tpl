@@ -1,13 +1,13 @@
-<div class="new-page">
+<div class="new-page" w-class="new-page">
     {{if it1.purchaseRecord.length === 0}}
     <div w-class="no-recode">
         <img src="../../../res/image/dividend_history_none.png" w-class="no-recode-icon"/>
-        <div w-class="no-recode-text">{{it1.cfgData.noneMess}}</div>
+        <div w-class="no-recode-text"><pi-ui-lang>{"zh_Hans":"还没有购买过理财","zh_Hant":"還沒有買過理財","en":""}</pi-ui-lang></div>
     </div>
     {{else}}
     <div w-class="list">
         {{for i,v of it1.purchaseRecord}}
-        <app-view-wallet-components-holdedProductItem>{product:{{v}}}</app-view-wallet-components-holdedProductItem>
+        <app-view-wallet-components-holdedProductItem>{product:{{v}},index:{{i}} }</app-view-wallet-components-holdedProductItem>
         {{end}}
     </div>
     {{end}}

@@ -2,12 +2,15 @@
  * cloud home
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getCloudBalance, getProductList } from '../../../net/pull';
+import { findModulConfig } from '../../../modulConfig';
+import { getProductList, getServerCloudBalance } from '../../../net/pull';
 import { Product } from '../../../store/interface';
-import { find, register } from '../../../store/store';
-import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getLanguage, hasWallet, getCurrencyUnitSymbol } from '../../../utils/tools';
+import { getStore, register } from '../../../store/memstore';
+// tslint:disable-next-line:max-line-length
+import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -17,22 +20,24 @@ interface Props {
     isActive:boolean;
 }
 export class CloudHome extends Widget {
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
+        this.props.financialModulIsShow = findModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
         this.init();
-        if(props.isActive){
+        if (props.isActive) {
             getProductList();
-            getCloudBalance();
+            getServerCloudBalance();
         }
     }
     public init() {
-        const color = find('changeColor');
+        this.language = this.config.value[getLang()];
+        const color = getStore('setting/changeColor','redUp');
         this.state = {
             totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
             assetList:fetchCloudWalletAssetList(),
-            productList:find('productList') || [],
-            cfgData:getLanguage(this),
-            redUp:color ? color.selected === 0 :true,
+            productList:getStore('activity/financialManagement/products',[]),
+            redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         this.paint();
@@ -73,10 +78,16 @@ export class CloudHome extends Widget {
 }
 
 // =======================本地
-
+register('user',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
+    }
+});
 
 // 云端余额变化
-register('cloudBalance',() => {
+register('cloud/cloudWallets',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -92,32 +103,30 @@ register('currency2USDTMap',() => {
 });
 
 // 理财产品变化
-register('productList', async (productList) => {
+register('activity/financialManagement/products', async (productList) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateProductList(productList);
     }
     
 });
-register('languageSet', () => {
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-register('changeColor', () => {
+register('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-
 
 // 货币单位变化
-register('currencyUnit',() => {
+register('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();
     }
 });
-

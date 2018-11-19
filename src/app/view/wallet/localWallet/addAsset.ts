@@ -1,24 +1,26 @@
 /**
  * add asset 
  */
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../logic/dataCenter';
-import { find, updateStore } from '../../../store/store';
+import { getStore, setStore } from '../../../store/memstore';
 import { fetchWalletAssetListAdded, getCurrentAddrInfo, getLanguage } from '../../../utils/tools';
 
 export class AddAsset extends Widget {
     public ok:() => void;
+    public language:any;
     public create() {
         super.create();
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const assetList = fetchWalletAssetListAdded();
         this.state = {
             assetList,
             searchText:'',
-            showAssetList:assetList,
-            cfgData:getLanguage(this)
+            showAssetList:assetList
         };
         console.log(this.state);
     }
@@ -35,7 +37,7 @@ export class AddAsset extends Widget {
         this.paint();
 
         // 处理search数据
-        const wallet = find('curWallet');
+        const wallet = getStore('wallet');
         const showCurrencys = wallet.showCurrencys || [];
         const oldIndex = showCurrencys.indexOf(currencys.currencyName);
         if (added && oldIndex < 0) {
@@ -48,7 +50,7 @@ export class AddAsset extends Widget {
         }
         wallet.showCurrencys = showCurrencys;
 
-        updateStore('curWallet', wallet);
+        setStore('wallet', wallet);
     }
 
     public searchTextChange(e:any) {
@@ -66,7 +68,5 @@ export class AddAsset extends Widget {
         this.state.showAssetList = this.state.assetList;
         this.paint();
     }
-    public searchClick() {
-        
-    }
+    
 }

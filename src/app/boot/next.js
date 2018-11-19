@@ -137,60 +137,65 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 
-			var updatedStore = pi_modules.commonjs.exports.relativeGet("app/store/store").exports.updateStore;
-			updatedStore('level_2_page_loaded', true);
+			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
+			setStore('flags/level_2_page_loaded', true);
+			if (updateMod.needForceUpdate()) {
+				// 注：必须堵住原有的界面操作，不允许任何更新
+				updateMod.update(function (e) {
+					console.log("update progress: ", e);
+				});
+			} else {
+				updateMod.checkUpdate(function (need) {
+					needUpdate = need;
+					if (needUpdate) {
+						// 注：必须堵住原有的界面操作，不允许任何触发操作
+						updateMod.update(function (e) {
+							console.log("update progress: ", e);
+						});
+					}
+				});
+			}
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
 
 
+	
 	// 更新模块
 	var updateMod = pi_modules.update.exports;
 	updateMod.setIntercept(true);
 	updateMod.setServerInfo("app/boot/");
-	if (updateMod.needForceUpdate()) {
-		// 注：必须堵住原有的界面操作，不允许任何更新
-		updateMod.update(function (e) {
-			console.log("update progress: ", e);
+	pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang"], {}, function (mods, fm) {
+		var html = mods[0],
+			util = mods[1],
+			lang = mods[2];
+
+		const setting = JSON.parse(localStorage.getItem('setting'));
+		lang.setLang(setting && setting.language || 'zh_Hans');  // 初始化语言为简体中文
+
+
+		// 判断是否第一次进入,决定是显示片头界面还是开始界面
+		var userinfo = html.getCookie("userinfo");
+		pi_modules.commonjs.exports.flags = html.userAgent(flags);
+		flags.userinfo = userinfo;
+
+		/**
+		 * 先判断浏览器对webp的支持；
+		 * 加载所有的预处理图片
+		 * 第一级目录：首页需要的资源；
+		 * 第二级目录：其他；
+		 * 
+		 */
+		html.checkWebpFeature(function (r) {
+			flags.webp = flags.webp || r;
+
+			loadImages(util, fm);
 		});
-	} else {
-		updateMod.checkUpdate(function (need) {
-			needUpdate = need;
-			if (needUpdate) {
-				// 注：必须堵住原有的界面操作，不允许任何触发操作
-				updateMod.update(function (e) {
-					console.log("update progress: ", e);
-				});
-			}else{
-				pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util"], {}, function (mods, fm) {
-					var html = mods[0],
-						util = mods[1];
-		
-					// 判断是否第一次进入,决定是显示片头界面还是开始界面
-					var userinfo = html.getCookie("userinfo");
-					pi_modules.commonjs.exports.flags = html.userAgent(flags);
-					flags.userinfo = userinfo;
-		
-					/**
-					 * 先判断浏览器对webp的支持；
-					 * 加载所有的预处理图片
-					 * 第一级目录：首页需要的资源；
-					 * 第二级目录：其他；
-					 * 
-					 */
-					html.checkWebpFeature(function (r) {
-						flags.webp = flags.webp || r;
-		
-						loadImages(util, fm);
-					});
-				}, function (result) {
-					alert("加载基础模块失败, " + result.error + ":" + result.reason);
-				}, modProcess.handler);
-			}
-		});
-		
-	}
+	}, function (result) {
+		alert("加载基础模块失败, " + result.error + ":" + result.reason);
+	}, modProcess.handler);
+
 };
 
 // 初始化开始

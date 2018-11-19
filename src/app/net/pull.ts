@@ -1,17 +1,19 @@
 /**
  * 主动向后端通讯
  */
-import { open, request, setUrl, randomLogin, setBottomLayerReloginMsg, getSeverTime } from '../../pi/net/ui/con_mgr';
+import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
+import { cryptoRandomInt } from '../../pi/util/math';
 import { MainChainCoin } from '../config';
-import { CurrencyType, CurrencyTypeReverse, LoginState, MinerFeeLevel } from '../store/interface';
+import { findModulConfig } from '../modulConfig';
+import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
+import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
-import { find, getBorn, updateStore } from '../store/store';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getFirstEthAddr, getStaticLanguage, unicodeArray2Str, popNewMessage, checkCreateAccount, getUserInfo } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str, xorDecode, xorEncode } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 // export const conIp = '47.106.176.185';
@@ -20,16 +22,20 @@ export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 
 // export const conPort = '8080';
 export const conPort = pi_modules.store.exports.severPort || '80';
+
+// walletName
+const walletName = findModulConfig('WALLET_NAME');
 console.log('conIp=',conIp);
 console.log('conPort=',conPort);
 
-export const thirdUrlPre = `http://${conIp}:${conPort}/data/proxy?`;
+export const thirdUrlPre = `http://${conIp}:${conPort}/proxy`;
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+export const sharePerUrl = `http://app.kuplay.io/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+// export const sharePerUrl = `http://${conIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
-export const shareDownload = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/download.html`;
+export const shareDownload = `http://${conIp}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
 
 // 上传图片url
 export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;
@@ -37,12 +43,12 @@ export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;
 // 上传的文件url前缀
 export const uploadFileUrlPrefix = `http://${conIp}:${conPort}/service/get_file?sid=`;
 
-//websock连接url
+// websock连接url
 const wsUrl = `ws://${conIp}:2081`;
 /**
  * 通用的异步通信
  */
-export const requestAsync = async (msg: any): Promise<any> => {
+export const requestAsync = (msg: any) => {
     return new Promise((resolve, reject) => {
         request(msg, (resp: any) => {
             if (resp.type) {
@@ -57,132 +63,168 @@ export const requestAsync = async (msg: any): Promise<any> => {
     });
 };
 
+/**
+ * 通用的异步通信 需要登录
+ * 
+ * 需要登录权限的接口
+ * emit_red_bag  发红包
+ * to_cash       eth提现
+ * btc_to_cash   btc提现
+ * manage_money@buy    购买理财
+ * manage_money@sell   出售理财
+ */
+export const requestAsyncNeedLogin = async (msg: any) => {
+    const isLogin = getStore('user/isLogin');
+    if (!isLogin) {
+        const secretHash = getStore('user/secretHash');
+        await defaultLogin(secretHash,getStore('user/conRandom'));
+    }
 
+    return requestAsync(msg);
+    
+};
 
 /**
  * 申请自动登录token
  */
-export const applyAutoLogin = () => {
+export const applyAutoLogin = async () => {
+    const id = await fetchDeviceId();
+    const deviceId = id.toString();
     const msg = { 
         type: 'wallet/user@set_auto_login', 
         param: { 
-            device_id: fetchDeviceId()
+            device_id:deviceId
         }
     };
     requestAsync(msg).then(res => {
-        const deviceId = fetchDeviceId();
         const decryptToken = encrypt(res.token,deviceId);
-        const tokenMap = getBorn('tokenMap');
-        tokenMap.set(getFirstEthAddr(),decryptToken);
-        updateStore('tokenMap',tokenMap);
+        setStore('user/token',decryptToken);
     });
 };
 
 /**
  * 自动登录
  */
-export const autoLogin = (serverTimestamp:number) => {
-    const deviceId = fetchDeviceId();
-    const token = decrypt(getBorn('tokenMap').get(getFirstEthAddr()),deviceId);
+export const autoLogin = async (conRandom:string) => {
+    const deviceId = await fetchDeviceId();
+    console.log('deviceId -------',deviceId);
+    const token = decrypt(getStore('user/token'),deviceId.toString());
     const msg = { 
         type: 'wallet/user@auto_login', 
         param: { 
             device_id: deviceId,
-            timestamp:serverTimestamp,
             token,
-            random:find('conRandom')
+            random:conRandom
         }
     };
-    updateStore('loginState', LoginState.logining);
     requestAsync(msg).then(res => {
-        updateStore('loginState', LoginState.logined);
+        setStore('user/isLogin', true);
         console.log('自动登录成功-----------',res);
-    }).catch(() => {
-        updateStore('loginState', LoginState.logerror);
+    }).catch((res) => {
+        setStore('user/token','');
     });
 };
 /**
  * 创建钱包后默认登录
  * @param mnemonic 助记词
  */
-export const defaultLogin = async (hash:string) => {
+export const defaultLogin = async (hash:string,conRandom:string) => {
     const getMnemonicByHash = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonicByHash;
     const mnemonic = getMnemonicByHash(hash);
     const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
     console.log('================',wlt.exportPrivateKey());
     const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
-    const signStr = sign(find('conRandom'), wlt.exportPrivateKey());
+    const signStr = sign(conRandom, wlt.exportPrivateKey());
     const msgLogin = { type: 'login', param: { sign: signStr } };
-    updateStore('loginState', LoginState.logining);
-    const res: any = await requestAsync(msgLogin);
-    if (res.result === 1) {
-        updateStore('loginState', LoginState.logined);
-    } else {
-        updateStore('loginState', LoginState.logerror);
-    }
+
+    return requestAsync(msgLogin).then(() => {
+        applyAutoLogin();
+        setStore('user/isLogin', true);
+    });
+
 };
 
-
-
 // const defaultConUser = '0x00000000000000000000000000000000000000000';
+// stateChangeRegister((res) => {
+//     const conState = res.con;
+//     const login = res.login;
+//     console.log('stateChangeRegister--------------',res);
+// });
+
+// 设置重登录回调
+setReloginCallback((res) => {
+    const rtype = res.type;
+    if (rtype === 'logerror') {  //  重登录失败，登录流程重走一遍
+        openConnect();
+    } else {
+        setStore('user/isLogin',true);
+    }
+});
 /**
  * 开启连接
  */
 export const openConnect = async () => {
+    // const conState = getConState();
+    // if (conState === ConState.opened) {
+    //     getRandom();
+    // } else {
     setUrl(wsUrl);
     open(conSuccess,conError,conClose,conReOpen);
+    // }
 };
 
 /**
  * 连接成功回调
  */
-const conSuccess = () =>{
-    const conState = find('conState');
-    console.log('ws con success',conState);
+const conSuccess = () => {
+    console.log('con success');
+    setStore('user/offline',false);
     getRandom();
-}
+};
 
 /**
  * 连接出错回调
  */
-const conError = (err) =>{
-    const conState = find('conState');
-    console.log(`ws con error ${conState}`,err);
+const conError = (err) => {
+    console.log('con error');
+    setStore('user/offline',true);
     checkCreateAccount();
-}
+    
+};
 
 /**
  * 连接关闭回调
  */
-const conClose = () =>{
-    const conState = find('conState');
-    console.log('ws con close',conState);
-    popNewMessage('连接已断开')
-}
+const conClose = () => {
+    console.log('con close');
+    setStore('user/isLogin',false);
+    setStore('user/offline',true);
+};
 
 /**
  * 重新连接回调
  */
-const conReOpen = ()=>{
-    const conState = find('conState');
-    console.log('ws con reOpen',conState);
-}
+const conReOpen = () => {
+    console.log('con reopen');
+    setStore('user/offline',false);
+    // console.log();
+};
 
 /**
  * 获取随机数
+ * flag:0 普通用户注册，1注册即为真实用户
  */
 export const getRandom = async (cmd?:number) => {
-    const wallet = find('curWallet');
+    console.log('getRandom--------------');
+    const wallet = getStore('wallet');
     if (!wallet) return;
-    const gwlt = JSON.parse(wallet.gwlt);
-    updateStore('conUser', wallet.walletId);
-    updateStore('conUserPublicKey', gwlt.publicKey);
-    const client = "android 20";
+    const client = 'android 20';
     const param:any = {
-        account: find('conUser').slice(2), 
-        pk: `04${find('conUserPublicKey')}`,
-        client:JSON.stringify(client)
+        account: getStore('user/id').slice(2), 
+        pk: `04${getStore('user/publicKey')}`,
+        client:JSON.stringify(client),
+        flag:1
     };
     if (cmd) {
         param.cmd = cmd;
@@ -193,10 +235,21 @@ export const getRandom = async (cmd?:number) => {
     };
     try {
         const resp = await requestAsync(msg);
-        updateStore('conRandom', resp.rand);
-        updateStore('conUid', resp.uid);
-        afterGetRandomAction(resp.timestamp.value);
+        // const serverTimestamp = resp.timestamp.value;
+        const conRandom = resp.rand;
+        if (getStore('user/token')) {
+            autoLogin(conRandom);
+        }
+        const secretHash = getStore('user/secretHash');
+        if (secretHash) {
+            defaultLogin(secretHash,conRandom);
+        }
+
         setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
+        
+        setStore('user/conUid', resp.uid);
+        setStore('user/conRandom', conRandom);
+        checkCreateAccount();
     } catch (resp) {
         if (resp.type === 1014) {
             popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
@@ -208,62 +261,44 @@ export const getRandom = async (cmd?:number) => {
                 } else {
                     getRandom(CMD.FORCELOGOUT);
                 }
-                checkCreateAccount();
             },() => {
                 getRandom(CMD.FORCELOGOUT);
-                checkCreateAccount();
             });
         }
-        return;
     }
-    checkCreateAccount();
 };
 
-const afterGetRandomAction = (serverTimestamp:number) =>{
-    // eth gasPrice
-    fetchGasPrices();
-    // btc fees
-    fetchBtcFees();
-
-    const hash = getBorn('hashMap').get(getFirstEthAddr());
-    if (hash) {
-        defaultLogin(hash);
-    }
-
-    if (getBorn('tokenMap').get(getFirstEthAddr())) {
-        autoLogin(serverTimestamp);
-    }
-}
-
-//底层登录成功回调
-const bottomLayerLoginCB = (res)=>{
-    console.log('bottomLayerLoginCB',res);
-}
 /**
  * 获取所有的货币余额
  */
-export const getCloudBalance = () => {
+export const getServerCloudBalance = () => {
     const list = [];
-    list.push(CurrencyType.KT);
-    for (const k in CurrencyType) {
+    list.push(CloudCurrencyType.KT);
+    for (const k in CloudCurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
-            list.push(CurrencyType[k]);
+            list.push(CloudCurrencyType[k]);
         }
     }
     const msg = { type: 'wallet/account@get', param: { list:`[${list}]` } };
     
     return requestAsync(msg).then(balanceInfo => {
         console.log('balanceInfo', balanceInfo);
-        updateStore('cloudBalance', parseCloudBalance(balanceInfo));
+        const cloudBalances = parseCloudBalance(balanceInfo);
+        const cloudWallets = getStore('cloud/cloudWallets');
+        for (const [key,value] of cloudBalances) {
+            const cloudWallet = cloudWallets.get(key);
+            cloudWallet.balance = value;
+        }
+        setStore('cloud/cloudWallets',cloudWallets);
     }).catch((res) => {
-        updateStore('cloudBalance', parseCloudBalance(null));
+        console.log(res);
     });
 };
 
 /**
  * 获取指定类型的货币余额
  */
-export const getBalance = async (currencyType: CurrencyType) => {
+export const getBalance = async (currencyType: CloudCurrencyType) => {
     const msg = { type: 'wallet/account@get', param: { list: `[${currencyType}]` } };
     requestAsync(msg).then(r => {
         // todo 这里更新余额
@@ -286,7 +321,7 @@ export const getDividend = async () => {
             thisDivid: wei2Eth(data.value[2]),
             yearIncome: yearIncome
         };
-        updateStore('dividTotal', dividend);
+        setStore('dividTotal', dividend);
     });
 };
 
@@ -309,7 +344,7 @@ export const getMining = async () => {
         const totalNum = kpt2kt(data.mine_total);
         const holdNum = kpt2kt(data.mines);
         const today = kpt2kt(data.today);
-        let nowNum = (totalNum - holdNum + today) * 0.25 - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
+        let nowNum = Math.floor((totalNum - holdNum + today) * 0.25) - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
         if (nowNum <= 0) {
             nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
         } else if ((totalNum - holdNum) >= 100) {
@@ -323,7 +358,7 @@ export const getMining = async () => {
             holdNum: holdNum
         };
         console.log('-------------------',mining);
-        updateStore('miningTotal', mining);
+        setStore('activity/mining/total', mining);
     });
 };
 
@@ -340,7 +375,7 @@ export const getMiningHistory = async (start = '') => {
     };
     requestAsync(msg).then(data => {
         const miningHistory = parseMiningHistory(data);
-        updateStore('miningHistory', miningHistory);
+        setStore('activity/mining/history', miningHistory);
     });
 };
 
@@ -389,20 +424,20 @@ export const getInviteCodeDetail = async () => {
  * @param count 红包数量
  * @param lm 留言
  */
-export const  sendRedEnvlope = async (rtype: number, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
+export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
     const msg = {
         type: 'emit_red_bag',
         param: {
-            type: rtype,
+            type: Number(rtype),
             priceType: ctype,
-            totalPrice: largeUnit2SmallUnit(CurrencyTypeReverse[ctype], totalAmount),
+            totalPrice: largeUnit2SmallUnit(CloudCurrencyType[ctype], totalAmount),
             count: redEnvelopeNumber,
             desc: lm
         }
     };
 
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
 
         return res.value;
     } catch (err) {
@@ -419,9 +454,10 @@ export const convertRedBag = async (cid) => {
     const msg = { type: 'convert_red_bag', param: { cid: cid } };
 
     try {
+        // tslint:disable-next-line:no-unnecessary-local-variable
         const res = await requestAsync(msg);
 
-        return res.value;
+        return res;
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -469,7 +505,7 @@ export const querySendRedEnvelopeRecord = (start?: string) => {
     try {
         requestAsync(msg).then(async detail => {
             const data = parseSendRedEnvLog(detail.value,start);
-            updateStore('sHisRec',data);
+            setStore('activity/luckyMoney/sends',data);
         });
 
     } catch (err) {
@@ -504,7 +540,7 @@ export const queryConvertLog = async (start?:string) => {
     try {
         requestAsync(msg).then(detail => {
             const data = parseConvertLog(detail,start);
-            updateStore('cHisRec',data);
+            setStore('activity/luckyMoney/exchange',data);
         });
 
     } catch (err) {
@@ -547,7 +583,17 @@ export const queryDetailLog = async (uid:number,rid: string) => {
 export const getAward = async () => {
     const msg = { type: 'wallet/cloud@get_award', param: {} };
 
-    return requestAsync(msg);
+    try {
+        // tslint:disable-next-line:no-unnecessary-local-variable
+        const detail = await requestAsync(msg);
+        
+        return detail;
+        
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
 };
 
 /**
@@ -563,7 +609,7 @@ export const getMineDetail = async (start = '') => {
     };
     requestAsync(msg).then(detail => {
         const list = parseMineDetail(detail);
-        updateStore('addMine', list);
+        setStore('activity/mining/addMine', list);
     });
 };
 
@@ -580,7 +626,7 @@ export const getDividHistory = async (start = '') => {
     };
     requestAsync(msg).then(data => {
         const dividHistory = parseDividHistory(data);
-        updateStore('dividHistory', dividHistory);
+        setStore('activity/dividend/history', dividHistory);
     });
 };
 
@@ -606,8 +652,7 @@ export const getData = async (key) => {
  * 设置用户基础信息
  */
 export const setUserInfo = async () => {
-    if (find('loginState') !== LoginState.logined) return;
-    const userInfo = find('userInfo');
+    const userInfo = getStore('user/info');
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
     return requestAsync(msg);
@@ -623,14 +668,27 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         const res = await requestAsync(msg);
         const userInfoStr = unicodeArray2Str(res.value[0]);
         if (userInfoStr) {
-            const localUserInfo = find('userInfo');
+            const localUserInfo = getStore('user/info');
             const serverUserInfo = JSON.parse(userInfoStr);
-            const userInfo = {
-                ...localUserInfo,
-                ...serverUserInfo
+            console.log(serverUserInfo);
+            let isSame = true;
+            for (const key in localUserInfo) {
+                if (localUserInfo[key] !== serverUserInfo[key]) {
+                    isSame = false;
+                }
             }
-            console.log(userInfo);
-            updateStore('userInfo',userInfo);
+            if (!isSame) {
+                const userInfo = {
+                    ...serverUserInfo,
+                    nickName:localUserInfo.nickName,
+                    avatar:localUserInfo.avatar,
+                    isRealUser:localUserInfo.isRealUser
+                };
+                setStore('user/info',userInfo);
+            }
+            
+        } else {
+            setUserInfo();
         }
         
     } catch (err) {
@@ -680,7 +738,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         msg = {
             type: 'wallet/account@get_detail',
             param: {
-                coin:CurrencyType[coin],
+                coin:CloudCurrencyType[coin],
                 start,
                 filter,
                 count:PAGELIMIT
@@ -690,7 +748,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         msg = {
             type: 'wallet/account@get_detail',
             param: {
-                coin:CurrencyType[coin],
+                coin:CloudCurrencyType[coin],
                 filter,
                 count:PAGELIMIT
             }
@@ -702,34 +760,21 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
-        if (filter === 1) {
-            const accountDetailMap = getBorn('accountDetail');
-            const accountDetail = accountDetailMap.get(CurrencyType[coin]) || { list:[] };
-            if (!start) {
-                accountDetail.list = detail;
-            } else {
-                accountDetail.list.push(...detail);
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            if (filter === 1) {
+                if (start) {
+                    cloudWallet.otherLogs.list.push(...detail);
+                } else {
+                    cloudWallet.otherLogs.list = detail;
+                }
+                
+                cloudWallet.otherLogs.start = nextStart;
+                cloudWallet.otherLogs.canLoadMore = canLoadMore;
+                setStore('cloud/cloudWallets',cloudWallets);
             }
-        
-            accountDetail.start = nextStart;
-            accountDetail.canLoadMore = canLoadMore;
-            accountDetailMap.set(CurrencyType[coin],accountDetail);
-            updateStore('accountDetail',accountDetailMap);
-        } else {
-            const totalLogMap = getBorn('totalLogs');
-            const totalLogs = totalLogMap.get(CurrencyType[coin]) || { list:[] };
-            if (!start) {
-                totalLogs.list = detail;
-            } else {
-                totalLogs.list.push(...detail);
-            }
-        
-            totalLogs.start = nextStart;
-            totalLogs.canLoadMore = canLoadMore;
-            totalLogMap.set(CurrencyType[coin],totalLogs);
-            updateStore('totalLogs',totalLogMap);
         }
-
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -745,7 +790,7 @@ export const getMineRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
     requestAsync(msg).then(data => {
         const mineData = parseMineRank(data);
-        updateStore('mineRank', mineData);
+        setStore('activity/mining/mineRank', mineData);
     });
 };
 
@@ -756,16 +801,33 @@ export const getMiningRank = async (num: number) => {
     const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
     requestAsync(msg).then(data => {
         const miningData = parseMiningRank(data);
-        updateStore('miningRank', miningData);
+        setStore('activity/mining/miningRank', miningData);
     });
+};
+
+/**
+ * 验证手机号是否被注册
+ */
+export const verifyPhone = async(phone:number) => {
+    const msg = { type: 'wallet/user@check_phone', param: { phone } };
+    try {
+        return await requestAsync(msg); 
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
 };
 
 /**
  * 发送验证码
  */
 export const sendCode = async (phone: number, num: number) => {
+    const v = await verifyPhone(phone);
+    if (!v) {
+        return;
+    }
     const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
-
     try {
         return await requestAsync(msg);
     } catch (err) {
@@ -778,8 +840,8 @@ export const sendCode = async (phone: number, num: number) => {
 /**
  * 注册手机
  */
-export const regPhone = async (phone: number, code: number) => {
-    const bphone = getUserInfo().bphone;
+export const regPhone = async (phone: number, code: string) => {
+    const bphone = getUserInfo().phoneNumber;
     // tslint:disable-next-line:variable-name
     const old_phone =  bphone ? bphone :'';
     const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code } };
@@ -805,7 +867,7 @@ export const getProxy = async () => {
  * 矿山增加项目跳转详情
  */
 export const getMineItemJump = async(itemJump) => {
-    updateStore('mineItemJump',itemJump);
+    setStore('activity/mining/itemJump',itemJump);
 };
 
 // ===============================充值提现
@@ -920,7 +982,7 @@ export const withdrawFromServer = async (toAddr:string,value:string) => {
     };
 
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
         console.log('withdrawFromServer',res);
 
         return res.txid;
@@ -944,8 +1006,7 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
     };
 
     try {
-        const res = await requestAsync(msg);
-        console.log('btcWithdrawFromServer',res);
+        const res = await requestAsyncNeedLogin(msg);
 
         return res.txid;
     } catch (err) {
@@ -991,19 +1052,19 @@ export const getRechargeLogs = async (coin: string,start?) => {
         const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
-        const rechargeLogsMap = getBorn('rechargeLogs');
-        const rechargeLogs = rechargeLogsMap.get(CurrencyType[coin]) || { list:[] };
-        if (!start) {
-            rechargeLogs.list = detail;
-        } else {
-            rechargeLogs.list.push(...detail);
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            if (start) {
+                cloudWallet.rechargeLogs.list.push(...detail);
+            } else {
+                cloudWallet.rechargeLogs.list = detail;
+            }
+            cloudWallet.rechargeLogs.start = nextStart;
+            cloudWallet.rechargeLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
         }
         
-        rechargeLogs.start = nextStart;
-        rechargeLogs.canLoadMore = canLoadMore;
-        rechargeLogsMap.set(CurrencyType[coin],rechargeLogs);
-        updateStore('rechargeLogs',rechargeLogsMap);
-
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -1047,19 +1108,19 @@ export const getWithdrawLogs = async (coin: string,start?) => {
         const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
-        const withdrawLogsMap = getBorn('withdrawLogs');
-        const withdrawLogs = withdrawLogsMap.get(CurrencyType[coin]) || { list:[] };
-        if (!start) {
-            withdrawLogs.list = detail;
-        } else {
-            withdrawLogs.list.push(...detail);
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            if (start) {
+                cloudWallet.withdrawLogs.list.push(...detail);
+            } else {
+                cloudWallet.withdrawLogs.list = detail;
+            }
+            cloudWallet.withdrawLogs.start = nextStart;
+            cloudWallet.withdrawLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
         }
         
-        withdrawLogs.start = nextStart;
-        withdrawLogs.canLoadMore = canLoadMore;
-        withdrawLogsMap.set(CurrencyType[coin],withdrawLogs);
-        updateStore('withdrawLogs',withdrawLogsMap);
-
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -1080,7 +1141,7 @@ export const getProductList = async () => {
     try {
         const res = await requestAsync(msg);
         const result = parseProductList(res);
-        updateStore('productList',result);
+        setStore('activity/financialManagement/products',result);
 
         return result;
     } catch (err) {
@@ -1106,7 +1167,7 @@ export const buyProduct = async (pid:any,count:any) => {
     };
     
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
         console.log('buyProduct',res);
         if (res.result === 1) {
             getProductList();
@@ -1123,7 +1184,7 @@ export const buyProduct = async (pid:any,count:any) => {
 };
 
 /**
- * 购买记录
+ * 理财购买记录
  */
 export const getPurchaseRecord = async (start = '') => {
     const msg = {
@@ -1138,7 +1199,7 @@ export const getPurchaseRecord = async (start = '') => {
         const res = await requestAsync(msg);
         console.log('getPurchaseRecord',res);
         const record = parsePurchaseRecord(res);
-        updateStore('purchaseRecord',record);
+        setStore('activity/financialManagement/purchaseHistories',record);
 
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -1156,7 +1217,7 @@ export const buyBack = async (timeStamp:any) => {
     };
     
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncNeedLogin(msg);
         console.log('buyBack',res);
 
         return true;
@@ -1180,11 +1241,11 @@ export const fetchGasPrices = async () => {
         const res = await requestAsync(msg);
         
         const gasPrice = {
-            [MinerFeeLevel.STANDARD]:Number(res.standard),
-            [MinerFeeLevel.FAST]:Number(res.fast),
-            [MinerFeeLevel.FASTEST]:Number(res.fastest)
+            [MinerFeeLevel.Standard]:Number(res.standard),
+            [MinerFeeLevel.Fast]:Number(res.fast),
+            [MinerFeeLevel.Fastest]:Number(res.fastest)
         };
-        updateStore('gasPrice',gasPrice);
+        setStore('third/gasPrice',gasPrice);
 
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -1205,11 +1266,11 @@ export const fetchBtcFees = async () => {
         const res = await requestAsync(msg);
         const obj = JSON.parse(res.btc);
         const btcMinerFee = {
-            [MinerFeeLevel.STANDARD]:Number(obj.low_fee_per_kb),
-            [MinerFeeLevel.FAST]:Number(obj.medium_fee_per_kb),
-            [MinerFeeLevel.FASTEST]:Number(obj.high_fee_per_kb)
+            [MinerFeeLevel.Standard]:Number(obj.low_fee_per_kb),
+            [MinerFeeLevel.Fast]:Number(obj.medium_fee_per_kb),
+            [MinerFeeLevel.Fastest]:Number(obj.high_fee_per_kb)
         };
-        updateStore('btcMinerFee',btcMinerFee);
+        setStore('third/btcMinerFee',btcMinerFee);
 
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -1217,7 +1278,7 @@ export const fetchBtcFees = async () => {
 };
 
 // 获取真实用户
-export const fetchRealUser = async () => {
+export const getRealUser = async () => {
     const msg = {
         type: 'wallet/user@get_real_user',
         param: {}
@@ -1225,11 +1286,15 @@ export const fetchRealUser = async () => {
     
     try {
         const res = await requestAsync(msg);
-        const realUserMap = getBorn('realUserMap');
-        const conUser = find('conUser');
+        const conUser = getStore('user/id');
         if (!conUser) return;
-        realUserMap.set(conUser,res.value === 'false' ? false : true);
-        updateStore('realUserMap',realUserMap);
+        const userInfo  = getStore('user/info');
+        const isRealUser = res.value !== 'false';
+        
+        if (isRealUser !== userInfo.isRealUser) {
+            userInfo.isRealUser =  isRealUser;
+            setStore('user/info',userInfo);
+        }
         
     } catch (err) {
         console.log('wallet/user@get_real_user--------',err);
@@ -1251,7 +1316,7 @@ export const uploadFile = async (base64) => {
             'user-agent': 'Mozilla/4.0 MDN Example'
         },
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'no-cors', // no-cors, cors, *same-origin
+        mode: 'cors', // no-cors, cors, *same-origin
         redirect: 'follow', // manual, *follow, error
         referrer: 'no-referrer' // *client, no-referrer
     }).then(response => response.json())
@@ -1260,9 +1325,9 @@ export const uploadFile = async (base64) => {
             popNewMessage('图片上传成功');
             if (res.result === 1) {
                 const sid = res.sid;
-                const userInfo = find('userInfo') || {};
+                const userInfo = getStore('user/info');
                 userInfo.avatar = sid;
-                updateStore('userInfo',userInfo);
+                setStore('user/info',userInfo);
             }
         });
 };

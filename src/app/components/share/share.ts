@@ -3,7 +3,7 @@
  */
 import { ShareToPlatforms } from '../../../pi/browser/shareToPlatforms';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
+import { getLang } from '../../../pi/util/lang';
 
 interface Props {
     text?: string;
@@ -19,15 +19,12 @@ export class BaseShare extends Widget {
     public props: Props;
     public ok: (success:boolean) => void;
     public cancel: (success:boolean) => void;
-    constructor() {
-        super();
-    }
 
+    public language:any;
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.state = {
-            cfgData:getLanguage(this)
-        };
+        this.language = this.config.value[getLang()];
+        this.state ={};
         if (this.props.shareType !== ShareToPlatforms.TYPE_TEXT) {
             this.state.isShowQQ = true;
             this.state.showCount = 4;
@@ -66,7 +63,7 @@ export class BaseShare extends Widget {
             stp.shareLink({
                 success: (result) => { this.ok(true); },
                 fail: (result) => { this.cancel(false); },
-                webName: this.props.webName || this.state.cfgData.wallet,
+                webName: this.props.webName || this.language.wallet,
                 url: this.props.url,
                 title: this.props.title,
                 content: this.props.content,

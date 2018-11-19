@@ -2,13 +2,13 @@
  * wallet home 
  */
 // ==============================导入
-import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getCloudBalance } from '../../../net/pull';
-import { find, register } from '../../../store/store';
+import { getServerCloudBalance } from '../../../net/pull';
+import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, getUserInfo } from '../../../utils/tools';
+import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -16,25 +16,25 @@ declare var pi_modules : any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Home extends Widget {
+    public language:any;
     public create() {
         super.create();
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const userInfo = getUserInfo();
-        const cfg = getLanguage(this);
         this.state = {
             tabs:[{
-                tab:cfg.tabs[0],
+                tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },
                 components:'app-view-wallet-home-cloudHome'
             },{
-                tab:cfg.tabs[1],
+                tab:{ zh_Hans:'本地钱包',zh_Hant:'本地錢包',en:'' },
                 components:'app-view-wallet-home-walletHome'
             }],
             activeNum:1,
             avatar:userInfo && userInfo.avatar,
-            totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets()),
-            cfgData:cfg,
+            totalAsset:formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets()),
             refreshing:false,
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
@@ -52,21 +52,14 @@ export class Home extends Widget {
     }
 
     public updateTotalAsset() {
-        this.state.totalAsset = formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets());
+        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
         this.paint();
     }
 
     public currencyUnitChange() {
-        this.state.totalAsset = formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets());
+        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
         this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
-    }
-
-    /**
-     * 打开我的设置
-     */
-    public showMine() {
-        popNew('app-view-mine-home-home');
     }
 
     public refreshClick() {
@@ -75,50 +68,39 @@ export class Home extends Widget {
         }
         this.state.refreshing = true;
         this.paint();
-        let neededRefreshCount = 1;
-        getCloudBalance().then(() => {
-            neededRefreshCount--;
-            if (neededRefreshCount === 0) {
-                this.state.refreshing = false;
-                this.paint();
-            }
-        }).catch(() => {
-            neededRefreshCount--;
-            if (neededRefreshCount === 0) {
-                this.state.refreshing = false;
-                this.paint();
+        setTimeout(() => {
+            this.state.refreshing = false;
+            this.paint();
+        },1000);
+        getServerCloudBalance();
+        const wallet = getStore('wallet');
+        if (!wallet) return;
+        const list = [];
+        wallet.currencyRecords.forEach(v => {
+            if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
+                v.addrs.forEach(addrInfo => {
+                    list.push({ addr: addrInfo.addr, currencyName: v.currencyName });
+                });
+                
             }
         });
-        // 从缓存中获取地址进行初始化
-        const addrs = find('addrs') || [];
-        if (addrs) {
-            const wallet = find('curWallet');
-            if (!wallet) return;
-            let list = [];
-            wallet.currencyRecords.forEach(v => {
-                if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
-                    list = list.concat(v.addrs);
-                }
-            });
-            const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-            addrs.forEach(v => {
-                if (list.indexOf(v.addr) >= 0 && wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
-                    neededRefreshCount++;
-                    dataCenter.updateBalance(v.addr, v.currencyName).then(() => {
-                        neededRefreshCount--;
-                        if (neededRefreshCount === 0) {
-                            this.state.refreshing = false;
-                            this.paint();
-                        }
-                    });
-                }
-            });
-        }
+       
+        const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+        list.forEach(v => {
+            dataCenter.updateBalance(v.addr, v.currencyName);
+        });
     }
 }
 
 // ==========================本地
-register('userInfo',() => {
+register('user',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+    }
+});
+
+register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.userInfoChange();
@@ -126,14 +108,14 @@ register('userInfo',() => {
 });
 
 // 云端余额变化
-register('cloudBalance',() => {
+register('cloud/cloudWallet',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
     }
 });
 
-register('languageSet', () => {
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -141,15 +123,14 @@ register('languageSet', () => {
 });
 
 // 货币涨跌幅度变化
-register('currency2USDTMap',() => {
+register('third/currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
     }
 });
-
 // 货币单位变化
-register('currencyUnit',() => {
+register('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

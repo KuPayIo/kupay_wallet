@@ -2,12 +2,14 @@
  * cloud wallet home
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
-import { find, getBorn, register } from '../../../store/store';
-import { fetchBalanceValueOfCoin, fetchCoinGain, formatBalanceValue, getLanguage, popNewMessage } from '../../../utils/tools';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getCloudBalances, getStore, register } from '../../../store/memstore';
+// tslint:disable-next-line:max-line-length
+import { fetchBalanceValueOfCoin, fetchCoinGain, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, popNewMessage } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -19,29 +21,29 @@ interface Props {
 export class CloudWalletHome extends Widget {
     public props:Props;
     public ok:() => void;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        this.initEvent();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const currencyName = this.props.currencyName;
-        const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]) || 0;
+        const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
-        const cfg = getLanguage(this); 
-        const color = find('changeColor');
+        const color = getStore('setting/changeColor','redUp');
         this.state = {
             tabs:[{
-                tab:cfg.total,
+                tab:this.language.total,
                 components:'app-view-wallet-cloudWallet-totalRecord'
             },{
-                tab:cfg.other,
+                tab:this.language.other,
                 components:'app-view-wallet-cloudWallet-otherRecord'
             },{
-                tab:cfg.recharge,
+                tab:this.language.recharge,
                 components:'app-view-wallet-cloudWallet-rechargeRecord'
             },{
-                tab:cfg.withdraw,
+                tab:this.language.withdraw,
                 components:'app-view-wallet-cloudWallet-withdrawRecord'
             }],
             activeNum:0,
@@ -49,14 +51,14 @@ export class CloudWalletHome extends Widget {
             rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
             balance,
             balanceValue,
-            cfgData:cfg,
-            redUp:color ? color.selected === 0 :true
+            currencyUnitSymbol:getCurrencyUnitSymbol(),
+            redUp: color === 'redUp'
         };
     }
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        this.state.balance = getBorn('cloudBalance').get(CurrencyType[currencyName]) || 0;
+        this.state.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
         this.state.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,this.state.balance));
         this.paint();
     }
@@ -67,17 +69,19 @@ export class CloudWalletHome extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
+    // 充值
     public rechargeClick() {
         if (this.props.currencyName === 'KT' || this.props.currencyName === 'CNYT') {
-            popNewMessage(this.state.cfgData.tips);
+            popNewMessage(this.language.tips);
 
             return;
         }
         popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
     }
+    // 提币
     public withdrawClick() {
         if (this.props.currencyName === 'KT' || this.props.currencyName === 'CNYT') {
-            popNewMessage(this.state.cfgData.tips);
+            popNewMessage(this.language.tips);
 
             return;
         }
@@ -93,6 +97,11 @@ export class CloudWalletHome extends Widget {
         getWithdrawLogs(this.props.currencyName);
     }
 
+    public currencyUnitChange() {
+        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.paint();
+    }
+
     /**
      * 刷新页面
      */
@@ -104,7 +113,7 @@ export class CloudWalletHome extends Widget {
 // ===========================
 
 // 余额变化
-register('cloudBalance', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -112,7 +121,7 @@ register('cloudBalance', () => {
 });
 
 // 汇率变化
-register('USD2CNYRate', () => {
+register('third/USD2CNYRate', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -120,9 +129,17 @@ register('USD2CNYRate', () => {
 });
 
 // 涨跌幅变化
-register('currency2USDTMap', () => {
+register('third/currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
+    }
+});
+
+// 货币单位变化
+register('setting/currencyUnit',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.currencyUnitChange();
     }
 });

@@ -1,29 +1,18 @@
-<div class="new-page" style="display: flex;flex-direction: column;">
-    {{if it1.scroll}}
-    {{let opca = it1.scrollHeight/100}}
-    <div style="background:rgba(255, 255, 255, {{opca}})" w-class="topBar1">
-        <img src={{it1.avatar}} w-class="userHead" on-tap="showMine"/>
-    </div>
-    {{else}}
-    <div w-class="topBar">
-        <img src={{it1.avatar}} w-class="userHead" on-tap="showMine"/>
-    </div>
-    {{end}}
-    <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
-    <img src="../../../res/image1/{{it1.scroll?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" on-tap="refreshPage" class="{{it1.refresh ?'refreshing':''}}"/>
-
-    <div w-class="contain" id="contain" on-scroll="scrollPage" >
+<div class="new-page" style="display: flex;flex-direction: column;" ev-refresh-click="refreshPage">
+    
+    <div w-class="contain" on-scroll="scrollPage" id="earn-home">
+        <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
         <div w-class="topBack">
             
             <div w-class="groupCard">
                 <div w-class="titleMode">
                     <img src="../../../res/image1/mine_makmoney.png" w-class="makeMoney"/>
-                    <span w-class="totalTitle">{{it1.cfgData.totalTitle}}</span>
-                    <img src="../../../res/image1/41_blue.png" w-class="miningDesc" on-tap="miningDesc"/>
+                    <span w-class="totalTitle"><pi-ui-lang>{"zh_Hans":"累计挖矿(KT)","zh_Hant":"累計挖礦(KT)","en":""}</pi-ui-lang></span>
+                    <img src="../../../res/image1/41_gray.png" w-class="miningDesc" on-tap="miningDesc"/>
                 </div>
 
                 <div w-class="totalNum" id="mining">
-                    {{it1.ktBalance}}
+                    {{it1.holdMines}}
                     <span class="miningNum" style="animation:{{it1.doMining?'miningEnlarge 0.3s linear':''}}">
                         +{{it1.mines}}
                     </span>  
@@ -31,15 +20,16 @@
 
                 <div w-class="titleMode">
                     <div w-class="totalTitle">
-                        <div>{{it1.cfgData.leftTitle}}</div>
+                        <div><pi-ui-lang>{"zh_Hans":"矿山剩余(KT)","zh_Hant":"礦山剩餘(KT)","en":""}</pi-ui-lang></div>
                         <div w-class="otherNum">{{it1.mineLast}}</div>
                     </div>
                     <div w-class="totalTitle">
-                        <div>{{it1.cfgData.rightTitle}}</div>
+                        <div><pi-ui-lang>{"zh_Hans":"本次可挖(KT)","zh_Hant":"本次可挖(KT)","en":""}</pi-ui-lang></div>
                         <div w-class="otherNum">{{it1.mines}}</div>
                     </div>
                     <div ev-btn-tap="doPadding">
-                        <app-components1-btn-btn>{name:{{it1.cfgData.btnName}},"types":"small"}</app-components1-btn-btn>                    
+                        {{let item = {zh_Hans:"挖一下",zh_Hant:"挖一下",en:""} }}
+                        <app-components1-btn-btn>{name:{{item}},"types":"small"}</app-components1-btn-btn>                    
                     </div>
                 </div>
 
@@ -47,8 +37,8 @@
 
                 <div w-class="titleMode" on-tap="goNextPage(0)">
                     <img src="../../../res/image1/mine_top.png" w-class="rankTop"/>
-                    <span w-class="miningTitle" style="flex: 1;">{{it1.cfgData.miningTitle}}</span>
-                    <span w-class="miningTitle">{{it1.cfgData.tips[0] + it1.rankNum + it1.cfgData.tips[1]}}</span>
+                    <span w-class="miningTitle" style="flex: 1;"><pi-ui-lang>{"zh_Hans":"挖矿排名","zh_Hant":"挖礦排名","en":""}</pi-ui-lang></span>
+                    <span w-class="miningTitle"><pi-ui-lang>{"zh_Hans":"第","zh_Hant":"第","en":""}</pi-ui-lang>{{it1.rankNum}}<pi-ui-lang>{"zh_Hans":"位","zh_Hant":"位","en":""}</pi-ui-lang></span>
                     <img src="../../../res/image1/25_blue.png" w-class="rankList"/>
                 </div>
             </div>
@@ -56,31 +46,33 @@
             <div w-class="menuCard">
                 <div w-class="oneBtn" on-tap="goNextPage(1)">
                     <img src="../../../res/image1/btn_yun_1.png" w-class="btnImg"/>
-                    <div w-class="btnMess">{{it1.cfgData.btnMess[0]}}</div>
+                    <div w-class="btnMess"><pi-ui-lang>{"zh_Hans":"领分红","zh_Hant":"領分紅","en":""}</pi-ui-lang></div>
                 </div>
                 <div w-class="oneBtn" on-tap="goNextPage(2)">
                     <img src="../../../res/image1/btn_yun_2.png" w-class="btnImg"/>
-                    <div w-class="btnMess">{{it1.cfgData.btnMess[1]}}</div>
+                    <div w-class="btnMess"><pi-ui-lang>{"zh_Hans":"发红包","zh_Hant":"發紅包","en":""}</pi-ui-lang></div>
                 </div>
                 <div w-class="oneBtn" on-tap="goNextPage(3)">
                     <img src="../../../res/image1/btn_yun_3.png" w-class="btnImg"/>
-                    <div w-class="btnMess">{{it1.cfgData.btnMess[2]}}</div>
+                    <div w-class="btnMess"><pi-ui-lang>{"zh_Hans":"兑换","zh_Hant":"兌換","en":""}</pi-ui-lang></div>
                 </div>
                 <div w-class="oneBtn" on-tap="goNextPage(4)">
                     <img src="../../../res/image1/btn_yun_4.png" w-class="btnImg"/>
-                    <div w-class="btnMess">{{it1.cfgData.btnMess[3]}}</div>
+                    <div w-class="btnMess"><pi-ui-lang>{"zh_Hans":"做任务","zh_Hant":"做任務","en":""}</pi-ui-lang></div>
                 </div>
             </div>
 
             <div style="display: flex;align-items: center;">
-                <span style="font-size: 36px;font-weight: 600;margin-left: 50px;flex: 1;">{{it1.cfgData.welfare}}</span>
-                <img src="../../../res/image1/25_gray.png" w-class="welfareImg"/>
+                <span w-class="welfare"><pi-ui-lang>{"zh_Hans":"福利活动","zh_Hant":"福利活動","en":""}</pi-ui-lang></span>
             </div>
 
             <div style="margin: 15px 20px;">
-                <img src="../../../res/image1/Card.png" style="height: 250px;width: 100%;"/>
+                <widget w-tag="pi-ui-langImg" style="height: 250px;width: 100%;" on-tap="doActivity">{"zh_Hans":"app/res/image1/activity1_CN.jpg","zh_Hant":"app/res/image1/activity1_TW.jpg","en":""}</widget>
+                <widget w-tag="pi-ui-langImg" style="height: 250px;width: 100%;margin-top: 30px;"  on-tap="doActivity">{"zh_Hans":"app/res/image1/activity2_CN.jpg","zh_Hant":"app/res/image1/activity2_TW.jpg","en":""}</widget>
             </div>
         </div>  
     </div>
+    
+    <app-components1-topBar-topBar1>{avatar:{{it1.avatar}},scrollHeight:{{it1.scrollHeight}} }</app-components1-topBar-topBar1>
     <div w-class="bottomMode"></div>
 </div>

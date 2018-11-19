@@ -2,15 +2,19 @@
  * 转账
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { ERC20Tokens } from '../../../config';
+import { dataCenter } from '../../../logic/dataCenter';
 import { doScanQrCode } from '../../../logic/native';
 import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
-import { resendNormalTransfer, transfer } from '../../../net/pullWallet';
-import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { register } from '../../../store/store';
+import { resendNormalTransfer, transfer, TxPayload } from '../../../net/pullWallet';
+import { MinerFeeLevel, TxHistory } from '../../../store/interface';
+import { register } from '../../../store/memstore';
+import { doErrorShow } from '../../../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, judgeAddressAvailable, popPswBox } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getStaticLanguage, judgeAddressAvailable, popPswBox, updateLocalTx } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,16 +22,19 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
     currencyName:string;
-    tx?:TransRecordLocal;
+    tx?:TxHistory;
 }
+
 export class Transfer extends Widget {
     public ok:() => void;
+    public language:any;
     public async setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
 
     public async init() {
+        this.language = this.config.value[getLang()];
         if (this.props.currencyName === 'BTC') {
             fetchBtcFees();
         } else {
@@ -35,19 +42,17 @@ export class Transfer extends Widget {
         }
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
         const tx = this.props.tx;
-        console.log(tx);
-        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.STANDARD;
+        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             toAddr:tx ? tx.toAddr : '',
             amount:tx ? tx.pay : 0,
-            balance:getCurrentAddrBalanceByCurrencyName(this.props.currencyName),
+            balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
             minerFee:minerFeeList[curLevel].minerFee,
             minerFeeList,
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false,
-            cfgData:getLanguage(this),
             amountShow:'0.00',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
@@ -63,11 +68,11 @@ export class Transfer extends Widget {
         this.ok && this.ok();
     }
     public speedDescClick() {
-        popNew('app-components-modalBox-modalBox1',this.state.cfgData.modalBox);
+        popNew('app-components-allModalBox-modalBox1',this.language.modalBox);
     }
-
+    // 到账速度
     public chooseMinerFee() {
-        popNew('app-components-modalBox-chooseModalBox',{ 
+        popNew('app-components-allModalBox-chooseModalBox',{ 
             currencyName:this.props.currencyName,
             minerFeeList:this.state.minerFeeList,
             curLevel:this.state.curLevel,
@@ -94,23 +99,32 @@ export class Transfer extends Widget {
     // 转账
     public async nextClick() {
         if (!this.state.toAddr) {
-            popNew('app-components1-message-message', {  content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', {  content: this.language.tips[0] });
 
             return;
         }
-        if (!this.state.amount) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
+        if (!Number(this.state.amount)) {
+            popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
         }
 
-        if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
-
-            return;
+        if (ERC20Tokens[this.props.currencyName]) {
+            if (this.state.balance < Number(this.state.amount) || this.state.minerFee > getCurrentAddrInfo('ETH').balance) {
+                popNew('app-components1-message-message', { content: this.language.tips[2] });
+    
+                return;
+            }
+        } else {
+            if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
+                popNew('app-components1-message-message', { content: this.language.tips[2] });
+    
+                return;
+            }
         }
+        
         if (!judgeAddressAvailable(this.props.currencyName,this.state.toAddr)) {
-            popNew('app-components1-message-message', {  content: this.state.cfgData.tips[3] });
+            popNew('app-components1-message-message', {  content: this.language.tips[3] });
 
             return;
         }
@@ -120,37 +134,38 @@ export class Transfer extends Widget {
         const fromAddr = this.state.fromAddr;
         const toAddr = this.state.toAddr;
         const pay = Number(this.state.amount);
+        const txPayload:TxPayload = {
+            fromAddr,    
+            toAddr,      
+            pay,        
+            currencyName,
+            fee:this.state.minerFee,            
+            minerFeeLevel 
+        };
         const passwd = await popPswBox();
         if (!passwd) return;
-        const t = new Date();
-        const tx:TransRecordLocal = {
-            hash:'',
-            addr:fromAddr,
-            txType:TxType.TRANSFER,
-            fromAddr,
-            toAddr,
-            pay: pay,
-            time: t.getTime(),
-            status:TxStatus.PENDING,
-            confirmedBlockNumber: 0,
-            needConfirmedBlockNumber:0,
-            info: '',
-            currencyName,
-            fee: this.state.minerFee,
-            nonce:undefined,
-            minerFeeLevel
-        };
         let ret;
         if (!this.props.tx) {
-            ret = await transfer(passwd,tx);
+            const loading = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.loading });
+            ret = await transfer(passwd,txPayload,(tx:TxHistory) => {
+                updateLocalTx(tx);
+                dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+                popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.transSuccess });
+                popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
+                this.ok && this.ok();
+            },(error) => {
+                doErrorShow(error);
+            });
+            loading.callback(loading.widget);
         } else {
             const tx = { ...this.props.tx };
             tx.minerFeeLevel = minerFeeLevel;
             ret = await resendNormalTransfer(passwd,tx);
+            if (ret) {
+                this.ok && this.ok();
+            }
         }
-        if (ret) {
-            this.ok && this.ok();
-        }
+        
     }
 
     /**
@@ -168,7 +183,7 @@ export class Transfer extends Widget {
 }
 
 // gasPrice变化
-register('gasPrice',() => {
+register('third/gasPrice',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();
@@ -176,7 +191,7 @@ register('gasPrice',() => {
 });
 
 // btcMinerFee变化
-register('btcMinerFee',() => {
+register('third/btcMinerFee',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();

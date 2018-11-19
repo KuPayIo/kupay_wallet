@@ -2,11 +2,13 @@
  * 做任务
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { findModulConfig } from '../../../modulConfig';
 import { getInviteCode, getMineDetail, getMineItemJump } from '../../../net/pull';
-import { find, register } from '../../../store/store';
-import { getLanguage } from '../../../utils/tools';
+import { getStore, register } from '../../../store/memstore';
+import { popNewMessage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -15,66 +17,78 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Dividend extends Widget {
     public ok: () => void;
+    public language: any;
     constructor() {
         super();
     }
 
     public create() {
         super.create();
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
-            data:[
+            data: [
                 {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_create.png',
-                    itemName: cfg.data[0][0],
-                    itemShort:cfg.data[0][1],
-                    itemDetail: cfg.data[0][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
+                    itemKT:'',
                     itemJump: 'walletCreate',
-                    show:false
+                    detailShow: false,
+                    modulIsShow:true
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_verify.png',
-                    itemName: cfg.data[1][0],
-                    itemShort: cfg.data[1][1],
-                    itemDetail: cfg.data[1][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
+                    itemKT:'',
                     itemJump: 'bindPhone',
-                    show:false                
+                    detailShow: false,
+                    modulIsShow:true
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_store.png',
-                    itemName: cfg.data[2][0],
-                    itemShort: cfg.data[2][1],                
-                    itemDetail: cfg.data[2][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
+                    itemKT:'',
                     itemJump: 'storeCoin',
-                    show:false
+                    detailShow: false,
+                    modulIsShow:true
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_share.png',
-                    itemName: cfg.data[3][0],
-                    itemShort: cfg.data[3][1],  
-                    itemDetail: cfg.data[3][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
+                    itemKT:'',
                     itemJump: 'shareFriend',
-                    show:false
+                    detailShow: false,
+                    modulIsShow:true
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_buy.png',
-                    itemName: cfg.data[4][0],
-                    itemShort: cfg.data[4][1],
-                    itemDetail: cfg.data[4][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
+                    itemKT:'',
                     itemJump: 'buyFinancial',
-                    show:false
+                    detailShow: false,
+                    modulIsShow:findModulConfig('FINANCIAL_SERVICES')
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_chat.png',
-                    itemName: cfg.data[5][0],
-                    itemShort: cfg.data[5][1],
-                    itemDetail: cfg.data[5][2],
+                    itemName: '',
+                    itemShort: '',
+                    itemDetail: '',
+                    itemKT:'',
                     itemJump: 'toChat',
-                    show:false
+                    detailShow: false,
+                    modulIsShow:findModulConfig('APP_CHAT')
                 }
-            ],
-            cfgData:cfg
+            ]
         };
         this.initData();
         getMineDetail();
@@ -88,27 +102,33 @@ export class Dividend extends Widget {
      * 挖矿项目跳转
      * @param ind 挖矿项目参数
      */
-    public async goDetail(ind:number) {
+    public async goDetail(ind: number) {
         if (!this.state.data[ind].isComplete) {
             const itemJump = this.state.data[ind].itemJump;
             getMineItemJump(itemJump);
 
-            if (itemJump === 'shareFriend') {  // 邀请红包
-                const inviteCodeInfo = await getInviteCode();
-                if (inviteCodeInfo.result !== 1) return;
-                
-                popNew('app-view-earn-redEnvelope-sendRedEnv',{
-                    rid:inviteCodeInfo.cid,
-                    rtype:99,
-                    message:this.state.cfgData.defaultMess
-                });
-            }
-            if (itemJump === 'bindPhone') {  // 绑定手机
-                popNew('app-view-mine-setting-phone');
-            }
+            switch (itemJump) {
+                case 'walletCreate':                  // 创建钱包
+                    popNew('app-view-wallet-create-home');
+                    break;
+                case 'shareFriend':                  // 邀请红包
+                    const inviteCodeInfo = await getInviteCode();
+                    if (inviteCodeInfo.result !== 1) return;
 
-            if (itemJump === 'buyFinancial') {  // 购买理财 
-                popNew('app-view-wallet-financialManagement-home');
+                    popNew('app-view-earn-redEnvelope-sendRedEnv', {
+                        rid: inviteCodeInfo.cid,
+                        rtype: '99',
+                        message: this.language.defaultMess
+                    });
+                    break;
+                case 'bindPhone':                   // 绑定手机
+                    popNew('app-view-mine-setting-phone');
+                    break;
+                case 'buyFinancial':                // 购买理财
+                    popNew('app-view-wallet-financialManagement-home');
+                    break;
+                default:
+                    popNewMessage(this.language.tips);
             }
         }
     }
@@ -116,30 +136,31 @@ export class Dividend extends Widget {
     /**
      * 展示或隐藏详细描述
      */
-    public show(ind:number) {
-        this.state.data[ind].show = !this.state.data[ind].show;
+    public show(ind: number) {
+        this.state.data[ind].detailShow = !this.state.data[ind].detailShow;
         this.paint();
     }
 
     /**
      * 获取更新数据
      */
-    public async initData() {  
-        const detail = find('addMine');
+    public async initData() {
+        const detail = getStore('activity/mining/addMine');
         // tslint:disable-next-line:max-line-length
         // const detail = [{isComplete:true},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false}];
         if (detail) {
             for (const i in detail) {
                 this.state.data[i].isComplete = detail[i].isComplete;
+                this.state.data[i].itemKT = detail[i].itemNum;
             }
         }
 
         this.paint();
-        
+
     }
 }
 
-register('addMine', () => {
+register('activity/mining/addMine', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

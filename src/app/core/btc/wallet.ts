@@ -288,8 +288,8 @@ export class BTCWallet {
         return [serialized, rawTx.getFee(),rawTx.hash];
     }
 
-    async coinSelector(address: string, amount: number): Promise<any> {
-        //TODO: what if utxos is not an array
+    public async coinSelector(address: string, amount: number): Promise<any> {
+        // TODO: what if utxos is not an array
         const utxos = await BtcApi.getAddrUnspent(address);
 
         for (let i = 0; i < utxos.length; i++) {
@@ -318,7 +318,7 @@ export class BTCWallet {
 
         utxos.sort((x, y) => x.satoshis < y.satoshis);
         let accumlated = 0;
-        let result = [];
+        const result = [];
         for (let i = 0; i < utxos.length; i++) {
             accumlated += utxos[i].satoshis;
             result.push(utxos[i]);
@@ -331,7 +331,7 @@ export class BTCWallet {
     }
 
     public async buildRawTransactionFromSingleAddress(address: string, output: Output, minerFee: number): Promise<any> {
-        let utxos = await this.coinSelector(address, output.amount * 1e8 + minerFee);
+        const utxos = await this.coinSelector(address, output.amount * 1e8 + minerFee);
 
         output.amount = bitcore.Unit.fromBTC(output.amount).toSatoshis();
         const rawTx = new bitcore.Transaction().feePerKb(minerFee)
@@ -339,16 +339,16 @@ export class BTCWallet {
             .to(output.toAddr, output.amount)
             .change(output.chgAddr === undefined ? this.derive(0) : output.chgAddr)
             .enableRBF()
-            .sign([this.privateKeyOf(0)])
+            .sign([this.privateKeyOf(this.usedAdresses[address.trim()])]);
         
-        console.log("usedAddress", this.usedAdresses)
-        console.log("addres", address)
-        console.log("privateKey", this.privateKeyOf(this.usedAdresses[address.trim()]).toString())
+        console.log('usedAddress', this.usedAdresses);
+        console.log('addres', address);
+    
         return {
-            "rawTx": rawTx.serialize(true),
-            "fee": rawTx.getFee(),
-            "hash":rawTx.hash
-        }
+            rawTx: rawTx.serialize(true),
+            fee: rawTx.getFee(),
+            hash:rawTx.hash
+        };
     }
 
     // TODO: we should distinguish `confirmed`, `unconfirmed` and `spendable`
@@ -376,18 +376,17 @@ export class BTCWallet {
         try {
             txInfo = await BtcApi.getTxInfo(originTxid);
         } catch (_) {
-            throw new Error("Re-send an unknown transaction");
+            throw new Error('Re-send an unknown transaction');
         }
 
         if (txInfo.confirmations > 0 && txInfo.blockheight !== -1) {
-            throw new Error("Transaction has been succeed")
+            throw new Error('Transaction has been succeed');
         }
-
 
         const vin = txInfo.vin;
         const vout = txInfo.vout;
         const utxos = [];
-        let fromAddr = "";
+        let fromAddr = '';
 
         for (let i = 0; i < vin.length; i++) {
             const id = vin[i].txid;
@@ -401,16 +400,15 @@ export class BTCWallet {
             const scriptPubkey = script.toHex();
 
             const utxo = new bitcore.Transaction.UnspentOutput({
-                "txid": id,
-                "vout": vout,
-                "address": address,
-                "scriptPubKey": scriptPubkey,
-                "satoshis": satoshis
+                txid: id,
+                vout: vout,
+                address: address,
+                scriptPubKey: scriptPubkey,
+                satoshis: satoshis
             });
 
             utxos.push(utxo);
         }
-
 
         const tx = new bitcore.Transaction();
 
@@ -422,12 +420,10 @@ export class BTCWallet {
             }
         }
 
-
         const keySet = [];
         for (let i = 0; i < utxos.length; i++) {
             keySet.push(this.privateKeyOf(this.usedAdresses[utxos[i].address]));
         }
-
 
         tx.from(utxos)
             .change(this.derive(0))
@@ -435,13 +431,12 @@ export class BTCWallet {
             .feePerKb(minerFee)
             .sign(keySet);
 
-
         return {
-            "rawTx": tx.serialize(),
-            "originTxid": originTxid,
-            "newTxid": tx.hash,
-            "fee": tx.getFee()
-        }
+            rawTx: tx.serialize(),
+            originTxid: originTxid,
+            newTxid: tx.hash,
+            fee: tx.getFee()
+        };
     }
 
     public async init(): Promise<void> {

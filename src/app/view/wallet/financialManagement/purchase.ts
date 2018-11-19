@@ -3,13 +3,14 @@
  */
 // ===============================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { recharge } from '../../../net/pullWallet';
-import { CurrencyType, MinerFeeLevel, Product, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { getBorn } from '../../../store/store';
+import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../store/interface';
+import { getCloudBalances } from '../../../store/memstore';
 import { defaultGasLimit } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { fetchGasPrice, formatBalance, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 import { wei2Eth } from '../../../utils/unitTools';
 import { purchaseProduct } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './productDetail';
@@ -21,6 +22,7 @@ interface Props {
 export class ProductDetail extends Widget {
     public props:Props;
     public ok: () => void;
+    public language:any;
     constructor() {
         super();
     }
@@ -30,14 +32,14 @@ export class ProductDetail extends Widget {
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
-        const cloudBalance = getBorn('cloudBalance').get(CurrencyType.ETH);
-        const localBalance = getCurrentAddrBalanceByCurrencyName('ETH');
+        const cloudBalance = getCloudBalances().get(CloudCurrencyType.ETH);
+        const localBalance = getCurrentAddrInfo('ETH').balance;
         this.state = {
             spend,
             cloudBalance,
-            localBalance,
-            cfgData:getLanguage(this)
+            localBalance
         }; 
     }
     public close() {
@@ -51,26 +53,25 @@ export class ProductDetail extends Widget {
             if (success) {
                 const w: any = forelet.getWidget(WIDGET_NAME);
                 w.ok && w.ok();
-                popNew('app-view-wallet-financialManagement-home',{ activeNum:1 });
             }
         } else if (this.state.cloudBalance + this.state.localBalance >= this.state.spend) {
             const fromAddr = getCurrentAddrByCurrencyName('ETH');
             const pay = this.state.spend - this.state.cloudBalance;
-            const tx:TransRecordLocal = {
+            const tx:TxHistory = {
                 hash:'',
-                txType:TxType.RECHARGE,
+                txType:TxType.Recharge,
                 fromAddr,
                 toAddr: '',
                 pay,
                 time: new Date().getTime(),
-                status:TxStatus.PENDING,
+                status:TxStatus.Pending,
                 confirmedBlockNumber: 0,
                 needConfirmedBlockNumber:0,
                 info: '',
                 currencyName: 'ETH',
-                fee: wei2Eth(defaultGasLimit * fetchGasPrice(MinerFeeLevel.STANDARD)),
+                fee: wei2Eth(defaultGasLimit * fetchGasPrice(MinerFeeLevel.Standard)),
                 nonce:0,
-                minerFeeLevel:MinerFeeLevel.STANDARD,
+                minerFeeLevel:MinerFeeLevel.Standard,
                 addr:fromAddr
             };
             const h = await recharge(psw,tx);
@@ -79,7 +80,7 @@ export class ProductDetail extends Widget {
                 w.ok && w.ok();
             }
         } else {
-            popNewMessage(this.state.cfgData.tips);
+            popNewMessage(this.language.tips);
         }
         this.ok && this.ok();
     }

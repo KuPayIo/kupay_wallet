@@ -1,4 +1,5 @@
-import { dev_mode } from '../config';
+import { getLang } from '../../pi/util/lang';
+import { Config, dev_mode, DevMode } from '../config';
 import { MinerFeeLevel } from '../store/interface';
 
 /**
@@ -14,7 +15,10 @@ export const PAGELIMIT = 10;
 export const defaultEthToken = [];
 
 // 默认显示货币列表
-export const defalutShowCurrencys = ['ETH', 'BTC','BNB','VEN','OMG','ZRX'];
+export const defalutShowCurrencys = ['ETH', 'BTC','TRX','BNB','WTC','VEN'];
+
+// 默认不可更改显示货币列表
+export const notSwtichShowCurrencys = ['ETH', 'BTC'];
 
 // 默认不可更改显示货币列表
 export const notSwtichShowCurrencys = ['ETH', 'BTC'];
@@ -24,7 +28,7 @@ export const strength = 128;
 
 // todo 测试网络与正式网络切换
 // btc网络
-export const btcNetwork = dev_mode === 'dev' ? 'testnet' : 'mainnet';
+export const btcNetwork = dev_mode === DevMode.Prod ? 'mainnet' : 'testnet';
 
 // 语言
 export const lang = 'english';
@@ -50,6 +54,9 @@ export const shapeshiftApiPublicKey = '339a363550d4490fb4a0efae308440f4386c7d99e
 // tslint:disable-next-line:max-line-length
 export const shapeshiftApiPrivateKey = 'c98210f4568b04d3f84c5404f8e5be98353849138ed26b3e2723223257d3cbb8bb5cba5060b7c4d44e746342a2eb43e26b9bb5827588d9ed3e712e85d35f054c';
 
+// shapeshift autologin token
+export const shapeshiftAutoToken = 'CZfRLxjor2E49vTfTZDjaeeR78nMMi1rKypV9GRBsmt2';
+
 // 如果shapeshift交易记录返回[],请求的最多次数,超过默认没有交易记录
 export const shapeshiftTransactionRequestNumber = 5;
 // 发红包所支持的货币
@@ -71,30 +78,30 @@ export const withdrawLimit = {
 // 不同矿工费的到账时间
 export const timeOfArrival = {
     ETH:[{
-        level:MinerFeeLevel.STANDARD,
-        text:'标准',
-        time:'1-3分钟'
+        level:MinerFeeLevel.Standard,
+        text:{ zh_Hans:'标准',zh_Hant:'標準',en:'' },// 标准
+        time:{ zh_Hans:'1-3分钟',zh_Hant:'1-3分鐘',en:'' }
     },{
-        level:MinerFeeLevel.FAST,
-        text:'快',
-        time:'30-60秒'
+        level:MinerFeeLevel.Fast,
+        text:{ zh_Hans:'快',zh_Hant:'快',en:'' },// 快
+        time:{ zh_Hans:'30-60秒',zh_Hant:'30-60秒',en:'' }
     },{
-        level:MinerFeeLevel.FASTEST,
-        text:'最快',
-        time:'10-30秒'
+        level:MinerFeeLevel.Fastest,
+        text:{ zh_Hans:'最快',zh_Hant:'最快',en:'' },// 最快
+        time:{ zh_Hans:'10-30秒',zh_Hant:'10-30秒',en:'' }
     }],
     BTC:[{
-        level:MinerFeeLevel.STANDARD,
-        text:'标准',
-        time:'2-3小时'
+        level:MinerFeeLevel.Standard,
+        text:{ zh_Hans:'标准',zh_Hant:'標準',en:'' },// 标准
+        time:{ zh_Hans:'2-3小时',zh_Hant:'2-3小時',en:'' }
     },{
-        level:MinerFeeLevel.FAST,
-        text:'快',
-        time:'0.5-1小时'
+        level:MinerFeeLevel.Fast,
+        text:{ zh_Hans:'快',zh_Hant:'快',en:'' },// 快
+        time:{ zh_Hans:'0.5-1小时',zh_Hant:'0.5-1小時',en:'' }
     },{
-        level:MinerFeeLevel.FASTEST,
-        text:'最快',
-        time:'0-30分钟'
+        level:MinerFeeLevel.Fastest,
+        text:{ zh_Hans:'最快',zh_Hant:'最快',en:'' },// 最快
+        time:{ zh_Hans:'1-30分钟',zh_Hant:'1-30分鐘',en:'' }
     }]
 };
 
@@ -150,20 +157,20 @@ export const currencyConfirmBlockNumber = {
 export const etherscanUrl = 'https://ropsten.etherscan.io/tx/';
 // 打开第三方查询网址btc
 export const blockchainUrl = 'https://testnet.blockchain.info/tx/';
-//火币api access key
+// 火币api access key
 const huobiApiAccessKey = '6fd70042-c5e4c618-d6e619ec-ecfa2';
-//火币API
+// 火币API
 export const huobiApi = `https://api.huobipro.com/market/history/kline?period=1day&size=1&AccessKeyId=${huobiApiAccessKey}&symbol=`;
 
 /**
  * 一些指令
  */
 export enum CMD {
-    FORCELOGOUT = 1, //强制下线保留数据
-    FORCELOGOUTDEL = 2 //强制下线删除数据
+    FORCELOGOUT = 1, // 强制下线保留数据
+    FORCELOGOUTDEL = 2 // 强制下线删除数据
 } 
 
 /**
  * 调用本地文件url前缀
  */
-export const localUrlPre = "file:///";
+export const localUrlPre = 'file:///';

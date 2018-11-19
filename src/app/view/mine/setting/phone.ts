@@ -3,23 +3,31 @@
  */
 // =================================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { regPhone } from '../../../net/pull';
-import { updateStore } from '../../../store/store';
-import { getLanguage, getUserInfo } from '../../../utils/tools';
-// =================================================导出
+import { getMineDetail, regPhone } from '../../../net/pull';
+import { getStore, setStore } from '../../../store/memstore';
+import { getUserInfo } from '../../../utils/tools';
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class BindPhone extends Widget {
     public ok: () => void;
+    public language:any;
     constructor() {
         super();
     }
     public create() {
         super.create();
+        this.language = this.config.value[getLang()];
         this.state = {
             phone:'',
             code:[],
-            isSuccess:true,
-            cfgData:getLanguage(this)
+            isSuccess:true
         };
     }
 
@@ -32,7 +40,7 @@ export class BindPhone extends Widget {
      */
     public async doSure() {
         if (!this.state.phone) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips });
+            popNew('app-components1-message-message', { content: this.language.tips });
             this.state.code = [];
             this.setCode();
 
@@ -40,15 +48,16 @@ export class BindPhone extends Widget {
         }
         const data = await regPhone(this.state.phone, this.state.code.join(''));
         if (data && data.result === 1) {
-            const userinfo = getUserInfo();
-            userinfo.bphone = this.state.phone;
-            updateStore('userInfo',userinfo);
+            const userinfo = getStore('user/info');
+            userinfo.phoneNumber = this.state.phone;
+            setStore('user/info',userinfo);
+            getMineDetail();
             this.ok();
         } else {
-            this.state.isSuccess = false;
             this.state.code = [];
             this.setCode();
         }
+        this.paint();
     }
 
     /**
@@ -66,7 +75,6 @@ export class BindPhone extends Widget {
             // tslint:disable-next-line:prefer-template
             (<any>document.getElementById('codeInput' + i)).value = this.state.code[i];
         }
-        this.codeFocus();
     }
 
     /**
@@ -87,6 +95,8 @@ export class BindPhone extends Widget {
         } else if (this.integerJudge(v)) {
             this.state.code.push(v);
             const ind = this.state.code.length;
+            // tslint:disable-next-line:prefer-template
+            document.getElementById('codeInput' + (ind - 1)).blur();
             if (ind < 4) {
             // tslint:disable-next-line:prefer-template
                 document.getElementById('codeInput' + ind).focus();
@@ -120,5 +130,4 @@ export class BindPhone extends Widget {
         
         return reg.test(num);
     }
-
 }

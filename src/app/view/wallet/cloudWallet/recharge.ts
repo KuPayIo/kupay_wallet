@@ -2,14 +2,15 @@
  * Recharge
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
 import { recharge, resendRecharge } from '../../../net/pullWallet';
-import { MinerFeeLevel, TransRecordLocal, TxStatus, TxType } from '../../../store/interface';
-import { register } from '../../../store/store';
+import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
+import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchMinerFeeList, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchMinerFeeList, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -19,16 +20,18 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
     currencyName:string;
-    tx?:TransRecordLocal;
+    tx?:TxHistory;
 }
 export class Recharge extends Widget {
     public props:Props;
     public ok:() => void;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public async init() {
+        this.language = this.config.value[getLang()];
         if (this.props.currencyName === 'BTC') {
             fetchBtcFees();
         } else {
@@ -37,17 +40,16 @@ export class Recharge extends Widget {
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
         const tx = this.props.tx;
         console.log(tx);
-        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.STANDARD;
+        const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
         this.state = {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             amount:tx ? tx.pay : 0,
-            balance:getCurrentAddrBalanceByCurrencyName(this.props.currencyName),
+            balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
             minerFee:minerFeeList[curLevel].minerFee,
             minerFeeList,
             curLevel,
             minLevel:curLevel,
-            inputDisabled:tx ? true : false,
-            cfgData:getLanguage(this)
+            inputDisabled:tx ? true : false
         };
         
     }
@@ -61,18 +63,18 @@ export class Recharge extends Widget {
         this.ok && this.ok();
     }
     public speedDescClick() {
-        popNew('app-components-modalBox-modalBox1',this.state.cfgData.modalBox);
+        popNew('app-components-allModalBox-modalBox1',this.language.modalBox);
     }
 
      // 提币金额变化
     public amountChange(e:any) {
-        this.state.amount = Number(e.value);
+        this.state.amount = e.value;
         this.paint();
     }
 
     // 选择矿工费
     public chooseMinerFee() {
-        popNew('app-components-modalBox-chooseModalBox',{ 
+        popNew('app-components-allModalBox-chooseModalBox',{ 
             currencyName:this.props.currencyName,
             minerFeeList:this.state.minerFeeList,
             curLevel:this.state.curLevel,
@@ -86,32 +88,32 @@ export class Recharge extends Widget {
     // 转账
     public async nextClick() {
         if (!this.state.amount) {
-            popNewMessage(this.state.cfgData.tips[0]);
+            popNewMessage(this.language.tips[0]);
 
             return;
         }
 
-        if (this.state.balance < this.state.amount + this.state.minerFee) {
-            popNewMessage(this.state.cfgData.tips[1]);
+        if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
+            popNewMessage(this.language.tips[1]);
 
             return;
         }
         const minerFeeLevel = this.state.curLevel;
         const currencyName = this.props.currencyName;
         const fromAddr = this.state.fromAddr;
-        const pay = this.state.amount;
+        const pay = Number(this.state.amount);
         const passwd = await popPswBox();
         if (!passwd) return;
         const t = new Date();
         const oldTx = this.props.tx;
-        const tx:TransRecordLocal = {
+        const tx:TxHistory = {
             hash:'',
-            txType:TxType.RECHARGE,
+            txType:TxType.Recharge,
             fromAddr,
             toAddr: '',
             pay,
             time: t.getTime(),
-            status:TxStatus.PENDING,
+            status:TxStatus.Pending,
             confirmedBlockNumber: 0,
             needConfirmedBlockNumber:0,
             info: '',
@@ -136,7 +138,7 @@ export class Recharge extends Widget {
 }
 
 // gasPrice变化
-register('gasPrice',() => {
+register('third/gasPrice',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();
@@ -144,7 +146,7 @@ register('gasPrice',() => {
 });
 
 // btcMinerFee变化
-register('btcMinerFee',() => {
+register('third/btcMinerFee',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();

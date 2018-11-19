@@ -2,12 +2,13 @@
  * 理财详情
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPurchaseRecord } from '../../../net/pull';
-import { Product, PurchaseRecordOne } from '../../../store/interface';
-import { find, register } from '../../../store/store';
-import { calPercent, fetchHoldedProductAmount, getLanguage, hasWallet } from '../../../utils/tools';
+import { Product, PurchaseHistory } from '../../../store/interface';
+import { getStore, register } from '../../../store/memstore';
+import { calPercent, fetchHoldedProductAmount, hasWallet, popNewMessage } from '../../../utils/tools';
 
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -19,6 +20,7 @@ interface Props {
 }
 export class ProductDetail extends Widget {
     public ok:() => void;
+    public language:any;
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -27,7 +29,8 @@ export class ProductDetail extends Widget {
         this.init();
     }
     public init() {
-        if (find('conUid')) {
+        this.language = this.config.value[getLang()];
+        if (getStore('user/conUid')) {
             // 获取购买记录
             getPurchaseRecord();
         }
@@ -39,8 +42,8 @@ export class ProductDetail extends Widget {
             amount:1,
             leftPercent:  res.left,
             usePercent: res.use,
-            cfgData:getLanguage(this),
-            isScroll:false
+
+            scrollHeight:0
         };
         console.log(this.props.product);
     }
@@ -65,18 +68,14 @@ export class ProductDetail extends Widget {
     }
 
     // 购买记录改变
-    public updatePurchaseRecord(purchaseRecord:PurchaseRecordOne[]) {
+    public updatePurchaseRecord(purchaseRecord:PurchaseHistory[]) {
         this.state.holdedAmout = fetchHoldedProductAmount(this.props.product.id);
     }
 
     // 页面滚动
     public pageScroll() {
-        if (document.getElementById('body').scrollTop > 0) {
-            this.state.isScroll = true;
-            
-        } else {
-            this.state.isScroll = false;
-        }
+        const scrollTop = document.getElementById('body').scrollTop;
+        this.state.scrollHeight = scrollTop;
         this.paint();
         
     }
@@ -85,6 +84,8 @@ export class ProductDetail extends Widget {
      * 点击购买按钮
      */
     public purchaseClicked() {
+        popNewMessage(this.language.tip);
+        return;
         if (!hasWallet()) return;
         popNew('app-view-wallet-financialManagement-productStatement',{ product:this.props.product,amount:this.state.amount });
     }
@@ -98,7 +99,7 @@ export class ProductDetail extends Widget {
 }
 
 // =====================================本地
-register('purchaseRecord', async (purchaseRecord) => {
+register('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updatePurchaseRecord(purchaseRecord);

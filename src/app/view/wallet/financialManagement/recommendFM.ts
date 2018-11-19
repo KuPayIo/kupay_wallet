@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList } from '../../../net/pull';
 import { Product } from '../../../store/interface';
-import { register } from '../../../store/store';
+import { register } from '../../../store/memstore';
 
 interface Props {
     isActive:boolean;
@@ -42,7 +42,7 @@ export class RecommendFM extends Widget {
 }
 
 // 理财产品变化
-register('productList', async (productList) => {
+register('activity/financialManagement/products', async (productList) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateProductList(productList);

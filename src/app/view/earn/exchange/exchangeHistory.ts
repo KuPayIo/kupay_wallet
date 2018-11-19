@@ -5,10 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getData, getUserList, queryConvertLog } from '../../../net/pull';
-import { CRecDetail, CurrencyType } from '../../../store/interface';
-import { find, register, updateStore } from '../../../store/store';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getStore, register, setStore } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { getLanguage, parseRtype, timestampFormat, unicodeArray2Str } from '../../../utils/tools';
+import { parseRtype, timestampFormat } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -23,18 +24,20 @@ interface State {
     showMoreTips:boolean; // 是否显示底部加载更多提示
     convertNumber:number; // 兑换总数，不包含邀请红包
     convertNumberShow:number; // 兑换总数
-    isScroll:boolean;  // 页面是否滑动
+    scrollHeight:number;  // 页面滑动高度
     inviteObj:any; // 邀请红包对象
     userList:any[]; // 用户信息列表
-    cfgData:any; 
+    topRefresh:boolean; // 头部刷新按钮
 }
 
 export class ExchangeHistory extends Widget {
     public ok: () => void;
     public state:State;
+    public language:any;
 
     public async create() {
         super.create();
+        this.language = this.config.value[getLang()];
         this.state = {
             recordList:[
                 // { rid:111,rtype:'00',rtypeShow:'拼手气红包',ctypeShow:'ETH',timeShow:'04-30 14:32:00',amount:1 },       
@@ -44,14 +47,14 @@ export class ExchangeHistory extends Widget {
             recordListShow:[],
             convertNumber:0,
             convertNumberShow:0,
-            isScroll:false,
             start:undefined,
+            topRefresh:false,
             refresh:true,
             hasMore:false, 
             showMoreTips:false, 
             inviteObj:null,
             userList:[],
-            cfgData:getLanguage(this)
+            scrollHeight:0
         };
         this.initData();
         
@@ -64,7 +67,7 @@ export class ExchangeHistory extends Widget {
        
         this.getInviteRedEnvelope();     
                                
-        const cHisRec = find('cHisRec');
+        const cHisRec = getStore('activity/luckyMoney/exchange');
         if (cHisRec) {
             const hList = cHisRec.list;
             if (hList && hList.length > this.state.recordList.length) {
@@ -93,7 +96,7 @@ export class ExchangeHistory extends Widget {
     public async initRedEnv() {
         for (const i in this.state.recordList) {
             const data = await getUserList([this.state.recordList[i].suid]);
-            this.state.recordList[i].userName = data ? data.nickName :this.state.cfgData.defaultName;
+            this.state.recordList[i].userName = data ? data.nickName :this.language.defaultName;
         }
         
         this.paint();
@@ -108,7 +111,7 @@ export class ExchangeHistory extends Widget {
 
     // 获取邀请红包记录
     public async getInviteRedEnvelope() {
-        const inviteRedBagRec = find('inviteRedBagRec');
+        const inviteRedBagRec = getStore('activity/luckyMoney/invite');
         if (inviteRedBagRec) {
             console.log('inviteRedBagRec from local');
             this.state.inviteObj = inviteRedBagRec;
@@ -121,16 +124,16 @@ export class ExchangeHistory extends Widget {
             this.state.inviteObj = {
                 suid: 0,
                 rid: '-1',
-                rtype: 99,
+                rtype: '99',
                 rtypeShow: parseRtype(99),
-                ctype: CurrencyType.ETH,
+                ctype: CloudCurrencyType.ETH,
                 ctypeShow: 'ETH',
                 amount: 0.15,
                 time: data.value,
                 timeShow: timestampFormat(data.value),
-                userName:this.state.cfgData.inviteRedEnv
+                userName:this.language.inviteRedEnv
             };
-            updateStore('inviteRedBagRec',this.state.inviteObj);
+            setStore('activity/luckyMoney/invite',this.state.inviteObj);
             this.innerPaint();
         }
     }
@@ -158,7 +161,7 @@ export class ExchangeHistory extends Widget {
      * 实际加载数据
      */
     public async loadMore() {
-        const cHisRec = find('cHisRec');
+        const cHisRec = getStore('activity/luckyMoney/exchange');
         if (!cHisRec) return;
         const hList = cHisRec.list;
         const start = this.state.recordList.length;
@@ -179,20 +182,16 @@ export class ExchangeHistory extends Widget {
         const oh1 = document.getElementById('exchangeHistoryContent').offsetHeight;
         const oh2 = document.getElementById('exchangeHistoryRecords').offsetHeight;
         const scrollTop = document.getElementById('exchangeHistoryContent').scrollTop; 
+        this.state.scrollHeight = scrollTop;
         if (this.state.hasMore && this.state.refresh && (oh2 - oh1 - scrollTop) < 20) {
             this.state.refresh = false;
-            console.log(this.state.cfgData.loading);
+            console.log(this.language.loading);
             setTimeout(() => {
                 this.initData();
                 this.state.refresh = true;
             }, 500); 
         } 
 
-        if (scrollTop > 0) {
-            this.state.isScroll = true;
-        } else {
-            this.state.isScroll = false;
-        }
         this.paint();
     }
 
@@ -201,10 +200,16 @@ export class ExchangeHistory extends Widget {
      */
     public refreshPage() {
         queryConvertLog();
+        this.state.topRefresh = true;
+        this.paint();
+        setTimeout(() => {
+            this.state.topRefresh = false;
+            this.paint();
+        }, 1000);
     }
 }
 // =====================================本地
-register('cHisRec', () => {
+register('activity/luckyMoney/exchange', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();

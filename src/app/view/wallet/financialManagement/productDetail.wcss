@@ -5,15 +5,18 @@
 .body{
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
     flex: 1;
     margin-top: -1px;
 }
 .top-head{
-    height: 350px;
+    height: 480px;
     display: flex;
     flex-direction: column;
     transform: translateZ(-1px);
     background: linear-gradient(to right,#328EE6, #38CEE7);
+    padding-top: 128px;
 }
 .row1{
     display: flex;
@@ -152,4 +155,31 @@
     width: 40px;
     height: 40px;
     border: 20px solid transparent;
+}
+.ga-top-banner{
+    background-color: #fff;
+    position: absolute;
+    padding-top: 40px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #222;
+    box-sizing: border-box;
+    height: 128px;
+    top: 0;
+}
+.left-container{
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    font-size: 36px;
+    line-height: 88px;
+}
+.ga-back{
+    width: 40px;
+    height: 40px;
+    margin: 0 15px;
+    border: 15px solid transparent;
+    line-height: 88px;
 }

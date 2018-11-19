@@ -6,27 +6,35 @@
 
 // =================================================导入
 import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
+import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { sendCode } from '../../net/pull';
-import { getLanguage } from '../../utils/tools';
-// =================================================导出
+import { register } from '../../store/memstore';
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class BindPhone extends Widget {
     public ok: () => void;
+    public language:any;
     constructor() {
         super();
     }
     public create(): void {
         super.create();
+        this.language = this.config.value[getLang()];
         this.state = {
             oldCode: 86,
             codeList: ['86','886'],
             isShowNewCode: false,
             countdown: 0,
             phone: '',
-            limitTime: 60,
-            phoneReg: /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/,
-            cfgData:getLanguage(this)
+            limitTime: 60
         };
         // const t = find('lastGetSmsCodeTime'); // 不保留获取验证码倒计时
         // if (t) {
@@ -42,8 +50,8 @@ export class BindPhone extends Widget {
      * 获取验证码
      */
     public async getCode(event:any) {
-        if (!this.state.phone || !(this.state.phoneReg.test(this.state.phone))) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips });
+        if (!this.state.phone || !this.phoneJudge()) {
+            popNew('app-components1-message-message', { content: this.language.tips });
 
             return;
         }
@@ -65,7 +73,7 @@ export class BindPhone extends Widget {
      */
     public chooseNewCode(ind:number) {
         this.state.isShowNewCode = false;
-        this.state.oldCode = this.state.codeList[ind];
+        this.state.oldCode = Number(this.state.codeList[ind]);
         this.paint();
     }
 
@@ -76,6 +84,22 @@ export class BindPhone extends Widget {
         this.state.phone = e.value;
     }
 
+    /**
+     * 判断手机号是否符合规则
+     */
+    public phoneJudge() {
+        const reg1 = /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/;
+        const reg2 = /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/;        
+        if (this.state.oldCode === 86) {
+            return reg1.test(this.state.phone);
+        } else {
+            return reg2.test(this.state.phone);
+        }
+    }
+
+    /**
+     * 开启倒计时
+     */
     private openTimer() {
         setTimeout(() => {
             this.openTimer();

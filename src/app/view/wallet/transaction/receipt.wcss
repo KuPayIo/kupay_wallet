@@ -38,9 +38,10 @@
     text-align: center;
 
 }
-.copy{
+.copy_img{
     vertical-align: middle;
     margin-left: 10px;
+    width:40px;
 }
 .btn-container{
     margin: 0 30px;

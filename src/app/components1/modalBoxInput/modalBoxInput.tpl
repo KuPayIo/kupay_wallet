@@ -2,7 +2,9 @@
     <div w-class="body">
         <div w-class="title">
             {{it.title}}
-            <span w-class="forgetPsw" on-tap="foegetPsw">{{it1.cfgData.forgetPsw}}</span>
+            <span w-class="forgetPsw" on-tap="foegetPsw">
+                <pi-ui-lang>{"zh_Hans":"忘记密码？","zh_Hant":"忘記密碼？","en":""}</pi-ui-lang>
+            </span>
         </div>
         <div w-class="content">
             {{for ind,val of it.content}}
@@ -10,12 +12,24 @@
             {{end}}
         </div>
 
-        <div style="height: 90px;border-bottom: 1px solid #3294E6;" ev-input-change="change">
-            <app-components1-input-input>{placeHolder: {{it.placeholder?it.placeholder:""}},itype:{{it.itype?it.itype:"text"}},style:"padding:0;font-size:28px;" }</app-components1-input-input>
+        <div style="height: 90px;" ev-input-change="change">
+            <app-components1-input-input>{placeHolder: {{it.placeholder?it.placeholder:""}},itype:{{it.itype?it.itype:"text"}},style:"padding:0;font-size:28px;",underLine:true,autofocus:true }</app-components1-input-input>
         </div>
         <div w-class="btns">
-            <div w-class="btn-cancel" on-tap="cancelBtnClick">{{it.cancelText ? it.cancelText : it1.cfgData.cancelText}}</div>
-            <div w-class="btn-ok" on-tap="okBtnClick">{{it.sureText ? it.sureText : it1.cfgData.sureText}}</div>
+            {{if it.cancelText}}
+                {{: cancelText = {"zh_Hans":it.cancelText,"zh_Hant":it.cancelText,"en":""} }}
+            {{else}}
+                {{: cancelText = {"zh_Hans":"取消","zh_Hant":"取消","en":""} }}
+            {{end}}
+
+            {{if it.sureText}}
+                {{: sureText = {"zh_Hans":it.sureText,"zh_Hant":it.sureText,"en":""} }}
+            {{else}}
+                {{: sureText = {"zh_Hans":"确定","zh_Hant":"確定","en":""} }}
+            {{end}}
+            
+            <div w-class="btn-cancel" on-tap="cancelBtnClick"><pi-ui-lang>{{cancelText}}</pi-ui-lang></div>
+            <div w-class="btn-ok" on-tap="okBtnClick"><pi-ui-lang>{{sureText}}</pi-ui-lang></div>
         </div>
     </div>
 </div>

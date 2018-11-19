@@ -76,8 +76,6 @@
     color: #222;
     font-size: 32px;
     line-height: 45px;
-    border-bottom:1px solid #dbdbe5;
-    display: flex;
     align-items: center;
 }
 .name{
@@ -94,6 +92,9 @@
     line-height: 45px;
 }
 .random{
+    position:absolute;
+    top:30px;
+    right:0px;
     height: 40px;
     width: 40px;
     border: 20px solid transparent;

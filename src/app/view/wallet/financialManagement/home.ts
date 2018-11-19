@@ -2,10 +2,12 @@
  * wallet home 
  */
 // ==============================导入
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { fetchCloudTotalAssets, fetchTotalAssets, formatBalanceValue, getLanguage } from '../../../utils/tools';
 import { getProductList, getPurchaseRecord } from '../../../net/pull';
+import { getStore } from '../../../store/memstore';
+import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -16,6 +18,7 @@ interface Props {
 }
 export class Home extends Widget {
     public ok:() => void;
+    public language:any;
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -27,22 +30,24 @@ export class Home extends Widget {
         super.setProps(props,oldProps);
         this.state.activeNum = props.activeNum;
         getProductList();
-        getPurchaseRecord();
+        if (getStore('user/id')) {
+            getPurchaseRecord();
+        }
+       
     }
     public init() {
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
             tabs:[{
-                tab:cfg.tabs[0],
+                tab:this.language.tabs[0],
                 components:'app-view-wallet-financialManagement-recommendFM'
             },{
-                tab:cfg.tabs[1],
+                tab:this.language.tabs[1],
                 components:'app-view-wallet-financialManagement-holdedFM'
             }],
             activeNum:0,
             avatar:'',
-            totalAsset:formatBalanceValue(fetchTotalAssets() + fetchCloudTotalAssets()),
-            cfgData:getLanguage(this),
+            totalAsset:formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets()),
             refreshing:false
         };
     }
@@ -51,17 +56,17 @@ export class Home extends Widget {
         this.paint();
     }
 
-    public refreshClick(){
+    public refreshClick() {
         this.state.refreshing = true;
         this.paint();
-        if(this.state.activeNum === 0){
-            getProductList().then(()=>{
+        if (this.state.activeNum === 0) {
+            getProductList().then(() => {
                 this.state.refreshing = false;
                 console.log('getProductList refresh');
                 this.paint();
             });
-        }else{
-            getPurchaseRecord().then(()=>{
+        } else {
+            getPurchaseRecord().then(() => {
                 this.state.refreshing = false;
                 console.log('getPurchaseRecord refresh');
                 this.paint();

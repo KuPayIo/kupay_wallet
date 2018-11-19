@@ -4,6 +4,14 @@
         <div w-class="right" style="width: {{it.activePercent >= 0.5 ? it.width : 0}}px;height: {{it.width}}px;border: {{it.borderWidth}}px solid {{it.activeColor}};clip: rect(0, {{it.width}}px, {{it.width}}px, {{it.width/2}}px);top:{{-it.borderWidth}}px;left:{{-it.borderWidth}}px;"></div>
     </div>
     <div w-class="text" style="{{it.centerStyle}};width: {{it.width - it.borderWidth * 2}}px;height:{{it.width - it.borderWidth * 2}}px;color:{{it.activePercent>0?it.activeColor:'#888888'}}">
-        {{it.centerText && it.centerText!="" ? it.centerText : it.activePercent*100+"%"}}
+        {{if it.centerText && it.centerText!=""}}
+            {{if typeof(it.centerText) === 'object' }}
+                <pi-ui-lang>{{it.centerText}}</pi-ui-lang>
+            {{else}}
+                {{it.centerText}} 
+            {{end}}         
+        {{else}}
+            {{it.activePercent*100+"%"}}
+        {{end}}
     </div>
 </div>

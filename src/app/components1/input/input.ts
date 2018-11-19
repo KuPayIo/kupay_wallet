@@ -12,10 +12,10 @@
  * 外部可监听 ev-input-change，ev-input-blur，ev-input-focus，ev-input-clear事件
  */
 import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { getRealNode, paintCmd3, paintWidget } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
 
 interface Props {
     input?:string;
@@ -26,21 +26,27 @@ interface Props {
     style?:string;
     autofocus?:boolean;
     maxLength?:number;
+    notUnderLine?:boolean;
 }
 interface State {
     currentValue:string;
     focused:boolean;
     showClear:boolean;
-    cfgData:any;
     inputLock:boolean; // 中文输入结束标记，未结束时不执行change方法
 }
 
 export class Input extends Widget {
     public props: Props;
     public state: State;
+    public language :any;
     
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
+        this.language = this.config.value[getLang()];
+        if (this.props.placeHolder) {
+            this.props.placeHolder = this.props.placeHolder[getLang()];
+        }
+        
         let currentValue = '';
         if (props.input) {
             currentValue = props.input;
@@ -49,7 +55,6 @@ export class Input extends Widget {
             currentValue,
             focused: false,
             showClear:false,
-            cfgData:getLanguage(this),
             inputLock:false
         };
     }
@@ -65,6 +70,7 @@ export class Input extends Widget {
             this.props = {};
         }
         paintCmd3(this.getInput(), 'readOnly', this.props.disabled || false);
+        (<any>this.getInput()).value = this.state.currentValue;
         paintWidget(this, reset);
     }
     /**
@@ -81,10 +87,12 @@ export class Input extends Widget {
     }
 
     /**
-     * 用户开始进行非直接输入的时候触发，而在非直接输入结束。
+     * 用户开始进行非直接输入(中文输入)的时候触发，而在非直接输入结束。
      */
     public compositionstart() {
-        this.state.inputLock = true;
+        if (this.props.itype === 'text') {
+            this.state.inputLock = true;
+        }
     }
     
     /**
@@ -108,24 +116,27 @@ export class Input extends Widget {
         }
         // 密码输入时检验非法字符
         if (this.props.itype === 'password' && !this.availableJudge(currentValue) && currentValue.length > 0) {
-            popNew('app-components1-message-message',{ content:this.state.cfgData.disAvailable });
+            popNew('app-components1-message-message',{ content:this.language.disAvailable });
             currentValue = currentValue.slice(0,currentValue.length - 1); 
         }
         // 数字输入时检验输入格式
-        if (this.props.itype === 'number' && !this.numberJudge(currentValue) && currentValue.length > 0) {
-            currentValue = currentValue.slice(0,currentValue.length - 1); 
+        if (this.props.itype === 'number' && currentValue.length > 0) {
+            currentValue = currentValue.replace(/[^\d\.]/g,''); 
+            if (!this.numberJudge(currentValue)) {
+                currentValue = currentValue.slice(0,currentValue.length - 1); 
+            }
         }
         // 整数输入时检验输入格式
-        if (this.props.itype === 'integer' && !this.integerJudge(currentValue) && currentValue.length > 0) {
-            currentValue = currentValue.slice(0,currentValue.length - 1); 
+        if (this.props.itype === 'integer' && currentValue.length > 0) {
+            currentValue = currentValue.replace(/[\D]/g,''); 
         }
-
         this.state.currentValue = currentValue;
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
         
-        notify(event.node,'ev-input-change',{ value:this.state.currentValue });
         (<any>this.getInput()).value = currentValue;
-        this.paint();
+        notify(event.node,'ev-input-change',{ value:this.state.currentValue }); 
+        this.state.focused = true;
+        this.paint();  
     }
 
     /**
@@ -151,12 +162,14 @@ export class Input extends Widget {
     // 清空文本框
     public clearClickListener(event:any) {
         this.state.currentValue = '';
-        notify(event.node,'ev-input-clear',{});
-        this.paint(true);
+        this.state.showClear = false;
+        (<any>this.getInput()).value = '';
+        notify(event.node,'ev-input-clear',{});  
+        this.paint();      
     }
 
     /**
-     * 判断输入的字符是否符合规则
+     * 判断输入的密码是否符合规则
      */
     public availableJudge(psw:string) {
         const reg = /^[0-9a-zA-Z!"#$%&'()*+,\-./:;<=>?@\[\]^_`{\|}~]+$/;
@@ -165,7 +178,7 @@ export class Input extends Widget {
     }
 
     /**
-     * 判断输入是否是数字
+     * 判断输入是否是正确的数字格式
      */
     public numberJudge(num:string) {
         const reg = /(^[1-9][0-9]*\.|^0\.)[0-9]*$/;
@@ -174,12 +187,4 @@ export class Input extends Widget {
         return reg.test(num) || reg1.test(num);
     }
 
-    /**
-     * 判断是否是整数
-     */
-    public integerJudge(num:string) {
-        const reg = /^[1-9][0-9]*$/;
-        
-        return reg.test(num);
-    }
 }

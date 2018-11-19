@@ -510,6 +510,7 @@ _$define("app/exchange/shapeshift/shapeshift", function (require, exports, modul
                     var method = xhr.method = options.method || "GET"
                     var body = options.body || options.data || null
                     var headers = xhr.headers = options.headers || {}
+                    headers.Authorization = 'Bearer CZfRLxjor2E49vTfTZDjaeeR78nMMi1rKypV9GRBsmt2';
                     var sync = !!options.sync
                     var isJson = false
                     var timeoutTimer

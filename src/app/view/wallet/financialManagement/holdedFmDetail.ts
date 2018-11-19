@@ -1,31 +1,42 @@
 /**
  * 购买的理财详情
  */
+import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { buyBack, getPurchaseRecord } from '../../../net/pull';
-import { PurchaseRecordOne } from '../../../store/interface';
-import { find } from '../../../store/store';
-import { getLanguage, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
+import { PurchaseHistory } from '../../../store/interface';
+import { register } from '../../../store/memstore';
+import { popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 interface Props {
-    product:PurchaseRecordOne;
+    product:PurchaseHistory;
+    index:number;
 }
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class HoldedFmDetail extends Widget {
     public ok:() => void;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        console.log(this.props.product);
-        const cfg = getLanguage(this);
-        const stateShow = props.product.state === 1 ? cfg.phrase[0] : cfg.phrase[1];
+        // console.log(this.props.product);
+        this.language = this.config.value[getLang()];
+        const stateShow = props.product.state === 1 ? this.language.phrase[0] : this.language.phrase[1];
         const stateBg = props.product.state === 1 ? '' : 'bg1';
-        const btnText = props.product.state === 1 ? cfg.phrase[2] : cfg.phrase[1];
+        const btnText = props.product.state === 1 ? this.language.phrase[2] : this.language.phrase[1];
         const btnBgColor = props.product.state === 1 ? 'blue' : 'white';
         this.state = {
             stateShow,
+            scrollHeight:0,
             stateBg,
             btnText,
-            btnBgColor,
-            cfgData:cfg
+            btnBgColor
         };
     }
     public backPrePage() {
@@ -36,10 +47,10 @@ export class HoldedFmDetail extends Widget {
         if (this.props.product.state !== 1) return;
         const psw = await popPswBox();
         if (!psw) return;
-        const close = popNewLoading(this.state.cfgData.loading);
-        const verify = await VerifyIdentidy(find('curWallet'),psw);
+        const close = popNewLoading(this.language.loading);
+        const verify = await VerifyIdentidy(psw);
         if (!verify) {
-            popNewMessage(this.state.cfgData.tips[0]);
+            popNewMessage(this.language.tips[0]);
             close.callback(close.widget);
 
             return;
@@ -47,10 +58,37 @@ export class HoldedFmDetail extends Widget {
         const result = await buyBack(this.props.product.purchaseTimeStamp);
         close.callback(close.widget);
         if (result) {
-            popNewMessage(this.state.cfgData.tips[1]);
+            popNewMessage(this.language.tips[1]);
             getPurchaseRecord();
         } else {
-            popNewMessage(this.state.cfgData.tips[2]);
+            popNewMessage(this.language.tips[2]);
         }
     }
+
+     // 页面滚动
+    public pageScroll() {
+        const scrollTop = document.getElementById('body').scrollTop;
+        this.state.scrollHeight = scrollTop;
+        this.paint();
+        
+    }
+
+    /**
+     * 点击阅读声明
+     */
+    public readAgree() {
+        popNew('app-view-wallet-financialManagement-productStatement',{ fg:1 });        
+    }
 }
+register('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        const data = {
+            product:purchaseRecord[w.props.index],
+            index:w.props.index
+        };
+        w.setProps(data);
+        w.paint();
+    }
+    
+});

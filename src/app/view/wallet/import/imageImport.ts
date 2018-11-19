@@ -4,24 +4,25 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
-import { CreateWalletType } from '../../../store/interface';
-import { getLanguage } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
+import { CreateWalletType } from '../../../logic/localWallet';
+import { getLang } from '../../../../pi/util/lang';
 
 export class ImageImport extends Widget {
     public ok: () => void;
+    public language:any;
     public create() {
         super.create();
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         this.state = {
             chooseImage:false,
             imageBase64:'',
             imageHtml:'',
             imagePsw:'',
             imagePswAvailable:false,
-            cfgData:getLanguage(this)
         };
     }
     public backPrePage() {
@@ -49,12 +50,12 @@ export class ImageImport extends Widget {
 
     public nextClick() {
         if (!this.state.imageBase64) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', { content: this.language.tips[0] });
 
             return;
         }
         if (!this.state.imagePsw) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
+            popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
         }

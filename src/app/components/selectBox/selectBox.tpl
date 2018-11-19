@@ -7,7 +7,7 @@
         <img src="../../res/image/15.png" style="width: 40px;height: 40px;"/>
     </div>
 
-    {{if it1.showList}}
+    {{if it1.showList && !it.forceHide}}
     <div w-class="new-code-bg">
         {{for ind,val of it1.list}}
         <div w-class="new-code" on-tap="changeSelect(e,{{ind}})">

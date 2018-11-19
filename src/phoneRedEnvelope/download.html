@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html manifest="IGNORE.manifest">
 <head>
     <meta charset="utf-8" />
-    <title>Page Title</title>
+    <title>KuPlay</title>
     <meta charset="utf-8">
 	<meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
 	<meta name="viewport" content="width=device-width,initial-scale=0.5,maximum-scale=0.5,user-scalable=0">
@@ -14,35 +14,28 @@
             <img class="ga-logo" src="image/img_logo.png"/>
             <div class="ga-title" id="title">KuPay安全的一站式资产管理平台</div>
             <div class="ga-download-btn" onclick="downloadClick()" id="download">立即下载</div>
-            <div class="ga-version">V1.0</div>
+            <div class="ga-version">V1.9</div>
             <div class="ga-installation-tutorial">
                 <div class="ga-install-title" id="installTutorial">Android安装教程</div>
                 <div class="ga-steps">
                     <div class="ga-step-item">
                         <div class="ga-box"><span class="ga-step-tag">step&nbsp;1</span><span class="ga-step-content" id="step1">点击“立即下载”按钮下载安装文件</span></div>
-                        <img src="image/img_logo.png" class="ga-step-img"/>
+                        <img src="image/step1.jpg" class="ga-step-img"/>
                     </div>
                 </div>
                 <div class="ga-steps">
                     <div class="ga-step-item">
-                        <div class="ga-box"><span class="ga-step-tag">step&nbsp;2</span><span class="ga-step-content" id="step2">成功安装KuPay</span></div>
-                        <img src="image/img_logo.png" class="ga-step-img"/>
+                        <div class="ga-box"><span class="ga-step-tag">step&nbsp;2</span><span class="ga-step-content" id="step2">进入APP并创建钱包</span></div>
+                        <img src="image/step2.jpg" class="ga-step-img"/>
                     </div>
                 </div>
-                <div class="ga-steps">
-                    <div class="ga-step-item">
-                        <div class="ga-box"><span class="ga-step-tag">step&nbsp;3</span><span class="ga-step-content" id="step3">进入APP并创建钱包</span></div>
-                        <img src="image/img_logo.png" class="ga-step-img"/>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
 
     <div class="tipsPage" onclick="closeTips()"></div>
 </body>
-<script src="main.js"></script>
+<script src="main20181112.js"></script>
 <script>
     const cfg = getLanguage();
     document.getElementById('title').innerText = cfg.shortMess;
@@ -50,6 +43,6 @@
     document.getElementById('installTutorial').innerText = cfg.installTutorial;
     document.getElementById('step1').innerText = cfg.step1;
     document.getElementById('step2').innerText = cfg.step2;
-    document.getElementById('step3').innerText = cfg.step3;
+    // document.getElementById('step3').innerText = cfg.step3;
 </script>
 </html>

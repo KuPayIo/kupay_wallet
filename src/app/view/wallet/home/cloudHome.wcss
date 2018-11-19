@@ -2,6 +2,8 @@
     padding: 0 20px;
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 .total-asset-container{
     height: 120px;
@@ -37,4 +39,7 @@
     height: 40px;
     width: 40px;
     border: 20px solid transparent;
+}
+.space{
+    height: 60px;
 }

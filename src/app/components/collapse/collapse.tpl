@@ -4,7 +4,7 @@
         <div w-class="pi-collapse-head" on-tap="clickItemListener(e,{{index}})" class="pi-collapse-head">
             <div w-class="ga-icon-container"><img src="{{CollapseItem.icon}}" w-class="ga-icon"/></div>
             <div w-class="pi-collapse-title" class="pi-collapse-title">{{CollapseItem.title}}</div>
-            <img  src="../../res/image/right_arrow_blue.png" w-class="pi-collapse-arrow {{it1.isExpanded(index) ? 'pi-collapse-arrow-rotate' : ''}}" />
+            <img src="app/res/image/right_arrow2_gray.png" w-class="pi-collapse-arrow {{it1.isExpanded(index) ? 'pi-collapse-arrow-rotate' : ''}}" />
         </div>
         <div w-class="pi-collapse-item-panel {{it1.isExpanded(index) ? 'pi-collapse-item-panel-border' : ''}}"
             class="pi-collapse-item-panel">
@@ -14,7 +14,6 @@
                     {{item.addr}}
                     <p style="margin-top: 20px;">{{item.balance}}</p>
                 </div>
-                <img src="../../res/image/right_arrow2_gray.png" style="width: 40px;height: 40px;" />
             </div>
             {{end}}
         </div>

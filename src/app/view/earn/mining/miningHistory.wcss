@@ -1,12 +1,14 @@
 .new-page{
     display: flex;
     flex-direction: column;
-    background-color: #F2F2F2;
+    background-color: #f9f9f9;
 }
 .historylist{
     flex:1 0 0;
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
 }
@@ -36,6 +38,7 @@
     font-size: 32px;
     margin-top: 20px;
     padding-top: 170px;
+    height: 100%;
 }
 .endMess{
     color: rgba(204, 204, 204, 1);

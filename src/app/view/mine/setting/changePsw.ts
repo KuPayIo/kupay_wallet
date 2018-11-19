@@ -3,26 +3,32 @@
  */
 // =============================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { GlobalWallet } from '../../../core/globalWallet';
-import { find } from '../../../store/store';
+import { register } from '../../../store/memstore';
 import { pswEqualed } from '../../../utils/account';
-import { getLanguage } from '../../../utils/tools';
-import { VerifyIdentidy } from '../../../utils/walletTools';
-// ================================================导出
+import { passwordChange, VerifyIdentidy } from '../../../utils/walletTools';
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class ChangePSW extends Widget {
     public ok: () => void;
+    public language:any;
     constructor() {
         super();
     }
 
     public create() {
         super.create();
+        this.language = this.config.value[getLang()];
         this.state = {
             oldPassword:'',
             newPassword:'',
             rePassword:'',
-            cfgData:getLanguage(this),
             pswEqualed:false,
             pswAvailable:false
         };
@@ -46,6 +52,20 @@ export class ChangePSW extends Widget {
         this.state.pswEqualed = pswEqualed(this.state.newPassword, this.state.rePassword) && this.state.pswAvailable;
         this.paint();
     }
+    public pswClear(pswType: number) {
+        switch (pswType) {
+            case 0:
+                this.state.oldPassword = '';
+                break;
+            case 1:
+                this.state.newPassword = '';
+                break;
+            case 2:
+                this.state.rePassword = '';
+                break;
+            default:
+        }
+    }
 
     /**
      * 点击确认按钮
@@ -54,40 +74,37 @@ export class ChangePSW extends Widget {
         const oldPassword = this.state.oldPassword;
         const newPassword = this.state.newPassword;
         const rePassword = this.state.rePassword;
-        const wallet = find('curWallet');
         if (!oldPassword || !newPassword || !rePassword) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', { content: this.language.tips[0] });
 
             return;
         }
         // 判断输入的密码是否符合规则
         if (!this.state.pswAvailable) {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
+            popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
         }
         // 判断两次输入的密码是否相同
         if (!this.state.pswEqualed) {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
+            popNew('app-components1-message-message', { content: this.language.tips[2] });
 
             return;
         }
-        const loading = popNew('app-components1-loading-loading', { text: this.state.cfgData.loading });
-        const fg = await VerifyIdentidy(wallet,oldPassword);
+        const loading = popNew('app-components1-loading-loading', { text: this.language.loading });
+        const fg = await VerifyIdentidy(oldPassword);
         // 判断原密码是否正确
         if (!fg) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });
+            popNew('app-components1-message-message', { content: this.language.tips[3] });
             loading.callback(loading.widget);
 
             return;
         }
-        const gwlt = GlobalWallet.fromJSON(wallet.gwlt);
-        await gwlt.passwordChange(oldPassword, newPassword);
-        wallet.gwlt = gwlt.toJSON();
+        await passwordChange(oldPassword, newPassword);
         loading.callback(loading.widget);
+        popNew('app-components1-message-message', { content: this.language.tips[4] });
         this.backPrePage();
     }
-
 }

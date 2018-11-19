@@ -4,9 +4,10 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
-import { getBorn, register } from '../../../store/store';
-import { getLanguage, timestampFormat } from '../../../utils/tools';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getStore, register } from '../../../store/memstore';
+import { timestampFormat } from '../../../utils/tools';
+import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,27 +19,27 @@ interface Props {
 }
 export class OtherRecord extends Widget {
     public props:Props;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName,1);
         }
-        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
         this.state = {
             recordList:this.parseRecordList(accountDetail.list),
             nextStart:accountDetail.start,
             canLoadMore:accountDetail.canLoadMore,
             isRefreshing:false,
-            cfgData:getLanguage(this)
         };
     }
     public updateRecordList() {
         if (!this.state) return;
-        const accountDetail = getBorn('accountDetail').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
-        console.log(accountDetail);
+        const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
         const list = accountDetail.list;
         this.state.nextStart = accountDetail.start;
         this.state.canLoadMore = accountDetail.canLoadMore;
@@ -73,7 +74,7 @@ export class OtherRecord extends Widget {
     }
 }
 
-register('accountDetail', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();

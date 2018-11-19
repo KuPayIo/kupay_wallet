@@ -29,9 +29,7 @@ export class FourParaItem extends Widget {
 
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
-        this.state = {
-            cfgData:getLanguage(this)
-        };
+        this.state = {};
     }
 
     public backPrePage() {

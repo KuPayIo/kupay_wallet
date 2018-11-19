@@ -2,18 +2,17 @@
  * create wallet
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
+import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
-import { createWallet } from '../../../logic/localWallet';
+import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { uploadFile, getRandom } from '../../../net/pull';
-import { CreateWalletType } from '../../../store/interface';
-import { getBorn, updateStore, register } from '../../../store/store';
+import { openConnect, uploadFile } from '../../../net/pull';
+import { getStore, register, setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { getFirstEthAddr, getLanguage, popNewMessage, getStaticLanguage } from '../../../utils/tools';
+import { checkCreateAccount, getStaticLanguage, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './home';
-import { localUrlPre } from '../../../utils/constants';
-import { resize } from '../../../../pi/widget/resize/resize';
 interface Props {
     itype:CreateWalletType;
     imageBase64?:string;// 图片base64
@@ -25,11 +24,14 @@ interface Props {
 export class CreateWallet extends Widget {
     public props:Props;
     public ok: () => void;
+    public language:any;
+
     public create() {
         super.create();
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         this.state = {
             itype:CreateWalletType.Random,
             walletName: playerName(),
@@ -40,8 +42,7 @@ export class CreateWallet extends Widget {
             walletPswAvailable:false,
             chooseImage:false,
             avatar:'',
-            avatarHtml:'',
-            cfgData:getLanguage(this)
+            avatarHtml:''
         };
     }
 
@@ -72,6 +73,12 @@ export class CreateWallet extends Widget {
         this.state.pswEqualed = pswEqualed(this.state.walletPsw, this.state.walletPswConfirm);
         this.paint();
     }
+
+    // 清除密码
+    public pwsClear() {
+        this.state.walletPsw = '';  
+        this.paint();
+    }
     public selectImageClick() {
         selectImage((width, height, base64) => {
             resize({ url:base64, width: 140, ratio: 0.3, type: 'jpeg' },(res) => {
@@ -84,12 +91,11 @@ export class CreateWallet extends Widget {
             });
         });
 
-
         // selectImage((path) => {
+        //     console.log('img url path ',path);
         //     this.state.chooseImage = true;
-        //     // this.state.avatarHtml = `<div style="background-image: url(${localUrlPre}${path});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
-        //     this.state.avatarHtml = `<img src='${localUrlPre}${path}' style='width: 100%;height: 100%;position: absolute;top: 0;'/>`
-        //     this.state.avatar = `${localUrlPre}${path}`;
+        //     this.state.avatarHtml = `<img src='file:///${path}?timestamp=${new Date().getTime()}' style='width: 100%;height: 100%;position: absolute;top: 0;'/>`;
+        //     // this.state.avatar = `${localUrlPre}${path}`;
         //     this.paint();
         // });
 
@@ -103,33 +109,34 @@ export class CreateWallet extends Widget {
         this.paint();
     }
     public async createClick() {
-        if (!this.state.userProtocolReaded) {
-            return;
-        }
         if (!walletNameAvailable(this.state.walletName)) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[0] });
-
+            popNew('app-components1-message-message', { content: this.language.tips[0] });
+            
             return;
         }
         if (!this.state.walletPsw || !this.state.walletPswConfirm) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
-
+            popNew('app-components1-message-message', { content: this.language.tips[1] });
+            
             return;
         }
         if (!this.state.walletPswAvailable) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
-
+            popNew('app-components1-message-message', { content: this.language.tips[2] });
+            
             return;
         }
         if (!this.state.pswEqualed) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });
+            popNew('app-components1-message-message', { content: this.language.tips[3] });
+            
+            return;
+        }
+        if (!this.state.userProtocolReaded) {
+            popNew('app-components1-message-message', { content: this.language.tips[5] });
 
             return;
         }
         const option:any = {
             psw:this.state.walletPsw,
-            nickName:this.state.walletName,
-            avatar:this.state.avatar
+            nickName:this.state.walletName
         };
         if (this.state.itype === CreateWalletType.Image) {
             option.imageBase64 = this.props.imageBase64;
@@ -143,19 +150,23 @@ export class CreateWallet extends Widget {
             option.fragment1 = this.props.fragment1;
             option.fragment2 = this.props.fragment2;
         }
-        console.time('create wallet');
         const hash = await createWallet(this.state.itype,option);
-        console.timeEnd('create wallet');
         if (!hash) {
-            popNewMessage(this.state.cfgData.tips[3]);
+            popNewMessage(this.language.tips[3]);
         }
-        const hashMap = getBorn('hashMap');
-        hashMap.set(getFirstEthAddr(),hash);
-        updateStore('hashMap',hashMap);
+
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
-        updateStore('flag',{ created:true,mnemonic,fragments });
-        getRandom();
+        setStore('flags',{ created:true,mnemonic,fragments });
+        if (getStore('user/offline')) {
+            checkCreateAccount();
+        } else {
+            openConnect();
+        }
+        
+        if (this.state.avatar) {
+            uploadFile(this.state.avatar);
+        }
         
         const w: any = forelet.getWidget(WIDGET_NAME);
         if (w) {
@@ -173,10 +184,12 @@ export class CreateWallet extends Widget {
 }
 
 // 登录状态成功
-register('flag',(flag:any) => {
-    if (flag.promptBackup) {
-        popNew('app-components-modalBox-modalBox',getStaticLanguage().createSuccess,() => {
-            popNew('app-view-wallet-backup-index',{ mnemonic:flag.mnemonic,fragments:flag.fragments });
+register('flags',(flags:any) => {
+    if (flags.promptBackup) {
+        popNew('app-components1-modalBox-modalBox',getStaticLanguage().createSuccess,() => {
+            popNew('app-view-wallet-backup-index',{ mnemonic:flags.mnemonic,fragments:flags.fragments });
         });
+        flags.promptBackup = false;
+        setStore('flags',flags,false);
     }
 });

@@ -2,11 +2,13 @@
  * wallet home 
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
-import { find, register } from '../../../store/store';
-import { copyToClipboard, getFirstEthAddr, getLanguage, getUserInfo, popPswBox } from '../../../utils/tools';
+import { findModulConfig } from '../../../modulConfig';
+import { getStore, register } from '../../../store/memstore';
+import { copyToClipboard, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出
@@ -17,30 +19,25 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Home extends Widget {
     public ok:() => void;
+    public language:any;
     public create() {
         super.create();
         this.init();
     }
 
     public init() {
-        const cfg = getLanguage(this);
-        const wallet = find('curWallet');
-        let hasBackupMnemonic = false;
-        let hasWallet = false;
-        let address = '';
-        if (wallet) {
-            hasWallet = true;
-            address = getFirstEthAddr();
-            hasBackupMnemonic = JSON.parse(wallet.gwlt).mnemonicBackup;
-        }
+        this.language = this.config.value[getLang()];
+        const hasBackupMnemonic = false;
+        const hasWallet = false;
+        const address = '';
         this.state = {
             list:[
-                { img:'../../../res/image1/28.png',name: cfg.itemTitle[0],components:'' },
-                { img:'../../../res/image1/10.png',name: cfg.itemTitle[1],components:'app-view-mine-other-help' },
-                { img:'../../../res/image1/21.png',name: cfg.itemTitle[2],components:'app-view-mine-setting-setting' },
-                { img:'../../../res/image1/23.png',name: cfg.itemTitle[3],components:'app-view-mine-other-contanctUs' },
-                { img:'../../../res/image1/24.png',name: cfg.itemTitle[4],components:'app-view-mine-other-aboutus' },
-                { img:'../../../res/image1/43.png',name: 'GitHub Repository',components:'' }
+                { img:'../../../res/image1/28.png',name: '',components:'' },
+                { img:'../../../res/image1/10.png',name: '',components:'app-view-mine-other-help' },
+                { img:'../../../res/image1/21.png',name: '',components:'app-view-mine-setting-setting' },
+                { img:'../../../res/image1/23.png',name: '',components:'app-view-mine-other-contanctUs' },
+                { img:'../../../res/image1/24.png',name: '',components:'app-view-mine-other-aboutus' }
+                
             ],
             address,
             userName:'',
@@ -48,8 +45,12 @@ export class Home extends Widget {
             close:false,
             hasWallet,
             hasBackupMnemonic,
-            cfgData:cfg
+            offline:false,
+            walletName : findModulConfig('WALLET_NAME')
         };
+        if (findModulConfig('GITHUB')) {
+            this.state.list.push({ img:'../../../res/image1/43.png',name: '',components:'' });
+        }
         this.initData();
     }
 
@@ -59,15 +60,15 @@ export class Home extends Widget {
     public initData() {
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.state.userName = userInfo.nickName ? userInfo.nickName :this.state.cfgData.defaultUserName;
-            this.state.avatar = userInfo.avatar ? userInfo.avatar : '../../../res/image/default_avater_big.png';
+            this.state.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
+            this.state.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
         }
 
-        const wallet = find('curWallet');
+        const wallet = getStore('wallet');
         if (wallet) {
             this.state.hasWallet = true;
-            this.state.address = getFirstEthAddr();
-            this.state.hasBackupMnemonic = JSON.parse(wallet.gwlt).mnemonicBackup;            
+            this.state.address = getStore('user/id');
+            this.state.hasBackupMnemonic = wallet.isBackup;            
         } else {
             this.state.hasWallet = false;
             this.state.address = '';
@@ -100,13 +101,13 @@ export class Home extends Widget {
             if (this.state.hasWallet) {
                 popNew('app-view-mine-account-home');
             } else {
-                popNew('app-components-modalBox-modalBox',this.state.cfgData.modalBox,() => {
+                popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {
                     popNew('app-view-wallet-create-home');
                 });
             }
         } else if (ind === 5) {
             // window.open('https://github.com/KuPayIo/kupay_wallet');
-            openNewActivity('https://github.com/KuPayIo/kupay_wallet','KuPay');
+            openNewActivity('https://github.com/KuPayIo/kupay_wallet',this.state.walletName);
         } else {
             popNew(this.state.list[ind].components);
         }
@@ -118,7 +119,7 @@ export class Home extends Widget {
      */
     public copyAddr() {
         copyToClipboard(this.state.address);
-        popNew('app-components1-message-message',{ content:this.state.cfgData.tips });
+        popNew('app-components1-message-message',{ content:this.language.tips });
     }
 
     /**
@@ -164,21 +165,37 @@ export class Home extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-register('curWallet', () => {
+register('user',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
+    }
+});
+
+register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-register('userInfo', () => {
+register('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
+        w.initData();
     }
 });
-register('languageSet', () => {
+register('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
+        w.language = w.config.value[r];
+        w.paint();
+    }
+});
+register('user/offline',(r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.state.offline = r;
+        w.paint();
     }
 });

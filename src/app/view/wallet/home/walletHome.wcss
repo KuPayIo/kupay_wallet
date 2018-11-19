@@ -2,6 +2,8 @@
     padding: 0 20px;
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 .total-asset-container{
     height: 120px;
@@ -24,4 +26,5 @@
 }
 .asset-list{
     flex: 1 0 0;
+    margin-bottom: 120px;
 }

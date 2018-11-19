@@ -1,6 +1,19 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+.body{
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+    margin-top: -1px;
+}
 .head1{
-    height: 420px;
-    background-color: #3790e6;
+    height: 550px;
+    padding-top: 128px;
+    background:linear-gradient(to right, #328EE6,#38CEE7);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -23,11 +36,11 @@
 .status{
     width: 160px;
     height: 60px;
-    border-radius: 12px;
-    background-color: rgba(17, 82, 196, .2);
+    border-radius: 12px 0 0 12px;
+    background-color: rgba(17, 82, 196, 0.2);
     position: absolute;
     right: 0;
-    top: 50px;
+    margin-top: 50px;
     font-size: 24px;
     display: flex;
     justify-content: center;
@@ -38,7 +51,7 @@
 }
 .head2{
     height: 150px;
-    background-color: rgba(17, 82, 196, .2);
+    background-color: rgba(17, 82, 196, 0.2);
     display: flex;
     align-items: center;
     padding: 20px 0;

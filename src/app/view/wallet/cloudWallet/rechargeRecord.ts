@@ -5,10 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getRechargeLogs } from '../../../net/pull';
-import { CurrencyType } from '../../../store/interface';
-import { getBorn, register } from '../../../store/store';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getStore, register } from '../../../store/memstore';
 import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -20,6 +21,7 @@ interface Props {
 }
 export class RechargeRecord extends Widget {
     public props:Props;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -28,20 +30,19 @@ export class RechargeRecord extends Widget {
         }
     }
     public init() {
-        const rechargeLogs = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
+        this.language = this.config.value[getLang()];
+        const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
         this.state = {
             recordList:[],
             nextStart:rechargeLogs.start,
             canLoadMore:rechargeLogs.canLoadMore,
-            isRefreshing:false,
-            cfgData:getLanguage(this)
+            isRefreshing:false
         };
         this.state.recordList = this.parseRecordList(rechargeLogs.list);
     }
     public updateRecordList() {
         if (!this.state) return;
-        const rechargeLogs = getBorn('rechargeLogs').get(CurrencyType[this.props.currencyName]) || { list:[],start:0,canLoadMore:false };
-        console.log(rechargeLogs);
+        const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
         const list = rechargeLogs.list;
         this.state.nextStart = rechargeLogs.start;
         this.state.canLoadMore = rechargeLogs.canLoadMore;
@@ -56,7 +57,7 @@ export class RechargeRecord extends Widget {
             const obj = parseStatusShow(txDetail);
             console.log(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.state.cfgData.recharge;
+            item.behavior = this.language.recharge;
             item.amountShow = `+${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_charge_icon.png`;
@@ -93,7 +94,7 @@ export class RechargeRecord extends Widget {
     }
 }
 
-register('rechargeLogs', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();
@@ -101,7 +102,7 @@ register('rechargeLogs', () => {
 });
 
 // 本地交易变化,更新状态
-register('transactions',() => {
+register('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

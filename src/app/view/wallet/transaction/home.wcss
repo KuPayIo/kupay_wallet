@@ -79,6 +79,7 @@
     background-color: #fff;
     height: 60px;
     font-size: 24px;
+    border-bottom: 1px solid rgb(219, 219, 229);
 }
 .quotes{
     color: #222;
@@ -96,6 +97,8 @@
     padding: 30px 30px 10px;
     overflow-x: hidden;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 .tx-list-container{
     border-radius: 12px;

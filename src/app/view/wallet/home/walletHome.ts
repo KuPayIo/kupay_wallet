@@ -4,9 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { find, register } from '../../../store/store';
+import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchTotalAssets, fetchWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
+import { fetchLocalTotalAssets, fetchWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,19 +18,18 @@ export class WalletHome extends Widget {
         this.init();
     }
     public init() {
-        const color = find('changeColor');
+        const color = getStore('setting/changeColor','redUp');
         this.state = {
-            totalAsset:formatBalanceValue(fetchTotalAssets()),
+            totalAsset:formatBalanceValue(fetchLocalTotalAssets()),
             assetList:fetchWalletAssetList(),
-            cfgData:getLanguage(this),
-            redUp:color ? color.selected === 0 :true,
+            redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         this.paint();
     }
 
     public updateBalance() {
-        this.state.totalAsset = formatBalanceValue(fetchTotalAssets());
+        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets());
         this.state.assetList = fetchWalletAssetList();
         this.paint();
     }
@@ -53,7 +52,7 @@ export class WalletHome extends Widget {
     }
 
     public currencyUnitChange() {
-        this.state.totalAsset = formatBalanceValue(fetchTotalAssets());
+        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets());
         this.state.assetList = fetchWalletAssetList();
         this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
@@ -61,17 +60,25 @@ export class WalletHome extends Widget {
 }
 
 // ==================本地
-
-// 当前钱包变化
-register('curWallet',() => {
+register('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.updateBalance();
+        w.init();
+        w.paint();
     }
 });
 
-// 地址变化
-register('addrs',() => {
+// 钱包记录变化
+register('wallet',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
+    }
+});
+
+// 钱包记录变化
+register('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -79,21 +86,27 @@ register('addrs',() => {
 });
 
 // 货币涨跌幅度变化
-register('currency2USDTMap',() => {
+register('third/currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
     }
 });
 
-register('languageSet', () => {
+// 汇率变化
+register('third/rate',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateBalance();
+    }
+});
+register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-
-register('changeColor', () => {
+register('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -101,7 +114,7 @@ register('changeColor', () => {
 });
 
 // 货币单位变化
-register('currencyUnit',() => {
+register('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

@@ -2,11 +2,12 @@
  * Withdraw
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { withdrawMinerFee } from '../../../config';
 import { withdraw } from '../../../net/pullWallet';
-import { CurrencyType } from '../../../store/interface';
-import { find, getBorn } from '../../../store/store';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getCloudBalances, getStore } from '../../../store/memstore';
 import { withdrawLimit } from '../../../utils/constants';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
 interface Props {
@@ -15,21 +16,22 @@ interface Props {
 export class Withdraw extends Widget {
     public props:Props;
     public ok:() => void;
+    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         const currencyName = this.props.currencyName;
         const minerFee = withdrawMinerFee[currencyName];
-        const balance = getBorn('cloudBalance').get(CurrencyType[currencyName]);
+        const balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
         this.state = {
             balance,
             amount:0,
             minerFee,
             withdrawAddr:getCurrentAddrInfo(currencyName).addr,
-            withdrawAddrInfo:this.parseAddrsInfo(),
-            cfgData:getLanguage(this)
+            withdrawAddrInfo:this.parseAddrsInfo()
         };
     }
 
@@ -37,12 +39,12 @@ export class Withdraw extends Widget {
         this.ok && this.ok();
     }
     public minerFeeDescClick() {
-        popNew('app-components-modalBox-modalBox1',this.state.cfgData.modalBox);
+        popNew('app-components-allModalBox-modalBox1',this.language.modalBox);
     }
 
      // 提币金额变化
     public amountChange(e:any) {
-        this.state.amount = Number(e.value);
+        this.state.amount = e.value;
         this.paint();
     }
 
@@ -76,18 +78,18 @@ export class Withdraw extends Widget {
         const currencyName = this.props.currencyName;
         const limit = withdrawLimit[currencyName];
         if (Number(this.state.amount) < limit) {
-            popNewMessage(this.state.cfgData.tips[0] + limit + currencyName);
+            popNewMessage(this.language.tips[0] + limit + currencyName);
 
             return;
         }
         if (Number(this.state.amount) + this.state.minerFee > this.state.balance) {
-            popNewMessage(this.state.cfgData.tips[1]);
+            popNewMessage(this.language.tips[1]);
 
             return;
         }
-        const realUser = getBorn('realUserMap').get(find('conUser'));
+        const realUser = getStore('user/info/isRealUser');
         if (!realUser) {
-            popNewMessage(this.state.cfgData.tips[2]);
+            popNewMessage(this.language.tips[2]);
 
             return;
         }

@@ -4,12 +4,14 @@
 
 // =========================================导入
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { EthWallet } from '../../../core/eth/wallet';
-import { find } from '../../../store/store';
+import { AddrInfo } from '../../../store/interface';
+import { getStore } from '../../../store/memstore';
 import { btcNetwork, lang } from '../../../utils/constants';
 import { getAddrInfoByAddr, getLanguage } from '../../../utils/tools';
 
@@ -24,13 +26,15 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class ExportPrivateKey extends Widget {
     public ok: () => void;
+    public language:any;
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
+        this.language = this.config.value[getLang()];
         this.init();
     }
 
     public init() {
-        const wallet = find('curWallet');
+        const wallet = getStore('wallet');
         let showCurrency = wallet.showCurrencys;
         if (!wallet || !showCurrency) {
             showCurrency = [];
@@ -71,8 +75,7 @@ export class ExportPrivateKey extends Widget {
         }
         
         this.state = {
-            collapseList,
-            cfgData:getLanguage(this)
+            collapseList
         };
     }
     
@@ -86,55 +89,55 @@ export class ExportPrivateKey extends Widget {
 
     public collapseItemClick(e: any) {
         const privateKey = this.state.collapseList[e.collapseListIndex].textList[e.textListIndex].privateKey;
-        popNew('app-components-modalBox-modalBox2', {
-            title: this.state.cfgData.modalBox[0],
-            content: this.state.cfgData.modalBox[1],
+        popNew('app-components-allModalBox-modalBox2', {
+            title: this.language.modalBox[0],
+            content: this.language.modalBox[1],
             extraInfo: privateKey,
-            copyBtnText: this.state.cfgData.modalBox[2],
+            copyBtnText: this.language.modalBox[2],
             contentStyle: 'color:#F17835;'
         });
     }
 
     // 导出以太坊私钥
-    public exportPrivateKeyETH(addrs: string[]) {
+    public exportPrivateKeyETH(addrs: AddrInfo[]) {
         const keys = [];
         const firstWlt = EthWallet.fromMnemonic(this.props.mnemonic, lang);
         for (let j = 0; j < addrs.length; j++) {
             const wlt = firstWlt.selectAddressWlt(j);
             const privateKey = wlt.exportPrivateKey();
             const addr = addrs[j];
-            const balance = getAddrInfoByAddr(addr,'ETH').balance;
-            keys.push({ addr,balance,privateKey });
+            const balance = getAddrInfoByAddr(addr.addr,'ETH').balance;
+            keys.push({ addr:addr.addr,balance,privateKey });
         }
 
         return keys;
     }
 
     // 导出BTC私钥
-    public exportPrivateKeyBTC(addrs: string[]) {
+    public exportPrivateKeyBTC(addrs: AddrInfo[]) {
         const keys = [];
         const wlt = BTCWallet.fromMnemonic(this.props.mnemonic, btcNetwork, lang);
         wlt.unlock();
         for (let j = 0; j < addrs.length; j++) {
             const privateKey = wlt.privateKeyOf(j);
             const addr = addrs[j];
-            const balance = getAddrInfoByAddr(addr,'BTC').balance;
-            keys.push({ addr,balance,privateKey });
+            const balance = getAddrInfoByAddr(addr.addr,'BTC').balance;
+            keys.push({ addr:addr.addr,balance,privateKey });
         }
         wlt.lock();
 
         return keys;
     }
 
-    public exportPrivateKeyERC20Token(addrs: string[],currencyName:string) {
+    public exportPrivateKeyERC20Token(addrs: AddrInfo[],currencyName:string) {
         const keys = [];
         const firstWlt = EthWallet.fromMnemonic(this.props.mnemonic, lang);
         for (let j = 0; j < addrs.length; j++) {
             const wlt = firstWlt.selectAddressWlt(j);
             const privateKey = wlt.exportPrivateKey();
             const addr = addrs[j];
-            const balance = getAddrInfoByAddr(addr,currencyName).balance;
-            keys.push({ addr,balance,privateKey });
+            const balance = getAddrInfoByAddr(addr.addr,currencyName).balance;
+            keys.push({ addr:addr.addr,balance,privateKey });
         }
 
         return keys;

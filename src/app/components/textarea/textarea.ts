@@ -4,6 +4,7 @@
 import { notify } from '../../../pi/widget/event';
 import { getRealNode } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
+import { getLang } from '../../../pi/util/lang';
 
 interface Props {
     input:string;// 初始内容
@@ -38,6 +39,9 @@ export class Input extends Widget {
             for (const key in props.style) {
                 styleStr += `${key}:${props.style[key]};`;
             }
+        }
+        if(props.placeHolder){
+            this.props.placeHolder = this.props.placeHolder[getLang()];
         }
         let currentValue = '';
         if (props.input) {

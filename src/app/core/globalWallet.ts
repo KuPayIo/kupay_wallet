@@ -2,10 +2,10 @@
  * global wallet
  */
 import { ERC20Tokens } from '../config';
-import { Addr, CurrencyRecord } from '../store/interface';
-import { find } from '../store/store';
+import { AddrInfo, CurrencyRecord } from '../store/interface';
+import { getStore } from '../store/memstore';
 import { btcNetwork, lang, strength } from '../utils/constants';
-import { calcHashValuePromise, u8ArrayToHexstr, initAddr } from '../utils/tools';
+import { calcHashValuePromise, u8ArrayToHexstr } from '../utils/tools';
 import { getMnemonic } from '../utils/walletTools';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
@@ -17,39 +17,26 @@ const cipher = new Cipher();
 /* tslint:disable: variable-name */
 export class GlobalWallet {
     private _glwtId: string;
-    private _nickName: string;
     private _currencyRecords: CurrencyRecord[] = [];
-    private _addrs: Addr[] = [];
-    private _vault: string;//加密后的随机数种子
-    private _mnemonicBackup: boolean = false;// 助记词备份
+    private _vault: string;// 加密后的随机数种子
+    private _isBackup: boolean = false;// 助记词备份
     private _publicKey: string;
 
     get glwtId(): string {
         return this._glwtId;
     }
-    get nickName(): string {
-        return this._nickName;
-    }
-
-    set nickName(name: string) {
-        this._nickName = name;
-    }
     get currencyRecords() {
         return this._currencyRecords;
-    }
-
-    get addrs() {
-        return this._addrs;
     }
 
     get vault() {
         return this._vault;
     }
-    set mnemonicBackup(mnemonicBackup: boolean) {
-        this._mnemonicBackup = mnemonicBackup;
+    set isBackup(isBackup: boolean) {
+        this._isBackup = isBackup;
     }
-    get mnemonicBackup() {
-        return this._mnemonicBackup;
+    get isBackup() {
+        return this._isBackup;
     }
 
     get publicKey() {
@@ -61,9 +48,8 @@ export class GlobalWallet {
         const gwlt = new GlobalWallet();
 
         gwlt._glwtId = wlt.glwtId;
-        gwlt._nickName = wlt.nickName;
         gwlt._vault = wlt.vault;
-        gwlt._mnemonicBackup = wlt.mnemonicBackup;
+        gwlt._isBackup = wlt.isBackup;
         gwlt._publicKey = wlt.publicKey;
 
         return gwlt;
@@ -72,11 +58,11 @@ export class GlobalWallet {
     /**
      * 通过助记词导入钱包
      */
-    public static fromMnemonic(hash:string,mnemonic: string){
+    public static fromMnemonic(secrectHash:string,mnemonic: string) {
         const gwlt = new GlobalWallet();
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
         
-        gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
+        gwlt._vault = cipher.encrypt(secrectHash, u8ArrayToHexstr(vault));
 
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
 
@@ -91,37 +77,22 @@ export class GlobalWallet {
      * @param walletName  wallet name
      * @param passphrase passphrase
      */
-    public static generate(hash:string, walletName: string, vault?: Uint8Array) {
+    public static generate(secrectHash:string, vault?: Uint8Array) {
         const gwlt = new GlobalWallet();
-        gwlt._nickName = walletName;
-        console.time('generateRandomValues');
         vault = vault || generateRandomValues(strength);
-        console.timeEnd('generateRandomValues');
-        console.time('encrypt');
-        gwlt._vault = cipher.encrypt(hash, u8ArrayToHexstr(vault));
-        console.timeEnd('encrypt');
-        // console.log('generate hash', hash, gwlt._vault, passwd, u8ArrayToHexstr(vault));
-        console.time('toMnemonic');
+        gwlt._vault = cipher.encrypt(secrectHash, u8ArrayToHexstr(vault));
         const mnemonic = toMnemonic(lang, vault);
-        console.timeEnd('toMnemonic');
-        console.time('initGwlt');
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
-        console.timeEnd('initGwlt');
-        console.time('getPublicKeyByMnemonic');
         gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
-        console.timeEnd('getPublicKeyByMnemonic');
-
-        // dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
-        // dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
 
         return gwlt;
     }
     /**
      * 动态创建钱包(地址)对象
      */
-    public static async createWlt(currencyName: string, passwd: string, wallet: any, i: number) {
+    public static async createWlt(currencyName: string, passwd: string, i: number) {
         // todo
-        const mnemonic = await getMnemonic(wallet, passwd);
+        const mnemonic = await getMnemonic(passwd);
 
         return this.createWltByMnemonic(mnemonic, currencyName, i);
     }
@@ -166,16 +137,6 @@ export class GlobalWallet {
         return addr;
     }
 
-    /**
-     * 获取钱包地址的位置
-     */
-    public static getWltAddrIndex(wallet: any, addr: string, currencyName: string): number {
-        const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
-        if (!currencyRecord) return -1;
-
-        return currencyRecord.addrs.indexOf(addr);
-    }
-
     /*****************************************
      * 私有静态函数
      * ************************************************************
@@ -188,14 +149,12 @@ export class GlobalWallet {
      */
     private static initGwlt(gwlt: GlobalWallet, mnemonic: string) {
         // 创建ETH钱包
-        const ethGwlt = this.createEthGwlt(mnemonic);
-        gwlt._currencyRecords.push(ethGwlt.currencyRecord);
-        gwlt._addrs.push(ethGwlt.addr);
+        const ethCurrencyRecord = this.createEthGwlt(mnemonic);
+        gwlt._currencyRecords.push(ethCurrencyRecord);
 
         // 创建BTC钱包
-        const btcGwlt = this.createBtcGwlt(mnemonic);
-        gwlt._currencyRecords.push(btcGwlt.currencyRecord);
-        gwlt._addrs.push(btcGwlt.addr);
+        const btcCurrencyRecord = this.createBtcGwlt(mnemonic);
+        gwlt._currencyRecords.push(btcCurrencyRecord);
 
         const ethTokenList = [];
         for (const k in ERC20Tokens) {
@@ -205,40 +164,42 @@ export class GlobalWallet {
         }
         // ETH代币创建
         ethTokenList.forEach(tokenName => {
-            const tokenRecord = {
-                ...ethGwlt.currencyRecord,
-                currencyName: tokenName
+            const ethAddrInfo = ethCurrencyRecord.addrs[0];
+            const erc20AddrInfo:AddrInfo = {
+                addr: ethAddrInfo.addr,               
+                balance: 0,                
+                txHistory: [],          
+                nonce: 0 
             };
-            const tokenAddr = {
-                ...ethGwlt.addr,
-                currencyName: tokenName
+            const tokenRecord = {
+                ...ethCurrencyRecord,
+                currencyName: tokenName,
+                addrs:[erc20AddrInfo]
             };
             gwlt._currencyRecords.push(tokenRecord);
-            gwlt._addrs.push(tokenAddr);
-
         });
 
-        // dataCenter.addAddr(ethGwlt.addr.addr, ethGwlt.addr.addrName, ethGwlt.addr.currencyName);
-        // dataCenter.addAddr(btcGwlt.addr.addr, btcGwlt.addr.addrName, btcGwlt.addr.currencyName);
-
-        return ethGwlt.addr.addr;
+        return ethCurrencyRecord.currentAddr;
     }
 
     private static createEthGwlt(mnemonic: string) {
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const address = ethWallet.selectAddress(0);
+        const addrInfo:AddrInfo = {
+            addr: address,                  // 地址
+            balance: 0,              // 余额
+            txHistory: [],         // 交易记录
+            nonce: 0                  // 本地维护的nonce(对BTC无效)
+        };
+        // tslint:disable-next-line:no-unnecessary-local-variable
         const currencyRecord: CurrencyRecord = {
             currencyName: 'ETH',
             currentAddr: address,
-            addrs: [address],
+            addrs: [addrInfo],
             updateAddr: false
         };
-        const addr: Addr = initAddr(address, 'ETH');
 
-        return {
-            currencyRecord,
-            addr
-        };
+        return currencyRecord;
     }
 
     private static createBtcGwlt(mnemonic: string) {
@@ -247,19 +208,21 @@ export class GlobalWallet {
         btcWallet.unlock();
         const address = btcWallet.derive(0);
         btcWallet.lock();
+        const addrInfo:AddrInfo = {
+            addr: address,                  // 地址
+            balance: 0,              // 余额
+            txHistory: [],         // 交易记录
+            nonce: 0                  // 本地维护的nonce(对BTC无效)
+        };
+        // tslint:disable-next-line:no-unnecessary-local-variable
         const currencyRecord: CurrencyRecord = {
             currencyName: 'BTC',
             currentAddr: address,
-            addrs: [address],
+            addrs: [addrInfo],
             updateAddr: false
         };
 
-        const addr: Addr = initAddr(address, 'BTC');
-
-        return {
-            currencyRecord,
-            addr
-        };
+        return currencyRecord;
     }
 
     /**********************************************
@@ -271,27 +234,12 @@ export class GlobalWallet {
     public toJSON(): string {
         const wlt = {
             glwtId: this._glwtId,
-            nickName: this._nickName,
             vault: this._vault,
-            mnemonicBackup: this._mnemonicBackup,
+            isBackup: this._isBackup,
             publicKey: this._publicKey
         };
 
         return JSON.stringify(wlt);
-    }
-
-    /**
-     * 修改密码
-     */
-    public async passwordChange(oldPsw: string, newPsw: string) {
-        const salt = find('salt');
-        const oldHash = await calcHashValuePromise(oldPsw, salt);
-        const newHash = await calcHashValuePromise(newPsw, salt);
-        // console.log('passwordChange hash', oldHash, this._vault, oldPsw, newHash, newPsw);
-
-        const oldVault = cipher.decrypt(oldHash, this._vault);
-        this._vault = cipher.encrypt(newHash, oldVault);
-
     }
 
 }

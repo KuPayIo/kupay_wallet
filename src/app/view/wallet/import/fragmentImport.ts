@@ -4,21 +4,23 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode } from '../../../logic/native';
-import { CreateWalletType } from '../../../store/interface';
 import { getLanguage, mnemonicFragmentDecrypt } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
+import { CreateWalletType } from '../../../logic/localWallet';
+import { getLang } from '../../../../pi/util/lang';
 
 export class FragmentImport extends Widget {
     public ok: () => void;
+    public language:any;
     public create() {
         super.create();
         this.init();
     }
     public init() {
+        this.language = this.config.value[getLang()];
         this.state = {
             fragment1:'',
             fragment2:'',
-            cfgData:getLanguage(this)
         };
     }
     public backPrePage() {
@@ -41,17 +43,17 @@ export class FragmentImport extends Widget {
     }
     public nextClick() {
         if (!this.state.fragment1) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[0] });
+            popNew('app-components1-message-message', { content: this.language.tips[0] });
 
             return;
         }
         if (!this.state.fragment2) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[1] });
+            popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
         }
         if (this.state.fragment1 === this.state.fragment2) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[2] });
+            popNew('app-components1-message-message', { content: this.language.tips[2] });
 
             return;
         }
@@ -62,7 +64,7 @@ export class FragmentImport extends Widget {
         const decryptFragement2 = obj2.fragment;
         const random2 = obj2.randomStr;
         if (random1 !== random2) {
-            popNew('app-components1-message-message', { content: this.state.cfgData.tips[3] });
+            popNew('app-components1-message-message', { content: this.language.tips[3] });
 
             return;
         }

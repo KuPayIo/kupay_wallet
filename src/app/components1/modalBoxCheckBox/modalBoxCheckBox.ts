@@ -19,7 +19,6 @@ export class ModalBoxCheckBox extends Widget {
     public create() {
         super.create();
         this.state = {
-            cfgData: getLanguage(this),
             deleteAccount:false
         };
     }

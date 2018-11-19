@@ -5,10 +5,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../logic/dataCenter';
-import { Addr, TxType } from '../../../store/interface';
-import { find, register } from '../../../store/store';
+import { TxHistory, TxType } from '../../../store/interface';
+import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrBalanceByCurrencyName, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
+import { currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -33,12 +33,11 @@ export class TransactionHome extends Widget {
     }
     public init() {
         const currencyName = this.props.currencyName;
-        const balance = formatBalance(getCurrentAddrBalanceByCurrencyName(currencyName));
+        const balance = formatBalance(getCurrentAddrInfo(this.props.currencyName).balance);
         const balanceValue =  fetchBalanceValueOfCoin(currencyName,balance);
         const txList = this.parseTxList();
         const canConvert = this.canConvert();
-        const color = find('changeColor');
-        const cfg = getLanguage(this);
+        const color = getStore('setting/changeColor','redUp');
         const addr = parseAccount(getCurrentAddrByCurrencyName(currencyName));
         
         this.state = {
@@ -47,17 +46,16 @@ export class TransactionHome extends Widget {
             rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
             txList,
             canConvert,
-            cfgData:cfg,
-            redUp:color ? color.selected === 0 :true,
+            redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol(),
             tabs:[{
-                tab:'全部',
+                tab:cfg.tabs[5],
                 list:txList
             },{
-                tab:'转账',
+                tab:cfg.tabs[1],
                 list:this.transferList(txList)
             },{
-                tab:'收款',
+                tab:cfg.tabs[2],
                 list:this.receiptList(txList)
             }],
             activeNum:0,
@@ -81,17 +79,17 @@ export class TransactionHome extends Widget {
     /**
      * 转账记录
      */
-    public transferList(txList:any[]) {
-        return txList.filter((item,ind,arr) => {
-            return item.txType !== TxType.RECEIPT;
+    public transferList(txList:TxHistory[]) {
+        return txList.filter(item => {
+            return item.txType !== TxType.Receipt;
         });
     }
     /**
      * 收款记录
      */
-    public receiptList(txList:any[]) {
-        return txList.filter((item,ind,arr) => {
-            return item.txType === TxType.RECEIPT;
+    public receiptList(txList:TxHistory[]) {
+        return txList.filter(item => {
+            return item.txType === TxType.Receipt;
         });
     }
     /**
@@ -115,11 +113,11 @@ export class TransactionHome extends Widget {
     public txListItemClick(e:any,index:number) {
         popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.state.txList[index].hash });
     }
-
+    // 转账
     public doTransferClick() {
         popNew('app-view-wallet-transaction-transfer',{ currencyName:this.props.currencyName });
     }
-
+    // 收款
     public doReceiptClick() {
         popNew('app-view-wallet-transaction-receipt',{ currencyName:this.props.currencyName });
     }
@@ -129,11 +127,6 @@ export class TransactionHome extends Widget {
     }
     public updateRate() {
         this.state.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
-        this.paint();
-    }
-
-    public updateTransaction() {
-        this.init();
         this.paint();
     }
 
@@ -147,37 +140,25 @@ export class TransactionHome extends Widget {
         this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
+
+    public refreshClick() {
+        dataCenter.updateAddrInfo(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
+    }
 }
 
 // ==========================本地
-// 地址变化
-register('addrs',(addrs:Addr[]) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.init();
-        w.paint();
-    }
-});
 
 // 当前钱包变化
-register('curWallet',() => {
+register('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
         w.paint();
-    }
-});
-
-// 交易记录变化
-register('transactions',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateTransaction();
     }
 });
 
 // 汇率变化
-register('USD2CNYRate', () => {
+register('third/rate', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRate();
@@ -185,7 +166,7 @@ register('USD2CNYRate', () => {
 });
 
 // 涨跌幅变化
-register('currency2USDTMap', () => {
+register('third/currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRate();
@@ -193,7 +174,7 @@ register('currency2USDTMap', () => {
 });
 
 // 货币单位变化
-register('currencyUnit',() => {
+register('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

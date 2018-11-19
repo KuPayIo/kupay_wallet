@@ -2,18 +2,26 @@
  * ExchangeDetail
  */
 import { Json } from '../../../../pi/lang/type';
+import { getLang } from '../../../../pi/util/lang';
+import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getUserList, queryDetailLog } from '../../../net/pull';
-import { getLanguage } from '../../../utils/tools';
+import { getUserList, queryDetailLog, uploadFileUrlPrefix } from '../../../net/pull';
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class ExchangeDetail extends Widget {
     public ok: () => void;
+    public language:any;
 
     public setProps(props: Json, oldProps?: Json)  {
         super.setProps(props,oldProps);
-        const cfg = getLanguage(this);
+        this.language = this.config.value[getLang()];
         this.state = {
-            message:this.props.message ? this.props.message :cfg.defaultMess,
+            message:this.props.message ? this.props.message :this.language.defaultMess,
             redBagList:[
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
@@ -21,7 +29,6 @@ export class ExchangeDetail extends Widget {
             ],
             scroll:false,
             showPin:this.props.rtype === 1,  // 0 等额红包  1 拼手气红包
-            cfgData:cfg,
             userName:'',
             userHead:'../../../res/image/default_avater_big.png',
             curNum:0,
@@ -61,14 +68,15 @@ export class ExchangeDetail extends Widget {
 
         const user = await getUserList([this.props.suid]);
         if (!user) return;
-        this.state.userName = user.nickName ? user.nickName :this.state.cfgData.defaultUserName;
-        this.state.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
+        this.state.userName = user.nickName ? user.nickName :this.language.defaultUserName;
+        this.state.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../../res/image/default_avater_big.png';
 
         const redBagList = value[0];
         for (let i = 0;i < redBagList.length;i++) {
             const user = await getUserList([redBagList[i].cuid]);
-            this.state.redBagList[i].userName = user.nickName ? user.nickName :this.state.cfgData.defaultUserName;
-            this.state.redBagList[i].avatar = user.avatar ? user.avatar :'../../res/image/default_avater_big.png';
+            this.state.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
+            // tslint:disable-next-line:max-line-length
+            this.state.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png';
             if (this.props.rtype === 1 && redBagList.length === this.state.totalNum && this.state.greatAmount < redBagList[i].amount) {
                 this.state.greatAmount = redBagList.amount;
                 this.state.greatUser = i;

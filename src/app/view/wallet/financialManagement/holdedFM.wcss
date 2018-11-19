@@ -1,3 +1,9 @@
+.new-page{
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
 .list{
     margin: 30px 20px;
 }
