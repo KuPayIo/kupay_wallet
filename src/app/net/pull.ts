@@ -48,7 +48,7 @@ const wsUrl = `ws://${conIp}:2081`;
 /**
  * 通用的异步通信
  */
-export const requestAsync = async (msg: any): Promise<any> => {
+export const requestAsync = (msg: any) => {
     return new Promise((resolve, reject) => {
         request(msg, (resp: any) => {
             if (resp.type) {
