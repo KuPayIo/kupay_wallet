@@ -4836,7 +4836,7 @@ require = (function () {
                         <div class="address" id="from">${fromAddr}</div>
                     </div>
                     <div class="pswBox">
-                        <input type="password" placeholder="输入密码" class="password" autofocus id="pi-psw"/>
+                        <input type="password" placeholder="输入密码" class="password" id="pi-psw"/>
                     </div>
                     <div class="btns">
                         <div class="cancel" onclick="doClose()">取消</div>
@@ -4844,8 +4844,9 @@ require = (function () {
                     </div>
                 </div>`;
                 document.body.appendChild(div);
-
-                document.querySelector("#pi-psw").focus();
+                setTimeout(function(){
+                    document.querySelector("#pi-psw").focus();
+                },100)
             }
             /**
              * Should be used to make async request

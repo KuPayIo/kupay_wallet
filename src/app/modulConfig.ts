@@ -4,12 +4,12 @@
 
 // ---------app模块功能配置----------------------------
 const appModulConfig = {
-    APP_CHAT: false,            // 聊天模块
+    APP_CHAT: true,            // 聊天模块
     APP_WALLET: true,           // 钱包模块
-    APP_EARN: false,             // 赚钱模块
+    APP_EARN: true,             // 赚钱模块
     APP_PLAY: true,            // 游戏模块
     FINANCIAL_SERVICES: true,   // 优选理财
-    GITHUB:false,                  // github显示
+    GITHUB:true,                  // github显示
 
     WALLET_NAME: 'Cubo',           // 钱包名字
     WALLET_WEBSITE:'www.Cubo.io',     // 官网地址

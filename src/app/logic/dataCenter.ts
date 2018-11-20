@@ -11,7 +11,7 @@ import { estimateGasERC20,getShapeShiftCoins,getTransactionsByAddr } from '../ne
 import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
 import { getStore,register,setStore } from '../store/memstore';
-import { btcNetwork, ethTokenTransferCode, lang } from '../utils/constants';
+import { btcNetwork, erc20GasLimitRate, ethTokenTransferCode, lang } from '../utils/constants';
 import { formatBalance,getAddrsAll,getConfirmBlockNumber,parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
 import { ethTokenDivideDecimals,sat2Btc,smallUnit2LargeUnit,wei2Eth } from '../utils/unitTools';
 import { fetchLocalTxByHash,fetchTransactionList,getMnemonicByHash } from '../utils/walletTools';
@@ -115,11 +115,11 @@ export class DataCenter {
      * 获取ERC20代币GasLimit
      */
     public fetchErc20GasLimit(currencyName:string) {
-        const defaultPay = 100;
+        const defaultPay = 0;
         const fromAddr = getCurrentEthAddr();
         estimateGasERC20(currencyName, defaultEthToAddr,fromAddr, defaultPay).then(res => {
             const gasLimitMap = getStore('third/gasLimitMap');
-            gasLimitMap.set(currencyName, res * 2);
+            gasLimitMap.set(currencyName, res * erc20GasLimitRate);
             setStore('third/gasLimitMap', gasLimitMap);
         });
     }

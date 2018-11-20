@@ -12,7 +12,7 @@ export enum DevMode {
     Rinkeby = 'rinkeby'   // rinkeby测试环境
 }
 // tslint:disable-next-line:variable-name
-export const dev_mode:DevMode = DevMode.Prod;
+export const dev_mode:DevMode = DevMode.Rinkeby;
 const walletName = findModulConfig('WALLET_NAME');
 
 // 主网erc20
