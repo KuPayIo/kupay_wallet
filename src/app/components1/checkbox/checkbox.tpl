@@ -3,7 +3,6 @@
     <span w-class="icon_{{it.itype}} icon-box">
         <i w-class="arrow_{{it.itype}}" class="checkbox1_{{it.itype}}"></i>
     </span>
-    <span w-class="text_{{it.itype}}">
-        <pi-ui-lang>{{it.text}}</pi-ui-lang></span>
+    <widget w-tag="pi-ui-lang" w-class="text_{{it.itype}}">{{it.text}}</widget>
     {{end}}
 </div>

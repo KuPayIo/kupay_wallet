@@ -5,7 +5,9 @@
     {{end}}
     <pi-ui-lang>{{it.prepend}}</pi-ui-lang>    
     </span>
-    <span style="flex: 1;height: 100%;"><app-components1-input-input>{placeHolder: {{it.placeholder?it.placeholder:""}},style:"text-align: right;",itype:{{it.itype?it.itype:"text"}},input:{{it.input?it.input:''}} }</app-components1-input-input></span>
+    <span style="flex: 1;height: 100%;">
+        <app-components1-input-input>{placeHolder: {{it.placeholder?it.placeholder:""}},style:"text-align: right;",itype:{{it.itype?it.itype:"text"}},input:{{it.input?it.input:''}},notUnderLine:{{it.notUnderLine?true:false}} }</app-components1-input-input>
+    </span>
     {{if it.append && it.append!=""}}
     <span w-class="append">
         <pi-ui-lang>{{it.append}}</pi-ui-lang></span>

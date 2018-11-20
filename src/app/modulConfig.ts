@@ -14,7 +14,7 @@ const appModulConfig = {
     WALLET_NAME: 'Cubo',           // 钱包名字
     WALLET_WEBSITE:'www.Cubo.io',     // 官网地址
     LOGIN_IMG:'app/res/image/login_bg.png',  // 登录页面图片
-    WALLET_LOGO:'app/res/image/img_logo.png', // 钱包logo
+    WALLET_LOGO:'app/res/image/img_logo.jpg', // 钱包logo
     WECHAT_HELPER:'app/res/image/wechat_robot.jpg',  // 微信小助手二维码
     WECHAT_ACCOUNT:'app/res/image/wechat_pn.jpg'  // 微信公众号二维码
 };
