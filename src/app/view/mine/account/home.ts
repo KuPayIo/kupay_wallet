@@ -19,8 +19,8 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class AccountHome extends Widget {
-    public ok:() => void;
-    public language:any;
+    public ok: () => void;
+    public language: any;
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
@@ -32,20 +32,20 @@ export class AccountHome extends Widget {
         const backup = wallet.isBackup;
 
         this.state = {
-            avatar:'',
-            nickName:'',
+            avatar: '',
+            nickName: '',
             isUpdatingWalletName: false,
-            phone:'',
+            phone: '',
             backup,
-            userInput:false,
-            chooseImage:false,
-            avatarHtml:''
+            userInput: false,
+            chooseImage: false,
+            avatarHtml: ''
         };
         if (userInfo.phoneNumber) {
-            const str = String(userInfo.phoneNumber).substr(3,6);
-            this.state.phone = userInfo.phoneNumber.replace(str,'******');
+            const str = String(userInfo.phoneNumber).substr(3, 6);
+            this.state.phone = userInfo.phoneNumber.replace(str, '******');
         }
-        this.state.nickName = userInfo.nickName ? userInfo.nickName :this.language.defaultName;
+        this.state.nickName = userInfo.nickName ? userInfo.nickName : this.language.defaultName;
         this.state.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
         this.paint();
     }
@@ -73,13 +73,13 @@ export class AccountHome extends Widget {
             this.state.nickName = v;
             const userInfo = getStore('user/info');
             userInfo.nickName = v;
-            setStore('user/info',userInfo);
+            setStore('user/info', userInfo);
         }
         this.state.isUpdatingWalletName = false;
         this.paint();
     }
 
-     // 修改钱包名称
+    // 修改钱包名称
     public walletNameInputFocus() {
         this.state.isUpdatingWalletName = true;
     }
@@ -89,7 +89,7 @@ export class AccountHome extends Widget {
         if (!psw) return;
         const ret = await backupMnemonic(psw);
         if (ret) {
-            popNew('app-view-wallet-backup-index',{ ...ret });
+            popNew('app-view-wallet-backup-index', { ...ret });
         }
 
     }
@@ -115,11 +115,11 @@ export class AccountHome extends Widget {
 
     public uploadAvatar() {
         selectImage((width, height, base64) => {
-            resize({ url:base64, width: 140, ratio: 0.3, type: 'jpeg' },(res) => {
-                console.log('resize---------',res);
+            resize({ url: base64, width: 140, ratio: 0.3, type: 'jpeg' }, (res) => {
+                console.log('resize---------', res);
                 this.state.chooseImage = true;
                 // tslint:disable-next-line:max-line-length
-                this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+                this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 120px;height: 120px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
                 this.state.avatar = res.base64;
                 this.paint();
                 uploadFile(this.state.avatar);
