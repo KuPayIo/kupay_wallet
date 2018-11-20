@@ -20,6 +20,7 @@ interface Props {
     style?:string;
     isShowPin?:boolean;
     input?:string;
+    notUnderLine?:boolean;
 }
 
 export class BasicInput extends Widget {

@@ -3,12 +3,17 @@
     <app-components1-topBar-topBar>{title:{{topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="body">
         <div w-class="head-container" class="pi-input">
-            <widget w-tag="app-components1-img-img" on-tap="uploadAvatar">{imgURL:{{it1.avatar}},width:"120px;"}</widget>
+            {{if !it1.chooseImage}}
+                <widget w-tag="app-components1-img-img" on-tap="uploadAvatar">{imgURL:{{it1.avatar}},width:"120px;"}</widget>
+            {{else}}
+                <widget w-tag="pi-ui-html" on-tap="uploadAvatar" w-class="ui-html">{{it1.avatarHtml}}</widget>
+            {{end}}
+            
             <div style="flex: 1 0 0;" ev-input-blur="walletNameInputBlur" ev-input-change="walletNameInputChange">
                 {{: defaultName = {"zh_Hans":"昵称未设置","zh_Hant":"暱稱未設置","en":""} }}
                 <app-components1-input-input>{input:{{it1.nickName}},maxLength:10,autofocus:true,placeHolder:{{defaultName}},disabled:{{!it1.userInput}},notUnderLine:true }</app-components1-input-input>
             </div>
-            <img src="../../../res/image/edit_blue.png" w-class="edit" on-tap="changeInput"/>
+            <img src="app/res/image/edit_blue.png" w-class="edit" on-tap="changeInput"/>
             
         </div>
         <div w-class="other">
