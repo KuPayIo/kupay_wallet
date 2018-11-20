@@ -57,10 +57,6 @@ export class Aboutus extends Widget {
                 url: shareDownload,
                 title:`${this.state.walletName}钱包`,
                 content:`我正在使用${this.state.walletName}，邀您一起来使用！` 
-            },() => {
-                this.backPrePage();
-            },() => {
-                this.backPrePage();
             });
             console.error(shareDownload);
         }
