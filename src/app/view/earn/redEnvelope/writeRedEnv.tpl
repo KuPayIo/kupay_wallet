@@ -36,7 +36,8 @@
                 itype:"number",
                 append:{{amountTitle[3]}},
                 isShowPin:{{it1.showPin}},
-                input:{{it1.oneAmount}}
+                input:{{it1.oneAmount}},
+                notUnderLine:true
                 }</app-components-basicInput-basicInput>
         </div>
         <div style="margin: 10px 0;" ev-input-change="changeNumber">
@@ -58,7 +59,8 @@
             <app-components-basicInput-basicInput>{
                 prepend:{{messTitle[0]}},
                 placeholder:{{messTitle[1]}},
-                input:{{it1.message}}
+                input:{{it1.message}},
+                notUnderLine:true
                 }</app-components-basicInput-basicInput>
         </div>
         <div w-class="totalNum">{{it1.totalAmount+" "+item.name}}</div>
