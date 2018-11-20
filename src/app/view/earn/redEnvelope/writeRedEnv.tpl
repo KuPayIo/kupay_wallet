@@ -51,7 +51,8 @@
                 placeholder:{{countTitle[1]}},
                 itype:"integer",
                 append:{{countTitle[2]}},
-                input:{{it1.totalNum}}
+                input:{{it1.totalNum}},
+                notUnderLine:true
                 }</app-components-basicInput-basicInput>
         </div>
         <div style="margin: 10px 0;" ev-input-change="changeMessage">

@@ -37,7 +37,9 @@ export class AccountHome extends Widget {
             isUpdatingWalletName: false,
             phone:'',
             backup,
-            userInput:false
+            userInput:false,
+            chooseImage:false,
+            avatarHtml:''
         };
         if (userInfo.phoneNumber) {
             const str = String(userInfo.phoneNumber).substr(3,6);
@@ -117,7 +119,7 @@ export class AccountHome extends Widget {
                 console.log('resize---------',res);
                 this.state.chooseImage = true;
                 // tslint:disable-next-line:max-line-length
-                // this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+                this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
                 this.state.avatar = res.base64;
                 this.paint();
                 uploadFile(this.state.avatar);
