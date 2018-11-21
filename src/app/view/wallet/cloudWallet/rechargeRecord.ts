@@ -2,6 +2,7 @@
  * other record
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getRechargeLogs } from '../../../net/pull';
@@ -9,7 +10,6 @@ import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
-import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

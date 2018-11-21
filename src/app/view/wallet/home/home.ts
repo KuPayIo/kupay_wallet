@@ -19,11 +19,11 @@ export class Home extends Widget {
     public language:any;
     public create() {
         super.create();
-        this.init();
+        this.pageInit();
+        this.dataInit();
     }
-    public init() {
+    public pageInit() {
         this.language = this.config.value[getLang()];
-        const userInfo = getUserInfo();
         this.state = {
             tabs:[{
                 tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },
@@ -33,13 +33,23 @@ export class Home extends Widget {
                 components:'app-view-wallet-home-walletHome'
             }],
             activeNum:1,
-            avatar:userInfo && userInfo.avatar,
-            totalAsset:formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets()),
             refreshing:false,
-            currencyUnitSymbol:getCurrencyUnitSymbol()
+
+            avatar:'',
+            totalAsset:'',
+            currencyUnitSymbol:''
         };
         this.paint();
     }
+
+    public dataInit() {
+        const userInfo = getUserInfo();
+        this.state.avatar = userInfo && userInfo.avatar;
+        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
+        this.state.currencyUnitSymbol = getCurrencyUnitSymbol(); 
+        this.paint();
+    }
+
     public tabsChangeClick(event: any, value: number) {
         this.state.activeNum = value;
         this.paint();
@@ -96,7 +106,7 @@ export class Home extends Widget {
 register('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
+        w.dataInit();
     }
 });
 
@@ -118,7 +128,7 @@ register('cloud/cloudWallet',() => {
 register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
+        w.pageInit();
     }
 });
 

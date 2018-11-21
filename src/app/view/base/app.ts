@@ -35,7 +35,7 @@ export class App extends Widget {
 
         this.state = {
             type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
-            isActive,
+            isActive:'',
             old: this.old,
             loading,
             allTabBar: {
@@ -77,12 +77,19 @@ export class App extends Widget {
         for (const item in this.state.allTabBar) {
             this.state.allTabBar[item];
             if (findModulConfig(this.state.allTabBar[item].modulName)) {
+                if (this.state.allTabBar[item].modulName === 'APP_WALLET') {
+                    this.state.isActive = 'APP_WALLET';
+                }
                 resList.push(this.state.allTabBar[item]);
             }   
         }
         if (resList.length === 0) {
             resList.push(this.state.allTabBar.wallet);
-        }   
+            this.state.isActive = this.state.allTabBar.wallet.modulName;
+        }
+        if (!this.state.isActive) {
+            this.state.isActive = resList[0].modulName;
+        }
         this.state.tabBarList = resList;
     }
     public closeLoading() {
