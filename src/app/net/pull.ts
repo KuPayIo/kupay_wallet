@@ -31,11 +31,11 @@ console.log('conPort=',conPort);
 export const thirdUrlPre = `http://${conIp}:${conPort}/proxy`;
 // 分享链接前缀
 // export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-export const sharePerUrl = `http://app.kuplay.io/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 // export const sharePerUrl = `http://${conIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
-export const shareDownload = `http://${conIp}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
+export const shareDownload = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
 
 // 上传图片url
 export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;
