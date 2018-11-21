@@ -935,8 +935,8 @@ export class DataCenter {
             // okey
             if (!res.error_code) {
                 const currency2USDTMap = getStore('third/currency2USDTMap');
-                const close = Number(res[0][1]);
-                const open = Number(res[0][4]);
+                const open = Number(res[0][1]);
+                const close = Number(res[0][4]);
                 currency2USDTMap.set(currencyName, {
                     open,
                     close

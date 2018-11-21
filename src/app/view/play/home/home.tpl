@@ -3,8 +3,8 @@
         <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
         <app-components1-topBar-topBar1>{avatar:{{it.avatar}} }</app-components1-topBar-topBar1>
     </div>
-   
     <div w-class="body">
+        <div>
         <div w-class="games1" on-tap="gameClick(0)">
             <img src="app/res/image1/game2.jpg"/>
             <div w-class="item-box">
@@ -29,5 +29,6 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>
