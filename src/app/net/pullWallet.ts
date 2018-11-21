@@ -4,7 +4,6 @@
 // ===================================================== 导入
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
-import { Collapse } from '../components/collapse/collapse1';
 import { defaultEthToAddr, ERC20Tokens } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
@@ -15,7 +14,7 @@ import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../logic/dataCenter';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
-import { shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
+import { erc20GasLimitRate, shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
 import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
@@ -79,9 +78,10 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
             const localNonce = getEthNonce(fromAddr);
             // 0xe209a49a0000000000000000000000000000000000000000000000000000000000000001
             // toAddr  0x0e7f42cdf739c06dd3c1c32fab5e50ec9620102a
-            // api.estimateGas({ to: txPayload.toAddr, data: txPayload.data });
+            // tslint:disable-next-line:max-line-length
+            let gasLimit = await api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data });
             // TODO  直接使用预估出来的gasLimit交易有可能失败   零时解决
-            const gasLimit = Math.floor(21000 * 10);
+            gasLimit = Math.floor(gasLimit * erc20GasLimitRate);
             let newNonce = nonce;
             if (!isNumber(nonce)) {
                 const chainNonce = await api.getTransactionCount(fromAddr);
@@ -226,29 +226,6 @@ export const transfer1 = async (psw:string,txRecord:TxHistory) => {
     return ret;
 };
 
-/**
- * 预估矿工费
- * @param currencyName 货币名称
- * @param options 可选项,货币为ETH或ERC20时必传
- */
-export const estimateMinerFee = async (currencyName:string) => {
-    const toAddr = defaultEthToAddr;
-    const pay = 0;
-    let gasLimit = 21000;
-    let btcMinerFee;
-    if (currencyName === 'ETH') {
-        gasLimit = await estimateGasETH(toAddr);
-    } else if (currencyName === 'BTC') {
-        btcMinerFee = getStore('third/btcMinerFee');
-    } else if (ERC20Tokens[currencyName]) {
-        gasLimit = await estimateGasERC20(currencyName,toAddr,pay);
-    }
-
-    return {
-        gasLimit,
-        btcMinerFee
-    };
-};
 // =====================================================ETH
 /**
  * 预估ETH的gas limit
@@ -348,12 +325,12 @@ export const sendRawTransactionETH = async (signedTx) => {
 
 // ==============================================ERC20
 // 预估ETH ERC20Token的gas limit
-export const estimateGasERC20 = (currencyName:string,toAddr:string,amount:number) => {
+export const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amount:number | string) => {
     const api = new EthApi();
 
     const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
 
-    return api.estimateGas({ to: ERC20Tokens[currencyName].contractAddr, data: transferCode });
+    return api.estimateGas({ to: ERC20Tokens[currencyName].contractAddr,from:fromAddr, value:'0x0', data: transferCode });
 };
 
 /**
@@ -375,7 +352,7 @@ export const doERC20TokenTransfer = async (wlt: EthWallet, txRecord:TxHistory) =
         newNonce = localNonce && localNonce >= chainNonce ? localNonce : chainNonce;
     }
     const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(pay, currencyName));
-    let gasLimit = await estimateGasERC20(currencyName,toAddr,pay);
+    let gasLimit = await estimateGasERC20(currencyName,toAddr,fromAddr,'0x0');
     // TODO  零时解决
     gasLimit = Math.floor(gasLimit * 4);
     console.log('gasLimit-------------',gasLimit);

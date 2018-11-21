@@ -11,7 +11,7 @@ import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
-import { openConnect } from '../../net/pull';
+import { openConnect, uploadFileUrl } from '../../net/pull';
 import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { deepCopy, getStore, initStore, setStore } from '../../store/memstore';
@@ -35,7 +35,6 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     console.timeEnd('home enter');
-    // popNew('app-view-chat-home-home');
     popNewPage();
     // setTimeout(() => {
     //     const api = new EthApi();

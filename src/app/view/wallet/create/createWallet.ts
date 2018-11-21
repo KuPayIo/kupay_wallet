@@ -12,19 +12,19 @@ import { getStore, register, setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { checkCreateAccount, getStaticLanguage, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
-import { forelet,WIDGET_NAME } from './home';
+import { forelet, WIDGET_NAME } from './home';
 interface Props {
-    itype:CreateWalletType;
-    imageBase64?:string;// 图片base64
-    imagePsw?:string;// 图片密码
-    mnemonic?:string;// 助记词
-    fragment1?:string;// 片段1
-    fragment2?:string;// 片段2
+    itype: CreateWalletType;
+    imageBase64?: string;// 图片base64
+    imagePsw?: string;// 图片密码
+    mnemonic?: string;// 助记词
+    fragment1?: string;// 片段1
+    fragment2?: string;// 片段2
 }
 export class CreateWallet extends Widget {
-    public props:Props;
+    public props: Props;
     public ok: () => void;
-    public language:any;
+    public language: any;
 
     public create() {
         super.create();
@@ -33,21 +33,21 @@ export class CreateWallet extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         this.state = {
-            itype:CreateWalletType.Random,
+            itype: CreateWalletType.Random,
             walletName: playerName(),
             walletPsw: '',
             walletPswConfirm: '',
-            pswEqualed:false,
+            pswEqualed: false,
             userProtocolReaded: false,
-            walletPswAvailable:false,
-            chooseImage:false,
-            avatar:'',
-            avatarHtml:''
+            walletPswAvailable: false,
+            chooseImage: false,
+            avatar: '',
+            avatarHtml: ''
         };
     }
 
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
+    public setProps(props: Props, oldProps: Props) {
+        super.setProps(props, oldProps);
         this.state.itype = props.itype;
     }
     public backPrePage() {
@@ -61,13 +61,13 @@ export class CreateWallet extends Widget {
         this.state.userProtocolReaded = (e.newType === 'true' ? true : false);
         this.paint();
     }
-    public pswConfirmChange(r:any) {
+    public pswConfirmChange(r: any) {
         this.state.walletPswConfirm = r.value;
         this.state.pswEqualed = pswEqualed(this.state.walletPsw, this.state.walletPswConfirm);
         this.paint();
     }
     // 密码格式正确通知
-    public pswChange(res:any) {
+    public pswChange(res: any) {
         this.state.walletPswAvailable = res.success;
         this.state.walletPsw = res.password;
         this.state.pswEqualed = pswEqualed(this.state.walletPsw, this.state.walletPswConfirm);
@@ -76,13 +76,13 @@ export class CreateWallet extends Widget {
 
     // 清除密码
     public pwsClear() {
-        this.state.walletPsw = '';  
+        this.state.walletPsw = '';
         this.paint();
     }
     public selectImageClick() {
         selectImage((width, height, base64) => {
-            resize({ url:base64, width: 140, ratio: 0.3, type: 'jpeg' },(res) => {
-                console.log('resize---------',res);
+            resize({ url: base64, width: 140, ratio: 0.3, type: 'jpeg' }, (res) => {
+                console.log('resize---------', res);
                 this.state.chooseImage = true;
                 // tslint:disable-next-line:max-line-length
                 this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
@@ -109,34 +109,32 @@ export class CreateWallet extends Widget {
         this.paint();
     }
     public async createClick() {
+        if (!this.state.userProtocolReaded) {
+            return;
+        }
         if (!walletNameAvailable(this.state.walletName)) {
             popNew('app-components1-message-message', { content: this.language.tips[0] });
-            
+
             return;
         }
         if (!this.state.walletPsw || !this.state.walletPswConfirm) {
             popNew('app-components1-message-message', { content: this.language.tips[1] });
-            
+
             return;
         }
         if (!this.state.walletPswAvailable) {
             popNew('app-components1-message-message', { content: this.language.tips[2] });
-            
+
             return;
         }
         if (!this.state.pswEqualed) {
             popNew('app-components1-message-message', { content: this.language.tips[3] });
-            
-            return;
-        }
-        if (!this.state.userProtocolReaded) {
-            popNew('app-components1-message-message', { content: this.language.tips[5] });
 
             return;
         }
-        const option:any = {
-            psw:this.state.walletPsw,
-            nickName:this.state.walletName
+        const option: any = {
+            psw: this.state.walletPsw,
+            nickName: this.state.walletName
         };
         if (this.state.itype === CreateWalletType.Image) {
             option.imageBase64 = this.props.imageBase64;
@@ -150,24 +148,24 @@ export class CreateWallet extends Widget {
             option.fragment1 = this.props.fragment1;
             option.fragment2 = this.props.fragment2;
         }
-        const hash = await createWallet(this.state.itype,option);
+        const hash = await createWallet(this.state.itype, option);
         if (!hash) {
             popNewMessage(this.language.tips[3]);
         }
 
         const mnemonic = getMnemonicByHash(hash);
         const fragments = fetchMnemonicFragment(hash);
-        setStore('flags',{ created:true,mnemonic,fragments });
+        setStore('flags', { created: true, mnemonic, fragments });
         if (getStore('user/offline')) {
             checkCreateAccount();
         } else {
             openConnect();
         }
-        
+
         if (this.state.avatar) {
             uploadFile(this.state.avatar);
         }
-        
+
         const w: any = forelet.getWidget(WIDGET_NAME);
         if (w) {
             w.ok && w.ok();
@@ -184,12 +182,12 @@ export class CreateWallet extends Widget {
 }
 
 // 登录状态成功
-register('flags',(flags:any) => {
+register('flags', (flags: any) => {
     if (flags.promptBackup) {
-        popNew('app-components1-modalBox-modalBox',getStaticLanguage().createSuccess,() => {
-            popNew('app-view-wallet-backup-index',{ mnemonic:flags.mnemonic,fragments:flags.fragments });
+        popNew('app-components1-modalBox-modalBox', getStaticLanguage().createSuccess, () => {
+            popNew('app-view-wallet-backup-index', { mnemonic: flags.mnemonic, fragments: flags.fragments });
         });
         flags.promptBackup = false;
-        setStore('flags',flags,false);
+        setStore('flags', flags, false);
     }
 });

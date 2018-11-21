@@ -8,7 +8,7 @@ import { dataCenter } from '../../../logic/dataCenter';
 import { TxHistory, TxType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
+import { currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -49,13 +49,13 @@ export class TransactionHome extends Widget {
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol(),
             tabs:[{
-                tab:cfg.tabs[5],
+                tab:'全部',
                 list:txList
             },{
-                tab:cfg.tabs[1],
+                tab:'转账',
                 list:this.transferList(txList)
             },{
-                tab:cfg.tabs[2],
+                tab:'收款',
                 list:this.receiptList(txList)
             }],
             activeNum:0,

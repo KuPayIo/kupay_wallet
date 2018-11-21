@@ -50,3 +50,10 @@
     border: 2px solid #fff;
     box-shadow: none;
 }
+
+.btn-cannotClick{
+    background: #fff;
+    border: 2px dashed #888;
+    box-shadow: none;
+    color:#888;
+}

@@ -8,7 +8,7 @@
                 <div w-class="titleMode">
                     <img src="../../../res/image1/mine_makmoney.png" w-class="makeMoney"/>
                     <span w-class="totalTitle"><pi-ui-lang>{"zh_Hans":"累计挖矿(KT)","zh_Hant":"累計挖礦(KT)","en":""}</pi-ui-lang></span>
-                    <img src="../../../res/image1/41_gray.png" w-class="miningDesc" on-tap="miningDesc"/>
+                    <img src="../../../res/image/41_gray.png" w-class="miningDesc" on-tap="miningDesc"/>
                 </div>
 
                 <div w-class="totalNum" id="mining">
