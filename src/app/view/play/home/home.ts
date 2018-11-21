@@ -53,7 +53,21 @@ export class PlayHome extends Widget {
         this.props.gameList = [
             {
                 title:'Crypto Fishing',
+                desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
+                img:'app/res/image1/game2.jpg',
                 url:'http://47.244.59.13/web-rinkeby/index.html'
+            },
+            {
+                title:{ zh_Hans:'迷失之城',zh_Hant:'迷失之城',en:'' },
+                desc:{ zh_Hans:'基于GAIA链的新一代区块链游戏',zh_Hant:'基於GAIA鏈的新一代區塊鏈遊戲',en:'' },
+                img:'app/res/image1/game3.jpg',
+                url:''
+            },
+            {
+                title:'Decentraland',
+                desc:{ zh_Hans:'Decentraland与Ethaemon合作',zh_Hant:'Decentraland與Ethaemon合作',en:'' },
+                img:'app/res/image1/game4.jpg',
+                url:''
             }
         ];
     }
@@ -102,7 +116,7 @@ export class PlayHome extends Widget {
 
     public gameClick(num:number) {
         if (!hasWallet()) return;
-        if (!this.props.gameList[num]) {
+        if (!this.props.gameList[num].url) {
             popNewMessage(this.language.tips);
         } else {
             const gameTitle = this.props.gameList[num].title;
