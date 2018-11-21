@@ -1308,20 +1308,20 @@ export const uploadFile = async (base64) => {
     const file = base64ToFile(base64);
     const formData = new FormData();
     formData.append('upload',file);
-    fetch(uploadFileUrl, {
+    fetch(`${uploadFileUrl}?$forceServer=1`, {
         body: formData, // must match 'Content-Type' header
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'same-origin', // include, same-origin, *omit
-        headers: {
-            'user-agent': 'Mozilla/4.0 MDN Example'
-        },
+        // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        // credentials: 'same-origin', // include, same-origin, *omit
+        // headers: {
+        //     'user-agent': 'Mozilla/4.0 MDN Example'
+        // },
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors', // no-cors, cors, *same-origin
-        redirect: 'follow', // manual, *follow, error
-        referrer: 'no-referrer' // *client, no-referrer
+        mode: 'cors' // no-cors, cors, *same-origin
+        // redirect: 'follow', // manual, *follow, error
+        // referrer: 'no-referrer' // *client, no-referrer
     }).then(response => response.json())
         .then(res => {
-            console.log('!!!!!!!!!!!',res);
+            console.log('uploadFile success ',res);
             popNewMessage('图片上传成功');
             if (res.result === 1) {
                 const sid = res.sid;
@@ -1329,5 +1329,8 @@ export const uploadFile = async (base64) => {
                 userInfo.avatar = sid;
                 setStore('user/info',userInfo);
             }
+        }).catch(err => {
+            console.log('uploadFile fail ',err);
+            popNewMessage('图片上传失败');
         });
 };
