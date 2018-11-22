@@ -61,6 +61,7 @@
                 prepend:{{messTitle[0]}},
                 placeholder:{{messTitle[1]}},
                 input:{{it1.message}},
+                maxLength:20,
                 notUnderLine:true
                 }</app-components-basicInput-basicInput>
         </div>
