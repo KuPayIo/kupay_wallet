@@ -182,6 +182,13 @@ export class WriteRedEnv extends Widget {
 
             return;
         }
+        if (this.state.selected === 0) {
+            if (!Number.isInteger(Number(this.state.oneAmount))) {
+                popNew('app-components-message-message', { content: this.language.tips[7] });
+
+                return;
+            }
+        }
 
         this.inputBlur();
         
