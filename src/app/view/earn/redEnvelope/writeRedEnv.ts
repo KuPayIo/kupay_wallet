@@ -103,7 +103,7 @@ export class WriteRedEnv extends Widget {
         if (this.state.showPin) {
             this.state.totalAmount = this.state.oneAmount;
         } else {
-            this.state.totalAmount = this.state.oneAmount * this.state.totalNum;
+            this.state.totalAmount = parseFloat((this.state.oneAmount * this.state.totalNum).toPrecision(12));
         }
         this.paint();
     }
@@ -113,11 +113,11 @@ export class WriteRedEnv extends Widget {
      */
     public changeAmount(e: any) {
         if (this.state.showPin) {
-            this.state.oneAmount = e.value;
-            this.state.totalAmount = e.value;
+            this.state.oneAmount = Number(e.value);
+            this.state.totalAmount = Number(e.value);
         } else {
-            this.state.oneAmount = e.value;
-            this.state.totalAmount = this.state.oneAmount * this.state.totalNum;
+            this.state.oneAmount = Number(e.value);
+            this.state.totalAmount = parseFloat((this.state.oneAmount * this.state.totalNum).toPrecision(12));
         }
         this.paint();
     }
@@ -128,7 +128,7 @@ export class WriteRedEnv extends Widget {
     public changeNumber(e: any) {
         this.state.totalNum = Number(e.value);
         if (!this.state.showPin) {
-            this.state.totalAmount = this.state.oneAmount * this.state.totalNum;
+            this.state.totalAmount = parseFloat((this.state.oneAmount * this.state.totalNum).toPrecision(12));
         }
         this.paint();
     }
@@ -153,12 +153,12 @@ export class WriteRedEnv extends Widget {
      * 点击发红包按钮
      */
     public async send() {
-        if (this.state.totalNum === 0) {
+        if (Number(this.state.totalNum) === 0) {
             popNew('app-components1-message-message', { content: this.language.tips[2] });
 
             return;
         }
-        if (this.state.oneAmount === 0 && this.state.totalAmount === 0) {
+        if (Number(this.state.oneAmount) === 0 && Number(this.state.totalAmount) === 0) {
             popNew('app-components-message-message', { content: this.language.tips[1] });
 
             return;
@@ -183,7 +183,7 @@ export class WriteRedEnv extends Widget {
             return;
         }
         if (this.state.selected === 0) {
-            if (!Number.isInteger(Number(this.state.oneAmount))) {
+            if (Number(this.state.totalAmount) < this.state.totalNum) {
                 popNew('app-components-message-message', { content: this.language.tips[7] });
 
                 return;
