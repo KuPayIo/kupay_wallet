@@ -1,4 +1,4 @@
-import { findModulConfig } from './modulConfig';
+import { getModulConfig } from './modulConfig';
 
 /**
  * config file
@@ -13,7 +13,7 @@ export enum DevMode {
 }
 // tslint:disable-next-line:variable-name
 export const dev_mode:DevMode = DevMode.Rinkeby;
-const walletName = findModulConfig('WALLET_NAME');
+const walletName = getModulConfig('WALLET_NAME');
 
 // 主网erc20
 const ERC20TokensMainnet = {

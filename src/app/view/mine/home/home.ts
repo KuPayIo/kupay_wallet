@@ -6,7 +6,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
 import { copyToClipboard, getUserInfo, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
@@ -46,9 +46,9 @@ export class Home extends Widget {
             hasWallet,
             hasBackupMnemonic,
             offline:false,
-            walletName : findModulConfig('WALLET_NAME')
+            walletName : getModulConfig('WALLET_NAME')
         };
-        if (findModulConfig('GITHUB')) {
+        if (getModulConfig('GITHUB')) {
             this.state.list.push({ img:'../../../res/image1/43.png',name: '',components:'' });
         }
         this.initData();

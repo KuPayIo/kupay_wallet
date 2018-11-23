@@ -5,7 +5,7 @@
 import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { findModulConfig } from '../../modulConfig';
+import { getModulConfig } from '../../modulConfig';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
 import { getStore, register } from '../../store/memstore';
@@ -76,7 +76,7 @@ export class App extends Widget {
         const resList = [];
         for (const item in this.state.allTabBar) {
             this.state.allTabBar[item];
-            if (findModulConfig(this.state.allTabBar[item].modulName)) {
+            if (getModulConfig(this.state.allTabBar[item].modulName)) {
                 if (this.state.allTabBar[item].modulName === 'APP_WALLET') {
                     this.state.isActive = 'APP_WALLET';
                 }

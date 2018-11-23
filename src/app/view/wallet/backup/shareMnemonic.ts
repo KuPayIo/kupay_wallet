@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { deleteMnemonic } from '../../../logic/localWallet';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { mnemonicFragmentEncrypt, popNewMessage } from '../../../utils/tools';
 interface Props {
     fragments:any[];
@@ -34,7 +34,7 @@ export class ShareMnemonic extends Widget {
         this.state = {
             encryptFragments,
             successList,
-            walletName:findModulConfig('WALLET_NAME')
+            walletName:getModulConfig('WALLET_NAME')
         };
     }
     // 分享
