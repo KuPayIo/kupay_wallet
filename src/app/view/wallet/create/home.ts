@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { deleteAccount, getAllAccount } from '../../../store/memstore';
 import { loginSuccess, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { VerifyIdentidy1 } from '../../../utils/walletTools';
@@ -33,7 +33,7 @@ export class CreateEnter extends Widget {
             accountList.push({ nickName,id });
         });
         this.state = {
-            loginImg:findModulConfig('LOGIN_IMG'),
+            loginImg:getModulConfig('LOGIN_IMG'),
             login:false,
             accountList,
             selectedAccountIndex:0,

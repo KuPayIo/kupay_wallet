@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { getProductList, getServerCloudBalance } from '../../../net/pull';
 import { Product } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
@@ -23,7 +23,7 @@ export class CloudHome extends Widget {
     public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.props.financialModulIsShow = findModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
+        this.props.financialModulIsShow = getModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
         this.init();
         if (props.isActive) {
             getProductList();

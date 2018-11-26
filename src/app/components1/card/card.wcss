@@ -9,7 +9,7 @@
 }
 
 .card-img{
-
+   width:100%;
 }
 
 .card-content{

@@ -19,7 +19,7 @@ const appModulConfig = {
     WECHAT_ACCOUNT:'app/res/image/wechat_pn.jpg'  // 微信公众号二维码
 };
 
-export const findModulConfig = (modulName: string) => {
+export const getModulConfig = (modulName: string) => {
     if (appModulConfig.hasOwnProperty(modulName)) {
         return appModulConfig[modulName];
     } else {

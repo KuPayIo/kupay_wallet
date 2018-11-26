@@ -6,7 +6,7 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 // ==================================================导出
 
 export class WechatQrcode extends Widget {
@@ -16,9 +16,9 @@ export class WechatQrcode extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
         this.state = {
-            walletName:findModulConfig('WALLET_NAME'),
-            wachatHelperQrcode:findModulConfig('WECHAT_HELPER'),
-            wachatQrcode:findModulConfig('WECHAT_ACCOUNT')
+            walletName:getModulConfig('WALLET_NAME'),
+            wachatHelperQrcode:getModulConfig('WECHAT_HELPER'),
+            wachatQrcode:getModulConfig('WECHAT_ACCOUNT')
         };
     }
 

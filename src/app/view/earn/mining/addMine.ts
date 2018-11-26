@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { getInviteCode, getMineDetail, getMineItemJump } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { popNewMessage } from '../../../utils/tools';
@@ -76,7 +76,7 @@ export class Dividend extends Widget {
                     itemKT:'',
                     itemJump: 'buyFinancial',
                     detailShow: false,
-                    modulIsShow:findModulConfig('FINANCIAL_SERVICES')
+                    modulIsShow:getModulConfig('FINANCIAL_SERVICES')
                 }, {
                     isComplete: false,
                     itemImg: '../../res/image/addMine_chat.png',
@@ -86,7 +86,7 @@ export class Dividend extends Widget {
                     itemKT:'',
                     itemJump: 'toChat',
                     detailShow: false,
-                    modulIsShow:findModulConfig('APP_CHAT')
+                    modulIsShow:getModulConfig('APP_CHAT')
                 }
             ]
         };

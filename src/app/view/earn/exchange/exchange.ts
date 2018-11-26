@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
@@ -28,7 +28,7 @@ export class Exchange extends Widget {
         this.language = this.config.value[getLang()];
         this.state = {
             cid: '',
-            walletName:findModulConfig('WALLET_NAME')
+            walletName:getModulConfig('WALLET_NAME')
         };
     }
     

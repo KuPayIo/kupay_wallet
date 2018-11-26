@@ -8,6 +8,8 @@
  * style:额外的CSS样式
  * isShowPin:拼字样是否需要显示，默认false
  * input:输入框填充数据
+ * maxLength?: 输入最大长度，仅对text和password类型输入有效
+ * notUnderLine:输入框下横线
  */
 import { Json } from '../../../pi/lang/type';
 import { Widget } from '../../../pi/widget/widget';
@@ -20,6 +22,7 @@ interface Props {
     style?:string;
     isShowPin?:boolean;
     input?:string;
+    maxLength?:number;
     notUnderLine?:boolean;
 }
 
