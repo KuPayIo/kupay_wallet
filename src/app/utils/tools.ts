@@ -309,9 +309,10 @@ export const ab2hex = (buffer) => {
     const hexArr = Array.prototype.map.call(
       new Uint8Array(buffer),
        (bit) => {
-           return ('00' + bit.toString(16)).slice(-2);
+           return `00${bit.toString(16)}`.slice(-2);
        }
     );
+
     return hexArr.join('');
 };
   
@@ -518,9 +519,11 @@ export const copyToClipboard = (copyText) => {
  */
 export const calcHashValuePromise = async (pwd, salt?) => {
     let hash;
+    // console.time('calc hash1');
     const argonHash = new ArgonHash();
     argonHash.init();
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
+    // console.timeEnd('calc hash1');
     setStore('user/secretHash',hash);
 
     return hash;

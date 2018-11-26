@@ -3,7 +3,6 @@
  */
 import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { cryptoRandomInt } from '../../pi/util/math';
 import { MainChainCoin } from '../config';
 import { findModulConfig } from '../modulConfig';
 import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
@@ -30,9 +29,7 @@ console.log('conPort=',conPort);
 
 export const thirdUrlPre = `http://${conIp}:${conPort}/proxy`;
 // 分享链接前缀
-// export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
 export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
-// export const sharePerUrl = `http://${conIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
 export const shareDownload = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
