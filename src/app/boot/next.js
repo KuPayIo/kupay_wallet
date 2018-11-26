@@ -139,6 +139,7 @@ winit.initNext = function () {
 
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
 			setStore('flags/level_2_page_loaded', true);
+			
 			if (updateMod.needForceUpdate()) {
 				// 注：必须堵住原有的界面操作，不允许任何更新
 				updateMod.update(function (e) {
@@ -148,9 +149,12 @@ winit.initNext = function () {
 				updateMod.checkUpdate(function (need) {
 					needUpdate = need;
 					if (needUpdate) {
+						createProgressBar();
 						// 注：必须堵住原有的界面操作，不允许任何触发操作
 						updateMod.update(function (e) {
+							//{type: "saveFile", total: 4, count: 1}
 							console.log("update progress: ", e);
+							updateProgressBar(e.count / e.total);
 						});
 					}
 				});
@@ -208,3 +212,49 @@ winit.initNext = function () {
 		winit.initNext();
 	!self._babelPolyfill && setTimeout(winit.init, 100);
 })();
+
+/**
+ * 创建更新进度条
+ */
+function createProgressBar(){
+	var progressMask = document.createElement("div");
+	progressMask.setAttribute("id","pi-progress-mask");
+	progressMask.setAttribute("style", "z-index:99999;position:absolute;top:0;bottom:0;left:0;right:0;background-color: rgba(0, 0, 0, .3);display: flex;justify-content: center;align-items: center;");
+	
+
+	var progressBg = document.createElement("div");
+	progressBg.setAttribute("style","margin: 20px;flex: 1 0 0;height: 10px;position: relative;background-color: blue;border-radius: 12px;overflow: hidden;");
+
+
+	var progress = document.createElement("div");
+	progress.setAttribute("id","pi-progress");
+	progress.setAttribute("style","width: 0%;height: 100%;background-color: rebeccapurple;");
+
+	progressBg.appendChild(progress);
+	progressMask.appendChild(progressBg);
+
+	var body = document.querySelector("body");
+	body.appendChild(progressMask);
+}
+
+/**
+ * 更新进度条
+ */
+function updateProgressBar(progress){
+	// debugger;
+	var $progress = document.querySelector("#pi-progress");
+	$progress.style.width = progress * 100 + "%";
+	if(progress === 1){
+		destroyProgressBar();
+	}
+
+}
+
+/**
+ * 销毁进度条
+ */
+function destroyProgressBar(){
+	var body = document.querySelector("body");
+	var progressMask = document.querySelector("#pi-progress-mask");
+	body.removeChild(progressMask);
+}
