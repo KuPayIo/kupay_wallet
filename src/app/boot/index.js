@@ -1,6 +1,5 @@
 // !version=0.1.13.112116
 
-
 'use strict';
 document.body.style.backgroundColor="#2F2F2F";
 winit.path="/wallet/";//"/pi/0.1/";

@@ -6,7 +6,7 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { shareDownload } from '../../../net/pull';
 import { getLocalVersion, popNewMessage } from '../../../utils/tools';
 // =========================================导出
@@ -25,8 +25,8 @@ export class Aboutus extends Widget {
                 { value: this.language.itemTitle[1], components: '' },
                 { value: this.language.itemTitle[2], components: '' }
             ],
-            walletLogo:findModulConfig('WALLET_LOGO'),
-            walletName:findModulConfig('WALLET_NAME')
+            walletLogo:getModulConfig('WALLET_LOGO'),
+            walletName:getModulConfig('WALLET_NAME')
         };
     }
 

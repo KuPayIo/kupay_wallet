@@ -6,7 +6,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { pswEqualed } from '../../../utils/account';
 
 export class CreateWalletByImage extends Widget {
@@ -26,7 +26,7 @@ export class CreateWalletByImage extends Widget {
             imagePswAvailable:false,
             imgagePswConfirm:'',
             pswEqualed:false,
-            walletName:findModulConfig('WALLET_NAME')
+            walletName:getModulConfig('WALLET_NAME')
         };
     }
     public backPrePage() {

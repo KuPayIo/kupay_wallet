@@ -29,7 +29,7 @@ interface Props {
     notUnderLine?:boolean;
 }
 interface State {
-    currentValue:string;
+    currentValue:string|number;
     focused:boolean;
     showClear:boolean;
     inputLock:boolean; // 中文输入结束标记，未结束时不执行change方法
@@ -128,7 +128,7 @@ export class Input extends Widget {
         }
         // 整数输入时检验输入格式
         if (this.props.itype === 'integer' && currentValue.length > 0) {
-            currentValue = currentValue.replace(/[\D]/g,''); 
+            currentValue = Number(currentValue.replace(/[\D]/g,'')); 
         }
         this.state.currentValue = currentValue;
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;

@@ -4,7 +4,7 @@
 import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin } from '../config';
-import { findModulConfig } from '../modulConfig';
+import { getModulConfig } from '../modulConfig';
 import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
@@ -23,7 +23,7 @@ export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 export const conPort = pi_modules.store.exports.severPort || '80';
 
 // walletName
-const walletName = findModulConfig('WALLET_NAME');
+const walletName = getModulConfig('WALLET_NAME');
 console.log('conIp=',conIp);
 console.log('conPort=',conPort);
 

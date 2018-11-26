@@ -5,7 +5,7 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { register } from '../../../store/memstore';
 
 // ================================ 导出
@@ -24,7 +24,7 @@ export class PlayHome extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
         this.state = {
-            walletName: findModulConfig('WALLET_NAME')
+            walletName: getModulConfig('WALLET_NAME')
         };
     }
 

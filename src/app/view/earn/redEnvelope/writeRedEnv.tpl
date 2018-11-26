@@ -33,7 +33,8 @@
             <app-components-basicInput-basicInput>{
                 prepend:{{it1.showPin? amountTitle[0] : amountTitle[1]}},
                 placeholder:{{amountTitle[2]}},
-                itype:"number",
+                itype:{{it1.selected===0? "integer" : "number"}},
+                maxLength:8,
                 append:{{amountTitle[3]}},
                 isShowPin:{{it1.showPin}},
                 input:{{it1.oneAmount}},
@@ -50,6 +51,7 @@
                 prepend:{{countTitle[0]}},
                 placeholder:{{countTitle[1]}},
                 itype:"integer",
+                maxLength:3,
                 append:{{countTitle[2]}},
                 input:{{it1.totalNum}},
                 notUnderLine:true
@@ -61,6 +63,7 @@
                 prepend:{{messTitle[0]}},
                 placeholder:{{messTitle[1]}},
                 input:{{it1.message}},
+                maxLength:20,
                 notUnderLine:true
                 }</app-components-basicInput-basicInput>
         </div>

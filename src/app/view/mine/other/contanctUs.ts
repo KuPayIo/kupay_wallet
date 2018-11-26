@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { getLocalVersion } from '../../../utils/tools';
 // ==================================================导出
 
@@ -19,12 +19,12 @@ export class ContanctUs extends Widget {
         this.state = {
             version:getLocalVersion(),
             data:[
-                { value: this.language.itemTitle[0],desc:findModulConfig('WALLET_WEBSITE') },
-                { value: this.language.itemTitle[1],desc:findModulConfig('WALLET_NAME') + this.language.itemTitle[2] },
-                { value: this.language.itemTitle[3],desc:findModulConfig('WALLET_NAME') }
+                { value: this.language.itemTitle[0],desc:getModulConfig('WALLET_WEBSITE') },
+                { value: this.language.itemTitle[1],desc:getModulConfig('WALLET_NAME') + this.language.itemTitle[2] },
+                { value: this.language.itemTitle[3],desc:getModulConfig('WALLET_NAME') }
             ],
-            walletLogo:findModulConfig('WALLET_LOGO'),
-            walletName:findModulConfig('WALLET_NAME')
+            walletLogo:getModulConfig('WALLET_LOGO'),
+            walletName:getModulConfig('WALLET_NAME')
         };
     }
 

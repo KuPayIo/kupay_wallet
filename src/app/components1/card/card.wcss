@@ -1,0 +1,29 @@
+.card{
+    background-color: #fff;
+    border-radius: 12px;
+    margin-bottom: 50px;
+}
+
+.card-shadow{
+    box-shadow:5px 5px 10px #e2e2e2;
+}
+
+.card-img{
+   width:100%;
+}
+
+.card-content{
+    padding:30px 20px;
+}
+
+.desc{
+    font-size: 28px;
+    color: #222222;
+    line-height: 40px;
+}
+
+.title{
+    font-size: 48px;
+    color: #222222;
+    line-height: 67px;
+}

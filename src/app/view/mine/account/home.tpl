@@ -9,11 +9,13 @@
                 <widget w-tag="pi-ui-html" on-tap="uploadAvatar" w-class="ui-html">{{it1.avatarHtml}}</widget>
             {{end}}
             
-            <div style="flex: 1 0 0;" ev-input-blur="walletNameInputBlur" ev-input-change="walletNameInputChange">
+            <div style="flex: 1 0 0;" ev-input-blur="walletNameInputBlur" ev-input-change="userNameChange">
                 {{: defaultName = {"zh_Hans":"昵称未设置","zh_Hant":"暱稱未設置","en":""} }}
-                <app-components1-input-input>{input:{{it1.nickName}},maxLength:10,autofocus:true,placeHolder:{{defaultName}},disabled:{{!it1.userInput}},notUnderLine:true }</app-components1-input-input>
-            </div>
-            <img src="app/res/image/edit_blue.png" w-class="edit" on-tap="changeInput"/>
+                <widget w-tag="app-components1-input-input" id="nameInput">{input:{{it1.nickName}},maxLength:10,placeHolder:{{defaultName}},disabled:{{!it1.canEditName}},notUnderLine:{{!it1.canEditName}} }</widget>
+            </div> 
+            <img src="app/res/image/16.png" style="display: {{it1.canEditName?'block':'none'}}" w-class="edit" on-tap="changeInput"/>  
+            <img src="app/res/image/edit_gray.png" style="display: {{!it1.canEditName?'block':'none'}}" w-class="edit" on-tap="changeInput"/>                
+            
             
         </div>
         <div w-class="other">
@@ -49,11 +51,11 @@
                 {{if !it1.backup}}
                 <div w-class="tag"><pi-ui-lang>{{itemTitle[3]}}</pi-ui-lang></div>
                 {{end}}
-                <img src="app/res/image/right_arrow2_gray.png" w-class="rightArrow"/>
+                <img src="app/res/image/right_arrow2_gray.png" height="40px" w-class="rightArrow"/>
             </div>
             <div w-class="other-item" on-tap="exportPrivateKeyClick" style="border-bottom: none;">
                 <div w-class="item-title"><pi-ui-lang>{{itemTitle[4]}}</pi-ui-lang></div>
-                <img src="app/res/image/right_arrow2_gray.png" w-class="rightArrow"/>
+                <img src="app/res/image/right_arrow2_gray.png" height="40px" w-class="rightArrow"/>
             </div>
         </div>
     </div>

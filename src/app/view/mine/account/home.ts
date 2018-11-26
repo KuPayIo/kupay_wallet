@@ -34,10 +34,10 @@ export class AccountHome extends Widget {
         this.state = {
             avatar: '',
             nickName: '',
-            isUpdatingWalletName: false,
             phone: '',
             backup,
-            userInput: false,
+            canEditName: false,
+            editName:'',
             chooseImage: false,
             avatarHtml: ''
         };
@@ -46,6 +46,7 @@ export class AccountHome extends Widget {
             this.state.phone = userInfo.phoneNumber.replace(str, '******');
         }
         this.state.nickName = userInfo.nickName ? userInfo.nickName : this.language.defaultName;
+        this.state.editName = this.state.nickName;
         this.state.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
         this.paint();
     }
@@ -62,10 +63,9 @@ export class AccountHome extends Widget {
      */
     public walletNameInputBlur(e: any) {
         const v = e.value;
-        this.state.userInput = false;
+        this.state.canEditName = false;
         if (!walletNameAvailable(v)) {
             popNewMessage(this.language.tips[0]);
-            this.state.isUpdatingWalletName = false;
 
             return;
         }
@@ -75,14 +75,15 @@ export class AccountHome extends Widget {
             userInfo.nickName = v;
             setStore('user/info', userInfo);
         }
-        this.state.isUpdatingWalletName = false;
         this.paint();
     }
-
-    // 修改钱包名称
-    public walletNameInputFocus() {
-        this.state.isUpdatingWalletName = true;
+    /**
+     * 修改名字输入框值变化
+     */
+    public userNameChange(e:any) {
+        this.state.editName = e.value;
     }
+
     // 备份助记词
     public async backupWalletClick() {
         const psw = await popPswBox();
@@ -146,8 +147,36 @@ export class AccountHome extends Widget {
      * 点击可输入用户名
      */
     public changeInput() {
-        this.state.userInput = true;
-        this.paint();
+        if (this.state.canEditName) {
+            const v = this.state.editName;
+            if (!walletNameAvailable(v)) {
+                popNewMessage(this.language.tips[0]);
+    
+                return;
+            } else {
+                if (v !== this.state.nickName) {
+                    this.state.nickName = v;
+                    const userInfo = getStore('user/info');
+                    userInfo.nickName = v;
+                    setStore('user/info', userInfo);
+                    popNewMessage(this.language.tips[2]);
+                    this.state.canEditName = false;
+                } else {
+                    this.state.canEditName = false;
+                }
+            }
+            
+        } else {
+            this.state.canEditName = true;
+            
+            setTimeout(() => {
+                const input =  document.getElementById('nameInput').getElementsByTagName('input')[0];
+                input.setSelectionRange(-1, -1);
+                input.focus();
+            }, 0);
+            
+        }
+        this.paint(true);
     }
 }
 
