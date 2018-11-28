@@ -2,7 +2,6 @@ import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
 import { DeviceIdProvider } from '../../pi/browser/systemInfoProvider';
 import { WebViewManager } from '../../pi/browser/webview';
-import { WebViewHelper } from '../../pi/browser/webViewHelper';
 import { popNew } from '../../pi/ui/root';
 
 /**

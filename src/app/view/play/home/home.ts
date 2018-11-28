@@ -10,9 +10,10 @@ import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { register } from '../../../store/memstore';
-import { getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
+import { hasWallet, popNewMessage } from '../../../utils/tools';
 
 import { WebViewManager } from '../../../../pi/browser/webview';
+import { getUserInfo } from '../../../net/pull';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

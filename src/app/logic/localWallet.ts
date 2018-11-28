@@ -263,16 +263,3 @@ export const deleteMnemonic = () => {
     setStore('wallet',wallet);
 };
 
-/**
- * 获取第一个ETH地址
- */
-export const getFirstEthAddr = () => {
-    return getStore('user/id');
-};
-
-/**
- * 获取当前正在使用的ETH地址
- */
-export const getCurrentEthAddr = () => {
-    return getCurrentAddrInfo('ETH').addr;
-};

@@ -2,7 +2,6 @@
  * modalbox
  */
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
 
 interface Props {
     title: string;

@@ -1,50 +1,181 @@
 /**
  * 主动向后端通讯
  */
-import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl, closeCon } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { cryptoRandomInt } from '../../pi/util/math';
-import { MainChainCoin } from '../config';
-import { getModulConfig } from '../modulConfig';
-import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
-import { getStore, setStore } from '../store/memstore';
+import { MainChainCoin, uploadFileUrl, uploadFileUrlPrefix, wsUrl } from '../config';
+import { CloudCurrencyType, MinerFeeLevel, User, AddrInfo, CurrencyRecord, Wallet } from '../store/interface';
+import { Account,getStore, setStore, initCloudWallets, LocalCloudWallet } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str, xorDecode, xorEncode } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
+import { cryptoRandomInt } from '../../pi/util/math';
 
-// export const conIp = '47.106.176.185';
-declare var pi_modules: any;
-export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
 
-// export const conPort = '8080';
-export const conPort = pi_modules.store.exports.severPort || '80';
+declare var pi_modules;
 
-// walletName
-const walletName = getModulConfig('WALLET_NAME');
-console.log('conIp=',conIp);
-console.log('conPort=',conPort);
+/**
+ * 注销账户并删除数据
+ */
+export const logoutAccountDel = () => {
+    const user = {
+        id: '',                      // 该账号的id
+        isLogin: false,              // 登录状态
+        offline:true,                // 在线状态
+        token: '',                   // 自动登录token
+        conRandom: '',               // 连接随机数
+        conUid: '',                   // 服务器连接uid
+        publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
+        salt: cryptoRandomInt().toString(),                    // 加密 盐值
+        secretHash: '',             // 密码hash缓存   
+        info: {                      // 用户基本信息
+            nickName: '',           // 昵称
+            avatar: '',            // 头像
+            phoneNumber: '',       // 手机号
+            isRealUser: false    // 是否是真实用户
+        }
+    };
+    const cloud = {
+        cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
+    };
+    
+    const activity = {
+        luckyMoney: {
+            sends: null,          // 发送红包记录
+            exchange: null,       // 兑换红包记录
+            invite: null          // 邀请红包记录
+        },
+        mining: {
+            total: null,      // 挖矿汇总信息
+            history: null, // 挖矿历史记录
+            addMine: [],  // 矿山增加项目
+            mineRank: null,    // 矿山排名
+            miningRank: null,  // 挖矿排名
+            itemJump: null
+        },                       // 挖矿
+        dividend: {
+            total: null,         // 分红汇总信息
+            history: null       // 分红历史记录
+        },
+        financialManagement: {          // 理财
+            products: null,
+            purchaseHistories: null
+        }
+    };
 
-export const thirdUrlPre = `http://${conIp}:${conPort}/proxy`;
-// 分享链接前缀
-// export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
-// export const sharePerUrl = `http://${conIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+    let lockScreen = getStore('setting/lockScreen');
+    lockScreen = {
+        psw:'',
+        open:false
+    };
+    setStore('wallet',null,false);
+    setStore('cloud',cloud,false);
+    setStore('user',user);
+    setStore('activity',activity);
+    setStore('setting/lockScreen',lockScreen);
+    setBottomLayerReloginMsg('','','');
+    closeCon();
+    setTimeout(() => {
+        openConnect();
+    },100);
+    
+};
 
-// 分享下载链接
-export const shareDownload = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
+/**
+ * 注销账户保留数据
+ */
+export const logoutAccount = () => {
+    setStore('flags', { saveAccount:true });
+    logoutAccountDel();
+};
 
-// 上传图片url
-export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;
+/**
+ * 登录成功
+ */
+export const loginSuccess = (account:Account) => {    
+    // const secretHash = getStore('user/secretHash');
+    const fileUser = account.user;
+    const user:User = {
+        isLogin: false,
+        offline:true,
+        conRandom:'',
+        conUid:'',
+        secretHash:'',
+        id : fileUser.id,
+        token : fileUser.token,
+        publicKey : fileUser.publicKey,
+        salt : fileUser.salt,
+        info : { ...fileUser.info }
+    };
+   
+    const localWallet = account.wallet;
+    const currencyRecords = [];
+    for (const localRecord of localWallet.currencyRecords) {
+        const addrs = [];
+        for (const info of localRecord.addrs) {
+            const addrInfo:AddrInfo = {
+                addr:info.addr,
+                balance:info.balance,
+                txHistory:[]
+            };
+            addrs.push(addrInfo);
+        }
+        const record:CurrencyRecord = {
+            currencyName: localRecord.currencyName,           
+            currentAddr: localRecord.currentAddr ,           
+            addrs,             
+            updateAddr: localRecord.updateAddr         
+        };
+        currencyRecords.push(record);
+    }
+    const wallet:Wallet = {
+        vault:localWallet.vault,                 
+        isBackup: localWallet.isBackup,                 
+        showCurrencys: localWallet.showCurrencys,           
+        currencyRecords
+    };
+  
+    const cloud = getStore('cloud');
+    const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(account.cloud.cloudWallets);
+    for (const [key,value] of localCloudWallets) {
+        const cloudWallet = cloud.cloudWallets.get(key);
+        cloudWallet.balance = localCloudWallets.get(key).balance;
+    }
 
-// 上传的文件url前缀
-export const uploadFileUrlPrefix = `http://${conIp}:${conPort}/service/get_file?sid=`;
+    setStore('wallet',wallet,false);
+    setStore('cloud',cloud,false);
+    setStore('user',user);
+    setStore('flags',{});
+    openConnect();
+};
 
-// websock连接url
-const wsUrl = `ws://${conIp}:2081`;
+
+/**
+ * 获取用户基本信息
+ */
+export const getUserInfo = () => {
+    const userInfo = getStore('user/info');
+    const nickName = userInfo.nickName;
+    const phoneNumber = userInfo.phoneNumber;
+    const isRealUser = userInfo.isRealUser;
+    let avatar = userInfo.avatar;
+    if (avatar && avatar.indexOf('data:image') < 0) {
+        avatar = `${uploadFileUrlPrefix}${avatar}`;
+    }
+
+    return {
+        nickName,
+        avatar,
+        phoneNumber,
+        isRealUser
+    };
+};
+
+
 /**
  * 通用的异步通信
  */

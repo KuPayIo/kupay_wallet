@@ -2,15 +2,13 @@
  * 确认购买
  */
 // ===============================================导入
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { recharge } from '../../../net/pullWallet';
 import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { getCloudBalances } from '../../../store/memstore';
 import { defaultGasLimit } from '../../../utils/constants';
-// tslint:disable-next-line:max-line-length
-import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { wei2Eth } from '../../../utils/unitTools';
 import { purchaseProduct } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './productDetail';

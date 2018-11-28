@@ -5,7 +5,8 @@ import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getUserList, queryDetailLog, uploadFileUrlPrefix } from '../../../net/pull';
+import { getUserList, queryDetailLog } from '../../../net/pull';
+import { uploadFileUrlPrefix } from '../../../config';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

@@ -8,7 +8,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
-import { beginShift, estimateMinerFee, getMarketInfo, transfer } from '../../../net/pullWallet';
+import { beginShift, getMarketInfo, transfer } from '../../../net/pullWallet';
 import { MarketInfo, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length

@@ -10,7 +10,6 @@ import { addCssNode, loadCssNode } from '../util/html';
 import { logLevel, warn } from '../util/log';
 import { BlobType, RES_TYPE_BLOB, ResTab } from '../util/res_mgr';
 import { set as task } from '../util/task_mgr';
-import { toFun, toMiniFun } from '../util/tpl';
 import { checkInstance, checkType, getExportFunc, getValue, mapCopy } from '../util/util';
 import { parse, Sheet } from '../widget/style';
 import { Forelet } from './forelet';
@@ -806,4 +805,185 @@ const parseValue = (pattern: any, flags: Json): any => {
     return parseFloat(arr[1]);
 };
 
+
+// ===================================== 从pi/util/tpl.ts拷贝过来的函数以删除对应的文件
+
+const stringifyName = '_stringify';
+const getName = '_get';
+const hashName = '_hash';
+const pathName = '_path';
+const convertEntityName = '_convertEntity';
+const calAttrHashName = '_calAttrHash';
+const calTextHashName = '_calTextHash';
+const addJsonName = '_addJson';
+const installTextName = '_installText';
+const addTextName = '_addText';
+const chFuncName = '_chFunc';
+const entityArr = [
+    ['&nbsp;', 160],
+    ['&lt;', 60],
+    ['&gt;', 62],
+    ['&amp;', 38],
+    ['&quot;', 34],
+    ['&apos;', 39],
+    ['&cent;', 162],
+    ['&pound;', 163],
+    ['&yen;', 165],
+    ['&euro;', 8364],
+    ['&sect;', 167],
+    ['&copy;', 169],
+    ['&reg;', 174],
+    ['&trade;', 8482],
+    ['&times;', 215],
+    ['&divide;', 247]
+];
+/**
+ * @description  返回字符串
+ * @example
+ */
+export const toString = (o: any) => {
+    const t = typeof o;
+    if (t === 'number' || t === 'string') {
+        return o;
+    }
+    try {
+        return JSON.stringify(o);
+    } catch (e) {
+        warn(level, 'tpl toString fail, obj: ', o, e);
+
+        return '';
+    }
+};
+
+/**
+ * @description 计算文本哈希
+ * @example
+ */
+export const calTextHash = (data: string) => {
+    // tslint:disable:prefer-template
+    return hash.iterHashCode((typeof data === 'string') ? data : data + '', 0, hash.charHash);
+};
+/**
+ * @description 计算节点的属性哈希（包括节点名）
+ * @example
+ */
+export const calAttrHash = (node) => {
+    let size = 0;
+    let str = '';
+    for (const key in node.attrs) {
+        if (key === 'w-tag') {
+            node.tagName = node.attrs['w-tag'];
+        } else if (key === 'w-did') {
+            node.did = node.attrs['w-did'];
+            delete node.attrs['w-did'];
+        } else {
+            size++;
+            str += key;
+            str += node.attrs[key];
+        }
+    }
+    node.attrSize = size;
+
+    return node.tagName ? calTextHash(str) : (calTextHash(str) ^ calTextHash(node.tagName));
+};
+
+export const addJson = (value, parent) => {
+    if (typeof value === 'object') {
+        parent.childHash = hash.objHashCode(value, parent.childHash ? parent.childHash : 0, new Set<any>());
+    } else {
+        parent.childHash = hash.anyHash(value, parent.childHash ? parent.childHash : 0, new Set<any>());
+    }
+    parent.child = value;
+    parent.hasChild = true;
+};
+export const addText = (value, parent) => {
+    const deep = {
+        obj: null
+    };
+    const hashv = calTextHash(value);
+    if (value && typeof value === 'string') {
+        if (value.indexOf('&#x') > -1) {
+            value = value.replace(/&#x(\w+?);/g, (s0, s1) => {
+                return String.fromCharCode(parseInt(s1, 16));
+            });
+        }
+        value = convertEntity(value);
+
+    }
+    parent.children.push({ text: value, str: value, childHash: hashv, hash: hashv, hasChild: undefined });
+};
+
+export const installText = (value, hash) => {
+    const node = {
+        text: value,
+        childHash: hash,
+        hash: hash,
+        str: value,
+        hasChild: undefined
+    };
+    if (node.text.indexOf('&#x') > -1) {
+        node.text = node.text.replace(/&#x(\w+?);/g, (s0, s1) => {
+            return String.fromCharCode(parseInt(s1, 16));
+        });
+    }
+    node.text = convertEntity(node.text);
+
+    return node;
+};
+
+/**
+ * @description 转换html的转义字符串
+ * @example
+ */
+export const convertEntity = (str) => {
+    for (let i = 0; i < entityArr.length; i++) {
+        if (str.indexOf(entityArr[i][0]) > -1) {
+            str = str.replace(new RegExp(<any>entityArr[i][0], 'ig'), String.fromCharCode(<any>entityArr[i][1]));
+        }
+    }
+
+    return str;
+};
+
+export const chFunc = (node) => {
+    if (node.childHash) {
+        return;
+    }
+    node.childHash = 0;
+    if (node.children && node.children.length > 0) {
+        for (let i = 0; i < node.children.length; i++) {
+            node.childHash = hash.nextHash(node.childHash, hash.nextHash(hash.nextHash(node.children[i].attrHash
+                || 0, node.children[i].childHash), i + 1));
+        }
+    }
+};
+/**
+ * @description 转换字符串成模板函数
+ * @example
+ */
+const toFun = (s: string, path?: string) => {
+    try {
+        // tslint:disable-next-line:no-function-constructor-with-string-args
+        return (new Function(stringifyName, getName, hashName, pathName, convertEntityName, calAttrHashName,
+            calTextHashName, addJsonName, installTextName, addTextName, chFuncName, 'return' + s))(toString, commonjs ?
+                commonjs.relativeGet : null, hash, path, convertEntity, calAttrHash, calTextHash, addJson, installText, addText, chFunc);
+    } catch (e) {
+        warn(level, 'tpl toFun, path: ' + path + ', s: ', s, e);
+        throw (e);
+    }
+};
+/**
+ * @description 转换字符串成模板函数(release版)
+ * @example
+ */
+const toMiniFun = (s: string, path?: string) => {
+    try {
+        // tslint:disable-next-line:no-function-constructor-with-string-args
+        return (new Function('return ' + s)())(toString, commonjs ? commonjs.relativeGet : null, hash, path,
+            convertEntity, calAttrHash, calTextHash, addJson, installText, addText, chFunc);
+    } catch (e) {
+        warn(level, 'tpl toFun, path: ' + path + ', s: ', s, e);
+        throw (e);
+    }
+};
 // ============================== 立即执行

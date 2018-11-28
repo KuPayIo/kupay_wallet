@@ -7,10 +7,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getInviteCode, getUserList, queryDetailLog, sharePerUrl, uploadFileUrlPrefix } from '../../../net/pull';
+import { getInviteCode, getUserList, queryDetailLog, getUserInfo } from '../../../net/pull';
 import { LuckyMoneyType } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
-import { getLanguage, getUserInfo } from '../../../utils/tools';
+import { getStore } from '../../../store/memstore';
+import { sharePerUrl, uploadFileUrlPrefix } from '../../../config';
 
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords

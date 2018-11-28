@@ -3,6 +3,51 @@ import { getModulConfig } from './modulConfig';
 /**
  * config file
  */
+
+// walletName
+const walletName = getModulConfig('WALLET_NAME');
+
+declare var pi_modules: any;
+// 资源服务器ip
+export const sourceIp = pi_modules.store.exports.severIp || '127.0.0.1';
+
+// 资源服务器port
+export const sourcePort = pi_modules.store.exports.severPort || '80';
+
+
+// 逻辑服务器ip
+export const logicIp = sourceIp;
+
+// 逻辑服务器port
+export const logicPort = '2081';
+
+console.log('sourceIp=',sourceIp);
+console.log('sourcePort=',sourcePort);
+
+console.log('logicIp=',logicIp);
+console.log('logicPort=',logicPort);
+
+// 向资源服务器请求第3方数据url prefix
+export const thirdUrlPre = `http://${sourceIp}:${sourcePort}/proxy`;
+
+// 分享链接前缀
+export const sharePerUrl = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+
+// 分享下载链接
+export const shareDownload = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
+
+// 上传图片url
+export const uploadFileUrl = `http://${sourceIp}:${sourcePort}/service/upload`;
+
+// 上传的文件url前缀
+export const uploadFileUrlPrefix = `http://${sourceIp}:${sourcePort}/service/get_file?sid=`;
+
+// websock连接url
+export const wsUrl = `ws://${logicIp}:${logicPort}`;
+
+
+
+
 /**
  * 环境配置
  */
@@ -13,7 +58,10 @@ export enum DevMode {
 }
 // tslint:disable-next-line:variable-name
 export const dev_mode:DevMode = DevMode.Rinkeby;
-const walletName = getModulConfig('WALLET_NAME');
+
+// btc网络
+export const btcNetwork = dev_mode === DevMode.Prod ? 'mainnet' : 'testnet';
+
 
 // 主网erc20
 const ERC20TokensMainnet = {

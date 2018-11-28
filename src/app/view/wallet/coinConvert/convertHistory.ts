@@ -9,7 +9,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getTransactionsByAddr } from '../../../net/pullWallet';
 import { ShapeShiftTx, ShapeShiftTxs } from '../../../store/interface';
 import { register } from '../../../store/memstore';
-import { getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, timestampFormat } from '../../../utils/tools';
+import { getCurrentAddrByCurrencyName, parseAccount, timestampFormat } from '../../../utils/tools';
 import { getLang } from '../../../../pi/util/lang';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
