@@ -149,12 +149,12 @@ winit.initNext = function () {
 				updateMod.checkUpdate(function (need) {
 					needUpdate = need;
 					if (needUpdate) {
-						createProgressBar();
+						// createProgressBar();
 						// 注：必须堵住原有的界面操作，不允许任何触发操作
 						updateMod.update(function (e) {
 							//{type: "saveFile", total: 4, count: 1}
 							console.log("update progress: ", e);
-							updateProgressBar(e.count / e.total);
+							// updateProgressBar(e.count / e.total);
 						});
 					}
 				});

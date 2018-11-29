@@ -1,8 +1,8 @@
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { backCall, backList, popNew } from '../../pi/ui/root';
 import { CMD } from '../utils/constants';
-import { getStaticLanguage, popNewMessage } from '../utils/tools';
-import { getServerCloudBalance, logoutAccount, logoutAccountDel } from './pull';
+import { getStaticLanguage, logoutAccount, logoutAccountDel, popNewMessage } from '../utils/tools';
+import { getServerCloudBalance } from './pull';
 
 /**
  * 后端主动推消息给后端

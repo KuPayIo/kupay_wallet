@@ -1,6 +1,6 @@
+import { thirdUrlPre } from '../config';
 import { shapeshiftApiPublicKey } from '../utils/constants';
 import { xorDecode1, xorEncode } from '../utils/tools';
-import { thirdUrlPre } from '../config';
 
 // ==========================三方接口=======================================
 /**
@@ -15,8 +15,8 @@ export const getThirdFromServer = async (url:string) => {
     } else {
         date.setSeconds(0);
     }
-    const timestamp = parseInt((date.getTime() / 1000).toString());
-    const realUrl = `${thirdUrlPre}?key=${key}&url=${xorEncodeUrl}&timestamp=${timestamp}`;
+    const timestamp = parseInt((date.getTime() / 1000).toString(),10);
+    const realUrl = `${thirdUrlPre}?key=${key}&url=${xorEncodeUrl}&timestamp=${timestamp}&$forceServer=1`;
     // console.log(realUrl);
 
     return fetch(realUrl).then(res => res.json());

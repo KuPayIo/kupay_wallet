@@ -3,7 +3,7 @@
  */
 import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { MainChainCoin, uploadFileUrl, uploadFileUrlPrefix, wsUrl } from '../config';
+import { MainChainCoin, uploadFileUrl, wsUrl } from '../config';
 import {  CloudCurrencyType, MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
@@ -11,31 +11,10 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDivid
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 declare var pi_modules;
-
-/**
- * 获取用户基本信息
- */
-export const getUserInfo = () => {
-    const userInfo = getStore('user/info');
-    const nickName = userInfo.nickName;
-    const phoneNumber = userInfo.phoneNumber;
-    const isRealUser = userInfo.isRealUser;
-    let avatar = userInfo.avatar;
-    if (avatar && avatar.indexOf('data:image') < 0) {
-        avatar = `${uploadFileUrlPrefix}${avatar}`;
-    }
-
-    return {
-        nickName,
-        avatar,
-        phoneNumber,
-        isRealUser
-    };
-};
 
 /**
  * 通用的异步通信

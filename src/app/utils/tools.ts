@@ -6,12 +6,12 @@ import { closeCon, setBottomLayerReloginMsg } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { Config, ERC20Tokens, MainChainCoin } from '../config';
+import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { getDeviceId } from '../logic/native';
 import { openConnect } from '../net/pull';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../store/interface';
+import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
 import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet,setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
@@ -1587,4 +1587,25 @@ export const loginSuccess = (account:Account) => {
     setStore('user',user);
     setStore('flags',{});
     openConnect();
+};
+
+/**
+ * 获取用户基本信息
+ */
+export const getUserInfo = () => {
+    const userInfo = getStore('user/info');
+    const nickName = userInfo.nickName;
+    const phoneNumber = userInfo.phoneNumber;
+    const isRealUser = userInfo.isRealUser;
+    let avatar = userInfo.avatar;
+    if (avatar && avatar.indexOf('data:image') < 0) {
+        avatar = `${uploadFileUrlPrefix}${avatar}`;
+    }
+
+    return {
+        nickName,
+        avatar,
+        phoneNumber,
+        isRealUser
+    };
 };
