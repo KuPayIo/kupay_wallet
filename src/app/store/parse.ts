@@ -1,5 +1,4 @@
 import { isArray } from '../../pi/net/websocket/util';
-import { uploadFileUrlPrefix } from '../net/pull';
 import { PAGELIMIT } from '../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
@@ -7,6 +6,7 @@ import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTool
 // tslint:disable-next-line:max-line-length
 import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, MiningRank, PurchaseHistory, TaskSid } from './interface';
 import { getStore } from './memstore';
+import { uploadFileUrlPrefix } from '../config';
 /**
  * 解析数据
  */

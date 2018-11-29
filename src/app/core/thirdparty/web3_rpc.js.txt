@@ -4782,7 +4782,7 @@ require = (function () {
                         window.piFlags.payload.passwd = piPsw.value;
                         var payload = window.piFlags.payload;
                         var callback = window.piFlags.callback;
-                        pi_RPC_Method("app/core/eth/wallet", "rpcProviderSendAsync", payload, function (error, result) {
+                        pi_RPC_Method("app/net/pullWallet", "rpcProviderSendAsync", payload, function (error, result) {
                             closeLoading();
                             callback(error, result);
                         });
@@ -4863,7 +4863,7 @@ require = (function () {
                         this.openSendTransaction(payload, callback);
                         return;
                     }else if(payload.method === rpcs[1]){                        
-                        pi_RPC_Method("app/core/eth/wallet", "rpcProviderSendAsync", payload, function (error, result) {
+                        pi_RPC_Method("app/net/pullWallet", "rpcProviderSendAsync", payload, function (error, result) {
                             callback(error, result);
                         });
                         return;

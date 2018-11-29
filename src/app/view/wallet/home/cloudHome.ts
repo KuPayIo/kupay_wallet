@@ -9,8 +9,7 @@ import { getModulConfig } from '../../../modulConfig';
 import { getProductList, getServerCloudBalance } from '../../../net/pull';
 import { Product } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-// tslint:disable-next-line:max-line-length
-import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
+import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, hasWallet } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

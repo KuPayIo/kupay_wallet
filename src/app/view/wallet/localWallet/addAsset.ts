@@ -5,7 +5,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { dataCenter } from '../../../logic/dataCenter';
 import { getStore, setStore } from '../../../store/memstore';
-import { fetchWalletAssetListAdded, getCurrentAddrInfo, getLanguage } from '../../../utils/tools';
+import { fetchWalletAssetListAdded, getCurrentAddrInfo } from '../../../utils/tools';
 
 export class AddAsset extends Widget {
     public ok:() => void;

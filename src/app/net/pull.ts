@@ -3,45 +3,40 @@
  */
 import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { MainChainCoin } from '../config';
-import { getModulConfig } from '../modulConfig';
-import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
+import { MainChainCoin, uploadFileUrl, uploadFileUrlPrefix, wsUrl } from '../config';
+import {  CloudCurrencyType, MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str, xorDecode, xorEncode } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
-// export const conIp = '47.106.176.185';
-declare var pi_modules: any;
-export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
+declare var pi_modules;
 
-// export const conPort = '8080';
-export const conPort = pi_modules.store.exports.severPort || '80';
+/**
+ * 获取用户基本信息
+ */
+export const getUserInfo = () => {
+    const userInfo = getStore('user/info');
+    const nickName = userInfo.nickName;
+    const phoneNumber = userInfo.phoneNumber;
+    const isRealUser = userInfo.isRealUser;
+    let avatar = userInfo.avatar;
+    if (avatar && avatar.indexOf('data:image') < 0) {
+        avatar = `${uploadFileUrlPrefix}${avatar}`;
+    }
 
-// walletName
-const walletName = getModulConfig('WALLET_NAME');
-console.log('conIp=',conIp);
-console.log('conPort=',conPort);
+    return {
+        nickName,
+        avatar,
+        phoneNumber,
+        isRealUser
+    };
+};
 
-export const thirdUrlPre = `http://${conIp}:${conPort}/proxy`;
-// 分享链接前缀
-export const sharePerUrl = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
-
-// 分享下载链接
-export const shareDownload = `http://${conIp}:${conPort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
-
-// 上传图片url
-export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;
-
-// 上传的文件url前缀
-export const uploadFileUrlPrefix = `http://${conIp}:${conPort}/service/get_file?sid=`;
-
-// websock连接url
-const wsUrl = `ws://${conIp}:2081`;
 /**
  * 通用的异步通信
  */

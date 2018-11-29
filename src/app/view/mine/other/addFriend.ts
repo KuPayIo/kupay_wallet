@@ -7,7 +7,8 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo } from '../../../utils/tools';
+import { copyToClipboard } from '../../../utils/tools';
+import { getUserInfo } from '../../../net/pull';
 
 export class AddFriend extends Widget {
     public ok:() => void;

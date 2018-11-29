@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode } from '../../../logic/native';
-import { getLanguage, mnemonicFragmentDecrypt } from '../../../utils/tools';
+import { mnemonicFragmentDecrypt } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
 import { CreateWalletType } from '../../../logic/localWallet';
 import { getLang } from '../../../../pi/util/lang';

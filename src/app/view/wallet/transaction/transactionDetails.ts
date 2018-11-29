@@ -11,7 +11,7 @@ import { TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 import { blockchainUrl, etherscanUrl } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { canResend, copyToClipboard, getLanguage, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
+import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 
 // ============================导出

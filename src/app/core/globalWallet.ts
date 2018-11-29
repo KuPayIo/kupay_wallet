@@ -1,11 +1,10 @@
 /**
  * global wallet
  */
-import { ERC20Tokens } from '../config';
+import { ERC20Tokens, btcNetwork } from '../config';
 import { AddrInfo, CurrencyRecord } from '../store/interface';
-import { getStore } from '../store/memstore';
-import { btcNetwork, lang, strength } from '../utils/constants';
-import { calcHashValuePromise, u8ArrayToHexstr } from '../utils/tools';
+import { lang, strength } from '../utils/constants';
+import { u8ArrayToHexstr } from '../utils/tools';
 import { getMnemonic } from '../utils/walletTools';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';

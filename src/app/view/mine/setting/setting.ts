@@ -7,8 +7,9 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStore, register, setStore } from '../../../store/memstore';
-import { logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
+import { popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
+import { logoutAccount, logoutAccountDel } from '../../../net/pull';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

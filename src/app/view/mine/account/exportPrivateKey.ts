@@ -7,13 +7,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { ERC20Tokens } from '../../../config';
+import { ERC20Tokens, btcNetwork } from '../../../config';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { EthWallet } from '../../../core/eth/wallet';
 import { AddrInfo } from '../../../store/interface';
 import { getStore } from '../../../store/memstore';
-import { btcNetwork, lang } from '../../../utils/constants';
-import { getAddrInfoByAddr, getLanguage } from '../../../utils/tools';
+import { lang } from '../../../utils/constants';
+import { getAddrInfoByAddr } from '../../../utils/tools';
 
 // ================================================导出
 interface Props {

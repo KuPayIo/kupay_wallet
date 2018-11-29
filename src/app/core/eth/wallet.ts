@@ -1,9 +1,7 @@
 /**
  * ETH wallet implementation
  */
-import { ERC20Tokens } from '../../config';
-import { getCurrentEthAddr } from '../../logic/localWallet';
-import { transfer3 } from '../../net/pullWallet';
+import { ERC20Tokens, DevMode } from '../../config';
 import { config } from '../config';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
@@ -15,53 +13,11 @@ import { minABI } from './tokens';
 /* tslint:disable: no-redundant-jsdoc*/
 /* tslint:disable: variable-name */
 
-let web3;
+export let web3;
 
 const LANGUAGES = { english: 0, chinese_simplified: 1, chinese_traditional: 2 };
 const DEFAULT_DERIVE_PATH = 'm/44\'/60\'/0\'/0/0';
 
-/**
- * 供其他的webview调用
- */
-export const rpcProviderSendAsync = (payload, callback) => {
-    initWeb3();    
-    
-    if (payload.method === 'eth_accounts') {
-        let addr = getCurrentEthAddr();
-        addr = addr ? [addr] : [];
-        callback(null,{ jsonrpc: '2.0', result: addr, id: payload.id });
-    } else if (payload.method === 'eth_sendTransaction') {
-        // alert(`payload is ${JSON.stringify(payload)}`);
-        const ethPayload = {
-            fromAddr:payload.params[0].from,
-            toAddr:payload.params[0].to,
-            pay:payload.params[0].value,
-            currencyName:'ETH',
-            data:payload.params[0].data
-        };    
-        try {
-            const promise = transfer3(payload.passwd,ethPayload);
-
-            promise.then(([err, hash]) => {
-                console.log(`wallet rpcProviderSendAsync err is ${err}, hash is ${hash}`);
-                if (err) {
-                    callback(err);
-                } else {
-                    callback(null, { jsonrpc: '2.0', result: hash, id: payload.id });
-                }
-            }).catch(() => {
-                console.log(`wallet rpcProviderSendAsync err is catch`);
-            });
-        } catch (e) {
-            console.log(`transfer3 catch throw`);
-        }
-        
-    } else {
-        if (web3 && web3.currentProvider && web3.currentProvider.sendAsync) {
-            web3.currentProvider.sendAsync(payload, callback);
-        }
-    }
-};
 
 // currently use the default config
 export interface Transaction {
@@ -497,8 +453,15 @@ export class EthWallet {
     }
 }
 
-const initWeb3 = () => {
+export const initWeb3 = () => {
     if (!web3) {
-        web3 = new Web3(new Web3.providers.HttpProvider(config.dev_mode === 'dev' ? config.dev.EthApiBaseUrl : config.prod.EthApiBaseUrl));
+        if (config.dev_mode === DevMode.Ropsten) {
+            var ETH_API_BASE_URL = config[DevMode.Ropsten].EthApiBaseUrl;
+        } else if (config.dev_mode === DevMode.Rinkeby) {
+            ETH_API_BASE_URL = config[DevMode.Rinkeby].EthApiBaseUrl;
+        } else if (config.dev_mode === DevMode.Prod) {
+            ETH_API_BASE_URL = config[DevMode.Prod].EthApiBaseUrl;
+        }
+        web3 = new Web3(new Web3.providers.HttpProvider(ETH_API_BASE_URL));
     }
 };

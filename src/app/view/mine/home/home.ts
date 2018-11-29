@@ -8,8 +8,9 @@ import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, popPswBox } from '../../../utils/tools';
+import { copyToClipboard, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
+import { getUserInfo } from '../../../net/pull';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

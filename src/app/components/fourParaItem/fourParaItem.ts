@@ -9,7 +9,6 @@
 // ================================ 导入
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
 
 interface Props {
     name:string;

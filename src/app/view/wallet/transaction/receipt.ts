@@ -5,7 +5,7 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { copyToClipboard, getCurrentAddrByCurrencyName, getLanguage, popNewMessage } from '../../../utils/tools';
+import { copyToClipboard, getCurrentAddrByCurrencyName, popNewMessage } from '../../../utils/tools';
 
 interface Props {
     currencyName:string;

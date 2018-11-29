@@ -9,7 +9,7 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { LockScreen } from '../../store/interface';
 import { getStore, register, setStore  } from '../../store/memstore';
-import { getLanguage, lockScreenHash, lockScreenVerify } from '../../utils/tools';
+import { lockScreenHash, lockScreenVerify } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
