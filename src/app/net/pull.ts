@@ -1277,6 +1277,23 @@ export const fetchBtcFees = async () => {
     }
 };
 
+/**
+ * 获取GT价格
+ */
+export const getGlodPrice = async () => {
+    const msg = { type:'get_goldprice',param:{} };
+    try {
+        const resData:any = await requestAsync(msg);
+        if (resData.result === 1) {
+            return resData.price;
+        }
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return false;
+    }
+};
+
 // 获取真实用户
 export const getRealUser = async () => {
     const msg = {

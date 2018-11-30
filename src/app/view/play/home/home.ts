@@ -13,6 +13,9 @@ import { register } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
 
 import { WebViewManager } from '../../../../pi/browser/webview';
+import { confirmPay,OrderDetail } from '../../../utils/pay';
+// import { closePayment, confirmOrder, getOpenId, openPayment, openPswInput } from '../../../api/JSAPI';
+// import { confirmPay } from '../../../utils/pay';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -125,6 +128,21 @@ export class PlayHome extends Widget {
                 WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }
+    }
+
+    public payBtn() {
+        const order:OrderDetail = {
+            total:Number(document.getElementById('total').value),
+            gt:Number(document.getElementById('gt').value),
+            body:document.getElementById('body').value,
+            payType:Number(document.getElementById('payType').value)
+        };
+        confirmPay(order,() => {
+            console.log('支付成功');
+            
+        },(err) => {
+            popNew('app-components1-message-message', { content:'下单失败，请重试' });
+        });
     }
 }
 register('user/info',() => {
