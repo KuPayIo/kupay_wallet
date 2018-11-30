@@ -16,6 +16,8 @@ import { nameWare } from './nameWareHouse';
 import { shareSecret } from './secretsBase';
 import { calcHashValuePromise, decrypt, encrypt, hexstrToU8Array, popNewLoading, popNewMessage, unicodeArray2Str } from './tools';
 
+
+
 /**
  * 获取新的地址信息
  * @param currencyName 货币类型

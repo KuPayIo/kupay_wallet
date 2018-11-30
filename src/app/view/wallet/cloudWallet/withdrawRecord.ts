@@ -6,7 +6,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
+import { parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出

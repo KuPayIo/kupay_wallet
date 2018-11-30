@@ -2,7 +2,6 @@
  * wallet home 
  */
 import { popNew } from '../../../../pi/ui/root';
-// import { getLanguage } from '../../../utils/tools';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';

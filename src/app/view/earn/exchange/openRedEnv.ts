@@ -5,8 +5,6 @@ import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { LuckyMoneyType } from '../../../store/interface';
-import { getLanguage } from '../../../utils/tools';
-import { register } from '../../../store/memstore';
 import { getLang } from '../../../../pi/util/lang';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

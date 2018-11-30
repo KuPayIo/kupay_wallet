@@ -1,5 +1,4 @@
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
 
 /**
  * loading逻辑处理

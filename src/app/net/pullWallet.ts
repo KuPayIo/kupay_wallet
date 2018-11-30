@@ -4,11 +4,11 @@
 // ===================================================== 导入
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
-import { defaultEthToAddr, ERC20Tokens } from '../config';
+import { ERC20Tokens } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
-import { EthWallet } from '../core/eth/wallet';
+import { EthWallet, initWeb3, web3 } from '../core/eth/wallet';
 import { GlobalWallet } from '../core/globalWallet';
 import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../logic/dataCenter';
@@ -17,7 +17,7 @@ import { getStore, setStore } from '../store/memstore';
 import { erc20GasLimitRate, shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
+import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx, getCurrentEthAddr } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
@@ -39,6 +39,52 @@ export interface TxPayload3 {
     currencyName:string;    // 转账货币
     data:string;
 }
+
+
+/**
+ * 供其他的webview调用
+ */
+export const rpcProviderSendAsync = (payload, callback) => {
+    initWeb3();    
+    
+    if (payload.method === 'eth_accounts') {
+        let addr = getCurrentEthAddr();
+        addr = addr ? [addr] : [];
+        callback(null,{ jsonrpc: '2.0', result: addr, id: payload.id });
+    } else if (payload.method === 'eth_sendTransaction') {
+        // alert(`payload is ${JSON.stringify(payload)}`);
+        const ethPayload = {
+            fromAddr:payload.params[0].from,
+            toAddr:payload.params[0].to,
+            pay:payload.params[0].value,
+            currencyName:'ETH',
+            data:payload.params[0].data
+        };    
+        try {
+            const promise = transfer3(payload.passwd,ethPayload);
+
+            promise.then(([err, hash]) => {
+                console.log(`wallet rpcProviderSendAsync err is ${err}, hash is ${hash}`);
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null, { jsonrpc: '2.0', result: hash, id: payload.id });
+                }
+            }).catch(() => {
+                console.log(`wallet rpcProviderSendAsync err is catch`);
+            });
+        } catch (e) {
+            console.log(`transfer3 catch throw`);
+        }
+        
+    } else {
+        if (web3 && web3.currentProvider && web3.currentProvider.sendAsync) {
+            web3.currentProvider.sendAsync(payload, callback);
+        }
+    }
+};
+
+
 
 /**
  * 普通转账

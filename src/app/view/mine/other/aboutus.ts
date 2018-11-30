@@ -7,8 +7,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
-import { shareDownload } from '../../../net/pull';
 import { getLocalVersion, popNewMessage } from '../../../utils/tools';
+import { shareDownload } from '../../../config';
 // =========================================导出
 declare var pi_modules;
 export class Aboutus extends Widget {

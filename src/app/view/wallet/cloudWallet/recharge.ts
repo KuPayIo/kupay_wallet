@@ -10,7 +10,7 @@ import { recharge, resendRecharge } from '../../../net/pullWallet';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchMinerFeeList, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchMinerFeeList, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords

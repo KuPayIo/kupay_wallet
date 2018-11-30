@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getRechargeLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
+import { parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords

@@ -7,10 +7,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAward, getMining, getMiningRank, getServerCloudBalance } from '../../../net/pull';
+import { getAward, getMining, getMiningRank, getServerCloudBalance, getUserInfo } from '../../../net/pull';
 import { CloudCurrencyType, Mining } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
-import { formatBalance, getUserInfo } from '../../../utils/tools';
+import { formatBalance } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

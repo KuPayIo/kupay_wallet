@@ -15,16 +15,5 @@
             {{end}}
             
         </div>
-
-        {{% 支付宝、微信充值测试}}
-        <div style="width:100%;"> 
-            <p style="font-size:36px;border: 1px solid brown;margin: 0">充值GT测试</p>
-            <input type="number" value="" id="total" placeholder="total" style="width:100%;height: 50px;font-size: 26px;box-sizing:border-box;"/>
-            <input type="number" value="" id="gt" placeholder="gt" style="width:100%;height: 50px;font-size: 26px;box-sizing:border-box;"/>
-            <input type="number" value="" id="payType" placeholder="payType" style="width:100%;height: 50px;font-size: 26px;box-sizing:border-box;"/>
-            <input type="text" value="" id="body" placeholder="body" style="width:100%;height: 50px;font-size: 26px;box-sizing:border-box;"/>
-            <button on-tap="payBtn" id="payBtn" style="width:100%;height: 50px;font-size: 26px;">GT充值</button>
-        </div>
-
     </div>
 </div>

@@ -4,7 +4,7 @@
 import { Widget } from '../../../../pi/widget/widget';
 import { createNewAddr } from '../../../logic/localWallet';
 import { getStore, setStore } from '../../../store/memstore';
-import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, getLanguage, parseAccount, popPswBox } from '../../../utils/tools';
+import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, parseAccount, popPswBox } from '../../../utils/tools';
 import { getLang } from '../../../../pi/util/lang';
 
 interface Props {
