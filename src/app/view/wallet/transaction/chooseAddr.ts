@@ -1,11 +1,11 @@
 /**
  * choose addr
  */
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { createNewAddr } from '../../../logic/localWallet';
 import { getStore, setStore } from '../../../store/memstore';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, parseAccount, popPswBox } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 
 interface Props {
     currencyName: string;
