@@ -2,11 +2,12 @@
  * image import 
  */
 import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-import { selectImage } from '../../../logic/native';
-import { forelet,WIDGET_NAME } from './home';
-import { CreateWalletType } from '../../../logic/localWallet';
 import { getLang } from '../../../../pi/util/lang';
+import { Widget } from '../../../../pi/widget/widget';
+import { calcImgArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
+import { selectImage } from '../../../logic/native';
+import { getStore, setStore } from '../../../store/memstore';
+import { forelet,WIDGET_NAME } from './home';
 
 export class ImageImport extends Widget {
     public ok: () => void;
@@ -22,7 +23,7 @@ export class ImageImport extends Widget {
             imageBase64:'',
             imageHtml:'',
             imagePsw:'',
-            imagePswAvailable:false,
+            imagePswAvailable:false
         };
     }
     public backPrePage() {
@@ -59,8 +60,10 @@ export class ImageImport extends Widget {
 
             return;
         }
-        // tslint:disable-next-line:max-line-length
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image,imageBase64:this.state.imageBase64,imagePsw:this.state.imagePsw });
+        const imgArgon2HashPromise = calcImgArgon2Hash(this.state.imageBase64,this.state.imagePsw);
+        const flags = getStore('flags');
+        setStore('flags',{ ...flags,imgArgon2HashPromise });
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });
         const w:any = forelet.getWidget(WIDGET_NAME);
         if (w) {
             w.ok && w.ok();

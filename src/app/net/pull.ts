@@ -19,7 +19,7 @@ declare var pi_modules;
 /**
  * 通用的异步通信
  */
-export const requestAsync = (msg: any) => {
+export const requestAsync = (msg: any):Promise<any> => {
     return new Promise((resolve, reject) => {
         request(msg, (resp: any) => {
             if (resp.type) {
@@ -59,7 +59,7 @@ export const requestAsyncNeedLogin = async (msg: any) => {
  * 申请自动登录token
  */
 export const applyAutoLogin = async () => {
-    const id = await fetchDeviceId();
+    const id = getStore('setting/deviceId') || await fetchDeviceId();
     const deviceId = id.toString();
     const msg = { 
         type: 'wallet/user@set_auto_login', 
@@ -77,7 +77,7 @@ export const applyAutoLogin = async () => {
  * 自动登录
  */
 export const autoLogin = async (conRandom:string) => {
-    const deviceId = await fetchDeviceId();
+    const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
     console.log('deviceId -------',deviceId);
     const token = decrypt(getStore('user/token'),deviceId.toString());
     const msg = { 
@@ -1245,6 +1245,23 @@ export const fetchBtcFees = async () => {
 
     } catch (err) {
         showError(err && (err.result || err.type));
+    }
+};
+
+/**
+ * 获取GT价格
+ */
+export const getGlodPrice = async () => {
+    const msg = { type:'get_goldprice',param:{} };
+    try {
+        const resData:any = await requestAsync(msg);
+        if (resData.result === 1) {
+            return resData.price;
+        }
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return false;
     }
 };
 

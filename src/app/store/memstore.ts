@@ -38,7 +38,7 @@ const isObject = (value:any) => {
  * 数据深拷贝
  */
 export const deepCopy = (v: any): any => {
-    if (!v || !isObject(v)) return v;
+    if (!v || v instanceof Promise || !isObject(v)) return v;
     if (v instanceof Map) {
         return new Map(JSON.parse(JSON.stringify(v)));
     }
@@ -321,7 +321,8 @@ const initSettings = () => {
         lockScreen: {
             open: false,
             psw: ''
-        }
+        },
+        deviceId:''
     });
     store.setting = {
         ...setting
@@ -497,7 +498,8 @@ const settingChange = () => {
         language: getStore('setting/language'),
         changeColor: getStore('setting/changeColor'),
         currencyUnit: getStore('setting/currencyUnit'),
-        lockScreen: getStore('setting/lockScreen')
+        lockScreen: getStore('setting/lockScreen'),
+        deviceId:getStore('setting/deviceId')
     };
     setLocalStorage('setting', localSetting);
 };

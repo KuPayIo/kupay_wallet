@@ -18,32 +18,6 @@ import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notS
 import { sat2Btc, wei2Eth } from './unitTools';
 
 /**
- * 获取指定id的钱包
- */
-export const getWalletByWalletId = (wallets, walletId) => {
-    if (!(wallets && wallets.length > 0)) return null;
-    for (let i = 0; i < wallets.length; i++) {
-        if (wallets[i].walletId === walletId) return wallets[i];
-    }
-
-    return null;
-};
-
-/**
- * 获取指定id钱包的index
- */
-export const getWalletIndexByWalletId = (wallets, walletId) => {
-    if (!(wallets && wallets.length > 0)) {
-        return -1;
-    }
-    for (let i = 0; i < wallets.length; i++) {
-        if (wallets[i].walletId === walletId) return i;
-    }
-
-    return -1;
-};
-
-/**
  * 获取当前钱包对应货币正在使用的地址信息
  * @param currencyName 货币类型
  */
@@ -1093,10 +1067,13 @@ export const getConfirmBlockNumber = (currencyName: string, amount: number) => {
  * 获取设备唯一id
  */
 export const fetchDeviceId = async () => {
+    console.log('fetchDeviceId');
     if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
         return new Promise((resolve,reject) => {
-            const hash256 = sha256(getStore('user/id'));
+            const deviceId = cryptoRandomInt().toString();
+            const hash256 = sha256(deviceId);
             resolve(hash256);
+            
         });
     } else {// ============================mobile
         return new Promise((resolve,reject) => {

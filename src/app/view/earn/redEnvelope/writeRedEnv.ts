@@ -146,6 +146,10 @@ export class WriteRedEnv extends Widget {
      */
     public changeCoin(e: any) {
         this.state.selected = e.selected;
+        this.state.oneAmount = 0;
+        this.state.totalNum = 0;
+        this.state.totalAmount = 0;
+        this.state.message = '';
         this.paint();
     }
 

@@ -24,6 +24,7 @@ interface Props {
 export class CreateWallet extends Widget {
     public props: Props;
     public ok: () => void;
+    public cancel: () => void;
     public language: any;
 
     public create() {
@@ -51,7 +52,7 @@ export class CreateWallet extends Widget {
         this.state.itype = props.itype;
     }
     public backPrePage() {
-        this.ok && this.ok();
+        this.cancel && this.cancel();
     }
     public walletNameChange(e: any) {
         this.state.walletName = e.value;
@@ -91,14 +92,6 @@ export class CreateWallet extends Widget {
             });
         });
 
-        // selectImage((path) => {
-        //     console.log('img url path ',path);
-        //     this.state.chooseImage = true;
-        //     this.state.avatarHtml = `<img src='file:///${path}?timestamp=${new Date().getTime()}' style='width: 100%;height: 100%;position: absolute;top: 0;'/>`;
-        //     // this.state.avatar = `${localUrlPre}${path}`;
-        //     this.paint();
-        // });
-
     }
     public randomPlayName() {
         this.state.walletName = playerName();
@@ -136,19 +129,15 @@ export class CreateWallet extends Widget {
             psw: this.state.walletPsw,
             nickName: this.state.walletName
         };
-        if (this.state.itype === CreateWalletType.Image) {
-            option.imageBase64 = this.props.imageBase64;
-            option.imagePsw = this.props.imagePsw;
-        } else if (this.state.itype === CreateWalletType.StrandarImport) {
+        if (this.state.itype === CreateWalletType.StrandarImport) {
             option.mnemonic = this.props.mnemonic;
-        } else if (this.state.itype === CreateWalletType.ImageImport) {
-            option.imageBase64 = this.props.imageBase64;
-            option.imagePsw = this.props.imagePsw;
         } else if (this.state.itype === CreateWalletType.FragmentImport) {
             option.fragment1 = this.props.fragment1;
             option.fragment2 = this.props.fragment2;
         }
+        console.time('pi_create createWallet all need');
         const hash = await createWallet(this.state.itype, option);
+        console.timeEnd('pi_create createWallet all need');
         if (!hash) {
             popNewMessage(this.language.tips[3]);
         }

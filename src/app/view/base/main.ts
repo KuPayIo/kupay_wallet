@@ -11,10 +11,12 @@ import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
+import { getDeviceId } from '../../logic/native';
 import { openConnect } from '../../net/pull';
 import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
-import { getStore, initStore } from '../../store/memstore';
+import { getStore, initStore, setStore } from '../../store/memstore';
+import { fetchDeviceId, sha256 } from '../../utils/tools';
 
 // let client;
 // let rpc;
@@ -31,6 +33,7 @@ export const run = (cb): void => {
     initStore();
     // 主动推送初始化
     initPush();
+    preFetchFromNative();
     openConnect();
     // dataCenter.init();
     popNew('app-view-base-app');
@@ -51,6 +54,18 @@ const popNewPage = () => {
     if (ifNeedUnlockScreen()) {
         popNew('app-components1-lockScreenPage-lockScreenPage', {
             openApp: true
+        });
+    }
+};
+
+/**
+ * 预先从底层获取一些数据
+ */
+const preFetchFromNative = () => {
+    const deviceId = getStore('setting/deviceId');
+    if (!deviceId) {
+        fetchDeviceId().then(hash256deviceId => {
+            setStore('setting/deviceId',hash256deviceId);
         });
     }
 };

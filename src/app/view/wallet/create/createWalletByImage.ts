@@ -4,9 +4,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { CreateWalletType } from '../../../logic/localWallet';
+import { calcImgArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
+import { getStore, setStore } from '../../../store/memstore';
 import { pswEqualed } from '../../../utils/account';
 
 export class CreateWalletByImage extends Widget {
@@ -38,7 +39,7 @@ export class CreateWalletByImage extends Widget {
             // tslint:disable-next-line:max-line-length
             this.state.imageHtml = `<div style="background-image: url(${base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;"></div>`;
             this.state.imageBase64 = base64;
-            console.log(base64);
+            // console.log(base64);
             this.paint();
         });
     }
@@ -71,8 +72,11 @@ export class CreateWalletByImage extends Widget {
 
             return;
         }
-        // tslint:disable-next-line:max-line-length
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image,imageBase64:this.state.imageBase64,imagePsw:this.state.imagePsw });
+
+        const imgArgon2HashPromise = calcImgArgon2Hash(this.state.imageBase64,this.state.imagePsw);
+        const flags = getStore('flags');
+        setStore('flags',{ ...flags,imgArgon2HashPromise });
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });
         this.ok && this.ok();
     }
 }

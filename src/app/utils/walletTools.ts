@@ -16,8 +16,6 @@ import { nameWare } from './nameWareHouse';
 import { shareSecret } from './secretsBase';
 import { calcHashValuePromise, decrypt, encrypt, hexstrToU8Array, popNewLoading, popNewMessage, unicodeArray2Str } from './tools';
 
-
-
 /**
  * 获取新的地址信息
  * @param currencyName 货币类型
@@ -225,9 +223,10 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
 export const fetchMnemonicFragment =  (hash) => {
     const mnemonicHexstr =  getMnemonicHexstr(hash);
     if (!mnemonicHexstr) return;
+    // tslint:disable-next-line:no-unnecessary-local-variable
     const shares = shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
             .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
-    console.log('fetchMnemonicFragment-----------',shares);
+    // console.log('fetchMnemonicFragment-----------',shares);
     
     return shares;
 };

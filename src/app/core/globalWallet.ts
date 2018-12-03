@@ -1,7 +1,7 @@
 /**
  * global wallet
  */
-import { ERC20Tokens, btcNetwork } from '../config';
+import { btcNetwork, ERC20Tokens } from '../config';
 import { AddrInfo, CurrencyRecord } from '../store/interface';
 import { lang, strength } from '../utils/constants';
 import { u8ArrayToHexstr } from '../utils/tools';
@@ -79,10 +79,18 @@ export class GlobalWallet {
     public static generate(secrectHash:string, vault?: Uint8Array) {
         const gwlt = new GlobalWallet();
         vault = vault || generateRandomValues(strength);
+        console.time('pi_create generate encrypt need');
         gwlt._vault = cipher.encrypt(secrectHash, u8ArrayToHexstr(vault));
+        console.timeEnd('pi_create generate encrypt need');
+        console.time('pi_create generate toMnemonic need');
         const mnemonic = toMnemonic(lang, vault);
+        console.timeEnd('pi_create generate toMnemonic need');
+        console.time('pi_create generate initGwlt need');
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
+        console.timeEnd('pi_create generate initGwlt need');
+        console.time('pi_create generate getPublicKeyByMnemonic need');
         gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
+        console.timeEnd('pi_create generate getPublicKeyByMnemonic need');
 
         return gwlt;
     }

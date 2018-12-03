@@ -463,6 +463,5 @@ export const initWeb3 = () => {
             ETH_API_BASE_URL = config[DevMode.Prod].EthApiBaseUrl;
         }
         web3 = new Web3(new Web3.providers.HttpProvider(ETH_API_BASE_URL));
-        console.log('web3.version.network',web3.version.network);
     }
 };
