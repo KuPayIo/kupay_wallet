@@ -93,7 +93,6 @@ winit.initNext = function () {
 			"app/view/chat/home/",
 			"app/view/earn/home/",
 			"app/view/wallet/home/",
-			"app/view/ceshi/home/"
 		];
 
 		console.time('firstload');
