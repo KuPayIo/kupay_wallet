@@ -8,8 +8,12 @@
                 <span w-class="balance-value">{{it1.currencyUnitSymbol}}{{it1.balanceValue}}</span>
             </div>
             <div w-class="head2-right">
-                <span w-class="btn" on-tap="rechargeClick"><pi-ui-lang>{"zh_Hans":"充值","zh_Hant":"充值","en":""}</pi-ui-lang></span>
-                <span w-class="btn btn-withdraw" on-tap="withdrawClick"><pi-ui-lang>{"zh_Hans":"提币","zh_Hant":"提幣","en":""}</pi-ui-lang></span>
+                {{if it.currencyName !== 'GT' }}
+                    <span w-class="btn" on-tap="rechargeClick"><pi-ui-lang>{"zh_Hans":"充值","zh_Hant":"充值","en":""}</pi-ui-lang></span>
+                    <span w-class="btn btn-withdraw" on-tap="withdrawClick"><pi-ui-lang>{"zh_Hans":"提币","zh_Hant":"提幣","en":""}</pi-ui-lang></span>
+                {{else}}
+                    <span w-class="btn" on-tap="rechargeClick"><pi-ui-lang>{"zh_Hans":"去充值","zh_Hant":"去充值","en":""}</pi-ui-lang></span>
+                {{end}}
             </div>
         </div>
         <div w-class="nav-wrap">

@@ -27,9 +27,7 @@
                         {{end}}
                     </div>
                     {{% 邀请票中部}}
-                    <div w-class="ticket_center" class="ticket_center">
-                        <div w-class="gary_line"></div>
-                    </div>
+                    <div w-class="ticket_center"></div>
                     {{% 邀请票下部}}
                     <div w-class="ticket_bottom">
                         {{if it.showPage ==='first'}}

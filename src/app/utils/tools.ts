@@ -829,14 +829,15 @@ export const fetchCloudWalletAssetList = () => {
     //     gain: formatBalanceValue(0)
     // };
     // assetList.push(ktItem);
-    // const cnytItem = {
-    //     currencyName: 'CNYT',
-    //     description: 'CNYT',
-    //     balance: 0,
-    //     balanceValue: '0.00',
-    //     gain: formatBalanceValue(0)
-    // };
-    // assetList.push(cnytItem);
+    const gtItem = {
+        currencyName: 'GT',
+        description: 'GT',
+        balance: 0,
+        balanceValue: '0.00',
+        gain: formatBalanceValue(0),
+        rate:'234.00'
+    };
+    assetList.push(gtItem);
     for (const k in CloudCurrencyType) {
         const item: any = {};
         if (MainChainCoin.hasOwnProperty(k)) {

@@ -69,18 +69,26 @@ export class CloudWalletHome extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
-    // 充值
+    /**
+     * 充值
+     */
     public rechargeClick() {
-        if (this.props.currencyName === 'KT' || this.props.currencyName === 'CNYT') {
+        if (this.props.currencyName === 'KT') {
             popNewMessage(this.language.tips);
 
-            return;
+        } else if (this.props.currencyName === 'GT') {
+            popNew('app-view-wallet-cloudWallet-rechargeGT');
+
+        } else {
+            
+            popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
         }
-        popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
     }
-    // 提币
+    /**
+     * 提币
+     */
     public withdrawClick() {
-        if (this.props.currencyName === 'KT' || this.props.currencyName === 'CNYT') {
+        if (this.props.currencyName === 'KT' || this.props.currencyName === 'GT') {
             popNewMessage(this.language.tips);
 
             return;
