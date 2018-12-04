@@ -3,7 +3,7 @@
 
         <widget w-class="title" w-tag="pi-ui-lang" >{"zh_Hans":"恭喜获得","zh_Hant":"恭喜獲得","en":""}</widget>
         <div w-class="context">
-            300
+            {{it.addNum}}
             <span style="font-size:40px">KT</span>
         </div>
         <div on-tap="close" w-class="btn">
