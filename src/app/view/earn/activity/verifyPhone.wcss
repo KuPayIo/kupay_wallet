@@ -1,0 +1,76 @@
+.content{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-around;
+    align-items:center;
+    width:100%;
+    height:100%;
+    background:rgb(44, 110, 234);
+    box-sizing: border-box;
+    padding:148px 20px 0px;
+}
+
+.main{
+    height:100%;
+    width:100%;
+    position:relative;
+    box-sizing:border-box;
+    background:url('../../app/res/image/verityPhone_topBg.png');
+    box-sizing: border-box;
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.phone_part{
+    width: 100%;
+    height: 720px;
+    position: absolute;
+    bottom: 0px;
+    display:flex;
+    padding-top:30px;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    font-family: PingFangSC-Regular;
+    color: rgb(34, 34, 34);
+    line-height: 50px;
+    background:url('../../app/res/image/verityPhone_botBg.png');
+    box-sizing: border-box;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.rule_title{
+    text-align: center;
+    font-size: 36px;
+    margin-top:50px;
+}
+
+.rule_list{
+    width:78%;
+    height:60%;
+    margin-top:50px;
+}
+
+.rule_item{
+    display:block;
+    font-size:30px;
+}
+
+.rule_btn{
+    width:60%;
+    height:96px;
+    background:blue;
+    margin-bottom:50px;
+    background: #4B7EFF;
+    border-radius: 12px;
+
+    ont-family: PingFangSC-Medium;
+    font-size: 32px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    text-align: center;
+    line-height:96px;
+}

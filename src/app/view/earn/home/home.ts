@@ -189,7 +189,7 @@ export class PlayHome extends Widget {
         }
         switch (ind) {
             case 0:
-                popNew('app-view-earn-mining-addMine');
+                popNew('app-view-earn-activity-verifyPhone');
                 break;
             case 1:
                 popNew('app-view-earn-activity-inviteFriend');
