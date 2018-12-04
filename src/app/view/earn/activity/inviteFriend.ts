@@ -16,10 +16,6 @@ export class InviteFriend extends Widget {
         super();
     }
 
-    public setProps(props:any) {
-        super.setProps(props);
-    } 
-
     /**
      * 返回上一页
      */
