@@ -7,4 +7,12 @@
 }
 .btn{
     margin: 110px 60px 40px;
+    text-align: center;
+}
+
+.exchangeTip{
+    font-size:24px;
+    font-family:PingFangSC-Regular;
+    font-weight:400;
+    color:rgba(136,136,136,1);
 }
