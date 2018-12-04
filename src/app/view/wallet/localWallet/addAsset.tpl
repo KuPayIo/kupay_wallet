@@ -12,7 +12,7 @@
         </div>
     </div>
     <div w-class="body">
-        {{if it1.showAssetList.length <= 0}}
+        {{if it.showAssetList.length <= 0}}
         <div w-class="no-record">
             <img src="../../../res/image/search_no.png" w-class="no-record-icon"/>
             <div>
@@ -21,7 +21,7 @@
         </div>
         {{else}}
         <div w-class="asset-list">
-            {{for i,v of it1.showAssetList}}
+            {{for i,v of it.showAssetList}}
             <div w-class="list-item">
                 <app-components-threeParaItem-threeParaItem>{img:"{{v.currencyName}}.png",title:{{v.currencyName}},desc:{{v.description}}}</app-components-threeParaItem-threeParaItem>
                 {{if v.canSwtiched}}

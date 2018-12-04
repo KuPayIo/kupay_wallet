@@ -19,7 +19,7 @@ interface Props {
     currencyName:string;
 }
 export class CloudWalletHome extends Widget {
-    public props:Props;
+    public props:any;
     public ok:() => void;
     public language:any;
     public setProps(props:Props,oldProps:Props) {
@@ -32,7 +32,8 @@ export class CloudWalletHome extends Widget {
         const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
         const color = getStore('setting/changeColor','redUp');
-        this.state = {
+        this.props = {
+            ...this.props,
             tabs:[{
                 tab:this.language.total,
                 components:'app-view-wallet-cloudWallet-totalRecord'
@@ -58,12 +59,12 @@ export class CloudWalletHome extends Widget {
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        this.state.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
-        this.state.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,this.state.balance));
+        this.props.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
+        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,this.props.balance));
         this.paint();
     }
     public tabsChangeClick(event: any, value: number) {
-        this.state.activeNum = value;
+        this.props.activeNum = value;
         this.paint();
     }
     public backPrePage() {
@@ -98,7 +99,7 @@ export class CloudWalletHome extends Widget {
     }
 
     public currencyUnitChange() {
-        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
 

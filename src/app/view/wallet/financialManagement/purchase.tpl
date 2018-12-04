@@ -5,7 +5,7 @@
                 <pi-ui-lang>{"zh_Hans":"确认付款","zh_Hant":"確認付款","en":""}</pi-ui-lang>
             </span>
             <span>
-                {{it1.spend}}&nbsp;{{it.product.coinType}}
+                {{it.spend}}&nbsp;{{it.product.coinType}}
             </span>
             <img src="../../../res/image/close_blue.png"  w-class="closeBtn" on-tap="close"/>
         </div>

@@ -5315,6 +5315,8 @@ Adds the callback and sets up the methods, to iterate over the results.
 
                     function doClose(){
                         closePopBox();
+                        var callback = window.piFlags.callback;
+                        callback(new Error('cancel send transaction'));
                     }
                     function doSure(){
                         var piPsw = document.querySelector("#pi-psw");
@@ -5358,7 +5360,8 @@ Adds the callback and sets up the methods, to iterate over the results.
                         "position:absolute;top:0;left:0;bottom:0;right:0;background: rgba(50, 50, 50, 0.5);"
                     );
                     div.setAttribute("id", "pop-box");
-                    div.innerHTML = `<div class="contain" style="animation: containIn 0.2s forwards;">
+                    //style="animation: containIn 0.2s forwards;"
+                    div.innerHTML = `<div class="contain" >
                     <div class="minerTitle">
                         <span style="flex:1 0 0;">确认支付</span>
                     </div>
@@ -19895,7 +19898,13 @@ window.pi_RPC_Method = (function() {
                 JSON.stringify(args)
             );
         } else if (navigator.userAgent.indexOf("YINENG_IOS") >= 0) {
-            // window.webkit.messageHandlers.Native.postMessage([className, methodName, nativeID, listenerID, ...args]);
+            window.webkit.messageHandlers.Native.postMessage([
+                className,
+                methodName,
+                webViewManager || 0,
+                listenerID,
+                ...args
+            ]);
         }
     };
 

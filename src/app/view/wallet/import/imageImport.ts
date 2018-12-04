@@ -18,7 +18,7 @@ export class ImageImport extends Widget {
     }
     public init() {
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
             chooseImage:false,
             imageBase64:'',
             imageHtml:'',
@@ -31,10 +31,10 @@ export class ImageImport extends Widget {
     }
     public selectImageClick() {
         selectImage((width, height, base64) => {
-            this.state.chooseImage = true;
+            this.props.chooseImage = true;
             // tslint:disable-next-line:max-line-length
-            this.state.imageHtml = `<div style="background-image: url(${base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;"></div>`;
-            this.state.imageBase64 = base64;
+            this.props.imageHtml = `<div style="background-image: url(${base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;"></div>`;
+            this.props.imageBase64 = base64;
             this.paint();
         });
     }
@@ -44,23 +44,23 @@ export class ImageImport extends Widget {
     }
 
     public imagePswChange(e:any) {
-        this.state.imagePsw = e.value;
-        this.state.imagePswAvailable = this.state.imagePsw.length > 0;
+        this.props.imagePsw = e.value;
+        this.props.imagePswAvailable = this.props.imagePsw.length > 0;
         this.paint();
     }
 
     public nextClick() {
-        if (!this.state.imageBase64) {
+        if (!this.props.imageBase64) {
             popNew('app-components1-message-message', { content: this.language.tips[0] });
 
             return;
         }
-        if (!this.state.imagePsw) {
+        if (!this.props.imagePsw) {
             popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
         }
-        const imgArgon2HashPromise = calcImgArgon2Hash(this.state.imageBase64,this.state.imagePsw);
+        const imgArgon2HashPromise = calcImgArgon2Hash(this.props.imageBase64,this.props.imagePsw);
         const flags = getStore('flags');
         setStore('flags',{ ...flags,imgArgon2HashPromise });
         popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });

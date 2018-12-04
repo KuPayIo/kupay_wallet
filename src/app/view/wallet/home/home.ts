@@ -17,14 +17,14 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Home extends Widget {
     public language:any;
-    public create() {
-        super.create();
+    public setProps(props:any,oldProps:any) {
+        super.setProps(props,oldProps);
         this.pageInit();
         this.dataInit();
     }
     public pageInit() {
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
             tabs:[{
                 tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },
                 components:'app-view-wallet-home-cloudHome'
@@ -44,42 +44,42 @@ export class Home extends Widget {
 
     public dataInit() {
         const userInfo = getUserInfo();
-        this.state.avatar = userInfo && userInfo.avatar;
-        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
-        this.state.currencyUnitSymbol = getCurrencyUnitSymbol(); 
+        this.props.avatar = userInfo && userInfo.avatar;
+        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
+        this.props.currencyUnitSymbol = getCurrencyUnitSymbol(); 
         this.paint();
     }
 
     public tabsChangeClick(event: any, value: number) {
-        this.state.activeNum = value;
+        this.props.activeNum = value;
         this.paint();
     }
 
     public userInfoChange() {
         const userInfo = getUserInfo();
-        this.state.avatar = userInfo.avatar || '';
+        this.props.avatar = userInfo.avatar || '';
         this.paint();
     }
 
     public updateTotalAsset() {
-        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
+        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
         this.paint();
     }
 
     public currencyUnitChange() {
-        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
-        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
+        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
 
     public refreshClick() {
-        if (this.state.refreshing) {
+        if (this.props.refreshing) {
             return;
         }
-        this.state.refreshing = true;
+        this.props.refreshing = true;
         this.paint();
         setTimeout(() => {
-            this.state.refreshing = false;
+            this.props.refreshing = false;
             this.paint();
         },1000);
         getServerCloudBalance();

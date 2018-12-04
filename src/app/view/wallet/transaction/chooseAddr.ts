@@ -11,7 +11,7 @@ interface Props {
     currencyName: string;
 }
 export class ChooseAddr extends Widget {
-    public props: Props;
+    public props: any;
     public ok: () => void;
     public language:any;
     public setProps(props: Props, oldProps: Props): void {
@@ -21,7 +21,8 @@ export class ChooseAddr extends Widget {
 
     public init(): void {
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
+            ...this.props,
             addrsInfo:this.parseAddrsInfo()
         };
     }
@@ -42,11 +43,11 @@ export class ChooseAddr extends Widget {
     }
 
     public addrItemClick(e:any,index:number) {
-        if (!this.state.addrsInfo[index].isChoosed) {
+        if (!this.props.addrsInfo[index].isChoosed) {
             const wallet = getStore('wallet');
             const record = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
             if (record) {
-                record.currentAddr = this.state.addrsInfo[index].addr;
+                record.currentAddr = this.props.addrsInfo[index].addr;
                 setStore('wallet/currencyRecords', wallet.currencyRecords);
             }
         }

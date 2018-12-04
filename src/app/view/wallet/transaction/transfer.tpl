@@ -21,34 +21,34 @@
                 <div w-class="item">
                     <div w-class="inner-tip">
                         <span>{{it.currencyName}} <pi-ui-lang>{{tags[0]}}</pi-ui-lang></span> 
-                        <span w-class="balance"><pi-ui-lang>{{tags[1]}}</pi-ui-lang>&nbsp;{{it1.balance%1===0?it1.balance.toFixed(2):it1.balance}}</span>
+                        <span w-class="balance"><pi-ui-lang>{{tags[1]}}</pi-ui-lang>&nbsp;{{it.balance%1===0?it.balance.toFixed(2):it.balance}}</span>
                     </div>
                     <div w-class="input-father" ev-input-change="amountChange">
-                        <div w-class="balance-value">≈{{it1.currencyUnitSymbol+" "+it1.amountShow}}</div>
+                        <div w-class="balance-value">≈{{it.currencyUnitSymbol+" "+it.amountShow}}</div>
                         {{: inputPlace0 = {"zh_Hans":"输入金额","zh_Hant":"輸入金額","en":""} }}
-                        <widget w-tag="app-components1-input-input">{itype:"number",placeHolder:{{inputPlace0}},style:"padding:0;font-size:36px;background:transparent;",input:{{it1.amount}},disabled:{{it1.inputDisabled}} }</widget>
+                        <widget w-tag="app-components1-input-input">{itype:"number",placeHolder:{{inputPlace0}},style:"padding:0;font-size:36px;background:transparent;",input:{{it.amount}},disabled:{{it.inputDisabled}} }</widget>
                     </div>
                 </div>
                 <div w-class="item" style="padding: 10px 0 0 20px;">
                     <div w-class="inner-tip"><pi-ui-lang>{{tags[2]}}</pi-ui-lang><img src="../../../res/image/scan.png" w-class="scanImg" on-tap="doScanClick"/></div>
                     <div w-class="input-father1" ev-input-change="toAddrChange">
-                        <app-components1-input-input>{placeHolder:{{inputPlace[1]}},style:"padding:0;font-size:28px;",input:{{it1.toAddr}},disabled:{{it1.inputDisabled}}}</app-components1-input-input>
+                        <app-components1-input-input>{placeHolder:{{inputPlace[1]}},style:"padding:0;font-size:28px;",input:{{it.toAddr}},disabled:{{it.inputDisabled}}}</app-components1-input-input>
                     </div>
                 </div>
                 <div w-class="item">
                     <div w-class="inner-tip"><pi-ui-lang>{{tags[3]}}</pi-ui-lang></div>
                     <div w-class="from-addr">
-                        {{it1.fromAddr}}
+                        {{it.fromAddr}}
                     </div>
                 </div>
                 <div w-class="item" style="border-bottom: none">
                     <div w-class="inner-tip" on-tap="chooseMinerFee">
                         <span style="flex: 1"><pi-ui-lang>{{tags[4]}}</pi-ui-lang></span>
                         <span w-class="speed">
-                            {{if typeof(it1.minerFeeList[it1.curLevel].text) ==='string'}}
-                                {{it1.minerFeeList[it1.curLevel].text}}
+                            {{if typeof(it.minerFeeList[it.curLevel].text) ==='string'}}
+                                {{it.minerFeeList[it.curLevel].text}}
                             {{else}}
-                                <pi-ui-lang>{{it1.minerFeeList[it1.curLevel].text}}</pi-ui-lang>
+                                <pi-ui-lang>{{it.minerFeeList[it.curLevel].text}}</pi-ui-lang>
                             {{end}}
                         </span>
                         <img src="app/res/image/down_arrow_gray.png" width="32px"/>
@@ -56,7 +56,7 @@
                     
                 </div>
                 <div w-class="choose-fee">
-                    <span on-tap="speedDescClick"><pi-ui-lang>{{tags[5]}}</pi-ui-lang>&nbsp;{{it1.minerFee}}</span>
+                    <span on-tap="speedDescClick"><pi-ui-lang>{{tags[5]}}</pi-ui-lang>&nbsp;{{it.minerFee}}</span>
                     <img src="../../../res/image/41_gray.png" on-tap="speedDescClick" w-class="descImg"/>
                 </div>
             </div>

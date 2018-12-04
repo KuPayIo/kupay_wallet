@@ -31,7 +31,8 @@ export class HoldedFmDetail extends Widget {
         const stateBg = props.product.state === 1 ? '' : 'bg1';
         const btnText = props.product.state === 1 ? this.language.phrase[2] : this.language.phrase[1];
         const btnBgColor = props.product.state === 1 ? 'blue' : 'white';
-        this.state = {
+        this.props = {
+            ...this.props,
             stateShow,
             scrollHeight:0,
             stateBg,
@@ -68,7 +69,7 @@ export class HoldedFmDetail extends Widget {
      // 页面滚动
     public pageScroll() {
         const scrollTop = document.getElementById('body').scrollTop;
-        this.state.scrollHeight = scrollTop;
+        this.props.scrollHeight = scrollTop;
         this.paint();
         
     }
@@ -80,7 +81,8 @@ export class HoldedFmDetail extends Widget {
         popNew('app-view-wallet-financialManagement-productStatement',{ fg:1 });        
     }
 }
-register('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
+
+register('activity/financialManagement/purchaseHistories',(purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         const data = {

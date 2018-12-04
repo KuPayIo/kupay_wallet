@@ -13,24 +13,24 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class WalletHome extends Widget {
-    public create() {
-        super.create();
+    public setProps(props:any,oldProps:any) {
+        super.setProps(props,oldProps);
         this.init();
     }
     public init() {
         const color = getStore('setting/changeColor','redUp');
-        this.state = {
+        this.props = {
+            ...this.props,
             totalAsset:formatBalanceValue(fetchLocalTotalAssets()),
             assetList:fetchWalletAssetList(),
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
-        this.paint();
     }
 
     public updateBalance() {
-        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets());
-        this.state.assetList = fetchWalletAssetList();
+        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets());
+        this.props.assetList = fetchWalletAssetList();
         this.paint();
     }
     // 添加资产
@@ -43,7 +43,7 @@ export class WalletHome extends Widget {
     public itemClick(e:any) {
         if (!hasWallet()) return;
         const index = e.index;
-        const v = this.state.assetList[index];
+        const v = this.props.assetList[index];
         popNew('app-view-wallet-transaction-home',{ currencyName:v.currencyName,gain:v.gain });
     }
 
@@ -52,9 +52,9 @@ export class WalletHome extends Widget {
     }
 
     public currencyUnitChange() {
-        this.state.totalAsset = formatBalanceValue(fetchLocalTotalAssets());
-        this.state.assetList = fetchWalletAssetList();
-        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets());
+        this.props.assetList = fetchWalletAssetList();
+        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
 }
@@ -104,12 +104,14 @@ register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+        w.paint();
     }
 });
 register('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+        w.paint();
     }
 });
 

@@ -16,13 +16,14 @@ declare var module: any;
 declare var pi_modules: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class App extends Widget {
+    public props:any;
     public old: any = {};
     public language:any;
     public create() {
         super.create();
         this.init();
-        this.setList();
     }
 
     public init(): void {
@@ -33,7 +34,7 @@ export class App extends Widget {
         const loading = localStorage.getItem('level_2_page_loaded') ? false : true;
         localStorage.removeItem('level_2_page_loaded');
 
-        this.state = {
+        this.props = {
             type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
             isActive:'',
             old: this.old,
@@ -77,36 +78,37 @@ export class App extends Widget {
             },
             tabBarList: []
         };
+        this.setList();
     }
 
     public setList() {
         const resList = [];
-        for (const item in this.state.allTabBar) {
-            this.state.allTabBar[item];
-            if (getModulConfig(this.state.allTabBar[item].modulName)) {
-                if (this.state.allTabBar[item].modulName === 'APP_WALLET') {
-                    this.state.isActive = 'APP_WALLET';
+        for (const item in this.props.allTabBar) {
+            this.props.allTabBar[item];
+            if (getModulConfig(this.props.allTabBar[item].modulName)) {
+                if (this.props.allTabBar[item].modulName === 'APP_WALLET') {
+                    this.props.isActive = 'APP_WALLET';
                 }
-                resList.push(this.state.allTabBar[item]);
+                resList.push(this.props.allTabBar[item]);
             }   
         }
         if (resList.length === 0) {
-            resList.push(this.state.allTabBar.wallet);
-            this.state.isActive = this.state.allTabBar.wallet.modulName;
+            resList.push(this.props.allTabBar.wallet);
+            this.props.isActive = this.props.allTabBar.wallet.modulName;
         }
-        if (!this.state.isActive) {
-            this.state.isActive = resList[0].modulName;
+        if (!this.props.isActive) {
+            this.props.isActive = resList[0].modulName;
         }
-        this.state.tabBarList = resList;
+        this.props.tabBarList = resList;
     }
     public closeLoading() {
-        this.state.loading = false;
+        this.props.loading = false;
         this.paint();
     }
     public async tabBarChangeListener(event: any, index: number) {
-        const identfy = this.state.tabBarList[index].modulName;
-        if (this.state.isActive === identfy) return;
-        this.state.isActive = identfy;
+        const identfy = this.props.tabBarList[index].modulName;
+        if (this.props.isActive === identfy) return;
+        this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
     }

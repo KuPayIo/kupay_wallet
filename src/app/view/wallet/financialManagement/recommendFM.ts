@@ -22,17 +22,9 @@ export class RecommendFM extends Widget {
         this.init();
     }
     public init() {
-        this.state = {
-            productList:[]
-        };
         if (this.props.isActive) {
             getProductList();
         }
-    }
-
-    public updateProductList(productList:Product[]) {
-        this.state.productList = productList;
-        this.paint();
     }
 
     public fmListItemClick(e:any,index:number) {
@@ -41,11 +33,9 @@ export class RecommendFM extends Widget {
     }
 }
 
+const localState:any = {};
 // 理财产品变化
-register('activity/financialManagement/products', async (productList) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateProductList(productList);
-    }
-    
+register('activity/financialManagement/products', (productList:Product[]) => {
+    localState.productList = productList;
+    forelet.paint(localState);
 });
