@@ -1066,7 +1066,6 @@ export const base64ToFile = (base64: string) => {
     return newFile;
 };
 
-
 /**
  * 获取区块确认数
  */
@@ -1439,7 +1438,6 @@ export const xorDecode1 = (str:string, key:string) => {
 
     return res;
 };
-
 
 /**
  * 获取当前正在使用的ETH地址

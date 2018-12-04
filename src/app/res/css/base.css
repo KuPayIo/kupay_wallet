@@ -26,6 +26,30 @@ div{
     background: rgba(255,255,255,0.80);
 }
 
+.ticket_center::before{
+    content: "";
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    position: absolute;
+    border: 1px solid rgb(44, 110, 234);
+    background: rgb(44, 110, 234);
+    left: -20px;
+    z-index: 1;
+}
+
+.ticket_center::after{
+    content: "";
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    position: absolute;
+    border: 1px solid rgb(44, 110, 234);
+    background: rgb(44, 110, 234);
+    right: -20px;
+    z-index: 1;
+}
+
 /* 侧边栏覆盖层进入 */
 @keyframes switchWalletPageIn{
     0% {background-color: rgba(2, 2, 2, 0);}
@@ -89,6 +113,11 @@ div{
         -webkit-transform: rotate(360deg);
                 transform: rotate(360deg); 
     } 
+}
+
+@keyframes outTicket{
+    0%{transform: translateY(-600px);}
+    100%{transform: translateY(0px);}
 }
 .refreshing{
    animation: refreshingRotated 1s infinite;

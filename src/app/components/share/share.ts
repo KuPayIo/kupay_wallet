@@ -2,8 +2,8 @@
  * fund share Page
  */
 import { ShareToPlatforms } from '../../../pi/browser/shareToPlatforms';
-import { Widget } from '../../../pi/widget/widget';
 import { getLang } from '../../../pi/util/lang';
+import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
     text?: string;
@@ -24,7 +24,7 @@ export class BaseShare extends Widget {
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
         this.language = this.config.value[getLang()];
-        this.state ={};
+        this.state = {};
         if (this.props.shareType !== ShareToPlatforms.TYPE_TEXT) {
             this.state.isShowQQ = true;
             this.state.showCount = 4;

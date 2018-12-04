@@ -1,7 +1,7 @@
 /**
  * 数据更新中心
  */
-import { defaultEthToAddr, ERC20Tokens, MainChainCoin, btcNetwork } from '../config';
+import { btcNetwork, defaultEthToAddr, ERC20Tokens, MainChainCoin } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
@@ -11,8 +11,8 @@ import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
 import { getStore,register,setStore } from '../store/memstore';
 import { erc20GasLimitRate, ethTokenTransferCode, lang } from '../utils/constants';
-import { formatBalance,getAddrsAll,getConfirmBlockNumber,parseTransferExtraInfo, updateLocalTx, getCurrentEthAddr } from '../utils/tools';
-import { ethTokenDivideDecimals,sat2Btc,smallUnit2LargeUnit,wei2Eth, ethTokenMultiplyDecimals } from '../utils/unitTools';
+import { formatBalance,getAddrsAll,getConfirmBlockNumber,getCurrentEthAddr, parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
+import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 import { fetchLocalTxByHash,fetchTransactionList,getMnemonicByHash } from '../utils/walletTools';
 /**
  * 创建事件处理器表
@@ -38,9 +38,9 @@ export class DataCenter {
         // getShapeShiftCoins();
 
         // 更新人民币美元汇率
-        // this.updateUSDRate();
+        this.updateUSDRate();
         // 更新货币对比USDT的比率
-        // this.updateCurrency2USDTRate();
+        this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
         this.refreshAllTx();
     }
@@ -954,7 +954,6 @@ export class DataCenter {
 
 // =====================================================
 
-
 const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amount:number | string) => {
     const api = new EthApi();
 
@@ -962,7 +961,6 @@ const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amou
 
     return api.estimateGas({ to: ERC20Tokens[currencyName].contractAddr,from:fromAddr, value:'0x0', data: transferCode });
 };
-
 
 // ============================================ 立即执行
 /**

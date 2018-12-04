@@ -10,7 +10,7 @@ import { recharge, resendRecharge } from '../../../net/pullWallet';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchMinerFeeList, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -49,6 +49,8 @@ export class Recharge extends Widget {
             minerFeeList,
             curLevel,
             minLevel:curLevel,
+            amountShow:'0.00',
+            currencyUnitSymbol:getCurrencyUnitSymbol(),
             inputDisabled:tx ? true : false
         };
         
@@ -69,6 +71,8 @@ export class Recharge extends Widget {
      // 提币金额变化
     public amountChange(e:any) {
         this.state.amount = e.value;
+        const amountShow = formatBalance(fetchBalanceValueOfCoin(this.props.currencyName,e.value));
+        this.state.amountShow =  amountShow === 0 ? '0.00' :amountShow;
         this.paint();
     }
 

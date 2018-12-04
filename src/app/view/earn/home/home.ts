@@ -183,11 +183,19 @@ export class PlayHome extends Widget {
     /**
      * 进入活动详情
      */
-    public doActivity() {
+    public doActivity(ind:number) {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-view-earn-mining-addMine');
+        switch (ind) {
+            case 0:
+                popNew('app-view-earn-mining-addMine');
+                break;
+            case 1:
+                popNew('app-view-earn-activity-inviteFriend');
+                break;
+            default:
+        }
     }
 
     /**

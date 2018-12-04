@@ -9,7 +9,7 @@ import { withdraw } from '../../../net/pullWallet';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore } from '../../../store/memstore';
 import { withdrawLimit } from '../../../utils/constants';
-import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, formatBalance, getAddrsInfoByCurrencyName, getCurrencyUnitSymbol, getCurrentAddrInfo, parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
 interface Props {
     currencyName:string;
 }
@@ -31,7 +31,9 @@ export class Withdraw extends Widget {
             amount:0,
             minerFee,
             withdrawAddr:getCurrentAddrInfo(currencyName).addr,
-            withdrawAddrInfo:this.parseAddrsInfo()
+            withdrawAddrInfo:this.parseAddrsInfo(),
+            amountShow:'0.00',
+            currencyUnitSymbol:getCurrencyUnitSymbol()
         };
     }
 
@@ -45,6 +47,8 @@ export class Withdraw extends Widget {
      // 提币金额变化
     public amountChange(e:any) {
         this.state.amount = e.value;
+        const amountShow = formatBalance(fetchBalanceValueOfCoin(this.props.currencyName,e.value));
+        this.state.amountShow =  amountShow === 0 ? '0.00' :amountShow;
         this.paint();
     }
 

@@ -56,8 +56,13 @@
     justify-content: space-between;
     align-items: center;
 }
+.input-icon{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
 .balance{
-    color: #318de6;
+    color: #888888;
 }
 .input-father{
     position: relative;
@@ -79,7 +84,7 @@
 }
 .fee{
     margin-left: 10px;
-    color: #F17835;
+    color: #318DE6;
 }
 .bottom-container{
     position: absolute;
@@ -95,4 +100,13 @@
 }
 .btn{
     margin: 30px 40px 0;
+}
+
+.balance-value{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    font-size: 36px;
+    color:#ccc;
 }
