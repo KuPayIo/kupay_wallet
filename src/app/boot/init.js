@@ -2365,6 +2365,6 @@ pi_update.alert = function(option,completeCB){
 pi_update.closePop = function(){
 	var $updateRoot = document.querySelector('#update-root');
 	var $body = document.querySelector("body");
-	$body.removeChild($updateRoot);
+	$updateRoot && $body.removeChild($updateRoot);
 }
 

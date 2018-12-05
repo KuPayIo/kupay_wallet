@@ -68,11 +68,13 @@ export const rpcProviderSendAsync = (payload, callback) => {
                 } else {
                     callback(null, { jsonrpc: '2.0', result: hash, id: payload.id });
                 }
-            }).catch(() => {
+            }).catch((err) => {
                 console.log(`wallet rpcProviderSendAsync err is catch`);
+                callback(err);
             });
         } catch (e) {
             console.log(`transfer3 catch throw`);
+            callback(e);
         }
         
     } else {
