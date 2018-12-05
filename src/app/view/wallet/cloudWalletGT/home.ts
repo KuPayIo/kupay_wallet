@@ -34,13 +34,13 @@ export class CloudWalletHome extends Widget {
         this.state = {
             tabs:[{
                 tab:{ zh_Hans:'全部',zh_Hant:'今日',en:'' },
-                components:'app-view-wallet-cloudWallet-totalRecord'
+                components:'app-view-wallet-cloudWalletGT-totalRecord'
             },{
                 tab:{ zh_Hans:'入账',zh_Hant:'入賬',en:'' },
-                components:'app-view-wallet-cloudWallet-rechargeRecord'
+                components:'app-view-wallet-cloudWalletGT-addGtRecord'
             },{
                 tab:{ zh_Hans:'出账',zh_Hant:'出賬',en:'' },
-                components:'app-view-wallet-cloudWallet-withdrawRecord'
+                components:'app-view-wallet-cloudWalletGT-expendGtRecord'
             }],
             activeNum:0,
             gain:fetchCoinGain(currencyName),
@@ -69,7 +69,7 @@ export class CloudWalletHome extends Widget {
      * 充值
      */
     public rechargeClick() {
-        // popNew('app-view-wallet-cloudWalletGT-transactionDetails');
+        // popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:'100' });
         popNew('app-view-wallet-cloudWalletGT-rechargeGT');
     }
 

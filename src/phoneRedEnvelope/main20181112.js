@@ -126,13 +126,15 @@ const Config= {
 const CurrencyType = {
     KT: 100,
     ETH: 101,
-    BTC: 102
+    BTC: 102,
+    GT: 103
 }
 // 枚举云端货币类型
 const CloudCurrencyType = {
     100: 'KT',
     101: 'ETH',
-    102:'BTC'
+    102:'BTC',
+    103:'GT'
 };
 // 不同红包类型
 const RedEnvelopeType = {

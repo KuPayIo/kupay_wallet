@@ -43,10 +43,10 @@ export enum TaskSid {
  * 云端账户的货币类型
  */
 export enum CloudCurrencyType {
-    GT = 99,   // GT
     KT = 100,  // KT
     ETH,       // ETH 
-    BTC       // BTC
+    BTC,       // BTC
+    GT
 }
 
 /**
