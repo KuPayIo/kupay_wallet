@@ -107,9 +107,9 @@ export const jumpPay = (order, okCb ? : Function, failCb ? : Function) => {
             sureText: { zh_Hans: '支付成功', zh_Hant: '支付成功', en: '' },
             cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
         }, () => {
-            queryPayState(order.oid, okCb, failCb);
+            okCb && okCb(order);
         }, () => {
-            jumpPay(order, okCb, failCb);
+            failCb && failCb();
         });
     }, 1000);
 };
