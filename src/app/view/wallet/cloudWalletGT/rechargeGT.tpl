@@ -6,6 +6,7 @@
         </div>
         <div w-class="body">
 
+
             {{% 充值金额输入}}
             <div w-class="body-top">
                 <div w-class="inner-tip">
@@ -20,37 +21,43 @@
                 </div>
                 <div w-class="input-father" ev-input-change="amountChange">
                     {{: inputPlace = {"zh_Hans":"输入金额","zh_Hant":"輸入金額","en":""} }}
-                    <div w-class="balance-value">≈￥0.00{{% {{it.currencyUnitSymbol+" "+it.amountShow}} </div>
+                    <div w-class="balance-value">≈{{it.currencyUnitSymbol+" "+it.total}} </div>
                     <app-components1-input-input>{itype:"number",placeHolder:{{inputPlace}},style:"padding:0;background:transparent;"}</app-components1-input-input>
                 </div>
             </div>
+
 
             {{% 选择支付方式}}
             <div w-class="body-center">
                 <widget w-class="select-title" w-tag="pi-ui-lang">{"zh_Hans":"选择支付方式","zh_Hant":"選擇支付方式","en":""}</widget>
                 <div w-class="select-body">
-                    <div w-class="select-item" style="border-bottom:1px solid #DBDBE5">
+
+
+                    {{% 微信支付}}
+                    <div w-class="select-item" on-tap="changPay(1)" style="border-bottom:1px solid #DBDBE5">
                         <div w-class="select-detail">
                             <img src="app/res/image/wxPay.png" width="60px"/>
                             <widget w-class="pay-name" w-tag="pi-ui-lang">{"zh_Hans":"微信支付","zh_Hant":"微信支付","en":""}</widget>
                         </div>
-                        <div w-class="select-round" on-tap="changPay(1)">
+                        <div w-class="select-round">
                             {{if it.payType ===1}}
-                                <img src="app/res/image/icon_right2.png" width="40px"/>
+                                <img src="app/res/image/icon_right2.png" width="42px"/>
                             {{else}}
                                 <div w-class="select-img"></div>
                             {{end}}
                         </div>
                     </div>
 
-                    <div w-class="select-item">
+
+                    {{% 支付宝支付}}
+                    <div w-class="select-item" on-tap="changPay(2)">
                         <div w-class="select-detail">
                             <img src="app/res/image/aliPay.png" width="60px"/>
                             <widget w-class="pay-name" w-tag="pi-ui-lang">{"zh_Hans":"支付宝支付","zh_Hant":"支付寶支付","en":""}</widget>
                         </div>
-                        <div w-class="select-round" on-tap="changPay(2)">
+                        <div w-class="select-round">
                             {{if it.payType ===2}}
-                                <img src="app/res/image/icon_right2.png" width="40px"/>
+                                <img src="app/res/image/icon_right2.png" width="42px"/>
                             {{else}}
                                 <div w-class="select-img"></div>
                             {{end}}
@@ -60,8 +67,9 @@
                 </div>
             </div>
 
+            
             {{% 支付按钮}}
-            <div w-class="body-bottom">
+            <div w-class="body-bottom" ev-btn-tap="rechargeClick">
                 <widget w-class="btn-tip" w-tag="pi-ui-lang">{"zh_Hans":"成功充值还能得KT奖励~","zh_Hant":"成功充值還能得KT獎勵〜","en":""}</widget>
                 {{let btnName = {"zh_Hans":"充值到云端","zh_Hant":"充值到雲端","en":""} }}
                 <app-components1-btn-btn>{name:{{btnName}},color:"blue",style:"width:90%;"}</app-components1-btn-btn>

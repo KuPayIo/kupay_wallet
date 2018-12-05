@@ -48,7 +48,11 @@ export class CloudHome extends Widget {
         if (!hasWallet()) return;
         const index = e.index;
         const v = this.state.assetList[index];
-        popNew('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
+        if (v.currencyName === 'GT') {
+            popNew('app-view-wallet-cloudWalletGT-home',{ currencyName:v.currencyName,gain:v.gain });
+        } else {
+            popNew('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
+        }
     }
     
     public updateProductList(productList:Product[]) {

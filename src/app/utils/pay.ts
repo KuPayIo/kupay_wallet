@@ -92,7 +92,6 @@ export const checkOrder = (order: OrderDetail): boolean => {
 /**
  * 跳转微信、支付宝支付
  * @param order 订单支付跳转信息
- * @param doReq 是否跳转支付url
  * @param okCb 成功回调
  * @param failCb 失败回调
  */
