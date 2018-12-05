@@ -1981,9 +1981,9 @@ pi_modules.update.exports = (function () {
 
 	module.needForceUpdate = function () {
 		var need = !!localStorage.getItem("$$nativeIsUpdating");
-		if (need) {
-			alert("上次版本还没有更新完毕，必须更新");
-		}
+		// if (need) {
+		// 	alert("上次版本还没有更新完毕，必须更新");
+		// }
 		return need;
 	}
 
@@ -2048,19 +2048,39 @@ pi_modules.update.exports = (function () {
 
 			remoteVersion = newVersion;
 
+			var updatedStr = getIndexUpdatedContent(indexJSStr);
+			// console.log("updatedStr = ",updatedStr);
+			pi_update.updated = JSON.parse(updatedStr);
+
 			var needUpdate = !!localStorage.getItem("$$nativeIsUpdating");
 			if (needUpdate) {
-				alert("上次版本还没有更新完毕，必须更新");
+				// alert("上次版本还没有更新完毕，必须更新");
+				pi_update.alert({
+					btnText:"更新未完成"
+				},function(){
+					okCB(needUpdate);
+				});
 			} else if (oldVersion[0] !== newVersion[0] || oldVersion[1] !== newVersion[1]) {
 				// 第一，第二版本号 不同，必须强制更新
 				needUpdate = true;
-				alert("版本有重大变化，必须更新");
+				// alert("版本有重大变化，必须更新");
+				pi_update.alert({
+					btnText:"版本有重大变化"
+				},function(){
+					okCB(needUpdate);
+				});
 			} else if (oldVersion[2] !== newVersion[2]) {
 				// 第三版本号 不同，提示用户更新
-				needUpdate = confirm("有新的版本，需要更新吗？");
+				// needUpdate = confirm("有新的版本，需要更新吗？");
+				pi_update.confirm(function(ok){
+					needUpdate = ok;
+					var cancelUpdate = !ok;
+					okCB(needUpdate,cancelUpdate);
+				});
+			}else{
+				pi_update.closePop();
+				okCB(needUpdate);
 			}
-
-			okCB(needUpdate);
 		}, function () {
 			// 取不到index.js，用拦截即可
 		});
@@ -2091,13 +2111,23 @@ pi_modules.update.exports = (function () {
 
 	function finishUpdate() {
 
-		alert("更新成功，即将进入新版本");
+		// alert("更新成功，即将进入新版本");
+		pi_update.alert({
+			btnText:"更新完毕"
+		},function(){
+			pi_update.closePop();
+			// 清除标记
+			localStorage.removeItem("$$nativeIsUpdating");
 
-		// 清除标记
-		localStorage.removeItem("$$nativeIsUpdating");
+			// 重启
+			JSIntercept.restartApp();
+		});
 
-		// 重启
-		JSIntercept.restartApp();
+		// // 清除标记
+		// localStorage.removeItem("$$nativeIsUpdating");
+
+		// // 重启
+		// JSIntercept.restartApp();
 	}
 
 	function saveBootFiles(files, callback) {
@@ -2182,6 +2212,17 @@ pi_modules.update.exports = (function () {
 		return [result[1], result[2], result[3], result[4]];
 	}
 
+	// 取indexjs的更新内容数组
+	function getIndexUpdatedContent(indexJS) {
+		// 第二行是：// !updated=["支持Dapp","交易功能稳定123","优化加载速度123","全新界面UI，全新体验","修复账户相关bug"]
+		var regex = /\/\/\s*!updated=(.*)/;
+		var result = indexJS.match(regex);
+		if (!result) {
+			throw new Error('index.js must have updated at second line, format like: // !updated=["支持Dapp","交易功能稳定"]');
+		}
+		return result[1];
+	}
+
 	function arrayBufferToBase64(buffer) {
 		var binary = '';
 		var bytes = new Uint8Array(buffer);
@@ -2227,3 +2268,103 @@ self.onerror = winit.debug ? undefined : (function () {
 	};
 })();
 winit.init();
+
+
+var pi_update = pi_update || {};
+
+// option = {
+// 	btnText
+// }
+
+pi_update.modifyContent = function(){
+	var modified = pi_update.contentModified;
+	if(!modified){
+		var updateMod = pi_modules.update.exports;
+		var versionArr = updateMod.getRemoteVersion();
+		versionArr.pop();
+		var newVersion = versionArr.join(".");
+		var $version = document.querySelector("#pi-version");
+		$version.innerHTML = newVersion;
+		var $items = document.querySelector(".pi-update-items");
+		for(var i = 0;i < pi_update.updated.length;i++){
+			var $item = document.createElement("div");
+			$item.setAttribute("class","pi-update-item");
+			$item.innerHTML = (i + 1) + "、" + pi_update.updated[i];
+			$items.appendChild($item);
+		}
+		pi_update.contentModified = true;
+	}
+}
+
+// 确定弹框
+pi_update.confirm = function(callback){
+	pi_update.modifyContent();
+	var $btns = document.querySelector(".pi-update-btns");
+	var $cancel = document.querySelector(".pi-update-cancel-btn");
+	var $ok = document.querySelector(".pi-update-ok-btn");
+	$cancel.addEventListener("click",function(){
+		var $updateRoot = document.querySelector('#update-root');
+		$updateRoot.style.display = "none";
+		callback(false);
+	});
+	$ok.addEventListener("click",function(){
+		callback(true);
+	});
+
+	$btns.style.display = "display";
+	// 显示弹框
+	var $updateRoot = document.querySelector('#update-root');
+	$updateRoot.style.display = "block";
+}
+
+//e的数据结构{type: "saveFile", total: 4, count: 1}
+// 进度条更新
+pi_update.updateProgress = function(e){
+	var updating  = pi_update.updating;
+	if(!updating){
+		var $btns = document.querySelector(".pi-update-btns");
+		var $progressContainer = document.querySelector(".pi-update-progress-container");
+		var $completeBtn = document.querySelector(".pi-update-complete-btn");
+		$btns.style.display = "none";
+		$progressContainer.style.display = "block";
+		$completeBtn.style.display = "none";
+		pi_update.updating = true;
+	}
+	
+	
+	var $progress = document.querySelector(".pi-update-progress");
+	var $progressText = document.querySelector(".pi-update-progress-text");
+	var percent = e.count / e.total;
+	var percentText = parseInt(percent * 100) + "%";
+	console.log("percentText = ",percentText);
+	$progress.style.width = percentText;
+	$progressText.innerHTML = percentText;
+}
+
+
+// alert弹框
+pi_update.alert = function(option,completeCB){
+	pi_update.modifyContent();
+	var $updateRoot = document.querySelector('#update-root');
+	var $btns = document.querySelector(".pi-update-btns");
+	var $progressContainer = document.querySelector(".pi-update-progress-container");
+	var $completeBtn = document.querySelector(".pi-update-complete-btn");
+	
+	$completeBtn.addEventListener("click",function(){
+		completeCB();
+	});
+
+	$updateRoot.style.display = "block";
+	$btns.style.display = "none";
+	$progressContainer.style.display = "none";
+	$completeBtn.innerHTML = option.btnText;
+	$completeBtn.style.display = "flex";
+}
+
+// 关闭弹框
+pi_update.closePop = function(){
+	var $updateRoot = document.querySelector('#update-root');
+	var $body = document.querySelector("body");
+	$body.removeChild($updateRoot);
+}
+

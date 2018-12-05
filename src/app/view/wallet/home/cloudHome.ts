@@ -41,6 +41,7 @@ export class CloudHome extends Widget {
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
+        // console.log('updateTest');
     }
 
     // 条目点击

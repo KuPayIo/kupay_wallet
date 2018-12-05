@@ -70,7 +70,6 @@
         display: flex;
         justify-content: center;
 		align-items: center;
-		display: none;
       }
       .pi-update-box {
         background-color: #fff;
@@ -110,7 +109,6 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        display: none;
       }
       .pi-update-cancel-btn {
         width: 220px;
@@ -151,7 +149,7 @@
         margin-bottom: 10px;
       }
       .pi-update-progress {
-        width: 50%;
+        width: 0%;
         height: 11px;
         background: rgba(49, 141, 230, 1);
         border-radius: 10px;
@@ -172,6 +170,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+		display: none;
       }
       @-webkit-keyframes bounceInUp {
         from,
@@ -440,8 +439,7 @@
 
 			// winit.severIp = "47.244.29.209";
 			// winit.severPort = "80";
-
-
+			
 			var defaultDomains;
 			var remoteDomains = [
 				"http://" + winit.severIp + ":" + winit.severPort,
@@ -667,26 +665,21 @@
 		<div class="pi-update-box animated bounceInUp">
 			<img src="../res/image1/rocket.png" class="pi-update-rocket" />
 			<div class="pi-update-content">
-			<div class="pi-update-title">发现新版本：V<span id="pi-version">0.1.6</span></div>
+			<div class="pi-update-title">发现新版本：V<span id="pi-version"></span></div>
 			<div class="pi-update-items">
-				<div class="pi-update-item">1、支持Dapp</div>
-				<div class="pi-update-item">2、交易功能稳定</div>
-				<div class="pi-update-item">3、优化加载速度</div>
-				<div class="pi-update-item">4、全新界面UI，全新体验</div>
-				<div class="pi-update-item">5、修复账户相关bug</div>
 			</div>
 			</div>
 			<div class="pi-update-btns">
-			<div class="pi-update-cancel-btn">取消</div>
-			<div class="pi-update-ok-btn">确定</div>
+				<div class="pi-update-cancel-btn">取消</div>
+				<div class="pi-update-ok-btn">确定</div>
 			</div>
 			<div class="pi-update-progress-container">
 			<div class="pi-update-progress-bg">
 				<div class="pi-update-progress"></div>
 			</div>
-			<div class="pi-update-progress-text">50%</div>
+			<div class="pi-update-progress-text">0%</div>
 			</div>
-			<div class="pi-update-complete-btn">更新完毕</div>
+			<div class="pi-update-complete-btn"></div>
 		</div>
 	</div>
 	</div>
@@ -694,50 +687,6 @@
 </body>
 <script src="./swiper.min.js"></script>
 <script type="text/javascript">
-// (function(){
-// 	var cfg = {
-//     width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
-// };
-
-// var browserAdaptive = function() {
-//     // if (!root) {
-//     //     return;
-//     // }
-//     var clientWidth = document.documentElement.clientWidth;
-//     var clientHeight = document.documentElement.clientHeight;
-//     oldHeight = clientHeight;
-//     rootWidth = cfg.width;
-//     rootHeight = cfg.height;
-//     let scaleW = clientWidth / rootWidth;
-//     let scaleH = clientHeight / rootHeight;
-//     if (cfg.wscale >= cfg.hscale) {
-//         // 宽度比例变动
-//         if (scaleW > scaleH * (cfg.wscale + 1)) {
-//             // 大于规定的比例
-//             rootWidth = rootWidth * (cfg.wscale + 1) | 0;
-//         } else {
-//             rootWidth = (clientWidth / scaleH) | 0;
-//         }
-//         rootScale = scaleW = scaleH;
-//     } else {
-//         // 高度比例变动
-//         if (scaleH > scaleW * (cfg.hscale + 1)) {
-//             rootHeight = rootHeight * (cfg.hscale + 1) | 0;
-//         } else {
-//             rootHeight = (clientHeight / scaleW) | 0;
-//         }
-//         rootScale = scaleH = scaleW;
-//     }
-//     rootX = (clientWidth - rootWidth) / 2;
-//     rootY = (clientHeight - rootHeight) / 2;
-// 	var cssText = 'z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
-// 	var rootSwiper = document.querySelector('#update-root');
-// 	rootSwiper.style.cssText = cssText;
-// };
-
-// browserAdaptive();
-// })();
-
 console.time('home enter');
 setTimeout(() => {
 	var mySwiper = new Swiper('.swiper-container', {
@@ -759,4 +708,50 @@ btnStart.onclick = function(){
 	document.body.removeChild(document.querySelector('#swiper-container'));
 }
 </script>
+<!--弹框适配-->
+<script>
+(function(){
+	var cfg = {
+    width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+};
+
+var browserAdaptive = function() {
+    var clientWidth = document.documentElement.clientWidth;
+    var clientHeight = document.documentElement.clientHeight;
+    oldHeight = clientHeight;
+    rootWidth = cfg.width;
+    rootHeight = cfg.height;
+    let scaleW = clientWidth / rootWidth;
+    let scaleH = clientHeight / rootHeight;
+    if (cfg.wscale >= cfg.hscale) {
+        // 宽度比例变动
+        if (scaleW > scaleH * (cfg.wscale + 1)) {
+            // 大于规定的比例
+            rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+        } else {
+            rootWidth = (clientWidth / scaleH) | 0;
+        }
+        rootScale = scaleW = scaleH;
+    } else {
+        // 高度比例变动
+        if (scaleH > scaleW * (cfg.hscale + 1)) {
+            rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+        } else {
+            rootHeight = (clientHeight / scaleW) | 0;
+        }
+        rootScale = scaleH = scaleW;
+    }
+    rootX = (clientWidth - rootWidth) / 2;
+    rootY = (clientHeight - rootHeight) / 2;
+	var cssText = 'display:none;z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+	var rootUpdate = document.querySelector('#update-root');
+	rootUpdate.style.cssText = cssText;
+};
+
+browserAdaptive();
+})();
+
+</script>
+<!--弹框适配-->
+
 </html>

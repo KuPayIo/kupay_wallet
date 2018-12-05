@@ -26,6 +26,7 @@ export class WalletHome extends Widget {
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
+        // console.log('updateTest');
     }
 
     public updateBalance() {

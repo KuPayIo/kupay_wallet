@@ -40,6 +40,7 @@ export class Home extends Widget {
             currencyUnitSymbol:''
         };
         this.paint();
+        // console.log('updateTest');
     }
 
     public dataInit() {

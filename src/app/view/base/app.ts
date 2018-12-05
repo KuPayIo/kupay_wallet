@@ -80,6 +80,7 @@ export class App extends Widget {
             tabBarList: []
         };
         this.setList();
+        // console.log('updateTest');
     }
 
     public setList() {
