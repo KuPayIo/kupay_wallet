@@ -12,7 +12,7 @@ interface Props {
     fragments:any[];
 }
 export class ShareMnemonic extends Widget {
-    public props:Props;
+    public props:any;
     public language:any;
     public ok:() => void;
     public backPrePage() {
@@ -26,12 +26,12 @@ export class ShareMnemonic extends Widget {
     public init() {
         const len = this.props.fragments.length;
         const encryptFragments = mnemonicFragmentEncrypt(this.props.fragments);
-        console.log(encryptFragments);
         const successList = [];
         for (let i = 0;i < len;i ++) {
             successList[i] = false;
         }
-        this.state = {
+        this.props = {
+            ...this.props,
             encryptFragments,
             successList,
             walletName:getModulConfig('WALLET_NAME')
@@ -39,9 +39,9 @@ export class ShareMnemonic extends Widget {
     }
     // 分享
     public shareItemClick(e:any,index:number) {
-        const fragment = this.state.encryptFragments[index];
+        const fragment = this.props.encryptFragments[index];
         popNew('app-components-share-share',{ text:fragment,shareType:ShareToPlatforms.TYPE_IMG },(success) => {
-            this.state.successList[index] = true;
+            this.props.successList[index] = true;
             this.paint();
             this.allShared();
         });
@@ -49,8 +49,8 @@ export class ShareMnemonic extends Widget {
 
     public allShared() {
         let allShared = true;
-        for (let i = 0;i < this.state.successList.length;i++) {
-            if (!this.state.successList[i]) {
+        for (let i = 0;i < this.props.successList.length;i++) {
+            if (!this.props.successList[i]) {
                 allShared = false;
             }
         }

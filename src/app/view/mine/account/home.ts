@@ -7,10 +7,10 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
-import { uploadFile, getUserInfo } from '../../../net/pull';
+import { uploadFile } from '../../../net/pull';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { walletNameAvailable } from '../../../utils/account';
-import { popNewMessage, popPswBox } from '../../../utils/tools';
+import { getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

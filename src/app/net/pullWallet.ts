@@ -17,7 +17,7 @@ import { getStore, setStore } from '../store/memstore';
 import { erc20GasLimitRate, shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx, getCurrentEthAddr } from '../utils/tools';
+import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
@@ -40,13 +40,11 @@ export interface TxPayload3 {
     data:string;
 }
 
-
 /**
  * 供其他的webview调用
  */
 export const rpcProviderSendAsync = (payload, callback) => {
     initWeb3();    
-    
     if (payload.method === 'eth_accounts') {
         let addr = getCurrentEthAddr();
         addr = addr ? [addr] : [];
@@ -83,8 +81,6 @@ export const rpcProviderSendAsync = (payload, callback) => {
         }
     }
 };
-
-
 
 /**
  * 普通转账

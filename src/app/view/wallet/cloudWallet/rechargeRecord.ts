@@ -20,7 +20,7 @@ interface Props {
     isActive:boolean;
 }
 export class RechargeRecord extends Widget {
-    public props:Props;
+    public props:any;
     public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
@@ -32,22 +32,23 @@ export class RechargeRecord extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
-        this.state = {
+        this.props = {
+            ...this.props,
             recordList:[],
             nextStart:rechargeLogs.start,
             canLoadMore:rechargeLogs.canLoadMore,
             isRefreshing:false
         };
-        this.state.recordList = this.parseRecordList(rechargeLogs.list);
+        this.props.recordList = this.parseRecordList(rechargeLogs.list);
     }
     public updateRecordList() {
-        if (!this.state) return;
+        if (!this.props) return;
         const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
         const list = rechargeLogs.list;
-        this.state.nextStart = rechargeLogs.start;
-        this.state.canLoadMore = rechargeLogs.canLoadMore;
-        this.state.recordList = this.parseRecordList(list);
-        this.state.isRefreshing = false;
+        this.props.nextStart = rechargeLogs.start;
+        this.props.canLoadMore = rechargeLogs.canLoadMore;
+        this.props.recordList = this.parseRecordList(list);
+        this.props.isRefreshing = false;
         this.paint();
     }
     // tslint:disable-next-line:typedef
@@ -67,7 +68,7 @@ export class RechargeRecord extends Widget {
     }
 
     public updateTransaction() {
-        const list = this.state.recordList;
+        const list = this.props.recordList;
         list.forEach(item => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
@@ -76,21 +77,21 @@ export class RechargeRecord extends Widget {
         this.paint();
     }
     public loadMore() {
-        getRechargeLogs(this.props.currencyName,this.state.nextStart);
+        getRechargeLogs(this.props.currencyName,this.props.nextStart);
     }
     public getMoreList() {
         const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
         const h2 = document.getElementById('recharge-content-container').offsetHeight; 
         const scrollTop = document.getElementById('recharge-scroller-container').scrollTop; 
-        if (this.state.canLoadMore && !this.state.isRefreshing && (h2 - h1 - scrollTop) < 20) {
-            this.state.isRefreshing = true;
+        if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
+            this.props.isRefreshing = true;
             this.paint();
             console.log('加载中，请稍后~~~');
             this.loadMore();
         } 
     }
     public recordListItemClick(e:any,index:number) {
-        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.state.recordList[index].hash });
+        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.props.recordList[index].hash });
     }
 }
 

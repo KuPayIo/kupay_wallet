@@ -43,7 +43,8 @@ export class Transfer extends Widget {
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
         const tx = this.props.tx;
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
-        this.state = {
+        this.props = {
+            ...this.props,
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             toAddr:tx ? tx.toAddr : '',
             amount:tx ? tx.pay : 0,
@@ -60,8 +61,8 @@ export class Transfer extends Widget {
 
     public updateMinerFeeList() {
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
-        this.state.minerFeeList = minerFeeList;
-        this.state.minerFee = minerFeeList[this.state.curLevel].minerFee;
+        this.props.minerFeeList = minerFeeList;
+        this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
         this.paint();
     }
     public backPrePage() {
@@ -74,72 +75,72 @@ export class Transfer extends Widget {
     public chooseMinerFee() {
         popNew('app-components-allModalBox-chooseModalBox',{ 
             currencyName:this.props.currencyName,
-            minerFeeList:this.state.minerFeeList,
-            curLevel:this.state.curLevel,
-            minLevel:this.state.minLevel },(index) => {
-                this.state.curLevel = this.state.minerFeeList[index].level;
-                this.state.minerFee = this.state.minerFeeList[index].minerFee;
+            minerFeeList:this.props.minerFeeList,
+            curLevel:this.props.curLevel,
+            minLevel:this.props.minLevel },(index) => {
+                this.props.curLevel = this.props.minerFeeList[index].level;
+                this.props.minerFee = this.props.minerFeeList[index].minerFee;
                 this.paint();
             });
     }
     // 收款地址变化
     public toAddrChange(e:any) {
-        this.state.toAddr = e.value;
+        this.props.toAddr = e.value;
         this.paint();
     }
 
     // 转账金额变化
     public amountChange(e:any) {
-        this.state.amount = e.value;
+        this.props.amount = e.value;
         const amountShow = formatBalance(fetchBalanceValueOfCoin(this.props.currencyName,e.value));
-        this.state.amountShow =  amountShow === 0 ? '0.00' :amountShow;
+        this.props.amountShow =  amountShow === 0 ? '0.00' :amountShow;
         this.paint();
     }
 
     // 转账
     public async nextClick() {
-        if (!this.state.toAddr) {
+        if (!this.props.toAddr) {
             popNew('app-components1-message-message', {  content: this.language.tips[0] });
 
             return;
         }
-        if (!Number(this.state.amount)) {
+        if (!Number(this.props.amount)) {
             popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
         }
 
         if (ERC20Tokens[this.props.currencyName]) {
-            if (this.state.balance < Number(this.state.amount) || this.state.minerFee > getCurrentAddrInfo('ETH').balance) {
+            if (this.props.balance < Number(this.props.amount) || this.props.minerFee > getCurrentAddrInfo('ETH').balance) {
                 popNew('app-components1-message-message', { content: this.language.tips[2] });
     
                 return;
             }
         } else {
-            if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
+            if (this.props.balance < Number(this.props.amount) + this.props.minerFee) {
                 popNew('app-components1-message-message', { content: this.language.tips[2] });
     
                 return;
             }
         }
         
-        if (!judgeAddressAvailable(this.props.currencyName,this.state.toAddr)) {
+        if (!judgeAddressAvailable(this.props.currencyName,this.props.toAddr)) {
             popNew('app-components1-message-message', {  content: this.language.tips[3] });
 
             return;
         }
 
-        const minerFeeLevel = this.state.curLevel;
+        const minerFeeLevel = this.props.curLevel;
         const currencyName = this.props.currencyName;
-        const fromAddr = this.state.fromAddr;
-        const toAddr = this.state.toAddr;
-        const pay = Number(this.state.amount);
+        const fromAddr = this.props.fromAddr;
+        const toAddr = this.props.toAddr;
+        const pay = Number(this.props.amount);
         const txPayload:TxPayload = {
             fromAddr,    
             toAddr,      
             pay,        
             currencyName,
-            fee:this.state.minerFee,            
+            fee:this.props.minerFee,            
             minerFeeLevel 
         };
         const passwd = await popPswBox();
@@ -175,7 +176,7 @@ export class Transfer extends Widget {
         if (this.props.tx) return;
         doScanQrCode((res) => {
             console.log(res);
-            this.state.toAddr = res;
+            this.props.toAddr = res;
             this.paint();
         });
     }

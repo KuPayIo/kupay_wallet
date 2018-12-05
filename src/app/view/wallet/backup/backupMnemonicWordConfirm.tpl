@@ -6,17 +6,17 @@
 			<pi-ui-lang>{"zh_Hans":"按序选择输入助记词","zh_Hant":"按序選擇輸入助記詞","en":""}</pi-ui-lang>
 		</div>
 		<div w-class="screen">
-			 {{for index,item of it1.nullMnemonic}}
+			 {{for index,item of it.nullMnemonic}}
 			 <span w-class="screenItem" on-tap="confirmedMnemonicItemClick(e,{{index}})" 
-			 style="{{index === 1 || index=== 4 || index === 7 || index === 10 ? 'margin:10px 10px 0;' : 'margin:10px 0 0;'}}{{it1.confirmedMnemonic[index] ? 'opacity: 1;' :'opacity: 0;'}}">
-			 {{ it1.confirmedMnemonic[index] && it1.confirmedMnemonic[index].word}}
+			 style="{{index === 1 || index=== 4 || index === 7 || index === 10 ? 'margin:10px 10px 0;' : 'margin:10px 0 0;'}}{{it.confirmedMnemonic[index] ? 'opacity: 1;' :'opacity: 0;'}}">
+			 {{ it.confirmedMnemonic[index] && it.confirmedMnemonic[index].word}}
 			 </span>
 			 {{end}}
 		</div>
 		
 		<div w-class="bottom-box">
 			<div w-class="itemsBox">
-				{{for index,item of it1.shuffledMnemonic}}
+				{{for index,item of it.shuffledMnemonic}}
 				<div w-class="item {{item.isActive ? 'checked' : ''}}" on-tap="shuffledMnemonicItemClick(e,{{index}})"  style="{{index === 1 || index=== 4 || index === 7 || index === 10 ? 'margin:10px 10px 0;' : 'margin:10px 0 0;'}}">
 					{{item.word}}
 				</div>

@@ -1,10 +1,10 @@
 /**
  * mnemonic backup confirm page
  */
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { deleteMnemonic } from '../../../logic/localWallet';
 import { popNewMessage, shuffle } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 
 interface Props {
     mnemonic: string;
@@ -13,9 +13,6 @@ interface Props {
 export class BackupMnemonicWordConfirm extends Widget {
     public ok: () => void;
     public language:any;
-    constructor() {
-        super();
-    }
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
         this.language = this.config.value[getLang()];
@@ -24,11 +21,12 @@ export class BackupMnemonicWordConfirm extends Widget {
     public init() {
         const mnemonic = this.props.mnemonic.split(' ');
         const shuffledMnemonic = this.initMnemonic(mnemonic);
-        this.state = {
+        this.props = {
+            ...this.props,
             mnemonic,
             nullMnemonic:[0,0,0,0,0,0,0,0,0,0,0,0],
             confirmedMnemonic: [],
-            shuffledMnemonic,
+            shuffledMnemonic
         };
     }
     
@@ -58,7 +56,7 @@ export class BackupMnemonicWordConfirm extends Widget {
     }
 
     public nextStepClick() {
-        if (this.state.confirmedMnemonic.length === 0) {
+        if (this.props.confirmedMnemonic.length === 0) {
             popNewMessage(this.language.tips[0]);
         } else if (!this.compareMnemonicEqualed()) {
             popNewMessage(this.language.tips[1]);
@@ -70,31 +68,31 @@ export class BackupMnemonicWordConfirm extends Widget {
     }
 
     public shuffledMnemonicItemClick(e: Event, v: number) {
-        const mnemonic = this.state.shuffledMnemonic[v];
+        const mnemonic = this.props.shuffledMnemonic[v];
         if (mnemonic.isActive) {
             mnemonic.isActive = false;
-            arryRemove(this.state.confirmedMnemonic, mnemonic);
+            arryRemove(this.props.confirmedMnemonic, mnemonic);
 
         } else {
             mnemonic.isActive = true;
-            this.state.confirmedMnemonic.push(mnemonic);
+            this.props.confirmedMnemonic.push(mnemonic);
         }
         this.paint();
     }
 
     public confirmedMnemonicItemClick(e: Event, v: number) {
-        if (v >= this.state.confirmedMnemonic.length) return;
-        const arr = this.state.confirmedMnemonic.splice(v, 1);
+        if (v >= this.props.confirmedMnemonic.length) return;
+        const arr = this.props.confirmedMnemonic.splice(v, 1);
         arr[0].isActive = false;
         this.paint();
     }
 
     private compareMnemonicEqualed(): boolean {
         let isEqualed = true;
-        const len = this.state.mnemonic.length;
-        if (this.state.confirmedMnemonic.length !== len) return false;
+        const len = this.props.mnemonic.length;
+        if (this.props.confirmedMnemonic.length !== len) return false;
         for (let i = 0; i < len; i++) {
-            if (this.state.confirmedMnemonic[i].word !== this.state.mnemonic[i]) {
+            if (this.props.confirmedMnemonic[i].word !== this.props.mnemonic[i]) {
                 isEqualed = false;
             }
         }

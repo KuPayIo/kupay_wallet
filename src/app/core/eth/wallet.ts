@@ -1,7 +1,7 @@
 /**
  * ETH wallet implementation
  */
-import { ERC20Tokens, DevMode } from '../../config';
+import { DevMode, ERC20Tokens } from '../../config';
 import { config } from '../config';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
@@ -17,7 +17,6 @@ export let web3;
 
 const LANGUAGES = { english: 0, chinese_simplified: 1, chinese_traditional: 2 };
 const DEFAULT_DERIVE_PATH = 'm/44\'/60\'/0\'/0/0';
-
 
 // currently use the default config
 export interface Transaction {
@@ -455,8 +454,9 @@ export class EthWallet {
 
 export const initWeb3 = () => {
     if (!web3) {
+        let ETH_API_BASE_URL;
         if (config.dev_mode === DevMode.Ropsten) {
-            var ETH_API_BASE_URL = config[DevMode.Ropsten].EthApiBaseUrl;
+            ETH_API_BASE_URL = config[DevMode.Ropsten].EthApiBaseUrl;
         } else if (config.dev_mode === DevMode.Rinkeby) {
             ETH_API_BASE_URL = config[DevMode.Rinkeby].EthApiBaseUrl;
         } else if (config.dev_mode === DevMode.Prod) {

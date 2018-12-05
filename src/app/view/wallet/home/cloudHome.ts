@@ -33,50 +33,47 @@ export class CloudHome extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         const color = getStore('setting/changeColor','redUp');
-        this.state = {
+        this.props = {
+            ...this.props,
             totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
             assetList:fetchCloudWalletAssetList(),
             productList:getStore('activity/financialManagement/products',[]),
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
-        this.paint();
+        // console.log('updateTest');
     }
 
     // 条目点击
     public itemClick(e:any) {
         if (!hasWallet()) return;
         const index = e.index;
-        const v = this.state.assetList[index];
-        if (v.currencyName === 'GT') {
-            popNew('app-view-wallet-cloudWalletGT-home',{ currencyName:v.currencyName,gain:v.gain });
-        } else {
-            popNew('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
-        }
+        const v = this.props.assetList[index];
+        popNew('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
     }
     
     public updateProductList(productList:Product[]) {
-        this.state.productList = productList;
+        this.props.productList = productList;
         this.paint();
     }
     
     public updateBalance() {
-        this.state.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
-        this.state.assetList = fetchCloudWalletAssetList();
+        this.props.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
+        this.props.assetList = fetchCloudWalletAssetList();
         this.paint();
     }
     public optimalClick() {
         popNew('app-view-wallet-financialManagement-home');
     }
     public fmItemClick(e:any,index:number) {
-        const product = this.state.productList[index];
+        const product = this.props.productList[index];
         popNew('app-view-wallet-financialManagement-productDetail',{ product });
     }
 
     public currencyUnitChange() {
-        this.state.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
-        this.state.assetList = fetchCloudWalletAssetList();
-        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.props.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
+        this.props.assetList = fetchCloudWalletAssetList();
+        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
 }
@@ -118,12 +115,14 @@ register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+        w.paint();
     }
 });
 register('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+        w.paint();
     }
 });
 

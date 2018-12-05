@@ -24,41 +24,37 @@
         <div w-class="main">
             <div w-class="item1">
                 {{: phrase = [
-                    {"zh_Hans":"充值金额","zh_Hant":"充值金額","en":""},
+                    {"zh_Hans":"充值数量","zh_Hant":"充值數量","en":""},
                     {"zh_Hans":"余额：","zh_Hant":"餘額：","en":""},
                     {"zh_Hans":"到账速度","zh_Hant":"到賬速度","en":""},
                     {"zh_Hans":"矿工费","zh_Hant":"礦工費","en":""},
                     {"zh_Hans":"余额不足","zh_Hant":"餘額不足","en":""}] }}
-                <div w-class="inner-tip">
-                    <span style="position:relative">
-                        <img src="app/res/image/currency/{{it.currencyName}}.png" width="32px" w-class="input-icon"/>
-                        <widget w-tag="pi-ui-lang" style="padding-left:40px">{{phrase[0]}}</widget>
-                    </span>
-                    <span w-class="balance"><pi-ui-lang>{{phrase[1]}}</pi-ui-lang>&nbsp;{{it1.balance%1===0?it1.balance.toFixed(2):it1.balance}}</span>
-                </div>
+                <div w-class="inner-tip"><pi-ui-lang>{{phrase[0]}}</pi-ui-lang><span w-class="balance"><pi-ui-lang>{{phrase[1]}}</pi-ui-lang>&nbsp;{{it.balance%1===0?it.balance.toFixed(2):it.balance}}</span></div>
                 <div w-class="input-father" ev-input-change="amountChange">
                     {{: inputPlace = {"zh_Hans":"输入金额","zh_Hant":"輸入金額","en":""} }}
-                    <div w-class="balance-value">≈{{it1.currencyUnitSymbol+" "+it1.amountShow}}</div>
-                    <app-components1-input-input>{itype:"number",placeHolder:{{inputPlace}},style:"padding:0;background:transparent;",input:{{it1.amount}},disabled:{{it1.inputDisabled}}}</app-components1-input-input>
+                    <app-components1-input-input>{itype:"number",placeHolder:{{inputPlace}},style:"padding:0;",input:{{it.amount}},disabled:{{it.inputDisabled}}}</app-components1-input-input>
                 </div>
             </div>
-            <div w-class="item1" style="border:none;">
+            <div w-class="item1">
                 <div w-class="inner-tip" >
-                    <pi-ui-lang>{{phrase[2]}}</pi-ui-lang>
-                    <span w-class="speed" on-tap="chooseMinerFee">
-                        <widget w-tag="pi-ui-lang" style="margin-right:10px;">{{it1.minerFeeList[it1.curLevel].text}}</widget>
-                        <img src="../../../res/image/down_arrow_gray.png" w-class="input-icon" width="32px" style="translateX(-50%)"/>
-                    </span>
+                    <div>
+                            <pi-ui-lang>{{phrase[2]}}</pi-ui-lang>
+                        <span w-class="speed">
+                            <pi-ui-lang>{{it.minerFeeList[it.curLevel].text}}</pi-ui-lang>
+                        </span>
+                    </div>
+                    <img src="../../../res/image/41_gray.png" on-tap="speedDescClick" style="border: 20px solid transparent;margin: -20px;width: 32px;"/>
+                </div>
+                <div w-class="speed-time">
+                    <pi-ui-lang>{{it.minerFeeList[it.curLevel].time}}</pi-ui-lang>
                 </div>
             </div>
-            <div w-class="choose-fee">
-                <widget w-tag="pi-ui-lang" style="margin-right:10px;">{{phrase[3]}}</widget>
-                <span w-class="fee">{{it1.minerFee+it.currencyName}}</span>
-                <img src="../../../res/image/41_gray.png" on-tap="speedDescClick" style="border: 20px solid transparent;margin: -20px;width: 32px;transform: translateY(5%);"/>
-                
+            <div w-class="choose-fee" on-tap="chooseMinerFee">
+                    <pi-ui-lang>{{phrase[3]}}</pi-ui-lang>
+                <div w-class="fees"><span w-class="fee">{{it.minerFee+it.currencyName}}</span><img src="../../../res/image/right_arrow_blue.png"/></div>
             </div>
             <div w-class="bottom-container">
-                {{if it1.balance <= it1.amount + it1.minerFee}}
+                {{if it.balance <= it.amount + it.minerFee}}
                 <div w-class="tip"><pi-ui-lang>{{phrase[4]}}</pi-ui-lang></div>
                 {{end}}
                 <div ev-btn-tap="nextClick" w-class="btn">

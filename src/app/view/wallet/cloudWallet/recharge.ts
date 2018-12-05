@@ -10,7 +10,7 @@ import { recharge, resendRecharge } from '../../../net/pullWallet';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchMinerFeeList, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -23,7 +23,7 @@ interface Props {
     tx?:TxHistory;
 }
 export class Recharge extends Widget {
-    public props:Props;
+    public props:any;
     public ok:() => void;
     public language:any;
     public setProps(props:Props,oldProps:Props) {
@@ -41,7 +41,8 @@ export class Recharge extends Widget {
         const tx = this.props.tx;
         console.log(tx);
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
-        this.state = {
+        this.props = {
+            ...this.props,
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             amount:tx ? tx.pay : 0,
             balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
@@ -49,16 +50,14 @@ export class Recharge extends Widget {
             minerFeeList,
             curLevel,
             minLevel:curLevel,
-            amountShow:'0.00',
-            currencyUnitSymbol:getCurrencyUnitSymbol(),
             inputDisabled:tx ? true : false
         };
         
     }
     public updateMinerFeeList() {
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
-        this.state.minerFeeList = minerFeeList;
-        this.state.minerFee = minerFeeList[this.state.curLevel].minerFee;
+        this.props.minerFeeList = minerFeeList;
+        this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
         this.paint();
     }
     public backPrePage() {
@@ -70,9 +69,7 @@ export class Recharge extends Widget {
 
      // 提币金额变化
     public amountChange(e:any) {
-        this.state.amount = e.value;
-        const amountShow = formatBalance(fetchBalanceValueOfCoin(this.props.currencyName,e.value));
-        this.state.amountShow =  amountShow === 0 ? '0.00' :amountShow;
+        this.props.amount = e.value;
         this.paint();
     }
 
@@ -80,32 +77,32 @@ export class Recharge extends Widget {
     public chooseMinerFee() {
         popNew('app-components-allModalBox-chooseModalBox',{ 
             currencyName:this.props.currencyName,
-            minerFeeList:this.state.minerFeeList,
-            curLevel:this.state.curLevel,
-            minLevel:this.state.minLevel },(index) => {
-                this.state.curLevel = this.state.minerFeeList[index].level;
-                this.state.minerFee = this.state.minerFeeList[index].minerFee;
+            minerFeeList:this.props.minerFeeList,
+            curLevel:this.props.curLevel,
+            minLevel:this.props.minLevel },(index) => {
+                this.props.curLevel = this.props.minerFeeList[index].level;
+                this.props.minerFee = this.props.minerFeeList[index].minerFee;
                 this.paint();
             });
     }
 
     // 转账
     public async nextClick() {
-        if (!this.state.amount) {
+        if (!this.props.amount) {
             popNewMessage(this.language.tips[0]);
 
             return;
         }
 
-        if (this.state.balance < Number(this.state.amount) + this.state.minerFee) {
+        if (this.props.balance < Number(this.props.amount) + this.props.minerFee) {
             popNewMessage(this.language.tips[1]);
 
             return;
         }
-        const minerFeeLevel = this.state.curLevel;
+        const minerFeeLevel = this.props.curLevel;
         const currencyName = this.props.currencyName;
-        const fromAddr = this.state.fromAddr;
-        const pay = Number(this.state.amount);
+        const fromAddr = this.props.fromAddr;
+        const pay = Number(this.props.amount);
         const passwd = await popPswBox();
         if (!passwd) return;
         const t = new Date();
@@ -122,7 +119,7 @@ export class Recharge extends Widget {
             needConfirmedBlockNumber:0,
             info: '',
             currencyName: currencyName,
-            fee: this.state.minerFee,
+            fee: this.props.minerFee,
             nonce:oldTx && oldTx.nonce,
             minerFeeLevel,
             addr:fromAddr

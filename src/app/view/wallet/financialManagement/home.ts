@@ -22,13 +22,9 @@ export class Home extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
-    public create() {
-        super.create();
-        this.init();
-    }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.state.activeNum = props.activeNum;
+        this.init();
         getProductList();
         if (getStore('user/id')) {
             getPurchaseRecord();
@@ -37,7 +33,8 @@ export class Home extends Widget {
     }
     public init() {
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
+            ...this.props,
             tabs:[{
                 tab:this.language.tabs[0],
                 components:'app-view-wallet-financialManagement-recommendFM'
@@ -45,29 +42,28 @@ export class Home extends Widget {
                 tab:this.language.tabs[1],
                 components:'app-view-wallet-financialManagement-holdedFM'
             }],
-            activeNum:0,
             avatar:'',
             totalAsset:formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets()),
             refreshing:false
         };
     }
     public tabsChangeClick(event: any, value: number) {
-        this.state.activeNum = value;
+        this.props.activeNum = value;
         this.paint();
     }
 
     public refreshClick() {
-        this.state.refreshing = true;
+        this.props.refreshing = true;
         this.paint();
-        if (this.state.activeNum === 0) {
+        if (this.props.activeNum === 0) {
             getProductList().then(() => {
-                this.state.refreshing = false;
+                this.props.refreshing = false;
                 console.log('getProductList refresh');
                 this.paint();
             });
         } else {
             getPurchaseRecord().then(() => {
-                this.state.refreshing = false;
+                this.props.refreshing = false;
                 console.log('getPurchaseRecord refresh');
                 this.paint();
             });

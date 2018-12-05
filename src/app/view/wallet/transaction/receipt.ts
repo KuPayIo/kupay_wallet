@@ -12,7 +12,7 @@ interface Props {
 }
 export class Receipt extends Widget {
     public ok:() => void;
-    public props:Props;
+    public props:any;
     public language:any;
     public backPrePage() {
         this.ok && this.ok();
@@ -23,13 +23,14 @@ export class Receipt extends Widget {
     }
     public init() {
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
+            ...this.props,
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName)
         };
     }
 
     public copyClick() {
-        copyToClipboard(this.state.fromAddr);
+        copyToClipboard(this.props.fromAddr);
         popNewMessage(this.language.tips[0]);
     }
 

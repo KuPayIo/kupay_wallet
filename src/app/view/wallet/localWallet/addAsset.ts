@@ -17,12 +17,12 @@ export class AddAsset extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         const assetList = fetchWalletAssetListAdded();
-        this.state = {
+        this.props = {
             assetList,
             searchText:'',
             showAssetList:assetList
         };
-        console.log(this.state);
+        console.log(this.props);
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -32,7 +32,7 @@ export class AddAsset extends Widget {
      */
     public onSwitchChange(e: any, index: number) {
         const added = e.newType;
-        const currencys = this.state.showAssetList[index];
+        const currencys = this.props.showAssetList[index];
         currencys.added = added;
         this.paint();
 
@@ -54,18 +54,18 @@ export class AddAsset extends Widget {
     }
 
     public searchTextChange(e:any) {
-        this.state.searchText = e.value;
-        if (this.state.searchText) {
+        this.props.searchText = e.value;
+        if (this.props.searchText) {
             // tslint:disable-next-line:max-line-length
-            this.state.showAssetList = this.state.assetList.filter(v => v.currencyName.toLowerCase().indexOf(this.state.searchText.toLowerCase()) >= 0);
+            this.props.showAssetList = this.props.assetList.filter(v => v.currencyName.toLowerCase().indexOf(this.props.searchText.toLowerCase()) >= 0);
         } else {
-            this.state.showAssetList = this.state.assetList;
+            this.props.showAssetList = this.props.assetList;
         }
         this.paint();
     }
 
     public searchTextClear() {
-        this.state.showAssetList = this.state.assetList;
+        this.props.showAssetList = this.props.assetList;
         this.paint();
     }
     

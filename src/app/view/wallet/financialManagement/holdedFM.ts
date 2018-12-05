@@ -1,8 +1,6 @@
 /**
  * HoldedFM
  */
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPurchaseRecord } from '../../../net/pull';
@@ -18,33 +16,20 @@ interface Props {
     isActive:boolean;
 }
 export class HoldedFM extends Widget {
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
-        this.state = {
-            purchaseRecord:[]
-        };
         if (this.props.isActive && getStore('user/conUid')) {
             getPurchaseRecord();
         }
     }
-
-    public updatePurchaseRecord(purchaseRecord:PurchaseHistory[]) {
-        this.state.purchaseRecord = purchaseRecord;
-        this.paint();
-    }
-
 }
 
 // =====================================本地
-register('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updatePurchaseRecord(purchaseRecord);
-    }
-    
+const localState:any = {};
+register('activity/financialManagement/purchaseHistories', (purchaseRecord:PurchaseHistory) => {
+    localState.purchaseRecord = purchaseRecord;
+    forelet.paint(localState);
 });

@@ -10,10 +10,9 @@ import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { register } from '../../../store/memstore';
-import { hasWallet, popNewMessage } from '../../../utils/tools';
+import { getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
 
 import { WebViewManager } from '../../../../pi/browser/webview';
-import { getUserInfo } from '../../../net/pull';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -51,12 +50,14 @@ export class PlayHome extends Widget {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
             this.props.refresh = false;
         }
+        // http://fishing.rinkeby.cchaingames.com/
+        // http://47.244.59.13/web-rinkeby/index.html
         this.props.gameList = [
             {
                 title:'Crypto Fishing',
                 desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
                 img:'app/res/image1/game2.jpg',
-                url:'http://47.244.59.13/web-rinkeby/index.html'
+                url:'http://fishing.rinkeby.cchaingames.com/'
             },
             {
                 title:{ zh_Hans:'迷失之城',zh_Hant:'迷失之城',en:'' },
@@ -75,19 +76,6 @@ export class PlayHome extends Widget {
 
     public backPrePage() {
         this.ok && this.ok();
-    }
-
-    public enterGames1Click() {
-        openNewActivity('http://39.104.203.151/game/boot/index.html');
-    }
-
-    public enterGames2Click() {
-        if (!hasWallet()) return;
-        const gameTitle = 'Crypto Fishing';
-        const gameUrl = 'http://47.244.59.13/web-rinkeby/index.html';
-        this.web3Promise.then(content => {
-            WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
-        });
     }
 
     public getCode(event:any) {
