@@ -41,13 +41,6 @@ export class App extends Widget {
             old: this.old,
             loading,
             allTabBar: {
-                test: {
-                    modulName: 'APP_TEST',
-                    text: { zh_Hans:'测',zh_Hant:'测',en:'' },
-                    icon: 'play.png',
-                    iconActive: 'play_active.png',
-                    components: 'app-view-ceshi-home-home'
-                },
                 play: {
                     modulName: 'APP_PLAY',
                     text: { zh_Hans:'玩',zh_Hant:'玩',en:'' },

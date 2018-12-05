@@ -15,11 +15,9 @@ import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getU
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 import { cryptoRandomInt } from '../../pi/util/math';
 
-
 declare var pi_modules;
 
 /**
-
 
  * 通用的异步通信
  */

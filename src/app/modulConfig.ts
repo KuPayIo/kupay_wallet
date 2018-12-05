@@ -8,7 +8,6 @@ const appModulConfig = {
     APP_WALLET: true,           // 钱包模块
     APP_EARN: true,             // 赚钱模块
     APP_PLAY: true,            // 游戏模块
-    APP_TEST:false,              // 测试模块
     FINANCIAL_SERVICES: true,   // 优选理财
     GITHUB:true,                  // github显示
 
