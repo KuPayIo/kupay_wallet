@@ -492,13 +492,13 @@ export const copyToClipboard = (copyText) => {
  * 获取memery hash
  */
 export const calcHashValuePromise = async (pwd, salt?) => {
+    console.time('pi_create  calc argonHash');
     let hash;
-    // console.time('calc hash1');
     const argonHash = new ArgonHash();
     argonHash.init();
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
-    // console.timeEnd('calc hash1');
     setStore('user/secretHash',hash);
+    console.timeEnd('pi_create  calc argonHash');
 
     return hash;
 };

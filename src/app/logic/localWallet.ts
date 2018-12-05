@@ -163,6 +163,7 @@ const getImageAhash = (imageBase64: string): Promise<string> => {
         img.onerror = e => {
             reject(e);
         };
+        img.crossOrigin = 'Anonymous';
         img.src = imageBase64;
     });
 };

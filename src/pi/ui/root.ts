@@ -515,7 +515,8 @@ const browserAdaptive = () => {
     if ((ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA') && oldHeight > clientHeight) {
         const rect = ae.getBoundingClientRect();
         if (rect.bottom > clientHeight) {
-            rootY -= (rect.bottom - clientHeight) / rootScale;// ?TODO 好像不应该/rootScale
+            // rootY -= (rect.bottom - clientHeight) / rootScale;// ?TODO 好像不应该/rootScale
+            rootY -= (rect.bottom - clientHeight);
             paintCmd3(root.style, 'top', rootY + 'px');
             oldHeight = clientHeight;
         }

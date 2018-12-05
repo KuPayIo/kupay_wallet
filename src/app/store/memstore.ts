@@ -567,7 +567,8 @@ const store: Store = {
         },
         language: '',             // 语言
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
-        currencyUnit: ''         // 显示哪个国家的货币
+        currencyUnit: '',         // 显示哪个国家的货币
+        deviceId:''               // 设备唯一ID
     },
     third: {
         gasPrice: null,                             // gasPrice分档次

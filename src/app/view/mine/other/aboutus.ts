@@ -6,9 +6,9 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { shareDownload } from '../../../config';
 import { getModulConfig } from '../../../modulConfig';
 import { getLocalVersion, popNewMessage } from '../../../utils/tools';
-import { shareDownload } from '../../../config';
 // =========================================导出
 declare var pi_modules;
 export class Aboutus extends Widget {
@@ -52,13 +52,14 @@ export class Aboutus extends Widget {
             // popNew('app-components-message-message', { content: this.state.cfgData.tips });
         } else {
             // TODO 分享下载
-            popNew('app-components-share-share', { 
-                shareType: ShareToPlatforms.TYPE_LINK,
-                url: shareDownload,
-                title:`${this.state.walletName}钱包`,
-                content:`我正在使用${this.state.walletName}，邀您一起来使用！` 
-            });
-            console.error(shareDownload);
+            // popNew('app-components-share-share', { 
+            //     shareType: ShareToPlatforms.TYPE_LINK,
+            //     url: shareDownload,
+            //     title:`${this.state.walletName}钱包`,
+            //     content:`我正在使用${this.state.walletName}，邀您一起来使用！` 
+            // });
+            // console.error(shareDownload);
+            popNew('app-view-mine-other-shareDownload');
         }
     }
 

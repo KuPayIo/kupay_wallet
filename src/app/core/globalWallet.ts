@@ -156,11 +156,15 @@ export class GlobalWallet {
      */
     private static initGwlt(gwlt: GlobalWallet, mnemonic: string) {
         // 创建ETH钱包
+        console.time('pi_create createEthGwlt');
         const ethCurrencyRecord = this.createEthGwlt(mnemonic);
+        console.timeEnd('pi_create createEthGwlt');
         gwlt._currencyRecords.push(ethCurrencyRecord);
 
         // 创建BTC钱包
+        console.time('pi_create createBtcGwlt');
         const btcCurrencyRecord = this.createBtcGwlt(mnemonic);
+        console.timeEnd('pi_create createBtcGwlt');
         gwlt._currencyRecords.push(btcCurrencyRecord);
 
         const ethTokenList = [];
@@ -190,8 +194,12 @@ export class GlobalWallet {
     }
 
     private static createEthGwlt(mnemonic: string) {
+        console.time('pi_create EthWallet.fromMnemonic');
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+        console.timeEnd('pi_create EthWallet.fromMnemonic');
+        console.time('pi_create ethWallet.selectAddress');
         const address = ethWallet.selectAddress(0);
+        console.timeEnd('pi_create ethWallet.selectAddress');
         const addrInfo:AddrInfo = {
             addr: address,                  // 地址
             balance: 0,              // 余额
@@ -210,10 +218,13 @@ export class GlobalWallet {
     }
 
     private static createBtcGwlt(mnemonic: string) {
-        // todo 测试阶段，使用测试链，后续改为主链
+        console.time('pi_create BTCWallet.fromMnemonic');
         const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
+        console.timeEnd('pi_create BTCWallet.fromMnemonic');
         btcWallet.unlock();
+        console.time('pi_create btcWallet.derive');
         const address = btcWallet.derive(0);
+        console.timeEnd('pi_create btcWallet.derive');
         btcWallet.lock();
         const addrInfo:AddrInfo = {
             addr: address,                  // 地址
