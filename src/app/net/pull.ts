@@ -1,11 +1,11 @@
 /**
  * 主动向后端通讯
  */
-import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+import { closeCon, open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { MainChainCoin, uploadFileUrl, wsUrl } from '../config';
-import {  CloudCurrencyType, MinerFeeLevel } from '../store/interface';
-import { getStore, setStore } from '../store/memstore';
+import { AddrInfo, CloudCurrencyType, CurrencyRecord, MinerFeeLevel, User, Wallet } from '../store/interface';
+import { Account,getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
 import { CMD, PAGELIMIT } from '../utils/constants';
@@ -13,10 +13,12 @@ import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
 import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
+import { cryptoRandomInt } from '../../pi/util/math';
 
 declare var pi_modules;
 
 /**
+
  * 通用的异步通信
  */
 export const requestAsync = (msg: any):Promise<any> => {
@@ -1251,17 +1253,18 @@ export const fetchBtcFees = async () => {
 /**
  * 获取GT价格
  */
-export const getGlodPrice = async () => {
+export const getGoldPrice = async () => {
     const msg = { type:'get_goldprice',param:{} };
     try {
         const resData:any = await requestAsync(msg);
+        console.log(resData);
+        
         if (resData.result === 1) {
-            return resData.price;
+            setStore('third/goldPrice',resData.price);
         }
     } catch (err) {
         showError(err && (err.result || err.type));
 
-        return false;
     }
 };
 

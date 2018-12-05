@@ -758,6 +758,24 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
 };
 
 /**
+ * 获取GT对应的货币价值
+ */
+export const fetchBalanceValueOfGT = (balance: number) => {
+    let balanceValue = 0;
+    const USD2CNYRate = getStore('third/rate', 0);
+    const goldPrice = getStore('third/goldPrice');
+    const currencyUnit = getStore('setting/currencyUnit', 'CNY');
+
+    if (currencyUnit === 'CNY') {
+        balanceValue = balance * goldPrice;
+    } else if (currencyUnit === 'USD') {
+        balanceValue = (balance * goldPrice) / USD2CNYRate;
+    }
+
+    return balanceValue;
+};
+
+/**
  * 获取本地钱包资产列表
  */
 export const fetchWalletAssetList = () => {
@@ -811,14 +829,15 @@ export const fetchCloudWalletAssetList = () => {
     //     gain: formatBalanceValue(0)
     // };
     // assetList.push(ktItem);
-    // const cnytItem = {
-    //     currencyName: 'CNYT',
-    //     description: 'CNYT',
-    //     balance: 0,
-    //     balanceValue: '0.00',
-    //     gain: formatBalanceValue(0)
-    // };
-    // assetList.push(cnytItem);
+    const gtItem = {
+        currencyName: 'GT',
+        description: 'GT',
+        balance: 0,
+        balanceValue: '0.00',
+        gain: formatBalanceValue(0),
+        rate:'234.00'
+    };
+    assetList.push(gtItem);
     for (const k in CloudCurrencyType) {
         const item: any = {};
         if (MainChainCoin.hasOwnProperty(k)) {

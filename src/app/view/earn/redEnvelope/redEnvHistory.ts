@@ -2,12 +2,12 @@
  * RedEnvHistory
  */
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getInviteCodeDetail, queryDetailLog, querySendRedEnvelopeRecord } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

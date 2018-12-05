@@ -19,32 +19,27 @@ interface Props {
     currencyName:string;
 }
 export class CloudWalletHome extends Widget {
-    public props:any;
+    public props:Props;
     public ok:() => void;
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
+
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const currencyName = this.props.currencyName;
         const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
         const color = getStore('setting/changeColor','redUp');
-        this.props = {
-            ...this.props,
+        this.state = {
             tabs:[{
-                tab:this.language.total,
+                tab:{ zh_Hans:'全部',zh_Hant:'今日',en:'' },
                 components:'app-view-wallet-cloudWallet-totalRecord'
-            },{  
-                tab:this.language.other,
-                components:'app-view-wallet-cloudWallet-otherRecord'
             },{
-                tab:this.language.recharge,
+                tab:{ zh_Hans:'入账',zh_Hant:'入賬',en:'' },
                 components:'app-view-wallet-cloudWallet-rechargeRecord'
             },{
-                tab:this.language.withdraw,
+                tab:{ zh_Hans:'出账',zh_Hant:'出賬',en:'' },
                 components:'app-view-wallet-cloudWallet-withdrawRecord'
             }],
             activeNum:0,
@@ -59,12 +54,12 @@ export class CloudWalletHome extends Widget {
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        this.props.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
-        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,this.props.balance));
+        this.state.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
+        this.state.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,this.state.balance));
         this.paint();
     }
     public tabsChangeClick(event: any, value: number) {
-        this.props.activeNum = value;
+        this.state.activeNum = value;
         this.paint();
     }
     public backPrePage() {
@@ -74,27 +69,8 @@ export class CloudWalletHome extends Widget {
      * 充值
      */
     public rechargeClick() {
-        if (this.props.currencyName === 'KT') {
-            popNewMessage(this.language.tips);
-
-        } else if (this.props.currencyName === 'GT') {
-            popNew('app-view-wallet-cloudWalletGT-rechargeGT');
-
-        } else {
-            
-            popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
-        }
-    }
-    /**
-     * 提币
-     */
-    public withdrawClick() {
-        if (this.props.currencyName === 'KT' || this.props.currencyName === 'GT') {
-            popNewMessage(this.language.tips);
-
-            return;
-        }
-        popNew('app-view-wallet-cloudWallet-withdraw',{ currencyName:this.props.currencyName });
+        // popNew('app-view-wallet-cloudWalletGT-transactionDetails');
+        popNew('app-view-wallet-cloudWalletGT-rechargeGT');
     }
 
     /**
@@ -107,7 +83,7 @@ export class CloudWalletHome extends Widget {
     }
 
     public currencyUnitChange() {
-        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
 

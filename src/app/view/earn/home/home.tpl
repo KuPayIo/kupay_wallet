@@ -67,8 +67,8 @@
             </div>
 
             <div style="margin: 15px 20px;">
-                <widget w-tag="pi-ui-langImg" style="height: 250px;width: 100%;" on-tap="doActivity">{"zh_Hans":"app/res/image1/activity1_CN.jpg","zh_Hant":"app/res/image1/activity1_TW.jpg","en":""}</widget>
-                <widget w-tag="pi-ui-langImg" style="height: 250px;width: 100%;margin-top: 30px;"  on-tap="doActivity">{"zh_Hans":"app/res/image1/activity2_CN.jpg","zh_Hant":"app/res/image1/activity2_TW.jpg","en":""}</widget>
+                <widget w-tag="pi-ui-langImg" style="height: 250px;width: 100%;" on-tap="doActivity(0)">{"zh_Hans":"app/res/image1/activity1_CN.jpg","zh_Hant":"app/res/image1/activity1_TW.jpg","en":""}</widget>
+                <widget w-tag="pi-ui-langImg" style="height: 250px;width: 100%;margin-top: 30px;"  on-tap="doActivity(1)">{"zh_Hans":"app/res/image1/activity2_CN.jpg","zh_Hant":"app/res/image1/activity2_TW.jpg","en":""}</widget>
             </div>
         </div>  
     </div>

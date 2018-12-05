@@ -416,8 +416,8 @@
 			// todo 发版本时需动态设置服务器ip及端口
 			// //----------本地-------
 			//////zxzxzx
-			// winit.severIp = "192.168.7.71";
-			// winit.severPort = "80";
+			winit.severIp = "192.168.7.71";
+			winit.severPort = "80";
 			// winit.severIp = "47.244.59.13";
 			// winit.severPort = "80";
 			// winit.severIp = "192.168.9.29";
@@ -425,8 +425,8 @@
 			//luobing
 			// winit.severIp = "192.168.9.25";
 			// winit.severPort = "80";
-			winit.severIp = "192.168.9.15";
-			winit.severPort = "80";			
+			// winit.severIp = "192.168.9.15";
+			// winit.severPort = "80";			
 			//---------国内------
 			// winit.severIp = "app.kuplay.io";
 			// winit.severPort = "80";
@@ -543,7 +543,7 @@
 					n.onload = n.onerror = undefined;
 					head.removeChild(n);
 					if (Array.isArray(roots)) {
-						winit.loadJS(roots, url, charset, callback, errText, i === undefined ? 0 : i + 1);
+					winit.loadJS(roots, url, charset, callback, errText, i === undefined ? 0 : i + 1);
 					} else {
 						return callback && callback(url, errText);
 					}
@@ -584,7 +584,7 @@
 							mobileBootFiles[key] = {
 								content: u8ArrayToStr(buffer),
 								url: URL.createObjectURL(blob)
-							}
+				}
 						}
 						winit.startImpl();
 					});
@@ -640,24 +640,24 @@
 		</div>
 	</div>
 	
-	<div class="swiper-container" id="swiper-container">
-		<div class="swiper-wrapper">
-			<div class="swiper-slide slide">
-				<img src="../res/image1/guide1.jpg"/>
+		<div class="swiper-container" id="swiper-container">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide slide">
+					<img src="../res/image1/guide1.jpg"/>
+				</div>
+				<div class="swiper-slide slide">
+					<img src="../res/image1/guide2.jpg"/>
+				</div>
+				<div class="swiper-slide slide">
+					<img src="../res/image1/guide3.jpg"/>
+				</div>
+				<div class="swiper-slide slide">
+					<img src="../res/image1/guide4.jpg"/>
+					<div style="transform:  scale(0.5);position: absolute;width: 100%;bottom: 0px;" ><div class="btn-start">立即体验</div></div>
+				</div>
 			</div>
-			<div class="swiper-slide slide">
-				<img src="../res/image1/guide2.jpg"/>
-			</div>
-			<div class="swiper-slide slide">
-				<img src="../res/image1/guide3.jpg"/>
-			</div>
-			<div class="swiper-slide slide">
-				<img src="../res/image1/guide4.jpg"/>
-				<div style="transform:  scale(0.5);position: absolute;width: 100%;bottom: 0px;" ><div class="btn-start">立即体验</div></div>
-			</div>
+			<div class="swiper-pagination"></div>
 		</div>
-		<div class="swiper-pagination"></div>
-	</div>
 
 	<!--更新弹框html begin-->
 	<div id="update-root">

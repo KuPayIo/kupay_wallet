@@ -122,7 +122,7 @@ export class PlayHome extends Widget {
         if (this.state.mines > 0 && this.state.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的挖矿操作并刷新数据
             await getAward();
             this.state.firstClick = false;
-
+            popNew('app-view-earn-mining-addMineAlert',{ addNum:this.state.mines });
             setTimeout(() => {// 数字动画效果执行完后刷新页面
                 this.initEvent();
             }, 300);
@@ -183,11 +183,19 @@ export class PlayHome extends Widget {
     /**
      * 进入活动详情
      */
-    public doActivity() {
+    public doActivity(ind:number) {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew('app-view-earn-mining-addMine');
+        switch (ind) {
+            case 0:
+                popNew('app-view-earn-activity-verifyPhone');
+                break;
+            case 1:
+                popNew('app-view-earn-activity-inviteFriend');
+                break;
+            default:
+        }
     }
 
     /**

@@ -26,6 +26,7 @@ div{
     background: rgba(255,255,255,0.80);
 }
 
+
 /* 侧边栏覆盖层进入 */
 @keyframes switchWalletPageIn{
     0% {background-color: rgba(2, 2, 2, 0);}
@@ -89,6 +90,11 @@ div{
         -webkit-transform: rotate(360deg);
                 transform: rotate(360deg); 
     } 
+}
+
+@keyframes outTicket{
+    0%{transform: translateY(-600px);}
+    100%{transform: translateY(0px);}
 }
 .refreshing{
    animation: refreshingRotated 1s infinite;

@@ -1,0 +1,89 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+.top-head{
+    height: 400px;
+    background:linear-gradient(to right,#38CFE7,#318DE6);
+    flex-shrink: 0;
+}
+.body{
+    flex: 1 0 0;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    margin: -240px 20px 20px;
+    padding: 0 10px;
+}
+.status-container{
+    height: 270px;
+    border-bottom: 1px solid #dbdbe5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.status-icon{
+    width: 72px;
+    height: 72px;
+    margin-top: 54px;
+}
+.status{
+    font-size: 32px;
+    line-height: 45px;
+    color: #222;
+    margin-top: 24px;
+}
+.resend-btn{
+    margin-top: 10px;
+    font-size: 24px;
+    line-height: 33px;
+    color: #888;
+}
+.detail-top{
+    line-height: 50px;
+    color: #222;
+    font-size: 36px;
+    border-bottom: 1px solid #dbdbe5;
+    padding: 35px 30px;
+}
+.item{
+    margin-top: 30px;
+    font-size: 28px;
+    color: #a0acc0;
+}
+.content{
+    font-size: 24px;
+    line-height: 33px;
+    color: #222;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+.copy{
+    margin-left: 10px;
+}
+.detail-bottom{
+    line-height: 50px;
+    color: #222;
+    font-size: 36px;
+    padding: 35px 30px;
+    position: relative;
+}
+.qrcode-container{
+    position: absolute;
+    right: 40px;
+    top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.copy-ethersacn{
+    margin-top: 15px;
+    font-size: 24px;
+    line-height: 33px;
+    color:#318de6;
+}
