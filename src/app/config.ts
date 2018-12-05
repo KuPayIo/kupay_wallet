@@ -15,7 +15,7 @@ export const sourceIp = pi_modules.store.exports.severIp || '127.0.0.1';
 export const sourcePort = pi_modules.store.exports.severPort || '80';
 
 // 逻辑服务器ip
-export const logicIp = '47.244.59.13';
+export const logicIp = sourceIp;
 
 // 逻辑服务器port
 export const logicPort = '2081';
