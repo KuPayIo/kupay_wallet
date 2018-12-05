@@ -1409,17 +1409,18 @@ export const fetchBtcFees = async () => {
 /**
  * 获取GT价格
  */
-export const getGlodPrice = async () => {
+export const getGoldPrice = async () => {
     const msg = { type:'get_goldprice',param:{} };
     try {
         const resData:any = await requestAsync(msg);
+        console.log(resData);
+        
         if (resData.result === 1) {
-            return resData.price;
+            setStore('third/goldPrice',resData.price);
         }
     } catch (err) {
         showError(err && (err.result || err.type));
 
-        return false;
     }
 };
 

@@ -5,13 +5,10 @@ import { popNewMessage } from './tools';
 export interface OrderDetail {
     total: number; // 总价
     body: string; // 信息
-    gt: number; // 充值GT数量
-    payTypeId: payType; // 支付方式
-}
-
-export enum payType {
-    wxPay = 1, // 微信H5支付
-    aliPay = 2 // 支付宝H5支付
+    num: number; // 充值GT数量
+    payType: string; // 支付方式
+    // tslint:disable-next-line:no-reserved-keywords
+    type:number; // 充值类型
 }
 
 /**
@@ -26,6 +23,7 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
 
         return;
     }
+    
     const msg = { type: 'order_pay', param: orderDetail };
     const loading = popNew('app-components1-loading-loading', { text: { zh_Hans: '充值中...', zh_Hant: '充值中...', en: '' } });
     try {
@@ -36,7 +34,7 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
                 mweb_url: ''
             };
 
-            if (orderDetail.payTypeId === 2) {// 支付宝H5支付
+            if (orderDetail.payType === 'alipay') {// 支付宝H5支付
                 fetch('https://openapi.alipaydev.com/gateway.do', {
                     method: 'POST',
                     headers:{
@@ -44,13 +42,12 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
                     },
                     body: URLencode(resData.JsData)// 这里是请求对象
                 }).then((res) => {
-                    console.log('aliPayres',res);
                     jumpData.mweb_url = res.url;
                     jumpPay(jumpData,okCb,failCb);
                 }).catch((err) => {
                     failCb && failCb(err);
                 });
-            } else if (orderDetail.payTypeId === 1) {// 微信H5支付
+            } else if (orderDetail.payType === 'wxpay') {// 微信H5支付
                 jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
                 jumpPay(jumpData,okCb,failCb);
             }
@@ -73,11 +70,11 @@ export const checkOrder = (order: OrderDetail): boolean => {
 
         return false;
     }
-    if (!order.gt) {
+    if (!order.num) {
 
         return false;
     }
-    if (!order.payTypeId) {
+    if (!order.payType) {
 
         return false;
     }
