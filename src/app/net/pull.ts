@@ -3,6 +3,7 @@
  */
 import { closeCon, open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
+import { cryptoRandomInt } from '../../pi/util/math';
 import { MainChainCoin, uploadFileUrl, wsUrl } from '../config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, MinerFeeLevel, User, Wallet } from '../store/interface';
 import { Account,getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
@@ -13,7 +14,6 @@ import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
 import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
-import { cryptoRandomInt } from '../../pi/util/math';
 
 declare var pi_modules;
 
@@ -260,6 +260,9 @@ export const getServerCloudBalance = () => {
         const cloudWallets = getStore('cloud/cloudWallets');
         for (const [key,value] of cloudBalances) {
             const cloudWallet = cloudWallets.get(key);
+            if (key === 103) {
+                cloudWallet.balance = 0;
+            }
             cloudWallet.balance = value;
         }
         setStore('cloud/cloudWallets',cloudWallets);
