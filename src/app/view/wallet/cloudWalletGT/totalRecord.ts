@@ -61,7 +61,7 @@ export class TotalRecord extends Widget {
         this.props.withdrawNext = data3.start;
         this.props.withdrawList = this.parseWithdrawList(data3.list);
 
-        this.props.recordList = [].concat(this.props.rechargeList,this.props.otherList,this.props.withdrawList);
+        this.props.recordList = [].concat(this.props.rechargeList,this.props.withdrawList);
         this.props.recordList.sort((v1,v2) => {
             return v2.time - v1.time;
         });
