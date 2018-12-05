@@ -36,8 +36,9 @@ export class ProductDetail extends Widget {
         }
         const product = this.props.product;
         const res = calPercent(product.surplus,product.total);
-        console.log(res);
-        this.state = {
+        // console.log(res);
+        this.props = {
+            ...this.props,
             holdedAmout:0,
             amount:1,
             leftPercent:  res.left,
@@ -50,32 +51,32 @@ export class ProductDetail extends Widget {
 
     // 减少购买数量
     public minus(e:any) {
-        if (this.state.amount === 1) {
+        if (this.props.amount === 1) {
             return;
         }
-        this.state.amount -= 1;
+        this.props.amount -= 1;
         this.paint();
     }
     // 增加购买数量
     public add(e:any) {
         const limit = Number(this.props.product.limit);
         // 超过限购量直接返回
-        if (this.state.amount + this.state.holdedAmout >= limit) {
+        if (this.props.amount + this.props.holdedAmout >= limit) {
             return;
         }
-        this.state.amount += 1;
+        this.props.amount += 1;
         this.paint();
     }
 
     // 购买记录改变
     public updatePurchaseRecord(purchaseRecord:PurchaseHistory[]) {
-        this.state.holdedAmout = fetchHoldedProductAmount(this.props.product.id);
+        this.props.holdedAmout = fetchHoldedProductAmount(this.props.product.id);
     }
 
     // 页面滚动
     public pageScroll() {
         const scrollTop = document.getElementById('body').scrollTop;
-        this.state.scrollHeight = scrollTop;
+        this.props.scrollHeight = scrollTop;
         this.paint();
         
     }
@@ -85,9 +86,10 @@ export class ProductDetail extends Widget {
      */
     public purchaseClicked() {
         popNewMessage(this.language.tip);
+
         return;
         if (!hasWallet()) return;
-        popNew('app-view-wallet-financialManagement-productStatement',{ product:this.props.product,amount:this.state.amount });
+        popNew('app-view-wallet-financialManagement-productStatement',{ product:this.props.product,amount:this.props.amount });
     }
 
     /**
@@ -104,5 +106,4 @@ register('activity/financialManagement/purchaseHistories', async (purchaseRecord
     if (w) {
         w.updatePurchaseRecord(purchaseRecord);
     }
-    
 });

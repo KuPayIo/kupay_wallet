@@ -5,11 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { CreateWalletType } from '../../../logic/localWallet';
 import { getModulConfig } from '../../../modulConfig';
 import { deleteAccount, getAllAccount } from '../../../store/memstore';
-import { popNewLoading, popNewMessage } from '../../../utils/tools';
+import { loginSuccess, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { VerifyIdentidy1 } from '../../../utils/walletTools';
-import { loginSuccess } from '../../../net/pull';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -22,7 +22,6 @@ export class CreateEnter extends Widget {
     public create() {
         super.create();
         this.init();
-        
     }
     public init() {
         this.language = this.config.value[getLang()];
@@ -33,7 +32,7 @@ export class CreateEnter extends Widget {
             const id = item.user.id;
             accountList.push({ nickName,id });
         });
-        this.state = {
+        this.props = {
             loginImg:getModulConfig('LOGIN_IMG'),
             login:false,
             accountList,
@@ -56,25 +55,25 @@ export class CreateEnter extends Widget {
         return totalHeight;
     }
     public closePopBox() {
-        this.state.showMoreUser = false;
+        this.props.showMoreUser = false;
         this.paint();
     }
     public delUserAccount(e:any,index:number) {
-        const delAccount = this.state.accountList.splice(index,1)[0];
+        const delAccount = this.props.accountList.splice(index,1)[0];
         deleteAccount(delAccount.id);
         if (getAllAccount().length <= 0) {
-            this.state.login = false;
+            this.props.login = false;
         } else {
-            this.state.popHeight = this.calPopBoxHeight(this.state.accountList.length);
-            if (index === this.state.selectedAccountIndex) {
-                this.state.selectedAccountIndex = 0;
+            this.props.popHeight = this.calPopBoxHeight(this.props.accountList.length);
+            if (index === this.props.selectedAccountIndex) {
+                this.props.selectedAccountIndex = 0;
             }
         }
         this.paint();
     }
     
     public chooseCurUser(e:any,index:number) {
-        this.state.selectedAccountIndex = index;
+        this.props.selectedAccountIndex = index;
         this.closePopBox();
     }
     public backPrePage() {
@@ -86,38 +85,38 @@ export class CreateEnter extends Widget {
     }
     // 已有账户
     public walletImportClicke() {
-        this.state.forceCloseMoreUser = true;
+        this.props.forceCloseMoreUser = true;
         this.paint();
         popNew('app-view-wallet-import-home');
         
     }
     // 普通创建
     public createStandardClick() {
-        popNew('app-view-wallet-create-createWallet');
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Random });
     }
     public switch2LoginClick() {
-        this.state.login = true;
+        this.props.login = true;
         this.paint();
     }
     public switch2CreateClick() {
-        this.state.login = false;
+        this.props.login = false;
         this.paint();
     }
 
     public pswChange(e:any) {
-        this.state.psw = e.value;
+        this.props.psw = e.value;
     }
     public async loginClick() {
-        if (this.state.psw.length <= 0) {
+        if (this.props.psw.length <= 0) {
             popNewMessage({ zh_Hans:'密码不能为空',zh_Hant:'密碼不能為空',en:'' });
 
             return;
         }
         const walletList = getAllAccount();
         const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
-        const account = walletList[this.state.selectedAccountIndex];
-        console.log(this.state.psw);
-        const verify = await VerifyIdentidy1(this.state.psw,account.wallet.vault,account.user.salt);
+        const account = walletList[this.props.selectedAccountIndex];
+        console.log(this.props.psw);
+        const verify = await VerifyIdentidy1(this.props.psw,account.wallet.vault,account.user.salt);
 
         close.callback(close.widget);
         if (!verify) {
@@ -130,7 +129,7 @@ export class CreateEnter extends Widget {
     }
 
     public popMoreUser() {
-        this.state.showMoreUser = !this.state.showMoreUser;
+        this.props.showMoreUser = !this.props.showMoreUser;
         this.paint();
     }
 }

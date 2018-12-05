@@ -116,10 +116,17 @@ export const createWalletRandom = async (option: Option) => {
  * @param option 参数
  */
 export const createWalletByImage = async (option: Option) => {
-    const secrectHash = await calcHashValuePromise(option.psw,getStore('user/salt'));
-    const ahash = await getImageAhash(option.imageBase64);
-    const vault = await imgToHash(ahash, option.imagePsw);
+    const secrectHashPromise = calcHashValuePromise(option.psw,getStore('user/salt'));
+
+    const imgArgon2HashPromise = getStore('flags').imgArgon2HashPromise;
+    
+    console.time('pi_create Promise all need');
+    const [secrectHash,vault] = await Promise.all([secrectHashPromise,imgArgon2HashPromise]);
+    console.timeEnd('pi_create Promise all need');
+    
+    console.time('pi_create GlobalWallet generate need');
     const gwlt = GlobalWallet.generate(secrectHash, vault);
+    console.timeEnd('pi_create GlobalWallet generate need');
     // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
@@ -156,6 +163,7 @@ const getImageAhash = (imageBase64: string): Promise<string> => {
         img.onerror = e => {
             reject(e);
         };
+        img.crossOrigin = 'Anonymous';
         img.src = imageBase64;
     });
 };
@@ -181,13 +189,19 @@ const imgToHash = async (ahash: string, imagePsw: string) => {
 };
 
 /**
+ * 计算图片Argon2 Hash
+ */
+export const calcImgArgon2Hash = async (imageBase64: string,imagePsw: string) => {
+    // console.log('calcImgArgon2Hash',imageBase64,imagePsw);
+    const ahash = await getImageAhash(imageBase64);
+
+    return imgToHash(ahash, imagePsw);
+};
+/**
  * 通过助记词导入钱包
  */
 export const importWalletByMnemonic = async (option: Option) => {
-    const secrectHash = await calcHashValuePromise(
-    option.psw,
-    getStore('user/salt')
-  );
+    const secrectHash = await calcHashValuePromise(option.psw,getStore('user/salt'));
     const gwlt = GlobalWallet.fromMnemonic(secrectHash, option.mnemonic);
   // 创建钱包基础数据
     const wallet: Wallet = {
@@ -262,4 +276,3 @@ export const deleteMnemonic = () => {
     wallet.isBackup = true;
     setStore('wallet',wallet);
 };
-

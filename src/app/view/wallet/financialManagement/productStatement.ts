@@ -12,24 +12,25 @@ interface Props {
 }
 export class ProductStatement extends Widget {
     public ok:() => void;
-    public props:Props;
+    public props:any;
     public create() {
         super.create();
         this.init();
     }
     public init() {
-        this.state = {
+        this.props = {
+            ...this.props,
             statement:getStaticLanguage().notice,
             readed:false
         };
     }
     public checkBoxClick(e: any) {
-        this.state.readed = (e.newType === 'true' ? true : false);
+        this.props.readed = (e.newType === 'true' ? true : false);
         this.paint();
     }
 
     public nextClick() {
-        if (!this.state.readed) return;
+        if (!this.props.readed) return;
         if (!this.props.fg) {
             popNew('app-view-wallet-financialManagement-purchase',{ product:this.props.product,amount:this.props.amount });
         }

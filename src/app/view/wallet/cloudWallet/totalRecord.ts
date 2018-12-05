@@ -21,7 +21,7 @@ interface Props {
 }
 
 export class TotalRecord extends Widget {
-    public props:Props;
+    public props:any;
     public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
@@ -29,7 +29,8 @@ export class TotalRecord extends Widget {
     }
     public init() {
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
+            ...this.props,
             recordList:[], // 全部记录
             otherList:[],  // 其他记录
             rechargeList:[], // 充值记录
@@ -52,26 +53,26 @@ export class TotalRecord extends Widget {
      * 更新交易列表
      */
     public updateRecordList() {
-        if (!this.state) return;
+        if (!this.props.currencyName) return;
         const cloudWallets = getStore('cloud/cloudWallets');
         const data1 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
-        this.state.rechargeNext = data1.start;
-        this.state.rechargeList = this.parseRechargeList(data1.list);
+        this.props.rechargeNext = data1.start;
+        this.props.rechargeList = this.parseRechargeList(data1.list);
 
         const data2 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
-        this.state.otherNext = data2.start;
-        this.state.otherList = this.parseOtherList(data2.list);
+        this.props.otherNext = data2.start;
+        this.props.otherList = this.parseOtherList(data2.list);
         
         const data3 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
-        this.state.withdrawNext = data3.start;
-        this.state.withdrawList = this.parseWithdrawList(data3.list);
+        this.props.withdrawNext = data3.start;
+        this.props.withdrawList = this.parseWithdrawList(data3.list);
 
-        this.state.recordList = [].concat(this.state.rechargeList,this.state.otherList,this.state.withdrawList);
-        this.state.recordList.sort((v1,v2) => {
+        this.props.recordList = [].concat(this.props.rechargeList,this.props.otherList,this.props.withdrawList);
+        this.props.recordList.sort((v1,v2) => {
             return v2.time - v1.time;
         });
-        this.state.canLoadMore = data1.canLoadMore | data2.canLoadMore | data3.canLoadMore;
-        this.state.isRefreshing = false;
+        this.props.canLoadMore = data1.canLoadMore | data2.canLoadMore | data3.canLoadMore;
+        this.props.isRefreshing = false;
         this.paint();
     }
     /**
@@ -123,8 +124,8 @@ export class TotalRecord extends Widget {
      * 查看详情界面
      */
     public recordListItemClick(e:any,index:number) {
-        if (this.state.recordList[index].hash) {
-            popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.state.recordList[index].hash });
+        if (this.props.recordList[index].hash) {
+            popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.props.recordList[index].hash });
         }
     }
 
@@ -132,9 +133,9 @@ export class TotalRecord extends Widget {
      * 请求更多数据
      */
     public loadMore() {
-        getAccountDetail(this.props.currencyName,0,this.state.otherNext);
-        getWithdrawLogs(this.props.currencyName,this.state.withdrawNext);
-        getRechargeLogs(this.props.currencyName,this.state.rechargeNext);
+        getAccountDetail(this.props.currencyName,0,this.props.otherNext);
+        getWithdrawLogs(this.props.currencyName,this.props.withdrawNext);
+        getRechargeLogs(this.props.currencyName,this.props.rechargeNext);
     }
 
     /**
@@ -144,8 +145,8 @@ export class TotalRecord extends Widget {
         const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
         const h2 = document.getElementById('recharge-content-container').offsetHeight; 
         const scrollTop = document.getElementById('recharge-scroller-container').scrollTop; 
-        if (this.state.canLoadMore && !this.state.isRefreshing && (h2 - h1 - scrollTop) < 20) {
-            this.state.isRefreshing = true;
+        if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
+            this.props.isRefreshing = true;
             this.paint();
             console.log('加载中，请稍后~~~');
             this.loadMore();
@@ -156,7 +157,7 @@ export class TotalRecord extends Widget {
      * 更新交易状态
      */
     public updateTransaction() {
-        const list = this.state.rechargeList.concat(this.state.withdrawList);
+        const list = this.props.rechargeList.concat(this.props.withdrawList);
         list.forEach(item => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);

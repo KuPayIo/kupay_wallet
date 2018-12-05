@@ -38,7 +38,7 @@ const isObject = (value:any) => {
  * 数据深拷贝
  */
 export const deepCopy = (v: any): any => {
-    if (!v || !isObject(v)) return v;
+    if (!v || v instanceof Promise || !isObject(v)) return v;
     if (v instanceof Map) {
         return new Map(JSON.parse(JSON.stringify(v)));
     }
@@ -321,7 +321,8 @@ const initSettings = () => {
         lockScreen: {
             open: false,
             psw: ''
-        }
+        },
+        deviceId:''
     });
     store.setting = {
         ...setting
@@ -497,7 +498,8 @@ const settingChange = () => {
         language: getStore('setting/language'),
         changeColor: getStore('setting/changeColor'),
         currencyUnit: getStore('setting/currencyUnit'),
-        lockScreen: getStore('setting/lockScreen')
+        lockScreen: getStore('setting/lockScreen'),
+        deviceId:getStore('setting/deviceId')
     };
     setLocalStorage('setting', localSetting);
 };
@@ -565,7 +567,8 @@ const store: Store = {
         },
         language: '',             // 语言
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
-        currencyUnit: ''         // 显示哪个国家的货币
+        currencyUnit: '',         // 显示哪个国家的货币
+        deviceId:''               // 设备唯一ID
     },
     third: {
         gasPrice: null,                             // gasPrice分档次

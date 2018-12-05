@@ -24,11 +24,11 @@
                 {"zh_Hans":"锁定期：无","zh_Hant":"鎖定期：無","en":""}] }}
 
             <div w-class="row2"><pi-ui-lang>{"zh_Hans":"以上利率均为预期年化结算利率，以实际回报为准","zh_Hant":"以上利率均為預期年化結算利率，以實際回報為準","en":""}</pi-ui-lang></div>
-            <div w-class="row3"><div w-class="progress" style="width:{{it1.usePercent}}%;"></div></div>
+            <div w-class="row3"><div w-class="progress" style="width:{{it.usePercent}}%;"></div></div>
             <div w-class="row4">
-                <div style="width:{{it1.usePercent}}%;"></div>
+                <div style="width:{{it.usePercent}}%;"></div>
                 <div w-class="sold" >
-                    <pi-ui-lang>{{tips[0]}}</pi-ui-lang> &nbsp;{{it1.usePercent}}%
+                    <pi-ui-lang>{{tips[0]}}</pi-ui-lang> &nbsp;{{it.usePercent}}%
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
                     </span>
                 </div>
                 <div w-class="detail">
-                    <pi-ui-lang>{{detail[1]}}</pi-ui-lang> {{it1.leftPercent}}%
+                    <pi-ui-lang>{{detail[1]}}</pi-ui-lang> {{it.leftPercent}}%
                 </div>
                 <div w-class="detail"><pi-ui-lang>{{detail[2]}}</pi-ui-lang></div>
             </div>
@@ -67,7 +67,7 @@
                 </span>
                 <div w-class="right-box">
                     <img w-class="sub" on-down="minus" src="../../../res/image/less_blue.png"/>
-                    <span>{{it1.amount}}</span>
+                    <span>{{it.amount}}</span>
                     <img w-class="plus" on-down="add" src="../../../res/image/add.png" />
                 </div>
             </div>
@@ -78,6 +78,6 @@
             </div>
         </div>
     </div>
-    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{it.product.productName}} }</app-components1-topBar-topBar2>
+    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{it.product.productName}} }</app-components1-topBar-topBar2>
 
 </div>

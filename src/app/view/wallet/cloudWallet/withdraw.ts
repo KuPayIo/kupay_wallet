@@ -14,7 +14,7 @@ interface Props {
     currencyName:string;
 }
 export class Withdraw extends Widget {
-    public props:Props;
+    public props:any;
     public ok:() => void;
     public language:any;
     public setProps(props:Props,oldProps:Props) {
@@ -26,7 +26,8 @@ export class Withdraw extends Widget {
         const currencyName = this.props.currencyName;
         const minerFee = withdrawMinerFee[currencyName];
         const balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
-        this.state = {
+        this.props = {
+            ...this.props,
             balance,
             amount:0,
             minerFee,
@@ -44,7 +45,7 @@ export class Withdraw extends Widget {
 
      // 提币金额变化
     public amountChange(e:any) {
-        this.state.amount = e.value;
+        this.props.amount = e.value;
         this.paint();
     }
 
@@ -60,12 +61,12 @@ export class Withdraw extends Widget {
     }
 
     public chooseWithdrawAddr() {
-        popNew('app-view-wallet-components-choosetWithdrawAddr',{ addrsInfo:this.state.withdrawAddrInfo },(index) => {
-            const addrsInfo = this.state.withdrawAddrInfo;
+        popNew('app-view-wallet-components-choosetWithdrawAddr',{ addrsInfo:this.props.withdrawAddrInfo },(index) => {
+            const addrsInfo = this.props.withdrawAddrInfo;
             for (let i = 0;i < addrsInfo.length;i++) {
                 if (i === index) {
                     addrsInfo[i].isChoosed = true;
-                    this.state.withdrawAddr = addrsInfo[i].addr;
+                    this.props.withdrawAddr = addrsInfo[i].addr;
                 } else {
                     addrsInfo[i].isChoosed = false;
                 }
@@ -77,12 +78,12 @@ export class Withdraw extends Widget {
     public async withdrawClick() {
         const currencyName = this.props.currencyName;
         const limit = withdrawLimit[currencyName];
-        if (Number(this.state.amount) < limit) {
+        if (Number(this.props.amount) < limit) {
             popNewMessage(this.language.tips[0] + limit + currencyName);
 
             return;
         }
-        if (Number(this.state.amount) + this.state.minerFee > this.state.balance) {
+        if (Number(this.props.amount) + this.props.minerFee > this.props.balance) {
             popNewMessage(this.language.tips[1]);
 
             return;
@@ -95,7 +96,7 @@ export class Withdraw extends Widget {
         }
         const passwd = await popPswBox();
         if (!passwd) return;
-        const success = await withdraw(passwd,this.state.withdrawAddr,this.props.currencyName,this.state.amount);
+        const success = await withdraw(passwd,this.props.withdrawAddr,this.props.currencyName,this.props.amount);
         if (success) {
             this.ok && this.ok();
         }

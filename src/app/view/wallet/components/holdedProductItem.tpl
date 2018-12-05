@@ -1,7 +1,7 @@
 <div w-class="item" on-tap="productItemClick">
     <div w-class="row1">
         <div>{{it.product.productName}}</div>
-        <div w-class="status {{it1.stateBg}}">{{it1.stateShow}}</div>
+        <div w-class="status {{it.stateBg}}">{{it.stateShow}}</div>
     </div>
     <div w-class="row2">
         <div w-class="col">

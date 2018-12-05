@@ -4,13 +4,13 @@
 // =======================================导入
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getTransactionsByAddr } from '../../../net/pullWallet';
 import { ShapeShiftTx, ShapeShiftTxs } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 import { getCurrentAddrByCurrencyName, parseAccount, timestampFormat } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -32,8 +32,9 @@ export class ConvertHistory extends Widget {
 
     public async init() {
         this.language = this.config.value[getLang()];
-        this.state = {
-            txsShow:[],
+        this.props = {
+            ...this.props,
+            txsShow:[]
         };
         const close = popNew('app-components1-loading-loading',{ text:this.language.loading });
         const addr = getCurrentAddrByCurrencyName(this.props.currencyName);
@@ -76,7 +77,7 @@ export class ConvertHistory extends Widget {
                 status_class
             });
         });
-        this.state.txsShow = txsShow;
+        this.props.txsShow = txsShow;
         this.paint();
         
     }
@@ -85,7 +86,7 @@ export class ConvertHistory extends Widget {
      * 查看输出地址交易详情
      */
     public inHashClick(e:any,index:number) {
-        const tx = this.state.txsShow[index];
+        const tx = this.props.txsShow[index];
         const inHash = tx.inputTXID;
         // const transactions = find('transactions');
         // let record = null;
@@ -113,7 +114,7 @@ export class ConvertHistory extends Widget {
      * 查看输入地址交易详情
      */
     public outHashClick(e:any,index:number) {
-        const tx = this.state.txsShow[index];
+        const tx = this.props.txsShow[index];
         if (tx.status !== 'complete') return;
         const outHash = tx.outputTXID;
         // const transactions = find('transactions');

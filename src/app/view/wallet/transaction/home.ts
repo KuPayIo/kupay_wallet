@@ -20,7 +20,7 @@ interface Props {
     gain:number;
 }
 export class TransactionHome extends Widget {
-    public props:Props;
+    public props:any;
 
     public ok:() => void;
     public backPrePage() {
@@ -28,8 +28,8 @@ export class TransactionHome extends Widget {
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        dataCenter.updateAddrInfo(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
         this.init();
+        dataCenter.updateAddrInfo(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
     }
     public init() {
         const currencyName = this.props.currencyName;
@@ -40,7 +40,8 @@ export class TransactionHome extends Widget {
         const color = getStore('setting/changeColor','redUp');
         const addr = parseAccount(getCurrentAddrByCurrencyName(currencyName));
         
-        this.state = {
+        this.props = {
+            ...this.props,
             balance,
             balanceValue:formatBalanceValue(balanceValue),
             rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
@@ -96,7 +97,7 @@ export class TransactionHome extends Widget {
      * tab切换
      */
     public tabsChangeClick(value: number) {
-        this.state.activeNum = value;
+        this.props.activeNum = value;
         this.paint();
     }
 
@@ -111,7 +112,7 @@ export class TransactionHome extends Widget {
         return false;
     }
     public txListItemClick(e:any,index:number) {
-        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.state.txList[index].hash });
+        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.props.txList[index].hash });
     }
     // 转账
     public doTransferClick() {
@@ -126,7 +127,7 @@ export class TransactionHome extends Widget {
         popNew('app-view-wallet-transaction-chooseAddr',{ currencyName:this.props.currencyName });
     }
     public updateRate() {
-        this.state.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
+        this.props.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
         this.paint();
     }
 
@@ -135,9 +136,9 @@ export class TransactionHome extends Widget {
     }
 
     public currencyUnitChange() {
-        this.state.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
-        this.state.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,this.state.balance));
-        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.props.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
+        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,this.props.balance));
+        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
 

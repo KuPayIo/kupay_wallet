@@ -60,17 +60,17 @@ pi_modules.butil.exports = (function () {
 		if ((!s) || s.length === 0) {
 			return null;
 		}
-	
+
 		var units = Infinity;
 		var codePoint;
 		var length = s.length;
 		var leadSurrogate = null;
 		var bytes = [];
 		var i = 0;
-	
+
 		for (; i < length; i++) {
 			codePoint = s.charCodeAt(i);
-	
+
 			// is surrogate component
 			if (codePoint > 0xD7FF && codePoint < 0xE000) {
 				// last char was a lead
@@ -87,7 +87,7 @@ pi_modules.butil.exports = (function () {
 					}
 				} else {
 					// no lead yet
-	
+
 					if (codePoint > 0xDBFF) {
 						// unexpected trail
 						if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
@@ -107,7 +107,7 @@ pi_modules.butil.exports = (function () {
 				if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
 				leadSurrogate = null;
 			}
-	
+
 			// encode utf8
 			if (codePoint < 0x80) {
 				if ((units -= 1) < 0) break
@@ -137,7 +137,7 @@ pi_modules.butil.exports = (function () {
 				throw new Error('Invalid code point');
 			}
 		}
-	
+
 		return new Uint8Array(bytes);
 	};
 
@@ -258,6 +258,7 @@ pi_modules.depend.exports = (function () {
 
 	// 多个域名地址，尽量使用CDN，第一个地址尝试下载2次，以后每个地址尝试下载1次
 	module.domains = winit.domains; /*:Array<string>*/
+	module.httpDomains = winit.httpDomains ? winit.httpDomains : winit.domains;
 
 	// ============================== 本地
 	// 文件表的根路径
@@ -566,7 +567,8 @@ pi_modules.ajax.exports = (function () {
 			xhr.responseType = 'arraybuffer';
 		}
 
-		xhr.withCredentials = true;
+		// NOTE: 一定不能设置withCredentials，否则跨域变得很严格
+		xhr.withCredentials = false;
 		xhr.onabort = function () {
 			timeout && clearTimeout(xhr.timerRef);
 			errorCallback({
@@ -618,7 +620,8 @@ pi_modules.ajax.exports = (function () {
 					reason: xhr.getResponseHeader("Location")
 				});
 			}
-			if (xhr.status !== 200 && xhr.status !== 304) {
+			// iOS的file协议，成功的状态码是0
+			if (xhr.status !== 0 && xhr.status !== 200 && xhr.status !== 304) {
 				return errorCallback({
 					url: url,
 					nativeError: ev,
@@ -834,10 +837,10 @@ pi_modules.load.exports = (function () {
 	var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
 	// 本地加载
 	var nativeLoad = {
-		timeout: 0,   // 超时时间
-		files: [],    // 待处理文件
+		timeout: 0, // 超时时间
+		files: [], // 待处理文件
 		handleCount: 0, // 正在处理的个数
- 	};
+	};
 	// 本地加载的定时器时间
 	var nativeLoadHandleTimeout = 20;
 	// 本地加载一次性处理的文件数
@@ -1019,12 +1022,12 @@ pi_modules.load.exports = (function () {
 
 		var handleWait = function () {
 			--nativeLoad.handleCount;
-			
+
 			if (nativeLoad.handleCount > 0) return;
 
 			// 原有的等待已经完成
 			if (nativeLoad.files.length >= nativeLoadHandleNum) {
-				nativeLoadHandler();  // files还有很多，就直接调
+				nativeLoadHandler(); // files还有很多，就直接调
 			} else if (nativeLoad.files.length > 0 && nativeLoad.timeout === 0) {
 				// 还有东西，开定时器
 				nativeLoad.timeout = setTimeout(nativeLoadHandler, nativeLoadHandleTimeout);
@@ -1039,11 +1042,11 @@ pi_modules.load.exports = (function () {
 			clearTimeout(nativeLoad.timeout);
 			nativeLoad.timeout = 0;
 		}
-		
+
 		nativeLoad.handleCount = Math.min(nativeLoadHandleNum, nativeLoad.files.length);
 		for (var i = 0; i < nativeLoad.handleCount; ++i) {
 			var name = nativeLoad.files.pop();
-		    (function (name, okCB, errCB) {
+			(function (name, okCB, errCB) {
 				ajax.get(depend.domains[0] + depend.rootPath() + name, undefined, undefined, ajax.RESP_TYPE_BIN, 0, function (data) {
 					handleWait();
 					okCB(data)
@@ -1390,10 +1393,10 @@ pi_modules.load.exports = (function () {
 
 	// 下载
 	var download = function (load, path, timeout, onsuccess, onerror, onprocess, err, retry) {
-		if (retry >= depend.domains.length) {
+		if (retry >= depend.httpDomains.length) {
 			return onerror(err);
 		}
-		load.ajax[path] = ajax.get(depend.domains[retry || 0] + path, undefined, undefined, ajax.RESP_TYPE_BIN, timeout, onsuccess, function (err) {
+		load.ajax[path] = ajax.get(depend.httpDomains[retry || 0] + path, undefined, undefined, ajax.RESP_TYPE_BIN, timeout, onsuccess, function (err) {
 			download(load, path, timeout, onsuccess, onerror, onprocess, err, retry === undefined ? 0 : retry + 1);
 		}, onprocess);
 	};
@@ -1739,8 +1742,7 @@ pi_modules.commonjs.exports = (function () {
 		var info = mod.info;
 		loadJS({
 			mod: mod,
-			// Naive模式下：&$forceServer=1使得js代码到服务器加载，而不是本地asset拦截
-			src: depend.domains[0] + depend.rootPath() + info.path + "?" + info.sign + "&$forceServer=1"
+			src: depend.httpDomains[0] + depend.rootPath() + info.path + "?" + info.sign
 		});
 	};
 	// 用BlobURL的方式加载的模块，二进制转换字符串及编译，浏览器内核会异步处理
@@ -1930,25 +1932,18 @@ pi_modules.update.exports = (function () {
 
 	var dependFileData = undefined;
 	var bootDir = undefined;
-	var domain = undefined;
+	var httpDomain = undefined;
+	var localDomain = undefined;
 	var rootPath = undefined;
 	var newIndexJSStr = undefined;
 	var isNative = navigator.userAgent.indexOf("YINENG") >= 0;
-	
+
 	var isIntercept = true;
 	var localVersion = [];
 	var remoteVersion = [];
 
-	var saveID = 0;
-	var saveMap = {};
-
-	window.handle_update_save = function (saveID) {
-		if (saveID in saveMap) {
-			var callback = saveMap[saveID];
-			delete saveMap[saveID];
-			callback && callback();
-		}
-	}
+	var JSIntercept = winit.JSIntercept;
+	var getLoadDomain = winit.getLoadDomain;
 
 	/**
 	 * 告诉更新系统，底层是否拦截
@@ -1965,10 +1960,9 @@ pi_modules.update.exports = (function () {
 		if (!isNative || !isIntercept) return;
 
 		bootDir = bootDirectory;
-		domain = depend.domains[0];
+		httpDomain = depend.httpDomains[0];
+		localDomain = depend.domains[0];
 		rootPath = depend.rootPath();
-
-		setResInfoServer(depend.domains, rootPath + bootDir, function () {});
 	}
 
 	/**
@@ -1987,9 +1981,9 @@ pi_modules.update.exports = (function () {
 
 	module.needForceUpdate = function () {
 		var need = !!localStorage.getItem("$$nativeIsUpdating");
-		if (need) {
-			alert("上次版本还没有更新完毕，必须更新");
-		}
+		// if (need) {
+		// 	alert("上次版本还没有更新完毕，必须更新");
+		// }
 		return need;
 	}
 
@@ -2006,12 +2000,22 @@ pi_modules.update.exports = (function () {
 			return;
 		}
 
-		// 从手机的的index.js取到老版本号
-		ajax.get(domain + rootPath + bootDir + "index.js?" + Math.random(), {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
+		var nextFunc = function (indexJSStr) {
 			var oldVersion = getIndexVersion(indexJSStr);
 			// 检查是否需要更新
 			checkNeedUpdate(oldVersion, callback);
-		}, function () {});
+		}
+
+		var indexJSStr = JSIntercept.getBootFile("index.js");
+		if (indexJSStr) {
+			nextFunc(indexJSStr);
+		} else {
+			// 从手机的的index.js取到老版本号
+			console.log("localDomain = " + localDomain);
+			console.log("rootPath = " + rootPath);
+			console.log("bootDir = " + bootDir);
+			ajax.get(localDomain + rootPath + bootDir + "index.js?" + Math.random(), {}, undefined, undefined, DOWNLOAD_TIMEOUT, nextFunc, function () {});
+		}
 	}
 
 	/**
@@ -2020,17 +2024,14 @@ pi_modules.update.exports = (function () {
 	 * 更新成功，会自动刷新页面
 	 */
 	module.update = function (updateProcessCb) {
-		
+
 		if (!isNative || !isIntercept) {
 			return;
 		}
 
 		localStorage.setItem("$$nativeIsUpdating", "1");
 
-		// 不拦截，webview正常模式
-		setIntercept(false, function () {
-			startUpdate(updateProcessCb);
-		});
+		startUpdate(updateProcessCb);
 	}
 
 	// 从index.js的版本号检查是否需要更新
@@ -2039,27 +2040,47 @@ pi_modules.update.exports = (function () {
 		remoteVersion = localVersion = oldVersion;
 
 		// 强制取服务器的index.js
-		ajax.get(domain + rootPath + bootDir + "index.js?" + Math.random() + "&$forceServer=1", {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
+		ajax.get(httpDomain + rootPath + bootDir + "index.js?" + Math.random(), {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
 
 			newIndexJSStr = indexJSStr;
 
 			var newVersion = getIndexVersion(indexJSStr);
-			
+
 			remoteVersion = newVersion;
+
+			var updatedStr = getIndexUpdatedContent(indexJSStr);
+			// console.log("updatedStr = ",updatedStr);
+			pi_update.updated = JSON.parse(updatedStr);
 
 			var needUpdate = !!localStorage.getItem("$$nativeIsUpdating");
 			if (needUpdate) {
-				alert("上次版本还没有更新完毕，必须更新");
+				// alert("上次版本还没有更新完毕，必须更新");
+				pi_update.alert({
+					btnText:"更新未完成"
+				},function(){
+					okCB(needUpdate);
+				});
 			} else if (oldVersion[0] !== newVersion[0] || oldVersion[1] !== newVersion[1]) {
 				// 第一，第二版本号 不同，必须强制更新
 				needUpdate = true;
-				alert("版本有重大变化，必须更新");
+				// alert("版本有重大变化，必须更新");
+				pi_update.alert({
+					btnText:"版本有重大变化"
+				},function(){
+					okCB(needUpdate);
+				});
 			} else if (oldVersion[2] !== newVersion[2]) {
 				// 第三版本号 不同，提示用户更新
-				needUpdate = confirm("有新的版本，需要更新吗？");
+				// needUpdate = confirm("有新的版本，需要更新吗？");
+				pi_update.confirm(function(ok){
+					needUpdate = ok;
+					var cancelUpdate = !ok;
+					okCB(needUpdate,cancelUpdate);
+				});
+			}else{
+				pi_update.closePop();
+				okCB(needUpdate);
 			}
-
-			okCB(needUpdate);
 		}, function () {
 			// 取不到index.js，用拦截即可
 		});
@@ -2068,15 +2089,15 @@ pi_modules.update.exports = (function () {
 	function startUpdate(updateProcessCb) {
 		// 先下载.depend
 		load.initLocal(function () {
-			var url = domain + rootPath + ".depend?" + Math.random() + "&$forceServer=1";
+			var url = httpDomain + rootPath + ".depend?" + Math.random();
 			ajax.get(url, {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (data) {
-	
+
 				dependFileData = data;
 
 				var str = data.substring(data.indexOf('['), data.lastIndexOf(']') + 1);
 				pi_modules.depend.exports.init(JSON.parse(str), rootPath);
 				var dependData = JSON.parse(str);
-	
+
 				downloadNewFiles(dependData, function (files) {
 					saveBootFiles(files, finishUpdate);
 				}, function (e) {
@@ -2089,26 +2110,35 @@ pi_modules.update.exports = (function () {
 	}
 
 	function finishUpdate() {
-		
-		setIntercept(true, function () {
-			alert("更新成功，即将进入新版本");
 
+		// alert("更新成功，即将进入新版本");
+		pi_update.alert({
+			btnText:"更新完毕"
+		},function(){
+			pi_update.closePop();
 			// 清除标记
 			localStorage.removeItem("$$nativeIsUpdating");
 
-			// 刷新页面
-			location.reload(true);
+			// 重启
+			JSIntercept.restartApp();
 		});
+
+		// // 清除标记
+		// localStorage.removeItem("$$nativeIsUpdating");
+
+		// // 重启
+		// JSIntercept.restartApp();
 	}
 
 	function saveBootFiles(files, callback) {
 		var bootFiles = {};
 		var saveCount = 0;
 		var rpath = rootPath;
+
 		if (rootPath.indexOf("/") === 0) {
 			rpath = rootPath.slice(1);
 		}
-		
+
 		++saveCount;
 		bootFiles[rpath + ".depend"] = butil.utf8Encode(dependFileData).buffer;
 		if (newIndexJSStr) {
@@ -2117,7 +2147,9 @@ pi_modules.update.exports = (function () {
 		}
 
 		for (var path in files) {
-			if (path.indexOf(bootDir) === 0 && bootFiles[rpath + path] === undefined) {
+			var pathInPiBootDir = path.indexOf("pi/boot/") >= 0;
+			var pathInBootDir = path.indexOf(bootDir) === 0 && bootFiles[rpath + path] === undefined
+			if (pathInPiBootDir || pathInBootDir) {
 				++saveCount;
 				bootFiles[rpath + path] = files[path];
 			}
@@ -2132,14 +2164,7 @@ pi_modules.update.exports = (function () {
 		for (var path in bootFiles) {
 			var str = arrayBufferToBase64(bootFiles[path]);
 			console.log("JSIntercept.saveFile, path = " + path + ", size = " + str.length);
-
-			saveMap[++saveID] = cb;
-			
-			if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
-				window.JSIntercept.saveFile(path, str, saveID);
-			} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
-				window.webkit.messageHandlers.JSIntercept.postMessage([path, str, saveID]);
-			}
+			JSIntercept.saveFile(path, str, cb);
 		}
 	}
 
@@ -2176,34 +2201,6 @@ pi_modules.update.exports = (function () {
 		load.start(down);
 	}
 
-	/**
-	 * 设置资源信息到拦截层
-	 * @param {*} domains 
-	 * @param {*} bootDir
-	 * @param {*} okCB 
-	 */
-	function setResInfoServer(domains, bootDir, okCB) {
-		var url = domain + "/$resinfo?domains=" + JSON.stringify(domains) + "&bootdir=" + bootDir;
-
-		url = encodeURI(url);
-
-		ajax.get(url, undefined, undefined, undefined, DOWNLOAD_TIMEOUT, okCB, function () {
-			alert("更新：setResInfoServer 失败");
-		}, function () {});
-	}
-
-	/**
-	 * @description 通知 webview，是否拦截请求，默认为拦截；
-	 * @param 
-	 */
-	function setIntercept(isIntercept, okCB) {
-		var url = encodeURI(domain + "/$intercept?value=" + (isIntercept ? "1" : "0"));
-
-		ajax.get(url, undefined, undefined, undefined, DOWNLOAD_TIMEOUT, okCB, function () {
-			alert("更新，设置拦截失败");
-		}, function () {});
-	}
-
 	// 取indexjs的版本号
 	function getIndexVersion(indexJS) {
 		// 第一行是：// !version=major.minor.update.date
@@ -2213,6 +2210,17 @@ pi_modules.update.exports = (function () {
 			throw new Error("index.js must have version at first line, format like: // !version=1.0.0.100916")
 		}
 		return [result[1], result[2], result[3], result[4]];
+	}
+
+	// 取indexjs的更新内容数组
+	function getIndexUpdatedContent(indexJS) {
+		// 第二行是：// !updated=["支持Dapp","交易功能稳定123","优化加载速度123","全新界面UI，全新体验","修复账户相关bug"]
+		var regex = /\/\/\s*!updated=(.*)/;
+		var result = indexJS.match(regex);
+		if (!result) {
+			throw new Error('index.js must have updated at second line, format like: // !updated=["支持Dapp","交易功能稳定"]');
+		}
+		return result[1];
 	}
 
 	function arrayBufferToBase64(buffer) {
@@ -2250,7 +2258,7 @@ self.onerror = winit.debug ? undefined : (function () {
 			e = error;
 		} else
 			return;
-				
+
 		console.log(e);
 		e = JSON.stringify(e);
 		c = count(e);
@@ -2260,3 +2268,103 @@ self.onerror = winit.debug ? undefined : (function () {
 	};
 })();
 winit.init();
+
+
+var pi_update = pi_update || {};
+
+// option = {
+// 	btnText
+// }
+
+pi_update.modifyContent = function(){
+	var modified = pi_update.contentModified;
+	if(!modified){
+		var updateMod = pi_modules.update.exports;
+		var versionArr = updateMod.getRemoteVersion();
+		versionArr.pop();
+		var newVersion = versionArr.join(".");
+		var $version = document.querySelector("#pi-version");
+		$version.innerHTML = newVersion;
+		var $items = document.querySelector(".pi-update-items");
+		for(var i = 0;i < pi_update.updated.length;i++){
+			var $item = document.createElement("div");
+			$item.setAttribute("class","pi-update-item");
+			$item.innerHTML = (i + 1) + "、" + pi_update.updated[i];
+			$items.appendChild($item);
+		}
+		pi_update.contentModified = true;
+	}
+}
+
+// 确定弹框
+pi_update.confirm = function(callback){
+	pi_update.modifyContent();
+	var $btns = document.querySelector(".pi-update-btns");
+	var $cancel = document.querySelector(".pi-update-cancel-btn");
+	var $ok = document.querySelector(".pi-update-ok-btn");
+	$cancel.addEventListener("click",function(){
+		var $updateRoot = document.querySelector('#update-root');
+		$updateRoot.style.display = "none";
+		callback(false);
+	});
+	$ok.addEventListener("click",function(){
+		callback(true);
+	});
+
+	$btns.style.display = "display";
+	// 显示弹框
+	var $updateRoot = document.querySelector('#update-root');
+	$updateRoot.style.display = "block";
+}
+
+//e的数据结构{type: "saveFile", total: 4, count: 1}
+// 进度条更新
+pi_update.updateProgress = function(e){
+	var updating  = pi_update.updating;
+	if(!updating){
+		var $btns = document.querySelector(".pi-update-btns");
+		var $progressContainer = document.querySelector(".pi-update-progress-container");
+		var $completeBtn = document.querySelector(".pi-update-complete-btn");
+		$btns.style.display = "none";
+		$progressContainer.style.display = "block";
+		$completeBtn.style.display = "none";
+		pi_update.updating = true;
+	}
+	
+	
+	var $progress = document.querySelector(".pi-update-progress");
+	var $progressText = document.querySelector(".pi-update-progress-text");
+	var percent = e.count / e.total;
+	var percentText = parseInt(percent * 100) + "%";
+	console.log("percentText = ",percentText);
+	$progress.style.width = percentText;
+	$progressText.innerHTML = percentText;
+}
+
+
+// alert弹框
+pi_update.alert = function(option,completeCB){
+	pi_update.modifyContent();
+	var $updateRoot = document.querySelector('#update-root');
+	var $btns = document.querySelector(".pi-update-btns");
+	var $progressContainer = document.querySelector(".pi-update-progress-container");
+	var $completeBtn = document.querySelector(".pi-update-complete-btn");
+	
+	$completeBtn.addEventListener("click",function(){
+		completeCB();
+	});
+
+	$updateRoot.style.display = "block";
+	$btns.style.display = "none";
+	$progressContainer.style.display = "none";
+	$completeBtn.innerHTML = option.btnText;
+	$completeBtn.style.display = "flex";
+}
+
+// 关闭弹框
+pi_update.closePop = function(){
+	var $updateRoot = document.querySelector('#update-root');
+	var $body = document.querySelector("body");
+	$body.removeChild($updateRoot);
+}
+
