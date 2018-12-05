@@ -76,12 +76,9 @@ export class CloudWalletHome extends Widget {
     public rechargeClick() {
         if (this.props.currencyName === 'KT') {
             popNewMessage(this.language.tips);
-
         } else if (this.props.currencyName === 'GT') {
             popNew('app-view-wallet-cloudWalletGT-rechargeGT');
-
         } else {
-            
             popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
         }
     }

@@ -820,15 +820,15 @@ export const fetchWalletAssetList = () => {
 export const fetchCloudWalletAssetList = () => {
     const assetList = [];
     const cloudBalances = getCloudBalances();
-    // const ktBalance = cloudBalances.get(CloudCurrencyType.KT) || 0;
-    // const ktItem = {
-    //     currencyName: 'KT',
-    //     description: 'KuPlay Token',
-    //     balance: formatBalance(ktBalance),
-    //     balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
-    //     gain: formatBalanceValue(0)
-    // };
-    // assetList.push(ktItem);
+    const ktBalance = cloudBalances.get(CloudCurrencyType.KT) || 0;
+    const ktItem = {
+        currencyName: 'KT',
+        description: 'KuPlay Token',
+        balance: formatBalance(ktBalance),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
+        gain: formatBalanceValue(0)
+    };
+    assetList.push(ktItem);
     const gtItem = {
         currencyName: 'GT',
         description: 'GT',

@@ -99,7 +99,6 @@ export const jumpPay = (order, okCb ? : Function, failCb ? : Function) => {
     payIframe.setAttribute('style', 'position:absolute;width:0px;height:0px;visibility:hidden;');
     document.body.appendChild(payIframe);
     setTimeout(() => {
-        document.body.removeChild(payIframe);
         popNew('app-components1-modalBox-modalBox', {
             title: '',
             content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
@@ -108,10 +107,12 @@ export const jumpPay = (order, okCb ? : Function, failCb ? : Function) => {
             cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
         }, () => {
             okCb && okCb(order);
+            document.body.removeChild(payIframe);
         }, () => {
             failCb && failCb();
+            document.body.removeChild(payIframe);
         });
-    }, 1000);
+    }, 3000);
 };
 
 /**
