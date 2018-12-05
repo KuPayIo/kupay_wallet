@@ -39,7 +39,7 @@ export class CloudWalletHome extends Widget {
                 tab:{ zh_Hans:'入账',zh_Hant:'入賬',en:'' },
                 components:'app-view-wallet-cloudWallet-rechargeRecord'
             },{
-                tab:{ zh_Hans:'入账',zh_Hant:'入賬',en:'' },
+                tab:{ zh_Hans:'出账',zh_Hant:'出賬',en:'' },
                 components:'app-view-wallet-cloudWallet-withdrawRecord'
             }],
             activeNum:0,
