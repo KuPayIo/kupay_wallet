@@ -19,7 +19,7 @@ interface Props {
     currencyName:string;
 }
 export class CloudWalletHome extends Widget {
-    public props:Props;
+    public props:any;
     public ok:() => void;
     public setProps(props:Props,oldProps:Props) {
 
@@ -31,16 +31,17 @@ export class CloudWalletHome extends Widget {
         const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
         const balanceValue = formatBalanceValue(fetchBalanceValueOfGT(balance));
         const color = getStore('setting/changeColor','redUp');
-        this.state = {
+        this.props = {
+            ...this.props,
             tabs:[{
                 tab:{ zh_Hans:'全部',zh_Hant:'全部',en:'' },
                 components:'app-view-wallet-cloudWalletGT-totalRecord'
             },{
                 tab:{ zh_Hans:'入账',zh_Hant:'入賬',en:'' },
-                components:'app-view-wallet-cloudWallet-rechargeRecord'
+                components:'app-view-wallet-cloudWalletGT-rechargeRecord'
             },{
                 tab:{ zh_Hans:'出账',zh_Hant:'出賬',en:'' },
-                components:'app-view-wallet-cloudWallet-withdrawRecord'
+                components:'app-view-wallet-cloudWalletGT-withdrawRecord'
             }],
             activeNum:0,
             gain:fetchCoinGain(currencyName),
@@ -54,12 +55,13 @@ export class CloudWalletHome extends Widget {
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        this.state.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
-        this.state.balanceValue = formatBalanceValue(fetchBalanceValueOfGT(this.state.balance));
+        this.props.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
+        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfGT(this.props.balance));
+        this.props.rate = formatBalanceValue(fetchBalanceValueOfGT(1));
         this.paint();
     }
     public tabsChangeClick(event: any, value: number) {
-        this.state.activeNum = value;
+        this.props.activeNum = value;
         this.paint();
     }
     public backPrePage() {
@@ -83,7 +85,7 @@ export class CloudWalletHome extends Widget {
     }
 
     public currencyUnitChange() {
-        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
 

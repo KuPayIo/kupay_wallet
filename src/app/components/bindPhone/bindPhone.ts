@@ -81,7 +81,7 @@ export class BindPhone extends Widget {
      * 电话号码改变
      */
     public phoneChange(e: any) {
-        this.state.phone = e.value;
+        this.state.phone = e.value.toString();
     }
 
     /**

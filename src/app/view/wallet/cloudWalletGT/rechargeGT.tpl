@@ -15,14 +15,14 @@
                         <widget w-tag="pi-ui-lang" style="padding-left:40px">{"zh_Hans":"充值金额","zh_Hant":"充值金額","en":""}</widget>
                     </span>
                     <span w-class="balance">
-                        <pi-ui-lang>{"zh_Hans":"余额：","zh_Hant":"餘額：","en":""}</pi-ui-lang>&nbsp;0.00
-                        {{% {{it1.balance%1===0?it1.balance.toFixed(2):it1.balance}} 
+                        <pi-ui-lang>{"zh_Hans":"余额：","zh_Hant":"餘額：","en":""}</pi-ui-lang>&nbsp;
+                        {{it.balance%1===0?it.balance.toFixed(2):it.balance}} 
                     </span>
                 </div>
                 <div w-class="input-father" ev-input-change="amountChange">
                     {{: inputPlace = {"zh_Hans":"输入金额","zh_Hant":"輸入金額","en":""} }}
                     <div w-class="balance-value">≈{{it.currencyUnitSymbol+" "+it.total}} </div>
-                    <app-components1-input-input>{itype:"number",placeHolder:{{inputPlace}},style:"padding:0;background:transparent;"}</app-components1-input-input>
+                    <app-components1-input-input>{itype:"number",maxLength:8,placeHolder:{{inputPlace}},input:{{it.num}},style:"padding:0;background:transparent;"}</app-components1-input-input>
                 </div>
             </div>
 

@@ -122,7 +122,6 @@ export class PlayHome extends Widget {
         if (this.state.mines > 0 && this.state.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的挖矿操作并刷新数据
             await getAward();
             this.state.firstClick = false;
-            popNew('app-view-earn-mining-addMineAlert',{ addNum:this.state.mines });
             setTimeout(() => {// 数字动画效果执行完后刷新页面
                 this.initEvent();
             }, 300);
