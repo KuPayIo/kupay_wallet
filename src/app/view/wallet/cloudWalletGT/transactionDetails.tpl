@@ -10,26 +10,27 @@
             <div w-class="status">{{it.state}}</div>
         </div>
         <div w-class="detail-top">
+            {{if it.state !=='查询失败'}}
+                {{: tags = [
+                    {"zh_Hans":"金额","zh_Hant":"金額","en":""},
+                    {"zh_Hans":"类型","zh_Hant":"類型","en":""},
+                    {"zh_Hans":"交易时间","zh_Hant":"交易時間","en":""}] }}
 
-            {{: tags = [
-                {"zh_Hans":"金额","zh_Hant":"金額","en":""},
-                {"zh_Hans":"类型","zh_Hant":"類型","en":""},
-                {"zh_Hans":"交易时间","zh_Hant":"交易時間","en":""}] }}
 
-
-            <div w-class="amount">+{{it.GTNum}}&nbsp;GT</div>
-            <div w-class="item">
-                <div w-class="tag"><pi-ui-lang>{{tags[0]}}</pi-ui-lang></div>
-                <div w-class="content"><span>￥{{it.money}}</span></div>
-            </div>
-            <div w-class="item">
-                <div w-class="tag"><pi-ui-lang>{{tags[1]}}</pi-ui-lang></div>
-                <div w-class="content"><span>{{it.transactionType}}</span></div>
-            </div>
-            <div w-class="item">
-                <div w-class="tag"><pi-ui-lang>{{tags[2]}}</pi-ui-lang></div>
-                <div w-class="content"><span>{{it.transactionTime}}</span></div>
-            </div>
+                <div w-class="amount">+{{it.GTNum}}&nbsp;GT</div>
+                <div w-class="item">
+                    <div w-class="tag"><pi-ui-lang>{{tags[0]}}</pi-ui-lang></div>
+                    <div w-class="content"><span>￥{{it.money}}</span></div>
+                </div>
+                <div w-class="item">
+                    <div w-class="tag"><pi-ui-lang>{{tags[1]}}</pi-ui-lang></div>
+                    <div w-class="content"><span>{{it.transactionType}}</span></div>
+                </div>
+                <div w-class="item">
+                    <div w-class="tag"><pi-ui-lang>{{tags[2]}}</pi-ui-lang></div>
+                    <div w-class="content"><span>{{it.transactionTime}}</span></div>
+                </div>
+            {{end}}
         </div>
     </div>
 </div>

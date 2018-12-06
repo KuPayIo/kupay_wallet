@@ -21,7 +21,6 @@ export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> =
         const each = balanceInfo.value[i];
         m.set(each[0], smallUnit2LargeUnit(CloudCurrencyType[each[0]], each[1]));
     }
-    m.set(CloudCurrencyType.CNYT,0);
     
     return m;
 };
@@ -66,6 +65,14 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
                 behavior = getStaticLanguage().cloudAccountDetail.types[7];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
+            case TaskSid.Wxpay:
+                behavior = getStaticLanguage().cloudAccountDetail.types[8];
+                behaviorIcon = 'wxpay_rechange.png';
+                break;
+            case TaskSid.Alipay:
+                behavior = getStaticLanguage().cloudAccountDetail.types[9];
+                behaviorIcon = 'alipay_rechange.png';
+                break;
             default:
                 behavior = isArray(v[2]) ? unicodeArray2Str(v[2]) : v[2];
         }
@@ -75,11 +82,30 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
             amount,
             behavior,
             behaviorIcon,
+            oid:v[2],
             time: v[3]
         });
     });
 
     return list;
+};
+/**
+ * 解析GT流水
+ */
+export const splitGtAccountDetail = (list:any[]) => {
+    const res = {
+        rechangeList :[],
+        withdrawList :[]
+    };
+    list.forEach(v => {
+        if (v.itype === TaskSid.Wxpay || v.itype === TaskSid.Alipay) {
+            res.rechangeList.push(v);
+        } else {
+            res.withdrawList.push(v);
+        }
+    });
+
+    return res;
 };
 
 /**

@@ -827,14 +827,16 @@ export const fetchCloudWalletAssetList = () => {
         description: 'KuPlay Token',
         balance: formatBalance(ktBalance),
         balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
-        gain: formatBalanceValue(0)
+        gain: formatBalanceValue(0),
+        rate:0
     };
     assetList.push(ktItem);
+    const gtBalance = cloudBalances.get(CloudCurrencyType.GT) || 0;
     const gtItem = {
         currencyName: 'GT',
         description: 'GT',
-        balance: 0,
-        balanceValue: '0.00',
+        balance: formatBalance(gtBalance),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfGT(gtBalance)),
         gain: formatBalanceValue(0),
         rate:formatBalanceValue(fetchBalanceValueOfGT(1))
     };

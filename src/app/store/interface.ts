@@ -36,7 +36,9 @@ export enum TaskSid {
     Chat = 1011,               // 聊天
     FinancialManagement = 330, // 理财
     LuckyMoney = 340,           // 红包
-    LuckyMoneyRetreat = 341     // 回退红包
+    LuckyMoneyRetreat = 341,     // 回退红包
+    Wxpay = 370,                // 微信支付
+    Alipay = 371                // 支付宝支付
 }
 
 /**

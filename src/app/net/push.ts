@@ -2,6 +2,7 @@ import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr
 import { backCall, backList, popNew } from '../../pi/ui/root';
 import { CMD } from '../utils/constants';
 import { getStaticLanguage, logoutAccount, logoutAccountDel, popNewMessage } from '../utils/tools';
+import { kpt2kt } from '../utils/unitTools';
 import { getServerCloudBalance } from './pull';
 
 /**
@@ -55,6 +56,12 @@ export const initPush = () => {
         getServerCloudBalance().then(res => {
             console.log('服务器推送成功 云端余额更新==========================',res);
         });
+        console.log('服务器推送成功==========================',res);
+    });
+
+    // 监听KT增加事件
+    setMsgHandler('alter_balance_ok',(res) => {
+        popNew('app-view-earn-mining-addMineAlert',{ addNum:kpt2kt(res.num) });
         console.log('服务器推送成功==========================',res);
     });
 };

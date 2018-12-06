@@ -14,6 +14,8 @@ export const smallUnit2LargeUnit = (currencyName: string, amount: string | numbe
         return kpt2kt(parseInt(amount.toString()));
     } else if (currencyName === 'BTC') {
         return sat2Btc(parseInt(amount.toString()));
+    } else if (currencyName === 'GT') {
+        return (parseInt(amount.toString(),16) / 1000000);
     } else { // erc20
         return ethTokenDivideDecimals(parseInt(amount.toString()),currencyName);
     }

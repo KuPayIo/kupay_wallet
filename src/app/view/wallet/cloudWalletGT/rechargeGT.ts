@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getGoldPrice } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
-import { register } from '../../../store/memstore';
+import { getCloudBalances, register } from '../../../store/memstore';
 import { confirmPay } from '../../../utils/pay';
 import { fetchBalanceValueOfGT, formatBalance, getCurrencyUnitSymbol, popNewMessage } from '../../../utils/tools';
 
@@ -22,6 +22,7 @@ interface Props {
     total:number;  // 总金额(元)
     num:string;  // 充值GT数
     currencyUnitSymbol:string; // 钱符号
+    balance:number; // GT余额
 }
 
 export class RechargeGT extends Widget {
@@ -30,8 +31,9 @@ export class RechargeGT extends Widget {
         payType : 'wxpay',
         goldPrice:200,
         total:0.00,
-        num:'0',
-        currencyUnitSymbol:getCurrencyUnitSymbol()
+        num:'',
+        currencyUnitSymbol:getCurrencyUnitSymbol(),
+        balance:formatBalance(getCloudBalances().get(CloudCurrencyType.GT))
     };
     constructor() {
         super();
@@ -57,7 +59,11 @@ export class RechargeGT extends Widget {
     }
 
     public amountChange(e:any) {
-        this.props.num = e.value;
+        if (e.value) {
+            this.props.num = e.value;
+        } else {
+            this.props.num = '0';
+        }
         const amountShow = formatBalance(fetchBalanceValueOfGT(e.value));
         this.props.total =  amountShow === 0 ? 0.00 :amountShow;
         this.paint();
@@ -74,12 +80,16 @@ export class RechargeGT extends Widget {
         const orderDetail = {
             total: Math.floor(this.props.total * 100), // 总价
             body: 'GT', // 信息
-            num: parseFloat(this.props.num), // 充值GT数量
+            num: parseFloat(this.props.num) * 1000000, // 充值GT数量
             payType: this.props.payType, // 支付方式
             type:CloudCurrencyType.GT // 充值类型
         };
         
         confirmPay(orderDetail,(res) => {
+            this.props.num = '';
+            this.props.total = 0.00;
+            this.props.payType = 'wxpay';
+            this.paint();
             popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:res.oid });
         },() => {
             popNewMessage({ zh_Hans:'充值失败，请重新充值',zh_Hant:'充值失败，请重新充值',en:'' });

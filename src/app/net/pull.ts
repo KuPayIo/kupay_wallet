@@ -8,7 +8,7 @@ import { MainChainCoin, uploadFileUrl, wsUrl } from '../config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, MinerFeeLevel, User, Wallet } from '../store/interface';
 import { Account,getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitGtAccountDetail } from '../store/parse';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
@@ -247,6 +247,7 @@ export const getRandom = async (cmd?:number) => {
 export const getServerCloudBalance = () => {
     const list = [];
     list.push(CloudCurrencyType.KT);
+    list.push(CloudCurrencyType.GT);
     for (const k in CloudCurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
             list.push(CloudCurrencyType[k]);
@@ -260,9 +261,6 @@ export const getServerCloudBalance = () => {
         const cloudWallets = getStore('cloud/cloudWallets');
         for (const [key,value] of cloudBalances) {
             const cloudWallet = cloudWallets.get(key);
-            if (key === 103) {
-                cloudWallet.balance = 0;
-            }
             cloudWallet.balance = value;
         }
         setStore('cloud/cloudWallets',cloudWallets);
@@ -735,6 +733,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         const res = await requestAsync(msg);
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
+        const splitDetail = splitGtAccountDetail(detail); 
         const canLoadMore = detail.length >= PAGELIMIT;
         if (detail.length > 0) {
             const cloudWallets = getStore('cloud/cloudWallets');
@@ -742,8 +741,16 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
             if (filter === 1) {
                 if (start) {
                     cloudWallet.otherLogs.list.push(...detail);
+                    if (coin === 'GT') {
+                        cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
+                        cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
+                    }
                 } else {
                     cloudWallet.otherLogs.list = detail;
+                    if (coin === 'GT') {
+                        cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
+                        cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
+                    }
                 }
                 
                 cloudWallet.otherLogs.start = nextStart;
