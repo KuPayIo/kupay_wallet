@@ -72,7 +72,7 @@ export class RechargeGT extends Widget {
      * 充值事件
      */
     public rechargeClick() {
-        if (parseFloat(this.props.num) === 0) {
+        if (parseFloat(this.props.num) === 0 || !this.props.num) {
             popNewMessage({ zh_Hans:'请输入充值GT数量',zh_Hant:'请输入充值GT数量',en:'' });
             
             return;
