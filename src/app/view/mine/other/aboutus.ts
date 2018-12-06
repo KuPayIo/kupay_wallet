@@ -19,7 +19,7 @@ export class Aboutus extends Widget {
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
             version: getLocalVersion(),
             data: [
                 { value: this.language.itemTitle[0], components: 'app-view-mine-other-privacypolicy' },
@@ -32,8 +32,8 @@ export class Aboutus extends Widget {
     }
 
     public itemClick(e: any, index: number) {
-        if (index === 0 && this.state.data[index].components !== '') {
-            popNew(this.state.data[index].components);
+        if (index === 0 && this.props.data[index].components !== '') {
+            popNew(this.props.data[index].components);
         } else if (index === 1) { // 版本更新
             const updateMod = pi_modules.update.exports;
             updateMod.checkUpdate((needUpdate,cancelUpdate) => {
@@ -52,14 +52,14 @@ export class Aboutus extends Widget {
                 });
             });
             
-            // popNew('app-components-message-message', { content: this.state.cfgData.tips });
+            // popNew('app-components-message-message', { content: this.props.cfgData.tips });
         } else {
             // TODO 分享下载
             // popNew('app-components-share-share', { 
             //     shareType: ShareToPlatforms.TYPE_LINK,
             //     url: shareDownload,
-            //     title:`${this.state.walletName}钱包`,
-            //     content:`我正在使用${this.state.walletName}，邀您一起来使用！` 
+            //     title:`${this.props.walletName}钱包`,
+            //     content:`我正在使用${this.props.walletName}，邀您一起来使用！` 
             // });
             // console.error(shareDownload);
             popNew('app-view-mine-other-shareDownload');

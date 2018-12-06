@@ -10,8 +10,8 @@ export class FAQ extends Widget {
     
     public create() {
         super.create();
-        this.state = {        
-            htmlStrList:getStaticLanguage().helpAnswer,
+        this.props = {        
+            htmlStrList:getStaticLanguage().helpAnswer
         };
     }
 

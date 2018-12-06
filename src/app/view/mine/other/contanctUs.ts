@@ -16,7 +16,7 @@ export class ContanctUs extends Widget {
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
             version:getLocalVersion(),
             data:[
                 { value: this.language.itemTitle[0],desc:getModulConfig('WALLET_WEBSITE') },
@@ -36,7 +36,7 @@ export class ContanctUs extends Widget {
         switch (ind) {
             // 点击钱包官网
             case 0:
-                openNewActivity(this.state.data[0].desc,this.state.walletName);
+                openNewActivity(this.props.data[0].desc,this.props.walletName);
                 break;
             // KuPay小助手
             case 1:
@@ -47,7 +47,7 @@ export class ContanctUs extends Widget {
                 popNew('app-view-mine-other-wechatQrcode',{ fg:1 });
                 break;
             default:
-                // console.log(this.state.cfgData.tips);
+                // console.log(this.props.cfgData.tips);
         }
     }
 }

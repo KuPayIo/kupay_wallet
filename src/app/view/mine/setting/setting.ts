@@ -32,7 +32,7 @@ export class Setting extends Widget {
         const lan = getStore('setting/language', 'zh_Hans');
         const unit = getStore('setting/currencyUnit', 'CNY');
         const color = getStore('setting/changeColor', 'redUp');
-        this.state = {
+        this.props = {
             lockScreenPsw: '',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
             lockScreenTitle: '',  // 锁屏密码页面标题
@@ -50,12 +50,12 @@ export class Setting extends Widget {
     public initData() {
         const wallet = getStore('wallet');
         if (wallet) {
-            this.state.wallet = wallet;
+            this.props.wallet = wallet;
         }
         const ls = getStore('setting/lockScreen');
         if (ls) {
-            this.state.lockScreenPsw = ls.psw;
-            this.state.openLockScreen = ls.psw && ls.open !== false;
+            this.props.lockScreenPsw = ls.psw;
+            this.props.openLockScreen = ls.psw && ls.open !== false;
         }
 
         this.paint();
@@ -69,7 +69,7 @@ export class Setting extends Widget {
      * 判断当前用户是否已经创建钱包
      */
     public judgeWallet() {
-        if (this.state.wallet) {
+        if (this.props.wallet) {
             return true;
         }
         popNew('app-components1-modalBox-modalBox', this.language.modalBox1, () => {
@@ -82,18 +82,18 @@ export class Setting extends Widget {
      * 处理锁屏开关切换
      */
     public onSwitchChange() {
-        if (this.state.openLockScreen) {   // 如果锁屏开关打开则直接关闭
+        if (this.props.openLockScreen) {   // 如果锁屏开关打开则直接关闭
             const ls = getStore('setting/lockScreen');
             ls.open = !ls.open;
-            this.state.openLockScreen = false;
+            this.props.openLockScreen = false;
             setStore('setting/lockScreen', ls);
-        } else if (this.state.wallet) {
+        } else if (this.props.wallet) {
             popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
                 if (!r) {
                     this.closeLockPsw();
-                    this.state.openLockScreen = false;
+                    this.props.openLockScreen = false;
                 } else {
-                    this.state.openLockScreen = true;
+                    this.props.openLockScreen = true;
                 }
             });
         } else {
@@ -112,8 +112,8 @@ export class Setting extends Widget {
      * 关闭锁屏开关
      */
     public closeLockPsw() {
-        this.state.openLockScreen = false;
-        this.state.lockScreenPsw = '';
+        this.props.openLockScreen = false;
+        this.props.lockScreenPsw = '';
         this.paint();
     }
 
@@ -124,7 +124,7 @@ export class Setting extends Widget {
         // if (!this.judgeWallet()) {
         //     return;
         // }
-        const data = this.state.itemList[ind];
+        const data = this.props.itemList[ind];
         popNew('app-view-mine-setting-itemList', data);
     }
 
@@ -148,7 +148,7 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        const backup = this.state.wallet.isBackup;
+        const backup = this.props.wallet.isBackup;
         popNew('app-components1-modalBox-modalBox', backup ? this.language.modalBox2[1] :this.language.modalBox2[0] , () => {
             if (!backup) {
                 this.backUp();
@@ -169,7 +169,7 @@ export class Setting extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        const backup = this.state.wallet.isBackup;
+        const backup = this.props.wallet.isBackup;
         popNew('app-components1-modalBox-modalBox', backup ? this.language.modalBox3[1] :this.language.modalBox3[0] , () => {
             if (!backup) {
                 this.backUp();
