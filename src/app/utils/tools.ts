@@ -759,17 +759,18 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
 
 /**
  * 获取GT对应的货币价值
+ * @param balance GT数量
  */
 export const fetchBalanceValueOfGT = (balance: number) => {
     let balanceValue = 0;
     const USD2CNYRate = getStore('third/rate', 0);
-    const goldPrice = getStore('third/goldPrice');
+    const goldPrice = getStore('third/goldPrice') || 0;
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
 
     if (currencyUnit === 'CNY') {
-        balanceValue = balance * goldPrice;
+        balanceValue = balance * (goldPrice / 100);
     } else if (currencyUnit === 'USD') {
-        balanceValue = (balance * goldPrice) / USD2CNYRate;
+        balanceValue = (balance * (goldPrice) / 100) / USD2CNYRate;
     }
 
     return balanceValue;
@@ -820,22 +821,22 @@ export const fetchWalletAssetList = () => {
 export const fetchCloudWalletAssetList = () => {
     const assetList = [];
     const cloudBalances = getCloudBalances();
-    // const ktBalance = cloudBalances.get(CloudCurrencyType.KT) || 0;
-    // const ktItem = {
-    //     currencyName: 'KT',
-    //     description: 'KuPlay Token',
-    //     balance: formatBalance(ktBalance),
-    //     balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
-    //     gain: formatBalanceValue(0)
-    // };
-    // assetList.push(ktItem);
+    const ktBalance = cloudBalances.get(CloudCurrencyType.KT) || 0;
+    const ktItem = {
+        currencyName: 'KT',
+        description: 'KuPlay Token',
+        balance: formatBalance(ktBalance),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
+        gain: formatBalanceValue(0)
+    };
+    assetList.push(ktItem);
     const gtItem = {
         currencyName: 'GT',
         description: 'GT',
         balance: 0,
         balanceValue: '0.00',
         gain: formatBalanceValue(0),
-        rate:'234.00'
+        rate:formatBalanceValue(fetchBalanceValueOfGT(1))
     };
     assetList.push(gtItem);
     for (const k in CloudCurrencyType) {

@@ -46,7 +46,7 @@ export enum CloudCurrencyType {
     KT = 100,  // KT
     ETH,       // ETH 
     BTC,       // BTC
-    GT
+    GT         // GT
 }
 
 /**
@@ -120,6 +120,7 @@ export interface Third {
     shapeShiftTxsMap: Map<string, ShapeShiftTxs>; // shapeshift 交易记录Map
 
     rate: number;                                 // 货币的美元汇率
+    goldPrice:number;                             // 黄金价格
     currency2USDTMap: Map<string, Currency2USDT>;  // k线  --> 计算涨跌幅
 }
 

@@ -52,7 +52,6 @@ export class CloudHome extends Widget {
         if (v.currencyName === 'GT') {
             popNew('app-view-wallet-cloudWalletGT-home',{ currencyName:v.currencyName,gain:v.gain });
         } else {
-            
             popNew('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
         }
     }
@@ -116,6 +115,15 @@ register('activity/financialManagement/products', async (productList) => {
     }
     
 });
+
+// 黄金价格变化
+register('third/goldPrice', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateBalance();
+    }
+    
+});
 register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -123,6 +131,7 @@ register('setting/language', () => {
         w.paint();
     }
 });
+
 register('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
