@@ -8,7 +8,6 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
-import { openNewActivity } from '../../../logic/native';
 import { register } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
 

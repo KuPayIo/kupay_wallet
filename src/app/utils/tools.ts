@@ -496,7 +496,9 @@ export const calcHashValuePromise = async (pwd, salt?) => {
     console.time('pi_create  calc argonHash');
     let hash;
     const argonHash = new ArgonHash();
+    console.log('argonHash will init');
     argonHash.init();
+    console.log('argonHash has init');
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
     setStore('user/secretHash',hash);
     console.timeEnd('pi_create  calc argonHash');

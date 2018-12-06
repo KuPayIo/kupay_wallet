@@ -54,16 +54,16 @@
                 <widget w-tag="pi-ui-lang">{"zh_Hans":"一键快速邀请","zh_Hant":"一鍵快速邀請","en":""}</widget>
             </div>
             <div w-class="share_icon">
-                <div w-class="img-box">
+                <div w-class="img-box" on-tap="shareToWechat">
                     <img src="app/res/image/img_share_wechat.png" height="60px"/>
                 </div>
-                <div w-class="img-box">
+                <div w-class="img-box" on-tap="shareToFriends">
                     <img src="app/res/image/img_share_wechatArea.png" height="60px"/>
                 </div>
-                <div w-class="img-box">
+                <div w-class="img-box" on-tap="shareToQQSpace">
                     <img src="app/res/image/img_share_qqArea.png" height="60px"/>
                 </div>
-                <div w-class="img-box">
+                <div w-class="img-box" on-tap="shareToQQ">
                     <img src="app/res/image/img_share_qq.png" height="60px"/>
                 </div>
             </div>

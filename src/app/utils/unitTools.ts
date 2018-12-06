@@ -3,20 +3,24 @@
  */
 import { ERC20Tokens } from '../config';
 import { BigNumber } from '../res/js/bignumber';
+import { formatBalance } from './tools';
 
 /**
  * 根据货币类型小单位转大单位  
  */
 export const smallUnit2LargeUnit = (currencyName: string, amount: string | number): number => {
+    let ret = 0;
     if (currencyName === 'ETH') {
-        return wei2Eth(parseInt(amount.toString()));
+        ret =  wei2Eth(parseInt(amount.toString()));
     } else if (currencyName === 'KT') {
-        return kpt2kt(parseInt(amount.toString()));
+        ret = kpt2kt(parseInt(amount.toString()));
     } else if (currencyName === 'BTC') {
-        return sat2Btc(parseInt(amount.toString()));
+        ret = sat2Btc(parseInt(amount.toString()));
     } else { // erc20
-        return ethTokenDivideDecimals(parseInt(amount.toString()),currencyName);
+        ret = ethTokenDivideDecimals(parseInt(amount.toString()),currencyName);
     }
+
+    return formatBalance(ret);
 };
 
 /**
@@ -53,7 +57,7 @@ export const wei2Eth = (amount:string|number):number => {
     
     const balance = wei.div(decimals);
 
-    return Number(balance.toString(10));
+    return formatBalance(Number(balance.toString(10)));
 };
 
 /**
@@ -62,7 +66,7 @@ export const wei2Eth = (amount:string|number):number => {
 export const sat2Btc = (num: number | string) => {
     num = Number(num);
 
-    return num / Math.pow(10, 8);
+    return formatBalance(num / Math.pow(10, 8));
 };
 
 /**
