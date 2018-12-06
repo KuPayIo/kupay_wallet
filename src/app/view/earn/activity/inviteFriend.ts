@@ -1,6 +1,7 @@
 /**
  * 活动-邀请好友
  */
+import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { Widget } from '../../../../pi/widget/widget';
 
 interface Props {
@@ -29,6 +30,28 @@ export class InviteFriend extends Widget {
     public change(page:string) {
         this.props.showPage = page;
         this.paint();
+    }
+    public shareToWechat() {
+        this.baseShare(ShareToPlatforms.PLATFORM_WEBCHAT);
+    }
+
+    public shareToFriends() {
+        this.baseShare(ShareToPlatforms.PLATFORM_MOMENTS);
+    }
+
+    public shareToQQ() {
+        this.baseShare(ShareToPlatforms.PLATFORM_QQ);
+    }
+
+    public shareToQQSpace() {
+        this.baseShare(ShareToPlatforms.PLATFORM_QZONE);
+    }
+    
+    private baseShare(platform: number) {
+        const stp = new ShareToPlatforms();
+
+        stp.init();
+
     }
 
 }
