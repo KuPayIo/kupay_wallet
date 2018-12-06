@@ -33,6 +33,9 @@
     width: 200px;
     height: 200px;
     border-radius: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 .nickname{
     max-width:480px;
@@ -59,8 +62,8 @@
     margin-bottom: 22px;
 }
 .qrcode{
-    width: 400px;
-    height: 246px;
+    width: 230px;
+    height: 230px;
     margin-bottom: 30px;
 }
 .desc{
@@ -73,7 +76,17 @@
 .share-box{
     position: absolute;
     right: 0;
-    top: 20px;
+    top: 60px;
+    width: 96px;
+    height: 96px;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+}
+.back-box{
+    position: absolute;
+    left: 0;
+    top: 60px;
     width: 96px;
     height: 96px;
     display: flex;
@@ -81,6 +94,10 @@
     justify-content: center;
 }
 .share{
+    width: 48px;
+    height: 48px;
+}
+.back{
     width: 48px;
     height: 48px;
 }

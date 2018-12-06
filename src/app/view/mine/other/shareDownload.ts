@@ -10,6 +10,7 @@ import { getUserInfo } from '../../../utils/tools';
 
 export class ShareDownload extends Widget {
     public language:any;
+    public ok:() => void;
     public create() {
         super.create();
         this.init();
@@ -33,5 +34,8 @@ export class ShareDownload extends Widget {
         },() => {
             popNew('app-components-message-message',{ content:this.language.tips[0] });
         });
+    }
+    public backClick() {
+        this.ok && this.ok();
     }
 }

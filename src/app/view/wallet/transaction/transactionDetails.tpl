@@ -12,7 +12,7 @@
     </div>
     <div w-class="body">
         <div w-class="status-container">
-            <img src="../../../res/image/{{it.statusIcon}}.png" w-class="status-icon"/>
+            <img src="../../../res/image/{{it.statusIcon}}" w-class="status-icon"/>
             <div w-class="status">{{it.statusShow}}</div>
             {{if it.canResend && (it.tx.txType ===1) }}
             <div w-class="resend-btn" on-tap="resendClick">

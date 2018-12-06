@@ -67,7 +67,7 @@ export class CloudHome extends Widget {
         this.paint();
     }
     public optimalClick() {
-        popNew('app-view-wallet-financialManagement-home');
+        popNew('app-view-wallet-financialManagement-home',{ activeNum:0 });
     }
     public fmItemClick(e:any,index:number) {
         const product = this.props.productList[index];

@@ -40,6 +40,10 @@ export const run = (cb): void => {
     popNewPage();
     // 后台切前台
     backToFront();
+    // let count = 0;
+    // setInterval(() => {
+    //     console.log('test webview postmessage',count++);
+    // },1000);
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();

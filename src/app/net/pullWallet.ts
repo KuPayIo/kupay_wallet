@@ -88,30 +88,32 @@ export const rpcProviderSendAsync = (payload, callback) => {
  * 普通转账
  */
 export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
-    const fromAddr = txPayload.fromAddr;
-    const currencyName = txPayload.currencyName;
-    const minerFeeLevel = MinerFeeLevel.Standard;
-    const minerFeeList = fetchMinerFeeList(currencyName);
-    const fee = minerFeeList[minerFeeLevel].minerFee;
-    const txRecord:TxHistory = {
-        hash:'',
-        addr:fromAddr,
-        txType:TxType.Transfer,
-        fromAddr,
-        toAddr:txPayload.toAddr,
-        pay: wei2Eth(txPayload.pay),
-        time: 0,
-        status:TxStatus.Pending,
-        confirmedBlockNumber: 0,
-        needConfirmedBlockNumber:0,
-        info: '',
-        currencyName,
-        fee,
-        nonce:undefined,
-        minerFeeLevel
-    };
+    try {  
+        console.log('transfer3 is called');
+        if (psw.length <= 0) return ['have no password'];
+        const fromAddr = txPayload.fromAddr;
+        const currencyName = txPayload.currencyName;
+        const minerFeeLevel = MinerFeeLevel.Standard;
+        const minerFeeList = fetchMinerFeeList(currencyName);
+        const fee = minerFeeList[minerFeeLevel].minerFee;
+        const txRecord:TxHistory = {
+            hash:'',
+            addr:fromAddr,
+            txType:TxType.Transfer,
+            fromAddr,
+            toAddr:txPayload.toAddr,
+            pay: wei2Eth(txPayload.pay),
+            time: 0,
+            status:TxStatus.Pending,
+            confirmedBlockNumber: 0,
+            needConfirmedBlockNumber:0,
+            info: '',
+            currencyName,
+            fee,
+            nonce:undefined,
+            minerFeeLevel
+        };
 
-    try {        
         const addrIndex = getWltAddrIndex(fromAddr, currencyName);
         let hash;
         if (addrIndex >= 0) {    

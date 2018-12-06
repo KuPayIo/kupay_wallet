@@ -21,7 +21,7 @@ export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> =
         const each = balanceInfo.value[i];
         m.set(each[0], smallUnit2LargeUnit(CloudCurrencyType[each[0]], each[1]));
     }
-    m.set(CloudCurrencyType.CNYT,0);
+    m.set(CloudCurrencyType.GT,0);
     
     return m;
 };

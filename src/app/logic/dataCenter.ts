@@ -38,11 +38,11 @@ export class DataCenter {
         // 获取shapeshift支持货币
         // getShapeShiftCoins();
         // 更新黄金价格
-        this.updateGoldPrice();
+        // this.updateGoldPrice();
         // 更新人民币美元汇率
-        this.updateUSDRate();
+        // this.updateUSDRate();
         // 更新货币对比USDT的比率
-        this.updateCurrency2USDTRate();
+        // this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
         this.refreshAllTx();
     }
@@ -195,7 +195,7 @@ export class DataCenter {
 
             return api.ethCall(ERC20Tokens[currencyName].contractAddr, balanceOfCode)
                 .then(r => {
-                    const num = ethTokenDivideDecimals(Number(r), currencyName);
+                    const num = formatBalance(ethTokenDivideDecimals(Number(r), currencyName));
                     this.setBalance(addr, currencyName, num);
                 });
         }
@@ -204,13 +204,13 @@ export class DataCenter {
                 const api = new EthApi();
                 
                 return api.getBalance(addr).then(r => {
-                    const num = wei2Eth(r.result);
+                    const num = formatBalance(wei2Eth(r.result));
                     this.setBalance(addr, currencyName, num);
                 });
             case 'BTC':
                 return BtcApi.getBalance(addr).then(r => {
                     if (!r) return;
-                    this.setBalance(addr, currencyName, sat2Btc(r));
+                    this.setBalance(addr, currencyName, formatBalance(sat2Btc(r)));
                 });
             default:
         }
@@ -422,12 +422,12 @@ export class DataCenter {
         const res3: any = await api.getBlock(blockHash);
         const blockHeight = Number(await api.getBlockNumber());
         const confirmedBlockNumber = blockHeight - res1.blockNumber + 1;
-        const pay = wei2Eth(res2.value);
+        const pay = formatBalance(wei2Eth(res2.value));
         const needConfirmedBlockNumber = getConfirmBlockNumber('ETH', pay);
         // tslint:disable-next-line:max-line-length
         const status = parseInt(res1.status,16) === 1 ? confirmedBlockNumber >= needConfirmedBlockNumber ? TxStatus.Success : TxStatus.Confirmed : TxStatus.Failed;
         const gasPrice = new BigNumber(res2.gasPrice);
-        const fee = wei2Eth(gasPrice.times(res1.gasUsed));
+        const fee = formatBalance(wei2Eth(gasPrice.times(res1.gasUsed)));
         const localTx = fetchLocalTxByHash(addr, 'BTC', hash);
         const record: TxHistory = {
             ...localTx,
@@ -464,13 +464,13 @@ export class DataCenter {
         const confirmedBlockNumber = blockHeight - res1.blockNumber + 1;
         const obj = this.parseErc20Input(res2.input);
         if (!obj) return;
-        const pay = smallUnit2LargeUnit(currencyName, obj.pay);
+        const pay = formatBalance(smallUnit2LargeUnit(currencyName, obj.pay));
         const toAddr = obj.toAddr;
         const needConfirmedBlockNumber = getConfirmBlockNumber(currencyName, pay);
         // tslint:disable-next-line:max-line-length
         const status = parseInt(res1.status,16) === 1 ? confirmedBlockNumber >= needConfirmedBlockNumber ? TxStatus.Success : TxStatus.Confirmed : TxStatus.Failed;
         const gasPrice = new BigNumber(res2.gasPrice);
-        const fee = wei2Eth(gasPrice.times(res1.gasUsed));
+        const fee = formatBalance(wei2Eth(gasPrice.times(res1.gasUsed)));
         const localTx = fetchLocalTxByHash(addr, 'BTC', hash);
         const record: TxHistory = {
             ...localTx,
@@ -573,7 +573,7 @@ export class DataCenter {
             needConfirmedBlockNumber,
             info: '无',
             currencyName: 'BTC',
-            fee: tx.fees,
+            fee: formatBalance(tx.fees),
             nonce: -1
         };
         updateLocalTx(record);
