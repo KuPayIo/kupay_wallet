@@ -251,6 +251,7 @@ const initAccount = () => {
         for (const [key, value] of localCloudWallets) {
             const cloudWallet = store.cloud.cloudWallets.get(key);
             cloudWallet.balance = localCloudWallets.get(key).balance;
+            
         }
 
         // store.wallet init

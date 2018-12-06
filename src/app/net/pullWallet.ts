@@ -68,11 +68,13 @@ export const rpcProviderSendAsync = (payload, callback) => {
                 } else {
                     callback(null, { jsonrpc: '2.0', result: hash, id: payload.id });
                 }
-            }).catch(() => {
+            }).catch((err) => {
                 console.log(`wallet rpcProviderSendAsync err is catch`);
+                callback(err);
             });
         } catch (e) {
             console.log(`transfer3 catch throw`);
+            callback(e);
         }
         
     } else {
@@ -86,30 +88,32 @@ export const rpcProviderSendAsync = (payload, callback) => {
  * 普通转账
  */
 export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
-    const fromAddr = txPayload.fromAddr;
-    const currencyName = txPayload.currencyName;
-    const minerFeeLevel = MinerFeeLevel.Standard;
-    const minerFeeList = fetchMinerFeeList(currencyName);
-    const fee = minerFeeList[minerFeeLevel].minerFee;
-    const txRecord:TxHistory = {
-        hash:'',
-        addr:fromAddr,
-        txType:TxType.Transfer,
-        fromAddr,
-        toAddr:txPayload.toAddr,
-        pay: wei2Eth(txPayload.pay),
-        time: 0,
-        status:TxStatus.Pending,
-        confirmedBlockNumber: 0,
-        needConfirmedBlockNumber:0,
-        info: '',
-        currencyName,
-        fee,
-        nonce:undefined,
-        minerFeeLevel
-    };
+    try {  
+        console.log('transfer3 is called');
+        if (psw.length <= 0) return ['have no password'];
+        const fromAddr = txPayload.fromAddr;
+        const currencyName = txPayload.currencyName;
+        const minerFeeLevel = MinerFeeLevel.Standard;
+        const minerFeeList = fetchMinerFeeList(currencyName);
+        const fee = minerFeeList[minerFeeLevel].minerFee;
+        const txRecord:TxHistory = {
+            hash:'',
+            addr:fromAddr,
+            txType:TxType.Transfer,
+            fromAddr,
+            toAddr:txPayload.toAddr,
+            pay: wei2Eth(txPayload.pay),
+            time: 0,
+            status:TxStatus.Pending,
+            confirmedBlockNumber: 0,
+            needConfirmedBlockNumber:0,
+            info: '',
+            currencyName,
+            fee,
+            nonce:undefined,
+            minerFeeLevel
+        };
 
-    try {        
         const addrIndex = getWltAddrIndex(fromAddr, currencyName);
         let hash;
         if (addrIndex >= 0) {    

@@ -33,7 +33,7 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
     const list = [];
     infos.forEach(v => {
         const itype = v[0];
-        const amount = formatBalance(smallUnit2LargeUnit(coinType, v[1]));
+        const amount = smallUnit2LargeUnit(coinType, v[1]);
         let behavior = '';
         let behaviorIcon = '';
         switch (itype) {

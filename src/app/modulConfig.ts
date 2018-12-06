@@ -12,7 +12,7 @@ const appModulConfig = {
     GITHUB:true,                  // github显示
 
     WALLET_NAME: 'KuPay',           // 钱包名字
-    WALLET_WEBSITE:'www.kupay.io',     // 官网地址
+    WALLET_WEBSITE:'http://www.kupay.io',     // 官网地址
     LOGIN_IMG:'app/res/image/login_bg.png',  // 登录页面图片
     WALLET_LOGO:'app/res/image/img_logo.png', // 钱包logo
     WECHAT_HELPER:'app/res/image/wechat_robot.jpg',  // 微信小助手二维码

@@ -1,5 +1,6 @@
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
+import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { DeviceIdProvider } from '../../pi/browser/systemInfoProvider';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
@@ -104,6 +105,22 @@ export const getDeviceId = (okCB?,errCB?) => {
         }
         , fail: (result) => {
             console.log('获取设备的唯一id失败\t' + result);
+            errCB && errCB(result);
+        }
+    });
+};
+
+/**
+ * 截屏
+ */
+export const makeScreenShot = (okCB?,errCB?) => {
+    const stp = new ShareToPlatforms();
+    stp.init();
+    stp.makeScreenShot({
+        success: (result) => { 
+            okCB && okCB(result);
+        },
+        fail: (result) => { 
             errCB && errCB(result);
         }
     });
