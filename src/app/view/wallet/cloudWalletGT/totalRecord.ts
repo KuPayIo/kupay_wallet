@@ -32,17 +32,11 @@ export class TotalRecord extends Widget {
         this.props = {
             ...this.props,
             recordList:[], // 全部记录
-            rechargeList:[], // 充值记录
-            withdrawList:[], // 提币记录
-            rechargeNext:0, // 充值下一页标记
-            withdrawNext:0, // 提币下一页标记
             canLoadMore:false,
             isRefreshing:false
         };
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName,1);
-            getWithdrawLogs(this.props.currencyName);
-            getRechargeLogs(this.props.currencyName);
         }
         this.updateRecordList();
     }
@@ -53,51 +47,26 @@ export class TotalRecord extends Widget {
     public updateRecordList() {
         if (!this.props.currencyName) return;
         const cloudWallets = getStore('cloud/cloudWallets');
-        const data1 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
-        this.props.rechargeNext = data1.start;
-        this.props.rechargeList = this.parseRechargeList(data1.list);
 
-        const data3 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
-        this.props.withdrawNext = data3.start;
-        this.props.withdrawList = this.parseWithdrawList(data3.list);
-
-        this.props.recordList = [].concat(this.props.rechargeList,this.props.withdrawList);
+        const data = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
+        this.props.otherNext = data.start; 
+        this.props.recordList = this.parseList(data.list);
         this.props.recordList.sort((v1,v2) => {
             return v2.time - v1.time;
         });
-        this.props.canLoadMore = data1.canLoadMore | data3.canLoadMore;
+        this.props.canLoadMore = data.canLoadMore;
         this.props.isRefreshing = false;
         this.paint();
     }
 
     /**
-     * 解析提币记录
+     * 解析全部记录
      */
-    public parseWithdrawList(list:any[]) {
+    public parseList(list:any[]) {
         list.forEach((item) => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
-            item.behavior = this.language.withdraw;
-            item.amountShow = `-${item.amount}`;
+            item.amountShow = item.amount >= 0 ? `+${item.amount} ${this.props.currencyName}` : `${item.amount} ${this.props.currencyName}`;
             item.timeShow = timestampFormat(item.time).slice(5);
-            item.iconShow = `cloud_withdraw_icon.png`;
-        });
-
-        return list;
-    }
-    /**
-     * 解析充值记录
-     */
-    public parseRechargeList(list:any[]) {
-        list.forEach((item) => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
-            item.behavior = this.language.recharge;
-            item.amountShow = `+${item.amount}`;
-            item.timeShow = timestampFormat(item.time).slice(5);
-            item.iconShow = `cloud_charge_icon.png`;
+            item.iconShow = `${item.behaviorIcon}`;
         });
 
         return list;
@@ -108,7 +77,7 @@ export class TotalRecord extends Widget {
      */
     public recordListItemClick(e:any,index:number) {
         if (this.props.recordList[index].oid) {
-            popNew('app-view-wallet-transaction-transactionDetails',{ oid:this.props.recordList[index].oid });
+            popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:this.props.recordList[index].oid });
         }
     }
 
@@ -117,8 +86,6 @@ export class TotalRecord extends Widget {
      */
     public loadMore() {
         getAccountDetail(this.props.currencyName,0,this.props.otherNext);
-        getWithdrawLogs(this.props.currencyName,this.props.withdrawNext);
-        getRechargeLogs(this.props.currencyName,this.props.rechargeNext);
     }
 
     /**
@@ -135,7 +102,6 @@ export class TotalRecord extends Widget {
             this.loadMore();
         } 
     }
-
     /**
      * 更新交易状态
      */
@@ -155,13 +121,5 @@ register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();
-    }
-});
-
-// 本地交易变化,更新状态
-register('wallet/currencyRecords',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateTransaction();
     }
 });

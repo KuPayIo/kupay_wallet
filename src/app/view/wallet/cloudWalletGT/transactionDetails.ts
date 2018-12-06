@@ -4,10 +4,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { TxType } from '../../../store/interface';
-import { queryPayState } from '../../../utils/pay';
-import { fetchBalanceValueOfGT, formatBalance, popNewMessage } from '../../../utils/tools';
-import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { getOrderDetail } from '../../../utils/pay';
+import { fetchBalanceValueOfGT, formatBalance, popNewMessage, timestampFormat } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -21,6 +19,13 @@ interface Props {
     transactionType:string;
     money:number;
     GTNum:number;
+}
+
+enum PayState {
+    '未支付' = 0,
+    '支付成功' = 1,
+    '支付异常' = 2,
+    '查询失败' = 3
 }
 export class TransactionDetails extends Widget {
     public props:Props = {
@@ -40,19 +45,17 @@ export class TransactionDetails extends Widget {
     }
 
     public initData() {
-        queryPayState(this.props.oid,(res) => {
-            this.props.state = '完成';
+        getOrderDetail(this.props.oid,(res) => {
+            this.props.state = PayState[res.state];
             this.props.GTNum = res.num;
             this.props.money = formatBalance(fetchBalanceValueOfGT(res.num));
-            this.props.transactionTime = '100';
+            this.props.transactionTime = timestampFormat(res.time).slice(5); 
             this.props.transactionType = res.payType === 'alipay' ? '支付宝支付' :'微信支付' ;
             this.paint();
         },(res) => {
-            if (res.result === 3003) {
-                this.props.state = '待支付';
-            } else {                
-                popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
-            }
+            this.props.state = PayState[3];                
+            popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
+  
             this.paint();
         });
     }
