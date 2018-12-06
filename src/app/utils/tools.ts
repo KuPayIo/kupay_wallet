@@ -768,9 +768,9 @@ export const fetchBalanceValueOfGT = (balance: number) => {
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
 
     if (currencyUnit === 'CNY') {
-        balanceValue = balance * goldPrice;
+        balanceValue = balance * (goldPrice / 100);
     } else if (currencyUnit === 'USD') {
-        balanceValue = (balance * goldPrice) / USD2CNYRate;
+        balanceValue = (balance * (goldPrice) / 100) / USD2CNYRate;
     }
 
     return balanceValue;
