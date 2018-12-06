@@ -6,6 +6,7 @@ import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
+import { getGoldPrice } from '../net/pull';
 import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
 import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
@@ -36,7 +37,8 @@ export class DataCenter {
     public init() {
         // 获取shapeshift支持货币
         // getShapeShiftCoins();
-
+        // 更新黄金价格
+        this.updateGoldPrice();
         // 更新人民币美元汇率
         this.updateUSDRate();
         // 更新货币对比USDT的比率
@@ -896,6 +898,21 @@ export class DataCenter {
         });
         setTimeout(() => {
             this.updateUSDRate();
+        },delay);
+    }
+
+    /**
+     * 整点更新黄金价格
+     */
+    private updateGoldPrice() {
+        const nextPoint = new Date();
+        nextPoint.setHours(nextPoint.getHours() + 1);
+        nextPoint.setMinutes(0);
+        nextPoint.setSeconds(0);
+        const delay = nextPoint.getTime() - new Date().getTime();
+        getGoldPrice();
+        setTimeout(() => {
+            this.updateGoldPrice();
         },delay);
     }
 

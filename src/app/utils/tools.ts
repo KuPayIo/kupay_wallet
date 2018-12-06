@@ -759,11 +759,12 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
 
 /**
  * 获取GT对应的货币价值
+ * @param balance GT数量
  */
 export const fetchBalanceValueOfGT = (balance: number) => {
     let balanceValue = 0;
     const USD2CNYRate = getStore('third/rate', 0);
-    const goldPrice = getStore('third/goldPrice');
+    const goldPrice = getStore('third/goldPrice') || 0;
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
 
     if (currencyUnit === 'CNY') {
@@ -835,7 +836,7 @@ export const fetchCloudWalletAssetList = () => {
         balance: 0,
         balanceValue: '0.00',
         gain: formatBalanceValue(0),
-        rate:'234.00'
+        rate:formatBalanceValue(fetchBalanceValueOfGT(1))
     };
     assetList.push(gtItem);
     for (const k in CloudCurrencyType) {

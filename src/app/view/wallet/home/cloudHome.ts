@@ -52,7 +52,6 @@ export class CloudHome extends Widget {
         if (v.currencyName === 'GT') {
             popNew('app-view-wallet-cloudWalletGT-home',{ currencyName:v.currencyName,gain:v.gain });
         } else {
-            
             popNew('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
         }
     }
