@@ -7,7 +7,6 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { CreateWalletType } from '../../../logic/localWallet';
 import { getModulConfig } from '../../../modulConfig';
-import { loginSuccess } from '../../../net/pull';
 import { deleteAccount, getAllAccount } from '../../../store/memstore';
 import { loginSuccess, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { VerifyIdentidy1 } from '../../../utils/walletTools';

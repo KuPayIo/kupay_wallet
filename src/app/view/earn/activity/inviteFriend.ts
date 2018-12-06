@@ -2,21 +2,30 @@
  * 活动-邀请好友
  */
 import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { makeScreenShot } from '../../../logic/native';
+import { copyToClipboard, popNewMessage } from '../../../utils/tools';
 
 interface Props {
     showPage:string;
 }
 export class InviteFriend extends Widget {
     public ok : () => void;
-
-    public props:Props = {
-        showPage:'first'
+    public language:any;
+    public props:any = {
+        showPage:'first',
+        inviteCode:'GY3D8S'
     };
-    constructor() {
-        super();
+    public create() {
+        super.create();
+        this.init();
     }
 
+    public init() {
+        this.language = this.config.value[getLang()];
+    }
     /**
      * 返回上一页
      */
@@ -46,11 +55,25 @@ export class InviteFriend extends Widget {
     public shareToQQSpace() {
         this.baseShare(ShareToPlatforms.PLATFORM_QZONE);
     }
+
+    public copyClick() {
+        copyToClipboard(this.props.inviteCode);
+        popNewMessage(this.language.tips[0]);
+    }
     
     private baseShare(platform: number) {
         const stp = new ShareToPlatforms();
 
         stp.init();
+        makeScreenShot(() => {
+            stp.shareScreenShot({
+                success: (result) => {  },
+                fail: (result) => {  },
+                platform: platform
+            });
+        },() => {
+            // popNew('app-components-message-message',{ content:this.language.tips[0] });
+        });
 
     }
 

@@ -21,7 +21,7 @@ export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> =
         const each = balanceInfo.value[i];
         m.set(each[0], smallUnit2LargeUnit(CloudCurrencyType[each[0]], each[1]));
     }
-    m.set(CloudCurrencyType.CNYT,0);
+    m.set(CloudCurrencyType.GT,0);
     
     return m;
 };
@@ -34,7 +34,7 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
     const list = [];
     infos.forEach(v => {
         const itype = v[0];
-        const amount = formatBalance(smallUnit2LargeUnit(coinType, v[1]));
+        const amount = smallUnit2LargeUnit(coinType, v[1]);
         let behavior = '';
         let behaviorIcon = '';
         switch (itype) {

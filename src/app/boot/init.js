@@ -2047,9 +2047,10 @@ pi_modules.update.exports = (function () {
 			var newVersion = getIndexVersion(indexJSStr);
 
 			remoteVersion = newVersion;
-
+			console.log("newVersion = ",newVersion);
+			console.log("oldVersion = ",oldVersion);
 			var updatedStr = getIndexUpdatedContent(indexJSStr);
-			// console.log("updatedStr = ",updatedStr);
+			console.log("updatedStr = ",updatedStr);
 			pi_update.updated = JSON.parse(updatedStr);
 
 			var needUpdate = !!localStorage.getItem("$$nativeIsUpdating");
@@ -2112,19 +2113,22 @@ pi_modules.update.exports = (function () {
 	function finishUpdate() {
 
 		// alert("更新成功，即将进入新版本");
+		// // 清除标记
+		localStorage.removeItem("$$nativeIsUpdating");
 		pi_update.alert({
 			btnText:"更新完毕"
 		},function(){
 			pi_update.closePop();
-			// 清除标记
-			localStorage.removeItem("$$nativeIsUpdating");
+			// 等待定时器，以便于清除localstorage完全成功
+			setTimeout(function() {
+				// alert("更新成功，程序即将关闭，请重启APP");
 
-			// 重启
-			JSIntercept.restartApp();
+				// 重启
+				JSIntercept.restartApp();
+			}, 10);
 		});
 
-		// // 清除标记
-		// localStorage.removeItem("$$nativeIsUpdating");
+		
 
 		// // 重启
 		// JSIntercept.restartApp();
@@ -2270,7 +2274,7 @@ self.onerror = winit.debug ? undefined : (function () {
 winit.init();
 
 
-var pi_update = pi_update || {};
+var pi_update = pi_update || { updated:[] };
 
 // option = {
 // 	btnText
@@ -2365,6 +2369,6 @@ pi_update.alert = function(option,completeCB){
 pi_update.closePop = function(){
 	var $updateRoot = document.querySelector('#update-root');
 	var $body = document.querySelector("body");
-	$body.removeChild($updateRoot);
+	$updateRoot && $body.removeChild($updateRoot);
 }
 
