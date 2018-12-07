@@ -32,7 +32,7 @@ export class ShareDownload extends Widget {
         console.log('attach');
         setTimeout(() => {
             this.shareClick();
-        },100);
+        },1000);
     }
     public shareClick() {
         makeScreenShot(() => {
