@@ -70,7 +70,7 @@ export const initPush = () => {
 
     // 监听KT增加事件
     setMsgHandler('event_kt_alert',(res) => {
-        popNew('app-view-earn-mining-addMineAlert',{ addNum:kpt2kt(res.money) });
+        popNew('app-view-earn-mining-addMineAlert',{ addNum:kpt2kt(res.num),iconType:'KT' });
         console.log('服务器推送成功==========================',res);
     });
 };

@@ -6,7 +6,7 @@
     </div>
     <div w-class="body">
         <div w-class="status-container">
-            {{if it.state===1}}
+            {{if it.state === '支付成功' }}
                 <img src="../../../res/image/icon_right2.png" w-class="status-icon"/>
             {{else}}
                 <img src="../../../res/image/btn_img_close.png" w-class="status-icon"/>

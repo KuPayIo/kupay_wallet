@@ -47,7 +47,7 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
                 }).catch((err) => {
                     failCb && failCb(err);
                 });
-            } else if (orderDetail.payType === 'wxpay') {// 微信H5支付
+            } else if (orderDetail.payType === 'wxpay') { // 微信H5支付
                 jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
                 jumpPay(jumpData, okCb, failCb);
             }
