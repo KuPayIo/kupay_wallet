@@ -50,6 +50,7 @@ export class BindPhone extends Widget {
      * 获取验证码
      */
     public async getCode(event:any) {
+        this.inputBlur;
         if (!this.state.phone || !this.phoneJudge()) {
             popNew('app-components1-message-message', { content: this.language.tips });
 
@@ -94,6 +95,16 @@ export class BindPhone extends Widget {
             return reg1.test(this.state.phone);
         } else {
             return reg2.test(this.state.phone);
+        }
+    }
+
+    /**
+     * 输入框取消聚焦
+     */
+    public inputBlur() {
+        const inputs: any = document.getElementsByTagName('input');
+        for (let i = 0;i < inputs.length;i++) {
+            inputs[i].blur();
         }
     }
 

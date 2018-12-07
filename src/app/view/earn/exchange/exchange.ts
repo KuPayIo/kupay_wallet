@@ -64,7 +64,8 @@ export class Exchange extends Widget {
             amount: smallUnit2LargeUnit(CloudCurrencyType[res.value[0]], res.value[1]),
             rtype: code.slice(0, 2),
             rid:res.rid,
-            suid:res.src_id
+            suid:res.src_id,
+            code
         };
         
         popNew('app-view-earn-exchange-openRedEnv', redEnvelope);

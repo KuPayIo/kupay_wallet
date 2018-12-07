@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getGoldPrice } from '../../../net/pull';
+import { getGoldPrice, getServerCloudBalance } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { confirmPay } from '../../../utils/pay';
@@ -47,6 +47,7 @@ export class RechargeGT extends Widget {
 
     public initData() {
         this.props.num = Math.floor((this.props.total / getStore('third/goldPrice/price') * 100) * 1000000) / 1000000;
+        this.props.balance = formatBalance(getCloudBalances().get(CloudCurrencyType.GT));
         this.paint();
     }
     /**
@@ -60,7 +61,7 @@ export class RechargeGT extends Widget {
      * @param payType 支付方式
      */
     public changPay(payType:string) {
-        this.props.payType = 'alipay';
+        this.props.payType = payType;
         this.paint();
     }
 
@@ -100,14 +101,23 @@ export class RechargeGT extends Widget {
             this.props.payType = 'alipay';
             this.paint();
             popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:res.oid });
+            getServerCloudBalance();
         },() => {
-            popNewMessage({ zh_Hans:'充值失败，请重新充值',zh_Hant:'充值失败，请重新充值',en:'' });
+            
         });
     }
 }
 
 // gasPrice变化
 register('third/goldPrice',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
+
+// 余额变化
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

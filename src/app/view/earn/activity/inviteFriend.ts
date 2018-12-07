@@ -7,6 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { makeScreenShot } from '../../../logic/native';
 import { getInviteCode } from '../../../net/pull';
+import { LuckyMoneyType } from '../../../store/interface';
 import { copyToClipboard, popNewMessage } from '../../../utils/tools';
 
 interface Props {
@@ -29,7 +30,7 @@ export class InviteFriend extends Widget {
         this.language = this.config.value[getLang()];
         const inviteCodeInfo = await getInviteCode();
         if (inviteCodeInfo.result !== 1) return;
-        this.props.inviteCode = inviteCodeInfo.cid;
+        this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
         this.paint();
     }
     /**
