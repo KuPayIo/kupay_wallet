@@ -20,9 +20,9 @@
                     </span>
                 </div>
                 <div w-class="input-father" ev-input-change="amountChange">
-                    {{: inputPlace = {"zh_Hans":"输入金额","zh_Hant":"輸入金額","en":""} }}
-                    <div w-class="balance-value">≈{{it.currencyUnitSymbol+" "+it.total}} </div>
-                    <app-components1-input-input>{itype:"number",maxLength:8,placeHolder:{{inputPlace}},input:{{it.num}},style:"padding:0;background:transparent;"}</app-components1-input-input>
+                    {{: inputPlace = {"zh_Hans":"￥输入金额","zh_Hant":"￥輸入金額","en":""} }}
+                    <div w-class="balance-value">≈{{it.num}}&nbsp;GT</div>
+                    <app-components1-input-input>{itype:"moneyNum",maxLength:8,placeHolder:{{inputPlace}},input:{{it.total}},style:"padding:0;background:transparent;"}</app-components1-input-input>
                 </div>
             </div>
 
@@ -43,7 +43,8 @@
                             {{if it.payType ==='wxpay'}}
                                 <img src="app/res/image/icon_right2.png" width="42px"/>
                             {{else}}
-                                <div w-class="select-img"></div>
+                                <img src="app/res/image/btn_img_close.png" width="42px"/>
+                                {{% <div w-class="select-img"></div>}}
                             {{end}}
                         </div>
                     </div>
@@ -70,7 +71,7 @@
             
             {{% 支付按钮}}
             <div w-class="body-bottom" ev-btn-tap="rechargeClick">
-                <widget w-class="btn-tip" w-tag="pi-ui-lang">{"zh_Hans":"成功充值还能得KT奖励~","zh_Hant":"成功充值還能得KT獎勵〜","en":""}</widget>
+                <widget w-class="btn-tip" w-tag="pi-ui-lang">{"zh_Hans":"充值金额不小于0.01元","zh_Hant":"充值金額不小於0.01元","en":""}</widget>
                 {{let btnName = {"zh_Hans":"充值到云端","zh_Hant":"充值到雲端","en":""} }}
                 <app-components1-btn-btn>{name:{{btnName}},color:"blue",style:"width:90%;"}</app-components1-btn-btn>
             </div>

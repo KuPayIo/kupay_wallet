@@ -6,25 +6,31 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { makeScreenShot } from '../../../logic/native';
+import { getInviteCode } from '../../../net/pull';
 import { copyToClipboard, popNewMessage } from '../../../utils/tools';
 
 interface Props {
     showPage:string;
+    inviteCode:string;
 }
 export class InviteFriend extends Widget {
     public ok : () => void;
     public language:any;
-    public props:any = {
+    public props:Props = {
         showPage:'first',
-        inviteCode:'GY3D8S'
+        inviteCode:'******'
     };
     public create() {
         super.create();
-        this.init();
+        this.initData();
     }
 
-    public init() {
+    public async initData() {
         this.language = this.config.value[getLang()];
+        const inviteCodeInfo = await getInviteCode();
+        if (inviteCodeInfo.result !== 1) return;
+        this.props.inviteCode = inviteCodeInfo.cid;
+        this.paint();
     }
     /**
      * 返回上一页
@@ -32,6 +38,10 @@ export class InviteFriend extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
+    public refreshPage() {
+        this.initData();
+    }
+
     /**
      * 切换显示页面
      * @param page 显示页面标识

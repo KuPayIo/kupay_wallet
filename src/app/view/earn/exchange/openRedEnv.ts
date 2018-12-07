@@ -2,10 +2,10 @@
  * open red-envelope
  */
 import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { LuckyMoneyType } from '../../../store/interface';
 import { getLang } from '../../../../pi/util/lang';
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { LuckyMoneyType } from '../../../store/interface';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -26,7 +26,7 @@ export class OpenRedEnvelope extends Widget {
         this.language = this.config.value[getLang()];
         this.state = {
             tag:'',
-            openClick:false,
+            openClick:false
         };
 
         if (props.rtype === LuckyMoneyType.Normal) {
@@ -44,6 +44,7 @@ export class OpenRedEnvelope extends Widget {
      */
     public openRedEnv() {
         this.state.openClick = true;
+        
         this.paint();
         setTimeout(() => {
             popNew('app-view-earn-exchange-exchangeDetail',this.props);
