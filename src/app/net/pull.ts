@@ -1263,14 +1263,14 @@ export const fetchBtcFees = async () => {
 /**
  * 获取GT价格
  */
-export const getGoldPrice = async () => {
-    const msg = { type:'get_goldprice',param:{} };
+export const getGoldPrice = async (ispay:number = 0) => {
+    const msg = { type:'get_goldprice',param:{ ispay } };
     try {
         const resData:any = await requestAsync(msg);
         console.log(resData);
         
         if (resData.result === 1) {
-            setStore('third/goldPrice',resData.price);
+            setStore('third/goldPrice',{ price:resData.price,change:resData.change });
         }
     } catch (err) {
         showError(err && (err.result || err.type));

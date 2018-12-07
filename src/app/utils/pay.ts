@@ -55,7 +55,9 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
         } else {
             failCb && failCb(resData);
         }
-        loading.callback(loading.widget);
+        setTimeout(() => {
+            loading.callback(loading.widget);
+        }, 5000);
     } catch (err) {
         failCb && failCb(err);
         loading.callback(loading.widget);
@@ -150,7 +152,7 @@ export const getOrderDetail = async (oid: string, okCb?: Function, failCb?: Func
     }
     const msg = { type: 'get_order_detail', param: { oid } };
     try {
-        const resData: any = await requestAsync(msg);
+        const resData = await requestAsync(msg);
         if (resData.result === 1) {
             okCb && okCb(resData);
         } else {
