@@ -61,8 +61,8 @@ export class BaseShare extends Widget {
         stp.init();
         if (this.props.shareType === ShareToPlatforms.TYPE_LINK) {
             stp.shareLink({
-                success: (result) => { this.ok(true); },
-                fail: (result) => { this.cancel(false); },
+                success: (result) => { console.log('share success callback');this.ok(true); },
+                fail: (result) => { console.log('share fail callback');this.cancel(false); },
                 webName: this.props.webName || this.language.wallet,
                 url: this.props.url,
                 title: this.props.title,
@@ -72,16 +72,19 @@ export class BaseShare extends Widget {
             });
         } else if (this.props.shareType === ShareToPlatforms.TYPE_SCREEN) {
             stp.shareScreenShot({
-                success: (result) => { this.ok(true); },
-                fail: (result) => { this.cancel(false); },
+                success: (result) => { console.log('share success callback');this.ok(true); },
+                fail: (result) => { console.log('share fail callback');this.cancel(false); },
                 platform: platform
             });
         } else {
             console.log('share text====',this.props.text);
             console.log('share type====',this.props.shareType);
             stp.shareCode({
-                success: (result) => { this.ok(true); },
-                fail: (result) => { this.cancel(false); },
+                success: (result) => { 
+                    console.log('share success callback');
+                    this.ok(true); 
+                },
+                fail: (result) => { console.log('share fail callback');this.cancel(false); },
                 content: this.props.text,
                 type: this.props.shareType,
                 platform: platform

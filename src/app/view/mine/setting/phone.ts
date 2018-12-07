@@ -23,7 +23,7 @@ export class BindPhone extends Widget {
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
             phone:'',
             code:[],
             isSuccess:true
@@ -38,22 +38,22 @@ export class BindPhone extends Widget {
      * 输入完成后确认
      */
     public async doSure() {
-        if (!this.state.phone) {
+        if (!this.props.phone) {
             popNew('app-components1-message-message', { content: this.language.tips });
-            this.state.code = [];
+            this.props.code = [];
             this.setCode();
 
             return;
         }
-        const data = await regPhone(this.state.phone, this.state.code.join(''));
+        const data = await regPhone(this.props.phone, this.props.code.join(''));
         if (data && data.result === 1) {
             const userinfo = getStore('user/info');
-            userinfo.phoneNumber = this.state.phone;
+            userinfo.phoneNumber = this.props.phone;
             setStore('user/info',userinfo);
             getMineDetail();
             this.ok();
         } else {
-            this.state.code = [];
+            this.props.code = [];
             this.setCode();
         }
         this.paint();
@@ -63,7 +63,7 @@ export class BindPhone extends Widget {
      * 手机号改变
      */
     public phoneChange(e: any) {
-        this.state.phone = e.value;  
+        this.props.phone = e.value;  
     }
 
     /**
@@ -72,7 +72,7 @@ export class BindPhone extends Widget {
     public setCode() {
         for (const i in [1,2,3,4]) {
             // tslint:disable-next-line:prefer-template
-            (<any>document.getElementById('codeInput' + i)).value = this.state.code[i];
+            (<any>document.getElementById('codeInput' + i)).value = this.props.code[i];
         }
     }
 
@@ -83,8 +83,8 @@ export class BindPhone extends Widget {
         const v = Number(e.key) ? e.key :e.currentTarget.value.slice(-1);
         // const v = e.currentTarget.value.slice(-1);
         if (e.key === 'Backspace') {
-            this.state.code.pop();
-            const ind = this.state.code.length;
+            this.props.code.pop();
+            const ind = this.props.code.length;
             if (ind >= 0) {
             // tslint:disable-next-line:prefer-template
                 document.getElementById('codeInput' + ind).focus();
@@ -92,8 +92,8 @@ export class BindPhone extends Widget {
             this.setCode();
             
         } else if (this.integerJudge(v)) {
-            this.state.code.push(v);
-            const ind = this.state.code.length;
+            this.props.code.push(v);
+            const ind = this.props.code.length;
             // tslint:disable-next-line:prefer-template
             document.getElementById('codeInput' + (ind - 1)).blur();
             if (ind < 4) {
@@ -101,11 +101,11 @@ export class BindPhone extends Widget {
                 document.getElementById('codeInput' + ind).focus();
             }
         }
-        console.log(v,this.state.code.length);
+        console.log(v,this.props.code.length);
         this.paint();
         
         setTimeout(() => {
-            if (this.state.code.length === 4) {
+            if (this.props.code.length === 4) {
                 this.doSure();
             }
         }, 100);
@@ -115,7 +115,7 @@ export class BindPhone extends Widget {
      * 验证码输入框聚焦
      */
     public codeFocus() {
-        const ind = this.state.code.length; 
+        const ind = this.props.code.length; 
         // tslint:disable-next-line:prefer-template
         document.getElementById('codeInput' + ind).focus();
         this.paint();

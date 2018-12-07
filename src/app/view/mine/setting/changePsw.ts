@@ -6,7 +6,6 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { register } from '../../../store/memstore';
 import { pswEqualed } from '../../../utils/account';
 import { passwordChange, VerifyIdentidy } from '../../../utils/walletTools';
 // ================================ 导出
@@ -25,7 +24,7 @@ export class ChangePSW extends Widget {
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
             oldPassword:'',
             newPassword:'',
             rePassword:'',
@@ -39,29 +38,29 @@ export class ChangePSW extends Widget {
     }
 
     public oldPswChange(e: any) {
-        this.state.oldPassword = e.value;
+        this.props.oldPassword = e.value;
     }
     public newPswChange(e: any) {
-        this.state.pswAvailable = e.success;
-        this.state.newPassword = e.password;
-        this.state.pswEqualed = pswEqualed(this.state.newPassword, this.state.rePassword) && e.success;
+        this.props.pswAvailable = e.success;
+        this.props.newPassword = e.password;
+        this.props.pswEqualed = pswEqualed(this.props.newPassword, this.props.rePassword) && e.success;
         this.paint();
     }
     public rePswChange(e: any) {
-        this.state.rePassword = e.value;
-        this.state.pswEqualed = pswEqualed(this.state.newPassword, this.state.rePassword) && this.state.pswAvailable;
+        this.props.rePassword = e.value;
+        this.props.pswEqualed = pswEqualed(this.props.newPassword, this.props.rePassword) && this.props.pswAvailable;
         this.paint();
     }
     public pswClear(pswType: number) {
         switch (pswType) {
             case 0:
-                this.state.oldPassword = '';
+                this.props.oldPassword = '';
                 break;
             case 1:
-                this.state.newPassword = '';
+                this.props.newPassword = '';
                 break;
             case 2:
-                this.state.rePassword = '';
+                this.props.rePassword = '';
                 break;
             default:
         }
@@ -71,23 +70,23 @@ export class ChangePSW extends Widget {
      * 点击确认按钮
      */
     public async btnClicked() {
-        const oldPassword = this.state.oldPassword;
-        const newPassword = this.state.newPassword;
-        const rePassword = this.state.rePassword;
+        const oldPassword = this.props.oldPassword;
+        const newPassword = this.props.newPassword;
+        const rePassword = this.props.rePassword;
         if (!oldPassword || !newPassword || !rePassword) {
             popNew('app-components1-message-message', { content: this.language.tips[0] });
 
             return;
         }
         // 判断输入的密码是否符合规则
-        if (!this.state.pswAvailable) {
+        if (!this.props.pswAvailable) {
             // tslint:disable-next-line:max-line-length
             popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
         }
         // 判断两次输入的密码是否相同
-        if (!this.state.pswEqualed) {
+        if (!this.props.pswEqualed) {
             // tslint:disable-next-line:max-line-length
             popNew('app-components1-message-message', { content: this.language.tips[2] });
 

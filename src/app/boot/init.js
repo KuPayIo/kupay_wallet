@@ -2125,7 +2125,7 @@ pi_modules.update.exports = (function () {
 
 				// 重启
 				JSIntercept.restartApp();
-			}, 10);
+			}, 200);
 		});
 
 		

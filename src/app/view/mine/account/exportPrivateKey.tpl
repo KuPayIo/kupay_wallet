@@ -3,7 +3,7 @@
         <app-components1-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/41_gray.png"}</app-components1-topBar-topBar>
         <div w-class="container">
             <div w-class="currency-container" ev-collapse-change="collapseChange" ev-collapse-item-click="collapseItemClick">
-                <app-components-collapse-collapse>{collapseList:{{it1.collapseList}},accordion:true}</app-components-collapse-collapse>
+                <app-components-collapse-collapse>{collapseList:{{it.collapseList}},accordion:true}</app-components-collapse-collapse>
             </div>
         </div>
     </div>

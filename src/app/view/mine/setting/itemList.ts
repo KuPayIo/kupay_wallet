@@ -2,11 +2,11 @@
  * radioList
  */
 // =============================================导入
+import { appLanguageList, LocalLanguageMgr } from '../../../../pi/browser/localLanguage';
 import { Json } from '../../../../pi/lang/type';
+import { setLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { setStore } from '../../../store/memstore';
-import { setLang } from '../../../../pi/util/lang';
-import { LocalLanguageMgr, appLanguageList } from '../../../../pi/browser/localLanguage';
 // ================================================导出
 export class ItemList extends Widget {
     public ok: () => void;

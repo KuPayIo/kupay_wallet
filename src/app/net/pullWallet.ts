@@ -59,6 +59,7 @@ export const rpcProviderSendAsync = (payload, callback) => {
             data:payload.params[0].data
         };    
         try {
+
             const promise = transfer3(payload.passwd,ethPayload);
 
             promise.then(([err, hash]) => {
@@ -89,7 +90,7 @@ export const rpcProviderSendAsync = (payload, callback) => {
  */
 export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
     try {  
-        console.log('transfer3 is called');
+        console.time('transfer3 need time = ');
         if (psw.length <= 0) return ['have no password'];
         const fromAddr = txPayload.fromAddr;
         const currencyName = txPayload.currencyName;
@@ -117,38 +118,49 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
         const addrIndex = getWltAddrIndex(fromAddr, currencyName);
         let hash;
         if (addrIndex >= 0) {    
-            // alert(1);
-            const wlt = await GlobalWallet.createWlt(currencyName, psw, addrIndex);
+            const wltPromise = GlobalWallet.createWlt(currencyName, psw, addrIndex);
+
             const api = new EthApi();
             const nonce = txRecord.nonce;
             const localNonce = getEthNonce(fromAddr);
             // 0xe209a49a0000000000000000000000000000000000000000000000000000000000000001
+
             // toAddr  0x0e7f42cdf739c06dd3c1c32fab5e50ec9620102a
             // tslint:disable-next-line:max-line-length
-            let gasLimit = await api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data });
+            const gasLimitPromise = api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data });
+            
+            const chainNoncePromise = api.getTransactionCount(fromAddr);
+
+            console.time('transfer3 all promise need');
+            const [wlt,gasLimit,chainNonce] = await Promise.all([wltPromise,gasLimitPromise,chainNoncePromise]);
+            console.timeEnd('transfer3 all promise need');
+
             // TODO  直接使用预估出来的gasLimit交易有可能失败   零时解决
-            gasLimit = Math.floor(gasLimit * erc20GasLimitRate);
+            const newGasLimit = Math.floor(gasLimit * erc20GasLimitRate);
             let newNonce = nonce;
             if (!isNumber(nonce)) {
-                const chainNonce = await api.getTransactionCount(fromAddr);
                 newNonce = localNonce && localNonce >= chainNonce ? localNonce : chainNonce;
             }
             const txObj = {
                 to: txPayload.toAddr,
                 nonce: newNonce,
                 gasPrice: fetchGasPrice(minerFeeLevel),
-                gasLimit: gasLimit,
+                gasLimit: newGasLimit,
                 value: txPayload.pay,
                 data: txPayload.data
             };         
             const tx = wlt.signRawTransaction(txObj);
+            console.time('transfer3 sendRawTransaction need time =');
             hash = await api.sendRawTransaction(tx);
+            console.timeEnd('transfer3 sendRawTransaction need time =');
         }
         if (hash) {
             txRecord.hash = hash;
             updateLocalTx(txRecord);
             dataCenter.updateAddrInfo(txRecord.addr,txRecord.currencyName);
 
+            console.timeEnd('transfer3 need time = ');
+            
             return [undefined,hash];
         } else {
             return ['send transaction failed'];

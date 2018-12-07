@@ -7,7 +7,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { ERC20Tokens, btcNetwork } from '../../../config';
+import { btcNetwork, ERC20Tokens } from '../../../config';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { EthWallet } from '../../../core/eth/wallet';
 import { AddrInfo } from '../../../store/interface';
@@ -74,7 +74,8 @@ export class ExportPrivateKey extends Widget {
             collapseList.push(obj);
         }
         
-        this.state = {
+        this.props = {
+            ...this.props,
             collapseList
         };
     }
@@ -88,7 +89,7 @@ export class ExportPrivateKey extends Widget {
     }
 
     public collapseItemClick(e: any) {
-        const privateKey = this.state.collapseList[e.collapseListIndex].textList[e.textListIndex].privateKey;
+        const privateKey = this.props.collapseList[e.collapseListIndex].textList[e.textListIndex].privateKey;
         popNew('app-components-allModalBox-modalBox2', {
             title: this.language.modalBox[0],
             content: this.language.modalBox[1],

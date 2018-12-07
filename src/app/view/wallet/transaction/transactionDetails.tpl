@@ -40,7 +40,7 @@
                 <div w-class="tag"><pi-ui-lang>{{tags[1]}}</pi-ui-lang></div>
                 <div w-class="content"><span>{{it.tx.fee}}&nbsp;{{it.minerFeeUnit}}</span></div>
             </div>
-            <div w-class="item">
+            <div w-class="item" style="display:none;">
                 <div w-class="tag"><pi-ui-lang>{{tags[2]}}</pi-ui-lang></div>
                 <div w-class="content"><span>{{it.tx.info ? it.tx.info : "无"}}</span></div>
             </div>
