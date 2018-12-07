@@ -23,11 +23,17 @@ export class ShareDownload extends Widget {
             avatar:userInfo.avatar
         };
 
-        setTimeout(() => {
-            this.shareClick();
-        },100);
+    }
+    public firstPaint() {
+        console.log('firstPaint');
     }
 
+    public attach() {
+        console.log('attach');
+        setTimeout(() => {
+            this.shareClick();
+        },1000);
+    }
     public shareClick() {
         makeScreenShot(() => {
             popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });

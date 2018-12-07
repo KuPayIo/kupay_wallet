@@ -8,6 +8,12 @@
         
         <div w-class="hot-games">
             <div w-class="hot-game-title"><pi-ui-lang>{"zh_Hans":"热门DApp","zh_Hant":"熱門DApp","en":""}</pi-ui-lang></div>
+            {{for ind,item of it.gameList}}
+                {{if ind != 0}}
+                <widget w-tag="app-components1-card-card" on-tap="gameClick({{ind}})">{title:{{item.title}},img:{{item.img}},desc:{{item.desc}} }</widget>
+                {{end}}
+            {{end}}
+            
         </div>
     </div>
 </div>
