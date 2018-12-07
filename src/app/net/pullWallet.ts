@@ -91,7 +91,6 @@ export const rpcProviderSendAsync = (payload, callback) => {
 export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
     try {  
         console.time('transfer3 need time = ');
-        console.log('transfer3 is called');
         if (psw.length <= 0) return ['have no password'];
         const fromAddr = txPayload.fromAddr;
         const currencyName = txPayload.currencyName;
@@ -119,32 +118,34 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
         const addrIndex = getWltAddrIndex(fromAddr, currencyName);
         let hash;
         if (addrIndex >= 0) {    
-            console.time('transfer3 createWlt need time =');
-            const wlt = await GlobalWallet.createWlt(currencyName, psw, addrIndex);
-            console.timeEnd('transfer3 createWlt need time =');
+            const wltPromise = GlobalWallet.createWlt(currencyName, psw, addrIndex);
+
             const api = new EthApi();
             const nonce = txRecord.nonce;
             const localNonce = getEthNonce(fromAddr);
             // 0xe209a49a0000000000000000000000000000000000000000000000000000000000000001
+
             // toAddr  0x0e7f42cdf739c06dd3c1c32fab5e50ec9620102a
-            console.time('transfer3 estimateGas need time =');
             // tslint:disable-next-line:max-line-length
-            let gasLimit = await api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data });
-            console.timeEnd('transfer3 estimateGas need time =');
+            const gasLimitPromise = api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data });
+            
+            const chainNoncePromise = api.getTransactionCount(fromAddr);
+
+            console.time('transfer3 all promise need');
+            const [wlt,gasLimit,chainNonce] = await Promise.all([wltPromise,gasLimitPromise,chainNoncePromise]);
+            console.timeEnd('transfer3 all promise need');
+
             // TODO  直接使用预估出来的gasLimit交易有可能失败   零时解决
-            gasLimit = Math.floor(gasLimit * erc20GasLimitRate);
+            const newGasLimit = Math.floor(gasLimit * erc20GasLimitRate);
             let newNonce = nonce;
             if (!isNumber(nonce)) {
-                console.time('transfer3 get nonce need time =');
-                const chainNonce = await api.getTransactionCount(fromAddr);
-                console.timeEnd('transfer3 get nonce need time =');
                 newNonce = localNonce && localNonce >= chainNonce ? localNonce : chainNonce;
             }
             const txObj = {
                 to: txPayload.toAddr,
                 nonce: newNonce,
                 gasPrice: fetchGasPrice(minerFeeLevel),
-                gasLimit: gasLimit,
+                gasLimit: newGasLimit,
                 value: txPayload.pay,
                 data: txPayload.data
             };         
