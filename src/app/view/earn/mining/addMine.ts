@@ -47,46 +47,6 @@ export class Dividend extends Widget {
                     itemJump: 'bindPhone',
                     detailShow: false,
                     modulIsShow:true
-                }, {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_store.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'storeCoin',
-                    detailShow: false,
-                    modulIsShow:true
-                }, {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_share.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'shareFriend',
-                    detailShow: false,
-                    modulIsShow:true
-                }, {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_buy.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'buyFinancial',
-                    detailShow: false,
-                    modulIsShow:getModulConfig('FINANCIAL_SERVICES')
-                }, {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_chat.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'toChat',
-                    detailShow: false,
-                    modulIsShow:getModulConfig('APP_CHAT')
                 }
             ]
         };
@@ -111,21 +71,8 @@ export class Dividend extends Widget {
                 case 'walletCreate':                  // 创建钱包
                     popNew('app-view-wallet-create-home');
                     break;
-                case 'shareFriend':                  // 邀请红包
-                    const inviteCodeInfo = await getInviteCode();
-                    if (inviteCodeInfo.result !== 1) return;
-
-                    popNew('app-view-earn-redEnvelope-sendRedEnv', {
-                        rid: inviteCodeInfo.cid,
-                        rtype: '99',
-                        message: this.language.defaultMess
-                    });
-                    break;
                 case 'bindPhone':                   // 绑定手机
                     popNew('app-view-mine-setting-phone');
-                    break;
-                case 'buyFinancial':                // 购买理财
-                    popNew('app-view-wallet-financialManagement-home');
                     break;
                 default:
                     popNewMessage(this.language.tips);

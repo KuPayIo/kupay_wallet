@@ -41,7 +41,7 @@ export class RechargeGT extends Widget {
 
     public create() {
         super.create();
-        getGoldPrice();
+        getGoldPrice(1);
     }
     /**
      * 返回上一页

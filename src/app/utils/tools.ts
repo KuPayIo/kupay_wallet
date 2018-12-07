@@ -767,7 +767,7 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
 export const fetchBalanceValueOfGT = (balance: number) => {
     let balanceValue = 0;
     const USD2CNYRate = getStore('third/rate', 0);
-    const goldPrice = getStore('third/goldPrice') || 0;
+    const goldPrice = getStore('third/goldPrice/price') || 0;
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
 
     if (currencyUnit === 'CNY') {

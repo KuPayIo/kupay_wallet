@@ -15,7 +15,7 @@
                             <div w-class="ticket_top_code">GY3D8S</div>
                         
                             {{let btnName = {"zh_Hans":"复制","zh_Hant":"複製","en":""} }}
-                            <div ev-btn-tap="copyClick"><widget style="margin-top:40px;" w-tag="app-components1-btn-btn">{name:{{btnName}},color:"orange","types":"small"}</widget></div>>
+                            <div ev-btn-tap="copyClick"><widget style="margin-top:40px;" w-tag="app-components1-btn-btn">{name:{{btnName}},color:"orange","types":"small"}</widget></div>
                             {{else}}
                             <div w-class="ticket_top_title">
                                 <widget w-tag="pi-ui-lang">{"zh_Hans":"已成功邀请人数","zh_Hant":"已成功邀請人數","en":""}</widget>
