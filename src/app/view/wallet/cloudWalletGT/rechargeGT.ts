@@ -61,7 +61,7 @@ export class RechargeGT extends Widget {
      * @param payType 支付方式
      */
     public changPay(payType:string) {
-        this.props.payType = payType;
+        this.props.payType = 'alipay';
         this.paint();
     }
 
@@ -103,7 +103,7 @@ export class RechargeGT extends Widget {
             popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:res.oid });
             getServerCloudBalance();
         },() => {
-            
+
         });
     }
 }
