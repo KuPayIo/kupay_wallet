@@ -47,9 +47,9 @@ export class TransactionDetails extends Widget {
     public initData() {
         getOrderDetail(this.props.oid,(res) => {
             this.props.state = PayState[res.state];
-            this.props.GTNum = res.num;
-            this.props.money = formatBalance(fetchBalanceValueOfGT(res.num));
-            this.props.transactionTime = timestampFormat(res.time).slice(5); 
+            this.props.GTNum = res.num / 1000000;
+            this.props.money = formatBalance(fetchBalanceValueOfGT(res.num / 1000000));
+            this.props.transactionTime = timestampFormat(res.time * 1000); 
             this.props.transactionType = res.payType === 'alipay' ? '支付宝支付' :'微信支付' ;
             this.paint();
         },(res) => {

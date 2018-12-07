@@ -122,7 +122,7 @@ export interface Third {
     shapeShiftTxsMap: Map<string, ShapeShiftTxs>; // shapeshift 交易记录Map
 
     rate: number;                                 // 货币的美元汇率
-    goldPrice:number;                             // 黄金价格
+    goldPrice:Gold;                             // 黄金价格
     currency2USDTMap: Map<string, Currency2USDT>;  // k线  --> 计算涨跌幅
 }
 
@@ -558,4 +558,12 @@ export interface LockScreen {
     psw?: string;           // 锁屏密码
     open?: boolean;         // 锁屏功能是否打开
     locked?: boolean;       // 是否3次解锁机会都用完
+}
+
+/**
+ * GT价格、涨跌
+ */
+export interface Gold {
+    price:number;          // 价格
+    change:number;         // 涨跌
 }
