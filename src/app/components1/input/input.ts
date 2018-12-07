@@ -114,21 +114,33 @@ export class Input extends Widget {
         if (this.props.maxLength) {
             currentValue = String(currentValue).slice(0,this.props.maxLength);
         }
-        // 密码输入时检验非法字符
+        // 密码输入 时检验非法字符
         if (this.props.itype === 'password' && !this.availableJudge(currentValue) && currentValue.length > 0) {
             popNew('app-components1-message-message',{ content:this.language.disAvailable });
             currentValue = currentValue.slice(0,currentValue.length - 1); 
         }
-        // 数字输入时检验输入格式
+        // 数字输入 时检验输入格式
         if (this.props.itype === 'number' && currentValue.length > 0) {
             currentValue = currentValue.replace(/[^\d\.]/g,''); 
             if (!this.numberJudge(currentValue)) {
                 currentValue = currentValue.slice(0,currentValue.length - 1); 
             }
         }
-        // 整数输入时检验输入格式
+        // 整数输入 时检验输入格式
         if (this.props.itype === 'integer' && currentValue.length > 0) {
             currentValue = Number(currentValue.replace(/[\D]/g,'')); 
+        }
+        // 两位小数 时检验输入格式
+        if (this.props.itype === 'moneyNum' && currentValue.length > 0) {
+            currentValue = currentValue.replace(/[^\d\.]/g,''); 
+            if (!this.numberJudge(currentValue)) {
+                currentValue = currentValue.slice(0,currentValue.length - 1);
+            }
+            const numAry = currentValue.split('.');
+            if (numAry[1]) {
+                numAry[1] = numAry[1].slice(0,2);
+                currentValue = numAry.join('.');   
+            }
         }
         this.state.currentValue = currentValue;
         this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
@@ -136,7 +148,7 @@ export class Input extends Widget {
         (<any>this.getInput()).value = currentValue;
         notify(event.node,'ev-input-change',{ value:this.state.currentValue }); 
         this.state.focused = true;
-        this.paint();  
+        // this.paint();  
     }
 
     /**

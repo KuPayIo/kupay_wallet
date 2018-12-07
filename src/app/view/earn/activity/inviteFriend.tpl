@@ -12,7 +12,7 @@
                             <div w-class="ticket_top_title">
                                 <widget w-tag="pi-ui-lang">{"zh_Hans":"我的邀请码","zh_Hant":"我的邀請碼","en":""}</widget>
                             </div>
-                            <div w-class="ticket_top_code">GY3D8S</div>
+                            <div w-class="ticket_top_code">{{it.inviteCode}}</div>
                         
                             {{let btnName = {"zh_Hans":"复制","zh_Hant":"複製","en":""} }}
                             <div ev-btn-tap="copyClick"><widget style="margin-top:40px;" w-tag="app-components1-btn-btn">{name:{{btnName}},color:"orange","types":"small"}</widget></div>

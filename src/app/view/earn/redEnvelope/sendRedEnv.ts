@@ -5,9 +5,9 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { sharePerUrl } from '../../../config';
 import { LuckyMoneyType } from '../../../store/interface';
 import { getStore } from '../../../store/memstore';
-import { sharePerUrl } from '../../../config';
 
 interface Props {
     rid: string;

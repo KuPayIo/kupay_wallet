@@ -35,7 +35,7 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
             };
 
             if (orderDetail.payType === 'alipay') {// 支付宝H5支付
-                fetch('https://openapi.alipaydev.com/gateway.do', {
+                fetch('https://openapi.alipay.com/gateway.do', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
