@@ -4,13 +4,17 @@
     <div w-class="container">
         <div w-class="top">
             <div w-class="avatar" style="background-image: url({{it.avatar ? it.avatar : '../../../res/image/share_default_avatar.png'}});" ></div>
-            <div w-class="nickname">{{it.nickName ? it.nickName : "我还没想好名字"}}</div>
-            <div w-class="app-addr">我正在KuPay</div>
+            {{: nickname = {"zh_Hans":it.nickName ? it.nickName : "我还没想好名字","zh_Hant":it.nickName ? it.nickName : "我還沒想好名字","en":""} }}
+            <widget w-tag="pi-ui-lang" w-class="nickname">{{ nickname }}</widget>
+            {{: addr = {"zh_Hans":"我正在KuPay","zh_Hant":"我正在KuPay","en":""} }}
+            <widget w-tag="pi-ui-lang" w-class="app-addr">{{ addr }}</widget>
         </div>
         <div w-class="bottom">
-            <div w-class="action">扫描二维码</div>
+            {{: action = {"zh_Hans":"扫描二维码","zh_Hant":"掃描二維碼","en":""} }}
+            <widget w-tag="pi-ui-lang" w-class="action">{{ action }}</widget>
             <img src="../../../res/image/share_qrcode.png" w-class="qrcode"/>
-            <div w-class="desc">更安全的一站式数字资产管理平台</div>
+            {{: desc = {"zh_Hans":"更安全的一站式数字资产管理平台","zh_Hant":"更安全的一站式數字資產管理平台","en":""} }}
+            <widget w-tag="pi-ui-lang" w-class="action">{{ desc }}</widget>
         </div>
     </div>
 </div>
