@@ -23,7 +23,7 @@ export class PlayHome extends Widget {
     public ok: () => void;
     public language:any;
     public web3Promise: Promise<string>;
-    
+    public thirdApiPromise:Promise<string>;
     constructor() {
         super();
 
@@ -35,6 +35,15 @@ export class PlayHome extends Widget {
                 //     content += String.fromCharCode(arr[i]);
                 // }
                 // content = decodeURIComponent(escape(atob(content)));
+                const content = new TextDecoder().decode(arr);
+                resolve(content);
+            }, () => {}, () => {});
+        });
+
+        this.thirdApiPromise = new Promise((resolve) => {
+            const path = 'app/api/thirdApi.js.txt';
+            loadDir([path], undefined, undefined, undefined, fileMap => {
+                const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
                 resolve(content);
             }, () => {}, () => {});
@@ -113,6 +122,14 @@ export class PlayHome extends Widget {
                 WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }
+    }
+
+    public openTestClick() {
+        const gameTitle = '测试';
+        const gameUrl =  'http://192.168.9.15:3001/authorize.html';
+        this.thirdApiPromise.then(content => {
+            WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+        });
     }
 }
 register('user/info',() => {

@@ -1680,7 +1680,7 @@ pi_modules.commonjs.exports = (function () {
 			set.push(mod); // 放置已加载和正在加载的模块
 			return;
 		}
-		info = depend.get(name + ".js") || depend.get(name + ".sjs");
+		info = depend.get(name + ".js");
 		if (!info)
 			throw new Error("mod not found, name:" + name + ", from:" + parent);
 		child = info.depend && info.depend.js ? info.depend.js : undefined;
@@ -1943,7 +1943,6 @@ pi_modules.update.exports = (function () {
 	var remoteVersion = [];
 
 	var JSIntercept = winit.JSIntercept;
-	var getLoadDomain = winit.getLoadDomain;
 
 	/**
 	 * 告诉更新系统，底层是否拦截
@@ -1980,7 +1979,7 @@ pi_modules.update.exports = (function () {
 	}
 
 	module.needForceUpdate = function () {
-		var need = !!localStorage.getItem("$$nativeIsUpdating");
+		var need = JSIntercept.getBootFile("update.flag") === "true";
 		// if (need) {
 		// 	alert("上次版本还没有更新完毕，必须更新");
 		// }
@@ -2029,9 +2028,10 @@ pi_modules.update.exports = (function () {
 			return;
 		}
 
-		localStorage.setItem("$$nativeIsUpdating", "1");
-
-		startUpdate(updateProcessCb);
+		// 设置标记，开始更新
+		JSIntercept.saveFile("update.flag", window.btoa("true"), function () {
+			startUpdate(updateProcessCb);
+		});
 	}
 
 	// 从index.js的版本号检查是否需要更新
@@ -2053,7 +2053,7 @@ pi_modules.update.exports = (function () {
 			console.log("updatedStr = ",updatedStr);
 			pi_update.updated = JSON.parse(updatedStr);
 
-			var needUpdate = !!localStorage.getItem("$$nativeIsUpdating");
+			var needUpdate = JSIntercept.getBootFile("update.flag") === "true";
 			if (needUpdate) {
 				// alert("上次版本还没有更新完毕，必须更新");
 				pi_update.alert({
@@ -2111,27 +2111,20 @@ pi_modules.update.exports = (function () {
 	}
 
 	function finishUpdate() {
+		// 清除标记
+		JSIntercept.saveFile("update.flag", window.btoa("false"), function () {
+			// alert("更新成功，程序即将关闭，请重启APP");
 
-		// alert("更新成功，即将进入新版本");
-		// // 清除标记
-		localStorage.removeItem("$$nativeIsUpdating");
-		pi_update.alert({
-			btnText:"更新完毕"
-		},function(){
-			pi_update.closePop();
-			// 等待定时器，以便于清除localstorage完全成功
-			setTimeout(function() {
-				// alert("更新成功，程序即将关闭，请重启APP");
-
+			pi_update.alert({
+				btnText:"更新完毕"
+			},function(){
+				pi_update.closePop();
 				// 重启
 				JSIntercept.restartApp();
-			}, 200);
+				
+			});
 		});
 
-		
-
-		// // 重启
-		// JSIntercept.restartApp();
 	}
 
 	function saveBootFiles(files, callback) {
@@ -2237,6 +2230,80 @@ pi_modules.update.exports = (function () {
 		return window.btoa(binary);
 	}
 
+	return module;
+})();
+
+// app更新模块
+pi_modules.appUpdate = {
+	id: 'appUpdate',
+	exports: undefined,
+	loaded: true
+};
+pi_modules.appUpdate.exports = (function () {
+	var module = function mod_update() {};
+
+	var DOWNLOAD_TIMEOUT = 10000;
+
+	var ajax = pi_modules.ajax.exports;
+	
+	var appURL = winit.appURL;
+	var JSIntercept = winit.JSIntercept;
+	
+	var localVersion = "";
+	var remoteVersion = "";
+
+	var updateURL = undefined;
+	
+	/**
+	 * Note: 
+		  iOS的版本文件名：ios_version.json
+		  Android的版本文件名：android_version.json
+		  版本json的内容：{"version": "版本号", "url": "文件url"}\
+	 * cb(result), result为1代表需要更新，为0代表不需要更新，为-1代表下载版本号失败
+	 */
+	module.needUpdate = function (cb) {
+		var url;
+		if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+			url = appURL + "/android_version.json?" + Math.random();
+		} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+			url = appURL + "/ios_version.json?" + Math.random();
+		} else {
+			setTimeout(function () {
+				cb(0);
+			}, 0);
+			return;
+		}
+
+		JSIntercept.getAppVersion(function (isOK, version) {
+			if (isOK) localVersion = version;
+			
+			debugger;
+			ajax.get(url, undefined, undefined, ajax.RESP_TYPE_TEXT, 3000, function (r) {
+				var content = JSON.parse(r);
+				remoteVersion = content.version;
+				if (remoteVersion !== localVersion) {
+					updateURL = content.url;
+				}
+				cb(remoteVersion !== localVersion ? 1 : 0);
+			}, function () {
+				cb(-1);
+			});
+		});
+	}
+
+	/**
+	 * cb(isSuccess)
+	 */
+	module.update = function(cb) {
+		if (!updateURL) {
+			setTimeout(function () {
+				cb(false);
+			}, 0);
+			return;
+		}
+
+		JSIntercept.updateApp(updateURL, cb);
+	}
 	return module;
 })();
 
