@@ -11,13 +11,14 @@ interface Props {
     style?: string; // 修改content的样式
 }
 export class ModalBoxCheckBox extends Widget {
-    public props: Props;
+    public props: any;
     public ok: (deleteAccount:boolean) => void;
     public cancel: () => void;
 
-    public create() {
-        super.create();
-        this.state = {
+    public setProps(props:any,oldProps:any) {
+        super.setProps(props,oldProps);
+        this.props = {
+            ...this.props,
             deleteAccount:false
         };
     }
@@ -25,10 +26,10 @@ export class ModalBoxCheckBox extends Widget {
         this.cancel && this.cancel();
     }
     public okBtnClick(e: any) {
-        this.ok && this.ok(this.state.deleteAccount);
+        this.ok && this.ok(this.props.deleteAccount);
     }
-    public deleteAccountClick(){
-        this.state.deleteAccount = !this.state.deleteAccount;
+    public deleteAccountClick() {
+        this.props.deleteAccount = !this.props.deleteAccount;
         this.paint();
     }
 }

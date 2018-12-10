@@ -16,7 +16,7 @@ interface Props {
 }
 
 export class BaseShare extends Widget {
-    public props: Props;
+    public props: any;
     public ok: (success:boolean) => void;
     public cancel: (success:boolean) => void;
 
@@ -24,13 +24,12 @@ export class BaseShare extends Widget {
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
         this.language = this.config.value[getLang()];
-        this.state = {};
         if (this.props.shareType !== ShareToPlatforms.TYPE_TEXT) {
-            this.state.isShowQQ = true;
-            this.state.showCount = 4;
+            this.props.isShowQQ = true;
+            this.props.showCount = 4;
         } else {
-            this.state.isShowQQ = false;
-            this.state.showCount = 3;
+            this.props.isShowQQ = false;
+            this.props.showCount = 3;
         }
 
     }

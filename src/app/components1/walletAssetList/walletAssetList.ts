@@ -21,7 +21,8 @@ export class WalletAssetList extends Widget {
 
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.state = {
+        this.props = {
+            ...this.props,
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
     }

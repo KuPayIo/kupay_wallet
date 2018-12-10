@@ -13,9 +13,11 @@ export class ItemList extends Widget {
    
     public setProps(oldProps:Json,props:Json) {
         super.setProps(oldProps,props);
-        this.state = {
-            selected:0,
-            list:[],
+        console.log(oldProps);
+        this.props = {
+            ...this.props,
+            selectedIndex:0,
+            list1:[],
             keys:[]
         };
         const list = [];
@@ -25,9 +27,9 @@ export class ItemList extends Widget {
             keys.push(i);
         }
         const val = this.props.list[this.props.selected];
-        this.state.selected =  list.indexOf(val); 
-        this.state.list = list;
-        this.state.keys = keys;
+        this.props.selectedIndex =  list.indexOf(val); 
+        this.props.list1 = list;
+        this.props.keys = keys;
     }
 
     public backPrePage() {
@@ -36,18 +38,18 @@ export class ItemList extends Widget {
 
     public changeSelect(e:any) {
         if (this.props.flag === 0) {
-            setLang(this.state.keys[e.value === 2 ? 0 :e.value]);
+            setLang(this.props.keys[e.value === 2 ? 0 :e.value]);
             const appLanguage = new LocalLanguageMgr();
             appLanguage.init();
             appLanguage.setAppLan({
                 success: (localLan) => {},
-                fail: (result) => {},language:appLanguageList[this.state.keys[e.value === 2 ? 0 :e.value]]
+                fail: (result) => {},language:appLanguageList[this.props.keys[e.value === 2 ? 0 :e.value]]
             });
-            setStore('setting/language',this.state.keys[e.value === 2 ? 0 :e.value]);
+            setStore('setting/language',this.props.keys[e.value === 2 ? 0 :e.value]);
         } else if (this.props.flag === 1) {
-            setStore('setting/currencyUnit',this.state.keys[e.value]);            
+            setStore('setting/currencyUnit',this.props.keys[e.value]);            
         } else {
-            setStore('setting/changeColor',this.state.keys[e.value]);  
+            setStore('setting/changeColor',this.props.keys[e.value]);  
         }
     }
 }

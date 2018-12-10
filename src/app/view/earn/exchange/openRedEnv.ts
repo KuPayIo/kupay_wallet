@@ -5,9 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { convertRedBag, getData, inputInviteCdKey } from '../../../net/pull';
 import { LuckyMoneyType } from '../../../store/interface';
-import { showError } from '../../../utils/toolMessages';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -26,17 +24,18 @@ export class OpenRedEnvelope extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
+            ...this.props,
             tag:'',
             openClick:false
         };
 
         if (props.rtype === LuckyMoneyType.Normal) {
-            this.state.tag = this.language.tips[0];
+            this.props.tag = this.language.tips[0];
         } else if (props.rtype === LuckyMoneyType.Random) {
-            this.state.tag = this.language.tips[1];
+            this.props.tag = this.language.tips[1];
         } else if (props.rtype === LuckyMoneyType.Invite) {
-            this.state.tag = this.language.tips[2];
+            this.props.tag = this.language.tips[2];
         }
         
     }
@@ -45,7 +44,7 @@ export class OpenRedEnvelope extends Widget {
      * 开红包
      */
     public openRedEnv() {
-        this.state.openClick = true;
+        this.props.openClick = true;
         
         this.paint();
         setTimeout(() => {

@@ -36,8 +36,7 @@ interface State {
 }
 
 export class Input extends Widget {
-    public props: Props;
-    public state: State;
+    public props: any;
     public language :any;
     
     public setProps(props: Props, oldProps: Props) {
@@ -51,7 +50,8 @@ export class Input extends Widget {
         if (props.input) {
             currentValue = props.input;
         }
-        this.state = {
+        this.props = {
+            ...this.props,
             currentValue,
             focused: false,
             showClear:false,
@@ -70,7 +70,7 @@ export class Input extends Widget {
             this.props = {};
         }
         paintCmd3(this.getInput(), 'readOnly', this.props.disabled || false);
-        (<any>this.getInput()).value = this.state.currentValue;
+        (<any>this.getInput()).value = this.props.currentValue;
         paintWidget(this, reset);
     }
     /**
@@ -91,7 +91,7 @@ export class Input extends Widget {
      */
     public compositionstart() {
         if (this.props.itype === 'text') {
-            this.state.inputLock = true;
+            this.props.inputLock = true;
         }
     }
     
@@ -99,14 +99,14 @@ export class Input extends Widget {
      * 用户输入完成,点击候选词或确认按钮时触发
      */
     public compositionend() {
-        this.state.inputLock = false;
+        this.props.inputLock = false;
     }
 
     /**
      * 输入事件
      */
     public change(event:any) {
-        if (this.state.inputLock) {
+        if (this.props.inputLock) {
             return;
         }
         let currentValue = event.currentTarget.value;
@@ -142,12 +142,12 @@ export class Input extends Widget {
                 currentValue = numAry.join('.');   
             }
         }
-        this.state.currentValue = currentValue;
-        this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
+        this.props.currentValue = currentValue;
+        this.props.showClear = this.props.clearable && !this.props.disabled && this.props.currentValue !== '' && this.props.focused;
         
         (<any>this.getInput()).value = currentValue;
-        notify(event.node,'ev-input-change',{ value:this.state.currentValue }); 
-        this.state.focused = true;
+        notify(event.node,'ev-input-change',{ value:this.props.currentValue }); 
+        this.props.focused = true;
         // this.paint();  
     }
 
@@ -155,9 +155,9 @@ export class Input extends Widget {
      * 失焦事件
      */
     public onBlur(event:any) {
-        this.state.focused = false;
-        this.state.showClear = false;
-        notify(event.node,'ev-input-blur',{ value:this.state.currentValue });
+        this.props.focused = false;
+        this.props.showClear = false;
+        notify(event.node,'ev-input-blur',{ value:this.props.currentValue });
         this.paint();
     }
 
@@ -165,16 +165,16 @@ export class Input extends Widget {
      * 聚焦事件
      */
     public onFocus(event:any) {
-        this.state.focused = true;
-        this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
+        this.props.focused = true;
+        this.props.showClear = this.props.clearable && !this.props.disabled && this.props.currentValue !== '' && this.props.focused;
         notify(event.node,'ev-input-focus',{});
         this.paint();
     }
    
     // 清空文本框
     public clearClickListener(event:any) {
-        this.state.currentValue = '';
-        this.state.showClear = false;
+        this.props.currentValue = '';
+        this.props.showClear = false;
         (<any>this.getInput()).value = '';
         notify(event.node,'ev-input-clear',{});  
         this.paint();      

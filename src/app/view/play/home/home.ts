@@ -53,7 +53,7 @@ export class PlayHome extends Widget {
         // http://47.244.59.13/web-rinkeby/index.html
         this.props.gameList = [
             {
-                title:'Crypto Fishing',
+                title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
                 desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
                 img:'app/res/image1/game2.jpg',
                 url:'http://fishing.rinkeby.cchaingames.com/'
@@ -62,7 +62,7 @@ export class PlayHome extends Widget {
                 title:{ zh_Hans:'迷失之城',zh_Hant:'迷失之城',en:'' },
                 desc:{ zh_Hans:'基于GAIA链的新一代区块链游戏',zh_Hant:'基於GAIA鏈的新一代區塊鏈遊戲',en:'' },
                 img:'app/res/image1/game3.jpg',
-                url:''
+                url:'https://fomosports.me'
             },
             {
                 title:'Decentraland',
@@ -107,7 +107,7 @@ export class PlayHome extends Widget {
         if (!this.props.gameList[num].url) {
             popNewMessage(this.language.tips);
         } else {
-            const gameTitle = this.props.gameList[num].title;
+            const gameTitle = this.props.gameList[num].title.zh_Hans;
             const gameUrl =   this.props.gameList[num].url;
             this.web3Promise.then(content => {
                 WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);

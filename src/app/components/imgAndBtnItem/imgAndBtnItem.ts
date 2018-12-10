@@ -29,10 +29,6 @@ export class ImgAndBtnItem extends Widget {
         super();
     }
 
-    public setProps(props:JSON,oldProps:JSON) {
-        super.setProps(props,oldProps);
-    }
-
     public backPrePage() {
         this.ok && this.ok();
     }

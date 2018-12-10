@@ -1,6 +1,6 @@
 <div style="position: relative;">
     {{for index,CollapseItem in it.htmlStrList}}
-    {{let fg = it1.currentExpIndex==index}}
+    {{let fg = it.currentExpIndex==index}}
     <div class="pi-collapse-item" >
         <div w-class="pi-collapse-head" on-tap="clickItemListener(e,{{index}})">
             <div w-class="pi-collapse-title" class="pi-collapse-title">{{CollapseItem.title}}</div>

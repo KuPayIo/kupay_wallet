@@ -21,11 +21,12 @@ interface Props {
 // ================================ 导出
 
 export class Btn extends Widget {
-    public props:Props;
+    public props:any;
     public ok: () => void;
     public setProps(props:JSON) {
         super.setProps(props);
-        this.state = {
+        this.props = {
+            ...this.props,
             isAbleBtn:false,
             isString:typeof this.props.name === 'string'
         };
@@ -37,11 +38,11 @@ export class Btn extends Widget {
 
     public doTap(event: any) {
         if (!this.props.cannotClick) {
-            this.state.isAbleBtn = true;
+            this.props.isAbleBtn = true;
             this.paint();
 
             setTimeout(() => {// 按钮动画效果执行完后改为未点击状态，则可以再次点击
-                this.state.isAbleBtn = false;
+                this.props.isAbleBtn = false;
                 this.paint();
             }, 200);
             notify(event.node, 'ev-btn-tap', {});
