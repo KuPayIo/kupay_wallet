@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getGoldPrice, getServerCloudBalance } from '../../../net/pull';
+import { getAccountDetail, getGoldPrice, getServerCloudBalance } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { confirmPay } from '../../../utils/pay';
@@ -94,16 +94,18 @@ export class RechargeGT extends Widget {
             payType: this.props.payType, // 支付方式
             type:CloudCurrencyType.GT // 充值类型
         };
-        
+        const allLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType.GT).otherLogs;
         confirmPay(orderDetail,(res) => {
             this.props.num = 0.00;
             this.props.total = 0.00;
             this.props.payType = 'alipay';
-            this.paint();
+            
             popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:res.oid });
             getServerCloudBalance();
+            getAccountDetail('GT',1,allLogs.start);
+            this.paint();
         },() => {
-
+            getServerCloudBalance();
         });
     }
 }

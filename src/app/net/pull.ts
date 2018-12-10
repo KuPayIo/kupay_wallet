@@ -1267,8 +1267,6 @@ export const getGoldPrice = async (ispay:number = 0) => {
     const msg = { type:'get_goldprice',param:{ ispay } };
     try {
         const resData:any = await requestAsync(msg);
-        console.log(resData);
-        
         if (resData.result === 1) {
             setStore('third/goldPrice',{ price:resData.price,change:resData.change });
         }
