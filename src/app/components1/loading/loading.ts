@@ -13,8 +13,7 @@ interface State {
     circular:string;// svg内容
 }
 export class Loading extends Widget {
-    public props: Props;
-    public state: State;
+    public props: any;
     public ok:() => void;
     constructor() {
         super();
@@ -25,18 +24,15 @@ export class Loading extends Widget {
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.state = {
-            circular:`<svg viewBox='25 25 50 50' class='pi-circular'>
-            <circle cx='50' cy='50' r='20' fill='none' class="pi-path">
-            </circle>
-            </svg>`,
-            startTime:new Date().getTime(),
+        this.props = {
+            ...this.props,
+            startTime:new Date().getTime()
         };
     }
     public close() {
         const INTERVAL = 500;
         const endTime = new Date().getTime();
-        const interval = endTime - this.state.startTime;
+        const interval = endTime - this.props.startTime;
         if (interval >= INTERVAL) {
             this.ok && this.ok();
         } else {

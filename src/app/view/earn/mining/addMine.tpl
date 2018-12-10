@@ -16,7 +16,7 @@
             itemShort:{"zh_Hans":"矿储量+2500KT","zh_Hant":"礦儲量+2500KT","en":""},
             itemDetail:{"zh_Hans":"手机号注册可提现，额外赠送2500KT","zh_Hant":"手機號註冊可提現，額外贈送2500KT","en":""}
             }] }}
-            {{for ind,val of it1.data}}
+            {{for ind,val of it.data}}
                 {{if val.modulIsShow}}
                 <div on-tap="show({{ind}})" ev-imgAndBtn-tap="goDetail({{ind}})">
                     <app-components-imgAndBtnItem-imgAndBtnItem>{"name":{{addMineList[ind].itemName}},"describe":{{addMineList[ind].itemShort}},"img":{{val.itemImg}},"btnName":{{btnName}},isComplete:{{val.isComplete}}

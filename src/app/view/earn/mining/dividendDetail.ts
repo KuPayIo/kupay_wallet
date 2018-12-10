@@ -6,7 +6,6 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
-import { register } from '../../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -23,7 +22,7 @@ export class PlayHome extends Widget {
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
             walletName: getModulConfig('WALLET_NAME')
         };
     }

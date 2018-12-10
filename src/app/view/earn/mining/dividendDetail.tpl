@@ -36,8 +36,8 @@
             </p>
             <p>
                 <pi-ui-lang>{
-                    "zh_Hans":"5、{{it1.walletName}}拥有最终解释权。",
-                    "zh_Hant":"5、{{it1.walletName}}擁有最終解釋權。",
+                    "zh_Hans":"5、{{it.walletName}}拥有最终解释权。",
+                    "zh_Hant":"5、{{it.walletName}}擁有最終解釋權。",
                     "en":""}
                 </pi-ui-lang>
             </p>

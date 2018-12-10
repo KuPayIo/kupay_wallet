@@ -1,11 +1,11 @@
-{{let item = it1.list[it1.selected]}}
+{{let item = it.list[it.selected]}}
 <div class="new-page" style="background: #f9f9f9;" ev-back-click="backPrePage" ev-next-click="goHistory">
     {{: topBarTitle = {"zh_Hans":"发红包","zh_Hant":"發紅包","en":""} }}
     <app-components1-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/26_white.png",background:"#F46262;"}</app-components1-topBar-topBar>
 
     <form w-class="content" ev-selectBox-change="changeCoin" id="content">
     
-        <app-components-selectBox-selectBox>{list:{{it1.list}},selected:{{it1.selected}},forceHide:{{it1.forceHide}} }</app-components-selectBox-selectBox>
+        <app-components-selectBox-selectBox>{list:{{it.list}},selected:{{it.selected}},forceHide:{{it.forceHide}} }</app-components-selectBox-selectBox>
         <div style="font-size: 28px;color: #888888;margin: 0 30px;">
             {{: changePin = [
             {"zh_Hans":"每个红包金额","zh_Hant":"每個紅包金額","en":""},
@@ -14,14 +14,14 @@
             {"zh_Hans":"，改为","zh_Hant":"，改為","en":""}] }}
 
             <pi-ui-lang>{{changePin[0]}} </pi-ui-lang>
-            <pi-ui-lang>{{it1.showPin ? changePin[1] : changePin[2]}}</pi-ui-lang>
+            <pi-ui-lang>{{it.showPin ? changePin[1] : changePin[2]}}</pi-ui-lang>
             <pi-ui-lang>{{changePin[3]}}</pi-ui-lang>
             <span w-class="changeType" on-tap="changePin">
                 {{: redEnvType = [
                 {"zh_Hans":"普通红包","zh_Hant":"普通紅包","en":""},
                 {"zh_Hans":"拼手气红包","zh_Hant":"拼手氣紅包","en":""}] }}
 
-                <pi-ui-lang>{{it1.showPin? redEnvType[0] : redEnvType[1]}}</pi-ui-lang></span>
+                <pi-ui-lang>{{it.showPin? redEnvType[0] : redEnvType[1]}}</pi-ui-lang></span>
         </div>
         <div ev-input-change="changeAmount">
 
@@ -31,13 +31,13 @@
             {"zh_Hans":item.name,"zh_Hant":item.name,"en":""}] }}
 
             <app-components-basicInput-basicInput>{
-                prepend:{{it1.showPin? amountTitle[0] : amountTitle[1]}},
+                prepend:{{it.showPin? amountTitle[0] : amountTitle[1]}},
                 placeholder:{{amountTitle[2]}},
-                itype:{{it1.selected===0? "integer" : "number"}},
+                itype:{{it.selected===0? "integer" : "number"}},
                 maxLength:8,
                 append:{{amountTitle[3]}},
-                isShowPin:{{it1.showPin}},
-                input:{{it1.oneAmount}},
+                isShowPin:{{it.showPin}},
+                input:{{it.oneAmount}},
                 notUnderLine:true
                 }</app-components-basicInput-basicInput>
         </div>
@@ -53,7 +53,7 @@
                 itype:"integer",
                 maxLength:3,
                 append:{{countTitle[2]}},
-                input:{{it1.totalNum}},
+                input:{{it.totalNum}},
                 notUnderLine:true
                 }</app-components-basicInput-basicInput>
         </div>
@@ -62,12 +62,12 @@
             <app-components-basicInput-basicInput>{
                 prepend:{{messTitle[0]}},
                 placeholder:{{messTitle[1]}},
-                input:{{it1.message}},
+                input:{{it.message}},
                 maxLength:20,
                 notUnderLine:true
                 }</app-components-basicInput-basicInput>
         </div>
-        <div w-class="totalNum">{{it1.totalAmount+" "+item.name}}</div>
+        <div w-class="totalNum">{{it.totalAmount+" "+item.name}}</div>
         <div style="margin: 0 40px;" ev-btn-tap="send">
             {{: btnName = {"zh_Hans":"塞钱进红包","zh_Hant":"塞錢進紅包","en":""} }}
             <app-components1-btn-btn>{"name":{{btnName}},"types":"big","style":"background:#F46262;"}</app-components1-btn-btn>

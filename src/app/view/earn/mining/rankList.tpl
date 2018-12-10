@@ -5,7 +5,7 @@
         <div w-class="nav">
             {{: tabTitle = [{"zh_Hans":"挖矿","zh_Hant":"挖礦","en":""},{"zh_Hans":"矿山总量","zh_Hant":"礦山總量","en":""}] }}
 
-            {{for i,v of it1.tabs}} {{let isActive = (i==it1.activeNum)}}
+            {{for i,v of it.tabs}} {{let isActive = (i==it.activeNum)}}
             <div w-class="nav-item {{isActive ? 'is-active' : ''}}" on-tap="tabsChangeClick({{i}})">
                 <pi-ui-lang>{{tabTitle[i]}}</pi-ui-lang>
             </div>
@@ -13,5 +13,5 @@
         </div>
     </div>
 
-    <app-view-earn-mining-miningRank>{{it1.tabs[it1.activeNum]}}</app-view-earn-mining-miningRank>
+    <app-view-earn-mining-miningRank>{{it.tabs[it.activeNum]}}</app-view-earn-mining-miningRank>
 </div>

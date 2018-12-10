@@ -25,15 +25,16 @@ interface Props {
     lockScreen?:boolean; // 解锁屏幕失败，验证身份进入该页面
 }
 export class ModalBoxInput extends Widget {
-    public props: Props;
+    public props: any;
     public language:any;
     public ok: (value:string) => void;
     public cancel: (fg:boolean) => void;   // fg为true表示退出APP(或点击取消)，false表示忘记密码删除钱包
 
-    public create() {
-        super.create();
+    public setProps(props:any,oldProps:any) {
+        super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
-        this.state = { 
+        this.props = { 
+            ...this.props,
             currentValue:''
         };
     }
@@ -47,7 +48,7 @@ export class ModalBoxInput extends Widget {
      * 点击确认按钮
      */
     public okBtnClick() {
-        this.ok && this.ok(this.state.currentValue);
+        this.ok && this.ok(this.props.currentValue);
     }
     /**
      * 忘记密码
@@ -66,7 +67,7 @@ export class ModalBoxInput extends Widget {
      * 输入框变化
      */
     public change(e:any) {
-        this.state.currentValue = e.value;
+        this.props.currentValue = e.value;
         this.paint();
     }
 }

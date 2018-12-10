@@ -23,7 +23,7 @@ import { Widget } from '../../../pi/widget/widget';
 // ==============================================导出
 
 export class Collapse extends Widget {
-    public props: Props;
+    public props: any;
     public state: State;
     constructor() {
         super();
@@ -31,7 +31,8 @@ export class Collapse extends Widget {
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
         if (props.accordion) {
-            this.state = {
+            this.props = {
+                ...this.props,
                 currentExpIndex:-1,
                 lastExpIndex:-1,
                 isExpanded:this.isExpanded.bind(this)
@@ -41,7 +42,8 @@ export class Collapse extends Widget {
             for (let i = 0; i < props.htmlStrList.length;i++) {
                 currentExpArr[i] = false;
             }
-            this.state = {
+            this.props = {
+                ...this.props,
                 currentExpArr,
                 isExpanded:this.isExpanded.bind(this)
             };
@@ -51,23 +53,23 @@ export class Collapse extends Widget {
     
     public clickItemListener(event:any,index:number) {
         if (this.props.accordion) {
-            this.state.lastExpIndex = this.state.currentExpIndex;
-            if (this.state.currentExpIndex === index) {
-                this.state.currentExpIndex = -1;
+            this.props.lastExpIndex = this.props.currentExpIndex;
+            if (this.props.currentExpIndex === index) {
+                this.props.currentExpIndex = -1;
             } else {
-                this.state.currentExpIndex = index;
+                this.props.currentExpIndex = index;
             }
         } else {
-            this.state.currentExpArr[index] = !this.state.currentExpArr[index];
+            this.props.currentExpArr[index] = !this.props.currentExpArr[index];
         }
         this.setHiddenContentHeight(index,this.isExpanded(index));
         let activeIndexs;
         if (this.props.accordion) {
-            activeIndexs = this.state.currentExpIndex;
+            activeIndexs = this.props.currentExpIndex;
         } else {
             activeIndexs = [];
-            for (let i = 0;i < this.state.currentExpArr.length;i++) {
-                if (this.state.currentExpArr[i]) {
+            for (let i = 0;i < this.props.currentExpArr.length;i++) {
+                if (this.props.currentExpArr[i]) {
                     activeIndexs.push(i);
                 }
             }
@@ -79,17 +81,17 @@ export class Collapse extends Widget {
     // 判断当前item是否展开
     public isExpanded(index:number) {
         if (this.props.accordion) {
-            return this.state.currentExpIndex === index;
+            return this.props.currentExpIndex === index;
         }
 
-        return this.state.currentExpArr[index];
+        return this.props.currentExpArr[index];
     }
 
     public setHiddenContentHeight(index:number,isExpanded:boolean) {
         const currentItemPanel = (<any>this.tree).children[index].children[1];
         const currentItemPanelNode = getRealNode(currentItemPanel);
-        if (this.props.accordion && this.state.lastExpIndex !== -1) {
-            const lastItemPanel = (<any>this.tree).children[this.state.lastExpIndex].children[1];
+        if (this.props.accordion && this.props.lastExpIndex !== -1) {
+            const lastItemPanel = (<any>this.tree).children[this.props.lastExpIndex].children[1];
             const lastItemPanelNode = getRealNode(lastItemPanel);
             lastItemPanelNode.style.height =  '0px';
         }

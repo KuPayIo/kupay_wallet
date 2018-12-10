@@ -6,20 +6,20 @@
         </div>
         <div w-class="ga-share-platforms">
             <div w-class="ga-share-platform" on-tap="shareToWechat">
-                <img src="../../res/image/img_share_wechat.png" w-class="ga-share-icon{{it1.showCount}}" />
+                <img src="../../res/image/img_share_wechat.png" w-class="ga-share-icon{{it.showCount}}" />
                 <pi-ui-lang>{"zh_Hans":"微信","zh_Hant":"微信","en":""}</pi-ui-lang>
             </div>
             <div w-class="ga-share-platform" on-tap="shareToFriends">
-                <img src="../../res/image/img_share_wechatArea.png" w-class="ga-share-icon{{it1.showCount}}" />
+                <img src="../../res/image/img_share_wechatArea.png" w-class="ga-share-icon{{it.showCount}}" />
                 <pi-ui-lang>{"zh_Hans":"朋友圈","zh_Hant":"朋友圈","en":""}</pi-ui-lang>
             </div>
             <div w-class="ga-share-platform" on-tap="shareToQQSpace">
-                <img src="../../res/image/img_share_qqArea.png" w-class="ga-share-icon{{it1.showCount}}" />
+                <img src="../../res/image/img_share_qqArea.png" w-class="ga-share-icon{{it.showCount}}" />
                 <pi-ui-lang>{"zh_Hans":"QQ空间","zh_Hant":"QQ空間","en":""}</pi-ui-lang>
             </div>
-            {{if it1.isShowQQ}}
+            {{if it.isShowQQ}}
             <div w-class="ga-share-platform" on-tap="shareToQQ">
-                <img src="../../res/image/img_share_qq.png" w-class="ga-share-icon{{it1.showCount}}" />
+                <img src="../../res/image/img_share_qq.png" w-class="ga-share-icon{{it.showCount}}" />
                 <span>QQ</span>
             </div>
             {{end}}

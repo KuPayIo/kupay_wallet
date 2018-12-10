@@ -2,7 +2,6 @@
  * 首页
  */
 // ================================ 导入
-import { popNew } from '../../../pi/ui/root';
 import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
@@ -124,7 +123,6 @@ register('flags/level_2_page_loaded', (loaded: boolean) => {
     } else { // 处理导航页过程中资源已经加载完毕
         localStorage.setItem('level_2_page_loaded', '1');
     }
-    // popNew('app-view-mine-other-shareDownload');
 });
 
 // 用户信息变化

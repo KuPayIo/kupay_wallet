@@ -29,14 +29,15 @@ interface Props {
     outDate?:boolean;  // 红包是否已过期
 }
 export class RedEnvDetail extends Widget {
-    public props:Props;
+    public props:any;
     public language:any;
     public ok: () => void;
 
     public setProps(props: Json, oldProps?: Json)  {
         super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
+            ...this.props,
             message:this.language.message,
             redBagList:[
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
@@ -56,23 +57,23 @@ export class RedEnvDetail extends Widget {
     public async initData() {
         const value = await queryDetailLog(getStore('user/conUid'),this.props.rid);
         if (!value) return;
-        this.state.redBagList = value[0];        
-        this.state.message = value[1];
+        this.props.redBagList = value[0];        
+        this.props.message = value[1];
 
         const user = getUserInfo();
         if (!user) return;
-        this.state.userName = user.nickName ? user.nickName :this.language.defaultUserName;
-        this.state.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
+        this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
+        this.props.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
 
         const redBagList = value[0];
         for (const i in redBagList) {
             const user = await getUserList([redBagList[i].cuid]);
-            this.state.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
+            this.props.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
             // tslint:disable-next-line:max-line-length
-            this.state.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png'; 
-            if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.state.greatAmount < redBagList[i].amount) {
-                this.state.greatAmount = redBagList.amount;
-                this.state.greatUser = i;
+            this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png'; 
+            if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.props.greatAmount < redBagList[i].amount) {
+                this.props.greatAmount = redBagList.amount;
+                this.props.greatUser = i;
             }
         }
         this.paint();
@@ -87,9 +88,9 @@ export class RedEnvDetail extends Widget {
      */
     public pageScroll() {
         if (document.getElementById('redEnvDetail').scrollTop > 0) {
-            this.state.scroll = true;
+            this.props.scroll = true;
         } else {
-            this.state.scroll = false;
+            this.props.scroll = false;
         }
         this.paint();
         
@@ -111,11 +112,11 @@ export class RedEnvDetail extends Widget {
         
         if (this.props.rtype === 0) {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}&lan=${lan}`;
+            url = `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.language.redEnvType[0]; 
         } else if (this.props.rtype === 1) {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.state.message)}&lan=${lan}`;
+            url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.language.redEnvType[1]; 
         } else if (this.props.rid === '-1') {
             const inviteCodeInfo = await getInviteCode();
@@ -128,7 +129,7 @@ export class RedEnvDetail extends Widget {
             shareType: ShareToPlatforms.TYPE_LINK,
             url,
             title,
-            content:this.state.message
+            content:this.props.message
         });
         console.error(url);
     }

@@ -23,7 +23,7 @@ interface Props {
 }
 export class ImgRankItem extends Widget {
     public ok: () => void;
-    public props:Props;
+    public props:any;
     public state:{
         password:string;
         secret:number;
@@ -37,7 +37,8 @@ export class ImgRankItem extends Widget {
 
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props,oldProps);
-        this.state = {
+        this.props = {
+            ...this.props,
             password:'',
             secret:0,
             showTips:false,
@@ -55,39 +56,39 @@ export class ImgRankItem extends Widget {
      */
     public pswChange(event:any) {
         const psw = event.value;
-        this.state.password = psw;
-        this.state.showIcon = true;       
+        this.props.password = psw;
+        this.props.showIcon = true;       
         let secret = 0; 
         const limit = this.props.limit ? this.props.limit :1;
         const length = this.props.length ? this.props.length :8;
         
         if (psw.length < length && psw.length > 0) {
             secret = 1; 
-            this.state.showTips = true;
-            this.state.isSuccess = false;
+            this.props.showTips = true;
+            this.props.isSuccess = false;
         } else {
             secret = this.strongJudge(psw);
         }
 
         if (limit === 1 && psw.length >= length) { // 符合最小长度限制
-            this.state.showTips = this.props.hideTips ? false :true;
-            this.state.isSuccess = true;
+            this.props.showTips = this.props.hideTips ? false :true;
+            this.props.isSuccess = true;
             notify(event.node,'ev-psw-change',{ password:psw,success:true });
         } else if (limit === 2 && secret > 1) {  // 符合最小长度和包含两种数据类型以上限制
-            this.state.showTips = this.props.hideTips ? false :true;
-            this.state.isSuccess = true;
+            this.props.showTips = this.props.hideTips ? false :true;
+            this.props.isSuccess = true;
             notify(event.node,'ev-psw-change',{ password:psw,success:true });
         } else {  // 不符合规则限制
             notify(event.node,'ev-psw-change',{ password:psw,success:false });
         }
-        this.state.secret = secret > 3 ? 3 :secret; // 只有三种强度水平显示
+        this.props.secret = secret > 3 ? 3 :secret; // 只有三种强度水平显示
         this.paint();
     }
 
     public pswBlur() {
-        if (!this.state.password) {
-            this.state.showTips = false;
-            this.state.showIcon = false;
+        if (!this.props.password) {
+            this.props.showTips = false;
+            this.props.showIcon = false;
         }
         this.paint();
     }
@@ -96,10 +97,10 @@ export class ImgRankItem extends Widget {
      * 选中输入框后图标切换
      */
     public iconChange() {
-        if (this.state.password !== '') {
-            this.state.showIcon = true;
+        if (this.props.password !== '') {
+            this.props.showIcon = true;
         } else {
-            this.state.showIcon = false;
+            this.props.showIcon = false;
         }
         this.paint();
     }
@@ -108,9 +109,9 @@ export class ImgRankItem extends Widget {
      * 情况输入框
      */
     public clear(event:any) {
-        this.state.password = '';
-        this.state.secret = 0;
-        this.state.showIcon = false;
+        this.props.password = '';
+        this.props.secret = 0;
+        this.props.showIcon = false;
         notify(event.node,'ev-psw-clear',{});
         this.paint(true);
     }

@@ -43,8 +43,7 @@
                             {{if it.payType ==='wxpay'}}
                                 <img src="app/res/image/icon_right2.png" width="42px"/>
                             {{else}}
-                                <img src="app/res/image/btn_img_close.png" width="42px"/>
-                                {{% <div w-class="select-img"></div>}}
+                                <div w-class="select-img"></div>
                             {{end}}
                         </div>
                     </div>

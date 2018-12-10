@@ -1,3 +1,4 @@
+console.log("PI注入web3成功");
 require = (function() {
     function e(t, n, r) {
         function s(o, u) {

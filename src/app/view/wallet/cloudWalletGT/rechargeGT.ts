@@ -61,7 +61,7 @@ export class RechargeGT extends Widget {
      * @param payType 支付方式
      */
     public changPay(payType:string) {
-        this.props.payType = 'alipay';
+        this.props.payType = payType;
         this.paint();
     }
 
