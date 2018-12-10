@@ -9,12 +9,12 @@
                 <div style="margin-top: 20px;">
                     <pi-ui-lang>{"zh_Hans":"共发出","zh_Hant":"共發出","en":""}</pi-ui-lang>
                 </div>
-                <div style="margin-bottom: 90px;"><span style="font-size: 64px;">{{it1.sendNumber}}</span>
+                <div style="margin-bottom: 90px;"><span style="font-size: 64px;">{{it.sendNumber}}</span>
                     <pi-ui-lang>{"zh_Hans":"个红包","zh_Hant":"個紅包","en":""}</pi-ui-lang>
                 </div>
             </div>
             <div w-class="bottom">
-                {{if it1.recordList.length==0}}
+                {{if it.recordList.length==0}}
                     <div style="text-align: center;height: 100%;">
                         <img src="../../../res/image/redEnvEmpty.png" style="width: 200px;height: 200px;margin-top: 210px;" />
                         <div style="font-size: 32px;color: #888888;margin-top: 20px;">
@@ -24,7 +24,7 @@
                     <div w-class="tips">
                         <pi-ui-lang>{"zh_Hans":"24小时未被领取的红包已退回云账户","zh_Hant":"24小時未被領取的紅包已退回雲賬戶","en":""}</pi-ui-lang>
                     </div>
-                    {{for ind,val of it1.recordList}}
+                    {{for ind,val of it.recordList}}
                     <div on-tap="goDetail({{ind}})">
                         {{let desc = {"zh_Hans":val.curNum+"/"+val.totalNum + "个","zh_Hant":val.curNum+"/"+val.totalNum + "個","en":""} }}
                         {{let outDate = {"zh_Hans":"已过期","zh_Hant":"已過期","en":""} }}	
@@ -37,7 +37,7 @@
                     {{end}}
                 {{end}}
 
-                {{if it1.showMoreTips && it1.recordList.length>0}}
+                {{if it.showMoreTips && it.recordList.length>0}}
                 <div w-class="endMess" id="more"><pi-ui-lang>{"zh_Hans":"到此结束啦","zh_Hant":"到此結束啦","en":""}</pi-ui-lang>^_^</div>
                 {{end}}
 
@@ -46,5 +46,5 @@
         </div>
     </div>
    {{: topBarTitle = {"zh_Hans":"红包记录","zh_Hant":"紅包記錄","en":""} }}	
-    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
+    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
 </div>

@@ -32,8 +32,4 @@ export class BasicInput extends Widget {
         super();
     }
 
-    public setProps(props:Json,oldProps:JSON) {
-        super.setProps(props,oldProps);
-        this.state = {};
-    }
 }

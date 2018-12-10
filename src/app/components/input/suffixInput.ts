@@ -30,13 +30,12 @@ interface State {
     showClear:boolean;
 }
 export class SuffixInput extends Widget {
-    public props: Props;
-    public state: State;
+    public props: any;
     constructor() {
         super();
     }
     public create() {
-        this.state = {
+        this.props = {
             currentValue:'',
             focused: false,
             showClear:false
@@ -45,29 +44,40 @@ export class SuffixInput extends Widget {
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
         if (props.placeHolder) {
-            this.props.placeHolder = this.props.placeHolder[getLang()];
+            this.props = {
+                ...this.props,
+                currentValue:'',
+                focused: false,
+                showClear:false,
+                placeHolder : this.props.placeHolder[getLang()]
+            };
         }
         if (props.input) {
-            this.state.currentValue = props.input;
+            this.props = {
+                ...this.props,
+                focused: false,
+                showClear:false,
+                currentValue : props.input
+            };
         }
     }
 
     public change(event:any) {
         const currentValue = event.currentTarget.value;
-        this.state.currentValue = currentValue;
-        this.state.showClear = this.props.clearable && this.state.currentValue !== '' && this.state.focused;
+        this.props.currentValue = currentValue;
+        this.props.showClear = this.props.clearable && this.props.currentValue !== '' && this.props.focused;
         
-        notify(event.node,'ev-input-change',{ value:this.state.currentValue });
+        notify(event.node,'ev-input-change',{ value:this.props.currentValue });
         this.changeInputValue();
         this.paint();
     }
     public blur(event:any) {
-        this.state.focused = false;
+        this.props.focused = false;
         notify(event.node,'ev-input-blur',{});
         this.paint();
     }
     public focus(event:any) {
-        this.state.focused = true;
+        this.props.focused = true;
         notify(event.node,'ev-input-focus',{});
         this.paint();
     }
@@ -75,8 +85,8 @@ export class SuffixInput extends Widget {
     // 清空文本框
     public clearClickListener(event:any) {
         if (this.props.available) return;
-        this.state.currentValue = '';
-        this.state.showClear = false;
+        this.props.currentValue = '';
+        this.props.showClear = false;
         notify(event.node,'ev-input-clear',{});
         this.changeInputValue();
         this.paint();
@@ -86,6 +96,6 @@ export class SuffixInput extends Widget {
     public changeInputValue() {
         const child = (<any>this.tree).children[0];
         const childNode = getRealNode(child);
-        (<any>childNode).value = this.state.currentValue;
+        (<any>childNode).value = this.props.currentValue;
     }
 }

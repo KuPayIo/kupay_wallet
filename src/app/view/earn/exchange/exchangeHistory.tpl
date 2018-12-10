@@ -7,12 +7,12 @@
                 <img src="../../../res/image/default_avater_big.png" w-class="userHead"/>
                 <div style="margin-top: 20px;"><pi-ui-lang>{"zh_Hans":"共兑换","zh_Hant":"共兌換","en":""}</pi-ui-lang></div>
                 <div style="margin-bottom: 90px;">
-                    <span style="font-size: 64px;">{{it1.convertNumberShow}}</span>
+                    <span style="font-size: 64px;">{{it.convertNumberShow}}</span>
                     <pi-ui-lang>{"zh_Hans":"个礼包","zh_Hant":"個禮包","en":""}</pi-ui-lang>
                 </div>
             </div>
             <div w-class="bottom">
-                {{if it1.recordListShow.length==0}}
+                {{if it.recordListShow.length==0}}
                     <div style="text-align: center;height: 100%;">
                         <img src="../../../res/image/exchangeEmpty.png" style="width: 200px;height: 200px;margin-top: 210px;"/>
                         <div style="font-size: 32px;color: #888888;margin-top: 20px;">
@@ -23,7 +23,7 @@
                     <div w-class="tips">
                         <pi-ui-lang>{"zh_Hans":"24小时未被领取的红包已退回云账户","zh_Hant":"24小時未被領取的紅包已退回雲賬戶","en":""}</pi-ui-lang>
                     </div>
-                    {{for ind,val of it1.recordListShow}}
+                    {{for ind,val of it.recordListShow}}
                     <div on-tap="goDetail({{ind}})">
                         {{: userName = {"zh_Hans":val.userName,"zh_Hant":val.userName,"en":""} }}
                         <app-components-fourParaItem-fourParaItem>{ name:{{userName}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},showPin:{{val.rtype==1}} }</app-components-fourParaItem-fourParaItem>
@@ -31,7 +31,7 @@
                     {{end}}
                 {{end}}
 
-                {{if it1.showMoreTips}}
+                {{if it.showMoreTips}}
                 <div w-class="endMess" id="more"><pi-ui-lang>{"zh_Hans":"到此结束啦","zh_Hant":"到此結束啦","en":""}</pi-ui-lang>^_^</div>
                 {{end}}
 
@@ -41,5 +41,5 @@
     </div>
 
     {{: topBarTitle = {"zh_Hans":"兑换记录","zh_Hant":"兌換記錄","en":""} }}	
-<app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
+<app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
 </div>

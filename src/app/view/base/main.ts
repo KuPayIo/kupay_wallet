@@ -114,3 +114,13 @@ const ifNeedUnlockScreen = () => {
 
     return lockScreenPsw && openLockScreen;
 };
+
+// const testTransfer3 = () => {
+//     const ethPayload = {
+//         fromAddr:'',
+//         toAddr:payload.params[0].to,
+//         pay:payload.params[0].value,
+//         currencyName:'ETH',
+//         data:payload.params[0].data
+//     };  
+// };

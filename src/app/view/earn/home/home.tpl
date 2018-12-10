@@ -12,20 +12,20 @@
                 </div>
 
                 <div w-class="totalNum" id="mining">
-                    {{it1.holdMines}}
-                    <span class="miningNum" style="animation:{{it1.doMining?'miningEnlarge 0.3s linear':''}}">
-                        +{{it1.mines}}
+                    {{it.holdMines}}
+                    <span class="miningNum" style="animation:{{it.doMining?'miningEnlarge 0.3s linear':''}}">
+                        +{{it.mines}}
                     </span>  
                 </div>
 
                 <div w-class="titleMode">
                     <div w-class="totalTitle">
                         <div><pi-ui-lang>{"zh_Hans":"矿山剩余(KT)","zh_Hant":"礦山剩餘(KT)","en":""}</pi-ui-lang></div>
-                        <div w-class="otherNum">{{it1.mineLast}}</div>
+                        <div w-class="otherNum">{{it.mineLast}}</div>
                     </div>
                     <div w-class="totalTitle">
                         <div><pi-ui-lang>{"zh_Hans":"本次可挖(KT)","zh_Hant":"本次可挖(KT)","en":""}</pi-ui-lang></div>
-                        <div w-class="otherNum">{{it1.mines}}</div>
+                        <div w-class="otherNum">{{it.mines}}</div>
                     </div>
                     <div ev-btn-tap="doPadding">
                         {{let item = {zh_Hans:"挖一下",zh_Hant:"挖一下",en:""} }}
@@ -38,7 +38,7 @@
                 <div w-class="titleMode" on-tap="goNextPage(0)">
                     <img src="../../../res/image1/mine_top.png" w-class="rankTop"/>
                     <span w-class="miningTitle" style="flex: 1;"><pi-ui-lang>{"zh_Hans":"挖矿排名","zh_Hant":"挖礦排名","en":""}</pi-ui-lang></span>
-                    <span w-class="miningTitle"><pi-ui-lang>{"zh_Hans":"第","zh_Hant":"第","en":""}</pi-ui-lang>{{it1.rankNum}}<pi-ui-lang>{"zh_Hans":"位","zh_Hant":"位","en":""}</pi-ui-lang></span>
+                    <span w-class="miningTitle"><pi-ui-lang>{"zh_Hans":"第","zh_Hant":"第","en":""}</pi-ui-lang>{{it.rankNum}}<pi-ui-lang>{"zh_Hans":"位","zh_Hant":"位","en":""}</pi-ui-lang></span>
                     <img src="../../../res/image1/25_blue.png" w-class="rankList"/>
                 </div>
             </div>
@@ -73,6 +73,6 @@
         </div>  
     </div>
     
-    <app-components1-topBar-topBar1>{avatar:{{it1.avatar}},scrollHeight:{{it1.scrollHeight}} }</app-components1-topBar-topBar1>
+    <app-components1-topBar-topBar1>{avatar:{{it.avatar}},scrollHeight:{{it.scrollHeight}} }</app-components1-topBar-topBar1>
     <div w-class="bottomMode"></div>
 </div>

@@ -24,14 +24,15 @@ export class ChooseCurrency extends Widget {
                 img:'../../res/image/currency/' + item + '.png'
             });
         });
-        this.state = {
+        this.props = {
+            ...this.props,
             currencyShowList,
             selected:this.props.selected
         };
     }
 
     public changeSelect(e:any,ind:number) {
-        this.state.selected = ind;
+        this.props.selected = ind;
         this.paint();
         setTimeout(() => {
             this.ok && this.ok(ind);

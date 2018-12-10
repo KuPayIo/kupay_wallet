@@ -34,7 +34,8 @@ export class PlayHome extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         
-        this.state = {
+        this.props = {
+            ...this.props,
             ktBalance: 0.00,// kt余额
             ethBalance: 0.00,// eth余额
             holdMines: 0,// 累计挖矿
@@ -70,7 +71,7 @@ export class PlayHome extends Widget {
      * 判断当前用户是否已经创建钱包
      */
     public judgeWallet() {
-        if (this.state.hasWallet) {
+        if (this.props.hasWallet) {
             return true;
         }
         popNew('app-components1-modalBox-modalBox', this.language.login, () => {
@@ -101,7 +102,7 @@ export class PlayHome extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        popNew(this.state.page[ind], { ktBalance: this.state.ktBalance });
+        popNew(this.props.page[ind], { ktBalance: this.props.ktBalance });
     }
 
     /**
@@ -119,9 +120,9 @@ export class PlayHome extends Widget {
         if (!this.judgeWallet()) {
             return;
         }
-        if (this.state.mines > 0 && this.state.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的挖矿操作并刷新数据
+        if (this.props.mines > 0 && this.props.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的挖矿操作并刷新数据
             await getAward();
-            this.state.firstClick = false;
+            this.props.firstClick = false;
             setTimeout(() => {// 数字动画效果执行完后刷新页面
                 this.initEvent();
             }, 300);
@@ -136,12 +137,12 @@ export class PlayHome extends Widget {
             document.getElementById('mining').appendChild(child);
 
         }
-        this.state.doMining = true;
-        this.state.isAbleBtn = true;
+        this.props.doMining = true;
+        this.props.isAbleBtn = true;
         this.paint();
 
         setTimeout(() => {// 按钮动画效果执行完后将领分红状态改为未点击状态，则可以再次点击
-            this.state.isAbleBtn = false;
+            this.props.isAbleBtn = false;
             this.paint();
         }, 100);
 
@@ -152,15 +153,15 @@ export class PlayHome extends Widget {
      */
     public scrollPage() {
         const scrollTop = document.getElementById('earn-home').scrollTop;
-        this.state.scrollHeight = scrollTop;
+        this.props.scrollHeight = scrollTop;
         if (scrollTop > 0) {
-            this.state.scroll = true;
-            if (this.state.scroll) {
+            this.props.scroll = true;
+            if (this.props.scroll) {
                 this.paint();
             }
 
         } else {
-            this.state.scroll = false;
+            this.props.scroll = false;
             this.paint();
         }
     }
@@ -169,11 +170,11 @@ export class PlayHome extends Widget {
      * 刷新页面
      */
     public refreshPage() {
-        this.state.refresh = true;
+        this.props.refresh = true;
         this.paint();
         this.initEvent();
         setTimeout(() => {
-            this.state.refresh = false;
+            this.props.refresh = false;
             this.paint();
         }, 1000);
 
@@ -207,34 +208,34 @@ export class PlayHome extends Widget {
 
             return;
         }
-        this.state.hasWallet = true;
+        this.props.hasWallet = true;
 
         const cloudBalances = getCloudBalances();
 
         if (cloudBalances) {
-            this.state.ktBalance = formatBalance(cloudBalances.get(CloudCurrencyType.KT));
-            this.state.ethBalance = formatBalance(cloudBalances.get(CloudCurrencyType.ETH));
+            this.props.ktBalance = formatBalance(cloudBalances.get(CloudCurrencyType.KT));
+            this.props.ethBalance = formatBalance(cloudBalances.get(CloudCurrencyType.ETH));
         }
 
         const mining: Mining = getStore('activity/mining');
         if (mining.total) {
             if (mining.total.thisNum > 0) {
-                this.state.isAbleBtn = true;
+                this.props.isAbleBtn = true;
             }
-            this.state.mines = formatBalance(mining.total.thisNum);
-            this.state.mineLast = formatBalance(mining.total.totalNum - mining.total.holdNum);
-            this.state.holdMines = formatBalance(mining.total.holdNum);
+            this.props.mines = formatBalance(mining.total.thisNum);
+            this.props.mineLast = formatBalance(mining.total.totalNum - mining.total.holdNum);
+            this.props.holdMines = formatBalance(mining.total.holdNum);
         } else {
-            this.state.isAbleBtn = false;
+            this.props.isAbleBtn = false;
         }
 
         if (mining.total && mining.miningRank) {
-            this.state.rankNum = mining.miningRank.myRank;
+            this.props.rankNum = mining.miningRank.myRank;
         }
 
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.state.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image1/default_avatar.png';
+            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image1/default_avatar.png';
         }
         this.paint();
     }
@@ -244,7 +245,7 @@ export class PlayHome extends Widget {
      */
     private initEvent() {
         // 这里发起通信
-        if (this.props.isActive && this.state.hasWallet) {
+        if (this.props.isActive && this.props.hasWallet) {
             getServerCloudBalance();
             getMining();
             getMiningRank(100);

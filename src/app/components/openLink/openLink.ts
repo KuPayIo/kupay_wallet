@@ -3,13 +3,12 @@
  */
 import { Widget } from '../../../pi/widget/widget';
 
-
 export class OpenLink extends Widget {
     public ok: () => void;
     public cancel:() => void;
 
     public create() {
-        this.state = {};
+        this.props = {};
     }
 
     public openClick() {

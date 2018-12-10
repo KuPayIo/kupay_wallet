@@ -1,10 +1,10 @@
 /**
  * 输入框的逻辑处理
  */
+import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { getRealNode } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
-import { getLang } from '../../../pi/util/lang';
 
 interface Props {
     input:string;// 初始内容
@@ -27,8 +27,7 @@ interface State {
     styleStr:string;// 样式设置
 }
 export class Input extends Widget {
-    public props: Props;
-    public state: State;
+    public props: any;
     constructor() {
         super();
     }
@@ -40,14 +39,15 @@ export class Input extends Widget {
                 styleStr += `${key}:${props.style[key]};`;
             }
         }
-        if(props.placeHolder){
+        if (props.placeHolder) {
             this.props.placeHolder = this.props.placeHolder[getLang()];
         }
         let currentValue = '';
         if (props.input) {
             currentValue = props.input;
         }
-        this.state = {
+        this.props = {
+            ...this.props,
             currentValue,
             hovering: false,
             focused: false,
@@ -58,27 +58,27 @@ export class Input extends Widget {
 
     public change(event:any) {
         const currentValue = event.currentTarget.value;
-        this.state.currentValue = currentValue;
-        notify(event.node,'ev-input-change',{ value:this.state.currentValue });
+        this.props.currentValue = currentValue;
+        notify(event.node,'ev-input-change',{ value:this.props.currentValue });
         this.changeInputValue();
         // this.paint();
     }
     public blur(event:any) {
-        this.state.focused = false;
+        this.props.focused = false;
         notify(event.node,'ev-input-blur',{});
         this.paint();
     }
     public focus(event:any) {
-        this.state.focused = true;
+        this.props.focused = true;
         notify(event.node,'ev-input-focus',{});
         this.paint();
     }
     public mouseover() {
-        this.state.hovering = true;
+        this.props.hovering = true;
         this.paint();
     }
     public mouseleave() {
-        this.state.hovering = false;
+        this.props.hovering = false;
         this.paint();
     }
     public showClear() {
@@ -86,13 +86,13 @@ export class Input extends Widget {
 
         return this.props && this.props.clearable &&
           !this.props.disabled &&
-          this.state.currentValue !== '' &&
-          (this.state.focused || this.state.hovering);
+          this.props.currentValue !== '' &&
+          (this.props.focused || this.props.hovering);
     }
     
     // 清空文本框
     public clearClickListener(event:any) {
-        this.state.currentValue = '';
+        this.props.currentValue = '';
         notify(event.node,'ev-input-clear',{});
         this.paint(true);
     }
@@ -101,6 +101,6 @@ export class Input extends Widget {
     public changeInputValue() {
         const child = (<any>this.tree).children[0].children[0];
         const childNode = getRealNode(child);
-        (<any>childNode).value = this.state.currentValue;
+        (<any>childNode).value = this.props.currentValue;
     }
 }

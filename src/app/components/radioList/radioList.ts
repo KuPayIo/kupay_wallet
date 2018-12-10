@@ -22,7 +22,8 @@ export class RadioList extends Widget {
 
     public setProps(props: Json, oldProps: Json): void {
         super.setProps(props, oldProps);
-        this.state = {
+        this.props = {
+            ...this.props,
             selected:this.props.selected ? this.props.selected :0
         };
     }
@@ -32,7 +33,7 @@ export class RadioList extends Widget {
     }
 
     public changeSelect(e:any,ind:any) {
-        this.state.selected = ind;
+        this.props.selected = ind;
         this.paint();
         setTimeout(() => {
             notify(e.node,'ev-radioList-change',{ value:ind });

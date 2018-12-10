@@ -8,7 +8,7 @@
             {{end}}
         </div>
         <div w-class="box" on-tap="deleteAccountClick">
-            {{if it1.deleteAccount}}
+            {{if it.deleteAccount}}
             <img src="../../res/image/icon_right2.png" w-class="choosed"/>
             {{else}}
             <div w-class="choose-box">

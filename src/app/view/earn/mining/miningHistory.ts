@@ -25,7 +25,8 @@ export class Dividend extends Widget {
     }
     
     public init() {
-        this.state = {
+        this.language = this.config.value[getLang()];
+        this.props = {
             data:[],
             hasMore:false,
             start:'',
@@ -41,16 +42,16 @@ export class Dividend extends Widget {
         const data = getStore('activity/mining/history');  
         if (data) {
             const hList = data.list;
-            if (hList && hList.length > this.state.data.length) {
+            if (hList && hList.length > this.props.data.length) {
                 console.log('load more from local');
                   
             } else {
                 console.log('load more from server');
-                getMiningHistory(this.state.start);
+                getMiningHistory(this.props.start);
             }
         } else {
             console.log('load more from server');
-            getMiningHistory(this.state.start);
+            getMiningHistory(this.props.start);
         }
         this.loadMore();  
 
@@ -68,10 +69,10 @@ export class Dividend extends Widget {
         const data = getStore('activity/mining/history');  
         if (!data) return;
         const hList = data.list;
-        const start = this.state.data.length;
-        this.state.data = this.state.data.concat(hList.slice(start,start + PAGELIMIT));
-        this.state.start = data.start;
-        this.state.hasMore = data.canLoadMore;
+        const start = this.props.data.length;
+        this.props.data = this.props.data.concat(hList.slice(start,start + PAGELIMIT));
+        this.props.start = data.start;
+        this.props.hasMore = data.canLoadMore;
         this.paint();
     }
     /**
@@ -81,12 +82,12 @@ export class Dividend extends Widget {
         const h1 = document.getElementById('historylist').offsetHeight; 
         const h2 = document.getElementById('history').offsetHeight; 
         const scrollTop = document.getElementById('historylist').scrollTop; 
-        if (this.state.hasMore && this.state.refresh && (h2 - h1 - scrollTop) < 20) {
-            this.state.refresh = false;
+        if (this.props.hasMore && this.props.refresh && (h2 - h1 - scrollTop) < 20) {
+            this.props.refresh = false;
             console.log('加载中，请稍后~~~');
             setTimeout(() => {
                 this.loadMore();
-                this.state.refresh = true;
+                this.props.refresh = true;
             }, 1000);
         } 
     }

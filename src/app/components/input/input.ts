@@ -27,13 +27,12 @@ interface State {
     showClear:boolean;
 }
 export class Input extends Widget {
-    public props: Props;
-    public state: State;
+    public props: any;
     constructor() {
         super();
     }
     public create() {
-        this.state = {
+        this.props = {
             currentValue:'',
             focused: false,
             showClear:false
@@ -42,24 +41,29 @@ export class Input extends Widget {
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
         if (props.input) {
-            this.state.currentValue = props.input;
+            this.props = {
+                ...this.props,
+                currentValue:props.input,
+                focused: false,
+                showClear:false
+            };
         }
     }
 
     public change(event:any) {
         const currentValue = event.currentTarget.value;
-        this.state.currentValue = currentValue;
-        notify(event.node,'ev-input-change',{ value:this.state.currentValue });
+        this.props.currentValue = currentValue;
+        notify(event.node,'ev-input-change',{ value:this.props.currentValue });
         this.changeInputValue();
         this.paint();
     }
     public blur(event:any) {
-        this.state.focused = false;
+        this.props.focused = false;
         notify(event.node,'ev-input-blur',{});
         this.paint();
     }
     public focus(event:any) {
-        this.state.focused = true;
+        this.props.focused = true;
         notify(event.node,'ev-input-focus',{});
         this.paint();
     }
@@ -68,6 +72,6 @@ export class Input extends Widget {
     public changeInputValue() {
         const child = (<any>this.tree).children[0];
         const childNode = getRealNode(child);
-        (<any>childNode).value = this.state.currentValue;
+        (<any>childNode).value = this.props.currentValue;
     }
 }

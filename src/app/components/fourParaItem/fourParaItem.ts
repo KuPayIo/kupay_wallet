@@ -26,11 +26,6 @@ export class FourParaItem extends Widget {
         super();
     }
 
-    public setProps(props: Props, oldProps: Props) {
-        super.setProps(props,oldProps);
-        this.state = {};
-    }
-
     public backPrePage() {
         this.ok && this.ok();
     }

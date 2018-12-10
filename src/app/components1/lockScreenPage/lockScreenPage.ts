@@ -31,7 +31,8 @@ export class LockScreenPage extends Widget {
 
     public init() {
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
+            ...this.props,
             errorTips: this.language.errorTips,
             lockScreenPsw:'',  // 锁屏密码
             openLockScreen: false, // 是否打开锁屏开关 
@@ -56,7 +57,7 @@ export class LockScreenPage extends Widget {
      */
     public setLockPsw() {
         popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[0] },(r) => {
-            this.state.lockScreenPsw = r;
+            this.props.lockScreenPsw = r;
             this.reSetLockPsw();
         },() => {
             this.close(false);
@@ -68,7 +69,7 @@ export class LockScreenPage extends Widget {
      */
     public reSetLockPsw() {
         popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[1] },(r) => {
-            if (this.state.lockScreenPsw !== r) {
+            if (this.props.lockScreenPsw !== r) {
                 popNew('app-components1-message-message',{ content:this.language.tips[0] });
                 this.reSetLockPsw();
             } else {
@@ -95,7 +96,7 @@ export class LockScreenPage extends Widget {
             setStore('setting/lockScreen',ls);
             this.verifyPsw();
         } else {
-            const title = this.state.errorTips[ind === 0 ? 3 :ind];
+            const title = this.props.errorTips[ind === 0 ? 3 :ind];
             popNew('app-components1-keyboard-keyboard',{ title:title,closePage:1 },(r) => {
                 if (lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
                     this.close(true);
@@ -113,7 +114,7 @@ export class LockScreenPage extends Widget {
         // tslint:disable-next-line:max-line-length
         popNew('app-components1-modalBoxInput-modalBoxInput',this.language.modalBoxInput2,async (r) => {
             const close = popNew('app-components1-loading-loading', { text: this.language.loading }); 
-            if (this.state.loading) {
+            if (this.props.loading) {
                 const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
                 const fg = await VerifyIdentidy(r);
                 close.callback(close.widget);
@@ -147,7 +148,7 @@ export class LockScreenPage extends Widget {
     public judgeLoading() {
         const loaded = getStore('flags/level_2_page_loaded');
         if (loaded) {
-            this.state.loading = true;
+            this.props.loading = true;
             this.paint();
         }
     }
