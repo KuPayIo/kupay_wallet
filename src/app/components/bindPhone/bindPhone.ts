@@ -49,7 +49,7 @@ export class BindPhone extends Widget {
      * 获取验证码
      */
     public async getCode(event:any) {
-        this.inputBlur;
+        this.inputBlur();
         if (!this.props.phone || !this.phoneJudge()) {
             popNew('app-components1-message-message', { content: this.language.tips });
 

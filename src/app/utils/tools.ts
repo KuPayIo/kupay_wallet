@@ -747,33 +747,22 @@ export const fetchCloudTotalAssets = () => {
 export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
     let balanceValue = 0;
     const USD2CNYRate = getStore('third/rate', 0);
-    const currency2USDTMap = getStore('third/currency2USDTMap');
-    const currency2USDT = currency2USDTMap.get(currencyName) || { open: 0, close: 0 };
+    const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
-
-    if (currencyUnit === 'CNY') {
-        balanceValue = balance * currency2USDT.close * USD2CNYRate;
-    } else if (currencyUnit === 'USD') {
-        balanceValue = balance * currency2USDT.close;
-    }
-
-    return balanceValue;
-};
-
-/**
- * 获取GT对应的货币价值
- * @param balance GT数量
- */
-export const fetchBalanceValueOfGT = (balance: number) => {
-    let balanceValue = 0;
-    const USD2CNYRate = getStore('third/rate', 0);
     const goldPrice = getStore('third/goldPrice/price') || 0;
-    const currencyUnit = getStore('setting/currencyUnit', 'CNY');
 
     if (currencyUnit === 'CNY') {
-        balanceValue = balance * (goldPrice / 100);
+        if (currencyName === 'GT') {
+            balanceValue = balance * (goldPrice / 100);
+        } else {
+            balanceValue = balance * currency2USDT.close * USD2CNYRate;
+        }
     } else if (currencyUnit === 'USD') {
-        balanceValue = (balance * (goldPrice) / 100) / USD2CNYRate;
+        if (currencyName === 'GT') {
+            balanceValue = (balance * (goldPrice) / 100) / USD2CNYRate;
+        } else {
+            balanceValue = balance * currency2USDT.close;
+        }
     }
 
     return balanceValue;
@@ -831,7 +820,7 @@ export const fetchCloudWalletAssetList = () => {
         balance: formatBalance(ktBalance),
         balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
         gain: formatBalanceValue(0),
-        rate:0
+        rate:formatBalanceValue(0)
     };
     assetList.push(ktItem);
     const gtBalance = cloudBalances.get(CloudCurrencyType.GT) || 0;
@@ -839,9 +828,9 @@ export const fetchCloudWalletAssetList = () => {
         currencyName: 'GT',
         description: 'GT',
         balance: formatBalance(gtBalance),
-        balanceValue: formatBalanceValue(fetchBalanceValueOfGT(gtBalance)),
-        gain: formatBalanceValue(0),
-        rate:formatBalanceValue(fetchBalanceValueOfGT(1))
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('GT',gtBalance)),
+        gain: fetchGTGain(),
+        rate:formatBalanceValue(fetchBalanceValueOfCoin('GT',1))
     };
     assetList.push(gtItem);
     for (const k in CloudCurrencyType) {
@@ -990,6 +979,15 @@ export const fetchCoinGain = (currencyName: string) => {
     if (!currency2USDT) return formatBalanceValue(0);
 
     return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
+};
+
+export const fetchGTGain = () => {
+    const goldGain = getStore('third/goldPrice/change');
+    if (!goldGain) {
+        return formatBalanceValue(0);
+    } else {
+        return formatBalanceValue(goldGain * 100);
+    }
 };
 /**
  * 转化rtype

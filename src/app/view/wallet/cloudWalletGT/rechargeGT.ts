@@ -4,11 +4,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getGoldPrice, getServerCloudBalance } from '../../../net/pull';
+import { getAccountDetail, getGoldPrice, getServerCloudBalance } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { confirmPay } from '../../../utils/pay';
-import { fetchBalanceValueOfGT, formatBalance, getCurrencyUnitSymbol, popNewMessage } from '../../../utils/tools';
+import { formatBalance, getCurrencyUnitSymbol, popNewMessage } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -27,9 +27,9 @@ interface Props {
 export class RechargeGT extends Widget {
     public ok:() => void; 
     public props:Props = {
-        payType : 'alipay',
+        payType : 'wxpay',
         goldPrice:200,
-        total:0.00,
+        total:0,
         num:0.00,
         balance:formatBalance(getCloudBalances().get(CloudCurrencyType.GT))
     };
@@ -72,7 +72,7 @@ export class RechargeGT extends Widget {
         if (e.value === '') {
             this.props.total = 0;
         } else {
-            this.props.total = e.value;
+            this.props.total = parseFloat(e.value);
         }
         this.props.num = Math.floor((this.props.total / getStore('third/goldPrice/price') * 100) * 1000000) / 1000000;
         this.paint();
@@ -94,16 +94,18 @@ export class RechargeGT extends Widget {
             payType: this.props.payType, // 支付方式
             type:CloudCurrencyType.GT // 充值类型
         };
-        
+        const allLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType.GT).otherLogs;
         confirmPay(orderDetail,(res) => {
             this.props.num = 0.00;
             this.props.total = 0.00;
             this.props.payType = 'alipay';
-            this.paint();
+            
             popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:res.oid });
             getServerCloudBalance();
+            getAccountDetail('GT',1,allLogs.start);
+            this.paint();
         },() => {
-
+            getServerCloudBalance();
         });
     }
 }

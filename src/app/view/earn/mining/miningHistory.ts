@@ -2,7 +2,6 @@
  * 分红领取记录，挖矿记录
  */
 // ================================ 导入
-import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMiningHistory } from '../../../net/pull';
@@ -16,7 +15,6 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Dividend extends Widget {
     public ok: () => void;
-    public language:any;
     constructor() {
         super();
     }

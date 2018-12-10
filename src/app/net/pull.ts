@@ -318,7 +318,7 @@ export const getMining = async () => {
         const totalNum = kpt2kt(data.mine_total);
         const holdNum = kpt2kt(data.mines);
         const today = kpt2kt(data.today);
-        let nowNum = Math.floor((totalNum - holdNum + today) * 0.25) - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
+        let nowNum = Math.round((totalNum - holdNum + today) * 0.25) - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖 再四舍五入取整
         if (nowNum <= 0) {
             nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
         } else if ((totalNum - holdNum) >= 100) {
@@ -1267,8 +1267,6 @@ export const getGoldPrice = async (ispay:number = 0) => {
     const msg = { type:'get_goldprice',param:{ ispay } };
     try {
         const resData:any = await requestAsync(msg);
-        console.log(resData);
-        
         if (resData.result === 1) {
             setStore('third/goldPrice',{ price:resData.price,change:resData.change });
         }

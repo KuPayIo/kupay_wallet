@@ -77,7 +77,9 @@ export class RechargeRecord extends Widget {
         } 
     }
     public recordListItemClick(e:any,index:number) {
-        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.props.recordList[index].hash });
+        if (this.props.recordList[index].oid) {
+            popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:this.props.recordList[index].oid });
+        }
     }
 }
 

@@ -44,6 +44,21 @@ export const showError = (result, str?) => {
             case 2031: str = getStaticLanguage().errorList[2031]; break;
             case 2032: str = getStaticLanguage().errorList[2032]; break;
             case 2033: str = getStaticLanguage().errorList[2033]; break;
+
+            case 3001: str = getStaticLanguage().errorList[3001]; break;
+            case 3002: str = getStaticLanguage().errorList[3002]; break;
+            case 3003: str = getStaticLanguage().errorList[3003]; break;
+            case 3004: str = getStaticLanguage().errorList[3004]; break;
+            case 3005: str = getStaticLanguage().errorList[3005]; break;
+
+            case 3101: str = getStaticLanguage().errorList[3101]; break;
+            case 3102: str = getStaticLanguage().errorList[3102]; break;
+            case 3103: str = getStaticLanguage().errorList[3103]; break;
+            case 3104: str = getStaticLanguage().errorList[3104]; break;
+            case 3201: str = getStaticLanguage().errorList[3201]; break;
+            case 3202: str = getStaticLanguage().errorList[3202]; break;
+            case 3203: str = getStaticLanguage().errorList[3203]; break;
+
             case -99: str = getStaticLanguage().errorList['-99']; break;
             case -300: str = getStaticLanguage().errorList['-300'];break;
             case -301: str = getStaticLanguage().errorList['-301'];break;
