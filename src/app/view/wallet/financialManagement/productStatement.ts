@@ -8,22 +8,26 @@ import { getStaticLanguage } from '../../../utils/tools';
 interface Props {
     product:Product;
     amount:number;
+    statement:any;
+    readed:boolean;
     fg:number; // 点击阅读声明进入为1，否则是点击购买进入
 }
 export class ProductStatement extends Widget {
     public ok:() => void;
-    public props:any;
-    public create() {
-        super.create();
-        this.init();
-    }
-    public init() {
+
+    public props:any = {
+        statement:getStaticLanguage() .notice,
+        readed:false,
+        fg:1
+    };
+    public setProps(props:any) {
         this.props = {
             ...this.props,
-            statement:getStaticLanguage().notice,
-            readed:false
+            fg:props.fg
         };
+        super.setProps(this.props);
     }
+    
     public checkBoxClick(e: any) {
         this.props.readed = (e.newType === 'true' ? true : false);
         this.paint();
