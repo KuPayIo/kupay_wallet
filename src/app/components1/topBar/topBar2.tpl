@@ -9,7 +9,7 @@
             <pi-ui-lang>{{it.text}}</pi-ui-lang>
             {{end}}
         </span>
-        {{if it}}
+        {{if it1}}
         <widget w-tag="pi-ui-lang" w-class="offline">{zh_Hans:"离线",zh_Hant:"離線",en:"Offline"}</widget>
         {{end}}
     </div>

@@ -2,12 +2,34 @@
  * 授权、支付等API
  */
 import { popNew } from '../../pi/ui/root';
-import { debug } from '../../pi/util/log';
 import { requestAsync } from '../net/pull';
 import { getStore } from '../store/memstore';
+import { getUserInfo } from '../utils/tools';
 import { VerifyIdentidy } from '../utils/walletTools';
 
 declare var pi_modules:any;
+
+/**
+ * 授权接口
+ * @param payload 需要授权内容 
+ * @param callback 回调
+ */
+export const authorize = (payload, callback) => {
+    console.log('authorize called',payload);
+    getOpenId(payload.appId,(res) => {
+        const ret:any = {};
+        ret.openId = res.openid;
+        if (payload.avatar) {
+            ret.avatar = getUserInfo().avatar;
+        }
+        if (payload.nickName) {
+            ret.nickName = getUserInfo().nickName;
+        }
+        callback(undefined,ret);
+    },(err) => {
+        callback(err);
+    });
+};
 
 /**
  * 授权用户openID接口
@@ -27,33 +49,42 @@ export const getOpenId = (appId:string,okCb?:Function,failCb?:Function) => {
 
         return;
     }
-    popNew('app-components1-modalBox-modalBox', {
-        title: { zh_Hans:'是否授权',zh_Hant:'是否授權',en:'' },
-        content: { zh_Hans:'授权成功将获取您的基本信息',zh_Hant:'授權成功將獲取您的基本信息',en:'' },
-        sureText: { zh_Hans:'授权',zh_Hant:'授權',en:'' },
-        cancelText: { zh_Hans:'取消',zh_Hant:'取消',en:'' }
-    },async () => {
-        const msg = { type: 'get_openid', param: { appid:appId } };
-        const close = popNew('app-components1-loading-loading', { text:'授权中...' });        
-        try {
-            const resData:any = await requestAsync(msg);
-            close.callback(close.widget);
-            if (resData.result === 1) {
-                authorize[appId] = resData;
-                localStorage.setItem('authorize',JSON.stringify(authorize));
-                okCb && okCb(resData);
-            } else {
-                failCb && failCb(resData); 
-            }
-            
-        } catch (err) {
-            console.log('get_openid--------',err);
-            failCb && failCb(err); 
-            close.callback(close.widget);
-        }
-    },() => {
-        failCb && failCb(new Error('Deauthorization'));
+    const msg = { type: 'get_openid', param: { appid:appId } };
+    requestAsync(msg).then(resData => {
+        authorize[appId] = resData;
+        localStorage.setItem('authorize',JSON.stringify(authorize));
+        okCb && okCb(resData);
+    }).catch(err => {
+        failCb && failCb(err); 
     });
+    
+    // popNew('app-components1-modalBox-modalBox', {
+    //     title: { zh_Hans:'是否授权',zh_Hant:'是否授權',en:'' },
+    //     content: { zh_Hans:'授权成功将获取您的基本信息',zh_Hant:'授權成功將獲取您的基本信息',en:'' },
+    //     sureText: { zh_Hans:'授权',zh_Hant:'授權',en:'' },
+    //     cancelText: { zh_Hans:'取消',zh_Hant:'取消',en:'' }
+    // },async () => {
+    //     const msg = { type: 'get_openid', param: { appid:appId } };
+    //     const close = popNew('app-components1-loading-loading', { text:'授权中...' });        
+    //     try {
+    //         const resData:any = await requestAsync(msg);
+    //         close.callback(close.widget);
+    //         if (resData.result === 1) {
+    //             authorize[appId] = resData;
+    //             localStorage.setItem('authorize',JSON.stringify(authorize));
+    //             okCb && okCb(resData);
+    //         } else {
+    //             failCb && failCb(resData); 
+    //         }
+            
+    //     } catch (err) {
+    //         console.log('get_openid--------',err);
+    //         failCb && failCb(err); 
+    //         close.callback(close.widget);
+    //     }
+    // },() => {
+    //     failCb && failCb(new Error('Deauthorization'));
+    // });
 };
 
 /**

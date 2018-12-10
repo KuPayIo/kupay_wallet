@@ -15,5 +15,6 @@
             {{end}}
             
         </div>
+        <div on-tap="openTestClick">打开测试网页</div>
     </div>
 </div>
