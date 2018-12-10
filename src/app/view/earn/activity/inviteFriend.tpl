@@ -22,8 +22,12 @@
                             </div>
                             <div w-class="ticket_top_code">0</div>
                         
-                            {{let tip = {"zh_Hans":"已获得奖励500KT","zh_Hant":"已獲得獎勵500KT","en":""} }}
-                            <widget w-class="haveGot" w-tag="pi-ui-lang">{{tip}}</widget>
+                            {{let tip = {"zh_Hans":"已获得奖励","zh_Hant":"已獲得獎勵","en":""} }}
+                            <div>
+                                <widget  w-class="haveGot" w-tag="pi-ui-lang">{{tip}}</widget>
+                                <span  w-class="haveGot">500KT</span>
+                            </div>
+                            
                         {{end}}
                     </div>
                     {{% 邀请票中部}}

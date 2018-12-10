@@ -7,7 +7,6 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getMiningHistory } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -16,7 +15,6 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Dividend extends Widget {
     public ok: () => void;
-    public language:any;
     constructor() {
         super();
     }
@@ -27,7 +25,6 @@ export class Dividend extends Widget {
     }
     
     public init() {
-        this.language = this.config.value[getLang()];
         this.state = {
             data:[],
             hasMore:false,

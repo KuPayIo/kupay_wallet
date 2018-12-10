@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getOrderDetail } from '../../../utils/pay';
-import { fetchBalanceValueOfGT, formatBalance, popNewMessage, timestampFormat } from '../../../utils/tools';
+import { formatBalance, popNewMessage, timestampFormat } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -52,10 +52,8 @@ export class TransactionDetails extends Widget {
             this.props.transactionTime = timestampFormat(res.time * 1000); 
             this.props.transactionType = res.payType === 'alipay' ? '支付宝支付' :'微信支付' ;
             this.paint();
-        },(res) => {
+        },(err) => {
             this.props.state = PayState[3];                
-            popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
-  
             this.paint();
         });
     }

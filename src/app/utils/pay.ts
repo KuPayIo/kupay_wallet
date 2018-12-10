@@ -1,5 +1,6 @@
 import { popNew } from '../../pi/ui/root';
 import { requestAsync } from '../net/pull';
+import { showError } from './toolMessages';
 import { popNewMessage } from './tools';
 
 export interface OrderDetail {
@@ -53,12 +54,14 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
             }
 
         } else {
+            showError(resData.result);
             failCb && failCb(resData);
         }
         setTimeout(() => {
             loading.callback(loading.widget);
         }, 5000);
     } catch (err) {
+        showError(err && (err.result || err.type));
         failCb && failCb(err);
         loading.callback(loading.widget);
     }
@@ -123,17 +126,19 @@ export const jumpPay = (order, okCb?: Function, failCb?: Function) => {
  * @param okCb 成功回调
  * @param failCb 失败回调
  */
-export const queryPayState = async (oid: string, okCb?: Function, failCb?: Function) => {
+export const getPayState = async (oid: string, okCb?: Function, failCb?: Function) => {
     const msg = { type: 'order_query', param: { oid } };
     try {
         const resData: any = await requestAsync(msg);
         if (resData.result === 1) {
             okCb && okCb(resData);
         } else {
+            showError(resData.result);
             failCb && failCb(resData);
         }
     } catch (err) {
         console.log('order_query--------', err);
+        popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
         failCb && failCb(err);
     }
 };
@@ -156,10 +161,12 @@ export const getOrderDetail = async (oid: string, okCb?: Function, failCb?: Func
         if (resData.result === 1) {
             okCb && okCb(resData);
         } else {
+            showError(resData.result);
             failCb && failCb(resData);
         }
     } catch (err) {
         console.log('get_order_detail--------', err);
+        popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
         failCb && failCb(err);
     }
 };

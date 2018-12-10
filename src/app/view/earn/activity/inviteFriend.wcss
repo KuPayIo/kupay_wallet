@@ -69,10 +69,10 @@
     height:45%;
     border-bottom:1px;
     border-top:none;
-    background: radial-gradient(circle at bottom left, transparent 15px, #FFFFFF 16px) bottom left, 
+    background: radial-gradient(circle at bottom left, transparent 15px, #FFFFFF 18px) bottom left, 
                 radial-gradient(circle at top left, transparent 0px, #FFFFFF 0px) top left, 
                 radial-gradient(circle at top right, transparent 0px, #FFFFFF 0px) top right, 
-                radial-gradient(circle at bottom right, transparent 15px, #FFFFFF 16px) bottom right;
+                radial-gradient(circle at bottom right, transparent 15px, #FFFFFF 18px) bottom right;
     background-size: 51% 51%;
     background-repeat: no-repeat;
 }
@@ -140,8 +140,8 @@
     height:55%; 
     border-radius:0px 0px 18px 18px;
     background: radial-gradient(circle at bottom left, transparent 0px, #FFFFFF 0px) bottom left, 
-            radial-gradient(circle at top left, transparent 15px, #FFFFFF 16px) top left, 
-            radial-gradient(circle at top right, transparent 15px, #FFFFFF 16px) top right, 
+            radial-gradient(circle at top left, transparent 15px, #FFFFFF 18px) top left, 
+            radial-gradient(circle at top right, transparent 15px, #FFFFFF 18px) top right, 
             radial-gradient(circle at bottom right, transparent 0px, #FFFFFF 0px) bottom right;
     background-size: 51% 51%;
     background-repeat: no-repeat;
