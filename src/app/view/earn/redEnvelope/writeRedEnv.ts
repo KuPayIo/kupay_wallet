@@ -17,22 +17,35 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
-    list: any[];
-    selected: number;
-    showPin: boolean;
+    list: any[];         // 发红包币种列表
+    selected: number;    // 所选币种
+    showPin: boolean;    // 是否拼手气红包
     totalAmount: number;
     // tslint:disable-next-line:no-reserved-keywords
     totalNum: number;
     oneAmount: number;
-    message: string;
-    realUser: boolean;
+    message: string;     // 红包留言
+    realUser: boolean;   // 是否真实用户
     forceHide:boolean;
+    ktBalance:number;    // KT余额
 }
 
 export class WriteRedEnv extends Widget {
     public ok: () => void;
-    public props: Props;
     public language:any;
+
+    public props:Props = {
+        list: [],
+        selected: 0,
+        showPin: false,
+        totalAmount: 0,
+        totalNum: 0,
+        oneAmount: 0,
+        message: '',
+        realUser: getStore('user/info/isRealUser'),
+        forceHide:false,
+        ktBalance:0
+    };
     constructor() {
         super();
     }
@@ -40,21 +53,18 @@ export class WriteRedEnv extends Widget {
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.props = {
-            list: [],
-            selected: 0,
-            showPin: false,
-            totalAmount: 0,
-            totalNum: 0,
-            oneAmount: 0,
-            message: '',
-            realUser: getStore('user/info/isRealUser'),
-            forceHide:false
-        };
         this.updateBalance();
         if (!this.props.realUser) {
             getRealUser();
         }
+    }
+
+    public setProps(props:any) {
+        super.setProps(this.props);
+        this.props = {
+            ...this.props,
+            ktBalance:props.ktBalance
+        };
     }
 
     /**

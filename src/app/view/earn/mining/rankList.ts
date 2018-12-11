@@ -17,25 +17,30 @@ export class Home extends Widget {
     public ok:() => void;
     public language:any;
 
+    public props:any = {
+        tabs:[{
+            tab:'0',
+            data:[],
+            totalNum:0,
+            myRank:1,
+            fg:0
+        },{
+            tab:'1',
+            data:[],
+            totalNum:0,
+            myRank:1,
+            fg:1
+        }],
+        activeNum:0
+    };
+
+    public setProps(props:any) {
+        super.setProps(this.props);
+    }
+
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.props = {
-            tabs:[{
-                tab:'0',
-                data:[],
-                totalNum:0,
-                myRank:1,
-                fg:0
-            },{
-                tab:'1',
-                data:[],
-                totalNum:0,
-                myRank:1,
-                fg:1
-            }],
-            activeNum:0
-        };
         this.initData();
         this.initEvent();
     }

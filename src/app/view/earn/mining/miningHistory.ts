@@ -25,7 +25,6 @@ export class Dividend extends Widget {
     }
     
     public init() {
-        this.language = this.config.value[getLang()];
         this.props = {
             data:[],
             hasMore:false,
