@@ -856,12 +856,7 @@ export const fetchCloudWalletAssetList = () => {
 export const hasWallet = () => {
     const wallet = getStore('wallet');
     if (!wallet) {
-        popNew('app-components1-modalBox-modalBox', {
-            title: { zh_Hans:'提示',zh_Hant:'提示',en:'' },
-            content: { zh_Hans:'你还没有登录，去登录使用更多功能吧',zh_Hant:'你還沒有登錄，去登錄使用更多功能吧',en:'' },
-            sureText: { zh_Hans:'去登录',zh_Hant:'去登錄',en:'' },
-            cancelText: { zh_Hans:'暂时不',zh_Hant:'暫時不',en:'' }
-        }, () => {
+        popNew('app-components1-modalBox-toLoginBox',null, () => {
             popNew('app-view-wallet-create-home');
             // popNew('app-view-base-localImg');
         });

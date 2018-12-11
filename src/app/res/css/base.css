@@ -91,7 +91,7 @@ div{
                 transform: rotate(360deg); 
     } 
 }
-
+/* 邀请好友出票效果*/
 @keyframes outTicket{
     0%{transform: translateY(-600px);}
     100%{transform: translateY(0px);}
