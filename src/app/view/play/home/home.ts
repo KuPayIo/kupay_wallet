@@ -71,7 +71,7 @@ export class PlayHome extends Widget {
                 title:{ zh_Hans:'迷失之城',zh_Hant:'迷失之城',en:'' },
                 desc:{ zh_Hans:'基于GAIA链的新一代区块链游戏',zh_Hant:'基於GAIA鏈的新一代區塊鏈遊戲',en:'' },
                 img:'app/res/image1/game3.jpg',
-                url:'https://fomosports.me'
+                url:'https://fomosports.me/'
             },
             {
                 title:'Decentraland',

@@ -11,6 +11,7 @@ import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
+import { authorize } from '../../api/JSAPI';
 import { openConnect } from '../../net/pull';
 import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
@@ -41,9 +42,12 @@ export const run = (cb): void => {
     // 后台切前台
     backToFront();
     // let count = 0;
-    // setInterval(() => {
-    //     console.log('test webview postmessage',count++);
-    // },1000);
+    setTimeout(() => {
+        authorize({ nickName:true,avatar:true,appId:'123' } ,(err,result) => {
+            console.log('authorize',err);
+            console.log('authorize',result);
+        });
+    },2000);
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
