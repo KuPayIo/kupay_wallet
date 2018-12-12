@@ -98,11 +98,11 @@ export const checkOrder = (order: OrderDetail): boolean => {
  * @param failCb 失败回调
  */
 export const jumpPay = (order, okCb?: Function, failCb?: Function) => {
-    const payIframe = document.createElement('iframe');
-    payIframe.setAttribute('sandbox', 'allow-scripts allow-top-navigation');
-    payIframe.setAttribute('src', order.mweb_url);
-    payIframe.setAttribute('style', 'position:absolute;width:0px;height:0px;visibility:hidden;');
-    document.body.appendChild(payIframe);
+    const $payIframe = document.createElement('iframe');
+    $payIframe.setAttribute('sandbox', 'allow-scripts allow-top-navigation');
+    $payIframe.setAttribute('src', order.mweb_url);
+    $payIframe.setAttribute('style', 'position:absolute;width:0px;height:0px;visibility:hidden;');
+    document.body.appendChild($payIframe);
     setTimeout(() => {
         popNew('app-components1-modalBox-modalBox', {
             title: '',
@@ -112,10 +112,10 @@ export const jumpPay = (order, okCb?: Function, failCb?: Function) => {
             cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
         }, () => {
             okCb && okCb(order);
-            document.body.removeChild(payIframe);
+            document.body.removeChild($payIframe);
         }, () => {
             failCb && failCb();
-            document.body.removeChild(payIframe);
+            document.body.removeChild($payIframe);
         });
     }, 5000);
 };

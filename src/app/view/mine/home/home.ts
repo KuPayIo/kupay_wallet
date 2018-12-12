@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, popPswBox } from '../../../utils/tools';
+import { copyToClipboard, getUserInfo, hasWallet, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出
@@ -98,13 +98,8 @@ export class Home extends Widget {
      */
     public itemClick(ind:number) {
         if (ind === 0) {
-            if (this.props.hasWallet) {
-                popNew('app-view-mine-account-home');
-            } else {
-                popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {
-                    popNew('app-view-wallet-create-home');
-                });
-            }
+            if (!hasWallet()) return;
+            popNew('app-view-mine-account-home');
         } else if (ind === 5) {
             // window.open('https://github.com/KuPayIo/kupay_wallet');
             openNewActivity('https://github.com/KuPayIo/kupay_wallet',this.props.walletName);

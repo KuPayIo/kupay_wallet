@@ -17,38 +17,43 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Dividend extends Widget {
     public ok: () => void;
     public language: any;
+
+    public props:any = {
+        data: [
+            {
+                isComplete: false,
+                itemImg: '../../res/image/addMine_create.png',
+                itemName: '',
+                itemShort: '',
+                itemDetail: '',
+                itemKT:'',
+                itemJump: 'walletCreate',
+                detailShow: false,
+                modulIsShow:true
+            }, {
+                isComplete: false,
+                itemImg: '../../res/image/addMine_verify.png',
+                itemName: '',
+                itemShort: '',
+                itemDetail: '',
+                itemKT:'',
+                itemJump: 'bindPhone',
+                detailShow: false,
+                modulIsShow:true
+            }
+        ]
+    };
     constructor() {
         super();
+    }
+
+    public setProps(props:any) {
+        super.setProps(this.props);
     }
 
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.props = {
-            data: [
-                {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_create.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'walletCreate',
-                    detailShow: false,
-                    modulIsShow:true
-                }, {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_verify.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'bindPhone',
-                    detailShow: false,
-                    modulIsShow:true
-                }
-            ]
-        };
         this.initData();
         getMineDetail();
     }
@@ -90,12 +95,12 @@ export class Dividend extends Widget {
     /**
      * 获取更新数据
      */
-    public async initData() {
+    public initData() {
         const detail = getStore('activity/mining/addMine');
         // tslint:disable-next-line:max-line-length
         // const detail = [{isComplete:true},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false}];
-        if (detail) {
-            for (const i in detail) {
+        if (detail && detail.length > 0) {
+            for (const i in this.props.data) {
                 this.props.data[i].isComplete = detail[i].isComplete;
                 this.props.data[i].itemKT = detail[i].itemNum;
             }
