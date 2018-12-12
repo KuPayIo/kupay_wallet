@@ -64,7 +64,6 @@
 
 }
 .btn-ok{
-    box-shadow:rgba(13, 131, 246, 0.2) 0px 13px 13px 0px;
     color:white;
     margin-left: 40px;
     background:linear-gradient(270deg,rgba(68,206,237,1) 0%,rgba(62,179,241,1) 100%);
