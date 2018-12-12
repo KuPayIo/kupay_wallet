@@ -1,8 +1,8 @@
 /**
  * ETH wallet implementation
  */
-import { DevMode, ERC20Tokens } from '../../config';
-import { config } from '../config';
+import { ERC20Tokens } from '../../config';
+import { getEthApiBaseUrl } from '../config';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
 import { Web3 } from '../thirdparty/web3.min';
@@ -454,14 +454,6 @@ export class EthWallet {
 
 export const initWeb3 = () => {
     if (!web3) {
-        let ETH_API_BASE_URL;
-        if (config.dev_mode === DevMode.Ropsten) {
-            ETH_API_BASE_URL = config[DevMode.Ropsten].EthApiBaseUrl;
-        } else if (config.dev_mode === DevMode.Rinkeby) {
-            ETH_API_BASE_URL = config[DevMode.Rinkeby].EthApiBaseUrl;
-        } else if (config.dev_mode === DevMode.Prod) {
-            ETH_API_BASE_URL = config[DevMode.Prod].EthApiBaseUrl;
-        }
-        web3 = new Web3(new Web3.providers.HttpProvider(ETH_API_BASE_URL));
+        web3 = new Web3(new Web3.providers.HttpProvider(getEthApiBaseUrl()));
     }
 };

@@ -2,6 +2,8 @@
     background-color: #fff;
     border-radius: 12px;
     margin-bottom: 50px;
+    flex-shrink: 0;
+    overflow: hidden;
 }
 
 .card-shadow{

@@ -12,7 +12,7 @@ import { beginShift, getMarketInfo, transfer } from '../../../net/pullWallet';
 import { MarketInfo, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, fetchBtcMinerFee, fetchGasPrice, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { currencyExchangeAvailable, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { sat2Btc, wei2Eth } from '../../../utils/unitTools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -86,11 +86,10 @@ export class CoinConvert extends Widget {
     // 更新矿工费
     public async updateMinerFee() {
         const cn = (this.props.currencyName === 'ETH' || ERC20Tokens[this.props.currencyName]) ? 'ETH' : 'BTC';
-        const obj = await estimateMinerFee(this.props.currencyName);
-        const gasLimit = obj.gasLimit;
-        // tslint:disable-next-line:max-line-length
-        const minerFee = cn === 'ETH' ? wei2Eth(gasLimit * fetchGasPrice(MinerFeeLevel.Standard)) : sat2Btc(fetchBtcMinerFee(MinerFeeLevel.Standard));
-        this.props.outMinerFee = minerFee;
+        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
+        console.log(minerFeeList);
+        // const gasLimit = obj.gasLimit;
+        this.props.outMinerFee = minerFeeList[0].minerFee;
         this.paint();
     }
 
@@ -233,13 +232,6 @@ export class CoinConvert extends Widget {
         const content = [this.language.tips[6] + outAmount + outCurrency,this.language.tips[7] + this.props.receiveAmount + this.props.inCurrency];
         const passwd = await popPswBox(content);
         if (!passwd) return;
-        // await openBasePage('app-view-currencyExchange-exchangeConfirm',{
-        //     outCurrency,
-        //     outAmount,
-        //     inCurrency:this.props.inCurrency,
-        //     inAmount:outAmount * this.props.rate,
-        //     fee
-        // });
         
         const close = popNew('app-components1-loading-loading', { text: this.language.loading });
         const withdrawalAddress = this.props.curInAddr; // 入账币种的地址

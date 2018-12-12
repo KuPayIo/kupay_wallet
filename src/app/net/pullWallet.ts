@@ -510,20 +510,31 @@ export const sendRawTransactionBTC = async (rawHexString) => {
 };
 
 // ===================================================shapeShift相关start
+
+const shapeShiftUrlPrex = 'https://shapeshift.io/';
+// tslint:disable-next-line:max-line-length
+const shapeShiftClientToken = {
+    createdAt:'2018-12-11T08:30:52.242Z',
+    updatedAt:'2018-12-11T08:30:52.242Z',
+    id:'959a71bc-a5d4-4483-8d10-c1cc7668d72c',
+    clientId:'bc401c5a-3ff3-4bc7-9ffb-72449dcfae80',
+    expiresAt:'2019-12-11T08:30:52.242Z',
+    token:'44Aq9s8cHBrDXUJsiXeU7ER9AtaR6JZ5i3qtz1oY7gYn',
+    userId:null,
+    deletedAt:null 
+};
+
 /**
  * 获取shapeShift所支持的币种
  */
 export const getShapeShiftCoins = () => {
-    shapeshift.coins((err, data) => {
-        if (err) {
-            console.error(err);
-
-            return;
-        }
+    fetch(`${shapeShiftUrlPrex}getcoins`).then(res => res.json()).then(res => {
+        // console.log(res);
         const list = [];
-        for (const k in data) {
-            list.push(data[k]);
+        for (const k in res) {
+            list.push(res[k]);
         }
+        // console.log(list);
         setStore('third/shapeShiftCoins', list);
     });
 };
@@ -532,13 +543,9 @@ export const getShapeShiftCoins = () => {
  * @param pair 交易对
  */
 export const getMarketInfo = (pair:string) => {
-    shapeshift.marketInfo(pair, (err, marketInfo) => {
-        if (err) {
-            console.error(err);
-            
-            return;
-        }
-        setStore('third/shapeShiftMarketInfo', marketInfo);
+    fetch(`${shapeShiftUrlPrex}marketinfo/${pair}`).then(res => res.json()).then(res => {
+        // console.log(res);
+        setStore('third/shapeShiftMarketInfo', res);
     });
 };
 
@@ -549,38 +556,22 @@ export const getMarketInfo = (pair:string) => {
  * @param pair 交易对
  */
 export const beginShift = (withdrawalAddress:string,returnAddress:string,pair:string,success?:Function,fail?:Function) => {
-    const options = {
-        returnAddress,
-        apiKey:shapeshiftApiPublicKey
+    const bodyData = {
+        amount: 1,
+        withdrawal: '0x5041F19dC1659E33848cc0f77cbF7447de562917',
+        returnAddress: '1N17uHdvY6fNwtutM1G5EAZFPLC43B59rB',
+        pair: 'BTC_ETH'
     };
-    shapeshift.shift(withdrawalAddress, pair, options, async (err, returnData) => {
-        console.log('returnData',returnData);
-        if (err) {
-            fail && fail(err);
-
-            return;
-        }
-        // ShapeShift owned BTC address that you send your BTC to
-        // const depositAddress = returnData.deposit;
-        
-        // NOTE: `depositAmount`, `expiration`, and `quotedRate` are only returned if
-        // you set `options.amount`
-
-        // amount to send to ShapeShift (type string)
-        // const shiftAmount = returnData.depositAmount;
-
-        // Time before rate expires (type number, time from epoch in seconds)
-        // const expiration = new Date(returnData.expiration * 1000);
-
-        // rate of exchange, 1 BTC for ??? LTC (type string)
-        // const rate = returnData.quotedRate;
-        // you need to actually then send your BTC to ShapeShift
-        // you could use module `spend`: https://www.npmjs.com/package/spend
-        // CONVERT AMOUNT TO SATOSHIS IF YOU USED `spend`
-        // spend(SS_BTC_WIF, depositAddress, shiftAmountSatoshis, function (err, txId) { /.. ../ })
-
-        // later, you can then check the deposit status
-        success && success(returnData);
+    fetch(`${shapeShiftUrlPrex}sendamount`,{
+        method: 'POST', // or 'PUT'
+        body: JSON.stringify(bodyData), // data can be `string` or {object}!
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            Authorization: `Bearer CZfRLxjor2E49vTfTZDjaeeR78nMMi1rKypV9GRBsmt2`
+        })
+    }).then(res => res.json()).then(res => {
+        console.log(res);
+        // setStore('third/shapeShiftMarketInfo', res);
     });
 };
 
