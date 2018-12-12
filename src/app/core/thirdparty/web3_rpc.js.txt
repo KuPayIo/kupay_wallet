@@ -5349,8 +5349,8 @@ Adds the callback and sets up the methods, to iterate over the results.
                         var cfg = {
                             width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
                         };
-                        var clientWidth = document.body.clientWidth;
-                        var clientHeight = document.body.clientHeight;
+                        var clientWidth = document.documentElement.clientWidth;
+                        var clientHeight = document.documentElement.clientHeight;
                         oldHeight = clientHeight;
                         rootWidth = cfg.width;
                         rootHeight = cfg.height;
@@ -5398,7 +5398,7 @@ Adds the callback and sets up the methods, to iterate over the results.
                     div.setAttribute("id", "pi-pop-root");
                     //style="animation: containIn 0.2s forwards;"
                     div.innerHTML = `
-                    <div style="position:absolute;top:0;left:0;bottom:0;right:0;background: rgba(50, 50, 50, 0.5);" id="pop-box">
+                    <div style="position:absolute;top:0;left:0;bottom:0;right:0;background: rgba(50, 50, 50, 0.5);">
                         <div class="contain" >
                             <div class="minerTitle">
                                 <span style="flex:1 0 0;">确认支付</span>
