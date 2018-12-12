@@ -9,9 +9,10 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { register } from '../../../store/memstore';
-import { getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
+import { getCurrentEthAddr, getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
 
 import { WebViewManager } from '../../../../pi/browser/webview';
+import { getEthApiBaseUrl } from '../../../core/config';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -22,11 +23,12 @@ export class PlayHome extends Widget {
     
     public ok: () => void;
     public language:any;
+    public defaultInjectPromise:Promise<string>;
     public web3Promise: Promise<string>;
     public thirdApiPromise:Promise<string>;
+    
     constructor() {
         super();
-
         this.web3Promise = new Promise((resolve) => {
             const path = 'app/core/thirdparty/web3_rpc.js.txt';
             loadDir([path], undefined, undefined, undefined, fileMap => {
@@ -62,16 +64,16 @@ export class PlayHome extends Widget {
         // http://47.244.59.13/web-rinkeby/index.html
         this.props.gameList = [
             {
-                title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
-                desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
-                img:'app/res/image1/game2.jpg',
-                url:'http://fishing.rinkeby.cchaingames.com/'
+                title:{ zh_Hans:'fomosports',zh_Hant:'fomosports',en:'' },
+                desc:{ zh_Hans:'要买要快，不要只是看',zh_Hant:'要买要快，不要只是看',en:'' },
+                img:'app/res/image1/fomosports.jpg',
+                url:'https://test.fomosports.me/'
             },
             {
-                title:{ zh_Hans:'迷失之城',zh_Hant:'迷失之城',en:'' },
-                desc:{ zh_Hans:'基于GAIA链的新一代区块链游戏',zh_Hant:'基於GAIA鏈的新一代區塊鏈遊戲',en:'' },
-                img:'app/res/image1/game3.jpg',
-                url:'https://fomosports.me'
+                title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
+                desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
+                img:'app/res/image1/CryptoFishing.jpg',
+                url:'http://fishing.rinkeby.cchaingames.com/'
             },
             {
                 title:'Decentraland',
@@ -118,7 +120,16 @@ export class PlayHome extends Widget {
         } else {
             const gameTitle = this.props.gameList[num].title.zh_Hans;
             const gameUrl =   this.props.gameList[num].url;
-            this.web3Promise.then(content => {
+            const defaultInjectText = `
+            window.piWeb3EthDefaultAccount = '${getCurrentEthAddr()}';
+            window.piWeb3ProviderNetWork = '${getEthApiBaseUrl()}';
+            window.piGameName = '${gameTitle}';
+            `;
+            this.defaultInjectPromise = Promise.resolve(defaultInjectText);
+
+            const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise]);
+            allPromise.then(([defaultInjectContent,web3Content]) => {
+                const content = defaultInjectContent + web3Content;
                 WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }

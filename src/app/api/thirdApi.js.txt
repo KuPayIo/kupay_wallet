@@ -8,9 +8,6 @@ window.piFlags = {};
 
 
 function createStyleTag() {
-    if(window.piFlags.createStyle){
-        return;
-    }
     var cssText = `.pi-root {
         font-size: 38px;
         position: absolute;
@@ -199,13 +196,9 @@ function createStyleTag() {
     style.type = "text/css";
     style.innerHTML = cssText;
     document.getElementsByTagName("head")[0].appendChild(style);
-    window.piFlags.createStyle = true;
 }
 
 function createElementTag(){
-    if(window.piFlags.createElement){
-        return;
-    }
     var htmlText = `
       <div class="pi-mask">
         <div class="pi-update-box animated bounceInUp">
@@ -228,9 +221,13 @@ function createElementTag(){
 
     var $body = document.querySelector("body");
     $body.appendChild($root);
-    window.piFlags.createElement = true;
 }
 
+function closePop(){
+  var $root = document.querySelector(".pi-root");
+  var $body = document.querySelector("body");
+  $body.removeChild($root);
+}
 window.pi_RPC_Method = (function() {
     var rpcID = 0;
     var rpcIDMap = {};
@@ -393,12 +390,13 @@ window.pi_jsApi.authorize = function(payload,callBack){
             console.log('getOpenId call success',result);
             callBack(error,result);
         });
-        $mask.style.display = "none";
+        closePop();
+        
     });
 
     $cancel.addEventListener("click",function(){
         callBack(new Error("user not allow authorize!!!"));
-        $mask.style.display = "none";
+        closePop();
     });
     
 }

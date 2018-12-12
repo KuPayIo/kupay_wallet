@@ -15,7 +15,8 @@ export const sourceIp = pi_modules.store.exports.severIp || '127.0.0.1';
 export const sourcePort = pi_modules.store.exports.severPort || '80';
 
 // 逻辑服务器ip
-export const logicIp = 'app.herominer.net';
+// app.herominer.net
+export const logicIp = sourceIp;
 
 // 逻辑服务器port
 export const logicPort = '2081';
@@ -53,7 +54,7 @@ export enum DevMode {
     Rinkeby = 'rinkeby'   // rinkeby测试环境
 }
 // tslint:disable-next-line:variable-name
-export const dev_mode:DevMode = DevMode.Rinkeby;
+export const dev_mode:DevMode = DevMode.Ropsten;
 
 // btc网络
 export const btcNetwork = dev_mode === DevMode.Prod ? 'mainnet' : 'testnet';

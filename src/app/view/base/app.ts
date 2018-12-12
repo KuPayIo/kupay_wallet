@@ -42,7 +42,7 @@ export class App extends Widget {
             allTabBar: {
                 play: {
                     modulName: 'APP_PLAY',
-                    text: { zh_Hans:'玩',zh_Hant:'玩',en:'' },
+                    text: { zh_Hans:'玩1',zh_Hant:'玩',en:'' },
                     icon: 'play.png',
                     iconActive: 'play_active.png',
                     components: 'app-view-play-home-home'
