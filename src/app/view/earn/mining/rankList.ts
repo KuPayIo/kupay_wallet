@@ -2,7 +2,6 @@
  * wallet home 
  */
 import { popNew } from '../../../../pi/ui/root';
-// import { getLanguage } from '../../../utils/tools';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
@@ -18,25 +17,30 @@ export class Home extends Widget {
     public ok:() => void;
     public language:any;
 
+    public props:any = {
+        tabs:[{
+            tab:'0',
+            data:[],
+            totalNum:0,
+            myRank:1,
+            fg:0
+        },{
+            tab:'1',
+            data:[],
+            totalNum:0,
+            myRank:1,
+            fg:1
+        }],
+        activeNum:0
+    };
+
+    public setProps(props:any) {
+        super.setProps(this.props);
+    }
+
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.state = {
-            tabs:[{
-                tab:'0',
-                data:[],
-                totalNum:0,
-                myRank:1,
-                fg:0
-            },{
-                tab:'1',
-                data:[],
-                totalNum:0,
-                myRank:1,
-                fg:1
-            }],
-            activeNum:0
-        };
         this.initData();
         this.initEvent();
     }
@@ -48,20 +52,20 @@ export class Home extends Widget {
     public initData() {
         const data1 = getStore('activity/mining/miningRank');  // 挖矿排名
         if (data1) {
-            this.state.tabs[0].data = data1.rank;
-            this.state.tabs[0].myRank = data1.myRank;
+            this.props.tabs[0].data = data1.rank;
+            this.props.tabs[0].myRank = data1.myRank;
         }
         
         const data2 = getStore('activity/mining/mineRank');   // 矿山排名
         if (data2) {
-            this.state.tabs[1].data = data2.rank;
-            this.state.tabs[1].myRank = data2.myRank;
+            this.props.tabs[1].data = data2.rank;
+            this.props.tabs[1].myRank = data2.myRank;
         }
 
         const mining = getStore('activity/mining/total');
         if (mining) {
-            this.state.tabs[1].totalNum = mining.totalNum;
-            this.state.tabs[0].totalNum = mining.holdNum;
+            this.props.tabs[1].totalNum = mining.totalNum;
+            this.props.tabs[0].totalNum = mining.holdNum;
         }
         
         this.paint();
@@ -71,7 +75,7 @@ export class Home extends Widget {
      * 导航栏切换
      */
     public tabsChangeClick(value: number) {
-        this.state.activeNum = value;
+        this.props.activeNum = value;
         this.paint();
     }
 

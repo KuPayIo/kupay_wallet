@@ -4,9 +4,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { CreateWalletType } from '../../../logic/localWallet';
+import { calcImgArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
+import { getStore, setStore } from '../../../store/memstore';
 import { pswEqualed } from '../../../utils/account';
 
 export class CreateWalletByImage extends Widget {
@@ -18,7 +19,7 @@ export class CreateWalletByImage extends Widget {
     }
     public init() {
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
             chooseImage:false,
             imageBase64:'',
             imageHtml:'',
@@ -26,7 +27,7 @@ export class CreateWalletByImage extends Widget {
             imagePswAvailable:false,
             imgagePswConfirm:'',
             pswEqualed:false,
-            walletName:findModulConfig('WALLET_NAME')
+            walletName:getModulConfig('WALLET_NAME')
         };
     }
     public backPrePage() {
@@ -34,11 +35,11 @@ export class CreateWalletByImage extends Widget {
     }
     public selectImageClick() {
         selectImage((width, height, base64) => {
-            this.state.chooseImage = true;
+            this.props.chooseImage = true;
             // tslint:disable-next-line:max-line-length
-            this.state.imageHtml = `<div style="background-image: url(${base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;"></div>`;
-            this.state.imageBase64 = base64;
-            console.log(base64);
+            this.props.imageHtml = `<div style="background-image: url(${base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;"></div>`;
+            this.props.imageBase64 = base64;
+            // console.log(base64);
             this.paint();
         });
     }
@@ -48,31 +49,34 @@ export class CreateWalletByImage extends Widget {
     }
 
     public imagePswChange(e:any) {
-        this.state.imagePsw = e.value;
-        this.state.imagePswAvailable = this.state.imagePsw.length > 0;
-        this.state.pswEqualed = pswEqualed(this.state.imagePsw, this.state.imgagePswConfirm);
+        this.props.imagePsw = e.value;
+        this.props.imagePswAvailable = this.props.imagePsw.length > 0;
+        this.props.pswEqualed = pswEqualed(this.props.imagePsw, this.props.imgagePswConfirm);
         this.paint();
     }
 
     public imagePswConfirmChange(e:any) {
-        this.state.imgagePswConfirm = e.value;
-        this.state.pswEqualed = pswEqualed(this.state.imagePsw, this.state.imgagePswConfirm);
+        this.props.imgagePswConfirm = e.value;
+        this.props.pswEqualed = pswEqualed(this.props.imagePsw, this.props.imgagePswConfirm);
         this.paint();
     }
 
     public nextClick() {
-        if (!this.state.chooseImage) {
+        if (!this.props.chooseImage) {
             popNew('app-components1-message-message', { content: this.language.tips[0] });
 
             return;
         }
-        if (!this.state.pswEqualed) {
+        if (!this.props.pswEqualed) {
             popNew('app-components1-message-message', { content: this.language.tips[1] });
 
             return;
         }
-        // tslint:disable-next-line:max-line-length
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image,imageBase64:this.state.imageBase64,imagePsw:this.state.imagePsw });
+
+        const imgArgon2HashPromise = calcImgArgon2Hash(this.props.imageBase64,this.props.imagePsw);
+        const flags = getStore('flags');
+        setStore('flags',{ ...flags,imgArgon2HashPromise });
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });
         this.ok && this.ok();
     }
 }

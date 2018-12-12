@@ -6,9 +6,9 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, popPswBox } from '../../../utils/tools';
+import { copyToClipboard, getUserInfo, hasWallet, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出
@@ -30,7 +30,7 @@ export class Home extends Widget {
         const hasBackupMnemonic = false;
         const hasWallet = false;
         const address = '';
-        this.state = {
+        this.props = {
             list:[
                 { img:'../../../res/image1/28.png',name: '',components:'' },
                 { img:'../../../res/image1/10.png',name: '',components:'app-view-mine-other-help' },
@@ -46,10 +46,10 @@ export class Home extends Widget {
             hasWallet,
             hasBackupMnemonic,
             offline:false,
-            walletName : findModulConfig('WALLET_NAME')
+            walletName : getModulConfig('WALLET_NAME')
         };
-        if (findModulConfig('GITHUB')) {
-            this.state.list.push({ img:'../../../res/image1/43.png',name: '',components:'' });
+        if (getModulConfig('GITHUB')) {
+            this.props.list.push({ img:'../../../res/image1/43.png',name: '',components:'' });
         }
         this.initData();
     }
@@ -60,18 +60,18 @@ export class Home extends Widget {
     public initData() {
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.state.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
-            this.state.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+            this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
+            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
         }
 
         const wallet = getStore('wallet');
         if (wallet) {
-            this.state.hasWallet = true;
-            this.state.address = getStore('user/id');
-            this.state.hasBackupMnemonic = wallet.isBackup;            
+            this.props.hasWallet = true;
+            this.props.address = getStore('user/id');
+            this.props.hasBackupMnemonic = wallet.isBackup;            
         } else {
-            this.state.hasWallet = false;
-            this.state.address = '';
+            this.props.hasWallet = false;
+            this.props.address = '';
         }
         this.paint();
     }
@@ -98,18 +98,13 @@ export class Home extends Widget {
      */
     public itemClick(ind:number) {
         if (ind === 0) {
-            if (this.state.hasWallet) {
-                popNew('app-view-mine-account-home');
-            } else {
-                popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {
-                    popNew('app-view-wallet-create-home');
-                });
-            }
+            if (!hasWallet()) return;
+            popNew('app-view-mine-account-home');
         } else if (ind === 5) {
             // window.open('https://github.com/KuPayIo/kupay_wallet');
-            openNewActivity('https://github.com/KuPayIo/kupay_wallet',this.state.walletName);
+            openNewActivity('https://github.com/KuPayIo/kupay_wallet',this.props.walletName);
         } else {
-            popNew(this.state.list[ind].components);
+            popNew(this.props.list[ind].components);
         }
         // this.backPrePage();
     }
@@ -118,7 +113,7 @@ export class Home extends Widget {
      * 复制地址
      */
     public copyAddr() {
-        copyToClipboard(this.state.address);
+        copyToClipboard(this.props.address);
         popNew('app-components1-message-message',{ content:this.language.tips });
     }
 
@@ -126,7 +121,7 @@ export class Home extends Widget {
      * 关闭侧边栏
      */
     public closePage() {
-        this.state.close = true;
+        this.props.close = true;
         setTimeout(() => {
             this.backPrePage();
         }, 200);
@@ -154,7 +149,7 @@ export class Home extends Widget {
      * 创建钱包
      */
     public login() {
-        if (this.state.hasWallet) {
+        if (this.props.hasWallet) {
             popNew('app-view-mine-account-home');
         } else {
             popNew('app-view-wallet-create-home');
@@ -195,7 +190,7 @@ register('setting/language', (r) => {
 register('user/offline',(r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.state.offline = r;
+        w.props.offline = r;
         w.paint();
     }
 });

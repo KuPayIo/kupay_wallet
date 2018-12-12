@@ -12,8 +12,8 @@ export class PrivacyPolicy extends Widget {
 
     public create() {
         super.create();
-        this.state = { 
-            privacyPolicy: getStaticLanguage().privacyPolicy, 
+        this.props = { 
+            privacyPolicy: getStaticLanguage().privacyPolicy 
         };
     }
 

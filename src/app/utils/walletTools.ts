@@ -223,9 +223,10 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
 export const fetchMnemonicFragment =  (hash) => {
     const mnemonicHexstr =  getMnemonicHexstr(hash);
     if (!mnemonicHexstr) return;
+    // tslint:disable-next-line:no-unnecessary-local-variable
     const shares = shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
             .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
-    console.log('fetchMnemonicFragment-----------',shares);
+    // console.log('fetchMnemonicFragment-----------',shares);
     
     return shares;
 };

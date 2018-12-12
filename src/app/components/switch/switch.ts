@@ -19,14 +19,15 @@ export class Switch extends Widget {
     public props: Props;
     public setProps(oldProps:Json,props:Json) {
         super.setProps(oldProps,props);
-        this.state = {
+        this.props = {
+            ...this.props,
             types:this.props.types
         };
     }
     public doClick(event: any) {
-        const oldType = !!this.state.types;
+        const oldType = !!this.props.types;
         const newType = !oldType;
-        this.state.types = newType;
+        this.props.types = newType;
         notify(event.node, 'ev-switch-click', { oldType: oldType, newType: newType });
         this.paint();
     }

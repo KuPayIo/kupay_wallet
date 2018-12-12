@@ -5,7 +5,7 @@
         <app-components-bindPhone-bindPhone></app-components-bindPhone-bindPhone>
     </div>
     <div w-class="content">
-        {{if !it1.isSuccess}}
+        {{if !it.isSuccess}}
         <div w-class="verify"><pi-ui-lang>{"zh_Hans":"验证码有误","zh_Hant":"驗證碼有誤","en":""}</pi-ui-lang></div>
         {{end}}
         

@@ -5,12 +5,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { getProductList, getServerCloudBalance } from '../../../net/pull';
 import { Product } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, getLanguage, hasWallet } from '../../../utils/tools';
+import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, hasWallet } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -23,7 +23,7 @@ export class CloudHome extends Widget {
     public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.props.financialModulIsShow = findModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
+        this.props.financialModulIsShow = getModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
         this.init();
         if (props.isActive) {
             getProductList();
@@ -33,46 +33,51 @@ export class CloudHome extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         const color = getStore('setting/changeColor','redUp');
-        this.state = {
+        this.props = {
+            ...this.props,
             totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
             assetList:fetchCloudWalletAssetList(),
             productList:getStore('activity/financialManagement/products',[]),
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
-        this.paint();
+        // console.log('updateTest');
     }
 
     // 条目点击
     public itemClick(e:any) {
         if (!hasWallet()) return;
         const index = e.index;
-        const v = this.state.assetList[index];
-        popNew('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
+        const v = this.props.assetList[index];
+        if (v.currencyName === 'GT') {
+            popNew('app-view-wallet-cloudWalletGT-home',{ currencyName:v.currencyName,gain:v.gain });
+        } else {
+            popNew('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
+        }
     }
     
     public updateProductList(productList:Product[]) {
-        this.state.productList = productList;
+        this.props.productList = productList;
         this.paint();
     }
     
     public updateBalance() {
-        this.state.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
-        this.state.assetList = fetchCloudWalletAssetList();
+        this.props.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
+        this.props.assetList = fetchCloudWalletAssetList();
         this.paint();
     }
     public optimalClick() {
-        popNew('app-view-wallet-financialManagement-home');
+        popNew('app-view-wallet-financialManagement-home',{ activeNum:0 });
     }
     public fmItemClick(e:any,index:number) {
-        const product = this.state.productList[index];
+        const product = this.props.productList[index];
         popNew('app-view-wallet-financialManagement-productDetail',{ product });
     }
 
     public currencyUnitChange() {
-        this.state.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
-        this.state.assetList = fetchCloudWalletAssetList();
-        this.state.currencyUnitSymbol = getCurrencyUnitSymbol();
+        this.props.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
+        this.props.assetList = fetchCloudWalletAssetList();
+        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
 }
@@ -110,16 +115,28 @@ register('activity/financialManagement/products', async (productList) => {
     }
     
 });
+
+// 黄金价格变化
+register('third/goldPrice', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateBalance();
+    }
+    
+});
 register('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+        w.paint();
     }
 });
+
 register('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
+        w.paint();
     }
 });
 

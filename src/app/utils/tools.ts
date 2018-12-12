@@ -6,42 +6,16 @@ import { closeCon, setBottomLayerReloginMsg } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { Config, ERC20Tokens, MainChainCoin } from '../config';
+import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { getDeviceId } from '../logic/native';
-import { openConnect, uploadFileUrlPrefix } from '../net/pull';
+import { openConnect } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
-import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
+import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet,setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
-
-/**
- * 获取指定id的钱包
- */
-export const getWalletByWalletId = (wallets, walletId) => {
-    if (!(wallets && wallets.length > 0)) return null;
-    for (let i = 0; i < wallets.length; i++) {
-        if (wallets[i].walletId === walletId) return wallets[i];
-    }
-
-    return null;
-};
-
-/**
- * 获取指定id钱包的index
- */
-export const getWalletIndexByWalletId = (wallets, walletId) => {
-    if (!(wallets && wallets.length > 0)) {
-        return -1;
-    }
-    for (let i = 0; i < wallets.length; i++) {
-        if (wallets[i].walletId === walletId) return i;
-    }
-
-    return -1;
-};
 
 /**
  * 获取当前钱包对应货币正在使用的地址信息
@@ -309,9 +283,10 @@ export const ab2hex = (buffer) => {
     const hexArr = Array.prototype.map.call(
       new Uint8Array(buffer),
        (bit) => {
-           return ('00' + bit.toString(16)).slice(-2);
+           return `00${bit.toString(16)}`.slice(-2);
        }
     );
+
     return hexArr.join('');
 };
   
@@ -517,11 +492,16 @@ export const copyToClipboard = (copyText) => {
  * 获取memery hash
  */
 export const calcHashValuePromise = async (pwd, salt?) => {
+    console.log('calcHashValuePromise is called');
+    console.time('pi_create  calc argonHash');
     let hash;
     const argonHash = new ArgonHash();
+    console.log('argonHash will init');
     argonHash.init();
+    console.log('argonHash has init');
     hash = await argonHash.calcHashValuePromise({ pwd, salt });
     setStore('user/secretHash',hash);
+    console.timeEnd('pi_create  calc argonHash');
 
     return hash;
 };
@@ -767,14 +747,22 @@ export const fetchCloudTotalAssets = () => {
 export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
     let balanceValue = 0;
     const USD2CNYRate = getStore('third/rate', 0);
-    const currency2USDTMap = getStore('third/currency2USDTMap');
-    const currency2USDT = currency2USDTMap.get(currencyName) || { open: 0, close: 0 };
+    const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
+    const goldPrice = getStore('third/goldPrice/price') || 0;
 
     if (currencyUnit === 'CNY') {
-        balanceValue = balance * currency2USDT.close * USD2CNYRate;
+        if (currencyName === 'GT') {
+            balanceValue = balance * (goldPrice / 100);
+        } else {
+            balanceValue = balance * currency2USDT.close * USD2CNYRate;
+        }
     } else if (currencyUnit === 'USD') {
-        balanceValue = balance * currency2USDT.close;
+        if (currencyName === 'GT') {
+            balanceValue = (balance * (goldPrice) / 100) / USD2CNYRate;
+        } else {
+            balanceValue = balance * currency2USDT.close;
+        }
     }
 
     return balanceValue;
@@ -825,23 +813,26 @@ export const fetchWalletAssetList = () => {
 export const fetchCloudWalletAssetList = () => {
     const assetList = [];
     const cloudBalances = getCloudBalances();
-    // const ktBalance = cloudBalances.get(CloudCurrencyType.KT) || 0;
-    // const ktItem = {
-    //     currencyName: 'KT',
-    //     description: 'KuPlay Token',
-    //     balance: formatBalance(ktBalance),
-    //     balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
-    //     gain: formatBalanceValue(0)
-    // };
-    // assetList.push(ktItem);
-    // const cnytItem = {
-    //     currencyName: 'CNYT',
-    //     description: 'CNYT',
-    //     balance: 0,
-    //     balanceValue: '0.00',
-    //     gain: formatBalanceValue(0)
-    // };
-    // assetList.push(cnytItem);
+    const ktBalance = cloudBalances.get(CloudCurrencyType.KT) || 0;
+    const ktItem = {
+        currencyName: 'KT',
+        description: 'KuPlay Token',
+        balance: formatBalance(ktBalance),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
+        gain: formatBalanceValue(0),
+        rate:formatBalanceValue(0)
+    };
+    assetList.push(ktItem);
+    const gtBalance = cloudBalances.get(CloudCurrencyType.GT) || 0;
+    const gtItem = {
+        currencyName: 'GT',
+        description: 'GT',
+        balance: formatBalance(gtBalance),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('GT',gtBalance)),
+        gain: fetchGTGain(),
+        rate:formatBalanceValue(fetchBalanceValueOfCoin('GT',1))
+    };
+    assetList.push(gtItem);
     for (const k in CloudCurrencyType) {
         const item: any = {};
         if (MainChainCoin.hasOwnProperty(k)) {
@@ -865,12 +856,7 @@ export const fetchCloudWalletAssetList = () => {
 export const hasWallet = () => {
     const wallet = getStore('wallet');
     if (!wallet) {
-        popNew('app-components1-modalBox-modalBox', {
-            title: { zh_Hans:'提示',zh_Hant:'提示',en:'' },
-            content: { zh_Hans:'你还没有登录，去登录使用更多功能吧',zh_Hant:'你還沒有登錄，去登錄使用更多功能吧',en:'' },
-            sureText: { zh_Hans:'去登录',zh_Hant:'去登錄',en:'' },
-            cancelText: { zh_Hans:'暂时不',zh_Hant:'暫時不',en:'' }
-        }, () => {
+        popNew('app-components1-modalBox-toLoginBox',null, () => {
             popNew('app-view-wallet-create-home');
             // popNew('app-view-base-localImg');
         });
@@ -989,6 +975,15 @@ export const fetchCoinGain = (currencyName: string) => {
 
     return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
 };
+
+export const fetchGTGain = () => {
+    const goldGain = getStore('third/goldPrice/change');
+    if (!goldGain) {
+        return formatBalanceValue(0);
+    } else {
+        return formatBalanceValue(goldGain * 100);
+    }
+};
 /**
  * 转化rtype
  */
@@ -1072,27 +1067,6 @@ export const base64ToFile = (base64: string) => {
 };
 
 /**
- * 获取用户基本信息
- */
-export const getUserInfo = () => {
-    const userInfo = getStore('user/info');
-    const nickName = userInfo.nickName;
-    const phoneNumber = userInfo.phoneNumber;
-    const isRealUser = userInfo.isRealUser;
-    let avatar = userInfo.avatar;
-    if (avatar && avatar.indexOf('data:image') < 0) {
-        avatar = `${uploadFileUrlPrefix}${avatar}`;
-    }
-
-    return {
-        nickName,
-        avatar,
-        phoneNumber,
-        isRealUser
-    };
-};
-
-/**
  * 获取区块确认数
  */
 export const getConfirmBlockNumber = (currencyName: string, amount: number) => {
@@ -1111,10 +1085,13 @@ export const getConfirmBlockNumber = (currencyName: string, amount: number) => {
  * 获取设备唯一id
  */
 export const fetchDeviceId = async () => {
+    console.log('fetchDeviceId');
     if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
         return new Promise((resolve,reject) => {
-            const hash256 = sha256(getStore('user/id'));
+            const deviceId = cryptoRandomInt().toString();
+            const hash256 = sha256(deviceId);
             resolve(hash256);
+            
         });
     } else {// ============================mobile
         return new Promise((resolve,reject) => {
@@ -1199,141 +1176,6 @@ export const mnemonicFragmentDecrypt = (fragment: string) => {
         fragment: fragmentArr.join(''),
         randomStr: randomArr.reverse().join('')
     };
-};
-
-/**
- * 注销账户并删除数据
- */
-export const logoutAccountDel = () => {
-    const user = {
-        id: '',                      // 该账号的id
-        isLogin: false,              // 登录状态
-        offline:true,                // 在线状态
-        token: '',                   // 自动登录token
-        conRandom: '',               // 连接随机数
-        conUid: '',                   // 服务器连接uid
-        publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
-        salt: cryptoRandomInt().toString(),                    // 加密 盐值
-        secretHash: '',             // 密码hash缓存   
-        info: {                      // 用户基本信息
-            nickName: '',           // 昵称
-            avatar: '',            // 头像
-            phoneNumber: '',       // 手机号
-            isRealUser: false    // 是否是真实用户
-        }
-    };
-    const cloud = {
-        cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
-    };
-    
-    const activity = {
-        luckyMoney: {
-            sends: null,          // 发送红包记录
-            exchange: null,       // 兑换红包记录
-            invite: null          // 邀请红包记录
-        },
-        mining: {
-            total: null,      // 挖矿汇总信息
-            history: null, // 挖矿历史记录
-            addMine: [],  // 矿山增加项目
-            mineRank: null,    // 矿山排名
-            miningRank: null,  // 挖矿排名
-            itemJump: null
-        },                       // 挖矿
-        dividend: {
-            total: null,         // 分红汇总信息
-            history: null       // 分红历史记录
-        },
-        financialManagement: {          // 理财
-            products: null,
-            purchaseHistories: null
-        }
-    };
-
-    let lockScreen = getStore('setting/lockScreen');
-    lockScreen = {
-        psw:'',
-        open:false
-    };
-    setStore('wallet',null,false);
-    setStore('cloud',cloud,false);
-    setStore('user',user);
-    setStore('activity',activity);
-    setStore('setting/lockScreen',lockScreen);
-    setBottomLayerReloginMsg('','','');
-    closeCon();
-    setTimeout(() => {
-        openConnect();
-    },100);
-    
-};
-
-/**
- * 注销账户保留数据
- */
-export const logoutAccount = () => {
-    setStore('flags', { saveAccount:true });
-    logoutAccountDel();
-};
-
-/**
- * 登录成功
- */
-export const loginSuccess = (account:Account) => {    
-    // const secretHash = getStore('user/secretHash');
-    const fileUser = account.user;
-    const user:User = {
-        isLogin: false,
-        offline:true,
-        conRandom:'',
-        conUid:'',
-        secretHash:'',
-        id : fileUser.id,
-        token : fileUser.token,
-        publicKey : fileUser.publicKey,
-        salt : fileUser.salt,
-        info : { ...fileUser.info }
-    };
-   
-    const localWallet = account.wallet;
-    const currencyRecords = [];
-    for (const localRecord of localWallet.currencyRecords) {
-        const addrs = [];
-        for (const info of localRecord.addrs) {
-            const addrInfo:AddrInfo = {
-                addr:info.addr,
-                balance:info.balance,
-                txHistory:[]
-            };
-            addrs.push(addrInfo);
-        }
-        const record:CurrencyRecord = {
-            currencyName: localRecord.currencyName,           
-            currentAddr: localRecord.currentAddr ,           
-            addrs,             
-            updateAddr: localRecord.updateAddr         
-        };
-        currencyRecords.push(record);
-    }
-    const wallet:Wallet = {
-        vault:localWallet.vault,                 
-        isBackup: localWallet.isBackup,                 
-        showCurrencys: localWallet.showCurrencys,           
-        currencyRecords
-    };
-  
-    const cloud = getStore('cloud');
-    const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(account.cloud.cloudWallets);
-    for (const [key,value] of localCloudWallets) {
-        const cloudWallet = cloud.cloudWallets.get(key);
-        cloudWallet.balance = localCloudWallets.get(key).balance;
-    }
-
-    setStore('wallet',wallet,false);
-    setStore('cloud',cloud,false);
-    setStore('user',user);
-    setStore('flags',{});
-    openConnect();
 };
 
 /**
@@ -1598,4 +1440,167 @@ export const xorDecode1 = (str:string, key:string) => {
     }
 
     return res;
+};
+
+/**
+ * 获取当前正在使用的ETH地址
+ */
+export const getCurrentEthAddr = () => {
+    return getCurrentAddrInfo('ETH').addr;
+};
+
+/**
+ * 注销账户并删除数据
+ */
+export const logoutAccountDel = () => {
+    const user = {
+        id: '',                      // 该账号的id
+        isLogin: false,              // 登录状态
+        offline:true,                // 在线状态
+        token: '',                   // 自动登录token
+        conRandom: '',               // 连接随机数
+        conUid: '',                   // 服务器连接uid
+        publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
+        salt: cryptoRandomInt().toString(),                    // 加密 盐值
+        secretHash: '',             // 密码hash缓存   
+        info: {                      // 用户基本信息
+            nickName: '',           // 昵称
+            avatar: '',            // 头像
+            phoneNumber: '',       // 手机号
+            isRealUser: false    // 是否是真实用户
+        }
+    };
+    const cloud = {
+        cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
+    };
+    
+    const activity = {
+        luckyMoney: {
+            sends: null,          // 发送红包记录
+            exchange: null,       // 兑换红包记录
+            invite: null          // 邀请红包记录
+        },
+        mining: {
+            total: null,      // 挖矿汇总信息
+            history: null, // 挖矿历史记录
+            addMine: [],  // 矿山增加项目
+            mineRank: null,    // 矿山排名
+            miningRank: null,  // 挖矿排名
+            itemJump: null
+        },                       // 挖矿
+        dividend: {
+            total: null,         // 分红汇总信息
+            history: null       // 分红历史记录
+        },
+        financialManagement: {          // 理财
+            products: null,
+            purchaseHistories: null
+        }
+    };
+
+    let lockScreen = getStore('setting/lockScreen');
+    lockScreen = {
+        psw:'',
+        open:false
+    };
+    setStore('wallet',null,false);
+    setStore('cloud',cloud,false);
+    setStore('user',user);
+    setStore('activity',activity);
+    setStore('setting/lockScreen',lockScreen);
+    setBottomLayerReloginMsg('','','');
+    closeCon();
+    setTimeout(() => {
+        openConnect();
+    },100);
+    
+};
+
+/**
+ * 注销账户保留数据
+ */
+export const logoutAccount = () => {
+    setStore('flags', { saveAccount:true });
+    logoutAccountDel();
+};
+
+/**
+ * 登录成功
+ */
+export const loginSuccess = (account:Account) => {    
+    // const secretHash = getStore('user/secretHash');
+    const fileUser = account.user;
+    const user:User = {
+        isLogin: false,
+        offline:true,
+        conRandom:'',
+        conUid:'',
+        secretHash:'',
+        id : fileUser.id,
+        token : fileUser.token,
+        publicKey : fileUser.publicKey,
+        salt : fileUser.salt,
+        info : { ...fileUser.info }
+    };
+   
+    const localWallet = account.wallet;
+    const currencyRecords = [];
+    for (const localRecord of localWallet.currencyRecords) {
+        const addrs = [];
+        for (const info of localRecord.addrs) {
+            const addrInfo:AddrInfo = {
+                addr:info.addr,
+                balance:info.balance,
+                txHistory:[]
+            };
+            addrs.push(addrInfo);
+        }
+        const record:CurrencyRecord = {
+            currencyName: localRecord.currencyName,           
+            currentAddr: localRecord.currentAddr ,           
+            addrs,             
+            updateAddr: localRecord.updateAddr         
+        };
+        currencyRecords.push(record);
+    }
+    const wallet:Wallet = {
+        vault:localWallet.vault,                 
+        isBackup: localWallet.isBackup,                 
+        showCurrencys: localWallet.showCurrencys,           
+        currencyRecords
+    };
+  
+    const cloud = getStore('cloud');
+    const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(account.cloud.cloudWallets);
+    for (const [key,value] of localCloudWallets) {
+        const cloudWallet = cloud.cloudWallets.get(key);
+        cloudWallet.balance = localCloudWallets.get(key).balance;
+    }
+
+    setStore('wallet',wallet,false);
+    setStore('cloud',cloud,false);
+    setStore('user',user);
+    setStore('flags',{});
+    openConnect();
+};
+
+/**
+ * 获取用户基本信息
+ */
+export const getUserInfo = () => {
+    const userInfo = getStore('user/info');
+    const nickName = userInfo.nickName;
+    const phoneNumber = userInfo.phoneNumber;
+    const isRealUser = userInfo.isRealUser;
+    let avatar = userInfo.avatar;
+    if (avatar && avatar.indexOf('data:image') < 0) {
+        avatar = `${uploadFileUrlPrefix}${avatar}`;
+    }
+
+    return {
+        nickName,
+        avatar,
+        phoneNumber,
+        isRealUser
+    };
 };

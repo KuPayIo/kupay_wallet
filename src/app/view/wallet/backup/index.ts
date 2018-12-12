@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 
 interface Props {
     mnemonic: string;
@@ -18,7 +18,7 @@ export class BackupIndex extends Widget {
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.props.walletName = findModulConfig('WALLET_NAME');
+        this.props.walletName = getModulConfig('WALLET_NAME');
         this.language = this.config.value[getLang()];
     }
     

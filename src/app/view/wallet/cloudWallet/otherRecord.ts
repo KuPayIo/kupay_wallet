@@ -1,13 +1,13 @@
 /**
  * other record
  */
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { timestampFormat } from '../../../utils/tools';
-import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,7 +18,7 @@ interface Props {
     isActive:boolean;
 }
 export class OtherRecord extends Widget {
-    public props:Props;
+    public props:any;
     public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
@@ -30,21 +30,22 @@ export class OtherRecord extends Widget {
             getAccountDetail(this.props.currencyName,1);
         }
         const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
-        this.state = {
+        this.props = {
+            ...this.props,
             recordList:this.parseRecordList(accountDetail.list),
             nextStart:accountDetail.start,
             canLoadMore:accountDetail.canLoadMore,
-            isRefreshing:false,
+            isRefreshing:false
         };
     }
     public updateRecordList() {
-        if (!this.state) return;
+        if (!this.props) return;
         const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
         const list = accountDetail.list;
-        this.state.nextStart = accountDetail.start;
-        this.state.canLoadMore = accountDetail.canLoadMore;
-        this.state.recordList = this.parseRecordList(list);
-        this.state.isRefreshing = false;
+        this.props.nextStart = accountDetail.start;
+        this.props.canLoadMore = accountDetail.canLoadMore;
+        this.props.recordList = this.parseRecordList(list);
+        this.props.isRefreshing = false;
         this.paint();
     }
     // tslint:disable-next-line:typedef
@@ -59,14 +60,14 @@ export class OtherRecord extends Widget {
     }
 
     public loadMore() {
-        getAccountDetail(this.props.currencyName,1,this.state.nextStart);
+        getAccountDetail(this.props.currencyName,1,this.props.nextStart);
     }
     public getMoreList() {
         const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
         const h2 = document.getElementById('recharge-content-container').offsetHeight; 
         const scrollTop = document.getElementById('recharge-scroller-container').scrollTop; 
-        if (this.state.canLoadMore && !this.state.isRefreshing && (h2 - h1 - scrollTop) < 20) {
-            this.state.isRefreshing = true;
+        if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
+            this.props.isRefreshing = true;
             this.paint();
             console.log('加载中，请稍后~~~');
             this.loadMore();

@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <div w-class="body" on-scroll="pageScroll" id="body">
-        <div w-class="head1 {{'head1-' + it1.stateBg}}">
+        <div w-class="head1 {{'head1-' + it.stateBg}}">
             {{: tags = [
                 {"zh_Hans":"昨日收益","zh_Hant":"昨日收益","en":""},
                 {"zh_Hans":"年化收益","zh_Hant":"年化收益","en":""},
@@ -17,7 +17,7 @@
 
             <div w-class="head1-tag"><pi-ui-lang>{{tags[0]}}</pi-ui-lang> ({{it.product.coinType}})</div>
             <div w-class="ye-earn">{{it.product.yesterdayIncoming}}</div>
-            <div w-class="status">{{it1.stateShow}}</div>
+            <div w-class="status">{{it.stateShow}}</div>
             <div w-class="head2">
                 <div w-class="col1">
                     <div w-class="tag"><pi-ui-lang>{{tags[1]}}</pi-ui-lang></div>
@@ -49,13 +49,13 @@
             </div>
             <div w-class="read" on-tap="readAgree"><pi-ui-lang>{"zh_Hans":"阅读声明","zh_Hant":"閱讀聲明","en":""}</pi-ui-lang></div>
             <div ev-btn-tap="redemptionClick" w-class="btn">
-                {{: btnName = {"zh_Hans":it1.btnText,"zh_Hant":it1.btnText,"en":""} }}
-                <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":{{it1.btnBgColor}}}</app-components1-btn-btn>
+                {{: btnName = {"zh_Hans":it.btnText,"zh_Hant":it.btnText,"en":""} }}
+                <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":{{it.btnBgColor}}}</app-components1-btn-btn>
             </div>
         </div>
     </div>
     
   {{: topBarTitle = {"zh_Hans":it.product.productName,"zh_Hant":it.product.productName,"en":""} }}
-    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
+    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
     
 </div>

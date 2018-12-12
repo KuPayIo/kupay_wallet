@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page" on-tap="maskClick">
     <div w-class="body">
         <div w-class="addr-list">
-            {{for i,v of it1.addrsInfo}}
+            {{for i,v of it.addrsInfo}}
             <div w-class="item" on-tap="addrItemClick(e,{{i}})">
                 <div w-class="addr">{{v.addrShow}}</div>
                 <div w-class="balance">{{v.balance%1===0?v.balance.toFixed(2):v.balance}}</div>

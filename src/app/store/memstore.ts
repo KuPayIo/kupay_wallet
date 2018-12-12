@@ -10,7 +10,7 @@ import { cryptoRandomInt } from '../../pi/util/math';
 import { defaultSetting } from '../config';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, ShapeShiftTxs, Store, TxHistory, UserInfo, Wallet } from './interface';
+import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Gold, Setting, ShapeShiftTxs, Store, TxHistory, UserInfo, Wallet } from './interface';
 
 // ============================================ 导出
 
@@ -28,7 +28,7 @@ export const initStore = () => {
 /**
  * 判断是否是对象
  */
-const isObject = (value:any) => {
+const isObject = (value: any) => {
     const vtype = typeof value;
 
     return value !== null && (vtype === 'object' || vtype === 'function');
@@ -38,7 +38,7 @@ const isObject = (value:any) => {
  * 数据深拷贝
  */
 export const deepCopy = (v: any): any => {
-    if (!v || !isObject(v)) return v;
+    if (!v || v instanceof Promise || !isObject(v)) return v;
     if (v instanceof Map) {
         return new Map(JSON.parse(JSON.stringify(v)));
     }
@@ -76,7 +76,7 @@ export const setStore = (path: string, data: any, notified = true) => {
     const keyArr = path.split('/');
 
     const notifyPath = [];
-    for (let i = 0;i < keyArr.length;i++) {
+    for (let i = 0; i < keyArr.length; i++) {
         // tslint:disable-next-line:prefer-template
         const path = i === 0 ? keyArr[i] : notifyPath[i - 1] + '/' + keyArr[i];
         notifyPath.push(path);
@@ -99,7 +99,7 @@ export const setStore = (path: string, data: any, notified = true) => {
     parent[lastKey] = deepCopy(data);
 
     if (notified) {
-        for (let i = notifyPath.length - 1;i >= 0;i --) {
+        for (let i = notifyPath.length - 1; i >= 0; i--) {
             handlerMap.notify(notifyPath[i], [getStore(notifyPath[i])]);
         }
     }
@@ -251,6 +251,7 @@ const initAccount = () => {
         for (const [key, value] of localCloudWallets) {
             const cloudWallet = store.cloud.cloudWallets.get(key);
             cloudWallet.balance = localCloudWallets.get(key).balance;
+
         }
 
         // store.wallet init
@@ -308,20 +309,21 @@ const initSettings = () => {
                     store.setting.language = defaultSetting.DEFAULT_LANGUAGE;
                 }
             }
-            
+
         },
         fail: (result) => {
             console.log(result);
         }
     });
     const setting = getLocalStorage('setting', {
-        language:defaultSetting.DEFAULT_LANGUAGE,
+        language: defaultSetting.DEFAULT_LANGUAGE,
         changeColor: defaultSetting.DEFAULT_CHANGECOLOR,
         currencyUnit: defaultSetting.DEFAULT_CURRENCY,
         lockScreen: {
             open: false,
             psw: ''
-        }
+        },
+        deviceId: ''
     });
     store.setting = {
         ...setting
@@ -339,6 +341,7 @@ const initThird = () => {
     store.third.gasPrice = third.gasPrice;
     store.third.btcMinerFee = third.btcMinerFee;
     store.third.rate = third.rate;
+    store.third.goldPrice = third.goldPrice;
     store.third.gasLimitMap = new Map<string, number>(third.gasLimitMap);
     store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third.shapeShiftTxsMap);
     store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
@@ -484,6 +487,7 @@ const thirdChange = () => {
         btcMinerFee: getStore('third/btcMinerFee'),
         gasLimitMap: getStore('third/gasLimitMap'),
         rate: getStore('third/rate'),
+        goldPrice: getStore('third/goldPrice'),
         currency2USDTMap: getStore('third/currency2USDTMap')
     };
     setLocalStorage('third', localThird);
@@ -497,7 +501,8 @@ const settingChange = () => {
         language: getStore('setting/language'),
         changeColor: getStore('setting/changeColor'),
         currencyUnit: getStore('setting/currencyUnit'),
-        lockScreen: getStore('setting/lockScreen')
+        lockScreen: getStore('setting/lockScreen'),
+        deviceId: getStore('setting/deviceId')
     };
     setLocalStorage('setting', localSetting);
 };
@@ -565,7 +570,8 @@ const store: Store = {
         },
         language: '',             // 语言
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
-        currencyUnit: ''         // 显示哪个国家的货币
+        currencyUnit: '',         // 显示哪个国家的货币
+        deviceId: ''               // 设备唯一ID
     },
     third: {
         gasPrice: null,                             // gasPrice分档次
@@ -578,6 +584,10 @@ const store: Store = {
         shapeShiftTxsMap: new Map<string, ShapeShiftTxs>(),   // shapeshift 交易记录Map
 
         rate: 0,                                            // 货币的美元汇率
+        goldPrice: {                                         // 黄金价格
+            price: 0,
+            change: 0
+        },
         currency2USDTMap: new Map<string, Currency2USDT>()  // k线  --> 计算涨跌幅
     },
     flags: {}
@@ -663,6 +673,7 @@ export interface LocalThird {
     gasLimitMap: Map<string, number>; // 各种货币转账需要的gasLimit
 
     rate: number; // 货币的美元汇率
+    goldPrice: Gold; // 黄金价格
     currency2USDTMap: Map<string, Currency2USDT>; // k线  --> 计算涨跌幅
 }
 

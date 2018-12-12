@@ -2,8 +2,8 @@
  * fund share Page
  */
 import { ShareToPlatforms } from '../../../pi/browser/shareToPlatforms';
-import { Widget } from '../../../pi/widget/widget';
 import { getLang } from '../../../pi/util/lang';
+import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
     text?: string;
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export class BaseShare extends Widget {
-    public props: Props;
+    public props: any;
     public ok: (success:boolean) => void;
     public cancel: (success:boolean) => void;
 
@@ -24,13 +24,12 @@ export class BaseShare extends Widget {
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
         this.language = this.config.value[getLang()];
-        this.state ={};
         if (this.props.shareType !== ShareToPlatforms.TYPE_TEXT) {
-            this.state.isShowQQ = true;
-            this.state.showCount = 4;
+            this.props.isShowQQ = true;
+            this.props.showCount = 4;
         } else {
-            this.state.isShowQQ = false;
-            this.state.showCount = 3;
+            this.props.isShowQQ = false;
+            this.props.showCount = 3;
         }
 
     }
@@ -61,8 +60,8 @@ export class BaseShare extends Widget {
         stp.init();
         if (this.props.shareType === ShareToPlatforms.TYPE_LINK) {
             stp.shareLink({
-                success: (result) => { this.ok(true); },
-                fail: (result) => { this.cancel(false); },
+                success: (result) => { console.log('share success callback');this.ok(true); },
+                fail: (result) => { console.log('share fail callback');this.cancel(false); },
                 webName: this.props.webName || this.language.wallet,
                 url: this.props.url,
                 title: this.props.title,
@@ -72,16 +71,19 @@ export class BaseShare extends Widget {
             });
         } else if (this.props.shareType === ShareToPlatforms.TYPE_SCREEN) {
             stp.shareScreenShot({
-                success: (result) => { this.ok(true); },
-                fail: (result) => { this.cancel(false); },
+                success: (result) => { console.log('share success callback');this.ok(true); },
+                fail: (result) => { console.log('share fail callback');this.cancel(false); },
                 platform: platform
             });
         } else {
             console.log('share text====',this.props.text);
             console.log('share type====',this.props.shareType);
             stp.shareCode({
-                success: (result) => { this.ok(true); },
-                fail: (result) => { this.cancel(false); },
+                success: (result) => { 
+                    console.log('share success callback');
+                    this.ok(true); 
+                },
+                fail: (result) => { console.log('share fail callback');this.cancel(false); },
                 content: this.props.text,
                 type: this.props.shareType,
                 platform: platform

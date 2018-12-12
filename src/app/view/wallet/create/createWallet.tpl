@@ -8,25 +8,25 @@
         
         <div w-class="bottom-box">
             <div w-class="avatar-container" on-tap="selectImageClick">
-                {{if !it1.chooseImage}}
+                {{if !it.chooseImage}}
                 <div style="background-image: url(../../../res/image/default_avater_big.png);" w-class="avatar"></div>
                 {{else}}
-                <widget w-tag="pi-ui-html" w-class="ui-html">{{it1.avatarHtml}}</widget>
+                <widget w-tag="pi-ui-html" w-class="ui-html">{{it.avatarHtml}}</widget>
                 {{end}}
-                {{if !it1.chooseImage}}
+                {{if !it.chooseImage}}
                 <div w-class="choose-img-mask">
                     <img src="../../../res/image/choose_img.png" w-class="choose-img"/>
                 </div>
                 {{end}}
             </div>
             <div w-class="name-box" ev-input-change="walletNameChange">
-                <widget w-tag="app-components1-input-input" style="flex: 1;">{input:{{it1.walletName}},maxLength:10}</widget>
+                <widget w-tag="app-components1-input-input" style="flex: 1;">{input:{{it.walletName}},maxLength:10}</widget>
                 <img w-class="random" src="../../../res/image/dice.png" on-tap="randomPlayName" id="random"/>
             </div>
             <div ev-psw-change="pswChange" ev-psw-clear="pwsClear"><app-components-password-password>{hideTips:true}</app-components-password-password></div>
             <div w-class="input-father" ev-input-change="pswConfirmChange">
                 {{: inputPlace = {"zh_Hans":"重复密码","zh_Hant":"重複密碼","en":""} }}
-                <app-components-input-suffixInput>{itype:"password",placeHolder:{{inputPlace}},clearable:true,available:{{it1.pswEqualed}}}</app-components-input-suffixInput>
+                <app-components-input-suffixInput>{itype:"password",placeHolder:{{inputPlace}},clearable:true,available:{{it.pswEqualed}}}</app-components-input-suffixInput>
             </div>
             <div w-class="registered-protocol" ev-checkbox-click="checkBoxClick">
                 {{: readAgree = {"zh_Hans":"我已经认证阅读并同意","zh_Hant":"我已經認證閱讀並同意","en":""} }}
@@ -35,7 +35,7 @@
             </div>
             <div ev-btn-tap="createClick" w-class="btn">
                 {{: btnName = {"zh_Hans":"完成","zh_Hant":"完成","en":""} }}
-                <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"blue","cannotClick":{{!it1.userProtocolReaded}} }</app-components1-btn-btn>
+                <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"blue","cannotClick":{{!it.userProtocolReaded}} }</app-components1-btn-btn>
             </div>
         </div>
     </div>

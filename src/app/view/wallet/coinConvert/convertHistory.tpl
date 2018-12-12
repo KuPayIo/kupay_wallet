@@ -2,7 +2,7 @@
     {{: topBarTitle = {"zh_Hans":"币币兑换","zh_Hant":"幣幣兌換","en":""} }}
     <app-components1-topBar-topBar>{title:{{topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="content" on-scroll="">
-        {{for ind,item of it1.txsShow}}
+        {{for ind,item of it.txsShow}}
         <div w-class="item">
             <div w-class="itemRow status">
                 <span w-class="{{item.status_class}}" style="flex: 1 0 0;">{{item.status_show}}</span>
@@ -26,7 +26,7 @@
         </div>
         {{end}}
 
-        {{if it1.txsShow.length==0}}
+        {{if it.txsShow.length==0}}
         <div w-class="historyNone">
             <img src="../../../res/image/dividend_history_none.png" style="width: 200px;height: 200px;margin-bottom: 20px;"/>
             <div><pi-ui-lang>{"zh_Hans":"还没有记录哦","zh_Hant":"還沒有記錄哦","en":""}</pi-ui-lang></div>

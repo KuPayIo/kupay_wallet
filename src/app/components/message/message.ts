@@ -8,7 +8,7 @@ interface Props {
 }
 
 export class Message extends Widget {
-    public props: Props;
+    public props: any;
     public ok: () => void;
 
     constructor() {
@@ -21,17 +21,17 @@ export class Message extends Widget {
 
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.state = { isShow: false };
+        this.props = { ...this.props,isShow: false };
         this.init();
     }
 
     private init() {
         setTimeout(() => {
-            this.state.isShow = true;
+            this.props.isShow = true;
             this.paint();
         }, 100);
         setTimeout(() => {
-            this.state.isShow = false;
+            this.props.isShow = false;
             this.paint();
             setTimeout(() => {
                 this.ok && this.ok();

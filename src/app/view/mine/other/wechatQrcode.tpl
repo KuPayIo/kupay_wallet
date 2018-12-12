@@ -4,10 +4,12 @@
     <app-components1-topBar-topBar>{title:{{topBarTitle[it.fg]}},nextImg:"../../res/image/share_blue.png" }</app-components1-topBar-topBar>
     <div w-class="content">
         <div w-class="aboutus-img">
-            <img src="{{it.fg==0?it1.wachatHelperQrcode:it1.wachatQrcode}}" w-class="logoimg"/>
+            <img src="{{it.fg==0?it.wachatHelperQrcode:it.wachatQrcode}}" w-class="logoimg"/>
         </div>
-        {{: ids = [{"zh_Hans":"ID："+it1.walletName+"","zh_Hant":"ID："+it1.walletName+"","en":""},{"zh_Hans":"ID："+it1.walletName+"","zh_Hant":"ID："+it1.walletName+"","en":""}] }}
-        {{: shortMess = [{"zh_Hans":"扫码添加小助手，进"+it1.walletName+"官方微信群","zh_Hant":"掃碼添加小助手，進"+it1.walletName+"官方微信群","en":""},{"zh_Hans":"扫码关注公众号，随时了解"+it1.walletName+"新动态","zh_Hant":"掃碼關注公眾號，隨時了解"+it1.walletName+"新動態","en":""}] }}
+        {{: ids = [{"zh_Hans":"ID："+it.walletName+"","zh_Hant":"ID："+it.walletName+"","en":""},{"zh_Hans":"ID："+it.walletName+"","zh_Hant":"ID："+it.walletName+"","en":""}] }}
+        {{: shortMess = [
+            {"zh_Hans":"扫码添加小助手，进"+it.walletName+"官方微信群","zh_Hant":"掃碼添加小助手，進"+it.walletName+"官方微信群","en":""},
+            {"zh_Hans":"扫码关注公众号，随时了解"+it.walletName+"新动态","zh_Hant":"掃碼關注公眾號，隨時了解"+it.walletName+"新動態","en":""}] }}
         <div w-class="shortmess"><pi-ui-lang>{{shortMess[it.fg]}}</pi-ui-lang></div>
     </div>
 </div>

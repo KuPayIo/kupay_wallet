@@ -10,27 +10,27 @@
                 <div w-class="dividend-title">
                     <pi-ui-lang>{zh_Hans:"累计分红(ETH)",zh_Hant:"累計分紅(ETH)",en:""}</pi-ui-lang>
                 </div>
-                <div w-class="dividend-money">{{it1.totalDivid}}</div>
+                <div w-class="dividend-money">{{it.totalDivid}}</div>
                 <div w-class="dividLine"></div>
                 <div w-class="dividend-sum">
                     <span style="display: inline-block;vertical-align: middle;">
-                        <pi-ui-lang>{zh_Hans:"持有",zh_Hant:"持有",en:""}</pi-ui-lang>&nbsp;{{it1.ktBalance}}&nbsp;KT
+                        <pi-ui-lang>{zh_Hans:"持有",zh_Hant:"持有",en:""}</pi-ui-lang>&nbsp;{{it.ktBalance}}&nbsp;KT
                     </span>
                 </div>
             </div>
 
             <div style="margin-top: 10px;transform: translateZ(-1px);">
                 {{: threeCard=[{zh_Hans:"年化收益",zh_Hant:"年化收益",en:""},{zh_Hans:"本次分红",zh_Hant:"本次分紅",en:""},{zh_Hans:"已分红天数",zh_Hant:"已分紅天數",en:""}]}}
-                <app-components-threeParaCard-threeParaCard>{"name":{{threeCard}},"data":[{{it1.yearIncome}},{{it1.thisDivid}},{{it1.totalDays}}]
+                <app-components-threeParaCard-threeParaCard>{"name":{{threeCard}},"data":[{{it.yearIncome}},{{it.thisDivid}},{{it.totalDays}}]
                     }</app-components-threeParaCard-threeParaCard>
             </div>
 
             <div id="dividendBtn" style="text-align: center;margin-top: 180px;height: 200px;">
-                <div w-class="miningBtn" on-tap="doMining" style="color: #fff;animation:{{it1.isAbleBtn?'dividendChange 0.2s':''}}">
+                <div w-class="miningBtn" on-tap="doMining" style="color: #fff;animation:{{it.isAbleBtn?'dividendChange 0.2s':''}}">
                     <pi-ui-lang>{zh_Hans:"领分红",zh_Hant:"領分紅",en:""}</pi-ui-lang>
                 </div>
-                <div class="dividendNum" style="animation:{{it1.doMining?'dividendMove 1s':''}}">
-                    <span>+{{it1.thisDivid}}</span>
+                <div class="dividendNum" style="animation:{{it.doMining?'dividendMove 1s':''}}">
+                    <span>+{{it.thisDivid}}</span>
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
                 <div w-class="historyTitle">
                     <pi-ui-lang>{zh_Hans:"分红记录",zh_Hant:"分紅記錄",en:""}</pi-ui-lang>
                 </div>
-                {{if it1.data.length==0}}
+                {{if it.data.length==0}}
                 <div w-class="historyNone">
                     <img src="../../../res/image/dividend_history_none.png" style="width: 200px;height: 200px;" />
                     <div>
@@ -48,14 +48,14 @@
                 {{end}}
 
                 <div w-class="historyContent">
-                    {{for ind,val of it1.data}}
+                    {{for ind,val of it.data}}
                     <div w-class="historyItem">
                         <span style="flex: 1;">{{val.time}}</span>
                         <span>{{val.num + " ETH"}}</span>
                     </div>
                     {{end}}
 
-                    {{if it1.data.length>0 && !it1.hasMore}}
+                    {{if it.data.length>0 && !it.hasMore}}
                     <div w-class="endMess">
                         <pi-ui-lang>{zh_Hans:"到此结束啦",zh_Hant:"到此結束啦",en:""}</pi-ui-lang>^_^
                     </div>
@@ -66,5 +66,5 @@
         </div>
     </div>
    {{: topBarTitle = {"zh_Hans":"领分红","zh_Hant":"領分紅","en":""} }}	
-    <app-components1-topBar-topBar2>{scrollHeight:{{it1.scrollHeight}},text:{{topBarTitle}},nextImg:{{it1.scrollHeight>0?"../../res/image/41_gray.png":"../../res/image/41_white.png"}} }</app-components1-topBar-topBar2>
+    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}},nextImg:{{it.scrollHeight>0?"../../res/image/41_gray.png":"../../res/image/41_white.png"}} }</app-components1-topBar-topBar2>
 </div>

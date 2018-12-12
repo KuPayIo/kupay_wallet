@@ -12,7 +12,7 @@
             <app-components-password-password>{placeHolder:{{itemTitle[1]}},hideTips:true }</app-components-password-password>
         </div>
         <div w-class="inputItem" ev-input-clear="pswClear(2)" ev-input-change="rePswChange">
-            <app-components-input-suffixInput>{itype:"password",placeHolder:{{itemTitle[2]}},clearable:true,available:{{it1.pswEqualed}} }</app-components-input-suffixInput>
+            <app-components-input-suffixInput>{itype:"password",placeHolder:{{itemTitle[2]}},clearable:true,available:{{it.pswEqualed}} }</app-components-input-suffixInput>
         </div>
         
     </div>

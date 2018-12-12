@@ -5,7 +5,7 @@
 import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { findModulConfig } from '../../modulConfig';
+import { getModulConfig } from '../../modulConfig';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
 import { getStore, register } from '../../store/memstore';
@@ -16,13 +16,14 @@ declare var module: any;
 declare var pi_modules: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 export class App extends Widget {
+    public props:any;
     public old: any = {};
     public language:any;
     public create() {
         super.create();
         this.init();
-        this.setList();
     }
 
     public init(): void {
@@ -33,15 +34,15 @@ export class App extends Widget {
         const loading = localStorage.getItem('level_2_page_loaded') ? false : true;
         localStorage.removeItem('level_2_page_loaded');
 
-        this.state = {
+        this.props = {
             type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
-            isActive,
+            isActive:'',
             old: this.old,
             loading,
             allTabBar: {
                 play: {
                     modulName: 'APP_PLAY',
-                    text: { zh_Hans:'玩',zh_Hant:'玩',en:'' },
+                    text: { zh_Hans:'玩1',zh_Hant:'玩',en:'' },
                     icon: 'play.png',
                     iconActive: 'play_active.png',
                     components: 'app-view-play-home-home'
@@ -70,29 +71,38 @@ export class App extends Widget {
             },
             tabBarList: []
         };
+        this.setList();
+        // console.log('updateTest');
     }
 
     public setList() {
         const resList = [];
-        for (const item in this.state.allTabBar) {
-            this.state.allTabBar[item];
-            if (findModulConfig(this.state.allTabBar[item].modulName)) {
-                resList.push(this.state.allTabBar[item]);
+        for (const item in this.props.allTabBar) {
+            this.props.allTabBar[item];
+            if (getModulConfig(this.props.allTabBar[item].modulName)) {
+                if (this.props.allTabBar[item].modulName === 'APP_WALLET') {
+                    this.props.isActive = 'APP_WALLET';
+                }
+                resList.push(this.props.allTabBar[item]);
             }   
         }
         if (resList.length === 0) {
-            resList.push(this.state.allTabBar.wallet);
-        }   
-        this.state.tabBarList = resList;
+            resList.push(this.props.allTabBar.wallet);
+            this.props.isActive = this.props.allTabBar.wallet.modulName;
+        }
+        if (!this.props.isActive) {
+            this.props.isActive = resList[0].modulName;
+        }
+        this.props.tabBarList = resList;
     }
     public closeLoading() {
-        this.state.loading = false;
+        this.props.loading = false;
         this.paint();
     }
     public async tabBarChangeListener(event: any, index: number) {
-        const identfy = this.state.tabBarList[index].modulName;
-        if (this.state.isActive === identfy) return;
-        this.state.isActive = identfy;
+        const identfy = this.props.tabBarList[index].modulName;
+        if (this.props.isActive === identfy) return;
+        this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
     }
@@ -107,7 +117,6 @@ register('flags/level_2_page_loaded', (loaded: boolean) => {
         const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
         dataCenter.init();
     },2000);
-    
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.closeLoading();

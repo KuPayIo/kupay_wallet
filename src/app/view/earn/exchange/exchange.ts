@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
@@ -26,9 +26,9 @@ export class Exchange extends Widget {
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
             cid: '',
-            walletName:findModulConfig('WALLET_NAME')
+            walletName:getModulConfig('WALLET_NAME')
         };
     }
     
@@ -38,13 +38,13 @@ export class Exchange extends Widget {
 
     // 输入兑换码
     public inputChange(e: any) {
-        this.state.cid = e.value;
+        this.props.cid = e.value;
         this.paint();
     }
     // 点击兑换按钮
     public async convertClick() {
         this.inputBlur();
-        const code = this.state.cid.trim();
+        const code = this.props.cid.trim();
         if (code.length <= 0) {
             popNew('app-components1-message-message', { itype: 'error', content: this.language.errorList[0], center: true });
 
@@ -64,12 +64,13 @@ export class Exchange extends Widget {
             amount: smallUnit2LargeUnit(CloudCurrencyType[res.value[0]], res.value[1]),
             rtype: code.slice(0, 2),
             rid:res.rid,
-            suid:res.src_id
+            suid:res.src_id,
+            code
         };
         
         popNew('app-view-earn-exchange-openRedEnv', redEnvelope);
         setTimeout(() => {
-            this.state.cid = '';
+            this.props.cid = '';
             this.paint(true);
         }, 100);
     }
@@ -122,7 +123,7 @@ export class Exchange extends Widget {
         let res = { result: -1, value: '' };
         if (perCode === LuckyMoneyType.Invite) {
             res.result = 1;
-            res.value = `${this.state.walletName}${this.language.defaultMess}`;
+            res.value = `${this.props.walletName}${this.language.defaultMess}`;
         } else {
             res = await queryRedBagDesc(validCode);
         }

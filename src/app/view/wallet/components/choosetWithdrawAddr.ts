@@ -13,7 +13,6 @@ export class ChooseWithdrawAddr extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         console.log(props);
-        this.state = {};
     }
 
     public chooseAddrClick(e:any,index:number) {

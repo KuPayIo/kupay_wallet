@@ -17,12 +17,6 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class DividendItem extends Widget {
     public ok: () => void;
     public language: any;
-    public state: {
-        data: any[];
-        userImg: string;
-        totalNum: number;
-        more: boolean;
-    };
 
     public backPrePage() {
         this.ok && this.ok();
@@ -32,7 +26,8 @@ export class DividendItem extends Widget {
         super.setProps(props, oldProps);
         this.language = this.config.value[getLang()];
         const userInfo = getUserInfo();
-        this.state = {
+        this.props = {
+            ...this.props,
             data: this.props.data,
             userImg: userInfo.avatar || '../../../res/image/default_avater_big.png',
             totalNum: this.props.totalNum,

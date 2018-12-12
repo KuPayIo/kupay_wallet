@@ -5,8 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
-import { getInviteCode, getMineDetail, getMineItemJump } from '../../../net/pull';
+import { getMineDetail, getMineItemJump } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { popNewMessage } from '../../../utils/tools';
 
@@ -18,78 +17,43 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Dividend extends Widget {
     public ok: () => void;
     public language: any;
+
+    public props:any = {
+        data: [
+            {
+                isComplete: false,
+                itemImg: '../../res/image/addMine_create.png',
+                itemName: '',
+                itemShort: '',
+                itemDetail: '',
+                itemKT:'',
+                itemJump: 'walletCreate',
+                detailShow: false,
+                modulIsShow:true
+            }, {
+                isComplete: false,
+                itemImg: '../../res/image/addMine_verify.png',
+                itemName: '',
+                itemShort: '',
+                itemDetail: '',
+                itemKT:'',
+                itemJump: 'bindPhone',
+                detailShow: false,
+                modulIsShow:true
+            }
+        ]
+    };
     constructor() {
         super();
+    }
+
+    public setProps(props:any) {
+        super.setProps(this.props);
     }
 
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.state = {
-            data: [
-                {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_create.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'walletCreate',
-                    detailShow: false,
-                    modulIsShow:true
-                }, {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_verify.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'bindPhone',
-                    detailShow: false,
-                    modulIsShow:true
-                }, {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_store.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'storeCoin',
-                    detailShow: false,
-                    modulIsShow:true
-                }, {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_share.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'shareFriend',
-                    detailShow: false,
-                    modulIsShow:true
-                }, {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_buy.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'buyFinancial',
-                    detailShow: false,
-                    modulIsShow:findModulConfig('FINANCIAL_SERVICES')
-                }, {
-                    isComplete: false,
-                    itemImg: '../../res/image/addMine_chat.png',
-                    itemName: '',
-                    itemShort: '',
-                    itemDetail: '',
-                    itemKT:'',
-                    itemJump: 'toChat',
-                    detailShow: false,
-                    modulIsShow:findModulConfig('APP_CHAT')
-                }
-            ]
-        };
         this.initData();
         getMineDetail();
     }
@@ -103,29 +67,16 @@ export class Dividend extends Widget {
      * @param ind 挖矿项目参数
      */
     public async goDetail(ind: number) {
-        if (!this.state.data[ind].isComplete) {
-            const itemJump = this.state.data[ind].itemJump;
+        if (!this.props.data[ind].isComplete) {
+            const itemJump = this.props.data[ind].itemJump;
             getMineItemJump(itemJump);
 
             switch (itemJump) {
                 case 'walletCreate':                  // 创建钱包
                     popNew('app-view-wallet-create-home');
                     break;
-                case 'shareFriend':                  // 邀请红包
-                    const inviteCodeInfo = await getInviteCode();
-                    if (inviteCodeInfo.result !== 1) return;
-
-                    popNew('app-view-earn-redEnvelope-sendRedEnv', {
-                        rid: inviteCodeInfo.cid,
-                        rtype: '99',
-                        message: this.language.defaultMess
-                    });
-                    break;
                 case 'bindPhone':                   // 绑定手机
                     popNew('app-view-mine-setting-phone');
-                    break;
-                case 'buyFinancial':                // 购买理财
-                    popNew('app-view-wallet-financialManagement-home');
                     break;
                 default:
                     popNewMessage(this.language.tips);
@@ -137,21 +88,21 @@ export class Dividend extends Widget {
      * 展示或隐藏详细描述
      */
     public show(ind: number) {
-        this.state.data[ind].detailShow = !this.state.data[ind].detailShow;
+        this.props.data[ind].detailShow = !this.props.data[ind].detailShow;
         this.paint();
     }
 
     /**
      * 获取更新数据
      */
-    public async initData() {
+    public initData() {
         const detail = getStore('activity/mining/addMine');
         // tslint:disable-next-line:max-line-length
         // const detail = [{isComplete:true},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false}];
-        if (detail) {
-            for (const i in detail) {
-                this.state.data[i].isComplete = detail[i].isComplete;
-                this.state.data[i].itemKT = detail[i].itemNum;
+        if (detail && detail.length > 0) {
+            for (const i in this.props.data) {
+                this.props.data[i].isComplete = detail[i].isComplete;
+                this.props.data[i].itemKT = detail[i].itemNum;
             }
         }
 

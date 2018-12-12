@@ -36,17 +36,19 @@ export enum TaskSid {
     Chat = 1011,               // 聊天
     FinancialManagement = 330, // 理财
     LuckyMoney = 340,           // 红包
-    LuckyMoneyRetreat = 341     // 回退红包
+    LuckyMoneyRetreat = 341,     // 回退红包
+    Wxpay = 370,                // 微信支付
+    Alipay = 371                // 支付宝支付
 }
 
 /**
  * 云端账户的货币类型
  */
 export enum CloudCurrencyType {
-    CNYT = 99, // 临时 人民币
     KT = 100,  // KT
     ETH,       // ETH 
-    BTC       // BTC
+    BTC,       // BTC
+    GT         // GT
 }
 
 /**
@@ -120,6 +122,7 @@ export interface Third {
     shapeShiftTxsMap: Map<string, ShapeShiftTxs>; // shapeshift 交易记录Map
 
     rate: number;                                 // 货币的美元汇率
+    goldPrice:Gold;                             // 黄金价格
     currency2USDTMap: Map<string, Currency2USDT>;  // k线  --> 计算涨跌幅
 }
 
@@ -131,6 +134,7 @@ export interface Setting {
     language: string;             // 语言
     changeColor: string;          // 涨跌颜色设置，默认：红跌绿张
     currencyUnit: string;         // 显示哪个国家的货币
+    deviceId:string;              // 设备唯一id
 }
 
 /**
@@ -554,4 +558,12 @@ export interface LockScreen {
     psw?: string;           // 锁屏密码
     open?: boolean;         // 锁屏功能是否打开
     locked?: boolean;       // 是否3次解锁机会都用完
+}
+
+/**
+ * GT价格、涨跌
+ */
+export interface Gold {
+    price:number;          // 价格
+    change:number;         // 涨跌
 }

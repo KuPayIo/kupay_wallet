@@ -38,3 +38,16 @@ export const config = {
         EthscanRopstenTokenTransferEvent: 'https://api.etherscan.io/api?module=account&action=tokentx'
     }
 };
+
+export const getEthApiBaseUrl = () => {
+    let ETH_API_BASE_URL;
+    if (config.dev_mode === DevMode.Ropsten) {
+        ETH_API_BASE_URL = config[DevMode.Ropsten].EthApiBaseUrl;
+    } else if (config.dev_mode === DevMode.Rinkeby) {
+        ETH_API_BASE_URL = config[DevMode.Rinkeby].EthApiBaseUrl;
+    } else if (config.dev_mode === DevMode.Prod) {
+        ETH_API_BASE_URL = config[DevMode.Prod].EthApiBaseUrl;
+    }
+    
+    return ETH_API_BASE_URL;
+};

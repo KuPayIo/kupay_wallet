@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 import { getLocalVersion } from '../../../utils/tools';
 // ==================================================导出
 
@@ -16,15 +16,15 @@ export class ContanctUs extends Widget {
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
             version:getLocalVersion(),
             data:[
-                { value: this.language.itemTitle[0],desc:findModulConfig('WALLET_WEBSITE') },
-                { value: this.language.itemTitle[1],desc:findModulConfig('WALLET_NAME') + this.language.itemTitle[2] },
-                { value: this.language.itemTitle[3],desc:findModulConfig('WALLET_NAME') }
+                { value: this.language.itemTitle[0],desc:getModulConfig('WALLET_WEBSITE') },
+                { value: this.language.itemTitle[1],desc:getModulConfig('WALLET_NAME') + this.language.itemTitle[2] },
+                { value: this.language.itemTitle[3],desc:getModulConfig('WALLET_NAME') }
             ],
-            walletLogo:findModulConfig('WALLET_LOGO'),
-            walletName:findModulConfig('WALLET_NAME')
+            walletLogo:getModulConfig('WALLET_LOGO'),
+            walletName:getModulConfig('WALLET_NAME')
         };
     }
 
@@ -36,7 +36,7 @@ export class ContanctUs extends Widget {
         switch (ind) {
             // 点击钱包官网
             case 0:
-                openNewActivity(this.state.data[0].desc,this.state.walletName);
+                openNewActivity(this.props.data[0].desc,this.props.walletName);
                 break;
             // KuPay小助手
             case 1:
@@ -47,7 +47,7 @@ export class ContanctUs extends Widget {
                 popNew('app-view-mine-other-wechatQrcode',{ fg:1 });
                 break;
             default:
-                // console.log(this.state.cfgData.tips);
+                // console.log(this.props.cfgData.tips);
         }
     }
 }

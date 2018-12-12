@@ -9,7 +9,6 @@
 // ================================ 导入
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
-import { getLanguage } from '../../utils/tools';
 
 interface Props {
     name:string;
@@ -25,11 +24,6 @@ export class FourParaItem extends Widget {
     public ok: () => void;
     constructor() {
         super();
-    }
-
-    public setProps(props: Props, oldProps: Props) {
-        super.setProps(props,oldProps);
-        this.state = {};
     }
 
     public backPrePage() {

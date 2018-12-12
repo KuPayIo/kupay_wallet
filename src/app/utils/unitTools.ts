@@ -9,15 +9,20 @@ import { formatBalance } from './tools';
  * 根据货币类型小单位转大单位  
  */
 export const smallUnit2LargeUnit = (currencyName: string, amount: string | number): number => {
+    let ret = 0;
     if (currencyName === 'ETH') {
-        return formatBalance(wei2Eth(parseInt(amount)));
+        ret =  wei2Eth(parseInt(amount.toString()));
     } else if (currencyName === 'KT') {
-        return formatBalance(kpt2kt(parseInt(amount)));
+        ret = kpt2kt(parseInt(amount.toString()));
     } else if (currencyName === 'BTC') {
-        return formatBalance(sat2Btc(parseInt(amount)));
+        ret = sat2Btc(parseInt(amount.toString()));
+    } else if (currencyName === 'GT') {
+        ret = (parseInt(amount.toString(),16) / 1000000);
     } else { // erc20
-        return formatBalance(ethTokenDivideDecimals(parseInt(amount),currencyName));
+        ret = ethTokenDivideDecimals(parseInt(amount.toString()),currencyName);
     }
+
+    return formatBalance(ret);
 };
 
 /**
@@ -63,7 +68,7 @@ export const wei2Eth = (amount:string|number):number => {
 export const sat2Btc = (num: number | string) => {
     num = Number(num);
 
-    return num / Math.pow(10, 8);
+    return formatBalance(num / Math.pow(10, 8));
 };
 
 /**
@@ -81,7 +86,7 @@ export const btc2Sat = (num: number | string) => {
 export const kpt2kt = (num: number | string) => {
     num = Number(num);
 
-    return num / Math.pow(10, 9);
+    return Math.round(num / Math.pow(10, 9));
 };
 
 /**

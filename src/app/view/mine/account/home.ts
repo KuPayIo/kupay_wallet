@@ -31,22 +31,23 @@ export class AccountHome extends Widget {
         const wallet = getStore('wallet');
         const backup = wallet.isBackup;
 
-        this.state = {
+        this.props = {
             avatar: '',
             nickName: '',
-            isUpdatingWalletName: false,
             phone: '',
             backup,
-            userInput: false,
+            canEditName: false,
+            editName:'',
             chooseImage: false,
             avatarHtml: ''
         };
         if (userInfo.phoneNumber) {
             const str = String(userInfo.phoneNumber).substr(3, 6);
-            this.state.phone = userInfo.phoneNumber.replace(str, '******');
+            this.props.phone = userInfo.phoneNumber.replace(str, '******');
         }
-        this.state.nickName = userInfo.nickName ? userInfo.nickName : this.language.defaultName;
-        this.state.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+        this.props.nickName = userInfo.nickName ? userInfo.nickName : this.language.defaultName;
+        this.props.editName = this.props.nickName;
+        this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
         this.paint();
     }
 
@@ -62,27 +63,27 @@ export class AccountHome extends Widget {
      */
     public walletNameInputBlur(e: any) {
         const v = e.value;
-        this.state.userInput = false;
+        this.props.canEditName = false;
         if (!walletNameAvailable(v)) {
             popNewMessage(this.language.tips[0]);
-            this.state.isUpdatingWalletName = false;
 
             return;
         }
-        if (v !== this.state.nickName) {
-            this.state.nickName = v;
+        if (v !== this.props.nickName) {
+            this.props.nickName = v;
             const userInfo = getStore('user/info');
             userInfo.nickName = v;
             setStore('user/info', userInfo);
         }
-        this.state.isUpdatingWalletName = false;
         this.paint();
     }
-
-    // 修改钱包名称
-    public walletNameInputFocus() {
-        this.state.isUpdatingWalletName = true;
+    /**
+     * 修改名字输入框值变化
+     */
+    public userNameChange(e:any) {
+        this.props.editName = e.value;
     }
+
     // 备份助记词
     public async backupWalletClick() {
         const psw = await popPswBox();
@@ -117,12 +118,12 @@ export class AccountHome extends Widget {
         selectImage((width, height, base64) => {
             resize({ url: base64, width: 140, ratio: 0.3, type: 'jpeg' }, (res) => {
                 console.log('resize---------', res);
-                this.state.chooseImage = true;
+                this.props.chooseImage = true;
                 // tslint:disable-next-line:max-line-length
-                this.state.avatarHtml = `<div style="background-image: url(${res.base64});width: 120px;height: 120px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
-                this.state.avatar = res.base64;
+                this.props.avatarHtml = `<div style="background-image: url(${res.base64});width: 120px;height: 120px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+                this.props.avatar = res.base64;
                 this.paint();
-                uploadFile(this.state.avatar);
+                uploadFile(this.props.avatar);
             });
         });
 
@@ -146,8 +147,36 @@ export class AccountHome extends Widget {
      * 点击可输入用户名
      */
     public changeInput() {
-        this.state.userInput = true;
-        this.paint();
+        if (this.props.canEditName) {
+            const v = this.props.editName;
+            if (!walletNameAvailable(v)) {
+                popNewMessage(this.language.tips[0]);
+    
+                return;
+            } else {
+                if (v !== this.props.nickName) {
+                    this.props.nickName = v;
+                    const userInfo = getStore('user/info');
+                    userInfo.nickName = v;
+                    setStore('user/info', userInfo);
+                    popNewMessage(this.language.tips[2]);
+                    this.props.canEditName = false;
+                } else {
+                    this.props.canEditName = false;
+                }
+            }
+            
+        } else {
+            this.props.canEditName = true;
+            
+            setTimeout(() => {
+                const input =  document.getElementById('nameInput').getElementsByTagName('input')[0];
+                input.setSelectionRange(-1, -1);
+                input.focus();
+            }, 0);
+            
+        }
+        this.paint(true);
     }
 }
 
