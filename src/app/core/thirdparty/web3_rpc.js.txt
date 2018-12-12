@@ -5064,13 +5064,14 @@ Adds the callback and sets up the methods, to iterate over the results.
                         100% {transform: translateY(1500px);}
                     }
                     .contain{
-                        position: fixed;
+                        position: absolute;
                         top: 200px;
                         left: 50px;
                         right: 50px;
                         background: #fff;
                         text-align:left;
                         border-radius:12px;
+                        padding-bottom:30px;
                     }
                     .item{
                         height: 110px;
@@ -5348,8 +5349,8 @@ Adds the callback and sets up the methods, to iterate over the results.
                         var cfg = {
                             width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
                         };
-                        var clientWidth = document.documentElement.clientWidth;
-                        var clientHeight = document.documentElement.clientHeight;
+                        var clientWidth = document.body.clientWidth;
+                        var clientHeight = document.body.clientHeight;
                         oldHeight = clientHeight;
                         rootWidth = cfg.width;
                         rootHeight = cfg.height;
