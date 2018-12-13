@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { calcImgArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
+import { ahashToArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore, setStore } from '../../../store/memstore';
@@ -21,27 +21,27 @@ export class CreateWalletByImage extends Widget {
         this.language = this.config.value[getLang()];
         this.props = {
             chooseImage:false,
-            imageBase64:'',
             imageHtml:'',
             imagePsw:'',
             imagePswAvailable:false,
             imgagePswConfirm:'',
             pswEqualed:false,
-            walletName:getModulConfig('WALLET_NAME')
+            walletName:getModulConfig('WALLET_NAME'),
+            imagePicker:null
         };
     }
     public backPrePage() {
         this.ok && this.ok();
     }
     public selectImageClick() {
-        selectImage((width, height, base64) => {
-            this.props.chooseImage = true;
+        this.props.imagePicker = selectImage((width, height, url) => {
+            console.log('selectImage url = ',url);
             // tslint:disable-next-line:max-line-length
-            this.props.imageHtml = `<div style="background-image: url(${base64});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;"></div>`;
-            this.props.imageBase64 = base64;
-            // console.log(base64);
+            this.props.imageHtml = `<div style="background-image: url(${url});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;"></div>`;
+            this.props.chooseImage = true;
             this.paint();
         });
+
     }
 
     public imagePswClick() {
@@ -73,7 +73,15 @@ export class CreateWalletByImage extends Widget {
             return;
         }
 
-        const imgArgon2HashPromise = calcImgArgon2Hash(this.props.imageBase64,this.props.imagePsw);
+        const imagePsw = this.props.imagePsw;
+        const imgArgon2HashPromise = new Promise((resolve) => {
+            this.props.imagePicker.getAHash({
+                success(ahash:string) {
+                    console.log('image ahash = ',ahash);
+                    resolve(ahashToArgon2Hash(ahash,imagePsw));
+                }
+            });
+        });
         const flags = getStore('flags');
         setStore('flags',{ ...flags,imgArgon2HashPromise });
         popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });

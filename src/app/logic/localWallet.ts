@@ -173,7 +173,7 @@ const getImageAhash = (imageBase64: string): Promise<string> => {
  * @param imagePsw 图片密码
  * @param ahash ahash
  */
-const imgToHash = async (ahash: string, imagePsw: string) => {
+export const ahashToArgon2Hash = async (ahash: string, imagePsw: string) => {
     const sha3Hash = sha3(ahash + imagePsw, false);
     const hash = await calcHashValuePromise(sha3Hash);
     const sha3Hash1 = sha3(hash, true);
@@ -195,8 +195,9 @@ export const calcImgArgon2Hash = async (imageBase64: string,imagePsw: string) =>
     // console.log('calcImgArgon2Hash',imageBase64,imagePsw);
     const ahash = await getImageAhash(imageBase64);
 
-    return imgToHash(ahash, imagePsw);
+    return ahashToArgon2Hash(ahash, imagePsw);
 };
+
 /**
  * 通过助记词导入钱包
  */
