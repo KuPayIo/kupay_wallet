@@ -95,12 +95,11 @@ export const setStore = (path: string, data: any, notified = true) => {
             throw new Error('setStore Failed, path = ' + path);
         }
     }
-
     parent[lastKey] = deepCopy(data);
 
     if (notified) {
         for (let i = notifyPath.length - 1; i >= 0; i--) {
-            handlerMap.notify(notifyPath[i], [getStore(notifyPath[i])]);
+            handlerMap.notify(notifyPath[i], getStore(notifyPath[i]));
         }
     }
 };
