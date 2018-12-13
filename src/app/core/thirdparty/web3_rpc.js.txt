@@ -5376,7 +5376,7 @@ Adds the callback and sets up the methods, to iterate over the results.
                         }
                         rootX = (clientWidth - rootWidth) / 2;
                         rootY = (clientHeight - rootHeight) / 2;
-                        var cssText = 'z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+                        var cssText = 'z-index:99999;position: fixed;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
                         return cssText;
                     };
                     if (!window.piFlags.createStyle) {
@@ -5391,8 +5391,7 @@ Adds the callback and sets up the methods, to iterate over the results.
                     var toAddr = payload.params[0].to;
                     var fromAddr = payload.params[0].from;
                     // 0x3782dace9d90000
-                    var pay =
-                        Number(payload.params[0].value) / Math.pow(10, 18);
+                    var pay = Number(payload.params[0].value) / Math.pow(10, 18);
                     var div = document.createElement("div");
                     div.setAttribute("style",browserAdaptive());
                     div.setAttribute("id", "pi-pop-root");
@@ -5406,7 +5405,7 @@ Adds the callback and sets up the methods, to iterate over the results.
                             <div class="item">
                                 <span class="title">金额:</span>
                                 <div>
-                                    <span id="sendNum">${pay}</span>
+                                    <span id="sendNum">${pay.toFixed(6)}</span>
                                     <span id="ctype">ETH</span>
                                 </div>
                             </div>
