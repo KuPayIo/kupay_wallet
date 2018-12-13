@@ -1,7 +1,11 @@
 <div w-class="modal-mask" class="new-page">
     <div w-class="body">
         <div w-class="title">
-            {{it.title}}
+            {{if typeof(it.title) === 'string' }}
+                {{it.title}}
+            {{else}}
+                <pi-ui-lang>{{it.title}}</pi-ui-lang>
+            {{end}}
             <span w-class="forgetPsw" on-tap="foegetPsw">
                 <pi-ui-lang>{"zh_Hans":"忘记密码？","zh_Hant":"忘記密碼？","en":""}</pi-ui-lang>
             </span>

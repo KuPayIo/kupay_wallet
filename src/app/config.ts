@@ -1,8 +1,50 @@
-import { findModulConfig } from './modulConfig';
+import { getModulConfig } from './modulConfig';
 
 /**
  * config file
  */
+
+// walletName
+const walletName = getModulConfig('WALLET_NAME');
+
+declare var pi_modules: any;
+// 资源服务器ip
+export const sourceIp = pi_modules.store.exports.severIp || '127.0.0.1';
+
+// 资源服务器port
+export const sourcePort = pi_modules.store.exports.severPort || '80';
+
+// 逻辑服务器ip
+// app.herominer.net
+export const logicIp = sourceIp;
+
+// 逻辑服务器port
+export const logicPort = '2081';
+
+console.log('sourceIp=',sourceIp);
+console.log('sourcePort=',sourcePort);
+
+console.log('logicIp=',logicIp);
+console.log('logicPort=',logicPort);
+
+// 向资源服务器请求第3方数据url prefix
+export const thirdUrlPre = `http://${sourceIp}:${sourcePort}/proxy`;
+
+// 分享链接前缀
+export const sharePerUrl = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+
+// 分享下载链接
+export const shareDownload = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
+
+// 上传图片url
+export const uploadFileUrl = `http://${sourceIp}:${sourcePort}/service/upload`;
+
+// 上传的文件url前缀
+export const uploadFileUrlPrefix = `http://${sourceIp}:${sourcePort}/service/get_file?sid=`;
+
+// websock连接url
+export const wsUrl = `ws://${logicIp}:${logicPort}`;
+
 /**
  * 环境配置
  */
@@ -12,8 +54,10 @@ export enum DevMode {
     Rinkeby = 'rinkeby'   // rinkeby测试环境
 }
 // tslint:disable-next-line:variable-name
-export const dev_mode:DevMode = DevMode.Rinkeby;
-const walletName = findModulConfig('WALLET_NAME');
+export const dev_mode:DevMode = DevMode.Prod;
+
+// btc网络
+export const btcNetwork = dev_mode === DevMode.Prod ? 'mainnet' : 'testnet';
 
 // 主网erc20
 const ERC20TokensMainnet = {
@@ -414,6 +458,7 @@ export const Config = {
     zh_Hans: {
         // 理财声明
         notice: `${walletName}钱包资产管理平台服务协议
+
 为了保障您的权益，请在使用${walletName}钱包资产管理平台服务前，详细阅读本协议的所有内容，特别是粗体下划线标注的内容。如您不同意本协议的任何内容，请勿注册或使用本平台提供的服务。该协议是您与${walletName}钱包的所有者${walletName}基金会、${walletName}的钱包资产管理平台上部分资产供应方即与${walletName}合作的数字资产交易机构达成的三方协议。该协议具有法律效力。
 您通过网络页面点击确认或以其他方式（包括但不限于签字或签章确认等方式）接受本协议，或者使用本协议项下服务，即视为您已同意本协议。在您接受本协议或使用本协议项下服务后，不得以未阅读本协议内容为理由做任何形式的抗辩。  
 为了保障${walletName}钱包资产管理服务的持续正常进行，${walletName}钱包资产管理平台已经发布或将来可能发布的各项规则、页面展示、操作流程、公告或通知（以下统称“${walletName}钱包资产管理平台规则”），也是本协议的重要组成部分。如本协议发生变更，导致您的权利义务发生变化，我们网站公告的方式予以公布或者其他合理的方式向您告知，请您留意变更后的协议内容。如您在本协议变更生效后，继续使用${walletName}钱包资产管理平台服务的，表示您愿意接受变更后的协议，也将遵循变更后的协议使用${walletName}钱包资产管理平台服务。
@@ -935,7 +980,9 @@ ${walletName}团队
                 '充值',
                 '提现',
                 '理财',
-                '红包退回'
+                '红包退回',
+                '微信充值',
+                '支付宝充值'
             ]
         },
         // 红包相关
@@ -1022,6 +1069,18 @@ ${walletName}团队
             2031: '出售理财产品失败',
             2032: '已出售',
             2033: '已售罄',
+            3001: '黄金价格过期',
+            3002: '订单不存在',
+            3003: '用户未支付',
+            3004: '金额错误',
+            3005: '获取金价失败',
+            3101: '微信支付请求失败',
+            3102: '微信支付结果错误',
+            3103: '微信支付订单查询失败',
+            3104: '微信支付订单查询失败',
+            3201: '支付宝支付请求失败',
+            3202: '支付宝支付交易已关闭',
+            3203: '支付宝支付订单查询失败',
             '-99': '你已经兑换了同类型的兑换码',
             '-300': '验证码超时',
             '-301': '验证码错误',
@@ -1571,7 +1630,9 @@ ${walletName}团队
                 '充值',
                 '提現',
                 '理財',
-                '紅包退回'
+                '紅包退回',
+                '微信充值',
+                '支付寶充值'
             ]
         },
         // 红包相关
@@ -1657,10 +1718,22 @@ ${walletName}团队
             2031: '出售理財產品失敗',
             2032: '已出售',
             2033: '已售罄',
+            3001: '黃金價格過期',
+            3002: '訂單不存在',
+            3003: '用戶未支付',
+            3004: '金額錯誤',
+            3005: '獲取金價失敗',
+            3101: '微信支付請求失敗',
+            3102: '微信支付結果錯誤',
+            3103: '微信支付訂單查詢失敗',
+            3104: '微信支付訂單查詢失敗',
+            3201: '支付寶支付請求失敗',
+            3202: '支付寶支付交易已關閉',
+            3203: '支付寶支付訂單查詢失敗',
             '-99': '你已經兌換了同類型的兌換碼',
             '-300': '驗證碼超時',
             '-301': '驗證碼錯誤',
-            default: '网络异常，请稍后重试'
+            default: '網絡異常，請稍後重試'
         },
         // 转账相关错误列表
         transError: [

@@ -8,28 +8,33 @@ import { getStaticLanguage } from '../../../utils/tools';
 interface Props {
     product:Product;
     amount:number;
+    statement:any;
+    readed:boolean;
     fg:number; // 点击阅读声明进入为1，否则是点击购买进入
 }
 export class ProductStatement extends Widget {
     public ok:() => void;
-    public props:Props;
-    public create() {
-        super.create();
-        this.init();
-    }
-    public init() {
-        this.state = {
-            statement:getStaticLanguage().notice,
-            readed:false
+
+    public props:any = {
+        statement:getStaticLanguage() .notice,
+        readed:false,
+        fg:1
+    };
+    public setProps(props:any) {
+        this.props = {
+            ...this.props,
+            fg:props.fg
         };
+        super.setProps(this.props);
     }
+    
     public checkBoxClick(e: any) {
-        this.state.readed = (e.newType === 'true' ? true : false);
+        this.props.readed = (e.newType === 'true' ? true : false);
         this.paint();
     }
 
     public nextClick() {
-        if (!this.state.readed) return;
+        if (!this.props.readed) return;
         if (!this.props.fg) {
             popNew('app-view-wallet-financialManagement-purchase',{ product:this.props.product,amount:this.props.amount });
         }

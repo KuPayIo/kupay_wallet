@@ -11,7 +11,7 @@ import { TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 import { blockchainUrl, etherscanUrl } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { canResend, copyToClipboard, getLanguage, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
+import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 
 // ============================导出
@@ -23,7 +23,7 @@ interface Props {
     hash:string;
 }
 export class TransactionDetails extends Widget {
-    public props:Props;
+    public props:any;
     public ok:() => void;
     public language:any;
     public setProps(props:Props,oldProps:Props) {
@@ -37,7 +37,8 @@ export class TransactionDetails extends Widget {
         const obj = parseStatusShow(tx);
         const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
         const webText = tx.currencyName === 'BTC' ? this.language.tips[0] : this.language.tips[1];
-        this.state = {
+        this.props = {
+            ...this.props,
             tx,
             hashShow:parseAccount(tx.hash),
             timeShow:timestampFormat(tx.time),
@@ -54,36 +55,36 @@ export class TransactionDetails extends Widget {
     }
 
     public resendClick() {
-        const tx = this.state.tx;
+        const tx = this.props.tx;
         if (tx.txType === TxType.Recharge) {
-            popNew('app-view-wallet-cloudWallet-recharge',{ tx,currencyName:this.state.tx.currencyName });
+            popNew('app-view-wallet-cloudWallet-recharge',{ tx,currencyName:this.props.tx.currencyName });
         } else {
-            popNew('app-view-wallet-transaction-transfer',{ tx,currencyName:this.state.tx.currencyName });
+            popNew('app-view-wallet-transaction-transfer',{ tx,currencyName:this.props.tx.currencyName });
         }
         this.ok && this.ok();
     }
 
     public copyToAddr() {
-        copyToClipboard(this.state.tx.toAddr);
+        copyToClipboard(this.props.tx.toAddr);
         popNewMessage(this.language.tips[2]);
     }
     public copyFromAddr() {
-        copyToClipboard(this.state.tx.fromAddr);
+        copyToClipboard(this.props.tx.fromAddr);
         popNewMessage(this.language.tips[2]);
     }
     public copyHash() {
-        copyToClipboard(this.state.tx.hash);
+        copyToClipboard(this.props.tx.hash);
         popNewMessage(this.language.tips[2]);
     }
     public openNewWeb() {
         popNew('app-components-openLink-openLink',{},() => {
-            const title = this.state.tx.currencyName === 'BTC' ? 'Blockchain' : 'Etherscan';
-            openNewActivity(this.state.qrcode,title);
+            const title = this.props.tx.currencyName === 'BTC' ? 'Blockchain' : 'Etherscan';
+            openNewActivity(this.props.qrcode,title);
         });
     }
 
     public updateTransaction() {
-        // this.state.tx = fetchTxByHash(this.props.hash);
+        // this.props.tx = fetchTxByHash(this.props.hash);
         this.init();
         this.paint();
     }

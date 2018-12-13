@@ -5,12 +5,12 @@
 // ============================== 导入
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getDividend, getDividHistory, getMining } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { getLang } from '../../../../pi/util/lang';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -28,13 +28,14 @@ export class Dividend extends Widget {
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.language = this.config.value[getLang()];
-        this.state = {
+        this.props = {
+            ...this.props,
             totalDivid:0,
             totalDays:0,
-            topRefresh:false,//顶部手动刷新
+            topRefresh:false,// 顶部手动刷新
             thisDivid:0,
             yearIncome: 0,
-            scrollHeight:0,  //页面滚动高度
+            scrollHeight:0,  // 页面滚动高度
             doMining:false,  // 点击领分红，数字动画效果执行
             firstClick:true,
             isAbleBtn:false,  // 点击领分红，按钮动画效果执行
@@ -74,25 +75,25 @@ export class Dividend extends Widget {
     public initData() {
         const data = getStore('activity/dividend/total');
         if (data) {
-            this.state.totalDivid = data.totalDivid;
-            this.state.totalDays = data.totalDays;
-            this.state.thisDivid = data.thisDivid;
-            this.state.yearIncome = Number(data.yearIncome) === 0 ? this.language.noneYearIncome :data.yearIncome;
+            this.props.totalDivid = data.totalDivid;
+            this.props.totalDays = data.totalDays;
+            this.props.thisDivid = data.thisDivid;
+            this.props.yearIncome = Number(data.yearIncome) === 0 ? this.language.noneYearIncome :data.yearIncome;
         }
 
         const history = getStore('activity/dividend/history');  
         if (history) {
             const hList = history.list;
-            if (hList && hList.length > this.state.data.length) {
+            if (hList && hList.length > this.props.data.length) {
                 console.log('load more from local');
                   
             } else {
                 console.log('load more from server');
-                getDividHistory(this.state.start);
+                getDividHistory(this.props.start);
             }
         } else {
             console.log('load more from server');
-            getDividHistory(this.state.start);
+            getDividHistory(this.props.start);
         }
 
         this.loadMore();
@@ -105,10 +106,10 @@ export class Dividend extends Widget {
         const data = getStore('activity/dividend/history');  
         if (!data) return;
         const hList = data.list;
-        const start = this.state.data.length;
-        this.state.data = this.state.data.concat(hList.slice(start,start + PAGELIMIT));
-        this.state.start = data.start;
-        this.state.hasMore = data.canLoadMore;
+        const start = this.props.data.length;
+        this.props.data = this.props.data.concat(hList.slice(start,start + PAGELIMIT));
+        this.props.start = data.start;
+        this.props.hasMore = data.canLoadMore;
         this.paint();
     }
 
@@ -119,24 +120,24 @@ export class Dividend extends Widget {
         const h1 = document.getElementById('historylist').offsetHeight; 
         const h2 = document.getElementById('history').offsetHeight; 
         const scrollTop = e.target.scrollTop;
-        this.state.scrollHeight = scrollTop; 
-        if (this.state.hasMore && this.state.refresh && (h2 - h1 - scrollTop) < 20) {
-            this.state.refresh = false;
+        this.props.scrollHeight = scrollTop; 
+        if (this.props.hasMore && this.props.refresh && (h2 - h1 - scrollTop) < 20) {
+            this.props.refresh = false;
             console.log('加载中，请稍后~~~');
             setTimeout(() => {
                 this.loadMore();
-                this.state.refresh = true;
+                this.props.refresh = true;
             }, 1000);
         } 
 
         if (scrollTop > 0) {
-            this.state.scroll = true;
-            if (this.state.scroll) {
+            this.props.scroll = true;
+            if (this.props.scroll) {
                 this.paint();
             }
 
         } else {
-            this.state.scroll = false;
+            this.props.scroll = false;
             this.paint();
         }
     }
@@ -145,9 +146,9 @@ export class Dividend extends Widget {
      * 点击领分红
      */
     public async doMining() {
-        if (this.state.thisDivid > 0 && this.state.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的领分红操作并刷新数据
+        if (this.props.thisDivid > 0 && this.props.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的领分红操作并刷新数据
             // await getAward();  // 领分红
-            this.state.firstClick = false;
+            this.props.firstClick = false;
 
             setTimeout(() => {// 数字动画效果执行完后刷新页面
                 getMining();
@@ -165,12 +166,12 @@ export class Dividend extends Widget {
             document.getElementById('dividendBtn').appendChild(child);
             
         }
-        this.state.doMining = true;        
-        this.state.isAbleBtn = true;
+        this.props.doMining = true;        
+        this.props.isAbleBtn = true;
         this.paint();
 
         setTimeout(() => {// 按钮动画效果执行完后将领分红状态改为未点击状态，则可以再次点击
-            this.state.isAbleBtn = false;
+            this.props.isAbleBtn = false;
             this.paint();
         },100);
     }
@@ -179,10 +180,10 @@ export class Dividend extends Widget {
      * 刷新页面
      */
     public refreshPage() {
-        this.state.topRefresh = true;
+        this.props.topRefresh = true;
         this.paint();
         setTimeout(() => {
-            this.state.topRefresh = false;
+            this.props.topRefresh = false;
             this.paint();
         }, 1000);
         this.initEvent();

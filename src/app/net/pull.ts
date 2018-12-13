@@ -1,54 +1,27 @@
 /**
  * 主动向后端通讯
  */
-import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+import { closeCon, open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { MainChainCoin } from '../config';
-import { findModulConfig } from '../modulConfig';
-import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
-import { getStore, setStore } from '../store/memstore';
+import { MainChainCoin, uploadFileUrl, wsUrl } from '../config';
+import { AddrInfo, CloudCurrencyType, CurrencyRecord, MinerFeeLevel, User, Wallet } from '../store/interface';
+import { Account,getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitGtAccountDetail } from '../store/parse';
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str, xorDecode, xorEncode } from '../utils/tools';
+import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
-// export const conIp = '47.106.176.185';
-declare var pi_modules: any;
-export const conIp = pi_modules.store.exports.severIp || '127.0.0.1';
+declare var pi_modules;
 
-// export const conPort = '8080';
-export const conPort = pi_modules.store.exports.severPort || '80';
-
-// walletName
-const walletName = findModulConfig('WALLET_NAME');
-console.log('conIp=',conIp);
-console.log('conPort=',conPort);
-
-export const thirdUrlPre = `http://${conIp}:${conPort}/proxy`;
-// 分享链接前缀
-// export const sharePerUrl = `http://share.kupay.io/wallet/app/boot/share.html`;
-export const sharePerUrl = `http://app.kuplay.io/wallet/phoneRedEnvelope/openRedEnvelope.html`;
-// export const sharePerUrl = `http://${conIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
-
-// 分享下载链接
-export const shareDownload = `http://${conIp}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
-
-// 上传图片url
-export const uploadFileUrl = `http://${conIp}:${conPort}/service/upload`;
-
-// 上传的文件url前缀
-export const uploadFileUrlPrefix = `http://${conIp}:${conPort}/service/get_file?sid=`;
-
-// websock连接url
-const wsUrl = `ws://${conIp}:2081`;
 /**
+
  * 通用的异步通信
  */
-export const requestAsync = (msg: any) => {
+export const requestAsync = (msg: any):Promise<any> => {
     return new Promise((resolve, reject) => {
         request(msg, (resp: any) => {
             if (resp.type) {
@@ -88,7 +61,7 @@ export const requestAsyncNeedLogin = async (msg: any) => {
  * 申请自动登录token
  */
 export const applyAutoLogin = async () => {
-    const id = await fetchDeviceId();
+    const id = getStore('setting/deviceId') || await fetchDeviceId();
     const deviceId = id.toString();
     const msg = { 
         type: 'wallet/user@set_auto_login', 
@@ -106,7 +79,7 @@ export const applyAutoLogin = async () => {
  * 自动登录
  */
 export const autoLogin = async (conRandom:string) => {
-    const deviceId = await fetchDeviceId();
+    const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
     console.log('deviceId -------',deviceId);
     const token = decrypt(getStore('user/token'),deviceId.toString());
     const msg = { 
@@ -274,6 +247,7 @@ export const getRandom = async (cmd?:number) => {
 export const getServerCloudBalance = () => {
     const list = [];
     list.push(CloudCurrencyType.KT);
+    list.push(CloudCurrencyType.GT);
     for (const k in CloudCurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
             list.push(CloudCurrencyType[k]);
@@ -344,7 +318,7 @@ export const getMining = async () => {
         const totalNum = kpt2kt(data.mine_total);
         const holdNum = kpt2kt(data.mines);
         const today = kpt2kt(data.today);
-        let nowNum = Math.floor((totalNum - holdNum + today) * 0.25) - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖
+        let nowNum = Math.round((totalNum - holdNum + today) * 0.25) - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖 再四舍五入取整
         if (nowNum <= 0) {
             nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
         } else if ((totalNum - holdNum) >= 100) {
@@ -759,6 +733,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         const res = await requestAsync(msg);
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
+        const splitDetail = splitGtAccountDetail(detail); 
         const canLoadMore = detail.length >= PAGELIMIT;
         if (detail.length > 0) {
             const cloudWallets = getStore('cloud/cloudWallets');
@@ -766,8 +741,16 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
             if (filter === 1) {
                 if (start) {
                     cloudWallet.otherLogs.list.push(...detail);
+                    if (coin === 'GT') {
+                        cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
+                        cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
+                    }
                 } else {
                     cloudWallet.otherLogs.list = detail;
+                    if (coin === 'GT') {
+                        cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
+                        cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
+                    }
                 }
                 
                 cloudWallet.otherLogs.start = nextStart;
@@ -1274,6 +1257,22 @@ export const fetchBtcFees = async () => {
 
     } catch (err) {
         showError(err && (err.result || err.type));
+    }
+};
+
+/**
+ * 获取GT价格
+ */
+export const getGoldPrice = async (ispay:number = 0) => {
+    const msg = { type:'get_goldprice',param:{ ispay } };
+    try {
+        const resData:any = await requestAsync(msg);
+        if (resData.result === 1) {
+            setStore('third/goldPrice',{ price:resData.price,change:resData.change });
+        }
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
     }
 };
 

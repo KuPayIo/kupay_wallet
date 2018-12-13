@@ -57,6 +57,219 @@
 	<meta http-equiv="Cache-Control" content="no-siteapp" />
 
 	<link href="./swiper.min.css" rel="stylesheet" type="text/css">
+
+	<!--更新弹框样式begin-->
+	<style>
+		.pi-mask {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: rgba(50, 50, 50, 0.5);
+        display: flex;
+        justify-content: center;
+		align-items: center;
+      }
+      .pi-update-box {
+        background-color: #fff;
+        background-image: url(../res/image1/update_bg.png);
+        background-repeat: no-repeat;
+        background-size: 100% 235px;
+        width: 630px;
+        border-radius: 12px;
+        padding-bottom: 30px;
+        position: relative;
+      }
+      .pi-update-rocket {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        transform: translate3d(-50%, -30%, 0);
+      }
+      .pi-update-content {
+        padding: 20px 40px;
+      }
+      .pi-update-title {
+        margin-top: 250px;
+        font-size: 32px;
+        color: #111;
+        line-height: 45px;
+      }
+      .pi-update-items {
+        margin-top: 20px;
+      }
+      .pi-update-item {
+        font-size: 28px;
+        line-height: 40px;
+        color: #8e96ab;
+      }
+      .pi-update-btns {
+        margin: 30px 80px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .pi-update-cancel-btn {
+        width: 220px;
+        height: 80px;
+        border-radius: 50px;
+        border: 1px dashed rgba(136, 136, 136, 1);
+        font-size: 32px;
+        color: #888;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .pi-update-ok-btn {
+        width: 220px;
+        height: 80px;
+        background: linear-gradient(
+          270deg,
+          rgba(68, 206, 237, 1) 0%,
+          rgba(62, 179, 241, 1) 100%
+        );
+        box-shadow: 0px 5px 10px 0px rgba(13, 131, 246, 0.1);
+        border-radius: 50px;
+        font-size: 32px;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .pi-update-progress-container {
+        margin: 70px 30px 0;
+        display: none;
+      }
+      .pi-update-progress-bg {
+        position: relative;
+        height: 11px;
+        background: rgba(204, 204, 204, 1);
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      .pi-update-progress {
+        width: 0%;
+        height: 11px;
+        background: rgba(49, 141, 230, 1);
+        border-radius: 10px;
+      }
+      .pi-update-progress-text {
+        font-size: 24px;
+        color: rgba(34, 34, 34, 1);
+        line-height: 33px;
+        text-align: center;
+      }
+      .pi-update-complete-btn {
+        margin: 30px 30px 0;
+        height: 80px;
+        background: rgba(49, 141, 230, 1);
+        border-radius: 12px;
+        font-size: 32px;
+        color: rgba(255, 255, 255, 1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+		display: none;
+      }
+      @-webkit-keyframes bounceInUp {
+        from,
+        60%,
+        75%,
+        90%,
+        to {
+          -webkit-animation-timing-function: cubic-bezier(
+            0.215,
+            0.61,
+            0.355,
+            1
+          );
+          animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        from {
+          opacity: 0;
+          -webkit-transform: translate3d(0, 3000px, 0);
+          transform: translate3d(0, 3000px, 0);
+        }
+
+        60% {
+          opacity: 1;
+          -webkit-transform: translate3d(0, -20px, 0);
+          transform: translate3d(0, -20px, 0);
+        }
+
+        75% {
+          -webkit-transform: translate3d(0, 10px, 0);
+          transform: translate3d(0, 10px, 0);
+        }
+
+        90% {
+          -webkit-transform: translate3d(0, -5px, 0);
+          transform: translate3d(0, -5px, 0);
+        }
+
+        to {
+          -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      @keyframes bounceInUp {
+        from,
+        60%,
+        75%,
+        90%,
+        to {
+          -webkit-animation-timing-function: cubic-bezier(
+            0.215,
+            0.61,
+            0.355,
+            1
+          );
+          animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        from {
+          opacity: 0;
+          -webkit-transform: translate3d(0, 3000px, 0);
+          transform: translate3d(0, 3000px, 0);
+        }
+
+        60% {
+          opacity: 1;
+          -webkit-transform: translate3d(0, -20px, 0);
+          transform: translate3d(0, -20px, 0);
+        }
+
+        75% {
+          -webkit-transform: translate3d(0, 10px, 0);
+          transform: translate3d(0, 10px, 0);
+        }
+
+        90% {
+          -webkit-transform: translate3d(0, -5px, 0);
+          transform: translate3d(0, -5px, 0);
+        }
+
+        to {
+          -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      .bounceInUp {
+        -webkit-animation-name: bounceInUp;
+        animation-name: bounceInUp;
+      }
+      .animated {
+        -webkit-animation-duration: 1s;
+        animation-duration: 1s;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+      }
+	</style>
+	<!--更新弹框样式end-->
 	<style>
 		body {
 			background-color: #0A1476 !important;
@@ -187,7 +400,7 @@
 					winit.win[k] = 1;
 			}
 			winit.startTime = Date.now();
-			var name = "taiwan"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
+			var name = "wallet"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
@@ -199,19 +412,11 @@
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
 			var needCDN = true;
-
-			winit.domains = [location.protocol + "//" + (remote ? needCDN ? "" + remote : "" + remote : "") + main, location.protocol +
-				"//" + remote + main
-			];
-			if(winit.isLoc){
-				winit.domains = [ "file:///android_asset/res", "file:///android_asset/res" ];
-			}
+			
 			// todo 发版本时需动态设置服务器ip及端口
 			// //----------本地-------
 			//////zxzxzx
 			// winit.severIp = "192.168.7.71";
-			// winit.severPort = "80";
-			// winit.severIp = "47.244.59.13";
 			// winit.severPort = "80";
 			// winit.severIp = "192.168.9.29";
 			// winit.severPort = "80";
@@ -221,7 +426,10 @@
 			// winit.severIp = "192.168.9.15";
 			// winit.severPort = "80";			
 			//---------国内------
-			winit.severIp = "app.kuplay.io";
+			// winit.severIp = "app.kuplay.io";
+			// winit.severPort = "80";
+			//--------支付测试------
+			winit.severIp = "app.herominer.net";
 			winit.severPort = "80";
 
 			// winit.severIp = "test.kuplay.io";
@@ -229,29 +437,129 @@
 
 			// winit.severIp = "47.244.29.209";
 			// winit.severPort = "80";
+			
+			var defaultDomains;
+			var remoteDomains = [
+				"http://" + winit.severIp + ":" + winit.severPort,
+				// location.protocol + "//" + (remote ? needCDN ? "" + remote : "" + remote : "") + main, 
+				// location.protocol + "//" + remote + main
+			];
 
-			// 读取JS的Function
+			if (location.protocol === "file:") {
+				winit.httpDomains = remoteDomains;
+				if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+					defaultDomains = winit.domains = ["file:///android_asset"];
+				}
+				if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+					var index = location.href.indexOf("/assets/");
+					if (index < 0) throw new Error("iOS bundle has not find assets")
+					index += "/assets".length;
+					defaultDomains = winit.domains = [location.href.slice(0, index)];
+				}
+			} else {
+				defaultDomains = winit.domains = remoteDomains;
+			}
+
+			var jsInterceptID = 0;
+			var jsInterceptMap = {};
+
+			window.handle_jsintercept_callback = function (listenerID, isSuccess, result) {
+				if (listenerID in jsInterceptMap) {
+					var callback = jsInterceptMap[listenerID];
+					delete jsInterceptMap[listenerID];
+					callback && callback(isSuccess, result);
+				}
+			}
+
+			var u8ArrayToStr = function (arr) {
+				const decoder = new TextDecoder('utf-8');
+				return decoder.decode(arr);
+			}
+
+			var base64ToU8Array = function (data) {
+				var string = window.atob(data);
+				var bytes = new Uint8Array(string.length);
+				for (var i = 0; i < string.length; i++) {
+					bytes[i] = string.charCodeAt(i);
+				}
+				return bytes;
+			}
+
+			winit.JSIntercept = {
+
+				isNative: navigator.userAgent.indexOf('YINENG') >= 0,
+
+				getBootFile: function (fileName) {
+					return mobileBootFiles[fileName] && mobileBootFiles[fileName].content;
+				},
+
+				getMobileBootFiles: function (cb) {
+					jsInterceptMap[++jsInterceptID] = cb;
+
+					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+						window.JSIntercept.getBootFiles(jsInterceptID);
+					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+						window.webkit.messageHandlers.JSIntercept.postMessage(["getBootFiles", jsInterceptID]);
+					} else {
+						setTimeout(cb, 0);
+					}
+				},
+
+				saveFile: function (path, content, cb) {
+					jsInterceptMap[++jsInterceptID] = cb;
+
+					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+						window.JSIntercept.saveFile(path, content, jsInterceptID);
+					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+						window.webkit.messageHandlers.JSIntercept.postMessage(["saveFile", path, content, jsInterceptID]);
+					} else {
+						setTimeout(cb, 0);
+					}
+				},
+
+				restartApp: function () {
+					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+						window.JSIntercept.restartApp();
+					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+						window.webkit.messageHandlers.JSIntercept.postMessage(["restartApp"]);
+					}
+				}
+			};
+
 			winit.loadJS = function (roots, url, charset, callback, errText, i) {
 				var u, n, head;
-				if (i >= roots.length) {
+				if (Array.isArray(roots) && i >= roots.length) {
 					return callback && callback(roots[0] + url, errText);
 				}
 				head = document.head || document.getElementsByTagName('head')[0] || document.documentElement;
 				n = document.createElement('script');
 				n.charset = charset;
 				n.onerror = function () {
+					if (!Array.isArray(roots)) {
+						URL.revokeObjectURL(roots);
+					}
 					n.onload = n.onerror = undefined;
 					head.removeChild(n);
+					if (Array.isArray(roots)) {
 					winit.loadJS(roots, url, charset, callback, errText, i === undefined ? 0 : i + 1);
+					} else {
+						return callback && callback(url, errText);
+					}
 				};
 				n.onload = function () {
+					if (!Array.isArray(roots)) {
+						URL.revokeObjectURL(roots);
+					}
 					n.onload = n.onerror = undefined;
 					head.removeChild(n);
+					if (Array.isArray(roots)) {
+						url = roots[i || 0] + url;
+					}
 					callback && callback(roots[i || 0] + url);
 				};
 				n.async = true;
 				n.crossorigin = true;
-				n.src = roots[i || 0] + url;
+				n.src = Array.isArray(roots) ? roots[i || 0] + url : roots;
 				head.appendChild(n);
 			};
 			winit.initFail = function (url, err) {
@@ -259,16 +567,47 @@
 			};
 			winit.init = function () {};
 			winit.flags = {};
+
+			mobileBootFiles = {};
+
 			winit.start = function () {
-				if(winit.isLoc){
-					winit.loadJS([winit.domains[1]], "/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,"load index error");
-					return;
+				if (winit.JSIntercept.isNative && location.protocol === "file:") {
+					winit.JSIntercept.getMobileBootFiles(function (isSuccess, str) {
+						mobileBootFiles = JSON.parse(str);
+						for (var key in mobileBootFiles) {
+							var buffer = base64ToU8Array(mobileBootFiles[key]);
+							var blob = new Blob([buffer], {
+								type: "text/javascript"
+							});
+							mobileBootFiles[key] = {
+								content: u8ArrayToStr(buffer),
+								url: URL.createObjectURL(blob)
 				}
-				if (winit.debug) winit.loadJS([winit.domains[1]], "/taiwan/app/boot/hotfix.js", "utf8", winit.initFail,
-					"load hotupdate error");
-				winit.loadJS([winit.domains[1]], "/taiwan/app/boot/index.js?" + Math.random(), "utf8", winit.initFail,
-					"load index error");
+						}
+						winit.startImpl();
+					});
+				} else {
+					winit.startImpl();
+				}
 			};
+
+			winit.getLoadDomain = function (name, path) {
+				var domain = mobileBootFiles[name] && mobileBootFiles[name].url;
+				if (domain) return domain;
+				return defaultDomains;
+			}
+
+			
+			winit.startImpl = function () {
+				if (winit.debug) {
+					winit.loadJS(winit.getLoadDomain("hotfix.js"),
+						"/taiwan/app/boot/hotfix.js", "utf8", winit.initFail, "load hotupdate error");
+				}
+
+				winit.loadJS(winit.getLoadDomain("index.js"),
+					"/taiwan/app/boot/index.js?" + Math.random(), "utf8", winit.initFail, "load index error");
+			}
+
 			if (document.hidden === true)
 				setTimeout(function () {
 					var div = document.createElement('div');
@@ -317,53 +656,35 @@
 			</div>
 			<div class="swiper-pagination"></div>
 		</div>
+
+	<!--更新弹框html begin-->
+	<div id="update-root">
+	<div class="pi-mask">
+		<div class="pi-update-box animated bounceInUp">
+			<img src="../res/image1/rocket.png" class="pi-update-rocket" />
+			<div class="pi-update-content">
+			<div class="pi-update-title">发现新版本：V<span id="pi-version"></span></div>
+			<div class="pi-update-items">
+			</div>
+			</div>
+			<div class="pi-update-btns">
+				<div class="pi-update-cancel-btn">取消</div>
+				<div class="pi-update-ok-btn">确定</div>
+			</div>
+			<div class="pi-update-progress-container">
+			<div class="pi-update-progress-bg">
+				<div class="pi-update-progress"></div>
+			</div>
+			<div class="pi-update-progress-text">0%</div>
+			</div>
+			<div class="pi-update-complete-btn"></div>
+		</div>
+	</div>
+	</div>
+	<!--更新弹框html end-->
 </body>
 <script src="./swiper.min.js"></script>
 <script type="text/javascript">
-// (function(){
-// 	var cfg = {
-//     width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
-// };
-
-// var browserAdaptive = function() {
-//     // if (!root) {
-//     //     return;
-//     // }
-//     var clientWidth = document.documentElement.clientWidth;
-//     var clientHeight = document.documentElement.clientHeight;
-//     oldHeight = clientHeight;
-//     rootWidth = cfg.width;
-//     rootHeight = cfg.height;
-//     let scaleW = clientWidth / rootWidth;
-//     let scaleH = clientHeight / rootHeight;
-//     if (cfg.wscale >= cfg.hscale) {
-//         // 宽度比例变动
-//         if (scaleW > scaleH * (cfg.wscale + 1)) {
-//             // 大于规定的比例
-//             rootWidth = rootWidth * (cfg.wscale + 1) | 0;
-//         } else {
-//             rootWidth = (clientWidth / scaleH) | 0;
-//         }
-//         rootScale = scaleW = scaleH;
-//     } else {
-//         // 高度比例变动
-//         if (scaleH > scaleW * (cfg.hscale + 1)) {
-//             rootHeight = rootHeight * (cfg.hscale + 1) | 0;
-//         } else {
-//             rootHeight = (clientHeight / scaleW) | 0;
-//         }
-//         rootScale = scaleH = scaleW;
-//     }
-//     rootX = (clientWidth - rootWidth) / 2;
-//     rootY = (clientHeight - rootHeight) / 2;
-// 	var cssText = 'position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
-// 	var rootSwiper = document.querySelector('#root-swiper');
-// 	rootSwiper.style.cssText = cssText;
-// };
-
-// browserAdaptive();
-// })();
-
 console.time('home enter');
 setTimeout(() => {
 	var mySwiper = new Swiper('.swiper-container', {
@@ -385,4 +706,50 @@ btnStart.onclick = function(){
 	document.body.removeChild(document.querySelector('#swiper-container'));
 }
 </script>
+<!--弹框适配-->
+<script>
+(function(){
+	var cfg = {
+    width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+};
+
+var browserAdaptive = function() {
+    var clientWidth = document.documentElement.clientWidth;
+    var clientHeight = document.documentElement.clientHeight;
+    oldHeight = clientHeight;
+    rootWidth = cfg.width;
+    rootHeight = cfg.height;
+    let scaleW = clientWidth / rootWidth;
+    let scaleH = clientHeight / rootHeight;
+    if (cfg.wscale >= cfg.hscale) {
+        // 宽度比例变动
+        if (scaleW > scaleH * (cfg.wscale + 1)) {
+            // 大于规定的比例
+            rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+        } else {
+            rootWidth = (clientWidth / scaleH) | 0;
+        }
+        rootScale = scaleW = scaleH;
+    } else {
+        // 高度比例变动
+        if (scaleH > scaleW * (cfg.hscale + 1)) {
+            rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+        } else {
+            rootHeight = (clientHeight / scaleW) | 0;
+        }
+        rootScale = scaleH = scaleW;
+    }
+    rootX = (clientWidth - rootWidth) / 2;
+    rootY = (clientHeight - rootHeight) / 2;
+	var cssText = 'display:none;z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+	var rootUpdate = document.querySelector('#update-root');
+	rootUpdate.style.cssText = cssText;
+};
+
+browserAdaptive();
+})();
+
+</script>
+<!--弹框适配-->
+
 </html>

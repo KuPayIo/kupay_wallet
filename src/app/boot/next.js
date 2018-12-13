@@ -127,7 +127,8 @@ winit.initNext = function () {
 			"app/logic/",
 			"app/components/",
 			"app/res/",
-			"app/view/"
+			"app/view/",
+			"app/api/"
 		];
 
 		// 加载其他文件
@@ -139,18 +140,25 @@ winit.initNext = function () {
 
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
 			setStore('flags/level_2_page_loaded', true);
+			
 			if (updateMod.needForceUpdate()) {
-				// 注：必须堵住原有的界面操作，不允许任何更新
-				updateMod.update(function (e) {
-					console.log("update progress: ", e);
+				pi_update.alert({
+					btnText:"更新未完成"
+				},function(){
+					// 注：必须堵住原有的界面操作，不允许任何更新
+					updateMod.update(function (e) {
+						console.log("update progress: ", e);
+						pi_update.updateProgress(e);
+					});
 				});
 			} else {
-				updateMod.checkUpdate(function (need) {
-					needUpdate = need;
+				updateMod.checkUpdate(function (needUpdate) {
 					if (needUpdate) {
 						// 注：必须堵住原有的界面操作，不允许任何触发操作
 						updateMod.update(function (e) {
+							//{type: "saveFile", total: 4, count: 1}
 							console.log("update progress: ", e);
+							pi_update.updateProgress(e);
 						});
 					}
 				});

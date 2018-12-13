@@ -1,14 +1,14 @@
 /**
  * other record
  */
+import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { getLanguage, parseStatusShow, timestampFormat } from '../../../utils/tools';
+import { parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
-import { getLang } from '../../../../pi/util/lang';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -19,7 +19,7 @@ interface Props {
     isActive:boolean;
 }
 export class WithdrawRecord extends Widget {
-    public props:Props;
+    public props:any;
     public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
@@ -31,22 +31,23 @@ export class WithdrawRecord extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         const withdrawLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
-        this.state = {
+        this.props = {
+            ...this.props,
             recordList:[],
             nextStart:withdrawLogs.start,
             canLoadMore:withdrawLogs.canLoadMore,
-            isRefreshing:false,
+            isRefreshing:false
         };
-        this.state.recordList = this.parseRecordList(withdrawLogs.list);
+        this.props.recordList = this.parseRecordList(withdrawLogs.list);
     }
     public updateRecordList() {
-        if (!this.state) return;
+        if (!this.props.currencyName) return;
         const withdrawLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
         const list = withdrawLogs.list;
-        this.state.nextStart = withdrawLogs.start;
-        this.state.canLoadMore = withdrawLogs.canLoadMore;
-        this.state.recordList = this.parseRecordList(list);
-        this.state.isRefreshing = false;
+        this.props.nextStart = withdrawLogs.start;
+        this.props.canLoadMore = withdrawLogs.canLoadMore;
+        this.props.recordList = this.parseRecordList(list);
+        this.props.isRefreshing = false;
         this.paint();
     }
 
@@ -65,7 +66,7 @@ export class WithdrawRecord extends Widget {
         return list;
     }
     public updateTransaction() {
-        const list = this.state.recordList;
+        const list = this.props.recordList;
         list.forEach(item => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
@@ -75,14 +76,14 @@ export class WithdrawRecord extends Widget {
     }
     
     public loadMore() {
-        getWithdrawLogs(this.props.currencyName,this.state.nextStart);
+        getWithdrawLogs(this.props.currencyName,this.props.nextStart);
     }
     public getMoreList() {
         const h1 = document.getElementById('withdraw-scroller-container').offsetHeight; 
         const h2 = document.getElementById('withdraw-content-container').offsetHeight; 
         const scrollTop = document.getElementById('withdraw-scroller-container').scrollTop; 
-        if (this.state.canLoadMore && !this.state.isRefreshing && (h2 - h1 - scrollTop) < 20) {
-            this.state.isRefreshing = true;
+        if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
+            this.props.isRefreshing = true;
             this.paint();
             console.log('加载中，请稍后~~~');
             this.loadMore();

@@ -2,7 +2,6 @@
  * 确认购买
  */
 // ===============================================导入
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { recharge } from '../../../net/pullWallet';
@@ -10,7 +9,7 @@ import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType 
 import { getCloudBalances } from '../../../store/memstore';
 import { defaultGasLimit } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getLanguage, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { wei2Eth } from '../../../utils/unitTools';
 import { purchaseProduct } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './productDetail';
@@ -20,7 +19,7 @@ interface Props {
     amount:number;
 }
 export class ProductDetail extends Widget {
-    public props:Props;
+    public props:any;
     public ok: () => void;
     public language:any;
     constructor() {
@@ -28,7 +27,7 @@ export class ProductDetail extends Widget {
     }
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
-        console.log(props);
+        // console.log(props);
         this.init();
     }
     public init() {
@@ -36,7 +35,8 @@ export class ProductDetail extends Widget {
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
         const cloudBalance = getCloudBalances().get(CloudCurrencyType.ETH);
         const localBalance = getCurrentAddrInfo('ETH').balance;
-        this.state = {
+        this.props = {
+            ...this.props,
             spend,
             cloudBalance,
             localBalance
@@ -48,15 +48,15 @@ export class ProductDetail extends Widget {
     public async purchaseClicked() {
         const psw = await popPswBox();
         if (!psw) return;
-        if (this.state.cloudBalance >= this.state.spend) {
+        if (this.props.cloudBalance >= this.props.spend) {
             const success = await purchaseProduct(psw,this.props.product.id,this.props.amount);
             if (success) {
                 const w: any = forelet.getWidget(WIDGET_NAME);
                 w.ok && w.ok();
             }
-        } else if (this.state.cloudBalance + this.state.localBalance >= this.state.spend) {
+        } else if (this.props.cloudBalance + this.props.localBalance >= this.props.spend) {
             const fromAddr = getCurrentAddrByCurrencyName('ETH');
-            const pay = this.state.spend - this.state.cloudBalance;
+            const pay = this.props.spend - this.props.cloudBalance;
             const tx:TxHistory = {
                 hash:'',
                 txType:TxType.Recharge,

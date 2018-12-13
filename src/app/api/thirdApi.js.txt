@@ -1,0 +1,406 @@
+// PI_BEGIN
+console.log("注入 thirdApi.js success");
+
+// 创建授权弹框
+
+window.pi_jsApi = {};
+window.piFlags = {};
+
+
+function createStyleTag() {
+    var cssText = `.pi-root {
+        font-size: 38px;
+        position: absolute;
+        overflow: hidden;
+        left: -187.5px;
+        top: -333.5px;
+        width: 750px;
+        height: 1334px;
+        transform: scale(0.5, 0.5);
+      }
+      .pi-mask {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: rgba(50, 50, 50, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        display: none;
+      }
+      .pi-update-box {
+        background-color: #fff;
+        background-image: url(./update_bg.png);
+        background-repeat: no-repeat;
+        background-size: 100% 235px;
+        width: 630px;
+        border-radius: 12px;
+        padding-bottom: 30px;
+        position: relative;
+      }
+      .pi-update-rocket {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        transform: translate3d(-50%, -30%, 0);
+      }
+      .pi-update-content {
+        padding: 20px 40px;
+      }
+      .pi-update-title {
+        margin-top: 250px;
+        font-size: 32px;
+        color: #111;
+        line-height: 45px;
+      }
+      .pi-update-items {
+        margin-top: 20px;
+      }
+      .pi-update-item {
+        font-size: 28px;
+        line-height: 40px;
+        color: #8e96ab;
+      }
+      .pi-update-btns {
+        margin: 30px 80px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .pi-update-cancel-btn {
+        width: 220px;
+        height: 80px;
+        border-radius: 50px;
+        border: 1px dashed rgba(136, 136, 136, 1);
+        font-size: 32px;
+        color: #888;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .pi-update-ok-btn {
+        width: 220px;
+        height: 80px;
+        background: linear-gradient(
+          270deg,
+          rgba(68, 206, 237, 1) 0%,
+          rgba(62, 179, 241, 1) 100%
+        );
+        box-shadow: 0px 5px 10px 0px rgba(13, 131, 246, 0.1);
+        border-radius: 50px;
+        font-size: 32px;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      @-webkit-keyframes bounceInUp {
+        from,
+        60%,
+        75%,
+        90%,
+        to {
+          -webkit-animation-timing-function: cubic-bezier(
+            0.215,
+            0.61,
+            0.355,
+            1
+          );
+          animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        from {
+          opacity: 0;
+          -webkit-transform: translate3d(0, 3000px, 0);
+          transform: translate3d(0, 3000px, 0);
+        }
+
+        60% {
+          opacity: 1;
+          -webkit-transform: translate3d(0, -20px, 0);
+          transform: translate3d(0, -20px, 0);
+        }
+
+        75% {
+          -webkit-transform: translate3d(0, 10px, 0);
+          transform: translate3d(0, 10px, 0);
+        }
+
+        90% {
+          -webkit-transform: translate3d(0, -5px, 0);
+          transform: translate3d(0, -5px, 0);
+        }
+
+        to {
+          -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      @keyframes bounceInUp {
+        from,
+        60%,
+        75%,
+        90%,
+        to {
+          -webkit-animation-timing-function: cubic-bezier(
+            0.215,
+            0.61,
+            0.355,
+            1
+          );
+          animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        from {
+          opacity: 0;
+          -webkit-transform: translate3d(0, 3000px, 0);
+          transform: translate3d(0, 3000px, 0);
+        }
+
+        60% {
+          opacity: 1;
+          -webkit-transform: translate3d(0, -20px, 0);
+          transform: translate3d(0, -20px, 0);
+        }
+
+        75% {
+          -webkit-transform: translate3d(0, 10px, 0);
+          transform: translate3d(0, 10px, 0);
+        }
+
+        90% {
+          -webkit-transform: translate3d(0, -5px, 0);
+          transform: translate3d(0, -5px, 0);
+        }
+
+        to {
+          -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      .bounceInUp {
+        -webkit-animation-name: bounceInUp;
+        animation-name: bounceInUp;
+      }
+      .animated {
+        -webkit-animation-duration: 1s;
+        animation-duration: 1s;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+      }`;
+    var style = document.createElement("style");
+    style.type = "text/css";
+    style.innerHTML = cssText;
+    document.getElementsByTagName("head")[0].appendChild(style);
+}
+
+function createElementTag(){
+    var htmlText = `
+      <div class="pi-mask">
+        <div class="pi-update-box animated bounceInUp">
+          <img src="./rocket.png" class="pi-update-rocket" />
+          <div class="pi-update-content">
+            <div class="pi-update-title">您将获取以下授权</span></div>
+            <div class="pi-update-items">
+            </div>
+          </div>
+          <div class="pi-update-btns">
+            <div class="pi-update-cancel-btn">取消</div>
+            <div class="pi-update-ok-btn">确定</div>
+          </div>
+        </div>
+      </div>
+    `;
+    var $root = document.createElement("div");
+    $root.setAttribute("class","pi-root");
+    $root.innerHTML = htmlText;
+
+    var $body = document.querySelector("body");
+    $body.appendChild($root);
+}
+
+function closePop(){
+  var $root = document.querySelector(".pi-root");
+  var $body = document.querySelector("body");
+  $body.removeChild($root);
+}
+window.pi_RPC_Method = (function() {
+    var rpcID = 0;
+    var rpcIDMap = {};
+
+    /**
+     * 往指定名字的WebView调用指定模块的导出方法
+     * data: 指定对方WebView执行的模块和导出方法
+     * callback：返回结果的回调函数
+     * 注：RPC都是一来一回的结构，没有注册一次可以调用多次的结构！
+     */
+    var rpcCall = function(moduleName, methodName, param, callback) {
+        var RPC_CALL_START = "$WEBVIEW_RPC_CALL: ";
+        var RPC_CALLBACK_PARAM = "$WEBVIEW_RPC_FUNCTION_PARAM: ";
+
+        var funcs = [callback];
+
+        var id = ++rpcID;
+        rpcIDMap[id] = funcs;
+
+        var sign = {
+            moduleName: moduleName, // 模块名
+            methodName: methodName, // 模块的导出方法名
+            params: [param, RPC_CALLBACK_PARAM + 0], // 参数组成的数组，这里参数的回调函数全部转成Callback ID
+            rpcID: id // 可选：调用rpc前注册到Map的RPC ID
+        };
+
+        var data = RPC_CALL_START + JSON.stringify(sign);
+
+        nativeCall("WebViewManager", "postWebViewMessage", 0, [
+            "default",
+            data
+        ]);
+    };
+
+    var webViewManager = undefined;
+    var webViewManagerCallWaits = [];
+
+    var nativeCall = function(className, methodName, listenerID, args) {
+        args = args || [];
+
+        if (!webViewManager && methodName !== "init") {
+            webViewManagerCallWaits.push([
+                className,
+                methodName,
+                listenerID,
+                args
+            ]);
+            return;
+        }
+
+        if (navigator.userAgent.indexOf("YINENG_ANDROID") >= 0) {
+            window.JSBridge.postMessage(
+                className,
+                methodName,
+                webViewManager || 0,
+                listenerID,
+                JSON.stringify(args)
+            );
+        } else if (navigator.userAgent.indexOf("YINENG_IOS") >= 0) {
+            window.webkit.messageHandlers.Native.postMessage([
+                className,
+                methodName,
+                webViewManager || 0,
+                listenerID,
+                ...args
+            ]);
+        }
+    };
+
+    window.handle_Native_ThrowError = function(className, methodName, message) {
+        alert(
+            "handle_Native_ThrowError, className = " +
+                className +
+                ", methodName = " +
+                methodName +
+                ", message = " +
+                message
+        );
+    };
+
+    window.handle_Native_Message = function(cbID, code, ...args) {
+        if (cbID === 0) return;
+
+        var cb = callIDMap[cbID];
+        if (cb) {
+            cb.apply(undefined, args);
+            delete callIDMap[cbID];
+        }
+    };
+
+    window["onWebViewPostMessage"] = function(fromWebView, message) {
+        var RPC_REPLY_START = "$WEBVIEW_RPC_REPLY: ";
+
+        // 收到对方的rpc回应，处理
+        if (message.startsWith(RPC_REPLY_START)) {
+            message = message.slice(RPC_REPLY_START.length);
+            var data = JSON.parse(message);
+            return handleRpcReply(data);
+        }
+    };
+
+    var handleRpcReply = function(sign) {
+        var funcs = rpcIDMap[sign.rpcID];
+        var f = funcs && funcs[sign.callbackID];
+        if (f) {
+            f.apply(undefined, sign.args);
+        }
+
+        delete rpcIDMap[rpcID];
+    };
+
+    var callIDMax = 0;
+    var callIDMap = {};
+
+    var callID = ++callIDMax;
+    callIDMap[callID] = function(id) {
+        webViewManager = id;
+
+        for (var i = 0; i < webViewManagerCallWaits.length; ++i) {
+            (function(w) {
+                setTimeout(() => {
+                    nativeCall(w[0], w[1], w[2], w[3]);
+                }, 0);
+            })(webViewManagerCallWaits[i]);
+        }
+
+        webViewManagerCallWaits.length = 0;
+    };
+
+    nativeCall("WebViewManager", "init", callID);
+    return rpcCall;
+})();
+
+
+window.pi_jsApi.authorize = function(payload,callBack){
+    createStyleTag();
+    createElementTag();
+    var $items = document.querySelector(".pi-update-items");
+    $items.innerHTML = "";
+    if(payload.avatar){
+        var $item = document.createElement("div");
+        $item.setAttribute("class","pi-update-item");
+        $item.innerHTML =  "用户头像";
+        $items.appendChild($item);
+    }
+    if(payload.nickName){
+        var $item = document.createElement("div");
+        $item.setAttribute("class","pi-update-item");
+        $item.innerHTML =  "用户昵称";
+        $items.appendChild($item);
+    }
+    var $mask = document.querySelector(".pi-mask");
+    $mask.style.display = "flex";
+
+    var $ok = document.querySelector(".pi-update-ok-btn");
+    var $cancel = document.querySelector(".pi-update-cancel-btn");
+    $ok.addEventListener("click",function(){
+        pi_RPC_Method("app/api/JSAPI", "authorize", payload, function (error, result) {
+            console.log('getOpenId call success',error);
+            console.log('getOpenId call success',result);
+            callBack(error,result);
+        });
+        closePop();
+        
+    });
+
+    $cancel.addEventListener("click",function(){
+        callBack(new Error("user not allow authorize!!!"));
+        closePop();
+    });
+    
+}
+
+
+
+// PI_END

@@ -6,7 +6,7 @@
         type="{{it.itype ? it.itype : 'text'}}" 
         autocomplete="off"
         placeholder="{{it.placeHolder?it.placeHolder:''}}" 
-        value="{{it1.currentValue}}"
+        value="{{it.currentValue}}"
         disabled={{ it.disabled ? true : false}}
         on-input="change"
         on-blur="blur"

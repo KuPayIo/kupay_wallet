@@ -22,7 +22,8 @@ export class RecommendFM extends Widget {
         this.init();
     }
     public init() {
-        this.state = {
+        this.props = {
+            ...this.props,
             productList:[]
         };
         if (this.props.isActive) {
@@ -31,18 +32,18 @@ export class RecommendFM extends Widget {
     }
 
     public updateProductList(productList:Product[]) {
-        this.state.productList = productList;
+        this.props.productList = productList;
         this.paint();
     }
 
     public fmListItemClick(e:any,index:number) {
-        const product = this.state.productList[index];
+        const product = this.props.productList[index];
         popNew('app-view-wallet-financialManagement-productDetail',{ product });
     }
 }
 
 // 理财产品变化
-register('activity/financialManagement/products', async (productList) => {
+register('activity/financialManagement/products',(productList) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateProductList(productList);

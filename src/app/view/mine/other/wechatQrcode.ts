@@ -6,19 +6,33 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { findModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../modulConfig';
 // ==================================================导出
+
+interface Props {
+    walletName:string;
+    wachatHelperQrcode:string;
+    wachatQrcode:string;
+    fg:number;
+}
 
 export class WechatQrcode extends Widget {
     public ok: () => void;
     public language:any;
-    public create() {
-        super.create();
+    public props:Props;
+
+    public setProps(props:any) {
+        super.setProps(props);
+        this.initData();
+    }
+
+    public initData() {
         this.language = this.config.value[getLang()];
-        this.state = {
-            walletName:findModulConfig('WALLET_NAME'),
-            wachatHelperQrcode:findModulConfig('WECHAT_HELPER'),
-            wachatQrcode:findModulConfig('WECHAT_ACCOUNT')
+        this.props = {
+            ...this.props,
+            walletName:getModulConfig('WALLET_NAME'),
+            wachatHelperQrcode:getModulConfig('WECHAT_HELPER'),
+            wachatQrcode:getModulConfig('WECHAT_ACCOUNT')
         };
     }
 

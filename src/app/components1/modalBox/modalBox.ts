@@ -15,10 +15,6 @@ export class ModalBox extends Widget {
     public ok: () => void;
     public cancel: () => void;
 
-    public create() {
-        super.create();
-        this.state = {};
-    }
     public cancelBtnClick(e: any) {
         this.cancel && this.cancel();
     }

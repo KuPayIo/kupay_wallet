@@ -1,21 +1,21 @@
 /**
  * 数据更新中心
  */
-import { defaultEthToAddr, ERC20Tokens, MainChainCoin } from '../config';
+import { btcNetwork, defaultEthToAddr, ERC20Tokens, MainChainCoin } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
+import { getGoldPrice } from '../net/pull';
 import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
-import { estimateGasERC20,getShapeShiftCoins,getTransactionsByAddr } from '../net/pullWallet';
+import { getShapeShiftCoins } from '../net/pullWallet';
 import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
 import { getStore,register,setStore } from '../store/memstore';
-import { btcNetwork, erc20GasLimitRate, ethTokenTransferCode, lang } from '../utils/constants';
-import { formatBalance,getAddrsAll,getConfirmBlockNumber,parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
-import { ethTokenDivideDecimals,sat2Btc,smallUnit2LargeUnit,wei2Eth } from '../utils/unitTools';
+import { erc20GasLimitRate, ethTokenTransferCode, lang } from '../utils/constants';
+import { formatBalance,getAddrsAll,getConfirmBlockNumber,getCurrentEthAddr, parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
+import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 import { fetchLocalTxByHash,fetchTransactionList,getMnemonicByHash } from '../utils/walletTools';
-import { getCurrentEthAddr } from './localWallet';
 /**
  * 创建事件处理器表
  * @example
@@ -38,11 +38,12 @@ export class DataCenter {
     public init() {
         // 获取shapeshift支持货币
         // getShapeShiftCoins();
-
+        // 更新黄金价格
+        this.updateGoldPrice();
         // 更新人民币美元汇率
-        this.updateUSDRate();
+        // this.updateUSDRate();
         // 更新货币对比USDT的比率
-        this.updateCurrency2USDTRate();
+        // this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
         this.refreshAllTx();
     }
@@ -132,7 +133,7 @@ export class DataCenter {
         if (!wallet) return;
         const curAllAddrs = getAddrsAll(wallet);
         curAllAddrs.forEach(item => {
-            getTransactionsByAddr(item);
+            // getTransactionsByAddr(item);
         });
     }
   
@@ -195,7 +196,7 @@ export class DataCenter {
 
             return api.ethCall(ERC20Tokens[currencyName].contractAddr, balanceOfCode)
                 .then(r => {
-                    const num = ethTokenDivideDecimals(Number(r), currencyName);
+                    const num = formatBalance(ethTokenDivideDecimals(Number(r), currencyName));
                     this.setBalance(addr, currencyName, num);
                 });
         }
@@ -254,7 +255,7 @@ export class DataCenter {
 
   // 币币交易记录定时器
     private currencyExchangeTimerStart() {
-        this.fetchCurrencyExchangeTx();
+        // this.fetchCurrencyExchangeTx();
         this.currencyExchangeTimer = setTimeout(() => {
             this.currencyExchangeTimerStart();
         }, 30 * 1000);
@@ -573,7 +574,7 @@ export class DataCenter {
             needConfirmedBlockNumber,
             info: '无',
             currencyName: 'BTC',
-            fee: tx.fees,
+            fee: formatBalance(tx.fees),
             nonce: -1
         };
         updateLocalTx(record);
@@ -902,6 +903,21 @@ export class DataCenter {
     }
 
     /**
+     * 整点更新黄金价格
+     */
+    private updateGoldPrice() {
+        const nextPoint = new Date();
+        nextPoint.setHours(nextPoint.getHours() + 1);
+        nextPoint.setMinutes(0);
+        nextPoint.setSeconds(0);
+        const delay = nextPoint.getTime() - new Date().getTime();
+        getGoldPrice();
+        setTimeout(() => {
+            this.updateGoldPrice();
+        },delay);
+    }
+
+    /**
      * 整点更新货币对比USDT的比率
      */
     private updateCurrency2USDTRate() {
@@ -953,6 +969,16 @@ export class DataCenter {
         },delay);
     }
 }
+
+// =====================================================
+
+const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amount:number | string) => {
+    const api = new EthApi();
+
+    const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
+
+    return api.estimateGas({ to: ERC20Tokens[currencyName].contractAddr,from:fromAddr, value:'0x0', data: transferCode });
+};
 
 // ============================================ 立即执行
 /**

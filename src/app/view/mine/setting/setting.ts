@@ -7,7 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStore, register, setStore } from '../../../store/memstore';
-import { logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
+import { hasWallet, logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -32,7 +32,7 @@ export class Setting extends Widget {
         const lan = getStore('setting/language', 'zh_Hans');
         const unit = getStore('setting/currencyUnit', 'CNY');
         const color = getStore('setting/changeColor', 'redUp');
-        this.state = {
+        this.props = {
             lockScreenPsw: '',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
             lockScreenTitle: '',  // 锁屏密码页面标题
@@ -50,12 +50,12 @@ export class Setting extends Widget {
     public initData() {
         const wallet = getStore('wallet');
         if (wallet) {
-            this.state.wallet = wallet;
+            this.props.wallet = wallet;
         }
         const ls = getStore('setting/lockScreen');
         if (ls) {
-            this.state.lockScreenPsw = ls.psw;
-            this.state.openLockScreen = ls.psw && ls.open !== false;
+            this.props.lockScreenPsw = ls.psw;
+            this.props.openLockScreen = ls.psw && ls.open !== false;
         }
 
         this.paint();
@@ -64,41 +64,27 @@ export class Setting extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
-
-    /**
-     * 判断当前用户是否已经创建钱包
-     */
-    public judgeWallet() {
-        if (this.state.wallet) {
-            return true;
-        }
-        popNew('app-components1-modalBox-modalBox', this.language.modalBox1, () => {
-            popNew('app-view-wallet-create-home');
-        });
-
-        return false;
-    }
     /**
      * 处理锁屏开关切换
      */
     public onSwitchChange() {
-        if (this.state.openLockScreen) {   // 如果锁屏开关打开则直接关闭
+        if (this.props.openLockScreen) {   // 如果锁屏开关打开则直接关闭
             const ls = getStore('setting/lockScreen');
             ls.open = !ls.open;
-            this.state.openLockScreen = false;
+            this.props.openLockScreen = false;
             setStore('setting/lockScreen', ls);
-        } else if (this.state.wallet) {
+        } else if (this.props.wallet) {
             popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
                 if (!r) {
                     this.closeLockPsw();
-                    this.state.openLockScreen = false;
+                    this.props.openLockScreen = false;
                 } else {
-                    this.state.openLockScreen = true;
+                    this.props.openLockScreen = true;
                 }
             });
         } else {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components1-modalBox-modalBox', this.language.modalBox1, () => {
+            popNew('app-components1-modalBox-toLoginBox', null, () => {
                 popNew('app-view-wallet-create-home');
             }, () => {
                 this.closeLockPsw();
@@ -112,8 +98,8 @@ export class Setting extends Widget {
      * 关闭锁屏开关
      */
     public closeLockPsw() {
-        this.state.openLockScreen = false;
-        this.state.lockScreenPsw = '';
+        this.props.openLockScreen = false;
+        this.props.lockScreenPsw = '';
         this.paint();
     }
 
@@ -121,10 +107,8 @@ export class Setting extends Widget {
      * 点击切换基础属性 
      */
     public itemClick(ind: number) {
-        // if (!this.judgeWallet()) {
-        //     return;
-        // }
-        const data = this.state.itemList[ind];
+        // if (!hasWallet()) return;
+        const data = this.props.itemList[ind];
         popNew('app-view-mine-setting-itemList', data);
     }
 
@@ -145,10 +129,8 @@ export class Setting extends Widget {
      * 退出账户不删除信息
      */
     public logOut() {
-        if (!this.judgeWallet()) {
-            return;
-        }
-        const backup = this.state.wallet.isBackup;
+        if (!hasWallet()) return;
+        const backup = this.props.wallet.isBackup;
         popNew('app-components1-modalBox-modalBox', backup ? this.language.modalBox2[1] :this.language.modalBox2[0] , () => {
             if (!backup) {
                 this.backUp();
@@ -166,10 +148,8 @@ export class Setting extends Widget {
      * 注销账户
      */
     public logOutDel() {
-        if (!this.judgeWallet()) {
-            return;
-        }
-        const backup = this.state.wallet.isBackup;
+        if (!hasWallet()) return;
+        const backup = this.props.wallet.isBackup;
         popNew('app-components1-modalBox-modalBox', backup ? this.language.modalBox3[1] :this.language.modalBox3[0] , () => {
             if (!backup) {
                 this.backUp();

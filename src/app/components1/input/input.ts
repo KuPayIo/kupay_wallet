@@ -29,15 +29,14 @@ interface Props {
     notUnderLine?:boolean;
 }
 interface State {
-    currentValue:string;
+    currentValue:string|number;
     focused:boolean;
     showClear:boolean;
     inputLock:boolean; // 中文输入结束标记，未结束时不执行change方法
 }
 
 export class Input extends Widget {
-    public props: Props;
-    public state: State;
+    public props: any;
     public language :any;
     
     public setProps(props: Props, oldProps: Props) {
@@ -51,7 +50,8 @@ export class Input extends Widget {
         if (props.input) {
             currentValue = props.input;
         }
-        this.state = {
+        this.props = {
+            ...this.props,
             currentValue,
             focused: false,
             showClear:false,
@@ -70,7 +70,7 @@ export class Input extends Widget {
             this.props = {};
         }
         paintCmd3(this.getInput(), 'readOnly', this.props.disabled || false);
-        (<any>this.getInput()).value = this.state.currentValue;
+        (<any>this.getInput()).value = this.props.currentValue;
         paintWidget(this, reset);
     }
     /**
@@ -91,7 +91,7 @@ export class Input extends Widget {
      */
     public compositionstart() {
         if (this.props.itype === 'text') {
-            this.state.inputLock = true;
+            this.props.inputLock = true;
         }
     }
     
@@ -99,14 +99,14 @@ export class Input extends Widget {
      * 用户输入完成,点击候选词或确认按钮时触发
      */
     public compositionend() {
-        this.state.inputLock = false;
+        this.props.inputLock = false;
     }
 
     /**
      * 输入事件
      */
     public change(event:any) {
-        if (this.state.inputLock) {
+        if (this.props.inputLock) {
             return;
         }
         let currentValue = event.currentTarget.value;
@@ -114,38 +114,50 @@ export class Input extends Widget {
         if (this.props.maxLength) {
             currentValue = String(currentValue).slice(0,this.props.maxLength);
         }
-        // 密码输入时检验非法字符
+        // 密码输入 时检验非法字符
         if (this.props.itype === 'password' && !this.availableJudge(currentValue) && currentValue.length > 0) {
             popNew('app-components1-message-message',{ content:this.language.disAvailable });
             currentValue = currentValue.slice(0,currentValue.length - 1); 
         }
-        // 数字输入时检验输入格式
+        // 数字输入 时检验输入格式
         if (this.props.itype === 'number' && currentValue.length > 0) {
             currentValue = currentValue.replace(/[^\d\.]/g,''); 
             if (!this.numberJudge(currentValue)) {
                 currentValue = currentValue.slice(0,currentValue.length - 1); 
             }
         }
-        // 整数输入时检验输入格式
+        // 整数输入 时检验输入格式
         if (this.props.itype === 'integer' && currentValue.length > 0) {
-            currentValue = currentValue.replace(/[\D]/g,''); 
+            currentValue = Number(currentValue.replace(/[\D]/g,'')); 
         }
-        this.state.currentValue = currentValue;
-        this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
+        // 两位小数 时检验输入格式
+        if (this.props.itype === 'moneyNum' && currentValue.length > 0) {
+            currentValue = currentValue.replace(/[^\d\.]/g,''); 
+            if (!this.numberJudge(currentValue)) {
+                currentValue = currentValue.slice(0,currentValue.length - 1);
+            }
+            const numAry = currentValue.split('.');
+            if (numAry[1]) {
+                numAry[1] = numAry[1].slice(0,2);
+                currentValue = numAry.join('.');   
+            }
+        }
+        this.props.currentValue = currentValue;
+        this.props.showClear = this.props.clearable && !this.props.disabled && this.props.currentValue !== '' && this.props.focused;
         
         (<any>this.getInput()).value = currentValue;
-        notify(event.node,'ev-input-change',{ value:this.state.currentValue }); 
-        this.state.focused = true;
-        this.paint();  
+        notify(event.node,'ev-input-change',{ value:this.props.currentValue }); 
+        this.props.focused = true;
+        // this.paint();  
     }
 
     /**
      * 失焦事件
      */
     public onBlur(event:any) {
-        this.state.focused = false;
-        this.state.showClear = false;
-        notify(event.node,'ev-input-blur',{ value:this.state.currentValue });
+        this.props.focused = false;
+        this.props.showClear = false;
+        notify(event.node,'ev-input-blur',{ value:this.props.currentValue });
         this.paint();
     }
 
@@ -153,16 +165,16 @@ export class Input extends Widget {
      * 聚焦事件
      */
     public onFocus(event:any) {
-        this.state.focused = true;
-        this.state.showClear = this.props.clearable && !this.props.disabled && this.state.currentValue !== '' && this.state.focused;
+        this.props.focused = true;
+        this.props.showClear = this.props.clearable && !this.props.disabled && this.props.currentValue !== '' && this.props.focused;
         notify(event.node,'ev-input-focus',{});
         this.paint();
     }
    
     // 清空文本框
     public clearClickListener(event:any) {
-        this.state.currentValue = '';
-        this.state.showClear = false;
+        this.props.currentValue = '';
+        this.props.showClear = false;
         (<any>this.getInput()).value = '';
         notify(event.node,'ev-input-clear',{});  
         this.paint();      

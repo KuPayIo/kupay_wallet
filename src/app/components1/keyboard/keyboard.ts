@@ -10,7 +10,7 @@ interface Props {
 }
 
 export class KeyBoard extends Widget {
-    public props: Props;
+    public props: any;
     public ok:(value:string) => void;
     public cancel:() => void;
     constructor() {
@@ -23,7 +23,8 @@ export class KeyBoard extends Widget {
     }
 
     public init() {
-        this.state = {
+        this.props = {
+            ...this.props,
             defArr:[1,2,3,4,5,6],
             numbers:[1,2,3,4,5,6,7,8,9,'',0,'x'],
             pswArr:[],
@@ -35,10 +36,10 @@ export class KeyBoard extends Widget {
      * 键盘点击事件处理
      */
     public boardItemClick(ind:number) {
-        const val = this.state.numbers[ind];
+        const val = this.props.numbers[ind];
 
         if (val !== '' && val !== 'x') {
-            this.state.pswArr.push(val);
+            this.props.pswArr.push(val);
             this.paint();
         } else if (val === 'x') {
             this.clearClick();
@@ -46,9 +47,9 @@ export class KeyBoard extends Widget {
             return;
         }
 
-        if (this.state.pswArr.length === 6) {
+        if (this.props.pswArr.length === 6) {
             setTimeout(() => {
-                this.ok && this.ok(this.state.pswArr.join(''));
+                this.ok && this.ok(this.props.pswArr.join(''));
             }, 100);
         }
     }
@@ -57,8 +58,8 @@ export class KeyBoard extends Widget {
      * 清除输入数据
      */
     public clearClick() {
-        if (this.state.pswArr.length === 0) return;
-        this.state.pswArr.pop();
+        if (this.props.pswArr.length === 0) return;
+        this.props.pswArr.pop();
         this.paint();
     }
 
