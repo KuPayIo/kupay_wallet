@@ -98,7 +98,7 @@ export class Exchange extends Widget {
 
                 return;
             }
-            value = await inputInviteCdKey(validCode);  // 兑换邀请红包
+            value = await inputInviteCdKey(validCode);  // 兑换邀请码
             if (!value) {
                 
                 return;

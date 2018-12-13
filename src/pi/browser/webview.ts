@@ -25,6 +25,24 @@ export class WebViewManager extends NativeObject {
     }
 
     /**
+     * 创建一个新的webview，但不会显示出来
+     * 一般用于微信支付
+     * headers = {"Referer": url}
+     */
+    static newView(webViewName: string, url: string, headers: any) {
+        headers = headers || {};
+        let headerString = JSON.stringify(headers);
+        webViewMgr.call("newView", { webViewName, url, headers: headerString });
+    }
+
+    /**
+     * 只有newView的东西，才能用freeView释放
+     */
+    static freeView(webViewName: string) {
+        webViewMgr.call("freeView", { webViewName });
+    }
+
+    /**
      * 往指定名字的WebView发信息
      */
     static postMessage(webViewName: string, message: string) {
@@ -88,6 +106,20 @@ export class WebViewManager extends NativeObject {
 // ========================= implmentation
 
 registerSign(WebViewManager, {
+    newView: [{
+        name: "webViewName",
+        type: ParamType.String
+    }, {
+        name: "url",
+        type: ParamType.String
+    }, {
+        name: "headers",
+        type: ParamType.String
+    }],
+    freeView: [{
+        name: "webViewName",
+        type: ParamType.String
+    }],
     openWebView: [{
         name: "webViewName",
         type: ParamType.String
@@ -100,7 +132,7 @@ registerSign(WebViewManager, {
     }, {
         name: "injectContent",
         type: ParamType.String
-    }],    
+    }],
     closeWebView: [{
         name: "webViewName",
         type: ParamType.String

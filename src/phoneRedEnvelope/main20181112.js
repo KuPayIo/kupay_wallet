@@ -58,7 +58,7 @@ const Config= {
         redEnvDesc:[
             "您收到一个红包",
             "金额随机，试试手气",
-            "您收到一个邀请红包"
+            "您收到一个邀请码"
         ],
         redEnvLook:"看看大家手气",
         errorList:[
@@ -95,7 +95,7 @@ const Config= {
         redEnvDesc:[
             "您收到一個紅包",
             "金額隨機，試試手氣",
-            "您收到一個邀請紅包"
+            "您收到一個邀請碼"
         ],
         redEnvLook:"看看大家手氣",
         errorList:[

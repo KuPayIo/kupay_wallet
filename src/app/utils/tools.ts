@@ -1478,7 +1478,7 @@ export const logoutAccountDel = () => {
         luckyMoney: {
             sends: null,          // 发送红包记录
             exchange: null,       // 兑换红包记录
-            invite: null          // 邀请红包记录
+            invite: null          // 邀请码记录
         },
         mining: {
             total: null,      // 挖矿汇总信息

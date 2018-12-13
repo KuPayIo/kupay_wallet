@@ -102,6 +102,13 @@ export class PlayHome extends Widget {
      * 刷新页面
      */
     public refreshPage() {
+    
+        setTimeout(() => {
+            document.getElementById('hhh').scrollTop += 500;
+        },0);
+        setTimeout(() => {
+            document.getElementById('hhh').scrollTop -= 500;
+        },1000);
         this.props.refresh = true;
         this.paint();
         setTimeout(() => {

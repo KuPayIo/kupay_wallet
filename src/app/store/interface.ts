@@ -57,7 +57,7 @@ export enum CloudCurrencyType {
 export enum LuckyMoneyType {
     Normal = '00',   // 等额红包
     Random = '01',   // 随机红包
-    Invite = '99'    // 邀请红包
+    Invite = '99'    // 邀请码
 }
 
 /**
@@ -143,7 +143,7 @@ export interface Setting {
 export interface LuckyMoney {
     sends: LuckyMoneySendHistory;          // 发送红包记录
     exchange: LuckyMoneyExchangeHistory;   // 兑换红包记录
-    invite: LuckyMoneyExchangeHistory;     // 邀请红包记录
+    invite: LuckyMoneyExchangeHistory;     // 邀请码记录
 }
 
 /**
@@ -414,7 +414,7 @@ export interface LuckyMoneyExchangeHistory {
 export interface LuckyMoneyExchangeDetail {
     suid: number;              // 发送者uid
     rid: string;               // 红包id
-    rtype: number;             // 红包类型 0-普通红包，1-拼手气红包，99-邀请红包
+    rtype: number;             // 红包类型 0-普通红包，1-拼手气红包，99-邀请码
     rtypeShow: string;
     ctype: number;             // 币种
     ctypeShow: string;

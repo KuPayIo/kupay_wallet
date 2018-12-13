@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getOrderDetail } from '../../../utils/pay';
+import { getOrderDetail, getPayState } from '../../../utils/pay';
 import { formatBalance, popNewMessage, timestampFormat } from '../../../utils/tools';
 
 // ============================导出
@@ -14,6 +14,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
     oid:string;
+    firstQuery:boolean;
     state:string;
     transactionTime:string;
     transactionType:string;
@@ -30,6 +31,7 @@ enum PayState {
 export class TransactionDetails extends Widget {
     public props:Props = {
         oid:'',
+        firstQuery:false,
         state:'失败',
         transactionTime:'0',
         transactionType:'未支付',
@@ -40,22 +42,39 @@ export class TransactionDetails extends Widget {
 
     public setProps(props:any) {
         this.props.oid = props.oid;
+        this.props.firstQuery = props.firstQuery || false;
         super.setProps(this.props);
         this.initData();
     }
 
+    /**
+     * 获取数据
+     */
     public initData() {
-        getOrderDetail(this.props.oid,(res) => {
-            this.props.state = PayState[res.state];
-            this.props.GTNum = res.num / 1000000;
-            this.props.money = res.total / 100;
-            this.props.transactionTime = timestampFormat(res.time * 1000); 
-            this.props.transactionType = res.payType === 'alipay' ? '支付宝支付' :'微信支付' ;
-            this.paint();
-        },(err) => {
-            this.props.state = PayState[3];                
-            this.paint();
-        });
+        if (this.props.firstQuery) {
+            getPayState(this.props.oid,(res) => {
+                this.setData(res);
+            },(err) => {
+                this.props.state = PayState[3];                
+                this.paint();
+            });
+        } else {
+            getOrderDetail(this.props.oid,(res) => {
+                this.setData(res);
+            },(err) => {
+                this.props.state = PayState[3];                
+                this.paint();
+            });
+        }
+    }
+    
+    public setData(res:any) {
+        this.props.state = PayState[res.state];
+        this.props.GTNum = res.num / 1000000;
+        this.props.money = res.total / 100;
+        this.props.transactionTime = timestampFormat(res.time * 1000); 
+        this.props.transactionType = res.payType === 'alipay' ? '支付宝支付' :'微信支付' ;
+        this.paint();
     }
 
     /**

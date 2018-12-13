@@ -973,7 +973,7 @@ ${walletName}团队
         cloudAccountDetail: {
             types: [
                 '挖矿',
-                '邀请红包',
+                '邀请码',
                 '领红包',
                 '发红包',
                 '充值',
@@ -988,7 +988,7 @@ ${walletName}团队
         luckeyMoney:{
             ordinary:'普通红包',
             random:'随机红包',
-            invite:'邀请红包'
+            invite:'邀请码'
         },
         // 购买理财
         bugProduct:{
@@ -1623,7 +1623,7 @@ ${walletName}团队
         cloudAccountDetail: {
             types: [
                 '挖礦',
-                '邀請紅包',
+                '邀請碼',
                 '領紅包',
                 '發紅包',
                 '充值',
@@ -1638,7 +1638,7 @@ ${walletName}团队
         luckeyMoney:{
             ordinary:'普通紅包',
             random:'隨機紅包',
-            invite:'邀請紅包'
+            invite:'邀請碼'
         },
         // 购买理财
         bugProduct:{

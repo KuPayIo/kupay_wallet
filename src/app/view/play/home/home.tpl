@@ -1,9 +1,9 @@
-<div class="new-page" w-class="new-page">
-    <div w-class="topBack">
+<div class="new-page" w-class="new-page" >
+    <div w-class="topBack" ev-refresh-click="refreshPage">
         <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
         <app-components1-topBar-topBar1>{avatar:{{it.avatar}} }</app-components1-topBar-topBar1>
     </div>
-    <div w-class="body">
+    <div w-class="body" id="hhh">
         <widget w-tag="app-components1-card-card" on-tap="gameClick(0)">{title:{{it.gameList[0].title}},img:{{it.gameList[0].img}},desc:{{it.gameList[0].desc}} }</widget>
         
         <div w-class="hot-games">
