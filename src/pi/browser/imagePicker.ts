@@ -2,6 +2,7 @@
  * 图片导入（本地、相机）
  */
 import { NativeObject, ParamType, registerSign } from './native';
+import { base64ToArrayBuffer } from '../util/base64';
 
 export class ImagePicker extends NativeObject {
     /**
@@ -13,11 +14,24 @@ export class ImagePicker extends NativeObject {
     }
 
     /**
-     * 打开相机拍摄
-     * @param param 参数
+     * 
+     * @param param {success: ArrayBuffer}
      */
-    public openCamera(param: any) {
-        // todo
+    public getContent(param: any) {
+        let old = param.success;
+        
+        if (old) {
+            param.success = base64 => {
+                let buffer = base64ToArrayBuffer(base64);
+                old(buffer);
+            }
+        }
+        
+        this.call('getContent', param);
+    }
+
+    public getAHash(param: any) {
+        this.call('getAHash', param);
     }
 }
 
@@ -35,5 +49,7 @@ registerSign(ImagePicker, {
             name: 'max',// 可以选择多张的情况下最大可以选择的张数
             type: ParamType.Number
         }
-    ]
+    ],
+    getContent: [],
+    getAHash: [],
 });

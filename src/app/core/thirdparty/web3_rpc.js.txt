@@ -1,4 +1,6 @@
 console.log("PI注入web3成功");
+
+
 require = (function() {
     function e(t, n, r) {
         function s(o, u) {
@@ -5062,14 +5064,14 @@ Adds the callback and sets up the methods, to iterate over the results.
                         100% {transform: translateY(1500px);}
                     }
                     .contain{
-                        zoom: 0.5;
                         position: absolute;
-                        top: 100px;
+                        top: 200px;
                         left: 50px;
                         right: 50px;
                         background: #fff;
                         text-align:left;
                         border-radius:12px;
+                        padding-bottom:30px;
                     }
                     .item{
                         height: 110px;
@@ -5309,7 +5311,7 @@ Adds the callback and sets up the methods, to iterate over the results.
                         body.removeChild(loading);
                     }
                     function closePopBox(){
-                        var popBox = document.querySelector("#pop-box");
+                        var popBox = document.querySelector("#pi-pop-root");
                         var body = document.querySelector("body");
                         body.removeChild(popBox);
                     }
@@ -5341,6 +5343,42 @@ Adds the callback and sets up the methods, to iterate over the results.
                             .appendChild(newScript);
                         window.piFlags.createScript = true;
                     }
+
+                        
+                    function browserAdaptive() {
+                        var cfg = {
+                            width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+                        };
+                        var clientWidth = document.documentElement.clientWidth;
+                        var clientHeight = document.documentElement.clientHeight;
+                        oldHeight = clientHeight;
+                        rootWidth = cfg.width;
+                        rootHeight = cfg.height;
+                        let scaleW = clientWidth / rootWidth;
+                        let scaleH = clientHeight / rootHeight;
+                        if (cfg.wscale >= cfg.hscale) {
+                            // 宽度比例变动
+                            if (scaleW > scaleH * (cfg.wscale + 1)) {
+                                // 大于规定的比例
+                                rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+                            } else {
+                                rootWidth = (clientWidth / scaleH) | 0;
+                            }
+                            rootScale = scaleW = scaleH;
+                        } else {
+                            // 高度比例变动
+                            if (scaleH > scaleW * (cfg.hscale + 1)) {
+                                rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+                            } else {
+                                rootHeight = (clientHeight / scaleW) | 0;
+                            }
+                            rootScale = scaleH = scaleW;
+                        }
+                        rootX = (clientWidth - rootWidth) / 2;
+                        rootY = (clientHeight - rootHeight) / 2;
+                        var cssText = 'z-index:99999;position: fixed;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+                        return cssText;
+                    };
                     if (!window.piFlags.createStyle) {
                         createStyleTag();
                     }
@@ -5353,45 +5391,45 @@ Adds the callback and sets up the methods, to iterate over the results.
                     var toAddr = payload.params[0].to;
                     var fromAddr = payload.params[0].from;
                     // 0x3782dace9d90000
-                    var pay =
-                        Number(payload.params[0].value) / Math.pow(10, 18);
+                    var pay = Number(payload.params[0].value) / Math.pow(10, 18);
                     var div = document.createElement("div");
-                    div.setAttribute(
-                        "style",
-                        "position:absolute;top:0;left:0;bottom:0;right:0;background: rgba(50, 50, 50, 0.5);"
-                    );
-                    div.setAttribute("id", "pop-box");
+                    div.setAttribute("style",browserAdaptive());
+                    div.setAttribute("id", "pi-pop-root");
                     //style="animation: containIn 0.2s forwards;"
-                    div.innerHTML = `<div class="contain" >
-                    <div class="minerTitle">
-                        <span style="flex:1 0 0;">确认支付</span>
-                    </div>
-                    <div class="item">
-                        <span class="title">金额:</span>
-                        <div>
-                            <span id="sendNum">${pay}</span>
-                            <span id="ctype">ETH</span>
+                    div.innerHTML = `
+                    <div style="position:absolute;top:0;left:0;bottom:0;right:0;background: rgba(50, 50, 50, 0.5);">
+                        <div class="contain" >
+                            <div class="minerTitle">
+                                <span style="flex:1 0 0;">确认支付</span>
+                            </div>
+                            <div class="item">
+                                <span class="title">金额:</span>
+                                <div>
+                                    <span id="sendNum">${pay.toFixed(6)}</span>
+                                    <span id="ctype">ETH</span>
+                                </div>
+                            </div>
+                            
+                            <div class="item1">
+                                <span class="title">发给:</span>
+                                <span class="content">${window.piGameName}</span>
+                                <div class="address" id="to">${toAddr}</div>
+                            </div>
+                            <div class="item1">
+                                <span class="title">余额:</span>
+                                <span class="content"><span id="balance">0</span>&nbsp;ETH</span>
+                                <div class="address" id="from">${fromAddr}</div>
+                            </div>
+                            <div class="pswBox">
+                                <input type="password" placeholder="输入密码" class="password" id="pi-psw"/>
+                            </div>
+                            <div class="btns">
+                                <div class="cancel" onclick="doClose()">取消</div>
+                                <div class="confirm" onclick="doSure()">确认</div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="item1">
-                        <span class="title">发给:</span>
-                        <span class="content">Crypto Fishing</span>
-                        <div class="address" id="to">${toAddr}</div>
-                    </div>
-                    <div class="item1">
-                        <span class="title">余额:</span>
-                        <span class="content"><span id="balance">0</span>&nbsp;ETH</span>
-                        <div class="address" id="from">${fromAddr}</div>
-                    </div>
-                    <div class="pswBox">
-                        <input type="password" placeholder="输入密码" class="password" id="pi-psw"/>
-                    </div>
-                    <div class="btns">
-                        <div class="cancel" onclick="doClose()">取消</div>
-                        <div class="confirm" onclick="doSure()">确认</div>
-                    </div>
-                </div>`;
+                `;
                     document.body.appendChild(div);
                     setTimeout(function() {
                         document.querySelector("#pi-psw").focus();
@@ -6400,7 +6438,7 @@ Check if the current connection is still valid.
 
                 Object.defineProperty(Eth.prototype, "defaultAccount", {
                     get: function() {
-                        return c.defaultAccount;
+                        return window.piWeb3EthDefaultAccount || c.defaultAccount;
                     },
                     set: function(val) {
                         c.defaultAccount = val;
@@ -19823,7 +19861,7 @@ Adds the callback and sets up the methods, to iterate over the results.
                     // PI_BEGIN
                     window.web3 = new window.Web3(
                         new window.Web3.providers.HttpProvider(
-                            "https://rinkeby.infura.io/Y4zS49bjsYwtRU3Tt4Yj"
+                            piWeb3ProviderNetWork
                         )
                     );
                     // PI_END

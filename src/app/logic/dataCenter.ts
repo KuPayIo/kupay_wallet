@@ -8,6 +8,7 @@ import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { getGoldPrice } from '../net/pull';
 import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
+import { getShapeShiftCoins } from '../net/pullWallet';
 import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
 import { getStore,register,setStore } from '../store/memstore';
@@ -37,7 +38,6 @@ export class DataCenter {
     public init() {
         // 获取shapeshift支持货币
         // getShapeShiftCoins();
-
         // 更新黄金价格
         this.updateGoldPrice();
         // 更新人民币美元汇率

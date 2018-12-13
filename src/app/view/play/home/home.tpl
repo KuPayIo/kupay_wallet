@@ -5,7 +5,6 @@
     </div>
     <div w-class="body" id="hhh">
         <widget w-tag="app-components1-card-card" on-tap="gameClick(0)">{title:{{it.gameList[0].title}},img:{{it.gameList[0].img}},desc:{{it.gameList[0].desc}} }</widget>
-        
         <div w-class="hot-games">
             <div w-class="hot-game-title"><pi-ui-lang>{"zh_Hans":"热门DApp","zh_Hant":"熱門DApp","en":""}</pi-ui-lang></div>
             {{for ind,item of it.gameList}}
@@ -15,6 +14,5 @@
             {{end}}
             
         </div>
-        <div on-tap="openTestClick">打开测试网页</div>
     </div>
 </div>

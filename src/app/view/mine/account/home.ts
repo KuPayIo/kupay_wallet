@@ -4,13 +4,12 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
-import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { walletNameAvailable } from '../../../utils/account';
-import { getUserInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { getUserInfo, imgResize, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -115,18 +114,21 @@ export class AccountHome extends Widget {
     }
 
     public uploadAvatar() {
-        selectImage((width, height, base64) => {
-            resize({ url: base64, width: 140, ratio: 0.3, type: 'jpeg' }, (res) => {
-                console.log('resize---------', res);
-                this.props.chooseImage = true;
-                // tslint:disable-next-line:max-line-length
-                this.props.avatarHtml = `<div style="background-image: url(${res.base64});width: 120px;height: 120px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
-                this.props.avatar = res.base64;
-                this.paint();
-                uploadFile(this.props.avatar);
+        const imagePicker = selectImage((width, height, url) => {
+            console.log('selectImage url = ',url);
+            // tslint:disable-next-line:max-line-length
+            this.props.avatarHtml = `<div style="background-image: url(${url});width: 120px;height: 120px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+            this.props.chooseImage = true;
+            this.props.avatar = url;
+            this.paint();
+            imagePicker.getContent({
+                success(buffer:ArrayBuffer) {
+                    imgResize(buffer,(res) => {
+                        uploadFile(res.base64);
+                    });
+                }
             });
         });
-
     }
 
     /**

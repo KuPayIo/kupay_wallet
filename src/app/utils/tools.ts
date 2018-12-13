@@ -6,6 +6,7 @@ import { closeCon, setBottomLayerReloginMsg } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
+import { resize } from '../../pi/widget/resize/resize';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { getDeviceId } from '../logic/native';
@@ -1064,6 +1065,36 @@ export const base64ToFile = (base64: string) => {
     console.log(newFile);
 
     return newFile;
+};
+
+/**
+ * arrayBuffer转file格式
+ */
+export const arrayBuffer2File = (buffer:ArrayBuffer) => {
+    const u8Arr = new Uint8Array(buffer);
+    const blob = new Blob([u8Arr], { type: 'image/jpeg' });
+    const newFile = new File([blob], 'avatar.jpeg', { type: blob.type });
+    console.log('arrayBuffer2File = ',newFile);
+
+    return newFile;
+};
+
+/**
+ * arrayBuffer图片压缩
+ * @param buffer 图片arraybuffer
+ */
+export const imgResize = (buffer:ArrayBuffer,callback:Function) => {
+    const file = arrayBuffer2File(buffer);
+    const fr = new FileReader();
+    fr.readAsDataURL(file); 
+    fr.onload = () => { 
+        const dataUrl = fr.result.toString();  
+        resize({ url: dataUrl, width: 140, ratio: 0.3, type: 'jpeg' }, (res) => {
+            console.log('resize---------', res);
+            callback(res);
+        });
+    };
+    
 };
 
 /**

@@ -196,8 +196,8 @@ const concatU8 = (data1: Uint8Array, data2: Uint8Array) => {
 const rawslice = (raw: Uint8Array, index: number, chunkSize: number) => {
 	const start = index * chunkSize;
 	const end = start + chunkSize > raw.length
-		? raw.length
-		: start + chunkSize;
+        ? raw.length
+        : start + chunkSize;
 
-	return raw.slice(start, end);
+    return raw.slice(start, end);
 };
