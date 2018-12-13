@@ -54,7 +54,7 @@ export class RedEnvHistory extends Widget {
      * 更新数据
      */
     public async initData() {
-        const data = await getInviteCodeDetail(); // 获取邀请红包记录
+        const data = await getInviteCodeDetail(); // 获取邀请码记录
         if (data) {
             this.props.recordList.push({
                 rid:'-1' ,

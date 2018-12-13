@@ -747,7 +747,7 @@ export const fetchCloudTotalAssets = () => {
  */
 export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
     let balanceValue = 0;
-    const USD2CNYRate = getStore('third/rate', 0);
+    const USD2CNYRate = getStore('third/rate', 1);
     const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
     const goldPrice = getStore('third/goldPrice/price') || 0;
@@ -760,7 +760,7 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
         }
     } else if (currencyUnit === 'USD') {
         if (currencyName === 'GT') {
-            balanceValue = (balance * (goldPrice) / 100) / USD2CNYRate;
+            balanceValue = (balance * (goldPrice / 100)) / USD2CNYRate;
         } else {
             balanceValue = balance * currency2USDT.close;
         }
@@ -1509,7 +1509,7 @@ export const logoutAccountDel = () => {
         luckyMoney: {
             sends: null,          // 发送红包记录
             exchange: null,       // 兑换红包记录
-            invite: null          // 邀请红包记录
+            invite: null          // 邀请码记录
         },
         mining: {
             total: null,      // 挖矿汇总信息

@@ -476,7 +476,7 @@ export const parseExchangeDetail = (value) => {
 };
 
 /**
- * 解析我的邀请红包被领取记录
+ * 解析我的邀请码被领取记录
  */
 export const parseMyInviteRedEnv = (value) => {
     if (value) return;
