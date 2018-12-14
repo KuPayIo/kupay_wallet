@@ -52,7 +52,7 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
                 });
             } else if (orderDetail.payType === 'wxpay') { // 微信H5支付
                 jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
-                jumpPay(jumpData, okCb, failCb);
+                jumpWxpay(jumpData, okCb, failCb);
             }
 
         } else {
@@ -94,12 +94,12 @@ export const checkOrder = (order: OrderDetail): boolean => {
 };
 
 /**
- * 跳转微信、支付宝支付
+ * 跳转微信支付
  * @param order 订单支付跳转信息
  * @param okCb 成功回调
  * @param failCb 失败回调
  */
-export const jumpPay = (order, okCb?: Function, failCb?: Function) => {
+export const jumpWxpay = (order, okCb?: Function, failCb?: Function) => {
 
     WebViewManager.newView('payWebView',order.mweb_url,{ Referer: getModulConfig('PAY_DOMAIN') });
     setTimeout(() => {
@@ -120,7 +120,7 @@ export const jumpPay = (order, okCb?: Function, failCb?: Function) => {
 };
 
 /**
- * 支付宝支付
+ * 跳转支付宝支付
  * @param order 订单支付跳转信息
  * @param okCb 成功回调
  * @param failCb 失败回调
