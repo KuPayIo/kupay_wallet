@@ -32,8 +32,8 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class TopBar extends Widget {
     public props:Props;
     
-    public setProps(oldProps:Json,props:Json) {
-        super.setProps(oldProps,props);
+    public setProps(props:Json,oldProps:Json) {
+        super.setProps(props,oldProps);
         this.props.refresh = false;
     }
 

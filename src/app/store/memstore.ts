@@ -66,7 +66,7 @@ export const getStore = (path: string, defaultValue = undefined) => {
         }
     }
 
-    return deepCopy(ret) || defaultValue;
+    return typeof deepCopy(ret) === 'boolean' ? deepCopy(ret) : (deepCopy(ret) || defaultValue);
 };
 
 /**

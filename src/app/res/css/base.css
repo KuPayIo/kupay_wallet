@@ -99,3 +99,8 @@ div{
 .refreshing{
    animation: refreshingRotated 1s infinite;
 }
+
+.award-gift-item:nth-child(3n+2){
+    margin: 0 55px;
+    color: red;
+}
