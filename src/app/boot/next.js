@@ -92,7 +92,8 @@ winit.initNext = function () {
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/earn/home/",
-			"app/view/wallet/home/"
+			"app/view/wallet/home/",
+			"app/view/earn/activity/"
 		];
 
 		console.time('firstload');

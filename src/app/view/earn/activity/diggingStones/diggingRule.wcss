@@ -1,0 +1,117 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+.body{
+    flex: 1 0 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 30px 20px;
+}
+.rule-container{
+    background-color: #fff;
+    background:rgba(255,255,255,1);
+    box-shadow:rgb(175, 118, 118)a(0,0,0,0.2);
+    border-radius:12px;
+    padding: 100px 30px 300px;
+    color:rgba(34,34,34,1);
+}
+.title{
+    font-size:48px;
+    line-height:46px;
+    text-align: center;
+}
+.desc{
+    font-size:28px;
+    line-height:50px;
+}
+.hoe-type{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 45px;
+    margin-bottom: 100px;
+}
+.hoe-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+.hoe-box{
+    width:90px;
+    height:90px;
+    border-radius:18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background:rgba(204,204,204,1);
+    border:2px solid rgba(38,67,96,0.5);
+}
+.hoe-name{
+    font-size:28px;
+    color:rgba(136,136,136,1);
+    line-height:50px;
+    margin-top: 15px;
+}
+.dividing{
+    font-size:72px;
+    line-height: 72px;
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    margin: 0 25px;
+}
+.get-type{
+    margin: 100px 0;
+}
+.get-item{
+    margin-bottom: 50px;
+}
+.get-item-title{
+    font-size:32px;
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    line-height:50px;
+    font-family:"PingFangSC-Medium";
+}
+.get-item-desc{
+    font-size:28px;
+    font-weight:400;
+    color:rgba(136,136,136,1);
+    line-height:50px;
+}
+.action{
+    margin-left: 15px;
+    font-size:28px;
+    color:rgba(69,126,239,1);
+}
+.stone-type-title{
+    font-size:32px;
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    line-height:50px;
+    margin-top: 100px;
+    font-family:"PingFangSC-Medium";
+}
+.stone-type{
+    display: flex;
+    align-items: flex-end;
+}
+.stone-type-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.stone-name{
+    font-size:28px;
+    font-weight:400;
+    color:rgba(136,136,136,1);
+    line-height:50px;
+}
+.stone-desc{
+    font-size:28px;
+    color:rgba(136,136,136,1);
+    line-height:50px;
+    margin-top: 30px;
+}

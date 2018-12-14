@@ -1271,7 +1271,7 @@ export const getGoldPrice = async (ispay:number = 0) => {
             setStore('third/goldPrice',{ price:resData.price,change:resData.change });
         }
     } catch (err) {
-        showError(err && (err.result || err.type));
+        // showError(err && (err.result || err.type));
 
     }
 };

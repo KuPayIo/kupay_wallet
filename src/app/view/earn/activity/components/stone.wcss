@@ -1,0 +1,18 @@
+.stone{
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+.hp-bg{
+    position: absolute;
+    width:100px;
+    height:10px;
+    background:rgba(204,204,204,1);
+    border-radius:7px;
+    overflow: hidden;
+}
+.hp{
+    width: 30%;
+    background:rgba(170,64,17,1);
+    height: 100%;
+}
