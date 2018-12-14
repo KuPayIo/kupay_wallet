@@ -7,7 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStore, register, setStore } from '../../../store/memstore';
-import { logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
+import { hasWallet, logoutAccount, logoutAccountDel, popPswBox } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -64,20 +64,6 @@ export class Setting extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
-
-    /**
-     * 判断当前用户是否已经创建钱包
-     */
-    public judgeWallet() {
-        if (this.props.wallet) {
-            return true;
-        }
-        popNew('app-components1-modalBox-modalBox', this.language.modalBox1, () => {
-            popNew('app-view-wallet-create-home');
-        });
-
-        return false;
-    }
     /**
      * 处理锁屏开关切换
      */
@@ -98,7 +84,7 @@ export class Setting extends Widget {
             });
         } else {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components1-modalBox-modalBox', this.language.modalBox1, () => {
+            popNew('app-components1-modalBox-toLoginBox', null, () => {
                 popNew('app-view-wallet-create-home');
             }, () => {
                 this.closeLockPsw();
@@ -121,9 +107,7 @@ export class Setting extends Widget {
      * 点击切换基础属性 
      */
     public itemClick(ind: number) {
-        // if (!this.judgeWallet()) {
-        //     return;
-        // }
+        // if (!hasWallet()) return;
         const data = this.props.itemList[ind];
         popNew('app-view-mine-setting-itemList', data);
     }
@@ -145,9 +129,7 @@ export class Setting extends Widget {
      * 退出账户不删除信息
      */
     public logOut() {
-        if (!this.judgeWallet()) {
-            return;
-        }
+        if (!hasWallet()) return;
         const backup = this.props.wallet.isBackup;
         popNew('app-components1-modalBox-modalBox', backup ? this.language.modalBox2[1] :this.language.modalBox2[0] , () => {
             if (!backup) {
@@ -166,9 +148,7 @@ export class Setting extends Widget {
      * 注销账户
      */
     public logOutDel() {
-        if (!this.judgeWallet()) {
-            return;
-        }
+        if (!hasWallet()) return;
         const backup = this.props.wallet.isBackup;
         popNew('app-components1-modalBox-modalBox', backup ? this.language.modalBox3[1] :this.language.modalBox3[0] , () => {
             if (!backup) {

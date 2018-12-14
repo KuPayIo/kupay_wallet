@@ -94,15 +94,14 @@ export class RechargeGT extends Widget {
             payType: this.props.payType, // 支付方式
             type:CloudCurrencyType.GT // 充值类型
         };
-        const allLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType.GT).otherLogs;
         confirmPay(orderDetail,(res) => {
             this.props.num = 0.00;
             this.props.total = 0.00;
             this.props.payType = 'alipay';
             
-            popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:res.oid });
+            popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:res.oid,firstQuery:true });
             getServerCloudBalance();
-            getAccountDetail('GT',1,allLogs.start);
+            getAccountDetail('GT',1);
             this.paint();
         },() => {
             getServerCloudBalance();

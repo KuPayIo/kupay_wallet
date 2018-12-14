@@ -1,4 +1,6 @@
+import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
+import { getModulConfig } from '../modulConfig';
 import { requestAsync } from '../net/pull';
 import { showError } from './toolMessages';
 import { popNewMessage } from './tools';
@@ -44,13 +46,13 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
                     body: URLencode(resData.JsData)// 这里是请求对象
                 }).then((res) => {
                     jumpData.mweb_url = res.url;
-                    jumpPay(jumpData, okCb, failCb);
+                    jumpAlipay(jumpData, okCb, failCb);
                 }).catch((err) => {
                     failCb && failCb(err);
                 });
             } else if (orderDetail.payType === 'wxpay') { // 微信H5支付
                 jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
-                jumpPay(jumpData, okCb, failCb);
+                jumpWxpay(jumpData, okCb, failCb);
             }
 
         } else {
@@ -92,17 +94,14 @@ export const checkOrder = (order: OrderDetail): boolean => {
 };
 
 /**
- * 跳转微信、支付宝支付
+ * 跳转微信支付
  * @param order 订单支付跳转信息
  * @param okCb 成功回调
  * @param failCb 失败回调
  */
-export const jumpPay = (order, okCb?: Function, failCb?: Function) => {
-    const payIframe = document.createElement('iframe');
-    payIframe.setAttribute('sandbox', 'allow-scripts allow-top-navigation');
-    payIframe.setAttribute('src', order.mweb_url);
-    payIframe.setAttribute('style', 'position:absolute;width:0px;height:0px;visibility:hidden;');
-    document.body.appendChild(payIframe);
+export const jumpWxpay = (order, okCb?: Function, failCb?: Function) => {
+
+    WebViewManager.newView('payWebView',order.mweb_url,{ Referer: getModulConfig('PAY_DOMAIN') });
     setTimeout(() => {
         popNew('app-components1-modalBox-modalBox', {
             title: '',
@@ -112,10 +111,39 @@ export const jumpPay = (order, okCb?: Function, failCb?: Function) => {
             cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
         }, () => {
             okCb && okCb(order);
-            document.body.removeChild(payIframe);
+            WebViewManager.freeView('payWebView');
         }, () => {
             failCb && failCb();
-            document.body.removeChild(payIframe);
+            WebViewManager.freeView('payWebView');
+        });
+    }, 5000);
+};
+
+/**
+ * 跳转支付宝支付
+ * @param order 订单支付跳转信息
+ * @param okCb 成功回调
+ * @param failCb 失败回调
+ */
+export const jumpAlipay = (order, okCb?: Function, failCb?: Function) => {
+    const $payIframe = document.createElement('iframe');
+    $payIframe.setAttribute('sandbox', 'allow-scripts allow-top-navigation');
+    $payIframe.setAttribute('src', order.mweb_url);
+    $payIframe.setAttribute('style', 'position:absolute;width:0px;height:0px;visibility:hidden;');
+    document.body.appendChild($payIframe);
+    setTimeout(() => {
+        popNew('app-components1-modalBox-modalBox', {
+            title: '',
+            content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
+            style: 'color:#F7931A;',
+            sureText: { zh_Hans: '支付成功', zh_Hant: '支付成功', en: '' },
+            cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
+        }, () => {
+            okCb && okCb(order);
+            document.body.removeChild($payIframe);
+        }, () => {
+            failCb && failCb();
+            document.body.removeChild($payIframe);
         });
     }, 5000);
 };
@@ -127,6 +155,11 @@ export const jumpPay = (order, okCb?: Function, failCb?: Function) => {
  * @param failCb 失败回调
  */
 export const getPayState = async (oid: string, okCb?: Function, failCb?: Function) => {
+    if (!oid) {
+        failCb && failCb('oid is not ready');
+
+        return;
+    }
     const msg = { type: 'order_query', param: { oid } };
     try {
         const resData: any = await requestAsync(msg);

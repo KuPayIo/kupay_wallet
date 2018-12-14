@@ -11,7 +11,7 @@ import { getStore } from '../../../store/memstore';
 
 interface Props {
     rid: string;
-    rtype:string;  // '00' 等额红包  '01' 拼手气红包  '99' 邀请红包
+    rtype:string;  // '00' 等额红包  '01' 拼手气红包  '99' 邀请码
     message: string;
 }
 export class SendRedEnv extends Widget {

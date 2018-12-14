@@ -28,7 +28,7 @@
                     <div on-tap="goDetail({{ind}})">
                         {{let desc = {"zh_Hans":val.curNum+"/"+val.totalNum + "个","zh_Hant":val.curNum+"/"+val.totalNum + "個","en":""} }}
                         {{let outDate = {"zh_Hans":"已过期","zh_Hant":"已過期","en":""} }}	
-                        {{let rtypeShow = [{"zh_Hans":"普通红包","zh_Hant":"普通紅包","en":""},{"zh_Hans":"拼手气红包","zh_Hant":"拼手氣紅包","en":""},{"zh_Hans":"邀请红包","zh_Hant":"邀請紅包","en":""}] }}
+                        {{let rtypeShow = [{"zh_Hans":"普通红包","zh_Hant":"普通紅包","en":""},{"zh_Hans":"拼手气红包","zh_Hant":"拼手氣紅包","en":""},{"zh_Hans":"邀请码","zh_Hant":"邀請碼","en":""}] }}
 
                         <app-components-fourParaItem-fourParaItem>
                             {name:{{rtypeShow[val.rtype]}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},describe:{{val.outDate ? outDate :desc}} }

@@ -31,7 +31,6 @@
     align-items: center;
     padding-top: 20px;
     padding-left: 30px;
-    position: relative;
 }
 .makeMoney{
     width: 70px;
@@ -47,8 +46,6 @@
     width: 40px;
     height: 40px;
     border: 20px solid transparent;
-    position: absolute;
-    right: 10px;
 }
 .totalNum{
     height: 100px;

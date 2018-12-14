@@ -747,7 +747,7 @@ export const fetchCloudTotalAssets = () => {
  */
 export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
     let balanceValue = 0;
-    const USD2CNYRate = getStore('third/rate', 0);
+    const USD2CNYRate = getStore('third/rate', 1);
     const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
     const goldPrice = getStore('third/goldPrice/price') || 0;
@@ -760,7 +760,7 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
         }
     } else if (currencyUnit === 'USD') {
         if (currencyName === 'GT') {
-            balanceValue = (balance * (goldPrice) / 100) / USD2CNYRate;
+            balanceValue = (balance * (goldPrice / 100)) / USD2CNYRate;
         } else {
             balanceValue = balance * currency2USDT.close;
         }
@@ -857,12 +857,7 @@ export const fetchCloudWalletAssetList = () => {
 export const hasWallet = () => {
     const wallet = getStore('wallet');
     if (!wallet) {
-        popNew('app-components1-modalBox-modalBox', {
-            title: { zh_Hans:'提示',zh_Hant:'提示',en:'' },
-            content: { zh_Hans:'你还没有登录，去登录使用更多功能吧',zh_Hant:'你還沒有登錄，去登錄使用更多功能吧',en:'' },
-            sureText: { zh_Hans:'去登录',zh_Hant:'去登錄',en:'' },
-            cancelText: { zh_Hans:'暂时不',zh_Hant:'暫時不',en:'' }
-        }, () => {
+        popNew('app-components1-modalBox-toLoginBox',null, () => {
             popNew('app-view-wallet-create-home');
             // popNew('app-view-base-localImg');
         });
@@ -1514,7 +1509,7 @@ export const logoutAccountDel = () => {
         luckyMoney: {
             sends: null,          // 发送红包记录
             exchange: null,       // 兑换红包记录
-            invite: null          // 邀请红包记录
+            invite: null          // 邀请码记录
         },
         mining: {
             total: null,      // 挖矿汇总信息

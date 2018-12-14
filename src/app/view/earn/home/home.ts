@@ -10,7 +10,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getAward, getMining, getMiningRank, getServerCloudBalance } from '../../../net/pull';
 import { CloudCurrencyType, Mining } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
-import { formatBalance, getUserInfo } from '../../../utils/tools';
+import { formatBalance, getUserInfo, hasWallet } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -67,19 +67,6 @@ export class PlayHome extends Widget {
         
         this.initData();
     }
-    /**
-     * 判断当前用户是否已经创建钱包
-     */
-    public judgeWallet() {
-        if (this.props.hasWallet) {
-            return true;
-        }
-        popNew('app-components1-modalBox-modalBox', this.language.login, () => {
-            popNew('app-view-wallet-create-home');
-        });
-
-        return false;
-    }
 
     /**
      * 打开我的设置
@@ -99,9 +86,7 @@ export class PlayHome extends Widget {
      * 跳转到下一页
      */
     public goNextPage(ind: number) {
-        if (!this.judgeWallet()) {
-            return;
-        }
+        if (!hasWallet()) return;
         popNew(this.props.page[ind], { ktBalance: this.props.ktBalance });
     }
 
@@ -117,9 +102,7 @@ export class PlayHome extends Widget {
      * 点击挖矿按钮
      */
     public async doPadding() {
-        if (!this.judgeWallet()) {
-            return;
-        }
+        if (!hasWallet()) return;
         if (this.props.mines > 0 && this.props.firstClick) { // 如果本次可挖大于0并且是首次点击，则需要真正的挖矿操作并刷新数据
             await getAward();
             this.props.firstClick = false;
@@ -184,9 +167,7 @@ export class PlayHome extends Widget {
      * 进入活动详情
      */
     public doActivity(ind:number) {
-        if (!this.judgeWallet()) {
-            return;
-        }
+        if (!hasWallet()) return;
         switch (ind) {
             case 0:
                 popNew('app-view-earn-activity-verifyPhone');
