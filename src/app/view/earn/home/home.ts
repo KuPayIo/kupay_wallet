@@ -170,7 +170,8 @@ export class PlayHome extends Widget {
         if (!hasWallet()) return;
         switch (ind) {
             case 0:
-                popNew('app-view-earn-activity-verifyPhone');
+                popNew('app-view-earn-ticketCenter-ticketCenter');
+                // popNew('app-view-earn-activity-verifyPhone');
                 break;
             case 1:
                 popNew('app-view-earn-activity-inviteFriend');
