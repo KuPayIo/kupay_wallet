@@ -168,8 +168,6 @@ winit.initNext = function () {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
-
-
 	
 	// 更新模块
 	var updateMod = pi_modules.update.exports;
@@ -189,6 +187,60 @@ winit.initNext = function () {
 		pi_modules.commonjs.exports.flags = html.userAgent(flags);
 		flags.userinfo = userinfo;
 
+
+		//FIXME:直接一次性加载了整个聊天项目，这里需要细化
+
+		//加载聊天框架代码
+		var loadChatFramework = function () {
+			util.loadDir(["chat/client/rpc/", "pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
+				loadChatApp()
+			}, function (r) {
+				alert("加载目录失败, " + r.error + ":" + r.reason);
+			}, dirProcess.handler);
+		}
+
+		//加载聊天APP部分代码，实际项目中会分的更细致
+		var loadChatApp = function () {
+			util.loadDir(["chat/client/app/demo_view/","chat/client/app/widget/","chat/client/app/res/css/","chat/client/app/res/images/"], flags, fm, undefined, function (fileMap) {
+				var tab = util.loadCssRes(fileMap);
+				// 将预加载的资源缓冲90秒，释放
+				tab.timeout = 90000;
+				tab.release();
+				registerChatStruct();
+			}, function (r) {
+				alert("加载目录失败, " + r.error + ":" + r.reason);
+			}, dirProcess.handler);
+		}
+
+		//初始化rpc服务
+		var registerChatStruct = function () {
+			util.loadDir(["chat/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {
+				pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
+				pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.initClient();
+				loadEmoji();
+			}, function (r) {
+				alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
+			}, dirProcess.handler);
+		};
+
+		var loadEmoji = function() {
+			util.loadDir(["chat/client/app/res/emoji/"],flags,fm,undefined,function(fileMap,mods){
+				//TODO: 可以长期放在缓存中达到更快的显示效果
+				loadChatImg();
+			},function (r) {
+				alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
+			}, dirProcess.handler)
+		}
+
+		var loadChatImg = function () {
+			util.loadDir(["chat/client/app/res/chatImg/"],flags,fm,undefined,function(fileMap,mods){
+				//TODO: 可以长期放在缓存中达到更快的显示效果
+				//FIXME 临时在此处加载，其实应该先加载这一部分代码
+				loadImages(util, fm);
+			},function (r) {
+				alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
+			}, dirProcess.handler)
+		}
 		/**
 		 * 先判断浏览器对webp的支持；
 		 * 加载所有的预处理图片
@@ -198,8 +250,9 @@ winit.initNext = function () {
 		 */
 		html.checkWebpFeature(function (r) {
 			flags.webp = flags.webp || r;
-
-			loadImages(util, fm);
+			//FIXME 临时在此处加载，其实应该先加载loadImages(util, fm);
+			loadChatFramework()
+			// loadImages(util, fm);
 		});
 	}, function (result) {
 		alert("加载基础模块失败, " + result.error + ":" + result.reason);

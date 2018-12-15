@@ -1,1 +1,0 @@
-<div w-inner={{it}}></div>
