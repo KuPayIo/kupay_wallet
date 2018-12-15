@@ -160,6 +160,21 @@ export class PlayHome extends Widget {
         }, 100);
 
     }
+    /**
+     * 福利活动进入
+     * @param ind 福利顺序
+     */
+    public goActivity(ind:number){
+        switch (ind) {
+            case 4:
+                popNew('app-view-earn-client-view-ticketCenter-ticketCenter');//奖券中心
+                break;
+        
+            default:
+
+                break;
+        }
+    }
 
     /**
      * 屏幕滑动
@@ -191,22 +206,6 @@ export class PlayHome extends Widget {
             this.paint();
         }, 1000);
 
-    }
-
-    /**
-     * 进入活动详情
-     */
-    public doActivity(ind:number) {
-        if (!hasWallet()) return;
-        switch (ind) {
-            case 0:
-                popNew('app-view-earn-activity-verifyPhone');
-                break;
-            case 1:
-                popNew('app-view-earn-activity-inviteFriend');
-                break;
-            default:
-        }
     }
 
     /**

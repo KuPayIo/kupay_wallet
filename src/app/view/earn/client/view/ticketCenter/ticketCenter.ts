@@ -1,15 +1,14 @@
+import { Widget } from "../../../../../../pi/widget/widget";
+import { popNew } from "../../../../../../pi/ui/root";
+
 /**
  * 奖券中心-首页
  */
 
-import { Widget } from "../../../../pi/widget/widget";
-import { popNew } from "../../../../pi/ui/root";
+export class TicketCenter extends Widget {
+    public ok: () => void;
 
 
- export class TicketCenter extends Widget{
-    public ok:()=>void;
-
-    
     /**
      * 查看历史记录
      */
@@ -19,8 +18,8 @@ import { popNew } from "../../../../pi/ui/root";
 
     /**
      * 返回上一页
-     */    
+     */
     public backPrePage() {
-        this.ok && this.ok(); 
+        this.ok && this.ok();
     }
- }
+}

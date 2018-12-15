@@ -44,8 +44,8 @@
             </div>
 
             <div w-class="welfare-container">
-                {{for item of it.welfareActivities}}
-                <div w-class="welfare-activities-item" class="welfare-activities-item">
+                {{for ind,item of it.welfareActivities}}
+                <div w-class="welfare-activities-item" on-tap="goActivity({{ind}})" class="welfare-activities-item">
                     <img src="../../res/image1/{{item.img}}"/>
                     <div w-class="welfare-box">
                         <div w-class="welfare-title">{{item.title}}</div>
