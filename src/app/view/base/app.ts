@@ -59,7 +59,7 @@ export class App extends Widget {
                     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
-                    components: 'app-view-earn-home-home1'
+                    components: 'app-view-earn-home-home'
                 },
                 wallet: {
                     modulName: 'APP_WALLET',
