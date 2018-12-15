@@ -104,3 +104,6 @@ div{
     margin: 0 55px;
     color: red;
 }
+.welfare-activities-item:nth-child(2n){
+    margin-left: 10px;
+}

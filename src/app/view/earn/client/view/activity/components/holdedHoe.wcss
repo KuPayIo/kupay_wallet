@@ -1,0 +1,26 @@
+.box{
+    width:90px;
+    height:90px;
+    background:rgba(255,255,255,1);
+    border-radius:18px;
+    border:2px solid rgba(204,204,204,1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.holded-num{
+    padding: 0 7px;
+    height:30px;
+    background:rgba(34,34,34,1);
+    border-radius:6px;
+    border:1px solid rgba(204,204,204,1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 24px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
