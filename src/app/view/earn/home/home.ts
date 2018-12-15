@@ -179,6 +179,9 @@ export class PlayHome extends Widget {
         }
     }
 
+    public openDemo(){
+        popNew('app-view-demo-client-demo');
+    }
     /**
      * 获取更新数据
      */     
