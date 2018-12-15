@@ -29,6 +29,24 @@
     line-height: 40px;
     margin-bottom: 30px;
 }
+.countdown{
+    font-size:48px;
+    color:rgba(255,255,255,1);
+    line-height:67px;
+    margin-top: 12px;
+}
+.award-container{
+    position: absolute;
+    right: 35px;
+    top: 55px;
+}
+.award-item{
+    margin-bottom: 20px;
+}
+.award-icon{
+    width: 40px;
+    height: 40px;
+}
 .box1{
     position: absolute;
     bottom: 40px;

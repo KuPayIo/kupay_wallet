@@ -1,11 +1,24 @@
 <div class="new-page" style="display: flex;flex-direction: column;" ev-refresh-click="refreshPage">
     
     <div w-class="contain" on-scroll="scrollPage" id="earn-home">
-        <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
         <div w-class="topBack">
             <div w-class="stone-card">
-                
-
+                <div w-class="holded-hoes">
+                    <app-view-earn-activity-components-holdedHoe></app-view-earn-activity-components-holdedHoe>
+                    <app-view-earn-activity-components-holdedHoe style="margin:0 15px;"></app-view-earn-activity-components-holdedHoe>
+                    <app-view-earn-activity-components-holdedHoe></app-view-earn-activity-components-holdedHoe>
+                </div>
+                <div w-class="explanation-box">
+                    <div w-class="explanation"><span>采矿说明</span><img src="../../../res/image/explanation.png" w-class="explanation-icon"/></div>
+                    <div w-class="action">看广告得锄头</div>
+                </div>
+                <div w-class="stone"></div>
+                <div w-class="holded-stone">我的矿星</div>
+                <div w-class="medals">
+                    {{for i of [0,0,0,0,0,0,0,0,0,0,0]}}
+                    <img src="../../../res/image/fail.png" w-class="medal"/>
+                    {{end}}
+                </div>
             </div>
             <div w-class="menuCard">
                 <div w-class="oneBtn" on-tap="goNextPage(1)">
@@ -18,7 +31,7 @@
                 </div>
                 <div w-class="oneBtn" on-tap="goNextPage(3)">
                     <img src="../../../res/image1/btn_yun_3.png" w-class="btnImg"/>
-                    <div w-class="btnMess"><pi-ui-lang>{"zh_Hans":"兑换","zh_Hant":"兌換","en":""}</pi-ui-lang></div>
+                    <div w-class="btnMess"><pi-ui-lang>{"zh_Hans":"兑换码","zh_Hant":"兌換碼","en":""}</pi-ui-lang></div>
                 </div>
                 <div w-class="oneBtn" on-tap="goNextPage(4)">
                     <img src="../../../res/image1/btn_yun_4.png" w-class="btnImg"/>
@@ -30,9 +43,16 @@
                 <span w-class="welfare"><pi-ui-lang>{"zh_Hans":"福利活动","zh_Hant":"福利活動","en":""}</pi-ui-lang></span>
             </div>
 
-            <div style="margin: 15px 20px;">
-                <widget w-tag="pi-ui-langImg" style="height: 250px;width: 100%;" on-tap="doActivity(0)">{"zh_Hans":"app/res/image1/activity1_CN.jpg","zh_Hant":"app/res/image1/activity1_TW.jpg","en":""}</widget>
-                <widget w-tag="pi-ui-langImg" style="height: 250px;width: 100%;margin-top: 30px;"  on-tap="doActivity(1)">{"zh_Hans":"app/res/image1/activity2_CN.jpg","zh_Hant":"app/res/image1/activity2_TW.jpg","en":""}</widget>
+            <div w-class="welfare-container">
+                {{for item of it.welfareActivities}}
+                <div w-class="welfare-activities-item" class="welfare-activities-item">
+                    <img src="../../../res/image1/{{item.img}}"/>
+                    <div w-class="welfare-box">
+                        <div w-class="welfare-title">{{item.title}}</div>
+                        <div w-class="welfare-desc">{{item.desc}}</div>
+                    </div>
+                </div>
+                {{end}}
             </div>
         </div>  
     </div>

@@ -21,7 +21,8 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
     public ok: () => void;
     public language:any;
-
+    public props:any;
+    public config:any;
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.init();
@@ -59,7 +60,36 @@ export class PlayHome extends Widget {
             scroll: false,
             scrollHeight: 0,
             refresh: false,
-            avatar: '../../res/image1/default_avatar.png'
+            avatar: '../../res/image1/default_avatar.png',
+            welfareActivities:[{
+                img:'btn_yun_5.png',
+                title:'邀请好友',
+                desc:'累计邀请有好礼'
+            },{
+                img:'btn_yun_6.png',
+                title:'验证手机',
+                desc:'额外赠送2500KT'
+            },{
+                img:'btn_yun_7.png',
+                title:'开宝箱',
+                desc:'不定期上新物品'
+            },{
+                img:'btn_yun_8.png',
+                title:'大转盘',
+                desc:'试试我的手气'
+            },{
+                img:'btn_yun_9.png',
+                title:'奖券中心',
+                desc:'可以抽奖兑换物品'
+            },{
+                img:'btn_yun_10.png',
+                title:'兑换物品',
+                desc:'不定期上新物品'
+            },{
+                img:'btn_yun_11.png',
+                title:'我的物品',
+                desc:'兑换和中奖的物品'
+            }]
         };
         setTimeout(() => {
             this.scrollPage();
