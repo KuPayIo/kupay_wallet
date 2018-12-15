@@ -66,7 +66,7 @@ export const getStore = (path: string, defaultValue = undefined) => {
         }
     }
 
-    return deepCopy(ret) || defaultValue;
+    return typeof deepCopy(ret) === 'boolean' ? deepCopy(ret) : (deepCopy(ret) || defaultValue);
 };
 
 /**
@@ -542,7 +542,7 @@ const store: Store = {
         luckyMoney: {
             sends: null,          // 发送红包记录
             exchange: null,       // 兑换红包记录
-            invite: null          // 邀请红包记录
+            invite: null          // 邀请码记录
         },
         mining: {
             total: null,      // 挖矿汇总信息

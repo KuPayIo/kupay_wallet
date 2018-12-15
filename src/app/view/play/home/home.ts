@@ -65,7 +65,7 @@ export class PlayHome extends Widget {
         this.props.gameList = [
             {
                 title:{ zh_Hans:'fomosports',zh_Hant:'fomosports',en:'' },
-                desc:{ zh_Hans:'要买要快，不要只是看',zh_Hant:'要买要快，不要只是看',en:'' },
+                desc:{ zh_Hans:'要买要快，不要只是看',zh_Hant:'要買要快，不要只是看',en:'' },
                 img:'app/res/image1/fomosports.jpg',
                 url:'https://test.fomosports.me/'
             },
@@ -104,6 +104,13 @@ export class PlayHome extends Widget {
      * 刷新页面
      */
     public refreshPage() {
+    
+        setTimeout(() => {
+            document.getElementById('hhh').scrollTop += 500;
+        },0);
+        setTimeout(() => {
+            document.getElementById('hhh').scrollTop -= 500;
+        },1000);
         this.props.refresh = true;
         this.paint();
         setTimeout(() => {

@@ -16,7 +16,8 @@ const appModulConfig = {
     LOGIN_IMG:'app/res/image/login_bg.png',  // 登录页面图片
     WALLET_LOGO:'app/res/image/img_logo.png', // 钱包logo
     WECHAT_HELPER:'app/res/image/wechat_robot.jpg',  // 微信小助手二维码
-    WECHAT_ACCOUNT:'app/res/image/wechat_pn.jpg'  // 微信公众号二维码
+    WECHAT_ACCOUNT:'app/res/image/wechat_pn.jpg',  // 微信公众号二维码
+    PAY_DOMAIN:'http://app.herominer.net'   // 支付注册域名
 };
 
 export const getModulConfig = (modulName: string) => {

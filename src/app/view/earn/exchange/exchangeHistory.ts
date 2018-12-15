@@ -22,10 +22,10 @@ interface Props {
     refresh:boolean; // 是否加载更多数据
     hasMore:boolean; // 是否还有更多记录
     showMoreTips:boolean; // 是否显示底部加载更多提示
-    convertNumber:number; // 兑换总数，不包含邀请红包
+    convertNumber:number; // 兑换总数，不包含邀请码
     convertNumberShow:number; // 兑换总数
     scrollHeight:number;  // 页面滑动高度
-    inviteObj:any; // 邀请红包对象
+    inviteObj:any; // 邀请码对象
     userList:any[]; // 用户信息列表
     topRefresh:boolean; // 头部刷新按钮
 }
@@ -109,7 +109,7 @@ export class ExchangeHistory extends Widget {
         popNew('app-view-earn-exchange-exchangeDetail',this.props.recordListShow[ind]);
     }
 
-    // 获取邀请红包记录
+    // 获取邀请码记录
     public async getInviteRedEnvelope() {
         const inviteRedBagRec = getStore('activity/luckyMoney/invite');
         if (inviteRedBagRec) {
@@ -138,7 +138,7 @@ export class ExchangeHistory extends Widget {
         }
     }
 
-    // 每次paint前对邀请红包做处理
+    // 每次paint前对邀请码做处理
     public innerPaint() {
         if (!this.props.inviteObj) {
             this.props.convertNumberShow = this.props.convertNumber;

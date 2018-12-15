@@ -47,7 +47,7 @@ const Config= {
         copySuccess:"复制成功",
         shortMess:walletName+"安全的一站式资产管理平台",
         immeDownload:"立即下载",
-        installTutorial:"Android安装教程",
+        installTutorial:"使用教程",
         step1:"点击“立即下载”按钮下载安装文件",
         step2:walletName+"成功安装",
         step3:"进入APP并创建钱包",
@@ -58,7 +58,7 @@ const Config= {
         redEnvDesc:[
             "您收到一个红包",
             "金额随机，试试手气",
-            "您收到一个邀请红包"
+            "您收到一个邀请码"
         ],
         redEnvLook:"看看大家手气",
         errorList:[
@@ -84,7 +84,7 @@ const Config= {
         copySuccess:"複製成功",
         shortMess:walletName+"安全的一站式資產管理平台",
         immeDownload:"立即下載",
-        installTutorial:"Android安裝教程",
+        installTutorial:"使用教程",
         step1:"點擊“立即下載”按鈕下載安裝文件",
         step2:walletName+"成功安裝",
         step3:"進入APP並創建錢包",
@@ -95,7 +95,7 @@ const Config= {
         redEnvDesc:[
             "您收到一個紅包",
             "金額隨機，試試手氣",
-            "您收到一個邀請紅包"
+            "您收到一個邀請碼"
         ],
         redEnvLook:"看看大家手氣",
         errorList:[

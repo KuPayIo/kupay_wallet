@@ -355,7 +355,7 @@ export const getMiningHistory = async (start = '') => {
 
 // ==========================================红包start
 /**
- * 获取邀请红包码
+ * 获取邀请码码
  */
 export const getInviteCode = async () => {
     const msg = { type: 'wallet/cloud@get_invite_code', param: {} };
@@ -364,7 +364,7 @@ export const getInviteCode = async () => {
 };
 
 /**
- * 兑换邀请红包
+ * 兑换邀请码
  */
 export const inputInviteCdKey = async (code) => {
     const msg = { type: 'wallet/cloud@input_cd_key', param: { code: code } };
@@ -381,7 +381,7 @@ export const inputInviteCdKey = async (code) => {
 };
 
 /**
- * 获取邀请红包领取明细
+ * 获取邀请码领取明细
  */
 export const getInviteCodeDetail = async () => {
     const msg = { type: 'wallet/cloud@get_invite_code_detail', param: {} };
@@ -1271,7 +1271,7 @@ export const getGoldPrice = async (ispay:number = 0) => {
             setStore('third/goldPrice',{ price:resData.price,change:resData.change });
         }
     } catch (err) {
-        showError(err && (err.result || err.type));
+        // showError(err && (err.result || err.type));
 
     }
 };
