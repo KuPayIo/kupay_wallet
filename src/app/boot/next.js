@@ -91,9 +91,9 @@ winit.initNext = function () {
 			"app/view/base/",
 			"app/view/play/home/",
 			"app/view/chat/home/",
-			"app/view/earn/home/",
+			"app/view/earn/client/view/",
 			"app/view/wallet/home/",
-			"app/view/earn/activity/"
+
 		];
 
 		console.time('firstload');
@@ -128,7 +128,6 @@ winit.initNext = function () {
 			"app/logic/",
 			"app/components/",
 			"app/res/",
-			"app/view/",
 			"app/api/"
 		];
 
@@ -190,9 +189,9 @@ winit.initNext = function () {
 
 		//FIXME:直接一次性加载了整个聊天项目，这里需要细化
 
-		//加载聊天框架代码
+		//加载聊天框架代码和活动代码
 		var loadChatFramework = function () {
-			util.loadDir(["chat/client/rpc/", "pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
+			util.loadDir(["app/view/demo/client/", "pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
 				loadChatApp()
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
@@ -251,6 +250,7 @@ winit.initNext = function () {
 		html.checkWebpFeature(function (r) {
 			flags.webp = flags.webp || r;
 			//FIXME 临时在此处加载，其实应该先加载loadImages(util, fm);
+			// loadActive();
 			loadChatFramework()
 			// loadImages(util, fm);
 		});
