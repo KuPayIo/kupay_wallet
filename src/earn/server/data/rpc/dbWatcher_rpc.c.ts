@@ -1,7 +1,0 @@
-
-import {cfgMgr} from "../../../../pi/util/cfg";
-import {Entrance} from "../../../../pi_pt/entrance.s";
-
-let _$c = (path, notes):Entrance => {return new Entrance(path, notes)};
-let arr = [[0, _$c("earn/server/data/rpc/dbWatcher.watchGroupInfo", new Map<string,string>([["rpc","rpcServer"]]))],[1, _$c("earn/server/data/rpc/dbWatcher.watchGroupUserLink", new Map<string,string>([["rpc","rpcServer"]]))],[2, _$c("earn/server/data/rpc/dbWatcher.watchUserHistory", new Map<string,string>([["rpc","rpcServer"]]))],[3, _$c("earn/server/data/rpc/dbWatcher.watchGroupHistory", new Map<string,string>([["rpc","rpcServer"]]))],[4, _$c("earn/server/data/rpc/dbWatcher.watchAnnounceHistory", new Map<string,string>([["rpc","rpcServer"]]))],[5, _$c("earn/server/data/rpc/dbWatcher.watchMsgLock", new Map<string,string>([["rpc","rpcServer"]]))],[6, _$c("earn/server/data/rpc/dbWatcher.watchUserInfo", new Map<string,string>([["rpc","rpcServer"]]))],[7, _$c("earn/server/data/rpc/dbWatcher.watchUserCredential", new Map<string,string>([["rpc","rpcServer"]]))],[8, _$c("earn/server/data/rpc/dbWatcher.watchAccountGenerator", new Map<string,string>([["rpc","rpcServer"]]))],[9, _$c("earn/server/data/rpc/dbWatcher.watchFriendLink", new Map<string,string>([["rpc","rpcServer"]]))],[10, _$c("earn/server/data/rpc/dbWatcher.watchContact", new Map<string,string>([["rpc","rpcServer"]]))],[11, _$c("earn/server/data/rpc/dbWatcher.watchAddressInfo", new Map<string,string>([["rpc","rpcServer"]]))]] as any;
-cfgMgr.update(Entrance._$info.name, new Map<number,any>(arr));
