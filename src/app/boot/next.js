@@ -79,6 +79,7 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 			loadDir1(util, fm);
+			
 		});
 	}
 
@@ -92,7 +93,8 @@ winit.initNext = function () {
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
-			"earn/client/app/"
+			"earn/client/app/view/home/",
+			"earn/client/app/view/activity/"
 
 		];
 
@@ -100,7 +102,6 @@ winit.initNext = function () {
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			// console.log(fm);
 			console.timeEnd('firstload');
-
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -192,7 +193,7 @@ winit.initNext = function () {
 		//加载聊天框架代码和活动代码
 		var loadChatFramework = function () {
 			util.loadDir(["app/view/demo/client/", "pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
-				loadChatApp()
+				loadChatApp();
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
 			}, dirProcess.handler);
