@@ -1,0 +1,7 @@
+
+import {cfgMgr} from "../../../../pi/util/cfg";
+import {Entrance} from "../../../../pi_pt/entrance.s";
+
+let _$c = (path, notes):Entrance => {return new Entrance(path, notes)};
+let arr = [[0, _$c("earn/server/data/rpc/group.applyJoinGroup", new Map<string,string>([["rpc","rpcServer"]]))],[1, _$c("earn/server/data/rpc/group.userExitGroup", new Map<string,string>([["rpc","rpcServer"]]))],[2, _$c("earn/server/data/rpc/group.acceptUser", new Map<string,string>([["rpc","rpcServer"]]))],[3, _$c("earn/server/data/rpc/group.inviteUsers", new Map<string,string>([["rpc","rpcServer"]]))],[4, _$c("earn/server/data/rpc/group.agreeJoinGroup", new Map<string,string>([["rpc","rpcServer"]]))],[5, _$c("earn/server/data/rpc/group.setOwner", new Map<string,string>([["rpc","rpcServer"]]))],[6, _$c("earn/server/data/rpc/group.addAdmin", new Map<string,string>([["rpc","rpcServer"]]))],[7, _$c("earn/server/data/rpc/group.delAdmin", new Map<string,string>([["rpc","rpcServer"]]))],[8, _$c("earn/server/data/rpc/group.delMember", new Map<string,string>([["rpc","rpcServer"]]))],[9, _$c("earn/server/data/rpc/group.createGroup", new Map<string,string>([["rpc","rpcServer"]]))],[10, _$c("earn/server/data/rpc/group.dissolveGroup", new Map<string,string>([["rpc","rpcServer"]]))]] as any;
+cfgMgr.update(Entrance._$info.name, new Map<number,any>(arr));

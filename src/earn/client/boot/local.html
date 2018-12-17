@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+<title>TITLE</title>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+<!-- 以上 3 个 meta 标签 *必须* 放在 head 的最前面；其他任何的 head 内容必须在这些标签的 *后面* -->
+<meta name="keywords" content="TODO">
+<meta name="description" content="TODO">
+<meta name="author" content="author,email address">
+
+<!--Google Android原生浏览器-->
+<!-- 定义你的网页为 Web 应用，添加到主屏  -->
+<meta name="mobile-web-app-capable" content="yes"/>
+
+<!--Apple iOS原生浏览器-->
+<!--启用 WebApp 全屏模式-->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<!--状态栏透明-->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<!--APP在主屏上显示的名字-->
+<meta name="apple-mobile-web-app-title" content="TODO title">
+<!--App在主屏上显示的图标-->
+<link rel="apple-touch-icon" sizes="128x128" href="icon/128.png">
+
+<!--QQ 浏览器（X5 内核）同样适用于微信，QQ等第三方应用页面开发 -->
+<!-- 设置锁定横屏、竖屏显示模式，portrait（竖屏）， landscape（横屏）-->
+<meta name="x5-orientation" content="portrait">
+<!-- 设置全屏显示页面 -->
+<meta name="x5-fullscreen" content="true">
+<!-- 开启页面以应用模式显示（全屏显示等） -->
+<meta name="x5-page-mode" content="app">
+
+<script type="text/javascript">
+(function(){
+// 提前加载index.html，并检查网络
+var url = "http://192.168.31.79/dst/boot/index.html?" + (new Date().getTime());
+var xhr = new XMLHttpRequest();
+xhr.timeout = 5000;
+xhr.onerror = function (ev) {
+	alert(JSON.stringify(ev)+", error status: " + xhr.status + " " + xhr.statusText + ", " + url);
+};
+xhr.onload = function (ev) {
+	if (xhr.status === 300 || xhr.status === 301 || xhr.status === 302 || xhr.status === 303) {
+		return alert("redirect: "+xhr.getResponseHeader("Location"));
+	}
+	if (xhr.status !== 200 && xhr.status !== 304) {
+		return alert(JSON.stringify(ev)+", error status: " + xhr.status + " " + xhr.statusText + ", " + url);
+	}
+	 window.location.href = url;
+};
+xhr.open('GET', url, true);
+xhr.send();
+})();
+</script>
+</head>
+<body onselectstart="return false" style="-webkit-text-size-adjust:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);-webkit-user-select:none;background-color:#696969;margin:0px;padding:0px;list-style:none;overflow:hidden;">
+	<!-- 显示Logo -->
+</body>
+</html>

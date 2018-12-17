@@ -91,8 +91,8 @@ winit.initNext = function () {
 			"app/view/base/",
 			"app/view/play/home/",
 			"app/view/chat/home/",
-			"app/view/earn/client/view/",
 			"app/view/wallet/home/",
+			"earn/client/app/"
 
 		];
 
