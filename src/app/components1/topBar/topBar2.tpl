@@ -16,5 +16,7 @@
     {{if it.nextImg}}
     <img on-tap="goNext" src={{it.nextImg}} w-class="ga-next" />
     {{end}}
+    {{if it.refreshImg}}
     <img on-tap="refreshPage" src="../../res/image1/{{opca>0?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" class="{{it.refresh?'refreshing':''}}"/>
+    {{end}}
 </div>

@@ -20,9 +20,9 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class PlayHome extends Widget {
     public ok: () => void;
-    public language:any;
-    public props:any;
-    public config:any;
+    public language: any;
+    public props: any;
+    public config: any;
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.init();
@@ -34,7 +34,7 @@ export class PlayHome extends Widget {
      */
     public init() {
         this.language = this.config.value[getLang()];
-        
+
         this.props = {
             ...this.props,
             ktBalance: 0.00,// kt余额
@@ -45,8 +45,8 @@ export class PlayHome extends Widget {
             mineLast: 0,// 矿山剩余量
             rankNum: 1,// 挖矿排名
             page: [
-                'app-view-earn-mining-rankList', // 挖矿排名
-                'app-view-earn-mining-dividend', // 领分红
+                'app-view-earn-client-view-mining-rankList', // 挖矿排名
+                'app-view-earn-client-view-mining-dividend', // 领分红
                 'app-view-earn-redEnvelope-writeRedEnv', // 发红包
                 'app-view-earn-exchange-exchange', // 兑换
                 'app-view-earn-mining-addMine'  // 任务
@@ -61,40 +61,40 @@ export class PlayHome extends Widget {
             scrollHeight: 0,
             refresh: false,
             avatar: '../../res/image1/default_avatar.png',
-            welfareActivities:[{
-                img:'btn_yun_5.png',
-                title:'邀请好友',
-                desc:'累计邀请有好礼'
-            },{
-                img:'btn_yun_6.png',
-                title:'验证手机',
-                desc:'额外赠送2500KT'
-            },{
-                img:'btn_yun_7.png',
-                title:'开宝箱',
-                desc:'不定期上新物品'
-            },{
-                img:'btn_yun_8.png',
-                title:'大转盘',
-                desc:'试试我的手气'
-            },{
-                img:'btn_yun_9.png',
-                title:'奖券中心',
-                desc:'可以抽奖兑换物品'
-            },{
-                img:'btn_yun_10.png',
-                title:'兑换物品',
-                desc:'不定期上新物品'
-            },{
-                img:'btn_yun_11.png',
-                title:'我的物品',
-                desc:'兑换和中奖的物品'
+            welfareActivities: [{
+                img: 'btn_yun_5.png',
+                title: '邀请好友',
+                desc: '累计邀请有好礼'
+            }, {
+                img: 'btn_yun_6.png',
+                title: '验证手机',
+                desc: '额外赠送2500KT'
+            }, {
+                img: 'btn_yun_7.png',
+                title: '开宝箱',
+                desc: '不定期上新物品'
+            }, {
+                img: 'btn_yun_8.png',
+                title: '大转盘',
+                desc: '试试我的手气'
+            }, {
+                img: 'btn_yun_9.png',
+                title: '奖券中心',
+                desc: '可以抽奖兑换物品'
+            }, {
+                img: 'btn_yun_10.png',
+                title: '兑换物品',
+                desc: '不定期上新物品'
+            }, {
+                img: 'btn_yun_11.png',
+                title: '我的物品',
+                desc: '兑换和中奖的物品'
             }]
         };
         setTimeout(() => {
             this.scrollPage();
         });
-        
+
         this.initData();
     }
 
@@ -164,12 +164,24 @@ export class PlayHome extends Widget {
      * 福利活动进入
      * @param ind 福利顺序
      */
-    public goActivity(ind:number){
+    public goActivity(ind: number) {
         switch (ind) {
+            case 0:
+                popNew('app-view-earn-client-view-activity-inviteFriend');//邀请好友
+                break;
+            case 1:
+                popNew('app-view-earn-client-view-activity-verifyPhone');//验证手机
+                break;
+            case 2:
+                popNew('app-view-earn-client-view-openBox-openBox');//开宝箱
+                break;
+            case 3:
+                popNew('app-view-earn-client-view-turntable-turntable');//大转盘
+                break;
             case 4:
                 popNew('app-view-earn-client-view-ticketCenter-ticketCenter');//奖券中心
                 break;
-        
+
             default:
 
                 break;
@@ -210,7 +222,7 @@ export class PlayHome extends Widget {
 
     /**
      * 获取更新数据
-     */     
+     */
     private initData() {
         const wallet = getStore('wallet');
         if (!wallet) {
@@ -275,14 +287,14 @@ register('cloud/cloudWallets', () => {
     }
 });
 
-register('user',() => {
+register('user', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
 
-register('user/info',() => {
+register('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
@@ -313,7 +325,7 @@ register('activity', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init(); // 注销钱包后初始化
-        
+
     }
 });
 register('setting/language', (r) => {

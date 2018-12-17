@@ -1,0 +1,125 @@
+
+.new-page{
+    background-color:#19355A;
+    padding-top:128px;
+    background-image: url('../view/earn/client/res/image/balloon.png');
+    background-repeat: no-repeat;
+    background-position: left 128px;
+}
+
+.content{
+    height:100%;
+    overflow:hidden auto;
+    scroll-behavior: smooth;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mat{
+    background:white;
+    box-shadow:0px 0px 2px 0px rgba(0,0,0,0.2);
+    border-radius:12px;
+}
+
+.flex-col{
+    display:flex;
+    flex-direction:column;
+    text-align:center;
+    width:100%;
+}
+
+.center{
+    height:1048px;
+    width:100%;
+    flex:0 0 auto;
+    background-image: url('../view/earn/client/res/image/openBox-bg.png');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.box-list{
+    width:100%;
+    height: 510px;
+    padding: 0px 60px;
+    margin-top: 175px;
+    display:flex;
+    flex-wrap:wrap;
+}
+
+.box{
+    display: flex;
+    height: 30%;
+    width: 30%;
+    margin: 0px 5px;
+    flex: 1 0 auto;
+    background-color: #FFEEEE;
+    border-radius: 24px;
+    box-shadow: 0px 10px 0px #FFBFBF;
+}
+
+.sale{
+    width: 100%;
+    padding: 0 60px;
+    height: 60px;
+    margin-top: 42px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.sale-money{
+    height:60px;
+    line-height:50px;
+    font-size:32px;
+    color:#FFFFFF;
+    padding:0 65px;
+    background:#B01E17;
+    border-radius:30px;
+    border:4px solid #9A1C1C;
+}
+
+.sale-btn{
+    height:60px;
+    padding:0px 55px;
+    background:linear-gradient(180deg,#FFEB86 0%,#F78C18 100%);
+    border-radius:30px;
+    border:4px solid rgba(107, 8, 8, 0.2);
+    font-size:28px;
+    color:#AA3509;
+    line-height:50px;
+}
+
+.ticket{
+    height: 150px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 70px;
+    margin-top: 40px;
+}
+
+.ticket-item{
+    width: 150px;
+    height: 150px;
+    background: rgba(176,30,23,1);
+    box-shadow: 0px 0px 5px 0px rgba(34,34,34,0.5);
+    border-radius: 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.ticket-num{
+    height: 45px;
+    font-size: 32px;
+    color: white;
+    text-align: right;
+    padding-right: 5px;
+    margin-top: -25px;
+}
+
+.select{
+    border:6px solid #FFDE2D;
+}
+
+
+

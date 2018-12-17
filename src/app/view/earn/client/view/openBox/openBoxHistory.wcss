@@ -1,0 +1,42 @@
+.content{
+    height:100%;
+    overflow:hidden auto;
+    scroll-behavior: smooth;
+    padding:20px;
+    padding-bottom:148px;
+}
+
+.mat{
+    background:white;
+    box-shadow:0px 0px 2px 0px rgba(0,0,0,0.2);
+    border-radius:12px;
+}
+
+.flex-col{
+    display:flex;
+    flex-direction:column;
+    text-align:center;
+    width:100%;
+}
+
+.tips{
+    text-align: center;
+    margin: 45px 0 30px;
+    font-size: 28px;
+    color: #888888;
+}
+
+.item{
+    margin:5px 0px;
+    padding:12px;
+    display:flex;
+}
+
+.item-text{
+    flex: 1 1 auto;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-left: 30px;
+}

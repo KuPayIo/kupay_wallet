@@ -7,7 +7,7 @@
         <div w-class="top-title">
             <widget w-class="top-btn" w-tag="pi-ui-lang">{"zh_Hans":"合成奖券","zh_Hant":"合成獎券","en":""}</widget>
             <widget w-class="getTicket-title-name" w-tag="pi-ui-lang">{"zh_Hans":"我的奖券","zh_Hant":"我的獎券","en":""}</widget>
-            <widget w-class="top-btn" w-tag="pi-ui-lang">{"zh_Hans":"玩法","zh_Hant":"玩法","en":""}</widget>
+            <widget w-class="top-btn" on-tap="goRule" w-tag="pi-ui-lang">{"zh_Hans":"玩法","zh_Hant":"玩法","en":""}</widget>
         </div>
         <div w-class="body">
 
@@ -19,21 +19,21 @@
             {{% 活动}}
             <div w-class="activity">
                 <div w-class="activity-box mat">
-                    <img src="app/res/image/img_logo.png" width="100px" />
-                    <div w-class="activity-text">2000KT</div>
+                    <img src="../../res/image1/btn_yun_7.png" width="100px" />
+                    <widget w-class="activity-text" w-tag="pi-ui-lang">{"zh_Hans":"开宝箱","zh_Hant":"開寶箱","en":""}</widget>
                 </div>
                     
                 <div w-class="activity-box mat">
-                    <img src="app/res/image/img_logo.png" width="100px" />
-                    <div w-class="activity-text">2000KT</div>
+                    <img src="../../res/image1/btn_yun_8.png" width="100px" />
+                    <widget w-class="activity-text" w-tag="pi-ui-lang">{"zh_Hans":"大转盘","zh_Hant":"大轉盤","en":""}</widget>
                 </div>
                 <div w-class="activity-box mat">
-                    <img src="app/res/image/img_logo.png" width="100px" />
-                    <div w-class="activity-text">2000KT</div>
+                    <img src="../../res/image1/btn_yun_5.png" width="100px" />
+                    <widget w-class="activity-text" w-tag="pi-ui-lang">{"zh_Hans":"发给好友","zh_Hant":"發給好友","en":""}</widget> 
                 </div>
                 <div w-class="activity-box mat">
-                    <img src="app/res/image/img_logo.png" width="100px" />
-                    <div w-class="activity-text">2000KT</div>
+                    <img src="../../res/image1/btn_yun_10.png" width="100px" />
+                    <widget w-class="activity-text" w-tag="pi-ui-lang">{"zh_Hans":"兑换物品","zh_Hant":"兌換物品","en":""}</widget> 
                 </div>
             </div>
 
@@ -54,21 +54,21 @@
                 <div w-class="getTicket-item">
                     <div w-class="ticket-show mat">
                         <div w-class="ticket-KT">500KT</div>
-                        <img src="app/res/image/img_logo.png" width="100%" />
+                        <img src="../../res/image/silverTicket.png" width="100%" />
                     </div>
                     <div w-class="getTicket-btn">领取</div>
                 </div>
                 <div w-class="getTicket-item" style="margin:0 10px;">
                     <div w-class="ticket-show mat">
                         <div w-class="ticket-KT">1000KT</div>
-                        <img src="app/res/image/img_logo.png" width="100%" />
+                        <img src="../../res/image/goldTicket.png" width="100%" />
                     </div>
                     <div w-class="getTicket-btn">领取</div>
                 </div>
                 <div w-class="getTicket-item">
                     <div w-class="ticket-show mat">
                         <div w-class="ticket-KT">2000KT</div>
-                        <img src="app/res/image/img_logo.png" width="100%" />
+                        <img src="../../res/image/diamondTicket.png" width="100%" />
                     </div>
                     <div w-class="getTicket-btn">领取</div>
                 </div>
