@@ -45,11 +45,11 @@ export class PlayHome extends Widget {
             mineLast: 0,// 矿山剩余量
             rankNum: 1,// 挖矿排名
             page: [
-                'app-view-earn-mining-rankList', // 挖矿排名
-                'app-view-earn-mining-dividend', // 领分红
-                'app-view-earn-redEnvelope-writeRedEnv', // 发红包
-                'app-view-earn-exchange-exchange', // 兑换
-                'app-view-earn-mining-addMine'  // 任务
+                'app-view-earn-client-view-mining-rankList', // 挖矿排名
+                'app-view-earn-client-view-mining-dividend', // 领分红
+                'app-view-earn-client-view-redEnvelope-writeRedEnv', // 发红包
+                'app-view-earn-client-view-exchange-exchange', // 兑换
+                'app-view-earn-client-view-mining-addMine'  // 任务
             ],
             doMining: false,  // 点击挖矿，数字动画效果执行
             firstClick: true,
@@ -96,6 +96,10 @@ export class PlayHome extends Widget {
         });
         
         this.initData();
+    }
+
+    public diggingStoneClick() {
+        popNew('app-view-earn-client-view-activity-diggingStones-home');
     }
 
     /**
@@ -210,6 +214,13 @@ export class PlayHome extends Widget {
     }
 
     /**
+     * 采矿说明点击
+     */
+    public miningInstructionsClick() {
+        popNew('app-view-earn-client-view-activity-diggingStones-diggingRule');
+    }
+
+    /**
      * 获取更新数据
      */     
     private initData() {
@@ -264,7 +275,6 @@ export class PlayHome extends Widget {
             // debugger;
         }
     }
-
 }
 
 // ===================================================== 本地

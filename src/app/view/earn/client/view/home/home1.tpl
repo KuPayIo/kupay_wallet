@@ -2,20 +2,24 @@
     
     <div w-class="contain" on-scroll="scrollPage" id="earn-home">
         <div w-class="topBack">
-            <div w-class="stone-card">
+            <div w-class="stone-card" on-tap="diggingStoneClick">
                 <div w-class="holded-hoes">
-                    <app-view-earn-client-view-activity-components-holdedHoe></app-view-earn-client-view-activity-components-holdedHoe>
-                    <app-view-earn-client-view-activity-components-holdedHoe style="margin:0 15px;"></app-view-earn-client-view-activity-components-holdedHoe>
-                    <app-view-earn-client-view-activity-components-holdedHoe></app-view-earn-client-view-activity-components-holdedHoe>
+                    <app-view-earn-client-view-activity-components-holdedHoe>{ holdedNumber:120,img:"../../../res/image/gold_hoe.png" }</app-view-earn-client-view-activity-components-holdedHoe>
+                    <app-view-earn-client-view-activity-components-holdedHoe style="margin:0 15px;">{ holdedNumber:6,img:"../../../res/image/gold_hoe.png" }</app-view-earn-client-view-activity-components-holdedHoe>
+                    <app-view-earn-client-view-activity-components-holdedHoe>{ holdedNumber:20,img:"../../../res/image/gold_hoe.png" }</app-view-earn-client-view-activity-components-holdedHoe>
+                    <div w-class="gift-box">
+                        <img src="../../res/image1/gift.png"/>
+                    </div>
                 </div>
                 <div w-class="explanation-box">
-                    <div w-class="explanation"><span>采矿说明</span><img src="../../res/image1/explanation.png" w-class="explanation-icon"/></div>
+                    <div w-class="explanation" on-tap="miningInstructionsClick"><span>采矿说明</span><img src="../../res/image1/explanation.png" w-class="explanation-icon"/></div>
                     <div w-class="action">看广告得锄头</div>
                 </div>
                 <div w-class="stone"></div>
                 <div w-class="holded-stone">我的矿星</div>
                 <div w-class="medals">
-                    {{for i of [0,0,0,0,0,0,0,0,0,0,0]}}
+                    <div w-class="medal-tip">我的勋章</div>
+                    {{for i of [0,0,0,0,0,0,0,0]}}
                     <img src="../../res/image1/btn_yun_1.png" w-class="medal"/>
                     {{end}}
                 </div>

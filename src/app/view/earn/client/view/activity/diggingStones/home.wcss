@@ -9,7 +9,7 @@
     margin:67px 20px;
     background-color: #fff;
     flex: 1 0 0;
-    background-image: url(../../../../res/image/digging_stones_bg.png);
+    background-image: url(../../../res/image/digging_stones_bg.png);
     background-size: cover;
     background-repeat: no-repeat;
     border-radius: 12px;
@@ -29,7 +29,7 @@
     line-height: 40px;
     margin-bottom: 30px;
 }
-.countdown{
+.digging-tips{
     font-size:48px;
     color:rgba(255,255,255,1);
     line-height:67px;

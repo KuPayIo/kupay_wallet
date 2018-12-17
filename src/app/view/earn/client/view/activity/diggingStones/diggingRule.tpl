@@ -9,21 +9,21 @@
                 <div w-class="hoe-type">
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
-                            <img src="../../../../res/image/gold_hoe.png"/>
+                            <img src="../../../res/image/gold_hoe.png"/>
                         </div>
                         <div w-class="hoe-name">金锄头</div>
                     </div>
                     <div w-class="dividing">></div>
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
-                            <img src="../../../../res/image/silver_hoe.png"/>
+                            <img src="../../../res/image/silver_hoe.png"/>
                         </div>
                         <div w-class="hoe-name">银锄头</div>
                     </div>
                     <div w-class="dividing">></div>
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
-                            <img src="../../../../res/image/copper_hoe.png"/>
+                            <img src="../../../res/image/copper_hoe.png"/>
                         </div>
                         <div w-class="hoe-name">铁锄头</div>
                     </div>
@@ -50,15 +50,15 @@
                 <div w-class="stone-type-title">矿山分类</div>
                 <div w-class="stone-type">
                     <div w-class="stone-type-item">
-                        <img src="../../../../res/image/small_stone.png" style="width:168px;height:122px;"/>
+                        <img src="../../../res/image/small_stone.png" style="width:168px;height:122px;"/>
                         <div w-class="stone-name">小矿山</div>
                     </div>
                     <div w-class="stone-type-item" style="margin:0 20px;">
-                        <img src="../../../../res/image/mid_stone.png" style="width:220px;height:161px;"/>
+                        <img src="../../../res/image/mid_stone.png" style="width:220px;height:161px;"/>
                         <div w-class="stone-name">中矿山</div>
                     </div>
                     <div w-class="stone-type-item">
-                        <img src="../../../../res/image/big_stone.png" style="width:250px;height:203px;"/>
+                        <img src="../../../res/image/big_stone.png" style="width:250px;height:203px;"/>
                         <div w-class="stone-name">大矿山</div>
                     </div>
                 </div>

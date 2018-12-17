@@ -17,13 +17,13 @@
             {{if it.activeNumber === 0}}
             <div w-class="award-gifts">
                 {{for i of [0,0,0,0,0,0,0,0,0]}}
-                <app-view-earn-activity-components-awardGift style="margin-top:50px;">{"width":180,"borderWidth":8,"activeColor":"#F7931A","activePercent":0.4,"centerImage":"../../../../res/image/award_gold_hoe.png",firstText:"1/2",secondText:"每日登录"}</app-view-earn-activity-components-awardGift>
+                <app-view-earn-client-view-activity-components-awardGift style="margin-top:50px;">{"width":180,"borderWidth":8,"activeColor":"#F7931A","activePercent":0.4,"centerImage":"../../../res/image/award_gold_hoe.png",firstText:"1/2",secondText:"每日登录"}</app-view-earn-client-view-activity-components-awardGift>
                 {{end}}
             </div>
             {{else}}
             <div w-class="award-gifts">
                 {{for i of [0,0,0,0,0,0,0,0,0]}}
-                <app-view-earn-activity-components-awardGift style="margin-top:50px;">{"width":180,"borderWidth":8,"activeColor":"#F7931A","activePercent":0.4,"centerImage":"../../../../res/image/award_gold_hoe.png",firstText:"1-3人"}</app-view-earn-activity-components-awardGift>
+                <app-view-earn-client-view-activity-components-awardGift style="margin-top:50px;">{"width":180,"borderWidth":8,"activeColor":"#F7931A","activePercent":0.4,"centerImage":"../../../res/image/award_gold_hoe.png",firstText:"1-3人"}</app-view-earn-client-view-activity-components-awardGift>
                 {{end}}
             </div>
             {{end}}
