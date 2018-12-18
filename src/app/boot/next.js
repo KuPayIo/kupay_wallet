@@ -93,8 +93,7 @@ winit.initNext = function () {
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
-			"earn/client/app/view/home/",
-			"earn/client/app/view/activity/"
+			"earn/client/app/",
 
 		];
 
@@ -114,12 +113,23 @@ winit.initNext = function () {
 				// 关闭读取界面
 				document.body.removeChild(document.getElementById('rcmj_loading_log'));
 			});
-
+			// TODO
+			registerEarnStruct(util,fm);
 			loadDir2(util, fm);
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
+
+	// TODO 初始化rpc服务
+	var registerEarnStruct = function (util,fm) {
+		util.loadDir(["earn/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {
+			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
+		}, function (r) {
+			alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
+		}, dirProcess.handler);
+	};
 
 	var loadDir2 = function (util, fm) {
 		console.time('secondLoad');
@@ -192,7 +202,7 @@ winit.initNext = function () {
 
 		//加载聊天框架代码和活动代码
 		var loadChatFramework = function () {
-			util.loadDir(["app/view/demo/client/", "pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
+			util.loadDir(["pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
 				loadChatApp();
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
@@ -215,9 +225,11 @@ winit.initNext = function () {
 		//初始化rpc服务
 		var registerChatStruct = function () {
 			util.loadDir(["chat/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {
-				pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
-				pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.initClient();
+				// TODO 暂时不初始化聊天的逻辑服
+				// pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
+				// pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.initClient();
 				loadEmoji();
+
 			}, function (r) {
 				alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
 			}, dirProcess.handler);
