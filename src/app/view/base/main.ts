@@ -11,9 +11,7 @@ import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
-import { authorize } from '../../api/JSAPI';
 import { openConnect } from '../../net/pull';
-import { beginShift, shapeShiftAuthorization } from '../../net/pullWallet';
 import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { getStore, initStore, setStore } from '../../store/memstore';
@@ -39,6 +37,7 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     console.timeEnd('home enter');
+    // popNew('earn-client-app-test-test');
     // popNew('app-view-earn-client-view-activity-diggingStones-home');
     // popNew('app-view-earn-client-view-activity-diggingStones-award');
     // popNew('app-view-earn-client-view-activity-diggingStones-diggingRule');
