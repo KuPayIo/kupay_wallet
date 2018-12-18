@@ -39,9 +39,9 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     console.timeEnd('home enter');
-    // popNew('app-view-earn-activity-diggingStones-home');
-    // popNew('app-view-earn-activity-diggingStones-award');
-    // popNew('app-view-earn-activity-diggingStones-diggingRule');
+    // popNew('app-view-earn-client-view-activity-diggingStones-home');
+    // popNew('app-view-earn-client-view-activity-diggingStones-award');
+    // popNew('app-view-earn-client-view-activity-diggingStones-diggingRule');
     popNewPage();
     // 后台切前台
     backToFront();
