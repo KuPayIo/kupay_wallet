@@ -170,6 +170,3 @@ export const localUrlPre = 'file:///';
  * 预估出来的erc20 gasLimit倍数
  */
 export const erc20GasLimitRate = 2;
-
-// 锄头的使用持续时间
-export const hoeUseDuration = 3;

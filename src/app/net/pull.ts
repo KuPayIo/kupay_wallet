@@ -18,7 +18,6 @@ import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 declare var pi_modules;
 
 /**
-
  * 通用的异步通信
  */
 export const requestAsync = (msg: any):Promise<any> => {
