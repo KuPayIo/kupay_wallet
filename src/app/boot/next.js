@@ -94,6 +94,7 @@ winit.initNext = function () {
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
 			"earn/client/app/",
+			"earn/xlsx/"
 
 		];
 
