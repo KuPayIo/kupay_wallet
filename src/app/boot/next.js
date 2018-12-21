@@ -141,8 +141,7 @@ winit.initNext = function () {
 			"app/components/",
 			"app/res/",
 			"app/api/",
-			"app/view/wallet/",
-			"app/view/play/"
+			"app/view/"
 		];
 
 		// 加载其他文件
