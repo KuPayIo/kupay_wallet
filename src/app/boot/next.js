@@ -228,8 +228,8 @@ winit.initNext = function () {
 		var registerChatStruct = function () {
 			util.loadDir(["chat/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {
 				// TODO 暂时不初始化聊天的逻辑服
-				// pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
-				// pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.initClient();
+				pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
+				pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.initClient();
 				loadEmoji();
 
 			}, function (r) {
