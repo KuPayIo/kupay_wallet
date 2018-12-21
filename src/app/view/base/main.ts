@@ -38,7 +38,7 @@ export const run = (cb): void => {
     popNew('app-view-base-app');
     console.timeEnd('home enter');
     // popNew('earn-client-app-test-test');
-    // popNew('earn-client-app-view-activity-mining-home');
+    // popNew('earn-client-app-view-activity-mining-welfare');
     popNewPage();
     // 后台切前台
     backToFront();
