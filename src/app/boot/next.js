@@ -140,7 +140,8 @@ winit.initNext = function () {
 			"app/logic/",
 			"app/components/",
 			"app/res/",
-			"app/api/"
+			"app/api/",
+			"app/view/"
 		];
 
 		// 加载其他文件
