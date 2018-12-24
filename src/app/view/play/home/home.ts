@@ -71,7 +71,7 @@ export class PlayHome extends Widget {
             },
             {
                 title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
-                desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
+                desc:{ zh_Hans:'新一代游戏',zh_Hant:'新一代遊戲',en:'' },
                 img:'app/res/image1/CryptoFishing.jpg',
                 url:'http://fishing.rinkeby.cchaingames.com/'
             },

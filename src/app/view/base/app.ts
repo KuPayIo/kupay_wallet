@@ -81,7 +81,7 @@ export class App extends Widget {
             this.props.allTabBar[item];
             if (getModulConfig(this.props.allTabBar[item].modulName)) {
                 if (this.props.allTabBar[item].modulName === 'APP_WALLET') {
-                    this.props.isActive = 'APP_EARN';
+                    this.props.isActive = 'APP_WALLET';
                 }
                 resList.push(this.props.allTabBar[item]);
             }   

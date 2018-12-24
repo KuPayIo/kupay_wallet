@@ -28,11 +28,11 @@ export class Home extends Widget {
             tabs:[{
                 tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },
                 components:'app-view-wallet-home-cloudHome'
-            },{
+            }/* ,{
                 tab:{ zh_Hans:'本地钱包',zh_Hant:'本地錢包',en:'' },
                 components:'app-view-wallet-home-walletHome'
-            }],
-            activeNum:1,
+            } */],
+            activeNum:0,
             refreshing:false,
 
             avatar:'',
