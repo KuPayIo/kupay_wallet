@@ -329,6 +329,7 @@ const initSettings = () => {
         bottomHeight:0
     });
     store.setting = {
+        ...store.setting,
         ...setting
     };
     setLang(setting.language);
