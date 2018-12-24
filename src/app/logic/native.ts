@@ -97,3 +97,13 @@ export const makeScreenShot = (okCB?,errCB?) => {
         }
     });
 };
+
+
+/**
+ * 获取屏幕刘海与下部分高度
+ */
+export const getScreenModify = () => {
+    setTimeout(()=>{
+        
+    },2000);
+}

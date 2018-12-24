@@ -171,3 +171,7 @@ export const localUrlPre = 'file:///';
  * 预估出来的erc20 gasLimit倍数
  */
 export const erc20GasLimitRate = 2;
+
+
+// 默认顶部留出40px高度
+export const topHeight = 40;
