@@ -25,6 +25,13 @@ export class WebViewManager extends NativeObject {
     }
 
     /**
+     * 获取屏幕刘海与下部分高度
+     */
+    static getScreenModify(success:(high: number, low: number)=>void){
+        webViewMgr.call("getScreenModify",{success});
+    }
+
+    /**
      * 创建一个新的webview，但不会显示出来
      * 一般用于微信支付
      * headers = {"Referer": url}
