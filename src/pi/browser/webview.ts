@@ -150,7 +150,9 @@ registerSign(WebViewManager, {
     }, {
         name: "message",
         type: ParamType.String
-    }]
+    }],
+    getScreenModify:[
+    ]   
 });
 
 let webViewMgr = new WebViewManager();

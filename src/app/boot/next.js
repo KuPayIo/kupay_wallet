@@ -65,8 +65,26 @@ winit.initNext = function () {
 		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 
-	var needUpdate = false;
+	// 底层更新模块
+	var appUpdateMod = pi_modules.appUpdate.exports;
+	appUpdateMod.needUpdate(function (isNeedUpdate) {
+		if (isNeedUpdate > 0) {
+			alert("App 需要更新")
+			appUpdateMod.update(function () {
+				alert("App 更新失败");
+			});
+			return;
+		}
+		appEntrance();
+	});
 
+	// H5更新模块
+	var updateMod = pi_modules.update.exports;
+	updateMod.setIntercept(true);
+	updateMod.setServerInfo("app/boot/");
+
+
+	
 	// alert('next start');
 	var loadImages = function (util, fm) {
 
@@ -169,41 +187,38 @@ winit.initNext = function () {
 		}, dirProcess.handler);
 	}
 
-
+	var appEntrance = function(){
+		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang"], {}, function (mods, fm) {
+			var html = mods[0],
+				util = mods[1],
+				lang = mods[2];
 	
-	// 更新模块
-	var updateMod = pi_modules.update.exports;
-	updateMod.setIntercept(true);
-	updateMod.setServerInfo("app/boot/");
-	pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang"], {}, function (mods, fm) {
-		var html = mods[0],
-			util = mods[1],
-			lang = mods[2];
-
-		const setting = JSON.parse(localStorage.getItem('setting'));
-		lang.setLang(setting && setting.language || 'zh_Hans');  // 初始化语言为简体中文
-
-
-		// 判断是否第一次进入,决定是显示片头界面还是开始界面
-		var userinfo = html.getCookie("userinfo");
-		pi_modules.commonjs.exports.flags = html.userAgent(flags);
-		flags.userinfo = userinfo;
-
-		/**
-		 * 先判断浏览器对webp的支持；
-		 * 加载所有的预处理图片
-		 * 第一级目录：首页需要的资源；
-		 * 第二级目录：其他；
-		 * 
-		 */
-		html.checkWebpFeature(function (r) {
-			flags.webp = flags.webp || r;
-
-			loadImages(util, fm);
-		});
-	}, function (result) {
-		alert("加载基础模块失败, " + result.error + ":" + result.reason);
-	}, modProcess.handler);
+			const setting = JSON.parse(localStorage.getItem('setting'));
+			lang.setLang(setting && setting.language || 'zh_Hans');  // 初始化语言为简体中文
+	
+	
+			// 判断是否第一次进入,决定是显示片头界面还是开始界面
+			var userinfo = html.getCookie("userinfo");
+			pi_modules.commonjs.exports.flags = html.userAgent(flags);
+			flags.userinfo = userinfo;
+	
+			/**
+			 * 先判断浏览器对webp的支持；
+			 * 加载所有的预处理图片
+			 * 第一级目录：首页需要的资源；
+			 * 第二级目录：其他；
+			 * 
+			 */
+			html.checkWebpFeature(function (r) {
+				flags.webp = flags.webp || r;
+	
+				loadImages(util, fm);
+			});
+		}, function (result) {
+			alert("加载基础模块失败, " + result.error + ":" + result.reason);
+		}, modProcess.handler);
+	}
+	
 
 };
 

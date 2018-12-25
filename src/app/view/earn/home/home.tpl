@@ -1,9 +1,10 @@
 <div class="new-page" style="display: flex;flex-direction: column;" ev-refresh-click="refreshPage">
     
     <div w-class="contain" on-scroll="scrollPage" id="earn-home">
+
+        <div style="background:linear-gradient(to right,#318DE6,#38CFE7);"><app-components1-topBar-topBar1>{avatar:{{it.avatar}},scrollHeight:{{it.scrollHeight}} }</app-components1-topBar-topBar1></div>
         <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
         <div w-class="topBack">
-            
             <div w-class="groupCard">
                 <div w-class="titleMode">
                     <img src="../../../res/image1/mine_makmoney.png" w-class="makeMoney"/>
@@ -73,6 +74,5 @@
         </div>  
     </div>
     
-    <app-components1-topBar-topBar1>{avatar:{{it.avatar}},scrollHeight:{{it.scrollHeight}} }</app-components1-topBar-topBar1>
     <div w-class="bottomMode"></div>
 </div>

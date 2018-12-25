@@ -2233,6 +2233,7 @@ pi_modules.update.exports = (function () {
 	return module;
 })();
 
+
 // app更新模块
 pi_modules.appUpdate = {
 	id: 'appUpdate',
@@ -2253,7 +2254,20 @@ pi_modules.appUpdate.exports = (function () {
 	var remoteVersion = "";
 
 	var updateURL = undefined;
+
+	/**
+	 * 获取APP本地版本号  eg: 1.0.0
+	 */
+	module.getAppLocalVersion = function(){
+		return localVersion;
+	}
 	
+	/**
+	 * 获取APP远端版本号  eg: 1.0.0
+	 */
+	module.getAppRemoteVersion = function(){
+		return remoteVersion;
+	}
 	/**
 	 * Note: 
 		  iOS的版本文件名：ios_version.json
@@ -2277,7 +2291,7 @@ pi_modules.appUpdate.exports = (function () {
 		JSIntercept.getAppVersion(function (isOK, version) {
 			if (isOK) localVersion = version;
 			
-			debugger;
+			// debugger;
 			ajax.get(url, undefined, undefined, ajax.RESP_TYPE_TEXT, 3000, function (r) {
 				var content = JSON.parse(r);
 				remoteVersion = content.version;

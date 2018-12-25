@@ -3,7 +3,6 @@
     flex-direction: column;
 }
 .topBack{
-    height: 128px;
     background:linear-gradient(to right,#318DE6,#38CFE7);
     flex-shrink: 0;
     overflow: hidden;
