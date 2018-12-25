@@ -437,7 +437,12 @@
 
 			// winit.severIp = "47.244.29.209";
 			// winit.severPort = "80";
-			
+
+
+			// app更新配置的URL地址
+			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
+			// console.log("winit.appURL = ",winit.appURL);
+
 			var defaultDomains;
 			var remoteDomains = [
 				"http://" + winit.severIp + ":" + winit.severPort,
@@ -489,6 +494,36 @@
 
 				isNative: navigator.userAgent.indexOf('YINENG') >= 0,
 
+				// 取App底层版本号
+				getAppVersion: function (cb) {
+
+					jsInterceptMap[++jsInterceptID] = cb;
+
+					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+						window.JSIntercept.getAppVersion(jsInterceptID);
+					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+						window.webkit.messageHandlers.JSIntercept.postMessage(["getAppVersion", jsInterceptID]);
+					} else {
+						setTimeout(cb, 0);
+					}
+				},
+
+				// 更新App
+				// iOS：url用来跳转到下载页面
+				// Android：url用于底层更新apk文件
+				updateApp: function (url, cb) {
+					jsInterceptMap[++jsInterceptID] = cb;
+
+					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+						window.JSIntercept.updateApp(url, jsInterceptID);
+					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+						// TODO: 弹出safari浏览器，跳转到url，并退出程序
+						window.JSIntercept.updateApp(url, jsInterceptID);
+					} else {
+						setTimeout(cb, 0);
+					}
+				},
+
 				getBootFile: function (fileName) {
 					return mobileBootFiles[fileName] && mobileBootFiles[fileName].content;
 				},
@@ -505,6 +540,10 @@
 					}
 				},
 
+				/*
+				 * 如果path为"update.flag"，表示在getBootFiles里面设置清空标志
+				 * content = "true"，表示正在更新
+				 */
 				saveFile: function (path, content, cb) {
 					jsInterceptMap[++jsInterceptID] = cb;
 
@@ -575,14 +614,20 @@
 					winit.JSIntercept.getMobileBootFiles(function (isSuccess, str) {
 						mobileBootFiles = JSON.parse(str);
 						for (var key in mobileBootFiles) {
-							var buffer = base64ToU8Array(mobileBootFiles[key]);
-							var blob = new Blob([buffer], {
-								type: "text/javascript"
-							});
-							mobileBootFiles[key] = {
-								content: u8ArrayToStr(buffer),
-								url: URL.createObjectURL(blob)
-				}
+							if (key === "update.flag") {
+								mobileBootFiles[key] = {
+									content: window.atob(mobileBootFiles[key])
+								};
+							} else {
+								var buffer = base64ToU8Array(mobileBootFiles[key]);
+								var blob = new Blob([buffer], {
+									type: "text/javascript"
+								});
+								mobileBootFiles[key] = {
+									content: u8ArrayToStr(buffer),
+									url: URL.createObjectURL(blob)
+								}
+							}
 						}
 						winit.startImpl();
 					});

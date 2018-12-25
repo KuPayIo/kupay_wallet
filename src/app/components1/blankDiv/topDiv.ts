@@ -22,6 +22,7 @@ export class TopDiv extends Widget{
 
 register('setting/topHeight',(topHeight:number)=>{
     const w = forelet.getWidget(WIDGET_NAME);
+    forelet.paint(topHeight);
     if(w){
         w.props.height = topHeight;
         w.paint();

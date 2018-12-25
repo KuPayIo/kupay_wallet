@@ -3,7 +3,6 @@
  */
 import { Widget } from "../../../pi/widget/widget";
 import { getStore, register } from "../../store/memstore";
-import { topHeight } from "../../utils/constants";
 import { Forelet } from "../../../pi/widget/forelet";
 
 
@@ -15,13 +14,14 @@ export class BottomDiv extends Widget{
     public create(){
         super.create();
         this.props = {
-            height:getStore('setting/bottomHeight',topHeight)
+            height:getStore('setting/bottomHeight',0)
         };
     }
 }
 
 register('setting/bottomHeight',(bottomHeight:number)=>{
     const w = forelet.getWidget(WIDGET_NAME);
+    forelet.paint(bottomHeight);
     if(w){
         w.props.height = bottomHeight;
         w.paint();

@@ -103,15 +103,11 @@ export const makeScreenShot = (okCB?,errCB?) => {
 /**
  * 获取屏幕刘海与下部分高度
  */
-export const screenTest = () => {
-    // WebViewManager.getScreenModify((high,low)=>{
-    //     alert(`high === ,${high}`);
-    //     alert(`high === ,${low}`);
-    // });
-    setTimeout(()=>{
-        const high = 80;
-        const low = 20;
-        setStore('setting/topHeight',high);
-        setStore('setting/bottomHeight',low);
+export const getScreenModify = () => {
+    WebViewManager.getScreenModify((high,low)=>{
+        const calHigh = high / window.devicePixelRatio * 2;
+        const calLow = low / window.devicePixelRatio * 2;
+        setStore('setting/topHeight',calHigh);
+        setStore('setting/bottomHeight',calLow);
     });
 }

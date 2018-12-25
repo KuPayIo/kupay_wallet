@@ -16,7 +16,7 @@ import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { getStore, initStore, setStore } from '../../store/memstore';
 import { fetchDeviceId } from '../../utils/tools';
-import { screenTest } from '../../logic/native';
+import { getScreenModify } from '../../logic/native';
 
 // let client;
 // let rpc;
@@ -38,7 +38,7 @@ export const run = (cb): void => {
     // dataCenter.init();
     popNew('app-view-base-app');
     console.timeEnd('home enter');
-    screenTest();
+    
     // popNew('app-view-earn-activity-diggingStones-home');
     // popNew('app-view-earn-activity-diggingStones-award');
     // popNew('app-view-earn-activity-diggingStones-diggingRule');
@@ -79,6 +79,7 @@ const preFetchFromNative = () => {
             setStore('setting/deviceId',hash256deviceId);
         });
     }
+    getScreenModify();
 };
 const checkUpdate = () => {
   // todo
