@@ -118,7 +118,11 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
         const addrIndex = getWltAddrIndex(fromAddr, currencyName);
         let hash;
         if (addrIndex >= 0) {    
-            const wltPromise = GlobalWallet.createWlt(currencyName, psw, addrIndex);
+            console.time("wltPromise");
+            const wltPromise = GlobalWallet.createWlt(currencyName, psw, addrIndex).then((wlt)=>{
+                console.timeEnd("wltPromise");
+                return wlt;
+            });
 
             const api = new EthApi();
             const nonce = txRecord.nonce;
@@ -126,10 +130,19 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
             // 0xe209a49a0000000000000000000000000000000000000000000000000000000000000001
 
             // toAddr  0x0e7f42cdf739c06dd3c1c32fab5e50ec9620102a
+
+            console.time("gasLimitPromise");
             // tslint:disable-next-line:max-line-length
-            const gasLimitPromise = api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data });
+            const gasLimitPromise = api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data }).then((gasLimit)=>{
+                console.timeEnd("gasLimitPromise");
+                return gasLimit;
+            });
             
-            const chainNoncePromise = api.getTransactionCount(fromAddr);
+            console.time("chainNoncePromise");
+            const chainNoncePromise = api.getTransactionCount(fromAddr).then((chainNonce)=>{
+                console.timeEnd("chainNoncePromise");
+                return chainNonce;
+            });
 
             console.time('transfer3 all promise need');
             const [wlt,gasLimit,chainNonce] = await Promise.all([wltPromise,gasLimitPromise,chainNoncePromise]);
