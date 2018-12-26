@@ -63,7 +63,7 @@ export class App extends Widget {
                 },
                 wallet: {
                     modulName: 'APP_WALLET',
-                    text: { zh_Hans:'钱',zh_Hant:'錢',en:'' },
+                    text: { zh_Hans:'钱123',zh_Hant:'錢',en:'' },
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
                     components: 'app-view-wallet-home-home'
@@ -82,7 +82,7 @@ export class App extends Widget {
             this.props.allTabBar[item];
             if (getModulConfig(this.props.allTabBar[item].modulName)) {
                 if (this.props.allTabBar[item].modulName === 'APP_WALLET') {
-                    this.props.isActive = 'APP_EARN';
+                    this.props.isActive = 'APP_WALLET';
                 }
                 resList.push(this.props.allTabBar[item]);
             }   

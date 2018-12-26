@@ -1914,7 +1914,7 @@ pi_modules.commonjs.exports = (function () {
 	return module;
 })();
 
-// 更新模块
+// h5更新模块
 pi_modules.update = {
 	id: 'update',
 	exports: undefined,
@@ -1941,6 +1941,8 @@ pi_modules.update.exports = (function () {
 	var isIntercept = true;
 	var localVersion = [];
 	var remoteVersion = [];
+	var h5Updated = [];
+	var dependAppVersion = [];
 
 	var JSIntercept = winit.JSIntercept;
 
@@ -1978,6 +1980,20 @@ pi_modules.update.exports = (function () {
 		return remoteVersion;
 	}
 
+	/**
+	 * 取h5更新内容  eg:["支持Dapp","交易功能稳定","优化加载速度","全新界面UI，全新体验","修复账户相关bug"]
+	 */
+	module.getH5Updated = function () {
+		return h5Updated;
+	}
+
+	/**
+	 * 获取依赖的appVersion eg:1.0.0
+	 */
+	module.getDependAppVersion = function () {
+		return dependAppVersion;
+	}
+
 	module.needForceUpdate = function () {
 		var need = JSIntercept.getBootFile("update.flag") === "true";
 		// if (need) {
@@ -1994,7 +2010,7 @@ pi_modules.update.exports = (function () {
 
 		if (!isNative || !isIntercept) {
 			setTimeout(function () {
-				callback(false);
+				callback(0);
 			}, 0);
 			return;
 		}
@@ -2045,43 +2061,26 @@ pi_modules.update.exports = (function () {
 			newIndexJSStr = indexJSStr;
 
 			var newVersion = getIndexVersion(indexJSStr);
-
 			remoteVersion = newVersion;
+			dependAppVersion = getIndexDependAppVersion(indexJSStr);
+			console.log("dependAppVersion = ",dependAppVersion);
 			console.log("newVersion = ",newVersion);
 			console.log("oldVersion = ",oldVersion);
 			var updatedStr = getIndexUpdatedContent(indexJSStr);
 			console.log("updatedStr = ",updatedStr);
-			pi_update.updated = JSON.parse(updatedStr);
-
+			h5Updated = JSON.parse(updatedStr);
+			debugger;
 			var needUpdate = JSIntercept.getBootFile("update.flag") === "true";
-			if (needUpdate) {
-				// alert("上次版本还没有更新完毕，必须更新");
-				pi_update.alert({
-					btnText:"更新未完成"
-				},function(){
-					okCB(needUpdate);
-				});
+			var needUpdateCode = 0;   // 没有更新
+			if (needUpdate) { 
+				needUpdateCode = 1;   // 更新未完成 强制更新
 			} else if (oldVersion[0] !== newVersion[0] || oldVersion[1] !== newVersion[1]) {
-				// 第一，第二版本号 不同，必须强制更新
-				needUpdate = true;
-				// alert("版本有重大变化，必须更新");
-				pi_update.alert({
-					btnText:"版本有重大变化"
-				},function(){
-					okCB(needUpdate);
-				});
+				needUpdateCode = 2;     // 第一，第二版本号 不同，必须强制更新
 			} else if (oldVersion[2] !== newVersion[2]) {
-				// 第三版本号 不同，提示用户更新
-				// needUpdate = confirm("有新的版本，需要更新吗？");
-				pi_update.confirm(function(ok){
-					needUpdate = ok;
-					var cancelUpdate = !ok;
-					okCB(needUpdate,cancelUpdate);
-				});
-			}else{
-				pi_update.closePop();
-				okCB(needUpdate);
+				needUpdateCode = 3;   // 第三版本号 不同，提示用户更新
 			}
+
+			okCB(needUpdateCode);
 		}, function () {
 			// 取不到index.js，用拦截即可
 		});
@@ -2113,11 +2112,14 @@ pi_modules.update.exports = (function () {
 	function finishUpdate() {
 		// 清除标记
 		JSIntercept.saveFile("update.flag", window.btoa("false"), function () {
+			debugger;
 			// alert("更新成功，程序即将关闭，请重启APP");
-
-			pi_update.alert({
-				btnText:"更新完毕"
-			},function(){
+			var option = {
+				updated:h5Updated,
+				version:remoteVersion.slice(0,remoteVersion.length - 1).join("."),
+				alertBtnText : "更新完毕"
+			};
+			pi_update.alert(option,function(){
 				pi_update.closePop();
 				// 重启
 				JSIntercept.restartApp();
@@ -2220,6 +2222,17 @@ pi_modules.update.exports = (function () {
 		return result[1];
 	}
 
+	// 取indexjs的dependAppVersion
+	function getIndexDependAppVersion(indexJS) {
+		// 第三行是：// !appVersion=1.0.0
+		var regex = /\/\/\s*!appVersion=(\d+)\.(\d+)\.(\d+)/;
+		var result = indexJS.match(regex);
+		if (!result) {
+			throw new Error('index.js must have updated at second line, format like: // !updated=["支持Dapp","交易功能稳定"]');
+		}
+		return [result[1], result[2], result[3]].join(".");
+	}
+
 	function arrayBufferToBase64(buffer) {
 		var binary = '';
 		var bytes = new Uint8Array(buffer);
@@ -2232,6 +2245,7 @@ pi_modules.update.exports = (function () {
 
 	return module;
 })();
+
 
 // app更新模块
 pi_modules.appUpdate = {
@@ -2253,7 +2267,29 @@ pi_modules.appUpdate.exports = (function () {
 	var remoteVersion = "";
 
 	var updateURL = undefined;
+
+	var appUpdated = [];
+
+	/**
+	 * 获取APP本地版本号  eg: 1.0.0
+	 */
+	module.getAppLocalVersion = function(){
+		return localVersion;
+	}
 	
+	/**
+	 * 获取APP远端版本号  eg: 1.0.0
+	 */
+	module.getAppRemoteVersion = function(){
+		return remoteVersion;
+	}
+
+	/**
+	 * 获取APP更新内容  eg: ["支持照相功能","支持图片裁剪","优化运行速度"]
+	 */
+	module.getAppUpdated = function(){
+		return appUpdated;
+	}
 	/**
 	 * Note: 
 		  iOS的版本文件名：ios_version.json
@@ -2277,10 +2313,12 @@ pi_modules.appUpdate.exports = (function () {
 		JSIntercept.getAppVersion(function (isOK, version) {
 			if (isOK) localVersion = version;
 			
-			debugger;
+			// debugger;
 			ajax.get(url, undefined, undefined, ajax.RESP_TYPE_TEXT, 3000, function (r) {
+				debugger;
 				var content = JSON.parse(r);
 				remoteVersion = content.version;
+				appUpdated = content.updated;
 				if (remoteVersion !== localVersion) {
 					updateURL = content.url;
 				}
@@ -2341,46 +2379,124 @@ self.onerror = winit.debug ? undefined : (function () {
 winit.init();
 
 
-var pi_update = pi_update || { updated:[] };
+var pi_update = pi_update || {};
 
-// option = {
-// 	btnText
-// }
+(function(){
+	var cfg = {
+    width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+};
 
-pi_update.modifyContent = function(){
+var browserAdaptive = function() {
+    var clientWidth = document.documentElement.clientWidth;
+    var clientHeight = document.documentElement.clientHeight;
+    var rootWidth = cfg.width;
+    var rootHeight = cfg.height;
+    var scaleW = clientWidth / rootWidth;
+	var scaleH = clientHeight / rootHeight;
+	var rootScale;
+    if (cfg.wscale >= cfg.hscale) {
+        // 宽度比例变动
+        if (scaleW > scaleH * (cfg.wscale + 1)) {
+            // 大于规定的比例
+            rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+        } else {
+            rootWidth = (clientWidth / scaleH) | 0;
+        }
+        rootScale = scaleW = scaleH;
+    } else {
+        // 高度比例变动
+        if (scaleH > scaleW * (cfg.hscale + 1)) {
+            rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+        } else {
+            rootHeight = (clientHeight / scaleW) | 0;
+        }
+        rootScale = scaleH = scaleW;
+    }
+    var rootX = (clientWidth - rootWidth) / 2;
+    var rootY = (clientHeight - rootHeight) / 2;
+	var cssText = 'display:none;z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+	// var rootUpdate = document.querySelector('#update-root');
+	// rootUpdate.style.cssText = cssText;
+
+	return cssText;
+};
+
+pi_update.rootCssText =  browserAdaptive();
+})();
+
+
+pi_update.modifyContent = function(option){
 	var modified = pi_update.contentModified;
-	if(!modified){
-		var updateMod = pi_modules.update.exports;
-		var versionArr = updateMod.getRemoteVersion();
-		versionArr.pop();
-		var newVersion = versionArr.join(".");
-		var $version = document.querySelector("#pi-version");
-		$version.innerHTML = newVersion;
-		var $items = document.querySelector(".pi-update-items");
-		for(var i = 0;i < pi_update.updated.length;i++){
-			var $item = document.createElement("div");
-			$item.setAttribute("class","pi-update-item");
-			$item.innerHTML = (i + 1) + "、" + pi_update.updated[i];
-			$items.appendChild($item);
-		}
-		pi_update.contentModified = true;
+	if(modified) return;
+	option.confirmOk = option.confirmOk || "确定";
+	option.confirmCancel = option.confirmCancel || "取消";
+	var $root = document.createElement("div");
+	$root.setAttribute("id","update-root");
+	$root.setAttribute("style",pi_update.rootCssText);
+	var $updateItemInnerHtml = "";
+	for(var i = 0;i < option.updated.length;i++){
+		var $item = "<div class='pi-update-item'>" + (i + 1) + "、" + option.updated[i] + "</div>";
+		$updateItemInnerHtml += $item;
 	}
+
+
+	$root.innerHTML = `
+	<div class="pi-mask">
+		<div class="pi-update-box animated bounceInUp">
+			<img src="../res/image1/rocket.png" class="pi-update-rocket" />
+			<div class="pi-update-content">
+			<div class="pi-update-title">发现新版本：V<span id="pi-version">${option.version}</span></div>
+			<div class="pi-update-items">
+				${$updateItemInnerHtml}
+			</div>
+			</div>
+			<div class="pi-update-bottom">
+				<div class="pi-update-btns">
+					<div class="pi-update-cancel-btn">${option.confirmCancel}</div>
+					<div class="pi-update-ok-btn">${option.confirmOk}</div>
+				</div>
+				<div class="pi-update-progress-container">
+					<div class="pi-update-progress-bg">
+						<div class="pi-update-progress"></div>
+					</div>
+					<div class="pi-update-progress-text">0%</div>
+				</div>
+				<div class="pi-update-complete-btn"></div>
+			</div>
+		</div>
+	</div>
+	`;
+
+	debugger;
+	var $body = document.querySelector("body");
+	$body.appendChild($root);
+	pi_update.contentModified = true;
 }
 
 // 确定弹框
-pi_update.confirm = function(callback){
-	pi_update.modifyContent();
+pi_update.confirm = function(option,callback){
+	pi_update.modifyContent(option);
 	var $btns = document.querySelector(".pi-update-btns");
 	var $cancel = document.querySelector(".pi-update-cancel-btn");
 	var $ok = document.querySelector(".pi-update-ok-btn");
-	$cancel.addEventListener("click",function(){
+
+	$cancel.onclick = function(){
 		var $updateRoot = document.querySelector('#update-root');
 		$updateRoot.style.display = "none";
 		callback(false);
-	});
-	$ok.addEventListener("click",function(){
+	};
+
+	$ok.onclick = function(){
 		callback(true);
-	});
+	};
+	// $cancel.addEventListener("click",function(){
+	// 	var $updateRoot = document.querySelector('#update-root');
+	// 	$updateRoot.style.display = "none";
+	// 	callback(false);
+	// });
+	// $ok.addEventListener("click",function(){
+	// 	callback(true);
+	// });
 
 	$btns.style.display = "display";
 	// 显示弹框
@@ -2415,20 +2531,21 @@ pi_update.updateProgress = function(e){
 
 // alert弹框
 pi_update.alert = function(option,completeCB){
-	pi_update.modifyContent();
+	pi_update.modifyContent(option);
 	var $updateRoot = document.querySelector('#update-root');
 	var $btns = document.querySelector(".pi-update-btns");
 	var $progressContainer = document.querySelector(".pi-update-progress-container");
 	var $completeBtn = document.querySelector(".pi-update-complete-btn");
 	
-	$completeBtn.addEventListener("click",function(){
-		completeCB();
-	});
+	$completeBtn.onclick = completeCB;
+	// $completeBtn.addEventListener("click",function(){
+	// 	completeCB();
+	// });
 
 	$updateRoot.style.display = "block";
 	$btns.style.display = "none";
 	$progressContainer.style.display = "none";
-	$completeBtn.innerHTML = option.btnText;
+	$completeBtn.innerHTML = option.alertBtnText;
 	$completeBtn.style.display = "flex";
 }
 

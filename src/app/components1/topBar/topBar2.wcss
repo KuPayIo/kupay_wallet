@@ -1,15 +1,11 @@
 .ga-top-banner{
-    background-color: #fff;
-    position: absolute;
-    padding-top: 40px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: #222;
     box-sizing: border-box;
-    height: 128px;
-    top: 0;
+    height: 88px;
 }
 .left-container{
     flex: 1 0 0;
