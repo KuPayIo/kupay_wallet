@@ -5,6 +5,7 @@
             <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
             {{if it.hasWallet}}
             <div w-class="addFriend">
+                <img src="../../../res/image/medal-white.png" w-class="scanImg" on-tap="showMyMedal"/>
                 <img src="../../../res/image/01.png" w-class="scanImg" on-tap="scanQrcode"/>
                 <img src="../../../res/image/19.png" w-class="scanImg" on-tap="showMyQrcode"/>
             </div>

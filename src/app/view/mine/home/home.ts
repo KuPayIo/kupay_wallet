@@ -146,6 +146,15 @@ export class Home extends Widget {
     }
 
     /**
+     * 展示我的勋章
+     */
+    public showMyMedal() {
+        //TODO
+        // popNew('app-view-mine-other-addFriend');
+        // this.backPrePage();
+    }
+
+    /**
      * 创建钱包
      */
     public login() {
