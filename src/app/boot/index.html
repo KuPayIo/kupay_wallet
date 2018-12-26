@@ -532,7 +532,7 @@
 						window.JSIntercept.updateApp(url, jsInterceptID);
 					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
 						// TODO: 弹出safari浏览器，跳转到url，并退出程序
-						window.JSIntercept.updateApp(url, jsInterceptID);
+						window.webkit.messageHandlers.JSIntercept.postMessage(["updateApp",url,jsInterceptID]);
 					} else {
 						setTimeout(cb, 0);
 					}

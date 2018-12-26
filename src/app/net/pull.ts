@@ -1,12 +1,11 @@
 /**
  * 主动向后端通讯
  */
-import { closeCon, open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { cryptoRandomInt } from '../../pi/util/math';
 import { MainChainCoin, uploadFileUrl, wsUrl } from '../config';
-import { AddrInfo, CloudCurrencyType, CurrencyRecord, MinerFeeLevel, User, Wallet } from '../store/interface';
-import { Account,getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
+import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
+import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitGtAccountDetail } from '../store/parse';
 import { CMD, PAGELIMIT } from '../utils/constants';
