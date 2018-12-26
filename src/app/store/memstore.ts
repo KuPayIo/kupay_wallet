@@ -65,8 +65,9 @@ export const getStore = (path: string, defaultValue = undefined) => {
             throw new Error('getStore Failed, path = ' + path);
         }
     }
+    const deepRet = deepCopy(ret);
 
-    return typeof deepCopy(ret) === 'boolean' ? deepCopy(ret) : (deepCopy(ret) || defaultValue);
+    return (typeof deepRet === 'boolean' || typeof deepRet === 'number') ? deepRet : (deepRet || defaultValue);
 };
 
 /**
