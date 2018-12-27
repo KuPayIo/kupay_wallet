@@ -2069,7 +2069,7 @@ pi_modules.update.exports = (function () {
 			var updatedStr = getIndexUpdatedContent(indexJSStr);
 			console.log("updatedStr = ",updatedStr);
 			h5Updated = JSON.parse(updatedStr);
-			debugger;
+			// debugger;
 			var needUpdate = JSIntercept.getBootFile("update.flag") === "true";
 			var needUpdateCode = 0;   // 没有更新
 			if (needUpdate) { 
@@ -2112,7 +2112,7 @@ pi_modules.update.exports = (function () {
 	function finishUpdate() {
 		// 清除标记
 		JSIntercept.saveFile("update.flag", window.btoa("false"), function () {
-			debugger;
+			// debugger;
 			// alert("更新成功，程序即将关闭，请重启APP");
 			var option = {
 				updated:h5Updated,
@@ -2313,9 +2313,8 @@ pi_modules.appUpdate.exports = (function () {
 		JSIntercept.getAppVersion(function (isOK, version) {
 			if (isOK) localVersion = version;
 			
-			// debugger;
 			ajax.get(url, undefined, undefined, ajax.RESP_TYPE_TEXT, 3000, function (r) {
-				debugger;
+				// debugger;
 				var content = JSON.parse(r);
 				remoteVersion = content.version;
 				appUpdated = content.updated;
@@ -2467,7 +2466,6 @@ pi_update.modifyContent = function(option){
 	</div>
 	`;
 
-	debugger;
 	var $body = document.querySelector("body");
 	$body.appendChild($root);
 	pi_update.contentModified = true;

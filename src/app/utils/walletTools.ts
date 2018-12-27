@@ -120,9 +120,14 @@ export const getMnemonic = async (passwd) => {
     const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
     try {
         const cipher = new Cipher();
+        console.time('transfer3 cipher.decrypt');
         const r = cipher.decrypt(hash, wallet.vault);
+        console.timeEnd('transfer3 cipher.decrypt');
+        console.time('transfer3 toMnemonic');
+        const mnemonic = toMnemonic(lang, hexstrToU8Array(r));
+        console.timeEnd('transfer3 toMnemonic');
 
-        return toMnemonic(lang, hexstrToU8Array(r));
+        return mnemonic;
     } catch (error) {
         console.log(error);
 

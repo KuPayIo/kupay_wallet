@@ -68,7 +68,7 @@ winit.initNext = function () {
 	// 底层更新模块
 	var appUpdateMod = pi_modules.appUpdate.exports;
 	appUpdateMod.needUpdate(function (isNeedUpdate) {
-		debugger;
+		// debugger;
 		if (isNeedUpdate > 0) {
 			var option = {
 				updated:appUpdateMod.getAppUpdated(),
@@ -220,7 +220,7 @@ winit.initNext = function () {
 					pi_update.updateProgress(e);
 				});
 			}
-			debugger;
+			// debugger;
 			if (needUpdateCode === 1 && canUpdate) {
 				option.alertBtnText = "更新未完成";
 				pi_update.alert(option,updateH5);
@@ -261,7 +261,7 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				loadChatFramework()
+				loadChatFramework(util, fm)
 				// loadImages(util, fm);
 			});
 		}, function (result) {
@@ -272,50 +272,50 @@ winit.initNext = function () {
 	//FIXME:直接一次性加载了整个聊天项目，这里需要细化
 
 	//加载聊天框架代码和活动代码
-	var loadChatFramework = function () {
+	var loadChatFramework = function (util, fm) {
 		util.loadDir(["pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
-			loadChatApp();
+			loadChatApp(util, fm);
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
 
 	//加载聊天APP部分代码，实际项目中会分的更细致
-	var loadChatApp = function () {
+	var loadChatApp = function (util, fm) {
 		util.loadDir(["chat/client/app/demo_view/","chat/client/app/widget/","chat/client/app/res/css/","chat/client/app/res/images/"], flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			// 将预加载的资源缓冲90秒，释放
 			tab.timeout = 90000;
 			tab.release();
-			registerChatStruct();
+			registerChatStruct(util, fm);
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
 
 	//初始化rpc服务
-	var registerChatStruct = function () {
+	var registerChatStruct = function (util, fm) {
 		util.loadDir(["chat/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {
 			// TODO 暂时不初始化聊天的逻辑服
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.initClient();
-			loadEmoji();
+			loadEmoji(util, fm);
 
 		}, function (r) {
 			alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
 		}, dirProcess.handler);
 	};
 
-	var loadEmoji = function() {
+	var loadEmoji = function(util, fm) {
 		util.loadDir(["chat/client/app/res/emoji/"],flags,fm,undefined,function(fileMap,mods){
 			//TODO: 可以长期放在缓存中达到更快的显示效果
-			loadChatImg();
+			loadChatImg(util, fm);
 		},function (r) {
 			alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
 		}, dirProcess.handler)
 	}
 
-	var loadChatImg = function () {
+	var loadChatImg = function (util, fm) {
 		util.loadDir(["chat/client/app/res/chatImg/"],flags,fm,undefined,function(fileMap,mods){
 			//TODO: 可以长期放在缓存中达到更快的显示效果
 			//FIXME 临时在此处加载，其实应该先加载这一部分代码
