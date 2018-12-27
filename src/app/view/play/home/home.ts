@@ -104,7 +104,6 @@ export class PlayHome extends Widget {
      * 刷新页面
      */
     public refreshPage() {
-
         this.props.refresh = true;
         this.paint();
         setTimeout(() => {

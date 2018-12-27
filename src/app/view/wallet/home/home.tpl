@@ -1,7 +1,6 @@
 <div class="new-page" w-class="new-page">
     <div w-class="title-container" ev-refresh-click="refreshClick">
         <app-components1-topBar-topBar1>{avatar:{{it.avatar}},text:{{it.currencyUnitSymbol+it.totalAsset}} }</app-components1-topBar-topBar1>
-
         <div w-class="nav-wrap">
             <div w-class="nav">
                 {{for i,v of it.tabs}} {{let isActive = i===it.activeNum}}

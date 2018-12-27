@@ -110,8 +110,12 @@ export class GlobalWallet {
     public static createWltByMnemonic(mnemonic: string, currencyName: string, i: number) {
         let wlt;
         if (currencyName === 'ETH') {
+            console.time('trans EthWallet.fromMnemonic');
             const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            console.timeEnd('trans EthWallet.fromMnemonic');
+            console.time('trans ethWallet.selectAddressWlt');
             wlt = ethWallet.selectAddressWlt(i);
+            console.timeEnd('trans ethWallet.selectAddressWlt');
         } else if (currencyName === 'BTC') {
             wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         } else if (ERC20Tokens[currencyName]) {

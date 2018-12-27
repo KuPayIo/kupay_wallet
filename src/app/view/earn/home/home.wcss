@@ -1,6 +1,6 @@
 .topBack{
-    height: 550px;
-    padding-top: 158px;
+    height: 422px;
+    padding-top: 30px;
     background:linear-gradient(to right,#318DE6,#38CFE7);
     flex-shrink: 0;
 }
