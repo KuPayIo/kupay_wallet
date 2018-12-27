@@ -149,8 +149,7 @@ export class Home extends Widget {
      * 展示我的勋章
      */
     public showMyMedal() {
-        //TODO
-        // popNew('app-view-mine-other-addFriend');
+        popNew('earn-client-app-view-medal-medal');
         // this.backPrePage();
     }
 
