@@ -16,6 +16,7 @@ import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { getStore, initStore, setStore } from '../../store/memstore';
 import { fetchDeviceId } from '../../utils/tools';
+import { getScreenModify } from '../../logic/native';
 
 // let client;
 // let rpc;
@@ -76,6 +77,7 @@ const preFetchFromNative = () => {
             setStore('setting/deviceId',hash256deviceId);
         });
     }
+    getScreenModify();
 };
 const checkUpdate = () => {
   // todo
