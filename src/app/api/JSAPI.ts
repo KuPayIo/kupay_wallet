@@ -37,22 +37,22 @@ export const authorize = (payload, callback) => {
  * @param okCb 成功回调 
  * @param failCb 失败回调
  */
-export const getOpenId = (appId:string,okCb?:Function,failCb?:Function) => {
+export const getOpenId = (appId:string,okCb:Function,failCb?:Function) => {
     if (!appId) {
         failCb && failCb(new Error('appId is not available'));
 
         return;
     }
-    const authorize = JSON.parse(localStorage.getItem('authorize')) || {};
-    if (authorize[appId]) {
-        okCb && okCb(authorize[appId]);
+    // const authorize = JSON.parse(localStorage.getItem('authorize')) || {};
+    // if (authorize[appId]) {
+    //     okCb && okCb(authorize[appId]);
 
-        return;
-    }
+    //     return;
+    // }
     const msg = { type: 'get_openid', param: { appid:appId } };
     requestAsync(msg).then(resData => {
-        authorize[appId] = resData;
-        localStorage.setItem('authorize',JSON.stringify(authorize));
+        // authorize[appId] = resData;
+        // localStorage.setItem('authorize',JSON.stringify(authorize));
         okCb && okCb(resData);
     }).catch(err => {
         failCb && failCb(err); 
