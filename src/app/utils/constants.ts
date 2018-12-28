@@ -21,7 +21,6 @@ export const notSwtichShowCurrencys = ['ETH', 'BTC'];
 //
 export const strength = 128;
 
-
 // 语言
 export const lang = 'english';
 

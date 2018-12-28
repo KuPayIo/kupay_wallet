@@ -59,7 +59,7 @@ export class PlayHome extends Widget {
             scroll: false,
             scrollHeight: 0,
             refresh: false,
-            avatar: '../../res/image1/default_avatar.png'
+            avatar: 'res/image1/default_avatar.png'
         };
         setTimeout(() => {
             this.scrollPage();
@@ -179,6 +179,9 @@ export class PlayHome extends Widget {
         }
     }
 
+    public openDemo() {
+        popNew('app-view-demo-client-demo');
+    }
     /**
      * 获取更新数据
      */     

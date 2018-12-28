@@ -64,6 +64,7 @@
 
             <div style="display: flex;align-items: center;">
                 <span w-class="welfare"><pi-ui-lang>{"zh_Hans":"福利活动","zh_Hant":"福利活動","en":""}</pi-ui-lang></span>
+                <span on-tap="openDemo">点我弹出Demo</span>
             </div>
 
             <div style="margin: 15px 20px;">

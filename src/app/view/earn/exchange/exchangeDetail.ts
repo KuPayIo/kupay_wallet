@@ -32,7 +32,7 @@ export class ExchangeDetail extends Widget {
             scroll:false,
             showPin:this.props.rtype === 1,  // 0 等额红包  1 拼手气红包
             userName:'',
-            userHead:'../../../res/image/default_avater_big.png',
+            userHead:'../res/image/default_avater_big.png',
             curNum:0,
             totalNum:0,
             totalAmount:0,
@@ -71,14 +71,14 @@ export class ExchangeDetail extends Widget {
         const user = await getUserList([this.props.suid]);
         if (!user) return;
         this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
-        this.props.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../../res/image/default_avater_big.png';
+        this.props.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../res/image/default_avater_big.png';
 
         const redBagList = value[0];
         for (let i = 0;i < redBagList.length;i++) {
             const user = await getUserList([redBagList[i].cuid]);
             this.props.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
             // tslint:disable-next-line:max-line-length
-            this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png';
+            this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'res/image/default_avater_big.png';
             if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.props.greatAmount < redBagList[i].amount) {
                 this.props.greatAmount = redBagList.amount;
                 this.props.greatUser = i;
