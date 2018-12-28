@@ -11,6 +11,7 @@ import { defaultSetting } from '../config';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Gold, Setting, ShapeShiftTxs, Store, TxHistory, UserInfo, Wallet } from './interface';
+import { topHeight } from '../utils/constants';
 
 // ============================================ 导出
 
@@ -65,8 +66,9 @@ export const getStore = (path: string, defaultValue = undefined) => {
             throw new Error('getStore Failed, path = ' + path);
         }
     }
+    const deepRet = deepCopy(ret);
 
-    return typeof deepCopy(ret) === 'boolean' ? deepCopy(ret) : (deepCopy(ret) || defaultValue);
+    return (typeof deepRet === 'boolean' || typeof deepRet === 'number') ? deepRet : (deepRet || defaultValue);
 };
 
 /**
@@ -322,9 +324,12 @@ const initSettings = () => {
             open: false,
             psw: ''
         },
-        deviceId: ''
+        deviceId: '',
+        topHeight,
+        bottomHeight:0
     });
     store.setting = {
+        ...store.setting,
         ...setting
     };
     setLang(setting.language);
@@ -501,7 +506,9 @@ const settingChange = () => {
         changeColor: getStore('setting/changeColor'),
         currencyUnit: getStore('setting/currencyUnit'),
         lockScreen: getStore('setting/lockScreen'),
-        deviceId: getStore('setting/deviceId')
+        deviceId: getStore('setting/deviceId'),
+        topHeight: getStore('setting/topHeight'),
+        bottomHeight:getStore('setting/bottomHeight')
     };
     setLocalStorage('setting', localSetting);
 };
@@ -570,7 +577,9 @@ const store: Store = {
         language: '',             // 语言
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
         currencyUnit: '',         // 显示哪个国家的货币
-        deviceId: ''               // 设备唯一ID
+        deviceId: '',             // 设备唯一ID
+        topHeight,              // 设备头部应空出来的高度
+        bottomHeight:0            // 设备底部应空出来的高度
     },
     third: {
         gasPrice: null,                             // gasPrice分档次

@@ -4,6 +4,7 @@ import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { DeviceIdProvider } from '../../pi/browser/systemInfoProvider';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
+import { setStore } from '../store/memstore';
 
 /**
  * 一些底层操作
@@ -97,3 +98,16 @@ export const makeScreenShot = (okCB?,errCB?) => {
         }
     });
 };
+
+
+/**
+ * 获取屏幕刘海与下部分高度
+ */
+export const getScreenModify = () => {
+    WebViewManager.getScreenModify((high,low)=>{
+        const calHigh = high / window.devicePixelRatio * 2;
+        const calLow = low / window.devicePixelRatio * 2;
+        setStore('setting/topHeight',calHigh);
+        setStore('setting/bottomHeight',calLow);
+    });
+}

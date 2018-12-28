@@ -135,6 +135,8 @@ export interface Setting {
     changeColor: string;          // 涨跌颜色设置，默认：红跌绿张
     currencyUnit: string;         // 显示哪个国家的货币
     deviceId:string;              // 设备唯一id
+    topHeight:number;             // 设备头部应空出来的高度(刘海高度)
+    bottomHeight:number;          // 设备底部应空出来的高度
 }
 
 /**

@@ -103,9 +103,17 @@
         font-size: 28px;
         line-height: 40px;
         color: #8e96ab;
-      }
+	  }
+	  .pi-update-bottom{
+		  position: relative;
+		  margin-top: 30px;
+		  min-height: 100px;
+	  }
       .pi-update-btns {
-        margin: 30px 80px 0;
+		position: absolute;
+		top: 0;
+		left: 80px;
+		right: 80px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -138,7 +146,10 @@
         align-items: center;
       }
       .pi-update-progress-container {
-        margin: 70px 30px 0;
+		position: absolute;
+		top: 40px;
+		left: 30px;
+		right: 30px;
         display: none;
       }
       .pi-update-progress-bg {
@@ -161,7 +172,10 @@
         text-align: center;
       }
       .pi-update-complete-btn {
-        margin: 30px 30px 0;
+		position: absolute;
+		top: 0;
+		left: 30px;
+		right: 30px;
         height: 80px;
         background: rgba(49, 141, 230, 1);
         border-radius: 12px;
@@ -406,7 +420,7 @@
 			winit.store = name;
 			// winit.debug = !remote;
 			// winit.debug = false;
-			winit.debug = true;
+			winit.debug = false;
 			// winit.debug = location.host.indexOf('192.168.31') > -1;
 			main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
@@ -435,7 +449,12 @@
 
 			// winit.severIp = "47.244.29.209";
 			// winit.severPort = "80";
-			
+
+
+			// app更新配置的URL地址
+			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
+			// console.log("winit.appURL = ",winit.appURL);
+
 			var defaultDomains;
 			var remoteDomains = [
 				"http://" + winit.severIp + ":" + winit.severPort,
@@ -487,6 +506,36 @@
 
 				isNative: navigator.userAgent.indexOf('YINENG') >= 0,
 
+				// 取App底层版本号
+				getAppVersion: function (cb) {
+
+					jsInterceptMap[++jsInterceptID] = cb;
+
+					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+						window.JSIntercept.getAppVersion(jsInterceptID);
+					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+						window.webkit.messageHandlers.JSIntercept.postMessage(["getAppVersion", jsInterceptID]);
+					} else {
+						setTimeout(cb, 0);
+					}
+				},
+
+				// 更新App
+				// iOS：url用来跳转到下载页面
+				// Android：url用于底层更新apk文件
+				updateApp: function (url, cb) {
+					jsInterceptMap[++jsInterceptID] = cb;
+
+					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+						window.JSIntercept.updateApp(url, jsInterceptID);
+					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+						// TODO: 弹出safari浏览器，跳转到url，并退出程序
+						window.webkit.messageHandlers.JSIntercept.postMessage(["updateApp",url,jsInterceptID]);
+					} else {
+						setTimeout(cb, 0);
+					}
+				},
+
 				getBootFile: function (fileName) {
 					return mobileBootFiles[fileName] && mobileBootFiles[fileName].content;
 				},
@@ -503,6 +552,10 @@
 					}
 				},
 
+				/*
+				 * 如果path为"update.flag"，表示在getBootFiles里面设置清空标志
+				 * content = "true"，表示正在更新
+				 */
 				saveFile: function (path, content, cb) {
 					jsInterceptMap[++jsInterceptID] = cb;
 
@@ -573,14 +626,20 @@
 					winit.JSIntercept.getMobileBootFiles(function (isSuccess, str) {
 						mobileBootFiles = JSON.parse(str);
 						for (var key in mobileBootFiles) {
-							var buffer = base64ToU8Array(mobileBootFiles[key]);
-							var blob = new Blob([buffer], {
-								type: "text/javascript"
-							});
-							mobileBootFiles[key] = {
-								content: u8ArrayToStr(buffer),
-								url: URL.createObjectURL(blob)
-				}
+							if (key === "update.flag") {
+								mobileBootFiles[key] = {
+									content: window.atob(mobileBootFiles[key])
+								};
+							} else {
+								var buffer = base64ToU8Array(mobileBootFiles[key]);
+								var blob = new Blob([buffer], {
+									type: "text/javascript"
+								});
+								mobileBootFiles[key] = {
+									content: u8ArrayToStr(buffer),
+									url: URL.createObjectURL(blob)
+								}
+							}
 						}
 						winit.startImpl();
 					});
@@ -636,50 +695,24 @@
 		</div>
 	</div>
 	
-		<div class="swiper-container" id="swiper-container">
-			<div class="swiper-wrapper">
-				<div class="swiper-slide slide">
-					<img src="../res/image1/guide1.jpg"/>
-				</div>
-				<div class="swiper-slide slide">
-					<img src="../res/image1/guide2.jpg"/>
-				</div>
-				<div class="swiper-slide slide">
-					<img src="../res/image1/guide3.jpg"/>
-				</div>
-				<div class="swiper-slide slide">
-					<img src="../res/image1/guide4.jpg"/>
-					<div style="transform:  scale(0.5);position: absolute;width: 100%;bottom: 0px;" ><div class="btn-start">立即体验</div></div>
-				</div>
+	<div class="swiper-container" id="swiper-container">
+		<div class="swiper-wrapper">
+			<div class="swiper-slide slide">
+				<img src="../res/image1/guide1.jpg"/>
 			</div>
-			<div class="swiper-pagination"></div>
+			<div class="swiper-slide slide">
+				<img src="../res/image1/guide2.jpg"/>
+			</div>
+			<div class="swiper-slide slide">
+				<img src="../res/image1/guide3.jpg"/>
+			</div>
+			<div class="swiper-slide slide">
+				<img src="../res/image1/guide4.jpg"/>
+				<div style="transform:  scale(0.5);position: absolute;width: 100%;bottom: 0px;" ><div class="btn-start">立即体验</div></div>
+			</div>
 		</div>
-
-	<!--更新弹框html begin-->
-	<div id="update-root">
-	<div class="pi-mask">
-		<div class="pi-update-box animated bounceInUp">
-			<img src="../res/image1/rocket.png" class="pi-update-rocket" />
-			<div class="pi-update-content">
-			<div class="pi-update-title">发现新版本：V<span id="pi-version"></span></div>
-			<div class="pi-update-items">
-			</div>
-			</div>
-			<div class="pi-update-btns">
-				<div class="pi-update-cancel-btn">取消</div>
-				<div class="pi-update-ok-btn">确定</div>
-			</div>
-			<div class="pi-update-progress-container">
-			<div class="pi-update-progress-bg">
-				<div class="pi-update-progress"></div>
-			</div>
-			<div class="pi-update-progress-text">0%</div>
-			</div>
-			<div class="pi-update-complete-btn"></div>
-		</div>
+		<div class="swiper-pagination"></div>
 	</div>
-	</div>
-	<!--更新弹框html end-->
 </body>
 <script src="./swiper.min.js"></script>
 <script type="text/javascript">
@@ -704,50 +737,5 @@ btnStart.onclick = function(){
 	document.body.removeChild(document.querySelector('#swiper-container'));
 }
 </script>
-<!--弹框适配-->
-<script>
-(function(){
-	var cfg = {
-    width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
-};
-
-var browserAdaptive = function() {
-    var clientWidth = document.documentElement.clientWidth;
-    var clientHeight = document.documentElement.clientHeight;
-    oldHeight = clientHeight;
-    rootWidth = cfg.width;
-    rootHeight = cfg.height;
-    let scaleW = clientWidth / rootWidth;
-    let scaleH = clientHeight / rootHeight;
-    if (cfg.wscale >= cfg.hscale) {
-        // 宽度比例变动
-        if (scaleW > scaleH * (cfg.wscale + 1)) {
-            // 大于规定的比例
-            rootWidth = rootWidth * (cfg.wscale + 1) | 0;
-        } else {
-            rootWidth = (clientWidth / scaleH) | 0;
-        }
-        rootScale = scaleW = scaleH;
-    } else {
-        // 高度比例变动
-        if (scaleH > scaleW * (cfg.hscale + 1)) {
-            rootHeight = rootHeight * (cfg.hscale + 1) | 0;
-        } else {
-            rootHeight = (clientHeight / scaleW) | 0;
-        }
-        rootScale = scaleH = scaleW;
-    }
-    rootX = (clientWidth - rootWidth) / 2;
-    rootY = (clientHeight - rootHeight) / 2;
-	var cssText = 'display:none;z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
-	var rootUpdate = document.querySelector('#update-root');
-	rootUpdate.style.cssText = cssText;
-};
-
-browserAdaptive();
-})();
-
-</script>
-<!--弹框适配-->
 
 </html>

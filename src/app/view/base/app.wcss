@@ -1,6 +1,4 @@
 .ga-bottom-tab-bar-container{
-    display: flex;
-    height: 110px;
     width: 100%;
     position: absolute;
     bottom: 0;

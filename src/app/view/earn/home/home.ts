@@ -128,7 +128,6 @@ export class PlayHome extends Widget {
             this.props.isAbleBtn = false;
             this.paint();
         }, 100);
-
     }
 
     /**
