@@ -32,7 +32,6 @@
         </div>
         {{end}}
     </div>
-    <app-components1-blankDiv-bottomDiv></app-components1-blankDiv-bottomDiv>
 </div>
 
 </div>
