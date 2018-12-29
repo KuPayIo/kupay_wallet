@@ -70,7 +70,6 @@ export class App extends Widget {
                 }
             },
             tabBarList: []
-            
         };
         this.setList();
         // console.log('updateTest');
@@ -135,6 +134,7 @@ register('user/info', (userInfo: UserInfo) => {
 
 // 登录状态成功
 register('user/isLogin', (isLogin: boolean) => {
+    const w = forelet.getWidget(WIDGET_NAME);
     if (isLogin) {
         // 余额
         getServerCloudBalance();
@@ -143,7 +143,16 @@ register('user/isLogin', (isLogin: boolean) => {
         getRealUser();
         // 用户基础信息
         getUserInfoFromServer(getStore('user/conUid'));
-        
+        // 切换聊天页面
+        if (w) {
+            w.props.allTabBar.chat.components = 'chat-client-app-demo_view-chat-contact';
+            w.paint();
+        }
+    } else {
+        if (w) {
+            w.props.allTabBar.chat.components = 'app-view-chat-home-home';
+            w.paint();
+        }
     }
 });
 
