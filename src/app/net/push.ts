@@ -60,16 +60,16 @@ export const initPush = () => {
     });
 
     // 监听余额变化事件
-    setMsgHandler('alter_balance_ok',(res) => {
+    // setMsgHandler('alter_balance_ok',(res) => {
         // if (res.coinType === CloudCurrencyType.KT) {
         //     popNew('app-view-earn-mining-addMineAlert',{ addNum:kpt2kt(res.num) });
         // }
-        console.log('服务器推送成功==========================',res);
-    });
+    //     console.log('服务器推送成功==========================',res);
+    // });
 
-    // 监听KT增加事件
-    setMsgHandler('event_kt_alert',(res) => {
-        popNew('app-view-earn-mining-addMineAlert',{ addNum:kpt2kt(res.num),iconType:'KT' });
-        console.log('服务器推送成功==========================',res);
-    });
+    // // 监听KT增加事件
+    // setMsgHandler('event_kt_alert',(res) => {
+    //     popNew('app-view-earn-mining-addMineAlert',{ addNum:kpt2kt(res.num),iconType:'KT' });
+    //     console.log('服务器推送成功==========================',res);
+    // });
 };

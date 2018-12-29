@@ -420,7 +420,7 @@
 			winit.store = name;
 			// winit.debug = !remote;
 			// winit.debug = false;
-			winit.debug = false;
+			winit.debug = true;
 			// winit.debug = location.host.indexOf('192.168.31') > -1;
 			main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
@@ -728,7 +728,6 @@ setTimeout(() => {
     });
 	if(!localStorage.firstInApp){
 		document.querySelector('#swiper-container').setAttribute('style','z-index:9999;')
-		localStorage.firstInApp = true;
 	}else{
 		document.body.removeChild(document.querySelector('#swiper-container'));
 	}
@@ -737,6 +736,7 @@ setTimeout(() => {
 var btnStart = document.querySelector('.btn-start');
 btnStart.onclick = function(){
 	document.body.removeChild(document.querySelector('#swiper-container'));
+	localStorage.firstInApp = true;
 }
 </script>
 
