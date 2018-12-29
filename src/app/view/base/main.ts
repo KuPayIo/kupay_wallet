@@ -11,12 +11,12 @@ import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
+import { getScreenModify } from '../../logic/native';
 import { openConnect } from '../../net/pull';
 import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { getStore, initStore, setStore } from '../../store/memstore';
 import { fetchDeviceId } from '../../utils/tools';
-import { getScreenModify } from '../../logic/native';
 
 // let client;
 // let rpc;

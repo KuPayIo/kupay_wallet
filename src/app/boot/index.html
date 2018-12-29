@@ -430,15 +430,13 @@
 			// todo 发版本时需动态设置服务器ip及端口
 			// //----------本地-------
 			//////zxzxzx
-			winit.severIp = "192.168.7.71";
-			winit.severPort = "80";
-			// winit.severIp = "192.168.9.29";
+			// winit.severIp = "192.168.7.71";
 			// winit.severPort = "80";
 			//luobing
 			// winit.severIp = "192.168.9.25";
 			// winit.severPort = "80";
-			// winit.severIp = "192.168.9.15";
-			// winit.severPort = "80";			
+			winit.severIp = "192.168.9.29";
+			winit.severPort = "80";			
 			//---------国内------
 			// winit.severIp = "app.kuplay.io";
 			// winit.severPort = "80";
@@ -728,6 +726,7 @@ setTimeout(() => {
     });
 	if(!localStorage.firstInApp){
 		document.querySelector('#swiper-container').setAttribute('style','z-index:9999;')
+		localStorage.firstInApp = true;
 	}else{
 		document.body.removeChild(document.querySelector('#swiper-container'));
 	}
@@ -736,7 +735,6 @@ setTimeout(() => {
 var btnStart = document.querySelector('.btn-start');
 btnStart.onclick = function(){
 	document.body.removeChild(document.querySelector('#swiper-container'));
-	localStorage.firstInApp = true;
 }
 </script>
 

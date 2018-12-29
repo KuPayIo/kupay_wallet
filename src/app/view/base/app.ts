@@ -52,14 +52,14 @@ export class App extends Widget {
                     text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
-                    components: 'chat-client-app-demo_view-login-login'
+                    components: 'app-view-chat-home-home'
                 },
                 earn: {
                     modulName: 'APP_EARN',
                     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
-                    components: 'earn-client-app-view-home-home1'
+                    components: 'app-view-earn-home-home'
                 },
                 wallet: {
                     modulName: 'APP_WALLET',
@@ -70,7 +70,6 @@ export class App extends Widget {
                 }
             },
             tabBarList: []
-            
         };
         this.setList();
         // console.log('updateTest');
@@ -82,7 +81,7 @@ export class App extends Widget {
             this.props.allTabBar[item];
             if (getModulConfig(this.props.allTabBar[item].modulName)) {
                 if (this.props.allTabBar[item].modulName === 'APP_WALLET') {
-                    this.props.isActive = 'APP_WALLET';
+                    this.props.isActive = 'APP_EARN';
                 }
                 resList.push(this.props.allTabBar[item]);
             }   
@@ -135,6 +134,7 @@ register('user/info', (userInfo: UserInfo) => {
 
 // 登录状态成功
 register('user/isLogin', (isLogin: boolean) => {
+    const w = forelet.getWidget(WIDGET_NAME);
     if (isLogin) {
         // 余额
         getServerCloudBalance();
@@ -143,7 +143,16 @@ register('user/isLogin', (isLogin: boolean) => {
         getRealUser();
         // 用户基础信息
         getUserInfoFromServer(getStore('user/conUid'));
-        
+        // 切换聊天页面
+        if(w){
+            w.props.allTabBar.chat.components = 'chat-client-app-demo_view-chat-contact';
+            w.paint();
+        }
+    }else{
+        if(w){
+            w.props.allTabBar.chat.components = 'app-view-chat-home-home';
+            w.paint();
+        }
     }
 });
 

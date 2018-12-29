@@ -2,6 +2,7 @@
  * 主动向钱包通讯
  */
 // ===================================================== 导入
+import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
 import { ERC20Tokens } from '../config';
@@ -83,6 +84,9 @@ export const rpcProviderSendAsync = (payload, callback) => {
             web3.currentProvider.sendAsync(payload, callback);
         }
     }
+
+    // 关闭webview定时器
+    WebViewManager.endTimer();
 };
 
 /**
