@@ -28,7 +28,7 @@ export class WebViewManager extends NativeObject {
      * 获取屏幕刘海与下部分高度
      */
     static getScreenModify(success:(high: number, low: number)=>void){
-        webViewMgr.call("getScreenModify",{success});
+        webViewMgr.call("getScreenModify",success);
     }
 
     /**
@@ -150,7 +150,8 @@ registerSign(WebViewManager, {
     }, {
         name: "message",
         type: ParamType.String
-    }]
+    }],
+    getScreenModify: []
 });
 
 let webViewMgr = new WebViewManager();
