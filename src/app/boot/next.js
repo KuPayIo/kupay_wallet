@@ -143,7 +143,7 @@ winit.initNext = function () {
 			});
 			// TODO
 			registerEarnStruct(util,fm);
-			loadDir2(util, fm);
+			// loadDir2(util, fm);
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -191,13 +191,20 @@ winit.initNext = function () {
 		h5UpdateMod.checkUpdate(function (needUpdateCode) {
 			// 判断当前app版本是否大于等于依赖的版本号
 			var appLocalVersion = appUpdateMod.getAppLocalVersion();
-			var canUpdate = true;
+			var canUpdate = false;
 			if(appLocalVersion){  
 				var dependAppVersionArr = h5UpdateMod.getDependAppVersion().split(".");
 				var appLocalVersionArr = appUpdateMod.getAppLocalVersion().split(".");
 				for(var i = 0;i < dependAppVersionArr.length;i++){
+					if(i === dependAppVersionArr.length - 1){
+						canUpdate = appLocalVersionArr[i] >= dependAppVersionArr[i];
+						break;
+					}
 					if(appLocalVersionArr[i] < dependAppVersionArr[i]){
 						canUpdate = false;
+						break;
+					}else if(appLocalVersionArr[i] > dependAppVersionArr[i]){
+						canUpdate = true;
 						break;
 					}
 				}
