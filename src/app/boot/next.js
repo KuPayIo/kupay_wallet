@@ -143,7 +143,7 @@ winit.initNext = function () {
 			});
 			// TODO
 			registerEarnStruct(util,fm);
-			// loadDir2(util, fm);
+			loadDir2(util, fm);
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
