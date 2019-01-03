@@ -146,6 +146,14 @@ export class Home extends Widget {
     }
 
     /**
+     * 展示我的勋章
+     */
+    public showMyMedal() {
+        popNew('earn-client-app-view-medal-medal');
+        // this.backPrePage();
+    }
+
+    /**
      * 创建钱包
      */
     public login() {

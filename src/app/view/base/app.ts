@@ -52,7 +52,7 @@ export class App extends Widget {
                     text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
-                    components: 'app-view-chat-home-home'
+                    components: 'chat-client-app-demo_view-login-login'
                 },
                 earn: {
                     modulName: 'APP_EARN',
@@ -144,12 +144,12 @@ register('user/isLogin', (isLogin: boolean) => {
         // 用户基础信息
         getUserInfoFromServer(getStore('user/conUid'));
         // 切换聊天页面
-        if(w){
+        if (w) {
             w.props.allTabBar.chat.components = 'chat-client-app-demo_view-chat-contact';
             w.paint();
         }
-    }else{
-        if(w){
+    } else {
+        if (w) {
             w.props.allTabBar.chat.components = 'app-view-chat-home-home';
             w.paint();
         }

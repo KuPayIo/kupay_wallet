@@ -65,6 +65,9 @@ const popNewPage = () => {
             openApp: true
         });
     }
+    if(!localStorage.firstInApp){
+        popNew('app-components1-modalBox-newUserWelfare');
+    }
 };
 
 /**
