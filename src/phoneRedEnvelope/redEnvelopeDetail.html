@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html manifest="IGNORE.manifest">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,12 +11,15 @@
     <meta name="viewport" content="width=device-width,initial-scale=0.5,maximum-scale=0.5,user-scalable=0">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
 </head>
+
 <body>
-    <div ev-back-click="backPrePage" class="detail-new-page">
+    <!-- <div ev-back-click="backPrePage" class="detail-new-page">
         <div class="detail-main">
             <div class="detail-scroll-container">
                 <div class="detail-top">
-                    <div class="detail-head"><div class="detail-head-inner"></div></div>
+                    <div class="detail-head">
+                        <div class="detail-head-inner"></div>
+                    </div>
                     <div class="detail-leave-message" id="message">恭喜发财 万事如意</div>
                     <div class="detail-amount"><span id="amount">1</span><span class="detail-currency-name" id="currencyName">KT</span></div>
                     <div class="detail-input-father">
@@ -24,115 +28,143 @@
                     </div>
                     <div class="detail-receive" onclick="receiveClick()" id="receiveBtn">立即领取红包金额</div>
                 </div>
-                
+
                 <div class="detail-bottom" id="detailBottom">
                     <div class="detail-title" id="detailTitle">已领取1/2，共10 KT</div>
-                    <div class="detail-list"  id="detailList">
-                        <!-- 已领取红包用户列表 -->
+                    <div class="detail-list" id="detailList">
+                       已领取红包用户列表
                     </div>
                 </div>
 
                 <div class="detail-rule">
                     <div class="detail-rule-title" id="ruleTitle">红包领取规则</div>
                     <div class="detail-rule-list" id="ruleList">
-                       <!-- 红包领取规则介绍 -->
+                        红包领取规则介绍
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
+    <div class="detail-new-page">
+        <div class="detail-top">
+            <div class="detail-head">
+                <div class="detail-head-inner"></div>
+            </div>
+            <div class="detail-amount"><span id="amount">1</span><span class="detail-currency-name" id="currencyName">KT</span></div>
+            <div class="detail-leave-message" id="message">恭喜发财 万事如意</div>
+            <div class="detail-input-father">
+                <div class="input-father" id="code">000000</div>
+                <div class="detail-copy-btn" onclick="copyBtnClick()" id="copyBtn">复制</div>
+            </div>
+            <div class="detail-receive" onclick="receiveClick()" id="receiveBtn">立即领取</div>
+        </div>
 
+        <div class="detail-bottom" id="detailBottom">
+            <div class="detail-title" id="detailTitle">已领取1/2，共10 KT</div>
+            <div class="detail-list" id="detailList">
+               已领取红包用户列表
+            </div>
+        </div>
+
+        <div class="detail-rule">
+            <div class="detail-rule-title" id="ruleTitle">红包领取规则</div>
+            <div class="detail-rule-list" id="ruleList">
+                红包领取规则介绍
+            </div>
+        </div>
+    </div>
 </body>
 <script src="main20181112.js"></script>
 <script src="bignumber.js"></script>
 <script>
-const props = JSON.parse(window.localStorage.takeRedBag);
-const lan = getLanguage();
-(function init(){
-    document.getElementById('message').innerText = props.leaveMsg;
-    document.getElementById('amount').innerText = props.amount;
-    document.getElementById('currencyName').innerText = CloudCurrencyType[props.ctype];
-    document.getElementById('code').innerText = props.cidShow;
-    document.getElementById('copyBtn').innerText = lan.copyBtn;
-    document.getElementById('receiveBtn').innerText = lan.receiveBtn;
-    document.getElementById('ruleTitle').innerText = lan.tips[2];
-    document.getElementById("ruleList").innerHTML = "<div class='detail-rule-item'>"+lan.tips[3]+"</div>"+
-                        "<div class='detail-rule-item'>"+lan.tips[4]+"</div>"+
-                        "<div class='detail-rule-item'>"+lan.tips[5]+"</div>"+
-                        "<div class='detail-rule-item'>"+lan.tips[6]+"</div>"
-})();
+    const props = JSON.parse(window.localStorage.takeRedBag);
+    const lan = getLanguage();
+    (function init() {
+        document.getElementById('message').innerText = props.leaveMsg;
+        document.getElementById('amount').innerText = props.amount;
+        document.getElementById('currencyName').innerText = CloudCurrencyType[props.ctype];
+        document.getElementById('code').innerText = props.cidShow;
+        document.getElementById('copyBtn').innerText = lan.copyBtn;
+        document.getElementById('receiveBtn').innerText = lan.receiveBtn;
+        document.getElementById('ruleTitle').innerText = lan.tips[2];
+        document.getElementById("ruleList").innerHTML = "<div class='detail-rule-item'>" + lan.tips[3] + "</div>" +
+            "<div class='detail-rule-item'>" + lan.tips[4] + "</div>" +
+            "<div class='detail-rule-item'>" + lan.tips[5] + "</div>" +
+            "<div class='detail-rule-item'>" + lan.tips[6] + "</div>"
+    })();
 
-if(props.rtype!==99){
-    getDetail();
-}
-/**
- * 复制兑换码
- */
- function copyBtnClick(){
-    copyToClipboard(props.cidShow);
-}
-
-function getDetail(){
-    const res = querydetail(props.uid,props.rid);
-    console.log(res);
-
-    if (res.result !== 1) {
-        popMessage(lan.errorList[4]);
-        return;
+    if (props.rtype !== 99) {
+        getDetail();
     }
-    const l = res.value[1];
-    const redBagList = [];
-    let totalAmount = 0;
-    for (let i = 0;i < l.length;i++) {
-        const amount = smallUnit2LargeUnitString(CloudCurrencyType[props.ctype],l[i][4]);
-        totalAmount += amount;
-        if (l[i][1] !== 0 && l[i][5] !== 0) {
-            user = JSON.parse(userDetails([l[i][1]]).value[0]);
-            console.log(user);
-            
-            const redBag = {
-                suid:l[i][0],
-                uid:l[i][1],
-                rtype:l[i][2],
-                ctype:l[i][3],
-                amount,
-                time:l[i][5],
-                timeShow:timestampFormat(l[i][5]),
-                userName:user.nickName,
-                avatar:user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'./image/img_avatar1.png'
-            };
-            redBagList.push(redBag);
+    /**
+     * 复制兑换码
+     */
+    function copyBtnClick() {
+        copyToClipboard(props.cidShow);
+    }
+
+    function getDetail() {
+        const res = querydetail(props.uid, props.rid);
+        console.log(res);
+
+        if (res.result !== 1) {
+            popMessage(lan.errorList[4]);
+            return;
         }
-        
-    }
-    totalNumber = l.length;
-    convertedNumber = redBagList.length;
-    totalAmount = totalAmount;
+        const l = res.value[1];
+        const redBagList = [];
+        let totalAmount = 0;
+        for (let i = 0; i < l.length; i++) {
+            const amount = smallUnit2LargeUnitString(CloudCurrencyType[props.ctype], l[i][4]);
+            totalAmount += amount;
+            if (l[i][1] !== 0 && l[i][5] !== 0) {
+                user = JSON.parse(userDetails([l[i][1]]).value[0]);
+                console.log(user);
 
-    document.getElementById('detailBottom').style.display = 'block';
-    document.getElementById('detailTitle').innerText = lan.tips[0]+convertedNumber+'/'+totalNumber+'，'+lan.tips[1]+totalAmount+ CloudCurrencyType[props.ctype];
-    // 领取红包，其他用户获得的红包列表
-    if(!redBagList){
-        return;
+                const redBag = {
+                    suid: l[i][0],
+                    uid: l[i][1],
+                    rtype: l[i][2],
+                    ctype: l[i][3],
+                    amount,
+                    time: l[i][5],
+                    timeShow: timestampFormat(l[i][5]),
+                    userName: user.nickName,
+                    avatar: user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` : './image/img_avatar1.png'
+                };
+                redBagList.push(redBag);
+            }
+
+        }
+        totalNumber = l.length;
+        convertedNumber = redBagList.length;
+        totalAmount = totalAmount;
+
+        document.getElementById('detailBottom').style.display = 'block';
+        document.getElementById('detailTitle').innerText = lan.tips[0] + convertedNumber + '/' + totalNumber + '，' + lan.tips[1] + totalAmount + CloudCurrencyType[props.ctype];
+        // 领取红包，其他用户获得的红包列表
+        if (!redBagList) {
+            return;
+        }
+        for (const i in redBagList) {
+            var item = document.createElement('div');
+            item.setAttribute('class', 'detail-item');
+            item.innerHTML = ' <img src="' + redBagList[i].avatar + '" class="detail-avator"/>' +
+                '<div class="detail-item-right">' +
+                '<div class="detail-box1">' +
+                '<div class="detail-name" id="userName">' + redBagList[i].userName + '</div>' +
+                '<div id="userAmount">' + redBagList[i].amount + '&nbsp;' + CloudCurrencyType[redBagList[i].ctype] + '</div>' +
+                '</div>' +
+                '<div class="detail-box2">' +
+                '<div class="detail-time" id="timeShow">' + redBagList[i].timeShow + '</div>' +
+                '<div class="detail-best"></div>' +
+                '</div>' +
+                '</div>';
+            document.getElementById('detailList').appendChild(item);
+        }
+
     }
-    for(const i in redBagList){
-        var item = document.createElement('div');
-        item.setAttribute('class','detail-item');
-        item.innerHTML = ' <img src="'+redBagList[i].avatar+'" class="detail-avator"/>'+
-            '<div class="detail-item-right">'+
-                '<div class="detail-box1">'+
-                    '<div class="detail-name" id="userName">'+redBagList[i].userName+'</div>'+
-                    '<div id="userAmount">'+redBagList[i].amount+'&nbsp;'+CloudCurrencyType[redBagList[i].ctype]+'</div>'+
-                '</div>'+
-                '<div class="detail-box2">'+
-                    '<div class="detail-time" id="timeShow">'+redBagList[i].timeShow+'</div>'+
-                    '<div class="detail-best"></div>'+
-                '</div>'+
-            '</div>';
-        document.getElementById('detailList').appendChild(item);
-    }
-    
-}
 
 </script>
+
 </html>

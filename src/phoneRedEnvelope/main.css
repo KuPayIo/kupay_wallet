@@ -178,7 +178,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: #fff;
+    background-color: #F8F8F8;
 }
 .detail-main{
     overflow-x: hidden;
@@ -189,7 +189,11 @@
     flex-direction: column;
 }
 .detail-top{
-    background-image: url(image/redEnvelopeDetail_bg.png);
+    flex: 0 0 auto;
+    margin-top: 140px;
+    height: 880px;
+    background-image: url('image/luckeyMoney.png');
+    background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
     background-color: #f8f8f8;
@@ -201,13 +205,13 @@
     flex: 1 0 0;
 }
 .detail-head{
-    margin-top: 20px;
+    margin-top: -50px;
     height: 195px;
     width: 195px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #ffd9a9;
+    background-color: white;
     border-radius: 50%;
 }
 .detail-head-inner{
@@ -221,62 +225,63 @@
 }
 .detail-leave-message{
     line-height: 40px;
-    color: rgba(32, 50, 96, 1);
+    color: #888888;
     font-size: 28px;
     text-align: center;
-    margin-top: 50px;
+    margin-top: 30px;
 }
 
 .detail-amount{
     line-height: 90px;
-    color: rgba(26, 112, 221, 1);
+    color: #FFFFFF;
     font-size: 64px;
     text-align: center;
-    margin: 30px auto 40px;
+    margin: 20px auto;
 }
 .detail-currency-name{
     font-size: 36px;
     margin-left: 10px;
 }
 .detail-input-father{
-    width: 690px;
-    height: 80px;
-    border-radius: 6px;
+    width: 500px;
+    height: 100px;
+    margin-top: 65px;
+    border-radius: 50px;
     border: 1px solid #e5e5ee;
     background-color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 32px;
-    color: #8e96ab;
+    font-size: 36px;
+    color: black;
 }
 .input-father{
     flex: 1 0 0;
     margin-left: 40px;
 }
 .detail-copy-btn{
-    width: 195px;
-    height: 63px;
-    border-radius: 6px;
-    background-color: rgba(223, 94, 94, 1);
-    font-size: 32px;
+    width: 150px;
+    height: 60px;
+    border-radius: 30px;
+    background: linear-gradient(27deg,#F39439 0%,#F8BC45 100%);
+    font-size: 28px;
     color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 14px;
+    margin-right: 20px;
 }
 .detail-receive{
     color: rgba(255, 255, 255, 0.87);
     font-size: 32px;
-    width: 690px;
-    height: 80px;
+    width: 500px;
+    height: 96px;
     border-radius: 6px;
     background-color: rgba(26, 112, 221, 1);
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 40px 0;
+    margin: 16px 0;
 }
 .detail-bottom{
     background-color: #fff;
@@ -335,7 +340,7 @@
     color: rgba(160, 172, 192, 1);
     font-size: 28px;
     font-family: "SourceHanSansCN-Regular";
-    padding: 72px 30px;
+    padding: 47px 30px;
     background-color: #fff;
     flex: 1 0 0;
 }
