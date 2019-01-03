@@ -49,14 +49,14 @@ export class HoldedFmDetail extends Widget {
         const psw = await popPswBox();
         if (!psw) return;
         const close = popNewLoading(this.language.loading);
-        const verify = await VerifyIdentidy(psw);
-        if (!verify) {
+        const secretHash = await VerifyIdentidy(psw);
+        if (!secretHash) {
             popNewMessage(this.language.tips[0]);
             close.callback(close.widget);
 
             return;
         }
-        const result = await buyBack(this.props.product.purchaseTimeStamp);
+        const result = await buyBack(this.props.product.purchaseTimeStamp,secretHash);
         close.callback(close.widget);
         if (result) {
             popNewMessage(this.language.tips[1]);

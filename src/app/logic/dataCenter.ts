@@ -140,19 +140,17 @@ export class DataCenter {
     /**
      * 检查已使用过的地址
      */
-    public async checkAddr() {
+    public async checkAddr(secretHash:string) {
         const wallet = getStore('wallet');
         if (!wallet) return;
-        if (getStore('user/secretHash')) {
-            const currencyRecord: CurrencyRecord[] = wallet.currencyRecords;
-            const needCheckAddr = [];
-            currencyRecord.forEach(item => {
-                if (!item.updateAddr && wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
-                    needCheckAddr.push(item);
-                }
-            });
-            this.timerCheckAddr(needCheckAddr);
-        }
+        const currencyRecord: CurrencyRecord[] = wallet.currencyRecords;
+        const needCheckAddr = [];
+        currencyRecord.forEach(item => {
+            if (!item.updateAddr && wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
+                needCheckAddr.push(item);
+            }
+        });
+        this.timerCheckAddr(needCheckAddr,secretHash);
     }
 
     /**
@@ -261,7 +259,7 @@ export class DataCenter {
         }, 30 * 1000);
     }
 
-    private timerCheckAddr(needCheckAddr:CurrencyRecord[]) {
+    private timerCheckAddr(needCheckAddr:CurrencyRecord[],secretHash:string) {
         clearTimeout(this.checkAddrTimer);
         const record = needCheckAddr.shift();
         if (!record) return;
@@ -269,17 +267,17 @@ export class DataCenter {
         if (!record.updateAddr) {
             console.log('checkAddr', record.currencyName);
             if (record.currencyName === 'ETH') {
-                this.checkEthAddr();
+                this.checkEthAddr(secretHash);
             } else if (record.currencyName === 'BTC') {
-                this.checkBtcAddr();
+                this.checkBtcAddr(secretHash);
             } else if (ERC20Tokens[record.currencyName]) {
-                this.checkEthERC20TokenAddr(record.currencyName);
+                this.checkEthERC20TokenAddr(record.currencyName,secretHash);
             }
 
         }
 
         this.checkAddrTimer = setTimeout(() => {
-            this.timerCheckAddr(needCheckAddr);
+            this.timerCheckAddr(needCheckAddr,secretHash);
         }, 1000);
     }
 
@@ -687,10 +685,10 @@ export class DataCenter {
     /**
      * 检查eth地址
      */
-    private async checkEthAddr() {
+    private async checkEthAddr(secretHash:string) {
         const wallet = getStore('wallet');
         if (!wallet) return [];
-        const mnemonic = getMnemonicByHash(getStore('user/secretHash'));
+        const mnemonic = getMnemonicByHash(secretHash);
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanUsedAddress();
         const addrs: AddrInfo[] = [];
@@ -713,10 +711,10 @@ export class DataCenter {
     /**
      * 检查btc地址
      */
-    private async checkBtcAddr() {
+    private async checkBtcAddr(secretHash:string) {
         const wallet = getStore('wallet');
         if (!wallet) return [];
-        const mnemonic = getMnemonicByHash(getStore('user/secretHash'));
+        const mnemonic = getMnemonicByHash(secretHash);
         const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         btcWallet.unlock();
         const cnt = await btcWallet.scanUsedAddress();
@@ -742,10 +740,10 @@ export class DataCenter {
     /**
      * 检查eth erc20 token地址
      */
-    private async checkEthERC20TokenAddr(currencyName:string) {
+    private async checkEthERC20TokenAddr(currencyName:string,secretHash:string) {
         const wallet = getStore('wallet');
         if (!wallet) return [];
-        const mnemonic = getMnemonicByHash(getStore('user/secretHash'));
+        const mnemonic = getMnemonicByHash(secretHash);
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanTokenUsedAddress(ERC20Tokens[currencyName].contractAddr);
         const addrs: AddrInfo[] = [];
@@ -985,10 +983,3 @@ const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amou
  * 消息处理列表
  */
 export const dataCenter: DataCenter = new DataCenter();
-
-// 检查地址
-register('user/secretHash', () => {
-    setTimeout(() => {
-        dataCenter.checkAddr();
-    }, 200);
-});

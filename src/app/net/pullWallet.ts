@@ -15,10 +15,10 @@ import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../logic/dataCenter';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
-import { erc20GasLimitRate, shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
+import { erc20GasLimitRate, shapeshiftTransactionRequestNumber } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
+import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
@@ -603,7 +603,7 @@ export const getTransactionsByAddr = async (addr: string) => {
     const addrLowerCase = addr.toLowerCase();
     const transactions = (addr: string): Promise<any> => {
         return new Promise((resolve, reject) => {
-            shapeshift.transactions(shapeshiftApiPrivateKey, addr, (err, transactions) => {
+            shapeshift.transactions('shapeshiftApiPrivateKey', addr, (err, transactions) => {
                 if (err || transactions.length === 0) {
                     reject(err || new Error('null array'));
                 }
@@ -893,14 +893,14 @@ export const withdraw = async (passwd:string,toAddr:string,currencyName:string,a
 // eth提现
 export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
     const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.withdraw });
-    const verify = await VerifyIdentidy(passwd);
-    if (!verify) {
+    const secretHash = await VerifyIdentidy(passwd);
+    if (!secretHash) {
         close.callback(close.widget);
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
 
         return;
     }
-    const hash = await withdrawFromServer(toAddr,eth2Wei(amount));
+    const hash = await withdrawFromServer(toAddr,eth2Wei(amount),secretHash);
     close.callback(close.widget);
     if (hash) {
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
@@ -931,14 +931,14 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
 // btc提现
 export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
     const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.withdraw });
-    const verify = await VerifyIdentidy(passwd);
-    if (!verify) {
+    const secretHash = await VerifyIdentidy(passwd);
+    if (!secretHash) {
         close.callback(close.widget);
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
 
         return;
     }
-    const hash = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString());
+    const hash = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString(),secretHash);
     close.callback(close.widget);
     if (hash) {
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
