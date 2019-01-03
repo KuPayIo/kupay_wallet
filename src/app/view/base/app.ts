@@ -52,7 +52,7 @@ export class App extends Widget {
                     text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
-                    components: 'chat-client-app-demo_view-login-login'
+                    components: 'app-view-chat-home-home'
                 },
                 earn: {
                     modulName: 'APP_EARN',
