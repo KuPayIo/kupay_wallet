@@ -218,10 +218,10 @@ export class WriteRedEnv extends Widget {
         },
             async (r) => {
                 const close = popNew('app-components1-loading-loading', { text: this.language.loading });
-                const fg = await VerifyIdentidy(r);
+                const secretHash = await VerifyIdentidy(r);
                 close.callback(close.widget);
-                if (fg) {
-                    this.sendRedEnv();
+                if (secretHash) {
+                    this.sendRedEnv(secretHash);
                 } else {
                     popNew('app-components1-message-message', { content: this.language.tips[6] });
                 }
@@ -233,15 +233,14 @@ export class WriteRedEnv extends Widget {
     /**
      * 实际发红包
      */
-    public async sendRedEnv() {
-
+    public async sendRedEnv(secretHash:string) {
         const curCoin = this.props.list[this.props.selected];
         const lm = this.props.message;  // 留言
         const rtype = this.props.showPin ? LuckyMoneyType.Random : LuckyMoneyType.Normal; // 0 等额红包  1 拼手气红包
         const ctype = Number(CloudCurrencyType[curCoin.name]);  // 货币类型
         const totalAmount = Number(this.props.totalAmount);   // 红包总金额
         const totalNum = this.props.totalNum;    // 红包总个数
-        const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm);
+        const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm,secretHash);
 
         if (!rid) return;
         setTimeout(() => {

@@ -87,11 +87,11 @@ export const VerifyIdentidy = async (passwd:string) => {
         const cipher = new Cipher();
         const r = cipher.decrypt(hash, wallet.vault);
 
-        return true;
+        return hash;
     } catch (error) {
         console.log(error);
 
-        return false;
+        return '';
     }
 };
 
@@ -205,14 +205,14 @@ export const fetchLocalTxByHash1 = (hash:string) => {
 // 购买理财
 export const purchaseProduct = async (psw:string,productId:string,amount:number) => {
     const close = popNewLoading(Config[getLang()].bugProduct.buying);  // 购买中  
-    const pswCorrect = await VerifyIdentidy(psw);
-    if (!pswCorrect) {
+    const secretHash = await VerifyIdentidy(psw);
+    if (!secretHash) {
         close.callback(close.widget);
         popNewMessage(Config[getLang()].bugProduct.wrong);  // 密码错误  
         
         return;
     }
-    const data = await buyProduct(productId,amount);
+    const data = await buyProduct(productId,amount,secretHash);
     close.callback(close.widget);
     if (data) {
         popNewMessage(Config[getLang()].bugProduct.buySuccess); // 购买成功

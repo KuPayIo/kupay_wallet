@@ -11,14 +11,18 @@ import { formatBalance } from './tools';
 export const smallUnit2LargeUnit = (currencyName: string, amount: string | number): number => {
     let ret = 0;
     if (currencyName === 'ETH') {
+        // tslint:disable-next-line:radix
         ret =  wei2Eth(parseInt(amount.toString()));
     } else if (currencyName === 'KT') {
+        // tslint:disable-next-line:radix
         ret = kpt2kt(parseInt(amount.toString()));
     } else if (currencyName === 'BTC') {
+        // tslint:disable-next-line:radix
         ret = sat2Btc(parseInt(amount.toString()));
     } else if (currencyName === 'GT') {
         ret = (parseInt(amount.toString(),16) / 1000000);
     } else { // erc20
+        // tslint:disable-next-line:radix
         ret = ethTokenDivideDecimals(parseInt(amount.toString()),currencyName);
     }
 

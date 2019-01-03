@@ -9,7 +9,8 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getDividend, getDividHistory, getMining } from '../../../net/pull';
-import { getStore, register } from '../../../store/memstore';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
 
 // ================================ 导出
@@ -25,11 +26,10 @@ export class Dividend extends Widget {
         super();
     }
 
-    public setProps(props: Json, oldProps: Json) {
-        super.setProps(props, oldProps);
+    public create() {
+        super.create();
         this.language = this.config.value[getLang()];
         this.props = {
-            ...this.props,
             totalDivid:0,
             totalDays:0,
             topRefresh:false,// 顶部手动刷新
@@ -48,14 +48,16 @@ export class Dividend extends Widget {
                 // { num:0.02,time:'04-30  14:32:00' },
                 // { num:0.02,time:'04-30  14:32:00' }
             ],
-            ktBalance:this.props.ktBalance,  // KT持有量 
+            ktBalance:getCloudBalances().get(CloudCurrencyType.KT),  // KT持有量 
             hasMore:false,
             refresh:true,
             start:''
+            
         };
 
         this.initData();
         this.initEvent();
+        
     }
 
     public backPrePage() {

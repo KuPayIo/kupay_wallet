@@ -96,7 +96,6 @@ export interface User {
     publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
 
     salt: string;          // 加密 盐值
-    secretHash: string;   // 密码hash缓存   
 
     info: UserInfo;        // 基本信息
 }
