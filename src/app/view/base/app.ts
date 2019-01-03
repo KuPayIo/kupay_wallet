@@ -59,7 +59,7 @@ export class App extends Widget {
                     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
-                    components: 'app-view-earn-home-home'
+                    components: 'earn-client-app-view-home-home1'
                 },
                 wallet: {
                     modulName: 'APP_WALLET',
@@ -81,7 +81,7 @@ export class App extends Widget {
             this.props.allTabBar[item];
             if (getModulConfig(this.props.allTabBar[item].modulName)) {
                 if (this.props.allTabBar[item].modulName === 'APP_WALLET') {
-                    this.props.isActive = 'APP_EARN';
+                    this.props.isActive = 'APP_CHAT';
                 }
                 resList.push(this.props.allTabBar[item]);
             }   
