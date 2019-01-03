@@ -1,6 +1,6 @@
-// !version=0.1.14.112112
+// !version=0.1.23.112112
 // !updated=["支持Dapp","交易功能稳定","优化加载速度","全新界面UI，全新体验","修复账户相关bug"]
-// !appVersion=0.0.1
+// !appVersion=1.0.0
 
 'use strict';
 document.body.style.backgroundColor="#2F2F2F";
