@@ -401,6 +401,7 @@
 
 
 	<script type="text/javascript">
+		console.time("first page");
 		var LOG_TIME = Date.now()
 		var PRE_TIME = LOG_TIME;
 		var TIME_STR = ""
@@ -415,41 +416,24 @@
 			}
 			winit.startTime = Date.now();
 			var name = "wallet"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
+			// debugger;
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			// winit.debug = !remote;
-			// winit.debug = false;
-			winit.debug = true;
-			// winit.debug = location.host.indexOf('192.168.31') > -1;
-			main = location.port ? main + ":" + location.port : main;
+			winit.debug = false;
+			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
 			var needCDN = true;
-			
+
 			// todo 发版本时需动态设置服务器ip及端口
-			// //----------本地-------
-			//////zxzxzx
-			// winit.severIp = "192.168.7.71";
-			// winit.severPort = "80";
-			//luobing
-			// winit.severIp = "192.168.9.25";
-			// winit.severPort = "80";
-			winit.severIp = "127.0.0.1";
-			winit.severPort = "80";			
-			//---------国内------
-			// winit.severIp = "app.kuplay.io";
-			// winit.severPort = "80";
-			//--------支付测试------
-			// winit.severIp = "app.herominer.net";
-			// winit.severPort = "80";
-
-			// winit.severIp = "test.kuplay.io";
-			// winit.severPort = "80";
-
-			// winit.severIp = "47.244.29.209";
-			// winit.severPort = "80";
-
+			if(!winit.isLoc){ // 浏览器版本自动识别
+				winit.severIp = main;
+				winit.severPort = location.port ? location.port : "80";		
+			}else{// 本地包需要配置服务器ip和port
+				winit.severIp = "192.168.9.15";
+				winit.severPort = "80";		
+			}
 
 			// app更新配置的URL地址
 			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";

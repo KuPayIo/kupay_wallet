@@ -11,7 +11,7 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDivid
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 declare var pi_modules;
@@ -156,8 +156,6 @@ const conSuccess = (secrectHash:string) => {
 const conError = (err) => {
     console.log('con error');
     setStore('user/offline',true);
-    checkCreateAccount();
-    
 };
 
 /**
@@ -215,7 +213,6 @@ export const getRandom = async (secretHash:string,cmd?:number) => {
         
         setStore('user/conUid', resp.uid);
         setStore('user/conRandom', conRandom);
-        checkCreateAccount();
     } catch (resp) {
         if (resp.type === 1014) {
             popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
