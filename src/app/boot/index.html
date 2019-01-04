@@ -401,6 +401,7 @@
 
 
 	<script type="text/javascript">
+		console.time("first page");
 		var LOG_TIME = Date.now()
 		var PRE_TIME = LOG_TIME;
 		var TIME_STR = ""
@@ -420,7 +421,7 @@
 			winit.store = name;
 			// winit.debug = !remote;
 			// winit.debug = false;
-			winit.debug = true;
+			winit.debug = false;
 			// winit.debug = location.host.indexOf('192.168.31') > -1;
 			main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0

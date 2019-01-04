@@ -90,8 +90,6 @@ winit.initNext = function () {
 	var h5UpdateMod = pi_modules.update.exports;
 	h5UpdateMod.setIntercept(true);
 	h5UpdateMod.setServerInfo("app/boot/");
-
-
 	
 	// alert('next start');
 	var loadImages = function (util, fm) {
@@ -104,15 +102,43 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			loadDir1(util, fm);
+			// loadDir1(util, fm);
+			loadDir0(util, fm);
 			
 		});
 	}
+
+	
+	var loadDir0 = function (util, fm) {
+		var routerList = JSON.parse(localStorage.getItem("pi_router_list")) || [];
+		var routerPathList = [];
+		// debugger;
+		for(var k = 0;k < routerList.length;k++){
+			var props = routerList[k].props;
+			if(props &&props.pi_norouter) break;
+			var path = routerList[k].name.split("-").join("/");
+			var regex = /^((earn\/client\/)|(chat\/client\/))*app\/view\/(.*?)\//;
+			var result = path.match(regex);
+			if(result && routerPathList.indexOf(result[0]) < 0){
+				routerPathList.push(result[0]);
+			}
+		}
+		util.loadDir(routerPathList, flags, fm, undefined, function (fileMap) {
+			var tab = util.loadCssRes(fileMap);
+			tab.timeout = 90000;
+			tab.release();
+			loadDir1(util, fm);
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
+
 
 	var loadDir1 = function (util, fm) {
 		var sourceList = [
 			"pi/ui/",
 			"app/components1/",
+			"app/components/",
 			"app/res/css/",
 			"app/res/js/",
 			"app/view/base/",
@@ -122,13 +148,8 @@ winit.initNext = function () {
 			"app/view/earn/home/",
 			"earn/client/app/",
 			"earn/xlsx/"
-
 		];
-
-		console.time('firstload');
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
-			// console.log(fm);
-			console.timeEnd('firstload');
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -160,7 +181,6 @@ winit.initNext = function () {
 	};
 
 	var loadDir2 = function (util, fm) {
-		console.time('secondLoad');
 
 		var level2SourceList = [
 			"app/core/",
@@ -173,7 +193,6 @@ winit.initNext = function () {
 
 		// 加载其他文件
 		util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
-			console.timeEnd('secondLoad');
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();

@@ -29,14 +29,22 @@ export const run = (cb): void => {
     // eth代币精度初始化
     // 数据检查
     checkUpdate();
+    console.time('initStore');
     // 初始化数据
-    initStore();
+    initStore().then(() => {
+        console.timeEnd('initStore');
+        // 打开首页面
+        popNewRouterList(cb);
+    });
     // 主动推送初始化
     initPush();
+    // 预先从底层获取一些数据
     preFetchFromNative();
+    
+    // 连接服务
     openConnect();
     // dataCenter.init();
-    popNew('app-view-base-app');
+    // popNew('app-view-base-app');
     console.timeEnd('home enter');
     // popNew('earn-client-app-test-test');
     // popNew('earn-client-app-view-activity-mining-welfare');
@@ -50,10 +58,29 @@ export const run = (cb): void => {
     //         console.log('authorize',result);
     //     });
     // },2000);
+    
+};
+
+/**
+ * 弹出上次关闭的界面
+ */
+const popNewRouterList = (cb:Function) => {
+    const routerList = JSON.parse(localStorage.getItem('pi_router_list'));
+    if (routerList) {
+        for (let i = 0;i < routerList.length;i++) {
+            const props = routerList[i].props;
+            if (props && props.pi_norouter) break;
+            popNew(routerList[i].name,routerList[i].props);
+        }
+    } else { // 首次进入
+        popNew('app-view-base-app');
+    }
+    
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
-    }, 20);
+        console.timeEnd('first page');
+    }, 300);
 };
 
 /**
@@ -65,7 +92,7 @@ const popNewPage = () => {
             openApp: true
         });
     }
-    if(!localStorage.firstInApp){
+    if (!localStorage.firstInApp) {
         popNew('app-components1-modalBox-newUserWelfare');
     }
 };
