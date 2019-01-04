@@ -66,7 +66,7 @@ export const run = (cb): void => {
  */
 const popNewRouterList = (cb:Function) => {
     const routerList = JSON.parse(localStorage.getItem('pi_router_list'));
-    if (routerList) {
+    if (routerList && routerList.length > 0) {
         for (let i = 0;i < routerList.length;i++) {
             const props = routerList[i].props;
             if (props && props.pi_norouter) break;

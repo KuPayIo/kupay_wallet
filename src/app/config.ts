@@ -1,3 +1,4 @@
+import { erlangLogicIp, erlangLogicPort, sourceIp, sourcePort } from './ipConfig';
 import { getModulConfig } from './modulConfig';
 
 /**
@@ -6,27 +7,6 @@ import { getModulConfig } from './modulConfig';
 
 // walletName
 const walletName = getModulConfig('WALLET_NAME');
-
-declare var pi_modules: any;
-// 资源服务器ip
-export const sourceIp = pi_modules.store.exports.severIp || '127.0.0.1';
-
-// 资源服务器port
-export const sourcePort = pi_modules.store.exports.severPort || '80';
-
-// 逻辑服务器ip
-// app.herominer.net
-// export const logicIp = 'app.herominer.net';
-export const logicIp = '192.168.9.29';
-
-// 逻辑服务器port
-export const logicPort = '2081';
-
-console.log('sourceIp=',sourceIp);
-console.log('sourcePort=',sourcePort);
-
-console.log('logicIp=',logicIp);
-console.log('logicPort=',logicPort);
 
 // 向资源服务器请求第3方数据url prefix
 export const thirdUrlPre = `http://${sourceIp}:${sourcePort}/proxy`;
@@ -44,7 +24,7 @@ export const uploadFileUrl = `http://${sourceIp}:${sourcePort}/service/upload`;
 export const uploadFileUrlPrefix = `http://${sourceIp}:${sourcePort}/service/get_file?sid=`;
 
 // websock连接url
-export const wsUrl = `ws://${logicIp}:${logicPort}`;
+export const wsUrl = `ws://${erlangLogicIp}:${erlangLogicPort}`;
 
 /**
  * 环境配置
