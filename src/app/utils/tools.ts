@@ -495,16 +495,19 @@ export const copyToClipboard = (copyText) => {
 export const calcHashValuePromise = async (pwd, salt?) => {
     console.log('calcHashValuePromise is called');
     console.time('pi_create  calc argonHash');
-    let hash;
+    let secretHash;
     const argonHash = new ArgonHash();
     console.log('argonHash will init');
     argonHash.init();
     console.log('argonHash has init');
-    hash = await argonHash.calcHashValuePromise({ pwd, salt });
-    setStore('user/secretHash',hash);
+    secretHash = await argonHash.calcHashValuePromise({ pwd, salt });
     console.timeEnd('pi_create  calc argonHash');
+    requestAnimationFrame(() => {
+        const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+        dataCenter.checkAddr(secretHash);
+    });
 
-    return hash;
+    return secretHash;
 };
 
 /**
@@ -1285,18 +1288,6 @@ export const getCurrencyUnitSymbol = () => {
     }
 };
 
-/**
- * 检查是否是创建账户,通知弹窗备份
- */
-export const checkCreateAccount = () => {
-    const flags = getStore('flags');
-    // 第一次创建检查是否有登录后弹框提示备份
-    if (flags.created) {
-        flags.promptBackup = true;
-        flags.created = false;
-        setStore('flags', flags);
-    }
-};
 
 /**
  * 判断地址是否合法
@@ -1559,14 +1550,12 @@ export const logoutAccount = () => {
  * 登录成功
  */
 export const loginSuccess = (account:Account) => {    
-    // const secretHash = getStore('user/secretHash');
     const fileUser = account.user;
     const user:User = {
         isLogin: false,
         offline:true,
         conRandom:'',
         conUid:'',
-        secretHash:'',
         id : fileUser.id,
         token : fileUser.token,
         publicKey : fileUser.publicKey,

@@ -98,7 +98,6 @@ export class Dividend extends Widget {
     public initData() {
         const detail = getStore('activity/mining/addMine');
         // tslint:disable-next-line:max-line-length
-        // const detail = [{isComplete:true},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false},{isComplete:false}];
         if (detail && detail.length > 0) {
             for (const i in this.props.data) {
                 this.props.data[i].isComplete = detail[i].isComplete;

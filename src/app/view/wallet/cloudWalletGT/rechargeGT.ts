@@ -8,7 +8,7 @@ import { getAccountDetail, getGoldPrice, getServerCloudBalance } from '../../../
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { confirmPay } from '../../../utils/pay';
-import { formatBalance, getCurrencyUnitSymbol, popNewMessage } from '../../../utils/tools';
+import { formatBalance, popNewMessage } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -46,7 +46,10 @@ export class RechargeGT extends Widget {
     }
 
     public initData() {
-        this.props.num = Math.floor((this.props.total / getStore('third/goldPrice/price') * 100) * 1000000) / 1000000;
+        if (getStore('third/goldPrice/price') !== 0) {
+            this.props.num = Math.floor((this.props.total / getStore('third/goldPrice/price') * 100) * 1000000) / 1000000;
+        }
+        
         this.props.balance = formatBalance(getCloudBalances().get(CloudCurrencyType.GT));
         this.paint();
     }

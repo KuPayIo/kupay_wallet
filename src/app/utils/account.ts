@@ -2,7 +2,6 @@
 /**
  * 和账号相关的工具
  */
-import { walletNumLimit } from './constants';
 import { getStrLen, shuffle } from './tools';
 
 // 密码强度列表

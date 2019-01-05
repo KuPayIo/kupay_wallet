@@ -11,7 +11,7 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDivid
 import { CMD, PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 declare var pi_modules;
@@ -44,10 +44,9 @@ export const requestAsync = (msg: any):Promise<any> => {
  * manage_money@buy    购买理财
  * manage_money@sell   出售理财
  */
-export const requestAsyncNeedLogin = async (msg: any) => {
+export const requestAsyncNeedLogin = async (msg: any,secretHash:string) => {
     const isLogin = getStore('user/isLogin');
     if (!isLogin) {
-        const secretHash = getStore('user/secretHash');
         await defaultLogin(secretHash,getStore('user/conRandom'));
     }
 
@@ -135,23 +134,20 @@ setReloginCallback((res) => {
 /**
  * 开启连接
  */
-export const openConnect = async () => {
-    // const conState = getConState();
-    // if (conState === ConState.opened) {
-    //     getRandom();
-    // } else {
+export const openConnect = async (secrectHash:string = '') => {
     setUrl(wsUrl);
-    open(conSuccess,conError,conClose,conReOpen);
-    // }
+    open(conSuccess(secrectHash),conError,conClose,conReOpen);
 };
 
 /**
  * 连接成功回调
  */
-const conSuccess = () => {
-    console.log('con success');
-    setStore('user/offline',false);
-    getRandom();
+const conSuccess = (secrectHash:string) => {
+    return () => {
+        console.log('con success');
+        setStore('user/offline',false);
+        getRandom(secrectHash);
+    };
 };
 
 /**
@@ -160,8 +156,6 @@ const conSuccess = () => {
 const conError = (err) => {
     console.log('con error');
     setStore('user/offline',true);
-    checkCreateAccount();
-    
 };
 
 /**
@@ -186,7 +180,7 @@ const conReOpen = () => {
  * 获取随机数
  * flag:0 普通用户注册，1注册即为真实用户
  */
-export const getRandom = async (cmd?:number) => {
+export const getRandom = async (secretHash:string,cmd?:number) => {
     console.log('getRandom--------------');
     const wallet = getStore('wallet');
     if (!wallet) return;
@@ -211,7 +205,6 @@ export const getRandom = async (cmd?:number) => {
         if (getStore('user/token')) {
             autoLogin(conRandom);
         }
-        const secretHash = getStore('user/secretHash');
         if (secretHash) {
             defaultLogin(secretHash,conRandom);
         }
@@ -220,7 +213,6 @@ export const getRandom = async (cmd?:number) => {
         
         setStore('user/conUid', resp.uid);
         setStore('user/conRandom', conRandom);
-        checkCreateAccount();
     } catch (resp) {
         if (resp.type === 1014) {
             popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
@@ -228,12 +220,12 @@ export const getRandom = async (cmd?:number) => {
                 content:'清除其它设备账户信息' 
             },(deleteAccount:boolean) => {
                 if (deleteAccount) {
-                    getRandom(CMD.FORCELOGOUTDEL);
+                    getRandom(secretHash,CMD.FORCELOGOUTDEL);
                 } else {
-                    getRandom(CMD.FORCELOGOUT);
+                    getRandom(secretHash,CMD.FORCELOGOUT);
                 }
             },() => {
-                getRandom(CMD.FORCELOGOUT);
+                getRandom(secretHash,CMD.FORCELOGOUT);
             });
         }
     }
@@ -396,7 +388,8 @@ export const getInviteCodeDetail = async () => {
  * @param count 红包数量
  * @param lm 留言
  */
-export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
+// tslint:disable-next-line:max-line-length
+export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string,secretHash:string) => {
     const msg = {
         type: 'emit_red_bag',
         param: {
@@ -409,7 +402,7 @@ export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount:
     };
 
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsyncNeedLogin(msg,secretHash);
 
         return res.value;
     } catch (err) {
@@ -953,7 +946,7 @@ export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,f
 /**
  * 提现
  */
-export const withdrawFromServer = async (toAddr:string,value:string) => {
+export const withdrawFromServer = async (toAddr:string,value:string,secretHash:string) => {
     const msg = {
         type: 'wallet/bank@to_cash',
         param: {
@@ -963,7 +956,7 @@ export const withdrawFromServer = async (toAddr:string,value:string) => {
     };
 
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsyncNeedLogin(msg,secretHash);
         console.log('withdrawFromServer',res);
 
         return res.txid;
@@ -977,7 +970,7 @@ export const withdrawFromServer = async (toAddr:string,value:string) => {
 /**
  * btc提现
  */
-export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
+export const btcWithdrawFromServer = async (toAddr:string,value:string,secretHash:string) => {
     const msg = {
         type: 'wallet/bank@btc_to_cash',
         param: {
@@ -987,7 +980,7 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
     };
 
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsyncNeedLogin(msg,secretHash);
 
         return res.txid;
     } catch (err) {
@@ -1135,7 +1128,7 @@ export const getProductList = async () => {
 /**
  * 购买理财
  */
-export const buyProduct = async (pid:any,count:any) => {
+export const buyProduct = async (pid:any,count:any,secretHash:string) => {
     pid = Number(pid);
     count = Number(count);
     const msg = {
@@ -1148,7 +1141,7 @@ export const buyProduct = async (pid:any,count:any) => {
     };
     
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsyncNeedLogin(msg,secretHash);
         console.log('buyProduct',res);
         if (res.result === 1) {
             getProductList();
@@ -1189,7 +1182,7 @@ export const getPurchaseRecord = async (start = '') => {
 /**
  * 赎回理财产品
  */
-export const buyBack = async (timeStamp:any) => {
+export const buyBack = async (timeStamp:any,secretHash:string) => {
     const msg = {
         type: 'wallet/manage_money@sell',
         param: {
@@ -1198,7 +1191,7 @@ export const buyBack = async (timeStamp:any) => {
     };
     
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsyncNeedLogin(msg,secretHash);
         console.log('buyBack',res);
 
         return true;

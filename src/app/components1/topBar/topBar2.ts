@@ -22,6 +22,7 @@ export class TopBar2 extends Widget {
     public setProps(oldProps:Json,props:Json) {
         super.setProps(oldProps,props);
         this.props.refresh = false;
+        console.log(this.props);
     }
 
     /**
