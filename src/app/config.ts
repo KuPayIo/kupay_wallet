@@ -17,7 +17,7 @@ export const sourcePort = pi_modules.store.exports.severPort || '80';
 // 逻辑服务器ip
 // app.herominer.net
 // export const logicIp = 'app.herominer.net';
-export const logicIp = '192.168.9.29';
+export const logicIp = '127.0.0.1';
 
 // 逻辑服务器port
 export const logicPort = '2081';
