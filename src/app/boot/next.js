@@ -290,7 +290,7 @@ winit.initNext = function () {
 
 	//加载聊天APP部分代码，实际项目中会分的更细致
 	var loadChatApp = function (util, fm) {
-		util.loadDir(["chat/client/app/demo_view/","chat/client/app/widget/","chat/client/app/res/css/","chat/client/app/res/images/"], flags, fm, undefined, function (fileMap) {
+		util.loadDir(["chat/client/app/view/","chat/client/app/widget/","chat/client/app/res/css/","chat/client/app/res/images/"], flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			// 将预加载的资源缓冲90秒，释放
 			tab.timeout = 90000;
