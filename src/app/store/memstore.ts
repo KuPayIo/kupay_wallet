@@ -19,11 +19,16 @@ import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, C
  * 初始化store
  */
 export const initStore = () => {
-    registerFileStore();    // 注册监听
-    initAccount();          // 账户初始化
-    initSettings();         // 设置初始化
-    initThird();            // 三方数据初始化
-    initFile();             // indexDb数据初始化
+    return new Promise(resolve => {
+        registerFileStore();    // 注册监听
+        initAccount();          // 账户初始化
+        initSettings();         // 设置初始化
+        initThird();            // 三方数据初始化
+        initFile().then(() => {
+            resolve();
+        });             // indexDb数据初始化
+    });
+    
 };
 
 /**
@@ -188,31 +193,46 @@ export const deleteAccount = (id: string) => {
  * indexDB数据初始化
  */
 const initFile = () => {
-    // console.time('initFile');
-    initFileStore().then(() => {
-        if (!store.user.id) return;
-        getFile(store.user.id, (value, key) => {
-            // console.timeEnd('initFile');
-            if (!value) return;
-            initTxHistory(value);
-            // console.log('store init success',store);
-        }, () => {
-            console.log('read error');
+    return new Promise(resolve => {
+        initFileStore().then(() => {
+            const txHistoryPromise = initTxHistory();         // 历史记录初始化
+            const activityPromise = initActivity();         // 活动初始化
+            Promise.all([txHistoryPromise,activityPromise]).then(() => {
+                resolve();
+            });
+            
         });
     });
+    
 };
 
 /**
  * 初始化历史记录
  * @param fileTxHistorys indexDb存储的历史记录
  */
-const initTxHistory = (fileTxHistorys: FileTxHistory[]) => {
-    const currencyRecords = store.wallet.currencyRecords;
-    for (const record of currencyRecords) {
-        for (const addrInfo of record.addrs) {
-            addrInfo.txHistory = getTxHistory(fileTxHistorys, record.currencyName, addrInfo.addr);
+const initTxHistory = () => {
+    return new Promise(resolve => {
+        if (!store.user.id) {
+            resolve();
+            
+            return;
         }
-    }
+        getFile(store.user.id, (value, key) => {
+            if (value) {
+                const currencyRecords = store.wallet.currencyRecords;
+                for (const record of currencyRecords) {
+                    for (const addrInfo of record.addrs) {
+                        addrInfo.txHistory = getTxHistory(value, record.currencyName, addrInfo.addr);
+                    }
+                }
+            }
+            resolve();
+        }, () => {
+            resolve();
+            console.log('read error');
+        });
+    });
+    
 };
 
 /**
@@ -337,6 +357,26 @@ const initSettings = () => {
 };
 
 /**
+ * 活动数据初始化
+ */
+const initActivity = () => {
+    return new Promise(resolve => {
+        getFile('activity',(activity) => {
+            console.log('activity read success = ',activity);
+            store.activity = {
+                ...store.activity,
+                ...activity
+            };
+            resolve();
+        },() => {
+            console.log('activity read fail ');
+            resolve();
+        });
+    });
+    
+};
+
+/**
  * 三方数据初始
  */
 const initThird = () => {
@@ -356,6 +396,7 @@ const initThird = () => {
  */
 const registerFileStore = () => {
     registerAccountChange(); // 监听账户变化
+    registerActivityChange();  // 监听活动数据变化
     registerThirdChange(); // 监听3方数据变化
     registerSettingChange(); // 监听setting数据变化
 };
@@ -372,6 +413,15 @@ const registerAccountChange = () => {
     });
     register('cloud', () => {
         accountChange();
+    });
+};
+
+/**
+ * 活动数据变化监听
+ */
+const registerActivityChange = () => {
+    register('activity', () => {
+        activityChange();
     });
 };
 
@@ -480,6 +530,14 @@ const accountChange = () => {
     setLocalStorage('accounts', localAccounts);
     writeFile(storeUser.id, fileTxHistorys);
 
+};
+
+/**
+ * 活动数据变化
+ */
+const activityChange = () => {
+    // setLocalStorage('activity', store.activity);
+    writeFile('activity', store.activity);
 };
 
 /**

@@ -11,8 +11,7 @@
     margin-top: -1px;
 }
 .head1{
-    height: 550px;
-    padding-top: 128px;
+    height: 422px;
     background:linear-gradient(to right, #328EE6,#38CEE7);
     position: relative;
     display: flex;
