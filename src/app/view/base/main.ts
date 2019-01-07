@@ -36,6 +36,7 @@ export const run = (cb): void => {
         // 打开首页面
         popNewRouterList(cb);
     });
+    // popNewRouterList(cb);
     // 主动推送初始化
     initPush();
     // 预先从底层获取一些数据

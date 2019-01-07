@@ -2,7 +2,7 @@
     <div w-class="product-list">
         {{for i,v of it.productList}}
         <div on-tap="fmListItemClick(e,{{i}})">
-        <app-view-wallet-components-fmListItem>{ product:{{v}} }</app-view-wallet-components-fmListItem>
+        <app-components1-fmListItem-fmListItem>{ product:{{v}} }</app-components1-fmListItem-fmListItem>
         </div>
         {{end}}
     </div>

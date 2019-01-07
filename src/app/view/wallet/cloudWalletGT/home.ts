@@ -4,11 +4,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
+import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, fetchCoinGain, fetchGTGain, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, popNewMessage } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, fetchGTGain, formatBalance, formatBalanceValue, getCurrencyUnitSymbol } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -129,4 +129,5 @@ register('setting/currencyUnit',() => {
     if (w) {
         w.currencyUnitChange();
     }
+    
 });

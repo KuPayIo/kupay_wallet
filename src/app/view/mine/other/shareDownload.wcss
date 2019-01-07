@@ -2,6 +2,8 @@
     background-image: url(../../../res/image/share_bg.png);
     background-size: contain;
     background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
 }
 .container{
     position: absolute;
@@ -76,7 +78,7 @@
 .share-box{
     position: absolute;
     right: 0;
-    top: 60px;
+    top: 0;
     width: 96px;
     height: 96px;
     display: flex;
@@ -86,7 +88,7 @@
 .back-box{
     position: absolute;
     left: 0;
-    top: 60px;
+    top: 0;
     width: 96px;
     height: 96px;
     display: flex;
