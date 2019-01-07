@@ -75,6 +75,9 @@ const popNewRouterList = (cb:Function) => {
         }
     } else { // 首次进入
         popNew('app-view-base-app');
+        if (!localStorage.firstInApp) {
+            popNew('app-components1-modalBox-newUserWelfare');
+        }
     }
     
     // 解决进入时闪一下问题
@@ -92,9 +95,6 @@ const popNewPage = () => {
         popNew('app-components1-lockScreenPage-lockScreenPage', {
             openApp: true
         });
-    }
-    if (!localStorage.firstInApp) {
-        popNew('app-components1-modalBox-newUserWelfare');
     }
 };
 

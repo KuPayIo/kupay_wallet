@@ -2,15 +2,13 @@
  * 新用户福利
  */
 
-
- import { Widget } from "../../../pi/widget/widget";
-import { popNew } from "../../../pi/ui/root";
-
+import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
 
 export class NewUserWelfare extends Widget {
     public ok: () => void;
-
-    public goLogin(){
+    public props:any = { pi_norouter:true };
+    public goLogin() {
         popNew('app-view-wallet-create-home');
         this.ok && this.ok();
     }
