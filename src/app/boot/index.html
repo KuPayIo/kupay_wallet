@@ -711,7 +711,7 @@ setTimeout(() => {
     });
 	if(!localStorage.firstInApp){
 		document.querySelector('#swiper-container').setAttribute('style','z-index:9999;')
-		localStorage.firstInApp = true;
+		
 	}else{
 		document.body.removeChild(document.querySelector('#swiper-container'));
 	}
@@ -719,6 +719,7 @@ setTimeout(() => {
 
 var btnStart = document.querySelector('.btn-start');
 btnStart.onclick = function(){
+	localStorage.firstInApp = true;
 	document.body.removeChild(document.querySelector('#swiper-container'));
 }
 </script>
