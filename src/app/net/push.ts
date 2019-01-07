@@ -2,7 +2,6 @@ import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr
 import { backCall, backList, popNew } from '../../pi/ui/root';
 import { CMD } from '../utils/constants';
 import { getStaticLanguage, logoutAccount, logoutAccountDel, popNewMessage } from '../utils/tools';
-import { kpt2kt } from '../utils/unitTools';
 import { getServerCloudBalance } from './pull';
 
 /**

@@ -1,4 +1,5 @@
 <div class="new-page" w-class="new-page">
+    <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
     <div w-class="top-bar">
         <div w-class="top-bar-container">
             <img on-tap="backPrePage" src="../../../res/image/left_arrow_blue.png" w-class="ga-back" />

@@ -1,4 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
+    {{: topBarTitle = {"zh_Hans":it.product.productName,"zh_Hant":it.product.productName,"en":""} }}
+    <div style="background: linear-gradient(to right,#328EE6, #38CEE7);"><app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2></div>
     <div w-class="body" on-scroll="pageScroll" id="body">
         <div w-class="head1 {{'head1-' + it.stateBg}}">
             {{: tags = [
@@ -55,7 +57,6 @@
         </div>
     </div>
     
-  {{: topBarTitle = {"zh_Hans":it.product.productName,"zh_Hant":it.product.productName,"en":""} }}
-    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
+    
     
 </div>

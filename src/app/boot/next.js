@@ -113,16 +113,24 @@ winit.initNext = function () {
 		var routerList = JSON.parse(localStorage.getItem("pi_router_list")) || [];
 		var routerPathList = [];
 		// debugger;
-		for(var k = 0;k < routerList.length;k++){
+		// k = 0一定是首页面
+		for(var k = 1;k < routerList.length;k++){
 			var props = routerList[k].props;
 			if(props &&props.pi_norouter) break;
 			var path = routerList[k].name.split("-").join("/");
-			var regex = /^((earn\/client\/)|(chat\/client\/))*app\/view\/(.*?)\//;
+			var regex = /^(earn\/client\/)*app\/view\/(.*?)+\//;
 			var result = path.match(regex);
 			if(result && routerPathList.indexOf(result[0]) < 0){
 				routerPathList.push(result[0]);
+				var tmp = result[0].slice(0,result[0].length - 2).split("/");
+				tmp.pop();
+				var componentsPath = tmp.join("/") + "/components/";
+				if(routerPathList.indexOf(componentsPath) < 0){
+					routerPathList.push(componentsPath);
+				}
 			}
 		}
+		console.log("routerPathList",routerPathList);
 		util.loadDir(routerPathList, flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
@@ -153,11 +161,12 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-
+			console.timeEnd("first load");
 			// 加载根组件
 			var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
 			root.cfg.full = false; //PC模式
 			var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+			// debugger;
 			index.run(function () {
 				// 关闭读取界面
 				document.body.removeChild(document.getElementById('rcmj_loading_log'));
