@@ -36,7 +36,7 @@ export const writeFile = (key: string,data:any,okCB?,errCB?) => {
 /**
  * 从indexdb读数据
  */
-export const getFile = (key: string,okCB,errCB) => {
+export const getFile = (key: string,okCB,errCB?) => {
     if (!initSuccess) return;
     mod.read(impl,key,okCB,errCB);
 };

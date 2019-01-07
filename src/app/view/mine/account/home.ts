@@ -89,7 +89,7 @@ export class AccountHome extends Widget {
         if (!psw) return;
         const ret = await backupMnemonic(psw);
         if (ret) {
-            popNew('app-view-wallet-backup-index', { ...ret });
+            popNew('app-view-wallet-backup-index', { ...ret,pi_norouter:true });
         }
 
     }

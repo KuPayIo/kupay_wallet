@@ -11,12 +11,11 @@
     margin-top: -1px;
 }
 .top-head{
-    height: 480px;
+    height: 422px;
     display: flex;
     flex-direction: column;
     transform: translateZ(-1px);
     background: linear-gradient(to right,#328EE6, #38CEE7);
-    padding-top: 128px;
 }
 .row1{
     display: flex;

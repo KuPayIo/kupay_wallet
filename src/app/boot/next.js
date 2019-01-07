@@ -90,8 +90,6 @@ winit.initNext = function () {
 	var h5UpdateMod = pi_modules.update.exports;
 	h5UpdateMod.setIntercept(true);
 	h5UpdateMod.setServerInfo("app/boot/");
-
-
 	
 	// alert('next start');
 	var loadImages = function (util, fm) {
@@ -104,15 +102,51 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			loadDir1(util, fm);
+			// loadDir1(util, fm);
+			loadDir0(util, fm);
 			
 		});
 	}
+
+	
+	var loadDir0 = function (util, fm) {
+		var routerList = JSON.parse(localStorage.getItem("pi_router_list")) || [];
+		var routerPathList = [];
+		// debugger;
+		// k = 0一定是首页面
+		for(var k = 1;k < routerList.length;k++){
+			var props = routerList[k].props;
+			if(props &&props.pi_norouter) break;
+			var path = routerList[k].name.split("-").join("/");
+			var regex = /^(earn\/client\/)*app\/view\/(.*?)+\//;
+			var result = path.match(regex);
+			if(result && routerPathList.indexOf(result[0]) < 0){
+				routerPathList.push(result[0]);
+				var tmp = result[0].slice(0,result[0].length - 2).split("/");
+				tmp.pop();
+				var componentsPath = tmp.join("/") + "/components/";
+				if(routerPathList.indexOf(componentsPath) < 0){
+					routerPathList.push(componentsPath);
+				}
+			}
+		}
+		console.log("routerPathList",routerPathList);
+		util.loadDir(routerPathList, flags, fm, undefined, function (fileMap) {
+			var tab = util.loadCssRes(fileMap);
+			tab.timeout = 90000;
+			tab.release();
+			loadDir1(util, fm);
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
+
 
 	var loadDir1 = function (util, fm) {
 		var sourceList = [
 			"pi/ui/",
 			"app/components1/",
+			"app/components/",
 			"app/res/css/",
 			"app/res/js/",
 			"app/view/base/",
@@ -122,21 +156,17 @@ winit.initNext = function () {
 			"app/view/earn/home/",
 			"earn/client/app/",
 			"earn/xlsx/"
-
 		];
-
-		console.time('firstload');
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
-			// console.log(fm);
-			console.timeEnd('firstload');
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-
+			console.timeEnd("first load");
 			// 加载根组件
 			var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
 			root.cfg.full = false; //PC模式
 			var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+			// debugger;
 			index.run(function () {
 				// 关闭读取界面
 				document.body.removeChild(document.getElementById('rcmj_loading_log'));
@@ -160,7 +190,6 @@ winit.initNext = function () {
 	};
 
 	var loadDir2 = function (util, fm) {
-		console.time('secondLoad');
 
 		var level2SourceList = [
 			"app/core/",
@@ -173,7 +202,6 @@ winit.initNext = function () {
 
 		// 加载其他文件
 		util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
-			console.timeEnd('secondLoad');
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -290,7 +318,7 @@ winit.initNext = function () {
 
 	//加载聊天APP部分代码，实际项目中会分的更细致
 	var loadChatApp = function (util, fm) {
-		util.loadDir(["chat/client/app/demo_view/","chat/client/app/widget/","chat/client/app/res/css/","chat/client/app/res/images/"], flags, fm, undefined, function (fileMap) {
+		util.loadDir(["chat/client/app/view/","chat/client/app/widget/","chat/client/app/res/css/","chat/client/app/res/images/"], flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			// 将预加载的资源缓冲90秒，释放
 			tab.timeout = 90000;

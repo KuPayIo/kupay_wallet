@@ -26,6 +26,7 @@ export class Loading extends Widget {
         super.setProps(props,oldProps);
         this.props = {
             ...this.props,
+            pi_norouter:true,
             startTime:new Date().getTime()
         };
     }

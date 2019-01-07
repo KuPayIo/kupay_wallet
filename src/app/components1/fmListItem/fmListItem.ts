@@ -1,8 +1,9 @@
+import { Widget } from '../../../pi/widget/widget';
+import { Product } from '../../store/interface';
+
 /**
  * 理财列表item
  */
-import { Widget } from '../../../../pi/widget/widget';
-import { Product } from '../../../store/interface';
 interface Props {
     product:Product;
 }

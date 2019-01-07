@@ -1288,18 +1288,6 @@ export const getCurrencyUnitSymbol = () => {
     }
 };
 
-/**
- * 检查是否是创建账户,通知弹窗备份
- */
-export const checkCreateAccount = () => {
-    const flags = getStore('flags');
-    // 第一次创建检查是否有登录后弹框提示备份
-    if (flags.created) {
-        flags.promptBackup = true;
-        flags.created = false;
-        setStore('flags', flags);
-    }
-};
 
 /**
  * 判断地址是否合法
