@@ -630,7 +630,7 @@ export const setUserInfo = async () => {
  * 获取当前用户信息
  */
 export const getUserInfoFromServer = async (uids: [number]) => {
-    const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+    const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]`, } };
 
     try {
         const res = await requestAsync(msg);
@@ -670,8 +670,13 @@ export const getUserInfoFromServer = async (uids: [number]) => {
 /**
  * 批量获取用户信息
  */
-export const getUserList = async(uids:number[]) => {
-    const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+export const getUserList = async(uids:number[],isOpenid?:number) => {
+    let msg = {}
+    if(isOpenid){
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]`,isOpenid } };
+    }else{
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+    }
 
     try {
         const res = await requestAsync(msg);

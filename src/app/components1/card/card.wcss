@@ -13,9 +13,13 @@
 .card-img{
    width:100%;
 }
-
+.card-img-small{
+    border-radius: 12px;
+    margin-right: 20px;
+}
 .card-content{
     padding:30px 20px;
+    display: flex;
 }
 
 .desc{
