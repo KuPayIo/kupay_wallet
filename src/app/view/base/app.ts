@@ -143,17 +143,8 @@ register('user/isLogin', (isLogin: boolean) => {
         getRealUser();
         // 用户基础信息
         getUserInfoFromServer(getStore('user/conUid'));
-        // 切换聊天页面
-        if (w) {
-            w.props.allTabBar.chat.components = 'chat-client-app-view-chat-contact';
-            w.paint();
-        }
-    } else {
-        if (w) {
-            w.props.allTabBar.chat.components = 'app-view-chat-home-home';
-            w.paint();
-        }
-    }
+       
+    } 
 });
 
 // 获取随机数成功
