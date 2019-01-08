@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getData, getUserList, queryConvertLog } from '../../../net/pull';
+import { getData, getOneUserInfo, queryConvertLog } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
@@ -95,7 +95,7 @@ export class ExchangeHistory extends Widget {
      */
     public async initRedEnv() {
         for (const i in this.props.recordList) {
-            const data = await getUserList([this.props.recordList[i].suid]);
+            const data = await getOneUserInfo([this.props.recordList[i].suid]);
             this.props.recordList[i].userName = data ? data.nickName :this.language.defaultName;
         }
         

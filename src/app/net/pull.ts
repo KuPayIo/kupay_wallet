@@ -665,15 +665,49 @@ export const getUserInfoFromServer = async (uids: [number]) => {
 };
 
 /**
- * 批量获取用户信息
+ * 获取单个用户信息
  */
-export const getUserList = async(uids:number[]) => {
-    const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+export const getOneUserInfo = async (uids: number[], isOpenid?: number) => {
+    let msg = {};
+    if (isOpenid) {
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]`, isOpenid } };
+    } else {
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+    }
 
     try {
         const res = await requestAsync(msg);
         if (res.value[0]) {
+
             return JSON.parse(unicodeArray2Str(res.value[0]));
+        }
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
+};
+
+/**
+ * 批量获取用户信息
+ */
+export const getUserList = async (uids: number[], isOpenid?: number) => {
+    let msg = {};
+    if (isOpenid) {
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]`, isOpenid } };
+    } else {
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+    }
+
+    try {
+        const res = await requestAsync(msg);
+        if (res.value[0]) {
+            const resAry = [];
+            for (const element of res.value) {
+                resAry.push(JSON.parse(unicodeArray2Str(element)));
+            }
+
+            return resAry;
         }
     } catch (err) {
         showError(err && (err.result || err.type));
