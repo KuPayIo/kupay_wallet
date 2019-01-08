@@ -18,9 +18,8 @@ import { LockScreen } from '../../store/interface';
 import { getStore, initStore, setStore } from '../../store/memstore';
 import { fetchDeviceId } from '../../utils/tools';
 
-// let client;
-// let rpc;
 // ============================== 导出
+
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void => {
@@ -35,30 +34,18 @@ export const run = (cb): void => {
         console.timeEnd('initStore');
         // 打开首页面
         popNewRouterList(cb);
+        // 主动推送初始化
+        initPush();
+        // popNew('earn-client-app-test-test');
     });
-    // popNewRouterList(cb);
-    // 主动推送初始化
-    initPush();
+    
     // 预先从底层获取一些数据
     preFetchFromNative();
-    
     // 连接服务
     openConnect();
-    // dataCenter.init();
-    // popNew('app-view-base-app');
     console.timeEnd('home enter');
-    // popNew('earn-client-app-test-test');
-    // popNew('earn-client-app-view-activity-mining-welfare');
-    popNewPage();
     // 后台切前台
     backToFront();
-    // let count = 0;
-    // setTimeout(() => {
-    //     authorize({ nickName:true,avatar:true,appId:'123' } ,(err,result) => {
-    //         console.log('authorize',err);
-    //         console.log('authorize',result);
-    //     });
-    // },2000);
     
 };
 
@@ -77,6 +64,7 @@ const popNewRouterList = (cb:Function) => {
         popNew('app-view-base-app');
         if (!localStorage.firstInApp) {
             popNew('app-components1-modalBox-newUserWelfare');
+            localStorage.setItem('firstInApp','true');
         }
     }
     
@@ -85,6 +73,8 @@ const popNewRouterList = (cb:Function) => {
         if (cb) cb();
         console.timeEnd('first page');
     }, 300);
+
+    popNewPage();
 };
 
 /**
@@ -152,13 +142,3 @@ const ifNeedUnlockScreen = () => {
 
     return lockScreenPsw && openLockScreen;
 };
-
-// const testTransfer3 = () => {
-//     const ethPayload = {
-//         fromAddr:'',
-//         toAddr:payload.params[0].to,
-//         pay:payload.params[0].value,
-//         currencyName:'ETH',
-//         data:payload.params[0].data
-//     };  
-// };

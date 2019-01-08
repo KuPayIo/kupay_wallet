@@ -421,7 +421,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = false;
+			winit.debug = true;
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
@@ -719,7 +719,6 @@ setTimeout(() => {
 
 var btnStart = document.querySelector('.btn-start');
 btnStart.onclick = function(){
-	localStorage.firstInApp = true;
 	document.body.removeChild(document.querySelector('#swiper-container'));
 }
 </script>
