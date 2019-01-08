@@ -24,8 +24,12 @@ export class LockScreenPage extends Widget {
         super();
     }
 
-    public setProps(oldProps:Json,props:Json) {
-        super.setProps(oldProps,props);
+    public setProps(props:Json,oldProps:Json) {
+        this.props = {
+            ...props,
+            pi_norouter:true
+        };
+        super.setProps(this.props,oldProps);
         this.init();
     }
 

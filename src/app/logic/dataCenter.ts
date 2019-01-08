@@ -8,10 +8,9 @@ import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { getGoldPrice } from '../net/pull';
 import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
-import { getShapeShiftCoins } from '../net/pullWallet';
 import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
-import { getStore,register,setStore } from '../store/memstore';
+import { getStore,setStore } from '../store/memstore';
 import { erc20GasLimitRate, ethTokenTransferCode, lang } from '../utils/constants';
 import { formatBalance,getAddrsAll,getConfirmBlockNumber,getCurrentEthAddr, parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
 import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
@@ -41,9 +40,9 @@ export class DataCenter {
         // 更新黄金价格
         this.updateGoldPrice();
         // 更新人民币美元汇率
-        // this.updateUSDRate();
+        this.updateUSDRate();
         // 更新货币对比USDT的比率
-        // this.updateCurrency2USDTRate();
+        this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
         this.refreshAllTx();
     }
@@ -890,8 +889,8 @@ export class DataCenter {
         nextPoint.setSeconds(0);
         const delay = nextPoint.getTime() - new Date().getTime();
         fetchUSD2CNYRate().then((res: any) => {
-            if (res.success === '1') {
-                const rate = Number(res.result.rate);
+            if (res.result === 'success') {
+                const rate = Number(res.rates.CNY);
                 setStore('third/rate', rate);
             }
         });
@@ -934,18 +933,6 @@ export class DataCenter {
         currencyList.forEach(currencyName => {
             fetchCurrency2USDTRate(currencyName)
         .then((res: any) => {
-            // 火币
-            // if (res.status === 'ok') {
-            //     const currency2USDTMap = getStore('third/currency2USDTMap');
-            //     const close = res.data[0].close;
-            //     const open = res.data[0].open;
-            //     currency2USDTMap.set(currencyName, {
-            //         open,
-            //         close
-            //     });
-            //     setStore('third/currency2USDTMap', currency2USDTMap);
-            // }
-
             // okey
             if (!res.error_code) {
                 const currency2USDTMap = getStore('third/currency2USDTMap');

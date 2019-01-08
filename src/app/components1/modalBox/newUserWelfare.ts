@@ -9,8 +9,8 @@ export class NewUserWelfare extends Widget {
     public ok: () => void;
     public props:any = { pi_norouter:true };
     public goLogin() {
-        popNew('app-view-wallet-create-home');
         this.ok && this.ok();
+        popNew('app-view-wallet-create-home');
     }
     public close(e: any) {
         this.ok && this.ok();
