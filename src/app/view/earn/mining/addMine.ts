@@ -22,7 +22,7 @@ export class Dividend extends Widget {
         data: [
             {
                 isComplete: false,
-                itemImg: 'res/image/addMine_create.png',
+                itemImg: '../../res/image/addMine_create.png',
                 itemName: '',
                 itemShort: '',
                 itemDetail: '',
@@ -32,7 +32,7 @@ export class Dividend extends Widget {
                 modulIsShow:true
             }, {
                 isComplete: false,
-                itemImg: 'res/image/addMine_verify.png',
+                itemImg: '../../res/image/addMine_verify.png',
                 itemName: '',
                 itemShort: '',
                 itemDetail: '',

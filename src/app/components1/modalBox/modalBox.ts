@@ -11,10 +11,17 @@ interface Props {
     style?: string; // 修改content的样式
 }
 export class ModalBox extends Widget {
-    public props: Props;
+    public props: any;
     public ok: () => void;
     public cancel: () => void;
 
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...props,
+            pi_norouter:true
+        };
+        super.setProps(this.props,oldProps);
+    }
     public cancelBtnClick(e: any) {
         this.cancel && this.cancel();
     }

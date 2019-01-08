@@ -84,7 +84,7 @@ export class Setting extends Widget {
             });
         } else {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components1-modalBox-toLoginBox', null, () => {
+            popNew('app-components1-modalBox-toLoginBox', undefined, () => {
                 popNew('app-view-wallet-create-home');
             }, () => {
                 this.closeLockPsw();
