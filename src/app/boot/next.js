@@ -68,7 +68,6 @@ winit.initNext = function () {
 	// 底层更新模块
 	var appUpdateMod = pi_modules.appUpdate.exports;
 	appUpdateMod.needUpdate(function (isNeedUpdate) {
-		// debugger;
 		if (isNeedUpdate > 0) {
 			var option = {
 				updated:appUpdateMod.getAppUpdated(),
@@ -83,16 +82,80 @@ winit.initNext = function () {
 				});
 			});
 		}
-		appEntrance();
+		appLoadEntrance();
 	});
 
-	// H5更新模块
-	var h5UpdateMod = pi_modules.update.exports;
-	h5UpdateMod.setIntercept(true);
-	h5UpdateMod.setServerInfo("app/boot/");
+
 	
-	// alert('next start');
-	var loadImages = function (util, fm) {
+	var html,util,lang; // pi/util/html,pi/widget/util,pi/util/lang
+	var fm;  // fileMap
+	var fpFlags = {};  // 进入首页面的资源加载标识位
+
+	// app下载入口函数
+	var appLoadEntrance = function(){
+		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang"], {}, function (mods, tmpfm) {
+			html = mods[0],
+			util = mods[1],
+			lang = mods[2];
+			fm = tmpfm;
+	
+			const setting = JSON.parse(localStorage.getItem('setting'));
+			lang.setLang(setting && setting.language || 'zh_Hans');  // 初始化语言为简体中文
+	
+	
+			// 判断是否第一次进入,决定是显示片头界面还是开始界面
+			var userinfo = html.getCookie("userinfo");
+			pi_modules.commonjs.exports.flags = html.userAgent(flags);
+			flags.userinfo = userinfo;
+	
+			/**
+			 * 先判断浏览器对webp的支持；
+			 * 加载所有的预处理图片
+			 * 第一级目录：首页需要的资源；
+			 * 第二级目录：其他；
+			 * 
+			 */
+			html.checkWebpFeature(function (r) {
+				flags.webp = flags.webp || r;
+				loadWalletLoginSource();  // 登录相关
+				loadChatSource();  // 聊天
+				loadEarnSource();  // 活动
+				loadWalletFirstPageSource();  //钱包
+				loadImages();  // 预加载图片
+			});
+		}, function (result) {
+			alert("加载基础模块失败, " + result.error + ":" + result.reason);
+		}, modProcess.handler);
+	}
+	
+	// 加载钱包项目登录相关资源
+	var loadWalletLoginSource = function(){
+		var sourceList = [
+			"app/store/memstore.js",
+			"app/net/pull.js",
+			"earn/client/app/net/init.js"
+		];
+		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+			var tab = util.loadCssRes(fileMap);
+			tab.timeout = 90000;
+			tab.release();
+			
+			// 活动登录
+			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
+
+			// erlang服务器连接登录
+			pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore().then(function(){ fpFlags.storeReady = true;enterApp();}); 
+			pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
+
+			// loadWalletFirstPageSource(); // 钱包首页资源
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
+	
+	// 加载一些需要预加载的图片
+	var loadImages = function () {
 
 		var suffixCfg = {
 			png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down'
@@ -102,17 +165,15 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			// loadDir1(util, fm);
-			loadDir0(util, fm);
-			
-		});
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
 	}
 
-	
-	var loadDir0 = function (util, fm) {
+	// 计算上次退出的页面相关资源
+	var calcRouterPathList = function () {
 		var routerList = JSON.parse(localStorage.getItem("pi_router_list")) || [];
 		var routerPathList = [];
-		// debugger;
 		// k = 0一定是首页面
 		for(var k = 1;k < routerList.length;k++){
 			var props = routerList[k].props;
@@ -130,21 +191,13 @@ winit.initNext = function () {
 				}
 			}
 		}
-		console.log("routerPathList",routerPathList);
-		util.loadDir(routerPathList, flags, fm, undefined, function (fileMap) {
-			var tab = util.loadCssRes(fileMap);
-			tab.timeout = 90000;
-			tab.release();
-			loadDir1(util, fm);
-		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		}, dirProcess.handler);
+		return routerPathList;
 	}
 
-
-	var loadDir1 = function (util, fm) {
+	// 加载钱包首页所需资源
+	var loadWalletFirstPageSource = function () {
+		var routerPathList = calcRouterPathList();
 		var sourceList = [
-			"pi/ui/",
 			"app/components1/",
 			"app/components/",
 			"app/res/css/",
@@ -154,42 +207,44 @@ winit.initNext = function () {
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
 			"app/view/earn/home/",
-			"earn/client/app/",
-			"earn/xlsx/"
 		];
+		sourceList = sourceList.concat(routerPathList);  
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			console.timeEnd("first load");
-			// 加载根组件
-			var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
-			root.cfg.full = false; //PC模式
-			var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
-			// debugger;
-			index.run(function () {
-				// 关闭读取界面
-				document.body.removeChild(document.getElementById('rcmj_loading_log'));
-			});
-			// TODO
-			registerEarnStruct(util,fm);
-			loadDir2(util, fm);
+			fpFlags.walletReady = true;
+			enterApp();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
 
-	// TODO 初始化rpc服务
-	var registerEarnStruct = function (util,fm) {
-		util.loadDir(["earn/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {
-			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
-			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
-		}, function (r) {
-			alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
-		}, dirProcess.handler);
-	};
+	// 全部所需资源下载完成,进入app,显示界面
+	var enterApp = function(){
+		console.log(`storeReady = ${fpFlags.storeReady},chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
+		if( fpFlags.storeReady && fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
+			util.loadDir(["pi/ui/"], flags, fm, undefined, function (fileMap) {
+				var tab = util.loadCssRes(fileMap);
+				tab.timeout = 90000;
+				tab.release();
+				// 加载根组件
+				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+				root.cfg.full = false; //PC模式
+				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+				index.run(function () {
+					// 关闭读取界面
+					document.body.removeChild(document.getElementById('rcmj_loading_log'));
+				});
+				loadLeftSource();
+			}, function (r) {
+				alert("加载目录失败, " + r.error + ":" + r.reason);
+			}, dirProcess.handler);
+		}
+	}
 
-	var loadDir2 = function (util, fm) {
+	// 加载剩下的资源
+	var loadLeftSource = function () {
 
 		var level2SourceList = [
 			"app/core/",
@@ -215,6 +270,11 @@ winit.initNext = function () {
 	}
 	// 检查h5更新
 	var h5CheckUpdate = function(){
+		// H5更新模块
+		var h5UpdateMod = pi_modules.update.exports;
+		h5UpdateMod.setIntercept(true);
+		h5UpdateMod.setServerInfo("app/boot/");
+
 		// needUpdateCode 0 1 2 3 
 		h5UpdateMod.checkUpdate(function (needUpdateCode) {
 			// 判断当前app版本是否大于等于依赖的版本号
@@ -256,7 +316,6 @@ winit.initNext = function () {
 					pi_update.updateProgress(e);
 				});
 			}
-			// debugger;
 			if (needUpdateCode === 1 && canUpdate) {
 				option.alertBtnText = "更新未完成";
 				pi_update.alert(option,updateH5);
@@ -273,92 +332,45 @@ winit.initNext = function () {
 		});
 	}
 
-	var appEntrance = function(){
-		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang"], {}, function (mods, fm) {
-			var html = mods[0],
-				util = mods[1],
-				lang = mods[2];
-	
-			const setting = JSON.parse(localStorage.getItem('setting'));
-			lang.setLang(setting && setting.language || 'zh_Hans');  // 初始化语言为简体中文
-	
-	
-			// 判断是否第一次进入,决定是显示片头界面还是开始界面
-			var userinfo = html.getCookie("userinfo");
-			pi_modules.commonjs.exports.flags = html.userAgent(flags);
-			flags.userinfo = userinfo;
-	
-			/**
-			 * 先判断浏览器对webp的支持；
-			 * 加载所有的预处理图片
-			 * 第一级目录：首页需要的资源；
-			 * 第二级目录：其他；
-			 * 
-			 */
-			html.checkWebpFeature(function (r) {
-				flags.webp = flags.webp || r;
-				loadChatFramework(util, fm)
-				// loadImages(util, fm);
-			});
-		}, function (result) {
-			alert("加载基础模块失败, " + result.error + ":" + result.reason);
-		}, modProcess.handler);
-	}
-	
-	//FIXME:直接一次性加载了整个聊天项目，这里需要细化
-
-	//加载聊天框架代码和活动代码
-	var loadChatFramework = function (util, fm) {
-		util.loadDir(["pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
-			loadChatApp(util, fm);
-		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		}, dirProcess.handler);
-	}
-
-	//加载聊天APP部分代码，实际项目中会分的更细致
-	var loadChatApp = function (util, fm) {
-		util.loadDir(["chat/client/app/view/","chat/client/app/widget/","chat/client/app/res/css/","chat/client/app/res/images/"], flags, fm, undefined, function (fileMap) {
+	// 加载聊天代码
+	var loadChatSource = function () {
+		// debugger;
+		var sourceList = [
+			"chat/client/app/view/",
+			"chat/client/app/widget/",
+			"chat/client/app/res/"
+		]; 
+		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+			// alert("loadChatSource");
 			var tab = util.loadCssRes(fileMap);
 			// 将预加载的资源缓冲90秒，释放
 			tab.timeout = 90000;
 			tab.release();
-			registerChatStruct(util, fm);
+			fpFlags.chatReady = true;
+			enterApp();
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.initClient();
+
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		},dirProcess.handler);
+	}
+
+	// 加载活动代码
+	var loadEarnSource = function () {
+		var sourceList = [
+			"earn/client/app/",
+			"earn/xlsx/"
+		];
+		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+			var tab = util.loadCssRes(fileMap);
+			tab.timeout = 90000;
+			tab.release();
+			fpFlags.earnReady = true;
+			enterApp();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
-	}
-
-	//初始化rpc服务
-	var registerChatStruct = function (util, fm) {
-		util.loadDir(["chat/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {
-			// TODO 暂时不初始化聊天的逻辑服
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.initClient();
-			loadEmoji(util, fm);
-
-		}, function (r) {
-			alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
-		}, dirProcess.handler);
-	};
-
-	var loadEmoji = function(util, fm) {
-		util.loadDir(["chat/client/app/res/emoji/"],flags,fm,undefined,function(fileMap,mods){
-			//TODO: 可以长期放在缓存中达到更快的显示效果
-			loadChatImg(util, fm);
-		},function (r) {
-			alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
-		}, dirProcess.handler)
-	}
-
-	var loadChatImg = function (util, fm) {
-		util.loadDir(["chat/client/app/res/chatImg/"],flags,fm,undefined,function(fileMap,mods){
-			//TODO: 可以长期放在缓存中达到更快的显示效果
-			//FIXME 临时在此处加载，其实应该先加载这一部分代码
-			loadImages(util, fm);
-		},function (r) {
-			alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
-		}, dirProcess.handler)
 	}
 };
 
