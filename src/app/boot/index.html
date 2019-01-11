@@ -286,7 +286,7 @@
 	<!--更新弹框样式end-->
 	<style>
 		body {
-			background-color: #0A1476 !important;
+			background-color: #fff !important;
 		}
 
         @keyframes opacity2{
@@ -402,6 +402,7 @@
 
 	<script type="text/javascript">
 		console.time('home enter');
+		console.time('all resource loaded');
 		var LOG_TIME = Date.now()
 		var PRE_TIME = LOG_TIME;
 		var TIME_STR = ""
@@ -420,7 +421,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = false;
+			winit.debug = true;
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 

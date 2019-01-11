@@ -58,7 +58,7 @@ const popNewRouterList = (cb:Function) => {
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
-    }, 300);
+    }, 100);
 
     popNewPage();
 };
