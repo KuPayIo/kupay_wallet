@@ -40,7 +40,8 @@ export const run = (cb): void => {
  * 弹出上次关闭的界面
  */
 const popNewRouterList = (cb:Function) => {
-    const routerList = JSON.parse(localStorage.getItem('pi_router_list'));
+    // const routerList = JSON.parse(localStorage.getItem('pi_router_list'));
+    const routerList = undefined;
     if (routerList && routerList.length > 0) {
         for (let i = 0;i < routerList.length;i++) {
             const props = routerList[i].props;

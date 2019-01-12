@@ -264,7 +264,9 @@ winit.initNext = function () {
 			"app/view/",
 			"chat/client/app/view/",
 			"earn/client/app/view/",
-			"earn/client/app/xls/"
+			"earn/client/app/components/",
+			"earn/client/app/xls/",
+			"earn/client/app/res/"
 		];
 
 		// 加载其他文件
@@ -384,6 +386,9 @@ winit.initNext = function () {
 			"earn/client/app/view/home/",
 			"earn/client/app/components/holdedHoe/",
 			"earn/client/app/components/mine/",
+			"earn/client/app/view/activity/miningHome.tpl",
+			"earn/client/app/view/activity/miningHome.js",
+			"earn/client/app/view/activity/miningHome.wcss",
 			"earn/xlsx/"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
