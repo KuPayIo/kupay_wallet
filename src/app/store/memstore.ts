@@ -565,6 +565,7 @@ const settingChange = () => {
         currencyUnit: getStore('setting/currencyUnit'),
         lockScreen: getStore('setting/lockScreen'),
         deviceId: getStore('setting/deviceId'),
+        deviceInfo:getStore('setting/deviceInfo'),
         topHeight: getStore('setting/topHeight'),
         bottomHeight:getStore('setting/bottomHeight')
     };
@@ -635,6 +636,7 @@ const store: Store = {
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
         currencyUnit: '',         // 显示哪个国家的货币
         deviceId: '',             // 设备唯一ID
+        deviceInfo:null,           // 设备信息
         topHeight,              // 设备头部应空出来的高度
         bottomHeight:0            // 设备底部应空出来的高度
     },

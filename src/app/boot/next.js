@@ -119,9 +119,9 @@ winit.initNext = function () {
 				flags.webp = flags.webp || r;
 				loadWalletLoginSource();  // 登录相关
 				loadImages();
-				// loadChatSource();  // 聊天
-				// loadEarnSource();  // 活动
-				// loadWalletFirstPageSource();  //钱包
+				loadChatSource();  // 聊天
+				loadEarnSource();  // 活动
+				loadWalletFirstPageSource();  //钱包
 			});
 		}, function (result) {
 			alert("加载基础模块失败, " + result.error + ":" + result.reason);
@@ -133,6 +133,7 @@ winit.initNext = function () {
 		var sourceList = [
 			"app/store/memstore.js",
 			"app/net/pull.js",
+			"app/net/push.js",
 			"earn/client/app/net/init.js",
 			"chat/client/app/net/init.js"
 		];
@@ -140,7 +141,6 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			// debugger
 			// 聊天登录
 			var chatLogicIp = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicIp;
 			var chatLogicPort = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicPort;
@@ -151,13 +151,18 @@ winit.initNext = function () {
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
 
-			// erlang服务器连接登录
+			// 钱包store初始化
 			pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore(); 
+
+			// erlang服务器推送注册
+			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
+
+			// erlang服务器连接登录
 			pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
 			fpFlags.storeReady = true;
 			enterApp();
 
-			loadChatSource();  // 聊天
+			// loadChatSource();  // 聊天
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -177,30 +182,6 @@ winit.initNext = function () {
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
-	}
-
-	// 计算上次退出的页面相关资源
-	var calcRouterPathList = function () {
-		var routerList = JSON.parse(localStorage.getItem("pi_router_list")) || [];
-		var routerPathList = [];
-		// k = 0一定是首页面
-		for(var k = 1;k < routerList.length;k++){
-			var props = routerList[k].props;
-			if(props &&props.pi_norouter) break;
-			var path = routerList[k].name.split("-").join("/");
-			var regex = /^(earn\/client\/)*app\/view\/(.*?)+\//;
-			var result = path.match(regex);
-			if(result && routerPathList.indexOf(result[0]) < 0){
-				routerPathList.push(result[0]);
-				var tmp = result[0].slice(0,result[0].length - 2).split("/");
-				tmp.pop();
-				var componentsPath = tmp.join("/") + "/components/";
-				if(routerPathList.indexOf(componentsPath) < 0){
-					routerPathList.push(componentsPath);
-				}
-			}
-		}
-		return routerPathList;
 	}
 
 	// 加载钱包首页所需资源
@@ -263,6 +244,7 @@ winit.initNext = function () {
 			"app/api/",
 			"app/view/",
 			"chat/client/app/view/",
+			"chat/client/app/widget/",
 			"earn/client/app/view/",
 			"earn/client/app/components/",
 			"earn/client/app/xls/",
@@ -374,7 +356,7 @@ winit.initNext = function () {
 			tab.release();
 			fpFlags.chatReady = true;
 			enterApp();
-			loadEarnSource();  // 活动
+			// loadEarnSource();  // 活动
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		},dirProcess.handler);
@@ -398,7 +380,7 @@ winit.initNext = function () {
 			// debugger
 			fpFlags.earnReady = true;
 			enterApp();
-			loadWalletFirstPageSource();  //钱包
+			// loadWalletFirstPageSource();  //钱包
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);

@@ -2,16 +2,15 @@
  * 主动向后端通讯
  */
 import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
-import { popNew } from '../../pi/ui/root';
 import { MainChainCoin, uploadFileUrl, wsUrl } from '../config';
 import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitGtAccountDetail } from '../store/parse';
-import { CMD, PAGELIMIT } from '../utils/constants';
+import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getUserInfo, kickOffline, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 declare var pi_modules;
@@ -185,7 +184,8 @@ export const getRandom = async (secretHash:string,cmd?:number) => {
     console.log('getRandom--------------');
     const wallet = getStore('wallet');
     if (!wallet) return;
-    const client = 'android 20';
+    const deviceInfo = getStore('setting/deviceInfo') || {};
+    const client = deviceInfo.system || navigator.userAgent;
     const param:any = {
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
@@ -216,18 +216,13 @@ export const getRandom = async (secretHash:string,cmd?:number) => {
         setStore('user/conRandom', conRandom);
     } catch (resp) {
         if (resp.type === 1014) {
-            popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
-                title:'检测到在其它设备有登录',
-                content:'清除其它设备账户信息' 
-            },(deleteAccount:boolean) => {
-                if (deleteAccount) {
-                    getRandom(secretHash,CMD.FORCELOGOUTDEL);
-                } else {
-                    getRandom(secretHash,CMD.FORCELOGOUT);
-                }
-            },() => {
-                getRandom(secretHash,CMD.FORCELOGOUT);
-            });
+            const flags = getStore('flags');
+            console.log('flags =====',flags);
+            if (flags.level_2_page_loaded) {  // 钱包创建成功直接提示,此时资源已经加载完成
+                kickOffline(secretHash);  // 踢人下线提示
+            } else {  // 刷新页面后，此时资源没有加载完成,延迟到资源加载成功弹出提示
+                localStorage.setItem('kickOffline',JSON.stringify(true));
+            }
         }
     }
 };
