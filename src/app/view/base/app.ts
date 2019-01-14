@@ -2,6 +2,7 @@
  * 首页
  */
 // ================================ 导入
+import { register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
@@ -69,7 +70,8 @@ export class App extends Widget {
                     components: 'app-view-wallet-home-home'
                 }
             },
-            tabBarList: []
+            tabBarList: [],
+            tabBarAnimateClasss:''
         };
         this.setList();
         // console.log('updateTest');
@@ -134,7 +136,6 @@ register('user/info', (userInfo: UserInfo) => {
 
 // 登录状态成功
 register('user/isLogin', (isLogin: boolean) => {
-    const w = forelet.getWidget(WIDGET_NAME);
     if (isLogin) {
         // 余额
         getServerCloudBalance();
@@ -160,4 +161,14 @@ register('user/conRandom',() => {
 // 语言配置
 register('setting/language',(r) => {
     setLang(r);
+});
+// 监听活动页面
+earnRegister('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
+    const w = forelet.getWidget(WIDGET_NAME);
+    if (earnHomeHidden) {
+        w.props.tabBarAnimateClasss = 'put-out-down';
+    } else {
+        w.props.tabBarAnimateClasss = 'reset-put-out';
+    }
+    w.paint();
 });
