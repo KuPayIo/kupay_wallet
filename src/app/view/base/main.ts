@@ -3,7 +3,6 @@
  * @author henk<speoth@163.com>
  */
 
-// tslint:disable-next-line:no-any
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
@@ -12,10 +11,9 @@ import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { getScreenModify } from '../../logic/native';
-import { openConnect } from '../../net/pull';
 import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
-import { getStore, initStore, setStore } from '../../store/memstore';
+import { getStore, setStore } from '../../store/memstore';
 import { fetchDeviceId } from '../../utils/tools';
 
 // ============================== 导出
@@ -24,25 +22,14 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void => {
     addWidget(document.body, 'pi-ui-root');
-    // 设置开发环境
-    // eth代币精度初始化
     // 数据检查
     checkUpdate();
-    console.time('initStore');
-    // 初始化数据
-    initStore().then(() => {
-        console.timeEnd('initStore');
-        // 打开首页面
-        popNewRouterList(cb);
-        // 主动推送初始化
-        initPush();
-        // popNew('earn-client-app-test-test');
-    });
-    
+    // 打开首页面
+    popNewRouterList(cb);
+    // 主动推送初始化
+    initPush();
     // 预先从底层获取一些数据
     preFetchFromNative();
-    // 连接服务
-    openConnect();
     console.timeEnd('home enter');
     // 后台切前台
     backToFront();
@@ -54,7 +41,7 @@ export const run = (cb): void => {
  */
 const popNewRouterList = (cb:Function) => {
     // const routerList = JSON.parse(localStorage.getItem('pi_router_list'));
-    const routerList = [];
+    const routerList = undefined;
     if (routerList && routerList.length > 0) {
         for (let i = 0;i < routerList.length;i++) {
             const props = routerList[i].props;
@@ -72,8 +59,7 @@ const popNewRouterList = (cb:Function) => {
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
-        console.timeEnd('first page');
-    }, 300);
+    }, 100);
 
     popNewPage();
 };

@@ -286,7 +286,7 @@
 	<!--更新弹框样式end-->
 	<style>
 		body {
-			background-color: #0A1476 !important;
+			background-color: #fff !important;
 		}
 
         @keyframes opacity2{
@@ -401,8 +401,8 @@
 
 
 	<script type="text/javascript">
-		console.time("first page");
-		console.time("first load");
+		console.time('home enter');
+		console.time('all resource loaded');
 		var LOG_TIME = Date.now()
 		var PRE_TIME = LOG_TIME;
 		var TIME_STR = ""
@@ -701,7 +701,6 @@
 </body>
 <script src="./swiper.min.js"></script>
 <script type="text/javascript">
-console.time('home enter');
 setTimeout(() => {
 	var mySwiper = new Swiper('.swiper-container', {
       pagination: {

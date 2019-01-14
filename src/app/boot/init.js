@@ -1541,10 +1541,11 @@ pi_modules.commonjs.exports = (function () {
 			var mod = pi_modules[module.modName(e.file)];
 			(module.debug) ? debugDefine(mod, e.data): releaseDefine(mod, e.data);
 		}
+		
 		for (i = len = modSet.length - 1; i >= 0; i--) {
 			mod = modSet[i];
 			// 如果模块已加载，则跳过
-			if (mod.loaded) {
+			if (mod.loaded || mod.buildFunc) {
 				modSet[i] = modSet[len--];
 				continue;
 			}
@@ -1570,6 +1571,7 @@ pi_modules.commonjs.exports = (function () {
 			total: modSet.length,
 			download: needs.length
 		});
+		
 		wait = {
 			names: modNames,
 			onsuccess: successCallback,
@@ -1580,6 +1582,7 @@ pi_modules.commonjs.exports = (function () {
 			count: modSet.length,
 			fileMap: {}
 		};
+		
 		waitList.push(wait);
 		if (needs.length === 0)
 			return;
@@ -1790,6 +1793,7 @@ pi_modules.commonjs.exports = (function () {
 	// 模块定义成功，通知所有正在等待的加载器
 	var modDefine = function (mod /*:Mod*/ ) {
 		var i, wait;
+
 		for (i = waitList.length - 1; i >= 0; i--) {
 			wait = waitList[i];
 			if (!wait.map[mod.id])
@@ -1798,10 +1802,13 @@ pi_modules.commonjs.exports = (function () {
 			wait.onprocess && wait.onprocess({
 				type: "defineMod",
 				total: wait.set.length,
-				count: wait.set.length - wait.count
+				count: wait.set.length - wait.count,
+				next1: wait.set[wait.count-1] && wait.set[wait.count-1].id,
+				current:mod.id,
 			});
 			if (wait.count > 0)
 				continue;
+			
 			if (i < waitList.length - 1)
 				waitList[i] = waitList[waitList.length - 1];
 			waitList.length--;
@@ -1811,6 +1818,7 @@ pi_modules.commonjs.exports = (function () {
 	};
 	// 构建模块
 	var build = function (wait) {
+		
 		var i, mod, oldlen, mods = wait.set,
 			len = mods.length,
 			end = Date.now() + module.buildTimeout;
@@ -2069,7 +2077,7 @@ pi_modules.update.exports = (function () {
 			var updatedStr = getIndexUpdatedContent(indexJSStr);
 			console.log("updatedStr = ",updatedStr);
 			h5Updated = JSON.parse(updatedStr);
-			// debugger;
+			
 			var needUpdate = JSIntercept.getBootFile("update.flag") === "true";
 			var needUpdateCode = 0;   // 没有更新
 			if (needUpdate) { 
@@ -2112,7 +2120,7 @@ pi_modules.update.exports = (function () {
 	function finishUpdate() {
 		// 清除标记
 		JSIntercept.saveFile("update.flag", window.btoa("false"), function () {
-			// debugger;
+			
 			// alert("更新成功，程序即将关闭，请重启APP");
 			var option = {
 				updated:h5Updated,
@@ -2314,7 +2322,7 @@ pi_modules.appUpdate.exports = (function () {
 			if (isOK) localVersion = version;
 			
 			ajax.get(url, undefined, undefined, ajax.RESP_TYPE_TEXT, 3000, function (r) {
-				// debugger;
+				
 				var content = JSON.parse(r);
 				remoteVersion = content.version;
 				appUpdated = content.updated;

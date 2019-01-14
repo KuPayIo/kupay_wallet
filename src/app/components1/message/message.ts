@@ -21,7 +21,7 @@ export class Message extends Widget {
 
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.props = { ...this.props,isShow: false };
+        this.props = { ...this.props,isShow: false,pi_norouter:true };
         this.init();
     }
 

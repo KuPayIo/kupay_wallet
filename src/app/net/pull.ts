@@ -135,6 +135,7 @@ setReloginCallback((res) => {
  * 开启连接
  */
 export const openConnect = async (secrectHash:string = '') => {
+    console.log('openConnect strat');
     setUrl(wsUrl);
     open(conSuccess(secrectHash),conError,conClose,conReOpen);
 };
