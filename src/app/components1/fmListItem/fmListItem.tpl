@@ -14,7 +14,7 @@
     {{else}}
         {{: centerText = Math.floor(it.product.surplus / it.product.total * 100) + '%' }}
     {{end}}
-    <app-components-ringProgressBar-ringProgressBar>
+    <app-components1-ringProgressBar-ringProgressBar>
         {
             "width":80,
             "borderWidth":4,
@@ -23,5 +23,5 @@
             "centerStyle":"fontSize:28px;color:#f7931a;",
             "centerText":{{centerText}}
         }
-    </app-components-ringProgressBar-ringProgressBar>
+    </app-components1-ringProgressBar-ringProgressBar>
 </div>
