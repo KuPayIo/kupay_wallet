@@ -84,6 +84,12 @@ export class PlayHome extends Widget {
         ];
         this.props.activityList = [
             {
+                title:{ zh_Hans:'竞猜',zh_Hant:'竞猜',en:'' },
+                desc:{ zh_Hans:'竞猜',zh_Hant:'竞猜',en:'' },
+                img:['app/res/image1/guess.png','app/res/image1/guess.png'],
+                url:'earn-client-app-view-guess-home'
+            },
+            {
                 title:{ zh_Hans:'大转盘',zh_Hant:'大轉盤',en:'' },
                 desc:{ zh_Hans:'看看今天的运气怎么样',zh_Hant:'看看今天的運氣怎麼樣',en:'' },
                 img:['app/res/image1/turntable.png','app/res/image1/turntable.png'],
