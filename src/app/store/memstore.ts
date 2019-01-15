@@ -196,8 +196,8 @@ const initFile = () => {
     return new Promise(resolve => {
         initFileStore().then(() => {
             const txHistoryPromise = initTxHistory();         // 历史记录初始化
-            const activityPromise = initActivity();         // 活动初始化
-            Promise.all([txHistoryPromise,activityPromise]).then(() => {
+            // const activityPromise = initActivity();         // 活动初始化
+            Promise.all([txHistoryPromise]).then(() => {
                 resolve();
             });
             
@@ -396,7 +396,7 @@ const initThird = () => {
  */
 const registerFileStore = () => {
     registerAccountChange(); // 监听账户变化
-    registerActivityChange();  // 监听活动数据变化
+    // registerActivityChange();  // 监听活动数据变化
     registerThirdChange(); // 监听3方数据变化
     registerSettingChange(); // 监听setting数据变化
 };
@@ -565,6 +565,7 @@ const settingChange = () => {
         currencyUnit: getStore('setting/currencyUnit'),
         lockScreen: getStore('setting/lockScreen'),
         deviceId: getStore('setting/deviceId'),
+        deviceInfo:getStore('setting/deviceInfo'),
         topHeight: getStore('setting/topHeight'),
         bottomHeight:getStore('setting/bottomHeight')
     };
@@ -635,6 +636,7 @@ const store: Store = {
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
         currencyUnit: '',         // 显示哪个国家的货币
         deviceId: '',             // 设备唯一ID
+        deviceInfo:null,           // 设备信息
         topHeight,              // 设备头部应空出来的高度
         bottomHeight:0            // 设备底部应空出来的高度
     },
