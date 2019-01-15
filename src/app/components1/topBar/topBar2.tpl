@@ -1,5 +1,5 @@
 {{let opca = it.scrollHeight/200 || 0}}
-<div style="{{opca>0?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 1px solid #cccccc;':'background:transparent;'}}">
+<div style="{{opca>0?'background:rgba(255, 255, 255, '+ opca +');border-bottom: 1px solid #cccccc;':''}}">
     <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
     <div w-class="ga-top-banner">
         <div w-class="left-container">

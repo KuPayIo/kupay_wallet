@@ -867,12 +867,6 @@ export const getProxy = async () => {
 
     return requestAsync(msg);
 };
-/**
- * 矿山增加项目跳转详情
- */
-export const getMineItemJump = async(itemJump) => {
-    setStore('activity/mining/itemJump',itemJump);
-};
 
 // ===============================充值提现
 /**

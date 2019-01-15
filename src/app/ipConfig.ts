@@ -22,10 +22,12 @@ export const activeLogicIp = sourceIp;
 // 活动逻辑服务器port
 export const activeLogicPort = 2234;
 
-// 聊天逻辑服务器ip
+// 聊天逻辑服务器ip 
+// 外网正式 39.104.203.151
 export const chatLogicIp = sourceIp;
 
 // 聊天逻辑服务器port
+// 外网正式 9080
 export const chatLogicPort = 1234;
 
 console.log('sourceIp=',sourceIp);

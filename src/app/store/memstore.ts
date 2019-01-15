@@ -196,8 +196,8 @@ const initFile = () => {
     return new Promise(resolve => {
         initFileStore().then(() => {
             const txHistoryPromise = initTxHistory();         // 历史记录初始化
-            const activityPromise = initActivity();         // 活动初始化
-            Promise.all([txHistoryPromise,activityPromise]).then(() => {
+            // const activityPromise = initActivity();         // 活动初始化
+            Promise.all([txHistoryPromise]).then(() => {
                 resolve();
             });
             
@@ -396,7 +396,7 @@ const initThird = () => {
  */
 const registerFileStore = () => {
     registerAccountChange(); // 监听账户变化
-    registerActivityChange();  // 监听活动数据变化
+    // registerActivityChange();  // 监听活动数据变化
     registerThirdChange(); // 监听3方数据变化
     registerSettingChange(); // 监听setting数据变化
 };

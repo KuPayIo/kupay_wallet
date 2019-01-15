@@ -135,7 +135,7 @@ winit.initNext = function () {
 			"app/net/pull.js",
 			"app/net/push.js",
 			"earn/client/app/net/init.js",
-			"chat/client/app/net/init.js"
+			"chat/client/app/net/init_1.js"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
@@ -144,8 +144,8 @@ winit.initNext = function () {
 			// 聊天登录
 			var chatLogicIp = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicIp;
 			var chatLogicPort = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicPort;
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.initClient(chatLogicIp,chatLogicPort);
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.initClient(chatLogicIp,chatLogicPort);
 
 			// 活动登录
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
@@ -157,8 +157,10 @@ winit.initNext = function () {
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 
-			// erlang服务器连接登录
-			pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
+			// erlang服务器连接登录 1s后在打开连接,确保大部分情况下聊天和活动得连接已经连接成功
+			setTimeout(function(){
+				pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
+			},1000)
 			fpFlags.storeReady = true;
 			enterApp();
 
@@ -366,11 +368,13 @@ winit.initNext = function () {
 	var loadEarnSource = function () {
 		var sourceList = [
 			"earn/client/app/view/home/",
-			"earn/client/app/components/holdedHoe/",
-			"earn/client/app/components/mine/",
+			"earn/client/app/components/",
 			"earn/client/app/view/activity/miningHome.tpl",
 			"earn/client/app/view/activity/miningHome.js",
 			"earn/client/app/view/activity/miningHome.wcss",
+			"earn/client/app/view/activity/inviteAward.tpl",
+			"earn/client/app/view/activity/inviteAward.js",
+			"earn/client/app/view/activity/inviteAward.wcss",
 			"earn/xlsx/"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
