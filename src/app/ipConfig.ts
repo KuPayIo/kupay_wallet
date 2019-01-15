@@ -28,7 +28,7 @@ export const chatLogicIp = sourceIp;
 
 // 聊天逻辑服务器port
 // 外网正式 9080
-export const chatLogicPort = 1234;
+export const chatLogicPort = 9080;
 
 console.log('sourceIp=',sourceIp);
 console.log('sourcePort=',sourcePort);
