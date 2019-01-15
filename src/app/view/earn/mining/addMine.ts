@@ -41,7 +41,7 @@ export class Dividend extends Widget {
                 itemName: { zh_Hans:'充值KT',zh_Hant:'充值KT',en:'' },
                 itemShort: { zh_Hans:'充KT送ST',zh_Hant:'充KT送ST',en:'' },
                 btnName : { zh_Hans:'去充值',zh_Hant:'去充值',en:'' },
-                components: 'app-view-mine-setting-phone',
+                components: 'app-view-wallet-cloudWallet-rechargeKT',
                 modulIsShow:true
             }, {
                 isComplete: false,
