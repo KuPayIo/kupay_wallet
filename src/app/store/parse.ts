@@ -37,7 +37,7 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
         let behavior = '';
         let behaviorIcon = '';
         switch (itype) {
-            case TaskSid.Mining:
+            case TaskSid.Mine:
                 behavior = getStaticLanguage().cloudAccountDetail.types[0];
                 behaviorIcon = 'behavior1010.png';
                 break;

@@ -219,6 +219,7 @@ winit.initNext = function () {
 				var tab = util.loadCssRes(fileMap);
 				tab.timeout = 90000;
 				tab.release();
+				// debugger
 				// 加载根组件
 				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
 				root.cfg.full = false; //PC模式

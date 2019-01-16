@@ -21,7 +21,7 @@
                     {"zh_Hans":"交易时间","zh_Hant":"交易時間","en":""}] }}
 
 
-                <div w-class="amount">+{{it.GTNum}}&nbsp;GT</div>
+                <div w-class="amount">+{{it.GTNum}}&nbsp;ST</div>
                 <div w-class="item">
                     <div w-class="tag"><pi-ui-lang>{{tags[0]}}</pi-ui-lang></div>
                     <div w-class="content"><span>￥{{it.money}}</span></div>

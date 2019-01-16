@@ -756,13 +756,13 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
     const goldPrice = getStore('third/goldPrice/price') || 0;
 
     if (currencyUnit === 'CNY') {
-        if (currencyName === 'GT') {
+        if (currencyName === 'ST') {
             balanceValue = balance * (goldPrice / 100);
         } else {
             balanceValue = balance * currency2USDT.close * USD2CNYRate;
         }
     } else if (currencyUnit === 'USD') {
-        if (currencyName === 'GT') {
+        if (currencyName === 'ST') {
             balanceValue = (balance * (goldPrice / 100)) / USD2CNYRate;
         } else {
             balanceValue = balance * currency2USDT.close;
@@ -827,14 +827,14 @@ export const fetchCloudWalletAssetList = () => {
         rate:formatBalanceValue(0)
     };
     assetList.push(ktItem);
-    const gtBalance = cloudBalances.get(CloudCurrencyType.GT) || 0;
+    const gtBalance = cloudBalances.get(CloudCurrencyType.ST) || 0;
     const gtItem = {
-        currencyName: 'GT',
-        description: 'GT',
+        currencyName: 'ST',
+        description: 'ST',
         balance: formatBalance(gtBalance),
-        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('GT',gtBalance)),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('ST',gtBalance)),
         gain: fetchGTGain(),
-        rate:formatBalanceValue(fetchBalanceValueOfCoin('GT',1))
+        rate:formatBalanceValue(fetchBalanceValueOfCoin('ST',1))
     };
     assetList.push(gtItem);
     for (const k in CloudCurrencyType) {

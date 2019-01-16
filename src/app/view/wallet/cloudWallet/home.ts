@@ -76,7 +76,7 @@ export class CloudWalletHome extends Widget {
     public rechargeClick() {
         if (this.props.currencyName === 'KT') {
             popNew('app-view-wallet-cloudWallet-rechargeKT');
-        } else if (this.props.currencyName === 'GT') {
+        } else if (this.props.currencyName === 'ST') {
             popNew('app-view-wallet-cloudWalletGT-rechargeGT');
         } else {
             popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
@@ -86,7 +86,7 @@ export class CloudWalletHome extends Widget {
      * 提币
      */
     public withdrawClick() {
-        if (this.props.currencyName === 'KT' || this.props.currencyName === 'GT') {
+        if (this.props.currencyName === 'KT' || this.props.currencyName === 'ST') {
             popNewMessage(this.language.tips);
 
             return;
