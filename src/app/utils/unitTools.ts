@@ -19,7 +19,7 @@ export const smallUnit2LargeUnit = (currencyName: string, amount: string | numbe
     } else if (currencyName === 'BTC') {
         // tslint:disable-next-line:radix
         ret = sat2Btc(parseInt(amount.toString()));
-    } else if (currencyName === 'GT') {
+    } else if (currencyName === 'ST') {
         ret = (parseInt(amount.toString(),16) / 1000000);
     } else { // erc20
         // tslint:disable-next-line:radix

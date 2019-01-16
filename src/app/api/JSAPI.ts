@@ -105,7 +105,7 @@ export const openPayment = async (order:any,okCb?:Function,failCb?:Function) => 
         if (resData.result === 1) {
             popNew('app-components1-modalBoxInput-modalBoxInput', {
                 title: '输入密码',
-                content: [`商品：${resData.body}`,`总额：${resData.total_fee}GT`],
+                content: [`商品：${resData.body}`,`总额：${resData.total_fee}ST`],
                 itype: 'password'
             },async (r) => {
                 const loading = popNew('app-components1-loading-loading', { text:'支付中...' });

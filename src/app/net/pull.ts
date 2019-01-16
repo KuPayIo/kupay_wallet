@@ -233,7 +233,7 @@ export const getRandom = async (secretHash:string,cmd?:number) => {
 export const getServerCloudBalance = () => {
     const list = [];
     list.push(CloudCurrencyType.KT);
-    list.push(CloudCurrencyType.GT);
+    list.push(CloudCurrencyType.ST);
     for (const k in CloudCurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
             list.push(CloudCurrencyType[k]);
@@ -762,13 +762,13 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
             if (filter === 1) {
                 if (start) {
                     cloudWallet.otherLogs.list.push(...detail);
-                    if (coin === 'GT') {
+                    if (coin === 'ST') {
                         cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
                         cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
                     }
                 } else {
                     cloudWallet.otherLogs.list = detail;
-                    if (coin === 'GT') {
+                    if (coin === 'ST') {
                         cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
                         cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
                     }

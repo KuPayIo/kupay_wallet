@@ -27,6 +27,7 @@ export class App extends Widget {
     public create() {
         super.create();
         this.init();
+        console.log('app create ====');
     }
 
     public init(): void {
@@ -125,7 +126,7 @@ register('flags/level_2_page_loaded', (loaded: boolean) => {
     } else { // 处理导航页过程中资源已经加载完毕
         localStorage.setItem('level_2_page_loaded', '1');
     }
-    if (!localStorage.getItem('firstInApp')) {
+    if (!getStore('user/id')) {
         popNew('app-components1-modalBox-newUserWelfare');
         localStorage.setItem('firstInApp','true');
     }

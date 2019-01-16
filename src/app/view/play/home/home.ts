@@ -107,7 +107,7 @@ export class PlayHome extends Widget {
                 img:['app/res/image1/exchangeMall.png','app/res/image1/exchangeMall.png'],
                 url:'earn-client-app-view-exchange-exchange'
             }
-        ]
+        ];
     }
 
     public backPrePage() {
@@ -165,8 +165,9 @@ export class PlayHome extends Widget {
      * 活动点击
      * @param index 序号
      */
-    public activityClick(index:number){
-        popNew(this.props.activityList[index].url)
+    public activityClick(index:number) {
+        if (!hasWallet()) return;
+        popNew(this.props.activityList[index].url);
     }
     public openTestClick() {
         const gameTitle = '测试';
