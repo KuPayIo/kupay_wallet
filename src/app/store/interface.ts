@@ -22,7 +22,7 @@ export interface Store {
  * 后端定义的任务id
  */
 export enum TaskSid {
-    Mine = 101,                 // 新挖矿
+    Mine = '101',                 // 新挖矿
     Recharge = 301,            // 充值
     Withdraw = 302,            // 提现
     CreateWallet = 1001,       // 创建钱包
