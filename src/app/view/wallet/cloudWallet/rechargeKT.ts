@@ -9,7 +9,7 @@ import { popNewMessage, formatBalance } from "../../../utils/tools";
 import { CloudCurrencyType } from "../../../store/interface";
 import { getServerCloudBalance, getAccountDetail, getGoldPrice } from "../../../net/pull";
 import { popNew } from "../../../../pi/ui/root";
-import { confirmPay } from "../../../utils/pay";
+import { confirmPay } from "../../../utils/recharge";
 import { kt2kpt } from "../../../utils/unitTools";
 
 

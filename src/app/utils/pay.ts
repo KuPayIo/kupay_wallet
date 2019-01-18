@@ -1,217 +1,163 @@
-import { WebViewManager } from '../../pi/browser/webview';
-import { popNew } from '../../pi/ui/root';
-import { getModulConfig } from '../modulConfig';
-import { requestAsync } from '../net/pull';
-import { showError } from './toolMessages';
-import { popNewMessage } from './tools';
+/**
+ * 钱包应用支付模块
+ */
 
-export interface OrderDetail {
-    total: number; // 总价
-    body: string; // 信息
-    num: number; // 充值GT数量
-    payType: string; // 支付方式
-    // tslint:disable-next-line:no-reserved-keywords
-    type: number; // 充值类型
+import { popNew } from "../../pi/ui/root";
+import { resCode, openPayment, pay } from "../api/JSAPI";
+
+
+declare var pi_modules: any;
+
+export const walletPay = (order: any, callback: Function) => {
+    
+    openPayment(order, (res, msg) => {
+        if (res === 1) {
+            popNew("app-components1-modalBoxPay-pay",msg,(password)=>{
+                const loading = popNew('app-components1-loading-loading', { text: '支付中...' });
+                order.password = password;
+                pay(order,(res1, msg1)=>{
+                    loading.callback(loading.widget);
+                    callback(res1,msg1);
+                });
+            },()=>{
+                callback(resCode.USER_CANCAL,null);
+            });
+        }else{
+            callback(res,msg);
+        }
+    })
 }
 
+
+
 /**
- * 确认订单支付接口
- * @param orderDetail 订单详情
- * @param okCb 成功回调
- * @param failCb 失败回调
+ * 启动支付接口(验证订单，展示订单信息)
+ * @param order 订单信息,后台返回的订单json
  */
-export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, failCb?: Function) => {
-    if (!checkOrder(orderDetail)) {
-        failCb && failCb('order is not ready');
+// export const openPayment = async (order: any, callback: Function) => {
+//     if (!order) {
+//         callback(resCode.INVALID_REQUEST, new Error('order is not available'));
 
-        return;
-    }
+//         return;
+//     }
+//     if (typeof order !== 'string') {
+//         order = JSON.stringify(order);
+//     }
+//     const msg = { type: 'wallet/order@order_start', param: { json: order } };
+//     requestAsync(msg).then(resData => {
+//         if (resData.result === 1) {       //开启支付成功
+//             callback(resCode.SUCCESS, resData);
+//         } else {
+//             callback(resCode.OTHER_ERROR, resData);
+//         }
+//     }).catch(err => {
+//         callback(resCode.OTHER_ERROR, err);
+//     });
 
-    const msg = { type: 'order_pay', param: orderDetail };
-    const loading = popNew('app-components1-loading-loading', { text: { zh_Hans: '充值中...', zh_Hant: '充值中...', en: '' } });
-    try {
-        const resData: any = await requestAsync(msg);
-        if (resData.result === 1) { // 下单成功
-            const jumpData = {
-                oid: resData.oid,
-                mweb_url: ''
-            };
+// };
 
-            if (orderDetail.payType === 'alipay') {// 支付宝H5支付
-                fetch('https://openapi.alipay.com/gateway.do', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                    },
-                    body: URLencode(resData.JsData)// 这里是请求对象
-                }).then((res) => {
-                    jumpData.mweb_url = res.url;
-                    jumpAlipay(jumpData, okCb, failCb);
-                }).catch((err) => {
-                    failCb && failCb(err);
-                });
-            } else if (orderDetail.payType === 'wxpay') { // 微信H5支付
-                jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
-                jumpWxpay(jumpData, okCb, failCb);
-            }
+/**
+ * 支付接口(输入密码进行支付)
+ * @param psw 钱包密码
+ * @param transactionId 交易id
+ */
+// export const pay = async (order: any, password: string, callback: Function) => {
+//     if (!order) {
+//         callback(resCode.INVALID_REQUEST, new Error('order is not available'));
 
+//         return;
+//     }
+//     if (!password) {
+//         callback(resCode.INVALID_REQUEST, new Error('password is not available'));
+
+//         return;
+//     }
+//     const secretHash = await VerifyIdentidy(password);
+//     if (!secretHash) {
+//         callback(resCode.PASSWORD_ERROR, null);
+
+//         return;
+
+//     }
+
+//     const signJson = {
+//         appid: order.appid,
+//         transaction_id: order.transaction_id,
+//         nonce_str: Math.random().toFixed(5)
+//     };
+//     const signStr = getSign(signJson, secretHash);
+//     const msg = {
+//         type: 'wallet/order@pay',
+//         param: {
+//             ...signJson,
+//             sign: signStr
+//         }
+//     };
+//     requestAsync(msg).then(resData => {
+//         if (resData.result === 1) {
+//             callback(resCode.SUCCESS,resData);
+//         } else {
+//             callback(resCode.OTHER_ERROR,resData);
+//         }
+//     }).catch(err => {
+//         callback(resCode.OTHER_ERROR, err);
+//     });
+
+// };
+
+/**
+ * 关闭交易
+ * @param transactionId 交易id
+ */
+// export const closePayment = async (transactionId: string, okCb?: Function, failCb?: Function) => {
+//     if (!transactionId) {
+//         failCb && failCb(new Error('transactionId is not available'));
+
+//         return;
+//     }
+//     const msg = { type: 'wallet/order@close_order', param: { transaction_id: transactionId } };
+//     try {
+//         const resData: any = await requestAsync(msg);
+//         if (resData.result !== 1) {
+//             failCb && failCb(new Error('closePayment is failed'));
+//         } else {
+//             okCb && okCb();
+//         }
+//     } catch (err) {
+//         failCb && failCb(new Error('closePayment is failed'));
+//     }
+// };
+
+/**
+ * 获取签名
+ * @param json 签名json
+ */
+const getSign = (json: any, secretHash: string) => {
+
+    const getMnemonicByHash = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonicByHash;
+    const mnemonic = getMnemonicByHash(secretHash);
+    const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
+    const wlt = GlobalWallet.createWltByMnemonic(mnemonic, 'ETH', 0);
+    const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
+
+    return sign(jsonUriSort(json), wlt.exportPrivateKey());
+};
+
+/**
+ * 拼接字符串为uri并按照字典排序;
+ * @param json 拼接json
+ */
+const jsonUriSort = (json) => {
+    const keys = Object.keys(json).sort();
+    let msg = '';
+    for (const index in keys) {
+        const key = keys[index];
+        if (msg === '') {
+            msg += `${key}=${json[key]}`;
         } else {
-            showError(resData.result);
-            failCb && failCb(resData);
+            msg += `&${key}=${json[key]}`;
         }
-        setTimeout(() => {
-            loading.callback(loading.widget);
-        }, 5000);
-    } catch (err) {
-        showError(err && (err.result || err.type));
-        failCb && failCb(err);
-        loading.callback(loading.widget);
-    }
-};
-/**
- * 检查订单
- * @param order 订单详情
- */
-export const checkOrder = (order: OrderDetail): boolean => {
-    if (!order.total) {
-
-        return false;
-    }
-    if (!order.num) {
-
-        return false;
-    }
-    if (!order.payType) {
-
-        return false;
-    }
-    if (!order.body) {
-
-        return false;
     }
 
-    return true;
-};
-
-/**
- * 跳转微信支付
- * @param order 订单支付跳转信息
- * @param okCb 成功回调
- * @param failCb 失败回调
- */
-export const jumpWxpay = (order, okCb?: Function, failCb?: Function) => {
-
-    WebViewManager.newView('payWebView',order.mweb_url,{ Referer: getModulConfig('PAY_DOMAIN') });
-    setTimeout(() => {
-        popNew('app-components1-modalBox-modalBox', {
-            title: '',
-            content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
-            style: 'color:#F7931A;',
-            sureText: { zh_Hans: '支付成功', zh_Hant: '支付成功', en: '' },
-            cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
-        }, () => {
-            okCb && okCb(order);
-            WebViewManager.freeView('payWebView');
-        }, () => {
-            failCb && failCb();
-            WebViewManager.freeView('payWebView');
-        });
-    }, 5000);
-};
-
-/**
- * 跳转支付宝支付
- * @param order 订单支付跳转信息
- * @param okCb 成功回调
- * @param failCb 失败回调
- */
-export const jumpAlipay = (order, okCb?: Function, failCb?: Function) => {
-    const $payIframe = document.createElement('iframe');
-    $payIframe.setAttribute('sandbox', 'allow-scripts allow-top-navigation');
-    $payIframe.setAttribute('src', order.mweb_url);
-    $payIframe.setAttribute('style', 'position:absolute;width:0px;height:0px;visibility:hidden;');
-    document.body.appendChild($payIframe);
-    setTimeout(() => {
-        popNew('app-components1-modalBox-modalBox', {
-            title: '',
-            content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
-            style: 'color:#F7931A;',
-            sureText: { zh_Hans: '支付成功', zh_Hant: '支付成功', en: '' },
-            cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
-        }, () => {
-            okCb && okCb(order);
-            document.body.removeChild($payIframe);
-        }, () => {
-            failCb && failCb();
-            document.body.removeChild($payIframe);
-        });
-    }, 5000);
-};
-
-/**
- * 查询订单支付状态
- * @param oid 查询订单号
- * @param okCb 成功回调
- * @param failCb 失败回调
- */
-export const getPayState = async (oid: string, okCb?: Function, failCb?: Function) => {
-    if (!oid) {
-        failCb && failCb('oid is not ready');
-
-        return;
-    }
-    const msg = { type: 'order_query', param: { oid } };
-    try {
-        const resData: any = await requestAsync(msg);
-        if (resData.result === 1) {
-            okCb && okCb(resData);
-        } else {
-            showError(resData.result);
-            failCb && failCb(resData);
-        }
-    } catch (err) {
-        console.log('order_query--------', err);
-        popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
-        failCb && failCb(err);
-    }
-};
-
-/**
- * 查询订单详情 
- * @param oid 查询订单号
- * @param okCb 成功回调
- * @param failCb 失败回调
- */
-export const getOrderDetail = async (oid: string, okCb?: Function, failCb?: Function) => {
-    if (!oid) {
-        failCb && failCb('oid is not ready');
-
-        return;
-    }
-    const msg = { type: 'get_order_detail', param: { oid } };
-    try {
-        const resData = await requestAsync(msg);
-        if (resData.result === 1) {
-            okCb && okCb(resData);
-        } else {
-            showError(resData.result);
-            failCb && failCb(resData);
-        }
-    } catch (err) {
-        console.log('get_order_detail--------', err);
-        popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
-        failCb && failCb(err);
-    }
-};
-
-/**
- * 特殊字符转码
- * @param sStr str
- */
-const URLencode = (sStr) => {
-    const signStr = sStr.split('&');
-    // tslint:disable-next-line:max-line-length
-    signStr[0] = `sign=${escape(signStr[0].slice(5)).replace(/\+/g, '%2B').replace(/\"/g, '%22').replace(/\'/g, '%27').replace(/\//g, '%2F')}`;
-
-    return signStr.join('&');
+    return msg;
 };

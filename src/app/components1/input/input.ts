@@ -130,8 +130,20 @@ export class Input extends Widget {
         if (this.props.itype === 'integer' && currentValue.length > 0) {
             currentValue = Number(currentValue.replace(/[\D]/g,'')); 
         }
+        // 一位小数 时检验输入格式
+        if (this.props.itype === 'moneyNum1' && currentValue.length > 0) {
+            currentValue = currentValue.replace(/[^\d\.]/g,''); 
+            if (!this.numberJudge(currentValue)) {
+                currentValue = currentValue.slice(0,currentValue.length - 1);
+            }
+            const numAry = currentValue.split('.');
+            if (numAry[1]) {
+                numAry[1] = numAry[1].slice(0,1);
+                currentValue = numAry.join('.');   
+            }
+        }
         // 两位小数 时检验输入格式
-        if (this.props.itype === 'moneyNum' && currentValue.length > 0) {
+        if (this.props.itype === 'moneyNum2' && currentValue.length > 0) {
             currentValue = currentValue.replace(/[^\d\.]/g,''); 
             if (!this.numberJudge(currentValue)) {
                 currentValue = currentValue.slice(0,currentValue.length - 1);

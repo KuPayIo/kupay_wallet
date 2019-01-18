@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail, getGoldPrice, getServerCloudBalance } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
-import { confirmPay } from '../../../utils/pay';
+import { confirmPay } from '../../../utils/recharge';
 import { formatBalance, popNewMessage } from '../../../utils/tools';
 
 // ============================导出

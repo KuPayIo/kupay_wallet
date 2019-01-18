@@ -68,6 +68,13 @@ export class App extends Widget {
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
                     components: 'app-view-wallet-home-home'
+                },
+                pay: {
+                    modulName: 'APP_PAY',
+                    text: { zh_Hans:'pay',zh_Hant:'pay',en:'' },
+                    icon: 'wallet.png',
+                    iconActive: 'wallet_active.png',
+                    components: 'app-view-ceshi-home'
                 }
             },
             tabBarList: [],

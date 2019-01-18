@@ -47,7 +47,7 @@ function createStyleTag() {
         transform: translate3d(-50%, -30%, 0);
       }
       .pi-update-content {
-        padding: 20px 40px;
+        padding: 20px 30px;
       }
       .pi-update-title {
         margin-top: 250px;
@@ -64,7 +64,7 @@ function createStyleTag() {
         color: #8e96ab;
       }
       .pi-update-btns {
-        margin: 30px 80px 0;
+        margin: 30px 40px 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -96,6 +96,99 @@ function createStyleTag() {
         justify-content: center;
         align-items: center;
       }
+
+
+
+
+
+      /* 支付 */
+      .pi-pay-title {
+          height: 90px;
+          text-align: center;
+          line-height: 90px;
+          border-bottom: 1px solid #CCCCCC;
+      }
+
+      .pi-pay-content {
+          padding-top: 20px;
+          font-size: 28px;
+      }
+
+      .pi-pay-item {
+          line-height: 40px;
+          height: 40px;
+          margin-bottom: 10px;
+      }
+      .pi-pay-text{
+          font-weight:500;
+      }
+      .pi-pay-num{
+          color: #318DE6;
+      }
+      .pi-pay-input{
+          height: 80px;
+          width: 100%;
+          border: 1px solid #1E6DEF;
+          background:rgba(249,249,249,1);
+          border-radius: 6px;
+          font-size: 32px;
+          padding: 0px 15px;
+          box-sizing: border-box;
+          letter-spacing: 2px;
+          margin-top: 15px;
+          outline:none;
+      }
+
+
+
+        /* 加载 */
+        .pi-loading-mask{
+            position: absolute;
+            margin: 0;
+            top: 0;
+            right: 0;   
+            bottom: 0;
+            left: 0;
+            -webkit-transition: opacity .3s;
+            transition: opacity .3s;
+            color: #fff;
+            font-size: 24px;
+        }
+        .pi-loading-spinner{
+            width: 180px;
+            height: 180px;
+            background-color: rgba(0,0,0,.6);
+            top: 50%;
+            left: 50%;
+            text-align: center;
+            position: absolute;
+            transform: translate(-50%,-50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            padding-top: 10px;
+        }
+
+        .loading-img{
+            width: 50px;
+            height: 50px;
+            border: 4px solid white;
+            border-bottom-color:transparent;
+            -webkit-animation: loading 1s 0s linear infinite;
+            animation: loading 1s 0s linear infinite;
+            opacity:1;
+            border-radius:50%;
+        }
+
+        .pi-loading-text{
+            color: #fff;
+            margin: 10px 0 20px;
+        }
+
+
+
       @-webkit-keyframes bounceInUp {
         from,
         60%,
@@ -198,6 +291,7 @@ function createStyleTag() {
     document.getElementsByTagName("head")[0].appendChild(style);
 }
 
+//创建授权弹窗标签
 function createElementTag(){
     var htmlText = `
       <div class="pi-mask">
@@ -223,13 +317,69 @@ function createElementTag(){
     $body.appendChild($root);
 }
 
+//创建支付弹窗标签
+function createPayElementTag() {
+    var htmlText = `
+        <div class="pi-mask">
+            <div class="pi-update-box animated bounceInUp">
+                <div class="pi-update-content">
+                    <div class="pi-pay-title">确认支付</div>
+                    <div class="pi-pay-content">
+                        <div class="pi-pay-item">
+                            <span>金额：</span><span id="pi_payCount" class="pi-pay-num">0.02ST</span>
+                        </div>
+                        <div class="pi-pay-item">
+                            <span>发给：</span><span id="pi_payObject" class="pi-pay-text">LOL赛事竞猜</span>
+                        </div>
+                        <div class="pi-pay-item">
+                            <span>余额：</span><span id="pi_payBalance" class="pi-pay-text">12ST</span>
+                        </div>
+                        <div>
+                            <input class="pi-pay-input" type="password" placeholder="输入密码" name="" id="pi_password">
+                        </div>
+                    </div>
+                </div>
+                <div class="pi-update-btns">
+                    <div class="pi-update-cancel-btn">取消</div>
+                    <div class="pi-update-ok-btn">确定</div>
+                </div>
+            </div>
+        </div>`;
+    var $root = document.createElement("div");
+    $root.setAttribute("class", "pi-root");
+    $root.innerHTML = htmlText;
+
+    var $body = document.querySelector("body");
+    $body.appendChild($root);
+}
+
+//创建加载弹窗标签
+function createLoadingElementTag() {
+    var htmlText = `
+        <div class="pi-loading-mask">
+            <div class="pi-loading-spinner">
+                <div class="loading-img"></div>
+                <p class="pi-loading-text">
+                    支付中...
+                </p>
+            </div>
+        </div>`;
+    var $root = document.createElement("div");
+    $root.setAttribute("class", "pi-loading-mask");
+    $root.innerHTML = htmlText;
+
+    var $body = document.querySelector(".pi-root");
+    $body.appendChild($root);
+}
+
+//关闭所有
 function closePop(){
   var $root = document.querySelector(".pi-root");
   var $body = document.querySelector("body");
   $body.removeChild($root);
 }
 window.pi_RPC_Method = (function() {
-    var rpcID = 0;
+    var rpcID = -1;
     var rpcIDMap = {};
 
     /**
@@ -361,7 +511,7 @@ window.pi_RPC_Method = (function() {
     return rpcCall;
 })();
 
-
+//获取openID
 window.pi_jsApi.authorize = function(payload,callBack){
     createStyleTag();
     createElementTag();
@@ -399,6 +549,51 @@ window.pi_jsApi.authorize = function(payload,callBack){
         closePop();
     });
     
+}
+
+
+//第三方支付
+window.pi_jsApi.openPayment = function (order, callBack) {
+    pi_RPC_Method("app/api/JSAPI", "openPayment", order, function (resCode, msg) {
+        console.log('openPayment call success', resCode);
+        console.log('openPayment call success', msg);
+        if (resCode === 1) {
+            createStyleTag();
+            createPayElementTag();
+            var $ok = document.querySelector(".pi-update-ok-btn");
+            var $cancel = document.querySelector(".pi-update-cancel-btn");
+            var $mask = document.querySelector(".pi-mask");
+            var $input = document.getElementById("pi_password");
+            document.getElementById('pi_payCount').innerHTML = msg.fee_total + msg.fee_name + '';
+            document.getElementById('pi_payObject').innerHTML = msg.desc + '';
+            document.getElementById('pi_payBalance').innerHTML = msg.balance + msg.fee_name + '';
+
+
+            $mask.style.display = "flex";
+
+            $ok.addEventListener("click", function () {
+                order.password = $input.value;
+                createLoadingElementTag();
+                pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
+                    console.log('pay call success', resCode1);
+                    console.log('pay call success', msg1);
+                    callBack(resCode1, msg1); 
+                    closePop();
+                });
+            });
+
+
+            $cancel.addEventListener("click", function () {
+                closePop();
+                callBack(1003, null)
+            });
+
+
+
+        } else {
+            callBack(resCode, msg);
+        }
+    });
 }
 
 
