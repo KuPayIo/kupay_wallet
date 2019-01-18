@@ -8,6 +8,7 @@ import { HandlerMap } from '../../pi/util/event';
 import { setLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { defaultSetting } from '../config';
+import { topHeight } from '../utils/constants';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Gold, Setting, ShapeShiftTxs, Store, TxHistory, UserInfo, Wallet } from './interface';
@@ -18,11 +19,16 @@ import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, C
  * 初始化store
  */
 export const initStore = () => {
-    registerFileStore();    // 注册监听
-    initAccount();          // 账户初始化
-    initSettings();         // 设置初始化
-    initThird();            // 三方数据初始化
-    initFile();             // indexDb数据初始化
+    return new Promise(resolve => {
+        registerFileStore();    // 注册监听
+        initAccount();          // 账户初始化
+        initSettings();         // 设置初始化
+        initThird();            // 三方数据初始化
+        initFile().then(() => {
+            resolve();
+        });             // indexDb数据初始化
+    });
+    
 };
 
 /**
@@ -65,8 +71,9 @@ export const getStore = (path: string, defaultValue = undefined) => {
             throw new Error('getStore Failed, path = ' + path);
         }
     }
+    const deepRet = deepCopy(ret);
 
-    return typeof deepCopy(ret) === 'boolean' ? deepCopy(ret) : (deepCopy(ret) || defaultValue);
+    return (typeof deepRet === 'boolean' || typeof deepRet === 'number') ? deepRet : (deepRet || defaultValue);
 };
 
 /**
@@ -95,12 +102,11 @@ export const setStore = (path: string, data: any, notified = true) => {
             throw new Error('setStore Failed, path = ' + path);
         }
     }
-
     parent[lastKey] = deepCopy(data);
 
     if (notified) {
         for (let i = notifyPath.length - 1; i >= 0; i--) {
-            handlerMap.notify(notifyPath[i], [getStore(notifyPath[i])]);
+            handlerMap.notify(notifyPath[i], getStore(notifyPath[i]));
         }
     }
 };
@@ -187,31 +193,46 @@ export const deleteAccount = (id: string) => {
  * indexDB数据初始化
  */
 const initFile = () => {
-    // console.time('initFile');
-    initFileStore().then(() => {
-        if (!store.user.id) return;
-        getFile(store.user.id, (value, key) => {
-            // console.timeEnd('initFile');
-            if (!value) return;
-            initTxHistory(value);
-            // console.log('store init success',store);
-        }, () => {
-            console.log('read error');
+    return new Promise(resolve => {
+        initFileStore().then(() => {
+            const txHistoryPromise = initTxHistory();         // 历史记录初始化
+            // const activityPromise = initActivity();         // 活动初始化
+            Promise.all([txHistoryPromise]).then(() => {
+                resolve();
+            });
+            
         });
     });
+    
 };
 
 /**
  * 初始化历史记录
  * @param fileTxHistorys indexDb存储的历史记录
  */
-const initTxHistory = (fileTxHistorys: FileTxHistory[]) => {
-    const currencyRecords = store.wallet.currencyRecords;
-    for (const record of currencyRecords) {
-        for (const addrInfo of record.addrs) {
-            addrInfo.txHistory = getTxHistory(fileTxHistorys, record.currencyName, addrInfo.addr);
+const initTxHistory = () => {
+    return new Promise(resolve => {
+        if (!store.user.id) {
+            resolve();
+            
+            return;
         }
-    }
+        getFile(store.user.id, (value, key) => {
+            if (value) {
+                const currencyRecords = store.wallet.currencyRecords;
+                for (const record of currencyRecords) {
+                    for (const addrInfo of record.addrs) {
+                        addrInfo.txHistory = getTxHistory(value, record.currencyName, addrInfo.addr);
+                    }
+                }
+            }
+            resolve();
+        }, () => {
+            resolve();
+            console.log('read error');
+        });
+    });
+    
 };
 
 /**
@@ -323,13 +344,36 @@ const initSettings = () => {
             open: false,
             psw: ''
         },
-        deviceId: ''
+        deviceId: '',
+        topHeight,
+        bottomHeight:0
     });
     store.setting = {
+        ...store.setting,
         ...setting
     };
     setLang(setting.language);
 
+};
+
+/**
+ * 活动数据初始化
+ */
+const initActivity = () => {
+    return new Promise(resolve => {
+        getFile('activity',(activity) => {
+            console.log('activity read success = ',activity);
+            store.activity = {
+                ...store.activity,
+                ...activity
+            };
+            resolve();
+        },() => {
+            console.log('activity read fail ');
+            resolve();
+        });
+    });
+    
 };
 
 /**
@@ -352,6 +396,7 @@ const initThird = () => {
  */
 const registerFileStore = () => {
     registerAccountChange(); // 监听账户变化
+    // registerActivityChange();  // 监听活动数据变化
     registerThirdChange(); // 监听3方数据变化
     registerSettingChange(); // 监听setting数据变化
 };
@@ -368,6 +413,15 @@ const registerAccountChange = () => {
     });
     register('cloud', () => {
         accountChange();
+    });
+};
+
+/**
+ * 活动数据变化监听
+ */
+const registerActivityChange = () => {
+    register('activity', () => {
+        activityChange();
     });
 };
 
@@ -479,6 +533,14 @@ const accountChange = () => {
 };
 
 /**
+ * 活动数据变化
+ */
+const activityChange = () => {
+    // setLocalStorage('activity', store.activity);
+    writeFile('activity', store.activity);
+};
+
+/**
  * 第3方数据变化
  */
 const thirdChange = () => {
@@ -502,7 +564,10 @@ const settingChange = () => {
         changeColor: getStore('setting/changeColor'),
         currencyUnit: getStore('setting/currencyUnit'),
         lockScreen: getStore('setting/lockScreen'),
-        deviceId: getStore('setting/deviceId')
+        deviceId: getStore('setting/deviceId'),
+        deviceInfo:getStore('setting/deviceInfo'),
+        topHeight: getStore('setting/topHeight'),
+        bottomHeight:getStore('setting/bottomHeight')
     };
     setLocalStorage('setting', localSetting);
 };
@@ -527,7 +592,6 @@ const store: Store = {
         conUid: '',                   // 服务器连接uid
         publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
         salt: '',                    // 加密 盐值
-        secretHash: '',             // 密码hash缓存   
         info: {                      // 用户基本信息
             nickName: '',           // 昵称
             avatar: '',             // 头像
@@ -571,7 +635,10 @@ const store: Store = {
         language: '',             // 语言
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
         currencyUnit: '',         // 显示哪个国家的货币
-        deviceId: ''               // 设备唯一ID
+        deviceId: '',             // 设备唯一ID
+        deviceInfo:null,           // 设备信息
+        topHeight,              // 设备头部应空出来的高度
+        bottomHeight:0            // 设备底部应空出来的高度
     },
     third: {
         gasPrice: null,                             // gasPrice分档次

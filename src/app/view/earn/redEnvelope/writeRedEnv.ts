@@ -28,10 +28,11 @@ interface Props {
     realUser: boolean;   // 是否真实用户
     forceHide:boolean;
     ktBalance:number;    // KT余额
+    inFlag?:string;  // 从哪里进入 chat
 }
 
 export class WriteRedEnv extends Widget {
-    public ok: () => void;
+    public ok: (res:any) => void;
     public language:any;
 
     public props:Props = {
@@ -44,7 +45,8 @@ export class WriteRedEnv extends Widget {
         message: '',
         realUser: getStore('user/info/isRealUser'),
         forceHide:false,
-        ktBalance:0
+        ktBalance:0,
+        inFlag:''
     };
     constructor() {
         super();
@@ -63,7 +65,8 @@ export class WriteRedEnv extends Widget {
         super.setProps(this.props);
         this.props = {
             ...this.props,
-            ktBalance:props.ktBalance
+            ktBalance:props.ktBalance,
+            inFlag:props.inFlag
         };
     }
 
@@ -92,7 +95,7 @@ export class WriteRedEnv extends Widget {
     }
 
     public backPrePage() {
-        this.ok && this.ok();
+        this.ok && this.ok(null);
     }
 
     public goHistory() {
@@ -167,6 +170,8 @@ export class WriteRedEnv extends Widget {
      * 点击发红包按钮
      */
     public async send() {
+        const curCoin = this.props.list[this.props.selected];
+        
         if (Number(this.props.totalNum) === 0) {
             popNew('app-components1-message-message', { content: this.language.tips[2] });
 
@@ -177,7 +182,6 @@ export class WriteRedEnv extends Widget {
 
             return;
         }
-        const curCoin = this.props.list[this.props.selected];
         if (this.props.totalAmount > curCoin.num) {
             popNew('app-components1-message-message', { content: this.language.tips[3] });
 
@@ -218,10 +222,10 @@ export class WriteRedEnv extends Widget {
         },
             async (r) => {
                 const close = popNew('app-components1-loading-loading', { text: this.language.loading });
-                const fg = await VerifyIdentidy(r);
+                const secretHash = await VerifyIdentidy(r);
                 close.callback(close.widget);
-                if (fg) {
-                    this.sendRedEnv();
+                if (secretHash) {
+                    this.sendRedEnv(secretHash);
                 } else {
                     popNew('app-components1-message-message', { content: this.language.tips[6] });
                 }
@@ -233,17 +237,16 @@ export class WriteRedEnv extends Widget {
     /**
      * 实际发红包
      */
-    public async sendRedEnv() {
-
+    public async sendRedEnv(secretHash:string) {
         const curCoin = this.props.list[this.props.selected];
         const lm = this.props.message;  // 留言
         const rtype = this.props.showPin ? LuckyMoneyType.Random : LuckyMoneyType.Normal; // 0 等额红包  1 拼手气红包
         const ctype = Number(CloudCurrencyType[curCoin.name]);  // 货币类型
         const totalAmount = Number(this.props.totalAmount);   // 红包总金额
         const totalNum = this.props.totalNum;    // 红包总个数
-        const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm);
+        const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm,secretHash);
 
-        if (!rid) return;
+        // if (!rid) return;
         setTimeout(() => {
             this.props.oneAmount = 0;
             this.props.totalNum = 0;
@@ -253,12 +256,21 @@ export class WriteRedEnv extends Widget {
             setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
             this.paint(true);
         });
-        popNew('app-view-earn-redEnvelope-sendRedEnv', {
-            message: lm,
-            rid,
-            rtype: rtype,
-            cname: curCoin.name
-        });
+        if(this.props.inFlag==='chat'){
+            console.log('发红包成功了')
+            this.ok({
+                message: lm,
+                rid  // 红包的ID
+            });
+        }else{
+            popNew('app-view-earn-redEnvelope-sendRedEnv', {
+                message: lm,
+                rid,
+                rtype: rtype,
+                cname: curCoin.name,
+            });
+        }
+        
 
         // if (!this.props.showPin) {
         //     // tslint:disable-next-line:max-line-length

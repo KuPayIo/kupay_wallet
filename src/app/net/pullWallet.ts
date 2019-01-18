@@ -2,6 +2,7 @@
  * 主动向钱包通讯
  */
 // ===================================================== 导入
+import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
 import { ERC20Tokens } from '../config';
@@ -10,14 +11,12 @@ import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet, initWeb3, web3 } from '../core/eth/wallet';
 import { GlobalWallet } from '../core/globalWallet';
-import { shapeshift } from '../exchange/shapeshift/shapeshift';
 import { dataCenter } from '../logic/dataCenter';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
-import { getStore, setStore } from '../store/memstore';
-import { erc20GasLimitRate, shapeshiftApiPrivateKey, shapeshiftApiPublicKey, shapeshiftTransactionRequestNumber } from '../utils/constants';
+import { erc20GasLimitRate } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
+import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
@@ -83,6 +82,9 @@ export const rpcProviderSendAsync = (payload, callback) => {
             web3.currentProvider.sendAsync(payload, callback);
         }
     }
+
+    // 关闭webview定时器
+    WebViewManager.endTimer();
 };
 
 /**
@@ -118,7 +120,12 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
         const addrIndex = getWltAddrIndex(fromAddr, currencyName);
         let hash;
         if (addrIndex >= 0) {    
-            const wltPromise = GlobalWallet.createWlt(currencyName, psw, addrIndex);
+            console.time('transfer3 wltPromise');
+            const wltPromise = GlobalWallet.createWlt(currencyName, psw, addrIndex).then((wlt) => {
+                console.timeEnd('transfer3 wltPromise');
+
+                return wlt;
+            });
 
             const api = new EthApi();
             const nonce = txRecord.nonce;
@@ -126,10 +133,21 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
             // 0xe209a49a0000000000000000000000000000000000000000000000000000000000000001
 
             // toAddr  0x0e7f42cdf739c06dd3c1c32fab5e50ec9620102a
+
+            console.time('transfer3 gasLimitPromise');
             // tslint:disable-next-line:max-line-length
-            const gasLimitPromise = api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data });
+            const gasLimitPromise = api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data }).then((gasLimit) => {
+                console.timeEnd('transfer3 gasLimitPromise');
+
+                return gasLimit;
+            });
             
-            const chainNoncePromise = api.getTransactionCount(fromAddr);
+            console.time('transfer3 chainNoncePromise');
+            const chainNoncePromise = api.getTransactionCount(fromAddr).then((chainNonce) => {
+                console.timeEnd('transfer3 chainNoncePromise');
+
+                return chainNonce;
+            });
 
             console.time('transfer3 all promise need');
             const [wlt,gasLimit,chainNonce] = await Promise.all([wltPromise,gasLimitPromise,chainNoncePromise]);
@@ -509,130 +527,129 @@ export const sendRawTransactionBTC = async (rawHexString) => {
     return hash;
 };
 
-// ===================================================shapeShift相关start
+// // ===================================================shapeShift相关start
 
-const shapeShiftUrlPrex = 'https://shapeshift.io/';
-// tslint:disable-next-line:max-line-length
-const shapeShiftClientToken = {
-    createdAt:'2018-12-11T08:30:52.242Z',
-    updatedAt:'2018-12-11T08:30:52.242Z',
-    id:'959a71bc-a5d4-4483-8d10-c1cc7668d72c',
-    clientId:'bc401c5a-3ff3-4bc7-9ffb-72449dcfae80',
-    expiresAt:'2019-12-11T08:30:52.242Z',
-    token:'44Aq9s8cHBrDXUJsiXeU7ER9AtaR6JZ5i3qtz1oY7gYn',
-    userId:null,
-    deletedAt:null 
-};
+// // tslint:disable-next-line:max-line-length
+// const shapeShiftClientToken = {
+//     createdAt:'2018-12-11T08:30:52.242Z',
+//     updatedAt:'2018-12-11T08:30:52.242Z',
+//     id:'959a71bc-a5d4-4483-8d10-c1cc7668d72c',
+//     clientId:'bc401c5a-3ff3-4bc7-9ffb-72449dcfae80',
+//     expiresAt:'2019-12-11T08:30:52.242Z',
+//     token:'44Aq9s8cHBrDXUJsiXeU7ER9AtaR6JZ5i3qtz1oY7gYn',
+//     userId:null,
+//     deletedAt:null 
+// };
 
-/**
- * 获取shapeShift所支持的币种
- */
-export const getShapeShiftCoins = () => {
-    fetch(`${shapeShiftUrlPrex}getcoins`).then(res => res.json()).then(res => {
-        // console.log(res);
-        const list = [];
-        for (const k in res) {
-            list.push(res[k]);
-        }
-        // console.log(list);
-        setStore('third/shapeShiftCoins', list);
-    });
-};
-/**
- * 
- * @param pair 交易对
- */
-export const getMarketInfo = (pair:string) => {
-    fetch(`${shapeShiftUrlPrex}marketinfo/${pair}`).then(res => res.json()).then(res => {
-        // console.log(res);
-        setStore('third/shapeShiftMarketInfo', res);
-    });
-};
+// /**
+//  * 获取shapeShift所支持的币种
+//  */
+// export const getShapeShiftCoins = () => {
+//     fetch(`${shapeShiftUrlPrex}getcoins`).then(res => res.json()).then(res => {
+//         // console.log(res);
+//         const list = [];
+//         for (const k in res) {
+//             list.push(res[k]);
+//         }
+//         // console.log(list);
+//         setStore('third/shapeShiftCoins', list);
+//     });
+// };
+// /**
+//  * 
+//  * @param pair 交易对
+//  */
+// export const getMarketInfo = (pair:string) => {
+//     fetch(`${shapeShiftUrlPrex}marketinfo/${pair}`).then(res => res.json()).then(res => {
+//         // console.log(res);
+//         setStore('third/shapeShiftMarketInfo', res);
+//     });
+// };
 
-/**
- * 开始进行币币兑换
- * @param withdrawalAddress 入账币种的地址
- * @param returnAddress 失败后的退款地址
- * @param pair 交易对
- */
-export const beginShift = (withdrawalAddress:string,returnAddress:string,pair:string,success?:Function,fail?:Function) => {
-    const bodyData = {
-        amount: 1,
-        withdrawal: '0x5041F19dC1659E33848cc0f77cbF7447de562917',
-        returnAddress: '1N17uHdvY6fNwtutM1G5EAZFPLC43B59rB',
-        pair: 'BTC_ETH'
-    };
-    fetch(`${shapeShiftUrlPrex}sendamount`,{
-        method: 'POST', // or 'PUT'
-        body: JSON.stringify(bodyData), // data can be `string` or {object}!
-        headers: new Headers({
-            'Content-Type': 'application/json',
-            Authorization: `Bearer CZfRLxjor2E49vTfTZDjaeeR78nMMi1rKypV9GRBsmt2`
-        })
-    }).then(res => res.json()).then(res => {
-        console.log(res);
-        // setStore('third/shapeShiftMarketInfo', res);
-    });
-};
+// /**
+//  * 开始进行币币兑换
+//  * @param withdrawalAddress 入账币种的地址
+//  * @param returnAddress 失败后的退款地址
+//  * @param pair 交易对
+//  */
+// export const beginShift = (withdrawalAddress:string,returnAddress:string,pair:string,success?:Function,fail?:Function) => {
+//     const bodyData = {
+//         amount: 1,
+//         withdrawal: '0x5041F19dC1659E33848cc0f77cbF7447de562917',
+//         returnAddress: '1N17uHdvY6fNwtutM1G5EAZFPLC43B59rB',
+//         pair: 'BTC_ETH'
+//     };
+//     fetch(`${shapeShiftUrlPrex}sendamount`,{
+//         method: 'POST', // or 'PUT'
+//         body: JSON.stringify(bodyData), // data can be `string` or {object}!
+//         headers: new Headers({
+//             'Content-Type': 'application/json',
+//             Authorization: `Bearer CZfRLxjor2E49vTfTZDjaeeR78nMMi1rKypV9GRBsmt2`
+//         })
+//     }).then(res => res.json()).then(res => {
+//         console.log(res);
+//         // setStore('third/shapeShiftMarketInfo', res);
+//     });
+// };
 
-/**
- * 获取币币交易记录
- * @param addr 要获取交易记录的地址
- */
-export const getTransactionsByAddr = async (addr: string) => {
-    const addrLowerCase = addr.toLowerCase();
-    const transactions = (addr: string): Promise<any> => {
-        return new Promise((resolve, reject) => {
-            shapeshift.transactions(shapeshiftApiPrivateKey, addr, (err, transactions) => {
-                if (err || transactions.length === 0) {
-                    reject(err || new Error('null array'));
-                }
-                resolve(transactions);
-            });
-        });
-    };
-    const getTxByHash = (txs: any[], hash: string) => {
-        for (let i = 0; i < txs.length; i++) {
-            // tslint:disable-next-line:possible-timing-attack
-            if (txs[i].inputTXID === hash) {
-                return i;
-            }
-        }
+// /**
+//  * 获取币币交易记录
+//  * @param addr 要获取交易记录的地址
+//  */
+// export const getTransactionsByAddr = async (addr: string) => {
+//     const addrLowerCase = addr.toLowerCase();
+//     const transactions = (addr: string): Promise<any> => {
+//         return new Promise((resolve, reject) => {
+//             shapeshift.transactions('shapeshiftApiPrivateKey', addr, (err, transactions) => {
+//                 if (err || transactions.length === 0) {
+//                     reject(err || new Error('null array'));
+//                 }
+//                 resolve(transactions);
+//             });
+//         });
+//     };
+//     const getTxByHash = (txs: any[], hash: string) => {
+//         for (let i = 0; i < txs.length; i++) {
+//             // tslint:disable-next-line:possible-timing-attack
+//             if (txs[i].inputTXID === hash) {
+//                 return i;
+//             }
+//         }
 
-        return -1;
-    };
-    const shapeShiftTxsMap = getStore('third/shapeShiftTxsMap');
-    const shapeShiftTxs =  shapeShiftTxsMap.get(addrLowerCase) || { addr:addrLowerCase,list:[] };
-    let count = shapeshiftTransactionRequestNumber;
-    while (count >= 0) {
-        let txs;
-        try {
-            txs = await transactions(addrLowerCase);
-        } catch (err) {
-            // console.error(err);
-        }
-        if (txs) {
-            console.log('shapeshifttx',txs);
-            txs.forEach(tx => {
-                const index = getTxByHash(shapeShiftTxs.list || [], tx.inputTXID);
-                if (index >= 0) {
-                    shapeShiftTxs.list[index] = tx;
-                } else {
-                    shapeShiftTxs.list.push(tx);
-                }
-            });
-            shapeShiftTxsMap.set(addrLowerCase,shapeShiftTxs);
-            setStore('third/shapeShiftTxsMap',shapeShiftTxsMap);
+//         return -1;
+//     };
+//     const shapeShiftTxsMap = getStore('third/shapeShiftTxsMap');
+//     const shapeShiftTxs =  shapeShiftTxsMap.get(addrLowerCase) || { addr:addrLowerCase,list:[] };
+//     let count = shapeshiftTransactionRequestNumber;
+//     while (count >= 0) {
+//         let txs;
+//         try {
+//             txs = await transactions(addrLowerCase);
+//         } catch (err) {
+//             // console.error(err);
+//         }
+//         if (txs) {
+//             console.log('shapeshifttx',txs);
+//             txs.forEach(tx => {
+//                 const index = getTxByHash(shapeShiftTxs.list || [], tx.inputTXID);
+//                 if (index >= 0) {
+//                     shapeShiftTxs.list[index] = tx;
+//                 } else {
+//                     shapeShiftTxs.list.push(tx);
+//                 }
+//             });
+//             shapeShiftTxsMap.set(addrLowerCase,shapeShiftTxs);
+//             setStore('third/shapeShiftTxsMap',shapeShiftTxsMap);
 
-            return;
-        }
-        count--;
-        console.log(count);
-    }
-    setStore('third/shapeShiftTxsMap',shapeShiftTxsMap);
-};
+//             return;
+//         }
+//         count--;
+//         console.log(count);
+//     }
+//     setStore('third/shapeShiftTxsMap',shapeShiftTxsMap);
+// };
 
-// ===================================================shapeShift相关end
+// // ===================================================shapeShift相关end
 
 // ===================================================== 本地
 
@@ -873,14 +890,14 @@ export const withdraw = async (passwd:string,toAddr:string,currencyName:string,a
 // eth提现
 export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
     const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.withdraw });
-    const verify = await VerifyIdentidy(passwd);
-    if (!verify) {
+    const secretHash = await VerifyIdentidy(passwd);
+    if (!secretHash) {
         close.callback(close.widget);
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
 
         return;
     }
-    const hash = await withdrawFromServer(toAddr,eth2Wei(amount));
+    const hash = await withdrawFromServer(toAddr,eth2Wei(amount),secretHash);
     close.callback(close.widget);
     if (hash) {
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
@@ -911,14 +928,14 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
 // btc提现
 export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
     const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.withdraw });
-    const verify = await VerifyIdentidy(passwd);
-    if (!verify) {
+    const secretHash = await VerifyIdentidy(passwd);
+    if (!secretHash) {
         close.callback(close.widget);
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
 
         return;
     }
-    const hash = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString());
+    const hash = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString(),secretHash);
     close.callback(close.widget);
     if (hash) {
         popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });

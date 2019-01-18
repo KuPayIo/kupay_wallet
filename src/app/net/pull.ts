@@ -1,24 +1,21 @@
 /**
  * 主动向后端通讯
  */
-import { closeCon, open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
-import { popNew } from '../../pi/ui/root';
-import { cryptoRandomInt } from '../../pi/util/math';
+import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { MainChainCoin, uploadFileUrl, wsUrl } from '../config';
-import { AddrInfo, CloudCurrencyType, CurrencyRecord, MinerFeeLevel, User, Wallet } from '../store/interface';
-import { Account,getStore, initCloudWallets, LocalCloudWallet, setStore } from '../store/memstore';
+import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
+import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitGtAccountDetail } from '../store/parse';
-import { CMD, PAGELIMIT } from '../utils/constants';
+import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, checkCreateAccount, decrypt, encrypt, fetchDeviceId, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, decrypt, encrypt, fetchDeviceId, getUserInfo, kickOffline, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 
 declare var pi_modules;
 
 /**
-
  * 通用的异步通信
  */
 export const requestAsync = (msg: any):Promise<any> => {
@@ -46,10 +43,9 @@ export const requestAsync = (msg: any):Promise<any> => {
  * manage_money@buy    购买理财
  * manage_money@sell   出售理财
  */
-export const requestAsyncNeedLogin = async (msg: any) => {
+export const requestAsyncNeedLogin = async (msg: any,secretHash:string) => {
     const isLogin = getStore('user/isLogin');
     if (!isLogin) {
-        const secretHash = getStore('user/secretHash');
         await defaultLogin(secretHash,getStore('user/conRandom'));
     }
 
@@ -137,23 +133,21 @@ setReloginCallback((res) => {
 /**
  * 开启连接
  */
-export const openConnect = async () => {
-    // const conState = getConState();
-    // if (conState === ConState.opened) {
-    //     getRandom();
-    // } else {
+export const openConnect = async (secrectHash:string = '') => {
+    console.log('openConnect strat');
     setUrl(wsUrl);
-    open(conSuccess,conError,conClose,conReOpen);
-    // }
+    open(conSuccess(secrectHash),conError,conClose,conReOpen);
 };
 
 /**
  * 连接成功回调
  */
-const conSuccess = () => {
-    console.log('con success');
-    setStore('user/offline',false);
-    getRandom();
+const conSuccess = (secrectHash:string) => {
+    return () => {
+        console.log('con success');
+        setStore('user/offline',false);
+        getRandom(secrectHash);
+    };
 };
 
 /**
@@ -162,8 +156,6 @@ const conSuccess = () => {
 const conError = (err) => {
     console.log('con error');
     setStore('user/offline',true);
-    checkCreateAccount();
-    
 };
 
 /**
@@ -188,11 +180,12 @@ const conReOpen = () => {
  * 获取随机数
  * flag:0 普通用户注册，1注册即为真实用户
  */
-export const getRandom = async (cmd?:number) => {
+export const getRandom = async (secretHash:string,cmd?:number) => {
     console.log('getRandom--------------');
     const wallet = getStore('wallet');
     if (!wallet) return;
-    const client = 'android 20';
+    const deviceInfo = getStore('setting/deviceInfo') || {};
+    const client = deviceInfo.system || navigator.userAgent;
     const param:any = {
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
@@ -213,7 +206,6 @@ export const getRandom = async (cmd?:number) => {
         if (getStore('user/token')) {
             autoLogin(conRandom);
         }
-        const secretHash = getStore('user/secretHash');
         if (secretHash) {
             defaultLogin(secretHash,conRandom);
         }
@@ -222,21 +214,15 @@ export const getRandom = async (cmd?:number) => {
         
         setStore('user/conUid', resp.uid);
         setStore('user/conRandom', conRandom);
-        checkCreateAccount();
     } catch (resp) {
         if (resp.type === 1014) {
-            popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
-                title:'检测到在其它设备有登录',
-                content:'清除其它设备账户信息' 
-            },(deleteAccount:boolean) => {
-                if (deleteAccount) {
-                    getRandom(CMD.FORCELOGOUTDEL);
-                } else {
-                    getRandom(CMD.FORCELOGOUT);
-                }
-            },() => {
-                getRandom(CMD.FORCELOGOUT);
-            });
+            const flags = getStore('flags');
+            console.log('flags =====',flags);
+            if (flags.level_2_page_loaded) {  // 钱包创建成功直接提示,此时资源已经加载完成
+                kickOffline(secretHash);  // 踢人下线提示
+            } else {  // 刷新页面后，此时资源没有加载完成,延迟到资源加载成功弹出提示
+                localStorage.setItem('kickOffline',JSON.stringify(true));
+            }
         }
     }
 };
@@ -247,7 +233,7 @@ export const getRandom = async (cmd?:number) => {
 export const getServerCloudBalance = () => {
     const list = [];
     list.push(CloudCurrencyType.KT);
-    list.push(CloudCurrencyType.GT);
+    list.push(CloudCurrencyType.ST);
     for (const k in CloudCurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
             list.push(CloudCurrencyType[k]);
@@ -398,7 +384,8 @@ export const getInviteCodeDetail = async () => {
  * @param count 红包数量
  * @param lm 留言
  */
-export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
+// tslint:disable-next-line:max-line-length
+export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string,secretHash:string) => {
     const msg = {
         type: 'emit_red_bag',
         param: {
@@ -411,7 +398,7 @@ export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount:
     };
 
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsyncNeedLogin(msg,secretHash);
 
         return res.value;
     } catch (err) {
@@ -674,15 +661,49 @@ export const getUserInfoFromServer = async (uids: [number]) => {
 };
 
 /**
- * 批量获取用户信息
+ * 获取单个用户信息
  */
-export const getUserList = async(uids:number[]) => {
-    const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+export const getOneUserInfo = async (uids: number[], isOpenid?: number) => {
+    let msg = {};
+    if (isOpenid) {
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]`, isOpenid } };
+    } else {
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+    }
 
     try {
         const res = await requestAsync(msg);
         if (res.value[0]) {
+
             return JSON.parse(unicodeArray2Str(res.value[0]));
+        }
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
+};
+
+/**
+ * 批量获取用户信息
+ */
+export const getUserList = async (uids: number[], isOpenid?: number) => {
+    let msg = {};
+    if (isOpenid) {
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]`, isOpenid } };
+    } else {
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+    }
+
+    try {
+        const res = await requestAsync(msg);
+        if (res.value[0]) {
+            const resAry = [];
+            for (const element of res.value) {
+                resAry.push(JSON.parse(unicodeArray2Str(element)));
+            }
+
+            return resAry;
         }
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -741,13 +762,13 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
             if (filter === 1) {
                 if (start) {
                     cloudWallet.otherLogs.list.push(...detail);
-                    if (coin === 'GT') {
+                    if (coin === 'ST') {
                         cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
                         cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
                     }
                 } else {
                     cloudWallet.otherLogs.list = detail;
-                    if (coin === 'GT') {
+                    if (coin === 'ST') {
                         cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
                         cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
                     }
@@ -845,12 +866,6 @@ export const getProxy = async () => {
     const msg = { type: 'wallet/proxy@get_proxy', param: {} };
 
     return requestAsync(msg);
-};
-/**
- * 矿山增加项目跳转详情
- */
-export const getMineItemJump = async(itemJump) => {
-    setStore('activity/mining/itemJump',itemJump);
 };
 
 // ===============================充值提现
@@ -955,7 +970,7 @@ export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,f
 /**
  * 提现
  */
-export const withdrawFromServer = async (toAddr:string,value:string) => {
+export const withdrawFromServer = async (toAddr:string,value:string,secretHash:string) => {
     const msg = {
         type: 'wallet/bank@to_cash',
         param: {
@@ -965,7 +980,7 @@ export const withdrawFromServer = async (toAddr:string,value:string) => {
     };
 
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsyncNeedLogin(msg,secretHash);
         console.log('withdrawFromServer',res);
 
         return res.txid;
@@ -979,7 +994,7 @@ export const withdrawFromServer = async (toAddr:string,value:string) => {
 /**
  * btc提现
  */
-export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
+export const btcWithdrawFromServer = async (toAddr:string,value:string,secretHash:string) => {
     const msg = {
         type: 'wallet/bank@btc_to_cash',
         param: {
@@ -989,7 +1004,7 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string) => {
     };
 
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsyncNeedLogin(msg,secretHash);
 
         return res.txid;
     } catch (err) {
@@ -1137,7 +1152,7 @@ export const getProductList = async () => {
 /**
  * 购买理财
  */
-export const buyProduct = async (pid:any,count:any) => {
+export const buyProduct = async (pid:any,count:any,secretHash:string) => {
     pid = Number(pid);
     count = Number(count);
     const msg = {
@@ -1150,7 +1165,7 @@ export const buyProduct = async (pid:any,count:any) => {
     };
     
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsyncNeedLogin(msg,secretHash);
         console.log('buyProduct',res);
         if (res.result === 1) {
             getProductList();
@@ -1191,7 +1206,7 @@ export const getPurchaseRecord = async (start = '') => {
 /**
  * 赎回理财产品
  */
-export const buyBack = async (timeStamp:any) => {
+export const buyBack = async (timeStamp:any,secretHash:string) => {
     const msg = {
         type: 'wallet/manage_money@sell',
         param: {
@@ -1200,7 +1215,7 @@ export const buyBack = async (timeStamp:any) => {
     };
     
     try {
-        const res = await requestAsyncNeedLogin(msg);
+        const res = await requestAsyncNeedLogin(msg,secretHash);
         console.log('buyBack',res);
 
         return true;

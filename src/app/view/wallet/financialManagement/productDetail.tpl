@@ -1,4 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
+    <div style="background: linear-gradient(to right,#328EE6, #38CEE7);"><app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{it.product.productName}} }</app-components1-topBar-topBar2></div>
     <div w-class="body" on-scroll="pageScroll" id="body">
         <div w-class="top-head">
             <div w-class="row1">
@@ -78,6 +79,4 @@
             </div>
         </div>
     </div>
-    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{it.product.productName}} }</app-components1-topBar-topBar2>
-
 </div>

@@ -1,5 +1,5 @@
 /**
- * GT 充值页面
+ * ST 充值页面
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -8,7 +8,7 @@ import { getAccountDetail, getGoldPrice, getServerCloudBalance } from '../../../
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { confirmPay } from '../../../utils/pay';
-import { formatBalance, getCurrencyUnitSymbol, popNewMessage } from '../../../utils/tools';
+import { formatBalance, popNewMessage } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -31,7 +31,7 @@ export class RechargeGT extends Widget {
         goldPrice:200,
         total:0,
         num:0.00,
-        balance:formatBalance(getCloudBalances().get(CloudCurrencyType.GT))
+        balance:formatBalance(getCloudBalances().get(CloudCurrencyType.ST))
     };
     constructor() {
         super();
@@ -46,8 +46,11 @@ export class RechargeGT extends Widget {
     }
 
     public initData() {
-        this.props.num = Math.floor((this.props.total / getStore('third/goldPrice/price') * 100) * 1000000) / 1000000;
-        this.props.balance = formatBalance(getCloudBalances().get(CloudCurrencyType.GT));
+        if (getStore('third/goldPrice/price') !== 0) {
+            this.props.num = Math.floor((this.props.total / getStore('third/goldPrice/price') * 100) * 1000000) / 1000000;
+        }
+        
+        this.props.balance = formatBalance(getCloudBalances().get(CloudCurrencyType.ST));
         this.paint();
     }
     /**
@@ -89,10 +92,10 @@ export class RechargeGT extends Widget {
         }
         const orderDetail = {
             total: Math.floor(this.props.total * 100), // 总价
-            body: 'GT', // 信息
+            body: 'ST', // 信息
             num: this.props.num * 1000000, // 充值GT数量
             payType: this.props.payType, // 支付方式
-            type:CloudCurrencyType.GT // 充值类型
+            type:CloudCurrencyType.ST // 充值类型
         };
         confirmPay(orderDetail,(res) => {
             this.props.num = 0.00;
@@ -101,7 +104,7 @@ export class RechargeGT extends Widget {
             
             popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:res.oid,firstQuery:true });
             getServerCloudBalance();
-            getAccountDetail('GT',1);
+            getAccountDetail('ST',1);
             this.paint();
         },() => {
             getServerCloudBalance();

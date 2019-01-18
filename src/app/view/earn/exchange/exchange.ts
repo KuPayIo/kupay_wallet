@@ -10,7 +10,7 @@ import { getModulConfig } from '../../../modulConfig';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
-import { register, setStore } from '../../../store/memstore';
+import { setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
 

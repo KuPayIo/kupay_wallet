@@ -24,7 +24,7 @@
                 <img src="../../../res/image/avatar1.png" w-class="img-logo"/>
                 <div w-class="tag" ><pi-ui-lang>{"zh_Hans":"登录账户","zh_Hant":"登錄賬戶","en":""}</pi-ui-lang></div>
             </div>
-            <div w-class="box" on-tap="walletImportClicke">
+            <div w-class="box" on-tap="walletImportClicke" style="display:none;">
                 <img src="../../../res/image/right_arrow2_blue.png" w-class="img-logo"/>
                 <div w-class="tag" ><pi-ui-lang>{"zh_Hans":"已有账户","zh_Hant":"已有賬戶","en":""}</pi-ui-lang></div>
             </div>

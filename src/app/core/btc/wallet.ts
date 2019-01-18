@@ -3,7 +3,6 @@
  * BTC HD wallet implementaion
  */
 import { Mnemonic } from '../thirdparty/bip39';
-import { bitcore } from '../thirdparty/bitcore-lib';
 import { BtcApi } from './api';
 
 export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
@@ -24,6 +23,11 @@ export class Output {
     public amount: number;
     public chgAddr?: string;
 }
+
+declare var pi_modules;
+const Bitcore = () => {
+    return pi_modules.commonjs.exports.relativeGet('app/core/thirdparty/bitcore-lib').exports.bitcore;
+};
 
 export class BTCWallet {
     // m/bip_number/coin_type/account/internal_or_external/index, we don't use change address
@@ -81,7 +85,7 @@ export class BTCWallet {
             throw new Error('Invalid Mnemonic words!');
         }
         const seed = mn.toSeed(mnemonics, passphrase);
-        const hdpriv = bitcore.HDPrivateKey.fromSeed(seed, network);
+        const hdpriv = Bitcore().HDPrivateKey.fromSeed(seed, network);
 
         const btcwallet = new BTCWallet();
         btcwallet.rootXpriv = hdpriv.toString();
@@ -112,7 +116,7 @@ export class BTCWallet {
         }
         const seed = mn.toSeed(mnemonic, passphrase);
 
-        const hdpriv = bitcore.HDPrivateKey.fromSeed(seed, network);
+        const hdpriv = Bitcore().HDPrivateKey.fromSeed(seed, network);
         const btcwallt = new BTCWallet();
 
         btcwallt.rootXpriv = hdpriv.toString();
@@ -128,7 +132,7 @@ export class BTCWallet {
 
     public static fromSeed(seed: string, network: NETWORK, lang: LANGUAGE): BTCWallet {
         // TODO: check seed ?
-        const hdpriv = bitcore.HDPrivateKey.fromSeed(seed, network);
+        const hdpriv = Bitcore().HDPrivateKey.fromSeed(seed, network);
         const btcwallt = new BTCWallet();
 
         btcwallt.rootXpriv = hdpriv.toString();
@@ -271,7 +275,8 @@ export class BTCWallet {
         console.log('accumlated: ', accumlated);
         console.log('keyset length: ', keySet.length);
 
-        output.amount = bitcore.Unit.fromBTC(output.amount).toSatoshis();
+        output.amount = Bitcore().Unit.fromBTC(output.amount).toSatoshis();
+        const bitcore = Bitcore();
         const rawTx = new bitcore.Transaction().feePerKb(minerFee)
             .from(collected)
             .to(output.toAddr, output.amount)
@@ -333,7 +338,8 @@ export class BTCWallet {
     public async buildRawTransactionFromSingleAddress(address: string, output: Output, minerFee: number): Promise<any> {
         const utxos = await this.coinSelector(address, output.amount * 1e8 + minerFee);
 
-        output.amount = bitcore.Unit.fromBTC(output.amount).toSatoshis();
+        output.amount = Bitcore().Unit.fromBTC(output.amount).toSatoshis();
+        const bitcore = Bitcore();
         const rawTx = new bitcore.Transaction().feePerKb(minerFee)
             .from(utxos)
             .to(output.toAddr, output.amount)
@@ -387,7 +393,7 @@ export class BTCWallet {
         const vout = txInfo.vout;
         const utxos = [];
         let fromAddr = '';
-
+        const bitcore = Bitcore();
         for (let i = 0; i < vin.length; i++) {
             const id = vin[i].txid;
             const vout = vin[i].vout;
@@ -395,10 +401,9 @@ export class BTCWallet {
             fromAddr = address;
             const satoshis = vin[i].valueSat;
 
-            const addr = bitcore.Address.fromString(address);
-            const script = bitcore.Script.buildPublicKeyHashOut(addr);
+            const addr = Bitcore().Address.fromString(address);
+            const script = Bitcore().Script.buildPublicKeyHashOut(addr);
             const scriptPubkey = script.toHex();
-
             const utxo = new bitcore.Transaction.UnspentOutput({
                 txid: id,
                 vout: vout,
@@ -414,7 +419,7 @@ export class BTCWallet {
 
         for (let i = 0; i < vout.length; i++) {
             if (vout[i].scriptPubKey.addresses[0] !== fromAddr) {
-                const value = bitcore.Unit.fromBTC(vout[i].value).toSatoshis();
+                const value = Bitcore().Unit.fromBTC(vout[i].value).toSatoshis();
                 const address = vout[i].scriptPubKey.addresses[0];
                 tx.to(address, value);
             }
@@ -503,6 +508,7 @@ export class BTCWallet {
         }
 
         let path: string;
+        const bitcore = Bitcore();
         const parent = new bitcore.HDPrivateKey(this.rootXpriv);
 
         if (parent.network.name === 'testnet') {

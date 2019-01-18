@@ -88,7 +88,7 @@ export class Home extends Widget {
         if (!psw) return;
         const ret = await backupMnemonic(psw);
         if (ret) {
-            popNew('app-view-wallet-backup-index',{ ...ret });
+            popNew('app-view-wallet-backup-index',{ ...ret,pi_norouter:true });
             // this.backPrePage();
         }
     }
@@ -142,6 +142,14 @@ export class Home extends Widget {
      */
     public showMyQrcode() {
         popNew('app-view-mine-other-addFriend');
+        // this.backPrePage();
+    }
+
+    /**
+     * 展示我的勋章
+     */
+    public showMyMedal() {
+        popNew('earn-client-app-view-medal-medal');
         // this.backPrePage();
     }
 

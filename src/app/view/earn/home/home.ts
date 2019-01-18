@@ -59,7 +59,7 @@ export class PlayHome extends Widget {
             scroll: false,
             scrollHeight: 0,
             refresh: false,
-            avatar: '../../res/image1/default_avatar.png'
+            avatar: 'res/image1/default_avatar.png'
         };
         setTimeout(() => {
             this.scrollPage();
@@ -128,7 +128,6 @@ export class PlayHome extends Widget {
             this.props.isAbleBtn = false;
             this.paint();
         }, 100);
-
     }
 
     /**
@@ -170,7 +169,8 @@ export class PlayHome extends Widget {
         if (!hasWallet()) return;
         switch (ind) {
             case 0:
-                popNew('app-view-earn-activity-verifyPhone');
+                popNew('app-view-earn-ticketCenter-ticketCenter');
+                // popNew('app-view-earn-activity-verifyPhone');
                 break;
             case 1:
                 popNew('app-view-earn-activity-inviteFriend');
@@ -179,6 +179,9 @@ export class PlayHome extends Widget {
         }
     }
 
+    public openDemo() {
+        popNew('app-view-demo-client-demo');
+    }
     /**
      * 获取更新数据
      */     

@@ -4,8 +4,6 @@ import { MinerFeeLevel } from '../store/interface';
  * 一些常用常量
  */
 
-// 钱包数量最大限制
-export const walletNumLimit = 10;
 // 分页每页条目数量
 export const PAGELIMIT = 10;
 
@@ -21,30 +19,11 @@ export const notSwtichShowCurrencys = ['ETH', 'BTC'];
 //
 export const strength = 128;
 
-
 // 语言
 export const lang = 'english';
 
 // eth代币transfer交易编码前缀
 export const ethTokenTransferCode = '0xa9059cbb';
-
-// 导航页广告
-export const guidePages = [
-    { imgUrl: 'img_security1.png', text: '' },
-    { imgUrl: 'img_security2.png', text: '' },
-    { imgUrl: 'img_security3.png', text: '' }
-];
-
-// 锁屏密码盐值
-export const lockScreenSalt = 'salt';
-
-// shapeshift api public key
-// tslint:disable-next-line:max-line-length
-export const shapeshiftApiPublicKey = '339a363550d4490fb4a0efae308440f4386c7d99ecf0f572584adc0400658b5799e3107eb0fe573c438e6d98b68dbe2ade2873aa7ac2fde8f74ab1be0750fdb2';
-
-// shapeshift api private key
-// tslint:disable-next-line:max-line-length
-export const shapeshiftApiPrivateKey = 'c98210f4568b04d3f84c5404f8e5be98353849138ed26b3e2723223257d3cbb8bb5cba5060b7c4d44e746342a2eb43e26b9bb5827588d9ed3e712e85d35f054c';
 
 // shapeshift autologin token
 export const shapeshiftAutoToken = 'CZfRLxjor2E49vTfTZDjaeeR78nMMi1rKypV9GRBsmt2';
@@ -149,10 +128,6 @@ export const currencyConfirmBlockNumber = {
 export const etherscanUrl = 'https://ropsten.etherscan.io/tx/';
 // 打开第三方查询网址btc
 export const blockchainUrl = 'https://testnet.blockchain.info/tx/';
-// 火币api access key
-const huobiApiAccessKey = '6fd70042-c5e4c618-d6e619ec-ecfa2';
-// 火币API
-export const huobiApi = `https://api.huobipro.com/market/history/kline?period=1day&size=1&AccessKeyId=${huobiApiAccessKey}&symbol=`;
 
 /**
  * 一些指令
@@ -163,11 +138,9 @@ export enum CMD {
 } 
 
 /**
- * 调用本地文件url前缀
- */
-export const localUrlPre = 'file:///';
-
-/**
  * 预估出来的erc20 gasLimit倍数
  */
 export const erc20GasLimitRate = 2;
+
+// 默认顶部留出40px高度
+export const topHeight = 40;

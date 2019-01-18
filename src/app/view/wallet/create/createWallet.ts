@@ -7,9 +7,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { openConnect, uploadFile } from '../../../net/pull';
-import { getStore, register, setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { checkCreateAccount, getStaticLanguage, imgResize, popNewMessage } from '../../../utils/tools';
+import { getStaticLanguage, imgResize, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
 import { forelet, WIDGET_NAME } from './home';
 interface Props {
@@ -128,20 +127,21 @@ export class CreateWallet extends Widget {
             option.fragment2 = this.props.fragment2;
         }
         console.time('pi_create createWallet all need');
-        const hash = await createWallet(this.props.itype, option);
+        const secrectHash = await createWallet(this.props.itype, option);
         console.timeEnd('pi_create createWallet all need');
-        if (!hash) {
+        if (!secrectHash) {
             popNewMessage(this.language.tips[3]);
         }
 
-        const mnemonic = getMnemonicByHash(hash);
-        const fragments = fetchMnemonicFragment(hash);
-        setStore('flags', { created: true, mnemonic, fragments });
-        if (getStore('user/offline')) {
-            checkCreateAccount();
-        } else {
-            openConnect();
-        }
+        const mnemonic = getMnemonicByHash(secrectHash);
+        const fragments = fetchMnemonicFragment(secrectHash);
+        // requestAnimationFrame(() => {
+        //     popNew('app-components1-modalBox-modalBox', getStaticLanguage().createSuccess, () => {
+        //         popNew('app-view-wallet-backup-index', { mnemonic: mnemonic, fragments: fragments,pi_norouter:true });
+        //     });
+        // });
+        
+        openConnect(secrectHash);
 
         if (this.props.chooseImage) {
             this.props.imagePicker.getContent({
@@ -168,14 +168,3 @@ export class CreateWallet extends Widget {
         popNew('app-view-mine-other-privacypolicy');
     }
 }
-
-// 登录状态成功
-register('flags', (flags: any) => {
-    if (flags.promptBackup) {
-        popNew('app-components1-modalBox-modalBox', getStaticLanguage().createSuccess, () => {
-            popNew('app-view-wallet-backup-index', { mnemonic: flags.mnemonic, fragments: flags.fragments });
-        });
-        flags.promptBackup = false;
-        setStore('flags', flags, false);
-    }
-});

@@ -3,7 +3,6 @@
  */
 import { popNew } from '../../pi/ui/root';
 import { requestAsync } from '../net/pull';
-import { getStore } from '../store/memstore';
 import { getUserInfo } from '../utils/tools';
 import { VerifyIdentidy } from '../utils/walletTools';
 
@@ -37,22 +36,22 @@ export const authorize = (payload, callback) => {
  * @param okCb 成功回调 
  * @param failCb 失败回调
  */
-export const getOpenId = (appId:string,okCb?:Function,failCb?:Function) => {
+export const getOpenId = (appId:string,okCb:Function,failCb?:Function) => {
     if (!appId) {
         failCb && failCb(new Error('appId is not available'));
 
         return;
     }
-    const authorize = JSON.parse(localStorage.getItem('authorize')) || {};
-    if (authorize[appId]) {
-        okCb && okCb(authorize[appId]);
+    // const authorize = JSON.parse(localStorage.getItem('authorize')) || {};
+    // if (authorize[appId]) {
+    //     okCb && okCb(authorize[appId]);
 
-        return;
-    }
+    //     return;
+    // }
     const msg = { type: 'get_openid', param: { appid:appId } };
     requestAsync(msg).then(resData => {
-        authorize[appId] = resData;
-        localStorage.setItem('authorize',JSON.stringify(authorize));
+        // authorize[appId] = resData;
+        // localStorage.setItem('authorize',JSON.stringify(authorize));
         okCb && okCb(resData);
     }).catch(err => {
         failCb && failCb(err); 
@@ -106,15 +105,15 @@ export const openPayment = async (order:any,okCb?:Function,failCb?:Function) => 
         if (resData.result === 1) {
             popNew('app-components1-modalBoxInput-modalBoxInput', {
                 title: '输入密码',
-                content: [`商品：${resData.body}`,`总额：${resData.total_fee}GT`],
+                content: [`商品：${resData.body}`,`总额：${resData.total_fee}ST`],
                 itype: 'password'
             },async (r) => {
                 const loading = popNew('app-components1-loading-loading', { text:'支付中...' });
-                const fg = await VerifyIdentidy(r);
+                const secretHash = await VerifyIdentidy(r);
                 
                 loading.callback(loading.widget);
-                if (fg) {
-                    pay(JSON.parse(order),okCb,failCb);
+                if (secretHash) {
+                    pay(JSON.parse(order),secretHash,okCb,failCb);
                 } else {
                     popNew('app-components1-message-message', { content:'密码错误' });
                     openPayment(order,okCb,failCb);
@@ -140,7 +139,7 @@ export const openPayment = async (order:any,okCb?:Function,failCb?:Function) => 
  * @param psw 钱包密码
  * @param transactionId 交易id
  */
-export const pay = async (order:any,okCb?:Function,failCb?:Function) => {
+export const pay = async (order:any,secretHash:string,okCb?:Function,failCb?:Function) => {
     if (!order) {
         failCb && failCb(new Error('transactionId is not available'));
 
@@ -151,7 +150,7 @@ export const pay = async (order:any,okCb?:Function,failCb?:Function) => {
         transaction_id:order.transaction_id,
         nonce_str:Math.random().toFixed(5)
     };
-    const signStr = getSign(json);
+    const signStr = getSign(json,secretHash);
     const msg = { 
         type: 'wallet/order@pay', 
         param: {
@@ -201,11 +200,10 @@ export const closePayment = async (transactionId:string,okCb?:Function,failCb?:F
  * 获取签名
  * @param json 签名json
  */
-const getSign = (json:any) => {
+const getSign = (json:any,secretHash:string) => {
 
-    const hash = getStore('user/secretHash');
     const getMnemonicByHash = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonicByHash;
-    const mnemonic = getMnemonicByHash(hash);
+    const mnemonic = getMnemonicByHash(secretHash);
     const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
     const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;

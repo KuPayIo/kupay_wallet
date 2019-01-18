@@ -4,7 +4,6 @@
 import { ERC20Tokens } from '../../config';
 import { getEthApiBaseUrl } from '../config';
 import { Mnemonic } from '../thirdparty/bip39';
-import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
 import { Web3 } from '../thirdparty/web3.min';
 import { Api } from './api';
 import { minABI } from './tokens';
@@ -18,6 +17,10 @@ export let web3;
 const LANGUAGES = { english: 0, chinese_simplified: 1, chinese_traditional: 2 };
 const DEFAULT_DERIVE_PATH = 'm/44\'/60\'/0\'/0/0';
 
+declare var pi_modules;
+const Ethereumjs = () => {
+    return pi_modules.commonjs.exports.relativeGet('app/core/thirdparty/ethereumjs-wallet-hd-0.6.0').exports.ethereumjs;
+};
 // currently use the default config
 export interface Transaction {
     to: string;
@@ -115,7 +118,7 @@ export class EthWallet {
             throw new Error('Invalid Mnemonic');
         }
         const seedBuffer = mn.toSeed(mnemonic);
-        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(seedBuffer, 'hex'));
+        const rootNode = Ethereumjs().WalletHD.fromMasterSeed(Ethereumjs().Buffer.Buffer(seedBuffer, 'hex'));
 
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
@@ -133,7 +136,7 @@ export class EthWallet {
         if (!(language in LANGUAGES)) {
             throw new Error('This language does not supported');
         }
-        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(seed, 'hex'));
+        const rootNode = Ethereumjs().WalletHD.fromMasterSeed(Ethereumjs().Buffer.Buffer(seed, 'hex'));
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
 
@@ -155,7 +158,7 @@ export class EthWallet {
      * @memberof EthWallet
      */
     public static fromKeyStore(v3string: string, passwd: string): EthWallet {
-        const wlt = ethereumjs.Wallet.fromV3(v3string, passwd, true);
+        const wlt = Ethereumjs().Wallet.fromV3(v3string, passwd, true);
         const gwlt = new EthWallet();
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = wlt.getPrivateKey().toString('hex');
@@ -172,8 +175,8 @@ export class EthWallet {
      * @memberof EthWallet
      */
     public static fromPrivateKey(privKey: string): EthWallet {
-        const sk = ethereumjs.Buffer.Buffer(privKey, 'hex');
-        const wlt = ethereumjs.Wallet.fromPrivateKey(sk);
+        const sk = Ethereumjs().Buffer.Buffer(privKey, 'hex');
+        const wlt = Ethereumjs().Wallet.fromPrivateKey(sk);
         const gwlt = new EthWallet();
         gwlt._address = wlt.getChecksumAddressString();
         gwlt._privKey = privKey;
@@ -202,7 +205,7 @@ export class EthWallet {
         const mn = new Mnemonic(language);
         const mnemonic = mn.generate(strength);
         const seedBuffer = mn.toSeed(mnemonic);
-        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(seedBuffer, 'hex'));
+        const rootNode = Ethereumjs().WalletHD.fromMasterSeed(Ethereumjs().Buffer.Buffer(seedBuffer, 'hex'));
 
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
@@ -260,7 +263,7 @@ export class EthWallet {
             throw new Error('Invalid Mnemonic');
         }
         const seedBuffer = mn.toSeed(mnemonic);
-        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(seedBuffer, 'hex'));
+        const rootNode = Ethereumjs().WalletHD.fromMasterSeed(Ethereumjs().Buffer.Buffer(seedBuffer, 'hex'));
 
         const hdwlt = rootNode.derivePath(DEFAULT_DERIVE_PATH);
         const wlt = hdwlt.getWallet();
@@ -277,8 +280,8 @@ export class EthWallet {
      */
     public exportKeystore(passwd: string): string {
         let decrypted = this._privKey;
-        decrypted = ethereumjs.Buffer.Buffer(decrypted, 'hex'); // decrypted should be a Buffer
-        const wlt = ethereumjs.Wallet.fromPrivateKey(decrypted);
+        decrypted = Ethereumjs().Buffer.Buffer(decrypted, 'hex'); // decrypted should be a Buffer
+        const wlt = Ethereumjs().Wallet.fromPrivateKey(decrypted);
 
         return wlt.toV3String(passwd);
     }
@@ -311,6 +314,7 @@ export class EthWallet {
      * @memberof EthWallet
      */
     public signRawTransaction(txObj: Transaction) {
+        const ethereumjs = Ethereumjs();
         const tx = new ethereumjs.Tx();
 
         tx.to = txObj.to;
@@ -319,12 +323,13 @@ export class EthWallet {
         tx.gasLimit = txObj.gasLimit;
         tx.value = txObj.value;
         tx.data = txObj.data;
-        tx.sign(ethereumjs.Buffer.Buffer(this._privKey, 'hex'));
+        tx.sign(Ethereumjs().Buffer.Buffer(this._privKey, 'hex'));
 
         return tx.serialize();
     }
 
     public signRawTransactionHash(txObj: Transaction) {
+        const ethereumjs = Ethereumjs();
         const tx = new ethereumjs.Tx();
 
         tx.to = txObj.to;
@@ -333,7 +338,7 @@ export class EthWallet {
         tx.gasLimit = txObj.gasLimit;
         tx.value = txObj.value;
         tx.data = txObj.data;
-        tx.sign(ethereumjs.Buffer.Buffer(this._privKey, 'hex'));
+        tx.sign(Ethereumjs().Buffer.Buffer(this._privKey, 'hex'));
 
         return {
             nonce:txObj.nonce,
@@ -369,7 +374,7 @@ export class EthWallet {
         }
         const masterSeed = this._masterSeed;
 
-        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(masterSeed, 'hex'));
+        const rootNode = Ethereumjs().WalletHD.fromMasterSeed(Ethereumjs().Buffer.Buffer(masterSeed, 'hex'));
         const path = 'm/44\'/60\'/0\'/0/' + index.toString();
         const hdwlt = rootNode.derivePath(path);
 
@@ -391,7 +396,7 @@ export class EthWallet {
         }
         const masterSeed = this._masterSeed;
 
-        const rootNode = ethereumjs.WalletHD.fromMasterSeed(ethereumjs.Buffer.Buffer(masterSeed, 'hex'));
+        const rootNode = Ethereumjs().WalletHD.fromMasterSeed(Ethereumjs().Buffer.Buffer(masterSeed, 'hex'));
         const path = 'm/44\'/60\'/0\'/0/' + index.toString();
         const hdwlt = rootNode.derivePath(path);
 

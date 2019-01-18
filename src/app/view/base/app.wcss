@@ -1,6 +1,4 @@
 .ga-bottom-tab-bar-container{
-    display: flex;
-    height: 110px;
     width: 100%;
     position: absolute;
     bottom: 0;
@@ -9,6 +7,7 @@
     background-color: #fff;
     border-top: 1px solid #ddd;
     box-shadow: 0px -3px 5px rgba(136,136,136,0.1);
+    transition: all .5s;
 }
 .ga-tab-bar-item{
     flex: 1 0 0;

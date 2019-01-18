@@ -29,7 +29,7 @@ export class DividendItem extends Widget {
         this.props = {
             ...this.props,
             data: this.props.data,
-            userImg: userInfo.avatar || '../../../res/image/default_avater_big.png',
+            userImg: userInfo.avatar || '../res/image/default_avater_big.png',
             totalNum: this.props.totalNum,
             more: false
         };

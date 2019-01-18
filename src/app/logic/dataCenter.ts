@@ -8,10 +8,9 @@ import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { getGoldPrice } from '../net/pull';
 import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
-import { getShapeShiftCoins } from '../net/pullWallet';
 import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
-import { getStore,register,setStore } from '../store/memstore';
+import { getStore,setStore } from '../store/memstore';
 import { erc20GasLimitRate, ethTokenTransferCode, lang } from '../utils/constants';
 import { formatBalance,getAddrsAll,getConfirmBlockNumber,getCurrentEthAddr, parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
 import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
@@ -140,19 +139,17 @@ export class DataCenter {
     /**
      * 检查已使用过的地址
      */
-    public async checkAddr() {
+    public async checkAddr(secretHash:string) {
         const wallet = getStore('wallet');
         if (!wallet) return;
-        if (getStore('user/secretHash')) {
-            const currencyRecord: CurrencyRecord[] = wallet.currencyRecords;
-            const needCheckAddr = [];
-            currencyRecord.forEach(item => {
-                if (!item.updateAddr && wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
-                    needCheckAddr.push(item);
-                }
-            });
-            this.timerCheckAddr(needCheckAddr);
-        }
+        const currencyRecord: CurrencyRecord[] = wallet.currencyRecords;
+        const needCheckAddr = [];
+        currencyRecord.forEach(item => {
+            if (!item.updateAddr && wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
+                needCheckAddr.push(item);
+            }
+        });
+        this.timerCheckAddr(needCheckAddr,secretHash);
     }
 
     /**
@@ -261,7 +258,7 @@ export class DataCenter {
         }, 30 * 1000);
     }
 
-    private timerCheckAddr(needCheckAddr:CurrencyRecord[]) {
+    private timerCheckAddr(needCheckAddr:CurrencyRecord[],secretHash:string) {
         clearTimeout(this.checkAddrTimer);
         const record = needCheckAddr.shift();
         if (!record) return;
@@ -269,17 +266,17 @@ export class DataCenter {
         if (!record.updateAddr) {
             console.log('checkAddr', record.currencyName);
             if (record.currencyName === 'ETH') {
-                this.checkEthAddr();
+                this.checkEthAddr(secretHash);
             } else if (record.currencyName === 'BTC') {
-                this.checkBtcAddr();
+                this.checkBtcAddr(secretHash);
             } else if (ERC20Tokens[record.currencyName]) {
-                this.checkEthERC20TokenAddr(record.currencyName);
+                this.checkEthERC20TokenAddr(record.currencyName,secretHash);
             }
 
         }
 
         this.checkAddrTimer = setTimeout(() => {
-            this.timerCheckAddr(needCheckAddr);
+            this.timerCheckAddr(needCheckAddr,secretHash);
         }, 1000);
     }
 
@@ -687,10 +684,10 @@ export class DataCenter {
     /**
      * 检查eth地址
      */
-    private async checkEthAddr() {
+    private async checkEthAddr(secretHash:string) {
         const wallet = getStore('wallet');
         if (!wallet) return [];
-        const mnemonic = getMnemonicByHash(getStore('user/secretHash'));
+        const mnemonic = getMnemonicByHash(secretHash);
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanUsedAddress();
         const addrs: AddrInfo[] = [];
@@ -713,10 +710,10 @@ export class DataCenter {
     /**
      * 检查btc地址
      */
-    private async checkBtcAddr() {
+    private async checkBtcAddr(secretHash:string) {
         const wallet = getStore('wallet');
         if (!wallet) return [];
-        const mnemonic = getMnemonicByHash(getStore('user/secretHash'));
+        const mnemonic = getMnemonicByHash(secretHash);
         const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         btcWallet.unlock();
         const cnt = await btcWallet.scanUsedAddress();
@@ -742,10 +739,10 @@ export class DataCenter {
     /**
      * 检查eth erc20 token地址
      */
-    private async checkEthERC20TokenAddr(currencyName:string) {
+    private async checkEthERC20TokenAddr(currencyName:string,secretHash:string) {
         const wallet = getStore('wallet');
         if (!wallet) return [];
-        const mnemonic = getMnemonicByHash(getStore('user/secretHash'));
+        const mnemonic = getMnemonicByHash(secretHash);
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanTokenUsedAddress(ERC20Tokens[currencyName].contractAddr);
         const addrs: AddrInfo[] = [];
@@ -892,8 +889,8 @@ export class DataCenter {
         nextPoint.setSeconds(0);
         const delay = nextPoint.getTime() - new Date().getTime();
         fetchUSD2CNYRate().then((res: any) => {
-            if (res.success === '1') {
-                const rate = Number(res.result.rate);
+            if (res.result === 'success') {
+                const rate = Number(res.rates.CNY);
                 setStore('third/rate', rate);
             }
         });
@@ -936,18 +933,6 @@ export class DataCenter {
         currencyList.forEach(currencyName => {
             fetchCurrency2USDTRate(currencyName)
         .then((res: any) => {
-            // 火币
-            // if (res.status === 'ok') {
-            //     const currency2USDTMap = getStore('third/currency2USDTMap');
-            //     const close = res.data[0].close;
-            //     const open = res.data[0].open;
-            //     currency2USDTMap.set(currencyName, {
-            //         open,
-            //         close
-            //     });
-            //     setStore('third/currency2USDTMap', currency2USDTMap);
-            // }
-
             // okey
             if (!res.error_code) {
                 const currency2USDTMap = getStore('third/currency2USDTMap');
@@ -985,10 +970,3 @@ const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amou
  * 消息处理列表
  */
 export const dataCenter: DataCenter = new DataCenter();
-
-// 检查地址
-register('user/secretHash', () => {
-    setTimeout(() => {
-        dataCenter.checkAddr();
-    }, 200);
-});

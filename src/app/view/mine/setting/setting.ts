@@ -84,7 +84,7 @@ export class Setting extends Widget {
             });
         } else {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components1-modalBox-toLoginBox', null, () => {
+            popNew('app-components1-modalBox-toLoginBox', undefined, () => {
                 popNew('app-view-wallet-create-home');
             }, () => {
                 this.closeLockPsw();
@@ -120,7 +120,7 @@ export class Setting extends Widget {
         if (!psw) return;
         const ret = await backupMnemonic(psw);
         if (ret) {
-            popNew('app-view-wallet-backup-index', { ...ret });
+            popNew('app-view-wallet-backup-index', { ...ret,pi_norouter:true });
             this.ok && this.ok();
         }
     }

@@ -9,13 +9,13 @@ import { cryptoRandomInt } from '../../pi/util/math';
 import { resize } from '../../pi/widget/resize/resize';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { getDeviceId } from '../logic/native';
-import { openConnect } from '../net/pull';
+import { getDeviceId, getDeviceInfo } from '../logic/native';
+import { getRandom, openConnect } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
 import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet,setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
+import { CMD, currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
 
 /**
@@ -495,16 +495,19 @@ export const copyToClipboard = (copyText) => {
 export const calcHashValuePromise = async (pwd, salt?) => {
     console.log('calcHashValuePromise is called');
     console.time('pi_create  calc argonHash');
-    let hash;
+    let secretHash;
     const argonHash = new ArgonHash();
     console.log('argonHash will init');
     argonHash.init();
     console.log('argonHash has init');
-    hash = await argonHash.calcHashValuePromise({ pwd, salt });
-    setStore('user/secretHash',hash);
+    secretHash = await argonHash.calcHashValuePromise({ pwd, salt });
     console.timeEnd('pi_create  calc argonHash');
+    requestAnimationFrame(() => {
+        const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+        dataCenter.checkAddr(secretHash);
+    });
 
-    return hash;
+    return secretHash;
 };
 
 /**
@@ -753,13 +756,13 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
     const goldPrice = getStore('third/goldPrice/price') || 0;
 
     if (currencyUnit === 'CNY') {
-        if (currencyName === 'GT') {
+        if (currencyName === 'ST') {
             balanceValue = balance * (goldPrice / 100);
         } else {
             balanceValue = balance * currency2USDT.close * USD2CNYRate;
         }
     } else if (currencyUnit === 'USD') {
-        if (currencyName === 'GT') {
+        if (currencyName === 'ST') {
             balanceValue = (balance * (goldPrice / 100)) / USD2CNYRate;
         } else {
             balanceValue = balance * currency2USDT.close;
@@ -824,14 +827,14 @@ export const fetchCloudWalletAssetList = () => {
         rate:formatBalanceValue(0)
     };
     assetList.push(ktItem);
-    const gtBalance = cloudBalances.get(CloudCurrencyType.GT) || 0;
+    const gtBalance = cloudBalances.get(CloudCurrencyType.ST) || 0;
     const gtItem = {
-        currencyName: 'GT',
-        description: 'GT',
+        currencyName: 'ST',
+        description: 'ST',
         balance: formatBalance(gtBalance),
-        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('GT',gtBalance)),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('ST',gtBalance)),
         gain: fetchGTGain(),
-        rate:formatBalanceValue(fetchBalanceValueOfCoin('GT',1))
+        rate:formatBalanceValue(fetchBalanceValueOfCoin('ST',1))
     };
     assetList.push(gtItem);
     // TODO 屏蔽掉ETH BTC
@@ -858,7 +861,7 @@ export const fetchCloudWalletAssetList = () => {
 export const hasWallet = () => {
     const wallet = getStore('wallet');
     if (!wallet) {
-        popNew('app-components1-modalBox-toLoginBox',null, () => {
+        popNew('app-components1-modalBox-toLoginBox',undefined, () => {
             popNew('app-view-wallet-create-home');
             // popNew('app-view-base-localImg');
         });
@@ -1139,6 +1142,31 @@ export const fetchDeviceId = async () => {
 };
 
 /**
+ * 获取设备信息
+ */
+export const fetchDeviceInfo = async () => {
+    console.log('fetchDeviceInfo');
+    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
+        return new Promise((resolve,reject) => {
+            const deviceInfo = {
+                system:navigator.userAgent
+            };
+            resolve(deviceInfo);
+        });
+    } else {// ============================mobile
+        return new Promise((resolve,reject) => {
+            getDeviceInfo((info:any) => {
+                console.log('fetchDeviceInfo = ',info);
+                resolve(info);
+            },(err) => {
+                reject(err);
+            });
+        });
+    }
+   
+};
+
+/**
  * 根据当前语言设置获取静态文字，对于组件模块
  */
 export const getLanguage = (w) => {
@@ -1283,19 +1311,6 @@ export const getCurrencyUnitSymbol = () => {
         return '￥';
     } else if (currencyUnit === 'USD') {
         return '$';
-    }
-};
-
-/**
- * 检查是否是创建账户,通知弹窗备份
- */
-export const checkCreateAccount = () => {
-    const flags = getStore('flags');
-    // 第一次创建检查是否有登录后弹框提示备份
-    if (flags.created) {
-        flags.promptBackup = true;
-        flags.created = false;
-        setStore('flags', flags);
     }
 };
 
@@ -1552,7 +1567,7 @@ export const logoutAccountDel = () => {
  * 注销账户保留数据
  */
 export const logoutAccount = () => {
-    setStore('flags', { saveAccount:true });
+    setStore('flags/saveAccount', true);
     logoutAccountDel();
 };
 
@@ -1560,14 +1575,12 @@ export const logoutAccount = () => {
  * 登录成功
  */
 export const loginSuccess = (account:Account) => {    
-    // const secretHash = getStore('user/secretHash');
     const fileUser = account.user;
     const user:User = {
         isLogin: false,
         offline:true,
         conRandom:'',
         conUid:'',
-        secretHash:'',
         id : fileUser.id,
         token : fileUser.token,
         publicKey : fileUser.publicKey,
@@ -1612,7 +1625,7 @@ export const loginSuccess = (account:Account) => {
     setStore('wallet',wallet,false);
     setStore('cloud',cloud,false);
     setStore('user',user);
-    setStore('flags',{});
+    setStore('flags',{ level_2_page_loaded:true });
     openConnect();
 };
 
@@ -1635,4 +1648,23 @@ export const getUserInfo = () => {
         phoneNumber,
         isRealUser
     };
+};
+
+/**
+ * 踢人下线提示
+ * @param secretHash 密码
+ */
+export const kickOffline = (secretHash:string = '') => {
+    popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
+        title:'检测到在其它设备有登录',
+        content:'清除其它设备账户信息' 
+    },(deleteAccount:boolean) => {
+        if (deleteAccount) {
+            getRandom(secretHash,CMD.FORCELOGOUTDEL);
+        } else {
+            getRandom(secretHash,CMD.FORCELOGOUT);
+        }
+    },() => {
+        getRandom(secretHash,CMD.FORCELOGOUT);
+    });
 };

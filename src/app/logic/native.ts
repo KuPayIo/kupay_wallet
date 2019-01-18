@@ -1,13 +1,13 @@
-import { ImagePicker } from '../../pi/browser/imagePicker';
-import { QRCode } from '../../pi/browser/qrcode';
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
-import { DeviceIdProvider } from '../../pi/browser/systemInfoProvider';
-import { WebViewManager } from '../../pi/browser/webview';
-import { popNew } from '../../pi/ui/root';
-
 /**
  * 一些底层操作
  */
+import { ImagePicker } from '../../pi/browser/imagePicker';
+import { QRCode } from '../../pi/browser/qrcode';
+import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
+import { DeviceIdProvider, SystemInfoProvider } from '../../pi/browser/systemInfoProvider';
+import { WebViewManager } from '../../pi/browser/webview';
+import { popNew } from '../../pi/ui/root';
+import { setStore } from '../store/memstore';
 
 export const selectImage = (ok?,cancel?) => {
     console.log('选择图片');
@@ -72,11 +72,29 @@ export const getDeviceId = (okCB?,errCB?) => {
     systemInfo.init();
     systemInfo.getDriverId({
         success: (result) => {
-            console.log('获取设备的唯一id成功\t' + result);
+            console.log(`获取设备的唯一id成功${JSON.stringify(result)}`);
             okCB && okCB(result);
         }
         , fail: (result) => {
-            console.log('获取设备的唯一id失败\t' + result);
+            console.log(`获取设备的唯一id失败${JSON.stringify(result)}`);
+            errCB && errCB(result);
+        }
+    });
+};
+
+/**
+ * 获取设备信息
+ */
+export const getDeviceInfo = (okCB?,errCB?) => {
+    const systemInfo = new SystemInfoProvider();
+    systemInfo.init();
+    systemInfo.getDeviceInfo({
+        success: (result) => {
+            console.log(`获取设备的信息成功${JSON.stringify(result)}`);
+            okCB && okCB(result);
+        }
+        , fail: (result) => {
+            console.log(`获取设备的信息失败${JSON.stringify(result)}`);
             errCB && errCB(result);
         }
     });
@@ -95,5 +113,17 @@ export const makeScreenShot = (okCB?,errCB?) => {
         fail: (result) => { 
             errCB && errCB(result);
         }
+    });
+};
+
+/**
+ * 获取屏幕刘海与下部分高度
+ */
+export const getScreenModify = () => {
+    WebViewManager.getScreenModify((high,low) => {
+        const calHigh = high / window.devicePixelRatio * 2;
+        const calLow = low / window.devicePixelRatio * 2;
+        setStore('setting/topHeight',calHigh);
+        setStore('setting/bottomHeight',calLow);
     });
 };
