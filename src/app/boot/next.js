@@ -98,11 +98,10 @@ winit.initNext = function () {
 			util = mods[1],
 			lang = mods[2];
 			fm = tmpfm;
-	
 			const setting = JSON.parse(localStorage.getItem('setting'));
 			lang.setLang(setting && setting.language || 'zh_Hans');  // 初始化语言为简体中文
 	
-	
+			console.log("load appLoadEntrance-----------------");
 			// 判断是否第一次进入,决定是显示片头界面还是开始界面
 			var userinfo = html.getCookie("userinfo");
 			pi_modules.commonjs.exports.flags = html.userAgent(flags);
@@ -141,26 +140,17 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
+			console.log("load loadWalletLoginSource-----------------");
 			// 聊天登录
-			var chatLogicIp = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicIp;
-			var chatLogicPort = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicPort;
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.initClient(chatLogicIp,chatLogicPort);
-
-			// 活动登录
+			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
-			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
-
 			// 钱包store初始化
 			pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore(); 
-
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
-
-			// erlang服务器连接登录 1s后在打开连接,确保大部分情况下聊天和活动得连接已经连接成功
-			setTimeout(function(){
-				pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
-			},1000)
+			// erlang服务器连接登录
+			pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
 			fpFlags.storeReady = true;
 			enterApp();
 
@@ -201,6 +191,7 @@ winit.initNext = function () {
 		];
 		// sourceList = sourceList.concat(routerPathList);  
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+			console.log("load loadWalletFirstPageSource-----------------");
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -219,6 +210,7 @@ winit.initNext = function () {
 				var tab = util.loadCssRes(fileMap);
 				tab.timeout = 90000;
 				tab.release();
+				console.log("load enterApp-----------------");
 				// debugger
 				// 加载根组件
 				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
@@ -352,7 +344,7 @@ winit.initNext = function () {
 		// 	"chat/client/app/widget/"
 		// ]; 
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
-			// alert("loadChatSource");
+			console.log("load loadChatSource-----------------");
 			var tab = util.loadCssRes(fileMap);
 			// 将预加载的资源缓冲90秒，释放
 			tab.timeout = 90000;
@@ -382,6 +374,7 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
+			console.log("load loadEarnSource-----------------");
 			// debugger
 			fpFlags.earnReady = true;
 			enterApp();
