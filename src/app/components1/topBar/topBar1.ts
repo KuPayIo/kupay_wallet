@@ -6,6 +6,7 @@ import { Json } from '../../../pi/lang/type';
 import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
+import { hasWallet } from '../../utils/tools';
 
 interface Props {
     avatar:string;
@@ -41,7 +42,9 @@ export class TopBar1 extends Widget {
      * 打开我的设置
      */
     public showMine() {
-        popNew('app-view-mine-home-home');
+        // popNew('app-view-mine-home-home');
+        if (!hasWallet()) return;
+        popNew('app-view-mine-account-home');
     }
 
 }

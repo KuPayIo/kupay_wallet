@@ -24,7 +24,7 @@ export const activeLogicPort = 2234;
 
 // 聊天逻辑服务器ip 
 // 外网正式 39.104.203.151
-export const chatLogicIp = sourceIp;
+export const chatLogicIp = '39.104.203.151';
 
 // 聊天逻辑服务器port
 // 外网正式 9080

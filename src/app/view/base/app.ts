@@ -86,7 +86,7 @@ export class App extends Widget {
             this.props.allTabBar[item];
             if (getModulConfig(this.props.allTabBar[item].modulName)) {
                 if (this.props.allTabBar[item].modulName === 'APP_WALLET') {
-                    this.props.isActive = 'APP_WALLET';
+                    this.props.isActive = 'APP_CHAT';
                 }
                 resList.push(this.props.allTabBar[item]);
             }   
@@ -126,10 +126,10 @@ register('flags/level_2_page_loaded', (loaded: boolean) => {
     } else { // 处理导航页过程中资源已经加载完毕
         localStorage.setItem('level_2_page_loaded', '1');
     }
-    if (!getStore('user/id')) {
-        popNew('app-components1-modalBox-newUserWelfare');
-        localStorage.setItem('firstInApp','true');
-    }
+    // if (!getStore('user/id')) {
+    //     popNew('app-components1-modalBox-newUserWelfare');
+    //     localStorage.setItem('firstInApp','true');
+    // }
     if (localStorage.getItem('kickOffline')) {
         localStorage.removeItem('kickOffline');
         kickOffline();  // 踢人下线提示

@@ -1,10 +1,10 @@
-// !version=0.1.14.112112
+// !version=0.1.13.112112
 // !updated=["支持Dapp","交易功能稳定","优化加载速度","全新界面UI，全新体验","修复账户相关bug"]
 // !appVersion=1.0.0
 
 'use strict';
 document.body.style.backgroundColor="#2F2F2F";
-winit.path="/wallet/";//"/pi/0.1/";
+winit.path="/ios/";//"/pi/0.1/";
 winit.loadJS(winit.getLoadDomain("init.js"), 
 	winit.path + 'app/boot/init.js?' + Math.random(), "utf8", winit.initFail, "load init error");
 

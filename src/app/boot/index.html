@@ -313,7 +313,7 @@
 			background-image: url(../res/image/bg_open.png);
 			background-position: center;
 			background-repeat: no-repeat;
-			background-size: 239px 188px;
+			background-size: 127px 188px;
 		}
 
 		.aside {
@@ -432,12 +432,12 @@
 				winit.severIp = main;
 				winit.severPort = location.port ? location.port : "80";		
 			}else{// 本地包需要配置服务器ip和port
-				winit.severIp = "192.168.9.15";
+				winit.severIp = "47.244.29.209";
 				winit.severPort = "80";		
 			}
 
 			// app更新配置的URL地址
-			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
+			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/ios/appversion";
 			// console.log("winit.appURL = ",winit.appURL);
 
 			var defaultDomains;
@@ -643,11 +643,11 @@
 			winit.startImpl = function () {
 				if (winit.debug) {
 					winit.loadJS(winit.getLoadDomain("hotfix.js"),
-						"/wallet/app/boot/hotfix.js", "utf8", winit.initFail, "load hotupdate error");
+						"/ios/app/boot/hotfix.js", "utf8", winit.initFail, "load hotupdate error");
 				}
 
 				winit.loadJS(winit.getLoadDomain("index.js"),
-					"/wallet/app/boot/index.js?" + Math.random(), "utf8", winit.initFail, "load index error");
+					"/ios/app/boot/index.js?" + Math.random(), "utf8", winit.initFail, "load index error");
 			}
 
 			if (document.hidden === true)
@@ -680,7 +680,7 @@
 		</div>
 	</div>
 	
-	<div class="swiper-container" id="swiper-container">
+	<div class="swiper-container" id="swiper-container" style="display:none;">
 		<div class="swiper-wrapper">
 			<div class="swiper-slide slide">
 				<img src="../res/image1/guide1.jpg"/>
@@ -701,25 +701,25 @@
 </body>
 <script src="./swiper.min.js"></script>
 <script type="text/javascript">
-setTimeout(() => {
-	var mySwiper = new Swiper('.swiper-container', {
-      pagination: {
-		el: '.swiper-pagination',
-		dynamicBullets: true
-      },
-    });
-	if(!localStorage.firstInApp){
-		document.querySelector('#swiper-container').setAttribute('style','z-index:9999;')
+// setTimeout(() => {
+// 	var mySwiper = new Swiper('.swiper-container', {
+//       pagination: {
+// 		el: '.swiper-pagination',
+// 		dynamicBullets: true
+//       },
+//     });
+// 	if(!localStorage.firstInApp){
+// 		document.querySelector('#swiper-container').setAttribute('style','z-index:9999;')
 		
-	}else{
-		document.body.removeChild(document.querySelector('#swiper-container'));
-	}
-}, 1000);
+// 	}else{
+// 		document.body.removeChild(document.querySelector('#swiper-container'));
+// 	}
+// }, 1000);
 
-var btnStart = document.querySelector('.btn-start');
-btnStart.onclick = function(){
-	document.body.removeChild(document.querySelector('#swiper-container'));
-}
+// var btnStart = document.querySelector('.btn-start');
+// btnStart.onclick = function(){
+// 	document.body.removeChild(document.querySelector('#swiper-container'));
+// }
 </script>
 
 </html>

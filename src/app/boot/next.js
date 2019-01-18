@@ -134,7 +134,7 @@ winit.initNext = function () {
 			"app/store/memstore.js",
 			"app/net/pull.js",
 			"app/net/push.js",
-			"earn/client/app/net/init.js",
+			// "earn/client/app/net/init.js",
 			"chat/client/app/net/init_1.js"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
@@ -148,8 +148,8 @@ winit.initNext = function () {
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.initClient(chatLogicIp,chatLogicPort);
 
 			// 活动登录
-			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
-			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
+			// pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+			// pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
 
 			// 钱包store初始化
 			pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore(); 
@@ -158,9 +158,7 @@ winit.initNext = function () {
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 
 			// erlang服务器连接登录 1s后在打开连接,确保大部分情况下聊天和活动得连接已经连接成功
-			setTimeout(function(){
-				pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
-			},1000)
+			pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
 			fpFlags.storeReady = true;
 			enterApp();
 
@@ -248,6 +246,7 @@ winit.initNext = function () {
 			"app/view/",
 			"chat/client/app/view/",
 			"chat/client/app/widget/",
+			"chat/client/app/res/",
 			"earn/client/app/view/",
 			"earn/client/app/components/",
 			"earn/client/app/xls/",

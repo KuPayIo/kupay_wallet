@@ -135,11 +135,11 @@ export class CreateWallet extends Widget {
 
         const mnemonic = getMnemonicByHash(secrectHash);
         const fragments = fetchMnemonicFragment(secrectHash);
-        requestAnimationFrame(() => {
-            popNew('app-components1-modalBox-modalBox', getStaticLanguage().createSuccess, () => {
-                popNew('app-view-wallet-backup-index', { mnemonic: mnemonic, fragments: fragments,pi_norouter:true });
-            });
-        });
+        // requestAnimationFrame(() => {
+        //     popNew('app-components1-modalBox-modalBox', getStaticLanguage().createSuccess, () => {
+        //         popNew('app-view-wallet-backup-index', { mnemonic: mnemonic, fragments: fragments,pi_norouter:true });
+        //     });
+        // });
         
         openConnect(secrectHash);
 
