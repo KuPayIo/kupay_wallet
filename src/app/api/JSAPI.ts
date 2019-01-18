@@ -1,6 +1,7 @@
 /**
  * 授权、支付等API
  */
+import { popNew } from '../../pi/ui/root';
 import { requestAsync } from '../net/pull';
 import { getUserInfo, formatBalance } from '../utils/tools';
 import { VerifyIdentidy } from '../utils/walletTools';
@@ -169,12 +170,12 @@ export const pay = async (order: any, callback: Function) => {
         if (resData.result === 1) {
             callback(resCode.SUCCESS,resData);
         } else {
-            callback(resCode.OTHER_ERROR,resData);
-        }
-    }).catch(err => {
-        callback(resCode.OTHER_ERROR, err);
-    });
-
+            failCb && failCb(resData); 
+        }  
+    } catch (err) {
+        // console.log('pay--------',err);
+        failCb && failCb(err); 
+    } 
 };
 
 /**

@@ -9,13 +9,13 @@ import { cryptoRandomInt } from '../../pi/util/math';
 import { resize } from '../../pi/widget/resize/resize';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { getDeviceId } from '../logic/native';
-import { openConnect } from '../net/pull';
+import { getDeviceId, getDeviceInfo } from '../logic/native';
+import { getRandom, openConnect } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
 import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet,setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
+import { CMD, currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
 
 /**
@@ -756,13 +756,13 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
     const goldPrice = getStore('third/goldPrice/price') || 0;
 
     if (currencyUnit === 'CNY') {
-        if (currencyName === 'GT') {
+        if (currencyName === 'ST') {
             balanceValue = balance * (goldPrice / 100);
         } else {
             balanceValue = balance * currency2USDT.close * USD2CNYRate;
         }
     } else if (currencyUnit === 'USD') {
-        if (currencyName === 'GT') {
+        if (currencyName === 'ST') {
             balanceValue = (balance * (goldPrice / 100)) / USD2CNYRate;
         } else {
             balanceValue = balance * currency2USDT.close;
@@ -827,14 +827,14 @@ export const fetchCloudWalletAssetList = () => {
         rate:formatBalanceValue(0)
     };
     assetList.push(ktItem);
-    const gtBalance = cloudBalances.get(CloudCurrencyType.GT) || 0;
+    const gtBalance = cloudBalances.get(CloudCurrencyType.ST) || 0;
     const gtItem = {
-        currencyName: 'GT',
-        description: 'GT',
+        currencyName: 'ST',
+        description: 'ST',
         balance: formatBalance(gtBalance),
-        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('GT',gtBalance)),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('ST',gtBalance)),
         gain: fetchGTGain(),
-        rate:formatBalanceValue(fetchBalanceValueOfCoin('GT',1))
+        rate:formatBalanceValue(fetchBalanceValueOfCoin('ST',1))
     };
     assetList.push(gtItem);
     for (const k in CloudCurrencyType) {
@@ -1141,6 +1141,31 @@ export const fetchDeviceId = async () => {
 };
 
 /**
+ * 获取设备信息
+ */
+export const fetchDeviceInfo = async () => {
+    console.log('fetchDeviceInfo');
+    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
+        return new Promise((resolve,reject) => {
+            const deviceInfo = {
+                system:navigator.userAgent
+            };
+            resolve(deviceInfo);
+        });
+    } else {// ============================mobile
+        return new Promise((resolve,reject) => {
+            getDeviceInfo((info:any) => {
+                console.log('fetchDeviceInfo = ',info);
+                resolve(info);
+            },(err) => {
+                reject(err);
+            });
+        });
+    }
+   
+};
+
+/**
  * 根据当前语言设置获取静态文字，对于组件模块
  */
 export const getLanguage = (w) => {
@@ -1287,7 +1312,6 @@ export const getCurrencyUnitSymbol = () => {
         return '$';
     }
 };
-
 
 /**
  * 判断地址是否合法
@@ -1542,7 +1566,7 @@ export const logoutAccountDel = () => {
  * 注销账户保留数据
  */
 export const logoutAccount = () => {
-    setStore('flags', { saveAccount:true });
+    setStore('flags/saveAccount', true);
     logoutAccountDel();
 };
 
@@ -1600,7 +1624,7 @@ export const loginSuccess = (account:Account) => {
     setStore('wallet',wallet,false);
     setStore('cloud',cloud,false);
     setStore('user',user);
-    setStore('flags',{});
+    setStore('flags',{ level_2_page_loaded:true });
     openConnect();
 };
 
@@ -1623,4 +1647,23 @@ export const getUserInfo = () => {
         phoneNumber,
         isRealUser
     };
+};
+
+/**
+ * 踢人下线提示
+ * @param secretHash 密码
+ */
+export const kickOffline = (secretHash:string = '') => {
+    popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
+        title:'检测到在其它设备有登录',
+        content:'清除其它设备账户信息' 
+    },(deleteAccount:boolean) => {
+        if (deleteAccount) {
+            getRandom(secretHash,CMD.FORCELOGOUTDEL);
+        } else {
+            getRandom(secretHash,CMD.FORCELOGOUT);
+        }
+    },() => {
+        getRandom(secretHash,CMD.FORCELOGOUT);
+    });
 };

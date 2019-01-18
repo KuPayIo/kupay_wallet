@@ -22,11 +22,13 @@ export const activeLogicIp = '192.168.9.30';   //何宗林
 // 活动逻辑服务器port
 export const activeLogicPort = 2234;
 
-// 聊天逻辑服务器ip
+// 聊天逻辑服务器ip 
+// 外网正式 39.104.203.151
 export const chatLogicIp = sourceIp;
 
 // 聊天逻辑服务器port
-export const chatLogicPort = 1234;
+// 外网正式 9080
+export const chatLogicPort = 9080;
 
 console.log('sourceIp=',sourceIp);
 console.log('sourcePort=',sourcePort);

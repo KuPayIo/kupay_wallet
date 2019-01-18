@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { ahashToArgon2Hash, calcImgArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
+import { ahashToArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { getStore, setStore } from '../../../store/memstore';
 import { forelet,WIDGET_NAME } from './home';
@@ -69,8 +69,7 @@ export class ImageImport extends Widget {
                 }
             });
         });
-        const flags = getStore('flags');
-        setStore('flags',{ ...flags,imgArgon2HashPromise });
+        setStore('flags/imgArgon2HashPromise',imgArgon2HashPromise);
         popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });
         const w:any = forelet.getWidget(WIDGET_NAME);
         if (w) {

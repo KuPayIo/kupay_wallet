@@ -3,6 +3,7 @@
  */
 // ================================ 导入
 import { register as earnRegister } from '../../../earn/client/app/store/memstore';
+import { popNew } from '../../../pi/ui/root';
 import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
@@ -10,6 +11,7 @@ import { getModulConfig } from '../../modulConfig';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
 import { getStore, register } from '../../store/memstore';
+import { kickOffline } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -25,6 +27,7 @@ export class App extends Widget {
     public create() {
         super.create();
         this.init();
+        console.log('app create ====');
     }
 
     public init(): void {
@@ -90,7 +93,7 @@ export class App extends Widget {
             this.props.allTabBar[item];
             if (getModulConfig(this.props.allTabBar[item].modulName)) {
                 if (this.props.allTabBar[item].modulName === 'APP_WALLET') {
-                    this.props.isActive = 'APP_EARN';
+                    this.props.isActive = 'APP_WALLET';
                 }
                 resList.push(this.props.allTabBar[item]);
             }   
@@ -122,15 +125,21 @@ export class App extends Widget {
 // ===================================================== 立即执行
 
 register('flags/level_2_page_loaded', (loaded: boolean) => {
-    setTimeout(() => {
-        const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-        dataCenter.init();
-    },2000);
+    const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+    dataCenter.init();
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.closeLoading();
     } else { // 处理导航页过程中资源已经加载完毕
         localStorage.setItem('level_2_page_loaded', '1');
+    }
+    if (!getStore('user/id')) {
+        popNew('app-components1-modalBox-newUserWelfare');
+        localStorage.setItem('firstInApp','true');
+    }
+    if (localStorage.getItem('kickOffline')) {
+        localStorage.removeItem('kickOffline');
+        kickOffline();  // 踢人下线提示
     }
 });
 

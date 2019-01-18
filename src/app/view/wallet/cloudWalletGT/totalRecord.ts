@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
+import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { parseStatusShow, timestampFormat } from '../../../utils/tools';
