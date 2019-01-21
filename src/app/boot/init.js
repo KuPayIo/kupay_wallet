@@ -2127,12 +2127,11 @@ pi_modules.update.exports = (function () {
 				version:remoteVersion.slice(0,remoteVersion.length - 1).join("."),
 				alertBtnText : "更新完毕"
 			};
-			pi_update.alert(option,function(){
+			setTimeout(()=>{
 				pi_update.closePop();
 				// 重启
 				JSIntercept.restartApp();
-				
-			});
+			},200);
 		});
 
 	}
@@ -2421,7 +2420,7 @@ var browserAdaptive = function() {
     }
     var rootX = (clientWidth - rootWidth) / 2;
     var rootY = (clientHeight - rootHeight) / 2;
-	var cssText = 'display:none;z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+	var cssText = 'z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
 	// var rootUpdate = document.querySelector('#update-root');
 	// rootUpdate.style.cssText = cssText;
 
@@ -2479,6 +2478,7 @@ pi_update.modifyContent = function(option){
 	pi_update.contentModified = true;
 }
 
+
 // 确定弹框
 pi_update.confirm = function(option,callback){
 	pi_update.modifyContent(option);
@@ -2513,18 +2513,11 @@ pi_update.confirm = function(option,callback){
 //e的数据结构{type: "saveFile", total: 4, count: 1}
 // 进度条更新
 pi_update.updateProgress = function(e){
+	debugger
 	var updating  = pi_update.updating;
 	if(!updating){
-		var $btns = document.querySelector(".pi-update-btns");
-		var $progressContainer = document.querySelector(".pi-update-progress-container");
-		var $completeBtn = document.querySelector(".pi-update-complete-btn");
-		$btns.style.display = "none";
-		$progressContainer.style.display = "block";
-		$completeBtn.style.display = "none";
 		pi_update.updating = true;
 	}
-	
-	
 	var $progress = document.querySelector(".pi-update-progress");
 	var $progressText = document.querySelector(".pi-update-progress-text");
 	var percent = e.count / e.total;

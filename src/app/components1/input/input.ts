@@ -52,6 +52,7 @@ export class Input extends Widget {
         }
         this.props = {
             ...this.props,
+            itype:props.itype || 'text',
             currentValue,
             focused: false,
             showClear:false,
@@ -98,8 +99,9 @@ export class Input extends Widget {
     /**
      * 用户输入完成,点击候选词或确认按钮时触发
      */
-    public compositionend() {
+    public compositionend(e:any) {
         this.props.inputLock = false;
+        this.change(e);
     }
 
     /**
