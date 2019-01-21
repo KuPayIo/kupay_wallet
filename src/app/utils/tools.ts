@@ -753,17 +753,17 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
     const USD2CNYRate = getStore('third/rate', 1);
     const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
-    const goldPrice = getStore('third/goldPrice/price') || 0;
+    const silverPrice = getStore('third/silver/price') || 0;
 
     if (currencyUnit === 'CNY') {
         if (currencyName === 'ST') {
-            balanceValue = balance * (goldPrice / 100);
+            balanceValue = balance * (silverPrice / 100);
         } else {
             balanceValue = balance * currency2USDT.close * USD2CNYRate;
         }
     } else if (currencyUnit === 'USD') {
         if (currencyName === 'ST') {
-            balanceValue = (balance * (goldPrice / 100)) / USD2CNYRate;
+            balanceValue = (balance * (silverPrice / 100)) / USD2CNYRate;
         } else {
             balanceValue = balance * currency2USDT.close;
         }
@@ -981,7 +981,7 @@ export const fetchCoinGain = (currencyName: string) => {
 };
 
 export const fetchGTGain = () => {
-    const goldGain = getStore('third/goldPrice/change');
+    const goldGain = getStore('third/silver/change');
     if (!goldGain) {
         return formatBalanceValue(0);
     } else {

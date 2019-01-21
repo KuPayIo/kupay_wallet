@@ -4,13 +4,13 @@
 
 import { Widget } from "../../../../pi/widget/widget";
 import { Forelet } from "../../../../pi/widget/forelet";
-import { register, getCloudBalances, getStore } from "../../../store/memstore";
-import { popNewMessage, formatBalance } from "../../../utils/tools";
+import { register, getStore } from "../../../store/memstore";
+import { popNewMessage } from "../../../utils/tools";
 import { CloudCurrencyType } from "../../../store/interface";
-import { getServerCloudBalance, getAccountDetail, getGoldPrice } from "../../../net/pull";
+import { getServerCloudBalance, getAccountDetail, getSilverPrice } from "../../../net/pull";
 import { popNew } from "../../../../pi/ui/root";
 import { confirmPay } from "../../../utils/recharge";
-import { kt2kpt } from "../../../utils/unitTools";
+import { ST2st } from "../../../utils/unitTools";
 
 
 // ============================导出
@@ -26,7 +26,6 @@ interface Props {
     selectPayItem: any; // 选择的支付项
     STprice: number; // ST价格
     total: number;  // 总金额(元)
-    num: number;  // 充值KT数
     giveST: number; // 赠送ST
 }
 
@@ -46,7 +45,6 @@ export class RechargeKT extends Widget {
         selectPayItem: {},
         STprice: 1,
         total: 0,
-        num: 0.00,
     };
     constructor() {
         super();
@@ -54,14 +52,14 @@ export class RechargeKT extends Widget {
 
     public create() {
         super.create();
-        getGoldPrice(1);
+        getSilverPrice(1);
         setTimeout(() => {
-            getGoldPrice(1);
+            getSilverPrice(1);
         }, 500000);
     }
 
     public initData() {
-        this.props.STprice = getStore('third/goldPrice/price');
+        this.props.STprice = getStore('third/silver/price') / 100;
         this.paint();
     }
 
@@ -75,13 +73,12 @@ export class RechargeKT extends Widget {
         const orderDetail = {
             total: this.props.total * 100, // 总价
             body: 'KT', // 信息
-            num: kt2kpt(this.props.num), // 充值KT数量
+            num: ST2st(this.props.giveST), // 充值ST数量
             payType: this.props.payType, // 支付方式
-            type: CloudCurrencyType.KT // 充值类型
+            type: CloudCurrencyType.ST // 充值类型
         };
         confirmPay(orderDetail, (res) => {
-            this.props.num = 0.00;
-            this.props.total = 0.00;
+            this.amountChange({value:0})
             this.props.payType = 'alipay';
 
             popNew('app-view-wallet-cloudWalletGT-transactionDetails', { oid: res.oid, firstQuery: true });
@@ -107,13 +104,11 @@ export class RechargeKT extends Widget {
     public changePayItem(index?: number) {
         if (index !== -1) {
             this.props.selectPayItem = this.props.payList[index];
-            this.props.num = this.props.selectPayItem.KTnum;
-            this.props.total = this.props.num * 1;
-            this.props.giveST = Math.floor(this.props.num / (this.props.STprice * 1.15)*100) / 100;
+            this.props.total = this.props.selectPayItem.sellPrize;
+            this.props.giveST = Math.floor(this.props.total / (this.props.STprice * 1.15)*100) / 100;
         } else {
             this.props.selectPayItem = {};
-            this.props.num = 0;
-            this.props.total = this.props.num * 1;
+            this.props.total = 0;
             this.props.giveST = 0;
         }
         this.paint();
@@ -129,8 +124,7 @@ export class RechargeKT extends Widget {
         } else {
             this.props.total = e.value;
         }
-        this.props.num = this.props.total / 1;
-        this.props.giveST = Math.floor(this.props.num / (this.props.STprice * 1.15)*100) / 100;
+        this.props.giveST = Math.floor(this.props.total / (this.props.STprice * 1.15)*100) / 100;
         this.paint();
     }
     /**
@@ -142,6 +136,14 @@ export class RechargeKT extends Widget {
 }
 
 
+
+// gasPrice变化
+register('third/silver',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
+    }
+});
 // 余额变化
 register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);

@@ -116,8 +116,8 @@ register('activity/financialManagement/products', async (productList) => {
     
 });
 
-// 黄金价格变化
-register('third/goldPrice', () => {
+// 白银价格变化
+register('third/silver', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();

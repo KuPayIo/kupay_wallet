@@ -1,21 +1,20 @@
 /**
  * 授权、支付等API
  */
-import { popNew } from '../../pi/ui/root';
 import { requestAsync } from '../net/pull';
-import { getUserInfo, formatBalance } from '../utils/tools';
-import { VerifyIdentidy } from '../utils/walletTools';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
+import { formatBalance, getUserInfo } from '../utils/tools';
+import { VerifyIdentidy } from '../utils/walletTools';
 
 declare var pi_modules:any;
 
 export enum resCode {
     SUCCESS = 1,
-    INVALID_REQUEST = 1001,
-    PASSWORD_ERROR = 1002,
-    USER_CANCAL = 1003,
-    OTHER_ERROR = 2003
+    INVALID_REQUEST = 101,
+    PASSWORD_ERROR = 102,
+    USER_CANCAL = 103,
+    OTHER_ERROR = 203
 }
 
 /**
@@ -96,7 +95,6 @@ export const getOpenId = (appId:string,okCb:Function,failCb?:Function) => {
     // });
 };
 
-
 /**
  * 启动支付接口(验证订单，展示订单信息)
  * @param order 订单信息,后台返回的订单json
@@ -112,16 +110,17 @@ export const openPayment = async (order: any, callback: Function) => {
     }
     const msg = { type: 'wallet/order@order_start', param: { json: order } };
     requestAsync(msg).then(resData => {
-        if (resData.result === 1) {       //开启支付成功
+        if (resData.result === 1) {       // 开启支付成功
             const propData = {
                 fee_total : resData.total_fee / 1000000,
                 desc : resData.body,
                 fee_name : CloudCurrencyType[resData.fee_type],
-                balance : formatBalance(getCloudBalances().get(resData.fee_type))
-            }
+                balance : formatBalance(getCloudBalances().get(resData.fee_type)),
+                no_password:resData.no_password
+            };
             callback(resCode.SUCCESS, propData);
         } else {
-            callback(resCode.OTHER_ERROR, resData);
+            callback(resData.result, resData);
         }
     }).catch(err => {
         callback(resCode.OTHER_ERROR, err);
@@ -140,12 +139,100 @@ export const pay = async (order: any, callback: Function) => {
 
         return;
     }
-    if (!order.password) {
+    if (!order.password && order.no_password !== 1) {
         callback(resCode.INVALID_REQUEST, new Error('password is not available'));
 
         return;
     }
-    const secretHash = await VerifyIdentidy(order.password);
+
+    let secretHash,signStr = '';
+    const signJson = {
+        appid: order.appid,
+        transaction_id: order.transaction_id,
+        nonce_str: Math.random().toFixed(5)
+    };
+
+    if (order.no_password !== 1) {
+        secretHash = await VerifyIdentidy(order.password);
+        if (!secretHash) {  //  密码错误
+            callback(resCode.PASSWORD_ERROR, null);
+    
+            return;
+    
+        }
+        signStr = getSign(signJson, secretHash);
+    }
+
+    const msg = {
+        type: 'wallet/order@pay',
+        param: {
+            ...signJson,
+            sign: signStr,
+            no_password:order.no_password
+        }
+    };
+    requestAsync(msg).then(resData => {
+        if (resData.result === 1) {
+            callback(resCode.SUCCESS,resData);
+        } else {
+            callback(resData.result,resData);
+        }  
+    }).catch (err => {
+        // console.log('pay--------',err);
+        callback(resCode.OTHER_ERROR, err);
+    });
+};
+
+/**
+ * 查询免密支付
+ * @param appid 应用id
+ * @param callback 回调函数
+ */
+export const queryNoPWD = (appid:string,callback:Function) => {
+    if (!appid) {
+        callback(resCode.INVALID_REQUEST, new Error('appid is not available'));
+
+        return;
+    }
+    const msg = {
+        type: 'wallet/order@nopwd_limit',
+        param: { appid }
+    };
+    requestAsync(msg).then(resData => {
+        if (resData.result === 1) {
+            callback(resCode.SUCCESS,resData);
+        } else {
+            callback(resData.result,resData);
+        }  
+    }).catch (err => {
+        // console.log('pay--------',err);
+        callback(resCode.OTHER_ERROR, err);
+    });
+};
+
+/**
+ * 设置免密支付
+ * @param data 免密设置对象
+ * @param callback 设置回调函数
+ */
+export const setNoPWD = async (data:any,callback:Function) => {
+    if (!data.appid) {
+        callback(resCode.INVALID_REQUEST, new Error('appid is not available'));
+
+        return;
+    }
+    if (!data.mchid) {
+        callback(resCode.INVALID_REQUEST, new Error('mchid is not available'));
+
+        return;
+    }
+    if (data.noPSW === undefined || data.noPSW === null) {
+        callback(resCode.INVALID_REQUEST, new Error('noPSW is not available'));
+
+        return;
+    }
+
+    const secretHash = await VerifyIdentidy(data.password);
     if (!secretHash) {  //  密码错误
         callback(resCode.PASSWORD_ERROR, null);
 
@@ -154,116 +241,31 @@ export const pay = async (order: any, callback: Function) => {
     }
 
     const signJson = {
-        appid: order.appid,
-        transaction_id: order.transaction_id,
+        appid: data.appid,
+        mch_id: data.mchid,
         nonce_str: Math.random().toFixed(5)
     };
     const signStr = getSign(signJson, secretHash);
     const msg = {
-        type: 'wallet/order@pay',
-        param: {
+        type: 'wallet/order@set_nopwd',
+        param:{
             ...signJson,
-            sign: signStr
+            user_sign:signStr,
+            no_password:data.noPSW
         }
     };
     requestAsync(msg).then(resData => {
         if (resData.result === 1) {
             callback(resCode.SUCCESS,resData);
         } else {
-            failCb && failCb(resData); 
+            callback(resData.result,resData);
         }  
-    } catch (err) {
+    }).catch (err => {
         // console.log('pay--------',err);
-        failCb && failCb(err); 
-    } 
+        callback(resCode.OTHER_ERROR, err);
+    });
+
 };
-
-/**
- * 启动支付接口(验证订单，展示订单信息)
- * @param order 订单信息,后台返回的订单json
- */
-// export const openPayment = async (order:any,okCb?:Function,failCb?:Function) => {    
-//     if (!order) {
-//         failCb && failCb(new Error('order is not available'));
-
-//         return;
-//     }
-//     if (typeof order !== 'string') {
-//         order = JSON.stringify(order);
-//     }
-//     const msg = { type: 'wallet/order@order_start', param: { json:order } };        
-//     try {
-//         const resData:any = await requestAsync(msg);
-//         if (resData.result === 1) {
-//             popNew('app-components1-modalBoxInput-modalBoxInput', {
-//                 title: '输入密码',
-//                 content: [`商品：${resData.body}`,`总额：${resData.total_fee}GT`],
-//                 itype: 'password'
-//             },async (r) => {
-//                 const loading = popNew('app-components1-loading-loading', { text:'支付中...' });
-//                 const secretHash = await VerifyIdentidy(r);
-                
-//                 loading.callback(loading.widget);
-//                 if (secretHash) {
-//                     pay(JSON.parse(order),secretHash,okCb,failCb);
-//                 } else {
-//                     popNew('app-components1-message-message', { content:'密码错误' });
-//                     openPayment(order,okCb,failCb);
-//                 }
-//             },() => {
-//                 failCb && failCb(new Error('transactionId is not available'));
-    
-//             });
-//         } else {
-//             failCb && failCb(resData); 
-//         }
-            
-//     } catch (err) {
-//         // console.log('order_start--------',err);
-//         failCb && failCb(err); 
-       
-//     }
-    
-// };
-
-/**
- * 支付接口(输入密码进行支付)
- * @param psw 钱包密码
- * @param transactionId 交易id
- */
-// export const pay = async (order:any,secretHash:string,okCb?:Function,failCb?:Function) => {
-//     if (!order) {
-//         failCb && failCb(new Error('transactionId is not available'));
-
-//         return;
-//     }
-//     const json = {
-//         appid:order.appid,
-//         transaction_id:order.transaction_id,
-//         nonce_str:Math.random().toFixed(5)
-//     };
-//     const signStr = getSign(json,secretHash);
-//     const msg = { 
-//         type: 'wallet/order@pay', 
-//         param: {
-//             appid:json.appid,
-//             transaction_id:json.transaction_id,
-//             nonce_str:json.nonce_str,
-//             sign:signStr
-//         } 
-//     };
-//     try {
-//         const resData:any = await requestAsync(msg);
-//         if (resData.result === 1) {
-//             okCb && okCb(resData);
-//         } else {
-//             failCb && failCb(resData); 
-//         }  
-//     } catch (err) {
-//         // console.log('pay--------',err);
-//         failCb && failCb(err); 
-//     } 
-// };
 
 /**
  * 关闭交易

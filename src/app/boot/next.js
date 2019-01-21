@@ -188,7 +188,7 @@ winit.initNext = function () {
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
 			"app/view/earn/home/",
-			// "app/view/ceshi/"
+			"app/view/ceshi/"
 		];
 		// sourceList = sourceList.concat(routerPathList);  
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {

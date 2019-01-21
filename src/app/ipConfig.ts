@@ -11,7 +11,7 @@ export const sourcePort = pi_modules.store.exports.severPort || '80';
 
 // erlang逻辑服务器ip
 // app.herominer.net
-export const erlangLogicIp = sourceIp;
+export const erlangLogicIp = '192.168.9.30';   //何宗林
 
 // erlang逻辑服务器port
 export const erlangLogicPort = '2081';

@@ -6,7 +6,7 @@ import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
-import { getGoldPrice } from '../net/pull';
+import { getSilverPrice } from '../net/pull';
 import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
 import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
@@ -908,7 +908,7 @@ export class DataCenter {
         nextPoint.setMinutes(0);
         nextPoint.setSeconds(0);
         const delay = nextPoint.getTime() - new Date().getTime();
-        getGoldPrice();
+        getSilverPrice();
         setTimeout(() => {
             this.updateGoldPrice();
         },delay);

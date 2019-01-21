@@ -558,21 +558,9 @@ window.pi_jsApi.openPayment = function (order, callBack) {
         console.log('openPayment call success', resCode);
         console.log('openPayment call success', msg);
         if (resCode === 1) {
-            createStyleTag();
-            createPayElementTag();
-            var $ok = document.querySelector(".pi-update-ok-btn");
-            var $cancel = document.querySelector(".pi-update-cancel-btn");
-            var $mask = document.querySelector(".pi-mask");
-            var $input = document.getElementById("pi_password");
-            document.getElementById('pi_payCount').innerHTML = msg.fee_total + msg.fee_name + '';
-            document.getElementById('pi_payObject').innerHTML = msg.desc + '';
-            document.getElementById('pi_payBalance').innerHTML = msg.balance + msg.fee_name + '';
+            order.no_password = msg.no_password;
 
-
-            $mask.style.display = "flex";
-
-            $ok.addEventListener("click", function () {
-                order.password = $input.value;
+            if(msg.no_password === 1){ // 已设置免密支付
                 createLoadingElementTag();
                 pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
                     console.log('pay call success', resCode1);
@@ -580,21 +568,44 @@ window.pi_jsApi.openPayment = function (order, callBack) {
                     callBack(resCode1, msg1); 
                     closePop();
                 });
-            });
+            }else{                    // 未设置免密支付
+                createStyleTag();
+                createPayElementTag();
+                var $ok = document.querySelector(".pi-update-ok-btn");
+                var $cancel = document.querySelector(".pi-update-cancel-btn");
+                var $mask = document.querySelector(".pi-mask");
+                var $input = document.getElementById("pi_password");
+                document.getElementById('pi_payCount').innerHTML = msg.fee_total + msg.fee_name + '';
+                document.getElementById('pi_payObject').innerHTML = msg.desc + '';
+                document.getElementById('pi_payBalance').innerHTML = msg.balance + msg.fee_name + '';
+    
+    
+                $mask.style.display = "flex";
 
-
-            $cancel.addEventListener("click", function () {
-                closePop();
-                callBack(1003, null)
-            });
-
-
+                $ok.addEventListener("click", function () {
+                    order.password = $input.value;
+                    createLoadingElementTag();
+                    pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
+                        console.log('pay call success', resCode1);
+                        console.log('pay call success', msg1);
+                        callBack(resCode1, msg1); 
+                        closePop();
+                    });
+                });
+                
+                $cancel.addEventListener("click", function () {
+                    closePop();
+                    callBack(1003, null)
+                });
+            }
 
         } else {
             callBack(resCode, msg);
         }
     });
 }
+
+
 
 
 
