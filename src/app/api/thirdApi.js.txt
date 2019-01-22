@@ -660,7 +660,7 @@ window.pi_jsApi.openPayment = function (order, callBack) {
     pi_RPC_Method("app/api/JSAPI", "openPayment", order, function (resCode, msg) {
         console.log('openPayment call success', resCode);
         console.log('openPayment call success', msg);
-        if (resCode === 1) {
+        if (!resCode) {
             order.no_password = msg.no_password;
             console.log('判断支付流程!',order,msg);
             if (msg.no_password === 1) { // 已设置免密支付

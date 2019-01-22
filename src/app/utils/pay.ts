@@ -14,7 +14,7 @@ import { popPswBox } from './tools';
 export const walletPay = (order: any, callback: Function) => {
     
     openPayment(order, (res, msg) => {
-        if (res === 1) {
+        if (!res) {
             order.no_password = msg.no_password;
             console.log(msg);
             

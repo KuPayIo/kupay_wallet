@@ -5,17 +5,16 @@ import { getServerCloudBalance, requestAsync } from '../net/pull';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
 import { formatBalance, getUserInfo } from '../utils/tools';
-import { st2ST } from '../utils/unitTools';
 import { VerifyIdentidy } from '../utils/walletTools';
 
 declare var pi_modules:any;
 
 export enum resCode {
-    SUCCESS = 1,
-    INVALID_REQUEST = 101,
-    PASSWORD_ERROR = 102,
-    USER_CANCAL = 103,
-    OTHER_ERROR = 203
+    SUCCESS = undefined,   // 成功
+    INVALID_REQUEST = 101, // 参数缺失
+    PASSWORD_ERROR = 102,  // 密码错误
+    USER_CANCAL = 103,     // 用户取消
+    OTHER_ERROR = 203      // 其他错误
 }
 
 /**
@@ -135,7 +134,6 @@ export const openPayment = async (order: any, callback: Function) => {
  * @param transactionId 交易id
  */
 export const pay = async (order: any, callback: Function) => {
-    debugger
     if (!order) {
         callback(resCode.INVALID_REQUEST, new Error('order is not available'));
 
