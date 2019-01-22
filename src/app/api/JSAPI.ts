@@ -1,10 +1,11 @@
 /**
  * 授权、支付等API
  */
-import { requestAsync } from '../net/pull';
+import { getServerCloudBalance, requestAsync } from '../net/pull';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
 import { formatBalance, getUserInfo } from '../utils/tools';
+import { st2ST } from '../utils/unitTools';
 import { VerifyIdentidy } from '../utils/walletTools';
 
 declare var pi_modules:any;
@@ -112,7 +113,7 @@ export const openPayment = async (order: any, callback: Function) => {
     requestAsync(msg).then(resData => {
         if (resData.result === 1) {       // 开启支付成功
             const propData = {
-                fee_total : resData.total_fee / 1000000,
+                fee_total : resData.total_fee,
                 desc : resData.body,
                 fee_name : CloudCurrencyType[resData.fee_type],
                 balance : formatBalance(getCloudBalances().get(resData.fee_type)),
@@ -134,6 +135,7 @@ export const openPayment = async (order: any, callback: Function) => {
  * @param transactionId 交易id
  */
 export const pay = async (order: any, callback: Function) => {
+    debugger
     if (!order) {
         callback(resCode.INVALID_REQUEST, new Error('order is not available'));
 
@@ -162,7 +164,7 @@ export const pay = async (order: any, callback: Function) => {
         }
         signStr = getSign(signJson, secretHash);
     }
-
+    
     const msg = {
         type: 'wallet/order@pay',
         param: {
@@ -173,6 +175,7 @@ export const pay = async (order: any, callback: Function) => {
     };
     requestAsync(msg).then(resData => {
         if (resData.result === 1) {
+            getServerCloudBalance();
             callback(resCode.SUCCESS,resData);
         } else {
             callback(resData.result,resData);

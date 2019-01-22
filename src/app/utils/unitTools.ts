@@ -105,20 +105,20 @@ export const kt2kpt = (num: number | string) => {
 /**
  * st转ST
  */
-export const st2ST = (num:number | string)=>{
+export const st2ST = (num:number | string) => {
     num = Number(num);
 
-    return Math.round(num / Math.pow(10, 6));
-}
+    return num / Math.pow(10, 6);
+};
 
 /**
  * ST转st
  */
-export const ST2st = (num:number | string)=>{
+export const ST2st = (num:number | string) => {
     num = Number(num);
 
-    return Math.round(num * Math.pow(10, 6));
-}
+    return num * Math.pow(10, 6);
+};
 
 /**
  * eth 代币除以精度计算

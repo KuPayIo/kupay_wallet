@@ -176,6 +176,15 @@ export class PlayHome extends Widget {
             WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
         });
     }
+
+    public payJump(e: any) {
+        console.log();
+        const gameTitle = '第三方';
+        const gameUrl =  'http://192.168.7.71:50/';
+        this.thirdApiPromise.then(content => {
+            WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+        });
+    }
 }
 register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);

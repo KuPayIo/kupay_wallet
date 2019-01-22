@@ -17,5 +17,11 @@
             {{end}}
             
         </div>
+
+        {{% 第三方ST支付跳转}}
+        <div style="width:100%;margin-bottom: 50px;"> 
+            <p style="font-size:36px;border: 1px solid brown;margin: 0">第三方ST支付跳转测试</p>
+            <button on-tap="payJump" style="width:100%;height: 50px;font-size: 26px;">第三方ST支付跳转</button>
+        </div>
     </div>
 </div>

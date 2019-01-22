@@ -6,361 +6,453 @@ console.log("注入 thirdApi.js success");
 window.pi_jsApi = {};
 window.piFlags = {};
 
+//--------标签样式----------------------------------------------------------------------------------------------------------------------------
 
 function createStyleTag() {
-    var cssText = `.pi-root {
-        font-size: 38px;
-        position: absolute;
-        overflow: hidden;
-        left: -187.5px;
-        top: -333.5px;
-        width: 750px;
-        height: 1334px;
-        transform: scale(0.5, 0.5);
-      }
-      .pi-mask {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        background-color: rgba(50, 50, 50, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        display: none;
-      }
-      .pi-update-box {
-        background-color: #fff;
-        background-image: url(./update_bg.png);
-        background-repeat: no-repeat;
-        background-size: 100% 235px;
-        width: 630px;
-        border-radius: 12px;
-        padding-bottom: 30px;
-        position: relative;
-      }
-      .pi-update-rocket {
-        position: absolute;
-        left: 50%;
-        top: 0;
-        transform: translate3d(-50%, -30%, 0);
-      }
-      .pi-update-content {
-        padding: 20px 30px;
-      }
-      .pi-update-title {
-        margin-top: 250px;
-        font-size: 32px;
-        color: #111;
-        line-height: 45px;
-      }
-      .pi-update-items {
-        margin-top: 20px;
-      }
-      .pi-update-item {
+    var cssText = `
+    /* 公共 */
+    .pi-root {
+    display:none;
+    }
+    .pi-mask {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: rgba(50, 50, 50, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+    .pi-btns {
+    margin: 30px 40px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+    .pi-cancel-btn {
+    width: 220px;
+    height: 80px;
+    border-radius: 50px;
+    border: 1px dashed rgba(136, 136, 136, 1);
+    font-size: 32px;
+    color: #888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+    .pi-ok-btn {
+    width: 220px;
+    height: 80px;
+    background: linear-gradient(
+        270deg,
+        rgba(68, 206, 237, 1) 0%,
+        rgba(62, 179, 241, 1) 100%
+    );
+    box-shadow: 0px 5px 10px 0px rgba(13, 131, 246, 0.1);
+    border-radius: 50px;
+    font-size: 32px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+
+    /* 获取openid */
+
+    .pi-update-box {
+    background-color: #fff;
+    background-image: url(./update_bg.png);
+    background-repeat: no-repeat;
+    background-size: 100% 235px;
+    width: 630px;
+    border-radius: 12px;
+    padding-bottom: 30px;
+    position: relative;
+    }
+    .pi-update-rocket {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate3d(-50%, -30%, 0);
+    }
+    .pi-update-content {
+    padding: 20px 30px;
+    }
+    .pi-update-title {
+    margin-top: 250px;
+    font-size: 32px;
+    color: #111;
+    line-height: 45px;
+    }
+    .pi-update-items {
+    margin-top: 20px;
+    }
+    .pi-update-item {
+    font-size: 28px;
+    line-height: 40px;
+    color: #8e96ab;
+    }
+
+
+
+
+
+    /* 支付 */
+
+    .pi-pay-title {
+        font-size:38px;
+        height: 90px;
+        text-align: center;
+        line-height: 90px;
+        border-bottom: 1px solid #CCCCCC;
+    }
+
+    .pi-pay-content {
+        padding-top: 20px;
         font-size: 28px;
+    }
+
+    .pi-pay-item {
         line-height: 40px;
-        color: #8e96ab;
-      }
-      .pi-update-btns {
-        margin: 30px 40px 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .pi-update-cancel-btn {
-        width: 220px;
+        height: 40px;
+        margin-bottom: 10px;
+    }
+    .pi-pay-text{
+        font-weight:500;
+    }
+    .pi-pay-num{
+        color: #318DE6;
+    }
+    .pi-pay-input{
         height: 80px;
-        border-radius: 50px;
-        border: 1px dashed rgba(136, 136, 136, 1);
+        width: 100%;
+        border: 1px solid #1E6DEF;
+        background:rgba(249,249,249,1);
+        border-radius: 6px;
         font-size: 32px;
-        color: #888;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .pi-update-ok-btn {
-        width: 220px;
-        height: 80px;
-        background: linear-gradient(
-          270deg,
-          rgba(68, 206, 237, 1) 0%,
-          rgba(62, 179, 241, 1) 100%
-        );
-        box-shadow: 0px 5px 10px 0px rgba(13, 131, 246, 0.1);
-        border-radius: 50px;
-        font-size: 32px;
+        padding: 0px 15px;
+        box-sizing: border-box;
+        letter-spacing: 2px;
+        margin-top: 15px;
+        outline:none;
+    }
+
+
+
+    /* 加载 */
+
+    .pi-loading-mask{
+        position: absolute;
+        margin: 0;
+        top: 0;
+        right: 0;   
+        bottom: 0;
+        left: 0;
+        -webkit-transition: opacity .3s;
+        transition: opacity .3s;
         color: #fff;
+        font-size: 24px;
+    }
+    .pi-loading-spinner{
+        width: 180px;
+        height: 180px;
+        background-color: rgba(0,0,0,.6);
+        top: 50%;
+        left: 50%;
+        text-align: center;
+        position: absolute;
+        transform: translate(-50%,-50%);
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-      }
+        border-radius: 12px;
+        padding-top: 10px;
+    }
+    .loading-img{
+        width: 50px;
+        height: 50px;
+        border: 4px solid white;
+        border-bottom-color:transparent;
+        -webkit-animation: loading 1s 0s linear infinite;
+        animation: loading 1s 0s linear infinite;
+        opacity:1;
+        border-radius:50%;
+    }
+    .pi-loading-text{
+        color: #fff;
+        margin: 10px 0 20px;
+    }
 
 
 
 
+    /* 动画 */
 
-      /* 支付 */
-      .pi-pay-title {
-          height: 90px;
-          text-align: center;
-          line-height: 90px;
-          border-bottom: 1px solid #CCCCCC;
-      }
+    @-webkit-keyframes bounceInUp {
+    from,
+    60%,
+    75%,
+    90%,
+    to {
+        -webkit-animation-timing-function: cubic-bezier(
+        0.215,
+        0.61,
+        0.355,
+        1
+        );
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
 
-      .pi-pay-content {
-          padding-top: 20px;
-          font-size: 28px;
-      }
+    from {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 3000px, 0);
+        transform: translate3d(0, 3000px, 0);
+    }
 
-      .pi-pay-item {
-          line-height: 40px;
-          height: 40px;
-          margin-bottom: 10px;
-      }
-      .pi-pay-text{
-          font-weight:500;
-      }
-      .pi-pay-num{
-          color: #318DE6;
-      }
-      .pi-pay-input{
-          height: 80px;
-          width: 100%;
-          border: 1px solid #1E6DEF;
-          background:rgba(249,249,249,1);
-          border-radius: 6px;
-          font-size: 32px;
-          padding: 0px 15px;
-          box-sizing: border-box;
-          letter-spacing: 2px;
-          margin-top: 15px;
-          outline:none;
-      }
+    60% {
+        opacity: 1;
+        -webkit-transform: translate3d(0, -20px, 0);
+        transform: translate3d(0, -20px, 0);
+    }
 
+    75% {
+        -webkit-transform: translate3d(0, 10px, 0);
+        transform: translate3d(0, 10px, 0);
+    }
 
+    90% {
+        -webkit-transform: translate3d(0, -5px, 0);
+        transform: translate3d(0, -5px, 0);
+    }
 
-        /* 加载 */
-        .pi-loading-mask{
-            position: absolute;
-            margin: 0;
-            top: 0;
-            right: 0;   
-            bottom: 0;
-            left: 0;
-            -webkit-transition: opacity .3s;
-            transition: opacity .3s;
-            color: #fff;
-            font-size: 24px;
-        }
-        .pi-loading-spinner{
-            width: 180px;
-            height: 180px;
-            background-color: rgba(0,0,0,.6);
-            top: 50%;
-            left: 50%;
-            text-align: center;
-            position: absolute;
-            transform: translate(-50%,-50%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 12px;
-            padding-top: 10px;
-        }
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    }
 
-        .loading-img{
-            width: 50px;
-            height: 50px;
-            border: 4px solid white;
-            border-bottom-color:transparent;
-            -webkit-animation: loading 1s 0s linear infinite;
-            animation: loading 1s 0s linear infinite;
-            opacity:1;
-            border-radius:50%;
-        }
+    @keyframes bounceInUp {
+    from,
+    60%,
+    75%,
+    90%,
+    to {
+        -webkit-animation-timing-function: cubic-bezier(
+        0.215,
+        0.61,
+        0.355,
+        1
+        );
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
 
-        .pi-loading-text{
-            color: #fff;
-            margin: 10px 0 20px;
-        }
+    from {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 3000px, 0);
+        transform: translate3d(0, 3000px, 0);
+    }
 
+    60% {
+        opacity: 1;
+        -webkit-transform: translate3d(0, -20px, 0);
+        transform: translate3d(0, -20px, 0);
+    }
 
+    75% {
+        -webkit-transform: translate3d(0, 10px, 0);
+        transform: translate3d(0, 10px, 0);
+    }
 
-      @-webkit-keyframes bounceInUp {
-        from,
-        60%,
-        75%,
-        90%,
-        to {
-          -webkit-animation-timing-function: cubic-bezier(
-            0.215,
-            0.61,
-            0.355,
-            1
-          );
-          animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-        }
+    90% {
+        -webkit-transform: translate3d(0, -5px, 0);
+        transform: translate3d(0, -5px, 0);
+    }
 
-        from {
-          opacity: 0;
-          -webkit-transform: translate3d(0, 3000px, 0);
-          transform: translate3d(0, 3000px, 0);
-        }
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    }
 
-        60% {
-          opacity: 1;
-          -webkit-transform: translate3d(0, -20px, 0);
-          transform: translate3d(0, -20px, 0);
-        }
+    @keyframes loading {
+    0% {
+        -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); 
+    }
+    100%{
+        -webkit-transform: rotate(360deg);
+                transform: rotate(360deg); 
+    } 
+    }
 
-        75% {
-          -webkit-transform: translate3d(0, 10px, 0);
-          transform: translate3d(0, 10px, 0);
-        }
+    .bounceInUp {
+    -webkit-animation-name: bounceInUp;
+    animation-name: bounceInUp;
+    }
+    .animated {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    }`;
 
-        90% {
-          -webkit-transform: translate3d(0, -5px, 0);
-          transform: translate3d(0, -5px, 0);
-        }
-
-        to {
-          -webkit-transform: translate3d(0, 0, 0);
-          transform: translate3d(0, 0, 0);
-        }
-      }
-
-      @keyframes bounceInUp {
-        from,
-        60%,
-        75%,
-        90%,
-        to {
-          -webkit-animation-timing-function: cubic-bezier(
-            0.215,
-            0.61,
-            0.355,
-            1
-          );
-          animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-        }
-
-        from {
-          opacity: 0;
-          -webkit-transform: translate3d(0, 3000px, 0);
-          transform: translate3d(0, 3000px, 0);
-        }
-
-        60% {
-          opacity: 1;
-          -webkit-transform: translate3d(0, -20px, 0);
-          transform: translate3d(0, -20px, 0);
-        }
-
-        75% {
-          -webkit-transform: translate3d(0, 10px, 0);
-          transform: translate3d(0, 10px, 0);
-        }
-
-        90% {
-          -webkit-transform: translate3d(0, -5px, 0);
-          transform: translate3d(0, -5px, 0);
-        }
-
-        to {
-          -webkit-transform: translate3d(0, 0, 0);
-          transform: translate3d(0, 0, 0);
-        }
-      }
-
-      .bounceInUp {
-        -webkit-animation-name: bounceInUp;
-        animation-name: bounceInUp;
-      }
-      .animated {
-        -webkit-animation-duration: 1s;
-        animation-duration: 1s;
-        -webkit-animation-fill-mode: both;
-        animation-fill-mode: both;
-      }`;
+    let pi_root_css = '.pi-root{'+browserAdaptive()+'}';
     var style = document.createElement("style");
     style.type = "text/css";
-    style.innerHTML = cssText;
+    style.innerHTML = (pi_root_css+cssText);
     document.getElementsByTagName("head")[0].appendChild(style);
-}
 
-//创建授权弹窗标签
-function createElementTag(){
-    var htmlText = `
-      <div class="pi-mask">
-        <div class="pi-update-box animated bounceInUp">
-          <img src="./rocket.png" class="pi-update-rocket" />
-          <div class="pi-update-content">
-            <div class="pi-update-title">您将获取以下授权</span></div>
-            <div class="pi-update-items">
-            </div>
-          </div>
-          <div class="pi-update-btns">
-            <div class="pi-update-cancel-btn">取消</div>
-            <div class="pi-update-ok-btn">确定</div>
-          </div>
-        </div>
-      </div>
-    `;
+    
     var $root = document.createElement("div");
-    $root.setAttribute("class","pi-root");
-    $root.innerHTML = htmlText;
+    $root.setAttribute("class", "pi-root");
 
     var $body = document.querySelector("body");
     $body.appendChild($root);
+
+    $root.addEventListener('click',function(){
+        console.log(111);
+    });
+}
+
+function browserAdaptive() {
+    var cfg = {
+        width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+    };
+    var clientWidth = document.documentElement.clientWidth;
+    var clientHeight = document.documentElement.clientHeight;
+    oldHeight = clientHeight;
+    rootWidth = cfg.width;
+    rootHeight = cfg.height;
+    let scaleW = clientWidth / rootWidth;
+    let scaleH = clientHeight / rootHeight;
+    if (cfg.wscale >= cfg.hscale) {
+        // 宽度比例变动
+        if (scaleW > scaleH * (cfg.wscale + 1)) {
+            // 大于规定的比例
+            rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+        } else {
+            rootWidth = (clientWidth / scaleH) | 0;
+        }
+        rootScale = scaleW = scaleH;
+    } else {
+        // 高度比例变动
+        if (scaleH > scaleW * (cfg.hscale + 1)) {
+            rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+        } else {
+            rootHeight = (clientHeight / scaleW) | 0;
+        }
+        rootScale = scaleH = scaleW;
+    }
+    rootX = (clientWidth - rootWidth) / 2;
+    rootY = (clientHeight - rootHeight) / 2;
+    var cssText = 'z-index:99999;position: fixed;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+    return cssText;
+};
+
+window.onload = createStyleTag;
+
+
+
+//--------创建标签----------------------------------------------------------------------------------------------------------------------------
+
+
+//创建授权弹窗标签
+function createElementTag() {
+    var htmlText = `
+        <div class="pi-update-box animated bounceInUp">
+            <img src="./rocket.png" class="pi-update-rocket" />
+            <div class="pi-update-content">
+                <div class="pi-update-title">您将获取以下授权</span></div>
+                <div class="pi-update-items">
+                </div>
+            </div>
+            <div class="pi-btns">
+                <div class="pi-cancel-btn">取消</div>
+                <div class="pi-ok-btn">确定</div>
+            </div>
+        </div>`;
+    var $root = document.createElement("div");
+    $root.setAttribute("class", "pi-mask");
+    $root.innerHTML = htmlText;
+
+    var $body = document.querySelector(".pi-root");
+    $body.appendChild($root);
+    $body.style.display = 'flex';
 }
 
 //创建支付弹窗标签
 function createPayElementTag() {
     var htmlText = `
-        <div class="pi-mask">
-            <div class="pi-update-box animated bounceInUp">
-                <div class="pi-update-content">
-                    <div class="pi-pay-title">确认支付</div>
-                    <div class="pi-pay-content">
-                        <div class="pi-pay-item">
-                            <span>金额：</span><span id="pi_payCount" class="pi-pay-num">0.02ST</span>
-                        </div>
-                        <div class="pi-pay-item">
-                            <span>发给：</span><span id="pi_payObject" class="pi-pay-text">LOL赛事竞猜</span>
-                        </div>
-                        <div class="pi-pay-item">
-                            <span>余额：</span><span id="pi_payBalance" class="pi-pay-text">12ST</span>
-                        </div>
-                        <div>
-                            <input class="pi-pay-input" type="password" placeholder="输入密码" name="" id="pi_password">
-                        </div>
+        <div class="pi-update-box animated bounceInUp">
+            <div class="pi-update-content">
+                <div class="pi-pay-title">确认支付</div>
+                <div class="pi-pay-content">
+                    <div class="pi-pay-item">
+                        <span>金额：</span><span id="pi_payCount" class="pi-pay-num">0.02ST</span>
+                    </div>
+                    <div class="pi-pay-item">
+                        <span>发给：</span><span id="pi_payObject" class="pi-pay-text">LOL赛事竞猜</span>
+                    </div>
+                    <div class="pi-pay-item">
+                        <span>余额：</span><span id="pi_payBalance" class="pi-pay-text">12ST</span>
+                    </div>
+                    <div>
+                        <input class="pi-pay-input" type="password" placeholder="输入密码" name="" id="pi_password">
                     </div>
                 </div>
-                <div class="pi-update-btns">
-                    <div class="pi-update-cancel-btn">取消</div>
-                    <div class="pi-update-ok-btn">确定</div>
-                </div>
+            </div>
+            <div class="pi-btns">
+                <div class="pi-cancel-btn">取消</div>
+                <div class="pi-ok-btn">确定</div>
             </div>
         </div>`;
     var $root = document.createElement("div");
-    $root.setAttribute("class", "pi-root");
+    $root.setAttribute("class", "pi-mask");
     $root.innerHTML = htmlText;
 
-    var $body = document.querySelector("body");
+    var $body = document.querySelector(".pi-root");
     $body.appendChild($root);
+    $body.style.display = 'flex';
+}
+
+//创建设置免密弹窗标签
+function createSetNoPSWElementTag() {
+    var htmlText = `
+        <div class="pi-update-box animated bounceInUp">
+            <div class="pi-update-content">
+                <div class="pi-pay-title">设置免密支付</div>
+                <div class="pi-pay-content">
+                    <div>
+                        <input class="pi-pay-input" type="password" placeholder="输入密码" name="" id="pi_password">
+                    </div>
+                </div>
+            </div>
+            <div class="pi-btns">
+                <div class="pi-cancel-btn">取消</div>
+                <div class="pi-ok-btn">确定</div>
+            </div>
+        </div>`;
+    var $root = document.createElement("div");
+    $root.setAttribute("class", "pi-mask");
+    $root.innerHTML = htmlText;
+
+    var $body = document.querySelector(".pi-root");
+    $body.appendChild($root);
+    $body.style.display = 'flex';
 }
 
 //创建加载弹窗标签
-function createLoadingElementTag() {
+function createLoadingElementTag(loadingStr) {
     var htmlText = `
         <div class="pi-loading-mask">
             <div class="pi-loading-spinner">
                 <div class="loading-img"></div>
                 <p class="pi-loading-text">
-                    支付中...
+                    ${loadingStr}
                 </p>
             </div>
         </div>`;
@@ -370,15 +462,23 @@ function createLoadingElementTag() {
 
     var $body = document.querySelector(".pi-root");
     $body.appendChild($root);
+    $body.style.display = 'flex';
 }
 
 //关闭所有
-function closePop(){
-  var $root = document.querySelector(".pi-root");
-  var $body = document.querySelector("body");
-  $body.removeChild($root);
+function closePop() {
+    var $body = document.querySelector(".pi-root");
+    $body.innerHTML = "";
+    $body.style.display = 'none';
 }
-window.pi_RPC_Method = (function() {
+
+
+
+
+
+//--------pi_RPC_Method----------------------------------------------------------------------------------------------------------------------------
+
+window.pi_RPC_Method = (function () {
     var rpcID = -1;
     var rpcIDMap = {};
 
@@ -388,7 +488,7 @@ window.pi_RPC_Method = (function() {
      * callback：返回结果的回调函数
      * 注：RPC都是一来一回的结构，没有注册一次可以调用多次的结构！
      */
-    var rpcCall = function(moduleName, methodName, param, callback) {
+    var rpcCall = function (moduleName, methodName, param, callback) {
         var RPC_CALL_START = "$WEBVIEW_RPC_CALL: ";
         var RPC_CALLBACK_PARAM = "$WEBVIEW_RPC_FUNCTION_PARAM: ";
 
@@ -415,7 +515,7 @@ window.pi_RPC_Method = (function() {
     var webViewManager = undefined;
     var webViewManagerCallWaits = [];
 
-    var nativeCall = function(className, methodName, listenerID, args) {
+    var nativeCall = function (className, methodName, listenerID, args) {
         args = args || [];
 
         if (!webViewManager && methodName !== "init") {
@@ -447,18 +547,18 @@ window.pi_RPC_Method = (function() {
         }
     };
 
-    window.handle_Native_ThrowError = function(className, methodName, message) {
+    window.handle_Native_ThrowError = function (className, methodName, message) {
         alert(
             "handle_Native_ThrowError, className = " +
-                className +
-                ", methodName = " +
-                methodName +
-                ", message = " +
-                message
+            className +
+            ", methodName = " +
+            methodName +
+            ", message = " +
+            message
         );
     };
 
-    window.handle_Native_Message = function(cbID, code, ...args) {
+    window.handle_Native_Message = function (cbID, code, ...args) {
         if (cbID === 0) return;
 
         var cb = callIDMap[cbID];
@@ -468,9 +568,8 @@ window.pi_RPC_Method = (function() {
         }
     };
 
-    window["onWebViewPostMessage"] = function(fromWebView, message) {
+    window["onWebViewPostMessage"] = function (fromWebView, message) {
         var RPC_REPLY_START = "$WEBVIEW_RPC_REPLY: ";
-
         // 收到对方的rpc回应，处理
         if (message.startsWith(RPC_REPLY_START)) {
             message = message.slice(RPC_REPLY_START.length);
@@ -479,7 +578,7 @@ window.pi_RPC_Method = (function() {
         }
     };
 
-    var handleRpcReply = function(sign) {
+    var handleRpcReply = function (sign) {
         var funcs = rpcIDMap[sign.rpcID];
         var f = funcs && funcs[sign.callbackID];
         if (f) {
@@ -493,11 +592,11 @@ window.pi_RPC_Method = (function() {
     var callIDMap = {};
 
     var callID = ++callIDMax;
-    callIDMap[callID] = function(id) {
+    callIDMap[callID] = function (id) {
         webViewManager = id;
 
         for (var i = 0; i < webViewManagerCallWaits.length; ++i) {
-            (function(w) {
+            (function (w) {
                 setTimeout(() => {
                     nativeCall(w[0], w[1], w[2], w[3]);
                 }, 0);
@@ -511,88 +610,91 @@ window.pi_RPC_Method = (function() {
     return rpcCall;
 })();
 
+
+
+//----------对外接口--------------------------------------------------------------------------------------------------------------------------------
+
 //获取openID
-window.pi_jsApi.authorize = function(payload,callBack){
-    createStyleTag();
+window.pi_jsApi.authorize = function (payload, callBack) {
     createElementTag();
     var $items = document.querySelector(".pi-update-items");
     $items.innerHTML = "";
-    if(payload.avatar){
+    if (payload.avatar) {
         var $item = document.createElement("div");
-        $item.setAttribute("class","pi-update-item");
-        $item.innerHTML =  "用户头像";
+        $item.setAttribute("class", "pi-update-item");
+        $item.innerHTML = "用户头像";
         $items.appendChild($item);
     }
-    if(payload.nickName){
+    if (payload.nickName) {
         var $item = document.createElement("div");
-        $item.setAttribute("class","pi-update-item");
-        $item.innerHTML =  "用户昵称";
+        $item.setAttribute("class", "pi-update-item");
+        $item.innerHTML = "用户昵称";
         $items.appendChild($item);
     }
     var $mask = document.querySelector(".pi-mask");
     $mask.style.display = "flex";
 
-    var $ok = document.querySelector(".pi-update-ok-btn");
-    var $cancel = document.querySelector(".pi-update-cancel-btn");
-    $ok.addEventListener("click",function(){
+    var $ok = document.querySelector(".pi-ok-btn");
+    var $cancel = document.querySelector(".pi-cancel-btn");
+    $ok.addEventListener("click", function () {
         pi_RPC_Method("app/api/JSAPI", "authorize", payload, function (error, result) {
-            console.log('getOpenId call success',error);
-            console.log('getOpenId call success',result);
-            callBack(error,result);
+            console.log('getOpenId call success', error);
+            console.log('getOpenId call success', result);
+            callBack(error, result);
         });
         closePop();
-        
+
     });
 
-    $cancel.addEventListener("click",function(){
+    $cancel.addEventListener("click", function () {
         callBack(new Error("user not allow authorize!!!"));
         closePop();
     });
-    
+
 }
 
 
-//第三方支付
+// 第三方支付
+// order:订单数据
 window.pi_jsApi.openPayment = function (order, callBack) {
     pi_RPC_Method("app/api/JSAPI", "openPayment", order, function (resCode, msg) {
         console.log('openPayment call success', resCode);
         console.log('openPayment call success', msg);
         if (resCode === 1) {
             order.no_password = msg.no_password;
-
-            if(msg.no_password === 1){ // 已设置免密支付
-                createLoadingElementTag();
-                pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
-                    console.log('pay call success', resCode1);
-                    console.log('pay call success', msg1);
-                    callBack(resCode1, msg1); 
-                    closePop();
-                });
-            }else{                    // 未设置免密支付
-                createStyleTag();
-                createPayElementTag();
-                var $ok = document.querySelector(".pi-update-ok-btn");
-                var $cancel = document.querySelector(".pi-update-cancel-btn");
-                var $mask = document.querySelector(".pi-mask");
-                var $input = document.getElementById("pi_password");
-                document.getElementById('pi_payCount').innerHTML = msg.fee_total + msg.fee_name + '';
-                document.getElementById('pi_payObject').innerHTML = msg.desc + '';
-                document.getElementById('pi_payBalance').innerHTML = msg.balance + msg.fee_name + '';
-    
-    
-                $mask.style.display = "flex";
-
-                $ok.addEventListener("click", function () {
-                    order.password = $input.value;
-                    createLoadingElementTag();
+            console.log('判断支付流程!',order,msg);
+            if (msg.no_password === 1) { // 已设置免密支付
+                createLoadingElementTag('免密支付中...');
+                requestAnimationFrame(function(){
                     pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
                         console.log('pay call success', resCode1);
                         console.log('pay call success', msg1);
-                        callBack(resCode1, msg1); 
+                        console.log('免密支付完成!');
+                        callBack(resCode1, msg1);
                         closePop();
                     });
                 });
                 
+            } else {                    // 未设置免密支付
+                createPayElementTag();
+                var $ok = document.querySelector(".pi-ok-btn");
+                var $cancel = document.querySelector(".pi-cancel-btn");
+                var $input = document.getElementById("pi_password");
+                document.getElementById('pi_payCount').innerHTML = msg.fee_total + msg.fee_name + '';
+                document.getElementById('pi_payObject').innerHTML = msg.desc + '';
+                document.getElementById('pi_payBalance').innerHTML = msg.balance + msg.fee_name + '';
+
+                $ok.addEventListener("click", function () {
+                    order.password = $input.value;
+                    createLoadingElementTag('支付中...');
+                    pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
+                        console.log('pay call success', resCode1);
+                        console.log('pay call success', msg1);
+                        callBack(resCode1, msg1);
+                        closePop();
+                    });
+                });
+
                 $cancel.addEventListener("click", function () {
                     closePop();
                     callBack(1003, null)
@@ -605,7 +707,37 @@ window.pi_jsApi.openPayment = function (order, callBack) {
     });
 }
 
+// 第三方设置免密支付
+// appid:应用id
+// mchid:商户id
+// noPSW:设置免密支付状态  0:关闭，1:开启
+window.pi_jsApi.setNoPSW = function (appid, mchid, noPSW, callBack) {
+    createSetNoPSWElementTag();
+    var $ok = document.querySelector(".pi-ok-btn");
+    var $cancel = document.querySelector(".pi-cancel-btn");
+    var $input = document.getElementById("pi_password");
 
+    $ok.addEventListener("click", function () {
+        var sendData = {
+            appid: appid,
+            mchid: mchid,
+            noPSW: noPSW,
+            password: $input.value
+        }
+        createLoadingElementTag('设置中...');
+        pi_RPC_Method("app/api/JSAPI", "setNoPWD", sendData, function (resCode1, msg1) {
+            console.log('setNoPWD call success', resCode1);
+            console.log('setNoPWD call success', msg1);
+            callBack(resCode1, msg1);
+            closePop();
+        });
+    });
+
+    $cancel.addEventListener("click", function () {
+        closePop();
+        callBack(1003, null)
+    });
+}
 
 
 
