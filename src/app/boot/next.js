@@ -65,31 +65,16 @@ winit.initNext = function () {
 		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 
-	// 底层更新模块
-	var appUpdateMod = pi_modules.appUpdate.exports;
-	appUpdateMod.needUpdate(function (isNeedUpdate) {
-		if (isNeedUpdate > 0) {
-			var option = {
-				updated:appUpdateMod.getAppUpdated(),
-				version:appUpdateMod.getAppRemoteVersion(),
-				alertBtnText:"App 需要更新"
-			};
-			pi_update.alert(option,function(){
-				pi_update.closePop();
-				// 注：必须堵住原有的界面操作，不允许任何更新
-				appUpdateMod.update(function () {
-					// alert("App 更新失败");
-				});
-			});
-		}
-		appLoadEntrance();
-	});
+	
 
 
 	
 	var html,util,lang; // pi/util/html,pi/widget/util,pi/util/lang
 	var fm;  // fileMap
 	var fpFlags = {};  // 进入首页面的资源加载标识位
+	var updateFlags = {}; // 更新标识位
+	appCheckUpdate();
+	h5CheckUpdate();
 
 	// app下载入口函数
 	var appLoadEntrance = function(){
@@ -101,7 +86,6 @@ winit.initNext = function () {
 			const setting = JSON.parse(localStorage.getItem('setting'));
 			lang.setLang(setting && setting.language || 'zh_Hans');  // 初始化语言为简体中文
 	
-			console.log("load appLoadEntrance-----------------");
 			// 判断是否第一次进入,决定是显示片头界面还是开始界面
 			var userinfo = html.getCookie("userinfo");
 			pi_modules.commonjs.exports.flags = html.userAgent(flags);
@@ -256,73 +240,9 @@ winit.initNext = function () {
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
 			setStore('flags/level_2_page_loaded', true);
 			console.timeEnd('all resource loaded');
-			h5CheckUpdate();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
-	}
-	// 检查h5更新
-	var h5CheckUpdate = function(){
-		// H5更新模块
-		var h5UpdateMod = pi_modules.update.exports;
-		h5UpdateMod.setIntercept(true);
-		h5UpdateMod.setServerInfo("app/boot/");
-
-		// needUpdateCode 0 1 2 3 
-		h5UpdateMod.checkUpdate(function (needUpdateCode) {
-			// 判断当前app版本是否大于等于依赖的版本号
-			var appLocalVersion = appUpdateMod.getAppLocalVersion();
-			var canUpdate = false;
-			if(appLocalVersion){  
-				var dependAppVersionArr = h5UpdateMod.getDependAppVersion().split(".");
-				var appLocalVersionArr = appUpdateMod.getAppLocalVersion().split(".");
-				for(var i = 0;i < dependAppVersionArr.length;i++){
-					if(i === dependAppVersionArr.length - 1){
-						canUpdate = appLocalVersionArr[i] >= dependAppVersionArr[i];
-						break;
-					}
-					if(appLocalVersionArr[i] < dependAppVersionArr[i]){
-						canUpdate = false;
-						break;
-					}else if(appLocalVersionArr[i] > dependAppVersionArr[i]){
-						canUpdate = true;
-						break;
-					}
-				}
-			}else{  // 还没获取到本地版本号  不更新
-				canUpdate = false;
-			}
-
-			var remoteVersion = h5UpdateMod.getRemoteVersion();
-			var option = {
-				updated:h5UpdateMod.getH5Updated(),
-				version:remoteVersion.slice(0,remoteVersion.length - 1).join(".")
-			};
-
-
-			// 更新h5
-			var updateH5 = function(){
-				// 注：必须堵住原有的界面操作，不允许任何触发操作
-				h5UpdateMod.update(function (e) {
-					//{type: "saveFile", total: 4, count: 1}
-					console.log("update progress: ", e);
-					pi_update.updateProgress(e);
-				});
-			}
-			if (needUpdateCode === 1 && canUpdate) {
-				option.alertBtnText = "更新未完成";
-				pi_update.alert(option,updateH5);
-			}else if(needUpdateCode === 2 && canUpdate){
-				option.alertBtnText = "版本有重大变化";
-				pi_update.alert(option,updateH5);
-			}else if(needUpdateCode === 3 && canUpdate){
-				pi_update.confirm(option,function(ok){
-					if(ok){
-						updateH5();
-					}
-				});
-			}
-		});
 	}
 
 	// 加载聊天代码
@@ -383,6 +303,95 @@ winit.initNext = function () {
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
+	}
+
+
+
+	// 检查h5更新
+	function h5CheckUpdate(){
+		// H5更新模块
+		var h5UpdateMod = pi_modules.update.exports;
+		// app更新模块
+		var appUpdateMod = pi_modules.appUpdate.exports;
+		h5UpdateMod.setIntercept(true);
+		h5UpdateMod.setServerInfo("app/boot/");
+
+		// needUpdateCode 0 1 2 3 
+		h5UpdateMod.checkUpdate(function (needUpdateCode) {
+			// 判断当前app版本是否大于等于依赖的版本号
+			var appLocalVersion = appUpdateMod.getAppLocalVersion();
+			var canUpdate = false;
+			if(appLocalVersion){  
+				var dependAppVersionArr = h5UpdateMod.getDependAppVersion().split(".");
+				var appLocalVersionArr = appUpdateMod.getAppLocalVersion().split(".");
+				for(var i = 0;i < dependAppVersionArr.length;i++){
+					if(i === dependAppVersionArr.length - 1){
+						canUpdate = appLocalVersionArr[i] >= dependAppVersionArr[i];
+						break;
+					}
+					if(appLocalVersionArr[i] < dependAppVersionArr[i]){
+						canUpdate = false;
+						break;
+					}else if(appLocalVersionArr[i] > dependAppVersionArr[i]){
+						canUpdate = true;
+						break;
+					}
+				}
+			}else{  // 还没获取到本地版本号  不更新
+				canUpdate = false;
+			}
+
+			var remoteVersion = h5UpdateMod.getRemoteVersion();
+			var option = {
+				updated:h5UpdateMod.getH5Updated(),
+				version:remoteVersion.slice(0,remoteVersion.length - 1).join(".")
+			};
+
+
+			// 更新h5
+			var updateH5 = function(){
+				// 注：必须堵住原有的界面操作，不允许任何触发操作
+				h5UpdateMod.update(function (e) {
+					//{type: "saveFile", total: 4, count: 1}
+					console.log("update progress: ", e);
+					pi_update.updateProgress(e);
+				});
+			}
+
+			if(needUpdateCode === 0 || !canUpdate){
+				updateFlags.checkH5Update = true;
+				updateFlags.checkAppUpdate && updateFlags.checkH5Update && appLoadEntrance();
+			}else{
+				pi_update.modifyContent(option);
+				updateH5();
+			}
+		});
+	}
+	// app更新检查
+	function appCheckUpdate(){
+		// 底层更新模块
+		var appUpdateMod = pi_modules.appUpdate.exports;
+		appUpdateMod.needUpdate(function (isNeedUpdate) {
+			if (isNeedUpdate > 0) {
+				var option = {
+					updated:appUpdateMod.getAppUpdated(),
+					version:appUpdateMod.getAppRemoteVersion(),
+					alertBtnText:"App 需要更新"
+				};
+				pi_update.modifyContent(option);
+				appUpdateMod.update(function () {
+					// alert("App 更新失败");
+				});
+				var e = { type: "saveFile", total: 100, count: 1}
+				setInterval(function(){
+					pi_update.updateProgress(e);
+					e.count = e.count++;
+				},300);
+			}else{
+				updateFlags.checkAppUpdate = true;
+				updateFlags.checkAppUpdate && updateFlags.checkH5Update && appLoadEntrance();
+			}
+		});
 	}
 };
 
