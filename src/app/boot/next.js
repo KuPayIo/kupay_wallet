@@ -142,10 +142,10 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 			// 聊天登录
-			var chatLogicIp = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicIp;
-			var chatLogicPort = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicPort;
+			// var chatLogicIp = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicIp;
+			// var chatLogicPort = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicPort;
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.initClient(chatLogicIp,chatLogicPort);
+			// pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.initClient(chatLogicIp,chatLogicPort);
 
 			// 活动登录
 			// pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
@@ -157,7 +157,7 @@ winit.initNext = function () {
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 
-			// erlang服务器连接登录 1s后在打开连接,确保大部分情况下聊天和活动得连接已经连接成功
+			// erlang服务器连接登录
 			pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
 			fpFlags.storeReady = true;
 			enterApp();
