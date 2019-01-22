@@ -73,6 +73,7 @@ export const initPush = () => {
     //     console.log('服务器推送成功==========================',res);
     // });
 
+
     // // 监听KT增加事件
     // setMsgHandler('event_kt_alert',(res) => {
     //     popNew('app-view-earn-mining-addMineAlert',{ addNum:kpt2kt(res.num),iconType:'KT' });
@@ -100,6 +101,7 @@ const setPushListener = (key:string,callback:Function) => {
                 popTips && popTips(res);
             });
         }
+
     });
 };
 

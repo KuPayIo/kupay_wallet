@@ -837,19 +837,20 @@ export const fetchCloudWalletAssetList = () => {
         rate:formatBalanceValue(fetchBalanceValueOfCoin('ST',1))
     };
     assetList.push(gtItem);
-    for (const k in CloudCurrencyType) {
-        const item: any = {};
-        if (MainChainCoin.hasOwnProperty(k)) {
-            item.currencyName = k;
-            item.description = MainChainCoin[k].description;
-            const balance = cloudBalances.get(CloudCurrencyType[k]) || 0;
-            item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
-            item.gain = fetchCoinGain(k);
-            item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
-            assetList.push(item);
-        }
-    }
+    // TODO 屏蔽掉ETH BTC
+    // for (const k in CloudCurrencyType) {
+    //     const item: any = {};
+    //     if (MainChainCoin.hasOwnProperty(k)) {
+    //         item.currencyName = k;
+    //         item.description = MainChainCoin[k].description;
+    //         const balance = cloudBalances.get(CloudCurrencyType[k]) || 0;
+    //         item.balance = formatBalance(balance);
+    //         item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
+    //         item.gain = fetchCoinGain(k);
+    //         item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
+    //         assetList.push(item);
+    //     }
+    // }
 
     return assetList;
 };

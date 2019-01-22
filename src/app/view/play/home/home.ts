@@ -66,6 +66,7 @@ export class PlayHome extends Widget {
             {
                 title:{ zh_Hans:'fomosports',zh_Hant:'fomosports',en:'' },
                 desc:{ zh_Hans:'要买要快，不要只是看',zh_Hant:'要買要快，不要只是看',en:'' },
+
                 img:['app/res/image1/fomosports.jpg','app/res/image1/fomosports.jpg'],
                 url:'https://test.fomosports.me/'
             },
@@ -74,6 +75,7 @@ export class PlayHome extends Widget {
                 desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
                 img:['app/res/image1/CryptoFishing.jpg','app/res/image1/CryptoFishing.jpg'],
                 url:'http://fishing.rinkeby.cchaingames.com/'
+
             },
             {
                 title:'Decentraland',
