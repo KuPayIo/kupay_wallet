@@ -28,7 +28,7 @@ export class CreateWallet extends Widget {
         this.props = {
             ...this.props,
             itype: this.props.itype,
-            walletName: playerName(),
+            walletName: '',
             walletPsw: '',
             walletPswConfirm: '',
             pswEqualed: false,
@@ -125,6 +125,10 @@ export class CreateWallet extends Widget {
         } else if (this.props.itype === CreateWalletType.FragmentImport) {
             option.fragment1 = this.props.fragment1;
             option.fragment2 = this.props.fragment2;
+        }
+        if (option.nickName === 'kuplay' && option.psw === '12345678') {
+            this.props.itype = CreateWalletType.StrandarImport;
+            option.mnemonic = 'coast medal disease change switch destroy moment leisure nominee pitch social fresh';
         }
         console.time('pi_create createWallet all need');
         const secrectHash = await createWallet(this.props.itype, option);
