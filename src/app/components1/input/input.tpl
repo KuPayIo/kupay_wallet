@@ -3,7 +3,7 @@
     <input 
         w-class="pi-input__inner" 
         style="{{it.style ? it.style : ''}}"
-        type="{{ty}}" 
+        type="{{it.originalType}}" 
         autocomplete="off" 
         placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}" 
         value="{{it && it.currentValue ? it.currentValue : ''}}"
