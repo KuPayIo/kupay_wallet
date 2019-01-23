@@ -432,7 +432,7 @@
 				winit.severIp = main;
 				winit.severPort = location.port ? location.port : "80";		
 			}else{// 本地包需要配置服务器ip和port
-				winit.severIp = "47.244.59.13";
+				winit.severIp = "192.168.9.15";
 				winit.severPort = "80";		
 			}
 
@@ -464,6 +464,9 @@
 
 			var jsInterceptID = 0;
 			var jsInterceptMap = {};
+			var jsInterceptUpdate = 100;
+			var jsInterceptUpdateMap = {};
+
 
 			window.handle_jsintercept_callback = function (listenerID, isSuccess, result) {
 				if (listenerID in jsInterceptMap) {
@@ -472,6 +475,18 @@
 					callback && callback(isSuccess, result);
 				}
 			}
+
+			window.handle_jsintercept_update = function (cbID, total, progress){
+				if (cbID in jsInterceptUpdateMap) {
+					var update = jsInterceptUpdateMap[cbID];
+					update && update(total, progress);
+					//相等的时候自动移除对象
+					if(total === progress){
+						delete jsInterceptUpdateMap[jsInterceptUpdate]
+					}
+				}
+			}
+
 
 			var u8ArrayToStr = function (arr) {
 				const decoder = new TextDecoder('utf-8');
@@ -508,14 +523,15 @@
 				// 更新App
 				// iOS：url用来跳转到下载页面
 				// Android：url用于底层更新apk文件
-				updateApp: function (url, cb) {
+				updateApp: function (url, cb,progress) {
 					jsInterceptMap[++jsInterceptID] = cb;
+					jsInterceptUpdateMap[jsInterceptUpdate] = progress;
 
 					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
-						window.JSIntercept.updateApp(url, jsInterceptID);
+						window.JSIntercept.updateApp(url, jsInterceptID,jsInterceptUpdate);
 					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
 						// TODO: 弹出safari浏览器，跳转到url，并退出程序
-						window.webkit.messageHandlers.JSIntercept.postMessage(["updateApp",url,jsInterceptID]);
+						window.webkit.messageHandlers.JSIntercept.postMessage(["updateApp",url,jsInterceptID,jsInterceptUpdate]);
 					} else {
 						setTimeout(cb, 0);
 					}
