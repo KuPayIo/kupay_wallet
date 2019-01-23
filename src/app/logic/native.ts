@@ -1,10 +1,11 @@
 /**
  * 一些底层操作
  */
+import { ADUnion } from '../../pi/browser/adUnoin';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
 import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
-import { DeviceIdProvider } from '../../pi/browser/systemInfoProvider';
+import { DeviceIdProvider, SystemInfoProvider } from '../../pi/browser/systemInfoProvider';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { setStore } from '../store/memstore';
@@ -74,10 +75,32 @@ export const getDeviceId = (okCB?,errCB?) => {
         success: (result) => {
             console.log(`获取设备的唯一id成功${JSON.stringify(result)}`);
             okCB && okCB(result);
+            systemInfo.close();
         }
         , fail: (result) => {
             console.log(`获取设备的唯一id失败${JSON.stringify(result)}`);
             errCB && errCB(result);
+            systemInfo.close();
+        }
+    });
+};
+
+/**
+ * 获取设备信息
+ */
+export const getDeviceInfo = (okCB?,errCB?) => {
+    const systemInfo = new SystemInfoProvider();
+    systemInfo.init();
+    systemInfo.getDeviceInfo({
+        success: (result) => {
+            console.log(`获取设备的信息成功${JSON.stringify(result)}`);
+            okCB && okCB(result);
+            systemInfo.close();
+        }
+        , fail: (result) => {
+            console.log(`获取设备的信息失败${JSON.stringify(result)}`);
+            errCB && errCB(result);
+            systemInfo.close();
         }
     });
 };
@@ -107,5 +130,17 @@ export const getScreenModify = () => {
         const calLow = low / window.devicePixelRatio * 2;
         setStore('setting/topHeight',calHigh);
         setStore('setting/bottomHeight',calLow);
+    });
+};
+
+/**
+ * 观看广告
+ * adtype:1.广点通  2.字节跳动
+ */
+export const watchAd = (adType: number,cb:(str1:string,str2:string) => void) => {
+    const adUnion = new ADUnion();
+    adUnion.showRewardVideoAD(adType,(str1,str2) => {
+        cb(str1,str2);
+        adUnion.close();
     });
 };

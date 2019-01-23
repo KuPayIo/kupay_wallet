@@ -11,10 +11,9 @@ import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { getScreenModify } from '../../logic/native';
-import { initPush } from '../../net/push';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
-import { fetchDeviceId } from '../../utils/tools';
+import { fetchDeviceId, fetchDeviceInfo } from '../../utils/tools';
 
 // ============================== 导出
 
@@ -25,43 +24,18 @@ export const run = (cb): void => {
     // 数据检查
     checkUpdate();
     // 打开首页面
-    popNewRouterList(cb);
-    // 主动推送初始化
-    initPush();
+    popNew('app-view-base-app');
+    // 锁屏页面
+    popNewPage();
     // 预先从底层获取一些数据
     preFetchFromNative();
     console.timeEnd('home enter');
     // 后台切前台
     backToFront();
-    
-};
-
-/**
- * 弹出上次关闭的界面
- */
-const popNewRouterList = (cb:Function) => {
-    // const routerList = JSON.parse(localStorage.getItem('pi_router_list'));
-    const routerList = undefined;
-    if (routerList && routerList.length > 0) {
-        for (let i = 0;i < routerList.length;i++) {
-            const props = routerList[i].props;
-            if (props && props.pi_norouter) break;
-            popNew(routerList[i].name,routerList[i].props);
-        }
-    } else { // 首次进入
-        popNew('app-view-base-app');
-        if (!localStorage.firstInApp) {
-            popNew('app-components1-modalBox-newUserWelfare');
-            localStorage.setItem('firstInApp','true');
-        }
-    }
-    
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
     }, 100);
-
-    popNewPage();
 };
 
 /**
@@ -83,6 +57,12 @@ const preFetchFromNative = () => {
     if (!deviceId) {
         fetchDeviceId().then(hash256deviceId => {
             setStore('setting/deviceId',hash256deviceId);
+        });
+    }
+    const deviceInfo = getStore('setting/deviceInfo');
+    if (!deviceInfo) {
+        fetchDeviceInfo().then(info => {
+            setStore('setting/deviceInfo',info);
         });
     }
     getScreenModify();

@@ -82,8 +82,7 @@ export class CreateWalletByImage extends Widget {
                 }
             });
         });
-        const flags = getStore('flags');
-        setStore('flags',{ ...flags,imgArgon2HashPromise });
+        setStore('flags/imgArgon2HashPromise',imgArgon2HashPromise);
         popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });
         this.ok && this.ok();
     }

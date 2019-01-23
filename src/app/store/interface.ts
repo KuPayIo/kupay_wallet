@@ -22,6 +22,7 @@ export interface Store {
  * 后端定义的任务id
  */
 export enum TaskSid {
+    Mine = '101',                 // 新挖矿
     Recharge = 301,            // 充值
     Withdraw = 302,            // 提现
     CreateWallet = 1001,       // 创建钱包
@@ -48,7 +49,7 @@ export enum CloudCurrencyType {
     KT = 100,  // KT
     ETH,       // ETH 
     BTC,       // BTC
-    GT         // GT
+    ST         // ST
 }
 
 /**
@@ -121,7 +122,7 @@ export interface Third {
     shapeShiftTxsMap: Map<string, ShapeShiftTxs>; // shapeshift 交易记录Map
 
     rate: number;                                 // 货币的美元汇率
-    goldPrice:Gold;                             // 黄金价格
+    silver:Gold;                                // 白银价格
     currency2USDTMap: Map<string, Currency2USDT>;  // k线  --> 计算涨跌幅
 }
 
@@ -134,6 +135,7 @@ export interface Setting {
     changeColor: string;          // 涨跌颜色设置，默认：红跌绿张
     currencyUnit: string;         // 显示哪个国家的货币
     deviceId:string;              // 设备唯一id
+    deviceInfo:any;               // 设备信息 
     topHeight:number;             // 设备头部应空出来的高度(刘海高度)
     bottomHeight:number;          // 设备底部应空出来的高度
 }

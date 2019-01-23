@@ -65,31 +65,16 @@ winit.initNext = function () {
 		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 
-	// 底层更新模块
-	var appUpdateMod = pi_modules.appUpdate.exports;
-	appUpdateMod.needUpdate(function (isNeedUpdate) {
-		if (isNeedUpdate > 0) {
-			var option = {
-				updated:appUpdateMod.getAppUpdated(),
-				version:appUpdateMod.getAppRemoteVersion(),
-				alertBtnText:"App 需要更新"
-			};
-			pi_update.alert(option,function(){
-				pi_update.closePop();
-				// 注：必须堵住原有的界面操作，不允许任何更新
-				appUpdateMod.update(function () {
-					// alert("App 更新失败");
-				});
-			});
-		}
-		appLoadEntrance();
-	});
+	
 
 
 	
 	var html,util,lang; // pi/util/html,pi/widget/util,pi/util/lang
 	var fm;  // fileMap
 	var fpFlags = {};  // 进入首页面的资源加载标识位
+	var updateFlags = {}; // 更新标识位
+	appCheckUpdate();
+	h5CheckUpdate();
 
 	// app下载入口函数
 	var appLoadEntrance = function(){
@@ -98,10 +83,8 @@ winit.initNext = function () {
 			util = mods[1],
 			lang = mods[2];
 			fm = tmpfm;
-	
 			const setting = JSON.parse(localStorage.getItem('setting'));
 			lang.setLang(setting && setting.language || 'zh_Hans');  // 初始化语言为简体中文
-	
 	
 			// 判断是否第一次进入,决定是显示片头界面还是开始界面
 			var userinfo = html.getCookie("userinfo");
@@ -119,9 +102,9 @@ winit.initNext = function () {
 				flags.webp = flags.webp || r;
 				loadWalletLoginSource();  // 登录相关
 				loadImages();
-				// loadChatSource();  // 聊天
-				// loadEarnSource();  // 活动
-				// loadWalletFirstPageSource();  //钱包
+				loadChatSource();  // 聊天
+				loadEarnSource();  // 活动
+				loadWalletFirstPageSource();  //钱包
 			});
 		}, function (result) {
 			alert("加载基础模块失败, " + result.error + ":" + result.reason);
@@ -133,31 +116,29 @@ winit.initNext = function () {
 		var sourceList = [
 			"app/store/memstore.js",
 			"app/net/pull.js",
+			"app/net/push.js",
 			"earn/client/app/net/init.js",
-			"chat/client/app/net/init.js"
+			"chat/client/app/net/init_1.js"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			// debugger
+			console.log("load loadWalletLoginSource-----------------");
 			// 聊天登录
-			var chatLogicIp = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicIp;
-			var chatLogicPort = pi_modules.commonjs.exports.relativeGet("app/ipConfig").exports.chatLogicPort;
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.initClient(chatLogicIp,chatLogicPort);
-
-			// 活动登录
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
+			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
-			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
-
-			// erlang服务器连接登录
+			// 钱包store初始化
 			pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore(); 
+			// erlang服务器推送注册
+			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
+			// erlang服务器连接登录
 			pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
 			fpFlags.storeReady = true;
 			enterApp();
 
-			loadChatSource();  // 聊天
+			// loadChatSource();  // 聊天
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -179,30 +160,6 @@ winit.initNext = function () {
 		}, dirProcess.handler);
 	}
 
-	// 计算上次退出的页面相关资源
-	var calcRouterPathList = function () {
-		var routerList = JSON.parse(localStorage.getItem("pi_router_list")) || [];
-		var routerPathList = [];
-		// k = 0一定是首页面
-		for(var k = 1;k < routerList.length;k++){
-			var props = routerList[k].props;
-			if(props &&props.pi_norouter) break;
-			var path = routerList[k].name.split("-").join("/");
-			var regex = /^(earn\/client\/)*app\/view\/(.*?)+\//;
-			var result = path.match(regex);
-			if(result && routerPathList.indexOf(result[0]) < 0){
-				routerPathList.push(result[0]);
-				var tmp = result[0].slice(0,result[0].length - 2).split("/");
-				tmp.pop();
-				var componentsPath = tmp.join("/") + "/components/";
-				if(routerPathList.indexOf(componentsPath) < 0){
-					routerPathList.push(componentsPath);
-				}
-			}
-		}
-		return routerPathList;
-	}
-
 	// 加载钱包首页所需资源
 	var loadWalletFirstPageSource = function () {
 		// var routerPathList = calcRouterPathList();
@@ -215,9 +172,11 @@ winit.initNext = function () {
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
 			"app/view/earn/home/",
+			"app/view/ceshi/"
 		];
 		// sourceList = sourceList.concat(routerPathList);  
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+			console.log("load loadWalletFirstPageSource-----------------");
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -236,6 +195,7 @@ winit.initNext = function () {
 				var tab = util.loadCssRes(fileMap);
 				tab.timeout = 90000;
 				tab.release();
+				// debugger
 				// 加载根组件
 				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
 				root.cfg.full = false; //PC模式
@@ -263,6 +223,7 @@ winit.initNext = function () {
 			"app/api/",
 			"app/view/",
 			"chat/client/app/view/",
+			"chat/client/app/widget/",
 			"earn/client/app/view/",
 			"earn/client/app/components/",
 			"earn/client/app/xls/",
@@ -278,73 +239,9 @@ winit.initNext = function () {
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
 			setStore('flags/level_2_page_loaded', true);
 			console.timeEnd('all resource loaded');
-			h5CheckUpdate();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
-	}
-	// 检查h5更新
-	var h5CheckUpdate = function(){
-		// H5更新模块
-		var h5UpdateMod = pi_modules.update.exports;
-		h5UpdateMod.setIntercept(true);
-		h5UpdateMod.setServerInfo("app/boot/");
-
-		// needUpdateCode 0 1 2 3 
-		h5UpdateMod.checkUpdate(function (needUpdateCode) {
-			// 判断当前app版本是否大于等于依赖的版本号
-			var appLocalVersion = appUpdateMod.getAppLocalVersion();
-			var canUpdate = false;
-			if(appLocalVersion){  
-				var dependAppVersionArr = h5UpdateMod.getDependAppVersion().split(".");
-				var appLocalVersionArr = appUpdateMod.getAppLocalVersion().split(".");
-				for(var i = 0;i < dependAppVersionArr.length;i++){
-					if(i === dependAppVersionArr.length - 1){
-						canUpdate = appLocalVersionArr[i] >= dependAppVersionArr[i];
-						break;
-					}
-					if(appLocalVersionArr[i] < dependAppVersionArr[i]){
-						canUpdate = false;
-						break;
-					}else if(appLocalVersionArr[i] > dependAppVersionArr[i]){
-						canUpdate = true;
-						break;
-					}
-				}
-			}else{  // 还没获取到本地版本号  不更新
-				canUpdate = false;
-			}
-
-			var remoteVersion = h5UpdateMod.getRemoteVersion();
-			var option = {
-				updated:h5UpdateMod.getH5Updated(),
-				version:remoteVersion.slice(0,remoteVersion.length - 1).join(".")
-			};
-
-
-			// 更新h5
-			var updateH5 = function(){
-				// 注：必须堵住原有的界面操作，不允许任何触发操作
-				h5UpdateMod.update(function (e) {
-					//{type: "saveFile", total: 4, count: 1}
-					console.log("update progress: ", e);
-					pi_update.updateProgress(e);
-				});
-			}
-			if (needUpdateCode === 1 && canUpdate) {
-				option.alertBtnText = "更新未完成";
-				pi_update.alert(option,updateH5);
-			}else if(needUpdateCode === 2 && canUpdate){
-				option.alertBtnText = "版本有重大变化";
-				pi_update.alert(option,updateH5);
-			}else if(needUpdateCode === 3 && canUpdate){
-				pi_update.confirm(option,function(ok){
-					if(ok){
-						updateH5();
-					}
-				});
-			}
-		});
 	}
 
 	// 加载聊天代码
@@ -367,14 +264,14 @@ winit.initNext = function () {
 		// 	"chat/client/app/widget/"
 		// ]; 
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
-			// alert("loadChatSource");
+			console.log("load loadChatSource-----------------");
 			var tab = util.loadCssRes(fileMap);
 			// 将预加载的资源缓冲90秒，释放
 			tab.timeout = 90000;
 			tab.release();
 			fpFlags.chatReady = true;
 			enterApp();
-			loadEarnSource();  // 活动
+			// loadEarnSource();  // 活动
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		},dirProcess.handler);
@@ -384,24 +281,120 @@ winit.initNext = function () {
 	var loadEarnSource = function () {
 		var sourceList = [
 			"earn/client/app/view/home/",
-			"earn/client/app/components/holdedHoe/",
-			"earn/client/app/components/mine/",
+			"earn/client/app/components/",
 			"earn/client/app/view/activity/miningHome.tpl",
 			"earn/client/app/view/activity/miningHome.js",
 			"earn/client/app/view/activity/miningHome.wcss",
+			"earn/client/app/view/activity/inviteAward.tpl",
+			"earn/client/app/view/activity/inviteAward.js",
+			"earn/client/app/view/activity/inviteAward.wcss",
 			"earn/xlsx/"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
+			console.log("load loadEarnSource-----------------");
 			// debugger
 			fpFlags.earnReady = true;
 			enterApp();
-			loadWalletFirstPageSource();  //钱包
+			// loadWalletFirstPageSource();  //钱包
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
+	}
+
+
+
+	// 检查h5更新
+	function h5CheckUpdate(){
+		// H5更新模块
+		var h5UpdateMod = pi_modules.update.exports;
+		// app更新模块
+		var appUpdateMod = pi_modules.appUpdate.exports;
+		h5UpdateMod.setIntercept(true);
+		h5UpdateMod.setServerInfo("app/boot/");
+
+		// 更新h5
+		var updateH5 = function(){
+			// 注：必须堵住原有的界面操作，不允许任何触发操作
+			h5UpdateMod.update(function (e) {
+				//{type: "saveFile", total: 4, count: 1}
+				console.log("update progress: ", e);
+				pi_update.updateProgress(e);
+			});
+		}
+
+		// needUpdateCode  0 1 2 3 
+		h5UpdateMod.checkUpdate(function (needUpdateCode) {
+			if(needUpdateCode === 0){
+				updateFlags.checkH5Update = true;
+				updateFlags.checkAppUpdate && updateFlags.checkH5Update && appLoadEntrance();
+			}else{
+				// 判断当前app版本是否大于等于依赖的版本号
+				var appLocalVersion = appUpdateMod.getAppLocalVersion();
+				var canUpdate = false;
+				if(appLocalVersion){  
+					var dependAppVersionArr = h5UpdateMod.getDependAppVersion().split(".");
+					var appLocalVersionArr = appUpdateMod.getAppLocalVersion().split(".");
+					for(var i = 0;i < dependAppVersionArr.length;i++){
+						if(i === dependAppVersionArr.length - 1){
+							canUpdate = appLocalVersionArr[i] >= dependAppVersionArr[i];
+							break;
+						}
+						if(appLocalVersionArr[i] < dependAppVersionArr[i]){
+							canUpdate = false;
+							break;
+						}else if(appLocalVersionArr[i] > dependAppVersionArr[i]){
+							canUpdate = true;
+							break;
+						}
+					}
+				}else{  // 还没获取到本地版本号  不更新
+					canUpdate = false;
+				}
+				var remoteVersion = h5UpdateMod.getRemoteVersion();
+				var option = {
+					updated:h5UpdateMod.getH5Updated(),
+					version:remoteVersion.slice(0,remoteVersion.length - 1).join(".")
+				};
+
+				if(canUpdate){
+					pi_update.modifyContent(option);
+					updateH5();
+				}
+				
+			}
+			
+		});
+	}
+	// app更新检查
+	function appCheckUpdate(){
+		// 底层更新模块
+		var appUpdateMod = pi_modules.appUpdate.exports;
+		appUpdateMod.needUpdate(function (isNeedUpdate) {
+			if (isNeedUpdate > 0) {
+				var option = {
+					updated:appUpdateMod.getAppUpdated(),
+					version:appUpdateMod.getAppRemoteVersion(),
+					alertBtnText:"App 需要更新"
+				};
+				pi_update.modifyContent(option);
+				appUpdateMod.update(function () {
+					alert("更新失败");
+				},function(total,process){
+					console.log("total = " + total + " process = " + process);
+				});
+				var e = { type: "saveFile", total: 100, count: 1}
+				setInterval(function(){
+					pi_update.updateProgress(e);
+					e.count = e.count++;
+				},300);
+			}else{
+				updateFlags.checkAppUpdate = true;
+				updateFlags.checkAppUpdate && updateFlags.checkH5Update && appLoadEntrance();
+			}
+		});
 	}
 };
 

@@ -196,8 +196,8 @@ const initFile = () => {
     return new Promise(resolve => {
         initFileStore().then(() => {
             const txHistoryPromise = initTxHistory();         // 历史记录初始化
-            const activityPromise = initActivity();         // 活动初始化
-            Promise.all([txHistoryPromise,activityPromise]).then(() => {
+            // const activityPromise = initActivity();         // 活动初始化
+            Promise.all([txHistoryPromise]).then(() => {
                 resolve();
             });
             
@@ -385,7 +385,7 @@ const initThird = () => {
     store.third.gasPrice = third.gasPrice;
     store.third.btcMinerFee = third.btcMinerFee;
     store.third.rate = third.rate;
-    store.third.goldPrice = third.goldPrice;
+    store.third.silver = third.silver;
     store.third.gasLimitMap = new Map<string, number>(third.gasLimitMap);
     store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third.shapeShiftTxsMap);
     store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
@@ -396,7 +396,7 @@ const initThird = () => {
  */
 const registerFileStore = () => {
     registerAccountChange(); // 监听账户变化
-    registerActivityChange();  // 监听活动数据变化
+    // registerActivityChange();  // 监听活动数据变化
     registerThirdChange(); // 监听3方数据变化
     registerSettingChange(); // 监听setting数据变化
 };
@@ -549,7 +549,7 @@ const thirdChange = () => {
         btcMinerFee: getStore('third/btcMinerFee'),
         gasLimitMap: getStore('third/gasLimitMap'),
         rate: getStore('third/rate'),
-        goldPrice: getStore('third/goldPrice'),
+        silver: getStore('third/silver'),
         currency2USDTMap: getStore('third/currency2USDTMap')
     };
     setLocalStorage('third', localThird);
@@ -565,6 +565,7 @@ const settingChange = () => {
         currencyUnit: getStore('setting/currencyUnit'),
         lockScreen: getStore('setting/lockScreen'),
         deviceId: getStore('setting/deviceId'),
+        deviceInfo:getStore('setting/deviceInfo'),
         topHeight: getStore('setting/topHeight'),
         bottomHeight:getStore('setting/bottomHeight')
     };
@@ -635,6 +636,7 @@ const store: Store = {
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
         currencyUnit: '',         // 显示哪个国家的货币
         deviceId: '',             // 设备唯一ID
+        deviceInfo:null,           // 设备信息
         topHeight,              // 设备头部应空出来的高度
         bottomHeight:0            // 设备底部应空出来的高度
     },
@@ -649,7 +651,7 @@ const store: Store = {
         shapeShiftTxsMap: new Map<string, ShapeShiftTxs>(),   // shapeshift 交易记录Map
 
         rate: 0,                                            // 货币的美元汇率
-        goldPrice: {                                         // 黄金价格
+        silver: {                                         // 黄金价格
             price: 0,
             change: 0
         },
@@ -738,7 +740,7 @@ export interface LocalThird {
     gasLimitMap: Map<string, number>; // 各种货币转账需要的gasLimit
 
     rate: number; // 货币的美元汇率
-    goldPrice: Gold; // 黄金价格
+    silver: Gold; // 白银价格
     currency2USDTMap: Map<string, Currency2USDT>; // k线  --> 计算涨跌幅
 }
 

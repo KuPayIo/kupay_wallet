@@ -570,64 +570,88 @@ pi_modules.ajax.exports = (function () {
 		// NOTE: 一定不能设置withCredentials，否则跨域变得很严格
 		xhr.withCredentials = false;
 		xhr.onabort = function () {
+			if (!xhr) return;
 			timeout && clearTimeout(xhr.timerRef);
+
 			errorCallback({
 				url: url,
 				error: module.ERR_ABORT,
 				reason: "abort"
 			});
+			
+			xhr = undefined;
 		};
+
 		if (timeout > 0) {
+			// 有些浏览器版本可能不支持xhr.timeout属性
 			// 自己处理超时，超时指超过规定时间没有收到数据
 			xhr.activeTime = Date.now();
 			var timer = function () {
 				var t = xhr.activeTime + timeout - Date.now();
-				if (t <= 0)
+				if (t <= 0) {
+					if (!xhr) return;
+					xhr = undefined;
 					return errorCallback({
 						url: url,
 						error: module.ERR_TIMEOUT,
 						reason: "timeout"
 					});
+				}
 				xhr.timerRef = setTimeout(timer, t);
 			};
 			xhr.timerRef = setTimeout(timer, timeout);
 		}
+
 		xhr.onerror = function (ev) {
+			if (!xhr) return;
 			timeout && clearTimeout(xhr.timerRef);
+
 			errorCallback({
 				url: url,
 				nativeError: ev,
 				error: module.ERR_NORMAL,
 				reason: "error status: " + xhr.status + " " + xhr.statusText + ", " + url
 			});
+			
+			xhr = undefined;
 		};
+
 		xhr.upload.onprogress = function (ev) {
 			xhr.activeTime = Date.now();
 			ev.progressType = 'upload';
 			processCallback && processCallback(ev);
-		}
+		};
+
 		xhr.onprogress = function (ev) {
 			xhr.activeTime = Date.now();
 			ev.progressType = 'download';
 			processCallback && processCallback(ev);
-		}
+		};
+
 		xhr.onload = function (ev) {
+			if (!xhr) return;
 			timeout && clearTimeout(xhr.timerRef);
+
 			if (xhr.status === 300 || xhr.status === 301 || xhr.status === 302 || xhr.status === 303) {
-				return errorCallback({
+				errorCallback({
 					url: url,
 					error: module.ERR_LOCATION,
 					reason: xhr.getResponseHeader("Location")
 				});
+				xhr = undefined;
+				return;
 			}
+
 			// iOS的file协议，成功的状态码是0
 			if (xhr.status !== 0 && xhr.status !== 200 && xhr.status !== 304) {
-				return errorCallback({
+				errorCallback({
 					url: url,
 					nativeError: ev,
 					error: module.ERR_NORMAL,
 					reason: "error status: " + xhr.status + " " + xhr.statusText + ", " + url
 				});
+				xhr = undefined;
+				return;
 			}
 			if (respType === undefined || respType === module.RESP_TYPE_TEXT) {
 				callback(xhr.responseText);
@@ -636,12 +660,14 @@ pi_modules.ajax.exports = (function () {
 				try {
 					json = JSON.parse(xhr.responseText);
 				} catch (e) {
-					return errorCallback({
+					errorCallback({
 						url: url,
 						nativeError: e,
 						error: module.ERR_JSON,
 						reason: e.name + ": " + e.message
 					});
+					xhr = undefined;
+					return;
 				}
 				callback(json);
 			} else if (respType === module.RESP_TYPE_BIN && !xhr.response) {
@@ -649,6 +675,7 @@ pi_modules.ajax.exports = (function () {
 			} else {
 				callback(xhr.response);
 			}
+			xhr = undefined;
 		};
 		xhr.open(type, url, true);
 		//传输的文件HTTP头信息， 必须在open之后设置
@@ -2062,9 +2089,9 @@ pi_modules.update.exports = (function () {
 	function checkNeedUpdate(oldVersion, okCB, failCB) {
 
 		remoteVersion = localVersion = oldVersion;
-
+		var timeout = 1000;
 		// 强制取服务器的index.js
-		ajax.get(httpDomain + rootPath + bootDir + "index.js?" + Math.random(), {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
+		ajax.get(httpDomain + rootPath + bootDir + "index.js?" + Math.random(), {}, undefined, undefined, timeout, function (indexJSStr) {
 
 			newIndexJSStr = indexJSStr;
 
@@ -2091,6 +2118,8 @@ pi_modules.update.exports = (function () {
 			okCB(needUpdateCode);
 		}, function () {
 			// 取不到index.js，用拦截即可
+			// alert("indexJSStr timeout");
+			okCB(0);
 		});
 	}
 
@@ -2127,12 +2156,11 @@ pi_modules.update.exports = (function () {
 				version:remoteVersion.slice(0,remoteVersion.length - 1).join("."),
 				alertBtnText : "更新完毕"
 			};
-			pi_update.alert(option,function(){
+			setTimeout(()=>{
 				pi_update.closePop();
 				// 重启
 				JSIntercept.restartApp();
-				
-			});
+			},200);
 		});
 
 	}
@@ -2320,8 +2348,8 @@ pi_modules.appUpdate.exports = (function () {
 
 		JSIntercept.getAppVersion(function (isOK, version) {
 			if (isOK) localVersion = version;
-			
-			ajax.get(url, undefined, undefined, ajax.RESP_TYPE_TEXT, 3000, function (r) {
+			var timeout = 1000;
+			ajax.get(url, undefined, undefined, ajax.RESP_TYPE_TEXT, timeout, function (r) {
 				
 				var content = JSON.parse(r);
 				remoteVersion = content.version;
@@ -2339,7 +2367,7 @@ pi_modules.appUpdate.exports = (function () {
 	/**
 	 * cb(isSuccess)
 	 */
-	module.update = function(cb) {
+	module.update = function(cb,process) {
 		if (!updateURL) {
 			setTimeout(function () {
 				cb(false);
@@ -2347,7 +2375,7 @@ pi_modules.appUpdate.exports = (function () {
 			return;
 		}
 
-		JSIntercept.updateApp(updateURL, cb);
+		JSIntercept.updateApp(updateURL,cb,process);
 	}
 	return module;
 })();
@@ -2421,7 +2449,7 @@ var browserAdaptive = function() {
     }
     var rootX = (clientWidth - rootWidth) / 2;
     var rootY = (clientHeight - rootHeight) / 2;
-	var cssText = 'display:none;z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+	var cssText = 'z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
 	// var rootUpdate = document.querySelector('#update-root');
 	// rootUpdate.style.cssText = cssText;
 
@@ -2479,6 +2507,7 @@ pi_update.modifyContent = function(option){
 	pi_update.contentModified = true;
 }
 
+
 // 确定弹框
 pi_update.confirm = function(option,callback){
 	pi_update.modifyContent(option);
@@ -2515,16 +2544,8 @@ pi_update.confirm = function(option,callback){
 pi_update.updateProgress = function(e){
 	var updating  = pi_update.updating;
 	if(!updating){
-		var $btns = document.querySelector(".pi-update-btns");
-		var $progressContainer = document.querySelector(".pi-update-progress-container");
-		var $completeBtn = document.querySelector(".pi-update-complete-btn");
-		$btns.style.display = "none";
-		$progressContainer.style.display = "block";
-		$completeBtn.style.display = "none";
 		pi_update.updating = true;
 	}
-	
-	
 	var $progress = document.querySelector(".pi-update-progress");
 	var $progressText = document.querySelector(".pi-update-progress-text");
 	var percent = e.count / e.total;
