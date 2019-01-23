@@ -1,0 +1,91 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+.topBack{
+    height: 128px;
+    background:linear-gradient(to right,#318DE6,#38CFE7);
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+}
+.userHead{
+    width: 40px;
+    height: 40px;
+    margin: 40px 5px 0;
+    border: 24px solid transparent;
+}
+.backImg{
+    position: absolute;
+    top: 0px;
+    right: 0;
+    width: 276px;
+    height: 341px;
+    border-radius: 18px;
+}
+.refreshBtn{
+    width: 40px;
+    height: 40px;
+    margin: 40px 5px 0px;
+    border: 24px solid transparent;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+.games1{
+    height: 800px;
+    background-color: #fff;
+    border-radius: 12px;
+    margin-bottom: 50px;
+}
+.title{
+    height: 50px;
+    line-height: 50px;
+    color: rgba(34, 34, 34, 1);
+    font-size: 36px;
+    text-align: left;
+    margin-left: 50px;
+    margin-top: 30px;
+    font-weight: 600;
+}
+.body{
+    padding: 30px 20px 130px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+}
+.hot-games{
+    margin-top: 60px;
+}
+.hot-game-title{
+    font-size: 36px;
+    color: #222222;
+    line-height: 50px;
+    font-family: "PingFangSC-Medium";
+    margin-bottom: 35px;
+}
+.item{
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 12px;
+    margin-bottom: 50px;
+}
+.item-box{
+    height: 180px;
+    padding: 0 25px;
+}
+.game-desc{
+    font-size: 28px;
+    color: #222222;
+    margin-top: 30px;
+    line-height: 40px;
+}
+.game-title{
+    font-size: 48px;
+    color: #222222;
+    line-height: 67px;
+}

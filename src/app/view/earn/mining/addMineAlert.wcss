@@ -10,7 +10,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    background:url('../../app/res/image/addMineAlert.png');
+    background:url(../../../res/image/addMineAlert.png);
     background-position: center bottom;
     background-size: 100%;
     background-repeat: no-repeat;

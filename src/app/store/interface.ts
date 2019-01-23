@@ -122,7 +122,7 @@ export interface Third {
     shapeShiftTxsMap: Map<string, ShapeShiftTxs>; // shapeshift 交易记录Map
 
     rate: number;                                 // 货币的美元汇率
-    goldPrice:Gold;                             // 黄金价格
+    silver:Gold;                                // 白银价格
     currency2USDTMap: Map<string, Currency2USDT>;  // k线  --> 计算涨跌幅
 }
 

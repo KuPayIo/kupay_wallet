@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getOrderDetail, getPayState } from '../../../utils/pay';
+import { getOrderDetail, getPayState } from '../../../utils/recharge';
 import { formatBalance, popNewMessage, timestampFormat } from '../../../utils/tools';
 
 // ============================导出
