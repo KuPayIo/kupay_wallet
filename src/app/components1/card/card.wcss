@@ -24,7 +24,7 @@
 
 .desc{
     font-size: 28px;
-    color: #222222;
+    color: #888888;
     line-height: 40px;
 }
 
