@@ -380,6 +380,9 @@ winit.initNext = function () {
 				};
 				pi_update.modifyContent(option);
 				appUpdateMod.update(function () {
+					alert("更新失败");
+				},function(total,process){
+					console.log("total = " + total + " process = " + process);
 				});
 				var e = { type: "saveFile", total: 100, count: 1}
 				setInterval(function(){

@@ -2367,7 +2367,7 @@ pi_modules.appUpdate.exports = (function () {
 	/**
 	 * cb(isSuccess)
 	 */
-	module.update = function(cb) {
+	module.update = function(cb,process) {
 		if (!updateURL) {
 			setTimeout(function () {
 				cb(false);
@@ -2375,7 +2375,7 @@ pi_modules.appUpdate.exports = (function () {
 			return;
 		}
 
-		JSIntercept.updateApp(updateURL, cb);
+		JSIntercept.updateApp(updateURL,cb,process);
 	}
 	return module;
 })();
