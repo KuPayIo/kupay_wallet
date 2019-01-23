@@ -1276,14 +1276,14 @@ export const fetchBtcFees = async () => {
 };
 
 /**
- * 获取GT价格
+ * 获取ST价格
  */
-export const getGoldPrice = async (ispay:number = 0) => {
-    const msg = { type:'get_goldprice',param:{ ispay } };
+export const getSilverPrice = async (ispay:number = 0) => {
+    const msg = { type:'get_silverprice',param:{ ispay } };
     try {
         const resData:any = await requestAsync(msg);
         if (resData.result === 1) {
-            setStore('third/goldPrice',{ price:resData.price,change:resData.change });
+            setStore('third/silver',{ price:resData.price,change:resData.change });
         }
     } catch (err) {
         // showError(err && (err.result || err.type));

@@ -4,11 +4,12 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail, getGoldPrice, getServerCloudBalance } from '../../../net/pull';
+import { getAccountDetail, getSilverPrice, getServerCloudBalance } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
-import { confirmPay } from '../../../utils/pay';
+import { confirmPay } from '../../../utils/recharge';
 import { formatBalance, popNewMessage } from '../../../utils/tools';
+import { ST2st } from '../../../utils/unitTools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -18,17 +19,17 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
     payType:string; // 支付方式
-    goldPrice:number; // 黄金价格
+    silverPrice:number; // 黄金价格
     total:number;  // 总金额(元)
-    num:number;  // 充值GT数
-    balance:number; // GT余额
+    num:number;  // 充值ST数
+    balance:number; // ST余额
 }
 
 export class RechargeGT extends Widget {
     public ok:() => void; 
     public props:Props = {
         payType : 'wxpay',
-        goldPrice:200,
+        silverPrice:200,
         total:0,
         num:0.00,
         balance:formatBalance(getCloudBalances().get(CloudCurrencyType.ST))
@@ -39,15 +40,15 @@ export class RechargeGT extends Widget {
 
     public create() {
         super.create();
-        getGoldPrice(1);
+        getSilverPrice(1);
         setTimeout(() => {
-            getGoldPrice(1);
+            getSilverPrice(1);
         }, 500000);
     }
 
     public initData() {
-        if (getStore('third/goldPrice/price') !== 0) {
-            this.props.num = Math.floor((this.props.total / getStore('third/goldPrice/price') * 100) * 1000000) / 1000000;
+        if (getStore('third/silver/price') !== 0) {
+            this.props.num = Math.floor((this.props.total / getStore('third/silver/price') * 100) * 100) / 100;
         }
         
         this.props.balance = formatBalance(getCloudBalances().get(CloudCurrencyType.ST));
@@ -77,7 +78,7 @@ export class RechargeGT extends Widget {
         } else {
             this.props.total = parseFloat(e.value);
         }
-        this.props.num = Math.floor((this.props.total / getStore('third/goldPrice/price') * 100) * 1000000) / 1000000;
+        this.props.num = Math.floor((this.props.total / getStore('third/silver/price') * 100) * 100) / 100;
         this.paint();
         
     }
@@ -86,16 +87,17 @@ export class RechargeGT extends Widget {
      */
     public rechargeClick() {
         if (this.props.total === 0) {
-            popNewMessage({ zh_Hans:'请输入充值GT数量',zh_Hant:'请输入充值GT数量',en:'' });
+            popNewMessage({ zh_Hans:'请输入充值ST数量',zh_Hant:'请输入充值ST数量',en:'' });
             
             return;
         }
         const orderDetail = {
             total: Math.floor(this.props.total * 100), // 总价
             body: 'ST', // 信息
-            num: this.props.num * 1000000, // 充值GT数量
+            num: ST2st(this.props.num), // 充值ST数量
             payType: this.props.payType, // 支付方式
-            type:CloudCurrencyType.ST // 充值类型
+            type:CloudCurrencyType.ST, // 充值类型
+            note: 0
         };
         confirmPay(orderDetail,(res) => {
             this.props.num = 0.00;
@@ -113,7 +115,7 @@ export class RechargeGT extends Widget {
 }
 
 // gasPrice变化
-register('third/goldPrice',() => {
+register('third/silver',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

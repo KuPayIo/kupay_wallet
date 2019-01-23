@@ -116,7 +116,7 @@ register('third/USD2CNYRate', () => {
 });
 
 // 金价变化
-register('third/goldPrice', () => {
+register('third/silver', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();

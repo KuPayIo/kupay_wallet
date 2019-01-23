@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
         <div w-class="top-head">
-            {{: topBarTitle = {"zh_Hans":"GT充值","zh_Hant":"GT充值","en":""} }}
+            {{: topBarTitle = {"zh_Hans":"ST充值","zh_Hant":"ST充值","en":""} }}
             <widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6);position: fixed;"}</widget>
     
         </div>
@@ -11,7 +11,7 @@
             <div w-class="body-top">
                 <div w-class="inner-tip">
                     <span style="position:relative">
-                        <img src="app/res/image/currency/ST.png" width="32px" w-class="input-icon"/>
+                        <img src="app/res/image/currency/GT.png" width="32px" w-class="input-icon"/>
                         <widget w-tag="pi-ui-lang" style="padding-left:40px">{"zh_Hans":"充值金额","zh_Hant":"充值金額","en":""}</widget>
                     </span>
                     <span w-class="balance">
@@ -22,7 +22,7 @@
                 <div w-class="input-father" ev-input-change="amountChange">
                     {{: inputPlace = {"zh_Hans":"￥输入金额","zh_Hant":"￥輸入金額","en":""} }}
                     <div w-class="balance-value">≈{{it.num}}&nbsp;ST</div>
-                    <app-components1-input-input>{itype:"moneyNum",maxLength:7,placeHolder:{{inputPlace}},input:{{it.total}},style:"padding:0;background:transparent;"}</app-components1-input-input>
+                    <app-components1-input-input>{itype:"moneyNum1",maxLength:7,placeHolder:{{inputPlace}},input:{{it.total}},style:"padding:0;background:transparent;"}</app-components1-input-input>
                 </div>
             </div>
 

@@ -385,7 +385,7 @@ const initThird = () => {
     store.third.gasPrice = third.gasPrice;
     store.third.btcMinerFee = third.btcMinerFee;
     store.third.rate = third.rate;
-    store.third.goldPrice = third.goldPrice;
+    store.third.silver = third.silver;
     store.third.gasLimitMap = new Map<string, number>(third.gasLimitMap);
     store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third.shapeShiftTxsMap);
     store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
@@ -549,7 +549,7 @@ const thirdChange = () => {
         btcMinerFee: getStore('third/btcMinerFee'),
         gasLimitMap: getStore('third/gasLimitMap'),
         rate: getStore('third/rate'),
-        goldPrice: getStore('third/goldPrice'),
+        silver: getStore('third/silver'),
         currency2USDTMap: getStore('third/currency2USDTMap')
     };
     setLocalStorage('third', localThird);
@@ -651,7 +651,7 @@ const store: Store = {
         shapeShiftTxsMap: new Map<string, ShapeShiftTxs>(),   // shapeshift 交易记录Map
 
         rate: 0,                                            // 货币的美元汇率
-        goldPrice: {                                         // 黄金价格
+        silver: {                                         // 黄金价格
             price: 0,
             change: 0
         },
@@ -740,7 +740,7 @@ export interface LocalThird {
     gasLimitMap: Map<string, number>; // 各种货币转账需要的gasLimit
 
     rate: number; // 货币的美元汇率
-    goldPrice: Gold; // 黄金价格
+    silver: Gold; // 白银价格
     currency2USDTMap: Map<string, Currency2USDT>; // k线  --> 计算涨跌幅
 }
 

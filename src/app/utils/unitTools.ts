@@ -20,7 +20,7 @@ export const smallUnit2LargeUnit = (currencyName: string, amount: string | numbe
         // tslint:disable-next-line:radix
         ret = sat2Btc(parseInt(amount.toString()));
     } else if (currencyName === 'ST') {
-        ret = (parseInt(amount.toString(),16) / 1000000);
+        ret = st2ST(parseInt(amount.toString()));
     } else { // erc20
         // tslint:disable-next-line:radix
         ret = ethTokenDivideDecimals(parseInt(amount.toString()),currencyName);
@@ -100,6 +100,24 @@ export const kt2kpt = (num: number | string) => {
     num = Number(num);
 
     return Math.floor(num * Math.pow(10, 9));
+};
+
+/**
+ * st转ST
+ */
+export const st2ST = (num:number | string) => {
+    num = Number(num);
+
+    return num / Math.pow(10, 6);
+};
+
+/**
+ * ST转st
+ */
+export const ST2st = (num:number | string) => {
+    num = Number(num);
+
+    return num * Math.pow(10, 6);
 };
 
 /**
