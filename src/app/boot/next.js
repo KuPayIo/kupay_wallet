@@ -194,7 +194,6 @@ winit.initNext = function () {
 				var tab = util.loadCssRes(fileMap);
 				tab.timeout = 90000;
 				tab.release();
-				console.log("load enterApp-----------------");
 				// debugger
 				// 加载根组件
 				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
@@ -315,55 +314,57 @@ winit.initNext = function () {
 		h5UpdateMod.setIntercept(true);
 		h5UpdateMod.setServerInfo("app/boot/");
 
-		// needUpdateCode 0 1 2 3 
+		// 更新h5
+		var updateH5 = function(){
+			// 注：必须堵住原有的界面操作，不允许任何触发操作
+			h5UpdateMod.update(function (e) {
+				//{type: "saveFile", total: 4, count: 1}
+				console.log("update progress: ", e);
+				pi_update.updateProgress(e);
+			});
+		}
+
+		// needUpdateCode  0 1 2 3 
 		h5UpdateMod.checkUpdate(function (needUpdateCode) {
-			// 判断当前app版本是否大于等于依赖的版本号
-			var appLocalVersion = appUpdateMod.getAppLocalVersion();
-			var canUpdate = false;
-			if(appLocalVersion){  
-				var dependAppVersionArr = h5UpdateMod.getDependAppVersion().split(".");
-				var appLocalVersionArr = appUpdateMod.getAppLocalVersion().split(".");
-				for(var i = 0;i < dependAppVersionArr.length;i++){
-					if(i === dependAppVersionArr.length - 1){
-						canUpdate = appLocalVersionArr[i] >= dependAppVersionArr[i];
-						break;
-					}
-					if(appLocalVersionArr[i] < dependAppVersionArr[i]){
-						canUpdate = false;
-						break;
-					}else if(appLocalVersionArr[i] > dependAppVersionArr[i]){
-						canUpdate = true;
-						break;
-					}
-				}
-			}else{  // 还没获取到本地版本号  不更新
-				canUpdate = false;
-			}
-
-			var remoteVersion = h5UpdateMod.getRemoteVersion();
-			var option = {
-				updated:h5UpdateMod.getH5Updated(),
-				version:remoteVersion.slice(0,remoteVersion.length - 1).join(".")
-			};
-
-
-			// 更新h5
-			var updateH5 = function(){
-				// 注：必须堵住原有的界面操作，不允许任何触发操作
-				h5UpdateMod.update(function (e) {
-					//{type: "saveFile", total: 4, count: 1}
-					console.log("update progress: ", e);
-					pi_update.updateProgress(e);
-				});
-			}
-
-			if(needUpdateCode === 0 || !canUpdate){
+			if(needUpdateCode === 0){
 				updateFlags.checkH5Update = true;
 				updateFlags.checkAppUpdate && updateFlags.checkH5Update && appLoadEntrance();
 			}else{
-				pi_update.modifyContent(option);
-				updateH5();
+				// 判断当前app版本是否大于等于依赖的版本号
+				var appLocalVersion = appUpdateMod.getAppLocalVersion();
+				var canUpdate = false;
+				if(appLocalVersion){  
+					var dependAppVersionArr = h5UpdateMod.getDependAppVersion().split(".");
+					var appLocalVersionArr = appUpdateMod.getAppLocalVersion().split(".");
+					for(var i = 0;i < dependAppVersionArr.length;i++){
+						if(i === dependAppVersionArr.length - 1){
+							canUpdate = appLocalVersionArr[i] >= dependAppVersionArr[i];
+							break;
+						}
+						if(appLocalVersionArr[i] < dependAppVersionArr[i]){
+							canUpdate = false;
+							break;
+						}else if(appLocalVersionArr[i] > dependAppVersionArr[i]){
+							canUpdate = true;
+							break;
+						}
+					}
+				}else{  // 还没获取到本地版本号  不更新
+					canUpdate = false;
+				}
+				var remoteVersion = h5UpdateMod.getRemoteVersion();
+				var option = {
+					updated:h5UpdateMod.getH5Updated(),
+					version:remoteVersion.slice(0,remoteVersion.length - 1).join(".")
+				};
+
+				if(canUpdate){
+					pi_update.modifyContent(option);
+					updateH5();
+				}
+				
 			}
+			
 		});
 	}
 	// app更新检查
@@ -379,7 +380,6 @@ winit.initNext = function () {
 				};
 				pi_update.modifyContent(option);
 				appUpdateMod.update(function () {
-					// alert("App 更新失败");
 				});
 				var e = { type: "saveFile", total: 100, count: 1}
 				setInterval(function(){

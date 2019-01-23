@@ -1,6 +1,7 @@
 /**
  * 一些底层操作
  */
+import { ADUnion } from '../../pi/browser/adUnoin';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
 import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
@@ -126,4 +127,13 @@ export const getScreenModify = () => {
         setStore('setting/topHeight',calHigh);
         setStore('setting/bottomHeight',calLow);
     });
+};
+
+/**
+ * 观看广告
+ * adtype:1.广点通  2.字节跳动
+ */
+export const watchAd = (adType: number,cb:(str1:string,str2:string) => void) => {
+    const adUnion = new ADUnion();
+    adUnion.showRewardVideoAD(adType,cb);
 };
