@@ -75,7 +75,8 @@ export class RechargeKT extends Widget {
             body: 'KT', // 信息
             num: ST2st(this.props.giveST), // 充值ST数量
             payType: this.props.payType, // 支付方式
-            type: CloudCurrencyType.ST // 充值类型
+            type: CloudCurrencyType.ST, // 充值类型
+            note: 1
         };
         confirmPay(orderDetail, (res) => {
             this.amountChange({value:0})

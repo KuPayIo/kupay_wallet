@@ -96,7 +96,8 @@ export class RechargeGT extends Widget {
             body: 'ST', // 信息
             num: ST2st(this.props.num), // 充值ST数量
             payType: this.props.payType, // 支付方式
-            type:CloudCurrencyType.ST // 充值类型
+            type:CloudCurrencyType.ST, // 充值类型
+            note: 0
         };
         confirmPay(orderDetail,(res) => {
             this.props.num = 0.00;
