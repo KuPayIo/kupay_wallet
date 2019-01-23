@@ -135,7 +135,6 @@ register('flags/level_2_page_loaded', (loaded: boolean) => {
     }
     if (!getStore('user/id')) {
         popNew('app-components1-modalBox-newUserWelfare');
-        localStorage.setItem('firstInApp','true');
     }
     if (localStorage.getItem('kickOffline')) {
         localStorage.removeItem('kickOffline');

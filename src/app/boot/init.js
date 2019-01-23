@@ -2513,7 +2513,6 @@ pi_update.confirm = function(option,callback){
 //e的数据结构{type: "saveFile", total: 4, count: 1}
 // 进度条更新
 pi_update.updateProgress = function(e){
-	debugger
 	var updating  = pi_update.updating;
 	if(!updating){
 		pi_update.updating = true;
