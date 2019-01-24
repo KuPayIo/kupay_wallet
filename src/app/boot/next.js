@@ -224,6 +224,7 @@ winit.initNext = function () {
 			"app/view/",
 			"chat/client/app/view/",
 			"chat/client/app/widget/",
+			"chat/client/app/res/",
 			"earn/client/app/view/",
 			"earn/client/app/components/",
 			"earn/client/app/xls/",
@@ -380,8 +381,9 @@ winit.initNext = function () {
 					alertBtnText:"App 需要更新"
 				};
 				pi_update.modifyContent(option);
-				appUpdateMod.update(function () {
-					alert("更新失败");
+				appUpdateMod.update(function (isSuccess) {
+					// alert("更新失败");
+					console.log("appUpdate " + isSuccess);
 				},function(total,process){
 					console.log("total = " + total + " process = " + process);
 				});

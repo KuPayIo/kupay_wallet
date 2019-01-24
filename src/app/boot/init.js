@@ -2375,7 +2375,7 @@ pi_modules.appUpdate.exports = (function () {
 			return;
 		}
 
-		JSIntercept.updateApp(updateURL,cb,process);
+		JSIntercept.updateApp(process,updateURL,cb);
 	}
 	return module;
 })();
