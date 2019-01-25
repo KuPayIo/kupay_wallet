@@ -664,7 +664,6 @@ window.pi_jsApi.openPayment = function (order, callBack) {
             order.no_password = msg.no_password;
             console.log('判断支付流程!',order,msg);
             if (msg.no_password === 1) { // 已设置免密支付
-                createLoadingElementTag('免密支付中...');
                 requestAnimationFrame(function(){
                     pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
                         console.log('pay call success', resCode1);

@@ -2,23 +2,21 @@
  * 充值KT
  */
 
-import { Widget } from "../../../../pi/widget/widget";
-import { Forelet } from "../../../../pi/widget/forelet";
-import { register, getStore } from "../../../store/memstore";
-import { popNewMessage } from "../../../utils/tools";
-import { CloudCurrencyType } from "../../../store/interface";
-import { getServerCloudBalance, getAccountDetail, getSilverPrice } from "../../../net/pull";
-import { popNew } from "../../../../pi/ui/root";
-import { confirmPay } from "../../../utils/recharge";
-import { ST2st } from "../../../utils/unitTools";
-
+import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { getAccountDetail, getServerCloudBalance, getSilverPrice } from '../../../net/pull';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getStore, register } from '../../../store/memstore';
+import { confirmPay } from '../../../utils/recharge';
+import { popNewMessage } from '../../../utils/tools';
+import { ST2st } from '../../../utils/unitTools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-
 
 interface Props {
     payType: string; // 支付方式
@@ -27,6 +25,7 @@ interface Props {
     STprice: number; // ST价格
     total: number;  // 总金额(元)
     giveST: number; // 赠送ST
+    inputValue: number; // 输入的金额
 }
 
 export class RechargeKT extends Widget {
@@ -39,20 +38,27 @@ export class RechargeKT extends Widget {
             { KTnum: 100, sellPrize: 100 },
             { KTnum: 200, sellPrize: 200 },
             { KTnum: 500, sellPrize: 500 },
-            { KTnum: 1000, sellPrize: 1000 },
+            { KTnum: 1000, sellPrize: 1000 }
         ],
         giveST: 0,
         selectPayItem: {},
         STprice: 1,
         total: 0,
+        inputValue: 0
     };
     constructor() {
         super();
     }
 
+    public setProps(prop: any) {
+        super.setProps(this.props);
+    }
+
     public create() {
         super.create();
-        getSilverPrice(1);
+        getSilverPrice(1).then(()=>{
+            this.changePayItem(0);
+        });
         setTimeout(() => {
             getSilverPrice(1);
         }, 500000);
@@ -79,7 +85,7 @@ export class RechargeKT extends Widget {
             note: 1
         };
         confirmPay(orderDetail, (res) => {
-            this.amountChange({value:0})
+            this.inputChange({ value: 0 });
             this.props.payType = 'alipay';
 
             popNew('app-view-wallet-cloudWalletGT-transactionDetails', { oid: res.oid, firstQuery: true });
@@ -103,30 +109,38 @@ export class RechargeKT extends Widget {
      * 修改支付KT数量的选择
      */
     public changePayItem(index?: number) {
-        if (index !== -1) {
-            this.props.selectPayItem = this.props.payList[index];
-            this.props.total = this.props.selectPayItem.sellPrize;
-            this.props.giveST = Math.floor(this.props.total / (this.props.STprice * 1.15)*100) / 100;
-        } else {
-            this.props.selectPayItem = {};
-            this.props.total = 0;
-            this.props.giveST = 0;
-        }
+        this.props.inputValue = null; // 清空自定义输入支付数量
+        this.props.selectPayItem = this.props.payList[index];
+        this.setOrderNum(this.props.selectPayItem.sellPrize);
         this.paint();
     }
 
     /**
      * 修改充值金额
      */
-    public amountChange(e: any) {
-        this.changePayItem(-1);
+    public inputChange(e: any) {
+        this.props.selectPayItem = {} // 清空固定支付数量选择
         if (e.value === '') {
-            this.props.total = 0;
+            this.props.inputValue = 0;
         } else {
-            this.props.total = e.value;
+            this.props.inputValue = e.value;
         }
-        this.props.giveST = Math.floor(this.props.total / (this.props.STprice * 1.15)*100) / 100;
+        this.setOrderNum(this.props.inputValue);
         this.paint();
+    }
+
+    /**
+     * 设置订单相关数量
+     * @param total 总金额
+     */
+    public setOrderNum(total: number) {
+        if (total === 0) {
+            this.props.total = 0;
+            this.props.giveST = 0;
+        } else {
+            this.props.total = total;
+            this.props.giveST = Math.floor(this.props.total / (this.props.STprice * 1.15) * 100) / 100;
+        }
     }
     /**
      * 返回上一页
@@ -136,10 +150,8 @@ export class RechargeKT extends Widget {
     }
 }
 
-
-
 // gasPrice变化
-register('third/silver',() => {
+register('third/silver', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

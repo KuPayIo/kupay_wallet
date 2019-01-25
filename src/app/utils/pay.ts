@@ -19,9 +19,7 @@ export const walletPay = (order: any, callback: Function) => {
             console.log(msg);
             
             if (msg.no_password === 1) { // 已设置免密
-                const loading = popNew('app-components1-loading-loading', { text: '免密支付中...' });
                 pay(order,(res1, msg1) => {
-                    loading.callback(loading.widget);
                     callback(res1,msg1);
                 });
             } else {  // 未设置免密
