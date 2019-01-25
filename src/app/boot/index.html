@@ -421,7 +421,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = true;
+			winit.debug = false;
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
@@ -528,10 +528,10 @@
 					jsInterceptUpdateMap[jsInterceptUpdate] = progress;
 
 					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
-						window.JSIntercept.updateApp(url, jsInterceptID,jsInterceptUpdate);
+						window.JSIntercept.updateApp(jsInterceptUpdate,url, jsInterceptID);
 					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
 						// TODO: 弹出safari浏览器，跳转到url，并退出程序
-						window.webkit.messageHandlers.JSIntercept.postMessage(["updateApp",url,jsInterceptID,jsInterceptUpdate]);
+						window.webkit.messageHandlers.JSIntercept.postMessage(["updateApp",jsInterceptUpdate,url,jsInterceptID]);
 					} else {
 						setTimeout(cb, 0);
 					}
