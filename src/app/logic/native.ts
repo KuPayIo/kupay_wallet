@@ -75,12 +75,10 @@ export const getDeviceId = (okCB?,errCB?) => {
         success: (result) => {
             console.log(`获取设备的唯一id成功${JSON.stringify(result)}`);
             okCB && okCB(result);
-            systemInfo.close();
         }
         , fail: (result) => {
             console.log(`获取设备的唯一id失败${JSON.stringify(result)}`);
             errCB && errCB(result);
-            systemInfo.close();
         }
     });
 };
@@ -95,12 +93,10 @@ export const getDeviceInfo = (okCB?,errCB?) => {
         success: (result) => {
             console.log(`获取设备的信息成功${JSON.stringify(result)}`);
             okCB && okCB(result);
-            systemInfo.close();
         }
         , fail: (result) => {
             console.log(`获取设备的信息失败${JSON.stringify(result)}`);
             errCB && errCB(result);
-            systemInfo.close();
         }
     });
 };
@@ -141,6 +137,5 @@ export const watchAd = (adType: number,cb:(str1:string,str2:string) => void) => 
     const adUnion = new ADUnion();
     adUnion.showRewardVideoAD(adType,(str1,str2) => {
         cb(str1,str2);
-        adUnion.close();
     });
 };
