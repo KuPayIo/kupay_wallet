@@ -617,12 +617,14 @@ pi_modules.ajax.exports = (function () {
 		};
 
 		xhr.upload.onprogress = function (ev) {
+			if (!xhr) return;
 			xhr.activeTime = Date.now();
 			ev.progressType = 'upload';
 			processCallback && processCallback(ev);
 		};
 
 		xhr.onprogress = function (ev) {
+			if (!xhr) return;
 			xhr.activeTime = Date.now();
 			ev.progressType = 'download';
 			processCallback && processCallback(ev);
@@ -2349,6 +2351,7 @@ pi_modules.appUpdate.exports = (function () {
 		JSIntercept.getAppVersion(function (isOK, version) {
 			if (isOK) localVersion = version;
 			var timeout = 1000;
+			debugger
 			ajax.get(url, undefined, undefined, ajax.RESP_TYPE_TEXT, timeout, function (r) {
 				
 				var content = JSON.parse(r);
@@ -2374,8 +2377,8 @@ pi_modules.appUpdate.exports = (function () {
 			}, 0);
 			return;
 		}
-
-		JSIntercept.updateApp(process,updateURL,cb);
+		
+		JSIntercept.updateApp(updateURL,cb,process);
 	}
 	return module;
 })();
