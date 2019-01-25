@@ -23,5 +23,13 @@
             <button on-tap="payBtn" style="width:100%;height: 50px;font-size: 26px;">ST支付</button>
         </div>
 
+        {{% 游戏键群}}
+        <div style="width:100%;"> 
+            <p style="font-size:36px;border: 1px solid brown;margin: 0">游戏键群</p>
+            <input type="text" value="" id="GroupName" placeholder="name" style="width:100%;height: 50px;font-size: 26px;box-sizing:border-box;"/>
+            <input type="text" value="" id="GroupNote" placeholder="note" style="width:100%;height: 50px;font-size: 26px;box-sizing:border-box;"/>
+            <button on-tap="creatGroup" style="width:100%;height: 50px;font-size: 26px;">创建群</button>
+        </div>
+
     </div>
 </div>
