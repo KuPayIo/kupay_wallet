@@ -146,7 +146,6 @@ winit.initNext = function () {
 	
 	// 加载一些需要预加载的图片
 	var loadImages = function () {
-
 		var suffixCfg = {
 			png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down'
 		};
@@ -240,6 +239,23 @@ winit.initNext = function () {
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
 			setStore('flags/level_2_page_loaded', true);
 			console.timeEnd('all resource loaded');
+			loadLeftImages();
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
+
+
+	// 加载一些需要预加载的图片
+	var loadLeftImages = function () {
+		var suffixCfg = {
+			png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down'
+		};
+
+		util.loadDir(["app/res/image/","chat/client/app/res/images/","earn/client/app/res/image/"], flags, fm, suffixCfg, function (fileMap) {
+			var tab = util.loadCssRes(fileMap);
+			tab.timeout = 90000;
+			tab.release();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -381,16 +397,16 @@ winit.initNext = function () {
 					alertBtnText:"App 需要更新"
 				};
 				pi_update.modifyContent(option);
-				appUpdateMod.update(function () {
-					alert("更新失败");
+				appUpdateMod.update(function (isSuccess) {
+					pi_update.closePop();
+					// alert("更新失败");
+					console.log("appUpdate " + isSuccess);
 				},function(total,process){
 					console.log("total = " + total + " process = " + process);
-				});
-				var e = { type: "saveFile", total: 100, count: 1}
-				setInterval(function(){
+					var e = { type: "saveFile", total: total, count: process};
 					pi_update.updateProgress(e);
-					e.count = e.count++;
-				},300);
+				});
+				
 			}else{
 				updateFlags.checkAppUpdate = true;
 				updateFlags.checkAppUpdate && updateFlags.checkH5Update && appLoadEntrance();
