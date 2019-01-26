@@ -224,6 +224,7 @@ winit.initNext = function () {
 			"app/view/",
 			"chat/client/app/view/",
 			"chat/client/app/widget/",
+			"chat/client/app/res/",
 			"earn/client/app/view/",
 			"earn/client/app/components/",
 			"earn/client/app/xls/",
