@@ -2,16 +2,16 @@
  * 充值KT
  */
 
-import { Widget } from "../../../../pi/widget/widget";
-import { Forelet } from "../../../../pi/widget/forelet";
-import { register, getStore } from "../../../store/memstore";
-import { popNewMessage } from "../../../utils/tools";
-import { CloudCurrencyType } from "../../../store/interface";
-import { getServerCloudBalance, getAccountDetail, getSilverPrice } from "../../../net/pull";
-import { popNew } from "../../../../pi/ui/root";
-import { confirmPay } from "../../../utils/recharge";
-import { ST2st } from "../../../utils/unitTools";
-
+import { popNew } from '../../../../pi/ui/root';
+import { Forelet } from '../../../../pi/widget/forelet';
+import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
+import { getAccountDetail, getServerCloudBalance, getSilverPrice } from '../../../net/pull';
+import { CloudCurrencyType } from '../../../store/interface';
+import { getStore, register } from '../../../store/memstore';
+import { confirmPay } from '../../../utils/recharge';
+import { popNewMessage } from '../../../utils/tools';
+import { ST2st } from '../../../utils/unitTools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -19,8 +19,9 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
-
 interface Props {
+    ktShow:string;  // KT界面显示
+    stShow:string;  // ST界面显示
     payType: string; // 支付方式
     payList: any;    // 支付项列表
     selectPayItem: any; // 选择的支付项
@@ -32,6 +33,8 @@ interface Props {
 export class RechargeKT extends Widget {
     public ok: () => void;
     public props: Props = {
+        ktShow:getModulConfig('KT_SHOW'),
+        stShow:getModulConfig('ST_SHOW'),
         payType: 'wxpay',
         payList: [
             { KTnum: 20, sellPrize: 20 },
@@ -39,12 +42,12 @@ export class RechargeKT extends Widget {
             { KTnum: 100, sellPrize: 100 },
             { KTnum: 200, sellPrize: 200 },
             { KTnum: 500, sellPrize: 500 },
-            { KTnum: 1000, sellPrize: 1000 },
+            { KTnum: 1000, sellPrize: 1000 }
         ],
         giveST: 0,
         selectPayItem: {},
         STprice: 1,
-        total: 0,
+        total: 0
     };
     constructor() {
         super();
@@ -65,7 +68,7 @@ export class RechargeKT extends Widget {
 
     public rechargeClick() {
         if (this.props.total < 20) {
-            popNewMessage({ zh_Hans: '最少充值20KT', zh_Hant: '最少充值20KT', en: '' });
+            popNewMessage({ zh_Hans: `最少充值20${this.props.ktShow}`, zh_Hant: `最少充值20${this.props.ktShow}`, en: '' });
 
             return;
         }
@@ -79,7 +82,7 @@ export class RechargeKT extends Widget {
             note: 1
         };
         confirmPay(orderDetail, (res) => {
-            this.amountChange({value:0})
+            this.amountChange({ value:0 });
             this.props.payType = 'alipay';
 
             popNew('app-view-wallet-cloudWalletGT-transactionDetails', { oid: res.oid, firstQuery: true });
@@ -106,7 +109,7 @@ export class RechargeKT extends Widget {
         if (index !== -1) {
             this.props.selectPayItem = this.props.payList[index];
             this.props.total = this.props.selectPayItem.sellPrize;
-            this.props.giveST = Math.floor(this.props.total / (this.props.STprice * 1.15)*100) / 100;
+            this.props.giveST = Math.floor(this.props.total / (this.props.STprice * 1.15) * 100) / 100;
         } else {
             this.props.selectPayItem = {};
             this.props.total = 0;
@@ -125,7 +128,7 @@ export class RechargeKT extends Widget {
         } else {
             this.props.total = e.value;
         }
-        this.props.giveST = Math.floor(this.props.total / (this.props.STprice * 1.15)*100) / 100;
+        this.props.giveST = Math.floor(this.props.total / (this.props.STprice * 1.15) * 100) / 100;
         this.paint();
     }
     /**
@@ -135,8 +138,6 @@ export class RechargeKT extends Widget {
         this.ok && this.ok();
     }
 }
-
-
 
 // gasPrice变化
 register('third/silver',() => {

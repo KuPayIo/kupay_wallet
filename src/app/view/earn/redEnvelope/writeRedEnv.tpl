@@ -1,4 +1,5 @@
 {{let item = it.list[it.selected]}}
+{{let itemName = item.name === 'KT' ? it.ktShow : item.name}}
 <div class="new-page" style="background: #f9f9f9;" ev-back-click="backPrePage" ev-next-click="goHistory">
     {{: topBarTitle = {"zh_Hans":"发红包","zh_Hant":"發紅包","en":""} }}
     <app-components1-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/26_white.png",background:"#F46262;"}</app-components1-topBar-topBar>
@@ -28,7 +29,7 @@
             {{: amountTitle = [{"zh_Hans":"总金额","zh_Hant":"總金額","en":""},
             {"zh_Hans":"单个金额","zh_Hant":"單個金額","en":""},
             {"zh_Hans":"0","zh_Hant":"0","en":""},
-            {"zh_Hans":item.name,"zh_Hant":item.name,"en":""}] }}
+            {"zh_Hans":itemName,"zh_Hant":itemName,"en":""}] }}
 
             <app-components-basicInput-basicInput>{
                 prepend:{{it.showPin? amountTitle[0] : amountTitle[1]}},
@@ -67,7 +68,7 @@
                 notUnderLine:true
                 }</app-components-basicInput-basicInput>
         </div>
-        <div w-class="totalNum">{{it.totalAmount+" "+item.name}}</div>
+        <div w-class="totalNum">{{it.totalAmount+" "+itemName}}</div>
         <div style="margin: 0 40px;" ev-btn-tap="send">
             {{: btnName = {"zh_Hans":"塞钱进红包","zh_Hant":"塞錢進紅包","en":""} }}
             <app-components1-btn-btn>{"name":{{btnName}},"types":"big","style":"background:#F46262;"}</app-components1-btn-btn>

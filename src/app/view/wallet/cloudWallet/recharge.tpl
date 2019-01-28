@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <div w-class="top-head">
-        {{: topBarTitle = {"zh_Hans":it.currencyName +"充值","zh_Hant":it.currencyName +"充值","en":""} }}
+        {{: topBarTitle = {"zh_Hans":it.topBarTitle +"充值","zh_Hant":it.topBarTitle +"充值","en":""} }}
         <app-components1-topBar-topBar>{"title":{{topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6)"}</app-components1-topBar-topBar>
         <div w-class="head2">
             <div w-class="item">

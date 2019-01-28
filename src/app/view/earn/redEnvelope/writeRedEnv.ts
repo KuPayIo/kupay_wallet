@@ -6,6 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
 import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
@@ -35,7 +36,8 @@ export class WriteRedEnv extends Widget {
     public ok: (res:any) => void;
     public language:any;
 
-    public props:Props = {
+    public props:any = {
+        ktShow:getModulConfig('KT_SHOW'),
         list: [],
         selected: 0,
         showPin: false,
@@ -65,6 +67,7 @@ export class WriteRedEnv extends Widget {
         super.setProps(this.props);
         this.props = {
             ...this.props,
+            ktShow:getModulConfig('KT_SHOW'),
             ktBalance:props.ktBalance,
             inFlag:props.inFlag
         };
@@ -202,7 +205,12 @@ export class WriteRedEnv extends Widget {
         }
         if (this.props.selected === 0) {
             if (Number(this.props.totalAmount) < this.props.totalNum) {
-                popNew('app-components-message-message', { content: this.language.tips[7] });
+                const ktTips = {
+                    zh_Hans:`单个红包${this.props.ktShow}数量是大于1的整数`,
+                    zh_Hant:`單個紅包${this.props.ktShow}數量是大於1的整數`,
+                    en:''
+                };
+                popNew('app-components-message-message', { content: ktTips[getLang()] });
 
                 return;
             }
@@ -256,22 +264,21 @@ export class WriteRedEnv extends Widget {
             setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
             this.paint(true);
         });
-        if(this.props.inFlag==='chat'){
-            console.log('发红包成功了')
+        if (this.props.inFlag === 'chat') {
+            console.log('发红包成功了');
             this.ok({
                 message: lm,
                 rid  // 红包的ID
             });
-        }else{
+        } else {
             popNew('app-view-earn-redEnvelope-sendRedEnv', {
                 message: lm,
                 rid,
                 rtype: rtype,
-                cname: curCoin.name,
+                cname: curCoin.name
             });
         }
         
-
         // if (!this.props.showPin) {
         //     // tslint:disable-next-line:max-line-length
         //     console.log('url', `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);

@@ -35,9 +35,6 @@ export class RedEnvHistory extends Widget {
         this.language = this.config.value[getLang()];
         this.props = {
             recordList:[
-                // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
-                // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
-                // { rid:'1111',rtype:0,ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 }               
             ],
             start:undefined,
             refresh:true,

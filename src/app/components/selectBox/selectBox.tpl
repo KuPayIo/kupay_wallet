@@ -1,8 +1,9 @@
 <div w-class="selectBox">
     <div w-class="basicTop" on-tap="showList">
         {{let item = it.list[it.selected]}}
+        {{let itemName = item.name === 'KT' ? it.ktShow : item.name}}
         <img src={{item.img}} style="width: 50px;height: 50px;"/>
-        <span w-class="prepend">{{item.name}}</span>
+        <span w-class="prepend">{{itemName}}</span>
         <span w-class="append">{{item.num}}</span>
         <img src="../../res/image/15.png" style="width: 40px;height: 40px;"/>
     </div>
