@@ -8,6 +8,7 @@ interface Props {
     title:string;
     img:string;
     shadow?:boolean;
+    isFirst?:boolean;
 }
 
 export class Card extends Widget {
