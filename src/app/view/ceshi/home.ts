@@ -1,7 +1,7 @@
 import { Widget } from "../../../pi/widget/widget";
 import { hasWallet } from "../../utils/tools";
 import { popNew } from "../../../pi/ui/root";
-import { openPayment, walletPay } from "../../utils/pay";
+import { walletPay } from "../../utils/pay";
 import { createGroup } from "../../../chat/client/app/net/rpc";
 
 /**

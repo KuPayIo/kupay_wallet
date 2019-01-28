@@ -15,7 +15,7 @@
             <button on-tap="rechargeBtn" style="width:100%;height: 50px;font-size: 26px;">GT充值</button>
         </div>
         {{% STPay测试}}
-        <div style="width:100%;"> 
+        <div style="width:100%;margin-bottom: 50px;"> 
             <p style="font-size:36px;border: 1px solid brown;margin: 0">ST支付测试</p>
             <input type="number" value="" id="pay_no" placeholder="out_trade_no" style="width:100%;height: 50px;font-size: 26px;box-sizing:border-box;"/>
             <input type="number" value="" id="pay_total" placeholder="total_fee" style="width:100%;height: 50px;font-size: 26px;box-sizing:border-box;"/>
@@ -24,7 +24,7 @@
         </div>
 
         {{% 游戏键群}}
-        <div style="width:100%;"> 
+        <div style="width:100%;margin-bottom: 50px;"> 
             <p style="font-size:36px;border: 1px solid brown;margin: 0">游戏键群</p>
             <input type="text" value="" id="GroupName" placeholder="name" style="width:100%;height: 50px;font-size: 26px;box-sizing:border-box;"/>
             <input type="text" value="" id="GroupNote" placeholder="note" style="width:100%;height: 50px;font-size: 26px;box-sizing:border-box;"/>
