@@ -8,19 +8,18 @@
         <app-components-selectBox-selectBox>{list:{{it.list}},selected:{{it.selected}},forceHide:{{it.forceHide}} }</app-components-selectBox-selectBox>
         <div style="font-size: 28px;color: #888888;margin: 0 30px;">
             {{: changePin = [
-            {"zh_Hans":"每个红包金额","zh_Hant":"每個紅包金額","en":""},
-            {"zh_Hans":"随机","zh_Hant":"隨機","en":""},
-            {"zh_Hans":"固定","zh_Hant":"固定","en":""},
+            {"zh_Hans":"当前为","zh_Hant":"當前為","en":""},
             {"zh_Hans":"，改为","zh_Hant":"，改為","en":""}] }}
+            
+            {{: redEnvType = [
+            {"zh_Hans":"普通红包","zh_Hant":"普通紅包","en":""},
+            {"zh_Hans":"拼手气红包","zh_Hant":"拼手氣紅包","en":""}] }}
+
 
             <pi-ui-lang>{{changePin[0]}} </pi-ui-lang>
-            <pi-ui-lang>{{it.showPin ? changePin[1] : changePin[2]}}</pi-ui-lang>
-            <pi-ui-lang>{{changePin[3]}}</pi-ui-lang>
+            <pi-ui-lang>{{it.showPin ? redEnvType[1] : redEnvType[0]}}</pi-ui-lang>
+            <pi-ui-lang>{{changePin[1]}}</pi-ui-lang>
             <span w-class="changeType" on-tap="changePin">
-                {{: redEnvType = [
-                {"zh_Hans":"普通红包","zh_Hant":"普通紅包","en":""},
-                {"zh_Hans":"拼手气红包","zh_Hant":"拼手氣紅包","en":""}] }}
-
                 <pi-ui-lang>{{it.showPin? redEnvType[0] : redEnvType[1]}}</pi-ui-lang></span>
         </div>
         <div ev-input-change="changeAmount">
