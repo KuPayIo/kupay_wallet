@@ -582,7 +582,7 @@ export const getByteLen = (val) => {
 
 // 计算支持的币币兑换的币种
 export const currencyExchangeAvailable = () => {
-    const shapeshiftCoins = getStore('third/shapeShiftCoins', []);
+    const changellyCurrencies = getStore('third/changellyCurrencies', []);
     const currencyArr = [];
     for (const i in MainChainCoin) {
         currencyArr.push(i);
@@ -591,8 +591,8 @@ export const currencyExchangeAvailable = () => {
         currencyArr.push(i);
     }
 
-    return shapeshiftCoins.filter(item => {
-        return item.status === 'available' && currencyArr.indexOf(item.symbol) >= 0;
+    return changellyCurrencies.filter(item => {
+        return currencyArr.indexOf(item) >= 0;
     });
 };
 

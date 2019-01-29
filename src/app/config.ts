@@ -35,10 +35,10 @@ export enum DevMode {
     Rinkeby = 'rinkeby'   // rinkeby测试环境
 }
 // tslint:disable-next-line:variable-name
-export const dev_mode:DevMode = DevMode.Rinkeby;
+export const dev_mode:DevMode = DevMode.Ropsten;
 
 // btc网络
-export const btcNetwork = dev_mode === DevMode.Ropsten ? 'mainnet' : 'testnet';
+export const btcNetwork = dev_mode === DevMode.Prod ? 'mainnet' : 'testnet';
 
 // 主网erc20
 const ERC20TokensMainnet = {

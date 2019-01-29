@@ -11,6 +11,8 @@ import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { getScreenModify } from '../../logic/native';
+import { changellySign } from '../../net/pull';
+import { changellyGetCurrencies, changellyGetCurrenciesFull, changellyGetExchangeAmount, changellyGetMinAmount } from '../../net/pull3';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
 import { fetchDeviceId, fetchDeviceInfo } from '../../utils/tools';
@@ -32,6 +34,12 @@ export const run = (cb): void => {
     console.timeEnd('home enter');
     // 后台切前台
     backToFront();
+    setTimeout(() => {
+        changellyGetExchangeAmount('ETH','BTC').then(res => {
+            console.log('changellyGetExchangeAmount ',res);
+        });
+        
+    },2000);
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();

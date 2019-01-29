@@ -1,5 +1,7 @@
 import { thirdUrlPre } from '../config';
+import { setStore } from '../store/memstore';
 import { xorDecode1, xorEncode } from '../utils/tools';
+import { changellySign } from './pull';
 
 // ==========================三方接口=======================================
 /**
@@ -62,15 +64,117 @@ export const fetchCurrency2USDTRate = (currencyName:string) => {
     }); 
 };
 
-// ======================================================================
+// ============================= changelly =========================================
+
+// changelly api url
+const changellyApiUrl = 'https://api.changelly.com';
+const changellyPostId = 'kuplay';
+const changellyFetchPost = (data) => {
+    return changellySign(data).then(res => {
+        const apiKey = res.key;
+        const sign = res.sign;
+
+        return fetch(changellyApiUrl, {
+            body: JSON.stringify(data), 
+            cache: 'no-cache',
+            headers: {
+                'content-type': 'application/json',
+                'api-key': apiKey,
+                sign: sign
+            },
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, cors, *same-origin
+            redirect: 'follow', // manual, *follow, error
+            referrer: 'no-referrer' // *client, no-referrer
+        }).then(response => response.json()); // parses response to JSON
+    });
+};
 
 /**
- * 获取货币对比USDT的比率
+ * 获取可用的币币兑换
  */
-export const shapeshiftMarketinfo = () => {
-    const url = `https://shapeshift.io/marketinfo/btc_ltc`;
+export const changellyGetCurrencies = () => {
+    const message = {
+        jsonrpc: '2.0',
+        id: changellyPostId,
+        method: 'getCurrencies',
+        params: {}
+    };
 
-    return fetch(url).then(res => res.json()).then(json => {
-        console.log('shapeshiftMarketinfo------',json);
+    return changellyFetchPost(message).then(res => {
+        if (res.result) {
+            const currencies = res.result.map(item => item.toUpperCase());
+            setStore('third/changellyCurrencies',currencies);
+        }
+
+        return res;
     });
+};
+
+/**
+ * 获取所有的支持货币(有可能不可用)
+ */
+export const changellyGetCurrenciesFull = () => {
+    const message = {
+        jsonrpc: '2.0',
+        id: changellyPostId,
+        method: 'getCurrenciesFull',
+        params: {}
+    };
+    
+    return changellyFetchPost(message);
+};
+
+/**
+ * 估算币币兑换汇率
+ */
+export const changellyGetExchangeAmount = (fromCurrency:string,toCurrency:string) => {
+    const message = {
+        jsonrpc: '2.0',
+        id: changellyPostId,
+        method: 'getExchangeAmount',
+        params: {
+            from: fromCurrency.toLowerCase(),
+            to: toCurrency.toLowerCase(),
+            amount: '1'
+        }
+    };
+
+    return changellyFetchPost(message);
+};
+/**
+ * 获取最小交易数量
+ */
+export const changellyGetMinAmount = (fromCurrency:string,toCurrency:string) => {
+    const message = {
+        jsonrpc: '2.0',
+        id: changellyPostId,
+        method: 'getMinAmount',
+        params: {
+            from: fromCurrency.toLowerCase(),
+            to: toCurrency.toLowerCase()
+        }
+    };
+
+    return changellyFetchPost(message);
+}; 
+
+/**
+ * 创建一笔交易
+ */
+export const changellyCreateTransaction = (fromCurrency:string,toCurrency:string,toAddr:string,amount:number,refundAddress:string) => {
+    const message = {
+        jsonrpc: '2.0',
+        id: changellyPostId,
+        method: 'createTransaction',
+        params: {
+            from: fromCurrency.toLowerCase(),
+            to: toCurrency.toLowerCase(),
+            amount,
+            address: toAddr,
+            refundAddress
+        }
+    };
+
+    return changellyFetchPost(message);
 };
