@@ -646,8 +646,7 @@ const store: Store = {
         gasLimitMap: new Map<string, number>(),     // 各种货币转账需要的gasLimit
 
         // shapeshift
-        shapeShiftCoins: [],                                  // shapeShift 支持的币种
-        shapeShiftMarketInfo: null,                           // shapeshift 汇率相关
+        changellyCurrencies: [],                                  // shapeShift 支持的币种
         shapeShiftTxsMap: new Map<string, ShapeShiftTxs>(),   // shapeshift 交易记录Map
 
         rate: 0,                                            // 货币的美元汇率

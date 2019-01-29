@@ -1381,3 +1381,17 @@ export const uploadFile1 = async (file:File) => {
             popNewMessage('图片上传失败');
         });
 };
+
+/**
+ * changelly 签名
+ */
+export const changellySign = (data:any) => {
+    const msg = {
+        type: 'wallet/proxy@sign',
+        param: {
+            body:JSON.stringify(data)
+        }
+    };
+
+    return requestAsync(msg);
+};

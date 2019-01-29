@@ -104,7 +104,7 @@ export class TransactionHome extends Widget {
     public canConvert() {
         const convertCurrencys = currencyExchangeAvailable();
         for (let i = 0;i < convertCurrencys.length;i++) {
-            if (convertCurrencys[i].symbol === this.props.currencyName) {
+            if (convertCurrencys[i] === this.props.currencyName) {
                 return true;
             }
         }
