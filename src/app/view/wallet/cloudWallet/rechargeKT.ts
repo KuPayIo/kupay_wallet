@@ -5,6 +5,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail, getServerCloudBalance, getSilverPrice } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
@@ -19,6 +20,8 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
+    ktShow:string;  // KT界面显示
+    stShow:string;  // ST界面显示
     payType: string; // 支付方式
     payList: any;    // 支付项列表
     selectPayItem: any; // 选择的支付项
@@ -31,6 +34,8 @@ interface Props {
 export class RechargeKT extends Widget {
     public ok: () => void;
     public props: Props = {
+        ktShow:getModulConfig('KT_SHOW'),
+        stShow:getModulConfig('ST_SHOW'),
         payType: 'wxpay',
         payList: [
             { KTnum: 20, sellPrize: 20 },
@@ -56,7 +61,7 @@ export class RechargeKT extends Widget {
 
     public create() {
         super.create();
-        getSilverPrice(1).then(()=>{
+        getSilverPrice(1).then(() => {
             this.changePayItem(0);
         });
         setTimeout(() => {
@@ -71,7 +76,7 @@ export class RechargeKT extends Widget {
 
     public rechargeClick() {
         if (this.props.total < 20) {
-            popNewMessage({ zh_Hans: '最少充值20KT', zh_Hant: '最少充值20KT', en: '' });
+            popNewMessage({ zh_Hans: `最少充值20${this.props.ktShow}`, zh_Hant: `最少充值20${this.props.ktShow}`, en: '' });
 
             return;
         }
@@ -119,7 +124,7 @@ export class RechargeKT extends Widget {
      * 修改充值金额
      */
     public inputChange(e: any) {
-        this.props.selectPayItem = {} // 清空固定支付数量选择
+        this.props.selectPayItem = {}; // 清空固定支付数量选择
         if (e.value === '') {
             this.props.inputValue = 0;
         } else {

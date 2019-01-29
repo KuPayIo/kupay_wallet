@@ -40,9 +40,6 @@ export class ExchangeHistory extends Widget {
         this.language = this.config.value[getLang()];
         this.props = {
             recordList:[
-                // { rid:111,rtype:'00',rtypeShow:'拼手气红包',ctypeShow:'ETH',timeShow:'04-30 14:32:00',amount:1 },       
-                // { rid:111,rtype:'00',rtypeShow:'普通红包',ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
-                // { rid:111,rtype:'00',rtypeShow:'拼手气红包',ctypeShow:'ETH',timeShow:'04-30 14:32:00',amount:1 }                
             ],
             recordListShow:[],
             convertNumber:0,

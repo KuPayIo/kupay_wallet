@@ -5,6 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
@@ -32,8 +33,17 @@ export class CloudWalletHome extends Widget {
         const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
         const color = getStore('setting/changeColor','redUp');
+        let topBarTitle = '';
+        if (this.props.currencyName === 'KT') {
+            topBarTitle = getModulConfig('KT_SHOW');
+        } else if (this.props.currencyName === 'ST') {
+            topBarTitle = getModulConfig('ST_SHOW');
+        } else {
+            topBarTitle = this.props.currencyName;
+        }
         this.props = {
             ...this.props,
+            topBarTitle,
             tabs:[{
                 tab:this.language.total,
                 components:'app-view-wallet-cloudWallet-totalRecord'
