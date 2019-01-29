@@ -15,7 +15,7 @@
                 <div w-class="dividLine"></div>
                 <div w-class="dividend-sum">
                     <span style="display: inline-block;vertical-align: middle;">
-                        <pi-ui-lang>{zh_Hans:"持有",zh_Hant:"持有",en:""}</pi-ui-lang>&nbsp;{{it.ktBalance}}&nbsp;KT
+                        <pi-ui-lang>{zh_Hans:"持有",zh_Hant:"持有",en:""}</pi-ui-lang>&nbsp;{{it.ktBalance}}&nbsp;{{it.KTShow}}
                     </span>
                 </div>
             </div>

@@ -5,6 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { withdrawMinerFee } from '../../../config';
+import { getModulConfig } from '../../../modulConfig';
 import { withdraw } from '../../../net/pullWallet';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore } from '../../../store/memstore';
@@ -40,6 +41,20 @@ export class Withdraw extends Widget {
         this.ok && this.ok();
     }
     public minerFeeDescClick() {
+        const ktShow = getModulConfig('KT_SHOW');
+        const tips = {
+            zh_Hans:{ 
+                title:'提币收费标准',
+                content:'无论单笔提币数量多少，每笔提币均会消耗固定费用，提币手续费将从提币数量中扣除，对应各币种，提现手续费不一致。BTC手续费固定0.001ETH/笔。ETH手续费固定收取0.01ETH/笔。提币到账时间以接收时间为准。',
+                tips:`曾经拥有1000${ktShow}才具有提现权限` 
+            },
+            zh_Hant:{ 
+                title:'提幣收費標準',
+                content:'無論單筆提幣數量多少，每筆提幣均會消耗固定費用，提幣手續費將從提幣數量中扣除，對應各幣種，提現手續費不一致。BTC手續費固定0.001 ETH/筆。ETH手續費固定收取0.01ETH/筆。提幣到賬時間以接收時間為準。',
+                tips:`曾經擁有1000${ktShow}才具有提現權限`
+            },
+            en:{}
+        };
         popNew('app-components-allModalBox-modalBox1',this.language.modalBox);
     }
 

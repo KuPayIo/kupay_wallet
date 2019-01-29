@@ -3,11 +3,11 @@
  * 
  */
 // ============================== 导入
-import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
 import { getDividend, getDividHistory, getMining } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
@@ -30,6 +30,7 @@ export class Dividend extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
         this.props = {
+            KTShow:getModulConfig('KT_SHOW'),
             totalDivid:0,
             totalDays:0,
             topRefresh:false,// 顶部手动刷新

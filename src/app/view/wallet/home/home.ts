@@ -32,7 +32,7 @@ export class Home extends Widget {
                 tab:{ zh_Hans:'本地钱包',zh_Hant:'本地錢包',en:'' },
                 components:'app-view-wallet-home-walletHome'
             }],
-            activeNum:1,
+            activeNum:0,
             refreshing:false,
 
             avatar:'',

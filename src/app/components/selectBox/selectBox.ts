@@ -11,6 +11,7 @@
 import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
+import { getModulConfig } from '../../modulConfig';
 // ================================================导出
 interface Props {
     list:any[];
@@ -28,6 +29,7 @@ export class SelectBox extends Widget {
         super.setProps(oldProps,newProps);
         this.props = {
             ...this.props,
+            ktShow:getModulConfig('KT_SHOW'),
             showList:false,
             list:this.props.list,
             selected:this.props.selected
