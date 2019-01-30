@@ -34,7 +34,7 @@ export interface TxPayload {
 export interface TxPayload3 {
     fromAddr:string;        // 转出地址
     toAddr:string;          // 转入地址
-    pay:string;             // 转账金额
+    pay:string | number;             // 转账金额
     currencyName:string;    // 转账货币
     data:string;
 }
@@ -182,6 +182,68 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
             return [undefined,hash];
         } else {
             return ['send transaction failed'];
+        }
+    } catch (error) {
+        return [error,undefined];
+    }
+};
+
+/**
+ * 普通转账
+ */
+export const transfer1 = async (psw:string,txPayload:TxPayload) => {
+    const fromAddr = txPayload.fromAddr;
+    const currencyName = txPayload.currencyName;
+    const needConfirmedBlockNumber = getConfirmBlockNumber(currencyName, txPayload.pay);
+    const txRecord:TxHistory = {
+        hash:'',
+        addr:fromAddr,
+        txType:TxType.Transfer,
+        fromAddr,
+        toAddr:txPayload.toAddr,
+        pay: txPayload.pay,
+        time: 0,
+        status:TxStatus.Pending,
+        confirmedBlockNumber: 0,
+        needConfirmedBlockNumber,
+        info: '',
+        currencyName,
+        fee: txPayload.fee,
+        nonce:undefined,
+        minerFeeLevel:txPayload.minerFeeLevel
+    };
+
+    try {
+        let ret: any;
+        const addrIndex = getWltAddrIndex(fromAddr, currencyName);
+        if (addrIndex >= 0) {
+            if (currencyName === 'ETH') {
+                ret = await doEthTransfer(psw,addrIndex,txRecord);
+            } else if (currencyName === 'BTC') {
+                const res = await doBtcTransfer(psw,addrIndex, txRecord);
+                if (res) {
+                    ret = {
+                        hash:res.txid,
+                        nonce:0
+                    };
+                }
+            } else if (ERC20Tokens[currencyName]) {
+                ret = await doERC20TokenTransfer(psw,addrIndex,txRecord);
+            }
+        }
+        if (ret) {
+            const tx = {
+                ...txRecord,
+                hash:ret.hash,
+                nonce:ret.nonce,
+                time:new Date().getTime()
+            };
+            updateLocalTx(tx);
+            dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+            
+            return [undefined,ret.hash];
+        } else {
+            throw new Error('send transaction failed');
         }
     } catch (error) {
         return [error,undefined];
