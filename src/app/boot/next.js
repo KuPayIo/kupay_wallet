@@ -115,7 +115,7 @@ winit.initNext = function () {
 	var loadWalletLoginSource = function(){
 		var sourceList = [
 			"app/store/memstore.js",
-			"app/net/pull.js",
+			"app/net/login.js",
 			"app/net/push.js",
 			"earn/client/app/net/init.js",
 			"chat/client/app/net/init_1.js"
@@ -134,7 +134,7 @@ winit.initNext = function () {
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 			// erlang服务器连接登录
-			pi_modules.commonjs.exports.relativeGet("app/net/pull").exports.openConnect();
+			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.openConnect();
 			fpFlags.storeReady = true;
 			enterApp();
 
