@@ -119,6 +119,10 @@ export class App extends Widget {
         this.paint();
     }
 
+    public switchToEarn() {
+        this.props.isActive = 'APP_EARN';
+        this.paint();
+    }
 }
 
 // ===================================================== 本地
@@ -177,6 +181,13 @@ register('user/conRandom',() => {
 register('setting/language',(r) => {
     setLang(r);
 });
+
+// 创建钱包成功
+register('flags/createWallet',(createWallet:boolean) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.switchToEarn();
+});
+
 // 监听活动页面
 earnRegister('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
     const w = forelet.getWidget(WIDGET_NAME);

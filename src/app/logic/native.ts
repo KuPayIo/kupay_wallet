@@ -130,12 +130,26 @@ export const getScreenModify = () => {
 };
 
 /**
+ * 预先下载广告
+ */
+export const preLoadAd = (adType: number,cb?:(str1:string,str2:string) => void) => {
+    const adUnion = new ADUnion();
+    adUnion.loadRewardVideoAD(adType,(str1,str2) => {
+        cb && cb(str1,str2);
+        console.log('preLoadAd ad',str1);
+        console.log('preLoadAd ad',str2);
+    });
+};
+/**
  * 观看广告
  * adtype:1.广点通  2.字节跳动
  */
 export const watchAd = (adType: number,cb:(str1:string,str2:string) => void) => {
     const adUnion = new ADUnion();
     adUnion.showRewardVideoAD(adType,(str1,str2) => {
-        cb(str1,str2);
+        cb && cb(str1,str2);
+        preLoadAd(adType);
+        console.log('watch ad',str1);
+        console.log('watch ad',str2);
     });
 };
