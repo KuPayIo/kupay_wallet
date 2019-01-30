@@ -178,3 +178,37 @@ export const changellyCreateTransaction = (fromCurrency:string,toCurrency:string
 
     return changellyFetchPost(message);
 };
+
+/**
+ * 获取指定交易的状态
+ */
+export const changellyGetStatus = () => {
+    const id = 'vlsrez4e0mh2yiwq';
+    const message = {
+        jsonrpc: '2.0',
+        id: changellyPostId,
+        method: 'getStatus',
+        params: {
+            id
+        }
+    };
+
+    return changellyFetchPost(message);
+};
+
+export const changellyGetTransactions = (currencyName:string,addr:string) => {
+    const message = {
+        jsonrpc: '2.0',
+        id: changellyPostId,
+        method: 'getTransactions',
+        params: {
+            currency: currencyName,
+            address: addr,
+            extraId: null,
+            limit: 10,
+            offset : 0
+        }
+    };
+
+    return changellyFetchPost(message);
+};

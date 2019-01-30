@@ -10,9 +10,7 @@ import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
-import { getScreenModify } from '../../logic/native';
-import { changellySign } from '../../net/pull';
-import { changellyGetCurrencies, changellyGetCurrenciesFull, changellyGetExchangeAmount, changellyGetMinAmount } from '../../net/pull3';
+import { getScreenModify, preLoadAd } from '../../logic/native';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
 import { fetchDeviceId, fetchDeviceInfo } from '../../utils/tools';
@@ -34,12 +32,15 @@ export const run = (cb): void => {
     console.timeEnd('home enter');
     // 后台切前台
     backToFront();
-    setTimeout(() => {
-        changellyGetExchangeAmount('ETH','BTC').then(res => {
-            console.log('changellyGetExchangeAmount ',res);
-        });
+    // setTimeout(() => {
+    //     changellyGetStatus().then(res => {
+    //         console.log('changellyGetStatus ',res);
+    //     });
+    //     changellyGetTransactions('ETH','0x313df6d5db1460c099a30ef5f1c1e87636ae08fa').then(res => {
+    //         console.log('changellyGetTransactions ',res);
+    //     });
         
-    },2000);
+    // },2000);
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
@@ -74,6 +75,11 @@ const preFetchFromNative = () => {
         });
     }
     getScreenModify();
+
+    const preLoadAdNum = 3;
+    for (let i = 0;i < preLoadAdNum;i++) {
+        preLoadAd(2);
+    }
 };
 const checkUpdate = () => {
   // todo

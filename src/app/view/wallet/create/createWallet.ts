@@ -6,7 +6,9 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { openConnect, uploadFile } from '../../../net/pull';
+import { openConnect } from '../../../net/login';
+import { uploadFile } from '../../../net/pull';
+import { setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { getStaticLanguage, imgResize, popNewMessage } from '../../../utils/tools';
 import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
@@ -140,7 +142,7 @@ export class CreateWallet extends Widget {
                 popNew('app-view-wallet-backup-index', { mnemonic: mnemonic, fragments: fragments,pi_norouter:true });
             });
         });
-        
+        setStore('flags/createWallet',true);
         openConnect(secrectHash);
 
         if (this.props.chooseImage) {
