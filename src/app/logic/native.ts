@@ -5,7 +5,6 @@ import { ADUnion } from '../../pi/browser/adUnoin';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
 import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
-import { DeviceIdProvider, SystemInfoProvider } from '../../pi/browser/systemInfoProvider';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { setStore } from '../store/memstore';

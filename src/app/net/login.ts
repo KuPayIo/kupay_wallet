@@ -79,7 +79,7 @@ export const applyAutoLogin = async () => {
     };
     requestAsync(msg).then(res => {
         const decryptToken = encrypt(res.token,deviceId);
-        // setStore('user/token',decryptToken);
+        setStore('user/token',decryptToken);
     });
 };
 

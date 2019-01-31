@@ -68,12 +68,12 @@ const preFetchFromNative = () => {
             setStore('setting/deviceId',hash256deviceId);
         });
     }
-    const deviceInfo = getStore('setting/deviceInfo');
-    if (!deviceInfo) {
-        fetchDeviceInfo().then(info => {
-            setStore('setting/deviceInfo',info);
-        });
-    }
+    // const deviceInfo = getStore('setting/deviceInfo');
+    // if (!deviceInfo) {
+    //     fetchDeviceInfo().then(info => {
+    //         setStore('setting/deviceInfo',info);
+    //     });
+    // }
     getScreenModify();
 
     const preLoadAdNum = 3;
