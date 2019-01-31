@@ -45,7 +45,7 @@ const walletName = getWalletName();
 const Config= {
     zh_Hans:{ 
         copySuccess:"复制成功",
-        shortMess:walletName+"安全的一站式资产管理平台",
+        shortMess:walletName+"能赚钱的游戏平台",
         immeDownload:"立即下载",
         installTutorial:"使用教程",
         step1:"点击“立即下载”按钮下载安装文件",
@@ -82,7 +82,7 @@ const Config= {
     },
     zh_Hant:{
         copySuccess:"複製成功",
-        shortMess:walletName+"安全的一站式資產管理平台",
+        shortMess:walletName+"能賺錢的遊戲平台",
         immeDownload:"立即下載",
         installTutorial:"使用教程",
         step1:"點擊“立即下載”按鈕下載安裝文件",
