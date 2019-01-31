@@ -6,7 +6,7 @@
             <img src="{{it.walletLogo}}" w-class="logoimg"/>
         </div>
         <div w-class="version">V{{it.version}}</div>
-        {{: shortMess = {"zh_Hans":it.walletName+"是一款功能全面、简单易用的钱包应用。","zh_Hant":it.walletName+"是一款功能全面、簡單易用的錢包應用。","en":""} }}
+        {{: shortMess = {"zh_Hans":it.walletName+"是一个能赚钱能分红的游戏平台。","zh_Hant":it.walletName+"是一個能賺錢能分紅的遊戲平台。","en":""} }}
         <div w-class="shortmess">
             <pi-ui-lang>{{shortMess}}</pi-ui-lang>
         </div>
