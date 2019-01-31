@@ -2,9 +2,10 @@
  * 钱包登录模块
  */
 import { open, setBottomLayerReloginMsg,setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+import { popNew } from '../../pi/ui/root';
 import { wsUrl } from '../config';
 import { getStore, register, setStore } from '../store/memstore';
-import { decrypt, encrypt, fetchDeviceId, kickOffline, popPswBox } from '../utils/tools';
+import { calcHashValuePromise, decrypt, encrypt, fetchDeviceId, kickOffline, popPswBox } from '../utils/tools';
 import { requestAsync } from './pull';
 
 declare var pi_modules;
@@ -100,9 +101,11 @@ export const autoLogin = async (conRandom:string) => {
     requestAsync(msg).then(res => {
         setStore('user/isLogin', true);
         console.log('自动登录成功-----------',res);
+        loginWalletSuccess();
     }).catch((res) => {
         setStore('user/token','');
         setStore('user/isLogin', false);
+        loginWalletFailed();
     });
 };
 /**
@@ -122,10 +125,21 @@ export const defaultLogin = (hash:string,conRandom:string) => {
     return requestAsync(msgLogin).then(() => {
         applyAutoLogin();
         setStore('user/isLogin', true);
+        loginWalletSuccess();
     }).catch(err => {
         setStore('user/isLogin', false);
+        loginWalletFailed();
     });
 
+};
+
+/**
+ * 获取openId
+ */
+export const getOpenId = (appId:string) => {
+    const msg = { type: 'get_openid', param: { appid:appId } };
+
+    return requestAsync(msg);
 };
 
 /**
@@ -155,11 +169,14 @@ export const getRandom = async (secretHash:string,cmd?:number) => {
         const resp = await requestAsync(msg);
         // const serverTimestamp = resp.timestamp.value;
         const conRandom = resp.rand;
-        if (getStore('user/token')) {
-            autoLogin(conRandom);
-        }
         if (secretHash) {
             defaultLogin(secretHash,conRandom);
+        } else {
+            if (getStore('user/token')) {
+                autoLogin(conRandom);
+            } else {
+                loginWalletFailed();
+            }
         }
 
         setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
@@ -180,26 +197,64 @@ export const getRandom = async (secretHash:string,cmd?:number) => {
 };
 
 // 登录成功之后的回调列表
-const loginedCallbackList = [];
+const loginedCallbackList:LoginType[] = [];
+
+// 登录失败延迟执行函数
+let loginWalletFailedDelay;
+
+interface LoginType {
+    appId:string;
+    success:Function;
+}
 /**
  * 登录钱包
  */
-export const loginWallet = (cb:Function) => {
-    loginedCallbackList.push(cb);
+export const loginWallet = (appId:string,success:Function) => {
+    const loginType:LoginType = {
+        appId,
+        success
+    };
+    loginedCallbackList.push(loginType);
 };
 
-// ====================本地=========================
-register('user/isLogin',async (isLogin:boolean) => {
-    // if (isLogin) { // 登录成功
-    //     for (const cb of loginedCallbackList) {
-    //         cb();
-    //     }
-    // } else { // 登录失败
-    //     const psw = await popPswBox();
-    //     const close = popNew('app-components1-loading-loading', { text: '登录中' });
-    //     const secretHash = await calcHashValuePromise(psw,getStore('user/salt'));
-    //     const conRandom = getStore('user/conRandom');
-    //     defaultLogin(secretHash,conRandom);
-    //     close && close.callback(close.widget);
-    // }
+/**
+ * 登录钱包并获取openId成功
+ */
+const loginWalletSuccess = () => {
+    for (const loginType of loginedCallbackList) {
+        getOpenId(loginType.appId).then(res => {
+            loginType.success(res.openid);
+        });
+    }
+};
+
+/**
+ * 钱包登录失败
+ */
+const loginWalletFailed =  () => {
+    const flags = getStore('flags');  
+    const loaded = flags.level_2_page_loaded; // 资源已经加载完成
+    if (loaded) {
+        loginWalletFailedPop();
+    } else {
+        loginWalletFailedDelay = loginWalletFailedPop;
+    }
+
+};
+
+/**
+ * 密码弹框重新登录
+ */
+const loginWalletFailedPop = async () => {
+    const psw = await popPswBox();
+    const close = popNew('app-components1-loading-loading', { text: '登录中' });
+    const secretHash = await calcHashValuePromise(psw,getStore('user/salt'));
+    const conRandom = getStore('user/conRandom');
+    defaultLogin(secretHash,conRandom);
+    close && close.callback(close.widget);
+};
+
+// =======================资源加载完成========================
+register('flags/level_2_page_loaded', (loaded: boolean) => {
+    loginWalletFailedDelay && loginWalletFailedDelay();
 });
