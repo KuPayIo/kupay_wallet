@@ -13,7 +13,7 @@ import { addWidget } from '../../../pi/widget/util';
 import { getScreenModify, preLoadAd } from '../../logic/native';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
-import { fetchDeviceId, fetchDeviceInfo } from '../../utils/tools';
+import { fetchDeviceId } from '../../utils/tools';
 
 // ============================== 导出
 
@@ -76,10 +76,11 @@ const preFetchFromNative = () => {
     // }
     getScreenModify();
 
-    const preLoadAdNum = 3;
-    for (let i = 0;i < preLoadAdNum;i++) {
-        preLoadAd(2);
-    }
+    preLoadAd(2,() => {
+        preLoadAd(2,() => {
+            preLoadAd(2);
+        });
+    });
 };
 const checkUpdate = () => {
   // todo

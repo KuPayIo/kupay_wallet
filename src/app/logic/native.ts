@@ -1,7 +1,8 @@
 /**
  * 一些底层操作
  */
-import { ADUnion } from '../../pi/browser/adUnoin';
+import { ADUnion } from '../../pi/browser/ad_unoin';
+import { DeviceIdProvider } from '../../pi/browser/device';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
 import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
@@ -67,18 +68,11 @@ export const openNewActivity = (url:string,title:string= '') => {
 /**
  * 获取设备信息
  */
-export const getDeviceId = (okCB?,errCB?) => {
-    const systemInfo = new DeviceIdProvider();
-    systemInfo.init();
-    systemInfo.getDriverId({
-        success: (result) => {
-            console.log(`获取设备的唯一id成功${JSON.stringify(result)}`);
-            okCB && okCB(result);
-        }
-        , fail: (result) => {
-            console.log(`获取设备的唯一id失败${JSON.stringify(result)}`);
-            errCB && errCB(result);
-        }
+export const getDeviceId = (okCB?) => {
+    const deviceIdProvider = new DeviceIdProvider();
+    deviceIdProvider.getUUId((result) => {
+        console.log(`获取设备的唯一id成功${JSON.stringify(result)}`);
+        okCB && okCB(result);
     });
 };
 
@@ -132,11 +126,8 @@ export const getScreenModify = () => {
  * 预先下载广告
  */
 export const preLoadAd = (adType: number,cb?:(str1:string,str2:string) => void) => {
-    const adUnion = new ADUnion();
-    adUnion.loadRewardVideoAD(adType,(str1,str2) => {
+    ADUnion.loadRewardVideoAD(adType,(str1,str2) => {
         cb && cb(str1,str2);
-        console.log('preLoadAd ad',str1);
-        console.log('preLoadAd ad',str2);
     });
 };
 /**
@@ -144,11 +135,8 @@ export const preLoadAd = (adType: number,cb?:(str1:string,str2:string) => void) 
  * adtype:1.广点通  2.字节跳动
  */
 export const watchAd = (adType: number,cb:(str1:string,str2:string) => void) => {
-    const adUnion = new ADUnion();
-    adUnion.showRewardVideoAD(adType,(str1,str2) => {
+    ADUnion.showRewardVideoAD(adType,(str1,str2) => {
         cb && cb(str1,str2);
         preLoadAd(adType);
-        console.log('watch ad',str1);
-        console.log('watch ad',str2);
     });
 };
