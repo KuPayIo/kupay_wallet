@@ -116,9 +116,8 @@ export interface Third {
     btcMinerFee: BtcMinerFee;          // btc minerfee 分档次
     gasLimitMap: Map<string, number>;  // 各种货币转账需要的gasLimit
 
-    // shapeshift
-    shapeShiftCoins: ShapeShiftCoin[];            // shapeShift 支持的币种
-    shapeShiftMarketInfo: MarketInfo;             // shapeshift 汇率相关
+    // changelly
+    changellyCurrencies: string[];            // changelly 支持的币种
     shapeShiftTxsMap: Map<string, ShapeShiftTxs>; // shapeshift 交易记录Map
 
     rate: number;                                 // 货币的美元汇率
@@ -438,29 +437,7 @@ export interface LuckyMoneyDetail {
     time: number;            // 时间
     timeShow: string;
 }
-/**
- * shapeShift支持的货币类型
- */
-export interface ShapeShiftCoin {
-    // tslint:disable-next-line:no-reserved-keywords
-    symbol: string;          // 货币类型
-    status: string;          // 状态
-    name: string;            // 货币全称
-    minerFee: number;        // 矿工费
-    image: string;           // 图片url
-    imageSmall: string;      // 小图url
-}
-/**
- * shapeShift汇率相关
- */
-export interface MarketInfo {
-    rate: number;            // 兑换汇率
-    pair: string;            // 交易对 eg:BTC_ETH
-    minimum: number;         // 最小发出数量
-    maxLimit: number;        // 最大发出数量
-    minerFee: number;        // 矿工费
-    limit: number;           // 限制数量
-}
+
 /**
  * shapeshift兑换记录详情
  */

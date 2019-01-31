@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
@@ -30,8 +31,10 @@ export class CloudWalletHome extends Widget {
         const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin('ST',balance));
         const color = getStore('setting/changeColor','redUp');
+        const stShow = getModulConfig('ST_SHOW');
         this.props = {
             ...this.props,
+            stShow,
             tabs:[{
                 tab:{ zh_Hans:'全部',zh_Hant:'全部',en:'' },
                 components:'app-view-wallet-cloudWalletGT-totalRecord'

@@ -4,7 +4,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail, getSilverPrice, getServerCloudBalance } from '../../../net/pull';
+import { getModulConfig } from '../../../modulConfig';
+import { getAccountDetail, getServerCloudBalance, getSilverPrice } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 import { confirmPay } from '../../../utils/recharge';
@@ -27,19 +28,19 @@ interface Props {
 
 export class RechargeGT extends Widget {
     public ok:() => void; 
-    public props:Props = {
-        payType : 'wxpay',
-        silverPrice:200,
-        total:0,
-        num:0.00,
-        balance:formatBalance(getCloudBalances().get(CloudCurrencyType.ST))
-    };
-    constructor() {
-        super();
-    }
+    public props:any;
 
     public create() {
         super.create();
+        const stShow = getModulConfig('ST_SHOW');
+        this.props = {
+            stShow,
+            payType : 'wxpay',
+            silverPrice:200,
+            total:0,
+            num:0.00,
+            balance:formatBalance(getCloudBalances().get(CloudCurrencyType.ST))
+        };
         getSilverPrice(1);
         setTimeout(() => {
             getSilverPrice(1);

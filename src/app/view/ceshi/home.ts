@@ -1,7 +1,8 @@
 import { Widget } from "../../../pi/widget/widget";
 import { hasWallet } from "../../utils/tools";
 import { popNew } from "../../../pi/ui/root";
-import { openPayment, walletPay } from "../../utils/pay";
+import { walletPay } from "../../utils/pay";
+import { createGroup } from "../../../chat/client/app/net/rpc";
 
 /**
  * play home 
@@ -87,6 +88,18 @@ export class Ceshi extends Widget {
         }, (err) => {
             console.log(err);
         });
+    }
+
+    /**
+     * 创建游戏群
+     */
+    public creatGroup(){    
+        let GroupName = document.getElementById('GroupName').value;
+        let GroupNote = document.getElementById('GroupNote').value;
+        createGroup(GroupName,'',GroupNote,false,(res)=>{
+            console.log(res);
+            
+        })
     }
     /**
      * Ajax 请求

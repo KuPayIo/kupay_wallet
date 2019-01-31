@@ -7,7 +7,7 @@ import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { getSilverPrice } from '../net/pull';
-import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
+import { changellyGetCurrencies, fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
 import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
 import { getStore,setStore } from '../store/memstore';
@@ -35,8 +35,8 @@ export class DataCenter {
    * 初始化
    */
     public init() {
-        // 获取shapeshift支持货币
-        // getShapeShiftCoins();
+        // 币币兑换可用货币获取
+        changellyGetCurrencies();
         // 更新黄金价格
         this.updateGoldPrice();
         // 更新人民币美元汇率

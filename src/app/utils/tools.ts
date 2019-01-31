@@ -10,7 +10,7 @@ import { resize } from '../../pi/widget/resize/resize';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
 import { Cipher } from '../core/crypto/cipher';
 import { getDeviceId, getDeviceInfo } from '../logic/native';
-import { getRandom, openConnect } from '../net/pull';
+import { getRandom, openConnect } from '../net/login';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
 import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet,setStore } from '../store/memstore';
@@ -582,7 +582,7 @@ export const getByteLen = (val) => {
 
 // 计算支持的币币兑换的币种
 export const currencyExchangeAvailable = () => {
-    const shapeshiftCoins = getStore('third/shapeShiftCoins', []);
+    const changellyCurrencies = getStore('third/changellyCurrencies', []);
     const currencyArr = [];
     for (const i in MainChainCoin) {
         currencyArr.push(i);
@@ -591,8 +591,8 @@ export const currencyExchangeAvailable = () => {
         currencyArr.push(i);
     }
 
-    return shapeshiftCoins.filter(item => {
-        return item.status === 'available' && currencyArr.indexOf(item.symbol) >= 0;
+    return changellyCurrencies.filter(item => {
+        return currencyArr.indexOf(item) >= 0;
     });
 };
 
@@ -1132,8 +1132,6 @@ export const fetchDeviceId = async () => {
             getDeviceId((deviceId:string) => {
                 const hash256 = sha256(deviceId + getStore('user/id'));
                 resolve(hash256);
-            },(err) => {
-                reject(err);
             });
         });
     }

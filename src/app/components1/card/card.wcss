@@ -5,13 +5,18 @@
     flex-shrink: 0;
     overflow: hidden;
 }
+.firstcard{
+    height: 100%;
+    position: relative;
+}    
 
 .card-shadow{
     box-shadow:5px 5px 10px #e2e2e2;
 }
 
 .card-img{
-   width:100%;
+    margin-left: 50%;
+    transform: translateX(-50%);
 }
 .card-img-small{
     border-radius: 12px;
@@ -21,15 +26,17 @@
     padding:30px 20px;
     display: flex;
 }
+.firstcard-content{
+    position: absolute;
+    bottom: 0px;
+}
 
 .desc{
     font-size: 28px;
-    color: #888888;
     line-height: 40px;
 }
 
 .title{
     font-size: 48px;
-    color: #222222;
     line-height: 67px;
 }

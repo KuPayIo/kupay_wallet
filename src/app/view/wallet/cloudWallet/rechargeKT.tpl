@@ -1,24 +1,24 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <div>
-        {{: topBarTitle = {"zh_Hans":"KT充值","zh_Hant":"KT充值","en":""} }}
+        {{: topBarTitle = {"zh_Hans":it.ktShow + "充值","zh_Hant":it.ktShow + "充值","en":""} }}
         <widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}} }</widget>
     </div>
     <div w-class="body">
 
         {{% 充值金额输入}}
         <div w-class="body-top">
-            <widget w-class="top-title" w-tag="pi-ui-lang">{"zh_Hans":"赠送：{{it.giveST}} ST","zh_Hant":"贈送：{{it.giveST}} ST","en":""}</widget>
+            <widget w-class="top-title" w-tag="pi-ui-lang">{"zh_Hans":"赠送：{{it.giveST}} {{it.stShow}}","zh_Hant":"贈送：{{it.giveST}} {{it.stShow}}","en":""}</widget>
             <div w-class="pay-list">
                 {{for i,item of it.payList}}
                 <div on-tap="changePayItem({{i}})" w-class="{{item.KTnum === it.selectPayItem.KTnum?'pay-list-selectItem':'pay-list-item'}} ">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"{{item.KTnum}}KT","zh_Hant":"{{item.KTnum}}KT","en":""}</widget>
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"{{item.KTnum}}{{it.ktShow}}","zh_Hant":"{{item.KTnum}}{{it.ktShow}}","en":""}</widget>
                     <widget style="font-size:24px;" w-tag="pi-ui-lang">{"zh_Hans":"售价：{{item.sellPrize}}元","zh_Hant":"售價：{{item.sellPrize}}元","en":""}</widget>
                 </div>
                 {{end}}
             </div>
-            <div w-class="other-input" ev-input-change="amountChange">
+            <div w-class="other-input" ev-input-change="inputChange">
                 {{: inputPlace = {"zh_Hans":"其它大于20元金额","zh_Hant":"其它大於20元金額","en":""} }}
-                <app-components1-input-input>{itype:"integer",maxLength:5,placeHolder:{{inputPlace}},input:{{it.total}},style:"color:#318DE6;background:transparent;"}</app-components1-input-input>
+                <app-components1-input-input>{itype:"integer",maxLength:5,placeHolder:{{inputPlace}},input:{{it.inputValue}},style:"color:#318DE6;background:transparent;"}</app-components1-input-input>
             </div>
         </div>
 

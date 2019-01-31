@@ -10,10 +10,10 @@ import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
-import { getScreenModify } from '../../logic/native';
+import { getScreenModify, preLoadAd } from '../../logic/native';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
-import { fetchDeviceId, fetchDeviceInfo } from '../../utils/tools';
+import { fetchDeviceId } from '../../utils/tools';
 
 // ============================== 导出
 
@@ -32,6 +32,15 @@ export const run = (cb): void => {
     console.timeEnd('home enter');
     // 后台切前台
     backToFront();
+    // setTimeout(() => {
+    //     changellyGetStatus().then(res => {
+    //         console.log('changellyGetStatus ',res);
+    //     });
+    //     changellyGetTransactions('ETH','0x313df6d5db1460c099a30ef5f1c1e87636ae08fa').then(res => {
+    //         console.log('changellyGetTransactions ',res);
+    //     });
+        
+    // },2000);
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
@@ -59,13 +68,19 @@ const preFetchFromNative = () => {
             setStore('setting/deviceId',hash256deviceId);
         });
     }
-    const deviceInfo = getStore('setting/deviceInfo');
-    if (!deviceInfo) {
-        fetchDeviceInfo().then(info => {
-            setStore('setting/deviceInfo',info);
-        });
-    }
+    // const deviceInfo = getStore('setting/deviceInfo');
+    // if (!deviceInfo) {
+    //     fetchDeviceInfo().then(info => {
+    //         setStore('setting/deviceInfo',info);
+    //     });
+    // }
     getScreenModify();
+
+    preLoadAd(2,() => {
+        preLoadAd(2,() => {
+            preLoadAd(2);
+        });
+    });
 };
 const checkUpdate = () => {
   // todo
