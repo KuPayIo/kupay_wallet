@@ -128,8 +128,6 @@ export const getScreenModify = () => {
 export const preLoadAd = (adType: number,cb?:(str1:string,str2:string) => void) => {
     ADUnion.loadRewardVideoAD(adType,(str1,str2) => {
         cb && cb(str1,str2);
-        console.log('preLoadAd ad',str1);
-        console.log('preLoadAd ad',str2);
     });
 };
 /**
@@ -140,7 +138,5 @@ export const watchAd = (adType: number,cb:(str1:string,str2:string) => void) => 
     ADUnion.showRewardVideoAD(adType,(str1,str2) => {
         cb && cb(str1,str2);
         preLoadAd(adType);
-        console.log('watch ad',str1);
-        console.log('watch ad',str2);
     });
 };
