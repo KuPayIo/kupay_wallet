@@ -2,10 +2,9 @@
  * 钱包登录模块
  */
 import { open, setBottomLayerReloginMsg,setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
-import { popNew } from '../../pi/ui/root';
 import { wsUrl } from '../config';
 import { getStore, register, setStore } from '../store/memstore';
-import { calcHashValuePromise, decrypt, encrypt, fetchDeviceId, kickOffline, popPswBox } from '../utils/tools';
+import { decrypt, encrypt, fetchDeviceId, kickOffline, popPswBox } from '../utils/tools';
 import { requestAsync } from './pull';
 
 declare var pi_modules;
