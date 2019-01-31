@@ -215,6 +215,10 @@ export const loginWallet = (appId:string,success:Function) => {
         success
     };
     loginedCallbackList.push(loginType);
+    const isLogin = getStore('user/isLogin');
+    if (isLogin) {
+        loginWalletSuccess();
+    }
 };
 
 /**
@@ -224,6 +228,8 @@ const loginWalletSuccess = () => {
     for (const loginType of loginedCallbackList) {
         getOpenId(loginType.appId).then(res => {
             loginType.success(res.openid);
+        }).catch(err => {
+            console.log(`appId ${loginType.appId} get openId failed`,err);
         });
     }
 };
