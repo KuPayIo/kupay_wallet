@@ -1,17 +1,18 @@
 /**
- * 去登录 modalbox
+ * 去登录 modal
  */
+
+import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 
-export class ModalBox extends Widget {
+export class NewUserWelfare extends Widget {
     public ok: () => void;
-    public cancel: () => void;
     public props:any = { pi_norouter:true };
-
-    public cancelBtnClick(e: any) {
-        this.cancel && this.cancel();
+    public goLogin() {
+        this.ok && this.ok();
+        popNew('app-view-wallet-create-home');
     }
-    public okBtnClick(e: any) {
+    public close(e: any) {
         this.ok && this.ok();
     }
 }
