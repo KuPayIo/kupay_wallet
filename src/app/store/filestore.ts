@@ -8,7 +8,7 @@
 declare var pi_modules;
 const mod = pi_modules.store.exports;
 
-const impl = mod.create('wallet', 'store');
+const impl = mod.create('walletStore', 'store');
 let initSuccess = false;
 
 /**

@@ -7,10 +7,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getTransactionsByAddr } from '../../../net/pullWallet';
-import { ShapeShiftTx, ShapeShiftTxs } from '../../../store/interface';
-import { register } from '../../../store/memstore';
-import { getCurrentAddrByCurrencyName, parseAccount, timestampFormat } from '../../../utils/tools';
+import { changellyGetTransactions } from '../../../net/pull3';
+import { getStore } from '../../../store/memstore';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -20,6 +18,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class ConvertHistory extends Widget {
     public ok: () => void;
     public language:any;
+    public close:any;
     
     public setProps(props:Json,oldProps:Json) {
         super.setProps(props,oldProps);
@@ -36,50 +35,23 @@ export class ConvertHistory extends Widget {
             ...this.props,
             txsShow:[]
         };
-        const close = popNew('app-components1-loading-loading',{ text:this.language.loading });
-        const addr = getCurrentAddrByCurrencyName(this.props.currencyName);
-        await getTransactionsByAddr(addr);
-        close.callback(close.widget);
+        this.getAllTransactions();
+        this.close = popNew('app-components1-loading-loading',{ text:this.language.loading });
     }
 
-    /**
-     * 兑换历史记录更新
-     */
-    public shapeShiftTxsUpdate(shapeShiftTxsMap:Map<string,ShapeShiftTxs>) {
-        const addr = getCurrentAddrByCurrencyName(this.props.currencyName).toLowerCase();
-        const shapeShiftTxs = shapeShiftTxsMap.get(addr);
-        const txs = shapeShiftTxs && shapeShiftTxs.list || [];
-        txs.sort((tx1,tx2) => {
-            return tx2.timestamp - tx1.timestamp;
-        });
-        const txsShow = [];
-        txs.forEach((tx:ShapeShiftTx) => {
-            // tslint:disable-next-line:variable-name
-            let status_show = '';
-            // tslint:disable-next-line:variable-name
-            let status_class = '';
-            if (tx.status === 'complete') {
-                status_show = this.language.tips[1];
-                status_class = '';
-            } else if (tx.status === 'failed') {
-                status_show = this.language.tips[2];
-                status_class = 'isActive';   // 做个标记，提醒
-            } else {
-                status_show = this.language.tips[3];
-                status_class = 'isActive';  // 做个标记，提醒
-            }
-            txsShow.push({
-                ...tx,
-                inputTXID_show:parseAccount(tx.inputTXID),
-                outputTXID_show:tx.status === 'complete' && parseAccount(tx.outputTXID),
-                timestamp_show:timestampFormat(tx.timestamp * 1000),
-                status_show,
-                status_class
+    public async getAllTransactions() {
+        const changellyPayinAddress = getStore('wallet/changellyPayinAddress');
+        let txHistory = [];
+        for (const tmp of changellyPayinAddress) {
+            changellyGetTransactions(tmp.currencyName,tmp.payinAddress).then(res => {
+                if (res.result) {
+                    txHistory = txHistory.concat(res.result);
+                    console.log(txHistory);
+                    this.close && this.close.callback(this.close.widget);
+                    this.paint();
+                }
             });
-        });
-        this.props.txsShow = txsShow;
-        this.paint();
-        
+        }
     }
 
     /**
@@ -88,25 +60,6 @@ export class ConvertHistory extends Widget {
     public inHashClick(e:any,index:number) {
         const tx = this.props.txsShow[index];
         const inHash = tx.inputTXID;
-        // const transactions = find('transactions');
-        // let record = null;
-        // transactions.forEach(item => {
-        //     if (item.hash === inHash) {
-        //         record = {
-        //             tx:tx
-        //         };
-        //     }
-        // });
-        // if (!record) {
-        //     const curAddrInfo = getCurrentAddrInfo(tx.inputCurrency);
-        //     curAddrInfo.record.forEach(item => {
-        //         if (item.id === inHash) {
-        //             record = {
-        //                 ...item
-        //             };
-        //         }
-        //     });
-        // }
         popNew('app-view-wallet-transaction-transactionDetails',{ hash:inHash });
     }
 
@@ -117,25 +70,8 @@ export class ConvertHistory extends Widget {
         const tx = this.props.txsShow[index];
         if (tx.status !== 'complete') return;
         const outHash = tx.outputTXID;
-        // const transactions = find('transactions');
-        // let record = null;
-        // transactions.forEach(item => {
-        //     if (item.hash === outHash) {
-        //         record = {
-        //             tx:tx
-        //         };
-        //     }
-        // });
-        // if (!record) return;
         popNew('app-view-wallet-transaction-transactionDetails',{ hash:outHash });
     }
 }
 
 // =================================本地
-
-register('third/shapeShiftTxsMap', shapeShiftTxsMap => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.shapeShiftTxsUpdate(shapeShiftTxsMap);
-    }
-});
