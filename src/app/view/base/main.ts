@@ -76,9 +76,11 @@ const preFetchFromNative = () => {
     // }
     getScreenModify();
 
-    preLoadAd(2,() => {
-        preLoadAd(2,() => {
-            preLoadAd(2);
+    // 预先随机下载
+    const adType = undefined;
+    preLoadAd(adType,() => {
+        preLoadAd(adType,() => {
+            preLoadAd(adType);
         });
     });
 };
