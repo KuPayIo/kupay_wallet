@@ -10,7 +10,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/pull3';
 import { transfer, transfer1, transfer3, TxPayload, TxPayload3 } from '../../../net/pullWallet';
-import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
+import { ChangellyPayinAddr, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
@@ -248,6 +248,19 @@ export class CoinConvert extends Widget {
                     minerFeeLevel
                 };
                 close && close.callback(close.widget);
+                const changellyPayinAddress = getStore('wallet/changellyPayinAddress');
+                const tmp:ChangellyPayinAddr = {
+                    currencyName:outCurrency,
+                    payinAddress
+                };
+                const index = changellyPayinAddress.findIndex(item => {
+                    return item.currencyName === tmp.currencyName && item.payinAddress === tmp.payinAddress;
+                });
+                if (index < 0) {
+                    changellyPayinAddress.push(tmp);
+                    setStore('wallet/changellyPayinAddress',changellyPayinAddress);
+                }
+                
                 // transfer1(passwd,payload).then(([err,hash]) => {
                 //     close && close.callback(close.widget);
                 //     if (err) {

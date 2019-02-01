@@ -32,15 +32,6 @@ export const run = (cb): void => {
     console.timeEnd('home enter');
     // 后台切前台
     backToFront();
-    // setTimeout(() => {
-    //     changellyGetStatus().then(res => {
-    //         console.log('changellyGetStatus ',res);
-    //     });
-    //     changellyGetTransactions('ETH','0x313df6d5db1460c099a30ef5f1c1e87636ae08fa').then(res => {
-    //         console.log('changellyGetTransactions ',res);
-    //     });
-        
-    // },2000);
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();

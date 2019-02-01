@@ -25,11 +25,6 @@ export const lang = 'english';
 // eth代币transfer交易编码前缀
 export const ethTokenTransferCode = '0xa9059cbb';
 
-// shapeshift autologin token
-export const shapeshiftAutoToken = 'CZfRLxjor2E49vTfTZDjaeeR78nMMi1rKypV9GRBsmt2';
-
-// 如果shapeshift交易记录返回[],请求的最多次数,超过默认没有交易记录
-export const shapeshiftTransactionRequestNumber = 5;
 // 发红包所支持的货币
 export const redEnvelopeSupportCurrency = ['KT', 'ETH'];
 
