@@ -1609,7 +1609,9 @@ export const loginSuccess = (account:Account) => {
         vault:localWallet.vault,                 
         isBackup: localWallet.isBackup,                 
         showCurrencys: localWallet.showCurrencys,           
-        currencyRecords
+        currencyRecords,
+        changellyPayinAddress:[],
+        changellyTempTxs:[]
     };
   
     const cloud = getStore('cloud');

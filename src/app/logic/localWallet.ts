@@ -94,7 +94,9 @@ export const createWalletRandom = async (option: Option) => {
         vault: gwlt.vault,
         isBackup: gwlt.isBackup,
         showCurrencys: defalutShowCurrencys,
-        currencyRecords: gwlt.currencyRecords
+        currencyRecords: gwlt.currencyRecords,
+        changellyPayinAddress:[],
+        changellyTempTxs:[]
     };
     const user = getStore('user');
     user.id = gwlt.glwtId;
@@ -131,7 +133,9 @@ export const createWalletByImage = async (option: Option) => {
         vault: gwlt.vault,
         isBackup: gwlt.isBackup,
         showCurrencys: defalutShowCurrencys,
-        currencyRecords: gwlt.currencyRecords
+        currencyRecords: gwlt.currencyRecords,
+        changellyPayinAddress:[],
+        changellyTempTxs:[]
     };
     const user = getStore('user');
     user.id = gwlt.glwtId;
@@ -208,7 +212,9 @@ export const importWalletByMnemonic = async (option: Option) => {
         vault: gwlt.vault,
         isBackup: gwlt.isBackup,
         showCurrencys: defalutShowCurrencys,
-        currencyRecords: gwlt.currencyRecords
+        currencyRecords: gwlt.currencyRecords,
+        changellyPayinAddress:[],
+        changellyTempTxs:[]
     };
     const user = getStore('user');
     user.id = gwlt.glwtId;

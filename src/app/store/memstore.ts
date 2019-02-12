@@ -11,7 +11,7 @@ import { defaultSetting } from '../config';
 import { topHeight } from '../utils/constants';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, BtcMinerFee, ChangellyPayinAddr, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Gold, Setting, Store, TxHistory, UserInfo, Wallet } from './interface';
+import { AddrInfo, BtcMinerFee, ChangellyPayinAddr, ChangellyTempTxs, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Gold, Setting, Store, TxHistory, UserInfo, Wallet } from './interface';
 
 // ============================================ 导出
 
@@ -296,12 +296,14 @@ const initAccount = () => {
             };
             currencyRecords.push(record);
         }
+        
         const wallet: Wallet = {
             vault: localWallet.vault,
             isBackup: localWallet.isBackup,
             showCurrencys: localWallet.showCurrencys,
             currencyRecords,
-            changellyPayinAddress:localWallet.changellyPayinAddress
+            changellyPayinAddress:localWallet.changellyPayinAddress || [],
+            changellyTempTxs:localWallet.changellyTempTxs || []
         };
         store.wallet = wallet;
     } else {
@@ -515,7 +517,8 @@ const accountChange = () => {
             isBackup: wallet.isBackup,
             showCurrencys: wallet.showCurrencys,
             currencyRecords: localCurrencyRecords,
-            changellyPayinAddress:wallet.changellyPayinAddress || []
+            changellyPayinAddress:wallet.changellyPayinAddress,
+            changellyTempTxs:wallet.changellyTempTxs
         };
     }
 
@@ -728,6 +731,7 @@ export interface LocalWallet {
     showCurrencys: string[];            // 显示的货币列表
     currencyRecords: LocalCurrencyRecord[];  // 支持的所有货币记录
     changellyPayinAddress:ChangellyPayinAddr[]; // changelly payinAddress
+    changellyTempTxs:ChangellyTempTxs[]; // changelly临时交易记录
 }
 
 /**

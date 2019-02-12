@@ -138,9 +138,20 @@ export interface Setting {
     bottomHeight:number;          // 设备底部应空出来的高度
 }
 
+/**
+ *  changelly 交易记录的changelly方收币地址
+ */
 export interface ChangellyPayinAddr {
     currencyName:string;   // 出币
     payinAddress:string;   // changelly收币地址
+}
+
+/**
+ * changelly 临时交易记录
+ */
+export interface ChangellyTempTxs {
+    hash:string;   // 交易hash
+    id:string;    // 交易id
 }
 /**
  * 红包模块
@@ -238,6 +249,7 @@ export interface Wallet {
     showCurrencys: string[];            // 显示的货币列表
     currencyRecords: CurrencyRecord[];  // 支持的所有货币记录
     changellyPayinAddress:ChangellyPayinAddr[];           // changelly 交易记录的changelly方收币地址
+    changellyTempTxs:ChangellyTempTxs[];   // changelly 临时交易记录
 }
 
 /**

@@ -10,7 +10,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/pull3';
 import { transfer, transfer1, transfer3, TxPayload, TxPayload3 } from '../../../net/pullWallet';
-import { ChangellyPayinAddr, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
+import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
@@ -36,9 +36,12 @@ export class CoinConvert extends Widget {
      * 查看手续费介绍
      */
     public rateDetail() {
-        // tslint:disable-next-line:prefer-template
-        const tips = this.language.tips[5] + this.props.inMinerFee + ' ' + this.props.inCurrency;
-        // tslint:disable-next-line:max-line-length
+        const outCurrency = this.props.outCurrency;
+        const minerFeeLevel = MinerFeeLevel.Standard;
+        const minerFeeList = fetchMinerFeeList(this.props.outCurrency);
+        const fee = minerFeeList[minerFeeLevel].minerFee;
+        const cn = (outCurrency === 'ETH' || ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
+        const tips = `${this.language.tips[5]} ${fee} ${cn}`;
         popNew('app-components-allModalBox-modalBox1',{ title:this.language.title,content:this.language.content,tips:tips });
     }
 
@@ -46,7 +49,7 @@ export class CoinConvert extends Widget {
      * 查看兑换历史
      */
     public goHistory() {
-        popNew('app-view-wallet-coinConvert-convertHistory',{ currencyName:this.props.outCurrency });
+        popNew('app-view-wallet-coinConvert-convertHistory',{ currencyName:this.props.outCurrency,addr:this.props.curOutAddr });
     }
 
     public setProps(props:Json,oldProps:Json) {
@@ -63,7 +66,6 @@ export class CoinConvert extends Widget {
             outCurrency,
             inCurrency,
             pair:'',
-            maxLimit:0,
             minimum:0,
             rate:0,
             outMinerFee:0,
@@ -81,7 +83,6 @@ export class CoinConvert extends Widget {
 
     // 更新矿工费
     public async updateMinerFee() {
-        const cn = (this.props.currencyName === 'ETH' || ERC20Tokens[this.props.currencyName]) ? 'ETH' : 'BTC';
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
         console.log(minerFeeList);
         // const gasLimit = obj.gasLimit;
@@ -247,7 +248,8 @@ export class CoinConvert extends Widget {
                     fee,             
                     minerFeeLevel
                 };
-                close && close.callback(close.widget);
+                this.props.inMinerFee = fee;
+                // close && close.callback(close.widget);
                 const changellyPayinAddress = getStore('wallet/changellyPayinAddress');
                 const tmp:ChangellyPayinAddr = {
                     currencyName:outCurrency,
@@ -261,19 +263,27 @@ export class CoinConvert extends Widget {
                     setStore('wallet/changellyPayinAddress',changellyPayinAddress);
                 }
                 
-                // transfer1(passwd,payload).then(([err,hash]) => {
-                //     close && close.callback(close.widget);
-                //     if (err) {
-                //         popNewMessage(this.language.messages[3]);
-                //     } else {
-                //         popNewMessage(this.language.messages[4]);
-                //     }
-                // });
+                transfer1(passwd,payload).then(([err,hash]) => {
+                    close && close.callback(close.widget);
+                    if (err) {
+                        popNewMessage(this.language.messages[3]);
+                    } else {
+                        popNewMessage(this.language.messages[4]);
+                        const changellyTempTxs = getStore('wallet/changellyTempTxs');
+                        const tempTxs:ChangellyTempTxs = {
+                            hash,
+                            id:res.result.id
+                        };
+                        changellyTempTxs.push(tempTxs);
+                        setStore('wallet/changellyTempTxs',changellyTempTxs);
+                    }
+                });
             } else {
                 close && close.callback(close.widget);
                 popNewMessage(this.language.messages[3]);
             }
         }).catch(err => {
+            console.log(err);
             close && close.callback(close.widget);
             popNewMessage(this.language.messages[3]);
         });
