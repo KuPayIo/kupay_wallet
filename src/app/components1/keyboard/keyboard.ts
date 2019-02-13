@@ -4,11 +4,6 @@
 import { Json } from '../../../pi/lang/type';
 import { Widget } from '../../../pi/widget/widget';
 
-interface Props {
-    title: string;
-    closePage?:boolean;
-}
-
 export class KeyBoard extends Widget {
     public props: any;
     public ok:(value:string) => void;
@@ -16,7 +11,7 @@ export class KeyBoard extends Widget {
     constructor() {
         super();
     }
-
+    
     public setProps(oldProps:Json,props:Json) {
         super.setProps(oldProps,props);
         this.init();
