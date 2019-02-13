@@ -14,7 +14,7 @@ export interface Store {
 
     setting: Setting;     // 设置
 
-    third: Third;        // 第三方通信数据，如：shapeshift...
+    third: Third;        // 第三方通信数据，如：changelly...
     flags: object;       // 全局的标识
 }
 
@@ -118,7 +118,6 @@ export interface Third {
 
     // changelly
     changellyCurrencies: string[];            // changelly 支持的币种
-    shapeShiftTxsMap: Map<string, ShapeShiftTxs>; // shapeshift 交易记录Map
 
     rate: number;                                 // 货币的美元汇率
     silver:Gold;                                // 白银价格
@@ -139,6 +138,10 @@ export interface Setting {
     bottomHeight:number;          // 设备底部应空出来的高度
 }
 
+export interface ChangellyPayinAddr {
+    currencyName:string;   // 出币
+    payinAddress:string;   // changelly收币地址
+}
 /**
  * 红包模块
  */
@@ -234,7 +237,7 @@ export interface Wallet {
     isBackup: boolean;                  // 备份助记词与否
     showCurrencys: string[];            // 显示的货币列表
     currencyRecords: CurrencyRecord[];  // 支持的所有货币记录
-
+    changellyPayinAddress:ChangellyPayinAddr[];           // changelly 交易记录的changelly方收币地址
 }
 
 /**
@@ -438,31 +441,6 @@ export interface LuckyMoneyDetail {
     timeShow: string;
 }
 
-/**
- * shapeshift兑换记录详情
- */
-export interface ShapeShiftTx {
-    hasConfirmations: string;          // 是否确认
-    inputAddress: string;              // Address that the input coin was paid to for this shift
-    inputAmount: number;               // Amount of input coin that was paid in on this shift
-    inputCurrency: string;             // Currency type of the input coin
-    inputTXID: string;                 // Transaction ID of the input coin going into shapeshift
-    outputAddress: string;             // Address that the output coin was sent to for this shift
-    outputAmount: number;              // Amount of output coin that was paid out on this shift
-    outputCurrency: string;            // Currency type of the output coin
-    outputTXID: string;                // Transaction ID of the output coin going out to user
-    shiftRate: string;                 // The effective rate the user got on this shift.
-    status: string;                    // status of the shift
-    timestamp: number;                 // timestamp
-}
-
-/**
- * shapeshift兑换记录
- */
-export interface ShapeShiftTxs {
-    addr: string;                // 这个地址的交易记录
-    list: ShapeShiftTx[];        // 交易记录列表
-}
 /**
  * 充值提现记录
  */

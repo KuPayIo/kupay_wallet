@@ -180,10 +180,9 @@ export const changellyCreateTransaction = (fromCurrency:string,toCurrency:string
 };
 
 /**
- * 获取指定交易的状态
+ * 获取指定交易的状态   vlsrez4e0mh2yiwq
  */
-export const changellyGetStatus = () => {
-    const id = 'vlsrez4e0mh2yiwq';
+export const changellyGetStatus = (id:string) => {
     const message = {
         jsonrpc: '2.0',
         id: changellyPostId,
@@ -195,7 +194,7 @@ export const changellyGetStatus = () => {
 
     return changellyFetchPost(message);
 };
-
+// 0x4c9a9d315d14192e8805bbe3bbf7d2582782c501
 export const changellyGetTransactions = (currencyName:string,addr:string) => {
     const message = {
         jsonrpc: '2.0',

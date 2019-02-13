@@ -11,7 +11,7 @@ import { defaultSetting } from '../config';
 import { topHeight } from '../utils/constants';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Gold, Setting, ShapeShiftTxs, Store, TxHistory, UserInfo, Wallet } from './interface';
+import { AddrInfo, BtcMinerFee, ChangellyPayinAddr, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Gold, Setting, Store, TxHistory, UserInfo, Wallet } from './interface';
 
 // ============================================ 导出
 
@@ -300,7 +300,8 @@ const initAccount = () => {
             vault: localWallet.vault,
             isBackup: localWallet.isBackup,
             showCurrencys: localWallet.showCurrencys,
-            currencyRecords
+            currencyRecords,
+            changellyPayinAddress:localWallet.changellyPayinAddress
         };
         store.wallet = wallet;
     } else {
@@ -387,7 +388,6 @@ const initThird = () => {
     store.third.rate = third.rate;
     store.third.silver = third.silver;
     store.third.gasLimitMap = new Map<string, number>(third.gasLimitMap);
-    store.third.shapeShiftTxsMap = new Map<string, ShapeShiftTxs>(third.shapeShiftTxsMap);
     store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
 };
 
@@ -514,7 +514,8 @@ const accountChange = () => {
             vault: wallet.vault,
             isBackup: wallet.isBackup,
             showCurrencys: wallet.showCurrencys,
-            currencyRecords: localCurrencyRecords
+            currencyRecords: localCurrencyRecords,
+            changellyPayinAddress:wallet.changellyPayinAddress || []
         };
     }
 
@@ -645,10 +646,8 @@ const store: Store = {
         btcMinerFee: null,                          // btc minerfee 分档次
         gasLimitMap: new Map<string, number>(),     // 各种货币转账需要的gasLimit
 
-        // shapeshift
-        changellyCurrencies: [],                                  // shapeShift 支持的币种
-        shapeShiftTxsMap: new Map<string, ShapeShiftTxs>(),   // shapeshift 交易记录Map
-
+        // changelly
+        changellyCurrencies: [],                                  // changelly 支持的币种
         rate: 0,                                            // 货币的美元汇率
         silver: {                                         // 黄金价格
             price: 0,
@@ -728,6 +727,7 @@ export interface LocalWallet {
     isBackup: boolean;                  // 备份助记词与否
     showCurrencys: string[];            // 显示的货币列表
     currencyRecords: LocalCurrencyRecord[];  // 支持的所有货币记录
+    changellyPayinAddress:ChangellyPayinAddr[]; // changelly payinAddress
 }
 
 /**
@@ -737,7 +737,6 @@ export interface LocalThird {
     gasPrice: GasPrice; // gasPrice分档次
     btcMinerFee: BtcMinerFee; // btc minerfee 分档次
     gasLimitMap: Map<string, number>; // 各种货币转账需要的gasLimit
-
     rate: number; // 货币的美元汇率
     silver: Gold; // 白银价格
     currency2USDTMap: Map<string, Currency2USDT>; // k线  --> 计算涨跌幅
