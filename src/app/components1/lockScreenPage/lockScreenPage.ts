@@ -1,7 +1,6 @@
 /**
  * pasword screen
  */
-import { ExitApp } from '../../../pi/browser/exitApp';
 import { Json } from '../../../pi/lang/type';
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
@@ -9,7 +8,7 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { LockScreen } from '../../store/interface';
 import { getStore, register, setStore  } from '../../store/memstore';
-import { lockScreenHash, lockScreenVerify } from '../../utils/tools';
+import { lockScreenHash, lockScreenVerify, logoutAccount } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -116,7 +115,13 @@ export class LockScreenPage extends Widget {
      */
     public verifyPsw() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components1-modalBoxInput-modalBoxInput',this.language.modalBoxInput2,async (r) => {
+        popNew('app-components1-modalBoxInput-modalBoxInput',this.language.modalBoxInput2, async (r) => {
+            if (!r) {  // 未输入密码点击验证则重新打开验证
+                popNew('app-components1-message-message',{ content:this.language.tips[3] });
+                this.verifyPsw();
+
+                return;
+            }
             const close = popNew('app-components1-loading-loading', { text: this.language.loading }); 
             if (this.props.loading) {
                 const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
@@ -138,10 +143,9 @@ export class LockScreenPage extends Widget {
                 } 
             }
         },(fg) => {
-            if (fg) {  // 退出app
-                const exitApp = new ExitApp();
-                exitApp.init();
-                exitApp.exitApplication({});
+            if (fg) {  // 退出当前钱包，跳转到登陆页面
+                logoutAccount();
+                popNew('app-view-wallet-create-home');
             }
         });
     }

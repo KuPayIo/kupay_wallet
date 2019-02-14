@@ -13,7 +13,7 @@ import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 
 import { getLang } from '../../../pi/util/lang';
-import { logoutAccountDel } from '../../net/login';
+import { logoutAccount } from '../../net/login';
 
 interface Props {
     title:string;
@@ -56,7 +56,9 @@ export class ModalBoxInput extends Widget {
     public foegetPsw() {
         this.cancel && this.cancel(false);
         popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {  // 确认删除钱包
-            logoutAccountDel();
+            logoutAccount();
+            popNew('app-view-wallet-create-home');
+            
         },() => {   // 取消删除钱包
             if (this.props.lockScreen) {
                 popNew('app-components1-modalBoxInput-modalBoxInput',this.props);
