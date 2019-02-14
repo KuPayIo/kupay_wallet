@@ -1,10 +1,11 @@
 /**
  * 钱包登录模块
  */
-import { open, setBottomLayerReloginMsg,setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+import { closeCon, open,setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
+import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
-import { getStore, register, setStore } from '../store/memstore';
+import { getStore, initCloudWallets, register, setStore } from '../store/memstore';
 import { calcHashValuePromise, decrypt, encrypt, fetchDeviceId, kickOffline, popPswBox } from '../utils/tools';
 import { requestAsync } from './pull';
 
@@ -196,16 +197,82 @@ export const getRandom = async (secretHash:string,cmd?:number) => {
     }
 };
 
-// 登录成功之后的回调列表
-const loginedCallbackList:LoginType[] = [];
+/**
+ * 注销账户并删除数据
+ */
+export const logoutAccountDel = () => {
+    const user = {
+        id: '',                      // 该账号的id
+        isLogin: false,              // 登录状态
+        offline:true,                // 在线状态
+        token: '',                   // 自动登录token
+        conRandom: '',               // 连接随机数
+        conUid: '',                   // 服务器连接uid
+        publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
+        salt: cryptoRandomInt().toString(),                    // 加密 盐值
+        secretHash: '',             // 密码hash缓存   
+        info: {                      // 用户基本信息
+            nickName: '',           // 昵称
+            avatar: '',            // 头像
+            phoneNumber: '',       // 手机号
+            isRealUser: false    // 是否是真实用户
+        }
+    };
+    const cloud = {
+        cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
+    };
+    
+    const activity = {
+        luckyMoney: {
+            sends: null,          // 发送红包记录
+            exchange: null,       // 兑换红包记录
+            invite: null          // 邀请码记录
+        },
+        mining: {
+            total: null,      // 挖矿汇总信息
+            history: null, // 挖矿历史记录
+            addMine: [],  // 矿山增加项目
+            mineRank: null,    // 矿山排名
+            miningRank: null,  // 挖矿排名
+            itemJump: null
+        },                       // 挖矿
+        dividend: {
+            total: null,         // 分红汇总信息
+            history: null       // 分红历史记录
+        },
+        financialManagement: {          // 理财
+            products: null,
+            purchaseHistories: null
+        }
+    };
 
-// 登录失败延迟执行函数
-let loginWalletFailedDelay;
+    let lockScreen = getStore('setting/lockScreen');
+    lockScreen = {
+        psw:'',
+        open:false
+    };
+    setStore('wallet',null,false);
+    setStore('cloud',cloud,false);
+    setStore('user',user);
+    setStore('activity',activity);
+    setStore('setting/lockScreen',lockScreen);
+    setBottomLayerReloginMsg('','','');
+    closeCon();
+    logoutWalletSuccess();
+    setTimeout(() => {
+        openConnect();
+    },100);
+    
+};
 
-interface LoginType {
-    appId:string;
-    success:Function;
-}
+/**
+ * 注销账户保留数据
+ */
+export const logoutAccount = () => {
+    setStore('flags/saveAccount', true);
+    logoutAccountDel();
+};
+
 /**
  * 登录钱包
  */
@@ -220,6 +287,26 @@ export const loginWallet = (appId:string,success:Function) => {
         loginWalletSuccess();
     }
 };
+
+/**
+ * 登出钱包
+ */
+export const logoutWallet = (success:Function) => {
+    logoutCallbackList.push(success);
+};
+// 登录成功之后的回调列表
+const loginedCallbackList:LoginType[] = [];
+
+// 登录失败延迟执行函数
+let loginWalletFailedDelay;
+
+// 用户登出回调
+const logoutCallbackList:Function[] = [];
+
+interface LoginType {
+    appId:string;
+    success:Function;
+}
 
 /**
  * 登录钱包并获取openId成功
@@ -246,6 +333,15 @@ const loginWalletFailed =  () => {
         loginWalletFailedDelay = loginWalletFailedPop;
     }
 
+};
+
+/**
+ * 钱包登出成功
+ */
+const logoutWalletSuccess =  () => {
+    for (const logout of logoutCallbackList) {
+        logout();
+    }
 };
 
 /**

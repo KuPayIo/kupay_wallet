@@ -114,6 +114,7 @@ winit.initNext = function () {
 	// 加载钱包项目登录相关资源
 	var loadWalletLoginSource = function(){
 		var sourceList = [
+			"app/view/base/",
 			"app/store/memstore.js",
 			"app/net/login.js",
 			"app/net/push.js",
@@ -166,7 +167,6 @@ winit.initNext = function () {
 			"app/components1/",
 			"app/res/css/",
 			"app/res/js/",
-			"app/view/base/",
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
@@ -225,8 +225,8 @@ winit.initNext = function () {
 			"chat/client/app/widget/",
 			"chat/client/app/res/",
 			"earn/client/app/view/",
+			"earn/client/app/test/",
 			"earn/client/app/components/",
-			"earn/client/app/xls/",
 			"earn/client/app/res/"
 		];
 
@@ -305,6 +305,7 @@ winit.initNext = function () {
 			"earn/client/app/view/activity/inviteAward.tpl",
 			"earn/client/app/view/activity/inviteAward.js",
 			"earn/client/app/view/activity/inviteAward.wcss",
+			"earn/client/app/xls/",
 			"earn/xlsx/"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {

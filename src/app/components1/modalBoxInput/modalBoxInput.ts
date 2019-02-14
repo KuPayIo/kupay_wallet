@@ -13,7 +13,7 @@ import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 
 import { getLang } from '../../../pi/util/lang';
-import { logoutAccount } from '../../utils/tools';
+import { logoutAccount } from '../../net/login';
 
 interface Props {
     title:string;
