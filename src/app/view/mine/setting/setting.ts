@@ -130,12 +130,12 @@ export class Setting extends Widget {
      */
     public logOut() {
         if (!hasWallet()) return;
-        const backup = this.props.wallet.isBackup;
-        popNew('app-components1-modalBox-modalBox', backup ? this.language.modalBox2[1] :this.language.modalBox2[0] , () => {
-            if (!backup) {
-                this.backUp();
-            }
-            console.log('备份');
+        // const backup = this.props.wallet.isBackup;
+        popNew('app-components1-modalBox-modalBox', this.language.modalBox2 , () => {
+            // if (!backup) {
+            //     this.backUp();
+            // }
+            console.log('取消');
         }, () => {
             popNew('app-components1-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccount();
@@ -149,12 +149,12 @@ export class Setting extends Widget {
      */
     public logOutDel() {
         if (!hasWallet()) return;
-        const backup = this.props.wallet.isBackup;
-        popNew('app-components1-modalBox-modalBox', backup ? this.language.modalBox3[1] :this.language.modalBox3[0] , () => {
-            if (!backup) {
-                this.backUp();
-            }
-            console.log('备份');
+        // const backup = this.props.wallet.isBackup;
+        popNew('app-components1-modalBox-modalBox', this.language.modalBox3 , () => {
+            // if (!backup) {
+            //     this.backUp();
+            // }
+            console.log('取消');
         }, () => {
             popNew('app-components1-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccountDel();

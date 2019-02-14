@@ -7,12 +7,11 @@
             <span w-class="itemDesc">
                 {{it.describe}}
             </span>
-        {{elseif typeof(it.describe) === 'object'}}
+        {{else}}
             <span w-class="itemDesc">
                 <pi-ui-lang>{{it.describe}}</pi-ui-lang>
             </span>
         {{end}}
-    
     {{end}}
     <img src="app/res/image/right_arrow2_gray.png" w-class="itemImg"/>
 </div>
