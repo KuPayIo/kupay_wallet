@@ -2,6 +2,7 @@
 /**
  * 和账号相关的工具
  */
+import { getStore, setStore } from '../store/memstore';
 import { getStrLen, shuffle } from './tools';
 
 // 密码强度列表
@@ -21,7 +22,18 @@ const walletPswStrengthList = [{
  * @param walletName wallet name
  */
 export const walletNameAvailable = (walletName) => {
+    
     return getStrLen(walletName.trim()) >= 1 && getStrLen(walletName.trim()) <= 20;
+};
+
+/**
+ * 修改钱包名称
+ * @param walletName wallet name
+ */
+export const changeWalletName = (walletName) => {
+    const userInfo = getStore('user/info');
+    userInfo.nickName = walletName;
+    setStore('user/info', userInfo);
 };
 
 /**

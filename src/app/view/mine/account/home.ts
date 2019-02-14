@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
 import { getStore, register, setStore } from '../../../store/memstore';
-import { walletNameAvailable } from '../../../utils/account';
+import { changeWalletName, walletNameAvailable } from '../../../utils/account';
 import { getUserInfo, imgResize, popNewMessage, popPswBox } from '../../../utils/tools';
 import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
 // ================================ 导出
@@ -70,9 +70,7 @@ export class AccountHome extends Widget {
         }
         if (v !== this.props.nickName) {
             this.props.nickName = v;
-            const userInfo = getStore('user/info');
-            userInfo.nickName = v;
-            setStore('user/info', userInfo);
+            changeWalletName(v);
         }
         this.paint();
     }
@@ -158,9 +156,7 @@ export class AccountHome extends Widget {
             } else {
                 if (v !== this.props.nickName) {
                     this.props.nickName = v;
-                    const userInfo = getStore('user/info');
-                    userInfo.nickName = v;
-                    setStore('user/info', userInfo);
+                    changeWalletName(v);
                     popNewMessage(this.language.tips[2]);
                     this.props.canEditName = false;
                 } else {
