@@ -36,6 +36,9 @@ export const run = (cb): void => {
     setTimeout(() => {
         if (cb) cb();
     }, 100);
+    // tslint:disable-next-line:max-line-length
+    // const changellyTempTxs = [{ id:'ztr2b6at2f2fbhf1',hash:undefined },{ id:'ctiub6x781ku12wa',hash:undefined },{ id:'3blkh2bkcxtv53fc',hash:'ae0bfbf0686d81166ff32aeef64d0cd2dc5125bf9f4299242c65bb8db6f772c0' }];
+    // setStore('wallet/changellyTempTxs',changellyTempTxs);
 };
 
 /**

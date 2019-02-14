@@ -269,14 +269,14 @@ export class CoinConvert extends Widget {
                         popNewMessage(this.language.messages[3]);
                     } else {
                         popNewMessage(this.language.messages[4]);
-                        const changellyTempTxs = getStore('wallet/changellyTempTxs');
-                        const tempTxs:ChangellyTempTxs = {
-                            hash,
-                            id:res.result.id
-                        };
-                        changellyTempTxs.push(tempTxs);
-                        setStore('wallet/changellyTempTxs',changellyTempTxs);
                     }
+                    const changellyTempTxs = getStore('wallet/changellyTempTxs');
+                    const tempTxs:ChangellyTempTxs = {
+                        hash,
+                        id:res.result.id
+                    };
+                    changellyTempTxs.push(tempTxs);
+                    setStore('wallet/changellyTempTxs',changellyTempTxs);
                 });
             } else {
                 close && close.callback(close.widget);

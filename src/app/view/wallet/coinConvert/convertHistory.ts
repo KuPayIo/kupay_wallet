@@ -31,7 +31,8 @@ interface ChangellyTransactionsShow {
     rate:string;  // 汇率 
     timestamp:number;  // 时间戳
     timestamp_show:string;   // 时间
-    status_show:string;   // 状态
+    status:string;    // 状态
+    status_show:string;   // 状态show
     status_class:string;  // 状态css class
     payinHash:string;   // 出币hash
     payinHash_show:string;   // 出币hash展示
@@ -90,6 +91,7 @@ export class ConvertHistory extends Widget {
                             amountExpectedFrom:result.amountExpectedFrom,
                             timestamp:result.createdAt,
                             timestamp_show:timestampFormat(result.createdAt * 1000),  
+                            status:result.status,
                             status_show:this.parseStatus(result.status).status_show,  
                             status_class:this.parseStatus(result.status).status_class,   
                             payinHash:result.payinHash,   
@@ -101,33 +103,66 @@ export class ConvertHistory extends Widget {
                     }
                 }
             }
-            const changellyTempTxs = getStore('wallet/changellyTempTxs');
-            // 没有详细记录时使用临时记录
-            for (let i = changellyTempTxs.length - 1;i >= 0;i--) {
-                const tempTxs = changellyTempTxs[i];
-                for (let j = 0; j < txHistory.length;j++) {
-                    if (txHistory[j].id === tempTxs.id) {
-                        if (!txHistory[j].payinHash) {
-                            txHistory[j].payinHash = tempTxs.hash;
-                            txHistory[j].payinHash_show = parseAccount(tempTxs.hash);
-                        } else {
-                            changellyTempTxs[i] = changellyTempTxs[changellyTempTxs.length - 1];
-                            changellyTempTxs.length--;
-                        }
-                    }
-                }
-            }
-            setStore('wallet/changellyTempTxs',changellyTempTxs);
-            txHistory.sort((tx1,tx2) => {
-                return tx2.timestamp - tx1.timestamp;
-            });
         } catch (err) {
             console.log(err);
         } finally {
             this.close && this.close.callback(this.close.widget);
-            this.props.txsShow = txHistory;
+            this.props.txsShow = this.filterTxHistory(txHistory);
             this.paint();
         }
+    }
+
+    public filterTxHistory(txHistory:ChangellyTransactionsShow[]) {
+        let changellyTempTxs = getStore('wallet/changellyTempTxs');
+        const findIndexOf = (txId:string) => {
+            let index = -1;
+            for (let j = 0; j < txHistory.length;j++) {
+                if (txHistory[j].id === txId) {
+                    return index = j;
+                }
+            }
+            
+            return index;
+        };
+        const findTempTxsIndexOf = (txHash:string) => {
+            let index = -1;
+            for (let j = 0; j < changellyTempTxs.length;j++) {
+                if (changellyTempTxs[j].hash === txHash) {
+                    return index = j;
+                }
+            }
+            
+            return index;
+        };
+        changellyTempTxs = changellyTempTxs.filter(tmpTx => {
+            const index = findIndexOf(tmpTx.id);
+            const tx = txHistory[index];
+            
+            return (tx.status !== ChangellyStatus.Overdue) && (tx.status !== ChangellyStatus.Finished);
+
+        });
+        // 没有详细记录时使用临时记录
+        for (let i = 0;i <  changellyTempTxs.length ;i++) {
+            const tempTxs = changellyTempTxs[i];
+            const tx = txHistory[findIndexOf(tempTxs.id)];
+            if ((tx.payinHash && tx.payoutHash) && !tempTxs.hash) {   // 创建了多笔订单  但只有最后发送成功
+                const index = findTempTxsIndexOf(tx.payinHash);
+                if (index >= 0)  changellyTempTxs[index].hash = undefined;
+            } else {
+                tx.payinHash = tempTxs.hash;
+                tx.payinHash_show = tempTxs.hash && parseAccount(tempTxs.hash);
+            }
+        }
+            
+        setStore('wallet/changellyTempTxs',changellyTempTxs);
+        txHistory = txHistory.filter(tx => {
+            return !!tx.payinHash;
+        });
+        txHistory.sort((tx1,tx2) => {
+            return tx2.timestamp - tx1.timestamp;
+        });
+
+        return txHistory;
     }
 
     /**
