@@ -57,7 +57,7 @@ export class PlayHome extends Widget {
     public setProps(props:Json) {
         this.props = {
             ...props,
-            isLogin:getStore('user/isLogin'),
+            isLogin:getStore('user/id') ? getStore('user/isLogin') : true,
             reconnecting:false   
         };
         super.setProps(this.props);
@@ -222,5 +222,8 @@ register('user/info',() => {
 
 register('user/isLogin',(isLogin:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
-    w && w.updateLoginState(isLogin);
+    const id = getStore('user/id');
+    if (id) {
+        w && w.updateLoginState(isLogin);
+    }
 });
