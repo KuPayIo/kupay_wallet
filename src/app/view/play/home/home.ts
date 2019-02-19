@@ -8,12 +8,13 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
-import { register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { getCurrentEthAddr, getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
 
 import { gameChatPromise } from '../../../../chat/client/app/view/gameChatApi';
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { getEthApiBaseUrl } from '../../../core/config';
+import { manualReconnect } from '../../../net/login';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -54,7 +55,12 @@ export class PlayHome extends Widget {
     }
     
     public setProps(props:Json) {
-        super.setProps(props);
+        this.props = {
+            ...props,
+            isLogin:getStore('user/isLogin'),
+            reconnecting:false   
+        };
+        super.setProps(this.props);
         this.language = this.config.value[getLang()];
         const userInfo = getUserInfo();
         if (userInfo) {
@@ -186,6 +192,22 @@ export class PlayHome extends Widget {
             WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
         });
     }
+
+    public updateLoginState(isLogin:boolean) {
+        this.props.isLogin = isLogin;
+        this.props.reconnecting = false;
+        this.paint();
+    }
+    /**
+     * 断线重连
+     */
+    public reConnect() {
+        if (this.props.reconnecting) return;
+        console.log('reconnect');
+        this.props.reconnecting = true;   // 正在连接
+        this.paint();
+        manualReconnect();
+    }
 }
 register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -196,4 +218,9 @@ register('user/info',() => {
         }
         w.paint();
     }
+});
+
+register('user/isLogin',(isLogin:boolean) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.updateLoginState(isLogin);
 });

@@ -11,6 +11,7 @@ import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { getScreenModify, preLoadAd } from '../../logic/native';
+import { manualReconnect } from '../../net/login';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
 import { fetchDeviceId } from '../../utils/tools';
@@ -88,10 +89,17 @@ const checkUpdate = () => {
  */
 const backToFront = () => {
     (<any>window).handle_app_lifecycle_listener = (iType: string) => {
-        if (iType === 'onAppResumed' && ifNeedUnlockScreen()) {
-            popNew('app-components1-lockScreenPage-lockScreenPage', {
-                openApp: true
-            });
+        if (iType === 'onAppResumed') {
+            if (ifNeedUnlockScreen()) {
+                popNew('app-components1-lockScreenPage-lockScreenPage', {
+                    openApp: true
+                });
+            }
+            setTimeout(() => {
+                if (!getStore('user/isLogin')) {
+                    manualReconnect();
+                }
+            },100);  // 检查是否已经退出登录
         } else if (iType === 'onBackPressed') {
             if (backList.length === 1) {
                 const exitApp = new ExitApp();
