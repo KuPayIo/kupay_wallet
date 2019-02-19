@@ -246,6 +246,7 @@ export interface UserInfo {
 export interface Wallet {
     vault: string;                      // 钱包核心
     isBackup: boolean;                  // 备份助记词与否
+    sharePart:boolean;                  // 是否有通过分享片段备份
     showCurrencys: string[];            // 显示的货币列表
     currencyRecords: CurrencyRecord[];  // 支持的所有货币记录
     changellyPayinAddress:ChangellyPayinAddr[];           // changelly 交易记录的changelly方收币地址

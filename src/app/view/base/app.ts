@@ -123,6 +123,11 @@ export class App extends Widget {
         this.props.isActive = 'APP_EARN';
         this.paint();
     }
+
+    public switchToChat() {
+        this.props.isActive = 'APP_CHAT';
+        this.paint();
+    }
 }
 
 // ===================================================== 本地
@@ -198,3 +203,13 @@ earnRegister('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
     }
     w.paint();
 });
+
+export const gotoChat = () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.switchToChat();
+};
+
+export const gotoEarn = () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.switchToEarn();
+};

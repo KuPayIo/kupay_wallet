@@ -11,6 +11,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { register } from '../../../store/memstore';
 import { getCurrentEthAddr, getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
 
+import { gameChatPromise } from '../../../../chat/client/app/view/gameChatApi';
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { getEthApiBaseUrl } from '../../../core/config';
 
@@ -74,7 +75,7 @@ export class PlayHome extends Widget {
                 desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
                 img:['app/res/image1/CryptoFishing.jpg','app/res/image1/CryptoFishing1.jpg'],
                 url:'http://fishing.rinkeby.cchaingames.com/'
-            },
+            }
             // {
             //     title:'Decentraland',
             //     desc:{ zh_Hans:'Decentraland与Ethaemon合作',zh_Hant:'Decentraland與Ethaemon合作',en:'' },
@@ -153,9 +154,9 @@ export class PlayHome extends Widget {
             `;
             this.defaultInjectPromise = Promise.resolve(defaultInjectText);
 
-            const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise]);
-            allPromise.then(([defaultInjectContent,web3Content]) => {
-                const content = defaultInjectContent + web3Content;
+            const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise,gameChatPromise()]);
+            allPromise.then(([defaultInjectContent,web3Content,chatContent]) => {
+                const content = defaultInjectContent + web3Content + chatContent;
                 WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }
