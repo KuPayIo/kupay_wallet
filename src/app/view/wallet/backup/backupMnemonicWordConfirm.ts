@@ -12,6 +12,7 @@ interface Props {
 
 export class BackupMnemonicWordConfirm extends Widget {
     public ok: () => void;
+    public cancel: () => void;
     public language:any;
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
@@ -31,7 +32,7 @@ export class BackupMnemonicWordConfirm extends Widget {
     }
     
     public backPrePage() {
-        this.ok && this.ok();
+        this.cancel && this.cancel();
     }
 
     // 对助记词乱序和标识处理
