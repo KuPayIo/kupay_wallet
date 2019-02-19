@@ -4,15 +4,11 @@ import { Widget } from '../../../pi/widget/widget';
  * loading逻辑处理
  */
 
-interface Props {
-    text:string;// 加载文本
-}
-
 interface State {
     startTime:number;
     circular:string;// svg内容
 }
-export class Loading1 extends Widget {
+export class Loading2 extends Widget {
     public props: any;
     public ok:() => void;
     constructor() {
@@ -22,7 +18,7 @@ export class Loading1 extends Widget {
         super.create();
         this.config = { value: { group: 'top' } };
     }
-    public setProps(props:Props,oldProps:Props) {
+    public setProps(props:JSON,oldProps:JSON) {
         super.setProps(props,oldProps);
         this.props = {
             ...this.props,
