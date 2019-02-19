@@ -139,7 +139,7 @@ export class CreateWallet extends Widget {
         const fragments = fetchMnemonicFragment(secrectHash);
         requestAnimationFrame(() => {
             popNew('app-components1-modalBox-modalBox', getStaticLanguage().createSuccess, () => {
-                popNew('app-view-wallet-backup-index', { mnemonic: mnemonic, fragments: fragments,pi_norouter:true });
+                popNew('app-view-wallet-backup-index', { mnemonic: mnemonic, fragments: fragments });
             });
         });
         setStore('flags/createWallet',true);
