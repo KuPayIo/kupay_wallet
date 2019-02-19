@@ -26,7 +26,7 @@ export class Home extends Widget {
     public pageInit() {
         this.language = this.config.value[getLang()];
         this.props = {
-            isLogin:getStore('user/isLogin'),
+            isLogin:getStore('user/id') ? getStore('user/isLogin') : true,
             reconnecting:false,  
             tabs:[{
                 tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },
@@ -168,5 +168,8 @@ register('setting/currencyUnit',() => {
 
 register('user/isLogin',(isLogin:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
-    w && w.updateLoginState(isLogin);
+    const id = getStore('user/id');
+    if (id) {
+        w && w.updateLoginState(isLogin);
+    }
 });
