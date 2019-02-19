@@ -93,6 +93,7 @@ export const createWalletRandom = async (option: Option) => {
     const wallet: Wallet = {
         vault: gwlt.vault,
         isBackup: gwlt.isBackup,
+        sharePart:false,
         showCurrencys: defalutShowCurrencys,
         currencyRecords: gwlt.currencyRecords,
         changellyPayinAddress:[],
@@ -132,6 +133,7 @@ export const createWalletByImage = async (option: Option) => {
     const wallet: Wallet = {
         vault: gwlt.vault,
         isBackup: gwlt.isBackup,
+        sharePart:false,
         showCurrencys: defalutShowCurrencys,
         currencyRecords: gwlt.currencyRecords,
         changellyPayinAddress:[],
@@ -211,6 +213,7 @@ export const importWalletByMnemonic = async (option: Option) => {
     const wallet: Wallet = {
         vault: gwlt.vault,
         isBackup: gwlt.isBackup,
+        sharePart:false,
         showCurrencys: defalutShowCurrencys,
         currencyRecords: gwlt.currencyRecords,
         changellyPayinAddress:[],
@@ -280,5 +283,12 @@ export const createNewAddr = async (passwd: string, currencyName: string) => {
 export const deleteMnemonic = () => {
     const wallet = getStore('wallet');
     wallet.isBackup = true;
+    setStore('wallet',wallet);
+};
+
+// 记录通过分享片段备份
+export const sharePart = () => {
+    const wallet = getStore('wallet');
+    wallet.sharePart = true;
     setStore('wallet',wallet);
 };

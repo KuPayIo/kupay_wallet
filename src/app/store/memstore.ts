@@ -300,6 +300,7 @@ const initAccount = () => {
         const wallet: Wallet = {
             vault: localWallet.vault,
             isBackup: localWallet.isBackup,
+            sharePart:false,
             showCurrencys: localWallet.showCurrencys,
             currencyRecords,
             changellyPayinAddress:localWallet.changellyPayinAddress || [],
