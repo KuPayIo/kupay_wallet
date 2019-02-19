@@ -11,6 +11,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getStore, register } from '../../../store/memstore';
 import { getCurrentEthAddr, getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
 
+import { gameChatPromise } from '../../../../chat/client/app/view/gameChatApi';
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { getEthApiBaseUrl } from '../../../core/config';
 import { manualReconnect } from '../../../net/login';
@@ -159,9 +160,9 @@ export class PlayHome extends Widget {
             `;
             this.defaultInjectPromise = Promise.resolve(defaultInjectText);
 
-            const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise]);
-            allPromise.then(([defaultInjectContent,web3Content]) => {
-                const content = defaultInjectContent + web3Content;
+            const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise,gameChatPromise()]);
+            allPromise.then(([defaultInjectContent,web3Content,chatContent]) => {
+                const content = defaultInjectContent + web3Content + chatContent;
                 WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }

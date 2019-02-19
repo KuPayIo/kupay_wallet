@@ -5,7 +5,7 @@ import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { deleteMnemonic } from '../../../logic/localWallet';
+import { deleteMnemonic, sharePart } from '../../../logic/localWallet';
 import { getModulConfig } from '../../../modulConfig';
 import { mnemonicFragmentEncrypt, popNewMessage } from '../../../utils/tools';
 interface Props {
@@ -56,6 +56,7 @@ export class ShareMnemonic extends Widget {
         }
         if (allShared) {
             deleteMnemonic();
+            sharePart();
             popNewMessage(this.language.tips);
             // this.ok && this.ok();
         }

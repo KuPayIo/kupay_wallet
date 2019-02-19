@@ -2,6 +2,7 @@
  * 充值KT
  */
 
+import { setStore } from '../../../../chat/client/app/data/store';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
@@ -97,6 +98,7 @@ export class RechargeKT extends Widget {
             getServerCloudBalance();
             getAccountDetail(CloudCurrencyType[100], 1);
             this.paint();
+            setStore('flags/firstRecharge',true); // 首次充值
         }, () => {
             getServerCloudBalance();
         });

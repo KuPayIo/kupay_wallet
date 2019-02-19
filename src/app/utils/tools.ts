@@ -1493,7 +1493,6 @@ export const getCurrentEthAddr = () => {
     return getCurrentAddrInfo('ETH').addr;
 };
 
-
 /**
  * 登录成功
  */
@@ -1533,7 +1532,8 @@ export const loginSuccess = (account:Account) => {
     }
     const wallet:Wallet = {
         vault:localWallet.vault,                 
-        isBackup: localWallet.isBackup,                 
+        isBackup: localWallet.isBackup,
+        sharePart:false,                 
         showCurrencys: localWallet.showCurrencys,           
         currencyRecords,
         changellyPayinAddress:[],
