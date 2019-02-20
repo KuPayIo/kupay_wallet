@@ -245,6 +245,7 @@ export interface UserInfo {
  */
 export interface Wallet {
     vault: string;                      // 钱包核心
+    backupTip:boolean;                  // 备份助记词是否已经提示
     isBackup: boolean;                  // 备份助记词与否
     sharePart:boolean;                  // 是否有通过分享片段备份
     showCurrencys: string[];            // 显示的货币列表

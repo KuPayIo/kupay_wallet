@@ -299,6 +299,7 @@ const initAccount = () => {
         
         const wallet: Wallet = {
             vault: localWallet.vault,
+            backupTip:localWallet.backupTip,
             isBackup: localWallet.isBackup,
             sharePart:false,
             showCurrencys: localWallet.showCurrencys,
@@ -515,6 +516,7 @@ const accountChange = () => {
 
         localWallet = {
             vault: wallet.vault,
+            backupTip:wallet.backupTip,
             isBackup: wallet.isBackup,
             showCurrencys: wallet.showCurrencys,
             currencyRecords: localCurrencyRecords,
@@ -728,6 +730,7 @@ export interface LocalCloudWallet {
  */
 export interface LocalWallet {
     vault: string;                      // 钱包核心
+    backupTip:boolean;                  // 助记词备份是否已经提示
     isBackup: boolean;                  // 备份助记词与否
     showCurrencys: string[];            // 显示的货币列表
     currencyRecords: LocalCurrencyRecord[];  // 支持的所有货币记录

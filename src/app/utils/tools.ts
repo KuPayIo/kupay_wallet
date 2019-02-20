@@ -2,7 +2,6 @@
  * common tools
  */
 import { ArgonHash } from '../../pi/browser/argonHash';
-import { closeCon, setBottomLayerReloginMsg } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
@@ -13,7 +12,7 @@ import { getDeviceId, getDeviceInfo } from '../logic/native';
 import { getRandom, openConnect } from '../net/login';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
-import { Account, getCloudBalances, getStore, initCloudWallets, LocalCloudWallet,setStore } from '../store/memstore';
+import { Account, getCloudBalances, getStore, LocalCloudWallet,setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { CMD, currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
 import { sat2Btc, wei2Eth } from './unitTools';
@@ -1531,7 +1530,8 @@ export const loginSuccess = (account:Account) => {
         currencyRecords.push(record);
     }
     const wallet:Wallet = {
-        vault:localWallet.vault,                 
+        vault:localWallet.vault,  
+        backupTip:false,               
         isBackup: localWallet.isBackup,
         sharePart:false,                 
         showCurrencys: localWallet.showCurrencys,           
