@@ -10,8 +10,9 @@ import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../modulConfig';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
-import { getStore, register } from '../../store/memstore';
-import { kickOffline } from '../../utils/tools';
+import { getStore, register, setStore } from '../../store/memstore';
+import { getStaticLanguage, kickOffline, popPswBox } from '../../utils/tools';
+import { backupMnemonic } from '../../utils/walletTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -111,11 +112,27 @@ export class App extends Widget {
         this.props.loading = false;
         this.paint();
     }
-    public async tabBarChangeListener(event: any, index: number) {
+    public tabBarChangeListener(event: any, index: number) {
         const identfy = this.props.tabBarList[index].modulName;
         if (this.props.isActive === identfy) return;
         this.props.isActive = identfy;
         this.old[identfy] = true;
+        const backupTip = getStore('flags').backupTip;
+        if (backupTip) {
+            popNew('app-components1-modalBox-modalBox', getStaticLanguage().ktUp, async () => {
+                setStore('wallet/backupTip',true);
+                setStore('flags/backupTip',false);
+                const psw = await popPswBox();
+                if (!psw) return;
+                const ret = await backupMnemonic(psw);
+                if (ret) {
+                    popNew('app-view-wallet-backup-index',{ ...ret });
+                }
+            },() => {
+                setStore('wallet/backupTip',true);
+                setStore('flags/backupTip',false);
+            });
+        }
         this.paint();
     }
 

@@ -92,6 +92,7 @@ export const createWalletRandom = async (option: Option) => {
     // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
+        backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
         showCurrencys: defalutShowCurrencys,
@@ -132,6 +133,7 @@ export const createWalletByImage = async (option: Option) => {
     // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
+        backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
         showCurrencys: defalutShowCurrencys,
@@ -212,6 +214,7 @@ export const importWalletByMnemonic = async (option: Option) => {
   // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
+        backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
         showCurrencys: defalutShowCurrencys,

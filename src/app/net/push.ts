@@ -4,7 +4,7 @@
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { backCall, backList, popNew } from '../../pi/ui/root';
 import { CloudCurrencyType } from '../store/interface';
-import { getStore, register } from '../store/memstore';
+import { getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
 import { getStaticLanguage, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
@@ -71,11 +71,12 @@ export const initPush = () => {
     setMsgHandler('alter_balance_ok',(res) => {
         console.log('alter_balance_ok服务器推送成功==========================',res);
         getServerCloudBalance();
-        // if (res.cointype === CloudCurrencyType.KT) {   // 回到一级页面提醒备份
-        //     popNew('app-components1-modalBox-modalBox', getStaticLanguage().createSuccess, () => {
-        //         // popNew('app-view-wallet-backup-index', { mnemonic: mnemonic, fragments: fragments });
-        //     });
-        // }
+        if (res.cointype === CloudCurrencyType.KT) {   // 回到一级页面提醒备份
+            const wallet = getStore('wallet');
+            if (!wallet.backupTip && !wallet.isBackup) {
+                setStore('flags/backupTip',true);   // 一级页面弹框标识
+            }  
+        }
     });
 
     // setMsgHandler('event_kt_alert',(res) => {
