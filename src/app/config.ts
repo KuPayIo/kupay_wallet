@@ -7,7 +7,7 @@ import { getModulConfig } from './modulConfig';
 
 // walletName
 const walletName = getModulConfig('WALLET_NAME');
-
+const ktShow = getModulConfig('KT_SHOW');
 // 向资源服务器请求第3方数据url prefix
 export const thirdUrlPre = `http://${sourceIp}:${sourcePort}/proxy`;
 
@@ -1075,12 +1075,12 @@ ${walletName}团队
             '交易失败',
             '交易已被确认'
         ],
-        // 钱包创建成功
-        createSuccess: {
-            title: '创建成功',
-            content: '记得备份，如果忘记账户就找不回来了。',
+        // KT 增加
+        ktUp: {
+            title: '备份助记词',
+            content: `您的${ktShow}有增加，为了您的资产安全，建议您备份助记词`,
             sureText: '备份',
-            cancelText: '暂时不'
+            cancelText: '以后'
         }
 
     },
@@ -1725,11 +1725,11 @@ ${walletName}团队
             '交易已被確認'
         ],
         // 钱包创建成功
-        createSuccess: {
-            title: '創建成功',
-            content: '記得備份，如果忘記賬戶就找不回來了。',
+        ktUp: {
+            title: '備份助記詞',
+            content: `您的${ktShow}有增加，為了您的資產安全，建議您備份助記詞`,
             sureText: '備份',
-            cancelText: '暫時不'
+            cancelText: '以後'
         }
     },
     /**

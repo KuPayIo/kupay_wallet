@@ -5,6 +5,7 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { manualReconnect } from '../../../net/login';
 import { getServerCloudBalance } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
@@ -25,6 +26,8 @@ export class Home extends Widget {
     public pageInit() {
         this.language = this.config.value[getLang()];
         this.props = {
+            isLogin:getStore('user/id') ? getStore('user/isLogin') : true,
+            reconnecting:false,  
             tabs:[{
                 tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },
                 components:'app-view-wallet-home-cloudHome'
@@ -34,7 +37,6 @@ export class Home extends Widget {
             }],
             activeNum:0,
             refreshing:false,
-
             avatar:'',
             totalAsset:'',
             currencyUnitSymbol:''
@@ -101,6 +103,22 @@ export class Home extends Widget {
             dataCenter.updateBalance(v.addr, v.currencyName);
         });
     }
+
+    public updateLoginState(isLogin:boolean) {
+        this.props.isLogin = isLogin;
+        this.props.reconnecting = false;
+        this.paint();
+    }
+    /**
+     * 断线重连
+     */
+    public reConnect() {
+        if (this.props.reconnecting) return;
+        console.log('reconnect');
+        this.props.reconnecting = true;   // 正在连接
+        this.paint();
+        manualReconnect();
+    }
 }
 
 // ==========================本地
@@ -145,5 +163,13 @@ register('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();
+    }
+});
+
+register('user/isLogin',(isLogin:boolean) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    const id = getStore('user/id');
+    if (id) {
+        w && w.updateLoginState(isLogin);
     }
 });

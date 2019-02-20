@@ -3,7 +3,8 @@
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { backCall, backList, popNew } from '../../pi/ui/root';
-import { getStore, register } from '../store/memstore';
+import { CloudCurrencyType } from '../store/interface';
+import { getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
 import { getStaticLanguage, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
@@ -68,15 +69,18 @@ export const initPush = () => {
 
     // 监听余额变化事件
     setMsgHandler('alter_balance_ok',(res) => {
-        getServerCloudBalance().then(res => {
-            console.log('服务器推送成功 云端余额更新==========================',res);
-        });
+        console.log('alter_balance_ok服务器推送成功==========================',res);
+        getServerCloudBalance();
+        if (res.cointype === CloudCurrencyType.KT) {   // 回到一级页面提醒备份
+            const wallet = getStore('wallet');
+            if (!wallet.backupTip && !wallet.isBackup) {
+                setStore('flags/backupTip',true);   // 一级页面弹框标识
+            }  
+        }
     });
 
-    // // 监听KT增加事件
     // setMsgHandler('event_kt_alert',(res) => {
-    //     popNew('app-view-earn-mining-addMineAlert',{ addNum:kpt2kt(res.num),iconType:'KT' });
-    //     console.log('服务器推送成功==========================',res);
+    //     console.log('event_kt_alert服务器推送成功==========================',res);
     // });
 };
 

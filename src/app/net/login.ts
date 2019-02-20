@@ -1,7 +1,8 @@
 /**
  * 钱包登录模块
  */
-import { closeCon, open,setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+// tslint:disable-next-line:max-line-length
+import { closeCon, ConState,getConState, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
@@ -14,12 +15,29 @@ declare var pi_modules;
  // 设置重登录回调
 setReloginCallback((res) => {
     const rtype = res.type;
+    console.log('relogin ',rtype);
     if (rtype === 'logerror') {  //  重登录失败，登录流程重走一遍
         openConnect();
     } else {
         setStore('user/isLogin',true);
     }
 });
+
+/**
+ * 手动重连
+ */
+export const manualReconnect = () => {
+    const conRandom = getStore('user/conRandom');
+    if (conRandom) {
+        console.log('manualReconnect reopen');
+        reopen(conReOpen);
+    } else {
+        console.log('manualReconnect openConnect');
+        openConnect();
+    }
+    
+};
+
 /**
  * 开启连接
  */
@@ -45,6 +63,7 @@ const conSuccess = (secrectHash:string) => {
  */
 const conError = (err) => {
     console.log('con error');
+    setStore('user/isLogin',false);
     setStore('user/offline',true);
 };
 
