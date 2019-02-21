@@ -1,6 +1,8 @@
 /**
  * 断线重连相关
  */
+import { getStore as chatGetStore } from '../../chat/client/app/data/store';
+import { chatManualReconnect } from '../../chat/client/app/net/init';
 import { earnManualReconnect } from '../../earn/client/app/net/init';
 import { getStore as earnGetStore } from '../../earn/client/app/store/memstore';
 import { getStore, setStore } from '../store/memstore';
@@ -30,6 +32,10 @@ export const manualReconnect = () => {
     if (!earnGetStore('userInfo/isLogin')) {
         earnManualReconnect();
         reconnecting.earn = true;
+    }
+    if (!chatGetStore('isLogin')) {
+        chatManualReconnect();
+        reconnecting.chat = true;
     }
     setStore('flags/reconnecting',reconnecting);
 };

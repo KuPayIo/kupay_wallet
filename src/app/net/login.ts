@@ -2,6 +2,7 @@
  * 钱包登录模块
  */
 
+import { getStore as chatGetStore,register as chatRegister } from '../../chat/client/app/data/store';
 import { getStore as earnGetStore,register as earnRegister } from '../../earn/client/app/store/memstore';
 import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
@@ -386,7 +387,7 @@ const loginWalletFailedPop = async () => {
  * 设置allIsLogin
  */
 const setAllIsLogin = () => {
-    const newAllIsLogin =  getStore('user/isLogin') && earnGetStore('userInfo/isLogin');
+    const newAllIsLogin =  getStore('user/isLogin') && earnGetStore('userInfo/isLogin') && chatGetStore('isLogin');
     setStore('user/allIsLogin',newAllIsLogin);
 };
 // =======================资源加载完成========================
@@ -401,5 +402,10 @@ register('user/isLogin', (loaded: boolean) => {
 
 // 赚钱login
 earnRegister('userInfo/isLogin', (isLogin: boolean) => {
+    setAllIsLogin();
+});
+
+// 聊天login
+chatRegister('isLogin', (isLogin: boolean) => {
     setAllIsLogin();
 });
