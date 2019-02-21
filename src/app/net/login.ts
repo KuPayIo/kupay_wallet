@@ -1,14 +1,16 @@
 /**
  * 钱包登录模块
  */
-// tslint:disable-next-line:max-line-length
-import { closeCon, ConState,getConState, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+
+import { getStore as earnGetStore,register as earnRegister } from '../../earn/client/app/store/memstore';
+import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
 import { getStore, initCloudWallets, register, setStore } from '../store/memstore';
 import { calcHashValuePromise, decrypt, encrypt, fetchDeviceId, kickOffline, popPswBox } from '../utils/tools';
 import { requestAsync } from './pull';
+import { setReconnectingState } from './reconnect';
 
 declare var pi_modules;
 
@@ -24,18 +26,17 @@ setReloginCallback((res) => {
 });
 
 /**
- * 手动重连
+ * 钱包手动重连
  */
-export const manualReconnect = () => {
+export const walletManualReconnect = () => {
     const conRandom = getStore('user/conRandom');
     if (conRandom) {
-        console.log('manualReconnect reopen');
+        console.log('walletManualReconnect reopen');
         reopen(conReOpen);
     } else {
-        console.log('manualReconnect openConnect');
+        console.log('walletManualReconnect openConnect');
         openConnect();
     }
-    
 };
 
 /**
@@ -47,6 +48,7 @@ export const openConnect = (secrectHash:string = '') => {
     open(conSuccess(secrectHash),conError,conClose,conReOpen);
 };
 
+const reconnectinName = 'wallet';
 /**
  * 连接成功回调
  */
@@ -55,6 +57,7 @@ const conSuccess = (secrectHash:string) => {
         console.log('con success');
         setStore('user/offline',false);
         getRandom(secrectHash);
+        setReconnectingState(reconnectinName,false);
     };
 };
 
@@ -65,6 +68,7 @@ const conError = (err) => {
     console.log('con error');
     setStore('user/isLogin',false);
     setStore('user/offline',true);
+    setReconnectingState(reconnectinName,false);
 };
 
 /**
@@ -74,6 +78,7 @@ const conClose = () => {
     console.log('con close');
     setStore('user/isLogin',false);
     setStore('user/offline',true);
+    setReconnectingState(reconnectinName,false);
 };
 
 /**
@@ -82,6 +87,7 @@ const conClose = () => {
 const conReOpen = () => {
     console.log('con reopen');
     setStore('user/offline',false);
+    setReconnectingState(reconnectinName,false);
     // console.log();
 };
 
@@ -223,7 +229,8 @@ export const logoutAccountDel = () => {
     const user = {
         id: '',                      // 该账号的id
         isLogin: false,              // 登录状态
-        offline:true,                // 在线状态
+        offline:false,                // 在线状态
+        allIsLogin:false,            // 所有服务登录状态  (钱包  活动  聊天)
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
         conUid: '',                   // 服务器连接uid
@@ -375,7 +382,24 @@ const loginWalletFailedPop = async () => {
     close && close.callback(close.widget);
 };
 
+/**
+ * 设置allIsLogin
+ */
+const setAllIsLogin = () => {
+    const newAllIsLogin =  getStore('user/isLogin') && earnGetStore('userInfo/isLogin');
+    setStore('user/allIsLogin',newAllIsLogin);
+};
 // =======================资源加载完成========================
 register('flags/level_2_page_loaded', (loaded: boolean) => {
     loginWalletFailedDelay && loginWalletFailedDelay();
+});
+
+// 钱包login
+register('user/isLogin', (loaded: boolean) => {
+    setAllIsLogin();
+});
+
+// 赚钱login
+earnRegister('userInfo/isLogin', (isLogin: boolean) => {
+    setAllIsLogin();
 });

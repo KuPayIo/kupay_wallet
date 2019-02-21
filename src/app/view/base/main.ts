@@ -11,7 +11,7 @@ import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { getScreenModify, preLoadAd } from '../../logic/native';
-import { manualReconnect } from '../../net/login';
+import { walletManualReconnect } from '../../net/login';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
 import { fetchDeviceId } from '../../utils/tools';
@@ -97,7 +97,7 @@ const backToFront = () => {
             }
             setTimeout(() => {
                 if (!getStore('user/isLogin')) {
-                    manualReconnect();
+                    walletManualReconnect();
                 }
             },100);  // 检查是否已经退出登录
         } else if (iType === 'onBackPressed') {
