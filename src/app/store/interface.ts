@@ -89,7 +89,8 @@ export interface User {
     id: string;            // 该账号的id
 
     offline: boolean;       // 连接状态
-    isLogin: boolean;      // 登录状态
+    isLogin: boolean;      // 钱包登录状态
+    allIsLogin:boolean;     // 所有服务登录状态  (钱包  活动  聊天)
 
     token: string;         // 自动登录token
     conRandom: string;     // 连接随机数

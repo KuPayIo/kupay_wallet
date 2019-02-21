@@ -2,19 +2,17 @@
  * play home 
  */
  // ================================ 导入
+import { gameChatPromise } from '../../../../chat/client/app/view/gameChatApi';
+import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStore, register } from '../../../store/memstore';
-import { getCurrentEthAddr, getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
-
-import { gameChatPromise } from '../../../../chat/client/app/view/gameChatApi';
-import { WebViewManager } from '../../../../pi/browser/webview';
 import { getEthApiBaseUrl } from '../../../core/config';
-import { manualReconnect } from '../../../net/login';
+import { register } from '../../../store/memstore';
+import { getCurrentEthAddr, getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -56,9 +54,7 @@ export class PlayHome extends Widget {
     
     public setProps(props:Json) {
         this.props = {
-            ...props,
-            isLogin:getStore('user/id') ? getStore('user/isLogin') : true,
-            reconnecting:false   
+            ...props
         };
         super.setProps(this.props);
         this.language = this.config.value[getLang()];
@@ -193,22 +189,9 @@ export class PlayHome extends Widget {
         });
     }
 
-    public updateLoginState(isLogin:boolean) {
-        this.props.isLogin = isLogin;
-        this.props.reconnecting = false;
-        this.paint();
-    }
-    /**
-     * 断线重连
-     */
-    public reConnect() {
-        if (this.props.reconnecting) return;
-        console.log('reconnect');
-        this.props.reconnecting = true;   // 正在连接
-        this.paint();
-        manualReconnect();
-    }
 }
+
+// ========================================
 register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -217,13 +200,5 @@ register('user/info',() => {
             w.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
         }
         w.paint();
-    }
-});
-
-register('user/isLogin',(isLogin:boolean) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    const id = getStore('user/id');
-    if (id) {
-        w && w.updateLoginState(isLogin);
     }
 });

@@ -118,7 +118,7 @@ winit.initNext = function () {
 			"app/store/memstore.js",
 			"app/net/login.js",
 			"app/net/push.js",
-			"earn/client/app/net/init.js",
+			"earn/client/app/net/",
 			"chat/client/app/net/init_1.js"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
