@@ -119,7 +119,7 @@ winit.initNext = function () {
 			"app/net/login.js",
 			"app/net/push.js",
 			"earn/client/app/net/",
-			// "chat/client/app/net/init_1.js"
+			"chat/client/app/net/init_1.js"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
@@ -127,7 +127,7 @@ winit.initNext = function () {
 			tab.release();
 			console.log("load loadWalletLoginSource-----------------");
 			// 聊天登录
-			// pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
 			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
 			// 钱包store初始化
