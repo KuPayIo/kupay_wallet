@@ -2,6 +2,7 @@
  * 钱包登录模块
  */
 
+import * as chatStore from '../../chat/client/app/data/store';
 import { getStore as earnGetStore,register as earnRegister } from '../../earn/client/app/store/memstore';
 import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
@@ -29,6 +30,7 @@ setReloginCallback((res) => {
  * 钱包手动重连
  */
 export const walletManualReconnect = () => {
+    
     const conRandom = getStore('user/conRandom');
     if (conRandom) {
         console.log('walletManualReconnect reopen');
@@ -43,6 +45,7 @@ export const walletManualReconnect = () => {
  * 开启连接
  */
 export const openConnect = (secrectHash:string = '') => {
+    
     console.log('openConnect strat');
     setUrl(wsUrl);
     open(conSuccess(secrectHash),conError,conClose,conReOpen);
@@ -386,7 +389,7 @@ const loginWalletFailedPop = async () => {
  * 设置allIsLogin
  */
 const setAllIsLogin = () => {
-    const newAllIsLogin =  getStore('user/isLogin') && earnGetStore('userInfo/isLogin');
+    const newAllIsLogin =  getStore('user/isLogin') && earnGetStore('userInfo/isLogin') && chatStore.getStore('isLogin');
     setStore('user/allIsLogin',newAllIsLogin);
 };
 // =======================资源加载完成========================
@@ -394,12 +397,21 @@ register('flags/level_2_page_loaded', (loaded: boolean) => {
     loginWalletFailedDelay && loginWalletFailedDelay();
 });
 
-// 钱包login
-register('user/isLogin', (loaded: boolean) => {
-    setAllIsLogin();
-});
+// 聊天login
+console.log(11111111111111);
+export const registerStore = () => {
+    console.log(22222222222222222);
+    // 钱包login
+    register('user/isLogin', (loaded: boolean) => {
+        setAllIsLogin();
+    });
 
 // 赚钱login
-earnRegister('userInfo/isLogin', (isLogin: boolean) => {
-    setAllIsLogin();
-});
+    earnRegister('userInfo/isLogin', (isLogin: boolean) => {
+        setAllIsLogin();
+    });
+
+    chatStore.register('isLogin', (isLogin: boolean) => {
+        setAllIsLogin();
+    });
+};

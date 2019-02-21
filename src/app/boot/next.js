@@ -119,7 +119,8 @@ winit.initNext = function () {
 			"app/net/login.js",
 			"app/net/push.js",
 			"earn/client/app/net/",
-			"chat/client/app/net/init_1.js"
+			"chat/client/app/net/",
+			"chat/client/app/data/store.js",
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
@@ -135,6 +136,7 @@ winit.initNext = function () {
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 			// erlang服务器连接登录
+			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.registerStore();
 			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.openConnect();
 			fpFlags.storeReady = true;
 			enterApp();
