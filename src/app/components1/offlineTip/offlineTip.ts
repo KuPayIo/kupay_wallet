@@ -36,7 +36,7 @@ export class OfflineTip extends Widget {
 // 钱包登录监听
 register('user/allIsLogin',(allIsLogin:boolean) => {
     const state = {
-        isLogin:allIsLogin,
+        isLogin:getAllIsLogin(),
         reconnecting:isReconnecting()
     };
     forelet.paint(state);
