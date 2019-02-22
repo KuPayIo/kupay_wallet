@@ -8,7 +8,8 @@ import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
 import { getStore, initCloudWallets, register, setStore } from '../store/memstore';
-import { calcHashValuePromise, decrypt, encrypt, fetchDeviceId, kickOffline, popPswBox } from '../utils/tools';
+import { calcHashValuePromise, decrypt, encrypt, fetchDeviceId, kickOffline, popNewMessage, popPswBox } from '../utils/tools';
+import { VerifyIdentidy } from '../utils/walletTools';
 import { requestAsync } from './pull';
 import { setReconnectingState } from './reconnect';
 
@@ -107,7 +108,7 @@ export const applyAutoLogin = async () => {
     };
     requestAsync(msg).then(res => {
         const decryptToken = encrypt(res.token,deviceId);
-        setStore('user/token',decryptToken);
+        // setStore('user/token',decryptToken);
     });
 };
 
@@ -377,11 +378,22 @@ const logoutWalletSuccess =  () => {
  */
 const loginWalletFailedPop = async () => {
     const psw = await popPswBox();
+    if (!psw) {
+        logoutAccount();
+
+        return;
+    }
     const close = popNew('app-components1-loading-loading', { text: '登录中' });
-    const secretHash = await calcHashValuePromise(psw,getStore('user/salt'));
+    const secretHash = await VerifyIdentidy(psw);
+    close && close.callback(close.widget);
+    if (!secretHash) {
+        popNewMessage('密码错误,请重新输入');
+        loginWalletFailedPop();
+
+        return;
+    }
     const conRandom = getStore('user/conRandom');
     defaultLogin(secretHash,conRandom);
-    close && close.callback(close.widget);
 };
 
 /**

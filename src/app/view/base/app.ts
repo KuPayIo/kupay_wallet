@@ -41,7 +41,7 @@ export class App extends Widget {
 
         this.props = {
             type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
-            isActive:'APP_EARN',
+            isActive:'APP_PLAY',
             old: this.old,
             loading,
             allTabBar: {
@@ -145,6 +145,11 @@ export class App extends Widget {
         this.props.isActive = 'APP_CHAT';
         this.paint();
     }
+
+    public switchToPlay() {
+        this.props.isActive = 'APP_PLAY';
+        this.paint();
+    }
 }
 
 // ===================================================== 本地
@@ -207,7 +212,7 @@ register('setting/language',(r) => {
 // 创建钱包成功
 register('flags/createWallet',(createWallet:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
-    w && w.switchToEarn();
+    w && w.switchToPlay();
 });
 
 // 监听活动页面
