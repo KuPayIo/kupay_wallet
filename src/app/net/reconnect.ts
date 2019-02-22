@@ -26,14 +26,17 @@ export const manualReconnect = () => {
         chat:false
     };
     if (!getStore('user/isLogin')) {
+        console.log('wallet is reconnecting');
         walletManualReconnect();
         reconnecting.wallet = true;
     }
     if (!earnGetStore('userInfo/isLogin')) {
+        console.log('earn is reconnecting');
         earnManualReconnect();
         reconnecting.earn = true;
     }
     if (!chatGetStore('isLogin')) {
+        console.log('chat is reconnecting');
         chatManualReconnect();
         reconnecting.chat = true;
     }
