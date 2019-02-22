@@ -25,7 +25,6 @@ export class OfflineTip extends Widget {
     public reConnect() {
         if (this.state.reconnecting) return;
         this.state.reconnecting = true;   // 正在连接
-        console.log('reconnect');
         forelet.paint(this.state);
         
         manualReconnect();

@@ -1,7 +1,6 @@
 /**
  * 钱包登录模块
  */
-
 import * as chatStore from '../../chat/client/app/data/store';
 import { getStore as earnGetStore,register as earnRegister } from '../../earn/client/app/store/memstore';
 import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
@@ -398,15 +397,13 @@ register('flags/level_2_page_loaded', (loaded: boolean) => {
 });
 
 // 聊天login
-console.log(11111111111111);
 export const registerStore = () => {
-    console.log(22222222222222222);
     // 钱包login
     register('user/isLogin', (loaded: boolean) => {
         setAllIsLogin();
     });
 
-// 赚钱login
+    // 赚钱login
     earnRegister('userInfo/isLogin', (isLogin: boolean) => {
         setAllIsLogin();
     });

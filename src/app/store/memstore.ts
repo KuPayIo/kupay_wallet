@@ -593,7 +593,7 @@ const store: Store = {
     user: {
         id: '',                      // 该账号的id
         offline: false,               // 连接状态
-        isLogin: false,              // 登录状态
+        isLogin: true,              // 登录状态
         allIsLogin:false,            // 所有服务登录状态  (钱包  活动  聊天)
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
