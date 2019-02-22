@@ -396,7 +396,6 @@ register('flags/level_2_page_loaded', (loaded: boolean) => {
     loginWalletFailedDelay && loginWalletFailedDelay();
 });
 
-// 聊天login
 export const registerStore = () => {
     // 钱包login
     register('user/isLogin', (loaded: boolean) => {
@@ -408,6 +407,7 @@ export const registerStore = () => {
         setAllIsLogin();
     });
 
+    // 聊天login
     chatStore.register('isLogin', (isLogin: boolean) => {
         setAllIsLogin();
     });
