@@ -284,14 +284,12 @@ export const createNewAddr = async (passwd: string, currencyName: string) => {
 
 // 删除助记词
 export const deleteMnemonic = () => {
-    const wallet = getStore('wallet');
-    wallet.isBackup = true;
-    setStore('wallet',wallet);
+    
+    setStore('wallet/isBackup',true);
 };
 
 // 记录通过分享片段备份
 export const sharePart = () => {
-    const wallet = getStore('wallet');
-    wallet.sharePart = true;
-    setStore('wallet',wallet);
+    
+    setStore('wallet/sharePart',true);
 };
