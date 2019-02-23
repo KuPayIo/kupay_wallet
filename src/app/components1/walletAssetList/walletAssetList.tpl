@@ -1,6 +1,6 @@
 <div w-class="list-container">
     {{for i,v of it.assetList}}
-    <div w-class="item" on-tap="itemClick(e,{{i}})">
+    <div w-class="item" on-tap="itemClick(e,{{i}})" on-down="onShow">
         <img src="../../res/image/currency/{{v.currencyName}}.png" w-class="icon"/>
         <div w-class="right-container">
             <div w-class="top-container">

@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goDetail" ev-refresh-click="refreshPage">
     {{: topBarTitle = {"zh_Hans":"领分红","zh_Hant":"領分紅","en":""} }}	
-    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}},nextImg:{{it.scrollHeight>0?"../../res/image/41_gray.png":"../../res/image/41_white.png"}} }</app-components1-topBar-topBar2>
+    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}},nextImg:{{it.scrollHeight>0?"../../res/image/41_blue.png":"../../res/image/41_white.png"}} }</app-components1-topBar-topBar2>
     <div style="text-align: center;position: absolute;width: 100%;top: 150px;z-index: 0;">
         <img src="../../../res/image/dividend_background.png" style="width: 570px;" />
     </div>

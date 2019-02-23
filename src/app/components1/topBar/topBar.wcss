@@ -17,7 +17,6 @@
     box-sizing: border-box;
 }
 .left-container{
-    flex: 1 0 0;
     display: flex;
     align-items: center;
     font-size: 36px;
@@ -46,16 +45,16 @@
     line-height: 88px;
 }
 .text{
-    height: 33px;
-    line-height: 33px;
+    height: 78px;
+    line-height: 78px;
     color: rgba(255, 255, 255, 1);
     font-size: 24px;
     text-align: right;
     margin-right: -20px;
 }
 .offline{
-    height: 40px;
-    line-height: 40px;
+    height: 48px;
+    line-height: 48px;
     margin-left: 20px;
     opacity: 0.8;
     padding: 0 15px;

@@ -7,6 +7,7 @@
  * nextImg:右侧图标路径
  */
 // ================================ 导入
+import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
@@ -62,6 +63,11 @@ export class TopBar extends Widget {
             this.props.refresh = false;
             this.paint();
         }, 1000);
+    }
+
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
     }
 }
 register('user/offline',(r) => {

@@ -2,6 +2,7 @@
  * 首页头部导航栏
  */
 // ================================ 导入
+import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { Json } from '../../../pi/lang/type';
 import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
@@ -35,6 +36,11 @@ export class TopBar1 extends Widget {
             this.props.refresh = false;
             this.paint();
         }, 1000);
+    }
+    
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
     }
     
     /**

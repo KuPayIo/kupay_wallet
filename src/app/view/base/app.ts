@@ -2,6 +2,7 @@
  * 首页
  */
 // ================================ 导入
+import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { popNew } from '../../../pi/ui/root';
 import { getLang, setLang } from '../../../pi/util/lang';
@@ -113,6 +114,7 @@ export class App extends Widget {
         this.paint();
     }
     public tabBarChangeListener(event: any, index: number) {
+        rippleShow(event);
         const identfy = this.props.tabBarList[index].modulName;
         if (this.props.isActive === identfy) return;
         this.props.isActive = identfy;

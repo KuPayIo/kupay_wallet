@@ -2,6 +2,7 @@
  * 可滑动页面头部导航栏
  */
 // ================================ 导入
+import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
@@ -51,5 +52,8 @@ export class TopBar2 extends Widget {
     public goNext(event:any) {
         notify(event.node,'ev-next-click',{});
     }
-    
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
+    }   
 }
