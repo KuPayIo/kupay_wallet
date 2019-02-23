@@ -859,7 +859,7 @@ export const fetchCloudWalletAssetList = () => {
 export const hasWallet = () => {
     const wallet = getStore('wallet');
     if (!wallet) {
-        popNew('app-components1-modalBox-toLoginBox',undefined, () => {
+        popNew('app-components1-modalBox-newUserWelfare',undefined, () => {
             // popNew('app-view-wallet-create-home');
             // popNew('app-view-base-localImg');
         });

@@ -204,3 +204,88 @@ div{
     -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
 }
+
+
+
+@keyframes popBoxFadeIn{
+    0%{
+        opacity: 0;
+        transform: scale(0);
+    }
+    100%{
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes popBoxFadeOut{
+    0%{
+        opacity: 1;
+        transform: scale(1);
+    }
+    100%{
+        opacity: 0;
+        transform: scale(.3);
+    }
+}
+
+/**
+  * 弹框淡入 
+*/
+.popBoxFadeIn{
+    animation: popBoxFadeIn .3s ease forwards;
+}
+
+/**
+  * 弹框淡出  
+*/
+.popBoxFadeOut{
+    animation: popBoxFadeOut .3s ease forwards;
+}
+
+@keyframes popBoxShake{
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+      }
+    
+    14% {
+        -webkit-transform: scale(1.1);
+        transform: scale(1.1);
+    }
+
+    28% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+
+    42% {
+        -webkit-transform: scale(1.1);
+        transform: scale(1.1);
+    }
+
+    70% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+.popBoxShake{
+    animation: popBoxShake 1.3s ease-in-out forwards;
+    animation-delay: .3s;
+}
+
+
+@keyframes popBoxZoomIn {
+    from {
+      -webkit-transform: scale3d(0.3, 0.3, 0.3);
+      transform: scale3d(0.3, 0.3, 0.3);
+    }
+  
+    50% {
+      opacity: 1;
+    }
+  }
+.popBoxZoomIn{
+    animation: popBoxZoomIn .4s ease forwards;
+    animation-delay: .1s;
+}
