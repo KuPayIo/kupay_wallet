@@ -35,7 +35,7 @@ const getWalletName = () =>{
     if(walletName){        
         return walletName;
     }else{
-        return 'KuPay';
+        return '好嗨';
     }
 }
 

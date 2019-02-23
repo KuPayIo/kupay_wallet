@@ -135,9 +135,11 @@ export const preLoadAd = (adType?: number,cb?:(str1:string,str2:string) => void)
  * 观看广告
  * adtype:1.广点通  2.字节跳动
  */
-export const watchAd = (adType: number,cb?:(str1:string,str2:string) => void) => {
-    ADUnion.showRewardVideoAD(adType,(str1,str2) => {
-        cb && cb(str1,str2);
+// tslint:disable-next-line:no-reserved-keywords
+export const watchAd = (adType: number,cb?:(str1:string,type:number,str2:string) => void) => {
+    // tslint:disable-next-line:no-reserved-keywords
+    ADUnion.showRewardVideoAD(adType,(str1,type,str2) => {
+        cb && cb(str1,type,str2);
         preLoadAd();
     });
 };
@@ -156,6 +158,7 @@ export const chooseAdType = (cb:Function) => {
         }
         const len = ads.length;
         const index = Math.floor(Math.random() * 100) % len;
-        cb && cb(ads[index]);
+        const adType = ads[index] || (Math.random() > 0.5 ? 1 : 2);
+        cb && cb(adType);
     });
 };

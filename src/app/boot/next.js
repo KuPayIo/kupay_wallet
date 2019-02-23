@@ -119,8 +119,7 @@ winit.initNext = function () {
 			"app/net/login.js",
 			"app/net/push.js",
 			"earn/client/app/net/",
-			"chat/client/app/net/",
-			"chat/client/app/data/store.js",
+			"chat/client/app/net/"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);

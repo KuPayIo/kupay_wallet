@@ -25,7 +25,6 @@ export class OfflineTip extends Widget {
     public reConnect() {
         if (this.state.reconnecting) return;
         this.state.reconnecting = true;   // 正在连接
-        console.log('reconnect');
         forelet.paint(this.state);
         
         manualReconnect();
@@ -36,7 +35,7 @@ export class OfflineTip extends Widget {
 // 钱包登录监听
 register('user/allIsLogin',(allIsLogin:boolean) => {
     const state = {
-        isLogin:allIsLogin,
+        isLogin:getAllIsLogin(),
         reconnecting:isReconnecting()
     };
     forelet.paint(state);
