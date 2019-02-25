@@ -17,6 +17,7 @@ import { register } from '../../store/memstore';
 interface Props {
     title:string;
     nextImg?:string;
+    nextImg1?:string;
     centerTitle?:boolean;
     background?:string;
     refreshImg?:string;
@@ -50,6 +51,13 @@ export class TopBar extends Widget {
      */
     public goNext(event:any) {
         notify(event.node,'ev-next-click',{});
+    }
+
+    /**
+     * 第二个右上角按钮
+     */
+    public goNext1(event:any) {
+        notify(event.node,'ev-next1-click',{});
     }
 
     /**

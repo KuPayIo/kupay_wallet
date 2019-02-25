@@ -22,6 +22,11 @@
             <img on-tap="goNext" src="{{it.nextImg}}" w-class="ga-next" />
             {{end}}
         </div>
+        {{if it.nextImg1}}
+        <div style="display:inline-block" on-down="onShow">
+            <img on-tap="goNext1" src="{{it.nextImg1}}" w-class="refreshBtn"/>
+        </div>
+        {{end}}
         {{if it.refreshImg}}
         <div style="display:inline-block" on-down="onShow">
             <img on-tap="refreshPage" src="{{it.refreshImg}}" w-class="refreshBtn" class="{{it.refresh?'refreshing':''}}"/>
