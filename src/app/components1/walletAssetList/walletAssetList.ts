@@ -1,6 +1,7 @@
 /**
  * wallet home asset list
  */
+import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
@@ -33,6 +34,11 @@ export class WalletAssetList extends Widget {
     }
     public itemClick(e:any,index:number) {
         notify(e.node,'ev-item-click',{ index }); 
+    }
+
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
     }
 
 }

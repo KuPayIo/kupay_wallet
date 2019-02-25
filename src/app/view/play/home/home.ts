@@ -3,6 +3,7 @@
  */
  // ================================ 导入
 import { gameChatPromise } from '../../../../chat/client/app/view/gameChatApi';
+import { CRYPTOFISHING_GROUP, FOMOSPORTS_GROUP } from '../../../../chat/server/data/constant';
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
@@ -70,13 +71,15 @@ export class PlayHome extends Widget {
                 title:{ zh_Hans:'fomosports',zh_Hant:'fomosports',en:'' },
                 desc:{ zh_Hans:'要买要快，不要只是看',zh_Hant:'要買要快，不要只是看',en:'' },
                 img:['app/res/image1/fomosports.jpg','app/res/image1/fomosports1.jpg'],
-                url:'https://test.fomosports.me/'
+                url:'https://test.fomosports.me/',
+                gid:FOMOSPORTS_GROUP
             },
             {
                 title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
                 desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
                 img:['app/res/image1/CryptoFishing.jpg','app/res/image1/CryptoFishing1.jpg'],
-                url:'http://fishing.rinkeby.cchaingames.com/'
+                url:'https://ctuct.com/',
+                gid:CRYPTOFISHING_GROUP
             }
             // {
             //     title:'Decentraland',
@@ -156,9 +159,10 @@ export class PlayHome extends Widget {
             `;
             this.defaultInjectPromise = Promise.resolve(defaultInjectText);
 
-            const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise,gameChatPromise()]);
-            allPromise.then(([defaultInjectContent,web3Content,chatContent]) => {
-                const content = defaultInjectContent + web3Content + chatContent;
+            const GChatPromise = gameChatPromise(this.props.gameList[num].gid);
+            const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise,GChatPromise.textPromise,GChatPromise.chatPromise]);
+            allPromise.then(([defaultInjectContent,web3Content,textContent,chatContent]) => {
+                const content = defaultInjectContent + web3Content + chatContent + textContent;
                 WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }

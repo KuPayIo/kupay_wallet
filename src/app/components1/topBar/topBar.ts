@@ -7,6 +7,7 @@
  * nextImg:右侧图标路径
  */
 // ================================ 导入
+import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
@@ -16,6 +17,7 @@ import { register } from '../../store/memstore';
 interface Props {
     title:string;
     nextImg?:string;
+    nextImg1?:string;
     centerTitle?:boolean;
     background?:string;
     refreshImg?:string;
@@ -52,6 +54,13 @@ export class TopBar extends Widget {
     }
 
     /**
+     * 第二个右上角按钮
+     */
+    public goNext1(event:any) {
+        notify(event.node,'ev-next1-click',{});
+    }
+
+    /**
      * 刷新当前页
      */
     public refreshPage(event:any) {
@@ -62,6 +71,11 @@ export class TopBar extends Widget {
             this.props.refresh = false;
             this.paint();
         }, 1000);
+    }
+
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
     }
 }
 register('user/offline',(r) => {

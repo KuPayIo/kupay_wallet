@@ -151,6 +151,9 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
 
             console.time('transfer3 all promise need');
             const [wlt,gasLimit,chainNonce] = await Promise.all([wltPromise,gasLimitPromise,chainNoncePromise]);
+            if (!wlt) {
+                return ['password error'];
+            }
             console.timeEnd('transfer3 all promise need');
 
             // TODO  直接使用预估出来的gasLimit交易有可能失败   零时解决
