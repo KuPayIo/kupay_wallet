@@ -5063,17 +5063,25 @@ Adds the callback and sets up the methods, to iterate over the results.
                         0% {transform: translateY(0);}
                         100% {transform: translateY(1500px);}
                     }
-                    .contain{
-                        position: absolute;
-                        top: 200px;
-                        left: 50px;
-                        right: 50px;
+                    #pi_pop_root{
+                        position:fixed;
+                        top:0;
+                        left:0;
+                        bottom:0;
+                        right:0;
+                        background: rgba(50, 50, 50, 0.5);
+                        zoom:0.5;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .pi_contain{
                         background: #fff;
                         text-align:left;
                         border-radius:12px;
                         padding-bottom:30px;
                     }
-                    .item{
+                    .pi_item{
                         height: 110px;
                         border-bottom: 1px solid #DBDBE5;
                         line-height: 110px;
@@ -5081,10 +5089,10 @@ Adds the callback and sets up the methods, to iterate over the results.
                         display: flex;
                         align-items: center;
                     }
-                    .item1{
+                    .pi_item1{
                         padding: 20px 30px 0;
                     }
-                    .title{
+                    .pi_title{
                         width:70px;
                         margin-right: 20px;
                         height: 40px;
@@ -5093,7 +5101,7 @@ Adds the callback and sets up the methods, to iterate over the results.
                         line-height:40px;
                         display: inline-block;
                     }
-                    .content{
+                    .pi_content{
                         height:40px;
                         font-size:28px;
                         font-weight:600;
@@ -5108,18 +5116,14 @@ Adds the callback and sets up the methods, to iterate over the results.
                         border: 15px solid transparent;
                         border-right: none;
                     }
-                    .address{
+                    .pi_address{
                         font-size:22px;
                         color:rgba(136,136,136,1);
                         line-height:30px;
                         margin-left: 90px;
                         word-break: break-all;
                     }
-                    .rightArrow{
-                        width: 32px;
-                        height: 32px;
-                    }
-                    .btns{
+                    .pi_btns{
                         display: flex;
                         margin: 20px 60px;
                         align-items: center;
@@ -5208,6 +5212,19 @@ Adds the callback and sets up the methods, to iterate over the results.
                         height:80px;
                         border-radius:6px;
                     }
+                    #pi_payFailed{
+                        position: fixed;
+                        left: 50%;
+                        bottom: 300px;
+                        border-radius: 6px;
+                        background-color: rgba(0, 0, 0, 0.9);
+                        line-height: 45px;
+                        color: rgba(255, 255, 255, 0.87);
+                        font-size: 32px;
+                        text-align: center;
+                        padding: 18px 25px;
+                        zoom:0.5;
+                    }
                     .password{
                         appearance:none;
                         -moz-appearance:none; /* Firefox */
@@ -5239,7 +5256,15 @@ Adds the callback and sets up the methods, to iterate over the results.
                     input:-ms-input-placeholder{ 
                         color:    #cccccc;
                     }
-                    
+                    .message_open{
+                        transform: translateX(-50%);
+                        transition: opacity 0.3s, transform .4s;
+                    }
+                    .message-fade-enter {
+                        opacity: 0;
+                        transform: translate(-50%, 100%);
+                    }
+
                     .loader {
                         box-sizing: border-box;
                         display: flex;
@@ -5296,7 +5321,7 @@ Adds the callback and sets up the methods, to iterate over the results.
                         var scritpText = `
                     function popLoading(){
                         var div = document.createElement('div');
-                        div.setAttribute("style", "position:absolute;top:0;left:0;bottom:0;right:0;background: rgba(50, 50, 50, 0.5);display:flex;justify-content: center;align-items: center;");
+                        div.setAttribute("style", "position:fixed;top:0;left:0;bottom:0;right:0;background: rgba(50, 50, 50, 0.5);display:flex;justify-content: center;align-items: center;");
                         div.setAttribute("id","pi-loading");
                         div.innerHTML = '<div class="loader">' + 
                             '<div class="loader-inner ball-clip-rotate">' +
@@ -5311,7 +5336,7 @@ Adds the callback and sets up the methods, to iterate over the results.
                         body.removeChild(loading);
                     }
                     function closePopBox(){
-                        var popBox = document.querySelector("#pi-pop-root");
+                        var popBox = document.querySelector("#pi_pop_root");
                         var body = document.querySelector("body");
                         body.removeChild(popBox);
                     }
@@ -5330,13 +5355,33 @@ Adds the callback and sets up the methods, to iterate over the results.
                         pi_RPC_Method("app/net/pullWallet", "rpcProviderSendAsync", payload, function (error, result) {
                             closeLoading();
                             callback(error, result);
+                            if(error){
+                                showNotice();
+                            }
                         });
                         popLoading();
                         closePopBox();
                         
-                    }`;
+                    }
+                    function showNotice(){
+                        var elem = document.createElement('div');
+                        elem.setAttribute("id","pi_payFailed");
+                        elem.classList.add('message_open');
+                        elem.innerText = '支付失败';
+                        document.body.appendChild(elem);
+
+                        setTimeout(() => {
+                            elem.classList.add('message-fade-enter');
+                            setTimeout(()=>{
+                                document.body.removeChild(document.getElementById('pi_payFailed'));
+                            },300);
+                            
+                        }, 2000);
+                    }
+                    `;
                         var newScript = document.createElement("script");
                         newScript.type = "text/javascript";
+                      
                         newScript.innerHTML = scritpText;
                         document
                             .getElementsByTagName("head")[0]
@@ -5392,41 +5437,40 @@ Adds the callback and sets up the methods, to iterate over the results.
                     var fromAddr = payload.params[0].from;
                     // 0x3782dace9d90000
                     var pay = Number(payload.params[0].value) / Math.pow(10, 18);
+                    document.getElementById('#pi_pop_root') && document.removeChild(document.getElementById('#pi_pop_root')); // 如果有则移除之前的弹窗
                     var div = document.createElement("div");
-                    div.setAttribute("style",browserAdaptive());
-                    div.setAttribute("id", "pi-pop-root");
+                    // div.setAttribute("style",browserAdaptive());
+                    div.setAttribute("id", "pi_pop_root");
                     //style="animation: containIn 0.2s forwards;"
                     div.innerHTML = `
-                    <div style="position:absolute;top:0;left:0;bottom:0;right:0;background: rgba(50, 50, 50, 0.5);">
-                        <div class="contain" >
-                            <div class="minerTitle">
-                                <span style="flex:1 0 0;">确认支付</span>
+                    <div class="pi_contain" >
+                        <div class="minerTitle">
+                            <span style="flex:1 0 0;">确认支付</span>
+                        </div>
+                        <div class="pi_item">
+                            <span class="pi_title">金额:</span>
+                            <div>
+                                <span id="sendNum">${pay.toFixed(6)}</span>
+                                <span id="ctype">ETH</span>
                             </div>
-                            <div class="item">
-                                <span class="title">金额:</span>
-                                <div>
-                                    <span id="sendNum">${pay.toFixed(6)}</span>
-                                    <span id="ctype">ETH</span>
-                                </div>
-                            </div>
-                            
-                            <div class="item1">
-                                <span class="title">发给:</span>
-                                <span class="content">${window.piGameName}</span>
-                                <div class="address" id="to">${toAddr}</div>
-                            </div>
-                            <div class="item1">
-                                <span class="title">余额:</span>
-                                <span class="content"><span id="balance">0</span>&nbsp;ETH</span>
-                                <div class="address" id="from">${fromAddr}</div>
-                            </div>
-                            <div class="pswBox">
-                                <input type="password" placeholder="输入密码" class="password" id="pi-psw"/>
-                            </div>
-                            <div class="btns">
-                                <div class="cancel" onclick="doClose()">取消</div>
-                                <div class="confirm" onclick="doSure()">确认</div>
-                            </div>
+                        </div>
+                        
+                        <div class="pi_item1">
+                            <span class="pi_title">发给:</span>
+                            <span class="pi_content">${window.piGameName}</span>
+                            <div class="pi_address" id="to">${toAddr}</div>
+                        </div>
+                        <div class="pi_item1">
+                            <span class="pi_title">余额:</span>
+                            <span class="pi_content"><span id="balance">0</span>&nbsp;ETH</span>
+                            <div class="pi_address" id="from">${fromAddr}</div>
+                        </div>
+                        <div class="pswBox">
+                            <input type="password" placeholder="输入密码" class="password" id="pi-psw"/>
+                        </div>
+                        <div class="pi_btns">
+                            <div class="cancel" onclick="doClose()">取消</div>
+                            <div class="confirm" onclick="doSure()">确认</div>
                         </div>
                     </div>
                 `;
