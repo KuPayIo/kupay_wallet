@@ -52,7 +52,7 @@ pi_modules.butil.exports = (function () {
 
 	// 字符串编码成utf8的Uint8Array
 	module.utf8Encode = (self.TextEncoder) ? (function () {
-		const encoder = new TextEncoder('utf-8');
+		var encoder = new TextEncoder('utf-8');
 		return function (s) {
 			return (s && s.length > 0) ? encoder.encode(s) : null;
 		};
@@ -61,7 +61,6 @@ pi_modules.butil.exports = (function () {
 			return null;
 		}
 
-		var units = Infinity;
 		var codePoint;
 		var length = s.length;
 		var leadSurrogate = null;
@@ -77,7 +76,7 @@ pi_modules.butil.exports = (function () {
 				if (leadSurrogate) {
 					// 2 leads in a row
 					if (codePoint < 0xDC00) {
-						if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+						bytes.push(0xEF, 0xBF, 0xBD);
 						leadSurrogate = codePoint;
 						continue
 					} else {
@@ -90,11 +89,11 @@ pi_modules.butil.exports = (function () {
 
 					if (codePoint > 0xDBFF) {
 						// unexpected trail
-						if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+						bytes.push(0xEF, 0xBF, 0xBD);
 						continue;
 					} else if (i + 1 === length) {
 						// unpaired lead
-						if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+						bytes.push(0xEF, 0xBF, 0xBD);
 						continue;
 					} else {
 						// valid lead
@@ -104,29 +103,25 @@ pi_modules.butil.exports = (function () {
 				}
 			} else if (leadSurrogate) {
 				// valid bmp char, but last char was a lead
-				if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+				bytes.push(0xEF, 0xBF, 0xBD);
 				leadSurrogate = null;
 			}
 
 			// encode utf8
 			if (codePoint < 0x80) {
-				if ((units -= 1) < 0) break
 				bytes.push(codePoint);
 			} else if (codePoint < 0x800) {
-				if ((units -= 2) < 0) break
 				bytes.push(
 					codePoint >> 0x6 | 0xC0,
 					codePoint & 0x3F | 0x80
 				);
 			} else if (codePoint < 0x10000) {
-				if ((units -= 3) < 0) break
 				bytes.push(
 					codePoint >> 0xC | 0xE0,
 					codePoint >> 0x6 & 0x3F | 0x80,
 					codePoint & 0x3F | 0x80
 				);
 			} else if (codePoint < 0x200000) {
-				if ((units -= 4) < 0) break
 				bytes.push(
 					codePoint >> 0x12 | 0xF0,
 					codePoint >> 0xC & 0x3F | 0x80,
@@ -326,6 +321,20 @@ pi_modules.store.exports = (function () {
 	 */
 	module.check = function () {
 		return !!iDB;
+	}
+
+	/**
+	 * 删除指定的数据库，cb(是否成功)
+	 */
+	module.deleteDatabase = function (dbName, cb) {
+		var request = iDB.deleteDatabase(dbName);
+		request.onsuccess = function(event) {
+			cb && cb(true);
+		};
+
+		request.onerror = function(event) {
+			cb && cb(false);
+		};
 	}
 
 	/**
@@ -738,6 +747,14 @@ pi_modules.load.exports = (function () {
 	module.getStore = function () {
 		return localStore;
 	};
+
+	/**
+	 * 删除store，cb(删除是否成功)
+	 */
+	module.deleteStore = function (cb) {
+		store.deleteDatabase(storeName, cb);
+	}
+
 	/**
 	 * @description 判断是否为本地数据库
 	 * @example
@@ -794,6 +811,9 @@ pi_modules.load.exports = (function () {
 			// 加载到的文件数量
 			loadCount: 0,
 			/*:number*/
+			// 加载到的文件大小
+			loadSize: 0,
+			/*:number*/
 			// 所有下载的文件数量
 			downAmount: 0,
 			/*:number*/
@@ -848,10 +868,16 @@ pi_modules.load.exports = (function () {
 		localSign = {};
 		initWait = [];
 	};
-
+	/**
+	 * @description 获得正在下载的数量
+	 * @example
+	 */
+	module.loadingCount = function () {
+		loadWait.length;
+	};
 	// ============================== 本地
-	// 本地存储名称
-	var storeName = winit.store; /*:string*/
+	// 本地存储名称，仅仅放文件缓存
+	var storeName = winit.store + "_files"; /*:string*/
 	// 本地存储
 	var localStore; /*:Json*/
 	// 本地签名表
@@ -1169,12 +1195,14 @@ pi_modules.load.exports = (function () {
 				});
 			} else {
 				load.loadCount++;
+				load.loadSize += data.byteLength;
 				load.onprocess({
 					type: "loadFile",
 					file: file,
 					data: data,
 					total: load.loadAmount,
-					count: load.loadCount
+					count: load.loadCount,
+					size: load.loadSize
 				});
 			}
 			if (load.downCount < load.downAmount || load.loadCount < load.loadAmount)
@@ -1570,10 +1598,9 @@ pi_modules.commonjs.exports = (function () {
 			var mod = pi_modules[module.modName(e.file)];
 			(module.debug) ? debugDefine(mod, e.data): releaseDefine(mod, e.data);
 		}
-		
 		for (i = len = modSet.length - 1; i >= 0; i--) {
 			mod = modSet[i];
-			// 如果模块已加载，则跳过
+			// 如果模块已经就绪或已经有创建函数，则跳过
 			if (mod.loaded || mod.buildFunc) {
 				modSet[i] = modSet[len--];
 				continue;
@@ -1600,7 +1627,6 @@ pi_modules.commonjs.exports = (function () {
 			total: modSet.length,
 			download: needs.length
 		});
-		
 		wait = {
 			names: modNames,
 			onsuccess: successCallback,
@@ -1611,7 +1637,6 @@ pi_modules.commonjs.exports = (function () {
 			count: modSet.length,
 			fileMap: {}
 		};
-		
 		waitList.push(wait);
 		if (needs.length === 0)
 			return;
@@ -1665,6 +1690,9 @@ pi_modules.commonjs.exports = (function () {
 		process.handler = function (e) {
 			process[e.type](e);
 		};
+		process.loadInfo = function (e) {
+			// 
+		};
 		process.loadStart = function (e) {
 			if (e.loadAmount > loadAmount)
 				loadAmount = e.loadAmount;
@@ -1694,7 +1722,15 @@ pi_modules.commonjs.exports = (function () {
 			build = e.count;
 			calc();
 		}
-		process.loadTpl = function (e) {};
+		process.loadTplStart = function (e) {
+			// 开始处理tpl 成 widget
+		}
+		process.tplStart = function (e) {
+			// js 加载tpl 开始
+		};
+		process.loadTpl = function (e) {
+			// js 加载每一个 tpl
+		};
 		process.loadWidget = function (e) {};
 		process.loadDirCompleted = function (e) {};
 		return process;
@@ -1822,7 +1858,6 @@ pi_modules.commonjs.exports = (function () {
 	// 模块定义成功，通知所有正在等待的加载器
 	var modDefine = function (mod /*:Mod*/ ) {
 		var i, wait;
-
 		for (i = waitList.length - 1; i >= 0; i--) {
 			wait = waitList[i];
 			if (!wait.map[mod.id])
@@ -1831,13 +1866,10 @@ pi_modules.commonjs.exports = (function () {
 			wait.onprocess && wait.onprocess({
 				type: "defineMod",
 				total: wait.set.length,
-				count: wait.set.length - wait.count,
-				next1: wait.set[wait.count-1] && wait.set[wait.count-1].id,
-				current:mod.id,
+				count: wait.set.length - wait.count
 			});
 			if (wait.count > 0)
 				continue;
-			
 			if (i < waitList.length - 1)
 				waitList[i] = waitList[waitList.length - 1];
 			waitList.length--;
@@ -1847,7 +1879,6 @@ pi_modules.commonjs.exports = (function () {
 	};
 	// 构建模块
 	var build = function (wait) {
-		
 		var i, mod, oldlen, mods = wait.set,
 			len = mods.length,
 			end = Date.now() + module.buildTimeout;
@@ -1960,7 +1991,7 @@ pi_modules.update = {
 pi_modules.update.exports = (function () {
 	var module = function mod_update() {};
 
-	var DOWNLOAD_TIMEOUT = 5000;
+	var DOWNLOAD_TIMEOUT = 1000;
 
 	var butil = pi_modules.butil.exports;
 	var load = pi_modules.load.exports;
@@ -1978,6 +2009,7 @@ pi_modules.update.exports = (function () {
 	var isIntercept = true;
 	var localVersion = [];
 	var remoteVersion = [];
+	var remoteVersionShow = [];  // 显示的版本号（仅用于界面展示）
 	var h5Updated = [];
 	var dependAppVersion = [];
 
@@ -2018,6 +2050,12 @@ pi_modules.update.exports = (function () {
 	}
 
 	/**
+	 * 取远端显示版本，返回数组 [大版本号, 小版本号, 更新版本号]
+	 */
+	module.getRemoteVersionShow = function(){
+		return remoteVersionShow;
+	}
+	/**
 	 * 取h5更新内容  eg:["支持Dapp","交易功能稳定","优化加载速度","全新界面UI，全新体验","修复账户相关bug"]
 	 */
 	module.getH5Updated = function () {
@@ -2041,13 +2079,28 @@ pi_modules.update.exports = (function () {
 
 	/**
 	 * 检查是否需要更新
-	 * @param {*} callback callback(isNeedUpdate)
+	 * @param {*} callback callback(UPDATE_FLAG_***)
 	 */
+	var UPDATE_FLAG_NO_UPDATE = 0; // 不更新, 获取检查相关文件失败也不会更新
+	var UPDATE_FLAG_LAST = 1;      // 上次没更新完成, 强制更新
+	var UPDATE_FLAG_MAJOR = 2;     // 大版本变动, 强制更新
+	var UPDATE_FLAG_MINOR = 3;     // 小版本变动, 提示更新
+	
 	module.checkUpdate = function (callback) {
 
+		// 非本地, 不用更新
 		if (!isNative || !isIntercept) {
 			setTimeout(function () {
-				callback(0);
+				callback(UPDATE_FLAG_NO_UPDATE);
+			}, 0);
+			return;
+		}
+
+		// 上次没更新完成, 必须强制更新
+		var needUpdate = JSIntercept.getBootFile("update.flag") === "true";
+		if (needUpdate) {
+			setTimeout(function () {
+				callback(UPDATE_FLAG_LAST);
 			}, 0);
 			return;
 		}
@@ -2058,14 +2111,12 @@ pi_modules.update.exports = (function () {
 			checkNeedUpdate(oldVersion, callback);
 		}
 
+		// 获取document的indexjs
 		var indexJSStr = JSIntercept.getBootFile("index.js");
 		if (indexJSStr) {
 			nextFunc(indexJSStr);
 		} else {
-			// 从手机的的index.js取到老版本号
-			console.log("localDomain = " + localDomain);
-			console.log("rootPath = " + rootPath);
-			console.log("bootDir = " + bootDir);
+			// 从assets的index.js取到老版本号
 			ajax.get(localDomain + rootPath + bootDir + "index.js?" + Math.random(), {}, undefined, undefined, DOWNLOAD_TIMEOUT, nextFunc, function () {});
 		}
 	}
@@ -2088,17 +2139,19 @@ pi_modules.update.exports = (function () {
 	}
 
 	// 从index.js的版本号检查是否需要更新
-	function checkNeedUpdate(oldVersion, okCB, failCB) {
+	function checkNeedUpdate(oldVersion, okCB) {
 
 		remoteVersion = localVersion = oldVersion;
-		var timeout = 1000;
+
 		// 强制取服务器的index.js
-		ajax.get(httpDomain + rootPath + bootDir + "index.js?" + Math.random(), {}, undefined, undefined, timeout, function (indexJSStr) {
+		ajax.get(httpDomain + rootPath + bootDir + "index.js?" + Math.random(), {}, undefined, undefined, DOWNLOAD_TIMEOUT, function (indexJSStr) {
 
 			newIndexJSStr = indexJSStr;
 
 			var newVersion = getIndexVersion(indexJSStr);
+
 			remoteVersion = newVersion;
+			remoteVersionShow = getIndexVersionShow(indexJSStr);
 			dependAppVersion = getIndexDependAppVersion(indexJSStr);
 			console.log("dependAppVersion = ",dependAppVersion);
 			console.log("newVersion = ",newVersion);
@@ -2106,22 +2159,19 @@ pi_modules.update.exports = (function () {
 			var updatedStr = getIndexUpdatedContent(indexJSStr);
 			console.log("updatedStr = ",updatedStr);
 			h5Updated = JSON.parse(updatedStr);
-			
-			var needUpdate = JSIntercept.getBootFile("update.flag") === "true";
-			var needUpdateCode = 0;   // 没有更新
-			if (needUpdate) { 
-				needUpdateCode = 1;   // 更新未完成 强制更新
-			} else if (oldVersion[0] !== newVersion[0] || oldVersion[1] !== newVersion[1]) {
-				needUpdateCode = 2;     // 第一，第二版本号 不同，必须强制更新
-			} else if (oldVersion[2] !== newVersion[2]) {
-				needUpdateCode = 3;   // 第三版本号 不同，提示用户更新
-			}
 
-			okCB(needUpdateCode);
+			if (oldVersion[0] !== newVersion[0] || oldVersion[1] !== newVersion[1]) {
+				// 第一，第二版本号 不同，必须强制更新
+				okCB(UPDATE_FLAG_MAJOR);	
+			} else if (oldVersion[2] !== newVersion[2]) {
+				// 第三版本号 不同，提示用户更新
+				okCB(UPDATE_FLAG_MINOR);
+			} else {
+				okCB(UPDATE_FLAG_NO_UPDATE);
+			}
 		}, function () {
-			// 取不到index.js，用拦截即可
-			// alert("indexJSStr timeout");
-			okCB(0);
+			// 取不到服务器的index.js, 不用更新
+			okCB(UPDATE_FLAG_NO_UPDATE);
 		});
 	}
 
@@ -2151,13 +2201,14 @@ pi_modules.update.exports = (function () {
 	function finishUpdate() {
 		// 清除标记
 		JSIntercept.saveFile("update.flag", window.btoa("false"), function () {
-			
 			// alert("更新成功，程序即将关闭，请重启APP");
+
 			var option = {
 				updated:h5Updated,
 				version:remoteVersion.slice(0,remoteVersion.length - 1).join("."),
 				alertBtnText : "更新完毕"
 			};
+			debugger
 			setTimeout(()=>{
 				pi_update.closePop();
 				// 重启
@@ -2241,12 +2292,23 @@ pi_modules.update.exports = (function () {
 	// 取indexjs的版本号
 	function getIndexVersion(indexJS) {
 		// 第一行是：// !version=major.minor.update.date
-		var regex = /\/\/\s*!version=(\d+)\.(\d+)\.(\d+)\.(\d+)/;
+		var regex = /\/\/\s*!version=(\w+)\.(\w+)\.(\w+)\.(\w+)/;
 		var result = indexJS.match(regex);
 		if (!result || result.length !== 5) {
 			throw new Error("index.js must have version at first line, format like: // !version=1.0.0.100916")
 		}
 		return [result[1], result[2], result[3], result[4]];
+	}
+
+	// 取indexjs的版本号
+	function getIndexVersionShow(indexJS) {
+		// 第一行是：// !version=major.minor.update.date
+		var regex = /\/\/\s*!versionShow=(\d+)\.(\d+)\.(\d+)/;
+		var result = indexJS.match(regex);
+		if (!result) {
+			throw new Error("index.js must have version at first line, format like: // !version=1.0.0.100916")
+		}
+		return [result[1], result[2], result[3]];
 	}
 
 	// 取indexjs的更新内容数组
@@ -2284,7 +2346,6 @@ pi_modules.update.exports = (function () {
 	return module;
 })();
 
-
 // app更新模块
 pi_modules.appUpdate = {
 	id: 'appUpdate',
@@ -2293,11 +2354,10 @@ pi_modules.appUpdate = {
 };
 pi_modules.appUpdate.exports = (function () {
 	var module = function mod_update() {};
-
-	var DOWNLOAD_TIMEOUT = 10000;
-
-	var ajax = pi_modules.ajax.exports;
 	
+	var ajax = pi_modules.ajax.exports;
+	var load = pi_modules.load.exports;
+
 	var appURL = winit.appURL;
 	var JSIntercept = winit.JSIntercept;
 	
@@ -2321,6 +2381,7 @@ pi_modules.appUpdate.exports = (function () {
 	module.getAppRemoteVersion = function(){
 		return remoteVersion;
 	}
+
 
 	/**
 	 * 获取APP更新内容  eg: ["支持照相功能","支持图片裁剪","优化运行速度"]
@@ -2348,22 +2409,37 @@ pi_modules.appUpdate.exports = (function () {
 			return;
 		}
 
-		JSIntercept.getAppVersion(function (isOK, version) {
+		/**
+		 * justUpdate 底层app是否刚更新过，1代表底层刚更新过
+		 */
+		JSIntercept.getAppVersion(function (isOK, version, justUpdate) {
 			if (isOK) localVersion = version;
-			var timeout = 1000;
-			debugger
-			ajax.get(url, undefined, undefined, ajax.RESP_TYPE_TEXT, timeout, function (r) {
-				
-				var content = JSON.parse(r);
-				remoteVersion = content.version;
-				appUpdated = content.updated;
-				if (remoteVersion !== localVersion) {
-					updateURL = content.url;
-				}
-				cb(remoteVersion !== localVersion ? 1 : 0);
-			}, function () {
-				cb(-1);
-			});
+
+			var next = function () {
+				ajax.get(url, undefined, undefined, ajax.RESP_TYPE_TEXT, 1000, function (r) {
+					var content = JSON.parse(r);
+					remoteVersion = content.version;
+					appUpdated = content.updated;
+					if (remoteVersion !== localVersion) {
+						updateURL = content.url;
+					}
+					cb(remoteVersion !== localVersion ? 1 : 0);
+				}, function () {
+					cb(-1);
+				});
+			};
+
+			// 如果是底层已经更新过了，要删除存储，并通知底层
+			if (justUpdate) {
+				load.deleteStore(function (success) {
+					if (success) {
+						JSIntercept.updateFinish();
+					}
+					next();
+				});
+			} else {
+				next();
+			}
 		});
 	}
 
@@ -2414,6 +2490,7 @@ self.onerror = winit.debug ? undefined : (function () {
 		}
 	};
 })();
+
 winit.init();
 
 
@@ -2421,45 +2498,45 @@ var pi_update = pi_update || {};
 
 (function(){
 	var cfg = {
-    width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
-};
+    	width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+	};
 
-var browserAdaptive = function() {
-    var clientWidth = document.documentElement.clientWidth;
-    var clientHeight = document.documentElement.clientHeight;
-    var rootWidth = cfg.width;
-    var rootHeight = cfg.height;
-    var scaleW = clientWidth / rootWidth;
-	var scaleH = clientHeight / rootHeight;
-	var rootScale;
-    if (cfg.wscale >= cfg.hscale) {
-        // 宽度比例变动
-        if (scaleW > scaleH * (cfg.wscale + 1)) {
-            // 大于规定的比例
-            rootWidth = rootWidth * (cfg.wscale + 1) | 0;
-        } else {
-            rootWidth = (clientWidth / scaleH) | 0;
-        }
-        rootScale = scaleW = scaleH;
-    } else {
-        // 高度比例变动
-        if (scaleH > scaleW * (cfg.hscale + 1)) {
-            rootHeight = rootHeight * (cfg.hscale + 1) | 0;
-        } else {
-            rootHeight = (clientHeight / scaleW) | 0;
-        }
-        rootScale = scaleH = scaleW;
-    }
-    var rootX = (clientWidth - rootWidth) / 2;
-    var rootY = (clientHeight - rootHeight) / 2;
-	var cssText = 'z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
-	// var rootUpdate = document.querySelector('#update-root');
-	// rootUpdate.style.cssText = cssText;
+	var browserAdaptive = function() {
+		var clientWidth = document.documentElement.clientWidth;
+		var clientHeight = document.documentElement.clientHeight;
+		var rootWidth = cfg.width;
+		var rootHeight = cfg.height;
+		var scaleW = clientWidth / rootWidth;
+		var scaleH = clientHeight / rootHeight;
+		var rootScale;
+		if (cfg.wscale >= cfg.hscale) {
+			// 宽度比例变动
+			if (scaleW > scaleH * (cfg.wscale + 1)) {
+				// 大于规定的比例
+				rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+			} else {
+				rootWidth = (clientWidth / scaleH) | 0;
+			}
+			rootScale = scaleW = scaleH;
+		} else {
+			// 高度比例变动
+			if (scaleH > scaleW * (cfg.hscale + 1)) {
+				rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+			} else {
+				rootHeight = (clientHeight / scaleW) | 0;
+			}
+			rootScale = scaleH = scaleW;
+		}
+		var rootX = (clientWidth - rootWidth) / 2;
+		var rootY = (clientHeight - rootHeight) / 2;
+		var cssText = 'z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+		// var rootUpdate = document.querySelector('#update-root');
+		// rootUpdate.style.cssText = cssText;
 
-	return cssText;
-};
+		return cssText;
+	};
 
-pi_update.rootCssText =  browserAdaptive();
+	pi_update.rootCssText =  browserAdaptive();
 })();
 
 
@@ -2477,13 +2554,13 @@ pi_update.modifyContent = function(option){
 		$updateItemInnerHtml += $item;
 	}
 
-
+	var newVersion = option.version ? `：V${option.version}` : "";
 	$root.innerHTML = `
 	<div class="pi-mask">
 		<div class="pi-update-box animated bounceInUp">
 			<img src="../res/image1/rocket.png" class="pi-update-rocket" />
 			<div class="pi-update-content">
-			<div class="pi-update-title">发现新版本：V<span id="pi-version">${option.version}</span></div>
+			<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
 			<div class="pi-update-items">
 				${$updateItemInnerHtml}
 			</div>
@@ -2578,6 +2655,7 @@ pi_update.alert = function(option,completeCB){
 	$completeBtn.innerHTML = option.alertBtnText;
 	$completeBtn.style.display = "flex";
 }
+
 
 // 关闭弹框
 pi_update.closePop = function(){

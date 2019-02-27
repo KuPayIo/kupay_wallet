@@ -53,7 +53,6 @@ winit.initNext = function () {
 	if (container) {
 		container.appendChild(div);
 	}
-
 	var modProcess = pi_modules.commonjs.exports.getProcess();
 	var dirProcess = pi_modules.commonjs.exports.getProcess();
 	modProcess.show(function (r) {
@@ -195,7 +194,6 @@ winit.initNext = function () {
 				var tab = util.loadCssRes(fileMap);
 				tab.timeout = 90000;
 				tab.release();
-				// debugger
 				// 加载根组件
 				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
 				root.cfg.full = false; //PC模式
@@ -236,7 +234,6 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			// debugger;
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
 			setStore('flags/level_2_page_loaded', true);
 			console.timeEnd('all resource loaded');
@@ -314,7 +311,6 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 			console.log("load loadEarnSource-----------------");
-			// debugger
 			fpFlags.earnReady = true;
 			enterApp();
 			// loadWalletFirstPageSource();  //钱包
@@ -329,7 +325,7 @@ winit.initNext = function () {
 	function h5CheckUpdate(){
 		// H5更新模块
 		var h5UpdateMod = pi_modules.update.exports;
-		// app更新模块
+		// app更新模块 
 		var appUpdateMod = pi_modules.appUpdate.exports;
 		h5UpdateMod.setIntercept(true);
 		h5UpdateMod.setServerInfo("app/boot/");
@@ -346,14 +342,17 @@ winit.initNext = function () {
 
 		// needUpdateCode  0 1 2 3 
 		h5UpdateMod.checkUpdate(function (needUpdateCode) {
+			debugger
+			updateFlags.checkH5Update = true;
 			if(needUpdateCode === 0){
-				updateFlags.checkH5Update = true;
 				updateFlags.checkAppUpdate && updateFlags.checkH5Update && appLoadEntrance();
 			}else{
 				// 判断当前app版本是否大于等于依赖的版本号
 				var appLocalVersion = appUpdateMod.getAppLocalVersion();
 				var canUpdate = false;
 				if(appLocalVersion){  
+					debugger;
+					
 					var dependAppVersionArr = h5UpdateMod.getDependAppVersion().split(".");
 					var appLocalVersionArr = appUpdateMod.getAppLocalVersion().split(".");
 					for(var i = 0;i < dependAppVersionArr.length;i++){
@@ -372,10 +371,10 @@ winit.initNext = function () {
 				}else{  // 还没获取到本地版本号  不更新
 					canUpdate = false;
 				}
-				var remoteVersion = h5UpdateMod.getRemoteVersion();
+				var remoteVersionShow = h5UpdateMod.getRemoteVersionShow();
 				var option = {
 					updated:h5UpdateMod.getH5Updated(),
-					version:remoteVersion.slice(0,remoteVersion.length - 1).join(".")
+					version:remoteVersionShow.join(".")
 				};
 
 				if(canUpdate){
@@ -389,13 +388,15 @@ winit.initNext = function () {
 	}
 	// app更新检查
 	function appCheckUpdate(){
+		debugger
 		// 底层更新模块
 		var appUpdateMod = pi_modules.appUpdate.exports;
 		appUpdateMod.needUpdate(function (isNeedUpdate) {
 			if (isNeedUpdate > 0) {
+				debugger
 				var option = {
 					updated:appUpdateMod.getAppUpdated(),
-					version:appUpdateMod.getAppRemoteVersion(),
+					version:"",//appUpdateMod.getAppRemoteVersion() app更新不显示版本号
 					alertBtnText:"App 需要更新"
 				};
 				pi_update.modifyContent(option);
