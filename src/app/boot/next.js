@@ -235,7 +235,7 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
-			setStore('flags/level_2_page_loaded', true);
+			setStore('flags/level_3_page_loaded', true);
 			console.timeEnd('all resource loaded');
 			loadLeftImages();
 		}, function (r) {
@@ -342,16 +342,14 @@ winit.initNext = function () {
 
 		// needUpdateCode  0 1 2 3 
 		h5UpdateMod.checkUpdate(function (needUpdateCode) {
-			debugger
-			updateFlags.checkH5Update = true;
 			if(needUpdateCode === 0){
+				updateFlags.checkH5Update = true;
 				updateFlags.checkAppUpdate && updateFlags.checkH5Update && appLoadEntrance();
 			}else{
 				// 判断当前app版本是否大于等于依赖的版本号
 				var appLocalVersion = appUpdateMod.getAppLocalVersion();
 				var canUpdate = false;
 				if(appLocalVersion){  
-					debugger;
 					
 					var dependAppVersionArr = h5UpdateMod.getDependAppVersion().split(".");
 					var appLocalVersionArr = appUpdateMod.getAppLocalVersion().split(".");
@@ -388,12 +386,10 @@ winit.initNext = function () {
 	}
 	// app更新检查
 	function appCheckUpdate(){
-		debugger
 		// 底层更新模块
 		var appUpdateMod = pi_modules.appUpdate.exports;
 		appUpdateMod.needUpdate(function (isNeedUpdate) {
 			if (isNeedUpdate > 0) {
-				debugger
 				var option = {
 					updated:appUpdateMod.getAppUpdated(),
 					version:"",//appUpdateMod.getAppRemoteVersion() app更新不显示版本号

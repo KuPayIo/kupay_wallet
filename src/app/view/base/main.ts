@@ -26,7 +26,10 @@ export const run = (cb): void =>  {
     checkUpdate();
     // 打开首页面
     popNew('app-view-base-app');
-    // popNew('app-components1-topBar-topBar');
+    if (!getStore('user/id')) {
+        popNew('app-view-base-entrance');
+    }
+    
     // 锁屏页面
     popNewPage();
     // 预先从底层获取一些数据

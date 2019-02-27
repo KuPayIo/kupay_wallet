@@ -16,7 +16,7 @@ import { calcHashValuePromise,getXOR,hexstrToU8Array,popNewLoading,popNewMessage
 import { getMnemonic } from '../utils/walletTools';
 import { dataCenter } from './dataCenter';
 
-interface Option {
+export interface Option {
     psw: string; // 密码
     nickName: string; // 昵称
     imageBase64?: string; // 图片base64
@@ -84,14 +84,37 @@ export const createWallet = async (itype: CreateWalletType, option: Option) => {
 };
 
 /**
+ * 游客登录创建钱包
+ */
+export const touristLogin = async (option: Option) => {
+    const close = popNew('app-components1-loading-loading', {
+        text: { zh_Hans:'游客登录中',zh_Hant:'遊客登錄中',en:'' }
+    });
+    let secrectHash;
+    try {
+        secrectHash = await createWalletRandom(option,true);
+    } catch (err) {
+        return '';
+    } finally {
+        close.callback(close.widget);
+    }
+    
+    // 刷新本地钱包
+    dataCenter.refreshAllTx();
+    dataCenter.initErc20GasLimit();
+
+    return secrectHash;
+};
+/**
  * 随机创建钱包
  */
-export const createWalletRandom = async (option: Option) => {
+export const createWalletRandom = async (option: Option,tourist?:boolean) => {
     const secrectHash = await calcHashValuePromise(option.psw,getStore('user/salt'));
     const gwlt = GlobalWallet.generate(secrectHash);
     // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
+        setPsw:tourist ? false : true,
         backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
@@ -133,6 +156,7 @@ export const createWalletByImage = async (option: Option) => {
     // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
+        setPsw:true,
         backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
@@ -214,6 +238,7 @@ export const importWalletByMnemonic = async (option: Option) => {
   // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
+        setPsw:true,
         backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,

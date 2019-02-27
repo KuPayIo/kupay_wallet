@@ -1498,8 +1498,9 @@ export const getCurrentEthAddr = () => {
 export const loginSuccess = (account:Account) => {    
     const fileUser = account.user;
     const user:User = {
-        isLogin: false,
+        isLogin: true,
         offline:true,
+        allIsLogin:true,
         conRandom:'',
         conUid:'',
         id : fileUser.id,
@@ -1530,7 +1531,8 @@ export const loginSuccess = (account:Account) => {
         currencyRecords.push(record);
     }
     const wallet:Wallet = {
-        vault:localWallet.vault,  
+        vault:localWallet.vault,
+        setPsw:true,
         backupTip:false,               
         isBackup: localWallet.isBackup,
         sharePart:false,                 

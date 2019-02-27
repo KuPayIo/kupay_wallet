@@ -132,7 +132,7 @@ export class CreateWallet extends Widget {
         const secrectHash = await createWallet(this.props.itype, option);
         console.timeEnd('pi_create createWallet all need');
         if (!secrectHash) {
-            popNewMessage(this.language.tips[3]);
+            popNewMessage(this.language.tips[4]);
         }
 
         // const mnemonic = getMnemonicByHash(secrectHash);
@@ -147,6 +147,7 @@ export class CreateWallet extends Widget {
 
         if (this.props.chooseImage) {
             this.props.imagePicker.getContent({
+                quality:70,
                 success(buffer:ArrayBuffer) {
                     imgResize(buffer,(res) => {
                         uploadFile(res.base64);

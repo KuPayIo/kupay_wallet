@@ -299,6 +299,7 @@ const initAccount = () => {
         
         const wallet: Wallet = {
             vault: localWallet.vault,
+            setPsw:localWallet.setPsw,
             backupTip:localWallet.backupTip,
             isBackup: localWallet.isBackup,
             sharePart:false,
@@ -516,6 +517,7 @@ const accountChange = () => {
 
         localWallet = {
             vault: wallet.vault,
+            setPsw:wallet.setPsw,
             backupTip:wallet.backupTip,
             isBackup: wallet.isBackup,
             showCurrencys: wallet.showCurrencys,
@@ -731,6 +733,7 @@ export interface LocalCloudWallet {
  */
 export interface LocalWallet {
     vault: string;                      // 钱包核心
+    setPsw:boolean;                     // 是否已经设置密码
     backupTip:boolean;                  // 助记词备份是否已经提示
     isBackup: boolean;                  // 备份助记词与否
     showCurrencys: string[];            // 显示的货币列表

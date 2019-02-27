@@ -154,14 +154,14 @@ export class LockScreenPage extends Widget {
      * 判断资源加载完成
      */
     public judgeLoading() {
-        const loaded = getStore('flags/level_2_page_loaded');
+        const loaded = getStore('flags/level_3_page_loaded');
         if (loaded) {
             this.props.loading = true;
             this.paint();
         }
     }
 }
-register('flags/level_2_page_loaded',(loaded:boolean) => {
+register('flags/level_3_page_loaded',(loaded:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.judgeLoading();

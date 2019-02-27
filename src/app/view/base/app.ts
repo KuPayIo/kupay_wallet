@@ -157,7 +157,7 @@ export class App extends Widget {
 // ===================================================== 本地
 // ===================================================== 立即执行
 
-register('flags/level_2_page_loaded', (loaded: boolean) => {
+register('flags/level_3_page_loaded', (loaded: boolean) => {
     const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
     dataCenter.init();
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -166,9 +166,9 @@ register('flags/level_2_page_loaded', (loaded: boolean) => {
     } else { // 处理导航页过程中资源已经加载完毕
         localStorage.setItem('level_2_page_loaded', '1');
     }
-    if (!getStore('user/id')) {
-        popNew('app-components1-modalBox-newUserWelfare');
-    }
+    // if (!getStore('user/id')) {
+    //     popNew('app-components1-modalBox-newUserWelfare');
+    // }
     if (localStorage.getItem('kickOffline')) {
         localStorage.removeItem('kickOffline');
         kickOffline();  // 踢人下线提示

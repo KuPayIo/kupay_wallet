@@ -2604,14 +2604,6 @@ pi_update.confirm = function(option,callback){
 	$ok.onclick = function(){
 		callback(true);
 	};
-	// $cancel.addEventListener("click",function(){
-	// 	var $updateRoot = document.querySelector('#update-root');
-	// 	$updateRoot.style.display = "none";
-	// 	callback(false);
-	// });
-	// $ok.addEventListener("click",function(){
-	// 	callback(true);
-	// });
 
 	$btns.style.display = "display";
 	// 显示弹框
