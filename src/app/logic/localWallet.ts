@@ -95,6 +95,7 @@ export const createWalletRandom = async (option: Option) => {
         backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
+        helpWord:false,
         showCurrencys: defalutShowCurrencys,
         currencyRecords: gwlt.currencyRecords,
         changellyPayinAddress:[],
@@ -136,6 +137,7 @@ export const createWalletByImage = async (option: Option) => {
         backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
+        helpWord:false,
         showCurrencys: defalutShowCurrencys,
         currencyRecords: gwlt.currencyRecords,
         changellyPayinAddress:[],
@@ -217,6 +219,7 @@ export const importWalletByMnemonic = async (option: Option) => {
         backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
+        helpWord:false,
         showCurrencys: defalutShowCurrencys,
         currencyRecords: gwlt.currencyRecords,
         changellyPayinAddress:[],
@@ -292,4 +295,10 @@ export const deleteMnemonic = () => {
 export const sharePart = () => {
     
     setStore('wallet/sharePart',true);
+};
+
+// 记录通过助计词备份
+export const helpWord = () => {
+    
+    setStore('wallet/helpWord',true);
 };

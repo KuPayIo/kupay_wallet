@@ -302,6 +302,7 @@ const initAccount = () => {
             backupTip:localWallet.backupTip,
             isBackup: localWallet.isBackup,
             sharePart:false,
+            helpWord:false,
             showCurrencys: localWallet.showCurrencys,
             currencyRecords,
             changellyPayinAddress:localWallet.changellyPayinAddress || [],
