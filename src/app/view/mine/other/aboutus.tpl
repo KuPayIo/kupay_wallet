@@ -17,7 +17,7 @@
             {"zh_Hans":"分享下载链接","zh_Hant":"分享下載鏈接","en":""}] }}
         
         {{for ind,val of it.data}}
-            <div on-tap="itemClick(e,{{ind}})">
+            <div on-tap="itemClick(e,{{ind}})" on-down="onShow">
                 <app-components-basicItem-basicItem>{"name":{{itemName[ind]}},"describe":{{val.desc}} }</app-components-basicItem-basicItem>
             </div>
         {{end}}

@@ -2,11 +2,10 @@
  * about us
  */
 // =======================================导入
-import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { shareDownload } from '../../../config';
 import { getModulConfig } from '../../../modulConfig';
 import { getLocalVersion, popNewMessage } from '../../../utils/tools';
 // =========================================导出
@@ -49,6 +48,11 @@ export class Aboutus extends Widget {
         }
     }
 
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
+    }
+    
     public backPrePage() {
         this.ok && this.ok();
     }

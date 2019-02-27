@@ -2,6 +2,7 @@
  * setting
  */
 // =============================================导入
+import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -60,6 +61,11 @@ export class Setting extends Widget {
         }
 
         this.paint();
+    }
+
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
     }
 
     public backPrePage() {

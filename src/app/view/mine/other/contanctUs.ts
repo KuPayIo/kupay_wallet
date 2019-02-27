@@ -2,6 +2,7 @@
  * 联系我们
  */
 // ===============================================导入
+import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
@@ -32,6 +33,11 @@ export class ContanctUs extends Widget {
         this.ok && this.ok();
     }
 
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
+    }
+    
     public itemClick(e:any,ind:any) {
         switch (ind) {
             // 点击钱包官网

@@ -15,7 +15,7 @@
         {"zh_Hans":"联系客服","zh_Hant":"聯繫客服","en":""},
         {"zh_Hans":"微信公众号","zh_Hant":"微信公眾號","en":""}] }}
         {{for ind,val of it.data}}
-            <div on-tap="itemClick(e,{{ind}})">
+            <div on-tap="itemClick(e,{{ind}})" on-down="onShow">
                 <app-components-basicItem-basicItem>{"name":{{itemName[ind]}},"describe":{{val.desc}} }</app-components-basicItem-basicItem>
             </div>
         {{end}}
