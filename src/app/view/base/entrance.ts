@@ -41,5 +41,8 @@ export class Entrance extends Widget {
     // 已有账户登录
     public haveAccountClick() {
         console.log('已有账户登录');
+        popNew('app-view-wallet-import-standardImport',{},() => {
+            this.ok && this.ok();
+        });
     }
 }

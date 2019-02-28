@@ -5,7 +5,7 @@
     <app-components1-topBar-topBar>{"title":{{ topBarTitle }} }</app-components1-topBar-topBar>
     <div w-class="body">
         {{: randomTips = {"zh_Hans":"设置支付密码","zh_Hant":"設置支付密碼","en":""} }}
-        {{: imageTips = {"zh_Hans":"设置密码","zh_Hant":"設置密碼","en":""} }}
+        {{: imageTips = {"zh_Hans":"设置支付密码","zh_Hant":"設置支付密碼","en":""} }}
         {{: createTips = it.itype === it.createWalletType.Random ? randomTips : imageTips}}
         <div w-class="create-tips"><div w-class="tip-divid"></div><pi-ui-lang>{{createTips}}</pi-ui-lang></div>
         <div w-class="bottom-box">

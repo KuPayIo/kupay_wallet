@@ -27,7 +27,7 @@
     flex: 1 0 0;
 }
 .bottom-box{
-    margin-top: 40px;
+    margin-top: 65px;
     background-color: #fff;
     border-radius: 12px;
     position: relative;

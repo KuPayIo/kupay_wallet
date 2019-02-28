@@ -1,6 +1,6 @@
 {
     "version":"0.0.1",
-    "h5UpdateContent":["修复问题1","修复问题2","修复问题3","修复问题4"],
+    "h5UpdateContent":["修复问题6","修复问题7","修复问题3","修复问题4"],
     "androidUpdateContent":["android底层修复1","android底层修复2","android底层修复3","android底层修复4"],
     "androidVersion":"1.0.0",
     "iosUpdateContent":["ios底层修复1","ios底层修复2","ios底层修复3","ios底层修复4"],
