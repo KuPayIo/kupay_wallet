@@ -10,8 +10,8 @@ import { openConnect } from '../../../net/login';
 import { uploadFile } from '../../../net/pull';
 import { setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { getStaticLanguage, imgResize, popNewMessage } from '../../../utils/tools';
-import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
+import { imgResize, popNewMessage } from '../../../utils/tools';
+import { playerName } from '../../../utils/walletTools';
 import { forelet, WIDGET_NAME } from './home';
 interface Props {
     itype: CreateWalletType;
@@ -29,6 +29,7 @@ export class CreateWallet extends Widget {
         this.language = this.config.value[getLang()];
         this.props = {
             ...this.props,
+            createWalletType:CreateWalletType,
             itype: this.props.itype,
             walletName: playerName(),
             walletPsw: '',
@@ -80,7 +81,7 @@ export class CreateWallet extends Widget {
         this.props.imagePicker = selectImage((width, height, url) => {
             console.log('selectImage url = ',url);
             // tslint:disable-next-line:max-line-length
-            this.props.avatarHtml = `<div style="background-image: url(${url});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+            this.props.avatarHtml = `<div style="background-image: url(${url});width: 160px;height: 160px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
             this.props.chooseImage = true;
             this.paint();
         });
@@ -169,5 +170,14 @@ export class CreateWallet extends Widget {
      */
     public agreementClick() {
         popNew('app-view-mine-other-privacypolicy');
+    }
+
+    /**
+     * 照片注册
+     */
+    public imgLoginClick() {
+        popNew('app-view-wallet-create-createWalletByImage',{},() => {
+            this.ok && this.ok();
+        });
     }
 }

@@ -266,11 +266,15 @@ winit.initNext = function () {
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
 			"app/components1/",
+			"app/components/password/",
+			"app/components/input/",
 			"app/res/css/",
 			"app/res/js/",
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
+			"app/view/wallet/create/",
+			"app/view/wallet/import/",
 			"app/view/earn/home/",
 			"app/view/ceshi/"
 		];

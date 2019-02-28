@@ -34,7 +34,9 @@ export class Entrance extends Widget {
     // 注册登录 
     public registerLoginClick() {
         console.log('注册登录');
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Random });
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Random },() => {
+            this.ok && this.ok();
+        });
     }
     // 已有账户登录
     public haveAccountClick() {
