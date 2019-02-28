@@ -45,14 +45,14 @@ export const walletPay = (order: any, appid: string, mchid: string, callback: Fu
                                 const loading1 = popNew('app-components1-loading-loading', { text: '设置中...' });
                                 setNoPWD(sendData, (res, msg) => {
                                     loading1.callback(loading1.widget);
-                                    if(!res){
-                                        popNew('app-components1-message-message',{ content:{"zh_Hans":"设置成功！","zh_Hant":"設置成功！","en":""} });
-                                    }else{
-                                        popNew('app-components1-message-message',{ content:{"zh_Hans":"设置失败！","zh_Hant":"設置失败！","en":""} });
+                                    if (!res) {
+                                        popNew('app-components1-message-message',{ content:{ zh_Hans:'设置成功！',zh_Hant:'設置成功！',en:'' } });
+                                    } else {
+                                        popNew('app-components1-message-message',{ content:{ zh_Hans:'设置失败！',zh_Hant:'設置失败！',en:'' } });
                                     }
                                 });
                             }, () => {
-
+                                // 取消设置
                             });
                         }
                     });

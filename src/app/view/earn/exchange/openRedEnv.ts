@@ -86,7 +86,7 @@ export class OpenRedEnvelope extends Widget {
             ctypeShow: CloudCurrencyType[v[0]],
             amount: smallUnit2LargeUnit(CloudCurrencyType[v[0]],v[1]),
             rid: rid.slice(2),
-            suid:res.src_id
+            suid: ans.src_id
         };
         setStore('activity/luckyMoney/exchange',undefined);
         getServerCloudBalance();
