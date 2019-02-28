@@ -20,12 +20,16 @@ import { fetchDeviceId } from '../../utils/tools';
 
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-export const run = (cb): void => {
+export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查
     checkUpdate();
     // 打开首页面
     popNew('app-view-base-app');
+    if (!getStore('user/id')) {
+        popNew('app-view-base-entrance');
+    }
+    
     // 锁屏页面
     popNewPage();
     // 预先从底层获取一些数据

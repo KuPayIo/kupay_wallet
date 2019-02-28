@@ -23,7 +23,6 @@ export class DataCenter {
     public timerRef: number = 0;
     public timerRef1: number = 0;
     public updateList: any[] = [];
-
     public currencyExchangeTimer: number;
   // 交易定时器列表
     private txTimerList:any[] = [];

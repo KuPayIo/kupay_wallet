@@ -1,6 +1,7 @@
 "use strict";
 // 依赖表加载成功后的回调函数
 winit.initNext = function () {
+	getUpdateContent();
 	var win = winit.win;
 	win._babelPolyfill = 1;
 	win.pi_modules = 1;
@@ -27,7 +28,8 @@ winit.initNext = function () {
 	//clear();
 
 	pi_modules.depend.exports.init(winit.deps, winit.path);
-
+	pi_update.severIp = winit.severIp;
+	pi_update.severPort = winit.severPort;
 	winit = undefined; //一定要立即释放，保证不会重复执行
 	//先登录
 
@@ -53,7 +55,6 @@ winit.initNext = function () {
 	if (container) {
 		container.appendChild(div);
 	}
-
 	var modProcess = pi_modules.commonjs.exports.getProcess();
 	var dirProcess = pi_modules.commonjs.exports.getProcess();
 	modProcess.show(function (r) {
@@ -65,16 +66,115 @@ winit.initNext = function () {
 		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 
-	
+// ====================================更新开始=============================================================
+	pi_update.updateJson = pi_update.updateJson || JSON.parse(localStorage.getItem("updateJson") || "{}");
+	/**
+	 * 更新App和H5,策略如下:
+	 *     1. 同时检查是否需要更新，超时1秒钟即可
+	 *     2. 如果App需要更新，更新App，并重启（Android/iOS底层自动）
+	 *     3. 否则，如果H5需要更新，更新H5并重新reload
+	 *     4. 否则调用加载函数load加载项目资源；
+	 */
+	var isAppNeedUpdate = undefined;
+	var isH5NeedUpdate = undefined;
 
+	var appUpdateMod = pi_modules.appUpdate.exports;
+	appUpdateMod.needUpdate(function (isNeedUpdate) {
+		if (isNeedUpdate > 0) {
+			debugger
+			var updateContent = [];
+			if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) { // android
+				updateContent = pi_update.updateJson.androidUpdateContent || [];
+			}else if(navigator.userAgent.indexOf('YINENG_IOS') >= 0) { // ios
+				updateContent = pi_update.updateJson.iosUpdateContent || [];
+			}else{  // 浏览器
+				updateContent = pi_update.updateJson.androidUpdateContent || [];
+			}
+			var option = {
+				updated:updateContent,
+				version:"",//appUpdateMod.getAppRemoteVersion() app更新不显示版本号
+				alertBtnText:"App 需要更新"
+			};
+			pi_update.modifyContent(option);
+			appUpdateMod.update(function (isSuccess) {
+				pi_update.closePop();
+				// alert("更新失败");
+				console.log("appUpdate " + isSuccess);
+			},function(total,process){
+				console.log("total = " + total + " process = " + process);
+				var e = { type: "saveFile", total: total, count: process};
+				pi_update.updateProgress(e);
+			});
+		} else {
+			// 只有在这种情况下才有可能更新H5
+			isAppNeedUpdate = isNeedUpdate;
+			if (isH5NeedUpdate !== undefined) {
+				updateH5();
+			}
+		}
+	});
 
+	var updateMod = pi_modules.update.exports;
+	updateMod.setIntercept(true);
+	updateMod.setServerInfo("app/boot/");
+	updateMod.checkUpdate(function (updateFlag) {
+		isH5NeedUpdate = updateFlag;
+		if (isAppNeedUpdate !== undefined) {
+			updateH5();
+		}
+	});
+
+	function updateH5() {
+		var needUpdate = false;
+
+		if (isH5NeedUpdate === 0) {
+			// 不需要更新
+			needUpdate = false;
+		} else if (isH5NeedUpdate === 1) {
+			// alert("上次没有更新完成, 强制更新");
+			needUpdate = true;
+		} else if (isH5NeedUpdate === 2) {
+			// alert("大版本变动, 强制更新");
+			needUpdate = true;
+		} else if (isH5NeedUpdate === 3) {
+			// needUpdate = confirm("小版本变动，需要更新吗？");
+			needUpdate = true;
+		} else {
+			throw new Error("H5 update error!");
+		}
+
+		if (needUpdate) {
+			var updateContent = pi_update.updateJson.h5UpdateContent || [];
+			var updateVersion =  pi_update.updateJson.version || "";
+			var option = {
+				updated:updateContent,
+				version:updateVersion
+			};
+			pi_update.modifyContent(option);
+			updateMod.update(function (e) {
+				//{type: "saveFile", total: 4, count: 1}
+				console.log("update progress: ", e);
+				pi_update.updateProgress(e);
+			}, function () {
+				setTimeout(()=>{
+					pi_update.closePop();
+					// 重启
+					updateMod.reload();
+				},200);
+				
+			});
+		} else {
+			// 这里是项目加载的开始
+			appLoadEntrance();
+		}
+	}
+
+// ====================================更新结束=============================================================
 	
 	var html,util,lang; // pi/util/html,pi/widget/util,pi/util/lang
 	var fm;  // fileMap
 	var fpFlags = {};  // 进入首页面的资源加载标识位
-	var updateFlags = {}; // 更新标识位
-	appCheckUpdate();
-	h5CheckUpdate();
+
 
 	// app下载入口函数
 	var appLoadEntrance = function(){
@@ -166,11 +266,16 @@ winit.initNext = function () {
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
 			"app/components1/",
+			"app/components/password/",
+			"app/components/input/",
+			"app/components/textarea/",
 			"app/res/css/",
 			"app/res/js/",
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
+			"app/view/wallet/create/",
+			"app/view/wallet/import/",
 			"app/view/earn/home/",
 			"app/view/ceshi/"
 		];
@@ -195,7 +300,6 @@ winit.initNext = function () {
 				var tab = util.loadCssRes(fileMap);
 				tab.timeout = 90000;
 				tab.release();
-				// debugger
 				// 加载根组件
 				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
 				root.cfg.full = false; //PC模式
@@ -236,9 +340,8 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			// debugger;
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
-			setStore('flags/level_2_page_loaded', true);
+			setStore('flags/level_3_page_loaded', true);
 			console.timeEnd('all resource loaded');
 			loadLeftImages();
 		}, function (r) {
@@ -314,7 +417,6 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 			console.log("load loadEarnSource-----------------");
-			// debugger
 			fpFlags.earnReady = true;
 			enterApp();
 			// loadWalletFirstPageSource();  //钱包
@@ -323,100 +425,190 @@ winit.initNext = function () {
 		}, dirProcess.handler);
 	}
 
-
-
-	// 检查h5更新
-	function h5CheckUpdate(){
-		// H5更新模块
-		var h5UpdateMod = pi_modules.update.exports;
-		// app更新模块
-		var appUpdateMod = pi_modules.appUpdate.exports;
-		h5UpdateMod.setIntercept(true);
-		h5UpdateMod.setServerInfo("app/boot/");
-
-		// 更新h5
-		var updateH5 = function(){
-			// 注：必须堵住原有的界面操作，不允许任何触发操作
-			h5UpdateMod.update(function (e) {
-				//{type: "saveFile", total: 4, count: 1}
-				console.log("update progress: ", e);
-				pi_update.updateProgress(e);
-			});
-		}
-
-		// needUpdateCode  0 1 2 3 
-		h5UpdateMod.checkUpdate(function (needUpdateCode) {
-			if(needUpdateCode === 0){
-				updateFlags.checkH5Update = true;
-				updateFlags.checkAppUpdate && updateFlags.checkH5Update && appLoadEntrance();
-			}else{
-				// 判断当前app版本是否大于等于依赖的版本号
-				var appLocalVersion = appUpdateMod.getAppLocalVersion();
-				var canUpdate = false;
-				if(appLocalVersion){  
-					var dependAppVersionArr = h5UpdateMod.getDependAppVersion().split(".");
-					var appLocalVersionArr = appUpdateMod.getAppLocalVersion().split(".");
-					for(var i = 0;i < dependAppVersionArr.length;i++){
-						if(i === dependAppVersionArr.length - 1){
-							canUpdate = appLocalVersionArr[i] >= dependAppVersionArr[i];
-							break;
-						}
-						if(appLocalVersionArr[i] < dependAppVersionArr[i]){
-							canUpdate = false;
-							break;
-						}else if(appLocalVersionArr[i] > dependAppVersionArr[i]){
-							canUpdate = true;
-							break;
-						}
-					}
-				}else{  // 还没获取到本地版本号  不更新
-					canUpdate = false;
-				}
-				var remoteVersion = h5UpdateMod.getRemoteVersion();
-				var option = {
-					updated:h5UpdateMod.getH5Updated(),
-					version:remoteVersion.slice(0,remoteVersion.length - 1).join(".")
-				};
-
-				if(canUpdate){
-					pi_update.modifyContent(option);
-					updateH5();
-				}
-				
-			}
-			
-		});
-	}
-	// app更新检查
-	function appCheckUpdate(){
-		// 底层更新模块
-		var appUpdateMod = pi_modules.appUpdate.exports;
-		appUpdateMod.needUpdate(function (isNeedUpdate) {
-			if (isNeedUpdate > 0) {
-				var option = {
-					updated:appUpdateMod.getAppUpdated(),
-					version:appUpdateMod.getAppRemoteVersion(),
-					alertBtnText:"App 需要更新"
-				};
-				pi_update.modifyContent(option);
-				appUpdateMod.update(function (isSuccess) {
-					pi_update.closePop();
-					// alert("更新失败");
-					console.log("appUpdate " + isSuccess);
-				},function(total,process){
-					console.log("total = " + total + " process = " + process);
-					var e = { type: "saveFile", total: total, count: process};
-					pi_update.updateProgress(e);
-				});
-				
-			}else{
-				updateFlags.checkAppUpdate = true;
-				updateFlags.checkAppUpdate && updateFlags.checkH5Update && appLoadEntrance();
-			}
-		});
-	}
 };
 
+
+/**
+ * 更新UI界面初始化
+ */
+function updateUiInit(){
+	window.pi_update = window.pi_update || {};
+
+	var cfg = {
+    	width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+	};
+
+	var browserAdaptive = function() {
+		var clientWidth = document.documentElement.clientWidth;
+		var clientHeight = document.documentElement.clientHeight;
+		var rootWidth = cfg.width;
+		var rootHeight = cfg.height;
+		var scaleW = clientWidth / rootWidth;
+		var scaleH = clientHeight / rootHeight;
+		var rootScale;
+		if (cfg.wscale >= cfg.hscale) {
+			// 宽度比例变动
+			if (scaleW > scaleH * (cfg.wscale + 1)) {
+				// 大于规定的比例
+				rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+			} else {
+				rootWidth = (clientWidth / scaleH) | 0;
+			}
+			rootScale = scaleW = scaleH;
+		} else {
+			// 高度比例变动
+			if (scaleH > scaleW * (cfg.hscale + 1)) {
+				rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+			} else {
+				rootHeight = (clientHeight / scaleW) | 0;
+			}
+			rootScale = scaleH = scaleW;
+		}
+		var rootX = (clientWidth - rootWidth) / 2;
+		var rootY = (clientHeight - rootHeight) / 2;
+		var cssText = 'z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+		// var rootUpdate = document.querySelector('#update-root');
+		// rootUpdate.style.cssText = cssText;
+
+		return cssText;
+	};
+
+	pi_update.rootCssText =  browserAdaptive();
+
+
+	pi_update.modifyContent = function(option){
+		var modified = pi_update.contentModified;
+		if(modified) return;
+		option.confirmOk = option.confirmOk || "确定";
+		option.confirmCancel = option.confirmCancel || "取消";
+		var $root = document.createElement("div");
+		$root.setAttribute("id","update-root");
+		$root.setAttribute("style",pi_update.rootCssText);
+		var $updateItemInnerHtml = "";
+		for(var i = 0;i < option.updated.length;i++){
+			var $item = "<div class='pi-update-item'>" + (i + 1) + "、" + option.updated[i] + "</div>";
+			$updateItemInnerHtml += $item;
+		}
+
+		var newVersion = option.version ? `：V${option.version}` : "";
+		$root.innerHTML = `
+		<div class="pi-mask">
+			<div class="pi-update-box animated bounceInUp">
+				<img src="../res/image1/rocket.png" class="pi-update-rocket" />
+				<div class="pi-update-content">
+				<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
+				<div class="pi-update-items">
+					${$updateItemInnerHtml}
+				</div>
+				</div>
+				<div class="pi-update-bottom">
+					<div class="pi-update-btns">
+						<div class="pi-update-cancel-btn">${option.confirmCancel}</div>
+						<div class="pi-update-ok-btn">${option.confirmOk}</div>
+					</div>
+					<div class="pi-update-progress-container">
+						<div class="pi-update-progress-bg">
+							<div class="pi-update-progress"></div>
+						</div>
+						<div class="pi-update-progress-text">0%</div>
+					</div>
+					<div class="pi-update-complete-btn"></div>
+				</div>
+			</div>
+		</div>
+		`;
+
+		var $body = document.querySelector("body");
+		$body.appendChild($root);
+		pi_update.contentModified = true;
+	}
+
+
+	// 确定弹框
+	pi_update.confirm = function(option,callback){
+		pi_update.modifyContent(option);
+		var $btns = document.querySelector(".pi-update-btns");
+		var $cancel = document.querySelector(".pi-update-cancel-btn");
+		var $ok = document.querySelector(".pi-update-ok-btn");
+
+		$cancel.onclick = function(){
+			var $updateRoot = document.querySelector('#update-root');
+			$updateRoot.style.display = "none";
+			callback(false);
+		};
+
+		$ok.onclick = function(){
+			callback(true);
+		};
+
+		$btns.style.display = "display";
+		// 显示弹框
+		var $updateRoot = document.querySelector('#update-root');
+		$updateRoot.style.display = "block";
+	}
+
+	//e的数据结构{type: "saveFile", total: 4, count: 1}
+	// 进度条更新
+	pi_update.updateProgress = function(e){
+		var updating  = pi_update.updating;
+		if(!updating){
+			pi_update.updating = true;
+		}
+		var $progress = document.querySelector(".pi-update-progress");
+		var $progressText = document.querySelector(".pi-update-progress-text");
+		var percent = e.count / e.total;
+		var percentText = parseInt(percent * 100) + "%";
+		console.log("percentText = ",percentText);
+		$progress.style.width = percentText;
+		$progressText.innerHTML = percentText;
+	}
+
+
+	// alert弹框
+	pi_update.alert = function(option,completeCB){
+		pi_update.modifyContent(option);
+		var $updateRoot = document.querySelector('#update-root');
+		var $btns = document.querySelector(".pi-update-btns");
+		var $progressContainer = document.querySelector(".pi-update-progress-container");
+		var $completeBtn = document.querySelector(".pi-update-complete-btn");
+		
+		$completeBtn.onclick = completeCB;
+		// $completeBtn.addEventListener("click",function(){
+		// 	completeCB();
+		// });
+
+		$updateRoot.style.display = "block";
+		$btns.style.display = "none";
+		$progressContainer.style.display = "none";
+		$completeBtn.innerHTML = option.alertBtnText;
+		$completeBtn.style.display = "flex";
+	}
+
+
+	// 关闭弹框
+	pi_update.closePop = function(){
+		var $updateRoot = document.querySelector('#update-root');
+		var $body = document.querySelector("body");
+		$updateRoot && $body.removeChild($updateRoot);
+	}
+
+}
+
+/**
+ * 获取更新内容 版本号  修复的BUG等
+ */
+function getUpdateContent(){
+	var ajax = pi_modules.ajax.exports;
+	const url = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion/update.json";
+	const timeout = 1000;
+	ajax.get(url + "?" + Math.random(), {}, undefined, undefined, timeout, function (updateJson) {
+		localStorage.setItem("updateJson",updateJson);
+		pi_update.updateJson = JSON.parse(updateJson);
+	}, function () {
+		// 取不到服务器的update.json,使用本地json
+	});
+}
+updateUiInit();
 // 初始化开始
 (winit.init = function () {
 	if (!winit) return;

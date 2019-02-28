@@ -107,7 +107,7 @@ const setPushListener = (key:string,callback:Function) => {
     });
 };
 
-register('flags/level_2_page_loaded',(loaded: boolean) => {
+register('flags/level_3_page_loaded',(loaded: boolean) => {
     // 将缓冲池中的回调函数都执行
     for (const cb of pushCallBackList) {
         cb();

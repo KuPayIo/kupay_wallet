@@ -8,7 +8,7 @@ import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
 import { getStore, initCloudWallets, register, setStore } from '../store/memstore';
-import { calcHashValuePromise, decrypt, encrypt, fetchDeviceId, kickOffline, popNewMessage, popPswBox } from '../utils/tools';
+import { decrypt, encrypt, fetchDeviceId, kickOffline, popNewMessage, popPswBox } from '../utils/tools';
 import { VerifyIdentidy } from '../utils/walletTools';
 import { requestAsync } from './pull';
 import { setReconnectingState } from './reconnect';
@@ -404,7 +404,7 @@ const setAllIsLogin = () => {
     setStore('user/allIsLogin',newAllIsLogin);
 };
 // =======================资源加载完成========================
-register('flags/level_2_page_loaded', (loaded: boolean) => {
+register('flags/level_3_page_loaded', (loaded: boolean) => {
     loginWalletFailedDelay && loginWalletFailedDelay();
 });
 

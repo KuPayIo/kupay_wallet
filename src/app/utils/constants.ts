@@ -139,3 +139,6 @@ export const erc20GasLimitRate = 2;
 
 // 默认顶部留出40px高度
 export const topHeight = 40;
+
+// 游客登录默认密码
+export const defaultPassword = '123456789';

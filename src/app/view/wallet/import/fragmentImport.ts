@@ -12,16 +12,14 @@ import { forelet,WIDGET_NAME } from './home';
 export class FragmentImport extends Widget {
     public ok: () => void;
     public language:any;
-    public create() {
-        super.create();
-        this.init();
-    }
-    public init() {
+    public setProps(props:any,oldProps:any) {
         this.language = this.config.value[getLang()];
         this.props = {
+            ...props,
             fragment1:'',
             fragment2:''
         };
+        super.setProps(props,oldProps);
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -69,7 +67,9 @@ export class FragmentImport extends Widget {
             return;
         }
         // tslint:disable-next-line:max-line-length
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.FragmentImport,fragment1:decryptFragement1,fragment2:decryptFragement2 });
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.FragmentImport,fragment1:decryptFragement1,fragment2:decryptFragement2 },() => {
+            this.ok && this.ok();
+        });
         const w:any = forelet.getWidget(WIDGET_NAME);
         if (w) {
             w.ok && w.ok();

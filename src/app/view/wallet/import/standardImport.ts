@@ -12,17 +12,15 @@ import { forelet,WIDGET_NAME } from './home';
 export class StandardImport extends Widget {
     public ok: () => void;
     public language:any;
-    public create() {
-        super.create();
-        this.init();
-    }
-    public init() {
+    public setProps(props:any,oldProps:any) {
         this.language = this.config.value[getLang()];
         this.props = {
+            ...props,
             mnemonic:'',
             psw:'',
             pswConfirm:''
         };
+        super.setProps(this.props,oldProps);
     }
     public inputChange(r:any) {
         const mnemonic = r.value;
@@ -44,6 +42,27 @@ export class StandardImport extends Widget {
             w.ok && w.ok();
         }
         // tslint:disable-next-line:max-line-length
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.StrandarImport,mnemonic:this.props.mnemonic });
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.StrandarImport,mnemonic:this.props.mnemonic },() => {
+            this.ok && this.ok();
+        });
+    }
+
+    public backPrePage() {
+        this.ok && this.ok();
+    }
+
+    public whatIsMnemonicClick() {
+        popNew('app-view-wallet-import-mnemonicDesc');
+    }
+
+    public imageImportClick() {
+        popNew('app-view-wallet-import-imageImport',{},() => {
+            this.ok && this.ok();
+        });
+    }
+    public fragmentImportClick() {
+        popNew('app-view-wallet-import-fragmentImport',{},() => {
+            this.ok && this.ok();
+        });
     }
 }

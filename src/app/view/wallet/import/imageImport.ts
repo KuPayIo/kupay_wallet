@@ -7,24 +7,21 @@ import { Widget } from '../../../../pi/widget/widget';
 import { ahashToArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { getStore, setStore } from '../../../store/memstore';
-import { forelet,WIDGET_NAME } from './home';
 
 export class ImageImport extends Widget {
     public ok: () => void;
     public language:any;
-    public create() {
-        super.create();
-        this.init();
-    }
-    public init() {
+    public setProps(props:any,oldProps:any) {
         this.language = this.config.value[getLang()];
         this.props = {
+            ...props,
             chooseImage:false,
             imageHtml:'',
             imagePsw:'',
             imagePswAvailable:false,
             imagePicker:null
         };
+        super.setProps(props,oldProps);
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -70,10 +67,12 @@ export class ImageImport extends Widget {
             });
         });
         setStore('flags/imgArgon2HashPromise',imgArgon2HashPromise);
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });
-        const w:any = forelet.getWidget(WIDGET_NAME);
-        if (w) {
-            w.ok && w.ok();
-        }
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image },() => {
+            this.ok && this.ok();
+        });
+        // const w:any = forelet.getWidget(WIDGET_NAME);
+        // if (w) {
+        //     w.ok && w.ok();
+        // }
     }
 }

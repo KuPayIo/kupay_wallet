@@ -126,6 +126,7 @@ export class AccountHome extends Widget {
             this.props.avatar = url;
             this.paint();
             imagePicker.getContent({
+                quality:70,
                 success(buffer:ArrayBuffer) {
                     imgResize(buffer,(res) => {
                         uploadFile(res.base64);
