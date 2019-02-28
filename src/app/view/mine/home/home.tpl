@@ -39,7 +39,7 @@
 
 
             {{for ind,val of it.list}}
-                <div w-class="item" on-tap="itemClick({{ind}})">
+                <div w-class="item" on-tap="itemClick({{ind}})" on-down="onShow">
                     <img src={{val.img}} w-class="itemImg"/>
                     <span w-class="itemName">
                         <pi-ui-lang>{{itemName[ind]}}</pi-ui-lang>

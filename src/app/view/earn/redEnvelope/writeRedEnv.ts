@@ -268,7 +268,7 @@ export class WriteRedEnv extends Widget {
             console.log('发红包成功了');
             this.ok({
                 message: lm,
-                rid  // 红包的ID
+                rid: rtype + rid  // 红包的ID
             });
         } else {
             popNew('app-view-earn-redEnvelope-sendRedEnv', {

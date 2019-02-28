@@ -3,7 +3,7 @@
  */
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { deleteMnemonic } from '../../../logic/localWallet';
+import { deleteMnemonic, helpWord } from '../../../logic/localWallet';
 import { popNewMessage, shuffle } from '../../../utils/tools';
 
 interface Props {
@@ -63,6 +63,7 @@ export class BackupMnemonicWordConfirm extends Widget {
             popNewMessage(this.language.tips[1]);
         } else {
             deleteMnemonic();
+            helpWord();
             popNewMessage(this.language.tips[2]);
             this.ok && this.ok();
         }

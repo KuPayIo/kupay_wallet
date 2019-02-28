@@ -1,6 +1,7 @@
 /**
  * wallet home 
  */
+import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -52,6 +53,11 @@ export class Home extends Widget {
             this.props.list.push({ img:'../../../res/image1/43.png',name: '',components:'' });
         }
         this.initData();
+    }
+    
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
     }
 
     /**
