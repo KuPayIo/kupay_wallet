@@ -5260,7 +5260,7 @@ Adds the callback and sets up the methods, to iterate over the results.
                         transform: translateX(-50%);
                         transition: opacity 0.3s, transform .4s;
                     }
-                    .message-fade-enter {
+                    .message_fade_enter {
                         opacity: 0;
                         transform: translate(-50%, 100%);
                     }
@@ -5366,12 +5366,16 @@ Adds the callback and sets up the methods, to iterate over the results.
                     function showNotice(){
                         var elem = document.createElement('div');
                         elem.setAttribute("id","pi_payFailed");
-                        elem.classList.add('message_open');
+                        elem.classList.add('message_open','message_fade_enter');
                         elem.innerText = '支付失败';
                         document.body.appendChild(elem);
 
+                        setTimeout(()=>{
+                            elem.classList.remove('message_fade_enter');
+                        },100);
+
                         setTimeout(() => {
-                            elem.classList.add('message-fade-enter');
+                            elem.classList.add('message_fade_enter');
                             setTimeout(()=>{
                                 document.body.removeChild(document.getElementById('pi_payFailed'));
                             },300);

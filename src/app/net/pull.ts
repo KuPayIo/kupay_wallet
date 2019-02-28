@@ -234,7 +234,25 @@ export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount:
 
 };
 /**
- * 兑换红包
+ * 领取红包 获取兑换码
+ */
+export const takeRedBag = async (rid) => {
+    const msg = { type: 'take_red_bag', param: { rid: rid } };
+    
+    try {
+        // tslint:disable-next-line:no-unnecessary-local-variable
+        const res = await requestAsync(msg);
+
+        return res;
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
+};
+
+/**
+ * 兑换码兑换红包
  */
 export const convertRedBag = async (cid) => {
     const msg = { type: 'convert_red_bag', param: { cid: cid } };

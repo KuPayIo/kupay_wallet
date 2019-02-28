@@ -1,6 +1,7 @@
 /**
  * account home
  */
+import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -55,6 +56,11 @@ export class AccountHome extends Widget {
      */
     public backPrePage() {
         this.ok && this.ok();
+    }
+
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
     }
 
     /**
