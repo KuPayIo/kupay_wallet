@@ -1,5 +1,6 @@
+import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { Option, touristLogin } from '../../logic/localWallet';
+import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
 import { openConnect } from '../../net/login';
 import { defaultPassword } from '../../utils/constants';
 import { popNewMessage } from '../../utils/tools';
@@ -33,6 +34,7 @@ export class Entrance extends Widget {
     // 注册登录 
     public registerLoginClick() {
         console.log('注册登录');
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Random });
     }
     // 已有账户登录
     public haveAccountClick() {

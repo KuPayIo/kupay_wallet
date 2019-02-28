@@ -79,9 +79,9 @@ winit.initNext = function () {
 	var isH5NeedUpdate = undefined;
 
 	var appUpdateMod = pi_modules.appUpdate.exports;
-	debugger
 	appUpdateMod.needUpdate(function (isNeedUpdate) {
 		if (isNeedUpdate > 0) {
+			debugger
 			var updateContent = [];
 			if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) { // android
 				updateContent = pi_update.updateJson.androidUpdateContent || [];
