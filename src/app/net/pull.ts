@@ -669,10 +669,12 @@ export const verifyPhone = async(phone:number) => {
 /**
  * 发送验证码
  */
-export const sendCode = async (phone: number, num: number) => {
-    const v = await verifyPhone(phone);
-    if (!v) {
-        return;
+export const sendCode = async (phone: number, num: number,verify:boolean = true) => {
+    if (verify) {
+        const v = await verifyPhone(phone);
+        if (!v) {
+            return;
+        }
     }
     const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
     try {

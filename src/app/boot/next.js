@@ -269,6 +269,7 @@ winit.initNext = function () {
 			"app/components/password/",
 			"app/components/input/",
 			"app/components/textarea/",
+			"app/components/bindPhone/",
 			"app/res/css/",
 			"app/res/js/",
 			"app/view/play/home/",

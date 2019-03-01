@@ -175,7 +175,7 @@ export const getOpenId = (appId:string) => {
  * 获取随机数
  * flag:0 普通用户注册，1注册即为真实用户
  */
-export const getRandom = async (secretHash:string,cmd?:number) => {
+export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number) => {
     console.log('getRandom--------------');
     const wallet = getStore('wallet');
     if (!wallet) return;
@@ -190,12 +190,19 @@ export const getRandom = async (secretHash:string,cmd?:number) => {
     if (cmd) {
         param.cmd = cmd;
     }
+    if (phone) {
+        param.phone = phone;
+    }
+    if (code) {
+        param.code = code;
+    }
     const msg = { 
         type: 'get_random', 
         param
     };
+    let resp;
     try {
-        const resp = await requestAsync(msg);
+        resp = await requestAsync(msg);
         // const serverTimestamp = resp.timestamp.value;
         const conRandom = resp.rand;
         if (secretHash) {
@@ -221,8 +228,10 @@ export const getRandom = async (secretHash:string,cmd?:number) => {
             } else {  // 刷新页面后，此时资源没有加载完成,延迟到资源加载成功弹出提示
                 localStorage.setItem('kickOffline',JSON.stringify(true));
             }
-        }
-    }
+        } 
+    } 
+
+    return resp && resp.type;
 };
 
 /**

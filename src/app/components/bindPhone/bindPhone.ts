@@ -24,10 +24,11 @@ export class BindPhone extends Widget {
     constructor() {
         super();
     }
-    public create(): void {
-        super.create();
+    public setProps(props:any,oldProps:any): void {
+        
         this.language = this.config.value[getLang()];
         this.props = {
+            ...props,
             oldCode: 86,
             codeList: ['86','886'],
             isShowNewCode: false,
@@ -41,6 +42,7 @@ export class BindPhone extends Widget {
         //     this.props.countdown = this.props.limitTime - Math.ceil((now - t) / 1000);
         // }
         this.openTimer();
+        super.setProps(this.props,oldProps);
     }
     public backClick() {
         this.ok && this.ok();
@@ -55,7 +57,7 @@ export class BindPhone extends Widget {
 
             return;
         }
-        await sendCode(this.props.phone, this.props.oldCode);
+        await sendCode(this.props.phone, this.props.oldCode,this.props.verify);
         // updateStore('lastGetSmsCodeTime', new Date().getTime());
         notify(event.node,'ev-getCode',{ value:this.props.phone });
         this.props.countdown = this.props.limitTime;

@@ -65,4 +65,10 @@ export class StandardImport extends Widget {
             this.ok && this.ok();
         });
     }
+
+    public phoneImportClick() {
+        popNew('app-view-wallet-import-phoneImport',{},() => {
+            this.ok && this.ok();
+        });
+    }
 }

@@ -10,10 +10,10 @@ import { GlobalWallet } from '../core/globalWallet';
 import { AddrInfo, Wallet } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 import { ahash } from '../utils/ahash';
-import { defalutShowCurrencys, lang } from '../utils/constants';
+import { defalutShowCurrencys, defaultPassword, lang } from '../utils/constants';
 import { restoreSecret } from '../utils/secretsBase';
 import { calcHashValuePromise,getXOR,hexstrToU8Array,popNewLoading,popNewMessage, u8ArrayToHexstr } from '../utils/tools';
-import { getMnemonic } from '../utils/walletTools';
+import { getMnemonic, playerName } from '../utils/walletTools';
 import { dataCenter } from './dataCenter';
 
 export interface Option {
@@ -102,6 +102,20 @@ export const touristLogin = async (option: Option) => {
     // 刷新本地钱包
     dataCenter.refreshAllTx();
     dataCenter.initErc20GasLimit();
+
+    return secrectHash;
+};
+
+/**
+ * 手机号导入
+ */
+export const phoneImport = async (option: Option) => {
+    let secrectHash;
+    try {
+        secrectHash = await createWalletRandom(option,true);
+    } catch (err) {
+        return '';
+    }
 
     return secrectHash;
 };

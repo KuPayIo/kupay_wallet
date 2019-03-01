@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"助记词登录","zh_Hant":"助記詞登錄","en":""} }}
     <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
     <div w-class="body">
