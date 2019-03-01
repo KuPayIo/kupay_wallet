@@ -27,13 +27,14 @@ export class BindPhone extends Widget {
     public setProps(props:any,oldProps:any): void {
         
         this.language = this.config.value[getLang()];
+        const phone = props.phone ? props.phone : '';
         this.props = {
             ...props,
             oldCode: 86,
             codeList: ['86','886'],
             isShowNewCode: false,
             countdown: 0,
-            phone: '',
+            phone,
             limitTime: 60
         };
         // const t = find('lastGetSmsCodeTime'); // 不保留获取验证码倒计时

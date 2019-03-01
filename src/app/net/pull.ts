@@ -705,6 +705,24 @@ export const regPhone = async (phone: number, code: string) => {
 };
 
 /**
+ * 验证旧手机
+ */
+export const checkPhoneCode = async (phone: number, code: string,cmd?:string) => {
+    const msg = { type: 'wallet/user@check_phoneCode', param: { phone, code } };
+    if (cmd) {
+        msg.param.cmd = cmd;
+    }
+    
+    try {
+        return await requestAsync(msg);
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
+};
+
+/**
  * 获取代理
  */
 export const getProxy = async () => {

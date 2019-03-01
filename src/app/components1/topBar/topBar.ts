@@ -22,6 +22,7 @@ interface Props {
     background?:string;
     refreshImg?:string;
     text?:string;
+    textStyle?:string;
     refresh?:boolean;
 }
 

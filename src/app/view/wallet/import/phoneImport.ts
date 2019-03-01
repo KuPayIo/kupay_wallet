@@ -67,7 +67,6 @@ export class PhoneImport extends Widget {
 
             return;
         }
-        // this.props.phone = '18328508594';
         const itype = await getRandom(secretHash,undefined,this.props.phone,this.props.code.join(''));
         close.callback(close.widget);
         if (itype === -301) {
@@ -81,7 +80,7 @@ export class PhoneImport extends Widget {
             this.props.code = [];
             this.setCode();
         } else {
-            popNewMessage('登录成');
+            popNewMessage('登录成功');
             this.ok && this.ok();
             // 刷新本地钱包
             dataCenter.refreshAllTx();

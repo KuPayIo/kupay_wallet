@@ -12,6 +12,7 @@ export const showError = (result, str?) => {
     if (result === 1) return;
     if (!str) {
         switch (result) {
+            case 22: str = getStaticLanguage().errorList[22]; break;
             case 600: str = getStaticLanguage().errorList[600]; break;
             case 701: str = getStaticLanguage().errorList[701];break;
             case 702: str = getStaticLanguage().errorList[702];break;

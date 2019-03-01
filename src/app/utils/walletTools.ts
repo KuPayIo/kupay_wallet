@@ -304,12 +304,12 @@ export const getWltAddrIndex = (addr: string, currencyName: string) => {
 /**
  * 修改密码
  */
-export const passwordChange = async (oldPsw: string, newPsw: string) => {
+export const passwordChange = async (secretHash: string, newPsw: string) => {
     const salt = getStore('user/salt');
-    const oldHash = await calcHashValuePromise(oldPsw, salt);
     const newHash = await calcHashValuePromise(newPsw, salt);
     const wallet = getStore('wallet');
-    const oldVault = decrypt(wallet.vault, oldHash);
+    const oldVault = decrypt(wallet.vault, secretHash);
     wallet.vault = encrypt(oldVault, newHash);
+    wallet.setPsw = true;
     setStore('wallet',wallet);
 };

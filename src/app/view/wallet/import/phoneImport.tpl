@@ -9,9 +9,9 @@
         <div w-class="verify"><pi-ui-lang>{"zh_Hans":"验证码有误","zh_Hant":"驗證碼有誤","en":""}</pi-ui-lang></div>
         {{end}}
         
-        <div style="text-align: center;margin-top: 60px;">
+        <div w-class="code-container">
             {{for ind,val of [1,2,3,4]}}
-            <div w-class="codeBottom">
+            <div w-class="codeBottom {{it.code[ind] ? 'codeBottom-active' : ''}}">
                 <input type="number" w-class="codeInput" id="codeInput{{ind}}" on-keyup="codeChange" on-focus="codeFocus"/>
             </div>
             {{end}}

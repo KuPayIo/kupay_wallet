@@ -29,7 +29,6 @@ export const run = (cb): void =>  {
     if (!getStore('user/id')) {
         popNew('app-view-base-entrance');
     }
-    
     // 锁屏页面
     popNewPage();
     // 预先从底层获取一些数据

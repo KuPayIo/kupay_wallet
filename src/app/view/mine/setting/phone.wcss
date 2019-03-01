@@ -21,11 +21,19 @@
     margin-top: 60px;
     margin-left: 60px;
 }
+.code-container{
+    margin: 60px 100px 0;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+}
 .codeBottom{
-    border-bottom: 3px solid #368FE5;
-    width: 20%;
-    margin-right: 4%;
+    border-bottom: 3px solid #ccc;
+    width: 90px;
     display: inline-block;
+}
+.codeBottom-active{
+    border-bottom: 3px solid #368FE5;
 }
 .codeInput{
     font-size:64px;
@@ -40,5 +48,5 @@
     outline: 0px;
     transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1) 0s;
     width: 100%;
-    padding: 30px;
+    padding: 30px 10px;
 }
