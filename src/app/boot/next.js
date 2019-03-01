@@ -269,6 +269,7 @@ winit.initNext = function () {
 			"app/components/password/",
 			"app/components/input/",
 			"app/components/textarea/",
+			"app/components/bindPhone/",
 			"app/res/css/",
 			"app/res/js/",
 			"app/view/play/home/",
@@ -277,7 +278,8 @@ winit.initNext = function () {
 			"app/view/wallet/create/",
 			"app/view/wallet/import/",
 			"app/view/earn/home/",
-			"app/view/ceshi/"
+			"app/view/ceshi/",
+			"app/view/mine/setting/",
 		];
 		// sourceList = sourceList.concat(routerPathList);  
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {

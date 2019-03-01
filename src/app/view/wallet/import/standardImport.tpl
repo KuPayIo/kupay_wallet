@@ -21,7 +21,7 @@
                 {{: fragmentLogin = {"zh_Hans":"片段登录","zh_Hant":"片段登錄","en":""} }}
                 <pi-ui-lang w-class="other-btn" on-tap="fragmentImportClick">{{fragmentLogin}}</pi-ui-lang>
                 {{: forgetMnemonic = {"zh_Hans":"忘了助记词","zh_Hant":"忘了助記詞","en":""} }}
-                <pi-ui-lang w-class="other-btn">{{forgetMnemonic}}</pi-ui-lang>
+                <pi-ui-lang w-class="other-btn" on-tap="phoneImportClick">{{forgetMnemonic}}</pi-ui-lang>
             </div>
         </div>
     </div>

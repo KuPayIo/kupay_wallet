@@ -16,7 +16,7 @@
 
         <div style="display: flex;align-items: center;" on-down="onShow">
             {{if it.text}}
-            <span w-class="text" on-tap="goNext">{{it.text}}</span>
+            <span w-class="text" on-tap="goNext" style="{{it.textStyle ? it.textStyle : ''}}color: {{flag?'#fff':''}}">{{it.text}}</span>
             {{end}}
             {{if it.nextImg}}
             <img on-tap="goNext" src="{{it.nextImg}}" w-class="ga-next" />

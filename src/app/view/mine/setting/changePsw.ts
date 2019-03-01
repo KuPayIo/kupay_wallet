@@ -93,15 +93,15 @@ export class ChangePSW extends Widget {
             return;
         }
         const loading = popNew('app-components1-loading-loading', { text: this.language.loading });
-        const fg = await VerifyIdentidy(oldPassword);
+        const secretHash = await VerifyIdentidy(oldPassword);
         // 判断原密码是否正确
-        if (!fg) {
+        if (!secretHash) {
             popNew('app-components1-message-message', { content: this.language.tips[3] });
             loading.callback(loading.widget);
 
             return;
         }
-        await passwordChange(oldPassword, newPassword);
+        await passwordChange(secretHash, newPassword);
         loading.callback(loading.widget);
         popNew('app-components1-message-message', { content: this.language.tips[4] });
         this.backPrePage();

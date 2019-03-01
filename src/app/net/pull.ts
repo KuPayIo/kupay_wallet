@@ -669,10 +669,12 @@ export const verifyPhone = async(phone:number) => {
 /**
  * 发送验证码
  */
-export const sendCode = async (phone: number, num: number) => {
-    const v = await verifyPhone(phone);
-    if (!v) {
-        return;
+export const sendCode = async (phone: number, num: number,verify:boolean = true) => {
+    if (verify) {
+        const v = await verifyPhone(phone);
+        if (!v) {
+            return;
+        }
     }
     const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
     try {
@@ -692,6 +694,24 @@ export const regPhone = async (phone: number, code: string) => {
     // tslint:disable-next-line:variable-name
     const old_phone =  bphone ? bphone :'';
     const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code } };
+    
+    try {
+        return await requestAsync(msg);
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
+};
+
+/**
+ * 验证旧手机
+ */
+export const checkPhoneCode = async (phone: number, code: string,cmd?:string) => {
+    const msg = { type: 'wallet/user@check_phoneCode', param: { phone, code } };
+    if (cmd) {
+        msg.param.cmd = cmd;
+    }
     
     try {
         return await requestAsync(msg);

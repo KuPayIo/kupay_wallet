@@ -50,3 +50,22 @@
     width: 100%;
     padding: 30px 10px;
 }
+.box{
+    margin-top: 125px;
+    margin-left: 80px;
+    height:40px;
+    font-size:28px;
+    font-family:"PingFangSC-Regular";
+    font-weight:400;
+    color:rgba(136,136,136,1);
+    line-height:40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.tips{
+    margin-bottom: 15px;
+}
+.customer-service{
+    border-bottom: 1px solid rgba(136,136,136,1);
+}

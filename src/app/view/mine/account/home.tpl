@@ -24,7 +24,8 @@
                 {"zh_Hans":"修改密码","zh_Hant":"修改密碼","en":""},
                 {"zh_Hans":"备份助记词","zh_Hant":"備份助記詞","en":""},
                 {"zh_Hans":"未备份","zh_Hant":"未備份","en":""},
-                {"zh_Hans":"导出私钥","zh_Hant":"導出私鑰","en":""}] }}
+                {"zh_Hans":"导出私钥","zh_Hant":"導出私鑰","en":""},
+                {"zh_Hans":"设置密码","zh_Hant":"設置密碼","en":""}] }}
                 
                 {{: phone = {"zh_Hans":it.phone,"zh_Hant":it.phone,"en":""} }}
                 {{: bindPhone = {"zh_Hans":"未设置","zh_Hant":"未設置","en":""} }}
@@ -41,7 +42,8 @@
                 {{end}}
             </div>
             <div on-tap="changePsw" on-down="onShow">
-                <app-components-basicItem-basicItem>{name:{{itemTitle[1]}},style:"margin:0;border:none;"}</app-components-basicItem-basicItem>
+                {{: pswTitle = it.isTourist ? itemTitle[5] : itemTitle[1]}}
+                <app-components-basicItem-basicItem>{name:{{pswTitle}},style:"margin:0;border:none;"}</app-components-basicItem-basicItem>
             </div>
         </div>
         

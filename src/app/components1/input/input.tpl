@@ -2,7 +2,7 @@
 <div w-class="pi-input-box {{it.notUnderLine?'':'input-focused-'+it.focused}}" class="pi-input">
     <input 
         w-class="pi-input__inner" 
-        style="{{it.style ? it.style : ''}}"
+        style="{{it.disabled ? 'color:#ccc;' : ''}}{{it.style ? it.style : ''}}"
         type="{{it.originalType}}" 
         autocomplete="off" 
         placeholder="{{it && it.placeHolder ? it.placeHolder : ''}}" 
@@ -13,6 +13,7 @@
         on-focus="onFocus"
         on-compositionstart="compositionstart"
         on-compositionend="compositionend"
+        disabled={{ it.disabled }}
     />
     {{if it.showClear}}
     <img w-class="clearBtn" src="../../res/image/fail.png" on-tap="clearClickListener"/>

@@ -32,6 +32,7 @@ export class AccountHome extends Widget {
         const backup = wallet.isBackup;
 
         this.props = {
+            isTourist:!wallet.setPsw,
             avatar: '',
             nickName: '',
             phone: '',
@@ -140,14 +141,32 @@ export class AccountHome extends Widget {
      * 绑定手机号
      */
     public changePhone() {
-        popNew('app-view-mine-setting-phone');
+        if (!this.props.phone) {  // 绑定
+            const props  = {
+                itype:1,   // 绑定
+                title:{ zh_Hans:'绑定新手机号',zh_Hant:'綁定新手機號',en:'' }  
+            };
+            popNew('app-view-mine-setting-phone',props);
+        } else { // 重新绑定
+            const props  = {
+                itype:2,   // 重新绑定
+                title: { zh_Hans:'验证旧手机号',zh_Hant:'验证旧手机号',en:'' }   
+            };
+            popNew('app-view-mine-setting-phone',props);
+        }
+        
     }
 
     /**
      * 修改密码
      */
     public changePsw() {
-        popNew('app-view-mine-setting-changePsw');
+        if (this.props.isTourist) {
+            popNew('app-view-mine-setting-settingPsw',{});
+        } else {
+            popNew('app-view-mine-setting-changePsw');
+        }
+        
     }
 
     /**

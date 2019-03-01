@@ -6,7 +6,7 @@ import { backCall, backList, popNew } from '../../pi/ui/root';
 import { CloudCurrencyType } from '../store/interface';
 import { getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
-import { getStaticLanguage, popNewMessage } from '../utils/tools';
+import { getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
 import { getServerCloudBalance } from './pull';
 
@@ -71,12 +71,28 @@ export const initPush = () => {
     setMsgHandler('alter_balance_ok',(res) => {
         console.log('alter_balance_ok服务器推送成功==========================',res);
         getServerCloudBalance();
-        if (res.cointype === CloudCurrencyType.KT) {   // 回到一级页面提醒备份
-            const wallet = getStore('wallet');
-            if (!wallet.backupTip && !wallet.isBackup) {
-                setStore('flags/backupTip',true);   // 一级页面弹框标识
-            }  
+        const wallet = getStore('wallet');
+        const userInfo = getUserInfo();
+        if (!wallet.setPsw) {
+            popNew('app-view-mine-setting-settingPsw',{});
+        } else if (!userInfo.phoneNumber) {
+            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                img:'app/res/image/bind_phone.png',
+                btn1:`验证手机`,// 按钮1 
+                btn2:'下次吧'// 按钮2
+            },(num) => {
+                if (num === 1) {
+                    popNew('app-view-mine-setting-phone',{});
+                } 
+            });
         }
+        
+        // if (res.cointype === CloudCurrencyType.KT) {   // 回到一级页面提醒备份
+        //     const wallet = getStore('wallet');
+        //     if (!wallet.backupTip && !wallet.isBackup) {
+        //         setStore('flags/backupTip',true);   // 一级页面弹框标识
+        //     }  
+        // }
     });
 
     // setMsgHandler('event_kt_alert',(res) => {
