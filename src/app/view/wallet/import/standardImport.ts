@@ -10,6 +10,7 @@ import { lang } from '../../../utils/constants';
 import { forelet,WIDGET_NAME } from './home';
 
 export class StandardImport extends Widget {
+    public cancel: () => void;
     public ok: () => void;
     public language:any;
     public setProps(props:any,oldProps:any) {
@@ -48,7 +49,7 @@ export class StandardImport extends Widget {
     }
 
     public backPrePage() {
-        this.ok && this.ok();
+        this.cancel && this.cancel();
     }
 
     public whatIsMnemonicClick() {

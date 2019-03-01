@@ -13,12 +13,21 @@
         {{elseif it.showIcon}}
         <img src="../../res/image/fail.png" w-class="successPic" on-tap="clear"/>
         {{end}}
-    </div>
-
-    <div w-class="pseRank-line" style="display: flex;flex: 3;">
-        <div w-class="line line{{it.secret>0?it.secret:''}}"></div>
-        <div w-class="line line{{it.secret>1?it.secret:''}}"></div>
-        <div w-class="line line{{it.secret>2?it.secret:''}}"></div>
+        <img src="../../res/image/closeEyes.png" w-class="close-eyes" />
+        <div w-class="rank-container">
+            {{if it.secret>2}}
+            <div w-class="rank-item" style="background:rgba(234,45,45,1);"></div>
+            <div w-class="rank-item" style="background:rgba(234,45,45,1);"></div>
+            {{end}}
+            {{if it.secret>1}}
+            <div w-class="rank-item"></div>
+            <div w-class="rank-item"></div>
+            {{end}}
+            {{if it.secret>0}}
+            <div w-class="rank-item" style="background:rgba(123,229,84,1);"></div>
+            <div w-class="rank-item" style="background:rgba(123,229,84,1);"></div>
+            {{end}}
+        </div>
     </div>
 
     {{if it.showTips}}
