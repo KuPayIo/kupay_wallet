@@ -57,7 +57,7 @@ export class ImgRankItem extends Widget {
     public pswChange(event:any) {
         const psw = event.value;
         this.props.password = psw;
-        this.props.showIcon = true;       
+        this.props.showIcon = !!psw ;       
         let secret = 0; 
         const limit = this.props.limit ? this.props.limit :1;
         const length = this.props.length ? this.props.length :8;

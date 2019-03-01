@@ -10,6 +10,7 @@ import { mnemonicFragmentDecrypt } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
 
 export class FragmentImport extends Widget {
+    public cancel: () => void;
     public ok: () => void;
     public language:any;
     public setProps(props:any,oldProps:any) {
@@ -22,7 +23,7 @@ export class FragmentImport extends Widget {
         super.setProps(props,oldProps);
     }
     public backPrePage() {
-        this.ok && this.ok();
+        this.cancel && this.cancel();
     }
     public fragment1Change(e:any) {
         this.props.fragment1 = e.value;
