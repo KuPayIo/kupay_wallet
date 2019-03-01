@@ -4,6 +4,7 @@
 
 import { popNew } from '../../pi/ui/root';
 import { openPayment, pay, resCode, setNoPWD } from '../api/JSAPI';
+import { setStore } from '../store/memstore';
 import { popPswBox } from './tools';
 
 /**
@@ -46,6 +47,7 @@ export const walletPay = (order: any, appid: string, mchid: string, callback: Fu
                                 setNoPWD(sendData, (res, msg) => {
                                     loading1.callback(loading1.widget);
                                     if (!res) {
+                                        setStore('flags/noPassword',true);
                                         popNew('app-components1-message-message',{ content:{ zh_Hans:'设置成功！',zh_Hant:'設置成功！',en:'' } });
                                     } else {
                                         popNew('app-components1-message-message',{ content:{ zh_Hans:'设置失败！',zh_Hant:'設置失败！',en:'' } });
@@ -86,7 +88,14 @@ export const walletSetNoPSW = async (appid: string, mchid: string, noPSW: number
     const loading = popNew('app-components1-loading-loading', { text: '设置中...' });
     setNoPWD(sendData, (res, msg) => {
         loading.callback(loading.widget);
-        callback(res, msg);
+        callback(res,msg);
+        if (!res) {
+            // setStore('flags/noPassword',noPSW);
+            popNew('app-components1-message-message',{ content:{ zh_Hans:'设置成功！',zh_Hant:'設置成功！',en:'' } });
+
+        } else {
+            popNew('app-components1-message-message',{ content:{ zh_Hans:'设置失败！',zh_Hant:'設置失败！',en:'' } });
+        }
     });
 
 };
