@@ -12,5 +12,5 @@
         on-focus="focus"
     />
     {{if it1.showClear}}<img w-class="pi-input__suffix" src="../../res/image/{{it.available ? 'icon_right2' : 'fail'}}.png" on-tap="clearClickListener"/>{{end}}
-    <img src="../../res/image/closeEyes.png" w-class="close-eyes" />
+    {{if it.closeEye}}<img src="../../res/image/closeEyes.png" w-class="close-eyes" />{{end}}
 </div>

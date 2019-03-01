@@ -180,4 +180,10 @@ export class CreateWallet extends Widget {
             this.ok && this.ok();
         });
     }
+
+    public haveAccountClick() {
+        popNew('app-view-wallet-import-standardImport',{},() => {
+            this.ok && this.ok();
+        });
+    }
 }

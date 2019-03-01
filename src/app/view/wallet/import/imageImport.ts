@@ -9,6 +9,7 @@ import { selectImage } from '../../../logic/native';
 import { getStore, setStore } from '../../../store/memstore';
 
 export class ImageImport extends Widget {
+    public cancel: () => void;
     public ok: () => void;
     public language:any;
     public setProps(props:any,oldProps:any) {
@@ -24,7 +25,7 @@ export class ImageImport extends Widget {
         super.setProps(props,oldProps);
     }
     public backPrePage() {
-        this.ok && this.ok();
+        this.cancel && this.cancel();
     }
     public selectImageClick() {
         this.props.imagePicker = selectImage((width, height, url) => {
