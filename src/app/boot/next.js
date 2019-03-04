@@ -1,10 +1,18 @@
-"use strict";
-// 依赖表加载成功后的回调函数
+'use strict';
+
+/** 
+ * 依赖表加载成功后的回调函数
+ * 每个项目需要在这里做3件事
+ *    1. 更新：App，H5，更新界面写到这里来。
+ *    2. 分批加载目录
+ *    3. 调用项目的入口函数/组件
+ */
 winit.initNext = function () {
 	getUpdateContent();
 	var win = winit.win;
 	win._babelPolyfill = 1;
 	win.pi_modules = 1;
+
 
 	win.Map = 1;
 	var flags = winit.flags;
@@ -33,37 +41,15 @@ winit.initNext = function () {
 	winit = undefined; //一定要立即释放，保证不会重复执行
 	//先登录
 
-	//二级页面相关的图片和代码资源
-	TIME_STR += "before load time: " + (Date.now() - PRE_TIME);
-	PRE_TIME = Date.now();
-	var div = document.createElement('div');
-	div.setAttribute("id", "pi")
-	div.setAttribute("pi", "1");
-	div.setAttribute("class", "process");
-	// div.setAttribute("style", "position:absolute;bottom:10px;left: 2%;width: 95%;height: 10px;background: #262626;padding: 1px;border-radius: 20px;border-top: 1px solid #000;border-bottom: 1px solid #7992a8;z-index:9999;");
-	var divProcess = document.createElement('div');
-	var divProcessBg = document.createElement('div');
-	var divProcessIcon = document.createElement('div');
-	divProcess.setAttribute("style", "width: 0%;height: 100%;border-radius: 20px;position:relative");
-	// divProcessBg.setAttribute("style", "width: 100%;height: 15px;background-size: 100% 100%;background-image:url(../res/common/sliderProgress.png)");
-	// divProcessIcon.setAttribute("style", "width:50px;height:50px;background-size: 100% 100%;position:absolute;right:-30px;top:-15px;background-image:url(../res/common/slider.png)");
-	divProcessIcon.setAttribute("class", "rotating")
-	div.appendChild(divProcess);
-	divProcess.appendChild(divProcessBg);
-	divProcess.appendChild(divProcessIcon);
-	var container = document.getElementById("process-container")
-	if (container) {
-		container.appendChild(div);
-	}
 	var modProcess = pi_modules.commonjs.exports.getProcess();
 	var dirProcess = pi_modules.commonjs.exports.getProcess();
 	modProcess.show(function (r) {
-		modProcess.value = r * 0.2;
-		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
+		// modProcess.value = r * 0.2;
+		// divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 	dirProcess.show(function (r) {
-		dirProcess.value = r * 0.8;
-		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
+		// dirProcess.value = r * 0.8;
+		// divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 
 // ====================================更新开始=============================================================
@@ -78,68 +64,77 @@ winit.initNext = function () {
 	var isAppNeedUpdate = undefined;
 	var isH5NeedUpdate = undefined;
 
+	var h5UpdateMod = pi_modules.update.exports;
 	var appUpdateMod = pi_modules.appUpdate.exports;
-	appUpdateMod.needUpdate(function (isNeedUpdate) {
-		if (isNeedUpdate > 0) {
-			debugger
-			var updateContent = [];
-			if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) { // android
-				updateContent = pi_update.updateJson.androidUpdateContent || [];
-			}else if(navigator.userAgent.indexOf('YINENG_IOS') >= 0) { // ios
-				updateContent = pi_update.updateJson.iosUpdateContent || [];
-			}else{  // 浏览器
-				updateContent = pi_update.updateJson.androidUpdateContent || [];
+	
+	appUpdateMod.init(function () {
+		appUpdateMod.needUpdate(function (isNeedUpdate) {
+			if (isNeedUpdate > 0) {
+				var updateContent = [];
+				if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) { // android
+					updateContent = pi_update.updateJson.androidUpdateContent || [];
+				}else if(navigator.userAgent.indexOf('YINENG_IOS') >= 0) { // ios
+					updateContent = pi_update.updateJson.iosUpdateContent || [];
+				}else{  // 浏览器
+					updateContent = pi_update.updateJson.androidUpdateContent || [];
+				}
+				var option = {
+					updated:updateContent,
+					version:"",//appUpdateMod.getAppRemoteVersion() app更新不显示版本号
+					alertBtnText:"App 需要更新"
+				};
+				pi_update.modifyContent(option);
+				appUpdateMod.update(function (isSuccess) {
+					pi_update.closePop();
+					// alert("更新失败");
+					console.log("appUpdate " + isSuccess);
+				},function(total,process){
+					console.log("total = " + total + " process = " + process);
+					var e = { type: "saveFile", total: total, count: process};
+					pi_update.updateProgress(e);
+				});
+			} else {
+				// 只有在这种情况下才有可能更新H5
+				isAppNeedUpdate = isNeedUpdate;
+				if (isH5NeedUpdate !== undefined) {
+					updateH5();
+				}
 			}
-			var option = {
-				updated:updateContent,
-				version:"",//appUpdateMod.getAppRemoteVersion() app更新不显示版本号
-				alertBtnText:"App 需要更新"
-			};
-			pi_update.modifyContent(option);
-			appUpdateMod.update(function (isSuccess) {
-				pi_update.closePop();
-				// alert("更新失败");
-				console.log("appUpdate " + isSuccess);
-			},function(total,process){
-				console.log("total = " + total + " process = " + process);
-				var e = { type: "saveFile", total: total, count: process};
-				pi_update.updateProgress(e);
-			});
-		} else {
-			// 只有在这种情况下才有可能更新H5
-			isAppNeedUpdate = isNeedUpdate;
-			if (isH5NeedUpdate !== undefined) {
+		});
+
+		h5UpdateMod.setServerInfo("app/boot/");
+		h5UpdateMod.checkUpdate(function (updateFlag) {
+
+			isH5NeedUpdate = updateFlag;
+			if (isAppNeedUpdate !== undefined) {
 				updateH5();
 			}
-		}
-	});
-
-	var updateMod = pi_modules.update.exports;
-	updateMod.setIntercept(true);
-	updateMod.setServerInfo("app/boot/");
-	updateMod.checkUpdate(function (updateFlag) {
-		isH5NeedUpdate = updateFlag;
-		if (isAppNeedUpdate !== undefined) {
-			updateH5();
-		}
+		});
 	});
 
 	function updateH5() {
 		var needUpdate = false;
 
-		if (isH5NeedUpdate === 0) {
+		if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_NO_UPDATE) {
 			// 不需要更新
 			needUpdate = false;
-		} else if (isH5NeedUpdate === 1) {
+		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_LAST) {
 			// alert("上次没有更新完成, 强制更新");
 			needUpdate = true;
-		} else if (isH5NeedUpdate === 2) {
+		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_FORCE) {
 			// alert("大版本变动, 强制更新");
 			needUpdate = true;
-		} else if (isH5NeedUpdate === 3) {
+		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_OPTIONAL) {
 			// needUpdate = confirm("小版本变动，需要更新吗？");
 			needUpdate = true;
+		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_LAST_ERROR) {
+			// alert("服务器连不上，同时上次更新到一半，错误");
+			return;
+		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_APP_ERROR) {
+			// alert("服务器连不上，同时app版本太低，错误");
+			return;
 		} else {
+			// alert("H5 更新，其他未处理错误");
 			throw new Error("H5 update error!");
 		}
 
@@ -151,7 +146,7 @@ winit.initNext = function () {
 				version:updateVersion
 			};
 			pi_update.modifyContent(option);
-			updateMod.update(function (e) {
+			h5UpdateMod.update(function (e) {
 				//{type: "saveFile", total: 4, count: 1}
 				console.log("update progress: ", e);
 				pi_update.updateProgress(e);
@@ -159,7 +154,7 @@ winit.initNext = function () {
 				setTimeout(()=>{
 					pi_update.closePop();
 					// 重启
-					updateMod.reload();
+					h5UpdateMod.reload();
 				},200);
 				
 			});
