@@ -147,6 +147,8 @@
         align-items: center;
       }
       .pi-update-progress-container {
+		  font-size: 32px;
+		  text-align: center;
 		position: absolute;
 		top: 40px;
 		left: 30px;
@@ -438,12 +440,12 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = false;
+			winit.debug = true; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
-			var needCDN = true;
-
+			var needCDN = true; 
+			 
 			// todo 发版本时需动态设置服务器ip及端口
 			if(!winit.isLoc){ // 浏览器版本自动识别
 				winit.severIp = main;

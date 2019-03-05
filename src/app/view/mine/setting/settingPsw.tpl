@@ -1,6 +1,6 @@
-<div class="new-page" w-class="new-page" ev-back-click="backPrePage">
+<div class="new-page" w-class="new-page" >
     {{: topBarTitle = {"zh_Hans":"设置密码","zh_Hant":"設置密碼","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{ topBarTitle }} }</app-components1-topBar-topBar>
+    <app-components1-topBar-topBar>{"title":{{ topBarTitle }},"backImg":"../../res/image/hamburger.png" }</app-components1-topBar-topBar>
     <div w-class="body">
         {{: tips = {"zh_Hans":"设置支付密码","zh_Hant":"設置支付密碼","en":""} }}
         <div w-class="create-tips"><div w-class="tip-divid"></div><pi-ui-lang>{{tips}}</pi-ui-lang></div>

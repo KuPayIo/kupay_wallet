@@ -1,5 +1,4 @@
 'use strict';
-
 /** 
  * 依赖表加载成功后的回调函数
  * 每个项目需要在这里做3件事
@@ -66,7 +65,6 @@ winit.initNext = function () {
 
 	var h5UpdateMod = pi_modules.update.exports;
 	var appUpdateMod = pi_modules.appUpdate.exports;
-	
 	appUpdateMod.init(function () {
 		appUpdateMod.needUpdate(function (isNeedUpdate) {
 			if (isNeedUpdate > 0) {
@@ -114,7 +112,16 @@ winit.initNext = function () {
 
 	function updateH5() {
 		var needUpdate = false;
-
+		function updateError(){  // 更新出错界面
+			var updateContent = pi_update.updateJson.h5UpdateContent || [];
+			var updateVersion =  pi_update.updateJson.version || "";
+			var option = {
+				updated:updateContent,
+				version:updateVersion,
+				updateError:true
+			};
+			pi_update.modifyContent(option);
+		}
 		if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_NO_UPDATE) {
 			// 不需要更新
 			needUpdate = false;
@@ -129,12 +136,17 @@ winit.initNext = function () {
 			needUpdate = true;
 		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_LAST_ERROR) {
 			// alert("服务器连不上，同时上次更新到一半，错误");
+			updateError();
 			return;
 		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_APP_ERROR) {
 			// alert("服务器连不上，同时app版本太低，错误");
+			updateError();
+			pi_update.modifyContent(option);
 			return;
 		} else {
 			// alert("H5 更新，其他未处理错误");
+			updateError();
+			pi_update.modifyContent(option);
 			throw new Error("H5 update error!");
 		}
 
@@ -210,12 +222,12 @@ winit.initNext = function () {
 	var loadWalletLoginSource = function(){
 		var sourceList = [
 			"app/view/base/",
-			"app/store/memstore.js",
 			"app/net/login.js",
 			"app/net/push.js",
 			"earn/client/app/net/",
 			"chat/client/app/net/"
 		];
+		// debugger
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
@@ -225,8 +237,8 @@ winit.initNext = function () {
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
 			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
-			// 钱包store初始化
-			pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore(); 
+			// // 钱包store初始化
+			// pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore(); 
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 			// erlang服务器连接登录
@@ -488,36 +500,74 @@ function updateUiInit(){
 		}
 
 		var newVersion = option.version ? `：V${option.version}` : "";
-		$root.innerHTML = `
-		<div class="pi-mask">
-			<div class="pi-update-box animated bounceInUp">
-				<img src="../res/image1/rocket.png" class="pi-update-rocket" />
-				<div class="pi-update-content">
-				<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
-				<div class="pi-update-items">
-					${$updateItemInnerHtml}
-				</div>
-				</div>
-				<div class="pi-update-bottom">
-					<div class="pi-update-btns">
-						<div class="pi-update-cancel-btn">${option.confirmCancel}</div>
-						<div class="pi-update-ok-btn">${option.confirmOk}</div>
+		var errorTips = "正在连接服务器";
+		if(option.updateError){
+			$root.innerHTML = `
+			<div class="pi-mask">
+				<div class="pi-update-box animated bounceInUp">
+					<img src="../res/image1/rocket.png" class="pi-update-rocket" />
+					<div class="pi-update-content">
+					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
+					<div class="pi-update-items">
+						${$updateItemInnerHtml}
 					</div>
-					<div class="pi-update-progress-container">
-						<div class="pi-update-progress-bg">
-							<div class="pi-update-progress"></div>
+					</div>
+					<div class="pi-update-bottom">
+						<div class="pi-update-btns">
+							<div class="pi-update-cancel-btn">${option.confirmCancel}</div>
+							<div class="pi-update-ok-btn">${option.confirmOk}</div>
 						</div>
-						<div class="pi-update-progress-text">0%</div>
+						<div class="pi-update-progress-container">
+							${errorTips}
+						</div>
+						<div class="pi-update-complete-btn"></div>
 					</div>
-					<div class="pi-update-complete-btn"></div>
+				</div>
+			</div>`;
+		}else{
+			$root.innerHTML = `
+			<div class="pi-mask">
+				<div class="pi-update-box animated bounceInUp">
+					<img src="../res/image1/rocket.png" class="pi-update-rocket" />
+					<div class="pi-update-content">
+					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
+					<div class="pi-update-items">
+						${$updateItemInnerHtml}
+					</div>
+					</div>
+					<div class="pi-update-bottom">
+						<div class="pi-update-btns">
+							<div class="pi-update-cancel-btn">${option.confirmCancel}</div>
+							<div class="pi-update-ok-btn">${option.confirmOk}</div>
+						</div>
+						<div class="pi-update-progress-container">
+							<div class="pi-update-progress-bg">
+								<div class="pi-update-progress"></div>
+							</div>
+							<div class="pi-update-progress-text">0%</div>
+						</div>
+						<div class="pi-update-complete-btn"></div>
+					</div>
 				</div>
 			</div>
-		</div>
-		`;
+			`;
+		}
+		
+		
 
 		var $body = document.querySelector("body");
 		$body.appendChild($root);
 		pi_update.contentModified = true;
+
+		if(option.updateError){
+			var container = document.querySelector(".pi-update-progress-container");
+			var dots = ["."];
+			setInterval(()=>{
+				if(dots.length >= 3) dots = [];
+				dots.push(".");
+				container.innerHTML = errorTips + dots.join("");
+			},1000);
+		}
 	}
 
 

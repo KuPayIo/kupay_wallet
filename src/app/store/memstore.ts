@@ -668,6 +668,8 @@ const store: Store = {
     flags: {}
 };
 
+initStore();
+
 // =======================localStorage interface===============================
 
 /**

@@ -3,7 +3,6 @@
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { backCall, backList, popNew } from '../../pi/ui/root';
-import { CloudCurrencyType } from '../store/interface';
 import { getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
 import { getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
@@ -74,17 +73,23 @@ export const initPush = () => {
         const wallet = getStore('wallet');
         const userInfo = getUserInfo();
         if (!wallet.setPsw) {
-            popNew('app-view-mine-setting-settingPsw',{});
+            setTimeout(() => {
+                popNew('app-view-mine-setting-settingPsw',{});
+            },2000);
+            
         } else if (!userInfo.phoneNumber) {
-            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
-                img:'app/res/image/bind_phone.png',
-                btn1:`验证手机`,// 按钮1 
-                btn2:'下次吧'// 按钮2
-            },(num) => {
-                if (num === 1) {
-                    popNew('app-view-mine-setting-phone',{});
-                } 
-            });
+            setTimeout(() => {
+                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                    img:'app/res/image/bind_phone.png',
+                    btn1:`验证手机`,// 按钮1 
+                    btn2:'下次吧'// 按钮2
+                },(num) => {
+                    if (num === 1) {
+                        popNew('app-view-mine-setting-phone',{});
+                    } 
+                });
+            },2000);
+            
         }
         
         // if (res.cointype === CloudCurrencyType.KT) {   // 回到一级页面提醒备份

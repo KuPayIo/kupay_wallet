@@ -15,6 +15,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { register } from '../../store/memstore';
 
 interface Props {
+    backImg?:string;
     title:string;
     nextImg?:string;
     nextImg1?:string;
