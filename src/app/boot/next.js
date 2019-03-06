@@ -207,11 +207,11 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				loadWalletFirstPageSource();  //钱包
 				loadWalletLoginSource();  // 登录相关
-				// loadImages();
+				loadImages();
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
+				loadWalletFirstPageSource();  //钱包
 				
 			});
 		}, function (result) {

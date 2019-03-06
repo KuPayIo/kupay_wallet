@@ -6,7 +6,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { addActivityBackPressed, addAppResumed } from '../../../pi/browser/app_comon_event';
+import { addAppBackPressed, addAppResumed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
@@ -23,6 +23,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
+    
     // 数据检查
     checkUpdate();
     // 打开首页面
@@ -83,6 +84,7 @@ const checkUpdate = () => {
 const addAppEvent = () => {
     // 注册appResumed
     addAppResumed(() => {
+        console.log('addAppResumed callback called');
         if (ifNeedUnlockScreen()) {
             popNew('app-components1-lockScreenPage-lockScreenPage', {
                 openApp: true
@@ -96,7 +98,8 @@ const addAppEvent = () => {
     });
 
     // 注册appBackPressed
-    addActivityBackPressed(() => {
+    addAppBackPressed(() => {
+        console.log('addActivityBackPressed callback called');
         if (backList.length === 1) {
             const exitApp = new ExitApp();
             exitApp.init();
