@@ -6,6 +6,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
+import { addAppBackPressed, addAppResumed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
@@ -22,6 +23,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
+    
     // 数据检查
     checkUpdate();
     // 打开首页面
@@ -34,15 +36,12 @@ export const run = (cb): void =>  {
     // 预先从底层获取一些数据
     preFetchFromNative();
     console.timeEnd('home enter');
-    // 后台切前台
-    backToFront();
+    // app event 注册
+    addAppEvent();
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
     }, 100);
-    // tslint:disable-next-line:max-line-length
-    // const changellyTempTxs = [{ id:'ztr2b6at2f2fbhf1',hash:undefined },{ id:'ctiub6x781ku12wa',hash:undefined },{ id:'3blkh2bkcxtv53fc',hash:'ae0bfbf0686d81166ff32aeef64d0cd2dc5125bf9f4299242c65bb8db6f772c0' }];
-    // setStore('wallet/changellyTempTxs',changellyTempTxs);
 };
 
 /**
@@ -66,19 +65,12 @@ const preFetchFromNative = () => {
             setStore('setting/deviceId',hash256deviceId);
         });
     }
-    // const deviceInfo = getStore('setting/deviceInfo');
-    // if (!deviceInfo) {
-    //     fetchDeviceInfo().then(info => {
-    //         setStore('setting/deviceInfo',info);
-    //     });
-    // }
     getScreenModify();
 
     // 预先随机下载
-    const adType = undefined;
-    preLoadAd(adType,() => {
-        preLoadAd(adType,() => {
-            preLoadAd(adType);
+    preLoadAd(undefined,() => {
+        preLoadAd(undefined,() => {
+            preLoadAd(undefined);
         });
     });
 };
@@ -87,34 +79,36 @@ const checkUpdate = () => {
 };
 
 /**
- * 后台切换到前台
- * onBackPressed
+ * 注册app event
  */
-const backToFront = () => {
-    (<any>window).handle_app_lifecycle_listener = (iType: string) => {
-        if (iType === 'onAppResumed') {
-            if (ifNeedUnlockScreen()) {
-                popNew('app-components1-lockScreenPage-lockScreenPage', {
-                    openApp: true
-                });
-            }
-            setTimeout(() => {
-                if (!getAllIsLogin()) {
-                    manualReconnect();
-                }
-            },100);  // 检查是否已经退出登录
-        } else if (iType === 'onBackPressed') {
-            if (backList.length === 1) {
-                const exitApp = new ExitApp();
-                exitApp.init();
-                exitApp.ToHome({});
-            } else {
-                backCall();
-            }
-      // (<any>window).onpopstate();
-      // widget.ok && widget.ok();
+const addAppEvent = () => {
+    // 注册appResumed
+    addAppResumed(() => {
+        console.log('addAppResumed callback called');
+        if (ifNeedUnlockScreen()) {
+            popNew('app-components1-lockScreenPage-lockScreenPage', {
+                openApp: true
+            });
         }
-    };
+        setTimeout(() => {
+            if (!getAllIsLogin()) {
+                manualReconnect();
+            }
+        },100);  // 检查是否已经退出登录
+    });
+
+    // 注册appBackPressed
+    addAppBackPressed(() => {
+        console.log('addActivityBackPressed callback called');
+        if (backList.length === 1) {
+            const exitApp = new ExitApp();
+            exitApp.init();
+            exitApp.ToHome({});
+        } else {
+            backCall();
+        }
+    });
+
 };
 
 // ============================== 立即执行

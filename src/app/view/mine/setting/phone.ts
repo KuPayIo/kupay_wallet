@@ -34,14 +34,14 @@ export class BindPhone extends Widget {
     }
     public jumpClick() {
         this.ok && this.ok();
-        popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+        popNew('app-components-allModalBox-modalBox3', {
             img:'app/res/image/bind_phone.png',
-            btn1:`验证手机`,// 按钮1 
-            btn2:'下次吧'// 按钮2
-        },(num) => {
-            if (num === 1) {
-                popNew('app-view-mine-setting-phone',{});
-            } 
+            tipTitle:'安全提醒',
+            tipContent:`手机号是您找回云端资产的凭证
+为了您的资产安全请输入手机号`,
+            btn:`验证手机`
+        },() => {
+            popNew('app-view-mine-setting-phone',{});
         });
     }
     

@@ -1,7 +1,7 @@
 /**
  * 一些底层操作
  */
-import { ADUnion } from '../../pi/browser/ad_unoin';
+import { AdPlatform, ADUnion, PlayEvent } from '../../pi/browser/ad_unoin';
 import { DeviceIdProvider } from '../../pi/browser/device';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { QRCode } from '../../pi/browser/qrcode';
@@ -125,8 +125,8 @@ export const getScreenModify = () => {
 /**
  * 预先下载广告
  */
-export const preLoadAd = (adType?: number,cb?:(str1:string,str2:string) => void) => {
-    adType = adType ? adType : Math.random() > 0.5 ? 1 : 2;
+export const preLoadAd = (adType?: AdPlatform,cb?:(str1:string,str2:string) => void) => {
+    adType = adType ? adType : Math.random() > 0.5 ? AdPlatform.GDT : AdPlatform.CSJ;
     ADUnion.loadRewardVideoAD(adType,(str1,str2) => {
         cb && cb(str1,str2);
     });
@@ -136,10 +136,10 @@ export const preLoadAd = (adType?: number,cb?:(str1:string,str2:string) => void)
  * adtype:1.广点通  2.字节跳动
  */
 // tslint:disable-next-line:no-reserved-keywords
-export const watchAd = (adType: number,cb?:(str1:string,type:number,str2:string) => void) => {
+export const watchAd = (adType: AdPlatform,cb?:(isSuccess: number, event: PlayEvent, info: string) => void) => {
     // tslint:disable-next-line:no-reserved-keywords
-    ADUnion.showRewardVideoAD(adType,(str1,type,str2) => {
-        cb && cb(str1,type,str2);
+    ADUnion.showRewardVideoAD(adType,(isSuccess,event,info) => {
+        cb && cb(isSuccess,event,info);
         preLoadAd();
     });
 };
@@ -149,16 +149,16 @@ export const watchAd = (adType: number,cb?:(str1:string,type:number,str2:string)
  */
 export const chooseAdType = (cb:Function) => {
     const ads = [];
-    ADUnion.getADNumber((gdtAdNumber,dyAdNumber) => {
+    ADUnion.getADNumber((gdtAdNumber,csjAdNumber) => {
         for (let i = 0;i < gdtAdNumber;i ++) {
-            ads.push(1);
+            ads.push(AdPlatform.GDT);
         }
-        for (let i = 0;i < dyAdNumber;i ++) {
-            ads.push(2);
+        for (let i = 0;i < csjAdNumber;i ++) {
+            ads.push(AdPlatform.CSJ);
         }
         const len = ads.length;
         const index = Math.floor(Math.random() * 100) % len;
-        const adType = ads[index] || (Math.random() > 0.5 ? 1 : 2);
+        const adType = ads[index] || (Math.random() > 0.5 ? AdPlatform.GDT : AdPlatform.CSJ);
         cb && cb(adType);
     });
 };

@@ -27,9 +27,6 @@ export class SettingPsw extends Widget {
         };
         super.setProps(this.props, oldProps);
     }
-    public backPrePage() {
-        this.cancel && this.cancel();
-    }
     public checkBoxClick(e: any) {
         this.props.userProtocolReaded = (e.newType === 'true' ? true : false);
         this.paint();

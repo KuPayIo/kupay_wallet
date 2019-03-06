@@ -14,22 +14,11 @@
         <img src="../../res/image/fail.png" w-class="successPic" on-tap="clear"/>
         {{end}}
         <img src="../../res/image/closeEyes.png" w-class="close-eyes" />
-        <div w-class="rank-container">
-            {{if it.secret>2}}
-            <div w-class="rank-item" style="background:rgba(234,45,45,1);"></div>
-            <div w-class="rank-item" style="background:rgba(234,45,45,1);"></div>
-            {{end}}
-            {{if it.secret>1}}
-            <div w-class="rank-item"></div>
-            <div w-class="rank-item"></div>
-            {{end}}
-            {{if it.secret>0}}
-            <div w-class="rank-item" style="background:rgba(123,229,84,1);"></div>
-            <div w-class="rank-item" style="background:rgba(123,229,84,1);"></div>
-            {{end}}
-        </div>
     </div>
-
+    <div w-class="pseRank-line" style="display: flex;">
+        <div w-class="line" style="{{it.lineStyle}}"></div>
+        <div w-class="line line-space" style="{{it.lineSpaceStyle}}"></div>
+    </div>
     {{if it.showTips}}
         {{if typeof(it.tips)==='string' && it.tips }}
             <div w-class="tips">{{it.tips}}</div>
