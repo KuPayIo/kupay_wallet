@@ -78,68 +78,77 @@ winit.initNext = function () {
 	var isAppNeedUpdate = undefined;
 	var isH5NeedUpdate = undefined;
 
+	var h5UpdateMod = pi_modules.update.exports;
 	var appUpdateMod = pi_modules.appUpdate.exports;
-	appUpdateMod.needUpdate(function (isNeedUpdate) {
-		if (isNeedUpdate > 0) {
-			debugger
-			var updateContent = [];
-			if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) { // android
-				updateContent = pi_update.updateJson.androidUpdateContent || [];
-			}else if(navigator.userAgent.indexOf('YINENG_IOS') >= 0) { // ios
-				updateContent = pi_update.updateJson.iosUpdateContent || [];
-			}else{  // 浏览器
-				updateContent = pi_update.updateJson.androidUpdateContent || [];
+
+	appUpdateMod.init(function () {
+		appUpdateMod.needUpdate(function (isNeedUpdate) {
+			if (isNeedUpdate > 0) {
+				debugger
+				var updateContent = [];
+				if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) { // android
+					updateContent = pi_update.updateJson.androidUpdateContent || [];
+				}else if(navigator.userAgent.indexOf('YINENG_IOS') >= 0) { // ios
+					updateContent = pi_update.updateJson.iosUpdateContent || [];
+				}else{  // 浏览器
+					updateContent = pi_update.updateJson.androidUpdateContent || [];
+				}
+				var option = {
+					updated:updateContent,
+					version:"",//appUpdateMod.getAppRemoteVersion() app更新不显示版本号
+					alertBtnText:"App 需要更新"
+				};
+				pi_update.modifyContent(option);
+				appUpdateMod.update(function (isSuccess) {
+					pi_update.closePop();
+					// alert("更新失败");
+					console.log("appUpdate " + isSuccess);
+				},function(total,process){
+					console.log("total = " + total + " process = " + process);
+					var e = { type: "saveFile", total: total, count: process};
+					pi_update.updateProgress(e);
+				});
+			} else {
+				// 只有在这种情况下才有可能更新H5
+				isAppNeedUpdate = isNeedUpdate;
+				if (isH5NeedUpdate !== undefined) {
+					updateH5();
+				}
 			}
-			var option = {
-				updated:updateContent,
-				version:"",//appUpdateMod.getAppRemoteVersion() app更新不显示版本号
-				alertBtnText:"App 需要更新"
-			};
-			pi_update.modifyContent(option);
-			appUpdateMod.update(function (isSuccess) {
-				pi_update.closePop();
-				// alert("更新失败");
-				console.log("appUpdate " + isSuccess);
-			},function(total,process){
-				console.log("total = " + total + " process = " + process);
-				var e = { type: "saveFile", total: total, count: process};
-				pi_update.updateProgress(e);
-			});
-		} else {
-			// 只有在这种情况下才有可能更新H5
-			isAppNeedUpdate = isNeedUpdate;
-			if (isH5NeedUpdate !== undefined) {
+		});
+
+		h5UpdateMod.setServerInfo("boot/");
+		h5UpdateMod.checkUpdate(function (updateFlag) {
+
+			isH5NeedUpdate = updateFlag;
+			if (isAppNeedUpdate !== undefined) {
 				updateH5();
 			}
-		}
-	});
-
-	var updateMod = pi_modules.update.exports;
-	updateMod.setIntercept(true);
-	updateMod.setServerInfo("app/boot/");
-	updateMod.checkUpdate(function (updateFlag) {
-		isH5NeedUpdate = updateFlag;
-		if (isAppNeedUpdate !== undefined) {
-			updateH5();
-		}
+		});
 	});
 
 	function updateH5() {
 		var needUpdate = false;
 
-		if (isH5NeedUpdate === 0) {
+		if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_NO_UPDATE) {
 			// 不需要更新
 			needUpdate = false;
-		} else if (isH5NeedUpdate === 1) {
-			// alert("上次没有更新完成, 强制更新");
+		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_LAST) {
+			alert("上次没有更新完成, 强制更新");
 			needUpdate = true;
-		} else if (isH5NeedUpdate === 2) {
-			// alert("大版本变动, 强制更新");
+		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_FORCE) {
+			alert("大版本变动, 强制更新");
 			needUpdate = true;
-		} else if (isH5NeedUpdate === 3) {
-			// needUpdate = confirm("小版本变动，需要更新吗？");
-			needUpdate = true;
+		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_OPTIONAL) {
+			needUpdate = confirm("小版本变动，需要更新吗？");
+		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_LAST_ERROR) {
+			alert("服务器连不上，同时上次更新到一半，错误");
+			return;
+		} else if (isH5NeedUpdate === h5UpdateMod.UPDATE_FLAG_APP_ERROR) {
+			alert("服务器连不上，同时app版本太低，错误");
+			return;
 		} else {
+			alert("H5 更新，其他未处理错误");
 			throw new Error("H5 update error!");
 		}
 
@@ -151,7 +160,7 @@ winit.initNext = function () {
 				version:updateVersion
 			};
 			pi_update.modifyContent(option);
-			updateMod.update(function (e) {
+			h5UpdateMod.update(function (e) {
 				//{type: "saveFile", total: 4, count: 1}
 				console.log("update progress: ", e);
 				pi_update.updateProgress(e);
@@ -159,7 +168,7 @@ winit.initNext = function () {
 				setTimeout(()=>{
 					pi_update.closePop();
 					// 重启
-					updateMod.reload();
+					h5UpdateMod.reload();
 				},200);
 				
 			});
