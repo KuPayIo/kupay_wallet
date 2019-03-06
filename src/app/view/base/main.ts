@@ -67,11 +67,11 @@ const preFetchFromNative = () => {
     getScreenModify();
 
     // 预先随机下载
-    // preLoadAd(undefined,() => {
-    //     preLoadAd(undefined,() => {
-    //         preLoadAd(undefined);
-    //     });
-    // });
+    preLoadAd(undefined,() => {
+        preLoadAd(undefined,() => {
+            preLoadAd(undefined);
+        });
+    });
 };
 const checkUpdate = () => {
   // todo

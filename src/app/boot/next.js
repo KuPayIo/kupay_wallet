@@ -207,11 +207,12 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
+				loadWalletFirstPageSource();  //钱包
 				loadWalletLoginSource();  // 登录相关
-				loadImages();
+				// loadImages();
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
-				loadWalletFirstPageSource();  //钱包
+				
 			});
 		}, function (result) {
 			alert("加载基础模块失败, " + result.error + ":" + result.reason);
@@ -220,6 +221,7 @@ winit.initNext = function () {
 	
 	// 加载钱包项目登录相关资源
 	var loadWalletLoginSource = function(){
+		console.time("fp loadWalletLoginSource");
 		var sourceList = [
 			"app/view/base/",
 			"app/net/login.js",
@@ -229,6 +231,7 @@ winit.initNext = function () {
 		];
 		// debugger
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+			console.timeEnd("fp loadWalletLoginSource");
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -246,7 +249,7 @@ winit.initNext = function () {
 			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.openConnect();
 			fpFlags.storeReady = true;
 			enterApp();
-
+			
 			// loadChatSource();  // 聊天
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
@@ -270,6 +273,7 @@ winit.initNext = function () {
 
 	// 加载钱包首页所需资源
 	var loadWalletFirstPageSource = function () {
+		console.time("fp loadWalletFirstPageSource");
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
 			"app/components1/",
@@ -290,12 +294,14 @@ winit.initNext = function () {
 		];
 		// sourceList = sourceList.concat(routerPathList);  
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+			console.timeEnd("fp loadWalletFirstPageSource");
 			console.log("load loadWalletFirstPageSource-----------------");
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
 			fpFlags.walletReady = true;
 			enterApp();
+			
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -352,7 +358,7 @@ winit.initNext = function () {
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
 			setStore('flags/level_3_page_loaded', true);
 			console.timeEnd('all resource loaded');
-			loadLeftImages();
+			// loadLeftImages();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -376,6 +382,7 @@ winit.initNext = function () {
 
 	// 加载聊天代码
 	var loadChatSource = function () {
+		console.time("fp loadChatSource");
 		var sourceList = [
 			"chat/client/app/view/chat/contact.tpl",
 			"chat/client/app/view/chat/contact.js",
@@ -394,6 +401,7 @@ winit.initNext = function () {
 		// 	"chat/client/app/widget/"
 		// ]; 
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+			console.timeEnd("fp loadChatSource");
 			console.log("load loadChatSource-----------------");
 			var tab = util.loadCssRes(fileMap);
 			// 将预加载的资源缓冲90秒，释放
@@ -401,6 +409,7 @@ winit.initNext = function () {
 			tab.release();
 			fpFlags.chatReady = true;
 			enterApp();
+			
 			// loadEarnSource();  // 活动
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
@@ -409,6 +418,7 @@ winit.initNext = function () {
 
 	// 加载活动代码
 	var loadEarnSource = function () {
+		console.time("fp loadEarnSource");
 		var sourceList = [
 			"earn/client/app/view/home/",
 			"earn/client/app/components/",
@@ -422,12 +432,14 @@ winit.initNext = function () {
 			"earn/xlsx/"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+			console.timeEnd("fp loadEarnSource");
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
 			console.log("load loadEarnSource-----------------");
 			fpFlags.earnReady = true;
 			enterApp();
+			
 			// loadWalletFirstPageSource();  //钱包
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);

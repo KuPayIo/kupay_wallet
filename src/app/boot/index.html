@@ -403,6 +403,7 @@
 
 
 	<script type="text/javascript">
+		// alert("index.html");
 		console.time('home enter');
 		console.time('all resource loaded');
 		var LOG_TIME = Date.now()
@@ -411,7 +412,6 @@
 
 		var winit = {};
 		(function () {
-
 			/**
 			 * 判断是否在app内: 协议是file，而且在ios和android的webview运行
 			 */
@@ -440,7 +440,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = true; 
+			winit.debug = false; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
