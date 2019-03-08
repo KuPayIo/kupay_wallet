@@ -7,6 +7,7 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { popNew } from '../../../pi/ui/root';
 import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
+import { getRealNode } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../modulConfig';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
@@ -113,28 +114,13 @@ export class App extends Widget {
         this.props.loading = false;
         this.paint();
     }
+    
     public tabBarChangeListener(event: any, index: number) {
         rippleShow(event);
         const identfy = this.props.tabBarList[index].modulName;
         if (this.props.isActive === identfy) return;
         this.props.isActive = identfy;
         this.old[identfy] = true;
-        const backupTip = getStore('flags').backupTip;
-        if (backupTip) {
-            popNew('app-components1-modalBox-modalBox', getStaticLanguage().ktUp, async () => {
-                setStore('wallet/backupTip',true);
-                setStore('flags/backupTip',false);
-                const psw = await popPswBox();
-                if (!psw) return;
-                const ret = await backupMnemonic(psw);
-                if (ret) {
-                    popNew('app-view-wallet-backup-index',{ ...ret });
-                }
-            },() => {
-                setStore('wallet/backupTip',true);
-                setStore('flags/backupTip',false);
-            });
-        }
         this.paint();
     }
 

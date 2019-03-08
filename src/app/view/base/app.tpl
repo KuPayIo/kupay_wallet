@@ -1,6 +1,5 @@
 <div style="width:100%;height:100%;display: flex;">
-
-<div w-class="tabs">
+<div w-class="tabs" >
 {{if it.type === 0}}
     {{for i, v of it.tabBarList}}
         {{if i == it.isActive}}

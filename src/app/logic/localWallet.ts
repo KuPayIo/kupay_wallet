@@ -326,18 +326,15 @@ export const createNewAddr = async (passwd: string, currencyName: string) => {
 
 // 删除助记词
 export const deleteMnemonic = () => {
-    
     setStore('wallet/isBackup',true);
 };
 
 // 记录通过分享片段备份
 export const sharePart = () => {
-    
     setStore('wallet/sharePart',true);
 };
 
 // 记录通过助计词备份
 export const helpWord = () => {
-    
     setStore('wallet/helpWord',true);
 };

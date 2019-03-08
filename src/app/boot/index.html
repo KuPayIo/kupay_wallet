@@ -401,9 +401,9 @@
 		}
 	</style>
 
-
 	<script type="text/javascript">
 		// alert("index.html");
+		self.startTime = Date.now();
 		console.time('home enter');
 		console.time('all resource loaded');
 		var LOG_TIME = Date.now()
@@ -440,7 +440,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = true; 
+			winit.debug = false; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
@@ -752,28 +752,28 @@
 		<div class="swiper-pagination"></div>
 	</div>
 </body>
-<script src="./swiper.min.js"></script>
 <script type="text/javascript">
-setTimeout(() => {
-	var mySwiper = new Swiper('.swiper-container', {
-      pagination: {
-		el: '.swiper-pagination',
-		dynamicBullets: true
-      },
-    });
-	if(!localStorage.firstInApp){
-		document.querySelector('#swiper-container').setAttribute('style','z-index:9999;')
-		
-	}else{
-		document.body.removeChild(document.querySelector('#swiper-container'));
-	}
-}, 1000);
-
-var btnStart = document.querySelector('.btn-start');
-btnStart.onclick = function(){
+if(!localStorage.firstInApp){
+	winit.loadJS(winit.getLoadDomain("swiper.min.js"),
+					"/wallet/app/boot/swiper.min.js", "utf8", function(url,err){
+						var mySwiper = new Swiper('.swiper-container', {
+							pagination: {
+								el: '.swiper-pagination',
+								dynamicBullets: true
+							},
+						});
+						document.querySelector('#swiper-container').setAttribute('style','z-index:9999;');
+						var btnStart = document.querySelector('.btn-start');
+						btnStart.onclick = function(){
+							document.body.removeChild(document.querySelector('#swiper-container'));
+							localStorage.setItem('firstInApp','true');
+						}
+					}, "load index error");
+	
+}else{
 	document.body.removeChild(document.querySelector('#swiper-container'));
-	localStorage.setItem('firstInApp','true');
 }
+
 </script>
 
 </html>

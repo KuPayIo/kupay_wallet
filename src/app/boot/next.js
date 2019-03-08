@@ -208,7 +208,7 @@ winit.initNext = function () {
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
 				loadWalletLoginSource();  // 登录相关
-				loadImages();
+				// loadImages();
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
@@ -232,6 +232,7 @@ winit.initNext = function () {
 		// debugger
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			console.timeEnd("fp loadWalletLoginSource");
+			console.log(11111,Date.now()-self.startTime)
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -311,7 +312,11 @@ winit.initNext = function () {
 	var enterApp = function(){
 		console.log(`storeReady = ${fpFlags.storeReady},chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
 		if( fpFlags.storeReady && fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
-			util.loadDir(["pi/ui/"], flags, fm, undefined, function (fileMap) {
+			console.time("enterApp ----");
+			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/lang.js","pi/ui/lang.tpl"];
+			// var sourceList = ["pi/ui/"];
+			util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+				console.timeEnd("enterApp ----");
 				var tab = util.loadCssRes(fileMap);
 				tab.timeout = 90000;
 				tab.release();
@@ -676,5 +681,5 @@ updateUiInit();
 		self.pi_modules.butil &&
 		self._babelPolyfill &&
 		winit.initNext();
-	!self._babelPolyfill && setTimeout(winit.init, 100);
+	!self._babelPolyfill && setTimeout(winit.init, 17);
 })();
