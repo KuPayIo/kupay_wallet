@@ -4,17 +4,14 @@
 // ================================ 导入
 import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { register as earnRegister } from '../../../earn/client/app/store/memstore';
-import { popNew } from '../../../pi/ui/root';
 import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
-import { getRealNode } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../modulConfig';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
 import { UserInfo } from '../../store/interface';
-import { getStore, register, setStore } from '../../store/memstore';
-import { getStaticLanguage, kickOffline, popPswBox } from '../../utils/tools';
-import { backupMnemonic } from '../../utils/walletTools';
+import { getStore, register } from '../../store/memstore';
+import { kickOffline } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

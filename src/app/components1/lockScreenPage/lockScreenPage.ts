@@ -6,9 +6,10 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { logoutAccount } from '../../net/login';
 import { LockScreen } from '../../store/interface';
 import { getStore, register, setStore  } from '../../store/memstore';
-import { lockScreenHash, lockScreenVerify, logoutAccount } from '../../utils/tools';
+import { lockScreenHash, lockScreenVerify } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

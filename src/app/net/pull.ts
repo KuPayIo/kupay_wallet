@@ -1,8 +1,8 @@
 /**
  * 主动向后端通讯
  */
-import { open, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
-import { MainChainCoin, uploadFileUrl, wsUrl } from '../config';
+import { request } from '../../pi/net/ui/con_mgr';
+import { MainChainCoin, uploadFileUrl } from '../config';
 import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
@@ -10,7 +10,7 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDivid
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { base64ToFile, decrypt, encrypt, fetchDeviceId, getUserInfo, kickOffline, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 import { defaultLogin } from './login';
 

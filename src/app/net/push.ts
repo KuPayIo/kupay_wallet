@@ -92,12 +92,6 @@ export const initPush = () => {
             
         }
         
-        // if (res.cointype === CloudCurrencyType.KT) {   // 回到一级页面提醒备份
-        //     const wallet = getStore('wallet');
-        //     if (!wallet.backupTip && !wallet.isBackup) {
-        //         setStore('flags/backupTip',true);   // 一级页面弹框标识
-        //     }  
-        // }
     });
 
     // setMsgHandler('event_kt_alert',(res) => {

@@ -1,3 +1,4 @@
+import { TaskSid } from './parse';
 
 /**
  * 内存中的数据结构
@@ -16,30 +17,6 @@ export interface Store {
 
     third: Third;        // 第三方通信数据，如：changelly...
     flags: object;       // 全局的标识
-}
-
-/**
- * 后端定义的任务id
- */
-export enum TaskSid {
-    Mine = '101',                 // 新挖矿
-    Recharge = 301,            // 充值
-    Withdraw = 302,            // 提现
-    CreateWallet = 1001,       // 创建钱包
-    FirstChargeEth = 1002,     // 以太坊首次转入
-    BindPhone = 1003,          // 注册手机
-    ChargeEth = 1004,          // 存币
-    InviteFriends = 1005,      // 邀请真实好友
-    BuyFinancial = 1007,       // 购买理财产品
-    Transfer = 1008,           // 交易奖励
-    Dividend = 1009,           // 分红
-    Mining = 1010,             // 挖矿
-    Chat = 1011,               // 聊天
-    FinancialManagement = 330, // 理财
-    LuckyMoney = 340,           // 红包
-    LuckyMoneyRetreat = 341,     // 回退红包
-    Wxpay = 370,                // 微信支付
-    Alipay = 371                // 支付宝支付
 }
 
 /**
@@ -121,7 +98,7 @@ export interface Third {
     changellyCurrencies: string[];            // changelly 支持的币种
 
     rate: number;                                 // 货币的美元汇率
-    silver:Gold;                                // 白银价格
+    silver:Silver;                                // 白银价格
     currency2USDTMap: Map<string, Currency2USDT>;  // k线  --> 计算涨跌幅
 }
 
@@ -536,9 +513,9 @@ export interface LockScreen {
 }
 
 /**
- * GT价格、涨跌
+ * ST价格、涨跌
  */
-export interface Gold {
+export interface Silver {
     price:number;          // 价格
     change:number;         // 涨跌
 }
