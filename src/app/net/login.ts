@@ -7,13 +7,29 @@ import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, s
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
-import { getStore, initCloudWallets, register, setStore } from '../store/memstore';
-import { decrypt, encrypt, fetchDeviceId, kickOffline, popNewMessage, popPswBox } from '../utils/tools';
-import { VerifyIdentidy } from '../utils/walletTools';
-import { requestAsync } from './pull';
+import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
+import { Account, getStore, initCloudWallets, LocalCloudWallet, register,setStore } from '../store/memstore';
+import { CMD } from '../utils/constants';
+import { fetchDeviceId, popNewMessage, popPswBox } from '../utils/tools';
+import { decrypt, encrypt, VerifyIdentidy } from '../utils/walletTools';
+import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 import { setReconnectingState } from './reconnect';
 
 declare var pi_modules;
+
+// 登录成功之后的回调列表
+const loginedCallbackList:LoginType[] = [];
+
+// 登录失败延迟执行函数
+let loginWalletFailedDelay;
+
+// 用户登出回调
+const logoutCallbackList:Function[] = [];
+
+interface LoginType {
+    appId:string;
+    success:Function;
+}
 
  // 设置重登录回调
 setReloginCallback((res) => {
@@ -312,6 +328,71 @@ export const logoutAccount = () => {
 };
 
 /**
+ * 登录成功
+ */
+export const loginSuccess = (account:Account) => {    
+    const fileUser = account.user;
+    const user:User = {
+        isLogin: true,
+        offline:true,
+        allIsLogin:true,
+        conRandom:'',
+        conUid:'',
+        id : fileUser.id,
+        token : fileUser.token,
+        publicKey : fileUser.publicKey,
+        salt : fileUser.salt,
+        info : { ...fileUser.info }
+    };
+   
+    const localWallet = account.wallet;
+    const currencyRecords = [];
+    for (const localRecord of localWallet.currencyRecords) {
+        const addrs = [];
+        for (const info of localRecord.addrs) {
+            const addrInfo:AddrInfo = {
+                addr:info.addr,
+                balance:info.balance,
+                txHistory:[]
+            };
+            addrs.push(addrInfo);
+        }
+        const record:CurrencyRecord = {
+            currencyName: localRecord.currencyName,           
+            currentAddr: localRecord.currentAddr ,           
+            addrs,             
+            updateAddr: localRecord.updateAddr         
+        };
+        currencyRecords.push(record);
+    }
+    const wallet:Wallet = {
+        vault:localWallet.vault,
+        setPsw:true,
+        backupTip:false,               
+        isBackup: localWallet.isBackup,
+        sharePart:false, 
+        helpWord:false,                
+        showCurrencys: localWallet.showCurrencys,           
+        currencyRecords,
+        changellyPayinAddress:[],
+        changellyTempTxs:[]
+    };
+  
+    const cloud = getStore('cloud');
+    const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(account.cloud.cloudWallets);
+    for (const [key,value] of localCloudWallets) {
+        const cloudWallet = cloud.cloudWallets.get(key);
+        cloudWallet.balance = localCloudWallets.get(key).balance;
+    }
+
+    setStore('wallet',wallet,false);
+    setStore('cloud',cloud,false);
+    setStore('user',user);
+    setStore('flags',{ level_2_page_loaded:true });
+    openConnect();
+};
+
+/**
  * 登录钱包
  */
 export const loginWallet = (appId:string,success:Function) => {
@@ -332,19 +413,25 @@ export const loginWallet = (appId:string,success:Function) => {
 export const logoutWallet = (success:Function) => {
     logoutCallbackList.push(success);
 };
-// 登录成功之后的回调列表
-const loginedCallbackList:LoginType[] = [];
 
-// 登录失败延迟执行函数
-let loginWalletFailedDelay;
-
-// 用户登出回调
-const logoutCallbackList:Function[] = [];
-
-interface LoginType {
-    appId:string;
-    success:Function;
-}
+/**
+ * 踢人下线提示
+ * @param secretHash 密码
+ */
+export const kickOffline = (secretHash:string = '') => {
+    popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
+        title:'检测到在其它设备有登录',
+        content:'清除其它设备账户信息' 
+    },(deleteAccount:boolean) => {
+        if (deleteAccount) {
+            getRandom(secretHash,CMD.FORCELOGOUTDEL);
+        } else {
+            getRandom(secretHash,CMD.FORCELOGOUT);
+        }
+    },() => {
+        getRandom(secretHash,CMD.FORCELOGOUT);
+    });
+};
 
 /**
  * 登录钱包并获取openId成功
@@ -417,7 +504,39 @@ register('flags/level_3_page_loaded', (loaded: boolean) => {
     loginWalletFailedDelay && loginWalletFailedDelay();
 });
 
+// 注册store
 export const registerStore = () => {
+    // 用户信息变化
+    register('user/info', (userInfo: UserInfo) => {
+        if (userInfo) {
+            setUserInfo();
+        }
+    });
+
+        // 登录状态成功
+    register('user/isLogin', (isLogin: boolean) => {
+        if (isLogin) {
+                // 余额
+            getServerCloudBalance();
+
+                // 获取真实用户
+            getRealUser();
+                // 用户基础信息
+            getUserInfoFromServer(getStore('user/conUid'));
+            
+        } 
+    });
+
+        // 获取随机数成功
+    register('user/conRandom',() => {
+            // eth gasPrice
+        fetchGasPrices();
+
+            // btc fees
+        fetchBtcFees();
+
+    });
+
     // 钱包login
     register('user/isLogin', (loaded: boolean) => {
         setAllIsLogin();

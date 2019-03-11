@@ -12,13 +12,12 @@ import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
 import { getScreenModify, preLoadAd } from '../../logic/native';
-import { getAllIsLogin, manualReconnect } from '../../net/reconnect';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
 import { fetchDeviceId } from '../../utils/tools';
 
 // ============================== 导出
-
+declare var pi_modules;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void =>  {
@@ -91,8 +90,9 @@ const addAppEvent = () => {
             });
         }
         setTimeout(() => {
-            if (!getAllIsLogin()) {
-                manualReconnect();
+            const reconnect =  pi_modules.commonjs.exports.relativeGet('app/net/reconnect').exports;
+            if (reconnect && !reconnect.getAllIsLogin()) {
+                reconnect.manualReconnect();
             }
         },100);  // 检查是否已经退出登录
     });

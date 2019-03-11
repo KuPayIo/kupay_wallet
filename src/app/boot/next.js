@@ -207,10 +207,10 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				loadWalletLoginSource();  // 登录相关
+				// loadWalletLoginSource();  // 登录相关
 				// loadImages();
-				loadChatSource();  // 聊天
-				loadEarnSource();  // 活动
+				// loadChatSource();  // 聊天
+				// loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
 				
 			});
@@ -277,26 +277,30 @@ winit.initNext = function () {
 		console.time("fp loadWalletFirstPageSource");
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
-			"app/components1/",
-			"app/components/password/",
-			"app/components/input/",
-			"app/components/textarea/",
-			"app/components/bindPhone/",
-			"app/res/css/",
-			"app/res/js/",
-			"app/view/play/home/",
-			"app/view/chat/home/",
-			"app/view/wallet/home/",
-			"app/view/wallet/create/",
-			"app/view/wallet/import/",
-			"app/view/earn/home/",
-			"app/view/ceshi/",
-			"app/view/mine/setting/",
+			"app/view/base/entrance.js",
+			"app/utils/commonjsTools.js",
+			"app/logic/localWallet.js",
+			// "app/components1/",
+			// "app/components/password/",
+			// "app/components/input/",
+			// "app/components/textarea/",
+			// "app/components/bindPhone/",
+			// "app/res/css/",
+			// "app/res/js/",
+			// "app/view/play/home/",
+			// "app/view/chat/home/",
+			// "app/view/wallet/home/",
+			// "app/view/wallet/create/",
+			// "app/view/wallet/import/",
+			// "app/view/earn/home/",
+			// "app/view/mine/setting/"
 		];
-		// sourceList = sourceList.concat(routerPathList);  
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			console.timeEnd("fp loadWalletFirstPageSource");
 			console.log("load loadWalletFirstPageSource-----------------");
+			debugger
+			const getDataCenter = pi_modules.commonjs.exports.relativeGet("app/utils/commonjsTools").exports.getDataCenter;
+			getDataCenter().then(r=>{debugger});
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -310,8 +314,8 @@ winit.initNext = function () {
 
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
-		console.log(`storeReady = ${fpFlags.storeReady},chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
-		if( fpFlags.storeReady && fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
+		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
+		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
 			console.time("enterApp ----");
 			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/lang.js","pi/ui/lang.tpl"];
 			// var sourceList = ["pi/ui/"];
@@ -329,7 +333,7 @@ winit.initNext = function () {
 					document.body.removeChild(document.getElementById('rcmj_loading_log'));
 				});
 				// loadImages();  // 预加载图片
-				loadLeftSource();
+				// loadLeftSource();
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
 			}, dirProcess.handler);

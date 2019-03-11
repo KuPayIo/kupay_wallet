@@ -5,17 +5,16 @@ import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
+import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
 import { Cipher } from '../core/crypto/cipher';
-import { getDeviceId, getDeviceInfo } from '../logic/native';
-import { getRandom, openConnect } from '../net/login';
-// tslint:disable-next-line:max-line-length
-import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
-import { Account, getCloudBalances, getStore, LocalCloudWallet,setStore } from '../store/memstore';
-// tslint:disable-next-line:max-line-length
-import { CMD, currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
-import { sat2Btc, wei2Eth } from './unitTools';
+import { getDeviceId } from '../logic/native';
+import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
+import { getCloudBalances, getStore,setStore } from '../store/memstore';
+import { toMnemonic } from './commonjsTools';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, resendInterval } from './constants';
+import { nameWare } from './nameWareHouse';
 
 /**
  * 获取当前钱包对应货币正在使用的地址信息
@@ -663,45 +662,6 @@ export const timestampFormatToDate = (timestamp: number) => {
 
     return `${year}-${month}-${day}`;
 };
-/**
- * 密码加密
- * @param plainText 需要加密的文本
- */
-export const encrypt = (plainText: string, salt: string) => {
-    const cipher = new Cipher();
-
-    return cipher.encrypt(salt, plainText);
-};
-
-/**
- * 密码解密
- * @param cipherText 需要解密的文本
- */
-export const decrypt = (cipherText: string, salt: string) => {
-    const cipher = new Cipher();
-
-    return cipher.decrypt(salt, cipherText);
-};
-
-// hash256;
-export const sha256 = (data: string) => {
-    const cipher = new Cipher();
-
-    return cipher.sha256(data);
-};
-
-// 锁屏密码验证
-export const lockScreenVerify = (psw) => {
-    const hash256 = sha256(psw + getStore('user/salt'));
-    const localHash256 = getStore('setting/lockScreen').psw;
-
-    return hash256 === localHash256;
-};
-// 锁屏密码hash算法
-export const lockScreenHash = (psw) => {
-    return sha256(psw + getStore('user/salt'));
-};
-
 // ==========================================================new version tools
 
 // 获取gasPrice
@@ -1115,54 +1075,6 @@ export const getConfirmBlockNumber = (currencyName: string, amount: number) => {
 };
 
 /**
- * 获取设备唯一id
- */
-export const fetchDeviceId = async () => {
-    console.log('fetchDeviceId');
-    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
-        return new Promise((resolve,reject) => {
-            const deviceId = cryptoRandomInt().toString();
-            const hash256 = sha256(deviceId);
-            resolve(hash256);
-            
-        });
-    } else {// ============================mobile
-        return new Promise((resolve,reject) => {
-            getDeviceId((deviceId:string) => {
-                const hash256 = sha256(deviceId + getStore('user/id'));
-                resolve(hash256);
-            });
-        });
-    }
-   
-};
-
-/**
- * 获取设备信息
- */
-export const fetchDeviceInfo = async () => {
-    console.log('fetchDeviceInfo');
-    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
-        return new Promise((resolve,reject) => {
-            const deviceInfo = {
-                system:navigator.userAgent
-            };
-            resolve(deviceInfo);
-        });
-    } else {// ============================mobile
-        return new Promise((resolve,reject) => {
-            getDeviceInfo((info:any) => {
-                console.log('fetchDeviceInfo = ',info);
-                resolve(info);
-            },(err) => {
-                reject(err);
-            });
-        });
-    }
-   
-};
-
-/**
  * 根据当前语言设置获取静态文字，对于组件模块
  */
 export const getLanguage = (w) => {
@@ -1273,29 +1185,6 @@ export const getRemoteVersion = () => {
     const versionStr = versionArr.join('.');
 
     return versionStr.slice(0, versionStr.length - 7);
-};
-
-// 更新矿工费
-export const fetchMinerFeeList = (currencyName) => {
-    const cn = (currencyName === 'ETH' || ERC20Tokens[currencyName]) ? 'ETH' : 'BTC';
-    const toa = timeOfArrival[cn];
-    const minerFeeList = [];
-    for (let i = 0; i < toa.length; i++) {
-        let minerFee = 0;
-        if (cn === 'ETH') {
-            const gasLimit = getStore('third/gasLimitMap').get(currencyName) || defaultGasLimit;
-            minerFee = wei2Eth(gasLimit * fetchGasPrice(toa[i].level));
-        } else {
-            minerFee = sat2Btc(fetchBtcMinerFee(toa[i].level));
-        }
-        const obj = {
-            ...toa[i],
-            minerFee
-        };
-        minerFeeList.push(obj);
-    }
-
-    return minerFeeList;
 };
 
 /**
@@ -1493,71 +1382,6 @@ export const getCurrentEthAddr = () => {
 };
 
 /**
- * 登录成功
- */
-export const loginSuccess = (account:Account) => {    
-    const fileUser = account.user;
-    const user:User = {
-        isLogin: true,
-        offline:true,
-        allIsLogin:true,
-        conRandom:'',
-        conUid:'',
-        id : fileUser.id,
-        token : fileUser.token,
-        publicKey : fileUser.publicKey,
-        salt : fileUser.salt,
-        info : { ...fileUser.info }
-    };
-   
-    const localWallet = account.wallet;
-    const currencyRecords = [];
-    for (const localRecord of localWallet.currencyRecords) {
-        const addrs = [];
-        for (const info of localRecord.addrs) {
-            const addrInfo:AddrInfo = {
-                addr:info.addr,
-                balance:info.balance,
-                txHistory:[]
-            };
-            addrs.push(addrInfo);
-        }
-        const record:CurrencyRecord = {
-            currencyName: localRecord.currencyName,           
-            currentAddr: localRecord.currentAddr ,           
-            addrs,             
-            updateAddr: localRecord.updateAddr         
-        };
-        currencyRecords.push(record);
-    }
-    const wallet:Wallet = {
-        vault:localWallet.vault,
-        setPsw:true,
-        backupTip:false,               
-        isBackup: localWallet.isBackup,
-        sharePart:false, 
-        helpWord:false,                
-        showCurrencys: localWallet.showCurrencys,           
-        currencyRecords,
-        changellyPayinAddress:[],
-        changellyTempTxs:[]
-    };
-  
-    const cloud = getStore('cloud');
-    const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(account.cloud.cloudWallets);
-    for (const [key,value] of localCloudWallets) {
-        const cloudWallet = cloud.cloudWallets.get(key);
-        cloudWallet.balance = localCloudWallets.get(key).balance;
-    }
-
-    setStore('wallet',wallet,false);
-    setStore('cloud',cloud,false);
-    setStore('user',user);
-    setStore('flags',{ level_2_page_loaded:true });
-    openConnect();
-};
-
-/**
  * 获取用户基本信息
  */
 export const getUserInfo = () => {
@@ -1578,21 +1402,68 @@ export const getUserInfo = () => {
     };
 };
 
+ // 水波纹动画效果展示
+export const rippleShow = (e:any) => {
+    getRealNode(e.node).classList.add('ripple');
+
+    setTimeout(() => {
+        getRealNode(e.node).classList.remove('ripple');
+    }, 500);
+};
+
 /**
- * 踢人下线提示
- * @param secretHash 密码
+ * 获取设备唯一id
  */
-export const kickOffline = (secretHash:string = '') => {
-    popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
-        title:'检测到在其它设备有登录',
-        content:'清除其它设备账户信息' 
-    },(deleteAccount:boolean) => {
-        if (deleteAccount) {
-            getRandom(secretHash,CMD.FORCELOGOUTDEL);
-        } else {
-            getRandom(secretHash,CMD.FORCELOGOUT);
-        }
-    },() => {
-        getRandom(secretHash,CMD.FORCELOGOUT);
-    });
+export const fetchDeviceId = async () => {
+    console.log('fetchDeviceId');
+    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
+        return new Promise((resolve,reject) => {
+            const deviceId = cryptoRandomInt().toString();
+            resolve(deviceId);
+            
+        });
+    } else {// ============================mobile
+        return new Promise((resolve,reject) => {
+            getDeviceId((deviceId:string) => {
+                resolve(deviceId);
+            });
+        });
+    }
+   
+};
+
+/**
+ * 获取随机名字
+ */
+export const playerName =  () => {
+    const num1 = nameWare[0].length;
+    const num2 = nameWare[1].length;
+    let name = '';
+    // tslint:disable-next-line:max-line-length
+    name = unicodeArray2Str(nameWare[0][Math.floor(Math.random() * num1)]) + unicodeArray2Str(nameWare[1][Math.floor(Math.random() * num2)]);
+    
+    return name;
+};
+
+/**
+ * 获取助记词
+ */
+export const getMnemonic = async (passwd) => {
+    const wallet = getStore('wallet');
+    const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
+    try {
+        const cipher = new Cipher();
+        console.time('transfer3 cipher.decrypt');
+        const r = cipher.decrypt(hash, wallet.vault);
+        console.timeEnd('transfer3 cipher.decrypt');
+        console.time('transfer3 toMnemonic');
+        const mnemonic = await toMnemonic(lang, hexstrToU8Array(r));
+        console.timeEnd('transfer3 toMnemonic');
+
+        return mnemonic;
+    } catch (error) {
+        console.log(error);
+
+        return '';
+    }
 };

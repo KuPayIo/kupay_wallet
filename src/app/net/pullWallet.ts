@@ -16,9 +16,9 @@ import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { erc20GasLimitRate } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx } from '../utils/tools';
+import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
-import { getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
+import { fetchMinerFeeList, getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
 import { btcRechargeToServer, btcWithdrawFromServer, getBankAddr, getBtcBankAddr, getRechargeLogs, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './pull';
 // ===================================================== 导出

@@ -1,7 +1,6 @@
 /**
  * wallet home 
  */
-import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -9,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, hasWallet, popPswBox } from '../../../utils/tools';
+import { copyToClipboard, getUserInfo, hasWallet, popPswBox, rippleShow } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出

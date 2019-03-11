@@ -130,7 +130,7 @@ export const unregister = (keyName: string, cb: Function): void => {
  */
 export const getCloudBalances = () => {
     const cloudWallets = store.cloud.cloudWallets;
-    const cloudBalances = new Map<CloudCurrencyType, number>();
+    const cloudBalances = new Map<CloudCurrencyType | String, number>();
     for (const [key, val] of cloudWallets) {
         cloudBalances.set(key, val.balance || 0);
     }

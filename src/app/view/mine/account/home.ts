@@ -1,7 +1,6 @@
 /**
  * account home
  */
-import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -10,8 +9,8 @@ import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
-import { getUserInfo, imgResize, popNewMessage, popPswBox } from '../../../utils/tools';
-import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
+import { getMnemonic, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { backupMnemonic } from '../../../utils/walletTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

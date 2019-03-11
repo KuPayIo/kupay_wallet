@@ -11,10 +11,11 @@ import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
 import { buyProduct, getPurchaseRecord, getServerCloudBalance } from '../net/pull';
 import { getStore, setStore } from '../store/memstore';
-import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
-import { nameWare } from './nameWareHouse';
+import { defaultGasLimit, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from './constants';
 import { shareSecret } from './secretsBase';
-import { calcHashValuePromise, decrypt, encrypt, hexstrToU8Array, popNewLoading, popNewMessage, unicodeArray2Str } from './tools';
+// tslint:disable-next-line:max-line-length
+import { calcHashValuePromise, fetchBtcMinerFee, fetchGasPrice, hexstrToU8Array, popNewLoading, popNewMessage } from './tools';
+import { sat2Btc, wei2Eth } from './unitTools';
 
 /**
  * 获取新的地址信息
@@ -112,28 +113,7 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
         return false;
     }
 };
-/**
- * 获取助记词
- */
-export const getMnemonic = async (passwd) => {
-    const wallet = getStore('wallet');
-    const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
-    try {
-        const cipher = new Cipher();
-        console.time('transfer3 cipher.decrypt');
-        const r = cipher.decrypt(hash, wallet.vault);
-        console.timeEnd('transfer3 cipher.decrypt');
-        console.time('transfer3 toMnemonic');
-        const mnemonic = toMnemonic(lang, hexstrToU8Array(r));
-        console.timeEnd('transfer3 toMnemonic');
 
-        return mnemonic;
-    } catch (error) {
-        console.log(error);
-
-        return '';
-    }
-};
 /**
  * 获取助记词16进制字符串
  */
@@ -272,19 +252,6 @@ export const getMnemonicByHash = (hash:string) => {
 };
 
 /**
- * 获取随机名字
- */
-export const playerName =  () => {
-    const num1 = nameWare[0].length;
-    const num2 = nameWare[1].length;
-    let name = '';
-    // tslint:disable-next-line:max-line-length
-    name = unicodeArray2Str(nameWare[0][Math.floor(Math.random() * num1)]) + unicodeArray2Str(nameWare[1][Math.floor(Math.random() * num2)]);
-    
-    return name;
-};
-
-/**
  * 获取钱包地址的位置
  */
 export const getWltAddrIndex = (addr: string, currencyName: string) => {
@@ -312,4 +279,66 @@ export const passwordChange = async (secretHash: string, newPsw: string) => {
     wallet.vault = encrypt(oldVault, newHash);
     wallet.setPsw = true;
     setStore('wallet',wallet);
+};
+
+// 更新矿工费
+export const fetchMinerFeeList = (currencyName) => {
+    const cn = (currencyName === 'ETH' || ERC20Tokens[currencyName]) ? 'ETH' : 'BTC';
+    const toa = timeOfArrival[cn];
+    const minerFeeList = [];
+    for (let i = 0; i < toa.length; i++) {
+        let minerFee = 0;
+        if (cn === 'ETH') {
+            const gasLimit = getStore('third/gasLimitMap').get(currencyName) || defaultGasLimit;
+            minerFee = wei2Eth(gasLimit * fetchGasPrice(toa[i].level));
+        } else {
+            minerFee = sat2Btc(fetchBtcMinerFee(toa[i].level));
+        }
+        const obj = {
+            ...toa[i],
+            minerFee
+        };
+        minerFeeList.push(obj);
+    }
+
+    return minerFeeList;
+};
+
+/**
+ * 密码加密
+ * @param plainText 需要加密的文本
+ */
+export const encrypt = (plainText: string, salt: string) => {
+    const cipher = new Cipher();
+
+    return cipher.encrypt(salt, plainText);
+};
+
+/**
+ * 密码解密
+ * @param cipherText 需要解密的文本
+ */
+export const decrypt = (cipherText: string, salt: string) => {
+    const cipher = new Cipher();
+
+    return cipher.decrypt(salt, cipherText);
+};
+
+// hash256;
+export const sha256 = (data: string) => {
+    const cipher = new Cipher();
+
+    return cipher.sha256(data);
+};
+
+// 锁屏密码验证
+export const lockScreenVerify = (psw) => {
+    const hash256 = sha256(psw + getStore('user/salt'));
+    const localHash256 = getStore('setting/lockScreen').psw;
+
+    return hash256 === localHash256;
+};
+// 锁屏密码hash算法
+export const lockScreenHash = (psw) => {
+    return sha256(psw + getStore('user/salt'));
 };

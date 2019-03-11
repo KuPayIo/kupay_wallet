@@ -2,16 +2,13 @@
  * 首页
  */
 // ================================ 导入
-import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { getLang, setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../modulConfig';
-import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from '../../net/pull';
-import { UserInfo } from '../../store/interface';
-import { getStore, register } from '../../store/memstore';
-import { kickOffline } from '../../utils/tools';
+import { register } from '../../store/memstore';
+import { rippleShow } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -138,6 +135,7 @@ export class App extends Widget {
 }
 
 // ===================================================== 本地
+
 // ===================================================== 立即执行
 
 register('flags/level_3_page_loaded', (loaded: boolean) => {
@@ -149,44 +147,11 @@ register('flags/level_3_page_loaded', (loaded: boolean) => {
     } else { // 处理导航页过程中资源已经加载完毕
         localStorage.setItem('level_2_page_loaded', '1');
     }
-    // if (!getStore('user/id')) {
-    //     popNew('app-components1-modalBox-newUserWelfare');
-    // }
     if (localStorage.getItem('kickOffline')) {
+        const kickOffline = pi_modules.commonjs.exports.relativeGet('app/net/login').exports.kickOffline;
         localStorage.removeItem('kickOffline');
         kickOffline();  // 踢人下线提示
     }
-});
-
-// 用户信息变化
-register('user/info', (userInfo: UserInfo) => {
-    if (userInfo) {
-        setUserInfo();
-    }
-});
-
-// 登录状态成功
-register('user/isLogin', (isLogin: boolean) => {
-    if (isLogin) {
-        // 余额
-        getServerCloudBalance();
-
-        // 获取真实用户
-        getRealUser();
-        // 用户基础信息
-        getUserInfoFromServer(getStore('user/conUid'));
-       
-    } 
-});
-
-// 获取随机数成功
-register('user/conRandom',() => {
-    // eth gasPrice
-    fetchGasPrices();
-
-     // btc fees
-    fetchBtcFees();
-
 });
 
 // 语言配置

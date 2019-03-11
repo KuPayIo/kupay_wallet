@@ -2,10 +2,10 @@
  * 可滑动页面头部导航栏
  */
 // ================================ 导入
-import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
+import { rippleShow } from '../../utils/tools';
 
 interface Props {
     scroll?:boolean;

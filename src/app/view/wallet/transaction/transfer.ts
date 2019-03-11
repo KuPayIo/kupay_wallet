@@ -14,7 +14,8 @@ import { MinerFeeLevel, TxHistory } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 import { doErrorShow } from '../../../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, fetchMinerFeeList, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getStaticLanguage, judgeAddressAvailable, popPswBox, updateLocalTx } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getStaticLanguage, judgeAddressAvailable, popPswBox, updateLocalTx } from '../../../utils/tools';
+import { fetchMinerFeeList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

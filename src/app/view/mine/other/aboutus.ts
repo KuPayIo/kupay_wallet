@@ -2,12 +2,11 @@
  * about us
  */
 // =======================================导入
-import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
-import { getLocalVersion, popNewMessage } from '../../../utils/tools';
+import { getLocalVersion, popNewMessage, rippleShow } from '../../../utils/tools';
 // =========================================导出
 declare var pi_update;
 export class Aboutus extends Widget {

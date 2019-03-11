@@ -2,11 +2,11 @@
  * 首页头部导航栏
  */
 // ================================ 导入
-import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { Json } from '../../../pi/lang/type';
 import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
+import { rippleShow } from '../../utils/tools';
 
 interface Props {
     avatar:string;

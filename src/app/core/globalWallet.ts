@@ -4,8 +4,7 @@
 import { btcNetwork, ERC20Tokens } from '../config';
 import { AddrInfo, CurrencyRecord } from '../store/interface';
 import { lang, strength } from '../utils/constants';
-import { u8ArrayToHexstr } from '../utils/tools';
-import { getMnemonic } from '../utils/walletTools';
+import { getMnemonic, u8ArrayToHexstr } from '../utils/tools';
 import { BTCWallet } from './btc/wallet';
 import { Cipher } from './crypto/cipher';
 import { EthWallet } from './eth/wallet';

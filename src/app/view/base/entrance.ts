@@ -1,10 +1,9 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
-import { openConnect } from '../../net/login';
+import { getLoginMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
-import { popNewMessage } from '../../utils/tools';
-import { playerName } from '../../utils/walletTools';
+import { playerName, popNewMessage } from '../../utils/tools';
 
 /**
  * 登录注册
@@ -24,8 +23,10 @@ export class Entrance extends Widget {
 
                 return;
             }
+            getLoginMod().then(mod => {
+                mod.openConnect(secrectHash);
+            });
             
-            openConnect(secrectHash);
             this.ok && this.ok();
             popNewMessage('登录成功');
         });

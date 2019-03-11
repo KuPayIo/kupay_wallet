@@ -2,13 +2,12 @@
  * 联系我们
  */
 // ===============================================导入
-import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
-import { getLocalVersion } from '../../../utils/tools';
+import { getLocalVersion, rippleShow } from '../../../utils/tools';
 // ==================================================导出
 
 export class ContanctUs extends Widget {

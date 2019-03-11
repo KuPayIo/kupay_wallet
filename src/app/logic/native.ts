@@ -77,24 +77,6 @@ export const getDeviceId = (okCB?) => {
 };
 
 /**
- * 获取设备信息
- */
-export const getDeviceInfo = (okCB?,errCB?) => {
-    const systemInfo = new SystemInfoProvider();
-    systemInfo.init();
-    systemInfo.getDeviceInfo({
-        success: (result) => {
-            console.log(`获取设备的信息成功${JSON.stringify(result)}`);
-            okCB && okCB(result);
-        }
-        , fail: (result) => {
-            console.log(`获取设备的信息失败${JSON.stringify(result)}`);
-            errCB && errCB(result);
-        }
-    });
-};
-
-/**
  * 截屏
  */
 export const makeScreenShot = (okCB?,errCB?) => {

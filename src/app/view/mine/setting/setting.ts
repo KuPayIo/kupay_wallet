@@ -2,14 +2,13 @@
  * setting
  */
 // =============================================导入
-import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { logoutAccount, logoutAccountDel } from '../../../net/login';
 import { getStore, register, setStore } from '../../../store/memstore';
-import { hasWallet, popPswBox } from '../../../utils/tools';
+import { hasWallet, popPswBox, rippleShow } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords

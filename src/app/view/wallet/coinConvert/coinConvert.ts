@@ -9,11 +9,12 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/pull3';
-import { transfer, transfer1, transfer3, TxPayload, TxPayload3 } from '../../../net/pullWallet';
+import { transfer1, TxPayload } from '../../../net/pullWallet';
 import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { currencyExchangeAvailable, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchMinerFeeList } from '../../../utils/walletTools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
