@@ -48,10 +48,6 @@ export class WalletHome extends Widget {
         popNew('app-view-wallet-transaction-home',{ currencyName:v.currencyName,gain:v.gain });
     }
 
-    public refresh() {
-        // const neededRefreshCount = dataCenter.refreshAllTx();
-    }
-
     public currencyUnitChange() {
         this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets());
         this.props.assetList = fetchWalletAssetList();

@@ -10,7 +10,7 @@ import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { sendCode } from '../../net/pull';
+import { getPullMod } from '../../utils/commonjsTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -58,8 +58,8 @@ export class BindPhone extends Widget {
 
             return;
         }
-        await sendCode(this.props.phone, this.props.oldCode,this.props.verify);
-        // updateStore('lastGetSmsCodeTime', new Date().getTime());
+        const pullMod = await getPullMod();
+        await pullMod.sendCode(this.props.phone, this.props.oldCode,this.props.verify);
         notify(event.node,'ev-getCode',{ value:this.props.phone });
         this.props.countdown = this.props.limitTime;
         this.paint();

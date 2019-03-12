@@ -3,8 +3,8 @@
  */
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getAllIsLogin, isReconnecting, manualReconnect } from '../../net/reconnect';
 import { register } from '../../store/memstore';
+import { getReconnectMod } from '../../utils/commonjsTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -15,7 +15,7 @@ export class OfflineTip extends Widget {
     public create() {
         super.create();
         this.state = {
-            isLogin:getAllIsLogin(),
+            isLogin:true,
             reconnecting:false
         };
     }
@@ -26,17 +26,20 @@ export class OfflineTip extends Widget {
         if (this.state.reconnecting) return;
         this.state.reconnecting = true;   // 正在连接
         forelet.paint(this.state);
+        getReconnectMod().then(reconnectMod => {
+            reconnectMod.manualReconnect();
+        });
         
-        manualReconnect();
     }
 }
 
 // ===========================================================
 // 钱包登录监听
-register('user/allIsLogin',(allIsLogin:boolean) => {
+register('user/allIsLogin',async (allIsLogin:boolean) => {
+    const reconnectMod = await getReconnectMod();
     const state = {
-        isLogin:getAllIsLogin(),
-        reconnecting:isReconnecting()
+        isLogin:reconnectMod.getAllIsLogin(),
+        reconnecting:reconnectMod.isReconnecting()
     };
     forelet.paint(state);
 });

@@ -4,7 +4,6 @@
 // ================================ 导入
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { register } from '../../../store/memstore';
@@ -15,7 +14,7 @@ import { getUserInfo } from '../../../utils/tools';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-export class PlayHome extends Widget {
+export class ChatHome extends Widget {
     public ok: () => void;
     public props:Json = {
         refresh:false,

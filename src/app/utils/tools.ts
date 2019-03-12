@@ -8,11 +8,10 @@ import { cryptoRandomInt } from '../../pi/util/math';
 import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
-import { Cipher } from '../core/crypto/cipher';
 import { getDeviceId } from '../logic/native';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
-import { toMnemonic } from './commonjsTools';
+import { getCipher, getGenmnemonicMod } from './commonjsTools';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, resendInterval } from './constants';
 import { nameWare } from './nameWareHouse';
 
@@ -1435,7 +1434,7 @@ export const fetchDeviceId = async () => {
 /**
  * 获取随机名字
  */
-export const playerName =  () => {
+export const playerName = async () => {
     const num1 = nameWare[0].length;
     const num2 = nameWare[1].length;
     let name = '';
@@ -1450,14 +1449,17 @@ export const playerName =  () => {
  */
 export const getMnemonic = async (passwd) => {
     const wallet = getStore('wallet');
-    const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
+    const hashPromise = calcHashValuePromise(passwd, getStore('user/salt'));
+    const CipherPromise = getCipher();
+    const genmnemonicPromise = getGenmnemonicMod();
+    const [hash,Cipher,genmnemonic] = await Promise.all([hashPromise,CipherPromise,genmnemonicPromise]);
     try {
         const cipher = new Cipher();
         console.time('transfer3 cipher.decrypt');
         const r = cipher.decrypt(hash, wallet.vault);
         console.timeEnd('transfer3 cipher.decrypt');
         console.time('transfer3 toMnemonic');
-        const mnemonic = await toMnemonic(lang, hexstrToU8Array(r));
+        const mnemonic = await genmnemonic.toMnemonic(lang, hexstrToU8Array(r));
         console.timeEnd('transfer3 toMnemonic');
 
         return mnemonic;

@@ -31,37 +31,14 @@ export const piRequire = (sourceList:string[]) => {
 };
 
 // =============================app/core/genmnemonic================================================
-/**
- * 通过固定hash生成助记词
- */
-export const generateByHash = async (str:string) => {
-    const mods = await piRequire(['app/core/genmnemonic']);
-    const generateByHash = mods[0].generateByHash;
-
-    return generateByHash(str);
-};
 
 /**
- * sha3加密
+ * 获取genmnemonic模块
  */
-export const sha3 = async (str: string, isHex: boolean) => {
+export const getGenmnemonicMod = async () => {
     const mods = await piRequire(['app/core/genmnemonic']);
-    const sha3 = mods[0].sha3;
 
-    return sha3(str,isHex);
-};
-
-/**
- * 随机值转助记词
- * @param language 语言
- * @param randomValues 随机数
- */
-// tslint:disable-next-line:max-line-length
-export const toMnemonic = async (language: 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese', randomValues: Uint8Array) => {
-    const mods = await piRequire(['app/core/genmnemonic']);
-    const toMnemonic = mods[0].toMnemonic;
-
-    return toMnemonic(language,randomValues);
+    return mods[0];
 };
 
 // =============================app/core/genmnemonic================================================
@@ -100,4 +77,64 @@ export const getLoginMod = async () => {
     return mods[0];
 };
 
-// =============================app/core/globalWallet================================================
+// =============================app/net/login================================================
+
+// =============================app/net/reconnect================================================
+/**
+ * 获取reconnect模块
+ */
+export const getReconnectMod = async () => {
+    const mods = await piRequire(['app/net/reconnect']);
+
+    return mods[0];
+};
+
+// =============================app/net/reconnect================================================
+
+// =============================app/net/pull================================================
+/**
+ * 获取pull模块
+ */
+export const getPullMod = async () => {
+    const mods = await piRequire(['app/net/pull']);
+
+    return mods[0];
+};
+
+// =============================app/net/pull================================================
+
+// =============================app/utils/walletTools================================================
+/**
+ * 获取walletTools模块
+ */
+export const getWalletTools = async () => {
+    const mods = await piRequire(['app/utils/walletTools']);
+
+    return mods[0];
+};
+
+// =============================app/utils/walletTools================================================
+
+// =============================app/core/btc/wallet================================================
+/**
+ * 获取BTCWallet
+ */
+export const getBTCWallet = async () => {
+    const mods = await piRequire(['app/core/btc/wallet']);
+
+    return mods[0].BTCWallet;
+};
+
+// =============================app/core/btc/wallet================================================
+
+// =============================app/core/crypto/cipher================================================
+/**
+ * 获取Cipher
+ */
+export const getCipher = async () => {
+    const mods = await piRequire(['app/core/crypto/cipher']);
+
+    return mods[0].Cipher;
+};
+
+// =============================app/core/crypto/cipher================================================

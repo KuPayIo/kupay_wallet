@@ -5,10 +5,10 @@
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
-    fee_total : number,
-    desc : string,
-    fee_name : string,
-    balance : number
+    fee_total : number;
+    desc : string;
+    fee_name : string;
+    balance : number;
 }
 export class ModalBoxInput extends Widget {
     public props: any;
@@ -19,7 +19,7 @@ export class ModalBoxInput extends Widget {
         
         super.setProps(props);
         this.props = { 
-            ...this.props,
+            ...this.props
         };
     }
     /**
@@ -33,7 +33,7 @@ export class ModalBoxInput extends Widget {
      */
     public okBtnClick() {
         const value = document.getElementById('pi_password').value;
-        if(value!==''){
+        if (value !== '') {
             this.ok && this.ok(value);
         }
     }

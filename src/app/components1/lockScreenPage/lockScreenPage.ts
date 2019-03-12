@@ -6,10 +6,9 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { logoutAccount } from '../../net/login';
 import { LockScreen } from '../../store/interface';
 import { getStore, register, setStore  } from '../../store/memstore';
-import { lockScreenHash, lockScreenVerify } from '../../utils/tools';
+import { getLoginMod, getWalletTools } from '../../utils/commonjsTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -71,13 +70,14 @@ export class LockScreenPage extends Widget {
     /**
      * 重复锁屏密码
      */
-    public reSetLockPsw() {
-        popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[1] },(r) => {
+    public  reSetLockPsw() {
+        popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[1] },async (r) => {
             if (this.props.lockScreenPsw !== r) {
                 popNew('app-components1-message-message',{ content:this.language.tips[0] });
                 this.reSetLockPsw();
             } else {
-                const hash256 = lockScreenHash(r);
+                const walletToolsMod = await getWalletTools();
+                const hash256 = walletToolsMod.lockScreenHash(r);
                 const ls:LockScreen = getStore('setting/lockScreen'); 
                 ls.psw = hash256;
                 ls.open = true;
@@ -101,8 +101,9 @@ export class LockScreenPage extends Widget {
             this.verifyPsw();
         } else {
             const title = this.props.errorTips[ind === 0 ? 3 :ind];
-            popNew('app-components1-keyboard-keyboard',{ title:title,closePage:1 },(r) => {
-                if (lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
+            popNew('app-components1-keyboard-keyboard',{ title:title,closePage:1 },async (r) => {
+                const walletToolsMod = await getWalletTools();
+                if (walletToolsMod.lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
                     this.close(true);
                 } else {
                     this.unLockScreen(++ind);
@@ -145,7 +146,9 @@ export class LockScreenPage extends Widget {
             }
         },(fg) => {
             if (fg) {  // 退出当前钱包，跳转到登陆页面
-                logoutAccount();
+                getLoginMod().then(loginMod => {
+                    loginMod.logoutAccount();
+                });
                 popNew('app-view-wallet-create-home');
             }
         });

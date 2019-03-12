@@ -6,12 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../logic/dataCenter';
 import { Option, phoneImport } from '../../../logic/localWallet';
 import { getRandom, logoutAccountDel, openConnect } from '../../../net/login';
+import { getDataCenter } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';
-import { popNewLoading, popNewMessage } from '../../../utils/tools';
-import { playerName } from '../../../utils/walletTools';
+import { playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -83,8 +82,11 @@ export class PhoneImport extends Widget {
             popNewMessage('登录成功');
             this.ok && this.ok();
             // 刷新本地钱包
-            dataCenter.refreshAllTx();
-            dataCenter.initErc20GasLimit();
+            getDataCenter().then(dataCenter => {
+                dataCenter.refreshAllTx();
+                dataCenter.initErc20GasLimit();
+            });
+            
         }
     }
 

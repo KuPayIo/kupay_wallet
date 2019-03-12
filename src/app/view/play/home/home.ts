@@ -2,7 +2,6 @@
  * play home 
  */
  // ================================ 导入
-import { gameChatPromise } from '../../../../chat/client/app/view/gameChatApi';
 import { CRYPTOFISHING_GROUP, FOMOSPORTS_GROUP } from '../../../../chat/server/data/constant';
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
@@ -13,6 +12,7 @@ import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { getEthApiBaseUrl } from '../../../core/config';
 import { register } from '../../../store/memstore';
+import { piRequire } from '../../../utils/commonjsTools';
 import { getCurrentEthAddr, getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
 
 // ================================ 导出
@@ -159,12 +159,16 @@ export class PlayHome extends Widget {
             `;
             this.defaultInjectPromise = Promise.resolve(defaultInjectText);
 
-            const GChatPromise = gameChatPromise(this.props.gameList[num].gid);
-            const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise,GChatPromise.textPromise,GChatPromise.chatPromise]);
-            allPromise.then(([defaultInjectContent,web3Content,textContent,chatContent]) => {
-                const content = defaultInjectContent + web3Content + chatContent + textContent;
-                WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+            piRequire(['chat/client/app/view/gameChatApi']).then(mods => {
+                const GChatPromise = mods[0].gameChatPromise(this.props.gameList[num].gid);
+                // tslint:disable-next-line:max-line-length
+                const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise,GChatPromise.textPromise,GChatPromise.chatPromise]);
+                allPromise.then(([defaultInjectContent,web3Content,textContent,chatContent]) => {
+                    const content = defaultInjectContent + web3Content + chatContent + textContent;
+                    WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+                });
             });
+            
         }
     }
 

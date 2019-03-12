@@ -4,8 +4,8 @@
 import { getServerCloudBalance, requestAsync } from '../net/pull';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
+import { getWalletTools } from '../utils/commonjsTools';
 import { formatBalance, getUserInfo } from '../utils/tools';
-import { VerifyIdentidy } from '../utils/walletTools';
 
 declare var pi_modules:any;
 
@@ -145,6 +145,7 @@ export const pay = async (order: any, callback: Function) => {
         return;
     }
 
+    // tslint:disable-next-line:one-variable-per-declaration
     let secretHash,signStr = '';
     const signJson = {
         appid: order.appid,
@@ -153,7 +154,8 @@ export const pay = async (order: any, callback: Function) => {
     };
 
     if (order.no_password !== 1) {
-        secretHash = await VerifyIdentidy(order.password);
+        const walletToolsMod = await getWalletTools();
+        secretHash = await walletToolsMod.VerifyIdentidy(order.password);
         if (!secretHash) {  //  密码错误
             callback(resCode.PASSWORD_ERROR, null);
     
@@ -232,8 +234,8 @@ export const setNoPWD = async (data:any,callback:Function) => {
 
         return;
     }
-
-    const secretHash = await VerifyIdentidy(data.password);
+    const walletToolsMod = await getWalletTools();
+    const secretHash = await walletToolsMod.VerifyIdentidy(data.password);
     if (!secretHash) {  //  密码错误
         callback(resCode.PASSWORD_ERROR, null);
 

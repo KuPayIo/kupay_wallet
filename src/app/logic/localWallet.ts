@@ -8,7 +8,7 @@ import { ERC20Tokens } from '../config';
 import { AddrInfo, Wallet } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 import { ahash } from '../utils/ahash';
-import { generateByHash, getDataCenter, getGlobalWalletClass, sha3, toMnemonic } from '../utils/commonjsTools';
+import { getDataCenter, getGenmnemonicMod, getGlobalWalletClass } from '../utils/commonjsTools';
 import { defalutShowCurrencys, lang } from '../utils/constants';
 import { restoreSecret } from '../utils/secretsBase';
 import { calcHashValuePromise,getMnemonic,getXOR,hexstrToU8Array,popNewLoading, popNewMessage, u8ArrayToHexstr } from '../utils/tools';
@@ -230,14 +230,16 @@ const getImageAhash = (imageBase64: string): Promise<string> => {
  * @param ahash ahash
  */
 export const ahashToArgon2Hash = async (ahash: string, imagePsw: string) => {
-    const sha3Hash = await sha3(ahash + imagePsw, false);
+    const genmnemonic = await getGenmnemonicMod(); 
+    const sha3Hash = await genmnemonic.sha3(ahash + imagePsw, false);
     const hash = await calcHashValuePromise(sha3Hash);
-    const sha3Hash1 = await sha3(hash, true);
+    const sha3Hash1 = await genmnemonic.sha3(hash, true);
+    
     const len = sha3Hash1.length;
     // 生成助记词的随机数仅需要128位即可，这里对256位随机数进行折半取异或的处理
     const sha3Hash2 = getXOR(sha3Hash1.slice(0, len / 2),sha3Hash1.slice(len / 2));
 
-    return generateByHash(sha3Hash2);
+    return genmnemonic.generateByHash(sha3Hash2);
 };
 
 /**
@@ -293,7 +295,8 @@ export const importWalletByFragment = async (option: Option) => {
     u8ArrayToHexstr(new Uint8Array(base64ToArrayBuffer(v)))
   );
     const comb = restoreSecret(shares);
-    const mnemonic = await toMnemonic(lang, hexstrToU8Array(comb));
+    const genmnemonic = await getGenmnemonicMod();
+    const mnemonic = await genmnemonic.toMnemonic(lang, hexstrToU8Array(comb));
     option.mnemonic = mnemonic;
     // tslint:disable-next-line:no-unnecessary-local-variable
     const secretHash = await importWalletByMnemonic(option);

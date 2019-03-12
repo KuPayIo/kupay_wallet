@@ -209,8 +209,8 @@ winit.initNext = function () {
 				flags.webp = flags.webp || r;
 				// loadWalletLoginSource();  // 登录相关
 				// loadImages();
-				// loadChatSource();  // 聊天
-				// loadEarnSource();  // 活动
+				loadChatSource();  // 聊天
+				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
 				
 			});
@@ -223,13 +223,11 @@ winit.initNext = function () {
 	var loadWalletLoginSource = function(){
 		console.time("fp loadWalletLoginSource");
 		var sourceList = [
-			"app/view/base/",
 			"app/net/login.js",
 			"app/net/push.js",
-			"earn/client/app/net/",
-			"chat/client/app/net/"
+			"earn/client/app/net/init_1.js",
+			"chat/client/app/net/init.js"
 		];
-		// debugger
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			console.timeEnd("fp loadWalletLoginSource");
 			console.log(11111,Date.now()-self.startTime)
@@ -251,7 +249,6 @@ winit.initNext = function () {
 			fpFlags.storeReady = true;
 			enterApp();
 			
-			// loadChatSource();  // 聊天
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -277,19 +274,17 @@ winit.initNext = function () {
 		console.time("fp loadWalletFirstPageSource");
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
-			"app/view/base/entrance.js",
-			"app/utils/commonjsTools.js",
-			"app/logic/localWallet.js",
-			// "app/components1/",
-			// "app/components/password/",
-			// "app/components/input/",
-			// "app/components/textarea/",
-			// "app/components/bindPhone/",
-			// "app/res/css/",
-			// "app/res/js/",
-			// "app/view/play/home/",
-			// "app/view/chat/home/",
-			// "app/view/wallet/home/",
+			"app/view/base/",
+			"app/components1/",
+			"app/components/password/",
+			"app/components/input/",
+			"app/components/textarea/",
+			"app/components/bindPhone/",
+			"app/res/css/",
+			"app/res/js/",
+			"app/view/play/home/",
+			"app/view/chat/home/",
+			"app/view/wallet/home/",
 			// "app/view/wallet/create/",
 			// "app/view/wallet/import/",
 			// "app/view/earn/home/",
@@ -298,9 +293,6 @@ winit.initNext = function () {
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			console.timeEnd("fp loadWalletFirstPageSource");
 			console.log("load loadWalletFirstPageSource-----------------");
-			debugger
-			const getDataCenter = pi_modules.commonjs.exports.relativeGet("app/utils/commonjsTools").exports.getDataCenter;
-			getDataCenter().then(r=>{debugger});
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -314,6 +306,7 @@ winit.initNext = function () {
 
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
+		// debugger
 		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
 			console.time("enterApp ----");
@@ -419,7 +412,6 @@ winit.initNext = function () {
 			fpFlags.chatReady = true;
 			enterApp();
 			
-			// loadEarnSource();  // 活动
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		},dirProcess.handler);

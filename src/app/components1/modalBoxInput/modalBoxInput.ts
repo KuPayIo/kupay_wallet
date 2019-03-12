@@ -10,10 +10,9 @@
  * 外部监听 ev-sure，ev-forgetPsw 事件,event.value获取输入框中数据  
  */
 import { popNew } from '../../../pi/ui/root';
-import { Widget } from '../../../pi/widget/widget';
-
 import { getLang } from '../../../pi/util/lang';
-import { logoutAccount } from '../../net/login';
+import { Widget } from '../../../pi/widget/widget';
+import { getLoginMod } from '../../utils/commonjsTools';
 
 interface Props {
     title:string;
@@ -56,8 +55,10 @@ export class ModalBoxInput extends Widget {
     public foegetPsw() {
         this.cancel && this.cancel(false);
         popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {  // 确认删除钱包
-            logoutAccount();
-            popNew('app-view-wallet-create-home');
+            getLoginMod().then(loginMod => {
+                loginMod.logoutAccount();
+                popNew('app-view-wallet-create-home');
+            });
             
         },() => {   // 取消删除钱包
             if (this.props.lockScreen) {
