@@ -421,7 +421,7 @@ export const logoutWallet = (success:Function) => {
  * @param secretHash 密码
  */
 export const kickOffline = (secretHash:string = '') => {
-    popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
+    popNew('app-components-modalBoxCheckBox-modalBoxCheckBox',{ 
         title:'检测到在其它设备有登录',
         content:'清除其它设备账户信息' 
     },(deleteAccount:boolean) => {

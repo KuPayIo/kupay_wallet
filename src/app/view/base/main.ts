@@ -14,6 +14,7 @@ import { addWidget } from '../../../pi/widget/util';
 import { getScreenModify, preLoadAd } from '../../logic/native';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
+import { piRequire } from '../../utils/commonjsTools';
 import { fetchDeviceId } from '../../utils/tools';
 
 // ============================== 导出
@@ -48,7 +49,7 @@ export const run = (cb): void =>  {
  */
 const popNewPage = () => {
     if (ifNeedUnlockScreen()) {
-        popNew('app-components1-lockScreenPage-lockScreenPage', {
+        popNew('app-components-lockScreenPage-lockScreenPage', {
             openApp: true
         });
     }
@@ -64,12 +65,14 @@ const preFetchFromNative = () => {
             setStore('setting/deviceId',hash256deviceId);
         });
     }
-    getScreenModify();
 
-    // 预先随机下载
-    preLoadAd(undefined,() => {
-        preLoadAd(undefined,() => {
-            preLoadAd(undefined);
+    piRequire(['app/logic/native']).then(mods => {
+        mods[0].getScreenModify();
+        // 预先随机下载
+        mods[0].preLoadAd(undefined,() => {
+            mods[0].preLoadAd(undefined,() => {
+                mods[0].preLoadAd(undefined);
+            });
         });
     });
 };
@@ -85,7 +88,7 @@ const addAppEvent = () => {
     addAppResumed(() => {
         console.log('addAppResumed callback called');
         if (ifNeedUnlockScreen()) {
-            popNew('app-components1-lockScreenPage-lockScreenPage', {
+            popNew('app-components-lockScreenPage-lockScreenPage', {
                 openApp: true
             });
         }

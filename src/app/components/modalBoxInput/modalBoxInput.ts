@@ -54,7 +54,7 @@ export class ModalBoxInput extends Widget {
      */
     public foegetPsw() {
         this.cancel && this.cancel(false);
-        popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {  // 确认删除钱包
+        popNew('app-components-modalBox-modalBox',this.language.modalBox,() => {  // 确认删除钱包
             getLoginMod().then(loginMod => {
                 loginMod.logoutAccount();
                 popNew('app-view-wallet-create-home');
@@ -62,7 +62,7 @@ export class ModalBoxInput extends Widget {
             
         },() => {   // 取消删除钱包
             if (this.props.lockScreen) {
-                popNew('app-components1-modalBoxInput-modalBoxInput',this.props);
+                popNew('app-components-modalBoxInput-modalBoxInput',this.props);
             }
         });      
     }

@@ -30,7 +30,7 @@ export const initPush = () => {
         }
        
         return () => {
-            popNew('app-components1-modalBox-modalBox',{
+            popNew('app-components-modalBox-modalBox',{
                 sureText:{ zh_Hans:'重新登录',zh_Hant:'重新登錄',en:'' },
                 cancelText:{ zh_Hans:'退出',zh_Hant:'退出',en:'' },
                 title:{ zh_Hans:'下线通知',zh_Hant:'下線通知',en:'' },

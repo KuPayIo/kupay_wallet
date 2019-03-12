@@ -107,7 +107,7 @@ export const jumpWxpay = (order, okCb?: Function, failCb?: Function) => {
 
     WebViewManager.newView('payWebView',order.mweb_url,{ Referer: getModulConfig('PAY_DOMAIN') });
     setTimeout(() => {
-        popNew('app-components1-modalBox-modalBox', {
+        popNew('app-components-modalBox-modalBox', {
             title: '',
             content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
             style: 'color:#F7931A;',
@@ -136,7 +136,7 @@ export const jumpAlipay = (order, okCb?: Function, failCb?: Function) => {
     $payIframe.setAttribute('style', 'position:absolute;width:0px;height:0px;visibility:hidden;');
     document.body.appendChild($payIframe);
     setTimeout(() => {
-        popNew('app-components1-modalBox-modalBox', {
+        popNew('app-components-modalBox-modalBox', {
             title: '',
             content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
             style: 'color:#F7931A;',

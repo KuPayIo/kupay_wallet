@@ -66,7 +66,7 @@ export const getOpenId = (appId:string,okCb:Function,failCb?:Function) => {
         failCb && failCb(err); 
     });
     
-    // popNew('app-components1-modalBox-modalBox', {
+    // popNew('app-components-modalBox-modalBox', {
     //     title: { zh_Hans:'是否授权',zh_Hant:'是否授權',en:'' },
     //     content: { zh_Hans:'授权成功将获取您的基本信息',zh_Hant:'授權成功將獲取您的基本信息',en:'' },
     //     sureText: { zh_Hans:'授权',zh_Hant:'授權',en:'' },

@@ -12,10 +12,10 @@ import { playerName, popNewMessage } from '../../utils/tools';
 export class Entrance extends Widget {
     public ok:() => void;
     // 游客登录
-    public touristLoginClick() {
+    public async touristLoginClick() {
         const option:Option = {
             psw: defaultPassword,
-            nickName: playerName()
+            nickName: await playerName()
         };
         touristLogin(option).then((secrectHash:string) => {
             if (!secrectHash) {

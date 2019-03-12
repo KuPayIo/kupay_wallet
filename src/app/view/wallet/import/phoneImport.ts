@@ -55,7 +55,7 @@ export class PhoneImport extends Widget {
         }
         const option:Option = {
             psw:defaultPassword,
-            nickName:playerName()
+            nickName:await playerName()
         };
         openConnect();
         const close = popNewLoading('导入中');

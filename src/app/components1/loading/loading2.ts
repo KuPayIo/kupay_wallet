@@ -4,10 +4,6 @@ import { Widget } from '../../../pi/widget/widget';
  * loading逻辑处理
  */
 
-interface State {
-    startTime:number;
-    circular:string;// svg内容
-}
 export class Loading2 extends Widget {
     public props: any;
     public ok:() => void;

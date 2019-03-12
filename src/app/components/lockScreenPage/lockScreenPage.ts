@@ -59,7 +59,7 @@ export class LockScreenPage extends Widget {
      * 设置锁屏密码
      */
     public setLockPsw() {
-        popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[0] },(r) => {
+        popNew('app-components-keyboard-keyboard',{ title: this.language.keyboardTitle[0] },(r) => {
             this.props.lockScreenPsw = r;
             this.reSetLockPsw();
         },() => {
@@ -71,7 +71,7 @@ export class LockScreenPage extends Widget {
      * 重复锁屏密码
      */
     public  reSetLockPsw() {
-        popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[1] },async (r) => {
+        popNew('app-components-keyboard-keyboard',{ title: this.language.keyboardTitle[1] },async (r) => {
             if (this.props.lockScreenPsw !== r) {
                 popNew('app-components1-message-message',{ content:this.language.tips[0] });
                 this.reSetLockPsw();
@@ -101,7 +101,7 @@ export class LockScreenPage extends Widget {
             this.verifyPsw();
         } else {
             const title = this.props.errorTips[ind === 0 ? 3 :ind];
-            popNew('app-components1-keyboard-keyboard',{ title:title,closePage:1 },async (r) => {
+            popNew('app-components-keyboard-keyboard',{ title:title,closePage:1 },async (r) => {
                 const walletToolsMod = await getWalletTools();
                 if (walletToolsMod.lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
                     this.close(true);
@@ -117,7 +117,7 @@ export class LockScreenPage extends Widget {
      */
     public verifyPsw() {
         // tslint:disable-next-line:max-line-length
-        popNew('app-components1-modalBoxInput-modalBoxInput',this.language.modalBoxInput2, async (r) => {
+        popNew('app-components-modalBoxInput-modalBoxInput',this.language.modalBoxInput2, async (r) => {
             if (!r) {  // 未输入密码点击验证则重新打开验证
                 popNew('app-components1-message-message',{ content:this.language.tips[3] });
                 this.verifyPsw();

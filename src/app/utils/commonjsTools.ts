@@ -15,6 +15,25 @@ export const relativeGet = (path:string) => {
 };
 
 /**
+ * loadDir加载模块
+ */
+export const piLoadDir = (sourceList:string[]) => {
+    return new Promise((resolve,reject) => {
+        const util = relativeGet('pi/widget/util');
+        util.loadDir(sourceList, {}, undefined, undefined,  (fileMap) => {
+            const tab = util.loadCssRes(fileMap);
+            tab.timeout = 90000;
+            tab.release();
+            resolve();
+        },  (r) => {
+            reject(r);
+        }, () => {
+            // console.log();
+        });
+    });
+};
+
+/**
  * 动态下载文件
  * @param sourceList 要加载的文件目录数组
  */

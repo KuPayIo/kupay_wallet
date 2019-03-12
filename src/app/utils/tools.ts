@@ -8,12 +8,10 @@ import { cryptoRandomInt } from '../../pi/util/math';
 import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
-import { getDeviceId } from '../logic/native';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
-import { getCipher, getGenmnemonicMod } from './commonjsTools';
+import { getCipher, getGenmnemonicMod, piRequire } from './commonjsTools';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, resendInterval } from './constants';
-import { nameWare } from './nameWareHouse';
 
 /**
  * 获取当前钱包对应货币正在使用的地址信息
@@ -553,7 +551,7 @@ export const popNewLoading = (text: any) => {
 const openMessageboxPsw = (BoxInputTitle?,content?): Promise<string> => {
     // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {
-        popNew('app-components1-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
             resolve(r);
         }, (cancel: string) => {
             reject(cancel);
@@ -818,7 +816,7 @@ export const fetchCloudWalletAssetList = () => {
 export const hasWallet = () => {
     const wallet = getStore('wallet');
     if (!wallet) {
-        popNew('app-components1-modalBox-newUserWelfare',undefined, () => {
+        popNew('app-components-modalBox-newUserWelfare',undefined, () => {
             // popNew('app-view-wallet-create-home');
             // popNew('app-view-base-localImg');
         });
@@ -1423,8 +1421,10 @@ export const fetchDeviceId = async () => {
         });
     } else {// ============================mobile
         return new Promise((resolve,reject) => {
-            getDeviceId((deviceId:string) => {
-                resolve(deviceId);
+            piRequire(['app/logic/native']).then(mods => {
+                mods[0].getDeviceId((deviceId:string) => {
+                    resolve(deviceId);
+                });
             });
         });
     }
@@ -1435,6 +1435,8 @@ export const fetchDeviceId = async () => {
  * 获取随机名字
  */
 export const playerName = async () => {
+    const mods = await piRequire(['app/utils/nameWareHouse']);
+    const nameWare = mods[0];
     const num1 = nameWare[0].length;
     const num2 = nameWare[1].length;
     let name = '';

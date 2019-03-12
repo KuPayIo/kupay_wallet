@@ -8,10 +8,6 @@ interface Props {
     text:string;// 加载文本
 }
 
-interface State {
-    startTime:number;
-    circular:string;// svg内容
-}
 export class Loading1 extends Widget {
     public props: any;
     public ok:() => void;

@@ -10,8 +10,7 @@ import { openConnect } from '../../../net/login';
 import { uploadFile } from '../../../net/pull';
 import { setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { imgResize, popNewMessage } from '../../../utils/tools';
-import { playerName } from '../../../utils/walletTools';
+import { imgResize, playerName, popNewMessage } from '../../../utils/tools';
 import { forelet, WIDGET_NAME } from './home';
 interface Props {
     itype: CreateWalletType;
@@ -31,7 +30,7 @@ export class CreateWallet extends Widget {
             ...this.props,
             createWalletType:CreateWalletType,
             itype: this.props.itype,
-            walletName: playerName(),
+            walletName: '',
             walletPsw: '',
             walletPswConfirm: '',
             pswEqualed: false,
@@ -42,6 +41,11 @@ export class CreateWallet extends Widget {
             imagePicker:null
         };
         console.log(this.props);
+        playerName().then(name => {
+            this.props.walletName = name;
+            this.paint();
+        });
+           
     }
 
     public setProps(props: Props, oldProps: Props) {
@@ -88,12 +92,15 @@ export class CreateWallet extends Widget {
     }
 
     public randomPlayName() {
-        this.props.walletName = playerName();
-        document.getElementById('random').classList.add('random');
-        setTimeout(() => {
-            document.getElementById('random').classList.remove('random');
-        }, 1000);
-        this.paint();
+        playerName().then(name => {
+            this.props.walletName = name;
+            document.getElementById('random').classList.add('random');
+            setTimeout(() => {
+                document.getElementById('random').classList.remove('random');
+            }, 1000);
+            this.paint();
+        });
+        
     }
     public async createClick() {
         if (!this.props.userProtocolReaded) {
@@ -136,13 +143,6 @@ export class CreateWallet extends Widget {
             popNewMessage(this.language.tips[4]);
         }
 
-        // const mnemonic = getMnemonicByHash(secrectHash);
-        // const fragments = fetchMnemonicFragment(secrectHash);
-        // requestAnimationFrame(() => {
-        //     popNew('app-components1-modalBox-modalBox', getStaticLanguage().ktUp, () => {
-        //         popNew('app-view-wallet-backup-index', { mnemonic: mnemonic, fragments: fragments });
-        //     });
-        // });
         setStore('flags/createWallet',true);
         openConnect(secrectHash);
 

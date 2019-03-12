@@ -207,7 +207,7 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				// loadWalletLoginSource();  // 登录相关
+				loadWalletLoginSource();  // 登录相关
 				// loadImages();
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
@@ -276,19 +276,11 @@ winit.initNext = function () {
 		var sourceList = [
 			"app/view/base/",
 			"app/components1/",
-			"app/components/password/",
-			"app/components/input/",
-			"app/components/textarea/",
-			"app/components/bindPhone/",
 			"app/res/css/",
 			"app/res/js/",
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
-			// "app/view/wallet/create/",
-			// "app/view/wallet/import/",
-			// "app/view/earn/home/",
-			// "app/view/mine/setting/"
 		];
 		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 			console.timeEnd("fp loadWalletFirstPageSource");
@@ -306,7 +298,6 @@ winit.initNext = function () {
 
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
-		// debugger
 		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
 			console.time("enterApp ----");
@@ -422,13 +413,10 @@ winit.initNext = function () {
 		console.time("fp loadEarnSource");
 		var sourceList = [
 			"earn/client/app/view/home/",
-			"earn/client/app/components/",
+			"earn/client/app/components1/",
 			"earn/client/app/view/activity/miningHome.tpl",
 			"earn/client/app/view/activity/miningHome.js",
 			"earn/client/app/view/activity/miningHome.wcss",
-			"earn/client/app/view/activity/inviteAward.tpl",
-			"earn/client/app/view/activity/inviteAward.js",
-			"earn/client/app/view/activity/inviteAward.wcss",
 			"earn/client/app/xls/",
 			"earn/xlsx/"
 		];
