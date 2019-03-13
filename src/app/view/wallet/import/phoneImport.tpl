@@ -1,6 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"手机号码","zh_Hant":"手機號碼","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     <div style="margin: 30px 20px;" ev-getCode="phoneChange">
         <app-components-bindPhone-bindPhone>{verify:false}</app-components-bindPhone-bindPhone>
     </div>

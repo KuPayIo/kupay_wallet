@@ -2,7 +2,7 @@
     {{: randomTitle = {"zh_Hans":"注册新账号","zh_Hant":"註冊新賬號","en":""} }}
     {{: imageTitle = {"zh_Hans":"设置密码","zh_Hant":"設置密碼","en":""} }}
     {{: topBarTitle = it.itype === it.createWalletType.Random ? randomTitle : imageTitle}}
-    <app-components1-topBar-topBar>{"title":{{ topBarTitle }} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{ topBarTitle }} }</app-components-topBar-topBar>
     <div w-class="body">
         {{: randomTips = {"zh_Hans":"设置支付密码","zh_Hant":"設置支付密碼","en":""} }}
         {{: imageTips = {"zh_Hans":"设置支付密码","zh_Hant":"設置支付密碼","en":""} }}

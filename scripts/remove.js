@@ -3,7 +3,6 @@ const init = (cfgPath) => {
     const str = fs.readFileSync(cfgPath, "utf8");
     const config = JSON.parse(str);
     deleteall(config.dsts[0].path);
-    deleteall(config.dsts[1].path);
     let arr = fs.readdirSync("./");
     arr.forEach(v => {
         if (v.indexOf(".depend") > -1) {
@@ -11,7 +10,6 @@ const init = (cfgPath) => {
         }
     });
     deleteall("../dst");
-    deleteall(config.dsts[1].path);
     console.log("------------ok");
 }
 const deleteall = (path) => {

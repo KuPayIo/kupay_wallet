@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goHistory">
     {{: topBarTitle = {"zh_Hans":"币币兑换","zh_Hant":"幣幣兌換","en":""} }}
-    <app-components1-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/detailBlueIcon.png"}</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/detailBlueIcon.png"}</app-components-topBar-topBar>
     <div w-class="content">
         {{: tips = [
         {"zh_Hans":"可用","zh_Hant":"可用","en":""},

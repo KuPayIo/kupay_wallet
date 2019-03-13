@@ -1,9 +1,9 @@
 <div class="new-page" ev-back-click="backPrePage" w-class="new-page">
     {{: topBarTitle = {"zh_Hans":"红包详情","zh_Hant":"紅包詳情","en":""} }}	
     {{if !it.scroll}}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}},background:"#DF5E5E" }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}},background:"#DF5E5E" }</app-components-topBar-topBar>
     {{else}}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     {{end}}
     <div w-class="content" on-scroll="pageScroll" id="redEnvDetail">
         <img src="../../../res/image/redEnvDetail.png" w-class="topBackimg"/>

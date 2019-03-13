@@ -1,6 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"关于"+it.walletName,"zh_Hant":"關於"+it.walletName,"en":""} }}
-    <app-components1-topBar-topBar>{title:{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{title:{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="content">
         <div w-class="aboutus-img">
             <img src="{{it.walletLogo}}" w-class="logoimg"/>

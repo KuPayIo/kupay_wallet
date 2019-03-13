@@ -35,16 +35,3 @@
     border: 15px solid transparent;
     line-height: 88px;
 }
-.offline{
-    height: 40px;
-    line-height: 40px;
-    margin-left: 20px;
-    opacity: 0.8;
-    padding: 0 15px;
-    font-size: 24px;
-    color: #fff;
-    border-radius: 6px;
-    background-color: rgba(34, 34, 34, 1);
-    display: inline-block;
-    display: none;
-}

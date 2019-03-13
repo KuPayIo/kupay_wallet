@@ -27,9 +27,9 @@ export const run = (cb): void =>  {
     checkUpdate();
     // 打开首页面
     popNew('app-view-base-app');
-    if (!getStore('user/id')) {
-        popNew('app-view-base-entrance');
-    }
+    // if (!getStore('user/id')) {
+    //     popNew('app-view-base-entrance');
+    // }
     
     // 锁屏页面
     popNewPage();

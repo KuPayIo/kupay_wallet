@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <div w-class="top-head">
             {{: topBarTitle = {"zh_Hans":it.currencyName+"转账","zh_Hant":it.currencyName+"轉賬","en":""} }}
-            <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+            <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     </div>
     <div w-class="body">
         <div w-class="container">

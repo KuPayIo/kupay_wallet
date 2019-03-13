@@ -80,6 +80,3 @@ export class TopBar extends Widget {
         rippleShow(e);
     }
 }
-register('user/offline',(r) => {
-    forelet.paint(r);
-});

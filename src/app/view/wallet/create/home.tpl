@@ -3,7 +3,7 @@
     <img src="{{it.loginImg}}" w-class="logo"/>
     <div ev-back-click="backPrePage" w-class="title-container">
         {{: topBarTitle = {"zh_Hans":"登录","zh_Hant":"登錄","en":""} }}
-        <app-components1-topBar-topBar>{"title":{{topBarTitle}},"background":"rgba(0,0,0,0)" }</app-components1-topBar-topBar>
+        <app-components-topBar-topBar>{"title":{{topBarTitle}},"background":"rgba(0,0,0,0)" }</app-components-topBar-topBar>
     </div>
     
     {{: btnName = [
