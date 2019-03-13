@@ -182,7 +182,7 @@ winit.initNext = function () {
 	var fm;  // fileMap
 	var fpFlags = {};  // 进入首页面的资源加载标识位
 	var suffixCfg = {
-		png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down', xlsx:'none'
+		png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down', xlsx:'none',rs:'none'
 	};
 
 	// app下载入口函数
@@ -209,11 +209,11 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				// loadWalletLoginSource();  // 登录相关
+				loadWalletLoginSource();  // 登录相关
 				// loadImages();
-				// loadChatSource();  // 聊天
+				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
-				// loadWalletFirstPageSource();  //钱包
+				loadWalletFirstPageSource();  //钱包
 				
 			});
 		}, function (result) {
@@ -241,8 +241,7 @@ winit.initNext = function () {
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
 			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
-			// // 钱包store初始化
-			// pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore(); 
+			
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 			// erlang服务器连接登录
@@ -411,11 +410,11 @@ winit.initNext = function () {
 			"earn/client/app/view/activity/miningHome.tpl",
 			"earn/client/app/view/activity/miningHome.js",
 			"earn/client/app/view/activity/miningHome.wcss",
-			"earn/client/app/xls/",
-			"earn/xlsx/"
+			// "earn/client/app/xls/",
+			"earn/xlsx/awardCfg.c.js",
+			"earn/xlsx/awardCfg.s.js",
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			debugger
 			console.timeEnd("fp loadEarnSource");
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
