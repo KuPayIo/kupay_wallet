@@ -48,7 +48,8 @@ export class WechatQrcode extends Widget {
                 popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
             },
             fail: (result) => { 
-                popNew('app-components-message-message',{ content:this.language.shareScreen });
+                const tips = { zh_Hans:'分享截图失败',zh_Hant:'分享截圖失敗',en:'' };
+                popNew('app-components-message-message',{ content:tips[getLang()] });
             }
         });
         console.log('截图截图截图');

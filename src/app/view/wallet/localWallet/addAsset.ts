@@ -9,13 +9,11 @@ import { fetchWalletAssetListAdded, getCurrentAddrInfo } from '../../../utils/to
 
 export class AddAsset extends Widget {
     public ok:() => void;
-    public language:any;
     public create() {
         super.create();
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const assetList = fetchWalletAssetListAdded();
         this.props = {
             assetList,

@@ -23,7 +23,6 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
     
     public ok: () => void;
-    public language:any;
     public defaultInjectPromise:Promise<string>;
     public web3Promise: Promise<string>;
     public thirdApiPromise:Promise<string>;
@@ -40,7 +39,11 @@ export class PlayHome extends Widget {
                 // content = decodeURIComponent(escape(atob(content)));
                 const content = new TextDecoder().decode(arr);
                 resolve(content);
-            }, () => {}, () => {});
+            }, () => {
+                //
+            }, () => {
+                //
+            });
         });
 
         this.thirdApiPromise = new Promise((resolve) => {
@@ -49,7 +52,11 @@ export class PlayHome extends Widget {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
                 resolve(content);
-            }, () => {}, () => {});
+            }, () => {
+                //
+            }, () => {
+                //
+            });
         });
     }
     
@@ -58,7 +65,6 @@ export class PlayHome extends Widget {
             ...props
         };
         super.setProps(this.props);
-        this.language = this.config.value[getLang()];
         const userInfo = getUserInfo();
         if (userInfo) {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
@@ -148,7 +154,8 @@ export class PlayHome extends Widget {
     public gameClick(num:number) {
         if (!hasWallet()) return;
         if (!this.props.gameList[num].url) {
-            popNewMessage(this.language.tips);
+            const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
+            popNewMessage(tips[getLang()]);
         } else {
             const gameTitle = this.props.gameList[num].title.zh_Hans;
             const gameUrl =   this.props.gameList[num].url;

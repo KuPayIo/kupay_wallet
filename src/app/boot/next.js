@@ -314,7 +314,7 @@ winit.initNext = function () {
 					document.body.removeChild(document.getElementById('rcmj_loading_log'));
 				});
 				// loadImages();  // 预加载图片
-				// loadLeftSource();
+				loadLeftSource();
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
 			}, dirProcess.handler);
@@ -337,7 +337,9 @@ winit.initNext = function () {
 			"earn/client/app/view/",
 			"earn/client/app/test/",
 			"earn/client/app/components/",
-			"earn/client/app/res/"
+			"earn/client/app/res/",
+			"earn/client/app/xls/",
+			"earn/xlsx/"
 		];
 
 		// 加载其他文件

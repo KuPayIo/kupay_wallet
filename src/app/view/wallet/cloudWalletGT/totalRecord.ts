@@ -22,13 +22,11 @@ interface Props {
 
 export class TotalRecord extends Widget {
     public props:any;
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         this.props = {
             ...this.props,
             recordList:[], // 全部记录

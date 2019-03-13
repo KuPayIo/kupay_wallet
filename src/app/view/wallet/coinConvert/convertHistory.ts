@@ -42,7 +42,6 @@ interface ChangellyTransactionsShow {
 }
 export class ConvertHistory extends Widget {
     public ok: () => void;
-    public language:any;
     public close:any;
     
     public setProps(props:Json,oldProps:Json) {
@@ -55,12 +54,12 @@ export class ConvertHistory extends Widget {
     }
 
     public async init() {
-        this.language = this.config.value[getLang()];
         this.props = {
             ...this.props,
             txsShow:[]
         };
-        this.close = popNew('app-components1-loading-loading',{ text:this.language.loading });
+        const loading = { zh_Hans:'加载中...',zh_Hant:'加載中...',en:'' };
+        this.close = popNew('app-components1-loading-loading',{ text:loading[getLang()] });
         this.getAllTransactions();
     }
 

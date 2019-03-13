@@ -20,13 +20,10 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class BindPhone extends Widget {
     public ok: () => void;
-    public language:any;
     constructor() {
         super();
     }
     public setProps(props:any,oldProps:any): void {
-        
-        this.language = this.config.value[getLang()];
         const phone = props.phone ? props.phone : '';
         this.props = {
             ...props,
@@ -54,7 +51,8 @@ export class BindPhone extends Widget {
     public async getCode(event:any) {
         this.inputBlur();
         if (!this.props.phone || !this.phoneJudge()) {
-            popNew('app-components1-message-message', { content: this.language.tips });
+            const tips = { zh_Hans:'无效的手机号',zh_Hant:'無效的手機號',en:'' };
+            popNew('app-components1-message-message', { content: tips[getLang()] });
 
             return;
         }

@@ -13,14 +13,12 @@ interface Props {
 }
 export class ShareMnemonic extends Widget {
     public props:any;
-    public language:any;
     public ok:() => void;
     public backPrePage() {
         this.ok && this.ok();
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        this.language = this.config.value[getLang()];
         this.init();
     }
     public init() {
@@ -57,7 +55,8 @@ export class ShareMnemonic extends Widget {
         if (allShared) {
             deleteMnemonic();
             sharePart();
-            popNewMessage(this.language.tips);
+            const tips = { zh_Hans:'分享成功',zh_Hant:'分享成功',en:'' };
+            popNewMessage(tips[getLang()]);
             // this.ok && this.ok();
         }
     }

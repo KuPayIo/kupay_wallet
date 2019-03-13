@@ -3,7 +3,7 @@
  */
 // ================================ 导入
 import { register as earnRegister } from '../../../earn/client/app/store/memstore';
-import { getLang, setLang } from '../../../pi/util/lang';
+import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../modulConfig';
@@ -20,17 +20,14 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class App extends Widget {
     public props:any;
     public old: any = {};
-    public language:any;
     public create() {
         super.create();
         this.init();
-        console.log('app create ====');
     }
 
     public init(): void {
         const isActive = 'APP_WALLET';
         this.old[isActive] = true;
-        this.language = this.config.value[getLang()];
 
         const loading = localStorage.getItem('level_2_page_loaded') ? false : true;
         localStorage.removeItem('level_2_page_loaded');

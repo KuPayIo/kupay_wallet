@@ -12,16 +12,15 @@ import { getLocalVersion, rippleShow } from '../../../utils/tools';
 
 export class ContanctUs extends Widget {
     public ok: () => void;
-    public language:any;
     public create() {
         super.create();
-        this.language = this.config.value[getLang()];
+        const tips = { zh_Hans:'客服',zh_Hant:'客服',en:'' };
         this.props = {
             version:getLocalVersion(),
             data:[
-                { value: this.language.itemTitle[0],desc:getModulConfig('WALLET_WEBSITE') },
-                { value: this.language.itemTitle[1],desc:getModulConfig('WALLET_NAME') + this.language.itemTitle[2] },
-                { value: this.language.itemTitle[3],desc:getModulConfig('WALLET_NAME') }
+                { value: '',desc:getModulConfig('WALLET_WEBSITE') },
+                { value: '',desc:getModulConfig('WALLET_NAME') + tips[getLang()] },
+                { value: '',desc:getModulConfig('WALLET_NAME') }
             ],
             walletLogo:getModulConfig('WALLET_LOGO'),
             walletName:getModulConfig('WALLET_NAME')

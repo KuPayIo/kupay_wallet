@@ -13,10 +13,8 @@ export class SettingPsw extends Widget {
     public props: any;
     public ok: () => void;
     public cancel: () => void;
-    public language: any;
 
     public setProps(props: any, oldProps: any) {
-        this.language = this.config.value[getLang()];
         this.props = {
             ...props,
             walletPsw: '',
@@ -55,17 +53,20 @@ export class SettingPsw extends Widget {
             return;
         }
         if (!this.props.walletPsw || !this.props.walletPswConfirm) {
-            popNew('app-components1-message-message', { content: this.language.tips[0] });
+            const tips = { zh_Hans:'请输入密码',zh_Hant:'請輸入密碼',en:'' };
+            popNew('app-components1-message-message', { content: tips[getLang()] });
 
             return;
         }
         if (!this.props.walletPswAvailable) {
-            popNew('app-components1-message-message', { content: this.language.tips[1] });
+            const tips = { zh_Hans:'密码格式不正确',zh_Hant:'密碼格式不正確',en:'' };
+            popNew('app-components1-message-message', { content: tips[getLang()] });
 
             return;
         }
         if (!this.props.pswEqualed) {
-            popNew('app-components1-message-message', { content: this.language.tips[2] });
+            const tips = { zh_Hans:'密码不一致',zh_Hant:'密碼不一致',en:'' };
+            popNew('app-components1-message-message', { content:tips[getLang()] });
 
             return;
         }

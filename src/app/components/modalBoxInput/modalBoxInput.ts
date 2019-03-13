@@ -25,13 +25,11 @@ interface Props {
 }
 export class ModalBoxInput extends Widget {
     public props: any;
-    public language:any;
     public ok: (value:string) => void;
     public cancel: (fg:boolean) => void;   // fg为true表示退出APP(或点击取消)，false表示忘记密码删除钱包
 
     public setProps(props:any,oldProps:any) {
         super.setProps(props,oldProps);
-        this.language = this.config.value[getLang()];
         this.props = { 
             ...this.props,
             currentValue:''
@@ -54,7 +52,18 @@ export class ModalBoxInput extends Widget {
      */
     public foegetPsw() {
         this.cancel && this.cancel(false);
-        popNew('app-components-modalBox-modalBox',this.language.modalBox,() => {  // 确认删除钱包
+        const modalBox = { 
+            zh_Hans:{
+                title:'忘记密码？',
+                content:'退出当前登录账号，您可以选择重新登录或导入。'
+            },
+            zh_Hant:{
+                title:'忘記密碼？',
+                content:'退出當前登錄賬號，您可以選擇重新登錄或導入。'
+            },
+            en:'' 
+        };
+        popNew('app-components-modalBox-modalBox',modalBox[getLang()],() => {  // 确认删除钱包
             getLoginMod().then(loginMod => {
                 loginMod.logoutAccount();
                 popNew('app-view-wallet-create-home');

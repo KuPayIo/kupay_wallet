@@ -9,14 +9,12 @@ import { makeScreenShot } from '../../../logic/native';
 import { getUserInfo } from '../../../utils/tools';
 
 export class ShareDownload extends Widget {
-    public language:any;
     public ok:() => void;
     public create() {
         super.create();
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const userInfo = getUserInfo();
         this.props = {
             nickName:userInfo.nickName,
@@ -38,7 +36,8 @@ export class ShareDownload extends Widget {
         makeScreenShot(() => {
             popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
         },() => {
-            popNew('app-components-message-message',{ content:this.language.tips[0] });
+            const tips = { zh_Hans:'分享截图失败',zh_Hant:'分享截圖失敗',en:'' };
+            popNew('app-components-message-message',{ content:tips[getLang()] });
         });
     }
     public backClick() {

@@ -20,12 +20,10 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PhoneImport extends Widget {
     public cancel: () => void;
     public ok: () => void;
-    public language:any;
     constructor() {
         super();
     }
     public setProps(props:any,oldProps:any) {
-        this.language = this.config.value[getLang()];
         this.props = {
             ...props,
             phone:'',
@@ -47,7 +45,8 @@ export class PhoneImport extends Widget {
      */
     public async doSure() {
         if (!this.props.phone) {
-            popNew('app-components1-message-message', { content: this.language.tips });
+            const tips = { zh_Hans:'请先获取验证码',zh_Hant:'請先獲取驗證碼',en:'' };
+            popNew('app-components1-message-message', { content: tips[getLang()] });
             this.props.code = [];
             this.setCode();
 

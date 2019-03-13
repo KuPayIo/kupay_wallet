@@ -28,20 +28,12 @@ interface Props {
     maxLength?: number;
     notUnderLine?: boolean;
 }
-interface State {
-    currentValue: string | number;
-    focused: boolean;
-    showClear: boolean;
-    inputLock: boolean; // 中文输入结束标记，未结束时不执行change方法
-}
 
 export class Input extends Widget {
     public props: any;
-    public language: any;
 
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props, oldProps);
-        this.language = this.config.value[getLang()];
         if (this.props.placeHolder) {
             this.props.placeHolder = this.props.placeHolder[getLang()];
         }
@@ -108,6 +100,7 @@ export class Input extends Widget {
     /**
      * 输入事件
      */
+    // tslint:disable-next-line:cyclomatic-complexity
     public change(event: any) {
         if (this.props.inputLock) {
             return;
@@ -119,7 +112,8 @@ export class Input extends Widget {
         }
         // 密码输入 时检验非法字符
         if (this.props.itype === 'password' && !this.availableJudge(currentValue) && currentValue.length > 0) {
-            popNew('app-components1-message-message', { content: this.language.disAvailable });
+            const disAvailable = { zh_Hans:'不支持的字符',zh_Hant:'不支持的字符',en:'' };
+            popNew('app-components1-message-message', { content: disAvailable[getLang()] });
             currentValue = currentValue.slice(0, currentValue.length - 1);
         }
         // 数字输入 时检验输入格式
@@ -195,7 +189,7 @@ export class Input extends Widget {
         this.paint();
     }
 
-    public switchItype(key) {
+    public switchItype(key:string) {
         switch (key) {
             case 'text':
                 return 'text';
@@ -217,7 +211,6 @@ export class Input extends Widget {
                 break;
             default:
                 return 'text';
-                break;
         }
     }
 

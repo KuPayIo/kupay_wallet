@@ -20,10 +20,8 @@ export class BaseShare extends Widget {
     public ok: (success:boolean) => void;
     public cancel: (success:boolean) => void;
 
-    public language:any;
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.language = this.config.value[getLang()];
         if (this.props.shareType !== ShareToPlatforms.TYPE_TEXT) {
             this.props.isShowQQ = true;
             this.props.showCount = 4;
@@ -59,10 +57,11 @@ export class BaseShare extends Widget {
 
         stp.init();
         if (this.props.shareType === ShareToPlatforms.TYPE_LINK) {
+            const walletName = { zh_Hans:'钱包',zh_Hant:'錢包',en:'' };
             stp.shareLink({
                 success: (result) => { console.log('share success callback');this.ok(true); },
                 fail: (result) => { console.log('share fail callback');this.cancel(false); },
-                webName: this.props.webName || this.language.wallet,
+                webName: this.props.webName || walletName,
                 url: this.props.url,
                 title: this.props.title,
                 content: this.props.content,

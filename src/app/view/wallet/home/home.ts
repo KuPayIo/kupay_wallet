@@ -16,14 +16,12 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Home extends Widget {
-    public language:any;
     public setProps(props:any,oldProps:any) {
         super.setProps(props,oldProps);
         this.pageInit();
         this.dataInit();
     }
     public pageInit() {
-        this.language = this.config.value[getLang()];
         this.props = {
             tabs:[{
                 tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },

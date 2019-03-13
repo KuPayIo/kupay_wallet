@@ -2,7 +2,6 @@
  * cloud home
  */
 import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
@@ -20,7 +19,6 @@ interface Props {
     isActive:boolean;
 }
 export class CloudHome extends Widget {
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.props.financialModulIsShow = getModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
@@ -31,7 +29,6 @@ export class CloudHome extends Widget {
         }
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const color = getStore('setting/changeColor','redUp');
         this.props = {
             ...this.props,
