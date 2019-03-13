@@ -11,7 +11,6 @@ import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
-import { getScreenModify, preLoadAd } from '../../logic/native';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
 import { piRequire } from '../../utils/commonjsTools';
@@ -27,9 +26,9 @@ export const run = (cb): void =>  {
     checkUpdate();
     // 打开首页面
     popNew('app-view-base-app');
-    // if (!getStore('user/id')) {
-    //     popNew('app-view-base-entrance');
-    // }
+    if (!getStore('user/id')) {
+        popNew('app-view-base-entrance');
+    }
     
     // 锁屏页面
     popNewPage();

@@ -541,17 +541,17 @@ export const registerStore = () => {
     });
 
     // 钱包login
-    register('user/isLogin', (loaded: boolean) => {
+    register('user/isLogin', () => {
         setAllIsLogin();
     });
 
     // 赚钱login
-    earnRegister('userInfo/isLogin', (isLogin: boolean) => {
+    earnRegister('userInfo/isLogin', () => {
         setAllIsLogin();
     });
 
     // 聊天login
-    chatStore.register('isLogin', (isLogin: boolean) => {
+    chatStore.register('isLogin', () => {
         setAllIsLogin();
     });
 };

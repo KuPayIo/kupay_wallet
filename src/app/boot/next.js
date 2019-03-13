@@ -227,8 +227,8 @@ winit.initNext = function () {
 		var sourceList = [
 			"app/net/login.js",
 			"app/net/push.js",
-			"earn/client/app/net/init_1.js",
-			"chat/client/app/net/init.js"
+			"earn/client/app/net/login.js",
+			"chat/client/app/net/login.js"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadWalletLoginSource");

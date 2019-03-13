@@ -1436,7 +1436,7 @@ export const fetchDeviceId = async () => {
  */
 export const playerName = async () => {
     const mods = await piRequire(['app/utils/nameWareHouse']);
-    const nameWare = mods[0];
+    const nameWare = mods[0].nameWare;
     const num1 = nameWare[0].length;
     const num2 = nameWare[1].length;
     let name = '';
