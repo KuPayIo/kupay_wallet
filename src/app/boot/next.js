@@ -37,7 +37,7 @@ winit.initNext = function () {
 	pi_modules.depend.exports.init(winit.deps, winit.path);
 	pi_update.severIp = winit.severIp;
 	pi_update.severPort = winit.severPort;
-	// winit = undefined; //一定要立即释放，保证不会重复执行
+	winit = undefined; //一定要立即释放，保证不会重复执行
 	//先登录
 
 	var modProcess = pi_modules.commonjs.exports.getProcess();
@@ -181,7 +181,9 @@ winit.initNext = function () {
 	var html,util,lang; // pi/util/html,pi/widget/util,pi/util/lang
 	var fm;  // fileMap
 	var fpFlags = {};  // 进入首页面的资源加载标识位
-
+	var suffixCfg = {
+		png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down', xlsx:'none'
+	};
 
 	// app下载入口函数
 	var appLoadEntrance = function(){
@@ -207,11 +209,11 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				loadWalletLoginSource();  // 登录相关
+				// loadWalletLoginSource();  // 登录相关
 				// loadImages();
-				loadChatSource();  // 聊天
+				// loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
-				loadWalletFirstPageSource();  //钱包
+				// loadWalletFirstPageSource();  //钱包
 				
 			});
 		}, function (result) {
@@ -228,7 +230,7 @@ winit.initNext = function () {
 			"earn/client/app/net/init_1.js",
 			"chat/client/app/net/init.js"
 		];
-		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadWalletLoginSource");
 			console.log(11111,Date.now()-self.startTime)
 			var tab = util.loadCssRes(fileMap);
@@ -256,10 +258,6 @@ winit.initNext = function () {
 	
 	// 加载一些需要预加载的图片
 	var loadImages = function () {
-		var suffixCfg = {
-			png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down'
-		};
-
 		util.loadDir(["app/res/image/currency/","app/res/image1/"], flags, fm, suffixCfg, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
@@ -282,7 +280,7 @@ winit.initNext = function () {
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
 		];
-		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadWalletFirstPageSource");
 			console.log("load loadWalletFirstPageSource-----------------");
 			var tab = util.loadCssRes(fileMap);
@@ -360,10 +358,6 @@ winit.initNext = function () {
 
 	// 加载一些需要预加载的图片
 	var loadLeftImages = function () {
-		var suffixCfg = {
-			png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down'
-		};
-
 		util.loadDir(["app/res/image/","chat/client/app/res/images/","earn/client/app/res/image/"], flags, fm, suffixCfg, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
@@ -393,7 +387,7 @@ winit.initNext = function () {
 		// 	"chat/client/app/view/chat/",
 		// 	"chat/client/app/widget/"
 		// ]; 
-		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadChatSource");
 			console.log("load loadChatSource-----------------");
 			var tab = util.loadCssRes(fileMap);
@@ -420,7 +414,8 @@ winit.initNext = function () {
 			"earn/client/app/xls/",
 			"earn/xlsx/"
 		];
-		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
+			debugger
 			console.timeEnd("fp loadEarnSource");
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
