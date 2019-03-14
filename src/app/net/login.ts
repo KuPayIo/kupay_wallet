@@ -241,7 +241,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         if (resp.type === 1014) {
             const flags = getStore('flags');
             console.log('flags =====',flags);
-            if (flags.level_2_page_loaded) {  // 钱包创建成功直接提示,此时资源已经加载完成
+            if (flags.level_3_page_loaded) {  // 钱包创建成功直接提示,此时资源已经加载完成
                 kickOffline(secretHash);  // 踢人下线提示
             } else {  // 刷新页面后，此时资源没有加载完成,延迟到资源加载成功弹出提示
                 localStorage.setItem('kickOffline',JSON.stringify(true));
@@ -390,7 +390,7 @@ export const loginSuccess = (account:Account) => {
     setStore('wallet',wallet,false);
     setStore('cloud',cloud,false);
     setStore('user',user);
-    setStore('flags',{ level_2_page_loaded:true });
+    setStore('flags',{ level_3_page_loaded:true });
     openConnect();
 };
 
@@ -453,7 +453,7 @@ const loginWalletSuccess = () => {
  */
 const loginWalletFailed =  () => {
     const flags = getStore('flags');  
-    const loaded = flags.level_2_page_loaded; // 资源已经加载完成
+    const loaded = flags.level_3_page_loaded; // 资源已经加载完成
     if (loaded) {
         loginWalletFailedPop();
     } else {

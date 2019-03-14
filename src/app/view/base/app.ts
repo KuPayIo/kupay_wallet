@@ -29,78 +29,49 @@ export class App extends Widget {
         const isActive = 'APP_WALLET';
         this.old[isActive] = true;
 
-        const loading = localStorage.getItem('level_2_page_loaded') ? false : true;
-        localStorage.removeItem('level_2_page_loaded');
+        const loading = localStorage.getItem('level_3_page_loaded') ? false : true;
+        localStorage.removeItem('level_3_page_loaded');
 
         this.props = {
             type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
             isActive:'APP_PLAY',
             old: this.old,
             loading,
-            allTabBar: {
-                play: {
+            tabBarList: [
+                {
                     modulName: 'APP_PLAY',
                     text: { zh_Hans:'玩',zh_Hant:'玩',en:'' },
                     icon: 'play.png',
                     iconActive: 'play_active.png',
                     components: 'app-view-play-home-home'
-                },
-                chat: {
+                },{
                     modulName: 'APP_CHAT',
                     text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
                     components: 'chat-client-app-view-chat-contact'
-                },
-                earn: {
+                },{
                     modulName: 'APP_EARN',
                     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
                     components: 'earn-client-app-view-home-home1'
-                },
-                wallet: {
+                },{
                     modulName: 'APP_WALLET',
                     text: { zh_Hans:'钱',zh_Hant:'錢',en:'' },
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
                     components: 'app-view-wallet-home-home'
-                },
-                pay: {
-                    modulName: 'APP_PAY',
-                    text: { zh_Hans:'pay',zh_Hant:'pay',en:'' },
-                    icon: 'wallet.png',
-                    iconActive: 'wallet_active.png',
-                    components: 'app-view-ceshi-home'
                 }
-            },
-            tabBarList: [],
+            ],
             tabBarAnimateClasss:''
         };
-        this.setList();
-        // console.log('updateTest');
+        
+        this.props.tabBarList = this.props.tabBarList.filter(item => {
+            return getModulConfig(item.modulName);
+        });
     }
 
-    public setList() {
-        const resList = [];
-        for (const item in this.props.allTabBar) {
-            this.props.allTabBar[item];
-            if (getModulConfig(this.props.allTabBar[item].modulName)) {
-                // if (this.props.allTabBar[item].modulName === 'APP_WALLET') {
-                //     this.props.isActive = 'APP_EARN';
-                // }
-                resList.push(this.props.allTabBar[item]);
-            }   
-        }
-        if (resList.length === 0) {
-            resList.push(this.props.allTabBar.wallet);
-            this.props.isActive = this.props.allTabBar.wallet.modulName;
-        }
-        if (!this.props.isActive) {
-            this.props.isActive = resList[0].modulName;
-        }
-        this.props.tabBarList = resList;
-    }
     public closeLoading() {
         this.props.loading = false;
         this.paint();
@@ -142,7 +113,7 @@ register('flags/level_3_page_loaded', (loaded: boolean) => {
     if (w) {
         w.closeLoading();
     } else { // 处理导航页过程中资源已经加载完毕
-        localStorage.setItem('level_2_page_loaded', '1');
+        localStorage.setItem('level_3_page_loaded', '1');
     }
     if (localStorage.getItem('kickOffline')) {
         const kickOffline = pi_modules.commonjs.exports.relativeGet('app/net/login').exports.kickOffline;

@@ -313,8 +313,7 @@ winit.initNext = function () {
 					// 关闭读取界面
 					document.body.removeChild(document.getElementById('rcmj_loading_log'));
 				});
-				// loadImages();  // 预加载图片
-				// loadLeftSource();
+				loadLeftSource();
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
 			}, dirProcess.handler);

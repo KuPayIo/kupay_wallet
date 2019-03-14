@@ -111,7 +111,7 @@ const setPushListener = (key:string,callback:Function) => {
     setMsgHandler(key,(res) => {
         const popTips = callback(res);
         const flags = getStore('flags');  
-        const loaded = flags.level_2_page_loaded; // 资源已经加载完成
+        const loaded = flags.level_3_page_loaded; // 资源已经加载完成
         if (loaded) {
             popTips && popTips(res);
         } else {
