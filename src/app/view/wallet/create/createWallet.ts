@@ -10,7 +10,7 @@ import { openConnect } from '../../../net/login';
 import { uploadFile } from '../../../net/pull';
 import { setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { imgResize, playerName, popNewMessage } from '../../../utils/tools';
+import { imgResize, playerName, popNew3, popNewMessage } from '../../../utils/tools';
 import { forelet, WIDGET_NAME } from './home';
 interface Props {
     itype: CreateWalletType;
@@ -169,20 +169,20 @@ export class CreateWallet extends Widget {
      * 查看隐私条约
      */
     public agreementClick() {
-        popNew('app-view-mine-other-privacypolicy');
+        popNew3('app-view-mine-other-privacypolicy');
     }
 
     /**
      * 照片注册
      */
     public imgLoginClick() {
-        popNew('app-view-wallet-create-createWalletByImage',{},() => {
+        popNew3('app-view-wallet-create-createWalletByImage',{},() => {
             this.ok && this.ok();
         });
     }
 
     public haveAccountClick() {
-        popNew('app-view-wallet-import-standardImport',{},() => {
+        popNew3('app-view-wallet-import-standardImport',{},() => {
             this.ok && this.ok();
         });
     }

@@ -271,6 +271,8 @@ winit.initNext = function () {
 		console.time("fp loadWalletFirstPageSource");
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
+			"pi/ui/lang.js",
+			"pi/ui/lang.tpl",
 			"app/view/base/",
 			"app/components1/",
 			"app/res/css/",
@@ -278,6 +280,8 @@ winit.initNext = function () {
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
+			"app/res/",
+			"earn/client/app/res/css/",
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadWalletFirstPageSource");
@@ -298,8 +302,7 @@ winit.initNext = function () {
 		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
 			console.time("enterApp ----");
-			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/lang.js","pi/ui/lang.tpl"];
-			// var sourceList = ["pi/ui/"];
+			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl"];
 			util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 				console.timeEnd("enterApp ----");
 				var tab = util.loadCssRes(fileMap);
@@ -310,8 +313,10 @@ winit.initNext = function () {
 				root.cfg.full = false; //PC模式
 				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
 				index.run(function () {
+					var n = document.getElementById('rcmj_loading_log')
 					// 关闭读取界面
-					document.body.removeChild(document.getElementById('rcmj_loading_log'));
+					if(n)
+					document.body.removeChild(n);
 				});
 				loadLeftSource();
 			}, function (r) {
@@ -322,12 +327,10 @@ winit.initNext = function () {
 
 	// 加载剩下的资源
 	var loadLeftSource = function () {
-
 		var level2SourceList = [
 			"app/core/",
 			"app/logic/",
 			"app/components/",
-			"app/res/",
 			"app/api/",
 			"app/view/",
 			"chat/client/app/view/",
@@ -336,9 +339,9 @@ winit.initNext = function () {
 			"earn/client/app/view/",
 			"earn/client/app/test/",
 			"earn/client/app/components/",
-			"earn/client/app/res/",
 			"earn/client/app/xls/",
-			"earn/xlsx/"
+			"earn/xlsx/",
+			"earn/client/app/res/",
 		];
 
 		// 加载其他文件
@@ -502,7 +505,7 @@ function updateUiInit(){
 			$root.innerHTML = `
 			<div class="pi-mask">
 				<div class="pi-update-box animated bounceInUp">
-					<img src="../res/image/rocket.png" class="pi-update-rocket" />
+					<img src="app/res/image/rocket.png" class="pi-update-rocket" />
 					<div class="pi-update-content">
 					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
 					<div class="pi-update-items">
@@ -525,7 +528,7 @@ function updateUiInit(){
 			$root.innerHTML = `
 			<div class="pi-mask">
 				<div class="pi-update-box animated bounceInUp">
-					<img src="../res/image/rocket.png" class="pi-update-rocket" />
+					<img src="app/res/image/rocket.png" class="pi-update-rocket" />
 					<div class="pi-update-content">
 					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
 					<div class="pi-update-items">
@@ -550,8 +553,6 @@ function updateUiInit(){
 			`;
 		}
 		
-		
-
 		var $body = document.querySelector("body");
 		$body.appendChild($root);
 		pi_update.contentModified = true;
@@ -627,7 +628,6 @@ function updateUiInit(){
 		$completeBtn.innerHTML = option.alertBtnText;
 		$completeBtn.style.display = "flex";
 	}
-
 
 	// 关闭弹框
 	pi_update.closePop = function(){

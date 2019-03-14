@@ -7,6 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { isValidMnemonic } from '../../../core/genmnemonic';
 import { CreateWalletType } from '../../../logic/localWallet';
 import { lang } from '../../../utils/constants';
+import { popNew3 } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
 
 export class StandardImport extends Widget {
@@ -43,7 +44,7 @@ export class StandardImport extends Widget {
             w.ok && w.ok();
         }
         // tslint:disable-next-line:max-line-length
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.StrandarImport,mnemonic:this.props.mnemonic },() => {
+        popNew3('app-view-wallet-create-createWallet',{ itype:CreateWalletType.StrandarImport,mnemonic:this.props.mnemonic },() => {
             this.ok && this.ok();
         });
     }
@@ -53,22 +54,22 @@ export class StandardImport extends Widget {
     }
 
     public whatIsMnemonicClick() {
-        popNew('app-view-wallet-import-mnemonicDesc');
+        popNew3('app-view-wallet-import-mnemonicDesc');
     }
 
     public imageImportClick() {
-        popNew('app-view-wallet-import-imageImport',{},() => {
+        popNew3('app-view-wallet-import-imageImport',{},() => {
             this.ok && this.ok();
         });
     }
     public fragmentImportClick() {
-        popNew('app-view-wallet-import-fragmentImport',{},() => {
+        popNew3('app-view-wallet-import-fragmentImport',{},() => {
             this.ok && this.ok();
         });
     }
 
     public phoneImportClick() {
-        popNew('app-view-wallet-import-phoneImport',{},() => {
+        popNew3('app-view-wallet-import-phoneImport',{},() => {
             this.ok && this.ok();
         });
     }

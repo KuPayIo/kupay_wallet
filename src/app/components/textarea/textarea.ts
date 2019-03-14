@@ -19,17 +19,15 @@ interface Props {
     autofocus:boolean;// 自动获取焦点
 }
 
-interface State {
-    currentValue:string;
-    hovering:boolean;
-    focused:boolean;
-    showClear:object;
-    styleStr:string;// 样式设置
-}
-export class Input extends Widget {
+export const loadDirCompleted = () => {
+    console.log(1111111111);
+};
+
+export class Textarea extends Widget {
     public props: any;
     constructor() {
         super();
+        console.log('textarea --------- constructor');
     }
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
@@ -41,6 +39,7 @@ export class Input extends Widget {
         }
         if (props.placeHolder) {
             this.props.placeHolder = this.props.placeHolder[getLang()];
+            console.log('textarea ---------',this.props.placeHolder);
         }
         let currentValue = '';
         if (props.input) {

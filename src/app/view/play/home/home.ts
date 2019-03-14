@@ -13,7 +13,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getEthApiBaseUrl } from '../../../core/config';
 import { register } from '../../../store/memstore';
 import { piRequire } from '../../../utils/commonjsTools';
-import { getCurrentEthAddr, getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
+import { getCurrentEthAddr, getUserInfo, hasWallet, popNew3, popNewMessage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -135,7 +135,7 @@ export class PlayHome extends Widget {
     }
 
     public showMine() {
-        popNew('app-view-mine-home-home');
+        popNew3('app-view-mine-home-home');
     }
 
     /**
@@ -185,7 +185,7 @@ export class PlayHome extends Widget {
      */
     public activityClick(index:number) {
         if (!hasWallet()) return;
-        popNew(this.props.activityList[index].url);
+        popNew3(this.props.activityList[index].url);
     }
     public openTestClick() {
         const gameTitle = '测试';

@@ -8,7 +8,7 @@
         <div w-class="desc"><pi-ui-lang>{{desc}}</pi-ui-lang></div>
         <div w-class="bottom-box">
             <div w-class="textarea-father" ev-input-change="inputChange">
-                {{: inputPlace = {"zh_Hans":"输入助记词，空格键分隔","zh_Hant":"輸入助記詞，空格鍵分隔","en":""} }}
+                {{:let inputPlace = {"zh_Hans":"输入助记词，空格键分隔","zh_Hant":"輸入助記詞，空格鍵分隔","en":""} }}
                 <app-components-textarea-textarea>{placeHolder:{{inputPlace}} }</app-components-textarea-textarea>
             </div>
             <div ev-btn-tap="nextClick" w-class="btn">

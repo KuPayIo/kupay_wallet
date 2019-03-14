@@ -17,9 +17,6 @@
     </div>
     {{end}}
 {{end}}
-{{if it.loading}}
-<div w-class="loading-container"><app-components1-loading-loading1>{}</app-components1-loading-loading1></div>
-{{end}}
 </div>
 
 <div w-class="ga-bottom-tab-bar-container" class="{{it.tabBarAnimateClasss}}" >

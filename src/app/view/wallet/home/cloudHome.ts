@@ -1,7 +1,6 @@
 /**
  * cloud home
  */
-import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
@@ -9,7 +8,7 @@ import { getProductList, getServerCloudBalance } from '../../../net/pull';
 import { Product } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, hasWallet } from '../../../utils/tools';
+import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, hasWallet, popNew3 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -47,9 +46,9 @@ export class CloudHome extends Widget {
         const index = e.index;
         const v = this.props.assetList[index];
         if (v.currencyName === 'ST') {
-            popNew('app-view-wallet-cloudWalletGT-home',{ currencyName:v.currencyName,gain:v.gain });
+            popNew3('app-view-wallet-cloudWalletGT-home',{ currencyName:v.currencyName,gain:v.gain });
         } else {
-            popNew('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
+            popNew3('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
         }
     }
     
@@ -64,11 +63,11 @@ export class CloudHome extends Widget {
         this.paint();
     }
     public optimalClick() {
-        popNew('app-view-wallet-financialManagement-home',{ activeNum:0 });
+        popNew3('app-view-wallet-financialManagement-home',{ activeNum:0 });
     }
     public fmItemClick(e:any,index:number) {
         const product = this.props.productList[index];
-        popNew('app-view-wallet-financialManagement-productDetail',{ product });
+        popNew3('app-view-wallet-financialManagement-productDetail',{ product });
     }
 
     public currencyUnitChange() {

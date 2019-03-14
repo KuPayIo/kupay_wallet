@@ -5,12 +5,15 @@ import { ArgonHash } from '../../pi/browser/argonHash';
 import { popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
+import { Callback } from '../../pi/util/util';
 import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
+import { lookup } from '../../pi/widget/widget';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
+import { dataCenter } from '../logic/dataCenter';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
-import { getCipher, getGenmnemonicMod, piRequire } from './commonjsTools';
+import { getCipher, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
 import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
 
 /**
@@ -497,11 +500,10 @@ export const calcHashValuePromise = async (pwd, salt?) => {
     console.log('argonHash has init');
     secretHash = await argonHash.calcHashValuePromise({ pwd, salt });
     console.timeEnd('pi_create  calc argonHash');
-    requestAnimationFrame(() => {
-        const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
+    getDataCenter().then(dataCenter => {
         dataCenter.checkAddr(secretHash);
     });
-
+    
     return secretHash;
 };
 
@@ -1479,4 +1481,56 @@ export const calCurrencyLogoUrl = (currencyName:string) => {
     const directory = preShowCurrencys.indexOf(currencyName) >= 0 ? 'image1' : 'image';
     
     return `app/res/${directory}/currency/${currencyName}.png`;
+};
+
+/**
+ * 弹出二级页面
+ */
+export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
+    if (!lookup(name)) {
+        const loading = popNew('app-components1-loading-loading1');
+        const name1 = name.replace(/-/g,'/');
+        const sourceList = ['app/components/',`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+        piLoadDir(sourceList).then(() => {
+            popNew(name,props,ok,cancel);
+            loading.callback(loading.widget);
+        });
+    } else {
+        popNew(name,props,ok,cancel);
+    }
+};
+
+/**
+ * 弹出三级页面
+ */
+export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
+    if (!lookup(name)) {
+        const loading = popNew('app-components1-loading-loading1');
+        const name1 = name.replace(/-/g,'/');
+        const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+        const level3SourceList = [
+            'app/core/',
+            'app/logic/',
+            'app/components/',
+            'app/res/',
+            'app/api/',
+            'app/view/',
+            'chat/client/app/view/',
+            'chat/client/app/widget/',
+            'chat/client/app/res/',
+            'earn/client/app/view/',
+            'earn/client/app/test/',
+            'earn/client/app/components/',
+            'earn/client/app/res/',
+            'earn/client/app/xls/',
+            'earn/xlsx/'
+        ];
+        sourceList.push(...level3SourceList);
+        piLoadDir(sourceList).then(() => {
+            popNew(name,props,ok,cancel);
+            loading.callback(loading.widget);
+        });
+    } else {
+        popNew(name,props,ok,cancel);
+    }
 };

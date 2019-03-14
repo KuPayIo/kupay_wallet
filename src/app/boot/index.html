@@ -732,7 +732,10 @@
 			</div>
 		</div>
 	</div>
-	
+</body>
+<script type="text/javascript">
+if(!localStorage.firstInApp){
+	var innerHtml = `
 	<div class="swiper-container" id="swiper-container">
 		<div class="swiper-wrapper">
 			<div class="swiper-slide slide">
@@ -751,9 +754,8 @@
 		</div>
 		<div class="swiper-pagination"></div>
 	</div>
-</body>
-<script type="text/javascript">
-if(!localStorage.firstInApp){
+	`;
+	document.querySelector("body").innerHTML = innerHtml;
 	winit.loadJS(winit.getLoadDomain("swiper.min.js"),
 					"/wallet/app/boot/swiper.min.js", "utf8", function(url,err){
 						var mySwiper = new Swiper('.swiper-container', {

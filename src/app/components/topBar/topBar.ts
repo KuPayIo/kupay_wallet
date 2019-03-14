@@ -11,7 +11,6 @@ import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { register } from '../../store/memstore';
 import { rippleShow } from '../../utils/tools';
 
 interface Props {

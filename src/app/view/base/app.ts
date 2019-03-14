@@ -28,15 +28,10 @@ export class App extends Widget {
     public init(): void {
         const isActive = 'APP_WALLET';
         this.old[isActive] = true;
-
-        const loading = localStorage.getItem('level_3_page_loaded') ? false : true;
-        localStorage.removeItem('level_3_page_loaded');
-
         this.props = {
             type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
-            isActive:'APP_PLAY',
+            isActive:'APP_WALLET',
             old: this.old,
-            loading,
             tabBarList: [
                 {
                     modulName: 'APP_PLAY',
@@ -72,11 +67,6 @@ export class App extends Widget {
         });
     }
 
-    public closeLoading() {
-        this.props.loading = false;
-        this.paint();
-    }
-    
     public tabBarChangeListener(event: any, index: number) {
         rippleShow(event);
         const identfy = this.props.tabBarList[index].modulName;
@@ -109,12 +99,6 @@ export class App extends Widget {
 register('flags/level_3_page_loaded', (loaded: boolean) => {
     const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
     dataCenter.init();
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.closeLoading();
-    } else { // 处理导航页过程中资源已经加载完毕
-        localStorage.setItem('level_3_page_loaded', '1');
-    }
     if (localStorage.getItem('kickOffline')) {
         const kickOffline = pi_modules.commonjs.exports.relativeGet('app/net/login').exports.kickOffline;
         localStorage.removeItem('kickOffline');
