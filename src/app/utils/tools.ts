@@ -10,10 +10,10 @@ import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
-import { dataCenter } from '../logic/dataCenter';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { getCipher, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
+// tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
 
 /**
@@ -550,15 +550,20 @@ export const popNewLoading = (text: any) => {
 /**
  * 打开密码输入框
  */
-const openMessageboxPsw = (BoxInputTitle?,content?): Promise<string> => {
+const openMessageboxPsw = async (BoxInputTitle?,content?) => {
     // tslint:disable-next-line:typedef
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+        const name = 'app-components-modalBoxInput-modalBoxInput';
+        if (!lookup(name)) {
+            const name1 = name.replace(/-/g,'/');
+            const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+            await piLoadDir(sourceList);
+        }
         popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
             resolve(r);
         }, (cancel: string) => {
             reject(cancel);
         });
-
     });
 };
 
@@ -1486,7 +1491,7 @@ export const calCurrencyLogoUrl = (currencyName:string) => {
 /**
  * 弹出二级页面
  */
-export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
+export const popNew2 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
     if (!lookup(name)) {
         const loading = popNew('app-components1-loading-loading1');
         const name1 = name.replace(/-/g,'/');

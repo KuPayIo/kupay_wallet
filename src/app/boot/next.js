@@ -280,12 +280,9 @@ winit.initNext = function () {
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
-			"app/res/",
-			"earn/client/app/res/css/",
+			"earn/client/app/res/css/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			console.timeEnd("fp loadWalletFirstPageSource");
-			console.log("load loadWalletFirstPageSource-----------------");
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -318,7 +315,7 @@ winit.initNext = function () {
 					if(n)
 					document.body.removeChild(n);
 				});
-				loadLeftSource();
+				// loadLeftSource();
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
 			}, dirProcess.handler);

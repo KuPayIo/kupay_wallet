@@ -2,7 +2,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
 import { getLoginMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
-import { playerName, popNew3, popNewMessage } from '../../utils/tools';
+import { playerName, popNew2, popNew3, popNewMessage } from '../../utils/tools';
 
 /**
  * 登录注册
@@ -41,7 +41,7 @@ export class Entrance extends Widget {
     // 已有账户登录
     public haveAccountClick() {
         console.log('已有账户登录');
-        popNew3('app-view-wallet-import-standardImport',{},() => {
+        popNew2('app-view-wallet-import-standardImport',{},() => {
             this.ok && this.ok();
         });
     }

@@ -19,15 +19,10 @@ interface Props {
     autofocus:boolean;// 自动获取焦点
 }
 
-export const loadDirCompleted = () => {
-    console.log(1111111111);
-};
-
 export class Textarea extends Widget {
     public props: any;
     constructor() {
         super();
-        console.log('textarea --------- constructor');
     }
     public setProps(props: Props, oldProps: Props) {
         super.setProps(props,oldProps);
@@ -39,7 +34,6 @@ export class Textarea extends Widget {
         }
         if (props.placeHolder) {
             this.props.placeHolder = this.props.placeHolder[getLang()];
-            console.log('textarea ---------',this.props.placeHolder);
         }
         let currentValue = '';
         if (props.input) {
