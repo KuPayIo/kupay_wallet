@@ -16,7 +16,7 @@
             {{for ind,val of it.numbers}}
                 <div w-class="oneNum {{(ind+1)%3==0?'':'oneNumMore'}}" on-down="boardItemClick({{ind}})">
                     {{if val=='x'}}
-                    <img src="../../res/image1/delete_lock.png"/>
+                    <img src="../../res/image/delete_lock.png"/>
                     {{else}}
                     {{val}}
                     {{end}}

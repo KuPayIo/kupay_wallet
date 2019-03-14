@@ -85,9 +85,9 @@ export class WriteRedEnv extends Widget {
      */
     public updateBalance() {
         const list = [
-            { img: '../../res/image/currency/KT.png', name: 'KT', num: 500 },
-            { img: '../../res/image/currency/BTC.png', name: 'BTC', num: 0.01 },
-            { img: '../../res/image/currency/ETH.png', name: 'ETH', num: 0.5 }
+            { img: '../../res/image1/currency/KT.png', name: 'KT', num: 500 },
+            { img: '../../res/image1/currency/BTC.png', name: 'BTC', num: 0.01 },
+            { img: '../../res/image1/currency/ETH.png', name: 'ETH', num: 0.5 }
         ];
         const data = getCloudBalances();
         for (const i in list) {

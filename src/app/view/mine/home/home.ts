@@ -32,11 +32,11 @@ export class Home extends Widget {
         const address = '';
         this.props = {
             list:[
-                { img:'../../../res/image1/28.png',name: '',components:'' },
-                { img:'../../../res/image1/10.png',name: '',components:'app-view-mine-other-help' },
-                { img:'../../../res/image1/21.png',name: '',components:'app-view-mine-setting-setting' },
-                { img:'../../../res/image1/23.png',name: '',components:'app-view-mine-other-contanctUs' },
-                { img:'../../../res/image1/24.png',name: '',components:'app-view-mine-other-aboutus' }
+                { img:'../../../res/image/28.png',name: '',components:'' },
+                { img:'../../../res/image/10.png',name: '',components:'app-view-mine-other-help' },
+                { img:'../../../res/image/21.png',name: '',components:'app-view-mine-setting-setting' },
+                { img:'../../../res/image/23.png',name: '',components:'app-view-mine-other-contanctUs' },
+                { img:'../../../res/image/24.png',name: '',components:'app-view-mine-other-aboutus' }
                 
             ],
             address,
@@ -49,7 +49,7 @@ export class Home extends Widget {
             walletName : getModulConfig('WALLET_NAME')
         };
         if (getModulConfig('GITHUB')) {
-            this.props.list.push({ img:'../../../res/image1/43.png',name: '',components:'' });
+            this.props.list.push({ img:'../../../res/image/43.png',name: '',components:'' });
         }
         this.initData();
     }

@@ -3,7 +3,7 @@
         {{: topBarTitle = {"zh_Hans":it.currencyName,"zh_Hant":it.currencyName,"en":""} }}
         <app-components-topBar-topBar>{"title":{{topBarTitle}},background:"transparent",nextImg:"../../res/image/location.png",refreshImg:"../../res/image1/refresh_white.png",text:{{it.address}}}</app-components-topBar-topBar>
         <div w-class="head">
-            <img src="../../../res/image/currency/{{it.currencyName}}.png" w-class="currency-icon"/>
+            <img src="{{it.currencyLogo}}" w-class="currency-icon"/>
             <div w-class="asset-container">
                 <div w-class="balance">{{it.balance%1===0?it.balance.toFixed(2):it.balance}}</div>
                 <div w-class="balance-value">{{it.currencyUnitSymbol}}{{it.balanceValue}}</div>

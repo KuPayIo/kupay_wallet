@@ -209,11 +209,11 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				loadWalletLoginSource();  // 登录相关
-				// loadImages();
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
+				loadWalletLoginSource();  // 登录相关
+				loadImages(); // 预加载图片
 				
 			});
 		}, function (result) {
@@ -257,7 +257,7 @@ winit.initNext = function () {
 	
 	// 加载一些需要预加载的图片
 	var loadImages = function () {
-		util.loadDir(["app/res/image/currency/","app/res/image1/"], flags, fm, suffixCfg, function (fileMap) {
+		util.loadDir(["app/res/image1/"], flags, fm, suffixCfg, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -314,7 +314,7 @@ winit.initNext = function () {
 					document.body.removeChild(document.getElementById('rcmj_loading_log'));
 				});
 				// loadImages();  // 预加载图片
-				loadLeftSource();
+				// loadLeftSource();
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
 			}, dirProcess.handler);
@@ -412,9 +412,10 @@ winit.initNext = function () {
 			"earn/client/app/view/activity/miningHome.tpl",
 			"earn/client/app/view/activity/miningHome.js",
 			"earn/client/app/view/activity/miningHome.wcss",
-			// "earn/client/app/xls/",
 			"earn/xlsx/awardCfg.c.js",
 			"earn/xlsx/awardCfg.s.js",
+			"earn/xlsx/item.c.js",
+			"earn/xlsx/item.s.js",
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadEarnSource");
@@ -502,7 +503,7 @@ function updateUiInit(){
 			$root.innerHTML = `
 			<div class="pi-mask">
 				<div class="pi-update-box animated bounceInUp">
-					<img src="../res/image1/rocket.png" class="pi-update-rocket" />
+					<img src="../res/image/rocket.png" class="pi-update-rocket" />
 					<div class="pi-update-content">
 					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
 					<div class="pi-update-items">
@@ -525,7 +526,7 @@ function updateUiInit(){
 			$root.innerHTML = `
 			<div class="pi-mask">
 				<div class="pi-update-box animated bounceInUp">
-					<img src="../res/image1/rocket.png" class="pi-update-rocket" />
+					<img src="../res/image/rocket.png" class="pi-update-rocket" />
 					<div class="pi-update-content">
 					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
 					<div class="pi-update-items">

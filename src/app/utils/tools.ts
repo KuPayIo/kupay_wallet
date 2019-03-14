@@ -11,7 +11,7 @@ import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../conf
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { getCipher, getGenmnemonicMod, piRequire } from './commonjsTools';
-import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, resendInterval } from './constants';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
 
 /**
  * 获取当前钱包对应货币正在使用的地址信息
@@ -1470,4 +1470,13 @@ export const getMnemonic = async (passwd) => {
 
         return '';
     }
+};
+
+/**
+ * 货币logo路径
+ */
+export const calCurrencyLogoUrl = (currencyName:string) => {
+    const directory = preShowCurrencys.indexOf(currencyName) >= 0 ? 'image1' : 'image';
+    
+    return `app/res/${directory}/currency/${currencyName}.png`;
 };

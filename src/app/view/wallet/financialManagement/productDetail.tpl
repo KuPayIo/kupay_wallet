@@ -69,7 +69,7 @@
                 <div w-class="right-box">
                     <img w-class="sub" on-down="minus" src="../../../res/image/less_blue.png"/>
                     <span>{{it.amount}}</span>
-                    <img w-class="plus" on-down="add" src="../../../res/image/add.png" />
+                    <img w-class="plus" on-down="add" src="../../../res/image1/add.png" />
                 </div>
             </div>
             <div w-class="read" on-tap="readAgree"><pi-ui-lang>{"zh_Hans":"阅读声明","zh_Hant":"閱讀聲明","en":""}</pi-ui-lang></div>
