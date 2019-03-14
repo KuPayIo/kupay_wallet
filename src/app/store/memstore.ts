@@ -329,7 +329,7 @@ const initSettings = () => {
             langNum = parseInt(localLan);
             const localSet = getLocalStorage('setting');
             if (!localSet) {
-                if (langNum === 2 || langNum === 3) {
+                if (langNum === appLanguageList.zh_Hans || langNum === appLanguageList.zh_Hant) {
                     setLang(appLanguageList[langNum]);
                     store.setting.language = appLanguageList[langNum];
                 } else {

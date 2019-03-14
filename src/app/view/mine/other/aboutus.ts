@@ -33,14 +33,6 @@ export class Aboutus extends Widget {
             const tips = { zh_Hans:'已是最新版本',zh_Hant:'已是最新版',en:'' };
             popNewMessage(tips[getLang()]);
         } else {
-            // TODO 分享下载
-            // popNew('app-components-share-share', { 
-            //     shareType: ShareToPlatforms.TYPE_LINK,
-            //     url: shareDownload,
-            //     title:`${this.props.walletName}钱包`,
-            //     content:`我正在使用${this.props.walletName}，邀您一起来使用！` 
-            // });
-            // console.error(shareDownload);
             popNew('app-view-mine-other-shareDownload');
         }
     }

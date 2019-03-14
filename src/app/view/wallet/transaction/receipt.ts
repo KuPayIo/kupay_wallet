@@ -1,7 +1,7 @@
 /**
  * receipt
  */
-import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { ShareToPlatforms, ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
@@ -40,7 +40,7 @@ export class Receipt extends Widget {
         stp.init();
         stp.makeScreenShot({
             success: (result) => { 
-                popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
+                popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
             },
             fail: (result) => { 
                 popNew('app-components-message-message',{ content:this.language.tips[1] });

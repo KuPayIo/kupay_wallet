@@ -1,8 +1,7 @@
 /**
  * fund share Page
  */
-import { ShareToPlatforms } from '../../../pi/browser/shareToPlatforms';
-import { getLang } from '../../../pi/util/lang';
+import { SharePlatform,ShareToPlatforms,ShareType } from '../../../pi/browser/shareToPlatforms';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
@@ -22,7 +21,7 @@ export class BaseShare extends Widget {
 
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        if (this.props.shareType !== ShareToPlatforms.TYPE_TEXT) {
+        if (this.props.shareType !== ShareType.TYPE_TEXT) {
             this.props.isShowQQ = true;
             this.props.showCount = 4;
         } else {
@@ -37,26 +36,26 @@ export class BaseShare extends Widget {
     }
 
     public shareToWechat() {
-        this.baseShare(ShareToPlatforms.PLATFORM_WEBCHAT);
+        this.baseShare(SharePlatform.PLATFORM_WEBCHAT);
     }
 
     public shareToFriends() {
-        this.baseShare(ShareToPlatforms.PLATFORM_MOMENTS);
+        this.baseShare(SharePlatform.PLATFORM_MOMENTS);
     }
 
     public shareToQQ() {
-        this.baseShare(ShareToPlatforms.PLATFORM_QQ);
+        this.baseShare(SharePlatform.PLATFORM_QQ);
     }
 
     public shareToQQSpace() {
-        this.baseShare(ShareToPlatforms.PLATFORM_QZONE);
+        this.baseShare(SharePlatform.PLATFORM_QZONE);
     }
 
     private baseShare(platform: number) {
         const stp = new ShareToPlatforms();
 
         stp.init();
-        if (this.props.shareType === ShareToPlatforms.TYPE_LINK) {
+        if (this.props.shareType === ShareType.TYPE_LINK) {
             const walletName = { zh_Hans:'钱包',zh_Hant:'錢包',en:'' };
             stp.shareLink({
                 success: (result) => { console.log('share success callback');this.ok(true); },
@@ -68,7 +67,7 @@ export class BaseShare extends Widget {
                 comment: this.props.comment || '',
                 platform: platform
             });
-        } else if (this.props.shareType === ShareToPlatforms.TYPE_SCREEN) {
+        } else if (this.props.shareType === ShareType.TYPE_SCREEN) {
             stp.shareScreenShot({
                 success: (result) => { console.log('share success callback');this.ok(true); },
                 fail: (result) => { console.log('share fail callback');this.cancel(false); },

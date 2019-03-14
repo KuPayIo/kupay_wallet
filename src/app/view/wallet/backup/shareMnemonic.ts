@@ -1,7 +1,7 @@
 /**
  * share mnemonic
  */
-import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
@@ -38,7 +38,7 @@ export class ShareMnemonic extends Widget {
     // 分享
     public shareItemClick(e:any,index:number) {
         const fragment = this.props.encryptFragments[index];
-        popNew('app-components-share-share',{ text:fragment,shareType:ShareToPlatforms.TYPE_IMG },(success) => {
+        popNew('app-components-share-share',{ text:fragment,shareType:ShareType.TYPE_IMG },(success) => {
             this.props.successList[index] = true;
             this.paint();
             this.allShared();

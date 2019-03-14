@@ -1,7 +1,7 @@
 /**
  * RedEnvDetail
  */
-import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
@@ -126,7 +126,7 @@ export class RedEnvDetail extends Widget {
             title = this.language.redEnvType[2];
         }
         popNew('app-components-share-share', { 
-            shareType: ShareToPlatforms.TYPE_LINK,
+            shareType: ShareType.TYPE_LINK,
             url,
             title,
             content:this.props.message
