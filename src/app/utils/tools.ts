@@ -12,7 +12,7 @@ import { lookup } from '../../pi/widget/widget';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
-import { getCipher, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
+import { getCipherTools, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
 
@@ -1083,9 +1083,6 @@ export const getConfirmBlockNumber = (currencyName: string, amount: number) => {
  */
 export const getLanguage = (w) => {
     const lan = getStore('setting/language', 'zh_Hans');
-    // if (lan) {
-    //     return w.config.value[lan.languageList[lan.selected]];
-    // }
 
     return w.config.value[lan];
 };
@@ -1095,9 +1092,6 @@ export const getLanguage = (w) => {
  */
 export const getStaticLanguage = () => {
     const lan = getStore('setting/language', 'zh_Hans');
-    // if (lan) {
-    //     return Config[lan.languageList[lan.selected]];
-    // }
 
     return Config[lan];
 };
@@ -1459,19 +1453,13 @@ export const playerName = async () => {
 export const getMnemonic = async (passwd) => {
     const wallet = getStore('wallet');
     const hashPromise = calcHashValuePromise(passwd, getStore('user/salt'));
-    const CipherPromise = getCipher();
+    const cipherToolsrPromise = getCipherTools();
     const genmnemonicPromise = getGenmnemonicMod();
-    const [hash,Cipher,genmnemonic] = await Promise.all([hashPromise,CipherPromise,genmnemonicPromise]);
+    const [hash,cipherTools,genmnemonic] = await Promise.all([hashPromise,cipherToolsrPromise,genmnemonicPromise]);
     try {
-        const cipher = new Cipher();
-        console.time('transfer3 cipher.decrypt');
-        const r = cipher.decrypt(hash, wallet.vault);
-        console.timeEnd('transfer3 cipher.decrypt');
-        console.time('transfer3 toMnemonic');
-        const mnemonic = await genmnemonic.toMnemonic(lang, hexstrToU8Array(r));
-        console.timeEnd('transfer3 toMnemonic');
-
-        return mnemonic;
+        const r = cipherTools.decrypt(hash, wallet.vault);
+        
+        return genmnemonic.toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {
         console.log(error);
 

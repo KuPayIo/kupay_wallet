@@ -5,12 +5,12 @@ import { arrayBufferToBase64 } from '../../pi/util/base64';
 import { getLang } from '../../pi/util/lang';
 import { Config, ERC20Tokens } from '../config';
 import { BTCWallet } from '../core/btc/wallet';
-import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
 import { buyProduct, getPurchaseRecord, getServerCloudBalance } from '../net/pull';
 import { getStore, setStore } from '../store/memstore';
+import { decrypt } from './cipherTools';
 import { defaultGasLimit, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from './constants';
 import { shareSecret } from './secretsBase';
 // tslint:disable-next-line:max-line-length
@@ -85,9 +85,8 @@ export const VerifyIdentidy = async (passwd:string) => {
     const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
 
     try {
-        const cipher = new Cipher();
-        const r = cipher.decrypt(hash, wallet.vault);
-
+        decrypt(hash, wallet.vault);
+        
         return hash;
     } catch (error) {
         console.log(error);
@@ -103,8 +102,7 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
     const hash = await calcHashValuePromise(passwd, salt);
 
     try {
-        const cipher = new Cipher();
-        const r = cipher.decrypt(hash, vault);
+        decrypt(hash, vault);
 
         return true;
     } catch (error) {
@@ -120,9 +118,7 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
 export const getMnemonicHexstr = (hash) => {
     const wallet = getStore('wallet');
     try {
-        const cipher = new Cipher();
-
-        return cipher.decrypt(hash, wallet.vault);
+        return decrypt(hash, wallet.vault);
     } catch (error) {
         console.log(error);
 
@@ -240,8 +236,7 @@ export const backupMnemonic = async (passwd:string) => {
 export const getMnemonicByHash = (hash:string) => {
     const wallet = getStore('wallet');
     try {
-        const cipher = new Cipher();
-        const r = cipher.decrypt(hash, wallet.vault);
+        const r = decrypt(hash, wallet.vault);
 
         return toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {
@@ -302,33 +297,6 @@ export const fetchMinerFeeList = (currencyName) => {
     }
 
     return minerFeeList;
-};
-
-/**
- * 密码加密
- * @param plainText 需要加密的文本
- */
-export const encrypt = (plainText: string, salt: string) => {
-    const cipher = new Cipher();
-
-    return cipher.encrypt(salt, plainText);
-};
-
-/**
- * 密码解密
- * @param cipherText 需要解密的文本
- */
-export const decrypt = (cipherText: string, salt: string) => {
-    const cipher = new Cipher();
-
-    return cipher.decrypt(salt, cipherText);
-};
-
-// hash256;
-export const sha256 = (data: string) => {
-    const cipher = new Cipher();
-
-    return cipher.sha256(data);
 };
 
 // 锁屏密码验证

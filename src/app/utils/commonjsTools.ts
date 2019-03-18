@@ -76,7 +76,7 @@ export const getGlobalWalletClass = async () => {
 
 // =============================app/logic/dataCenter================================================
 /**
- * 获取GlobalWallet
+ * 获取dataCenter
  */
 export const getDataCenter = async () => {
     const mods = await piRequire(['app/logic/dataCenter']);
@@ -146,14 +146,14 @@ export const getBTCWallet = async () => {
 
 // =============================app/core/btc/wallet================================================
 
-// =============================app/core/crypto/cipher================================================
+// =============================app/utils/cipherTools================================================
 /**
- * 获取Cipher
+ * 获取CipherTools
  */
-export const getCipher = async () => {
-    const mods = await piRequire(['app/core/crypto/cipher']);
+export const getCipherTools = async () => {
+    const mods = await piRequire(['app/utils/cipherTools']);
 
-    return mods[0].Cipher;
+    return mods[0];
 };
 
-// =============================app/core/crypto/cipher================================================
+// =============================app/utils/cipherTools================================================

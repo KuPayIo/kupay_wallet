@@ -247,8 +247,6 @@ winit.initNext = function () {
 			// erlang服务器连接登录
 			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.registerStore();
 			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.openConnect();
-			fpFlags.storeReady = true;
-			enterApp();
 			
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
