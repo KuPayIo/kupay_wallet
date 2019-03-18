@@ -3,7 +3,7 @@
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { backCall, backList, popNew } from '../../pi/ui/root';
-import { getStore, register, setStore } from '../store/memstore';
+import { getStore, register } from '../store/memstore';
 import { CMD } from '../utils/constants';
 import { getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';

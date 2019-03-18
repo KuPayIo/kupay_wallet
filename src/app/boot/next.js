@@ -299,7 +299,7 @@ winit.initNext = function () {
 		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
 			console.time("enterApp ----");
-			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl"];
+			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
 			util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
 				console.timeEnd("enterApp ----");
 				var tab = util.loadCssRes(fileMap);
@@ -310,10 +310,8 @@ winit.initNext = function () {
 				root.cfg.full = false; //PC模式
 				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
 				index.run(function () {
-					var n = document.getElementById('rcmj_loading_log')
 					// 关闭读取界面
-					if(n)
-					document.body.removeChild(n);
+					document.body.removeChild(document.getElementById('rcmj_loading_log'));
 				});
 				// loadLeftSource();
 			}, function (r) {
