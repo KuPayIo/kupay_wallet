@@ -10,7 +10,7 @@ import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
 import { buyProduct, getPurchaseRecord, getServerCloudBalance } from '../net/pull';
 import { getStore, setStore } from '../store/memstore';
-import { decrypt } from './cipherTools';
+import { decrypt, encrypt } from './cipherTools';
 import { defaultGasLimit, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from './constants';
 import { shareSecret } from './secretsBase';
 // tslint:disable-next-line:max-line-length
@@ -85,7 +85,7 @@ export const VerifyIdentidy = async (passwd:string) => {
     const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
 
     try {
-        decrypt(hash, wallet.vault);
+        decrypt(wallet.vault,hash);
         
         return hash;
     } catch (error) {
@@ -102,7 +102,7 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
     const hash = await calcHashValuePromise(passwd, salt);
 
     try {
-        decrypt(hash, vault);
+        decrypt(vault,hash);
 
         return true;
     } catch (error) {
@@ -118,7 +118,7 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
 export const getMnemonicHexstr = (hash) => {
     const wallet = getStore('wallet');
     try {
-        return decrypt(hash, wallet.vault);
+        return decrypt(wallet.vault,hash);
     } catch (error) {
         console.log(error);
 
@@ -236,7 +236,7 @@ export const backupMnemonic = async (passwd:string) => {
 export const getMnemonicByHash = (hash:string) => {
     const wallet = getStore('wallet');
     try {
-        const r = decrypt(hash, wallet.vault);
+        const r = decrypt(wallet.vault,hash);
 
         return toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {

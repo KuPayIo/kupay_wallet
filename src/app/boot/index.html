@@ -440,7 +440,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = false; 
+			winit.debug = true; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
@@ -755,7 +755,7 @@ if(!localStorage.firstInApp){
 		<div class="swiper-pagination"></div>
 	</div>
 	`;
-	document.querySelector("body").innerHTML = innerHtml;
+	document.querySelector("body").innerHTML = document.querySelector("body").innerHTML + innerHtml;
 	winit.loadJS(winit.getLoadDomain("swiper.min.js"),
 					"/wallet/app/boot/swiper.min.js", "utf8", function(url,err){
 						var mySwiper = new Swiper('.swiper-container', {

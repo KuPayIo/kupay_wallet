@@ -511,30 +511,23 @@ export const calcHashValuePromise = async (pwd, salt?) => {
  * 基础打开弹窗界面封装
  */
 export const openBasePage = (foreletName: string, foreletParams: any = {}): Promise<string> => {
-
-    // tslint:disable-next-line:typedef
     return new Promise((resolve, reject) => {
         popNew(foreletName, foreletParams, (ok: string) => {
-            // this.windowSet.delete(foreletName);
             resolve(ok);
         }, (cancel: string) => {
-            // this.windowSet.delete(foreletName);
             reject(cancel);
         });
 
     });
 };
 
-export const popPswBox = async (content = []) => {
+export const popPswBox = (content = []) => {
     try {
-        // tslint:disable-next-line:no-unnecessary-local-variable
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
-        // tslint:disable-next-line:no-unnecessary-local-variable
-        const psw = await openMessageboxPsw(BoxInputTitle,content);
 
-        return psw;
+        return openMessageboxPsw(BoxInputTitle,content);
     } catch (error) {
-        return;
+        return '';
     }
 };
 
@@ -550,8 +543,7 @@ export const popNewLoading = (text: any) => {
 /**
  * 打开密码输入框
  */
-const openMessageboxPsw = async (BoxInputTitle?,content?) => {
-    // tslint:disable-next-line:typedef
+const openMessageboxPsw = (BoxInputTitle?,content?):Promise<string> => {
     return new Promise(async (resolve, reject) => {
         const name = 'app-components-modalBoxInput-modalBoxInput';
         if (!lookup(name)) {
@@ -1457,7 +1449,7 @@ export const getMnemonic = async (passwd) => {
     const genmnemonicPromise = getGenmnemonicMod();
     const [hash,cipherTools,genmnemonic] = await Promise.all([hashPromise,cipherToolsrPromise,genmnemonicPromise]);
     try {
-        const r = cipherTools.decrypt(hash, wallet.vault);
+        const r = cipherTools.decrypt(wallet.vault,hash);
         
         return genmnemonic.toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {

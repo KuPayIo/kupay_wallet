@@ -3,14 +3,12 @@
  */
 import { btcNetwork, ERC20Tokens } from '../config';
 import { AddrInfo, CurrencyRecord } from '../store/interface';
+import { encrypt } from '../utils/cipherTools';
 import { lang, strength } from '../utils/constants';
 import { getMnemonic, u8ArrayToHexstr } from '../utils/tools';
 import { BTCWallet } from './btc/wallet';
-import { Cipher } from './crypto/cipher';
 import { EthWallet } from './eth/wallet';
 import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';
-
-const cipher = new Cipher();
 
 /* tslint:disable: variable-name */
 export class GlobalWallet {
@@ -60,7 +58,7 @@ export class GlobalWallet {
         const gwlt = new GlobalWallet();
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
         
-        gwlt._vault = cipher.encrypt(secrectHash, u8ArrayToHexstr(vault));
+        gwlt._vault = encrypt(u8ArrayToHexstr(vault),secrectHash);
 
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
 
@@ -79,7 +77,7 @@ export class GlobalWallet {
         const gwlt = new GlobalWallet();
         vault = vault || generateRandomValues(strength);
         console.time('pi_create generate encrypt need');
-        gwlt._vault = cipher.encrypt(secrectHash, u8ArrayToHexstr(vault));
+        gwlt._vault = encrypt(u8ArrayToHexstr(vault),secrectHash);
         console.timeEnd('pi_create generate encrypt need');
         console.time('pi_create generate toMnemonic need');
         const mnemonic = toMnemonic(lang, vault);

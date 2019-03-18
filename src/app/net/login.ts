@@ -123,8 +123,8 @@ export const applyAutoLogin = async () => {
         }
     };
     requestAsync(msg).then(async (res) => {
-        const walletToolsMod = await getWalletTools();
-        const decryptToken = walletToolsMod.encrypt(res.token,deviceId);
+        const cipherToolsMod = await getCipherTools();
+        const decryptToken = cipherToolsMod.encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
     });
 };

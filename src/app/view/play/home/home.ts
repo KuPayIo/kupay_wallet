@@ -5,7 +5,6 @@
 import { CRYPTOFISHING_GROUP, FOMOSPORTS_GROUP } from '../../../../chat/server/data/constant';
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
@@ -33,10 +32,6 @@ export class PlayHome extends Widget {
             const path = 'app/core/thirdparty/web3_rpc.js.txt';
             loadDir([path], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
-                // for (let i = 0; i < arr.length; ++i) {
-                //     content += String.fromCharCode(arr[i]);
-                // }
-                // content = decodeURIComponent(escape(atob(content)));
                 const content = new TextDecoder().decode(arr);
                 resolve(content);
             }, () => {
@@ -87,12 +82,7 @@ export class PlayHome extends Widget {
                 url:'https://ctuct.com/',
                 gid:CRYPTOFISHING_GROUP
             }
-            // {
-            //     title:'Decentraland',
-            //     desc:{ zh_Hans:'Decentraland与Ethaemon合作',zh_Hant:'Decentraland與Ethaemon合作',en:'' },
-            //     img:['app/res/image1/game4.jpg','app/res/image1/game4.jpg'],
-            //     url:''
-            // }
+           
         ];
         this.props.activityList = [
             {
