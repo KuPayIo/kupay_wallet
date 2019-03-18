@@ -6,7 +6,7 @@
 // tslint:disable-next-line:no-reserved-keywords
 declare const module;
 
-import { addAppBackPressed, addAppResumed } from '../../../pi/browser/app_comon_event';
+import { addActivityBackPressed, addAppResumed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
@@ -100,7 +100,7 @@ const addAppEvent = () => {
     });
 
     // 注册appBackPressed
-    addAppBackPressed(() => {
+    addActivityBackPressed(() => {
         console.log('addActivityBackPressed callback called');
         if (backList.length === 1) {
             const exitApp = new ExitApp();

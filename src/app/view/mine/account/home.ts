@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
-import { getStore, register, setStore } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
 import { getMnemonic, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';

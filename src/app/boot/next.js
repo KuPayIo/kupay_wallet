@@ -309,7 +309,7 @@ winit.initNext = function () {
 					// 关闭读取界面
 					document.body.removeChild(document.getElementById('rcmj_loading_log'));
 				});
-				loadLeftSource();
+				// loadLeftSource();
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
 			}, dirProcess.handler);
@@ -377,10 +377,6 @@ winit.initNext = function () {
 			"chat/client/app/widget/utilList/",
 			"chat/client/app/widget/imgShow/"
 		]; 
-		// var sourceList = [
-		// 	"chat/client/app/view/chat/",
-		// 	"chat/client/app/widget/"
-		// ]; 
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadChatSource");
 			console.log("load loadChatSource-----------------");

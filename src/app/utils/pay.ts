@@ -13,7 +13,6 @@ import { popPswBox } from './tools';
  * @param callback 回调函数
  */
 export const walletPay = (order: any, appid: string, mchid: string, callback: Function) => {
-
     openPayment(order, (res, msg) => {
         if (!res) { // 开启订单支付成功(预支付)
             order.no_password = msg.no_password;

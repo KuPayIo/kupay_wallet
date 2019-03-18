@@ -2,13 +2,11 @@
  * 一些底层操作
  */
 import { AdPlatform, ADUnion, PlayEvent } from '../../pi/browser/ad_unoin';
-import { DeviceIdProvider } from '../../pi/browser/device';
 import { ImagePicker } from '../../pi/browser/imagePicker';
-import { QRCode } from '../../pi/browser/qrcode';
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { setStore } from '../store/memstore';
+import { piRequire } from '../utils/commonjsTools';
 
 export const selectImage = (ok?,cancel?) => {
     console.log('选择图片');
@@ -39,22 +37,25 @@ export const selectImage = (ok?,cancel?) => {
  * 二维码扫描
  */
 export const doScanQrCode = (ok?,cancel?) => {
-    const qrcode = new QRCode();
-    qrcode.init();
-    qrcode.scan({
-        success: (res) => {
-            ok && ok(res);
-            console.log('scan-------------',res);
-        },
-        fail: (r) => {
-            cancel && cancel();
-            console.log(`scan fail:${r}`);
-        }
-    });
-    qrcode.close({
-        success: (r) => {
-            console.log(`close result:${r}`);
-        }
+    piRequire(['pi/browser/qrcode']).then(mods => {
+        const QRCode = mods[0].QRCode;
+        const qrcode = new QRCode();
+        qrcode.init();
+        qrcode.scan({
+            success: (res) => {
+                ok && ok(res);
+                console.log('scan-------------',res);
+            },
+            fail: (r) => {
+                cancel && cancel();
+                console.log(`scan fail:${r}`);
+            }
+        });
+        qrcode.close({
+            success: (r) => {
+                console.log(`close result:${r}`);
+            }
+        });
     });
 };
 
@@ -69,27 +70,35 @@ export const openNewActivity = (url:string,title:string= '') => {
  * 获取设备信息
  */
 export const getDeviceId = (okCB?) => {
-    const deviceIdProvider = new DeviceIdProvider();
-    deviceIdProvider.getUUId((result) => {
-        console.log(`获取设备的唯一id成功${JSON.stringify(result)}`);
-        okCB && okCB(result);
+    piRequire(['pi/browser/device']).then(mods => {
+        const DeviceIdProvider = mods[0].DeviceIdProvider;
+        const deviceIdProvider = new DeviceIdProvider();
+        deviceIdProvider.getUUId((result) => {
+            console.log(`获取设备的唯一id成功${JSON.stringify(result)}`);
+            okCB && okCB(result);
+        });
     });
+    
 };
 
 /**
  * 截屏
  */
 export const makeScreenShot = (okCB?,errCB?) => {
-    const stp = new ShareToPlatforms();
-    stp.init();
-    stp.makeScreenShot({
-        success: (result) => { 
-            okCB && okCB(result);
-        },
-        fail: (result) => { 
-            errCB && errCB(result);
-        }
+    piRequire(['pi/browser/shareToPlatforms']).then(mods => {
+        const ShareToPlatforms = mods[0].ShareToPlatforms;
+        const stp = new ShareToPlatforms();
+        stp.init();
+        stp.makeScreenShot({
+            success: (result) => { 
+                okCB && okCB(result);
+            },
+            fail: (result) => { 
+                errCB && errCB(result);
+            }
+        });
     });
+    
 };
 
 /**

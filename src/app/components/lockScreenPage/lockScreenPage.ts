@@ -8,7 +8,7 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { LockScreen } from '../../store/interface';
 import { getStore, register, setStore  } from '../../store/memstore';
-import { getLoginMod, getWalletTools } from '../../utils/commonjsTools';
+import { getLoginMod, getWalletToolsMod } from '../../utils/commonjsTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -76,7 +76,7 @@ export class LockScreenPage extends Widget {
                 popNew('app-components1-message-message',{ content:this.language.tips[0] });
                 this.reSetLockPsw();
             } else {
-                const walletToolsMod = await getWalletTools();
+                const walletToolsMod = await getWalletToolsMod();
                 const hash256 = walletToolsMod.lockScreenHash(r);
                 const ls:LockScreen = getStore('setting/lockScreen'); 
                 ls.psw = hash256;
@@ -102,7 +102,7 @@ export class LockScreenPage extends Widget {
         } else {
             const title = this.props.errorTips[ind === 0 ? 3 :ind];
             popNew('app-components-keyboard-keyboard',{ title:title,closePage:1 },async (r) => {
-                const walletToolsMod = await getWalletTools();
+                const walletToolsMod = await getWalletToolsMod();
                 if (walletToolsMod.lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
                     this.close(true);
                 } else {

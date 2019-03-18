@@ -53,7 +53,6 @@ export class TopRefresh extends Widget {
 
     public attach(): void {
         super.attach();
-        console.log(this.parentNode.parent.link);
        // let ss=this.parentNode.parent.widget.tree.link
         // let a=this.parentNode.parent.link;
         try {

@@ -9,7 +9,7 @@ import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
 import { Account, getStore, initCloudWallets, LocalCloudWallet, register,setStore } from '../store/memstore';
-import { getCipherTools, getWalletTools } from '../utils/commonjsTools';
+import { getCipherToolsMod, getWalletToolsMod } from '../utils/commonjsTools';
 import { CMD } from '../utils/constants';
 import { fetchDeviceId, popNewMessage, popPswBox } from '../utils/tools';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
@@ -123,7 +123,7 @@ export const applyAutoLogin = async () => {
         }
     };
     requestAsync(msg).then(async (res) => {
-        const cipherToolsMod = await getCipherTools();
+        const cipherToolsMod = await getCipherToolsMod();
         const decryptToken = cipherToolsMod.encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
     });
@@ -135,7 +135,7 @@ export const applyAutoLogin = async () => {
 export const autoLogin = async (conRandom:string) => {
     const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
     console.log('deviceId -------',deviceId);
-    const cipherToolsMod = await getCipherTools();
+    const cipherToolsMod = await getCipherToolsMod();
     const token = cipherToolsMod.decrypt(getStore('user/token'),deviceId.toString());
     const msg = { 
         type: 'wallet/user@auto_login', 
@@ -482,7 +482,7 @@ const loginWalletFailedPop = async () => {
         return;
     }
     const close = popNew('app-components1-loading-loading', { text: '登录中' });
-    const walletToolsMod = await getWalletTools();
+    const walletToolsMod = await getWalletToolsMod();
     const secretHash = await walletToolsMod.VerifyIdentidy(psw);
     close && close.callback(close.widget);
     if (!secretHash) {
