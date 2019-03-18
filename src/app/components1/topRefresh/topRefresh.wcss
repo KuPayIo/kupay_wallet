@@ -1,0 +1,23 @@
+.refresh-icon{
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    transition: all 1s;
+    background: white;
+    box-sizing: border-box;
+    box-shadow:0px 2px 10px 1px rgba(26,118,204,0.12);
+    border-radius: 50%;
+    z-index: 1000;
+}
+.refresh-icon-img{
+    width: 50px;
+    height: 50px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: rgb(50,155,250) rgb(50,155,250) transparent;
+    border-image: initial;
+    opacity: 1; border-radius: 50%;
+}
