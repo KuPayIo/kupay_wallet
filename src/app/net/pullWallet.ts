@@ -92,7 +92,6 @@ export const rpcProviderSendAsync = (payload, callback) => {
  */
 export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
     try {  
-        console.time('transfer3 need time = ');
         if (psw.length <= 0) return ['have no password'];
         const fromAddr = txPayload.fromAddr;
         const currencyName = txPayload.currencyName;
@@ -120,13 +119,7 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
         const addrIndex = getWltAddrIndex(fromAddr, currencyName);
         let hash;
         if (addrIndex >= 0) {    
-            console.time('transfer3 wltPromise');
-            const wltPromise = GlobalWallet.createWlt(currencyName, psw, addrIndex).then((wlt) => {
-                console.timeEnd('transfer3 wltPromise');
-
-                return wlt;
-            });
-
+            const wltPromise = GlobalWallet.createWlt(currencyName, psw, addrIndex);
             const api = new EthApi();
             const nonce = txRecord.nonce;
             const localNonce = getEthNonce(fromAddr);
@@ -134,27 +127,15 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
 
             // toAddr  0x0e7f42cdf739c06dd3c1c32fab5e50ec9620102a
 
-            console.time('transfer3 gasLimitPromise');
             // tslint:disable-next-line:max-line-length
-            const gasLimitPromise = api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data }).then((gasLimit) => {
-                console.timeEnd('transfer3 gasLimitPromise');
-
-                return gasLimit;
-            });
+            const gasLimitPromise = api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data });
             
-            console.time('transfer3 chainNoncePromise');
-            const chainNoncePromise = api.getTransactionCount(fromAddr).then((chainNonce) => {
-                console.timeEnd('transfer3 chainNoncePromise');
+            const chainNoncePromise = api.getTransactionCount(fromAddr);
 
-                return chainNonce;
-            });
-
-            console.time('transfer3 all promise need');
             const [wlt,gasLimit,chainNonce] = await Promise.all([wltPromise,gasLimitPromise,chainNoncePromise]);
             if (!wlt) {
                 return ['password error'];
             }
-            console.timeEnd('transfer3 all promise need');
 
             // TODO  直接使用预估出来的gasLimit交易有可能失败   零时解决
             const newGasLimit = Math.floor(gasLimit * erc20GasLimitRate);
@@ -171,17 +152,13 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
                 data: txPayload.data
             };         
             const tx = wlt.signRawTransaction(txObj);
-            console.time('transfer3 sendRawTransaction need time =');
             hash = await api.sendRawTransaction(tx);
-            console.timeEnd('transfer3 sendRawTransaction need time =');
         }
         if (hash) {
             txRecord.hash = hash;
             updateLocalTx(txRecord);
             dataCenter.updateAddrInfo(txRecord.addr,txRecord.currencyName);
 
-            console.timeEnd('transfer3 need time = ');
-            
             return [undefined,hash];
         } else {
             return ['send transaction failed'];
@@ -194,7 +171,7 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
 /**
  * 普通转账
  */
-export const transfer1 = async (psw:string,txPayload:TxPayload) => {
+export const transfer = async (psw:string,txPayload:TxPayload) => {
     const fromAddr = txPayload.fromAddr;
     const currencyName = txPayload.currencyName;
     const needConfirmedBlockNumber = getConfirmBlockNumber(currencyName, txPayload.pay);
@@ -244,71 +221,12 @@ export const transfer1 = async (psw:string,txPayload:TxPayload) => {
             updateLocalTx(tx);
             dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
             
-            return [undefined,ret.hash];
+            return [undefined,tx];
         } else {
             throw new Error('send transaction failed');
         }
     } catch (error) {
         return [error,undefined];
-    }
-};
-
-/**
- * 普通转账
- */
-export const transfer = async (psw:string,txPayload:TxPayload,success?:Function,fail?:Function) => {
-    const fromAddr = txPayload.fromAddr;
-    const currencyName = txPayload.currencyName;
-    const needConfirmedBlockNumber = getConfirmBlockNumber(currencyName, txPayload.pay);
-    const txRecord:TxHistory = {
-        hash:'',
-        addr:fromAddr,
-        txType:TxType.Transfer,
-        fromAddr,
-        toAddr:txPayload.toAddr,
-        pay: txPayload.pay,
-        time: 0,
-        status:TxStatus.Pending,
-        confirmedBlockNumber: 0,
-        needConfirmedBlockNumber,
-        info: '',
-        currencyName,
-        fee: txPayload.fee,
-        nonce:undefined,
-        minerFeeLevel:txPayload.minerFeeLevel
-    };
-
-    try {
-        let ret: any;
-        const addrIndex = getWltAddrIndex(fromAddr, currencyName);
-        if (addrIndex >= 0) {
-            if (currencyName === 'ETH') {
-                ret = await doEthTransfer(psw,addrIndex,txRecord);
-            } else if (currencyName === 'BTC') {
-                const res = await doBtcTransfer(psw,addrIndex, txRecord);
-                if (res) {
-                    ret = {
-                        hash:res.txid,
-                        nonce:0
-                    };
-                }
-            } else if (ERC20Tokens[currencyName]) {
-                ret = await doERC20TokenTransfer(psw,addrIndex,txRecord);
-            }
-        }
-        if (ret) {
-            const tx = {
-                ...txRecord,
-                hash:ret.hash,
-                nonce:ret.nonce,
-                time:new Date().getTime()
-            };
-            success(tx);
-        } else {
-            throw new Error('send transaction failed');
-        }
-    } catch (error) {
-        fail(error);
     }
 };
 

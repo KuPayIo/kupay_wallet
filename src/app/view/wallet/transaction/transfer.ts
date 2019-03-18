@@ -149,16 +149,18 @@ export class Transfer extends Widget {
         let ret;
         if (!this.props.tx) {
             const loading = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.loading });
-            ret = await transfer(passwd,txPayload,(tx:TxHistory) => {
-                updateLocalTx(tx);
-                dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-                popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.transSuccess });
-                popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
-                this.ok && this.ok();
-            },(error) => {
-                doErrorShow(error);
+            transfer(passwd,txPayload).then(([err,tx]) => {
+                if (!err) {
+                    updateLocalTx(tx);
+                    dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+                    popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.transSuccess });
+                    popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
+                    this.ok && this.ok();
+                } else {
+                    doErrorShow(err);
+                }
+                loading.callback(loading.widget);
             });
-            loading.callback(loading.widget);
         } else {
             const tx = { ...this.props.tx };
             tx.minerFeeLevel = minerFeeLevel;

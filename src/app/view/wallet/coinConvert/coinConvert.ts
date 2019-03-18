@@ -9,7 +9,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/pull3';
-import { transfer1, TxPayload } from '../../../net/pullWallet';
+import { transfer, TxPayload } from '../../../net/pullWallet';
 import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel } from '../../../store/interface';
 import { getStore, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
@@ -267,7 +267,7 @@ export class CoinConvert extends Widget {
                     setStore('wallet/changellyPayinAddress',changellyPayinAddress);
                 }
                 
-                transfer1(passwd,payload).then(([err,hash]) => {
+                transfer(passwd,payload).then(([err,tx]) => {
                     close && close.callback(close.widget);
                     if (err) {
                         popNewMessage(this.language.messages[3]);
@@ -276,7 +276,7 @@ export class CoinConvert extends Widget {
                     }
                     const changellyTempTxs = getStore('wallet/changellyTempTxs');
                     const tempTxs:ChangellyTempTxs = {
-                        hash,
+                        hash:tx.hash,
                         id:res.result.id
                     };
                     changellyTempTxs.push(tempTxs);
