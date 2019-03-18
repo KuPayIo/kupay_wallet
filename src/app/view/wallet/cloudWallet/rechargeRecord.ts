@@ -21,7 +21,6 @@ interface Props {
 }
 export class RechargeRecord extends Widget {
     public props:any;
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -30,7 +29,6 @@ export class RechargeRecord extends Widget {
         }
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
         this.props = {
             ...this.props,
@@ -53,12 +51,13 @@ export class RechargeRecord extends Widget {
     }
     // tslint:disable-next-line:typedef
     public parseRecordList(list) {
+        const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
         list.forEach((item) => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             console.log(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.language.recharge;
+            item.behavior = recharge[getLang()];
             item.amountShow = `+${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_charge_icon.png`;

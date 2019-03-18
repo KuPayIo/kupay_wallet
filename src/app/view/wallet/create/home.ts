@@ -2,13 +2,13 @@
  * create a wallet
  */
 import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { CreateWalletType } from '../../../logic/localWallet';
 import { getModulConfig } from '../../../modulConfig';
+import { loginSuccess } from '../../../net/login';
 import { deleteAccount, getAllAccount } from '../../../store/memstore';
-import { loginSuccess, popNewLoading, popNewMessage } from '../../../utils/tools';
+import { popNewLoading, popNewMessage } from '../../../utils/tools';
 import { VerifyIdentidy1 } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -17,14 +17,12 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class CreateEnter extends Widget {
     public ok: () => void;
-    public language:any;
 
     public create() {
         super.create();
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const walletList = getAllAccount();
         const accountList = [];
         walletList.forEach(item => {

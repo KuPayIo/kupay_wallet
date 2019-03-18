@@ -25,14 +25,14 @@ export const walletPay = (order: any, appid: string, mchid: string, callback: Fu
                 });
             } else {                    // 未设置免密
                 console.log('未设置免密支付', order);
-                popNew('app-components1-modalBoxPay-pay', msg, (password) => {
+                popNew('app-components-modalBoxPay-pay', msg, (password) => {
                     const loading = popNew('app-components1-loading-loading', { text: '支付中...' });
                     order.password = password;
                     pay(order, (res1, msg1) => {
                         loading.callback(loading.widget);
                         callback(res1, msg1);
                         if (order.isFirst === 1 && !res1) { // 应用内第一次支付成功后提示开通免密
-                            popNew('app-components1-modalBox-modalBox', {
+                            popNew('app-components-modalBox-modalBox', {
                                 title: { zh_Hans: '是否开通免密支付？', zh_Hant: '是否開通免密支付?', en: '' },
                                 content: { zh_Hans: '累计未超过20ST不再验证密码，超过后直至下个20ST。', zh_Hant: '累計未超過20ST不再驗證密碼，超過後直至下個20ST。', en: '' },
                                 sureText: { zh_Hans: '开通', zh_Hant: '开通', en: '' }

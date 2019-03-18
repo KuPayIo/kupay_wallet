@@ -1,6 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"修改密码","zh_Hant":"修改密碼","en":""} }}	
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="content">
         {{: itemTitle = [{"zh_Hans":"原密码","zh_Hant":"原密碼","en":""},
         {"zh_Hans":"新密码","zh_Hant":"新密碼","en":""},

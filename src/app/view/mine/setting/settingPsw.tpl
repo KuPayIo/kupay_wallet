@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" >
     {{: topBarTitle = {"zh_Hans":"设置密码","zh_Hant":"設置密碼","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{ topBarTitle }},"backImg":"../../res/image/hamburger.png" }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{ topBarTitle }},"backImg":"../../res/image/hamburger.png" }</app-components-topBar-topBar>
     <div w-class="body">
         {{: tips = {"zh_Hans":"设置支付密码","zh_Hant":"設置支付密碼","en":""} }}
         <div w-class="create-tips"><div w-class="tip-divid"></div><pi-ui-lang>{{tips}}</pi-ui-lang></div>
@@ -14,7 +14,7 @@
             </div>
             <div w-class="registered-protocol" ev-checkbox-click="checkBoxClick">
                 {{: readAgree = {"zh_Hans":"我已经认证阅读并同意","zh_Hant":"我已經認證閱讀並同意","en":""} }}
-                <app-components1-checkbox-checkbox>{itype:"false",text:{{readAgree}} }</app-components1-checkbox-checkbox>
+                <app-components-checkbox-checkbox>{itype:"false",text:{{readAgree}} }</app-components-checkbox-checkbox>
                 <span w-class="user-protocol" on-tap="agreementClick"><pi-ui-lang>{"zh_Hans":"用户协议及隐私服务","zh_Hant":"用戶協議及隱私服務","en":""}</pi-ui-lang></span>
             </div>
             <div ev-btn-tap="createClick" w-class="btn">

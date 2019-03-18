@@ -2,14 +2,13 @@
  * setting
  */
 // =============================================导入
-import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { logoutAccount, logoutAccountDel } from '../../../net/login';
 import { getStore, register, setStore } from '../../../store/memstore';
-import { hasWallet, popPswBox } from '../../../utils/tools';
+import { hasWallet, popPswBox, rippleShow } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -81,7 +80,7 @@ export class Setting extends Widget {
             this.props.openLockScreen = false;
             setStore('setting/lockScreen', ls);
         } else if (this.props.wallet) {
-            popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
+            popNew('app-components-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
                 if (!r) {
                     this.closeLockPsw();
                     this.props.openLockScreen = false;
@@ -91,7 +90,7 @@ export class Setting extends Widget {
             });
         } else {
             // tslint:disable-next-line:max-line-length
-            popNew('app-components1-modalBox-toLoginBox', undefined, () => {
+            popNew('app-components-modalBox-toLoginBox', undefined, () => {
                 popNew('app-view-wallet-create-home');
             }, () => {
                 this.closeLockPsw();
@@ -138,13 +137,13 @@ export class Setting extends Widget {
     public logOut() {
         if (!hasWallet()) return;
         // const backup = this.props.wallet.isBackup;
-        popNew('app-components1-modalBox-modalBox', this.language.modalBox2 , () => {
+        popNew('app-components-modalBox-modalBox', this.language.modalBox2 , () => {
             // if (!backup) {
             //     this.backUp();
             // }
             console.log('取消');
         }, () => {
-            popNew('app-components1-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
+            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccount();
                 this.backPrePage();
             });
@@ -157,13 +156,13 @@ export class Setting extends Widget {
     public logOutDel() {
         if (!hasWallet()) return;
         // const backup = this.props.wallet.isBackup;
-        popNew('app-components1-modalBox-modalBox', this.language.modalBox3 , () => {
+        popNew('app-components-modalBox-modalBox', this.language.modalBox3 , () => {
             // if (!backup) {
             //     this.backUp();
             // }
             console.log('取消');
         }, () => {
-            popNew('app-components1-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
+            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccountDel();
                 this.backPrePage();
             });

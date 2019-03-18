@@ -2,7 +2,7 @@
 {{let itemName = item.name === 'KT' ? it.ktShow : item.name}}
 <div class="new-page" style="background: #f9f9f9;" ev-back-click="backPrePage" ev-next-click="goHistory">
     {{: topBarTitle = {"zh_Hans":"发红包","zh_Hant":"發紅包","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/26_white.png",background:"#F46262;"}</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/26_white.png",background:"#F46262;"}</app-components-topBar-topBar>
 
     <form w-class="content" ev-selectBox-change="changeCoin" id="content">
     

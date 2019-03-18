@@ -181,7 +181,9 @@ winit.initNext = function () {
 	var html,util,lang; // pi/util/html,pi/widget/util,pi/util/lang
 	var fm;  // fileMap
 	var fpFlags = {};  // 进入首页面的资源加载标识位
-
+	var suffixCfg = {
+		png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down', xlsx:'none',rs:'none'
+	};
 
 	// app下载入口函数
 	var appLoadEntrance = function(){
@@ -207,11 +209,11 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				loadWalletLoginSource();  // 登录相关
-				loadImages();
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
+				loadWalletLoginSource();  // 登录相关
+				loadImages(); // 预加载图片
 				
 			});
 		}, function (result) {
@@ -221,36 +223,28 @@ winit.initNext = function () {
 	
 	// 加载钱包项目登录相关资源
 	var loadWalletLoginSource = function(){
-		console.time("fp loadWalletLoginSource");
 		var sourceList = [
-			"app/view/base/",
 			"app/net/login.js",
 			"app/net/push.js",
-			"earn/client/app/net/",
-			"chat/client/app/net/"
+			"earn/client/app/net/login.js",
+			"chat/client/app/net/login.js"
 		];
-		// debugger
-		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
-			console.timeEnd("fp loadWalletLoginSource");
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
+			console.log(11111,Date.now()-self.startTime)
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			console.log("load loadWalletLoginSource-----------------");
 			// 聊天登录
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
 			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
-			// // 钱包store初始化
-			// pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore(); 
+			
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 			// erlang服务器连接登录
 			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.registerStore();
 			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.openConnect();
-			fpFlags.storeReady = true;
-			enterApp();
 			
-			// loadChatSource();  // 聊天
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -258,11 +252,7 @@ winit.initNext = function () {
 	
 	// 加载一些需要预加载的图片
 	var loadImages = function () {
-		var suffixCfg = {
-			png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down'
-		};
-
-		util.loadDir(["app/res/image/currency/","app/res/image1/"], flags, fm, suffixCfg, function (fileMap) {
+		util.loadDir(["app/res/image1/"], flags, fm, suffixCfg, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -276,26 +266,18 @@ winit.initNext = function () {
 		console.time("fp loadWalletFirstPageSource");
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
+			"pi/ui/lang.js",
+			"pi/ui/lang.tpl",
+			"app/view/base/",
 			"app/components1/",
-			"app/components/password/",
-			"app/components/input/",
-			"app/components/textarea/",
-			"app/components/bindPhone/",
 			"app/res/css/",
 			"app/res/js/",
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
-			"app/view/wallet/create/",
-			"app/view/wallet/import/",
-			"app/view/earn/home/",
-			"app/view/ceshi/",
-			"app/view/mine/setting/",
+			"earn/client/app/res/css/"
 		];
-		// sourceList = sourceList.concat(routerPathList);  
-		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
-			console.timeEnd("fp loadWalletFirstPageSource");
-			console.log("load loadWalletFirstPageSource-----------------");
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -309,9 +291,13 @@ winit.initNext = function () {
 
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
-		console.log(`storeReady = ${fpFlags.storeReady},chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
-		if( fpFlags.storeReady && fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
-			util.loadDir(["pi/ui/"], flags, fm, undefined, function (fileMap) {
+		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
+		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
+			// loadWalletLoginSource();
+			console.time("enterApp ----");
+			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
+			util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+				console.timeEnd("enterApp ----");
 				var tab = util.loadCssRes(fileMap);
 				tab.timeout = 90000;
 				tab.release();
@@ -323,7 +309,6 @@ winit.initNext = function () {
 					// 关闭读取界面
 					document.body.removeChild(document.getElementById('rcmj_loading_log'));
 				});
-				// loadImages();  // 预加载图片
 				loadLeftSource();
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
@@ -333,12 +318,10 @@ winit.initNext = function () {
 
 	// 加载剩下的资源
 	var loadLeftSource = function () {
-
 		var level2SourceList = [
 			"app/core/",
 			"app/logic/",
 			"app/components/",
-			"app/res/",
 			"app/api/",
 			"app/view/",
 			"chat/client/app/view/",
@@ -347,7 +330,9 @@ winit.initNext = function () {
 			"earn/client/app/view/",
 			"earn/client/app/test/",
 			"earn/client/app/components/",
-			"earn/client/app/res/"
+			"earn/client/app/xls/",
+			"earn/xlsx/",
+			"earn/client/app/res/",
 		];
 
 		// 加载其他文件
@@ -367,10 +352,6 @@ winit.initNext = function () {
 
 	// 加载一些需要预加载的图片
 	var loadLeftImages = function () {
-		var suffixCfg = {
-			png: 'down', jpg: 'down', jpeg: 'down', webp: 'down', gif: 'down'
-		};
-
 		util.loadDir(["app/res/image/","chat/client/app/res/images/","earn/client/app/res/image/"], flags, fm, suffixCfg, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
@@ -400,7 +381,7 @@ winit.initNext = function () {
 		// 	"chat/client/app/view/chat/",
 		// 	"chat/client/app/widget/"
 		// ]; 
-		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadChatSource");
 			console.log("load loadChatSource-----------------");
 			var tab = util.loadCssRes(fileMap);
@@ -410,7 +391,6 @@ winit.initNext = function () {
 			fpFlags.chatReady = true;
 			enterApp();
 			
-			// loadEarnSource();  // 活动
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		},dirProcess.handler);
@@ -421,17 +401,16 @@ winit.initNext = function () {
 		console.time("fp loadEarnSource");
 		var sourceList = [
 			"earn/client/app/view/home/",
-			"earn/client/app/components/",
+			"earn/client/app/components1/",
 			"earn/client/app/view/activity/miningHome.tpl",
 			"earn/client/app/view/activity/miningHome.js",
 			"earn/client/app/view/activity/miningHome.wcss",
-			"earn/client/app/view/activity/inviteAward.tpl",
-			"earn/client/app/view/activity/inviteAward.js",
-			"earn/client/app/view/activity/inviteAward.wcss",
-			"earn/client/app/xls/",
-			"earn/xlsx/"
+			"earn/xlsx/awardCfg.c.js",
+			"earn/xlsx/awardCfg.s.js",
+			"earn/xlsx/item.c.js",
+			"earn/xlsx/item.s.js",
 		];
-		util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadEarnSource");
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
@@ -517,7 +496,7 @@ function updateUiInit(){
 			$root.innerHTML = `
 			<div class="pi-mask">
 				<div class="pi-update-box animated bounceInUp">
-					<img src="../res/image1/rocket.png" class="pi-update-rocket" />
+					<img src="app/res/image/rocket.png" class="pi-update-rocket" />
 					<div class="pi-update-content">
 					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
 					<div class="pi-update-items">
@@ -540,7 +519,7 @@ function updateUiInit(){
 			$root.innerHTML = `
 			<div class="pi-mask">
 				<div class="pi-update-box animated bounceInUp">
-					<img src="../res/image1/rocket.png" class="pi-update-rocket" />
+					<img src="app/res/image/rocket.png" class="pi-update-rocket" />
 					<div class="pi-update-content">
 					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
 					<div class="pi-update-items">
@@ -565,8 +544,6 @@ function updateUiInit(){
 			`;
 		}
 		
-		
-
 		var $body = document.querySelector("body");
 		$body.appendChild($root);
 		pi_update.contentModified = true;
@@ -643,7 +620,6 @@ function updateUiInit(){
 		$completeBtn.style.display = "flex";
 	}
 
-
 	// 关闭弹框
 	pi_update.closePop = function(){
 		var $updateRoot = document.querySelector('#update-root');
@@ -676,5 +652,5 @@ updateUiInit();
 		self.pi_modules.butil &&
 		self._babelPolyfill &&
 		winit.initNext();
-	!self._babelPolyfill && setTimeout(winit.init, 100);
+	!self._babelPolyfill && setTimeout(winit.init, 17);
 })();

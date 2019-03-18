@@ -10,7 +10,7 @@ import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { sendCode } from '../../net/pull';
+import { getPullMod } from '../../utils/commonjsTools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,13 +20,10 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class BindPhone extends Widget {
     public ok: () => void;
-    public language:any;
     constructor() {
         super();
     }
     public setProps(props:any,oldProps:any): void {
-        
-        this.language = this.config.value[getLang()];
         const phone = props.phone ? props.phone : '';
         this.props = {
             ...props,
@@ -54,12 +51,13 @@ export class BindPhone extends Widget {
     public async getCode(event:any) {
         this.inputBlur();
         if (!this.props.phone || !this.phoneJudge()) {
-            popNew('app-components1-message-message', { content: this.language.tips });
+            const tips = { zh_Hans:'无效的手机号',zh_Hant:'無效的手機號',en:'' };
+            popNew('app-components1-message-message', { content: tips[getLang()] });
 
             return;
         }
-        await sendCode(this.props.phone, this.props.oldCode,this.props.verify);
-        // updateStore('lastGetSmsCodeTime', new Date().getTime());
+        const pullMod = await getPullMod();
+        await pullMod.sendCode(this.props.phone, this.props.oldCode,this.props.verify);
         notify(event.node,'ev-getCode',{ value:this.props.phone });
         this.props.countdown = this.props.limitTime;
         this.paint();

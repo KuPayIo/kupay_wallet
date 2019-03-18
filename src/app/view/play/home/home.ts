@@ -2,18 +2,17 @@
  * play home 
  */
  // ================================ 导入
-import { gameChatPromise } from '../../../../chat/client/app/view/gameChatApi';
 import { CRYPTOFISHING_GROUP, FOMOSPORTS_GROUP } from '../../../../chat/server/data/constant';
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { getEthApiBaseUrl } from '../../../core/config';
 import { register } from '../../../store/memstore';
-import { getCurrentEthAddr, getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
+import { piRequire } from '../../../utils/commonjsTools';
+import { getCurrentEthAddr, getUserInfo, hasWallet, popNew3, popNewMessage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -23,7 +22,6 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
     
     public ok: () => void;
-    public language:any;
     public defaultInjectPromise:Promise<string>;
     public web3Promise: Promise<string>;
     public thirdApiPromise:Promise<string>;
@@ -34,13 +32,13 @@ export class PlayHome extends Widget {
             const path = 'app/core/thirdparty/web3_rpc.js.txt';
             loadDir([path], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
-                // for (let i = 0; i < arr.length; ++i) {
-                //     content += String.fromCharCode(arr[i]);
-                // }
-                // content = decodeURIComponent(escape(atob(content)));
                 const content = new TextDecoder().decode(arr);
                 resolve(content);
-            }, () => {}, () => {});
+            }, () => {
+                //
+            }, () => {
+                //
+            });
         });
 
         this.thirdApiPromise = new Promise((resolve) => {
@@ -49,7 +47,11 @@ export class PlayHome extends Widget {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
                 resolve(content);
-            }, () => {}, () => {});
+            }, () => {
+                //
+            }, () => {
+                //
+            });
         });
     }
     
@@ -58,7 +60,6 @@ export class PlayHome extends Widget {
             ...props
         };
         super.setProps(this.props);
-        this.language = this.config.value[getLang()];
         const userInfo = getUserInfo();
         if (userInfo) {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
@@ -81,12 +82,7 @@ export class PlayHome extends Widget {
                 url:'https://ctuct.com/',
                 gid:CRYPTOFISHING_GROUP
             }
-            // {
-            //     title:'Decentraland',
-            //     desc:{ zh_Hans:'Decentraland与Ethaemon合作',zh_Hant:'Decentraland與Ethaemon合作',en:'' },
-            //     img:['app/res/image1/game4.jpg','app/res/image1/game4.jpg'],
-            //     url:''
-            // }
+           
         ];
         this.props.activityList = [
             {
@@ -151,7 +147,7 @@ export class PlayHome extends Widget {
     }
 
     public showMine() {
-        popNew('app-view-mine-home-home');
+        popNew3('app-view-mine-home-home');
     }
 
     /**
@@ -169,7 +165,8 @@ export class PlayHome extends Widget {
     public gameClick(num:number) {
         if (!hasWallet()) return;
         if (!this.props.gameList[num].url) {
-            popNewMessage(this.language.tips);
+            const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
+            popNewMessage(tips[getLang()]);
         } else {
             const gameTitle = this.props.gameList[num].title.zh_Hans;
             const gameUrl =   this.props.gameList[num].url;
@@ -180,12 +177,16 @@ export class PlayHome extends Widget {
             `;
             this.defaultInjectPromise = Promise.resolve(defaultInjectText);
 
-            const GChatPromise = gameChatPromise(this.props.gameList[num].gid);
-            const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise,GChatPromise.textPromise,GChatPromise.chatPromise]);
-            allPromise.then(([defaultInjectContent,web3Content,textContent,chatContent]) => {
-                const content = defaultInjectContent + web3Content + chatContent + textContent;
-                WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+            piRequire(['chat/client/app/view/gameChatApi']).then(mods => {
+                const GChatPromise = mods[0].gameChatPromise(this.props.gameList[num].gid);
+                // tslint:disable-next-line:max-line-length
+                const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise,GChatPromise.textPromise,GChatPromise.chatPromise]);
+                allPromise.then(([defaultInjectContent,web3Content,textContent,chatContent]) => {
+                    const content = defaultInjectContent + web3Content + chatContent + textContent;
+                    WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+                });
             });
+            
         }
     }
 
@@ -195,7 +196,7 @@ export class PlayHome extends Widget {
      */
     public activityClick(index:number) {
         if (!hasWallet()) return;
-        popNew(this.props.activityList[index].url);
+        popNew3(this.props.activityList[index].url);
     }
     public openTestClick() {
         const gameTitle = '测试';

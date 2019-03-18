@@ -24,7 +24,7 @@
         <div w-class="asset-list">
             {{for i,v of it.showAssetList}}
             <div w-class="list-item">
-                <app-components-threeParaItem-threeParaItem>{img:"{{v.currencyName}}.png",title:{{v.currencyName}},desc:{{v.description}}}</app-components-threeParaItem-threeParaItem>
+                <app-components-threeParaItem-threeParaItem>{img:"{{v.logo}}",title:{{v.currencyName}},desc:{{v.description}}}</app-components-threeParaItem-threeParaItem>
                 {{if v.canSwtiched}}
                 <div w-class="swtich-btn" ev-switch-click="onSwitchChange(e,{{i}})"><app-components-switch-switch>{types:{{v.added}}}</app-components-switch-switch></div>
                 {{end}}

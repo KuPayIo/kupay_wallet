@@ -1,10 +1,8 @@
-import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
-import { openConnect } from '../../net/login';
+import { getLoginMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
-import { popNewMessage } from '../../utils/tools';
-import { playerName } from '../../utils/walletTools';
+import { playerName, popNew2, popNew3, popNewMessage } from '../../utils/tools';
 
 /**
  * 登录注册
@@ -13,10 +11,10 @@ import { playerName } from '../../utils/walletTools';
 export class Entrance extends Widget {
     public ok:() => void;
     // 游客登录
-    public touristLoginClick() {
+    public async touristLoginClick() {
         const option:Option = {
             psw: defaultPassword,
-            nickName: playerName()
+            nickName: await playerName()
         };
         touristLogin(option).then((secrectHash:string) => {
             if (!secrectHash) {
@@ -24,8 +22,10 @@ export class Entrance extends Widget {
 
                 return;
             }
+            getLoginMod().then(mod => {
+                mod.openConnect(secrectHash);
+            });
             
-            openConnect(secrectHash);
             this.ok && this.ok();
             popNewMessage('登录成功');
         });
@@ -34,14 +34,14 @@ export class Entrance extends Widget {
     // 注册登录 
     public registerLoginClick() {
         console.log('注册登录');
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Random },() => {
+        popNew3('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Random },() => {
             this.ok && this.ok();
         });
     }
     // 已有账户登录
     public haveAccountClick() {
         console.log('已有账户登录');
-        popNew('app-view-wallet-import-standardImport',{},() => {
+        popNew2('app-view-wallet-import-standardImport',{},() => {
             this.ok && this.ok();
         });
     }

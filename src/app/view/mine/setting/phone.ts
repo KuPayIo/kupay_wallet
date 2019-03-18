@@ -17,9 +17,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class BindPhone extends Widget {
     public ok: () => void;
-    public language:any;
     public setProps(props:any,oldProps:any) {
-        this.language = this.config.value[getLang()];
         this.props = {
             ...props,
             phone: props.itype === 1 ? '' : getUserInfo().phoneNumber,
@@ -50,7 +48,8 @@ export class BindPhone extends Widget {
      */
     public async doSure() {
         if (!this.props.phone) {
-            popNew('app-components1-message-message', { content: this.language.tips });
+            const tips = { zh_Hans:'请先获取验证码',zh_Hant:'請先獲取驗證碼',en:'' };
+            popNew('app-components1-message-message', { content: tips[getLang()] });
             this.props.code = [];
             this.setCode();
 

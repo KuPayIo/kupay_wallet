@@ -20,7 +20,6 @@ interface Props {
 }
 export class WithdrawRecord extends Widget {
     public props:any;
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -29,7 +28,6 @@ export class WithdrawRecord extends Widget {
         }
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const withdrawLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
         this.props = {
             ...this.props,
@@ -53,11 +51,12 @@ export class WithdrawRecord extends Widget {
 
     // tslint:disable-next-line:typedef
     public parseRecordList(list) {
+        const withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
         list.forEach((item) => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.language.withdraw;
+            item.behavior = withdraw[getLang()];
             item.amountShow = `-${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_withdraw_icon.png`;

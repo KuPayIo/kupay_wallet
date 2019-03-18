@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="shareScreen">
     <div w-class="top-head">
         {{: topBarTitle = {"zh_Hans":"充值","zh_Hant":"充值","en":""} }}
-        <widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6);position: fixed;",nextImg:"../../res/image/share_white.png"}</widget>
+        <widget w-tag="app-components-topBar-topBar">{"title":{{topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6);position: fixed;",nextImg:"../../res/image/share_white.png"}</widget>
 
     </div>
     <div w-class="body">

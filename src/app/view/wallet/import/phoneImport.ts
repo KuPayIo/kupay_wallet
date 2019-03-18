@@ -6,12 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../logic/dataCenter';
 import { Option, phoneImport } from '../../../logic/localWallet';
 import { getRandom, logoutAccountDel, openConnect } from '../../../net/login';
+import { getDataCenter } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';
-import { popNewLoading, popNewMessage } from '../../../utils/tools';
-import { playerName } from '../../../utils/walletTools';
+import { playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -21,12 +20,10 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PhoneImport extends Widget {
     public cancel: () => void;
     public ok: () => void;
-    public language:any;
     constructor() {
         super();
     }
     public setProps(props:any,oldProps:any) {
-        this.language = this.config.value[getLang()];
         this.props = {
             ...props,
             phone:'',
@@ -48,7 +45,8 @@ export class PhoneImport extends Widget {
      */
     public async doSure() {
         if (!this.props.phone) {
-            popNew('app-components1-message-message', { content: this.language.tips });
+            const tips = { zh_Hans:'请先获取验证码',zh_Hant:'請先獲取驗證碼',en:'' };
+            popNew('app-components1-message-message', { content: tips[getLang()] });
             this.props.code = [];
             this.setCode();
 
@@ -56,7 +54,7 @@ export class PhoneImport extends Widget {
         }
         const option:Option = {
             psw:defaultPassword,
-            nickName:playerName()
+            nickName:await playerName()
         };
         openConnect();
         const close = popNewLoading('导入中');
@@ -83,8 +81,11 @@ export class PhoneImport extends Widget {
             popNewMessage('登录成功');
             this.ok && this.ok();
             // 刷新本地钱包
-            dataCenter.refreshAllTx();
-            dataCenter.initErc20GasLimit();
+            getDataCenter().then(dataCenter => {
+                dataCenter.refreshAllTx();
+                dataCenter.initErc20GasLimit();
+            });
+            
         }
     }
 

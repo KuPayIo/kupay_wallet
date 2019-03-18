@@ -2,7 +2,7 @@
  * 联系我们
  */
 // ===============================================导入
-import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { ShareToPlatforms, ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
@@ -45,10 +45,11 @@ export class WechatQrcode extends Widget {
         stp.init();
         stp.makeScreenShot({
             success: (result) => { 
-                popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
+                popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
             },
             fail: (result) => { 
-                popNew('app-components-message-message',{ content:this.language.shareScreen });
+                const tips = { zh_Hans:'分享截图失败',zh_Hant:'分享截圖失敗',en:'' };
+                popNew('app-components-message-message',{ content:tips[getLang()] });
             }
         });
         console.log('截图截图截图');

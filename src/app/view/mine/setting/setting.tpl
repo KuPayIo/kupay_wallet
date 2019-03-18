@@ -1,6 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"设置","zh_Hant":"設置","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="content">
         <div style="margin: 30px 0;">
             <div w-class="mode">

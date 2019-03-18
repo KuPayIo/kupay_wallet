@@ -1,12 +1,12 @@
 /**
  * wallet home asset list
  */
-import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../modulConfig';
-import { getCurrencyUnitSymbol } from '../../utils/tools';
+import { preShowCurrencys } from '../../utils/constants';
+import { calCurrencyLogoUrl, getCurrencyUnitSymbol, rippleShow } from '../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -31,6 +31,9 @@ export class WalletAssetList extends Widget {
             stShow,
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
+        this.props.assetList.map(item => {
+            item.logo = calCurrencyLogoUrl(item.currencyName);
+        });
     }
     public itemClick(e:any,index:number) {
         notify(e.node,'ev-item-click',{ index }); 

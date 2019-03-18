@@ -13,6 +13,9 @@ export const defaultEthToken = [];
 // 默认显示货币列表
 export const defalutShowCurrencys = ['ETH', 'BTC','TRX','BNB','WTC','VEN'];
 
+// 首页默认显示的货币
+export const preShowCurrencys = [...defalutShowCurrencys,'ST','KT'];
+
 // 默认不可更改显示货币列表
 export const notSwtichShowCurrencys = ['ETH', 'BTC'];
 

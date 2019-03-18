@@ -11,9 +11,6 @@
             </div>
             <div w-class="userName">
                 {{it.userName}}
-                {{if it.offline}}
-                <widget w-tag="pi-ui-lang" w-class="offline">{zh_Hans:"离线",zh_Hant:"離線",en:"Offline"}</widget>
-                {{end}}
             </div>
             
             <div w-class="address" on-tap="copyAddr">

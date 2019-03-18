@@ -21,7 +21,6 @@ interface Props {
 export class ProductDetail extends Widget {
     public props:any;
     public ok: () => void;
-    public language:any;
     constructor() {
         super();
     }
@@ -31,7 +30,6 @@ export class ProductDetail extends Widget {
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
         const cloudBalance = getCloudBalances().get(CloudCurrencyType.ETH);
         const localBalance = getCurrentAddrInfo('ETH').balance;
@@ -80,7 +78,8 @@ export class ProductDetail extends Widget {
                 w.ok && w.ok();
             }
         } else {
-            popNewMessage(this.language.tips);
+            const tips = { zh_Hans:'余额不足',zh_Hant:'餘額不足',en:'' };
+            popNewMessage(tips[getLang()]);
         }
         this.ok && this.ok();
     }

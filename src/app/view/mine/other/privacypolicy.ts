@@ -2,7 +2,7 @@
  * privacy policy
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { getStaticLanguage } from '../../../utils/tools';
+import { getPrivacyPolicy } from './privacyPolicyText';
 
 export class PrivacyPolicy extends Widget {
     public ok: () => void;
@@ -13,7 +13,7 @@ export class PrivacyPolicy extends Widget {
     public create() {
         super.create();
         this.props = { 
-            privacyPolicy: getStaticLanguage().privacyPolicy 
+            privacyPolicy: getPrivacyPolicy() 
         };
     }
 

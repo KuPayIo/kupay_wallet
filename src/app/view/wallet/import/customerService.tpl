@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"找客服","zh_Hant":"找客服","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="body">
         {{: title = {"zh_Hans":"联系客服","zh_Hant":"聯繫客服","en":""} }}
         <div w-class="title"><pi-ui-lang>{{title}}</pi-ui-lang></div>

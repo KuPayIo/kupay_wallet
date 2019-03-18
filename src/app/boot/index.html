@@ -73,7 +73,7 @@
       }
       .pi-update-box {
         background-color: #fff;
-        background-image: url(../res/image1/update_bg.png);
+        background-image: url(../res/image/update_bg.png);
         background-repeat: no-repeat;
         background-size: 100% 235px;
         width: 630px;
@@ -401,9 +401,9 @@
 		}
 	</style>
 
-
 	<script type="text/javascript">
 		// alert("index.html");
+		self.startTime = Date.now();
 		console.time('home enter');
 		console.time('all resource loaded');
 		var LOG_TIME = Date.now()
@@ -440,7 +440,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = true; 
+			winit.debug = false; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
@@ -732,47 +732,46 @@
 			</div>
 		</div>
 	</div>
-	
+</body>
+<script type="text/javascript">
+if(!localStorage.firstInApp){
+	var innerHtml = `
 	<div class="swiper-container" id="swiper-container">
 		<div class="swiper-wrapper">
 			<div class="swiper-slide slide">
-				<img src="../res/image1/guide1.jpg"/>
+				<img src="../res/image/guide1.jpg"/>
 			</div>
 			<div class="swiper-slide slide">
-				<img src="../res/image1/guide2.jpg"/>
+				<img src="../res/image/guide2.jpg"/>
 			</div>
 			<div class="swiper-slide slide">
-				<img src="../res/image1/guide3.jpg"/>
+				<img src="../res/image/guide3.jpg"/>
 			</div>
 			<div class="swiper-slide slide">
-				<img src="../res/image1/guide4.jpg"/>
+				<img src="../res/image/guide4.jpg"/>
 				<div style="transform:  scale(0.5);position: absolute;width: 100%;bottom: 0px;" ><div class="btn-start">立即体验</div></div>
 			</div>
 		</div>
 		<div class="swiper-pagination"></div>
 	</div>
-</body>
-<script src="./swiper.min.js"></script>
-<script type="text/javascript">
-setTimeout(() => {
-	var mySwiper = new Swiper('.swiper-container', {
-      pagination: {
-		el: '.swiper-pagination',
-		dynamicBullets: true
-      },
-    });
-	if(!localStorage.firstInApp){
-		document.querySelector('#swiper-container').setAttribute('style','z-index:9999;')
-		
-	}else{
-		document.body.removeChild(document.querySelector('#swiper-container'));
-	}
-}, 1000);
-
-var btnStart = document.querySelector('.btn-start');
-btnStart.onclick = function(){
-	document.body.removeChild(document.querySelector('#swiper-container'));
-	localStorage.setItem('firstInApp','true');
+	`;
+	document.querySelector("body").innerHTML = document.querySelector("body").innerHTML + innerHtml;
+	winit.loadJS(winit.getLoadDomain("swiper.min.js"),
+					"/wallet/app/boot/swiper.min.js", "utf8", function(url,err){
+						var mySwiper = new Swiper('.swiper-container', {
+							pagination: {
+								el: '.swiper-pagination',
+								dynamicBullets: true
+							},
+						});
+						document.querySelector('#swiper-container').setAttribute('style','z-index:9999;');
+						var btnStart = document.querySelector('.btn-start');
+						btnStart.onclick = function(){
+							document.body.removeChild(document.querySelector('#swiper-container'));
+							localStorage.setItem('firstInApp','true');
+						}
+					}, "load index error");
+	
 }
 </script>
 

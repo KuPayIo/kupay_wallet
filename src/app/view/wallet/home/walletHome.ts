@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchLocalTotalAssets, fetchWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, hasWallet } from '../../../utils/tools';
+import { fetchLocalTotalAssets, fetchWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, hasWallet, popNew3 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -37,7 +37,7 @@ export class WalletHome extends Widget {
     // 添加资产
     public addAssetClick() {
         if (!hasWallet()) return;
-        popNew('app-view-wallet-localWallet-addAsset');
+        popNew3('app-view-wallet-localWallet-addAsset');
     }
 
     // 条目点击
@@ -45,11 +45,7 @@ export class WalletHome extends Widget {
         if (!hasWallet()) return;
         const index = e.index;
         const v = this.props.assetList[index];
-        popNew('app-view-wallet-transaction-home',{ currencyName:v.currencyName,gain:v.gain });
-    }
-
-    public refresh() {
-        // const neededRefreshCount = dataCenter.refreshAllTx();
+        popNew3('app-view-wallet-transaction-home',{ currencyName:v.currencyName,gain:v.gain });
     }
 
     public currencyUnitChange() {

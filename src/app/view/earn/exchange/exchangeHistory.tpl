@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refreshPage">
     <div style="background: rgb(62, 180, 241);">
         {{: topBarTitle = {"zh_Hans":"兑换记录","zh_Hant":"兌換記錄","en":""} }}
-        <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
+        <app-components-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</app-components-topBar-topBar2>
     </div>
     <div w-class="content" on-scroll="getMoreList" id="exchangeHistoryContent">
         <div id="exchangeHistoryRecords" w-class="records">

@@ -2,28 +2,25 @@
  * wallet home 
  */
 // ==============================导入
-import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getServerCloudBalance } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
+import { getDataCenter } from '../../../utils/commonjsTools';
 // tslint:disable-next-line:max-line-length
 import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
-declare var pi_modules : any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Home extends Widget {
-    public language:any;
     public setProps(props:any,oldProps:any) {
         super.setProps(props,oldProps);
         this.pageInit();
         this.dataInit();
     }
     public pageInit() {
-        this.language = this.config.value[getLang()];
         this.props = {
             tabs:[{
                 tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },
@@ -116,9 +113,10 @@ export class Home extends Widget {
             }
         });
        
-        const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-        list.forEach(v => {
-            dataCenter.updateBalance(v.addr, v.currencyName);
+        getDataCenter().then(dataCenter => {
+            list.forEach(v => {
+                dataCenter.updateBalance(v.addr, v.currencyName);
+            });
         });
     }
 

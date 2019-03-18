@@ -3,7 +3,7 @@
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { backCall, backList, popNew } from '../../pi/ui/root';
-import { getStore, register, setStore } from '../store/memstore';
+import { getStore, register } from '../store/memstore';
 import { CMD } from '../utils/constants';
 import { getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
@@ -30,7 +30,7 @@ export const initPush = () => {
         }
        
         return () => {
-            popNew('app-components1-modalBox-modalBox',{
+            popNew('app-components-modalBox-modalBox',{
                 sureText:{ zh_Hans:'重新登录',zh_Hant:'重新登錄',en:'' },
                 cancelText:{ zh_Hans:'退出',zh_Hant:'退出',en:'' },
                 title:{ zh_Hans:'下线通知',zh_Hant:'下線通知',en:'' },
@@ -92,12 +92,6 @@ export const initPush = () => {
             
         }
         
-        // if (res.cointype === CloudCurrencyType.KT) {   // 回到一级页面提醒备份
-        //     const wallet = getStore('wallet');
-        //     if (!wallet.backupTip && !wallet.isBackup) {
-        //         setStore('flags/backupTip',true);   // 一级页面弹框标识
-        //     }  
-        // }
     });
 
     // setMsgHandler('event_kt_alert',(res) => {
@@ -117,7 +111,7 @@ const setPushListener = (key:string,callback:Function) => {
     setMsgHandler(key,(res) => {
         const popTips = callback(res);
         const flags = getStore('flags');  
-        const loaded = flags.level_2_page_loaded; // 资源已经加载完成
+        const loaded = flags.level_3_page_loaded; // 资源已经加载完成
         if (loaded) {
             popTips && popTips(res);
         } else {

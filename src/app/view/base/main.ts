@@ -11,19 +11,17 @@ import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { addWidget } from '../../../pi/widget/util';
-import { getScreenModify, preLoadAd } from '../../logic/native';
-import { getAllIsLogin, manualReconnect } from '../../net/reconnect';
 import { LockScreen } from '../../store/interface';
 import { getStore, setStore } from '../../store/memstore';
+import { piRequire } from '../../utils/commonjsTools';
 import { fetchDeviceId } from '../../utils/tools';
 
 // ============================== 导出
-
+declare var pi_modules;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
-    
     // 数据检查
     checkUpdate();
     // 打开首页面
@@ -31,6 +29,7 @@ export const run = (cb): void =>  {
     if (!getStore('user/id')) {
         popNew('app-view-base-entrance');
     }
+    
     // 锁屏页面
     popNewPage();
     // 预先从底层获取一些数据
@@ -49,7 +48,7 @@ export const run = (cb): void =>  {
  */
 const popNewPage = () => {
     if (ifNeedUnlockScreen()) {
-        popNew('app-components1-lockScreenPage-lockScreenPage', {
+        popNew('app-components-lockScreenPage-lockScreenPage', {
             openApp: true
         });
     }
@@ -65,12 +64,14 @@ const preFetchFromNative = () => {
             setStore('setting/deviceId',hash256deviceId);
         });
     }
-    getScreenModify();
 
-    // 预先随机下载
-    preLoadAd(undefined,() => {
-        preLoadAd(undefined,() => {
-            preLoadAd(undefined);
+    piRequire(['app/logic/native']).then(mods => {
+        mods[0].getScreenModify();
+        // 预先随机下载
+        mods[0].preLoadAd(undefined,() => {
+            mods[0].preLoadAd(undefined,() => {
+                mods[0].preLoadAd(undefined);
+            });
         });
     });
 };
@@ -86,13 +87,14 @@ const addAppEvent = () => {
     addAppResumed(() => {
         console.log('addAppResumed callback called');
         if (ifNeedUnlockScreen()) {
-            popNew('app-components1-lockScreenPage-lockScreenPage', {
+            popNew('app-components-lockScreenPage-lockScreenPage', {
                 openApp: true
             });
         }
         setTimeout(() => {
-            if (!getAllIsLogin()) {
-                manualReconnect();
+            const reconnect =  pi_modules.commonjs.exports.relativeGet('app/net/reconnect').exports;
+            if (reconnect && !reconnect.getAllIsLogin()) {
+                reconnect.manualReconnect();
             }
         },100);  // 检查是否已经退出登录
     });

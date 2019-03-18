@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <div>
         {{: topBarTitle = {"zh_Hans":it.ktShow + "充值","zh_Hant":it.ktShow + "充值","en":""} }}
-        <widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}} }</widget>
+        <widget w-tag="app-components-topBar-topBar">{"title":{{topBarTitle}} }</widget>
     </div>
     <div w-class="body">
 

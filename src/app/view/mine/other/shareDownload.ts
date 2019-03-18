@@ -1,7 +1,7 @@
 /**
  * 分享下载链接页面
  */
-import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
@@ -9,14 +9,12 @@ import { makeScreenShot } from '../../../logic/native';
 import { getUserInfo } from '../../../utils/tools';
 
 export class ShareDownload extends Widget {
-    public language:any;
     public ok:() => void;
     public create() {
         super.create();
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const userInfo = getUserInfo();
         this.props = {
             nickName:userInfo.nickName,
@@ -36,9 +34,10 @@ export class ShareDownload extends Widget {
     }
     public shareClick() {
         makeScreenShot(() => {
-            popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
+            popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
         },() => {
-            popNew('app-components-message-message',{ content:this.language.tips[0] });
+            const tips = { zh_Hans:'分享截图失败',zh_Hant:'分享截圖失敗',en:'' };
+            popNew('app-components-message-message',{ content:tips[getLang()] });
         });
     }
     public backClick() {
