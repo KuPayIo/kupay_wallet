@@ -223,7 +223,6 @@ winit.initNext = function () {
 	
 	// 加载钱包项目登录相关资源
 	var loadWalletLoginSource = function(){
-		console.time("fp loadWalletLoginSource");
 		var sourceList = [
 			"app/net/login.js",
 			"app/net/push.js",
@@ -231,12 +230,10 @@ winit.initNext = function () {
 			"chat/client/app/net/login.js"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			console.timeEnd("fp loadWalletLoginSource");
 			console.log(11111,Date.now()-self.startTime)
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			console.log("load loadWalletLoginSource-----------------");
 			// 聊天登录
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
 			// 活动注册
@@ -296,6 +293,7 @@ winit.initNext = function () {
 	var enterApp = function(){
 		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
+			// loadWalletLoginSource();
 			console.time("enterApp ----");
 			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
 			util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
