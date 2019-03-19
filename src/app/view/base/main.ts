@@ -76,7 +76,7 @@ const checkUpdate = () => {
 const addAppEvent = () => {
     piRequire(['pi/browser/app_comon_event','pi/browser/exitApp']).then(mods => {
         const addAppResumed = mods[0].addAppResumed;
-        const addActivityBackPressed = mods[0].addActivityBackPressed;
+        const addAppBackPressed = mods[0].addAppBackPressed;
         // 注册appResumed
         addAppResumed(() => {
             console.log('addAppResumed callback called');
@@ -94,8 +94,8 @@ const addAppEvent = () => {
         });
 
         // 注册appBackPressed
-        addActivityBackPressed(() => {
-            console.log('addActivityBackPressed callback called');
+        addAppBackPressed(() => {
+            console.log('addAppBackPressed callback called');
             if (backList.length === 1) {
                 const ExitApp = mods[1].ExitApp;
                 const exitApp = new ExitApp();
