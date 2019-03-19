@@ -6,7 +6,7 @@
 import { backCall, backList, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
 import { LockScreen } from '../../store/interface';
-import { getStore, setStore } from '../../store/memstore';
+import { getAllAccount, getStore, setStore } from '../../store/memstore';
 import { piRequire } from '../../utils/commonjsTools';
 import { fetchDeviceId } from '../../utils/tools';
 
@@ -19,7 +19,11 @@ export const run = (cb): void =>  {
     // 打开首页面
     popNew('app-view-base-app');
     if (!getStore('user/id')) {
-        popNew('app-view-base-entrance');
+        if (getAllAccount().length > 0) {
+            popNew('app-view-base-entrance1');
+        } else {
+            popNew('app-view-base-entrance');
+        }
     }
     // 锁屏页面
     popNewPage();

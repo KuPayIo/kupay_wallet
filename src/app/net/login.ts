@@ -8,10 +8,10 @@ import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
-import { Account, getStore, initCloudWallets, LocalCloudWallet, register,setStore } from '../store/memstore';
+import { Account, getAllAccount, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
 import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
 import { CMD, defaultPassword } from '../utils/constants';
-import { fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
+import { closeAllPage, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 import { setReconnectingState } from './reconnect';
 
@@ -317,7 +317,12 @@ export const logoutAccountDel = () => {
     setTimeout(() => {
         openConnect();
     },100);
-    
+    closeAllPage();
+    if (getAllAccount().length > 0) {
+        popNew('app-view-base-entrance1');
+    } else {
+        popNew('app-view-base-entrance');
+    }
 };
 
 /**

@@ -1,7 +1,7 @@
 /**
  * common tools
  */
-import { popNew } from '../../pi/ui/root';
+import { backCall, backList, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Callback } from '../../pi/util/util';
@@ -1231,5 +1231,14 @@ export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callb
         });
     } else {
         popNew(name,props,ok,cancel);
+    }
+};
+
+/**
+ * 关掉所有页面 （不包括首页面）
+ */
+export const closeAllPage = () => {
+    for (let i = backList.length;i > 1;i--) {
+        backCall();
     }
 };
