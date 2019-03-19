@@ -6,7 +6,7 @@
             {{else}}
                 {{: placeHolder = {"zh_Hans":"密码","zh_Hant":"密碼","en":""} }}
             {{end}}
-            <app-components-input-input>{itype:"password",placeHolder:{{placeHolder}},input:{{it.password}} }</app-components-input-input>
+            <app-components1-input-input>{itype:"password",placeHolder:{{placeHolder}},input:{{it.password}} }</app-components1-input-input>
         </div>
         {{if it.isSuccess}}
         <img src="../../res/image/icon_right2.png" w-class="successPic"/>

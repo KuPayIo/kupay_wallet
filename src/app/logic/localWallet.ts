@@ -1,7 +1,6 @@
 /**
  * 本地钱包相关操作
  */
-import { popNew } from '../../pi/ui/root';
 import { base64ToArrayBuffer } from '../../pi/util/base64';
 import { ERC20Tokens } from '../config';
 import { AddrInfo, Wallet } from '../store/interface';

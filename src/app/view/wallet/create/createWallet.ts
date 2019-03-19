@@ -1,7 +1,6 @@
 /**
  * create wallet
  */
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
@@ -11,7 +10,6 @@ import { uploadFile } from '../../../net/pull';
 import { setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { imgResize, playerName, popNew3, popNewMessage } from '../../../utils/tools';
-import { forelet, WIDGET_NAME } from './home';
 interface Props {
     itype: CreateWalletType;
     mnemonic?: string;// 助记词
@@ -156,11 +154,6 @@ export class CreateWallet extends Widget {
                 }
             });
             
-        }
-
-        const w: any = forelet.getWidget(WIDGET_NAME);
-        if (w) {
-            w.ok && w.ok();
         }
         this.ok && this.ok();
     }

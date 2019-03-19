@@ -11,7 +11,7 @@
             
             <div style="flex: 1 0 0;" ev-input-blur="walletNameInputBlur" ev-input-change="userNameChange">
                 {{: defaultName = {"zh_Hans":"昵称未设置","zh_Hant":"暱稱未設置","en":""} }}
-                <widget w-tag="app-components-input-input" id="nameInput">{input:{{it.nickName}},maxLength:10,placeHolder:{{defaultName}},disabled:{{!it.canEditName}},notUnderLine:{{!it.canEditName}} }</widget>
+                <widget w-tag="app-components1-input-input" id="nameInput">{input:{{it.nickName}},maxLength:10,placeHolder:{{defaultName}},disabled:{{!it.canEditName}},notUnderLine:{{!it.canEditName}} }</widget>
             </div> 
             <img src="app/res/image/16.png" style="display: {{it.canEditName?'block':'none'}}" w-class="edit" on-tap="changeInput"/>  
             <img src="app/res/image/edit_gray.png" style="display: {{!it.canEditName?'block':'none'}}" w-class="edit" on-tap="changeInput"/>                

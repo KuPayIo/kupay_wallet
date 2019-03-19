@@ -324,7 +324,10 @@ export const logoutAccountDel = () => {
  * 注销账户保留数据
  */
 export const logoutAccount = () => {
-    setStore('flags/saveAccount', true);
+    const wallet = getStore('wallet');
+    if (wallet.setPsw) {
+        setStore('flags/saveAccount', true);
+    }
     logoutAccountDel();
 };
 

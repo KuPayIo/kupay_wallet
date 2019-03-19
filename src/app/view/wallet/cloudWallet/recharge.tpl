@@ -32,7 +32,7 @@
                 <div w-class="inner-tip"><pi-ui-lang>{{phrase[0]}}</pi-ui-lang><span w-class="balance"><pi-ui-lang>{{phrase[1]}}</pi-ui-lang>&nbsp;{{it.balance%1===0?it.balance.toFixed(2):it.balance}}</span></div>
                 <div w-class="input-father" ev-input-change="amountChange">
                     {{: inputPlace = {"zh_Hans":"输入金额","zh_Hant":"輸入金額","en":""} }}
-                    <app-components-input-input>{itype:"number",placeHolder:{{inputPlace}},style:"padding:0;",input:{{it.amount}},disabled:{{it.inputDisabled}}}</app-components-input-input>
+                    <app-components1-input-input>{itype:"number",placeHolder:{{inputPlace}},style:"padding:0;",input:{{it.amount}},disabled:{{it.inputDisabled}}}</app-components1-input-input>
                 </div>
             </div>
             <div w-class="item1">

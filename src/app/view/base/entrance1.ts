@@ -1,21 +1,16 @@
 /**
  * create a wallet
  */
-import { popNew } from '../../../../pi/ui/root';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { CreateWalletType } from '../../../logic/localWallet';
-import { getModulConfig } from '../../../modulConfig';
-import { loginSuccess } from '../../../net/login';
-import { deleteAccount, getAllAccount } from '../../../store/memstore';
-import { popNewLoading, popNewMessage } from '../../../utils/tools';
-import { VerifyIdentidy1 } from '../../../utils/walletTools';
+import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
+import { getModulConfig } from '../../modulConfig';
+import { loginSuccess } from '../../net/login';
+import { deleteAccount, getAllAccount } from '../../store/memstore';
+import { getWalletToolsMod } from '../../utils/commonjsTools';
+import { popNewLoading, popNewMessage } from '../../utils/tools';
+
 // ============================导出
-// tslint:disable-next-line:no-reserved-keywords
-declare var module: any;
-export const forelet = new Forelet();
-export const WIDGET_NAME = module.id.replace(/\//g, '-');
-export class CreateEnter extends Widget {
+export class Entrance1 extends Widget {
     public ok: () => void;
 
     public create() {
@@ -59,9 +54,7 @@ export class CreateEnter extends Widget {
     public delUserAccount(e:any,index:number) {
         const delAccount = this.props.accountList.splice(index,1)[0];
         deleteAccount(delAccount.id);
-        if (getAllAccount().length <= 0) {
-            this.props.login = false;
-        } else {
+        if (getAllAccount().length > 0) {
             this.props.popHeight = this.calPopBoxHeight(this.props.accountList.length);
             if (index === this.props.selectedAccountIndex) {
                 this.props.selectedAccountIndex = 0;
@@ -74,31 +67,11 @@ export class CreateEnter extends Widget {
         this.props.selectedAccountIndex = index;
         this.closePopBox();
     }
-    public backPrePage() {
+    // 注册新账户
+    public registerNewClick() {
         this.ok && this.ok();
-    }
-    // 图片创建
-    public createByImgClick() {
-        popNew('app-view-wallet-create-createWalletByImage');
-    }
-    // 已有账户
-    public walletImportClicke() {
-        this.props.forceCloseMoreUser = true;
-        this.paint();
-        popNew('app-view-wallet-import-home');
+        popNew('app-view-base-entrance');
         
-    }
-    // 普通创建
-    public createStandardClick() {
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Random });
-    }
-    public switch2LoginClick() {
-        this.props.login = true;
-        this.paint();
-    }
-    public switch2CreateClick() {
-        this.props.login = false;
-        this.paint();
     }
 
     public pswChange(e:any) {
@@ -113,8 +86,8 @@ export class CreateEnter extends Widget {
         const walletList = getAllAccount();
         const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
         const account = walletList[this.props.selectedAccountIndex];
-        console.log(this.props.psw);
-        const verify = await VerifyIdentidy1(this.props.psw,account.wallet.vault,account.user.salt);
+        const walletToolsMod = await getWalletToolsMod();
+        const verify = await walletToolsMod.VerifyIdentidy1(this.props.psw,account.wallet.vault,account.user.salt);
 
         close.callback(close.widget);
         if (!verify) {

@@ -22,7 +22,7 @@
                 <div w-class="input-father" ev-input-change="amountChange">
                     {{: inputPlace = {"zh_Hans":"￥输入金额","zh_Hant":"￥輸入金額","en":""} }}
                     <div w-class="balance-value">≈{{it.num}}&nbsp;{{it.stShow}}</div>
-                    <app-components-input-input>{itype:"moneyNum1",maxLength:7,placeHolder:{{inputPlace}},input:{{it.total}},style:"padding:0;background:transparent;"}</app-components-input-input>
+                    <app-components1-input-input>{itype:"moneyNum1",maxLength:7,placeHolder:{{inputPlace}},input:{{it.total}},style:"padding:0;background:transparent;"}</app-components1-input-input>
                 </div>
             </div>
 
