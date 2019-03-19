@@ -9,7 +9,7 @@ import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
-import { getMnemonic, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow, popNewLoading } from '../../../utils/tools';
+import { getMnemonic, getUserInfo, imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

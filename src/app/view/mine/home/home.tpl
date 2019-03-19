@@ -41,7 +41,7 @@
                     <span w-class="itemName">
                         <pi-ui-lang>{{itemName[ind]}}</pi-ui-lang>
                     </span>
-                    {{if ind==0 && !it.hasBackupMnemonic && it.hasWallet}}
+                    {{if ind==0 && !it.isTourist && !it.hasBackupMnemonic && it.hasWallet}}
                     <div w-class="backup" on-tap="backUp">
                         <pi-ui-lang>{"zh_Hans":"备份","zh_Hant":"備份","en":""}</pi-ui-lang>
                     </div>
