@@ -11,6 +11,7 @@ import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
 import { VerifyIdentidy } from '../../../utils/walletTools';
+import { popNewMessage, popNewLoading } from '../../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -176,22 +177,22 @@ export class WriteRedEnv extends Widget {
         const curCoin = this.props.list[this.props.selected];
         
         if (Number(this.props.totalNum) === 0) {
-            popNew('app-components1-message-message', { content: this.language.tips[2] });
+            popNewMessage(this.language.tips[2]);
 
             return;
         }
         if (Number(this.props.oneAmount) === 0 && Number(this.props.totalAmount) === 0) {
-            popNew('app-components-message-message', { content: this.language.tips[1] });
+            popNewMessage(this.language.tips[1]);
 
             return;
         }
         if (this.props.totalAmount > curCoin.num) {
-            popNew('app-components1-message-message', { content: this.language.tips[3] });
+            popNewMessage(this.language.tips[3]);
 
             return;
         }
         if (this.props.message.length > 20) {
-            popNew('app-components1-message-message', { content: this.language.tips[4] });
+            popNewMessage(this.language.tips[4]);
 
             return;
         }
@@ -199,7 +200,7 @@ export class WriteRedEnv extends Widget {
             this.props.message = this.language.messTitle[1];
         }
         if (!this.props.realUser) {
-            popNew('app-components1-message-message', { content: this.language.tips[5] });
+            popNewMessage(this.language.tips[5]);
 
             return;
         }
@@ -210,7 +211,7 @@ export class WriteRedEnv extends Widget {
                     zh_Hant:`單個紅包${this.props.ktShow}數量是大於1的整數`,
                     en:''
                 };
-                popNew('app-components-message-message', { content: ktTips[getLang()] });
+                popNewMessage(ktTips[getLang()]);
 
                 return;
             }
@@ -229,13 +230,13 @@ export class WriteRedEnv extends Widget {
             itype: 'password'
         },
             async (r) => {
-                const close = popNew('app-components1-loading-loading', { text: this.language.loading });
+                const close = popNewLoading(this.language.loading);
                 const secretHash = await VerifyIdentidy(r);
                 close.callback(close.widget);
                 if (secretHash) {
                     this.sendRedEnv(secretHash);
                 } else {
-                    popNew('app-components1-message-message', { content: this.language.tips[6] });
+                    popNewMessage(this.language.tips[6]);
                 }
             }
         );

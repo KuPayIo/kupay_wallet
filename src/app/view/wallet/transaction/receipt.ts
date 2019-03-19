@@ -43,7 +43,7 @@ export class Receipt extends Widget {
                 popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
             },
             fail: (result) => { 
-                popNew('app-components-message-message',{ content:this.language.tips[1] });
+                popNewMessage(this.language.tips[1]);
             }
         });
     }

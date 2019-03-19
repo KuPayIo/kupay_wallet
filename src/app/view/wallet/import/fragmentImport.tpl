@@ -10,11 +10,11 @@
             <div>
             <div w-class="input-father" ev-input-change="fragment1Change">
                 {{: inputPlace = [{"zh_Hans":"输入片段一","zh_Hant":"輸入片段一","en":""},{"zh_Hans":"输入片段二","zh_Hant":"輸入片段二","en":""}] }}
-                <app-components1-input-input>{input:{{it.fragment1}},placeHolder:{{inputPlace[0]}},style:"padding-right:76px;",notUnderLine:true}</app-components1-input-input>
+                <app-components-input-input>{input:{{it.fragment1}},placeHolder:{{inputPlace[0]}},style:"padding-right:76px;",notUnderLine:true}</app-components-input-input>
                 <img src="../../../res/image/scan.png" w-class="scan" on-tap="doScanQRCode(e,{{1}})"/>
             </div>
             <div w-class="input-father" ev-input-change="fragment2Change">
-                <app-components1-input-input>{input:{{it.fragment2}},placeHolder:{{inputPlace[1]}},style:"padding-right:76px;",notUnderLine:true}</app-components1-input-input>
+                <app-components-input-input>{input:{{it.fragment2}},placeHolder:{{inputPlace[1]}},style:"padding-right:76px;",notUnderLine:true}</app-components-input-input>
                 <img src="../../../res/image/scan.png" w-class="scan" on-tap="doScanQRCode(e,{{2}})"/>
             </div>
             </div>

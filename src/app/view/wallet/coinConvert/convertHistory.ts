@@ -9,7 +9,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { changellyGetTransactions } from '../../../net/pull3';
 import { getStore, setStore } from '../../../store/memstore';
-import { parseAccount, timestampFormat } from '../../../utils/tools';
+import { parseAccount, timestampFormat, popNewLoading } from '../../../utils/tools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -59,7 +59,7 @@ export class ConvertHistory extends Widget {
             txsShow:[]
         };
         const loading = { zh_Hans:'加载中...',zh_Hant:'加載中...',en:'' };
-        this.close = popNew('app-components1-loading-loading',{ text:loading[getLang()] });
+        this.close = popNewLoading(loading[getLang()]);
         this.getAllTransactions();
     }
 

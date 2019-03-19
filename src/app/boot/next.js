@@ -62,7 +62,7 @@ winit.initNext = function () {
 	 */
 	var isAppNeedUpdate = undefined;
 	var isH5NeedUpdate = undefined;
-
+	console.time("update check");
 	var h5UpdateMod = pi_modules.update.exports;
 	var appUpdateMod = pi_modules.appUpdate.exports;
 	appUpdateMod.init(function () {
@@ -172,6 +172,7 @@ winit.initNext = function () {
 			});
 		} else {
 			// 这里是项目加载的开始
+			console.timeEnd("update check");
 			appLoadEntrance();
 		}
 	}
@@ -212,8 +213,7 @@ winit.initNext = function () {
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
-				loadWalletLoginSource();  // 登录相关
-				loadImages(); // 预加载图片
+				
 				
 			});
 		}, function (result) {
@@ -278,6 +278,7 @@ winit.initNext = function () {
 			"earn/client/app/res/css/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
+			// debugger
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -293,7 +294,8 @@ winit.initNext = function () {
 	var enterApp = function(){
 		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
-			// loadWalletLoginSource();
+			loadWalletLoginSource();  // 登录相关
+			loadImages(); // 预加载图片
 			console.time("enterApp ----");
 			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
 			util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
@@ -492,7 +494,7 @@ function updateUiInit(){
 			$root.innerHTML = `
 			<div class="pi-mask">
 				<div class="pi-update-box animated bounceInUp">
-					<img src="app/res/image/rocket.png" class="pi-update-rocket" />
+					<img src="../res/image/rocket.png" class="pi-update-rocket" />
 					<div class="pi-update-content">
 					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
 					<div class="pi-update-items">
@@ -515,7 +517,7 @@ function updateUiInit(){
 			$root.innerHTML = `
 			<div class="pi-mask">
 				<div class="pi-update-box animated bounceInUp">
-					<img src="app/res/image/rocket.png" class="pi-update-rocket" />
+					<img src="../res/image/rocket.png" class="pi-update-rocket" />
 					<div class="pi-update-content">
 					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
 					<div class="pi-update-items">

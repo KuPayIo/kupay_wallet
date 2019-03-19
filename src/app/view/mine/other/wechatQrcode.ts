@@ -7,6 +7,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
+import { popNewMessage } from '../../../utils/tools';
 // ==================================================导出
 
 interface Props {
@@ -49,7 +50,7 @@ export class WechatQrcode extends Widget {
             },
             fail: (result) => { 
                 const tips = { zh_Hans:'分享截图失败',zh_Hant:'分享截圖失敗',en:'' };
-                popNew('app-components-message-message',{ content:tips[getLang()] });
+                popNewMessage(tips[getLang()]);
             }
         });
         console.log('截图截图截图');

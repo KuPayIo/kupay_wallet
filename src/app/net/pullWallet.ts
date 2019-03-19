@@ -16,7 +16,7 @@ import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { erc20GasLimitRate } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx } from '../utils/tools';
+import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx, popNewMessage, popNewLoading } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
 import { fetchMinerFeeList, getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
@@ -519,7 +519,7 @@ export const sendRawTransactionBTC = async (rawHexString) => {
  */
 export const resendNormalTransfer = async (psw:string,txRecord:TxHistory) => {
     console.log('----------resendNormalTransfer--------------');
-    const loading = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.againSend });
+    const loading = popNewLoading(getStaticLanguage().transfer.againSend);
     const fromAddr = txRecord.fromAddr;
     const currencyName = txRecord.currencyName;
     let ret: any;
@@ -559,7 +559,7 @@ export const resendNormalTransfer = async (psw:string,txRecord:TxHistory) => {
         updateLocalTx(tx);
         dataCenter.clearTxTimer(oldHash);// 删除定时器
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.againSuccess });
+        popNewMessage(getStaticLanguage().transfer.againSuccess);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
 
@@ -571,7 +571,7 @@ export const resendNormalTransfer = async (psw:string,txRecord:TxHistory) => {
  */
 export const resendRecharge = async (psw:string,txRecord:TxHistory) => {
     console.log('----------resendRecharge--------------');
-    const loading = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.againSend });
+    const loading = popNewLoading(getStaticLanguage().transfer.againSend);
     let tx;
     try {
         
@@ -593,7 +593,7 @@ export const resendRecharge = async (psw:string,txRecord:TxHistory) => {
         dataCenter.clearTxTimer(oldHash);// 删除定时器
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         getRechargeLogs(tx.currencyName);
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.againSuccess });
+        popNewMessage(getStaticLanguage().transfer.againSuccess);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
 
@@ -604,7 +604,7 @@ export const resendRecharge = async (psw:string,txRecord:TxHistory) => {
 
 export const recharge = async (psw:string,txRecord:TxHistory) => {
     let tx;
-    const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.recharge });
+    const close = popNewLoading(getStaticLanguage().transfer.recharge);
     if (txRecord.currencyName === 'BTC') {
         tx = await btcRecharge(psw,txRecord);
     } else {
@@ -612,7 +612,7 @@ export const recharge = async (psw:string,txRecord:TxHistory) => {
     }
     close.callback(close.widget);
     if (tx) {
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.rechargeSuccess });
+        popNewMessage(getStaticLanguage().transfer.rechargeSuccess);
         updateLocalTx(tx);
         console.log(`recharge tx is `,tx);
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
@@ -748,18 +748,18 @@ export const withdraw = async (passwd:string,toAddr:string,currencyName:string,a
 };
 // eth提现
 export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
-    const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.withdraw });
+    const close = popNewLoading(getStaticLanguage().transfer.withdraw);
     const secretHash = await VerifyIdentidy(passwd);
     if (!secretHash) {
         close.callback(close.widget);
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
+        popNewMessage(getStaticLanguage().transfer.wrongPsw);
 
         return;
     }
     const hash = await withdrawFromServer(toAddr,eth2Wei(amount),secretHash);
     close.callback(close.widget);
     if (hash) {
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
+        popNewMessage(getStaticLanguage().transfer.withdrawSuccess);
         const tx:TxHistory = {
             hash,
             addr:toAddr,
@@ -786,18 +786,18 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
 
 // btc提现
 export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
-    const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.withdraw });
+    const close = popNewLoading(getStaticLanguage().transfer.withdraw);
     const secretHash = await VerifyIdentidy(passwd);
     if (!secretHash) {
         close.callback(close.widget);
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
+        popNewMessage(getStaticLanguage().transfer.wrongPsw);
 
         return;
     }
     const hash = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString(),secretHash);
     close.callback(close.widget);
     if (hash) {
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
+        popNewMessage(getStaticLanguage().transfer.withdrawSuccess);
         const tx:TxHistory = {
             hash,
             addr:toAddr,

@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, hasWallet, popPswBox, rippleShow } from '../../../utils/tools';
+import { copyToClipboard, getUserInfo, hasWallet, popPswBox, rippleShow, popNewMessage } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出
@@ -118,7 +118,7 @@ export class Home extends Widget {
      */
     public copyAddr() {
         copyToClipboard(this.props.address);
-        popNew('app-components1-message-message',{ content:this.language.tips });
+        popNewMessage(this.language.tips);
     }
 
     /**

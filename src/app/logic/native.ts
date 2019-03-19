@@ -4,9 +4,9 @@
 import { AdPlatform, ADUnion, PlayEvent } from '../../pi/browser/ad_unoin';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { WebViewManager } from '../../pi/browser/webview';
-import { popNew } from '../../pi/ui/root';
 import { setStore } from '../store/memstore';
 import { piRequire } from '../utils/commonjsTools';
+import { popNewLoading } from '../utils/tools';
 
 export const selectImage = (ok?,cancel?) => {
     console.log('选择图片');
@@ -27,7 +27,7 @@ export const selectImage = (ok?,cancel?) => {
     });
     let close;
     setTimeout(() => {
-        close = popNew('app-components1-loading-loading', { text: { zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' } });
+        close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
     },100);
     
     return imagePicker;

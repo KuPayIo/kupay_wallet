@@ -255,7 +255,7 @@ export const copyToClipboard = (copyText) => {
 /**
  * 获取memery hash
  */
-export const calcHashValuePromise = (pwd, salt?) => {
+export const calcHashValuePromise = (pwd, salt?):Promise<string> => {
     return new Promise((resolve,reject) => {
         console.time('pi_create  calc argonHash');
         piRequire(['pi/browser/argonHash']).then(async (mods) => {
@@ -286,7 +286,16 @@ export const popPswBox = (content = []) => {
 
 // 弹出提示框
 export const popNewMessage = (content: any) => {
-    return popNew('app-components1-message-message', { content });
+    const name = 'app-components-message-message';
+    if (!lookup(name)) {
+        const name1 = name.replace(/-/g,'/');
+        const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+        piLoadDir(sourceList).then(() => {
+            popNew(name, { content });
+        });
+    } else {
+        popNew(name, { content });
+    }
 };
 // 弹出loading
 export const popNewLoading = (text: any) => {

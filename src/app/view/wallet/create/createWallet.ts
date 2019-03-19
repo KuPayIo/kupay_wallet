@@ -107,22 +107,22 @@ export class CreateWallet extends Widget {
             return;
         }
         if (!walletNameAvailable(this.props.walletName)) {
-            popNew('app-components1-message-message', { content: this.language.tips[0] });
+            popNewMessage(this.language.tips[0]);
 
             return;
         }
         if (!this.props.walletPsw || !this.props.walletPswConfirm) {
-            popNew('app-components1-message-message', { content: this.language.tips[1] });
+            popNewMessage(this.language.tips[1]);
 
             return;
         }
         if (!this.props.walletPswAvailable) {
-            popNew('app-components1-message-message', { content: this.language.tips[2] });
+            popNewMessage(this.language.tips[2]);
 
             return;
         }
         if (!this.props.pswEqualed) {
-            popNew('app-components1-message-message', { content: this.language.tips[3] });
+            popNewMessage(this.language.tips[3]);
 
             return;
         }

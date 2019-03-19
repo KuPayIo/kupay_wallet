@@ -50,7 +50,7 @@
         </div>
         <div w-class="input-father" ev-input-change="pswChange">
             {{: inputHolder = {"zh_Hans":"输入密码","zh_Hant":"輸入密碼","en":""} }}
-            <app-components1-input-input>{placeHolder:{{inputHolder}},itype:"password"}</app-components1-input-input>
+            <app-components-input-input>{placeHolder:{{inputHolder}},itype:"password"}</app-components-input-input>
         </div>
         <div ev-btn-tap="loginClick"><app-components1-btn-btn>{"name":{{btnName[2]}},"types":"big","color":"blue"}</app-components1-btn-btn></div>
         <div w-class="container2">

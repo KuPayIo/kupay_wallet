@@ -39,33 +39,23 @@ export enum CreateWalletType {
 export const createWallet = async (itype: CreateWalletType, option: Option) => {
     let secrectHash;
     if (itype === CreateWalletType.Random) {
-        const close = popNew('app-components1-loading-loading', {
-            text: { zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' }
-        });
+        const close = popNewLoading({ zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' });
         secrectHash = await createWalletRandom(option);
         close.callback(close.widget);
     } else if (itype === CreateWalletType.Image) {
-        const close = popNew('app-components1-loading-loading', {
-            text: { zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' }
-        });
+        const close = popNewLoading({ zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' });
         secrectHash = await createWalletByImage(option);
         close.callback(close.widget);
     } else if (itype === CreateWalletType.StrandarImport) {
-        const close = popNew('app-components1-loading-loading', {
-            text: { zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' }
-        });
+        const close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
         secrectHash = await importWalletByMnemonic(option);
         close.callback(close.widget);
     } else if (itype === CreateWalletType.ImageImport) {
-        const close = popNew('app-components1-loading-loading', {
-            text: { zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' }
-        });
+        const close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
         secrectHash = await createWalletByImage(option);
         close.callback(close.widget);
     } else if (itype === CreateWalletType.FragmentImport) {
-        const close = popNew('app-components1-loading-loading', {
-            text: { zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' }
-        });
+        const close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
         secrectHash = await importWalletByFragment(option);
         close.callback(close.widget);
     }
@@ -85,9 +75,7 @@ export const createWallet = async (itype: CreateWalletType, option: Option) => {
  * 游客登录创建钱包
  */
 export const touristLogin = async (option: Option) => {
-    const close = popNew('app-components1-loading-loading', {
-        text: { zh_Hans:'游客登录中',zh_Hant:'遊客登錄中',en:'' }
-    });
+    const close = popNewLoading({ zh_Hans:'游客登录中',zh_Hant:'遊客登錄中',en:'' });
     let secrectHash;
     try {
         secrectHash = await createWalletRandom(option,true);

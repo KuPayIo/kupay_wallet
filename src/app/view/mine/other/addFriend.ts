@@ -7,7 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo } from '../../../utils/tools';
+import { copyToClipboard, getUserInfo, popNewMessage } from '../../../utils/tools';
 
 export class AddFriend extends Widget {
     public ok:() => void;
@@ -46,7 +46,7 @@ export class AddFriend extends Widget {
                 popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
             },
             fail: (result) => { 
-                popNew('app-components-message-message',{ content:this.language.tips[1] });
+                popNewMessage(this.language.tips[1]);
             }
         });
     }
@@ -60,6 +60,6 @@ export class AddFriend extends Widget {
      */
     public copyAddr() {
         copyToClipboard(this.props.address);
-        popNew('app-components1-message-message',{ content:this.language.tips[0] });
+        popNewMessage(this.language.tips[0]);
     }
 }

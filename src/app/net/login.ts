@@ -11,7 +11,7 @@ import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } f
 import { Account, getStore, initCloudWallets, LocalCloudWallet, register,setStore } from '../store/memstore';
 import { getCipherToolsMod, getWalletToolsMod } from '../utils/commonjsTools';
 import { CMD } from '../utils/constants';
-import { fetchDeviceId, popNewMessage, popPswBox } from '../utils/tools';
+import { fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 import { setReconnectingState } from './reconnect';
 
@@ -481,7 +481,7 @@ const loginWalletFailedPop = async () => {
 
         return;
     }
-    const close = popNew('app-components1-loading-loading', { text: '登录中' });
+    const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
     const walletToolsMod = await getWalletToolsMod();
     const secretHash = await walletToolsMod.VerifyIdentidy(psw);
     close && close.callback(close.widget);

@@ -10,7 +10,7 @@ import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
 import { buyProduct, getPurchaseRecord, getServerCloudBalance } from '../net/pull';
 import { getStore, setStore } from '../store/memstore';
-import { decrypt, encrypt } from './cipherTools';
+import { decrypt, encrypt, sha256 } from './cipherTools';
 import { getSecretsBaseMod } from './commonjsTools';
 import { defaultGasLimit, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from './constants';
 // tslint:disable-next-line:max-line-length

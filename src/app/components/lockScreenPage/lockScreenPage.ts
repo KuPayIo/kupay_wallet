@@ -9,6 +9,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { LockScreen } from '../../store/interface';
 import { getStore, register, setStore  } from '../../store/memstore';
 import { getLoginMod, getWalletToolsMod } from '../../utils/commonjsTools';
+import { popNewMessage, popNewLoading } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -73,7 +74,7 @@ export class LockScreenPage extends Widget {
     public  reSetLockPsw() {
         popNew('app-components-keyboard-keyboard',{ title: this.language.keyboardTitle[1] },async (r) => {
             if (this.props.lockScreenPsw !== r) {
-                popNew('app-components1-message-message',{ content:this.language.tips[0] });
+                popNewMessage(this.language.tips[0]);
                 this.reSetLockPsw();
             } else {
                 const walletToolsMod = await getWalletToolsMod();
@@ -82,7 +83,7 @@ export class LockScreenPage extends Widget {
                 ls.psw = hash256;
                 ls.open = true;
                 setStore('setting/lockScreen',ls);
-                popNew('app-components1-message-message',{ content:this.language.tips[1] });
+                popNewMessage(this.language.tips[1]);
             }
             this.close(true);
         },() => {
@@ -119,12 +120,12 @@ export class LockScreenPage extends Widget {
         // tslint:disable-next-line:max-line-length
         popNew('app-components-modalBoxInput-modalBoxInput',this.language.modalBoxInput2, async (r) => {
             if (!r) {  // 未输入密码点击验证则重新打开验证
-                popNew('app-components1-message-message',{ content:this.language.tips[3] });
+                popNewMessage(this.language.tips[3]);
                 this.verifyPsw();
 
                 return;
             }
-            const close = popNew('app-components1-loading-loading', { text: this.language.loading }); 
+            const close = popNewLoading(this.language.loading); 
             if (this.props.loading) {
                 const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
                 const fg = await VerifyIdentidy(r);
@@ -140,7 +141,7 @@ export class LockScreenPage extends Widget {
                     this.setLockPsw();
                     
                 } else {  // 进入APP验证身份失败后再次进入验证身份步骤
-                    popNew('app-components1-message-message',{ content:this.language.tips[2] });
+                    popNewMessage(this.language.tips[2]);
                     this.verifyPsw();
                 } 
             }

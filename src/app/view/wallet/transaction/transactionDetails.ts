@@ -100,7 +100,7 @@ export class TransactionDetails extends Widget {
                 popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
             },
             fail: (result) => { 
-                popNew('app-components-message-message',{ content:this.language.shareScreen });
+                popNewMessage(this.language.shareScreen);
             }
         });
     }

@@ -4,6 +4,14 @@
     color: #222;
     font-size: 32px;
 }
+
+.input-focused-true{
+    border-bottom:1px solid #318DE6;
+}
+
+.input-focused-false{
+    border-bottom:1px solid #DBDBE5;
+}
 .pi-input__inner{
     appearance:none;
     -moz-appearance:none; /* Firefox */
@@ -26,8 +34,15 @@
     color: #222;
     font-size: 32px;
 }
-
-.pi-input__inner-disabled{
-    color: #c0c4cc;
-    cursor: not-allowed;
+.clearBtn{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 20px solid transparent;
+    
 }

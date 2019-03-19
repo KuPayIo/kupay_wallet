@@ -17,7 +17,7 @@
                 {{end}}
             </div>
             <div w-class="name-box" ev-input-change="walletNameChange">
-                <widget w-tag="app-components1-input-input" style="flex: 1;">{input:{{it.walletName}},maxLength:10}</widget>
+                <widget w-tag="app-components-input-input" style="flex: 1;">{input:{{it.walletName}},maxLength:10}</widget>
                 <img w-class="random" src="../../../res/image/dice.png" on-tap="randomPlayName" id="random"/>
             </div>
             <div ev-psw-change="pswChange" ev-psw-clear="pwsClear"><app-components-password-password>{hideTips:true}</app-components-password-password></div>

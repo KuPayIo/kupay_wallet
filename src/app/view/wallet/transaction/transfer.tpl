@@ -26,13 +26,13 @@
                     <div w-class="input-father" ev-input-change="amountChange">
                         <div w-class="balance-value">≈{{it.currencyUnitSymbol+" "+it.amountShow}}</div>
                         {{: inputPlace0 = {"zh_Hans":"输入金额","zh_Hant":"輸入金額","en":""} }}
-                        <widget w-tag="app-components1-input-input">{itype:"number",placeHolder:{{inputPlace0}},style:"padding:0;font-size:36px;background:transparent;",input:{{it.amount}},disabled:{{it.inputDisabled}} }</widget>
+                        <widget w-tag="app-components-input-input">{itype:"number",placeHolder:{{inputPlace0}},style:"padding:0;font-size:36px;background:transparent;",input:{{it.amount}},disabled:{{it.inputDisabled}} }</widget>
                     </div>
                 </div>
                 <div w-class="item" style="padding: 10px 0 0 20px;">
                     <div w-class="inner-tip"><pi-ui-lang>{{tags[2]}}</pi-ui-lang><img src="../../../res/image/scan.png" w-class="scanImg" on-tap="doScanClick"/></div>
                     <div w-class="input-father1" ev-input-change="toAddrChange">
-                        <app-components1-input-input>{placeHolder:{{inputPlace[1]}},style:"padding:0;font-size:28px;",input:{{it.toAddr}},disabled:{{it.inputDisabled}}}</app-components1-input-input>
+                        <app-components-input-input>{placeHolder:{{inputPlace[1]}},style:"padding:0;font-size:28px;",input:{{it.toAddr}},disabled:{{it.inputDisabled}}}</app-components-input-input>
                     </div>
                 </div>
                 <div w-class="item">

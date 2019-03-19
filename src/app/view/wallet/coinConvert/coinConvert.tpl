@@ -20,7 +20,7 @@
         {"zh_Hans":"收到数量","zh_Hant":"收到數量","en":""}] }}
 
         <div w-class="outInput" ev-input-change="outAmountChange">
-            <app-components1-input-input>{placeHolder:{{inputPlace[0]}},style:"padding:20px;",input:{{it.outAmount}},itype:"number"}</app-components1-input-input>
+            <app-components-input-input>{placeHolder:{{inputPlace[0]}},style:"padding:20px;",input:{{it.outAmount}},itype:"number"}</app-components-input-input>
         </div>
 
         <div w-class="coin" on-tap="inCurrencySelectClick">
@@ -29,7 +29,7 @@
             <img src="../../../res/image/right_arrow_blue.png" style="width: 40px;height: 40px;"/>
         </div>
         <div w-class="inInput" ev-input-change="inAmountChange">
-            <app-components1-input-input>{placeHolder:{{inputPlace[1]}},style:"padding:20px;",input:{{it.receiveAmount}},itype:"number" }</app-components1-input-input>
+            <app-components-input-input>{placeHolder:{{inputPlace[1]}},style:"padding:20px;",input:{{it.receiveAmount}},itype:"number" }</app-components-input-input>
         </div>
 
         <div w-class="rate">
