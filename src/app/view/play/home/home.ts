@@ -110,28 +110,28 @@ export class PlayHome extends Widget {
                 url:'earn-client-app-view-exchange-exchange'
             }
         ];
-        this.props.loaded=false
+        this.props.loaded = false;
     }
     /**
      * 刷新页面
      */
-    public loaded(){
-        //toDo 更新数据 完成之后将loaded变成true 刷新页面
-        setTimeout(()=>{
+    public loaded() {
+        // toDo 更新数据 完成之后将loaded变成true 刷新页面
+        setTimeout(() => {
             console.log('加载数据完成');
-            this.props.loaded=true;
-            this.paint()
+            this.props.loaded = true;
+            this.paint();
 
-        },2000)
+        },2000);
 
     }
     /**
      * 刷新页面前的准备
      */
-    public beforeLoad(){
+    public beforeLoad() {
         console.log('通知刷新状态---');
-        this.props.loaded=false;
-        this.paint()
+        this.props.loaded = false;
+        this.paint();
     }
 
     public backPrePage() {

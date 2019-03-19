@@ -6,7 +6,9 @@ import { ShareToPlatforms, ShareType } from '../../../../pi/browser/shareToPlatf
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { makeScreenShot } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
+import { popNewMessage } from '../../../utils/tools';
 // ==================================================导出
 
 interface Props {
@@ -41,16 +43,11 @@ export class WechatQrcode extends Widget {
     }
 
     public shareImg() {
-        const stp = new ShareToPlatforms();
-        stp.init();
-        stp.makeScreenShot({
-            success: (result) => { 
-                popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
-            },
-            fail: (result) => { 
-                const tips = { zh_Hans:'分享截图失败',zh_Hant:'分享截圖失敗',en:'' };
-                popNew('app-components-message-message',{ content:tips[getLang()] });
-            }
+        makeScreenShot((result) => { 
+            popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
+        },(result) => { 
+            const tips = { zh_Hans:'分享截图失败',zh_Hant:'分享截圖失敗',en:'' };
+            popNewMessage(tips[getLang()]);
         });
         console.log('截图截图截图');
     }

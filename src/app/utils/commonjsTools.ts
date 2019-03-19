@@ -126,7 +126,7 @@ export const getPullMod = async () => {
 /**
  * 获取walletTools模块
  */
-export const getWalletTools = async () => {
+export const getWalletToolsMod = async () => {
     const mods = await piRequire(['app/utils/walletTools']);
 
     return mods[0];
@@ -150,10 +150,34 @@ export const getBTCWallet = async () => {
 /**
  * 获取CipherTools
  */
-export const getCipherTools = async () => {
+export const getCipherToolsMod = async () => {
     const mods = await piRequire(['app/utils/cipherTools']);
 
     return mods[0];
 };
 
 // =============================app/utils/cipherTools================================================
+
+// =============================app/utils/secretsBase================================================
+/**
+ * 获取secretsBase
+ */
+export const getSecretsBaseMod = async () => {
+    const mods = await piRequire(['app/utils/secretsBase']);
+
+    return mods[0];
+};
+
+// =============================app/utils/secretsBase================================================
+
+// =============================app/utils/ahash================================================
+/**
+ * 获取ahash
+ */
+export const getAhashMod = async () => {
+    const mods = await piRequire(['app/utils/ahash']);
+
+    return mods[0];
+};
+
+// =============================app/utils/ahash================================================

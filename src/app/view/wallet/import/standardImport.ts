@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { isValidMnemonic } from '../../../core/genmnemonic';
 import { CreateWalletType } from '../../../logic/localWallet';
 import { lang } from '../../../utils/constants';
-import { popNew3 } from '../../../utils/tools';
+import { popNew3, popNewMessage } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
 
 export class StandardImport extends Widget {
@@ -30,12 +30,12 @@ export class StandardImport extends Widget {
     }
     public nextClick(e:any) {
         if (this.props.mnemonic.length <= 0) {
-            popNew('app-components1-message-message', { content: this.language.tips });
+            popNewMessage(this.language.tips);
 
             return;
         }
         if (!isValidMnemonic(lang,this.props.mnemonic)) {
-            popNew('app-components1-message-message', { content: this.language.invalidMnemonicTips });
+            popNewMessage(this.language.invalidMnemonicTips);
 
             return;
         }

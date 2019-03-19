@@ -4,7 +4,7 @@
 import { getServerCloudBalance, requestAsync } from '../net/pull';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
-import { getWalletTools } from '../utils/commonjsTools';
+import { getWalletToolsMod } from '../utils/commonjsTools';
 import { formatBalance, getUserInfo } from '../utils/tools';
 
 declare var pi_modules:any;
@@ -154,7 +154,7 @@ export const pay = async (order: any, callback: Function) => {
     };
 
     if (order.no_password !== 1) {
-        const walletToolsMod = await getWalletTools();
+        const walletToolsMod = await getWalletToolsMod();
         secretHash = await walletToolsMod.VerifyIdentidy(order.password);
         if (!secretHash) {  //  密码错误
             callback(resCode.PASSWORD_ERROR, null);
@@ -234,7 +234,7 @@ export const setNoPWD = async (data:any,callback:Function) => {
 
         return;
     }
-    const walletToolsMod = await getWalletTools();
+    const walletToolsMod = await getWalletToolsMod();
     const secretHash = await walletToolsMod.VerifyIdentidy(data.password);
     if (!secretHash) {  //  密码错误
         callback(resCode.PASSWORD_ERROR, null);

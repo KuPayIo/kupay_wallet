@@ -16,6 +16,7 @@ import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { getRealNode, paintCmd3, paintWidget } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
+import { popNewMessage } from '../../utils/tools';
 
 interface Props {
     input?: string;
@@ -113,7 +114,7 @@ export class Input extends Widget {
         // 密码输入 时检验非法字符
         if (this.props.itype === 'password' && !this.availableJudge(currentValue) && currentValue.length > 0) {
             const disAvailable = { zh_Hans:'不支持的字符',zh_Hant:'不支持的字符',en:'' };
-            popNew('app-components1-message-message', { content: disAvailable[getLang()] });
+            popNewMessage(disAvailable[getLang()]);
             currentValue = currentValue.slice(0, currentValue.length - 1);
         }
         // 数字输入 时检验输入格式

@@ -10,9 +10,9 @@ import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
 import { buyProduct, getPurchaseRecord, getServerCloudBalance } from '../net/pull';
 import { getStore, setStore } from '../store/memstore';
-import { decrypt, encrypt } from './cipherTools';
+import { decrypt, encrypt, sha256 } from './cipherTools';
+import { getSecretsBaseMod } from './commonjsTools';
 import { defaultGasLimit, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from './constants';
-import { shareSecret } from './secretsBase';
 // tslint:disable-next-line:max-line-length
 import { calcHashValuePromise, fetchBtcMinerFee, fetchGasPrice, hexstrToU8Array, popNewLoading, popNewMessage } from './tools';
 import { sat2Btc, wei2Eth } from './unitTools';
@@ -201,15 +201,14 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
 };
 
 // 获取助记词片段
-export const fetchMnemonicFragment =  (hash) => {
+export const fetchMnemonicFragment = async (hash) => {
     const mnemonicHexstr =  getMnemonicHexstr(hash);
     if (!mnemonicHexstr) return;
-    // tslint:disable-next-line:no-unnecessary-local-variable
-    const shares = shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
+    const secretsBase = await getSecretsBaseMod();
+
+    return secretsBase.shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
             .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
-    // console.log('fetchMnemonicFragment-----------',shares);
     
-    return shares;
 };
 
 // 备份助记词
@@ -219,7 +218,7 @@ export const backupMnemonic = async (passwd:string) => {
     console.log('hash!!!!!!!!!!!!',hash);
     close.callback(close.widget);
     const mnemonic = getMnemonicByHash(hash);
-    const fragments = fetchMnemonicFragment(hash);
+    const fragments = await fetchMnemonicFragment(hash);
     if (!mnemonic) {
         popNewMessage(Config[getLang()].transError[0]);
         

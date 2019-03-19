@@ -48,7 +48,6 @@ export class ChatHome extends Widget {
 
     public login() {
         // const content = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
-        // popNew('app-components-message-message',{ content:content[getLang()] });
         popNew('app-view-wallet-create-home');
     }
 }

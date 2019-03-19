@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { makeScreenShot } from '../../../logic/native';
-import { getUserInfo } from '../../../utils/tools';
+import { getUserInfo, popNewMessage } from '../../../utils/tools';
 
 export class ShareDownload extends Widget {
     public ok:() => void;
@@ -37,7 +37,7 @@ export class ShareDownload extends Widget {
             popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
         },() => {
             const tips = { zh_Hans:'分享截图失败',zh_Hant:'分享截圖失敗',en:'' };
-            popNew('app-components-message-message',{ content:tips[getLang()] });
+            popNewMessage(tips[getLang()]);
         });
     }
     public backClick() {

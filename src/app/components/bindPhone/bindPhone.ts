@@ -11,6 +11,7 @@ import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getPullMod } from '../../utils/commonjsTools';
+import { popNewMessage } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -52,7 +53,7 @@ export class BindPhone extends Widget {
         this.inputBlur();
         if (!this.props.phone || !this.phoneJudge()) {
             const tips = { zh_Hans:'无效的手机号',zh_Hant:'無效的手機號',en:'' };
-            popNew('app-components1-message-message', { content: tips[getLang()] });
+            popNewMessage(tips[getLang()]);
 
             return;
         }

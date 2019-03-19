@@ -9,6 +9,7 @@ import { convertRedBag, getServerCloudBalance, takeRedBag } from '../../../net/p
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { setStore } from '../../../store/memstore';
 import { smallUnit2LargeUnit } from '../../../utils/unitTools';
+import { popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -59,7 +60,7 @@ export class OpenRedEnvelope extends Widget {
             }
             popNew('app-view-earn-exchange-exchangeDetail',this.props);
             
-            popNew('app-components1-message-message',{ content:this.language.successMess });
+            popNewMessage(this.language.successMess);
             this.backPrePage();
         },800);
        

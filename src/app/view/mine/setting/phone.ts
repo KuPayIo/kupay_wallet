@@ -8,7 +8,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { checkPhoneCode, getMineDetail, regPhone } from '../../../net/pull';
 import { getStore, setStore } from '../../../store/memstore';
-import { getUserInfo } from '../../../utils/tools';
+import { getUserInfo, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -49,7 +49,7 @@ export class BindPhone extends Widget {
     public async doSure() {
         if (!this.props.phone) {
             const tips = { zh_Hans:'请先获取验证码',zh_Hant:'請先獲取驗證碼',en:'' };
-            popNew('app-components1-message-message', { content: tips[getLang()] });
+            popNewMessage(tips[getLang()]);
             this.props.code = [];
             this.setCode();
 

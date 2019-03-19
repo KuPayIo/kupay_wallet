@@ -5,7 +5,7 @@
 import { popNew } from '../../pi/ui/root';
 import { openPayment, pay, resCode, setNoPWD } from '../api/JSAPI';
 import { setStore } from '../store/memstore';
-import { popPswBox } from './tools';
+import { popPswBox, popNewMessage, popNewLoading } from './tools';
 
 /**
  * 钱包支付，钱包内应用调用
@@ -13,7 +13,6 @@ import { popPswBox } from './tools';
  * @param callback 回调函数
  */
 export const walletPay = (order: any, appid: string, mchid: string, callback: Function) => {
-
     openPayment(order, (res, msg) => {
         if (!res) { // 开启订单支付成功(预支付)
             order.no_password = msg.no_password;
@@ -26,7 +25,7 @@ export const walletPay = (order: any, appid: string, mchid: string, callback: Fu
             } else {                    // 未设置免密
                 console.log('未设置免密支付', order);
                 popNew('app-components-modalBoxPay-pay', msg, (password) => {
-                    const loading = popNew('app-components1-loading-loading', { text: '支付中...' });
+                    const loading = popNewLoading('支付中...');
                     order.password = password;
                     pay(order, (res1, msg1) => {
                         loading.callback(loading.widget);
@@ -43,14 +42,14 @@ export const walletPay = (order: any, appid: string, mchid: string, callback: Fu
                                     noPSW: 1,
                                     password
                                 };
-                                const loading1 = popNew('app-components1-loading-loading', { text: '设置中...' });
+                                const loading1 = popNewLoading('设置中...');
                                 setNoPWD(sendData, (res, msg) => {
                                     loading1.callback(loading1.widget);
                                     if (!res) {
                                         setStore('flags/noPassword',true);
-                                        popNew('app-components1-message-message',{ content:{ zh_Hans:'设置成功！',zh_Hant:'設置成功！',en:'' } });
+                                        popNewMessage({ zh_Hans:'设置成功！',zh_Hant:'設置成功！',en:'' });
                                     } else {
-                                        popNew('app-components1-message-message',{ content:{ zh_Hans:'设置失败！',zh_Hant:'設置失败！',en:'' } });
+                                        popNewMessage({ zh_Hans:'设置失败！',zh_Hant:'設置失败！',en:'' });
                                     }
                                 });
                             }, () => {
@@ -85,16 +84,15 @@ export const walletSetNoPSW = async (appid: string, mchid: string, noPSW: number
     const psw = await popPswBox();
     if (!psw) { return; }
     sendData.password = psw;
-    const loading = popNew('app-components1-loading-loading', { text: '设置中...' });
+    const loading = popNewLoading('设置中...');
     setNoPWD(sendData, (res, msg) => {
         loading.callback(loading.widget);
         callback(res,msg);
         if (!res) {
-            // setStore('flags/noPassword',noPSW);
-            popNew('app-components1-message-message',{ content:{ zh_Hans:'设置成功！',zh_Hant:'設置成功！',en:'' } });
+            popNewMessage({ zh_Hans:'设置成功！',zh_Hant:'設置成功！',en:'' });
 
         } else {
-            popNew('app-components1-message-message',{ content:{ zh_Hans:'设置失败！',zh_Hant:'設置失败！',en:'' } });
+            popNewMessage({ zh_Hans:'设置失败！',zh_Hant:'設置失败！',en:'' });
         }
     });
 

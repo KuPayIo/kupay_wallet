@@ -8,6 +8,7 @@ import { ahashToArgon2Hash, CreateWalletType } from '../../../logic/localWallet'
 import { selectImage } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { setStore } from '../../../store/memstore';
+import { popNewMessage } from '../../../utils/tools';
 
 export class CreateWalletByImage extends Widget {
     public cancel: () => void;
@@ -51,7 +52,7 @@ export class CreateWalletByImage extends Widget {
     public nextClick() {
         if (!this.props.chooseImage) {
             const tips = { zh_Hans:'请选择照片',zh_Hant:'請選擇照片',en:'' };
-            popNew('app-components1-message-message', { content: tips[getLang()] });
+            popNewMessage(tips[getLang()]);
 
             return;
         }

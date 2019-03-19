@@ -54,19 +54,19 @@ export class SettingPsw extends Widget {
         }
         if (!this.props.walletPsw || !this.props.walletPswConfirm) {
             const tips = { zh_Hans:'请输入密码',zh_Hant:'請輸入密碼',en:'' };
-            popNew('app-components1-message-message', { content: tips[getLang()] });
+            popNewMessage(tips[getLang()]);
 
             return;
         }
         if (!this.props.walletPswAvailable) {
             const tips = { zh_Hans:'密码格式不正确',zh_Hant:'密碼格式不正確',en:'' };
-            popNew('app-components1-message-message', { content: tips[getLang()] });
+            popNewMessage(tips[getLang()]);
 
             return;
         }
         if (!this.props.pswEqualed) {
             const tips = { zh_Hans:'密码不一致',zh_Hant:'密碼不一致',en:'' };
-            popNew('app-components1-message-message', { content:tips[getLang()] });
+            popNewMessage(tips[getLang()]);
 
             return;
         }

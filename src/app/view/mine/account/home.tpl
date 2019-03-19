@@ -48,6 +48,7 @@
         </div>
         
         <div w-class="other">
+            {{if !it.isTourist}}
             <div w-class="other-item" on-tap="backupWalletClick" on-down="onShow">
                 <div w-class="item-title"><pi-ui-lang>{{itemTitle[2]}}</pi-ui-lang></div>
                 {{if !it.backup}}
@@ -59,6 +60,7 @@
                 <div w-class="item-title"><pi-ui-lang>{{itemTitle[4]}}</pi-ui-lang></div>
                 <img src="app/res/image/right_arrow2_gray.png" height="40px" w-class="rightArrow"/>
             </div>
+            {{end}}
         </div>
     </div>
 </div>

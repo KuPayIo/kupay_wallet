@@ -9,19 +9,14 @@ import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
 import { Account, getStore, initCloudWallets, LocalCloudWallet, register,setStore } from '../store/memstore';
-import { getCipherTools, getWalletTools } from '../utils/commonjsTools';
-import { CMD } from '../utils/constants';
-import { fetchDeviceId, popNewMessage, popPswBox } from '../utils/tools';
+import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
+import { CMD, defaultPassword } from '../utils/constants';
+import { fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 import { setReconnectingState } from './reconnect';
 
-declare var pi_modules;
-
 // 登录成功之后的回调列表
 const loginedCallbackList:LoginType[] = [];
-
-// 登录失败延迟执行函数
-let loginWalletFailedDelay;
 
 // 用户登出回调
 const logoutCallbackList:Function[] = [];
@@ -123,7 +118,7 @@ export const applyAutoLogin = async () => {
         }
     };
     requestAsync(msg).then(async (res) => {
-        const cipherToolsMod = await getCipherTools();
+        const cipherToolsMod = await getCipherToolsMod();
         const decryptToken = cipherToolsMod.encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
     });
@@ -135,7 +130,7 @@ export const applyAutoLogin = async () => {
 export const autoLogin = async (conRandom:string) => {
     const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
     console.log('deviceId -------',deviceId);
-    const cipherToolsMod = await getCipherTools();
+    const cipherToolsMod = await getCipherToolsMod();
     const token = cipherToolsMod.decrypt(getStore('user/token'),deviceId.toString());
     const msg = { 
         type: 'wallet/user@auto_login', 
@@ -159,13 +154,17 @@ export const autoLogin = async (conRandom:string) => {
  * 创建钱包后默认登录
  * @param mnemonic 助记词
  */
-export const defaultLogin = (hash:string,conRandom:string) => {
-    const getMnemonicByHash = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonicByHash;
+export const defaultLogin = async (hash:string,conRandom:string) => {
+    const walletToolsModPromise =  getWalletToolsMod();
+    const GlobalWalletPromise =  getGlobalWalletClass();
+    const genmnemonicModPromise =  getGenmnemonicMod();
+    // tslint:disable-next-line:max-line-length
+    const [walletToolsMod,GlobalWallet,genmnemonicMod] = await Promise.all([walletToolsModPromise,GlobalWalletPromise,genmnemonicModPromise]);
+    const getMnemonicByHash = walletToolsMod.getMnemonicByHash;
     const mnemonic = getMnemonicByHash(hash);
-    const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
     console.log('================',wlt.exportPrivateKey());
-    const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
+    const sign = genmnemonicMod.sign;
     const signStr = sign(conRandom, wlt.exportPrivateKey());
     const msgLogin = { type: 'login', param: { sign: signStr } };
 
@@ -325,7 +324,10 @@ export const logoutAccountDel = () => {
  * 注销账户保留数据
  */
 export const logoutAccount = () => {
-    setStore('flags/saveAccount', true);
+    const wallet = getStore('wallet');
+    if (wallet.setPsw) {
+        setStore('flags/saveAccount', true);
+    }
     logoutAccountDel();
 };
 
@@ -452,14 +454,7 @@ const loginWalletSuccess = () => {
  * 钱包登录失败
  */
 const loginWalletFailed =  () => {
-    const flags = getStore('flags');  
-    const loaded = flags.level_3_page_loaded; // 资源已经加载完成
-    if (loaded) {
-        loginWalletFailedPop();
-    } else {
-        loginWalletFailedDelay = loginWalletFailedPop;
-    }
-
+    loginWalletFailedPop();
 };
 
 /**
@@ -475,21 +470,31 @@ const logoutWalletSuccess =  () => {
  * 密码弹框重新登录
  */
 const loginWalletFailedPop = async () => {
-    const psw = await popPswBox();
-    if (!psw) {
-        logoutAccount();
+    const wallet = getStore('wallet');
+    let psw;
+    let secretHash;
+    if (!wallet.setPsw) {
+        psw = defaultPassword;
+        const walletToolsMod = await getWalletToolsMod();
+        secretHash = await walletToolsMod.VerifyIdentidy(psw);
+    } else {
+        psw = await popPswBox();
+        if (!psw) {
+            logoutAccount();
 
-        return;
-    }
-    const close = popNew('app-components1-loading-loading', { text: '登录中' });
-    const walletToolsMod = await getWalletTools();
-    const secretHash = await walletToolsMod.VerifyIdentidy(psw);
-    close && close.callback(close.widget);
-    if (!secretHash) {
-        popNewMessage('密码错误,请重新输入');
-        loginWalletFailedPop();
+            return;
+        }
+        const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
+        const walletToolsMod = await getWalletToolsMod();
+        secretHash = await walletToolsMod.VerifyIdentidy(psw);
+        close && close.callback(close.widget);
+        if (!secretHash) {
+            popNewMessage('密码错误,请重新输入');
+            loginWalletFailedPop();
 
-        return;
+            return;
+        }
+        
     }
     const conRandom = getStore('user/conRandom');
     defaultLogin(secretHash,conRandom);
@@ -502,10 +507,6 @@ const setAllIsLogin = () => {
     const newAllIsLogin =  getStore('user/isLogin') && earnGetStore('userInfo/isLogin') && chatStore.getStore('isLogin');
     setStore('user/allIsLogin',newAllIsLogin);
 };
-// =======================资源加载完成========================
-register('flags/level_3_page_loaded', (loaded: boolean) => {
-    loginWalletFailedDelay && loginWalletFailedDelay();
-});
 
 // 注册store
 export const registerStore = () => {

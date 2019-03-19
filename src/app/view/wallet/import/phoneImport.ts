@@ -46,7 +46,7 @@ export class PhoneImport extends Widget {
     public async doSure() {
         if (!this.props.phone) {
             const tips = { zh_Hans:'请先获取验证码',zh_Hant:'請先獲取驗證碼',en:'' };
-            popNew('app-components1-message-message', { content: tips[getLang()] });
+            popNewMessage(tips[getLang()]);
             this.props.code = [];
             this.setCode();
 

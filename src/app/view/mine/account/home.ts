@@ -7,9 +7,9 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
-import { getStore, register, setStore } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
-import { getMnemonic, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { getMnemonic, getUserInfo, imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -102,7 +102,7 @@ export class AccountHome extends Widget {
     public async exportPrivateKeyClick() {
         const psw = await popPswBox();
         if (!psw) return;
-        const close = popNew('app-components1-loading-loading', { text: this.language.loading });
+        const close = popNewLoading(this.language.loading);
         try {
             const mnemonic = await getMnemonic(psw);
             if (mnemonic) {

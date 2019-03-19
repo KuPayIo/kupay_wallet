@@ -1,8 +1,7 @@
 /**
  * 处理提示信息
  */
-import { popNew } from '../../pi/ui/root';
-import { getStaticLanguage } from './tools';
+import { getStaticLanguage, popNewMessage } from './tools';
 
 /**
  * 显示错误信息
@@ -66,8 +65,8 @@ export const showError = (result, str?) => {
             default: str = getStaticLanguage().errorList.default;
         }
     }
-
-    popNew('app-components1-message-message', { content: str });
+    
+    popNewMessage(str);
 };
 
 /**
@@ -87,5 +86,5 @@ export const doErrorShow = (err:Error) => {
         case 'send transaction failed':showStr = getStaticLanguage().transError[3];break;
         default: showStr = err.message || getStaticLanguage().transError[3];
     }
-    popNew('app-components1-message-message', { content: showStr });
+    popNewMessage(showStr);
 };

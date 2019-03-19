@@ -5,7 +5,6 @@ import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../modulConfig';
-import { preShowCurrencys } from '../../utils/constants';
 import { calCurrencyLogoUrl, getCurrencyUnitSymbol, rippleShow } from '../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
