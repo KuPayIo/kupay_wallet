@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+import { uploadFileUrlPrefix } from '../../config';
 import { getModulConfig } from '../../modulConfig';
 import { loginSuccess } from '../../net/login';
 import { deleteAccount, getAllAccount } from '../../store/memstore';
@@ -22,8 +23,9 @@ export class Entrance1 extends Widget {
         const accountList = [];
         walletList.forEach(item => {
             const nickName = item.user.info.nickName;
+            const avatar = item.user.info.avatar ? `${uploadFileUrlPrefix}${item.user.info.avatar}` : 'app/res/image1/default_avatar.png';
             const id = item.user.id;
-            accountList.push({ nickName,id });
+            accountList.push({ nickName,avatar,id });
         });
         this.props = {
             loginImg:getModulConfig('LOGIN_IMG'),
@@ -59,6 +61,9 @@ export class Entrance1 extends Widget {
             if (index === this.props.selectedAccountIndex) {
                 this.props.selectedAccountIndex = 0;
             }
+        } else {
+            this.ok && this.ok();
+            popNew('app-view-base-entrance');
         }
         this.paint();
     }
@@ -71,7 +76,6 @@ export class Entrance1 extends Widget {
     public registerNewClick() {
         this.ok && this.ok();
         popNew('app-view-base-entrance');
-        
     }
 
     public pswChange(e:any) {
