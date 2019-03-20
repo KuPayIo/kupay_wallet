@@ -334,7 +334,7 @@ winit.initNext = function () {
 			"earn/client/app/components/",
 			"earn/client/app/xls/",
 			"earn/xlsx/",
-			"earn/client/app/res/",
+			"earn/client/app/res/"
 		];
 
 		// 加载其他文件

@@ -9,7 +9,6 @@ import { getStore, setStore } from '../store/memstore';
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitGtAccountDetail } from '../store/parse';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-// tslint:disable-next-line:max-line-length
 import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 import { defaultLogin } from './login';
@@ -474,26 +473,15 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         if (userInfoStr) {
             const localUserInfo = getStore('user/info');
             const serverUserInfo = JSON.parse(userInfoStr);
-            console.log(serverUserInfo);
-            let isSame = true;
-            for (const key in localUserInfo) {
-                if (localUserInfo[key] !== serverUserInfo[key]) {
-                    isSame = false;
-                }
-            }
-            if (!isSame) {
-                const userInfo = {
-                    ...serverUserInfo,
-                    nickName:localUserInfo.nickName,
-                    avatar:localUserInfo.avatar,
-                    isRealUser:localUserInfo.isRealUser
-                };
-                setStore('user/info',userInfo);
-            }
-            
-        } else {
-            setUserInfo();
-        }
+            console.log('serverUserInfo ==== ',serverUserInfo);
+            console.log('localUserInfo ==== ',localUserInfo);
+            const userInfo = {
+                ...localUserInfo,
+                ...serverUserInfo
+            };
+            console.log('userInfo ==== ',userInfo);
+            setStore('user/info',userInfo);
+        } 
         
     } catch (err) {
         console.log(err);
@@ -571,28 +559,19 @@ export const doChat = async () => {
  * filter（0表示不过滤，1表示过滤）
  */
 export const getAccountDetail = async (coin: string,filter:number,start = '') => {
-    let msg;
+    const param:any = {
+        coin:CloudCurrencyType[coin],
+        start,
+        filter,
+        count:PAGELIMIT
+    };
     if (start) {
-        msg = {
-            type: 'wallet/account@get_detail',
-            param: {
-                coin:CloudCurrencyType[coin],
-                start,
-                filter,
-                count:PAGELIMIT
-            }
-        };
-    } else {
-        msg = {
-            type: 'wallet/account@get_detail',
-            param: {
-                coin:CloudCurrencyType[coin],
-                filter,
-                count:PAGELIMIT
-            }
-        };
-    }
-   
+        param.start = start;
+    } 
+    const msg = {
+        type: 'wallet/account@get_detail',
+        param
+    };
     try {
         const res = await requestAsync(msg);
         const nextStart = res.start;
@@ -678,7 +657,7 @@ export const sendCode = async (phone: number, num: number,verify:boolean = true)
     }
     const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
     try {
-        return await requestAsync(msg);
+        return requestAsync(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -696,7 +675,7 @@ export const regPhone = async (phone: number, code: string) => {
     const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code } };
     
     try {
-        return await requestAsync(msg);
+        return requestAsync(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -708,13 +687,13 @@ export const regPhone = async (phone: number, code: string) => {
  * 验证旧手机
  */
 export const checkPhoneCode = async (phone: number, code: string,cmd?:string) => {
-    const msg = { type: 'wallet/user@check_phoneCode', param: { phone, code } };
+    const param:any = { phone, code };
     if (cmd) {
-        msg.param.cmd = cmd;
+        param.cmd = cmd;
     }
-    
+    const msg = { type: 'wallet/user@check_phoneCode', param };
     try {
-        return await requestAsync(msg);
+        return requestAsync(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 

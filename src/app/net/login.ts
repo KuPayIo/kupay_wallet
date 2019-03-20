@@ -202,7 +202,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
         client:JSON.stringify(client),
-        flag:1
+        flag:0
     };
     if (cmd) {
         param.cmd = cmd;
@@ -235,6 +235,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
         
         setStore('user/conUid', resp.uid);
+        console.log('uid =',resp.uid);
         setStore('user/conRandom', conRandom);
     } catch (resp) {
         if (resp.type === 1014) {
@@ -525,12 +526,11 @@ export const registerStore = () => {
         // 登录状态成功
     register('user/isLogin', (isLogin: boolean) => {
         if (isLogin) {
-                // 余额
+            // 余额
             getServerCloudBalance();
-
-                // 获取真实用户
+            // 获取真实用户
             getRealUser();
-                // 用户基础信息
+            // 用户基础信息
             getUserInfoFromServer(getStore('user/conUid'));
             
         } 

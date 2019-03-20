@@ -8,6 +8,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { Option, phoneImport } from '../../../logic/localWallet';
 import { getRandom, logoutAccountDel, openConnect } from '../../../net/login';
+import { getStore, setStore } from '../../../store/memstore';
 import { getDataCenter } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';
 import { playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
@@ -65,6 +66,9 @@ export class PhoneImport extends Widget {
 
             return;
         }
+        const userInfo = getStore('user/info');
+        userInfo.phoneNumber = this.props.phone;
+        setStore('user/info',userInfo);
         const itype = await getRandom(secretHash,undefined,this.props.phone,this.props.code.join(''));
         close.callback(close.widget);
         if (itype === -301) {
