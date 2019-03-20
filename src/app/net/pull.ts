@@ -657,7 +657,7 @@ export const sendCode = async (phone: number, num: number,verify:boolean = true)
     }
     const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
     try {
-        return requestAsync(msg);
+        return await requestAsync(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -675,7 +675,7 @@ export const regPhone = async (phone: number, code: string) => {
     const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code } };
     
     try {
-        return requestAsync(msg);
+        return await requestAsync(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -693,7 +693,7 @@ export const checkPhoneCode = async (phone: number, code: string,cmd?:string) =>
     }
     const msg = { type: 'wallet/user@check_phoneCode', param };
     try {
-        return requestAsync(msg);
+        return await requestAsync(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 

@@ -23,10 +23,9 @@ export const initPush = () => {
         setBottomLayerReloginMsg('','','');
         const cmd = res.cmd;
         if (cmd === CMD.FORCELOGOUT) {
-            logoutAccount();
-            
+            logoutAccount(true);
         } else if (cmd === CMD.FORCELOGOUTDEL) {
-            logoutAccountDel();
+            logoutAccountDel(true);
         }
        
         return () => {
@@ -47,6 +46,11 @@ export const initPush = () => {
             },() => {
                 setTimeout(() => {
                     closeAllPage();
+                    if (getAllAccount().length > 0) {
+                        popNew('app-view-base-entrance1');
+                    } else {
+                        popNew('app-view-base-entrance');
+                    }
                 },100);
             });
         };

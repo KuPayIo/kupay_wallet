@@ -91,15 +91,15 @@ export class Entrance1 extends Widget {
         const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
         const account = walletList[this.props.selectedAccountIndex];
         const walletToolsMod = await getWalletToolsMod();
-        const verify = await walletToolsMod.VerifyIdentidy1(this.props.psw,account.wallet.vault,account.user.salt);
+        const secretHash = await walletToolsMod.VerifyIdentidy1(this.props.psw,account.wallet.vault,account.user.salt);
 
         close.callback(close.widget);
-        if (!verify) {
+        if (!secretHash) {
             popNewMessage({ zh_Hans:'密码错误',zh_Hant:'密碼錯誤',en:'' });
 
             return;
         }
-        loginSuccess(account);
+        loginSuccess(account,secretHash);
         this.ok && this.ok();
     }
 

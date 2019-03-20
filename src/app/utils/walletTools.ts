@@ -104,11 +104,11 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
     try {
         decrypt(vault,hash);
 
-        return true;
+        return hash;
     } catch (error) {
         console.log(error);
 
-        return false;
+        return '';
     }
 };
 

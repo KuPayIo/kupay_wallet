@@ -7,8 +7,8 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { Option, phoneImport } from '../../../logic/localWallet';
-import { getRandom, logoutAccountDel, openConnect } from '../../../net/login';
-import { getStore, setStore } from '../../../store/memstore';
+import { getRandom, logoutAccountDel } from '../../../net/login';
+import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
 import { getDataCenter } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';
 import { playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
@@ -57,7 +57,6 @@ export class PhoneImport extends Widget {
             psw:defaultPassword,
             nickName:await playerName()
         };
-        openConnect();
         const close = popNewLoading('导入中');
         const secretHash = await phoneImport(option);
         if (!secretHash) {
@@ -82,6 +81,7 @@ export class PhoneImport extends Widget {
             this.props.code = [];
             this.setCode();
         } else {
+            // deletePrePhoneAccount(this.props.phone);
             popNewMessage('登录成功');
             this.ok && this.ok();
             // 刷新本地钱包
@@ -164,3 +164,16 @@ export class PhoneImport extends Widget {
         return reg.test(num);
     }
 }
+
+/**
+ * 删除相同手机号绑定的账户
+ */
+const deletePrePhoneAccount = (phoneNumber:string) => {
+    const accounts = getAllAccount();
+    for (const id in accounts) {
+        const account = accounts[id];
+        if (account.user.info.phoneNumber === phoneNumber) {
+            deleteAccount(id);
+        }
+    }
+};

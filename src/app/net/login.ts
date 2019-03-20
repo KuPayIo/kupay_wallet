@@ -41,7 +41,6 @@ setReloginCallback((res) => {
  * 钱包手动重连
  */
 export const walletManualReconnect = () => {
-    
     const conRandom = getStore('user/conRandom');
     if (conRandom) {
         console.log('walletManualReconnect reopen');
@@ -56,7 +55,6 @@ export const walletManualReconnect = () => {
  * 开启连接
  */
 export const openConnect = (secrectHash:string = '') => {
-    
     console.log('openConnect strat');
     setUrl(wsUrl);
     open(conSuccess(secrectHash),conError,conClose,conReOpen);
@@ -255,7 +253,8 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
 /**
  * 注销账户并删除数据
  */
-export const logoutAccountDel = () => {
+export const logoutAccountDel = (forceLogout?:boolean) => {
+    setStore('user/token','');
     const user = {
         id: '',                      // 该账号的id
         isLogin: false,              // 登录状态
@@ -318,29 +317,31 @@ export const logoutAccountDel = () => {
     setTimeout(() => {
         openConnect();
     },100);
-    closeAllPage();
-    if (getAllAccount().length > 0) {
-        popNew('app-view-base-entrance1');
-    } else {
-        popNew('app-view-base-entrance');
+    if (!forceLogout) {
+        closeAllPage();
+        if (getAllAccount().length > 0) {
+            popNew('app-view-base-entrance1');
+        } else {
+            popNew('app-view-base-entrance');
+        }
     }
 };
 
 /**
  * 注销账户保留数据
  */
-export const logoutAccount = () => {
+export const logoutAccount = (forceLogout?:boolean) => {
     const wallet = getStore('wallet');
     if (wallet.setPsw) {
         setStore('flags/saveAccount', true);
     }
-    logoutAccountDel();
+    logoutAccountDel(forceLogout);
 };
 
 /**
  * 登录成功
  */
-export const loginSuccess = (account:Account) => {    
+export const loginSuccess = (account:Account,secretHash:string) => {    
     const fileUser = account.user;
     const user:User = {
         isLogin: true,
@@ -399,7 +400,7 @@ export const loginSuccess = (account:Account) => {
     setStore('cloud',cloud,false);
     setStore('user',user);
     setStore('flags',{ level_3_page_loaded:true });
-    openConnect();
+    openConnect(secretHash);
 };
 
 /**
