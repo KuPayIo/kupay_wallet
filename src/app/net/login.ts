@@ -8,10 +8,10 @@ import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
-import { Account, getStore, initCloudWallets, LocalCloudWallet, register,setStore } from '../store/memstore';
+import { Account, getAllAccount, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
 import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
 import { CMD, defaultPassword } from '../utils/constants';
-import { fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
+import { closeAllPage, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 import { setReconnectingState } from './reconnect';
 
@@ -41,7 +41,6 @@ setReloginCallback((res) => {
  * 钱包手动重连
  */
 export const walletManualReconnect = () => {
-    
     const conRandom = getStore('user/conRandom');
     if (conRandom) {
         console.log('walletManualReconnect reopen');
@@ -56,7 +55,6 @@ export const walletManualReconnect = () => {
  * 开启连接
  */
 export const openConnect = (secrectHash:string = '') => {
-    
     console.log('openConnect strat');
     setUrl(wsUrl);
     open(conSuccess(secrectHash),conError,conClose,conReOpen);
@@ -202,7 +200,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
         client:JSON.stringify(client),
-        flag:1
+        flag:0
     };
     if (cmd) {
         param.cmd = cmd;
@@ -235,6 +233,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
         
         setStore('user/conUid', resp.uid);
+        console.log('uid =',resp.uid);
         setStore('user/conRandom', conRandom);
     } catch (resp) {
         if (resp.type === 1014) {
@@ -254,7 +253,8 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
 /**
  * 注销账户并删除数据
  */
-export const logoutAccountDel = () => {
+export const logoutAccountDel = (forceLogout?:boolean) => {
+    setStore('user/token','');
     const user = {
         id: '',                      // 该账号的id
         isLogin: false,              // 登录状态
@@ -317,24 +317,31 @@ export const logoutAccountDel = () => {
     setTimeout(() => {
         openConnect();
     },100);
-    
+    if (!forceLogout) {
+        closeAllPage();
+        if (getAllAccount().length > 0) {
+            popNew('app-view-base-entrance1');
+        } else {
+            popNew('app-view-base-entrance');
+        }
+    }
 };
 
 /**
  * 注销账户保留数据
  */
-export const logoutAccount = () => {
+export const logoutAccount = (forceLogout?:boolean) => {
     const wallet = getStore('wallet');
     if (wallet.setPsw) {
         setStore('flags/saveAccount', true);
     }
-    logoutAccountDel();
+    logoutAccountDel(forceLogout);
 };
 
 /**
  * 登录成功
  */
-export const loginSuccess = (account:Account) => {    
+export const loginSuccess = (account:Account,secretHash:string) => {    
     const fileUser = account.user;
     const user:User = {
         isLogin: true,
@@ -393,7 +400,7 @@ export const loginSuccess = (account:Account) => {
     setStore('cloud',cloud,false);
     setStore('user',user);
     setStore('flags',{ level_3_page_loaded:true });
-    openConnect();
+    openConnect(secretHash);
 };
 
 /**
@@ -520,12 +527,11 @@ export const registerStore = () => {
         // 登录状态成功
     register('user/isLogin', (isLogin: boolean) => {
         if (isLogin) {
-                // 余额
+            // 余额
             getServerCloudBalance();
-
-                // 获取真实用户
+            // 获取真实用户
             getRealUser();
-                // 用户基础信息
+            // 用户基础信息
             getUserInfoFromServer(getStore('user/conUid'));
             
         } 

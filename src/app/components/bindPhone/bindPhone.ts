@@ -5,7 +5,6 @@
  */
 
 // =================================================导入
-import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
@@ -35,11 +34,6 @@ export class BindPhone extends Widget {
             phone,
             limitTime: 60
         };
-        // const t = find('lastGetSmsCodeTime'); // 不保留获取验证码倒计时
-        // if (t) {
-        //     const now = new Date().getTime();
-        //     this.props.countdown = this.props.limitTime - Math.ceil((now - t) / 1000);
-        // }
         this.openTimer();
         super.setProps(this.props,oldProps);
     }

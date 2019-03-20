@@ -3,10 +3,10 @@
  * @author henk<speoth@163.com>
  */
 
-import { backCall, backList, popNew } from '../../../pi/ui/root';
+import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
 import { LockScreen } from '../../store/interface';
-import { getStore, setStore } from '../../store/memstore';
+import { getAllAccount, getStore, setStore } from '../../store/memstore';
 import { piRequire } from '../../utils/commonjsTools';
 import { fetchDeviceId } from '../../utils/tools';
 
@@ -19,7 +19,11 @@ export const run = (cb): void =>  {
     // 打开首页面
     popNew('app-view-base-app');
     if (!getStore('user/id')) {
-        popNew('app-view-base-entrance');
+        if (getAllAccount().length > 0) {
+            popNew('app-view-base-entrance1');
+        } else {
+            popNew('app-view-base-entrance');
+        }
     }
     // 锁屏页面
     popNewPage();
@@ -93,15 +97,27 @@ const addAppEvent = () => {
             },100);  // 检查是否已经退出登录
         });
 
+        let startTime = 0;
         // 注册appBackPressed
         addAppBackPressed(() => {
-            console.log('addAppBackPressed callback called');
+            let doubleClick = false;
+            const now = new Date().getTime();
+            if (now - startTime <= 300) {
+                doubleClick = true;
+            }
+            startTime = now;
+            console.log('addActivityBackPressed callback called');
             if (backList.length === 1) {
+                if (!doubleClick) return;
                 const ExitApp = mods[1].ExitApp;
                 const exitApp = new ExitApp();
                 exitApp.init();
                 exitApp.ToHome({});
             } else {
+                const widget = lastBack();
+                const entranceName = 'app-view-base-entrance';
+                const entranceName1 = 'app-view-base-entrance1';
+                if (widget.name === entranceName || widget.name === entranceName1) return;
                 backCall();
             }
         });

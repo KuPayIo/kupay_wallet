@@ -4,6 +4,7 @@
 
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+import { getAllAccount } from '../../store/memstore';
 
 export class NewUserWelfare extends Widget {
     public ok: () => void;
@@ -12,7 +13,11 @@ export class NewUserWelfare extends Widget {
     };
     public goLogin() {
         this.ok && this.ok();
-        popNew('app-view-wallet-create-home');
+        if (getAllAccount().length > 0) {
+            popNew('app-view-base-entrance1');
+        } else {
+            popNew('app-view-base-entrance');
+        }
     }
     public close(e: any) {
         this.props.fadeOut = true;

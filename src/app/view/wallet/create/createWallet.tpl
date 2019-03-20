@@ -9,6 +9,7 @@
         {{: createTips = it.itype === it.createWalletType.Random ? randomTips : imageTips}}
         <div w-class="create-tips"><div w-class="tip-divid"></div><pi-ui-lang>{{createTips}}</pi-ui-lang></div>
         <div w-class="bottom-box">
+            {{if it.itype === it.createWalletType.Random}}
             <div w-class="avatar-container" on-tap="selectImageClick">
                 {{if !it.chooseImage}}
                 <div style="background-image: url(../../../res/image/default_avater_big.png);" w-class="avatar"></div>
@@ -20,6 +21,7 @@
                 <widget w-tag="app-components1-input-input" style="flex: 1;">{input:{{it.walletName}},maxLength:10}</widget>
                 <img w-class="random" src="../../../res/image/dice.png" on-tap="randomPlayName" id="random"/>
             </div>
+            {{end}}
             <div ev-psw-change="pswChange" ev-psw-clear="pwsClear"><app-components-password-password>{hideTips:true}</app-components-password-password></div>
             <div w-class="input-father" ev-input-change="pswConfirmChange">
                 {{: inputPlace = {"zh_Hans":"重复密码","zh_Hant":"重複密碼","en":""} }}

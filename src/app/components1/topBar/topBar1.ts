@@ -3,7 +3,6 @@
  */
 // ================================ 导入
 import { Json } from '../../../pi/lang/type';
-import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
 import { popNew3, rippleShow } from '../../utils/tools';
