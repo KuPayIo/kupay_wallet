@@ -12,7 +12,8 @@ import { Account, getAllAccount, getStore, initCloudWallets, LocalCloudWallet,re
 import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
 import { CMD, defaultPassword } from '../utils/constants';
 import { closeAllPage, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
-import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
+// tslint:disable-next-line:max-line-length
+import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 import { setReconnectingState } from './reconnect';
 
 // 登录成功之后的回调列表
@@ -190,7 +191,7 @@ export const getOpenId = (appId:string) => {
  * 获取随机数
  * flag:0 普通用户注册，1注册即为真实用户
  */
-export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number) => {
+export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number,num?:string) => {
     console.log('getRandom--------------');
     const wallet = getStore('wallet');
     if (!wallet) return;
@@ -210,6 +211,9 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     }
     if (code) {
         param.code = code;
+    }
+    if (num) {
+        param.num = num;
     }
     const msg = { 
         type: 'get_random', 
@@ -531,11 +535,12 @@ export const registerStore = () => {
         if (isLogin) {
             // 余额
             getServerCloudBalance();
-            // 获取真实用户
-            getRealUser();
             // 用户基础信息
-            getUserInfoFromServer(getStore('user/conUid'));
-            
+            getUserInfoFromServer(getStore('user/conUid')).then(() => {
+                getBindPhone();
+                // 获取真实用户
+                getRealUser();
+            });
         } 
     });
 

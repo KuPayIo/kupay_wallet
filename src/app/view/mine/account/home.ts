@@ -141,18 +141,9 @@ export class AccountHome extends Widget {
      */
     public changePhone() {
         if (!this.props.phone) {  // 绑定
-            const props  = {
-                itype:1,   // 绑定
-                title:{ zh_Hans:'绑定新手机号',zh_Hant:'綁定新手機號',en:'' }  
-            };
-            popNew('app-view-mine-setting-phone',props);
+            popNew('app-view-mine-setting-phone');
         } else { // 重新绑定
-            const props  = {
-                itype:2,   // 重新绑定
-                title: { zh_Hans:'验证旧手机号',zh_Hant:'验证旧手机号',en:'' }   
-            };
-            // popNew('app-view-mine-setting-phone',props);
-            popNew('app-view-mine-setting-unbindPhone',props);
+            popNew('app-view-mine-setting-unbindPhone');
         }
         
     }

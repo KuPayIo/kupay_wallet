@@ -215,6 +215,7 @@ export interface UserInfo {
     nickName: string;      // 昵称
     avatar: string;        // 头像
     phoneNumber: string;   // 手机号
+    areaCode:string;     // 手机区号
     isRealUser: boolean;    // 是否是真实用户
 }
 
