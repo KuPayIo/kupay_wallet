@@ -2,10 +2,10 @@
  * 后端主动推消息给后端
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
-import { backCall, backList, popNew } from '../../pi/ui/root';
-import { getStore, register } from '../store/memstore';
+import { popNew } from '../../pi/ui/root';
+import { getAllAccount, getStore, register } from '../store/memstore';
 import { CMD } from '../utils/constants';
-import { getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
+import { closeAllPage, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
 import { getServerCloudBalance } from './pull';
 
@@ -23,10 +23,9 @@ export const initPush = () => {
         setBottomLayerReloginMsg('','','');
         const cmd = res.cmd;
         if (cmd === CMD.FORCELOGOUT) {
-            logoutAccount();
-            
+            logoutAccount(true);
         } else if (cmd === CMD.FORCELOGOUTDEL) {
-            logoutAccountDel();
+            logoutAccountDel(true);
         }
        
         return () => {
@@ -37,15 +36,20 @@ export const initPush = () => {
                 content:{ zh_Hans:'您的账户已被下线，如非本人操作，则助记词可能已泄露。',zh_Hant:'您的賬戶已被下線，如非本人操作，則助記詞可能已洩露。',en:'' }
             },() => {
                 setTimeout(() => {
-                    for (let i = backList.length;i > 1;i--) {
-                        backCall();
+                    closeAllPage();
+                    if (getAllAccount().length > 0) {
+                        popNew('app-view-base-entrance1');
+                    } else {
+                        popNew('app-view-base-entrance');
                     }
-                    popNew('app-view-wallet-create-home');
                 },100);
             },() => {
                 setTimeout(() => {
-                    for (let i = backList.length;i > 1;i--) {
-                        backCall();
+                    closeAllPage();
+                    if (getAllAccount().length > 0) {
+                        popNew('app-view-base-entrance1');
+                    } else {
+                        popNew('app-view-base-entrance');
                     }
                 },100);
             });

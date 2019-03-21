@@ -61,6 +61,7 @@ export class BindPhone extends Widget {
                 const userinfo = getStore('user/info');
                 userinfo.phoneNumber = this.props.phone;
                 setStore('user/info',userinfo);
+                popNewMessage('绑定成功');
                 getMineDetail();
                 this.ok && this.ok();
             } else {

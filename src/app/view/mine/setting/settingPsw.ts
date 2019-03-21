@@ -6,7 +6,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { pswEqualed } from '../../../utils/account';
 import { defaultPassword } from '../../../utils/constants';
-import { popNewLoading, popNewMessage } from '../../../utils/tools';
+import { getUserInfo, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { passwordChange, VerifyIdentidy } from '../../../utils/walletTools';
 
 export class SettingPsw extends Widget {
@@ -83,7 +83,11 @@ export class SettingPsw extends Widget {
         loading.callback(loading.widget);
         popNewMessage('设置成功');
         this.ok && this.ok();
-        popNew('app-view-mine-setting-phone',{});
+        const userInfo = getUserInfo();
+        if (!userInfo.phoneNumber) {
+            popNew('app-view-mine-setting-phone',{});
+        }
+        
     }
 
     /**

@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+import { uploadFileUrlPrefix } from '../../config';
 import { getModulConfig } from '../../modulConfig';
 import { loginSuccess } from '../../net/login';
 import { deleteAccount, getAllAccount } from '../../store/memstore';
@@ -22,8 +23,9 @@ export class Entrance1 extends Widget {
         const accountList = [];
         walletList.forEach(item => {
             const nickName = item.user.info.nickName;
+            const avatar = item.user.info.avatar ? `${uploadFileUrlPrefix}${item.user.info.avatar}` : 'app/res/image1/default_avatar.png';
             const id = item.user.id;
-            accountList.push({ nickName,id });
+            accountList.push({ nickName,avatar,id });
         });
         this.props = {
             loginImg:getModulConfig('LOGIN_IMG'),
@@ -59,6 +61,9 @@ export class Entrance1 extends Widget {
             if (index === this.props.selectedAccountIndex) {
                 this.props.selectedAccountIndex = 0;
             }
+        } else {
+            this.ok && this.ok();
+            popNew('app-view-base-entrance');
         }
         this.paint();
     }
@@ -71,7 +76,6 @@ export class Entrance1 extends Widget {
     public registerNewClick() {
         this.ok && this.ok();
         popNew('app-view-base-entrance');
-        
     }
 
     public pswChange(e:any) {
@@ -87,15 +91,15 @@ export class Entrance1 extends Widget {
         const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
         const account = walletList[this.props.selectedAccountIndex];
         const walletToolsMod = await getWalletToolsMod();
-        const verify = await walletToolsMod.VerifyIdentidy1(this.props.psw,account.wallet.vault,account.user.salt);
+        const secretHash = await walletToolsMod.VerifyIdentidy1(this.props.psw,account.wallet.vault,account.user.salt);
 
         close.callback(close.widget);
-        if (!verify) {
+        if (!secretHash) {
             popNewMessage({ zh_Hans:'密码错误',zh_Hant:'密碼錯誤',en:'' });
 
             return;
         }
-        loginSuccess(account);
+        loginSuccess(account,secretHash);
         this.ok && this.ok();
     }
 
