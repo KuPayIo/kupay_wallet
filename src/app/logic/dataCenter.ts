@@ -488,7 +488,6 @@ class DataCenter {
         };
         updateLocalTx(record);
     }
-
     /**
      * 解析erc20 input
      */
@@ -507,6 +506,8 @@ class DataCenter {
      * 过滤eth交易记录，过滤掉token的交易记录
      */
     private filterEthTrans(trans: any[]) {
+        if (!trans)return [];
+  
         return trans.filter(item => {
             if (item.to.length === 0) return false;
             if (item.input.indexOf(ethTokenTransferCode) === 0) return false;

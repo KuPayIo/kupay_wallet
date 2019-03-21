@@ -26,7 +26,6 @@ export class FourParaImgItem extends Widget {
     constructor() {
         super();
     }
-    
     public backPrePage() {
         this.ok && this.ok();
     }

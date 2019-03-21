@@ -6,7 +6,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { timestampFormat } from '../../../utils/tools';
+import { currencyType, timestampFormat } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -50,7 +50,7 @@ export class WithdrawRecord extends Widget {
     // tslint:disable-next-line:typedef
     public parseRecordList(list) {
         list.forEach((item) => {
-            item.amountShow = `-${item.amount} ${this.props.currencyName}`;
+            item.amountShow = `-${item.amount} ${currencyType(this.props.currencyName)}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = item.behaviorIcon;
         });

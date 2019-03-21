@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { parseStatusShow, timestampFormat } from '../../../utils/tools';
+import { currencyType, parseStatusShow, timestampFormat } from '../../../utils/tools';
 import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -62,7 +62,8 @@ export class TotalRecord extends Widget {
      */
     public parseList(list:any[]) {
         list.forEach((item) => {
-            item.amountShow = item.amount >= 0 ? `+${item.amount} ${this.props.currencyName}` : `${item.amount} ${this.props.currencyName}`;
+            // tslint:disable-next-line:max-line-length
+            item.amountShow = item.amount >= 0 ? `+${item.amount} ${currencyType(this.props.currencyName)}` : `${item.amount} ${currencyType(this.props.currencyName)}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `${item.behaviorIcon}`;
         });

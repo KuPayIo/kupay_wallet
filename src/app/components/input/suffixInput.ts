@@ -23,6 +23,7 @@ interface Props {
     style?:string;
     autofocus?:boolean;
     closeEye?:boolean;
+    isShow?:boolean;
 }
 
 interface State {
@@ -51,6 +52,7 @@ export class SuffixInput extends Widget {
         if (props.input) {
             this.state.currentValue = props.input;
         }
+        this.props.closeEye = true;
     }
 
     public change(event:any) {
@@ -88,5 +90,10 @@ export class SuffixInput extends Widget {
         const child = (<any>this.tree).children[0];
         const childNode = getRealNode(child);
         (<any>childNode).value = this.state.currentValue;
+    }
+     // 判断是否显示密码
+    public showPassword() {
+        this.props.closeEye = !this.props.closeEye;
+        this.paint();
     }
 }

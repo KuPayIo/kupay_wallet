@@ -60,7 +60,6 @@ export class TotalRecord extends Widget {
         const data2 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
         this.props.otherNext = data2.start;
         this.props.otherList = this.parseOtherList(data2.list);
-        
         const data3 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
         this.props.withdrawNext = data3.start;
         this.props.withdrawList = this.parseWithdrawList(data3.list);
