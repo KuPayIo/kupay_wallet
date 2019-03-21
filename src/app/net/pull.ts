@@ -634,7 +634,7 @@ export const getMiningRank = async (num: number) => {
 /**
  * 验证手机号是否被注册
  */
-export const verifyPhone = async(phone:number) => {
+export const verifyPhone = async(phone:string) => {
     const msg = { type: 'wallet/user@check_phone', param: { phone } };
     try {
         return await requestAsync(msg); 
@@ -648,7 +648,7 @@ export const verifyPhone = async(phone:number) => {
 /**
  * 发送验证码
  */
-export const sendCode = async (phone: number, num: number,verify:boolean = true) => {
+export const sendCode = async (phone: string, num: number,verify:boolean = true) => {
     if (verify) {
         const v = await verifyPhone(phone);
         if (!v) {
@@ -668,7 +668,7 @@ export const sendCode = async (phone: number, num: number,verify:boolean = true)
 /**
  * 注册手机
  */
-export const regPhone = async (phone: number, code: string) => {
+export const regPhone = async (phone: string, code: string) => {
     const bphone = getUserInfo().phoneNumber;
     // tslint:disable-next-line:variable-name
     const old_phone =  bphone ? bphone :'';
@@ -686,7 +686,7 @@ export const regPhone = async (phone: number, code: string) => {
 /**
  * 验证旧手机
  */
-export const checkPhoneCode = async (phone: number, code: string,cmd?:string) => {
+export const checkPhoneCode = async (phone: string, code: string,cmd?:string) => {
     const param:any = { phone, code };
     if (cmd) {
         param.cmd = cmd;
