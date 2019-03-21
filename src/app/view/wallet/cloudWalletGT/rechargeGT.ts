@@ -88,7 +88,7 @@ export class RechargeGT extends Widget {
      */
     public rechargeClick() {
         if (this.props.total === 0) {
-            popNewMessage({ zh_Hans:'请输入充值ST数量',zh_Hant:'请输入充值ST数量',en:'' });
+            popNewMessage({ zh_Hans:`请输入充值${getModulConfig('ST_SHOW')}数量`,zh_Hant:`请输入充值${getModulConfig('ST_SHOW')}数量`,en:'' });
             
             return;
         }

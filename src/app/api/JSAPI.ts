@@ -5,8 +5,7 @@ import { getServerCloudBalance, requestAsync } from '../net/pull';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
 import { getWalletToolsMod } from '../utils/commonjsTools';
-import { formatBalance, getUserInfo } from '../utils/tools';
-
+import { currencyType, formatBalance, getUserInfo } from '../utils/tools';
 declare var pi_modules:any;
 
 export enum resCode {
@@ -114,7 +113,7 @@ export const openPayment = async (order: any, callback: Function) => {
             const propData = {
                 fee_total : resData.total_fee,
                 desc : resData.body,
-                fee_name : CloudCurrencyType[resData.fee_type],
+                fee_name : currencyType(CloudCurrencyType[resData.fee_type]),
                 balance : formatBalance(getCloudBalances().get(resData.fee_type)),
                 no_password:resData.no_password
             };

@@ -7,16 +7,16 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
-import { getLocalVersion, rippleShow } from '../../../utils/tools';
+import { rippleShow } from '../../../utils/tools';
 // ==================================================导出
-
+declare var pi_update;
 export class ContanctUs extends Widget {
     public ok: () => void;
     public create() {
         super.create();
         const tips = { zh_Hans:'客服',zh_Hant:'客服',en:'' };
         this.props = {
-            version:getLocalVersion(),
+            version:pi_update.updateJson.version,
             data:[
                 { value: '',desc:getModulConfig('WALLET_WEBSITE') },
                 { value: '',desc:getModulConfig('WALLET_NAME') + tips[getLang()] },
@@ -51,7 +51,7 @@ export class ContanctUs extends Widget {
                 popNew('app-view-mine-other-wechatQrcode',{ fg:1 });
                 break;
             default:
-                // console.log(this.props.cfgData.tips);
+                console.log(this.props.cfgData.tips);
         }
     }
 }

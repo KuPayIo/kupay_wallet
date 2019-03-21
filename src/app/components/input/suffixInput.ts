@@ -23,6 +23,7 @@ interface Props {
     style?:string;
     autofocus?:boolean;
     closeEye?:boolean;
+    isShow?:boolean;
 }
 
 interface State {
