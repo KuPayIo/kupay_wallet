@@ -65,23 +65,24 @@ export class PhoneImport extends Widget {
 
             return;
         }
-        const userInfo = getStore('user/info');
-        userInfo.phoneNumber = this.props.phone;
-        setStore('user/info',userInfo);
         const itype = await getRandom(secretHash,undefined,this.props.phone,this.props.code.join(''));
+        console.log('getRandom itype = ',itype);
         close.callback(close.widget);
         if (itype === -301) {
             popNewMessage('验证码错误');
-            logoutAccountDel();
+            logoutAccountDel(true);
             this.props.code = [];
             this.setCode();
         } else if (itype === 1017) {
             popNewMessage('手机号未绑定');
-            logoutAccountDel();
+            logoutAccountDel(true);
             this.props.code = [];
             this.setCode();
-        } else {
-            // deletePrePhoneAccount(this.props.phone);
+        } else if (itype === 1) {
+            deletePrePhoneAccount(this.props.phone);
+            const userInfo = getStore('user/info');
+            userInfo.phoneNumber = this.props.phone;
+            setStore('user/info',userInfo,false);
             popNewMessage('登录成功');
             this.ok && this.ok();
             // 刷新本地钱包
@@ -89,7 +90,11 @@ export class PhoneImport extends Widget {
                 dataCenter.refreshAllTx();
                 dataCenter.initErc20GasLimit();
             });
-            
+        } else {
+            popNewMessage('出错啦');
+            logoutAccountDel(true);
+            this.props.code = [];
+            this.setCode();
         }
     }
 
@@ -170,10 +175,10 @@ export class PhoneImport extends Widget {
  */
 const deletePrePhoneAccount = (phoneNumber:string) => {
     const accounts = getAllAccount();
-    for (const id in accounts) {
-        const account = accounts[id];
+    for (const index in accounts) {
+        const account = accounts[index];
         if (account.user.info.phoneNumber === phoneNumber) {
-            deleteAccount(id);
+            deleteAccount(account.user.id);
         }
     }
 };

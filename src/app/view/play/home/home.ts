@@ -79,7 +79,7 @@ export class PlayHome extends Widget {
                 title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
                 desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
                 img:['app/res/image1/CryptoFishing.jpg','app/res/image1/CryptoFishing1.jpg'],
-                url:'https://ctuct.com/',
+                url:'http://192.168.31.95/dst/boot/yineng/yineng.html?debug',
                 gid:CRYPTOFISHING_GROUP
             }
            
@@ -180,9 +180,9 @@ export class PlayHome extends Widget {
             piRequire(['chat/client/app/view/gameChatApi']).then(mods => {
                 const GChatPromise = mods[0].gameChatPromise(this.props.gameList[num].gid);
                 // tslint:disable-next-line:max-line-length
-                const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise,GChatPromise.textPromise,GChatPromise.chatPromise]);
-                allPromise.then(([defaultInjectContent,web3Content,textContent,chatContent]) => {
-                    const content = defaultInjectContent + web3Content + chatContent + textContent;
+                const allPromise = Promise.all([this.thirdApiPromise]);
+                allPromise.then(([thirdApiContent]) => {
+                    const content =  thirdApiContent;
                     WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
                 });
             });
