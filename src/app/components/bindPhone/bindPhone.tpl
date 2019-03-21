@@ -7,7 +7,17 @@
         {{: phone = {"zh_Hans":"手机号","zh_Hant":"手機號","en":""} }}
         {{: second = {"zh_Hans":"s 重新获取","zh_Hant":"s 重新獲取","en":""} }}
         {{: getCode = {"zh_Hans":"获取验证码","zh_Hant":"獲取驗證碼","en":""} }}
-        <div w-class="phoneInput"><app-components1-input-input>{placeHolder:{{phone}},itype:"integer",autofocus:true,maxLength:11,notUnderLine:true}</app-components1-input-input></div>
+        <div w-class="phoneInput"><app-components1-input-input>
+            {
+                input:{{it.phone}},
+                placeHolder:{{phone}},
+                itype:"integer",
+                autofocus:true,
+                maxLength:11,
+                notUnderLine:true,
+                disabled:{{it.disabled}}
+            }
+        </app-components1-input-input></div>
         {{if it.countdown>0}}
         <div w-class="text-code">
             {{it.countdown}}

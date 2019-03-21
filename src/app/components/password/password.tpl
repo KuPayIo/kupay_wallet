@@ -13,14 +13,12 @@
         {{elseif it.showIcon}}
         <img src="../../res/image/fail.png" w-class="successPic" on-tap="clear"/>
         {{end}}
+        <img src="../../res/image/closeEyes.png" w-class="close-eyes" />
     </div>
-
-    <div w-class="pseRank-line" style="display: flex;flex: 3;">
-        <div w-class="line line{{it.secret>0?it.secret:''}}"></div>
-        <div w-class="line line{{it.secret>1?it.secret:''}}"></div>
-        <div w-class="line line{{it.secret>2?it.secret:''}}"></div>
+    <div w-class="pseRank-line" style="display: flex;">
+        <div w-class="line" style="{{it.lineStyle}}"></div>
+        <div w-class="line line-space" style="{{it.lineSpaceStyle}}"></div>
     </div>
-
     {{if it.showTips}}
         {{if typeof(it.tips)==='string' && it.tips }}
             <div w-class="tips">{{it.tips}}</div>

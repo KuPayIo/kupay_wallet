@@ -1,21 +1,19 @@
 /**
  * common tools
  */
-import { ArgonHash } from '../../pi/browser/argonHash';
-import { popNew } from '../../pi/ui/root';
+import { backCall, backList, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
+import { Callback } from '../../pi/util/util';
+import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
+import { lookup } from '../../pi/widget/widget';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
-import { Cipher } from '../core/crypto/cipher';
-import { getDeviceId, getDeviceInfo } from '../logic/native';
-import { getRandom, openConnect } from '../net/login';
+import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
+import { getCloudBalances, getStore,setStore } from '../store/memstore';
+import { getCipherToolsMod, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, User, Wallet } from '../store/interface';
-import { Account, getCloudBalances, getStore, LocalCloudWallet,setStore } from '../store/memstore';
-// tslint:disable-next-line:max-line-length
-import { CMD, currencyConfirmBlockNumber, defalutShowCurrencys, defaultGasLimit, notSwtichShowCurrencys, resendInterval, timeOfArrival } from './constants';
-import { sat2Btc, wei2Eth } from './unitTools';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
 
 /**
  * 获取当前钱包对应货币正在使用的地址信息
@@ -52,24 +50,6 @@ export const getAddrsAll = (wallet) => {
 };
 
 /**
- * 获取钱包下指定货币类型的所有地址
- * @param wallet wallet obj
- */
-export const getAddrsByCurrencyName = (wallet: any, currencyName: string) => {
-    const currencyRecords = wallet.currencyRecords;
-    const retAddrs = [];
-    const len = currencyRecords.length;
-    for (let i = 0; i < len; i++) {
-        if (currencyRecords[i].currencyName === currencyName) {
-            retAddrs.push(...currencyRecords[i].addrs);
-            break;
-        }
-    }
-
-    return retAddrs;
-};
-
-/**
  * 获取钱包下指定货币类型的所有地址信息
  * @param wallet wallet obj
  */
@@ -98,15 +78,6 @@ export const getAddrInfoByAddr = (addr: string, currencyName: string) => {
     }
 };
 
-// 随机生成RGB颜色
-export const randomRgbColor = () => {
-    const r = Math.floor(Math.random() * 256);
-    const g = Math.floor(Math.random() * 256);
-    const b = Math.floor(Math.random() * 256);
-
-    return `rgb(${r},${g},${b})`; // 返回rgb(r,g,b)格式颜色
-};
-
 /**
  * 解析显示的账号信息
  * @param str 需要解析的字符串
@@ -115,21 +86,6 @@ export const parseAccount = (str: string) => {
     if (str.length <= 29) return str;
 
     return `${str.slice(0, 6)}...${str.slice(str.length - 6, str.length)}`;
-};
-
-export const getDefaultAddr = (addr: number | string) => {
-    const addrStr = addr.toString();
-
-    return `${addrStr.slice(0, 3)}...${addrStr.slice(-3)}`;
-};
-
-/**
- * 转化显示时间
- * @param t date
- */
-export const parseDate = (t: Date) => {
-    // tslint:disable-next-line:max-line-length
-    return `${t.getUTCFullYear()}-${addPerZero(t.getUTCMonth() + 1, 2)}-${addPerZero(t.getUTCDate(), 2)} ${addPerZero(t.getHours(), 2)}:${addPerZero(t.getMinutes(), 2)}`;
 };
 
 /**
@@ -184,55 +140,6 @@ export const getStrLen = (str): number => {
 };
 
 /**
- * 截取字符串
- * @param str 字符串
- * @param start 开始位置
- * @param len 截取长度
- */
-export const sliceStr = (str, start, len): string => {
-    if (str === null) return '';
-    if (typeof str !== 'string') str += '';
-    let r = '';
-    for (let i = start; i < str.length; i++) {
-        len--;
-        if (str.charCodeAt(i) > 127 || str.charCodeAt(i) === 94) {
-            len--;
-        }
-
-        if (len < 0) break;
-        r += str[i];
-    }
-
-    return r;
-};
-
-// 函数防抖
-export const debounce = (fn, wait = 1000) => {
-    let timer = null;
-
-    return (...rest) => {
-        if (timer) {
-            clearTimeout(timer);
-            timer = null;
-        }
-        timer = setTimeout(() => {
-            fn(...rest);
-        }, wait);
-    };
-};
-
-/**
- * 解析url中指定key的值
- * @param url url地址
- * @param key 键
- */
-export const urlParams = (url: string, key: string) => {
-    const ret = url.match(new RegExp(`(\\?|&)${key}=(.*?)(&|$)`));
-
-    return ret && decodeURIComponent(ret[2]);
-};
-
-/**
  * 金额格式化
  * @param banlance 金额
  */
@@ -250,106 +157,6 @@ export const formatBalanceValue = (value: number) => {
     if (value === 0) return '0.00';
 
     return value.toFixed(2);
-};
-
-/**
- * 字符串转u8Arr
- * 
- * @param str 输入字符串
- */
-export const str2arr = (str) => {
-    const len = str.length;
-    const arr = [];
-    let arr32;
-    let i;
-    let offset = 0;
-    if (len >= 32) {
-        for (i = 0; i < 8; i++) {
-            arr[i] = ((str.charCodeAt(i * 4) & 0xff) << 24)
-                | ((str.charCodeAt(i * 4 + 1) & 0xff) << 16)
-                | ((str.charCodeAt(i * 4 + 2) & 0xff) << 8)
-                | (str.charCodeAt(i * 4 + 3) & 0xff);
-        }
-    }
-    arr32 = new Uint32Array(new ArrayBuffer(32));
-    for (i = 0; i < 8; i++) {
-        arr32[i] = arr[offset++];
-    }
-
-    return new Uint8Array(arr32.buffer, 0, 32);
-};
-// ArrayBuffer转16进度字符串示例
-export const ab2hex = (buffer) => {
-    const hexArr = Array.prototype.map.call(
-      new Uint8Array(buffer),
-       (bit) => {
-           return `00${bit.toString(16)}`.slice(-2);
-       }
-    );
-
-    return hexArr.join('');
-};
-  
-/**
- * u16Arr转字符串
- * 
- * @param buf 输入buff
- */
-export const ab2str = (buf) => {
-    return String.fromCharCode.apply(null, new Uint16Array(buf));
-};
-
-/**
- * 字符串转u16Arr
- * 
- * @param str 输入字符串
- */
-export const str2ab = (str) => {
-    const buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-    const bufView = new Uint16Array(buf);
-    for (let i = 0, strLen = str.length; i < strLen; i++) {
-        bufView[i] = str.charCodeAt(i);
-    }
-
-    return buf;
-};
-
-/**
- * 字节数组转十六进制字符串
- * @param arr 传入数组
- */
-export const bytes2Str = (arr) => {
-    let str = '';
-    for (let i = 0; i < arr.length; i++) {
-        let tmp = arr[i].toString(16);
-        if (tmp.length === 1) {
-            tmp = `0${tmp}`;
-        }
-        str += tmp;
-    }
-
-    return str;
-};
-
-/**
- * 十六进制字符串转字节数组
- * @param str 传入字符串
- */
-export const str2Bytes = (str) => {
-    let pos = 0;
-    let len = str.length;
-    if (len % 2 !== 0) return null;
-
-    len /= 2;
-    const hexA = [];
-    for (let i = 0; i < len; i++) {
-        const s = str.substr(pos, 2);
-        const v = parseInt(s, 16);
-        hexA.push(v);
-        pos += 2;
-    }
-
-    return hexA;
 };
 
 /**
@@ -371,22 +178,6 @@ export const hexstrToU8Array = (str: string) => {
 };
 
 /**
- * 十六进制字符串转u8数组
- * 
- * @param str 输入字符串
- */
-export const hexstrToU16Array = (str: string) => {
-    // if (str.length % 2 > 0) str = `0${str}`;
-
-    const r = new Uint8Array(str.length);
-    for (let i = 0; i < str.length; i++) {
-        r[i] = parseInt(str.charAt(i), 16);
-    }
-
-    return r;
-};
-
-/**
  * u8数组转十六进制字符串
  * 
  * @param u8Array 输入数组
@@ -401,33 +192,6 @@ export const u8ArrayToHexstr = (u8Array: Uint8Array) => {
     if (str[0] === '0') str = str.slice(1);
 
     return str;
-};
-
-/**
- * 简化加密助记词
- * 
- * @param cipherMnemonic 加密助记词
- */
-export const simplifyCipherMnemonic = (cipherMnemonic: string) => {
-    const r = JSON.parse(cipherMnemonic);
-    const newJson = { iv: r.iv, ct: r.ct, salt: r.salt };
-
-    return JSON.stringify(newJson);
-};
-
-/**
- * 还原加密助记词
- * 
- * @param cipherMnemonic 加密助记词
- */
-export const reductionCipherMnemonic = (cipherMnemonic: string) => {
-    const r = JSON.parse(cipherMnemonic);
-    const newJson = {
-        iv: r.iv, ct: r.ct, salt: r.salt, v: 1, iter: 10000, ks: 128, ts: 64
-        , mode: 'ccm', adata: '', cipher: 'aes', keySize: 128, tagSize: 64
-    };
-
-    return JSON.stringify(newJson);
 };
 
 /**
@@ -491,58 +255,47 @@ export const copyToClipboard = (copyText) => {
 /**
  * 获取memery hash
  */
-export const calcHashValuePromise = async (pwd, salt?) => {
-    console.log('calcHashValuePromise is called');
-    console.time('pi_create  calc argonHash');
-    let secretHash;
-    const argonHash = new ArgonHash();
-    console.log('argonHash will init');
-    argonHash.init();
-    console.log('argonHash has init');
-    secretHash = await argonHash.calcHashValuePromise({ pwd, salt });
-    console.timeEnd('pi_create  calc argonHash');
-    requestAnimationFrame(() => {
-        const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-        dataCenter.checkAddr(secretHash);
-    });
-
-    return secretHash;
-};
-
-/**
- * 基础打开弹窗界面封装
- */
-export const openBasePage = (foreletName: string, foreletParams: any = {}): Promise<string> => {
-
-    // tslint:disable-next-line:typedef
-    return new Promise((resolve, reject) => {
-        popNew(foreletName, foreletParams, (ok: string) => {
-            // this.windowSet.delete(foreletName);
-            resolve(ok);
-        }, (cancel: string) => {
-            // this.windowSet.delete(foreletName);
-            reject(cancel);
+export const calcHashValuePromise = (pwd, salt?):Promise<string> => {
+    return new Promise((resolve,reject) => {
+        console.time('pi_create  calc argonHash');
+        piRequire(['pi/browser/argonHash']).then(async (mods) => {
+            let secretHash;
+            const ArgonHash = mods[0].ArgonHash;
+            const argonHash = new ArgonHash();
+            argonHash.init();
+            secretHash = await argonHash.calcHashValuePromise({ pwd, salt });
+            console.timeEnd('pi_create  calc argonHash');
+            getDataCenter().then(dataCenter => {
+                dataCenter.checkAddr(secretHash);
+            });
+            
+            resolve(secretHash);
         });
-
     });
 };
 
-export const popPswBox = async (content = []) => {
+export const popPswBox = (content = []) => {
     try {
-        // tslint:disable-next-line:no-unnecessary-local-variable
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
-        // tslint:disable-next-line:no-unnecessary-local-variable
-        const psw = await openMessageboxPsw(BoxInputTitle,content);
 
-        return psw;
+        return openMessageboxPsw(BoxInputTitle,content);
     } catch (error) {
-        return;
+        return '';
     }
 };
 
 // 弹出提示框
 export const popNewMessage = (content: any) => {
-    return popNew('app-components1-message-message', { content });
+    const name = 'app-components-message-message';
+    if (!lookup(name)) {
+        const name1 = name.replace(/-/g,'/');
+        const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+        piLoadDir(sourceList).then(() => {
+            popNew(name, { content });
+        });
+    } else {
+        popNew(name, { content });
+    }
 };
 // 弹出loading
 export const popNewLoading = (text: any) => {
@@ -552,31 +305,20 @@ export const popNewLoading = (text: any) => {
 /**
  * 打开密码输入框
  */
-const openMessageboxPsw = (BoxInputTitle?,content?): Promise<string> => {
-    // tslint:disable-next-line:typedef
-    return new Promise((resolve, reject) => {
-        popNew('app-components1-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
+const openMessageboxPsw = (BoxInputTitle?,content?):Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+        const name = 'app-components-modalBoxInput-modalBoxInput';
+        if (!lookup(name)) {
+            const name1 = name.replace(/-/g,'/');
+            const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+            await piLoadDir(sourceList);
+        }
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
             resolve(r);
         }, (cancel: string) => {
             reject(cancel);
         });
-
     });
-};
-
-// 计算字符串长度包含中文 中文长度加2 英文加1
-export const getByteLen = (val) => {
-    let len = 0;
-    for (let i = 0; i < val.length; i++) {
-        const a = val.charAt(i);
-        if (a.match(/[^\x00-\xff]/ig) !== null) {
-            len += 2;
-        } else {
-            len += 1;
-        }
-    }
-
-    return len;
 };
 
 // 计算支持的币币兑换的币种
@@ -663,45 +405,6 @@ export const timestampFormatToDate = (timestamp: number) => {
 
     return `${year}-${month}-${day}`;
 };
-/**
- * 密码加密
- * @param plainText 需要加密的文本
- */
-export const encrypt = (plainText: string, salt: string) => {
-    const cipher = new Cipher();
-
-    return cipher.encrypt(salt, plainText);
-};
-
-/**
- * 密码解密
- * @param cipherText 需要解密的文本
- */
-export const decrypt = (cipherText: string, salt: string) => {
-    const cipher = new Cipher();
-
-    return cipher.decrypt(salt, cipherText);
-};
-
-// hash256;
-export const sha256 = (data: string) => {
-    const cipher = new Cipher();
-
-    return cipher.sha256(data);
-};
-
-// 锁屏密码验证
-export const lockScreenVerify = (psw) => {
-    const hash256 = sha256(psw + getStore('user/salt'));
-    const localHash256 = getStore('setting/lockScreen').psw;
-
-    return hash256 === localHash256;
-};
-// 锁屏密码hash算法
-export const lockScreenHash = (psw) => {
-    return sha256(psw + getStore('user/salt'));
-};
-
 // ==========================================================new version tools
 
 // 获取gasPrice
@@ -819,7 +522,7 @@ export const fetchCloudWalletAssetList = () => {
     const ktBalance = cloudBalances.get(CloudCurrencyType.KT) || 0;
     const ktItem = {
         currencyName: 'KT',
-        description: 'KuPlay Token',
+        description: 'KT Token',
         balance: formatBalance(ktBalance),
         balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
         gain: formatBalanceValue(0),
@@ -859,7 +562,7 @@ export const fetchCloudWalletAssetList = () => {
 export const hasWallet = () => {
     const wallet = getStore('wallet');
     if (!wallet) {
-        popNew('app-components1-modalBox-newUserWelfare',undefined, () => {
+        popNew('app-components-modalBox-newUserWelfare',undefined, () => {
             // popNew('app-view-wallet-create-home');
             // popNew('app-view-base-localImg');
         });
@@ -1115,61 +818,10 @@ export const getConfirmBlockNumber = (currencyName: string, amount: number) => {
 };
 
 /**
- * 获取设备唯一id
- */
-export const fetchDeviceId = async () => {
-    console.log('fetchDeviceId');
-    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
-        return new Promise((resolve,reject) => {
-            const deviceId = cryptoRandomInt().toString();
-            const hash256 = sha256(deviceId);
-            resolve(hash256);
-            
-        });
-    } else {// ============================mobile
-        return new Promise((resolve,reject) => {
-            getDeviceId((deviceId:string) => {
-                const hash256 = sha256(deviceId + getStore('user/id'));
-                resolve(hash256);
-            });
-        });
-    }
-   
-};
-
-/**
- * 获取设备信息
- */
-export const fetchDeviceInfo = async () => {
-    console.log('fetchDeviceInfo');
-    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
-        return new Promise((resolve,reject) => {
-            const deviceInfo = {
-                system:navigator.userAgent
-            };
-            resolve(deviceInfo);
-        });
-    } else {// ============================mobile
-        return new Promise((resolve,reject) => {
-            getDeviceInfo((info:any) => {
-                console.log('fetchDeviceInfo = ',info);
-                resolve(info);
-            },(err) => {
-                reject(err);
-            });
-        });
-    }
-   
-};
-
-/**
  * 根据当前语言设置获取静态文字，对于组件模块
  */
 export const getLanguage = (w) => {
     const lan = getStore('setting/language', 'zh_Hans');
-    // if (lan) {
-    //     return w.config.value[lan.languageList[lan.selected]];
-    // }
 
     return w.config.value[lan];
 };
@@ -1179,9 +831,6 @@ export const getLanguage = (w) => {
  */
 export const getStaticLanguage = () => {
     const lan = getStore('setting/language', 'zh_Hans');
-    // if (lan) {
-    //     return Config[lan.languageList[lan.selected]];
-    // }
 
     return Config[lan];
 };
@@ -1273,29 +922,6 @@ export const getRemoteVersion = () => {
     const versionStr = versionArr.join('.');
 
     return versionStr.slice(0, versionStr.length - 7);
-};
-
-// 更新矿工费
-export const fetchMinerFeeList = (currencyName) => {
-    const cn = (currencyName === 'ETH' || ERC20Tokens[currencyName]) ? 'ETH' : 'BTC';
-    const toa = timeOfArrival[cn];
-    const minerFeeList = [];
-    for (let i = 0; i < toa.length; i++) {
-        let minerFee = 0;
-        if (cn === 'ETH') {
-            const gasLimit = getStore('third/gasLimitMap').get(currencyName) || defaultGasLimit;
-            minerFee = wei2Eth(gasLimit * fetchGasPrice(toa[i].level));
-        } else {
-            minerFee = sat2Btc(fetchBtcMinerFee(toa[i].level));
-        }
-        const obj = {
-            ...toa[i],
-            minerFee
-        };
-        minerFeeList.push(obj);
-    }
-
-    return minerFeeList;
 };
 
 /**
@@ -1454,22 +1080,6 @@ export const xorEncode = (str:string, key:string) => {
 };
 
 /**
- * 异或解码 直接解析字符串
- */
-export const xorDecode = (str:string, key:string) => {
-    const ord = []; 
-    let res = '';
-
-    for (let i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
-
-    for (let i = 0; i < str.length; i++) {
-        res += String.fromCharCode(ord[str.substr(i, 1)] ^ ord[key.substr(i %    key.length, 1)]);
-    }
-
-    return res;
-};
-
-/**
  * 异或解码 解析16进制
  */
 export const xorDecode1 = (str:string, key:string) => {
@@ -1493,71 +1103,6 @@ export const getCurrentEthAddr = () => {
 };
 
 /**
- * 登录成功
- */
-export const loginSuccess = (account:Account) => {    
-    const fileUser = account.user;
-    const user:User = {
-        isLogin: true,
-        offline:true,
-        allIsLogin:true,
-        conRandom:'',
-        conUid:'',
-        id : fileUser.id,
-        token : fileUser.token,
-        publicKey : fileUser.publicKey,
-        salt : fileUser.salt,
-        info : { ...fileUser.info }
-    };
-   
-    const localWallet = account.wallet;
-    const currencyRecords = [];
-    for (const localRecord of localWallet.currencyRecords) {
-        const addrs = [];
-        for (const info of localRecord.addrs) {
-            const addrInfo:AddrInfo = {
-                addr:info.addr,
-                balance:info.balance,
-                txHistory:[]
-            };
-            addrs.push(addrInfo);
-        }
-        const record:CurrencyRecord = {
-            currencyName: localRecord.currencyName,           
-            currentAddr: localRecord.currentAddr ,           
-            addrs,             
-            updateAddr: localRecord.updateAddr         
-        };
-        currencyRecords.push(record);
-    }
-    const wallet:Wallet = {
-        vault:localWallet.vault,
-        setPsw:true,
-        backupTip:false,               
-        isBackup: localWallet.isBackup,
-        sharePart:false, 
-        helpWord:false,                
-        showCurrencys: localWallet.showCurrencys,           
-        currencyRecords,
-        changellyPayinAddress:[],
-        changellyTempTxs:[]
-    };
-  
-    const cloud = getStore('cloud');
-    const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(account.cloud.cloudWallets);
-    for (const [key,value] of localCloudWallets) {
-        const cloudWallet = cloud.cloudWallets.get(key);
-        cloudWallet.balance = localCloudWallets.get(key).balance;
-    }
-
-    setStore('wallet',wallet,false);
-    setStore('cloud',cloud,false);
-    setStore('user',user);
-    setStore('flags',{ level_2_page_loaded:true });
-    openConnect();
-};
-
-/**
  * 获取用户基本信息
  */
 export const getUserInfo = () => {
@@ -1578,21 +1123,122 @@ export const getUserInfo = () => {
     };
 };
 
+ // 水波纹动画效果展示
+export const rippleShow = (e:any) => {
+    getRealNode(e.node).classList.add('ripple');
+
+    setTimeout(() => {
+        getRealNode(e.node).classList.remove('ripple');
+    }, 500);
+};
+
 /**
- * 踢人下线提示
- * @param secretHash 密码
+ * 获取设备唯一id
  */
-export const kickOffline = (secretHash:string = '') => {
-    popNew('app-components1-modalBoxCheckBox-modalBoxCheckBox',{ 
-        title:'检测到在其它设备有登录',
-        content:'清除其它设备账户信息' 
-    },(deleteAccount:boolean) => {
-        if (deleteAccount) {
-            getRandom(secretHash,CMD.FORCELOGOUTDEL);
-        } else {
-            getRandom(secretHash,CMD.FORCELOGOUT);
-        }
-    },() => {
-        getRandom(secretHash,CMD.FORCELOGOUT);
-    });
+export const fetchDeviceId = async () => {
+    console.log('fetchDeviceId');
+    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
+        return new Promise((resolve,reject) => {
+            const deviceId = cryptoRandomInt().toString();
+            resolve(deviceId);
+            
+        });
+    } else {// ============================mobile
+        return new Promise((resolve,reject) => {
+            piRequire(['app/logic/native']).then(mods => {
+                mods[0].getDeviceId((deviceId:string) => {
+                    resolve(deviceId);
+                });
+            });
+        });
+    }
+   
+};
+
+/**
+ * 获取随机名字
+ */
+export const playerName = async () => {
+    const mods = await piRequire(['app/utils/nameWareHouse']);
+    const nameWare = mods[0].nameWare;
+    const num1 = nameWare[0].length;
+    const num2 = nameWare[1].length;
+    let name = '';
+    // tslint:disable-next-line:max-line-length
+    name = unicodeArray2Str(nameWare[0][Math.floor(Math.random() * num1)]) + unicodeArray2Str(nameWare[1][Math.floor(Math.random() * num2)]);
+    
+    return name;
+};
+
+/**
+ * 获取助记词
+ */
+export const getMnemonic = async (passwd) => {
+    const wallet = getStore('wallet');
+    const hashPromise = calcHashValuePromise(passwd, getStore('user/salt'));
+    const cipherToolsrPromise = getCipherToolsMod();
+    const genmnemonicPromise = getGenmnemonicMod();
+    const [hash,cipherTools,genmnemonic] = await Promise.all([hashPromise,cipherToolsrPromise,genmnemonicPromise]);
+    try {
+        const r = cipherTools.decrypt(wallet.vault,hash);
+        
+        return genmnemonic.toMnemonic(lang, hexstrToU8Array(r));
+    } catch (error) {
+        console.log(error);
+
+        return '';
+    }
+};
+
+/**
+ * 货币logo路径
+ */
+export const calCurrencyLogoUrl = (currencyName:string) => {
+    const directory = preShowCurrencys.indexOf(currencyName) >= 0 ? 'image1' : 'image';
+    
+    return `app/res/${directory}/currency/${currencyName}.png`;
+};
+
+/**
+ * 弹出三级页面
+ */
+export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
+    if (!lookup(name)) {
+        const loading = popNew('app-components1-loading-loading1');
+        const name1 = name.replace(/-/g,'/');
+        const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+        const level3SourceList = [
+            'app/core/',
+            'app/logic/',
+            'app/components/',
+            'app/res/',
+            'app/api/',
+            'app/view/',
+            'chat/client/app/view/',
+            'chat/client/app/widget/',
+            'chat/client/app/res/',
+            'earn/client/app/view/',
+            'earn/client/app/test/',
+            'earn/client/app/components/',
+            'earn/client/app/res/',
+            'earn/client/app/xls/',
+            'earn/xlsx/'
+        ];
+        sourceList.push(...level3SourceList);
+        piLoadDir(sourceList).then(() => {
+            popNew(name,props,ok,cancel);
+            loading.callback(loading.widget);
+        });
+    } else {
+        popNew(name,props,ok,cancel);
+    }
+};
+
+/**
+ * 关掉所有页面 （不包括首页面）
+ */
+export const closeAllPage = () => {
+    for (let i = backList.length;i > 1;i--) {
+        backCall();
+    }
 };

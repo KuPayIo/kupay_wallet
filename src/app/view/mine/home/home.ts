@@ -1,7 +1,6 @@
 /**
  * wallet home 
  */
-import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -9,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode, openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, hasWallet, popPswBox } from '../../../utils/tools';
+import { copyToClipboard, getUserInfo, hasWallet, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出
@@ -32,12 +31,13 @@ export class Home extends Widget {
         const hasWallet = false;
         const address = '';
         this.props = {
+            isTourist:true,
             list:[
-                { img:'../../../res/image1/28.png',name: '',components:'' },
-                { img:'../../../res/image1/10.png',name: '',components:'app-view-mine-other-help' },
-                { img:'../../../res/image1/21.png',name: '',components:'app-view-mine-setting-setting' },
-                { img:'../../../res/image1/23.png',name: '',components:'app-view-mine-other-contanctUs' },
-                { img:'../../../res/image1/24.png',name: '',components:'app-view-mine-other-aboutus' }
+                { img:'../../../res/image/28.png',name: '',components:'' },
+                { img:'../../../res/image/10.png',name: '',components:'app-view-mine-other-help' },
+                { img:'../../../res/image/21.png',name: '',components:'app-view-mine-setting-setting' },
+                { img:'../../../res/image/23.png',name: '',components:'app-view-mine-other-contanctUs' },
+                { img:'../../../res/image/24.png',name: '',components:'app-view-mine-other-aboutus' }
                 
             ],
             address,
@@ -50,7 +50,7 @@ export class Home extends Widget {
             walletName : getModulConfig('WALLET_NAME')
         };
         if (getModulConfig('GITHUB')) {
-            this.props.list.push({ img:'../../../res/image1/43.png',name: '',components:'' });
+            this.props.list.push({ img:'../../../res/image/43.png',name: '',components:'' });
         }
         this.initData();
     }
@@ -74,7 +74,8 @@ export class Home extends Widget {
         if (wallet) {
             this.props.hasWallet = true;
             this.props.address = getStore('user/id');
-            this.props.hasBackupMnemonic = wallet.isBackup;            
+            this.props.hasBackupMnemonic = wallet.isBackup;    
+            this.props.isTourist = !wallet.setPsw;        
         } else {
             this.props.hasWallet = false;
             this.props.address = '';
@@ -119,7 +120,7 @@ export class Home extends Widget {
      */
     public copyAddr() {
         copyToClipboard(this.props.address);
-        popNew('app-components1-message-message',{ content:this.language.tips });
+        popNewMessage(this.language.tips);
     }
 
     /**

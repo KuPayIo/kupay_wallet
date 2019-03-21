@@ -7,8 +7,10 @@ import { Widget } from '../../../../pi/widget/widget';
 import { ahashToArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { getStore, setStore } from '../../../store/memstore';
+import { popNewMessage } from '../../../utils/tools';
 
 export class ImageImport extends Widget {
+    public cancel: () => void;
     public ok: () => void;
     public language:any;
     public setProps(props:any,oldProps:any) {
@@ -24,7 +26,7 @@ export class ImageImport extends Widget {
         super.setProps(props,oldProps);
     }
     public backPrePage() {
-        this.ok && this.ok();
+        this.cancel && this.cancel();
     }
     public selectImageClick() {
         this.props.imagePicker = selectImage((width, height, url) => {
@@ -48,12 +50,12 @@ export class ImageImport extends Widget {
 
     public nextClick() {
         if (!this.props.chooseImage) {
-            popNew('app-components1-message-message', { content: this.language.tips[0] });
+            popNewMessage(this.language.tips[0]);
 
             return;
         }
         if (!this.props.imagePsw) {
-            popNew('app-components1-message-message', { content: this.language.tips[1] });
+            popNewMessage(this.language.tips[1]);
 
             return;
         }

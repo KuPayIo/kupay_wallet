@@ -9,7 +9,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { changellyGetTransactions } from '../../../net/pull3';
 import { getStore, setStore } from '../../../store/memstore';
-import { parseAccount, timestampFormat } from '../../../utils/tools';
+import { parseAccount, timestampFormat, popNewLoading } from '../../../utils/tools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -42,7 +42,6 @@ interface ChangellyTransactionsShow {
 }
 export class ConvertHistory extends Widget {
     public ok: () => void;
-    public language:any;
     public close:any;
     
     public setProps(props:Json,oldProps:Json) {
@@ -55,12 +54,12 @@ export class ConvertHistory extends Widget {
     }
 
     public async init() {
-        this.language = this.config.value[getLang()];
         this.props = {
             ...this.props,
             txsShow:[]
         };
-        this.close = popNew('app-components1-loading-loading',{ text:this.language.loading });
+        const loading = { zh_Hans:'加载中...',zh_Hant:'加載中...',en:'' };
+        this.close = popNewLoading(loading[getLang()]);
         this.getAllTransactions();
     }
 

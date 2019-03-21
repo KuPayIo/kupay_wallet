@@ -1,6 +1,5 @@
 <div style="width:100%;height:100%;display: flex;">
-
-<div w-class="tabs">
+<div w-class="tabs" >
 {{if it.type === 0}}
     {{for i, v of it.tabBarList}}
         {{if i == it.isActive}}
@@ -17,9 +16,6 @@
         <widget w-tag={{v.components}} >{isActive:{{v.modulName == it.isActive}} }</widget>
     </div>
     {{end}}
-{{end}}
-{{if it.loading}}
-<div w-class="loading-container"><app-components1-loading-loading1>{}</app-components1-loading-loading1></div>
 {{end}}
 </div>
 

@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"助记词登录","zh_Hant":"助記詞登錄","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="body">
         {{: createTips = {"zh_Hans":"按序输入助记词","zh_Hant":"按序輸入助記詞","en":""} }}
         <div w-class="create-tips"><div w-class="tip-divid"></div><pi-ui-lang>{{createTips}}</pi-ui-lang><img src="../../../res/image/41_blue.png" w-class="what-is" on-tap="whatIsMnemonicClick"/></div>
@@ -8,7 +8,7 @@
         <div w-class="desc"><pi-ui-lang>{{desc}}</pi-ui-lang></div>
         <div w-class="bottom-box">
             <div w-class="textarea-father" ev-input-change="inputChange">
-                {{: inputPlace = {"zh_Hans":"输入助记词，空格键分隔","zh_Hant":"輸入助記詞，空格鍵分隔","en":""} }}
+                {{:let inputPlace = {"zh_Hans":"输入助记词，空格键分隔","zh_Hant":"輸入助記詞，空格鍵分隔","en":""} }}
                 <app-components-textarea-textarea>{placeHolder:{{inputPlace}} }</app-components-textarea-textarea>
             </div>
             <div ev-btn-tap="nextClick" w-class="btn">
@@ -21,7 +21,7 @@
                 {{: fragmentLogin = {"zh_Hans":"片段登录","zh_Hant":"片段登錄","en":""} }}
                 <pi-ui-lang w-class="other-btn" on-tap="fragmentImportClick">{{fragmentLogin}}</pi-ui-lang>
                 {{: forgetMnemonic = {"zh_Hans":"忘了助记词","zh_Hant":"忘了助記詞","en":""} }}
-                <pi-ui-lang w-class="other-btn">{{forgetMnemonic}}</pi-ui-lang>
+                <pi-ui-lang w-class="other-btn" on-tap="phoneImportClick">{{forgetMnemonic}}</pi-ui-lang>
             </div>
         </div>
     </div>

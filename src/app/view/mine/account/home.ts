@@ -1,17 +1,16 @@
 /**
  * account home
  */
-import { rippleShow } from '../../../../chat/client/app/logic/logic';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
-import { getStore, register, setStore } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
-import { getUserInfo, imgResize, popNewMessage, popPswBox } from '../../../utils/tools';
-import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
+import { getMnemonic, getUserInfo, imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { backupMnemonic } from '../../../utils/walletTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -32,6 +31,7 @@ export class AccountHome extends Widget {
         const backup = wallet.isBackup;
 
         this.props = {
+            isTourist:!wallet.setPsw,
             avatar: '',
             nickName: '',
             phone: '',
@@ -102,7 +102,7 @@ export class AccountHome extends Widget {
     public async exportPrivateKeyClick() {
         const psw = await popPswBox();
         if (!psw) return;
-        const close = popNew('app-components1-loading-loading', { text: this.language.loading });
+        const close = popNewLoading(this.language.loading);
         try {
             const mnemonic = await getMnemonic(psw);
             if (mnemonic) {
@@ -140,14 +140,32 @@ export class AccountHome extends Widget {
      * 绑定手机号
      */
     public changePhone() {
-        popNew('app-view-mine-setting-phone');
+        if (!this.props.phone) {  // 绑定
+            const props  = {
+                itype:1,   // 绑定
+                title:{ zh_Hans:'绑定新手机号',zh_Hant:'綁定新手機號',en:'' }  
+            };
+            popNew('app-view-mine-setting-phone',props);
+        } else { // 重新绑定
+            const props  = {
+                itype:2,   // 重新绑定
+                title: { zh_Hans:'验证旧手机号',zh_Hant:'验证旧手机号',en:'' }   
+            };
+            popNew('app-view-mine-setting-phone',props);
+        }
+        
     }
 
     /**
      * 修改密码
      */
     public changePsw() {
-        popNew('app-view-mine-setting-changePsw');
+        if (this.props.isTourist) {
+            popNew('app-view-mine-setting-settingPsw',{});
+        } else {
+            popNew('app-view-mine-setting-changePsw');
+        }
+        
     }
 
     /**

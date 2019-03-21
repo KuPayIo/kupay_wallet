@@ -1,6 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"账户","zh_Hant":"賬戶","en":""} }}
-    <app-components1-topBar-topBar>{title:{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{title:{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="body">
         <div w-class="head-container" class="pi-input">
             {{if !it.chooseImage}}
@@ -24,7 +24,8 @@
                 {"zh_Hans":"修改密码","zh_Hant":"修改密碼","en":""},
                 {"zh_Hans":"备份助记词","zh_Hant":"備份助記詞","en":""},
                 {"zh_Hans":"未备份","zh_Hant":"未備份","en":""},
-                {"zh_Hans":"导出私钥","zh_Hant":"導出私鑰","en":""}] }}
+                {"zh_Hans":"导出私钥","zh_Hant":"導出私鑰","en":""},
+                {"zh_Hans":"设置密码","zh_Hant":"設置密碼","en":""}] }}
                 
                 {{: phone = {"zh_Hans":it.phone,"zh_Hant":it.phone,"en":""} }}
                 {{: bindPhone = {"zh_Hans":"未设置","zh_Hant":"未設置","en":""} }}
@@ -41,11 +42,13 @@
                 {{end}}
             </div>
             <div on-tap="changePsw" on-down="onShow">
-                <app-components-basicItem-basicItem>{name:{{itemTitle[1]}},style:"margin:0;border:none;"}</app-components-basicItem-basicItem>
+                {{: pswTitle = it.isTourist ? itemTitle[5] : itemTitle[1]}}
+                <app-components-basicItem-basicItem>{name:{{pswTitle}},style:"margin:0;border:none;"}</app-components-basicItem-basicItem>
             </div>
         </div>
         
         <div w-class="other">
+            {{if !it.isTourist}}
             <div w-class="other-item" on-tap="backupWalletClick" on-down="onShow">
                 <div w-class="item-title"><pi-ui-lang>{{itemTitle[2]}}</pi-ui-lang></div>
                 {{if !it.backup}}
@@ -57,6 +60,7 @@
                 <div w-class="item-title"><pi-ui-lang>{{itemTitle[4]}}</pi-ui-lang></div>
                 <img src="app/res/image/right_arrow2_gray.png" height="40px" w-class="rightArrow"/>
             </div>
+            {{end}}
         </div>
     </div>
 </div>

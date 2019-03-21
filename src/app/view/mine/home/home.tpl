@@ -11,9 +11,6 @@
             </div>
             <div w-class="userName">
                 {{it.userName}}
-                {{if it.offline}}
-                <widget w-tag="pi-ui-lang" w-class="offline">{zh_Hans:"离线",zh_Hant:"離線",en:"Offline"}</widget>
-                {{end}}
             </div>
             
             <div w-class="address" on-tap="copyAddr">
@@ -44,7 +41,7 @@
                     <span w-class="itemName">
                         <pi-ui-lang>{{itemName[ind]}}</pi-ui-lang>
                     </span>
-                    {{if ind==0 && !it.hasBackupMnemonic && it.hasWallet}}
+                    {{if ind==0 && !it.isTourist && !it.hasBackupMnemonic && it.hasWallet}}
                     <div w-class="backup" on-tap="backUp">
                         <pi-ui-lang>{"zh_Hans":"备份","zh_Hant":"備份","en":""}</pi-ui-lang>
                     </div>

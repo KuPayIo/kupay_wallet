@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
         {{: topBarTitle = {"zh_Hans":"备份助记词","zh_Hant":"備份助記詞","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="body">
             {{: title = {"zh_Hans":"按序抄写助记词","zh_Hant":"按序抄寫助記詞","en":""} }}
             {{: content = {"zh_Hans":"助记词是您找回账号的唯一凭证，如果丢失，"+it.walletName+"将无法恢复您的账户和资产。请务必妥善保管您的助记词","zh_Hant":"助記詞是您找回賬號的唯一憑證，如果丟失，"+it.walletName+"將無法恢復您的賬號和資產。請務必妥善保管您的助記詞。","en":""} }}

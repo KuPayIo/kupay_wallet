@@ -7,7 +7,7 @@
             {{: topBarTitle = {"zh_Hans":"收款","zh_Hant":"收款","en":""} }}
         {{end}}
   
-        <widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6);position: fixed;",nextImg:"../../res/image/share_white.png"}</widget>
+        <widget w-tag="app-components-topBar-topBar">{"title":{{topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6);position: fixed;",nextImg:"../../res/image/share_white.png"}</widget>
 
     </div>
     <div w-class="body">

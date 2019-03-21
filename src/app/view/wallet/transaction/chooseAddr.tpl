@@ -11,6 +11,6 @@
             </div>
             {{end}}
         </div>
-        <div w-class="add-addr" on-tap="addAddrClick"><pi-ui-lang>{"zh_Hans":"添加地址","zh_Hant":"添加地址","en":""}</pi-ui-lang><img src="../../../res/image/add.png" w-class="add-icon"/></div>
+        <div w-class="add-addr" on-tap="addAddrClick"><pi-ui-lang>{"zh_Hans":"添加地址","zh_Hant":"添加地址","en":""}</pi-ui-lang><img src="../../../res/image1/add.png" w-class="add-icon"/></div>
     </div>
 </div>

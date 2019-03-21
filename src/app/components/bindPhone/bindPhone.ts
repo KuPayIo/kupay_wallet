@@ -5,12 +5,12 @@
  */
 
 // =================================================导入
-import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { sendCode } from '../../net/pull';
+import { getPullMod } from '../../utils/commonjsTools';
+import { popNewMessage } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,27 +20,22 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class BindPhone extends Widget {
     public ok: () => void;
-    public language:any;
     constructor() {
         super();
     }
-    public create(): void {
-        super.create();
-        this.language = this.config.value[getLang()];
+    public setProps(props:any,oldProps:any): void {
+        const phone = props.phone ? props.phone : '';
         this.props = {
+            ...props,
             oldCode: 86,
             codeList: ['86','886'],
             isShowNewCode: false,
             countdown: 0,
-            phone: '',
+            phone,
             limitTime: 60
         };
-        // const t = find('lastGetSmsCodeTime'); // 不保留获取验证码倒计时
-        // if (t) {
-        //     const now = new Date().getTime();
-        //     this.props.countdown = this.props.limitTime - Math.ceil((now - t) / 1000);
-        // }
         this.openTimer();
+        super.setProps(this.props,oldProps);
     }
     public backClick() {
         this.ok && this.ok();
@@ -51,12 +46,13 @@ export class BindPhone extends Widget {
     public async getCode(event:any) {
         this.inputBlur();
         if (!this.props.phone || !this.phoneJudge()) {
-            popNew('app-components1-message-message', { content: this.language.tips });
+            const tips = { zh_Hans:'无效的手机号',zh_Hant:'無效的手機號',en:'' };
+            popNewMessage(tips[getLang()]);
 
             return;
         }
-        await sendCode(this.props.phone, this.props.oldCode);
-        // updateStore('lastGetSmsCodeTime', new Date().getTime());
+        const pullMod = await getPullMod();
+        await pullMod.sendCode(this.props.phone, this.props.oldCode,this.props.verify);
         notify(event.node,'ev-getCode',{ value:this.props.phone });
         this.props.countdown = this.props.limitTime;
         this.paint();

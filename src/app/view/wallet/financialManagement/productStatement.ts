@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { Product } from '../../../store/interface';
-import { getStaticLanguage } from '../../../utils/tools';
+import { getProductStatement } from './productStatementText';
 interface Props {
     product:Product;
     amount:number;
@@ -16,7 +16,7 @@ export class ProductStatement extends Widget {
     public ok:() => void;
 
     public props:any = {
-        statement:getStaticLanguage() .notice,
+        statement:getProductStatement(),
         readed:false,
         fg:1
     };

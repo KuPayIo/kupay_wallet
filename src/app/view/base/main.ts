@@ -3,23 +3,15 @@
  * @author henk<speoth@163.com>
  */
 
-// tslint:disable-next-line:no-reserved-keywords
-declare const module;
-
-import { ExitApp } from '../../../pi/browser/exitApp';
-import { backCall, backList, popNew } from '../../../pi/ui/root';
-import { Forelet } from '../../../pi/widget/forelet';
+import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { getScreenModify, preLoadAd } from '../../logic/native';
-import { getAllIsLogin, manualReconnect } from '../../net/reconnect';
 import { LockScreen } from '../../store/interface';
-import { getStore, setStore } from '../../store/memstore';
+import { getAllAccount, getStore, setStore } from '../../store/memstore';
+import { piRequire } from '../../utils/commonjsTools';
 import { fetchDeviceId } from '../../utils/tools';
 
 // ============================== 导出
-
-export const forelet = new Forelet();
-export const WIDGET_NAME = module.id.replace(/\//g, '-');
+declare var pi_modules;
 export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查
@@ -27,23 +19,23 @@ export const run = (cb): void =>  {
     // 打开首页面
     popNew('app-view-base-app');
     if (!getStore('user/id')) {
-        popNew('app-view-base-entrance');
+        if (getAllAccount().length > 0) {
+            popNew('app-view-base-entrance1');
+        } else {
+            popNew('app-view-base-entrance');
+        }
     }
-    
     // 锁屏页面
     popNewPage();
     // 预先从底层获取一些数据
     preFetchFromNative();
     console.timeEnd('home enter');
-    // 后台切前台
-    backToFront();
+    // app event 注册
+    addAppEvent();
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
     }, 100);
-    // tslint:disable-next-line:max-line-length
-    // const changellyTempTxs = [{ id:'ztr2b6at2f2fbhf1',hash:undefined },{ id:'ctiub6x781ku12wa',hash:undefined },{ id:'3blkh2bkcxtv53fc',hash:'ae0bfbf0686d81166ff32aeef64d0cd2dc5125bf9f4299242c65bb8db6f772c0' }];
-    // setStore('wallet/changellyTempTxs',changellyTempTxs);
 };
 
 /**
@@ -51,7 +43,7 @@ export const run = (cb): void =>  {
  */
 const popNewPage = () => {
     if (ifNeedUnlockScreen()) {
-        popNew('app-components1-lockScreenPage-lockScreenPage', {
+        popNew('app-components-lockScreenPage-lockScreenPage', {
             openApp: true
         });
     }
@@ -67,19 +59,14 @@ const preFetchFromNative = () => {
             setStore('setting/deviceId',hash256deviceId);
         });
     }
-    // const deviceInfo = getStore('setting/deviceInfo');
-    // if (!deviceInfo) {
-    //     fetchDeviceInfo().then(info => {
-    //         setStore('setting/deviceInfo',info);
-    //     });
-    // }
-    getScreenModify();
 
-    // 预先随机下载
-    const adType = undefined;
-    preLoadAd(adType,() => {
-        preLoadAd(adType,() => {
-            preLoadAd(adType);
+    piRequire(['app/logic/native']).then(mods => {
+        mods[0].getScreenModify();
+        // 预先随机下载
+        mods[0].preLoadAd(undefined,() => {
+            mods[0].preLoadAd(undefined,() => {
+                mods[0].preLoadAd(undefined);
+            });
         });
     });
 };
@@ -88,34 +75,53 @@ const checkUpdate = () => {
 };
 
 /**
- * 后台切换到前台
- * onBackPressed
+ * 注册app event
  */
-const backToFront = () => {
-    (<any>window).handle_app_lifecycle_listener = (iType: string) => {
-        if (iType === 'onAppResumed') {
+const addAppEvent = () => {
+    piRequire(['pi/browser/app_comon_event','pi/browser/exitApp']).then(mods => {
+        const addAppResumed = mods[0].addAppResumed;
+        const addAppBackPressed = mods[0].addAppBackPressed;
+        // 注册appResumed
+        addAppResumed(() => {
+            console.log('addAppResumed callback called');
             if (ifNeedUnlockScreen()) {
-                popNew('app-components1-lockScreenPage-lockScreenPage', {
+                popNew('app-components-lockScreenPage-lockScreenPage', {
                     openApp: true
                 });
             }
             setTimeout(() => {
-                if (!getAllIsLogin()) {
-                    manualReconnect();
+                const reconnect =  pi_modules.commonjs.exports.relativeGet('app/net/reconnect').exports;
+                if (reconnect && !reconnect.getAllIsLogin()) {
+                    reconnect.manualReconnect();
                 }
             },100);  // 检查是否已经退出登录
-        } else if (iType === 'onBackPressed') {
+        });
+
+        let startTime = 0;
+        // 注册appBackPressed
+        addAppBackPressed(() => {
+            let doubleClick = false;
+            const now = new Date().getTime();
+            if (now - startTime <= 300) {
+                doubleClick = true;
+            }
+            startTime = now;
+            console.log('addActivityBackPressed callback called');
             if (backList.length === 1) {
+                if (!doubleClick) return;
+                const ExitApp = mods[1].ExitApp;
                 const exitApp = new ExitApp();
                 exitApp.init();
                 exitApp.ToHome({});
             } else {
+                const widget = lastBack();
+                const entranceName = 'app-view-base-entrance';
+                const entranceName1 = 'app-view-base-entrance1';
+                if (widget.name === entranceName || widget.name === entranceName1) return;
                 backCall();
             }
-      // (<any>window).onpopstate();
-      // widget.ok && widget.ok();
-        }
-    };
+        });
+    });
 };
 
 // ============================== 立即执行

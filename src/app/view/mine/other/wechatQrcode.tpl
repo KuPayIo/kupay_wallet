@@ -1,7 +1,7 @@
 
 <div class="new-page" ev-back-click="backPrePage" ev-next-click="shareImg">
     {{: topBarTitle = [{"zh_Hans":"微信小助手","zh_Hant":"微信小助手","en":""},{"zh_Hans":"微信公众号","zh_Hant":"微信公眾號","en":""}] }}
-    <app-components1-topBar-topBar>{title:{{topBarTitle[it.fg]}},nextImg:"../../res/image/share_blue.png" }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{title:{{topBarTitle[it.fg]}},nextImg:"../../res/image/share_blue.png" }</app-components-topBar-topBar>
     <div w-class="content">
         <div w-class="aboutus-img">
             <img src="{{it.fg==0?it.wachatHelperQrcode:it.wachatQrcode}}" w-class="logoimg"/>

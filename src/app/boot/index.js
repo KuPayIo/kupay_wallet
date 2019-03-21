@@ -29,6 +29,7 @@ winit.loadJS(winit.getLoadDomain("next.js"),
 winit.loadJS(winit.getLoadDomain("babel_polyfill.js"), 
 	winit.path + "pi/polyfill/babel_polyfill.js", "utf8", winit.initFail, "load babel_polyfill error");
 
+// 现在没拦截了，所以需要改成depend
 var dependFile = ".depend";
 if (winit.httpDomains) {
 	dependFile = "depend";

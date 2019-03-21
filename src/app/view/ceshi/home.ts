@@ -68,21 +68,21 @@ export class Ceshi extends Widget {
 
                 walletPay(data.data, (code, res) => {
                     if (code === 1) {
-                        popNew('app-components1-message-message', { content: '支付成功！' });
+                        popNew('app-components-message-message', { content: '支付成功！' });
                     } else {
-                        popNew('app-components1-message-message', { content: '支付失败！' });
+                        popNew('app-components-message-message', { content: '支付失败！' });
                     }
                     console.log(code);
                     console.log(res);
 
                 })
                 //  openPayment(data.data,(resCode,msg) => {
-                //      popNew('app-components1-message-message', { content:'支付成功！' });
-                //      popNew('app-components1-message-message', { content:'支付失败！' });
+                //      popNew('app-components-message-message', { content:'支付成功！' });
+                //      popNew('app-components-message-message', { content:'支付失败！' });
                 //      console.log('GTpay --------fail-------',err);
                 //  });
             } else if (data.return_code === 30003) {
-                popNew('app-components1-message-message', { content: '订单已存在' });
+                popNew('app-components-message-message', { content: '订单已存在' });
             }
 
         }, (err) => {

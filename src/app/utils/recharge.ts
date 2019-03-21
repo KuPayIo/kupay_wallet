@@ -7,7 +7,7 @@ import { popNew } from '../../pi/ui/root';
 import { getModulConfig } from '../modulConfig';
 import { requestAsync } from '../net/pull';
 import { showError } from './toolMessages';
-import { popNewMessage } from './tools';
+import { popNewMessage, popNewLoading } from './tools';
 
 export interface OrderDetail {
     total: number; // 总价
@@ -32,7 +32,7 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
     }
 
     const msg = { type: 'order_pay', param: orderDetail };
-    const loading = popNew('app-components1-loading-loading', { text: { zh_Hans: '充值中...', zh_Hant: '充值中...', en: '' } });
+    const loading = popNewLoading({ zh_Hans: '充值中...', zh_Hant: '充值中...', en: '' });
     try {
         const resData: any = await requestAsync(msg);
         if (resData.result === 1) { // 下单成功
@@ -107,7 +107,7 @@ export const jumpWxpay = (order, okCb?: Function, failCb?: Function) => {
 
     WebViewManager.newView('payWebView',order.mweb_url,{ Referer: getModulConfig('PAY_DOMAIN') });
     setTimeout(() => {
-        popNew('app-components1-modalBox-modalBox', {
+        popNew('app-components-modalBox-modalBox', {
             title: '',
             content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
             style: 'color:#F7931A;',
@@ -136,7 +136,7 @@ export const jumpAlipay = (order, okCb?: Function, failCb?: Function) => {
     $payIframe.setAttribute('style', 'position:absolute;width:0px;height:0px;visibility:hidden;');
     document.body.appendChild($payIframe);
     setTimeout(() => {
-        popNew('app-components1-modalBox-modalBox', {
+        popNew('app-components-modalBox-modalBox', {
             title: '',
             content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
             style: 'color:#F7931A;',

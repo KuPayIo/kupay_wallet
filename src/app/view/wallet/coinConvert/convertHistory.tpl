@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"币币兑换","zh_Hant":"幣幣兌換","en":""} }}
-    <app-components1-topBar-topBar>{title:{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{title:{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="content" on-scroll="">
         {{for ind,item of it.txsShow}}
         <div w-class="item">

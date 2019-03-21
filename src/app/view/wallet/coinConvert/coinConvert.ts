@@ -9,11 +9,12 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
 import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/pull3';
-import { transfer, transfer1, transfer3, TxPayload, TxPayload3 } from '../../../net/pullWallet';
-import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
-import { getStore, register, setStore } from '../../../store/memstore';
+import { transfer, TxPayload } from '../../../net/pullWallet';
+import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel } from '../../../store/interface';
+import { getStore, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { calCurrencyLogoUrl, currencyExchangeAvailable, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox, popNewLoading } from '../../../utils/tools';
+import { fetchMinerFeeList } from '../../../utils/walletTools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -60,11 +61,14 @@ export class CoinConvert extends Widget {
 
         const outCurrency = canCurrencyExchange ? props.currencyName : 'ETH';
         const inCurrency = (outCurrency === 'BTC' ||  ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
+        
         // ZRX   BAT
         this.props = {
             ...this.props,
             outCurrency,
+            outCurrencyLogo:calCurrencyLogoUrl(outCurrency),
             inCurrency,
+            inCurrencyLogo:calCurrencyLogoUrl(inCurrency),
             pair:'',
             minimum:0,
             rate:0,
@@ -229,8 +233,7 @@ export class CoinConvert extends Widget {
         const content = [this.language.tips[6] + outAmount + outCurrency,this.language.tips[7] + this.props.receiveAmount + this.props.inCurrency];
         const passwd = await popPswBox(content);
         if (!passwd) return;
-        
-        const close = popNew('app-components1-loading-loading', { text: this.language.loading });
+        const close = popNewLoading(this.language.loading);
         const withdrawalAddress = this.props.curInAddr; // 入账币种的地址
         const returnAddress =  this.props.curOutAddr;// 失败后的退款地址
         changellyCreateTransaction(outCurrency,inCurrency,withdrawalAddress,outAmount,returnAddress).then(res => {
@@ -263,7 +266,7 @@ export class CoinConvert extends Widget {
                     setStore('wallet/changellyPayinAddress',changellyPayinAddress);
                 }
                 
-                transfer1(passwd,payload).then(([err,hash]) => {
+                transfer(passwd,payload).then(([err,tx]) => {
                     close && close.callback(close.widget);
                     if (err) {
                         popNewMessage(this.language.messages[3]);
@@ -272,7 +275,7 @@ export class CoinConvert extends Widget {
                     }
                     const changellyTempTxs = getStore('wallet/changellyTempTxs');
                     const tempTxs:ChangellyTempTxs = {
-                        hash,
+                        hash:tx.hash,
                         id:res.result.id
                     };
                     changellyTempTxs.push(tempTxs);

@@ -6,8 +6,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineDetail, regPhone } from '../../../net/pull';
+import { checkPhoneCode, getMineDetail, regPhone } from '../../../net/pull';
 import { getStore, setStore } from '../../../store/memstore';
+import { getUserInfo, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -16,22 +17,30 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class BindPhone extends Widget {
     public ok: () => void;
-    public language:any;
-    constructor() {
-        super();
-    }
-    public create() {
-        super.create();
-        this.language = this.config.value[getLang()];
+    public setProps(props:any,oldProps:any) {
         this.props = {
-            phone:'',
+            ...props,
+            phone: props.itype === 1 ? '' : getUserInfo().phoneNumber,
             code:[],
             isSuccess:true
         };
+        super.setProps(this.props,oldProps);
     }
 
     public backPrePage() {
         this.ok && this.ok();
+    }
+    public jumpClick() {
+        this.ok && this.ok();
+        popNew('app-components-allModalBox-modalBox3', {
+            img:'app/res/image/bind_phone.png',
+            tipTitle:'安全提醒',
+            tipContent:`手机号是您找回云端资产的凭证
+为了您的资产安全请输入手机号`,
+            btn:`验证手机`
+        },() => {
+            popNew('app-view-mine-setting-phone',{});
+        });
     }
     
     /**
@@ -39,23 +48,42 @@ export class BindPhone extends Widget {
      */
     public async doSure() {
         if (!this.props.phone) {
-            popNew('app-components1-message-message', { content: this.language.tips });
+            const tips = { zh_Hans:'请先获取验证码',zh_Hant:'請先獲取驗證碼',en:'' };
+            popNewMessage(tips[getLang()]);
             this.props.code = [];
             this.setCode();
 
             return;
         }
-        const data = await regPhone(this.props.phone, this.props.code.join(''));
-        if (data && data.result === 1) {
-            const userinfo = getStore('user/info');
-            userinfo.phoneNumber = this.props.phone;
-            setStore('user/info',userinfo);
-            getMineDetail();
-            this.ok();
+        if (this.props.itype === 1) {
+            const data = await regPhone(this.props.phone, this.props.code.join(''));
+            if (data && data.result === 1) {
+                const userinfo = getStore('user/info');
+                userinfo.phoneNumber = this.props.phone;
+                setStore('user/info',userinfo);
+                popNewMessage('绑定成功');
+                getMineDetail();
+                this.ok && this.ok();
+            } else {
+                this.props.code = [];
+                this.setCode();
+            }
         } else {
-            this.props.code = [];
-            this.setCode();
+            // 重新绑定
+            const data = await checkPhoneCode(this.props.phone, this.props.code.join(''),'delete_phone_auth');
+            if (data && data.result === 1) {
+                this.ok && this.ok();
+                const props  = {
+                    itype:1,   // 绑定
+                    title:{ zh_Hans:'绑定新手机号',zh_Hant:'綁定新手機號',en:'' }  
+                };
+                popNew('app-view-mine-setting-phone',props);
+            } else {
+                this.props.code = [];
+                this.setCode();
+            }
         }
+        
         this.paint();
     }
 

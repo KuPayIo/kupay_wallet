@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { copyToClipboard } from '../../utils/tools';
+import { copyToClipboard, popNewMessage } from '../../utils/tools';
 
 interface Props {
     title:string;
@@ -32,7 +32,7 @@ export class ModalBox2 extends Widget {
 
     public copyBtnClick(e:any) {
         copyToClipboard(this.props.extraInfo);
-        popNew('app-components1-message-message', { itype: 'success', content: '复制成功', center: true });
+        popNewMessage('复制成功');
         this.ok && this.ok();
     }
 

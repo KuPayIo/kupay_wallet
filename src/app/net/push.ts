@@ -2,11 +2,10 @@
  * 后端主动推消息给后端
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
-import { backCall, backList, popNew } from '../../pi/ui/root';
-import { CloudCurrencyType } from '../store/interface';
-import { getStore, register, setStore } from '../store/memstore';
+import { popNew } from '../../pi/ui/root';
+import { getAllAccount, getStore, register } from '../store/memstore';
 import { CMD } from '../utils/constants';
-import { getStaticLanguage, popNewMessage } from '../utils/tools';
+import { closeAllPage, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
 import { getServerCloudBalance } from './pull';
 
@@ -24,29 +23,33 @@ export const initPush = () => {
         setBottomLayerReloginMsg('','','');
         const cmd = res.cmd;
         if (cmd === CMD.FORCELOGOUT) {
-            logoutAccount();
-            
+            logoutAccount(true);
         } else if (cmd === CMD.FORCELOGOUTDEL) {
-            logoutAccountDel();
+            logoutAccountDel(true);
         }
        
         return () => {
-            popNew('app-components1-modalBox-modalBox',{
+            popNew('app-components-modalBox-modalBox',{
                 sureText:{ zh_Hans:'重新登录',zh_Hant:'重新登錄',en:'' },
                 cancelText:{ zh_Hans:'退出',zh_Hant:'退出',en:'' },
                 title:{ zh_Hans:'下线通知',zh_Hant:'下線通知',en:'' },
                 content:{ zh_Hans:'您的账户已被下线，如非本人操作，则助记词可能已泄露。',zh_Hant:'您的賬戶已被下線，如非本人操作，則助記詞可能已洩露。',en:'' }
             },() => {
                 setTimeout(() => {
-                    for (let i = backList.length;i > 1;i--) {
-                        backCall();
+                    closeAllPage();
+                    if (getAllAccount().length > 0) {
+                        popNew('app-view-base-entrance1');
+                    } else {
+                        popNew('app-view-base-entrance');
                     }
-                    popNew('app-view-wallet-create-home');
                 },100);
             },() => {
                 setTimeout(() => {
-                    for (let i = backList.length;i > 1;i--) {
-                        backCall();
+                    closeAllPage();
+                    if (getAllAccount().length > 0) {
+                        popNew('app-view-base-entrance1');
+                    } else {
+                        popNew('app-view-base-entrance');
                     }
                 },100);
             });
@@ -71,12 +74,28 @@ export const initPush = () => {
     setMsgHandler('alter_balance_ok',(res) => {
         console.log('alter_balance_ok服务器推送成功==========================',res);
         getServerCloudBalance();
-        if (res.cointype === CloudCurrencyType.KT) {   // 回到一级页面提醒备份
-            const wallet = getStore('wallet');
-            if (!wallet.backupTip && !wallet.isBackup) {
-                setStore('flags/backupTip',true);   // 一级页面弹框标识
-            }  
+        const wallet = getStore('wallet');
+        const userInfo = getUserInfo();
+        if (!wallet.setPsw) {
+            setTimeout(() => {
+                popNew('app-view-mine-setting-settingPsw',{});
+            },2000);
+            
+        } else if (!userInfo.phoneNumber) {
+            setTimeout(() => {
+                popNew('app-components-allModalBox-modalBox3', {
+                    img:'app/res/image/bind_phone.png',
+                    tipTitle:'安全提醒',
+                    tipContent:`手机号是您找回云端资产的凭证
+为了您的资产安全请输入手机号`,
+                    btn:`验证手机`
+                },() => {
+                    popNew('app-view-mine-setting-phone',{});
+                });
+            },2000);
+            
         }
+        
     });
 
     // setMsgHandler('event_kt_alert',(res) => {
@@ -96,7 +115,7 @@ const setPushListener = (key:string,callback:Function) => {
     setMsgHandler(key,(res) => {
         const popTips = callback(res);
         const flags = getStore('flags');  
-        const loaded = flags.level_2_page_loaded; // 资源已经加载完成
+        const loaded = flags.level_3_page_loaded; // 资源已经加载完成
         if (loaded) {
             popTips && popTips(res);
         } else {

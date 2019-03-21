@@ -11,7 +11,7 @@ import { defaultSetting } from '../config';
 import { topHeight } from '../utils/constants';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, BtcMinerFee, ChangellyPayinAddr, ChangellyTempTxs, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Gold, Setting, Store, TxHistory, UserInfo, Wallet } from './interface';
+import { AddrInfo, BtcMinerFee, ChangellyPayinAddr, ChangellyTempTxs, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, Silver, Store, TxHistory, UserInfo, Wallet } from './interface';
 
 // ============================================ 导出
 
@@ -130,7 +130,7 @@ export const unregister = (keyName: string, cb: Function): void => {
  */
 export const getCloudBalances = () => {
     const cloudWallets = store.cloud.cloudWallets;
-    const cloudBalances = new Map<CloudCurrencyType, number>();
+    const cloudBalances = new Map<CloudCurrencyType | String, number>();
     for (const [key, val] of cloudWallets) {
         cloudBalances.set(key, val.balance || 0);
     }
@@ -329,7 +329,7 @@ const initSettings = () => {
             langNum = parseInt(localLan);
             const localSet = getLocalStorage('setting');
             if (!localSet) {
-                if (langNum === 2 || langNum === 3) {
+                if (langNum === appLanguageList.zh_Hans || langNum === appLanguageList.zh_Hant) {
                     setLang(appLanguageList[langNum]);
                     store.setting.language = appLanguageList[langNum];
                 } else {
@@ -364,26 +364,6 @@ const initSettings = () => {
 };
 
 /**
- * 活动数据初始化
- */
-const initActivity = () => {
-    return new Promise(resolve => {
-        getFile('activity',(activity) => {
-            console.log('activity read success = ',activity);
-            store.activity = {
-                ...store.activity,
-                ...activity
-            };
-            resolve();
-        },() => {
-            console.log('activity read fail ');
-            resolve();
-        });
-    });
-    
-};
-
-/**
  * 三方数据初始
  */
 const initThird = () => {
@@ -402,7 +382,6 @@ const initThird = () => {
  */
 const registerFileStore = () => {
     registerAccountChange(); // 监听账户变化
-    // registerActivityChange();  // 监听活动数据变化
     registerThirdChange(); // 监听3方数据变化
     registerSettingChange(); // 监听setting数据变化
 };
@@ -419,15 +398,6 @@ const registerAccountChange = () => {
     });
     register('cloud', () => {
         accountChange();
-    });
-};
-
-/**
- * 活动数据变化监听
- */
-const registerActivityChange = () => {
-    register('activity', () => {
-        activityChange();
     });
 };
 
@@ -540,14 +510,6 @@ const accountChange = () => {
     setLocalStorage('accounts', localAccounts);
     writeFile(storeUser.id, fileTxHistorys);
 
-};
-
-/**
- * 活动数据变化
- */
-const activityChange = () => {
-    // setLocalStorage('activity', store.activity);
-    writeFile('activity', store.activity);
 };
 
 /**
@@ -668,6 +630,8 @@ const store: Store = {
     flags: {}
 };
 
+initStore();
+
 // =======================localStorage interface===============================
 
 /**
@@ -751,7 +715,7 @@ export interface LocalThird {
     btcMinerFee: BtcMinerFee; // btc minerfee 分档次
     gasLimitMap: Map<string, number>; // 各种货币转账需要的gasLimit
     rate: number; // 货币的美元汇率
-    silver: Gold; // 白银价格
+    silver: Silver; // 白银价格
     currency2USDTMap: Map<string, Currency2USDT>; // k线  --> 计算涨跌幅
 }
 

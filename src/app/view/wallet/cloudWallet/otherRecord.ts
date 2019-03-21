@@ -1,7 +1,6 @@
 /**
  * other record
  */
-import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
@@ -19,13 +18,11 @@ interface Props {
 }
 export class OtherRecord extends Widget {
     public props:any;
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         if (this.props.isActive) {
             getAccountDetail(this.props.currencyName,1);
         }

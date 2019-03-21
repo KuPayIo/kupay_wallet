@@ -43,7 +43,9 @@ export class ImgRankItem extends Widget {
             secret:0,
             showTips:false,
             isSuccess:false,
-            showIcon:false
+            showIcon:false,
+            lineStyle:'',
+            lineSpaceStyle:''
         };
     }
 
@@ -57,7 +59,7 @@ export class ImgRankItem extends Widget {
     public pswChange(event:any) {
         const psw = event.value;
         this.props.password = psw;
-        this.props.showIcon = true;       
+        this.props.showIcon = !!psw ;       
         let secret = 0; 
         const limit = this.props.limit ? this.props.limit :1;
         const length = this.props.length ? this.props.length :8;
@@ -82,9 +84,25 @@ export class ImgRankItem extends Widget {
             notify(event.node,'ev-psw-change',{ password:psw,success:false });
         }
         this.props.secret = secret > 3 ? 3 :secret; // 只有三种强度水平显示
+        this.calSecretStyle();
         this.paint();
     }
 
+    public calSecretStyle() {
+        if (this.props.secret > 2) {
+            this.props.lineStyle = 'flex:3;';
+            this.props.lineSpaceStyle = 'flex:0;';
+        } else if (this.props.secret > 1) {
+            this.props.lineStyle = 'flex:2;';
+            this.props.lineSpaceStyle = 'flex:1;';
+        } else if (this.props.secret > 0) {
+            this.props.lineStyle = 'flex:1;';
+            this.props.lineSpaceStyle = 'flex:2;';
+        } else {
+            this.props.lineStyle = 'flex:0;';
+            this.props.lineSpaceStyle = 'flex:3;';
+        }
+    }
     public pswBlur() {
         if (!this.props.password) {
             this.props.showTips = false;

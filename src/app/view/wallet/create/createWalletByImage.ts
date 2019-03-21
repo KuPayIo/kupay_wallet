@@ -7,13 +7,13 @@ import { Widget } from '../../../../pi/widget/widget';
 import { ahashToArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
-import { getStore, setStore } from '../../../store/memstore';
+import { setStore } from '../../../store/memstore';
+import { popNewMessage } from '../../../utils/tools';
 
 export class CreateWalletByImage extends Widget {
+    public cancel: () => void;
     public ok: () => void;
-    public language:any;
     public setProps(props:any,oldProps:any) {
-        this.language = this.config.value[getLang()];
         this.props = {
             ...props,
             chooseImage:false,
@@ -26,7 +26,7 @@ export class CreateWalletByImage extends Widget {
         super.setProps(this.props,oldProps);
     }
     public backPrePage() {
-        this.ok && this.ok();
+        this.cancel && this.cancel();
     }
     public selectImageClick() {
         this.props.imagePicker = selectImage((width, height, url) => {
@@ -51,7 +51,8 @@ export class CreateWalletByImage extends Widget {
 
     public nextClick() {
         if (!this.props.chooseImage) {
-            popNew('app-components1-message-message', { content: this.language.tips[0] });
+            const tips = { zh_Hans:'请选择照片',zh_Hant:'請選擇照片',en:'' };
+            popNewMessage(tips[getLang()]);
 
             return;
         }

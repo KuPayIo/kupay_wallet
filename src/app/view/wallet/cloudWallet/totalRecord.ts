@@ -22,13 +22,11 @@ interface Props {
 
 export class TotalRecord extends Widget {
     public props:any;
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         this.props = {
             ...this.props,
             recordList:[], // 全部记录
@@ -91,11 +89,12 @@ export class TotalRecord extends Widget {
      * 解析提币记录
      */
     public parseWithdrawList(list:any[]) {
+        const withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
         list.forEach((item) => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.language.withdraw;
+            item.behavior = withdraw[getLang()];
             item.amountShow = `-${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_withdraw_icon.png`;
@@ -107,11 +106,12 @@ export class TotalRecord extends Widget {
      * 解析充值记录
      */
     public parseRechargeList(list:any[]) {
+        const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
         list.forEach((item) => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.language.recharge;
+            item.behavior = recharge[getLang()];
             item.amountShow = `+${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_charge_icon.png`;
