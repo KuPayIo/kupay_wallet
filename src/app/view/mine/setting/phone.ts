@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { checkPhoneCode, getMineDetail, regPhone } from '../../../net/pull';
+import { getMineDetail, regPhone, unbindPhone } from '../../../net/pull';
 import { getStore, setStore } from '../../../store/memstore';
 import { getUserInfo, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
@@ -17,16 +17,23 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class BindPhone extends Widget {
     public ok: () => void;
-    public setProps(props:any,oldProps:any) {
+    public create() {
         this.props = {
-            ...props,
-            phone: props.itype === 1 ? '' : getUserInfo().phoneNumber,
+            areaCode:'',
+            phone:getUserInfo().phoneNumber,
             code:[],
             isSuccess:true
         };
-        super.setProps(this.props,oldProps);
+        super.create();
     }
 
+    public setProps(props:any,oldProps:any) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+    }
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -39,7 +46,7 @@ export class BindPhone extends Widget {
 为了您的资产安全请输入手机号`,
             btn:`验证手机`
         },() => {
-            popNew('app-view-mine-setting-phone',{});
+            popNew('app-view-mine-setting-phone',{ jump:true });
         });
     }
     
@@ -55,35 +62,36 @@ export class BindPhone extends Widget {
 
             return;
         }
-        if (this.props.itype === 1) {
-            const data = await regPhone(this.props.phone, this.props.code.join(''));
+        
+        if (!this.props.unbind) {
+            const data = await regPhone(this.props.phone, this.props.areaCode,this.props.code.join(''));
             if (data && data.result === 1) {
                 const userinfo = getStore('user/info');
                 userinfo.phoneNumber = this.props.phone;
+                userinfo.areaCode = this.props.areaCode;
                 setStore('user/info',userinfo);
-                popNewMessage('绑定成功');
                 getMineDetail();
                 this.ok && this.ok();
+                popNewMessage('绑定成功');
             } else {
                 this.props.code = [];
                 this.setCode();
             }
         } else {
-            // 重新绑定
-            const data = await checkPhoneCode(this.props.phone, this.props.code.join(''),'delete_phone_auth');
+            // 解绑
+            const data = await unbindPhone(this.props.phone, this.props.code.join(''),this.props.areaCode);
             if (data && data.result === 1) {
                 this.ok && this.ok();
-                const props  = {
-                    itype:1,   // 绑定
-                    title:{ zh_Hans:'绑定新手机号',zh_Hant:'綁定新手機號',en:'' }  
-                };
-                popNew('app-view-mine-setting-phone',props);
+                const userinfo = getStore('user/info');
+                userinfo.phoneNumber = '';
+                userinfo.areaCode = '';
+                setStore('user/info',userinfo);
+                popNewMessage('解绑成功');
             } else {
                 this.props.code = [];
                 this.setCode();
             }
         }
-        
         this.paint();
     }
 
@@ -92,6 +100,7 @@ export class BindPhone extends Widget {
      */
     public phoneChange(e: any) {
         this.props.phone = e.value;  
+        this.props.areaCode = e.areaCode;
     }
 
     /**
