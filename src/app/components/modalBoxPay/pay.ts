@@ -10,6 +10,7 @@ interface Props {
     fee_name : string;
     balance : number;
 }
+// tslint:disable-next-line:completed-docs
 export class ModalBoxInput extends Widget {
     public props: any;
     public ok: (value:string) => void;
@@ -27,6 +28,7 @@ export class ModalBoxInput extends Widget {
      */
     public cancelBtnClick() {
         this.cancel && this.cancel(true);
+        this.paint();
     }
     /**
      * 点击确认按钮

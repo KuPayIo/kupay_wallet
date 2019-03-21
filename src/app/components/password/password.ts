@@ -21,6 +21,7 @@ interface Props {
     tips?:string;
     placeHolder?:string;
 }
+// tslint:disable-next-line:completed-docs
 export class ImgRankItem extends Widget {
     public ok: () => void;
     public props:any;
@@ -30,6 +31,7 @@ export class ImgRankItem extends Widget {
         showTips:boolean;
         isSuccess:boolean;
         showIcon:boolean;
+        isShowPassword:boolean; // 是否显示密码 true 隐藏
     };
     constructor() {
         super();
@@ -45,7 +47,8 @@ export class ImgRankItem extends Widget {
             isSuccess:false,
             showIcon:false,
             lineStyle:'',
-            lineSpaceStyle:''
+            lineSpaceStyle:'',
+            isShowPassword:true
         };
     }
 
@@ -158,5 +161,11 @@ export class ImgRankItem extends Widget {
         }
         
         return num;
+    }
+
+    // 判断是否显示密码
+    public showPassword() {
+        this.props.isShowPassword = !this.props.isShowPassword;
+        this.paint();
     }
 }

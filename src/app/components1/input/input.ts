@@ -50,7 +50,8 @@ export class Input extends Widget {
             currentValue,
             focused: false,
             showClear: false,
-            inputLock: false
+            inputLock: false,
+            showClearType:true
         };
     }
     /**

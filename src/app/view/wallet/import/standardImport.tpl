@@ -12,7 +12,7 @@
                 <app-components-textarea-textarea>{placeHolder:{{inputPlace}} }</app-components-textarea-textarea>
             </div>
             <div ev-btn-tap="nextClick" w-class="btn">
-                {{: btnName = {"zh_Hans":"下一步","zh_Hant":"下一步","en":""} }}
+                {{: btnName = {"zh_Hans":"继续","zh_Hant":"繼續","en":""} }}
                 <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"blue"}</app-components1-btn-btn>
             </div>
             <div w-class="other-btns">

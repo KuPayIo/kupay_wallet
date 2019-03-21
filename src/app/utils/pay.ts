@@ -4,9 +4,9 @@
 
 import { popNew } from '../../pi/ui/root';
 import { openPayment, pay, resCode, setNoPWD } from '../api/JSAPI';
+import { getModulConfig } from '../modulConfig';
 import { setStore } from '../store/memstore';
-import { popPswBox, popNewMessage, popNewLoading } from './tools';
-
+import { popNewLoading, popNewMessage, popPswBox } from './tools';
 /**
  * 钱包支付，钱包内应用调用
  * @param order 后台返回订单数据
@@ -33,7 +33,8 @@ export const walletPay = (order: any, appid: string, mchid: string, callback: Fu
                         if (order.isFirst === 1 && !res1) { // 应用内第一次支付成功后提示开通免密
                             popNew('app-components-modalBox-modalBox', {
                                 title: { zh_Hans: '是否开通免密支付？', zh_Hant: '是否開通免密支付?', en: '' },
-                                content: { zh_Hans: '累计未超过20ST不再验证密码，超过后直至下个20ST。', zh_Hant: '累計未超過20ST不再驗證密碼，超過後直至下個20ST。', en: '' },
+                                // tslint:disable-next-line:max-line-length
+                                content: { zh_Hans: `累计未超过20${getModulConfig('ST_SHOW')}不再验证密码，超过后直至下个20${getModulConfig('ST_SHOW')}。`, zh_Hant: `累計未超過20${getModulConfig('ST_SHOW')}不再驗證密碼，超過後直至下個20${getModulConfig('ST_SHOW')}。`, en: '' },
                                 sureText: { zh_Hans: '开通', zh_Hant: '开通', en: '' }
                             }, () => {
                                 const sendData = {

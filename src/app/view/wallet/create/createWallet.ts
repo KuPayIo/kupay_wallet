@@ -32,7 +32,7 @@ export class CreateWallet extends Widget {
             walletPsw: '',
             walletPswConfirm: '',
             pswEqualed: false,
-            userProtocolReaded: false,
+            userProtocolReaded: true,
             walletPswAvailable: false,
             chooseImage: false,
             avatarHtml: '',
@@ -55,10 +55,6 @@ export class CreateWallet extends Widget {
     }
     public walletNameChange(e: any) {
         this.props.walletName = e.value;
-        this.paint();
-    }
-    public checkBoxClick(e: any) {
-        this.props.userProtocolReaded = (e.newType === 'true' ? true : false);
         this.paint();
     }
     public pswConfirmChange(r: any) {
