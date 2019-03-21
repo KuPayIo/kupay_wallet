@@ -3,7 +3,7 @@
         w-class="pi-input__inner" 
         class="pi-input"
         style="{{it.style}}"
-        type="{{it.itype ? it.itype : 'text'}}" 
+        type="{{it.closeEye ? it.itype : 'text'}}" 
         autocomplete="off" 
         placeholder="{{it.placeHolder}}" 
         value="{{it1.currentValue}}"
@@ -12,5 +12,5 @@
         on-focus="focus"
     />
     {{if it1.showClear}}<img w-class="pi-input__suffix" src="../../res/image/{{it.available ? 'icon_right2' : 'fail'}}.png" on-tap="clearClickListener"/>{{end}}
-    {{if it.closeEye}}<img src="../../res/image/closeEyes.png" w-class="close-eyes" />{{end}}
+    <img src="{{it.closeEye?'../../res/image/closeEyes.png':'../../res/image/openEyes.png'}}" w-class="close-eyes" on-tap="showPassword"/>
 </div>

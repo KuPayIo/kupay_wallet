@@ -9,6 +9,7 @@ interface Props {
     mnemonic: string;
     fragments: any[];
 }
+// tslint:disable-next-line:completed-docs
 export class BackupIndex extends Widget {
     public ok:() => void;
     public backPrePage() {
