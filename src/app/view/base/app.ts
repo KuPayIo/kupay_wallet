@@ -2,6 +2,7 @@
  * 首页
  */
 // ================================ 导入
+import { register as ChatRegister } from '../../../chat/client/app/data/store';
 import { register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
@@ -90,6 +91,17 @@ export class App extends Widget {
         this.props.isActive = 'APP_PLAY';
         this.paint();
     }
+
+    public changeChatIcon(fg:boolean) {
+        if (fg) {
+            this.props.tabBarList[1].iconActive = 'chat_active_unRead.png';
+            this.props.tabBarList[1].icon = 'chat_unRead.png';
+        } else {
+            this.props.tabBarList[1].iconActive = 'chat_active.png';
+            this.props.tabBarList[1].icon = 'chat.png';
+        }
+        this.paint();
+    }
 }
 
 // ===================================================== 本地
@@ -126,6 +138,12 @@ earnRegister('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
         w.props.tabBarAnimateClasss = 'reset-put-out';
     }
     w.paint();
+});
+
+// 监听聊天是否有未读消息
+ChatRegister('flags/unReadFg',(fg) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.changeChatIcon(fg);
 });
 
 export const gotoChat = () => {

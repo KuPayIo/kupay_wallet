@@ -8,8 +8,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { convertRedBag, getServerCloudBalance, takeRedBag } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { setStore } from '../../../store/memstore';
-import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 import { popNewMessage } from '../../../utils/tools';
+import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -24,7 +24,7 @@ interface Props {
     inFlag?:string; // 从哪里进入 chat
 }
 export class OpenRedEnvelope extends Widget {
-    public ok:() => void;
+    public ok:(fg:string) => void;
     public language:any;
     public props:any;
 
@@ -58,15 +58,12 @@ export class OpenRedEnvelope extends Widget {
             let convertFg = true; // 兑换成功标记
             if (this.props.inFlag === 'chat') {
                 convertFg = await this.convertClick();
-            }
+            } 
             if (convertFg) {  
                 popNew('app-view-earn-exchange-exchangeDetail',this.props);
-                popNew('app-components1-message-message',{ content:this.language.successMess });
-                this.backPrePage();
+                popNewMessage(this.language.successMess);
+                this.backPrePage(JSON.stringify(this.props)); // 兑换成功
             }
-            
-            popNewMessage(this.language.successMess);
-            this.backPrePage();
         },800);
        
     }
@@ -110,8 +107,8 @@ export class OpenRedEnvelope extends Widget {
         return true;
     }
 
-    public backPrePage() {
-        this.ok && this.ok();
+    public backPrePage(fg:string) {
+        this.ok && this.ok(fg);
     }
 
 }
