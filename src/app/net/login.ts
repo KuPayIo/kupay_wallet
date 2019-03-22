@@ -12,7 +12,8 @@ import { Account, getAllAccount, getStore, initCloudWallets, LocalCloudWallet,re
 import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
 import { CMD, defaultPassword } from '../utils/constants';
 import { closeAllPage, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
-import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
+// tslint:disable-next-line:max-line-length
+import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 import { setReconnectingState } from './reconnect';
 
 // 登录成功之后的回调列表
@@ -190,7 +191,7 @@ export const getOpenId = (appId:string) => {
  * 获取随机数
  * flag:0 普通用户注册，1注册即为真实用户
  */
-export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number) => {
+export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number,num?:string) => {
     console.log('getRandom--------------');
     const wallet = getStore('wallet');
     if (!wallet) return;
@@ -210,6 +211,9 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     }
     if (code) {
         param.code = code;
+    }
+    if (num) {
+        param.num = num;
     }
     const msg = { 
         type: 'get_random', 
@@ -235,8 +239,9 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         setStore('user/conUid', resp.uid);
         console.log('uid =',resp.uid);
         setStore('user/conRandom', conRandom);
-    } catch (resp) {
-        if (resp.type === 1014) {
+    } catch (res) {
+        resp = res;
+        if (res.type === 1014) {
             const flags = getStore('flags');
             console.log('flags =====',flags);
             if (flags.level_3_page_loaded) {  // 钱包创建成功直接提示,此时资源已经加载完成
@@ -246,14 +251,15 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
             }
         } 
     } 
+    console.log('getRandom resp = ',resp);
 
-    return resp && resp.type;
+    return resp && (resp.type || resp.result);
 };
 
 /**
  * 注销账户并删除数据
  */
-export const logoutAccountDel = (forceLogout?:boolean) => {
+export const logoutAccountDel = (noLogin?:boolean) => {
     setStore('user/token','');
     const user = {
         id: '',                      // 该账号的id
@@ -317,7 +323,7 @@ export const logoutAccountDel = (forceLogout?:boolean) => {
     setTimeout(() => {
         openConnect();
     },100);
-    if (!forceLogout) {
+    if (!noLogin) {
         closeAllPage();
         if (getAllAccount().length > 0) {
             popNew('app-view-base-entrance1');
@@ -330,12 +336,12 @@ export const logoutAccountDel = (forceLogout?:boolean) => {
 /**
  * 注销账户保留数据
  */
-export const logoutAccount = (forceLogout?:boolean) => {
+export const logoutAccount = (noLogin?:boolean) => {
     const wallet = getStore('wallet');
     if (wallet.setPsw) {
         setStore('flags/saveAccount', true);
     }
-    logoutAccountDel(forceLogout);
+    logoutAccountDel(noLogin);
 };
 
 /**
@@ -529,11 +535,12 @@ export const registerStore = () => {
         if (isLogin) {
             // 余额
             getServerCloudBalance();
-            // 获取真实用户
-            getRealUser();
             // 用户基础信息
-            getUserInfoFromServer(getStore('user/conUid'));
-            
+            getUserInfoFromServer(getStore('user/conUid')).then(() => {
+                getBindPhone();
+                // 获取真实用户
+                getRealUser();
+            });
         } 
     });
 

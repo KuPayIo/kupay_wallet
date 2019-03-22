@@ -547,7 +547,7 @@ window.pi_RPC_Method = (function () {
         }
     };
 
-    window.handle_Native_ThrowError = function (className, methodName, message) {
+    window.handle_native_throwerror = function (className, methodName, message) {
         alert(
             "handle_Native_ThrowError, className = " +
             className +
@@ -558,7 +558,7 @@ window.pi_RPC_Method = (function () {
         );
     };
 
-    window.handle_Native_Message = function (cbID, code, ...args) {
+    window.handle_native_message = function (cbID, code, ...args) {
         if (cbID === 0) return;
 
         var cb = callIDMap[cbID];

@@ -4,7 +4,7 @@
     <div w-class="body">
         {{: tips = {"zh_Hans":"设置支付密码","zh_Hant":"設置支付密碼","en":""} }}
         <div w-class="create-tips"><div w-class="tip-divid"></div><pi-ui-lang>{{tips}}</pi-ui-lang></div>
-        {{: desc = {"zh_Hans":"您的账户有变动，为了您的资产安全，建议您立即设置支付密码","zh_Hant":"您的賬戶有變動，為了您的資產安全，建議您立即設置支付密碼","en":""} }}
+        {{: desc = {"zh_Hans":"为了您的资产安全，建议您立即设置支付密码","zh_Hant":"您的賬戶有變動，為了您的資產安全，建議您立即設置支付密碼","en":""} }}
         <div w-class="desc"><pi-ui-lang>{{desc}}</pi-ui-lang></div>
         <div w-class="bottom-box">
             <div ev-psw-change="pswChange" ev-psw-clear="pwsClear"><app-components-password-password>{hideTips:true}</app-components-password-password></div>

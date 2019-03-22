@@ -1,8 +1,9 @@
 <div class="new-page" ev-back-click="backPrePage" ev-next-click="jumpClick">
-    {{: topBarTitle = it.title ? it.title : {"zh_Hans":"手机号码","zh_Hant":"手機號碼","en":""} }}
-    <app-components-topBar-topBar>{"title":{{topBarTitle}},textStyle:"margin-right:25px;color:rgba(136,136,136,1);font-size:28px;" }</app-components-topBar-topBar>
+    {{: topBarTitle = !!it.unbind ? {zh_Hans:'解除绑定',zh_Hant:'解除綁定',en:''} : { zh_Hans:'绑定新手机号',zh_Hant:'綁定新手機號',en:'' } }}
+    {{: text = it.jump ? "跳过" : ""}}
+    <app-components-topBar-topBar>{"title":{{topBarTitle}},text:{{text}},textStyle:"margin-right:25px;color:rgba(136,136,136,1);font-size:28px;" }</app-components-topBar-topBar>
     <div style="margin: 30px 20px;" ev-getCode="phoneChange">
-        <app-components-bindPhone-bindPhone>{verify:{{it.itype === 1 ? true : false}},phone:{{it.phone}},disabled:{{ it.itype === 1 ? false : true}} }</app-components-bindPhone-bindPhone>
+        <app-components-bindPhone-bindPhone>{verify:{{!it.unbind}},phone:{{it.phone}},disabled:{{ !!it.unbind }} }</app-components-bindPhone-bindPhone>
     </div>
     <div w-class="content">
         {{if !it.isSuccess}}

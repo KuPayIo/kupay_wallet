@@ -27,7 +27,7 @@ export class BindPhone extends Widget {
         const phone = props.phone ? props.phone : '';
         this.props = {
             ...props,
-            oldCode: 86,
+            oldCode: '86',
             codeList: ['86','886'],
             isShowNewCode: false,
             countdown: 0,
@@ -53,7 +53,7 @@ export class BindPhone extends Widget {
         }
         const pullMod = await getPullMod();
         await pullMod.sendCode(this.props.phone, this.props.oldCode,this.props.verify);
-        notify(event.node,'ev-getCode',{ value:this.props.phone });
+        notify(event.node,'ev-getCode',{ value:this.props.phone,areaCode:this.props.oldCode });
         this.props.countdown = this.props.limitTime;
         this.paint();
     }
@@ -69,7 +69,7 @@ export class BindPhone extends Widget {
      */
     public chooseNewCode(ind:number) {
         this.props.isShowNewCode = false;
-        this.props.oldCode = Number(this.props.codeList[ind]);
+        this.props.oldCode = this.props.codeList[ind];
         this.paint();
     }
 

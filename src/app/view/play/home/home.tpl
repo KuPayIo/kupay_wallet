@@ -4,7 +4,6 @@
     </div>
     <app-components1-offlineTip-offlineTip></app-components1-offlineTip-offlineTip>
     <div w-class="body">
-        <app-components1-topRefresh-topRefresh  ev-before-load="beforeLoad" ev-loaded="loaded">{"top":"200px","loaded":{{it.loaded}}}</app-components1-topRefresh-topRefresh>
         <widget w-tag="app-components1-card-card" on-tap="activityClick(0)">{title:{{it.activityList[0].title}},img:{{it.activityList[0].img}},desc:{{it.activityList[0].desc}},isFirst:true }</widget>
         <div w-class="hot-games">
 

@@ -9,6 +9,7 @@ import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
+import { getModulConfig } from '../modulConfig';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { getCipherToolsMod, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
@@ -1110,6 +1111,7 @@ export const getUserInfo = () => {
     const nickName = userInfo.nickName;
     const phoneNumber = userInfo.phoneNumber;
     const isRealUser = userInfo.isRealUser;
+    const areaCode = userInfo.areaCode;
     let avatar = userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
@@ -1119,6 +1121,7 @@ export const getUserInfo = () => {
         nickName,
         avatar,
         phoneNumber,
+        areaCode,
         isRealUser
     };
 };
@@ -1240,5 +1243,16 @@ export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callb
 export const closeAllPage = () => {
     for (let i = backList.length;i > 1;i--) {
         backCall();
+    }
+};
+
+// 货币判断
+export const currencyType = (str:string) => {
+    if (str === 'ST') {
+        return getModulConfig('ST_SHOW');
+    } else if (str === 'KT') {
+        return getModulConfig('KT_SHOW');
+    } else {
+        return str;
     }
 };

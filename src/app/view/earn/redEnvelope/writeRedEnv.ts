@@ -10,8 +10,8 @@ import { getModulConfig } from '../../../modulConfig';
 import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
+import { popNewLoading, popNewMessage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
-import { popNewMessage, popNewLoading } from '../../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

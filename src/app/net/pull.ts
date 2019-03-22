@@ -467,8 +467,7 @@ export const setUserInfo = async () => {
 export const getUserInfoFromServer = async (uids: [number]) => {
     const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
 
-    try {
-        const res = await requestAsync(msg);
+    return requestAsync(msg).then(res => {
         const userInfoStr = unicodeArray2Str(res.value[0]);
         if (userInfoStr) {
             const localUserInfo = getStore('user/info');
@@ -482,13 +481,8 @@ export const getUserInfoFromServer = async (uids: [number]) => {
             console.log('userInfo ==== ',userInfo);
             setStore('user/info',userInfo);
         } 
+    });
         
-    } catch (err) {
-        console.log(err);
-        showError(err && (err.result || err.type));
-
-        return;
-    }
 };
 
 /**
@@ -634,7 +628,7 @@ export const getMiningRank = async (num: number) => {
 /**
  * 验证手机号是否被注册
  */
-export const verifyPhone = async(phone:number) => {
+export const verifyPhone = async(phone:string) => {
     const msg = { type: 'wallet/user@check_phone', param: { phone } };
     try {
         return await requestAsync(msg); 
@@ -648,7 +642,7 @@ export const verifyPhone = async(phone:number) => {
 /**
  * 发送验证码
  */
-export const sendCode = async (phone: number, num: number,verify:boolean = true) => {
+export const sendCode = async (phone: string, num: string,verify:boolean = true) => {
     if (verify) {
         const v = await verifyPhone(phone);
         if (!v) {
@@ -668,11 +662,14 @@ export const sendCode = async (phone: number, num: number,verify:boolean = true)
 /**
  * 注册手机
  */
-export const regPhone = async (phone: number, code: string) => {
+export const regPhone = async (phone: string, num:string, code: string) => {
     const bphone = getUserInfo().phoneNumber;
+    const areaCode = getUserInfo().areaCode;
     // tslint:disable-next-line:variable-name
     const old_phone =  bphone ? bphone :'';
-    const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code } };
+    // tslint:disable-next-line:variable-name
+    const  old_num = areaCode ? areaCode : '';
+    const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code,num,old_num } };
     
     try {
         return await requestAsync(msg);
@@ -686,7 +683,7 @@ export const regPhone = async (phone: number, code: string) => {
 /**
  * 验证旧手机
  */
-export const checkPhoneCode = async (phone: number, code: string,cmd?:string) => {
+export const checkPhoneCode = async (phone: string, code: string,cmd?:string) => {
     const param:any = { phone, code };
     if (cmd) {
         param.cmd = cmd;
@@ -699,6 +696,35 @@ export const checkPhoneCode = async (phone: number, code: string,cmd?:string) =>
 
         return;
     }
+};
+
+/**
+ * 解绑手机
+ */
+export const unbindPhone = async (phone: string, code: string,num:string) => {
+    const param:any = { phone, code,num };
+    const msg = { type: 'wallet/user@unset_phone', param };
+    try {
+        return await requestAsync(msg);
+    } catch (err) {
+        showError(err && (err.result || err.type));
+
+        return;
+    }
+};
+
+/**
+ * 获取绑定的手机号
+ */
+export const getBindPhone = async () => {
+    const msg = { type: 'wallet/user@get_phone',param: {} };
+
+    return  requestAsync(msg).then(res => {
+        const userInfo  = getStore('user/info');
+        userInfo.phoneNumber =  res.phone;
+        userInfo.areaCode = res.num;
+        setStore('user/info',userInfo);
+    });
 };
 
 /**
@@ -1139,11 +1165,8 @@ export const getRealUser = async () => {
         type: 'wallet/user@get_real_user',
         param: {}
     };
-    
-    try {
-        const res = await requestAsync(msg);
-        const conUser = getStore('user/id');
-        if (!conUser) return;
+
+    requestAsync(msg).then(res => {
         const userInfo  = getStore('user/info');
         const isRealUser = res.value !== 'false';
         
@@ -1151,12 +1174,8 @@ export const getRealUser = async () => {
             userInfo.isRealUser =  isRealUser;
             setStore('user/info',userInfo);
         }
-        
-    } catch (err) {
-        console.log('wallet/user@get_real_user--------',err);
-        showError(err && (err.result || err.type));
-
-    } 
+    });
+   
 };
 
 // 上传文件

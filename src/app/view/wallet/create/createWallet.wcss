@@ -145,3 +145,9 @@
 .login-btn{
     border-bottom: 1px solid rgba(136,136,136,1);
 }
+.user-agree{
+    font-size: 28px;
+    line-height: 33px;
+    text-align: left;
+    margin-left: 48px;
+}
