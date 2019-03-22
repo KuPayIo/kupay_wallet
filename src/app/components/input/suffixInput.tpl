@@ -1,6 +1,6 @@
 <div w-class="pi-input-box input-focused-{{it1.focused}}" class="pi-input">
     <input 
-        w-class="pi-input__inner" 
+        w-class="pi-input__inner {{it.isCenter?'pi-input__inner1':''}}" 
         class="pi-input"
         style="{{it.style}}"
         type="{{it.closeEye ? it.itype : 'text'}}" 
