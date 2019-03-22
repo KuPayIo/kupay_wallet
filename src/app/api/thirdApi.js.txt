@@ -2,9 +2,10 @@
 console.log("注入 thirdApi.js success");
 
 // 创建授权弹框
-
 window.pi_jsApi = {};
-window.piFlags = {};
+window.pi_flags = {
+    imgUrlPre:"http://192.168.31.10"
+};
 
 //--------标签样式----------------------------------------------------------------------------------------------------------------------------
 
@@ -361,7 +362,7 @@ window.onload = createStyleTag;
 
 
 //创建授权弹窗标签
-function createElementTag() {
+function createAuthorizeElementTag() {
     var htmlText = `
         <div class="pi-update-box animated bounceInUp">
             <img src="./rocket.png" class="pi-update-rocket" />
@@ -474,149 +475,11 @@ function closePop() {
 
 
 
-
-
-//--------pi_RPC_Method----------------------------------------------------------------------------------------------------------------------------
-
-window.pi_RPC_Method = (function () {
-    var rpcID = -1;
-    var rpcIDMap = {};
-
-    /**
-     * 往指定名字的WebView调用指定模块的导出方法
-     * data: 指定对方WebView执行的模块和导出方法
-     * callback：返回结果的回调函数
-     * 注：RPC都是一来一回的结构，没有注册一次可以调用多次的结构！
-     */
-    var rpcCall = function (moduleName, methodName, param, callback) {
-        var RPC_CALL_START = "$WEBVIEW_RPC_CALL: ";
-        var RPC_CALLBACK_PARAM = "$WEBVIEW_RPC_FUNCTION_PARAM: ";
-
-        var funcs = [callback];
-
-        var id = ++rpcID;
-        rpcIDMap[id] = funcs;
-
-        var sign = {
-            moduleName: moduleName, // 模块名
-            methodName: methodName, // 模块的导出方法名
-            params: [param, RPC_CALLBACK_PARAM + 0], // 参数组成的数组，这里参数的回调函数全部转成Callback ID
-            rpcID: id // 可选：调用rpc前注册到Map的RPC ID
-        };
-
-        var data = RPC_CALL_START + JSON.stringify(sign);
-
-        nativeCall("WebViewManager", "postWebViewMessage", 0, [
-            "default",
-            data
-        ]);
-    };
-
-    var webViewManager = undefined;
-    var webViewManagerCallWaits = [];
-
-    var nativeCall = function (className, methodName, listenerID, args) {
-        args = args || [];
-
-        if (!webViewManager && methodName !== "init") {
-            webViewManagerCallWaits.push([
-                className,
-                methodName,
-                listenerID,
-                args
-            ]);
-            return;
-        }
-
-        if (navigator.userAgent.indexOf("YINENG_ANDROID") >= 0) {
-            window.JSBridge.postMessage(
-                className,
-                methodName,
-                webViewManager || 0,
-                listenerID,
-                JSON.stringify(args)
-            );
-        } else if (navigator.userAgent.indexOf("YINENG_IOS") >= 0) {
-            window.webkit.messageHandlers.Native.postMessage([
-                className,
-                methodName,
-                webViewManager || 0,
-                listenerID,
-                ...args
-            ]);
-        }
-    };
-
-    window.handle_native_throwerror = function (className, methodName, message) {
-        alert(
-            "handle_Native_ThrowError, className = " +
-            className +
-            ", methodName = " +
-            methodName +
-            ", message = " +
-            message
-        );
-    };
-
-    window.handle_native_message = function (cbID, code, ...args) {
-        if (cbID === 0) return;
-
-        var cb = callIDMap[cbID];
-        if (cb) {
-            cb.apply(undefined, args);
-            delete callIDMap[cbID];
-        }
-    };
-
-    window["onWebViewPostMessage"] = function (fromWebView, message) {
-        var RPC_REPLY_START = "$WEBVIEW_RPC_REPLY: ";
-        // 收到对方的rpc回应，处理
-        if (message.startsWith(RPC_REPLY_START)) {
-            message = message.slice(RPC_REPLY_START.length);
-            var data = JSON.parse(message);
-            return handleRpcReply(data);
-        }
-    };
-
-    var handleRpcReply = function (sign) {
-        var funcs = rpcIDMap[sign.rpcID];
-        var f = funcs && funcs[sign.callbackID];
-        if (f) {
-            f.apply(undefined, sign.args);
-        }
-
-        delete rpcIDMap[rpcID];
-    };
-
-    var callIDMax = 0;
-    var callIDMap = {};
-
-    var callID = ++callIDMax;
-    callIDMap[callID] = function (id) {
-        webViewManager = id;
-
-        for (var i = 0; i < webViewManagerCallWaits.length; ++i) {
-            (function (w) {
-                setTimeout(() => {
-                    nativeCall(w[0], w[1], w[2], w[3]);
-                }, 0);
-            })(webViewManagerCallWaits[i]);
-        }
-
-        webViewManagerCallWaits.length = 0;
-    };
-
-    nativeCall("WebViewManager", "init", callID);
-    return rpcCall;
-})();
-
-
-
 //----------对外接口--------------------------------------------------------------------------------------------------------------------------------
 
 //获取openID
 window.pi_jsApi.authorize = function (payload, callBack) {
-    createElementTag();
+    createAuthorizeElementTag();
     var $items = document.querySelector(".pi-update-items");
     $items.innerHTML = "";
     if (payload.avatar) {
