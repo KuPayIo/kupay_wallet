@@ -90,7 +90,7 @@ export const initPush = () => {
 为了您的资产安全请输入手机号`,
                     btn:`验证手机`
                 },() => {
-                    popNew('app-view-mine-setting-phone',{});
+                    popNew('app-view-mine-setting-phone',{ jump:true });
                 });
             },2000);
             

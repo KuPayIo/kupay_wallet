@@ -27,6 +27,7 @@ export class PhoneImport extends Widget {
     public setProps(props:any,oldProps:any) {
         this.props = {
             ...props,
+            areaCode:'',
             phone:'',
             code:[],
             isSuccess:true
@@ -65,7 +66,7 @@ export class PhoneImport extends Widget {
 
             return;
         }
-        const itype = await getRandom(secretHash,undefined,this.props.phone,this.props.code.join(''));
+        const itype = await getRandom(secretHash,undefined,this.props.phone,this.props.code.join(''),this.props.areaCode);
         console.log('getRandom itype = ',itype);
         close.callback(close.widget);
         if (itype === -301) {
@@ -102,7 +103,8 @@ export class PhoneImport extends Widget {
      * 手机号改变
      */
     public phoneChange(e: any) {
-        this.props.phone = e.value;  
+        this.props.phone = e.value; 
+        this.props.areaCode = e.areaCode; 
     }
 
     /**
