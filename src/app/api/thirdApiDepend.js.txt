@@ -1,0 +1,397 @@
+// PI_BEGIN
+console.log("注入 thirdApiDepend.js success");
+
+window.pi_tools = {};
+window.pi_jsApi = {
+    
+};
+
+
+//--------pi_RPC_Method----------------------------------------------------------------------------------------------------------------------------
+/**
+ * 第三方接口依赖
+ * 主要通信接口和通用界面接口
+ */
+window.pi_RPC_Method = (function () {
+    var rpcID = -1;
+    var rpcIDMap = {};
+
+    /**
+     * 往指定名字的WebView调用指定模块的导出方法
+     * data: 指定对方WebView执行的模块和导出方法
+     * callback：返回结果的回调函数
+     * 注：RPC都是一来一回的结构，没有注册一次可以调用多次的结构！
+     */
+    var rpcCall = function (moduleName, methodName, param, callback) {
+        var RPC_CALL_START = "$WEBVIEW_RPC_CALL: ";
+        var RPC_CALLBACK_PARAM = "$WEBVIEW_RPC_FUNCTION_PARAM: ";
+
+        var funcs = [callback];
+
+        var id = ++rpcID;
+        rpcIDMap[id] = funcs;
+
+        var sign = {
+            moduleName: moduleName, // 模块名
+            methodName: methodName, // 模块的导出方法名
+            params: [param, RPC_CALLBACK_PARAM + 0], // 参数组成的数组，这里参数的回调函数全部转成Callback ID
+            rpcID: id // 可选：调用rpc前注册到Map的RPC ID
+        };
+
+        var data = RPC_CALL_START + JSON.stringify(sign);
+
+        nativeCall("WebViewManager", "postWebViewMessage", 0, [
+            "default",
+            data
+        ]);
+    };
+
+    var webViewManager = undefined;
+    var webViewManagerCallWaits = [];
+
+    var nativeCall = function (className, methodName, listenerID, args) {
+        args = args || [];
+
+        if (!webViewManager && methodName !== "init") {
+            webViewManagerCallWaits.push([
+                className,
+                methodName,
+                listenerID,
+                args
+            ]);
+            return;
+        }
+
+        if (navigator.userAgent.indexOf("YINENG_ANDROID") >= 0) {
+            window.JSBridge.postMessage(
+                className,
+                methodName,
+                webViewManager || 0,
+                listenerID,
+                JSON.stringify(args)
+            );
+        } else if (navigator.userAgent.indexOf("YINENG_IOS") >= 0) {
+            window.webkit.messageHandlers.Native.postMessage([
+                className,
+                methodName,
+                webViewManager || 0,
+                listenerID,
+                ...args
+            ]);
+        }
+    };
+
+    window.handle_native_throwerror = function (className, methodName, message) {
+        alert(
+            "handle_Native_ThrowError, className = " +
+            className +
+            ", methodName = " +
+            methodName +
+            ", message = " +
+            message
+        );
+    };
+
+    window.handle_native_message = function (cbID, code, ...args) {
+        if (cbID === 0) return;
+
+        var cb = callIDMap[cbID];
+        if (cb) {
+            cb.apply(undefined, args);
+            delete callIDMap[cbID];
+        }
+    };
+
+    window["onWebViewPostMessage"] = function (fromWebView, message) {
+        var RPC_REPLY_START = "$WEBVIEW_RPC_REPLY: ";
+        // 收到对方的rpc回应，处理
+        if (message.startsWith(RPC_REPLY_START)) {
+            message = message.slice(RPC_REPLY_START.length);
+            var data = JSON.parse(message);
+            return handleRpcReply(data);
+        }
+    };
+
+    var handleRpcReply = function (sign) {
+        var funcs = rpcIDMap[sign.rpcID];
+        var f = funcs && funcs[sign.callbackID];
+        if (f) {
+            f.apply(undefined, sign.args);
+        }
+
+        delete rpcIDMap[rpcID];
+    };
+
+    var callIDMax = 0;
+    var callIDMap = {};
+
+    var callID = ++callIDMax;
+    callIDMap[callID] = function (id) {
+        webViewManager = id;
+
+        for (var i = 0; i < webViewManagerCallWaits.length; ++i) {
+            (function (w) {
+                setTimeout(() => {
+                    nativeCall(w[0], w[1], w[2], w[3]);
+                }, 0);
+            })(webViewManagerCallWaits[i]);
+        }
+
+        webViewManagerCallWaits.length = 0;
+    };
+
+    nativeCall("WebViewManager", "init", callID);
+    return rpcCall;
+})();
+
+
+//--------pi_RPC_Method----------------------------------------------------------------------------------------------------------------------------
+
+
+/**
+ * 自适应
+ */
+pi_tools.browserAdaptive =  function() {
+    var cfg = {
+        width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+    };
+    var clientWidth = document.documentElement.clientWidth;
+    var clientHeight = document.documentElement.clientHeight;
+    oldHeight = clientHeight;
+    rootWidth = cfg.width;
+    rootHeight = cfg.height;
+    let scaleW = clientWidth / rootWidth;
+    let scaleH = clientHeight / rootHeight;
+    if (cfg.wscale >= cfg.hscale) {
+        // 宽度比例变动
+        if (scaleW > scaleH * (cfg.wscale + 1)) {
+            // 大于规定的比例
+            rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+        } else {
+            rootWidth = (clientWidth / scaleH) | 0;
+        }
+        rootScale = scaleW = scaleH;
+    } else {
+        // 高度比例变动
+        if (scaleH > scaleW * (cfg.hscale + 1)) {
+            rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+        } else {
+            rootHeight = (clientHeight / scaleW) | 0;
+        }
+        rootScale = scaleH = scaleW;
+    }
+    rootX = (clientWidth - rootWidth) / 2;
+    rootY = (clientHeight - rootHeight) / 2;
+    var cssText = 'z-index:99999;position: fixed;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+    return cssText;
+};
+
+/**
+ * 悬浮框按钮样式
+ */
+pi_tools.createFloatButtonStyle = function(){
+  var cssText = `
+  .pi-float-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:40px;
+    height:40px;
+    background:rgba(0,0,0,0.2);
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,0.2);
+    position: fixed;
+    top: 100px;
+    right: 10px;
+  }
+  .pi-dot1{
+  width: 3.5px;
+  height: 3.5px;
+  background-color: #fff;
+  border-radius: 50%;
+  }
+  .pi-dot2{
+  width: 7.5px;
+  height: 7.5px;
+  background-color: #fff;
+  border-radius: 50%;
+  margin: 0 5px;
+  }
+  .pi-bottom-box{
+  background:#fff;
+  border-radius:20px 20px 0px 0px;
+  position: absolute;
+  bottom: -400px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 60px 30px;
+  transition: all .3s ease-in-out;
+  }
+  .pi-bottom-item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+  margin-top: 40px;
+  }
+  .pi-img-box{
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  }
+  .pi-text{
+  font-size:24px;
+  font-family:"PingFangSC-Regular";
+  font-weight:400;
+  color:rgba(136,136,136,1);
+  line-height:33px;
+  margin-top: 10px;
+  }
+  `;
+  var pi_root_css = '#pi-root{'+pi_tools.browserAdaptive()+'}';
+  var style = document.createElement("style");
+  style.type = "text/css";
+  style.innerHTML = (pi_root_css+cssText);
+  document.getElementsByTagName("head")[0].appendChild(style);
+}
+
+/**
+ * 悬浮框按钮初始化
+ */
+pi_tools.floatButtonInit = function (){
+    var buttons = [{
+      img:"wx.png",
+      text:"邀请好友",
+      idName:"pi-invite",
+      show:true,
+      clickCb:function(){
+        console.log("click 邀请好友");
+        pi_RPC_Method(pi_config.thirdBase, "inviteFriends", pi_config.gameName, function (error, result) {
+            console.log('inviteFriends call success');
+        });
+      }
+    },{
+      img:"game_customer_service.png",
+      text:"游戏客服",
+      idName:"pi-service",
+      show:true,
+      clickCb:function(){
+        console.log("click 游戏客服");
+      }
+    },{
+      img:"official_group_chat.png",
+      text:"官方群聊",
+      idName:"pi-official-chat",
+      show:true,
+      clickCb:function(){
+        console.log("click 官方群聊");
+      }
+    },{
+      img:"recharg.png",
+      text:"去充值",
+      idName:"pi-recharg",
+      show:true,
+      clickCb:function(){
+        console.log("click 去充值");
+        pi_RPC_Method(pi_config.thirdBase, "gotoRecharge", pi_config.gameName, function (error, result) {
+            console.log('inviteFriends call success');
+        });
+      }
+    },{
+      img:"free_secret_close.png",
+      text:"免密支付",
+      idName:"pi-free-secret",
+      show:true,
+      clickCb:function(){
+        console.log("click 免密支付");
+      }
+    },{
+      img:"close_voice.png",
+      text:"关闭声音",
+      idName:"pi-close-voice",
+      show:true,
+      clickCb:function(){
+        console.log("click 关闭声音");
+      }
+    },{
+      img:"min_window.png",
+      text:"最小化",
+      idName:"pi-min-window",
+      show:true,
+      clickCb:function(){
+        console.log("click 最小化");
+        pi_RPC_Method(pi_config.thirdBase, "minWebview", pi_config.gameName, function (error, result) {
+            console.log('minWebview call success');
+        });
+      }
+    },{
+      img:"exit_game.png",
+      text:"退出游戏",
+      idName:"pi-exit-game",
+      show:true,
+      clickCb:function(){
+        console.log("click 退出游戏");
+        pi_RPC_Method(pi_config.thirdBase, "closeWebview", pi_config.gameName, function (error, result) {
+            console.log('closeWebview call success');
+        });
+      }
+  }];
+  var $floatButton = document.createElement("div");
+  $floatButton.setAttribute("class","pi-float-button");
+  $floatButton.innerHTML = `
+  <span class="pi-dot1"></span>
+  <span class="pi-dot2"></span>
+  <span class="pi-dot1"></span>
+  `;
+  $floatButton.addEventListener("click",function(){
+      var $bottomBox = document.createElement("div");
+      $bottomBox.setAttribute("class","pi-bottom-box");
+      $bottomBox.addEventListener("click",function(e){
+        e.stopPropagation();
+        e.preventDefault();
+      });
+      buttons.forEach(function(item){
+        if(!item.show) return;
+        var $bottomItem = document.createElement("div");
+        $bottomItem.setAttribute("class","pi-bottom-item");
+        $bottomItem.setAttribute("id",item.idName);
+        $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${item.img}"/></div>
+            <div class="pi-text">${item.text}</div>`;
+        $bottomItem.addEventListener("click",function(){
+            item.clickCb();
+            pi_tools.closePopBox();
+        });
+
+        $bottomBox.appendChild($bottomItem);
+      });
+
+      var $root = document.createElement("div");
+      $root.setAttribute("id","pi-root");
+      $root.addEventListener("click",function(){
+        document.querySelector(".pi-bottom-box").style.bottom = "-400px";
+        setTimeout(function(){
+          document.querySelector("body").removeChild(document.querySelector("#pi-root"));
+        },300);
+      });
+      $root.appendChild($bottomBox);
+      document.querySelector("body").appendChild($root);
+      requestAnimationFrame(function(){
+        $bottomBox.style.bottom = "0px";
+      });
+
+  });
+  document.querySelector("body").appendChild($floatButton);
+}
+
+/**
+ * 关闭弹框
+ */
+pi_tools.closePopBox = function(){
+    document.querySelector("body").removeChild(document.querySelector("#pi-root"));
+}
+window.addEventListener("load",pi_tools.createFloatButtonStyle);
+window.addEventListener("load",pi_tools.floatButtonInit);
