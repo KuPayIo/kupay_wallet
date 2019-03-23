@@ -102,3 +102,9 @@
 .btn{
     margin: 0 30px;
 }
+.user-agree{
+    font-size: 28px;
+    line-height: 33px;
+    text-align: left;
+    margin-left: 48px;
+}

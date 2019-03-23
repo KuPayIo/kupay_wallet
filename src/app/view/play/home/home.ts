@@ -62,7 +62,7 @@ export class PlayHome extends Widget {
         super.setProps(this.props);
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
+            this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image/acc.png';
             this.props.refresh = false;
         }
         // http://fishing.rinkeby.cchaingames.com/

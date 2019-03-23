@@ -5,7 +5,9 @@
             <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
             {{if it.hasWallet}}
             <div w-class="addFriend">
-                <img src="../../../res/image/medal-white.png" w-class="scanImg" on-tap="showMyMedal"/>
+                <div w-class="scanImg1" on-tap="showMyMedal">
+                    <img src="{{it.medalest}}" w-class="scanImg2"/>
+                </div>
                 <img src="../../../res/image/01.png" w-class="scanImg" on-tap="scanQrcode"/>
                 <img src="../../../res/image/19.png" w-class="scanImg" on-tap="showMyQrcode"/>
             </div>
@@ -14,6 +16,7 @@
             </div>
             
             <div w-class="address" on-tap="copyAddr">
+                <span>{{it.walletName}}ID：</span>
                 <span w-class="addrNum">{{it.address}}</span>
                 <img src="../../../res/image/copy_write.png" width="40px" w-class="copy"/>
             </div>
