@@ -75,10 +75,11 @@ export class ExchangeDetail extends Widget {
 
         const redBagList = value[0];
         for (let i = 0;i < redBagList.length;i++) {
-            const user = await getOneUserInfo([redBagList[i].cuid]);
-            this.props.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
+            const person = await getOneUserInfo([redBagList[i].cuid]);
+            if (!person) break;
+            this.props.redBagList[i].userName = person.nickName ? person.nickName :this.language.defaultUserName;
             // tslint:disable-next-line:max-line-length
-            this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png';
+            this.props.redBagList[i].avatar = person.avatar ? `${uploadFileUrlPrefix}${person.avatar}` :'../../res/image/default_avater_big.png';
             if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.props.greatAmount < redBagList[i].amount) {
                 this.props.greatAmount = redBagList.amount;
                 this.props.greatUser = i;

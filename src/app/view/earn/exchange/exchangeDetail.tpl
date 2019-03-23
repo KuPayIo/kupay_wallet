@@ -31,10 +31,12 @@
                     <pi-ui-lang>{"zh_Hans":"共","zh_Hant":"共","en":""}</pi-ui-lang>
                     {{it.totalAmount+it.ctypeShow}}
                 </div>
+
+                {{% ====================领取记录===================}}
                 {{for ind,val of it.redBagList}}
                 {{: userName = {"zh_Hans":val.userName,"zh_Hant":val.userName,"en":""} }}
                 {{: greatUser = {"zh_Hans":"手气最佳","zh_Hant":"手氣最佳","en":""} }}
-                	
+
                 <app-components-fourParaImgItem-fourParaImgItem>{name:{{userName}},data:{{val.amount+" "+it.ctypeShow}},time:{{val.timeShow}},img:{{val.avatar}},describe:{{it.greatUser==ind?greatUser:""}} }</app-components-fourParaImgItem-fourParaImgItem>
                 {{end}}
             {{end}}
