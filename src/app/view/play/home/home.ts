@@ -2,17 +2,16 @@
  * play home 
  */
  // ================================ 导入
-import { CRYPTOFISHING_GROUP, FOMOSPORTS_GROUP } from '../../../../chat/server/data/constant';
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
-import { getEthApiBaseUrl } from '../../../core/config';
+import { getPi3Config } from '../../../api/pi3Config';
 import { register } from '../../../store/memstore';
-import { piRequire } from '../../../utils/commonjsTools';
-import { getCurrentEthAddr, getUserInfo, hasWallet, popNew3, popNewMessage } from '../../../utils/tools';
+import { getUserInfo, hasWallet, popNew3, popNewMessage } from '../../../utils/tools';
+import { gameList } from './gameConfig';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -22,9 +21,10 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
     
     public ok: () => void;
-    public defaultInjectPromise:Promise<string>;
+    public configPromise:Promise<string>;
     public web3Promise: Promise<string>;
     public thirdApiPromise:Promise<string>;
+    public thirdApiDependPromise:Promise<string>;
     
     constructor() {
         super();
@@ -53,6 +53,19 @@ export class PlayHome extends Widget {
                 //
             });
         });
+
+        this.thirdApiDependPromise = new Promise((resolve) => {
+            const path = 'app/api/thirdApiDepend.js.txt';
+            loadDir([path], undefined, undefined, undefined, fileMap => {
+                const arr = new Uint8Array(fileMap[path]);
+                const content = new TextDecoder().decode(arr);
+                resolve(content);
+            }, () => {
+                //
+            }, () => {
+                //
+            });
+        });
     }
     
     public setProps(props:Json) {
@@ -67,23 +80,8 @@ export class PlayHome extends Widget {
         }
         // http://fishing.rinkeby.cchaingames.com/
         // http://47.244.59.13/web-rinkeby/index.html
-        this.props.gameList = [
-            {
-                title:{ zh_Hans:'fomosports',zh_Hant:'fomosports',en:'' },
-                desc:{ zh_Hans:'要买要快，不要只是看',zh_Hant:'要買要快，不要只是看',en:'' },
-                img:['app/res/image1/fomosports.jpg','app/res/image1/fomosports1.jpg'],
-                url:'https://test.fomosports.me/',
-                gid:FOMOSPORTS_GROUP
-            },
-            {
-                title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
-                desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
-                img:['app/res/image1/CryptoFishing.jpg','app/res/image1/CryptoFishing1.jpg'],
-                url:'http://192.168.31.95/dst/boot/yineng/yineng.html?debug',
-                gid:CRYPTOFISHING_GROUP
-            }
-           
-        ];
+        // http://192.168.31.95/dst/boot/yineng/yineng.html?debug
+        this.props.gameList = gameList;
         this.props.activityList = [
             {
                 title:{ zh_Hans:'LOL赛事竞猜',zh_Hant:'LOL賽事競猜',en:'' },
@@ -164,29 +162,24 @@ export class PlayHome extends Widget {
 
     public gameClick(num:number) {
         if (!hasWallet()) return;
-        if (!this.props.gameList[num].url) {
+        if (!gameList[num].url) {
             const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
             popNewMessage(tips[getLang()]);
         } else {
-            const gameTitle = this.props.gameList[num].title.zh_Hans;
-            const gameUrl =   this.props.gameList[num].url;
-            const defaultInjectText = `
-            window.piWeb3EthDefaultAccount = '${getCurrentEthAddr()}';
-            window.piWeb3ProviderNetWork = '${getEthApiBaseUrl()}';
-            window.piGameName = '${gameTitle}';
-            `;
-            this.defaultInjectPromise = Promise.resolve(defaultInjectText);
 
-            piRequire(['chat/client/app/view/gameChatApi']).then(mods => {
-                const GChatPromise = mods[0].gameChatPromise(this.props.gameList[num].gid);
-                // tslint:disable-next-line:max-line-length
-                const allPromise = Promise.all([this.thirdApiPromise]);
-                allPromise.then(([thirdApiContent]) => {
-                    const content =  thirdApiContent;
-                    WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
-                });
-            });
+            const gameTitle = gameList[num].title.zh_Hans;
+            const gameUrl =   gameList[num].url;
+            const pi3Config:any = getPi3Config();
+            pi3Config.gameName = gameTitle;
             
+            const pi3ConfigStr = `window.pi_config = ${JSON.stringify(pi3Config)}`;
+            this.configPromise = Promise.resolve(pi3ConfigStr);
+
+            const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
+            allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
+                const content =  configContent + thirdApiDependContent + thirdApiContent;
+                WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+            });
         }
     }
 

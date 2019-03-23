@@ -1,19 +1,15 @@
 // PI_BEGIN
 console.log("注入 thirdApi.js success");
 
-// 创建授权弹框
-
-window.pi_jsApi = {};
-window.piFlags = {};
 
 //--------标签样式----------------------------------------------------------------------------------------------------------------------------
 
-function createStyleTag() {
+/**
+ * 授权弹框样式
+ */
+pi_tools.createAuthorizeStyleTag = function() {
     var cssText = `
     /* 公共 */
-    .pi-root {
-    display:none;
-    }
     .pi-mask {
     position: absolute;
     top: 0;
@@ -64,7 +60,7 @@ function createStyleTag() {
 
     .pi-update-box {
     background-color: #fff;
-    background-image: url(./update_bg.png);
+    background-image: url(${pi_config.imgUrlPre}update_bg.png);
     background-repeat: no-repeat;
     background-size: 100% 235px;
     width: 630px;
@@ -300,60 +296,16 @@ function createStyleTag() {
     animation-fill-mode: both;
     }`;
 
-    let pi_root_css = '.pi-root{'+browserAdaptive()+'}';
+    let pi_root_css = '#pi-root{'+pi_tools.browserAdaptive()+'}';
     var style = document.createElement("style");
     style.type = "text/css";
     style.innerHTML = (pi_root_css+cssText);
     document.getElementsByTagName("head")[0].appendChild(style);
-
-    
-    var $root = document.createElement("div");
-    $root.setAttribute("class", "pi-root");
-
-    var $body = document.querySelector("body");
-    $body.appendChild($root);
-
-    $root.addEventListener('click',function(){
-        console.log(111);
-    });
 }
 
-function browserAdaptive() {
-    var cfg = {
-        width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
-    };
-    var clientWidth = document.documentElement.clientWidth;
-    var clientHeight = document.documentElement.clientHeight;
-    oldHeight = clientHeight;
-    rootWidth = cfg.width;
-    rootHeight = cfg.height;
-    let scaleW = clientWidth / rootWidth;
-    let scaleH = clientHeight / rootHeight;
-    if (cfg.wscale >= cfg.hscale) {
-        // 宽度比例变动
-        if (scaleW > scaleH * (cfg.wscale + 1)) {
-            // 大于规定的比例
-            rootWidth = rootWidth * (cfg.wscale + 1) | 0;
-        } else {
-            rootWidth = (clientWidth / scaleH) | 0;
-        }
-        rootScale = scaleW = scaleH;
-    } else {
-        // 高度比例变动
-        if (scaleH > scaleW * (cfg.hscale + 1)) {
-            rootHeight = rootHeight * (cfg.hscale + 1) | 0;
-        } else {
-            rootHeight = (clientHeight / scaleW) | 0;
-        }
-        rootScale = scaleH = scaleW;
-    }
-    rootX = (clientWidth - rootWidth) / 2;
-    rootY = (clientHeight - rootHeight) / 2;
-    var cssText = 'z-index:99999;position: fixed;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
-    return cssText;
-};
+window.addEventListener("load",pi_tools.createAuthorizeStyleTag)
 
-window.onload = createStyleTag;
+
 
 
 
@@ -361,10 +313,10 @@ window.onload = createStyleTag;
 
 
 //创建授权弹窗标签
-function createElementTag() {
+pi_tools.createAuthorizeElementTag = function() {
     var htmlText = `
         <div class="pi-update-box animated bounceInUp">
-            <img src="./rocket.png" class="pi-update-rocket" />
+            <img src="${pi_config.imgUrlPre}rocket.png" class="pi-update-rocket" />
             <div class="pi-update-content">
                 <div class="pi-update-title">您将获取以下授权</span></div>
                 <div class="pi-update-items">
@@ -375,13 +327,16 @@ function createElementTag() {
                 <div class="pi-ok-btn">确定</div>
             </div>
         </div>`;
-    var $root = document.createElement("div");
-    $root.setAttribute("class", "pi-mask");
-    $root.innerHTML = htmlText;
+    var $mask = document.createElement("div");
+    $mask.setAttribute("class", "pi-mask");
+    $mask.innerHTML = htmlText;
 
-    var $body = document.querySelector(".pi-root");
+    var $root = document.createElement("div");
+    $root.setAttribute("id", "pi-root");
+    $root.appendChild($mask);
+
+    var $body = document.querySelector("body");
     $body.appendChild($root);
-    $body.style.display = 'flex';
 }
 
 //创建支付弹窗标签
@@ -465,158 +420,13 @@ function createLoadingElementTag(loadingStr) {
     $body.style.display = 'flex';
 }
 
-//关闭所有
-function closePop() {
-    var $body = document.querySelector(".pi-root");
-    $body.innerHTML = "";
-    $body.style.display = 'none';
-}
-
-
-
-
-
-//--------pi_RPC_Method----------------------------------------------------------------------------------------------------------------------------
-
-window.pi_RPC_Method = (function () {
-    var rpcID = -1;
-    var rpcIDMap = {};
-
-    /**
-     * 往指定名字的WebView调用指定模块的导出方法
-     * data: 指定对方WebView执行的模块和导出方法
-     * callback：返回结果的回调函数
-     * 注：RPC都是一来一回的结构，没有注册一次可以调用多次的结构！
-     */
-    var rpcCall = function (moduleName, methodName, param, callback) {
-        var RPC_CALL_START = "$WEBVIEW_RPC_CALL: ";
-        var RPC_CALLBACK_PARAM = "$WEBVIEW_RPC_FUNCTION_PARAM: ";
-
-        var funcs = [callback];
-
-        var id = ++rpcID;
-        rpcIDMap[id] = funcs;
-
-        var sign = {
-            moduleName: moduleName, // 模块名
-            methodName: methodName, // 模块的导出方法名
-            params: [param, RPC_CALLBACK_PARAM + 0], // 参数组成的数组，这里参数的回调函数全部转成Callback ID
-            rpcID: id // 可选：调用rpc前注册到Map的RPC ID
-        };
-
-        var data = RPC_CALL_START + JSON.stringify(sign);
-
-        nativeCall("WebViewManager", "postWebViewMessage", 0, [
-            "default",
-            data
-        ]);
-    };
-
-    var webViewManager = undefined;
-    var webViewManagerCallWaits = [];
-
-    var nativeCall = function (className, methodName, listenerID, args) {
-        args = args || [];
-
-        if (!webViewManager && methodName !== "init") {
-            webViewManagerCallWaits.push([
-                className,
-                methodName,
-                listenerID,
-                args
-            ]);
-            return;
-        }
-
-        if (navigator.userAgent.indexOf("YINENG_ANDROID") >= 0) {
-            window.JSBridge.postMessage(
-                className,
-                methodName,
-                webViewManager || 0,
-                listenerID,
-                JSON.stringify(args)
-            );
-        } else if (navigator.userAgent.indexOf("YINENG_IOS") >= 0) {
-            window.webkit.messageHandlers.Native.postMessage([
-                className,
-                methodName,
-                webViewManager || 0,
-                listenerID,
-                ...args
-            ]);
-        }
-    };
-
-    window.handle_native_throwerror = function (className, methodName, message) {
-        alert(
-            "handle_Native_ThrowError, className = " +
-            className +
-            ", methodName = " +
-            methodName +
-            ", message = " +
-            message
-        );
-    };
-
-    window.handle_native_message = function (cbID, code, ...args) {
-        if (cbID === 0) return;
-
-        var cb = callIDMap[cbID];
-        if (cb) {
-            cb.apply(undefined, args);
-            delete callIDMap[cbID];
-        }
-    };
-
-    window["onWebViewPostMessage"] = function (fromWebView, message) {
-        var RPC_REPLY_START = "$WEBVIEW_RPC_REPLY: ";
-        // 收到对方的rpc回应，处理
-        if (message.startsWith(RPC_REPLY_START)) {
-            message = message.slice(RPC_REPLY_START.length);
-            var data = JSON.parse(message);
-            return handleRpcReply(data);
-        }
-    };
-
-    var handleRpcReply = function (sign) {
-        var funcs = rpcIDMap[sign.rpcID];
-        var f = funcs && funcs[sign.callbackID];
-        if (f) {
-            f.apply(undefined, sign.args);
-        }
-
-        delete rpcIDMap[rpcID];
-    };
-
-    var callIDMax = 0;
-    var callIDMap = {};
-
-    var callID = ++callIDMax;
-    callIDMap[callID] = function (id) {
-        webViewManager = id;
-
-        for (var i = 0; i < webViewManagerCallWaits.length; ++i) {
-            (function (w) {
-                setTimeout(() => {
-                    nativeCall(w[0], w[1], w[2], w[3]);
-                }, 0);
-            })(webViewManagerCallWaits[i]);
-        }
-
-        webViewManagerCallWaits.length = 0;
-    };
-
-    nativeCall("WebViewManager", "init", callID);
-    return rpcCall;
-})();
-
 
 
 //----------对外接口--------------------------------------------------------------------------------------------------------------------------------
 
 //获取openID
-window.pi_jsApi.authorize = function (payload, callBack) {
-    createElementTag();
+pi_jsApi.authorize = function (payload, callBack) {
+    pi_tools.createAuthorizeElementTag();
     var $items = document.querySelector(".pi-update-items");
     $items.innerHTML = "";
     if (payload.avatar) {
@@ -642,13 +452,13 @@ window.pi_jsApi.authorize = function (payload, callBack) {
             console.log('getOpenId call success', result);
             callBack(error, result);
         });
-        closePop();
+        pi_tools.closePopBox();
 
     });
 
     $cancel.addEventListener("click", function () {
         callBack(new Error("user not allow authorize!!!"));
-        closePop();
+        pi_tools.closePopBox();
     });
 
 }
@@ -656,7 +466,7 @@ window.pi_jsApi.authorize = function (payload, callBack) {
 
 // 第三方支付
 // order:订单数据
-window.pi_jsApi.openPayment = function (order, callBack) {
+pi_jsApi.openPayment = function (order, callBack) {
     pi_RPC_Method("app/api/JSAPI", "openPayment", order, function (resCode, msg) {
         console.log('openPayment call success', resCode);
         console.log('openPayment call success', msg);
@@ -710,7 +520,7 @@ window.pi_jsApi.openPayment = function (order, callBack) {
 // appid:应用id
 // mchid:商户id
 // noPSW:设置免密支付状态  0:关闭，1:开启
-window.pi_jsApi.setNoPSW = function (appid, mchid, noPSW, callBack) {
+pi_jsApi.setNoPSW = function (appid, mchid, noPSW, callBack) {
     createSetNoPSWElementTag();
     var $ok = document.querySelector(".pi-ok-btn");
     var $cancel = document.querySelector(".pi-cancel-btn");

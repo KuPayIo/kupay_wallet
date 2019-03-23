@@ -469,18 +469,21 @@ export const getUserInfoFromServer = async (uids: [number]) => {
 
     return requestAsync(msg).then(res => {
         const userInfoStr = unicodeArray2Str(res.value[0]);
+        const localUserInfo = getStore('user/info');
+        console.log('localUserInfo ==== ',localUserInfo);
+        let userInfo = {
+            ...localUserInfo
+        };
         if (userInfoStr) {
-            const localUserInfo = getStore('user/info');
             const serverUserInfo = JSON.parse(userInfoStr);
             console.log('serverUserInfo ==== ',serverUserInfo);
-            console.log('localUserInfo ==== ',localUserInfo);
-            const userInfo = {
-                ...localUserInfo,
+            userInfo = {
+                ...userInfo,
                 ...serverUserInfo
             };
             console.log('userInfo ==== ',userInfo);
-            setStore('user/info',userInfo);
         } 
+        setStore('user/info',userInfo);
     });
         
 };
