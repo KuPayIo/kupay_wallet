@@ -1,5 +1,25 @@
+.new-page{
+    background-color: #fff;
+}
 .body{
-    padding: 30px 20px 20px;
+    padding: 0 30px 30px;
+}
+.create-tips{
+    margin-top: 65px;
+    margin-left: 18px;
+    font-size:36px;
+    font-family:"PingFangSC-Medium";
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    line-height:50px;
+    display: flex;
+    align-items: center;
+}
+.tip-divid{
+    margin-right: 12px;
+    width:10px;
+    height:34px;
+    background:rgba(252,220,60,1);
 }
 .top-box{
     border-radius: 12px;
@@ -20,21 +40,10 @@
 }
 .bottom-box{
     border-radius: 12px;
-    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
-    background-color: #fff;
-    padding: 93px 10px 35px;
-    margin-top: 110px;
+    margin-top: 65px;
     position: relative;
 }
 .avatar-container{
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    background-color: #fff;
-    position: absolute;
-    left: 50%;
-    top: 0;
-    transform: translate(-50%,-50%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -42,8 +51,9 @@
     overflow: hidden;
 }
 .avatar{
-    width: 100%;
-    height: 100%;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100%;
@@ -52,6 +62,8 @@
     width: 100%;
     height: 100%;
     position: relative;
+    display: flex;
+    justify-content: center;
 }
 .choose-img-mask{
     position: absolute;
@@ -118,4 +130,24 @@
 }
 .btn{
     margin: 0 30px;
+}
+.login-btns{
+    margin: 60px 50px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size:28px;
+    font-family:"PingFangSC-Regular";
+    font-weight:400;
+    color:rgba(136,136,136,1);
+    line-height:40px;
+}
+.login-btn{
+    border-bottom: 1px solid rgba(136,136,136,1);
+}
+.user-agree{
+    font-size: 28px;
+    line-height: 33px;
+    text-align: left;
+    margin-left: 48px;
 }

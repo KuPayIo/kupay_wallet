@@ -1,6 +1,0 @@
-{
-    "tpl":"./topBar2.tpl",
-    "css":"./topBar2.wcss",
-    "js":"./topBar2.ts",
-    "forelet":"./topBar.ts"
-}

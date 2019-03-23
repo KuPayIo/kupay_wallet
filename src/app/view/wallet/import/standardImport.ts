@@ -7,22 +7,22 @@ import { Widget } from '../../../../pi/widget/widget';
 import { isValidMnemonic } from '../../../core/genmnemonic';
 import { CreateWalletType } from '../../../logic/localWallet';
 import { lang } from '../../../utils/constants';
+import { popNew3, popNewMessage } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
 
 export class StandardImport extends Widget {
+    public cancel: () => void;
     public ok: () => void;
     public language:any;
-    public create() {
-        super.create();
-        this.init();
-    }
-    public init() {
+    public setProps(props:any,oldProps:any) {
         this.language = this.config.value[getLang()];
         this.props = {
+            ...props,
             mnemonic:'',
             psw:'',
             pswConfirm:''
         };
+        super.setProps(this.props,oldProps);
     }
     public inputChange(r:any) {
         const mnemonic = r.value;
@@ -30,12 +30,12 @@ export class StandardImport extends Widget {
     }
     public nextClick(e:any) {
         if (this.props.mnemonic.length <= 0) {
-            popNew('app-components1-message-message', { content: this.language.tips });
+            popNewMessage(this.language.tips);
 
             return;
         }
         if (!isValidMnemonic(lang,this.props.mnemonic)) {
-            popNew('app-components1-message-message', { content: this.language.invalidMnemonicTips });
+            popNewMessage(this.language.invalidMnemonicTips);
 
             return;
         }
@@ -44,6 +44,33 @@ export class StandardImport extends Widget {
             w.ok && w.ok();
         }
         // tslint:disable-next-line:max-line-length
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.StrandarImport,mnemonic:this.props.mnemonic });
+        popNew3('app-view-wallet-create-createWallet',{ itype:CreateWalletType.StrandarImport,mnemonic:this.props.mnemonic },() => {
+            this.ok && this.ok();
+        });
+    }
+
+    public backPrePage() {
+        this.cancel && this.cancel();
+    }
+
+    public whatIsMnemonicClick() {
+        popNew3('app-view-wallet-import-mnemonicDesc');
+    }
+
+    public imageImportClick() {
+        popNew3('app-view-wallet-import-imageImport',{},() => {
+            this.ok && this.ok();
+        });
+    }
+    public fragmentImportClick() {
+        popNew3('app-view-wallet-import-fragmentImport',{},() => {
+            this.ok && this.ok();
+        });
+    }
+
+    public phoneImportClick() {
+        popNew3('app-view-wallet-import-phoneImport',{},() => {
+            this.ok && this.ok();
+        });
     }
 }

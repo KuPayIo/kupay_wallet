@@ -1,6 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"设置","zh_Hant":"設置","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="content">
         <div style="margin: 30px 0;">
             <div w-class="mode">
@@ -13,7 +13,7 @@
                 {"zh_Hans":"退出并清除信息","zh_Hant":"退出並清除信息","en":""}] }}
 
                 {{for ind,val of it.itemList}}
-                <div on-tap="itemClick({{ind}})">
+                <div on-tap="itemClick({{ind}})" on-down="onShow">
                     <app-components-basicItem-basicItem>{name:{{itemTitle[ind]}},describe:{{val.list[val.selected]}} }</app-components-basicItem-basicItem>
                 </div>
                 {{end}}
@@ -27,10 +27,10 @@
 
             {{if it.wallet}}
             <div w-class="mode">
-                <div w-class="item" on-tap="logOut">
+                <div w-class="item" on-tap="logOut" on-down="onShow">
                     <span w-class="itemName"><pi-ui-lang>{{itemTitle[4]}}</pi-ui-lang></span>
                 </div>
-                <div w-class="item" on-tap="logOutDel" style="border-bottom: none;">
+                <div w-class="item" on-tap="logOutDel" style="border-bottom: none;" on-down="onShow">
                     <span w-class="itemName" style="color: #F5A264;"><pi-ui-lang>{{itemTitle[5]}}</pi-ui-lang></span>
                 </div>
             </div>

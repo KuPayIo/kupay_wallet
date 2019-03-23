@@ -3,59 +3,49 @@
  * @author henk<speoth@163.com>
  */
 
-// tslint:disable-next-line:no-any
-// tslint:disable-next-line:no-reserved-keywords
-declare const module;
-
-import { ExitApp } from '../../../pi/browser/exitApp';
-import { backCall, backList, popNew } from '../../../pi/ui/root';
-import { Forelet } from '../../../pi/widget/forelet';
+import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { openConnect } from '../../net/pull';
-import { initPush } from '../../net/push';
+import { authorize } from '../../api/JSAPI';
 import { LockScreen } from '../../store/interface';
-import { getStore, initStore, setStore } from '../../store/memstore';
+import { getAllAccount, getStore, setStore } from '../../store/memstore';
+import { piRequire } from '../../utils/commonjsTools';
 import { fetchDeviceId } from '../../utils/tools';
-import { getScreenModify } from '../../logic/native';
 
-// let client;
-// let rpc;
 // ============================== 导出
-export const forelet = new Forelet();
-export const WIDGET_NAME = module.id.replace(/\//g, '-');
-export const run = (cb): void => {
+declare var pi_modules;
+export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
-    // 设置开发环境
-    // eth代币精度初始化
     // 数据检查
+    const payload = {
+        appId:'101',
+        nickName:true,
+        avatar:true
+    };
+    authorize(payload,(err,result) => {
+        console.log('err  ===',err);
+        console.log('result  ===',result);
+    });
     checkUpdate();
-    // 初始化数据
-    initStore();
-    // 主动推送初始化
-    initPush();
-    preFetchFromNative();
-    openConnect();
-    // dataCenter.init();
+    // 打开首页面
     popNew('app-view-base-app');
-    console.timeEnd('home enter');
-    
-    // popNew('app-view-earn-activity-diggingStones-home');
-    // popNew('app-view-earn-activity-diggingStones-award');
-    // popNew('app-view-earn-activity-diggingStones-diggingRule');
+    if (!getStore('user/id')) {
+        if (getAllAccount().length > 0) {
+            popNew('app-view-base-entrance1');
+        } else {
+            popNew('app-view-base-entrance');
+        }
+    }
+    // 锁屏页面
     popNewPage();
-    // 后台切前台
-    backToFront();
-    // let count = 0;
-    // setTimeout(() => {
-    //     authorize({ nickName:true,avatar:true,appId:'123' } ,(err,result) => {
-    //         console.log('authorize',err);
-    //         console.log('authorize',result);
-    //     });
-    // },2000);
+    // 预先从底层获取一些数据
+    preFetchFromNative();
+    console.timeEnd('home enter');
+    // app event 注册
+    addAppEvent();
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();
-    }, 20);
+    }, 100);
 };
 
 /**
@@ -63,7 +53,7 @@ export const run = (cb): void => {
  */
 const popNewPage = () => {
     if (ifNeedUnlockScreen()) {
-        popNew('app-components1-lockScreenPage-lockScreenPage', {
+        popNew('app-components-lockScreenPage-lockScreenPage', {
             openApp: true
         });
     }
@@ -79,34 +69,69 @@ const preFetchFromNative = () => {
             setStore('setting/deviceId',hash256deviceId);
         });
     }
-    getScreenModify();
+
+    piRequire(['app/logic/native']).then(mods => {
+        mods[0].getScreenModify();
+        // 预先随机下载
+        mods[0].preLoadAd(undefined,() => {
+            mods[0].preLoadAd(undefined,() => {
+                mods[0].preLoadAd(undefined);
+            });
+        });
+    });
 };
 const checkUpdate = () => {
   // todo
 };
 
 /**
- * 后台切换到前台
- * onBackPressed
+ * 注册app event
  */
-const backToFront = () => {
-    (<any>window).handle_app_lifecycle_listener = (iType: string) => {
-        if (iType === 'onAppResumed' && ifNeedUnlockScreen()) {
-            popNew('app-components1-lockScreenPage-lockScreenPage', {
-                openApp: true
-            });
-        } else if (iType === 'onBackPressed') {
+const addAppEvent = () => {
+    piRequire(['pi/browser/app_comon_event','pi/browser/exitApp']).then(mods => {
+        const addAppResumed = mods[0].addAppResumed;
+        const addAppBackPressed = mods[0].addAppBackPressed;
+        // 注册appResumed
+        addAppResumed(() => {
+            console.log('addAppResumed callback called');
+            if (ifNeedUnlockScreen()) {
+                popNew('app-components-lockScreenPage-lockScreenPage', {
+                    openApp: true
+                });
+            }
+            setTimeout(() => {
+                const reconnect =  pi_modules.commonjs.exports.relativeGet('app/net/reconnect').exports;
+                if (reconnect && !reconnect.getAllIsLogin()) {
+                    reconnect.manualReconnect();
+                }
+            },100);  // 检查是否已经退出登录
+        });
+
+        let startTime = 0;
+        // 注册appBackPressed
+        addAppBackPressed(() => {
+            let doubleClick = false;
+            const now = new Date().getTime();
+            if (now - startTime <= 300) {
+                doubleClick = true;
+            }
+            startTime = now;
+            console.log('addActivityBackPressed callback called');
             if (backList.length === 1) {
+                if (!doubleClick) return;
+                const ExitApp = mods[1].ExitApp;
                 const exitApp = new ExitApp();
                 exitApp.init();
                 exitApp.ToHome({});
             } else {
+                const widget = lastBack();
+                const entranceName = 'app-view-base-entrance';
+                const entranceName1 = 'app-view-base-entrance1';
+                if (widget.name === entranceName || widget.name === entranceName1) return;
                 backCall();
             }
-      // (<any>window).onpopstate();
-      // widget.ok && widget.ok();
-        }
-    };
+        });
+    });
 };
 
 // ============================== 立即执行
@@ -123,13 +148,3 @@ const ifNeedUnlockScreen = () => {
 
     return lockScreenPsw && openLockScreen;
 };
-
-// const testTransfer3 = () => {
-//     const ethPayload = {
-//         fromAddr:'',
-//         toAddr:payload.params[0].to,
-//         pay:payload.params[0].value,
-//         currencyName:'ETH',
-//         data:payload.params[0].data
-//     };  
-// };

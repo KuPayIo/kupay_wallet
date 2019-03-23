@@ -1,13 +1,20 @@
 /**
  * 授权、支付等API
  */
-import { popNew } from '../../pi/ui/root';
-import { requestAsync } from '../net/pull';
-import { getStore } from '../store/memstore';
-import { getUserInfo } from '../utils/tools';
-import { VerifyIdentidy } from '../utils/walletTools';
-
+import { getServerCloudBalance, requestAsync } from '../net/pull';
+import { CloudCurrencyType } from '../store/interface';
+import { getCloudBalances } from '../store/memstore';
+import { getWalletToolsMod } from '../utils/commonjsTools';
+import { currencyType, formatBalance, getUserInfo } from '../utils/tools';
 declare var pi_modules:any;
+
+export enum resCode {
+    SUCCESS = undefined,   // 成功
+    INVALID_REQUEST = 101, // 参数缺失
+    PASSWORD_ERROR = 102,  // 密码错误
+    USER_CANCAL = 103,     // 用户取消
+    OTHER_ERROR = 203      // 其他错误
+}
 
 /**
  * 授权接口
@@ -37,28 +44,28 @@ export const authorize = (payload, callback) => {
  * @param okCb 成功回调 
  * @param failCb 失败回调
  */
-export const getOpenId = (appId:string,okCb?:Function,failCb?:Function) => {
+export const getOpenId = (appId:string,okCb:Function,failCb?:Function) => {
     if (!appId) {
         failCb && failCb(new Error('appId is not available'));
 
         return;
     }
-    const authorize = JSON.parse(localStorage.getItem('authorize')) || {};
-    if (authorize[appId]) {
-        okCb && okCb(authorize[appId]);
+    // const authorize = JSON.parse(localStorage.getItem('authorize')) || {};
+    // if (authorize[appId]) {
+    //     okCb && okCb(authorize[appId]);
 
-        return;
-    }
+    //     return;
+    // }
     const msg = { type: 'get_openid', param: { appid:appId } };
     requestAsync(msg).then(resData => {
-        authorize[appId] = resData;
-        localStorage.setItem('authorize',JSON.stringify(authorize));
+        // authorize[appId] = resData;
+        // localStorage.setItem('authorize',JSON.stringify(authorize));
         okCb && okCb(resData);
     }).catch(err => {
         failCb && failCb(err); 
     });
     
-    // popNew('app-components1-modalBox-modalBox', {
+    // popNew('app-components-modalBox-modalBox', {
     //     title: { zh_Hans:'是否授权',zh_Hant:'是否授權',en:'' },
     //     content: { zh_Hans:'授权成功将获取您的基本信息',zh_Hant:'授權成功將獲取您的基本信息',en:'' },
     //     sureText: { zh_Hans:'授权',zh_Hant:'授權',en:'' },
@@ -91,48 +98,33 @@ export const getOpenId = (appId:string,okCb?:Function,failCb?:Function) => {
  * 启动支付接口(验证订单，展示订单信息)
  * @param order 订单信息,后台返回的订单json
  */
-export const openPayment = async (order:any,okCb?:Function,failCb?:Function) => {    
+export const openPayment = async (order: any, callback: Function) => {
     if (!order) {
-        failCb && failCb(new Error('order is not available'));
+        callback(resCode.INVALID_REQUEST, new Error('order is not available'));
 
         return;
     }
     if (typeof order !== 'string') {
         order = JSON.stringify(order);
     }
-    const msg = { type: 'wallet/order@order_start', param: { json:order } };        
-    try {
-        const resData:any = await requestAsync(msg);
-        if (resData.result === 1) {
-            popNew('app-components1-modalBoxInput-modalBoxInput', {
-                title: '输入密码',
-                content: [`商品：${resData.body}`,`总额：${resData.total_fee}GT`],
-                itype: 'password'
-            },async (r) => {
-                const loading = popNew('app-components1-loading-loading', { text:'支付中...' });
-                const fg = await VerifyIdentidy(r);
-                
-                loading.callback(loading.widget);
-                if (fg) {
-                    pay(JSON.parse(order),okCb,failCb);
-                } else {
-                    popNew('app-components1-message-message', { content:'密码错误' });
-                    openPayment(order,okCb,failCb);
-                }
-            },() => {
-                failCb && failCb(new Error('transactionId is not available'));
-    
-            });
+    const msg = { type: 'wallet/order@order_start', param: { json: order } };
+    requestAsync(msg).then(resData => {
+        if (resData.result === 1) {       // 开启支付成功
+            const propData = {
+                fee_total : resData.total_fee,
+                desc : resData.body,
+                fee_name : currencyType(CloudCurrencyType[resData.fee_type]),
+                balance : formatBalance(getCloudBalances().get(resData.fee_type)),
+                no_password:resData.no_password
+            };
+            callback(resCode.SUCCESS, propData);
         } else {
-            failCb && failCb(resData); 
+            callback(resData.result, resData);
         }
-            
-    } catch (err) {
-        // console.log('order_start--------',err);
-        failCb && failCb(err); 
-       
-    }
-    
+    }).catch(err => {
+        callback(resCode.OTHER_ERROR, err);
+    });
+
 };
 
 /**
@@ -140,38 +132,141 @@ export const openPayment = async (order:any,okCb?:Function,failCb?:Function) => 
  * @param psw 钱包密码
  * @param transactionId 交易id
  */
-export const pay = async (order:any,okCb?:Function,failCb?:Function) => {
+export const pay = async (order: any, callback: Function) => {
     if (!order) {
-        failCb && failCb(new Error('transactionId is not available'));
+        callback(resCode.INVALID_REQUEST, new Error('order is not available'));
 
         return;
     }
-    const json = {
-        appid:order.appid,
-        transaction_id:order.transaction_id,
-        nonce_str:Math.random().toFixed(5)
+    if (!order.password && order.no_password !== 1) {
+        callback(resCode.INVALID_REQUEST, new Error('password is not available'));
+
+        return;
+    }
+
+    // tslint:disable-next-line:one-variable-per-declaration
+    let secretHash,signStr = '';
+    const signJson = {
+        appid: order.appid,
+        transaction_id: order.transaction_id,
+        nonce_str: Math.random().toFixed(5)
     };
-    const signStr = getSign(json);
-    const msg = { 
-        type: 'wallet/order@pay', 
+
+    if (order.no_password !== 1) {
+        const walletToolsMod = await getWalletToolsMod();
+        secretHash = await walletToolsMod.VerifyIdentidy(order.password);
+        if (!secretHash) {  //  密码错误
+            callback(resCode.PASSWORD_ERROR, null);
+    
+            return;
+    
+        }
+        signStr = getSign(signJson, secretHash);
+    }
+    
+    const msg = {
+        type: 'wallet/order@pay',
         param: {
-            appid:json.appid,
-            transaction_id:json.transaction_id,
-            nonce_str:json.nonce_str,
-            sign:signStr
-        } 
+            ...signJson,
+            sign: signStr,
+            no_password:order.no_password
+        }
     };
-    try {
-        const resData:any = await requestAsync(msg);
+    requestAsync(msg).then(resData => {
         if (resData.result === 1) {
-            okCb && okCb(resData);
+            getServerCloudBalance();
+            callback(resCode.SUCCESS,resData);
         } else {
-            failCb && failCb(resData); 
+            callback(resData.result,resData);
         }  
-    } catch (err) {
+    }).catch (err => {
         // console.log('pay--------',err);
-        failCb && failCb(err); 
-    } 
+        callback(resCode.OTHER_ERROR, err);
+    });
+};
+
+/**
+ * 查询免密支付
+ * @param appid 应用id
+ * @param callback 回调函数
+ */
+export const queryNoPWD = (appid:string,callback:Function) => {
+    if (!appid) {
+        callback(resCode.INVALID_REQUEST, new Error('appid is not available'));
+
+        return;
+    }
+    const msg = {
+        type: 'wallet/order@nopwd_limit',
+        param: { appid }
+    };
+    requestAsync(msg).then(resData => {
+        if (resData.result === 1) {
+            callback(resCode.SUCCESS,resData);
+        } else {
+            callback(resData.result,resData);
+        }  
+    }).catch (err => {
+        // console.log('pay--------',err);
+        callback(resCode.OTHER_ERROR, err);
+    });
+};
+
+/**
+ * 设置免密支付
+ * @param data 免密设置对象
+ * @param callback 设置回调函数
+ */
+export const setNoPWD = async (data:any,callback:Function) => {
+    if (!data.appid) {
+        callback(resCode.INVALID_REQUEST, new Error('appid is not available'));
+
+        return;
+    }
+    if (!data.mchid) {
+        callback(resCode.INVALID_REQUEST, new Error('mchid is not available'));
+
+        return;
+    }
+    if (data.noPSW === undefined || data.noPSW === null) {
+        callback(resCode.INVALID_REQUEST, new Error('noPSW is not available'));
+
+        return;
+    }
+    const walletToolsMod = await getWalletToolsMod();
+    const secretHash = await walletToolsMod.VerifyIdentidy(data.password);
+    if (!secretHash) {  //  密码错误
+        callback(resCode.PASSWORD_ERROR, null);
+
+        return;
+
+    }
+
+    const signJson = {
+        appid: data.appid,
+        mch_id: data.mchid,
+        nonce_str: Math.random().toFixed(5)
+    };
+    const signStr = getSign(signJson, secretHash);
+    const msg = {
+        type: 'wallet/order@set_nopwd',
+        param:{
+            ...signJson,
+            user_sign:signStr,
+            no_password:data.noPSW
+        }
+    };
+    requestAsync(msg).then(resData => {
+        if (resData.result === 1) {
+            callback(resCode.SUCCESS,resData);
+        } else {
+            callback(resData.result,resData);
+        }  
+    }).catch (err => {
+        // console.log('pay--------',err);
+        callback(resCode.OTHER_ERROR, err);
+    });
+
 };
 
 /**
@@ -201,11 +296,10 @@ export const closePayment = async (transactionId:string,okCb?:Function,failCb?:F
  * 获取签名
  * @param json 签名json
  */
-const getSign = (json:any) => {
+const getSign = (json:any,secretHash:string) => {
 
-    const hash = getStore('user/secretHash');
     const getMnemonicByHash = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonicByHash;
-    const mnemonic = getMnemonicByHash(hash);
+    const mnemonic = getMnemonicByHash(secretHash);
     const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
     const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;

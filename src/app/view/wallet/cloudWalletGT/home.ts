@@ -1,14 +1,15 @@
 /**
- * GT 交易记录主页
+ * ST 交易记录主页
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
+import { getModulConfig } from '../../../modulConfig';
+import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, fetchCoinGain, fetchGTGain, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, popNewMessage } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, fetchGTGain, formatBalance, formatBalanceValue, getCurrencyUnitSymbol } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -28,10 +29,12 @@ export class CloudWalletHome extends Widget {
     public init() {
         const currencyName = this.props.currencyName;
         const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
-        const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin('GT',balance));
+        const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin('ST',balance));
         const color = getStore('setting/changeColor','redUp');
+        const stShow = getModulConfig('ST_SHOW');
         this.props = {
             ...this.props,
+            stShow,
             tabs:[{
                 tab:{ zh_Hans:'全部',zh_Hant:'全部',en:'' },
                 components:'app-view-wallet-cloudWalletGT-totalRecord'
@@ -44,7 +47,7 @@ export class CloudWalletHome extends Widget {
             }],
             activeNum:0,
             gain:fetchGTGain(),
-            rate:formatBalanceValue(fetchBalanceValueOfCoin('GT',1)),
+            rate:formatBalanceValue(fetchBalanceValueOfCoin('ST',1)),
             balance,
             balanceValue,
             currencyUnitSymbol:getCurrencyUnitSymbol(),
@@ -55,9 +58,9 @@ export class CloudWalletHome extends Widget {
     public updateBalance() {
         const currencyName = this.props.currencyName;
         this.props.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
-        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin('GT',this.props.balance));
+        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin('ST',this.props.balance));
         this.props.gain = fetchGTGain();
-        this.props.rate = formatBalanceValue(fetchBalanceValueOfCoin('GT',1));
+        this.props.rate = formatBalanceValue(fetchBalanceValueOfCoin('ST',1));
         this.paint();
     }
     public tabsChangeClick(event: any, value: number) {
@@ -116,7 +119,7 @@ register('third/USD2CNYRate', () => {
 });
 
 // 金价变化
-register('third/goldPrice', () => {
+register('third/silver', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -129,4 +132,5 @@ register('setting/currencyUnit',() => {
     if (w) {
         w.currencyUnitChange();
     }
+    
 });

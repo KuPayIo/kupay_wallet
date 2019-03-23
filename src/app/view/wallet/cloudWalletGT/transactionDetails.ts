@@ -4,7 +4,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getOrderDetail, getPayState } from '../../../utils/pay';
+import { getModulConfig } from '../../../modulConfig';
+import { getOrderDetail, getPayState } from '../../../utils/recharge';
 import { formatBalance, popNewMessage, timestampFormat } from '../../../utils/tools';
 
 // ============================导出
@@ -13,6 +14,7 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
+    stShow:string;
     oid:string;
     firstQuery:boolean;
     state:string;
@@ -30,6 +32,7 @@ enum PayState {
 }
 export class TransactionDetails extends Widget {
     public props:Props = {
+        stShow:getModulConfig('ST_SHOW'),
         oid:'',
         firstQuery:false,
         state:'失败',

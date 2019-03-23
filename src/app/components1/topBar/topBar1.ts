@@ -3,9 +3,9 @@
  */
 // ================================ 导入
 import { Json } from '../../../pi/lang/type';
-import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
+import { popNew3, rippleShow } from '../../utils/tools';
 
 interface Props {
     avatar:string;
@@ -37,11 +37,16 @@ export class TopBar1 extends Widget {
         }, 1000);
     }
     
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
+    }
+    
     /**
      * 打开我的设置
      */
     public showMine() {
-        popNew('app-view-mine-home-home');
+        popNew3('app-view-mine-home-home');
     }
 
 }

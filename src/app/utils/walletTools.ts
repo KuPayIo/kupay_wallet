@@ -5,16 +5,17 @@ import { arrayBufferToBase64 } from '../../pi/util/base64';
 import { getLang } from '../../pi/util/lang';
 import { Config, ERC20Tokens } from '../config';
 import { BTCWallet } from '../core/btc/wallet';
-import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { EthWallet } from '../core/eth/wallet';
 import { toMnemonic } from '../core/genmnemonic';
 import { buyProduct, getPurchaseRecord, getServerCloudBalance } from '../net/pull';
 import { getStore, setStore } from '../store/memstore';
-import { lang, MAX_SHARE_LEN, MIN_SHARE_LEN } from './constants';
-import { nameWare } from './nameWareHouse';
-import { shareSecret } from './secretsBase';
-import { calcHashValuePromise, decrypt, encrypt, hexstrToU8Array, popNewLoading, popNewMessage, unicodeArray2Str } from './tools';
+import { decrypt, encrypt, sha256 } from './cipherTools';
+import { getSecretsBaseMod } from './commonjsTools';
+import { defaultGasLimit, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from './constants';
+// tslint:disable-next-line:max-line-length
+import { calcHashValuePromise, fetchBtcMinerFee, fetchGasPrice, hexstrToU8Array, popNewLoading, popNewMessage } from './tools';
+import { sat2Btc, wei2Eth } from './unitTools';
 
 /**
  * 获取新的地址信息
@@ -84,14 +85,13 @@ export const VerifyIdentidy = async (passwd:string) => {
     const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
 
     try {
-        const cipher = new Cipher();
-        const r = cipher.decrypt(hash, wallet.vault);
-
-        return true;
+        decrypt(wallet.vault,hash);
+        
+        return hash;
     } catch (error) {
         console.log(error);
 
-        return false;
+        return '';
     }
 };
 
@@ -102,42 +102,23 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
     const hash = await calcHashValuePromise(passwd, salt);
 
     try {
-        const cipher = new Cipher();
-        const r = cipher.decrypt(hash, vault);
+        decrypt(vault,hash);
 
-        return true;
-    } catch (error) {
-        console.log(error);
-
-        return false;
-    }
-};
-/**
- * 获取助记词
- */
-export const getMnemonic = async (passwd) => {
-    const wallet = getStore('wallet');
-    const hash = await calcHashValuePromise(passwd, getStore('user/salt'));
-    try {
-        const cipher = new Cipher();
-        const r = cipher.decrypt(hash, wallet.vault);
-
-        return toMnemonic(lang, hexstrToU8Array(r));
+        return hash;
     } catch (error) {
         console.log(error);
 
         return '';
     }
 };
+
 /**
  * 获取助记词16进制字符串
  */
 export const getMnemonicHexstr = (hash) => {
     const wallet = getStore('wallet');
     try {
-        const cipher = new Cipher();
-
-        return cipher.decrypt(hash, wallet.vault);
+        return decrypt(wallet.vault,hash);
     } catch (error) {
         console.log(error);
 
@@ -200,14 +181,14 @@ export const fetchLocalTxByHash1 = (hash:string) => {
 // 购买理财
 export const purchaseProduct = async (psw:string,productId:string,amount:number) => {
     const close = popNewLoading(Config[getLang()].bugProduct.buying);  // 购买中  
-    const pswCorrect = await VerifyIdentidy(psw);
-    if (!pswCorrect) {
+    const secretHash = await VerifyIdentidy(psw);
+    if (!secretHash) {
         close.callback(close.widget);
         popNewMessage(Config[getLang()].bugProduct.wrong);  // 密码错误  
         
         return;
     }
-    const data = await buyProduct(productId,amount);
+    const data = await buyProduct(productId,amount,secretHash);
     close.callback(close.widget);
     if (data) {
         popNewMessage(Config[getLang()].bugProduct.buySuccess); // 购买成功
@@ -220,15 +201,14 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
 };
 
 // 获取助记词片段
-export const fetchMnemonicFragment =  (hash) => {
+export const fetchMnemonicFragment = async (hash) => {
     const mnemonicHexstr =  getMnemonicHexstr(hash);
     if (!mnemonicHexstr) return;
-    // tslint:disable-next-line:no-unnecessary-local-variable
-    const shares = shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
+    const secretsBase = await getSecretsBaseMod();
+
+    return secretsBase.shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
             .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
-    // console.log('fetchMnemonicFragment-----------',shares);
     
-    return shares;
 };
 
 // 备份助记词
@@ -238,7 +218,7 @@ export const backupMnemonic = async (passwd:string) => {
     console.log('hash!!!!!!!!!!!!',hash);
     close.callback(close.widget);
     const mnemonic = getMnemonicByHash(hash);
-    const fragments = fetchMnemonicFragment(hash);
+    const fragments = await fetchMnemonicFragment(hash);
     if (!mnemonic) {
         popNewMessage(Config[getLang()].transError[0]);
         
@@ -255,8 +235,7 @@ export const backupMnemonic = async (passwd:string) => {
 export const getMnemonicByHash = (hash:string) => {
     const wallet = getStore('wallet');
     try {
-        const cipher = new Cipher();
-        const r = cipher.decrypt(hash, wallet.vault);
+        const r = decrypt(wallet.vault,hash);
 
         return toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {
@@ -264,19 +243,6 @@ export const getMnemonicByHash = (hash:string) => {
 
         return '';
     }
-};
-
-/**
- * 获取随机名字
- */
-export const playerName =  () => {
-    const num1 = nameWare[0].length;
-    const num2 = nameWare[1].length;
-    let name = '';
-    // tslint:disable-next-line:max-line-length
-    name = unicodeArray2Str(nameWare[0][Math.floor(Math.random() * num1)]) + unicodeArray2Str(nameWare[1][Math.floor(Math.random() * num2)]);
-    
-    return name;
 };
 
 /**
@@ -299,12 +265,47 @@ export const getWltAddrIndex = (addr: string, currencyName: string) => {
 /**
  * 修改密码
  */
-export const passwordChange = async (oldPsw: string, newPsw: string) => {
+export const passwordChange = async (secretHash: string, newPsw: string) => {
     const salt = getStore('user/salt');
-    const oldHash = await calcHashValuePromise(oldPsw, salt);
     const newHash = await calcHashValuePromise(newPsw, salt);
     const wallet = getStore('wallet');
-    const oldVault = decrypt(wallet.vault, oldHash);
+    const oldVault = decrypt(wallet.vault, secretHash);
     wallet.vault = encrypt(oldVault, newHash);
+    wallet.setPsw = true;
     setStore('wallet',wallet);
+};
+
+// 更新矿工费
+export const fetchMinerFeeList = (currencyName) => {
+    const cn = (currencyName === 'ETH' || ERC20Tokens[currencyName]) ? 'ETH' : 'BTC';
+    const toa = timeOfArrival[cn];
+    const minerFeeList = [];
+    for (let i = 0; i < toa.length; i++) {
+        let minerFee = 0;
+        if (cn === 'ETH') {
+            const gasLimit = getStore('third/gasLimitMap').get(currencyName) || defaultGasLimit;
+            minerFee = wei2Eth(gasLimit * fetchGasPrice(toa[i].level));
+        } else {
+            minerFee = sat2Btc(fetchBtcMinerFee(toa[i].level));
+        }
+        const obj = {
+            ...toa[i],
+            minerFee
+        };
+        minerFeeList.push(obj);
+    }
+
+    return minerFeeList;
+};
+
+// 锁屏密码验证
+export const lockScreenVerify = (psw) => {
+    const hash256 = sha256(psw + getStore('user/salt'));
+    const localHash256 = getStore('setting/lockScreen').psw;
+
+    return hash256 === localHash256;
+};
+// 锁屏密码hash算法
+export const lockScreenHash = (psw) => {
+    return sha256(psw + getStore('user/salt'));
 };

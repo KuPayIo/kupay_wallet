@@ -1,0 +1,54 @@
+.modal-mask{
+    background-color: rgba(50, 50, 50, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 60px;
+}
+.animate-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.one{
+    margin-top: 20px;
+    height:67px;
+    font-size:48px;
+    color:#222222;
+    line-height:67px;
+}
+.two{
+    height:45px;
+    font-size:32px;
+    color:#222222;
+    line-height:45px;
+}
+
+.four{
+    height: 80px;
+    font-size: 32px;
+    width: 350px;
+    background: rgb(255, 244, 101);
+    box-shadow: rgba(34, 34, 34, 0.1) 0px 0px 5px 0px;
+    border-radius: 40px;
+    text-align: center;
+    line-height: 80px;
+    margin-top: 45px;
+}
+.closeBtn{
+    margin-top:60px;
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    border:2px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

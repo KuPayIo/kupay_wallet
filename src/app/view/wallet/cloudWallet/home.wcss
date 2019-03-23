@@ -63,8 +63,7 @@
 
 .nav-item{
     box-sizing: border-box;
-    height: 86px;
-    width: 120px;
+    flex: 1;
     display: inline-block;
     list-style: none;
     font-size: 28px;

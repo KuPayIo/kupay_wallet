@@ -65,6 +65,7 @@
 .inMessage{
     color: #222222;
     margin-left: 30px;
+    display: none;
 }
 .sureBtn{
     margin: 30px 40px;

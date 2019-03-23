@@ -5,7 +5,7 @@
         {{: topBarTitle = {"zh_Hans":it.title,"zh_Hant":it.title,"en":""} }}    
     {{end}}
 
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     
     <app-components-radioList-radioList>{list:{{it.list1}},selected:{{it.selectedIndex}} }</app-components-radioList-radioList>
 </div>

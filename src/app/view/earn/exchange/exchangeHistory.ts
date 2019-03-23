@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getData, getUserList, queryConvertLog } from '../../../net/pull';
+import { getData, getOneUserInfo, queryConvertLog } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
@@ -40,9 +40,6 @@ export class ExchangeHistory extends Widget {
         this.language = this.config.value[getLang()];
         this.props = {
             recordList:[
-                // { rid:111,rtype:'00',rtypeShow:'拼手气红包',ctypeShow:'ETH',timeShow:'04-30 14:32:00',amount:1 },       
-                // { rid:111,rtype:'00',rtypeShow:'普通红包',ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
-                // { rid:111,rtype:'00',rtypeShow:'拼手气红包',ctypeShow:'ETH',timeShow:'04-30 14:32:00',amount:1 }                
             ],
             recordListShow:[],
             convertNumber:0,
@@ -95,7 +92,7 @@ export class ExchangeHistory extends Widget {
      */
     public async initRedEnv() {
         for (const i in this.props.recordList) {
-            const data = await getUserList([this.props.recordList[i].suid]);
+            const data = await getOneUserInfo([this.props.recordList[i].suid]);
             this.props.recordList[i].userName = data ? data.nickName :this.language.defaultName;
         }
         

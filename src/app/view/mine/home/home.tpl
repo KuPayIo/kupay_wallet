@@ -5,17 +5,18 @@
             <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
             {{if it.hasWallet}}
             <div w-class="addFriend">
+                <div w-class="scanImg1" on-tap="showMyMedal">
+                    <img src="{{it.medalest}}" w-class="scanImg2"/>
+                </div>
                 <img src="../../../res/image/01.png" w-class="scanImg" on-tap="scanQrcode"/>
                 <img src="../../../res/image/19.png" w-class="scanImg" on-tap="showMyQrcode"/>
             </div>
             <div w-class="userName">
                 {{it.userName}}
-                {{if it.offline}}
-                <widget w-tag="pi-ui-lang" w-class="offline">{zh_Hans:"离线",zh_Hant:"離線",en:"Offline"}</widget>
-                {{end}}
             </div>
             
             <div w-class="address" on-tap="copyAddr">
+                <span>{{it.walletName}}ID：</span>
                 <span w-class="addrNum">{{it.address}}</span>
                 <img src="../../../res/image/copy_write.png" width="40px" w-class="copy"/>
             </div>
@@ -38,12 +39,12 @@
 
 
             {{for ind,val of it.list}}
-                <div w-class="item" on-tap="itemClick({{ind}})">
+                <div w-class="item" on-tap="itemClick({{ind}})" on-down="onShow">
                     <img src={{val.img}} w-class="itemImg"/>
                     <span w-class="itemName">
                         <pi-ui-lang>{{itemName[ind]}}</pi-ui-lang>
                     </span>
-                    {{if ind==0 && !it.hasBackupMnemonic && it.hasWallet}}
+                    {{if ind==0 && !it.isTourist && !it.hasBackupMnemonic && it.hasWallet}}
                     <div w-class="backup" on-tap="backUp">
                         <pi-ui-lang>{"zh_Hans":"备份","zh_Hant":"備份","en":""}</pi-ui-lang>
                     </div>

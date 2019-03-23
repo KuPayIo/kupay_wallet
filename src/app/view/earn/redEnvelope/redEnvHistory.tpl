@@ -1,5 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refreshPage">
-
+        {{: topBarTitle = {"zh_Hans":"红包记录","zh_Hant":"紅包記錄","en":""} }}	
+    <div style="background: #F46262;"><app-components-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</app-components-topBar-topBar2></div>
     <div w-class="content" on-scroll="getMoreList" id="redEnvHistory">
         <img src="../../../res/image/redEnvtop1.png" w-class="topBackimg" />
         <div id="historyRecords" w-class="records">
@@ -45,6 +46,5 @@
 
         </div>
     </div>
-   {{: topBarTitle = {"zh_Hans":"红包记录","zh_Hant":"紅包記錄","en":""} }}	
-    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</app-components1-topBar-topBar2>
+   
 </div>

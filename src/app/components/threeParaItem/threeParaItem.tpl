@@ -1,5 +1,5 @@
 <div w-class="item">
-    <img src="../../res/image/currency/{{it.img}}" w-class="icon"/>
+    <img src="{{it.img}}" w-class="icon"/>
     <div w-class="right-container">
         <div w-class="top-container">
             <div w-class="currency-name">{{it.title}}</div>

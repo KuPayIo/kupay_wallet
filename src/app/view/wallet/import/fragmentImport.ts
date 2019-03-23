@@ -6,25 +6,24 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { CreateWalletType } from '../../../logic/localWallet';
 import { doScanQrCode } from '../../../logic/native';
-import { mnemonicFragmentDecrypt } from '../../../utils/tools';
+import { mnemonicFragmentDecrypt, popNewMessage } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
 
 export class FragmentImport extends Widget {
+    public cancel: () => void;
     public ok: () => void;
     public language:any;
-    public create() {
-        super.create();
-        this.init();
-    }
-    public init() {
+    public setProps(props:any,oldProps:any) {
         this.language = this.config.value[getLang()];
         this.props = {
+            ...props,
             fragment1:'',
             fragment2:''
         };
+        super.setProps(props,oldProps);
     }
     public backPrePage() {
-        this.ok && this.ok();
+        this.cancel && this.cancel();
     }
     public fragment1Change(e:any) {
         this.props.fragment1 = e.value;
@@ -43,17 +42,17 @@ export class FragmentImport extends Widget {
     }
     public nextClick() {
         if (!this.props.fragment1) {
-            popNew('app-components1-message-message', { content: this.language.tips[0] });
+            popNewMessage(this.language.tips[0]);
 
             return;
         }
         if (!this.props.fragment2) {
-            popNew('app-components1-message-message', { content: this.language.tips[1] });
+            popNewMessage(this.language.tips[1]);
 
             return;
         }
         if (this.props.fragment1 === this.props.fragment2) {
-            popNew('app-components1-message-message', { content: this.language.tips[2] });
+            popNewMessage(this.language.tips[2]);
 
             return;
         }
@@ -64,12 +63,14 @@ export class FragmentImport extends Widget {
         const decryptFragement2 = obj2.fragment;
         const random2 = obj2.randomStr;
         if (random1 !== random2) {
-            popNew('app-components1-message-message', { content: this.language.tips[3] });
+            popNewMessage(this.language.tips[3]);
 
             return;
         }
         // tslint:disable-next-line:max-line-length
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.FragmentImport,fragment1:decryptFragement1,fragment2:decryptFragement2 });
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.FragmentImport,fragment1:decryptFragement1,fragment2:decryptFragement2 },() => {
+            this.ok && this.ok();
+        });
         const w:any = forelet.getWidget(WIDGET_NAME);
         if (w) {
             w.ok && w.ok();

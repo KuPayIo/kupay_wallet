@@ -1,7 +1,7 @@
 <div class="new-page" ev-next-click="share" ev-back-click="backPrePage" w-class="new-page">
     <img src="../../../res/image1/topbar_backimg.png" style="position: absolute;top: 0;right: 0;"/>
     {{: topBarTitle = {"zh_Hans":"我的二维码","zh_Hant":"我的二維碼","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/share_white.png",background:"transparent"}</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/share_white.png",background:"transparent"}</app-components-topBar-topBar>
     <div w-class="content">
         <div w-class="title">
             <img src={{it.userHead}} w-class="userHead"/>

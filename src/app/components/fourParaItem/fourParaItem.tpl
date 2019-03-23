@@ -14,7 +14,8 @@
         <span w-class="itemleft">{{it.time}}</span>
         {{if it.describe && it.describe!=""}}
         <span>
-            <pi-ui-lang>{{it.describe}}</pi-ui-lang></span>
+            <pi-ui-lang>{{it.describe}}</pi-ui-lang>
+        </span>
         {{end}}
     </div>
 </div>

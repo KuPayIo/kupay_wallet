@@ -8,12 +8,13 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
-import { beginShift, getMarketInfo, transfer } from '../../../net/pullWallet';
-import { MarketInfo, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
-import { getStore, register, setStore } from '../../../store/memstore';
+import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/pull3';
+import { transfer, TxPayload } from '../../../net/pullWallet';
+import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel } from '../../../store/interface';
+import { getStore, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
-import { sat2Btc, wei2Eth } from '../../../utils/unitTools';
+import { calCurrencyLogoUrl, currencyExchangeAvailable, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox, popNewLoading } from '../../../utils/tools';
+import { fetchMinerFeeList } from '../../../utils/walletTools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -36,9 +37,12 @@ export class CoinConvert extends Widget {
      * 查看手续费介绍
      */
     public rateDetail() {
-        // tslint:disable-next-line:prefer-template
-        const tips = this.language.tips[5] + this.props.inMinerFee + ' ' + this.props.inCurrency;
-        // tslint:disable-next-line:max-line-length
+        const outCurrency = this.props.outCurrency;
+        const minerFeeLevel = MinerFeeLevel.Standard;
+        const minerFeeList = fetchMinerFeeList(this.props.outCurrency);
+        const fee = minerFeeList[minerFeeLevel].minerFee;
+        const cn = (outCurrency === 'ETH' || ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
+        const tips = `${this.language.tips[5]} ${fee} ${cn}`;
         popNew('app-components-allModalBox-modalBox1',{ title:this.language.title,content:this.language.content,tips:tips });
     }
 
@@ -46,28 +50,26 @@ export class CoinConvert extends Widget {
      * 查看兑换历史
      */
     public goHistory() {
-        popNew('app-view-wallet-coinConvert-convertHistory',{ currencyName:this.props.outCurrency });
+        popNew('app-view-wallet-coinConvert-convertHistory',{ currencyName:this.props.outCurrency,addr:this.props.curOutAddr });
     }
 
     public setProps(props:Json,oldProps:Json) {
         super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
-        const data = currencyExchangeAvailable();
-        const dataList = [];
-        data.forEach(element => {
-            dataList.push(element.symbol);
-        });
+        const dataList = currencyExchangeAvailable();
         const canCurrencyExchange = dataList.indexOf(props.currencyName) >= 0;
 
         const outCurrency = canCurrencyExchange ? props.currencyName : 'ETH';
         const inCurrency = (outCurrency === 'BTC' ||  ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
+        
         // ZRX   BAT
         this.props = {
             ...this.props,
             outCurrency,
+            outCurrencyLogo:calCurrencyLogoUrl(outCurrency),
             inCurrency,
+            inCurrencyLogo:calCurrencyLogoUrl(inCurrency),
             pair:'',
-            maxLimit:0,
             minimum:0,
             rate:0,
             outMinerFee:0,
@@ -85,7 +87,6 @@ export class CoinConvert extends Widget {
 
     // 更新矿工费
     public async updateMinerFee() {
-        const cn = (this.props.currencyName === 'ETH' || ERC20Tokens[this.props.currencyName]) ? 'ETH' : 'BTC';
         const minerFeeList = fetchMinerFeeList(this.props.currencyName);
         console.log(minerFeeList);
         // const gasLimit = obj.gasLimit;
@@ -99,7 +100,6 @@ export class CoinConvert extends Widget {
         return super.destroy();
     }
     public init() {
-
         this.props.outAmount = 0;
         this.props.receiveAmount = 0;
         this.setPair();
@@ -116,18 +116,24 @@ export class CoinConvert extends Widget {
         this.props.pair = `${this.props.outCurrency.toLowerCase()}_${this.props.inCurrency.toLowerCase()}`;
         // this.props.pair = `${this.props.outCurrency}_${this.props.inCurrency}`;
     }
-    // 重置汇率相关显示
-    public resetMarketInfo(marketInfo:MarketInfo) {
-        this.props.maxLimit = marketInfo.maxLimit;
-        this.props.minimum = marketInfo.minimum;
-        this.props.rate = marketInfo.rate;
-        this.props.inMinerFee = marketInfo.minerFee;
-        this.paint();
-    }
+    
     // 定时获取兑率等信息 30s更新一次
     public marketInfoUpdated() {
+        changellyGetExchangeAmount(this.props.outCurrency,this.props.inCurrency).then(res => {
+            if (res.result) {
+                this.props.rate = Number(res.result).toFixed(8);
+                this.paint();
+                console.log('changellyGetExchangeAmount = ',res);
+            }
+        });
+        changellyGetMinAmount(this.props.outCurrency,this.props.inCurrency).then(res => {
+            if (res.result) {
+                this.props.minimum = Number(res.result).toFixed(8);
+                this.paint();
+                console.log('changellyGetMinAmount = ',res);
+            }
+        });
         clearTimeout(this.props.timer);
-        getMarketInfo(this.props.pair);
         this.props.timer = setTimeout(() => {
             this.marketInfoUpdated();
         },30 * 1000);
@@ -174,13 +180,7 @@ export class CoinConvert extends Widget {
 
     // 选择入币币种 如果入币币种和出币币种一样时,出币币种顺延一种
     public inCurrencySelectClick() {
-        const data = currencyExchangeAvailable();
-        const dataList = [];
-        data.forEach(element => {
-            if (element.symbol !== this.props.outCurrency) { // 去掉出币币种
-                dataList.push(element.symbol);
-            }
-        });
+        const dataList = currencyExchangeAvailable();
         popNew('app-components-chooseCurrency-chooseCurrency',{ list:dataList,selected:dataList.indexOf(this.props.inCurrency) },(r) => {
             const currencyName = dataList[r];
             if (this.props.inCurrency === currencyName) return;
@@ -213,17 +213,18 @@ export class CoinConvert extends Widget {
     public async sureClick() {
         const outAmount = this.props.outAmount;
         const outCurrency = this.props.outCurrency;
+        const inCurrency = this.props.inCurrency;
         if (outAmount <= 0) {
             popNewMessage(this.language.messages[0]);
 
             return;
         }
-        if (outAmount >= this.props.outBalance) {
-            popNewMessage(this.language.messages[1]);
+        // if (outAmount >= this.props.outBalance) {
+        //     popNewMessage(this.language.messages[1]);
 
-            return;
-        }
-        if (outAmount > this.props.maxLimit || outAmount < this.props.minimum) {
+        //     return;
+        // }
+        if (outAmount < this.props.minimum) {
             popNewMessage(this.language.messages[2]);
 
             return;
@@ -232,96 +233,63 @@ export class CoinConvert extends Widget {
         const content = [this.language.tips[6] + outAmount + outCurrency,this.language.tips[7] + this.props.receiveAmount + this.props.inCurrency];
         const passwd = await popPswBox(content);
         if (!passwd) return;
-        
-        const close = popNew('app-components1-loading-loading', { text: this.language.loading });
+        const close = popNewLoading(this.language.loading);
         const withdrawalAddress = this.props.curInAddr; // 入账币种的地址
         const returnAddress =  this.props.curOutAddr;// 失败后的退款地址
-        const pair = this.props.pair;// 交易对
-        beginShift(withdrawalAddress,returnAddress,pair,async (returnData) => {
-            if (returnData.error) {
-                popNew('app-components1-message-message',{ content:this.language.messages[3] });
-                close.callback(close.widget);
-                this.init();
-                this.paint();
-
-                return;
+        changellyCreateTransaction(outCurrency,inCurrency,withdrawalAddress,outAmount,returnAddress).then(res => {
+            console.log('changellyCreateTransaction = ',res);
+            if (res.result) {
+                const payinAddress = res.result.payinAddress;
+                const minerFeeLevel = MinerFeeLevel.Standard;
+                const minerFeeList = fetchMinerFeeList(outCurrency);
+                const fee = minerFeeList[minerFeeLevel].minerFee;
+                const payload:TxPayload = {
+                    fromAddr:returnAddress,        
+                    toAddr:payinAddress,         
+                    pay:outAmount,            
+                    currencyName:outCurrency, 
+                    fee,             
+                    minerFeeLevel
+                };
+                this.props.inMinerFee = fee;
+                // close && close.callback(close.widget);
+                const changellyPayinAddress = getStore('wallet/changellyPayinAddress');
+                const tmp:ChangellyPayinAddr = {
+                    currencyName:outCurrency,
+                    payinAddress
+                };
+                const index = changellyPayinAddress.findIndex(item => {
+                    return item.currencyName === tmp.currencyName && item.payinAddress === tmp.payinAddress;
+                });
+                if (index < 0) {
+                    changellyPayinAddress.push(tmp);
+                    setStore('wallet/changellyPayinAddress',changellyPayinAddress);
+                }
+                
+                transfer(passwd,payload).then(([err,tx]) => {
+                    close && close.callback(close.widget);
+                    if (err) {
+                        popNewMessage(this.language.messages[3]);
+                    } else {
+                        popNewMessage(this.language.messages[4]);
+                    }
+                    const changellyTempTxs = getStore('wallet/changellyTempTxs');
+                    const tempTxs:ChangellyTempTxs = {
+                        hash:tx.hash,
+                        id:res.result.id
+                    };
+                    changellyTempTxs.push(tempTxs);
+                    setStore('wallet/changellyTempTxs',changellyTempTxs);
+                });
+            } else {
+                close && close.callback(close.widget);
+                popNewMessage(this.language.messages[3]);
             }
-            const depositAddress = returnData.deposit;
-            const t = new Date();
-            const record:TxHistory = {
-                hash:'',
-                txType: TxType.Exchange,
-                fromAddr: this.props.curOutAddr,
-                toAddr: depositAddress,
-                pay: outAmount,
-                time: t.getTime(),
-                info: '',
-                currencyName: outCurrency,
-                fee: this.props.outMinerFee,
-                nonce:undefined,
-                addr:this.props.curOutAddr,
-                status:TxStatus.Pending,
-                confirmedBlockNumber:0,
-                needConfirmedBlockNumber:0,
-                minerFeeLevel:MinerFeeLevel.Standard
-            };
-            
-            const ret = await transfer(passwd,record);
-            close.callback(close.widget);
-            if (!ret) {
-                return;
-            }
-            const hash = ret.hash;
-            this.setTemRecord(hash,this.props.curOutAddr,outAmount,outCurrency,this.props.inCurrency,this.props.rate);
-            // popNew('app-view-wallet-coinConvert-convertHistory', { currencyName:outCurrency });
-            this.init();
-            this.paint();
-        },(err) => {
+        }).catch(err => {
             console.log(err);
+            close && close.callback(close.widget);
             popNewMessage(this.language.messages[3]);
-            close.callback(close.widget);
-            this.init();
-            this.paint();
-
-            return;
         });
-
-    }
-
-    // 临时记录
-    // tslint:disable-next-line:max-line-length
-    public setTemRecord(hash: string,fromAddr:string,pay:number,outCurrency:string,inCurrency:string,rate:number) {
-        const t = new Date();
-        // 币币兑换交易记录
-        const tx = {
-            hasConfirmations:'false',
-            inputAddress:fromAddr,
-            inputAmount:pay,
-            inputCurrency:outCurrency,
-            inputTXID:hash,
-            outputAddress:'',
-            outputAmount:'',
-            outputCurrency:inCurrency,
-            outputTXID:'',
-            shiftRate:rate,
-            status:'pending',
-            timestamp:t.getTime() / 1000
-        };
-        console.log('tx',tx);
-        const addrLowerCase = this.props.curOutAddr.toLowerCase();
-        const shapeShiftTxsMap = getStore('third/shapeShiftTxsMap');
-        const shapeShiftTxs =  shapeShiftTxsMap.get(addrLowerCase) || { addr:addrLowerCase,list:[] };
-        shapeShiftTxs.list.push(tx);
-        shapeShiftTxsMap.set(addrLowerCase,shapeShiftTxs);
-        setStore('third/shapeShiftTxsMap',shapeShiftTxsMap);
     }
     
 }
-
-// =====================================本地
-register('third/shapeShiftMarketInfo', marketInfo => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.resetMarketInfo(marketInfo);
-    }
-});

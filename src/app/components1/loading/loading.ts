@@ -8,10 +8,6 @@ interface Props {
     text:string;// 加载文本
 }
 
-interface State {
-    startTime:number;
-    circular:string;// svg内容
-}
 export class Loading extends Widget {
     public props: any;
     public ok:() => void;
@@ -26,6 +22,7 @@ export class Loading extends Widget {
         super.setProps(props,oldProps);
         this.props = {
             ...this.props,
+            pi_norouter:true,
             startTime:new Date().getTime()
         };
     }

@@ -17,12 +17,11 @@
     flex-direction: column;
 }
 .topBack{
-    height: 550px;
+    height: 422px;
     background: #F46262;
     text-align: center;
     color: #fff;
     font-size: 28px;
-    padding-top: 128px;
 }
 .topBackimg{
     position: absolute;

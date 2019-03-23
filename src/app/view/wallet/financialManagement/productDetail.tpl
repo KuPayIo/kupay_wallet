@@ -1,4 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
+    <div style="background: linear-gradient(to right,#328EE6, #38CEE7);"><app-components-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{it.product.productName}} }</app-components-topBar-topBar2></div>
     <div w-class="body" on-scroll="pageScroll" id="body">
         <div w-class="top-head">
             <div w-class="row1">
@@ -68,7 +69,7 @@
                 <div w-class="right-box">
                     <img w-class="sub" on-down="minus" src="../../../res/image/less_blue.png"/>
                     <span>{{it.amount}}</span>
-                    <img w-class="plus" on-down="add" src="../../../res/image/add.png" />
+                    <img w-class="plus" on-down="add" src="../../../res/image1/add.png" />
                 </div>
             </div>
             <div w-class="read" on-tap="readAgree"><pi-ui-lang>{"zh_Hans":"阅读声明","zh_Hant":"閱讀聲明","en":""}</pi-ui-lang></div>
@@ -78,6 +79,4 @@
             </div>
         </div>
     </div>
-    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{it.product.productName}} }</app-components1-topBar-topBar2>
-
 </div>

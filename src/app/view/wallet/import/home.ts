@@ -38,7 +38,7 @@ export class ImportHome extends Widget {
     public importSuccess() {
         console.log('-----------success');
         this.ok && this.ok();
-        popNew('app-components1-modalBox-modalBox',this.language.modalBox,() => {
+        popNew('app-components-modalBox-modalBox',this.language.modalBox,() => {
             // popNew('app-view-wallet-create-createEnter');
         });
     }

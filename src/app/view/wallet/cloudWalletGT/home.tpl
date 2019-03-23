@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refreshPage">
     <div w-class="top-head">
-        {{: topBarTitle = {"zh_Hans":it.currencyName,"zh_Hant":it.currencyName,"en":""} }}
-        <app-components1-topBar-topBar>{"title":{{topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6)",refreshImg:"../../res/image1/refresh_white.png"}</app-components1-topBar-topBar>
+        {{: topBarTitle = {"zh_Hans":it.stShow,"zh_Hant":it.stShow,"en":""} }}
+        <app-components-topBar-topBar>{"title":{{topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6)",refreshImg:"../../res/image1/refresh_white.png"}</app-components-topBar-topBar>
         <div w-class="head2">
             <div w-class="head2-left">
                 <span w-class="balance">{{it.balance%1===0?it.balance.toFixed(2):it.balance}}</span>
@@ -22,7 +22,7 @@
         </div>
     </div>
     <div w-class="show-container">
-        <div w-class="quotes"><pi-ui-lang>{"zh_Hans":"行情","zh_Hant":"行情","en":""}</pi-ui-lang>&nbsp;{{it.currencyUnitSymbol}}{{it.rate}}/{{it.currencyName}}</div>
+        <div w-class="quotes"><pi-ui-lang>{"zh_Hans":"行情","zh_Hant":"行情","en":""}</pi-ui-lang>&nbsp;{{it.currencyUnitSymbol}}{{it.rate}}/{{it.stShow}}</div>
         {{if it.redUp}}
             <div w-class="{{it.gain >= 0 ? 'up' : 'down'}}"><pi-ui-lang>{"zh_Hans":"今日","zh_Hant":"今日","en":""}</pi-ui-lang>&nbsp;{{it.gain >= 0 ? '+' : ''}}{{it.gain}}%</div>
         {{else}}

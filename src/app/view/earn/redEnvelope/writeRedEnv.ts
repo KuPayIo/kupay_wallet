@@ -6,9 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
 import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
+import { popNewLoading, popNewMessage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -28,13 +30,15 @@ interface Props {
     realUser: boolean;   // 是否真实用户
     forceHide:boolean;
     ktBalance:number;    // KT余额
+    inFlag?:string;  // 从哪里进入 chat
 }
 
 export class WriteRedEnv extends Widget {
-    public ok: () => void;
+    public ok: (res:any) => void;
     public language:any;
 
-    public props:Props = {
+    public props:any = {
+        ktShow:getModulConfig('KT_SHOW'),
         list: [],
         selected: 0,
         showPin: false,
@@ -44,7 +48,8 @@ export class WriteRedEnv extends Widget {
         message: '',
         realUser: getStore('user/info/isRealUser'),
         forceHide:false,
-        ktBalance:0
+        ktBalance:0,
+        inFlag:''
     };
     constructor() {
         super();
@@ -63,7 +68,9 @@ export class WriteRedEnv extends Widget {
         super.setProps(this.props);
         this.props = {
             ...this.props,
-            ktBalance:props.ktBalance
+            ktShow:getModulConfig('KT_SHOW'),
+            ktBalance:props.ktBalance,
+            inFlag:props.inFlag
         };
     }
 
@@ -79,9 +86,9 @@ export class WriteRedEnv extends Widget {
      */
     public updateBalance() {
         const list = [
-            { img: '../../res/image/currency/KT.png', name: 'KT', num: 500 },
-            { img: '../../res/image/currency/BTC.png', name: 'BTC', num: 0.01 },
-            { img: '../../res/image/currency/ETH.png', name: 'ETH', num: 0.5 }
+            { img: '../../res/image1/currency/KT.png', name: 'KT', num: 500 },
+            { img: '../../res/image1/currency/BTC.png', name: 'BTC', num: 0.01 },
+            { img: '../../res/image1/currency/ETH.png', name: 'ETH', num: 0.5 }
         ];
         const data = getCloudBalances();
         for (const i in list) {
@@ -92,7 +99,7 @@ export class WriteRedEnv extends Widget {
     }
 
     public backPrePage() {
-        this.ok && this.ok();
+        this.ok && this.ok(null);
     }
 
     public goHistory() {
@@ -167,24 +174,25 @@ export class WriteRedEnv extends Widget {
      * 点击发红包按钮
      */
     public async send() {
+        const curCoin = this.props.list[this.props.selected];
+        
         if (Number(this.props.totalNum) === 0) {
-            popNew('app-components1-message-message', { content: this.language.tips[2] });
+            popNewMessage(this.language.tips[2]);
 
             return;
         }
         if (Number(this.props.oneAmount) === 0 && Number(this.props.totalAmount) === 0) {
-            popNew('app-components-message-message', { content: this.language.tips[1] });
+            popNewMessage(this.language.tips[1]);
 
             return;
         }
-        const curCoin = this.props.list[this.props.selected];
         if (this.props.totalAmount > curCoin.num) {
-            popNew('app-components1-message-message', { content: this.language.tips[3] });
+            popNewMessage(this.language.tips[3]);
 
             return;
         }
         if (this.props.message.length > 20) {
-            popNew('app-components1-message-message', { content: this.language.tips[4] });
+            popNewMessage(this.language.tips[4]);
 
             return;
         }
@@ -192,13 +200,18 @@ export class WriteRedEnv extends Widget {
             this.props.message = this.language.messTitle[1];
         }
         if (!this.props.realUser) {
-            popNew('app-components1-message-message', { content: this.language.tips[5] });
+            popNewMessage(this.language.tips[5]);
 
             return;
         }
         if (this.props.selected === 0) {
             if (Number(this.props.totalAmount) < this.props.totalNum) {
-                popNew('app-components-message-message', { content: this.language.tips[7] });
+                const ktTips = {
+                    zh_Hans:`单个红包${this.props.ktShow}数量是大于1的整数`,
+                    zh_Hant:`單個紅包${this.props.ktShow}數量是大於1的整數`,
+                    en:''
+                };
+                popNewMessage(ktTips[getLang()]);
 
                 return;
             }
@@ -210,20 +223,20 @@ export class WriteRedEnv extends Widget {
         const mess1 = `${this.language.phrase[0]}${this.props.totalAmount}${curCoin.name} / ${this.props.totalNum} ${this.language.phrase[1]}`;
         // tslint:disable-next-line:max-line-length
         const mess2 = this.language.phrase[2] + (this.props.showPin ? this.language.redEnvType[1] : this.language.redEnvType[0]);
-        popNew('app-components1-modalBoxInput-modalBoxInput', {
+        popNew('app-components-modalBoxInput-modalBoxInput', {
             title: curCoin.name + this.language.phrase[3],
             content: [mess1, mess2],
             placeholder: this.language.phrase[4],
             itype: 'password'
         },
             async (r) => {
-                const close = popNew('app-components1-loading-loading', { text: this.language.loading });
-                const fg = await VerifyIdentidy(r);
+                const close = popNewLoading(this.language.loading);
+                const secretHash = await VerifyIdentidy(r);
                 close.callback(close.widget);
-                if (fg) {
-                    this.sendRedEnv();
+                if (secretHash) {
+                    this.sendRedEnv(secretHash);
                 } else {
-                    popNew('app-components1-message-message', { content: this.language.tips[6] });
+                    popNewMessage(this.language.tips[6]);
                 }
             }
         );
@@ -233,17 +246,16 @@ export class WriteRedEnv extends Widget {
     /**
      * 实际发红包
      */
-    public async sendRedEnv() {
-
+    public async sendRedEnv(secretHash:string) {
         const curCoin = this.props.list[this.props.selected];
         const lm = this.props.message;  // 留言
         const rtype = this.props.showPin ? LuckyMoneyType.Random : LuckyMoneyType.Normal; // 0 等额红包  1 拼手气红包
         const ctype = Number(CloudCurrencyType[curCoin.name]);  // 货币类型
         const totalAmount = Number(this.props.totalAmount);   // 红包总金额
         const totalNum = this.props.totalNum;    // 红包总个数
-        const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm);
+        const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm,secretHash);
 
-        if (!rid) return;
+        // if (!rid) return;
         setTimeout(() => {
             this.props.oneAmount = 0;
             this.props.totalNum = 0;
@@ -253,13 +265,21 @@ export class WriteRedEnv extends Widget {
             setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
             this.paint(true);
         });
-        popNew('app-view-earn-redEnvelope-sendRedEnv', {
-            message: lm,
-            rid,
-            rtype: rtype,
-            cname: curCoin.name
-        });
-
+        if (this.props.inFlag === 'chat') {
+            console.log('发红包成功了');
+            this.ok({
+                message: lm,
+                rid: rtype + rid  // 红包的ID
+            });
+        } else {
+            popNew('app-view-earn-redEnvelope-sendRedEnv', {
+                message: lm,
+                rid,
+                rtype: rtype,
+                cname: curCoin.name
+            });
+        }
+        
         // if (!this.props.showPin) {
         //     // tslint:disable-next-line:max-line-length
         //     console.log('url', `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);

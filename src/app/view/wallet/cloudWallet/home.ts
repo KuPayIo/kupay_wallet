@@ -5,6 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
@@ -25,6 +26,7 @@ export class CloudWalletHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
+        this.paint();
     }
     public init() {
         this.language = this.config.value[getLang()];
@@ -32,8 +34,17 @@ export class CloudWalletHome extends Widget {
         const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
         const color = getStore('setting/changeColor','redUp');
+        let topBarTitle = '';
+        if (this.props.currencyName === 'KT') {
+            topBarTitle = getModulConfig('KT_SHOW');
+        } else if (this.props.currencyName === 'ST') {
+            topBarTitle = getModulConfig('ST_SHOW');
+        } else {
+            topBarTitle = this.props.currencyName;
+        }
         this.props = {
             ...this.props,
+            topBarTitle,
             tabs:[{
                 tab:this.language.total,
                 components:'app-view-wallet-cloudWallet-totalRecord'
@@ -55,6 +66,10 @@ export class CloudWalletHome extends Widget {
             currencyUnitSymbol:getCurrencyUnitSymbol(),
             redUp: color === 'redUp'
         };
+        console.log('+++++++++++++',this.props.tabs);
+        if (this.props.currencyName === 'KT') {
+            this.props.tabs.splice(2);
+        }
     }
 
     public updateBalance() {
@@ -75,8 +90,8 @@ export class CloudWalletHome extends Widget {
      */
     public rechargeClick() {
         if (this.props.currencyName === 'KT') {
-            popNewMessage(this.language.tips);
-        } else if (this.props.currencyName === 'GT') {
+            popNew('app-view-wallet-cloudWallet-rechargeKT');
+        } else if (this.props.currencyName === 'ST') {
             popNew('app-view-wallet-cloudWalletGT-rechargeGT');
         } else {
             popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
@@ -86,7 +101,7 @@ export class CloudWalletHome extends Widget {
      * 提币
      */
     public withdrawClick() {
-        if (this.props.currencyName === 'KT' || this.props.currencyName === 'GT') {
+        if (this.props.currencyName === 'KT' || this.props.currencyName === 'ST') {
             popNewMessage(this.language.tips);
 
             return;

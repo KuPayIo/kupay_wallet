@@ -1,0 +1,116 @@
+.pi-mask {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: rgba(50, 50, 50, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pi-update-box {
+    background-color: #fff;
+    background-image: url(./update_bg.png);
+    background-repeat: no-repeat;
+    background-size: 100% 235px;
+    width: 630px;
+    border-radius: 12px;
+    padding-bottom: 30px;
+    position: relative;
+}
+
+.pi-update-rocket {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate3d(-50%, -30%, 0);
+}
+
+.pi-update-content {
+    padding: 20px 30px;
+}
+
+
+
+
+
+.pi-pay-title {
+    height: 90px;
+    text-align: center;
+    line-height: 90px;
+    font-size: 36px;
+    border-bottom: 1px solid #CCCCCC;
+}
+
+.pi-pay-content {
+    padding-top: 20px;
+    font-size: 28px;
+}
+
+.pi-pay-item {
+    line-height: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+}
+.pi-pay-text{
+    font-weight:500;
+}
+.pi-pay-num{
+    color: #318DE6;
+}
+.pi-pay-input{
+    height: 80px;
+    width: 100%;
+    border: 1px solid #1E6DEF;
+    background:rgba(249,249,249,1);
+    border-radius: 6px;
+    font-size: 32px;
+    padding: 0px 15px;
+    box-sizing: border-box;
+    letter-spacing: 2px;
+    margin-top: 15px;
+    outline:none;
+}
+
+
+
+
+
+
+
+.pi-update-btns {
+    margin: 30px 40px 0;
+    padding: 1px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pi-update-cancel-btn {
+    width: 220px;
+    height: 80px;
+    border-radius: 50px;
+    border: 1px dashed rgba(136, 136, 136, 1);
+    font-size: 32px;
+    color: #888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pi-update-ok-btn {
+    width: 220px;
+    height: 80px;
+    background: linear-gradient(270deg,
+        rgba(68, 206, 237, 1) 0%,
+        rgba(62, 179, 241, 1) 100%);
+    box-shadow: 0px 5px 10px 0px rgba(13, 131, 246, 0.1);
+    border-radius: 50px;
+    font-size: 32px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

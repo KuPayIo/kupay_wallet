@@ -1,17 +1,15 @@
 /**
  * create wallet
  */
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { openConnect, uploadFile } from '../../../net/pull';
-import { getStore, register, setStore } from '../../../store/memstore';
+import { openConnect } from '../../../net/login';
+import { uploadFile } from '../../../net/pull';
+import { setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { checkCreateAccount, getStaticLanguage, imgResize, popNewMessage } from '../../../utils/tools';
-import { fetchMnemonicFragment, getMnemonicByHash, playerName } from '../../../utils/walletTools';
-import { forelet, WIDGET_NAME } from './home';
+import { imgResize, playerName, popNew3, popNewMessage } from '../../../utils/tools';
 interface Props {
     itype: CreateWalletType;
     mnemonic?: string;// 助记词
@@ -28,18 +26,24 @@ export class CreateWallet extends Widget {
         this.language = this.config.value[getLang()];
         this.props = {
             ...this.props,
+            createWalletType:CreateWalletType,
             itype: this.props.itype,
-            walletName: playerName(),
+            walletName: '',
             walletPsw: '',
             walletPswConfirm: '',
             pswEqualed: false,
-            userProtocolReaded: false,
+            userProtocolReaded: true,
             walletPswAvailable: false,
             chooseImage: false,
             avatarHtml: '',
             imagePicker:null
         };
         console.log(this.props);
+        playerName().then(name => {
+            this.props.walletName = name;
+            this.paint();
+        });
+           
     }
 
     public setProps(props: Props, oldProps: Props) {
@@ -51,10 +55,6 @@ export class CreateWallet extends Widget {
     }
     public walletNameChange(e: any) {
         this.props.walletName = e.value;
-        this.paint();
-    }
-    public checkBoxClick(e: any) {
-        this.props.userProtocolReaded = (e.newType === 'true' ? true : false);
         this.paint();
     }
     public pswConfirmChange(r: any) {
@@ -79,41 +79,44 @@ export class CreateWallet extends Widget {
         this.props.imagePicker = selectImage((width, height, url) => {
             console.log('selectImage url = ',url);
             // tslint:disable-next-line:max-line-length
-            this.props.avatarHtml = `<div style="background-image: url(${url});width: 100%;height: 100%;position: absolute;top: 0;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+            this.props.avatarHtml = `<div style="background-image: url(${url});width: 160px;height: 160px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
             this.props.chooseImage = true;
             this.paint();
         });
     }
 
     public randomPlayName() {
-        this.props.walletName = playerName();
-        document.getElementById('random').classList.add('random');
-        setTimeout(() => {
-            document.getElementById('random').classList.remove('random');
-        }, 1000);
-        this.paint();
+        playerName().then(name => {
+            this.props.walletName = name;
+            document.getElementById('random').classList.add('random');
+            setTimeout(() => {
+                document.getElementById('random').classList.remove('random');
+            }, 1000);
+            this.paint();
+        });
+        
     }
     public async createClick() {
         if (!this.props.userProtocolReaded) {
             return;
         }
         if (!walletNameAvailable(this.props.walletName)) {
-            popNew('app-components1-message-message', { content: this.language.tips[0] });
+            popNewMessage(this.language.tips[0]);
 
             return;
         }
         if (!this.props.walletPsw || !this.props.walletPswConfirm) {
-            popNew('app-components1-message-message', { content: this.language.tips[1] });
+            popNewMessage(this.language.tips[1]);
 
             return;
         }
         if (!this.props.walletPswAvailable) {
-            popNew('app-components1-message-message', { content: this.language.tips[2] });
+            popNewMessage(this.language.tips[2]);
 
             return;
         }
         if (!this.props.pswEqualed) {
-            popNew('app-components1-message-message', { content: this.language.tips[3] });
+            popNewMessage(this.language.tips[3]);
 
             return;
         }
@@ -128,23 +131,18 @@ export class CreateWallet extends Widget {
             option.fragment2 = this.props.fragment2;
         }
         console.time('pi_create createWallet all need');
-        const hash = await createWallet(this.props.itype, option);
+        const secrectHash = await createWallet(this.props.itype, option);
         console.timeEnd('pi_create createWallet all need');
-        if (!hash) {
-            popNewMessage(this.language.tips[3]);
+        if (!secrectHash) {
+            popNewMessage(this.language.tips[4]);
         }
 
-        const mnemonic = getMnemonicByHash(hash);
-        const fragments = fetchMnemonicFragment(hash);
-        setStore('flags', { created: true, mnemonic, fragments });
-        if (getStore('user/offline')) {
-            checkCreateAccount();
-        } else {
-            openConnect();
-        }
+        setStore('flags/createWallet',true);
+        openConnect(secrectHash);
 
         if (this.props.chooseImage) {
             this.props.imagePicker.getContent({
+                quality:70,
                 success(buffer:ArrayBuffer) {
                     imgResize(buffer,(res) => {
                         uploadFile(res.base64);
@@ -153,11 +151,6 @@ export class CreateWallet extends Widget {
             });
             
         }
-
-        const w: any = forelet.getWidget(WIDGET_NAME);
-        if (w) {
-            w.ok && w.ok();
-        }
         this.ok && this.ok();
     }
 
@@ -165,17 +158,21 @@ export class CreateWallet extends Widget {
      * 查看隐私条约
      */
     public agreementClick() {
-        popNew('app-view-mine-other-privacypolicy');
+        popNew3('app-view-mine-other-privacypolicy');
+    }
+
+    /**
+     * 照片注册
+     */
+    public imgLoginClick() {
+        popNew3('app-view-wallet-create-createWalletByImage',{},() => {
+            this.ok && this.ok();
+        });
+    }
+
+    public haveAccountClick() {
+        popNew3('app-view-wallet-import-standardImport',{},() => {
+            this.ok && this.ok();
+        });
     }
 }
-
-// 登录状态成功
-register('flags', (flags: any) => {
-    if (flags.promptBackup) {
-        popNew('app-components1-modalBox-modalBox', getStaticLanguage().createSuccess, () => {
-            popNew('app-view-wallet-backup-index', { mnemonic: flags.mnemonic, fragments: flags.fragments });
-        });
-        flags.promptBackup = false;
-        setStore('flags', flags, false);
-    }
-});

@@ -1,10 +1,11 @@
 /**
  * receipt
  */
-import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { ShareToPlatforms, ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { makeScreenShot } from '../../../logic/native';
 import { copyToClipboard, getCurrentAddrByCurrencyName, popNewMessage } from '../../../utils/tools';
 
 interface Props {
@@ -35,16 +36,10 @@ export class Receipt extends Widget {
     }
 
     public shareClick() {
-        
-        const stp = new ShareToPlatforms();
-        stp.init();
-        stp.makeScreenShot({
-            success: (result) => { 
-                popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
-            },
-            fail: (result) => { 
-                popNew('app-components-message-message',{ content:this.language.tips[1] });
-            }
+        makeScreenShot((result) => { 
+            popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
+        },(result) => { 
+            popNewMessage(this.language.tips[1]);
         });
     }
 }

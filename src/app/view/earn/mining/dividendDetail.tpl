@@ -1,6 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"分红说明","zh_Hant":"分紅說明","en":""} }}
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}} }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="content">
         <div w-class="title">
             <pi-ui-lang>{"zh_Hans":"如何分红？","zh_Hant":"如何分紅？","en":""}</pi-ui-lang>
@@ -8,8 +8,8 @@
         <div style="padding: 30px;line-height: 50px;">
             <p>
                 <pi-ui-lang>{
-                    "zh_Hans":"1、分红单位最小为份，1份KT=3000KT，只核算云账户中的KT，未挖取的矿储量不算。",
-                    "zh_Hant":"1、分紅單位最小為份，1份KT=3000KT，只核算雲賬戶中的KT，未挖取的礦儲量不算。",
+                    "zh_Hans":"1、分红单位最小为份，1份{{ it.ktShow }}=3000{{ it.ktShow }}，只核算云账户中的{{ it.ktShow }}，未挖取的矿储量不算。",
+                    "zh_Hant":"1、分紅單位最小為份，1份{{ it.ktShow }}=3000{{ it.ktShow }}，只核算雲賬戶中的{{ it.ktShow }}，未挖取的礦儲量不算。",
                     "en":""}
                 </pi-ui-lang>
             </p>
@@ -22,15 +22,15 @@
             </p>
             <p>
                 <pi-ui-lang>{
-                    "zh_Hans":"3、分红开始之前可增加持有KT获取更多分红。",
-                    "zh_Hant":"3、分紅開始之前可增加持有KT獲取更多分紅。",
+                    "zh_Hans":"3、分红开始之前可增加持有{{ it.ktShow }}获取更多分红。",
+                    "zh_Hant":"3、分紅開始之前可增加持有{{ it.ktShow }}獲取更多分紅。",
                     "en":""}
                 </pi-ui-lang>
             </p>
             <p>
                 <pi-ui-lang>{
-                    "zh_Hans":"4、曾经拥有1000KT才具有提现权限。",
-                    "zh_Hant":"4、曾經擁有1000KT才具有提現權限。",
+                    "zh_Hans":"4、曾经拥有1000{{ it.ktShow }}才具有提现权限。",
+                    "zh_Hant":"4、曾經擁有1000{{ it.ktShow }}才具有提現權限。",
                     "en":""}
                 </pi-ui-lang>
             </p>

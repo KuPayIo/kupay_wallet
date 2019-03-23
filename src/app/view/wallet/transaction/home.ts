@@ -8,7 +8,7 @@ import { dataCenter } from '../../../logic/dataCenter';
 import { TxHistory, TxType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
+import { calCurrencyLogoUrl, currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
 import { fetchTransactionList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -42,6 +42,7 @@ export class TransactionHome extends Widget {
         
         this.props = {
             ...this.props,
+            currencyLogo:calCurrencyLogoUrl(currencyName),
             balance,
             balanceValue:formatBalanceValue(balanceValue),
             rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
@@ -104,7 +105,7 @@ export class TransactionHome extends Widget {
     public canConvert() {
         const convertCurrencys = currencyExchangeAvailable();
         for (let i = 0;i < convertCurrencys.length;i++) {
-            if (convertCurrencys[i].symbol === this.props.currencyName) {
+            if (convertCurrencys[i] === this.props.currencyName) {
                 return true;
             }
         }

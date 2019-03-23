@@ -3,10 +3,10 @@
     flex-direction: column;
 }
 .topBack{
-    background:linear-gradient(to right,#318DE6,#38CFE7);
     flex-shrink: 0;
     overflow: hidden;
     position: relative;
+    background: linear-gradient(to right,#318DE6,#38CFE7);
 }
 .userHead{
     width: 40px;

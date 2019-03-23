@@ -10,9 +10,10 @@ import { getModulConfig } from '../../../modulConfig';
 // tslint:disable-next-line:max-line-length
 import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
-import { register, setStore } from '../../../store/memstore';
+import { setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
+import { popNewMessage, popNewLoading } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -46,11 +47,11 @@ export class Exchange extends Widget {
         this.inputBlur();
         const code = this.props.cid.trim();
         if (code.length <= 0) {
-            popNew('app-components1-message-message', { itype: 'error', content: this.language.errorList[0], center: true });
+            popNewMessage(this.language.errorList[0]);
 
             return;
         }
-        const close = popNew('app-components1-loading-loading', { text: this.language.loading });        
+        const close = popNewLoading(this.language.loading);
         const res: any = await this.convertRedEnvelope(code);
         close.callback(close.widget);
         if (!res.value) return;
@@ -106,7 +107,7 @@ export class Exchange extends Widget {
             value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
         } else {
-            popNew('app-components1-message-message', { content: this.language.errorList[1] });
+            popNewMessage(this.language.errorList[1]);
 
             return null;
         }

@@ -20,7 +20,6 @@ interface Props {
 }
 export class ProductDetail extends Widget {
     public ok:() => void;
-    public language:any;
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -29,7 +28,6 @@ export class ProductDetail extends Widget {
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         if (getStore('user/conUid')) {
             // 获取购买记录
             getPurchaseRecord();
@@ -85,7 +83,8 @@ export class ProductDetail extends Widget {
      * 点击购买按钮
      */
     public purchaseClicked() {
-        popNewMessage(this.language.tip);
+        const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
+        popNewMessage(tips[getLang()]);
 
         return;
         if (!hasWallet()) return;

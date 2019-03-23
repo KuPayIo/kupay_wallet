@@ -1,0 +1,110 @@
+.new-page{
+    background-color: #fff;
+}
+.body{
+    padding: 0 30px 30px;
+}
+.create-tips{
+    margin-top: 65px;
+    margin-left: 18px;
+    font-size:36px;
+    font-family:"PingFangSC-Medium";
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    line-height:50px;
+    display: flex;
+    align-items: center;
+}
+.tip-divid{
+    margin-right: 12px;
+    width:10px;
+    height:34px; 
+    background:rgba(252,220,60,1);
+}
+.desc{
+    margin-left: 20px;
+    margin-top: 35px;
+    font-size:28px;
+    font-family:"PingFangSC-Regular";
+    font-weight:400;
+    color:rgba(136,136,136,1);
+    line-height:40px;
+}
+.top-box{
+    border-radius: 12px;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    padding: 35px 30px 30px;
+}
+.top-tip-title{
+    line-height: 50px;
+    color: #222;
+    font-size: 36px;
+}
+.top-tip-content{
+    line-height: 40px;
+    font-size: 28px;
+    color: #888;
+    margin-top: 35px;
+}
+.bottom-box{
+    border-radius: 12px;
+    margin-top: 65px;
+    position: relative;
+}
+
+.name-box{
+    height: 110px;
+    position: relative;
+    color: #222;
+    font-size: 32px;
+    line-height: 45px;
+    align-items: center;
+}
+.name{
+    outline: 0;
+    border: none;
+    border-bottom:1px solid #dbdbe5;
+    height: 100%;
+    width: 100%;
+    padding-right: 100px;
+    padding-left: 30px;
+    box-sizing: border-box;
+    color: #222;
+    font-size: 32px;
+    line-height: 45px;
+}
+.random{
+    position:absolute;
+    top:30px;
+    right:0px;
+    height: 40px;
+    width: 40px;
+    border: 20px solid transparent;
+}
+.input-father{
+    height: 110px;
+}
+.registered-protocol{
+    display: flex;
+    align-items: center;
+    margin-top: 300px;
+    margin-bottom: 60px;
+    padding: 0 30px;
+}
+.user-protocol{
+    cursor: pointer;
+    font-size: 28px;
+    line-height: 33px;
+    color: #1A70DD;
+    text-align: left;
+}
+.btn{
+    margin: 0 30px;
+}
+.user-agree{
+    font-size: 28px;
+    line-height: 33px;
+    text-align: left;
+    margin-left: 48px;
+}

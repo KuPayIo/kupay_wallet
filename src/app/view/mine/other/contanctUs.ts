@@ -7,21 +7,20 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
-import { getLocalVersion } from '../../../utils/tools';
+import { rippleShow } from '../../../utils/tools';
 // ==================================================导出
-
+declare var pi_update;
 export class ContanctUs extends Widget {
     public ok: () => void;
-    public language:any;
     public create() {
         super.create();
-        this.language = this.config.value[getLang()];
+        const tips = { zh_Hans:'客服',zh_Hant:'客服',en:'' };
         this.props = {
-            version:getLocalVersion(),
+            version:pi_update.updateJson.version,
             data:[
-                { value: this.language.itemTitle[0],desc:getModulConfig('WALLET_WEBSITE') },
-                { value: this.language.itemTitle[1],desc:getModulConfig('WALLET_NAME') + this.language.itemTitle[2] },
-                { value: this.language.itemTitle[3],desc:getModulConfig('WALLET_NAME') }
+                { value: '',desc:getModulConfig('WALLET_WEBSITE') },
+                { value: '',desc:getModulConfig('WALLET_NAME') + tips[getLang()] },
+                { value: '',desc:getModulConfig('WALLET_NAME') }
             ],
             walletLogo:getModulConfig('WALLET_LOGO'),
             walletName:getModulConfig('WALLET_NAME')
@@ -32,6 +31,11 @@ export class ContanctUs extends Widget {
         this.ok && this.ok();
     }
 
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
+    }
+    
     public itemClick(e:any,ind:any) {
         switch (ind) {
             // 点击钱包官网
@@ -47,7 +51,7 @@ export class ContanctUs extends Widget {
                 popNew('app-view-mine-other-wechatQrcode',{ fg:1 });
                 break;
             default:
-                // console.log(this.props.cfgData.tips);
+                console.log(this.props.cfgData.tips);
         }
     }
 }
