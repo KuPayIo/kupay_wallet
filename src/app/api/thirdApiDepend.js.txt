@@ -1,3 +1,12 @@
+// PI_BEGIN
+console.log("注入 thirdApiDepend.js success");
+
+window.pi_tools = {};
+window.pi_jsApi = {
+    
+};
+
+
 //--------pi_RPC_Method----------------------------------------------------------------------------------------------------------------------------
 /**
  * 第三方接口依赖
@@ -137,3 +146,252 @@ window.pi_RPC_Method = (function () {
 
 
 //--------pi_RPC_Method----------------------------------------------------------------------------------------------------------------------------
+
+
+/**
+ * 自适应
+ */
+pi_tools.browserAdaptive =  function() {
+    var cfg = {
+        width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+    };
+    var clientWidth = document.documentElement.clientWidth;
+    var clientHeight = document.documentElement.clientHeight;
+    oldHeight = clientHeight;
+    rootWidth = cfg.width;
+    rootHeight = cfg.height;
+    let scaleW = clientWidth / rootWidth;
+    let scaleH = clientHeight / rootHeight;
+    if (cfg.wscale >= cfg.hscale) {
+        // 宽度比例变动
+        if (scaleW > scaleH * (cfg.wscale + 1)) {
+            // 大于规定的比例
+            rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+        } else {
+            rootWidth = (clientWidth / scaleH) | 0;
+        }
+        rootScale = scaleW = scaleH;
+    } else {
+        // 高度比例变动
+        if (scaleH > scaleW * (cfg.hscale + 1)) {
+            rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+        } else {
+            rootHeight = (clientHeight / scaleW) | 0;
+        }
+        rootScale = scaleH = scaleW;
+    }
+    rootX = (clientWidth - rootWidth) / 2;
+    rootY = (clientHeight - rootHeight) / 2;
+    var cssText = 'z-index:99999;position: fixed;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
+    return cssText;
+};
+
+/**
+ * 悬浮框按钮样式
+ */
+pi_tools.createFloatButtonStyle = function(){
+  var cssText = `
+  .pi-float-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:40px;
+    height:40px;
+    background:rgba(0,0,0,0.2);
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,0.2);
+    position: fixed;
+    top: 100px;
+    right: 10px;
+  }
+  .pi-dot1{
+  width: 3.5px;
+  height: 3.5px;
+  background-color: #fff;
+  border-radius: 50%;
+  }
+  .pi-dot2{
+  width: 7.5px;
+  height: 7.5px;
+  background-color: #fff;
+  border-radius: 50%;
+  margin: 0 5px;
+  }
+  .pi-bottom-box{
+  background:#fff;
+  border-radius:20px 20px 0px 0px;
+  position: absolute;
+  bottom: -400px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 60px 30px;
+  transition: all .3s ease-in-out;
+  }
+  .pi-bottom-item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+  margin-top: 40px;
+  }
+  .pi-img-box{
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  }
+  .pi-text{
+  font-size:24px;
+  font-family:"PingFangSC-Regular";
+  font-weight:400;
+  color:rgba(136,136,136,1);
+  line-height:33px;
+  margin-top: 10px;
+  }
+  `;
+  var pi_root_css = '#pi-root{'+pi_tools.browserAdaptive()+'}';
+  var style = document.createElement("style");
+  style.type = "text/css";
+  style.innerHTML = (pi_root_css+cssText);
+  document.getElementsByTagName("head")[0].appendChild(style);
+}
+
+/**
+ * 悬浮框按钮初始化
+ */
+pi_tools.floatButtonInit = function (){
+    var buttons = [{
+      img:"wx.png",
+      text:"邀请好友",
+      idName:"pi-invite",
+      show:true,
+      clickCb:function(){
+        console.log("click 邀请好友");
+        pi_RPC_Method(pi_config.thirdBase, "inviteFriends", pi_config.gameName, function (error, result) {
+            console.log('inviteFriends call success');
+        });
+      }
+    },{
+      img:"game_customer_service.png",
+      text:"游戏客服",
+      idName:"pi-service",
+      show:true,
+      clickCb:function(){
+        console.log("click 游戏客服");
+      }
+    },{
+      img:"official_group_chat.png",
+      text:"官方群聊",
+      idName:"pi-official-chat",
+      show:true,
+      clickCb:function(){
+        console.log("click 官方群聊");
+      }
+    },{
+      img:"recharg.png",
+      text:"去充值",
+      idName:"pi-recharg",
+      show:true,
+      clickCb:function(){
+        console.log("click 去充值");
+        pi_RPC_Method(pi_config.thirdBase, "gotoRecharge", pi_config.gameName, function (error, result) {
+            console.log('inviteFriends call success');
+        });
+      }
+    },{
+      img:"free_secret_close.png",
+      text:"免密支付",
+      idName:"pi-free-secret",
+      show:true,
+      clickCb:function(){
+        console.log("click 免密支付");
+      }
+    },{
+      img:"close_voice.png",
+      text:"关闭声音",
+      idName:"pi-close-voice",
+      show:true,
+      clickCb:function(){
+        console.log("click 关闭声音");
+      }
+    },{
+      img:"min_window.png",
+      text:"最小化",
+      idName:"pi-min-window",
+      show:true,
+      clickCb:function(){
+        console.log("click 最小化");
+        pi_RPC_Method(pi_config.thirdBase, "minWebview", pi_config.gameName, function (error, result) {
+            console.log('minWebview call success');
+        });
+      }
+    },{
+      img:"exit_game.png",
+      text:"退出游戏",
+      idName:"pi-exit-game",
+      show:true,
+      clickCb:function(){
+        console.log("click 退出游戏");
+        pi_RPC_Method(pi_config.thirdBase, "closeWebview", pi_config.gameName, function (error, result) {
+            console.log('closeWebview call success');
+        });
+      }
+  }];
+  var $floatButton = document.createElement("div");
+  $floatButton.setAttribute("class","pi-float-button");
+  $floatButton.innerHTML = `
+  <span class="pi-dot1"></span>
+  <span class="pi-dot2"></span>
+  <span class="pi-dot1"></span>
+  `;
+  $floatButton.addEventListener("click",function(){
+      var $bottomBox = document.createElement("div");
+      $bottomBox.setAttribute("class","pi-bottom-box");
+      $bottomBox.addEventListener("click",function(e){
+        e.stopPropagation();
+        e.preventDefault();
+      });
+      buttons.forEach(function(item){
+        if(!item.show) return;
+        var $bottomItem = document.createElement("div");
+        $bottomItem.setAttribute("class","pi-bottom-item");
+        $bottomItem.setAttribute("id",item.idName);
+        $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${item.img}"/></div>
+            <div class="pi-text">${item.text}</div>`;
+        $bottomItem.addEventListener("click",function(){
+            item.clickCb();
+            pi_tools.closePopBox();
+        });
+
+        $bottomBox.appendChild($bottomItem);
+      });
+
+      var $root = document.createElement("div");
+      $root.setAttribute("id","pi-root");
+      $root.addEventListener("click",function(){
+        document.querySelector(".pi-bottom-box").style.bottom = "-400px";
+        setTimeout(function(){
+          document.querySelector("body").removeChild(document.querySelector("#pi-root"));
+        },300);
+      });
+      $root.appendChild($bottomBox);
+      document.querySelector("body").appendChild($root);
+      requestAnimationFrame(function(){
+        $bottomBox.style.bottom = "0px";
+      });
+
+  });
+  document.querySelector("body").appendChild($floatButton);
+}
+
+/**
+ * 关闭弹框
+ */
+pi_tools.closePopBox = function(){
+    document.querySelector("body").removeChild(document.querySelector("#pi-root"));
+}
+window.addEventListener("load",pi_tools.createFloatButtonStyle);
+window.addEventListener("load",pi_tools.floatButtonInit);
