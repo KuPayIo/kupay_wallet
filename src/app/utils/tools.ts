@@ -1206,10 +1206,11 @@ export const calCurrencyLogoUrl = (currencyName:string) => {
  * 弹出三级页面
  */
 export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
-    if (!lookup(name)) {
+    const level_3_page_loaded = getStore('flags').level_3_page_loaded;
+    if (level_3_page_loaded) {
+        popNew(name,props,ok,cancel);
+    } else {
         const loading = popNew('app-components1-loading-loading1');
-        const name1 = name.replace(/-/g,'/');
-        const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
         const level3SourceList = [
             'app/core/',
             'app/logic/',
@@ -1227,13 +1228,11 @@ export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callb
             'earn/client/app/xls/',
             'earn/xlsx/'
         ];
-        sourceList.push(...level3SourceList);
-        piLoadDir(sourceList).then(() => {
+        piLoadDir(level3SourceList).then(() => {
+            console.log('popNew3 ------ all resource loaded');
             popNew(name,props,ok,cancel);
             loading.callback(loading.widget);
         });
-    } else {
-        popNew(name,props,ok,cancel);
     }
 };
 

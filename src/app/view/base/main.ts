@@ -16,15 +16,6 @@ declare var pi_modules;
 export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查
-    const payload = {
-        appId:'101',
-        nickName:true,
-        avatar:true
-    };
-    authorize(payload,(err,result) => {
-        console.log('err  ===',err);
-        console.log('result  ===',result);
-    });
     checkUpdate();
     // 打开首页面
     popNew('app-view-base-app');
