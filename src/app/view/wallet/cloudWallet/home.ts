@@ -26,6 +26,7 @@ export class CloudWalletHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
+        this.paint();
     }
     public init() {
         this.language = this.config.value[getLang()];
@@ -65,6 +66,10 @@ export class CloudWalletHome extends Widget {
             currencyUnitSymbol:getCurrencyUnitSymbol(),
             redUp: color === 'redUp'
         };
+        console.log('+++++++++++++',this.props.tabs);
+        if (this.props.currencyName === 'KT') {
+            this.props.tabs.splice(2);
+        }
     }
 
     public updateBalance() {

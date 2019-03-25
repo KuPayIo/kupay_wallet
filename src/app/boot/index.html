@@ -451,7 +451,7 @@
 				winit.severIp = main;
 				winit.severPort = location.port ? location.port : "80";		
 			}else{// 本地包需要配置服务器ip和port
-				winit.severIp = "192.168.31.10";
+				winit.severIp = "192.168.31.113";
 				winit.severPort = "80";		
 			}
 
@@ -476,7 +476,6 @@
 					if (index < 0) throw new Error("iOS bundle has not find assets")
 					index += "/assets".length;
 					defaultDomains = winit.domains = [location.href.slice(0, index)];
-					alert("inApp defaultDomains ========",defaultDomains);
 				}
 			} else {
 				defaultDomains = winit.domains = remoteDomains;

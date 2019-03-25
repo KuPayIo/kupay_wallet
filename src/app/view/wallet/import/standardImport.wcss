@@ -7,7 +7,7 @@
     padding: 0 40px;
 }
 .create-tips{
-    margin-top: 65px;
+    margin-top: 10%;
     margin-left: 18px;
     font-size:36px;
     font-family:"PingFangSC-Medium";
@@ -53,7 +53,7 @@
     border-radius: 2px;
 }
 .btn{
-    margin: 80px 20px 60px;
+    margin: 10% 20px 10%;
 }
 .other-btns{
     display: flex;

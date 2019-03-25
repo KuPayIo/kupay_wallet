@@ -12,8 +12,8 @@ import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryR
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
+import { popNewLoading, popNewMessage } from '../../../utils/tools';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
-import { popNewMessage, popNewLoading } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
