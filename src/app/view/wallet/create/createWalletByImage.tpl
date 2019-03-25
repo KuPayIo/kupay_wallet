@@ -16,7 +16,10 @@
             <div w-class="image-psw-container" on-tap="imagePswClick">
                 {{: inputPlace = {"zh_Hans":"给照片取个名字","zh_Hant":"給照片取個名字","en":""} }}
                 <div w-class="input-father" ev-input-change="imagePswChange">
-                    <app-components-input-suffixInput>{itype:"text",placeHolder:{{inputPlace}},clearable:true,available:{{it.imagePswAvailable}},closeEye:false}</app-components-input-suffixInput>
+                    <app-components-input-suffixInput>{isCenter:true,itype:"text",placeHolder:{{inputPlace}},clearable:true,available:{{it.imagePswAvailable}},closeEye:false}</app-components-input-suffixInput>
+                </div>
+                <div w-class="place-holder">
+                    <pi-ui-lang>{"zh_Hans":"4个中文字符或者8个英文字符以上","zh_Hant":"4個中文字元或者8個英文字元以上","en":""}</pi-ui-lang>
                 </div>
             </div>
             <div ev-btn-tap="nextClick" w-class="btn">

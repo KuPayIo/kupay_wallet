@@ -58,3 +58,6 @@
     border: 20px solid transparent;
     border-radius: 50%;
 }
+.pi-input__inner1{
+    text-align: center;
+}

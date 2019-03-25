@@ -16,6 +16,6 @@
         disabled={{ it.disabled }}
     />
     {{if it.showClear}}
-    <img w-class="clearBtn" src="{{it.showClearType?'../../res/image/30_gray.png':'../../res/image/fail.png'}}" on-tap="clearClickListener"/>
+    <img w-class="clearBtn" src="../../res/image/30_gray.png" on-tap="clearClickListener"/>
     {{end}}
 </div>

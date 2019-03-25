@@ -11,7 +11,7 @@
         {{if it.isSuccess}}
         <img src="../../res/image/icon_right2.png" w-class="successPic"/>
         {{elseif it.showIcon}}
-        <img src="../../res/image/fail.png" w-class="successPic" on-tap="clear"/>
+        <img src="../../res/image/30_gray.png" w-class="successPic" on-tap="clear"/>
         {{end}}
         <img src="{{it.isShowPassword?'../../res/image/closeEyes.png':'../../res/image/openEyes.png'}}" w-class="close-eyes" on-tap="showPassword"/>
     </div>

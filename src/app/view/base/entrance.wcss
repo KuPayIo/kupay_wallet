@@ -4,7 +4,7 @@
     align-items: center;
 }
 .logo{
-    margin-top: 300px;
+    margin-top: 40%;
 }
 .slogan{
     font-size:64px;
@@ -15,7 +15,7 @@
 }
 .tourist-login{
     width: 250px;
-    margin-top: 250px;
+    margin-top: 30%;
 }
 .register{
     width: 250px;
