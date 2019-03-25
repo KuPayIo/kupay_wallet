@@ -24,6 +24,7 @@ interface Props {
     autofocus?:boolean;
     closeEye?:boolean;
     isShow?:boolean;
+    isCenter?:boolean;
 }
 
 interface State {

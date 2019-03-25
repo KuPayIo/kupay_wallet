@@ -71,23 +71,23 @@ export class Home extends Widget {
     /**
      *  刷新页面
     */
-    public loaded(){
-        //toDo 更新数据 完成之后将loaded变成true 刷新页面
-        setTimeout(()=>{
-            //加载数据完成
-            this.props.loaded=true;
-            this.paint()
+    public loaded() {
+        // toDo 更新数据 完成之后将loaded变成true 刷新页面
+        setTimeout(() => {
+            // 加载数据完成
+            this.props.loaded = true;
+            this.paint();
 
-        },2000)
+        },2000);
 
     }
     /**
      * 刷新前的准备
      */
-    public beforeLoad(){
-        //'通知刷新状态---'
-        this.props.loaded=false;
-        this.paint()
+    public beforeLoad() {
+        // '通知刷新状态---'
+        this.props.loaded = false;
+        this.paint();
     }
 
     public refreshClick() {

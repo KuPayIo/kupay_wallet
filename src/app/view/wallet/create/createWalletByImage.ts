@@ -45,7 +45,7 @@ export class CreateWalletByImage extends Widget {
 
     public imagePswChange(e:any) {
         this.props.imagePsw = e.value;
-        this.props.imagePswAvailable = this.props.imagePsw.length > 0;
+        this.props.imagePswAvailable = this.props.imagePsw.length > 0 && this.props.imagePsw.match(/([\u4e00-\u9fa5]{4,})|([A-Za-z]{8,})/);
         this.paint();
     }
 
@@ -56,18 +56,19 @@ export class CreateWalletByImage extends Widget {
 
             return;
         }
-
         const imagePsw = this.props.imagePsw;
-        const imgArgon2HashPromise = new Promise((resolve) => {
-            this.props.imagePicker.getAHash({
-                success(ahash:string) {
-                    console.log('image ahash = ',ahash);
-                    resolve(ahashToArgon2Hash(ahash,imagePsw));
-                }
+        if (this.props.imagePswAvailable) {
+            const imgArgon2HashPromise = new Promise((resolve) => {
+                this.props.imagePicker.getAHash({
+                    success(ahash:string) {
+                        console.log('image ahash = ',ahash);
+                        resolve(ahashToArgon2Hash(ahash,imagePsw));
+                    }
+                });
             });
-        });
-        setStore('flags/imgArgon2HashPromise',imgArgon2HashPromise);
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });
-        this.ok && this.ok();
+            setStore('flags/imgArgon2HashPromise',imgArgon2HashPromise);
+            popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });
+            this.ok && this.ok();
+        }
     }
 }

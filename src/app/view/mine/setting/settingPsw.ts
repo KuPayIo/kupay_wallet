@@ -20,14 +20,10 @@ export class SettingPsw extends Widget {
             walletPsw: '',
             walletPswConfirm: '',
             pswEqualed: false,
-            userProtocolReaded: false,
+            userProtocolReaded: true,
             walletPswAvailable: false
         };
         super.setProps(this.props, oldProps);
-    }
-    public checkBoxClick(e: any) {
-        this.props.userProtocolReaded = (e.newType === 'true' ? true : false);
-        this.paint();
     }
     public pswConfirmChange(r: any) {
         this.props.walletPswConfirm = r.value;

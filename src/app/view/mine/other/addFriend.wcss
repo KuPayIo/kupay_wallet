@@ -13,6 +13,7 @@
     background: #2273C3;    
     border-radius: 12px 12px 0 0;
     margin: -1px;
+    overflow: hidden;
 }
 .userHead{
     width: 120px;
@@ -41,4 +42,12 @@
 .copy{
     vertical-align: middle;
     border: 10px solid transparent;
+}
+.userId{
+    color: rgba(255, 255, 255, 1);
+    font-size: 32px;
+    line-height: 32px;
+    margin-top: 5%;
+    padding-right: 30px;
+    text-align: right;
 }

@@ -72,3 +72,12 @@
 .btn{
     margin: 80px 40px;
 }
+.place-holder{
+    text-align: center;
+    font-size:32px;
+    font-family:PingFangSC-Regular;
+    font-weight:400;
+    color:rgba(204,204,204,1);
+    line-height:40px;
+    padding: 26px 0;
+}
