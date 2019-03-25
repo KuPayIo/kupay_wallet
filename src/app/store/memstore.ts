@@ -24,6 +24,7 @@ export const initStore = () => {
         initAccount();          // 账户初始化
         initSettings();         // 设置初始化
         initThird();            // 三方数据初始化
+        initInviteUsers();      // 邀请好友数据初始化
         initFile().then(() => {
             resolve();
         });             // indexDb数据初始化
@@ -417,6 +418,12 @@ const registerSettingChange = () => {
     register('setting', () => {
         settingChange();
     });
+    register('flags/invite_success', () => {
+        inviteUsersChange();
+    });
+    register('flags/convert_invite', () => {
+        inviteUsersChange();
+    });
 };
 
 /**
@@ -544,6 +551,26 @@ const settingChange = () => {
     setLocalStorage('setting', localSetting);
 };
 
+/**
+ * 邀请好友数据变化
+ */
+const inviteUsersChange = () => {
+    const localInvite = {
+        invite_success: getStore('flags').invite_success || [],  // 我邀请的好友
+        convert_invite: getStore('flags').convert_invite || []  // 邀请我的好友
+    };
+    setLocalStorage('flagsInvite', localInvite);
+};
+
+/**
+ * 邀请好友数据初始
+ */
+const initInviteUsers = () => {
+    const flags = getLocalStorage('flagsInvite');
+    if (!flags) return;
+    setStore('flags/invite_success',flags.invite_success);
+    setStore('flags/convert_invite',flags.convert_invite);
+};
 // ======================================================== 本地
 
 // ============================================ 立即执行
@@ -570,7 +597,8 @@ const store: Store = {
             avatar: '',             // 头像
             phoneNumber: '',        // 手机号
             areaCode:'86',          // 区域码
-            isRealUser: false       // 是否是真实用户
+            isRealUser: false,       // 是否是真实用户
+            acc_id:''                // 好嗨号
         }
     },
     wallet: null,

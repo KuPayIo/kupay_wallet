@@ -7,6 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { uploadFileUrlPrefix } from '../../../config';
 import { getOneUserInfo, queryDetailLog } from '../../../net/pull';
+import { CloudCurrencyType } from '../../../store/interface';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -37,7 +38,8 @@ export class ExchangeDetail extends Widget {
             totalNum:0,
             totalAmount:0,
             greatUser:-1,
-            greatAmount:0
+            greatAmount:0,
+            ctypeShow:'KT'
         };
         this.initData();
     }
@@ -60,7 +62,7 @@ export class ExchangeDetail extends Widget {
     }
 
     public async initData() {
-        const value = await queryDetailLog(this.props.suid,this.props.rid);
+        const value = await queryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
         if (!value) return;
         this.props.redBagList = value[0];        
         this.props.message = value[1];
@@ -68,12 +70,18 @@ export class ExchangeDetail extends Widget {
         this.props.totalNum = value[3];
         this.props.totalAmount = value[4];
 
-        const user = await getOneUserInfo([this.props.suid]);
-        if (!user) return;
-        this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
-        this.props.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../../res/image/default_avater_big.png';
+        if (this.props.suid) {
+            const user = await getOneUserInfo([this.props.suid]);
+            if (!user) return;
+            this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
+            this.props.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../../res/image/default_avater_big.png';
+        }
 
         const redBagList = value[0];
+        if (!this.props.ctypeShow) {
+            this.props.ctypeShow = CloudCurrencyType[redBagList[0].ctype];
+        }
+        
         for (let i = 0;i < redBagList.length;i++) {
             const person = await getOneUserInfo([redBagList[i].cuid]);
             if (!person) break;

@@ -75,7 +75,20 @@ export class OpenRedEnvelope extends Widget {
         const rid = this.props.rid;
         
         const res: any = await takeRedBag(rid.slice(2));
-        if (!res) {
+        console.log('========================convert',res);
+        if (res.result === 702) {  // 红包已被领完 查看其他人领取记录
+            this.props = {
+                ...this.props,
+                rtype: rid.slice(0,2),
+                amount: 0,
+                rid: rid.slice(2)
+            };
+            popNew('app-view-earn-exchange-exchangeDetail',this.props);
+            this.backPrePage(JSON.stringify(this.props)); // 查看兑换记录
+
+            return false;
+
+        } else if (res.result !== 1) {  // 其他错误 直接退出
             this.props.openClick = false;
             this.paint();
 

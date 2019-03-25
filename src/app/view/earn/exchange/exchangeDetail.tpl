@@ -8,7 +8,7 @@
     <div w-class="content" on-scroll="pageScroll" id="exchangeDetail">
         <img src="../../../res/image/redEnvDetail.png" w-class="topBackimg"/>
         <div w-class="topBack">
-            <img src="{{it.userHead}}" w-class="userHead"/>
+            <img src="{{it.userHead?it.userHead:'../../../res/image/default_avater_big.png'}}" w-class="userHead"/>
             <div w-class="userName">{{it.userName}}
                 {{if it.showPin}}
                 <span w-class="other">
@@ -17,7 +17,7 @@
                 {{end}}
             </div>
             <div>{{it.message}}</div>
-            <div w-class="describe">{{it.amount+" "+it.ctypeShow}}</div>
+            <div w-class="describe">{{it.amount > 0 ? (it.amount+" "+it.ctypeShow):"已抢光"}}</div>
         </div>
         <div w-class="bottom">
             {{if it.rtype==99}}
