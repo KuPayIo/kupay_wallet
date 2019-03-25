@@ -542,13 +542,6 @@ export const registerStore = () => {
                 // 获取真实用户
                 getRealUser();
             });
-            const data = {
-                appid:'101',
-                mchid:'15',
-                noPSW:1,
-                password:'123456789'
-            };
-            setNoPWD(data);
         } 
     });
 
