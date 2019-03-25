@@ -64,8 +64,8 @@ console.log("注入 thirdApiDepend.js success");
         img:"free_secret_start.png",
         startImg:"free_secret_close.png",
         closeImg:"free_secret_start.png",
-        text:"免密支付",
-        startText:"免密支付",
+        text:"打开免密",
+        startText:"打开免密支付",
         closeText:"关闭免密",
         show:true,
         clickedClose:false,
@@ -425,6 +425,12 @@ pi_tools.closePopBox = function(){
 }
 
 /**
+ * 提示框
+ */
+pi_tools.popNewMessage = function(msg){
+
+}
+/**
  * 根据id获取buttonItem
  */
 pi_tools.getButtonItemById = function(id){
@@ -437,7 +443,9 @@ pi_tools.getButtonItemById = function(id){
  * 获取是否开启免密支付
  */
 pi_tools.getFreeSecret = function(){
-    pi_RPC_Method(pi_config.jsApi, "queryNoPWD", pi_config.gameName, function (error, startFreeSecret) {
+    console.log("getFreeSecret called");
+    pi_RPC_Method(pi_config.jsApi, "queryNoPWD", pi_config.appId, function (error, startFreeSecret) {
+        console.log("getFreeSecret called callback",startFreeSecret);
         if(pi_store.freeSecret === startFreeSecret) return;
         pi_store.freeSecret = startFreeSecret;
         console.log('queryNoPWD call success',startFreeSecret);

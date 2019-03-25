@@ -217,6 +217,12 @@ export const queryNoPWD = (appid:string,callback:Function) => {
  * 设置免密支付
  * @param data 免密设置对象
  * @param callback 设置回调函数
+ * {
+ * appid:"101",
+ * mchid:"15",
+ * noPSW:1
+ * password:"123456789"
+ * }
  */
 export const setNoPWD = async (data:any,callback:Function) => {
     if (!data.appid) {
@@ -258,11 +264,7 @@ export const setNoPWD = async (data:any,callback:Function) => {
         }
     };
     requestAsync(msg).then(resData => {
-        if (resData.result === 1) {
-            callback(resCode.SUCCESS,true);
-        } else {
-            callback(resData.result,false);
-        }  
+        callback(resCode.SUCCESS,true);
     }).catch (err => {
         callback(resCode.OTHER_ERROR, false);
     });

@@ -296,10 +296,9 @@ pi_tools.createThirdApiStyleTag = function() {
     animation-fill-mode: both;
     }`;
 
-    let pi_root_css = '#pi-root{'+pi_tools.browserAdaptive()+'}';
     var style = document.createElement("style");
     style.type = "text/css";
-    style.innerHTML = (pi_root_css+cssText);
+    style.innerHTML = cssText
     document.getElementsByTagName("head")[0].appendChild(style);
 }
 
@@ -391,13 +390,15 @@ pi_tools.createSetNoPSWElementTag =  function() {
                 <div class="pi-ok-btn">确定</div>
             </div>
         </div>`;
-    var $root = document.createElement("div");
-    $root.setAttribute("class", "pi-mask");
-    $root.innerHTML = htmlText;
+    var $mask = document.createElement("div");
+    $mask.setAttribute("class", "pi-mask");
+    $mask.innerHTML = htmlText;
 
-    var $body = document.querySelector(".pi-root");
-    $body.appendChild($root);
-    $body.style.display = 'flex';
+    var $root = document.createElement("div");
+    $root.setAttribute("id", "pi-root");
+    $root.appendChild($mask);
+
+    document.querySelector("body").appendChild($root);
 }
 
 //创建加载弹窗标签
@@ -411,13 +412,15 @@ pi_tools.createLoadingElementTag = function(loadingStr) {
                 </p>
             </div>
         </div>`;
-    var $root = document.createElement("div");
-    $root.setAttribute("class", "pi-loading-mask");
-    $root.innerHTML = htmlText;
+    var $mask = document.createElement("div");
+    $mask.setAttribute("class", "pi-loading-mask");
+    $mask.innerHTML = htmlText;
 
-    var $body = document.querySelector(".pi-root");
-    $body.appendChild($root);
-    $body.style.display = 'flex';
+    var $root = document.createElement("div");
+    $root.setAttribute("id", "pi-root");
+    $root.appendChild($mask);
+
+    document.querySelector("body").appendChild($root);
 }
 
 
@@ -480,7 +483,7 @@ pi_jsApi.openPayment = function (order, callBack) {
                         console.log('pay call success', msg1);
                         console.log('免密支付完成!');
                         callBack(resCode1, msg1);
-                        closePop();
+                        closePopBox();
                     });
                 });
                 
@@ -500,12 +503,12 @@ pi_jsApi.openPayment = function (order, callBack) {
                         console.log('pay call success', resCode1);
                         console.log('pay call success', msg1);
                         callBack(resCode1, msg1);
-                        closePop();
+                        closePopBox();
                     });
                 });
 
                 $cancel.addEventListener("click", function () {
-                    closePop();
+                    closePopBox();
                     callBack(1003, null)
                 });
             }
@@ -520,7 +523,7 @@ pi_jsApi.openPayment = function (order, callBack) {
 // appid:应用id
 // mchid:商户id
 // noPSW:设置免密支付状态  0:关闭，1:开启
-pi_jsApi.setNoPSW = function (appid, mchid, noPSW, callBack) {
+pi_jsApi.setNoPSW = function (appid, mchid, noPSW) {
     pi_tools.createSetNoPSWElementTag();
     var $ok = document.querySelector(".pi-ok-btn");
     var $cancel = document.querySelector(".pi-cancel-btn");
@@ -533,18 +536,20 @@ pi_jsApi.setNoPSW = function (appid, mchid, noPSW, callBack) {
             noPSW: noPSW,
             password: $input.value
         }
+        pi_tools.closePopBox();
         pi_tools.createLoadingElementTag('设置中...');
         pi_RPC_Method("app/api/JSAPI", "setNoPWD", sendData, function (resCode1, msg1) {
             console.log('setNoPWD call success', resCode1);
             console.log('setNoPWD call success', msg1);
-            callBack(resCode1, msg1);
-            pi_tools.closePop();
+            if(msg1){
+                pi_tools.getFreeSecret();
+            }
+            pi_tools.closePopBox();
         });
     });
 
     $cancel.addEventListener("click", function () {
-        pi_tools.closePop();
-        callBack(1003, null)
+        pi_tools.closePopBox();
     });
 }
 
