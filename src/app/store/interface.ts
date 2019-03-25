@@ -217,6 +217,7 @@ export interface UserInfo {
     phoneNumber: string;   // 手机号
     areaCode:string;     // 手机区号
     isRealUser: boolean;    // 是否是真实用户
+    acc_id:string;  // 账户ID 钱包，聊天，活动统一账号
 }
 
 /**

@@ -1112,6 +1112,7 @@ export const getUserInfo = () => {
     const phoneNumber = userInfo.phoneNumber;
     const isRealUser = userInfo.isRealUser;
     const areaCode = userInfo.areaCode;
+    const acc_id = userInfo.acc_id;
     let avatar = userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
@@ -1122,7 +1123,8 @@ export const getUserInfo = () => {
         avatar,
         phoneNumber,
         areaCode,
-        isRealUser
+        isRealUser,
+        acc_id
     };
 };
 

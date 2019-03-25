@@ -3,7 +3,7 @@
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
-import { getAllAccount, getStore, register } from '../store/memstore';
+import { getAllAccount, getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
 import { closeAllPage, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
@@ -16,6 +16,7 @@ import { getServerCloudBalance } from './pull';
 /**
  * 主动推送初始化
  */ 
+// tslint:disable-next-line:max-func-body-length
 export const initPush = () => {
     // 监听指令事件
     setPushListener('cmd',(res) => {
@@ -68,6 +69,22 @@ export const initPush = () => {
         return () => {
             popNewMessage(getStaticLanguage().transfer.rechargeTips);
         };
+    });
+
+    // 监听邀请好友成功事件
+    setPushListener('event_invite_success',(res) => {
+        console.log('event_invite_success服务器推送邀请好友成功=====================',res);
+        const invite = getStore('flags').invite_success || [];
+        invite.push(res.accId);
+        setStore('flags/invite_success',invite);
+    });
+
+    // 监听兑换邀请码成功事件
+    setPushListener('event_convert_invite',(res) => {
+        console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
+        const invite = getStore('flags').convert_invite || [];
+        invite.push(res.accId);
+        setStore('flags/convert_invite',invite);
     });
 
     // 监听余额变化事件

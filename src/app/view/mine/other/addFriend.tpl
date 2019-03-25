@@ -7,11 +7,11 @@
             <img src={{it.userHead}} w-class="userHead"/>
             <span w-class="userName">{{it.userName}}</span>
         </div>
-        <div w-class="address" on-tap="copyAddr">{{it.address}}
+        <div w-class="address" on-tap="copyAddr">好嗨号：{{it.acc_id}}
             <img src="../../../res/image/copy_gray.png" width="30px" w-class="copy"/>
         </div>
         <div style="text-align: center;">
-            <app-components-qrcode-qrcode>{value:{{it.address}},size:"350"}</app-components-qrcode-qrcode>
+            <app-components-qrcode-qrcode>{value:{{it.acc_id}},size:"350"}</app-components-qrcode-qrcode>
             <div style="font-size: 32px;color: #222222;margin-top: 50px;">
                 <pi-ui-lang>{"zh_Hans":"扫码添加{{it.walletName}}好友","zh_Hant":"掃碼添加{{it.walletName}}好友","en":""}</pi-ui-lang>
             </div>
