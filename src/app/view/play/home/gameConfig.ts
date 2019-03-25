@@ -21,7 +21,7 @@ export const gameList = [
         desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
         webviewName:'Crypto Fishing',
         img:['app/res/image1/CryptoFishing.jpg','app/res/image1/CryptoFishing1.jpg'],
-        url:'http://192.168.31.10:3003/index.html',
+        url:'https://test.fomosports.me/',
         gid:CRYPTOFISHING_GROUP
     }
    
@@ -36,4 +36,15 @@ export const getGameUrl = (webviewName:string) => {
     });
 
     return gameList[index].url;
+};
+
+/**
+ * 获取指定webviewName的logo url
+ */
+export const getGameLogo = (webviewName:string) => {
+    const index = gameList.findIndex((item) => {
+        return item.webviewName === webviewName;
+    });
+
+    return gameList[index].img[1];
 };

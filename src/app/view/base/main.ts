@@ -5,7 +5,6 @@
 
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { authorize } from '../../api/JSAPI';
 import { LockScreen } from '../../store/interface';
 import { getAllAccount, getStore, setStore } from '../../store/memstore';
 import { piRequire } from '../../utils/commonjsTools';

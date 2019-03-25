@@ -376,7 +376,6 @@ winit.initNext = function () {
 			"chat/client/app/view/chat/contactTop.tpl",
 			"chat/client/app/view/chat/contactTop.js",
 			"chat/client/app/view/chat/contactTop.wcss",
-			
 			"chat/client/app/view/contactList/contactList.tpl",
 			"chat/client/app/view/contactList/contactList.js",
 			"chat/client/app/view/contactList/contactList.wcss",
@@ -384,7 +383,8 @@ winit.initNext = function () {
 			"chat/client/app/view/contactList/contactItem.js",
 			"chat/client/app/view/contactList/contactItem.wcss",
 			"chat/client/app/widget/utilList/",
-			"chat/client/app/widget/imgShow/"
+			"chat/client/app/widget/imgShow/",
+			"chat/client/app/widget/topBar/"
 		]; 
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadChatSource");
