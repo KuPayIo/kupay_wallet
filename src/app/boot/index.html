@@ -476,6 +476,7 @@
 					if (index < 0) throw new Error("iOS bundle has not find assets")
 					index += "/assets".length;
 					defaultDomains = winit.domains = [location.href.slice(0, index)];
+					alert("inApp defaultDomains ========",defaultDomains);
 				}
 			} else {
 				defaultDomains = winit.domains = remoteDomains;

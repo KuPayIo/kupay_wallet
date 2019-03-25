@@ -1,6 +1,5 @@
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
-import { popNew3 } from '../utils/tools';
 import { getGameUrl } from '../view/play/home/gameConfig';
 
 /**
@@ -53,9 +52,6 @@ export const gotoRecharge = (webViewName: string) => {
  */
 export const gotoGameService = (webViewName: string) => {
     console.log('wallet gotoGameService called');
-    // popNew('chat-client-app-view-chat-chat',{},() => {
-    //     WebViewManager.open(webViewName, `${getGameUrl(webViewName)}?${Math.random()}`, webViewName,'');
-    // });
     minWebview(webViewName);
 };
 
@@ -64,8 +60,5 @@ export const gotoGameService = (webViewName: string) => {
  */
 export const gotoOfficialGroupChat = (webViewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
-    // popNew('chat-client-app-view-chat-chat',{},() => {
-    //     WebViewManager.open(webViewName, `${getGameUrl(webViewName)}?${Math.random()}`, webViewName,'');
-    // });
     minWebview(webViewName);
 };

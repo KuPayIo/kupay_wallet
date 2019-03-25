@@ -186,7 +186,7 @@ export const pay = async (order: any, callback: Function) => {
 };
 
 /**
- * 查询免密支付
+ * 查询是否开启免密支付
  * @param appid 应用id
  * @param callback 回调函数
  */
@@ -200,15 +200,16 @@ export const queryNoPWD = (appid:string,callback:Function) => {
         type: 'wallet/order@nopwd_limit',
         param: { appid }
     };
-    requestAsync(msg).then(resData => {
-        if (resData.result === 1) {
-            callback(resCode.SUCCESS,resData);
-        } else {
-            callback(resData.result,resData);
-        }  
+    requestAsync(msg).then(() => {
+        callback(resCode.SUCCESS,true);
     }).catch (err => {
-        // console.log('pay--------',err);
-        callback(resCode.OTHER_ERROR, err);
+        if (err.result === 2119) {  // 用户未开启免密支付
+            callback(undefined, false);
+        } else if (err.result === 2118) { // 免密支付已达当日限额
+            callback(undefined,true);
+        } else {
+            callback(undefined, false);
+        }
     });
 };
 
@@ -258,13 +259,12 @@ export const setNoPWD = async (data:any,callback:Function) => {
     };
     requestAsync(msg).then(resData => {
         if (resData.result === 1) {
-            callback(resCode.SUCCESS,resData);
+            callback(resCode.SUCCESS,true);
         } else {
-            callback(resData.result,resData);
+            callback(resData.result,false);
         }  
     }).catch (err => {
-        // console.log('pay--------',err);
-        callback(resCode.OTHER_ERROR, err);
+        callback(resCode.OTHER_ERROR, false);
     });
 
 };

@@ -5,9 +5,9 @@ console.log("注入 thirdApi.js success");
 //--------标签样式----------------------------------------------------------------------------------------------------------------------------
 
 /**
- * 授权弹框样式
+ * 第三方api样式
  */
-pi_tools.createAuthorizeStyleTag = function() {
+pi_tools.createThirdApiStyleTag = function() {
     var cssText = `
     /* 公共 */
     .pi-mask {
@@ -303,7 +303,7 @@ pi_tools.createAuthorizeStyleTag = function() {
     document.getElementsByTagName("head")[0].appendChild(style);
 }
 
-window.addEventListener("load",pi_tools.createAuthorizeStyleTag)
+window.addEventListener("load",pi_tools.createThirdApiStyleTag)
 
 
 
@@ -340,7 +340,7 @@ pi_tools.createAuthorizeElementTag = function() {
 }
 
 //创建支付弹窗标签
-function createPayElementTag() {
+pi_tools.createPayElementTag = function() {
     var htmlText = `
         <div class="pi-update-box animated bounceInUp">
             <div class="pi-update-content">
@@ -375,7 +375,7 @@ function createPayElementTag() {
 }
 
 //创建设置免密弹窗标签
-function createSetNoPSWElementTag() {
+pi_tools.createSetNoPSWElementTag =  function() {
     var htmlText = `
         <div class="pi-update-box animated bounceInUp">
             <div class="pi-update-content">
@@ -401,7 +401,7 @@ function createSetNoPSWElementTag() {
 }
 
 //创建加载弹窗标签
-function createLoadingElementTag(loadingStr) {
+pi_tools.createLoadingElementTag = function(loadingStr) {
     var htmlText = `
         <div class="pi-loading-mask">
             <div class="pi-loading-spinner">
@@ -521,7 +521,7 @@ pi_jsApi.openPayment = function (order, callBack) {
 // mchid:商户id
 // noPSW:设置免密支付状态  0:关闭，1:开启
 pi_jsApi.setNoPSW = function (appid, mchid, noPSW, callBack) {
-    createSetNoPSWElementTag();
+    pi_tools.createSetNoPSWElementTag();
     var $ok = document.querySelector(".pi-ok-btn");
     var $cancel = document.querySelector(".pi-cancel-btn");
     var $input = document.getElementById("pi_password");
@@ -533,17 +533,17 @@ pi_jsApi.setNoPSW = function (appid, mchid, noPSW, callBack) {
             noPSW: noPSW,
             password: $input.value
         }
-        createLoadingElementTag('设置中...');
+        pi_tools.createLoadingElementTag('设置中...');
         pi_RPC_Method("app/api/JSAPI", "setNoPWD", sendData, function (resCode1, msg1) {
             console.log('setNoPWD call success', resCode1);
             console.log('setNoPWD call success', msg1);
             callBack(resCode1, msg1);
-            closePop();
+            pi_tools.closePop();
         });
     });
 
     $cancel.addEventListener("click", function () {
-        closePop();
+        pi_tools.closePop();
         callBack(1003, null)
     });
 }
