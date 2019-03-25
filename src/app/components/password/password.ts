@@ -122,6 +122,7 @@ export class ImgRankItem extends Widget {
             this.props.showIcon = true;
         } else {
             this.props.showIcon = false;
+            this.props.showTips = true;
         }
         this.paint();
     }

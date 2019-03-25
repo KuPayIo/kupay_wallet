@@ -10,7 +10,7 @@
             <div ev-psw-change="pswChange" ev-psw-clear="pwsClear"><app-components-password-password>{hideTips:true}</app-components-password-password></div>
             <div w-class="input-father" ev-input-change="pswConfirmChange">
                 {{: inputPlace = {"zh_Hans":"重复密码","zh_Hant":"重複密碼","en":""} }}
-                <app-components-input-suffixInput>{itype:"password",placeHolder:{{inputPlace}},clearable:true,available:{{it.pswEqualed}}}</app-components-input-suffixInput>
+                <app-components-input-suffixInput>{isShow:true,itype:"password",placeHolder:{{inputPlace}},clearable:true,available:{{it.pswEqualed}}}</app-components-input-suffixInput>
             </div>
             <div w-class="registered-protocol" ev-checkbox-click="checkBoxClick">
                     <span w-class="user-agree"><pi-ui-lang>{"zh_Hans":"我已经认证阅读并同意","zh_Hant":"我已經認證閱讀並同意","en":""}</pi-ui-lang></span>

@@ -77,9 +77,9 @@ export class Home extends Widget {
             ],
             medalest:''
         };
-        if (getModulConfig('GITHUB')) {
-            this.props.list.push({ img:'../../../res/image/43.png',name: '',components:'' });
-        }
+        // if (getModulConfig('GITHUB')) {
+        //     this.props.list.push({ img:'../../../res/image/43.png',name: '',components:'' });
+        // }
         this.initData();
     }
     
@@ -95,7 +95,7 @@ export class Home extends Widget {
         const userInfo = getUserInfo();
         if (userInfo) {
             this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
-            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/acc.png';
+            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
         }
 
         const wallet = getStore('wallet');
@@ -165,9 +165,6 @@ export class Home extends Widget {
         if (ind === 0) {
             if (!hasWallet()) return;
             popNew('app-view-mine-account-home');
-        } else if (ind === 5) {
-            // window.open('https://github.com/KuPayIo/kupay_wallet');
-            openNewActivity('https://github.com/KuPayIo/kupay_wallet',this.props.walletName);
         } else {
             popNew(this.props.list[ind].components);
         }
