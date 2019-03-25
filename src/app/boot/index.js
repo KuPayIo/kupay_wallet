@@ -16,6 +16,7 @@
  *    + 只有在Android App的版本达到这个以上，才会更新H5版本；
  */
 
+
 'use strict';
 document.body.style.backgroundColor="#2F2F2F";
 winit.path="/wallet/";//"/pi/0.1/";

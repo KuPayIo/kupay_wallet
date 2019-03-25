@@ -8,8 +8,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { convertRedBag, getServerCloudBalance, takeRedBag } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { setStore } from '../../../store/memstore';
-import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 import { popNewMessage } from '../../../utils/tools';
+import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -24,7 +24,7 @@ interface Props {
     inFlag?:string; // 从哪里进入 chat
 }
 export class OpenRedEnvelope extends Widget {
-    public ok:() => void;
+    public ok:(fg:string) => void;
     public language:any;
     public props:any;
 
@@ -52,33 +52,45 @@ export class OpenRedEnvelope extends Widget {
      */
     public openRedEnv() {
         this.props.openClick = true;
-        
         this.paint();
+        
         setTimeout(async () => {
+            let convertFg = true; // 兑换成功标记
             if (this.props.inFlag === 'chat') {
-                await this.convertClick();
+                convertFg = await this.convertClick();
+            } 
+            if (convertFg) {  
+                popNew('app-view-earn-exchange-exchangeDetail',this.props);
+                popNewMessage(this.language.successMess);
+                this.backPrePage(JSON.stringify(this.props)); // 兑换成功
             }
-            popNew('app-view-earn-exchange-exchangeDetail',this.props);
-            
-            popNewMessage(this.language.successMess);
-            this.backPrePage();
         },800);
        
     }
 
     /**
-     * 点击兑换按钮
+     * 实际兑换红包
      */
     public async convertClick() {
         const rid = this.props.rid;
         
         const res: any = await takeRedBag(rid.slice(2));
-        if (!res.value) return;
+        if (!res) {
+            this.props.openClick = false;
+            this.paint();
+
+            return false;
+        }
         console.log('!!!!!!!!!!!!!!!!!!!takeredbag',res);
         const cid = res.value[3];  // 兑换码
         
         const ans = await convertRedBag(cid);
-        if (!ans.value) return;
+        if (!ans) {
+            this.props.openClick = false;
+            this.paint();
+
+            return false;
+        }
         console.log('!!!!!!!!!!!!!!!!!!!convertredbag',ans);
         const v = ans.value;
         this.props = {
@@ -92,10 +104,11 @@ export class OpenRedEnvelope extends Widget {
         setStore('activity/luckyMoney/exchange',undefined);
         getServerCloudBalance();
 
+        return true;
     }
 
-    public backPrePage() {
-        this.ok && this.ok();
+    public backPrePage(fg:string) {
+        this.ok && this.ok(fg);
     }
 
 }
