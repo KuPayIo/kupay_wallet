@@ -281,6 +281,9 @@ pi_tools.floatButtonInit = function (){
       show:true,
       clickCb:function(){
         console.log("click 游戏客服");
+        pi_RPC_Method(pi_config.thirdBase, "gotoGameService", pi_config.gameName, function (error, result) {
+            console.log('gotoGameService call success');
+        });
       }
     },{
       img:"official_group_chat.png",
@@ -289,6 +292,9 @@ pi_tools.floatButtonInit = function (){
       show:true,
       clickCb:function(){
         console.log("click 官方群聊");
+        pi_RPC_Method(pi_config.thirdBase, "gotoOfficialGroupChat", pi_config.gameName, function (error, result) {
+            console.log('gotoOfficialGroupChat call success');
+        });
       }
     },{
       img:"recharg.png",
