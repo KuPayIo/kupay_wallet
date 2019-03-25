@@ -16,8 +16,7 @@
             </div>
             
             <div w-class="address" on-tap="copyAddr">
-                <span>{{it.walletName}}ID：</span>
-                <span w-class="addrNum">{{it.address}}</span>
+                <span w-class="addrNum">好嗨号：{{it.acc_id}}</span>
                 <img src="../../../res/image/copy_write.png" width="40px" w-class="copy"/>
             </div>
             {{else}}

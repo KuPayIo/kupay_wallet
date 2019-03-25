@@ -167,7 +167,9 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
     const signStr = sign(conRandom, wlt.exportPrivateKey());
     const msgLogin = { type: 'login', param: { sign: signStr } };
 
-    return requestAsync(msgLogin).then(() => {
+    return requestAsync(msgLogin).then((r:any) => {
+        console.log('============================好嗨号acc_id:',r.acc_id);
+        setStore('user/info/acc_id',r.acc_id);
         applyAutoLogin();
         setStore('user/isLogin', true);
         loginWalletSuccess();

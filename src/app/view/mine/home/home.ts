@@ -32,7 +32,6 @@ export class Home extends Widget {
         this.language = this.config.value[getLang()];
         const hasBackupMnemonic = false;
         const hasWallet = false;
-        const address = '';
         this.props = {
             isTourist:true,
             list:[
@@ -43,7 +42,7 @@ export class Home extends Widget {
                 { img:'../../../res/image/24.png',name: '',components:'app-view-mine-other-aboutus' }
                 
             ],
-            address,
+            acc_id:'000000',
             userName:'',
             avatar:'',
             close:false,
@@ -101,12 +100,12 @@ export class Home extends Widget {
         const wallet = getStore('wallet');
         if (wallet) {
             this.props.hasWallet = true;
-            this.props.address = getStore('user/id');
+            this.props.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
             this.props.hasBackupMnemonic = wallet.isBackup;    
             this.props.isTourist = !wallet.setPsw;        
         } else {
             this.props.hasWallet = false;
-            this.props.address = '';
+            this.props.acc_id = '';
         }
         this.medalest();
         this.paint();
@@ -175,7 +174,7 @@ export class Home extends Widget {
      * 复制地址
      */
     public copyAddr() {
-        copyToClipboard(this.props.address);
+        copyToClipboard(this.props.acc_id);
         popNewMessage(this.language.tips);
     }
 

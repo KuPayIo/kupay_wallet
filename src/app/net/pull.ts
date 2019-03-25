@@ -245,8 +245,8 @@ export const takeRedBag = async (rid) => {
         return res;
     } catch (err) {
         showError(err && (err.result || err.type));
-
-        return;
+        
+        return err;
     }
 };
 
@@ -356,14 +356,22 @@ export const queryConvertLog = async (start?:string) => {
 /**
  * 查询某个红包兑换详情
  */
-export const queryDetailLog = async (uid:number,rid: string) => {
+export const queryDetailLog = async (uid:number,rid: string,accId?:string) => {
     const msg = {
         type: 'query_detail_log',
-        param: {
+        param: {}
+    };
+    if (accId) {  // 与聊天通用的账户id
+        msg.param = {
+            acc_id: accId,
+            rid
+        };
+    } else {
+        msg.param = {
             uid,
             rid
-        }
-    };
+        };
+    }
     if (rid === '-1') return;
 
     try {
@@ -377,7 +385,6 @@ export const queryDetailLog = async (uid:number,rid: string) => {
         return;
     }
 };
-
 // ==========================================红包end
 
 /**
