@@ -461,12 +461,16 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
     if (currencyUnit === 'CNY') {
         if (currencyName === 'ST') {
             balanceValue = balance * (silverPrice / 100);
+        } else if (currencyName === 'SC') {
+            balanceValue = balance;
         } else {
             balanceValue = balance * currency2USDT.close * USD2CNYRate;
         }
     } else if (currencyUnit === 'USD') {
         if (currencyName === 'ST') {
             balanceValue = (balance * (silverPrice / 100)) / USD2CNYRate;
+        } else if (currencyName === 'SC') {
+            balanceValue = balance / USD2CNYRate;
         } else {
             balanceValue = balance * currency2USDT.close;
         }
@@ -530,14 +534,14 @@ export const fetchCloudWalletAssetList = () => {
         rate:formatBalanceValue(0)
     };
     assetList.push(ktItem);
-    const gtBalance = cloudBalances.get(CloudCurrencyType.ST) || 0;
+    const scBalance = cloudBalances.get(CloudCurrencyType.SC) || 0;
     const gtItem = {
-        currencyName: 'ST',
-        description: 'ST',
-        balance: formatBalance(gtBalance),
-        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('ST',gtBalance)),
-        gain: fetchGTGain(),
-        rate:formatBalanceValue(fetchBalanceValueOfCoin('ST',1))
+        currencyName: 'SC',
+        description: 'SC',
+        balance: formatBalance(scBalance),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('SC',scBalance)),
+        gain: fetchSCGain(),
+        rate:formatBalanceValue(fetchBalanceValueOfCoin('SC',1))
     };
     assetList.push(gtItem);
     for (const k in CloudCurrencyType) {
@@ -683,13 +687,19 @@ export const fetchCoinGain = (currencyName: string) => {
     return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
 };
 
-export const fetchGTGain = () => {
+// 获取ST涨跌情况
+export const fetchSTGain = () => {
     const goldGain = getStore('third/silver/change');
     if (!goldGain) {
         return formatBalanceValue(0);
     } else {
         return formatBalanceValue(goldGain * 100);
     }
+};
+
+// 获取SC涨跌情况 
+export const fetchSCGain = () => {
+    return formatBalanceValue(0);
 };
 /**
  * 转化rtype
@@ -1253,6 +1263,8 @@ export const currencyType = (str:string) => {
         return getModulConfig('ST_SHOW');
     } else if (str === 'KT') {
         return getModulConfig('KT_SHOW');
+    } else if (str === 'SC') {
+        return getModulConfig('SC_SHOW');
     } else {
         return str;
     }

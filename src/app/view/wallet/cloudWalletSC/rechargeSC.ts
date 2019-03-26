@@ -1,5 +1,5 @@
 /**
- * 充值KT
+ * 充值SC
  */
 
 import { setStore } from '../../../../chat/client/app/data/store';
@@ -10,9 +10,7 @@ import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail, getServerCloudBalance, getSilverPrice } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { confirmPay } from '../../../utils/recharge';
-import { popNewMessage } from '../../../utils/tools';
-import { ST2st } from '../../../utils/unitTools';
+import { confirmPay, OrderDetail } from '../../../utils/recharge';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -32,7 +30,7 @@ interface Props {
     inputValue: number; // 输入的金额
 }
 
-export class RechargeKT extends Widget {
+export class RechargeSC  extends Widget {
     public ok: () => void;
     public props: Props = {
         ktShow:getModulConfig('KT_SHOW'),
@@ -76,25 +74,20 @@ export class RechargeKT extends Widget {
     }
 
     public rechargeClick() {
-        if (this.props.total < 20) {
-            popNewMessage({ zh_Hans: `最少充值20${this.props.ktShow}`, zh_Hant: `最少充值20${this.props.ktShow}`, en: '' });
-
-            return;
-        }
-
-        const orderDetail = {
+        const orderDetail:OrderDetail = {
             total: this.props.total * 100, // 总价
-            body: 'KT', // 信息
-            num: ST2st(this.props.giveST), // 充值ST数量
+            body: 'SC', // 信息
+            num: this.props.total * 100, // 充值ST数量
             payType: this.props.payType, // 支付方式
-            type: CloudCurrencyType.ST, // 充值类型
-            note: 1
+            cointype: CloudCurrencyType.SC, // 充值类型
+            note: ''
         };
+
         confirmPay(orderDetail, (res) => {
             this.inputChange({ value: 0 });
             this.props.payType = 'alipay';
 
-            popNew('app-view-wallet-cloudWalletGT-transactionDetails', { oid: res.oid, firstQuery: true });
+            popNew('app-view-wallet-cloudWalletSC-transactionDetails', { oid: res.oid, firstQuery: true });
             getServerCloudBalance();
             getAccountDetail(CloudCurrencyType[100], 1);
             this.paint();
@@ -130,7 +123,7 @@ export class RechargeKT extends Widget {
         if (e.value === '') {
             this.props.inputValue = 0;
         } else {
-            this.props.inputValue = e.value;
+            this.props.inputValue = Math.floor(Number(e.value) * 100) / 100;
         }
         this.setOrderNum(this.props.inputValue);
         this.paint();

@@ -1,10 +1,10 @@
 /**
- * other record
+ * 入账
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail, getRechargeLogs } from '../../../net/pull';
+import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { timestampFormat } from '../../../utils/tools';
@@ -17,7 +17,7 @@ interface Props {
     currencyName:string;
     isActive:boolean;
 }
-export class RechargeRecord extends Widget {
+export class AccountEntry extends Widget {
     public props:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
@@ -78,7 +78,7 @@ export class RechargeRecord extends Widget {
     }
     public recordListItemClick(e:any,index:number) {
         if (this.props.recordList[index].oid) {
-            popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:this.props.recordList[index].oid });
+            popNew('app-view-wallet-cloudWalletSC-transactionDetails',{ oid:this.props.recordList[index].oid });
         }
     }
 }

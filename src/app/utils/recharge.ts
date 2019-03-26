@@ -7,7 +7,7 @@ import { popNew } from '../../pi/ui/root';
 import { getModulConfig } from '../modulConfig';
 import { requestAsync } from '../net/pull';
 import { showError } from './toolMessages';
-import { popNewMessage, popNewLoading } from './tools';
+import { popNewLoading, popNewMessage } from './tools';
 
 export interface OrderDetail {
     total: number; // 总价
@@ -15,7 +15,8 @@ export interface OrderDetail {
     num: number; // 充值GT数量
     payType: string; // 支付方式
     // tslint:disable-next-line:no-reserved-keywords
-    type: number; // 充值类型
+    cointype: number; // 充值类型
+    note?:string;     // 备注
 }
 
 /**
@@ -35,6 +36,7 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
     const loading = popNewLoading({ zh_Hans: '充值中...', zh_Hant: '充值中...', en: '' });
     try {
         const resData: any = await requestAsync(msg);
+        console.log('pay 下单结果===============',resData);
         if (resData.result === 1) { // 下单成功
             const jumpData = {
                 oid: resData.oid,

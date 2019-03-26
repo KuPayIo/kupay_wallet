@@ -16,17 +16,13 @@ interface Props {
     currencyName:string;
     isActive:boolean;
 }
-export class WithdrawRecord extends Widget {
+export class AccountOut extends Widget {
     public props:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        if (this.props.isActive) {
-            getWithdrawLogs(this.props.currencyName);
-        }
     }
     public init() {
-
         const allLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]);
         this.props = {
             ...this.props,
