@@ -11,7 +11,7 @@
                 <img src="../../../res/image/01.png" w-class="scanImg" on-tap="scanQrcode"/>
                 <img src="../../../res/image/19.png" w-class="scanImg" on-tap="showMyQrcode"/>
             </div>
-            <div w-class="userName">
+            <div w-class="userName" on-tap="tex">
                 {{it.userName}}
             </div>
             
