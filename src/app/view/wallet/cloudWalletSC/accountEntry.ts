@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
@@ -25,6 +26,7 @@ export class AccountEntry extends Widget {
     }
     public init() {
         const allLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]);
+        console.log('allLogs',allLogs);
         this.props = {
             ...this.props,
             recordList:this.parseRecordList(allLogs.rechargeLogs.list),
@@ -53,8 +55,9 @@ export class AccountEntry extends Widget {
      * @param list 充值列表 
      */
     public parseRecordList(list:any) {
+        const scShow = getModulConfig('SC_SHOW');
         list.forEach((item) => {
-            item.amountShow = `+${item.amount} ${this.props.currencyName}`;
+            item.amountShow = `+${item.amount} ${scShow}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = item.behaviorIcon;
         });
