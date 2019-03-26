@@ -20,9 +20,10 @@ export const closeWebview = (webViewName: string) => {
  */
 export const minWebview = (webViewName: string) => {
     console.log('wallet minWebview called');
-    popNew('app-components-floatBox-floatBox',{ webViewName });
+    const close = popNew('app-components-floatBox-floatBox',{ webViewName });
     WebViewManager.minWebView(webViewName);
-    
+
+    return close;
 };
 
 /**
@@ -30,10 +31,12 @@ export const minWebview = (webViewName: string) => {
  */
 export const inviteFriends = (webViewName: string) => {
     console.log('wallet inviteFriends called');
+    const close = minWebview(webViewName);
     popNew('earn-client-app-view-activity-inviteFriend',undefined,() => {
         WebViewManager.open(webViewName, `${getGameUrl(webViewName)}?${Math.random()}`, webViewName,'');
+        console.log('inviteFriends =======',close);
     });
-    minWebview(webViewName);
+   
 };
 
 /**
