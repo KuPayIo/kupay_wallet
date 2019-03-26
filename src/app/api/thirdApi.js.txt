@@ -5,9 +5,9 @@ console.log("注入 thirdApi.js success");
 //--------标签样式----------------------------------------------------------------------------------------------------------------------------
 
 /**
- * 授权弹框样式
+ * 第三方api样式
  */
-pi_tools.createAuthorizeStyleTag = function() {
+pi_tools.createThirdApiStyleTag = function() {
     var cssText = `
     /* 公共 */
     .pi-mask {
@@ -296,14 +296,13 @@ pi_tools.createAuthorizeStyleTag = function() {
     animation-fill-mode: both;
     }`;
 
-    let pi_root_css = '#pi-root{'+pi_tools.browserAdaptive()+'}';
     var style = document.createElement("style");
     style.type = "text/css";
-    style.innerHTML = (pi_root_css+cssText);
+    style.innerHTML = cssText
     document.getElementsByTagName("head")[0].appendChild(style);
 }
 
-window.addEventListener("load",pi_tools.createAuthorizeStyleTag)
+window.addEventListener("load",pi_tools.createThirdApiStyleTag)
 
 
 
@@ -340,7 +339,7 @@ pi_tools.createAuthorizeElementTag = function() {
 }
 
 //创建支付弹窗标签
-function createPayElementTag() {
+pi_tools.createPayElementTag = function() {
     var htmlText = `
         <div class="pi-update-box animated bounceInUp">
             <div class="pi-update-content">
@@ -375,11 +374,11 @@ function createPayElementTag() {
 }
 
 //创建设置免密弹窗标签
-function createSetNoPSWElementTag() {
+pi_tools.createSetNoPSWElementTag =  function(title) {
     var htmlText = `
         <div class="pi-update-box animated bounceInUp">
             <div class="pi-update-content">
-                <div class="pi-pay-title">设置免密支付</div>
+                <div class="pi-pay-title">${title}</div>
                 <div class="pi-pay-content">
                     <div>
                         <input class="pi-pay-input" type="password" placeholder="输入密码" name="" id="pi_password">
@@ -391,17 +390,19 @@ function createSetNoPSWElementTag() {
                 <div class="pi-ok-btn">确定</div>
             </div>
         </div>`;
-    var $root = document.createElement("div");
-    $root.setAttribute("class", "pi-mask");
-    $root.innerHTML = htmlText;
+    var $mask = document.createElement("div");
+    $mask.setAttribute("class", "pi-mask");
+    $mask.innerHTML = htmlText;
 
-    var $body = document.querySelector(".pi-root");
-    $body.appendChild($root);
-    $body.style.display = 'flex';
+    var $root = document.createElement("div");
+    $root.setAttribute("id", "pi-root");
+    $root.appendChild($mask);
+
+    document.querySelector("body").appendChild($root);
 }
 
 //创建加载弹窗标签
-function createLoadingElementTag(loadingStr) {
+pi_tools.createLoadingElementTag = function(loadingStr) {
     var htmlText = `
         <div class="pi-loading-mask">
             <div class="pi-loading-spinner">
@@ -411,13 +412,15 @@ function createLoadingElementTag(loadingStr) {
                 </p>
             </div>
         </div>`;
-    var $root = document.createElement("div");
-    $root.setAttribute("class", "pi-loading-mask");
-    $root.innerHTML = htmlText;
+    var $mask = document.createElement("div");
+    $mask.setAttribute("class", "pi-loading-mask");
+    $mask.innerHTML = htmlText;
 
-    var $body = document.querySelector(".pi-root");
-    $body.appendChild($root);
-    $body.style.display = 'flex';
+    var $root = document.createElement("div");
+    $root.setAttribute("id", "pi-root");
+    $root.appendChild($mask);
+
+    document.querySelector("body").appendChild($root);
 }
 
 
@@ -480,7 +483,7 @@ pi_jsApi.openPayment = function (order, callBack) {
                         console.log('pay call success', msg1);
                         console.log('免密支付完成!');
                         callBack(resCode1, msg1);
-                        closePop();
+                        closePopBox();
                     });
                 });
                 
@@ -500,12 +503,12 @@ pi_jsApi.openPayment = function (order, callBack) {
                         console.log('pay call success', resCode1);
                         console.log('pay call success', msg1);
                         callBack(resCode1, msg1);
-                        closePop();
+                        closePopBox();
                     });
                 });
 
                 $cancel.addEventListener("click", function () {
-                    closePop();
+                    closePopBox();
                     callBack(1003, null)
                 });
             }
@@ -517,34 +520,39 @@ pi_jsApi.openPayment = function (order, callBack) {
 }
 
 // 第三方设置免密支付
-// appid:应用id
-// mchid:商户id
-// noPSW:设置免密支付状态  0:关闭，1:开启
-pi_jsApi.setNoPSW = function (appid, mchid, noPSW, callBack) {
-    createSetNoPSWElementTag();
+// openFreeSecret:设置免密支付状态  
+// 0:关闭，1:开启
+pi_jsApi.setNoPSW = function (openFreeSecret) {
+    pi_tools.closePopBox();
+    var title = openFreeSecret ? "设置免密支付" : "关闭免密支付"; 
+    pi_tools.createSetNoPSWElementTag(title);
     var $ok = document.querySelector(".pi-ok-btn");
     var $cancel = document.querySelector(".pi-cancel-btn");
     var $input = document.getElementById("pi_password");
 
     $ok.addEventListener("click", function () {
         var sendData = {
-            appid: appid,
-            mchid: mchid,
-            noPSW: noPSW,
+            appid: pi_config.appId,
+            noPSW: openFreeSecret ? 1 : 0,
             password: $input.value
         }
-        createLoadingElementTag('设置中...');
+        pi_tools.closePopBox();
+        pi_tools.createLoadingElementTag('设置中...');
         pi_RPC_Method("app/api/JSAPI", "setNoPWD", sendData, function (resCode1, msg1) {
             console.log('setNoPWD call success', resCode1);
             console.log('setNoPWD call success', msg1);
-            callBack(resCode1, msg1);
-            closePop();
+            if(msg1){
+                pi_store.freeSecret = !pi_store.freeSecret;
+                pi_tools.popNewMessage("设置成功");
+            }else{
+                pi_tools.popNewMessage("设置失败");
+            }
+            pi_tools.closePopBox();
         });
     });
 
     $cancel.addEventListener("click", function () {
-        closePop();
-        callBack(1003, null)
+        pi_tools.closePopBox();
     });
 }
 

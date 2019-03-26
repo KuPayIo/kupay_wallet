@@ -64,7 +64,7 @@ export enum TxType {
  */
 export interface User {
 
-    id: string;            // 该账号的id
+    id: string;            // 该账号的id,实际上是第一个以太坊地址
 
     offline: boolean;       // 连接状态
     isLogin: boolean;      // 钱包登录状态
@@ -72,7 +72,7 @@ export interface User {
 
     token: string;         // 自动登录token
     conRandom: string;     // 连接随机数
-    conUid: string;         // 服务器连接uid
+    conUid: string;        // 服务器连接uid
     publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
 
     salt: string;          // 加密 盐值

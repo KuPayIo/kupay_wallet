@@ -1,10 +1,114 @@
 // PI_BEGIN
 console.log("注入 thirdApiDepend.js success");
 
-window.pi_tools = {};
-window.pi_jsApi = {
-    
-};
+(function(){
+    var buttonId = {
+        INVITEFRIENDS:"pi-invite", // 邀请好友
+        GAMESSERVICE:"pi-service",    // 游戏客服
+        OFFICIALGROUPCHAT:"pi-official-chat", // 官方群聊
+        RECHARGE:"pi-recharg",        // 充值
+        FREESECRET:"pi-free-secret",    // 免密支付
+        MINWINDOW:"pi-min-window",      // 最小化
+        EXITGAME:"pi-exit-game"        // 退出游戏
+    };
+    var buttons = [{
+        id:buttonId.INVITEFRIENDS,
+        img:"wx.png",
+        text:"邀请好友",
+        show:true,
+        clickedClose:true,
+        clickCb:function(){
+            console.log("click 邀请好友");
+            pi_RPC_Method(pi_config.thirdBase, "inviteFriends", pi_config.gameName, function (error, result) {
+                console.log('inviteFriends call success');
+            });
+        }
+    },{
+        id:buttonId.GAMESSERVICE,
+        img:"game_customer_service.png",
+        text:"游戏客服",
+        show:true,
+        clickedClose:true,
+        clickCb:function(){
+            console.log("click 游戏客服");
+            pi_RPC_Method(pi_config.thirdBase, "gotoGameService", pi_config.gameName, function (error, result) {
+                console.log('gotoGameService call success');
+            });
+        }
+    },{
+        id:buttonId.OFFICIALGROUPCHAT,
+        img:"official_group_chat.png",
+        text:"官方群聊",
+        show:true,
+        clickedClose:true,
+        clickCb:function(){
+            console.log("click 官方群聊");
+            pi_RPC_Method(pi_config.thirdBase, "gotoOfficialGroupChat", pi_config.gameName, function (error, result) {
+                console.log('gotoOfficialGroupChat call success');
+            });
+        }
+    },{
+        id:buttonId.RECHARGE,
+        img:"recharg.png",
+        text:"去充值",
+        show:true,
+        clickedClose:true,
+        clickCb:function(){
+            console.log("click 去充值");
+            pi_RPC_Method(pi_config.thirdBase, "gotoRecharge", pi_config.gameName, function (error, result) {
+                console.log('inviteFriends call success');
+            });
+        }
+    },{
+        id:buttonId.FREESECRET,
+        startImg:"free_secret_close.png",
+        closeImg:"free_secret_start.png",
+        text:"打开免密",
+        startText:"关闭免密",
+        closeText:"打开免密支付",
+        show:true,
+        clickedClose:false,
+        clickCb:function(){
+            console.log("click 免密支付");
+            pi_jsApi.setNoPSW(!pi_store.freeSecret);
+        }
+    },{
+        id:buttonId.MINWINDOW,
+        img:"min_window.png",
+        text:"最小化",
+        show:true,
+        clickedClose:true,
+        clickCb:function(){
+            console.log("click 最小化");
+            pi_RPC_Method(pi_config.thirdBase, "minWebview", pi_config.gameName, function (error, result) {
+                console.log('minWebview call success');
+            });
+        }
+    },{
+        id:buttonId.EXITGAME,
+        img:"exit_game.png",
+        text:"退出游戏",
+        show:true,
+        clickedClose:true,
+        clickCb:function(){
+            console.log("click 退出游戏");
+            pi_RPC_Method(pi_config.thirdBase, "closeWebview", pi_config.gameName, function (error, result) {
+                console.log('closeWebview call success');
+            });
+        }
+  }];
+
+
+    window.pi_tools = {           // 工具函数
+        buttonId,
+        buttons
+    };
+    window.pi_jsApi = {};         // 供第三方调用的api接口
+    window.pi_store = {
+        freeSecret:false       // 是否开启免密支付
+    };
+})();
+
 
 
 //--------pi_RPC_Method----------------------------------------------------------------------------------------------------------------------------
@@ -189,8 +293,28 @@ pi_tools.browserAdaptive =  function() {
 /**
  * 悬浮框按钮样式
  */
-pi_tools.createFloatButtonStyle = function(){
+pi_tools.createThirdBaseStyle = function(){
+  console.log("createThirdBaseStyle---------");
   var cssText = `
+  .pi-message{
+    position: fixed;
+    left: 50%;
+    bottom: 150px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.9);
+    line-height: 22.5px;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 16px;
+    text-align: center;
+    padding: 9px 12.5px;
+    transform: translateX(-50%);
+    transition: opacity .3s, transform .4s;
+    opacity: 0;
+  }
+  .message-fade-enter {
+    opacity: 1;
+    transform: translate(-50%,-100%);
+  }
   .pi-float-button{
     display: flex;
     align-items: center;
@@ -203,6 +327,7 @@ pi_tools.createFloatButtonStyle = function(){
     position: fixed;
     top: 100px;
     right: 10px;
+    z-index:99999;
   }
   .pi-dot1{
   width: 3.5px;
@@ -252,7 +377,7 @@ pi_tools.createFloatButtonStyle = function(){
   margin-top: 10px;
   }
   `;
-  var pi_root_css = '#pi-root{'+pi_tools.browserAdaptive()+'}';
+  var pi_root_css = `#pi-root{${pi_tools.browserAdaptive()}}.pi-root{${pi_tools.browserAdaptive()}}`;
   var style = document.createElement("style");
   style.type = "text/css";
   style.innerHTML = (pi_root_css+cssText);
@@ -263,83 +388,7 @@ pi_tools.createFloatButtonStyle = function(){
  * 悬浮框按钮初始化
  */
 pi_tools.floatButtonInit = function (){
-    var buttons = [{
-      img:"wx.png",
-      text:"邀请好友",
-      idName:"pi-invite",
-      show:true,
-      clickCb:function(){
-        console.log("click 邀请好友");
-        pi_RPC_Method(pi_config.thirdBase, "inviteFriends", pi_config.gameName, function (error, result) {
-            console.log('inviteFriends call success');
-        });
-      }
-    },{
-      img:"game_customer_service.png",
-      text:"游戏客服",
-      idName:"pi-service",
-      show:true,
-      clickCb:function(){
-        console.log("click 游戏客服");
-      }
-    },{
-      img:"official_group_chat.png",
-      text:"官方群聊",
-      idName:"pi-official-chat",
-      show:true,
-      clickCb:function(){
-        console.log("click 官方群聊");
-      }
-    },{
-      img:"recharg.png",
-      text:"去充值",
-      idName:"pi-recharg",
-      show:true,
-      clickCb:function(){
-        console.log("click 去充值");
-        pi_RPC_Method(pi_config.thirdBase, "gotoRecharge", pi_config.gameName, function (error, result) {
-            console.log('inviteFriends call success');
-        });
-      }
-    },{
-      img:"free_secret_close.png",
-      text:"免密支付",
-      idName:"pi-free-secret",
-      show:true,
-      clickCb:function(){
-        console.log("click 免密支付");
-      }
-    },{
-      img:"close_voice.png",
-      text:"关闭声音",
-      idName:"pi-close-voice",
-      show:true,
-      clickCb:function(){
-        console.log("click 关闭声音");
-      }
-    },{
-      img:"min_window.png",
-      text:"最小化",
-      idName:"pi-min-window",
-      show:true,
-      clickCb:function(){
-        console.log("click 最小化");
-        pi_RPC_Method(pi_config.thirdBase, "minWebview", pi_config.gameName, function (error, result) {
-            console.log('minWebview call success');
-        });
-      }
-    },{
-      img:"exit_game.png",
-      text:"退出游戏",
-      idName:"pi-exit-game",
-      show:true,
-      clickCb:function(){
-        console.log("click 退出游戏");
-        pi_RPC_Method(pi_config.thirdBase, "closeWebview", pi_config.gameName, function (error, result) {
-            console.log('closeWebview call success');
-        });
-      }
-  }];
+    console.log("floatButtonInit ---------floatButtonInit");
   var $floatButton = document.createElement("div");
   $floatButton.setAttribute("class","pi-float-button");
   $floatButton.innerHTML = `
@@ -354,16 +403,25 @@ pi_tools.floatButtonInit = function (){
         e.stopPropagation();
         e.preventDefault();
       });
-      buttons.forEach(function(item){
+      pi_tools.buttons.forEach(function(item,index){
         if(!item.show) return;
         var $bottomItem = document.createElement("div");
         $bottomItem.setAttribute("class","pi-bottom-item");
-        $bottomItem.setAttribute("id",item.idName);
-        $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${item.img}"/></div>
-            <div class="pi-text">${item.text}</div>`;
+        $bottomItem.setAttribute("id",item.id);
+        var imgUrl = item.img;
+        var text = item.text;
+        if(item.id === pi_tools.buttonId.FREESECRET){
+            imgUrl = pi_store.freeSecret ? item.startImg : item.closeImg;
+            text = pi_store.freeSecret ? item.startText : item.closeText;
+        }
+        
+        $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${imgUrl}" class="pi-item-img"/></div>
+            <div class="pi-text">${text}</div>`;
         $bottomItem.addEventListener("click",function(){
             item.clickCb();
-            pi_tools.closePopBox();
+            if(item.clickedClose){
+                pi_tools.closePopBox();
+            }
         });
 
         $bottomBox.appendChild($bottomItem);
@@ -391,7 +449,53 @@ pi_tools.floatButtonInit = function (){
  * 关闭弹框
  */
 pi_tools.closePopBox = function(){
-    document.querySelector("body").removeChild(document.querySelector("#pi-root"));
+    var $root = document.querySelector("#pi-root");
+    if($root){
+        document.querySelector("body").removeChild($root);
+    }
 }
-window.addEventListener("load",pi_tools.createFloatButtonStyle);
+
+/**
+ * 提示框
+ */
+pi_tools.popNewMessage = function(msg){
+    var $message = document.createElement("div");
+    $message.setAttribute("class","pi-message");
+    $message.textContent = msg;
+
+    var $body = document.querySelector("body");
+    $body.appendChild($message);
+    setTimeout(function(){
+        $message.setAttribute("class","pi-message message-fade-enter");
+    },17);
+    setTimeout(function(){
+        $message.setAttribute("class","pi-message");
+        setTimeout(function(){
+            $body.removeChild($message);
+        },300);
+    },2000);
+}
+/**
+ * 根据id获取buttonItem
+ */
+pi_tools.getButtonItemById = function(id){
+    var index = pi_tools.buttons.findIndex(function(item){
+        return item.id === id;
+    });
+    return pi_tools.buttons[index];
+}
+/**
+ * 获取是否开启免密支付
+ */
+pi_tools.getFreeSecret = function(){
+    console.log("getFreeSecret called");
+    pi_RPC_Method(pi_config.jsApi, "queryNoPWD", pi_config.appId, function (error, startFreeSecret) {
+        console.log("getFreeSecret called callback",startFreeSecret);
+        pi_store.freeSecret = startFreeSecret;
+    });
+}
+
+
+window.addEventListener("load",pi_tools.createThirdBaseStyle);
 window.addEventListener("load",pi_tools.floatButtonInit);
+window.addEventListener("load",pi_tools.getFreeSecret);
