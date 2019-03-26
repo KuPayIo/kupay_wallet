@@ -219,7 +219,6 @@ export const queryNoPWD = (appid:string,callback:Function) => {
  * @param callback 设置回调函数
  * {
  * appid:"101",
- * mchid:"15",
  * noPSW:1
  * password:"123456789"
  * }
@@ -227,11 +226,6 @@ export const queryNoPWD = (appid:string,callback:Function) => {
 export const setNoPWD = async (data:any,callback:Function) => {
     if (!data.appid) {
         callback(resCode.INVALID_REQUEST, new Error('appid is not available'));
-
-        return;
-    }
-    if (!data.mchid) {
-        callback(resCode.INVALID_REQUEST, new Error('mchid is not available'));
 
         return;
     }
@@ -251,7 +245,7 @@ export const setNoPWD = async (data:any,callback:Function) => {
 
     const signJson = {
         appid: data.appid,
-        mch_id: data.mchid,
+        no_password: data.noPSW,
         nonce_str: Math.random().toFixed(5)
     };
     const signStr = getSign(signJson, secretHash);
@@ -259,8 +253,7 @@ export const setNoPWD = async (data:any,callback:Function) => {
         type: 'wallet/order@set_nopwd',
         param:{
             ...signJson,
-            user_sign:signStr,
-            no_password:data.noPSW
+            user_sign:signStr
         }
     };
     requestAsync(msg).then(resData => {
