@@ -225,6 +225,11 @@ export class Home extends Widget {
         }
         // this.backPrePage();
     }
+
+    public tex() {
+        console.log(getUserInfo());
+        console.log(getStore('user/id'));
+    }
 }
 
 // ===================================================== 本地
