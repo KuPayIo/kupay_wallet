@@ -293,9 +293,28 @@ pi_tools.browserAdaptive =  function() {
 /**
  * 悬浮框按钮样式
  */
-pi_tools.createFloatButtonStyle = function(){
-  console.log("createFloatButtonStyle---------");
+pi_tools.createThirdBaseStyle = function(){
+  console.log("createThirdBaseStyle---------");
   var cssText = `
+  .pi-message{
+    position: fixed;
+    left: 50%;
+    bottom: 150px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.9);
+    line-height: 22.5px;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 16px;
+    text-align: center;
+    padding: 9px 12.5px;
+    transform: translateX(-50%);
+    transition: opacity .3s, transform .4s;
+    opacity: 0;
+  }
+  .message-fade-enter {
+    opacity: 1;
+    transform: translate(-50%,-100%);
+  }
   .pi-float-button{
     display: flex;
     align-items: center;
@@ -358,7 +377,7 @@ pi_tools.createFloatButtonStyle = function(){
   margin-top: 10px;
   }
   `;
-  var pi_root_css = '#pi-root{'+pi_tools.browserAdaptive()+'}';
+  var pi_root_css = `#pi-root{${pi_tools.browserAdaptive()}}.pi-root{${pi_tools.browserAdaptive()}}`;
   var style = document.createElement("style");
   style.type = "text/css";
   style.innerHTML = (pi_root_css+cssText);
@@ -440,7 +459,21 @@ pi_tools.closePopBox = function(){
  * 提示框
  */
 pi_tools.popNewMessage = function(msg){
+    var $message = document.createElement("div");
+    $message.setAttribute("class","pi-message");
+    $message.textContent = msg;
 
+    var $body = document.querySelector("body");
+    $body.appendChild($message);
+    setTimeout(function(){
+        $message.setAttribute("class","pi-message message-fade-enter");
+    },17);
+    setTimeout(function(){
+        $message.setAttribute("class","pi-message");
+        setTimeout(function(){
+            $body.removeChild($message);
+        },300);
+    },2000);
 }
 /**
  * 根据id获取buttonItem
@@ -463,6 +496,6 @@ pi_tools.getFreeSecret = function(){
 }
 
 
-window.addEventListener("load",pi_tools.createFloatButtonStyle);
+window.addEventListener("load",pi_tools.createThirdBaseStyle);
 window.addEventListener("load",pi_tools.floatButtonInit);
 window.addEventListener("load",pi_tools.getFreeSecret);
