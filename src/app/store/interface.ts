@@ -17,6 +17,7 @@ export interface Store {
 
     third: Third;        // 第三方通信数据，如：changelly...
     flags: object;       // 全局的标识
+    inviteUsers:object;  // 邀请好友
 }
 
 /**
