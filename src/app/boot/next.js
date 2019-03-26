@@ -373,11 +373,18 @@ winit.initNext = function () {
 			"chat/client/app/view/chat/messageRecord.tpl",
 			"chat/client/app/view/chat/messageRecord.js",
 			"chat/client/app/view/chat/messageRecord.wcss",
-			"chat/client/app/widget/topBar/topBar1.tpl",
-			"chat/client/app/widget/topBar/topBar1.js",
-			"chat/client/app/widget/topBar/topBar1.wcss",
+			"chat/client/app/view/chat/contactTop.tpl",
+			"chat/client/app/view/chat/contactTop.js",
+			"chat/client/app/view/chat/contactTop.wcss",
+			"chat/client/app/view/contactList/contactList.tpl",
+			"chat/client/app/view/contactList/contactList.js",
+			"chat/client/app/view/contactList/contactList.wcss",
+			"chat/client/app/view/contactList/contactItem.tpl",
+			"chat/client/app/view/contactList/contactItem.js",
+			"chat/client/app/view/contactList/contactItem.wcss",
 			"chat/client/app/widget/utilList/",
-			"chat/client/app/widget/imgShow/"
+			"chat/client/app/widget/imgShow/",
+			"chat/client/app/widget/topBar/"
 		]; 
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadChatSource");

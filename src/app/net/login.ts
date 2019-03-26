@@ -6,6 +6,7 @@ import { getStore as earnGetStore,register as earnRegister } from '../../earn/cl
 import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
+import { setNoPWD } from '../api/JSAPI';
 import { wsUrl } from '../config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
 import { Account, getAllAccount, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
@@ -167,7 +168,9 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
     const signStr = sign(conRandom, wlt.exportPrivateKey());
     const msgLogin = { type: 'login', param: { sign: signStr } };
 
-    return requestAsync(msgLogin).then(() => {
+    return requestAsync(msgLogin).then((r:any) => {
+        console.log('============================好嗨号acc_id:',r.acc_id);
+        setStore('user/info/acc_id',r.acc_id);
         applyAutoLogin();
         setStore('user/isLogin', true);
         loginWalletSuccess();
@@ -201,7 +204,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
         client:JSON.stringify(client),
-        flag:0
+        flag:1
     };
     if (cmd) {
         param.cmd = cmd;
