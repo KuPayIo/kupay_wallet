@@ -60,7 +60,7 @@ export const initPush = () => {
 
     // 监听充值成功事件
     setPushListener('event_pay_ok',(res) => {
-        const value = res.value.toJSNumber ? res.value.toJSNumber() : res.value;
+        // const value = res.value.toJSNumber ? res.value.toJSNumber() : res.value;
         getServerCloudBalance().then(res => {
             console.log('服务器推送成功 云端余额更新==========================',res);
         });

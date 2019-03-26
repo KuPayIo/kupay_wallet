@@ -18,7 +18,7 @@
             </div>
             <div w-class="other-input" ev-input-change="inputChange">
                 {{: inputPlace = {"zh_Hans":"其它大于20元金额","zh_Hant":"其它大於20元金額","en":""} }}
-                <app-components1-input-input>{itype:"integer",maxLength:5,placeHolder:{{inputPlace}},input:{{it.inputValue}},style:"color:#318DE6;background:transparent;"}</app-components1-input-input>
+                <app-components1-input-input>{itype:"number",maxLength:4,placeHolder:{{inputPlace}},input:{{it.inputValue}},style:"color:#318DE6;background:transparent;"}</app-components1-input-input>
             </div>
         </div>
 

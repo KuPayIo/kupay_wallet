@@ -156,7 +156,7 @@ export const initCloudWallets = () => {
             cloudWallets.set(CloudCurrencyType[CloudCurrencyType[key]], cloudWallet);
         }
     }
-
+    
     return cloudWallets;
 };
 

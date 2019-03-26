@@ -27,7 +27,8 @@ export enum CloudCurrencyType {
     KT = 100,  // KT
     ETH,       // ETH 
     BTC,       // BTC
-    ST         // ST
+    ST,         // ST
+    SC         // SC 银两
 }
 
 /**

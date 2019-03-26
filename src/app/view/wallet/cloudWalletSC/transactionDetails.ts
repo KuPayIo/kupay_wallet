@@ -1,12 +1,11 @@
 /**
- * GT交易详情页面
+ * SC交易详情页面
  */
-import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
 import { getOrderDetail, getPayState } from '../../../utils/recharge';
-import { formatBalance, popNewMessage, timestampFormat } from '../../../utils/tools';
+import { timestampFormat } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -14,7 +13,7 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
-    stShow:string;
+    scShow:string;
     oid:string;
     firstQuery:boolean;
     state:string;
@@ -32,7 +31,7 @@ enum PayState {
 }
 export class TransactionDetails extends Widget {
     public props:Props = {
-        stShow:getModulConfig('ST_SHOW'),
+        scShow:getModulConfig('SC_SHOW'),
         oid:'',
         firstQuery:false,
         state:'失败',
@@ -73,7 +72,7 @@ export class TransactionDetails extends Widget {
     
     public setData(res:any) {
         this.props.state = PayState[res.state];
-        this.props.GTNum = res.num / 1000000;
+        this.props.GTNum = res.num / 100;
         this.props.money = res.total / 100;
         this.props.transactionTime = timestampFormat(res.time * 1000); 
         this.props.transactionType = res.payType === 'alipay' ? '支付宝支付' :'微信支付' ;

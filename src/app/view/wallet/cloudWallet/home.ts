@@ -37,8 +37,6 @@ export class CloudWalletHome extends Widget {
         let topBarTitle = '';
         if (this.props.currencyName === 'KT') {
             topBarTitle = getModulConfig('KT_SHOW');
-        } else if (this.props.currencyName === 'ST') {
-            topBarTitle = getModulConfig('ST_SHOW');
         } else {
             topBarTitle = this.props.currencyName;
         }
@@ -68,7 +66,7 @@ export class CloudWalletHome extends Widget {
         };
         console.log('+++++++++++++',this.props.tabs);
         if (this.props.currencyName === 'KT') {
-            this.props.tabs.splice(2);
+            this.props.tabs.splice(1);
         }
     }
 
@@ -89,10 +87,8 @@ export class CloudWalletHome extends Widget {
      * 充值
      */
     public rechargeClick() {
-        if (this.props.currencyName === 'KT') {
-            popNew('app-view-wallet-cloudWallet-rechargeKT');
-        } else if (this.props.currencyName === 'ST') {
-            popNew('app-view-wallet-cloudWalletGT-rechargeGT');
+        if (this.props.currencyName === 'SC') {
+            popNew('app-view-wallet-cloudWalletSC-rechargeSC ');
         } else {
             popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
         }
@@ -101,11 +97,6 @@ export class CloudWalletHome extends Widget {
      * 提币
      */
     public withdrawClick() {
-        if (this.props.currencyName === 'KT' || this.props.currencyName === 'ST') {
-            popNewMessage(this.language.tips);
-
-            return;
-        }
         popNew('app-view-wallet-cloudWallet-withdraw',{ currencyName:this.props.currencyName });
     }
 
