@@ -61,16 +61,16 @@ console.log("注入 thirdApiDepend.js success");
         }
     },{
         id:buttonId.FREESECRET,
-        img:"free_secret_start.png",
         startImg:"free_secret_close.png",
         closeImg:"free_secret_start.png",
         text:"打开免密",
-        startText:"打开免密支付",
-        closeText:"关闭免密",
+        startText:"关闭免密",
+        closeText:"打开免密支付",
         show:true,
         clickedClose:false,
         clickCb:function(){
             console.log("click 免密支付");
+            pi_jsApi.setNoPSW(!pi_store.freeSecret);
         }
     },{
         id:buttonId.MINWINDOW,
@@ -293,8 +293,28 @@ pi_tools.browserAdaptive =  function() {
 /**
  * 悬浮框按钮样式
  */
-pi_tools.createFloatButtonStyle = function(){
+pi_tools.createThirdBaseStyle = function(){
+  console.log("createThirdBaseStyle---------");
   var cssText = `
+  .pi-message{
+    position: fixed;
+    left: 50%;
+    bottom: 150px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.9);
+    line-height: 22.5px;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 16px;
+    text-align: center;
+    padding: 9px 12.5px;
+    transform: translateX(-50%);
+    transition: opacity .3s, transform .4s;
+    opacity: 0;
+  }
+  .message-fade-enter {
+    opacity: 1;
+    transform: translate(-50%,-100%);
+  }
   .pi-float-button{
     display: flex;
     align-items: center;
@@ -357,7 +377,7 @@ pi_tools.createFloatButtonStyle = function(){
   margin-top: 10px;
   }
   `;
-  var pi_root_css = '#pi-root{'+pi_tools.browserAdaptive()+'}';
+  var pi_root_css = `#pi-root{${pi_tools.browserAdaptive()}}.pi-root{${pi_tools.browserAdaptive()}}`;
   var style = document.createElement("style");
   style.type = "text/css";
   style.innerHTML = (pi_root_css+cssText);
@@ -368,6 +388,7 @@ pi_tools.createFloatButtonStyle = function(){
  * 悬浮框按钮初始化
  */
 pi_tools.floatButtonInit = function (){
+    console.log("floatButtonInit ---------floatButtonInit");
   var $floatButton = document.createElement("div");
   $floatButton.setAttribute("class","pi-float-button");
   $floatButton.innerHTML = `
@@ -387,8 +408,15 @@ pi_tools.floatButtonInit = function (){
         var $bottomItem = document.createElement("div");
         $bottomItem.setAttribute("class","pi-bottom-item");
         $bottomItem.setAttribute("id",item.id);
-        $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${item.img}" class="pi-item-img"/></div>
-            <div class="pi-text">${item.text}</div>`;
+        var imgUrl = item.img;
+        var text = item.text;
+        if(item.id === pi_tools.buttonId.FREESECRET){
+            imgUrl = pi_store.freeSecret ? item.startImg : item.closeImg;
+            text = pi_store.freeSecret ? item.startText : item.closeText;
+        }
+        
+        $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${imgUrl}" class="pi-item-img"/></div>
+            <div class="pi-text">${text}</div>`;
         $bottomItem.addEventListener("click",function(){
             item.clickCb();
             if(item.clickedClose){
@@ -421,14 +449,31 @@ pi_tools.floatButtonInit = function (){
  * 关闭弹框
  */
 pi_tools.closePopBox = function(){
-    document.querySelector("body").removeChild(document.querySelector("#pi-root"));
+    var $root = document.querySelector("#pi-root");
+    if($root){
+        document.querySelector("body").removeChild($root);
+    }
 }
 
 /**
  * 提示框
  */
 pi_tools.popNewMessage = function(msg){
+    var $message = document.createElement("div");
+    $message.setAttribute("class","pi-message");
+    $message.textContent = msg;
 
+    var $body = document.querySelector("body");
+    $body.appendChild($message);
+    setTimeout(function(){
+        $message.setAttribute("class","pi-message message-fade-enter");
+    },17);
+    setTimeout(function(){
+        $message.setAttribute("class","pi-message");
+        setTimeout(function(){
+            $body.removeChild($message);
+        },300);
+    },2000);
 }
 /**
  * 根据id获取buttonItem
@@ -446,19 +491,11 @@ pi_tools.getFreeSecret = function(){
     console.log("getFreeSecret called");
     pi_RPC_Method(pi_config.jsApi, "queryNoPWD", pi_config.appId, function (error, startFreeSecret) {
         console.log("getFreeSecret called callback",startFreeSecret);
-        if(pi_store.freeSecret === startFreeSecret) return;
         pi_store.freeSecret = startFreeSecret;
-        console.log('queryNoPWD call success',startFreeSecret);
-        var button = pi_tools.getButtonItemById(pi_tools.buttonId.FREESECRET);
-        var imgUrl = startFreeSecret ? button.startImg : button.closeImg;
-        var text = startFreeSecret ? button.startText : button.closeText;
-        var $freeSecretItem =  document.querySelector(`#${pi_tools.buttonId.FREESECRET}`);
-        $freeSecretItem.querySelector(".pi-item-img").src = `${pi_config.imgUrlPre}${imgUrl}`;
-        $freeSecretItem.querySelector(".pi-text").textContent = text;
     });
 }
 
 
-window.addEventListener("load",pi_tools.createFloatButtonStyle);
+window.addEventListener("load",pi_tools.createThirdBaseStyle);
 window.addEventListener("load",pi_tools.floatButtonInit);
 window.addEventListener("load",pi_tools.getFreeSecret);
