@@ -14,7 +14,7 @@ import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletTo
 import { CMD, defaultPassword } from '../utils/constants';
 import { closeAllPage, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
+import { fetchBtcFees, fetchGasPrices, getBindPhone, getInviteUserAccIds, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 import { setReconnectingState } from './reconnect';
 
 // 登录成功之后的回调列表
@@ -121,6 +121,7 @@ export const applyAutoLogin = async () => {
         const cipherToolsMod = await getCipherToolsMod();
         const decryptToken = cipherToolsMod.encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
+
     });
 };
 
@@ -144,6 +145,15 @@ export const autoLogin = async (conRandom:string) => {
         setStore('user/isLogin', true);
         console.log('自动登录成功-----------',res);
         loginWalletSuccess();
+
+        if (!getStore('inviteUsers').invite_success) {  // 如果本地没有记录则向后端请求邀请好友记录
+            getInviteUserAccIds().then(res => {
+                console.log('===============邀请好友id',res);
+                setStore('inviteUsers/invite_success',res.invites || []);  // 我邀请的好友
+                setStore('inviteUsers/convert_invite',res.invited || []);  // 邀请我的好友
+            });
+        }
+        
     }).catch((res) => {
         setStore('user/token','');
         setStore('user/isLogin', false);

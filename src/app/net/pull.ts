@@ -1266,3 +1266,15 @@ export const changellySign = (data:any) => {
 
     return requestAsync(msg);
 };
+
+/**
+ * 获取邀请好友accId
+ */
+export const getInviteUserAccIds = () => {
+    const msg = {
+        type: 'wallet/cloud@get_invites',
+        param: {}
+    };
+
+    return requestAsync(msg);
+};
