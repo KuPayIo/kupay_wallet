@@ -457,7 +457,6 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
     const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
     const silverPrice = getStore('third/silver/price') || 0;
-
     if (currencyUnit === 'CNY') {
         if (currencyName === 'ST') {
             balanceValue = balance * (silverPrice / 100);
