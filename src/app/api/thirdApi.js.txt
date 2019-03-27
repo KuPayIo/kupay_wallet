@@ -429,6 +429,7 @@ pi_tools.createLoadingElementTag = function(loadingStr) {
 
 //获取openID
 pi_jsApi.authorize = function (payload, callBack) {
+    pi_tools.closePopBox();
     pi_tools.createAuthorizeElementTag();
     var $items = document.querySelector(".pi-update-items");
     $items.innerHTML = "";
@@ -466,62 +467,67 @@ pi_jsApi.authorize = function (payload, callBack) {
 
 }
 
+
 // 第三方支付
-// order:订单数据
-pi_jsApi.pay = function (order, callBack) {
-    pi_RPC_Method("app/api/JSAPI", "openPayment", order, function (resCode, msg) {
-        console.log('openPayment call success', resCode);
-        console.log('openPayment call success', msg);
-        if (!resCode) {
-            order.no_password = msg.no_password;
-            console.log('判断支付流程!',order,msg);
-            if (msg.no_password === 1) { // 已设置免密支付
-                requestAnimationFrame(function(){
-                    pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
-                        console.log('pay call success', resCode1);
-                        console.log('pay call success', msg1);
-                        console.log('免密支付完成!');
-                        callBack(resCode1, msg1);
-                        closePopBox();
-                    });
-                });
-                
-            } else {                    // 未设置免密支付
-                createPayElementTag();
-                var $ok = document.querySelector(".pi-ok-btn");
-                var $cancel = document.querySelector(".pi-cancel-btn");
-                var $input = document.getElementById("pi_password");
-                document.getElementById('pi_payCount').innerHTML = msg.fee_total + msg.fee_name + '';
-                document.getElementById('pi_payObject').innerHTML = msg.desc + '';
-                document.getElementById('pi_payBalance').innerHTML = msg.balance + msg.fee_name + '';
-
-                $ok.addEventListener("click", function () {
-                    order.password = $input.value;
-                    createLoadingElementTag('支付中...');
-                    pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
-                        console.log('pay call success', resCode1);
-                        console.log('pay call success', msg1);
-                        callBack(resCode1, msg1);
-                        closePopBox();
-                    });
-                });
-
-                $cancel.addEventListener("click", function () {
-                    closePopBox();
-                    callBack(1003, null)
-                });
-            }
-
-        } else {
-            callBack(resCode, msg);
-        }
+pi_jsApi.thirdPay = function (order, callBack) {
+    pi_tools.closePopBox();
+    pi_RPC_Method(pi_config.jsApi, "thirdPay", {order,webViewName:pi_config.gameName}, function (error, res) {
+        console.log('thirdPay call success',res);
+        callBack(error,res);
     });
+    // pi_RPC_Method("app/api/JSAPI", "openPayment", order, function (resCode, msg) {
+    //     console.log('openPayment call success', resCode);
+    //     console.log('openPayment call success', msg);
+    //     if (!resCode) {
+    //         order.no_password = msg.no_password;
+    //         console.log('判断支付流程!',order,msg);
+    //         if (msg.no_password === 1) { // 已设置免密支付
+    //             requestAnimationFrame(function(){
+    //                 pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
+    //                     console.log('pay call success', resCode1);
+    //                     console.log('pay call success', msg1);
+    //                     console.log('免密支付完成!');
+    //                     callBack(resCode1, msg1);
+    //                     closePopBox();
+    //                 });
+    //             });
+                
+    //         } else {                    // 未设置免密支付
+    //             createPayElementTag();
+    //             var $ok = document.querySelector(".pi-ok-btn");
+    //             var $cancel = document.querySelector(".pi-cancel-btn");
+    //             var $input = document.getElementById("pi_password");
+    //             document.getElementById('pi_payCount').innerHTML = msg.fee_total + msg.fee_name + '';
+    //             document.getElementById('pi_payObject').innerHTML = msg.desc + '';
+    //             document.getElementById('pi_payBalance').innerHTML = msg.balance + msg.fee_name + '';
+
+    //             $ok.addEventListener("click", function () {
+    //                 order.password = $input.value;
+    //                 createLoadingElementTag('支付中...');
+    //                 pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
+    //                     console.log('pay call success', resCode1);
+    //                     console.log('pay call success', msg1);
+    //                     callBack(resCode1, msg1);
+    //                     closePopBox();
+    //                 });
+    //             });
+
+    //             $cancel.addEventListener("click", function () {
+    //                 closePopBox();
+    //                 callBack(1003, null)
+    //             });
+    //         }
+
+    //     } else {
+    //         callBack(resCode, msg);
+    //     }
+    // });
 }
 
 // 第三方设置免密支付
 // openFreeSecret:设置免密支付状态  
 // 0:关闭，1:开启
-pi_jsApi.setNoPSW = function (openFreeSecret) {
+pi_jsApi.setFreeSecrectPay = function (openFreeSecret) {
     pi_tools.closePopBox();
     var title = openFreeSecret ? "设置免密支付" : "关闭免密支付"; 
     pi_tools.createSetNoPSWElementTag(title);

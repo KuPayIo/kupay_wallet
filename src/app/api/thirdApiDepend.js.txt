@@ -70,7 +70,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:false,
         clickCb:function(){
             console.log("click 免密支付");
-            pi_jsApi.setNoPSW(!pi_store.freeSecret);
+            pi_jsApi.setFreeSecrectPay(!pi_store.freeSecret);
         }
     },{
         id:buttonId.MINWINDOW,

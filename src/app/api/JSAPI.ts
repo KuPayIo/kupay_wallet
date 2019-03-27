@@ -1,6 +1,7 @@
 /**
  * 授权、支付等API
  */
+import { popNew } from '../../pi/ui/root';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { requestAsync } from '../net/pull';
@@ -8,6 +9,7 @@ import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
 import { currencyType, formatBalance, getUserInfo } from '../utils/tools';
 import { getMnemonicByHash, VerifyIdentidy } from '../utils/walletTools';
+import { minWebview } from './thirdBase';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功
@@ -77,6 +79,16 @@ export const setFreeSecrectPay = (payload,callback) => {
 };
 
 /**
+ * 第三方支付
+ * @param order 订单
+ * @param callback 回调
+ */
+export const thirdPay = (payload,callback) => {
+    thirdPay1(payload.order,payload.webViewName).then(([err,res]) => {
+        callback(err,res);
+    });
+};
+/**
  * 授权用户openID接口
  * @param appId appId 
  * @param okCb 成功回调 
@@ -144,30 +156,64 @@ export interface ThirdOrder {
 /**
  * 第三方支付
  */
-export const thirdPay = async () => {
+const thirdPay1 = async (order:ThirdOrder,webViewName: string) => {
     try {
         const resData = await openPayment(order);
+        // tslint:disable-next-line:variable-name
+        const fee_total = resData.total_fee;
+        const setNoPassword = await queryNoPWD(order.appid,fee_total);
+        const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
+        console.log('thirdPay balance =========',scBalance);
+        console.log('thirdPay fee_total =========',fee_total);
+        if (scBalance >= fee_total) {
+            if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
+                const payRes = await walletPay(order);
+                console.log('walletPay success',payRes);
+    
+                return [undefined,payRes];
+            } else { // 余额足够  但是没有开启免密 或者免密上限
+                return [undefined,{ setNoPassword }]; 
+            }
+        } else { // 余额不够
+            // TODO 跳转充值页面
+            minWebview(webViewName);
+            const newOrder = {
+                fee_total,
+                transaction_id:order.transaction_id,
+                desc:resData.body
+            };
+            popNew('app-view-wallet-cloudWalletSC-thirdRechargeSC',{ order:newOrder },(rechargeSuccess:boolean) => {
+                return [undefined,{ test:'thirdRechargeSC' }];
+            });
+        }
+    } catch (err) {
+        console.log('thirdPay err =====',err);
+
+        return [err];
+    }
+};
+
+/**
+ * 获取三方支付基础信息
+ */
+export const getThirdPayBase = (order:ThirdOrder,callback) => {
+    openPayment(order).then(resData => {
         const orderDetail = {
             fee_total : resData.total_fee,
             desc : resData.body,
             fee_name : currencyType(CloudCurrencyType[resData.fee_type]),
             balance : formatBalance(getCloudBalances().get(resData.fee_type))
         };
-        const setNoPassword = await queryNoPWD(order.appid,orderDetail.fee_total);
-        const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
-        const secretHash = await VerifyIdentidy('123456789');
-        const payRes = await walletPay(order,secretHash);
-
-        console.log('支付成功===========',payRes);
-        
-        return [undefined,payRes];
-    } catch (err) {
-        console.log('thirdPay err =====',err);
-
-        return [err];
-    }
-    
-    // popNew3('app-view-wallet-cloudWalletSC-thirdRechargeSC',{ order });
+        queryNoPWD(order.appid,orderDetail.fee_total).then(setNoPassword => {
+            const obj = {
+                setNoPassword,
+                scBalance:getCloudBalances().get(CloudCurrencyType.SC) || 0
+            };
+            callback(undefined,obj);
+        });
+    }).catch(err => {
+        callback(err);
+    });
 };
 
 /**
@@ -205,8 +251,6 @@ const walletPay = async (order: any,secretHash?:string) => {
             no_password
         }
     };
-
-    console.log('walletPay =======',msg);
 
     return requestAsync(msg);
 };

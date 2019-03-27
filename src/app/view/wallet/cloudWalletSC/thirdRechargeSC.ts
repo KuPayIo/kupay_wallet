@@ -2,11 +2,8 @@
  * 第三方充值SC
  */
 
-import { setStore } from '../../../../chat/client/app/data/store';
-import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { ThirdOrder } from '../../../api/JSAPI';
 import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
@@ -20,17 +17,16 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
-interface Props {
-    order:ThirdOrder;
-}
 export class ThirdRechargeSC  extends Widget {
-    public ok: () => void;
+    public ok: (rechargeSuccess?:boolean) => void;
     public setProps(props: any) {
         const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
+        const needPay = (props.order.fee_total - scBalance) / SCPrecision;
         this.props = {
             ...props,
             scShow:getModulConfig('SC_SHOW'),
             scBalance,
+            needPay,
             payType: PayType.WX,
             walletName:getModulConfig('WALLET_NAME')
         };
@@ -51,10 +47,8 @@ export class ThirdRechargeSC  extends Widget {
             note: ''          // 备注
         };
         confirmPay(orderDetail, (res) => {
-            popNew('app-view-wallet-cloudWalletSC-transactionDetails', { oid: res.oid, firstQuery: true });
-            this.paint();
-            setStore('flags/firstRecharge',true); // 首次充值
             getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+            this.ok && this.ok(true);
         });
     }
     /**
@@ -70,6 +64,6 @@ export class ThirdRechargeSC  extends Widget {
      * 返回上一页
      */
     public backPrePage() {
-        this.ok && this.ok();
+        this.ok && this.ok(false);
     }
 }
