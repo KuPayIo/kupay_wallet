@@ -7,10 +7,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
-import { getAccountDetail, getServerCloudBalance, getSilverPrice } from '../../../net/pull';
+import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
-import { confirmPay, OrderDetail } from '../../../utils/recharge';
+import { getCloudBalances, register } from '../../../store/memstore';
+import { rechargeGiftMultiple, SCPrecision, SCUnitprice } from '../../../utils/constants';
+import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,80 +21,79 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
     ktShow:string;  // KT界面显示
-    stShow:string;  // ST界面显示
-    payType: string; // 支付方式
+    scShow:string;  // SC界面显示
+    payType: PayType; // 支付方式
     payList: any;    // 支付项列表
-    selectPayItem: any; // 选择的支付项
-    STprice: number; // ST价格
+    selectPayItemIndex: number; // 选择的支付项
+    SCprice: number; // SC价格
     total: number;  // 总金额(元)
-    giveST: number; // 赠送ST
-    inputValue: number; // 输入的金额
+    giveKT: number; // 赠送ST
+    SCNum: number; // 输入的金额
 }
 
 export class RechargeSC  extends Widget {
     public ok: () => void;
-    public props: Props = {
-        ktShow:getModulConfig('KT_SHOW'),
-        stShow:getModulConfig('ST_SHOW'),
-        payType: 'wxpay',
-        payList: [
-            { KTnum: 20, sellPrize: 20 },
-            { KTnum: 50, sellPrize: 50 },
-            { KTnum: 100, sellPrize: 100 },
-            { KTnum: 200, sellPrize: 200 },
-            { KTnum: 500, sellPrize: 500 },
-            { KTnum: 1000, sellPrize: 1000 }
-        ],
-        giveST: 0,
-        selectPayItem: {},
-        STprice: 1,
-        total: 0,
-        inputValue: 0
-    };
-    constructor() {
-        super();
-    }
-
     public setProps(prop: any) {
         super.setProps(this.props);
     }
 
     public create() {
         super.create();
-        getSilverPrice(1).then(() => {
-            this.changePayItem(0);
-        });
-        setTimeout(() => {
-            getSilverPrice(1);
-        }, 500000);
+        const payList = [
+            { sellNum: 20, sellPrize: 20 },
+            { sellNum: 50, sellPrize: 50 },
+            { sellNum: 100, sellPrize: 100 },
+            { sellNum: 200, sellPrize: 200 },
+            { sellNum: 500, sellPrize: 500 },
+            { sellNum: 1000, sellPrize: 1000 }
+        ];
+        const selectPayItemIndex = 0;
+        const SCNum = payList[selectPayItemIndex].sellNum;
+        const giveKT = SCNum * rechargeGiftMultiple;
+        const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
+        this.props = {
+            ktShow:getModulConfig('KT_SHOW'),
+            scShow:getModulConfig('SC_SHOW'),
+            scBalance,
+            payType: PayType.WX,
+            payList,
+            giveKT,
+            selectPayItemIndex,
+            SCNum,
+            PayType
+        };
     }
 
+    // 初始化
     public initData() {
-        this.props.STprice = getStore('third/silver/price') / 100;
-        this.paint();
+        const selectPayItemIndex = 0;
+        const SCNum = this.props.payList[selectPayItemIndex].sellNum;
+        const giveKT = SCNum * rechargeGiftMultiple;
+        this.props.payType = PayType.WX;
+        this.props.SCNum = SCNum;
+        this.props.giveKT = giveKT;
+        this.props.selectPayItemIndex = selectPayItemIndex;
     }
-
+    /**
+     * 充值
+     */
     public rechargeClick() {
+        const num = this.props.SCNum * SCPrecision;
         const orderDetail:OrderDetail = {
-            total: this.props.total * 100, // 总价
+            total: num * SCUnitprice, // 总价
             body: 'SC', // 信息
-            num: this.props.total * 100, // 充值ST数量
+            num, // 充值SC数量
             payType: this.props.payType, // 支付方式
             cointype: CloudCurrencyType.SC, // 充值类型
-            note: ''
+            note: ''          // 备注
         };
 
         confirmPay(orderDetail, (res) => {
-            this.inputChange({ value: 0 });
-            this.props.payType = 'alipay';
-
+            this.initData();
             popNew('app-view-wallet-cloudWalletSC-transactionDetails', { oid: res.oid, firstQuery: true });
-            getServerCloudBalance();
-            getAccountDetail(CloudCurrencyType[100], 1);
             this.paint();
             setStore('flags/firstRecharge',true); // 首次充值
-        }, () => {
-            getServerCloudBalance();
+            getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
         });
     }
     /**
@@ -106,12 +106,12 @@ export class RechargeSC  extends Widget {
     }
 
     /**
-     * 修改支付KT数量的选择
+     * 修改支付SC数量的选择
      */
     public changePayItem(index?: number) {
-        this.props.inputValue = null; // 清空自定义输入支付数量
-        this.props.selectPayItem = this.props.payList[index];
-        this.setOrderNum(this.props.selectPayItem.sellPrize);
+        this.props.selectPayItemIndex = index;
+        this.props.SCNum = this.props.payList[index].sellNum;
+        this.props.giveKT = this.props.SCNum * rechargeGiftMultiple;
         this.paint();
     }
 
@@ -119,29 +119,16 @@ export class RechargeSC  extends Widget {
      * 修改充值金额
      */
     public inputChange(e: any) {
-        this.props.selectPayItem = {}; // 清空固定支付数量选择
+        this.props.selectPayItemIndex = -1; // 清空固定支付数量选择
         if (e.value === '') {
-            this.props.inputValue = 0;
+            this.props.SCNum = 0;
         } else {
-            this.props.inputValue = Math.floor(Number(e.value) * 100) / 100;
+            this.props.SCNum = Math.floor(Number(e.value) * 100) / 100;  // 保留小数点后两位
         }
-        this.setOrderNum(this.props.inputValue);
+        this.props.giveKT = this.props.SCNum * rechargeGiftMultiple;
         this.paint();
     }
 
-    /**
-     * 设置订单相关数量
-     * @param total 总金额
-     */
-    public setOrderNum(total: number) {
-        if (total === 0) {
-            this.props.total = 0;
-            this.props.giveST = 0;
-        } else {
-            this.props.total = total;
-            this.props.giveST = Math.floor(this.props.total / (this.props.STprice * 1.15) * 100) / 100;
-        }
-    }
     /**
      * 返回上一页
      */
@@ -150,17 +137,12 @@ export class RechargeSC  extends Widget {
     }
 }
 
-// gasPrice变化
-register('third/silver', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.initData();
-    }
-});
 // 余额变化
 register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.initData();
+        const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
+        w.props.scBalance = scBalance;
+        w.paint();
     }
 });
