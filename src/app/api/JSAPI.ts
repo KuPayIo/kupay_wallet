@@ -1,12 +1,13 @@
 /**
  * 授权、支付等API
  */
-import { getServerCloudBalance, requestAsync } from '../net/pull';
+import { sign } from '../core/genmnemonic';
+import { GlobalWallet } from '../core/globalWallet';
+import { requestAsync } from '../net/pull';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
-import { getWalletToolsMod } from '../utils/commonjsTools';
 import { currencyType, formatBalance, getUserInfo } from '../utils/tools';
-declare var pi_modules:any;
+import { getMnemonicByHash, VerifyIdentidy } from '../utils/walletTools';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功
@@ -15,7 +16,11 @@ export enum resCode {
     USER_CANCAL = 103,     // 用户取消
     OTHER_ERROR = 203      // 其他错误
 }
-
+export enum SetNoPassword {
+    NOSETED = 0,   // 未设置
+    SETED = 1,    // 设置
+    EXCEEDLIMIT = 2  // 设置但超出每日限额
+}
 /**
  * 授权接口
  * @param payload 需要授权内容 
@@ -35,6 +40,39 @@ export const authorize = (payload, callback) => {
         callback(undefined,ret);
     },(err) => {
         callback(err);
+    });
+};
+
+/**
+ * 查询是否开启免密支付
+ */
+export const querySetNoPassword = (appid, callback) => {
+    queryNoPWD(appid).then(setNoPassword => {
+        if (setNoPassword === SetNoPassword.NOSETED) {
+            callback(undefined,false);
+        } else {
+            callback(undefined,true);
+        }
+    });
+    
+};
+
+/**
+ * 设置免密支付
+ */
+export const setFreeSecrectPay = (payload,callback) => {
+    VerifyIdentidy(payload.password).then(secretHash => {
+        if (!secretHash) {  //  密码错误
+            callback(resCode.PASSWORD_ERROR, false);
+    
+            return;
+    
+        }
+        setNoPWD(payload.appid,payload.noPSW,secretHash).then(() => {
+            callback(undefined, true);
+        }).catch(err => {
+            callback(err, false);
+        });
     });
 };
 
@@ -95,94 +133,82 @@ export const getOpenId = (appId:string,okCb:Function,failCb?:Function) => {
 };
 
 /**
+ * 统一订单
+ */
+export interface ThirdOrder {
+    appid:string; // 应用id
+    transaction_id:string;   // 钱包订单ID
+    nonce_str:string;    // 随机字符串
+    sign:string;     // 签名
+}
+/**
+ * 第三方支付
+ */
+export const thirdPay = async () => {
+    try {
+        const resData = await openPayment(order);
+        const orderDetail = {
+            fee_total : resData.total_fee,
+            desc : resData.body,
+            fee_name : currencyType(CloudCurrencyType[resData.fee_type]),
+            balance : formatBalance(getCloudBalances().get(resData.fee_type))
+        };
+        const setNoPassword = await queryNoPWD(order.appid,orderDetail.fee_total);
+        const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
+        const secretHash = await VerifyIdentidy('123456789');
+        const payRes = await walletPay(order,secretHash);
+
+        console.log('支付成功===========',payRes);
+        
+        return [undefined,payRes];
+    } catch (err) {
+        console.log('thirdPay err =====',err);
+
+        return [err];
+    }
+    
+    // popNew3('app-view-wallet-cloudWalletSC-thirdRechargeSC',{ order });
+};
+
+/**
  * 启动支付接口(验证订单，展示订单信息)
  * @param order 订单信息,后台返回的订单json
  */
-export const openPayment = async (order: any, callback: Function) => {
-    if (!order) {
-        callback(resCode.INVALID_REQUEST, new Error('order is not available'));
+const openPayment = (order: any) => {
+    const orderStr = JSON.stringify(order);
+    const msg = { type: 'wallet/order@order_start', param: { json: orderStr } };
 
-        return;
-    }
-    if (typeof order !== 'string') {
-        order = JSON.stringify(order);
-    }
-    const msg = { type: 'wallet/order@order_start', param: { json: order } };
-    requestAsync(msg).then(resData => {
-        if (resData.result === 1) {       // 开启支付成功
-            const propData = {
-                fee_total : resData.total_fee,
-                desc : resData.body,
-                fee_name : currencyType(CloudCurrencyType[resData.fee_type]),
-                balance : formatBalance(getCloudBalances().get(resData.fee_type)),
-                no_password:resData.no_password
-            };
-            callback(resCode.SUCCESS, propData);
-        } else {
-            callback(resData.result, resData);
-        }
-    }).catch(err => {
-        callback(resCode.OTHER_ERROR, err);
-    });
-
+    return requestAsync(msg);
 };
 
 /**
  * 支付接口(输入密码进行支付)
- * @param psw 钱包密码
- * @param transactionId 交易id
  */
-export const pay = async (order: any, callback: Function) => {
-    if (!order) {
-        callback(resCode.INVALID_REQUEST, new Error('order is not available'));
-
-        return;
-    }
-    if (!order.password && order.no_password !== 1) {
-        callback(resCode.INVALID_REQUEST, new Error('password is not available'));
-
-        return;
-    }
-
-    // tslint:disable-next-line:one-variable-per-declaration
-    let secretHash,signStr = '';
+const walletPay = async (order: any,secretHash?:string) => {
     const signJson = {
         appid: order.appid,
         transaction_id: order.transaction_id,
         nonce_str: Math.random().toFixed(5)
     };
-
-    if (order.no_password !== 1) {
-        const walletToolsMod = await getWalletToolsMod();
-        secretHash = await walletToolsMod.VerifyIdentidy(order.password);
-        if (!secretHash) {  //  密码错误
-            callback(resCode.PASSWORD_ERROR, null);
-    
-            return;
-    
-        }
+    let signStr;
+    // tslint:disable-next-line:variable-name
+    let no_password = SetNoPassword.SETED;  // 使用免密
+    if (secretHash) {
         signStr = getSign(signJson, secretHash);
+        no_password = SetNoPassword.NOSETED;
     }
-    
     const msg = {
         type: 'wallet/order@pay',
         param: {
             ...signJson,
             sign: signStr,
-            no_password:order.no_password
+            no_password
         }
     };
-    requestAsync(msg).then(resData => {
-        if (resData.result === 1) {
-            getServerCloudBalance();
-            callback(resCode.SUCCESS,resData);
-        } else {
-            callback(resData.result,resData);
-        }  
-    }).catch (err => {
-        // console.log('pay--------',err);
-        callback(resCode.OTHER_ERROR, err);
-    });
+
+    console.log('walletPay =======',msg);
+
+    return requestAsync(msg);
 };
 
 /**
@@ -190,62 +216,40 @@ export const pay = async (order: any, callback: Function) => {
  * @param appid 应用id
  * @param callback 回调函数
  */
-export const queryNoPWD = (appid:string,callback:Function) => {
-    if (!appid) {
-        callback(resCode.INVALID_REQUEST, new Error('appid is not available'));
-
-        return;
-    }
+// tslint:disable-next-line:variable-name
+const queryNoPWD = async (appid:string,total_fee?:number) => {
     const msg = {
         type: 'wallet/order@nopwd_limit',
-        param: { appid }
+        param: { appid,total_fee }
     };
-    requestAsync(msg).then(() => {
-        callback(resCode.SUCCESS,true);
-    }).catch (err => {
+
+    let setNoPassword;
+    try {
+        await requestAsync(msg);
+        setNoPassword = SetNoPassword.SETED;
+    } catch (err) {
         if (err.result === 2119) {  // 用户未开启免密支付
-            callback(undefined, false);
+            setNoPassword = SetNoPassword.NOSETED;
         } else if (err.result === 2118) { // 免密支付已达当日限额
-            callback(undefined,true);
+            setNoPassword = SetNoPassword.EXCEEDLIMIT;
         } else {
-            callback(undefined, false);
+            setNoPassword = SetNoPassword.NOSETED;
         }
-    });
+    }
+    
+    return setNoPassword;
 };
 
 /**
  * 设置免密支付
- * @param data 免密设置对象
- * @param callback 设置回调函数
- * {
- * appid:"101",
- * noPSW:1
- * password:"123456789"
- * }
+ * @param appid appid
+ * @param noPSW  0 关闭免密  1 开启免密
+ * @param secretHash 密码hash
  */
-export const setNoPWD = async (data:any,callback:Function) => {
-    if (!data.appid) {
-        callback(resCode.INVALID_REQUEST, new Error('appid is not available'));
-
-        return;
-    }
-    if (data.noPSW === undefined || data.noPSW === null) {
-        callback(resCode.INVALID_REQUEST, new Error('noPSW is not available'));
-
-        return;
-    }
-    const walletToolsMod = await getWalletToolsMod();
-    const secretHash = await walletToolsMod.VerifyIdentidy(data.password);
-    if (!secretHash) {  //  密码错误
-        callback(resCode.PASSWORD_ERROR, null);
-
-        return;
-
-    }
-
+const setNoPWD = async (appid:string,noPSW:number,secretHash:string) => {
     const signJson = {
-        appid: data.appid,
-        no_password: data.noPSW,
+        appid,
+        no_password: noPSW,
         nonce_str: Math.random().toFixed(5)
     };
     const signStr = getSign(signJson, secretHash);
@@ -256,12 +260,8 @@ export const setNoPWD = async (data:any,callback:Function) => {
             user_sign:signStr
         }
     };
-    requestAsync(msg).then(resData => {
-        callback(resCode.SUCCESS,true);
-    }).catch (err => {
-        callback(resCode.OTHER_ERROR, false);
-    });
 
+    return requestAsync(msg);
 };
 
 /**
@@ -292,12 +292,8 @@ export const closePayment = async (transactionId:string,okCb?:Function,failCb?:F
  * @param json 签名json
  */
 const getSign = (json:any,secretHash:string) => {
-
-    const getMnemonicByHash = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.getMnemonicByHash;
     const mnemonic = getMnemonicByHash(secretHash);
-    const GlobalWallet = pi_modules.commonjs.exports.relativeGet('app/core/globalWallet').exports.GlobalWallet;
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
-    const sign = pi_modules.commonjs.exports.relativeGet('app/core/genmnemonic').exports.sign;
 
     return sign(jsonUriSort(json), wlt.exportPrivateKey());
 };

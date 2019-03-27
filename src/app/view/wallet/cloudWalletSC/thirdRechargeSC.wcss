@@ -11,87 +11,26 @@
 }
 .body-top{
     width:100%;
-    background:#ffffff;
-    padding:40px 30px 0px;
-}
-.top-title1{
-    font-size:36px;
-    color:rgba(34,34,34,1);
-    line-height:50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.balance{
     font-size:28px;
-    font-family:Helvetica;
-    color:rgba(136,136,136,1);
-    line-height:34px;
-}
-.top-title2{
-    font-size:36px;
+    font-family:"PingFangSC-Medium";
+    font-weight:500;
     color:rgba(34,34,34,1);
-    line-height:50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 30px;
+    line-height:40px;
 }
-.pay-list{
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    color:rgba(136,136,136,1);
+.box1{
+    padding: 15px 30px 20px;
+    background:#ffffff;
 }
-.pay-list-item{
-    width: 30%;
-    height: 120px;
-    margin: 10px 0px;
-    border-radius: 6px;
-    border: 1px solid rgba(136,136,136,1);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-size: 36px;
-    transition: all 0.3s ease 0s;
-    color:rgba(136,136,136,1);
-}
-
-.pay-list-selectItem{
-    width: 30%;
-    height: 120px;
-    margin: 10px 0px;
-    border-radius: 6px;
-    border: 1px solid rgba(49,141,230,1);
-    color: rgba(49,141,230,1);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-size: 36px;
-    transition: all 0.3s ease 0s;
-}
-.other-input{
+.box2{
     margin-top: 10px;
-    height: 100px;
-    border-radius:6px;
-    border:1px solid rgba(204,204,204,1);
-    position: relative;
+    padding: 15px 30px 40px;
+    background:#ffffff;
 }
-.input-suffix{
-    position: absolute;
-    top: 50%;
-    right: 30px;
-    transform: translateY(-50%);
-    font-size:36px;
-    font-family:"PingFangSC-Regular";
-    font-weight:400;
-    color:rgba(204,204,204,1);
-    line-height:50px;
+.order-item{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
 }
-
 .body-center{
     flex: 1 0 0;
     width:100%;
