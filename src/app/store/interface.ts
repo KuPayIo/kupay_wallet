@@ -17,6 +17,7 @@ export interface Store {
 
     third: Third;        // 第三方通信数据，如：changelly...
     flags: object;       // 全局的标识
+    inviteUsers:object;  // 邀请好友
 }
 
 /**
@@ -26,7 +27,8 @@ export enum CloudCurrencyType {
     KT = 100,  // KT
     ETH,       // ETH 
     BTC,       // BTC
-    ST         // ST
+    ST,         // ST
+    SC         // SC 银两
 }
 
 /**

@@ -7,17 +7,24 @@ import { popNew } from '../../pi/ui/root';
 import { getModulConfig } from '../modulConfig';
 import { requestAsync } from '../net/pull';
 import { showError } from './toolMessages';
-import { popNewMessage, popNewLoading } from './tools';
+import { popNewLoading, popNewMessage } from './tools';
 
 export interface OrderDetail {
     total: number; // 总价
     body: string; // 信息
     num: number; // 充值GT数量
-    payType: string; // 支付方式
-    // tslint:disable-next-line:no-reserved-keywords
-    type: number; // 充值类型
+    payType: PayType; // 支付方式
+    cointype: number; // 充值类型
+    note?:string;     // 备注
 }
 
+/**
+ * 支付方式
+ */
+export enum PayType {
+    WX = 'wxpay',
+    Alipay = 'alipay'
+}
 /**
  * 确认订单支付接口
  * @param orderDetail 订单详情
@@ -35,13 +42,14 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
     const loading = popNewLoading({ zh_Hans: '充值中...', zh_Hant: '充值中...', en: '' });
     try {
         const resData: any = await requestAsync(msg);
+        console.log('pay 下单结果===============',resData);
         if (resData.result === 1) { // 下单成功
             const jumpData = {
                 oid: resData.oid,
                 mweb_url: ''
             };
 
-            if (orderDetail.payType === 'alipay') {// 支付宝H5支付
+            if (orderDetail.payType === PayType.Alipay) {// 支付宝H5支付
                 fetch('https://openapi.alipay.com/gateway.do', {
                     method: 'POST',
                     headers: {
@@ -54,7 +62,7 @@ export const confirmPay = async (orderDetail: OrderDetail, okCb?: Function, fail
                 }).catch((err) => {
                     failCb && failCb(err);
                 });
-            } else if (orderDetail.payType === 'wxpay') { // 微信H5支付
+            } else if (orderDetail.payType === PayType.WX) { // 微信H5支付
                 jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
                 jumpWxpay(jumpData, okCb, failCb);
             }

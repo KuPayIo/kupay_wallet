@@ -57,7 +57,7 @@ export const requestAsyncNeedLogin = async (msg: any,secretHash:string) => {
 export const getServerCloudBalance = () => {
     const list = [];
     list.push(CloudCurrencyType.KT);
-    list.push(CloudCurrencyType.ST);
+    list.push(CloudCurrencyType.SC);
     for (const k in CloudCurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
             list.push(CloudCurrencyType[k]);
@@ -588,13 +588,13 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
             if (filter === 1) {
                 if (start) {
                     cloudWallet.otherLogs.list.push(...detail);
-                    if (coin === 'ST') {
+                    if (coin === 'SC') {
                         cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
                         cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
                     }
                 } else {
                     cloudWallet.otherLogs.list = detail;
-                    if (coin === 'ST') {
+                    if (coin === 'SC') {
                         cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
                         cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
                     }
@@ -734,6 +734,8 @@ export const getBindPhone = async () => {
         userInfo.phoneNumber =  res.phone;
         userInfo.areaCode = res.num;
         setStore('user/info',userInfo);
+    }).catch(err => {
+        // console.log(err);
     });
 };
 
@@ -1262,6 +1264,18 @@ export const changellySign = (data:any) => {
         param: {
             body:JSON.stringify(data)
         }
+    };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取邀请好友accId
+ */
+export const getInviteUserAccIds = () => {
+    const msg = {
+        type: 'wallet/cloud@get_invites',
+        param: {}
     };
 
     return requestAsync(msg);

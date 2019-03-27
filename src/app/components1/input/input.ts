@@ -11,7 +11,6 @@
  * maxLength?: 输入最大长度，仅对text和password类型输入有效
  * 外部可监听 ev-input-change，ev-input-blur，ev-input-focus，ev-input-clear事件
  */
-import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { getRealNode, paintCmd3, paintWidget } from '../../../pi/widget/painter';

@@ -5,7 +5,7 @@ import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr
 import { popNew } from '../../pi/ui/root';
 import { getAllAccount, getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
-import { closeAllPage, getStaticLanguage, getUserInfo, popNew3, popNewMessage } from '../utils/tools';
+import { closeAllPage, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
 import { getServerCloudBalance } from './pull';
 
@@ -60,7 +60,7 @@ export const initPush = () => {
 
     // 监听充值成功事件
     setPushListener('event_pay_ok',(res) => {
-        const value = res.value.toJSNumber ? res.value.toJSNumber() : res.value;
+        // const value = res.value.toJSNumber ? res.value.toJSNumber() : res.value;
         getServerCloudBalance().then(res => {
             console.log('服务器推送成功 云端余额更新==========================',res);
         });
@@ -75,7 +75,9 @@ export const initPush = () => {
     setPushListener('event_invite_success',(res) => {
         console.log('event_invite_success服务器推送邀请好友成功=====================',res);
         const invite = getStore('flags').invite_success || [];
-        invite.push(res.accId);
+        if (res.accId) {
+            invite.push(res.accId);
+        }
         setStore('flags/invite_success',invite);
     });
 
@@ -83,14 +85,10 @@ export const initPush = () => {
     setPushListener('event_convert_invite',(res) => {
         console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
         const invite = getStore('flags').convert_invite || [];
-        invite.push(res.accId);
-        setStore('flags/convert_invite',invite); 
-        // console.log('111111111',invite);
-        // popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-        //     title:'新用户',
-        //     awardType:2001,
-        //     awardNum:1
-        // });
+        if (res.accId) {
+            invite.push(res.accId);
+        }
+        setStore('flags/convert_invite',invite);
     });
 
     // 监听余额变化事件

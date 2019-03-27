@@ -1,75 +1,50 @@
 .new-page{
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-}
-.top-head{
-    height: 400px;
-    background:linear-gradient(to right,#38CFE7,#318DE6);
-    flex-shrink: 0;
+    background-color:rgba(242,242,242,1);
 }
 .body{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     flex: 1 0 0;
     border-radius: 12px;
-    margin: -150px 20px 50px;
-    padding: 0 10px;
 }
-
-
-
-
 .body-top{
     width:100%;
-    height:200px;
-    background:#ffffff;
-    box-shadow:0px 0px 2px 0px rgba(0,0,0,0.2);
-    border-radius: 12px;
-    padding:30px 30px 20px;
+    font-size:28px;
+    font-family:"PingFangSC-Medium";
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    line-height:40px;
 }
-.inner-tip{
-    font-size: 28px;
-    color: #222;
+.box1{
+    padding: 15px 30px 20px;
+    background:#ffffff;
+}
+.box2{
+    margin-top: 10px;
+    padding: 15px 30px 40px;
+    background:#ffffff;
+}
+.order-item{
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    margin-top: 25px;
 }
-.input-icon{
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-}
-.balance{
-    color: #888888;
-}
-
-.balance-value{
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 0;
-    font-size: 36px;
-    color:#ccc;
-}
-.input-father{
-    position: relative;
-    height: 90px;
-    margin-top: 10px;
-}
-
-
-
-
-
 .body-center{
+    flex: 1 0 0;
     width:100%;
-    height:350px;
     border-radius: 12px;
+    margin-top: 10px;
+    background-color: #fff;
+    padding: 40px 30px;
+}
+.pay-title{
+    font-size:28px;
+    font-family:PingFangSC-Medium;
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    line-height:40px;
 }
 .select-title{
     height:50px;
@@ -82,17 +57,11 @@
 }
 .select-body{
     width:100%;
-    height:280px;
     margin-top:30px;
-    background:rgba(255,255,255,1);
-    box-shadow:0px 0px 2px 0px rgba(0,0,0,0.2);
-    border-radius:12px;
-    padding:0 10px;
 }
 .select-item{
-    height:50%;
     width:100%;
-    padding:40px 20px;
+    padding:20px 0px;
     display:flex;
     justify-content:space-between;
 }
@@ -124,15 +93,14 @@
 
 
 
-
-
 .body-bottom{
     width:100%;
-    height:160px;
+    height:100px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items:center;
+    margin-top: 60px;
 }
 
 .btn-tip{
@@ -145,4 +113,11 @@
 }
 
 
-
+.gift{
+    font-size:28px;
+    font-family:"SourceHanSansCN-Regular";
+    font-weight:400;
+    color:rgba(245,162,100,1);
+    line-height:42px;
+    margin: 20px 0 50px 30px;
+}
