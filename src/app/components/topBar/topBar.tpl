@@ -8,7 +8,7 @@
             <img on-tap="backPrePage" src="{{ backImg }}" w-class="ga-back" />
             <span on-tap="backPrePage"  style="color: {{flag?'#fff':''}}">
                 {{if typeof(it.title) == "string"}}
-                <div>{{it.title}}</div>
+                <span>{{it.title}}</span>
                 {{else}}
                 <pi-ui-lang>{{it.title}}</pi-ui-lang>
                 {{end}}

@@ -14,6 +14,7 @@ interface Props {
     refresh?:boolean;
     text?:string;
     nextImg?:string;
+    isOne?:boolean;
 }
 
 // ================================ 导出
