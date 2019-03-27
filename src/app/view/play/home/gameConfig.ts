@@ -1,4 +1,3 @@
-import { CRYPTOFISHING_GROUP, FOMOSPORTS_GROUP } from '../../../../chat/server/data/constant';
 
 /**
  * 第三方游戏相关配置
@@ -14,7 +13,8 @@ export const gameList = [
         webviewName:'fomosports',
         img:['app/res/image1/fomosports.jpg','app/res/image1/fomosports1.jpg'],
         url:'https://test.fomosports.me/',
-        gid:FOMOSPORTS_GROUP
+        gid:10002,
+        uid:10002
     },
     {
         title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
@@ -22,29 +22,19 @@ export const gameList = [
         webviewName:'Crypto Fishing',
         img:['app/res/image1/CryptoFishing.jpg','app/res/image1/CryptoFishing1.jpg'],
         url:'https://test.fomosports.me/',
-        gid:CRYPTOFISHING_GROUP
+        gid:10003,
+        uid:10003
     }
    
 ];
 
 /**
- * 获取指定webviewName的url
+ * 获取指定webviewName的所有值
  */
-export const getGameUrl = (webviewName:string) => {
+export const getGameItem = (webviewName:string) => {
     const index = gameList.findIndex((item) => {
         return item.webviewName === webviewName;
     });
 
-    return gameList[index].url;
-};
-
-/**
- * 获取指定webviewName的logo url
- */
-export const getGameLogo = (webviewName:string) => {
-    const index = gameList.findIndex((item) => {
-        return item.webviewName === webviewName;
-    });
-
-    return gameList[index].img[1];
+    return gameList[index];
 };

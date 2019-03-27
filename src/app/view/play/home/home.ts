@@ -172,7 +172,11 @@ export class PlayHome extends Widget {
             const pi3Config:any = getPi3Config();
             pi3Config.gameName = gameTitle;
             
-            const pi3ConfigStr = `window.pi_config = ${JSON.stringify(pi3Config)}`;
+            const pi3ConfigStr = `
+                window.pi_config = ${JSON.stringify(pi3Config)}
+                window.piGroupId = ${gameList[num].gid};
+                window.piOfficialUser = ${gameList[num].uid}; 
+            `;
             this.configPromise = Promise.resolve(pi3ConfigStr);
 
             const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
