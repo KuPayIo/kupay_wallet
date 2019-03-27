@@ -2,7 +2,7 @@
  * Exchange
  */
 // ============================== 导入
-import { cdkey } from '../../../../earn/server/rpc/invite.r';
+
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -13,7 +13,7 @@ import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryR
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
-import { popNew3, popNewLoading, popNewMessage } from '../../../utils/tools';
+import {  popNewLoading, popNewMessage } from '../../../utils/tools';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
 
 // ================================ 导出
@@ -106,13 +106,6 @@ export class Exchange extends Widget {
             }
             value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
-            // const arr = cdkey(code);
-            // console.log(arr);
-            // popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-            //     title:'新用户',
-            //     awardType:2001,
-            //     awardNum:1
-            // });
         } else {
             alert(1);
             popNewMessage(this.language.errorList[1]);
