@@ -1,5 +1,5 @@
 /**
- * ST 交易记录主页
+ * SC 交易记录主页
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -9,7 +9,7 @@ import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, fetchGTGain, formatBalance, formatBalanceValue, getCurrencyUnitSymbol } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, fetchSCGain, formatBalance, formatBalanceValue, getCurrencyUnitSymbol } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -22,32 +22,31 @@ export class CloudWalletHome extends Widget {
     public props:any;
     public ok:() => void;
     public setProps(props:Props,oldProps:Props) {
-
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
         const currencyName = this.props.currencyName;
         const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
-        const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin('ST',balance));
+        const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin('SC',balance));
         const color = getStore('setting/changeColor','redUp');
-        const stShow = getModulConfig('ST_SHOW');
+        const scShow = getModulConfig('SC_SHOW');
         this.props = {
             ...this.props,
-            stShow,
+            scShow,
             tabs:[{
                 tab:{ zh_Hans:'全部',zh_Hant:'全部',en:'' },
-                components:'app-view-wallet-cloudWalletGT-totalRecord'
+                components:'app-view-wallet-cloudWalletSC-totalRecord'
             },{
                 tab:{ zh_Hans:'入账',zh_Hant:'入賬',en:'' },
-                components:'app-view-wallet-cloudWalletGT-rechargeRecord'
+                components:'app-view-wallet-cloudWalletSC-accountEntry'
             },{
                 tab:{ zh_Hans:'出账',zh_Hant:'出賬',en:'' },
-                components:'app-view-wallet-cloudWalletGT-withdrawRecord'
+                components:'app-view-wallet-cloudWalletSC-accountOut'
             }],
             activeNum:0,
-            gain:fetchGTGain(),
-            rate:formatBalanceValue(fetchBalanceValueOfCoin('ST',1)),
+            gain:fetchSCGain(),
+            rate:formatBalanceValue(fetchBalanceValueOfCoin('SC',1)),
             balance,
             balanceValue,
             currencyUnitSymbol:getCurrencyUnitSymbol(),
@@ -58,9 +57,9 @@ export class CloudWalletHome extends Widget {
     public updateBalance() {
         const currencyName = this.props.currencyName;
         this.props.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
-        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin('ST',this.props.balance));
-        this.props.gain = fetchGTGain();
-        this.props.rate = formatBalanceValue(fetchBalanceValueOfCoin('ST',1));
+        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin('SC',this.props.balance));
+        this.props.gain = fetchSCGain();
+        this.props.rate = formatBalanceValue(fetchBalanceValueOfCoin('SC',1));
         this.paint();
     }
     public tabsChangeClick(event: any, value: number) {
@@ -74,8 +73,8 @@ export class CloudWalletHome extends Widget {
      * 充值
      */
     public rechargeClick() {
-        // popNew('app-view-wallet-cloudWalletGT-transactionDetails',{ oid:'100' });
-        popNew('app-view-wallet-cloudWalletGT-rechargeGT');
+        // popNew('app-view-wallet-cloudWalletSC-transactionDetails',{ oid:'100' });
+        popNew('app-view-wallet-cloudWalletSC-rechargeSC');
     }
 
     /**

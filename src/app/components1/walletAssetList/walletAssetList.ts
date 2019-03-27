@@ -23,11 +23,11 @@ export class WalletAssetList extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         const ktShow = getModulConfig('KT_SHOW');
-        const stShow = getModulConfig('ST_SHOW');
+        const scShow = getModulConfig('SC_SHOW');
         this.props = {
             ...this.props,
             ktShow,
-            stShow,
+            scShow,
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
         this.props.assetList.map(item => {
