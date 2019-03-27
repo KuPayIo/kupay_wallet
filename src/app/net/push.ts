@@ -5,7 +5,7 @@ import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr
 import { popNew } from '../../pi/ui/root';
 import { getAllAccount, getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
-import { closeAllPage, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
+import { closeAllPage, getStaticLanguage, getUserInfo, popNew3, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
 import { getServerCloudBalance } from './pull';
 
@@ -84,7 +84,13 @@ export const initPush = () => {
         console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
         const invite = getStore('flags').convert_invite || [];
         invite.push(res.accId);
-        setStore('flags/convert_invite',invite);
+        setStore('flags/convert_invite',invite); 
+        // console.log('111111111',invite);
+        // popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+        //     title:'新用户',
+        //     awardType:2001,
+        //     awardNum:1
+        // });
     });
 
     // 监听余额变化事件
