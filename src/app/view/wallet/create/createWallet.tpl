@@ -28,7 +28,7 @@
                 <app-components-input-suffixInput>{isShow:true,itype:"password",placeHolder:{{inputPlace}},clearable:true,available:{{it.pswEqualed}}}</app-components-input-suffixInput>
             </div>
             <div w-class="registered-protocol" ev-checkbox-click="checkBoxClick">
-                <span w-class="user-agree"><pi-ui-lang>{"zh_Hans":"我已经认证阅读并同意","zh_Hant":"我已經認證閱讀並同意","en":""}</pi-ui-lang></span>
+                <span w-class="user-agree"><pi-ui-lang>{"zh_Hans":"选择继续表示同意","zh_Hant":"選擇繼續表示同意","en":""}</pi-ui-lang></span>
                 <span w-class="user-protocol" on-tap="agreementClick"><pi-ui-lang>{"zh_Hans":"用户协议及隐私服务","zh_Hant":"用戶協議及隱私服務","en":""}</pi-ui-lang></span>
             </div>
             <div ev-btn-tap="createClick" w-class="btn">
