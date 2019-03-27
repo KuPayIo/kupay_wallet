@@ -489,7 +489,7 @@ pi_tools.getButtonItemById = function(id){
  */
 pi_tools.getFreeSecret = function(){
     console.log("getFreeSecret called");
-    pi_RPC_Method(pi_config.jsApi, "queryNoPWD", pi_config.appId, function (error, startFreeSecret) {
+    pi_RPC_Method(pi_config.jsApi, "querySetNoPassword", pi_config.appId, function (error, startFreeSecret) {
         console.log("getFreeSecret called callback",startFreeSecret);
         pi_store.freeSecret = startFreeSecret;
     });

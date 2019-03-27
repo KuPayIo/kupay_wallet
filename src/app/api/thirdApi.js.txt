@@ -466,10 +466,9 @@ pi_jsApi.authorize = function (payload, callBack) {
 
 }
 
-
 // 第三方支付
 // order:订单数据
-pi_jsApi.openPayment = function (order, callBack) {
+pi_jsApi.pay = function (order, callBack) {
     pi_RPC_Method("app/api/JSAPI", "openPayment", order, function (resCode, msg) {
         console.log('openPayment call success', resCode);
         console.log('openPayment call success', msg);
@@ -538,9 +537,7 @@ pi_jsApi.setNoPSW = function (openFreeSecret) {
         }
         pi_tools.closePopBox();
         pi_tools.createLoadingElementTag('设置中...');
-        pi_RPC_Method("app/api/JSAPI", "setNoPWD", sendData, function (resCode1, msg1) {
-            console.log('setNoPWD call success', resCode1);
-            console.log('setNoPWD call success', msg1);
+        pi_RPC_Method("app/api/JSAPI", "setFreeSecrectPay", sendData, function (resCode1, msg1) {
             if(msg1){
                 pi_store.freeSecret = !pi_store.freeSecret;
                 pi_tools.popNewMessage("设置成功");
