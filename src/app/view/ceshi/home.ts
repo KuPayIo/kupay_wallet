@@ -1,14 +1,20 @@
-import { Widget } from "../../../pi/widget/widget";
-import { hasWallet } from "../../utils/tools";
-import { popNew } from "../../../pi/ui/root";
-import { walletPay } from "../../utils/pay";
-import { createGroup } from "../../../chat/client/app/net/rpc";
+import { createGroup } from '../../../chat/client/app/net/rpc';
+import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
+import { walletPay } from '../../utils/pay';
+import { hasWallet } from '../../utils/tools';
 
 /**
  * play home 
  */
 // ================================ 导入
 
+export interface UnifiedOrder {
+    appid:string; // 应用id
+    transaction_id:string;   // 钱包订单ID
+    nonce_str:string;    // 随机字符串
+    sign:string;     // 签名
+}
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -22,7 +28,6 @@ export class Ceshi extends Widget {
     constructor() {
         super();
     }
-
 
     public backPrePage() {
         this.ok && this.ok();
@@ -75,7 +80,7 @@ export class Ceshi extends Widget {
                     console.log(code);
                     console.log(res);
 
-                })
+                });
                 //  openPayment(data.data,(resCode,msg) => {
                 //      popNew('app-components-message-message', { content:'支付成功！' });
                 //      popNew('app-components-message-message', { content:'支付失败！' });
@@ -93,13 +98,13 @@ export class Ceshi extends Widget {
     /**
      * 创建游戏群
      */
-    public creatGroup(){    
-        let GroupName = document.getElementById('GroupName').value;
-        let GroupNote = document.getElementById('GroupNote').value;
-        createGroup(GroupName,'',GroupNote,false,(res)=>{
+    public creatGroup() {    
+        const GroupName = document.getElementById('GroupName').value;
+        const GroupNote = document.getElementById('GroupNote').value;
+        createGroup(GroupName,'',GroupNote,false,(res) => {
             console.log(res);
             
-        })
+        });
     }
     /**
      * Ajax 请求
@@ -122,7 +127,7 @@ export class Ceshi extends Widget {
             if (xhr.readyState === 4) {
                 const status = xhr.status;
                 if (status >= 200 && status < 300) {
-                    okCb && okCb(JSON.parse(xhr.responseText), xhr.responseXML)
+                    okCb && okCb(JSON.parse(xhr.responseText), xhr.responseXML);
                 } else {
                     failCb && failCb(status);
                 }

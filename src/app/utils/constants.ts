@@ -145,3 +145,12 @@ export const topHeight = 40;
 
 // 游客登录默认密码
 export const defaultPassword = '123456789';
+
+// 充值赠送KT倍数
+export const rechargeGiftMultiple = 10;
+
+// SC单价
+export const SCUnitprice =  1;
+
+// SC精度
+export const SCPrecision = 100;

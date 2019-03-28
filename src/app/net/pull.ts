@@ -734,6 +734,8 @@ export const getBindPhone = async () => {
         userInfo.phoneNumber =  res.phone;
         userInfo.areaCode = res.num;
         setStore('user/info',userInfo);
+    }).catch(err => {
+        // console.log(err);
     });
 };
 
