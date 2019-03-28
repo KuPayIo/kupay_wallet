@@ -206,6 +206,10 @@ window.pi_RPC_Method = (function () {
         }
     };
 
+    window.handle_native_event = function(){
+        console.log("handle_native_event called");
+    }
+
     window["onWebViewPostMessage"] = function (fromWebView, message) {
         var RPC_REPLY_START = "$WEBVIEW_RPC_REPLY: ";
         // 收到对方的rpc回应，处理

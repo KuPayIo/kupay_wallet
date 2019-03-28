@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
-import { getCloudBalances } from '../../../store/memstore';
+import { getCloudBalances, getStore } from '../../../store/memstore';
 import { SCPrecision, SCUnitprice } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
 
@@ -21,14 +21,17 @@ export class ThirdRechargeSC  extends Widget {
     public ok: (rechargeSuccess?:boolean) => void;
     public setProps(props: any) {
         const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
-        const needPay = (props.order.fee_total - scBalance) / SCPrecision;
+        const needPay = (props.order.total_fee - scBalance * SCPrecision) / SCPrecision;
         this.props = {
             ...props,
+            acc_id:getStore('user/info').acc_id,
             scShow:getModulConfig('SC_SHOW'),
             scBalance,
+            total_fee_show:props.order.total_fee / SCPrecision,
             needPay,
             payType: PayType.WX,
             walletName:getModulConfig('WALLET_NAME')
+
         };
         super.setProps(this.props);
     }
@@ -37,7 +40,7 @@ export class ThirdRechargeSC  extends Widget {
      * 充值
      */
     public rechargeClick() {
-        const num = this.props.SCNum * SCPrecision;
+        const num = this.props.needPay * SCPrecision;
         const orderDetail:OrderDetail = {
             total: num * SCUnitprice, // 总价
             body: 'SC', // 信息

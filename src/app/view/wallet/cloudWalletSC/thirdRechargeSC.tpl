@@ -6,13 +6,13 @@
             <div w-class="body-top">
                 <div w-class="box1">
                     <div w-class="order-item"><widget w-tag="pi-ui-lang">{"zh_Hans":"订单号","zh_Hant":"訂單號","en":""}</widget><span>{{it.order.transaction_id}}</span></div>
-                    <div w-class="order-item"><widget w-tag="pi-ui-lang">{"zh_Hans":{{ it.walletName + "ID" }},"zh_Hant":{{ it.walletName + "ID" }},"en":""}</widget><span>FX52366512666</span></div>
+                    <div w-class="order-item"><widget w-tag="pi-ui-lang">{"zh_Hans":{{ it.walletName + "ID" }},"zh_Hant":{{ it.walletName + "ID" }},"en":""}</widget><span>{{it.acc_id}}</span></div>
                     <div w-class="order-item"><widget w-tag="pi-ui-lang">{"zh_Hans":{{ it.scShow + "余额" }},"zh_Hant":{{ it.scShow + "餘額" }},"en":""}</widget><span>{{it.scBalance}}</span></div>
                 </div>
                 <div w-class="box2">
-                    <div w-class="order-item"><widget w-tag="pi-ui-lang">{"zh_Hans":"收款方","zh_Hant":"收款方","en":""}</widget><span>{{ it.order.desc }}</span></div>
-                    <div w-class="order-item"><widget w-tag="pi-ui-lang">{"zh_Hans":"收款价格","zh_Hant":"收款價格","en":""}</widget><span>{{it.order.fee_total}}{{it.scShow}}</span></div>
-                    <div w-class="order-item" style="color:rgba(245,162,100,1);"><widget w-tag="pi-ui-lang">{"zh_Hans":"还需支付","zh_Hant":"還需支付","en":""}</widget><span>{{it.needPay}}</span>元</div>
+                    <div w-class="order-item"><widget w-tag="pi-ui-lang">{"zh_Hans":"收款方","zh_Hant":"收款方","en":""}</widget><span>{{ it.beneficiary }}</span></div>
+                    <div w-class="order-item"><widget w-tag="pi-ui-lang">{"zh_Hans":"收款价格","zh_Hant":"收款價格","en":""}</widget><span>{{it.total_fee_show}}{{it.scShow}}</span></div>
+                    <div w-class="order-item" style="color:rgba(245,162,100,1);"><widget w-tag="pi-ui-lang">{"zh_Hans":"还需支付","zh_Hant":"還需支付","en":""}</widget><div><span>{{it.needPay}}</span>元</div></div>
                 </div>
             </div>
             {{% 选择支付方式}}
