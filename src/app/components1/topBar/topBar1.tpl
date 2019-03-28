@@ -14,7 +14,10 @@
             {{end}}
         </div>
         <div style="display:inline-block;" on-down="onShow">
-            <img src="../../res/image1/{{opca>0?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" on-tap="refreshPage" class="{{it.refresh ?'refreshing':''}}"/>
+            {{if it.nextImg}}
+            <img src="{{it.nextImg}}" w-class="refreshBtn" on-tap="goNext"/>
+            {{end}}
+
         </div>
     </div>
 </div>
