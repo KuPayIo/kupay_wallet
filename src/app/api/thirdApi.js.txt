@@ -511,23 +511,22 @@ pi_jsApi.thirdPay = function (order, callBack) {
                 pi_RPC_Method(pi_config.jsApi, "thirdPayDirect", {order,password:value}, function (error, res) {
                     console.log('thirdPayDirect call success',res);
                     pi_tools.closePopBox();
-                    callBack(error,res);
                     if(res.result === payCode.ERRORPSW){
                         pi_tools.popNewMessage("密码错误");
+                        callBack(error,{ result:payCode.FAILED });
                     }else if(res.result === payCode.SUCCESS){
                         pi_tools.popNewMessage("支付成功");
+                        callBack(error,res);
                     }else{
                         pi_tools.popNewMessage("支付失败");
+                        callBack(error,res);
                     }
                     
                 });
             });
-        }else if(res.result === payCode.RECHARGEFAILED){
-            pi_tools.popNewMessage("充值失败");
-            callBack(error,res);
         }else{
             pi_tools.popNewMessage("支付失败");
-            callBack(error,res);
+            callBack(error,{ result:payCode.FAILED });
         }
     });
 }

@@ -249,7 +249,7 @@ const thirdPay1 = async (order:ThirdOrder,webViewName: string) => {
 /**
  * 跳转充值页面
  */
-const gotoRecharge = (order:ThirdOrder,beneficiary:string) => {
+const gotoRecharge = (order:ThirdOrder,beneficiary:string = '未知') => {
     return new Promise(resolve => {
         popNew('app-view-wallet-cloudWalletSC-thirdRechargeSC',{ order,beneficiary },(rechargeSuccess:boolean) => {
             resolve(rechargeSuccess);
