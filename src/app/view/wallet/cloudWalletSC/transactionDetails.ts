@@ -4,8 +4,8 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
-import { getOrderDetail, getPayState } from '../../../utils/recharge';
-import { timestampFormat } from '../../../utils/tools';
+import { getOrderDetail } from '../../../utils/recharge';
+import { popNewMessage, timestampFormat } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -15,7 +15,6 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
     scShow:string;
     oid:string;
-    firstQuery:boolean;
     state:string;
     transactionTime:string;
     transactionType:string;
@@ -33,7 +32,6 @@ export class TransactionDetails extends Widget {
     public props:Props = {
         scShow:getModulConfig('SC_SHOW'),
         oid:'',
-        firstQuery:false,
         state:'失败',
         transactionTime:'0',
         transactionType:'未支付',
@@ -44,7 +42,6 @@ export class TransactionDetails extends Widget {
 
     public setProps(props:any) {
         this.props.oid = props.oid;
-        this.props.firstQuery = props.firstQuery || false;
         super.setProps(this.props);
         this.initData();
     }
@@ -53,21 +50,15 @@ export class TransactionDetails extends Widget {
      * 获取数据
      */
     public initData() {
-        if (this.props.firstQuery) {
-            getPayState(this.props.oid,(res) => {
-                this.setData(res);
-            },(err) => {
-                this.props.state = PayState[3];                
-                this.paint();
-            });
-        } else {
-            getOrderDetail(this.props.oid,(res) => {
-                this.setData(res);
-            },(err) => {
-                this.props.state = PayState[3];                
-                this.paint();
-            });
-        }
+        getOrderDetail(this.props.oid).then(res => {
+            this.setData(res);
+        }).catch(() => {
+            popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
+            this.props.state = PayState[3];                
+            this.paint();
+        });
+        
+        // popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
     }
     
     public setData(res:any) {

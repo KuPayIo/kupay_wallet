@@ -161,59 +161,15 @@ export const jumpAlipay = (order, okCb?: Function, failCb?: Function) => {
 };
 
 /**
- * 查询订单支付状态
- * @param oid 查询订单号
- * @param okCb 成功回调
- * @param failCb 失败回调
- */
-export const getPayState = async (oid: string, okCb?: Function, failCb?: Function) => {
-    if (!oid) {
-        failCb && failCb('oid is not ready');
-
-        return;
-    }
-    const msg = { type: 'order_query', param: { oid } };
-    try {
-        const resData: any = await requestAsync(msg);
-        if (resData.result === 1) {
-            okCb && okCb(resData);
-        } else {
-            showError(resData.result);
-            failCb && failCb(resData);
-        }
-    } catch (err) {
-        console.log('order_query--------', err);
-        popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
-        failCb && failCb(err);
-    }
-};
-
-/**
  * 查询订单详情 
  * @param oid 查询订单号
  * @param okCb 成功回调
  * @param failCb 失败回调
  */
-export const getOrderDetail = async (oid: string, okCb?: Function, failCb?: Function) => {
-    if (!oid) {
-        failCb && failCb('oid is not ready');
-
-        return;
-    }
+export const getOrderDetail = async (oid: string) => {
     const msg = { type: 'get_order_detail', param: { oid } };
-    try {
-        const resData = await requestAsync(msg);
-        if (resData.result === 1) {
-            okCb && okCb(resData);
-        } else {
-            showError(resData.result);
-            failCb && failCb(resData);
-        }
-    } catch (err) {
-        console.log('get_order_detail--------', err);
-        popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
-        failCb && failCb(err);
-    }
+    
+    return requestAsync(msg);
 };
 
 /**
@@ -226,4 +182,15 @@ const URLencode = (sStr) => {
     signStr[0] = `sign=${escape(signStr[0].slice(5)).replace(/\+/g, '%2B').replace(/\"/g, '%22').replace(/\'/g, '%27').replace(/\//g, '%2F')}`;
 
     return signStr.join('&');
+};
+
+/**
+ * 获取订单详情
+ * @param oid 订单号
+ */
+export const getOrderLocal = (transactionId: string) => {
+    const msg = { type: 'wallet/order@order_query_local', param: { transaction_id:transactionId } };
+    
+    return requestAsync(msg);
+     
 };
