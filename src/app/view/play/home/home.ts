@@ -12,7 +12,7 @@ import { thirdPay } from '../../../api/JSAPI';
 import { getPi3Config } from '../../../api/pi3Config';
 import { register } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNew3, popNewMessage } from '../../../utils/tools';
-import { gameList } from './gameConfig';
+import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -83,32 +83,7 @@ export class PlayHome extends Widget {
         // http://47.244.59.13/web-rinkeby/index.html
         // http://192.168.31.95/dst/boot/yineng/yineng.html?debug
         this.props.gameList = gameList;
-        this.props.activityList = [
-            {
-                title:{ zh_Hans:'LOL赛事竞猜',zh_Hant:'LOL賽事競猜',en:'' },
-                desc:{ zh_Hans:'2019LPL春季赛常规赛',zh_Hant:'2019LPL春季賽常規賽',en:'' },
-                img:['app/res/image1/guess.png','app/res/image1/guess1.png'],
-                url:'earn-client-app-view-guess-home'
-            },
-            {
-                title:{ zh_Hans:'大转盘',zh_Hant:'大轉盤',en:'' },
-                desc:{ zh_Hans:'看看今天的运气怎么样',zh_Hant:'看看今天的運氣怎麼樣',en:'' },
-                img:['app/res/image1/turntable.png','app/res/image1/turntable1.png'],
-                url:'earn-client-app-view-turntable-turntable'
-            },
-            {
-                title:{ zh_Hans:'宝箱贩卖机',zh_Hant:'寶箱販賣機',en:'' },
-                desc:{ zh_Hans:'是哪一个幸运的宝箱被选中呢？',zh_Hant:'是哪一個幸運的寶箱被選中呢？',en:'' },
-                img:['app/res/image1/chest.png','app/res/image1/chest1.png'],
-                url:'earn-client-app-view-openBox-openBox'
-            },
-            {
-                title:{ zh_Hans:'兑换商城',zh_Hant:'兌換商城',en:'' },
-                desc:{ zh_Hans:'不定期上新物品',zh_Hant:'不定期上新物品',en:'' },
-                img:['app/res/image1/exchangeMall.png','app/res/image1/exchangeMall1.png'],
-                url:'earn-client-app-view-exchange-exchange'
-            }
-        ];
+        this.props.activityList = activityList;
         this.props.loaded = false;
     }
     /**
@@ -161,6 +136,16 @@ export class PlayHome extends Widget {
         }, 1000);
     }
 
+    /**
+     * 搜索
+     */
+    public toSearch() {
+        popNew3('app-view-play-searchGame');
+    }
+
+    /**
+     * 点击游戏
+     */
     public gameClick(num:number) {
         if (!hasWallet()) return;
         if (!gameList[num].url) {
@@ -173,11 +158,10 @@ export class PlayHome extends Widget {
             const gameUrl =   gameList[num].url;
             const pi3Config:any = getPi3Config();
             pi3Config.gameName = gameTitle;
+            pi3Config.appId = gameList[num].appId;
             
             const pi3ConfigStr = `
                 window.pi_config = ${JSON.stringify(pi3Config)}
-                window.piGroupId = ${gameList[num].gid};
-                window.piOfficialUser = ${gameList[num].uid}; 
             `;
             this.configPromise = Promise.resolve(pi3ConfigStr);
 
