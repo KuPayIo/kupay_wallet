@@ -154,11 +154,10 @@ export class Input extends Widget {
         }
         this.props.currentValue = currentValue;
         this.props.showClear = this.props.clearable && !this.props.disabled && this.props.currentValue !== '' && this.props.focused;
-
         (<any>this.getInput()).value = currentValue;
         notify(event.node, 'ev-input-change', { value: this.props.currentValue });
         this.props.focused = true;
-        // this.paint();  
+        this.paint();  
     }
 
     /**
