@@ -106,6 +106,10 @@ export class Exchange extends Widget {
             }
             value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
+            // console.log(code);
+            // inviteCode(code).then((r) => {
+            //     console.log('邀请奖励',r);
+            // });
         } else {
             alert(1);
             popNewMessage(this.language.errorList[1]);
