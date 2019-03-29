@@ -440,7 +440,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = true; 
+			winit.debug = false; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
@@ -451,8 +451,8 @@
 				winit.severIp = main;
 				winit.severPort = location.port ? location.port : "80";		
 			}else{// 本地包需要配置服务器ip和port
-				// 外网 39.98.200.23
-				winit.severIp = "192.168.31.113";
+				// 外网 39.98.200.23   high.herominer.net 
+				winit.severIp = "192.168.31.226";
 				winit.severPort = "80";		
 			}
 

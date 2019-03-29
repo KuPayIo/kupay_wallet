@@ -27,7 +27,7 @@ export const uploadFileUrl = `http://${sourceIp}:${sourcePort}/service/upload`;
 export const uploadFileUrlPrefix = `http://${sourceIp}:${sourcePort}/service/get_file?sid=`;
 
 // websock连接url
-export const wsUrl = `ws://${erlangLogicIp}:${erlangLogicPort}`;
+export const wsUrl = `wss://${erlangLogicIp}:${erlangLogicPort}`;
 
 /**
  * 环境配置

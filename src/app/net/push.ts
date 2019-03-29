@@ -100,7 +100,7 @@ export const initPush = () => {
         if (!wallet.setPsw) {
             setTimeout(() => {
                 popNew('app-view-mine-setting-settingPsw',{});
-            },2000);
+            },3000);
             
         } else if (!userInfo.phoneNumber) {
             setTimeout(() => {
@@ -113,7 +113,7 @@ export const initPush = () => {
                 },() => {
                     popNew('app-view-mine-setting-phone',{ jump:true });
                 });
-            },2000);
+            },3000);
             
         }
         
