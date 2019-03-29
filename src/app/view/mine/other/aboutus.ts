@@ -9,6 +9,7 @@ import { getModulConfig } from '../../../modulConfig';
 import { popNewMessage, rippleShow } from '../../../utils/tools';
 // =========================================导出
 declare var pi_update;
+declare var pi_modules;
 export class Aboutus extends Widget {
     public ok: () => void;
 
@@ -24,6 +25,7 @@ export class Aboutus extends Widget {
             walletLogo:getModulConfig('WALLET_LOGO'),
             walletName:getModulConfig('WALLET_NAME')
         };
+        console.log('底层版本号  ===================',pi_modules.appUpdate.getLocalVersion());
     }
 
     public itemClick(e: any, index: number) {

@@ -8,20 +8,13 @@
   */
 export const gameList = [
     {
-        title:{ zh_Hans:'fomosports',zh_Hant:'fomosports',en:'' },
-        desc:{ zh_Hans:'要买要快，不要只是看',zh_Hant:'要買要快，不要只是看',en:'' },
-        img:['app/res/image1/fomosports.jpg','app/res/image1/fomosports1.jpg'],
+        title:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
+        desc:{ zh_Hans:'仙之侠道仙之侠道仙之侠道',zh_Hant:'仙之侠道仙之侠道仙之侠道',en:'' },
+        img:['app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
         url:'http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html',
-        webviewName:'fomosports',
-        appId:'101'
-    },
-    {
-        title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
-        desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
-        webviewName:'Crypto Fishing',
-        img:['app/res/image1/CryptoFishing.jpg','app/res/image1/CryptoFishing1.jpg'],
-        url:'https://test.fomosports.me/',
-        appId:'103'
+        webviewName:'fairyChivalry',
+        uid:10002,
+        gid:10002
     }
 ];
 
