@@ -1,4 +1,4 @@
-import { applyGameGroup,applyGameServer, applyToGroup } from '../../chat/client/app/net/rpc';
+import { applyGameServer, applyToGroup } from '../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../chat/server/data/db/user.s';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
@@ -58,7 +58,7 @@ export const gotoRecharge = (webViewName: string) => {
 export const gotoGameService = (webViewName: string) => {
     console.log('wallet gotoGameService called');
     const item = getGameItem(webViewName);
-    applyGameServer(item.appId).then((r) => {
+    applyGameServer(item.uid).then((r) => {
         popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER });
     });
     minWebview(webViewName);
@@ -70,8 +70,8 @@ export const gotoGameService = (webViewName: string) => {
 export const gotoOfficialGroupChat = (webViewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
     const item = getGameItem(webViewName);
-    applyGameGroup(item.appId).then((r) => {
-        popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.GROUP });
+    applyToGroup(item.gid).then(() => {
+        popNew('chat-client-app-view-chat-chat',{ id: item.gid, chatType: GENERATOR_TYPE.GROUP });
     });
     minWebview(webViewName);
 };
