@@ -21,8 +21,7 @@
     font-weight:400;
     color:rgba(136,136,136,1);
     line-height:40px;
-    margin-top: 35px;
-    margin-left: 18px;
+    margin: 35px 0 145px 18px;
 }
 .tip-divid{
     margin-right: 12px;
@@ -49,7 +48,7 @@
 }
 .bottom-box{
     border-radius: 12px;
-    margin-top: 145px;
+    margin-top: 65px;
     position: relative;
 }
 .avatar-container{

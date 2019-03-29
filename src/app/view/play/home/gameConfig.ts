@@ -11,9 +11,9 @@ export const gameList = [
         title:{ zh_Hans:'fomosports',zh_Hant:'fomosports',en:'' },
         desc:{ zh_Hans:'要买要快，不要只是看',zh_Hant:'要買要快，不要只是看',en:'' },
         img:['app/res/image1/fomosports.jpg','app/res/image1/fomosports1.jpg'],
-        url:'https://test.fomosports.me/',
+        url:'http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html',
         webviewName:'fomosports',
-        appId:'102'
+        appId:'101'
     },
     {
         title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
