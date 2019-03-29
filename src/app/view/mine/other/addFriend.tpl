@@ -3,7 +3,6 @@
     <app-components-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/share_white.png",background:"transparent"}</app-components-topBar-topBar>
     <div w-class="content">
         <div w-class="title">
-            <div w-class="userId">ID：123456</div>
             <img src={{it.userHead}} w-class="userHead"/>
             <span w-class="userName">{{it.userName}}</span>
         </div>

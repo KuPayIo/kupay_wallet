@@ -1,6 +1,8 @@
+import { applyGameGroup,applyGameServer, applyToGroup } from '../../chat/client/app/net/rpc';
+import { GENERATOR_TYPE } from '../../chat/server/data/db/user.s';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
-import { getGameUrl } from '../view/play/home/gameConfig';
+import { getGameItem } from '../view/play/home/gameConfig';
 
 /**
  * 第三方应用调用的基础功能
@@ -20,9 +22,10 @@ export const closeWebview = (webViewName: string) => {
  */
 export const minWebview = (webViewName: string) => {
     console.log('wallet minWebview called');
-    popNew('app-components-floatBox-floatBox',{ webViewName });
+    const close = popNew('app-components-floatBox-floatBox',{ webViewName });
     WebViewManager.minWebView(webViewName);
-    
+
+    return close;
 };
 
 /**
@@ -30,10 +33,12 @@ export const minWebview = (webViewName: string) => {
  */
 export const inviteFriends = (webViewName: string) => {
     console.log('wallet inviteFriends called');
+    const close = minWebview(webViewName);
     popNew('earn-client-app-view-activity-inviteFriend',undefined,() => {
-        WebViewManager.open(webViewName, `${getGameUrl(webViewName)}?${Math.random()}`, webViewName,'');
+        WebViewManager.open(webViewName, `${getGameItem(webViewName).url}?${Math.random()}`, webViewName,'');
+        console.log('inviteFriends =======',close);
     });
-    minWebview(webViewName);
+   
 };
 
 /**
@@ -41,8 +46,8 @@ export const inviteFriends = (webViewName: string) => {
  */
 export const gotoRecharge = (webViewName: string) => {
     console.log('wallet gotoRecharge called');
-    popNew('app-view-wallet-cloudWalletGT-rechargeGT',undefined,() => {
-        WebViewManager.open(webViewName, `${getGameUrl(webViewName)}?${Math.random()}`, webViewName,'');
+    popNew('app-view-wallet-cloudWalletSC-rechargeSC ',undefined,() => {
+        WebViewManager.open(webViewName, `${getGameItem(webViewName).url}?${Math.random()}`, webViewName,'');
     });
     minWebview(webViewName);
 };
@@ -52,6 +57,10 @@ export const gotoRecharge = (webViewName: string) => {
  */
 export const gotoGameService = (webViewName: string) => {
     console.log('wallet gotoGameService called');
+    const item = getGameItem(webViewName);
+    applyGameServer(item.appId).then((r) => {
+        popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER });
+    });
     minWebview(webViewName);
 };
 
@@ -60,5 +69,9 @@ export const gotoGameService = (webViewName: string) => {
  */
 export const gotoOfficialGroupChat = (webViewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
+    const item = getGameItem(webViewName);
+    applyGameGroup(item.appId).then((r) => {
+        popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.GROUP });
+    });
     minWebview(webViewName);
 };

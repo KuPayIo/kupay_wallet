@@ -440,7 +440,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = true; 
+			winit.debug = false; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
@@ -451,7 +451,8 @@
 				winit.severIp = main;
 				winit.severPort = location.port ? location.port : "80";		
 			}else{// 本地包需要配置服务器ip和port
-				winit.severIp = "192.168.31.10";
+				// 外网 39.98.200.23   high.herominer.net 
+				winit.severIp = "192.168.31.226";
 				winit.severPort = "80";		
 			}
 
@@ -837,7 +838,7 @@
 		</div>
 	</div>
 </body>
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 if(!localStorage.firstInApp){
 	var innerHtml = `
 	<div class="swiper-container" id="swiper-container">
@@ -877,6 +878,6 @@ if(!localStorage.firstInApp){
 					}, "load index error");
 	
 }
-</script>
+</script> -->
 
 </html>

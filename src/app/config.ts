@@ -17,6 +17,9 @@ export const sharePerUrl = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnve
 // 分享下载链接
 export const shareDownload = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
 
+// 邀请好友下载链接
+export const inviteFriends = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
+
 // 上传图片url
 export const uploadFileUrl = `http://${sourceIp}:${sourcePort}/service/upload`;
 

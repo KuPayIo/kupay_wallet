@@ -22,7 +22,10 @@ export const smallUnit2LargeUnit = (currencyName: string, amount: string | numbe
     } else if (currencyName === 'ST') {
         // tslint:disable-next-line:radix
         ret = st2ST(parseInt(amount.toString()));
-    } else { // erc20
+    } else if (currencyName === 'SC') {
+        // tslint:disable-next-line:radix
+        ret = parseInt(amount.toString()) / 100;
+    }  else { // erc20
         // tslint:disable-next-line:radix
         ret = ethTokenDivideDecimals(parseInt(amount.toString()),currencyName);
     }

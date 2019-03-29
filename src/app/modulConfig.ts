@@ -21,7 +21,8 @@ const appModulConfig = {
     QQ_CODE:'1598787032',                               // qq号
     PAY_DOMAIN:'http://app.herominer.net',   // 支付注册域名
     KT_SHOW:'嗨豆',                    // KT界面显示文字
-    ST_SHOW:'碎银'                     // ST界面显示文字
+    ST_SHOW:'碎银',                    // ST界面显示文字
+    SC_SHOW:'银两'                     // SC界面显示文字
 };
 
 export const getModulConfig = (modulName: string) => {

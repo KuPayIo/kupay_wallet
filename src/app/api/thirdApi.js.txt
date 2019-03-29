@@ -374,11 +374,11 @@ pi_tools.createPayElementTag = function() {
 }
 
 //创建设置免密弹窗标签
-pi_tools.createSetNoPSWElementTag =  function() {
+pi_tools.createSetNoPSWElementTag =  function(title) {
     var htmlText = `
         <div class="pi-update-box animated bounceInUp">
             <div class="pi-update-content">
-                <div class="pi-pay-title">设置免密支付</div>
+                <div class="pi-pay-title">${title}</div>
                 <div class="pi-pay-content">
                     <div>
                         <input class="pi-pay-input" type="password" placeholder="输入密码" name="" id="pi_password">
@@ -466,10 +466,9 @@ pi_jsApi.authorize = function (payload, callBack) {
 
 }
 
-
 // 第三方支付
 // order:订单数据
-pi_jsApi.openPayment = function (order, callBack) {
+pi_jsApi.pay = function (order, callBack) {
     pi_RPC_Method("app/api/JSAPI", "openPayment", order, function (resCode, msg) {
         console.log('openPayment call success', resCode);
         console.log('openPayment call success', msg);
@@ -520,29 +519,30 @@ pi_jsApi.openPayment = function (order, callBack) {
 }
 
 // 第三方设置免密支付
-// appid:应用id
-// mchid:商户id
-// noPSW:设置免密支付状态  0:关闭，1:开启
-pi_jsApi.setNoPSW = function (appid, mchid, noPSW) {
-    pi_tools.createSetNoPSWElementTag();
+// openFreeSecret:设置免密支付状态  
+// 0:关闭，1:开启
+pi_jsApi.setNoPSW = function (openFreeSecret) {
+    pi_tools.closePopBox();
+    var title = openFreeSecret ? "设置免密支付" : "关闭免密支付"; 
+    pi_tools.createSetNoPSWElementTag(title);
     var $ok = document.querySelector(".pi-ok-btn");
     var $cancel = document.querySelector(".pi-cancel-btn");
     var $input = document.getElementById("pi_password");
 
     $ok.addEventListener("click", function () {
         var sendData = {
-            appid: appid,
-            mchid: mchid,
-            noPSW: noPSW,
+            appid: pi_config.appId,
+            noPSW: openFreeSecret ? 1 : 0,
             password: $input.value
         }
         pi_tools.closePopBox();
         pi_tools.createLoadingElementTag('设置中...');
-        pi_RPC_Method("app/api/JSAPI", "setNoPWD", sendData, function (resCode1, msg1) {
-            console.log('setNoPWD call success', resCode1);
-            console.log('setNoPWD call success', msg1);
+        pi_RPC_Method("app/api/JSAPI", "setFreeSecrectPay", sendData, function (resCode1, msg1) {
             if(msg1){
-                pi_tools.getFreeSecret();
+                pi_store.freeSecret = !pi_store.freeSecret;
+                pi_tools.popNewMessage("设置成功");
+            }else{
+                pi_tools.popNewMessage("设置失败");
             }
             pi_tools.closePopBox();
         });

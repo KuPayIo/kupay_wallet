@@ -37,7 +37,6 @@ export class CloudHome extends Widget {
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
-        // console.log('updateTest');
     }
 
     // 条目点击
@@ -45,8 +44,8 @@ export class CloudHome extends Widget {
         if (!hasWallet()) return;
         const index = e.index;
         const v = this.props.assetList[index];
-        if (v.currencyName === 'ST') {
-            popNew3('app-view-wallet-cloudWalletGT-home',{ currencyName:v.currencyName,gain:v.gain });
+        if (v.currencyName === 'SC') {
+            popNew3('app-view-wallet-cloudWalletSC-home',{ currencyName:v.currencyName,gain:v.gain });
         } else {
             popNew3('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
         }

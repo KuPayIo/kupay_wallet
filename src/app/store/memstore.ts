@@ -156,7 +156,7 @@ export const initCloudWallets = () => {
             cloudWallets.set(CloudCurrencyType[CloudCurrencyType[key]], cloudWallet);
         }
     }
-
+    
     return cloudWallets;
 };
 
@@ -418,12 +418,33 @@ const registerSettingChange = () => {
     register('setting', () => {
         settingChange();
     });
-    register('flags/invite_success', () => {
+    register('inviteUsers/invite_success', () => {
         inviteUsersChange();
     });
-    register('flags/convert_invite', () => {
+    register('inviteUsers/convert_invite', () => {
         inviteUsersChange();
     });
+};
+
+/**
+ * 邀请好友数据变化
+ */
+const inviteUsersChange = () => {
+    const localInvite = {
+        invite_success: getStore('inviteUsers').invite_success || [],  // 我邀请的好友
+        convert_invite: getStore('inviteUsers').convert_invite || []  // 邀请我的好友
+    };
+    setLocalStorage('inviteUsers', localInvite);
+};
+
+/**
+ * 邀请好友数据初始
+ */
+const initInviteUsers = () => {
+    const flags = getLocalStorage('inviteUsers');
+    if (!flags) return;
+    setStore('inviteUsers/invite_success',flags.invite_success);
+    setStore('inviteUsers/convert_invite',flags.convert_invite);
 };
 
 /**
@@ -551,26 +572,6 @@ const settingChange = () => {
     setLocalStorage('setting', localSetting);
 };
 
-/**
- * 邀请好友数据变化
- */
-const inviteUsersChange = () => {
-    const localInvite = {
-        invite_success: getStore('flags').invite_success || [],  // 我邀请的好友
-        convert_invite: getStore('flags').convert_invite || []  // 邀请我的好友
-    };
-    setLocalStorage('flagsInvite', localInvite);
-};
-
-/**
- * 邀请好友数据初始
- */
-const initInviteUsers = () => {
-    const flags = getLocalStorage('flagsInvite');
-    if (!flags) return;
-    setStore('flags/invite_success',flags.invite_success);
-    setStore('flags/convert_invite',flags.convert_invite);
-};
 // ======================================================== 本地
 
 // ============================================ 立即执行
@@ -656,7 +657,8 @@ const store: Store = {
         },
         currency2USDTMap: new Map<string, Currency2USDT>()  // k线  --> 计算涨跌幅
     },
-    flags: {}
+    flags: {},
+    inviteUsers:{}
 };
 
 initStore();

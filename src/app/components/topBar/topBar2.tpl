@@ -19,8 +19,10 @@
             <img on-tap="goNext" src={{it.nextImg}} w-class="ga-next" />
         </div>
         {{end}}
-        <div style="display:inline-block" on-down="onShow">
-            <img on-tap="refreshPage" src="../../res/image1/{{opca>0?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" class="{{it.refresh?'refreshing':''}}"/>
-        </div>
+        {{if it.isOne!=1}}
+            <div style="display:inline-block" on-down="onShow">
+                <img on-tap="refreshPage" src="../../res/image1/{{opca>0?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" class="{{it.refresh?'refreshing':''}}"/>
+            </div>
+        {{end}}
     </div>
 </div>
