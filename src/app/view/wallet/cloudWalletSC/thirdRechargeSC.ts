@@ -49,9 +49,11 @@ export class ThirdRechargeSC  extends Widget {
             cointype: CloudCurrencyType.SC, // 充值类型
             note: ''          // 备注
         };
-        confirmPay(orderDetail, (res) => {
-            getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
-            this.ok && this.ok(true);
+        confirmPay(orderDetail).then(res => {
+            if (res) {
+                getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+                this.ok && this.ok(true);
+            }
         });
     }
     /**

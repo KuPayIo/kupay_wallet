@@ -8,7 +8,6 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
-import { thirdPay } from '../../../api/JSAPI';
 import { getPi3Config } from '../../../api/pi3Config';
 import { register } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNew3, popNewMessage } from '../../../utils/tools';

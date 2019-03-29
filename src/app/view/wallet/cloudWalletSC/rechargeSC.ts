@@ -88,12 +88,14 @@ export class RechargeSC  extends Widget {
             note: ''          // 备注
         };
 
-        confirmPay(orderDetail, (res) => {
-            this.initData();
-            popNew('app-view-wallet-cloudWalletSC-transactionDetails', { oid: res.oid });
-            this.paint();
-            setStore('flags/firstRecharge',true); // 首次充值
-            getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+        confirmPay(orderDetail).then(res => {
+            if (res) {
+                this.initData();
+                popNew('app-view-wallet-cloudWalletSC-transactionDetails', { oid: res.oid });
+                this.paint();
+                setStore('flags/firstRecharge',true); // 首次充值
+                getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+            }
         });
     }
     /**

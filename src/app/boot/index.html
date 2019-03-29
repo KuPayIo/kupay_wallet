@@ -440,7 +440,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = true; 
+			winit.debug = false; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
