@@ -447,42 +447,11 @@ pi_tools.popInputBox = function (title,okCB,cancelCB){
 
 //获取openID
 pi_jsApi.authorize = function (payload, callBack) {
-    pi_tools.closePopBox();
-    pi_tools.createAuthorizeElementTag();
-    var $items = document.querySelector(".pi-update-items");
-    $items.innerHTML = "";
-    if (payload.avatar) {
-        var $item = document.createElement("div");
-        $item.setAttribute("class", "pi-update-item");
-        $item.innerHTML = "用户头像";
-        $items.appendChild($item);
-    }
-    if (payload.nickName) {
-        var $item = document.createElement("div");
-        $item.setAttribute("class", "pi-update-item");
-        $item.innerHTML = "用户昵称";
-        $items.appendChild($item);
-    }
-    var $mask = document.querySelector(".pi-mask");
-    $mask.style.display = "flex";
-
-    var $ok = document.querySelector(".pi-ok-btn");
-    var $cancel = document.querySelector(".pi-cancel-btn");
-    $ok.addEventListener("click", function () {
-        pi_RPC_Method("app/api/JSAPI", "authorize", payload, function (error, result) {
-            console.log('getOpenId call success', error);
-            console.log('getOpenId call success', result);
-            callBack(error, result);
-        });
-        pi_tools.closePopBox();
-
+    pi_RPC_Method("app/api/JSAPI", "authorize", payload, function (error, result) {
+        console.log('getOpenId call success', error);
+        console.log('getOpenId call success', result);
+        callBack(error, result);
     });
-
-    $cancel.addEventListener("click", function () {
-        callBack(new Error("user not allow authorize!!!"));
-        pi_tools.closePopBox();
-    });
-
 }
 
 
