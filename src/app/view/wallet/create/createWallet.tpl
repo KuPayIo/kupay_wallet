@@ -8,6 +8,8 @@
         {{: imageTips = {"zh_Hans":"设置支付密码","zh_Hant":"設置支付密碼","en":""} }}
         {{: createTips = it.itype === it.createWalletType.Random ? randomTips : imageTips}}
         <div w-class="create-tips"><div w-class="tip-divid"></div><pi-ui-lang>{{createTips}}</pi-ui-lang></div>
+        {{: createTips2 = {"zh_Hans":"为了您的资产安全，请您立即设置密码","zh_Hant":"為了您的資產安全，請您立即設置密碼","en":""} }}
+        <div w-class="create-tips2"><pi-ui-lang>{{createTips2}}</pi-ui-lang></div>
         <div w-class="bottom-box">
             {{if it.itype === it.createWalletType.Random}}
             <div w-class="avatar-container" on-tap="selectImageClick">
