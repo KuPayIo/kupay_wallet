@@ -1,7 +1,9 @@
 /**
  * 搜索游戏
  */
+import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+import { hasWallet } from '../../utils/tools';
 import { activityList } from './home/gameConfig';
 
 interface Props {
@@ -34,6 +36,15 @@ export class SearchGame extends Widget {
     public searchTextClear() {
         this.props.showGameList = this.props.gameList;
         this.paint();
+    }
+
+    /**
+     * 活动点击
+     * @param index 序号
+     */
+    public activityClick(index:number) {
+        if (!hasWallet()) return;
+        popNew(this.props.gameList[index].url);
     }
     
 }
