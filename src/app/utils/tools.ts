@@ -1,6 +1,7 @@
 /**
  * common tools
  */
+import { getStore as chatGetStore } from '../../chat/client/app/data/store';
 import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
@@ -1127,13 +1128,16 @@ export const getUserInfo = () => {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
     }
 
+    const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
+
     return {
         nickName,
         avatar,
         phoneNumber,
         areaCode,
         isRealUser,
-        acc_id
+        acc_id,
+        level
     };
 };
 
