@@ -467,7 +467,7 @@ pi_jsApi.thirdPay = function (order, callBack) {
     }
     pi_tools.closePopBox();
     pi_tools.popNewLoading('支付中...');
-    pi_RPC_Method(pi_config.jsApi, "thirdPay", {order,webViewName:pi_config.webviewName}, function (error, res) {
+    pi_RPC_Method(pi_config.jsApi, "thirdPay", {order,webviewName:pi_config.webviewName}, function (error, res) {
         console.log('thirdPay call success',res);
         pi_tools.closePopBox();
         if(res.result === payCode.SUCCESS){

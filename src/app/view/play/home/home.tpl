@@ -4,6 +4,6 @@
     </div>
     <app-components1-offlineTip-offlineTip></app-components1-offlineTip-offlineTip>
     <div w-class="body">
-        <img src="{{it.gameList[0].img[0]}}" style="width:100%;height:100%"/>
+        <img src="{{it.gameList[0].img[0]}}" style="width:100%;height:100%" on-tap="gameClick(0)"/>
     </div>
 </div>
