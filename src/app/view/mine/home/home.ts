@@ -8,7 +8,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { doScanQrCode, openNewActivity } from '../../../logic/native';
+import { doScanQrCode } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
 import { copyToClipboard, getUserInfo, hasWallet, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
@@ -45,6 +45,7 @@ export class Home extends Widget {
             acc_id:'000000',
             userName:'',
             avatar:'',
+            userLevel:0,
             close:false,
             hasWallet,
             hasBackupMnemonic,
@@ -95,6 +96,7 @@ export class Home extends Widget {
         if (userInfo) {
             this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
             this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+            this.props.userLevel = userInfo.level;
         }
 
         const wallet = getStore('wallet');

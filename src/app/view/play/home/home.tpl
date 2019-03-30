@@ -4,6 +4,6 @@
     </div>
     <app-components1-offlineTip-offlineTip></app-components1-offlineTip-offlineTip>
     <div w-class="body">
-        <widget w-tag="app-components1-card-card" on-tap="gameClick(0)">{title:{{it.gameList[0].title}},img:{{it.gameList[0].img}},desc:{{it.gameList[0].desc}},isFirst:true }</widget>
+        <img src="{{it.gameList[0].img[0]}}" style="width:100%;height:100%"/>
     </div>
 </div>
