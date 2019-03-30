@@ -2,15 +2,12 @@
  * 第三方充值SC
  */
 
-import { setStore } from '../../../../chat/client/app/data/store';
-import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { ThirdOrder } from '../../../api/JSAPI';
 import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
-import { getCloudBalances } from '../../../store/memstore';
+import { getCloudBalances, getStore } from '../../../store/memstore';
 import { SCPrecision, SCUnitprice } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
 
@@ -20,19 +17,21 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
-interface Props {
-    order:ThirdOrder;
-}
 export class ThirdRechargeSC  extends Widget {
-    public ok: () => void;
+    public ok: (rechargeSuccess?:boolean) => void;
     public setProps(props: any) {
         const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
+        const needPay = (props.order.total_fee - scBalance * SCPrecision) / SCPrecision;
         this.props = {
             ...props,
+            acc_id:getStore('user/info').acc_id,
             scShow:getModulConfig('SC_SHOW'),
             scBalance,
+            total_fee_show:props.order.total_fee / SCPrecision,
+            needPay,
             payType: PayType.WX,
             walletName:getModulConfig('WALLET_NAME')
+
         };
         super.setProps(this.props);
     }
@@ -41,7 +40,7 @@ export class ThirdRechargeSC  extends Widget {
      * 充值
      */
     public rechargeClick() {
-        const num = this.props.SCNum * SCPrecision;
+        const num = this.props.needPay * SCPrecision;
         const orderDetail:OrderDetail = {
             total: num * SCUnitprice, // 总价
             body: 'SC', // 信息
@@ -50,11 +49,11 @@ export class ThirdRechargeSC  extends Widget {
             cointype: CloudCurrencyType.SC, // 充值类型
             note: ''          // 备注
         };
-        confirmPay(orderDetail, (res) => {
-            popNew('app-view-wallet-cloudWalletSC-transactionDetails', { oid: res.oid, firstQuery: true });
-            this.paint();
-            setStore('flags/firstRecharge',true); // 首次充值
-            getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+        confirmPay(orderDetail).then(res => {
+            if (res) {
+                getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+                this.ok && this.ok(true);
+            }
         });
     }
     /**
@@ -70,6 +69,6 @@ export class ThirdRechargeSC  extends Widget {
      * 返回上一页
      */
     public backPrePage() {
-        this.ok && this.ok();
+        this.ok && this.ok(false);
     }
 }

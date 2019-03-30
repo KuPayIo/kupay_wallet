@@ -1,7 +1,6 @@
 /**
  * standard import bu Mnemonic
  */
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { isValidMnemonic } from '../../../core/genmnemonic';
@@ -64,12 +63,6 @@ export class StandardImport extends Widget {
     }
     public fragmentImportClick() {
         popNew3('app-view-wallet-import-fragmentImport',{},() => {
-            this.ok && this.ok();
-        });
-    }
-
-    public phoneImportClick() {
-        popNew3('app-view-wallet-import-phoneImport',{},() => {
             this.ok && this.ok();
         });
     }

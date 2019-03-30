@@ -150,12 +150,14 @@ export class PlayHome extends Widget {
         if (!gameList[num].url) {
             const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
             popNewMessage(tips[getLang()]);
+            
         } else {
-
             const gameTitle = gameList[num].title.zh_Hans;
             const gameUrl =   gameList[num].url;
+            const webviewName = gameList[num].webviewName;
             const pi3Config:any = getPi3Config();
             pi3Config.gameName = gameTitle;
+            pi3Config.webviewName = webviewName;
             pi3Config.uid = gameList[num].uid;
             pi3Config.gid = gameList[num].gid;
             
@@ -167,7 +169,7 @@ export class PlayHome extends Widget {
             const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
             allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
                 const content =  configContent + thirdApiDependContent + thirdApiContent;
-                WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+                WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }
     }

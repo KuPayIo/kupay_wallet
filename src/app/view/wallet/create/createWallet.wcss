@@ -15,6 +15,14 @@
     display: flex;
     align-items: center;
 }
+.create-tips2{
+    font-size:28px;
+    font-family:"PingFangSC-Regular";
+    font-weight:400;
+    color:rgba(136,136,136,1);
+    line-height:40px;
+    margin: 35px 0 145px 18px;
+}
 .tip-divid{
     margin-right: 12px;
     width:10px;

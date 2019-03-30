@@ -48,7 +48,7 @@ export class AccountOut extends Widget {
     public parseRecordList(list) {
         const scShow = getModulConfig('SC_SHOW');
         list.forEach((item) => {
-            item.amountShow = `-${item.amount} ${currencyType(scShow)}`;
+            item.amountShow = `${item.amount} ${currencyType(scShow)}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = item.behaviorIcon;
         });

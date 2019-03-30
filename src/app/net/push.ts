@@ -2,7 +2,8 @@
  * 后端主动推消息给后端
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
-import { popNew } from '../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../pi/ui/root';
+import { getLang } from '../../pi/util/lang';
 import { getAllAccount, getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
 import { closeAllPage, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
@@ -99,20 +100,47 @@ export const initPush = () => {
         const userInfo = getUserInfo();
         if (!wallet.setPsw) {
             setTimeout(() => {
-                popNew('app-view-mine-setting-settingPsw',{});
+                const modalBox = { 
+                    zh_Hans:{
+                        title:'设置密码',
+                        content:'为了您的资产安全，请您立即设置支付密码',
+                        sureText:'去设置',
+                        onlyOk:true
+                    },
+                    zh_Hant:{
+                        title:'設置密碼',
+                        content:'為了您的資產安全，請您立即設置支付密碼',
+                        sureText:'去設置',
+                        onlyOk:true
+                    },
+                    en:'' 
+                };
+                popModalBoxs('app-components-modalBox-modalBox',modalBox[getLang()],() => {  
+                    popNew('app-view-mine-setting-settingPsw',{});
+                },undefined,true);
+                
             },3000);
             
         } else if (!userInfo.phoneNumber) {
             setTimeout(() => {
-                popNew('app-components-allModalBox-modalBox3', {
-                    img:'app/res/image/bind_phone.png',
-                    tipTitle:'安全提醒',
-                    tipContent:`手机号是您找回云端资产的凭证
-为了您的资产安全请输入手机号`,
-                    btn:`验证手机`
-                },() => {
+                const modalBox = { 
+                    zh_Hans:{
+                        title:'绑定手机',
+                        content:'手机号是找回云端资产的重要凭证，为了您的资产安全请绑定手机号',
+                        sureText:'去绑定',
+                        onlyOk:true
+                    },
+                    zh_Hant:{
+                        title:'綁定手機',
+                        content:'手機號是找回雲端資產的重要憑證，為了您的資產安全請綁定手機號',
+                        sureText:'去綁定',
+                        onlyOk:true
+                    },
+                    en:'' 
+                };
+                popModalBoxs('app-components-modalBox-modalBox',modalBox[getLang()],() => { 
                     popNew('app-view-mine-setting-phone',{ jump:true });
-                });
+                },undefined,true);      
             },3000);
             
         }

@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    {{: topBarTitle = {"zh_Hans":"助记词登录","zh_Hant":"助記詞登錄","en":""} }}
+    {{: topBarTitle = {"zh_Hans":"已有区块链账号","zh_Hant":"已有區塊鏈賬號","en":""} }}
     <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="body">
         {{: createTips = {"zh_Hans":"按序输入助记词","zh_Hant":"按序輸入助記詞","en":""} }}
@@ -20,8 +20,6 @@
                 <pi-ui-lang w-class="other-btn" on-tap="imageImportClick">{{imgLogin}}</pi-ui-lang>
                 {{: fragmentLogin = {"zh_Hans":"片段登录","zh_Hant":"片段登錄","en":""} }}
                 <pi-ui-lang w-class="other-btn" on-tap="fragmentImportClick">{{fragmentLogin}}</pi-ui-lang>
-                {{: forgetMnemonic = {"zh_Hans":"忘了助记词","zh_Hant":"忘了助記詞","en":""} }}
-                <pi-ui-lang w-class="other-btn" on-tap="phoneImportClick">{{forgetMnemonic}}</pi-ui-lang>
             </div>
         </div>
     </div>
