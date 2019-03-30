@@ -9,7 +9,7 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../modulConfig';
 import { register } from '../../store/memstore';
-import { rippleShow } from '../../utils/tools';
+import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -111,6 +111,7 @@ export class App extends Widget {
 register('flags/level_3_page_loaded', (loaded: boolean) => {
     const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
     dataCenter.init();
+    checkPopPhoneTips();
     if (localStorage.getItem('kickOffline')) {
         const kickOffline = pi_modules.commonjs.exports.relativeGet('app/net/login').exports.kickOffline;
         localStorage.removeItem('kickOffline');

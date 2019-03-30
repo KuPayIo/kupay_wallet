@@ -17,6 +17,7 @@ export class Aboutus extends Widget {
         super.create();
         this.props = {
             version: pi_update.updateJson.version,
+            appVersion:pi_modules.appUpdate.exports.getLocalVersion().join('.') || '1.0.0',
             data: [
                 { value: '', components: 'app-view-mine-other-privacypolicy' },
                 { value: '', components: '' },
@@ -25,7 +26,6 @@ export class Aboutus extends Widget {
             walletLogo:getModulConfig('WALLET_LOGO'),
             walletName:getModulConfig('WALLET_NAME')
         };
-        console.log('底层版本号  ===================',pi_modules.appUpdate.exports.getLocalVersion());
     }
 
     public itemClick(e: any, index: number) {

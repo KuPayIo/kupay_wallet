@@ -8,7 +8,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getMineDetail, regPhone, unbindPhone } from '../../../net/pull';
 import { getStore, setStore } from '../../../store/memstore';
-import { getUserInfo, popNewMessage } from '../../../utils/tools';
+import { delPopPhoneTips, getUserInfo, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -62,6 +62,7 @@ export class BindPhone extends Widget {
                 userinfo.areaCode = this.props.areaCode;
                 setStore('user/info',userinfo);
                 getMineDetail();
+                delPopPhoneTips();
                 this.ok && this.ok();
                 popNewMessage('绑定成功');
             } else {
