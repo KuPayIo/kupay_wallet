@@ -13,6 +13,10 @@
             </div>
             <div w-class="userName" on-tap="tex">
                 {{it.userName}}
+
+                {{if it.userLevel === 5}}
+                    <div w-class="official">官方</div>
+                {{end}}
             </div>
             
             <div w-class="address" on-tap="copyAddr">
