@@ -1,5 +1,5 @@
 // PI_BEGIN
-console.log("注入 thirdApi.js success");
+;console.log("注入 thirdApi.js success");
 
 
 //--------标签样式----------------------------------------------------------------------------------------------------------------------------
@@ -302,7 +302,7 @@ pi_tools.createThirdApiStyleTag = function() {
     document.getElementsByTagName("head")[0].appendChild(style);
 }
 
-window.addEventListener("load",pi_tools.createThirdApiStyleTag)
+
 
 
 
@@ -508,7 +508,7 @@ pi_jsApi.setFreeSecrectPay = function (openFreeSecret) {
     var title = openFreeSecret ? "设置免密支付" : "关闭免密支付"; 
     pi_tools.popInputBox(title,function(value){
         var sendData = {
-            appid: pi_config.appId,
+            appid: pi_config.appid,
             noPSW: openFreeSecret ? 1 : 0,
             password:value
         }
@@ -525,5 +525,11 @@ pi_jsApi.setFreeSecrectPay = function (openFreeSecret) {
     });
 }
 
+
+
+window.addEventListener("load",pi_tools.createThirdBaseStyle);
+window.addEventListener("load",pi_tools.floatButtonInit);
+window.addEventListener("load",function(){setTimeout(pi_tools.getFreeSecret,1000)});  // 直接调用没有返回 不知道为什么
+window.addEventListener("load",pi_tools.createThirdApiStyleTag);
 
 // PI_END

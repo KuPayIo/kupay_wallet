@@ -12,7 +12,7 @@ import { SCPrecision } from '../utils/constants';
 import { getUserInfo } from '../utils/tools';
 import { getMnemonicByHash, VerifyIdentidy } from '../utils/walletTools';
 import { getGameItem } from '../view/play/home/gameConfig';
-import { minWebview } from './thirdBase';
+import { minWebview1 } from './thirdBase';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功
@@ -52,6 +52,7 @@ export const authorize = (payload, callback) => {
  * 查询是否开启免密支付
  */
 export const querySetNoPassword = (appid, callback) => {
+    console.log('querySetNoPassword called');
     queryNoPWD(appid).then(setNoPassword => {
         if (setNoPassword === SetNoPassword.NOSETED) {
             callback(undefined,false);
@@ -218,11 +219,12 @@ const thirdPay1 = async (order:ThirdOrder,webViewName: string) => {
             }
         } else { // 余额不够
             // TODO 跳转充值页面
-            minWebview(webViewName);
+            minWebview1(webViewName);
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
             console.log('商户信息 ==========',mchInfo);
-            const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName);
-            WebViewManager.open(webViewName, `${getGameItem(webViewName).url}?${Math.random()}`, webViewName,'');
+            const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
+                WebViewManager.open(webViewName, `${getGameItem(webViewName).url}?${Math.random()}`, webViewName,'');
+            });
             if (rechargeSuccess) {  // 充值成功   直接购买
                 if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
                     console.log('walletPay start------',order);
@@ -249,7 +251,7 @@ const thirdPay1 = async (order:ThirdOrder,webViewName: string) => {
 /**
  * 跳转充值页面
  */
-const gotoRecharge = (order:ThirdOrder,beneficiary:string = '未知') => {
+const gotoRecharge = (order:ThirdOrder,beneficiary:string = '未知',okCB:Function) => {
     return new Promise(resolve => {
         popNew('app-view-wallet-cloudWalletSC-thirdRechargeSC',{ order,beneficiary },(rechargeSuccess:boolean) => {
             resolve(rechargeSuccess);
