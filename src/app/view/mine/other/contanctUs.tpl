@@ -5,7 +5,7 @@
         <div w-class="aboutus-img">
             <img src="{{it.walletLogo}}" w-class="logoimg"/>
         </div>
-        <div w-class="version">V{{it.version}}</div>
+        <div w-class="version">V{{it.version}}({{it.appVersion}})</div>
         <div w-class="shortmess">
             <pi-ui-lang>{"zh_Hans": "{{it.walletName}}是一个能赚钱能分红的游戏平台。","zh_Hant": "{{it.walletName}}是一個能賺錢能分紅的遊戲平台。","en":""}</pi-ui-lang>
         </div>

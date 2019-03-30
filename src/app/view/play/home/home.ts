@@ -10,7 +10,7 @@ import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { register } from '../../../store/memstore';
-import { getUserInfo, hasWallet, popNew3, popNewMessage } from '../../../utils/tools';
+import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
@@ -22,9 +22,9 @@ export class PlayHome extends Widget {
     
     public ok: () => void;
     public configPromise:Promise<string>;
-    public web3Promise: Promise<string>;
-    public thirdApiPromise:Promise<string>;
     public thirdApiDependPromise:Promise<string>;
+    public thirdApiPromise:Promise<string>;
+    public web3Promise: Promise<string>;
     
     constructor() {
         super();
@@ -78,12 +78,10 @@ export class PlayHome extends Widget {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image/default_avater_big.png';
             this.props.refresh = false;
         }
-        // http://fishing.rinkeby.cchaingames.com/
-        // http://47.244.59.13/web-rinkeby/index.html
-        // http://192.168.31.95/dst/boot/yineng/yineng.html?debug
         this.props.gameList = gameList;
         this.props.activityList = activityList;
         this.props.loaded = false;
+
     }
     /**
      * 刷新页面
@@ -150,8 +148,9 @@ export class PlayHome extends Widget {
         if (!gameList[num].url) {
             const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
             popNewMessage(tips[getLang()]);
-            
         } else {
+            setPopPhoneTips();
+            
             const gameTitle = gameList[num].title.zh_Hans;
             const gameUrl =   gameList[num].url;
             const webviewName = gameList[num].webviewName;
@@ -181,13 +180,6 @@ export class PlayHome extends Widget {
     public activityClick(index:number) {
         if (!hasWallet()) return;
         popNew3(this.props.activityList[index].url);
-    }
-    public openTestClick() {
-        const gameTitle = '测试';
-        const gameUrl =  'http://192.168.9.15:3001/authorize.html';
-        this.thirdApiPromise.then(content => {
-            WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
-        });
     }
 
     public payJump(e: any) {
