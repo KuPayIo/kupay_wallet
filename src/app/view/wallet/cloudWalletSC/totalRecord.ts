@@ -44,7 +44,6 @@ export class TotalRecord extends Widget {
     public updateRecordList() {
         if (!this.props.currencyName) return;
         const cloudWallets = getStore('cloud/cloudWallets');
-
         const data = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
         this.props.otherNext = data.start; 
         this.props.recordList = this.parseList(data.list);

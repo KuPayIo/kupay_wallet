@@ -3,6 +3,7 @@
  */
 import { ERC20Tokens } from '../config';
 import { BigNumber } from '../res/js/bignumber';
+import { SCPrecision } from './constants';
 import { formatBalance } from './tools';
 
 /**
@@ -24,7 +25,7 @@ export const smallUnit2LargeUnit = (currencyName: string, amount: string | numbe
         ret = st2ST(parseInt(amount.toString()));
     } else if (currencyName === 'SC') {
         // tslint:disable-next-line:radix
-        ret = parseInt(amount.toString()) / 100;
+        ret = parseInt(amount.toString()) / SCPrecision;
     }  else { // erc20
         // tslint:disable-next-line:radix
         ret = ethTokenDivideDecimals(parseInt(amount.toString()),currencyName);

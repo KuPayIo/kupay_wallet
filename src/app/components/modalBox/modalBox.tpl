@@ -15,6 +15,7 @@
             {{end}}
         </div>
         <div w-class="btns">
+            {{if !it.onlyOk}}
             <div w-class="btn-cancel" on-tap="cancelBtnClick">
                 {{if it.cancelText}}
                     {{if typeof(it.cancelText)==='string'}}
@@ -26,7 +27,7 @@
                 <pi-ui-lang>{"zh_Hans":"取消","zh_Hant":"取消","en":""}</pi-ui-lang>
                 {{end}}
             </div>
-
+            {{end}}
             <div w-class="btn-ok" on-tap="okBtnClick">
                 {{if it.sureText}}
                     {{if typeof(it.sureText)==='string'}}

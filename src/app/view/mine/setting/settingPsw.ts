@@ -81,7 +81,7 @@ export class SettingPsw extends Widget {
         this.ok && this.ok();
         const userInfo = getUserInfo();
         if (!userInfo.phoneNumber) {
-            popNew('app-view-mine-setting-phone');
+            popNew('app-view-mine-setting-phone',{ jump:true });
         }
         
     }
