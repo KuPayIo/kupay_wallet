@@ -447,32 +447,32 @@
 			var needCDN = true; 
 			 
 			// todo 发版本时需动态设置服务器ip及端口
+			if(!winit.isLoc){ // 浏览器版本自动识别
+				winit.severIp = main;
+				winit.severPort = location.port ? location.port : "80";		
+			}else{// 本地包需要配置服务器ip和port
+				// 外网 39.98.200.23   high.herominer.net 
+				winit.severIp = "192.168.31.10";
+				winit.severPort = "80";		
+			}
+
 			// if(!winit.isLoc){ // 浏览器版本自动识别
 			// 	winit.severIp = main;
-			// 	winit.severPort = location.port ? location.port : "80";		
+			// 	winit.severPort = location.port ? location.port : "443";		
 			// }else{// 本地包需要配置服务器ip和port
 			// 	// 外网 39.98.200.23   high.herominer.net 
 			// 	winit.severIp = "39.98.200.23";
-			// 	winit.severPort = "80";		
+			// 	winit.severPort = "443";		
 			// }
 
-			if(!winit.isLoc){ // 浏览器版本自动识别
-				winit.severIp = main;
-				winit.severPort = location.port ? location.port : "443";		
-			}else{// 本地包需要配置服务器ip和port
-				// 外网 39.98.200.23   high.herominer.net 
-				winit.severIp = "39.98.200.23";
-				winit.severPort = "443";		
-			}
-
 			// app更新配置的URL地址
-			// winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
-			winit.appURL = "https://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
+			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
+			// winit.appURL = "https://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
 			// console.log("winit.appURL = ",winit.appURL);
 
 			var defaultDomains;
-			// var remoteDomains = ["http://" + winit.severIp + ":" + winit.severPort];
-			var remoteDomains = ["https://" + winit.severIp + ":" + winit.severPort];
+			var remoteDomains = ["http://" + winit.severIp + ":" + winit.severPort];
+			// var remoteDomains = ["https://" + winit.severIp + ":" + winit.severPort];
 			if (inApp) {
 				winit.httpDomains = remoteDomains;
 

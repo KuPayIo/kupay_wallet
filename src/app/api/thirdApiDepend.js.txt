@@ -19,7 +19,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 邀请好友");
-            pi_RPC_Method(pi_config.thirdBase, "inviteFriends", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "inviteFriends", pi_config.webviewName, function (error, result) {
                 console.log('inviteFriends call success');
             });
         }
@@ -31,7 +31,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 游戏客服");
-            pi_RPC_Method(pi_config.thirdBase, "gotoGameService", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "gotoGameService", pi_config.webviewName, function (error, result) {
                 console.log('gotoGameService call success');
             });
         }
@@ -43,7 +43,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 官方群聊");
-            pi_RPC_Method(pi_config.thirdBase, "gotoOfficialGroupChat", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "gotoOfficialGroupChat", pi_config.webviewName, function (error, result) {
                 console.log('gotoOfficialGroupChat call success');
             });
         }
@@ -55,7 +55,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 去充值");
-            pi_RPC_Method(pi_config.thirdBase, "gotoRecharge", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "gotoRecharge", pi_config.webviewName, function (error, result) {
                 console.log('inviteFriends call success');
             });
         }
@@ -80,7 +80,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 最小化");
-            pi_RPC_Method(pi_config.thirdBase, "minWebview", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "minWebview", pi_config.webviewName, function (error, result) {
                 console.log('minWebview call success');
             });
         }
@@ -92,7 +92,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 退出游戏");
-            pi_RPC_Method(pi_config.thirdBase, "closeWebview", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "closeWebview", pi_config.webviewName, function (error, result) {
                 console.log('closeWebview call success');
             });
         }
