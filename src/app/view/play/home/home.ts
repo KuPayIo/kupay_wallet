@@ -155,6 +155,7 @@ export class PlayHome extends Widget {
             const gameUrl =   gameList[num].url;
             const webviewName = gameList[num].webviewName;
             const pi3Config:any = getPi3Config();
+            pi3Config.appid = gameList[num].appid;
             pi3Config.gameName = gameTitle;
             pi3Config.webviewName = webviewName;
             pi3Config.uid = gameList[num].uid;

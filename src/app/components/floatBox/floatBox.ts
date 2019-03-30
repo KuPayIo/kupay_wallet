@@ -10,15 +10,14 @@ export class FloatBox extends Widget {
     public setProps(props:any,oldProps:any) {
         this.props = {
             ...props,
-            imgUrl:getGameItem(props.webViewName).img[1]
+            imgUrl:getGameItem(props.webviewName).img[1]
         };
         super.setProps(this.props,oldProps);
     }
     public floatBoxClick() {
         console.log('点击悬浮框');
-        const webViewName = this.props.webViewName;
-        WebViewManager.open(webViewName, `${getGameItem(webViewName)}?${Math.random()}`, webViewName,'');
+        const webviewName = this.props.webviewName;
+        WebViewManager.open(webviewName, `${getGameItem(webviewName)}?${Math.random()}`, webviewName,'');
         this.ok && this.ok();
-        
     }
 }
