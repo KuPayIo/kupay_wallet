@@ -51,18 +51,18 @@ export class RedEnvHistory extends Widget {
      * 更新数据
      */
     public async initData() {
-        const data = await getInviteCodeDetail(); // 获取邀请码记录
-        if (data) {
-            this.props.recordList.push({
-                rid:'-1' ,
-                rtype:2,
-                ctypeShow:'ETH',
-                timeShow:'',
-                amount:0.5,
-                curNum:data[1],
-                totalNum:20
-            });
-        }
+        // const data = await getInviteCodeDetail(); // 获取邀请码记录
+        // if (data) {
+        //     this.props.recordList.push({
+        //         rid:'-1' ,
+        //         rtype:2,
+        //         ctypeShow:'ETH',
+        //         timeShow:'',
+        //         amount:0.5,
+        //         curNum:data[1],
+        //         totalNum:20
+        //     });
+        // }
 
         const sHisRec = getStore('activity/luckyMoney/sends');
         if (sHisRec) {

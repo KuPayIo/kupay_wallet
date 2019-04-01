@@ -8,7 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { convertRedBag, getServerCloudBalance, takeRedBag } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { setStore } from '../../../store/memstore';
-import { popNewMessage } from '../../../utils/tools';
+import { currencyType, popNewMessage } from '../../../utils/tools';
 import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -109,7 +109,7 @@ export class OpenRedEnvelope extends Widget {
         this.props = {
             ...this.props,
             rtype: rid.slice(0,2),
-            ctypeShow: CloudCurrencyType[v[0]],
+            ctypeShow: currencyType(CloudCurrencyType[v[0]]),
             amount: smallUnit2LargeUnit(CloudCurrencyType[v[0]],v[1]),
             rid: rid.slice(2),
             suid: ans.src_id
