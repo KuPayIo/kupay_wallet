@@ -14,7 +14,7 @@ import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, T
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { getCipherToolsMod, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
-import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval, USD2CNYRateDefault } from './constants';
 
 /**
  * 获取当前钱包对应货币正在使用的地址信息
@@ -453,7 +453,7 @@ export const fetchCloudTotalAssets = () => {
  */
 export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
     let balanceValue = 0;
-    const USD2CNYRate = getStore('third/rate', 1);
+    const USD2CNYRate = getStore('third/rate') || USD2CNYRateDefault;
     const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
     const silverPrice = getStore('third/silver/price') || 0;

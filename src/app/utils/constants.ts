@@ -154,3 +154,6 @@ export const SCUnitprice =  1;
 
 // SC精度
 export const SCPrecision = 100;
+
+// 美元默认汇率
+export const USD2CNYRateDefault = 6;
