@@ -1,5 +1,5 @@
 // PI_BEGIN
-console.log("注入 thirdApi.js success");
+;console.log("注入 thirdApi.js success");
 
 
 //--------标签样式----------------------------------------------------------------------------------------------------------------------------
@@ -302,7 +302,7 @@ pi_tools.createThirdApiStyleTag = function() {
     document.getElementsByTagName("head")[0].appendChild(style);
 }
 
-window.addEventListener("load",pi_tools.createThirdApiStyleTag)
+
 
 
 
@@ -374,7 +374,7 @@ pi_tools.createPayElementTag = function() {
 }
 
 //创建设置免密弹窗标签
-pi_tools.createSetNoPSWElementTag =  function(title) {
+pi_tools.createInputBoxElementTag =  function(title) {
     var htmlText = `
         <div class="pi-update-box animated bounceInUp">
             <div class="pi-update-content">
@@ -402,7 +402,7 @@ pi_tools.createSetNoPSWElementTag =  function(title) {
 }
 
 //创建加载弹窗标签
-pi_tools.createLoadingElementTag = function(loadingStr) {
+pi_tools.popNewLoading = function(loadingStr) {
     var htmlText = `
         <div class="pi-loading-mask">
             <div class="pi-loading-spinner">
@@ -423,97 +423,79 @@ pi_tools.createLoadingElementTag = function(loadingStr) {
     document.querySelector("body").appendChild($root);
 }
 
+/**
+ * 密码弹框
+ */
+pi_tools.popInputBox = function (title,okCB,cancelCB){
+    pi_tools.createInputBoxElementTag(title);
+    var $ok = document.querySelector(".pi-ok-btn");
+    var $cancel = document.querySelector(".pi-cancel-btn");
+    var $input = document.getElementById("pi_password");
 
+    $ok.addEventListener("click", function () {
+        pi_tools.closePopBox();
+        okCB && okCB($input.value);
+    });
+
+    $cancel.addEventListener("click", function () {
+        cancelCB && cancelCB();
+        pi_tools.closePopBox();
+    });
+};
 
 //----------对外接口--------------------------------------------------------------------------------------------------------------------------------
 
 //获取openID
 pi_jsApi.authorize = function (payload, callBack) {
-    pi_tools.createAuthorizeElementTag();
-    var $items = document.querySelector(".pi-update-items");
-    $items.innerHTML = "";
-    if (payload.avatar) {
-        var $item = document.createElement("div");
-        $item.setAttribute("class", "pi-update-item");
-        $item.innerHTML = "用户头像";
-        $items.appendChild($item);
-    }
-    if (payload.nickName) {
-        var $item = document.createElement("div");
-        $item.setAttribute("class", "pi-update-item");
-        $item.innerHTML = "用户昵称";
-        $items.appendChild($item);
-    }
-    var $mask = document.querySelector(".pi-mask");
-    $mask.style.display = "flex";
-
-    var $ok = document.querySelector(".pi-ok-btn");
-    var $cancel = document.querySelector(".pi-cancel-btn");
-    $ok.addEventListener("click", function () {
-        pi_RPC_Method("app/api/JSAPI", "authorize", payload, function (error, result) {
-            console.log('getOpenId call success', error);
-            console.log('getOpenId call success', result);
-            callBack(error, result);
-        });
-        pi_tools.closePopBox();
-
+    pi_RPC_Method("app/api/JSAPI", "authorize", payload, function (error, result) {
+        console.log('getOpenId call success', error);
+        console.log('getOpenId call success', result);
+        callBack(error, result);
     });
-
-    $cancel.addEventListener("click", function () {
-        callBack(new Error("user not allow authorize!!!"));
-        pi_tools.closePopBox();
-    });
-
 }
 
+
 // 第三方支付
-// order:订单数据
-pi_jsApi.pay = function (order, callBack) {
-    pi_RPC_Method("app/api/JSAPI", "openPayment", order, function (resCode, msg) {
-        console.log('openPayment call success', resCode);
-        console.log('openPayment call success', msg);
-        if (!resCode) {
-            order.no_password = msg.no_password;
-            console.log('判断支付流程!',order,msg);
-            if (msg.no_password === 1) { // 已设置免密支付
-                requestAnimationFrame(function(){
-                    pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
-                        console.log('pay call success', resCode1);
-                        console.log('pay call success', msg1);
-                        console.log('免密支付完成!');
-                        callBack(resCode1, msg1);
-                        closePopBox();
-                    });
+pi_jsApi.thirdPay = function (order, callBack) {
+    var payCode = {
+        SUCCESS : 1,     // 支付成功
+        SETNOPASSWORD : 2,   // 余额足够  但是没有开启免密
+        EXCEEDLIMIT : 3,   // 余额足够 并且开启免密 但是免密上限
+        ERRORPSW: 4,   //密码错误
+        RECHARGEFAILED: 5,  // 充值失败
+        FAILED : 6     // 支付失败
+    }
+    pi_tools.closePopBox();
+    pi_tools.popNewLoading('支付中...');
+    pi_RPC_Method(pi_config.jsApi, "thirdPay", {order,webviewName:pi_config.webviewName}, function (error, res) {
+        console.log('thirdPay call success',res);
+        pi_tools.closePopBox();
+        if(res.result === payCode.SUCCESS){
+            pi_tools.popNewMessage("支付成功");
+            callBack(error,res);
+        }else if(res.result === payCode.SETNOPASSWORD || res.result === payCode.EXCEEDLIMIT){
+            var title = res.result === payCode.SETNOPASSWORD ? "未开启免密支付，请输入密码" : "免密额度到达上限";
+            pi_tools.popInputBox(title,function(value){
+                pi_tools.popNewLoading('支付中...');
+                pi_RPC_Method(pi_config.jsApi, "thirdPayDirect", {order,password:value}, function (error, res) {
+                    console.log('thirdPayDirect call success',res);
+                    pi_tools.closePopBox();
+                    if(res.result === payCode.ERRORPSW){
+                        pi_tools.popNewMessage("密码错误");
+                        callBack(error,{ result:payCode.FAILED });
+                    }else if(res.result === payCode.SUCCESS){
+                        pi_tools.popNewMessage("支付成功");
+                        callBack(error,res);
+                    }else{
+                        pi_tools.popNewMessage("支付失败");
+                        callBack(error,res);
+                    }
+                    
                 });
-                
-            } else {                    // 未设置免密支付
-                createPayElementTag();
-                var $ok = document.querySelector(".pi-ok-btn");
-                var $cancel = document.querySelector(".pi-cancel-btn");
-                var $input = document.getElementById("pi_password");
-                document.getElementById('pi_payCount').innerHTML = msg.fee_total + msg.fee_name + '';
-                document.getElementById('pi_payObject').innerHTML = msg.desc + '';
-                document.getElementById('pi_payBalance').innerHTML = msg.balance + msg.fee_name + '';
-
-                $ok.addEventListener("click", function () {
-                    order.password = $input.value;
-                    createLoadingElementTag('支付中...');
-                    pi_RPC_Method("app/api/JSAPI", "pay", order, function (resCode1, msg1) {
-                        console.log('pay call success', resCode1);
-                        console.log('pay call success', msg1);
-                        callBack(resCode1, msg1);
-                        closePopBox();
-                    });
-                });
-
-                $cancel.addEventListener("click", function () {
-                    closePopBox();
-                    callBack(1003, null)
-                });
-            }
-
-        } else {
-            callBack(resCode, msg);
+            });
+        }else{
+            pi_tools.popNewMessage("支付失败");
+            callBack(error,{ result:payCode.FAILED });
         }
     });
 }
@@ -521,22 +503,16 @@ pi_jsApi.pay = function (order, callBack) {
 // 第三方设置免密支付
 // openFreeSecret:设置免密支付状态  
 // 0:关闭，1:开启
-pi_jsApi.setNoPSW = function (openFreeSecret) {
+pi_jsApi.setFreeSecrectPay = function (openFreeSecret) {
     pi_tools.closePopBox();
     var title = openFreeSecret ? "设置免密支付" : "关闭免密支付"; 
-    pi_tools.createSetNoPSWElementTag(title);
-    var $ok = document.querySelector(".pi-ok-btn");
-    var $cancel = document.querySelector(".pi-cancel-btn");
-    var $input = document.getElementById("pi_password");
-
-    $ok.addEventListener("click", function () {
+    pi_tools.popInputBox(title,function(value){
         var sendData = {
-            appid: pi_config.appId,
+            appid: pi_config.appid,
             noPSW: openFreeSecret ? 1 : 0,
-            password: $input.value
+            password:value
         }
-        pi_tools.closePopBox();
-        pi_tools.createLoadingElementTag('设置中...');
+        pi_tools.popNewLoading('设置中...');
         pi_RPC_Method("app/api/JSAPI", "setFreeSecrectPay", sendData, function (resCode1, msg1) {
             if(msg1){
                 pi_store.freeSecret = !pi_store.freeSecret;
@@ -547,12 +523,13 @@ pi_jsApi.setNoPSW = function (openFreeSecret) {
             pi_tools.closePopBox();
         });
     });
-
-    $cancel.addEventListener("click", function () {
-        pi_tools.closePopBox();
-    });
 }
 
 
+
+window.addEventListener("load",pi_tools.createThirdBaseStyle);
+window.addEventListener("load",pi_tools.floatButtonInit);
+window.addEventListener("load",function(){setTimeout(pi_tools.getFreeSecret,1000)});  // 直接调用没有返回 不知道为什么
+window.addEventListener("load",pi_tools.createThirdApiStyleTag);
 
 // PI_END

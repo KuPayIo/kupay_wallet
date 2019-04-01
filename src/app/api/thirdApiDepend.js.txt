@@ -1,5 +1,5 @@
 // PI_BEGIN
-console.log("注入 thirdApiDepend.js success");
+;console.log("注入 thirdApiDepend.js success");
 
 (function(){
     var buttonId = {
@@ -19,7 +19,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 邀请好友");
-            pi_RPC_Method(pi_config.thirdBase, "inviteFriends", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "inviteFriends", pi_config.webviewName, function (error, result) {
                 console.log('inviteFriends call success');
             });
         }
@@ -31,7 +31,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 游戏客服");
-            pi_RPC_Method(pi_config.thirdBase, "gotoGameService", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "gotoGameService", pi_config.webviewName, function (error, result) {
                 console.log('gotoGameService call success');
             });
         }
@@ -43,7 +43,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 官方群聊");
-            pi_RPC_Method(pi_config.thirdBase, "gotoOfficialGroupChat", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "gotoOfficialGroupChat", pi_config.webviewName, function (error, result) {
                 console.log('gotoOfficialGroupChat call success');
             });
         }
@@ -55,7 +55,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 去充值");
-            pi_RPC_Method(pi_config.thirdBase, "gotoRecharge", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "gotoRecharge", pi_config.webviewName, function (error, result) {
                 console.log('inviteFriends call success');
             });
         }
@@ -70,7 +70,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:false,
         clickCb:function(){
             console.log("click 免密支付");
-            pi_jsApi.setNoPSW(!pi_store.freeSecret);
+            pi_jsApi.setFreeSecrectPay(!pi_store.freeSecret);
         }
     },{
         id:buttonId.MINWINDOW,
@@ -80,7 +80,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 最小化");
-            pi_RPC_Method(pi_config.thirdBase, "minWebview", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "minWebview", {webviewName:pi_config.webviewName,popFloatBox:true}, function (error, result) {
                 console.log('minWebview call success');
             });
         }
@@ -92,7 +92,7 @@ console.log("注入 thirdApiDepend.js success");
         clickedClose:true,
         clickCb:function(){
             console.log("click 退出游戏");
-            pi_RPC_Method(pi_config.thirdBase, "closeWebview", pi_config.gameName, function (error, result) {
+            pi_RPC_Method(pi_config.thirdBase, "closeWebview", pi_config.webviewName, function (error, result) {
                 console.log('closeWebview call success');
             });
         }
@@ -205,6 +205,10 @@ window.pi_RPC_Method = (function () {
             delete callIDMap[cbID];
         }
     };
+
+    window.handle_native_event = function(){
+        console.log("handle_native_event called");
+    }
 
     window["onWebViewPostMessage"] = function (fromWebView, message) {
         var RPC_REPLY_START = "$WEBVIEW_RPC_REPLY: ";
@@ -325,7 +329,7 @@ pi_tools.createThirdBaseStyle = function(){
     border-radius:50%;
     border:1px solid rgba(255,255,255,0.2);
     position: fixed;
-    top: 100px;
+    top: 10px;
     right: 10px;
     z-index:99999;
   }
@@ -489,13 +493,9 @@ pi_tools.getButtonItemById = function(id){
  */
 pi_tools.getFreeSecret = function(){
     console.log("getFreeSecret called");
-    pi_RPC_Method(pi_config.jsApi, "querySetNoPassword", pi_config.appId, function (error, startFreeSecret) {
+    pi_RPC_Method(pi_config.jsApi, "querySetNoPassword", pi_config.appid, function (error, startFreeSecret) {
         console.log("getFreeSecret called callback",startFreeSecret);
         pi_store.freeSecret = startFreeSecret;
     });
 }
 
-
-window.addEventListener("load",pi_tools.createThirdBaseStyle);
-window.addEventListener("load",pi_tools.floatButtonInit);
-window.addEventListener("load",pi_tools.getFreeSecret);

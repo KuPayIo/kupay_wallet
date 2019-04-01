@@ -6,6 +6,7 @@ import { Widget } from '../../../pi/widget/widget';
 interface Props {
     title: string;
     content: string;
+    onlyOk:boolean;
     sureText?: string;
     cancelText?: string;
     style?: string; // 修改content的样式

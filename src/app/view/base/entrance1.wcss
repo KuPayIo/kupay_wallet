@@ -5,17 +5,11 @@
     align-items: center;
 }
 .logo{
-    margin-top: 300px;
+    margin-top: 220px;
 }
-.slogan{
-    font-size:64px;
-    font-family:"DFWaWaW5";
-    color:rgba(17,17,17,1);
-    line-height:64px;
-    margin-top: 60px;
-}
+
 .body2{
-    margin-top: 160px;
+    margin-top: 130px;
     background-color: #fff;
     flex: 1 0 0;
     display: flex;
@@ -89,12 +83,31 @@
     width:250px;
     margin: 0 auto;
 }
-.register-btn{
+.bottom{
     font-size:24px;
     font-family:"PingFangSC-Regular";
     font-weight:400;
     color:rgba(49,141,230,1);
     line-height:33px;
-    border-bottom: 1px solid #318DE6;
-    margin: 160px auto 0;
+    position: absolute;
+    bottom: 80px;
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    padding: 0 40px;
+}
+.bottom-item{
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size:20px;
+    font-family:"PingFangSC-Regular";
+    font-weight:400;
+    color:rgba(136,136,136,1);
+    line-height:28px;
+    
+}
+.item-text{
+    border-bottom: 1px solid rgba(136,136,136,1);
 }

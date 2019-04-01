@@ -11,7 +11,7 @@ import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } f
 import { Account, getAllAccount, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
 import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
 import { CMD, defaultPassword } from '../utils/constants';
-import { closeAllPage, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
+import { closeAllPage, delPopPhoneTips, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getInviteUserAccIds, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 import { setReconnectingState } from './reconnect';
@@ -343,6 +343,7 @@ export const logoutAccountDel = (noLogin?:boolean) => {
             popNew('app-view-base-entrance');
         }
     }
+    delPopPhoneTips();
 };
 
 /**

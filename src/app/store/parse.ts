@@ -46,7 +46,9 @@ export enum TaskSid {
     LuckyMoney = 340,           // 红包
     LuckyMoneyRetreat = 341,     // 回退红包
     Wxpay = 370,                // 微信支付
-    Alipay = 371                // 支付宝支付
+    Alipay = 371,               // 支付宝支付
+    Consume = 360,               // 消费
+    Receipt = 361               // 收款
 }
 
 /**
@@ -96,6 +98,14 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
             case TaskSid.Alipay:
                 behavior = getStaticLanguage().cloudAccountDetail.types[9];
                 behaviorIcon = 'alipay_rechange.png';
+                break;
+            case TaskSid.Consume:
+                behavior = getStaticLanguage().cloudAccountDetail.types[10];
+                behaviorIcon = 'transfer_icon.png';
+                break;
+            case TaskSid.Receipt:
+                behavior = getStaticLanguage().cloudAccountDetail.types[11];
+                behaviorIcon = 'transfer_icon.png';
                 break;
             default:
                 behavior = isArray(v[2]) ? unicodeArray2Str(v[2]) : v[2];

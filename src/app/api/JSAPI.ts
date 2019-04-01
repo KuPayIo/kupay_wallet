@@ -1,13 +1,18 @@
 /**
  * 授权、支付等API
  */
+import { WebViewManager } from '../../pi/browser/webview';
+import { popNew } from '../../pi/ui/root';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { requestAsync } from '../net/pull';
+import { getOneUserInfo, requestAsync } from '../net/pull';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
-import { currencyType, formatBalance, getUserInfo } from '../utils/tools';
+import { SCPrecision } from '../utils/constants';
+import { getUserInfo } from '../utils/tools';
 import { getMnemonicByHash, VerifyIdentidy } from '../utils/walletTools';
+import { getGameItem } from '../view/play/home/gameConfig';
+import { minWebview1 } from './thirdBase';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功
@@ -47,6 +52,7 @@ export const authorize = (payload, callback) => {
  * 查询是否开启免密支付
  */
 export const querySetNoPassword = (appid, callback) => {
+    console.log('querySetNoPassword called');
     queryNoPWD(appid).then(setNoPassword => {
         if (setNoPassword === SetNoPassword.NOSETED) {
             callback(undefined,false);
@@ -76,6 +82,38 @@ export const setFreeSecrectPay = (payload,callback) => {
     });
 };
 
+/**
+ * 第三方支付
+ * @param order 订单
+ * @param callback 回调
+ */
+export const thirdPay = (payload,callback) => {
+    thirdPay1(payload.order,payload.webviewName).then(([err,res]) => {
+        callback(err,res);
+    });
+};
+
+/**
+ * 第三方直接支付  已经免密验证过
+ * @param payload 参数
+ * @param callback 回调
+ */
+export const thirdPayDirect = (payload,callback) => {
+    console.log('thirdPayDirect payload=====',payload);
+    VerifyIdentidy(payload.password).then(secretHash => {
+        if (!secretHash) {
+            callback(undefined,{ result:PayCode.ERRORPSW });
+            
+            return;
+        }
+        walletPay(payload.order,secretHash).then(() => {
+            callback(undefined,{ result:PayCode.SUCCESS });
+        }).catch(err => {
+            callback(undefined,{ result:PayCode.FAILED });
+        });
+    });
+    
+};
 /**
  * 授权用户openID接口
  * @param appId appId 
@@ -140,38 +178,89 @@ export interface ThirdOrder {
     transaction_id:string;   // 钱包订单ID
     nonce_str:string;    // 随机字符串
     sign:string;     // 签名
+    total_fee:number;   // 支付金额
+    mch_id:string;    // 商户id
+}
+
+/**
+ * 支付返回结果
+ */
+const enum PayCode {
+    SUCCESS = 1,     // 支付成功
+    SETNOPASSWORD = 2,   // 余额足够  但是没有开启免密 
+    EXCEEDLIMIT = 3, // 余额足够 并且开启免密 但是免密上限
+    ERRORPSW = 4,    // 密码错误
+    RECHARGEFAILED = 5,  // 充值失败
+    FAILED = 6     // 支付失败
 }
 /**
  * 第三方支付
  */
-export const thirdPay = async () => {
+const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
     try {
-        const resData = await openPayment(order);
-        const orderDetail = {
-            fee_total : resData.total_fee,
-            desc : resData.body,
-            fee_name : currencyType(CloudCurrencyType[resData.fee_type]),
-            balance : formatBalance(getCloudBalances().get(resData.fee_type))
-        };
-        const setNoPassword = await queryNoPWD(order.appid,orderDetail.fee_total);
+        // tslint:disable-next-line:variable-name
+        const fee_total = order.total_fee;
+        const setNoPassword = await queryNoPWD(order.appid,fee_total);
         const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
-        const secretHash = await VerifyIdentidy('123456789');
-        const payRes = await walletPay(order,secretHash);
-
-        console.log('支付成功===========',payRes);
-        
-        return [undefined,payRes];
+        console.log('thirdPay balance =========',scBalance * SCPrecision);
+        console.log('thirdPay fee_total =========',fee_total);
+        console.log('thirdPay setNoPassword =========',setNoPassword);
+        if (scBalance * SCPrecision >= fee_total) {
+            if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
+                console.log('walletPay start------',order);
+                const payRes = await walletPay(order);
+                console.log('walletPay success',payRes);
+    
+                return [undefined,{ result:PayCode.SUCCESS }];
+            } else if (setNoPassword === SetNoPassword.NOSETED) { // 余额足够  但是没有开启免密
+                return [undefined,{ result:PayCode.SETNOPASSWORD }]; 
+            } else {// 余额足够 并且开启免密 但是免密上限
+                return [undefined,{ result:PayCode.EXCEEDLIMIT }]; 
+            }
+        } else { // 余额不够
+            // TODO 跳转充值页面
+            minWebview1(webviewName);
+            const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
+            console.log('商户信息 ==========',mchInfo);
+            const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
+                WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
+            });
+            if (rechargeSuccess) {  // 充值成功   直接购买
+                if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
+                    console.log('walletPay start------',order);
+                    const payRes = await walletPay(order);
+                    console.log('walletPay success',payRes);
+            
+                    return [undefined,{ result:PayCode.SUCCESS }];
+                } else if (setNoPassword === SetNoPassword.NOSETED) { // 余额足够  但是没有开启免密
+                    return [undefined,{ result:PayCode.SETNOPASSWORD }]; 
+                } else {// 余额足够 并且开启免密 但是免密上限
+                    return [undefined,{ result:PayCode.EXCEEDLIMIT }]; 
+                }
+            } else {
+                return [undefined,{ result:PayCode.RECHARGEFAILED }];
+            }
+        }
     } catch (err) {
         console.log('thirdPay err =====',err);
 
-        return [err];
+        return [err,{ result:PayCode.FAILED }];
     }
-    
-    // popNew3('app-view-wallet-cloudWalletSC-thirdRechargeSC',{ order });
 };
 
 /**
- * 启动支付接口(验证订单，展示订单信息)
+ * 跳转充值页面
+ */
+const gotoRecharge = (order:ThirdOrder,beneficiary:string = '未知',okCB:Function) => {
+    return new Promise(resolve => {
+        popNew('app-view-wallet-cloudWalletSC-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
+            resolve(rechargeSuccess);
+        });
+    });
+};
+
+/**
+ * 启动支付接口(验证订单，展示订单信息) 预支付
  * @param order 订单信息,后台返回的订单json
  */
 const openPayment = (order: any) => {
@@ -184,7 +273,7 @@ const openPayment = (order: any) => {
 /**
  * 支付接口(输入密码进行支付)
  */
-const walletPay = async (order: any,secretHash?:string) => {
+const orderPay = (order: any,secretHash?:string) => {
     const signJson = {
         appid: order.appid,
         transaction_id: order.transaction_id,
@@ -197,18 +286,33 @@ const walletPay = async (order: any,secretHash?:string) => {
         signStr = getSign(signJson, secretHash);
         no_password = SetNoPassword.NOSETED;
     }
+    const param:any = {
+        ...signJson,
+        no_password
+    };
+    if (secretHash) {
+        param.sign = signStr;
+    }
     const msg = {
         type: 'wallet/order@pay',
-        param: {
-            ...signJson,
-            sign: signStr,
-            no_password
-        }
+        param
     };
-
-    console.log('walletPay =======',msg);
-
+    
+    console.log('walletPay param-------------',msg);
+    
     return requestAsync(msg);
+};
+
+/**
+ * 预支付成功后支付
+ */
+const walletPay = async (order: any,secretHash?:string) => {
+    console.log('openPayment start---------',order);
+    const resData = await openPayment(order);
+    console.log('openPayment resData---------',resData);
+    await orderPay(order,secretHash);
+
+    return resData;
 };
 
 /**
@@ -218,9 +322,13 @@ const walletPay = async (order: any,secretHash?:string) => {
  */
 // tslint:disable-next-line:variable-name
 const queryNoPWD = async (appid:string,total_fee?:number) => {
+    const param:any = { appid };
+    if (total_fee) {
+        param.total_fee = total_fee;
+    }
     const msg = {
         type: 'wallet/order@nopwd_limit',
-        param: { appid,total_fee }
+        param
     };
 
     let setNoPassword;

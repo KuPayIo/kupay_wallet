@@ -1,7 +1,8 @@
 /**
  * common tools
  */
-import { backCall, backList, popNew } from '../../pi/ui/root';
+import { getStore as chatGetStore } from '../../chat/client/app/data/store';
+import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Callback } from '../../pi/util/util';
@@ -1127,13 +1128,16 @@ export const getUserInfo = () => {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
     }
 
+    const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
+
     return {
         nickName,
         avatar,
         phoneNumber,
         areaCode,
         isRealUser,
-        acc_id
+        acc_id,
+        level
     };
 };
 
@@ -1267,4 +1271,42 @@ export const currencyType = (str:string) => {
     } else {
         return str;
     }
+};
+
+// 检查手机弹框提示
+export const checkPopPhoneTips = () => {
+    if (localStorage.getItem('popPhoneTips')) {
+        const modalBox = { 
+            zh_Hans:{
+                title:'绑定手机',
+                content:'手机号是找回云端资产的重要凭证，为了您的资产安全请绑定手机号',
+                sureText:'去绑定',
+                onlyOk:true
+            },
+            zh_Hant:{
+                title:'綁定手機',
+                content:'手機號是找回雲端資產的重要憑證，為了您的資產安全請綁定手機號',
+                sureText:'去綁定',
+                onlyOk:true
+            },
+            en:'' 
+        };
+        popModalBoxs('app-components-modalBox-modalBox',modalBox[getLang()],() => { 
+            popNew('app-view-mine-setting-phone',{ jump:true });
+        },undefined,true);      
+    }
+};
+
+// 设置手机弹框提示
+export const setPopPhoneTips = () => {
+    const userInfo = getUserInfo();
+    const popPhoneTips = localStorage.getItem('popPhoneTips');
+    if (!userInfo.phoneNumber && !popPhoneTips) localStorage.setItem('popPhoneTips','1');
+};
+
+/**
+ * 删除手机弹框提示
+ */
+export const delPopPhoneTips = () => {
+    if (localStorage.getItem('popPhoneTips')) localStorage.removeItem('popPhoneTips');
 };

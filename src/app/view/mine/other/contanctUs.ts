@@ -10,6 +10,7 @@ import { getModulConfig } from '../../../modulConfig';
 import { rippleShow } from '../../../utils/tools';
 // ==================================================导出
 declare var pi_update;
+declare var pi_modules;
 export class ContanctUs extends Widget {
     public ok: () => void;
     public create() {
@@ -17,6 +18,7 @@ export class ContanctUs extends Widget {
         const tips = { zh_Hans:'客服',zh_Hant:'客服',en:'' };
         this.props = {
             version:pi_update.updateJson.version,
+            appVersion:pi_modules.appUpdate.exports.getLocalVersion().join('.') || '1.0.0',
             data:[
                 { value: '',desc:getModulConfig('WALLET_WEBSITE') },
                 { value: '',desc:getModulConfig('WALLET_NAME') + tips[getLang()] },

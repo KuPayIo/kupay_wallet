@@ -638,8 +638,9 @@ function updateUiInit(){
  * 获取更新内容 版本号  修复的BUG等
  */
 function getUpdateContent(){
+	
 	var ajax = pi_modules.ajax.exports;
-	const url = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion/update.json";
+	const url = winit.appURL + "/update.json";
 	const timeout = 1000;
 	ajax.get(url + "?" + Math.random(), {}, undefined, undefined, timeout, function (updateJson) {
 		localStorage.setItem("updateJson",updateJson);

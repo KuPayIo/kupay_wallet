@@ -440,7 +440,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = false; 
+			winit.debug = true; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
@@ -452,20 +452,27 @@
 				winit.severPort = location.port ? location.port : "80";		
 			}else{// 本地包需要配置服务器ip和port
 				// 外网 39.98.200.23   high.herominer.net 
-				winit.severIp = "192.168.31.113";
+				winit.severIp = "192.168.31.10";
 				winit.severPort = "80";		
 			}
 
+			// if(!winit.isLoc){ // 浏览器版本自动识别
+			// 	winit.severIp = main;
+			// 	winit.severPort = location.port ? location.port : "443";		
+			// }else{// 本地包需要配置服务器ip和port
+			// 	// 外网 39.98.200.23   high.herominer.net 
+			// 	winit.severIp = "39.98.200.23";
+			// 	winit.severPort = "443";		
+			// }
+
 			// app更新配置的URL地址
 			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
+			// winit.appURL = "https://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
 			// console.log("winit.appURL = ",winit.appURL);
 
 			var defaultDomains;
-			var remoteDomains = [
-				"http://" + winit.severIp + ":" + winit.severPort,
-				// location.protocol + "//" + (remote ? needCDN ? "" + remote : "" + remote : "") + main, 
-				// location.protocol + "//" + remote + main
-			];
+			var remoteDomains = ["http://" + winit.severIp + ":" + winit.severPort];
+			// var remoteDomains = ["https://" + winit.severIp + ":" + winit.severPort];
 			if (inApp) {
 				winit.httpDomains = remoteDomains;
 

@@ -33,7 +33,11 @@ interface Props {
 
 export class RechargeSC  extends Widget {
     public ok: () => void;
-    public setProps(prop: any) {
+    public setProps(props: any) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
         super.setProps(this.props);
     }
 
@@ -88,12 +92,14 @@ export class RechargeSC  extends Widget {
             note: ''          // 备注
         };
 
-        confirmPay(orderDetail, (res) => {
-            this.initData();
-            popNew('app-view-wallet-cloudWalletSC-transactionDetails', { oid: res.oid, firstQuery: true });
-            this.paint();
-            setStore('flags/firstRecharge',true); // 首次充值
-            getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+        confirmPay(orderDetail).then(res => {
+            if (res) {
+                this.initData();
+                popNew('app-view-wallet-cloudWalletSC-transactionDetails', { oid: res.oid });
+                this.paint();
+                setStore('flags/firstRecharge',true); // 首次充值
+                getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+            }
         });
     }
     /**
@@ -133,7 +139,14 @@ export class RechargeSC  extends Widget {
      * 返回上一页
      */
     public backPrePage() {
-        this.ok && this.ok();
+        if (this.props.okCB) {
+            this.props.okCB && this.props.okCB();
+            setTimeout(() => {
+                this.ok && this.ok();
+            },500);
+        } else {
+            this.ok && this.ok();
+        }
     }
 }
 

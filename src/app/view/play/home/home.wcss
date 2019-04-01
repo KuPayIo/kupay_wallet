@@ -48,7 +48,7 @@
     font-weight: 600;
 }
 .body{
-    padding: 30px 20px 130px;
+    padding-bottom: 120px;
     overflow-x: hidden;
     overflow-y: auto;
     scroll-behavior: smooth;
