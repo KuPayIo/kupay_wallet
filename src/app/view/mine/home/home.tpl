@@ -2,7 +2,6 @@
     <div w-class="left {{it.close?'leftHide':''}}">
         <div w-class="topBack">
             <widget w-tag="app-components1-img-img" w-class="userHead" on-tap="login">{imgURL:{{it.avatar}},width:"120px;"}</widget>
-            <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
             {{if it.hasWallet}}
             <div w-class="addFriend">
                 <div w-class="scanImg1" on-tap="showMyMedal">
