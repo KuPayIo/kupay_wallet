@@ -3,6 +3,7 @@
  */
 import { request } from '../../pi/net/ui/con_mgr';
 import { MainChainCoin, uploadFileUrl } from '../config';
+import { getModulConfig } from '../modulConfig';
 import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
@@ -659,7 +660,7 @@ export const sendCode = async (phone: string, num: string,verify:boolean = true)
             return;
         }
     }
-    const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
+    const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: getModulConfig('WALLET_NAME') } };
     try {
         return await requestAsync(msg);
     } catch (err) {

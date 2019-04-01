@@ -1,3 +1,4 @@
+import { sourceIp, sourcePort } from '../../../ipConfig';
 
 /**
  * 第三方游戏相关配置
@@ -12,6 +13,7 @@ export const gameList = [
         desc:{ zh_Hans:'仙之侠道仙之侠道仙之侠道',zh_Hant:'仙之侠道仙之侠道仙之侠道',en:'' },
         img:['app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
         url:'http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html',
+        apkDownloadUrl:`http://${sourceIp}:${sourcePort}/wallet/appversion/haohaifairyChivalry.apk`,
         webviewName:'fairyChivalry',
         uid:10002,
         gid:10002,

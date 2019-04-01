@@ -8,7 +8,7 @@ import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore } from '../../../store/memstore';
-import { SCPrecision, SCUnitprice } from '../../../utils/constants';
+import { SCPrecision, SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
 
 // ============================导出
@@ -43,7 +43,7 @@ export class ThirdRechargeSC  extends Widget {
         const num = this.props.needPay * SCPrecision;
         const orderDetail:OrderDetail = {
             total: num * SCUnitprice, // 总价
-            body: 'SC', // 信息
+            body: wxPayShow, // 信息
             num, // 充值SC数量
             payType: this.props.payType, // 支付方式
             cointype: CloudCurrencyType.SC, // 充值类型

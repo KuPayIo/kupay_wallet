@@ -95,7 +95,7 @@ export const btc2Sat = (num: number | string) => {
 export const kpt2kt = (num: number | string) => {
     num = Number(num);
 
-    return Math.round(num / Math.pow(10, 9));
+    return num / Math.pow(10, 9);
 };
 
 /**
@@ -104,7 +104,7 @@ export const kpt2kt = (num: number | string) => {
 export const kt2kpt = (num: number | string) => {
     num = Number(num);
 
-    return Math.floor(num * Math.pow(10, 9));
+    return num * Math.pow(10, 9);
 };
 
 /**

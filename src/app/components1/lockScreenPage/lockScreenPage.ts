@@ -9,7 +9,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { LockScreen } from '../../store/interface';
 import { getStore, register, setStore  } from '../../store/memstore';
 import { getLoginMod, getWalletToolsMod } from '../../utils/commonjsTools';
-import { popNewMessage, popNewLoading } from '../../utils/tools';
+import { popNewLoading, popNewMessage } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -60,7 +60,7 @@ export class LockScreenPage extends Widget {
      * 设置锁屏密码
      */
     public setLockPsw() {
-        popNew('app-components-keyboard-keyboard',{ title: this.language.keyboardTitle[0] },(r) => {
+        popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[0] },(r) => {
             this.props.lockScreenPsw = r;
             this.reSetLockPsw();
         },() => {
@@ -72,7 +72,7 @@ export class LockScreenPage extends Widget {
      * 重复锁屏密码
      */
     public  reSetLockPsw() {
-        popNew('app-components-keyboard-keyboard',{ title: this.language.keyboardTitle[1] },async (r) => {
+        popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[1] },async (r) => {
             if (this.props.lockScreenPsw !== r) {
                 popNewMessage(this.language.tips[0]);
                 this.reSetLockPsw();
@@ -102,7 +102,7 @@ export class LockScreenPage extends Widget {
             this.verifyPsw();
         } else {
             const title = this.props.errorTips[ind === 0 ? 3 :ind];
-            popNew('app-components-keyboard-keyboard',{ title:title,closePage:1 },async (r) => {
+            popNew('app-components1-keyboard-keyboard',{ title:title,closePage:1 },async (r) => {
                 const walletToolsMod = await getWalletToolsMod();
                 if (walletToolsMod.lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
                     this.close(true);

@@ -10,6 +10,7 @@ import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
+import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { register } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
@@ -26,6 +27,7 @@ export class PlayHome extends Widget {
     public thirdApiDependPromise:Promise<string>;
     public thirdApiPromise:Promise<string>;
     public web3Promise: Promise<string>;
+    public isLogin:boolean = false;
     
     constructor() {
         super();
@@ -71,7 +73,8 @@ export class PlayHome extends Widget {
     
     public setProps(props:Json) {
         this.props = {
-            ...props
+            ...props,
+            offlienType:OfflienType.WALLET
         };
         super.setProps(this.props);
         const userInfo = getUserInfo();
@@ -146,7 +149,11 @@ export class PlayHome extends Widget {
      */
     public gameClick(num:number) {
         closePopFloatBox();
-        if (!hasWallet()) return;
+        // if (!this.isLogin) {
+        //     popNewMessage('登录中,请稍后再试');
+
+        //     return;
+        // }
         if (!gameList[num].url) {
             const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
             popNewMessage(tips[getLang()]);
@@ -164,13 +171,16 @@ export class PlayHome extends Widget {
             pi3Config.gid = gameList[num].gid;
             
             const pi3ConfigStr = `
-                window.pi_config = ${JSON.stringify(pi3Config)}
+                window.pi_config = ${JSON.stringify(pi3Config)};
             `;
             this.configPromise = Promise.resolve(pi3ConfigStr);
 
             const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
             allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
                 const content =  configContent + thirdApiDependContent + thirdApiContent;
+
+                console.log(`============ ${webviewName}, ${gameUrl}, ${gameTitle}, ${content}`);
+
                 WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }
@@ -206,4 +216,9 @@ register('user/info',() => {
         }
         w.paint();
     }
+});
+
+register('user/isLogin', (isLogin:boolean) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && (w.isLogin = isLogin);
 });

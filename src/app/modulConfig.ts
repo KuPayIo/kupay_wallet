@@ -19,7 +19,7 @@ const appModulConfig = {
     WECHAT_HELPER:'app/res/image/wechat_robot.jpg',  // 微信小助手二维码
     WECHAT_ACCOUNT:'app/res/image/wechat_pn.jpg',  // 微信公众号二维码
     QQ_CODE:'1598787032',                               // qq号
-    PAY_DOMAIN:'http://app.herominer.net',   // 支付注册域名
+    PAY_DOMAIN:'https://app.herominer.net',   // 支付注册域名
     KT_SHOW:'嗨豆',                    // KT界面显示文字
     ST_SHOW:'碎银',                    // ST界面显示文字
     SC_SHOW:'银两'                     // SC界面显示文字

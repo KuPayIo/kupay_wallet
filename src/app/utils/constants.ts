@@ -154,3 +154,6 @@ export const SCUnitprice =  1;
 
 // SC精度
 export const SCPrecision = 100;
+
+// 微信支付显示
+export const wxPayShow = 'HighApp';

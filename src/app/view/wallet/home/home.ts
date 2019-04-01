@@ -4,6 +4,7 @@
 // ==============================导入
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { getServerCloudBalance } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { getDataCenter } from '../../../utils/commonjsTools';
@@ -22,6 +23,7 @@ export class Home extends Widget {
     }
     public pageInit() {
         this.props = {
+            offlienType:OfflienType.WALLET,
             tabs:[{
                 tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },
                 components:'app-view-wallet-home-cloudHome'

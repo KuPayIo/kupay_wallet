@@ -1273,25 +1273,33 @@ export const currencyType = (str:string) => {
     }
 };
 
+/**
+ * 获取手机提示语
+ */
+export const getPopPhoneTips = () => {
+    const modalBox = { 
+        zh_Hans:{
+            title:'绑定手机',
+            content:'亲爱的玩家，为了避免您的游戏数据在更换账号后清空，请绑定手机号',
+            sureText:'去绑定',
+            onlyOk:true
+        },
+        zh_Hant:{
+            title:'綁定手機',
+            content:'親愛的玩家，為了避免您的遊戲數據在更換賬號後清空，請綁定手機號',
+            sureText:'去綁定',
+            onlyOk:true
+        },
+        en:'' 
+    };
+
+    return modalBox[getLang()];
+};
 // 检查手机弹框提示
 export const checkPopPhoneTips = () => {
     if (localStorage.getItem('popPhoneTips')) {
-        const modalBox = { 
-            zh_Hans:{
-                title:'绑定手机',
-                content:'手机号是找回云端资产的重要凭证，为了您的资产安全请绑定手机号',
-                sureText:'去绑定',
-                onlyOk:true
-            },
-            zh_Hant:{
-                title:'綁定手機',
-                content:'手機號是找回雲端資產的重要憑證，為了您的資產安全請綁定手機號',
-                sureText:'去綁定',
-                onlyOk:true
-            },
-            en:'' 
-        };
-        popModalBoxs('app-components-modalBox-modalBox',modalBox[getLang()],() => { 
+        
+        popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
             popNew('app-view-mine-setting-phone',{ jump:true });
         },undefined,true);      
     }
