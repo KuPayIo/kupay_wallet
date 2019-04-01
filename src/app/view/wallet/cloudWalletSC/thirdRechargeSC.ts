@@ -52,7 +52,10 @@ export class ThirdRechargeSC  extends Widget {
         confirmPay(orderDetail).then(res => {
             if (res) {
                 getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
-                this.ok && this.ok(true);
+                this.props.okCB && this.props.okCB();
+                setTimeout(() => {
+                    this.ok && this.ok(true);
+                },500);
             }
         });
     }

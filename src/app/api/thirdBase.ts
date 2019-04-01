@@ -9,6 +9,12 @@ import { getGameItem } from '../view/play/home/gameConfig';
  * 
  */
 
+let popFloatBoxClose;
+
+export const closePopFloatBox = () => {
+    popFloatBoxClose && popFloatBoxClose.callback(popFloatBoxClose.widget);
+    popFloatBoxClose = undefined;
+};
  /**
   * 关闭打开的webview
   */
@@ -25,7 +31,7 @@ export const minWebview = (payload:{webviewName: string;popFloatBox:boolean}) =>
     const webviewName = payload.webviewName;
     const popFloatBox = payload.popFloatBox;
     if (popFloatBox) {
-        popNew('app-components-floatBox-floatBox',{ webviewName });
+        popFloatBoxClose = popNew('app-components-floatBox-floatBox',{ webviewName });
     }
     minWebview1(webviewName);
 };
