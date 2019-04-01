@@ -12,7 +12,7 @@ import { SCPrecision } from '../utils/constants';
 import { getUserInfo } from '../utils/tools';
 import { getMnemonicByHash, VerifyIdentidy } from '../utils/walletTools';
 import { getGameItem } from '../view/play/home/gameConfig';
-import { minWebview } from './thirdBase';
+import { minWebview1 } from './thirdBase';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功
@@ -52,6 +52,7 @@ export const authorize = (payload, callback) => {
  * 查询是否开启免密支付
  */
 export const querySetNoPassword = (appid, callback) => {
+    console.log('querySetNoPassword called');
     queryNoPWD(appid).then(setNoPassword => {
         if (setNoPassword === SetNoPassword.NOSETED) {
             callback(undefined,false);
@@ -87,7 +88,7 @@ export const setFreeSecrectPay = (payload,callback) => {
  * @param callback 回调
  */
 export const thirdPay = (payload,callback) => {
-    thirdPay1(payload.order,payload.webViewName).then(([err,res]) => {
+    thirdPay1(payload.order,payload.webviewName).then(([err,res]) => {
         callback(err,res);
     });
 };
@@ -195,7 +196,7 @@ const enum PayCode {
 /**
  * 第三方支付
  */
-const thirdPay1 = async (order:ThirdOrder,webViewName: string) => {
+const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
     try {
         // tslint:disable-next-line:variable-name
         const fee_total = order.total_fee;
@@ -218,11 +219,12 @@ const thirdPay1 = async (order:ThirdOrder,webViewName: string) => {
             }
         } else { // 余额不够
             // TODO 跳转充值页面
-            minWebview(webViewName);
+            minWebview1(webviewName);
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
             console.log('商户信息 ==========',mchInfo);
-            const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName);
-            WebViewManager.open(webViewName, `${getGameItem(webViewName).url}?${Math.random()}`, webViewName,'');
+            const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
+                WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
+            });
             if (rechargeSuccess) {  // 充值成功   直接购买
                 if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
                     console.log('walletPay start------',order);
@@ -249,9 +251,9 @@ const thirdPay1 = async (order:ThirdOrder,webViewName: string) => {
 /**
  * 跳转充值页面
  */
-const gotoRecharge = (order:ThirdOrder,beneficiary:string = '未知') => {
+const gotoRecharge = (order:ThirdOrder,beneficiary:string = '未知',okCB:Function) => {
     return new Promise(resolve => {
-        popNew('app-view-wallet-cloudWalletSC-thirdRechargeSC',{ order,beneficiary },(rechargeSuccess:boolean) => {
+        popNew('app-view-wallet-cloudWalletSC-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
             resolve(rechargeSuccess);
         });
     });

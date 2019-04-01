@@ -14,7 +14,8 @@ export const gameList = [
         url:'http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html',
         webviewName:'fairyChivalry',
         uid:10002,
-        gid:10002
+        gid:10002,
+        appid:'102'
     }
 ];
 

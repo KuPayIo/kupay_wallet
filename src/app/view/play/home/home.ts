@@ -9,6 +9,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
+import { closePopFloatBox } from '../../../api/thirdBase';
 import { register } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
@@ -144,6 +145,7 @@ export class PlayHome extends Widget {
      * 点击游戏
      */
     public gameClick(num:number) {
+        closePopFloatBox();
         if (!hasWallet()) return;
         if (!gameList[num].url) {
             const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
@@ -155,6 +157,7 @@ export class PlayHome extends Widget {
             const gameUrl =   gameList[num].url;
             const webviewName = gameList[num].webviewName;
             const pi3Config:any = getPi3Config();
+            pi3Config.appid = gameList[num].appid;
             pi3Config.gameName = gameTitle;
             pi3Config.webviewName = webviewName;
             pi3Config.uid = gameList[num].uid;
