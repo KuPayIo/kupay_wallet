@@ -22,7 +22,8 @@ export class ContanctUs extends Widget {
             data:[
                 { value: '',desc:getModulConfig('WALLET_WEBSITE') },
                 { value: '',desc:getModulConfig('WALLET_NAME') + tips[getLang()] },
-                { value: '',desc:getModulConfig('WALLET_NAME') }
+                // tslint:disable-next-line:prefer-template
+                { value: '',desc:getModulConfig('WALLET_NAME') + '游戏' }
             ],
             walletLogo:getModulConfig('WALLET_LOGO'),
             walletName:getModulConfig('WALLET_NAME')
