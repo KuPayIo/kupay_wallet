@@ -8,7 +8,7 @@ import { addWidget } from '../../../pi/widget/util';
 import { LockScreen } from '../../store/interface';
 import { getAllAccount, getStore, setStore } from '../../store/memstore';
 import { piRequire } from '../../utils/commonjsTools';
-import { fetchDeviceId } from '../../utils/tools';
+import { fetchDeviceId, popNew3 } from '../../utils/tools';
 
 // ============================== 导出
 declare var pi_modules;
@@ -43,7 +43,7 @@ export const run = (cb): void =>  {
  */
 const popNewPage = () => {
     if (ifNeedUnlockScreen()) {
-        popNew('app-components-lockScreenPage-lockScreenPage', {
+        popNew('app-components1-lockScreenPage-lockScreenPage', {
             openApp: true
         });
     }

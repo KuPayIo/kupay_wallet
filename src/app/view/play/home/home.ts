@@ -10,6 +10,7 @@ import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
+import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { getStore, register } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNew3, popNewLoading, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
@@ -72,7 +73,8 @@ export class PlayHome extends Widget {
     
     public setProps(props:Json) {
         this.props = {
-            ...props
+            ...props,
+            offlienType:OfflienType.WALLET
         };
         super.setProps(this.props);
         const userInfo = getUserInfo();

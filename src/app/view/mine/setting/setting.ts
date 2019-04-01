@@ -80,7 +80,7 @@ export class Setting extends Widget {
             this.props.openLockScreen = false;
             setStore('setting/lockScreen', ls);
         } else if (this.props.wallet) {
-            popNew('app-components-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
+            popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
                 if (!r) {
                     this.closeLockPsw();
                     this.props.openLockScreen = false;
