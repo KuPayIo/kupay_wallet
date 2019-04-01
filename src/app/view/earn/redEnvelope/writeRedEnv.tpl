@@ -16,12 +16,14 @@
             {"zh_Hans":"普通红包","zh_Hant":"普通紅包","en":""},
             {"zh_Hans":"拼手气红包","zh_Hant":"拼手氣紅包","en":""}] }}
 
-
+            {{if it.inFlag !== "chat_user"}}
             <pi-ui-lang>{{changePin[0]}} </pi-ui-lang>
             <pi-ui-lang>{{it.showPin ? redEnvType[1] : redEnvType[0]}}</pi-ui-lang>
             <pi-ui-lang>{{changePin[1]}}</pi-ui-lang>
             <span w-class="changeType" on-tap="changePin">
-                <pi-ui-lang>{{it.showPin? redEnvType[0] : redEnvType[1]}}</pi-ui-lang></span>
+                <pi-ui-lang>{{it.showPin? redEnvType[0] : redEnvType[1]}}</pi-ui-lang>
+            </span>
+            {{end}}
         </div>
         <div ev-input-change="changeAmount">
 
@@ -47,6 +49,7 @@
             {"zh_Hans":"0","zh_Hant":"0","en":""},
             {"zh_Hans":"个","zh_Hant":"個","en":""}] }}
 
+            {{if it.inFlag !== "chat_user"}}
             <app-components-basicInput-basicInput>{
                 prepend:{{countTitle[0]}},
                 placeholder:{{countTitle[1]}},
@@ -56,6 +59,7 @@
                 input:{{it.totalNum}},
                 notUnderLine:true
                 }</app-components-basicInput-basicInput>
+            {{end}}
         </div>
         <div style="margin: 10px 0;" ev-input-change="changeMessage">
             {{: messTitle = [{"zh_Hans":"留言","zh_Hant":"留言","en":""},{"zh_Hans":"恭喜发财，万事如意","zh_Hant":"恭喜發財 萬事如意","en":""}] }}
