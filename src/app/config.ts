@@ -465,7 +465,7 @@ export const Config = {
         // 云端账户详情
         cloudAccountDetail: {
             types: [
-                '挖矿',
+                '游戏',
                 '邀请码',
                 '领红包',
                 '发红包',
@@ -627,7 +627,7 @@ export const Config = {
         // 云端账户详情
         cloudAccountDetail: {
             types: [
-                '挖礦',
+                '遊戲',
                 '邀請碼',
                 '領紅包',
                 '發紅包',

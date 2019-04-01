@@ -35,11 +35,18 @@ export class CloudWalletHome extends Widget {
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
         const color = getStore('setting/changeColor','redUp');
         let topBarTitle = '';
+        let recharge;
+        let withdraw;
         if (this.props.currencyName === 'KT') {
             topBarTitle = getModulConfig('KT_SHOW');
+            recharge = { zh_Hans:'入账',zh_Hant:'入賬',en:'' };
+            withdraw = { zh_Hans:'出账',zh_Hant:'出賬',en:'' };
         } else {
             topBarTitle = this.props.currencyName;
+            recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
+            withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
         }
+         
         this.props = {
             ...this.props,
             topBarTitle,
@@ -50,10 +57,10 @@ export class CloudWalletHome extends Widget {
                 tab:this.language.other,
                 components:'app-view-wallet-cloudWallet-otherRecord'
             },{
-                tab:this.language.recharge,
+                tab:recharge[getLang()],
                 components:'app-view-wallet-cloudWallet-rechargeRecord'
             },{
-                tab:this.language.withdraw,
+                tab:withdraw[getLang()],
                 components:'app-view-wallet-cloudWallet-withdrawRecord'
             }],
             activeNum:0,
@@ -66,7 +73,7 @@ export class CloudWalletHome extends Widget {
         };
         console.log('+++++++++++++',this.props.tabs);
         if (this.props.currencyName === 'KT') {
-            this.props.tabs.splice(1);
+            this.props.tabs.splice(1,1);
         }
     }
 

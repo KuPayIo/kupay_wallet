@@ -11,8 +11,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { getStore, register } from '../../../store/memstore';
-import { getUserInfo, hasWallet, popNew3, popNewLoading, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
+import { register } from '../../../store/memstore';
+import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
@@ -149,11 +149,11 @@ export class PlayHome extends Widget {
      */
     public gameClick(num:number) {
         closePopFloatBox();
-        if (!this.isLogin) {
-            popNewMessage('登录中,请稍后再试');
+        // if (!this.isLogin) {
+        //     popNewMessage('登录中,请稍后再试');
 
-            return;
-        }
+        //     return;
+        // }
         if (!gameList[num].url) {
             const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
             popNewMessage(tips[getLang()]);
@@ -171,13 +171,16 @@ export class PlayHome extends Widget {
             pi3Config.gid = gameList[num].gid;
             
             const pi3ConfigStr = `
-                window.pi_config = ${JSON.stringify(pi3Config)}
+                window.pi_config = ${JSON.stringify(pi3Config)};
             `;
             this.configPromise = Promise.resolve(pi3ConfigStr);
 
             const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
             allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
                 const content =  configContent + thirdApiDependContent + thirdApiContent;
+
+                console.log(`============ ${webviewName}, ${gameUrl}, ${gameTitle}, ${content}`);
+
                 WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }

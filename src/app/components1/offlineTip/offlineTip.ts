@@ -62,7 +62,6 @@ export class OfflineTip extends Widget {
             if (!chatGetStore('isLogin')) {
                 chatManualReconnect();
             }
-            chatManualReconnect();
         } else {   // 活动重连
             if (!getStore('user/isLogin')) {
                 walletManualReconnect();
