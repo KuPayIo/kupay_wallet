@@ -15,7 +15,7 @@ export const thirdUrlPre = `http://${sourceIp}:${sourcePort}/proxy`;
 export const sharePerUrl = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
-export const shareDownload = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
+export const shareDownload = `http://${sourceIp}:${sourcePort}/wallet/appversion/haohai.apk`;
 
 // 邀请好友下载链接
 export const inviteFriends = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;

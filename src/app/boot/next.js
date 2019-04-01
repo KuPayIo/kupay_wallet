@@ -213,7 +213,8 @@ winit.initNext = function () {
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
-				
+				loadWalletLoginSource();  // 登录相关
+				loadImages(); // 预加载图片
 				
 			});
 		}, function (result) {
@@ -295,8 +296,6 @@ winit.initNext = function () {
 	var enterApp = function(){
 		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
-			loadWalletLoginSource();  // 登录相关
-			loadImages(); // 预加载图片
 			console.time("enterApp ----");
 			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
 			util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {

@@ -49,9 +49,12 @@ export const minWebview1 = (webviewName: string) => {
  */
 export const inviteFriends = (webviewName: string) => {
     console.log('wallet inviteFriends called');
+    const gameItem = getGameItem(webviewName);
     popNew('earn-client-app-view-activity-inviteFriend',{
+        bgImg:gameItem.img[0],
+        shareUrl:gameItem.apkDownloadUrl,
         okCB:() => {
-            WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
+            WebViewManager.open(webviewName, `${gameItem.url}?${Math.random()}`, webviewName,'');
         }
     });
     minWebview1(webviewName);

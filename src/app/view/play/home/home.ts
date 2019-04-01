@@ -10,8 +10,8 @@ import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
-import { register } from '../../../store/memstore';
-import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
+import { getStore, register } from '../../../store/memstore';
+import { getUserInfo, hasWallet, popNew3, popNewLoading, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
@@ -26,6 +26,7 @@ export class PlayHome extends Widget {
     public thirdApiDependPromise:Promise<string>;
     public thirdApiPromise:Promise<string>;
     public web3Promise: Promise<string>;
+    public isLogin:boolean = false;
     
     constructor() {
         super();
@@ -146,7 +147,11 @@ export class PlayHome extends Widget {
      */
     public gameClick(num:number) {
         closePopFloatBox();
-        if (!hasWallet()) return;
+        if (!this.isLogin) {
+            popNewMessage('登录中,请稍后再试');
+
+            return;
+        }
         if (!gameList[num].url) {
             const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
             popNewMessage(tips[getLang()]);
@@ -206,4 +211,9 @@ register('user/info',() => {
         }
         w.paint();
     }
+});
+
+register('user/isLogin', (isLogin:boolean) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && (w.isLogin = isLogin);
 });

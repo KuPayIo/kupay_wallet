@@ -37,7 +37,8 @@ export class Entrance1 extends Widget {
             psw:'',
             showMoreUser:false,
             popHeight:this.calPopBoxHeight(accountList.length),
-            forceCloseMoreUser:false
+            forceCloseMoreUser:false,
+            noAnimate:false
         };
     }
     public calPopBoxHeight(len:number) {
@@ -53,6 +54,11 @@ export class Entrance1 extends Widget {
     }
     public closePopBox() {
         this.props.showMoreUser = false;
+        this.paint();
+    }
+    public closePopBoxNoAnimate() {
+        this.props.showMoreUser = false;
+        this.props.noAnimate = true;
         this.paint();
     }
     public delUserAccount(e:any,index:number) {
@@ -107,28 +113,41 @@ export class Entrance1 extends Widget {
 
     // 注册登录 
     public registerLoginClick() {
+        this.closePopBoxNoAnimate();
         console.log('注册登录');
         popNew3('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Random },() => {
             this.ok && this.ok();
+        },() => {
+            this.props.noAnimate = false;
+            this.paint();
         });
     }
     // 已有账户登录
     public haveAccountClick() {
+        this.closePopBoxNoAnimate();
         console.log('已有账户登录');
         popNew3('app-view-wallet-import-standardImport',{},() => {
             this.ok && this.ok();
+        },() => {
+            this.props.noAnimate = false;
+            this.paint();
         });
     }
 
     // 手机登录
     public phoneLoginClick() {
+        this.closePopBoxNoAnimate();
         popNew3('app-view-wallet-import-phoneImport',{},() => {
             this.ok && this.ok();
+        },() => {
+            this.props.noAnimate = false;
+            this.paint();
         });
     }
 
     // 游客登录
     public async touristLoginClick() {
+        this.closePopBoxNoAnimate();
         const option:Option = {
             psw: defaultPassword,
             nickName: await playerName()
