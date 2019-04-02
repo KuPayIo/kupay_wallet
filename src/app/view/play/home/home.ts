@@ -21,32 +21,16 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
-    
     public ok: () => void;
     public configPromise:Promise<string>;
     public thirdApiDependPromise:Promise<string>;
     public thirdApiPromise:Promise<string>;
-    public web3Promise: Promise<string>;
-    public isLogin:boolean = false;
     
     constructor() {
         super();
-        this.web3Promise = new Promise((resolve) => {
-            const path = 'app/core/thirdparty/web3_rpc.js.txt';
-            loadDir([path], undefined, undefined, undefined, fileMap => {
-                const arr = new Uint8Array(fileMap[path]);
-                const content = new TextDecoder().decode(arr);
-                resolve(content);
-            }, () => {
-                //
-            }, () => {
-                //
-            });
-        });
-
         this.thirdApiPromise = new Promise((resolve) => {
             const path = 'app/api/thirdApi.js.txt';
-            loadDir([path], undefined, undefined, undefined, fileMap => {
+            loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
                 resolve(content);
@@ -59,7 +43,7 @@ export class PlayHome extends Widget {
 
         this.thirdApiDependPromise = new Promise((resolve) => {
             const path = 'app/api/thirdApiDepend.js.txt';
-            loadDir([path], undefined, undefined, undefined, fileMap => {
+            loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
                 resolve(content);
@@ -149,7 +133,7 @@ export class PlayHome extends Widget {
      */
     public gameClick(num:number) {
         closePopFloatBox();
-        if (!this.isLogin) {
+        if (!this.state) {
             popNewMessage('登录中,请稍后再试');
 
             return;
@@ -201,7 +185,6 @@ export class PlayHome extends Widget {
             WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
         });
     }
-
 }
 
 // ========================================
@@ -217,6 +200,6 @@ register('user/info',() => {
 });
 
 register('user/isLogin', (isLogin:boolean) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    w && (w.isLogin = isLogin);
+    console.log('play / home -------',isLogin);
+    forelet.paint(isLogin);
 });
