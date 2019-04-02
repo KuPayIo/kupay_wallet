@@ -56,7 +56,8 @@ export class BaseShare extends Widget {
 
         stp.init();
         if (this.props.shareType === ShareType.TYPE_LINK) {
-            const walletName = { zh_Hans:'钱包',zh_Hant:'錢包',en:'' };
+            const walletName = '钱包';
+
             stp.shareLink({
                 success: (result) => { console.log('share success callback');this.ok(true); },
                 fail: (result) => { console.log('share fail callback');this.cancel(false); },

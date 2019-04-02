@@ -3,7 +3,8 @@
  */
 // ============================== 导入
 
-import { popNew } from '../../../../pi/ui/root';
+import { convertAwards } from '../../../../earn/client/app/net/rpc';
+import { popModalBoxs, popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
@@ -106,10 +107,22 @@ export class Exchange extends Widget {
             }
             value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
-            // console.log(code);
-            // inviteCode(code).then((r) => {
-            //     console.log('邀请奖励',r);
-            // });
+            convertAwards(validCode).then((res:any) => {  // 兑换邀请码获得奖励
+                if (res && res.award.length > 0) {
+                    const awa = res.award[0];
+                    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                        title: '邀请奖励',
+                        awardType: awa.awardType,
+                        awardNum: awa.count
+                    });
+                    this.props.cid = '';
+                    this.paint(true);
+
+                } else {
+                    popNewMessage('获取奖励失败');
+                }
+            });
+           
         } else {
             alert(1);
             popNewMessage(this.language.errorList[1]);
