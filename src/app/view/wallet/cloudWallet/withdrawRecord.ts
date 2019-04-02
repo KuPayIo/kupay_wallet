@@ -3,6 +3,7 @@
  */
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
@@ -78,9 +79,9 @@ export class WithdrawRecord extends Widget {
         getWithdrawLogs(this.props.currencyName,this.props.nextStart);
     }
     public getMoreList() {
-        const h1 = document.getElementById('withdraw-scroller-container').offsetHeight; 
-        const h2 = document.getElementById('withdraw-content-container').offsetHeight; 
-        const scrollTop = document.getElementById('withdraw-scroller-container').scrollTop; 
+        const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
+        const h2 = getRealNode((<any>this.tree).children[0].children[0]).offsetHeight; 
+        const scrollTop = getRealNode((<any>this.tree).children[0]).scrollTop; 
         if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
             this.props.isRefreshing = true;
             this.paint();

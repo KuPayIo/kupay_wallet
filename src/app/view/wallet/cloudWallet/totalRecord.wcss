@@ -1,13 +1,13 @@
 .new-page{
-    overflow-x: hidden;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
     padding: 30px 20px 0;
 }
 .main{
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
     flex: 1 0 0;
     background-color: #fff;
     border-radius: 12px 12px 0 0;

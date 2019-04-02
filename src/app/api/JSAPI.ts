@@ -167,7 +167,7 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
             // TODO 跳转充值页面
             minWebview1(webviewName);
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
-            console.log('商户信息 ==========',mchInfo);
+            console.log(`商户信息 ========== mch_id = ${order.mch_id}  mchInfo = ${mchInfo}`);
             const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
                 WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
             });
@@ -197,7 +197,7 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
 /**
  * 跳转充值页面
  */
-const gotoRecharge = (order:ThirdOrder,beneficiary:string = '未知',okCB:Function) => {
+const gotoRecharge = (order:ThirdOrder,beneficiary:string = '好嗨游戏',okCB:Function) => {
     return new Promise(resolve => {
         popNew('app-view-wallet-cloudWalletCustomize-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
             resolve(rechargeSuccess);

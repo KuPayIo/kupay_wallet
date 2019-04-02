@@ -72,6 +72,9 @@ export class ThirdRechargeSC  extends Widget {
      * 返回上一页
      */
     public backPrePage() {
-        this.ok && this.ok(false);
+        this.props.okCB && this.props.okCB();
+        setTimeout(() => {
+            this.ok && this.ok(false);
+        },500);
     }
 }

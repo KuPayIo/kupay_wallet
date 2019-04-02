@@ -586,25 +586,23 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         if (detail.length > 0) {
             const cloudWallets = getStore('cloud/cloudWallets');
             const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
-            if (filter === 1) {
-                if (start) {
-                    cloudWallet.otherLogs.list.push(...detail);
-                    if (coin === CloudCurrencyType[CloudCurrencyType.SC] || coin === CloudCurrencyType[CloudCurrencyType.KT]) {
-                        cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
-                        cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
-                    }
-                } else {
-                    cloudWallet.otherLogs.list = detail;
-                    if (coin === CloudCurrencyType[CloudCurrencyType.SC] || coin === CloudCurrencyType[CloudCurrencyType.KT]) {
-                        cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
-                        cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
-                    }
+            if (start) {
+                cloudWallet.otherLogs.list.push(...detail);
+                if (coin === CloudCurrencyType[CloudCurrencyType.SC] || coin === CloudCurrencyType[CloudCurrencyType.KT]) {
+                    cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
+                    cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
                 }
-                
-                cloudWallet.otherLogs.start = nextStart;
-                cloudWallet.otherLogs.canLoadMore = canLoadMore;
-                setStore('cloud/cloudWallets',cloudWallets);
+            } else {
+                cloudWallet.otherLogs.list = detail;
+                if (coin === CloudCurrencyType[CloudCurrencyType.SC] || coin === CloudCurrencyType[CloudCurrencyType.KT]) {
+                    cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
+                    cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
+                }
             }
+                
+            cloudWallet.otherLogs.start = nextStart;
+            cloudWallet.otherLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
         }
     } catch (err) {
         showError(err && (err.result || err.type));

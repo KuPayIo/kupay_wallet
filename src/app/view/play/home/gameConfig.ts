@@ -14,7 +14,7 @@ export const gameList = [
         title:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
         desc:{ zh_Hans:'仙之侠道仙之侠道仙之侠道',zh_Hant:'仙之侠道仙之侠道仙之侠道',en:'' },
         img:['app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url:'http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html',
+        url:'http://192.168.31.95/dst/boot/yineng/yineng.html',
         apkDownloadUrl:`http://${sourceIp}:${sourcePort}/wallet/appversion/haohaifairyChivalry.apk`,
         webviewName:'fairyChivalry',
         uid:10002,
