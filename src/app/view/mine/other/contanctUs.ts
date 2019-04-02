@@ -8,6 +8,8 @@ import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { rippleShow } from '../../../utils/tools';
+import { GENERATOR_TYPE } from '../../../../chat/server/data/db/user.s';
+import { CUSTOMER_SERVICE } from '../../../../chat/server/data/constant';
 // ==================================================导出
 declare var pi_update;
 declare var pi_modules;
@@ -45,9 +47,9 @@ export class ContanctUs extends Widget {
             case 0:
                 openNewActivity(this.props.data[0].desc,this.props.walletName);
                 break;
-            // KuPay小助手
+            // 客服
             case 1:
-                popNew('app-view-mine-other-wechatQrcode',{ fg:0 });
+                popNew('chat-client-app-view-chat-chat', { id: CUSTOMER_SERVICE, chatType: GENERATOR_TYPE.USER });
                 break;
             // KuPay公众号
             case 2:

@@ -18,7 +18,7 @@
         {{end}}
         {{: list = it.showGameList.length > 0 ? it.showGameList :it.gameList}}
         {{for i,v of list}}
-        <div w-class="gameItem" on-tap="activityClick({{i}})">
+        <div w-class="gameItem" on-tap="activityClick({{i}})" on-down="onShow">
             <img src="{{v.img[1]}}" w-class="gameImg"/>
             <span w-class="gameTitle">{{v.title.zh_Hans}}</span>
         </div>

@@ -1,6 +1,7 @@
 /**
  * 搜索游戏
  */
+import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { hasWallet } from '../../utils/tools';
@@ -37,7 +38,10 @@ export class SearchGame extends Widget {
         this.props.showGameList = this.props.gameList;
         this.paint();
     }
-
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
+    }
     /**
      * 活动点击
      * @param index 序号

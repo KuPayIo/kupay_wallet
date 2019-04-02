@@ -38,7 +38,8 @@ export class ShareMnemonic extends Widget {
     // 分享
     public shareItemClick(e:any,index:number) {
         const fragment = this.props.encryptFragments[index];
-        popNew('app-components-share-share',{ text:fragment,shareType:ShareType.TYPE_IMG },(success) => {
+        console.log('11111111111111111111111111111',fragment);
+        popNew('app-components-share-share',{ comment:fragment,text:fragment,shareType:ShareType.TYPE_IMG },(success) => {
             this.props.successList[index] = true;
             this.paint();
             this.allShared();
