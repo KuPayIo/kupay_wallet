@@ -92,6 +92,12 @@ export const initPush = () => {
         setStore('flags/convert_invite',invite);
     });
 
+    // 监听邀请好友并成为真实用户事件
+    setPushListener('event_invite_real',(res) => {
+        console.log('event_invite_real服务器推送邀请好友并成为真实用户===============',res);
+        setStore('flags/invite_realUser',res.num);
+    });
+
     // 监听余额变化事件
     setMsgHandler('alter_balance_ok',(res) => {
         console.log('alter_balance_ok服务器推送成功==========================',res);
