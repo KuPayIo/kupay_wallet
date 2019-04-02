@@ -276,14 +276,25 @@ export const calcHashValuePromise = (pwd, salt?):Promise<string> => {
     });
 };
 
+/**
+ * 弹出密码提示框
+ */
 export const popPswBox = (content = []) => {
-    try {
+    return new Promise(async (resolve) => {
+        const name = 'app-components-modalBoxInput-modalBoxInput';
+        if (!lookup(name)) {
+            const name1 = name.replace(/-/g,'/');
+            const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+            await piLoadDir(sourceList);
+        }
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
-
-        return openMessageboxPsw(BoxInputTitle,content);
-    } catch (error) {
-        return '';
-    }
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
+            resolve(r);
+        }, () => {
+            resolve('');
+        });
+    });
+   
 };
 
 // 弹出提示框
@@ -308,19 +319,7 @@ export const popNewLoading = (text: any) => {
  * 打开密码输入框
  */
 const openMessageboxPsw = (BoxInputTitle?,content?):Promise<string> => {
-    return new Promise(async (resolve, reject) => {
-        const name = 'app-components-modalBoxInput-modalBoxInput';
-        if (!lookup(name)) {
-            const name1 = name.replace(/-/g,'/');
-            const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
-            await piLoadDir(sourceList);
-        }
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
-            resolve(r);
-        }, (cancel: string) => {
-            reject(cancel);
-        });
-    });
+    
 };
 
 // 计算支持的币币兑换的币种
