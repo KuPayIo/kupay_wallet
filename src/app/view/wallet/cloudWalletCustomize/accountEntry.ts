@@ -1,13 +1,14 @@
 /**
- * other record
+ * 入账
  */
+import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
-import { getWithdrawLogs } from '../../../net/pull';
+import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
-import { currencyType, timestampFormat } from '../../../utils/tools';
+import { timestampFormat } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -17,7 +18,7 @@ interface Props {
     currencyName:string;
     isActive:boolean;
 }
-export class AccountOut extends Widget {
+export class AccountEntry extends Widget {
     public props:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
@@ -25,30 +26,38 @@ export class AccountOut extends Widget {
     }
     public init() {
         const allLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]);
+        console.log('allLogs',allLogs);
         this.props = {
             ...this.props,
-            recordList:this.parseRecordList(allLogs.withdrawLogs.list),
+            recordList:this.parseRecordList(allLogs.rechargeLogs.list),
             nextStart:allLogs.otherLogs.start,
             canLoadMore:allLogs.otherLogs.canLoadMore,
             isRefreshing:false
         };
     }
-
+    /**
+     * 更新props数据
+     */
     public updateRecordList() {
-        if (!this.props.currencyName) return;
+        if (!this.props) return;
         const allLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]);
         this.props.nextStart = allLogs.otherLogs.start;
         this.props.canLoadMore = allLogs.otherLogs.canLoadMore;
-        this.props.recordList = this.parseRecordList(allLogs.withdrawLogs.list);
+        this.props.recordList = this.parseRecordList(allLogs.rechargeLogs.list);
         this.props.isRefreshing = false;
         this.paint();
     }
 
     // tslint:disable-next-line:typedef
-    public parseRecordList(list) {
-        const scShow = getModulConfig('SC_SHOW');
+    /**
+     * 处理充值列表
+     * @param list 充值列表 
+     */
+    public parseRecordList(list:any) {
+        // tslint:disable-next-line:max-line-length
+        const titleShow = this.props.currencyName === CloudCurrencyType[CloudCurrencyType.SC] ? getModulConfig('SC_SHOW') : getModulConfig('KT_SHOW');
         list.forEach((item) => {
-            item.amountShow = `${item.amount} ${currencyType(scShow)}`;
+            item.amountShow = `+${item.amount} ${titleShow}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = item.behaviorIcon;
         });
@@ -57,12 +66,12 @@ export class AccountOut extends Widget {
     }
 
     public loadMore() {
-        getWithdrawLogs(this.props.currencyName,this.props.nextStart);
+        getAccountDetail(this.props.currencyName,0,this.props.nextStart);
     }
     public getMoreList() {
-        const h1 = document.getElementById('withdraw-scroller-container').offsetHeight; 
-        const h2 = document.getElementById('withdraw-content-container').offsetHeight; 
-        const scrollTop = document.getElementById('withdraw-scroller-container').scrollTop; 
+        const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
+        const h2 = document.getElementById('recharge-content-container').offsetHeight; 
+        const scrollTop = document.getElementById('recharge-scroller-container').scrollTop; 
         if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
             this.props.isRefreshing = true;
             this.paint();
@@ -70,9 +79,12 @@ export class AccountOut extends Widget {
             this.loadMore();
         } 
     }
+    public recordListItemClick(e:any,index:number) {
+        if (this.props.recordList[index].oid) {
+            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails',{ oid:this.props.recordList[index].oid });
+        }
+    }
 }
-
-// ====================================
 
 register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);

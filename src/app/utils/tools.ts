@@ -530,7 +530,7 @@ export const fetchCloudWalletAssetList = () => {
         description: 'KT Token',
         balance: formatBalance(ktBalance),
         balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
-        gain: formatBalanceValue(0),
+        gain: fetchCloudGain(),
         rate:formatBalanceValue(0)
     };
     assetList.push(ktItem);
@@ -540,7 +540,7 @@ export const fetchCloudWalletAssetList = () => {
         description: 'SC',
         balance: formatBalance(scBalance),
         balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('SC',scBalance)),
-        gain: fetchSCGain(),
+        gain: fetchCloudGain(),
         rate:formatBalanceValue(fetchBalanceValueOfCoin('SC',1))
     };
     assetList.push(gtItem);
@@ -698,7 +698,7 @@ export const fetchSTGain = () => {
 };
 
 // 获取SC涨跌情况 
-export const fetchSCGain = () => {
+export const fetchCloudGain = () => {
     return formatBalanceValue(0);
 };
 /**

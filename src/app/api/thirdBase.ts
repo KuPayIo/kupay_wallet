@@ -65,7 +65,7 @@ export const inviteFriends = (webviewName: string) => {
  */
 export const gotoRecharge = (webviewName: string) => {
     console.log('wallet gotoRecharge called');
-    popNew('app-view-wallet-cloudWalletSC-rechargeSC',{
+    popNew('app-view-wallet-cloudWalletCustomize-rechargeSC',{
         okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
         }

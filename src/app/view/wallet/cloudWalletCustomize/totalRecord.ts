@@ -74,7 +74,7 @@ export class TotalRecord extends Widget {
      */
     public recordListItemClick(e:any,index:number) {
         if (this.props.recordList[index].oid) {
-            popNew('app-view-wallet-cloudWalletSC-transactionDetails',{ oid:this.props.recordList[index].oid });
+            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails',{ oid:this.props.recordList[index].oid });
         }
     }
 

@@ -1,10 +1,10 @@
 /**
- * SC交易详情页面
+ * 交易详情页面
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
-import { getOrderDetail } from '../../../utils/recharge';
+import { getOrderDetail, getOrderLocal } from '../../../utils/recharge';
 import { popNewMessage, timestampFormat } from '../../../utils/tools';
 
 // ============================导出
@@ -19,7 +19,7 @@ interface Props {
     transactionTime:string;
     transactionType:string;
     money:number;
-    GTNum:number;
+    amount:number;
 }
 
 enum PayState {
@@ -36,7 +36,7 @@ export class TransactionDetails extends Widget {
         transactionTime:'0',
         transactionType:'未支付',
         money:0,
-        GTNum:0
+        amount:0
     };
     public ok:() => void;
 
@@ -57,13 +57,16 @@ export class TransactionDetails extends Widget {
             this.props.state = PayState[3];                
             this.paint();
         });
-        
-        // popNewMessage({ zh_Hans:'获取订单信息失败',zh_Hant:'获取订单信息失败',en:'' });
+        getOrderLocal(this.props.oid).then(res => {
+            console.log('getOrderLocal ',res);
+        }).catch(err => {
+            console.log('getOrderLocal ',err);
+        });
     }
     
     public setData(res:any) {
         this.props.state = PayState[res.state];
-        this.props.GTNum = res.num / 100;
+        this.props.amount = res.num / 100;
         this.props.money = res.total / 100;
         this.props.transactionTime = timestampFormat(res.time * 1000); 
         this.props.transactionType = res.payType === 'alipay' ? '支付宝支付' :'微信支付' ;
