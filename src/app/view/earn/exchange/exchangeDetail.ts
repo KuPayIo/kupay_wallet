@@ -8,6 +8,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { uploadFileUrlPrefix } from '../../../config';
 import { getOneUserInfo, queryDetailLog } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
+import { currencyType } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -38,8 +39,7 @@ export class ExchangeDetail extends Widget {
             totalNum:0,
             totalAmount:0,
             greatUser:-1,
-            greatAmount:0,
-            ctypeShow:'KT'
+            greatAmount:0
         };
         this.initData();
     }
@@ -79,7 +79,7 @@ export class ExchangeDetail extends Widget {
 
         const redBagList = value[0];
         if (!this.props.ctypeShow) {
-            this.props.ctypeShow = CloudCurrencyType[redBagList[0].ctype];
+            this.props.ctypeShow = currencyType(CloudCurrencyType[redBagList[0].ctype]);
         }
         
         for (let i = 0;i < redBagList.length;i++) {

@@ -1,5 +1,4 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    <img src="../../../res/image1/topbar_backimg.png" style="position: absolute;top: 0;right: 0;"/>
     <div w-class="top-head" ev-next-click="doScanClick">
         {{: topBarTitle = {"zh_Hans":it.currencyName +"收款","zh_Hant":it.currencyName +"收款","en":""} }}
         <app-components-topBar-topBar>{"title":{{topBarTitle}},background:"transparent"}</app-components-topBar-topBar>

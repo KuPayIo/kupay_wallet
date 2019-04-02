@@ -41,6 +41,9 @@
     box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.1);
 
 }
+.pop-box-no-animate{
+    display: none;
+}
 .user-item{
     display: flex;
     height: 100px;

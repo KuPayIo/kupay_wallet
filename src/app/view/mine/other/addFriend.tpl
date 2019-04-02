@@ -12,7 +12,7 @@
         <div style="text-align: center;">
             <app-components-qrcode-qrcode>{value:{{it.acc_id}},size:"350"}</app-components-qrcode-qrcode>
             <div style="font-size: 32px;color: #222222;margin-top: 50px;">
-                <pi-ui-lang>{"zh_Hans":"扫码加好友、扫码转账","zh_Hant":"掃碼加好友、掃碼轉賬","en":""}</pi-ui-lang>
+                <pi-ui-lang>{"zh_Hans":"扫码加好友","zh_Hant":"掃碼加好友","en":""}</pi-ui-lang>
             </div>
         </div>
     </div>

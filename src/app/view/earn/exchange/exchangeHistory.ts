@@ -123,9 +123,8 @@ export class ExchangeHistory extends Widget {
                 rid: '-1',
                 rtype: '99',
                 rtypeShow: parseRtype(99),
-                ctype: CloudCurrencyType.ETH,
-                ctypeShow: 'ETH',
-                amount: 0.15,
+                ctypeShow: '银锄',
+                amount: 1,
                 time: data.value,
                 timeShow: timestampFormat(data.value),
                 userName:this.language.inviteRedEnv

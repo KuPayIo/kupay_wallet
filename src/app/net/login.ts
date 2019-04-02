@@ -1,8 +1,7 @@
 /**
  * 钱包登录模块
  */
-import * as chatStore from '../../chat/client/app/data/store';
-import { getStore as earnGetStore,register as earnRegister } from '../../earn/client/app/store/memstore';
+
 import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
@@ -14,7 +13,6 @@ import { CMD, defaultPassword } from '../utils/constants';
 import { closeAllPage, delPopPhoneTips, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getInviteUserAccIds, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
-import { setReconnectingState } from './reconnect';
 
 // 登录成功之后的回调列表
 const loginedCallbackList:LoginType[] = [];
@@ -43,6 +41,7 @@ setReloginCallback((res) => {
  */
 export const walletManualReconnect = () => {
     const conRandom = getStore('user/conRandom');
+    console.log('walletManualReconnect called');
     if (conRandom) {
         console.log('walletManualReconnect reopen');
         reopen(conReOpen);
@@ -61,7 +60,6 @@ export const openConnect = (secrectHash:string = '') => {
     open(conSuccess(secrectHash),conError,conClose,conReOpen);
 };
 
-const reconnectinName = 'wallet';
 /**
  * 连接成功回调
  */
@@ -70,7 +68,6 @@ const conSuccess = (secrectHash:string) => {
         console.log('con success');
         setStore('user/offline',false);
         getRandom(secrectHash);
-        setReconnectingState(reconnectinName,false);
     };
 };
 
@@ -81,7 +78,6 @@ const conError = (err) => {
     console.log('con error');
     setStore('user/isLogin',false);
     setStore('user/offline',true);
-    setReconnectingState(reconnectinName,false);
 };
 
 /**
@@ -91,7 +87,6 @@ const conClose = () => {
     console.log('con close');
     setStore('user/isLogin',false);
     setStore('user/offline',true);
-    setReconnectingState(reconnectinName,false);
 };
 
 /**
@@ -100,7 +95,6 @@ const conClose = () => {
 const conReOpen = () => {
     console.log('con reopen');
     setStore('user/offline',false);
-    setReconnectingState(reconnectinName,false);
     // console.log();
 };
 
@@ -526,14 +520,6 @@ const loginWalletFailedPop = async () => {
     defaultLogin(secretHash,conRandom);
 };
 
-/**
- * 设置allIsLogin
- */
-const setAllIsLogin = () => {
-    const newAllIsLogin =  getStore('user/isLogin') && earnGetStore('userInfo/isLogin') && chatStore.getStore('isLogin');
-    setStore('user/allIsLogin',newAllIsLogin);
-};
-
 // 注册store
 export const registerStore = () => {
     // 用户信息变化
@@ -565,20 +551,5 @@ export const registerStore = () => {
             // btc fees
         fetchBtcFees();
 
-    });
-
-    // 钱包login
-    register('user/isLogin', () => {
-        setAllIsLogin();
-    });
-
-    // 赚钱login
-    earnRegister('userInfo/isLogin', () => {
-        setAllIsLogin();
-    });
-
-    // 聊天login
-    chatStore.register('isLogin', () => {
-        setAllIsLogin();
     });
 };

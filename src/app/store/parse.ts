@@ -2,7 +2,7 @@ import { isArray } from '../../pi/net/websocket/util';
 import { uploadFileUrlPrefix } from '../config';
 import { PAGELIMIT } from '../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
+import { currencyType, formatBalance, GetDateDiff,getStaticLanguage,parseRtype, timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
 import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, MiningRank, PurchaseHistory } from './interface';
@@ -29,7 +29,7 @@ export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> =
  * 后端定义的任务id
  */
 export enum TaskSid {
-    Mine = '101',                 // 新挖矿
+    Mine = '11',                 // 游戏 实际上是appid
     Recharge = 301,            // 充值
     Withdraw = 302,            // 提现
     CreateWallet = 1001,       // 创建钱包
@@ -421,7 +421,7 @@ export const parseSendRedEnvLog = (value,sta) => {
             rid:r[i][0].toString(),
             rtype:r[i][1],
             ctype:r[i][2],
-            ctypeShow:currencyName,
+            ctypeShow:currencyType(currencyName),
             amount:smallUnit2LargeUnit(currencyName,r[i][3]),
             time:r[i][4],
             timeShow:timestampFormat(r[i][4]),
@@ -462,7 +462,7 @@ export const parseConvertLog = (data,sta) => {
             rtype: r[i][2],
             rtypeShow: parseRtype(r[i][2]),
             ctype: r[i][3],
-            ctypeShow:currencyName,
+            ctypeShow:currencyType(currencyName),
             amount: smallUnit2LargeUnit(currencyName, r[i][4]),
             time: r[i][5],
             timeShow: timestampFormat(r[i][5])

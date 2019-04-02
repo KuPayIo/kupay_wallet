@@ -300,7 +300,7 @@ pi_tools.createThirdApiStyleTag = function() {
     style.type = "text/css";
     style.innerHTML = cssText
     document.getElementsByTagName("head")[0].appendChild(style);
-}
+};
 
 
 
@@ -336,7 +336,7 @@ pi_tools.createAuthorizeElementTag = function() {
 
     var $body = document.querySelector("body");
     $body.appendChild($root);
-}
+};
 
 //创建支付弹窗标签
 pi_tools.createPayElementTag = function() {
@@ -371,7 +371,7 @@ pi_tools.createPayElementTag = function() {
     var $body = document.querySelector(".pi-root");
     $body.appendChild($root);
     $body.style.display = 'flex';
-}
+};
 
 //创建设置免密弹窗标签
 pi_tools.createInputBoxElementTag =  function(title) {
@@ -399,7 +399,7 @@ pi_tools.createInputBoxElementTag =  function(title) {
     $root.appendChild($mask);
 
     document.querySelector("body").appendChild($root);
-}
+};
 
 //创建加载弹窗标签
 pi_tools.popNewLoading = function(loadingStr) {
@@ -421,7 +421,7 @@ pi_tools.popNewLoading = function(loadingStr) {
     $root.appendChild($mask);
 
     document.querySelector("body").appendChild($root);
-}
+};
 
 /**
  * 密码弹框
@@ -452,7 +452,7 @@ pi_jsApi.authorize = function (payload, callBack) {
         console.log('getOpenId call success', result);
         callBack(error, result);
     });
-}
+};
 
 
 // 第三方支付
@@ -498,7 +498,7 @@ pi_jsApi.thirdPay = function (order, callBack) {
             callBack(error,{ result:payCode.FAILED });
         }
     });
-}
+};
 
 // 第三方设置免密支付
 // openFreeSecret:设置免密支付状态  
@@ -523,7 +523,7 @@ pi_jsApi.setFreeSecrectPay = function (openFreeSecret) {
             pi_tools.closePopBox();
         });
     });
-}
+};
 
 
 

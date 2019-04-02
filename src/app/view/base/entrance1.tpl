@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page" >
+<div class="new-page" w-class="new-page" on-tap="closePopBox">
     <img src="../../res/image/login_logo.png" w-class="logo"/>
     <div w-class="body2">
         <div w-class="users">
@@ -7,7 +7,7 @@
                 <div w-class="name">{{it.accountList[it.selectedAccountIndex].nickName}}</div>
                 <img src="../../res/image/40.png" w-class="more" />
             </div>
-            <div w-class="pop-box" style="height:{{it.showMoreUser ? it.popHeight : 0}}px; {{it.forceCloseMoreUser ? 'display:none;' : ''}} ">
+            <div w-class="pop-box {{it.noAnimate ? 'pop-box-no-animate' : ''}}" style="height:{{it.showMoreUser ? it.popHeight : 0}}px; {{it.forceCloseMoreUser ? 'display:none;' : ''}} ">
                 {{for index,item of it.accountList}}
                 <div w-class="user-item2" on-tap="chooseCurUser(e,{{index}})">
                     <img src="{{item.avatar}}" w-class="avatar"/>
@@ -26,7 +26,7 @@
        
     </div>
     <div w-class="bottom" >
-        <div w-class="bottom-item" on-tap="phoneLoginClick">
+        <div w-class="bottom-item"  on-tap="phoneLoginClick">
             <img src="../../res/image/phone_login.png"/>
             <pi-ui-lang w-class="item-text">{"zh_Hans":"手机登录","zh_Hant":"手機登錄","en":""}</pi-ui-lang>
         </div>
