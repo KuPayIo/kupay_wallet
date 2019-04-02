@@ -149,11 +149,11 @@ export class PlayHome extends Widget {
      */
     public gameClick(num:number) {
         closePopFloatBox();
-        // if (!this.isLogin) {
-        //     popNewMessage('登录中,请稍后再试');
+        if (!this.isLogin) {
+            popNewMessage('登录中,请稍后再试');
 
-        //     return;
-        // }
+            return;
+        }
         if (!gameList[num].url) {
             const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
             popNewMessage(tips[getLang()]);

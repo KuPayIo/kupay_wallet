@@ -315,13 +315,6 @@ export const popNewLoading = (text: any) => {
     return popNew('app-components1-loading-loading', { text });
 };
 
-/**
- * 打开密码输入框
- */
-const openMessageboxPsw = (BoxInputTitle?,content?):Promise<string> => {
-    
-};
-
 // 计算支持的币币兑换的币种
 export const currencyExchangeAvailable = () => {
     const changellyCurrencies = getStore('third/changellyCurrencies', []);
