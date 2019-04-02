@@ -64,6 +64,8 @@ export const openConnect = (secrectHash:string = '') => {
  * 连接成功回调
  */
 const conSuccess = (secrectHash:string) => {
+    console.time('login');
+
     return () => {
         console.log('con success');
         setStore('user/offline',false);
@@ -173,7 +175,7 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
 
     return requestAsync(msgLogin).then((r:any) => {
         console.log('============================好嗨号acc_id:',r.acc_id);
-        setStore('user/info/acc_id',r.acc_id);
+        setStore('user/info/acc_id',r.acc_id,false);
         applyAutoLogin();
         setStore('user/isLogin', true);
         loginWalletSuccess();

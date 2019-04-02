@@ -177,14 +177,6 @@ export class PlayHome extends Widget {
         popNew3(this.props.activityList[index].url);
     }
 
-    public payJump(e: any) {
-        console.log();
-        const gameTitle = '第三方';
-        const gameUrl =  'http://192.168.7.71:50/';
-        this.thirdApiPromise.then(content => {
-            WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
-        });
-    }
 }
 
 // ========================================
@@ -200,6 +192,5 @@ register('user/info',() => {
 });
 
 register('user/isLogin', (isLogin:boolean) => {
-    console.log('play / home -------',isLogin);
     forelet.paint(isLogin);
 });
