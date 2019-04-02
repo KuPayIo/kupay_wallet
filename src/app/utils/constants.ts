@@ -157,3 +157,6 @@ export const SCPrecision = 100;
 
 // 微信支付显示
 export const wxPayShow = 'HighApp';
+
+// 美元默认汇率
+export const USD2CNYRateDefault = 6;

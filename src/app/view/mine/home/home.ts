@@ -11,7 +11,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, hasWallet, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { copyToClipboard, getUserInfo, hasWallet, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出
@@ -196,7 +196,17 @@ export class Home extends Widget {
      */
     public scanQrcode() {
         doScanQrCode((res) => {
-            console.log(res);
+            console.log('扫一扫！！！！！！！！！！！！！！！！',res);
+            if (res.search(/^\d{1,}$/) !== -1) {
+                // 添加好友
+                popNew3('chat-client-app-view-chat-addUser',{ rid:res });
+            } else if (res.startsWith('0x') && res.length === 42) {
+                // 判断转账ETH地址
+                popNew('app-view-wallet-transaction-transfer',{ currencyName:'ETH',address:res });
+            } else {
+                // 判断转账BTC
+                popNew('app-view-wallet-transaction-transfer',{ currencyName:'BTC',address:res });
+            }
         });
     }
 

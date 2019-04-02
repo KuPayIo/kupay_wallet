@@ -21,6 +21,7 @@
             <pi-ui-lang>{{it.showPin ? redEnvType[1] : redEnvType[0]}}</pi-ui-lang>
             <pi-ui-lang>{{changePin[1]}}</pi-ui-lang>
             <span w-class="changeType" on-tap="changePin">
+                <pi-ui-lang>{{changePin[1]}}</pi-ui-lang>
                 <pi-ui-lang>{{it.showPin? redEnvType[0] : redEnvType[1]}}</pi-ui-lang>
             </span>
             {{end}}

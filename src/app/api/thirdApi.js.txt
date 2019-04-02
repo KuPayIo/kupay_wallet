@@ -474,7 +474,7 @@ pi_jsApi.thirdPay = function (order, callBack) {
             pi_tools.popNewMessage("支付成功");
             callBack(error,res);
         }else if(res.result === payCode.SETNOPASSWORD || res.result === payCode.EXCEEDLIMIT){
-            var title = res.result === payCode.SETNOPASSWORD ? "未开启免密支付，请输入密码" : "免密额度到达上限";
+            var title = res.result === payCode.SETNOPASSWORD ? "未开启免密支付，请输入支付密码" : "免密额度到达上限";
             pi_tools.popInputBox(title,function(value){
                 pi_tools.popNewLoading('支付中...');
                 pi_RPC_Method(pi_config.jsApi, "thirdPayDirect", {order,password:value}, function (error, res) {
