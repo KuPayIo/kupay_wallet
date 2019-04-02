@@ -64,6 +64,8 @@ export const openConnect = (secrectHash:string = '') => {
  * 连接成功回调
  */
 const conSuccess = (secrectHash:string) => {
+    console.time('login');
+
     return () => {
         console.log('con success');
         setStore('user/offline',false);
@@ -173,7 +175,7 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
 
     return requestAsync(msgLogin).then((r:any) => {
         console.log('============================好嗨号acc_id:',r.acc_id);
-        setStore('user/info/acc_id',r.acc_id);
+        setStore('user/info/acc_id',r.acc_id,false);
         applyAutoLogin();
         setStore('user/isLogin', true);
         loginWalletSuccess();
@@ -185,7 +187,8 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
 };
 
 /**
- * 获取openId
+ * 授权用户openID接口
+ * @param appId appId 
  */
 export const getOpenId = (appId:string) => {
     const msg = { type: 'get_openid', param: { appid:appId } };

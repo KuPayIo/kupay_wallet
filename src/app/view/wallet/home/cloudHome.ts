@@ -5,7 +5,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
 import { getProductList, getServerCloudBalance } from '../../../net/pull';
-import { Product } from '../../../store/interface';
+import { CloudCurrencyType, Product } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, hasWallet, popNew3 } from '../../../utils/tools';
@@ -44,8 +44,8 @@ export class CloudHome extends Widget {
         if (!hasWallet()) return;
         const index = e.index;
         const v = this.props.assetList[index];
-        if (v.currencyName === 'SC') {
-            popNew3('app-view-wallet-cloudWalletSC-home',{ currencyName:v.currencyName,gain:v.gain });
+        if (v.currencyName === CloudCurrencyType[CloudCurrencyType.SC] || v.currencyName === CloudCurrencyType[CloudCurrencyType.KT]) {
+            popNew3('app-view-wallet-cloudWalletCustomize-home',{ currencyName:v.currencyName,gain:v.gain });
         } else {
             popNew3('app-view-wallet-cloudWallet-home',{ currencyName:v.currencyName,gain:v.gain });
         }

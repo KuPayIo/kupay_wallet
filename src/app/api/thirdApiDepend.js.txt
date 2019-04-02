@@ -256,7 +256,22 @@ window.pi_RPC_Method = (function () {
     };
 })();
 
-
+/**
+ * 函数防抖
+ */
+pi_tools.throttle = function(func){
+    var intervel = 300;
+    var lastTime = 0;
+    return function () {
+      var nowTime = + new Date()
+      var context = this;
+      var args = arguments;
+      if (nowTime - lastTime > intervel) {
+        func.apply(context, args);
+        lastTime = nowTime
+      }
+    }
+};
 /**
  * 自适应
  */
@@ -401,7 +416,7 @@ pi_tools.floatButtonInit = function (){
   <span class="pi-dot2"></span>
   <span class="pi-dot1"></span>
   `;
-  $floatButton.addEventListener("click",function(){
+  $floatButton.addEventListener("click",pi_tools.throttle(function(){
       var $bottomBox = document.createElement("div");
       $bottomBox.setAttribute("class","pi-bottom-box");
       $bottomBox.addEventListener("click",function(e){
@@ -423,7 +438,7 @@ pi_tools.floatButtonInit = function (){
         $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${imgUrl}" class="pi-item-img"/></div>
             <div class="pi-text">${text}</div>`;
         $bottomItem.addEventListener("click",function(){
-            item.clickCb();
+            (pi_tools.throttle(item.clickCb))();
             if(item.clickedClose){
                 pi_tools.closePopBox();
             }
@@ -446,7 +461,7 @@ pi_tools.floatButtonInit = function (){
         $bottomBox.style.bottom = "0px";
       });
 
-  });
+  }));
   document.querySelector("body").appendChild($floatButton);
 };
 

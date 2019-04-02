@@ -5,7 +5,6 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
@@ -34,22 +33,9 @@ export class CloudWalletHome extends Widget {
         const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
         const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
         const color = getStore('setting/changeColor','redUp');
-        let topBarTitle = '';
-        let recharge;
-        let withdraw;
-        if (this.props.currencyName === 'KT') {
-            topBarTitle = getModulConfig('KT_SHOW');
-            recharge = { zh_Hans:'入账',zh_Hant:'入賬',en:'' };
-            withdraw = { zh_Hans:'出账',zh_Hant:'出賬',en:'' };
-        } else {
-            topBarTitle = this.props.currencyName;
-            recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
-            withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
-        }
-         
         this.props = {
             ...this.props,
-            topBarTitle,
+            topBarTitle:this.props.currencyName,
             tabs:[{
                 tab:this.language.total,
                 components:'app-view-wallet-cloudWallet-totalRecord'
@@ -57,10 +43,10 @@ export class CloudWalletHome extends Widget {
                 tab:this.language.other,
                 components:'app-view-wallet-cloudWallet-otherRecord'
             },{
-                tab:recharge[getLang()],
+                tab:this.language.recharge,
                 components:'app-view-wallet-cloudWallet-rechargeRecord'
             },{
-                tab:withdraw[getLang()],
+                tab:this.language.withdraw,
                 components:'app-view-wallet-cloudWallet-withdrawRecord'
             }],
             activeNum:0,
@@ -71,10 +57,6 @@ export class CloudWalletHome extends Widget {
             currencyUnitSymbol:getCurrencyUnitSymbol(),
             redUp: color === 'redUp'
         };
-        console.log('+++++++++++++',this.props.tabs);
-        if (this.props.currencyName === 'KT') {
-            this.props.tabs.splice(1,1);
-        }
     }
 
     public updateBalance() {
@@ -94,11 +76,7 @@ export class CloudWalletHome extends Widget {
      * 充值
      */
     public rechargeClick() {
-        if (this.props.currencyName === 'SC') {
-            popNew('app-view-wallet-cloudWalletSC-rechargeSC ');
-        } else {
-            popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
-        }
+        popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
     }
     /**
      * 提币

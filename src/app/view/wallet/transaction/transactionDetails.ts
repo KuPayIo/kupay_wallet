@@ -1,7 +1,7 @@
 /**
  * 交易详情页面
  */
-import { ShareToPlatforms, ShareType } from '../../../../pi/browser/shareToPlatforms';
+import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';

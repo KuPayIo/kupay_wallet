@@ -95,7 +95,7 @@ export class RechargeSC  extends Widget {
         confirmPay(orderDetail).then(res => {
             if (res) {
                 this.initData();
-                popNew('app-view-wallet-cloudWalletSC-transactionDetails', { oid: res.oid });
+                popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: res.oid });
                 this.paint();
                 setStore('flags/firstRecharge',true); // 首次充值
                 getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);

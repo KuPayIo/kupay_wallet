@@ -51,7 +51,7 @@ export const inviteFriends = (webviewName: string) => {
     console.log('wallet inviteFriends called');
     const gameItem = getGameItem(webviewName);
     popNew('earn-client-app-view-activity-inviteFriend',{
-        bgImg:gameItem.img[0],
+        bgImg:gameItem.img[2],
         shareUrl:gameItem.apkDownloadUrl,
         okCB:() => {
             WebViewManager.open(webviewName, `${gameItem.url}?${Math.random()}`, webviewName,'');
@@ -65,7 +65,7 @@ export const inviteFriends = (webviewName: string) => {
  */
 export const gotoRecharge = (webviewName: string) => {
     console.log('wallet gotoRecharge called');
-    popNew('app-view-wallet-cloudWalletSC-rechargeSC',{
+    popNew('app-view-wallet-cloudWalletCustomize-rechargeSC',{
         okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
         }
