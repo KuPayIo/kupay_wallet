@@ -612,26 +612,40 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
 
 };
 
-/**
- * 获取矿山排名列表
- */
-export const getMineRank = async (num: number) => {
-    const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
-    requestAsync(msg).then(data => {
-        const mineData = parseMineRank(data);
-        setStore('activity/mining/mineRank', mineData);
-    });
-};
+// /**
+//  * 获取矿山排名列表
+//  */
+// export const getMineRank = async (num: number) => {
+//     const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
+//     requestAsync(msg).then(data => {
+//         const mineData = parseMineRank(data);
+//         setStore('activity/mining/mineRank', mineData);
+//     });
+// };
+
+// /**
+//  * 获取挖矿排名列表
+//  */
+// export const getMiningRank = async (num: number) => {
+//     const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
+//     requestAsync(msg).then(data => {
+//         const miningData = parseMiningRank(data);
+//         setStore('activity/mining/miningRank', miningData);
+//     });
+// };
 
 /**
- * 获取挖矿排名列表
+ * 获取全部用户嗨豆排名列表
  */
-export const getMiningRank = async (num: number) => {
-    const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
-    requestAsync(msg).then(data => {
-        const miningData = parseMiningRank(data);
-        setStore('activity/mining/miningRank', miningData);
+export const getHighTop = async (num: number) => {
+    const msg = { type: 'wallet/cloud@get_high_top', param: { num: num } };
+
+    return new Promise((resolve,reject) => {
+        requestAsync(msg).then(data => {
+            resolve(parseMiningRank(data));
+        });
     });
+    
 };
 
 /**
