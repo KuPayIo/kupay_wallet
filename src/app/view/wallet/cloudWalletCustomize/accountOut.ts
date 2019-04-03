@@ -1,6 +1,7 @@
 /**
  * other record
  */
+import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
@@ -71,6 +72,17 @@ export class AccountOut extends Widget {
             console.log('加载中，请稍后~~~');
             this.loadMore();
         } 
+    }
+
+    public recordListItemClick(e:any,index:number) {
+        const item = this.props.recordList[index];
+        if (this.props.currencyName === CloudCurrencyType[CloudCurrencyType.SC] && item.oid) {
+            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails',{ 
+                oid:item.oid,
+                itype:item.itype,
+                ctype:item.amount >= 0 ? 1 : 2 
+            });
+        }
     }
 }
 

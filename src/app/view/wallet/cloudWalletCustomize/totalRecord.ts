@@ -74,8 +74,13 @@ export class TotalRecord extends Widget {
      * 查看详情界面
      */
     public recordListItemClick(e:any,index:number) {
-        if (this.props.recordList[index].oid) {
-            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails',{ oid:this.props.recordList[index].oid });
+        const item = this.props.recordList[index];
+        if (this.props.currencyName === CloudCurrencyType[CloudCurrencyType.SC] && item.oid) {
+            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails',{ 
+                oid:item.oid,
+                itype:item.itype,
+                ctype:item.amount >= 0 ? 1 : 2 
+            });
         }
     }
 
