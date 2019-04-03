@@ -5,6 +5,7 @@ import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
+import { getOpenId } from '../net/login';
 import { getOneUserInfo, requestAsync } from '../net/pull';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
@@ -33,9 +34,9 @@ export enum SetNoPassword {
  */
 export const authorize = (payload, callback) => {
     console.log('authorize called',payload);
-    getOpenId(payload.appId,(res) => {
+    getOpenId(payload.appId).then(resData => {
         const ret:any = {};
-        ret.openId = res.openid;
+        ret.openId = resData.openid;
         if (payload.avatar) {
             ret.avatar = getUserInfo().avatar;
         }
@@ -43,7 +44,7 @@ export const authorize = (payload, callback) => {
             ret.nickName = getUserInfo().nickName;
         }
         callback(undefined,ret);
-    },(err) => {
+    }).catch(err => {
         callback(err);
     });
 };
@@ -114,61 +115,6 @@ export const thirdPayDirect = (payload,callback) => {
     });
     
 };
-/**
- * 授权用户openID接口
- * @param appId appId 
- * @param okCb 成功回调 
- * @param failCb 失败回调
- */
-export const getOpenId = (appId:string,okCb:Function,failCb?:Function) => {
-    if (!appId) {
-        failCb && failCb(new Error('appId is not available'));
-
-        return;
-    }
-    // const authorize = JSON.parse(localStorage.getItem('authorize')) || {};
-    // if (authorize[appId]) {
-    //     okCb && okCb(authorize[appId]);
-
-    //     return;
-    // }
-    const msg = { type: 'get_openid', param: { appid:appId } };
-    requestAsync(msg).then(resData => {
-        // authorize[appId] = resData;
-        // localStorage.setItem('authorize',JSON.stringify(authorize));
-        okCb && okCb(resData);
-    }).catch(err => {
-        failCb && failCb(err); 
-    });
-    
-    // popNew('app-components-modalBox-modalBox', {
-    //     title: { zh_Hans:'是否授权',zh_Hant:'是否授權',en:'' },
-    //     content: { zh_Hans:'授权成功将获取您的基本信息',zh_Hant:'授權成功將獲取您的基本信息',en:'' },
-    //     sureText: { zh_Hans:'授权',zh_Hant:'授權',en:'' },
-    //     cancelText: { zh_Hans:'取消',zh_Hant:'取消',en:'' }
-    // },async () => {
-    //     const msg = { type: 'get_openid', param: { appid:appId } };
-    //     const close = popNew('app-components1-loading-loading', { text:'授权中...' });        
-    //     try {
-    //         const resData:any = await requestAsync(msg);
-    //         close.callback(close.widget);
-    //         if (resData.result === 1) {
-    //             authorize[appId] = resData;
-    //             localStorage.setItem('authorize',JSON.stringify(authorize));
-    //             okCb && okCb(resData);
-    //         } else {
-    //             failCb && failCb(resData); 
-    //         }
-            
-    //     } catch (err) {
-    //         console.log('get_openid--------',err);
-    //         failCb && failCb(err); 
-    //         close.callback(close.widget);
-    //     }
-    // },() => {
-    //     failCb && failCb(new Error('Deauthorization'));
-    // });
-};
 
 /**
  * 统一订单
@@ -221,7 +167,7 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
             // TODO 跳转充值页面
             minWebview1(webviewName);
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
-            console.log('商户信息 ==========',mchInfo);
+            console.log(`商户信息 ========== mch_id = ${order.mch_id}  mchInfo = ${mchInfo}`);
             const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
                 WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
             });
@@ -251,9 +197,9 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
 /**
  * 跳转充值页面
  */
-const gotoRecharge = (order:ThirdOrder,beneficiary:string = '未知',okCB:Function) => {
+const gotoRecharge = (order:ThirdOrder,beneficiary:string = '好嗨游戏',okCB:Function) => {
     return new Promise(resolve => {
-        popNew('app-view-wallet-cloudWalletSC-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
+        popNew('app-view-wallet-cloudWalletCustomize-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
             resolve(rechargeSuccess);
         });
     });

@@ -476,7 +476,8 @@ export const Config = {
                 '微信充值',
                 '支付宝充值',
                 '消费',
-                '收款'
+                '收款',
+                '充值贈送'
             ]
         },
         // 红包相关
@@ -508,7 +509,7 @@ export const Config = {
             exporting: '导出中...',
             loginSuccess: '登录成功',
             wrong: '错误',
-            PswBoxInputTitle: '请输入密码'
+            PswBoxInputTitle: '请输入支付密码'
         },
         // 转账交易相关信息
         transfer: {
@@ -638,7 +639,8 @@ export const Config = {
                 '微信充值',
                 '支付寶充值',
                 '消費',
-                '收款'
+                '收款',
+                '充值赠送'
             ]
         },
         // 红包相关
@@ -669,7 +671,7 @@ export const Config = {
             exporting: '導出中...',
             loginSuccess: '登錄成功',
             wrong: '錯誤',
-            PswBoxInputTitle: '請輸入密碼'
+            PswBoxInputTitle: '請輸入支付密碼'
         },
         // 转账交易相关信息
         transfer: {

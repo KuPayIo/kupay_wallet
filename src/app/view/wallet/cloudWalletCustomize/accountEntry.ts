@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
@@ -34,7 +35,6 @@ export class AccountEntry extends Widget {
             canLoadMore:allLogs.otherLogs.canLoadMore,
             isRefreshing:false
         };
-        this.loadMore();
     }
     /**
      * 更新props数据
@@ -55,9 +55,10 @@ export class AccountEntry extends Widget {
      * @param list 充值列表 
      */
     public parseRecordList(list:any) {
-        const scShow = getModulConfig('SC_SHOW');
+        // tslint:disable-next-line:max-line-length
+        const titleShow = this.props.currencyName === CloudCurrencyType[CloudCurrencyType.SC] ? getModulConfig('SC_SHOW') : getModulConfig('KT_SHOW');
         list.forEach((item) => {
-            item.amountShow = `+${item.amount} ${scShow}`;
+            item.amountShow = `+${item.amount} ${titleShow}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = item.behaviorIcon;
         });
@@ -69,9 +70,9 @@ export class AccountEntry extends Widget {
         getAccountDetail(this.props.currencyName,0,this.props.nextStart);
     }
     public getMoreList() {
-        const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
-        const h2 = document.getElementById('recharge-content-container').offsetHeight; 
-        const scrollTop = document.getElementById('recharge-scroller-container').scrollTop; 
+        const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
+        const h2 = getRealNode((<any>this.tree).children[0].children[0]).offsetHeight; 
+        const scrollTop = getRealNode((<any>this.tree).children[0]).scrollTop; 
         if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
             this.props.isRefreshing = true;
             this.paint();
@@ -81,7 +82,7 @@ export class AccountEntry extends Widget {
     }
     public recordListItemClick(e:any,index:number) {
         if (this.props.recordList[index].oid) {
-            popNew('app-view-wallet-cloudWalletSC-transactionDetails',{ oid:this.props.recordList[index].oid });
+            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails',{ oid:this.props.recordList[index].oid });
         }
     }
 }

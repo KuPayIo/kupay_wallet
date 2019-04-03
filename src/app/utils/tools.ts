@@ -15,7 +15,7 @@ import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, T
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { getCipherToolsMod, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
-import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval, USD2CNYRateDefault } from './constants';
 
 /**
  * 获取当前钱包对应货币正在使用的地址信息
@@ -276,14 +276,25 @@ export const calcHashValuePromise = (pwd, salt?):Promise<string> => {
     });
 };
 
+/**
+ * 弹出密码提示框
+ */
 export const popPswBox = (content = []) => {
-    try {
+    return new Promise(async (resolve) => {
+        const name = 'app-components-modalBoxInput-modalBoxInput';
+        if (!lookup(name)) {
+            const name1 = name.replace(/-/g,'/');
+            const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+            await piLoadDir(sourceList);
+        }
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
-
-        return openMessageboxPsw(BoxInputTitle,content);
-    } catch (error) {
-        return '';
-    }
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
+            resolve(r);
+        }, () => {
+            resolve('');
+        });
+    });
+   
 };
 
 // 弹出提示框
@@ -302,25 +313,6 @@ export const popNewMessage = (content: any) => {
 // 弹出loading
 export const popNewLoading = (text: any) => {
     return popNew('app-components1-loading-loading', { text });
-};
-
-/**
- * 打开密码输入框
- */
-const openMessageboxPsw = (BoxInputTitle?,content?):Promise<string> => {
-    return new Promise(async (resolve, reject) => {
-        const name = 'app-components-modalBoxInput-modalBoxInput';
-        if (!lookup(name)) {
-            const name1 = name.replace(/-/g,'/');
-            const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
-            await piLoadDir(sourceList);
-        }
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
-            resolve(r);
-        }, (cancel: string) => {
-            reject(cancel);
-        });
-    });
 };
 
 // 计算支持的币币兑换的币种
@@ -454,7 +446,7 @@ export const fetchCloudTotalAssets = () => {
  */
 export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
     let balanceValue = 0;
-    const USD2CNYRate = getStore('third/rate', 1);
+    const USD2CNYRate = getStore('third/rate') || USD2CNYRateDefault;
     const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
     const silverPrice = getStore('third/silver/price') || 0;
@@ -530,7 +522,7 @@ export const fetchCloudWalletAssetList = () => {
         description: 'KT Token',
         balance: formatBalance(ktBalance),
         balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
-        gain: formatBalanceValue(0),
+        gain: fetchCloudGain(),
         rate:formatBalanceValue(0)
     };
     assetList.push(ktItem);
@@ -540,7 +532,7 @@ export const fetchCloudWalletAssetList = () => {
         description: 'SC',
         balance: formatBalance(scBalance),
         balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('SC',scBalance)),
-        gain: fetchSCGain(),
+        gain: fetchCloudGain(),
         rate:formatBalanceValue(fetchBalanceValueOfCoin('SC',1))
     };
     assetList.push(gtItem);
@@ -698,7 +690,7 @@ export const fetchSTGain = () => {
 };
 
 // 获取SC涨跌情况 
-export const fetchSCGain = () => {
+export const fetchCloudGain = () => {
     return formatBalanceValue(0);
 };
 /**

@@ -7,7 +7,7 @@ import { getModulConfig } from '../modulConfig';
 import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitGtAccountDetail } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
@@ -581,30 +581,28 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         const res = await requestAsync(msg);
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
-        const splitDetail = splitGtAccountDetail(detail); 
+        const splitDetail = splitCloudCurrencyDetail(detail); 
         const canLoadMore = detail.length >= PAGELIMIT;
         if (detail.length > 0) {
             const cloudWallets = getStore('cloud/cloudWallets');
             const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
-            if (filter === 1) {
-                if (start) {
-                    cloudWallet.otherLogs.list.push(...detail);
-                    if (coin === 'SC') {
-                        cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
-                        cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
-                    }
-                } else {
-                    cloudWallet.otherLogs.list = detail;
-                    if (coin === 'SC') {
-                        cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
-                        cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
-                    }
+            if (start) {
+                cloudWallet.otherLogs.list.push(...detail);
+                if (coin === CloudCurrencyType[CloudCurrencyType.SC] || coin === CloudCurrencyType[CloudCurrencyType.KT]) {
+                    cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
+                    cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
                 }
-                
-                cloudWallet.otherLogs.start = nextStart;
-                cloudWallet.otherLogs.canLoadMore = canLoadMore;
-                setStore('cloud/cloudWallets',cloudWallets);
+            } else {
+                cloudWallet.otherLogs.list = detail;
+                if (coin === CloudCurrencyType[CloudCurrencyType.SC] || coin === CloudCurrencyType[CloudCurrencyType.KT]) {
+                    cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
+                    cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
+                }
             }
+                
+            cloudWallet.otherLogs.start = nextStart;
+            cloudWallet.otherLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
         }
     } catch (err) {
         showError(err && (err.result || err.type));

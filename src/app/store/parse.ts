@@ -60,51 +60,52 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
     infos.forEach(v => {
         const itype = v[0];
         const amount = smallUnit2LargeUnit(coinType, v[1]);
+        const detailTypes = getStaticLanguage().cloudAccountDetail.types;
         let behavior = '';
         let behaviorIcon = '';
         switch (itype) {
             case TaskSid.Mine:
-                behavior = getStaticLanguage().cloudAccountDetail.types[0];
+                behavior = detailTypes[0];
                 behaviorIcon = 'behavior1010.png';
                 break;
             case TaskSid.InviteFriends:
-                behavior = getStaticLanguage().cloudAccountDetail.types[1];
+                behavior = detailTypes[1];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
             case TaskSid.LuckyMoney: 
-                behavior = amount > 0 ? getStaticLanguage().cloudAccountDetail.types[2] : getStaticLanguage().cloudAccountDetail.types[3];
+                behavior = amount > 0 ? detailTypes[2] : detailTypes[3];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
             case TaskSid.Recharge:
-                behavior = getStaticLanguage().cloudAccountDetail.types[4];
+                behavior = detailTypes[4];
                 behaviorIcon = 'cloud_charge_icon.png';
                 break;
             case TaskSid.Withdraw:
-                behavior = getStaticLanguage().cloudAccountDetail.types[5];
+                behavior = detailTypes[5];
                 behaviorIcon = 'cloud_withdraw_icon.png';
                 break;
             case TaskSid.FinancialManagement:
-                behavior = getStaticLanguage().cloudAccountDetail.types[6];
+                behavior = detailTypes[6];
                 behaviorIcon = 'behavior_manage_money_port.png';
                 break;
             case TaskSid.LuckyMoneyRetreat:
-                behavior = getStaticLanguage().cloudAccountDetail.types[7];
+                behavior = detailTypes[7];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
-            case TaskSid.Wxpay:
-                behavior = getStaticLanguage().cloudAccountDetail.types[8];
+            case TaskSid.Wxpay: 
+                behavior = coinType === 'KT' ? detailTypes[12] : detailTypes[8];
                 behaviorIcon = 'wxpay_rechange.png';
                 break;
             case TaskSid.Alipay:
-                behavior = getStaticLanguage().cloudAccountDetail.types[9];
+                behavior = coinType === 'KT' ? detailTypes[12] : detailTypes[9];
                 behaviorIcon = 'alipay_rechange.png';
                 break;
             case TaskSid.Consume:
-                behavior = getStaticLanguage().cloudAccountDetail.types[10];
+                behavior = detailTypes[10];
                 behaviorIcon = 'transfer_icon.png';
                 break;
             case TaskSid.Receipt:
-                behavior = getStaticLanguage().cloudAccountDetail.types[11];
+                behavior = detailTypes[11];
                 behaviorIcon = 'transfer_icon.png';
                 break;
             default:
@@ -126,13 +127,13 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
 /**
  * 解析GT流水
  */
-export const splitGtAccountDetail = (list:any[]) => {
+export const splitCloudCurrencyDetail = (list:any[]) => {
     const res = {
         rechangeList :[],
         withdrawList :[]
     };
     list.forEach(v => {
-        if (v.itype === TaskSid.Wxpay || v.itype === TaskSid.Alipay) {
+        if (v.amount > 0) {
             res.rechangeList.push(v);
         } else {
             res.withdrawList.push(v);

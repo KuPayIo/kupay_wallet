@@ -49,7 +49,7 @@ export class SettingPsw extends Widget {
             return;
         }
         if (!this.props.walletPsw || !this.props.walletPswConfirm) {
-            const tips = { zh_Hans:'请输入密码',zh_Hant:'請輸入密碼',en:'' };
+            const tips = { zh_Hans:'请输入支付密码',zh_Hant:'請輸入支付密碼',en:'' };
             popNewMessage(tips[getLang()]);
 
             return;

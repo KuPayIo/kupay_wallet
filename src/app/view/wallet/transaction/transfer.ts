@@ -14,7 +14,7 @@ import { MinerFeeLevel, TxHistory } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 import { doErrorShow } from '../../../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getStaticLanguage, judgeAddressAvailable, popPswBox, updateLocalTx, popNewMessage, popNewLoading } from '../../../utils/tools';
+import { fetchBalanceValueOfCoin, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getStaticLanguage, judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox, updateLocalTx } from '../../../utils/tools';
 import { fetchMinerFeeList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -24,6 +24,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
     currencyName:string;
     tx?:TxHistory;
+    address:string;
 }
 
 export class Transfer extends Widget {
@@ -47,7 +48,8 @@ export class Transfer extends Widget {
         this.props = {
             ...this.props,
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
-            toAddr:tx ? tx.toAddr : '',
+            // tslint:disable-next-line:binary-expression-operand-order
+            toAddr:tx ? tx.toAddr : '' || (this.props.address || ''),
             amount:tx ? tx.pay : 0,
             balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
             minerFee:minerFeeList[curLevel].minerFee,
