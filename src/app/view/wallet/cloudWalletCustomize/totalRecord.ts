@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
@@ -74,7 +75,7 @@ export class TotalRecord extends Widget {
      */
     public recordListItemClick(e:any,index:number) {
         if (this.props.recordList[index].oid) {
-            popNew('app-view-wallet-cloudWalletSC-transactionDetails',{ oid:this.props.recordList[index].oid });
+            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails',{ oid:this.props.recordList[index].oid });
         }
     }
 
@@ -89,9 +90,9 @@ export class TotalRecord extends Widget {
      * 加载更多数据
      */
     public getMoreList() {
-        const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
-        const h2 = document.getElementById('recharge-content-container').offsetHeight; 
-        const scrollTop = document.getElementById('recharge-scroller-container').scrollTop; 
+        const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
+        const h2 = getRealNode((<any>this.tree).children[0].children[0]).offsetHeight; 
+        const scrollTop = getRealNode((<any>this.tree).children[0]).scrollTop; 
         if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
             this.props.isRefreshing = true;
             this.paint();

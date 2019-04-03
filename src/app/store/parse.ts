@@ -60,51 +60,52 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
     infos.forEach(v => {
         const itype = v[0];
         const amount = smallUnit2LargeUnit(coinType, v[1]);
+        const detailTypes = getStaticLanguage().cloudAccountDetail.types;
         let behavior = '';
         let behaviorIcon = '';
         switch (itype) {
             case TaskSid.Mine:
-                behavior = getStaticLanguage().cloudAccountDetail.types[0];
+                behavior = detailTypes[0];
                 behaviorIcon = 'behavior1010.png';
                 break;
             case TaskSid.InviteFriends:
-                behavior = getStaticLanguage().cloudAccountDetail.types[1];
+                behavior = detailTypes[1];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
             case TaskSid.LuckyMoney: 
-                behavior = amount > 0 ? getStaticLanguage().cloudAccountDetail.types[2] : getStaticLanguage().cloudAccountDetail.types[3];
+                behavior = amount > 0 ? detailTypes[2] : detailTypes[3];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
             case TaskSid.Recharge:
-                behavior = getStaticLanguage().cloudAccountDetail.types[4];
+                behavior = detailTypes[4];
                 behaviorIcon = 'cloud_charge_icon.png';
                 break;
             case TaskSid.Withdraw:
-                behavior = getStaticLanguage().cloudAccountDetail.types[5];
+                behavior = detailTypes[5];
                 behaviorIcon = 'cloud_withdraw_icon.png';
                 break;
             case TaskSid.FinancialManagement:
-                behavior = getStaticLanguage().cloudAccountDetail.types[6];
+                behavior = detailTypes[6];
                 behaviorIcon = 'behavior_manage_money_port.png';
                 break;
             case TaskSid.LuckyMoneyRetreat:
-                behavior = getStaticLanguage().cloudAccountDetail.types[7];
+                behavior = detailTypes[7];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
-            case TaskSid.Wxpay:
-                behavior = getStaticLanguage().cloudAccountDetail.types[8];
+            case TaskSid.Wxpay: 
+                behavior = coinType === 'KT' ? detailTypes[12] : detailTypes[8];
                 behaviorIcon = 'wxpay_rechange.png';
                 break;
             case TaskSid.Alipay:
-                behavior = getStaticLanguage().cloudAccountDetail.types[9];
+                behavior = coinType === 'KT' ? detailTypes[12] : detailTypes[9];
                 behaviorIcon = 'alipay_rechange.png';
                 break;
             case TaskSid.Consume:
-                behavior = getStaticLanguage().cloudAccountDetail.types[10];
+                behavior = detailTypes[10];
                 behaviorIcon = 'transfer_icon.png';
                 break;
             case TaskSid.Receipt:
-                behavior = getStaticLanguage().cloudAccountDetail.types[11];
+                behavior = detailTypes[11];
                 behaviorIcon = 'transfer_icon.png';
                 break;
             default:
@@ -126,13 +127,13 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
 /**
  * 解析GT流水
  */
-export const splitGtAccountDetail = (list:any[]) => {
+export const splitCloudCurrencyDetail = (list:any[]) => {
     const res = {
         rechangeList :[],
         withdrawList :[]
     };
     list.forEach(v => {
-        if (v.itype === TaskSid.Wxpay || v.itype === TaskSid.Alipay) {
+        if (v.amount > 0) {
             res.rechangeList.push(v);
         } else {
             res.withdrawList.push(v);
@@ -179,32 +180,31 @@ export const parseMineRank = (data) => {
  * 处理挖矿排名列表
  */
 export const parseMiningRank = (data) => {
-    const miningData: MiningRank = {
-        page: 1,
-        isMore: false,
-        rank: [],
-        myRank:data.me
+    const miningData = {
+        miningKTnum: 0,  // 当前用户的嗨豆总数量
+        rank: [],  // 排名列表
+        miningRank: data.me  // 当前用户的排名
     };
 
-    if (data.value.length > 100) {
-        miningData.isMore = true;
-    } 
-    const data2 = [];
+    const res = [];
     for (let i = 0; i < data.value.length && i < 100; i++) {
-        const user = unicodeArray2Str(data.value[i][1]);
+        const user = unicodeArray2Str(data.value[i][2]);
         const userData = user ? JSON.parse(user) :'';
         let avatar = userData ? userData.avatar :'';
         if (avatar && avatar.indexOf('data:image') < 0) {
             avatar = `${uploadFileUrlPrefix}${avatar}`;
         }
-        data2.push({
-            index: data.value[i][3],
-            name: userData ? userData.nickName :getStaticLanguage().userInfo.name,
-            avatar,
-            num: formatBalance(kpt2kt(data.value[i][2]))
+        
+        res.push({
+            rank: data.value[i][4],  // 排名
+            userName: userData ? userData.nickName :getStaticLanguage().userInfo.name, // 用户名称
+            avatar,  // 头像
+            ktNum: formatBalance(kpt2kt(data.value[i][3])),  // 嗨豆数量
+            acc_id: data.value[i][0]  // 用户 accId
         });
     }
-    miningData.rank = data2;
+    miningData.miningKTnum = res[data.me - 1].ktNum;
+    miningData.rank = res;
     
     return miningData;
 };

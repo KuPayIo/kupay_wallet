@@ -1,10 +1,9 @@
 /**
  * 搜索游戏
  */
-import { rippleShow } from '../../../chat/client/app/logic/logic';
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { hasWallet } from '../../utils/tools';
+import { hasWallet, rippleShow } from '../../utils/tools';
 import { activityList } from './home/gameConfig';
 
 interface Props {

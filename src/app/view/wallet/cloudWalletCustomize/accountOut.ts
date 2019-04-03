@@ -2,6 +2,7 @@
  * other record
  */
 import { Forelet } from '../../../../pi/widget/forelet';
+import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
 import { getWithdrawLogs } from '../../../net/pull';
@@ -46,9 +47,10 @@ export class AccountOut extends Widget {
 
     // tslint:disable-next-line:typedef
     public parseRecordList(list) {
-        const scShow = getModulConfig('SC_SHOW');
+        // tslint:disable-next-line:max-line-length
+        const titleShow = this.props.currencyName === CloudCurrencyType[CloudCurrencyType.SC] ? getModulConfig('SC_SHOW') : getModulConfig('KT_SHOW');
         list.forEach((item) => {
-            item.amountShow = `${item.amount} ${currencyType(scShow)}`;
+            item.amountShow = `${item.amount} ${currencyType(titleShow)}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = item.behaviorIcon;
         });
@@ -60,9 +62,9 @@ export class AccountOut extends Widget {
         getWithdrawLogs(this.props.currencyName,this.props.nextStart);
     }
     public getMoreList() {
-        const h1 = document.getElementById('withdraw-scroller-container').offsetHeight; 
-        const h2 = document.getElementById('withdraw-content-container').offsetHeight; 
-        const scrollTop = document.getElementById('withdraw-scroller-container').scrollTop; 
+        const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
+        const h2 = getRealNode((<any>this.tree).children[0].children[0]).offsetHeight; 
+        const scrollTop = getRealNode((<any>this.tree).children[0]).scrollTop; 
         if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
             this.props.isRefreshing = true;
             this.paint();

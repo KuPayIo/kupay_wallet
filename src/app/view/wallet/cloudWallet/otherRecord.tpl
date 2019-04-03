@@ -1,5 +1,5 @@
-<div class="new-page" w-class="new-page">
-    <div w-class="main">
+<div class="new-page" w-class="new-page" >
+    <div w-class="main" on-scroll="getMoreList">
     {{if it.recordList.length <= 0}}
     <div w-class="no-recode">
         <img src="../../../res/image/dividend_history_none.png" w-class="no-recode-icon"/>

@@ -164,12 +164,14 @@ export class WriteRedEnv extends Widget {
      * 切换货币
      */
     public changeCoin(e: any) {
-        this.props.selected = e.selected;
-        this.props.oneAmount = 0;
-        this.props.totalNum = this.props.inFlag === 'chat_user' ? 1 :0; 
-        this.props.totalAmount = 0;
-        this.props.message = '';
-        this.paint();
+        if (this.props.selected !== e.selected) {
+            this.props.selected = e.selected;
+            this.props.oneAmount = 0;
+            this.props.totalNum = this.props.inFlag === 'chat_user' ? 1 :0; 
+            this.props.totalAmount = 0;
+            this.props.message = '';
+            this.paint();
+        }
     }
 
     /**
