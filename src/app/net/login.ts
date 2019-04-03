@@ -150,9 +150,11 @@ export const autoLogin = async (conRandom:string) => {
         }
         
     }).catch((res) => {
-        setStore('user/token','');
         setStore('user/isLogin', false);
-        loginWalletFailed();
+        if (res.error !== -69) {
+            setStore('user/token','');
+            loginWalletFailed();
+        }
     });
 };
 /**
@@ -181,7 +183,9 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
         loginWalletSuccess();
     }).catch(err => {
         setStore('user/isLogin', false);
-        loginWalletFailed();
+        if (err.error !== -69) {
+            loginWalletFailed();
+        }
     });
 
 };
