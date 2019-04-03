@@ -8,7 +8,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { Option, phoneImport } from '../../../logic/localWallet';
 import { getRandom, logoutAccountDel } from '../../../net/login';
-import { getMineDetail, regPhone, verifyPhone } from '../../../net/pull';
+import { regPhone, verifyPhone } from '../../../net/pull';
 import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
 import { getDataCenter } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';

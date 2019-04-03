@@ -208,12 +208,11 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     console.log('getRandom--------------');
     const wallet = getStore('wallet');
     if (!wallet) return;
-    const deviceInfo = getStore('setting/deviceInfo') || {};
-    const client = deviceInfo.system || navigator.userAgent;
+    const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
     const param:any = {
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
-        client:JSON.stringify(client),
+        device_id:deviceId,
         flag:1
     };
     if (cmd) {
