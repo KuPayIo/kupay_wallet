@@ -656,7 +656,9 @@ export const verifyPhone = async (phone:string,num: string) => {
 export const sendCode = async (phone: string, num: string,verify:boolean = true) => {
     if (verify) {
         const v = await verifyPhone(phone,num);
-        if (!v) {
+        if (v) {
+            popNewMessage('手机号已绑定');
+
             return;
         }
     }

@@ -9,6 +9,8 @@
  * placeholder:输入框提示语
  * 外部监听 ev-sure，ev-forgetPsw 事件,event.value获取输入框中数据  
  */
+import { getLocalStorage } from '../../../chat/client/app/data/lcstore';
+import { GENERATOR_TYPE } from '../../../chat/server/data/db/user.s';
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
@@ -76,6 +78,9 @@ export class ModalBoxInput extends Widget {
             });
         },() => {   // 取消删除钱包
             console.log('联系客服');
+            getChatUid(getLocalStorage('officialService').HAOHAI_SERVANT).then((r) => {
+                popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER });
+            });
         });      
     }
     /**

@@ -19,7 +19,7 @@
             <div class="detail-head">
                 <div class="detail-head-inner"></div>
             </div>
-            <div class="detail-amount"><span id="amount">1</span><span class="detail-currency-name" id="currencyName">KT</span></div>
+            <div class="detail-amount"><span id="amount">1</span><span class="detail-currency-name" id="currencyName"></span></div>
             <div class="detail-leave-message" id="message">恭喜发财 万事如意</div>
             <div class="detail-input-father">
                 <div class="input-father" id="code">000000</div>
@@ -29,7 +29,7 @@
         </div>
 
         <div class="detail-bottom" id="detailBottom">
-            <div class="detail-title" id="detailTitle">已领取1/2，共10 KT</div>
+            <div class="detail-title" id="detailTitle"></div>
             <div class="detail-list" id="detailList">
                已领取红包用户列表
             </div>
@@ -40,12 +40,15 @@
 <script src="main20181112.js"></script>
 <script src="bignumber.js"></script>
 <script>
+    function getCurrencyNameShow(ctype){
+        return CloudCurrencyType[ctype] === 'KT' ? '嗨豆' : CloudCurrencyType[ctype];
+    }
     const props = JSON.parse(window.localStorage.takeRedBag);
     const lan = getLanguage();
     (function init() {
         document.getElementById('message').innerText = props.leaveMsg;
         document.getElementById('amount').innerText = props.amount;
-        document.getElementById('currencyName').innerText = CloudCurrencyType[props.ctype];
+        document.getElementById('currencyName').innerText = getCurrencyNameShow(props.ctype);
         document.getElementById('code').innerText = props.cidShow;
         document.getElementById('copyBtn').innerText = lan.copyBtn;
         document.getElementById('receiveBtn').innerText = lan.receiveBtn;
@@ -99,7 +102,7 @@
         totalAmount = totalAmount;
 
         document.getElementById('detailBottom').style.display = 'block';
-        document.getElementById('detailTitle').innerText = lan.tips[0] + convertedNumber + '/' + totalNumber + '，' + lan.tips[1] + totalAmount + CloudCurrencyType[props.ctype];
+        document.getElementById('detailTitle').innerText = lan.tips[0] + convertedNumber + '/' + totalNumber + '，' + lan.tips[1] + totalAmount + getCurrencyNameShow(props.ctype);
         // 领取红包，其他用户获得的红包列表
         if (!redBagList) {
             return;
@@ -111,7 +114,7 @@
                 '<div class="detail-item-right">' +
                 '<div class="detail-box1">' +
                 '<div class="detail-name" id="userName">' + redBagList[i].userName + '</div>' +
-                '<div id="userAmount">' + redBagList[i].amount + '&nbsp;' + CloudCurrencyType[redBagList[i].ctype] + '</div>' +
+                '<div id="userAmount">' + redBagList[i].amount + '&nbsp;' + getCurrencyNameShow(redBagList[i].ctype) + '</div>' +
                 '</div>' +
                 '<div class="detail-box2">' +
                 '<div class="detail-time" id="timeShow">' + redBagList[i].timeShow + '</div>' +

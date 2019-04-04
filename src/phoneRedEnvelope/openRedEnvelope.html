@@ -111,7 +111,7 @@ function openRedEnvelopeClick() {
  */
 function openNormalRedEnvelope() {
     const res = JSON.parse(takeRedEnvelope(state.rid));
-    
+    console.log(res);
     setTimeout(async () => {
         switch (res.result) {
             case 1:

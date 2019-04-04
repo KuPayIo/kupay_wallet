@@ -7,7 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { Option, phoneImport } from '../../../logic/localWallet';
-import { getRandom, kickOffline, logoutAccountDel } from '../../../net/login';
+import { getRandom, logoutAccountDel } from '../../../net/login';
 import { regPhone, verifyPhone } from '../../../net/pull';
 import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
 import { getDataCenter } from '../../../utils/commonjsTools';
