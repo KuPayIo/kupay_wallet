@@ -505,7 +505,7 @@ const loginWalletFailedPop = async () => {
         const walletToolsMod = await getWalletToolsMod();
         secretHash = await walletToolsMod.VerifyIdentidy(psw);
     } else {
-        psw = await popPswBox([],true);
+        psw = await popPswBox([],true,true);
         if (!psw) {
             return;
         }

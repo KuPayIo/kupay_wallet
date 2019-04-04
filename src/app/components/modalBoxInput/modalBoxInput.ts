@@ -10,6 +10,7 @@
  * 外部监听 ev-sure，ev-forgetPsw 事件,event.value获取输入框中数据  
  */
 import { getLocalStorage } from '../../../chat/client/app/data/lcstore';
+import { getChatUid } from '../../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../../chat/server/data/db/user.s';
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
@@ -29,7 +30,7 @@ interface Props {
 export class ModalBoxInput extends Widget {
     public props: any;
     public ok: (value:string) => void;
-    public cancel: (fg:boolean) => void;   // fg为true表示退出APP(或点击取消)，false表示忘记密码删除钱包
+    public cancel: (fg:boolean) => void;   // fg为false表示退出APP(或点击取消)，true表示忘记密码
 
     public setProps(props:any,oldProps:any) {
         super.setProps(props,oldProps);
@@ -42,7 +43,7 @@ export class ModalBoxInput extends Widget {
      * 点击取消按钮
      */
     public cancelBtnClick() {
-        this.cancel && this.cancel(true);
+        this.cancel && this.cancel(false);
     }
     /**
      * 点击确认按钮
@@ -54,7 +55,7 @@ export class ModalBoxInput extends Widget {
      * 忘记密码
      */
     public foegetPsw() {
-        this.cancel && this.cancel(false);
+        this.cancel && this.cancel(true);
         const modalBox = { 
             zh_Hans:{
                 title:'忘记密码？',

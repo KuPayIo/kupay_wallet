@@ -280,7 +280,7 @@ export const calcHashValuePromise = (pwd, salt?):Promise<string> => {
 /**
  * 弹出密码提示框
  */
-export const popPswBox = (content = [],onlyOk:boolean = false):Promise<string> => {
+export const popPswBox = (content = [],onlyOk:boolean = false,cancelDel:boolean = false):Promise<string> => {
     return new Promise(async (resolve) => {
         const name = 'app-components-modalBoxInput-modalBoxInput';
         if (!lookup(name)) {
@@ -291,8 +291,9 @@ export const popPswBox = (content = [],onlyOk:boolean = false):Promise<string> =
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
         popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content,onlyOk }, (r: string) => {
             resolve(r);
+            if (cancelDel) popPswBox(content,onlyOk,cancelDel);
         }, (forgetPsw:boolean) => {
-            if (forgetPsw) logoutAccount();
+            if (cancelDel && !forgetPsw) logoutAccount();
             resolve('');
         });
     });
