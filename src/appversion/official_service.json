@@ -1,0 +1,12 @@
+{
+    "gameList":[
+        {
+            "url":"http://192.168.31.95/dst/boot/yineng/yineng.html",
+            "apkDownloadUrl":"http://127.0.0.1/wallet/appversion/haohaifairyChivalry.apk",
+            "accId":"268828",
+            "groupId":10001,
+            "appid":"102"
+        }
+    ],
+    "HAOHAI_SERVANT":"609727"
+}

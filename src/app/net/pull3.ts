@@ -1,4 +1,5 @@
 import { thirdUrlPre } from '../config';
+import { sourceIp, sourcePort } from '../ipConfig';
 import { setStore } from '../store/memstore';
 import { xorDecode1, xorEncode } from '../utils/tools';
 import { changellySign } from './pull';
@@ -210,4 +211,13 @@ export const changellyGetTransactions = (currencyName:string,addr:string) => {
     };
 
     return changellyFetchPost(message);
+};
+
+/**
+ * 获取官方客服等配置信息
+ */
+export const getOfficial = () => {
+    const url = `http://${sourceIp}:${sourcePort}/wallet/appversion/official_service.json`;
+
+    return fetch(url).then(res => res.json()).catch();
 };

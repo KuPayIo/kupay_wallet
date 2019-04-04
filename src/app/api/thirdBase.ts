@@ -1,4 +1,4 @@
-import { applyGameServer, applyToGroup } from '../../chat/client/app/net/rpc';
+import { applyToGroup, getChatUid } from '../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../chat/server/data/db/user.s';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
@@ -79,7 +79,7 @@ export const gotoRecharge = (webviewName: string) => {
 export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
     const item = getGameItem(webviewName);
-    applyGameServer(item.uid).then((r) => {
+    getChatUid(item.accId).then((r) => {
         popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER,okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
         } });
@@ -93,8 +93,8 @@ export const gotoGameService = (webviewName: string) => {
 export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
     const item = getGameItem(webviewName);
-    applyToGroup(item.gid).then(() => {
-        popNew('chat-client-app-view-chat-chat',{ id: item.gid, chatType: GENERATOR_TYPE.GROUP,okCB:() => {
+    applyToGroup(item.groupId).then((r) => {
+        popNew('chat-client-app-view-chat-chat',{ id: r, chatType: GENERATOR_TYPE.GROUP,okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
         } });
     });
