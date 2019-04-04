@@ -2,6 +2,7 @@
  * 微信、支付宝充值模块
  */
 
+import { getStore as earnGetStore, setStore  as earnSetStore } from '../../earn/client/app/store/memstore';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { getModulConfig } from '../modulConfig';
@@ -81,6 +82,8 @@ export const jumpWxpay = (order) => {
                 cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
             }, () => {
                 WebViewManager.freeView('payWebView');
+                const firstRecharge = earnGetStore('flags').firstRecharge;
+                if (!firstRecharge) earnSetStore('flags/firstRecharge',true);
                 resolve(order);
             }, () => {
                 WebViewManager.freeView('payWebView');
@@ -113,6 +116,8 @@ export const jumpAlipay = (order) => {
                 cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
             }, () => {
                 document.body.removeChild($payIframe);
+                const firstRecharge = earnGetStore('flags').firstRecharge;
+                if (!firstRecharge) earnSetStore('flags/firstRecharge',true);
                 resolve(order);
             }, () => {
                 document.body.removeChild($payIframe);

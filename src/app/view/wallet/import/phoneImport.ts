@@ -8,10 +8,11 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { Option, phoneImport } from '../../../logic/localWallet';
 import { getRandom, logoutAccountDel } from '../../../net/login';
+import { regPhone, verifyPhone } from '../../../net/pull';
 import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
 import { getDataCenter } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';
-import { playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
+import { delPopPhoneTips, playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -46,7 +47,8 @@ export class PhoneImport extends Widget {
      * 输入完成后确认
      */
     public async doSure() {
-        if (!this.props.phone) {
+        const phoneNum = this.props.phone; 
+        if (!phoneNum) {
             const tips = { zh_Hans:'请先获取验证码',zh_Hant:'請先獲取驗證碼',en:'' };
             popNewMessage(tips[getLang()]);
             this.props.code = [];
@@ -59,6 +61,7 @@ export class PhoneImport extends Widget {
             nickName:await playerName()
         };
         const close = popNewLoading('导入中');
+        const verify = await verifyPhone(phoneNum,this.props.areaCode);
         const secretHash = await phoneImport(option);
         if (!secretHash) {
             close.callback(close.widget);
@@ -66,37 +69,63 @@ export class PhoneImport extends Widget {
 
             return;
         }
-        const itype = await getRandom(secretHash,undefined,this.props.phone,this.props.code.join(''),this.props.areaCode);
-        console.log('getRandom itype = ',itype);
-        close.callback(close.widget);
-        if (itype === -301) {
-            popNewMessage('验证码错误');
-            logoutAccountDel(true);
-            this.props.code = [];
-            this.setCode();
-        } else if (itype === 1017) {
-            popNewMessage('手机号未绑定');
-            logoutAccountDel(true);
-            this.props.code = [];
-            this.setCode();
-        } else if (itype === 1) {
-            deletePrePhoneAccount(this.props.phone);
-            const userInfo = getStore('user/info');
-            userInfo.phoneNumber = this.props.phone;
-            setStore('user/info',userInfo,false);
-            popNewMessage('登录成功');
-            this.ok && this.ok();
-            // 刷新本地钱包
-            getDataCenter().then(dataCenter => {
-                dataCenter.refreshAllTx();
-                dataCenter.initErc20GasLimit();
-            });
+        if (verify) {  // 已经注册过
+            const itype = await getRandom(secretHash,undefined,phoneNum,this.props.code.join(''),this.props.areaCode);
+            console.log('getRandom itype = ',itype);
+            close.callback(close.widget);
+            if (itype === -301) {
+                this.phoneImportError('验证码错误');
+            } else if (itype === 1014) {
+                this.phoneImportSuccess(phoneNum);
+            } else if (itype === 1) {
+                this.phoneImportSuccess(phoneNum);
+            } else {
+                this.phoneImportError('出错啦');
+            }
         } else {
-            popNewMessage('出错啦');
-            logoutAccountDel(true);
-            this.props.code = [];
-            this.setCode();
+            const itype = await getRandom(secretHash);
+            console.log('getRandom itype = ',itype);
+            if (itype === 1) {
+                const data = await regPhone(this.props.phone, this.props.areaCode,this.props.code.join(''));
+                close.callback(close.widget);
+                if (data && data.result === 1) {
+                    const userinfo = getStore('user/info');
+                    userinfo.phoneNumber = this.props.phone;
+                    userinfo.areaCode = this.props.areaCode;
+                    setStore('user/info',userinfo);
+                    delPopPhoneTips();
+                    this.ok && this.ok();
+                } else {
+                    this.phoneImportError('出错啦');
+                }
+            } else {
+                close.callback(close.widget);
+                this.phoneImportError('出错啦');
+            }
         }
+        
+    }
+    // 手机导入失败
+    public phoneImportError(tips:string) {
+        popNewMessage(tips);
+        logoutAccountDel(true);
+        this.props.code = [];
+        this.setCode();
+    }
+    
+    // 手机导入成功
+    public phoneImportSuccess(phoneNum:string) {
+        deletePrePhoneAccount(phoneNum);
+        const userInfo = getStore('user/info');
+        userInfo.phoneNumber = phoneNum;
+        setStore('user/info',userInfo,false);
+        popNewMessage('登录成功');
+        this.ok && this.ok();
+        // 刷新本地钱包
+        getDataCenter().then(dataCenter => {
+            dataCenter.refreshAllTx();
+            dataCenter.initErc20GasLimit();
+        });
     }
 
     /**

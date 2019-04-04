@@ -11,6 +11,7 @@ import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
 import { getModulConfig } from '../modulConfig';
+import { logoutAccount } from '../net/login';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { getCipherToolsMod, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
@@ -279,7 +280,7 @@ export const calcHashValuePromise = (pwd, salt?):Promise<string> => {
 /**
  * 弹出密码提示框
  */
-export const popPswBox = (content = []) => {
+export const popPswBox = (content = [],onlyOk:boolean = false,cancelDel:boolean = false):Promise<string> => {
     return new Promise(async (resolve) => {
         const name = 'app-components-modalBoxInput-modalBoxInput';
         if (!lookup(name)) {
@@ -288,9 +289,11 @@ export const popPswBox = (content = []) => {
             await piLoadDir(sourceList);
         }
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content,onlyOk }, (r: string) => {
             resolve(r);
-        }, () => {
+            if (cancelDel) popPswBox(content,onlyOk,cancelDel);
+        }, (forgetPsw:boolean) => {
+            if (cancelDel && !forgetPsw) logoutAccount();
             resolve('');
         });
     });
@@ -1272,13 +1275,13 @@ export const getPopPhoneTips = () => {
     const modalBox = { 
         zh_Hans:{
             title:'绑定手机',
-            content:'亲爱的玩家，为了避免您的游戏数据在更换账号后清空，请绑定手机号',
+            content:'为了避免您的游戏数据丢失，请绑定手机号',
             sureText:'去绑定',
             onlyOk:true
         },
         zh_Hant:{
             title:'綁定手機',
-            content:'親愛的玩家，為了避免您的遊戲數據在更換賬號後清空，請綁定手機號',
+            content:'為了避免您的遊戲數據丟失，請綁定手機號',
             sureText:'去綁定',
             onlyOk:true
         },

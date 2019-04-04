@@ -666,14 +666,16 @@ export const getFriendsKTTops =  (arr:any) => {
 /**
  * 验证手机号是否被注册
  */
-export const verifyPhone = async(phone:string) => {
-    const msg = { type: 'wallet/user@check_phone', param: { phone } };
+export const verifyPhone = async (phone:string,num: string) => {
+    const msg = { type: 'wallet/user@check_phone', param: { phone,num } };
     try {
-        return await requestAsync(msg); 
-    } catch (err) {
-        showError(err && (err.result || err.type));
+        await requestAsync(msg); 
 
-        return;
+        return false;
+    } catch (err) {
+        if (err.result === 1005) return true;
+
+        return false; 
     }
 };
 
@@ -682,8 +684,10 @@ export const verifyPhone = async(phone:string) => {
  */
 export const sendCode = async (phone: string, num: string,verify:boolean = true) => {
     if (verify) {
-        const v = await verifyPhone(phone);
-        if (!v) {
+        const v = await verifyPhone(phone,num);
+        if (v) {
+            popNewMessage('手机号已绑定');
+
             return;
         }
     }
