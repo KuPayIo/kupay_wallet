@@ -45,12 +45,12 @@ const walletName = getWalletName();
 const Config= {
     zh_Hans:{ 
         copySuccess:"复制成功",
-        shortMess:walletName+"能赚钱的游戏平台",
+        shortMess:walletName+"好玩又赚钱",
         immeDownload:"立即下载",
         installTutorial:"使用教程",
-        step1:"点击“立即下载”按钮下载安装文件",
-        step2:walletName+"成功安装",
-        step3:"进入APP并创建钱包",
+        step1:"点击“下载”下载安装文件",
+        step2:"进入APP并创建账户",
+        step3:"在赚-兑换中使用兑换码或邀请码",
         redEnvMess:[
             "恭喜发财 万事如意",
             walletName+"大礼包"
@@ -82,12 +82,12 @@ const Config= {
     },
     zh_Hant:{
         copySuccess:"複製成功",
-        shortMess:walletName+"能賺錢的遊戲平台",
+        shortMess:walletName+"好玩又賺錢",
         immeDownload:"立即下載",
         installTutorial:"使用教程",
-        step1:"點擊“立即下載”按鈕下載安裝文件",
-        step2:walletName+"成功安裝",
-        step3:"進入APP並創建錢包",
+        step1:"點擊“下載”下載安裝文件",
+        step2:"進入APP並創建賬戶",
+        step3:"在賺-兌換中使用兌換碼或邀請碼",
         redEnvMess:[
             "恭喜發財 萬事如意",
             walletName+"大禮包"
@@ -263,7 +263,7 @@ function downloadClick() {
     if(ua.match(/MicroMessenger/i) == "micromessenger" || ua.match(/mqqbrowser/i)){
         document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
     }else{
-        location.href = "http://app.kuplay.io/KuPlay.apk";
+        location.href = "https://app.herominer.net/wallet/appversion/fairyChivalry1.0.3.apk";
     }
 }
 /**
