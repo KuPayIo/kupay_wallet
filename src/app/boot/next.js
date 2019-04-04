@@ -213,7 +213,8 @@ winit.initNext = function () {
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
-				
+				loadWalletLoginSource();  // 登录相关
+				loadImages(); // 预加载图片
 				
 			});
 		}, function (result) {
@@ -272,6 +273,7 @@ winit.initNext = function () {
 			"app/components1/",
 			"app/res/css/",
 			"app/res/js/",
+			"app/view/ceshi/",
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
@@ -294,8 +296,6 @@ winit.initNext = function () {
 	var enterApp = function(){
 		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
-			loadWalletLoginSource();  // 登录相关
-			loadImages(); // 预加载图片
 			console.time("enterApp ----");
 			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
 			util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
@@ -345,7 +345,7 @@ winit.initNext = function () {
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
 			setStore('flags/level_3_page_loaded', true);
 			console.timeEnd('all resource loaded');
-			// loadLeftImages();
+			loadLeftImages();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -373,11 +373,18 @@ winit.initNext = function () {
 			"chat/client/app/view/chat/messageRecord.tpl",
 			"chat/client/app/view/chat/messageRecord.js",
 			"chat/client/app/view/chat/messageRecord.wcss",
-			"chat/client/app/widget/topBar/topBar1.tpl",
-			"chat/client/app/widget/topBar/topBar1.js",
-			"chat/client/app/widget/topBar/topBar1.wcss",
+			"chat/client/app/view/chat/contactTop.tpl",
+			"chat/client/app/view/chat/contactTop.js",
+			"chat/client/app/view/chat/contactTop.wcss",
+			"chat/client/app/view/contactList/contactList.tpl",
+			"chat/client/app/view/contactList/contactList.js",
+			"chat/client/app/view/contactList/contactList.wcss",
+			"chat/client/app/view/contactList/contactItem.tpl",
+			"chat/client/app/view/contactList/contactItem.js",
+			"chat/client/app/view/contactList/contactItem.wcss",
 			"chat/client/app/widget/utilList/",
-			"chat/client/app/widget/imgShow/"
+			"chat/client/app/widget/imgShow/",
+			"chat/client/app/widget/topBar/"
 		]; 
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadChatSource");
@@ -630,8 +637,9 @@ function updateUiInit(){
  * 获取更新内容 版本号  修复的BUG等
  */
 function getUpdateContent(){
+	
 	var ajax = pi_modules.ajax.exports;
-	const url = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion/update.json";
+	const url = winit.appURL + "/update.json";
 	const timeout = 1000;
 	ajax.get(url + "?" + Math.random(), {}, undefined, undefined, timeout, function (updateJson) {
 		localStorage.setItem("updateJson",updateJson);

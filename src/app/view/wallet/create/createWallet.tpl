@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    {{: randomTitle = {"zh_Hans":"注册新账号","zh_Hant":"註冊新賬號","en":""} }}
+    {{: randomTitle = {"zh_Hans":"新区块链账号","zh_Hant":"新區塊鏈賬號","en":""} }}
     {{: imageTitle = {"zh_Hans":"设置密码","zh_Hant":"設置密碼","en":""} }}
     {{: topBarTitle = it.itype === it.createWalletType.Random ? randomTitle : imageTitle}}
     <app-components-topBar-topBar>{"title":{{ topBarTitle }} }</app-components-topBar-topBar>
@@ -8,6 +8,10 @@
         {{: imageTips = {"zh_Hans":"设置支付密码","zh_Hant":"設置支付密碼","en":""} }}
         {{: createTips = it.itype === it.createWalletType.Random ? randomTips : imageTips}}
         <div w-class="create-tips"><div w-class="tip-divid"></div><pi-ui-lang>{{createTips}}</pi-ui-lang></div>
+        {{if it.itype === it.createWalletType.StrandarImport}}
+        {{: createTips2 = {"zh_Hans":"为了您的资产安全，请您立即设置密码","zh_Hant":"為了您的資產安全，請您立即設置密碼","en":""} }}
+        <div w-class="create-tips2"><pi-ui-lang>{{createTips2}}</pi-ui-lang></div>
+        {{end}}
         <div w-class="bottom-box">
             {{if it.itype === it.createWalletType.Random}}
             <div w-class="avatar-container" on-tap="selectImageClick">
@@ -28,14 +32,14 @@
                 <app-components-input-suffixInput>{isShow:true,itype:"password",placeHolder:{{inputPlace}},clearable:true,available:{{it.pswEqualed}}}</app-components-input-suffixInput>
             </div>
             <div w-class="registered-protocol" ev-checkbox-click="checkBoxClick">
-                <span w-class="user-agree"><pi-ui-lang>{"zh_Hans":"我已经认证阅读并同意","zh_Hant":"我已經認證閱讀並同意","en":""}</pi-ui-lang></span>
+                <span w-class="user-agree"><pi-ui-lang>{"zh_Hans":"选择继续表示同意","zh_Hant":"選擇繼續表示同意","en":""}</pi-ui-lang></span>
                 <span w-class="user-protocol" on-tap="agreementClick"><pi-ui-lang>{"zh_Hans":"用户协议及隐私服务","zh_Hant":"用戶協議及隱私服務","en":""}</pi-ui-lang></span>
             </div>
             <div ev-btn-tap="createClick" w-class="btn">
                 {{: btnName = {"zh_Hans":"继续","zh_Hant":"繼續","en":""} }}
                 <app-components1-btn-btn>{"name":{{btnName}},"types":"big","color":"blue","cannotClick":{{!it.userProtocolReaded}} }</app-components1-btn-btn>
             </div>
-            {{: haveAccount = {"zh_Hans":"已有账号登录","zh_Hant":"已有賬號登錄","en":""} }}
+            {{: haveAccount = {"zh_Hans":"已有区块链账号","zh_Hant":"已有區塊鏈賬號","en":""} }}
             {{: imgLogin = {"zh_Hans":"使用照片注册","zh_Hant":"使用照片註冊","en":""} }}
             {{if it.itype === it.createWalletType.Random}}
             <div w-class="login-btns">

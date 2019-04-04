@@ -1,7 +1,8 @@
 /**
  * common tools
  */
-import { backCall, backList, popNew } from '../../pi/ui/root';
+import { getStore as chatGetStore } from '../../chat/client/app/data/store';
+import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { Callback } from '../../pi/util/util';
@@ -14,7 +15,7 @@ import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, T
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { getCipherToolsMod, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
-import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval, USD2CNYRateDefault } from './constants';
 
 /**
  * 获取当前钱包对应货币正在使用的地址信息
@@ -275,14 +276,25 @@ export const calcHashValuePromise = (pwd, salt?):Promise<string> => {
     });
 };
 
+/**
+ * 弹出密码提示框
+ */
 export const popPswBox = (content = []) => {
-    try {
+    return new Promise(async (resolve) => {
+        const name = 'app-components-modalBoxInput-modalBoxInput';
+        if (!lookup(name)) {
+            const name1 = name.replace(/-/g,'/');
+            const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+            await piLoadDir(sourceList);
+        }
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
-
-        return openMessageboxPsw(BoxInputTitle,content);
-    } catch (error) {
-        return '';
-    }
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
+            resolve(r);
+        }, () => {
+            resolve('');
+        });
+    });
+   
 };
 
 // 弹出提示框
@@ -301,25 +313,6 @@ export const popNewMessage = (content: any) => {
 // 弹出loading
 export const popNewLoading = (text: any) => {
     return popNew('app-components1-loading-loading', { text });
-};
-
-/**
- * 打开密码输入框
- */
-const openMessageboxPsw = (BoxInputTitle?,content?):Promise<string> => {
-    return new Promise(async (resolve, reject) => {
-        const name = 'app-components-modalBoxInput-modalBoxInput';
-        if (!lookup(name)) {
-            const name1 = name.replace(/-/g,'/');
-            const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
-            await piLoadDir(sourceList);
-        }
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
-            resolve(r);
-        }, (cancel: string) => {
-            reject(cancel);
-        });
-    });
 };
 
 // 计算支持的币币兑换的币种
@@ -453,20 +446,23 @@ export const fetchCloudTotalAssets = () => {
  */
 export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
     let balanceValue = 0;
-    const USD2CNYRate = getStore('third/rate', 1);
+    const USD2CNYRate = getStore('third/rate') || USD2CNYRateDefault;
     const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
     const currencyUnit = getStore('setting/currencyUnit', 'CNY');
     const silverPrice = getStore('third/silver/price') || 0;
-
     if (currencyUnit === 'CNY') {
         if (currencyName === 'ST') {
             balanceValue = balance * (silverPrice / 100);
+        } else if (currencyName === 'SC') {
+            balanceValue = balance;
         } else {
             balanceValue = balance * currency2USDT.close * USD2CNYRate;
         }
     } else if (currencyUnit === 'USD') {
         if (currencyName === 'ST') {
             balanceValue = (balance * (silverPrice / 100)) / USD2CNYRate;
+        } else if (currencyName === 'SC') {
+            balanceValue = balance / USD2CNYRate;
         } else {
             balanceValue = balance * currency2USDT.close;
         }
@@ -526,18 +522,18 @@ export const fetchCloudWalletAssetList = () => {
         description: 'KT Token',
         balance: formatBalance(ktBalance),
         balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
-        gain: formatBalanceValue(0),
+        gain: fetchCloudGain(),
         rate:formatBalanceValue(0)
     };
     assetList.push(ktItem);
-    const gtBalance = cloudBalances.get(CloudCurrencyType.ST) || 0;
+    const scBalance = cloudBalances.get(CloudCurrencyType.SC) || 0;
     const gtItem = {
-        currencyName: 'ST',
-        description: 'ST',
-        balance: formatBalance(gtBalance),
-        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('ST',gtBalance)),
-        gain: fetchGTGain(),
-        rate:formatBalanceValue(fetchBalanceValueOfCoin('ST',1))
+        currencyName: 'SC',
+        description: 'SC',
+        balance: formatBalance(scBalance),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('SC',scBalance)),
+        gain: fetchCloudGain(),
+        rate:formatBalanceValue(fetchBalanceValueOfCoin('SC',1))
     };
     assetList.push(gtItem);
     for (const k in CloudCurrencyType) {
@@ -683,13 +679,19 @@ export const fetchCoinGain = (currencyName: string) => {
     return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
 };
 
-export const fetchGTGain = () => {
+// 获取ST涨跌情况
+export const fetchSTGain = () => {
     const goldGain = getStore('third/silver/change');
     if (!goldGain) {
         return formatBalanceValue(0);
     } else {
         return formatBalanceValue(goldGain * 100);
     }
+};
+
+// 获取SC涨跌情况 
+export const fetchCloudGain = () => {
+    return formatBalanceValue(0);
 };
 /**
  * 转化rtype
@@ -1112,17 +1114,22 @@ export const getUserInfo = () => {
     const phoneNumber = userInfo.phoneNumber;
     const isRealUser = userInfo.isRealUser;
     const areaCode = userInfo.areaCode;
+    const acc_id = userInfo.acc_id;
     let avatar = userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
     }
+
+    const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
 
     return {
         nickName,
         avatar,
         phoneNumber,
         areaCode,
-        isRealUser
+        isRealUser,
+        acc_id,
+        level
     };
 };
 
@@ -1206,10 +1213,11 @@ export const calCurrencyLogoUrl = (currencyName:string) => {
  * 弹出三级页面
  */
 export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
-    if (!lookup(name)) {
+    const level_3_page_loaded = getStore('flags').level_3_page_loaded;
+    if (level_3_page_loaded) {
+        popNew(name,props,ok,cancel);
+    } else {
         const loading = popNew('app-components1-loading-loading1');
-        const name1 = name.replace(/-/g,'/');
-        const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
         const level3SourceList = [
             'app/core/',
             'app/logic/',
@@ -1227,13 +1235,11 @@ export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callb
             'earn/client/app/xls/',
             'earn/xlsx/'
         ];
-        sourceList.push(...level3SourceList);
-        piLoadDir(sourceList).then(() => {
+        piLoadDir(level3SourceList).then(() => {
+            console.log('popNew3 ------ all resource loaded');
             popNew(name,props,ok,cancel);
             loading.callback(loading.widget);
         });
-    } else {
-        popNew(name,props,ok,cancel);
     }
 };
 
@@ -1252,7 +1258,55 @@ export const currencyType = (str:string) => {
         return getModulConfig('ST_SHOW');
     } else if (str === 'KT') {
         return getModulConfig('KT_SHOW');
+    } else if (str === 'SC') {
+        return getModulConfig('SC_SHOW');
     } else {
         return str;
     }
+};
+
+/**
+ * 获取手机提示语
+ */
+export const getPopPhoneTips = () => {
+    const modalBox = { 
+        zh_Hans:{
+            title:'绑定手机',
+            content:'为了避免您的游戏数据丢失，请绑定手机号',
+            sureText:'去绑定',
+            onlyOk:true
+        },
+        zh_Hant:{
+            title:'綁定手機',
+            content:'為了避免您的遊戲數據丟失，請綁定手機號',
+            sureText:'去綁定',
+            onlyOk:true
+        },
+        en:'' 
+    };
+
+    return modalBox[getLang()];
+};
+// 检查手机弹框提示
+export const checkPopPhoneTips = () => {
+    if (localStorage.getItem('popPhoneTips')) {
+        
+        popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
+            popNew('app-view-mine-setting-phone',{ jump:true });
+        },undefined,true);      
+    }
+};
+
+// 设置手机弹框提示
+export const setPopPhoneTips = () => {
+    const userInfo = getUserInfo();
+    const popPhoneTips = localStorage.getItem('popPhoneTips');
+    if (!userInfo.phoneNumber && !popPhoneTips) localStorage.setItem('popPhoneTips','1');
+};
+
+/**
+ * 删除手机弹框提示
+ */
+export const delPopPhoneTips = () => {
+    if (localStorage.getItem('popPhoneTips')) localStorage.removeItem('popPhoneTips');
 };

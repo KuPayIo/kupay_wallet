@@ -17,6 +17,7 @@ export interface Store {
 
     third: Third;        // 第三方通信数据，如：changelly...
     flags: object;       // 全局的标识
+    inviteUsers:object;  // 邀请好友
 }
 
 /**
@@ -26,7 +27,8 @@ export enum CloudCurrencyType {
     KT = 100,  // KT
     ETH,       // ETH 
     BTC,       // BTC
-    ST         // ST
+    ST,         // ST
+    SC         // SC 银两
 }
 
 /**
@@ -63,7 +65,7 @@ export enum TxType {
  */
 export interface User {
 
-    id: string;            // 该账号的id
+    id: string;            // 该账号的id,实际上是第一个以太坊地址
 
     offline: boolean;       // 连接状态
     isLogin: boolean;      // 钱包登录状态
@@ -71,7 +73,7 @@ export interface User {
 
     token: string;         // 自动登录token
     conRandom: string;     // 连接随机数
-    conUid: string;         // 服务器连接uid
+    conUid: string;        // 服务器连接uid
     publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
 
     salt: string;          // 加密 盐值
@@ -217,6 +219,7 @@ export interface UserInfo {
     phoneNumber: string;   // 手机号
     areaCode:string;     // 手机区号
     isRealUser: boolean;    // 是否是真实用户
+    acc_id:string;  // 账户ID 钱包，聊天，活动统一账号
 }
 
 /**

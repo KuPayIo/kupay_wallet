@@ -1,8 +1,9 @@
+
 import { isArray } from '../../pi/net/websocket/util';
 import { uploadFileUrlPrefix } from '../config';
 import { PAGELIMIT } from '../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, GetDateDiff, getStaticLanguage,parseRtype,timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
+import { currencyType, formatBalance, GetDateDiff,getStaticLanguage,parseRtype, timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
 import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, MiningRank, PurchaseHistory } from './interface';
@@ -29,7 +30,7 @@ export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> =
  * 后端定义的任务id
  */
 export enum TaskSid {
-    Mine = '101',                 // 新挖矿
+    Mine = '11',                 // 游戏 实际上是appid
     Recharge = 301,            // 充值
     Withdraw = 302,            // 提现
     CreateWallet = 1001,       // 创建钱包
@@ -46,7 +47,9 @@ export enum TaskSid {
     LuckyMoney = 340,           // 红包
     LuckyMoneyRetreat = 341,     // 回退红包
     Wxpay = 370,                // 微信支付
-    Alipay = 371                // 支付宝支付
+    Alipay = 371,               // 支付宝支付
+    Consume = 360,               // 消费
+    Receipt = 361               // 收款
 }
 
 /**
@@ -58,44 +61,53 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
     infos.forEach(v => {
         const itype = v[0];
         const amount = smallUnit2LargeUnit(coinType, v[1]);
+        const detailTypes = getStaticLanguage().cloudAccountDetail.types;
         let behavior = '';
         let behaviorIcon = '';
         switch (itype) {
             case TaskSid.Mine:
-                behavior = getStaticLanguage().cloudAccountDetail.types[0];
+                behavior = detailTypes[0];
                 behaviorIcon = 'behavior1010.png';
                 break;
             case TaskSid.InviteFriends:
-                behavior = getStaticLanguage().cloudAccountDetail.types[1];
+                behavior = detailTypes[1];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
             case TaskSid.LuckyMoney: 
-                behavior = amount > 0 ? getStaticLanguage().cloudAccountDetail.types[2] : getStaticLanguage().cloudAccountDetail.types[3];
+                behavior = amount > 0 ? detailTypes[2] : detailTypes[3];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
             case TaskSid.Recharge:
-                behavior = getStaticLanguage().cloudAccountDetail.types[4];
+                behavior = detailTypes[4];
                 behaviorIcon = 'cloud_charge_icon.png';
                 break;
             case TaskSid.Withdraw:
-                behavior = getStaticLanguage().cloudAccountDetail.types[5];
+                behavior = detailTypes[5];
                 behaviorIcon = 'cloud_withdraw_icon.png';
                 break;
             case TaskSid.FinancialManagement:
-                behavior = getStaticLanguage().cloudAccountDetail.types[6];
+                behavior = detailTypes[6];
                 behaviorIcon = 'behavior_manage_money_port.png';
                 break;
             case TaskSid.LuckyMoneyRetreat:
-                behavior = getStaticLanguage().cloudAccountDetail.types[7];
+                behavior = detailTypes[7];
                 behaviorIcon = 'behavior_red_bag.png';
                 break;
-            case TaskSid.Wxpay:
-                behavior = getStaticLanguage().cloudAccountDetail.types[8];
+            case TaskSid.Wxpay: 
+                behavior = coinType === 'KT' ? detailTypes[12] : detailTypes[8];
                 behaviorIcon = 'wxpay_rechange.png';
                 break;
             case TaskSid.Alipay:
-                behavior = getStaticLanguage().cloudAccountDetail.types[9];
+                behavior = coinType === 'KT' ? detailTypes[12] : detailTypes[9];
                 behaviorIcon = 'alipay_rechange.png';
+                break;
+            case TaskSid.Consume:
+                behavior = detailTypes[10];
+                behaviorIcon = 'transfer_icon.png';
+                break;
+            case TaskSid.Receipt:
+                behavior = detailTypes[11];
+                behaviorIcon = 'transfer_icon.png';
                 break;
             default:
                 behavior = isArray(v[2]) ? unicodeArray2Str(v[2]) : v[2];
@@ -116,13 +128,13 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
 /**
  * 解析GT流水
  */
-export const splitGtAccountDetail = (list:any[]) => {
+export const splitCloudCurrencyDetail = (list:any[]) => {
     const res = {
         rechangeList :[],
         withdrawList :[]
     };
     list.forEach(v => {
-        if (v.itype === TaskSid.Wxpay || v.itype === TaskSid.Alipay) {
+        if (v.amount > 0) {
             res.rechangeList.push(v);
         } else {
             res.withdrawList.push(v);
@@ -169,34 +181,31 @@ export const parseMineRank = (data) => {
  * 处理挖矿排名列表
  */
 export const parseMiningRank = (data) => {
-    const miningData: MiningRank = {
-        page: 1,
-        isMore: false,
-        rank: [],
-        myRank:data.me
+    const miningData = {
+        rank: [],  // 排名列表
+        miningRank: data.me  // 当前用户的排名
     };
+    const res = [];
 
-    if (data.value.length > 100) {
-        miningData.isMore = true;
-    } 
-    const data2 = [];
     for (let i = 0; i < data.value.length && i < 100; i++) {
-        const user = unicodeArray2Str(data.value[i][1]);
+        const user = unicodeArray2Str(data.value[i][2]);
         const userData = user ? JSON.parse(user) :'';
         let avatar = userData ? userData.avatar :'';
         if (avatar && avatar.indexOf('data:image') < 0) {
             avatar = `${uploadFileUrlPrefix}${avatar}`;
-        }
-        data2.push({
-            index: data.value[i][3],
-            name: userData ? userData.nickName :getStaticLanguage().userInfo.name,
-            avatar,
-            num: formatBalance(kpt2kt(data.value[i][2]))
+        }  
+        res.push({
+            rank: data.value[i][4],  // 排名
+            userName: userData ? userData.nickName :getStaticLanguage().userInfo.name, // 用户名称
+            avatar,  // 头像
+            ktNum: formatBalance(kpt2kt(data.value[i][3])),  // 嗨豆数量
+            acc_id: data.value[i][0] // 用户 accId
         });
     }
-    miningData.rank = data2;
-    
+    miningData.rank = res;
+     
     return miningData;
+   
 };
 /**
  * 解析挖矿历史记录
@@ -411,7 +420,7 @@ export const parseSendRedEnvLog = (value,sta) => {
             rid:r[i][0].toString(),
             rtype:r[i][1],
             ctype:r[i][2],
-            ctypeShow:currencyName,
+            ctypeShow:currencyType(currencyName),
             amount:smallUnit2LargeUnit(currencyName,r[i][3]),
             time:r[i][4],
             timeShow:timestampFormat(r[i][4]),
@@ -452,7 +461,7 @@ export const parseConvertLog = (data,sta) => {
             rtype: r[i][2],
             rtypeShow: parseRtype(r[i][2]),
             ctype: r[i][3],
-            ctypeShow:currencyName,
+            ctypeShow:currencyType(currencyName),
             amount: smallUnit2LargeUnit(currencyName, r[i][4]),
             time: r[i][5],
             timeShow: timestampFormat(r[i][5])

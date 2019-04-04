@@ -1,8 +1,7 @@
 /**
  * 钱包登录模块
  */
-import * as chatStore from '../../chat/client/app/data/store';
-import { getStore as earnGetStore,register as earnRegister } from '../../earn/client/app/store/memstore';
+
 import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
@@ -11,10 +10,9 @@ import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } f
 import { Account, getAllAccount, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
 import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
 import { CMD, defaultPassword } from '../utils/constants';
-import { closeAllPage, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
+import { closeAllPage, delPopPhoneTips, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
-import { setReconnectingState } from './reconnect';
+import { fetchBtcFees, fetchGasPrices, getBindPhone, getInviteUserAccIds, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 
 // 登录成功之后的回调列表
 const loginedCallbackList:LoginType[] = [];
@@ -43,6 +41,7 @@ setReloginCallback((res) => {
  */
 export const walletManualReconnect = () => {
     const conRandom = getStore('user/conRandom');
+    console.log('walletManualReconnect called');
     if (conRandom) {
         console.log('walletManualReconnect reopen');
         reopen(conReOpen);
@@ -61,16 +60,16 @@ export const openConnect = (secrectHash:string = '') => {
     open(conSuccess(secrectHash),conError,conClose,conReOpen);
 };
 
-const reconnectinName = 'wallet';
 /**
  * 连接成功回调
  */
 const conSuccess = (secrectHash:string) => {
+    console.time('login');
+
     return () => {
         console.log('con success');
         setStore('user/offline',false);
         getRandom(secrectHash);
-        setReconnectingState(reconnectinName,false);
     };
 };
 
@@ -81,7 +80,6 @@ const conError = (err) => {
     console.log('con error');
     setStore('user/isLogin',false);
     setStore('user/offline',true);
-    setReconnectingState(reconnectinName,false);
 };
 
 /**
@@ -91,7 +89,6 @@ const conClose = () => {
     console.log('con close');
     setStore('user/isLogin',false);
     setStore('user/offline',true);
-    setReconnectingState(reconnectinName,false);
 };
 
 /**
@@ -100,7 +97,6 @@ const conClose = () => {
 const conReOpen = () => {
     console.log('con reopen');
     setStore('user/offline',false);
-    setReconnectingState(reconnectinName,false);
     // console.log();
 };
 
@@ -120,6 +116,7 @@ export const applyAutoLogin = async () => {
         const cipherToolsMod = await getCipherToolsMod();
         const decryptToken = cipherToolsMod.encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
+
     });
 };
 
@@ -143,10 +140,21 @@ export const autoLogin = async (conRandom:string) => {
         setStore('user/isLogin', true);
         console.log('自动登录成功-----------',res);
         loginWalletSuccess();
+
+        if (!getStore('inviteUsers').invite_success) {  // 如果本地没有记录则向后端请求邀请好友记录
+            getInviteUserAccIds().then(res => {
+                console.log('===============邀请好友id',res);
+                setStore('inviteUsers/invite_success',res.invites || []);  // 我邀请的好友
+                setStore('inviteUsers/convert_invite',res.invited || []);  // 邀请我的好友
+            });
+        }
+        
     }).catch((res) => {
-        setStore('user/token','');
         setStore('user/isLogin', false);
-        loginWalletFailed();
+        if (res.error !== -69) {
+            setStore('user/token','');
+            loginWalletFailed();
+        }
     });
 };
 /**
@@ -167,19 +175,24 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
     const signStr = sign(conRandom, wlt.exportPrivateKey());
     const msgLogin = { type: 'login', param: { sign: signStr } };
 
-    return requestAsync(msgLogin).then(() => {
+    return requestAsync(msgLogin).then((r:any) => {
+        console.log('============================好嗨号acc_id:',r.acc_id);
+        setStore('user/info/acc_id',r.acc_id,false);
         applyAutoLogin();
         setStore('user/isLogin', true);
         loginWalletSuccess();
     }).catch(err => {
         setStore('user/isLogin', false);
-        loginWalletFailed();
+        if (err.error !== -69) {
+            loginWalletFailed();
+        }
     });
 
 };
 
 /**
- * 获取openId
+ * 授权用户openID接口
+ * @param appId appId 
  */
 export const getOpenId = (appId:string) => {
     const msg = { type: 'get_openid', param: { appid:appId } };
@@ -195,13 +208,12 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     console.log('getRandom--------------');
     const wallet = getStore('wallet');
     if (!wallet) return;
-    const deviceInfo = getStore('setting/deviceInfo') || {};
-    const client = deviceInfo.system || navigator.userAgent;
+    const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
     const param:any = {
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
-        client:JSON.stringify(client),
-        flag:0
+        device_id:deviceId,
+        flag:1
     };
     if (cmd) {
         param.cmd = cmd;
@@ -331,6 +343,7 @@ export const logoutAccountDel = (noLogin?:boolean) => {
             popNew('app-view-base-entrance');
         }
     }
+    delPopPhoneTips();
 };
 
 /**
@@ -513,14 +526,6 @@ const loginWalletFailedPop = async () => {
     defaultLogin(secretHash,conRandom);
 };
 
-/**
- * 设置allIsLogin
- */
-const setAllIsLogin = () => {
-    const newAllIsLogin =  getStore('user/isLogin') && earnGetStore('userInfo/isLogin') && chatStore.getStore('isLogin');
-    setStore('user/allIsLogin',newAllIsLogin);
-};
-
 // 注册store
 export const registerStore = () => {
     // 用户信息变化
@@ -552,20 +557,5 @@ export const registerStore = () => {
             // btc fees
         fetchBtcFees();
 
-    });
-
-    // 钱包login
-    register('user/isLogin', () => {
-        setAllIsLogin();
-    });
-
-    // 赚钱login
-    earnRegister('userInfo/isLogin', () => {
-        setAllIsLogin();
-    });
-
-    // 聊天login
-    chatStore.register('isLogin', () => {
-        setAllIsLogin();
     });
 };

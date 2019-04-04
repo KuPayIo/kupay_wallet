@@ -24,6 +24,7 @@ export const initStore = () => {
         initAccount();          // 账户初始化
         initSettings();         // 设置初始化
         initThird();            // 三方数据初始化
+        initInviteUsers();      // 邀请好友数据初始化
         initFile().then(() => {
             resolve();
         });             // indexDb数据初始化
@@ -155,7 +156,7 @@ export const initCloudWallets = () => {
             cloudWallets.set(CloudCurrencyType[CloudCurrencyType[key]], cloudWallet);
         }
     }
-
+    
     return cloudWallets;
 };
 
@@ -417,6 +418,33 @@ const registerSettingChange = () => {
     register('setting', () => {
         settingChange();
     });
+    register('inviteUsers/invite_success', () => {
+        inviteUsersChange();
+    });
+    register('inviteUsers/convert_invite', () => {
+        inviteUsersChange();
+    });
+};
+
+/**
+ * 邀请好友数据变化
+ */
+const inviteUsersChange = () => {
+    const localInvite = {
+        invite_success: getStore('inviteUsers').invite_success || [],  // 我邀请的好友
+        convert_invite: getStore('inviteUsers').convert_invite || []  // 邀请我的好友
+    };
+    setLocalStorage('inviteUsers', localInvite);
+};
+
+/**
+ * 邀请好友数据初始
+ */
+const initInviteUsers = () => {
+    const flags = getLocalStorage('inviteUsers');
+    if (!flags) return;
+    setStore('inviteUsers/invite_success',flags.invite_success);
+    setStore('inviteUsers/convert_invite',flags.convert_invite);
 };
 
 /**
@@ -569,7 +597,9 @@ const store: Store = {
             nickName: '',           // 昵称
             avatar: '',             // 头像
             phoneNumber: '',        // 手机号
-            isRealUser: false       // 是否是真实用户
+            areaCode:'86',          // 区域码
+            isRealUser: false,       // 是否是真实用户
+            acc_id:''                // 好嗨号
         }
     },
     wallet: null,
@@ -627,7 +657,8 @@ const store: Store = {
         },
         currency2USDTMap: new Map<string, Currency2USDT>()  // k线  --> 计算涨跌幅
     },
-    flags: {}
+    flags: {},
+    inviteUsers:{}
 };
 
 initStore();

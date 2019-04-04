@@ -11,7 +11,7 @@
                 {{end}}
             </div>
         </div>
-        <app-components1-offlineTip-offlineTip></app-components1-offlineTip-offlineTip>
+        <app-components1-offlineTip-offlineTip>{offlienType:{{it.offlienType}} }</app-components1-offlineTip-offlineTip>
     </div>
     {{for i,v of it.tabs}} {{let isActive = i===it.activeNum}}
     <widget w-tag={{v.components}} style="visibility: {{isActive ? 'visible' : 'hidden'}}; z-index:{{isActive ? 0 : -1}};  width:100%;{{isActive ? 'flex:1 0 0;overflow-x: hidden;overflow-y: auto;scroll-behavior: smooth;-webkit-overflow-scrolling: touch;' : 'height: 0;'}}">{isActive:{{isActive}}}</widget>

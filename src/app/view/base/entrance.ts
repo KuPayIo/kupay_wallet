@@ -1,7 +1,5 @@
-import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
-import { getAllAccount } from '../../store/memstore';
 import { getLoginMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewMessage } from '../../utils/tools';
@@ -12,9 +10,6 @@ import { playerName, popNew3, popNewMessage } from '../../utils/tools';
 
 export class Entrance extends Widget {
     public ok:() => void;
-    public props:any = {
-        pswLogin:getAllAccount().length > 0
-    };
     // 游客登录
     public async touristLoginClick() {
         const option:Option = {
@@ -51,8 +46,11 @@ export class Entrance extends Widget {
         });
     }
 
-    public pswLoginClick() {
-        popNew('app-view-base-entrance1');
-        this.ok && this.ok();
+    // 手机登录
+    public phoneLoginClick() {
+        popNew3('app-view-wallet-import-phoneImport',{},() => {
+            this.ok && this.ok();
+        });
     }
+
 }

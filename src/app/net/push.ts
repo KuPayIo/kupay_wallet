@@ -2,10 +2,11 @@
  * 后端主动推消息给后端
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
-import { popNew } from '../../pi/ui/root';
-import { getAllAccount, getStore, register } from '../store/memstore';
+import { popModalBoxs, popNew } from '../../pi/ui/root';
+import { getLang } from '../../pi/util/lang';
+import { getAllAccount, getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
-import { closeAllPage, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
+import { closeAllPage, getPopPhoneTips, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
 import { getServerCloudBalance } from './pull';
 
@@ -16,6 +17,7 @@ import { getServerCloudBalance } from './pull';
 /**
  * 主动推送初始化
  */ 
+// tslint:disable-next-line:max-func-body-length
 export const initPush = () => {
     // 监听指令事件
     setPushListener('cmd',(res) => {
@@ -59,7 +61,7 @@ export const initPush = () => {
 
     // 监听充值成功事件
     setPushListener('event_pay_ok',(res) => {
-        const value = res.value.toJSNumber ? res.value.toJSNumber() : res.value;
+        // const value = res.value.toJSNumber ? res.value.toJSNumber() : res.value;
         getServerCloudBalance().then(res => {
             console.log('服务器推送成功 云端余额更新==========================',res);
         });
@@ -70,6 +72,32 @@ export const initPush = () => {
         };
     });
 
+    // 监听邀请好友成功事件
+    setPushListener('event_invite_success',(res) => {
+        console.log('event_invite_success服务器推送邀请好友成功=====================',res);
+        const invite = getStore('flags').invite_success || [];
+        if (res.accId) {
+            invite.push(res.accId);
+        }
+        setStore('flags/invite_success',invite);
+    });
+
+    // 监听兑换邀请码成功事件
+    setPushListener('event_convert_invite',(res) => {
+        console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
+        const invite = getStore('flags').convert_invite || [];
+        if (res.accId) {
+            invite.push(res.accId);
+        }
+        setStore('flags/convert_invite',invite);
+    });
+
+    // 监听邀请好友并成为真实用户事件
+    setPushListener('event_invite_real',(res) => {
+        console.log('event_invite_real服务器推送邀请好友并成为真实用户===============',res);
+        setStore('flags/invite_realUser',res.num);
+    });
+
     // 监听余额变化事件
     setMsgHandler('alter_balance_ok',(res) => {
         console.log('alter_balance_ok服务器推送成功==========================',res);
@@ -78,21 +106,33 @@ export const initPush = () => {
         const userInfo = getUserInfo();
         if (!wallet.setPsw) {
             setTimeout(() => {
-                popNew('app-view-mine-setting-settingPsw',{});
-            },2000);
+                const modalBox = { 
+                    zh_Hans:{
+                        title:'设置密码',
+                        content:'为了您的资产安全，请您立即设置支付密码',
+                        sureText:'去设置',
+                        onlyOk:true
+                    },
+                    zh_Hant:{
+                        title:'設置密碼',
+                        content:'為了您的資產安全，請您立即設置支付密碼',
+                        sureText:'去設置',
+                        onlyOk:true
+                    },
+                    en:'' 
+                };
+                popModalBoxs('app-components-modalBox-modalBox',modalBox[getLang()],() => {  
+                    popNew('app-view-mine-setting-settingPsw',{});
+                },undefined,true);
+                
+            },3000);
             
         } else if (!userInfo.phoneNumber) {
             setTimeout(() => {
-                popNew('app-components-allModalBox-modalBox3', {
-                    img:'app/res/image/bind_phone.png',
-                    tipTitle:'安全提醒',
-                    tipContent:`手机号是您找回云端资产的凭证
-为了您的资产安全请输入手机号`,
-                    btn:`验证手机`
-                },() => {
+                popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
                     popNew('app-view-mine-setting-phone',{ jump:true });
-                });
-            },2000);
+                },undefined,true);      
+            },3000);
             
         }
         

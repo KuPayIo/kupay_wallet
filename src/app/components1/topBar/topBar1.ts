@@ -9,10 +9,11 @@ import { popNew3, rippleShow } from '../../utils/tools';
 
 interface Props {
     avatar:string;
-    scrollHeight?:number;
-    refreshImg?:string;
-    refresh?:boolean;
-    text?:string;
+    scrollHeight:number;
+    refreshImg:string;
+    refresh:boolean;
+    text:string;
+    nextImg:string;
 }
 
 // ================================ 导出
@@ -47,6 +48,13 @@ export class TopBar1 extends Widget {
      */
     public showMine() {
         popNew3('app-view-mine-home-home');
+    }
+
+    /**
+     * 点击右侧按钮
+     */
+    public goNext(e:any) {
+        notify(e.node,'ev-next-click',null);
     }
 
 }

@@ -49,6 +49,33 @@ export const piRequire = (sourceList:string[]) => {
     });
 };
 
+/**
+ * js脚本下载
+ */
+export const loadJS = (roots, url, charset, callback, errText, i, afterCallback) => {
+    let n;
+    if (i >= roots.length) {
+        return callback && callback(roots[0] + url, errText);
+    }
+    const head = document.head || document.getElementsByTagName('head')[0] || document.documentElement;
+    n = document.createElement('script');
+    n.charset = charset;
+    n.onerror =  () => {
+        n.onload = n.onerror = undefined;
+        head.removeChild(n);
+        loadJS(roots, url, charset, callback, errText, i === undefined ? 0 : i + 1,afterCallback);
+    };
+    n.onload =  () => {
+        n.onload = n.onerror = undefined;
+        head.removeChild(n);
+        afterCallback && afterCallback();
+    };
+    n.async = true;
+    n.crossorigin = true;
+    n.src = roots[i || 0] + url;
+    head.appendChild(n);
+};
+
 // =============================app/core/genmnemonic================================================
 
 /**
@@ -97,18 +124,6 @@ export const getLoginMod = async () => {
 };
 
 // =============================app/net/login================================================
-
-// =============================app/net/reconnect================================================
-/**
- * 获取reconnect模块
- */
-export const getReconnectMod = async () => {
-    const mods = await piRequire(['app/net/reconnect']);
-
-    return mods[0];
-};
-
-// =============================app/net/reconnect================================================
 
 // =============================app/net/pull================================================
 /**

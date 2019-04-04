@@ -4,11 +4,13 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { uploadFileUrlPrefix } from '../../config';
+import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
 import { getModulConfig } from '../../modulConfig';
 import { loginSuccess } from '../../net/login';
 import { deleteAccount, getAllAccount } from '../../store/memstore';
-import { getWalletToolsMod } from '../../utils/commonjsTools';
-import { popNewLoading, popNewMessage } from '../../utils/tools';
+import { getLoginMod, getWalletToolsMod } from '../../utils/commonjsTools';
+import { defaultPassword } from '../../utils/constants';
+import { playerName, popNew3, popNewLoading, popNewMessage } from '../../utils/tools';
 
 // ============================导出
 export class Entrance1 extends Widget {
@@ -35,7 +37,8 @@ export class Entrance1 extends Widget {
             psw:'',
             showMoreUser:false,
             popHeight:this.calPopBoxHeight(accountList.length),
-            forceCloseMoreUser:false
+            forceCloseMoreUser:false,
+            noAnimate:false
         };
     }
     public calPopBoxHeight(len:number) {
@@ -51,6 +54,11 @@ export class Entrance1 extends Widget {
     }
     public closePopBox() {
         this.props.showMoreUser = false;
+        this.paint();
+    }
+    public closePopBoxNoAnimate() {
+        this.props.showMoreUser = false;
+        this.props.noAnimate = true;
         this.paint();
     }
     public delUserAccount(e:any,index:number) {
@@ -71,11 +79,6 @@ export class Entrance1 extends Widget {
     public chooseCurUser(e:any,index:number) {
         this.props.selectedAccountIndex = index;
         this.closePopBox();
-    }
-    // 注册新账户
-    public registerNewClick() {
-        this.ok && this.ok();
-        popNew('app-view-base-entrance');
     }
 
     public pswChange(e:any) {
@@ -106,5 +109,62 @@ export class Entrance1 extends Widget {
     public popMoreUser() {
         this.props.showMoreUser = !this.props.showMoreUser;
         this.paint();
+    }
+
+    // 注册登录 
+    public registerLoginClick() {
+        this.closePopBoxNoAnimate();
+        console.log('注册登录');
+        popNew3('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Random },() => {
+            this.ok && this.ok();
+        },() => {
+            this.props.noAnimate = false;
+            this.paint();
+        });
+    }
+    // 已有账户登录
+    public haveAccountClick() {
+        this.closePopBoxNoAnimate();
+        console.log('已有账户登录');
+        popNew3('app-view-wallet-import-standardImport',{},() => {
+            this.ok && this.ok();
+        },() => {
+            this.props.noAnimate = false;
+            this.paint();
+        });
+    }
+
+    // 手机登录
+    public phoneLoginClick() {
+        this.closePopBoxNoAnimate();
+        popNew3('app-view-wallet-import-phoneImport',{},() => {
+            this.ok && this.ok();
+        },() => {
+            this.props.noAnimate = false;
+            this.paint();
+        });
+    }
+
+    // 游客登录
+    public async touristLoginClick() {
+        this.closePopBoxNoAnimate();
+        const option:Option = {
+            psw: defaultPassword,
+            nickName: await playerName()
+        };
+        touristLogin(option).then((secrectHash:string) => {
+            if (!secrectHash) {
+                popNewMessage('登录失败');
+
+                return;
+            }
+            getLoginMod().then(mod => {
+                mod.openConnect(secrectHash);
+            });
+            
+            this.ok && this.ok();
+            popNewMessage('登录成功');
+        });
+        console.log('游客登录');
     }
 }

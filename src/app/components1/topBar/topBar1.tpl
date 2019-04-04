@@ -4,7 +4,7 @@
     <div w-class="topBar-content">
         <div style=" display: flex;align-items: center;">
             <div on-tap="showMine" on-down="onShow" >
-                <widget w-tag="app-components1-img-img" w-class="userHead" >{imgURL:{{it.avatar ? it.avatar : 'app/res/image/acc.png'}},width:"48px;"}</widget>
+                <widget w-tag="app-components1-img-img" w-class="userHead" >{imgURL:{{it.avatar ? it.avatar : 'app/res/image/default_avater_big.png'}},width:"48px;"}</widget>
             </div>
             {{if it.text}}
             <div w-class="total-asset">{{it.text}}</div>
@@ -14,7 +14,10 @@
             {{end}}
         </div>
         <div style="display:inline-block;" on-down="onShow">
-            <img src="../../res/image1/{{opca>0?'refresh_blue.png':'refresh_white.png'}}" w-class="refreshBtn" on-tap="refreshPage" class="{{it.refresh ?'refreshing':''}}"/>
+            {{if it.nextImg}}
+            <img src="{{it.nextImg}}" w-class="refreshBtn" on-tap="goNext"/>
+            {{end}}
+
         </div>
     </div>
 </div>

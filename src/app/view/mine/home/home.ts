@@ -8,10 +8,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { doScanQrCode, openNewActivity } from '../../../logic/native';
+import { doScanQrCode } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, hasWallet, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { copyToClipboard, getUserInfo, hasWallet, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { backupMnemonic } from '../../../utils/walletTools';
 
 // ================================ 导出
@@ -32,7 +32,6 @@ export class Home extends Widget {
         this.language = this.config.value[getLang()];
         const hasBackupMnemonic = false;
         const hasWallet = false;
-        const address = '';
         this.props = {
             isTourist:true,
             list:[
@@ -43,9 +42,10 @@ export class Home extends Widget {
                 { img:'../../../res/image/24.png',name: '',components:'app-view-mine-other-aboutus' }
                 
             ],
-            address,
+            acc_id:'000000',
             userName:'',
             avatar:'',
+            userLevel:0,
             close:false,
             hasWallet,
             hasBackupMnemonic,
@@ -77,9 +77,9 @@ export class Home extends Widget {
             ],
             medalest:''
         };
-        if (getModulConfig('GITHUB')) {
-            this.props.list.push({ img:'../../../res/image/43.png',name: '',components:'' });
-        }
+        // if (getModulConfig('GITHUB')) {
+        //     this.props.list.push({ img:'../../../res/image/43.png',name: '',components:'' });
+        // }
         this.initData();
     }
     
@@ -95,18 +95,19 @@ export class Home extends Widget {
         const userInfo = getUserInfo();
         if (userInfo) {
             this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
-            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/acc.png';
+            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+            this.props.userLevel = userInfo.level;
         }
 
         const wallet = getStore('wallet');
         if (wallet) {
             this.props.hasWallet = true;
-            this.props.address = getStore('user/id');
+            this.props.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
             this.props.hasBackupMnemonic = wallet.isBackup;    
             this.props.isTourist = !wallet.setPsw;        
         } else {
             this.props.hasWallet = false;
-            this.props.address = '';
+            this.props.acc_id = '';
         }
         this.medalest();
         this.paint();
@@ -165,9 +166,6 @@ export class Home extends Widget {
         if (ind === 0) {
             if (!hasWallet()) return;
             popNew('app-view-mine-account-home');
-        } else if (ind === 5) {
-            // window.open('https://github.com/KuPayIo/kupay_wallet');
-            openNewActivity('https://github.com/KuPayIo/kupay_wallet',this.props.walletName);
         } else {
             popNew(this.props.list[ind].components);
         }
@@ -178,7 +176,7 @@ export class Home extends Widget {
      * 复制地址
      */
     public copyAddr() {
-        copyToClipboard(this.props.address);
+        copyToClipboard(this.props.acc_id);
         popNewMessage(this.language.tips);
     }
 
@@ -198,7 +196,17 @@ export class Home extends Widget {
      */
     public scanQrcode() {
         doScanQrCode((res) => {
-            console.log(res);
+            console.log('扫一扫！！！！！！！！！！！！！！！！',res);
+            if (res.search(/^\d{1,}$/) !== -1) {
+                // 添加好友
+                popNew3('chat-client-app-view-chat-addUser',{ rid:res });
+            } else if (res.startsWith('0x') && res.length === 42) {
+                // 判断转账ETH地址
+                popNew('app-view-wallet-transaction-transfer',{ currencyName:'ETH',address:res });
+            } else {
+                // 判断转账BTC
+                popNew('app-view-wallet-transaction-transfer',{ currencyName:'BTC',address:res });
+            }
         });
     }
 
@@ -228,6 +236,11 @@ export class Home extends Widget {
             popNew('app-view-wallet-create-home');
         }
         // this.backPrePage();
+    }
+
+    public tex() {
+        console.log(getUserInfo());
+        console.log(getStore('user/id'));
     }
 }
 

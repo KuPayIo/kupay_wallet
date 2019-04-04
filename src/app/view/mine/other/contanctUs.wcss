@@ -1,5 +1,5 @@
 .aboutus-img{
-    margin-top: 204px; 
+    margin-top: 20%; 
     text-align: center;
 }
 .logoimg{
@@ -60,4 +60,5 @@
     position: absolute;
     border-radius: 12px;
     box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
 }

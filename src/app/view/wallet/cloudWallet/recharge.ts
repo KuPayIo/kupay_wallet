@@ -46,8 +46,6 @@ export class Recharge extends Widget {
         let topBarTitle = '';
         if (this.props.currencyName === 'KT') {
             topBarTitle = getModulConfig('KT_SHOW');
-        } else if (this.props.currencyName === 'ST') {
-            topBarTitle = getModulConfig('ST_SHOW');
         } else {
             topBarTitle = this.props.currencyName;
         }

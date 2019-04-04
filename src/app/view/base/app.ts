@@ -2,13 +2,14 @@
  * 首页
  */
 // ================================ 导入
+import { register as ChatRegister } from '../../../chat/client/app/data/store';
 import { register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../modulConfig';
 import { register } from '../../store/memstore';
-import { rippleShow } from '../../utils/tools';
+import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -90,6 +91,17 @@ export class App extends Widget {
         this.props.isActive = 'APP_PLAY';
         this.paint();
     }
+
+    public changeChatIcon(fg:boolean) {
+        if (fg) {
+            this.props.tabBarList[1].iconActive = 'chat_active_unRead.png';
+            this.props.tabBarList[1].icon = 'chat_unRead.png';
+        } else {
+            this.props.tabBarList[1].iconActive = 'chat_active.png';
+            this.props.tabBarList[1].icon = 'chat.png';
+        }
+        this.paint();
+    }
 }
 
 // ===================================================== 本地
@@ -99,6 +111,7 @@ export class App extends Widget {
 register('flags/level_3_page_loaded', (loaded: boolean) => {
     const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
     dataCenter.init();
+    checkPopPhoneTips();
     if (localStorage.getItem('kickOffline')) {
         const kickOffline = pi_modules.commonjs.exports.relativeGet('app/net/login').exports.kickOffline;
         localStorage.removeItem('kickOffline');
@@ -126,6 +139,12 @@ earnRegister('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
         w.props.tabBarAnimateClasss = 'reset-put-out';
     }
     w.paint();
+});
+
+// 监听聊天是否有未读消息
+ChatRegister('flags/unReadFg',(fg) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.changeChatIcon(fg);
 });
 
 export const gotoChat = () => {

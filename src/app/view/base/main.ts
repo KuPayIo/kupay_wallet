@@ -3,28 +3,22 @@
  * @author henk<speoth@163.com>
  */
 
+import { getStore as chatGetStore } from '../../../chat/client/app/data/store';
+import { chatManualReconnect } from '../../../chat/client/app/net/init';
+import { earnManualReconnect } from '../../../earn/client/app/net/init';
+import { getStore as earnGetStore } from '../../../earn/client/app/store/memstore';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { authorize } from '../../api/JSAPI';
+import { walletManualReconnect } from '../../net/login';
 import { LockScreen } from '../../store/interface';
 import { getAllAccount, getStore, setStore } from '../../store/memstore';
 import { piRequire } from '../../utils/commonjsTools';
 import { fetchDeviceId } from '../../utils/tools';
 
 // ============================== 导出
-declare var pi_modules;
 export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查
-    const payload = {
-        appId:'101',
-        nickName:true,
-        avatar:true
-    };
-    authorize(payload,(err,result) => {
-        console.log('err  ===',err);
-        console.log('result  ===',result);
-    });
     checkUpdate();
     // 打开首页面
     popNew('app-view-base-app');
@@ -53,7 +47,7 @@ export const run = (cb): void =>  {
  */
 const popNewPage = () => {
     if (ifNeedUnlockScreen()) {
-        popNew('app-components-lockScreenPage-lockScreenPage', {
+        popNew('app-components1-lockScreenPage-lockScreenPage', {
             openApp: true
         });
     }
@@ -100,9 +94,14 @@ const addAppEvent = () => {
                 });
             }
             setTimeout(() => {
-                const reconnect =  pi_modules.commonjs.exports.relativeGet('app/net/reconnect').exports;
-                if (reconnect && !reconnect.getAllIsLogin()) {
-                    reconnect.manualReconnect();
+                if (!getStore('user/isLogin')) {
+                    walletManualReconnect();
+                }
+                if (!chatGetStore('isLogin')) {
+                    chatManualReconnect();
+                }
+                if (!earnGetStore('userInfo/isLogin')) {
+                    earnManualReconnect();
                 }
             },100);  // 检查是否已经退出登录
         });

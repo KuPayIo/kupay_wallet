@@ -2,13 +2,12 @@
  * 云端绑定手机
  */
 // =================================================导入
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineDetail, regPhone, unbindPhone } from '../../../net/pull';
+import { regPhone, unbindPhone } from '../../../net/pull';
 import { getStore, setStore } from '../../../store/memstore';
-import { getUserInfo, popNewMessage } from '../../../utils/tools';
+import { delPopPhoneTips, getUserInfo, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -39,15 +38,6 @@ export class BindPhone extends Widget {
     }
     public jumpClick() {
         this.ok && this.ok();
-        popNew('app-components-allModalBox-modalBox3', {
-            img:'app/res/image/bind_phone.png',
-            tipTitle:'安全提醒',
-            tipContent:`手机号是您找回云端资产的凭证
-为了您的资产安全请输入手机号`,
-            btn:`验证手机`
-        },() => {
-            popNew('app-view-mine-setting-phone',{ jump:true });
-        });
     }
     
     /**
@@ -70,7 +60,7 @@ export class BindPhone extends Widget {
                 userinfo.phoneNumber = this.props.phone;
                 userinfo.areaCode = this.props.areaCode;
                 setStore('user/info',userinfo);
-                getMineDetail();
+                delPopPhoneTips();
                 this.ok && this.ok();
                 popNewMessage('绑定成功');
             } else {

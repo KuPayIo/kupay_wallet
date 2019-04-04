@@ -15,7 +15,10 @@ export const thirdUrlPre = `http://${sourceIp}:${sourcePort}/proxy`;
 export const sharePerUrl = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
-export const shareDownload = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
+export const shareDownload = `http://${sourceIp}:${sourcePort}/wallet/appversion/haohai.apk`;
+
+// 邀请好友下载链接
+export const inviteFriends = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
 
 // 上传图片url
 export const uploadFileUrl = `http://${sourceIp}:${sourcePort}/service/upload`;
@@ -462,7 +465,7 @@ export const Config = {
         // 云端账户详情
         cloudAccountDetail: {
             types: [
-                '挖矿',
+                '游戏',
                 '邀请码',
                 '领红包',
                 '发红包',
@@ -471,7 +474,10 @@ export const Config = {
                 '理财',
                 '红包退回',
                 '微信充值',
-                '支付宝充值'
+                '支付宝充值',
+                '消费',
+                '收款',
+                '充值赠送'
             ]
         },
         // 红包相关
@@ -503,7 +509,7 @@ export const Config = {
             exporting: '导出中...',
             loginSuccess: '登录成功',
             wrong: '错误',
-            PswBoxInputTitle: '请输入密码'
+            PswBoxInputTitle: '请输入支付密码'
         },
         // 转账交易相关信息
         transfer: {
@@ -622,7 +628,7 @@ export const Config = {
         // 云端账户详情
         cloudAccountDetail: {
             types: [
-                '挖礦',
+                '遊戲',
                 '邀請碼',
                 '領紅包',
                 '發紅包',
@@ -631,7 +637,10 @@ export const Config = {
                 '理財',
                 '紅包退回',
                 '微信充值',
-                '支付寶充值'
+                '支付寶充值',
+                '消費',
+                '收款',
+                '充值贈送'
             ]
         },
         // 红包相关
@@ -662,7 +671,7 @@ export const Config = {
             exporting: '導出中...',
             loginSuccess: '登錄成功',
             wrong: '錯誤',
-            PswBoxInputTitle: '請輸入密碼'
+            PswBoxInputTitle: '請輸入支付密碼'
         },
         // 转账交易相关信息
         transfer: {

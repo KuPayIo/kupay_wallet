@@ -2,7 +2,9 @@
  * Exchange
  */
 // ============================== 导入
-import { popNew } from '../../../../pi/ui/root';
+
+import { convertAwards } from '../../../../earn/client/app/net/rpc';
+import { popModalBoxs, popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
@@ -12,8 +14,8 @@ import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryR
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
+import {  popNewLoading, popNewMessage } from '../../../utils/tools';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
-import { popNewMessage, popNewLoading } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -53,12 +55,12 @@ export class Exchange extends Widget {
         }
         const close = popNewLoading(this.language.loading);
         const res: any = await this.convertRedEnvelope(code);
+
         close.callback(close.widget);
         if (!res.value) return;
         setStore('activity/luckyMoney/exchange',undefined);
         getServerCloudBalance();
         const r: any = await this.queryDesc(code);
-
         const redEnvelope = {
             message: r.value,
             ctypeShow: CloudCurrencyType[res.value[0]],
@@ -68,7 +70,6 @@ export class Exchange extends Widget {
             suid:res.src_id,
             code
         };
-        
         popNew('app-view-earn-exchange-openRedEnv', redEnvelope);
         setTimeout(() => {
             this.props.cid = '';
@@ -106,7 +107,24 @@ export class Exchange extends Widget {
             }
             value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
+            convertAwards(validCode).then((res:any) => {  // 兑换邀请码获得奖励
+                if (res && res.award.length > 0) {
+                    const awa = res.award[0];
+                    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                        title: '邀请奖励',
+                        awardType: awa.awardType,
+                        awardNum: awa.count
+                    });
+                    this.props.cid = '';
+                    this.paint(true);
+
+                } else {
+                    popNewMessage('获取奖励失败');
+                }
+            });
+           
         } else {
+            alert(1);
             popNewMessage(this.language.errorList[1]);
 
             return null;

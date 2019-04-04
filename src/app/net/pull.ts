@@ -3,10 +3,11 @@
  */
 import { request } from '../../pi/net/ui/con_mgr';
 import { MainChainCoin, uploadFileUrl } from '../config';
+import { getModulConfig } from '../modulConfig';
 import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitGtAccountDetail } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseFriendsMiningRank,parseMineDetail,parseMineRank, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
@@ -57,7 +58,7 @@ export const requestAsyncNeedLogin = async (msg: any,secretHash:string) => {
 export const getServerCloudBalance = () => {
     const list = [];
     list.push(CloudCurrencyType.KT);
-    list.push(CloudCurrencyType.ST);
+    list.push(CloudCurrencyType.SC);
     for (const k in CloudCurrencyType) {
         if (MainChainCoin.hasOwnProperty(k)) {
             list.push(CloudCurrencyType[k]);
@@ -245,8 +246,8 @@ export const takeRedBag = async (rid) => {
         return res;
     } catch (err) {
         showError(err && (err.result || err.type));
-
-        return;
+        
+        return err;
     }
 };
 
@@ -356,14 +357,22 @@ export const queryConvertLog = async (start?:string) => {
 /**
  * 查询某个红包兑换详情
  */
-export const queryDetailLog = async (uid:number,rid: string) => {
+export const queryDetailLog = async (uid:number,rid: string,accId?:string) => {
     const msg = {
         type: 'query_detail_log',
-        param: {
+        param: {}
+    };
+    if (accId) {  // 与聊天通用的账户id
+        msg.param = {
+            acc_id: accId,
+            rid
+        };
+    } else {
+        msg.param = {
             uid,
             rid
-        }
-    };
+        };
+    }
     if (rid === '-1') return;
 
     try {
@@ -377,7 +386,6 @@ export const queryDetailLog = async (uid:number,rid: string) => {
         return;
     }
 };
-
 // ==========================================红包end
 
 /**
@@ -469,18 +477,21 @@ export const getUserInfoFromServer = async (uids: [number]) => {
 
     return requestAsync(msg).then(res => {
         const userInfoStr = unicodeArray2Str(res.value[0]);
+        const localUserInfo = getStore('user/info');
+        console.log('localUserInfo ==== ',localUserInfo);
+        let userInfo = {
+            ...localUserInfo
+        };
         if (userInfoStr) {
-            const localUserInfo = getStore('user/info');
             const serverUserInfo = JSON.parse(userInfoStr);
             console.log('serverUserInfo ==== ',serverUserInfo);
-            console.log('localUserInfo ==== ',localUserInfo);
-            const userInfo = {
-                ...localUserInfo,
+            userInfo = {
+                ...userInfo,
                 ...serverUserInfo
             };
             console.log('userInfo ==== ',userInfo);
-            setStore('user/info',userInfo);
         } 
+        setStore('user/info',userInfo);
     });
         
 };
@@ -570,30 +581,28 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         const res = await requestAsync(msg);
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
-        const splitDetail = splitGtAccountDetail(detail); 
+        const splitDetail = splitCloudCurrencyDetail(detail); 
         const canLoadMore = detail.length >= PAGELIMIT;
         if (detail.length > 0) {
             const cloudWallets = getStore('cloud/cloudWallets');
             const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
-            if (filter === 1) {
-                if (start) {
-                    cloudWallet.otherLogs.list.push(...detail);
-                    if (coin === 'ST') {
-                        cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
-                        cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
-                    }
-                } else {
-                    cloudWallet.otherLogs.list = detail;
-                    if (coin === 'ST') {
-                        cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
-                        cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
-                    }
+            if (start) {
+                cloudWallet.otherLogs.list.push(...detail);
+                if (coin === CloudCurrencyType[CloudCurrencyType.SC] || coin === CloudCurrencyType[CloudCurrencyType.KT]) {
+                    cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
+                    cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
                 }
-                
-                cloudWallet.otherLogs.start = nextStart;
-                cloudWallet.otherLogs.canLoadMore = canLoadMore;
-                setStore('cloud/cloudWallets',cloudWallets);
+            } else {
+                cloudWallet.otherLogs.list = detail;
+                if (coin === CloudCurrencyType[CloudCurrencyType.SC] || coin === CloudCurrencyType[CloudCurrencyType.KT]) {
+                    cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
+                    cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
+                }
             }
+                
+            cloudWallet.otherLogs.start = nextStart;
+            cloudWallet.otherLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
         }
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -603,39 +612,65 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
 
 };
 
-/**
- * 获取矿山排名列表
- */
-export const getMineRank = async (num: number) => {
-    const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
-    requestAsync(msg).then(data => {
-        const mineData = parseMineRank(data);
-        setStore('activity/mining/mineRank', mineData);
-    });
-};
+// /**
+//  * 获取矿山排名列表
+//  */
+// export const getMineRank = async (num: number) => {
+//     const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
+//     requestAsync(msg).then(data => {
+//         const mineData = parseMineRank(data);
+//         setStore('activity/mining/mineRank', mineData);
+//     });
+// };
+
+// /**
+//  * 获取挖矿排名列表
+//  */
+// export const getMiningRank = async (num: number) => {
+//     const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
+//     requestAsync(msg).then(data => {
+//         const miningData = parseMiningRank(data);
+//         setStore('activity/mining/miningRank', miningData);
+//     });
+// };
 
 /**
- * 获取挖矿排名列表
+ * 获取全部用户嗨豆排名列表
  */
-export const getMiningRank = async (num: number) => {
-    const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
-    requestAsync(msg).then(data => {
-        const miningData = parseMiningRank(data);
-        setStore('activity/mining/miningRank', miningData);
+export const getHighTop =  (num: number) => {
+    const msg = { type: 'wallet/cloud@get_high_top', param: { num: num } };
+
+    return  requestAsync(msg).then(data => {
+        console.log('获取全部排名========================',data);
+            
+        return parseMiningRank(data);
     });
+    
 };
 
+// 获取好友嗨豆排名
+export const getFriendsKTTops =  (arr:any) => {
+    const msg = { type:'wallet/cloud@finds_high_top',param:{ finds:JSON.stringify(arr) } };
+
+    return  requestAsync(msg).then(data => {
+        console.log('获取好友排名========================',data);
+
+        return parseMiningRank(data);
+    });
+};
 /**
  * 验证手机号是否被注册
  */
-export const verifyPhone = async(phone:string) => {
-    const msg = { type: 'wallet/user@check_phone', param: { phone } };
+export const verifyPhone = async (phone:string,num: string) => {
+    const msg = { type: 'wallet/user@check_phone', param: { phone,num } };
     try {
-        return await requestAsync(msg); 
-    } catch (err) {
-        showError(err && (err.result || err.type));
+        await requestAsync(msg); 
 
-        return;
+        return false;
+    } catch (err) {
+        if (err.result === 1005) return true;
+
+        return false; 
     }
 };
 
@@ -644,12 +679,12 @@ export const verifyPhone = async(phone:string) => {
  */
 export const sendCode = async (phone: string, num: string,verify:boolean = true) => {
     if (verify) {
-        const v = await verifyPhone(phone);
+        const v = await verifyPhone(phone,num);
         if (!v) {
             return;
         }
     }
-    const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: '钱包' } };
+    const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: getModulConfig('WALLET_NAME') } };
     try {
         return await requestAsync(msg);
     } catch (err) {
@@ -724,6 +759,8 @@ export const getBindPhone = async () => {
         userInfo.phoneNumber =  res.phone;
         userInfo.areaCode = res.num;
         setStore('user/info',userInfo);
+    }).catch(err => {
+        // console.log(err);
     });
 };
 
@@ -1252,6 +1289,18 @@ export const changellySign = (data:any) => {
         param: {
             body:JSON.stringify(data)
         }
+    };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 获取邀请好友accId
+ */
+export const getInviteUserAccIds = () => {
+    const msg = {
+        type: 'wallet/cloud@get_invites',
+        param: {}
     };
 
     return requestAsync(msg);

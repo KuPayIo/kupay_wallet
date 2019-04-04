@@ -80,7 +80,7 @@ export class Setting extends Widget {
             this.props.openLockScreen = false;
             setStore('setting/lockScreen', ls);
         } else if (this.props.wallet) {
-            popNew('app-components-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
+            popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
                 if (!r) {
                     this.closeLockPsw();
                     this.props.openLockScreen = false;
@@ -137,17 +137,15 @@ export class Setting extends Widget {
     public logOut() {
         if (!hasWallet()) return;
         // const backup = this.props.wallet.isBackup;
-        popNew('app-components-modalBox-modalBox', this.language.modalBox2 , () => {
-            // if (!backup) {
-            //     this.backUp();
-            // }
-            console.log('取消');
+        popNew('app-components-modalBox-modalBox', this.language.modalBox2 , () => {  
+            this.backUp();
+            console.log('取消1');
         }, () => {
-            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
-                logoutAccount();
-                this.backPrePage();
-            });
-        });
+            console.log(1);
+            logoutAccount();
+            this.backPrePage();
+        }
+        );
     }
 
     /**
@@ -157,10 +155,8 @@ export class Setting extends Widget {
         if (!hasWallet()) return;
         // const backup = this.props.wallet.isBackup;
         popNew('app-components-modalBox-modalBox', this.language.modalBox3 , () => {
-            // if (!backup) {
-            //     this.backUp();
-            // }
-            console.log('取消');
+            this.backUp();
+            console.log('取消2');
         }, () => {
             popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
                 logoutAccountDel();

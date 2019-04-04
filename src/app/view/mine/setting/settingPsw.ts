@@ -49,7 +49,7 @@ export class SettingPsw extends Widget {
             return;
         }
         if (!this.props.walletPsw || !this.props.walletPswConfirm) {
-            const tips = { zh_Hans:'请输入密码',zh_Hant:'請輸入密碼',en:'' };
+            const tips = { zh_Hans:'请输入支付密码',zh_Hant:'請輸入支付密碼',en:'' };
             popNewMessage(tips[getLang()]);
 
             return;
@@ -81,7 +81,7 @@ export class SettingPsw extends Widget {
         this.ok && this.ok();
         const userInfo = getUserInfo();
         if (!userInfo.phoneNumber) {
-            popNew('app-view-mine-setting-phone');
+            popNew('app-view-mine-setting-phone',{ jump:true });
         }
         
     }

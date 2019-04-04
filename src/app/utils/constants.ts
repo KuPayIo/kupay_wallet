@@ -14,7 +14,7 @@ export const defaultEthToken = [];
 export const defalutShowCurrencys = ['ETH', 'BTC','TRX','BNB','WTC','VEN'];
 
 // 首页默认显示的货币
-export const preShowCurrencys = [...defalutShowCurrencys,'ST','KT'];
+export const preShowCurrencys = [...defalutShowCurrencys,'SC','KT'];
 
 // 默认不可更改显示货币列表
 export const notSwtichShowCurrencys = ['ETH', 'BTC'];
@@ -145,3 +145,18 @@ export const topHeight = 40;
 
 // 游客登录默认密码
 export const defaultPassword = '123456789';
+
+// 充值赠送KT倍数
+export const rechargeGiftMultiple = 10;
+
+// SC单价
+export const SCUnitprice =  1;
+
+// SC精度
+export const SCPrecision = 100;
+
+// 微信支付显示
+export const wxPayShow = 'HighApp';
+
+// 美元默认汇率
+export const USD2CNYRateDefault = 6;
