@@ -258,7 +258,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
             const flags = getStore('flags');
             console.log('flags =====',flags);
             if (flags.level_3_page_loaded) {  // 钱包创建成功直接提示,此时资源已经加载完成
-                kickOffline(secretHash);  // 踢人下线提示
+                kickOffline(secretHash,phone,code,num);  // 踢人下线提示
             } else {  // 刷新页面后，此时资源没有加载完成,延迟到资源加载成功弹出提示
                 localStorage.setItem('kickOffline',JSON.stringify(true));
             }
@@ -449,15 +449,15 @@ export const logoutWallet = (success:Function) => {
  * 踢人下线提示
  * @param secretHash 密码
  */
-export const kickOffline = (secretHash:string = '') => {
+export const kickOffline = (secretHash:string = '',phone?:number,code?:number,num?:string) => {
     popNew('app-components-modalBoxCheckBox-modalBoxCheckBox',{ 
         title:'检测到在其它设备有登录',
         content:'清除其它设备账户信息' 
     },(deleteAccount:boolean) => {
         if (deleteAccount) {
-            getRandom(secretHash,CMD.FORCELOGOUTDEL);
+            getRandom(secretHash,CMD.FORCELOGOUTDEL,phone,code,num);
         } else {
-            getRandom(secretHash,CMD.FORCELOGOUT);
+            getRandom(secretHash,CMD.FORCELOGOUT,phone,code,num);
         }
     },() => {
         getRandom(secretHash,CMD.FORCELOGOUT);

@@ -7,7 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { Option, phoneImport } from '../../../logic/localWallet';
-import { getRandom, logoutAccountDel } from '../../../net/login';
+import { getRandom, kickOffline, logoutAccountDel } from '../../../net/login';
 import { regPhone, verifyPhone } from '../../../net/pull';
 import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
 import { getDataCenter } from '../../../utils/commonjsTools';
@@ -75,6 +75,8 @@ export class PhoneImport extends Widget {
             close.callback(close.widget);
             if (itype === -301) {
                 this.phoneImportError('验证码错误');
+            } else if (itype === 1014) {
+                this.phoneImportSuccess(phoneNum);
             } else if (itype === 1) {
                 this.phoneImportSuccess(phoneNum);
             } else {
