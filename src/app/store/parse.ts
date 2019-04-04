@@ -1,3 +1,4 @@
+
 import { isArray } from '../../pi/net/websocket/util';
 import { uploadFileUrlPrefix } from '../config';
 import { PAGELIMIT } from '../utils/constants';
@@ -181,32 +182,30 @@ export const parseMineRank = (data) => {
  */
 export const parseMiningRank = (data) => {
     const miningData = {
-        miningKTnum: 0,  // 当前用户的嗨豆总数量
         rank: [],  // 排名列表
         miningRank: data.me  // 当前用户的排名
     };
-
     const res = [];
+
     for (let i = 0; i < data.value.length && i < 100; i++) {
         const user = unicodeArray2Str(data.value[i][2]);
         const userData = user ? JSON.parse(user) :'';
         let avatar = userData ? userData.avatar :'';
         if (avatar && avatar.indexOf('data:image') < 0) {
             avatar = `${uploadFileUrlPrefix}${avatar}`;
-        }
-        
+        }  
         res.push({
             rank: data.value[i][4],  // 排名
             userName: userData ? userData.nickName :getStaticLanguage().userInfo.name, // 用户名称
             avatar,  // 头像
             ktNum: formatBalance(kpt2kt(data.value[i][3])),  // 嗨豆数量
-            acc_id: data.value[i][0]  // 用户 accId
+            acc_id: data.value[i][0] // 用户 accId
         });
     }
-    miningData.miningKTnum = res[data.me - 1].ktNum;
     miningData.rank = res;
-    
+     
     return miningData;
+   
 };
 /**
  * 解析挖矿历史记录
