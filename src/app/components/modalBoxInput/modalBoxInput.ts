@@ -13,11 +13,11 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
 import { getLoginMod } from '../../utils/commonjsTools';
-import { popNew3 } from '../../utils/tools';
 
 interface Props {
     title:string;
     content:string[];
+    onlyOk:boolean;
     sureText?:string;
     cancelText?:string;
     placeholder?:boolean;
@@ -56,24 +56,26 @@ export class ModalBoxInput extends Widget {
         const modalBox = { 
             zh_Hans:{
                 title:'忘记密码？',
-                content:'退出当前登录账号，您可以选择重新登录或导入。'
+                content:'退出当前登录账号，您可以选择重新登录或导入。',
+                sureText:'退出',
+                cancelText:'联系客服',
+                onlyOk:!!this.props.onlyOk
             },
             zh_Hant:{
                 title:'忘記密碼？',
-                content:'退出當前登錄賬號，您可以選擇重新登錄或導入。'
+                content:'退出當前登錄賬號，您可以選擇重新登錄或導入。',
+                sureText:'退出',
+                cancelText:'联系客服',
+                onlyOk:!!this.props.onlyOk
             },
             en:'' 
         };
         popNew('app-components-modalBox-modalBox',modalBox[getLang()],() => {  // 确认删除钱包
             getLoginMod().then(loginMod => {
                 loginMod.logoutAccount();
-                popNew('app-view-wallet-create-home');
             });
-            
         },() => {   // 取消删除钱包
-            if (this.props.lockScreen) {
-                popNew('app-components-modalBoxInput-modalBoxInput',this.props);
-            }
+            console.log('联系客服');
         });      
     }
     /**

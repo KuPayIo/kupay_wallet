@@ -253,7 +253,8 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         setStore('user/conRandom', conRandom);
     } catch (res) {
         resp = res;
-        if (res.type === 1014) {
+        const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
+        if (res.type === 1014 && res.why !== deviceId) {  // 避免自己踢自己下线
             const flags = getStore('flags');
             console.log('flags =====',flags);
             if (flags.level_3_page_loaded) {  // 钱包创建成功直接提示,此时资源已经加载完成
@@ -504,10 +505,8 @@ const loginWalletFailedPop = async () => {
         const walletToolsMod = await getWalletToolsMod();
         secretHash = await walletToolsMod.VerifyIdentidy(psw);
     } else {
-        psw = await popPswBox();
+        psw = await popPswBox([],true);
         if (!psw) {
-            logoutAccount();
-
             return;
         }
         const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
