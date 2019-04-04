@@ -1,13 +1,14 @@
 /**
  * 主动向后端通讯
  */
+import { getStore as getStoreGame,setStore as setStoreGame } from '../../earn/client/app/store/memstore';
 import { request } from '../../pi/net/ui/con_mgr';
 import { MainChainCoin, uploadFileUrl } from '../config';
 import { getModulConfig } from '../modulConfig';
 import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
-import { getStore, setStore } from '../store/memstore';
+import { getCloudBalances, getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseFriendsMiningRank,parseMineDetail,parseMineRank, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
@@ -642,7 +643,12 @@ export const getHighTop =  (num: number) => {
 
     return  requestAsync(msg).then(data => {
         console.log('获取全部排名========================',data);
-            
+        const mine = {
+            miningRank:data.me || 0,
+            miningKTnum: getCloudBalances().get(CloudCurrencyType.KT)
+        };
+        setStore('mine',mine); 
+
         return parseMiningRank(data);
     });
     
