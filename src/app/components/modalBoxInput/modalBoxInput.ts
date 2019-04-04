@@ -13,6 +13,7 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
 import { getLoginMod } from '../../utils/commonjsTools';
+import { popNew3 } from '../../utils/tools';
 
 interface Props {
     title:string;

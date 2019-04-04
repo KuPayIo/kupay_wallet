@@ -2,14 +2,14 @@
  * 联系我们
  */
 // ===============================================导入
+import { CUSTOMER_SERVICE } from '../../../../chat/server/data/constant';
+import { GENERATOR_TYPE } from '../../../../chat/server/data/db/user.s';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { rippleShow } from '../../../utils/tools';
-import { GENERATOR_TYPE } from '../../../../chat/server/data/db/user.s';
-import { CUSTOMER_SERVICE } from '../../../../chat/server/data/constant';
 // ==================================================导出
 declare var pi_update;
 declare var pi_modules;
@@ -45,7 +45,7 @@ export class ContanctUs extends Widget {
         switch (ind) {
             // 点击钱包官网
             case 0:
-                openNewActivity(this.props.data[0].desc,this.props.walletName);
+                // openNewActivity(this.props.data[0].desc,this.props.walletName);
                 break;
             // 客服
             case 1:

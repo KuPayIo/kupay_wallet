@@ -2,11 +2,10 @@
  * 云端绑定手机
  */
 // =================================================导入
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineDetail, regPhone, unbindPhone } from '../../../net/pull';
+import { regPhone, unbindPhone } from '../../../net/pull';
 import { getStore, setStore } from '../../../store/memstore';
 import { delPopPhoneTips, getUserInfo, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
@@ -61,7 +60,6 @@ export class BindPhone extends Widget {
                 userinfo.phoneNumber = this.props.phone;
                 userinfo.areaCode = this.props.areaCode;
                 setStore('user/info',userinfo);
-                getMineDetail();
                 delPopPhoneTips();
                 this.ok && this.ok();
                 popNewMessage('绑定成功');

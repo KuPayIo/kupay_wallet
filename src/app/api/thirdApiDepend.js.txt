@@ -213,7 +213,7 @@ window.pi_RPC_Method = (function () {
         text:"打开免密",
         startText:"关闭免密",
         closeText:"打开免密支付",
-        show:true,
+        show:false,
         clickedClose:false,
         clickCb:function(){
             console.log("click 免密支付");
@@ -271,6 +271,66 @@ pi_tools.throttle = function(func){
         lastTime = nowTime
       }
     }
+};
+
+
+pi_tools.dragDom = function(element, callback) {
+    callback = callback || function() {};
+    var parentNodeWidth = element.parentNode.clientWidth,parentNodeHeigth = element.parentNode.clientHeight;
+    var elementWidth = element.clientWidth,elementHeight = element.clientHeight;
+    var params = {
+        left: 0,
+        top: 0,
+        currentX: 0,
+        currentY: 0,
+        leftLimit:parentNodeWidth - elementWidth,
+        topLimit:parentNodeHeigth - elementHeight,
+        flag: false
+    };
+    //获取相关CSS属性
+    var getCss = function(o,key){
+        return o.currentStyle? o.currentStyle[key] : document.defaultView.getComputedStyle(o,false)[key];     
+    };
+    
+    //拖拽的实现
+    if(getCss(element, "left") !== "auto"){
+        params.left = getCss(element, "left");
+    }
+    if(getCss(element, "top") !== "auto"){
+        params.top = getCss(element, "top");
+    }
+    //o是移动对象
+    element.ontouchstart = function(event){
+        console.log("onmousedown");
+        params.flag = true;
+        event = event || window.event;
+        params.currentX = event.changedTouches[0].clientX;
+        params.currentY = event.changedTouches[0].clientY;
+    };
+    document.ontouchend = function(){
+        console.log("onmouseup");
+        params.flag = false;    
+        if(getCss(element, "left") !== "auto"){
+            params.left = getCss(element, "left");
+        }
+        if(getCss(element, "top") !== "auto"){
+            params.top = getCss(element, "top");
+        }
+        callback();
+    };
+    document.ontouchmove = function(event){
+        console.log("onmousemove");
+        event = event || window.event;
+        if(params.flag){
+            var nowX = event.changedTouches[0].clientX, nowY = event.changedTouches[0].clientY;
+            var disX = nowX - params.currentX, disY = nowY - params.currentY;
+            var nowLeft = parseInt(params.left) + disX,nowTop = parseInt(params.top) + disY;
+            nowLeft = nowLeft < 0 ? 0 : ( nowLeft > params.leftLimit ? params.leftLimit : nowLeft);
+            nowTop = nowTop < 0 ? 0 : ( nowTop > params.topLimit ? params.topLimit : nowTop);
+            element.style.left =  nowLeft + "px";
+            element.style.top =  nowTop + "px";
+        }
+    }    
 };
 /**
  * 自适应
@@ -346,7 +406,7 @@ pi_tools.createThirdBaseStyle = function(){
     border:1px solid rgba(255,255,255,0.2);
     position: fixed;
     top: 10px;
-    right: 10px;
+    left: 10px;
     z-index:99999;
   }
   .pi-dot1{
@@ -463,6 +523,9 @@ pi_tools.floatButtonInit = function (){
 
   }));
   document.querySelector("body").appendChild($floatButton);
+
+
+  pi_tools.dragDom( $floatButton);
 };
 
 /**

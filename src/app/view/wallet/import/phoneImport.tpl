@@ -16,12 +16,5 @@
             </div>
             {{end}}
         </div>
-
-        <div w-class="box">
-            {{: tips = {"zh_Hans":"手机号登录，只能找回云端资产哦(^__^)","zh_Hant":"手機號登錄，只能找回雲端資產哦(^__^)","en":""} }}
-            <div w-class="tips"><pi-ui-lang>{{tips}}</pi-ui-lang></div>
-            {{: customerService = {"zh_Hans":"找客服","zh_Hant":"找客服","en":""} }}
-            <div w-class="customer-service" on-tap="customerServiceClick"><pi-ui-lang>{{customerService}}</pi-ui-lang></div>
-        </div>
     </div>
 </div>
