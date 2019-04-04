@@ -1,7 +1,6 @@
 /**
  * 主动向后端通讯
  */
-import { getStore as getStoreGame,setStore as setStoreGame } from '../../earn/client/app/store/memstore';
 import { request } from '../../pi/net/ui/con_mgr';
 import { MainChainCoin, uploadFileUrl } from '../config';
 import { getModulConfig } from '../modulConfig';
