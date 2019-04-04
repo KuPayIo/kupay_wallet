@@ -1,4 +1,5 @@
 import { sourceIp, sourcePort } from '../../../ipConfig';
+import { getLocalStorage } from '../../../store/filestore';
 
 /**
  * 第三方游戏相关配置
@@ -17,8 +18,8 @@ export const gameList = [
         url:'http://192.168.31.95/dst/boot/yineng/yineng.html',
         apkDownloadUrl:`http://${sourceIp}:${sourcePort}/wallet/appversion/haohaifairyChivalry.apk`,
         webviewName:'fairyChivalry',
-        uid:10002,
-        gid:10002,
+        accId:'268828',
+        groupId:10001,
         appid:'102'
     }
 ];
@@ -57,6 +58,11 @@ export const getGameItem = (webviewName:string) => {
     const index = gameList.findIndex((item) => {
         return item.webviewName === webviewName;
     });
+    const gameItem =  getLocalStorage('officialService').gameList[index]; 
+    console.log('获取游戏配置信息', gameList[index], gameItem);
 
-    return gameList[index];
+    return {
+        ...gameList[index],
+        gameItem
+    };
 };
