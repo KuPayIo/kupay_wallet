@@ -16,7 +16,6 @@
             <div class="redEnv-leave-message" id="message">恭喜发财 万事如意</div>
             <div class="redEnv-tag" id="describe">您收到一个邀请码</div>
             <div class="redEnv-open-div"><img src="image/open.png" class="redEnv-open" onclick="openRedEnvelopeClick()" id="openRedEnv"/></div>
-            <div class="redEnv-look" id="look">看看大家手气></div>
         </div>
     </div>
 </body>
@@ -64,7 +63,6 @@ switch (itype) {
 (function init(){
     document.getElementById('message').innerText = state.lm;
     document.getElementById('describe').innerText = state.desc;
-    document.getElementById('look').innerText = lan.redEnvLook;
 })();
 
  /**
@@ -113,7 +111,7 @@ function openRedEnvelopeClick() {
  */
 function openNormalRedEnvelope() {
     const res = JSON.parse(takeRedEnvelope(state.rid));
-    
+    console.log(res);
     setTimeout(async () => {
         switch (res.result) {
             case 1:

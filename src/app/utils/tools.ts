@@ -11,6 +11,7 @@ import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
 import { getModulConfig } from '../modulConfig';
+import { logoutAccount } from '../net/login';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { getCipherToolsMod, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
@@ -279,7 +280,7 @@ export const calcHashValuePromise = (pwd, salt?):Promise<string> => {
 /**
  * 弹出密码提示框
  */
-export const popPswBox = (content = []) => {
+export const popPswBox = (content = [],onlyOk:boolean = false,cancelDel:boolean = false):Promise<string> => {
     return new Promise(async (resolve) => {
         const name = 'app-components-modalBoxInput-modalBoxInput';
         if (!lookup(name)) {
@@ -288,9 +289,11 @@ export const popPswBox = (content = []) => {
             await piLoadDir(sourceList);
         }
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content }, (r: string) => {
+        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content,onlyOk }, (r: string) => {
             resolve(r);
-        }, () => {
+            if (cancelDel) popPswBox(content,onlyOk,cancelDel);
+        }, (forgetPsw:boolean) => {
+            if (cancelDel && !forgetPsw) logoutAccount();
             resolve('');
         });
     });
