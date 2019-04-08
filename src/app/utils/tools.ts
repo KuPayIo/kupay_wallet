@@ -291,7 +291,7 @@ export const popPswBox = (content = [],onlyOk:boolean = false,cancelDel:boolean 
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
         popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content,onlyOk }, (r: string) => {
             resolve(r);
-            if (cancelDel) popPswBox(content,onlyOk,cancelDel);
+            if (!r && cancelDel) popPswBox(content,onlyOk,cancelDel);
         }, (forgetPsw:boolean) => {
             if (cancelDel && !forgetPsw) logoutAccount();
             resolve('');
