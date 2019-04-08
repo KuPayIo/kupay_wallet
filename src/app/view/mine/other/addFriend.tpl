@@ -10,7 +10,7 @@
             <img src="../../../res/image/copy_gray.png" width="30px" w-class="copy"/>
         </div>
         <div style="text-align: center;">
-            <app-components-qrcode-qrcode>{value:{{it.acc_id}},size:"350"}</app-components-qrcode-qrcode>
+            <div style="display: flex;justify-content: center;"><app-components-qrcode-qrcode>{value:{{it.acc_id}},size:350}</app-components-qrcode-qrcode></div>
             <div style="font-size: 32px;color: #222222;margin-top: 50px;">
                 <pi-ui-lang>{"zh_Hans":"扫码加好友","zh_Hant":"掃碼加好友","en":""}</pi-ui-lang>
             </div>

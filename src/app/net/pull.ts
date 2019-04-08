@@ -482,8 +482,8 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         let userInfo = {
             ...localUserInfo
         };
-        if (userInfoStr && userInfoStr !== JSON.stringify(localUserInfo)) {
-            const serverUserInfo = JSON.parse(userInfoStr);
+        if (userInfoStr !== JSON.stringify(localUserInfo)) {
+            const serverUserInfo = userInfoStr ? JSON.parse(userInfoStr) : {} ; 
             console.log('serverUserInfo ==== ',serverUserInfo);
             userInfo = {
                 ...userInfo,
