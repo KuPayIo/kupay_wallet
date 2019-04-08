@@ -8,7 +8,7 @@ import { getAllAccount, getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
 import { closeAllPage, getPopPhoneTips, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
 import { logoutAccount, logoutAccountDel } from './login';
-import { getServerCloudBalance } from './pull';
+import { getHighTop, getServerCloudBalance } from './pull';
 
 // ===================================================== 导入
 
@@ -75,21 +75,23 @@ export const initPush = () => {
     // 监听邀请好友成功事件
     setPushListener('event_invite_success',(res) => {
         console.log('event_invite_success服务器推送邀请好友成功=====================',res);
-        const invite = getStore('flags').invite_success || [];
+        const invite = getStore('inviteUsers').invite_success || [];
+        
         if (res.accId) {
-            invite.push(res.accId);
+            const index = invite.indexOf(res.accId);
+            index === -1 && invite.push(res.accId);
         }
-        setStore('flags/invite_success',invite);
+        setStore('inviteUsers/invite_success',invite);
     });
 
     // 监听兑换邀请码成功事件
     setPushListener('event_convert_invite',(res) => {
         console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
-        const invite = getStore('flags').convert_invite || [];
+        let invite = [];
         if (res.accId) {
-            invite.push(res.accId);
+            invite = [res.accId];
         }
-        setStore('flags/convert_invite',invite);
+        setStore('inviteUsers/convert_invite',invite);
     });
 
     // 监听邀请好友并成为真实用户事件
@@ -100,8 +102,11 @@ export const initPush = () => {
 
     // 监听余额变化事件
     setMsgHandler('alter_balance_ok',(res) => {
-        console.log('alter_balance_ok服务器推送成功==========================',res);
-        getServerCloudBalance();
+        console.log('alter_balance_ok服务器推送成功===========调用排名===============',res);
+        
+        getServerCloudBalance().then(() => {
+            getHighTop(100);
+        });
         const wallet = getStore('wallet');
         const userInfo = getUserInfo();
         if (!wallet.setPsw) {

@@ -21,3 +21,4 @@
 /src/app/ipConfig.ts
 /scripts/wallet_back_start.bat - 快捷方式.lnk
 /scripts/webserver_start.bat - 快捷方式.lnk
+/scripts/file/*.mdb
