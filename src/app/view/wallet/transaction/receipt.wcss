@@ -30,7 +30,8 @@
 }
 .qrcode-container{
     margin-top: 70px;
-    
+    display: flex;
+    justify-content: center;
 }
 .addr-container{
     margin:30px 50px;

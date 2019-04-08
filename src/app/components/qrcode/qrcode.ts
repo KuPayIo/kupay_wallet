@@ -1,9 +1,8 @@
 /**
  * 二维码组件
  */
-import { getRealNode } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
-import { QrcodeSrc } from './qrcode_src';
+import { QRious } from './qrious';
 
 interface Props {
     value: string;
@@ -16,14 +15,12 @@ export class Qrcode extends Widget {
         super();
     }
 
-    public firstPaint() {
-        const wrapper = <HTMLElement>getRealNode(this.tree);
-        console.log(this.tree, wrapper);
-        const qrcode: any = new QrcodeSrc(wrapper.children[0], {
-            width: this.props.size,
-            height: this.props.size
+    public attach() {
+        const qr = new QRious({
+            element: document.getElementById('qrcode-img'),
+            value: this.props.value,
+            size:this.props.size
         });
-        qrcode.makeCode(this.props.value);
 
     }
 }
