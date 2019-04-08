@@ -32,7 +32,7 @@
                         {{let rtypeShow = [{"zh_Hans":"普通红包","zh_Hant":"普通紅包","en":""},{"zh_Hans":"拼手气红包","zh_Hant":"拼手氣紅包","en":""},{"zh_Hans":"邀请码","zh_Hant":"邀請碼","en":""}] }}
                         {{let btnName = {"zh_Hans":"继续发送","zh_Hant":"繼續發送","en":""} }}
                         <app-components-fourParaItem-fourParaItem>
-                            {name:{{rtypeShow[val.rtype]}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},describe:{{val.outDate ? outDate :desc}},btnName:{{ val.curNum < val.totalNum ? btnName : ""}} }
+                            {name:{{rtypeShow[val.rtype]}},data:{{val.amount+" "+val.ctypeShow}},time:{{val.timeShow}},describe:{{val.outDate ? outDate :desc}},btnName:{{ val.outDate ? "" : val.curNum < val.totalNum ? btnName : ""}} }
                         </app-components-fourParaItem-fourParaItem>
                     </div>
                     {{end}}

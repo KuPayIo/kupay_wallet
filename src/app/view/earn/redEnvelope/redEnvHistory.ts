@@ -188,7 +188,7 @@ export class RedEnvHistory extends Widget {
             shareType: ShareType.TYPE_LINK,
             url,
             title,
-            content:this.props.message
+            content:item.message
         });
         console.error(url);
     }
